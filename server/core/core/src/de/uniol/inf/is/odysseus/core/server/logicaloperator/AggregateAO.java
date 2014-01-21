@@ -191,7 +191,7 @@ public class AggregateAO extends UnaryLogicalOp {
 				type = realAggFunc.getPartialAggregateType();
 
 				outAttribs.add(new SDFAttribute(a.getE1().getSourceName(), a
-						.getE1().getAttributeName(), type));
+						.getE1().getAttributeName(), type, null, null, null));
 			} else {
 				outAttribs.add(a.getE1());
 			}

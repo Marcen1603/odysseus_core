@@ -84,6 +84,6 @@ public class Conversions {
 		}
 
 		// The source name could also include e.g. the connection name
-		return new SDFAttribute("dbenrich", label, sdfDatatype);
+		return new SDFAttribute("dbenrich", label, sdfDatatype, null, null, null);
 	}
 }

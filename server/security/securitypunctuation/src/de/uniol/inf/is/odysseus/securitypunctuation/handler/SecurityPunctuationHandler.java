@@ -111,15 +111,15 @@ public class SecurityPunctuationHandler extends
 		schema = new SDFSchema(
 				"securityPunctuation",
 				Tuple.class,
-				new SDFAttribute("SP", "streamname", new SDFDatatype("String")),
-				new SDFAttribute("SP", "tupleStartTS", new SDFDatatype("Long")),
-				new SDFAttribute("SP", "tupleEndTS", new SDFDatatype("Long")),
+				new SDFAttribute("SP", "streamname", new SDFDatatype("String"), null, null, null),
+				new SDFAttribute("SP", "tupleStartTS", new SDFDatatype("Long"), null, null, null),
+				new SDFAttribute("SP", "tupleEndTS", new SDFDatatype("Long"), null, null, null),
 				new SDFAttribute("SP", "attributeNames", new SDFDatatype(
-						"String")), new SDFAttribute("SP", "role",
-						new SDFDatatype("String")), new SDFAttribute("SP",
-						"sign", new SDFDatatype("Integer")), new SDFAttribute(
-						"SP", "mutable", new SDFDatatype("Integer")),
-				new SDFAttribute("SP", "ts", new SDFDatatype("Long")));
+						"String"), null, null, null), new SDFAttribute("SP", "role",
+						new SDFDatatype("String"), null, null, null), new SDFAttribute("SP",
+						"sign", new SDFDatatype("Integer"), null, null, null), new SDFAttribute(
+						"SP", "mutable", new SDFDatatype("Integer"), null, null, null),
+				new SDFAttribute("SP", "ts", new SDFDatatype("Long"), null, null, null));
 		this.securityPunctuationHandlers = new IDataHandler<?>[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {

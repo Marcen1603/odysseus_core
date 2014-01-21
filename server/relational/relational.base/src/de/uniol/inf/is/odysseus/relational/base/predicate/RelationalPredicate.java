@@ -642,7 +642,7 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
     // }
 
     public static void main(String[] args) {
-        SDFAttribute a = new SDFAttribute("", "p_out", SDFDatatype.DOUBLE);
+        SDFAttribute a = new SDFAttribute("", "p_out", SDFDatatype.DOUBLE, null, null, null);
         SDFSchema schema = new SDFSchema("", Tuple.class, a);
         RelationalPredicate pred = new RelationalPredicate(new SDFExpression("p_out <=0 || isNaN(p_out)", MEP.getInstance()));
 

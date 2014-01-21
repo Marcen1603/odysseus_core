@@ -41,15 +41,15 @@ public class BasicTripleSelectionAO extends SelectAO {
 
 		if (triple.getSubject().isVariable()) {
 			l.add(new SDFAttribute(null, this.hashCode() + "#"
-					+ triple.getSubject().getName(), SDFDatatype.STRING));
+					+ triple.getSubject().getName(), SDFDatatype.STRING, null, null, null));
 		}
 		if (triple.getPredicate().isVariable()) {
 			l.add(new SDFAttribute(null, this.hashCode() + "#"
-					+ triple.getPredicate().getName(), SDFDatatype.STRING));
+					+ triple.getPredicate().getName(), SDFDatatype.STRING, null, null, null));
 		}
 		if (triple.getObject().isVariable()) {
 			l.add(new SDFAttribute(null, this.hashCode() + "#"
-					+ triple.getObject().getName(), SDFDatatype.STRING));
+					+ triple.getObject().getName(), SDFDatatype.STRING, null, null, null));
 		}
 		if (getInputAO() != null && getInputSchema() != null) {
 			l.addAll(getInputSchema().getAttributes());

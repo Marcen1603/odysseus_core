@@ -84,7 +84,7 @@ public class UnNestAO extends UnaryLogicalOp {
             if (attribute.equals(this.attribute) && (this.attribute.getDatatype().isComplex() && this.recalculate)) {
                 if (attribute.getDatatype().isMultiValue()) {
                     attrs.add(new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName(), attribute
-                            .getDatatype().getSubType()));
+                            .getDatatype().getSubType(), null, null, null));
                 }
                 else {
                     SDFSchema subschema = attribute.getDatatype().getSchema();

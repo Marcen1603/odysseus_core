@@ -46,14 +46,14 @@ public class SDFSpatialDatatype extends SDFDatatype{
 
 	public static final SDFDatatype SPATIAL_COORDINATE = new SDFSpatialDatatype("SpatialCoordinate", SDFDatatype.KindOfDatatype.BEAN, 
 			new SDFSchema("", Tuple.class,
-					new SDFAttribute(null,"x", SDFDatatype.DOUBLE),
-					new SDFAttribute(null,"y", SDFDatatype.DOUBLE),
-					new SDFAttribute(null,"z", SDFDatatype.DOUBLE)));
+					new SDFAttribute(null,"x", SDFDatatype.DOUBLE, null, null, null),
+					new SDFAttribute(null,"y", SDFDatatype.DOUBLE, null, null, null),
+					new SDFAttribute(null,"z", SDFDatatype.DOUBLE, null, null, null)));
 	
 	public static final SDFDatatype SPATIAL_POLAR_COORDINATE = new SDFSpatialDatatype("SpatialPolarCoordinate", SDFDatatype.KindOfDatatype.BEAN, 
 			new SDFSchema("", Tuple.class,
-					new SDFAttribute(null,"r", SDFDatatype.DOUBLE),
-					new SDFAttribute(null,"a", SDFDatatype.DOUBLE)));
+					new SDFAttribute(null,"r", SDFDatatype.DOUBLE, null, null, null),
+					new SDFAttribute(null,"a", SDFDatatype.DOUBLE, null, null, null)));
 
 	public static final SDFDatatype SPATIAL_COORDINATE_SEQUENCE = new SDFSpatialDatatype("SpatialCoordinateSequence", SDFDatatype.KindOfDatatype.MULTI_VALUE, SDFSpatialDatatype.SPATIAL_COORDINATE);
 
@@ -69,22 +69,22 @@ public class SDFSpatialDatatype extends SDFDatatype{
 //	
 	public static final SDFDatatype SPATIAL_POINT = new SDFSpatialDatatype("SpatialPoint", SDFDatatype.KindOfDatatype.BEAN, 
 			new SDFSchema("",Tuple.class,
-					new SDFAttribute(null,"coordinate", SDFSpatialDatatype.SPATIAL_COORDINATE),
-					new SDFAttribute(null,"srid", SDFDatatype.INTEGER)));
+					new SDFAttribute(null,"coordinate", SDFSpatialDatatype.SPATIAL_COORDINATE, null, null, null),
+					new SDFAttribute(null,"srid", SDFDatatype.INTEGER, null, null, null)));
 
 	public static final SDFDatatype SPATIAL_LINE_STRING = new SDFSpatialDatatype("SpatialLineString", SDFDatatype.KindOfDatatype.BEAN, 
 			new SDFSchema("",Tuple.class,
-					new SDFAttribute(null,"points", SDFSpatialDatatype.SPATIAL_COORDINATE_SEQUENCE),
-					new SDFAttribute(null,"srid", SDFDatatype.INTEGER)));
+					new SDFAttribute(null,"points", SDFSpatialDatatype.SPATIAL_COORDINATE_SEQUENCE, null, null, null),
+					new SDFAttribute(null,"srid", SDFDatatype.INTEGER, null, null, null)));
 
 	public static final SDFDatatype SPATIAL_LINEAR_RING = new SDFSpatialDatatype("SpatialLinearRing", SDFDatatype.KindOfDatatype.BEAN, SDFSpatialDatatype.SPATIAL_LINE_STRING);
 	public static final SDFDatatype SPATIAL_LINEAR_RING_ARRAY = new SDFSpatialDatatype("SpatialLinearRingArray", SDFDatatype.KindOfDatatype.MULTI_VALUE, SDFSpatialDatatype.SPATIAL_LINE_STRING);
 
 	public static final SDFDatatype SPATIAL_POLYGON = new SDFSpatialDatatype("SpatialPolygon", SDFDatatype.KindOfDatatype.BEAN,
 			new SDFSchema("",Tuple.class,
-					new SDFAttribute(null,"shell", SDFSpatialDatatype.SPATIAL_LINEAR_RING),
-					new SDFAttribute(null,"holes", SDFSpatialDatatype.SPATIAL_LINEAR_RING_ARRAY),
-					new SDFAttribute(null,"srid", SDFDatatype.INTEGER)));
+					new SDFAttribute(null,"shell", SDFSpatialDatatype.SPATIAL_LINEAR_RING, null, null, null),
+					new SDFAttribute(null,"holes", SDFSpatialDatatype.SPATIAL_LINEAR_RING_ARRAY, null, null, null),
+					new SDFAttribute(null,"srid", SDFDatatype.INTEGER, null, null, null)));
 
 	public static final SDFDatatype SPATIAL_MULTI_POINT = new SDFSpatialDatatype("SpatialMultiPoint", SDFDatatype.KindOfDatatype.MULTI_VALUE, SDFSpatialDatatype.SPATIAL_POINT);
 	

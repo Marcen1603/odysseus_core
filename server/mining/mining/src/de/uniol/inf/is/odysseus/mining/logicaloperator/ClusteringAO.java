@@ -95,7 +95,7 @@ public class ClusteringAO extends AbstractLogicalOperator {
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>(getInputSchema(0).getAttributes());		
-		SDFAttribute attributeId = new SDFAttribute(null, "clusterid", SDFDatatype.INTEGER);
+		SDFAttribute attributeId = new SDFAttribute(null, "clusterid", SDFDatatype.INTEGER, null, null, null);
 		attributes.add(attributeId);		
 		SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), getInputSchema(0).getType(), attributes);
 		return outSchema;

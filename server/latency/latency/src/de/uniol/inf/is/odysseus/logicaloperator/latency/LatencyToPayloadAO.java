@@ -29,7 +29,7 @@ public class LatencyToPayloadAO extends AbstractLogicalOperator {
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema old = super.getOutputSchemaIntern(0);
 		List<SDFAttribute> attributes = new ArrayList<>();
-		SDFAttribute a = new SDFAttribute(old.getURI(), "latency", SDFDatatype.LONG);
+		SDFAttribute a = new SDFAttribute(old.getURI(), "latency", SDFDatatype.LONG, null, null, null);
 		attributes.add(a);		
 		SDFSchema schema = new SDFSchema(old.getURI(), old.getType(), attributes);
 		return schema;

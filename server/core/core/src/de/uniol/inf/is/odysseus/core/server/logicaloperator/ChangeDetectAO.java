@@ -118,7 +118,7 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	
 	@Parameter(type = StringParameter.class, name = "suppressCountAttribute", optional = true)
 	public void setSuppressCountAttribute_(String name){
-		this.suppressCountAttribute = new SDFAttribute(null,name,SDFDatatype.INTEGER);
+		this.suppressCountAttribute = new SDFAttribute(null,name,SDFDatatype.INTEGER, null, null, null);
 	}
 	
 	public SDFAttribute getSuppressCountAttribute() {

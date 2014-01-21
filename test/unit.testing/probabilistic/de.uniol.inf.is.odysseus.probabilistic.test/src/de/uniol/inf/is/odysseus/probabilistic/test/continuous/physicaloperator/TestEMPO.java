@@ -81,9 +81,9 @@ public class TestEMPO extends EMPO<ITimeIntervalProbabilistic> {
     @DataProvider(name = "tuple")
     public final Object[][] provideTuple() {
         final Collection<SDFAttribute> attr = new ArrayList<SDFAttribute>();
-        attr.add(new SDFAttribute("", "a", SDFDatatype.DOUBLE));
-        attr.add(new SDFAttribute("", "b", SDFDatatype.DOUBLE));
-        attr.add(new SDFAttribute("", "c", SDFDatatype.DOUBLE));
+        attr.add(new SDFAttribute("", "a", SDFDatatype.DOUBLE, null, null, null));
+        attr.add(new SDFAttribute("", "b", SDFDatatype.DOUBLE, null, null, null));
+        attr.add(new SDFAttribute("", "c", SDFDatatype.DOUBLE, null, null, null));
 
         final SDFSchema schema = new SDFSchema("", ProbabilisticTuple.class, attr);
 

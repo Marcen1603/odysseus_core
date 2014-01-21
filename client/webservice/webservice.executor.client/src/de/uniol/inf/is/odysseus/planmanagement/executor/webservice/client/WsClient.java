@@ -478,7 +478,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	private SDFAttribute createAttributeFromInformation(SdfAttributeInformation info) {
-		return new SDFAttribute(info.getSourcename(), info.getAttributename(), createDatatypeFromInformation(info.getDatatype()));
+		// TODO Extend SdfAttributeInformation 
+		return new SDFAttribute(info.getSourcename(), info.getAttributename(), createDatatypeFromInformation(info.getDatatype()), null, null, null);
 	}
 
 	private SDFDatatype createDatatypeFromInformation(SdfDatatypeInformation info) {
@@ -737,9 +738,10 @@ public class WsClient implements IExecutor, IClientExecutor {
 			try {
 				SdfSchemaInformation si = getWebserviceServer().determineOutputSchema(query, parserID, user.getToken(), port, context).getResponseValue();
 				List<SDFAttribute> attributes = new ArrayList<>();
+				// TODO: extends SdfAttributeInformation
 				for (SdfAttributeInformation sda : si.getAttributes()) {
 					SDFDatatype dt = new SDFDatatype(sda.getDatatype().getUri());
-					attributes.add(new SDFAttribute(sda.getSourcename(), sda.getAttributename(), dt));
+					attributes.add(new SDFAttribute(sda.getSourcename(), sda.getAttributename(), dt, null, null, null));
 				}
 				@SuppressWarnings({ "rawtypes", "unchecked" })
 				Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) Class.forName(si.getTypeClass());

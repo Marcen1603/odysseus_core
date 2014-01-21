@@ -123,13 +123,13 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 			}
 
 			if (function.getName().equalsIgnoreCase("AVG")) {
-				attribute = new SDFAttribute(null, funcName, SDFDatatype.DOUBLE);
+				attribute = new SDFAttribute(null, funcName, SDFDatatype.DOUBLE, null, null, null);
 			} else if (function.getName().equalsIgnoreCase("COUNT")) {
-				attribute = new SDFAttribute(null, funcName, SDFDatatype.INTEGER);
+				attribute = new SDFAttribute(null, funcName, SDFDatatype.INTEGER, null, null, null);
 			} else {
 				// datatype equals datatype of input attribute
 				// for other functions
-				attribute = new SDFAttribute(null, funcName, datatype);
+				attribute = new SDFAttribute(null, funcName, datatype, null, null, null);
 			}
 
 			this.attributeResolver.addAttribute(attribute);

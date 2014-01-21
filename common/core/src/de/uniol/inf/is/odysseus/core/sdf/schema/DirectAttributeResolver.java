@@ -46,7 +46,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 		List<SDFAttribute> attribs = new ArrayList<SDFAttribute>();
 		for (Variable var : vars) {
 			SDFAttribute a = new SDFAttribute(null, var.getIdentifier(),
-					var.getReturnType());
+					var.getReturnType(), null, null, null);
 			attribs.add(a);
 		}
 		SDFSchema schema = new SDFSchema("", Tuple.class, attribs);

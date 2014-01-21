@@ -36,7 +36,7 @@ public class EqualDepthHistogramEvaluationCombinedSampling {
 		List<Double> normalValues = gen.getNormalDistributedStream(0, 100, 10000);
 		List<Double> normalIncreasedValues = gen.getJumpingStream(0, 100, 10000);
 		
-		SDFAttribute attr = new SDFAttribute(null,"example:double", SDFDatatype.DOUBLE);
+		SDFAttribute attr = new SDFAttribute(null,"example:double", SDFDatatype.DOUBLE, null, null, null);
 
 		/**
 		 *  Equal Distributed Values

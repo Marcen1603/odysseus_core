@@ -99,7 +99,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	public SDFSchema getOutputSchemaIntern(int pos){
 		// add detected sentiment to schema 		
 		SDFSchema inSchema = getInputSchema(outputSchemaPort);
-		SDFAttribute sentDetection = new SDFAttribute(null, enrichAttribut ,SDFDatatype.STRING);
+		SDFAttribute sentDetection = new SDFAttribute(null, enrichAttribut ,SDFDatatype.STRING, null, null, null);
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();		
 		outputAttributes.addAll(inSchema.getAttributes());				
 		outputAttributes.add(sentDetection);

@@ -361,7 +361,7 @@ public class QueryManagerImpl implements QueryManager {
             while (result.hasNext()) {
 
                 final QuerySolution solution = result.next();
-                attributes.add(new SDFAttribute(solution.get("foiLabel").asLiteral().getString() + ":" + solution.get("sdLabel").asLiteral().getString(), solution.get("mcLabel").asLiteral().getString(), SDFDatatype.OBJECT));
+                attributes.add(new SDFAttribute(solution.get("foiLabel").asLiteral().getString() + ":" + solution.get("sdLabel").asLiteral().getString(), solution.get("mcLabel").asLiteral().getString(), SDFDatatype.OBJECT, null, null, null));
             }
         } catch (final QueryCancelledException e) {
             QueryManagerImpl.LOG.error(e.getMessage(), e);

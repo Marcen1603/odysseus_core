@@ -55,43 +55,43 @@ public enum NEXMarkStreamType {
 			switch (type) {
 			case PERSON:
 				schema = new SDFSchema("Person",Tuple.class, new SDFAttribute(null,
-						"timestamp", SDFDatatype.LONG), new SDFAttribute(null,
-						"id", SDFDatatype.INTEGER), new SDFAttribute(null,
-						"name", SDFDatatype.STRING), new SDFAttribute(null,
-						"email", SDFDatatype.STRING), new SDFAttribute(null,
-						"creditcard", SDFDatatype.STRING), new SDFAttribute(
-						null, "city", SDFDatatype.STRING), new SDFAttribute(
-						null, "state", SDFDatatype.STRING));
+						"timestamp", SDFDatatype.LONG, null, null, null), new SDFAttribute(null,
+						"id", SDFDatatype.INTEGER, null, null, null), new SDFAttribute(null,
+						"name", SDFDatatype.STRING, null, null, null), new SDFAttribute(null,
+						"email", SDFDatatype.STRING, null, null, null), new SDFAttribute(null,
+						"creditcard", SDFDatatype.STRING, null, null, null), new SDFAttribute(
+						null, "city", SDFDatatype.STRING, null, null, null), new SDFAttribute(
+						null, "state", SDFDatatype.STRING, null, null, null));
 				break;
 			case AUCTION:
 				schema = new SDFSchema(
 						"Auction",Tuple.class,
-						new SDFAttribute(null, "timestamp", SDFDatatype.LONG),
-						new SDFAttribute(null, "id", SDFDatatype.INTEGER),
-						new SDFAttribute(null, "itemname", SDFDatatype.STRING),
+						new SDFAttribute(null, "timestamp", SDFDatatype.LONG, null, null, null),
+						new SDFAttribute(null, "id", SDFDatatype.INTEGER, null, null, null),
+						new SDFAttribute(null, "itemname", SDFDatatype.STRING, null, null, null),
 						new SDFAttribute(null, "description",
-								SDFDatatype.STRING),
+								SDFDatatype.STRING, null, null, null),
 						new SDFAttribute(null, "initialbid",
-								SDFDatatype.INTEGER),
-						new SDFAttribute(null, "reserver", SDFDatatype.INTEGER),
-						new SDFAttribute(null, "expires", SDFDatatype.LONG),
-						new SDFAttribute(null, "seller", SDFDatatype.INTEGER),
-						new SDFAttribute(null, "category", SDFDatatype.INTEGER));
+								SDFDatatype.INTEGER, null, null, null),
+						new SDFAttribute(null, "reserver", SDFDatatype.INTEGER, null, null, null),
+						new SDFAttribute(null, "expires", SDFDatatype.LONG, null, null, null),
+						new SDFAttribute(null, "seller", SDFDatatype.INTEGER, null, null, null),
+						new SDFAttribute(null, "category", SDFDatatype.INTEGER, null, null, null));
 				break;
 			case BID:
 				schema = new SDFSchema("Bid",Tuple.class, new SDFAttribute(null,
-						"timestamp", SDFDatatype.LONG), new SDFAttribute(null,
-						"auction", SDFDatatype.INTEGER), new SDFAttribute(null,
-						"bidder", SDFDatatype.INTEGER), new SDFAttribute(null,
-						"datetime", SDFDatatype.LONG), new SDFAttribute(null,
-						"price", SDFDatatype.DOUBLE));
+						"timestamp", SDFDatatype.LONG, null, null, null), new SDFAttribute(null,
+						"auction", SDFDatatype.INTEGER, null, null, null), new SDFAttribute(null,
+						"bidder", SDFDatatype.INTEGER, null, null, null), new SDFAttribute(null,
+						"datetime", SDFDatatype.LONG, null, null, null), new SDFAttribute(null,
+						"price", SDFDatatype.DOUBLE, null, null, null));
 				break;
 			case CATEGORY:
 				schema = new SDFSchema("Category",Tuple.class, new SDFAttribute(null, "id",
-						SDFDatatype.INTEGER), new SDFAttribute(null, "name",
-						SDFDatatype.STRING), new SDFAttribute(null,
-						"description", SDFDatatype.STRING), new SDFAttribute(
-						null, "parentid", SDFDatatype.INTEGER));
+						SDFDatatype.INTEGER, null, null, null), new SDFAttribute(null, "name",
+						SDFDatatype.STRING, null, null, null), new SDFAttribute(null,
+						"description", SDFDatatype.STRING, null, null, null), new SDFAttribute(
+						null, "parentid", SDFDatatype.INTEGER, null, null, null));
 				break;
 			}
 			schemaMap.put(type, schema);

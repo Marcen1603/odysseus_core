@@ -139,7 +139,7 @@ public class SampleAO extends UnaryLogicalOp {
         final Collection<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
         for (final SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
             if (this.getAttributes().contains(inAttr)) {
-                outputAttributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFDatatype.DOUBLE));
+                outputAttributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFDatatype.DOUBLE, inAttr.getUnit(), inAttr.getDtConstraints()));
             }
             else {
                 outputAttributes.add(inAttr);

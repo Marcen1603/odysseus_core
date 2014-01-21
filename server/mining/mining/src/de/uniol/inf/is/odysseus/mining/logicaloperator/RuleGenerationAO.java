@@ -83,11 +83,11 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 			return outSchema;
 		} else {
 			List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-			SDFAttribute attributeCount = new SDFAttribute(null, "count", SDFDatatype.INTEGER);
+			SDFAttribute attributeCount = new SDFAttribute(null, "count", SDFDatatype.INTEGER, null, null, null);
 			attributes.add(attributeCount);
-			SDFAttribute attributeNeeded = new SDFAttribute(null, "needed", SDFDatatype.INTEGER);
+			SDFAttribute attributeNeeded = new SDFAttribute(null, "needed", SDFDatatype.INTEGER, null, null, null);
 			attributes.add(attributeNeeded);
-			SDFAttribute attributeTotal = new SDFAttribute(null, "total", SDFDatatype.INTEGER);
+			SDFAttribute attributeTotal = new SDFAttribute(null, "total", SDFDatatype.INTEGER, null, null, null);
 			attributes.add(attributeTotal);
 			SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(),getInputSchema(0).getType(), attributes);
 			return outSchema;

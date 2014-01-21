@@ -105,7 +105,7 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 				if (ifunc != null) {
 					SDFDatatype dt = ifunc.getPartialAggregateType();
 					outAttributes.remove(i);
-					outAttributes.add(i, new SDFAttribute(attr.getSourceName(), attr.getAttributeName(), dt));
+					outAttributes.add(i, new SDFAttribute(attr.getSourceName(), attr.getAttributeName(), dt, null, null, null));
 				}
 			}
 

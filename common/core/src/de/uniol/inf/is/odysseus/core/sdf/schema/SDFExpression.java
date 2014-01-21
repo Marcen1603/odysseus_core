@@ -289,7 +289,7 @@ public class SDFExpression implements Serializable, IClone {
 			// SDFAttribute curAttribute = this.schema.findAttribute(name);
 			if (curAttribute == null && name == "t") {
 				this.attributes.add(new SDFAttribute(null, "t",
-						SDFDatatype.OBJECT));
+						SDFDatatype.OBJECT, null, null, null));
 			} else {
 				this.attributes.add(curAttribute);
 			}

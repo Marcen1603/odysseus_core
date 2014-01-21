@@ -123,11 +123,11 @@ public class MapAO extends UnaryLogicalOp {
 									+ "."
 									+ elem.getQualName() : elem.getQualName();
 							attr = new SDFAttribute(lastString, attrName,
-									attribute.getDatatype());
+									attribute.getDatatype(), attribute.getUnit(), attribute.getDtConstraints());
 						} else {
 							attr = new SDFAttribute(
 									elem.getURIWithoutQualName(),
-									elem.getQualName(), attribute.getDatatype());
+									elem.getQualName(), attribute.getDatatype(), attribute.getUnit(), attribute.getDtConstraints());
 						}
 						isOnlyAttribute = true;
 					}
@@ -149,7 +149,7 @@ public class MapAO extends UnaryLogicalOp {
 				// else use the expression data type
 				if (attr == null) {
 					attr = new SDFAttribute(null, !"".equals(expr.name) ? expr.name
-							: exprString, mepExpression.getReturnType());
+							: exprString, mepExpression.getReturnType(), null, null, null);
 				}
 				attrs.add(attr);
 

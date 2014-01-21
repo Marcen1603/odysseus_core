@@ -90,9 +90,9 @@ public class RegressionAO extends UnaryLogicalOp {
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		SDFAttribute x = new SDFAttribute(SOURCE_NAME, "slope",
-				SDFDatatype.DOUBLE);
+				SDFDatatype.DOUBLE, null, null, null);
 		SDFAttribute y = new SDFAttribute(SOURCE_NAME, "intercept",
-				SDFDatatype.DOUBLE);
+				SDFDatatype.DOUBLE, null, null, null);
 		setOutputSchema(new SDFSchema(URI_NAME,Tuple.class, x, y));
 		return getOutputSchema();
 	}

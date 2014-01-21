@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -62,24 +63,24 @@ public class SDFAttribute extends SDFElement implements
 
 	private SDFSchema subSchema;
 
-	/**
-	 * Create a new SDFAttribute
-	 * 
-	 * @param sourceName
-	 *            The source name of the attribute
-	 * @param attributeName
-	 *            The attribute name in the source
-	 * @param datatype
-	 *            The data type of this attribute
-	 */
-	public SDFAttribute(String sourceName, String attributeName,
-			SDFDatatype datatype) {
-		this(sourceName, attributeName, datatype, null, null);
-	}
+//	/**
+//	 * Create a new SDFAttribute
+//	 * 
+//	 * @param sourceName
+//	 *            The source name of the attribute
+//	 * @param attributeName
+//	 *            The attribute name in the source
+//	 * @param datatype
+//	 *            The data type of this attribute
+//	 */
+//	public SDFAttribute(String sourceName, String attributeName,
+//			SDFDatatype datatype) {
+//		this(sourceName, attributeName, datatype, null, null);
+//	}
 
 	public SDFAttribute(String sourceName, String attributeName,
 			SDFDatatype datatype, SDFSchema subschema) {
-		this(sourceName, attributeName, datatype, null, null);
+		this(sourceName, attributeName, datatype, null, (Collection<SDFDatatypeConstraint>) null);
 		this.subSchema = subschema;
 	}
 
@@ -99,8 +100,14 @@ public class SDFAttribute extends SDFElement implements
 	 */
 	public SDFAttribute(String sourceName, String attributeName,
 			SDFDatatype datatype, SDFUnit unit,
-			List<SDFDatatypeConstraint> dtConstraints) {
+			Collection<SDFDatatypeConstraint> dtConstraints) {
 		this(sourceName, attributeName, datatype, unit, dtConstraints, null);
+	}
+	
+	public SDFAttribute(String sourceName, String attributeName,
+			SDFDatatype datatype, SDFUnit unit,
+			Map<String,SDFDatatypeConstraint> dtConstraints) {
+		this(sourceName, attributeName, datatype, unit, dtConstraints.values(), null);
 	}
 
 	/**
@@ -121,7 +128,7 @@ public class SDFAttribute extends SDFElement implements
 	 */
 	public SDFAttribute(String sourceName, String attributeName,
 			SDFDatatype attribType, SDFUnit unit,
-			List<SDFDatatypeConstraint> dtConstraints, List<?> addInfo) {
+			Collection<SDFDatatypeConstraint> dtConstraints, List<?> addInfo) {
 		super(sourceName, attributeName);
 		this.datatype = attribType;
 		this.unit = unit;
@@ -321,7 +328,7 @@ public class SDFAttribute extends SDFElement implements
 	 */
 	public SDFAttribute clone(SDFDatatype dt) {
 		return new SDFAttribute(this.getSourceName(), this.getAttributeName(),
-				dt);
+				dt,this.getUnit(), new LinkedList<>(this.dtConstraints.values()));
 	}
 
 	@Override

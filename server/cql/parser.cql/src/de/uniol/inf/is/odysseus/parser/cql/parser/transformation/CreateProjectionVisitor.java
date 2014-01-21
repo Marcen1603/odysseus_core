@@ -179,7 +179,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			}
 			SDFExpression exp = new SDFExpression(constant, this.attributeResolver, MEP.getInstance(), aliasExpression.getAlias());
 			expressions.add(exp);
-			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), datatype);
+			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), datatype, null, null, null);
 			outputAttributes.add(attribute);
 			aliasAttributes.add(attribute);
 		}
@@ -201,7 +201,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 				SDFExpression expr = new SDFExpression(null, expression.toString(), this.attributeResolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 				expressions.add(expr);
 				SDFDatatype type = expr.getMEPExpression().getReturnType();
-				SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), type);
+				SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), type, null, null, null);
 				outputAttributes.add(attribute);
 				aliasAttributes.add(attribute);
 			}
@@ -224,7 +224,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			SDFExpression expr = new SDFExpression(null, expression.toString(), this.attributeResolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 			expressions.add(expr);
 			SDFDatatype type = expr.getMEPExpression().getReturnType();
-			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), type);
+			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), type, null, null, null);
 			outputAttributes.add(attribute);
 			aliasAttributes.add(attribute);
 		}
@@ -285,7 +285,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			SDFDatatype datatype = SDFDatatype.STRING;
 			SDFExpression exp = new SDFExpression(new Constant<String>(node.getValue(), datatype), this.attributeResolver, MEP.getInstance(), aliasExpression.getAlias());
 			expressions.add(exp);
-			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), datatype);
+			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), datatype, null, null, null);
 			outputAttributes.add(attribute);
 			aliasAttributes.add(attribute);
 		}

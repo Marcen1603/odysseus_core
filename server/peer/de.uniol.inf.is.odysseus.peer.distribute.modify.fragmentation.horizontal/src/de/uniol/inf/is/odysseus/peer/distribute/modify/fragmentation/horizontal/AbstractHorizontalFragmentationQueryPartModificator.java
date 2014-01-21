@@ -261,22 +261,22 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 					if(function.getName().toUpperCase().equals("AVG") || function.getName().toUpperCase().equals("COUNT")) {
 						
 						newOutAttr = new SDFAttribute(oldOutAttr.getSourceName(), oldOutAttr.getAttributeName(), 
-								SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE);
+								SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE, oldOutAttr.getUnit(), oldOutAttr.getDtConstraints());
 						
 					} else if(function.getName().toUpperCase().equals("COUNT")) {
 						
 						newOutAttr = new SDFAttribute(oldOutAttr.getSourceName(), oldOutAttr.getAttributeName(), 
-								SDFDatatype.COUNT_PARTIAL_AGGREGATE);
+								SDFDatatype.COUNT_PARTIAL_AGGREGATE, oldOutAttr.getUnit(), oldOutAttr.getDtConstraints());
 						
 					} else if(oldOutAttr.getDatatype().isListValue()) {
 						
 						newOutAttr = new SDFAttribute(oldOutAttr.getSourceName(), oldOutAttr.getAttributeName(), 
-								SDFDatatype.LIST_PARTIAL_AGGREGATE);
+								SDFDatatype.LIST_PARTIAL_AGGREGATE, oldOutAttr.getUnit(), oldOutAttr.getDtConstraints());
 						
 					} else {
 						
 						newOutAttr = new SDFAttribute(oldOutAttr.getSourceName(), oldOutAttr.getAttributeName(), 
-								SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE);
+								SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE, oldOutAttr.getUnit(), oldOutAttr.getDtConstraints());
 					
 					}
 					

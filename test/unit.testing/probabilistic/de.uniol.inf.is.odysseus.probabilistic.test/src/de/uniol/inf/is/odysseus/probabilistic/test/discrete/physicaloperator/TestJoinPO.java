@@ -189,11 +189,11 @@ public class TestJoinPO extends ProbabilisticJoinTIPO<ITimeIntervalProbabilistic
      */
     private static SDFSchema getSchema1() {
         final Collection<SDFAttribute> attr = new ArrayList<SDFAttribute>();
-        attr.add(new SDFAttribute("", "a", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
-        attr.add(new SDFAttribute("", "b", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
-        attr.add(new SDFAttribute("", "c", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
-        attr.add(new SDFAttribute("", "d", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
-        attr.add(new SDFAttribute("", "name", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
+        attr.add(new SDFAttribute("", "a", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, null, null, null));
+        attr.add(new SDFAttribute("", "b", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, null, null, null));
+        attr.add(new SDFAttribute("", "c", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, null, null, null));
+        attr.add(new SDFAttribute("", "d", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, null, null, null));
+        attr.add(new SDFAttribute("", "name", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, null, null, null));
         final SDFSchema schema = new SDFSchema("", ProbabilisticTuple.class, attr);
         return schema;
     }
@@ -204,11 +204,11 @@ public class TestJoinPO extends ProbabilisticJoinTIPO<ITimeIntervalProbabilistic
      */
     private static SDFSchema getSchema2() {
         final Collection<SDFAttribute> attr = new ArrayList<SDFAttribute>();
-        attr.add(new SDFAttribute("", "e", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
-        attr.add(new SDFAttribute("", "f", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
-        attr.add(new SDFAttribute("", "g", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
-        attr.add(new SDFAttribute("", "h", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
-        attr.add(new SDFAttribute("", "name", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
+        attr.add(new SDFAttribute("", "e", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, null, null, null));
+        attr.add(new SDFAttribute("", "f", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, null, null, null));
+        attr.add(new SDFAttribute("", "g", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, null, null, null));
+        attr.add(new SDFAttribute("", "h", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, null, null, null));
+        attr.add(new SDFAttribute("", "name", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, null, null, null));
         final SDFSchema schema = new SDFSchema("", ProbabilisticTuple.class, attr);
         return schema;
     }

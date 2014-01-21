@@ -32,7 +32,7 @@ public class FaceDetectorAO extends UnaryLogicalOp {
 	private void calcOutputSchema() {
 			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 			SDFAttribute faces = new SDFAttribute("face",
-					"face", SDFKinectDatatype.BUFFERED_IMAGE);				
+					"face", SDFKinectDatatype.BUFFERED_IMAGE, null, null, null);				
 			attrs.add(faces);
 			setOutputSchema(new SDFSchema(getInputSchema().getURI(), getInputSchema().getType(), attrs));
 	}

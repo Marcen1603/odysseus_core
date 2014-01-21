@@ -36,9 +36,9 @@ public class FaceRecognizerAO extends UnaryLogicalOp {
 
 	private void calcOutputSchema() {
 		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
-		SDFAttribute attr = new SDFAttribute("id", "id", SDFDatatype.INTEGER);
-		SDFAttribute name = new SDFAttribute("name", "name", SDFDatatype.STRING);
-		SDFAttribute confidence = new SDFAttribute("confidence", "confidence", SDFDatatype.DOUBLE);
+		SDFAttribute attr = new SDFAttribute("id", "id", SDFDatatype.INTEGER, null, null, null);
+		SDFAttribute name = new SDFAttribute("name", "name", SDFDatatype.STRING, null, null, null);
+		SDFAttribute confidence = new SDFAttribute("confidence", "confidence", SDFDatatype.DOUBLE, null, null, null);
 		attrs.add(attr);
 		attrs.add(name);
 		attrs.add(confidence);

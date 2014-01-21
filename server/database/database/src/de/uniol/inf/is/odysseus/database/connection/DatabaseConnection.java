@@ -193,7 +193,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 		while (rs.next()) {
 			String name = rs.getString("COLUMN_NAME");
 			SDFDatatype dt = DatatypeRegistry.getSDFDatatype(rs.getInt("DATA_TYPE"));
-			SDFAttribute a = new SDFAttribute(null, name, dt);
+			SDFAttribute a = new SDFAttribute(null, name, dt, null, null, null);
 			attrs.add(a);
 		}
 		SDFSchema schema = new SDFSchema(tablename, Tuple.class, attrs);

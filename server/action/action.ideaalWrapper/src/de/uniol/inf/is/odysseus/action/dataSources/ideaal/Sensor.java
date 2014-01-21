@@ -93,7 +93,7 @@ public enum Sensor {
 
 			for (int i = 0; i < identifiers.length; i++) {
 				SDFAttribute attribute = new SDFAttribute(null, identifiers[i],
-						types[i]);
+						types[i], null, null, null);
 				attrs.add(attribute);
 			}
 			SDFSchema schema = new SDFSchema("BedBalance", Tuple.class, attrs);
@@ -104,7 +104,7 @@ public enum Sensor {
 
 			for (int i = 0; i < 3; i++) {
 				SDFAttribute attribute = new SDFAttribute(null, identifiers[i],
-						types[i]);
+						types[i], null, null, null);
 				attrs.add(attribute);
 			}
 			schema = new SDFSchema("Bed", Tuple.class, attrs);

@@ -81,7 +81,8 @@ public class SourceAO extends AbstractLogicalOperator {
 			try {
 				// This operator cannot be used in tenant contexts
 				attribute = new SDFAttribute(null,
-						schemaInformation[0], DataDictionaryProvider.getDataDictionary(UserManagementProvider.getDefaultTenant()).getDatatype(schemaInformation[1]));
+						schemaInformation[0], DataDictionaryProvider.getDataDictionary(UserManagementProvider.getDefaultTenant()).getDatatype(schemaInformation[1])
+						, null, null, null);
 			} catch (DataDictionaryException e) {
 				throw new QueryParseException(e.getMessage());
 			}

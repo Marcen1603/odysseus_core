@@ -60,12 +60,12 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 				
 				type = dd.getDatatype(value.get(3));
 
-				outAttr = new SDFAttribute(null, outputName, type);
+				outAttr = new SDFAttribute(null, outputName, type, null, null, null);
 			} else {
 				// Fallback to old DOUBLE value for aggregation results
 				IDataDictionary dd = getDataDictionary();
 				SDFDatatype type = dd.getDatatype("double");
-				outAttr = new SDFAttribute(null, outputName, type);
+				outAttr = new SDFAttribute(null, outputName, type, null, null, null);
 			}
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e.getMessage());

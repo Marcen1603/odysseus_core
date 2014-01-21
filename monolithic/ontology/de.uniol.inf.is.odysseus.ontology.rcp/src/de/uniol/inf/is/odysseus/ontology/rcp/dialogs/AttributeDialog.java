@@ -117,7 +117,7 @@ public class AttributeDialog extends Dialog {
         final String name = this.txtName.getText();
         final String item = this.cmbDatatype.getItem(this.cmbDatatype.getSelectionIndex());
         final SDFDatatype datatype = (SDFDatatype) this.cmbDatatype.getData(item);
-        this.attribute = new SDFAttribute("", name, datatype);
+        this.attribute = new SDFAttribute("", name, datatype, null, null, null);
     }
 
     @Override

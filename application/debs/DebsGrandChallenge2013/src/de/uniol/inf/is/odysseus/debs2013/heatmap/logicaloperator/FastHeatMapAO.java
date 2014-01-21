@@ -137,21 +137,21 @@ public class FastHeatMapAO extends UnaryLogicalOp {
 		String schemaURI = "fastheatmap";
 		@SuppressWarnings("rawtypes")
 		ArrayList attributes = new ArrayList<SDFAttribute>();
-		attributes.add(new SDFAttribute("", "ts", new SDFDatatype("Long")));
-		attributes.add(new SDFAttribute("", "player_id", new SDFDatatype("Integer")));
+		attributes.add(new SDFAttribute("", "ts", new SDFDatatype("Long"), null, null, null));
+		attributes.add(new SDFAttribute("", "player_id", new SDFDatatype("Integer"), null, null, null));
 		String name = "";
 		for(int i = 0; i < this.x; i++) {
 			for(int j = 0; j < this.y; j++) {
 				name = "cell_" + this.x + "x" + this.y + "_x1";
-				attributes.add(new SDFAttribute("", name, new SDFDatatype("Integer")));
+				attributes.add(new SDFAttribute("", name, new SDFDatatype("Integer"), null, null, null));
 				name = "cell_" + this.x + "x" + this.y + "_y1";
-				attributes.add(new SDFAttribute("", name, new SDFDatatype("Integer")));
+				attributes.add(new SDFAttribute("", name, new SDFDatatype("Integer"), null, null, null));
 				name = "cell_" + this.x + "x" + this.y + "_x2";
-				attributes.add(new SDFAttribute("", name, new SDFDatatype("Integer")));
+				attributes.add(new SDFAttribute("", name, new SDFDatatype("Integer"), null, null, null));
 				name = "cell_" + this.x + "x" + this.y + "_y2";
-				attributes.add(new SDFAttribute("", name, new SDFDatatype("Integer")));
+				attributes.add(new SDFAttribute("", name, new SDFDatatype("Integer"), null, null, null));
 				name = "time_" + this.x + "x" + this.y;
-				attributes.add(new SDFAttribute("", name, new SDFDatatype("Double")));
+				attributes.add(new SDFAttribute("", name, new SDFDatatype("Double"), null, null, null));
 			}
 		}
 		SDFSchema grandChallengeSchema = new  SDFSchema(schemaURI, Tuple.class , attributes);

@@ -320,7 +320,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		final List<SDFAttribute> attributes = Lists.newArrayList();
 		while (children.hasMoreElements()) {
 			final TextElement<?> elem = (TextElement<?>) children.nextElement();
-			final SDFAttribute attr = new SDFAttribute(viewName, elem.getKey(), ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getDatatype(elem.getTextValue()));
+			final SDFAttribute attr = new SDFAttribute(viewName, elem.getKey(), ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getDatatype(elem.getTextValue()), null, null, null);
 			attributes.add(attr);
 		}
 

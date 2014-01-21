@@ -103,10 +103,10 @@ public class PredicateSPHandler extends AbstractDataHandler<ISecurityPunctuation
 	
 	private void createSecurityPunctuationHandlers() {
 		schema = new SDFSchema("predicateSP", Tuple.class,
-				new SDFAttribute("", "predicate", new SDFDatatype("String")),
-				new SDFAttribute("", "sign", new SDFDatatype("Integer")),
-				new SDFAttribute("", "mutable", new SDFDatatype("Integer")),
-				new SDFAttribute("", "ts", new SDFDatatype("Long")));
+				new SDFAttribute("", "predicate", new SDFDatatype("String"), null, null, null),
+				new SDFAttribute("", "sign", new SDFDatatype("Integer"), null, null, null),
+				new SDFAttribute("", "mutable", new SDFDatatype("Integer"), null, null, null),
+				new SDFAttribute("", "ts", new SDFDatatype("Long"), null, null, null));
 		this.securityPunctuationHandlers = new IDataHandler<?>[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {

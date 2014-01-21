@@ -186,7 +186,7 @@ public class PatternDetectAO<T> extends AbstractLogicalOperator{
 								attributeName)) {
 							outAttributeList.add(new SDFAttribute(outAttr
 									.getSourceName(), outAttr
-									.getAttributeName(), inAttr.getDatatype()));
+									.getAttributeName(), inAttr.getDatatype(), inAttr.getUnit(), inAttr.getDtConstraints()));
 							found = true;
 						}
 					}
@@ -197,11 +197,11 @@ public class PatternDetectAO<T> extends AbstractLogicalOperator{
 			} else if (outAttr.getQualName().startsWith("COUNT")) {
 				outAttributeList.add(new SDFAttribute(outAttr
 						.getSourceName(), outAttr
-						.getAttributeName(), SDFDatatype.LONG));
+						.getAttributeName(), SDFDatatype.LONG, null, null, null));
 			} else if (outAttr.getQualName().startsWith("AVG") || outAttr.getQualName().startsWith("SUM")) {
 				outAttributeList.add(new SDFAttribute(outAttr
 						.getSourceName(), outAttr
-						.getAttributeName(), SDFDatatype.DOUBLE));
+						.getAttributeName(), SDFDatatype.DOUBLE, null, null, null));
 			}
 
 		}

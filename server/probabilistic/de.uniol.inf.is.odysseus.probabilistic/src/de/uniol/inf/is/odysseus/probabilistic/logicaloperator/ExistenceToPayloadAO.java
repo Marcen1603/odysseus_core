@@ -61,7 +61,7 @@ public class ExistenceToPayloadAO extends AbstractLogicalOperator {
     @Override
     public final SDFSchema getOutputSchemaIntern(final int pos) {
         Preconditions.checkPositionIndex(pos, 1);
-        final SDFAttribute existence = new SDFAttribute(null, "meta_existence", SDFDatatype.DOUBLE);
+        final SDFAttribute existence = new SDFAttribute(null, "meta_existence", SDFDatatype.DOUBLE, null, null, null);
 
         final List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
         String name = "";

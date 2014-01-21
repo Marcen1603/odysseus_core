@@ -133,13 +133,13 @@ public class HeatMapAO extends UnaryLogicalOp {
 	public void initOutputSchema() {
 		String schemaURI = "heatmap";
 		SDFSchema grandChallengeSchema = new SDFSchema(schemaURI,Tuple.class,
-				new SDFAttribute("", "ts", new SDFDatatype("Long")), 
-				new SDFAttribute("", "player_id", new SDFDatatype("Integer")),
-				new SDFAttribute("", "cell_x1", new SDFDatatype("Integer")),
-				new SDFAttribute("", "cell_y1", new SDFDatatype("Integer")),
-				new SDFAttribute("", "cell_x2", new SDFDatatype("Integer")),
-				new SDFAttribute("", "cell_y2", new SDFDatatype("Integer")),
-				new SDFAttribute("", "time", new SDFDatatype("Double")));
+				new SDFAttribute("", "ts", new SDFDatatype("Long"), null, null, null), 
+				new SDFAttribute("", "player_id", new SDFDatatype("Integer"), null, null, null),
+				new SDFAttribute("", "cell_x1", new SDFDatatype("Integer"), null, null, null),
+				new SDFAttribute("", "cell_y1", new SDFDatatype("Integer"), null, null, null),
+				new SDFAttribute("", "cell_x2", new SDFDatatype("Integer"), null, null, null),
+				new SDFAttribute("", "cell_y2", new SDFDatatype("Integer"), null, null, null),
+				new SDFAttribute("", "time", new SDFDatatype("Double"), null, null, null));
 		this.setOutputSchema(grandChallengeSchema);
 	}
 }

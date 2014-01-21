@@ -1469,7 +1469,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 
 		// in each case the input datatype is string
 		SDFAttribute attribute = new SDFAttribute(null, funcName,
-				SDFDatatype.STRING);
+				SDFDatatype.STRING, null, null, null);
 
 		return attribute;
 	}

@@ -188,7 +188,8 @@ public final class AccessAOConverter {
 			if( elem.getKey().equals(OUTPUTSCHEMA_TYPE_TAG) ) {
 				schemaType = tryGetSchemaType(elem);
 			} else {
-				final SDFAttribute attr = new SDFAttribute("", elem.getKey(), ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getDatatype(elem.getTextValue()));
+				// TODO: Unit and Constraints?
+				final SDFAttribute attr = new SDFAttribute("", elem.getKey(), ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getDatatype(elem.getTextValue()), null, null, null);
 				attributes.add(attr);
 			}
 		}

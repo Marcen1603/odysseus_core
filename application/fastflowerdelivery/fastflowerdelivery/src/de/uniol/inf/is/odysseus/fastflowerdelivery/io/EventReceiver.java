@@ -122,7 +122,7 @@ public class EventReceiver extends Thread implements ITransferHandler {
 	private SDFSchema getSchema() {
 		ArrayList<SDFAttribute> attr = new ArrayList<SDFAttribute>();
 		for(String dataType : sinkEventHandler.getSchema()) 
-			attr.add(new SDFAttribute("", "", new SDFDatatype(dataType)));
+			attr.add(new SDFAttribute("", "", new SDFDatatype(dataType), null, null, null));
 		return new SDFSchema("", Tuple.class, attr);
 	}
 

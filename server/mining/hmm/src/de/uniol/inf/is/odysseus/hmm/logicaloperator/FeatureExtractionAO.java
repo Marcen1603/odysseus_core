@@ -55,10 +55,10 @@ public class FeatureExtractionAO extends UnaryLogicalOp implements ILogicalOpera
 	public SDFSchema getOutputSchemaIntern(int pos) {
 
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		SDFAttribute attributeType = new SDFAttribute(null, "datatype",	SDFDatatype.STRING);
+		SDFAttribute attributeType = new SDFAttribute(null, "datatype",	SDFDatatype.STRING, null, null, null);
 		attributes.add(attributeType);
 
-		SDFAttribute attributeId = new SDFAttribute(null, "value", SDFDatatype.DOUBLE);
+		SDFAttribute attributeId = new SDFAttribute(null, "value", SDFDatatype.DOUBLE, null, null, null);
 		attributes.add(attributeId);
 
 		SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), getInputSchema(0).getType(),attributes);

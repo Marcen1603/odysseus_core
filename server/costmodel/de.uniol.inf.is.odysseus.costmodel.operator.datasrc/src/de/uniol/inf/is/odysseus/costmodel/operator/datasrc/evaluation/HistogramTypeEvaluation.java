@@ -56,7 +56,7 @@ public class HistogramTypeEvaluation {
 		increasing = gen.getIncreasingStream(0, 100, 2000);
 		normalized = gen.getNormalDistributedStream(0, 100, 2000);
 		jumping = gen.getJumpingStream(0, 100, 2000);
-		SDFAttribute attribute = new SDFAttribute(null,"src:example",SDFDatatype.DOUBLE);
+		SDFAttribute attribute = new SDFAttribute(null,"src:example",SDFDatatype.DOUBLE, null, null, null);
 
 		// Create Histograms
 		

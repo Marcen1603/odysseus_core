@@ -48,7 +48,7 @@ public class TreeNode {
 	}
 	
 	public void setAttribute(SDFAttribute attribute) {
-		this.attribute = new SDFAttribute(null, attribute.getAttributeName(), attribute.getDatatype());	
+		this.attribute = new SDFAttribute(null, attribute.getAttributeName(), attribute.getDatatype(), attribute.getUnit(), attribute.getDtConstraints());	
 	}
 	
 	public TreeNode getMatchingChild(Tuple<?> tuple){

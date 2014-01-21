@@ -32,7 +32,7 @@ public class EqualWidthHistogramTest {
 		DataStreamGenerator gen = new DataStreamGenerator();
 		
 		List<Double> increasing = gen.getIncreasingStream(0, 100, 1000);
-		SDFAttribute attribute = new SDFAttribute(null,"example:attribute", SDFDatatype.DOUBLE);
+		SDFAttribute attribute = new SDFAttribute(null,"example:attribute", SDFDatatype.DOUBLE, null, null, null);
 		
 		IHistogramFactory factory = new EqualWidthHistogramFactory( attribute, new LastNSampling(1000), new FreedmanDiaconisRule() );
 		for( double d : increasing ) 

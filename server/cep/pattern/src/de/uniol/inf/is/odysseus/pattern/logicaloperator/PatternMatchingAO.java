@@ -228,7 +228,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 			}
 		} else if (outputMode == PatternOutput.TUPLE_CONTAINER) {
 			// create tuple container attribute
-			SDFAttribute tuple = new SDFAttribute("PATTERN", "tuple_container", SDFDatatype.TUPLE);
+			SDFAttribute tuple = new SDFAttribute("PATTERN", "tuple_container", SDFDatatype.TUPLE, null, null, null);
 			schema = new SDFSchema("PATTERN",Tuple.class, tuple);
 		} else if (outputMode == PatternOutput.EXPRESSIONS && returnExpressions != null) {
 			// EXPRESSIONS: Ausgabe hängt vom return-Parameter ab
@@ -291,11 +291,11 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 									+ "."
 									+ elem.getQualName() : elem.getQualName();
 							attr = new SDFAttribute(lastString, attrName,
-									attribute.getDatatype());
+									attribute.getDatatype(), attribute.getUnit(), attribute.getDtConstraints());
 						} else {
 							attr = new SDFAttribute(
 									elem.getURIWithoutQualName(),
-									elem.getQualName(), attribute.getDatatype());
+									elem.getQualName(), attribute.getDatatype(), attribute.getUnit(), attribute.getDtConstraints());
 						}
 						isOnlyAttribute = true;
 					}
@@ -317,7 +317,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 				// else use the expression data type
 				if (attr == null) {
 					attr = new SDFAttribute(null, !"".equals(expr.name) ? expr.name
-							: exprString, mepExpression.getReturnType());
+							: exprString, mepExpression.getReturnType(), null, null, null);
 				}
 				attrs.add(attr);
 			}
@@ -325,9 +325,9 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 			schema = new SDFSchema("PATTERN", Tuple.class, attrs);
 		} else {
 			// SIMPLE: einfache Variante (ohne Expressions)
-			SDFAttribute type = new SDFAttribute("PATTERN", "type", SDFDatatype.STRING);
-			SDFAttribute timestamp = new SDFAttribute("PATTERN", "timestamp", SDFDatatype.LONG);
-			SDFAttribute detected = new SDFAttribute("PATTERN", "detected", SDFDatatype.BOOLEAN);
+			SDFAttribute type = new SDFAttribute("PATTERN", "type", SDFDatatype.STRING, null, null, null);
+			SDFAttribute timestamp = new SDFAttribute("PATTERN", "timestamp", SDFDatatype.LONG, null, null, null);
+			SDFAttribute detected = new SDFAttribute("PATTERN", "detected", SDFDatatype.BOOLEAN, null, null, null);
 			schema = new SDFSchema("PATTERN", Tuple.class, type, timestamp, detected);
 		}
 		setOutputSchema(schema);

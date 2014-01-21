@@ -147,17 +147,17 @@ public class TriplePatternMatching extends AbstractLogicalOperator {
 		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		if (triple.getSubject().isVariable()) {
 			SDFAttribute subject = new SDFAttribute(this.sourceName, triple
-					.getSubject().getName(), SDFDatatype.STRING);
+					.getSubject().getName(), SDFDatatype.STRING, null, null, null);
 			attrs.add(subject);
 		}
 		if (triple.getPredicate().isVariable()) {
 			SDFAttribute predicate = new SDFAttribute(this.sourceName, triple
-					.getPredicate().getName(), SDFDatatype.STRING);
+					.getPredicate().getName(), SDFDatatype.STRING, null, null, null);
 			attrs.add(predicate);
 		}
 		if (triple.getObject().isVariable()) {
 			SDFAttribute object = new SDFAttribute(this.sourceName, triple
-					.getObject().getName(), SDFDatatype.STRING);
+					.getObject().getName(), SDFDatatype.STRING, null, null, null);
 			attrs.add(object);
 		}
 		// Wozu braucht man das?
@@ -169,7 +169,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator {
 		if (this.graphVar != null && this.stream_name != null) {
 			boolean alreadyAdded = false;
 			SDFAttribute graphVarAtt = new SDFAttribute(this.sourceName,
-					this.graphVar.getName(), SDFDatatype.STRING);
+					this.graphVar.getName(), SDFDatatype.STRING, null, null, null);
 			for (SDFAttribute a : attrs) {
 				if (a.getQualName().equals(graphVarAtt.getQualName())) {
 					alreadyAdded = true;

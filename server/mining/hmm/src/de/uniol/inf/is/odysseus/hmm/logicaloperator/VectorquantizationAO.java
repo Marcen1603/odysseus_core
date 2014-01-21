@@ -71,7 +71,7 @@ public class VectorquantizationAO extends UnaryLogicalOp implements	ILogicalOper
 		// SDFDatatype.STRING);
 		// attributes.add(attributeType);
 
-		SDFAttribute attributeId = new SDFAttribute(null, "clusterID", SDFDatatype.INTEGER);
+		SDFAttribute attributeId = new SDFAttribute(null, "clusterID", SDFDatatype.INTEGER, null, null, null);
 		attributes.add(attributeId);
 
 		SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(),getInputSchema(0).getType(),attributes);

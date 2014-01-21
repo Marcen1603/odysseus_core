@@ -45,10 +45,10 @@ public class TestLinearRegressionPO {
     @Test
     public final void testLinearRegression() {
         final Collection<SDFAttribute> attr = new ArrayList<SDFAttribute>();
-        attr.add(new SDFAttribute("", "a", SDFDatatype.DOUBLE));
-        attr.add(new SDFAttribute("", "b", SDFDatatype.DOUBLE));
-        attr.add(new SDFAttribute("", "c", SDFDatatype.DOUBLE));
-        attr.add(new SDFAttribute("", "d", SDFDatatype.DOUBLE));
+        attr.add(new SDFAttribute("", "a", SDFDatatype.DOUBLE, null, null, null));
+        attr.add(new SDFAttribute("", "b", SDFDatatype.DOUBLE, null, null, null));
+        attr.add(new SDFAttribute("", "c", SDFDatatype.DOUBLE, null, null, null));
+        attr.add(new SDFAttribute("", "d", SDFDatatype.DOUBLE, null, null, null));
 
         final SDFSchema schema = new SDFSchema("", ProbabilisticTuple.class, attr);
         final Object[] attributes1 = new Object[] { 1.0, 1.0, 6.0, 11.0 };

@@ -113,7 +113,7 @@ public class SchemaHelper {
 				dataType = new SDFDatatype(elem.getTextValue());
 			}
 		}
-		SDFAttribute result = new SDFAttribute(sourceName, attributeName, dataType);
+		SDFAttribute result = new SDFAttribute(sourceName, attributeName, dataType, null, null, null);
 		return result;
 	}
 }

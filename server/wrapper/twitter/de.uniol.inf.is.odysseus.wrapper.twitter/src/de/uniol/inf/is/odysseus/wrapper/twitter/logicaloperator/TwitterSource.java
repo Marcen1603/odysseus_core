@@ -28,12 +28,12 @@ public class TwitterSource extends AbstractAccessAO {
 		setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 		setWrapper(Constants.GENERIC_PUSH);
 		List<SDFAttribute> schema = new LinkedList<>();
-		schema.add(new SDFAttribute(null, "id", SDFDatatype.STRING));
-		schema.add(new SDFAttribute(null, "username", SDFDatatype.STRING));
-		schema.add(new SDFAttribute(null, "screenname", SDFDatatype.STRING));
-		schema.add(new SDFAttribute(null, "date", SDFDatatype.STRING));
-		schema.add(new SDFAttribute(null, "message", SDFDatatype.STRING));
-		schema.add(new SDFAttribute(null, "geolocation", SDFDatatype.STRING));
+		schema.add(new SDFAttribute(null, "id", SDFDatatype.STRING, null, null, null));
+		schema.add(new SDFAttribute(null, "username", SDFDatatype.STRING, null, null, null));
+		schema.add(new SDFAttribute(null, "screenname", SDFDatatype.STRING, null, null, null));
+		schema.add(new SDFAttribute(null, "date", SDFDatatype.STRING, null, null, null));
+		schema.add(new SDFAttribute(null, "message", SDFDatatype.STRING, null, null, null));
+		schema.add(new SDFAttribute(null, "geolocation", SDFDatatype.STRING, null, null, null));
 		setAttributes(schema);
 	}
 

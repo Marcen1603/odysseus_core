@@ -41,13 +41,13 @@ public class LatencyConverterAO extends UnaryLogicalOp{
 		if(pos == 0){		
 			SDFSchema old = super.getOutputSchemaIntern(0);
 			List<SDFAttribute> attributes = new ArrayList<>();
-			SDFAttribute a = new SDFAttribute(old.getURI(), "tillclustering", SDFDatatype.DOUBLE);
+			SDFAttribute a = new SDFAttribute(old.getURI(), "tillclustering", SDFDatatype.DOUBLE, null, null, null);
 			attributes.add(a);
-			SDFAttribute b = new SDFAttribute(old.getURI(), "forclustering", SDFDatatype.DOUBLE);
+			SDFAttribute b = new SDFAttribute(old.getURI(), "forclustering", SDFDatatype.DOUBLE, null, null, null);
 			attributes.add(b);
-			SDFAttribute c = new SDFAttribute(old.getURI(), "fortransfer", SDFDatatype.DOUBLE);
+			SDFAttribute c = new SDFAttribute(old.getURI(), "fortransfer", SDFDatatype.DOUBLE, null, null, null);
 			attributes.add(c);
-			SDFAttribute d = new SDFAttribute(old.getURI(), "total", SDFDatatype.DOUBLE);
+			SDFAttribute d = new SDFAttribute(old.getURI(), "total", SDFDatatype.DOUBLE, null, null, null);
 			attributes.add(d);
 			SDFSchema schema = new SDFSchema(old.getURI(), old.getType(), attributes);
 			return schema;

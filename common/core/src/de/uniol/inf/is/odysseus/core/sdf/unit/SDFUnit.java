@@ -17,13 +17,14 @@ package de.uniol.inf.is.odysseus.core.sdf.unit;
 
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 
-public abstract class SDFUnit extends SDFElement {
+public class SDFUnit extends SDFElement {
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6991203331974014367L;
 
-	protected SDFUnit(String URI) {
+	public SDFUnit(String URI) {
 		super(URI);
 	}
 	

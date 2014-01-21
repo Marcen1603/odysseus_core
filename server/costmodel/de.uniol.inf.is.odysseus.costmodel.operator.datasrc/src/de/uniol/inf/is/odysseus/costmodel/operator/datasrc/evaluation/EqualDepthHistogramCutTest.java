@@ -34,7 +34,7 @@ public class EqualDepthHistogramCutTest {
 		DataStreamGenerator gen = new DataStreamGenerator();
 		List<Double> values = gen.getNormalDistributedStream(0, 100, 2000);
 		
-		SDFAttribute attribute = new SDFAttribute(null,"example:value", SDFDatatype.DOUBLE);
+		SDFAttribute attribute = new SDFAttribute(null,"example:value", SDFDatatype.DOUBLE, null, null, null);
 		ISampling sampling = new LastNSampling(2000);
 		IIntervalCountEstimator estimator = new FreedmanDiaconisRule();
 		

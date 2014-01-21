@@ -46,69 +46,69 @@ public class TupleGenerator {
 		//generate schema
 		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		//timestamp attribute for all types
-		SDFAttribute attribute = new SDFAttribute(null,"timestamp", SDFDatatype.LONG);
+		SDFAttribute attribute = new SDFAttribute(null,"timestamp", SDFDatatype.LONG, null, null, null);
 		attrs.add(attribute);
 		
 		switch(type){
 		case Factory:
-			attribute = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
+			attribute = new SDFAttribute(null,"id", SDFDatatype.INTEGER, null, null, null);
 			attrs.add(attribute);
 			
-			attribute = new SDFAttribute(null,"name", SDFDatatype.STRING);
+			attribute = new SDFAttribute(null,"name", SDFDatatype.STRING, null, null, null);
 			attrs.add(attribute);
 			
 			break;
 			
 		case Machine:
-			attribute = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
+			attribute = new SDFAttribute(null,"id", SDFDatatype.INTEGER, null, null, null);
 			attrs.add(attribute);
 			
-			attribute = new SDFAttribute(null,"factoryId", SDFDatatype.INTEGER);
+			attribute = new SDFAttribute(null,"factoryId", SDFDatatype.INTEGER, null, null, null);
 			attrs.add(attribute);
 			
-			attribute = new SDFAttribute(null,"name", SDFDatatype.STRING);
+			attribute = new SDFAttribute(null,"name", SDFDatatype.STRING, null, null, null);
 			attrs.add(attribute);
 			
 			break;
 			
 		case Install_Pure:
-			attribute = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
+			attribute = new SDFAttribute(null,"id", SDFDatatype.INTEGER, null, null, null);
 			attrs.add(attribute);
 			
-			attribute = new SDFAttribute(null,"machineId", SDFDatatype.INTEGER);
+			attribute = new SDFAttribute(null,"machineId", SDFDatatype.INTEGER, null, null, null);
 			attrs.add(attribute);
 			
-			attribute = new SDFAttribute(null,"limit1", SDFDatatype.DOUBLE);
+			attribute = new SDFAttribute(null,"limit1", SDFDatatype.DOUBLE, null, null, null);
 			attrs.add(attribute);
 			
-			attribute = new SDFAttribute(null,"limit2", SDFDatatype.DOUBLE);
+			attribute = new SDFAttribute(null,"limit2", SDFDatatype.DOUBLE, null, null, null);
 			attrs.add(attribute);
 			
 			break;
 			
 		case Install_DB:
-			attribute = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
+			attribute = new SDFAttribute(null,"id", SDFDatatype.INTEGER, null, null, null);
 			attrs.add(attribute);
 			
-			attribute = new SDFAttribute(null,"machineId", SDFDatatype.INTEGER);
+			attribute = new SDFAttribute(null,"machineId", SDFDatatype.INTEGER, null, null, null);
 			attrs.add(attribute);
 			
-			attribute = new SDFAttribute(null,"limit1", SDFDatatype.DOUBLE);
+			attribute = new SDFAttribute(null,"limit1", SDFDatatype.DOUBLE, null, null, null);
 			attrs.add(attribute);
 			
-			attribute = new SDFAttribute(null,"limit2", SDFDatatype.DOUBLE);
+			attribute = new SDFAttribute(null,"limit2", SDFDatatype.DOUBLE, null, null, null);
 			attrs.add(attribute);
 			
-			attribute = new SDFAttribute(null,"pastUsageTime", SDFDatatype.DOUBLE);
+			attribute = new SDFAttribute(null,"pastUsageTime", SDFDatatype.DOUBLE, null, null, null);
 			attrs.add(attribute);
 			
 			break;
 			
 		case Usage:
-			attribute = new SDFAttribute(null,"machineId", SDFDatatype.INTEGER);
+			attribute = new SDFAttribute(null,"machineId", SDFDatatype.INTEGER, null, null, null);
 			attrs.add(attribute);
 			
-			attribute = new SDFAttribute(null,"rate", SDFDatatype.DOUBLE);
+			attribute = new SDFAttribute(null,"rate", SDFDatatype.DOUBLE, null, null, null);
 			attrs.add(attribute);
 			
 			break;

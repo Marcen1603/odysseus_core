@@ -778,7 +778,7 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
     	e = new RelationalMEPOutputSchemeEntry(variable);
     	scheme.append(e);
     	// TODO: Set correct Datatypes
-    	SDFAttribute attr = new SDFAttribute(null, e.getLabel(), SDFDatatype.STRING);
+    	SDFAttribute attr = new SDFAttribute(null, e.getLabel(), SDFDatatype.STRING, null, null, null);
     	attrList.add(attr);
     }
     String name = value != null && value.getText() != null ? value.getText() : "";

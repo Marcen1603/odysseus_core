@@ -63,10 +63,11 @@ public class TimestampToPayloadAO extends AbstractLogicalOperator {
 			end = attributes.get(1);
 		}
 		
+		// TODO: Is there a chance to determine the unit of the timestamp?
 		SDFAttribute starttimeStamp = new SDFAttribute(null,
-				start, SDFDatatype.TIMESTAMP);
+				start, SDFDatatype.TIMESTAMP, null, null, null);
 		SDFAttribute endtimeStamp = new SDFAttribute(null, end,
-				SDFDatatype.TIMESTAMP);
+				SDFDatatype.TIMESTAMP, null, null, null);
 		
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		String name = "";
