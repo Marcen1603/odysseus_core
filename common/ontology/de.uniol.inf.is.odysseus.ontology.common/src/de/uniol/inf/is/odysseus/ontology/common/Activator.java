@@ -1,14 +1,11 @@
-package de.uniol.inf.is.odysseus.ontology;
+package de.uniol.inf.is.odysseus.ontology.common;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.ontology.common.SensorOntologyService;
-
 public class Activator implements BundleActivator {
 
     private static BundleContext context;
-    private static SensorOntologyService sensorOntologyService;
 
     static BundleContext getContext() {
         return Activator.context;
@@ -37,15 +34,4 @@ public class Activator implements BundleActivator {
         Activator.context = null;
     }
 
-    protected void bindSensorOntologyService(final SensorOntologyService service) {
-        Activator.sensorOntologyService = service;
-    }
-
-    protected void unbindSensorOntologyService(final SensorOntologyService service) {
-        Activator.sensorOntologyService = null;
-    }
-
-    public static SensorOntologyService getSensorOntologyService() {
-        return Activator.sensorOntologyService;
-    }
 }

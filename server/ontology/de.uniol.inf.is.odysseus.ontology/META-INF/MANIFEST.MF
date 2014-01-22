@@ -1,51 +1,27 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Sensor
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.ontology;singleton:=true
+Bundle-Name: Sensor Ontology
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.ontology
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.ontology.Activator
+Bundle-Vendor: Christian Kuka
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0"
-Bundle-ActivationPolicy: lazy
-Embed-Dependency: *
-Embed-Transitive: true
 Import-Package: com.google.common.base,
- de.uniol.inf.is.odysseus.core.planmanagement.executor,
- de.uniol.inf.is.odysseus.physicaloperator.relational,
- de.uniol.inf.is.odysseus.probabilistic.base,
- de.uniol.inf.is.odysseus.probabilistic.common,
- de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator,
- de.uniol.inf.is.odysseus.probabilistic.math,
- de.uniol.inf.is.odysseus.probabilistic.sdf.schema,
+ de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.ontology.common,
+ de.uniol.inf.is.odysseus.ontology.common.model,
+ de.uniol.inf.is.odysseus.ontology.common.model.condition,
+ de.uniol.inf.is.odysseus.ontology.common.model.property,
+ de.uniol.inf.is.odysseus.rewrite.flow,
+ de.uniol.inf.is.odysseus.rewrite.rule,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
- de.uniol.inf.is.odysseus.ruleengine.system,
- de.uniol.inf.is.odysseus.transform.flow,
- de.uniol.inf.is.odysseus.transform.rule,
  org.apache.commons.math3.util;version="3.2.0",
  org.osgi.framework,
  org.osgi.service.component,
  org.slf4j,
  org.slf4j.spi
-Service-Component: OSGI-INF/SensorOntologyService.xml
-Export-Package: de.uniol.inf.is.odysseus.ontology,
- de.uniol.inf.is.odysseus.ontology.model,
- de.uniol.inf.is.odysseus.ontology.model.condition,
- de.uniol.inf.is.odysseus.ontology.model.property,
- de.uniol.inf.is.odysseus.ontology.ontology,
- de.uniol.inf.is.odysseus.ontology.ontology.vocabulary,
- com.hp.hpl.jena.rdf.model
-Ignore-Package: com.sun.jdmk.comm,javax.jmdns,javax.jms,sun.io,com.ibm.u
- vm.tools,org.apache.xml.resolver,org.apache.xml.resolver.readers
-Bundle-ClassPath: .,
- lib/jcl-over-slf4j-1.6.4.jar,
- lib/org.apache.jena.jena-arq-2.11.0_1-SNAPSHOT.jar,
- lib/org.apache.jena.jena-core-2.11.0_1-SNAPSHOT.jar,
- lib/org.apache.jena.jena-iri-1.0.0_1-SNAPSHOT.jar,
- lib/org.apache.jena.jena-tdb-1.0.0_1-SNAPSHOT.jar,
- lib/org.apache.servicemix.bundles.xerces-2.11.0_1.jar,
- lib/httpclient-4.2.3.jar,
- lib/httpcore-4.2.2.jar
-
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core
+Service-Component: OSGI-INF/RewriteRuleProvider.xml,
+ OSGI-INF/SensorOntologyService.xml

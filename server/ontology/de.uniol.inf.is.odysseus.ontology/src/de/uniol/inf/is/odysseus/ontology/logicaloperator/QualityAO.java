@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.ontology.logicaloperator;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -35,11 +37,12 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
-import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
-import de.uniol.inf.is.odysseus.ontology.model.condition.Condition;
-import de.uniol.inf.is.odysseus.ontology.model.property.MeasurementProperty;
-import de.uniol.inf.is.odysseus.ontology.ontology.SensorOntologyServiceImpl;
+import de.uniol.inf.is.odysseus.ontology.Activator;
+import de.uniol.inf.is.odysseus.ontology.common.SDFUtils;
+import de.uniol.inf.is.odysseus.ontology.common.model.MeasurementCapability;
+import de.uniol.inf.is.odysseus.ontology.common.model.SensingDevice;
+import de.uniol.inf.is.odysseus.ontology.common.model.condition.Condition;
+import de.uniol.inf.is.odysseus.ontology.common.model.property.MeasurementProperty;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -143,7 +146,7 @@ public class QualityAO extends UnaryLogicalOp {
         Objects.requireNonNull(this.properties);
         Preconditions.checkArgument(!this.attributes.isEmpty());
         Preconditions.checkArgument(!this.properties.isEmpty());
-        Preconditions.checkState(SensorOntologyServiceImpl.getOntology() != null);
+        Preconditions.checkState(Activator.getSensorOntologyService() != null);
     }
 
     private void calcOutputSchema() {
@@ -166,13 +169,14 @@ public class QualityAO extends UnaryLogicalOp {
      * 
      * The expression for each property is of the form:
      * 
-     * sMin(eif(Condition1_1 AND Condition1_2,sMin([Property1_1Expr1,
-     * Property1_1Expr2]),1.0),eif(Condition2_1 AND
-     * Condition2_2,sMin([Property2_1Expr1, Property2_2Expr2]),1.0))
+     * sMin(eif((Condition1_1) AND (Condition1_2), sMax([Property1_1Expr1,
+     * Property1_1Expr2]), DOUBLE.MAX), eif((Condition2_1) AND
+     * (Condition2_2), sMax([Property2_1Expr1, Property2_2Expr2]),DOUBLE.MAX))
      * 
      * 
      * With ConditionX_Y being different conditions for one measurement
-     * capability. And PropertyX_YExprZ being an expression for one property under the
+     * capability. And PropertyX_YExprZ being an expression for one property
+     * under the
      * given condition
      * 
      * @return The expressions used during processing
@@ -225,18 +229,23 @@ public class QualityAO extends UnaryLogicalOp {
                         expression.append("eif(");
                         expression.append(conditionExpression);
                         expression.append(",");
-                        expression.append("sMin(");
+                        expression.append("sMax(");
                         expression.append(conditionMeasurementPropertyMapping.get(conditionExpression));
                         expression.append(")");
                         expression.append(",");
-                        expression.append(Double.MAX_VALUE);
+                        // expression.append(new
+                        // BigDecimal(Double.MAX_VALUE).toPlainString());
+                        expression.append("0.0");
                         expression.append(")");
                     }
-                    expression.insert(0, "sMin([");
+                    expression.insert(0, "sMax([");
                     expression.append("])");
                     expressions[i] = new SDFExpression(expression.toString(), MEP.getInstance());
                     i++;
                 }
+            }
+            else {
+                expressions[i] = new SDFExpression("-1.0", MEP.getInstance());
             }
         }
         return expressions;
@@ -251,12 +260,16 @@ public class QualityAO extends UnaryLogicalOp {
      */
     private List<SensingDevice> getSensingDevices(final SDFAttribute attribute) {
         Objects.requireNonNull(attribute);
-        Objects.requireNonNull(SensorOntologyServiceImpl.getOntology());
-        return SensorOntologyServiceImpl.getOntology().getSensingDevices(attribute);
+        Objects.requireNonNull(Activator.getSensorOntologyService());
+        return Activator.getSensorOntologyService().getSensingDevices(SDFUtils.getFeatureOfInterestLabel(attribute), SDFUtils.getSensingDeviceLabel(attribute), attribute.getAttributeName());
     }
 
     /**
      * Constructs the condition expression for the given measurement capability
+     * and inserts the attribute name observed condition property. The condition
+     * looks like:
+     * 
+     * (con1) AND (con2) AND ...
      * 
      * @param measurementCapability
      *            The measurement capability
@@ -273,8 +286,13 @@ public class QualityAO extends UnaryLogicalOp {
                 conditionExpression.append(" AND ");
             }
 
-            final List<SDFAttribute> observerAttributes = SensorOntologyServiceImpl.getOntology().getAttributes(condition);
+            final List<String> observerAttributeUris = Activator.getSensorOntologyService().getAttributes(condition);
 
+            final List<SDFAttribute> observerAttributes = new ArrayList<>();
+            for (final String uri : observerAttributeUris) {
+                final String[] split = SDFElement.splitURI(uri);
+                observerAttributes.add(new SDFAttribute(split[0], split[1], SDFDatatype.DOUBLE));
+            }
             conditionExpression.append("(");
             // Inject the observed attribute name for evaluation during
             // processing
@@ -286,10 +304,13 @@ public class QualityAO extends UnaryLogicalOp {
     }
 
     /**
-     * Construct the vectors for the measurement properties.
+     * Construct the vectors for the measurement properties and insert the
+     * attribute name of the measurement capability.
      * 
      * The vector consists of single expressions that are evaluated during
-     * processing.
+     * processing. The vector looks like:
+     * 
+     * [expr1, expr2, ...]
      * 
      * @param measurementCapability
      *            The measurement capability
@@ -303,18 +324,20 @@ public class QualityAO extends UnaryLogicalOp {
         for (final MeasurementProperty measurementProperty : measurementProperties) {
             if (measurementProperty != null) {
                 StringBuilder expressionBuilder;
-                if (!measurementPropertyExpressions.containsKey(measurementProperty.getResource().getLocalName())) {
+                if (!measurementPropertyExpressions.containsKey(URI.create(measurementProperty.getResource()).getFragment())) {
                     expressionBuilder = new StringBuilder();
-                    measurementPropertyExpressions.put(measurementProperty.getResource().getLocalName(), expressionBuilder);
+                    measurementPropertyExpressions.put(URI.create(measurementProperty.getResource()).getFragment(), expressionBuilder);
                 }
                 else {
-                    expressionBuilder = measurementPropertyExpressions.get(measurementProperty.getResource().getLocalName());
+                    expressionBuilder = measurementPropertyExpressions.get(URI.create(measurementProperty.getResource()).getFragment());
                 }
                 if (expressionBuilder.length() != 0) {
                     expressionBuilder.append(", ");
                 }
                 if (measurementProperty.getExpression() != null) {
-                    expressionBuilder.append(measurementProperty.getExpression());
+                    // Inject the observed attribute name for evaluation during
+                    // processing
+                    expressionBuilder.append(String.format(measurementProperty.getExpression(), measurementCapability.getName()));
                 }
                 else {
                     expressionBuilder.append(0.0);
