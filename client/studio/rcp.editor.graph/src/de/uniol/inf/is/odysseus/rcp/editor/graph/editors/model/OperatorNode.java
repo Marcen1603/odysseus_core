@@ -238,7 +238,7 @@ public class OperatorNode extends Observable implements Observer {
 			}
 		}
 		this.satisfied = ok;
-		System.out.println("recalc satisfied: " + ok + " - " + this);
+//		System.out.println("recalc satisfied: " + ok + " - " + this);
 	}
 
 	private void addProblemMarker(String message) {
@@ -310,7 +310,9 @@ public class OperatorNode extends Observable implements Observer {
 				element.setAttribute("list", "false");
 			}
 			if (entry.getValue() != null) {
-				entry.getValue().saveValueToXML(element, builder);
+				if(entry.getValue().getValue()!=null){
+					entry.getValue().saveValueToXML(element, builder);
+				}
 			}
 			parameterElement.appendChild(element);
 		}

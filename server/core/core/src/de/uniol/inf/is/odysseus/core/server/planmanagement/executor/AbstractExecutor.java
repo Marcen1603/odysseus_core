@@ -1108,6 +1108,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			LogicalParameterInformation lpi = new LogicalParameterInformation();
 			lpi.setName(param.getName());
 			lpi.setMandatory(param.isMandatory());
+			lpi.setDeprecated(param.isDeprecated());
 			lpi.setParameterClass(param.getClass());
 			lpi.setDoc(param.getDoc());
 			lpi.setPossibleValues(resolvePossibleOperatorParameterValue(builder, param, caller));

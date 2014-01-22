@@ -30,6 +30,7 @@ public class LogicalParameterInformation {
 	private boolean mandatory;
 	private List<String> possibleValues;
 	private boolean possibleValuesAreDynamic;
+	private boolean deprecated;
 
 	public Class<?> getParameterClass() {
 		return parameterClass;
@@ -96,6 +97,14 @@ public class LogicalParameterInformation {
 	@Override
 	public String toString() {
 		return name + " (" + parameterClass + ") list=" + list;
+	}
+
+	public boolean isDeprecated() {
+		return deprecated;
+	}
+
+	public void setDeprecated(boolean deprecated) {
+		this.deprecated = deprecated;
 	}
 
 }

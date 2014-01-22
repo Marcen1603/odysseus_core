@@ -80,6 +80,9 @@ public class ParameterPresentationFactory {
 		if (parameterClass.getName().endsWith("builder.SDFExpressionParameter")){
 			return new SDFExpressionParameterPresentation();
 		}
+		if (parameterClass.getName().endsWith("builder.TimeParameter")){
+			return new TimeParameterPresentation();
+		}
 		return new StringParameterPresentation();
 	}
 

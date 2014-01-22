@@ -52,6 +52,11 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterVal
  */
 public class OperatorGraphPropertyView extends ViewPart implements Observer {
 
+	private static final int COLOR_DEPRECATED = SWT.COLOR_DARK_GRAY;
+	private static final int COLOR_OK = SWT.COLOR_BLACK;
+	private static final int COLOR_FAILED = SWT.COLOR_RED;
+	
+	
 	private List<IParameterPresentation<?>> widgets = new ArrayList<>();
 	private Map<Control, Label> labels = new HashMap<>();
 
@@ -153,10 +158,13 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 					parentGroup = requiredGroup;
 					setLabelColor(label, param.getValue());
 				} else {
-					label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(SWT.COLOR_BLACK));
+					label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(COLOR_OK));
+				}
+				if(param.getKey().isDeprecated()){
+					label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(COLOR_DEPRECATED));
 				}
 				label.setText(param.getKey().getName());
-				label.setToolTipText(param.getKey().getDoc());
+				label.setToolTipText("This value is DEPRECATED! "+param.getKey().getDoc());
 
 				IParameterPresentation<?> widget = param.getValue();
 				Control control = widget.createWidget(parentGroup);
@@ -164,6 +172,9 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 
 				labels.put(control, label);
 				widgets.add(widget);
+				if(param.getKey().isDeprecated()){
+					widget.getControl().setEnabled(false);
+				}
 				widget.addParameterValueChangedListener(new IParameterValueChangeListener() {
 					@Override
 					public void parameterValueChanged(IParameterPresentation widget) {
@@ -201,11 +212,15 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 		currentNode.setParameterValues(parameterValues);
 	}
 
-	private void setLabelColor(Label label, IParameterPresentation<?> value) {
-		if (value.getLogicalParameterInformation().isMandatory() && !value.hasValidValue()) {
-			label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(SWT.COLOR_RED));
-		} else {
-			label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(SWT.COLOR_BLACK));
+	private void setLabelColor(Label label, IParameterPresentation<?> value) {		
+		if(value.getLogicalParameterInformation().isDeprecated()){
+			label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(COLOR_DEPRECATED));
+		}else{
+			if (value.getLogicalParameterInformation().isMandatory() && !value.hasValidValue()) {
+				label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(COLOR_FAILED));
+			} else {
+				label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(COLOR_OK));
+			}
 		}
 	}
 
