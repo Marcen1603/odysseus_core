@@ -35,13 +35,13 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpress
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.ontology.Activator;
-import de.uniol.inf.is.odysseus.ontology.common.SDFUtils;
 import de.uniol.inf.is.odysseus.ontology.common.SSN;
 import de.uniol.inf.is.odysseus.ontology.common.model.MeasurementCapability;
 import de.uniol.inf.is.odysseus.ontology.common.model.SensingDevice;
 import de.uniol.inf.is.odysseus.ontology.common.model.condition.Condition;
 import de.uniol.inf.is.odysseus.ontology.common.model.property.MeasurementProperty;
 import de.uniol.inf.is.odysseus.ontology.logicaloperator.QualityAO;
+import de.uniol.inf.is.odysseus.ontology.utils.SDFUtils;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;

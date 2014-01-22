@@ -31,5 +31,5 @@ Bundle-ClassPath: .,
  lib/org.apache.servicemix.bundles.xerces-2.11.0_1.jar,
  lib/httpclient-4.2.3.jar,
  lib/httpcore-4.2.2.jar
-Bundle-Vendor: Chistian Kuka
+Bundle-Vendor: Christian Kuka
 

@@ -38,11 +38,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.ontology.Activator;
-import de.uniol.inf.is.odysseus.ontology.common.SDFUtils;
 import de.uniol.inf.is.odysseus.ontology.common.model.MeasurementCapability;
 import de.uniol.inf.is.odysseus.ontology.common.model.SensingDevice;
 import de.uniol.inf.is.odysseus.ontology.common.model.condition.Condition;
 import de.uniol.inf.is.odysseus.ontology.common.model.property.MeasurementProperty;
+import de.uniol.inf.is.odysseus.ontology.utils.SDFUtils;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
