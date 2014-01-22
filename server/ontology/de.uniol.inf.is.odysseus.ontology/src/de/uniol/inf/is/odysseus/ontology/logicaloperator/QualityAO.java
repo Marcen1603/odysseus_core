@@ -291,7 +291,7 @@ public class QualityAO extends UnaryLogicalOp {
             final List<SDFAttribute> observerAttributes = new ArrayList<>();
             for (final String uri : observerAttributeUris) {
                 final String[] split = SDFElement.splitURI(uri);
-                observerAttributes.add(new SDFAttribute(split[0], split[1], SDFDatatype.DOUBLE));
+                observerAttributes.add(new SDFAttribute(split[0], split[1], SDFDatatype.DOUBLE, null));
             }
             conditionExpression.append("(");
             // Inject the observed attribute name for evaluation during

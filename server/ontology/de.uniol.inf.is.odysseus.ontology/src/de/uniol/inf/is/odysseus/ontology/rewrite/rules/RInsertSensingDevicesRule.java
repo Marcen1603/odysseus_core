@@ -98,7 +98,7 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
                         final List<SDFAttribute> observerAttributes = new ArrayList<>();
                         for (final String uri : observerAttributeUris) {
                             final String[] split = SDFElement.splitURI(uri);
-                            observerAttributes.add(new SDFAttribute(split[0], split[1], SDFDatatype.DOUBLE));
+                            observerAttributes.add(new SDFAttribute(split[0], split[1], SDFDatatype.DOUBLE, null));
                         }
                         boolean inSchema = false;
                         if (!observerAttributes.isEmpty()) {

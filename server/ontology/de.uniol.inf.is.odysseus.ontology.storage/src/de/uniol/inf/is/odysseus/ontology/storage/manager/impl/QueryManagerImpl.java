@@ -540,8 +540,8 @@ public class QueryManagerImpl implements QueryManager {
         }
 
         final String expression = this.getConditionExpression(condition);
-            return new ExpressionCondition(URI.create(condition.getURI()), property, expression);
-        }
+        return new ExpressionCondition(URI.create(condition.getURI()), property, expression);
+    }
 
     private MeasurementProperty getMeasurementProperty(final OntResource measurementProperty) {
         final String expression = this.getMeasurementPropertyExpression(measurementProperty);
@@ -582,25 +582,6 @@ public class QueryManagerImpl implements QueryManager {
         }
         return new MeasurementProperty(URI.create(measurementProperty.getURI()), measurementProperty.getURI(), expression);
 
-    }
-
-    private Interval getConditionInterval(final OntResource condition) {
-        double min = Double.MIN_VALUE;
-        double max = Double.MAX_VALUE;
-
-        final Statement conditionStmt = this.getInferenceModel().getProperty(condition, SSN.hasValue);
-        if (conditionStmt != null) {
-            final Resource region = conditionStmt.getResource();
-            final Statement minValueStmt = this.getInferenceModel().getProperty(region, ODYSSEUS.hasMinValue);
-            final Statement maxValueStmt = this.getInferenceModel().getProperty(region, ODYSSEUS.hasMaxValue);
-            if (minValueStmt != null) {
-                min = this.getInferenceModel().getProperty(minValueStmt.getObject().asResource(), DUL.hasDataValue).getObject().asLiteral().getDouble();
-            }
-            if (maxValueStmt != null) {
-                max = this.getInferenceModel().getProperty(maxValueStmt.getObject().asResource(), DUL.hasDataValue).getObject().asLiteral().getDouble();
-            }
-        }
-        return new Interval(min, max);
     }
 
     private String getConditionExpression(final OntResource condition) {
