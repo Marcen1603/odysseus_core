@@ -14,6 +14,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParame
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 /**
+ * Adaptive window (ADWIN) operator for change detection.
+ * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
