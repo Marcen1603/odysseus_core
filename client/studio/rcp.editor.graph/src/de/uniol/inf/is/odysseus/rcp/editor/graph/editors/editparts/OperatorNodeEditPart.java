@@ -61,19 +61,9 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements O
 		OperatorNodeFigure figure = (OperatorNodeFigure) getFigure();
 		OperatorNode node = (OperatorNode) getModel();
 		GraphEditPart parent = (GraphEditPart) getParent();
-		Object v = getValue(node, "SOURCE");
+		Object v = node.getReadableName();
 		Object addInfo = getValue(node, "PREDICATE");
-		if (v == null) {
-			v = getValue(node, "SINK");
-			if (v == null) {
-				v = getValue(node, "NAME");
-			}
-		}
-		if (v != null && v.toString().length() > 0) {
-			figure.getLabel().setText(v.toString());
-		} else {
-			figure.getLabel().setText(node.getOperatorInformation().getOperatorName());
-		}
+		figure.getLabel().setText(v.toString());
 		if (addInfo != null) {
 			figure.updateToolTip(addInfo.toString());
 		}
@@ -141,7 +131,9 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements O
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef .ConnectionEditPart)
+	 * @see
+	 * org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef
+	 * .ConnectionEditPart)
 	 */
 	@Override
 	public ConnectionAnchor getSourceConnectionAnchor(ConnectionEditPart connection) {
@@ -151,7 +143,9 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements O
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef .ConnectionEditPart)
+	 * @see
+	 * org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef
+	 * .ConnectionEditPart)
 	 */
 	@Override
 	public ConnectionAnchor getTargetConnectionAnchor(ConnectionEditPart connection) {
@@ -161,7 +155,9 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements O
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef .Request)
+	 * @see
+	 * org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef
+	 * .Request)
 	 */
 	@Override
 	public ConnectionAnchor getSourceConnectionAnchor(Request request) {
@@ -171,7 +167,9 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements O
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef .Request)
+	 * @see
+	 * org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef
+	 * .Request)
 	 */
 	@Override
 	public ConnectionAnchor getTargetConnectionAnchor(Request request) {

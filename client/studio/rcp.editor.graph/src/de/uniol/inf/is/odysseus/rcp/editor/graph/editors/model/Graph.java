@@ -46,7 +46,7 @@ public class Graph extends Observable implements Observer {
 		resetUniqueIds();
 		node.setGraph(this);
 		node.addObserver(this);
-		node.recalcSatisfied();
+		node.updateInformations();
 		setChanged();
 		notifyObservers();
 	}
@@ -67,11 +67,11 @@ public class Graph extends Observable implements Observer {
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
-		setChanged();
-		notifyObservers();		
+		if (!(arg instanceof OperatorNode)) {
+			setChanged();
+			notifyObservers();
+		}
 	}
-
-	
 
 	public synchronized void resetUniqueIds() {
 		int id = 1;
@@ -90,17 +90,12 @@ public class Graph extends Observable implements Observer {
 		return null;
 	}
 
-	public void updateInformation() {
+	public List<GraphProblem> updateInformation() {
+		this.currentMarker.clear();		
 		for (OperatorNode node : getNodes()) {
 			node.updateInformations();
-			node.recalcSatisfied();
-		}		
-	}
-	
-	public void recalcSatisfied(){
-		for (OperatorNode node : this.getNodes()) {
-			node.recalcSatisfied();
 		}
+		return this.currentMarker;
 	}
 
 	public IProject getProject() {
@@ -121,11 +116,11 @@ public class Graph extends Observable implements Observer {
 
 	public void addProblem(String message, OperatorNode operatorNode) {
 		GraphProblem problem = new GraphProblem(operatorNode, message);
-		if (!this.currentMarker .contains(problem)) {
+		if (!this.currentMarker.contains(problem)) {
 			this.currentMarker.add(problem);
 		}
 	}
-	
+
 	public List<GraphProblem> getCurrentMarker() {
 		return currentMarker;
 	}

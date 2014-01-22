@@ -97,7 +97,7 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 	private Graph graph;
 	private DefaultEditDomain editDomain;
 
-	private List<GraphProblem> currentMarker = new ArrayList<>();
+	
 
 	public OperatorGraphEditor() {
 		editDomain = new DefaultEditDomain(this);
@@ -147,17 +147,17 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 
 	public void updateGraph() {
 		if (graph != null) {	
-			graph.recalcSatisfied();
-			updateMarkers();
+			List<GraphProblem> problems = graph.updateInformation();
+			updateMarkers(problems);
 		}
 	}
 
-	private void updateMarkers() {
+	private void updateMarkers(List<GraphProblem> problems) {
 		try {
 			IResource target = graph.getGraphFile();
 			target.deleteMarkers(MARKER_ID, true, IResource.DEPTH_INFINITE);
 
-			for (GraphProblem prob : currentMarker) {
+			for (GraphProblem prob : problems) {
 				IMarker marker = graph.getGraphFile().createMarker(MARKER_ID);
 				marker.setAttribute(IMarker.MESSAGE, prob.getMessage());
 				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);

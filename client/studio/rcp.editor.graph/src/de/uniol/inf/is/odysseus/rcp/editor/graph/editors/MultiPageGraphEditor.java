@@ -144,6 +144,11 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 		createPage3();
 	}
 
+	@Override
+	public void setFocus() {
+		graphEditor.updateGraph();
+	}
+	
 	private void modelChanged() {
 		reloadTextEditor();
 		setDirty(true);

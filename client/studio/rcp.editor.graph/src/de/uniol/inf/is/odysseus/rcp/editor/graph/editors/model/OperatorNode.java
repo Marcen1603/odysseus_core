@@ -198,36 +198,47 @@ public class OperatorNode extends Observable implements Observer {
 		OperatorGraphSelectionProvider.getInstance().update();
 	}
 
-	public void recalcSatisfied() {
+	private void recalcSatisfied() {
 		boolean ok = true;
-		if (this.getTargetConnections().size() < this.operatorInformation.getMinPorts()) {
-			ok = false;
-			addProblemMarker("Operator needs at least " + this.operatorInformation.getMinPorts() + " input operators");
+		boolean totalFailed = false;
+		for (Connection conn : getTargetConnections()) {
+			if (conn.getSource() !=null && !conn.getSource().isSatisfied()) {
+				addProblemMarker("Operator \""+getReadableName()+"\" is not satisfied, because its source \""+conn.getSource().getReadableName()+"\" is not satisfied!");
+				totalFailed = true;
+			}
 		}
-		if (this.getTargetConnections().size() > this.operatorInformation.getMaxPorts()) {
-			ok = false;
-			addProblemMarker("Operator may not have more than " + this.operatorInformation.getMaxPorts() + " input operators");
-		}
-		for (LogicalParameterInformation lpi : this.operatorInformation.getParameters()) {
-			if (this.parameterValues.get(lpi) == null) {
-				if (lpi.isMandatory()) {
-					ok = false;
-					addProblemMarker("Operators parameter is mandatory but missing");
-				}
-			} else {
-				if (!this.parameterValues.get(lpi).hasValidValue()) {
+		ok = !totalFailed;
+		if (!totalFailed) {
+			if (this.getTargetConnections().size() < this.operatorInformation.getMinPorts()) {
+				ok = false;
+				addProblemMarker("Operator needs at least " + this.operatorInformation.getMinPorts() + " input operators");
+			}
+			if (this.getTargetConnections().size() > this.operatorInformation.getMaxPorts()) {
+				ok = false;
+				addProblemMarker("Operator may not have more than " + this.operatorInformation.getMaxPorts() + " input operators");
+			}
+			for (LogicalParameterInformation lpi : this.operatorInformation.getParameters()) {
+				if (this.parameterValues.get(lpi) == null) {
 					if (lpi.isMandatory()) {
 						ok = false;
 						addProblemMarker("Operators parameter is mandatory but missing");
 					}
+				} else {
+					if (!this.parameterValues.get(lpi).hasValidValue()) {
+						if (lpi.isMandatory()) {
+							ok = false;
+							addProblemMarker("Operators parameter is mandatory but missing");
+						}
+					}
 				}
-			}
 
-		}
-		if (!validPQLBuilding()) {
-			ok = false;
+			}
+			if (!validPQLBuilding()) {
+				ok = false;
+			}
 		}
 		this.satisfied = ok;
+		System.out.println("recalc satisfied: " + ok + " - " + this);
 	}
 
 	private void addProblemMarker(String message) {
@@ -255,7 +266,7 @@ public class OperatorNode extends Observable implements Observer {
 				Activator.getDefault().getExecutor().determineOutputSchema(completeQuery, "PQL", Activator.getDefault().getCaller(), 0, context);
 			}
 		} catch (Exception e) {
-			addProblemMarker("Operator \"" + getOperatorInformation().getOperatorName() + "\" is not satisfied because: " + getRootmessage(e));
+			addProblemMarker("Operator \"" + getReadableName() + "\" is not satisfied because: " + getRootmessage(e));
 			return false;
 		}
 
@@ -420,6 +431,32 @@ public class OperatorNode extends Observable implements Observer {
 		updateInputSchemas();
 		updateOutputSchemas();
 		recalcSatisfied();
+		setChanged();
+		notifyObservers(this);
 		// inform descendant operators
+	}
+	
+	public String getReadableName(){		
+		Object v = getValue("SOURCE");		
+		if (v == null) {
+			v = getValue("SINK");
+			if (v == null) {
+				v = getValue("NAME");
+			}
+		}
+		if (v != null && v.toString().length() > 0) {
+			return v.toString();
+		} else {
+			return getOperatorInformation().getOperatorName();
+		}				
+	}
+	
+	private Object getValue(String valueType) {
+		Object v = null;
+		LogicalParameterInformation param = getOperatorInformation().getParameter(valueType);
+		if (param != null) {
+			v = getParameterValue(param);
+		}
+		return v;
 	}
 }
