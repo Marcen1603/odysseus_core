@@ -37,8 +37,7 @@ Import-Package: com.google.common.base,
  org.apache.commons.math3.util,
  org.osgi.framework,
  org.slf4j
-Service-Component: OSGI-INF/IntervalProbabilistic.xml,OSGI-INF/ProbabilisticTupleDataHandler.xml,OSGI-INF/ProbabilisticDoubleDataHandler.xml,OSGI-INF/ProbabilisticFloatDataHandler.xml,OSGI-INF/ProbabilisticLongDataHandler.xml,OSGI-INF/ProbabilisticIntegerDataHandler.xml,OSGI-INF/ProbabilisticShortDataHandler.xml,OSGI-INF/ProbabilisticByteDataHandler.xml,OSGI-INF/ProbabilisticStringDataHandler.xml,
- OSGI-INF/IntervalProbabilisticLatencyQueryBuildConfiguration.xml,OSGI-INF/ProbabilisticAggregationFunctionBuilder.xml,OSGI-INF/IntervalProbabilisticLatency.xml,OSGI-INF/IntervalProbabilisticQueryBuildConfiguration.xml,OSGI-INF/ProbabilisticDatatypeProvider.xml,OSGI-INF/ProbabilisticContinuousDataHandler.xml,OSGI-INF/Probabilistic.xml,OSGI-INF/ProbabilisticFunctionProvider.xml
+Service-Component: OSGI-INF/*
 Export-Package: de.uniol.inf.is.odysseus.probabilistic;
   uses:="de.uniol.inf.is.odysseus.core.datatype,
    de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate,
