@@ -521,9 +521,16 @@ public class QueryManagerImpl implements QueryManager {
         final StmtIterator measurementPropertyIter = measurementCapabilityResource.listProperties(SSN.hasMeasurementProperty);
         while (measurementPropertyIter.hasNext()) {
             final OntResource measurementPropertyResource = measurementPropertyIter.next().getObject().as(OntResource.class);
-            final MeasurementProperty measurementProperty = this.getMeasurementProperty(measurementPropertyResource);
-            if (measurementProperty != null) {
-                measurementCapability.addMeasurementProperty(measurementProperty);
+            if (measurementPropertyResource != null) {
+                try {
+                    final MeasurementProperty measurementProperty = this.getMeasurementProperty(measurementPropertyResource);
+                    if (measurementProperty != null) {
+                        measurementCapability.addMeasurementProperty(measurementProperty);
+                    }
+                }
+                catch (NullPointerException e) {
+                    LOG.error("Invalid measurement property in " + measurementPropertyResource.toString() + ", check ontology", e);
+                }
             }
         }
         return measurementCapability;
@@ -602,14 +609,10 @@ public class QueryManagerImpl implements QueryManager {
     private String getMeasurementPropertyExpression(final OntResource measurementProperty) {
         String expression = null;
 
-        final Statement measurementPropertyStmt = this.getInferenceModel().getProperty(measurementProperty, SSN.hasValue);
+        final Statement measurementPropertyStmt = this.getInferenceModel().getProperty(measurementProperty, DUL.hasDataValue);
 
         if (measurementPropertyStmt != null) {
-            final Resource region = measurementPropertyStmt.getResource();
-            final Statement expressionValueStmt = this.getInferenceModel().getProperty(region, ODYSSEUS.hasExpression);
-            if (expressionValueStmt != null) {
-                expression = this.getInferenceModel().getProperty(expressionValueStmt.getObject().asResource(), DUL.hasDataValue).getObject().asLiteral().getString();
-            }
+            expression = measurementPropertyStmt.getObject().asLiteral().getString();
         }
         return expression;
     }
