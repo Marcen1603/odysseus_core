@@ -374,8 +374,8 @@ public class StandardCompiler implements ICompiler {
 
 	@Override
 	public ILogicalOperator rewritePlan(ILogicalOperator plan,
-			RewriteConfiguration conf) {
-		return rewrite.rewritePlan(plan, conf);
+			RewriteConfiguration conf, ISession caller, IDataDictionary dd) {
+		return rewrite.rewritePlan(plan, conf, caller, dd);
 	}
 
 	@Override

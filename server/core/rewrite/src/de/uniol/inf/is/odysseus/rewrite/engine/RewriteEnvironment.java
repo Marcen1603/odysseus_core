@@ -15,15 +15,18 @@
   */
 package de.uniol.inf.is.odysseus.rewrite.engine;
 
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlow;
 import de.uniol.inf.is.odysseus.ruleengine.system.AbstractWorkingEnvironment;
 
 public class RewriteEnvironment extends AbstractWorkingEnvironment<RewriteConfiguration> {
 
-	public RewriteEnvironment(RewriteConfiguration config, IRuleFlow ruleflow) {
+	public RewriteEnvironment(RewriteConfiguration config, IRuleFlow ruleflow, ISession caller, IDataDictionary dd) {
 		// Currently no user and no datadictionary is needed in rewrite
-		super(config, ruleflow, null, null);		
+	    // Now it is (CKu)
+		super(config, ruleflow, caller, dd);		
 	}
 
 }

@@ -16,9 +16,11 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 
 public interface IRewrite {
-	public ILogicalOperator rewritePlan(ILogicalOperator plan, RewriteConfiguration conf);
+	public ILogicalOperator rewritePlan(ILogicalOperator plan, RewriteConfiguration conf, ISession caller, IDataDictionary dd);
 }

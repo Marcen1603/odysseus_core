@@ -24,10 +24,12 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rewrite.flow.IRewriteRuleProvider;
 
 public class RewriteExecutor implements IRewrite {
@@ -36,12 +38,12 @@ public class RewriteExecutor implements IRewrite {
 
 	@Override
 	public ILogicalOperator rewritePlan(ILogicalOperator plan,
-			RewriteConfiguration conf) {
+			RewriteConfiguration conf, ISession caller, IDataDictionary dd) {
 		LOGGER.info("Starting rewriting...");
 		RewriteInventory rewriteInventory = new RewriteInventory(
 				RewriteInventory.getInstance());
 
-		RewriteEnvironment env = new RewriteEnvironment(conf, rewriteInventory);
+		RewriteEnvironment env = new RewriteEnvironment(conf, rewriteInventory, caller, dd);
 
 		TopAO top = null;
 		final boolean createdNewTopAO;

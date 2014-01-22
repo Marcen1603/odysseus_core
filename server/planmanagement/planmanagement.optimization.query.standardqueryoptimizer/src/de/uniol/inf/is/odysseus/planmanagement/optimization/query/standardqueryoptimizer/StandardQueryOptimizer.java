@@ -134,7 +134,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 			LOG.debug("Start rewriting of query...");
 			RewriteConfiguration rewriteConfig = parameters.getRewriteConfiguration();
 			rewriteConfig.setQueryBuildConfiguration(cb);
-			ILogicalOperator newPlan = compiler.rewritePlan(copiedPlan,rewriteConfig);
+			ILogicalOperator newPlan = compiler.rewritePlan(copiedPlan,rewriteConfig, query.getUser(), dd);
 			LOG.debug("Rewriting of query done.");
 			// set new logical plan.
 			query.setLogicalPlan(newPlan, false);
@@ -145,7 +145,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 				alternativePlans.set(0, query.getLogicalPlan());
 				for(int i = 1; i < alternativePlans.size(); i++) {
 					ILogicalOperator alternativePlan = alternativePlans.get(i);
-					alternativePlans.set(i, compiler.rewritePlan(alternativePlan, rewriteConfig));
+					alternativePlans.set(i, compiler.rewritePlan(alternativePlan, rewriteConfig, query.getUser(), dd));
 				}
 			}
 		}else{
