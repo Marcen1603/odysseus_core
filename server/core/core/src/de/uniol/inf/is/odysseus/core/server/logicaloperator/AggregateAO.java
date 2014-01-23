@@ -55,6 +55,8 @@ public class AggregateAO extends UnaryLogicalOp {
 	private int dumpAtValueCount = -1;
 	private boolean outputPA = false;
 	private boolean drainAtDone = true;
+	
+	public static final String AGGREGATIONS = "AGGREGATIONS";
 
 	public AggregateAO() {
 		super();
@@ -115,7 +117,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		}
 	}
 
-	@GetParameter(name = "AGGREGATIONS")
+	@GetParameter(name = AGGREGATIONS)
 	public Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> getAggregations() {
 		return Collections.unmodifiableMap(this.aggregations);
 	}
@@ -146,7 +148,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		}
 	}
 
-	@Parameter(name = "AGGREGATIONS", type = AggregateItemParameter.class, isList = true)
+	@Parameter(name = AGGREGATIONS, type = AggregateItemParameter.class, isList = true)
 	public void setAggregationItems(List<AggregateItem> aggregations) {
 		for (AggregateItem item : aggregations) {
 			addAggregation(item.inAttribute, item.aggregateFunction,

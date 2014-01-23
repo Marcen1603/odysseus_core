@@ -31,7 +31,8 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 		super();
 	}
 
-	public AggregateItemParameter(String name, REQUIREMENT requirement, USAGE usage) {
+	public AggregateItemParameter(String name, REQUIREMENT requirement,
+			USAGE usage) {
 		super(name, requirement, usage);
 	}
 
@@ -49,7 +50,8 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 
 		String funcStr = value.get(0);
 		String attributeStr = value.get(1);
-		SDFAttribute attribute = getAttributeResolver().getAttribute(attributeStr);
+		SDFAttribute attribute = getAttributeResolver().getAttribute(
+				attributeStr);
 		String outputName = value.get(2);
 		SDFAttribute outAttr = null;
 
@@ -57,15 +59,17 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 			if (value.size() == 4) {
 				IDataDictionary dd = getDataDictionary();
 				SDFDatatype type;
-				
+
 				type = dd.getDatatype(value.get(3));
 
-				outAttr = new SDFAttribute(null, outputName, type, null, null, null);
+				outAttr = new SDFAttribute(null, outputName, type, null, null,
+						null);
 			} else {
 				// Fallback to old DOUBLE value for aggregation results
 				IDataDictionary dd = getDataDictionary();
 				SDFDatatype type = dd.getDatatype("double");
-				outAttr = new SDFAttribute(null, outputName, type, null, null, null);
+				outAttr = new SDFAttribute(null, outputName, type, null, null,
+						null);
 			}
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e.getMessage());
@@ -76,12 +80,15 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected String getPQLStringInternal() {
-		List<String> value = (List<String>) inputValue;
+		return getPQLString((List<String>) inputValue);
+	}
 
+	static public String getPQLString(List<String> value) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
-		sb.append("'").append(value.get(0)).append("','").append(value.get(1)).append("','").append(value.get(2)).append("'");
-		if( value.size() == 4 ) {
+		sb.append("'").append(value.get(0)).append("','").append(value.get(1))
+				.append("','").append(value.get(2)).append("'");
+		if (value.size() == 4) {
 			sb.append(",'").append(value.get(3)).append("'");
 		}
 		sb.append("]");
