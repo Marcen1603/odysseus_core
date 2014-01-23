@@ -210,6 +210,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 			_Point p1 = null;
 			_Point p2 = null;
 			// get the first point
+			// FIXME This looks useless, if pointerIter has no next element a NullPointer exception will be thrown in the next line anyway (CKu 20140123)
 			if (pointIter.hasNext()) {
 				p1 = pointIter.next();
 			}
@@ -270,6 +271,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 						// Add new element as a combination from current value
 						// and new
 						// element for new time interval
+					    // FIXME Use logger
 						if (lastPartialAggregate == null) {
 							System.err.println("ONLY FOR DEBUGGER!!");
 							System.err.println(sa.toString());
