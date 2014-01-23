@@ -32,14 +32,24 @@ public class ADWIN2TIPO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, 
     /** The position of the attribute. */
     private final int pos;
 
+    private int width;
+    private double variance;
+    private int total;
+
     public ADWIN2TIPO(final int pos, final double delta) {
         this.pos = pos;
         this.delta = delta;
+        this.width = 0;
+        this.variance = 0.0;
+        this.total = 0;
     }
 
     public ADWIN2TIPO(final ADWIN2TIPO<T> operator) {
         this.pos = operator.pos;
         this.delta = operator.delta;
+        this.width = operator.width;
+        this.variance = operator.variance;
+        this.total = operator.total;
     }
 
     @Override
@@ -98,12 +108,44 @@ public class ADWIN2TIPO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, 
         return new ADWIN2TIPO<>(this);
     }
 
+    private void setInput() {
+    }
+
+    private void insertElement(double value) {
+        // create a new bucket b with content e and capacity 1
+
+        // add e to the head of W
+
+        // update WIDTH, VARIANCE and TOTAL
+        this.variance += variance(value);
+        this.width++;
+        this.total += value;
+        // Compress buckets
+        compressBuckets();
+
+    }
+
+    private void deleteElement() {
+    }
+
+    private void compressBuckets() {
+    }
+
     private boolean insert(final double value) {
         return false;
     }
 
     private void compress() {
 
+    }
+
+    private double variance(double value) {
+        if (width > 0) {
+            return Math.pow((value - total / width), 2.0) / (width - 1);
+        }
+        else {
+            return 0.0;
+        }
     }
 
     /**
