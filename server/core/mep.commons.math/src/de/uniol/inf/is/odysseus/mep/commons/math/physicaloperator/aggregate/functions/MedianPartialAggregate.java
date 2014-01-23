@@ -104,7 +104,13 @@ public class MedianPartialAggregate<R> implements IPartialAggregate<R> {
             this.add(val);
         }
     }
-
+    /**
+     * 
+     */
+    public void clear() {
+        stats.clear(); 
+    }
+    
     @Override
     public MedianPartialAggregate<R> clone() {
         return new MedianPartialAggregate<R>(this);
@@ -134,4 +140,6 @@ public class MedianPartialAggregate<R> implements IPartialAggregate<R> {
         assert (agg.getAggValue() == 2.5);
         System.out.println(agg);
     }
+
+
 }

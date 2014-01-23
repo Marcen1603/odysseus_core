@@ -67,7 +67,6 @@ public class RelationalMedian extends Median<Tuple<?>, Tuple<?>> {
         if (createNew) {
             final MedianPartialAggregate<Tuple> h = (MedianPartialAggregate<Tuple>) p;
             pa = new MedianPartialAggregate<Tuple>(h);
-
         }
         else {
             pa = (MedianPartialAggregate<Tuple>) p;
@@ -130,6 +129,7 @@ public class RelationalMedian extends Median<Tuple<?>, Tuple<?>> {
         final MedianPartialAggregate pa = (MedianPartialAggregate) p;
         final Tuple r = new Tuple(1, false);
         r.setAttribute(0, new Double(pa.getAggValue().doubleValue()));
+        pa.clear();
         return r;
     }
 
