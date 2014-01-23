@@ -127,6 +127,14 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 		return Collections.unmodifiableList(baseSourceNames);
 	}
 
+	public int findAttributeIndex(String attributeName){
+		SDFAttribute a = findAttribute(attributeName);
+		if (a != null){
+			return this.indexOf(a);
+		}
+		return -1;
+	}
+	
 	public SDFAttribute findAttribute(String attributeName) {
 		String[] parts = attributeName.split("\\.", 2); // the attribute can have the
 		// form a.b.c.d
