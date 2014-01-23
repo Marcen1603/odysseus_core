@@ -11,6 +11,11 @@ public class NoGroupProcessor<R,W extends IClone> implements IGroupProcessor<R, 
 	public Long getGroupID(R elem) {
 		return 0L;
 	}
+	
+	@Override
+	public R getGroupingPart(R elem) {
+		return elem;
+	}
 
 	@Override
 	public void init() {

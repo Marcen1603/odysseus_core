@@ -23,6 +23,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 public interface IGroupProcessor<R, W extends IClone> {
 
 	public Long getGroupID(R elem);
+	
+	public R getGroupingPart(R elem);
 
 	public void init();
 

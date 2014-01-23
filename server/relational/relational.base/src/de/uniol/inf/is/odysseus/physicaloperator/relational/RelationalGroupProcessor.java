@@ -59,7 +59,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 		if (gRestrict == null || gRestrict.length == 0)
 			return Long.valueOf(0);
 		// Ansonsten das Tupel auf die Gruppierungsattribute einschr�nken
-		Tuple<T> gTuple = elem.restrict(gRestrict, true);
+		Tuple<T> gTuple = getGroupingPart(elem);
 		// calc hash from attributes as groud id
 		long hash = gTuple.hashCode();	
 		
@@ -78,6 +78,11 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 		 * }
 		 */
 		return hash;
+	}
+	
+	@Override
+	public Tuple<T> getGroupingPart(Tuple<T> elem) {
+		return elem.restrict(gRestrict, true);
 	}
 
 	@Override
