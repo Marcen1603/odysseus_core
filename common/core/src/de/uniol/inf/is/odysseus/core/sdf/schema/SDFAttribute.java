@@ -345,10 +345,16 @@ public class SDFAttribute extends SDFElement implements
 
 	@Override
 	public String toString() {
+		StringBuffer ret = new StringBuffer();
 		if (getSourceName() != null) {
-			return getSourceName() + "." + getAttributeName();
+			ret.append(getSourceName()); 
 		}
-		return "." + getAttributeName();
+		ret.append(".").append(getAttributeName());
+		if (unit != null){
+			ret.append("[").append(unit).append("]");
+		}
+		
+		return ret.toString();
 	}
 
 	public SDFSchema getSubSchema() {
