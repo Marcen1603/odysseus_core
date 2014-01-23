@@ -24,6 +24,7 @@ public class PQLGenerator implements IPQLGenerator {
 	private static final Logger LOG = LoggerFactory.getLogger(PQLGenerator.class);
 	
 	private static final String NAME_SEPARATOR = "_";
+	private static int operatorCounter = 0;
 	
 	private final List<IPQLGeneratorPostProcessor> postProcessors = Lists.newArrayList();
 	private final List<IPQLGeneratorPreProcessor> preProcessors = Lists.newArrayList();
@@ -174,11 +175,9 @@ public class PQLGenerator implements IPQLGenerator {
 	}
 
 	private static String generateStatementName(Collection<String> usedNames, String opName) {
-		int i = 0;
 		String statementName = null;
 		do {
-			i++;
-			statementName = opName + NAME_SEPARATOR + i;
+			statementName = opName + NAME_SEPARATOR + (operatorCounter++);
 		} while (usedNames.contains(statementName));
 		return statementName;
 	}
