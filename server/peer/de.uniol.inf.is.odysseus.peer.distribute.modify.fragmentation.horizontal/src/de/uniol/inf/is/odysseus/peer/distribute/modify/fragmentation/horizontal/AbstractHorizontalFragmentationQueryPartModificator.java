@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
@@ -156,6 +157,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			
 		}
 	
+
 		// Subscribe the targets to the last operator of reunion part
 		for(ILogicalOperator target : targets)
 			lastOperatorOfReunionPart.subscribeSink(target, sinkInPort, 0, schema);		
@@ -203,9 +205,8 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 				
 				AbstractHorizontalFragmentationQueryPartModificator.log.debug("Found {} as an aggregation in {}", operator, originPart);
 			
-				copiesToOrigin = AbstractHorizontalFragmentationQueryPartModificator.changeAggregation(
-						originPart, copiesToOrigin, (AggregateAO) operator);
-				optAggregation = Optional.of((AggregateAO) operator);
+				return Optional.of(AbstractHorizontalFragmentationQueryPartModificator.changeAggregation(
+						originPart, copiesToOrigin, (AggregateAO) operator));
 			
 			} else if(operator instanceof AggregateAO)
 				throw new QueryPartModificationException("Can not fragment a query part containing more than one aggregation!");
@@ -217,6 +218,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 	}
 
 	/**
+	 * TODO javaDoc update
 	 * Changes the copies of a given origin aggregation to send partial aggregates. 
 	 * @param originPart The query part to modify.
 	 * @param copiesToOrigin A mapping of copies to origin query parts.
@@ -225,7 +227,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 	 * @throws NullPointerException if <code>originPart</code>, <code>copiesToOrigin</code> or <code>originAggregation</code> is null.
 	 * @throws IllegalArgumentException if <code>copiesToOrigin</code> does not contain <code>originPart</code> as a key.
 	 */
-	private static Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> changeAggregation(
+	private static AggregateAO changeAggregation(
 			ILogicalQueryPart originPart,
 			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin,
 			AggregateAO originAggregation)
@@ -242,45 +244,53 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			throw new NullPointerException("Origin aggregation must be not null");
 		
 		// The return value
-		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> modifiedCopiesToOrigin = Maps.newHashMap(copiesToOrigin);
+		AggregateAO reunionAggregate = new AggregateAO();
+		reunionAggregate.setGroupingAttributes(originAggregation.getGroupingAttributes());
+		reunionAggregate.setDumpAtValueCount(originAggregation.getDumpAtValueCount());
+		reunionAggregate.setDrainAtDone(originAggregation.isDrainAtDone());
+		List<AggregateItem> aggItems = Lists.newArrayList();
 		
 		Collection<ILogicalOperator> copiedAggregations = 
 				LogicalQueryHelper.collectCopies(originPart, copiesToOrigin.get(originPart), originAggregation);
 		
-		for(ILogicalOperator copy : copiedAggregations) {
+		for(int copyNo = 0; copyNo < copiedAggregations.size(); copyNo++) {
 			
-			AggregateAO copyOfAggregation = (AggregateAO) copy;
+			((AggregateAO) ((List<ILogicalOperator>) copiedAggregations).get(copyNo)).setOutputPA(true);
 			
-			for(SDFSchema inSchema : copyOfAggregation.getAggregations().keySet()) {
+			if(copyNo == 0) {
 				
-				for(AggregateFunction function : copyOfAggregation.getAggregations().get(inSchema).keySet()) {
+				for(SDFSchema inSchema : originAggregation.getAggregations().keySet()) {
 					
-					SDFAttribute oldOutAttr = copyOfAggregation.getAggregations().get(inSchema).get(function);
-					SDFAttribute newOutAttr = null;
-					
-					if(function.getName().toUpperCase().equals("AVG") || function.getName().toUpperCase().equals("COUNT")) {
+					for(AggregateFunction function : originAggregation.getAggregations().get(inSchema).keySet()) {
 						
-						newOutAttr = new SDFAttribute(oldOutAttr.getSourceName(), oldOutAttr.getAttributeName(), 
-								SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE, oldOutAttr.getUnit(), oldOutAttr.getDtConstraints());
+						SDFAttribute oldOutAttr = originAggregation.getAggregations().get(inSchema).get(function);
+						SDFAttribute newOutAttr = null;
 						
-					} else if(function.getName().toUpperCase().equals("COUNT")) {
+						if(function.getName().toUpperCase().equals("AVG") || function.getName().toUpperCase().equals("COUNT")) {
+							
+							newOutAttr = new SDFAttribute(oldOutAttr.getSourceName(), oldOutAttr.getAttributeName(), 
+									SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE, inSchema);
+							
+						} else if(function.getName().toUpperCase().equals("COUNT")) {
+							
+							newOutAttr = new SDFAttribute(oldOutAttr.getSourceName(), oldOutAttr.getAttributeName(), 
+									SDFDatatype.COUNT_PARTIAL_AGGREGATE, inSchema);
+							
+						} else if(oldOutAttr.getDatatype().isListValue()) {
+							
+							newOutAttr = new SDFAttribute(oldOutAttr.getSourceName(), oldOutAttr.getAttributeName(), 
+									SDFDatatype.LIST_PARTIAL_AGGREGATE, inSchema);
+							
+						} else {
+							
+							newOutAttr = new SDFAttribute(oldOutAttr.getSourceName(), oldOutAttr.getAttributeName(), 
+									SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE, inSchema);
 						
-						newOutAttr = new SDFAttribute(oldOutAttr.getSourceName(), oldOutAttr.getAttributeName(), 
-								SDFDatatype.COUNT_PARTIAL_AGGREGATE, oldOutAttr.getUnit(), oldOutAttr.getDtConstraints());
+						}
 						
-					} else if(oldOutAttr.getDatatype().isListValue()) {
+						aggItems.add(new AggregateItem(function.getName(), newOutAttr, oldOutAttr));
 						
-						newOutAttr = new SDFAttribute(oldOutAttr.getSourceName(), oldOutAttr.getAttributeName(), 
-								SDFDatatype.LIST_PARTIAL_AGGREGATE, oldOutAttr.getUnit(), oldOutAttr.getDtConstraints());
-						
-					} else {
-						
-						newOutAttr = new SDFAttribute(oldOutAttr.getSourceName(), oldOutAttr.getAttributeName(), 
-								SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE, oldOutAttr.getUnit(), oldOutAttr.getDtConstraints());
-					
 					}
-					
-					copyOfAggregation.getAggregations().get(inSchema).put(function, newOutAttr);
 					
 				}
 				
@@ -288,7 +298,8 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			
 		}
 		
-		return modifiedCopiesToOrigin;
+		reunionAggregate.setAggregationItems(aggItems);
+		return reunionAggregate;
 		
 	}
 	
