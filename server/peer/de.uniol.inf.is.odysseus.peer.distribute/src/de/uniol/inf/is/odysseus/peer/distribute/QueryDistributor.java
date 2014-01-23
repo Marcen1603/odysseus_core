@@ -252,7 +252,7 @@ public class QueryDistributor implements IQueryDistributor {
 				final QueryPartAdvertisement adv = (QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
 				adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
 				adv.setPeerID(peerID);
-				adv.setPqlStatement(pqlGenerator.generatePQLStatement(part.getOperators().iterator().next()));
+				adv.setPqlStatement(LogicalQueryHelper.generatePQLStatementFromQueryPart(part));
 				adv.setSharedQueryID(sharedQueryID);
 				adv.setTransCfgName(parameters.getName());
 

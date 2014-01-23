@@ -9,7 +9,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -32,27 +31,32 @@ public class UserQueryPartitioner implements IQueryPartitioner {
 	}
 
 	private static Collection<ILogicalQueryPart> determineQueryParts(Collection<ILogicalOperator> operators) {
-		final List<ILogicalQueryPart> parts = Lists.newArrayList();
+		Map<ILogicalOperator, String> destinations = determineDestinationNames(operators);
+		Map<String, Collection<ILogicalOperator>> revertedDestinationMap = revertMap(destinations);
+		
+		return generateQueryParts(revertedDestinationMap);
+	}
 
-		final Map<ILogicalOperator, String> destinations = determineDestinationNames(operators);
-		final List<ILogicalOperator> operatorsToVisit = Lists.newArrayList(operators);
-
-		while (!operatorsToVisit.isEmpty()) {
-			ILogicalOperator chosenOperator = operatorsToVisit.get(0);
-			String chosenDestination = destinations.get(chosenOperator);
-
-			List<ILogicalOperator> partOperators = Lists.newArrayList();
-			collectOperatorsWithEqualDestination(chosenOperator, chosenDestination, partOperators, destinations);
-
-			operatorsToVisit.removeAll(partOperators);
-
-			ILogicalQueryPart part = new LogicalQueryPart(partOperators);
-			for (ILogicalOperator operator : partOperators) {
-				operator.setDestinationName(chosenDestination);
+	private static <K, V> Map<K, Collection<V>> revertMap(Map<V, K> map) {
+		Map<K, Collection<V>> revertedMap = Maps.newHashMap();
+		for( V values : map.keySet() ) {
+			K key = map.get(values);
+			
+			Collection<V> coll = revertedMap.get(key);
+			if( coll == null ) {
+				coll = Lists.<V>newArrayList();
+				revertedMap.put(key, coll);
 			}
-			parts.add(part);
+			coll.add(values);
 		}
+		return revertedMap;
+	}
 
+	private static Collection<ILogicalQueryPart> generateQueryParts(Map<String, Collection<ILogicalOperator>> revertedDestinationMap) {
+		Collection<ILogicalQueryPart> parts = Lists.newArrayList();
+		for( String destinationName : revertedDestinationMap.keySet() ) {
+			parts.add( new LogicalQueryPart(revertedDestinationMap.get(destinationName)));
+		}
 		return parts;
 	}
 
@@ -87,25 +91,5 @@ public class UserQueryPartitioner implements IQueryPartitioner {
 
 	private static ILogicalOperator getOnePreviousOperator(ILogicalOperator operator) {
 		return operator.getSubscribedToSource().iterator().next().getTarget();
-	}
-
-	private static void collectOperatorsWithEqualDestination(ILogicalOperator operator, String chosenDestination, List<ILogicalOperator> collectedOperators, Map<ILogicalOperator, String> destinations) {
-		if (collectedOperators.contains(operator)) {
-			return;
-		}
-
-		String opDestination = destinations.get(operator);
-		if (opDestination.equalsIgnoreCase(chosenDestination)) {
-
-			collectedOperators.add(operator);
-
-			for (final LogicalSubscription subscription : operator.getSubscriptions()) {
-				collectOperatorsWithEqualDestination(subscription.getTarget(), chosenDestination, collectedOperators, destinations);
-			}
-
-			for (final LogicalSubscription subscription : operator.getSubscribedToSource()) {
-				collectOperatorsWithEqualDestination(subscription.getTarget(), chosenDestination, collectedOperators, destinations);
-			}
-		}
 	}
 }

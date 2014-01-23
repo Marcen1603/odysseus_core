@@ -80,6 +80,39 @@ public final class LogicalQueryHelper {
 		return copyVisitor.getResult();
 	}
 
+	public static String generatePQLStatementFromQueryPart( ILogicalQueryPart part ) {
+		
+		List<ILogicalOperator> operators = Lists.newArrayList(part.getOperators());
+		
+		String statement = "";
+		while( !operators.isEmpty() ) {
+			ILogicalOperator operator = operators.remove(0);
+			
+			List<ILogicalOperator> visitedOperators = Lists.newArrayList();
+			collectOperatorsWithSubscriptions(operator, visitedOperators);
+			
+			statement = statement + pqlGenerator.generatePQLStatement(operator) + System.lineSeparator();
+			
+			operators.removeAll(visitedOperators);
+		}
+		
+		return statement;
+	}
+	
+	private static void collectOperatorsWithSubscriptions(ILogicalOperator operator, List<ILogicalOperator> visitedOperators) {
+		if( !visitedOperators.contains(operator )) {
+			visitedOperators.add(operator);
+			
+			for( LogicalSubscription sub : operator.getSubscribedToSource()) {
+				collectOperatorsWithSubscriptions(sub.getTarget(), visitedOperators);
+			}
+			
+			for( LogicalSubscription sub : operator.getSubscriptions()) {
+				collectOperatorsWithSubscriptions(sub.getTarget(), visitedOperators);
+			}
+		}
+	}
+
 	public static Collection<ILogicalOperator> getAllOperators(ILogicalQuery plan) {
 		return getAllOperators(plan.getLogicalPlan());
 	}
