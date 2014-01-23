@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -84,6 +85,28 @@ public class CreateSDFAttributeParameter extends
 		}
 		sb.append("'").append(attributeFullName).append("','")
 				.append(getValue().getDatatype().getURI()).append("'");
+		if (getValue().getUnit() != null || getValue().getDtConstraints().size() > 0){
+			sb.append(",[");
+			if (getValue().getUnit() != null ){
+				sb.append("['Unit','").append(getValue().getUnit()).append("']");
+				if (getValue().getDtConstraints().size() > 0){
+					sb.append(",");
+				}
+			}
+			if (getValue().getDtConstraints().size() > 0){
+				Iterator<SDFDatatypeConstraint> iter = getValue().getDtConstraints().iterator();
+				for (int i=0; i<getValue().getDtConstraints().size();i++){
+					SDFDatatypeConstraint cs = iter.next();
+					sb.append("['").append(cs.getQualName()).append("','").append(cs.getValue()).append("']");
+					if (i<getValue().getDtConstraints().size()-1){
+						sb.append(",");
+				}
+				
+			}
+			}
+			sb.append("]");
+		}
+		
 		sb.append("]");
 		return sb.toString();
 	}
