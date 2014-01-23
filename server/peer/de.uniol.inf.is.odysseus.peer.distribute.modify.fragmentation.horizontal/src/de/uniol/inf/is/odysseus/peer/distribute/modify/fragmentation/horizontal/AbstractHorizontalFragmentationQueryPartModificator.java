@@ -14,11 +14,11 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItemParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
@@ -26,8 +26,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
-
-// TODO failure for operator cloud
 /**
  * A abstract modifier of {@link ILogicalQueryPart}s, which fragments data streams horizontally from a given source 
  * into parallel query parts and inserts operators to merge the result sets of the parallel fragments 
@@ -218,12 +216,11 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 	}
 
 	/**
-	 * TODO javaDoc update
 	 * Changes the copies of a given origin aggregation to send partial aggregates. 
 	 * @param originPart The query part to modify.
-	 * @param copiesToOrigin A mapping of copies to origin query parts.
+	 * @param copiesToOrigin A mapping of copies to origin query parts. Will be muted.
 	 * @param originAggregation The origin aggregation.
-	 * @return The changed mapping of copies to origin query parts.
+	 * @return The aggregation for merging the partial aggregates.
 	 * @throws NullPointerException if <code>originPart</code>, <code>copiesToOrigin</code> or <code>originAggregation</code> is null.
 	 * @throws IllegalArgumentException if <code>copiesToOrigin</code> does not contain <code>originPart</code> as a key.
 	 */
@@ -263,32 +260,8 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 					
 					for(AggregateFunction function : originAggregation.getAggregations().get(inSchema).keySet()) {
 						
-						SDFAttribute oldOutAttr = originAggregation.getAggregations().get(inSchema).get(function);
-						SDFAttribute newOutAttr = null;
-						
-						if(function.getName().toUpperCase().equals("AVG") || function.getName().toUpperCase().equals("COUNT")) {
-							
-							newOutAttr = new SDFAttribute(oldOutAttr.getSourceName(), oldOutAttr.getAttributeName(), 
-									SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE, inSchema);
-							
-						} else if(function.getName().toUpperCase().equals("COUNT")) {
-							
-							newOutAttr = new SDFAttribute(oldOutAttr.getSourceName(), oldOutAttr.getAttributeName(), 
-									SDFDatatype.COUNT_PARTIAL_AGGREGATE, inSchema);
-							
-						} else if(oldOutAttr.getDatatype().isListValue()) {
-							
-							newOutAttr = new SDFAttribute(oldOutAttr.getSourceName(), oldOutAttr.getAttributeName(), 
-									SDFDatatype.LIST_PARTIAL_AGGREGATE, inSchema);
-							
-						} else {
-							
-							newOutAttr = new SDFAttribute(oldOutAttr.getSourceName(), oldOutAttr.getAttributeName(), 
-									SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE, inSchema);
-						
-						}
-						
-						aggItems.add(new AggregateItem(function.getName(), newOutAttr, oldOutAttr));
+						SDFAttribute attr = originAggregation.getAggregations().get(inSchema).get(function);
+						aggItems.add(new AggregateItem(function.getName(), attr, attr));
 						
 					}
 					
@@ -297,8 +270,22 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			}
 			
 		}
-		
+
 		reunionAggregate.setAggregationItems(aggItems);
+	
+		// Creating PQL string of aggregation items
+		StringBuffer pql = new StringBuffer();
+		for(AggregateItem a: aggItems){
+			
+			List<String> value = Lists.newArrayList(a.aggregateFunction.getName(), a.inAttribute.getURI(), a.outAttribute.getURI());
+			pql.append(AggregateItemParameter.getPQLString(value));
+			pql.append(",");
+			
+		}
+		String pqlString = "[" + pql.substring(0, pql.length() - 1) + "]";
+		
+		reunionAggregate.addParameterInfo(AggregateAO.AGGREGATIONS, pqlString);
+		
 		return reunionAggregate;
 		
 	}
