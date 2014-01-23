@@ -100,6 +100,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 
 	public TimeUnit getBaseTimeUnit() {
 		if (baseTimeUnit == null) {
+			baseTimeUnit = TimeUnit.MILLISECONDS;
 			// Find input schema attribute with type start timestamp
 			// It provides the correct base unit 
 			// if not given use MILLISECONDS as default
@@ -115,9 +116,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 				if (constr != null){
 					baseTimeUnit = (TimeUnit) constr.getValue();
 				}
-			} else {
-				baseTimeUnit = TimeUnit.MILLISECONDS;
-			}
+			} 
 
 		}
 		return baseTimeUnit;

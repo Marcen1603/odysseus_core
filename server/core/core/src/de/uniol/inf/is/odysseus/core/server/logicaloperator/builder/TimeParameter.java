@@ -56,7 +56,7 @@ public class TimeParameter extends
 			@SuppressWarnings("unchecked")
 			List<Object> in = ((List<Object>) inputValue);
 			if (in.size() == 2) {
-				return "['" + in.get(0) + "', '" + in.get(1) + "']";
+				return "[" + in.get(0) + ", '" + in.get(1) + "']";
 			} else {
 				throw new RuntimeException(
 						" Could not determine value/unit pair!");
