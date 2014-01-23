@@ -5,13 +5,11 @@ package de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.aggregate.fun
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class MedianPartialAggregate<R> implements IPartialAggregate<R> {
+public class MedianPartialAggregate<R> implements IMedianPartialAggregate<R> {
     private final DescriptiveStatistics stats = new DescriptiveStatistics();
 
     // private final Queue<Double> upper = new PriorityQueue<Double>();
@@ -104,13 +102,14 @@ public class MedianPartialAggregate<R> implements IPartialAggregate<R> {
             this.add(val);
         }
     }
+
     /**
      * 
      */
     public void clear() {
-        stats.clear(); 
+        stats.clear();
     }
-    
+
     @Override
     public MedianPartialAggregate<R> clone() {
         return new MedianPartialAggregate<R>(this);
@@ -140,6 +139,5 @@ public class MedianPartialAggregate<R> implements IPartialAggregate<R> {
         assert (agg.getAggValue() == 2.5);
         System.out.println(agg);
     }
-
 
 }

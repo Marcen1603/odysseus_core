@@ -20,4 +20,8 @@ abstract public class Median<R, W> extends AbstractAggregateFunction<R, W> {
         super("MEDIAN", partialAggregateInput);
     }
 
+    protected Median(String name, final boolean partialAggregateInput) {
+        super(name, partialAggregateInput);
+    }
+
 }

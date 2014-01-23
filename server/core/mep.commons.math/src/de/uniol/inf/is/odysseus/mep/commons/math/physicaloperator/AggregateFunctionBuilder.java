@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.relational.RelationalMedian;
+import de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.relational.RelationalMedian2;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -21,10 +22,11 @@ import de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.relational.Rel
 public class AggregateFunctionBuilder implements IAggregateFunctionBuilder {
 
     private final static String MEDIAN = "MEDIAN";
-
+    private final static String MEDIAN2 = "MEDIAN2";
     private static Collection<String> names = new LinkedList<String>();
     {
         names.add(MEDIAN);
+        names.add(MEDIAN2);
     }
 
     @Override
@@ -32,6 +34,9 @@ public class AggregateFunctionBuilder implements IAggregateFunctionBuilder {
         IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
         if (key.getName().equalsIgnoreCase(MEDIAN)) {
             aggFunc = RelationalMedian.getInstance(pos[0], partialAggregateInput);
+        }
+        else if (key.getName().equalsIgnoreCase(MEDIAN2)) {
+            aggFunc = RelationalMedian2.getInstance(pos[0], partialAggregateInput);
         }
         else {
             throw new IllegalArgumentException("No such Aggregatefunction");
