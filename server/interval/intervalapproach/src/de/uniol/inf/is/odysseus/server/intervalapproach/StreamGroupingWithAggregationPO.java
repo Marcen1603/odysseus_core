@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.server.intervalapproach;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -162,8 +163,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		if (sa == null) {
 			sa = new DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>();
 			groups.put(groupID, sa);
-			// System.out.println("Created new Sweep Area for group id " +
-			// groupID);
+			System.out.println("Created new Sweep Area for group id " + groupID+ " --> #"+groups.size());
 		}
 
 		// Update sweep area with new element
@@ -221,6 +221,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	private void produceResults(
 			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results,
 			Long groupID) {
+		List<W> outList = new LinkedList<>();
 		while (results.hasNext()) {
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> e = results
 					.next();
@@ -232,9 +233,9 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 				out = getGroupProcessor().createOutputElement(groupID, r);
 			}
 			out.setMetadata(e.getMetadata());
-			// System.out.println(this+"Move to tranfer area "+out);
-			transferArea.transfer(out);
+			outList.add(out);
 		}
+		transferArea.transfer(outList);
 	}
 
 	@Override
