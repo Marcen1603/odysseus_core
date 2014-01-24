@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.PriorityQueue;
 import java.util.Queue;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -20,7 +21,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
  */
 @SuppressWarnings("unchecked")
 public class Median3PartialAggregate<R> implements IMedianPartialAggregate<R> {
- 
+
     // Increase min number of elements used in the queues to improve result.
     private final int MIN_ELEMENTS = 10;
     private double totalSum;
@@ -118,6 +119,14 @@ public class Median3PartialAggregate<R> implements IMedianPartialAggregate<R> {
         return 1.0 / ((1.0 / n0) + (1.0 / n1));
     }
 
+    /**
+     * Required value for not purging elements out of the queues
+     * 
+     * @param m
+     * @param sigma
+     * @param deltaPrime
+     * @return
+     */
     private double epsilonCut(final double m, final double sigma, final double deltaPrime) {
         return Math.sqrt((2.0 / (m)) * sigma * Math.log(2.0 / deltaPrime)) + ((2.0 / (3.0 * m)) * Math.log(2.0 / deltaPrime));
     }
@@ -170,29 +179,44 @@ public class Median3PartialAggregate<R> implements IMedianPartialAggregate<R> {
         return "MEDIAN= " + this.getAggValue();
     }
 
-    private boolean canPurge(MedianQueue<Double> lower2, MedianQueue<Double> upper2, double totalVariance2) {
+    /**
+     * Check if elements can be purged out of the queues. This should be
+     * possible if the variance in both queues are *nearly* equal.
+     * 
+     * @param lower
+     * @param upper
+     * @param totalVariance
+     * @return
+     */
+    private boolean canPurge(MedianQueue<Double> lower, MedianQueue<Double> upper, double totalVariance) {
         boolean purge = false;
-        if ((this.lower.size() == this.upper.size()) && (this.lower.size() > MIN_ELEMENTS) && (this.lower.size() > MIN_ELEMENTS)) {
-            double epsilon = epsilonCut(harmonicMean(lower2.size, upper2.size), totalVariance, 0.01);
+        if ((lower.size() == upper.size()) && (lower.size() > MIN_ELEMENTS) && (lower.size() > MIN_ELEMENTS)) {
+            double epsilon = epsilonCut(harmonicMean(lower.size, upper.size), totalVariance, 0.01);
 
-            purge = (Math.abs(lower2.variance - upper2.variance) < epsilon);
+            // Compare the variances in both queues
+            // If the diff is lower than epsilon, the last elements can be
+            // purged.
+            purge = (Math.abs(lower.variance - upper.variance) < epsilon);
             if (purge) {
                 System.out.println("Purge: ");
                 System.out.println("Var " + totalVariance);
-                System.out.println("Epsi " + epsilonCut(harmonicMean(lower2.size, upper2.size), totalVariance, 0.01));
+                System.out.println("Epsi " + epsilonCut(harmonicMean(lower.size, upper.size), totalVariance, 0.01));
                 System.out.println("Stat lower: ");
-                System.out.println(this.lower.size);
-                System.out.println(this.lower.sum);
-                System.out.println(this.lower.variance);
+                System.out.println(lower.size);
+                System.out.println(lower.sum);
+                System.out.println(lower.variance);
                 System.out.println("Stat upper: ");
-                System.out.println(this.upper.size);
-                System.out.println(this.upper.sum);
-                System.out.println(this.upper.variance);
+                System.out.println(upper.size);
+                System.out.println(upper.sum);
+                System.out.println(upper.variance);
             }
         }
         return purge;
     }
 
+    /**
+     * Rebalance both queues, so the number of elements are equal or differ by 1
+     */
     private void rebalance() {
         if ((this.upper.size() != 0) && (this.lower.size() != 0)) {
             if (this.lower.size() < (this.upper.size() - 1)) {
@@ -289,6 +313,14 @@ public class Median3PartialAggregate<R> implements IMedianPartialAggregate<R> {
         System.out.println(agg3.getAggValue() + "==" + stats.getPercentile(50));
     }
 
+    /**
+     * {@link PriorityQueue} extension that caclulates the variance of the
+     * elements and can remove the last element in the queue.
+     * 
+     * @author Christian Kuka <christian@kuka.cc>
+     * 
+     * @param <E>
+     */
     private class MedianQueue<E extends Number> extends AbstractQueue<E> implements java.io.Serializable {
         /**
          * 
