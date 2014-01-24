@@ -74,14 +74,29 @@ public class RelationalFastMapPO<T extends Comparable<T>>
 
 		// Add new value sorted
 		int pos = Collections.binarySearch(groupList, p);
-		groupList.add(pos, p);
+		if (pos < 0) {
+			groupList.add(p);
+		} else {
+			groupList.add(pos, p);
+		}
 
 		// Create Median
-		FESortedPair<T, Tuple<? extends ITimeInterval>> median = groupList
-				.get(groupList.size() / 2);
+		FESortedPair<T, Tuple<? extends ITimeInterval>> median = null;
+		int medianPos = 0;
+		if (groupList.size() > 1) {
+			if (groupList.size() % 2 == 0) {
+				medianPos = (groupList.size() / 2) - 1;
+			} else {
+				medianPos = (groupList.size() / 2);
+			}
+		}
+
+		median = groupList.get(medianPos);
+
 		Tuple<? extends ITimeInterval> gr = groupProcessor
 				.getGroupingPart(object);
-		gr.append(median, false);
+		System.out.println(median.getE1() + " " + groupList);
+		gr.append(median.getE1(), false);
 		// TODO what if element end is before "end" of groupList
 		transfer(gr);
 	}
