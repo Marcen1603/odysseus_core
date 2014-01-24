@@ -119,15 +119,14 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		this.valueChanged = copy.valueChanged;
 		this.containsNull = copy.containsNull;
 	}
-	
+
 	/**
 	 * Creates a new Tuple with out attributes
 	 * 
 	 * @param copy
 	 * @param requiresDeepClone
 	 */
-	protected Tuple(Tuple<T> copy, 
-			boolean requiresDeepClone) {
+	protected Tuple(Tuple<T> copy, boolean requiresDeepClone) {
 		super(copy);
 		this.requiresDeepClone = requiresDeepClone;
 		if (this.requiresDeepClone) {
@@ -297,9 +296,15 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	 * @return the extended tuple
 	 */
 	public Tuple<T> append(Object object, boolean createNew) {
-		Object[] newAttrs = Arrays.copyOf(this.attributes,
-				this.attributes.length + 1);
-		newAttrs[this.attributes.length] = object;
+		Object[] newAttrs = null;
+		if (this.attributes != null) {
+			newAttrs= Arrays.copyOf(this.attributes,
+					this.attributes.length + 1);
+			newAttrs[this.attributes.length] = object;
+		} else {
+			newAttrs = new Object[1];
+			newAttrs[0] = object;
+		}
 		if (createNew) {
 			Tuple<T> newTuple = new Tuple<T>(this, newAttrs, requiresDeepClone);
 			return newTuple;
@@ -315,7 +320,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 						requiresDeepClone);
 				return newTuple;
 			} else {
-				Tuple<T> newTuple = new Tuple<>(this,requiresDeepClone);
+				Tuple<T> newTuple = new Tuple<>(this, requiresDeepClone);
 				return newTuple;
 			}
 		}
