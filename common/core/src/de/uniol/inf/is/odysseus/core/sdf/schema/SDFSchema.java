@@ -25,7 +25,6 @@ import java.util.ListIterator;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -137,28 +136,48 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 	}
 
 	public SDFAttribute findAttribute(String attributeNameToFind) {
-		List<String> attributeToFindParts = Lists.newArrayList(attributeNameToFind.split("."));
+		System.err.print("Trying to find name '" + attributeNameToFind + "'... ");
+		String[] attributeToFindParts = splitIfNeeded(attributeNameToFind);
 		
 		for( SDFAttribute attribute : this.elements ) {
 			
-			List<String> attributeParts = Lists.newArrayList( (attribute.getSourceName() + "." + attribute.getAttributeName()).split("."));
+			String[] attributeParts = splitIfNeeded(attribute.getSourceName() + "." + attribute.getAttributeName());
 			
 			if( compareBackwards(attributeToFindParts, attributeParts) ) {
+				System.err.println("and found " + attribute);
 				return attribute;
 			}
 		}
-
+		
+		System.err.println("and found NOTHING!");
 		return null;
 	}
 
-	private static boolean compareBackwards(List<String> listA, List<String> listB) {
-		while( !listB.isEmpty() && !listB.isEmpty() ) {
-			String attributeToFindPart = listA.remove(listA.size() - 1);
-			String attributePart = listB.remove(listB.size() - 1);
+	private static String[] splitIfNeeded(String text) {
+		if( text == null || text.isEmpty() ) {
+			return new String[0];
+		}
+		
+		if( text.indexOf(".") == -1 ) {
+			return new String[] {text};
+		}
+		
+		return text.split("\\.");
+	}
+
+	private static boolean compareBackwards(String[] listA, String[] listB) {
+		int indexA = listA.length - 1;
+		int indexB = listB.length - 1;
+		while( indexA >= 0 && indexB >= 0 ) {
+			String attributeToFindPart = listA[indexA];
+			String attributePart = listB[indexB];
 			
 			if( !attributeToFindPart.equals(attributePart)) {
 				return false;
 			}
+			
+			indexA--;
+			indexB--;
 		}
 		
 		return true;
