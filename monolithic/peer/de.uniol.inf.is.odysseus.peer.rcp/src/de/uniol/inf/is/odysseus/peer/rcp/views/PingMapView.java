@@ -1,11 +1,15 @@
 package de.uniol.inf.is.odysseus.peer.rcp.views;
 
 import java.util.Collection;
+import java.util.Map;
 
 import net.jxta.peer.PeerID;
 
 import org.apache.commons.math.geometry.Vector3D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
@@ -17,26 +21,33 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMapNode;
 import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
 
-public class PingMapView extends ViewPart implements PaintListener {
+public class PingMapView extends ViewPart implements PaintListener, MouseMoveListener {
 
 	private RepeatingJobThread updateThread;
+	
+	private Map<Vector2D, String> currentPoints = Maps.newHashMap();
+
+	private Canvas canvas;
 	
 	@Override
 	public void createPartControl(Composite parent) {
 		Composite rootComposite = new Composite(parent, SWT.NONE);
 		rootComposite.setLayout(new GridLayout(1, true));
 		
-		final Canvas canvas = new Canvas(rootComposite, SWT.BORDER);
+		canvas = new Canvas(rootComposite, SWT.BORDER);
 		canvas.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		canvas.setLayoutData(new GridData(GridData.FILL_BOTH));
 		canvas.addPaintListener(this);
+		canvas.addMouseMoveListener(this);
 		
 		updateThread = new RepeatingJobThread(2000) {
 			@Override
@@ -73,10 +84,10 @@ public class PingMapView extends ViewPart implements PaintListener {
 	public void paintControl(PaintEvent e) {
 		IPingMap pingMap = RCPP2PNewPlugIn.getPingMap();
 		Collection<IPingMapNode> nodes = collectNodes(pingMap); 
-		Collection<Vector3D> points = collectPoints(nodes);
+		Map<Vector3D, String> points = collectPoints(nodes);
 		Vector3D localPoint = pingMap.getLocalPosition();
 		
-		Collection<Vector3D> shiftedPoints = shiftPoints( localPoint, points );
+		Map<Vector3D, String> shiftedPoints = shiftPoints( localPoint, points );
 
 		// consider centered local coordinates and default size of 15
 		double minX = -15;
@@ -84,7 +95,7 @@ public class PingMapView extends ViewPart implements PaintListener {
 		double maxX = 15;
 		double maxY = 15;
 		
-		for( Vector3D shiftedPoint : shiftedPoints ) {
+		for( Vector3D shiftedPoint : shiftedPoints.keySet() ) {
 			if( shiftedPoint.getX() < minX ) {
 				minX = shiftedPoint.getX();
 			}
@@ -109,15 +120,18 @@ public class PingMapView extends ViewPart implements PaintListener {
 		GC gc = e.gc;
 		drawBackground(gc, e, xFactor, yFactor);
 
+		currentPoints.clear();
 		gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
 		drawPingSymbol(gc, e.width / 2, e.height / 2);
+		currentPoints.put(new Vector2D(e.width / 2, e.height / 2), RCPP2PNewPlugIn.getP2PNetworkManager().getLocalPeerName());
 		
 		gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
-		for( Vector3D shiftedPoint : shiftedPoints ) {
+		for( Vector3D shiftedPoint : shiftedPoints.keySet() ) {
 			double x = ( e.width / 2 ) + ( shiftedPoint.getX() * xFactor);
 			double y = ( e.height / 2 ) + ( shiftedPoint.getY() * yFactor);
 			
 			drawPingSymbol(gc, (int)x, (int)y);
+			currentPoints.put(new Vector2D(x, y), shiftedPoints.get(shiftedPoint));
 		}
 	}
 	
@@ -150,19 +164,46 @@ public class PingMapView extends ViewPart implements PaintListener {
 		return nodes;
 	}
 	
-	private static Collection<Vector3D> collectPoints(Collection<IPingMapNode> nodes) {
-		Collection<Vector3D> points = Lists.newArrayList();
+	private static Map<Vector3D, String> collectPoints(Collection<IPingMapNode> nodes) {
+		Map<Vector3D, String> points = Maps.newHashMap();
 		for( IPingMapNode node : nodes ) {
-			points.add(node.getPosition());
+			points.put(node.getPosition(), determinePeerName(node));
 		}
 		return points;
 	}
 
-	private static Collection<Vector3D> shiftPoints(Vector3D localPoint, Collection<Vector3D> points) {
-		Collection<Vector3D> result = Lists.newArrayList();
-		for( Vector3D point : points ) {
-			result.add(point.subtract(localPoint));
+	private static String determinePeerName(IPingMapNode node) {
+		Optional<String> optName = RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerName(node.getPeerID());
+		return optName.isPresent() ? optName.get() : "<unknown>";
+	}
+
+	private static Map<Vector3D, String> shiftPoints(Vector3D localPoint, Map<Vector3D, String> points) {
+		Map<Vector3D, String> result = Maps.newHashMap();
+		for( Vector3D point : points.keySet() ) {
+			result.put(point.subtract(localPoint), points.get(point));
 		}
 		return result;
+	}
+
+	@Override
+	public void mouseMove(MouseEvent e) {
+		double minDist = Double.MAX_VALUE;
+		String minName = null;
+		for( Vector2D currentPoint : currentPoints.keySet() ) {
+			double distX = currentPoint.getX() - e.x;
+			double distY = currentPoint.getY() - e.y;
+			double dist = (distX * distX) + (distY * distY);
+			
+			if( dist < minDist ) {
+				minDist = dist;
+				minName = currentPoints.get(currentPoint);
+			}
+		}
+		
+		if( minDist < 10) {
+			canvas.setToolTipText(minName);
+		} else {
+			canvas.setToolTipText("");
+		}
 	}
 }
