@@ -136,7 +136,6 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 	}
 
 	public SDFAttribute findAttribute(String attributeNameToFind) {
-		System.err.print("Trying to find name '" + attributeNameToFind + "'... ");
 		String[] attributeToFindParts = splitIfNeeded(attributeNameToFind);
 		
 		for( SDFAttribute attribute : this.elements ) {
@@ -144,7 +143,6 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 			String[] attributeParts = splitIfNeeded(attribute.getSourceName() + "." + attribute.getAttributeName());
 			
 			if( compareBackwards(attributeToFindParts, attributeParts) ) {
-				System.err.println("and found " + attribute);
 				return attribute;
 			}
 		}
