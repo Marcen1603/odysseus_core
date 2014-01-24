@@ -139,9 +139,9 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			this.cloner = null;
 		}
 	}
-	
+
 	/**
-	 * Erzeugt ein neues Tuple mit einem Attribut 
+	 * Erzeugt ein neues Tuple mit einem Attribut
 	 * 
 	 * @param attribute
 	 *            Attributbelegung des neuen Tuples
@@ -150,7 +150,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	 *            attribute
 	 */
 	public Tuple(Object attribute, boolean requiresDeepClone) {
-		this.attributes = new Object[1];  
+		this.attributes = new Object[1];
 		attributes[0] = attribute;
 		this.requiresDeepClone = requiresDeepClone;
 		// calcSize();
@@ -238,10 +238,13 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	 *            one will be modified
 	 */
 	public Tuple<T> restrict(int[] attrList, boolean createNew) {
-		Object[] newAttrs = new Object[attrList.length];
+		Object[] newAttrs = null;
+		if (attrList != null) {
+			newAttrs = new Object[attrList.length];
 
-		for (int i = 0; i < attrList.length; i++) {
-			newAttrs[i] = this.attributes[attrList[i]];
+			for (int i = 0; i < attrList.length; i++) {
+				newAttrs[i] = this.attributes[attrList[i]];
+			}
 		}
 		return restrictCreation(createNew, newAttrs);
 	}
@@ -296,17 +299,17 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		return this;
 	}
 
-//	/**
-//	 * Sets the attribute values of this tuple to the specified values in
-//	 * attributes.
-//	 * 
-//	 * @param attributes
-//	 *            The new attribute values for this tuple.
-//	 */
-//	public void setAttributes(Object[] attributes) {
-//		this.attributes = attributes;
-//		this.valueChanged = true;
-//	}
+	// /**
+	// * Sets the attribute values of this tuple to the specified values in
+	// * attributes.
+	// *
+	// * @param attributes
+	// * The new attribute values for this tuple.
+	// */
+	// public void setAttributes(Object[] attributes) {
+	// this.attributes = attributes;
+	// this.valueChanged = true;
+	// }
 
 	public Object[] getAttributes() {
 		return attributes;
@@ -584,32 +587,37 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		}
 		return ret;
 	}
-	
+
 	/**
-	 * Returns a hash code for the values of the specified attributes. 
-	 * Note: this method generates a hash code only for the given attributes,
-	 * not for the hole tuple
-	 * @param attributeNumbers the position of the attributes in the tuple
+	 * Returns a hash code for the values of the specified attributes. Note:
+	 * this method generates a hash code only for the given attributes, not for
+	 * the hole tuple
+	 * 
+	 * @param attributeNumbers
+	 *            the position of the attributes in the tuple
 	 * @return the generated hash code for the given attributes
 	 */
 	@Override
 	public final int restrictedHashCode(int[] attributeNumbers) {
-		if(attributeNumbers.length > this.attributes.length) {
-			throw new IllegalArgumentException("The number of attributes for the hash code " +
-												"should be less or equal to the number of all attributes of the Tupel");
+		if (attributeNumbers.length > this.attributes.length) {
+			throw new IllegalArgumentException(
+					"The number of attributes for the hash code "
+							+ "should be less or equal to the number of all attributes of the Tupel");
 		}
-		for(int i = 0; i < attributeNumbers.length; i++) {
-			if(attributeNumbers[i] <= this.attributes.length) {
+		for (int i = 0; i < attributeNumbers.length; i++) {
+			if (attributeNumbers[i] <= this.attributes.length) {
 				continue;
 			} else {
-				throw new IllegalArgumentException("The attribute with the number " + attributeNumbers[i] + " is not a valid" +
-													" attribute in the given Tuple" );
+				throw new IllegalArgumentException(
+						"The attribute with the number " + attributeNumbers[i]
+								+ " is not a valid"
+								+ " attribute in the given Tuple");
 			}
 		}
 		int ret = 0;
-		for(int i = 0; i < attributeNumbers.length; i++) {
-			Object o = this.attributes[attributeNumbers[i]-1];
-			if(o != null) {
+		for (int i = 0; i < attributeNumbers.length; i++) {
+			Object o = this.attributes[attributeNumbers[i] - 1];
+			if (o != null) {
 				ret += o.hashCode() * Primes.PRIMES[i % Primes.size()];
 			}
 		}
