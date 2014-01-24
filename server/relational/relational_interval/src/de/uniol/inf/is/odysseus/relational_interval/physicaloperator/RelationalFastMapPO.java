@@ -95,7 +95,6 @@ public class RelationalFastMapPO<T extends Comparable<T>>
 
 		Tuple<? extends ITimeInterval> gr = groupProcessor
 				.getGroupingPart(object);
-		System.out.println(median.getE1() + " " + groupList);
 		gr.append(median.getE1(), false);
 		// TODO what if element end is before "end" of groupList
 		transfer(gr);
