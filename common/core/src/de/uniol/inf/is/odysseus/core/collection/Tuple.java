@@ -119,6 +119,25 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		this.valueChanged = copy.valueChanged;
 		this.containsNull = copy.containsNull;
 	}
+	
+	/**
+	 * Creates a new Tuple with out attributes
+	 * 
+	 * @param copy
+	 * @param requiresDeepClone
+	 */
+	protected Tuple(Tuple<T> copy, 
+			boolean requiresDeepClone) {
+		super(copy);
+		this.requiresDeepClone = requiresDeepClone;
+		if (this.requiresDeepClone) {
+			this.cloner = new Cloner();
+		} else {
+			this.cloner = null;
+		}
+		this.valueChanged = copy.valueChanged;
+		this.containsNull = copy.containsNull;
+	}
 
 	/**
 	 * Erzeugt ein neues Tuple mit Attributen und ohne Schemainformationen
@@ -291,8 +310,14 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	private Tuple<T> restrictCreation(boolean createNew, Object[] newAttrs) {
 		if (createNew) {
-			Tuple<T> newTuple = new Tuple<T>(this, newAttrs, requiresDeepClone);
-			return newTuple;
+			if (newAttrs != null) {
+				Tuple<T> newTuple = new Tuple<T>(this, newAttrs,
+						requiresDeepClone);
+				return newTuple;
+			} else {
+				Tuple<T> newTuple = new Tuple<>(this,requiresDeepClone);
+				return newTuple;
+			}
 		}
 		this.attributes = newAttrs;
 		this.valueChanged = true;
