@@ -11,8 +11,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  */
 public class StandardDeviationPartialAggregate<R> implements IPartialAggregate<R> {
 
-    private double sum;
-    private double squareSum;
+    private double diffSquareSum;
+    private double mean;
     private int count;
 
     public StandardDeviationPartialAggregate(final Double value) {
@@ -20,24 +20,28 @@ public class StandardDeviationPartialAggregate<R> implements IPartialAggregate<R
     }
 
     public StandardDeviationPartialAggregate(final StandardDeviationPartialAggregate<R> standardDeviationPartialAggregate) {
-        this.sum = standardDeviationPartialAggregate.sum;
-        this.squareSum = standardDeviationPartialAggregate.squareSum;
+        this.mean = standardDeviationPartialAggregate.mean;
+        this.diffSquareSum = standardDeviationPartialAggregate.diffSquareSum;
         this.count = standardDeviationPartialAggregate.count;
     }
 
     public Double getAggValue() {
-        return Math.sqrt(((this.squareSum - (Math.pow(this.sum, 2.0) / this.count)) / this.count) - 1.0);
+        return Math.sqrt(this.diffSquareSum / (this.count - 1.0));
     }
 
     public void add(final Double value) {
-        this.sum += value;
-        this.squareSum += Math.pow(value, 2.0);
+        // Estimate online variance value using
+        // Donald E. Knuth (1998). The Art of Computer Programming, volume 2:
+        // Seminumerical Algorithms, 3rd edn., p. 232. Boston: Addison-Wesley.
         this.count++;
+        final double delta = value - this.mean;
+        this.mean += delta / (double) this.count;
+        this.diffSquareSum += delta * (value - this.mean);
     }
 
     public void add(final StandardDeviationPartialAggregate<?> value) {
-        this.sum += value.sum;
-        this.squareSum += value.squareSum;
+        this.mean += value.mean;
+        this.diffSquareSum += value.diffSquareSum;
         this.count += value.count;
     }
 
@@ -57,7 +61,7 @@ public class StandardDeviationPartialAggregate<R> implements IPartialAggregate<R
         agg.add(-224.0);
         agg.add(36.0);
         agg.add(-94.0);
-        assert (agg.getAggValue() == 147.31938093815083);
+        assert (agg.getAggValue() == 164.7118696390761);
         System.out.println(agg);
     }
 }
