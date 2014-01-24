@@ -1,14 +1,13 @@
 package de.uniol.inf.is.odysseus.relational_interval.physicaloperator;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.FESortedPair;
-import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -51,7 +50,7 @@ public class RelationalFastMapPO<T extends Comparable<T>>
 		List<FESortedPair<T, Tuple<? extends ITimeInterval>>> groupList = elements
 				.get(groupID);
 		if (groupList == null) {
-			groupList = new ArrayList<FESortedPair<T, Tuple<? extends ITimeInterval>>>();
+			groupList = new LinkedList<FESortedPair<T, Tuple<? extends ITimeInterval>>>();
 			elements.put(groupID, groupList);
 		}
 		T n = object.getAttribute(medianAttrPos);
