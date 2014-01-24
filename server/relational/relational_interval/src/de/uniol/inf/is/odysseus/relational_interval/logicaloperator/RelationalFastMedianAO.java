@@ -21,7 +21,10 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 
 	public RelationalFastMedianAO(RelationalFastMedianAO op) {
 		super(op);
-		this.groupingAttributes = new LinkedList<>(op.groupingAttributes);
+		if (op.groupingAttributes != null){
+			this.groupingAttributes = new LinkedList<>();
+			this.groupingAttributes.addAll(groupingAttributes);
+		}
 		this.medianAttribute = op.medianAttribute;
 	}
 
