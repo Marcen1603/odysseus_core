@@ -24,13 +24,17 @@ final class ForceNode {
 	private Vector3D position;
 
 	public ForceNode(Vector3D position, ILogicalQueryPart queryPart) {
+		this(position, queryPart, false);
+	}
+	
+	public ForceNode(Vector3D position, ILogicalQueryPart queryPart, boolean fixed) {
 		Preconditions.checkNotNull(position, "Position for forceNode must not be null!");
 		Preconditions.checkNotNull(queryPart, "QueryPart for ForceNode must not be null!");
 
 		this.position = position;
 		this.queryPart = queryPart;
 
-		fixed = false;
+		this.fixed = fixed;
 		id = idCounter++;
 	}
 
@@ -49,7 +53,7 @@ final class ForceNode {
 	}
 
 	public ILogicalQueryPart getQueryPart() {
-		if (fixed) {
+		if (queryPart == null) {
 			throw new RuntimeException("Could not get the query part from a fixed force node!");
 		}
 
@@ -108,8 +112,6 @@ final class ForceNode {
 			direction = direction.scalarMultiply(DAMPING_FACTOR);
 			
 			position = position.add(direction);
-			
-			System.out.println("ForceNode " + id + " at pos " + position.getX() + " " + position.getY() + " " + position.getZ());
 		}
 	}
 }

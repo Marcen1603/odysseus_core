@@ -13,7 +13,6 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -24,7 +23,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
@@ -45,7 +43,6 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	private static final Logger LOG = LoggerFactory.getLogger(SurveyBasedAllocator.class);
 
 	private static IP2PNetworkManager p2pNetworkManager;
-	private static IPQLGenerator pqlGenerator;
 	private static IP2PDictionary p2pDictionary;
 	private static IPingMap pingMap;
 
@@ -58,18 +55,6 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
 		if (p2pNetworkManager == serv) {
 			p2pNetworkManager = null;
-		}
-	}
-
-	// called by OSGi-DS
-	public static void bindPQLGenerator(IPQLGenerator serv) {
-		pqlGenerator = serv;
-	}
-
-	// called by OSGi-DS
-	public static void unbindPQLGenerator(IPQLGenerator serv) {
-		if (pqlGenerator == serv) {
-			pqlGenerator = null;
 		}
 	}
 
@@ -119,11 +104,15 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		List<ILogicalQueryPart> queryPartsToSurvey = Lists.newArrayList(queryPartsCopyMap.keySet());
 		queryPartsToSurvey.remove(realSinksQueryPartCopy);
 
-		Map<ILogicalQueryPart, PeerID> allocationMap = allocate(queryPartsToSurvey, config);
+		Map<ILogicalQueryPart, PeerID> allocationMap = allocate(queryPartsToSurvey, config, isOwnBidUsed(allocatorParameters));
 		Map<ILogicalQueryPart, PeerID> allocationMapParts = transformToOriginalLogicalQueryParts(allocationMap, queryPartsCopyMap);
 
 		allocationMapParts.put(realSinksQueryPart, p2pNetworkManager.getLocalPeerID());
 		return allocationMapParts;
+	}
+
+	private static boolean isOwnBidUsed(List<String> allocatorParameters) {
+		return allocatorParameters.isEmpty() || !allocatorParameters.get(0).equalsIgnoreCase("notlocal");
 	}
 
 	private static ILogicalQueryPart getCopy(ILogicalQueryPart originalQueryPart, Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap) {
@@ -169,9 +158,11 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 				Collection<ILogicalOperator> allOperatorsOfQueryPart = Lists.newArrayList(queryPart.getOperators());
 				allOperatorsOfQueryPart.removeAll(realSinksOfQueryPart);
 
-				ILogicalQueryPart newQueryPart = new LogicalQueryPart(allOperatorsOfQueryPart);
-				result.add(newQueryPart);
-				LOG.debug("Created new query part {}", newQueryPart);
+				if( !allOperatorsOfQueryPart.isEmpty() ) {
+					ILogicalQueryPart newQueryPart = new LogicalQueryPart(allOperatorsOfQueryPart);
+					result.add(newQueryPart);
+					LOG.debug("Created new query part {}", newQueryPart);
+				}
 			} else {
 				result.add(queryPart);
 				LOG.debug("Can use old query part without changes");
@@ -205,10 +196,10 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		return partMap;
 	}
 
-	private static Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, QueryBuildConfiguration transCfg) throws QueryPartAllocationException {
+	private static Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, QueryBuildConfiguration transCfg, boolean ownBid) throws QueryPartAllocationException {
 		QueryPartGraph partGraph = new QueryPartGraph(queryParts);
 		List<AuctionSummary> auctions = publishAuctionsForRemoteSubPlans(queryParts, transCfg);
-		Map<ILogicalQueryPart, PeerID> destinationMap = determinePeerAssignment(auctions, partGraph);
+		Map<ILogicalQueryPart, PeerID> destinationMap = determinePeerAssignment(auctions, partGraph, ownBid);
 		return destinationMap;
 	}
 
@@ -221,7 +212,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		for (ILogicalQueryPart queryPart : queryParts) {
 			AuctionQueryAdvertisement adv = (AuctionQueryAdvertisement) AdvertisementFactory.newAdvertisement(AuctionQueryAdvertisement.getAdvertisementType());
 
-			adv.setPqlStatement(pqlGenerator.generatePQLStatement(queryPart.getOperators().iterator().next()));
+			adv.setPqlStatement(LogicalQueryHelper.generatePQLStatementFromQueryPart(queryPart));
 			adv.setTransCfgName(transCfg.getName());
 			adv.setAuctionId(IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), true));
 			adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
@@ -236,22 +227,23 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		return auctions;
 	}
 
-	private static Map<ILogicalQueryPart, PeerID> determinePeerAssignment(List<AuctionSummary> auctions, QueryPartGraph partGraph) throws QueryPartAllocationException {
+	private static Map<ILogicalQueryPart, PeerID> determinePeerAssignment(List<AuctionSummary> auctions, QueryPartGraph partGraph, boolean ownBid) throws QueryPartAllocationException {
 		try {
-			Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap = determineBidPlanMap(auctions);
-			Map<ILogicalQueryPart, Bid> bestBids = determineBestPeers(bidPlanMap);
+			Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap = determineBidPlanMap(auctions, ownBid);
 
-			ForceModel model = new ForceModel(bestBids, partGraph);
+			ForceModel model = new ForceModel(bidPlanMap, partGraph);
 			model.run();
 			
-//			return model.getResult();
+			return model.getResult();
 
-			return Maps.transformValues(bestBids, new Function<Bid, PeerID>() {
-				@Override
-				public PeerID apply(Bid input) {
-					return input.getBidderPeerID();
-				}
-			});
+			// TODO: Remove
+//			Map<ILogicalQueryPart, Bid> bestBids = determineBestPeers(bidPlanMap);
+//			return Maps.transformValues(bestBids, new Function<Bid, PeerID>() {
+//				@Override
+//				public PeerID apply(Bid input) {
+//					return input.getBidderPeerID();
+//				}
+//			});
 
 		} catch (QueryPartAllocationException e) {
 			throw e;
@@ -260,7 +252,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		}
 	}
 
-	private static Map<ILogicalQueryPart, Collection<Bid>> determineBidPlanMap(List<AuctionSummary> auctions) throws InterruptedException, ExecutionException, QueryPartAllocationException {
+	private static Map<ILogicalQueryPart, Collection<Bid>> determineBidPlanMap(List<AuctionSummary> auctions, boolean ownBid) throws InterruptedException, ExecutionException, QueryPartAllocationException {
 		Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap = Maps.newHashMap();
 
 		IBidProvider bidProvider = SurveyBasedAllocationPlugIn.getSelectedBidProvider();
@@ -269,12 +261,15 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		for (AuctionSummary auction : auctions) {
 			Collection<Bid> bids = auction.getBidsFuture().get();
 
-			Optional<Double> bidValue = bidProvider.calculateBid(Helper.getLogicalQuery(auction.getAuctionAdvertisement().getPqlStatement()).get(0), auction.getAuctionAdvertisement().getTransCfgName());
-			if (bidValue.isPresent()) {
-				bids.add(new Bid(localPeerID, bidValue.get()));
+			if( ownBid || bids.isEmpty()) {
+				LOG.debug("Generating own bid since there was no bild for query part {}", auction.getLogicalQueryPart());
+				Optional<Double> bidValue = bidProvider.calculateBid(Helper.getLogicalQuery(auction.getAuctionAdvertisement().getPqlStatement()).get(0), auction.getAuctionAdvertisement().getTransCfgName());
+				if (bidValue.isPresent()) {
+					bids.add(new Bid(localPeerID, bidValue.get()));
+				}
 			}
 
-			if (bids.isEmpty()) {
+			if (bids.isEmpty() ) {
 				throw new QueryPartAllocationException("Could not allocate a subplan since there are no bids for");
 			}
 
@@ -283,24 +278,24 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 		return bidPlanMap;
 	}
+//
+//	private static Map<ILogicalQueryPart, Bid> determineBestPeers(Map<ILogicalQueryPart, Collection<Bid>> bidQueryPartMap) {
+//
+//		Map<ILogicalQueryPart, Bid> bestBids = Maps.newHashMap();
+//		for (ILogicalQueryPart queryPart : bidQueryPartMap.keySet()) {
+//			bestBids.put(queryPart, determineBestBid(bidQueryPartMap.get(queryPart)));
+//		}
+//
+//		return bestBids;
+//	}
 
-	private static Map<ILogicalQueryPart, Bid> determineBestPeers(Map<ILogicalQueryPart, Collection<Bid>> bidQueryPartMap) {
-
-		Map<ILogicalQueryPart, Bid> bestBids = Maps.newHashMap();
-		for (ILogicalQueryPart queryPart : bidQueryPartMap.keySet()) {
-			bestBids.put(queryPart, determineBestBid(bidQueryPartMap.get(queryPart)));
-		}
-
-		return bestBids;
-	}
-
-	private static Bid determineBestBid(Collection<Bid> bids) {
-		Bid bestBid = null;
-		for (Bid bid : bids) {
-			if (bestBid == null || bid.getValue() > bestBid.getValue()) {
-				bestBid = bid;
-			}
-		}
-		return bestBid;
-	}
+//	private static Bid determineBestBid(Collection<Bid> bids) {
+//		Bid bestBid = null;
+//		for (Bid bid : bids) {
+//			if (bestBid == null || bid.getValue() > bestBid.getValue()) {
+//				bestBid = bid;
+//			}
+//		}
+//		return bestBid;
+//	}
 }

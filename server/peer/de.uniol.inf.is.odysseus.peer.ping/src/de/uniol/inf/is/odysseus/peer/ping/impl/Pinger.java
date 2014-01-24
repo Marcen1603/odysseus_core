@@ -185,7 +185,6 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 			double remoteX = buffer.getDouble();
 			double remoteY = buffer.getDouble();
 			double remoteZ = buffer.getDouble();
-
 			pingMap.update(senderPeer, new Vector3D(remoteX, remoteY, remoteZ), latency);
 		}
 	}

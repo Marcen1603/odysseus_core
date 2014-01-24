@@ -144,7 +144,7 @@ public class PingMapView extends ViewPart implements PaintListener {
 
 	private static Collection<IPingMapNode> collectNodes(IPingMap pingMap) {
 		Collection<IPingMapNode> nodes = Lists.newArrayList(); 
-		for( PeerID peerID : pingMap.getPeerIDs()) {
+		for( PeerID peerID : pingMap.getRemotePeerIDs()) {
 			nodes.add(pingMap.getNode(peerID).get());
 		}
 		return nodes;

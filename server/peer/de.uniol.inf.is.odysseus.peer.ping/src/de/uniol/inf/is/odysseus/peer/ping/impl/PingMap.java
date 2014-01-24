@@ -102,8 +102,13 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	}
 
 	@Override
-	public ImmutableCollection<PeerID> getPeerIDs() {
+	public ImmutableCollection<PeerID> getRemotePeerIDs() {
 		return ImmutableSet.copyOf(nodes.keySet());
+	}
+	
+	@Override
+	public PeerID getLocalPeerID() {
+		return networkManager.getLocalPeerID();
 	}
 	
 	public void update( PeerID peerID, Vector3D position, long latency ) {

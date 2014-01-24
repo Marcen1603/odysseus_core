@@ -13,7 +13,8 @@ public interface IPingMap {
 	public Optional<Double> getRemotePing( PeerID start, PeerID end );
 
 	public Optional<IPingMapNode> getNode(PeerID peer);
-	public ImmutableCollection<PeerID> getPeerIDs();
+	public ImmutableCollection<PeerID> getRemotePeerIDs();
+	public PeerID getLocalPeerID();
 	public Vector3D getLocalPosition();
 
 }
