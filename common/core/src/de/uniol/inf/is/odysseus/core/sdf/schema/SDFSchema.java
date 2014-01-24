@@ -147,7 +147,6 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 			}
 		}
 		
-		System.err.println("and found NOTHING!");
 		return null;
 	}
 
