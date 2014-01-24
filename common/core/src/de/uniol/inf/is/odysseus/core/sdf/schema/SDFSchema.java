@@ -25,6 +25,7 @@ import java.util.ListIterator;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -127,108 +128,40 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 		return Collections.unmodifiableList(baseSourceNames);
 	}
 
-	public int findAttributeIndex(String attributeName){
+	public int findAttributeIndex(String attributeName) {
 		SDFAttribute a = findAttribute(attributeName);
-		if (a != null){
+		if (a != null) {
 			return this.indexOf(a);
 		}
 		return -1;
 	}
-	
-	public SDFAttribute findAttribute(String attributeName) {
-		String[] parts = attributeName.split("\\.", 2); // the attribute can have the
-		// form a.b.c.d
 
-		// source name available
-		String path[] = null;
-		String source = null;
-		if (parts.length == 2) {
-			path = parts[1].split("\\."); // split b:c:d into {b, c, d}
-			source = parts[0];
-		}
-		// no source name available
-		else {
-			path = parts[0].split("\\."); // split b:c:d into {b, c, d}
-		}
-
-		// Test if special attribute, starting with %
-		if (source != null && source.startsWith("__") && parts.length == 2) {
-			SDFAttribute attribute = findAttribute(parts[1]);
-			if (attribute != null) {
-				return new SDFAttribute(source + "." + attribute.getSourceName(), attribute.getAttributeName(), attribute);
-			}
-
-		} else {
-
-			SDFAttribute attribute = findORAttribute(this, source, path, 0);
-			if (attribute != null)
+	public SDFAttribute findAttribute(String attributeNameToFind) {
+		List<String> attributeToFindParts = Lists.newArrayList(attributeNameToFind.split("."));
+		
+		for( SDFAttribute attribute : this.elements ) {
+			
+			List<String> attributeParts = Lists.newArrayList( (attribute.getSourceName() + "." + attribute.getAttributeName()).split("."));
+			
+			if( compareBackwards(attributeToFindParts, attributeParts) ) {
 				return attribute;
-		}
-
-		for (SDFAttribute attr : this) {
-			// Remove UserName
-			String attrName = attr.toString();
-			if (attrName.equalsIgnoreCase(attributeName)) {
-				return attr;
-			}
-		}
-
-		// final cases: UserName.SourceName.Attribute
-		// --> remove User name from schema
-		for (SDFAttribute attr : this.elements) {
-			// Remove UserName
-			String attrName = attr.toString();
-			int pos = attrName.indexOf('.');
-			if (pos > 0) {
-				attrName = attrName.substring(pos + 1);
-				if (attrName.equalsIgnoreCase(attributeName)) {
-					return attr;
-				}
-			}
-		}
-
-		// final cases: UserName.SourceName.Attribute
-		// --> remove User name from name
-		int pos = attributeName.indexOf('.');
-		if (pos > 0) {
-			attributeName = attributeName.substring(pos + 1);
-			for (SDFAttribute attr : this.elements) {
-				if (attr.toString().equalsIgnoreCase(attributeName)) {
-					return attr;
-				}
 			}
 		}
 
 		return null;
-
 	}
 
-	private SDFAttribute findORAttribute(SDFSchema list, String source,
-			String[] path, int index) throws AmbiguousAttributeException {
-		String toFind = path[index];
-		SDFAttribute curRoot = null;
-		for (SDFAttribute attr : list) {
-
-			if (attr.getAttributeName().equals(toFind)
-					&& (source == null || attr.getSourceName().equals(source))) {
-				if (curRoot == null) {
-					curRoot = attr;
-				} else {
-					throw new AmbiguousAttributeException(
-							attr.getAttributeName());
-				}
+	private static boolean compareBackwards(List<String> listA, List<String> listB) {
+		while( !listB.isEmpty() && !listB.isEmpty() ) {
+			String attributeToFindPart = listA.remove(listA.size() - 1);
+			String attributePart = listB.remove(listB.size() - 1);
+			
+			if( !attributeToFindPart.equals(attributePart)) {
+				return false;
 			}
 		}
-
-		if (index == path.length - 1) {
-			return curRoot;
-		} else if (curRoot != null && curRoot.getDatatype().hasSchema()) {
-			// TODO: MG: Is this correct?
-			return findORAttribute(curRoot.getDatatype().getSchema(), null,
-					path, index + 1);
-		}
-
-		return null;
+		
+		return true;
 	}
 
 	public int indexOf(SDFAttribute attribute) {
@@ -394,65 +327,65 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 		SDFSchema newSchema = new SDFSchema(newName, schema.type, newattributeList);
 		return newSchema;
 	}
-	
-    /**
-     * Returns the positions of all attributes in the
-     * schema with the given datatype.
-     * 
-     * @param datatype
-     *            The {@link SDFDatatype datatype}
-     * @return An array of all attribute indexes in the schema that are discrete
-     *         {@link SDFProbabilisticDatatype probabilistic attributes}
-     */
-    public int[] getSDFDatatypeAttributePositions(final SDFDatatype datatype) {
-        Objects.requireNonNull(datatype);
-        final Collection<SDFAttribute> attributes = getSDFDatatypeAttributes(datatype);
-        final int[] pos = new int[attributes.size()];
-        int i = 0;
-        for (final SDFAttribute attribute : attributes) {
-            pos[i++] = indexOf(attribute);
-        }
-        return pos;
-    }
 
-    /**
-     * Returns all attributes of the schema with the given datatype.
-     * 
-     * @param datatype
-     *            The {@link SDFDatatype datatype}
-     * @return A list of all attributes that are of the given datatype.
-     */
-    public Collection<SDFAttribute> getSDFDatatypeAttributes(final SDFDatatype datatype) {
-        Objects.requireNonNull(datatype);
-        Objects.requireNonNull(getAttributes());
-        final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-        for (final SDFAttribute attribute : getAttributes()) {
-            if (attribute.getDatatype().equals(datatype)) {
-                attributes.add(attribute);
-            }
-        }
-        return attributes;
-    }
+	/**
+	 * Returns the positions of all attributes in the schema with the given
+	 * datatype.
+	 * 
+	 * @param datatype
+	 *            The {@link SDFDatatype datatype}
+	 * @return An array of all attribute indexes in the schema that are discrete
+	 *         {@link SDFProbabilisticDatatype probabilistic attributes}
+	 */
+	public int[] getSDFDatatypeAttributePositions(final SDFDatatype datatype) {
+		Objects.requireNonNull(datatype);
+		final Collection<SDFAttribute> attributes = getSDFDatatypeAttributes(datatype);
+		final int[] pos = new int[attributes.size()];
+		int i = 0;
+		for (final SDFAttribute attribute : attributes) {
+			pos[i++] = indexOf(attribute);
+		}
+		return pos;
+	}
 
-    /**
-     * Returns the indexes in the schema of the given list of attributes.
-     * 
-     * @param attributes
-     *            The {@link Collection attributes}
-     * @return An array with the indexes of the attributes in the schema
-     */
-    public int[] indexesOf(final Collection<SDFAttribute> attributes) {
-        Objects.requireNonNull(attributes);
-        final int[] pos = new int[attributes.size()];
-        int i = 0;
-        for (final SDFAttribute attribute : attributes) {
-            Preconditions.checkArgument(contains(attribute));
-            pos[i] = indexOf(attribute);
-            i++;
-        }
-        return pos;
-    }
-    
+	/**
+	 * Returns all attributes of the schema with the given datatype.
+	 * 
+	 * @param datatype
+	 *            The {@link SDFDatatype datatype}
+	 * @return A list of all attributes that are of the given datatype.
+	 */
+	public Collection<SDFAttribute> getSDFDatatypeAttributes(final SDFDatatype datatype) {
+		Objects.requireNonNull(datatype);
+		Objects.requireNonNull(getAttributes());
+		final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		for (final SDFAttribute attribute : getAttributes()) {
+			if (attribute.getDatatype().equals(datatype)) {
+				attributes.add(attribute);
+			}
+		}
+		return attributes;
+	}
+
+	/**
+	 * Returns the indexes in the schema of the given list of attributes.
+	 * 
+	 * @param attributes
+	 *            The {@link Collection attributes}
+	 * @return An array with the indexes of the attributes in the schema
+	 */
+	public int[] indexesOf(final Collection<SDFAttribute> attributes) {
+		Objects.requireNonNull(attributes);
+		final int[] pos = new int[attributes.size()];
+		int i = 0;
+		for (final SDFAttribute attribute : attributes) {
+			Preconditions.checkArgument(contains(attribute));
+			pos[i] = indexOf(attribute);
+			i++;
+		}
+		return pos;
+	}
+
 	@Override
 	public String toString() {
 		return super.toString() + " " + type;
