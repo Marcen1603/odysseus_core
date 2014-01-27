@@ -59,6 +59,8 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 	private static final String TIME_NANO = "nanoseconds";
 	private static final String TIME_MICRO = "microseconds";
 	private static final String TIME_MILLI = "milliseconds";
+	private static final String TIME_SECONDS = "seconds";
+	private static final String TIME_MINUTES = "minutes";
 
 	private double max = Double.NaN;
 	private double min = Double.NaN;
@@ -67,7 +69,7 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 	private String xTitle = "";
 	private String yTitle = "";
 
-	private static final int DEFAULT_MAX_NUMBER_OF_ITEMS = 100;
+	private static final int DEFAULT_MAX_NUMBER_OF_ITEMS = 1000;
 	private static final String DEFAULT_TIME_GRANULARITY = TIME_MILLI;
 
 	private static final String CURRENT_TIME = "Current Time";
@@ -76,7 +78,7 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 	// also milli
 	private String dateformat = "HH:mm:ss";
 	private int choosenXValue = -1;
-	private Integer timefactor = 1;
+	private Double timefactor = 1.0;
 	private String timeinputgranularity = DEFAULT_TIME_GRANULARITY;
 	private Integer choosenXValuePort = 0;
 
@@ -113,13 +115,17 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 		getChart().getXYPlot().getRangeAxis().setLabel(yTitle);
 		
 		if (this.timeinputgranularity.equals(TIME_MILLI)) {
-			this.timefactor = 1;
+			this.timefactor = 1.0;
 		} else if (this.timeinputgranularity.equals(TIME_MICRO)) {
-			this.timefactor = 1000;
+			this.timefactor = 1000.0;
 		} else if (this.timeinputgranularity.equals(TIME_NANO)) {
-			this.timefactor = 1000000;
+			this.timefactor = 1000000.0;
 		} else if (this.timeinputgranularity.equals(TIME_PICO)) {
-			this.timefactor = 1000000000;
+			this.timefactor = 1000000000.0;
+		} else if (this.timeinputgranularity.equals(TIME_SECONDS)) {
+			this.timefactor = 0.001;
+		}else if (this.timeinputgranularity.equals(TIME_MINUTES)) {
+			this.timefactor = 1.67777e-5;
 		}
 	}
 
@@ -177,7 +183,7 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 				try {
 					if (choosenXValue == -1) {
 						long time = tuple.getMetadata().getStart().getMainPoint();
-						long millis = time / timefactor;
+						long millis = Math.round(time / timefactor);
 						FixedMillisecond ms = new FixedMillisecond(millis);
 
 						for (int i = 0; i < values.size(); i++) {
@@ -267,6 +273,8 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 		values.add(TIME_MICRO);
 		values.add(TIME_NANO);
 		values.add(TIME_PICO);
+		values.add(TIME_SECONDS);
+		values.add(TIME_MINUTES);
 		return values;
 	}
 
