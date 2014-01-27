@@ -28,17 +28,16 @@ public class LogicalQueryPart implements ILogicalQueryPart {
 	}
 	
 	public LogicalQueryPart( Collection<ILogicalOperator> partOperators, Collection<ILogicalQueryPart> avoidedQueryParts ) {
-		Preconditions.checkNotNull(partOperators, "List operators forming a logical query part must not be null!");
-		Preconditions.checkArgument(!partOperators.isEmpty(), "List of operators forming a logical query part must not be empty!");
+		this(partOperators);
 		
 		if( avoidedQueryParts != null && !avoidedQueryParts.isEmpty() ) {
 			this.avoidedQueryParts.addAll(avoidedQueryParts);
 		}
+		
 	}
 	
 	public LogicalQueryPart( Collection<ILogicalOperator> partOperators, ILogicalQueryPart avoidedQueryPart ) {
-		Preconditions.checkNotNull(partOperators, "List operators forming a logical query part must not be null!");
-		Preconditions.checkArgument(!partOperators.isEmpty(), "List of operators forming a logical query part must not be empty!");
+		this(partOperators);
 		
 		if( avoidedQueryPart != null ) {
 			avoidedQueryParts.add(avoidedQueryPart);
@@ -46,7 +45,7 @@ public class LogicalQueryPart implements ILogicalQueryPart {
 	}
 	
 	public LogicalQueryPart( ILogicalOperator partOperator, Collection<ILogicalQueryPart> avoidedQueryParts ) {
-		Preconditions.checkNotNull(partOperator, "Operator for forming a logical query part must not be null!");
+		this(partOperator);
 		
 		if( avoidedQueryParts != null && !avoidedQueryParts.isEmpty() ) {
 			this.avoidedQueryParts.addAll(avoidedQueryParts);
@@ -54,7 +53,7 @@ public class LogicalQueryPart implements ILogicalQueryPart {
 	}
 	
 	public LogicalQueryPart( ILogicalOperator partOperator, ILogicalQueryPart avoidedQueryPart ) {
-		Preconditions.checkNotNull(partOperator, "Operator for forming a logical query part must not be null!");
+		this(partOperator);
 		
 		if( avoidedQueryPart != null ) {
 			avoidedQueryParts.add(avoidedQueryPart);
