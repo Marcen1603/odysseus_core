@@ -140,8 +140,17 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			
 			// Create the return value
 			modifiedParts.clear();
-			for(ILogicalQueryPart originPart : copiesToOrigin.keySet())
-					modifiedParts.addAll(copiesToOrigin.get(originPart));
+			for(ILogicalQueryPart originPart : copiesToOrigin.keySet()) {
+			
+					for(ILogicalQueryPart modifiedPart : copiesToOrigin.get(originPart)) {
+						
+						Collection<ILogicalQueryPart> avoidedParts = Lists.newArrayList(copiesToOrigin.get(originPart));
+						avoidedParts.remove(modifiedPart);
+						modifiedParts.add(new LogicalQueryPart(modifiedPart.getOperators(), avoidedParts));
+						
+					}
+					
+			}
 			
 		} catch(Exception e) {
 			
@@ -539,7 +548,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				Optional<LogicalSubscription> optSubscription = Optional.absent();
 				
 				modifiedCopiesToOrigin = this.insertOperatorForReunion(originPart, modifiedCopiesToOrigin, originSink, copiedSinks, 
-						optSubscription, targets);
+						optSubscription, targets, historyOfOperatorsForFragmentation);
 				
 			} else {
 				
@@ -582,7 +591,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 					} else targets.add(target);
 						
 					modifiedCopiesToOrigin = this.insertOperatorForReunion(originPart, modifiedCopiesToOrigin, originSink, copiedSinks, 
-							Optional.of(subToSink), targets);
+							Optional.of(subToSink), targets, historyOfOperatorsForFragmentation);
 					
 				}
 				
@@ -602,6 +611,9 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @param copiesOfOriginSink The copies of <code>originSink</code>.
 	 * @param optSubscription The origin subscription of <code>originSink</code>, if present.
 	 * @param targets A collection of all targets.
+	 * @param historyOfOperatorsForFragmentation The history for origin relative sources (key), 
+	 * inserted operators for fragmentation (value.getE1()) 
+	 * and the subscription to the origin relative source (value.getE2()).
 	 * @return A modified mapping of copies to origin query parts.
 	 * @throws NullPointerException if <code>originPart</code>, <code>copiesToOrigin</code>, <code>originSink</code>, <code>copiesOfOriginSink</code>, 
 	 * <code>optSubscription</code> or <code>targets</code> is null.
@@ -613,7 +625,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			ILogicalOperator originSink,
 			Collection<ILogicalOperator> copiesOfOriginSink,
 			Optional<LogicalSubscription> optSubscription,
-			Collection<ILogicalOperator> targets)
+			Collection<ILogicalOperator> targets,
+			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation)
 			throws NullPointerException, QueryPartModificationException{
 		
 		// Preconditions
@@ -629,6 +642,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			throw new NullPointerException("The optional of the subscription to modify must be not null!");
 		else if(targets == null)
 			throw new NullPointerException("The targets must be not null!");
+		else if(historyOfOperatorsForFragmentation == null)
+			throw new NullPointerException("The history of inserted operator for fragmentation must be not null!");
 		
 		// The return value
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> modifiedCopiesToOrigin = Maps.newHashMap(copiesToOrigin);
@@ -678,6 +693,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		Collection<ILogicalQueryPart> copiesOfReunionPart = Lists.newArrayList(reunionPart);
 		modifiedCopiesToOrigin.put(reunionPart, copiesOfReunionPart);
 		
+		modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.handlePartOfFragmentation(
+						reunionPart, modifiedCopiesToOrigin, operatorForReunion, historyOfOperatorsForFragmentation);
 		return modifiedCopiesToOrigin;
 		
 	}
@@ -801,14 +818,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 						modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.connect(
 								modifiedCopiesToOrigin, copiedSinks, subToSink, targets);
 						
-						// XXX Workaround, because errors occur, if there are not connected operators within a query part
-						Collection<ILogicalOperator> modifiedOperators = 
-								Lists.newArrayList(modifiedCopiesToOrigin.get(originPart).iterator().next().getOperators());
-						modifiedOperators.addAll(operatorForFragmentation.getE2().getOperators());
-						ILogicalQueryPart modifiedPart = new LogicalQueryPart(modifiedOperators);
-						Collection<ILogicalQueryPart> copiesOfModifiedPart = Lists.newArrayList(modifiedPart);
-						modifiedCopiesToOrigin.put(originPart, copiesOfModifiedPart);
-						modifiedCopiesToOrigin.remove(operatorForFragmentation.getE2());
+						modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.handlePartOfFragmentation(
+								originPart, modifiedCopiesToOrigin, originSink, historyOfOperatorsForFragmentation);
 						
 						continue;
 						
@@ -928,32 +939,14 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				
 				Collection<ILogicalOperator> irrelevantOperators = Lists.newArrayList(part.getOperators());
 				irrelevantOperators.removeAll(relevantOperators);
-				
-				Collection<ILogicalOperator> realSources = 
-						AbstractFragmentationQueryPartModificator.determineRealSources(part, sourceName);
-				
-				if(realSources.size() == irrelevantOperators.size()) {
-				
-					ILogicalQueryPart otherPart = new LogicalQueryPart(irrelevantOperators);
-					otherParts.add(otherPart);
-				
-					AbstractFragmentationQueryPartModificator.log.debug("Split {} into {} as a part to be fragmented and {} as another part", 
-							new Object[] {part, partToBeFragmented, otherPart});
-					
-				} else if(!realSources.isEmpty()) {
-					
-					ILogicalQueryPart sourcePart = new LogicalQueryPart(realSources);
-					otherParts.add(sourcePart);
-					
-					irrelevantOperators.removeAll(realSources);
-					ILogicalQueryPart otherPart = new LogicalQueryPart(irrelevantOperators);
-					otherParts.add(otherPart);
-				
-					AbstractFragmentationQueryPartModificator.log.debug("Split {} into {} as a part to be fragmented, {} as a source part and " +
-							"{} as another parts", 
-							new Object[] {part, partToBeFragmented, sourcePart, otherPart});
-					
-				}
+
+			
+				ILogicalQueryPart otherPart = new LogicalQueryPart(irrelevantOperators);
+				otherParts.add(otherPart);
+			
+				AbstractFragmentationQueryPartModificator.log.debug("Split {} into {} as a part to be fragmented and " +
+						"{} as another parts", 
+						new Object[] {part, partToBeFragmented, otherPart});
 				
 				
 			} else {
@@ -967,38 +960,6 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		}
 		
 		return new Pair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>>(partsToBeFragmented, otherParts);
-		
-	}
-
-	/**
-	 * Determine all real sources to be fragmented of a given query part.
-	 * @param queryPart The query part to modify.
-	 * @param sourceName The name of the source to be fragmented.
-	 * @return A collection of real sources to be fragmented.
-	 * @throws NullPointerException if <code>queryPart</code> or <code>sourceName</code> is null.
-	 */
-	private static Collection<ILogicalOperator> determineRealSources(
-			ILogicalQueryPart queryPart, 
-			String sourceName)
-			throws NullPointerException {
-		
-		// Preconditions
-		if(queryPart == null)
-			throw new NullPointerException("Query part for modification must be not null!");
-		else if(sourceName == null)
-			throw new NullPointerException("Name of the source to be fragmented must be not null!");
-		
-		// The return value
-		Collection<ILogicalOperator> relevantOperators = Lists.newArrayList();
-		
-		for(ILogicalOperator operator : queryPart.getOperators()) {
-			
-			if(operator instanceof AccessAO && ((AccessAO) operator).getAccessAOName().getResourceName().equals(sourceName))
-				relevantOperators.add(operator);
-			
-		}
-		
-		return relevantOperators;
 		
 	}
 
@@ -1145,6 +1106,45 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 					"the name of the source to be fragmented nor the degree of fragmentation!");
 		
 		return modificatorParameters.get(0);
+		
+	}
+	
+	// TODO javaDoc
+	private static Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> handlePartOfFragmentation(
+			ILogicalQueryPart originPart,
+			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin,
+			ILogicalOperator target,
+			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation) {
+		
+		// TODO Preconditions
+		// es darf nur eine Kopie geben
+		
+		// The return value
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> modifiedCopiesToOrigin = Maps.newHashMap(copiesToOrigin);
+		
+		for(ILogicalOperator relSource : historyOfOperatorsForFragmentation.keySet()) {
+			
+			for(IPair<ILogicalOperator, LogicalSubscription> pair : historyOfOperatorsForFragmentation.get(relSource)) {
+				
+				if(pair.getE2().getTarget().equals(target)) {
+					
+					ILogicalQueryPart partOfFragmentation = 
+							LogicalQueryHelper.determineQueryPart(modifiedCopiesToOrigin.keySet(), pair.getE1()).get();
+					modifiedCopiesToOrigin.remove(partOfFragmentation);
+					
+					Collection<ILogicalOperator> modifiedOperatorList = 
+							Lists.newArrayList(modifiedCopiesToOrigin.get(originPart).iterator().next().getOperators());
+					modifiedOperatorList.add(pair.getE1());
+					Collection<ILogicalQueryPart> modifiedParts = Lists.newArrayList((ILogicalQueryPart) new LogicalQueryPart(modifiedOperatorList));
+					modifiedCopiesToOrigin.put(originPart, modifiedParts);
+					
+				}
+				
+			}
+			
+		}
+		
+		return modifiedCopiesToOrigin;
 		
 	}
 	
