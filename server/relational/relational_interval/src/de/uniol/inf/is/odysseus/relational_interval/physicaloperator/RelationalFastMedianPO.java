@@ -64,18 +64,21 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 
 		// Cleanup
 
+		//System.err.println("Cleaning up for "+object+" in "+groupList);
 		Iterator<FESortedPair<T, Tuple<? extends ITimeInterval>>> iter = groupList
 				.iterator();
 		while (iter.hasNext()) {
 			FESortedPair<T, Tuple<? extends ITimeInterval>> next = iter.next();
-			if (next.getE2().getMetadata().getEnd().before(eStart)) {
+			if (next.getE2().getMetadata().getEnd().beforeOrEquals(eStart)) {
 				iter.remove();
 			}
 		}
+		
+		//System.err.println("Cleaning done "+groupList);
 
 		// Add new value sorted
 		int pos = Collections.binarySearch(groupList, p);
-		// System.err.println(pos + " for " + p + " in List " + groupList);
+		System.err.println(pos + " for " + p + " in List " + groupList);
 		if (pos < 0) { // Element not found in list
 			int insert = (-1) * pos - 1;
 			groupList.add(insert, p);
@@ -83,7 +86,7 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 			groupList.add(pos, p);
 		}
 
-		// System.err.println("After insert: " + groupList);
+		//System.err.println("After insert: " + groupList);
 
 		// Create Median
 		Tuple<? extends ITimeInterval> gr = groupProcessor
@@ -114,6 +117,8 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 			}
 			gr.append(num_median, false);
 		}
+		
+	//	System.err.println("Found median "+gr+" in list "+groupList);
 
 		// TODO what if element end is before "end" of groupList
 		transfer(gr);
