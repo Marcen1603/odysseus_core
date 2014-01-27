@@ -21,13 +21,13 @@ import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
 public class CostModelBidProvider implements IBidProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CostModelBidProvider.class);
-	
+
 	@SuppressWarnings("rawtypes")
 	private static OperatorCostModel costModel;
 
 	// called by OSGi-DS
 	public static void bindCostModel(ICostModel<?> serv) {
-		costModel = (OperatorCostModel<?>)serv;
+		costModel = (OperatorCostModel<?>) serv;
 	}
 
 	// called by OSGi-DS
@@ -45,7 +45,7 @@ public class CostModelBidProvider implements IBidProvider {
 	@Override
 	public Optional<Double> calculateBid(ILogicalQuery query, String configName) {
 		CostSummary summary = calcCostsForPlan(query, configName);
-		
+
 		return calcBidImpl(query.getLogicalPlan(), summary.getCpuCost(), summary.getMemCost());
 	}
 
@@ -58,6 +58,14 @@ public class CostModelBidProvider implements IBidProvider {
 
 		double cpuCost = c.getCpuCost();
 		double memCost = c.getMemCost();
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Estimated costs of query {}", query);
+			for (IPhysicalOperator operator : cost.getOperators()) {
+				LOG.debug("\tCost of {}: {}", operator, cost.getCostOfOperator(operator));
+			}
+		}
+
 		return new CostSummary(cpuCost, memCost, query.getLogicalPlan());
 	}
 
@@ -86,7 +94,7 @@ public class CostModelBidProvider implements IBidProvider {
 		double remainingCpuPerc = (remainingCpu - cpuCosts) / maximumCost.getCpuCost();
 		LOG.debug("Remaining costs(%): MEM at {} %, CPU at {} %", remainingMemPerc * 100, remainingCpuPerc * 100);
 
-		double bid = ( remainingMemPerc + remainingCpuPerc ) / 2;
+		double bid = (remainingMemPerc + remainingCpuPerc) / 2;
 		LOG.debug("Resulting bid = {}", bid);
 
 		return Optional.of(bid);
