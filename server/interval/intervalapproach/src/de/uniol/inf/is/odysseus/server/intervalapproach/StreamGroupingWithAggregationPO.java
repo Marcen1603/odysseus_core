@@ -163,7 +163,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		if (sa == null) {
 			sa = new DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>();
 			groups.put(groupID, sa);
-			System.out.println("Created new Sweep Area for group id " + groupID+ " --> #"+groups.size());
+			//System.out.println("Created new Sweep Area for group id " + groupID+ " --> #"+groups.size());
 		}
 
 		// Update sweep area with new element
