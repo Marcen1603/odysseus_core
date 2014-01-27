@@ -24,9 +24,11 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 	Map<Long, List<FESortedPair<T, Tuple<? extends ITimeInterval>>>> elements = new HashMap<>();
 
 	final private int medianAttrPos;
+	final private boolean numericalMedian;
 
-	public RelationalFastMedianPO(int medianAttrPos) {
+	public RelationalFastMedianPO(int medianAttrPos, boolean numericalMedian) {
 		this.medianAttrPos = medianAttrPos;
+		this.numericalMedian = numericalMedian;
 	}
 
 	public void setGroupProcessor(
@@ -73,7 +75,7 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 
 		// Add new value sorted
 		int pos = Collections.binarySearch(groupList, p);
-		//System.err.println(pos + " for " + p + " in List " + groupList);
+		// System.err.println(pos + " for " + p + " in List " + groupList);
 		if (pos < 0) { // Element not found in list
 			int insert = (-1) * pos - 1;
 			groupList.add(insert, p);
@@ -81,24 +83,38 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 			groupList.add(pos, p);
 		}
 
-		//System.err.println("After insert: " + groupList);
+		// System.err.println("After insert: " + groupList);
 
 		// Create Median
-		FESortedPair<T, Tuple<? extends ITimeInterval>> median = null;
-		int medianPos = 0;
-		if (groupList.size() > 1) {
-			if (groupList.size() % 2 == 0) {
-				medianPos = (groupList.size() / 2) - 1;
-			} else {
-				medianPos = (groupList.size() / 2);
-			}
-		}
-
-		median = groupList.get(medianPos);
-
 		Tuple<? extends ITimeInterval> gr = groupProcessor
 				.getGroupingPart(object);
-		gr.append(median.getE1(), false);
+		FESortedPair<T, Tuple<? extends ITimeInterval>> median = null;
+		int medianPos = 0;
+		if (!numericalMedian) {
+			if (groupList.size() > 1) {
+				if (groupList.size() % 2 == 0) {
+					medianPos = (groupList.size() / 2) - 1;
+				} else {
+					medianPos = (groupList.size() / 2);
+				}
+			}
+			median = groupList.get(medianPos);
+			gr.append(median.getE1(), false);
+		} else {
+			Double num_median;
+			if (groupList.size() > 1){
+				int middle = groupList.size() / 2;
+				if (groupList.size() % 2 == 0) {					
+					num_median = (((Number) groupList.get(middle).getE1()).doubleValue() + ((Number) groupList.get(middle+1).getE1()).doubleValue())/2;
+				} else {
+					num_median = ((Number) groupList.get(middle).getE1()).doubleValue();
+				}								
+			}else{
+				num_median = ((Number) groupList.get(0).getE1()).doubleValue();
+			}
+			gr.append(num_median, false);
+		}
+
 		// TODO what if element end is before "end" of groupList
 		transfer(gr);
 	}
