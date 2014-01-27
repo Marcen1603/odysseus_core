@@ -26,7 +26,7 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 	final private int medianAttrPos;
 	final private boolean numericalMedian;
 
-	private Tuple<? extends ITimeInterval>  last_gr;
+	private Map<Long,Tuple<? extends ITimeInterval>> lastCreatedElement = new HashMap<>();
 
 	public RelationalFastMedianPO(int medianAttrPos, boolean numericalMedian) {
 		this.medianAttrPos = medianAttrPos;
@@ -66,7 +66,7 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 
 		// Cleanup
 
-		//System.err.println("Cleaning up for "+object+" in "+groupList);
+		// System.err.println("Cleaning up for "+object+" in "+groupList);
 		Iterator<FESortedPair<T, Tuple<? extends ITimeInterval>>> iter = groupList
 				.iterator();
 		while (iter.hasNext()) {
@@ -75,12 +75,12 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 				iter.remove();
 			}
 		}
-		
-		//System.err.println("Cleaning done "+groupList);
+
+		// System.err.println("Cleaning done "+groupList);
 
 		// Add new value sorted
 		int pos = Collections.binarySearch(groupList, p);
-	//	System.err.println(pos + " for " + p + " in List " + groupList);
+		// System.err.println(pos + " for " + p + " in List " + groupList);
 		if (pos < 0) { // Element not found in list
 			int insert = (-1) * pos - 1;
 			groupList.add(insert, p);
@@ -88,7 +88,7 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 			groupList.add(pos, p);
 		}
 
-		//System.err.println("After insert: " + groupList);
+		// System.err.println("After insert: " + groupList);
 
 		// Create Median
 		Tuple<? extends ITimeInterval> gr = groupProcessor
@@ -107,30 +107,40 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 			gr.append(median.getE1(), false);
 		} else {
 			Double num_median;
-			if (groupList.size() > 1){
+			if (groupList.size() > 1) {
 				int middle = groupList.size() / 2;
-				if (groupList.size() % 2 == 0) {					
-					num_median = (((Number) groupList.get(middle-1).getE1()).doubleValue() + ((Number) groupList.get(middle).getE1()).doubleValue())/2;
+				if (groupList.size() % 2 == 0) {
+					num_median = (((Number) groupList.get(middle - 1).getE1())
+							.doubleValue() + ((Number) groupList.get(middle)
+							.getE1()).doubleValue()) / 2;
 				} else {
-					num_median = ((Number) groupList.get(middle).getE1()).doubleValue();
-				}								
-			}else{
+					num_median = ((Number) groupList.get(middle).getE1())
+							.doubleValue();
+				}
+			} else {
 				num_median = ((Number) groupList.get(0).getE1()).doubleValue();
 			}
 			gr.append(num_median, false);
 		}
-		
-	//	System.err.println("Found median "+gr+" in list "+groupList);
+
+		// System.err.println("Found median "+gr+" in list "+groupList);
 
 		// TODO what if element end is before "end" of groupList
-		
-		// Element can be written, if next element is created (starttimestamp of next element is needed)
-		if (last_gr != null){
-			last_gr.getMetadata().setEnd(gr.getMetadata().getStart());
-			transfer(last_gr);
+
+		// Element can be written, if next element is created (starttimestamp of
+		// next element is needed)
+
+		Tuple<? extends ITimeInterval> last_gr = lastCreatedElement.get(groupID);
+		if (last_gr != null) {
+			if (last_gr.getMetadata().getStart()
+					.before(gr.getMetadata().getStart())) {
+				last_gr.getMetadata().setEnd(gr.getMetadata().getStart());
+				transfer(last_gr);
+				lastCreatedElement.put(groupID, gr);
+			}
+		} else {
+			lastCreatedElement.put(groupID, gr);
 		}
-		last_gr = gr;
-		
 	}
 
 	@Override
