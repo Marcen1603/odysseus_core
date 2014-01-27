@@ -12,12 +12,17 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 
 @LogicalOperator(name = "DUMMY", doc = "Some dummy operator", minInputPorts = 0, maxInputPorts = 1, category=LogicalOperatorCategory.SINK)
 public class DummyAO extends AbstractLogicalOperator {
+	
 	private DummyAO sink;
 	private DummyAO src;
 	private SDFSchema assignedSchema;
+	
+	private double dataRate;
+	private double intervalLength;
 
 	/**
 	 * 
@@ -36,6 +41,9 @@ public class DummyAO extends AbstractLogicalOperator {
         	this.assignedSchema = dummyAO.assignedSchema.clone();
         this.setOutputSchema(dummyAO.getOutputSchema());
         setParameterInfos(dummyAO.getParameterInfos());
+        
+        this.dataRate = dummyAO.dataRate;
+        this.intervalLength = dummyAO.intervalLength;
     }	
 	
 	@Override
@@ -98,5 +106,25 @@ public class DummyAO extends AbstractLogicalOperator {
 		}
 		sb.append("]");
 		return sb.toString();
+	}
+
+	@Parameter(name="DATARATE", type = DoubleParameter.class, optional=true)
+	public void setDataRate(double dataRate) {
+		this.dataRate = dataRate;
+		addParameterInfo("DATARATE", String.valueOf(dataRate));
 	}	
+	
+	public double getDataRate() {
+		return dataRate;
+	}
+	
+	@Parameter(name="INTERVALLENGTH", type = DoubleParameter.class, optional=true)
+	public void setIntervalLength(double intervalLength) {
+		this.intervalLength = intervalLength;
+		addParameterInfo("INTERVALLENGTH", String.valueOf(intervalLength));
+	}
+	
+	public double getIntervalLength() {
+		return intervalLength;
+	}
 }
