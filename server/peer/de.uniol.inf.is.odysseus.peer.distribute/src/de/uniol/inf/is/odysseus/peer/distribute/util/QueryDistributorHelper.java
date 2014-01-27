@@ -201,10 +201,10 @@ public final class QueryDistributorHelper {
 		return new LogicalQueryPart(mergedOperators);
 	}
 	
-	public static void tryPostProcess(IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> allocationMap, QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryDistributionPostProcessor>> postProcessors) throws QueryDistributionException {
+	public static void tryPostProcess(IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> allocationMap, QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryDistributionPostProcessor>> postProcessors, ILogicalQuery query) throws QueryDistributionException {
 		try {
 			for( InterfaceParametersPair<IQueryDistributionPostProcessor> postProcessor : postProcessors ) {
-				postProcessor.getInterface().postProcess(serverExecutor, caller, allocationMap, config);
+				postProcessor.getInterface().postProcess(serverExecutor, caller, allocationMap, query, config);
 			}
 		} catch( Throwable t ) {
 			throw new QueryDistributionException("Could not post process query distribution", t);
@@ -212,15 +212,15 @@ public final class QueryDistributorHelper {
 	}
 	
 
-	public static void tryCheckDistribution(QueryBuildConfiguration config, Collection<ILogicalOperator> operators) throws QueryDistributionException {
+	public static void tryCheckDistribution(QueryBuildConfiguration config, ILogicalQuery query, Collection<ILogicalOperator> operators) throws QueryDistributionException {
 		try {
-			checkDistribution(operators, config);
+			checkDistribution(operators, query, config);
 		} catch (DistributionCheckException ex) {
 			throw new QueryDistributionException("Could not distribute query", ex);
 		}
 	}
 
-	private static void checkDistribution(Collection<ILogicalOperator> operators, QueryBuildConfiguration config) throws DistributionCheckException {
+	private static void checkDistribution(Collection<ILogicalOperator> operators, ILogicalQuery query, QueryBuildConfiguration config) throws DistributionCheckException {
 		ImmutableCollection<String> names = DistributionCheckerRegistry.getInstance().getNames();
 		if (names.isEmpty()) {
 			LOG.debug("No distribution checkers registered. No checks taken.");
@@ -232,17 +232,17 @@ public final class QueryDistributorHelper {
 			IDistributionChecker checker = DistributionCheckerRegistry.getInstance().get(name);
 			LOG.debug("Checking with {}", checker.getName());
 			
-			checker.check(operators, config);
+			checker.check(operators, query, config);
 		}
 		LOG.debug("All checks passed");
 	}
 
-	public static Collection<ILogicalQueryPart> tryPartitionQuery(QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryPartitioner>> partitioners, Collection<ILogicalOperator> operators) throws QueryDistributionException {
+	public static Collection<ILogicalQueryPart> tryPartitionQuery(QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryPartitioner>> partitioners, Collection<ILogicalOperator> operators, ILogicalQuery query) throws QueryDistributionException {
 		LOG.debug("Begin partitioning");
 
 		try {
 			InterfaceParametersPair<IQueryPartitioner> firstPartitioner = partitioners.get(0);
-			Collection<ILogicalQueryPart> partitions = firstPartitioner.getInterface().partition(operators, config, firstPartitioner.getParameters());
+			Collection<ILogicalQueryPart> partitions = firstPartitioner.getInterface().partition(operators, query, config, firstPartitioner.getParameters());
 			
 			if (partitions == null || partitions.isEmpty()) {
 				throw new QueryDistributionException("Query partitioner '" + firstPartitioner.getInterface().getName() + "' retured null or empty query part list!");
@@ -268,7 +268,7 @@ public final class QueryDistributorHelper {
 		}
 	}
 
-	public static Collection<ILogicalQueryPart> tryModifyQueryParts(QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryPartModificator>> modificators, Collection<ILogicalQueryPart> queryParts) throws QueryDistributionException {
+	public static Collection<ILogicalQueryPart> tryModifyQueryParts(QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryPartModificator>> modificators, Collection<ILogicalQueryPart> queryParts, ILogicalQuery query) throws QueryDistributionException {
 		if( modificators.isEmpty() ) {
 			LOG.debug("No modificator set");
 			return queryParts;
@@ -279,7 +279,7 @@ public final class QueryDistributorHelper {
 		try {
 			Collection<ILogicalQueryPart> currentPartitionState = queryParts;
 			for( InterfaceParametersPair<IQueryPartModificator> modificator : modificators ) {
-				currentPartitionState = modificator.getInterface().modify(currentPartitionState, config, modificator.getParameters());
+				currentPartitionState = modificator.getInterface().modify(currentPartitionState, query, config, modificator.getParameters());
 				
 				if (currentPartitionState == null || currentPartitionState.isEmpty()) {
 					throw new QueryDistributionException("Query part modificator '" + modificator.getInterface().getName() + "' retured null or empty query part list!");
@@ -296,12 +296,12 @@ public final class QueryDistributorHelper {
 		}
 	}
 
-	public static Map<ILogicalQueryPart, PeerID> tryAllocate(QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryPartAllocator>> allocators, Collection<ILogicalQueryPart> modifiedQueryParts) throws QueryDistributionException {
+	public static Map<ILogicalQueryPart, PeerID> tryAllocate(QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryPartAllocator>> allocators, Collection<ILogicalQueryPart> modifiedQueryParts, ILogicalQuery query) throws QueryDistributionException {
 		LOG.debug("Begin allocation of query parts");
 
 		try {
 			InterfaceParametersPair<IQueryPartAllocator> firstAllocator = allocators.get(0);
-			Map<ILogicalQueryPart, PeerID> allocationMap = firstAllocator.getInterface().allocate(modifiedQueryParts, p2pDictionary.getRemotePeerIDs(), p2pNetworkManager.getLocalPeerID(), config, firstAllocator.getParameters());
+			Map<ILogicalQueryPart, PeerID> allocationMap = firstAllocator.getInterface().allocate(modifiedQueryParts, query, p2pDictionary.getRemotePeerIDs(), p2pNetworkManager.getLocalPeerID(), config, firstAllocator.getParameters());
 			
 			if (allocationMap == null || allocationMap.isEmpty()) {
 				throw new QueryDistributionException("Query part allocation map from allocator '" + firstAllocator.getInterface().getName() + "' is null or empty!");

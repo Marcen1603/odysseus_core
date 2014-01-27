@@ -14,6 +14,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -58,7 +59,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	}
 
 	@Override
-	public Collection<ILogicalQueryPart> modify(Collection<ILogicalQueryPart> queryParts, 
+	public Collection<ILogicalQueryPart> modify(Collection<ILogicalQueryPart> queryParts, ILogicalQuery query, 
 			QueryBuildConfiguration config, List<String> modificatorParameters) throws QueryPartModificationException {
 		
 		// Preconditions

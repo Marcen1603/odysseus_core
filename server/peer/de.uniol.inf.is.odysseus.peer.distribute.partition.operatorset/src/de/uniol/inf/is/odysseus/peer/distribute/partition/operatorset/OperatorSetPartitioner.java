@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartitioner;
@@ -23,7 +24,7 @@ public class OperatorSetPartitioner implements IQueryPartitioner {
 	}
 
 	@Override
-	public Collection<ILogicalQueryPart> partition(Collection<ILogicalOperator> ops, QueryBuildConfiguration config, List<String> partitionParameters) throws QueryPartitionException {
+	public Collection<ILogicalQueryPart> partition(Collection<ILogicalOperator> ops, ILogicalQuery query, QueryBuildConfiguration config, List<String> partitionParameters) throws QueryPartitionException {
 
 		Collection<ILogicalOperator> operatorsToVisit = Lists.newArrayList(ops);
 		Collection<ILogicalQueryPart> queryParts = Lists.newArrayList();

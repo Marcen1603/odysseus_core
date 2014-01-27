@@ -135,10 +135,10 @@ public class QueryDistributor implements IQueryDistributor {
 			Collection<ILogicalOperator> operators = QueryDistributorHelper.collectRelevantOperators(query);
 			LOG.debug("Following operators are condidered during distribution: {}", operators);
 			
-			QueryDistributorHelper.tryCheckDistribution(config, operators);
-			Collection<ILogicalQueryPart> queryParts = QueryDistributorHelper.tryPartitionQuery(config, partitioners, operators);
-			Collection<ILogicalQueryPart> modifiedQueryParts = QueryDistributorHelper.tryModifyQueryParts(config, modificators, queryParts );
-			Map<ILogicalQueryPart, PeerID> allocationMap = QueryDistributorHelper.tryAllocate(config, allocators, modifiedQueryParts);
+			QueryDistributorHelper.tryCheckDistribution(config, query, operators);
+			Collection<ILogicalQueryPart> queryParts = QueryDistributorHelper.tryPartitionQuery(config, partitioners, operators, query);
+			Collection<ILogicalQueryPart> modifiedQueryParts = QueryDistributorHelper.tryModifyQueryParts(config, modificators, queryParts, query );
+			Map<ILogicalQueryPart, PeerID> allocationMap = QueryDistributorHelper.tryAllocate(config, allocators, modifiedQueryParts, query);
 
 			if( ParameterHelper.isDoForceLocal(config)) {
 				allocationMap = QueryDistributorHelper.forceLocalOperators(allocationMap);
@@ -154,7 +154,7 @@ public class QueryDistributor implements IQueryDistributor {
 				LOG.debug("Merging query parts omitted");
 			}
 			
-			QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMap, config, postProcessors);
+			QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMap, config, postProcessors, query);
 			
 			insertJxtaOperators(allocationMap.keySet());
 			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(allocationMap, config);

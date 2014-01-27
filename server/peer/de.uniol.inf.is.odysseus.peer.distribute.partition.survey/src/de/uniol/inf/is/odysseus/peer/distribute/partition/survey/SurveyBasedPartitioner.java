@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -43,7 +44,7 @@ public class SurveyBasedPartitioner implements IQueryPartitioner {
 	}
 
 	@Override
-	public Collection<ILogicalQueryPart> partition(Collection<ILogicalOperator> operators, QueryBuildConfiguration config, List<String> partitionParameters) throws QueryPartitionException {
+	public Collection<ILogicalQueryPart> partition(Collection<ILogicalOperator> operators, ILogicalQuery query, QueryBuildConfiguration config, List<String> partitionParameters) throws QueryPartitionException {
 		Helper.addOperatorIds(operators);
 		ID sharedQueryID = IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), true);
 

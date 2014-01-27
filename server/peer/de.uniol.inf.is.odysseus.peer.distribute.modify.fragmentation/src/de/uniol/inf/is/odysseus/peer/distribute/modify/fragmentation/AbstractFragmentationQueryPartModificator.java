@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
@@ -46,7 +47,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 	@Override
 	public Collection<ILogicalQueryPart> modify(
-			Collection<ILogicalQueryPart> queryParts,
+			Collection<ILogicalQueryPart> queryParts, 
+			ILogicalQuery query, 
 			QueryBuildConfiguration config, List<String> modificatorParameters)
 			throws QueryPartModificationException {
 	

@@ -9,6 +9,7 @@ import net.jxta.peer.PeerID;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
@@ -17,7 +18,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator {
 
 	@Override
-	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
+	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, ILogicalQuery query, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
 		
 		List<PeerID> peerIDs = determineConsideredPeerIDs(knownRemotePeers, localPeerID);
 		if( peerIDs == null || peerIDs.isEmpty() ) {

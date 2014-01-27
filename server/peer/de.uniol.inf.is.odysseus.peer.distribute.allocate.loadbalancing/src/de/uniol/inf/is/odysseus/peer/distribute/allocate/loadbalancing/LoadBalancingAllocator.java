@@ -13,6 +13,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -48,7 +49,7 @@ public class LoadBalancingAllocator implements IQueryPartAllocator {
 	}
 
 	@Override
-	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
+	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, ILogicalQuery query, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
 		Preconditions.checkArgument(allocatorParameters.size() == 1, "Load balancing allocator needs exactly one parameter (e. g. 'avg')");
 		String loadBalancerType = allocatorParameters.get(0);
 		

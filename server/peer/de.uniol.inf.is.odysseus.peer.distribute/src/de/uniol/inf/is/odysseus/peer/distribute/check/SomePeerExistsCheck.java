@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.DistributionCheckException;
@@ -35,7 +36,7 @@ public class SomePeerExistsCheck implements IDistributionChecker {
 	}
 	
 	@Override
-	public void check(Collection<ILogicalOperator> operatorss, QueryBuildConfiguration config) throws DistributionCheckException {
+	public void check(Collection<ILogicalOperator> operatorss, ILogicalQuery query, QueryBuildConfiguration config) throws DistributionCheckException {
 		int remotePeersCount = p2pDictionary.getRemotePeerIDs().size();
 		if( remotePeersCount == 0 ) {
 			throw new DistributionCheckException("No remote peers known");
