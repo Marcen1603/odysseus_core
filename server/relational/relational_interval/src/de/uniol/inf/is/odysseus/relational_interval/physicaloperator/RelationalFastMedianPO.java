@@ -26,6 +26,8 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 	final private int medianAttrPos;
 	final private boolean numericalMedian;
 
+	private Tuple<? extends ITimeInterval>  last_gr;
+
 	public RelationalFastMedianPO(int medianAttrPos, boolean numericalMedian) {
 		this.medianAttrPos = medianAttrPos;
 		this.numericalMedian = numericalMedian;
@@ -78,7 +80,7 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 
 		// Add new value sorted
 		int pos = Collections.binarySearch(groupList, p);
-		System.err.println(pos + " for " + p + " in List " + groupList);
+	//	System.err.println(pos + " for " + p + " in List " + groupList);
 		if (pos < 0) { // Element not found in list
 			int insert = (-1) * pos - 1;
 			groupList.add(insert, p);
@@ -121,7 +123,14 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 	//	System.err.println("Found median "+gr+" in list "+groupList);
 
 		// TODO what if element end is before "end" of groupList
-		transfer(gr);
+		
+		// Element can be written, if next element is created (starttimestamp of next element is needed)
+		if (last_gr != null){
+			last_gr.getMetadata().setEnd(gr.getMetadata().getStart());
+			transfer(last_gr);
+		}
+		last_gr = gr;
+		
 	}
 
 	@Override
