@@ -2,14 +2,11 @@ package de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util;
 
 import java.util.List;
 
-import net.jxta.id.ID;
-
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.SubPlan;
 
 public final class PlanProOperatorPartitioner  {
@@ -18,8 +15,8 @@ public final class PlanProOperatorPartitioner  {
 		
 	}
 	
-	public static List<SubPlan> partitionWithDummyOperators(ILogicalOperator query, ID sharedQueryId, QueryBuildConfiguration transCfg) {
-		List<SubPlan> parts = partitionLogical(query, sharedQueryId, transCfg); 
+	public static List<SubPlan> partitionWithDummyOperators(ILogicalOperator query) {
+		List<SubPlan> parts = partitionLogical(query); 
 		SubPlanManipulator.insertDummyAOs(parts);
 		return parts;
 	}
@@ -47,8 +44,7 @@ public final class PlanProOperatorPartitioner  {
 		}	
 	}
 
-	private static List<SubPlan> partitionLogical(ILogicalOperator query,
-			ID sharedQueryId, QueryBuildConfiguration transCfg) {
+	private static List<SubPlan> partitionLogical(ILogicalOperator query) {
 		
 		final List<ILogicalOperator> operators = collectOperators(query);
 		List<SubPlan> parts = Lists.newArrayList();

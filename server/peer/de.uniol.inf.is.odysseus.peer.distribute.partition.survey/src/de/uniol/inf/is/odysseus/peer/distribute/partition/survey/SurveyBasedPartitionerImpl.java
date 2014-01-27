@@ -136,10 +136,6 @@ public final class SurveyBasedPartitionerImpl {
 						currentAbsoluteSubPlanCosts[0] += operatorAbsoluteCosts;
 					} else {
 						subPlans.add(new SubPlan(currentSubPlanOperators.toArray(new ILogicalOperator[0])));
-						// sollte kein fehler auftreten, da vorher schon
-						// überprüft wurde,
-						// ob der plan in seiner gänze zerlegt werden
-						// kann
 						targetAbsoluteCosts[0] = targetSize.getNextSize(totalAbsoluteCosts);
 						currentAbsoluteSubPlanCosts[0] = operatorAbsoluteCosts;
 						currentSubPlanOperators.clear();

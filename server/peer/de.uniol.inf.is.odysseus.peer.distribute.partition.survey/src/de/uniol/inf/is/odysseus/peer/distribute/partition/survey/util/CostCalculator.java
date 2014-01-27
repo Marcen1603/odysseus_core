@@ -122,7 +122,7 @@ public final class CostCalculator {
 		Map<String, CostSummary> operatorCost = new HashMap<>();
 
 		int i = 0;
-		List<SubPlan> parts = PlanProOperatorPartitioner.partitionWithDummyOperators(query, null, null);
+		List<SubPlan> parts = PlanProOperatorPartitioner.partitionWithDummyOperators(query);
 
 		for (SubPlan part : parts) {
 			if (part.getOperators().isEmpty() || skipOperator(part)) {
