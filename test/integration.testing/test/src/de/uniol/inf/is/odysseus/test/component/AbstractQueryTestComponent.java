@@ -15,10 +15,13 @@ import de.uniol.inf.is.odysseus.test.sinks.physicaloperator.TICompareSink;
 public abstract class AbstractQueryTestComponent<T extends ITestContext, S extends QueryTestSet> extends AbstractTestComponent<T, S> implements ICompareSinkListener {
 
 	private static final long PROCESSING_WAIT_TIME = 1000;
+	// after 10 Minutes: abort!
+	private static final long ABORT_PROCESSING_AFTER = 1000*60*10; 
 
 	private StatusCode processingResult = null;
 
 	private boolean waitforprocessing = true;
+	private long startedAt;
 	
 	public AbstractQueryTestComponent(){
 		this(true);
@@ -47,6 +50,7 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 					LOG.debug("starting query with ID " + id + "...");
 					executor.startQuery(id, session);
 				}
+				
 				processingResult = null;
 				LOG.debug("query started, waiting until data is processed...");
 				result = waitProcessing();
@@ -75,9 +79,13 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 	public abstract List<S> createTestSets(T context);
 
 	protected StatusCode waitProcessing() throws InterruptedException {
+		startedAt = System.currentTimeMillis();
 		synchronized (this) {
 			while (processingResult == null) {
 				this.wait(PROCESSING_WAIT_TIME);
+				if(System.currentTimeMillis()-startedAt>ABORT_PROCESSING_AFTER){
+					this.processingResult = StatusCode.ERROR_DEADLOCK_POSSIBLE;
+				}
 			}
 			return processingResult;
 		}
