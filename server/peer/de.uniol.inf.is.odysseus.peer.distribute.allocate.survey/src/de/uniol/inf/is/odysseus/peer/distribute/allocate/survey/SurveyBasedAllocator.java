@@ -17,6 +17,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Maps.EntryTransformer;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -37,7 +38,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.AuctionSum
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Communicator;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
-import de.uniol.inf.is.odysseus.peer.distribute.util.QueryPartGraph;
+import de.uniol.inf.is.odysseus.peer.distribute.util.graph.QueryPartGraph;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 
 public class SurveyBasedAllocator implements IQueryPartAllocator {
@@ -209,7 +210,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		Map<ILogicalOperator, OperatorEstimation<?>> logicalOperatorEstimationMap = Helper.determineOperatorCostEstimations(operators, transCfg.getName());
 		
 		List<AuctionSummary> auctions = publishAuctionsForRemoteSubPlans(queryParts, logicalOperatorEstimationMap, transCfg);
-		Map<ILogicalQueryPart, PeerID> destinationMap = determinePeerAssignment(auctions, partGraph, ownBid);
+		Map<ILogicalQueryPart, PeerID> destinationMap = determinePeerAssignment(auctions, partGraph, ownBid, logicalOperatorEstimationMap);
 		return destinationMap;
 	}
 
@@ -237,11 +238,12 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		return auctions;
 	}
 
-	private static Map<ILogicalQueryPart, PeerID> determinePeerAssignment(List<AuctionSummary> auctions, QueryPartGraph partGraph, boolean ownBid) throws QueryPartAllocationException {
+	private static Map<ILogicalQueryPart, PeerID> determinePeerAssignment(List<AuctionSummary> auctions, QueryPartGraph partGraph, boolean ownBid, Map<ILogicalOperator, OperatorEstimation<?>> logicalOperatorEstimationMap) throws QueryPartAllocationException {
 		try {
 			Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap = determineBidPlanMap(auctions, ownBid);
 
-			ForceModel model = new ForceModel(bidPlanMap, partGraph);
+			Map<ILogicalOperator, Double> dataRateMap = createDataRateMap(logicalOperatorEstimationMap);
+			ForceModel model = new ForceModel(bidPlanMap, partGraph, dataRateMap);
 			model.run();
 			
 			return model.getResult();
@@ -250,6 +252,15 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		} catch (Exception e) {
 			throw new QueryPartAllocationException("Could not determine the winner of an auction", e);
 		}
+	}
+
+	private static Map<ILogicalOperator, Double> createDataRateMap(Map<ILogicalOperator, OperatorEstimation<?>> logicalOperatorEstimationMap) {
+		return Maps.transformEntries(logicalOperatorEstimationMap, new EntryTransformer<ILogicalOperator, OperatorEstimation<?>, Double>() {
+			@Override
+			public Double transformEntry(ILogicalOperator key, OperatorEstimation<?> value) {
+				return value.getDataStream().getDataRate();
+			}
+		});
 	}
 
 	private static Map<ILogicalQueryPart, Collection<Bid>> determineBidPlanMap(List<AuctionSummary> auctions, boolean ownBid) throws InterruptedException, ExecutionException, QueryPartAllocationException {

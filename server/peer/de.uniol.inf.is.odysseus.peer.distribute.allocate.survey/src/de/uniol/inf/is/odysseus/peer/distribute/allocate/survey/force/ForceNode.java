@@ -74,11 +74,12 @@ final class ForceNode {
 		sb.append("{");
 		sb.append("#").append(id).append(", ");
 		sb.append(position.getX()).append("/").append(position.getY()).append("/").append(position.getZ()).append(", ");
+		if( queryPart != null ) {
+			sb.append("part=").append(queryPart);			
+		}
 		if (fixed) {
 			sb.append("FIXED");
-		} else {
-			sb.append("part=").append(queryPart);
-		}
+		} 
 
 		if (!attachedForces.isEmpty()) {
 			sb.append(", forces to: ");
@@ -88,6 +89,7 @@ final class ForceNode {
 				} else {
 					sb.append(force.getNodeA().id);
 				}
+				sb.append("<").append(force.getDataRate()).append(">");
 				sb.append("  ");
 			}
 		}

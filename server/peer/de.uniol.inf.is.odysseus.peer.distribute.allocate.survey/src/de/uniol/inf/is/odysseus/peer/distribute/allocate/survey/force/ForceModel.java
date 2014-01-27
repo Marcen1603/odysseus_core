@@ -15,13 +15,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.Bid;
-import de.uniol.inf.is.odysseus.peer.distribute.util.QueryPartGraph;
-import de.uniol.inf.is.odysseus.peer.distribute.util.QueryPartGraphConnection;
-import de.uniol.inf.is.odysseus.peer.distribute.util.QueryPartGraphNode;
+import de.uniol.inf.is.odysseus.peer.distribute.util.graph.QueryPartGraph;
+import de.uniol.inf.is.odysseus.peer.distribute.util.graph.QueryPartGraphConnection;
+import de.uniol.inf.is.odysseus.peer.distribute.util.graph.QueryPartGraphNode;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMapNode;
 
@@ -82,7 +83,7 @@ public class ForceModel {
 		bids = Maps.newHashMap();
 	}
 	
-	public ForceModel(Map<ILogicalQueryPart, Collection<Bid>> bids, QueryPartGraph partGraph) {
+	public ForceModel(Map<ILogicalQueryPart, Collection<Bid>> bids, QueryPartGraph partGraph, Map<ILogicalOperator, Double> operatorDataRateMap) {
 		Preconditions.checkNotNull(bids, "Map of bid must not be null!");
 		Preconditions.checkNotNull(partGraph, "Query Part graph must not be null!");
 		
@@ -96,13 +97,13 @@ public class ForceModel {
 		LOG.debug("Force Nodes");
 		printForceNodes(forceNodes);
 		
-		createForces(forceNodes, localForceNode, partGraph);
+		createForces(forceNodes, localForceNode, partGraph, operatorDataRateMap);
 		
 		LOG.debug("Attached forces");
 		printForceNodes(forceNodes);
 	}
 
-	private static void createForces(Collection<ForceNode> forceNodes, ForceNode localForceNode, QueryPartGraph partGraph) {
+	private static void createForces(Collection<ForceNode> forceNodes, ForceNode localForceNode, QueryPartGraph partGraph, Map<ILogicalOperator, Double> operatorDataRateMap) {
 		for( ForceNode forceNode : forceNodes.toArray(new ForceNode[0]) ) {
 			if( !forceNode.isFixed() ) {
 				ILogicalQueryPart queryPart = forceNode.getQueryPart();
@@ -112,10 +113,13 @@ public class ForceModel {
 				
 				if( !nextQueryPartConnections.isEmpty() ) {
 					for( QueryPartGraphConnection nextQueryPartConnection : nextQueryPartConnections ) {
+						ILogicalOperator relativeSource = nextQueryPartConnection.getStartOperator();
+						Double dataRate = operatorDataRateMap.get(relativeSource);
+						
 						ILogicalQueryPart nextQueryPart = nextQueryPartConnection.getEndNode().getQueryPart();
 						
 						ForceNode nextForceNode = determineForceNode(nextQueryPart, forceNodes);
-						new Force(forceNode, nextForceNode, 1); // TODO: Insert Data rate
+						new Force(forceNode, nextForceNode, dataRate); // TODO: Insert Data rate
 						
 					}
 				} else {
