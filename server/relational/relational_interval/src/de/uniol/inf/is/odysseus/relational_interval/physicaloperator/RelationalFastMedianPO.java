@@ -105,7 +105,7 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 			if (groupList.size() > 1){
 				int middle = groupList.size() / 2;
 				if (groupList.size() % 2 == 0) {					
-					num_median = (((Number) groupList.get(middle).getE1()).doubleValue() + ((Number) groupList.get(middle+1).getE1()).doubleValue())/2;
+					num_median = (((Number) groupList.get(middle-1).getE1()).doubleValue() + ((Number) groupList.get(middle).getE1()).doubleValue())/2;
 				} else {
 					num_median = ((Number) groupList.get(middle).getE1()).doubleValue();
 				}								
