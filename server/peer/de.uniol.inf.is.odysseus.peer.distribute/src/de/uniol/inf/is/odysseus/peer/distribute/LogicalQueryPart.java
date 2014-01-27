@@ -80,7 +80,7 @@ public class LogicalQueryPart implements ILogicalQueryPart {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		for( ILogicalOperator operator : operators ) {
-			sb.append(operator.getName()).append("(").append(operator.hashCode()).append(")  ");
+			sb.append(operator.getName() + " ");//.append("(").append(operator.hashCode()).append(")  ");
 		}
 		sb.append("}");
 		return sb.toString();

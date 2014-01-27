@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.util;
+package de.uniol.inf.is.odysseus.peer.distribute.util.graph;
 
 import java.util.Collection;
 import java.util.Map;
@@ -12,9 +12,23 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
 public final class QueryPartGraph {
 
+	private static class QueryPartRelation {
+		
+		public ILogicalQueryPart queryPart;
+		public LogicalSubscription subscription;
+		public ILogicalOperator fromOperator;
+		
+		public QueryPartRelation( ILogicalQueryPart queryPart, LogicalSubscription subscription, ILogicalOperator fromOperator ) {
+			this.queryPart = queryPart;
+			this.subscription = subscription;
+			this.fromOperator = fromOperator;
+		}
+	}
+	
 	private final Collection<ILogicalQueryPart> queryParts = Lists.newArrayList();
 	private final Map<ILogicalQueryPart, QueryPartGraphNode> graphNodes;
 	
@@ -54,22 +68,23 @@ public final class QueryPartGraph {
 		
 		for( ILogicalQueryPart queryPart : nodeMap.keySet()) {
 			
-			Collection<ILogicalQueryPart> nextQueryParts = determineNextQueryParts(queryPart, operatorPartMap);
-			Collection<ILogicalQueryPart> previousQueryParts = determinePreviousQueryParts(queryPart, operatorPartMap);
+			Collection<QueryPartRelation> nextQueryPartRelations = determineNextQueryParts(queryPart, operatorPartMap);
+			Collection<QueryPartRelation> previousQueryPartRelations = determinePreviousQueryParts(queryPart, operatorPartMap);
 			
 			QueryPartGraphNode graphNode = nodeMap.get(queryPart);
 			
-			for( ILogicalQueryPart nextQueryPart : nextQueryParts ) {
-				QueryPartGraphNode nextGraphNode = nodeMap.get(nextQueryPart);
-				QueryPartGraphConnection connection = new QueryPartGraphConnection(graphNode, nextGraphNode);
+			for( QueryPartRelation nextQueryPartRelation : nextQueryPartRelations ) {
+				QueryPartGraphNode nextGraphNode = nodeMap.get(nextQueryPartRelation.queryPart);
+				
+				QueryPartGraphConnection connection = new QueryPartGraphConnection(graphNode, nextQueryPartRelation.fromOperator, nextGraphNode, nextQueryPartRelation.subscription.getTarget());
 				
 				graphNode.addConnection(connection);
 				nextGraphNode.addConnection(connection);
 			}
 			
-			for( ILogicalQueryPart prevQueryPart : previousQueryParts ) {
-				QueryPartGraphNode prevGraphNode = nodeMap.get(prevQueryPart);
-				QueryPartGraphConnection connection = new QueryPartGraphConnection(prevGraphNode, graphNode);
+			for( QueryPartRelation prevQueryPartRelation : previousQueryPartRelations ) {
+				QueryPartGraphNode prevGraphNode = nodeMap.get(prevQueryPartRelation.queryPart);
+				QueryPartGraphConnection connection = new QueryPartGraphConnection(prevGraphNode, prevQueryPartRelation.subscription.getTarget(), graphNode, prevQueryPartRelation.fromOperator);
 				
 				graphNode.addConnection(connection);
 				prevGraphNode.addConnection(connection);
@@ -79,8 +94,8 @@ public final class QueryPartGraph {
 		return nodeMap;
 	}
 
-	private static Collection<ILogicalQueryPart> determineNextQueryParts(ILogicalQueryPart queryPart, Map<ILogicalOperator, ILogicalQueryPart> operatorPartMap) {
-		Collection<ILogicalQueryPart> nextParts = Lists.newArrayList();
+	private static Collection<QueryPartRelation> determineNextQueryParts(ILogicalQueryPart queryPart, Map<ILogicalOperator, ILogicalQueryPart> operatorPartMap) {
+		Collection<QueryPartRelation> nextParts = Lists.newArrayList();
 		Collection<ILogicalOperator> relativeSinks = LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(queryPart);
 		for( ILogicalOperator relativeSink : relativeSinks ) {
 			
@@ -89,15 +104,15 @@ public final class QueryPartGraph {
 				ILogicalQueryPart queryPartOfTarget = operatorPartMap.get(target);
 				
 				if( queryPartOfTarget != null && !queryPartOfTarget.equals(queryPart)) {
-					nextParts.add(queryPartOfTarget);
+					nextParts.add(new QueryPartRelation(queryPartOfTarget, sub, relativeSink));
 				}
 			}
 		}
 		return nextParts;
 	}
 	
-	private static Collection<ILogicalQueryPart> determinePreviousQueryParts(ILogicalQueryPart queryPart, Map<ILogicalOperator, ILogicalQueryPart> operatorPartMap) {
-		Collection<ILogicalQueryPart> previousParts = Lists.newArrayList();
+	private static Collection<QueryPartRelation> determinePreviousQueryParts(ILogicalQueryPart queryPart, Map<ILogicalOperator, ILogicalQueryPart> operatorPartMap) {
+		Collection<QueryPartRelation> previousParts = Lists.newArrayList();
 		Collection<ILogicalOperator> relativeSources = LogicalQueryHelper.getRelativeSourcesOfLogicalQueryPart(queryPart);
 		for( ILogicalOperator relativeSource : relativeSources ) {
 			
@@ -106,7 +121,7 @@ public final class QueryPartGraph {
 				ILogicalQueryPart queryPartOfTarget = operatorPartMap.get(target);
 				
 				if( queryPartOfTarget != null  && !queryPartOfTarget.equals(queryPart)) {
-					previousParts.add(queryPartOfTarget);
+					previousParts.add(new QueryPartRelation(queryPartOfTarget, sub, relativeSource));
 				}
 			}
 		}

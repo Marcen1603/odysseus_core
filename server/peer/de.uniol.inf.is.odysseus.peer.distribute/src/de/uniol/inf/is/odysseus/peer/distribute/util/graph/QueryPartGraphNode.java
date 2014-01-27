@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.util;
+package de.uniol.inf.is.odysseus.peer.distribute.util.graph;
 
 import java.util.Collection;
 
