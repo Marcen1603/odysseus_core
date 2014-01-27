@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.relational_interval.logicaloperator.RelationalFastMedianAO;
-import de.uniol.inf.is.odysseus.relational_interval.physicaloperator.RelationalFastMapPO;
+import de.uniol.inf.is.odysseus.relational_interval.physicaloperator.RelationalFastMedianPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -18,7 +18,7 @@ public class TRelationalFastMedianAORule extends AbstractTransformationRule<Rela
 			TransformationConfiguration config) {
 		SDFSchema inputSchema = operator.getInputSchema(0);
 		int medianAttrPos = inputSchema.findAttributeIndex(operator.getMedianAttribute().getURI()); 
-		RelationalFastMapPO po = new RelationalFastMapPO(medianAttrPos);
+		RelationalFastMedianPO po = new RelationalFastMedianPO(medianAttrPos);
 		po.setGroupProcessor(new RelationalGroupProcessor(inputSchema, operator.getOutputSchema(), operator.getGroupingAttributes(), null));
 		defaultExecute(operator, po, config, true, true);
 	}

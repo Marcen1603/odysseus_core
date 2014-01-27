@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 
-public class RelationalFastMapPO<T extends Comparable<T>>
+public class RelationalFastMedianPO<T extends Comparable<T>>
 		extends
 		AbstractPipe<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> {
 
@@ -25,7 +25,7 @@ public class RelationalFastMapPO<T extends Comparable<T>>
 
 	final private int medianAttrPos;
 
-	public RelationalFastMapPO(int medianAttrPos) {
+	public RelationalFastMedianPO(int medianAttrPos) {
 		this.medianAttrPos = medianAttrPos;
 	}
 
@@ -73,11 +73,15 @@ public class RelationalFastMapPO<T extends Comparable<T>>
 
 		// Add new value sorted
 		int pos = Collections.binarySearch(groupList, p);
-		if (pos < 0) {
-			groupList.add(p);
+		//System.err.println(pos + " for " + p + " in List " + groupList);
+		if (pos < 0) { // Element not found in list
+			int insert = (-1) * pos - 1;
+			groupList.add(insert, p);
 		} else {
 			groupList.add(pos, p);
 		}
+
+		//System.err.println("After insert: " + groupList);
 
 		// Create Median
 		FESortedPair<T, Tuple<? extends ITimeInterval>> median = null;
