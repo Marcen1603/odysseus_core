@@ -11,7 +11,11 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.keyvalue.Activator
 Service-Component: OSGI-INF/*
-Import-Package: de.uniol.inf.is.odysseus.ruleengine.rule,
+Import-Package: com.fasterxml.jackson.core,
+ com.fasterxml.jackson.databind,
+ de.undercouch.bson4jackson,
+ de.undercouch.bson4jackson.serializers,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework;version="1.6.0",

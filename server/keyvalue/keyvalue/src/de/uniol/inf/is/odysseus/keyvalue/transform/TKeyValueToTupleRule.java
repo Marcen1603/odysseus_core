@@ -17,7 +17,7 @@ public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToT
 
 	@Override
 	public void execute(KeyValueToTupleAO operator, TransformationConfiguration config) {
-		defaultExecute(operator, new KeyValueToTuplePO<IMetaAttribute>(operator.isKeepInputObject()), config, true, false);
+		defaultExecute(operator, new KeyValueToTuplePO<IMetaAttribute>(operator.isKeepInputObject(), operator.getOutputSchema()), config, true, false);
 	}
 
 	@Override

@@ -29,6 +29,7 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 	public KeyValueToTupleAO(KeyValueToTupleAO keyValueToTuple) {
 		super(keyValueToTuple);
 		this.keepInputObject = keyValueToTuple.keepInputObject;
+		this.attributes = keyValueToTuple.attributes;
 	}
 
 	@Parameter(name="Schema", type=CreateSDFAttributeParameter.class, optional=false, isList=true)
@@ -60,7 +61,5 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 	public AbstractLogicalOperator clone() {
 		return new KeyValueToTupleAO(this);
 	}
-	
-	
 
 }

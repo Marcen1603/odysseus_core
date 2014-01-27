@@ -20,8 +20,9 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 
 	boolean keepInputObject;
 
-	public KeyValueToTuplePO(boolean keepInputObject) {
+	public KeyValueToTuplePO(boolean keepInputObject, SDFSchema outputSchema) {
 		this.keepInputObject = keepInputObject;
+		setOutputSchema(outputSchema);
 	}
 
 	public KeyValueToTuplePO(KeyValueToTuplePO<M> keyValueToTuplePO) {
