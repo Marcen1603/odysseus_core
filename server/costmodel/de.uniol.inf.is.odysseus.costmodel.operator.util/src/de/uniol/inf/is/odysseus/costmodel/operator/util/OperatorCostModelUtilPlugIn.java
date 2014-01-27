@@ -25,7 +25,6 @@ public class OperatorCostModelUtilPlugIn implements BundleActivator {
 	@Override
 	public void start(BundleContext context) {
 		if( OdysseusConfiguration.getBoolean("ac_operator_useHistograms", true) ) {
-			DataStreamRateSaver.getInstance().load();
 			CPURateSaver.getInstance().load();
 			MemoryUsageSaver.load();
 		}
@@ -34,7 +33,6 @@ public class OperatorCostModelUtilPlugIn implements BundleActivator {
 	@Override
 	public void stop(BundleContext context)  {
 		if( OdysseusConfiguration.getBoolean("ac_operator_useHistograms", true) ) {
-			DataStreamRateSaver.getInstance().save();
 			CPURateSaver.getInstance().save();
 			MemoryUsageSaver.save();
 		}

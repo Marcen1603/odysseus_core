@@ -26,8 +26,8 @@ import de.uniol.inf.is.odysseus.costmodel.operator.IOperatorEstimator;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorDetailCost;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
+import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.util.DataStreamRateSaver;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.CPURateSaver;
-import de.uniol.inf.is.odysseus.costmodel.operator.util.DataStreamRateSaver;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.MemoryUsageSaver;
 

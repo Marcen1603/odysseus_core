@@ -29,13 +29,17 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
+import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.util.DataStreamRateSaver;
 
 public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
+	
+	private static final long IDEAL_TIME_INTERVAL_SECONDS = 10;
 	
 	private static Logger _logger = null;
 
@@ -47,14 +51,21 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 	}
 
 	private final ISource<? extends IStreamObject<?>> source;
+	private final String sourceName;
 	private final List<IDataSourceObserverListener> listeners = new ArrayList<IDataSourceObserverListener>();
 	
 	private ISource<? extends IStreamObject<?>> connectingSource;
 
+	private long lastTimestamp = 0;
+	private long elementCount = 0;
+	private long maxElementCount = 5;
+	
+	
 	public DataSourceObserverSink( ISource<? extends IStreamObject<?>> source ) {
 		super();
 		
 		this.source = source;
+		this.sourceName = source.getOutputSchema().getAttribute(0).getSourceName();
 		connect();
 	}
 	
@@ -62,8 +73,16 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 		super();
 		
 		source = other.source;
+		sourceName = other.sourceName;
 		listeners.addAll(other.listeners);
 		connectingSource = other.connectingSource;
+	}
+	
+	@Override
+	protected void process_open() throws OpenFailedException {
+		super.process_open();
+		
+		lastTimestamp = System.currentTimeMillis();
 	}
 	
 	@Override
@@ -74,6 +93,18 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 	@Override
 	protected void process_next(IStreamObject<?> object, int port) {
 		fireStreamElementRecieveEvent(object, port);
+		
+		elementCount++;
+		if( elementCount >= maxElementCount ) {
+			
+			long timeDiff = System.currentTimeMillis() - lastTimestamp;
+			double datarate = ((double)elementCount / (double)timeDiff) * 1000;
+			DataStreamRateSaver.getInstance().set(sourceName,  datarate);
+			
+			lastTimestamp = System.currentTimeMillis();
+			maxElementCount = (int)(datarate * IDEAL_TIME_INTERVAL_SECONDS);
+			elementCount = 0;
+		}
 	}
 
 	@Override
@@ -83,11 +114,11 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void connect() {
-		Optional<ISource> connectingSource = getMetadataUpdatePOAsSource(source);
-		if( connectingSource.isPresent() ) {
+		Optional<ISource> optConnectingSource = getMetadataUpdatePOAsSource(source);
+		if( optConnectingSource.isPresent() ) {
 			
-			subscribeToSource(connectingSource.get(), 0, 0, connectingSource.get().getOutputSchema());
-			this.connectingSource = connectingSource.get(); 
+			connectingSource = optConnectingSource.get(); 
+			connectingSource.subscribeSink(this, 0, 0, connectingSource.getOutputSchema(), true, 0);
 			getLogger().debug("Source {} connected", source);					
 		} else {
 			getLogger().warn("Could not connect to {}", source);

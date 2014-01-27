@@ -7,6 +7,7 @@ Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.costmodel.operator,
  de.uniol.inf.is.odysseus.costmodel.operator.datasrc,
+ de.uniol.inf.is.odysseus.costmodel.operator.datasrc.util,
  de.uniol.inf.is.odysseus.mep.functions,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base,
