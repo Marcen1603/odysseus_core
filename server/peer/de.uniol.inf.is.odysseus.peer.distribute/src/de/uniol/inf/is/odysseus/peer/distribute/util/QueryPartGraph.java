@@ -58,19 +58,25 @@ public final class QueryPartGraph {
 			Collection<ILogicalQueryPart> previousQueryParts = determinePreviousQueryParts(queryPart, operatorPartMap);
 			
 			QueryPartGraphNode graphNode = nodeMap.get(queryPart);
-			graphNode.setNextNodes(transformToNodes(nextQueryParts, nodeMap));
-			graphNode.setPreviousNodes(transformToNodes(previousQueryParts, nodeMap));
+			
+			for( ILogicalQueryPart nextQueryPart : nextQueryParts ) {
+				QueryPartGraphNode nextGraphNode = nodeMap.get(nextQueryPart);
+				QueryPartGraphConnection connection = new QueryPartGraphConnection(graphNode, nextGraphNode);
+				
+				graphNode.addConnection(connection);
+				nextGraphNode.addConnection(connection);
+			}
+			
+			for( ILogicalQueryPart prevQueryPart : previousQueryParts ) {
+				QueryPartGraphNode prevGraphNode = nodeMap.get(prevQueryPart);
+				QueryPartGraphConnection connection = new QueryPartGraphConnection(prevGraphNode, graphNode);
+				
+				graphNode.addConnection(connection);
+				prevGraphNode.addConnection(connection);
+			}
 		}
 		
 		return nodeMap;
-	}
-
-	private static Collection<QueryPartGraphNode> transformToNodes(Collection<ILogicalQueryPart> queryParts, Map<ILogicalQueryPart, QueryPartGraphNode> nodeMap) {
-		Collection<QueryPartGraphNode> nodes = Lists.newArrayList();
-		for( ILogicalQueryPart queryPart : queryParts ) {
-			nodes.add(nodeMap.get(queryPart));
-		}
-		return nodes;
 	}
 
 	private static Collection<ILogicalQueryPart> determineNextQueryParts(ILogicalQueryPart queryPart, Map<ILogicalOperator, ILogicalQueryPart> operatorPartMap) {

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.distribute.util;
 import java.util.Collection;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -11,8 +12,7 @@ public class QueryPartGraphNode {
 
 	private final ILogicalQueryPart queryPart;
 	
-	private Collection<QueryPartGraphNode> previous = Lists.newArrayList();
-	private Collection<QueryPartGraphNode> next = Lists.newArrayList();
+	private final Collection<QueryPartGraphConnection> connections = Lists.newLinkedList();
 	
 	QueryPartGraphNode( ILogicalQueryPart queryPart) {
 		Preconditions.checkNotNull(queryPart, "Query Part for queryPartGraph must not be null!");
@@ -24,21 +24,64 @@ public class QueryPartGraphNode {
 		return queryPart;
 	}
 	
-	void setPreviousNodes(Collection<QueryPartGraphNode> nodes ) {
-		previous.clear();
-		previous.addAll(nodes); 
+	void addConnection(QueryPartGraphConnection connection ) {
+		if( !connections.contains(connection)) {
+			connections.add(connection);
+		}
 	}
 	
-	void setNextNodes( Collection<QueryPartGraphNode> nodes ) {
-		next.clear();
-		next.addAll(nodes);
+	public Collection<QueryPartGraphConnection> getConnections() {
+		return ImmutableList.copyOf(connections);
 	}
 	
-	public Collection<QueryPartGraphNode> getPreviousNodes() {
-		return previous;
+	public Collection<QueryPartGraphConnection> getConnectionsAsStart() {
+		Collection<QueryPartGraphConnection> startConnections = Lists.newLinkedList();
+		for( QueryPartGraphConnection connection : connections ) {
+			if( connection.getStartNode().equals(this)) {
+				startConnections.add(connection);
+			}
+		}
+		return startConnections;
 	}
 	
-	public Collection<QueryPartGraphNode> getNextNodes() {
-		return next;
+	public Collection<QueryPartGraphConnection> getConnectionsAsEnd() {
+		Collection<QueryPartGraphConnection> endConnections = Lists.newLinkedList();
+		for( QueryPartGraphConnection connection : connections ) {
+			if( connection.getEndNode().equals(this)) {
+				endConnections.add(connection);
+			}
+		}
+		return endConnections;
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if( !(other instanceof QueryPartGraphNode)) {
+			return false;
+		}
+		if( other == this ) {
+			return true;
+		}
+		
+		QueryPartGraphNode node = (QueryPartGraphNode)other;
+		return queryPart.equals(node.queryPart);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("QueryPartGraphNode[").append(queryPart);
+		
+		Collection<QueryPartGraphConnection> connectionsAsStart = getConnectionsAsStart();
+		if( !connectionsAsStart.isEmpty() ) {
+			sb.append("Connected to ");
+			for( QueryPartGraphConnection connection : connectionsAsStart) {
+				sb.append(connection.getEndNode().getQueryPart());
+			}
+		} else {
+			sb.append("Not connected");
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 }

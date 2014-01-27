@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.Bid;
 import de.uniol.inf.is.odysseus.peer.distribute.util.QueryPartGraph;
+import de.uniol.inf.is.odysseus.peer.distribute.util.QueryPartGraphConnection;
 import de.uniol.inf.is.odysseus.peer.distribute.util.QueryPartGraphNode;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMapNode;
@@ -107,10 +108,11 @@ public class ForceModel {
 				ILogicalQueryPart queryPart = forceNode.getQueryPart();
 				
 				QueryPartGraphNode graphNode = partGraph.getGraphNode(queryPart);
-				Collection<QueryPartGraphNode> nextQueryPartNodes = graphNode.getNextNodes();
-				if( !nextQueryPartNodes.isEmpty() ) {
-					for( QueryPartGraphNode nextQueryPartNode : nextQueryPartNodes ) {
-						ILogicalQueryPart nextQueryPart = nextQueryPartNode.getQueryPart();
+				Collection<QueryPartGraphConnection> nextQueryPartConnections = graphNode.getConnectionsAsStart();
+				
+				if( !nextQueryPartConnections.isEmpty() ) {
+					for( QueryPartGraphConnection nextQueryPartConnection : nextQueryPartConnections ) {
+						ILogicalQueryPart nextQueryPart = nextQueryPartConnection.getEndNode().getQueryPart();
 						
 						ForceNode nextForceNode = determineForceNode(nextQueryPart, forceNodes);
 						new Force(forceNode, nextForceNode, 1); // TODO: Insert Data rate
