@@ -131,7 +131,10 @@ public class Communicator implements IAdvertisementListener {
 
 	private void processActionQueryAdvertisement(AuctionQueryAdvertisement adv) {
 		if (!adv.getOwnerPeerId().equals(p2pNetworkManager.getLocalPeerID())) {
+			
 			LOG.debug("Received query to bid to auction {}", adv.getAuctionId());
+			LOG.debug("PQL-Statement is \n{}", adv.getPqlStatement());
+			
 			ILogicalQuery query = Helper.getLogicalQuery(adv.getPqlStatement()).get(0);
 
 			IBidProvider bidProvider = SurveyBasedAllocationPlugIn.getSelectedBidProvider();

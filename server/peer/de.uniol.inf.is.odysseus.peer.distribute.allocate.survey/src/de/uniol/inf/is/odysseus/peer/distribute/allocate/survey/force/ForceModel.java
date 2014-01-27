@@ -111,8 +111,10 @@ public class ForceModel {
 				if( !nextQueryPartNodes.isEmpty() ) {
 					for( QueryPartGraphNode nextQueryPartNode : nextQueryPartNodes ) {
 						ILogicalQueryPart nextQueryPart = nextQueryPartNode.getQueryPart();
+						
 						ForceNode nextForceNode = determineForceNode(nextQueryPart, forceNodes);
 						new Force(forceNode, nextForceNode, 1); // TODO: Insert Data rate
+						
 					}
 				} else {
 					new Force( forceNode, localForceNode, 1 ); // TODO: Insert Data rate
