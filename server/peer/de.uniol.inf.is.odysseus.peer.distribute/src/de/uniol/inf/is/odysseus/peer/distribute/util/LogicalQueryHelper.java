@@ -79,7 +79,7 @@ public final class LogicalQueryHelper {
 		walker.prefixWalk(originPlan, copyVisitor);
 		return copyVisitor.getResult();
 	}
-
+	
 	public static String generatePQLStatementFromQueryPart( ILogicalQueryPart part ) {
 		
 		List<ILogicalOperator> operators = Lists.newArrayList(part.getOperators());

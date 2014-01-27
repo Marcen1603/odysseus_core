@@ -267,10 +267,16 @@ public class QueryDistributor implements IQueryDistributor {
 	private static ILogicalQuery buildLocalQuery(Collection<ILogicalQueryPart> localQueryParts) {
 		Collection<ILogicalOperator> sinks = Lists.newArrayList();
 		for( ILogicalQueryPart localPart : localQueryParts ) {
+			Collection<ILogicalOperator> partOperators = localPart.getOperators();
 			
-			ILogicalOperator firstOp = localPart.getOperators().iterator().next();
-			Collection<ILogicalOperator> allOperators = LogicalQueryHelper.getAllOperators(firstOp);
-			
+			Collection<ILogicalOperator> allOperators = Lists.newArrayList();
+			for( ILogicalOperator operator : partOperators) {
+				for( ILogicalOperator op : LogicalQueryHelper.getAllOperators(operator)) {
+					if( !allOperators.contains(op)) {
+						allOperators.add(op);
+					}
+				}
+			}
 			sinks.addAll(LogicalQueryHelper.getSinks(allOperators));
 		}
 		LOG.debug("Determined {} logical sinks", sinks.size());
