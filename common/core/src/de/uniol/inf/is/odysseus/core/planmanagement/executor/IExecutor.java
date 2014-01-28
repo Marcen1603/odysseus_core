@@ -381,22 +381,67 @@ public interface IExecutor extends IClientPlanManager {
 	 */
 	public SDFSchema getOutputSchema(int queryId, ISession session);
 
-	// stored procedure stuff
+	/**
+	 * Adds a new stored procedure, which should be saved
+	 * @param name A unique name of the procedure
+	 * @param proc The stored procedure
+	 * @param caller The current user
+	 */
 	public void addStoredProcedure(String name, StoredProcedure proc, ISession caller);
 
+	/**
+	 * Removes a saved procedure
+	 * @param name The name of the stored procedure that should be removed
+	 * @param caller The current user
+	 */
 	public void removeStoredProcedure(String name, ISession caller);
 
+	/**
+	 * Gets the stored procedure by its name 
+	 * @param name The name of the procedure
+	 * @param caller The current user
+	 * @return The stored procedure
+	 */
 	public StoredProcedure getStoredProcedure(String name, ISession caller);
 
+	/**
+	 * Returns the list of all saved stored procedures for the user
+	 * @param caller The current user
+	 * @return A list of stored procedures
+	 */
 	public List<StoredProcedure> getStoredProcedures(ISession caller);
 
+	/**
+	 * Checks whether a stored procedure exists
+	 * @param name The name of the stored procedure
+	 * @param caller The current user
+	 * @return true, if there is a stored procedure with this name
+	 */
 	public boolean containsStoredProcedures(String name, ISession caller);
 
-	// available operator informations
+	/**
+	 * Gets the name of all installed operators
+	 * 
+	 * @param caller The current user
+	 * @return A list of the names
+	 */
 	public List<String> getOperatorNames(ISession caller);
 
+	/**
+	 * Gets a description of all installed operators that can be used e.g. in PQL
+	 * 
+	 * @param caller The current user
+	 * @return a list of operator information
+	 */
 	public List<LogicalOperatorInformation> getOperatorInformations(ISession caller);
 
+	/**
+	 * Gets the logical description of a certain operator
+	 *  
+	 * @param name The name of the operator
+	 * @param caller The current user
+	 * @return a description of the logical operator
+	 */
 	public LogicalOperatorInformation getOperatorInformation(String name, ISession caller);
 
 }
