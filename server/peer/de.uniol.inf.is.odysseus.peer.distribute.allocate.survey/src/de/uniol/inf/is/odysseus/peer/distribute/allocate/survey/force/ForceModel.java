@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.Bid;
+import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.util.graph.QueryPartGraph;
 import de.uniol.inf.is.odysseus.peer.distribute.util.graph.QueryPartGraphConnection;
 import de.uniol.inf.is.odysseus.peer.distribute.util.graph.QueryPartGraphNode;
@@ -119,11 +120,15 @@ public class ForceModel {
 						ILogicalQueryPart nextQueryPart = nextQueryPartConnection.getEndNode().getQueryPart();
 						
 						ForceNode nextForceNode = determineForceNode(nextQueryPart, forceNodes);
-						new Force(forceNode, nextForceNode, dataRate); // TODO: Insert Data rate
-						
+						new Force(forceNode, nextForceNode, dataRate); 
 					}
+					
 				} else {
-					new Force( forceNode, localForceNode, 1 ); // TODO: Insert Data rate
+					Collection<ILogicalOperator> relativeSinks = LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(queryPart);
+					ILogicalOperator firstRelativeSink = relativeSinks.iterator().next();
+					Double dataRate = operatorDataRateMap.get(firstRelativeSink);
+					
+					new Force( forceNode, localForceNode, dataRate );
 				}
 			}
 		}
@@ -201,22 +206,31 @@ public class ForceModel {
 	}
 
 	public Map<ILogicalQueryPart, PeerID> getResult() {
+		LOG.debug("Evaluating force-results");
+		
 		Map<PeerID, Vector3D> positionMap = Maps.newHashMap();
 		for( PeerID peerID : pingMap.getRemotePeerIDs() ) {
 			positionMap.put(peerID, pingMap.getNode(peerID).get().getPosition());
 		}
 		positionMap.put(pingMap.getLocalPeerID(), pingMap.getLocalPosition());
-		normalize(positionMap);
 		
 		Map<ILogicalQueryPart, PeerID> result = Maps.newHashMap();
+		PositionNormalizer normalizer = new PositionNormalizer(positionMap.values());
 		for( ILogicalQueryPart queryPart : bids.keySet() ) {
+			LOG.debug("Determine best peer for queryPart {}", queryPart);
 			
 			Collection<Bid> bidsForQueryPart = bids.get(queryPart);
 			if( bidsForQueryPart.size() == 1 ) {
-				result.put(queryPart, bidsForQueryPart.iterator().next().getBidderPeerID());
+				Bid oneAndOnlyBid = bidsForQueryPart.iterator().next();
+				result.put(queryPart, oneAndOnlyBid.getBidderPeerID());
+				
+				LOG.debug("Got only one bid (value={}) from peer {}", oneAndOnlyBid.getValue(), p2pDictionary.getRemotePeerName(oneAndOnlyBid.getBidderPeerID()).get());
 			} else {
+				LOG.debug("Got {} bids for this query part", bidsForQueryPart.size());
+				
 				ForceNode forceNodeOfQueryPart = determineForceNode(queryPart, forceNodes);
-				PeerID bestPeer = determineNearestPeerWithBestBid( forceNodeOfQueryPart.getPosition(), positionMap, bidsForQueryPart);
+				
+				PeerID bestPeer = determineNearestPeerWithBestBid( forceNodeOfQueryPart.getPosition(), positionMap, normalizer, bidsForQueryPart);
 				
 				result.put(queryPart, bestPeer);
 			}
@@ -226,61 +240,22 @@ public class ForceModel {
 		return result;
 	}
 
-	private static void normalize(Map<PeerID, Vector3D> positionMap) {
-		double minX = Double.MAX_VALUE;
-		double minY = Double.MAX_VALUE;
-		double minZ = Double.MAX_VALUE;
-		double maxX = Double.MIN_VALUE;
-		double maxY = Double.MIN_VALUE;
-		double maxZ = Double.MIN_VALUE;
-		for( Vector3D position : positionMap.values()) {
-			if( position.getX() < minX ) {
-				minX = position.getX();
-			}
-			if( position.getY() < minY ) {
-				minY = position.getY();
-			}
-			if( position.getZ() < minZ ) {
-				minZ = position.getZ();
-			}
-			
-			if( position.getX() > maxX ) {
-				maxX = position.getX();
-			}
-			if( position.getY() > maxY ) {
-				maxY = position.getY();
-			}
-			if( position.getZ() > maxZ ) {
-				maxZ = position.getZ();
-			}
-		}
-		
-		double distX = maxX - minX;
-		double distY = maxY - minY;
-		double distZ = maxZ - minZ;
-		
-		for( PeerID peerID : positionMap.keySet().toArray(new PeerID[0])) {
-			Vector3D position = positionMap.get(peerID);
-			Vector3D newPos = new Vector3D( distX > 0 ? (position.getX() - minX) / distX : 1, 
-					distY > 0 ? (position.getY() - minY) / distY : 1,
-					distZ > 0 ? (position.getZ() - minZ) / distZ : 1);
-			
-			positionMap.put(peerID, newPos);
-		}
-	}
 
-	private static PeerID determineNearestPeerWithBestBid(Vector3D position, Map<PeerID, Vector3D> positionMap, Collection<Bid> bidsForQueryPart) {
+
+	private static PeerID determineNearestPeerWithBestBid(Vector3D position, Map<PeerID, Vector3D> positionMap, PositionNormalizer normalizer, Collection<Bid> bidsForQueryPart) {
 		Map<PeerID, Bid> bidMap = createBidMap(bidsForQueryPart);
 		
 		PeerID bestPeer = null;
 		double bestPeerDistanceToPerfect = Double.MAX_VALUE;
+		Vector3D normPosition = normalizer.normalize(position);
+		
 		for( PeerID peerID : bidMap.keySet() ) {
 			double bidValueOfPeer = bidMap.get(peerID).getValue();
-			Vector3D positionOfPeer = positionMap.get(peerID);
+			Vector3D normPositionOfPeer = normalizer.normalize(positionMap.get(peerID));
 
-			double distX = Math.abs(position.getX() - positionOfPeer.getX());
-			double distY = Math.abs(position.getY() - positionOfPeer.getY());
-			double distZ = Math.abs(position.getZ() - positionOfPeer.getZ());
+			double distX = Math.abs(normPosition.getX() - normPositionOfPeer.getX());
+			double distY = Math.abs(normPosition.getY() - normPositionOfPeer.getY());
+			double distZ = Math.abs(normPosition.getZ() - normPositionOfPeer.getZ());
 			double distB = 1 - bidValueOfPeer;
 			
 			double peerDistanceToPerfect = Math.sqrt( (distX * distX) + (distY * distY ) + (distZ * distZ) + (distB * distB));
@@ -288,8 +263,14 @@ public class ForceModel {
 				bestPeer = peerID;
 				bestPeerDistanceToPerfect = peerDistanceToPerfect;
 			}
+			
+			if( LOG.isDebugEnabled() ) {
+				LOG.debug("Peer {} has bidValue of {} and due to latencies a peerValue of {}", 
+						new Object[] {p2pDictionary.getRemotePeerName(peerID).get(), bidValueOfPeer, peerDistanceToPerfect});
+			}
 		}
 		
+		LOG.debug("Best peer is {}", p2pDictionary.getRemotePeerName(bestPeer).get());
 		return bestPeer;
 	}
 

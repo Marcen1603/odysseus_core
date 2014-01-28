@@ -144,7 +144,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 			if (!nonRealSinksOfQueryPart.isEmpty()) {
 				LOG.debug("Found non real sinks {}", nonRealSinksOfQueryPart);
 				for (ILogicalOperator nonRealSink : nonRealSinksOfQueryPart) {
-					RenameAO renameAO = new RenameAO();
+					RenameAO renameAO = new RenameAO(); // TODO: Check
 					renameAO.setNoOp(true);
 					renameAO.setOutputSchema(nonRealSink.getOutputSchema());
 
