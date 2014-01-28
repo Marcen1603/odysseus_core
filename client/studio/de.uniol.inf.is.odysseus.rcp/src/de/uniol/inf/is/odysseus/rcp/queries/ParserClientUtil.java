@@ -14,6 +14,7 @@ public class ParserClientUtil {
 		IProject project = file.getProject();
 		String localRootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 
+		String projectName = project.getName();
 		Context context = Context.empty();
 		context.put("WORKSPACE", localRootLocation);
 		context.put("WORKSPACE/", localRootLocation + File.separator);
@@ -22,9 +23,9 @@ public class ParserClientUtil {
 		context.put("PROJECTPATH", project.getLocation().toOSString());
 		context.put("PROJECTPATH\\", project.getLocation().toOSString() + File.separator);
 		context.put("PROJECTPATH/", project.getLocation().toOSString() + File.separator);
-		context.put("WORKSPACEPROJECT", localRootLocation + File.separator + project.getName());
-		context.put("WORKSPACEPROJECT\\", localRootLocation + File.separator + project + File.separator);
-		context.put("WORKSPACEPROJECT/", localRootLocation + File.separator + project + File.separator);
+		context.put("WORKSPACEPROJECT", localRootLocation + File.separator + projectName);
+		context.put("WORKSPACEPROJECT\\", localRootLocation + File.separator + projectName + File.separator);
+		context.put("WORKSPACEPROJECT/", localRootLocation + File.separator + projectName + File.separator);
 		context.put("\\", File.separator);
 		context.put("/", File.separator);
 		

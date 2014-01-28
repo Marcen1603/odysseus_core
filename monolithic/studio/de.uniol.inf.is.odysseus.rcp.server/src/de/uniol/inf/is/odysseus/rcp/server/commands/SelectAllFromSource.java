@@ -59,7 +59,7 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 	}
 
 	private static Collection<Integer> createQueryToSelectAllDataFromSource(Resource sourceName, ISession caller) {
-		return OdysseusRCPServerPlugIn.getServerExecutor().addQuery("SELECT * FROM " + sourceName + ";", "CQL", caller, "Standard",(Context) null);
+		return OdysseusRCPServerPlugIn.getServerExecutor().addQuery("SELECT * FROM " + sourceName + ";", "CQL", caller, "Standard", Context.empty());
 	}
 
 	private static void startQueries(Collection<Integer> queryIDs, ISession caller) {
@@ -67,7 +67,7 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 			try {
 				OdysseusRCPServerPlugIn.getServerExecutor().startQuery(queryID, caller);
 			} catch( Throwable t ) {
-				LOG.error("Could not start query for viewing source data");
+				LOG.error("Could not start query for viewing source data", t);
 			}
 		}
 	}
