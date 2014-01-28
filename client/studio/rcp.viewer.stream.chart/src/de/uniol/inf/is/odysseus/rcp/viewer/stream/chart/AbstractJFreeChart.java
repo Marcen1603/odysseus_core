@@ -94,6 +94,8 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 	private ChangeSettingsAction changeSettingsAction;
 	private final Map<Integer, List<String>> loadedChoosenAttributes = Maps
 			.newHashMap();
+	private final Map<Integer, List<String>> loadedGroupedAttributes = Maps
+			.newHashMap();
 
 	private List<IDashboardPartListener> listener = new ArrayList<>();
 	private IDashboardPartQueryTextProvider queryTextProvider;
@@ -335,6 +337,11 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 					String key = port + "#" + choosenAttribute.getName();
 					toSave.put(key, "choosenAttribute");
 				}
+				for (IViewableAttribute groupedAttribute : getGroupByAttributes(port)) {
+					String key = "GROUPED#" + port + "#"
+							+ groupedAttribute.getName();
+					toSave.put(key, "groupedAttribute");
+				}
 			}
 
 			for (MethodSetting ms : getChartSettings()) {
@@ -355,12 +362,24 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 	@Override
 	public void onLoad(Map<String, String> saved) {
 		loadedChoosenAttributes.clear();
+		loadedGroupedAttributes.clear();
 
 		for (Entry<String, String> values : saved.entrySet()) {
 
 			String key = values.getKey();
 
-			if (key.contains("#")) {
+			if (key.startsWith("GROUPED")) {
+				String[] splittedKey = key.split("#");
+
+				Integer port = Integer.valueOf(splittedKey[1]);
+				String groupedAttribute = splittedKey[2];
+
+				if (!loadedGroupedAttributes.containsKey(port)) {
+					loadedGroupedAttributes.put(port,
+							Lists.<String> newArrayList());
+				}
+				loadedGroupedAttributes.get(port).add(groupedAttribute);
+			}else if (key.contains("#")) {
 				String[] splittedKey = key.split("#");
 
 				Integer port = Integer.valueOf(splittedKey[0]);
@@ -423,6 +442,8 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 			int port = s.getSinkInPort();
 			List<String> preChoosenAttributesOfPort = loadedChoosenAttributes
 					.get(port);
+			List<String> preGroupingAttributesOfPort = loadedGroupedAttributes
+					.get(port);
 
 			this.viewSchema
 					.put(port,
@@ -431,6 +452,8 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 									s.getTarget().getMetaAttributeSchema(),
 									port,
 									preChoosenAttributesOfPort != null ? preChoosenAttributesOfPort
+											: Lists.<String> newArrayList(),
+									preGroupingAttributesOfPort != null ? preGroupingAttributesOfPort
 											: Lists.<String> newArrayList()));
 		}
 
