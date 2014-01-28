@@ -41,15 +41,10 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 	 */
 	private static final Logger log = LoggerFactory.getLogger(AbstractHorizontalFragmentationQueryPartModificator.class);
 	
-	/**
-	 * The class of the used operator for reunion.
-	 */
-	private static final Class<? extends ILogicalOperator> reunionClass = UnionAO.class;
-	
 	@Override
-	protected Class<? extends ILogicalOperator> getReunionClass() {
+	protected ILogicalOperator createOperatorForReunion() {
 		
-		return AbstractHorizontalFragmentationQueryPartModificator.reunionClass;
+		return new UnionAO();
 		
 	}
 	
@@ -111,18 +106,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> modifiedCopiesToOrigin = Maps.newHashMap(copiesToOrigin);
 		
 		// Create operator for reunion
-		ILogicalOperator operatorForReunion = null;
-		try {
-		
-			operatorForReunion = this.getReunionClass().newInstance();
-			
-		} catch(Exception e) {
-			
-			String message = "Could not instantiate operator for reunion!";
-			AbstractHorizontalFragmentationQueryPartModificator.log.error(message, e);
-			throw new QueryPartModificationException(message, e);
-			
-		}
+		ILogicalOperator operatorForReunion = this.createOperatorForReunion();
 		
 		int sinkInPort = 0;
 		int sourceOutPort = 0;
@@ -171,7 +155,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 		Collection<ILogicalQueryPart> copiesOfReunionPart = Lists.newArrayList(reunionPart);
 		modifiedCopiesToOrigin.put(reunionPart, copiesOfReunionPart);
 		
-		modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.handlePartOfFragmentation(
+		modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.unionPartOfFragmentationWithGivenPart(
 				reunionPart, modifiedCopiesToOrigin, originSink, historyOfOperatorsForFragmentation);
 		return modifiedCopiesToOrigin;
 		

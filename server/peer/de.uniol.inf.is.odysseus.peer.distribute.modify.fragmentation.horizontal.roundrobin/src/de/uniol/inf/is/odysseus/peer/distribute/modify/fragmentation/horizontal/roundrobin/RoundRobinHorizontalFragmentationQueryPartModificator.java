@@ -14,27 +14,17 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
 public class RoundRobinHorizontalFragmentationQueryPartModificator extends
 		AbstractHorizontalFragmentationQueryPartModificator {
 
-	/**
-	 * The name of this modificator.
-	 */
-	private static final String name = "fragmentation_horizontal_roundrobin";
-	
-	/**
-	 * The class of the used operator for fragmentation.
-	 */
-	private static final Class<? extends ILogicalOperator> fragmentationClass = RoundRobinFragmentAO.class;
-
 	@Override
 	public String getName() {
 		
-		return RoundRobinHorizontalFragmentationQueryPartModificator.name;
+		return "fragmentation_horizontal_roundrobin";
 		
 	}
 
 	@Override
-	protected Class<? extends ILogicalOperator> getFragmentationClass() {
+	protected ILogicalOperator createOperatorForFragmentation() {
 		
-		return RoundRobinHorizontalFragmentationQueryPartModificator.fragmentationClass;
+		return new RoundRobinFragmentAO();
 		
 	}
 
