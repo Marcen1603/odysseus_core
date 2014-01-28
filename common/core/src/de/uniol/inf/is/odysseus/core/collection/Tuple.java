@@ -298,7 +298,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	public Tuple<T> append(Object object, boolean createNew) {
 		Object[] newAttrs = null;
 		if (this.attributes != null) {
-			newAttrs= Arrays.copyOf(this.attributes,
+			newAttrs = Arrays.copyOf(this.attributes,
 					this.attributes.length + 1);
 			newAttrs[this.attributes.length] = object;
 		} else {
@@ -634,19 +634,20 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 					"The number of attributes for the hash code "
 							+ "should be less or equal to the number of all attributes of the Tupel");
 		}
-		for (int i = 0; i < attributeNumbers.length; i++) {
-			if (attributeNumbers[i] <= this.attributes.length) {
-				continue;
-			} else {
-				throw new IllegalArgumentException(
-						"The attribute with the number " + attributeNumbers[i]
-								+ " is not a valid"
-								+ " attribute in the given Tuple");
-			}
-		}
+		// Will create an exception anyway
+//		for (int i = 0; i < attributeNumbers.length; i++) {
+//			if (attributeNumbers[i] <= this.attributes.length) {
+//				continue;
+//			} else {
+//				throw new IllegalArgumentException(
+//						"The attribute with the number " + attributeNumbers[i]
+//								+ " is not a valid"
+//								+ " attribute in the given Tuple");
+//			}
+//		}
 		int ret = 0;
 		for (int i = 0; i < attributeNumbers.length; i++) {
-			Object o = this.attributes[attributeNumbers[i] - 1];
+			Object o = this.attributes[attributeNumbers[i]];
 			if (o != null) {
 				ret += o.hashCode() * Primes.PRIMES[i % Primes.size()];
 			}
