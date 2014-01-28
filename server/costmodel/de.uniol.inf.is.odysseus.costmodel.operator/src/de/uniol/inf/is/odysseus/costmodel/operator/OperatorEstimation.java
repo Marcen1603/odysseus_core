@@ -146,25 +146,29 @@ public class OperatorEstimation<T> {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		if(getDetailCost() != null ) {
-			sb.append("cpu = ").append(getDetailCost().getProcessorCost()).append(", ");
-			sb.append("mem = ").append(getDetailCost().getMemoryCost()).append(", ");
+			sb.append("cpu = ").append(format(getDetailCost().getProcessorCost())).append(", ");
+			sb.append("mem = ").append(format(getDetailCost().getMemoryCost())).append(", ");
 		} else {
 			sb.append("no detail cost, ");
 		}
 		
 		if( getDataStream() != null ) {
-			sb.append("r = ").append(getDataStream().getDataRate()).append(", ");
-			sb.append("g = ").append(getDataStream().getIntervalLength()).append(", ");
+			sb.append("r = ").append(format(getDataStream().getDataRate())).append(", ");
+			sb.append("g = ").append(format(getDataStream().getIntervalLength())).append(", ");
 		} else {
 			sb.append("no data stream, ");
 		}
 		if( getSelectivity() != null ) {
-			sb.append("sel = ").append(getSelectivity());
+			sb.append("sel = ").append(format(getSelectivity()));
 		} else {
 			sb.append("no selectivity");
 		}
 		sb.append("}");
 		
 		return sb.toString();
+	}
+	
+	private static String format( double value) {
+		return String.format("%-10.3f", value);
 	}
 }
