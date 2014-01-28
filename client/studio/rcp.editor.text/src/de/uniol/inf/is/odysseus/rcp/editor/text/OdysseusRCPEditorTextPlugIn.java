@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.editor.text;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -45,6 +47,7 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	private static OdysseusRCPEditorTextPlugIn plugin;
 	private static IExecutor executor;
 	private static Map<String, IEditorLanguagePropertiesProvider> completionproviders = new HashMap<String, IEditorLanguagePropertiesProvider>();
+	private List<String> cachedAggregateFunctions;
 
 	@Override
 	public void start(BundleContext context) throws Exception {
@@ -126,6 +129,15 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 		for(SDFDatatype dt : dts){
 			list.add(dt.getQualName());
 		}
+		Collections.sort(list);
 		return list;
+	}
+	
+	public synchronized List<String> getInstalledAggregateFunctions(@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel){
+		if(cachedAggregateFunctions == null){
+			cachedAggregateFunctions = new ArrayList<String>(getExecutor().getRegisteredAggregateFunctions(datamodel, OdysseusRCPPlugIn.getActiveSession()));
+			Collections.sort(cachedAggregateFunctions);
+		}
+		return cachedAggregateFunctions;
 	}
 }

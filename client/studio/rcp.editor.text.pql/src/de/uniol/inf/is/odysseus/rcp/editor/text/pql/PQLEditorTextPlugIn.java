@@ -1,10 +1,14 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.pql;
 
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
@@ -34,6 +38,7 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 		imageManager.register("sources", "icons/sources.png");
 		imageManager.register("sinks", "icons/sinks.png");
 		imageManager.register("attribute", "icons/attribute.png");
+		imageManager.register("value", "icons/value.png");
 	}
 
 	@Override
@@ -61,5 +66,10 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 	
 	public static List<LogicalOperatorInformation> getOperatorInformations() {
 		return OdysseusRCPEditorTextPlugIn.getExecutor().getOperatorInformations(OdysseusRCPPlugIn.getActiveSession());
+	}
+
+	public static Set<Entry<Resource,ILogicalOperator>> getCurrentSources() {
+		return OdysseusRCPEditorTextPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession());
+		
 	}
 }

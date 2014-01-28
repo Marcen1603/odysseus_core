@@ -396,7 +396,7 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 		// print all operator build in upper case
 		final String upperContent = partText.toUpperCase();
 		for (String name : PQLEditorTextPlugIn.getOperatorNames()) {
-			name = name.toUpperCase();
+			name = name.toUpperCase()+"(";
 			int index = upperContent.indexOf(name, 0);
 			while (index >= 0 && index <= partText.length()) {
 				partText = insertInstead(partText, name, index, name.length());
