@@ -11,6 +11,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -81,13 +82,15 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 		
 	}
 	
+	@Override
 	protected Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> insertOperatorForReunion(
 			ILogicalQueryPart originPart,
 			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin,
 			ILogicalOperator originSink,
 			Collection<ILogicalOperator> copiesOfOriginSink,
 			Optional<LogicalSubscription> optSubscription,
-			Collection<ILogicalOperator> targets)
+			Collection<ILogicalOperator> targets,
+			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation)
 			throws NullPointerException, QueryPartModificationException{
 		
 		// Preconditions
@@ -203,8 +206,8 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 				
 				AbstractHorizontalFragmentationQueryPartModificator.log.debug("Found {} as an aggregation in {}", operator, originPart);
 			
-				return Optional.of(AbstractHorizontalFragmentationQueryPartModificator.changeAggregation(
-						originPart, copiesToOrigin, (AggregateAO) operator));
+				optAggregation = Optional.of(AbstractHorizontalFragmentationQueryPartModificator.changeAggregation(
+						originPart, copiesToOrigin, (AggregateAO) operator)); 
 			
 			} else if(operator instanceof AggregateAO)
 				throw new QueryPartModificationException("Can not fragment a query part containing more than one aggregation!");
