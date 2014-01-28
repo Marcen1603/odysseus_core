@@ -141,8 +141,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			AbstractHorizontalFragmentationQueryPartModificator.log.debug("Inserted an aggregation after {}", operatorForReunion);
 			
 		}
-	
-
+		
 		// Subscribe the targets to the last operator of reunion part
 		for(ILogicalOperator target : targets)
 			lastOperatorOfReunionPart.subscribeSink(target, sinkInPort, 0, schema);		

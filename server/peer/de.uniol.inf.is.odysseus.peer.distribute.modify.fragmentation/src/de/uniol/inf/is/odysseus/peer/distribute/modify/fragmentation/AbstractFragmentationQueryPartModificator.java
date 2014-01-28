@@ -555,26 +555,35 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 						targets.addAll(LogicalQueryHelper.collectCopies(
 								optPartOfTarget.get(), modifiedCopiesToOrigin.get(optPartOfTarget.get()), target));
 							
-						if(partsToBeFragmented.contains(optPartOfTarget.get()) && 
-								this.canOptimizeSubscription(originPart, modifiedCopiesToOrigin, originSink, copiedSinks, subToSink)) {
+						if(partsToBeFragmented.contains(optPartOfTarget.get())) {
 							
 							LogicalSubscription subscription = new LogicalSubscription(originSink, subToSink.getSinkInPort(), 
 									subToSink.getSourceOutPort(), subToSink.getSchema());
-							modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.removeOperatorForFragmentation(
-									modifiedCopiesToOrigin, subToSink.getTarget(), subscription, historyOfOperatorsForFragmentation);
-							for(int copyNo = 0; copyNo < copiedSinks.size(); copyNo++) {
-								
-								Collection<ILogicalOperator> singleSource = 
-										Lists.newArrayList(((List<ILogicalOperator>) (Collection<ILogicalOperator>) copiedSinks).get(copyNo));
-								Collection<ILogicalOperator> singleTarget = 
-										Lists.newArrayList(((List<ILogicalOperator>) (Collection<ILogicalOperator>) targets).get(copyNo));
-								
-								modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.connect(modifiedCopiesToOrigin, singleSource, 
-										subToSink, singleTarget);
-								
-							}
 							
-							continue;
+							if(this.canOptimizeSubscription(originPart, modifiedCopiesToOrigin, originSink, copiedSinks, subToSink)) {
+							
+								modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.removeOperatorForFragmentation(
+										modifiedCopiesToOrigin, subToSink.getTarget(), subscription, historyOfOperatorsForFragmentation);
+								for(int copyNo = 0; copyNo < copiedSinks.size(); copyNo++) {
+									
+									Collection<ILogicalOperator> singleSource = 
+											Lists.newArrayList(((List<ILogicalOperator>) (Collection<ILogicalOperator>) copiedSinks).get(copyNo));
+									Collection<ILogicalOperator> singleTarget = 
+											Lists.newArrayList(((List<ILogicalOperator>) (Collection<ILogicalOperator>) targets).get(copyNo));
+									
+									modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.connect(modifiedCopiesToOrigin, singleSource, 
+											subToSink, singleTarget);
+									
+								}
+								
+								continue;
+								
+							} else {
+								
+								targets.clear();
+								targets.add(AbstractFragmentationQueryPartModificator.findOperatorForFragmentation(
+									target, subscription, historyOfOperatorsForFragmentation).get());
+							}
 							
 						}
 						
@@ -590,6 +599,42 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		}
 		
 		return modifiedCopiesToOrigin;
+		
+	}
+
+	/**
+	 * Finds an inserted operator for fragmentation, is there is any for the given origin source and subscription.
+	 * @param originSource The origin, relative source.
+	 * @param subscription The origin subscription of <code>originSource</code>.
+	 * @param historyOfOperatorsForFragmentation The history for origin relative sources (key), 
+	 * inserted operators for fragmentation (value.getE1()) 
+	 * and the subscription to the origin relative source (value.getE2()).
+	 * @return The operator for fragmentation subscribed by <code>originSource</code> for which <code>subscription</code> has been broken, 
+	 * if there is any.
+	 * @throws NullPointerException if <code>originSource</code>, <code>subscription</code> or <code>historyOfOperatorsForFragmentation</code> is null.
+	 */
+	private static Optional<ILogicalOperator> findOperatorForFragmentation(
+			ILogicalOperator originSource,
+			LogicalSubscription subscription,
+			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation) 
+			throws NullPointerException {
+		
+		// Preconditions
+		if(originSource == null)
+			throw new NullPointerException("The origin source must be not null!");
+		else if(subscription == null)
+			throw new NullPointerException("The subscription to modify must be not null!");
+		else if(historyOfOperatorsForFragmentation == null)
+			throw new NullPointerException("The history of inserted operator for fragmentation must be not null!");
+		
+		for(IPair<ILogicalOperator, LogicalSubscription> pair : historyOfOperatorsForFragmentation.get(originSource)) {
+			
+			if(pair.getE2().equals(subscription))
+				return Optional.of(pair.getE1());
+			
+		}
+		
+		return Optional.absent();
 		
 	}
 
