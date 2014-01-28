@@ -14,7 +14,8 @@ class ASTDropSinkStatement extends SimpleNode {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException {
+  @Override
+public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException {
     return visitor.visit(this, data);
   }
 }

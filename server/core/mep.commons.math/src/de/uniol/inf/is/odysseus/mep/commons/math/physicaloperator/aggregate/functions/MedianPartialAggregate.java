@@ -50,7 +50,8 @@ public class MedianPartialAggregate<R> implements IMedianPartialAggregate<R> {
         this.addAll(medianPartialAggregate.stats.getValues());
     }
 
-    public Double getAggValue() {
+    @Override
+	public Double getAggValue() {
         return stats.getPercentile(50);
         // if ((this.lower.isEmpty()) && (this.upper.isEmpty())) {
         // return null;
@@ -68,7 +69,8 @@ public class MedianPartialAggregate<R> implements IMedianPartialAggregate<R> {
         // }
     }
 
-    public void add(final Double value) {
+    @Override
+	public void add(final Double value) {
         stats.addValue(value);
         // if ((this.lower.isEmpty()) && (this.upper.isEmpty())) {
         // this.lower.add(value);
@@ -106,7 +108,8 @@ public class MedianPartialAggregate<R> implements IMedianPartialAggregate<R> {
     /**
      * 
      */
-    public void clear() {
+    @Override
+	public void clear() {
         stats.clear();
     }
 

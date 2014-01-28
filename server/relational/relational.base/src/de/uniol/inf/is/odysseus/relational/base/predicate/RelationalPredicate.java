@@ -69,7 +69,8 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
         super(expression);
     }
 
-    @SuppressWarnings("rawtypes")
+    @Override
+	@SuppressWarnings("rawtypes")
     public List<IPredicate> splitPredicate() {
         List<IPredicate> result = new LinkedList<IPredicate>();
         if (isAndPredicate()) {

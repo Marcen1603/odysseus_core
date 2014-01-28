@@ -75,7 +75,8 @@ public class Median3PartialAggregate<R> implements IMedianPartialAggregate<R> {
         this.upper.addAll(medianPartialAggregate.upper);
     }
 
-    public Double getAggValue() {
+    @Override
+	public Double getAggValue() {
         if ((this.lower.isEmpty()) && (this.upper.isEmpty())) {
             return null;
         }
@@ -92,7 +93,8 @@ public class Median3PartialAggregate<R> implements IMedianPartialAggregate<R> {
         }
     }
 
-    public void add(final Double value) {
+    @Override
+	public void add(final Double value) {
         int size = this.lower.size + this.upper.size;
         if ((this.lower.isEmpty()) && (this.upper.isEmpty())) {
             this.lower.offer(value);
@@ -164,7 +166,8 @@ public class Median3PartialAggregate<R> implements IMedianPartialAggregate<R> {
     /**
      * 
      */
-    public void clear() {
+    @Override
+	public void clear() {
         lower.clear();
         upper.clear();
     }
@@ -582,11 +585,13 @@ public class Median3PartialAggregate<R> implements IMedianPartialAggregate<R> {
              */
             private E lastRetElt = null;
 
-            public boolean hasNext() {
+            @Override
+			public boolean hasNext() {
                 return cursor < size || (forgetMeNot != null && !forgetMeNot.isEmpty());
             }
 
-            public E next() {
+            @Override
+			public E next() {
                 if (cursor < size)
                     return (E) queue[lastRet = cursor++];
                 if (forgetMeNot != null) {
@@ -598,7 +603,8 @@ public class Median3PartialAggregate<R> implements IMedianPartialAggregate<R> {
                 throw new NoSuchElementException();
             }
 
-            public void remove() {
+            @Override
+			public void remove() {
                 if (lastRet != -1) {
                     E moved = MedianQueue.this.removeAt(lastRet);
                     lastRet = -1;

@@ -49,7 +49,8 @@ public class Median2PartialAggregate<R> implements IMedianPartialAggregate<R> {
         this.upper.addAll(medianPartialAggregate.upper);
     }
 
-    public Double getAggValue() {
+    @Override
+	public Double getAggValue() {
         if ((this.lower.isEmpty()) && (this.upper.isEmpty())) {
             return null;
         }
@@ -66,7 +67,8 @@ public class Median2PartialAggregate<R> implements IMedianPartialAggregate<R> {
         }
     }
 
-    public void add(final Double value) {
+    @Override
+	public void add(final Double value) {
         if ((this.lower.isEmpty()) && (this.upper.isEmpty())) {
             this.lower.add(value);
         }
@@ -108,7 +110,8 @@ public class Median2PartialAggregate<R> implements IMedianPartialAggregate<R> {
     /**
      * 
      */
-    public void clear() {
+    @Override
+	public void clear() {
         lower.clear();
         upper.clear();
     }
