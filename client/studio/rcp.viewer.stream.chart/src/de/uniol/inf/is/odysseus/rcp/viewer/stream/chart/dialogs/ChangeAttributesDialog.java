@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.dialogs;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,12 +48,15 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 	private static final String DEFAULT_MESSAGE = "Changes the attributes that are shown by the chart";
 	private Table table;
 	private List<IViewableAttribute> activatedAttributes = new ArrayList<IViewableAttribute>();
+	private List<IViewableAttribute> groupByAttributes = new ArrayList<IViewableAttribute>();
 	private IAttributesChangeable<T> changeable;
 	private Button okButton;
 	private Button selectAllButton;
 	private Button deselectAllButton;
-	private List<Button> tableChecks = new ArrayList<>();
+	private Map<IViewableAttribute,Button> tableChecks = new HashMap<>();
+	private Map<IViewableAttribute,Button> tableGroupBy = new HashMap<>();
 
+	
 	public ChangeAttributesDialog(Shell parentShell, IAttributesChangeable<T> changeable) {
 		super(parentShell);
 		// Collections.copy(this.activatedAttributes,
@@ -60,6 +64,9 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 		for (Integer port : changeable.getPorts()) {
 			for (IViewableAttribute att : changeable.getChoosenAttributes(port)) {
 				this.activatedAttributes.add(att);
+			}
+			for (IViewableAttribute att: changeable.getGroupByAttributes(port)){
+				this.groupByAttributes.add(att);
 			}
 		}
 		this.changeable = changeable;
@@ -119,16 +126,26 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 		col2.setText("visible");
 		col2.setWidth(200);
 
+		TableColumn col3 = new TableColumn(table, SWT.CENTER);
+		col3.setText("groupBy");
+		col3.setWidth(200);
+
+		
 		table.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		tableChecks.clear();
+		tableGroupBy.clear();
 		for (Integer port : this.changeable.getPorts()) {
 			for (IViewableAttribute a : this.changeable.getViewableAttributes(port)) {
+				
 				TableItem item = new TableItem(table, SWT.NONE);
 				Button check = new Button(table, SWT.CHECK);
+				Button groupBy = new Button(table, SWT.CHECK);
 				check.setData(a);
+				groupBy.setData(a);
 				check.setSelection(this.activatedAttributes.contains(a));
+				groupBy.setSelection(this.groupByAttributes.contains(a));
 				check.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
@@ -136,18 +153,46 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 						IViewableAttribute selAtt = (IViewableAttribute) thisButton.getData();
 						if (thisButton.getSelection()) {
 							activatedAttributes.add(selAtt);
+							groupByAttributes.remove(selAtt);
+							if (tableGroupBy.containsKey(selAtt)){
+								tableGroupBy.get(selAtt).setSelection(false);
+							}
 						} else {
 							activatedAttributes.remove(selAtt);
 						}
 						validate();
 					}
 				});
-				tableChecks.add(check);
+				groupBy.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						Button thisButton = (Button) e.widget;
+						IViewableAttribute selAtt = (IViewableAttribute) thisButton.getData();
+						if (thisButton.getSelection()) {
+							groupByAttributes.add(selAtt);
+							activatedAttributes.remove(selAtt);
+							if (tableChecks.containsKey(selAtt)){
+								tableChecks.get(selAtt).setSelection(false);
+							}
+						} else {
+							groupByAttributes.remove(selAtt);
+						}
+						validate();
+					}
+				});
+				tableChecks.put(a,check);
+				tableGroupBy.put(a, groupBy);
 				TableEditor tbl_editor = new TableEditor(table);
 				tbl_editor.grabHorizontal = true;
 				tbl_editor.minimumHeight = check.getSize().x;
 				tbl_editor.minimumWidth = check.getSize().y;
 				tbl_editor.setEditor(check, item, 1);
+				tbl_editor = new TableEditor(table);
+				tbl_editor.grabHorizontal = true;
+				tbl_editor.minimumHeight = groupBy.getSize().x;
+				tbl_editor.minimumWidth = groupBy.getSize().y;
+				tbl_editor.setEditor(groupBy, item, 2);
+
 				item.setText(0, a.toString());
 			}
 		}
@@ -183,11 +228,14 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 
 	private void changeAttributeSelection(boolean select) {
 		activatedAttributes.clear();
-		for (Button b : tableChecks) {
+		for (Button b : tableChecks.values()) {
 			b.setSelection(select);
 			IViewableAttribute selAtt = (IViewableAttribute) b.getData();
 			if (select) {
 				activatedAttributes.add(selAtt);
+				if (tableGroupBy.containsKey(selAtt)){
+					tableGroupBy.get(selAtt).setSelection(false);
+				}
 			}
 		}
 		validate();
@@ -195,6 +243,10 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 
 	public List<IViewableAttribute> getSelectedAttributes() {
 		return this.activatedAttributes;
+	}
+	
+	public List<IViewableAttribute> getGroupByAttributes() {
+		return groupByAttributes;
 	}
 	
 	

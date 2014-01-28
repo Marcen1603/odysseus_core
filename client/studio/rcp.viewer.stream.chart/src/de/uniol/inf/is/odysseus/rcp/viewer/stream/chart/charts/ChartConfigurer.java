@@ -62,8 +62,10 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 	
 	// ATTRIBUTES
 	private final List<IViewableAttribute> activatedAttributes = new ArrayList<IViewableAttribute>();
-	private final List<Button> tableChecks = new ArrayList<>();
-	
+	private final List<IViewableAttribute> groupdByAttributes = new ArrayList<IViewableAttribute>();
+	private final Map<IViewableAttribute, Button> tableChecks = new HashMap<>();
+	private final Map<IViewableAttribute,Button> groupByChecks = new HashMap<>();
+
 	private Button selectAllButton;
 	private Button deselectAllButton;
 	private Table table;
@@ -86,6 +88,9 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 			for (IViewableAttribute att : getChoosenAttributes(port)) {
 				activatedAttributes.add(att);
 			}
+			for (IViewableAttribute att : getGroupByAttributes(port)) {
+				groupdByAttributes.add(att);
+			}
 		}
 		
 		try {
@@ -101,6 +106,11 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 	@SuppressWarnings({ "unchecked" })
 	private List<IViewableAttribute> getChoosenAttributes(int port) {
 		return dashboardPartChart.getChoosenAttributes(port);
+	}
+	
+	@SuppressWarnings({ "unchecked" })
+	public List<IViewableAttribute> getGroupByAttributes(int port) {
+		return dashboardPartChart.getGroupByAttributes(port);
 	}
 	
 	@SuppressWarnings({ "unchecked" })
@@ -187,18 +197,52 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 						IViewableAttribute selAtt = (IViewableAttribute) thisButton.getData();
 						if (thisButton.getSelection()) {
 							activatedAttributes.add(selAtt);
+							groupdByAttributes.remove(selAtt);
+							if (groupByChecks.get(selAtt) != null){
+								groupByChecks.get(selAtt).setSelection(false);
+							}
 						} else {
 							activatedAttributes.remove(selAtt);
 						}
 						updateSelectedAttributes();
 					}
 				});
-				tableChecks.add(check);
+				tableChecks.put(a, check);
+				Button groupByCheck = new Button(table, SWT.CHECK);
+				groupByCheck.setData(a);
+				isSelected = this.groupdByAttributes.contains(a);
+				groupByCheck.setSelection(isSelected);
+				groupByCheck.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						Button thisButton = (Button) e.widget;
+						IViewableAttribute selAtt = (IViewableAttribute) thisButton.getData();
+						if (thisButton.getSelection()) {
+							groupdByAttributes.add(selAtt);
+							activatedAttributes.remove(selAtt);
+							if (tableChecks.get(selAtt) != null){
+								tableChecks.get(selAtt).setSelection(false);
+							}
+						} else {
+							groupdByAttributes.remove(selAtt);
+						}
+						updateSelectedAttributes();
+					}
+				});
+				
+				groupByChecks.put(a, groupByCheck);
+				
 				TableEditor tbl_editor = new TableEditor(table);
 				tbl_editor.grabHorizontal = true;
 				tbl_editor.minimumHeight = check.getSize().x;
 				tbl_editor.minimumWidth = check.getSize().y;
 				tbl_editor.setEditor(check, item, 1);
+				
+				tbl_editor = new TableEditor(table);
+				tbl_editor.grabHorizontal = true;
+				tbl_editor.minimumHeight = groupByCheck.getSize().x;
+				tbl_editor.minimumWidth = groupByCheck.getSize().y;
+				tbl_editor.setEditor(groupByCheck, item, 2);
 				item.setText(0, a.toString());
 			}
 		}
@@ -212,16 +256,24 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 		for (Entry<Integer, List<IViewableAttribute>> e : attr.entrySet()) {
 			dashboardPartChart.setChoosenAttributes(e.getKey(), e.getValue());
 		}
+		attr = AbstractViewableAttribute.getAttributesAsPortMapList(groupdByAttributes);
+		for (Entry<Integer, List<IViewableAttribute>> e : attr.entrySet()) {
+			dashboardPartChart.setGroupByAttributes(e.getKey(), e.getValue());
+		}
 		dashboardPartChart.chartSettingsChanged();				
 	}
 
 	private void changeAttributeSelection(boolean select) {
 		activatedAttributes.clear();
-		for (Button b : tableChecks) {
+		for (Button b : tableChecks.values()) {
 			b.setSelection(select);
 			IViewableAttribute selAtt = (IViewableAttribute) b.getData();
 			if (select) {
 				activatedAttributes.add(selAtt);
+				groupdByAttributes.remove(selAtt);
+				if (groupByChecks.get(selAtt) != null){
+					groupByChecks.get(selAtt).setSelection(false);
+				}
 			}
 		}
 	}

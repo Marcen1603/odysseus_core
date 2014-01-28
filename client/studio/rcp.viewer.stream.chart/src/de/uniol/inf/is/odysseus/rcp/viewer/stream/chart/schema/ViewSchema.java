@@ -17,11 +17,14 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -29,22 +32,26 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.ViewableDatatypeRegistry;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class ViewSchema<T> {
 
 	protected final SDFSchema outputSchema;
 	protected final SDFMetaAttributeList metadataSchema;
 	protected final int port;
+	protected final TimeUnit timeUnit;
 	
-	protected List<IViewableAttribute> viewableAttributes = new ArrayList<IViewableAttribute>();
+	final protected List<IViewableAttribute> viewableAttributes = new ArrayList<IViewableAttribute>();
 
-	protected List<IViewableAttribute> choosenAttributes = new ArrayList<IViewableAttribute>();
+	final protected List<IViewableAttribute> choosenAttributes = new ArrayList<IViewableAttribute>();
+
+	final protected List<IViewableAttribute> groupByAttributes = new ArrayList<IViewableAttribute>();
+	private int[] groupRestrictList;
 
 	public ViewSchema(SDFSchema outputSchema, SDFMetaAttributeList metaSchema, int port) {
 		this.outputSchema = outputSchema;
 		this.metadataSchema = metaSchema;
 		this.port = port;
+		this.timeUnit = outputSchema.determineTimeUnit();
 
 		init(Lists.<String>newArrayList());
 	}
@@ -55,6 +62,7 @@ public class ViewSchema<T> {
 		this.outputSchema = outputSchema;
 		this.metadataSchema = metaSchema;
 		this.port = port;
+		this.timeUnit = outputSchema.determineTimeUnit();
 
 		init(preChoosenAttributes);
 	}
@@ -69,7 +77,7 @@ public class ViewSchema<T> {
 			index++;
 		}
 		
-		this.choosenAttributes = new ArrayList<IViewableAttribute>();
+		this.choosenAttributes.clear();
 		for(IViewableAttribute a : this.viewableAttributes){
 			if( !preChoosenAttributes.isEmpty() ) {
 				if( preChoosenAttributes.contains(a.getName()) && chooseAsInitialAttribute(a.getSDFDatatype())) {
@@ -134,18 +142,53 @@ public class ViewSchema<T> {
 		return restricted;
 	}
 
+	public List<IViewableAttribute> getChoosenAttributes() {
+		return Collections.unmodifiableList(choosenAttributes);
+	}
 	
 
-	public List<IViewableAttribute> getChoosenAttributes() {
-		return choosenAttributes;
-	}
-
 	public void setChoosenAttributes(List<IViewableAttribute> choosenAttributes) {
-		this.choosenAttributes = choosenAttributes;
+		this.choosenAttributes.clear();
+		this.choosenAttributes.addAll(choosenAttributes);
 	}
+	
+	public void setGroupByAttributes(List<IViewableAttribute> groupByAttributes){
+		this.groupByAttributes.clear();
+		this.groupByAttributes.addAll(groupByAttributes);
+
+		List<SDFAttribute> groupByAttribs = new ArrayList<>();
+		for (IViewableAttribute a: groupByAttributes){
+			SDFAttribute attr = new SDFAttribute(a.getTypeName(),a.getAttributeName(),null,null,null,null);
+			groupByAttribs.add(attr);
+		}
+
+		SDFSchema groupBySchema = new SDFSchema("", null, groupByAttribs);
+		this.groupRestrictList = SDFSchema.calcRestrictList(outputSchema, groupBySchema);
+	}
+	
+	public List<IViewableAttribute> getGroupByAttributes() {
+		return Collections.unmodifiableList(groupByAttributes);
+	}
+	
 
 	public List<IViewableAttribute> getViewableAttributes() {
 		return viewableAttributes;
+	}
+	
+	public TimeUnit getTimeUnit(){
+		return timeUnit;
+	}
+	
+	public TimeUnit getTimeUnit(TimeUnit defaultUnit){
+		if (timeUnit == null){
+			return defaultUnit;
+		}else{
+			return timeUnit;
+		}
+	}
+
+	public int[] getGroupRestrictList() {
+		return groupRestrictList;
 	}
 
 }

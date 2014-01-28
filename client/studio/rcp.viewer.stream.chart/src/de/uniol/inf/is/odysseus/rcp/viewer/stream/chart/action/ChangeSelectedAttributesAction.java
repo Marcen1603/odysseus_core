@@ -49,6 +49,11 @@ public class ChangeSelectedAttributesAction<T> extends Action {
 				for (Entry<Integer, List<IViewableAttribute>> e : attr.entrySet()) {
 					changeable.setChoosenAttributes(e.getKey(), e.getValue());
 				}
+				attr = AbstractViewableAttribute.getAttributesAsPortMapList(dialog.getGroupByAttributes());
+				for (Entry<Integer, List<IViewableAttribute>> e : attr.entrySet()) {
+					changeable.setGroupByAttributes(e.getKey(), e.getValue());
+				}
+				
 				changeable.chartSettingsChanged();				
 			}
 		} catch (Exception e) {

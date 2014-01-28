@@ -32,6 +32,8 @@ public interface IAttributesChangeable<T> {
 	public String isValidSelection(Map<Integer, Set<IViewableAttribute>> selectAttributes);
 	public List<IViewableAttribute> getViewableAttributes(int port);
 	public List<IViewableAttribute> getChoosenAttributes(int port);
+	public List<IViewableAttribute> getGroupByAttributes(int port);
 	public void setChoosenAttributes(int port, List<IViewableAttribute> choosenAttributes);
+	public void setGroupByAttributes(int port, List<IViewableAttribute> groupByAttributes);
 	Set<Integer> getPorts();	
 }

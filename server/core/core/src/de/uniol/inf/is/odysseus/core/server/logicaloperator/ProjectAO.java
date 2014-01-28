@@ -57,7 +57,7 @@ public class ProjectAO extends UnaryLogicalOp {
 	}
 
 	public int[] determineRestrictList() {
-		return calcRestrictList(this.getInputSchema(), this.getOutputSchema());
+		return SDFSchema.calcRestrictList(this.getInputSchema(), this.getOutputSchema());
 	}
 
 	// Must be another name than setOutputSchema, else this method is not found!
@@ -95,20 +95,6 @@ public class ProjectAO extends UnaryLogicalOp {
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		return new SDFSchema(getInputSchema().getURI(), getInputSchema().getType(), attributes);
-	}
-
-	public static int[] calcRestrictList(SDFSchema in, SDFSchema out) {
-		int[] ret = new int[out.size()];
-		int i = 0;
-		for (SDFAttribute outAttribute : out) {
-			SDFAttribute foundAttribute = in.findAttribute(outAttribute.getURI());
-			if (foundAttribute == null) {
-				throw new IllegalArgumentException("no such attribute: " + outAttribute);
-			}
-			
-			ret[i++] = in.indexOf(foundAttribute);
-		}
-		return ret;
 	}
 
 	@Override

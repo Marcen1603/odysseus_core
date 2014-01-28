@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
@@ -47,11 +48,14 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribut
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 
-public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double, ITimeInterval> {
+public abstract class AbstractTimeSeriesChart extends
+		AbstractJFreeChart<Double, ITimeInterval> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractTimeSeriesChart.class);
-	
-	private Map<String, TimeSeries> series = new HashMap<String, TimeSeries>();
+	private static final Logger LOG = LoggerFactory
+			.getLogger(AbstractTimeSeriesChart.class);
+
+	private Map<Long, Map<String, TimeSeries>> series = new HashMap<>();
+	private Map<Long, String> groupNames = new HashMap<>();
 
 	protected TimeSeriesCollection dataset = new TimeSeriesCollection();
 
@@ -61,6 +65,7 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 	private static final String TIME_MILLI = "milliseconds";
 	private static final String TIME_SECONDS = "seconds";
 	private static final String TIME_MINUTES = "minutes";
+	private static final String FROM_STREAM ="from stream";
 
 	private double max = Double.NaN;
 	private double min = Double.NaN;
@@ -70,7 +75,7 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 	private String yTitle = "";
 
 	private static final int DEFAULT_MAX_NUMBER_OF_ITEMS = 1000;
-	private static final String DEFAULT_TIME_GRANULARITY = TIME_MILLI;
+	private static final String DEFAULT_TIME_GRANULARITY = FROM_STREAM;
 
 	private static final String CURRENT_TIME = "Current Time";
 	private int maxItems = DEFAULT_MAX_NUMBER_OF_ITEMS;
@@ -83,7 +88,8 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 	private Integer choosenXValuePort = 0;
 
 	private long updateIntervalMillis = 0;
-	private final List<Tuple<ITimeInterval>> bufferedTuples = Lists.newArrayList();
+	private final List<Tuple<ITimeInterval>> bufferedTuples = Lists
+			.newArrayList();
 	private final List<Integer> bufferedPorts = Lists.newArrayList();
 	private ChartUpdater chartUpdater;
 
@@ -91,29 +97,36 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 	public void reloadChart() {
 		series.clear();
 		this.dataset.removeAllSeries();
-		for (Integer port : getPorts()) {
-			for (int i = 0; i < getChoosenAttributes(port).size(); i++) {
-				String name = getChoosenAttributes(port).get(i).getName();
-				TimeSeries serie = new TimeSeries(name);
-				serie.setMaximumItemCount(this.maxItems);
-				series.put(name, serie);
-				this.dataset.addSeries(serie);
-			}
-		}
-		
+		// Will not work, because the list must be per input port!
+		// if (groupByList == null) {
+		// Map<String, TimeSeries> gseries = new HashMap<>();
+		// series.put(0L, gseries);
+		// for (Integer port : getPorts()) {
+		// for (int i = 0; i < getChoosenAttributes(port).size(); i++) {
+		// String name = getChoosenAttributes(port).get(i).getName();
+		// TimeSeries serie = new TimeSeries(name);
+		// serie.setMaximumItemCount(this.maxItems);
+		// gseries.put(name, serie);
+		// this.dataset.addSeries(serie);
+		// }
+		// }
+		// }
+
 		ValueAxis domainAxis = getChart().getXYPlot().getDomainAxis();
 		domainAxis.setLabel(xTitle);
 		if (domainAxis instanceof NumberAxis) {
-			NumberAxis axis = (NumberAxis) getChart().getXYPlot().getDomainAxis();
-			axis.setNumberFormatOverride(new SimpleNumberToDateFormat(this.dateformat));
+			NumberAxis axis = (NumberAxis) getChart().getXYPlot()
+					.getDomainAxis();
+			axis.setNumberFormatOverride(new SimpleNumberToDateFormat(
+					this.dateformat));
 		}
 		if (domainAxis instanceof DateAxis) {
 			DateAxis axis = (DateAxis) getChart().getXYPlot().getDomainAxis();
 			axis.setDateFormatOverride(new SimpleDateFormat(this.dateformat));
 		}
-		
+
 		getChart().getXYPlot().getRangeAxis().setLabel(yTitle);
-		
+
 		if (this.timeinputgranularity.equals(TIME_MILLI)) {
 			this.timefactor = 1.0;
 		} else if (this.timeinputgranularity.equals(TIME_MICRO)) {
@@ -124,30 +137,37 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 			this.timefactor = 1000000000.0;
 		} else if (this.timeinputgranularity.equals(TIME_SECONDS)) {
 			this.timefactor = 0.001;
-		}else if (this.timeinputgranularity.equals(TIME_MINUTES)) {
+		} else if (this.timeinputgranularity.equals(TIME_MINUTES)) {
 			this.timefactor = 1.67777e-5;
+		} else if (this.timeinputgranularity.equals(FROM_STREAM)){
+			this.timefactor = 0.0;
 		}
 	}
 
 	@Override
-	public String isValidSelection(Map<Integer, Set<IViewableAttribute>> selectAttributes) {
+	public String isValidSelection(
+			Map<Integer, Set<IViewableAttribute>> selectAttributes) {
 		return checkAtLeastOneSelectedAttribute(selectAttributes);
 	}
 
 	@Override
-	protected void processElement(List<Double> tuple, ITimeInterval metadata, int port) {
+	protected void processElement(List<Double> tuple, ITimeInterval metadata,
+			int port) {
 		// this is not needed, since streamElementReceived is overwritten!
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, final int port) {
+	public void streamElementRecieved(IPhysicalOperator senderOperator,
+			IStreamObject<?> element, final int port) {
 		if (!(element instanceof Tuple<?>)) {
-			LOG.warn("Stream visualization is only for relational tuple, not for {}!", element.getClass());
+			LOG.warn(
+					"Stream visualization is only for relational tuple, not for {}!",
+					element.getClass());
 			return;
 		}
-		
-		if( getChart() == null ) {
+
+		if (getChart() == null) {
 			return;
 		}
 
@@ -164,58 +184,109 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 		return updateIntervalMillis > 0;
 	}
 
-	private void processElement(final int port, final Tuple<ITimeInterval> tuple, final boolean update) {
-		final List<Double> viewableValues = this.viewSchema.get(port).convertToViewableFormat(tuple);
-		final List<?> values = this.viewSchema.get(port).convertToChoosenFormat(viewableValues);
+	private void processElement(final int port,
+			final Tuple<ITimeInterval> tuple, final boolean update) {
+		final List<Double> viewableValues = this.viewSchema.get(port)
+				.convertToViewableFormat(tuple);
+		final List<?> values = this.viewSchema.get(port)
+				.convertToChoosenFormat(viewableValues);
+		final int[] gRestrict = this.viewSchema.get(port)
+				.getGroupRestrictList();
+		final TimeUnit timeUnit = this.viewSchema.get(port).getTimeUnit(
+				TimeUnit.MILLISECONDS);
 		Display display = PlatformUI.getWorkbench().getDisplay();
 
 		if (getChartComposite().isDisposed()) {
 			return;
 		}
-		
+
 		display.asyncExec(new Runnable() {
+
 			@Override
 			public void run() {
 				if (getChartComposite().isDisposed()) {
 					return;
 				}
-				
+
+				Long groupId = 0L;
+				String groupName = "";
+				if (gRestrict != null) {
+					groupId = (long) tuple.restrictedHashCode(gRestrict);
+					groupName = groupNames.get(groupId);
+					if (groupName == null) {
+						StringBuffer name = new StringBuffer();
+						for (int pos : gRestrict) {
+							name.append(tuple.getAttribute(pos)).append(" ");
+						}
+						groupName = name.toString();
+						groupNames.put(groupId, groupName);
+					}
+				}
+
 				try {
 					if (choosenXValue == -1) {
-						long time = tuple.getMetadata().getStart().getMainPoint();
-						long millis = Math.round(time / timefactor);
+						long time = tuple.getMetadata().getStart()
+								.getMainPoint();
+						long millis;
+						if (timefactor != 0) {
+							millis = Math.round(time / timefactor);
+						} else {
+							millis = TimeUnit.MILLISECONDS.convert(time,
+									timeUnit);
+						}
 						FixedMillisecond ms = new FixedMillisecond(millis);
 
 						for (int i = 0; i < values.size(); i++) {
-							double value = ((Number) values.get(i)).doubleValue();
-							addToSeries(port, update, ms, i, value);
+							double value = ((Number) values.get(i))
+									.doubleValue();
+							addToSeries(port, update, ms, i, value, groupId,
+									groupName);
 							adjust(value);
 						}
 					} else {
 						for (int i = 0; i < values.size(); i++) {
-							double value = ((Number) values.get(i)).doubleValue();
-							long x = ((Number) viewableValues.get(choosenXValue)).longValue();
+							double value = ((Number) values.get(i))
+									.doubleValue();
+							long x = ((Number) viewableValues
+									.get(choosenXValue)).longValue();
 							FixedMillisecond ms = new FixedMillisecond(x);
-							addToSeries(port, update, ms, i, value);
+							addToSeries(port, update, ms, i, value, groupId,
+									groupName);
 							adjust(value);
 						}
 					}
-					
-					
 
 				} catch (SWTException ex) {
 					LOG.error("Exception in adding data into chart", ex);
-					
+
 					dispose();
 					return;
 				}
 			}
 		});
 	}
-	
-	private void addToSeries(int port, boolean update, FixedMillisecond ms, int i, double value) {
-		TimeSeries timeSeries = series.get(getChoosenAttributes(port).get(i).getName());
-		
+
+	private void addToSeries(int port, boolean update, FixedMillisecond ms,
+			int i, double value, Long groupID, String groupName) {
+		TimeSeries timeSeries = null;
+
+		Map<String, TimeSeries> gSerie = series.get(groupID);
+
+		if (gSerie == null) {
+			gSerie = new HashMap<>();
+			series.put(groupID, gSerie);
+		}
+
+		String name = getChoosenAttributes(port).get(i).getName() + "@"
+				+ groupName;
+		timeSeries = gSerie.get(name);
+		if (timeSeries == null) {
+			timeSeries = new TimeSeries(name);
+			timeSeries.setMaximumItemCount(this.maxItems);
+			gSerie.put(name, timeSeries);
+			this.dataset.addSeries(timeSeries);
+		}
+
 		timeSeries.setNotify(update);
 		timeSeries.addOrUpdate(ms, value);
 	}
@@ -233,8 +304,10 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 			min = value;
 		}
 		if (isAutoadjust()) {
-			getChart().getXYPlot().getRangeAxis().setLowerBound(min * (1.0 - margin));
-			getChart().getXYPlot().getRangeAxis().setUpperBound(max * (1.0 + margin));
+			getChart().getXYPlot().getRangeAxis()
+					.setLowerBound(min * (1.0 - margin));
+			getChart().getXYPlot().getRangeAxis()
+					.setUpperBound(max * (1.0 + margin));
 		}
 
 	}
@@ -269,12 +342,13 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 	@ChartSetting(name = "Time Input Granularity", type = Type.OPTIONS)
 	public List<String> getTimeInputGranularityValues() {
 		List<String> values = new ArrayList<String>();
+		values.add(FROM_STREAM);
+		values.add(TIME_MINUTES);
+		values.add(TIME_SECONDS);
 		values.add(TIME_MILLI);
 		values.add(TIME_MICRO);
 		values.add(TIME_NANO);
 		values.add(TIME_PICO);
-		values.add(TIME_SECONDS);
-		values.add(TIME_MINUTES);
 		return values;
 	}
 
@@ -310,7 +384,8 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 		if (this.choosenXValue == -1) {
 			return CURRENT_TIME;
 		}
-		return getViewableAttributes(choosenXValuePort).get(this.choosenXValue).getName();
+		return getViewableAttributes(choosenXValuePort).get(this.choosenXValue)
+				.getName();
 	}
 
 	@ChartSetting(name = "Value for X-Axis", type = Type.SET)
@@ -363,9 +438,10 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 
 	@ChartSetting(name = "Update interval (ms)", type = Type.SET)
 	public void setUpdateIntervalMillis(long millis) {
-		Preconditions.checkArgument(millis >= 0, "Update interval must be zero or positive!");
-		
-		if( millis != updateIntervalMillis ) {
+		Preconditions.checkArgument(millis >= 0,
+				"Update interval must be zero or positive!");
+
+		if (millis != updateIntervalMillis) {
 			if (millis > 0 && updateIntervalMillis == 0) {
 				startUpdater(millis);
 			} else if (millis == 0 && updateIntervalMillis > 0) {
@@ -373,7 +449,7 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 			} else {
 				changeUpdater(millis);
 			}
-			
+
 			this.updateIntervalMillis = millis;
 		}
 	}
@@ -391,9 +467,9 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 	}
 
 	private void stopUpdater() {
-		if( chartUpdater != null ) {
-				chartUpdater.stopRunning();
-				chartUpdater = null;
+		if (chartUpdater != null) {
+			chartUpdater.stopRunning();
+			chartUpdater = null;
 		}
 
 		cleanBuffers();
@@ -408,16 +484,17 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 
 	private void cleanBuffers() {
 		synchronized (bufferedTuples) {
-			if( !bufferedTuples.isEmpty() ) {
-				
+			if (!bufferedTuples.isEmpty()) {
+
 				while (bufferedTuples.size() > 1) {
 					Tuple<ITimeInterval> tuple = bufferedTuples.remove(0);
 					Integer port = bufferedPorts.remove(0);
-	
+
 					processElement(port, tuple, false);
 				}
-	
-				processElement(bufferedPorts.remove(0), bufferedTuples.remove(0), true);
+
+				processElement(bufferedPorts.remove(0),
+						bufferedTuples.remove(0), true);
 			}
 		}
 	}
@@ -431,63 +508,64 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 	public long getUpdateIntervalMillis() {
 		return updateIntervalMillis;
 	}
-	
+
 	@Override
-	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
+	public void onStart(Collection<IPhysicalOperator> physicalRoots)
+			throws Exception {
 		super.onStart(physicalRoots);
-		
+
 		startUpdaterIfNeeded();
 	}
-	
+
 	@Override
 	public void onPause() {
 		super.onPause();
-		
+
 		stopUpdater();
 	}
-	
+
 	@Override
 	public void onUnpause() {
 		super.onUnpause();
-		
+
 		startUpdaterIfNeeded();
 	}
 
 	private void startUpdaterIfNeeded() {
-		if( isAsyncUpdate() ) {
+		if (isAsyncUpdate()) {
 			startUpdater(updateIntervalMillis);
 		}
 	}
-	
+
 	@Override
 	public void onStop() {
 		stopUpdater();
-		
+
 		super.onStop();
 	}
-	
-	@ChartSetting(name = "X-Axis title", type=Type.SET)
-	public void setXTitle( String xTitle ) {
-		if( getChart() != null ) {
+
+	@ChartSetting(name = "X-Axis title", type = Type.SET)
+	public void setXTitle(String xTitle) {
+		if (getChart() != null) {
 			getChart().getXYPlot().getDomainAxis().setLabel(xTitle);
 		}
 		this.xTitle = xTitle;
 	}
-	
-	@ChartSetting(name = "X-Axis title", type=Type.GET)
+
+	@ChartSetting(name = "X-Axis title", type = Type.GET)
 	public String getXTitle() {
 		return xTitle;
 	}
-	
-	@ChartSetting(name = "Y-Axis title", type=Type.SET)
-	public void setYTitle( String yTitle ) {
-		if( getChart() != null ) {
+
+	@ChartSetting(name = "Y-Axis title", type = Type.SET)
+	public void setYTitle(String yTitle) {
+		if (getChart() != null) {
 			getChart().getXYPlot().getRangeAxis().setLabel(yTitle);
 		}
 		this.yTitle = yTitle;
 	}
-	
-	@ChartSetting(name = "Y-Axis title", type=Type.GET)
+
+	@ChartSetting(name = "Y-Axis title", type = Type.GET)
 	public String getYTitle() {
 		return yTitle;
 	}

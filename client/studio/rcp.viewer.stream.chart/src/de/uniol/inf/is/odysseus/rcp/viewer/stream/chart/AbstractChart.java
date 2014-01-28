@@ -43,6 +43,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	Logger logger = LoggerFactory.getLogger(AbstractChart.class);
 
 	protected Map<Integer, ViewSchema<T>> viewSchema = new HashMap<Integer, ViewSchema<T>>();
+	protected int[] groupByList = null;
 	protected IStreamConnection<IStreamObject<?>> connection;
 
 	public AbstractChart() {
@@ -126,11 +127,22 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	public List<IViewableAttribute> getChoosenAttributes(int port) {
 		return this.viewSchema.get(port).getChoosenAttributes();
 	}
+	
+	@Override
+	public List<IViewableAttribute> getGroupByAttributes(int port) {
+		return this.viewSchema.get(port).getGroupByAttributes();
+	}
 
 	@Override
 	public void setChoosenAttributes(int port, List<IViewableAttribute> choosenAttributes) {
 		this.viewSchema.get(port).setChoosenAttributes(choosenAttributes);
 		reloadChartImpl();
+	}
+	
+	@Override
+	public void setGroupByAttributes(int port,
+			List<IViewableAttribute> groupByAttributes) {
+		this.viewSchema.get(port).setGroupByAttributes(groupByAttributes);
 	}
 
 	@Override

@@ -69,7 +69,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Ty
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.IChartSettingChangeable;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.MethodSetting;
 
-public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends AbstractChart<T, M> implements IChartSettingChangeable, IDashboardPart {
+public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
+		AbstractChart<T, M> implements IChartSettingChangeable, IDashboardPart {
 
 	Logger logger = LoggerFactory.getLogger(AbstractJFreeChart.class);
 
@@ -88,12 +89,12 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	protected final static Color DEFAULT_BACKGROUND_GRID = Color.GRAY;
 	protected final static String VIEW_ID_PREFIX = "de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts";
 
-
 	private JFreeChart chart;
 	private ChangeSelectedAttributesAction<T> changeAttributesAction;
-	private ChangeSettingsAction changeSettingsAction;	
-	private final Map<Integer, List<String>> loadedChoosenAttributes = Maps.newHashMap();
-	
+	private ChangeSettingsAction changeSettingsAction;
+	private final Map<Integer, List<String>> loadedChoosenAttributes = Maps
+			.newHashMap();
+
 	private List<IDashboardPartListener> listener = new ArrayList<>();
 	private IDashboardPartQueryTextProvider queryTextProvider;
 	private boolean opened = false;
@@ -106,7 +107,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	private boolean isStarted;
 
 	private static int currentUniqueSecondIdentifer = 0;
-	
+
 	private String chartTitle = "";
 
 	public static synchronized String getUniqueSecondIdentifier(String prefix) {
@@ -115,7 +116,8 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	}
 
 	@Override
-	public void init( IFile dashboardFile, IProject containingProject, IWorkbenchPart containingPart) {
+	public void init(IFile dashboardFile, IProject containingProject,
+			IWorkbenchPart containingPart) {
 		this.dashboardPartFile = dashboardFile;
 		this.containingProject = containingProject;
 		this.workbenchpart = containingPart;
@@ -126,18 +128,17 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 		initComposite(parent);
 		contributeToActionBars();
 	}
-	
+
 	private void initComposite(Composite parent) {
 		this.chart = createChart();
-		this.chart.setTitle(chartTitle);		
-		
+		this.chart.setTitle(chartTitle);
+
 		decorateChart(this.chart);
 
 		chartComposite = new ChartComposite(parent, SWT.NONE, this.chart, true);
 		chartComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createActions(parent.getShell());
 	}
-
 
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
@@ -151,16 +152,22 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	}
 
 	private void createActions(Shell shell) {
-		this.changeAttributesAction = new ChangeSelectedAttributesAction<T>(shell, this);
+		this.changeAttributesAction = new ChangeSelectedAttributesAction<T>(
+				shell, this);
 		this.changeAttributesAction.setText("Change Attributes");
-		this.changeAttributesAction.setToolTipText("Configure the attributes that will be shown by the chart");
-		ImageDescriptor imgDescMonitor = ImageDescriptor.createFromURL(Activator.getBundleContext().getBundle().getEntry("icons/monitor_edit.png"));
+		this.changeAttributesAction
+				.setToolTipText("Configure the attributes that will be shown by the chart");
+		ImageDescriptor imgDescMonitor = ImageDescriptor
+				.createFromURL(Activator.getBundleContext().getBundle()
+						.getEntry("icons/monitor_edit.png"));
 		this.changeAttributesAction.setImageDescriptor(imgDescMonitor);
 
 		this.changeSettingsAction = new ChangeSettingsAction(shell, this);
 		this.changeSettingsAction.setText("Change Settings");
-		this.changeSettingsAction.setToolTipText("Change several settings for this chart");
-		ImageDescriptor imgDescCog = ImageDescriptor.createFromURL(Activator.getBundleContext().getBundle().getEntry("icons/cog.png"));
+		this.changeSettingsAction
+				.setToolTipText("Change several settings for this chart");
+		ImageDescriptor imgDescCog = ImageDescriptor.createFromURL(Activator
+				.getBundleContext().getBundle().getEntry("icons/cog.png"));
 		this.changeSettingsAction.setImageDescriptor(imgDescCog);
 
 	}
@@ -172,14 +179,14 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	@Override
 	public void chartSettingsChanged() {
 		fireDashboardChangedEvent();
-		reloadChartImpl();	
+		reloadChartImpl();
 	}
 
 	private void fireDashboardChangedEvent() {
-		for(IDashboardPartListener l : this.listener){
+		for (IDashboardPartListener l : this.listener) {
 			l.dashboardPartChanged(this);
-		}		
-	}	
+		}
+	}
 
 	@Override
 	public void setFocus() {
@@ -189,7 +196,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	public JFreeChart getChart() {
 		return chart;
 	}
-	
+
 	public ChartComposite getChartComposite() {
 		return chartComposite;
 	}
@@ -225,11 +232,13 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 				if (us.type().equals(Type.GET)) {
 					Method other = getAccordingType(us);
 					if (other != null) {
-						MethodSetting ms = new MethodSetting(us.name(), m, other);
+						MethodSetting ms = new MethodSetting(us.name(), m,
+								other);
 						ms.setListGetter(getListMethod(us));
 						settings.add(ms);
 					} else {
-						System.out.println("WARN: setting can not be loaded because there is no getter/setter pair");
+						System.out
+								.println("WARN: setting can not be loaded because there is no getter/setter pair");
 						continue;
 					}
 				}
@@ -263,19 +272,18 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 		return findMethod(otherMethod.name(), Type.SET);
 	}
 
-
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
 		initComposite(parent);
 		addToToolbar(toolbar, changeAttributesAction);
 		addToToolbar(toolbar, changeSettingsAction);
 	}
-	
+
 	@Override
 	public void setSinkNames(String sinkNames) {
 		this.sinkNames = sinkNames;
 	}
-	
+
 	@Override
 	public String getSinkNames() {
 		return sinkNames;
@@ -317,13 +325,13 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	@Override
 	public Map<String, String> onSave() {
 		Map<String, String> toSave = new HashMap<>();
-		
+
 		if (opened) {
 			Set<Integer> ports = getPorts();
-			for( Integer port : ports ) {
+			for (Integer port : ports) {
 				List<IViewableAttribute> choosenAttributes = getChoosenAttributes(port);
-				
-				for( IViewableAttribute choosenAttribute : choosenAttributes ) {
+
+				for (IViewableAttribute choosenAttribute : choosenAttributes) {
 					String key = port + "#" + choosenAttribute.getName();
 					toSave.put(key, "choosenAttribute");
 				}
@@ -347,39 +355,44 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	@Override
 	public void onLoad(Map<String, String> saved) {
 		loadedChoosenAttributes.clear();
-		
+
 		for (Entry<String, String> values : saved.entrySet()) {
-			
+
 			String key = values.getKey();
-			
-			if( key.contains("#")) {
+
+			if (key.contains("#")) {
 				String[] splittedKey = key.split("#");
-				
+
 				Integer port = Integer.valueOf(splittedKey[0]);
 				String choosenAttribute = splittedKey[1];
-				
-				if( !loadedChoosenAttributes.containsKey(port)) {
-					loadedChoosenAttributes.put(port, Lists.<String>newArrayList());
+
+				if (!loadedChoosenAttributes.containsKey(port)) {
+					loadedChoosenAttributes.put(port,
+							Lists.<String> newArrayList());
 				}
 				loadedChoosenAttributes.get(port).add(choosenAttribute);
 			}
-			
+
 			String methodName = values.getKey();
 			String value = values.getValue();
 			try {
 				for (MethodSetting ms : getChartSettings()) {
 					if (ms.getName().equals(methodName)) {
 						Class<?> paramType = ms.getSetter().getParameterTypes()[0];
-						if (paramType.equals(Double.class) || paramType.equals(double.class)) {
+						if (paramType.equals(Double.class)
+								|| paramType.equals(double.class)) {
 							Double d = Double.parseDouble(value);
 							ms.getSetter().invoke(this, d);
-						} else if (paramType.equals(Integer.class) || paramType.equals(int.class)) {
+						} else if (paramType.equals(Integer.class)
+								|| paramType.equals(int.class)) {
 							Integer d = Integer.parseInt(value);
 							ms.getSetter().invoke(this, d);
-						} else if (paramType.equals(Boolean.class) || paramType.equals(boolean.class)) {
+						} else if (paramType.equals(Boolean.class)
+								|| paramType.equals(boolean.class)) {
 							Boolean d = Boolean.getBoolean(value);
 							ms.getSetter().invoke(this, d);
-						} else if (paramType.equals(Long.class) || paramType.equals(long.class)) {
+						} else if (paramType.equals(Long.class)
+								|| paramType.equals(long.class)) {
 							Long d = Long.parseLong(value);
 							ms.getSetter().invoke(this, d);
 						} else {
@@ -394,22 +407,33 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	}
 
 	@Override
-	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
+	public void onStart(Collection<IPhysicalOperator> physicalRoots)
+			throws Exception {
 		initWithOperator(physicalRoots.iterator().next());
 		opened = true;
 		isStarted = true;
 	}
-	
-	@Override
-	protected void initConnection(IStreamConnection<IStreamObject<?>> streamConnection) {
 
-		for (ISubscription<? extends ISource<?>> s : streamConnection.getSubscriptions()) {
+	@Override
+	protected void initConnection(
+			IStreamConnection<IStreamObject<?>> streamConnection) {
+
+		for (ISubscription<? extends ISource<?>> s : streamConnection
+				.getSubscriptions()) {
 			int port = s.getSinkInPort();
-			List<String> preChoosenAttributesOfPort = loadedChoosenAttributes.get(port);
-			
-			this.viewSchema.put(port, new ViewSchema<T>(s.getSchema(), s.getTarget().getMetaAttributeSchema(), port, preChoosenAttributesOfPort != null ? preChoosenAttributesOfPort : Lists.<String>newArrayList()));
+			List<String> preChoosenAttributesOfPort = loadedChoosenAttributes
+					.get(port);
+
+			this.viewSchema
+					.put(port,
+							new ViewSchema<T>(
+									s.getSchema(),
+									s.getTarget().getMetaAttributeSchema(),
+									port,
+									preChoosenAttributesOfPort != null ? preChoosenAttributesOfPort
+											: Lists.<String> newArrayList()));
 		}
-		
+
 		if (validate()) {
 			streamConnection.addStreamElementListener(this);
 			streamConnection.connect();
@@ -422,7 +446,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	public void onStop() {
 		isStarted = false;
 	}
-	
+
 	public boolean isStarted() {
 		return isStarted;
 	}
@@ -430,40 +454,41 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	@Override
 	public void onUnpause() {
 	}
-	
+
 	@Override
 	public void onLock() {
-		
+
 	}
-	
+
 	@Override
 	public void onUnlock() {
-		
+
 	}
 
 	@Override
 	public void setQueryTextProvider(IDashboardPartQueryTextProvider provider) {
-		this.queryTextProvider = Preconditions.checkNotNull(provider, "QueryTextProvider for DashboardPart must not be null!");
+		this.queryTextProvider = Preconditions.checkNotNull(provider,
+				"QueryTextProvider for DashboardPart must not be null!");
 	}
-	
+
 	@Override
 	public void addListener(IDashboardPartListener listener) {
 		this.listener.add(listener);
 	}
-	
+
 	@Override
 	public void removeListener(IDashboardPartListener listener) {
 		this.listener.remove(listener);
 	}
-	
+
 	public final IWorkbenchPart getWorkbenchPart() {
 		return this.workbenchpart;
 	}
-	
+
 	public final IFile getDashboardPartFile() {
 		return dashboardPartFile;
 	}
-	
+
 	public final IProject getProject() {
 		return containingProject;
 	}
@@ -472,33 +497,33 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	public IDashboardActionBarContributor getEditorActionBarContributor() {
 		return null;
 	}
-	
+
 	@ChartSetting(name = "Chart title", type = Type.SET)
-	public void setChartTitle( String title ) {
-		if( getChart() != null ) {
+	public void setChartTitle(String title) {
+		if (getChart() != null) {
 			getChart().setTitle(title);
 		}
-		
+
 		chartTitle = title;
 	}
-	
+
 	@ChartSetting(name = "Chart title", type = Type.GET)
 	public String getChartTitle() {
 		return chartTitle;
 	}
-	
+
 	@Override
 	public Point getPreferredSize() {
 		return new Point(500, 300);
 	}
-	
-	@Override	
+
+	@Override
 	public boolean isSinkSynchronized() {
 		return sinkSynced;
 	}
-	
-	@Override	
-	public void setSinkSynchronized( boolean doSync ) {
+
+	@Override
+	public void setSinkSynchronized(boolean doSync) {
 		sinkSynced = doSync;
 	}
 }

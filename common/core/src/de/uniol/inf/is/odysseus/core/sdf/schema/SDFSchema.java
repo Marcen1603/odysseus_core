@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Preconditions;
 
@@ -30,7 +31,8 @@ import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 @SuppressWarnings("rawtypes")
-public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comparable<SDFSchema>, Serializable, IClone {
+public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
+		Comparable<SDFSchema>, Serializable, IClone {
 
 	private static final long serialVersionUID = 5218658682722448980L;
 
@@ -58,7 +60,8 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 		super(uri, schema);
 		if (schema != null) {
 			if (schema.getBaseSourceNames() != null) {
-				if (schema.getBaseSourceNames().size() == 1 && schema.getBaseSourceNames().get(0).equals("")) {
+				if (schema.getBaseSourceNames().size() == 1
+						&& schema.getBaseSourceNames().get(0).equals("")) {
 					baseSourceNames.add(uri);
 				}
 				baseSourceNames.addAll(schema.getBaseSourceNames());
@@ -72,7 +75,8 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 
 	}
 
-	public SDFSchema(String uri, Class<? extends IStreamObject> type, SDFAttribute attribute, SDFAttribute... attributes1) {
+	public SDFSchema(String uri, Class<? extends IStreamObject> type,
+			SDFAttribute attribute, SDFAttribute... attributes1) {
 		super(uri);
 		this.type = type;
 		if (attribute != null) {
@@ -88,7 +92,8 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 		}
 	}
 
-	public SDFSchema(String uri, Class<? extends IStreamObject> type, Collection<SDFAttribute> attributes1) {
+	public SDFSchema(String uri, Class<? extends IStreamObject> type,
+			Collection<SDFAttribute> attributes1) {
 		super(uri, attributes1);
 		this.type = type;
 		if (!uri.equals("")) {
@@ -137,46 +142,47 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 
 	public SDFAttribute findAttribute(String attributeNameToFind) {
 		String[] attributeToFindParts = splitIfNeeded(attributeNameToFind);
-		
-		for( SDFAttribute attribute : this.elements ) {
-			
-			String[] attributeParts = splitIfNeeded(attribute.getSourceName() + "." + attribute.getAttributeName());
-			
-			if( compareBackwards(attributeToFindParts, attributeParts) ) {
+
+		for (SDFAttribute attribute : this.elements) {
+
+			String[] attributeParts = splitIfNeeded(attribute.getSourceName()
+					+ "." + attribute.getAttributeName());
+
+			if (compareBackwards(attributeToFindParts, attributeParts)) {
 				return attribute;
 			}
 		}
-		
+
 		return null;
 	}
 
 	private static String[] splitIfNeeded(String text) {
-		if( text == null || text.isEmpty() ) {
+		if (text == null || text.isEmpty()) {
 			return new String[0];
 		}
-		
-		if( text.indexOf(".") == -1 ) {
-			return new String[] {text};
+
+		if (text.indexOf(".") == -1) {
+			return new String[] { text };
 		}
-		
+
 		return text.split("\\.");
 	}
 
 	private static boolean compareBackwards(String[] listA, String[] listB) {
 		int indexA = listA.length - 1;
 		int indexB = listB.length - 1;
-		while( indexA >= 0 && indexB >= 0 ) {
+		while (indexA >= 0 && indexB >= 0) {
 			String attributeToFindPart = listA[indexA];
 			String attributePart = listB[indexB];
-			
-			if( !attributeToFindPart.equals(attributePart)) {
+
+			if (!attributeToFindPart.equals(attributePart)) {
 				return false;
 			}
-			
+
 			indexA--;
 			indexB--;
 		}
-		
+
 		return true;
 	}
 
@@ -212,8 +218,12 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 		return newSet;
 	}
 
-	protected static String getNewName(SDFSchema attributes1, SDFSchema attributes2) {
-		String name = attributes1.getURI().compareToIgnoreCase(attributes2.getURI()) >= 0 ? attributes1.getURI() + attributes2.getURI() : attributes2.getURI() + attributes1.getURI();
+	protected static String getNewName(SDFSchema attributes1,
+			SDFSchema attributes2) {
+		String name = attributes1.getURI().compareToIgnoreCase(
+				attributes2.getURI()) >= 0 ? attributes1.getURI()
+				+ attributes2.getURI() : attributes2.getURI()
+				+ attributes1.getURI();
 		return name;
 	}
 
@@ -224,7 +234,8 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 	 * @param attributes2
 	 * @return
 	 */
-	public static SDFSchema difference(SDFSchema attributes1, SDFSchema attributes2) {
+	public static SDFSchema difference(SDFSchema attributes1,
+			SDFSchema attributes2) {
 
 		SDFSchema newSet = new SDFSchema(attributes1.getURI(), attributes1);
 		for (int j = 0; j < attributes2.size(); j++) {
@@ -248,8 +259,10 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 	 *            Set2
 	 * @return
 	 */
-	public static SDFSchema intersection(SDFSchema attributes1, SDFSchema attributes2) {
-		SDFSchema newSet = new SDFSchema(getNewName(attributes1, attributes2), attributes1.type);
+	public static SDFSchema intersection(SDFSchema attributes1,
+			SDFSchema attributes2) {
+		SDFSchema newSet = new SDFSchema(getNewName(attributes1, attributes2),
+				attributes1.type);
 		for (int j = 0; j < attributes1.size(); j++) {
 			SDFAttribute nextAttr = attributes1.getAttribute(j);
 
@@ -338,9 +351,11 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 	public static SDFSchema changeSourceName(SDFSchema schema, String newName) {
 		List<SDFAttribute> newattributeList = new ArrayList<SDFAttribute>();
 		for (SDFAttribute a : schema.getAttributes()) {
-			newattributeList.add(new SDFAttribute(newName, a.getAttributeName(), a));
+			newattributeList.add(new SDFAttribute(newName,
+					a.getAttributeName(), a));
 		}
-		SDFSchema newSchema = new SDFSchema(newName, schema.type, newattributeList);
+		SDFSchema newSchema = new SDFSchema(newName, schema.type,
+				newattributeList);
 		return newSchema;
 	}
 
@@ -371,7 +386,8 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 	 *            The {@link SDFDatatype datatype}
 	 * @return A list of all attributes that are of the given datatype.
 	 */
-	public Collection<SDFAttribute> getSDFDatatypeAttributes(final SDFDatatype datatype) {
+	public Collection<SDFAttribute> getSDFDatatypeAttributes(
+			final SDFDatatype datatype) {
 		Objects.requireNonNull(datatype);
 		Objects.requireNonNull(getAttributes());
 		final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
@@ -405,6 +421,41 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 	@Override
 	public String toString() {
 		return super.toString() + " " + type;
+	}
+
+	/**
+	 * Search for a datatype START_TIMESTAMP or STARTTIME_STAMP_STRING and read 
+	 * BASE_TIME_UNIT if available
+	 * @return The TimeUnit if available or null else
+	 */
+	public TimeUnit determineTimeUnit() {
+		for (SDFAttribute a : elements) {
+			if (a.getDatatype() == SDFDatatype.START_TIMESTAMP
+					|| a.getDatatype() == SDFDatatype.START_TIMESTAMP_STRING) {
+				SDFDatatypeConstraint c = a
+						.getDtConstraint(SDFDatatypeConstraint.BASE_TIME_UNIT);
+				if (c != null) {
+					return (TimeUnit) c.getValue();
+				} else {
+					return null;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static int[] calcRestrictList(SDFSchema in, SDFSchema out) {
+		int[] ret = new int[out.size()];
+		int i = 0;
+		for (SDFAttribute outAttribute : out) {
+			SDFAttribute foundAttribute = in.findAttribute(outAttribute.getURI());
+			if (foundAttribute == null) {
+				throw new IllegalArgumentException("no such attribute: " + outAttribute);
+			}
+			
+			ret[i++] = in.indexOf(foundAttribute);
+		}
+		return ret;
 	}
 
 }

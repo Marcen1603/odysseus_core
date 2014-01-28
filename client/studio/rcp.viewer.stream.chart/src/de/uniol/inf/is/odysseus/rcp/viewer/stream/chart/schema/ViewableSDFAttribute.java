@@ -38,7 +38,17 @@ public class ViewableSDFAttribute extends AbstractViewableAttribute{
 	public String getName() {
 		return typeName+"."+attribute.getAttributeName()+"("+getPort()+")";
 	}
+	
+	@Override
+	public String getAttributeName(){
+		return attribute.getAttributeName();		
+	}
 
+	@Override
+	public String getTypeName(){
+		return typeName;
+	}
+	
 	@Override
 	public SDFDatatype getSDFDatatype() {		
 		return attribute.getDatatype();

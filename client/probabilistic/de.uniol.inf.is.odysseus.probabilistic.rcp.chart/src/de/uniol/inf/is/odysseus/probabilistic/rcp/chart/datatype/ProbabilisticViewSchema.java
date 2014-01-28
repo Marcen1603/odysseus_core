@@ -14,7 +14,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.rcp.chart.datatype;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -63,7 +62,7 @@ public class ProbabilisticViewSchema<T> extends ViewSchema<T> {
         }
         // add all (except of currently timestamps) to the list of pre-chosen
         // attributes
-        this.choosenAttributes = new ArrayList<IViewableAttribute>();
+        this.choosenAttributes.clear();
         for (final IViewableAttribute a : this.viewableAttributes) {
             if (this.chooseAsInitialAttribute(a.getSDFDatatype())) {
                 this.choosenAttributes.add(a);

@@ -38,6 +38,16 @@ public class ViewableMetaAttribute extends AbstractViewableAttribute {
 	public String getName() {
 		return metaAttribute.getAttributeName() + "." + method.getName()+"("+getPort()+")";
 	}
+	
+	@Override
+	public String getAttributeName() {
+		return metaAttribute.getAttributeName() + "." + method.getName();
+	}
+	
+	@Override
+	public String getTypeName() {
+		return null;
+	}
 
 	@Override
 	public SDFDatatype getSDFDatatype() {

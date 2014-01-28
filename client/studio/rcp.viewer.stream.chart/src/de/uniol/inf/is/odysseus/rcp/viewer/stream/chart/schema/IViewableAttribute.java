@@ -21,8 +21,11 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public interface IViewableAttribute{
 
-	public String getName();
-	public SDFDatatype getSDFDatatype();
-	public Object evaluate(Tuple<? extends IMetaAttribute> tuple);
-	public int getPort();
+	String getName();
+	String getTypeName();
+	String getAttributeName();
+	SDFDatatype getSDFDatatype();
+	Object evaluate(Tuple<? extends IMetaAttribute> tuple);
+	int getPort();
+	
 }
