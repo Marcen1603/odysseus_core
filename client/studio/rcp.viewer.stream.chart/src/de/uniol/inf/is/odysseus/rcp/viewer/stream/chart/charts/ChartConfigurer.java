@@ -179,6 +179,10 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 		col2.setText("Visible");
 		col2.setWidth(200);
 
+		TableColumn col3 = new TableColumn(table, SWT.CENTER);
+		col3.setText("groupBy");
+		col3.setWidth(200);
+		
 		table.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
