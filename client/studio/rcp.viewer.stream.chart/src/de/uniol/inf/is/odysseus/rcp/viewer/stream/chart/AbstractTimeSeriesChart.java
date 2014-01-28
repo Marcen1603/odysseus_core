@@ -75,10 +75,12 @@ public abstract class AbstractTimeSeriesChart extends
 	private String yTitle = "";
 
 	private static final int DEFAULT_MAX_NUMBER_OF_ITEMS = 1000;
+	private static final long DEFAULT_MAX_ITEM_AGE = 0;
 	private static final String DEFAULT_TIME_GRANULARITY = FROM_STREAM;
 
 	private static final String CURRENT_TIME = "Current Time";
 	private int maxItems = DEFAULT_MAX_NUMBER_OF_ITEMS;
+	private long maxItemAge = DEFAULT_MAX_ITEM_AGE;
 
 	// also milli
 	private String dateformat = "HH:mm:ss";
@@ -282,7 +284,15 @@ public abstract class AbstractTimeSeriesChart extends
 		timeSeries = gSerie.get(name);
 		if (timeSeries == null) {
 			timeSeries = new TimeSeries(name);
-			timeSeries.setMaximumItemCount(this.maxItems);
+			
+			if (this.maxItems > 0){
+				timeSeries.setMaximumItemCount(this.maxItems);
+			}
+
+			if (this.maxItemAge > 0){
+				timeSeries.setMaximumItemAge(this.maxItemAge);
+			}
+			
 			gSerie.put(name, timeSeries);
 			this.dataset.addSeries(timeSeries);
 		}
@@ -327,6 +337,16 @@ public abstract class AbstractTimeSeriesChart extends
 	@ChartSetting(name = "Max Shown Items", type = Type.SET)
 	public void setMaxItems(Integer maxItems) {
 		this.maxItems = maxItems;
+	}
+
+	@ChartSetting(name = "Max Shown Item Age", type = Type.GET)
+	public Long getMaxItemAge() {
+		return maxItemAge;
+	}
+
+	@ChartSetting(name = "Max Shown Item Age", type = Type.SET)
+	public void setMaxItemAge(Long maxItemAge) {
+		this.maxItemAge = maxItemAge;
 	}
 
 	@ChartSetting(name = "Date Time Format", type = Type.GET)
