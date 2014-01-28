@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
@@ -78,7 +79,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			// Determine all parts to be fragmented (e1) and other (e2) query parts
 			// Note: Some of the origin query parts may be split.
 			IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> partsToBeFragmentedAndOtherParts = 
-					AbstractFragmentationQueryPartModificator.determinePartsToBeFragmented(queryParts, sourceName);
+					this.determinePartsToBeFragmented(queryParts, sourceName);
 			Collection<ILogicalQueryPart> partsToBeFragmented = partsToBeFragmentedAndOtherParts.getE1();
 			
 			// Preconditions
@@ -135,8 +136,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			
 			// Connect all other query parts, which are not connected yet
 			for(ILogicalQueryPart originPart : otherParts)
-				copiesToOrigin = AbstractFragmentationQueryPartModificator.attachOtherParts(originPart, copiesToOrigin, partsToBeFragmented, 
-						sourceName, historyOfFragmentationOperators);
+				copiesToOrigin = this.attachOtherParts(originPart, copiesToOrigin, partsToBeFragmented, sourceName, historyOfFragmentationOperators);
 			
 			// Create the return value
 			modifiedParts.clear();
@@ -174,7 +174,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @throws NullPointerException if <code>copiesToOrigin</code>, <code>sources</code>, <code>targets</code> or 
 	 * <code>subscription</code> is null.
 	 */
-	private static Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> connect(
+	protected static Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> connect(
 			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin,
 			Collection<ILogicalOperator> sources,
 			LogicalSubscription subscription,
@@ -219,7 +219,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * <code>historyOfOperatorsForFragmentation</code> is null.
 	 * @throws IllegalArgumentException if an operator for fragmentation could not be found.
 	 */
-	private static IPair<ILogicalOperator, ILogicalQueryPart> searchOperatorForFragmentation(
+	protected static IPair<ILogicalOperator, ILogicalQueryPart> searchOperatorForFragmentation(
 			Collection<ILogicalQueryPart> queryParts, 
 			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation, 
 			LogicalSubscription subscription, 
@@ -742,7 +742,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @throws NullPointerException if <code>originPart</code>, <code>copiesToOrigin</code>, <code>partsToBeFragmented</code> or 
 	 * <code>historyOfOperatorsForFragmentation</code> is null.
 	 */
-	private static Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> attachOtherParts(
+	protected Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> attachOtherParts(
 			ILogicalQueryPart originPart,
 			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin,
 			Collection<ILogicalQueryPart> partsToBeFragmented,
@@ -830,7 +830,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 							LogicalQueryHelper.determineQueryPart(modifiedCopiesToOrigin.keySet(), target);
 					if(!optPartOfOriginTarget.isPresent())
 						targets.add(target);
-					else if(originSink instanceof AccessAO && ((AccessAO) originSink).getAccessAOName().getResourceName().equals(sourceName)) {
+					else if(originSink instanceof AbstractAccessAO && ((AbstractAccessAO) originSink).getAccessAOName().getResourceName().equals(sourceName)) {
 						
 						LogicalSubscription subscription = new LogicalSubscription(originSink, subToSink.getSinkInPort(), 
 								subToSink.getSourceOutPort(), subToSink.getSchema());
@@ -933,7 +933,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @return A pair of query parts to be fragmented (e1) and other parts (e2).
 	 * @throws NullPointerException if <code>queryParts</code> or <code>sourceName</code> is null.
 	 */
-	private static IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> determinePartsToBeFragmented(
+	private IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> determinePartsToBeFragmented(
 			Collection<ILogicalQueryPart> queryParts, 
 			String sourceName) 
 			throws NullPointerException {
@@ -950,8 +950,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		
 		for(ILogicalQueryPart part : queryParts) {
 			
-			Collection<ILogicalOperator> relevantOperators = 
-					AbstractFragmentationQueryPartModificator.determineRelevantOperators(part, sourceName);
+			Collection<ILogicalOperator> relevantOperators = this.determineRelevantOperators(part, sourceName);
 			if(relevantOperators.size() == part.getOperators().size()) {
 				
 				partsToBeFragmented.add(part);
@@ -996,7 +995,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * Those operators have a data stream as an input, which depend on the source to be fragmented.
 	 * @throws NullPointerException if <code>queryPart</code> or <code>sourceName</code> is null.
 	 */
-	private static Collection<ILogicalOperator> determineRelevantOperators(
+	protected Collection<ILogicalOperator> determineRelevantOperators(
 			ILogicalQueryPart queryPart, 
 			String sourceName)
 			throws NullPointerException {
@@ -1012,9 +1011,9 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		
 		for(ILogicalOperator operator : queryPart.getOperators()) {
 			
-			if(operator instanceof AccessAO && ((AccessAO) operator).getAccessAOName().getResourceName().equals(sourceName))
+			if(operator instanceof AbstractAccessAO && ((AbstractAccessAO) operator).getAccessAOName().getResourceName().equals(sourceName))
 				continue;
-			if(AbstractFragmentationQueryPartModificator.isOperatorRelevant(operator, sourceName))
+			else if(AbstractFragmentationQueryPartModificator.isOperatorRelevant(operator, sourceName))
 				relevantOperators.add(operator);
 			
 		}

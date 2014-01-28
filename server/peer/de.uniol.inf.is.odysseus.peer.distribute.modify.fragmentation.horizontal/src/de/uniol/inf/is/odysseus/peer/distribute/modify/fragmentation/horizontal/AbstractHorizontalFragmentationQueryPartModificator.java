@@ -16,8 +16,11 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItemParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
@@ -275,6 +278,152 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 		reunionAggregate.addParameterInfo(AggregateAO.AGGREGATIONS, pqlString);
 		
 		return reunionAggregate;
+		
+	}
+	
+	@Override
+	protected Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> attachOtherParts(
+			ILogicalQueryPart originPart,
+			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin,
+			Collection<ILogicalQueryPart> partsToBeFragmented,
+			String sourceName,
+			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation)
+			throws NullPointerException {
+		
+		// Preconditions
+		if(originPart == null)
+			throw new NullPointerException("Origin query part for attachment must be not null!");
+		else if(copiesToOrigin == null)
+			throw new NullPointerException("Mapping of copies to origin query parts must be not null!");
+		else if(partsToBeFragmented == null)
+			throw new NullPointerException("Collection of parts to be fragmented must be not null!");
+		else if(historyOfOperatorsForFragmentation == null)
+			throw new NullPointerException("The history of inserted operator for fragmentation must be not null!");
+		else if(sourceName == null)
+			throw new NullPointerException("Name of the source to be fragmented must be not null!");
+		
+		// The return value
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> modifiedCopiesToOrigin = Maps.newHashMap(copiesToOrigin);
+		
+		// Collect all relative sources
+		Map<ILogicalOperator, Collection<ILogicalOperator>> copiedToOriginSources = 
+				LogicalQueryHelper.collectRelativeSources(originPart, modifiedCopiesToOrigin.get(originPart));
+		
+		// Collect all relative sinks
+		Map<ILogicalOperator, Collection<ILogicalOperator>> copiedToOriginSinks = 
+				LogicalQueryHelper.collectRelativeSinks(originPart, modifiedCopiesToOrigin.get(originPart));
+		
+		// Process each relative source
+		for(ILogicalOperator originSource : copiedToOriginSources.keySet()) {
+			
+			if(originSource.getSubscribedToSource().isEmpty())
+				continue;
+			else {
+				
+				for(LogicalSubscription subToSource : originSource.getSubscribedToSource()) {
+					
+					if(originPart.getOperators().contains(subToSource.getTarget()))
+						continue;
+					
+					Collection<ILogicalOperator> copiedSources = copiedToOriginSources.get(originSource);
+				
+					ILogicalOperator target = subToSource.getTarget();
+					Collection<ILogicalOperator> targets = Lists.newArrayList();
+					Optional<ILogicalQueryPart> optPartOfOriginTarget = 
+							LogicalQueryHelper.determineQueryPart(modifiedCopiesToOrigin.keySet(), target);
+					if(!optPartOfOriginTarget.isPresent())
+						targets.add(target);
+					else if(partsToBeFragmented.contains(optPartOfOriginTarget.get())) {
+						
+						// Done by the insertion of the operator for reunion
+						continue;
+						
+					} else targets.addAll(LogicalQueryHelper.collectCopies(
+							optPartOfOriginTarget.get(), modifiedCopiesToOrigin.get(optPartOfOriginTarget.get()), target));
+					
+					modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.connect(
+							modifiedCopiesToOrigin, targets, subToSource, copiedSources);
+					
+				}
+				
+			}
+			
+		}
+		
+		// Process each relative sink
+		for(ILogicalOperator originSink : copiedToOriginSinks.keySet()) {
+			
+			if(originSink.getSubscriptions().isEmpty())
+				continue;
+			else {
+				
+				for(LogicalSubscription subToSink : originSink.getSubscriptions()) {
+					
+					if(originPart.getOperators().contains(subToSink.getTarget()))
+						continue;
+					
+					Collection<ILogicalOperator> copiedSinks = copiedToOriginSinks.get(originSink);
+					
+					ILogicalOperator target = subToSink.getTarget();
+					Collection<ILogicalOperator> targets = Lists.newArrayList();
+					Optional<ILogicalQueryPart> optPartOfOriginTarget = 
+							LogicalQueryHelper.determineQueryPart(modifiedCopiesToOrigin.keySet(), target);
+					if(!optPartOfOriginTarget.isPresent())
+						targets.add(target);
+					else if((originSink instanceof AbstractAccessAO && 
+							((AbstractAccessAO) originSink).getAccessAOName().getResourceName().equals(sourceName)) ||
+							(originSink instanceof AbstractWindowAO && 
+									!((AbstractWindowAO) originSink).getWindowType().equals(WindowType.TIME))){
+						
+						LogicalSubscription subscription = new LogicalSubscription(originSink, subToSink.getSinkInPort(), 
+								subToSink.getSourceOutPort(), subToSink.getSchema());
+						
+						IPair<ILogicalOperator, ILogicalQueryPart> operatorForFragmentation = 
+								AbstractFragmentationQueryPartModificator.searchOperatorForFragmentation(
+								modifiedCopiesToOrigin.keySet(), historyOfOperatorsForFragmentation, subscription, target);
+						
+						targets.add(operatorForFragmentation.getE1());
+						modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.connect(
+								modifiedCopiesToOrigin, copiedSinks, subToSink, targets);
+						
+						modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.unionPartOfFragmentationWithGivenPart(
+								originPart, modifiedCopiesToOrigin, originSink, historyOfOperatorsForFragmentation);
+						
+						continue;
+						
+					} else targets.addAll(LogicalQueryHelper.collectCopies(
+							optPartOfOriginTarget.get(), modifiedCopiesToOrigin.get(optPartOfOriginTarget.get()), target));
+					
+					modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.connect(
+							modifiedCopiesToOrigin, copiedSinks, subToSink, targets);
+					
+				}
+				
+			}
+			
+		}
+		
+		return modifiedCopiesToOrigin;
+		
+	}
+	
+	@Override
+	protected Collection<ILogicalOperator> determineRelevantOperators(
+			ILogicalQueryPart queryPart, 
+			String sourceName)
+			throws NullPointerException {
+		
+		// The return value
+		Collection<ILogicalOperator> relevantOperators = Lists.newArrayList();
+		
+		for(ILogicalOperator operator : super.determineRelevantOperators(queryPart, sourceName)) {
+			
+			if(!(operator instanceof AbstractWindowAO) || ((AbstractWindowAO) operator).getWindowType().equals(WindowType.TIME))
+				relevantOperators.add(operator);
+			
+		}
+		
+		return relevantOperators;
 		
 	}
 	
