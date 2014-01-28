@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author Wolf Bauer, Marco Grawunder
  * 
  */
-public interface IExecutor extends IClientPlanManager{
+public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * List of predefined registered build configurations
@@ -52,190 +52,351 @@ public interface IExecutor extends IClientPlanManager{
 	public Collection<String> getQueryBuildConfigurationNames(ISession session);
 
 	/**
-	 * getSupportedQueryParser liefert alle IDs der zur Verfuegung stehenden
-	 * Parser zur uebersetzung von Anfragen, die als Zeichenkette vorliegen.
+	 * lists the IDs of all currently installed parsers, which can be used to
+	 * translate a query.
 	 * 
-	 * @return Liste aller IDs der zur Verfuegung stehenden Parser zur
-	 *         uebersetzung von Anfragen, die als Zeichenkette vorliegen
 	 * @throws PlanManagementException
 	 */
-	public Set<String> getSupportedQueryParsers(ISession session)
-			throws PlanManagementException;
-	
+	public Set<String> getSupportedQueryParsers(ISession session) throws PlanManagementException;
+
 	/**
 	 * A list of tokens like static key words for a certain query parser that
-	 * can be, e.g. used for visualization. 
+	 * can be, e.g. used for visualization.
+	 * 
 	 * @param queryParser
+	 *            the ID of the query parser
+	 * @param user
+	 *            current user
 	 * @return a parser dependent key-multiple-values map
 	 */
 	public Map<String, List<String>> getQueryParserTokens(String queryParser, ISession user);
-	
+
+	/**
+	 * Returns a list of suggestions for a certain query parser based on a hint.
+	 * This method strongly depends on the query parser
+	 * 
+	 * @param queryParser
+	 *            the ID of the parser
+	 * @param hint
+	 *            the hint that is used by the parser
+	 * @param user
+	 *            the current user
+	 * @return a list of suggestions
+	 */
 	public List<String> getQueryParserSuggestions(String queryParser, String hint, ISession user);
 
 	/**
-	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als Zeichenkette
-	 * vorliegt.
+	 * Adds a new query
 	 * 
 	 * @param query
-	 *            Anfrage in Form einer Zeichenkette
+	 *            The query defined as a string
 	 * @param parserID
-	 *            ID des zu verwendenden Parsers, ueberschreibt einen evtl.
-	 *            vorhandenen Eintrag in parameters
+	 *            The ID of the parser that should be used to translate the
+	 *            query
 	 * @param queryBuildConfigurationName
-	 *            Name der zu verwendeden Build-Configuration
-	 * @param context TODO
-	 * @return vorläufige ID der neuen Anfrage
+	 *            The name of the the build configuration that should be used
+	 *            during the query processing
+	 * 
+	 * @param context
+	 *            Allows to pass some context based information to the query
+	 *            processing, e.g. current directories.
+	 * 
+	 * @return A (potential empty) list of the IDs of the installed queries
 	 * @throws PlanManagementException
 	 */
-	public Collection<Integer> addQuery(String query, String parserID,
-			ISession user, String queryBuildConfigurationName, Context context)
-			throws PlanManagementException;
+	public Collection<Integer> addQuery(String query, String parserID, ISession user, String queryBuildConfigurationName, Context context) throws PlanManagementException;
 
-	
-	 /** This method tries to translate the given query to a logical plan and delivers the output schema for the root operator
-	 * Remark: It must be shure, that there in only one output operator, else the first one will be choosen that is found!
-	 * @param query The query text
-	 * @param parserID The parser to translate the query
-	 * @param user The caller of this method to validate user right
-	 * @param port The port for which the schema should be returned
-	 * @return The output schema from the top operator for the given port
-	 */	
-	public SDFSchema determineOutputSchema(String query, String parserID,
-			ISession user, int port, Context context);
-	// TODO, Multiple roots
-//	public SDFSchema determinedOutputSchema(String query, String parserID,
-//			ISession user, String queryBuildConfigurationName, String rootName, int port);	
-	
-	
 	/**
-	 * Return the logical query with the id
+	 * This method tries to translate the given query to a logical plan and
+	 * delivers the output schema for the root operator Remark: It must be
+	 * shure, that there in only one output operator, else the first one will be
+	 * choosen that is found!
+	 * 
+	 * @param query
+	 *            The query text
+	 * @param parserID
+	 *            The parser to translate the query
+	 * @param user
+	 *            The caller of this method to validate user right
+	 * @param port
+	 *            The port for which the schema should be returned
+	 * @return The output schema from the top operator for the given port
+	 */
+	public SDFSchema determineOutputSchema(String query, String parserID, ISession user, int port, Context context);
+
+	// TODO, Multiple roots
+	// public SDFSchema determinedOutputSchema(String query, String parserID,
+	// ISession user, String queryBuildConfigurationName, String rootName, int
+	// port);
+
+	/**
+	 * Returns the logical query for the given id
+	 * 
 	 * @param id
-	 * @return
+	 *            The ID of the query
+	 * @param session
+	 *            The current user
+	 * @return the logical query
 	 */
 	public ILogicalQuery getLogicalQueryById(int id, ISession session);
-	
+
 	/**
-	 * Return the named logical query 
+	 * Returns the logical query for the given name
+	 * 
 	 * @param name
-	 * @return
+	 *            The name of the query
+	 * @param session
+	 *            The current user
+	 * @return the logical query
 	 */
 	public ILogicalQuery getLogicalQueryByName(String name, ISession session);
-	
+
 	/**
-	 * getLogicalQueryIds gibt die Query-IDs aller Anfragen zurück
+	 * Returns all IDs of all logical queries for the given user
 	 * 
-	 * @return IDs aller Anfragen
+	 * @param session
+	 *            The current user
+	 * @return The IDs of the logical queries
 	 */
 	public Collection<Integer> getLogicalQueryIds(ISession session);
-	
+
 	/**
-	 * Returns for a query the physical root operators
+	 * Returns all root operators of the physical query that has the given
+	 * queryID
 	 * 
 	 * @param queryID
-	 * @return
+	 *            The ID of the query
+	 * @param session
+	 *            The current user
+	 * @return All physical root operators
 	 */
 	public List<IPhysicalOperator> getPhysicalRoots(int queryID, ISession session);
-	
+
 	/**
-	 * Start all queries that are currently not running
+	 * Starts all queries that are currently not running
 	 * 
-	 * @param user
+	 * @param session
+	 *            The current user
 	 * @return List of queries that could be started
 	 */
 	public Collection<Integer> startAllClosedQueries(ISession user);
 
 	/**
-	 * Provides a Set of registered buffer placement strategies represented by
-	 * an id.
+	 * Provides a set of all registered buffer placement strategies
 	 * 
-	 * @return Set of registered buffer placement strategies represented by an
-	 *         id
+	 * @param session
+	 *            The current user
+	 * 
+	 * @return A set of IDs of the strategies
 	 */
 	public Set<String> getRegisteredBufferPlacementStrategiesIDs(ISession session);
 
 	/**
-	 * Provides a Set of registered scheduling strategy strategies represented
-	 * by an id.
+	 * Provides a set of all registered scheduling strategies
 	 * 
-	 * @return Set of registered scheduling strategy strategies represented by
-	 *         an id
+	 * @param session
+	 *            The current user
+	 * 
+	 * @return A set of IDs of the scheduling strategies
 	 */
 	public Set<String> getRegisteredSchedulingStrategies(ISession session);
 
 	/**
-	 * Provides a Set of registered schedulers represented by an id.
+	 * Provides a set of all registered schedulers
 	 * 
-	 * @return Set of registered schedulers represented by an id
+	 * @param session
+	 *            The current user
+	 * @return Set of scheduler IDs
 	 */
 	public Set<String> getRegisteredSchedulers(ISession session);
 
 	/**
 	 * Sets the the scheduler with a scheduling strategy which should be used
-	 * for creating concrete scheduler.
+	 * for creating a concrete scheduler.
 	 * 
 	 * @param scheduler
-	 *            scheduler factory which should be used for creating concrete
-	 *            scheduler.
+	 *            The scheduler factory which should be used for creating
+	 *            concrete scheduler.
 	 * @param schedulerStrategy
-	 *            scheduling strategy factory which should be used by scheduler
-	 *            for creating concrete scheduler.
+	 *            The scheduling strategy factory which should be used by
+	 *            scheduler for creating concrete scheduler.
+	 * @param session
+	 *            The current user
 	 */
 	public void setScheduler(String scheduler, String schedulerStrategy, ISession session);
 
 	/**
 	 * Get the current active scheduler represented by an id.
+	 * @param session The current user
 	 * 
-	 * @return current active scheduler represented by an id.
+	 * @return id of the current scheduler
 	 */
 	public String getCurrentSchedulerID(ISession session);
 
 	/**
 	 * Get the current active scheduling strategy factory represented by an id.
 	 * 
-	 * @return current active scheduling strategy factory represented by an id.
+	 * @param session The current user
+	 * @return id of the current active scheduling strategy factory
 	 */
 	public String getCurrentSchedulingStrategyID(ISession session);
 
+	/**
+	 * Returns all registered data types
+	 * 
+	 * @param caller The current user
+	 * @return The set of data types
+	 */
 	public Set<SDFDatatype> getRegisteredDatatypes(ISession caller);
-	
+
+	/**
+	 * Returns all registered wrapper names
+	 * @param caller The current user
+	 * @return A set of wrapper IDs
+	 */
 	public Set<String> getRegisteredWrapperNames(ISession caller);
-	
+
+	/**
+	 * Returns all registered aggregated functions for a certain data model
+	 * 
+	 * @param datamodel The data model 
+	 * @param caller The current user
+	 * @return A list of the function
+	 */
+
 	public Set<String> getRegisteredAggregateFunctions(@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel, ISession caller);
-	
+
+	/**
+	 * The name of the executor
+	 * 
+	 * @return the name 
+	 */
 	public String getName();
 
 	// Facade
 	// Session Management methods
+	/**
+	 * Logs a user in and creates a session
+	 * @param username The user name
+	 * @param password The password of the user
+	 * @param tenantname The tenant
+	 * @return the session of the logged in user
+	 */
 	ISession login(String username, byte[] password, String tenantname);
 
+	/**
+	 * Logs the user out
+	 * @param caller The user to be logged out
+	 */
 	void logout(ISession caller);
-	
+
 	// Facade for DataDictionary
+	/**
+	 * Removes a sink using its simple name
+	 *  
+	 * @param name The name of the sink
+	 * @param caller The current user
+	 * @return The operator of the sink that was removed
+	 */	
 	public ILogicalOperator removeSink(String name, ISession caller);
+
+	/**
+	 * Removes a sink using its resource name
+	 *  
+	 * @param name The resource description of the sink
+	 * @param caller The current user
+	 * @return The operator of the sink that was removed
+	 */	
 	public ILogicalOperator removeSink(Resource name, ISession caller);
+
+	/**
+	 * Removes a view or stream using its simple name
+	 *  
+	 * @param name The name of the stream or view
+	 * @param caller The current user
+	 */	
 	public void removeViewOrStream(String name, ISession caller);
+
+	/**
+	 * Removes a view or stream using its resource description
+	 *  
+	 * @param name The resource description of the stream or view
+	 * @param caller The current user
+	 */	
 	public void removeViewOrStream(Resource name, ISession caller);
+
+	/**
+	 * Delivers a user-dependent set of all installed streams and views
+	 * 
+	 * A stream or view is named by a resource description and is represented by 
+	 * its top most logical operator
+	 * 
+	 * @param caller The current user
+	 * @return Pairs of resource description and the top operator
+	 */
 	public Set<Entry<Resource, ILogicalOperator>> getStreamsAndViews(ISession caller);
+
+	/**
+	 * Delivers a user-dependent set of all installed sinks
+	 * 
+	 * A sink is named by a resource description and is represented by 
+	 * its top most logical operator
+	 * 
+	 * @param caller The current user
+	 * @return Pairs of resource description and the top operator
+	 */
 	public Set<Entry<Resource, ILogicalOperator>> getSinks(ISession caller);
+
+	/**
+	 * Checks whether the stream or view exists.
+	 * 
+	 * @param name The resource description to be checked
+	 * @param caller the current user
+	 * @return true, if the view or stream exists
+	 */
 	public boolean containsViewOrStream(Resource name, ISession caller);
+
+	/**
+	 * Checks whether the stream or view exists.
+	 * 
+	 * @param name The name to be checked
+	 * @param caller the current user
+	 * @return true, if the view or stream exists
+	 */
 	public boolean containsViewOrStream(String name, ISession caller);
 
+	/**
+	 * Invokes to reload stored queries.
+	 * 
+	 * @param caller The current user
+	 */
 	void reloadStoredQueries(ISession caller);
-	
+
+	/**
+	 * Returns the output schema of the query identified by the given ID
+	 *    
+	 * @param queryId The ID of the query
+	 * @param session The current user 
+	 * @return the schema of the query
+	 */
 	public SDFSchema getOutputSchema(int queryId, ISession session);
-	
+
 	// stored procedure stuff
 	public void addStoredProcedure(String name, StoredProcedure proc, ISession caller);
+
 	public void removeStoredProcedure(String name, ISession caller);
+
 	public StoredProcedure getStoredProcedure(String name, ISession caller);
+
 	public List<StoredProcedure> getStoredProcedures(ISession caller);
+
 	public boolean containsStoredProcedures(String name, ISession caller);
-	
-	
+
 	// available operator informations
 	public List<String> getOperatorNames(ISession caller);
+
 	public List<LogicalOperatorInformation> getOperatorInformations(ISession caller);
+
 	public LogicalOperatorInformation getOperatorInformation(String name, ISession caller);
-		
 
 }
