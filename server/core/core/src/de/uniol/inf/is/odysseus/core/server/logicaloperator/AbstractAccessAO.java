@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatypeConstraint;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFTimeUnit;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
@@ -194,8 +194,8 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		
 		TimeUnit timeUnit = TimeUnit.MILLISECONDS;
 		
-		if (optionsMap.containsKey(SDFDatatypeConstraint.BASE_TIME_UNIT)){
-			String unit = optionsMap.get(SDFDatatypeConstraint.BASE_TIME_UNIT);
+		if (optionsMap.containsKey(SDFConstraint.BASE_TIME_UNIT)){
+			String unit = optionsMap.get(SDFConstraint.BASE_TIME_UNIT);
 			TimeUnit btu = TimeUnit.valueOf(unit);
 			if (btu != null){
 				timeUnit = btu;
@@ -210,8 +210,8 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 			for (SDFAttribute a : attributes) {
 				SDFAttribute newAttr;
 				if (a.getDatatype() == SDFDatatype.START_TIMESTAMP || a.getDatatype() == SDFDatatype.START_TIMESTAMP_STRING){
-					List<SDFDatatypeConstraint> c = new ArrayList<>();
-					c.add(new SDFDatatypeConstraint(SDFDatatypeConstraint.BASE_TIME_UNIT, timeUnit));
+					List<SDFConstraint> c = new ArrayList<>();
+					c.add(new SDFConstraint(SDFConstraint.BASE_TIME_UNIT, timeUnit));
 					SDFUnit unit = new SDFTimeUnit(timeUnit.toString());
 					newAttr = new SDFAttribute(getName(), a.getAttributeName(), a, unit, c);
 				}else{

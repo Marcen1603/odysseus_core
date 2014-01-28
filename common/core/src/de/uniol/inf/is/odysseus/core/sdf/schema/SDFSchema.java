@@ -432,8 +432,8 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		for (SDFAttribute a : elements) {
 			if (a.getDatatype() == SDFDatatype.START_TIMESTAMP
 					|| a.getDatatype() == SDFDatatype.START_TIMESTAMP_STRING) {
-				SDFDatatypeConstraint c = a
-						.getDtConstraint(SDFDatatypeConstraint.BASE_TIME_UNIT);
+				SDFConstraint c = a
+						.getDtConstraint(SDFConstraint.BASE_TIME_UNIT);
 				if (c != null) {
 					return (TimeUnit) c.getValue();
 				} else {

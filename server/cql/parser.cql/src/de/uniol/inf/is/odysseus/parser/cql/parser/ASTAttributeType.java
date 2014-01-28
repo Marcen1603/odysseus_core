@@ -19,7 +19,7 @@ package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatypeConstraint;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 
 @SuppressWarnings("all")
@@ -36,13 +36,13 @@ public class ASTAttributeType extends SimpleNode {
 	/**
 	 * Will be used to format date attributes.
 	 */
-	SDFDatatypeConstraint dateFormatConstr;
+	SDFConstraint dateFormatConstr;
 
 	public void setDateFormat(String dateFormat) {
-		this.dateFormatConstr = new SDFDatatypeConstraint(null, dateFormat);
+		this.dateFormatConstr = new SDFConstraint(null, dateFormat);
 	}
 	
-	public SDFDatatypeConstraint getDateFormat(){
+	public SDFConstraint getDateFormat(){
 		return this.dateFormatConstr;
 	}
 

@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatypeConstraint;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
@@ -74,7 +74,7 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 			return OdysseusRCPViewerPlugIn.getImageManager().get("attribute");
 		}
 
-		if (element instanceof SDFDatatypeConstraint){
+		if (element instanceof SDFConstraint){
 			return OdysseusRCPViewerPlugIn.getImageManager().get("constraint");
 		}
 		
@@ -187,8 +187,8 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 			return styledString;
 		}
 		
-		if (element instanceof SDFDatatypeConstraint){
-			SDFDatatypeConstraint dt = (SDFDatatypeConstraint)element;
+		if (element instanceof SDFConstraint){
+			SDFConstraint dt = (SDFConstraint)element;
 			return styledString.append(dt.getURI()).append(" = "+dt.getValue());
 		}
 		

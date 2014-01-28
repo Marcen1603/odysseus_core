@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatypeConstraint;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
@@ -177,7 +177,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		SDFAttribute attribute = null;
 		ASTAttributeType astAttrType = (ASTAttributeType) node.jjtGetChild(1);
-		List<SDFDatatypeConstraint> dtConstrains = new LinkedList<>();
+		List<SDFConstraint> dtConstrains = new LinkedList<>();
 
 		// we allow user defined types, so check
 		// whether the defined type exists or not
@@ -190,7 +190,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 
 		if (attribType.isDate()) {
-			dtConstrains.add(new SDFDatatypeConstraint("format", astAttrType.getDateFormat()));
+			dtConstrains.add(new SDFConstraint("format", astAttrType.getDateFormat()));
 		}
 		Resource resource = new Resource(this.caller.getUser(), this.name);
 		if (attribType.isMeasurementValue() && astAttrType.jjtGetNumChildren() > 0) {

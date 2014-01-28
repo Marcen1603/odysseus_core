@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatypeConstraint;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
@@ -112,7 +112,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 			}
 			if (attrs.size() > 0) {
 				SDFAttribute attr = attrs.iterator().next();
-				SDFDatatypeConstraint constr = attr.getDtConstraint(SDFDatatypeConstraint.BASE_TIME_UNIT);
+				SDFConstraint constr = attr.getDtConstraint(SDFConstraint.BASE_TIME_UNIT);
 				if (constr != null){
 					baseTimeUnit = (TimeUnit) constr.getValue();
 				}

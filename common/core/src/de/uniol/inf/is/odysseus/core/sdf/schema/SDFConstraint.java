@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.core.sdf.schema;
 
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 
-public class SDFDatatypeConstraint extends SDFElement {
+public class SDFConstraint extends SDFElement {
 	
 	final static public String BASE_TIME_UNIT = "basetimeunit"; 
 	
@@ -27,14 +27,14 @@ public class SDFDatatypeConstraint extends SDFElement {
 	private static final long serialVersionUID = -2738703926500426135L;
 	final private Object value;
 	
-	public SDFDatatypeConstraint(String URI, Object value) {
+	public SDFConstraint(String URI, Object value) {
 		super(URI);
 		this.value = value;
 	}
 
-	public SDFDatatypeConstraint(SDFDatatypeConstraint sdfDatatypeConstraint) {
-		super(sdfDatatypeConstraint);
-		this.value = sdfDatatypeConstraint.value;
+	public SDFConstraint(SDFConstraint sdfConstraint) {
+		super(sdfConstraint);
+		this.value = sdfConstraint.value;
 	}
 
 	public Object getValue() {
@@ -43,7 +43,7 @@ public class SDFDatatypeConstraint extends SDFElement {
 	
 	@Override
 	public SDFElement clone() {
-		return new SDFDatatypeConstraint(this);
+		return new SDFConstraint(this);
 	}
 	
 }

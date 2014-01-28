@@ -59,7 +59,7 @@ public class SDFAttribute extends SDFElement implements
 	 * A set of data type constraints further restricting the set of possible
 	 * values
 	 */
-	final private Map<String, SDFDatatypeConstraint> dtConstraints;
+	final private Map<String, SDFConstraint> dtConstraints;
 
 	private SDFSchema subSchema;
 
@@ -80,7 +80,7 @@ public class SDFAttribute extends SDFElement implements
 
 	public SDFAttribute(String sourceName, String attributeName,
 			SDFDatatype datatype, SDFSchema subschema) {
-		this(sourceName, attributeName, datatype, null, (Collection<SDFDatatypeConstraint>) null);
+		this(sourceName, attributeName, datatype, null, (Collection<SDFConstraint>) null);
 		this.subSchema = subschema;
 	}
 
@@ -100,13 +100,13 @@ public class SDFAttribute extends SDFElement implements
 	 */
 	public SDFAttribute(String sourceName, String attributeName,
 			SDFDatatype datatype, SDFUnit unit,
-			Collection<SDFDatatypeConstraint> dtConstraints) {
+			Collection<SDFConstraint> dtConstraints) {
 		this(sourceName, attributeName, datatype, unit, dtConstraints, null);
 	}
 	
 	public SDFAttribute(String sourceName, String attributeName,
 			SDFDatatype datatype, SDFUnit unit,
-			Map<String,SDFDatatypeConstraint> dtConstraints) {
+			Map<String,SDFConstraint> dtConstraints) {
 		this(sourceName, attributeName, datatype, unit, dtConstraints.values(), null);
 	}
 
@@ -128,13 +128,13 @@ public class SDFAttribute extends SDFElement implements
 	 */
 	public SDFAttribute(String sourceName, String attributeName,
 			SDFDatatype attribType, SDFUnit unit,
-			Collection<SDFDatatypeConstraint> dtConstraints, List<?> addInfo) {
+			Collection<SDFConstraint> dtConstraints, List<?> addInfo) {
 		super(sourceName, attributeName);
 		this.datatype = attribType;
 		this.unit = unit;
 		this.dtConstraints = new HashMap<>();
 		if (dtConstraints != null) {
-			for (SDFDatatypeConstraint c : dtConstraints) {
+			for (SDFConstraint c : dtConstraints) {
 				this.dtConstraints.put(c.getURI(), c);
 			}
 		}
@@ -162,12 +162,12 @@ public class SDFAttribute extends SDFElement implements
 	}
 
 	public SDFAttribute(String name, String attributeName, SDFAttribute a,
-			SDFUnit unit, List<SDFDatatypeConstraint> dtConstraints) {
+			SDFUnit unit, List<SDFConstraint> dtConstraints) {
 		super(name, attributeName);
 		this.datatype = a.datatype;
 		this.dtConstraints = new HashMap<>();
 		if (dtConstraints != null) {
-			for (SDFDatatypeConstraint c : dtConstraints) {
+			for (SDFConstraint c : dtConstraints) {
 				this.dtConstraints.put(c.getURI(), c);
 			}
 		}
@@ -218,7 +218,7 @@ public class SDFAttribute extends SDFElement implements
 	 * @param uri
 	 * @return
 	 */
-	public SDFDatatypeConstraint getDtConstraint(String uri) {
+	public SDFConstraint getDtConstraint(String uri) {
 		return dtConstraints.get(uri);
 	}
 
@@ -227,7 +227,7 @@ public class SDFAttribute extends SDFElement implements
 	 * 
 	 * @return
 	 */
-	public Collection<SDFDatatypeConstraint> getDtConstraints() {
+	public Collection<SDFConstraint> getDtConstraints() {
 		return dtConstraints.values();
 	}
 

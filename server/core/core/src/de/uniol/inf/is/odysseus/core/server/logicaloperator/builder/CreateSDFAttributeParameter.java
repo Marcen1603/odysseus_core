@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatypeConstraint;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -94,9 +94,9 @@ public class CreateSDFAttributeParameter extends
 				}
 			}
 			if (getValue().getDtConstraints().size() > 0){
-				Iterator<SDFDatatypeConstraint> iter = getValue().getDtConstraints().iterator();
+				Iterator<SDFConstraint> iter = getValue().getDtConstraints().iterator();
 				for (int i=0; i<getValue().getDtConstraints().size();i++){
-					SDFDatatypeConstraint cs = iter.next();
+					SDFConstraint cs = iter.next();
 					sb.append("['").append(cs.getQualName()).append("','").append(cs.getValue()).append("']");
 					if (i<getValue().getDtConstraints().size()-1){
 						sb.append(",");
@@ -116,7 +116,7 @@ public class CreateSDFAttributeParameter extends
 			List<List<String>> constraintList) {
 		try {
 			SDFUnit unit = null;
-			List<SDFDatatypeConstraint> dtList = new LinkedList<>();
+			List<SDFConstraint> dtList = new LinkedList<>();
 			if (constraintList != null && constraintList.size() > 0) {
 				for (List<String> pair : constraintList) {
 					if (pair.size() != 2) {
@@ -128,7 +128,7 @@ public class CreateSDFAttributeParameter extends
 							|| pair.get(0).equalsIgnoreCase("Unit")) {
 						unit = new SDFUnit(pair.get(1));
 					} else {
-						dtList.add(new SDFDatatypeConstraint(pair.get(0)
+						dtList.add(new SDFConstraint(pair.get(0)
 								.toLowerCase(), pair.get(1)));
 					}
 				}
