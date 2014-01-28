@@ -171,6 +171,8 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 		Collection<ILogicalQueryPart> copiesOfReunionPart = Lists.newArrayList(reunionPart);
 		modifiedCopiesToOrigin.put(reunionPart, copiesOfReunionPart);
 		
+		modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.handlePartOfFragmentation(
+				reunionPart, modifiedCopiesToOrigin, originSink, historyOfOperatorsForFragmentation);
 		return modifiedCopiesToOrigin;
 		
 	}

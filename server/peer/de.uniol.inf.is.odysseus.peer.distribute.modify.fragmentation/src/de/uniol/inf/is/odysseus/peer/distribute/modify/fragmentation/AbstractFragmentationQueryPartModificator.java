@@ -1110,7 +1110,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	}
 	
 	// TODO javaDoc
-	private static Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> handlePartOfFragmentation(
+	protected static Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> handlePartOfFragmentation(
 			ILogicalQueryPart originPart,
 			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin,
 			ILogicalOperator target,
