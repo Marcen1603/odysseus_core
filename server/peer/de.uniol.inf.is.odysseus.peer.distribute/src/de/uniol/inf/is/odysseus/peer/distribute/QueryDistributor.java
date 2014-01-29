@@ -139,13 +139,8 @@ public class QueryDistributor implements IQueryDistributor {
 			Collection<ILogicalQueryPart> queryParts = QueryDistributorHelper.tryPartitionQuery(config, partitioners, operators, query);
 			Collection<ILogicalQueryPart> modifiedQueryParts = QueryDistributorHelper.tryModifyQueryParts(config, modificators, queryParts, query );
 			Map<ILogicalQueryPart, PeerID> allocationMap = QueryDistributorHelper.tryAllocate(config, allocators, modifiedQueryParts, query);
-
-			if( ParameterHelper.isDoForceLocal(config)) {
-				allocationMap = QueryDistributorHelper.forceLocalOperators(allocationMap);
-				LoggingHelper.printAllocationMap(allocationMap, p2pDictionary);
-			} else {
-				LOG.debug("Ommitting forcing operators with 'local' to be locally executed");
-			}
+			
+			QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMap, config, postProcessors, query);
 			
 			if( ParameterHelper.isDoMerge(config)) {
 				allocationMap = QueryDistributorHelper.mergeQueryPartsWithSamePeer(allocationMap);
@@ -153,8 +148,6 @@ public class QueryDistributor implements IQueryDistributor {
 			} else {
 				LOG.debug("Merging query parts omitted");
 			}
-			
-			QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMap, config, postProcessors, query);
 			
 			insertJxtaOperators(allocationMap.keySet());
 			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(allocationMap, config);

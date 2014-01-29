@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.parameter.DoForceLocalParameter;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
+@Deprecated
 public class DoForceLocalPreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String KEYWORD = "PEER_DOFORCELOCAL";
@@ -36,5 +37,4 @@ public class DoForceLocalPreParserKeyword extends AbstractPreParserKeyword {
 	public Collection<String> getAllowedParameters(ISession caller) {
 		return Lists.newArrayList("true", "false");
 	}
-
 }

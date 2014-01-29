@@ -9,7 +9,6 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -86,47 +85,6 @@ public final class QueryDistributorHelper {
 		
 		
 		return operators;
-	}
-	
-	public static Map<ILogicalQueryPart, PeerID> forceLocalOperators(Map<ILogicalQueryPart, PeerID> partMap) {
-		LOG.debug("Forcing operators with 'local' as destination name (if any) to be locally executed");
-
-		Map<ILogicalQueryPart, PeerID> resultMap = Maps.newHashMap();
-		for( ILogicalQueryPart part : partMap.keySet() ) {
-			
-			Collection<ILogicalOperator> localOperators = collectLocalOperators(part.getOperators());
-			if( localOperators.isEmpty() ) {
-				resultMap.put(part, partMap.get(part));
-			} else {
-				LOG.debug("Splitting query part {} into local and non-local", part);
-				Collection<ILogicalOperator> nonLocalOperators = Lists.newArrayList(part.getOperators());
-				nonLocalOperators.removeAll(localOperators);
-				
-				if( !nonLocalOperators.isEmpty() ) {
-					LogicalQueryPart nonLocalQueryPart = new LogicalQueryPart(nonLocalOperators);
-					resultMap.put(nonLocalQueryPart, partMap.get(part));
-					LOG.debug("Created new query part {}", nonLocalQueryPart);
-				}
-				LogicalQueryPart localQueryPart = new LogicalQueryPart(localOperators);
-				resultMap.put(localQueryPart, p2pNetworkManager.getLocalPeerID());
-				LOG.debug("Created new local query part {}", localQueryPart);
-			}
-		}
-		return resultMap;
-	}
-
-	private static Collection<ILogicalOperator> collectLocalOperators(Collection<ILogicalOperator> operators) {
-		Collection<ILogicalOperator> localOperators = Lists.newArrayList();
-		for( ILogicalOperator operator : operators ) {
-			if( isDestinationNameLocal(operator)) {
-				localOperators.add(operator);
-			}
-		}
-		return localOperators;
-	}
-
-	private static boolean isDestinationNameLocal(ILogicalOperator operator) {
-		return !Strings.isNullOrEmpty(operator.getDestinationName()) && operator.getDestinationName().equalsIgnoreCase("local");
 	}
 	
 	public static Map<ILogicalQueryPart, PeerID> mergeQueryPartsWithSamePeer(Map<ILogicalQueryPart, PeerID> allocationMap) {
