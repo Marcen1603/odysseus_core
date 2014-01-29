@@ -47,22 +47,20 @@ public class LocalSinkPostProcessor implements IQueryDistributionPostProcessor {
 
 	@Override
 	public void postProcess(IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> allocationMap, ILogicalQuery query, QueryBuildConfiguration config) {
-		LOG.debug("Begin post processing");
+		LOG.debug("Begin finding sinks to be executed locally");
 		
 		Collection<ILogicalOperator> realSinks = Lists.newArrayList();
 		for( ILogicalQueryPart queryPart : allocationMap.keySet().toArray(new ILogicalQueryPart[0])) {
-			LOG.debug("Determining real sinks from query part {}", queryPart);
-			
 			Collection<ILogicalOperator> relativeSinks = LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(queryPart);
 			
 			for( ILogicalOperator relativeSink : relativeSinks ) {
 				if( isRealSink(relativeSink)) {
-					LOG.debug("Found real sink {}", relativeSink);
+					LOG.debug("Found real sink {} in queryPart {}", relativeSink, queryPart);
 					realSinks.add(relativeSink);
 					
 					queryPart.getOperatorsWriteable().remove(relativeSink);
 				} else if( relativeSink.getSubscriptions().isEmpty() ) {
-					LOG.debug("Found nonreal sink {}", relativeSink);
+					LOG.debug("Found nonreal sink {} in queryPart {}", relativeSink, queryPart);
 					
 					RenameAO renameAO = new RenameAO(); 
 					renameAO.setNoOp(true);

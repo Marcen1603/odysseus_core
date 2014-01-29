@@ -141,14 +141,7 @@ public class QueryDistributor implements IQueryDistributor {
 			Map<ILogicalQueryPart, PeerID> allocationMap = QueryDistributorHelper.tryAllocate(config, allocators, modifiedQueryParts, query);
 			
 			QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMap, config, postProcessors, query);
-			
-			if( ParameterHelper.isDoMerge(config)) {
-				allocationMap = QueryDistributorHelper.mergeQueryPartsWithSamePeer(allocationMap);
-				LoggingHelper.printAllocationMap(allocationMap, p2pDictionary);
-			} else {
-				LOG.debug("Merging query parts omitted");
-			}
-			
+		
 			insertJxtaOperators(allocationMap.keySet());
 			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(allocationMap, config);
 

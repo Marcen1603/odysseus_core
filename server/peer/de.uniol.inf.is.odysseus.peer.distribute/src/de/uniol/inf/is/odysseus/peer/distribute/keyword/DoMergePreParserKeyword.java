@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.parameter.DoMergeParameter;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
+@Deprecated
 public class DoMergePreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String KEYWORD = "PEER_DOMERGE";

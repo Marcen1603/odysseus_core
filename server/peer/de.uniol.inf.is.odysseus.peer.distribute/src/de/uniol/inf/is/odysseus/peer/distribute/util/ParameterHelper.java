@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartitioner;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.AbstractQueryDistributionParameter;
-import de.uniol.inf.is.odysseus.peer.distribute.parameter.DoMergeParameter;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.InterfaceNameParametersPair;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.QueryDistributionPostProcessorParameter;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.QueryDistributionPreProcessorParameter;
@@ -27,8 +26,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.registry.QueryPartitionerRegistr
 
 public final class ParameterHelper {
 	
-	private static final boolean DO_MERGE_DEFAULT_VALUE = true;
-
 	public static List<InterfaceParametersPair<IQueryPartitioner>> determineQueryPartitioners(QueryBuildConfiguration config) throws QueryDistributionException {
 		List<InterfaceNameParametersPair> pairs = getPairsOfParameter(config, QueryPartitionerParameter.class, "Query partitioner");
 		
@@ -94,13 +91,5 @@ public final class ParameterHelper {
 		}
 				
 		return setting.getPairs();
-	}
-	
-	public static boolean isDoMerge(QueryBuildConfiguration config) {
-		DoMergeParameter param = config.get(DoMergeParameter.class);
-		if( param == null ) {
-			return DO_MERGE_DEFAULT_VALUE;
-		}
-		return param.getValue();
 	}
 }

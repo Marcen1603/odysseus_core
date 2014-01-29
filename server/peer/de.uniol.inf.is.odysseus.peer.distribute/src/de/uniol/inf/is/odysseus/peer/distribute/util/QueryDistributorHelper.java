@@ -10,11 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -30,7 +28,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.IQueryDistributionPreProcessor;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartitioner;
-import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartitionException;
@@ -87,60 +84,6 @@ public final class QueryDistributorHelper {
 		return operators;
 	}
 	
-	public static Map<ILogicalQueryPart, PeerID> mergeQueryPartsWithSamePeer(Map<ILogicalQueryPart, PeerID> allocationMap) {
-		LOG.debug("Merging query parts with same peerid if possible");
-		
-		Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment = determineOperatorAssignment(allocationMap.keySet());
-		Map<LogicalSubscription, ILogicalOperator> subs = determineSubscriptionsAcrossQueryParts(queryPartAssignment);
-		
-		Map<ILogicalQueryPart, PeerID> result = Maps.newHashMap(allocationMap);
-		for( LogicalSubscription sub : subs.keySet() ) {
-			ILogicalOperator startOperator = subs.get(sub);
-			ILogicalOperator targetOperator = sub.getTarget();
-			
-			ILogicalQueryPart startQueryPart = queryPartAssignment.get(startOperator);
-			ILogicalQueryPart targetQueryPart = queryPartAssignment.get(targetOperator);
-			
-			PeerID startPeerID = result.get(startQueryPart);
-			PeerID targetPeerID = result.get(targetQueryPart);
-			
-			if( startPeerID.equals(targetPeerID) && !startQueryPart.equals(targetQueryPart)) {
-				LOG.debug("Merging query parts {} and {}", startQueryPart, targetQueryPart);
-				ILogicalQueryPart mergedPart = mergeQueryParts(startQueryPart, targetQueryPart);
-				result.remove(startQueryPart);
-				result.remove(targetQueryPart);
-				result.put(mergedPart, startPeerID);
-				
-				for(ILogicalOperator op : mergedPart.getOperators()) {
-					queryPartAssignment.put(op, mergedPart);
-				}
-			}
-		}
-		
-		return result;
-	}
-
-	private static Map<LogicalSubscription, ILogicalOperator> determineSubscriptionsAcrossQueryParts(Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment) {
-		List<ILogicalOperator> operatorsToVisit = Lists.newArrayList(queryPartAssignment.keySet());
-
-		Map<LogicalSubscription, ILogicalOperator> subsToReplace = Maps.newHashMap();
-		while (!operatorsToVisit.isEmpty()) {
-			ILogicalOperator currentOperator = operatorsToVisit.remove(0);
-
-			Collection<LogicalSubscription> sinkSubs = currentOperator.getSubscriptions();
-			for (LogicalSubscription sinkSub : sinkSubs) {
-				ILogicalOperator targetOperator = sinkSub.getTarget();
-
-				ILogicalQueryPart currentQueryPart = queryPartAssignment.get(currentOperator);
-				ILogicalQueryPart targetQueryPart = queryPartAssignment.get(targetOperator);
-				if (!currentQueryPart.equals(targetQueryPart)) {
-					subsToReplace.put(sinkSub, currentOperator);
-				}
-			}
-		}
-		return subsToReplace;
-	}
-
 	private static Map<ILogicalOperator, ILogicalQueryPart> determineOperatorAssignment(Collection<ILogicalQueryPart> queryParts) {
 		Map<ILogicalOperator, ILogicalQueryPart> map = Maps.newHashMap();
 		for (ILogicalQueryPart part : queryParts) {
@@ -151,14 +94,6 @@ public final class QueryDistributorHelper {
 		return map;
 	}
 
-	private static ILogicalQueryPart mergeQueryParts(ILogicalQueryPart startQueryPart, ILogicalQueryPart targetQueryPart) {
-		Collection<ILogicalOperator> mergedOperators = Lists.newArrayList();
-		mergedOperators.addAll(startQueryPart.getOperators());
-		mergedOperators.addAll(targetQueryPart.getOperators());
-		
-		return new LogicalQueryPart(mergedOperators);
-	}
-	
 	public static void tryPostProcess(IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> allocationMap, QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryDistributionPostProcessor>> postProcessors, ILogicalQuery query) throws QueryDistributionException {
 		try {
 			for( InterfaceParametersPair<IQueryDistributionPostProcessor> postProcessor : postProcessors ) {
