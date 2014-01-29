@@ -30,7 +30,7 @@ public class FileNameParameter extends AbstractParameter<String> {
 	
 	@Override
 	protected String getPQLStringInternal() {
-		return getValue().toString();
+		return "'" + getValue().toString() + "'";
 	}
 
 }
