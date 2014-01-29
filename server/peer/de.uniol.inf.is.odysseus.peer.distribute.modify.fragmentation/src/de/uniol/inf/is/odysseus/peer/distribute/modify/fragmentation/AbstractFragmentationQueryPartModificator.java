@@ -1013,6 +1013,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			
 			if(operator instanceof AbstractAccessAO && ((AbstractAccessAO) operator).getAccessAOName().getResourceName().equals(sourceName))
 				continue;
+			else if(operator.isSinkOperator() && !operator.isSourceOperator())
+				continue;
 			else if(AbstractFragmentationQueryPartModificator.isOperatorRelevant(operator, sourceName))
 				relevantOperators.add(operator);
 			
