@@ -12,6 +12,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.collection.IPair;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -88,9 +90,24 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			ReplicationQueryPartModificator.checkDegreeOfReplication(queryParts.size(), degreeOfReplication);
 			ReplicationQueryPartModificator.log.debug("Degree of replication set to {}.", degreeOfReplication);
 			
+			IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> replicatableAndIrreplicatableParts = 
+					ReplicationQueryPartModificator.determineRealSinks(queryParts);
+			modifiedParts.addAll(replicatableAndIrreplicatableParts.getE1());
+			modifiedParts.addAll(replicatableAndIrreplicatableParts.getE2());
+			
 			// Copy the query parts
 			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> replicatesToOrigin = 
-					LogicalQueryHelper.copyAndCutQueryParts(queryParts, degreeOfReplication);
+					LogicalQueryHelper.copyAndCutQueryParts(modifiedParts, degreeOfReplication);
+			
+			// Keep only one copy of real sinks
+			for(ILogicalQueryPart realSink : replicatableAndIrreplicatableParts.getE2()) {
+					
+				ILogicalQueryPart copyToKeep = replicatesToOrigin.get(realSink).iterator().next();
+				replicatesToOrigin.get(realSink).clear();
+				replicatesToOrigin.get(realSink).add(copyToKeep);
+				
+			}
+			
 			if(ReplicationQueryPartModificator.log.isDebugEnabled()) {
 				
 				for(ILogicalQueryPart origin : replicatesToOrigin.keySet()) {
@@ -103,10 +120,11 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			}
 			
 			// Modify each query part
-			for(ILogicalQueryPart originPart : queryParts)
+			for(ILogicalQueryPart originPart : replicatableAndIrreplicatableParts.getE1())
 				replicatesToOrigin.putAll(ReplicationQueryPartModificator.modify(originPart, replicatesToOrigin));
 			
 			// Create the return value
+			modifiedParts.clear();
 			for(ILogicalQueryPart originPart : replicatesToOrigin.keySet())
 					modifiedParts.addAll(replicatesToOrigin.get(originPart));
 			
@@ -118,6 +136,93 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		}
 		
 		return modifiedParts;
+		
+	}
+
+	/**
+	 * Determines all query parts to be replicated. <br />
+	 * Origin parts within <code>queryParts</code> may be split.
+	 * @param queryParts A collection of query parts to modify.
+	 * @return A pair of query parts to be replicated (e1) and parts containing only real sinks (e2).
+	 * @throws NullPointerException if <code>queryParts</code> is null.
+	 */
+	private static IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> determineRealSinks(
+			Collection<ILogicalQueryPart> queryParts) {
+		
+		// Preconditions
+		if(queryParts == null)
+			throw new NullPointerException("Query parts for modification must be not null!");
+		
+		// The return value
+		Collection<ILogicalQueryPart> partsToBeFragmented = Lists.newArrayList();
+		Collection<ILogicalQueryPart> otherParts = Lists.newArrayList();
+		
+		for(ILogicalQueryPart part : queryParts) {
+			
+			Collection<ILogicalOperator> relevantOperators = ReplicationQueryPartModificator.determineRelevantOperators(part);
+			if(relevantOperators.size() == part.getOperators().size()) {
+				
+				partsToBeFragmented.add(part);
+				ReplicationQueryPartModificator.log.debug("Found {} as a part to be replicated", part);
+				
+			} else if(!relevantOperators.isEmpty()) {
+				
+				ILogicalQueryPart partToBeFragmented = new LogicalQueryPart(relevantOperators);
+				partsToBeFragmented.add(partToBeFragmented);
+				
+				Collection<ILogicalOperator> realSinks = Lists.newArrayList(part.getOperators());
+				realSinks.removeAll(relevantOperators);
+			
+				ILogicalQueryPart otherPart = new LogicalQueryPart(realSinks);
+				otherParts.add(otherPart);
+			
+				ReplicationQueryPartModificator.log.debug("Split {} into {} as a part to be replicated and " +
+						"{} as another parts", 
+						new Object[] {part, partToBeFragmented, otherPart});
+				
+				
+			} else {
+				
+				otherParts.add(part);
+				ReplicationQueryPartModificator.log.debug("Found {} as a real sink", part);				
+				
+			}
+			
+			
+		}
+		
+		return new Pair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>>(partsToBeFragmented, otherParts);
+		
+	}
+
+	/**
+	 * Determine all relevant operators for replication of a given query part.
+	 * @param queryPart The query part to modify.
+	 * @return A collection of all operators relevant for replication. <br />
+	 * Those operators are no real sinks.
+	 * @throws NullPointerException if <code>queryPart</code> is null.
+	 */
+	private static Collection<ILogicalOperator> determineRelevantOperators(
+			ILogicalQueryPart queryPart)
+			throws NullPointerException {
+		
+		// Preconditions
+		if(queryPart == null)
+			throw new NullPointerException("Query part for modification must be not null!");
+		
+		// The return value
+		Collection<ILogicalOperator> relevantOperators = Lists.newArrayList();
+		
+		for(ILogicalOperator operator : queryPart.getOperators()) {
+			
+			if(operator.isSinkOperator() && !operator.isSourceOperator())
+				continue;
+			
+			relevantOperators.add(operator);
+			
+		}
+		
+		return relevantOperators;
 		
 	}
 
@@ -151,6 +256,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		// Collect all relative sinks
 		Map<ILogicalOperator, Collection<ILogicalOperator>> copiedToOriginSinks = 
 				LogicalQueryHelper.collectRelativeSinks(originPart, modifiedReplicatesToOrigin.get(originPart));
+		
 		if(ReplicationQueryPartModificator.log.isDebugEnabled()) {
 			
 			for(ILogicalOperator originSink : copiedToOriginSinks.keySet())
