@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.adv.QueryPartAdvertisement;
+import de.uniol.inf.is.odysseus.peer.distribute.adv.QueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.util.IOperatorGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.util.InterfaceParametersPair;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LoggingHelper;
@@ -126,7 +127,6 @@ public class QueryDistributor implements IQueryDistributor {
 		
 		LoggingHelper.printUsedInterfaces(preProcessors, partitioners, modificators, allocators, postProcessors);
 
-		Collection<ILogicalQuery> localQueriesToExecutor = Lists.newArrayList();
 		for (ILogicalQuery query : queries) {
 			LOG.debug("Start distribution of query {}", query);
 			
@@ -142,8 +142,9 @@ public class QueryDistributor implements IQueryDistributor {
 			
 			QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMap, config, postProcessors, query);
 		
+			ID sharedQueryID = IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
 			insertJxtaOperators(allocationMap.keySet());
-			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(allocationMap, config);
+			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(sharedQueryID, allocationMap, config);
 
 			if (!localQueryParts.isEmpty()) {
 				LOG.debug("Building local logical query out of {} local query parts", localQueryParts.size());
@@ -152,18 +153,12 @@ public class QueryDistributor implements IQueryDistributor {
 				localQuery.setName(query.getName());
 				localQuery.setUser(caller);
 
-				localQueriesToExecutor.add(localQuery);
+				callExecutorToAddLocalQueries(localQuery, sharedQueryID, serverExecutor, caller, config);
 			} else {
 				LOG.debug("No local query part of query {} remains.", query);
 			}
 		}
 
-		if (!localQueriesToExecutor.isEmpty()) {
-			LOG.debug("Calling executor for {} local queries", localQueriesToExecutor.size());
-			callExecutorToAddLocalQueries(localQueriesToExecutor, serverExecutor, caller, config);
-		} else {
-			LOG.debug("There are no local queries in all {} given queries.", queriesToDistribute.size());
-		}
 	}
 
 	private static Collection<ILogicalQuery> copyAllQueries(Collection<ILogicalQuery> queriesToDistribute) {
@@ -175,11 +170,11 @@ public class QueryDistributor implements IQueryDistributor {
 		return copiedQueries;
 	}
 
-	private static void callExecutorToAddLocalQueries(Collection<ILogicalQuery> localQueriesToExecutor, IServerExecutor serverExecutor, ISession caller, QueryBuildConfiguration config) throws QueryDistributionException {
+	private static void callExecutorToAddLocalQueries(ILogicalQuery query, ID sharedQueryID, IServerExecutor serverExecutor, ISession caller, QueryBuildConfiguration config) throws QueryDistributionException {
 		try {
-			for (ILogicalQuery query : localQueriesToExecutor) {
-				serverExecutor.addQuery(query.getLogicalPlan(), caller, config.getName());
-			}
+			int queryID = serverExecutor.addQuery(query.getLogicalPlan(), caller, config.getName());
+			
+			QueryPartController.getInstance().registerAsMaster(query, queryID, sharedQueryID);
 		} catch (Throwable ex) {
 			throw new QueryDistributionException("Could not add local query to server executor", ex);
 		}
@@ -223,9 +218,8 @@ public class QueryDistributor implements IQueryDistributor {
 		});
 	}
 
-	private static Collection<ILogicalQueryPart> distributeToRemotePeers(Map<ILogicalQueryPart, PeerID> correctedAllocationMap, QueryBuildConfiguration parameters) {
+	private static Collection<ILogicalQueryPart> distributeToRemotePeers(ID sharedQueryID, Map<ILogicalQueryPart, PeerID> correctedAllocationMap, QueryBuildConfiguration parameters) {
 		List<ILogicalQueryPart> localParts = Lists.newArrayList();
-		final ID sharedQueryID = IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
 
 		for (ILogicalQueryPart part : correctedAllocationMap.keySet()) {
 			PeerID peerID = correctedAllocationMap.get(part);
