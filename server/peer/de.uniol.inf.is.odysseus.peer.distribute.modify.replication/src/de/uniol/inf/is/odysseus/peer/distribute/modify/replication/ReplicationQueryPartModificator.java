@@ -125,8 +125,17 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			
 			// Create the return value
 			modifiedParts.clear();
-			for(ILogicalQueryPart originPart : replicatesToOrigin.keySet())
-					modifiedParts.addAll(replicatesToOrigin.get(originPart));
+			for(ILogicalQueryPart originPart : replicatesToOrigin.keySet()) {
+				
+				for(ILogicalQueryPart modifiedPart : replicatesToOrigin.get(originPart)) {
+					
+					Collection<ILogicalQueryPart> avoidedParts = Lists.newArrayList(replicatesToOrigin.get(originPart));
+					avoidedParts.remove(modifiedPart);
+					modifiedParts.add(new LogicalQueryPart(modifiedPart.getOperators(), avoidedParts));
+					
+				}
+				
+		}
 			
 		} catch(Exception e) {
 			
