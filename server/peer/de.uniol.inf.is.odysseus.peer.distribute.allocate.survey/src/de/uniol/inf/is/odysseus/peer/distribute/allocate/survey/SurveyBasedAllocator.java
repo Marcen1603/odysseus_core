@@ -21,14 +21,12 @@ import com.google.common.collect.Maps.EntryTransformer;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
-import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.Bid;
@@ -93,99 +91,17 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	@Override
 	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, ILogicalQuery query, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters)
 			throws QueryPartAllocationException {
-
-		List<ILogicalQueryPart> newQueryParts = createQueryPartsWithSinkQueryPart(queryParts);
-
-		// copy --> original. Needed since allocator inserts dummyAOs
-		Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap = LogicalQueryHelper.copyQueryPartsDeep(newQueryParts);
-		ILogicalQueryPart realSinksQueryPart = newQueryParts.get(newQueryParts.size() - 1); // see
-																							// createSinkQueryPart-method
-		ILogicalQueryPart realSinksQueryPartCopy = getCopy(realSinksQueryPart, queryPartsCopyMap);
-
-		// survey every query part except the one with the real sinks since this
-		// must be placed locally
+		Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap = LogicalQueryHelper.copyQueryPartsDeep(queryParts);
 		List<ILogicalQueryPart> queryPartsToSurvey = Lists.newArrayList(queryPartsCopyMap.keySet());
-		queryPartsToSurvey.remove(realSinksQueryPartCopy);
 
 		Map<ILogicalQueryPart, PeerID> allocationMap = allocate(queryPartsToSurvey, query, config, isOwnBidUsed(allocatorParameters));
 		Map<ILogicalQueryPart, PeerID> allocationMapParts = transformToOriginalLogicalQueryParts(allocationMap, queryPartsCopyMap);
 
-		allocationMapParts.put(realSinksQueryPart, p2pNetworkManager.getLocalPeerID());
 		return allocationMapParts;
 	}
 
 	private static boolean isOwnBidUsed(List<String> allocatorParameters) {
 		return allocatorParameters.isEmpty() || !allocatorParameters.get(0).equalsIgnoreCase("notlocal");
-	}
-
-	private static ILogicalQueryPart getCopy(ILogicalQueryPart originalQueryPart, Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap) {
-		for (ILogicalQueryPart copyQueryPart : queryPartsCopyMap.keySet()) {
-			if (queryPartsCopyMap.get(copyQueryPart).equals(originalQueryPart)) {
-				return copyQueryPart;
-			}
-		}
-		throw new RuntimeException("Could not find copy of query part " + originalQueryPart);
-	}
-
-	private static List<ILogicalQueryPart> createQueryPartsWithSinkQueryPart(Collection<ILogicalQueryPart> queryParts) {
-		LOG.debug("Creating sink query part");
-		List<ILogicalQueryPart> result = Lists.newArrayList();
-
-		Collection<ILogicalOperator> realSinks = Lists.newArrayList();
-		for (ILogicalQueryPart queryPart : queryParts) {
-			LOG.debug("Check query part {}", queryPart);
-
-			Collection<ILogicalOperator> sinks = LogicalQueryHelper.getSinks(queryPart.getOperators());
-			Collection<ILogicalOperator> realSinksOfQueryPart = determineRealSinks(sinks);
-
-			Collection<ILogicalOperator> nonRealSinksOfQueryPart = Lists.newArrayList(sinks);
-			nonRealSinksOfQueryPart.removeAll(realSinksOfQueryPart);
-
-			if (!nonRealSinksOfQueryPart.isEmpty()) {
-				LOG.debug("Found non real sinks {}", nonRealSinksOfQueryPart);
-				for (ILogicalOperator nonRealSink : nonRealSinksOfQueryPart) {
-					RenameAO renameAO = new RenameAO(); // TODO: Check
-					renameAO.setNoOp(true);
-					renameAO.setOutputSchema(nonRealSink.getOutputSchema());
-
-					nonRealSink.subscribeSink(renameAO, 0, 0, nonRealSink.getOutputSchema());
-
-					realSinks.add(renameAO);
-				}
-			}
-			realSinks.addAll(realSinksOfQueryPart);
-
-			if (!realSinksOfQueryPart.isEmpty()) {
-				LOG.debug("Found real sinks {}", realSinksOfQueryPart);
-
-				Collection<ILogicalOperator> allOperatorsOfQueryPart = Lists.newArrayList(queryPart.getOperators());
-				allOperatorsOfQueryPart.removeAll(realSinksOfQueryPart);
-
-				if( !allOperatorsOfQueryPart.isEmpty() ) {
-					ILogicalQueryPart newQueryPart = new LogicalQueryPart(allOperatorsOfQueryPart);
-					result.add(newQueryPart);
-					LOG.debug("Created new query part {}", newQueryPart);
-				}
-			} else {
-				result.add(queryPart);
-				LOG.debug("Can use old query part without changes");
-			}
-		}
-		ILogicalQueryPart realSinksQueryPart = new LogicalQueryPart(realSinks);
-		result.add(realSinksQueryPart);
-		LOG.debug("Created query part with all real sinks {}", realSinksQueryPart);
-
-		return result;
-	}
-
-	private static Collection<ILogicalOperator> determineRealSinks(Collection<ILogicalOperator> sinks) {
-		Collection<ILogicalOperator> realSinks = Lists.newArrayList();
-		for (ILogicalOperator sink : sinks) {
-			if (sink.isSinkOperator() && !sink.isSourceOperator()) {
-				realSinks.add(sink);
-			}
-		}
-		return realSinks;
 	}
 
 	private static Map<ILogicalQueryPart, PeerID> transformToOriginalLogicalQueryParts(Map<ILogicalQueryPart, PeerID> allocationMapPeerID, Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap) {

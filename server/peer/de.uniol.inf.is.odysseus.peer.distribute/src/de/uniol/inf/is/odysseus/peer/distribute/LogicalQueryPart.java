@@ -69,6 +69,11 @@ public class LogicalQueryPart implements ILogicalQueryPart {
 	public ImmutableCollection<ILogicalOperator> getOperators() {
 		return ImmutableList.copyOf(operators);
 	}
+	
+	@Override
+	public Collection<ILogicalOperator> getOperatorsWriteable() {
+		return operators;
+	}
 
 	@Override
 	public ImmutableCollection<ILogicalQueryPart> getAvoidingQueryParts() {

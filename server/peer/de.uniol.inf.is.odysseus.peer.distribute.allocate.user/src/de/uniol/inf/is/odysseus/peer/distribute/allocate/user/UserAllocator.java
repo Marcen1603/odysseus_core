@@ -10,7 +10,6 @@ import net.jxta.peer.PeerID;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
@@ -99,7 +98,7 @@ public class UserAllocator implements IQueryPartAllocator {
 	}
 
 	private static String determineMostMentionedDestinationName(ILogicalQueryPart part) {
-		ImmutableCollection<ILogicalOperator> operators = part.getOperators();
+		Collection<ILogicalOperator> operators = part.getOperators();
 		
 		Map<String, Integer> countMap = Maps.newHashMap();
 		for( ILogicalOperator operator : operators ) {
