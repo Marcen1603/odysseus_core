@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.force;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -12,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -29,6 +32,23 @@ import de.uniol.inf.is.odysseus.peer.ping.IPingMapNode;
 
 public class ForceModel {
 
+	private static class ValuePeerPair implements Comparable<ValuePeerPair> {
+		public final double value;
+		public final PeerID peerID;
+		
+		public ValuePeerPair(double value, PeerID peerID) {
+			Preconditions.checkNotNull(peerID, "PeerID must not be null!");
+
+			this.value = value;
+			this.peerID = peerID;
+		}
+		
+		@Override
+		public int compareTo(ValuePeerPair o) {
+			return Double.compare(value, o.value);
+		}
+	}
+	
 	private static final int MAX_ITERATIONS = 10000;
 	private static final Logger LOG = LoggerFactory.getLogger(ForceModel.class);
 	private static final Random RAND = new Random();
@@ -152,7 +172,7 @@ public class ForceModel {
 			Collection<Bid> queryPartBids = bids.get(queryPart);
 			Bid bestBid = determineBestBid(queryPartBids);
 			Optional<IPingMapNode> optPingMapNode = pingMap.getNode(bestBid.getBidderPeerID());
-			LOG.debug("Best bid for query part {} is from {}", queryPart, p2pDictionary.getRemotePeerName(bestBid.getBidderPeerID()));
+			LOG.debug("Best bid for query part {} is from {}", queryPart, p2pDictionary.getRemotePeerName(bestBid.getBidderPeerID()).get());
 			
 			Vector3D nodePosition = optPingMapNode.isPresent() ? optPingMapNode.get().getPosition() : createRandomVector3D();
 			forceNodes.add(new ForceNode(nodePosition, queryPart, queryPartBids.size() == 1));
@@ -229,25 +249,41 @@ public class ForceModel {
 				LOG.debug("Got {} bids for this query part", bidsForQueryPart.size());
 				
 				ForceNode forceNodeOfQueryPart = determineForceNode(queryPart, forceNodes);
-				
-				PeerID bestPeer = determineNearestPeerWithBestBid( forceNodeOfQueryPart.getPosition(), positionMap, normalizer, bidsForQueryPart);
+				Collection<PeerID> avoidingPeers = determineAvoidingPeers(queryPart.getAvoidingQueryParts(), result);
+				PeerID bestPeer = determineNearestPeerWithBestBid( forceNodeOfQueryPart.getPosition(), positionMap, normalizer, bidsForQueryPart, avoidingPeers);
 				
 				result.put(queryPart, bestPeer);
 			}
-			
 		}
 		
 		return result;
 	}
 
+	private static Collection<PeerID> determineAvoidingPeers(ImmutableCollection<ILogicalQueryPart> avoidingQueryParts, Map<ILogicalQueryPart, PeerID> currentAllocationMap) {
+		Collection<PeerID> avoidedPeers = Lists.newLinkedList();
+		for( ILogicalQueryPart queryPart : avoidingQueryParts ) {
+			PeerID avoidedPeer = currentAllocationMap.get(queryPart);
+			if( avoidedPeer != null && !avoidedPeers.contains(avoidedPeer) ) {
+				if(LOG.isDebugEnabled() ) {
+					LOG.debug("One avoiding part is {} from {}", avoidingQueryParts, p2pDictionary.getRemotePeerName(avoidedPeer).get());
+				}
+				
+				avoidedPeers.add(avoidedPeer);
+			}
+		}
+		return avoidedPeers;
+	}
 
-
-	private static PeerID determineNearestPeerWithBestBid(Vector3D position, Map<PeerID, Vector3D> positionMap, PositionNormalizer normalizer, Collection<Bid> bidsForQueryPart) {
+	private static PeerID determineNearestPeerWithBestBid(Vector3D position, Map<PeerID, Vector3D> positionMap, PositionNormalizer normalizer, Collection<Bid> bidsForQueryPart, Collection<PeerID> avoidedPeers) {
 		Map<PeerID, Bid> bidMap = createBidMap(bidsForQueryPart);
+
+		List<ValuePeerPair> peerValues = Lists.newLinkedList();
 		
-		PeerID bestPeer = null;
-		double bestPeerDistanceToPerfect = Double.MAX_VALUE;
 		Vector3D normPosition = normalizer.normalize(position);
+		
+		if( LOG.isDebugEnabled() && !avoidedPeers.isEmpty()) {
+			printAvoidingPeerList(avoidedPeers);
+		}
 		
 		for( PeerID peerID : bidMap.keySet() ) {
 			double bidValueOfPeer = bidMap.get(peerID).getValue();
@@ -259,19 +295,44 @@ public class ForceModel {
 			double distB = 1 - bidValueOfPeer;
 			
 			double peerDistanceToPerfect = Math.sqrt( (distX * distX) + (distY * distY ) + (distZ * distZ) + (distB * distB));
-			if( bestPeer == null || peerDistanceToPerfect < bestPeerDistanceToPerfect ) {
-				bestPeer = peerID;
-				bestPeerDistanceToPerfect = peerDistanceToPerfect;
-			}
+			peerValues.add( new ValuePeerPair(peerDistanceToPerfect, peerID));
 			
 			if( LOG.isDebugEnabled() ) {
-				LOG.debug("Peer {} has bidValue of {} and due to latencies a peerValue of {}", 
-						new Object[] {p2pDictionary.getRemotePeerName(peerID).get(), bidValueOfPeer, peerDistanceToPerfect});
+				double latency = Math.sqrt( (distX * distX) + (distY * distY ) + (distZ * distZ));
+				LOG.debug("Peer {} has bidValue of {} and due to latency {} a peerValue of {}", 
+						new Object[] {p2pDictionary.getRemotePeerName(peerID).get(), bidValueOfPeer, latency, peerDistanceToPerfect});
 			}
 		}
 		
-		LOG.debug("Best peer is {}", p2pDictionary.getRemotePeerName(bestPeer).get());
-		return bestPeer;
+		Collections.sort(peerValues);
+		
+		int index = 0;
+		PeerID currentChoice = peerValues.get(0).peerID;
+		while( avoidedPeers.contains(currentChoice) ) {
+			index++;
+			
+			if( index == peerValues.size() ) {
+				// checked all...
+				currentChoice = peerValues.get(0).peerID;
+				break;
+			}
+			
+			currentChoice = peerValues.get(index).peerID;
+		}
+		
+		LOG.debug("Best (non-avoided) peer is {}", p2pDictionary.getRemotePeerName(currentChoice).get());
+		return currentChoice;
+	}
+
+	private static void printAvoidingPeerList(Collection<PeerID> avoidedPeers) {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("Avoiding peers: ");
+		for( PeerID peerID : avoidedPeers ) {
+			sb.append(p2pDictionary.getRemotePeerName(peerID).get()).append("  ");
+		}
+		
+		LOG.debug(sb.toString());
 	}
 
 	private static Map<PeerID, Bid> createBidMap(Collection<Bid> bids) {

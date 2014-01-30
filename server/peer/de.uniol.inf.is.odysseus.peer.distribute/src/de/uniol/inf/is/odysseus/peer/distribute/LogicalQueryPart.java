@@ -81,6 +81,11 @@ public class LogicalQueryPart implements ILogicalQueryPart {
 	}
 	
 	@Override
+	public Collection<ILogicalQueryPart> getAvoidingQueryPartsWritable() {
+		return avoidedQueryParts;
+	}
+	
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");

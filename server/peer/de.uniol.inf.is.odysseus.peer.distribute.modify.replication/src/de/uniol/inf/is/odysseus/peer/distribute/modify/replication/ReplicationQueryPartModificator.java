@@ -131,8 +131,10 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 					
 					Collection<ILogicalQueryPart> avoidedParts = Lists.newArrayList(replicatesToOrigin.get(originPart));
 					avoidedParts.remove(modifiedPart);
-					modifiedParts.add(new LogicalQueryPart(modifiedPart.getOperators(), avoidedParts));
 					
+					modifiedPart.getAvoidingQueryPartsWritable().clear();
+					modifiedPart.getAvoidingQueryPartsWritable().addAll(avoidedParts);
+					modifiedParts.add(modifiedPart);
 				}
 				
 		}
@@ -175,20 +177,20 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 				ReplicationQueryPartModificator.log.debug("Found {} as a part to be replicated", part);
 				
 			} else if(!relevantOperators.isEmpty()) {
+				ReplicationQueryPartModificator.log.debug("Split {} to form as a non-replicateable part", new Object[] {part});
 				
-				ILogicalQueryPart partToBeFragmented = new LogicalQueryPart(relevantOperators);
-				partsToBeFragmented.add(partToBeFragmented);
+				Collection<ILogicalOperator> allOperatorsOfPart = part.getOperators();
+				partsToBeFragmented.add(part);
+				part.getOperatorsWriteable().clear();
+				part.getOperatorsWriteable().addAll(relevantOperators);
 				
-				Collection<ILogicalOperator> realSinks = Lists.newArrayList(part.getOperators());
+				Collection<ILogicalOperator> realSinks = Lists.newArrayList(allOperatorsOfPart);
 				realSinks.removeAll(relevantOperators);
 			
 				ILogicalQueryPart otherPart = new LogicalQueryPart(realSinks);
 				otherParts.add(otherPart);
 			
-				ReplicationQueryPartModificator.log.debug("Split {} into {} as a part to be replicated and " +
-						"{} as another parts", 
-						new Object[] {part, partToBeFragmented, otherPart});
-				
+				ReplicationQueryPartModificator.log.debug("Non-replicatable part is {}", otherPart);
 				
 			} else {
 				
@@ -639,8 +641,9 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			
 			// Create new query part
 			Collection<ILogicalQueryPart> modifiedQueryParts = Lists.newArrayList();
-			modifiedQueryParts.add(new LogicalQueryPart(merger));
-			modifiedReplicatesToOrigin.put(new LogicalQueryPart(merger), modifiedQueryParts);
+			LogicalQueryPart mergerQueryPart = new LogicalQueryPart(merger);
+			modifiedQueryParts.add(mergerQueryPart);
+			modifiedReplicatesToOrigin.put(mergerQueryPart, modifiedQueryParts);
 			
 		}
 		else {

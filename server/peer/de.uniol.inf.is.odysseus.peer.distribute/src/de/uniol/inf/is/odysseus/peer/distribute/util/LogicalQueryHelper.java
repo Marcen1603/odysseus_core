@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -26,6 +29,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
 
 public final class LogicalQueryHelper {
 
+	private static final Logger LOG = LoggerFactory.getLogger(LogicalQueryHelper.class);
 	private static final String PQL_PARSER_ID = "PQL";
 
 	private static int connectionCounter = 0;
@@ -519,6 +523,23 @@ public final class LogicalQueryHelper {
 			ILogicalQueryPart copyQueryPart = new LogicalQueryPart(copyOperatorsOfCopyPart);
 			map.put(copyQueryPart, queryPart);
 		}
+		
+		for( ILogicalQueryPart copyQueryPart : map.keySet() ) {
+			ILogicalQueryPart originalQueryPart = map.get(copyQueryPart);
+			
+			Collection<ILogicalQueryPart> avoidedPartsInCopy = Lists.newArrayList();
+			for( ILogicalQueryPart avoidedPartInOriginal : originalQueryPart.getAvoidingQueryParts() ) {
+				ILogicalQueryPart avoidedPartCopy = getCopyOfMap(avoidedPartInOriginal, map);
+				
+				if( avoidedPartCopy != null ) {
+					avoidedPartsInCopy.add(avoidedPartCopy);
+				} else {
+					LOG.error("Could not find copy of queryPart {}", avoidedPartInOriginal);
+				}
+			}
+			
+			copyQueryPart.getAvoidingQueryPartsWritable().addAll(avoidedPartsInCopy);
+		}
 
 		return map;
 	}
@@ -609,9 +630,9 @@ public final class LogicalQueryHelper {
 		}
 	}
 
-	public static ILogicalOperator getCopyOfMap(ILogicalOperator originalOperator, Map<ILogicalOperator, ILogicalOperator> operatorCopyMap) {
-		for (ILogicalOperator copy : operatorCopyMap.keySet()) {
-			if (operatorCopyMap.get(copy).equals(originalOperator)) {
+	public static <T> T getCopyOfMap(T original, Map<T, T> copyMap) {
+		for (T copy : copyMap.keySet()) {
+			if (copyMap.get(copy).equals(original)) {
 				return copy;
 			}
 		}

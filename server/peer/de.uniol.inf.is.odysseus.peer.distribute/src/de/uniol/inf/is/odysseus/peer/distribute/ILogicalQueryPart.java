@@ -12,5 +12,6 @@ public interface ILogicalQueryPart {
 	public Collection<ILogicalOperator> getOperatorsWriteable();
 	
 	public ImmutableCollection<ILogicalQueryPart> getAvoidingQueryParts();
+	public Collection<ILogicalQueryPart> getAvoidingQueryPartsWritable();
 	
 }

@@ -205,24 +205,4 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 		return bidPlanMap;
 	}
-//
-//	private static Map<ILogicalQueryPart, Bid> determineBestPeers(Map<ILogicalQueryPart, Collection<Bid>> bidQueryPartMap) {
-//
-//		Map<ILogicalQueryPart, Bid> bestBids = Maps.newHashMap();
-//		for (ILogicalQueryPart queryPart : bidQueryPartMap.keySet()) {
-//			bestBids.put(queryPart, determineBestBid(bidQueryPartMap.get(queryPart)));
-//		}
-//
-//		return bestBids;
-//	}
-
-//	private static Bid determineBestBid(Collection<Bid> bids) {
-//		Bid bestBid = null;
-//		for (Bid bid : bids) {
-//			if (bestBid == null || bid.getValue() > bestBid.getValue()) {
-//				bestBid = bid;
-//			}
-//		}
-//		return bestBid;
-//	}
 }
