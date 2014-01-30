@@ -1,7 +1,10 @@
 package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.AbstractHorizontalFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.logicaloperator.RoundRobinFragmentAO;
 
@@ -22,9 +25,17 @@ public class RoundRobinHorizontalFragmentationQueryPartModificator extends
 	}
 
 	@Override
-	protected ILogicalOperator createOperatorForFragmentation() {
+	protected ILogicalOperator createOperatorForFragmentation(
+			int numFragments,
+			List<String> modificationParameters) 
+			throws QueryPartModificationException {
 		
-		return new RoundRobinFragmentAO();
+		if(numFragments < 1)
+			throw new QueryPartModificationException("Invalid number of fragments: " + numFragments);
+			
+		RoundRobinFragmentAO fragmentAO = new RoundRobinFragmentAO();
+		fragmentAO.setNumberOfFragments(numFragments);
+		return fragmentAO;
 		
 	}
 

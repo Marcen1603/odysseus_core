@@ -74,7 +74,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		
 			// Determine degree of fragmentation and source to be fragmented
 			final String sourceName = AbstractFragmentationQueryPartModificator.determineSourceName(modificatorParameters);
-			final int degreeOfFragmentation = AbstractFragmentationQueryPartModificator.determineDegreeOfFragmentation(modificatorParameters);
+			final int degreeOfFragmentation = this.determineDegreeOfFragmentation(modificatorParameters);
 			
 			// Determine all parts to be fragmented (e1) and other (e2) query parts
 			// Note: Some of the origin query parts may be split.
@@ -125,7 +125,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			
 			// Modify each query part to be fragmented for insertion of operators for fragmentation
 			for(ILogicalQueryPart originPart : partsToBeFragmented)
-				copiesToOrigin = this.modifyPartForFragmentation(originPart, copiesToOrigin, sourceName, historyOfFragmentationOperators);
+				copiesToOrigin = this.modifyPartForFragmentation(originPart, copiesToOrigin, sourceName, historyOfFragmentationOperators, modificatorParameters);
 			
 			// Modify each query part to be fragmented for insertion of operators for reunion
 			for(ILogicalQueryPart originPart : partsToBeFragmented) {
@@ -325,6 +325,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @param historyOfOperatorsForFragmentation The history for origin relative sources (key), 
 	 * inserted operators for fragmentation (value.getE1()) 
 	 * and the subscription to the origin relative source (value.getE2()).
+	 * @param modificatorParameters The parameters for the modification given by the user without the parameter <code>fragmentation-strategy-name</code>.
 	 * @return A modified mapping of copies to origin query parts.
 	 * @throws NullPointerException if <code>originPart</code>, <code>copiesToOrigin</code>, <code>sourceName</code> or 
 	 * <code>historyOfOperatorsForFragmentation</code> is null.
@@ -336,7 +337,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			ILogicalQueryPart originPart,
 			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin,
 			String sourceName, 
-			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation)
+			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation,
+			List<String> modificationParameters)
 			throws NullPointerException, IllegalArgumentException, QueryPartModificationException {
 		
 		// Preconditions
@@ -393,7 +395,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 					} else {
 						
 						modifiedCopiesToOrigin = this.insertOperatorForFragmentation(modifiedCopiesToOrigin, originSource, copiedSources, 
-								subToSource, historyOfOperatorsForFragmentation);
+								subToSource, historyOfOperatorsForFragmentation, modificationParameters);
 						
 					}
 					
@@ -416,6 +418,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @param historyOfOperatorsForFragmentation The history for origin relative sources (key), 
 	 * inserted operators for fragmentation (value.getE1()) 
 	 * and the subscription to the origin relative source (value.getE2()).
+	 * @param modificatorParameters The parameters for the modification given by the user without the parameter <code>fragmentation-strategy-name</code>.
 	 * @return A modified mapping of copies to origin query parts.
 	 * @throws NullPointerException if <code>copiesToOrigin</code>, <code>originSource</code>, <code>copiesOfOriginSource</code>, 
 	 * <code>subscription</code> or <code>historyOfOperatorsForFragmentation</code> is null.
@@ -426,7 +429,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			ILogicalOperator originSource,
 			Collection<ILogicalOperator> copiesOfOriginSource,
 			LogicalSubscription subscription,
-			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation)
+			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation,
+			List<String> modificationParameters)
 			throws NullPointerException, QueryPartModificationException {
 		
 		// Preconditions
@@ -445,7 +449,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> modifiedCopiesToOrigin = Maps.newHashMap(copiesToOrigin);
 		
 		// Create operator for fragmentation
-		ILogicalOperator operatorForFragmentation = this.createOperatorForFragmentation();
+		ILogicalOperator operatorForFragmentation = this.createOperatorForFragmentation(copiesOfOriginSource.size(), modificationParameters);
 	
 		// Subscribe the operator for fragmentation to the sources
 		for(int sourceNo = 0; sourceNo < copiesOfOriginSource.size(); sourceNo++) {
@@ -478,9 +482,15 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	
 	/**
 	 * Creates an operator for fragmentation.
+	 * @param modificatorParameters The parameters for the modification given by the user without the parameter <code>fragmentation-strategy-name</code>.
+	 * @param numFragments The number of fragments.
 	 * @return The created operator for fragmentation.
+	 * @throws QueryPartModificationException if any error occurs.
 	 */
-	protected abstract ILogicalOperator createOperatorForFragmentation();
+	protected abstract ILogicalOperator createOperatorForFragmentation(
+			int numFragments,
+			List<String> modificationParameters)
+			throws QueryPartModificationException;
 	
 	/**
 	 * Modifies a part to be fragmented by inserting an operator for reunion for every subscription from 
@@ -1065,7 +1075,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @return The degree of fragmentation given by the user.
 	 * @throws NullPointerException if <code>modificatorParameters</code> is null.
 	 */
-	private static int determineDegreeOfFragmentation(
+	protected int determineDegreeOfFragmentation(
 			List<String> modificatorParameters) 
 			throws NullPointerException {
 		
