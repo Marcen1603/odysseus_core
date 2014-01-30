@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.core.collection;
 
 import java.io.Serializable;
 
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public class Resource implements Serializable, Comparable<Resource> {
@@ -38,6 +39,11 @@ public class Resource implements Serializable, Comparable<Resource> {
 		return resourceName;
 	}
 
+	public String getShortString(String caller) {
+		return getUser().equals(caller)?getResourceName():toString();
+	}
+
+	
 	@Override
 	public String toString() {
 		return new StringBuffer(user).append(".").append(resourceName).toString();
@@ -95,5 +101,6 @@ public class Resource implements Serializable, Comparable<Resource> {
 
 		test = new Resource("test");
 	}
+
 
 }

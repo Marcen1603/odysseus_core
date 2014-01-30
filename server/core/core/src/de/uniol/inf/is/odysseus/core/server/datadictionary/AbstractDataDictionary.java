@@ -353,7 +353,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 			// Set Type of view to name of view
 			if (topOperator.getOutputSchema() != null) {
 				SDFSchema oldSchema = topOperator.getOutputSchema();
-				SDFSchema newSchema = SDFSchema.changeSourceName(oldSchema, viewname.toString());
+				SDFSchema newSchema = SDFSchema.changeSourceName(oldSchema, viewname.getShortString(caller.getUser().getName()));
 				topOperator.setOutputSchema(newSchema);
 			}
 			fireViewAddEvent(viewname, topOperator);
@@ -468,7 +468,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 			for (SDFAttribute old : this.streamDefinitions.get(streamname).getOutputSchema()) {
 				attributes.add(new SDFAttribute(streamname.toString(), old.getAttributeName(), old));
 			}
-			SDFSchema schema = SDFSchema.changeSourceName(outSchema, streamname.toString());
+			SDFSchema schema = SDFSchema.changeSourceName(outSchema, streamname.getShortString(caller.getUser().getName()));
 			ao.setOutputSchema(schema);
 		}
 		return ao;
