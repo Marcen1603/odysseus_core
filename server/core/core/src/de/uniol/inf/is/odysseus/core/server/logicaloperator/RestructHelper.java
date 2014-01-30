@@ -293,29 +293,29 @@ public class RestructHelper {
 
 	}
 
-	/**
-	 * Generates a new {@link SDFSchema} with a given base name and adopting
-	 * {@link SDFAttribute}s of an existing {@link SDFSchema}.
-	 * 
-	 * @param basename
-	 *            The base name for the new {@link SDFSchema}.
-	 * @param outputSchema
-	 *            The {@link SDFSchema} whose {@link SDFAttribute}s shall be
-	 *            adopted.
-	 * @return The new {@link SDFSchema}.
-	 */
-	public static SDFSchema generateOutputSchema(String basename,
-			SDFSchema outputSchema) {
-
-		List<SDFAttribute> attributes = Lists.newArrayList();
-
-		for (SDFAttribute attribute : outputSchema)
-			attributes.add(new SDFAttribute(basename, attribute
-					.getAttributeName(), attribute));
-
-		return new SDFSchema(basename, outputSchema.getType(), attributes);
-
-	}
+//	/**
+//	 * Generates a new {@link SDFSchema} with a given base name and adopting
+//	 * {@link SDFAttribute}s of an existing {@link SDFSchema}.
+//	 * 
+//	 * @param basename
+//	 *            The base name for the new {@link SDFSchema}.
+//	 * @param outputSchema
+//	 *            The {@link SDFSchema} whose {@link SDFAttribute}s shall be
+//	 *            adopted.
+//	 * @return The new {@link SDFSchema}.
+//	 */
+//	public static SDFSchema generateOutputSchema(String basename,
+//			SDFSchema outputSchema) {
+//
+//		List<SDFAttribute> attributes = Lists.newArrayList();
+//
+//		for (SDFAttribute attribute : outputSchema)
+//			attributes.add(new SDFAttribute(basename, attribute
+//					.getAttributeName(), attribute));
+//
+//		return new SDFSchema(basename, outputSchema, attributes);
+//
+//	}
 
 	/**
 	 * Collects recursive all {@link ILogicalOperator}s representing an

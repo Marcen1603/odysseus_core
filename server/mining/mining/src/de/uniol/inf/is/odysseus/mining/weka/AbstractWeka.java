@@ -55,7 +55,7 @@ public final class AbstractWeka<M extends ITimeInterval> {
 		List<SDFAttribute> attributes = this.schema.getAttributes();
 		if (index != -1) {
 			attributes.remove(index);
-			this.schema = new SDFSchema(this.schema.getURI(), this.schema.getType(), attributes);
+			this.schema = new SDFSchema(this.schema, attributes);
 		}
 	}
 

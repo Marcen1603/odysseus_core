@@ -31,7 +31,7 @@ abstract public class AbstractRelationalMedian extends Median<Tuple<?>, Tuple<?>
     }
 
     public IPartialAggregate<Tuple<?>> merge(final IMedianPartialAggregate p, final Tuple<?> toMerge) {
-        final IMedianPartialAggregate pa = (IMedianPartialAggregate) p;
+        final IMedianPartialAggregate pa = p;
         if (this.isPartialAggregateInput()) {
             return this.merge(p, (IPartialAggregate) toMerge.getAttribute(this.pos), false);
         }

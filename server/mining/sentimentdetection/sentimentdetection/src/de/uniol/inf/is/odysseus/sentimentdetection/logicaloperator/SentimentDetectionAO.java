@@ -103,7 +103,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();		
 		outputAttributes.addAll(inSchema.getAttributes());				
 		outputAttributes.add(sentDetection);
-		SDFSchema outSchema = new SDFSchema(inSchema.getURI(), inSchema.getType(), outputAttributes);
+		SDFSchema outSchema = new SDFSchema(inSchema, outputAttributes);
 		setOutputSchema(outSchema);
 		
 		if(totalInputports == 3){
@@ -111,7 +111,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 			outputAttributesneu.addAll(getInputSchema(1).getAttributes());
 			outputAttributesneu.add(sentDetection);
 			String nameneu = getInputSchema(1).getURI();
-			setOutputSchema(2,new SDFSchema(nameneu, getInputSchema(1).getType(), outputAttributesneu));
+			setOutputSchema(2,new SDFSchema(nameneu, getInputSchema(1), outputAttributesneu));
 		}
 		return getOutputSchema();
 	}

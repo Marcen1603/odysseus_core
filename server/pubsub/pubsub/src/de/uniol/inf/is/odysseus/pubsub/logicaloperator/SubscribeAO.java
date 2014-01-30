@@ -146,7 +146,7 @@ public class SubscribeAO extends UnaryLogicalOp{
 		if (source != null){
 			return new SDFSchema(source, Tuple.class,sdfAttributes);
 		}else if (getInputSchema() != null) {
-			return new SDFSchema(getInputSchema().getURI(), getInputSchema().getType(), sdfAttributes);
+			return new SDFSchema(getInputSchema(), sdfAttributes);
 		} else {
 			return new SDFSchema("", Tuple.class, sdfAttributes);
 		}

@@ -206,7 +206,7 @@ public class PatternDetectAO<T> extends AbstractLogicalOperator{
 
 		}
 
-		SDFSchema output = new SDFSchema(outputSchemaIntern.getURI(), outputSchemaIntern.getType(),
+		SDFSchema output = new SDFSchema(outputSchemaIntern,
 				outAttributeList);
 		setOutputSchema(output);
 

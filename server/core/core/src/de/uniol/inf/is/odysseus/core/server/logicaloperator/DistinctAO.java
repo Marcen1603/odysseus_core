@@ -37,8 +37,7 @@ public class DistinctAO extends UnaryLogicalOp {
 			throw new IllegalArgumentException(
 					"No output port other than 0 defined!");
 		}
-		return new SDFSchema(getInputAO().getOutputSchema().getURI(),
-				getInputAO().getOutputSchema().getType(), attributes);
+		return new SDFSchema(getInputAO().getOutputSchema(), attributes);
 	}
 
 	public List<SDFAttribute> getAttributes() {

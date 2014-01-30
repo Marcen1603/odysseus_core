@@ -200,8 +200,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		}
 
 		if (getInputSchema() != null) {
-			outputSchema = new SDFSchema(getInputSchema().getURI(),
-					getInputSchema().getType(), outAttribs);
+			outputSchema = new SDFSchema(getInputSchema(), outAttribs);
 		} else {
 			outputSchema = new SDFSchema("<tmp>", Tuple.class, outAttribs);
 		}

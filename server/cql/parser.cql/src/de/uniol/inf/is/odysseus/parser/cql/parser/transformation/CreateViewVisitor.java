@@ -71,7 +71,7 @@ public class CreateViewVisitor extends AbstractDefaultVisitor {
 				attributes.add(new SDFAttribute(viewName, old
 						.getAttributeName(), old));
 			}
-			rename.setOutputSchema(new SDFSchema(viewName, operator.getOutputSchema().getType(), attributes));
+			rename.setOutputSchema(new SDFSchema(viewName, operator.getOutputSchema(), attributes));
 			operator = rename;
 
 			CreateViewCommand cmd = new CreateViewCommand(viewName, operator,

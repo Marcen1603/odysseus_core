@@ -258,7 +258,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
             }
         }
 
-        final SDFSchema outputSchema = new SDFSchema(this.getInputSchema().getURI(), this.getInputSchema().getType(), outputAttributes);
+        final SDFSchema outputSchema = new SDFSchema(this.getInputSchema(), outputAttributes);
         this.setOutputSchema(outputSchema);
     }
 

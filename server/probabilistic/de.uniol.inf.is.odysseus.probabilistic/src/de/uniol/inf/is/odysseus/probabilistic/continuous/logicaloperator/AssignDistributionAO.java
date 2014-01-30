@@ -170,7 +170,7 @@ public class AssignDistributionAO extends UnaryLogicalOp {
             }
         }
 
-        final SDFSchema outputSchema = new SDFSchema(this.getInputSchema().getURI(), this.getInputSchema().getType(), outputAttributes);
+        final SDFSchema outputSchema = new SDFSchema(this.getInputSchema(), outputAttributes);
         this.setOutputSchema(outputSchema);
     }
 

@@ -90,7 +90,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		checkAttributes(aliasAttributes);
 
 		SDFSchema inputSchema = _top.getOutputSchema();
-		_outputSchema = new SDFSchema(inputSchema.getURI(), inputSchema.getType(), outputAttributes);
+		_outputSchema = new SDFSchema(inputSchema, outputAttributes);
 		// create operator: if there is a need for a project/map operator,
 		// create one and set top operator to it
 		if (!_outputSchema.equals(inputSchema) || projectionMatrix != null) {

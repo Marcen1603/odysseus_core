@@ -42,8 +42,7 @@ public class FaceRecognizerAO extends UnaryLogicalOp {
 		attrs.add(attr);
 		attrs.add(name);
 		attrs.add(confidence);
-		setOutputSchema(new SDFSchema(getInputSchema().getURI(),
-				getInputSchema().getType(), attrs));
+		setOutputSchema(new SDFSchema(getInputSchema(), attrs));
 	}
 
 	@Override

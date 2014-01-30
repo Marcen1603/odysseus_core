@@ -70,7 +70,7 @@ public class StatCounterAO extends AbstractLogicalOperator {
 		attributes.add(attributeNeeded);
 		SDFAttribute attributeTotal = new SDFAttribute(null, "total", SDFDatatype.INTEGER, null, null, null);
 		attributes.add(attributeTotal);
-		SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), getInputSchema(0).getType(), attributes);
+		SDFSchema outSchema = new SDFSchema(getInputSchema(0), attributes);
 		return outSchema;
 
 	}

@@ -149,7 +149,7 @@ public class RelationalRestructHelper {
 			int pos = son.getOutputSchema().indexOf(a);
 			newOutputAttributes.add(inputSchema.get(pos));
 		}
-		SDFSchema newOutputSchema = new SDFSchema(oldOutputSchema.getURI(), oldOutputSchema.getType(), newOutputAttributes);
+		SDFSchema newOutputSchema = new SDFSchema(oldOutputSchema, newOutputAttributes);
 		father.setOutputSchema(newOutputSchema);
 
 		father.subscribeSink(son, 0, 0, father.getOutputSchema());

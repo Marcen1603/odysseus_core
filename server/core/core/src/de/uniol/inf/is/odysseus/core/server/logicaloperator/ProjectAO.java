@@ -72,7 +72,7 @@ public class ProjectAO extends UnaryLogicalOp {
 
 	@GetParameter(name = "ATTRIBUTES")
 	public SDFSchema getOutputSchemaIntern() {
-		return new SDFSchema(getInputSchema().getURI(), getInputSchema().getType(), attributes);
+		return new SDFSchema(getInputSchema(), attributes);
 	}
 
 	@Parameter(type = CreateSDFAttributeParameter.class, name = "PATHS", optional = true, isList = true, doc = "for use with keyvalue objects")
@@ -94,7 +94,7 @@ public class ProjectAO extends UnaryLogicalOp {
 	 */
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		return new SDFSchema(getInputSchema().getURI(), getInputSchema().getType(), attributes);
+		return new SDFSchema(getInputSchema(), attributes);
 	}
 
 	@Override

@@ -29,7 +29,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.DateTickUnit;
+import org.jfree.chart.axis.DateTickUnitType;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.TimeSeries;
@@ -84,6 +87,8 @@ public abstract class AbstractTimeSeriesChart extends
 
 	// also milli
 	private String dateformat = "HH:mm:ss";
+	private DateTickUnitType dateTickUnitType = DateTickUnitType.HOUR;
+	private int dateTickUnitCount = 24;
 	private int choosenXValue = -1;
 	private Double timefactor = 1.0;
 	private String timeinputgranularity = DEFAULT_TIME_GRANULARITY;
@@ -121,10 +126,12 @@ public abstract class AbstractTimeSeriesChart extends
 					.getDomainAxis();
 			axis.setNumberFormatOverride(new SimpleNumberToDateFormat(
 					this.dateformat));
+			axis.setTickUnit(new NumberTickUnit(3600000));
 		}
 		if (domainAxis instanceof DateAxis) {
 			DateAxis axis = (DateAxis) getChart().getXYPlot().getDomainAxis();
 			axis.setDateFormatOverride(new SimpleDateFormat(this.dateformat));
+			axis.setTickUnit(new DateTickUnit(this.dateTickUnitType, this.dateTickUnitCount));
 		}
 
 		getChart().getXYPlot().getRangeAxis().setLabel(yTitle);

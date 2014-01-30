@@ -156,7 +156,7 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		SDFSchema inputSchema = getInputSchema();
 		List<SDFAttribute> attributes = new ArrayList<>(inputSchema.getAttributes());
 		attributes.add(suppressCountAttribute);
-		SDFSchema outputSchema = new SDFSchema(inputSchema.getURI(), inputSchema.getType(), attributes);
+		SDFSchema outputSchema = new SDFSchema(inputSchema, attributes);
 		
 		return outputSchema;
 	}

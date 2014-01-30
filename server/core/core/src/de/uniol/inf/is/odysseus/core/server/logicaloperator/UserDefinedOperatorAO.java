@@ -83,7 +83,7 @@ public class UserDefinedOperatorAO extends AbstractLogicalOperator{
 
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		return new SDFSchema(getInputSchema(0).getURI(), getInputSchema(0).getType(),attributes);
+		return new SDFSchema(getInputSchema(0),attributes);
 	}
 	
 	@Override

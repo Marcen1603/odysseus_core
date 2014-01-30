@@ -22,12 +22,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 @SuppressWarnings("rawtypes")
@@ -42,22 +44,37 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	private List<String> baseSourceNames = new ArrayList<String>();
 
 	final private Class<? extends IStreamObject> type;
+	
+	final private Map<String, SDFConstraint> constraints;
 
 	private Boolean outOfOrder;
 
-	protected SDFSchema(String URI, Class<? extends IStreamObject> type) {
+	protected SDFSchema(String URI, Class<? extends IStreamObject> type, Map<String, SDFConstraint> constraints) {
 		super(URI);
 		this.type = type;
 		if (!URI.equals("")) {
 			baseSourceNames.add(URI);
 		}
+		this.constraints = constraints;
 	}
 
 	/**
 	 * @param schema
 	 */
 	public SDFSchema(String uri, SDFSchema schema) {
+		this(uri, schema, (Map<String, SDFConstraint>)null);
+	}
+	
+	public SDFSchema(String uri, SDFSchema schema, Map<String, SDFConstraint> constraints) {
 		super(uri, schema);
+		if (constraints != null){
+			this.constraints = constraints;
+		}else if (schema != null){
+			this.constraints = schema.constraints;
+		}else{
+			this.constraints = null;
+		}
+		
 		if (schema != null) {
 			if (schema.getBaseSourceNames() != null) {
 				if (schema.getBaseSourceNames().size() == 1
@@ -75,7 +92,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	}
 
-	public SDFSchema(String uri, Class<? extends IStreamObject> type,
+	public SDFSchema(String uri, Class<? extends IStreamObject> type,Map<String, SDFConstraint> constraints,
 			SDFAttribute attribute, SDFAttribute... attributes1) {
 		super(uri);
 		this.type = type;
@@ -90,21 +107,59 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		if (!uri.equals("")) {
 			baseSourceNames.add(uri);
 		}
+		this.constraints = constraints;
 	}
 
 	public SDFSchema(String uri, Class<? extends IStreamObject> type,
+			SDFAttribute attribute, SDFAttribute... attributes1) {
+		this(uri, type, null, attribute, attributes1);
+	}
+
+	
+	
+	public SDFSchema(String uri, Class<? extends IStreamObject> type, Map<String, SDFConstraint> constraints,
 			Collection<SDFAttribute> attributes1) {
 		super(uri, attributes1);
 		this.type = type;
 		if (!uri.equals("")) {
 			baseSourceNames.add(uri);
 		}
+		this.constraints = constraints;
+	}
+	
+	public SDFSchema(String uri, Class<? extends IStreamObject> type,
+			Collection<SDFAttribute> attributes1) {
+		this(uri, type, null, attributes1);
+	}
+	
+	public SDFSchema(String uri, SDFSchema schema,
+			Collection<SDFAttribute> attributes1) {
+		this(uri, schema.type, schema.constraints, attributes1);
+	}
+	
+	public SDFSchema(SDFSchema schema,
+			Collection<SDFAttribute> attributes1) {
+		this(schema.getURI(), schema.type, schema.constraints, attributes1);
 	}
 
 	public Class<? extends IStreamObject> getType() {
 		return type;
 	}
 
+	public SDFConstraint getConstraint(String name){
+		return this.constraints.get(name);
+	}
+	
+
+	public Collection<SDFConstraint> getConstraints() {
+		if (constraints != null){
+			return Collections.unmodifiableCollection(constraints.values());
+		}else{
+			return null;
+		}
+	}
+
+	
 	public boolean isInOrder() {
 		return (outOfOrder == null) || (outOfOrder == false);
 	}
@@ -262,7 +317,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	public static SDFSchema intersection(SDFSchema attributes1,
 			SDFSchema attributes2) {
 		SDFSchema newSet = new SDFSchema(getNewName(attributes1, attributes2),
-				attributes1.type);
+				attributes1.type, attributes1.constraints);
 		for (int j = 0; j < attributes1.size(); j++) {
 			SDFAttribute nextAttr = attributes1.getAttribute(j);
 
@@ -354,7 +409,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			newattributeList.add(new SDFAttribute(newName,
 					a.getAttributeName(), a));
 		}
-		SDFSchema newSchema = new SDFSchema(newName, schema.type,
+		SDFSchema newSchema = new SDFSchema(newName, schema,
 				newattributeList);
 		return newSchema;
 	}
@@ -420,7 +475,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	@Override
 	public String toString() {
-		return super.toString() + " " + type;
+		return super.toString() + " " + type + " c: "+constraints;
 	}
 
 	/**
@@ -456,6 +511,10 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			ret[i++] = in.indexOf(foundAttribute);
 		}
 		return ret;
+	}
+
+	public static SDFSchema changeType(SDFSchema toAdapt, Class<? extends IStreamObject> newType) {
+		return new SDFSchema(toAdapt.getURI(), newType, toAdapt.constraints, toAdapt.getAttributes());
 	}
 
 }

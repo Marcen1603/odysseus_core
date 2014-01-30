@@ -187,7 +187,7 @@ public class ViewSchema<T> {
 			groupByAttribs.add(attr);
 		}
 
-		SDFSchema groupBySchema = new SDFSchema("", null, groupByAttribs);
+		SDFSchema groupBySchema = new SDFSchema("", null, null, groupByAttribs);
 		this.groupRestrictList = SDFSchema.calcRestrictList(outputSchema,
 				groupBySchema);
 	}

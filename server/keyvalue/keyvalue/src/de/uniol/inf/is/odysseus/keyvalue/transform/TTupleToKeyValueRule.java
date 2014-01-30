@@ -20,7 +20,7 @@ public class TTupleToKeyValueRule extends AbstractTransformationRule<TupleToKeyV
 
 	@Override
 	public void execute(TupleToKeyValueAO ao, TransformationConfiguration config) {
-		SDFSchema newOutputSchema = new SDFSchema(ao.getInputSchema().getURI(), KeyValueObject.class, ao.getInputSchema().getAttributes());
+		SDFSchema newOutputSchema =  SDFSchema.changeType(ao.getInputSchema(),KeyValueObject.class);
 		TupleToKeyValuePO<IMetaAttribute> po = new TupleToKeyValuePO<IMetaAttribute>();
 		po.setOutputSchema(newOutputSchema);
 		defaultExecute(ao, po, config, true, false);

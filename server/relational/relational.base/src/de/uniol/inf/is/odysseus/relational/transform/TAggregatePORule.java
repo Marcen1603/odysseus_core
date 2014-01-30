@@ -112,7 +112,7 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 		}
 		
 		SDFSchema newOutputSchema = new SDFSchema(
-				outputSchema.getURI(), outputSchema.getType(), outAttributes);
+				outputSchema, outAttributes);
 
 		RelationalGroupProcessor r = new RelationalGroupProcessor(
 				aggregatePO.getInputSchema(), newOutputSchema,

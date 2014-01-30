@@ -184,6 +184,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema schema = null;
+		Map<String, SDFConstraint> constraints = new HashMap<>();
 		
 		@SuppressWarnings("rawtypes")
 		Class<? extends IStreamObject> type = DataHandlerRegistry
@@ -203,6 +204,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 				throw new IllegalParameterException("Illegal time unit "+unit);
 			}
 		}
+		constraints.put(SDFConstraint.BASE_TIME_UNIT, new SDFConstraint(SDFConstraint.BASE_TIME_UNIT,timeUnit));
 
 		if (attributes != null && attributes.size() > 0) {
 			List<SDFAttribute> s2 = new ArrayList<>();
@@ -220,12 +222,10 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 				s2.add(newAttr);
 			}
 			
-			schema = new SDFSchema(getName(), type, s2);
+			schema = new SDFSchema(getName(), type, constraints, s2);
 		} else {
-			schema = new SDFSchema(getName(), type, null);
+			schema = new SDFSchema(getName(), type, constraints, null);
 		}
-		
-
 
 		return schema;
 	}

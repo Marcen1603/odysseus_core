@@ -100,14 +100,13 @@ public class ConverterAO extends UnaryLogicalOp {
 			type = Tuple.class;
 		}
 		
+		String name = "";
 		if (source != null){
-			return new SDFSchema(source, type, outputAttributes);
-		}else if (getInputSchema() != null) {
-			return new SDFSchema(getInputSchema().getURI(), type, outputAttributes);
-		} else {
-			return new SDFSchema("", type, outputAttributes);
+			name = source;
+		}else if (getInputSchema() != null){
+			name = getInputSchema().getURI();
 		}
-
+		return new SDFSchema(name, type, outputAttributes);
 	}
 
 	@Parameter(name = "dateFormat", type = StringParameter.class, optional = true, doc = "Format used if schema contains (Start|End)TimestampString")

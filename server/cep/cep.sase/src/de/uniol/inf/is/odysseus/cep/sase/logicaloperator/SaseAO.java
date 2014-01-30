@@ -77,7 +77,9 @@ public class SaseAO extends AbstractLogicalOperator {
 	
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		SDFSchema schema = new SDFSchema(typeName, Tuple.class, attributes);
+		SDFSchema schema = SDFSchema.changeSourceName(getInputSchema(0), typeName);
+		schema = SDFSchema.changeType(schema, Tuple.class);
+		schema = new SDFSchema(schema, attributes);
 		return schema;
 	}
 	

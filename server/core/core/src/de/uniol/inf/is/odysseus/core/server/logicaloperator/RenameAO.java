@@ -127,7 +127,7 @@ public class RenameAO extends UnaryLogicalOp {
 					attrs.add(attribute);
 				}
 				String uri = typeName != null ? typeName : inputSchema.getURI();
-				setOutputSchema(new SDFSchema(uri, inputSchema.getType(), attrs));
+				setOutputSchema(new SDFSchema(uri, inputSchema, attrs));
 			} else {
 				//
 				if (typeName != null) {
@@ -137,7 +137,7 @@ public class RenameAO extends UnaryLogicalOp {
 						SDFAttribute newOne = new SDFAttribute(typeName, oldAttr.getAttributeName(), oldAttr);
 						attrs.add(newOne);
 					}
-					setOutputSchema(new SDFSchema(typeName, inputSchema.getType(), attrs));
+					setOutputSchema(new SDFSchema(typeName, inputSchema, attrs));
 				} else {
 					setOutputSchema(new SDFSchema(inputSchema.getURI(), inputSchema));
 				}
@@ -164,7 +164,7 @@ public class RenameAO extends UnaryLogicalOp {
 					attrs.add(oldAttr.clone());
 				}
 				String uri = typeName != null ? typeName : inputSchema.getURI();
-				setOutputSchema(new SDFSchema(uri, inputSchema.getType(), attrs));
+				setOutputSchema(new SDFSchema(uri, inputSchema, attrs));
 			}
 		}
 	}

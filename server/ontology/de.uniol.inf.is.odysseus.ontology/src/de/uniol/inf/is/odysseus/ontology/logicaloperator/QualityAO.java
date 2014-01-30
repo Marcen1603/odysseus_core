@@ -160,7 +160,7 @@ public class QualityAO extends UnaryLogicalOp {
                 outputSchemaAttributes.add(propertyAttribute);
             }
         }
-        this.setOutputSchema(new SDFSchema(this.getInputSchema().getURI(), this.getInputSchema().getType(), outputSchemaAttributes));
+        this.setOutputSchema(new SDFSchema(this.getInputSchema(), outputSchemaAttributes));
         this.expressions = this.estimateExpressions();
     }
 

@@ -73,8 +73,7 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 			outattr.addAll(groupingAttributes);
 		}
 		outattr.add(medianAttribute);
-		SDFSchema output = new SDFSchema(getInputSchema(0).getURI(),
-				getInputSchema(0).getType(), outattr);
+		SDFSchema output = new SDFSchema(getInputSchema(0), outattr);
 		return output;
 	}
 

@@ -169,7 +169,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 
 	@Override
 	public void initialize() {
-		SDFSchema webserviceData = new SDFSchema("", getInputSchema().getType(), receivedData);
+		SDFSchema webserviceData = new SDFSchema("", getInputSchema(), receivedData);
 		SDFSchema outputSchema = SDFSchema.union(getInputSchema(),
 				webserviceData);
 		setOutputSchema(outputSchema);
