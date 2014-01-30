@@ -146,8 +146,10 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 						
 						Collection<ILogicalQueryPart> avoidedParts = Lists.newArrayList(copiesToOrigin.get(originPart));
 						avoidedParts.remove(modifiedPart);
-						modifiedParts.add(new LogicalQueryPart(modifiedPart.getOperators(), avoidedParts));
 						
+						modifiedParts.add(modifiedPart);
+						modifiedPart.getAvoidingQueryPartsWritable().clear();
+						modifiedPart.getAvoidingQueryPartsWritable().addAll(avoidedParts);
 					}
 					
 			}
@@ -967,20 +969,20 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				AbstractFragmentationQueryPartModificator.log.debug("Found {} as a part to be fragmented", part);
 				
 			} else if(!relevantOperators.isEmpty()) {
+				AbstractFragmentationQueryPartModificator.log.debug("Split {} to form as a non-fragmenteable part", new Object[] {part});
 				
-				ILogicalQueryPart partToBeFragmented = new LogicalQueryPart(relevantOperators);
-				partsToBeFragmented.add(partToBeFragmented);
+				Collection<ILogicalOperator> allOperatorsOfPart = part.getOperators();
+				part.getOperatorsWriteable().clear();
+				part.getOperatorsWriteable().addAll(relevantOperators);
+				partsToBeFragmented.add(part);
 				
-				Collection<ILogicalOperator> irrelevantOperators = Lists.newArrayList(part.getOperators());
+				Collection<ILogicalOperator> irrelevantOperators = Lists.newArrayList(allOperatorsOfPart);
 				irrelevantOperators.removeAll(relevantOperators);
-
 			
 				ILogicalQueryPart otherPart = new LogicalQueryPart(irrelevantOperators);
 				otherParts.add(otherPart);
 			
-				AbstractFragmentationQueryPartModificator.log.debug("Split {} into {} as a part to be fragmented and " +
-						"{} as another parts", 
-						new Object[] {part, partToBeFragmented, otherPart});
+				AbstractFragmentationQueryPartModificator.log.debug("Non-fragmentable part is {}", otherPart);
 				
 				
 			} else {
@@ -1186,12 +1188,10 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				
 				if(pair.getE2().getTarget().equals(relativeSink)) {
 					
-					ILogicalQueryPart partOfFragmentation = 
-							LogicalQueryHelper.determineQueryPart(modifiedCopiesToOrigin.keySet(), pair.getE1()).get();
+					ILogicalQueryPart partOfFragmentation = LogicalQueryHelper.determineQueryPart(modifiedCopiesToOrigin.keySet(), pair.getE1()).get();
 					modifiedCopiesToOrigin.remove(partOfFragmentation);
 					
-					Collection<ILogicalOperator> modifiedOperatorList = 
-							Lists.newArrayList(modifiedCopiesToOrigin.get(originPart).iterator().next().getOperators());
+					Collection<ILogicalOperator> modifiedOperatorList = Lists.newArrayList(modifiedCopiesToOrigin.get(originPart).iterator().next().getOperators());
 					modifiedOperatorList.add(pair.getE1());
 					Collection<ILogicalQueryPart> modifiedParts = Lists.newArrayList((ILogicalQueryPart) new LogicalQueryPart(modifiedOperatorList));
 					modifiedCopiesToOrigin.put(originPart, modifiedParts);
