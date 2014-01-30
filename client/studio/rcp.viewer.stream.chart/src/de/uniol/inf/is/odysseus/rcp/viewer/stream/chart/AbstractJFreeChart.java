@@ -16,6 +16,8 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,6 +44,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPart;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.experimental.chart.swt.ChartComposite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,7 +139,15 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 	private void initComposite(Composite parent) {
 		this.chart = createChart();
 		this.chart.setTitle(chartTitle);
-
+		LegendTitle l = this.chart.getLegend();
+		for (String name : GraphicsEnvironment.getLocalGraphicsEnvironment()
+				.getAvailableFontFamilyNames()) {
+			if (name.equalsIgnoreCase("Arial Narrow")) {
+				Font f = new Font("Arial Narrow", Font.PLAIN, 10);
+				l.setItemFont(f);
+				break;
+			}
+		}
 		decorateChart(this.chart);
 
 		chartComposite = new ChartComposite(parent, SWT.NONE, this.chart, true);
@@ -385,7 +396,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 							Lists.<String> newArrayList());
 				}
 				loadedGroupedAttributes.get(port).add(groupedAttribute);
-			}else if (key.contains("#")) {
+			} else if (key.contains("#")) {
 				String[] splittedKey = key.split("#");
 
 				Integer port = Integer.valueOf(splittedKey[0]);
