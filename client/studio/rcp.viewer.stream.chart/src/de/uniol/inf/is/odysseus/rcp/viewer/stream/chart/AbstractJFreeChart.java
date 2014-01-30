@@ -45,6 +45,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.experimental.chart.swt.ChartComposite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -358,6 +360,10 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 		}
 		return toSave;
 	}
+	
+	@Override
+	public void onSaveXML( Document document, Element element ) {
+	}
 
 	@Override
 	public void onLoad(Map<String, String> saved) {
@@ -425,6 +431,10 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 		}
 	}
 
+	@Override
+	public void onLoadXML( Document document, Element element ) {
+	}
+	
 	@Override
 	public void onStart(Collection<IPhysicalOperator> physicalRoots)
 			throws Exception {

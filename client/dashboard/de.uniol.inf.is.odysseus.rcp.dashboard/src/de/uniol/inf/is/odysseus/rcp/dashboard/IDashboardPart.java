@@ -24,6 +24,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IWorkbenchPart;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -33,10 +35,12 @@ public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>>
 
 	public void init( IFile dashboardFile, IProject containingProject, IWorkbenchPart containingPart);
 	public void onLoad(Map<String, String> saved);
+	public void onLoadXML( Document document, Element xmlElement );
 	public void createPartControl(Composite parent, ToolBar toolbar);
 	public void dispose();
 
 	public Map<String, String> onSave();
+	public void onSaveXML(Document document, Element xmlElement );
 	
 	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception;
 	public void onStop();

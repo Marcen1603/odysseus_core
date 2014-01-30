@@ -26,6 +26,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IWorkbenchPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -60,6 +62,10 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	@Override
 	public void onLoad(Map<String, String> saved) {
 	}
+	
+	@Override
+	public void onLoadXML(Document document, Element xmlElement) {
+	}
 
 	@Override
 	public void onPause() {
@@ -68,6 +74,10 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	@Override
 	public Map<String, String> onSave() {
 		return Maps.newHashMap();
+	}
+	
+	@Override
+	public void onSaveXML(Document document, Element xmlElement) {
 	}
 	
 	@Override

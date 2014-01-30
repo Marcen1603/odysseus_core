@@ -70,6 +70,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 	public static final String SETTING_XML_ELEMENT = "Setting";
 	public static final String CUSTOM_SETTING_XML_ELEMENT = "Setting";
 	public static final String CUSTOM_XML_ELEMENT = "Custom";
+	private static final String CUSTOM_XML_XML_ELEMENT = "CustomXML";
 	public static final String QUERY_TEXT_XML_ELEMENT = "Query";
 	public static final String QUERY_TEXT_FILE_PROVIDER_XML_ELEMENT = "File";
 	public static final String QUERY_TEXT_TEXT_PROVIDER_XML_ELEMENT = "Text";
@@ -103,6 +104,12 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 				part.init(fileToLoad, fileToLoad.getProject(), partToShow);
 				part.setQueryTextProvider(queryTextProvider);
 				part.onLoad(customSettings);
+				
+				NodeList customXMLElement = doc.getElementsByTagName(CUSTOM_XML_XML_ELEMENT);
+				if( customXMLElement != null && customXMLElement.getLength() == 1 ) {
+					Element node = (Element) customXMLElement.item(0);
+					part.onLoadXML(doc, node);
+				}
 				
 				return part;
 			} catch (final InstantiationException e) {
@@ -172,6 +179,10 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			}
 		}
 		rootElement.appendChild(customElement);
+		
+		Element custom2Element = doc.createElement(CUSTOM_XML_XML_ELEMENT);
+		rootElement.appendChild(custom2Element);
+		part.onSaveXML(doc, custom2Element);
 	}
 
 	private static void appendQueryTextProvider(IDashboardPartQueryTextProvider queryTextProvider, Document doc, Element rootElement) throws DashboardHandlerException {
