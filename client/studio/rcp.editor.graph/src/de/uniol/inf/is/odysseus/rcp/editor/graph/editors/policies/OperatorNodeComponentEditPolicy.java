@@ -28,7 +28,8 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
  * 
  */
 public class OperatorNodeComponentEditPolicy extends ComponentEditPolicy {
-
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 

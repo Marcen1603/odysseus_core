@@ -21,7 +21,9 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
@@ -56,11 +58,24 @@ public class OperatorGraphEditorContributor extends MultiPageEditorActionBarCont
 	}
 
 	protected void buildActions() {
+		ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
+
 		addRetargetAction(new UndoRetargetAction());
 		addRetargetAction(new RedoRetargetAction());
 		addRetargetAction(new DeleteRetargetAction());
 		addRetargetAction(new ZoomInRetargetAction());
 		addRetargetAction(new ZoomOutRetargetAction());
+		
+		RetargetAction cra = new RetargetAction(ActionFactory.COPY.getId(), "&Copy");
+		cra.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		cra.setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));		
+		addRetargetAction(cra);
+		
+		addRetargetAction(new RetargetAction(ActionFactory.PASTE.getId(), "&Paste"));
+		RetargetAction pra = new RetargetAction(ActionFactory.PASTE.getId(), "&Paste");
+		pra.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+		pra.setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));		
+		addRetargetAction(pra);
 
 	}
 
@@ -122,6 +137,8 @@ public class OperatorGraphEditorContributor extends MultiPageEditorActionBarCont
 	public void contributeToToolBar(IToolBarManager toolBarManager) {
 		toolBarManager.add(getAction(ActionFactory.UNDO.getId()));
 		toolBarManager.add(getAction(ActionFactory.REDO.getId()));
+		toolBarManager.add(getAction(ActionFactory.COPY.getId()));
+		toolBarManager.add(getAction(ActionFactory.PASTE.getId()));
 		toolBarManager.add(getAction(ActionFactory.DELETE.getId()));
 		toolBarManager.add(new Separator());
 		toolBarManager.add(getAction(GEFActionConstants.ZOOM_IN));

@@ -32,6 +32,16 @@ public class Connection extends Observable{
 	private int sourcePort = 0;
 	private int targetPort = 0;
 	private Graph graph;
+	
+	public Connection() {
+
+	}
+
+	public Connection(Connection connection) {
+		this.sourcePort = connection.sourcePort;
+		this.targetPort = connection.targetPort;	
+		this.graph = connection.graph;
+	}
 
 	public OperatorNode getSource() {
 		return source;
@@ -122,5 +132,9 @@ public class Connection extends Observable{
 
 	public void setGraph(Graph graph) {
 		this.graph = graph;
+	}
+	
+	public Connection clone(){
+		return new Connection(this);
 	}
 }

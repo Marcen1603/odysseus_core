@@ -67,6 +67,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.FileEditorInput;
 import org.w3c.dom.CDATASection;
@@ -77,6 +78,8 @@ import org.w3c.dom.NodeList;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.commands.CopyAction;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.commands.PasteAction;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dnd.OperatorDropListener;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.editparts.OperatorNodeEditPart;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.editparts.factories.GraphEditPartFactory;
@@ -341,11 +344,22 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 		viewer.getControl().setBackground(ColorConstants.white);
 		viewer.addDropTargetListener(new OperatorDropListener(getGraphicalViewer()));
 		viewer.setProperty(SnapToGrid.PROPERTY_GRID_ENABLED, true);
-
+		getSite().setSelectionProvider(viewer);
+				
 		// actions
 		registerAndBindingService("org.eclipse.ui.edit.undo", new UndoAction(this));
 		registerAndBindingService("org.eclipse.ui.edit.redo", new RedoAction(this));
+//		registerAndBindingService(ActionFactory.COPY.getId(), new CopyAction(this));
+//		registerAndBindingService(ActionFactory.PASTE.getId(), new PasteAction(this));
+		registerAndBindingService("org.eclipse.ui.edit.copy", new CopyAction(getEditorSite().getPart()));
+		registerAndBindingService("org.eclipse.ui.edit.paste", new PasteAction(getEditorSite().getPart()));
 		registerAndBindingService("org.eclipse.ui.edit.delete", new DeleteAction(getEditorSite().getPart()));
+		
+		@SuppressWarnings("unchecked")
+		List<Object> list = super.getSelectionActions();
+		list.add(ActionFactory.COPY.getId());
+		list.add(ActionFactory.PASTE.getId());		
+		
 		ZoomManager zoomManager = ((ScalableRootEditPart) viewer.getRootEditPart()).getZoomManager();
 		registerAndBindingService(new ZoomInAction(zoomManager));
 		registerAndBindingService(new ZoomOutAction(zoomManager));
@@ -354,6 +368,7 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 		zoomManager.setZoomLevelContributions(zoomContributions);
 		viewer.setProperty(MouseWheelHandler.KeyGenerator.getKey(SWT.MOD1), MouseWheelZoomHandler.SINGLETON);
 		viewer.setKeyHandler(new GraphicalViewerKeyHandler(viewer));
+		
 	}
 
 	private void registerAndBindingService(IAction action) {
@@ -415,6 +430,7 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		updateActions(getSelectionActions());
+		super.selectionChanged(part, selection);
 	}
 
 	/*
@@ -436,5 +452,5 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 			}
 		}
 	}
-
+	
 }

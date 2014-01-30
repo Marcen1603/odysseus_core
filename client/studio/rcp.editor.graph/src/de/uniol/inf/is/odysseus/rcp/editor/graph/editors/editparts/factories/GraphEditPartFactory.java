@@ -41,7 +41,10 @@ public class GraphEditPartFactory implements EditPartFactory {
 		if (model instanceof Graph) {
 			return new GraphEditPart((Graph) model);
 		} else if (model instanceof OperatorNode) {
-			return new OperatorNodeEditPart((OperatorNode) model);
+			
+			OperatorNodeEditPart part = new OperatorNodeEditPart((OperatorNode) model);
+//			context.getViewer().appendSelection(part);
+			return part;
 		} else if (model instanceof Connection){
 			return new ConnectionEditPart((Connection)model);
 		} else {

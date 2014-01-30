@@ -71,6 +71,15 @@ public class OperatorNode extends Observable implements Observer {
 		initParameters();
 	}
 
+	public OperatorNode(OperatorNode operatorNode) {
+		this.operatorInformation = operatorNode.operatorInformation;		
+		for(Entry<LogicalParameterInformation, IParameterPresentation<?>> e : operatorNode.parameterValues.entrySet()){
+			IParameterPresentation<?> param = ParameterPresentationFactory.createPresentation(e.getKey(), this, e.getValue().getValue());
+			this.parameterValues.put(e.getKey(), param);
+		}
+		this.constraint = operatorNode.constraint.getCopy();
+	}
+
 	private void initParameters() {
 		for (LogicalParameterInformation lpi : this.operatorInformation.getParameters()) {
 			IParameterPresentation<?> param = ParameterPresentationFactory.createPresentation(lpi, this, null);
@@ -460,5 +469,10 @@ public class OperatorNode extends Observable implements Observer {
 			v = getParameterValue(param);
 		}
 		return v;
+	}
+	
+	
+	public OperatorNode clone(){
+		return new OperatorNode(this);
 	}
 }

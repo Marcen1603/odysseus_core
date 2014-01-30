@@ -127,7 +127,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 				public void update(Observable arg0, Object arg1) {
 					modelChanged();
 				}
-			});
+			});			
 		} catch (PartInitException e) {
 			ErrorDialog.openError(getSite().getShell(), "Error creating nested graph editor", null, e.getStatus());
 		}
