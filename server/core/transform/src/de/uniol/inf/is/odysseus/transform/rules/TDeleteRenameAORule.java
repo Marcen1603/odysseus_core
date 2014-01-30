@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -64,15 +63,6 @@ public class TDeleteRenameAORule extends AbstractTransformationRule<RenameAO> {
 
 	private boolean hasSupscriptions(RenameAO operator) {
 		return (operator.getSubscriptions().size() == 0);
-	}
-
-	private boolean isLastOne(RenameAO operator) {
-		if (operator.getSubscriptions().size() == 1) {
-			if (operator.getSubscriptions().iterator().next().getTarget() instanceof TopAO) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	@Override

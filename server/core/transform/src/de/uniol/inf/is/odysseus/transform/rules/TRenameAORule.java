@@ -32,7 +32,7 @@ public class TRenameAORule extends AbstractTransformationRule<RenameAO> {
 
 	@Override
 	public void execute(RenameAO operator, TransformationConfiguration config) {
-		if (operator.getName().equalsIgnoreCase("Rename")){
+		if (operator.getName().equalsIgnoreCase("Rename") && !isLastOne(operator)){
 			operator.setName("TOP");
 		}
 		defaultExecute(operator, new TopPO<IStreamObject<?>>(), config ,true, true);

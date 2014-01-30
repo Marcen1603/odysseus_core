@@ -21,6 +21,7 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -29,9 +30,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
@@ -44,6 +45,16 @@ public abstract class AbstractTransformationRule<T> extends
 	static Logger logger = LoggerFactory
 			.getLogger(AbstractTransformationRule.class);
 
+	protected boolean isLastOne(ILogicalOperator operator) {
+		if (operator.getSubscriptions().size() == 1) {
+			if (operator.getSubscriptions().iterator().next().getTarget() instanceof TopAO) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	
 	protected void defaultExecute(ILogicalOperator logical,
 			IPhysicalOperator physical, TransformationConfiguration config,
 			boolean retract, boolean insert, boolean ignoreSinkInput,
