@@ -126,12 +126,12 @@ public abstract class AbstractTimeSeriesChart extends
 					.getDomainAxis();
 			axis.setNumberFormatOverride(new SimpleNumberToDateFormat(
 					this.dateformat));
-			axis.setTickUnit(new NumberTickUnit(3600000));
+//			axis.setTickUnit(new NumberTickUnit(3600000));
 		}
 		if (domainAxis instanceof DateAxis) {
 			DateAxis axis = (DateAxis) getChart().getXYPlot().getDomainAxis();
 			axis.setDateFormatOverride(new SimpleDateFormat(this.dateformat));
-			axis.setTickUnit(new DateTickUnit(this.dateTickUnitType, this.dateTickUnitCount));
+	//		axis.setTickUnit(new DateTickUnit(this.dateTickUnitType, this.dateTickUnitCount));
 		}
 
 		getChart().getXYPlot().getRangeAxis().setLabel(yTitle);
