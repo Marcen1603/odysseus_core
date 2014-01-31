@@ -221,10 +221,14 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	}
 
 	@Override
-	public void onLoadXML(Document document, Element xmlElement) {
+	public void onLoadXML(Document document, Element xmlElement) {		
 		if (xmlElement.getChildNodes().getLength() > 0) {
-			// first node should be "pictogramgroup"
-			NodeList pictogramList = xmlElement.getChildNodes().item(0).getChildNodes();
+			NodeList pictogramList = xmlElement.getChildNodes();
+		
+			if(!xmlElement.getNodeName().equals("pictogramgroup")){
+				pictogramList = xmlElement.getChildNodes().item(0).getChildNodes();
+			}
+			
 			try {
 				for (int i = 0; i < pictogramList.getLength(); i++) {
 					Node pictogramNode = pictogramList.item(i);
