@@ -72,19 +72,16 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	private int[] positions;
 	private boolean refreshing = false;
 
-	private final Map<Integer, Long> hashTimestampMap = Maps.newHashMap();
-	private final Map<Integer, Integer> hashPositionMap = Maps.newHashMap();
-	private final List<Tuple<?>> tuplesForTable = Lists.newLinkedList();
+	private KeyedTuples tuples = new KeyedTuples(10);
 
 	private String attributeList = "*";
-	private int maxData = 10;
 	private String title = "";
+	
 	private List<Color> ageColors = Lists.newArrayList();
 	private boolean showAge = false;
 	private long maxAgeMillis = 5000;
 
 	private List<String> keyAttributes = Lists.newLinkedList();
-	private int[] keyAttributeIndices = new int[0];
 
 	public String getKeyAttributes() {
 		return attributeListToString(keyAttributes);
@@ -102,13 +99,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	}
 
 	public void setKeyAttributes(String keyAttributeList) {
-		if (Strings.isNullOrEmpty(keyAttributeList)) {
-			synchronized (tuplesForTable) {
-				clearData();
-			}
-		}
 		String[] attrs = keyAttributeList.split("\\,");
-
 		keyAttributes.clear();
 		for (String attr : attrs) {
 			if (!keyAttributes.contains(attr) && !Strings.isNullOrEmpty(attr)) {
@@ -116,7 +107,6 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 			}
 		}
 		updateKeyAttributeIndex();
-		clearData();
 	}
 
 	public long getMaxAgeMillis() {
@@ -129,21 +119,26 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		}
 	}
 
-	private void clearData() {
-		tuplesForTable.clear();
-		hashPositionMap.clear();
-		hashTimestampMap.clear();
-	}
-
 	private void updateKeyAttributeIndex() {
-		keyAttributeIndices = new int[0];
 		if (!keyAttributes.isEmpty() && operator != null) {
-			keyAttributeIndices = new int[keyAttributes.size()];
+			int[] keyAttributeIndices = new int[keyAttributes.size()];
 			for (int i = 0; i < keyAttributes.size(); i++) {
 				int index = getAttributeIndex(keyAttributes.get(i).trim());
 				if (index != -1) {
 					keyAttributeIndices[i] = index;
 				}
+			}
+
+			if( tuples != null ) {
+				tuples = new KeyedTuples(tuples.getMaxData(), keyAttributeIndices);
+			} else {
+				tuples = new KeyedTuples(10, keyAttributeIndices);
+			}
+		} else {
+			if( tuples != null ) {
+				tuples = new KeyedTuples(tuples.getMaxData());
+			} else {
+				tuples = new KeyedTuples(10);
 			}
 		}
 	}
@@ -169,11 +164,11 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	}
 
 	public int getMaxData() {
-		return maxData;
+		return tuples.getMaxData();
 	}
 
 	public void setMaxData(int maxData) {
-		this.maxData = maxData;
+		tuples.setMaxData(maxData);
 	}
 
 	public String getTitle() {
@@ -268,7 +263,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	@Override
 	public void onLoad(Map<String, String> saved) {
 		attributeList = saved.get("Attributes");
-		maxData = Integer.valueOf(saved.get("MaxData"));
+		tuples.setMaxData(Integer.valueOf(saved.get("MaxData")));
 		title = saved.get("Title");
 		showAge = Boolean.valueOf(saved.get("showAge"));
 		maxAgeMillis = tryConvertToLong(saved.get("maxAge"));
@@ -290,7 +285,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	public Map<String, String> onSave() {
 		Map<String, String> toSaveMap = Maps.newHashMap();
 		toSaveMap.put("Attributes", attributeList);
-		toSaveMap.put("MaxData", String.valueOf(maxData));
+		toSaveMap.put("MaxData", String.valueOf(tuples.getMaxData()));
 		toSaveMap.put("Title", title);
 		toSaveMap.put("KeyAttribute", getKeyAttributes());
 		toSaveMap.put("showAge", String.valueOf(showAge));
@@ -309,8 +304,13 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		operator = physicalRoots.iterator().next();
 		positions = determinePositions(operator.getOutputSchema(), attributes);
 		updateKeyAttributeIndex();
-		refreshAttributesList(operator.getOutputSchema()); // if attributes was
-															// = "*"
+		
+		if (attributes.length == 0) {
+			attributes = new String[operator.getOutputSchema().size()];
+			for (int i = 0; i < attributes.length; i++) {
+				attributes[i] = operator.getOutputSchema().getAttribute(i).getAttributeName();
+			}
+		}
 
 		deleteColumns();
 		final int colCount = positions.length;
@@ -331,11 +331,8 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 					if (!keyAttributes.isEmpty() && keyAttributes.contains(attributes[fi])) {
 						cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 					} else {
-						if (showAge && keyAttributeIndices.length > 0) {
-							int hashCode = tuple.restrictedHashCode(keyAttributeIndices);
-							Long timestamp = hashTimestampMap.get(hashCode);
-
-							long age = System.currentTimeMillis() - timestamp;
+						if (showAge) {
+							long age = tuples.getAge(tuple);
 							if (age > maxAgeMillis) {
 								cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 							} else {
@@ -353,7 +350,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		}
 
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
-		tableViewer.setInput(tuplesForTable);
+		tableViewer.setInput(tuples.getTuplesForTable());
 		tableViewer.refresh();
 		tableViewer.getTable().redraw();
 
@@ -381,124 +378,28 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	@Override
 	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
 		if (element != null) {
-			synchronized (tuplesForTable) {
-				Tuple<?> tuple = (Tuple<?>) element;
-				int hash = determineHashOfTuple(keyAttributeIndices, tuple);
-				hashTimestampMap.put(hash, System.currentTimeMillis());
+			synchronized (tuples) {
+				tuples.add((Tuple<?>) element);
+			}
 
-				Integer currentPosition = hashPositionMap.get(hash);
-				if (currentPosition == null) {
-					currentPosition = addTupleSorted(tuplesForTable, tuple, keyAttributeIndices);
-					for (Object someHash : hashPositionMap.keySet().toArray()) {
-						Integer somePosition = hashPositionMap.get(someHash);
-						if (somePosition >= currentPosition) {
-							hashPositionMap.put((Integer) someHash, somePosition + 1);
+			refreshTableAsync();
+		}
+	}
+
+	private void refreshTableAsync() {
+		if (!refreshing && tableViewer.getInput() != null) {
+			refreshing = true;
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					synchronized (tuples) {
+						if (!tableViewer.getTable().isDisposed()) {
+							tableViewer.refresh();
 						}
-					}
-					
-					hashPositionMap.put(hash, currentPosition);
-				} else {
-					tuplesForTable.set(currentPosition, tuple);
-				}
-
-				if (tuplesForTable.size() > maxData) {
-					long oldest = Long.MAX_VALUE;
-					Object oldestHash = null;
-					for (Integer hash2 : hashTimestampMap.keySet()) {
-						Long ts = hashTimestampMap.get(hash2);
-						if (oldestHash == null || ts < oldest) {
-							oldestHash = hash2;
-							oldest = ts;
-						}
-					}
-
-					int positionToRemove = hashPositionMap.get(oldestHash);
-					tuplesForTable.remove(positionToRemove);
-					hashTimestampMap.remove(oldestHash);
-					hashPositionMap.remove(oldestHash);
-
-					for (Object someHash : hashPositionMap.keySet().toArray()) {
-						Integer somePosition = hashPositionMap.get(someHash);
-						if (somePosition > positionToRemove) {
-							hashPositionMap.put((Integer) someHash, somePosition - 1);
-						}
+						refreshing = false;
 					}
 				}
-			}
-
-			if (!refreshing && tableViewer.getInput() != null) {
-				refreshing = true;
-				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						synchronized (tuplesForTable) {
-							if (!tableViewer.getTable().isDisposed()) {
-								tableViewer.refresh();
-							}
-							refreshing = false;
-						}
-					}
-				});
-			}
-		}
-	}
-
-	private static int determineHashOfTuple(int[] indices, Tuple<?> tuple) {
-		if (indices.length > 0) {
-			return tuple.restrictedHashCode(indices);
-		} else {
-			return tuple.hashCode();
-		}
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static int addTupleSorted(List<Tuple<?>> list, Tuple<?> tuple, int[] indices) {
-		if( indices != null && indices.length > 0 ) {
-			Comparable[] valuesOfTuple = getAttributeValues(tuple, indices);
-	
-			int currentPos = 0;
-			for (Tuple<?> tupleInList : list) {
-	
-				for (int i = 0; i < indices.length; i++) {
-					Comparable value = tupleInList.getAttribute(indices[i]);
-					Comparable otherValue = valuesOfTuple[i];
-	
-					try {
-						int cmp = value.compareTo(otherValue);
-						if (cmp > 0) {
-							list.add(currentPos, tuple);
-							return currentPos;
-						} else if( cmp < 0 ) {
-							break; // next tuple
-						}
-					} catch (Throwable t) {
-						LOG.error("Cannot compare " + value + " with " + otherValue, t);
-					}
-				}
-				
-				currentPos++;
-			}
-		}
-		
-		list.add(tuple);
-		return list.size() - 1;
-	}
-
-	@SuppressWarnings("rawtypes")
-	private static Comparable[] getAttributeValues(Tuple<?> tuple, int[] indices) {
-		Comparable[] values = new Comparable[indices.length];
-		for (int i = 0; i < indices.length; i++) {
-			values[i] = tuple.getAttribute(indices[i]);
-		}
-		return values;
-	}
-
-	private void refreshAttributesList(SDFSchema outputSchema) {
-		if (attributes.length == 0) {
-			attributes = new String[outputSchema.size()];
-			for (int i = 0; i < attributes.length; i++) {
-				attributes[i] = outputSchema.getAttribute(i).getAttributeName();
-			}
+			});
 		}
 	}
 
