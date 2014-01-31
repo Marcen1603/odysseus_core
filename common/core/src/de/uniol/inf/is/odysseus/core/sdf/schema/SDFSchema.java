@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 @SuppressWarnings("rawtypes")

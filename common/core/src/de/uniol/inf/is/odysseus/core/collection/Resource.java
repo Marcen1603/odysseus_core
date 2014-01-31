@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.core.collection;
 
 import java.io.Serializable;
 
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public class Resource implements Serializable, Comparable<Resource> {
