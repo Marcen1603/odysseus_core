@@ -72,8 +72,9 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	private int[] positions;
 	private boolean refreshing = false;
 
-	private final Map<Integer, Long> keyHashTimestamps = Maps.newHashMap();
-	private final Map<Integer, Tuple<?>> keyedHashData = Maps.newHashMap();
+	private final Map<Integer, Long> hashTimestampMap = Maps.newHashMap();
+	private final Map<Integer, Integer> hashPositionMap = Maps.newHashMap();
+	private final List<Tuple<?>> tuplesForTable = Lists.newLinkedList();
 	
 	private String attributeList = "*";
 	private int maxData = 10;
@@ -102,7 +103,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 
 	public void setKeyAttributes(String keyAttributeList) {
 		if( Strings.isNullOrEmpty(keyAttributeList)) {
-			synchronized( keyedHashData ) {
+			synchronized( tuplesForTable ) {
 				clearData();
 			}
 		}
@@ -129,7 +130,9 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	}
 
 	private void clearData() {
-		keyedHashData.clear();
+		tuplesForTable.clear();
+		hashPositionMap.clear();
+		hashTimestampMap.clear();
 	}
 
 	private void updateKeyAttributeIndex() {
@@ -329,7 +332,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 					} else {
 						if( showAge && keyAttributeIndices.length > 0 ) {
 							int hashCode = tuple.restrictedHashCode(keyAttributeIndices);
-							Long timestamp = keyHashTimestamps.get(hashCode);
+							Long timestamp = hashTimestampMap.get(hashCode);
 							
 							long age = System.currentTimeMillis() - timestamp;
 							if( age > maxAgeMillis ) {
@@ -349,7 +352,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		}
 
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
-		tableViewer.setInput(keyedHashData.values());
+		tableViewer.setInput(tuplesForTable);
 		tableViewer.refresh();
 		tableViewer.getTable().redraw();
 		
@@ -377,7 +380,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	@Override
 	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
 		if( element != null ) {
-			synchronized( keyedHashData ) {
+			synchronized( tuplesForTable ) {
 				
 				Tuple<?> tuple = (Tuple<?>)element;
 				int hash = 0;
@@ -386,22 +389,42 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 				} else {
 					hash = tuple.hashCode();
 				}
-				keyedHashData.put(hash, tuple);
-				keyHashTimestamps.put(hash, System.currentTimeMillis());
+				hashTimestampMap.put(hash, System.currentTimeMillis());
 				
-				if( keyedHashData.size() > maxData ) {
+				Integer currentPosition = hashPositionMap.get(hash);
+				if( currentPosition == null ) {
+					tuplesForTable.add(tuple);
+					hashPositionMap.put(hash, tuplesForTable.size() - 1);
+					
+					System.out.println("Added: Size to " + tuplesForTable.size());
+				} else {
+					tuplesForTable.set(currentPosition, tuple);
+					System.out.println("Changed position " + currentPosition);
+				}
+				
+				if( tuplesForTable.size() > maxData ) {
 					long oldest = Long.MAX_VALUE;
 					Object oldestHash = null;
-					for( Integer hash2 : keyHashTimestamps.keySet() ) {
-						Long ts = keyHashTimestamps.get(hash2);
-						if( ts < oldest ) {
+					for( Integer hash2 : hashTimestampMap.keySet() ) {
+						Long ts = hashTimestampMap.get(hash2);
+						if( oldestHash == null || ts < oldest ) {
 							oldestHash = hash2;
 							oldest = ts;
 						}
 					}
 					
-					keyedHashData.remove(oldestHash);
-					keyHashTimestamps.remove(oldestHash);
+					int positionToRemove = hashPositionMap.get(oldestHash);
+					tuplesForTable.remove(positionToRemove);
+					System.out.println("Removed: Size to " + tuplesForTable.size());
+					hashTimestampMap.remove(oldestHash);
+					hashPositionMap.remove(oldestHash);
+					
+					for( Object someHash : hashPositionMap.keySet().toArray() ) {
+						Integer somePosition = hashPositionMap.get(someHash);
+						if( somePosition > positionToRemove ) {
+							hashPositionMap.put((Integer)someHash, somePosition - 1);
+						}
+					}
 				}
 			}
 			
@@ -410,7 +433,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						synchronized( keyedHashData ) {
+						synchronized( tuplesForTable ) {
 							if (!tableViewer.getTable().isDisposed()) {
 								tableViewer.refresh();
 							}
