@@ -453,29 +453,31 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static int addTupleSorted(List<Tuple<?>> list, Tuple<?> tuple, int[] indices) {
-		Comparable[] valuesOfTuple = getAttributeValues(tuple, indices);
-
-		int currentPos = 0;
-		for (Tuple<?> tupleInList : list) {
-
-			for (int i = 0; i < indices.length; i++) {
-				Comparable value = tupleInList.getAttribute(indices[i]);
-				Comparable otherValue = valuesOfTuple[i];
-
-				try {
-					int cmp = value.compareTo(otherValue);
-					if (cmp > 0) {
-						list.add(currentPos, tuple);
-						return currentPos;
-					} else if( cmp < 0 ) {
-						break; // next tuple
+		if( indices != null && indices.length > 0 ) {
+			Comparable[] valuesOfTuple = getAttributeValues(tuple, indices);
+	
+			int currentPos = 0;
+			for (Tuple<?> tupleInList : list) {
+	
+				for (int i = 0; i < indices.length; i++) {
+					Comparable value = tupleInList.getAttribute(indices[i]);
+					Comparable otherValue = valuesOfTuple[i];
+	
+					try {
+						int cmp = value.compareTo(otherValue);
+						if (cmp > 0) {
+							list.add(currentPos, tuple);
+							return currentPos;
+						} else if( cmp < 0 ) {
+							break; // next tuple
+						}
+					} catch (Throwable t) {
+						LOG.error("Cannot compare " + value + " with " + otherValue, t);
 					}
-				} catch (Throwable t) {
-					LOG.error("Cannot compare " + value + " with " + otherValue, t);
 				}
+				
+				currentPos++;
 			}
-			
-			currentPos++;
 		}
 		
 		list.add(tuple);
@@ -489,16 +491,6 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 			values[i] = tuple.getAttribute(indices[i]);
 		}
 		return values;
-	}
-
-	private String arrayToString(int[] keyAttributeIndices2) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("[");
-		for (int i = 0; i < keyAttributeIndices2.length; i++) {
-			sb.append(keyAttributeIndices2[i]).append("  ");
-		}
-		sb.append("]");
-		return sb.toString();
 	}
 
 	private void refreshAttributesList(SDFSchema outputSchema) {
