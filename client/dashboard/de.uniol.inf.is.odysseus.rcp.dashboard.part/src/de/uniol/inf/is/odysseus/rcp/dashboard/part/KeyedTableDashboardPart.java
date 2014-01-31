@@ -60,14 +60,14 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	private static final Logger LOG = LoggerFactory.getLogger(KeyedTableDashboardPart.class);
 
 	private static final int COLOR_AGE_STEPS = 10;
-	
+
 	private IPhysicalOperator operator;
 
 	private TableViewer tableViewer;
 	private TableColumnLayout tableColumnLayout;
 	private Composite tableComposite;
 	private Font titleFont;
-	
+
 	private String[] attributes;
 	private int[] positions;
 	private boolean refreshing = false;
@@ -75,26 +75,26 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	private final Map<Integer, Long> hashTimestampMap = Maps.newHashMap();
 	private final Map<Integer, Integer> hashPositionMap = Maps.newHashMap();
 	private final List<Tuple<?>> tuplesForTable = Lists.newLinkedList();
-	
+
 	private String attributeList = "*";
 	private int maxData = 10;
 	private String title = "";
 	private List<Color> ageColors = Lists.newArrayList();
 	private boolean showAge = false;
 	private long maxAgeMillis = 5000;
-	
+
 	private List<String> keyAttributes = Lists.newLinkedList();
 	private int[] keyAttributeIndices = new int[0];
-	
+
 	public String getKeyAttributes() {
 		return attributeListToString(keyAttributes);
 	}
 
 	private static String attributeListToString(List<String> attrs) {
 		StringBuilder sb = new StringBuilder();
-		for( int i = 0; i < attrs.size(); i++) {
-			sb.append( attrs.get(i) );
-			if( i < attrs.size() - 1) {
+		for (int i = 0; i < attrs.size(); i++) {
+			sb.append(attrs.get(i));
+			if (i < attrs.size() - 1) {
 				sb.append(", ");
 			}
 		}
@@ -102,29 +102,29 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	}
 
 	public void setKeyAttributes(String keyAttributeList) {
-		if( Strings.isNullOrEmpty(keyAttributeList)) {
-			synchronized( tuplesForTable ) {
+		if (Strings.isNullOrEmpty(keyAttributeList)) {
+			synchronized (tuplesForTable) {
 				clearData();
 			}
 		}
 		String[] attrs = keyAttributeList.split("\\,");
 
 		keyAttributes.clear();
-		for( String attr : attrs ) {
-			if( !keyAttributes.contains(attr) && !Strings.isNullOrEmpty(attr)) {
+		for (String attr : attrs) {
+			if (!keyAttributes.contains(attr) && !Strings.isNullOrEmpty(attr)) {
 				keyAttributes.add(attr.trim());
 			}
 		}
 		updateKeyAttributeIndex();
 		clearData();
 	}
-	
+
 	public long getMaxAgeMillis() {
 		return maxAgeMillis;
 	}
 
 	public void setMaxAgeMillis(long maxAgeMillis) {
-		if( maxAgeMillis >= 0 ) {
+		if (maxAgeMillis >= 0) {
 			this.maxAgeMillis = maxAgeMillis;
 		}
 	}
@@ -137,11 +137,11 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 
 	private void updateKeyAttributeIndex() {
 		keyAttributeIndices = new int[0];
-		if( !keyAttributes.isEmpty() && operator != null) {
+		if (!keyAttributes.isEmpty() && operator != null) {
 			keyAttributeIndices = new int[keyAttributes.size()];
-			for( int i = 0; i < keyAttributes.size(); i++ ) {
+			for (int i = 0; i < keyAttributes.size(); i++) {
 				int index = getAttributeIndex(keyAttributes.get(i).trim());
-				if( index != -1 ) {
+				if (index != -1) {
 					keyAttributeIndices[i] = index;
 				}
 			}
@@ -149,14 +149,14 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	}
 
 	private int getAttributeIndex(String keyAttribute) {
-		for( int i = 0; i < operator.getOutputSchema().getAttributes().size(); i++ ) {
+		for (int i = 0; i < operator.getOutputSchema().getAttributes().size(); i++) {
 			SDFAttribute attribute = operator.getOutputSchema().get(i);
-			
-			if(attribute.getAttributeName().equals(keyAttribute)) {
+
+			if (attribute.getAttributeName().equals(keyAttribute)) {
 				return i;
 			}
 		}
-		
+
 		return -1;
 	}
 
@@ -190,19 +190,19 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 			new Label(parent, SWT.NONE).setText("Attribute List is invalid!");
 			return;
 		}
-		
+
 		ageColors = determineAgeColors();
 		attributes = determineAttributes(attributeList);
-		
+
 		Composite topComposite = new Composite(parent, SWT.NONE);
 		topComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		topComposite.setLayout(new GridLayout(1, false));
 		topComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		
-		if( !Strings.isNullOrEmpty(title)) {
+
+		if (!Strings.isNullOrEmpty(title)) {
 			createLabel(topComposite);
 		}
-		
+
 		tableComposite = new Composite(topComposite, SWT.NONE);
 		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tableColumnLayout = new TableColumnLayout();
@@ -213,19 +213,19 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
-		
+
 		parent.layout();
 	}
-	
+
 	private List<Color> determineAgeColors() {
 		List<Color> colors = Lists.newArrayList();
-		for( int i = 0; i < COLOR_AGE_STEPS; i++ ) {
-			float factor = (float)i / (float)COLOR_AGE_STEPS;
-			
-			int r = (int)(255 - (255 * factor));
-			int g = (int)(255 * factor);
-			int b = (int)(255 * factor);
-			colors.add( new Color(Display.getCurrent(), r, g, b));
+		for (int i = 0; i < COLOR_AGE_STEPS; i++) {
+			float factor = (float) i / (float) COLOR_AGE_STEPS;
+
+			int r = (int) (255 - (255 * factor));
+			int g = (int) (255 * factor);
+			int b = (int) (255 * factor);
+			colors.add(new Color(Display.getCurrent(), r, g, b));
 		}
 		return colors;
 	}
@@ -236,7 +236,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		label.setAlignment(SWT.CENTER);
 		label.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		
+
 		titleFont = createBoldFont(label.getFont());
 		label.setFont(titleFont);
 	}
@@ -246,20 +246,20 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		fontData[0].setStyle(SWT.BOLD);
 		return new Font(Display.getCurrent(), fontData[0]);
 	}
-	
+
 	@Override
 	public void dispose() {
-		if( titleFont != null ) {
+		if (titleFont != null) {
 			titleFont.dispose();
 		}
-		
+
 		disposeAgeColors();
-		
+
 		super.dispose();
 	}
 
 	private void disposeAgeColors() {
-		for( Color color : ageColors ) {
+		for (Color color : ageColors) {
 			color.dispose();
 		}
 		ageColors.clear();
@@ -272,16 +272,16 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		title = saved.get("Title");
 		showAge = Boolean.valueOf(saved.get("showAge"));
 		maxAgeMillis = tryConvertToLong(saved.get("maxAge"));
-		
+
 		setKeyAttributes(saved.get("KeyAttribute"));
-		
+
 		updateKeyAttributeIndex();
 	}
 
 	private Long tryConvertToLong(String longString) {
 		try {
 			return Long.valueOf(longString);
-		} catch( Throwable ignore ) {
+		} catch (Throwable ignore) {
 			return maxAgeMillis;
 		}
 	}
@@ -309,14 +309,15 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		operator = physicalRoots.iterator().next();
 		positions = determinePositions(operator.getOutputSchema(), attributes);
 		updateKeyAttributeIndex();
-		refreshAttributesList( operator.getOutputSchema() ); // if attributes was = "*"
-		
+		refreshAttributesList(operator.getOutputSchema()); // if attributes was
+															// = "*"
+
 		deleteColumns();
 		final int colCount = positions.length;
 		for (int i = 0; i < colCount; i++) {
 
 			final int fi = i;
-			
+
 			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
 			column.getColumn().setText(attributes[i]);
 			tableColumnLayout.setColumnData(column.getColumn(), new ColumnWeightData(5, 25, true));
@@ -326,23 +327,23 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 					final Tuple<?> tuple = (Tuple<?>) cell.getElement();
 					final Object attrValue = tuple.getAttribute(positions[fi]);
 					cell.setText(attrValue != null ? attrValue.toString() : "null");
-					
-					if( !keyAttributes.isEmpty() && keyAttributes.contains(attributes[fi])) {
+
+					if (!keyAttributes.isEmpty() && keyAttributes.contains(attributes[fi])) {
 						cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 					} else {
-						if( showAge && keyAttributeIndices.length > 0 ) {
+						if (showAge && keyAttributeIndices.length > 0) {
 							int hashCode = tuple.restrictedHashCode(keyAttributeIndices);
 							Long timestamp = hashTimestampMap.get(hashCode);
-							
+
 							long age = System.currentTimeMillis() - timestamp;
-							if( age > maxAgeMillis ) {
+							if (age > maxAgeMillis) {
 								cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 							} else {
-								float ageStep = (float)maxAgeMillis / (float)COLOR_AGE_STEPS;
-								int index = Math.min((int)(age / ageStep), COLOR_AGE_STEPS - 1);
+								float ageStep = (float) maxAgeMillis / (float) COLOR_AGE_STEPS;
+								int index = Math.min((int) (age / ageStep), COLOR_AGE_STEPS - 1);
 								cell.setBackground(ageColors.get(index));
 							}
-							
+
 						} else {
 							cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 						}
@@ -355,16 +356,16 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		tableViewer.setInput(tuplesForTable);
 		tableViewer.refresh();
 		tableViewer.getTable().redraw();
-		
+
 		tableComposite.layout();
 	}
-	
+
 	private void deleteColumns() {
 		disposeAllColumns(tableViewer.getTable());
 	}
-	
+
 	private static void disposeAllColumns(Table table) {
-		while( table.getColumnCount() > 0 ) {
+		while (table.getColumnCount() > 0) {
 			table.getColumns()[0].dispose();
 		}
 	}
@@ -379,76 +380,58 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 
 	@Override
 	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
-		if( element != null ) {
-			synchronized( tuplesForTable ) {
-				Tuple<?> tuple = (Tuple<?>)element;
-				int hash = 0;
-				if( !keyAttributes.isEmpty() ) {
-					hash = tuple.restrictedHashCode(keyAttributeIndices);
-				} else {
-					hash = tuple.hashCode();
-				}
+		if (element != null) {
+			synchronized (tuplesForTable) {
+				Tuple<?> tuple = (Tuple<?>) element;
+				int hash = determineHashOfTuple(keyAttributeIndices, tuple);
 				hashTimestampMap.put(hash, System.currentTimeMillis());
-				
+
 				Integer currentPosition = hashPositionMap.get(hash);
-				if( currentPosition == null ) {
-					tuplesForTable.add(tuple);
-					hashPositionMap.put(hash, tuplesForTable.size() - 1);
+				if (currentPosition == null) {
+					currentPosition = addTupleSorted(tuplesForTable, tuple, keyAttributeIndices);
+					for (Object someHash : hashPositionMap.keySet().toArray()) {
+						Integer somePosition = hashPositionMap.get(someHash);
+						if (somePosition >= currentPosition) {
+							hashPositionMap.put((Integer) someHash, somePosition + 1);
+						}
+					}
 					
-//					System.out.println("Added tuple " + tuple + " (Hash " + hash + ") Size is now " + tuplesForTable.size() );
+					hashPositionMap.put(hash, currentPosition);
 				} else {
-					// DEBUG check
-//					Tuple<?> otherTuple = (Tuple<?>)tuplesForTable.get(currentPosition);
-//					for( int keyIndex : keyAttributeIndices) {
-//						Object value = tuple.getAttribute(keyIndex);
-//						Object otherValue = otherTuple.getAttribute(keyIndex);
-//						
-//						if( !value.equals(otherValue)) {
-//							System.err.println("Hashkollision!!! Hash = " + hash);
-//							System.err.println("Neues Tupel: " + tuple);
-//							System.err.println("Altes Tupel: " + otherTuple);
-//							System.err.println("AttributIndices = " + arrayToString(keyAttributeIndices));
-//							System.err.println();
-//							break;
-//						}
-//					}
-					
 					tuplesForTable.set(currentPosition, tuple);
-//					System.out.println("Changed position " + currentPosition);
 				}
-				
-				if( tuplesForTable.size() > maxData ) {
+
+				if (tuplesForTable.size() > maxData) {
 					long oldest = Long.MAX_VALUE;
 					Object oldestHash = null;
-					for( Integer hash2 : hashTimestampMap.keySet() ) {
+					for (Integer hash2 : hashTimestampMap.keySet()) {
 						Long ts = hashTimestampMap.get(hash2);
-						if( oldestHash == null || ts < oldest ) {
+						if (oldestHash == null || ts < oldest) {
 							oldestHash = hash2;
 							oldest = ts;
 						}
 					}
-					
+
 					int positionToRemove = hashPositionMap.get(oldestHash);
 					tuplesForTable.remove(positionToRemove);
-//					System.out.println("Removed: Size to " + tuplesForTable.size());
 					hashTimestampMap.remove(oldestHash);
 					hashPositionMap.remove(oldestHash);
-					
-					for( Object someHash : hashPositionMap.keySet().toArray() ) {
+
+					for (Object someHash : hashPositionMap.keySet().toArray()) {
 						Integer somePosition = hashPositionMap.get(someHash);
-						if( somePosition > positionToRemove ) {
-							hashPositionMap.put((Integer)someHash, somePosition - 1);
+						if (somePosition > positionToRemove) {
+							hashPositionMap.put((Integer) someHash, somePosition - 1);
 						}
 					}
 				}
 			}
-			
-			if( !refreshing && tableViewer.getInput() != null) {
+
+			if (!refreshing && tableViewer.getInput() != null) {
 				refreshing = true;
 				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						synchronized( tuplesForTable ) {
+						synchronized (tuplesForTable) {
 							if (!tableViewer.getTable().isDisposed()) {
 								tableViewer.refresh();
 							}
@@ -460,11 +443,58 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		}
 	}
 
-	@SuppressWarnings("unused")
+	private static int determineHashOfTuple(int[] indices, Tuple<?> tuple) {
+		if (indices.length > 0) {
+			return tuple.restrictedHashCode(indices);
+		} else {
+			return tuple.hashCode();
+		}
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static int addTupleSorted(List<Tuple<?>> list, Tuple<?> tuple, int[] indices) {
+		Comparable[] valuesOfTuple = getAttributeValues(tuple, indices);
+
+		int currentPos = 0;
+		for (Tuple<?> tupleInList : list) {
+
+			for (int i = 0; i < indices.length; i++) {
+				Comparable value = tupleInList.getAttribute(indices[i]);
+				Comparable otherValue = valuesOfTuple[i];
+
+				try {
+					int cmp = value.compareTo(otherValue);
+					if (cmp > 0) {
+						list.add(currentPos, tuple);
+						return currentPos;
+					} else if( cmp < 0 ) {
+						break; // next tuple
+					}
+				} catch (Throwable t) {
+					LOG.error("Cannot compare " + value + " with " + otherValue, t);
+				}
+			}
+			
+			currentPos++;
+		}
+		
+		list.add(tuple);
+		return list.size() - 1;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static Comparable[] getAttributeValues(Tuple<?> tuple, int[] indices) {
+		Comparable[] values = new Comparable[indices.length];
+		for (int i = 0; i < indices.length; i++) {
+			values[i] = tuple.getAttribute(indices[i]);
+		}
+		return values;
+	}
+
 	private String arrayToString(int[] keyAttributeIndices2) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
-		for( int i = 0; i < keyAttributeIndices2.length; i++ ) {
+		for (int i = 0; i < keyAttributeIndices2.length; i++) {
 			sb.append(keyAttributeIndices2[i]).append("  ");
 		}
 		sb.append("]");
@@ -472,9 +502,9 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	}
 
 	private void refreshAttributesList(SDFSchema outputSchema) {
-		if( attributes.length == 0 ) {
+		if (attributes.length == 0) {
 			attributes = new String[outputSchema.size()];
-			for( int i = 0; i< attributes.length; i++ ) {
+			for (int i = 0; i < attributes.length; i++) {
 				attributes[i] = outputSchema.getAttribute(i).getAttributeName();
 			}
 		}
@@ -484,7 +514,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		if (attributeList.trim().equalsIgnoreCase("*")) {
 			return new String[0];
 		}
-		
+
 		String[] attributes = attributeList.trim().split(",");
 		for (int i = 0; i < attributes.length; i++) {
 			attributes[i] = attributes[i].trim();
@@ -494,26 +524,26 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 
 	private static int[] determinePositions(SDFSchema outputSchema, String[] attributes) {
 		int[] positions = null;
-		if( attributes.length > 0 ) {
+		if (attributes.length > 0) {
 			positions = new int[attributes.length];
 			for (int i = 0; i < attributes.length; i++) {
 				Optional<Integer> optPosition = getPosition(outputSchema, attributes[i]);
-				if( optPosition.isPresent() ) {
+				if (optPosition.isPresent()) {
 					positions[i] = optPosition.get();
 				} else {
 					throw new RuntimeException("Could not position of " + attributes[i]);
 				}
-			}	
+			}
 		} else {
 			positions = new int[outputSchema.size()];
-			for( int i = 0; i < positions.length; i++ ) {
+			for (int i = 0; i < positions.length; i++) {
 				positions[i] = i;
 			}
 		}
 		return positions;
 	}
 
-	private static Optional<Integer> getPosition(SDFSchema outputSchema, String attribute ) {
+	private static Optional<Integer> getPosition(SDFSchema outputSchema, String attribute) {
 		for (int j = 0; j < outputSchema.size(); j++) {
 			if (outputSchema.get(j).getAttributeName().equals(attribute)) {
 				return Optional.of(j);
@@ -521,7 +551,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		}
 		return Optional.absent();
 	}
-	
+
 	public String[] getAttributes() {
 		return attributes;
 	}
