@@ -15,12 +15,15 @@
  */
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
+import de.uniol.inf.is.odysseus.core.collection.FESortedPair;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -34,7 +37,8 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 		IGroupProcessor<Tuple<T>, Tuple<T>> {
 
 	Map<Long, Tuple<T>> tupleMap = null;
-	int maxId = 0;
+	List<FESortedPair<Tuple<?>, Long>> groupList = new LinkedList<>();
+	Long maxId = 0L;
 	int[] gRestrict = null;
 	private final List<SDFAttribute> grAttribs;
 	private final Map<FESortedClonablePair<SDFSchema, AggregateFunction>, Integer> aggrOutputPos = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, Integer>();
@@ -42,45 +46,58 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 	final private SDFSchema inputSchema;
 	final private SDFSchema outputSchema;
 	final private Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations;
+	final private boolean fast;
 
 	public RelationalGroupProcessor(SDFSchema inputSchema,
 			SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
-			Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations) {
+			Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations, boolean fast) {
 		super();
 		this.grAttribs = groupingAttributes;
 		this.inputSchema = inputSchema;
 		this.outputSchema = outputSchema;
 		this.aggregations = aggregations;
+		this.fast = fast;
 	}
 
 	@Override
 	public Long getGroupID(Tuple<T> elem) {
-		// Wenn es keine Gruppierungen gibt, ist der Schl�ssel immer gleich 0
+		// if there are no group attributes, value is 0
 		if (gRestrict == null || gRestrict.length == 0)
 			return Long.valueOf(0);
-		// Ansonsten das Tupel auf die Gruppierungsattribute einschr�nken
-		//Tuple<T> gTuple = getGroupingPart(elem);
-		// calc hash from attributes as groud id
-		//long hash = gTuple.hashCode();	
-		long hash = elem.restrictedHashCode(gRestrict);
-		
-		// Gibt es diese Kombination schon?
 
-		// Wenn nicht, neu eintragen
-		if (! tupleMap.containsKey(hash)) {
-			tupleMap.put(hash, getGroupingPart(elem));
-			// System.out.println("Created new Group "+id+" from "+gTuple+" with input "+elem);
+		long hash = 0;
+		// Fast version uses hash code of tuple. Warning: This may not always be
+		// correct!
+		if (fast) {
+			hash = elem.restrictedHashCode(gRestrict);
+			if (!tupleMap.containsKey(hash)) {
+				Tuple<T> gTuple = getGroupingPart(elem);
+				tupleMap.put(hash, gTuple);
+				System.err.println("Created a new group "+hash+" for "+gTuple);
+			}
+		} else {
+			Tuple<T> gTuple = getGroupingPart(elem);
+			FESortedPair<Tuple<?>, Long> p = new FESortedPair<Tuple<?>, Long>(
+					gTuple, maxId);
+			// Add new value sorted
+			int pos = Collections.binarySearch(groupList, p);
+			// System.err.println(pos + " for " + p + " in List " +
+			// groupList);
+			if (pos < 0) { // Element not found in list
+				int insert = (-1) * pos - 1;
+				groupList.add(insert, p);
+				hash = maxId;
+				System.err.println("Created a new group "+hash+" for "+gTuple);
+				maxId++;
+			} else if (pos > 0) {
+				hash = groupList.get(pos).getE2();
+			}
+			tupleMap.put(hash, gTuple);
+
 		}
-		/*
-		 * else{
-		 * System.out.println("Using Group with ID "+id+" for input "+gTuple
-		 * +" "+elem);
-		 * 
-		 * }
-		 */
 		return hash;
 	}
-	
+
 	@Override
 	public Tuple<T> getGroupingPart(Tuple<T> elem) {
 		return elem.restrict(gRestrict, true);
@@ -94,7 +111,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 				gRestrict[i] = inputSchema.indexOf(grAttribs.get(i));
 			}
 		}
-		maxId = 0;
+		maxId = 0L;
 		tupleMap = new HashMap<>();
 	}
 

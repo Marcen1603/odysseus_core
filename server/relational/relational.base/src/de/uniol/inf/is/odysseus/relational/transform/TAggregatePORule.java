@@ -117,7 +117,7 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 		RelationalGroupProcessor r = new RelationalGroupProcessor(
 				aggregatePO.getInputSchema(), newOutputSchema,
 				aggregatePO.getGroupingAttribute(),
-				aggregatePO.getAggregations());
+				aggregatePO.getAggregations(), false);
 		aggregatePO.setGroupProcessor(r);
 		aggregatePO.setOutputSchema(newOutputSchema);
 		update(aggregatePO);

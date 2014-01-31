@@ -59,7 +59,7 @@ public class TRelationalChangeDetectAORule extends
 			RelationalGroupProcessor r = new RelationalGroupProcessor(
 					operator.getInputSchema(), operator.getOutputSchema(),
 					operator.getGroupingAttributes(),
-					null);
+					null, false);
 			po.setGroupProcessor(r);
 		}
 		SDFAttribute suppressAttribute = operator.getSuppressCountAttribute();

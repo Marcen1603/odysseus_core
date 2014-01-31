@@ -39,7 +39,7 @@ public class TRelationalSlidingElementWindowTIPORule extends
 			TransformationConfiguration transformConfig) {
 		SlidingElementWindowTIPO<Tuple<ITimeInterval>> windowPO = new SlidingElementWindowTIPO<>(
 				windowAO);
-		RelationalGroupProcessor<ITimeInterval> r = new RelationalGroupProcessor<>(windowAO.getInputSchema(), windowAO.getOutputSchema(), windowAO.getPartitionBy(), null);
+		RelationalGroupProcessor<ITimeInterval> r = new RelationalGroupProcessor<>(windowAO.getInputSchema(), windowAO.getOutputSchema(), windowAO.getPartitionBy(), null, false);
 		windowPO.setGroupProcessor(r);
 		defaultExecute(windowAO, windowPO, transformConfig, true, true);
 		insert(windowPO);

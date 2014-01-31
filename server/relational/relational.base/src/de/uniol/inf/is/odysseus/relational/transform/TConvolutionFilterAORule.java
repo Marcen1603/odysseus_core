@@ -38,7 +38,7 @@ public class TConvolutionFilterAORule extends AbstractTransformationRule<Convolu
 		ConvolutionFilterPO<?> filter = new ConvolutionFilterPO<>(operator.getExpression(), operator.getAttributes(), operator.getSize());
 		if (operator.getGroupingAttributes().size() > 0) {
 			@SuppressWarnings("rawtypes")
-			IGroupProcessor r = new RelationalGroupProcessor<>(operator.getOutputSchema(), operator.getOutputSchema(), operator.getGroupingAttributes(), null);
+			IGroupProcessor r = new RelationalGroupProcessor<>(operator.getOutputSchema(), operator.getOutputSchema(), operator.getGroupingAttributes(), null, false);
 			filter.setGroupProcessor(r);
 		}
 		defaultExecute(operator, filter, transformConfig, true, true);

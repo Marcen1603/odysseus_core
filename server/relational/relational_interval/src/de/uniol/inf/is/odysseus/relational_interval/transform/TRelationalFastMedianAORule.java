@@ -19,7 +19,7 @@ public class TRelationalFastMedianAORule extends AbstractTransformationRule<Rela
 		SDFSchema inputSchema = operator.getInputSchema(0);
 		int medianAttrPos = inputSchema.findAttributeIndex(operator.getMedianAttribute().getURI()); 
 		RelationalFastMedianPO po = new RelationalFastMedianPO(medianAttrPos, operator.isNumericalMedian());
-		po.setGroupProcessor(new RelationalGroupProcessor(inputSchema, operator.getOutputSchema(), operator.getGroupingAttributes(), null));
+		po.setGroupProcessor(new RelationalGroupProcessor(inputSchema, operator.getOutputSchema(), operator.getGroupingAttributes(), null, false));
 		defaultExecute(operator, po, config, true, true);
 	}
 
