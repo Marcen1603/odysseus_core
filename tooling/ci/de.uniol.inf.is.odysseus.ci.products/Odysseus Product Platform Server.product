@@ -3,6 +3,7 @@
 
 <product name="Odysseus Server Platform" uid="de.uniol.inf.is.odysseus.product.server" id="de.uniol.inf.is.odysseus.product.server.starter.odysseusserverproduct" application="de.uniol.inf.is.odysseus.server.starter.OdysseusServerApplication" version="1.0.0" useFeatures="true" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
@@ -14,12 +15,14 @@
 
    <windowImages/>
 
+
    <launcher name="odysseus">
       <solaris/>
       <win useIco="false">
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
       <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</windows>
@@ -33,7 +36,11 @@
    </features>
 
    <configurations>
-      <plugin id="de.uniol.inf.is.odysseus.product.server.starter" autoStart="true" startLevel="0" />
+      <plugin id="de.uniol.inf.is.odysseus.server.starter" autoStart="true" startLevel="3" />
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.osgi" autoStart="true" startLevel="1" />
    </configurations>
 
 </product>
