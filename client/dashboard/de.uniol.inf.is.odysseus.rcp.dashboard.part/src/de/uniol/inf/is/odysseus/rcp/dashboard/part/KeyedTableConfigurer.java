@@ -10,7 +10,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
@@ -70,13 +69,13 @@ public class KeyedTableConfigurer extends AbstractDashboardPartConfigurer<KeyedT
 	}
 
 	private void createKeyAttribbutesControls(Composite topComposite) {
-		DashboardPartUtil.createLabel(topComposite, "Key attribute");
-		final Combo attributesInput = DashboardPartUtil.createCombo(topComposite, dashboardPart.getAttributes(), dashboardPart.getKeyAttribute());
-		attributesInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		attributesInput.addModifyListener(new ModifyListener() {
+		DashboardPartUtil.createLabel(topComposite, "Key attributes");
+		final Text attributeListsText = DashboardPartUtil.createText(topComposite, dashboardPart.getKeyAttributes());
+		attributeListsText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		attributeListsText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				dashboardPart.setKeyAttribute(attributesInput.getText());
+				dashboardPart.setKeyAttributes(attributeListsText.getText());
 				fireListener();
 			}
 		});

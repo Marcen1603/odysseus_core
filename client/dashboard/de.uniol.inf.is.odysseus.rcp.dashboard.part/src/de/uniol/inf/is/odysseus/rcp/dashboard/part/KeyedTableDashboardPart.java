@@ -72,40 +72,52 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	private int[] positions;
 	private boolean refreshing = false;
 
-	private final Map<Object, Integer> keyIndices = Maps.newHashMap();
-	private final Map<Object, Long> keyTimestamps = Maps.newHashMap();
-	private final List<Tuple<?>> keyedData = Lists.newArrayList();
+	private final Map<Integer, Long> keyHashTimestamps = Maps.newHashMap();
+	private final Map<Integer, Tuple<?>> keyedHashData = Maps.newHashMap();
 	
 	private String attributeList = "*";
 	private int maxData = 10;
 	private String title = "";
-	private String keyAttribute = "";
 	private List<Color> ageColors = Lists.newArrayList();
 	private boolean showAge = false;
 	private long maxAgeMillis = 5000;
 	
-	private int keyAttributeIndex;
+	private List<String> keyAttributes = Lists.newLinkedList();
+	private int[] keyAttributeIndices = new int[0];
 	
-	public String getKeyAttribute() {
-		return keyAttribute;
+	public String getKeyAttributes() {
+		return attributeListToString(keyAttributes);
 	}
 
-	public void setKeyAttribute(String keyAttribute) {
-		if( keyAttribute == null && this.keyAttribute != null) {
-			synchronized( keyedData ) {
+	private static String attributeListToString(List<String> attrs) {
+		StringBuilder sb = new StringBuilder();
+		for( int i = 0; i < attrs.size(); i++) {
+			sb.append( attrs.get(i) );
+			if( i < attrs.size() - 1) {
+				sb.append(", ");
+			}
+		}
+		return sb.toString();
+	}
+
+	public void setKeyAttributes(String keyAttributeList) {
+		if( Strings.isNullOrEmpty(keyAttributeList)) {
+			synchronized( keyedHashData ) {
 				clearData();
 			}
 		}
-		
-		if( keyAttribute != null && ( !keyAttribute.equals(this.keyAttribute) || this.keyAttribute == null )) {
-			this.keyAttribute = keyAttribute;
-			updateKeyAttributeIndex();
-			
-			clearData();
+		String[] attrs = keyAttributeList.split("\\,");
+
+		keyAttributes.clear();
+		for( String attr : attrs ) {
+			if( !keyAttributes.contains(attr) && !Strings.isNullOrEmpty(attr)) {
+				keyAttributes.add(attr.trim());
+			}
 		}
+		updateKeyAttributeIndex();
+		clearData();
 	}
 	
-
 	public long getMaxAgeMillis() {
 		return maxAgeMillis;
 	}
@@ -117,15 +129,19 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	}
 
 	private void clearData() {
-		keyedData.clear();
-		keyIndices.clear();
+		keyedHashData.clear();
 	}
 
 	private void updateKeyAttributeIndex() {
-		if( operator != null && !Strings.isNullOrEmpty(keyAttribute)) {
-			keyAttributeIndex = getAttributeIndex(keyAttribute);
-		} else {
-			keyAttributeIndex = -1;
+		keyAttributeIndices = new int[0];
+		if( !keyAttributes.isEmpty() && operator != null) {
+			keyAttributeIndices = new int[keyAttributes.size()];
+			for( int i = 0; i < keyAttributes.size(); i++ ) {
+				int index = getAttributeIndex(keyAttributes.get(i).trim());
+				if( index != -1 ) {
+					keyAttributeIndices[i] = index;
+				}
+			}
 		}
 	}
 
@@ -251,10 +267,10 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		attributeList = saved.get("Attributes");
 		maxData = Integer.valueOf(saved.get("MaxData"));
 		title = saved.get("Title");
-		
-		keyAttribute = saved.get("KeyAttribute");
 		showAge = Boolean.valueOf(saved.get("showAge"));
 		maxAgeMillis = tryConvertToLong(saved.get("maxAge"));
+		
+		setKeyAttributes(saved.get("KeyAttribute"));
 		
 		updateKeyAttributeIndex();
 	}
@@ -273,7 +289,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		toSaveMap.put("Attributes", attributeList);
 		toSaveMap.put("MaxData", String.valueOf(maxData));
 		toSaveMap.put("Title", title);
-		toSaveMap.put("KeyAttribute", keyAttribute);
+		toSaveMap.put("KeyAttribute", getKeyAttributes());
 		toSaveMap.put("showAge", String.valueOf(showAge));
 		toSaveMap.put("maxAge", String.valueOf(maxAgeMillis));
 		return toSaveMap;
@@ -308,12 +324,12 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 					final Object attrValue = tuple.getAttribute(positions[fi]);
 					cell.setText(attrValue != null ? attrValue.toString() : "null");
 					
-					if( !Strings.isNullOrEmpty(keyAttribute) && attributes[fi].equals(keyAttribute)) {
+					if( !keyAttributes.isEmpty() && keyAttributes.contains(attributes[fi])) {
 						cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 					} else {
-						if( showAge && keyAttributeIndex != - 1 ) {
-							Object keyValue = tuple.getAttribute(keyAttributeIndex);
-							Long timestamp = keyTimestamps.get(keyValue);
+						if( showAge && keyAttributeIndices.length > 0 ) {
+							int hashCode = tuple.restrictedHashCode(keyAttributeIndices);
+							Long timestamp = keyHashTimestamps.get(hashCode);
 							
 							long age = System.currentTimeMillis() - timestamp;
 							if( age > maxAgeMillis ) {
@@ -333,7 +349,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		}
 
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
-		tableViewer.setInput(keyedData);
+		tableViewer.setInput(keyedHashData.values());
 		tableViewer.refresh();
 		tableViewer.getTable().redraw();
 		
@@ -361,42 +377,31 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	@Override
 	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
 		if( element != null ) {
-			synchronized( keyedData ) {
+			synchronized( keyedHashData ) {
 				
 				Tuple<?> tuple = (Tuple<?>)element;
-				if( keyAttributeIndex != -1 ) {
-					Object keyValue = tuple.getAttribute(keyAttributeIndex);
-					if( keyIndices.containsKey(keyValue)) {
-						int index = keyIndices.get(keyValue);
-						keyedData.set(index, tuple);
-					} else {
-						keyIndices.put(keyValue, keyIndices.size());
-						keyedData.add(tuple);
-					}
-					keyTimestamps.put(keyValue, System.currentTimeMillis());
+				int hash = 0;
+				if( !keyAttributes.isEmpty() ) {
+					hash = tuple.restrictedHashCode(keyAttributeIndices);
+				} else {
+					hash = tuple.hashCode();
 				}
+				keyedHashData.put(hash, tuple);
+				keyHashTimestamps.put(hash, System.currentTimeMillis());
 				
-				if( keyedData.size() > maxData ) {
+				if( keyedHashData.size() > maxData ) {
 					long oldest = Long.MAX_VALUE;
-					Object oldestKey = null;
-					for( Object key : keyTimestamps.keySet() ) {
-						Long ts = keyTimestamps.get(key);
+					Object oldestHash = null;
+					for( Integer hash2 : keyHashTimestamps.keySet() ) {
+						Long ts = keyHashTimestamps.get(hash2);
 						if( ts < oldest ) {
-							oldestKey = key;
+							oldestHash = hash2;
 							oldest = ts;
 						}
 					}
 					
-					int index = keyIndices.get(oldestKey);
-					keyedData.remove(index);
-					keyIndices.remove(oldestKey);
-					for( Object key : keyIndices.keySet().toArray() ) {
-						if( keyIndices.get(key) > index ) {
-							keyIndices.put(key, keyIndices.get(key) - 1);
-						}
-					}
-					
-					keyTimestamps.remove(oldestKey);
+					keyedHashData.remove(oldestHash);
+					keyHashTimestamps.remove(oldestHash);
 				}
 			}
 			
@@ -405,7 +410,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						synchronized( keyedData ) {
+						synchronized( keyedHashData ) {
 							if (!tableViewer.getTable().isDisposed()) {
 								tableViewer.refresh();
 							}
@@ -438,16 +443,16 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		return attributes;
 	}
 
-	private static int[] determinePositions(SDFSchema outputSchema, String[] attributes2) {
+	private static int[] determinePositions(SDFSchema outputSchema, String[] attributes) {
 		int[] positions = null;
-		if( attributes2.length > 0 ) {
-			positions = new int[attributes2.length];
-			for (int i = 0; i < attributes2.length; i++) {
-				Optional<Integer> optPosition = getPosition(outputSchema, attributes2[i]);
+		if( attributes.length > 0 ) {
+			positions = new int[attributes.length];
+			for (int i = 0; i < attributes.length; i++) {
+				Optional<Integer> optPosition = getPosition(outputSchema, attributes[i]);
 				if( optPosition.isPresent() ) {
 					positions[i] = optPosition.get();
 				} else {
-					throw new RuntimeException("Could not position of " + attributes2[i]);
+					throw new RuntimeException("Could not position of " + attributes[i]);
 				}
 			}	
 		} else {
