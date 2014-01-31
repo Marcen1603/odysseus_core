@@ -14,6 +14,9 @@ public class LogicalQueryPart implements ILogicalQueryPart {
 	private final Collection<ILogicalOperator> operators = Lists.newArrayList();
 	private final Collection<ILogicalQueryPart> avoidedQueryParts = Lists.newArrayList();
 	
+	public LogicalQueryPart() {
+	}
+	
 	public LogicalQueryPart(Collection<ILogicalOperator> partOperators) {
 		Preconditions.checkNotNull(partOperators, "List operators forming a logical query part must not be null!");
 		Preconditions.checkArgument(!partOperators.isEmpty(), "List of operators forming a logical query part must not be empty!");
@@ -71,18 +74,8 @@ public class LogicalQueryPart implements ILogicalQueryPart {
 	}
 	
 	@Override
-	public Collection<ILogicalOperator> getOperatorsWriteable() {
-		return operators;
-	}
-
-	@Override
 	public ImmutableCollection<ILogicalQueryPart> getAvoidingQueryParts() {
 		return ImmutableList.copyOf(avoidedQueryParts);
-	}
-	
-	@Override
-	public Collection<ILogicalQueryPart> getAvoidingQueryPartsWritable() {
-		return avoidedQueryParts;
 	}
 	
 	@Override
@@ -94,6 +87,98 @@ public class LogicalQueryPart implements ILogicalQueryPart {
 		}
 		sb.append("}");
 		return sb.toString();
+	}
+
+	@Override
+	public void addOperator(ILogicalOperator operator) {
+		Preconditions.checkNotNull(operator, "Operator to add to queryPart must not be null!");
+		Preconditions.checkArgument(!operators.contains(operator), "Operator %s is already added to the queryPart", operator);
+		
+		operators.add(operator);
+	}
+
+	@Override
+	public void addOperators(Collection<ILogicalOperator> operators) {
+		Preconditions.checkNotNull(operators, "Collection of operators to add to queryPart must not be null!");
+		
+		for( ILogicalOperator operator : operators ) {
+			addOperator(operator);
+		}
+	}
+
+	@Override
+	public void removeOperator(ILogicalOperator operator) {
+		Preconditions.checkNotNull(operator, "Operator to remove from queryPart must not be null!");
+		Preconditions.checkArgument(operators.contains(operator), "Operator %s to remove is not in this queryPart", operator);
+		
+		operators.remove(operator);
+	}
+
+	@Override
+	public void removeOperators(Collection<ILogicalOperator> operators) {
+		Preconditions.checkNotNull(operators, "Collection of operators to remove to queryPart must not be null!");
+		
+		for( ILogicalOperator operator : operators ) {
+			removeOperator(operator);
+		}
+	}
+
+	@Override
+	public boolean contains(ILogicalOperator operator) {
+		Preconditions.checkNotNull(operator, "Operator to check in queryPart must not be null!");
+		
+		return operators.contains(operator);
+	}
+
+	@Override
+	public void removeAllOperators() {
+		operators.clear();
+	}
+
+	@Override
+	public void addAvoidingQueryPart(ILogicalQueryPart queryPartToAvoid) {
+		Preconditions.checkNotNull(queryPartToAvoid, "QueryPartToAvoid must not be null!");
+		Preconditions.checkArgument(!avoidedQueryParts.contains(queryPartToAvoid), "The queryPart %s is already avoided in %s", queryPartToAvoid, this);
+		
+		avoidedQueryParts.add(queryPartToAvoid);
+	}
+
+	@Override
+	public void addAvoidingQueryParts(Collection<ILogicalQueryPart> queryPartsToAvoid) {
+		Preconditions.checkNotNull(queryPartsToAvoid, "Collection of queryParts to avoid must not be null!");
+		
+		for( ILogicalQueryPart part : queryPartsToAvoid ) {
+			addAvoidingQueryPart(part);
+		}
+	}
+
+	@Override
+	public void removeAvoidingQueryPart(ILogicalQueryPart queryPartToAvoid) {
+		Preconditions.checkNotNull(queryPartToAvoid, "QueryPartToAvoid must not be null!");
+		Preconditions.checkArgument(avoidedQueryParts.contains(queryPartToAvoid), "The queryPart %s to remove is not in %s", queryPartToAvoid, this);
+		
+		avoidedQueryParts.remove(queryPartToAvoid);
+	}
+
+	@Override
+	public void removeAvoidingQueryParts(Collection<ILogicalQueryPart> queryPartsToAvoid) {
+		Preconditions.checkNotNull(queryPartsToAvoid, "Collection of queryParts to avoid must not be null!");
+		
+		for( ILogicalQueryPart part : queryPartsToAvoid ) {
+			removeAvoidingQueryPart(part);
+		}
+	}
+
+	@Override
+	public boolean contains(ILogicalQueryPart queryPart) {
+		Preconditions.checkNotNull(queryPart, "QueryPart to check for avoidance must not be null!");
+		
+		return avoidedQueryParts.contains(queryPart);
+	}
+
+	@Override
+	public void removeAllAvoidingQueryParts() {
+		avoidedQueryParts.clear();
 	}
 }
 	

@@ -132,8 +132,8 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 					Collection<ILogicalQueryPart> avoidedParts = Lists.newArrayList(replicatesToOrigin.get(originPart));
 					avoidedParts.remove(modifiedPart);
 					
-					modifiedPart.getAvoidingQueryPartsWritable().clear();
-					modifiedPart.getAvoidingQueryPartsWritable().addAll(avoidedParts);
+					modifiedPart.addAvoidingQueryParts(avoidedParts);
+
 					modifiedParts.add(modifiedPart);
 				}
 				
@@ -181,8 +181,8 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 				
 				Collection<ILogicalOperator> allOperatorsOfPart = part.getOperators();
 				partsToBeFragmented.add(part);
-				part.getOperatorsWriteable().clear();
-				part.getOperatorsWriteable().addAll(relevantOperators);
+				part.removeAllOperators();
+				part.addOperators(relevantOperators);
 				
 				Collection<ILogicalOperator> realSinks = Lists.newArrayList(allOperatorsOfPart);
 				realSinks.removeAll(relevantOperators);

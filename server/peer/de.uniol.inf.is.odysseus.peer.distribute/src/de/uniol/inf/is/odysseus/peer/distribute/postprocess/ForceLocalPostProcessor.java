@@ -57,9 +57,7 @@ public class ForceLocalPostProcessor implements IQueryDistributionPostProcessor 
 				if( localOperators.size() == part.getOperators().size() ) {
 					allocationMap.put(part, p2pNetworkManager.getLocalPeerID());
 				} else {
-					for( ILogicalOperator localOperator : localOperators ) {
-						part.getOperatorsWriteable().remove(localOperator);
-					}
+					part.removeOperators(localOperators);
 					
 					ILogicalQueryPart localQueryPart = new LogicalQueryPart(localOperators);
 					allocationMap.put(localQueryPart, p2pNetworkManager.getLocalPeerID());

@@ -58,7 +58,7 @@ public class LocalSinkPostProcessor implements IQueryDistributionPostProcessor {
 					LOG.debug("Found real sink {} in queryPart {}", relativeSink, queryPart);
 					realSinks.add(relativeSink);
 					
-					queryPart.getOperatorsWriteable().remove(relativeSink);
+					queryPart.removeOperator(relativeSink);
 				} else if( relativeSink.getSubscriptions().isEmpty() ) {
 					LOG.debug("Found nonreal sink {} in queryPart {}", relativeSink, queryPart);
 					

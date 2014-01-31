@@ -538,7 +538,7 @@ public final class LogicalQueryHelper {
 				}
 			}
 			
-			copyQueryPart.getAvoidingQueryPartsWritable().addAll(avoidedPartsInCopy);
+			copyQueryPart.addAvoidingQueryParts(avoidedPartsInCopy);
 		}
 
 		return map;

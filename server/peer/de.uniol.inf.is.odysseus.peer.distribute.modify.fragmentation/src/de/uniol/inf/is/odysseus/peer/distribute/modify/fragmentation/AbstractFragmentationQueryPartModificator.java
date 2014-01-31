@@ -147,9 +147,9 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 						Collection<ILogicalQueryPart> avoidedParts = Lists.newArrayList(copiesToOrigin.get(originPart));
 						avoidedParts.remove(modifiedPart);
 						
+						modifiedPart.addAvoidingQueryParts(avoidedParts);
+						
 						modifiedParts.add(modifiedPart);
-						modifiedPart.getAvoidingQueryPartsWritable().clear();
-						modifiedPart.getAvoidingQueryPartsWritable().addAll(avoidedParts);
 					}
 					
 			}
@@ -972,8 +972,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				AbstractFragmentationQueryPartModificator.log.debug("Split {} to form as a non-fragmenteable part", new Object[] {part});
 				
 				Collection<ILogicalOperator> allOperatorsOfPart = part.getOperators();
-				part.getOperatorsWriteable().clear();
-				part.getOperatorsWriteable().addAll(relevantOperators);
+				part.removeAllOperators();
+				part.addOperators(relevantOperators);
 				partsToBeFragmented.add(part);
 				
 				Collection<ILogicalOperator> irrelevantOperators = Lists.newArrayList(allOperatorsOfPart);
