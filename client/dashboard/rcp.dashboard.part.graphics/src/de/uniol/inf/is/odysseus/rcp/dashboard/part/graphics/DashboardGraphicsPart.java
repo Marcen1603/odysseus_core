@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,10 +29,6 @@ import java.util.Observer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.gef.DefaultEditDomain;
@@ -130,7 +125,9 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart#onStart(java.util.Collection)
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart#onStart(
+	 * java.util.Collection)
 	 */
 	@Override
 	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
@@ -154,7 +151,8 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart#dispose()
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -185,7 +183,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	}
 
 	protected void processElement(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
-		//System.out.println(element);
+		// System.out.println(element);
 		Tuple<?> tuple = (Tuple<?>) element;
 		this.pictogramGroup.processTuple(senderOperator, tuple);
 	}
@@ -207,14 +205,27 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		setBackgroundFileStretch(Boolean.parseBoolean(saved.get(BACKGROUND_FILE_STRETCH)));
 		this.pictogramGroup = new GraphicsLayer(getBackgroundFile(), isBackgroundFileStretch(), getProject());
 		this.pictogramGroup.addObserver(this);
+		// this part is only for downward compatibility...
 		String xmlContent = saved.get(GRAPHICS_CONTENT);
 		try {
-			if (!xmlContent.isEmpty()) {
+			if (!(xmlContent == null) && !xmlContent.isEmpty()) {
 				InputStream is = new ByteArrayInputStream(xmlContent.getBytes());
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 				Document doc = dBuilder.parse(is);
-				NodeList pictogramList = doc.getDocumentElement().getChildNodes();
+				onLoadXML(doc, doc.getDocumentElement());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onLoadXML(Document document, Element xmlElement) {
+		if (xmlElement.getChildNodes().getLength() > 0) {
+			// first node should be "pictogramgroup"
+			NodeList pictogramList = xmlElement.getChildNodes().item(0).getChildNodes();
+			try {
 				for (int i = 0; i < pictogramList.getLength(); i++) {
 					Node pictogramNode = pictogramList.item(i);
 					if (pictogramNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -223,55 +234,42 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 							className = ImagePictogram.class.getName();
 						}
 
-						AbstractPart part = (AbstractPart) Class.forName(className).newInstance();						
-						part.loadFromXML(pictogramNode, this.pictogramGroup);						
+						AbstractPart part = (AbstractPart) Class.forName(className).newInstance();
+						part.loadFromXML(pictogramNode, this.pictogramGroup);
 					}
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onSaveXML(Document doc, Element xmlElement) {
+		Element root = doc.createElement("pictogramgroup");
+		xmlElement.appendChild(root);
+		if (viewer != null) {
+			GraphicsLayer model = (GraphicsLayer) viewer.getContents().getModel();
+			List<Connection> connections = new ArrayList<>();
+			for (AbstractPictogram p : model.getPictograms()) {
+				Element picNode = doc.createElement("pictogram");
+				picNode.setAttribute("type", p.getClass().getName());
+				p.getXML(picNode, doc);
+				root.appendChild(picNode);
+				connections.addAll(p.getSourceConnections());
+			}
+			for (Connection c : connections) {
+				Element conNode = doc.createElement("connection");
+				conNode.setAttribute("type", c.getClass().getName());
+				c.getXML(conNode, doc);
+				root.appendChild(conNode);
+			}
 		}
 	}
 
 	@Override
 	public Map<String, String> onSave() {
 		Map<String, String> save = super.onSave();
-
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder;
-		try {
-			docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.newDocument();
-			Element root = doc.createElement("pictogramgroup");
-			doc.appendChild(root);
-			if (viewer != null) {
-				GraphicsLayer model = (GraphicsLayer) viewer.getContents().getModel();
-				List<Connection> connections = new ArrayList<>();
-				for (AbstractPictogram p : model.getPictograms()) {
-					Element picNode = doc.createElement("pictogram");
-					picNode.setAttribute("type", p.getClass().getName());
-					p.getXML(picNode, doc);
-					root.appendChild(picNode);
-					connections.addAll(p.getSourceConnections());
-				}
-				for (Connection c : connections) {
-					Element conNode = doc.createElement("connection");
-					conNode.setAttribute("type", c.getClass().getName());
-					c.getXML(conNode, doc);
-					root.appendChild(conNode);
-				}
-			}
-
-			StringWriter sw = new StringWriter();
-			StreamResult result = new StreamResult(sw);
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-			transformer.transform(source, result);
-			save.put(GRAPHICS_CONTENT, sw.toString());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
 		save.put(BACKGROUND_FILE, this.backgroundfile);
 		save.put(BACKGROUND_FILE_STRETCH, Boolean.toString(this.backgroundFileStretch));
@@ -345,7 +343,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		registerAndBindingService("org.eclipse.ui.edit.delete", new DeleteAction(getWorkbenchPart()));
 		registerAndBindingService("org.eclipse.ui.edit.copy", new CopyAction(getWorkbenchPart()));
 		registerAndBindingService("org.eclipse.ui.edit.paste", new PasteAction(getWorkbenchPart()));
-		
+
 		ZoomManager zoomManager = ((ScalableFreeformRootEditPart) viewer.getRootEditPart()).getZoomManager();
 		registerAndBindingService(new ZoomInAction(zoomManager));
 		registerAndBindingService(new ZoomOutAction(zoomManager));
@@ -369,7 +367,9 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.gef.commands.CommandStackListener#commandStackChanged(java.util.EventObject)
+	 * @see
+	 * org.eclipse.gef.commands.CommandStackListener#commandStackChanged(java
+	 * .util.EventObject)
 	 */
 	@Override
 	public void commandStackChanged(EventObject event) {
@@ -430,7 +430,8 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.
+	 * IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
