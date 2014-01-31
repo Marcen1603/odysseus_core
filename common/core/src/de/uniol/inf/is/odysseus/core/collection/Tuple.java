@@ -620,7 +620,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			Object o = this.attributes[i];
 			if (o != null) {
 				// ret += o.hashCode() * Primes.PRIMES[i % Primes.size()];
-				ret += 31 * ret + o.hashCode();
+				ret = 31 * ret + o.hashCode();
 			}
 		}
 		return ret;
@@ -658,7 +658,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		for (int i = 0; i < attributeNumbers.length; i++) {
 			Object o = this.attributes[attributeNumbers[i]];
 			if (o != null) {
-				ret += 31 * ret + o.hashCode();
+				ret = 31 * ret + o.hashCode();
 				//ret += o.hashCode() * Primes.PRIMES[i % Primes.size()];
 			}
 		}
