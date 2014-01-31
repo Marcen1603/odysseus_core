@@ -85,7 +85,9 @@ public abstract class AbstractTimeSeriesChart extends
 
 	// also milli
 	private String dateformat = "HH:mm:ss";
+	@SuppressWarnings("unused")
 	private DateTickUnitType dateTickUnitType = DateTickUnitType.HOUR;
+	@SuppressWarnings("unused")
 	private int dateTickUnitCount = 24;
 	private int choosenXValue = -1;
 	private Double timefactor = 1.0;
