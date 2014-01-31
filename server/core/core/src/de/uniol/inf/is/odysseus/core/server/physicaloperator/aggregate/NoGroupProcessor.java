@@ -33,5 +33,10 @@ public class NoGroupProcessor<R,W extends IClone> implements IGroupProcessor<R, 
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, ?> e) {
 		throw new IllegalArgumentException("Cannot create Element");
 	}
+	
+	@Override
+	public String toGroupString(R elem) {
+		return elem.toString();
+	}
 
 }

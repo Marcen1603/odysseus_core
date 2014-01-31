@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.util.Primes;
 
 /**
@@ -547,6 +548,14 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		return retBuff.toString();
 	}
 
+	public String toString(final int[] gRestrict) {
+		StringBuffer value = new StringBuffer();
+		for (int pos : gRestrict) {
+			value.append(getAttribute(pos)).append(" ");
+		}
+		return value.toString();
+	}
+	
 	@Override
 	public final String csvToString(char delimiter, Character textSeperator,
 			NumberFormat floatingFormatter, NumberFormat numberFormatter,
@@ -629,11 +638,11 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	 */
 	@Override
 	public final int restrictedHashCode(int[] attributeNumbers) {
-		if (attributeNumbers.length > this.attributes.length) {
-			throw new IllegalArgumentException(
-					"The number of attributes for the hash code "
-							+ "should be less or equal to the number of all attributes of the Tupel");
-		}
+//		if (attributeNumbers.length > this.attributes.length) {
+//			throw new IllegalArgumentException(
+//					"The number of attributes for the hash code "
+//							+ "should be less or equal to the number of all attributes of the Tupel");
+//		}
 		// Will create an exception anyway
 //		for (int i = 0; i < attributeNumbers.length; i++) {
 //			if (attributeNumbers[i] <= this.attributes.length) {

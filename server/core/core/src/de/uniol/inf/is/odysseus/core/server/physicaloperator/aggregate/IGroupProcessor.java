@@ -33,5 +33,7 @@ public interface IGroupProcessor<R, W extends IClone> {
 
 	public W createOutputElement2(Long groupID,
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, ?> e);
+	
+	public String toGroupString(R elem);
 
 }

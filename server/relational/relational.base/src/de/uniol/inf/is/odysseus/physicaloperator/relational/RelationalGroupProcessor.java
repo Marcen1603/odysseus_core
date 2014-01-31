@@ -171,4 +171,8 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 		}
 	}
 
+	@Override
+	public String toGroupString(Tuple<T> elem) {
+		return elem.toString(gRestrict);
+	}
 }
