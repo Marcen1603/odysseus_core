@@ -7,13 +7,12 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -debug -nl ${target.nl} -data @noDefault -clean -debug -noExit</programArgs>
+      <programArgs>-console -debug -nl en -data @noDefault -clean -debug -noExit</programArgs>
       <vmArgs>-Xms1000M -Xmx1000M -XX:+UseConcMarkSweepGC</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
-
 
    <launcher>
       <solaris/>
