@@ -520,6 +520,37 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		}
 		return compare;
 	}
+	
+	/**
+	 * Liefert 0 wenn die beiden Attributlisten gleich sind ansonsten das erste
+	 * Element an denen sich die Attributlisten unterscheiden. Die
+	 * Sortierreihenfolge ist implizit durch die Position in der Liste gegeben
+	 * wenn das aktuelle Objekt kleiner ist ist der R�ckgabewert negativ
+	 * ansonsten positiv Es wird maximal die kleinere Anzahl der Felder
+	 * verglichen. Tupel mit NULL-Werten sind ungleich.
+	 */
+	@SuppressWarnings("unchecked")
+	public final int compareTo(Tuple<?> c, int[] restricted) {
+		int compare = 0;		
+		int i = 0;
+		for (int j = 0; j < restricted.length && compare == 0; j++) {
+			i = restricted[j];
+			// try {
+			if (this.attributes[i] == null || c.getAttribute(i) == null) {
+				compare = i;
+			} else if (this.attributes[i] instanceof Comparable<?>) {
+				compare = ((Comparable<Object>) this.attributes[i]).compareTo(c
+						.getAttribute(i));
+			}
+		}
+		if (compare < 0) {
+			compare = (-1) * i;
+		}
+		if (compare > 0) {
+			compare = i;
+		}
+		return compare;
+	}
 
 	// -----------------------------------------------------------------
 	// Ausgabe
