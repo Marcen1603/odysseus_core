@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.DateTickUnitType;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.data.time.FixedMillisecond;
@@ -57,6 +56,7 @@ public abstract class AbstractTimeSeriesChart extends
 
 	private Map<Long, Map<String, TimeSeries>> series = new HashMap<>();
 	private Map<Long, String> groupNames = new HashMap<>();
+	private boolean useShortNames = true;
 
 	protected TimeSeriesCollection dataset = new TimeSeriesCollection();
 
@@ -66,7 +66,7 @@ public abstract class AbstractTimeSeriesChart extends
 	private static final String TIME_MILLI = "milliseconds";
 	private static final String TIME_SECONDS = "seconds";
 	private static final String TIME_MINUTES = "minutes";
-	private static final String FROM_STREAM ="from stream";
+	private static final String FROM_STREAM = "from stream";
 
 	private double max = Double.NaN;
 	private double min = Double.NaN;
@@ -85,10 +85,6 @@ public abstract class AbstractTimeSeriesChart extends
 
 	// also milli
 	private String dateformat = "HH:mm:ss";
-	@SuppressWarnings("unused")
-	private DateTickUnitType dateTickUnitType = DateTickUnitType.HOUR;
-	@SuppressWarnings("unused")
-	private int dateTickUnitCount = 24;
 	private int choosenXValue = -1;
 	private Double timefactor = 1.0;
 	private String timeinputgranularity = DEFAULT_TIME_GRANULARITY;
@@ -126,12 +122,13 @@ public abstract class AbstractTimeSeriesChart extends
 					.getDomainAxis();
 			axis.setNumberFormatOverride(new SimpleNumberToDateFormat(
 					this.dateformat));
-//			axis.setTickUnit(new NumberTickUnit(3600000));
+			// axis.setTickUnit(new NumberTickUnit(3600000));
 		}
 		if (domainAxis instanceof DateAxis) {
 			DateAxis axis = (DateAxis) getChart().getXYPlot().getDomainAxis();
 			axis.setDateFormatOverride(new SimpleDateFormat(this.dateformat));
-	//		axis.setTickUnit(new DateTickUnit(this.dateTickUnitType, this.dateTickUnitCount));
+			// axis.setTickUnit(new DateTickUnit(this.dateTickUnitType,
+			// this.dateTickUnitCount));
 		}
 
 		getChart().getXYPlot().getRangeAxis().setLabel(yTitle);
@@ -148,7 +145,7 @@ public abstract class AbstractTimeSeriesChart extends
 			this.timefactor = 0.001;
 		} else if (this.timeinputgranularity.equals(TIME_MINUTES)) {
 			this.timefactor = 1.67777e-5;
-		} else if (this.timeinputgranularity.equals(FROM_STREAM)){
+		} else if (this.timeinputgranularity.equals(FROM_STREAM)) {
 			this.timefactor = 0.0;
 		}
 	}
@@ -223,11 +220,7 @@ public abstract class AbstractTimeSeriesChart extends
 					groupId = (long) tuple.restrictedHashCode(gRestrict);
 					groupName = groupNames.get(groupId);
 					if (groupName == null) {
-						StringBuffer name = new StringBuffer();
-						for (int pos : gRestrict) {
-							name.append(tuple.getAttribute(pos)).append(" ");
-						}
-						groupName = name.toString();
+						groupName = tuple.toString(gRestrict);
 						groupNames.put(groupId, groupName);
 					}
 				}
@@ -287,10 +280,16 @@ public abstract class AbstractTimeSeriesChart extends
 		}
 
 		String name = getChoosenAttributes(port).get(i).getName() + "@"
-				+ groupName;
+				+ groupName;;
 		timeSeries = gSerie.get(name);
 		if (timeSeries == null) {
-			timeSeries = new TimeSeries(name);
+
+			if (useShortNames){
+				timeSeries = new TimeSeries(getChoosenAttributes(port).get(i).getAttributeName() + "@"
+						+ groupName);			
+			}else{
+				timeSeries = new TimeSeries(name);
+			}
 			
 			if (this.maxItems > 0){
 				timeSeries.setMaximumItemCount(this.maxItems);
