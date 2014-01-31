@@ -64,8 +64,8 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	public StreamGroupingWithAggregationPO(SDFSchema inputSchema,
 			SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
-			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations) {
-		super(inputSchema, outputSchema, groupingAttributes, aggregations);
+			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations, boolean fastGrouping) {
+		super(inputSchema, outputSchema, groupingAttributes, aggregations, fastGrouping);
 		transferArea = new TITransferArea<W, W>();
 	}
 

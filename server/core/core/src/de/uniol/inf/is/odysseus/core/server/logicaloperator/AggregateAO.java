@@ -55,6 +55,7 @@ public class AggregateAO extends UnaryLogicalOp {
 	private int dumpAtValueCount = -1;
 	private boolean outputPA = false;
 	private boolean drainAtDone = true;
+	private boolean fastGrouping = false;
 	
 	public static final String AGGREGATIONS = "AGGREGATIONS";
 
@@ -76,6 +77,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		dumpAtValueCount = op.dumpAtValueCount;
 		this.outputPA = op.outputPA;
 		this.drainAtDone = op.drainAtDone;
+		this.fastGrouping  = op.fastGrouping;
 	}
 
 	public void addAggregation(SDFAttribute attribute,
@@ -232,5 +234,14 @@ public class AggregateAO extends UnaryLogicalOp {
 
 	public boolean isDrainAtDone() {
 		return drainAtDone;
+	}
+	
+	public boolean isFastGrouping() {
+		return fastGrouping;
+	}
+
+	@Parameter(name = "fastGrouping", type = BooleanParameter.class, optional = true, doc = "Use hash code instead of tuple compare to create group. Potentially unsafe!")
+	public void setFastGrouping(boolean fastGrouping) {
+		this.fastGrouping = fastGrouping;
 	}
 }

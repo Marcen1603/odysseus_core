@@ -50,8 +50,8 @@ public class SAAggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>
 
 	public SAAggregateTIPO(SDFSchema inputSchema, SDFSchema outputSchemaIntern,
 			List<SDFAttribute> groupingAttributes,
-			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations) {
-		super(inputSchema, outputSchemaIntern, groupingAttributes, aggregations);
+			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations, boolean fastGrouping) {
+		super(inputSchema, outputSchemaIntern, groupingAttributes, aggregations, fastGrouping);
 	}
 
 	@Override

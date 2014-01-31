@@ -73,7 +73,10 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 			if (!tupleMap.containsKey(hash)) {
 				Tuple<T> gTuple = getGroupingPart(elem);
 				tupleMap.put(hash, gTuple);
-				System.err.println("Created a new group "+hash+" for "+gTuple);
+				System.err.println("Created a new group "+hash+" for "+gTuple+" "+tupleMap.size());
+				if (tupleMap.size() >= 1955){
+						System.err.println("List "+tupleMap);
+				}			
 			}
 		} else {
 			Tuple<T> gTuple = getGroupingPart(elem);
@@ -88,6 +91,9 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 				groupList.add(insert, p);
 				hash = maxId;
 				System.err.println("Created a new group "+hash+" for "+gTuple);
+				if (hash >= 1955){
+						System.err.println("List "+groupList);
+				}
 				maxId++;
 			} else if (pos > 0) {
 				hash = groupList.get(pos).getE2();

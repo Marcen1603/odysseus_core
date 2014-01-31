@@ -35,7 +35,7 @@ public class TSAStreamGroupingWithAggregationTIPORule extends AbstractTransforma
 	@Override
 	public void execute(AggregateAO aggregateAO, TransformationConfiguration transformConfig) {
 		SAAggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>> po = new SAAggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(aggregateAO.getInputSchema(), aggregateAO.getOutputSchemaIntern(0) , aggregateAO.getGroupingAttributes(),
-				aggregateAO.getAggregations());
+				aggregateAO.getAggregations(), aggregateAO.isFastGrouping());
 		po.setDumpAtValueCount(aggregateAO.getDumpAtValueCount());
 		po.setMetadataMerge(new CombinedMergeFunction<ITimeInterval>());
 		// ACHTUNG: Die Zeit-Metadaten werden manuell in der Aggregation gesetzt!!

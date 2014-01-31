@@ -52,6 +52,7 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
     private final SDFSchema internalOutputSchema;
 
     private final List<SDFAttribute> groupingAttributes;
+    private final boolean fastGrouping; 
 
     // private AggregateAO algebraOp;
 
@@ -67,11 +68,12 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
             SDFSchema inputSchema,
             SDFSchema outputSchema,
             List<SDFAttribute> groupingAttributes,
-            Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations) {
+            Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations, boolean fastGrouping) {
         this.inputSchema = inputSchema;
         this.internalOutputSchema = outputSchema;
         this.aggregations = aggregations;
         this.groupingAttributes = groupingAttributes;
+        this.fastGrouping = fastGrouping;
     }
 
     public SDFSchema getInputSchema() {
@@ -102,6 +104,7 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
         this.groupingAttributes = agg.groupingAttributes;
         this.aggregations = agg.aggregations;
         this.groupProcessor = agg.groupProcessor;
+        this.fastGrouping = agg.fastGrouping;
     }
 
     public void setInitFunction(
@@ -283,4 +286,8 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
     	
     	return false;
     }
+
+	public boolean isFastGrouping() {
+		return fastGrouping;
+	}
 }
