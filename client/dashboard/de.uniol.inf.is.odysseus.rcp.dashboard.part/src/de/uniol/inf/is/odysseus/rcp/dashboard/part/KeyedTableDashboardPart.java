@@ -381,7 +381,6 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
 		if( element != null ) {
 			synchronized( tuplesForTable ) {
-				
 				Tuple<?> tuple = (Tuple<?>)element;
 				int hash = 0;
 				if( !keyAttributes.isEmpty() ) {
@@ -396,25 +395,26 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 					tuplesForTable.add(tuple);
 					hashPositionMap.put(hash, tuplesForTable.size() - 1);
 					
-					System.out.println("Added: Size to " + tuplesForTable.size());
+//					System.out.println("Added tuple " + tuple + " (Hash " + hash + ") Size is now " + tuplesForTable.size() );
 				} else {
 					// DEBUG check
-					Tuple<?> otherTuple = (Tuple<?>)tuplesForTable.get(currentPosition);
-					for( int keyIndex : keyAttributeIndices) {
-						Object value = tuple.getAttribute(keyIndex);
-						Object otherValue = otherTuple.getAttribute(keyIndex);
-						
-						if( !value.equals(otherValue)) {
-							System.err.println("Hashkollision!!! Hash = " + hash);
-							System.err.println("Neues Tupel: " + tuple);
-							System.err.println("Altes Tupel: " + otherTuple);
-							System.err.println();
-							break;
-						}
-					}
+//					Tuple<?> otherTuple = (Tuple<?>)tuplesForTable.get(currentPosition);
+//					for( int keyIndex : keyAttributeIndices) {
+//						Object value = tuple.getAttribute(keyIndex);
+//						Object otherValue = otherTuple.getAttribute(keyIndex);
+//						
+//						if( !value.equals(otherValue)) {
+//							System.err.println("Hashkollision!!! Hash = " + hash);
+//							System.err.println("Neues Tupel: " + tuple);
+//							System.err.println("Altes Tupel: " + otherTuple);
+//							System.err.println("AttributIndices = " + arrayToString(keyAttributeIndices));
+//							System.err.println();
+//							break;
+//						}
+//					}
 					
 					tuplesForTable.set(currentPosition, tuple);
-					System.out.println("Changed position " + currentPosition);
+//					System.out.println("Changed position " + currentPosition);
 				}
 				
 				if( tuplesForTable.size() > maxData ) {
@@ -430,7 +430,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 					
 					int positionToRemove = hashPositionMap.get(oldestHash);
 					tuplesForTable.remove(positionToRemove);
-					System.out.println("Removed: Size to " + tuplesForTable.size());
+//					System.out.println("Removed: Size to " + tuplesForTable.size());
 					hashTimestampMap.remove(oldestHash);
 					hashPositionMap.remove(oldestHash);
 					
@@ -458,6 +458,17 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 				});
 			}
 		}
+	}
+
+	@SuppressWarnings("unused")
+	private String arrayToString(int[] keyAttributeIndices2) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		for( int i = 0; i < keyAttributeIndices2.length; i++ ) {
+			sb.append(keyAttributeIndices2[i]).append("  ");
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 
 	private void refreshAttributesList(SDFSchema outputSchema) {
