@@ -398,6 +398,21 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 					
 					System.out.println("Added: Size to " + tuplesForTable.size());
 				} else {
+					// DEBUG check
+					Tuple<?> otherTuple = (Tuple<?>)tuplesForTable.get(currentPosition);
+					for( int keyIndex : keyAttributeIndices) {
+						Object value = tuple.getAttribute(keyIndex);
+						Object otherValue = otherTuple.getAttribute(keyIndex);
+						
+						if( !value.equals(otherValue)) {
+							System.err.println("Hashkollision!!! Hash = " + hash);
+							System.err.println("Neues Tupel: " + tuple);
+							System.err.println("Altes Tupel: " + otherTuple);
+							System.err.println();
+							break;
+						}
+					}
+					
 					tuplesForTable.set(currentPosition, tuple);
 					System.out.println("Changed position " + currentPosition);
 				}
