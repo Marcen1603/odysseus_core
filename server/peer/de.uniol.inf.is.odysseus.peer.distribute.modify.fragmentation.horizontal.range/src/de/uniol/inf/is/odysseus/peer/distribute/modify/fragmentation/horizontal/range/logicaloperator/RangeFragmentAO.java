@@ -164,7 +164,7 @@ public class RangeFragmentAO extends AbstractFragmentAO {
 		this.attributeURI = fragmentAO.attributeURI;
 		this.attributeIndex = fragmentAO.attributeIndex;
 		this.ranges = Lists.newArrayList(fragmentAO.ranges);
-		this.doubleRanges = false;
+		this.doubleRanges = fragmentAO.doubleRanges;
 		
 	}
 
