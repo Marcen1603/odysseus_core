@@ -206,8 +206,8 @@ public class RangeFragmentAO extends AbstractFragmentAO {
 	@Parameter(type = StringParameter.class, name = "ATTRIBUTE", optional = false)
 	public void setAttribute(String uri) {
 		
-		this.attributeURI = uri;
-		this.addParameterInfo("ATTRIBUTE", uri);
+		this.attributeURI = "'" + uri + "'";
+		this.addParameterInfo("ATTRIBUTE", this.attributeURI);
 		
 	}
 	
@@ -225,7 +225,7 @@ public class RangeFragmentAO extends AbstractFragmentAO {
 	 * Sets the minimum values of each range.
 	 */
 	@Parameter(type = StringParameter.class, name = "RANGES", optional = false, isList = true)
-	public void setRangesList(List<String> ranges) {
+	public void setRanges(List<String> ranges) {
 	
 		this.ranges.clear();
 		
@@ -242,7 +242,8 @@ public class RangeFragmentAO extends AbstractFragmentAO {
 		}
 		
 		this.setNumberOfFragments(ranges.size() + 1); // +1 for all elements, which do not match any range
-		this.sortRanges();			
+		this.sortRanges();	
+		this.addParameterInfo("RANGES", this.ranges);
 		
 	}
 	

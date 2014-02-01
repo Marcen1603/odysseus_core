@@ -85,7 +85,7 @@ public class RangeHorizontalFragmentationQueryPartModificator extends
 			
 		RangeFragmentAO fragmentAO = new RangeFragmentAO();
 		fragmentAO.setAttribute(attribute);
-		fragmentAO.setRangesList(ranges);
+		fragmentAO.setRanges(ranges);
 		return fragmentAO;
 		
 	}
