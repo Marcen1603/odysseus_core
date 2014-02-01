@@ -8,9 +8,7 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
- * The rule of transformation for the {@link RoundRobinFragmentAO}. 
- * The {@link TransformationConfiguration} will decide into which physical operator, extending {@link RoundRobinFragmentPO}, 
- * the {@link RoundRobinFragmentAO} will be transformed.
+ * The rule of transformation for the {@link RoundRobinFragmentAO}.
  * @author Michael Brand
  */
 public class TRoundRobinFragmentAORule extends AbstractTransformationRule<RoundRobinFragmentAO> {

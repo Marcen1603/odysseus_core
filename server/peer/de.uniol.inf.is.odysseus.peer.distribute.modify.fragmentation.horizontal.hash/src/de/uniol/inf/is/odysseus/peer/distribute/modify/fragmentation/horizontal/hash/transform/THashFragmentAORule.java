@@ -9,8 +9,6 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
  * The rule of transformation for the {@link HashFragmentAO}. 
- * The {@link TransformationConfiguration} will decide into which physical operator, extending {@link HashFragmentPO}, 
- * the {@link HashFragmentAO} will be transformed.
  * @author Michael Brand
  */
 public class THashFragmentAORule extends AbstractTransformationRule<HashFragmentAO> {

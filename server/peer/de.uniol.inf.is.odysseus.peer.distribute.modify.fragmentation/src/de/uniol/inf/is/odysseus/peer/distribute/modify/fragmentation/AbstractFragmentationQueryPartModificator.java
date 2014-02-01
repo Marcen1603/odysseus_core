@@ -73,7 +73,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		try {
 		
 			// Determine degree of fragmentation and source to be fragmented
-			final String sourceName = AbstractFragmentationQueryPartModificator.determineSourceName(modificatorParameters);
+			final String sourceName = this.determineSourceName(modificatorParameters);
 			final int degreeOfFragmentation = this.determineDegreeOfFragmentation(modificatorParameters);
 			
 			// Determine all parts to be fragmented (e1) and other (e2) query parts
@@ -595,6 +595,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 								targets.clear();
 								targets.add(AbstractFragmentationQueryPartModificator.findOperatorForFragmentation(
 									target, subscription, historyOfOperatorsForFragmentation).get());
+								targets.iterator().next().initialize();
 							}
 							
 						}
@@ -969,7 +970,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				AbstractFragmentationQueryPartModificator.log.debug("Found {} as a part to be fragmented", part);
 				
 			} else if(!relevantOperators.isEmpty()) {
-				AbstractFragmentationQueryPartModificator.log.debug("Split {} to form as a non-fragmenteable part", new Object[] {part});
+				AbstractFragmentationQueryPartModificator.log.debug("Split {} to form a fragmentable part as well as a non-fragmentable part", part);
 				
 				Collection<ILogicalOperator> allOperatorsOfPart = part.getOperators();
 				part.removeAllOperators();
@@ -982,6 +983,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				ILogicalQueryPart otherPart = new LogicalQueryPart(irrelevantOperators);
 				otherParts.add(otherPart);
 			
+				AbstractFragmentationQueryPartModificator.log.debug("Fragmentable part is {}", part);
 				AbstractFragmentationQueryPartModificator.log.debug("Non-fragmentable part is {}", otherPart);
 				
 				
@@ -1132,7 +1134,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @throws NullPointerException if <code>modificatorParameters</code> is null.
 	 * @throws IllegalArgumentException if <code>modificatorParameters</code> is empty.
 	 */
-	private static String determineSourceName(
+	protected String determineSourceName(
 			List<String> modificatorParameters) 
 			throws NullPointerException, IllegalArgumentException {
 		
