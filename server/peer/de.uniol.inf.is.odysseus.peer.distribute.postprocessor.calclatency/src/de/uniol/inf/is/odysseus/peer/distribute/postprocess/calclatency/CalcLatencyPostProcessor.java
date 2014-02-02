@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.postprocess;
+package de.uniol.inf.is.odysseus.peer.distribute.postprocess.calclatency;
 
 import java.util.Collection;
 import java.util.Map;
@@ -17,36 +17,18 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.logicaloperator.latency.CalcLatencyAO;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryDistributionPostProcessor;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
-// TODO javaDoc M.B.
+/**
+ * The {@link CalcLatencyPostProcessor} inserts a {@link CalcLatencyAO} for each sink within a query.
+ * @author Michael Brand
+ */
 public class CalcLatencyPostProcessor implements IQueryDistributionPostProcessor {
 
 	private static final Logger log = LoggerFactory.getLogger(CalcLatencyPostProcessor.class);
-	
-	private static IP2PNetworkManager p2pNetworkManager;
-
-	// called by OSGi-DS
-	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
-		
-		CalcLatencyPostProcessor.p2pNetworkManager = serv;
-		
-	}
-
-	// called by OSGi-DS
-	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
-		
-		if(CalcLatencyPostProcessor.p2pNetworkManager == serv) {
-			
-			CalcLatencyPostProcessor.p2pNetworkManager = null;
-			
-		}
-		
-	}
 	
 	@Override
 	public String getName() {
@@ -64,6 +46,13 @@ public class CalcLatencyPostProcessor implements IQueryDistributionPostProcessor
 		CalcLatencyPostProcessor.log.debug("Begin post processing");
 		
 		Collection<ILogicalOperator> calcLatencys = Lists.newArrayList();
+		
+		if(!Activator.getP2PNetworkManager().isPresent()) {
+			
+			CalcLatencyPostProcessor.log.error("No peer network manager bound!");
+			return;
+			
+		}
 		
 		for(ILogicalQueryPart queryPart : allocationMap.keySet()) {
 			
@@ -90,13 +79,16 @@ public class CalcLatencyPostProcessor implements IQueryDistributionPostProcessor
 		if(!calcLatencys.isEmpty()) {
 			
 			ILogicalQueryPart calcLatencyPart = new LogicalQueryPart(calcLatencys);
-			allocationMap.put(calcLatencyPart, p2pNetworkManager.getLocalPeerID());
+			allocationMap.put(calcLatencyPart, Activator.getP2PNetworkManager().get().getLocalPeerID());
 			log.debug("Created local query part {}", calcLatencyPart);
 			
 		}
 		
 	}
 
+	/**
+	 * Inserts {@link CalcLatencyAO}s between a relative sink and each operator subscribed by the relative sink.
+	 */
 	private static Collection<CalcLatencyAO> insertCalcLatency(ILogicalOperator relativeSink) {
 		
 		Collection<CalcLatencyAO> latAOs = Lists.newArrayList();
@@ -116,10 +108,13 @@ public class CalcLatencyPostProcessor implements IQueryDistributionPostProcessor
 		
 	}
 
-	private static CalcLatencyAO attachCalcLatency(ILogicalOperator relativeSink) {
+	/**
+	 * Inserts a {@link CalcLatencyAO} after a real sink.
+	 */
+	private static CalcLatencyAO attachCalcLatency(ILogicalOperator realSink) {
 		
 		CalcLatencyAO latAO = new CalcLatencyAO();
-		latAO.subscribeToSource(relativeSink, 0, 0, relativeSink.getOutputSchema());
+		latAO.subscribeToSource(realSink, 0, 0, realSink.getOutputSchema());
 		return latAO;
 		
 	}
