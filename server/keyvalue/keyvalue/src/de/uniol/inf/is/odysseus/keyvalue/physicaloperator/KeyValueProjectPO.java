@@ -34,9 +34,9 @@ public class KeyValueProjectPO<T extends KeyValueObject<?>> extends AbstractPipe
 			String pathURI = path.getURI();
 			String pathQualName = path.getQualName();
 			if(object.getAttribute(pathURI) != null) {
-				newObject.addAttributeValue(pathURI, object.getAttribute(pathURI));
+				newObject.setAttribute(pathURI, object.getAttribute(pathURI));
 			} else if(object.getAttribute(pathQualName) != null) {
-				newObject.addAttributeValue(pathQualName, object.getAttribute(pathQualName));
+				newObject.setAttribute(pathQualName, object.getAttribute(pathQualName));
 			}
 		}
 		if(!newObject.isEmpty()) {

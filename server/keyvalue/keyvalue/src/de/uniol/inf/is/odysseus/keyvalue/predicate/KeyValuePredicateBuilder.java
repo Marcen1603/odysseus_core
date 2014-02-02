@@ -11,7 +11,7 @@ public class KeyValuePredicateBuilder implements IPredicateBuilder {
 	
 	@Override
 	public IPredicate<?> createPredicate(IAttributeResolver resolver, String predicate) {
-		SDFExpression expression = new SDFExpression("", predicate, resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
+		SDFExpression expression = new SDFExpression("", predicate, null, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 		KeyValuePredicate pred = new KeyValuePredicate(expression);
 		return pred;
 	}
