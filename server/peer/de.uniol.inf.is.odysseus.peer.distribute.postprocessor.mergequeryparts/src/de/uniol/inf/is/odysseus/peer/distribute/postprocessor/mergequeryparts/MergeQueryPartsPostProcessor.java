@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.postprocess;
+package de.uniol.inf.is.odysseus.peer.distribute.postprocessor.mergequeryparts;
 
 import java.util.Collection;
 import java.util.List;
