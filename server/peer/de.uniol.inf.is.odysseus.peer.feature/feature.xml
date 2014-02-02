@@ -226,14 +226,14 @@
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.peer.distribute.postprocess.calclatency"
+         id="de.uniol.inf.is.odysseus.peer.distribute.postprocessor.localsink"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.peer.distribute.postprocessor.localsink"
+         id="de.uniol.inf.is.odysseus.peer.distribute.postprocessor.calclatency"
          download-size="0"
          install-size="0"
          version="0.0.0"
