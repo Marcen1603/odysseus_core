@@ -35,10 +35,10 @@ public class RangeFragmentPO<T extends IStreamObject<IMetaAttribute>>
 	private List<String> ranges;
 	
 	/**
-	 * True, if the entries of <code>ranges</code> are to be interpreted as doubles; 
+	 * True, if the entries of <code>ranges</code> are to be interpreted as numbers; 
 	 * false, if they are to be interpreted as Strings.
 	 */
-	private boolean doubleRanges;
+	private boolean numericRanges;
 
 	/**
 	 * Constructs a new {@link RangeFragmentPO}.
@@ -61,7 +61,7 @@ public class RangeFragmentPO<T extends IStreamObject<IMetaAttribute>>
 					fragmentAO.getInputSchema() + "!");
 		
 		this.ranges = fragmentAO.getRanges();
-		this.doubleRanges = fragmentAO.areRangesDouble();
+		this.numericRanges = fragmentAO.areRangesNumeric();
 		
 	}
 
@@ -75,7 +75,7 @@ public class RangeFragmentPO<T extends IStreamObject<IMetaAttribute>>
 		
 		this.attributeIndex = fragmentPO.attributeIndex;
 		this.ranges = fragmentPO.ranges;
-		this.doubleRanges = fragmentPO.doubleRanges;
+		this.numericRanges = fragmentPO.numericRanges;
 		
 	}
 	
@@ -99,27 +99,40 @@ public class RangeFragmentPO<T extends IStreamObject<IMetaAttribute>>
 			
 			for(int rangeNo = 0; rangeNo < this.ranges.size(); rangeNo++) {
 				
-				if(this.doubleRanges) {
-					
-					Double range = Double.valueOf(this.ranges.get(rangeNo));
-					
-					if(((Double) tuple.getAttribute(this.attributeIndex)).compareTo(range) >= 0) {
+				try {
+				
+					if(this.numericRanges) {
 						
-						RangeFragmentPO.log.debug("Routed " + object + " to output port " + rangeNo);
-						return rangeNo;
+						Double range = Double.valueOf(this.ranges.get(rangeNo));
+						Double attr = ((Number) tuple.getAttribute(this.attributeIndex)).doubleValue();
+						
+						if(Double.compare(attr, range) >= 0) {
+							
+//							RangeFragmentPO.log.debug("Routed " + object + " to output port " + rangeNo);
+							return rangeNo;
+							
+						}
+						
+					} else { // String ranges
+						
+						String range = this.ranges.get(rangeNo);
+						String attr = (String) tuple.getAttribute(this.attributeIndex);
+						
+						if(attr.compareTo(range) >= 0) {
+							
+//							RangeFragmentPO.log.debug("Routed " + object + " to output port " + rangeNo);
+							return rangeNo;
+							
+						}
 						
 					}
 					
-				} else { // String ranges
+				} catch(Exception e) {
 					
-					String range = this.ranges.get(rangeNo);
+					RangeFragmentPO.log.error("Could not cast {}! \n{}", tuple.getAttribute(this.attributeIndex), e.getStackTrace());
 					
-					if(((String) tuple.getAttribute(this.attributeIndex)).compareTo(range) >= 0) {
-						
-						RangeFragmentPO.log.debug("Routed " + object + " to output port " + rangeNo);
-						return rangeNo;
-						
-					}
+					RangeFragmentPO.log.debug(object + " is not a tuple");
+					return this.ranges.size();
 					
 				}
 				

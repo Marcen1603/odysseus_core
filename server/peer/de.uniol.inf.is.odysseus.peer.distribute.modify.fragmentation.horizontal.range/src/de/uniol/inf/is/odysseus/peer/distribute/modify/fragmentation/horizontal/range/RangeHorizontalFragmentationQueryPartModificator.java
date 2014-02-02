@@ -33,12 +33,7 @@ public class RangeHorizontalFragmentationQueryPartModificator extends
 		if(modificationParameters == null)
 			throw new NullPointerException("Parameters for query part fragmentation strategy must not be null!");
 		
-		String attribute = modificationParameters.get(0).split("\\.")[1];
-		
-		if(attribute.isEmpty())
-			throw new NullPointerException("No attribute given to fragment!");
-		
-		return attribute;
+		return modificationParameters.get(0);
 		
 	}
 	

@@ -59,12 +59,12 @@ public class RangeFragmentAO extends AbstractFragmentAO {
 	}
 
 	/**
-	 * Checks, if the ranges are to be interpreted as doubles.
+	 * Checks, if the ranges are to be interpreted as numbers.
 	 * @param ranges The ranges to check.
-	 * @return True, if the entries of <code>ranges</code> are to be interpreted as doubles; 
+	 * @return True, if the entries of <code>ranges</code> are to be interpreted as numbers; 
 	 * false, if they are to be interpreted as Strings.
 	 */
-	private static boolean areRangesDouble(List<String> ranges) {
+	private static boolean areRangesNumeric(List<String> ranges) {
 		
 		for(String range : ranges) {
 			
@@ -93,10 +93,10 @@ public class RangeFragmentAO extends AbstractFragmentAO {
 	private List<String> ranges;
 	
 	/**
-	 * True, if the entries of <code>ranges</code> are to be interpreted as doubles; 
+	 * True, if the entries of <code>ranges</code> are to be interpreted as numbers; 
 	 * false, if they are to be interpreted as Strings.
 	 */
-	private boolean doubleRanges;
+	private boolean numericRanges;
 	
 	/**
 	 * Sorts the ranges descending.
@@ -115,9 +115,9 @@ public class RangeFragmentAO extends AbstractFragmentAO {
 				
 				if(maxRange == null)
 					maxRange = range;
-				else if(this.doubleRanges && Double.compare(Double.valueOf(range), Double.valueOf(maxRange)) > 0)
+				else if(this.numericRanges && Double.valueOf(range) > Double.valueOf(maxRange))
 					maxRange = range;
-				else if(!this.doubleRanges && collator.compare(range, maxRange) > 0)
+				else if(!this.numericRanges && collator.compare(range, maxRange) > 0)
 					maxRange = range;
 				
 			}
@@ -147,7 +147,7 @@ public class RangeFragmentAO extends AbstractFragmentAO {
 		this.attributeURI = null;
 		this.attributeIndex = -1;
 		this.ranges = Lists.newArrayList();
-		this.doubleRanges = false;
+		this.numericRanges = false;
 		
 	}
 
@@ -163,7 +163,7 @@ public class RangeFragmentAO extends AbstractFragmentAO {
 		this.attributeURI = fragmentAO.attributeURI;
 		this.attributeIndex = fragmentAO.attributeIndex;
 		this.ranges = Lists.newArrayList(fragmentAO.ranges);
-		this.doubleRanges = fragmentAO.doubleRanges;
+		this.numericRanges = fragmentAO.numericRanges;
 		
 	}
 
@@ -206,8 +206,8 @@ public class RangeFragmentAO extends AbstractFragmentAO {
 	@Parameter(type = StringParameter.class, name = "ATTRIBUTE", optional = false)
 	public void setAttribute(String uri) {
 		
-		this.attributeURI = "'" + uri + "'";
-		this.addParameterInfo("ATTRIBUTE", this.attributeURI);
+		this.attributeURI = uri;
+		this.addParameterInfo("ATTRIBUTE", "'" + this.attributeURI + "'");
 		
 	}
 	
@@ -229,32 +229,32 @@ public class RangeFragmentAO extends AbstractFragmentAO {
 	
 		this.ranges.clear();
 		
-		if(RangeFragmentAO.areRangesDouble(ranges)) {
+		if(RangeFragmentAO.areRangesNumeric(ranges)) {
 			
 			this.ranges.addAll(ranges);
-			this.doubleRanges = true;
+			this.numericRanges = true;
 			
 		} else {	// String ranges
 			
 			this.ranges.addAll(RangeFragmentAO.preprocessRanges(ranges));
-			this.doubleRanges = false;
+			this.numericRanges = false;
 			
 		}
 		
 		this.setNumberOfFragments(ranges.size() + 1); // +1 for all elements, which do not match any range
 		this.sortRanges();	
-		this.addParameterInfo("RANGES", this.ranges);
+		this.addParameterInfo("RANGES", ranges);
 		
 	}
 	
 	/**
-	 * Checks, if the ranges are to be interpreted as doubles.
-	 * @return True, if the entries of {@link #getRanges()} are to be interpreted as doubles; 
+	 * Checks, if the ranges are to be interpreted as numbers.
+	 * @return True, if the entries of {@link #getRanges()} are to be interpreted as numbers; 
 	 * false, if they are to be interpreted as Strings.
 	 */
-	public boolean areRangesDouble() {
+	public boolean areRangesNumeric() {
 		
-		return this.doubleRanges;
+		return this.numericRanges;
 		
 	}
 

@@ -855,6 +855,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 						targets.add(operatorForFragmentation.getE1());
 						modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.connect(
 								modifiedCopiesToOrigin, copiedSinks, subToSink, targets);
+						targets.iterator().next().initialize();
 						
 						modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.unionPartOfFragmentationWithGivenPart(
 								originPart, modifiedCopiesToOrigin, originSink, historyOfOperatorsForFragmentation);

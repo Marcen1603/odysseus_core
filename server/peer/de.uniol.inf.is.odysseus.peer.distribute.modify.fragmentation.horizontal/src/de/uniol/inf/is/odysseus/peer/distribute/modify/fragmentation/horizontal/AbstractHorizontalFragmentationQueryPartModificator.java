@@ -385,6 +385,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 						targets.add(operatorForFragmentation.getE1());
 						modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.connect(
 								modifiedCopiesToOrigin, copiedSinks, subToSink, targets);
+						targets.iterator().next().initialize();
 						
 						modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.unionPartOfFragmentationWithGivenPart(
 								originPart, modifiedCopiesToOrigin, originSink, historyOfOperatorsForFragmentation);
