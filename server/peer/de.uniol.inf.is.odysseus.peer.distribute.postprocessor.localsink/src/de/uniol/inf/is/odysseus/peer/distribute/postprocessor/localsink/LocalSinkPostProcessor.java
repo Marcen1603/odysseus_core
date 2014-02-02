@@ -1,4 +1,5 @@
-package de.uniol.inf.is.odysseus.peer.distribute.postprocess;
+package de.uniol.inf.is.odysseus.peer.distribute.postprocessor.localsink;
+
 
 import java.util.Collection;
 import java.util.Map;
