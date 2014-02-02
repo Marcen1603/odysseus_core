@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.postprocess;
+package de.uniol.inf.is.odysseus.peer.distribute.postprocessor.forcelocal;
 
 import java.util.Collection;
 import java.util.Map;
