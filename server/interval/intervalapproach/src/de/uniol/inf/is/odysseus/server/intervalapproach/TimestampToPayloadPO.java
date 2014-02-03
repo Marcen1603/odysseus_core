@@ -33,5 +33,6 @@ public abstract class TimestampToPayloadPO<K extends ITimeInterval, T extends IS
 		return OutputMode.MODIFIED_INPUT;
 	}
 
+	
 
 }

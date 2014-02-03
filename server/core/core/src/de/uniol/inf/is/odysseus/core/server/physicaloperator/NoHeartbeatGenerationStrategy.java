@@ -31,4 +31,13 @@ public class NoHeartbeatGenerationStrategy<T> implements
 		return new NoHeartbeatGenerationStrategy<T>();
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof NoHeartbeatGenerationStrategy;
+	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 }

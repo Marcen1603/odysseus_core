@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.relational_interval;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TimestampToPayloadPO;
 
@@ -60,4 +61,17 @@ public class RelationalTimestampToPayloadPO extends
 		return new RelationalTimestampToPayloadPO(this);
 	}
 
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof RelationalTimestampToPayloadPO)){
+			return false;
+		}
+		RelationalTimestampToPayloadPO po = (RelationalTimestampToPayloadPO) ipo;
+		
+		if (!po.getOutputSchema().equals(getOutputSchema())){
+			return false;
+		}
+		
+		return true;
+	}
 }

@@ -198,4 +198,71 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 	public String toGroupString(Tuple<T> elem) {
 		return elem.toString(gRestrict);
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((aggrOutputPos == null) ? 0 : aggrOutputPos.hashCode());
+		result = prime * result
+				+ ((aggregations == null) ? 0 : aggregations.hashCode());
+		result = prime * result + (fast ? 1231 : 1237);
+		result = prime * result
+				+ ((grAttribs == null) ? 0 : grAttribs.hashCode());
+		result = prime * result
+				+ ((groupOutputPos == null) ? 0 : groupOutputPos.hashCode());
+		result = prime * result
+				+ ((inputSchema == null) ? 0 : inputSchema.hashCode());
+		result = prime * result
+				+ ((outputSchema == null) ? 0 : outputSchema.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		@SuppressWarnings("rawtypes")
+		RelationalGroupProcessor other = (RelationalGroupProcessor) obj;
+		if (aggrOutputPos == null) {
+			if (other.aggrOutputPos != null)
+				return false;
+		} else if (!aggrOutputPos.equals(other.aggrOutputPos))
+			return false;
+		if (aggregations == null) {
+			if (other.aggregations != null)
+				return false;
+		} else if (!aggregations.equals(other.aggregations))
+			return false;
+		if (fast != other.fast)
+			return false;
+		if (grAttribs == null) {
+			if (other.grAttribs != null)
+				return false;
+		} else if (!grAttribs.equals(other.grAttribs))
+			return false;
+		if (groupOutputPos == null) {
+			if (other.groupOutputPos != null)
+				return false;
+		} else if (!groupOutputPos.equals(other.groupOutputPos))
+			return false;
+		if (inputSchema == null) {
+			if (other.inputSchema != null)
+				return false;
+		} else if (!inputSchema.equals(other.inputSchema))
+			return false;
+		if (outputSchema == null) {
+			if (other.outputSchema != null)
+				return false;
+		} else if (!outputSchema.equals(other.outputSchema))
+			return false;
+		return true;
+	}
+	
+	
 }
