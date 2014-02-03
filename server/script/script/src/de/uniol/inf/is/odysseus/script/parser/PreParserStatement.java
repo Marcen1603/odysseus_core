@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -31,25 +32,29 @@ public final class PreParserStatement {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PreParserStatement.class);
 	
-	private IPreParserKeyword keyword;
-	private String keywordText;
-	private String parameter;
-	private int line;
+	private final IPreParserKeyword keyword;
+	private final String keywordText;
+	private final String parameter;
+	private final int line;
+	private final Context context;
 	
-	public PreParserStatement( String keywordText, IPreParserKeyword keyword, String parameter, int line ) {
+	public PreParserStatement( String keywordText, IPreParserKeyword keyword, String parameter, int line, Context context) {
+		Preconditions.checkNotNull(context, "Context for preParserKeyword must not be null!");
+		
 		this.keyword = keyword;
 		this.keywordText = keywordText;
 		this.parameter = parameter;
 		this.line = line;
+		this.context = context.copy();
 	}
 	
-	void validate( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser, Context context ) throws OdysseusScriptException {
+	void validate( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser) throws OdysseusScriptException {
 		keyword.setParser(parser);
 		
 		keyword.validate(variables, parameter, caller, context);
 	}
 	
-	Optional<?> execute( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser, Context context ) throws OdysseusScriptException {
+	Optional<?> execute( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser) throws OdysseusScriptException {
 		if( keyword.isDeprecated() ) {
 			logDeprecation();
 		}
@@ -86,9 +91,5 @@ public final class PreParserStatement {
 
 	public int getLine() {
 		return line;
-	}
-
-	public void setLine(int line) {
-		this.line = line;
 	}
 }

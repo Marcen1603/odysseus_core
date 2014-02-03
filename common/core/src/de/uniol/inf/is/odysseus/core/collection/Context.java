@@ -64,4 +64,10 @@ public class Context {
 	public final void remove( String key ) {
 		contextMap.remove(key);
 	}
+
+	public Context copy() {
+		Context copy = new Context();
+		copy.contextMap.putAll(this.contextMap);
+		return copy;
+	}
 }

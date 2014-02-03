@@ -122,4 +122,8 @@ public final class ReplacementContainer {
 	public Map<String, String> toMap() {
 		return Maps.newHashMap(replacements);
 	}
+	
+	public Context getCurrentContext() {
+		return context;
+	}
 }

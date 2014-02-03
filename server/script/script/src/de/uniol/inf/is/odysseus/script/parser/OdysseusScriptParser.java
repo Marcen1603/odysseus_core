@@ -140,13 +140,13 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	@Override
 	public List<IExecutorCommand> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException {
 
-		validate(statements, caller, defaultSink, context);
+		validate(statements, caller, defaultSink);
 
 		Map<String, Object> variables = prepareVariables(defaultSink);
 		List<IExecutorCommand> results = Lists.newArrayList();
 		for (PreParserStatement stmt : statements) {
 			try {
-				Optional<?> optionalResult = stmt.execute(variables, caller, this, context);
+				Optional<?> optionalResult = stmt.execute(variables, caller, this);
 				if (optionalResult.isPresent()) {
 					List<?> list = (List<?>) optionalResult.get();
 					for(Object o : list){
@@ -172,16 +172,16 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		return results;
 	}
 
-	private void validate(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException {
+	private void validate(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
 		Map<String, Object> variables = prepareVariables(defaultSink);
 		for (PreParserStatement stmt : statements) {
-			stmt.validate(variables, caller, this, context);
+			stmt.validate(variables, caller, this);
 		}
 	}
 
 	@Override
 	public void validate(String[] lines, ISession caller, Context context) throws OdysseusScriptException {
-		validate(parseScript(lines, caller, context), caller, null, context);
+		validate(parseScript(lines, caller, context), caller, null);
 	}
 
 	private static Boolean isResumeOnError(Map<String, Object> variables) {
@@ -265,7 +265,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					String dropkey = PARAMETER_KEY + DROPPROCEDURE;
 					String name = line.substring(dropkey.length()).trim();
 					IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(DROPPROCEDURE);
-					statements.add(new PreParserStatement(DROPPROCEDURE, keyword, name, keyStartedAtLine));
+					statements.add(new PreParserStatement(DROPPROCEDURE, keyword, name, keyStartedAtLine, replacements.getCurrentContext()));
 					keyStartedAtLine = currentLine + 1;
 					continue;
 				}
@@ -286,7 +286,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					if (line.indexOf(STORED_PROCEDURE_END) != -1) {
 						// and put all into the keyword
 						IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(STORED_PROCEDURE_PROCEDURE);
-						statements.add(new PreParserStatement(STORED_PROCEDURE_PROCEDURE, keyword, procedureLines.toString(), keyStartedAtLine));
+						statements.add(new PreParserStatement(STORED_PROCEDURE_PROCEDURE, keyword, procedureLines.toString(), keyStartedAtLine, replacements.getCurrentContext()));
 						keyStartedAtLine = currentLine + 1;
 						isInProcedure = false;
 					}
@@ -315,7 +315,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 									// that we have seen until now
 									if (sb != null && currentKey != null) {
 										IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(currentKey);
-										statements.add(new PreParserStatement(currentKey, keyword, sb.toString(), keyStartedAtLine));
+										statements.add(new PreParserStatement(currentKey, keyword, sb.toString(), keyStartedAtLine, replacements.getCurrentContext()));
 										keyStartedAtLine = currentLine + 1;
 									}
 
@@ -348,7 +348,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			// statement/parameter
 			if (sb != null && currentKey != null) {
 				IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(currentKey);
-				statements.add(new PreParserStatement(currentKey, keyword, sb.toString(), keyStartedAtLine));
+				statements.add(new PreParserStatement(currentKey, keyword, sb.toString(), keyStartedAtLine, replacements.getCurrentContext()));
 				keyStartedAtLine = currentLine + 1;
 			}
 
