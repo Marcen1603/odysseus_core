@@ -66,7 +66,7 @@ public class TProbabilisiticJoinAORule extends AbstractTransformationRule<JoinAO
         boolean isCross = false;
         final IPredicate pred = operator.getPredicate();
         if (pred == null) {
-            joinPO.setJoinPredicate(new TruePredicate<>());
+            joinPO.setJoinPredicate(TruePredicate.getInstance());
             isCross = true;
         }
         else {

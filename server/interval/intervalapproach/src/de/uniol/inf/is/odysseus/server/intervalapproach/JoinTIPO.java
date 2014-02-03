@@ -380,7 +380,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 						.equals(jtipo.creationFunction.getClass().toString())) {
 			return false;
 		}
-
+		
 		// Vergleichen des Join-Pr�dikats und des Output-Schemas
 		if (this.getJoinPredicate().equals(jtipo.getJoinPredicate())
 				&& this.getOutputSchema().compareTo(jtipo.getOutputSchema()) == 0) {
@@ -409,7 +409,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 						.equals(jtipo.creationFunction.getClass().toString())) {
 			return false;
 		}
-
+		
 		// Vergleichen des Join-Pr�dikats
 		if (this.getJoinPredicate().isContainedIn(jtipo.getJoinPredicate())) {
 			return true;

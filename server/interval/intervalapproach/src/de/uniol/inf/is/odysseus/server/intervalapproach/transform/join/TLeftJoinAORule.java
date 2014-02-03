@@ -43,7 +43,7 @@ public class TLeftJoinAORule extends AbstractTransformationRule<LeftJoinAO> {
 	public void execute(LeftJoinAO joinAO, TransformationConfiguration transformConfig) {
 		LeftJoinTIPO joinPO = new LeftJoinTIPO(joinAO.getInputSchema(0), joinAO.getInputSchema(1), joinAO.getOutputSchema());
 		IPredicate pred = joinAO.getPredicate();
-		joinPO.setJoinPredicate(pred == null ? new TruePredicate() : pred.clone());
+		joinPO.setJoinPredicate(pred == null ? TruePredicate.getInstance() : pred.clone());
 	
 		// see TJoinAORule
 		

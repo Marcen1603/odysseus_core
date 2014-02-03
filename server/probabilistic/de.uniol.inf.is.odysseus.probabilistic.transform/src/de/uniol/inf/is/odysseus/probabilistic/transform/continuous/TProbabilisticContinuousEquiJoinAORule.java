@@ -74,7 +74,7 @@ public class TProbabilisticContinuousEquiJoinAORule extends AbstractTransformati
         boolean isCross = false;
         final IPredicate pred = operator.getPredicate();
         if (pred == null) {
-            joinPO.setJoinPredicate(new TruePredicate<>());
+            joinPO.setJoinPredicate(TruePredicate.getInstance());
             isCross = true;
         }
         else {

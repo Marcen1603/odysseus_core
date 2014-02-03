@@ -43,7 +43,7 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
 		boolean isCross = false;
 		IPredicate pred = joinAO.getPredicate();
 		if(pred == null){
-			joinPO.setJoinPredicate(new TruePredicate<>());
+			joinPO.setJoinPredicate(TruePredicate.getInstance());
 			isCross = true;
 		}else{
 			joinPO.setJoinPredicate(pred.clone());

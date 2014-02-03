@@ -43,7 +43,7 @@ public class TSAJoinAORule extends AbstractTransformationRule<JoinAO> {
 	public void execute(JoinAO joinAO, TransformationConfiguration transformConfig) {
 		SAJoinPO joinPO = new SAJoinPO();
 		IPredicate pred = joinAO.getPredicate();
-		joinPO.setJoinPredicate(pred == null ? new TruePredicate() : pred.clone());
+		joinPO.setJoinPredicate(pred == null ? TruePredicate.getInstance() : pred.clone());
 		
 		// Der Name des Schemas soll nicht beide vorherigen Schemanamen nur aneinanderhängen, sondern sie mit einem Komma trennen!!!
 		// Der neue Name wird dabei in joinAO geschrieben, da er bei defaultExecute() nochmal daraus gelesen wird.

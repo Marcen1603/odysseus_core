@@ -18,26 +18,33 @@ package de.uniol.inf.is.odysseus.core.server.predicate;
 import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 
-public class TruePredicate<T> extends AbstractPredicate<T> {
+public class TruePredicate extends AbstractPredicate<Object> {
 	private static final long serialVersionUID = 7701679660439284127L;
-
+	private static final TruePredicate instance = new TruePredicate();
+	
+	static public TruePredicate getInstance(){
+		return instance;
+	}
+	
+	private TruePredicate(){}
+	
 	@Override
-	public boolean evaluate(T input) {
+	public boolean evaluate(Object input) {
 		return true;
 	}
 
 	@Override
-	public boolean evaluate(T left, T right) {
+	public boolean evaluate(Object left, Object right) {
 		return true;
 	}
 
 	@Override
-	public AbstractPredicate<T> clone() {
-		return new TruePredicate<T>();
+	public AbstractPredicate<Object> clone() {
+		return this;
 	}
 	
 	@Override
-	public boolean equals(IPredicate<T> pred) {
+	public boolean equals(IPredicate<Object> pred) {
 		return (pred instanceof TruePredicate);
 	}
 	

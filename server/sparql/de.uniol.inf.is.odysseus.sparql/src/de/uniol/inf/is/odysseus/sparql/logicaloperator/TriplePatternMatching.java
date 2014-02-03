@@ -269,7 +269,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator {
 
 		// there is no predicate
 		else {
-			pred = new TruePredicate();
+			pred = TruePredicate.getInstance();
 		}
 
 		this.selectionPredicate = pred;

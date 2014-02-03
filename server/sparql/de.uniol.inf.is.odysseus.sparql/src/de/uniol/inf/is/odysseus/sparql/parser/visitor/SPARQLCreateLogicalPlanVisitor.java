@@ -1482,7 +1482,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 			SDFSchema leftSchema, SDFSchema rightSchema) {
 		// if there are no common vars, the predicate is always true
 		if (commonVars.isEmpty()) {
-			return new TruePredicate();
+			return TruePredicate.getInstance();
 		}
 
 		// ArrayList<SDFExpression> exprs = new ArrayList<SDFExpression>();

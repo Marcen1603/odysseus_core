@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.collection.FESortedPair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
@@ -148,4 +149,16 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 		throw new IllegalArgumentException("Not implemented");
 	}
 
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof RelationalFastMedianPO)){
+			return false;
+		}
+		
+		@SuppressWarnings("unchecked")
+		RelationalFastMedianPO<T> po = (RelationalFastMedianPO<T>) ipo;
+		
+		return medianAttrPos == po.medianAttrPos && numericalMedian == po.numericalMedian;
+		
+	}
 }
