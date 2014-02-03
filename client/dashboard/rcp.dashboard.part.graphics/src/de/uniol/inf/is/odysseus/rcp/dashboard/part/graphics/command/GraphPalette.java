@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.factory.ConnectionFa
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.factory.PictogramFactory;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.ImagePictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.MultipleImagePictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.RectanglePictogram;
 
 public class GraphPalette extends PaletteRoot {
 
@@ -40,6 +41,8 @@ public class GraphPalette extends PaletteRoot {
 		group.add(new PaletteSeparator());
 		group.add(new CreationToolEntry("Image", "An image that is shown if the predicate is true", new PictogramFactory(ImagePictogram.class), Activator.getImage("image.png"), null));
 		group.add(new CreationToolEntry("Multiple Images", "A list of images where a predicate selects the image", new PictogramFactory(MultipleImagePictogram.class), Activator.getImage("images.png"), null));
+		group.add(new PaletteSeparator());
+		group.add(new CreationToolEntry("Rectangle", "Creates a rectangle", new PictogramFactory(RectanglePictogram.class), Activator.getImage("shape_rectangle.png"), null));
 		palette.add(group);
 	}
 }

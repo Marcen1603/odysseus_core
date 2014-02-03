@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -67,7 +68,10 @@ public class ImagePictogramFigure extends AbstractPictogramFigure<ImagePictogram
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.AbstractPictogramFigure#updateValues(de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.
+	 * AbstractPictogramFigure
+	 * #updateValues(de.uniol.inf.is.odysseus.rcp.dashboard
+	 * .part.graphics.model.Pictogram)
 	 */
 	@Override
 	public void updateValues(ImagePictogram node) {
@@ -79,10 +83,14 @@ public class ImagePictogramFigure extends AbstractPictogramFigure<ImagePictogram
 			image.dispose();
 		}
 		try {
-			this.image = new Image(Display.getDefault(), new ImageData(node.getFile().getLocation().toOSString()));
+			IResource file = node.getFile();
+			if(file!=null){
+				this.image = new Image(Display.getDefault(), new ImageData(file.getLocation().toOSString()));
+			}else{
+				this.image = new Image(Display.getDefault(), Activator.getImage("image.png").getImageData());
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			this.image = new Image(Display.getDefault(), Activator.getImage("image.png").getImageData());
+			e.printStackTrace();			
 		}
 
 	}
@@ -90,7 +98,8 @@ public class ImagePictogramFigure extends AbstractPictogramFigure<ImagePictogram
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.AbstractPictogramFigure#getContentSize()
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.
+	 * AbstractPictogramFigure#getContentSize()
 	 */
 	@Override
 	public Dimension getContentSize() {
