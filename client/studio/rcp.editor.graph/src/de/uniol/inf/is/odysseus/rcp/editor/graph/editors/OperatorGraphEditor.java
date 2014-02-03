@@ -100,6 +100,9 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 	private Graph graph;
 	private DefaultEditDomain editDomain;
 
+	private static final String DEFAULT_HEADING = "#TRANSCFG Standard";
+	private String heading;
+
 	
 
 	public OperatorGraphEditor() {
@@ -202,7 +205,11 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 				c.getXML(conNode, doc);
 				connectionsElement.appendChild(conNode);
 			}
-
+			// the heading data
+			Element headingElement = doc.createElement("heading");
+			headingElement.setTextContent(getHeading());
+			root.appendChild(headingElement);
+			
 			// now, PQL for other purposes
 			String pql = ScriptGenerator.buildPQL(graph);
 
@@ -231,6 +238,10 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 
 	}
 
+	public String getHeading() {
+		return this.heading;
+	}
+
 	private void loadFromXML(FileEditorInput input) {
 
 		try {
@@ -248,6 +259,13 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 
 			Map<String, OperatorNode> currentIdToNodes = new TreeMap<>();
 
+			if(mainNodes.get("heading")!=null){
+				Element heading = mainNodes.get("heading");
+				setHeading(heading.getTextContent());
+			}else{
+				setHeading(DEFAULT_HEADING);
+			}
+			
 			List<Element> operatorNodes = getChildList(mainNodes.get("operators"));
 			for (Element opNode : operatorNodes) {
 				String typeName = opNode.getAttributes().getNamedItem("type").getNodeValue();
@@ -451,6 +469,20 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 				}
 			}
 		}
+	}
+
+	public void setHeading(String heading) {
+		this.heading = heading;		
+	}
+
+	public String createFullHeading(){
+		if(getHeading()==null || getHeading().trim().isEmpty()){
+			setHeading(DEFAULT_HEADING);
+		}
+		String pql = getHeading()+System.lineSeparator();
+		pql = pql + "#PARSER PQL"+System.lineSeparator();				
+		pql = pql+"#ADDQUERY"+System.lineSeparator();
+		return pql;
 	}
 	
 }

@@ -22,9 +22,14 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISaveablePart;
@@ -56,7 +61,9 @@ import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
  */
 public class MultiPageGraphEditor extends MultiPageEditorPart implements IResourceChangeListener, ISaveablePart2 {
 
-	/** The text editor used in page 0. */
+	
+	
+
 	private StyledText text;
 
 	private int editorIndex;
@@ -68,7 +75,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 	private OperatorGraphEditor graphEditor;
 
 	private boolean dirty = false;
-
+	
 	/**
 	 * Creates a multi-page editor example.
 	 */
@@ -102,15 +109,30 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 	/**
 	 * Creates page 1: some properties
 	 */
-	void createPage1() {
-
-		Composite composite = new Composite(getContainer(), SWT.NONE);
-		GridLayout layout = new GridLayout();
-		composite.setLayout(layout);
-		layout.numColumns = 2;
-
+	void createPage1() {				
+		Composite composite = new Composite(getContainer(), SWT.NONE);			
+		composite.setLayoutData(GridData.FILL_BOTH);
+		GridLayout layout = new GridLayout(1, false);		
+		composite.setLayout(layout);		
 		int index = addPage(composite);
 		setPageText(index, "Properties");
+		
+		Label l = new Label(composite, SWT.NONE);
+		l.setText("Heading");
+		GridData dt = new GridData(GridData.FILL, GridData.FILL, true, true);
+		final Text text = new Text(composite, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		text.setText(getGraphEditor().getHeading());
+		text.setLayoutData(dt);
+		
+		
+		text.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent e) {
+				setHeading(text.getText());
+				setDirty(true);
+			}
+		});
 	}
 
 	/**
@@ -178,7 +200,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 	}
 
 	@Override
-	public void doSave(IProgressMonitor monitor) {
+	public void doSave(IProgressMonitor monitor) {		
 		getGraphEditor().doSave(monitor);
 		setDirty(false);
 	}
@@ -398,7 +420,8 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 	private void reloadTextEditor() {
 		String pql = "There are still problems in your graph, so that PQL cannot be generated!";
 		try {
-			pql = getPQLString();
+			pql = this.graphEditor.createFullHeading();
+			pql = pql+getPQLString();
 		} catch (Exception e) {
 
 		}
@@ -419,8 +442,18 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 
 	public void executeScript() {
 		IFile file = ((FileEditorInput) getEditorInput()).getFile();
-		String pql = getPQLString();
-		Activator.getDefault().getExecutor().addQuery(pql, "PQL", Activator.getDefault().getCaller(), "Standard", ParserClientUtil.createRCPContext(file));
+		String pql = this.graphEditor.createFullHeading();
+		pql = pql+getPQLString();
+		Activator.getDefault().getExecutor().addQuery(pql, "OdysseusScript", Activator.getDefault().getCaller(), "Standard", ParserClientUtil.createRCPContext(file));
+	}
+	
+	
+	
+
+	
+
+	public void setHeading(String heading) {
+		this.getGraphEditor().setHeading(heading);
 	}
 
 }

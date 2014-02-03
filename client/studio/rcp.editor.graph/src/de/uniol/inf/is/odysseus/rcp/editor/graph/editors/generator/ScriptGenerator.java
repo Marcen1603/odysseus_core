@@ -58,9 +58,7 @@ public class ScriptGenerator {
 	public static String buildPQL(List<OperatorNode> sinks) {
 		Map<OperatorNode, String> names = new HashMap<>();
 		StringBuilder builder = new StringBuilder();
-		// builder.append("#PARSER PQL").append(System.lineSeparator());
-		// builder.append("#TRANSCFG Standard").append(System.lineSeparator());
-		// builder.append("#QUERY").append(System.lineSeparator());
+		
 
 		// no we start at the sinks and walk through the plans
 		List<OperatorNode> foundOpsUnsorted = new ArrayList<>();
