@@ -179,7 +179,7 @@ public class ShapePictogramDialog extends AbstractPictogramDialog<AbstractShapeP
 		pg.setWidth(widthSpinner.getSelection());
 		pg.setFillColor(fillColorCheckButton.getSelection());
 		pg.setKeepRatio(keepRatioCheckButton.getSelection());
-		pg.setRotate(rotateSpinner.getSelection());
+		pg.setRotate(rotateSpinner.getSelection());		
 	}
 
 	@Override

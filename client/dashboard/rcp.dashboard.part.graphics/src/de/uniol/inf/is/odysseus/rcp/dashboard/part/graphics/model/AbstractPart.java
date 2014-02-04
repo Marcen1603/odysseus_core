@@ -44,9 +44,10 @@ public abstract class AbstractPart extends Observable implements Observer {
 		this.setRelevancePredicate(old.relevancePredicate.getExpression().getExpressionString());		
 		this.selectedRootName = old.selectedRootName;
 		this.dirty = old.dirty;
+		this.roots = old.roots;
 	}
 
-	protected void setDirty() {
+	public void setDirty() {
 		refreshVisuals();
 		this.dirty = true;
 		if (this.getGraphicsLayer() != null) {

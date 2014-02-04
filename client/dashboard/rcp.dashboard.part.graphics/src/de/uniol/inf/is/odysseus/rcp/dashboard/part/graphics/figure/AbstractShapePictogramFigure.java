@@ -19,7 +19,7 @@ public abstract class AbstractShapePictogramFigure<T extends AbstractShapePictog
 	private float rotate = 0.0f;
 
 	public AbstractShapePictogramFigure() {
-		super();
+		super();		
 	}
 
 	@Override

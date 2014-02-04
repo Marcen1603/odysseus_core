@@ -47,7 +47,7 @@ public abstract class AbstractShapePictogram extends AbstractPictogram {
 		this.fillColor = old.fillColor;
 		this.keepRatio = old.keepRatio;
 		this.width = old.width;
-		this.rotate = old.rotate;
+		this.rotate = old.rotate;		
 	}
 
 	@Override

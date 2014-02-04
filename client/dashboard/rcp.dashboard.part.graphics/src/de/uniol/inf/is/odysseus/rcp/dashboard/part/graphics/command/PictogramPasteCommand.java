@@ -43,7 +43,7 @@ public class PictogramPasteCommand extends Command{
 			newOne.setConstraint(cons);
 			graphicsLayer = oldOne.getGraphicsLayer();
 			graphicsLayer.addPictogram(newOne);
-			newPictogram = newOne;
+			newPictogram = newOne;			
 		}
 			
 	}

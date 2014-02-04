@@ -33,6 +33,8 @@ public abstract class AbstractPictogramFigure<T extends AbstractPictogram> exten
 
 	private Label topTextlabel;
 	private Label bottomTextlabel;
+	private String textTopRaw = "";
+	private String textBottomRaw = "";
 	private static final int TEXT_HEIGHT_MARGIN = 3;
 
 	public AbstractPictogramFigure() {
@@ -67,6 +69,8 @@ public abstract class AbstractPictogramFigure<T extends AbstractPictogram> exten
 	public void updateValuesInternal(T node) {
 		this.topTextlabel.setText(node.getTextTopToShow());
 		this.bottomTextlabel.setText(node.getTextBottomToShow());
+		this.textTopRaw = node.getTextTop();
+		this.textBottomRaw = node.getTextBottom();
 		recalcPreferedSize();
 		updateValues(node);
 	}
@@ -83,11 +87,11 @@ public abstract class AbstractPictogramFigure<T extends AbstractPictogram> exten
 	protected Rectangle getContentBounds() {
 		Rectangle r = getBounds().getCopy();
 		int topSize = 0;
-		if(!topTextlabel.getText().isEmpty()){
+		if(!this.textTopRaw.isEmpty()){
 			topSize = topTextlabel.getPreferredSize().height;
 		}
 		int bottomSize = 0;
-		if(!bottomTextlabel.getText().isEmpty()){
+		if(!this.textBottomRaw.isEmpty()){
 			bottomSize = bottomTextlabel.getPreferredSize().height;
 		}
 		r.y = r.y + topSize;

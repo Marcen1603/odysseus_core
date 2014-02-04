@@ -51,8 +51,8 @@ public abstract class AbstractPictogram extends AbstractPart {
 	public AbstractPictogram(AbstractPictogram old) {
 		super(old);
 		this.constraint = old.constraint.getCopy();
-		this.textTop = old.textTop;
-		this.textBottom = old.textBottom;
+		setTextBottom(old.getTextBottom());
+		setTextTop(old.getTextTop());
 
 	}
 
