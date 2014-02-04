@@ -158,7 +158,18 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 		@SuppressWarnings("unchecked")
 		RelationalFastMedianPO<T> po = (RelationalFastMedianPO<T>) ipo;
 		
-		return medianAttrPos == po.medianAttrPos && numericalMedian == po.numericalMedian;
-		
+		if (medianAttrPos != po.medianAttrPos || numericalMedian != po.numericalMedian){
+			return false;
+		}
+
+		if (this.groupProcessor == null && po.groupProcessor == null){
+			return true;
+		}
+
+		if (this.groupProcessor != null && po.groupProcessor!=null){
+			return groupProcessor.equals(po.groupProcessor);
+		}
+				
+		return false;					
 	}
 }
