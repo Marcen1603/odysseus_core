@@ -279,13 +279,13 @@ public abstract class AbstractTimeSeriesChart extends
 			series.put(groupID, gSerie);
 		}
 
-		String name = getChoosenAttributes(port).get(i).getName() + "@"
+		String name = getChoosenAttributes(port).get(i).getName() + " "
 				+ groupName;;
 		timeSeries = gSerie.get(name);
 		if (timeSeries == null) {
 
 			if (useShortNames){
-				timeSeries = new TimeSeries(getChoosenAttributes(port).get(i).getAttributeName() + "@"
+				timeSeries = new TimeSeries(getChoosenAttributes(port).get(i).getAttributeName() + " "
 						+ groupName);			
 			}else{
 				timeSeries = new TimeSeries(name);
