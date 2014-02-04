@@ -67,7 +67,9 @@ public class Context {
 
 	public Context copy() {
 		Context copy = new Context();
-		copy.contextMap.putAll(this.contextMap);
+		for( String key : contextMap.keySet() ) {
+			copy.contextMap.put(key, contextMap.get(key));
+		}
 		return copy;
 	}
 }

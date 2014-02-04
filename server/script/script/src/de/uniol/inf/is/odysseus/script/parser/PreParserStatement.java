@@ -51,7 +51,7 @@ public final class PreParserStatement {
 	void validate( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser) throws OdysseusScriptException {
 		keyword.setParser(parser);
 		
-		keyword.validate(variables, parameter, caller, context);
+		keyword.validate(variables, parameter, caller, context.copy());
 	}
 	
 	Optional<?> execute( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser) throws OdysseusScriptException {
@@ -60,7 +60,7 @@ public final class PreParserStatement {
 		}
 		
 		keyword.setParser(parser);
-		Object result = keyword.execute(variables, parameter, caller, context);
+		Object result = keyword.execute(variables, parameter, caller, context.copy());
 		return result == null ? Optional.absent() : Optional.of(result);
 	}
 

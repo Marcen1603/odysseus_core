@@ -129,16 +129,16 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 
 	@Override
 	public List<IExecutorCommand> parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException {
-		return execute(parseScript(completeText, caller, context), caller, defaultSink, context);
+		return execute(parseScript(completeText, caller, context), caller, defaultSink);
 	}
 
 	@Override
 	public List<IExecutorCommand> parseAndExecute(String[] textLines, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException {
-		return execute(parseScript(textLines, caller, context), caller, defaultSink, context);
+		return execute(parseScript(textLines, caller, context), caller, defaultSink);
 	}
 	
 	@Override
-	public List<IExecutorCommand> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
 
 		validate(statements, caller, defaultSink);
 
@@ -227,7 +227,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			text = runProcedures(text, caller);
 
 			ReplacementContainer replacements = new ReplacementContainer();
-			replacements.connect(context);
+			replacements.connect(context.copy());
 
 			IfController ifController = new IfController(text, caller);
 			StringBuffer sb = null;
@@ -248,17 +248,6 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 				// use replacements if we are not in procedure
 				if (!isInProcedure) {
 					line = replacements.use(line);
-					if (replacements.parse(line)) {
-						continue;
-					}
-
-					if (line.indexOf(PARAMETER_KEY + LOOP_END_KEY) != -1) {
-						continue;
-					}
-
-					if (line.indexOf(PARAMETER_KEY + LOOP_START_KEY) != -1) {
-						continue;
-					}
 				}
 				// dropping procedures was already done
 				if (line.indexOf(PARAMETER_KEY + DROPPROCEDURE) != -1) {
@@ -330,10 +319,22 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 							}
 
 							if (!foundParam) {
+								if (replacements.parse(line)) {
+									continue;
+								}
+								
+								if (line.indexOf(PARAMETER_KEY + LOOP_END_KEY) != -1) {
+									continue;
+								}
+								
+								if (line.indexOf(PARAMETER_KEY + LOOP_START_KEY) != -1) {
+									continue;
+								}
+								
 								throw new OdysseusScriptException("Undefined key '" + line.substring(1) + "'");
 							}
 						}
-
+						
 					} else {
 						if (sb == null) {
 							throw new OdysseusScriptException("No key set in line " + (currentLine + 1));
@@ -348,7 +349,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			// statement/parameter
 			if (sb != null && currentKey != null) {
 				IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(currentKey);
-				statements.add(new PreParserStatement(currentKey, keyword, sb.toString(), keyStartedAtLine, replacements.getCurrentContext()));
+				statements.add(new PreParserStatement(currentKey, keyword, sb.toString(), keyStartedAtLine, replacements.getNowContext()));
 				keyStartedAtLine = currentLine + 1;
 			}
 

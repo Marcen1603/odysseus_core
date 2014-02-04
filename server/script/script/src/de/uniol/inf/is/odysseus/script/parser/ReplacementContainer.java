@@ -18,6 +18,8 @@ public final class ReplacementContainer {
 	
 	private static final Map<String, String> defaultReplacements = Maps.newHashMap();
 	private final Map<String, String> replacements = Maps.newHashMap();
+	
+	private Context currentContext;
 	private Context context;
 	
 	public ReplacementContainer() {
@@ -27,6 +29,7 @@ public final class ReplacementContainer {
 	public void connect(Context context) {
 		Preconditions.checkNotNull(context, "Context must not be null");
 		this.context = context;
+		this.currentContext = context;
 		
 		fromContextToReplacements();
 		fromReplacementsToContext();
@@ -43,6 +46,7 @@ public final class ReplacementContainer {
 	private void fromReplacementsToContext() {
 		for( String key : replacements.keySet() ) {
 			context.putOrReplace(key, replacements.get(key));
+			currentContext.putOrReplace(key, replacements.get(key));
 		}
 	}
 	
@@ -74,6 +78,8 @@ public final class ReplacementContainer {
 
 	public boolean parse(String line) {
 		Preconditions.checkNotNull(line, "Line to parse must not be null!");
+
+		currentContext = context.copy();
 
 		if (line.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY) != -1) {
 			String[] parts = line.split(" |\t", 3);
@@ -124,6 +130,10 @@ public final class ReplacementContainer {
 	}
 	
 	public Context getCurrentContext() {
+		return currentContext;
+	}
+	
+	public Context getNowContext() {
 		return context;
 	}
 }

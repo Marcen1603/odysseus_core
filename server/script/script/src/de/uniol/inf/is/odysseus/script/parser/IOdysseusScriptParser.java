@@ -31,7 +31,7 @@ public interface IOdysseusScriptParser {
 
 	public List<?> parseAndExecute(String[] textlines, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException;
 
-	public List<?> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException;
+	public List<?> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException;
 
 	public void validate(String[] textlines, ISession caller, Context context) throws OdysseusScriptException;
 	
