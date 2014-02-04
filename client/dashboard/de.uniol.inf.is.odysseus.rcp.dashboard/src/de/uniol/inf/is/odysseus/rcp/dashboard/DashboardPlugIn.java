@@ -112,6 +112,7 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 		imageManager.register("selectImage", "icons/selectImage.gif");
 		imageManager.register("resetImage", "icons/deleteEdit.gif");
 		imageManager.register("setting", "icons/setting.png");
+		imageManager.register("chooseFile", "icons/navigator.gif");
 	}
 
 	private static void stopImpl() {
