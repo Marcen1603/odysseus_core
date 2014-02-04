@@ -34,7 +34,7 @@ public class AssociativeStorage3D implements IAssociativeStorage<Tuple<?>> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void set(Object[] path, int[] index, double value) {
+    public synchronized void set(Object[] path, int[] index, double value) {
         Map<Object, Object> tmpStore = this.store;
         for (int i = 0; i < path.length - 1; i++) {
             Object key = path[i];
@@ -52,7 +52,7 @@ public class AssociativeStorage3D implements IAssociativeStorage<Tuple<?>> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public double get(Object[] path, int[] position) {
+    public synchronized  double get(Object[] path, int[] position) {
         Map<Object, Object> tmpStore = this.store;
         for (int i = 0; i < path.length - 1; i++) {
             Object index = path[i];
@@ -64,7 +64,7 @@ public class AssociativeStorage3D implements IAssociativeStorage<Tuple<?>> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public double[] getLine(Object[] path, int[] position) {
+    public synchronized double[] getLine(Object[] path, int[] position) {
         Map<Object, Object> tmpStore = this.store;
         for (int i = 0; i < path.length - 1; i++) {
             Object index = path[i];

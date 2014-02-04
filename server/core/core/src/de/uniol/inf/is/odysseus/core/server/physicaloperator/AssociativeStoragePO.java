@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.storage.IAssociativeStorag
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class AssociativeStoragePO<T extends Tuple<?>> extends AbstractSink<T> {
+public class AssociativeStoragePO<T extends Tuple<?>> extends AbstractPipe<T,T> {
 
     private IAssociativeStorage<T> store;
     private int[] hierachyPos;
@@ -46,14 +46,15 @@ public class AssociativeStoragePO<T extends Tuple<?>> extends AbstractSink<T> {
         }
         Double value = (Double) object.getAttribute(valuePos);
         this.store.set(hierachy, index, value);
-    }
+        transfer(object);
+   }
 
     @Override
     public void processPunctuation(IPunctuation punctuation, int port) {
     }
 
     @Override
-    public AbstractSink<T> clone() {
+    public AbstractPipe<T,T> clone() {
         return new AssociativeStoragePO<T>(this);
     }
 
@@ -61,5 +62,10 @@ public class AssociativeStoragePO<T extends Tuple<?>> extends AbstractSink<T> {
     protected void process_close() {
         super.process_close();
     }
+
+	@Override
+	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
+		return OutputMode.INPUT;
+	}
 
 }
