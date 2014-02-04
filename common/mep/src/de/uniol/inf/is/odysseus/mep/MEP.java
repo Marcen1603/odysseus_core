@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.mep.functions.SMaxFunction;
 import de.uniol.inf.is.odysseus.mep.functions.SMinFunction;
 import de.uniol.inf.is.odysseus.mep.functions.SleepFunction;
 import de.uniol.inf.is.odysseus.mep.functions.StoreFunction;
-import de.uniol.inf.is.odysseus.mep.functions.StoreLineFunction;
+import de.uniol.inf.is.odysseus.mep.functions.StoreGetLineFunction;
 import de.uniol.inf.is.odysseus.mep.functions.UUIDFunction;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
@@ -392,7 +392,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new SleepFunction());
         
         registerFunction(new StoreFunction());
-        registerFunction(new StoreLineFunction());
+        registerFunction(new StoreGetLineFunction());
     }
 
     /**
