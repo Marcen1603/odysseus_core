@@ -2,16 +2,16 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model;
 
 import org.eclipse.draw2d.IFigure;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.RectanglePictogramFigure;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.PentagonPictogramFigure;
 
-public class RectanglePictogram extends AbstractShapePictogram {
+public class PentagonPictogram extends AbstractShapePictogram {
 
-	public RectanglePictogram() {
+	public PentagonPictogram() {
 		super();		
 		super.setKeepRatio(false);
 	}
 
-	public RectanglePictogram(RectanglePictogram rp) {
+	public PentagonPictogram(PentagonPictogram rp) {
 		super(rp);
 		super.setKeepRatio(false);
 	}
@@ -19,12 +19,12 @@ public class RectanglePictogram extends AbstractShapePictogram {
 
 	@Override
 	public AbstractPictogram clone() {
-		return new RectanglePictogram(this);
+		return new PentagonPictogram(this);
 	}
 
 	@Override
 	public IFigure createPictogramFigure() {
-		return new RectanglePictogramFigure();
+		return new PentagonPictogramFigure();
 	}
 
 }

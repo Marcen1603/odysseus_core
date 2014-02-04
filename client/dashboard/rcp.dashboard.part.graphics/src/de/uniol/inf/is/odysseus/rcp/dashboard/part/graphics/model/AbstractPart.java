@@ -82,15 +82,55 @@ public abstract class AbstractPart extends Observable implements Observer {
 		notifyObservers();
 	}
 
-	public <T> T loadValue(T value, T defaultValue) {
-		if (value == null) {
+	public boolean loadValue(String value, boolean defaultValue){
+		if(value==null){
 			return defaultValue;
 		}
-		if (value.toString().isEmpty()) {
+		if (value.isEmpty()) {
+			return defaultValue;
+		}		
+		return Boolean.parseBoolean(value);
+	}
+	
+	public int loadValue(String value, int defaultValue){
+		if(value==null){
 			return defaultValue;
 		}
+		if (value.isEmpty()) {
+			return defaultValue;
+		}		
+		return Integer.parseInt(value);
+	}
+	
+	public float loadValue(String value, float defaultValue){
+		if(value==null){
+			return defaultValue;
+		}
+		if (value.isEmpty()) {
+			return defaultValue;
+		}		
+		return Float.parseFloat(value);
+	}
+	
+	public String loadValue(String value, String defaultValue){
+		if(value==null){
+			return defaultValue;
+		}
+		if (value.isEmpty()) {
+			return defaultValue;
+		}		
 		return value;
 	}
+	
+//	public <T> T loadValue(T value, T defaultValue) {
+//		if (value == null) {
+//			return defaultValue;
+//		}
+//		if (value.toString().isEmpty()) {
+//			return defaultValue;
+//		}
+//		return value;
+//	}
 
 	public void getXML(Node parent, Document builder) {
 		Map<String, String> values = new HashMap<String, String>();

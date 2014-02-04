@@ -164,7 +164,7 @@ public class Connection extends AbstractPart {
 	 */
 	@Override
 	protected void load(Map<String, String> values) {
-		setWidth(loadValue(Integer.parseInt(values.get("width")), 2));
+		setWidth(loadValue(values.get("width"), 2));
 		setTargetText(loadValue(values.get("targetText"), ""));
 		setSourceText(loadValue(values.get("sourceText"), ""));
 		setBottomText(loadValue(values.get("bottomText"), ""));

@@ -18,20 +18,28 @@ import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.predicate.TuplePredicate;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.ColorManager;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.RectanglePictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractShapePictogram;
 
-public class ShapePictogramDialog extends AbstractPictogramDialog<RectanglePictogram> {
+public class ShapePictogramDialog extends AbstractPictogramDialog<AbstractShapePictogram> {
 
 	private List<ShapeEntry> entries = new ArrayList<>();
 	private ScrolledComposite scroller;
 	private Composite container;
-	private Text widthText;
-	private String width;
+	private Spinner widthSpinner;
+	private int width;
+	private Spinner rotateSpinner;
+	private int rotate;
+	private Button fillColorCheckButton;
+	private Button keepRatioCheckButton;
+	private boolean fillColor = false;
+	private boolean keepRatio = false;
+	
 
 	@Override
 	public Control createWidgetAdrea(final Composite parent) {
@@ -87,11 +95,30 @@ public class ShapePictogramDialog extends AbstractPictogramDialog<RectanglePicto
 		Label lblPredicate = new Label(parent, SWT.NONE);
 		lblPredicate.setText("Width of the stroke");		
 
-		widthText = new Text(parent, SWT.BORDER);
-		widthText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		widthText.setText(width);
+		widthSpinner = new Spinner(parent, SWT.BORDER);
+		widthSpinner.setMinimum(0);
+		widthSpinner.setMaximum(1000);
+		widthSpinner.setSelection(width);
+		widthSpinner.setIncrement(1);
+		widthSpinner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));		
 		
+		Label lblRotate = new Label(parent, SWT.NONE);
+		lblRotate.setText("Rotates the shape by the given counter-clockwise angle");
 		
+		rotateSpinner = new Spinner(parent, SWT.BORDER);
+		rotateSpinner.setMinimum(0);
+		rotateSpinner.setMaximum(359);
+		rotateSpinner.setSelection(rotate);
+		rotateSpinner.setIncrement(1);
+		rotateSpinner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));	
+		
+		keepRatioCheckButton = new Button(parent, SWT.CHECK);
+		keepRatioCheckButton.setText("Do not fit the shape to the containers size and keep its ratio");
+		keepRatioCheckButton.setSelection(keepRatio);
+		
+		fillColorCheckButton = new Button(parent, SWT.CHECK);
+		fillColorCheckButton.setText("Fill the shape with the color.");
+		fillColorCheckButton.setSelection(fillColor);
 		return parent;
 	}
 
@@ -144,25 +171,46 @@ public class ShapePictogramDialog extends AbstractPictogramDialog<RectanglePicto
 	}
 
 	@Override
-	public void saveValues(RectanglePictogram pg) {
+	public void saveValues(AbstractShapePictogram pg) {
 		pg.clearShapeColors();
 		for (ShapeEntry se : entries) {
 			pg.addShapeColor(se.predicate, se.color);
 		}
-		pg.setWidth(Integer.parseInt(widthText.getText()));
-
+		pg.setWidth(widthSpinner.getSelection());
+		pg.setFillColor(fillColorCheckButton.getSelection());
+		pg.setKeepRatio(keepRatioCheckButton.getSelection());
+		pg.setRotate(rotateSpinner.getSelection());
 	}
 
 	@Override
-	public void loadValues(RectanglePictogram pg) {
+	public void loadValues(AbstractShapePictogram pg) {
 		entries.clear();
 		for (Pair<TuplePredicate, Color> pair : pg.getShapeColors()) {
 			ShapeEntry se = new ShapeEntry();
 			se.predicate = pair.getE1().toString();
 			se.color = pair.getE2();
 			entries.add(se);
-		}
-		width = Integer.toString(pg.getWidth());
+		}		
+		width = pg.getWidth();
+		fillColor = pg.getFillColor();
+		keepRatio = pg.isKeepRatio();
+		rotate = (int) pg.getRotate();
+	}
+
+	public boolean isFillColor() {
+		return fillColor;
+	}
+
+	public void setFillColor(boolean fillColor) {
+		this.fillColor = fillColor;
+	}
+
+	public boolean isKeepRatio() {
+		return keepRatio;
+	}
+
+	public void setKeepRatio(boolean keepRatio) {
+		this.keepRatio = keepRatio;
 	}
 
 	private class ShapeEntry {

@@ -4,22 +4,22 @@ import org.eclipse.draw2d.IFigure;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.RectanglePictogramFigure;
 
-public class RectanglePictogram extends AbstractShapePictogram {
+public class SquarePictogram extends AbstractShapePictogram {
 
-	public RectanglePictogram() {
+	public SquarePictogram() {
 		super();		
-		super.setKeepRatio(false);
+		super.setKeepRatio(true);
 	}
 
-	public RectanglePictogram(RectanglePictogram rp) {
+	public SquarePictogram(SquarePictogram rp) {
 		super(rp);
-		super.setKeepRatio(false);
+		super.setKeepRatio(true);
 	}
 	
 
 	@Override
 	public AbstractPictogram clone() {
-		return new RectanglePictogram(this);
+		return new SquarePictogram(this);
 	}
 
 	@Override

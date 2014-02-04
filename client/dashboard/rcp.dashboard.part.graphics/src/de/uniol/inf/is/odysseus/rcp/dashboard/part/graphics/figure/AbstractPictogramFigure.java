@@ -36,7 +36,7 @@ public abstract class AbstractPictogramFigure<T extends AbstractPictogram> exten
 	private static final int TEXT_HEIGHT_MARGIN = 3;
 
 	public AbstractPictogramFigure() {
-		setLayoutManager(new XYLayout());
+		setLayoutManager(new XYLayout());		
 		setOpaque(false);		
 		topTextlabel = new Label();
 		bottomTextlabel = new Label();
@@ -46,6 +46,7 @@ public abstract class AbstractPictogramFigure<T extends AbstractPictogram> exten
 
 	@Override
 	public void paintFigure(Graphics g) {
+		
 		Rectangle r = getBounds().getCopy();
 		Point center = new Point(r.width / 2, r.height / 2);
 		Dimension topDim = topTextlabel.getPreferredSize();
@@ -56,7 +57,7 @@ public abstract class AbstractPictogramFigure<T extends AbstractPictogram> exten
 
 		topTextlabel.invalidate();
 		bottomTextlabel.invalidate();
-		paintGraphic(g);
+		paintGraphic(g);		
 	}
 
 	public void refresh() {
@@ -81,8 +82,16 @@ public abstract class AbstractPictogramFigure<T extends AbstractPictogram> exten
 
 	protected Rectangle getContentBounds() {
 		Rectangle r = getBounds().getCopy();
-		r.y = r.y + topTextlabel.getPreferredSize().height;
-		r.height = r.height - topTextlabel.getPreferredSize().height - bottomTextlabel.getPreferredSize().height;
+		int topSize = 0;
+		if(!topTextlabel.getText().isEmpty()){
+			topSize = topTextlabel.getPreferredSize().height;
+		}
+		int bottomSize = 0;
+		if(!bottomTextlabel.getText().isEmpty()){
+			bottomSize = bottomTextlabel.getPreferredSize().height;
+		}
+		r.y = r.y + topSize;
+		r.height = r.height - topSize - bottomSize;
 		r.height = Math.max(r.height, 0);
 		return r;
 	}

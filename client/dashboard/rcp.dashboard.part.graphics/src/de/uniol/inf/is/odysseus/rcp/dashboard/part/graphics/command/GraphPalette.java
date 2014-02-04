@@ -13,9 +13,17 @@ import org.eclipse.gef.palette.ToolEntry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.Activator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.factory.ConnectionFactory;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.factory.PictogramFactory;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.CirclePictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.EllipsePictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.HexagonPictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.ImagePictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.MultipleImagePictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.OctagonPictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.PentagonPictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.RectanglePictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.RhombPictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.SquarePictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.TrianglePictogram;
 
 public class GraphPalette extends PaletteRoot {
 
@@ -43,6 +51,14 @@ public class GraphPalette extends PaletteRoot {
 		group.add(new CreationToolEntry("Multiple Images", "A list of images where a predicate selects the image", new PictogramFactory(MultipleImagePictogram.class), Activator.getImage("images.png"), null));
 		group.add(new PaletteSeparator());
 		group.add(new CreationToolEntry("Rectangle", "Creates a rectangle", new PictogramFactory(RectanglePictogram.class), Activator.getImage("shape_rectangle.png"), null));
+		group.add(new CreationToolEntry("Square", "Creates a square", new PictogramFactory(SquarePictogram.class), Activator.getImage("shape_square.png"), null));
+		group.add(new CreationToolEntry("Circle", "Creates a circle", new PictogramFactory(CirclePictogram.class), Activator.getImage("shape_circle.png"), null));
+		group.add(new CreationToolEntry("Ellipse", "Creates an ellipse", new PictogramFactory(EllipsePictogram.class), Activator.getImage("shape_ellipse.png"), null));
+		group.add(new CreationToolEntry("Triangle", "Creates a triangle", new PictogramFactory(TrianglePictogram.class), Activator.getImage("shape_triangle.png"), null));
+		group.add(new CreationToolEntry("Rhomb", "Creates a rhomb", new PictogramFactory(RhombPictogram.class), Activator.getImage("shape_rhomb.png"), null));
+		group.add(new CreationToolEntry("Pentagon", "Creates a pentagon", new PictogramFactory(PentagonPictogram.class), Activator.getImage("shape_pentagon.png"), null));
+		group.add(new CreationToolEntry("Hexagon", "Creates a hexagon", new PictogramFactory(HexagonPictogram.class), Activator.getImage("shape_hexagon.png"), null));
+		group.add(new CreationToolEntry("Octagon", "Creates a octagon", new PictogramFactory(OctagonPictogram.class), Activator.getImage("shape_octagon.png"), null));
 		palette.add(group);
 	}
 }

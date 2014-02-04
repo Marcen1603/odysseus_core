@@ -65,15 +65,15 @@ public class MultipleImagePictogram extends AbstractPictogram {
 	 */
 	@Override
 	protected void load(Map<String, String> values) {
-		int count = loadValue(Integer.parseInt(values.get("count")), 0);
+		int count = loadValue(values.get("count"), 0);
 		for (int i = 0; i < count; i++) {
 			String image = values.get("image__" + i + "__filename");
 			String predicate = values.get("image__" + i + "__predicate");
 			addImage(predicate, image);
 		}
-		setStretch(loadValue(Boolean.parseBoolean(values.get("stretch")), true));
-		setCenter(loadValue(Boolean.parseBoolean(values.get("center")), true));
-		setKeepRatio(loadValue(Boolean.parseBoolean(values.get("keepRatio")), true));
+		setStretch(loadValue(values.get("stretch"), true));
+		setCenter(loadValue(values.get("center"), true));
+		setKeepRatio(loadValue(values.get("keepRatio"), true));
 	}
 
 	/*

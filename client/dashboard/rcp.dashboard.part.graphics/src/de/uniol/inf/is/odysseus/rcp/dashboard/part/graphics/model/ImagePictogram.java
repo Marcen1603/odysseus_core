@@ -86,9 +86,9 @@ public class ImagePictogram extends AbstractPictogram {
 	protected void load(Map<String, String> values) {
 		setFilename(loadValue(values.get("filename"), ""));
 		setPredicate(loadValue(values.get("predicate"), "true"));
-		setStretch(loadValue(Boolean.parseBoolean(values.get("stretch")), true));
-		setCenter(loadValue(Boolean.parseBoolean(values.get("center")), true));
-		setKeepRatio(loadValue(Boolean.parseBoolean(values.get("keepRatio")), true));
+		setStretch(loadValue(values.get("stretch"), true));
+		setCenter(loadValue(values.get("center"), true));
+		setKeepRatio(loadValue(values.get("keepRatio"), true));
 	}
 
 	/*
