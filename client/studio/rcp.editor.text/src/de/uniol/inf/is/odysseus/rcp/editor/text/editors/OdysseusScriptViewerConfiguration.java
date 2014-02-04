@@ -24,6 +24,8 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.formatter.IFormattingStrategy;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
@@ -37,6 +39,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.editors.coloring.OdysseusScriptR
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.completion.OdysseusScriptCompletionProcessor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.formatting.DefaultFormattingStrategy;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.formatting.OdysseusScriptContentFormatter;
+import de.uniol.inf.is.odysseus.rcp.editor.text.editors.hyperlink.QueryHyperlinkDetector;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.partition.IOdysseusScriptPartition;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.partition.OdysseusScriptPartitionRegsitry;
 
@@ -109,5 +112,10 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 		}
 		formatter.setFormattingStrategy(new DefaultFormattingStrategy(), IDocument.DEFAULT_CONTENT_TYPE);
 		return formatter;
+	}
+	
+	@Override
+	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
+		return new IHyperlinkDetector[] { new URLHyperlinkDetector(), new QueryHyperlinkDetector(editor) };
 	}
 }
