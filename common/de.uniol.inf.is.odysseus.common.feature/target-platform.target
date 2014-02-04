@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target includeMode="feature" name="Odysseus Target Platform" sequenceNumber="115">
+<?pde version="3.8"?><target includeMode="feature" name="Odysseus Target Platform" sequenceNumber="116">
 <locations>
 <location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.persistence.sdk.feature.group" version="2.3.2.v20111125-r10461"/>
@@ -19,6 +19,10 @@
 <unit id="org.eclipse.gef.feature.group" version="3.7.2.v20110927-2020-777D381B4Bz0755B465D34242"/>
 <unit id="org.eclipse.zest.feature.group" version="1.3.0.v20110425-2050-67A18yF6F18CBD5A7N54242"/>
 <repository location="http://download.eclipse.org/tools/gef/updates/releases"/>
+</location>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.wst.xml_ui.feature.feature.group" version="3.3.2.v201112072049-7H7EFZ7DxumTmce4khcSkIiqoD8eDMKlT8Oz011P"/>
+<repository location="http://download.eclipse.org/releases/indigo"/>
 </location>
 </locations>
 </target>
