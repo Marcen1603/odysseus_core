@@ -215,11 +215,15 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	@Override
 	public List<PreParserStatement> parseScript(String[] textToParse, ISession caller, Context context) throws OdysseusScriptException {
 
-		
 		List<PreParserStatement> statements = new LinkedList<PreParserStatement>();
 		try {
 			resetDefaultReplacements();
-
+			ReplacementContainer replacements = new ReplacementContainer();
+			replacements.connect(context.copy());
+			
+			InputStatementParser inputParser = new InputStatementParser(textToParse, replacements);
+			textToParse = inputParser.unwrap();
+			
 			textToParse = removeAllComments(textToParse);
 
 			// first, we rewrite loops to serial query text
@@ -227,12 +231,6 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 
 			// after that, we are looking for procedures and replace them
 			text = runProcedures(text, caller);
-
-			ReplacementContainer replacements = new ReplacementContainer();
-			replacements.connect(context.copy());
-
-			InputStatementParser inputParser = new InputStatementParser(text, replacements);
-			text = inputParser.unwrap();
 			
 			IfController ifController = new IfController(text, caller);
 			StringBuffer sb = null;
