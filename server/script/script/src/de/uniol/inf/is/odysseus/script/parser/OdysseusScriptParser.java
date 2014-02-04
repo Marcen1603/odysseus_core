@@ -116,6 +116,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		strings.add(IfController.UNDEF_KEY);
 		strings.add(IfController.SRCDEF_KEY);
 		strings.add(IfController.SRCNDEF_KEY);
+		strings.add(InputStatementParser.INPUT_KEY);
 		return strings;
 	}
 
@@ -214,6 +215,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	@Override
 	public List<PreParserStatement> parseScript(String[] textToParse, ISession caller, Context context) throws OdysseusScriptException {
 
+		
 		List<PreParserStatement> statements = new LinkedList<PreParserStatement>();
 		try {
 			resetDefaultReplacements();
@@ -229,6 +231,9 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			ReplacementContainer replacements = new ReplacementContainer();
 			replacements.connect(context.copy());
 
+			InputStatementParser inputParser = new InputStatementParser(text, replacements);
+			text = inputParser.unwrap();
+			
 			IfController ifController = new IfController(text, caller);
 			StringBuffer sb = null;
 
