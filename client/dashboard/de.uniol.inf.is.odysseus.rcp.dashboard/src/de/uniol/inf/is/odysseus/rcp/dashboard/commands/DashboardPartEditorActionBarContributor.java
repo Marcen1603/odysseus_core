@@ -21,8 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.gef.ui.actions.ActionBarContributor;
 import org.eclipse.gef.ui.actions.ActionRegistry;
+import org.eclipse.gef.ui.actions.AlignmentRetargetAction;
 import org.eclipse.gef.ui.actions.CopyRetargetAction;
 import org.eclipse.gef.ui.actions.DeleteRetargetAction;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
@@ -96,6 +98,12 @@ public class DashboardPartEditorActionBarContributor extends ActionBarContributo
 		addRetargetAction(new PasteRetargetAction());
 		addRetargetAction(new ZoomInRetargetAction());
 		addRetargetAction(new ZoomOutRetargetAction());
+		addRetargetAction(new AlignmentRetargetAction(PositionConstants.LEFT));
+		addRetargetAction(new AlignmentRetargetAction(PositionConstants.CENTER));
+		addRetargetAction(new AlignmentRetargetAction(PositionConstants.RIGHT));
+		addRetargetAction(new AlignmentRetargetAction(PositionConstants.TOP));
+		addRetargetAction(new AlignmentRetargetAction(PositionConstants.MIDDLE));
+		addRetargetAction(new AlignmentRetargetAction(PositionConstants.BOTTOM));
 
 	}
 
@@ -149,6 +157,14 @@ public class DashboardPartEditorActionBarContributor extends ActionBarContributo
 		toolBarManager.add(getAction(GEFActionConstants.ZOOM_IN));
 		toolBarManager.add(getAction(GEFActionConstants.ZOOM_OUT));
 		toolBarManager.add(new ZoomComboContributionItem(getPage()));
+		toolBarManager.add(new Separator());
+		toolBarManager.add(getAction(GEFActionConstants.ALIGN_LEFT));
+		toolBarManager.add(getAction(GEFActionConstants.ALIGN_CENTER));
+		toolBarManager.add(getAction(GEFActionConstants.ALIGN_RIGHT));
+		toolBarManager.add(getAction(GEFActionConstants.ALIGN_TOP));
+		toolBarManager.add(getAction(GEFActionConstants.ALIGN_MIDDLE));
+		toolBarManager.add(getAction(GEFActionConstants.ALIGN_BOTTOM));
+		
 
 	}
 
@@ -158,6 +174,13 @@ public class DashboardPartEditorActionBarContributor extends ActionBarContributo
 		MenuManager viewMenu = new MenuManager("View");
 		viewMenu.add(getAction(GEFActionConstants.ZOOM_IN));
 		viewMenu.add(getAction(GEFActionConstants.ZOOM_OUT));
+		viewMenu.add(new Separator());
+		viewMenu.add(getAction(GEFActionConstants.ALIGN_LEFT));
+		viewMenu.add(getAction(GEFActionConstants.ALIGN_CENTER));
+		viewMenu.add(getAction(GEFActionConstants.ALIGN_RIGHT));
+		viewMenu.add(getAction(GEFActionConstants.ALIGN_TOP));
+		viewMenu.add(getAction(GEFActionConstants.ALIGN_MIDDLE));
+		viewMenu.add(getAction(GEFActionConstants.ALIGN_BOTTOM));		
 		menubar.insertAfter(IWorkbenchActionConstants.M_EDIT, viewMenu);
 	}
 

@@ -31,6 +31,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.MouseWheelHandler;
@@ -41,7 +42,9 @@ import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.ui.actions.ActionRegistry;
+import org.eclipse.gef.ui.actions.AlignmentAction;
 import org.eclipse.gef.ui.actions.DeleteAction;
+import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.gef.ui.actions.RedoAction;
 import org.eclipse.gef.ui.actions.UndoAction;
 import org.eclipse.gef.ui.actions.UpdateAction;
@@ -331,7 +334,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		actionRegistry.registerAction(new RedoAction(part));
 		actionRegistry.registerAction(new DeleteAction(part));
 		actionRegistry.registerAction(new CopyAction(part));
-		actionRegistry.registerAction(new PasteAction(part));
+		actionRegistry.registerAction(new PasteAction(part));		
 	}
 
 	protected ActionRegistry getActionRegistry() {
@@ -341,21 +344,29 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	}
 
 	protected void configureGraphicalViewer() {
-		// actions
+		// default actions
 		registerAndBindingService("org.eclipse.ui.edit.undo", new UndoAction(getWorkbenchPart()));
 		registerAndBindingService("org.eclipse.ui.edit.redo", new RedoAction(getWorkbenchPart()));
 		registerAndBindingService("org.eclipse.ui.edit.delete", new DeleteAction(getWorkbenchPart()));
 		registerAndBindingService("org.eclipse.ui.edit.copy", new CopyAction(getWorkbenchPart()));
 		registerAndBindingService("org.eclipse.ui.edit.paste", new PasteAction(getWorkbenchPart()));
 
+		// zooming
 		ZoomManager zoomManager = ((ScalableFreeformRootEditPart) viewer.getRootEditPart()).getZoomManager();
 		registerAndBindingService(new ZoomInAction(zoomManager));
-		registerAndBindingService(new ZoomOutAction(zoomManager));
-
+		registerAndBindingService(new ZoomOutAction(zoomManager));		
 		List<String> zoomContributions = Arrays.asList(new String[] { ZoomManager.FIT_ALL, ZoomManager.FIT_HEIGHT, ZoomManager.FIT_WIDTH });
 		zoomManager.setZoomLevelContributions(zoomContributions);
 		viewer.setProperty(MouseWheelHandler.KeyGenerator.getKey(SWT.MOD1), MouseWheelZoomHandler.SINGLETON);
 		viewer.setKeyHandler(new GraphicalViewerKeyHandler(viewer));
+		
+		// layouting
+		registerAndBindingService(GEFActionConstants.ALIGN_LEFT, new AlignmentAction(getWorkbenchPart(), PositionConstants.LEFT));
+		registerAndBindingService(GEFActionConstants.ALIGN_CENTER, new AlignmentAction(getWorkbenchPart(), PositionConstants.CENTER));
+		registerAndBindingService(GEFActionConstants.ALIGN_RIGHT, new AlignmentAction(getWorkbenchPart(), PositionConstants.RIGHT));
+		registerAndBindingService(GEFActionConstants.ALIGN_TOP, new AlignmentAction(getWorkbenchPart(), PositionConstants.TOP));
+		registerAndBindingService(GEFActionConstants.ALIGN_MIDDLE, new AlignmentAction(getWorkbenchPart(), PositionConstants.MIDDLE));
+		registerAndBindingService(GEFActionConstants.ALIGN_BOTTOM, new AlignmentAction(getWorkbenchPart(), PositionConstants.BOTTOM));
 	}
 
 	private void registerAndBindingService(IAction action) {

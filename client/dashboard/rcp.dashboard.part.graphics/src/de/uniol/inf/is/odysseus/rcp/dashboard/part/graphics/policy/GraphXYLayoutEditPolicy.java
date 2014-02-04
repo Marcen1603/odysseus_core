@@ -33,7 +33,7 @@ public class GraphXYLayoutEditPolicy extends XYLayoutEditPolicy {
 			return createPasteAction((LocationRequest) request);
 		}
 		return super.getCommand(request);
-	}
+	}	
 	
 	/**
 	 * @param request

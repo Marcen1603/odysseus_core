@@ -49,7 +49,7 @@ public class PictogramComponentEditPolicy extends ComponentEditPolicy {
 		copyCommand.setPictogram((AbstractPictogram) getHost().getModel());
 		return copyCommand;
 	}
-
+	
 	@Override
 	protected Command createDeleteCommand(GroupRequest request) {
 		PictogramDeleteCommand deleteCommand = new PictogramDeleteCommand();

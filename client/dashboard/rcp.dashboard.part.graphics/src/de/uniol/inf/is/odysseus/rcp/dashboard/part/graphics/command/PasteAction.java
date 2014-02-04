@@ -67,14 +67,6 @@ public class PasteAction extends WorkbenchPartAction {
 			return null;
 		}		
 		return new PictogramPasteCommand();		
-//		LocationRequest pasteReq = new LocationRequest(GRAPHICS_PASTE_ACTION);
-//		CompoundCommand compoundCmd = new CompoundCommand("Paste");
-//		Command cmd = object.getCommand(pasteReq);
-//		if (cmd != null) {
-//			compoundCmd.add(cmd);
-//		}
-//
-//		return compoundCmd;
 	}
 
 	@Override
