@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.script.parser.ReplacementException;
 
 public class QueryHyperlinkDetector extends AbstractHyperlinkDetector {
 
+	private static final String[] FILE_ENDINGS = new String[] {"qry", "pql", "cql"};
 	private final OdysseusScriptEditor editor;
 	
 	public QueryHyperlinkDetector(OdysseusScriptEditor editor) {
@@ -36,7 +37,6 @@ public class QueryHyperlinkDetector extends AbstractHyperlinkDetector {
 			return null;
 
 		IDocument document = textViewer.getDocument();
-
 		int offset = region.getOffset();
 
 		if (document == null)
@@ -51,7 +51,7 @@ public class QueryHyperlinkDetector extends AbstractHyperlinkDetector {
 			return null;
 		}
 
-		int pos = line.indexOf(".qry");
+		int pos = findFileEnding(line);
 		if( pos != -1 ) {
 
 			int index = pos;
@@ -84,6 +84,16 @@ public class QueryHyperlinkDetector extends AbstractHyperlinkDetector {
 		}
 		
 		return null;
+	}
+
+	private static int findFileEnding(String line) {
+		for( String fileEnding : FILE_ENDINGS ) {
+			int pos = line.indexOf("." + fileEnding);
+			if( pos != -1 ) {
+				return pos;
+			}
+		}
+		return -1;
 	}
 
 }
