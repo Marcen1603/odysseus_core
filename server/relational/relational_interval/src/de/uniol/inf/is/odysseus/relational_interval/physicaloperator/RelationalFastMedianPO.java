@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalNoGroupProcessor;
 
 public class RelationalFastMedianPO<T extends Comparable<T>>
 		extends
@@ -27,7 +28,7 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 	final private int medianAttrPos;
 	final private boolean numericalMedian;
 
-	private Map<Long,Tuple<? extends ITimeInterval>> lastCreatedElement = new HashMap<>();
+	private Map<Long, Tuple<? extends ITimeInterval>> lastCreatedElement = new HashMap<>();
 
 	public RelationalFastMedianPO(int medianAttrPos, boolean numericalMedian) {
 		this.medianAttrPos = medianAttrPos;
@@ -66,8 +67,10 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 		// PointInTime eEnd = object.getMetadata().getEnd();
 
 		// Cleanup
+//		if (groupProcessor instanceof RelationalNoGroupProcessor) {
+//			System.err.println("New element " + object);
+//		}
 
-		// System.err.println("Cleaning up for "+object+" in "+groupList);
 		Iterator<FESortedPair<T, Tuple<? extends ITimeInterval>>> iter = groupList
 				.iterator();
 		while (iter.hasNext()) {
@@ -81,7 +84,9 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 
 		// Add new value sorted
 		int pos = Collections.binarySearch(groupList, p);
-		// System.err.println(pos + " for " + p + " in List " + groupList);
+//		if (groupProcessor instanceof RelationalNoGroupProcessor) {
+//			System.err.println(pos + " for " + p + " in List " + groupList);
+//		}
 		if (pos < 0) { // Element not found in list
 			int insert = (-1) * pos - 1;
 			groupList.add(insert, p);
@@ -89,8 +94,9 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 			groupList.add(pos, p);
 		}
 
-		// System.err.println("After insert: " + groupList);
-
+//		if (groupProcessor instanceof RelationalNoGroupProcessor) {
+//			System.err.println("After insert: " + groupList);
+//		}
 		// Create Median
 		Tuple<? extends ITimeInterval> gr = groupProcessor
 				.getGroupingPart(object);
@@ -124,14 +130,17 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 			gr.append(num_median, false);
 		}
 
-		// System.err.println("Found median "+gr+" in list "+groupList);
-
+//		if (groupProcessor instanceof RelationalNoGroupProcessor){
+//			System.err.println("Found median "+gr+" in list "+groupList);
+//		}
+		
 		// TODO what if element end is before "end" of groupList
 
 		// Element can be written, if next element is created (starttimestamp of
 		// next element is needed)
 
-		Tuple<? extends ITimeInterval> last_gr = lastCreatedElement.get(groupID);
+		Tuple<? extends ITimeInterval> last_gr = lastCreatedElement
+				.get(groupID);
 		if (last_gr != null) {
 			if (last_gr.getMetadata().getStart()
 					.before(gr.getMetadata().getStart())) {
@@ -151,25 +160,26 @@ public class RelationalFastMedianPO<T extends Comparable<T>>
 
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof RelationalFastMedianPO)){
-			return false;
-		}
-		
-		@SuppressWarnings("unchecked")
-		RelationalFastMedianPO<T> po = (RelationalFastMedianPO<T>) ipo;
-		
-		if (medianAttrPos != po.medianAttrPos || numericalMedian != po.numericalMedian){
+		if (!(ipo instanceof RelationalFastMedianPO)) {
 			return false;
 		}
 
-		if (this.groupProcessor == null && po.groupProcessor == null){
+		@SuppressWarnings("unchecked")
+		RelationalFastMedianPO<T> po = (RelationalFastMedianPO<T>) ipo;
+
+		if (medianAttrPos != po.medianAttrPos
+				|| numericalMedian != po.numericalMedian) {
+			return false;
+		}
+
+		if (this.groupProcessor == null && po.groupProcessor == null) {
 			return true;
 		}
 
-		if (this.groupProcessor != null && po.groupProcessor!=null){
+		if (this.groupProcessor != null && po.groupProcessor != null) {
 			return groupProcessor.equals(po.groupProcessor);
 		}
-				
-		return false;					
+
+		return false;
 	}
 }

@@ -14,7 +14,7 @@ public class NoGroupProcessor<R,W extends IClone> implements IGroupProcessor<R, 
 	
 	@Override
 	public R getGroupingPart(R elem) {
-		return elem;
+		return null;
 	}
 
 	@Override
