@@ -299,15 +299,16 @@ public class PQLParserImpl implements PQLParserImplConstants {
                   commands.add(new CreateStreamCommand(nameStr, op, user));
         }
         else
-        {
-          RenameAO rename = new RenameAO();
-                  rename.subscribeTo(op, op.getOutputSchema());
-                  List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-                  for(SDFAttribute old : op.getOutputSchema()){
-                         attributes.add(new SDFAttribute(nameStr, old.getAttributeName(), old));
-                  }
-                  rename.setOutputSchema(new SDFSchema(nameStr, op.getOutputSchema(), attributes));
-                  op = rename;
+        {       
+        	// Now done in CreateViewCommand
+//          RenameAO rename = new RenameAO();
+//		  rename.subscribeTo(op, op.getOutputSchema());
+//		  List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+//		  for(SDFAttribute old : op.getOutputSchema()){
+//			 attributes.add(new SDFAttribute(nameStr, old.getAttributeName(), old));
+//		  }
+//		  rename.setOutputSchema(new SDFSchema(nameStr, op.getOutputSchema(), attributes));
+//		  op = rename;
           commands.add(new CreateViewCommand(nameStr, op, user));
         }
         //get access operator for view, so other operators don't get subscribed
