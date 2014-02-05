@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.TableItem;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
@@ -39,10 +40,12 @@ public class ContextMapEditorWindow extends TitleAreaDialog {
 	private static class TableEntry {
 		public String key;
 		public String value;
+		public boolean fixed;
 		
-		public TableEntry( String key, String value ) {
+		public TableEntry( String key, String value, boolean fixed ) {
 			this.key = key;
 			this.value = value;
+			this.fixed = fixed;
 		}
 	}
 	
@@ -67,15 +70,74 @@ public class ContextMapEditorWindow extends TitleAreaDialog {
 		this.dashboardPartName = dashboardPartName;
 		
 		this.tableEntries.addAll(determineTableEntries(dashboardPart));
+		scanForUndefinedReplacements(dashboardPart.getQueryTextProvider().getQueryText());
 	}
 	
 	private static List<TableEntry> determineTableEntries(IDashboardPart part) {
 		List<TableEntry> entries = Lists.newArrayList();
 		for( String key : part.getContextKeys() ) {
-			entries.add( new TableEntry(key, part.getContextValue(key).get()));
+			entries.add( new TableEntry(key, part.getContextValue(key).get(), false));
 		}
 		
 		return entries;
+	}
+	
+	private void scanForUndefinedReplacements(ImmutableList<String> queryText) {
+		List<String> undefinedReplacements = Lists.newArrayList();
+		List<String> foundDefines = Lists.newArrayList();
+		List<String> preDefinedKeys = Lists.newArrayList();
+		preDefinedKeys.add("WORKSPACE");
+		preDefinedKeys.add("WORKSPACE/");
+		preDefinedKeys.add("WORKSPACE\\");
+		preDefinedKeys.add("PROJECT");
+		preDefinedKeys.add("PROJECTPATH");
+		preDefinedKeys.add("PROJECTPATH\\");
+		preDefinedKeys.add("PROJECTPATH/");
+		preDefinedKeys.add("WORKSPACEPROJECT");
+		preDefinedKeys.add("WORKSPACEPROJECT\\");
+		preDefinedKeys.add("WORKSPACEPROJECT/");
+		preDefinedKeys.add("\\");
+		preDefinedKeys.add("/");
+
+		
+		for( String line : queryText ) {
+			line = line.trim();
+			if( line.startsWith("#DEFINE")) {
+				String[] defineParts = line.split("\\ ", 3);
+				if( defineParts.length > 2 ) {
+					foundDefines.add(defineParts[1]);
+				}
+			} else {
+				
+				int startPos = 0; 
+				startPos = line.indexOf("${");
+				
+				while( startPos >= 0 ) {
+					int posEnd = line.indexOf("}", startPos);
+					if( posEnd != -1 ) {
+						String undefinedReplacement = line.substring(startPos + 2, posEnd);
+						
+						if( !undefinedReplacements.contains(undefinedReplacement) && !foundDefines.contains(undefinedReplacement) && !preDefinedKeys.contains(undefinedReplacement)) {
+							undefinedReplacements.add(undefinedReplacement);
+						}
+						startPos = line.indexOf("${", posEnd);
+					} else {
+						break;
+					}
+				}
+			}
+		}
+		
+		f1: for( String undefinedReplacement : undefinedReplacements ) {
+			for( TableEntry e : tableEntries ) {
+				if( e.key.equals(undefinedReplacement ) ) {
+					e.fixed = true;
+					continue f1;
+				}
+			}
+			
+			tableEntries.add(new TableEntry(undefinedReplacement, "", true));
+		}
 	}
 
 	@Override
@@ -107,7 +169,11 @@ public class ContextMapEditorWindow extends TitleAreaDialog {
 			@Override
 			public void update(ViewerCell cell) {
 				TableEntry entry = (TableEntry) cell.getElement();
-				cell.setText(entry.key);
+				String keyName = entry.key;
+				if( entry.fixed ) {
+					keyName += "*";
+				}
+				cell.setText(keyName);
 			}
 		});
 
@@ -149,19 +215,20 @@ public class ContextMapEditorWindow extends TitleAreaDialog {
 					entry.key = (String)value;
 					tableItem.setText(0, entry.key);
 					
-					checkForDuplicateKey();
 				} else {
 					entry.value = (String)value;
 					tableItem.setText(1, entry.value);
 				}
+				checkKeys();
 			}
 		});
 
 		tableViewer.setInput(tableEntries);
+		
 		return tableComposite;
 	}
 
-	private void checkForDuplicateKey() {
+	private void checkKeys() {
 		for( int i = 0; i < tableEntries.size(); i++ ) {
 			String key = tableEntries.get(i).key;
 			
@@ -174,6 +241,14 @@ public class ContextMapEditorWindow extends TitleAreaDialog {
 			}
 		}
 		
+		for( TableEntry e : tableEntries ) {
+			if( e.fixed && Strings.isNullOrEmpty(e.value)) {
+				okButton.setEnabled(false);
+				setErrorMessage("Value for key '" + e.key + "' is needed to execute query!");
+				return;
+			}
+		}
+
 		setErrorMessage(null);
 		okButton.setEnabled(true);
 	}
@@ -202,7 +277,9 @@ public class ContextMapEditorWindow extends TitleAreaDialog {
 				IStructuredSelection selection = (IStructuredSelection)tableViewer.getSelection();
 				for( Object selectedObject : selection.toArray() ) {
 					TableEntry entry = (TableEntry)selectedObject;
-					tableEntries.remove(entry);
+					if( !entry.fixed) {
+						tableEntries.remove(entry);
+					}
 				}
 				
 				tableViewer.refresh();
@@ -228,7 +305,7 @@ public class ContextMapEditorWindow extends TitleAreaDialog {
 			}
 		});
 		
-		checkForDuplicateKey();
+		checkKeys();
 	}
 
 	private TableEntry generateNewTableEntry() {
@@ -242,7 +319,7 @@ public class ContextMapEditorWindow extends TitleAreaDialog {
 				}
 			}
 			
-			return new TableEntry(name, "value");
+			return new TableEntry(name, "value", false);
 		}
 	}
 	

@@ -26,7 +26,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -40,7 +39,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartConfigurer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.ControllerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.QueryExecutionHandler;
-import de.uniol.inf.is.odysseus.rcp.dashboard.windows.ContextMapEditorWindow;
 
 public class DashboardPartTypeSelectionPage extends WizardPage {
 
@@ -191,16 +189,6 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 			
 			selectedConfigurer.createPartControl(configComposite);
 			
-			Button contextMapButton = new Button(configComposite, SWT.PUSH);
-			contextMapButton.setText("Context");
-			contextMapButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					ContextMapEditorWindow wnd = new ContextMapEditorWindow(configComposite.getShell(), newDashboardPart, newDashboardPart.getClass().getSimpleName());
-					wnd.open();
-				}
-			});
-
 			rootComposite.layout();
 		} catch (InstantiationException e) {
 			LOG.error("Could not create DashboardPart", e);

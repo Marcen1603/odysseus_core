@@ -98,7 +98,11 @@ public class ContextMapPage extends WizardPage {
 			@Override
 			public void update(ViewerCell cell) {
 				TableEntry entry = (TableEntry) cell.getElement();
-				cell.setText(entry.key);
+				String keyName = entry.key;
+				if( entry.fixed ) {
+					keyName += "*";
+				}
+				cell.setText(keyName);
 			}
 		});
 
