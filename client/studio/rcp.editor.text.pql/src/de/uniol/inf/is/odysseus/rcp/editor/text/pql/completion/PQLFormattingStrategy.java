@@ -382,7 +382,7 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 	private String lineAtOffset(String text, int offset) {
 		int pos = offset - 1;
 		String line = text.substring(pos, offset);
-		while (pos >= 0) {
+		while (pos > 0) {
 			if (line.startsWith("\n")) {
 				return line;
 			}
