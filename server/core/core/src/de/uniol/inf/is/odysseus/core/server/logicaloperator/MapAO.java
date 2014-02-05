@@ -154,7 +154,8 @@ public class MapAO extends UnaryLogicalOp {
 				attrs.add(attr);
 
 			}
-			setOutputSchema(new SDFSchema(getInputSchema(), attrs));
+			SDFSchema s = SDFSchema.changeSourceName(new SDFSchema(getInputSchema(), attrs), getInputSchema().getURI());
+			setOutputSchema(s);
 		}
 	}
 
