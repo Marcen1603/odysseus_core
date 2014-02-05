@@ -20,6 +20,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.UnknownHostException;
 import java.util.Map;
 
@@ -52,10 +53,13 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	protected long lineCounter = 0L;
 	private boolean debug = false;
 	private boolean isDone = false;
-	private StringBuffer measurements = new StringBuffer("");
+//	private StringBuffer measurements = new StringBuffer("");
 	private long measureEachLine = -1;
 	private long lastDumpTime = 0;
+	private long lastMeasureTime = 0;
 	private long basetime;
+	private String dumpFile = null;
+	private PrintWriter dumpOut;
 	
 	private Map<String,String> optionsMap;
 
@@ -68,6 +72,8 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public static final String LAST_LINE = "lastline";
 	public static final String MAX_LINES ="maxlines";
 	public static final String DEBUG = "debug";
+	public static final String DUMPFILE = "dumpfile";
+	
 	
 	public LineProtocolHandler() {
 		super();
@@ -99,7 +105,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 		if (options.get(MEASURE_EACH_LINE) != null) {
 			measureEachLine = Integer.parseInt(options.get(MEASURE_EACH_LINE));
-			measurements.setLength(0);
+//			measurements.setLength(0);
 		}
 
 		if (options.get(LAST_LINE ) != null) {
@@ -110,6 +116,9 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		}
 		if (options.get(DEBUG) != null) {
 			debug = Boolean.parseBoolean(options.get(DEBUG));
+		}
+		if (options.get(DUMPFILE) != null){
+			dumpFile = options.get(DUMPFILE);
 		}
 		lastDumpTime = System.currentTimeMillis();
 
@@ -133,6 +142,9 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		firstLineSkipped = false;
 		if(debug){
 			ProtocolMonitor.getInstance().addToMonitor(this);
+			if (dumpFile != null){
+				dumpOut = new PrintWriter(dumpFile);
+			}
 		}
 	}
 
@@ -151,6 +163,9 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		if(debug){
 			ProtocolMonitor.getInstance().informMonitor(this, lineCounter);
 			ProtocolMonitor.getInstance().removeFromMonitor(this);
+			if (dumpOut != null){
+				dumpOut.close();
+			}
 		}
 	}
 
@@ -194,7 +209,11 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 			if (measureEachLine > 0) {
 				if (lineCounter % measureEachLine == 0) {
 					long time = System.currentTimeMillis();
-					measurements.append(lineCounter).append(";").append(time - basetime).append("\n");
+//					measurements.append(lineCounter).append(";").append(time - basetime).append("\n");
+					if (dumpOut != null){
+						dumpOut.println(lineCounter+";"+(time - basetime)+";"+(time - lastMeasureTime));
+					}	
+					lastMeasureTime = time;
 				}
 			}
 
@@ -204,7 +223,10 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 					basetime = time;
 				}
 				LOG.debug(lineCounter + " " + time);
-				measurements.append(lineCounter).append(";").append(time - basetime).append("\n");
+				if (dumpOut != null){
+					dumpOut.println(lineCounter+";"+(time - basetime)+";"+(time - lastMeasureTime));
+				}
+//				measurements.append(lineCounter).append(";").append(time - basetime).append("\n");
 				if (lastLine == lineCounter) {
 					//System.out.println(measurements);
 					ProtocolMonitor.getInstance().informMonitor(this, lineCounter);
