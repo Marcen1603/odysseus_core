@@ -69,8 +69,9 @@ public class EditorCompletionProvider implements IEditorLanguagePropertiesProvid
 		if (tokenbefore.endsWith(",") && lastSplitters.length > 1) {
 			// is an operator, if the one after the last splitter is a "}"
 			if (lastSplitters[1].endsWith("}")) {
+				String tokenAtOffset = getCompleteToken(document, offset);				
 				// return all possible operators and sources...
-				return buildCompletionProposalOperators(currentToken, document, offset, prefix);
+				return buildCompletionProposalOperators(tokenAtOffset, document, offset, prefix);
 			}
 			// otherwise, we are maybe in a list
 			if (inListParam(document, offset)) {
@@ -140,7 +141,7 @@ public class EditorCompletionProvider implements IEditorLanguagePropertiesProvid
 			// ... or we're at the beginning after the first definition, so we
 			// need an operator or source
 			return buildCompletionProposalOperators(currentToken, document, offset, prefix);
-		} else if (tokenbefore.endsWith("[")){
+		} else if (tokenbefore.endsWith("[")) {
 			if (inListParam(document, offset)) {
 				LogicalOperatorInformation op = getOperatorAtPosition(document, offset);
 				LogicalParameterInformation param = getParamAtPosition(document, offset, op);
@@ -159,11 +160,11 @@ public class EditorCompletionProvider implements IEditorLanguagePropertiesProvid
 		for (Entry<Resource, ILogicalOperator> source : PQLEditorTextPlugIn.getCurrentSources()) {
 			String name = source.getKey().getResourceName();
 			if (name.toLowerCase().startsWith(prefix)) {
-				sources.add(SourceCompletionPart.buildCompletionProposal(name, offset, currentToken.length(), document));
+				sources.add(SourceCompletionPart.buildCompletionProposal(name, offset-prefix.length(), currentToken.length(), document));
 			}
 			name = source.getKey().toString();
 			if (name.toLowerCase().startsWith(prefix)) {
-				sources.add(SourceCompletionPart.buildCompletionProposal(name, offset, currentToken.length(), document));
+				sources.add(SourceCompletionPart.buildCompletionProposal(name, offset-prefix.length(), currentToken.length(), document));
 			}
 		}
 
@@ -179,7 +180,7 @@ public class EditorCompletionProvider implements IEditorLanguagePropertiesProvid
 		List<ICompletionProposal> operators = new ArrayList<ICompletionProposal>();
 		for (LogicalOperatorInformation opBuilder : PQLEditorTextPlugIn.getOperatorInformations()) {
 			if (opBuilder.getOperatorName().toLowerCase().startsWith(prefix)) {
-				operators.add(OperatorCompletionPart.buildCompletionProposal(opBuilder, offset, prefix.length(), document));
+				operators.add(OperatorCompletionPart.buildCompletionProposal(opBuilder, offset-prefix.length(), currentToken.length(), document));
 			}
 		}
 
@@ -219,7 +220,7 @@ public class EditorCompletionProvider implements IEditorLanguagePropertiesProvid
 		int n = offset - 1;
 		int closed = 0;
 		try {
-			while (n > 0) {				
+			while (n > 0) {
 				if (document.getChar(n) == ']') {
 					closed++;
 				}
@@ -250,7 +251,7 @@ public class EditorCompletionProvider implements IEditorLanguagePropertiesProvid
 			String name = "";
 			boolean read = false;
 			while (n > 0) {
-				char c = document.getChar(n);				
+				char c = document.getChar(n);
 				if (c == ']') {
 					brakets++;
 				}
@@ -328,6 +329,33 @@ public class EditorCompletionProvider implements IEditorLanguagePropertiesProvid
 			}
 		}
 		return currentToken;
+	}
+
+	private String getCompleteToken(IDocument document, int offset) {
+
+		try {
+			int start = offset;
+			while (start > 0) {
+				char c = document.getChar(start);
+				if (getTokenSplitters().contains(c)) {
+					break;
+				}
+				start--;
+			}
+			start++;
+			int end = offset;
+			while (end < document.getLength()) {
+				char c = document.getChar(end);
+				if (getTokenSplitters().contains(c)) {
+					break;
+				}
+				end++;
+			}
+			return document.get(start, end - start);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 
 	private ICompletionProposal buildCompletionProposal(String word, int offset) {

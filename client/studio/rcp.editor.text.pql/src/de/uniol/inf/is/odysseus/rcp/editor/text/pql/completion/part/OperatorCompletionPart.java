@@ -45,11 +45,11 @@ public class OperatorCompletionPart extends AbstractCompletionPart{
 	
 	public static ICompletionProposal buildCompletionProposal(LogicalOperatorInformation op, int offset, int length, IDocument doc) {
 		Image image = PQLEditorTextPlugIn.getImageManager().get("pqlOperator");
-		Region region = new Region(offset - length, length);
+		Region region = new Region(offset, length);
 		String tempString = OperatorCompletionPart.createTemplate(op);
 		Template template = new Template(op.getOperatorName().toUpperCase(), op.getDoc(), "no-context", tempString, true);
 		TemplateContextType contextType = new TemplateContextType("test");
-		TemplateContext context = new DocumentTemplateContext(contextType, doc, offset - length, length);
+		TemplateContext context = new DocumentTemplateContext(contextType, doc, offset, length);
 		TemplateProposal tp = new TemplateProposal(template, context, region, image);
 		return tp;
 	}

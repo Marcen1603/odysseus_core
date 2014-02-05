@@ -18,10 +18,10 @@ public class SourceCompletionPart extends AbstractCompletionPart {
 
 	public static ICompletionProposal buildCompletionProposal(String sourcename, int offset, int length, IDocument doc) {
 		Image image = PQLEditorTextPlugIn.getImageManager().get("sources");
-		Region region = new Region(offset - length, length);
+		Region region = new Region(offset, length);
 		Template template = new Template(sourcename, "An installed source", "no-context", sourcename, true);
 		TemplateContextType contextType = new TemplateContextType("test");
-		TemplateContext context = new DocumentTemplateContext(contextType, doc, offset - length, length);
+		TemplateContext context = new DocumentTemplateContext(contextType, doc, offset, length);
 		TemplateProposal tp = new TemplateProposal(template, context, region, image);
 		return tp;
 	}
