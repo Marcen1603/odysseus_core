@@ -150,8 +150,12 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 		}
 		// }
 		if (selectedFunction != null) {
-			selectedFunction.setBasetimeUnit((TimeUnit) schema.get(0)
-					.getConstraint(SDFConstraint.BASE_TIME_UNIT).getValue());
+			if (schema != null && schema.size() > 0) {
+				SDFConstraint c = schema.get(0).getConstraint(
+						SDFConstraint.BASE_TIME_UNIT);
+				if (c != null)
+					selectedFunction.setBasetimeUnit((TimeUnit) c.getValue());
+			}
 		}
 		return selectedFunction;
 	}

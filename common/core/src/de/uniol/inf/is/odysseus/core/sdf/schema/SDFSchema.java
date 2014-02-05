@@ -147,6 +147,9 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	}
 
 	public SDFConstraint getConstraint(String name) {
+		if (this.constraints == null){
+			return null;
+		}
 		return this.constraints.get(name);
 	}
 
