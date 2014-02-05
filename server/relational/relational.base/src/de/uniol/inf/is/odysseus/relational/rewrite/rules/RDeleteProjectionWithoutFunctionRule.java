@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
@@ -45,7 +46,8 @@ public class RDeleteProjectionWithoutFunctionRule extends AbstractRewriteRule<Pr
 
 	@Override
 	public boolean isExecutable(ProjectAO proj, RewriteConfiguration transformConfig) {
-		return proj.getInputSchema().equals(proj.getOutputSchema());
+		return proj.getInputSchema().getType().isAssignableFrom(Tuple.class) &&
+				proj.getInputSchema().equals(proj.getOutputSchema()) ;
 	}
 
 	@Override
