@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.mep;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -103,5 +104,7 @@ public interface IFunction<T> extends IExpression<T> {
 	 * if the call to the function with a constant parameter can deliver different results 
 	 */
 	public boolean optimizeConstantParameter();
+
+	public void setBasetimeUnit(TimeUnit baseTimeUnit);
 
 }

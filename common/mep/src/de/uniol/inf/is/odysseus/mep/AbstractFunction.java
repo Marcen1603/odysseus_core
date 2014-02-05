@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -37,6 +38,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	private IExpression<?>[] arguments;
 	private Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
 	private IMetaAttribute[] metaAttribute = new IMetaAttribute[1];
+	private TimeUnit baseTimeUnit = TimeUnit.MILLISECONDS;
 	
 	@Override
 	final public void setArguments(IExpression<?>... arguments) {
@@ -185,5 +187,14 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	@Override
 	public Constant<T> toConstant() {
 		throw new RuntimeException("cannot convert IFunction to Constant");
+	}
+	
+	@Override
+	public void setBasetimeUnit(TimeUnit baseTimeUnit) {
+		this.baseTimeUnit = baseTimeUnit;
+	}
+	
+	public TimeUnit getBaseTimeUnit() {
+		return baseTimeUnit;
 	}
 }

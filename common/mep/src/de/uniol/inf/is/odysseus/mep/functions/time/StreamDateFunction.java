@@ -4,6 +4,7 @@
 package de.uniol.inf.is.odysseus.mep.functions.time;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -48,7 +49,7 @@ public class StreamDateFunction extends AbstractFunction<Date> {
     @Override
     public Date getValue() {
         PointInTime streamTime = ((ITimeInterval) getMetaAttribute()).getStart();
-        return new Date(streamTime.getMainPoint());
+        return new Date(TimeUnit.MILLISECONDS.convert(streamTime.getMainPoint(),getBaseTimeUnit()));
     }
 
     @Override
