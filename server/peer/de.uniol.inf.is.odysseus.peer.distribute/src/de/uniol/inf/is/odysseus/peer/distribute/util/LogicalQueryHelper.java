@@ -312,6 +312,7 @@ public final class LogicalQueryHelper {
 	 *             if at least one entry of <code>copies</code> does not contain
 	 *             all sources of <code>originPart</code>.
 	 */
+	@SuppressWarnings("unchecked")
 	public static Map<ILogicalOperator, Collection<ILogicalOperator>> collectRelativeSources(ILogicalQueryPart originPart, Collection<ILogicalQueryPart> copies) throws NullPointerException, IllegalArgumentException {
 
 		// Preconditions
@@ -332,10 +333,10 @@ public final class LogicalQueryHelper {
 
 			try {
 
-				sourceNo = ((List<ILogicalOperator>) ((Collection<ILogicalOperator>) originPart.getOperators())).indexOf(source);
+				sourceNo = ((List<ILogicalOperator>) (originPart.getOperators())).indexOf(source);
 
 				for (ILogicalQueryPart copy : copies)
-					copiedSources.add(((List<ILogicalOperator>) ((Collection<ILogicalOperator>) copy.getOperators())).get(sourceNo));
+					copiedSources.add(((List<ILogicalOperator>) (copy.getOperators())).get(sourceNo));
 
 			} catch (IndexOutOfBoundsException e) {
 
@@ -366,6 +367,7 @@ public final class LogicalQueryHelper {
 	 *             if at least one entry of <code>copies</code> does not contain
 	 *             all sinks of <code>originPart</code>.
 	 */
+	@SuppressWarnings("unchecked")
 	public static Map<ILogicalOperator, Collection<ILogicalOperator>> collectRelativeSinks(ILogicalQueryPart originPart, Collection<ILogicalQueryPart> copies) throws NullPointerException, IllegalArgumentException {
 
 		// Preconditions
@@ -386,10 +388,10 @@ public final class LogicalQueryHelper {
 
 			try {
 
-				sinkNo = ((List<ILogicalOperator>) ((Collection<ILogicalOperator>) originPart.getOperators())).indexOf(sink);
+				sinkNo = ((List<ILogicalOperator>) (originPart.getOperators())).indexOf(sink);
 
 				for (ILogicalQueryPart copy : copies)
-					copiedSinks.add(((List<ILogicalOperator>) ((Collection<ILogicalOperator>) copy.getOperators())).get(sinkNo));
+					copiedSinks.add(((List<ILogicalOperator>) (copy.getOperators())).get(sinkNo));
 
 			} catch (IndexOutOfBoundsException e) {
 
@@ -646,6 +648,7 @@ public final class LogicalQueryHelper {
 	 * @param copiesOfOriginPart The copies of <code>originPartOfOperator</code>
 	 * @param operator The operator, whose copies shall be collected.
 	 */
+	@SuppressWarnings("unchecked")
 	public static Collection<ILogicalOperator> collectCopies(ILogicalQueryPart originPartOfOperator, 
 			Collection<ILogicalQueryPart> copiesOfOriginPart, ILogicalOperator operator) {
 		
@@ -656,9 +659,9 @@ public final class LogicalQueryHelper {
 		// The return value
 		Collection<ILogicalOperator> copies = Lists.newArrayList();
 		
-		int operatorIndex = ((List<ILogicalOperator>) (Collection<ILogicalOperator>) originPartOfOperator.getOperators()).indexOf(operator);
+		int operatorIndex = ((List<ILogicalOperator>) originPartOfOperator.getOperators()).indexOf(operator);
 		for(ILogicalQueryPart copyOfOriginPart : copiesOfOriginPart)
-			copies.add(((List<ILogicalOperator>) (Collection<ILogicalOperator>) copyOfOriginPart.getOperators()).get(operatorIndex));
+			copies.add(((List<ILogicalOperator>) copyOfOriginPart.getOperators()).get(operatorIndex));
 		
 		return copies;
 		

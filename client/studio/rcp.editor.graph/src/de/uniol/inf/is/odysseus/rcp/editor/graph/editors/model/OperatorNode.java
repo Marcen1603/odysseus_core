@@ -472,6 +472,7 @@ public class OperatorNode extends Observable implements Observer {
 	}
 	
 	
+	@Override
 	public OperatorNode clone(){
 		return new OperatorNode(this);
 	}

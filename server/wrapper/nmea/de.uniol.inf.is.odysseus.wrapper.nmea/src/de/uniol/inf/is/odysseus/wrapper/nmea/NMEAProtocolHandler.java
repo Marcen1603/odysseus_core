@@ -72,7 +72,7 @@ public class NMEAProtocolHandler extends AbstractProtocolHandler<KeyValueObject<
         	return false;
         }
         String nmea = reader.readLine();
-        Sentence sentence = (Sentence) PythonScript.getInstance().parseNmea(nmea);
+        Sentence sentence = PythonScript.getInstance().parseNmea(nmea);
         if (sentence == null) {
         	return false;
         }

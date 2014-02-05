@@ -35,7 +35,7 @@ public class StandardDeviationPartialAggregate<R> implements IPartialAggregate<R
         // Seminumerical Algorithms, 3rd edn., p. 232. Boston: Addison-Wesley.
         this.count++;
         final double delta = value - this.mean;
-        this.mean += delta / (double) this.count;
+        this.mean += delta / this.count;
         this.diffSquareSum += delta * (value - this.mean);
     }
 

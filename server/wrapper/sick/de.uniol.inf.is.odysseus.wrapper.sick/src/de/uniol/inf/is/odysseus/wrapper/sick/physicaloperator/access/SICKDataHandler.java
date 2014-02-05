@@ -514,9 +514,9 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 					final List<Double> remission2 = new ArrayList<Double>(
 							measurement.get16BitSamples().length + 2);
 					// FIXME Remove 0.0 fake distance measure
-					dist1Coordinates.add(new PolarCoordinate((double) 0.0,
+					dist1Coordinates.add(new PolarCoordinate(0.0,
 							measurement.get16BitSamples()[0].getAngle()));
-					remission1.add((double) 0.0);
+					remission1.add(0.0);
 					for (Sample sample : measurement.get16BitSamples()) {
 						// if ((dist1Coordinates.size() == 0)
 						// || (sample.getDist1() != 0.0)
@@ -535,10 +535,10 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 						remission2.add((double) sample.getRssi2());
 						// }
 					}
-					dist1Coordinates.add(new PolarCoordinate((double) 0.0,
+					dist1Coordinates.add(new PolarCoordinate(0.0,
 							measurement.get16BitSamples()[measurement
 									.get16BitSamples().length - 1].getAngle()));
-					remission1.add((double) 0.0);
+					remission1.add(0.0);
 
 					event.put(SICKConstants.DIST1, dist1Coordinates);
 					event.put(SICKConstants.RSSI1, remission1);

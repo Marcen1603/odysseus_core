@@ -579,9 +579,9 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 								for(int copyNo = 0; copyNo < copiedSinks.size(); copyNo++) {
 									
 									Collection<ILogicalOperator> singleSource = 
-											Lists.newArrayList(((List<ILogicalOperator>) (Collection<ILogicalOperator>) copiedSinks).get(copyNo));
+											Lists.newArrayList(((List<ILogicalOperator>) copiedSinks).get(copyNo));
 									Collection<ILogicalOperator> singleTarget = 
-											Lists.newArrayList(((List<ILogicalOperator>) (Collection<ILogicalOperator>) targets).get(copyNo));
+											Lists.newArrayList(((List<ILogicalOperator>) targets).get(copyNo));
 									
 									modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.connect(modifiedCopiesToOrigin, singleSource, 
 											subToSink, singleTarget);

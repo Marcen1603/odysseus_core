@@ -57,7 +57,7 @@ public class StoreFunction extends AbstractFunction<Double> {
         Objects.requireNonNull(index);
         IAssociativeStorage<Tuple<?>> store = AssociativeStorageManager.get(name);
         if (store != null) {
-            return (Double) store.get(path, index);
+            return store.get(path, index);
         }
         else {
             return 0.0;

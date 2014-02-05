@@ -134,6 +134,7 @@ public class Connection extends Observable{
 		this.graph = graph;
 	}
 	
+	@Override
 	public Connection clone(){
 		return new Connection(this);
 	}

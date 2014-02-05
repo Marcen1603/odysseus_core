@@ -15,7 +15,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalNoGroupProcessor;
 
 public class RelationalFastMedianPO<T extends Comparable<T>>
 		extends
