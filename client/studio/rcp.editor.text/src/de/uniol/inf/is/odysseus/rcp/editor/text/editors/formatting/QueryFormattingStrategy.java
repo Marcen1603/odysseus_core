@@ -45,6 +45,11 @@ public class QueryFormattingStrategy extends DefaultFormattingStrategy{
 	public String format(String content, boolean isLineStart, String indentation, int[] positions) {	
 		
 		String parser = DocumentUtils.findValidParserAtPosition(document, region.getOffset());
+		if(parser.isEmpty()){
+			if(this.formattingStrategies.size()==1){
+				parser = this.formattingStrategies.keySet().iterator().next();				
+			}
+		}
 		if(!parser.isEmpty()){
 			IOdysseusScriptFormattingStrategy parserFormatter =  this.formattingStrategies.get(parser);
 			if(parserFormatter!=null){				

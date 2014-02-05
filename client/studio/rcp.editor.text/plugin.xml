@@ -8,7 +8,7 @@
             class="de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             default="true"
-            extensions="qry, pql"
+            extensions="qry, pql, cql"
             icon="Icons/text.gif"
             id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor"
             name="Odysseus Script Editor">

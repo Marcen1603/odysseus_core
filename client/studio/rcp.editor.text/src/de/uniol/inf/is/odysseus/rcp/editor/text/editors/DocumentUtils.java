@@ -25,21 +25,25 @@ import org.eclipse.jface.text.IDocument;
 public class DocumentUtils {
 
 	/**
-	 * Searches backwards from offset for a parser definition (#PARSER xyz) and returns the first one
-	 * If there is no parser found, an empty string is returned
-	 * @param document the document where to search in
-	 * @param offset the position where the parser is valid
+	 * Searches backwards from offset for a parser definition (#PARSER xyz) and
+	 * returns the first one If there is no parser found, an empty string is
+	 * returned
+	 * 
+	 * @param document
+	 *            the document where to search in
+	 * @param offset
+	 *            the position where the parser is valid
 	 * @return the last set parser
 	 */
 	public static String findValidParserAtPosition(IDocument document, int offset) {
 		if (offset <= 0) {
-			return "";
+			return getParserFromDocumentType(document);
 		}
 		try {
 			int position = document.get(0, offset).toUpperCase().lastIndexOf("#PARSER");
 
 			if (position == -1) {
-				return "";
+				return getParserFromDocumentType(document);
 			}
 			int start = position + 7;
 			while (start < document.getLength()) {
@@ -61,7 +65,17 @@ public class DocumentUtils {
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return getParserFromDocumentType(document);
+	}
+
+	public static String getParserFromDocumentType(IDocument doc) {
+		if (doc instanceof OdysseusScriptDocument) {
+			OdysseusScriptDocument odoc = (OdysseusScriptDocument) doc;
+			if (!odoc.isOdysseusScript()) {
+				return odoc.getParserType();
+			}
+		}
+		return "";
 	}
 
 }

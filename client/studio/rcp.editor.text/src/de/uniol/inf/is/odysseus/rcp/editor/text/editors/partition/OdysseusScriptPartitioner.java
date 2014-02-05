@@ -40,7 +40,7 @@ public class OdysseusScriptPartitioner extends FastPartitioner {
 	public void connect(IDocument document, boolean delayInitialise)
 	{
 	    super.connect(document, delayInitialise);
-	  //  printPartitions(document);
+	    printPartitions(document);
 	}
 
 	public void printPartitions(IDocument document)
@@ -67,9 +67,9 @@ public class OdysseusScriptPartitioner extends FastPartitioner {
 	            e.printStackTrace();
 	        }
 	    }
-//	    System.out.println("*****************************");	    
-//	    System.out.print(buffer);
-//	    System.out.println("*****************************");
+	    System.out.println("*****************************");	    
+	    System.out.print(buffer);
+	    System.out.println("*****************************");
 	}
 	
 }

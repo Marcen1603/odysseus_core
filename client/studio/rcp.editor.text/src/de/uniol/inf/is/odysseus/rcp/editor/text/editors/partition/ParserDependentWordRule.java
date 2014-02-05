@@ -128,6 +128,9 @@ public class ParserDependentWordRule implements IRule {
 						if (scanner instanceof OdysseusScriptRuleBasedScanner) {
 							OdysseusScriptRuleBasedScanner oScanner = (OdysseusScriptRuleBasedScanner) scanner;
 							String currentParser = DocumentUtils.findValidParserAtPosition(oScanner.getDocument(), oScanner.getCurrentOffset());
+							if(currentParser.isEmpty() && parserAndWords.size()==1){
+								currentParser = parserAndWords.keySet().iterator().next();
+							}
 							if (parserAndWords.containsKey(currentParser)) {
 								List<String> words = parserAndWords.get(currentParser);
 								if (!words.contains(buffer)) {

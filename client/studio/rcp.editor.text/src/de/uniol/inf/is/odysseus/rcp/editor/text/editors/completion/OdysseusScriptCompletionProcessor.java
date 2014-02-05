@@ -98,6 +98,9 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 					// providers
 					if (OdysseusRCPEditorTextPlugIn.getEditorCompletionProviders().size() > 0) {
 						String parser = DocumentUtils.findValidParserAtPosition(document, offset);
+						if(parser.isEmpty()){
+							
+						}
 						if (!parser.isEmpty()) {
 							IEditorLanguagePropertiesProvider ecp = OdysseusRCPEditorTextPlugIn.getEditorCompletionProvider(parser);
 							if (ecp != null) {

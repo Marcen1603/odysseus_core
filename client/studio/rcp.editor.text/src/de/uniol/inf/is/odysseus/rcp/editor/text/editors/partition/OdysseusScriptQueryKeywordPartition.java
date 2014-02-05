@@ -40,13 +40,19 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.editors.formatting.QueryFormatti
  */
 public class OdysseusScriptQueryKeywordPartition extends OdysseusScriptKeywordPartition {
 
+	private String onlyForParser = "";
+
 	public OdysseusScriptQueryKeywordPartition() {
 		super("__odysseus_script_query");
+	}
+	
+	public OdysseusScriptQueryKeywordPartition(String onlyForParser) {
+		super("__odysseus_script_query");
+		this.onlyForParser  = onlyForParser;
 	}
 
 	@Override
 	public Color getDefaultColor() {
-		// normal color here is dark blue
 		return Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
 	}
 
@@ -59,7 +65,13 @@ public class OdysseusScriptQueryKeywordPartition extends OdysseusScriptKeywordPa
 		IToken wordToken = createToken(SWT.COLOR_DARK_BLUE, true);
 		for(IEditorLanguagePropertiesProvider ecp : OdysseusRCPEditorTextPlugIn.getEditorCompletionProviders()){
 			for (String word : ecp.getTerminals()) {
-				pd.addWord(word, wordToken, ecp.getSupportedParser());
+				if(this.onlyForParser.equalsIgnoreCase("")){			
+					pd.addWord(word, wordToken, ecp.getSupportedParser());
+				}else{
+					if(ecp.getSupportedParser().equalsIgnoreCase(onlyForParser)){
+						pd.addWord(word, wordToken, ecp.getSupportedParser());
+					}
+				}
 			}
 			
 		}
@@ -76,19 +88,20 @@ public class OdysseusScriptQueryKeywordPartition extends OdysseusScriptKeywordPa
 		List<String> ignore = new ArrayList<>();
 		ignore.add("#IFDEF");
 		ignore.add("#ELSE");
-		ignore.add("#ENDIF");
-		
+		ignore.add("#ENDIF");		
 		rules.add(new SimpleMultiLineRule(OdysseusScriptStructureProvider.PARAMETER_KEY + "QUERY", end, ignore, getPartitioningToken(), true, true));
 		rules.add(new SimpleMultiLineRule(OdysseusScriptStructureProvider.PARAMETER_KEY + "ADDQUERY", end, ignore, getPartitioningToken(), true, true));
-		rules.add(new SimpleMultiLineRule(OdysseusScriptStructureProvider.PARAMETER_KEY + "RUNQUERY", end, ignore, getPartitioningToken(), true, true));
+		rules.add(new SimpleMultiLineRule(OdysseusScriptStructureProvider.PARAMETER_KEY + "RUNQUERY", end, ignore, getPartitioningToken(), true, true));		
 		return rules;
 	}
 	
 	@Override
 	public IFormattingStrategy getFormattingStrategy() {
 		Map<String, IOdysseusScriptFormattingStrategy> queryStrategies = new HashMap<>();
-		for(IEditorLanguagePropertiesProvider ecp : OdysseusRCPEditorTextPlugIn.getEditorCompletionProviders()){			
-			queryStrategies.put(ecp.getSupportedParser(), ecp.getFormattingStrategy());
+		for(IEditorLanguagePropertiesProvider ecp : OdysseusRCPEditorTextPlugIn.getEditorCompletionProviders()){
+			if(this.onlyForParser.equalsIgnoreCase("") || ecp.getSupportedParser().equalsIgnoreCase(onlyForParser)){
+				queryStrategies.put(ecp.getSupportedParser(), ecp.getFormattingStrategy());
+			}
 		}
 		return new QueryFormattingStrategy(queryStrategies);
 	}

@@ -42,6 +42,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.editors.formatting.OdysseusScrip
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.hyperlink.QueryHyperlinkDetector;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.partition.IOdysseusScriptPartition;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.partition.OdysseusScriptPartitionRegsitry;
+import de.uniol.inf.is.odysseus.rcp.editor.text.editors.partition.OdysseusScriptQueryKeywordPartition;
 
 /**
  * @author Dennis Geesen
@@ -66,17 +67,25 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 
-		for (IOdysseusScriptPartition osp : OdysseusScriptPartitionRegsitry.getParitions()) {
-			DefaultDamagerRepairer dr = new DefaultDamagerRepairer(osp.getReconcilerScanner());
-			reconciler.setDamager(dr, osp.getPartitionTokenName());
-			reconciler.setRepairer(dr, osp.getPartitionTokenName());
+				
+			for (IOdysseusScriptPartition osp : OdysseusScriptPartitionRegsitry.getParitions()) {
+				DefaultDamagerRepairer dr = new DefaultDamagerRepairer(osp.getReconcilerScanner());
+				reconciler.setDamager(dr, osp.getPartitionTokenName());
+				reconciler.setRepairer(dr, osp.getPartitionTokenName());
+			}
+			
+		if (isParserOnlyEditor()) {
+			OdysseusScriptQueryKeywordPartition part = new OdysseusScriptQueryKeywordPartition(getFileTypeParser());
+			DefaultDamagerRepairer dr = new DefaultDamagerRepairer(part.getReconcilerScanner());
+			reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
+			reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);		
+		}else{
+			// and the default one
+			DefaultDamagerRepairer dr = new DefaultDamagerRepairer(new RuleBasedScanner());
+			reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
+			reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);		
+			
 		}
-
-		// and the default one
-		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(new RuleBasedScanner());
-		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
-		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
-
 		return reconciler;
 	}
 
@@ -110,12 +119,35 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 			IFormattingStrategy fs = osp.getFormattingStrategy();
 			formatter.setFormattingStrategy(fs, osp.getPartitionTokenName());
 		}
-		formatter.setFormattingStrategy(new DefaultFormattingStrategy(), IDocument.DEFAULT_CONTENT_TYPE);
+		// if we have a special parser-dependent editor (not odysseus script)
+		// like pql, we use the certain strategy for default partitions
+		if (isParserOnlyEditor()) {
+			OdysseusScriptQueryKeywordPartition part = new OdysseusScriptQueryKeywordPartition(getFileTypeParser());
+			formatter.setFormattingStrategy(part.getFormattingStrategy(), IDocument.DEFAULT_CONTENT_TYPE);
+		} else {
+			formatter.setFormattingStrategy(new DefaultFormattingStrategy(), IDocument.DEFAULT_CONTENT_TYPE);
+		}
 		return formatter;
 	}
-	
+
 	@Override
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
 		return new IHyperlinkDetector[] { new URLHyperlinkDetector(), new QueryHyperlinkDetector(editor) };
+	}
+
+	private boolean isParserOnlyEditor() {
+		if (editor.getFile() != null) {
+			if (!editor.getFile().getFileExtension().equalsIgnoreCase("qry")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private String getFileTypeParser() {
+		if (editor.getFile() != null) {
+			return editor.getFile().getFileExtension().toUpperCase();
+		}
+		return null;
 	}
 }
