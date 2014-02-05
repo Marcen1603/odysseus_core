@@ -51,7 +51,11 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -105,8 +109,11 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 	private List<IDashboardPartListener> listener = new ArrayList<>();
 	private IDashboardPartQueryTextProvider queryTextProvider;
 	private boolean opened = false;
+	
 	private String sinkNames;
 	private boolean sinkSynced;
+	private Map<String, String> contextMap = Maps.newHashMap();
+
 	private ChartComposite chartComposite;
 	private IWorkbenchPart workbenchpart;
 	private IFile dashboardPartFile;
@@ -569,5 +576,32 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 	@Override
 	public void setSinkSynchronized(boolean doSync) {
 		sinkSynced = doSync;
+	}
+	
+	@Override
+	public void addContext( String key, String value ) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "key for context map must not be null or empty!");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(value), "value for context map must not be null or empty!");
+		
+		contextMap.put(key,  value);
+	}
+	
+	@Override
+	public Optional<String> getContextValue( String key ) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "key for context map must not be null or empty!");
+		
+		return Optional.fromNullable(contextMap.get(key));
+	}
+	
+	@Override
+	public ImmutableCollection<String> getContextKeys() {
+		return ImmutableSet.copyOf(contextMap.keySet());
+	}
+	
+	@Override
+	public void removeContext( String key ) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "key for context map must not be null or empty!");
+		
+		contextMap.remove(key);
 	}
 }

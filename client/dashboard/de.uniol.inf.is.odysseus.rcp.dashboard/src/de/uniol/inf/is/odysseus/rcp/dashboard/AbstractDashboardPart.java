@@ -29,7 +29,11 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -42,6 +46,7 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	private List<IDashboardPartListener> listeners = new ArrayList<>();
 	private String sinkNames;
 	private boolean sinkSynced = false;
+	private Map<String, String> contextMap = Maps.newHashMap();
 	
 	private IDashboardActionBarContributor editorActionBarContributor;
 	private IWorkbenchPart workbenchpart;
@@ -199,5 +204,32 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	@Override
 	public void setSinkSynchronized(boolean doSync) {
 		sinkSynced = doSync;
+	}
+	
+	@Override
+	public void addContext( String key, String value ) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "key for context map must not be null or empty!");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(value), "value for context map must not be null or empty!");
+		
+		contextMap.put(key,  value);
+	}
+	
+	@Override
+	public Optional<String> getContextValue( String key ) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "key for context map must not be null or empty!");
+		
+		return Optional.fromNullable(contextMap.get(key));
+	}
+	
+	@Override
+	public ImmutableCollection<String> getContextKeys() {
+		return ImmutableSet.copyOf(contextMap.keySet());
+	}
+	
+	@Override
+	public void removeContext( String key ) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "key for context map must not be null or empty!");
+		
+		contextMap.remove(key);
 	}
 }

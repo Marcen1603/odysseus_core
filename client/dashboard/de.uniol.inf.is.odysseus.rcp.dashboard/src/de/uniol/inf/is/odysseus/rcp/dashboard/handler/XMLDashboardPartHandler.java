@@ -80,6 +80,9 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 	public static final String SETTING_NAME_XML_ATTRIBUTE = "name";
 	public static final String SETTING_VALUE_XML_ATTRIBUTE = "value";
 	public static final String FILE_XML_ATTRIBUTE = "file";
+	
+	public static final String CONTEXT_XML_ELEMENT = "ContextMap";
+	public static final String CONTEXT_ITEM_ELEMENT = "ContextItem";
 
 	public static final String NULL_SETTING = "<null>";
 
@@ -101,6 +104,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 
 			try {
 				final IDashboardPart part = DashboardPartRegistry.createDashboardPart(partName);
+				loadContextMap(part, doc);
 				part.init(fileToLoad, fileToLoad.getProject(), partToShow);
 				part.setQueryTextProvider(queryTextProvider);
 				part.onLoad(customSettings);
@@ -132,6 +136,24 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 		}
 	}
 
+	private void loadContextMap(IDashboardPart part, Document doc) {
+		NodeList contextElements = doc.getElementsByTagName(CONTEXT_XML_ELEMENT);
+		if( contextElements == null || contextElements.getLength() == 0 ) {
+			return;
+		}
+		
+		Node contextNode = contextElements.item(0);
+		
+		NodeList contextItemNodes = contextNode.getChildNodes();
+		for( int i = 0; i < contextItemNodes.getLength(); i++ ) {
+			Node contextItemNode = contextItemNodes.item(i);
+			String key = contextItemNode.getAttributes().getNamedItem("key").getNodeValue();
+			String value = contextItemNode.getAttributes().getNamedItem("value").getNodeValue();
+			
+			part.addContext(key, value);
+		}
+	}
+
 	private String getDashboardPartName(Node rootNode) {
 		return getAttribute(rootNode, "id", null);
 	}
@@ -151,6 +173,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			appendDashboardPartName( DashboardPartRegistry.getRegistrationName(part.getClass()).get(), rootElement);
 			appendQueryTextProvider(part.getQueryTextProvider(), doc, rootElement);
 			appendCustoms(part, doc, rootElement);
+			appendContextMap(part, doc, rootElement);
 			FileUtil.write(save(doc), fileToSave);
 
 		} catch (final ParserConfigurationException | CoreException e) {
@@ -159,14 +182,27 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 		} 
 	}
 
+	private static void appendContextMap(IDashboardPart part, Document doc, Element rootElement) {
+		Element contextElement = doc.createElement(CONTEXT_XML_ELEMENT);
+		rootElement.appendChild(contextElement);
+		
+		for( String contextKey : part.getContextKeys() ) {
+			Element contextItemElement = doc.createElement(CONTEXT_ITEM_ELEMENT);
+			contextElement.appendChild(contextItemElement);
+			
+			contextItemElement.setAttribute("key", contextKey);
+			contextItemElement.setAttribute("value", part.getContextValue(contextKey).get());
+		}
+	}
+
 	private static void appendDashboardPartName(String dashboardPartName, Element rootElement) {
 		rootElement.setAttribute("id", dashboardPartName);
 	}
 
 	private static void appendCustoms(IDashboardPart part, Document doc, Element rootElement) {
-		final Element customElement = doc.createElement(CUSTOM_XML_ELEMENT);
+		Element customElement = doc.createElement(CUSTOM_XML_ELEMENT);
 
-		final Map<String, String> customSave = part.onSave();
+		Map<String, String> customSave = part.onSave();
 		if (customSave != null && !customSave.isEmpty()) {
 			for (final String key : customSave.keySet()) {
 				final Element settingElement = doc.createElement(CUSTOM_SETTING_XML_ELEMENT);

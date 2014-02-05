@@ -144,7 +144,19 @@ public class DashboardPartConfigWindow extends TitleAreaDialog {
 	}
 	
 	@Override
-	protected void createButtonsForButtonBar(Composite parent) {
+	protected void createButtonsForButtonBar(final Composite parent) {
+		((GridLayout) parent.getLayout()).numColumns++;
+		Button contextMapButton = new Button(parent, SWT.PUSH);
+		contextMapButton.setText("Context");
+		setButtonLayoutData(contextMapButton);
+		contextMapButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ContextMapEditorWindow wnd = new ContextMapEditorWindow(parent.getShell(), dashboardPart, dashboardPart.getClass().getSimpleName());
+				wnd.open();
+			}
+		});
+
 		okButton = createButton(parent, IDialogConstants.OK_ID, "OK", true);
 		okButton.addSelectionListener(new SelectionAdapter() {
 			@Override

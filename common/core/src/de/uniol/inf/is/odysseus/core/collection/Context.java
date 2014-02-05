@@ -27,11 +27,11 @@ public class Context {
 		if (containsKey(key)){
 			throw new IllegalArgumentException("Key "+key+" already used. Delete first.");
 		}
-		putImpl(key, value);
+		putImpl(key.toUpperCase(), value);
 	}
 	
 	public void putOrReplace( String key, Serializable value ) {
-		putImpl(key, value);
+		putImpl(key.toUpperCase(), value);
 	}
 
 	private Serializable putImpl(String key, Serializable value) {
@@ -46,7 +46,7 @@ public class Context {
 	}
 	
 	public final boolean containsKey( String key ) {
-		return contextMap.containsKey(key);
+		return contextMap.containsKey(key.toUpperCase());
 	}
 	
 	public final boolean containsValue( Serializable value ) {
@@ -62,7 +62,7 @@ public class Context {
 	}
 	
 	public final void remove( String key ) {
-		contextMap.remove(key);
+		contextMap.remove(key.toUpperCase());
 	}
 
 	public Context copy() {

@@ -9,7 +9,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  jna;bundle-version="4.0.0",
  org.eclipse.ui;bundle-version="3.7.0",
  org.eclipse.core.resources;bundle-version="3.7.101",
- de.uniol.inf.is.odysseus.slf4j
+ de.uniol.inf.is.odysseus.slf4j,
+ com.google.guava;bundle-version="14.0.0"
 Import-Package: de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.datahandler,
  de.uniol.inf.is.odysseus.core.physicaloperator,

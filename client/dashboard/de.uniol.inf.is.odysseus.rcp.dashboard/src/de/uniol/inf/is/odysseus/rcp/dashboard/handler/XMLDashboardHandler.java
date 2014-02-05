@@ -116,6 +116,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 					final IFile dashboardPartFile = ResourcesPlugin.getWorkspace().getRoot().getFile(queryFilePath);
 
 					final IDashboardPart dashboardPart = partHandler.load(dashboardPartFile, partToShow);
+					loadContextMap( dashboardPart, dashboardNode);
 					final DashboardPartPlacement plc = new DashboardPartPlacement(dashboardPart, fileName, x, y, w, h);
 					applySettingsToDashboardPart(settingsMap, dashboardPart);			
 					
@@ -140,6 +141,24 @@ public class XMLDashboardHandler implements IDashboardHandler {
 		}
 	}
 
+	private void loadContextMap(IDashboardPart part, Node dashboardPartNode ) {
+		NodeList dashboardChildNodes = dashboardPartNode.getChildNodes();
+		for( int i = 0; i < dashboardChildNodes.getLength(); i++ ) {
+			Node dashboardChildNode = dashboardChildNodes.item(i);
+			if( dashboardChildNode.getNodeType() == Node.ELEMENT_NODE && dashboardChildNode.getNodeName().equals(XMLDashboardPartHandler.CONTEXT_XML_ELEMENT)) {
+				
+				NodeList contextItemNodes = dashboardChildNode.getChildNodes();
+				for( int j = 0; j < contextItemNodes.getLength(); j++ ) {
+					Node contextItemNode = contextItemNodes.item(j);
+					String key = contextItemNode.getAttributes().getNamedItem("key").getNodeValue();
+					String value = contextItemNode.getAttributes().getNamedItem("value").getNodeValue();
+					
+					part.addContext(key, value);
+				}
+			}
+		}
+	}
+	
 	private void applySettingsToDashboardPart(final Map<String, String> settingsMap, final IDashboardPart dashboardPart) {
 		dashboardPart.onLoad(settingsMap);
 	}
@@ -206,6 +225,20 @@ public class XMLDashboardHandler implements IDashboardHandler {
 		rootElement.appendChild(element);
 		
 		appendConfiguration(placement.getDashboardPart().onSave(), doc, element);
+		appendContextMap(placement.getDashboardPart(), doc, element);
+	}
+	
+	private static void appendContextMap(IDashboardPart part, Document doc, Element rootElement) {
+		Element contextElement = doc.createElement(XMLDashboardPartHandler.CONTEXT_XML_ELEMENT);
+		rootElement.appendChild(contextElement);
+		
+		for( String contextKey : part.getContextKeys() ) {
+			Element contextItemElement = doc.createElement(XMLDashboardPartHandler.CONTEXT_ITEM_ELEMENT);
+			contextElement.appendChild(contextItemElement);
+			
+			contextItemElement.setAttribute("key", contextKey);
+			contextItemElement.setAttribute("value", part.getContextValue(contextKey).get());
+		}
 	}
 	
 	private static void appendConfiguration(Map<String, String> customSettings, Document doc, Element rootElement) {

@@ -44,6 +44,7 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 	private ContainerSelectionPage containerPage;
 	private DashboardPartTypeSelectionPage partTypePage;
 	private QueryFileSelectionPage queryFilePage;
+	private ContextMapPage contextMapPage;
 
 	public NewDashboardPartWizard() {
 		super();
@@ -54,6 +55,7 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 	public void addPages() {
 		addPage(containerPage);
 		addPage(queryFilePage);
+		addPage(contextMapPage);
 		addPage(partTypePage);
 	}
 
@@ -61,7 +63,8 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		containerPage = new ContainerSelectionPage("Select file name", selection, DEFAULT_DASHBOARD_FILENAME);
 		queryFilePage = new QueryFileSelectionPage("Select query", containerPage);
-		partTypePage = new DashboardPartTypeSelectionPage("Select type of Dashboard Part", queryFilePage);
+		contextMapPage = new ContextMapPage("Configure context");
+		partTypePage = new DashboardPartTypeSelectionPage("Select type of Dashboard Part", queryFilePage, contextMapPage);
 	}
 
 	@Override

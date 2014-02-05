@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.wizards;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -25,17 +26,21 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableCollection;
+
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartConfigurer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.ControllerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.QueryExecutionHandler;
+import de.uniol.inf.is.odysseus.rcp.dashboard.windows.ContextMapEditorWindow;
 
 public class DashboardPartTypeSelectionPage extends WizardPage {
 
@@ -43,6 +48,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 	
 	private final List<String> dashboardPartNames;
 	private final QueryFileSelectionPage queryFilePage;
+	private final ContextMapPage contextMapPage;
 
 	private Combo choosePartNameCombo;
 
@@ -54,7 +60,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 	private IDashboardPartConfigurer<IDashboardPart> selectedConfigurer;
 	private QueryExecutionHandler handler;
 	
-	public DashboardPartTypeSelectionPage(String pageName, QueryFileSelectionPage queryFilePage) {
+	public DashboardPartTypeSelectionPage(String pageName, QueryFileSelectionPage queryFilePage, ContextMapPage contextMapPage) {
 		super(pageName);
 
 		setTitle("Choose type of DashboardPart");
@@ -62,6 +68,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 
 		dashboardPartNames = determineDashboardPartNames();
 		this.queryFilePage = queryFilePage;
+		this.contextMapPage = contextMapPage;
 	}
 
 	@Override
@@ -87,7 +94,6 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				startQueryIfNeeded();
 				selectDashboardPart(choosePartNameCombo.getSelectionIndex());
 			}
 		});
@@ -96,8 +102,8 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 	}
 	
 	private void startQueryIfNeeded() {
-		if( handler == null ) {
-			handler = new QueryExecutionHandler(queryFilePage.getQueryTextProvider());
+		if( handler == null && selectedDashboardPart != null ) {
+			handler = new QueryExecutionHandler(selectedDashboardPart);
 		}
 		
 		try {
@@ -173,17 +179,42 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		configComposite.setLayoutData( new GridData(GridData.FILL_BOTH));
 		
 		try {
-			IDashboardPart newDashboardPart = DashboardPartRegistry.createDashboardPart(dashboardPartName);
+			final IDashboardPart newDashboardPart = DashboardPartRegistry.createDashboardPart(dashboardPartName);
+			newDashboardPart.setQueryTextProvider(queryFilePage.getQueryTextProvider());
+			insertInto(newDashboardPart, contextMapPage.getContextMap());
+			selectedDashboardPart = newDashboardPart;
+			
+			startQueryIfNeeded();
 			
 			selectedConfigurer = (IDashboardPartConfigurer<IDashboardPart>) DashboardPartRegistry.createDashboardPartConfigurer(dashboardPartName);
 			selectedConfigurer.init(newDashboardPart, handler.getRoots());
 			
 			selectedConfigurer.createPartControl(configComposite);
-			selectedDashboardPart = newDashboardPart;
 			
+			Button contextMapButton = new Button(configComposite, SWT.PUSH);
+			contextMapButton.setText("Context");
+			contextMapButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					ContextMapEditorWindow wnd = new ContextMapEditorWindow(configComposite.getShell(), newDashboardPart, newDashboardPart.getClass().getSimpleName());
+					wnd.open();
+				}
+			});
+
 			rootComposite.layout();
 		} catch (InstantiationException e) {
 			LOG.error("Could not create DashboardPart", e);
+		}
+	}
+	
+	private static void insertInto(IDashboardPart part, Map<String, String> contextMap) {
+		ImmutableCollection<String> keys = part.getContextKeys();
+		for( String key : keys ) {
+			part.removeContext(key);
+		}
+		
+		for( String entry : contextMap.keySet()) {
+			part.addContext(entry, contextMap.get(entry));
 		}
 	}
 

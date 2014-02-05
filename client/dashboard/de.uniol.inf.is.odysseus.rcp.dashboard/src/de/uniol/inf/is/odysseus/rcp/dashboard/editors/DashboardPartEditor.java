@@ -18,9 +18,13 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 import java.io.FileNotFoundException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TabFolder;
@@ -47,6 +51,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
+import de.uniol.inf.is.odysseus.rcp.dashboard.windows.ContextMapEditorWindow;
 
 public class DashboardPartEditor extends EditorPart implements IDashboardPartListener, IConfigurerListener {
 
@@ -202,7 +207,7 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 	}	
 
 	@SuppressWarnings("unchecked")
-	private void createSettingsTabContent(Composite settingsTab) {
+	private void createSettingsTabContent(final Composite settingsTab) {
 		settingsTab.setLayout(new GridLayout(1, false));
 		settingsTab.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
@@ -221,6 +226,18 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 				LOG.error("Could not create configurer", e);
 			}
 		}
+		
+		Button contextMapButton = new Button(settingsTab, SWT.PUSH);
+		contextMapButton.setText("Context");
+		contextMapButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ContextMapEditorWindow wnd = new ContextMapEditorWindow(settingsTab.getShell(), dashboardPart, dashboardPart.getClass().getSimpleName());
+				if( wnd.open() == Window.OK) {
+					setDirty(true);
+				}
+			}
+		});
 	}
 
 	private static Composite createTabComposite(TabFolder tabFolder, String title) {

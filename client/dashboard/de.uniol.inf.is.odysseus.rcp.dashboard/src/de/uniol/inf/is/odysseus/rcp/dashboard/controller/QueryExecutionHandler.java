@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.GraphQueryFileProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTextProvider;
@@ -30,15 +31,19 @@ public class QueryExecutionHandler {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryExecutionHandler.class);
 	
+	private final IDashboardPart dashboardPart;
+
 	private IFile scriptFile;
 	private String[] lines;
 	
 	private Collection<Integer> queryIDs;
 	private Collection<IPhysicalOperator> queryRoots;
 	
-	public QueryExecutionHandler( IDashboardPartQueryTextProvider provider ) {
-		Preconditions.checkNotNull(provider, "Text provider for execution must not be null!");
+	public QueryExecutionHandler( IDashboardPart dashboardPart ) {
+		Preconditions.checkNotNull(dashboardPart, "Dashboard part for execution must not be null!");
 		
+		this.dashboardPart = dashboardPart;
+		IDashboardPartQueryTextProvider provider = dashboardPart.getQueryTextProvider();
 		if( provider instanceof ResourceFileQueryTextProvider ) {
 			ResourceFileQueryTextProvider resProvider = (ResourceFileQueryTextProvider)provider;
 			
@@ -56,6 +61,8 @@ public class QueryExecutionHandler {
 			
 			this.scriptFile = null;
 			this.lines = graphProvider.getQueryText().toArray(new String[0]);
+		} else {
+			throw new RuntimeException("Unknown queryText provider: " + provider.getClass());
 		}
 		
 	}
@@ -74,7 +81,7 @@ public class QueryExecutionHandler {
 			for(String line : lines){
 				query = query + System.lineSeparator() + line;
 			}
-			Context context = scriptFile != null ? ParserClientUtil.createRCPContext(scriptFile) : Context.empty();
+			Context context = createContext(scriptFile, dashboardPart);
 			Collection<Integer> ids = OdysseusRCPPlugIn.getExecutor().addQuery(query, "OdysseusScript", caller, "Standard", context);
 			
 			queryIDs = ids;
@@ -83,8 +90,15 @@ public class QueryExecutionHandler {
 			throw new ControllerException("Could not start query", ex);
 		}
 	}
-	
 
+	private static Context createContext(IFile scriptFile, IDashboardPart part) {
+		Context context = scriptFile != null ? ParserClientUtil.createRCPContext(scriptFile) : Context.empty();
+		for( String key : part.getContextKeys() ) {
+			context.putOrReplace(key, part.getContextValue(key).get());
+		}
+		return context;
+	}
+	
 	private static Collection<IPhysicalOperator> determineRoots(Collection<Integer> queryIDs) {
 		final Collection<IPhysicalOperator> roots = Lists.newArrayList();
 		for (final Integer id : queryIDs) {

@@ -27,6 +27,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableCollection;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
@@ -55,8 +58,14 @@ public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>>
 	
 	public void setSinkNames( String sinkNames );
 	public String getSinkNames();
+	
 	public boolean isSinkSynchronized();
 	public void setSinkSynchronized( boolean doSync );
+	
+	public void addContext( String key, String value );
+	public Optional<String> getContextValue( String key );
+	public ImmutableCollection<String> getContextKeys();
+	public void removeContext( String key );
 	
 	public Point getPreferredSize();
 	

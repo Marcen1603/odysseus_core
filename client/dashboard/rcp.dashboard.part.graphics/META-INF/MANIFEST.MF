@@ -22,5 +22,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.gef;bundle-version="3.7.2",
  org.eclipse.ui.views,
  org.eclipse.core.resources;bundle-version="3.7.101",
- de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0",
+ com.google.guava;bundle-version="14.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
