@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.server.intervalapproach.transform;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TimeStampOrderValidatorTIPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.TimeStampOrderValidatorAO;
@@ -35,7 +36,7 @@ public class TTimeStampOrderValdiatorRule extends
 
 	@Override
 	public void execute(TimeStampOrderValidatorAO operator,
-			TransformationConfiguration config) {		
+			TransformationConfiguration config) throws RuleException {		
 		TimeStampOrderValidatorTIPO<ITimeInterval, IStreamObject<ITimeInterval>> po = new TimeStampOrderValidatorTIPO<ITimeInterval, IStreamObject<ITimeInterval>>();
 		defaultExecute(operator, po, config, true, true);
 	}

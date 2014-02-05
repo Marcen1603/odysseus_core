@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.pattern.physicaloperator.NPatternMatchingPO;
 import de.uniol.inf.is.odysseus.pattern.physicaloperator.PatternMatchingPO;
 import de.uniol.inf.is.odysseus.pattern.physicaloperator.SubsetSelectionPatternMatchingPO;
 import de.uniol.inf.is.odysseus.pattern.physicaloperator.TrendPatternMatchingPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TIInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -30,7 +31,7 @@ public class TPatternMatchingAORule extends
 
 	@Override
 	public void execute(PatternMatchingAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		// physischen Operator auswählen
 		PatternMatchingPO pOperator = null;
 		switch (operator.getType()) {

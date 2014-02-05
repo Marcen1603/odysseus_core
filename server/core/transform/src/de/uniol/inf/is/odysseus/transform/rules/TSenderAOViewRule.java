@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ITransformation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.engine.TransformationExecutor;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -38,7 +39,7 @@ public class TSenderAOViewRule extends AbstractTransformationRule<SenderAO> {
 	}
 
 	@Override
-	public void execute(SenderAO senderAO, TransformationConfiguration transformConfig) {
+	public void execute(SenderAO senderAO, TransformationConfiguration transformConfig) throws RuleException {
 		Resource sinkName = senderAO.getSinkname();
 		ILogicalOperator view = getDataDictionary().getSinkForTransformation(senderAO.getSinkname(), getCaller());
 		ILogicalOperator cPlan = view;

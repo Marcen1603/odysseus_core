@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SAAggregateTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -33,7 +34,7 @@ public class TSAStreamGroupingWithAggregationTIPORule extends AbstractTransforma
 	}
 	
 	@Override
-	public void execute(AggregateAO aggregateAO, TransformationConfiguration transformConfig) {
+	public void execute(AggregateAO aggregateAO, TransformationConfiguration transformConfig) throws RuleException {
 		SAAggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>> po = new SAAggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(aggregateAO.getInputSchema(), aggregateAO.getOutputSchemaIntern(0) , aggregateAO.getGroupingAttributes(),
 				aggregateAO.getAggregations(), aggregateAO.isFastGrouping());
 		po.setDumpAtValueCount(aggregateAO.getDumpAtValueCount());

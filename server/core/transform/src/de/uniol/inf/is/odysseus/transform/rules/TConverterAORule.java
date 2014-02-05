@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ConverterAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ConverterPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -28,7 +29,7 @@ public class TConverterAORule extends AbstractTransformationRule<ConverterAO> {
 	}
 
 	@Override
-	public void execute(ConverterAO operator, TransformationConfiguration config) {
+	public void execute(ConverterAO operator, TransformationConfiguration config) throws RuleException {
 
 		if (!hasTimestampAOAsFather(operator)) {
 			insertTimestampAO(operator, operator.getDateFormat());

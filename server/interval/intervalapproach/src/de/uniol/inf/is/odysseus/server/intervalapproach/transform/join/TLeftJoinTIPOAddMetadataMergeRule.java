@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.server.intervalapproach.transform.join;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.LeftJoinTIPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
@@ -33,7 +34,7 @@ public class TLeftJoinTIPOAddMetadataMergeRule extends AbstractTransformationRul
 	}
 
 	@Override
-	public void execute(LeftJoinTIPO<?, ?> joinPO, TransformationConfiguration transformConfig) {
+	public void execute(LeftJoinTIPO<?, ?> joinPO, TransformationConfiguration transformConfig) throws RuleException {
 		((CombinedMergeFunction) joinPO.getMetadataMerge()).add(new TimeIntervalInlineMetadataMergeFunction());
 		/*
 		 * # no update, because otherwise # other rules may overwrite this rule

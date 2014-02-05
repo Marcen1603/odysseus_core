@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.logicaloperator.ReplicationMergeAO;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.physicaloperator.ReplicationMergePO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -25,7 +26,7 @@ public class TReplicationMergeAORule extends AbstractTransformationRule<Replicat
 	  
 	 @SuppressWarnings("rawtypes")
 	@Override
-	 public void execute(ReplicationMergeAO mergeAO, TransformationConfiguration config) { 
+	 public void execute(ReplicationMergeAO mergeAO, TransformationConfiguration config) throws RuleException { 
 		 
 		 defaultExecute(mergeAO, new ReplicationMergePO(), config, true, true);
 		 

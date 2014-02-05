@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.UnionPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -33,7 +34,7 @@ public class TUnionTIPORule extends AbstractTransformationRule<UnionAO> {
 	}
 
 	@Override
-	public void execute(UnionAO unionAO, TransformationConfiguration transformConfig) {
+	public void execute(UnionAO unionAO, TransformationConfiguration transformConfig) throws RuleException {
 		UnionPO<IStreamObject<ITimeInterval>> unionPO = new UnionPO<IStreamObject<ITimeInterval>>(new TITransferArea<IStreamObject<ITimeInterval>,IStreamObject<ITimeInterval>>());
 		
 		defaultExecute(unionAO, unionPO, transformConfig, true, true);

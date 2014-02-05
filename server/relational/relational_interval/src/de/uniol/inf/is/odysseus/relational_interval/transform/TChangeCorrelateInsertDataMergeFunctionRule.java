@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.ChangeCorrelatePO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -52,7 +53,7 @@ public class TChangeCorrelateInsertDataMergeFunctionRule extends AbstractTransfo
 	}
 
 	@Override
-	public void execute(ChangeCorrelatePO<ITimeInterval, Tuple<ITimeInterval>> cc, TransformationConfiguration transformConfig) {
+	public void execute(ChangeCorrelatePO<ITimeInterval, Tuple<ITimeInterval>> cc, TransformationConfiguration transformConfig) throws RuleException {
 		cc.setDataMerge(new RelationalMergeFunction<ITimeInterval>(cc.getOutputSchema().size()));
 		update(cc);		
 	}

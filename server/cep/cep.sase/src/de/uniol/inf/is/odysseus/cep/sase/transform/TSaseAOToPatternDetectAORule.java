@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.cep.sase.logicaloperator.SaseAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -16,7 +17,7 @@ public class TSaseAOToPatternDetectAORule extends AbstractTransformationRule<Sas
 
 
 	@Override
-	public void execute(SaseAO operator, TransformationConfiguration config) {
+	public void execute(SaseAO operator, TransformationConfiguration config) throws RuleException {
 		SaseBuilder parser = new SaseBuilder();
 		PatternDetectAO<?> newOp = null;
 		List<IExecutorCommand> op = parser.parse(operator.getQuery(), getCaller(),

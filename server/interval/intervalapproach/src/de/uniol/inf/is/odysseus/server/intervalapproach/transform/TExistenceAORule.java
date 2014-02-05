@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.OverlapsPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -38,7 +39,7 @@ public class TExistenceAORule extends AbstractTransformationRule<ExistenceAO> {
 	}
 
 	@Override
-	public void execute(ExistenceAO existenceAO, TransformationConfiguration transformConfig) {
+	public void execute(ExistenceAO existenceAO, TransformationConfiguration transformConfig) throws RuleException {
 		ISweepArea<IStreamObject<ITimeInterval>> leftSA = new DefaultTISweepArea<IStreamObject<ITimeInterval>>();
 		ISweepArea<IStreamObject<ITimeInterval>> rightSA = new DefaultTISweepArea<IStreamObject<ITimeInterval>>();
 		IPredicate<?> predicate = existenceAO.getPredicate();

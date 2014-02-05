@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.LeftJoinTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -46,7 +47,7 @@ public class TProbabilisticContinuousLeftJoinAOSetDMRule extends AbstractTransfo
     }
 
     @Override
-    public void execute(final LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, final TransformationConfiguration transformConfig) {
+    public void execute(final LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, final TransformationConfiguration transformConfig) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getLeftSchema());
         Objects.requireNonNull(operator.getRightSchema());

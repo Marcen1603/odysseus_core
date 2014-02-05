@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.server.intervalapproach.transform;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -32,7 +33,7 @@ public class TSelectTimeintervalAORule extends AbstractTransformationRule<Select
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void execute(SelectAO selectAO, TransformationConfiguration transformConfig) {	
+	public void execute(SelectAO selectAO, TransformationConfiguration transformConfig) throws RuleException {	
 		SelectPO<?> selectPO = new SelectPO(selectAO.getPredicate());
 		if (selectAO.getHeartbeatRate() > 0){
 			selectPO.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(

@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupPro
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.ConvolutionFilterPO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -34,7 +35,7 @@ public class TConvolutionFilterAORule extends AbstractTransformationRule<Convolu
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void execute(ConvolutionFilterAO operator, TransformationConfiguration transformConfig) {
+	public void execute(ConvolutionFilterAO operator, TransformationConfiguration transformConfig) throws RuleException {
 		ConvolutionFilterPO<?> filter = new ConvolutionFilterPO<>(operator.getExpression(), operator.getAttributes(), operator.getSize());
 		if (operator.getGroupingAttributes().size() > 0) {
 			@SuppressWarnings("rawtypes")

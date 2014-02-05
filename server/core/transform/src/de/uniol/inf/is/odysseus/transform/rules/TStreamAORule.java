@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ITransformation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.engine.TransformationExecutor;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -38,7 +39,7 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 	}
 
 	@Override
-	public void execute(StreamAO operator, TransformationConfiguration transformConfig) {
+	public void execute(StreamAO operator, TransformationConfiguration transformConfig) throws RuleException {
 
 		Resource name = operator.getStreamname();
 		if (!getDataDictionary().containsViewOrStream(name, getCaller())) {

@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -53,7 +54,7 @@ public class TProbabilisticValidatorRule extends AbstractTransformationRule<IHas
      * java.lang.Object)
      */
     @Override
-    public final void execute(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) {
+    public final void execute(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getMetadataMerge());
         Objects.requireNonNull(config);

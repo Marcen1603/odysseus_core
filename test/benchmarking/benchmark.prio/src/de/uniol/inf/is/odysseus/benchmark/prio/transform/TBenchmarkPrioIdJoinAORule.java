@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority_interval.PriorityIdHashSweepArea;
 import de.uniol.inf.is.odysseus.priority_interval.PriorityTITransferArea;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -41,7 +42,7 @@ public class TBenchmarkPrioIdJoinAORule extends AbstractTransformationRule<PrioI
 
 	@Override
 	public void execute(PrioIdJoinAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		JoinTIPO joinPO = new JoinTIPO();
 		joinPO.setTransferFunction(new PriorityTITransferArea());
 		joinPO.setMetadataMerge(new CombinedMergeFunction());

@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProce
 import de.uniol.inf.is.odysseus.relational_interval.RelationalAbsoluteNumericChangeDetectPO;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalChangeDetectPO;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalRelativeNumericChangeDetectPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -39,7 +40,7 @@ public class TRelationalChangeDetectAORule extends
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void execute(ChangeDetectAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		RelationalChangeDetectPO po = null;
 		if (operator.getTolerance() == 0) {
 			po = new RelationalChangeDetectPO(operator.getComparePositions());

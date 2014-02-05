@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSinkAO;
 import de.uniol.inf.is.odysseus.database.physicaloperator.DatabaseSinkPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -50,7 +51,7 @@ public class TDatabaseDatabaseSinkAORule extends AbstractTransformationRule<Data
 	}
 
 	@Override
-	public void execute(DatabaseSinkAO operator, TransformationConfiguration config) {
+	public void execute(DatabaseSinkAO operator, TransformationConfiguration config) throws RuleException {
 		ISink<?> sinkPO = new DatabaseSinkPO(operator.getConnection(), operator.getTablename(), operator.isDrop(), operator.isTruncate(), operator.getBatchSize());			
 		defaultExecute(operator, sinkPO, config, true, true);		
 	}

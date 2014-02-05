@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.Probab
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TIMergeFunction;
@@ -56,7 +57,7 @@ public class TProbabilisticContinuousJoinAOSetSARule extends AbstractTransformat
     }
 
     @Override
-    public void execute(final JoinTIPO operator, final TransformationConfiguration transformConfig) {
+    public void execute(final JoinTIPO operator, final TransformationConfiguration transformConfig) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(transformConfig);
         final ProbabilisticContinuousJoinTISweepArea<?, ?>[] areas = new ProbabilisticContinuousJoinTISweepArea[2];

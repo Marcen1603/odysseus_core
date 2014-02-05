@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.EnrichPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -36,7 +37,7 @@ public class TEnrichAORule extends AbstractTransformationRule<EnrichAO>{
 	}
 
 	@Override
-	public void execute(EnrichAO operator, TransformationConfiguration config) {
+	public void execute(EnrichAO operator, TransformationConfiguration config) throws RuleException {
 		EnrichPO<IStreamObject<IMetaAttribute>, IMetaAttribute> po = new EnrichPO<IStreamObject<IMetaAttribute>, IMetaAttribute>(operator.getPredicate(), operator.getMinimumSize());
 		defaultExecute(operator, po, config, true, true);
 	}

@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BlockingBufferPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -32,7 +33,7 @@ public class TBufferedPipeRule extends AbstractTransformationRule<BufferAO> {
 	}
 
 	@Override
-	public void execute(BufferAO algebraOp, TransformationConfiguration trafo) {
+	public void execute(BufferAO algebraOp, TransformationConfiguration trafo) throws RuleException {
 		BufferPO po = null;
 		if (algebraOp.getMaxBufferSize() > 0) {
 			po = new BlockingBufferPO(algebraOp.getMaxBufferSize());

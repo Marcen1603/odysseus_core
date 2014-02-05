@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.GroupSplitFileWrite
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -18,7 +19,7 @@ public class TGroupSplitFileWriter extends
 
 	@Override
 	public void execute(GroupSplitFileWriterAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		IGroupProcessor<Tuple<IMetaAttribute>, Tuple<IMetaAttribute>> gp = new RelationalGroupProcessor<>(operator.getInputSchema(), operator.getInputSchema(), operator.getGroupAttributes(), null, false);
 		@SuppressWarnings("rawtypes")
 		IDataHandler dataHandler = DataHandlerRegistry.getDataHandler(

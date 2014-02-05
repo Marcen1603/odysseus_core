@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AppendToPhysicalAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -18,7 +19,7 @@ public class TAppendToPhysicalAORule extends AbstractTransformationRule<AppendTo
 
 	@Override
 	public void execute(AppendToPhysicalAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		
 		String appendTo = operator.getAppendTo();
 		// To avoid potential security risk! We can add our source 

@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.RoutePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -32,7 +33,7 @@ public class TRouteAORule extends AbstractTransformationRule<RouteAO> {
 
 	
 	@Override
-	public void execute(RouteAO routeAO, TransformationConfiguration config) {		
+	public void execute(RouteAO routeAO, TransformationConfiguration config) throws RuleException {		
 		defaultExecute(routeAO, new RoutePO(routeAO.getPredicates(), routeAO.isOverlappingPredicates(), routeAO.isSendingHeartbeats()), config, true, true);
 	}
 

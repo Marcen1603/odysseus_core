@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.pubsub.transform;
 
 import de.uniol.inf.is.odysseus.pubsub.logicaloperator.SubscribeAO;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -39,7 +40,7 @@ public class TSubscribeAORule extends AbstractTransformationRule<SubscribeAO> {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void execute(SubscribeAO subscribe,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		defaultExecute(
 				subscribe,
 				new SubscribePO(subscribe.getPredicates(), subscribe

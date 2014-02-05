@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingElementWindowTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -36,7 +37,7 @@ public class TRelationalSlidingElementWindowTIPORule extends
 
 	@Override
 	public void execute(AbstractWindowAO windowAO,
-			TransformationConfiguration transformConfig) {
+			TransformationConfiguration transformConfig) throws RuleException {
 		SlidingElementWindowTIPO<Tuple<ITimeInterval>> windowPO = new SlidingElementWindowTIPO<>(
 				windowAO);
 		RelationalGroupProcessor<ITimeInterval> r = new RelationalGroupProcessor<>(windowAO.getInputSchema(), windowAO.getOutputSchema(), windowAO.getPartitionBy(), null, false);

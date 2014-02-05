@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.latency.LatencyMergeFunction;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -35,7 +36,7 @@ public class TAggregateLatencyRule extends
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(AggregateTIPO<?, ?, ?> operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		((CombinedMergeFunction)operator.getMetadataMerge()).add(new LatencyMergeFunction());		
 		
 	}

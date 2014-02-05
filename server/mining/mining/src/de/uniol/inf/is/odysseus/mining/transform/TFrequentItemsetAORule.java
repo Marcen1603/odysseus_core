@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.mining.logicaloperator.FrequentItemsetAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.FrequentItemsetAprioriPO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.FrequentItemsetFPGrowthPO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.FrequentPatternMiningPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -58,7 +59,7 @@ public class TFrequentItemsetAORule extends AbstractTransformationRule<FrequentI
 	}
 
 	@Override
-	public void execute(FrequentItemsetAO operator, TransformationConfiguration config) {
+	public void execute(FrequentItemsetAO operator, TransformationConfiguration config) throws RuleException {
 		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po = null;
 		CombinedMergeFunction<ITimeInterval> metaDataMerge = new CombinedMergeFunction<ITimeInterval>();
 		metaDataMerge.add(new TimeIntervalInlineMetadataMergeFunction());

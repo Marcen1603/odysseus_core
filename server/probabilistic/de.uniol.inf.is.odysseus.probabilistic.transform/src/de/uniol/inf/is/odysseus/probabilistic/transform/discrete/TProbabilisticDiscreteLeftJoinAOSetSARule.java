@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.Probabil
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.LeftJoinTIPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TIMergeFunction;
@@ -57,7 +58,7 @@ public class TProbabilisticDiscreteLeftJoinAOSetSARule extends AbstractTransform
 
     @SuppressWarnings("unchecked")
     @Override
-    public void execute(final LeftJoinTIPO operator, final TransformationConfiguration transformConfig) {
+    public void execute(final LeftJoinTIPO operator, final TransformationConfiguration transformConfig) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getSubscribedToSource(0));
         Objects.requireNonNull(operator.getSubscribedToSource(1));

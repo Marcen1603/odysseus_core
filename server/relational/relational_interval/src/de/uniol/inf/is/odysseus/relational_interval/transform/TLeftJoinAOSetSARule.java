@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.server.intervalapproach.LeftJoinTIPO;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -37,7 +38,7 @@ public class TLeftJoinAOSetSARule extends
 	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(LeftJoinTIPO joinPO,
-			TransformationConfiguration transformConfig) {
+			TransformationConfiguration transformConfig) throws RuleException {
 		// JoinPersistentSweepArea[] areas = new JoinPersistentSweepArea[2];
 		// // areas[0] = new JoinTISweepArea();
 		// // areas[1] = new JoinTISweepArea();

@@ -20,6 +20,7 @@ import java.util.Objects;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.transform.rules.TRenameAORule;
 
 /**
@@ -40,7 +41,7 @@ public class TProbabilisticRenameAORule extends TRenameAORule {
      * {@inheritDoc}
      */
     @Override
-    public final void execute(final RenameAO operator, final TransformationConfiguration transformConfig) {
+    public final void execute(final RenameAO operator, final TransformationConfiguration transformConfig) throws RuleException {
         super.execute(operator, transformConfig);
     }
 

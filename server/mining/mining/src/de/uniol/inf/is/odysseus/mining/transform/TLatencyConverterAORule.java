@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.LatencyConverterAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.LatencyConverterPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -16,7 +17,7 @@ public class TLatencyConverterAORule extends AbstractTransformationRule<LatencyC
 	}
 
 	@Override
-	public void execute(LatencyConverterAO operator, TransformationConfiguration config) {
+	public void execute(LatencyConverterAO operator, TransformationConfiguration config) throws RuleException {
 		defaultExecute(operator, new LatencyConverterPO(operator.getFactor(), operator.getSample()), config, true, true);
 	}
 

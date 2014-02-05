@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.mining.clustering.WekaClusterer;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.ClusteringAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.ClusteringKMeansPO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.ClusteringPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -57,7 +58,7 @@ public class TClusteringAORule extends AbstractTransformationRule<ClusteringAO> 
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void execute(ClusteringAO operator, TransformationConfiguration config) {
+	public void execute(ClusteringAO operator, TransformationConfiguration config) throws RuleException {
 		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po;
 		String algorithm = operator.getClustererName().toUpperCase();
 

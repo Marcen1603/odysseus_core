@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.Receive
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -55,7 +56,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void execute(AbstractAccessAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 
 		if (!hasTimestampAOAsFather(operator)) {
 			insertTimestampAO(operator, operator.getDateFormat());

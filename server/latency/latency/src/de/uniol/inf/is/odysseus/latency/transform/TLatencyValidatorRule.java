@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -19,7 +20,7 @@ public class TLatencyValidatorRule extends
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void execute(IHasMetadataMergeFunction<?> operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		if (!((CombinedMergeFunction)operator.getMetadataMerge()).providesMergeFunctionFor(ILatency.class)){
 			// TODO: Make logger
 			System.err.println(this+" WARN: No Latency merge function set for "+operator);

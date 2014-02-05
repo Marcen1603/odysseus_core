@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.DuplicateElimination
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.DuplicateEliminationTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -43,7 +44,7 @@ public class TDuplicateEliminationAORule extends AbstractTransformationRule<Dupl
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void execute(DuplicateEliminationAO operator, TransformationConfiguration config) {
+	public void execute(DuplicateEliminationAO operator, TransformationConfiguration config) throws RuleException {
 		DefaultTISweepArea<Tuple<ITimeInterval>> sweepArea = new DefaultTISweepArea<Tuple<ITimeInterval>>();
 		DuplicateEliminationTIPO<Tuple<ITimeInterval>> po = new DuplicateEliminationTIPO<Tuple<ITimeInterval>>(sweepArea);
 		po.setOutputSchema(operator.getOutputSchema());

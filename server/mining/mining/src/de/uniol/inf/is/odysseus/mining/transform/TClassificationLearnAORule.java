@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
 import de.uniol.inf.is.odysseus.mining.classification.WekaClassificationLearner;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.ClassificationLearnAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.ClassificationLearnPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -37,7 +38,7 @@ public class TClassificationLearnAORule extends AbstractTransformationRule<Class
 	}
 
 	@Override
-	public void execute(ClassificationLearnAO operator, TransformationConfiguration config) {
+	public void execute(ClassificationLearnAO operator, TransformationConfiguration config) throws RuleException {
 		IClassificationLearner<ITimeInterval> learner = null;
 		if (operator.getLearner().equalsIgnoreCase("weka")) {
 			learner = new WekaClassificationLearner<ITimeInterval>();

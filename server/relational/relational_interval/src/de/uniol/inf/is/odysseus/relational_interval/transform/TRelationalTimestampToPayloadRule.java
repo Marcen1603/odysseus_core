@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampToPayloadPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.TimestampToPayloadAO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -34,7 +35,7 @@ public class TRelationalTimestampToPayloadRule extends AbstractTransformationRul
 
 	@Override
 	public void execute(TimestampToPayloadAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		defaultExecute(operator, new RelationalTimestampToPayloadPO(), config, true, true);		
 	}
 

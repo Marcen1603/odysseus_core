@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.latency.transform;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.latency.physicaloperator.LatencyCalculationPipe;
 import de.uniol.inf.is.odysseus.logicaloperator.latency.CalcLatencyAO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -32,7 +33,7 @@ public class TLatencyCalculationRule extends
 
 	@Override
 	public void execute(CalcLatencyAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		@SuppressWarnings("rawtypes")
 		LatencyCalculationPipe pO = new LatencyCalculationPipe();
 		defaultExecute(operator, pO, config, true, true);

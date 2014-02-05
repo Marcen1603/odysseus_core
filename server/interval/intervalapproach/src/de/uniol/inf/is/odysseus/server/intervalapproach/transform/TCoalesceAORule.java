@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.server.intervalapproach.transform;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CoalesceAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AbstractCoalescePO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.GroupCoalescePO;
@@ -20,7 +21,7 @@ public class TCoalesceAORule extends AbstractTransformationRule<CoalesceAO> {
 	}
 
 	@Override
-	public void execute(CoalesceAO operator, TransformationConfiguration config) {
+	public void execute(CoalesceAO operator, TransformationConfiguration config) throws RuleException {
 		AbstractCoalescePO<ITimeInterval> po = null;
 		if (operator.getPredicate() == null){
 			int maxElementsPerGroup = operator.getMaxElementsPerGroup();

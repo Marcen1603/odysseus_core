@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.AssignDistributionAO;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.AssignDistributionPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -50,7 +51,7 @@ public class TAssignDistributionAORule extends AbstractTransformationRule<Assign
      * java.lang.Object)
      */
     @Override
-    public final void execute(final AssignDistributionAO operator, final TransformationConfiguration config) {
+    public final void execute(final AssignDistributionAO operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(config);
         final IPhysicalOperator distributionPO = new AssignDistributionPO<ITimeInterval>(operator.determineAttributesList(), operator.determineVariance());

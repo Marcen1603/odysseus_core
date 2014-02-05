@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.relational_interval.logicaloperator.ReplacementA
 import de.uniol.inf.is.odysseus.relational_interval.replacement.IReplacement;
 import de.uniol.inf.is.odysseus.relational_interval.replacement.RelationalReplacementPO;
 import de.uniol.inf.is.odysseus.relational_interval.replacement.ReplacementRegistry;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -16,7 +17,7 @@ public class TReplacementAORule extends AbstractTransformationRule<ReplacementAO
 
 	@Override
 	public void execute(ReplacementAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		SDFSchema schema = operator.getOutputSchema();
 		int timestampAttributePos = operator.getTimestampAttribute()!=null?schema.indexOf(operator.getTimestampAttribute()):-1;
 		int valueAttributePos = operator.getValueAttribute()!=null?schema.indexOf(operator.getValueAttribute()): -1;

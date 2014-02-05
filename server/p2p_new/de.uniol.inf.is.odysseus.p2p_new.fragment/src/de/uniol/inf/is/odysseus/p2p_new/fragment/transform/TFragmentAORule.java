@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.p2p_new.fragment.logicaloperator.FragmentAO;
 import de.uniol.inf.is.odysseus.p2p_new.fragment.physicaloperator.AbstractFragmentPO;
 import de.uniol.inf.is.odysseus.p2p_new.fragment.physicaloperator.HashFragmentPO;
 import de.uniol.inf.is.odysseus.p2p_new.fragment.physicaloperator.RRFragmentPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -28,7 +29,7 @@ public class TFragmentAORule extends AbstractTransformationRule<FragmentAO> {
 	  
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void execute(FragmentAO fragmentAO, TransformationConfiguration config) { 
+	public void execute(FragmentAO fragmentAO, TransformationConfiguration config) throws RuleException { 
 		
 		if(fragmentAO.getType().equals(HashFragmentation.NAME))
 			defaultExecute(fragmentAO, new HashFragmentPO(fragmentAO), config, true, true);

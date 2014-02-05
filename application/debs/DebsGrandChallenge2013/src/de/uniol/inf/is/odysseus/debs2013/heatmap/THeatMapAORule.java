@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.debs2013.heatmap;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.debs2013.heatmap.HeatMapPO;
 import de.uniol.inf.is.odysseus.debs2013.heatmap.logicaloperator.HeatMapAO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -30,7 +31,7 @@ public class THeatMapAORule extends AbstractTransformationRule<HeatMapAO> {
 	}
 
 	@Override
-	public void execute(HeatMapAO heatMapAO, TransformationConfiguration transformConfig) {		
+	public void execute(HeatMapAO heatMapAO, TransformationConfiguration transformConfig) throws RuleException {		
 		@SuppressWarnings({ "rawtypes" })
 		HeatMapPO<?, ?> heatMapPO = new HeatMapPO(heatMapAO.getX(), heatMapAO.getY(), 
 												heatMapAO.getXLength(), heatMapAO.getYLength(),

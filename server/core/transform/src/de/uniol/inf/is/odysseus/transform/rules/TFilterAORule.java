@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.FilterAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.FilterPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -30,7 +31,7 @@ public class TFilterAORule extends AbstractTransformationRule<FilterAO> {
 	}
 
 	@Override
-	public void execute(FilterAO filterAO, TransformationConfiguration transformConfig) {		
+	public void execute(FilterAO filterAO, TransformationConfiguration transformConfig) throws RuleException {		
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		FilterPO<?> filterPO = new FilterPO(filterAO.getPredicate());
 		defaultExecute(filterAO, filterPO, transformConfig, true, true);		

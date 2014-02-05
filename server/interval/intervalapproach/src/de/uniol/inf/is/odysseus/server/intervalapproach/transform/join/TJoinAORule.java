@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
@@ -38,7 +39,7 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
 	}
 
 	@Override
-	public void execute(JoinAO joinAO, TransformationConfiguration transformConfig) {
+	public void execute(JoinAO joinAO, TransformationConfiguration transformConfig) throws RuleException {
 		JoinTIPO joinPO = new JoinTIPO();
 		boolean isCross = false;
 		IPredicate pred = joinAO.getPredicate();

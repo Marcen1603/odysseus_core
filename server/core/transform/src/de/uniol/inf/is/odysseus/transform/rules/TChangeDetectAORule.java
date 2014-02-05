@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ChangeDetectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -31,7 +32,7 @@ public class TChangeDetectAORule extends AbstractTransformationRule<ChangeDetect
 	}
 
 	@Override
-	public void execute(ChangeDetectAO operator, TransformationConfiguration config) {
+	public void execute(ChangeDetectAO operator, TransformationConfiguration config) throws RuleException {
 		ChangeDetectPO<?> po = new ChangeDetectPO<IStreamObject<?>>();
 		defaultExecute(operator, po, config, true, true);
 	}

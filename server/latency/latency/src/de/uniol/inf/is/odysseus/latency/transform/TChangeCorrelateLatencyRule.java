@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.latency.LatencyMergeFunction;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.ChangeCorrelatePO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -33,7 +34,7 @@ public class TChangeCorrelateLatencyRule extends AbstractTransformationRule<Chan
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void execute(ChangeCorrelatePO<?, ?> ccPO, TransformationConfiguration config) {
+	public void execute(ChangeCorrelatePO<?, ?> ccPO, TransformationConfiguration config) throws RuleException {
 		((CombinedMergeFunction)ccPO.getMetadataMerge()).add(new LatencyMergeFunction());		
 	}
 

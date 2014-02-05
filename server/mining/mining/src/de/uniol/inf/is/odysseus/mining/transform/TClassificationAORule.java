@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.ClassificationAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.ClassificationPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -39,7 +40,7 @@ public class TClassificationAORule extends AbstractTransformationRule<Classifica
 	}
 
 	@Override
-	public void execute(ClassificationAO operator, TransformationConfiguration config) {
+	public void execute(ClassificationAO operator, TransformationConfiguration config) throws RuleException {
 		CombinedMergeFunction<ITimeInterval> metaDataMerge = new CombinedMergeFunction<ITimeInterval>();
 		metaDataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
 		TITransferArea<Tuple<ITimeInterval>, Tuple<ITimeInterval>> transferFunction = new TITransferArea<>();

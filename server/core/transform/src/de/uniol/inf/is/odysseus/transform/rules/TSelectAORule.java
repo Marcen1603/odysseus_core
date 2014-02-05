@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -30,7 +31,7 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 	}
 
 	@Override
-	public void execute(SelectAO selectAO, TransformationConfiguration transformConfig) {		
+	public void execute(SelectAO selectAO, TransformationConfiguration transformConfig) throws RuleException {		
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		SelectPO<?> selectPO = new SelectPO(selectAO.getPredicate());
 		defaultExecute(selectAO, selectPO, transformConfig, true, true);		

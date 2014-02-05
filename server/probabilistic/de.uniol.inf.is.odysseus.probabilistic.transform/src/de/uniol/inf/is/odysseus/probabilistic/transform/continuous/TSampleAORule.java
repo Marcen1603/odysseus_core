@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.SampleAO;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.SamplePO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -50,7 +51,7 @@ public class TSampleAORule extends AbstractTransformationRule<SampleAO> {
      * java.lang.Object)
      */
     @Override
-    public final void execute(final SampleAO operator, final TransformationConfiguration config) {
+    public final void execute(final SampleAO operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(config);
         final IPhysicalOperator samplePO = new SamplePO<ITimeInterval>(operator.determineAttributesList(), operator.getSamples());

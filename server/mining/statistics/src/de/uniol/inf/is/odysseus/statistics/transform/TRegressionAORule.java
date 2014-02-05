@@ -33,6 +33,7 @@ package de.uniol.inf.is.odysseus.statistics.transform;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.statistics.logicaloperator.RegressionAO;
 import de.uniol.inf.is.odysseus.statistics.physicaloperator.RegressionPO;
@@ -52,7 +53,7 @@ public class TRegressionAORule extends AbstractTransformationRule<RegressionAO>{
 	}
 
 	@Override
-	public void execute(RegressionAO operator, TransformationConfiguration config) {
+	public void execute(RegressionAO operator, TransformationConfiguration config) throws RuleException {
 		int x = operator.getInputSchema().indexOf(operator.getAttributeX());
 		int y = operator.getInputSchema().indexOf(operator.getAttributeY());
 		RegressionPO<ITimeInterval, Tuple<ITimeInterval>> po = new RegressionPO<ITimeInterval, Tuple<ITimeInterval>>(x, y);

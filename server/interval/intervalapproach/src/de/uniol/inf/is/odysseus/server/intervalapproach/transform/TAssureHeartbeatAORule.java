@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.server.intervalapproach.transform;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AssureHeartbeatPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
@@ -19,7 +20,7 @@ public class TAssureHeartbeatAORule extends
 
 	@Override
 	public void execute(AssureHeartbeatAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		AssureHeartbeatPO<IStreamObject<? extends ITimeInterval>> physical = new AssureHeartbeatPO<>(operator.isStartAtCurrentTime());
 		physical.setApplicationTimeDelay(operator.getApplicationTimeDelay());
 		physical.setRealTimeDelay(operator.getRealTimeDelay(), operator.getTimeUnit());

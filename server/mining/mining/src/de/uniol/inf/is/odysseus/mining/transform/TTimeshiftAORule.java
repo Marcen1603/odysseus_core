@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.TimeshiftAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.TimeshiftPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -17,7 +18,7 @@ public class TTimeshiftAORule extends AbstractTransformationRule<TimeshiftAO> {
 	}
 
 	@Override
-	public void execute(TimeshiftAO operator, TransformationConfiguration config) {
+	public void execute(TimeshiftAO operator, TransformationConfiguration config) throws RuleException {
 		PointInTime point = new PointInTime(operator.getShift());
 		TimeshiftPO<ITimeInterval> po = new TimeshiftPO<>(point);
 		defaultExecute(operator, po, config, true, false);		

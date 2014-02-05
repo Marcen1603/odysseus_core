@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
 public class WorkingMemory {
@@ -144,7 +145,7 @@ public class WorkingMemory {
 		// insertObject(o, true);
 	}
 
-	public int process() {
+	public int process() throws RuleException {
 		LOGGER.trace("Rule engine started and now looking for matches...");
 		for (IRuleFlowGroup group : this.env.getRuleFlow()) {			
 //			LOGGER.info("Running group: " + group + "...");						
@@ -168,7 +169,7 @@ public class WorkingMemory {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void runGroup(IRuleFlowGroup group){
+	private void runGroup(IRuleFlowGroup group) throws RuleException{
 		hasChanged = false;
 		Set<Class<?>> clazzes = new HashSet(objectMap.keySet());
 		Iterator<IRule<?, ?>> iterator = this.env.getRuleFlow().iteratorRules(group, clazzes);
@@ -185,7 +186,7 @@ public class WorkingMemory {
 			for(Object matchingObject : matchingObjects){		
 				if(rule.isExecutable(matchingObject, this.env.getConfiguration())){
 					LOGGER.trace("Running rule "+rule+" on "+matchingObject);
-					rule.execute(matchingObject, this.env.getConfiguration());					
+					rule.execute(matchingObject, this.env.getConfiguration());
 					if(this.hasChanged){
 						// if wm was changed: stop...
 						return;

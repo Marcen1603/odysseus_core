@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.latency.LatencyMergeFunction;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.ClassificationPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -37,7 +38,7 @@ public class TClassificationPOLatencyRule  extends AbstractTransformationRule<Cl
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void execute(ClassificationPO<?> classifictionpo, TransformationConfiguration config) {
+	public void execute(ClassificationPO<?> classifictionpo, TransformationConfiguration config) throws RuleException {
 		((CombinedMergeFunction)classifictionpo.getMetadataMerge()).add(new LatencyMergeFunction());		
 	}
 

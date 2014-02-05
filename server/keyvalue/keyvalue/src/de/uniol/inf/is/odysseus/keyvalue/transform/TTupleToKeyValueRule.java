@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.keyvalue.logicaloperator.TupleToKeyValueAO;
 import de.uniol.inf.is.odysseus.keyvalue.physicaloperator.TupleToKeyValuePO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -19,7 +20,7 @@ public class TTupleToKeyValueRule extends AbstractTransformationRule<TupleToKeyV
 	}
 
 	@Override
-	public void execute(TupleToKeyValueAO ao, TransformationConfiguration config) {
+	public void execute(TupleToKeyValueAO ao, TransformationConfiguration config) throws RuleException {
 		SDFSchema newOutputSchema =  SDFSchema.changeType(ao.getInputSchema(),KeyValueObject.class);
 		TupleToKeyValuePO<IMetaAttribute> po = new TupleToKeyValuePO<IMetaAttribute>();
 		po.setOutputSchema(newOutputSchema);

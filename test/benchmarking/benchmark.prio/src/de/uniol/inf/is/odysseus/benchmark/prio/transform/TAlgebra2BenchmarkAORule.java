@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.priority.IPriority;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -38,7 +39,7 @@ public class TAlgebra2BenchmarkAORule extends
 
 	@Override
 	public void execute(ILogicalOperator algebraOp,
-			TransformationConfiguration trafo) {
+			TransformationConfiguration trafo) throws RuleException {
 		int processingTime = trafo.getOption("processingTime");
 		double selectivity = trafo.getOption("selectivity");
 		BenchmarkPO<?> po = createBenchmarkPO(processingTime, selectivity,

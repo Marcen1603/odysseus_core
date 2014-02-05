@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.benchmark.logicaloperator.BatchProducerAO;
 import de.uniol.inf.is.odysseus.benchmark.prio.physical.BatchProducer;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -34,7 +35,7 @@ public class TBatchProducerAORule extends AbstractTransformationRule<BatchProduc
 	}
 
 	@Override
-	public void execute(BatchProducerAO algebraOp, TransformationConfiguration trafo) {
+	public void execute(BatchProducerAO algebraOp, TransformationConfiguration trafo) throws RuleException {
 		BatchProducer po = new BatchProducer(algebraOp.getInvertedPriorityRatio());
 		Iterator<Long> it = algebraOp.getFrequencies().iterator();
 		for(Integer size : algebraOp.getElementCounts()) {

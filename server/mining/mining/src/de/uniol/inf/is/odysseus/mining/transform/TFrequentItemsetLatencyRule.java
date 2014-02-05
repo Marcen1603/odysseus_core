@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.latency.LatencyMergeFunction;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.FrequentItemsetFPGrowthPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -37,7 +38,7 @@ public class TFrequentItemsetLatencyRule  extends AbstractTransformationRule<Fre
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void execute(FrequentItemsetFPGrowthPO<?> fp, TransformationConfiguration config) {
+	public void execute(FrequentItemsetFPGrowthPO<?> fp, TransformationConfiguration config) throws RuleException {
 		((CombinedMergeFunction)fp.getMetadataMerge()).add(new LatencyMergeFunction());		
 	}
 

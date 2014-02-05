@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.sentimentdetection.logicaloperator.SentimentDetectionAO;
 import de.uniol.inf.is.odysseus.sentimentdetection.physicaloperator.SentimentDetectionPO;
@@ -18,7 +19,7 @@ public class TSentimentDetectionAORule extends
 
 	@Override
 	public void execute(SentimentDetectionAO sentimentDetectionAO,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		
 		
 		defaultExecute(

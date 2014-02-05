@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.EMAO;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.EMPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -51,7 +52,7 @@ public class TEMAORule extends AbstractTransformationRule<EMAO> {
      * java.lang.Object)
      */
     @Override
-    public final void execute(final EMAO operator, final TransformationConfiguration config) {
+    public final void execute(final EMAO operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
          Objects.requireNonNull(config);
         final IPhysicalOperator emPO = new EMPO<ITimeInterval>(operator.determineAttributesList(), operator.getMixtures(), operator.getIterations(), operator.getThreshold(), operator.isIncremental(),

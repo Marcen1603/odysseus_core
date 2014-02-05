@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -22,7 +23,7 @@ public class TStoreKinectAORule extends
 
     @Override
     public void execute(StoreKinectAO visualGridSinkAO,
-            TransformationConfiguration transformConfig) {
+            TransformationConfiguration transformConfig) throws RuleException {
         try {
             final StoreKinectPO visualGridSinkPO = new StoreKinectPO(
                     visualGridSinkAO.getOutputSchema());

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.server.intervalapproach.transform;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.SyncWithSystemTimePO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.SyncWithSystemTimeAO;
@@ -18,7 +19,7 @@ public class TSyncWithSystemTimeAORule extends AbstractTransformationRule<SyncWi
 
 	@Override
 	public void execute(SyncWithSystemTimeAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		SyncWithSystemTimePO<IStreamObject<? extends ITimeInterval>> po = new SyncWithSystemTimePO<>(operator.getTimeUnit(), operator.getFactor());
 		defaultExecute(operator, po, config, true, true);
 	}

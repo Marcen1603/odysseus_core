@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalThreadedMapPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -35,7 +36,7 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 	}
 
 	@Override
-	public void execute(MapAO mapAO, TransformationConfiguration transformConfig) {
+	public void execute(MapAO mapAO, TransformationConfiguration transformConfig) throws RuleException {
         IPhysicalOperator mapPO;
         if ((mapAO.getThreads() >= 0) && (mapAO.getThreads() <= 1)) {
             mapPO = new RelationalMapPO<IMetaAttribute>(mapAO.getInputSchema(), mapAO.getExpressions().toArray(new SDFExpression[0]), false, false);

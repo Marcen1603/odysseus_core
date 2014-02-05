@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.LinearRegressionAO;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.LinearRegressionPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -51,7 +52,7 @@ public class TLinearRegressionAORule extends AbstractTransformationRule<LinearRe
      * java.lang.Object)
      */
     @Override
-    public final void execute(final LinearRegressionAO operator, final TransformationConfiguration config) {
+    public final void execute(final LinearRegressionAO operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
        Objects.requireNonNull(config);
           final IPhysicalOperator linearRegressionPO = new LinearRegressionPO<ITimeInterval>(operator.determineDependentList(), operator.determineExplanatoryList());

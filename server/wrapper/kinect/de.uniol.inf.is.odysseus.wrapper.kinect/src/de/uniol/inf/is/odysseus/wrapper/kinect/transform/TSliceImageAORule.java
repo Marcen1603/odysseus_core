@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -19,7 +20,7 @@ public class TSliceImageAORule extends
 
 	@Override
 	public void execute(SliceImageAO ao,
-			TransformationConfiguration transformConfig) {
+			TransformationConfiguration transformConfig) throws RuleException {
         try {
         	SliceImagePO po = new SliceImagePO(ao.getOutputSchema());
             po.setOutputSchema(ao.getOutputSchema());

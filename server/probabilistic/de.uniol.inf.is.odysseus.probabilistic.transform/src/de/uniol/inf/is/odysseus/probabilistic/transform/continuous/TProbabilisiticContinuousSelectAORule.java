@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticContinuousSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.server.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.transform.rules.TSelectAORule;
 
@@ -53,7 +54,7 @@ public class TProbabilisiticContinuousSelectAORule extends TSelectAORule {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public final void execute(final SelectAO operator, final TransformationConfiguration transformConfig) {
+    public final void execute(final SelectAO operator, final TransformationConfiguration transformConfig) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getInputSchema());
         Objects.requireNonNull(transformConfig);

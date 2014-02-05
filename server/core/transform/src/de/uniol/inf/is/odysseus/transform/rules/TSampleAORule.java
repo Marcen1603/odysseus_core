@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SampleAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SamplePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -15,7 +16,7 @@ public class TSampleAORule extends AbstractTransformationRule<SampleAO> {
 	}
 
 	@Override
-	public void execute(SampleAO operator, TransformationConfiguration config) {
+	public void execute(SampleAO operator, TransformationConfiguration config) throws RuleException {
 		defaultExecute(operator, new SamplePO<>(operator.getSampleRate()), config, true, true);
 	}
 

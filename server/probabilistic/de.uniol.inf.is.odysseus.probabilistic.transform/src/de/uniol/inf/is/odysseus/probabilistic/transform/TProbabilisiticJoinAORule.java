@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.DefaultProbabilisticTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticJoinTIPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -58,7 +59,7 @@ public class TProbabilisiticJoinAORule extends AbstractTransformationRule<JoinAO
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public final void execute(final JoinAO operator, final TransformationConfiguration config) {
+    public final void execute(final JoinAO operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(config);
         final ProbabilisticJoinTIPO joinPO = new ProbabilisticJoinTIPO();

@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DistinctAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalDistinctPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -17,7 +18,7 @@ public class TRelationalDistinctAORule extends AbstractTransformationRule<Distin
 	}
 
 	@Override
-	public void execute(DistinctAO operator, TransformationConfiguration config) {
+	public void execute(DistinctAO operator, TransformationConfiguration config) throws RuleException {
 		RelationalDistinctPO<Tuple<? extends ITimeInterval>> po = new RelationalDistinctPO<>();
 		defaultExecute(operator, po, config, true, true);
 	}

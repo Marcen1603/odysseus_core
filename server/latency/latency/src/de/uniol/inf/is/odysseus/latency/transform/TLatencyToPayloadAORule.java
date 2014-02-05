@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.latency.physicaloperator.LatencyToPayloadPO;
 import de.uniol.inf.is.odysseus.logicaloperator.latency.LatencyToPayloadAO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -17,7 +18,7 @@ public class TLatencyToPayloadAORule extends AbstractTransformationRule<LatencyT
 	}
 
 	@Override
-	public void execute(LatencyToPayloadAO operator, TransformationConfiguration config) {
+	public void execute(LatencyToPayloadAO operator, TransformationConfiguration config) throws RuleException {
 		LatencyToPayloadPO<ILatency, IStreamObject<ILatency>> po = new LatencyToPayloadPO<>();
 		defaultExecute(operator, po, config, true, false);	
 	}

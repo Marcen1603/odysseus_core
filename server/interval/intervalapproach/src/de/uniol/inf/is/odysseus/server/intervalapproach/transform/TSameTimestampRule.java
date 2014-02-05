@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SameTimeFactory;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -35,7 +36,7 @@ public class TSameTimestampRule extends AbstractTransformationRule<TimestampAO> 
 	}
 
 	@Override
-	public void execute(TimestampAO timestampAO, TransformationConfiguration transformConfig) {
+	public void execute(TimestampAO timestampAO, TransformationConfiguration transformConfig) throws RuleException {
 		SameTimeFactory<ITimeInterval, IStreamObject<ITimeInterval>> mUpdater = new SameTimeFactory<ITimeInterval, IStreamObject<ITimeInterval>>();		
 		MetadataUpdatePO<ITimeInterval, IStreamObject<ITimeInterval>> po = new MetadataUpdatePO<ITimeInterval, IStreamObject<ITimeInterval>>(mUpdater);
 		defaultExecute(timestampAO, po, transformConfig, true, true);

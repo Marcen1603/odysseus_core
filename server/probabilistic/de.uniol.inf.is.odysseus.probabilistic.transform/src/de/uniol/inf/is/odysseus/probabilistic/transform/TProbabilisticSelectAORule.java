@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.transform.rules.TSelectAORule;
 
 /**
@@ -42,7 +43,7 @@ public class TProbabilisticSelectAORule extends TSelectAORule {
      * {@inheritDoc}
      */
     @Override
-    public final void execute(final SelectAO selectAO, final TransformationConfiguration transformConfig) {
+    public final void execute(final SelectAO selectAO, final TransformationConfiguration transformConfig) throws RuleException {
         super.execute(selectAO, transformConfig);
     }
 

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MergeAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MergePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -15,7 +16,7 @@ public class TMergeAORule extends AbstractTransformationRule<MergeAO> {
 	}
 
 	@Override
-	public void execute(MergeAO operator, TransformationConfiguration config) {
+	public void execute(MergeAO operator, TransformationConfiguration config) throws RuleException {
 		defaultExecute(operator, new MergePO(), config, true, true);
 	}
 

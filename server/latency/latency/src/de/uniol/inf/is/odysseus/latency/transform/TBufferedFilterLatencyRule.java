@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.latency.LatencyMergeFunction;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.BufferedFilterPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -53,7 +54,7 @@ public class TBufferedFilterLatencyRule extends AbstractTransformationRule<Buffe
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void execute(BufferedFilterPO<?,?> bf, TransformationConfiguration config) {
+	public void execute(BufferedFilterPO<?,?> bf, TransformationConfiguration config) throws RuleException {
 		((CombinedMergeFunction)bf.getMetadataMerge()).add(new LatencyMergeFunction());		
 	}
 

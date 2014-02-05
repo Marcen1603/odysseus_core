@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.benchmark.transform;
 import de.uniol.inf.is.odysseus.benchmark.logicaloperator.DatarateCalcAO;
 import de.uniol.inf.is.odysseus.benchmark.physical.DatarateCalcPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -16,7 +17,7 @@ public class TDatarateCalcAORule extends AbstractTransformationRule<DatarateCalc
 
 	@Override
 	public void execute(DatarateCalcAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		@SuppressWarnings("rawtypes")
 		DatarateCalcPO po = new DatarateCalcPO<>();
 		po.setUpdateRate(operator.getUpdateRate());

@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.benchmark.logicaloperator.TestProducerAO;
 import de.uniol.inf.is.odysseus.benchmark.physical.TestproducerPO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -34,7 +35,7 @@ public class TTestProducerAORule extends AbstractTransformationRule<TestProducer
 	}
 
 	@Override
-	public void execute(TestProducerAO algebraOp, TransformationConfiguration trafo) {
+	public void execute(TestProducerAO algebraOp, TransformationConfiguration trafo) throws RuleException {
 		TestproducerPO po = new TestproducerPO(algebraOp.getDelayMillis());
 		po.setOutputSchema(algebraOp.getOutputSchema());
 		Iterator<Long> it = algebraOp.getFrequencies().iterator();

@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.relational.transform.TProjectAORule;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -40,7 +41,7 @@ public class TProbabilisticProjectAORule extends TProjectAORule {
      * {@inheritDoc}
      */
     @Override
-    public final void execute(final ProjectAO projectAO, final TransformationConfiguration transformConfig) {
+    public final void execute(final ProjectAO projectAO, final TransformationConfiguration transformConfig) throws RuleException {
         super.execute(projectAO, transformConfig);
     }
 

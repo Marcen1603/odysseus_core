@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.logicaloperator.ExistenceToPayloadAO;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.RelationalExistenceToPayloadPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -47,7 +48,7 @@ public class TRelationalExistenceToPayloadRule extends AbstractTransformationRul
      * java.lang.Object)
      */
     @Override
-    public final void execute(final ExistenceToPayloadAO operator, final TransformationConfiguration config) {
+    public final void execute(final ExistenceToPayloadAO operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(config);
         this.defaultExecute(operator, new RelationalExistenceToPayloadPO(), config, true, true);

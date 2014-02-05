@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.StatCounterAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.StatCounterPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -41,7 +42,7 @@ public class TStatCounterAORule extends AbstractTransformationRule<StatCounterAO
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void execute(StatCounterAO operator, TransformationConfiguration config) {
+	public void execute(StatCounterAO operator, TransformationConfiguration config) throws RuleException {
 		StatCounterPO<ITimeInterval> po = new StatCounterPO<ITimeInterval>(operator.getOutputeach());
 		po.setOutputSchema(operator.getOutputSchema(0), 0);		
 		replace(operator, po, config);

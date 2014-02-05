@@ -19,6 +19,7 @@ package de.uniol.inf.is.odysseus.pubsub.transform;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.pubsub.logicaloperator.PublishAO;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -38,7 +39,7 @@ public class TPublishAORule extends AbstractTransformationRule<PublishAO> {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void execute(PublishAO publish, TransformationConfiguration config) {
+	public void execute(PublishAO publish, TransformationConfiguration config) throws RuleException {
 		defaultExecute(publish, new PublishPO(publish.getTopologyType(),
 				publish.getDomain(), publish.getTopics(), publish.getRouting()), config, true, true);
 	}

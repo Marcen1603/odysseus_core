@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SystemTimeIntervalFactory;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -34,7 +35,7 @@ public class TSystemTimestampRule extends AbstractTransformationRule<TimestampAO
 	}
 
 	@Override
-	public void execute(TimestampAO timestampAO, TransformationConfiguration transformConfig) {
+	public void execute(TimestampAO timestampAO, TransformationConfiguration transformConfig) throws RuleException {
 		if(timestampAO.hasEndTimestamp() || timestampAO.hasStartTimestamp()){
 			throw new TransformationException("You cannot use start and end parameters for system time processing");
 		}

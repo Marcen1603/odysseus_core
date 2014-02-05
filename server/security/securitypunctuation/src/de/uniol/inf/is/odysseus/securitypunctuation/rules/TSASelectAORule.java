@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.securitypunctuation.rules;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SASelectPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.NElementHeartbeatGeneration;
@@ -33,7 +34,7 @@ public class TSASelectAORule extends AbstractTransformationRule<SelectAO> {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void execute(SelectAO selectAO, TransformationConfiguration transformConfig) {	
+	public void execute(SelectAO selectAO, TransformationConfiguration transformConfig) throws RuleException {	
 		SelectPO<?> selectPO = new SASelectPO(selectAO.getPredicate());
 		if (selectAO.getHeartbeatRate() > 0){
 			selectPO.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(

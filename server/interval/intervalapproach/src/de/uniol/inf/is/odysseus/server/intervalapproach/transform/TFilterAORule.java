@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.server.intervalapproach.transform;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.FilterAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.FilterPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -32,7 +33,7 @@ public class TFilterAORule extends AbstractTransformationRule<FilterAO> {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void execute(FilterAO filterAO, TransformationConfiguration transformConfig) {	
+	public void execute(FilterAO filterAO, TransformationConfiguration transformConfig) throws RuleException {	
 		FilterPO<?> filterPO = new FilterPO(filterAO.getPredicate());
 		if (filterAO.getHeartbeatRate() > 0){
 			filterPO.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(

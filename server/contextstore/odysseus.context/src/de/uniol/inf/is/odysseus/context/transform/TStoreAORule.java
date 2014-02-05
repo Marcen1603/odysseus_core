@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.context.store.IContextStore;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -54,7 +55,7 @@ public class TStoreAORule extends AbstractTransformationRule<StoreAO>{
 	}
 
 	@Override
-	public void execute(StoreAO operator, TransformationConfiguration config) {
+	public void execute(StoreAO operator, TransformationConfiguration config) throws RuleException {
 		IContextStore<Tuple<? extends ITimeInterval>> store = ContextStoreManager.getStore(operator.getStoreName());			
 		StorePO<Tuple<? extends ITimeInterval>> newOperator = new StorePO<Tuple<? extends ITimeInterval>>(store);
 		store.setWriter(newOperator);

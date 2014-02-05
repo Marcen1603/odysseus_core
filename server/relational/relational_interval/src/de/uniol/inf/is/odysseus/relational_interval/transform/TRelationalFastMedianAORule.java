@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProce
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalNoGroupProcessor;
 import de.uniol.inf.is.odysseus.relational_interval.logicaloperator.RelationalFastMedianAO;
 import de.uniol.inf.is.odysseus.relational_interval.physicaloperator.RelationalFastMedianPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -17,7 +18,7 @@ public class TRelationalFastMedianAORule extends
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(RelationalFastMedianAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		SDFSchema inputSchema = operator.getInputSchema(0);
 		int medianAttrPos = inputSchema.findAttributeIndex(operator
 				.getMedianAttribute().getURI());

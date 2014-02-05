@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SenderPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -65,7 +66,7 @@ public class TSenderAOGenericRule extends
 	 */
 	@Override
 	public void execute(AbstractSenderAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		Resource senderPOName = operator.getSinkname();
 
 		IDataHandler<?> dataHandler = getDataHandler(operator);

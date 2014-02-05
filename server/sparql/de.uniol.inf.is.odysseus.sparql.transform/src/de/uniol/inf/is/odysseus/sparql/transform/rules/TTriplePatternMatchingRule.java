@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.sparql.transform.rules;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatching;
 import de.uniol.inf.is.odysseus.sparql.physicaloperator.TriplePatternMatchingPO;
@@ -31,7 +32,7 @@ public class TTriplePatternMatchingRule<M extends IMetaAttribute> extends Abstra
 	}
 
 	@Override
-	public void execute(TriplePatternMatching tpmAO, TransformationConfiguration transformConfig) {
+	public void execute(TriplePatternMatching tpmAO, TransformationConfiguration transformConfig) throws RuleException {
 		
 		TriplePatternMatchingPO<M> tpmPO = new TriplePatternMatchingPO<M>(tpmAO);
 		defaultExecute(tpmAO, tpmPO, transformConfig, true, true);

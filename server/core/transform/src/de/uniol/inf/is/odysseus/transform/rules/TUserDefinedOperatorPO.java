@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UserDefinedOperatorAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.UserDefinedOperatorPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -33,7 +34,7 @@ public class TUserDefinedOperatorPO extends
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(UserDefinedOperatorAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		UserDefinedOperatorPO po = new UserDefinedOperatorPO();
 		po.setInitString(operator.getInitString());
 		po.setUdf(operator.getUdf());		

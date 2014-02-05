@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -35,7 +36,7 @@ public class TBenchmarkDirectInterlinkBufferRule extends AbstractTransformationR
 	}
 
 	@Override
-	public void execute(BufferAO algebraOp, TransformationConfiguration trafo) {
+	public void execute(BufferAO algebraOp, TransformationConfiguration trafo) throws RuleException {
 		BufferPO po = new DirectInterlinkBufferPO();
 		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(algebraOp, po);
 		for (ILogicalOperator o:toUpdate){

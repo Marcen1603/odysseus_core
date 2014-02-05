@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.FileSinkPO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SecurityShieldPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -47,7 +48,7 @@ public class TSecurityShieldAORule extends AbstractTransformationRule<TopAO> {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(TopAO topAO,
-			TransformationConfiguration transformConfig) {
+			TransformationConfiguration transformConfig) throws RuleException {
 		if(transformConfig.getOption("isSecurityAware") != null) {		
 			if (Boolean.parseBoolean((String)transformConfig.getOption("isSecurityAware")) )  {
 				Collection<IPhysicalOperator> physInputPOs = topAO.getPhysInputPOs();

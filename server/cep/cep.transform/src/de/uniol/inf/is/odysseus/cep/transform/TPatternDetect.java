@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TIInputStreamSyncArea;
@@ -46,7 +47,7 @@ public class TPatternDetect extends AbstractTransformationRule<PatternDetectAO> 
 
 	@Override
 	public void execute(PatternDetectAO cepAO,
-			TransformationConfiguration transformConfig) {
+			TransformationConfiguration transformConfig) throws RuleException {
 
 		Map<Integer, IEventReader> rMap = new HashMap<>();
 

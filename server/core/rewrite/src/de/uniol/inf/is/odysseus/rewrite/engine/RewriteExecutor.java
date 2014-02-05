@@ -27,10 +27,12 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IRewrite;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rewrite.flow.IRewriteRuleProvider;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 
 public class RewriteExecutor implements IRewrite {
 
@@ -67,7 +69,11 @@ public class RewriteExecutor implements IRewrite {
 			LOGGER.trace("Processing rules...");
 		}
 		// start transformation
-		env.processEnvironment();
+		try{
+			env.processEnvironment();
+		}catch(RuleException e){
+			throw new TransformationException(e);
+		}
 		LOGGER.trace("Processing rules done.");
 		final ILogicalOperator ret;
 		if (createdNewTopAO) {

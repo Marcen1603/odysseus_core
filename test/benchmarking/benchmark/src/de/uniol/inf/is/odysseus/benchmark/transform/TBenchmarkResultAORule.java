@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.benchmark.result.IBenchmarkResultFactory;
 import de.uniol.inf.is.odysseus.core.server.monitoring.IDescriptiveStatistics;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -19,7 +20,7 @@ public class TBenchmarkResultAORule extends AbstractTransformationRule<Benchmark
 	}
 
 	@Override
-	public void execute(BenchmarkResultAO operator, TransformationConfiguration config) {
+	public void execute(BenchmarkResultAO operator, TransformationConfiguration config) throws RuleException {
 		IBenchmarkResultFactory<?> resultFactory = BenchmarkResultFactoryRegistry.getEntry(operator.getResultType());
 		if (resultFactory == null) {
 			throw new TransformationException("ResultFactory " + operator.getResultType() + " not registered!");

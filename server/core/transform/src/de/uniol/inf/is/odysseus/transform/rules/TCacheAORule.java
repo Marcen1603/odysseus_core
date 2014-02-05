@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CacheAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.CachePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -15,7 +16,7 @@ public class TCacheAORule extends AbstractTransformationRule<CacheAO> {
 	}
 
 	@Override
-	public void execute(CacheAO operator, TransformationConfiguration config) {
+	public void execute(CacheAO operator, TransformationConfiguration config) throws RuleException {
 		defaultExecute(operator, new CachePO<>(operator.getMaxElements()), config, true, true);
 	}
 

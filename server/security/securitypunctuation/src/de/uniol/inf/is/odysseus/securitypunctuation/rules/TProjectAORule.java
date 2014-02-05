@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SARelationalProjectPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -34,7 +35,7 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 
 	@Override
 	public void execute(ProjectAO projectAO,
-			TransformationConfiguration transformConfig) {
+			TransformationConfiguration transformConfig) throws RuleException {
 		SARelationalProjectPO<IStreamObject<? extends ITimeInterval>> saProjectPO = new SARelationalProjectPO<IStreamObject<? extends ITimeInterval>>(
 				projectAO.determineRestrictList());
 		defaultExecute(projectAO, saProjectPO, transformConfig, true, true);

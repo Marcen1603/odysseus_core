@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -30,7 +31,7 @@ public class TSenderAOExistsRule extends AbstractTransformationRule<SenderAO> {
 	}
 
 	@Override
-	public void execute(SenderAO senderAO, TransformationConfiguration trafo) {		
+	public void execute(SenderAO senderAO, TransformationConfiguration trafo) throws RuleException {		
 		ISink<?> sinkPO = getDataDictionary().getSinkplan(senderAO.getSinkname());		
 		defaultExecute(senderAO, sinkPO, trafo, true, true);
 		sinkPO.setName(senderAO.getSinkname().getResourceName());

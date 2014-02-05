@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range.logicaloperator.RangeFragmentAO;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range.physicaloperator.RangeFragmentPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -23,7 +24,7 @@ public class TRangeFragmentAORule extends
 	
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void execute(RangeFragmentAO fragmentAO, TransformationConfiguration config) { 
+	public void execute(RangeFragmentAO fragmentAO, TransformationConfiguration config) throws RuleException { 
 		
 		defaultExecute(fragmentAO, new RangeFragmentPO(fragmentAO), config, true, true);
 		 

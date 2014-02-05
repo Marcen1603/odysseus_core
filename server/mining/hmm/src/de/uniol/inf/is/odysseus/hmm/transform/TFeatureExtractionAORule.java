@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.hmm.transform;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.hmm.logicaloperator.FeatureExtractionAO;
 import de.uniol.inf.is.odysseus.hmm.physicaloperator.FeatureExtractionPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -17,7 +18,7 @@ public class TFeatureExtractionAORule extends
 	}
 
 	@Override
-	public void execute(FeatureExtractionAO operator, TransformationConfiguration config) {
+	public void execute(FeatureExtractionAO operator, TransformationConfiguration config) throws RuleException {
 		defaultExecute(operator, new FeatureExtractionPO(), config, true, true);
 
 	}

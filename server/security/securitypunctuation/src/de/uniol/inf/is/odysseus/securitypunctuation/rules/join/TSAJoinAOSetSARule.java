@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SAJoinPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
@@ -34,7 +35,7 @@ public class TSAJoinAOSetSARule<K extends ITimeInterval, T extends IStreamObject
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void execute(SAJoinPO<K,T> joinPO, TransformationConfiguration transformConfig) {
+	public void execute(SAJoinPO<K,T> joinPO, TransformationConfiguration transformConfig) throws RuleException {
 		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
 		
 		// check, which sweep area to use

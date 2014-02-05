@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.keyvalue.logicaloperator.KeyValueToTupleAO;
 import de.uniol.inf.is.odysseus.keyvalue.physicaloperator.KeyValueToTuplePO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -16,7 +17,7 @@ public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToT
 	}
 
 	@Override
-	public void execute(KeyValueToTupleAO operator, TransformationConfiguration config) {
+	public void execute(KeyValueToTupleAO operator, TransformationConfiguration config) throws RuleException {
 		defaultExecute(operator, new KeyValueToTuplePO<IMetaAttribute>(operator.isKeepInputObject(), operator.getOutputSchema()), config, true, false);
 	}
 

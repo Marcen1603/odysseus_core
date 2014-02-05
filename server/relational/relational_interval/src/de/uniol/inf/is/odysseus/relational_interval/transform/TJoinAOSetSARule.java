@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -33,7 +34,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 	}
 
 	@Override
-	public void execute(JoinTIPO joinPO, TransformationConfiguration transformConfig) {
+	public void execute(JoinTIPO joinPO, TransformationConfiguration transformConfig) throws RuleException {
 		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
 		
 		// check, which sweep area to use

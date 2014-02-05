@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -32,7 +33,7 @@ public class TInitPredicateRule extends AbstractTransformationRule<ILogicalOpera
 
 	@Override
 	public void execute(ILogicalOperator operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		for(IPredicate<?> pred: operator.getPredicates()){
 			pred.init();
 			ComplexPredicateHelper.visitPredicates(pred, new InitPredicateFunctor(operator));

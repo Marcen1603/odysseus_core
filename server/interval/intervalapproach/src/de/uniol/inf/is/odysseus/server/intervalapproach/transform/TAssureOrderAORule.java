@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AssureOrderAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AssureOrderPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -44,7 +45,7 @@ public class TAssureOrderAORule extends AbstractTransformationRule<AssureOrderAO
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void execute(AssureOrderAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		AssureOrderPO orderPO = new AssureOrderPO();
 		
 		orderPO.setTransferFunction(new TITransferArea());

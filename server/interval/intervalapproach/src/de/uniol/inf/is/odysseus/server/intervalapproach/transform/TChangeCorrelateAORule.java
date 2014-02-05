@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.ChangeCorrelatePO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TIInputStreamSyncArea;
@@ -58,7 +59,7 @@ public class TChangeCorrelateAORule extends AbstractTransformationRule<ChangeCor
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void execute(ChangeCorrelateAO ccAO, TransformationConfiguration transformConfig) {
+	public void execute(ChangeCorrelateAO ccAO, TransformationConfiguration transformConfig) throws RuleException {
 		TIInputStreamSyncArea inputStreamSyncArea = new TIInputStreamSyncArea(ccAO.getSubscribedToSource().size());
 		TITransferArea outputTransferArea = new TITransferArea();
 		

@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ObjectSinkStre
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -37,7 +38,7 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 
 	@Override
 	public void execute(SocketSinkAO operator,
-			TransformationConfiguration config) {
+			TransformationConfiguration config) throws RuleException {
 		try {
 
 			// Is this sink already translated?

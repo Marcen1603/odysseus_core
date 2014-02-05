@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.logicaloperator.HashFragmentAO;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.physicaloperator.HashFragmentPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -23,7 +24,7 @@ public class THashFragmentAORule extends AbstractTransformationRule<HashFragment
 	  
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void execute(HashFragmentAO fragmentAO, TransformationConfiguration config) { 
+	public void execute(HashFragmentAO fragmentAO, TransformationConfiguration config) throws RuleException { 
 		
 		defaultExecute(fragmentAO, new HashFragmentPO(fragmentAO), config, true, true);
 		 

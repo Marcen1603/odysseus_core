@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 
 /**
  * entry point for transformation (is bound by osgi-service)
@@ -73,7 +74,11 @@ public class TransformationExecutor implements ITransformation {
 		addLogicalOperator(top, new HashSet<ILogicalOperator>(), env);
 		LOGGER.trace("Processing rules...");
 		// start transformation
-		env.processEnvironment();
+		try{
+			env.processEnvironment();
+		}catch(RuleException e){
+			throw new TransformationException("Error in Transformation: ",e);
+		}
 		LOGGER.trace("Processing rules done.");
 
 		Map<Integer, IPhysicalOperator> roots = top.getPhysInputOperators();

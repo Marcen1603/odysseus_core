@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -34,7 +35,7 @@ public class TStateMapAORule extends AbstractTransformationRule<StateMapAO> {
 	}
 
 	@Override
-	public void execute(StateMapAO mapAO, TransformationConfiguration transformConfig) {
+	public void execute(StateMapAO mapAO, TransformationConfiguration transformConfig) throws RuleException {
 		RelationalMapPO<?> mapPO = new RelationalMapPO<IMetaAttribute>(mapAO.getInputSchema(), mapAO.getExpressions().toArray(new SDFExpression[0]), true, mapAO.isAllowNullInOutput());
 		defaultExecute(mapAO, mapPO, transformConfig, true, true);
 	}

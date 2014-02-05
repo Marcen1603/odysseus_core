@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.hmm.logicaloperator.HmmAO;
 import de.uniol.inf.is.odysseus.hmm.physicaloperator.HmmRecognitionPO;
 import de.uniol.inf.is.odysseus.hmm.physicaloperator.HmmTrainingPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -26,7 +27,7 @@ public class THmmAORule extends
 	 * Choose the correct physical operator by comparing the given parameter from the odysseus query
 	 */
 	@Override
-	public void execute(HmmAO operator, TransformationConfiguration config) {
+	public void execute(HmmAO operator, TransformationConfiguration config) throws RuleException {
 		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po;
 		if (operator.getMode().equalsIgnoreCase("RECOGNITION")) {
 			po = new HmmRecognitionPO();

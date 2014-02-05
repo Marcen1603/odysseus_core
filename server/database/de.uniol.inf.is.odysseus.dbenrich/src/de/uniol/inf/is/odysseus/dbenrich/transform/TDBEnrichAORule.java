@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.dbenrich.cache.DBRetrievalStrategy;
 import de.uniol.inf.is.odysseus.dbenrich.logicaloperator.DBEnrichAO;
 import de.uniol.inf.is.odysseus.dbenrich.physicaloperator.DBEnrichPO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -35,7 +36,7 @@ public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 
 	@Override
 	public void execute(DBEnrichAO logical,
-			TransformationConfiguration transformConfig) {
+			TransformationConfiguration transformConfig) throws RuleException {
 		// System.out.println("transform; " + logical.getDebugString());
 
 		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMergeFunction = new RelationalMergeFunction<ITimeInterval>(

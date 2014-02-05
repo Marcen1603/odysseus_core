@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -32,7 +33,7 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 	}
 
 	@Override
-	public void execute(ProjectAO projectAO, TransformationConfiguration transformConfig) {
+	public void execute(ProjectAO projectAO, TransformationConfiguration transformConfig) throws RuleException {
 		RelationalProjectPO<?> projectPO = new RelationalProjectPO<IMetaAttribute>(projectAO.determineRestrictList());
 		defaultExecute(projectAO, projectPO, transformConfig, true, true);
 	}

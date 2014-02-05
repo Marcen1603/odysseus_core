@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalLeftMergeFunction;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.BufferedFilterPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
@@ -37,7 +38,7 @@ public class TBufferedFilterAORule extends AbstractTransformationRule<BufferedFi
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void execute(BufferedFilterAO operator, TransformationConfiguration config) {
+	public void execute(BufferedFilterAO operator, TransformationConfiguration config) throws RuleException {
 		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMerge = new RelationalLeftMergeFunction<ITimeInterval>(operator.getInputSchema(0), operator.getInputSchema(1), operator.getOutputSchema());
 		// IMetadataMergeFunction<?> metaDataMerge = new UseLeftInputMetadata();
 		CombinedMergeFunction metaDataMerge = new CombinedMergeFunction();

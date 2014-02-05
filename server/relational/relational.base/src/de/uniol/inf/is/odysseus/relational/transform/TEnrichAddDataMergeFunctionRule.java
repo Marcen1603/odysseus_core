@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.EnrichPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -52,7 +53,7 @@ public class TEnrichAddDataMergeFunctionRule extends AbstractTransformationRule<
 	}
 
 	@Override
-	public void execute(EnrichPO<Tuple<IMetaAttribute>, IMetaAttribute> operator, TransformationConfiguration config) {
+	public void execute(EnrichPO<Tuple<IMetaAttribute>, IMetaAttribute> operator, TransformationConfiguration config) throws RuleException {
 		IDataMergeFunction<Tuple<IMetaAttribute>, IMetaAttribute> dmf = new RelationalMergeFunction<IMetaAttribute>(operator.getOutputSchema().size());
 		operator.setDataMergeFunction(dmf);
 		update(operator);

@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.latency.LatencyMergeFunction;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -33,7 +34,7 @@ public class TJoinLatencyRule extends AbstractTransformationRule<JoinTIPO<?,?>> 
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void execute(JoinTIPO<?, ?> joinPO, TransformationConfiguration config) {
+	public void execute(JoinTIPO<?, ?> joinPO, TransformationConfiguration config) throws RuleException {
 		((CombinedMergeFunction)joinPO.getMetadataMerge()).add(new LatencyMergeFunction());		
 	}
 

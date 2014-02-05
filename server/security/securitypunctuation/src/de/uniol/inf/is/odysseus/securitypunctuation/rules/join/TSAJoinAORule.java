@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SAJoinPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.DefaultTIDummyDataCreation;
@@ -40,7 +41,7 @@ public class TSAJoinAORule extends AbstractTransformationRule<JoinAO> {
 	}
 
 	@Override
-	public void execute(JoinAO joinAO, TransformationConfiguration transformConfig) {
+	public void execute(JoinAO joinAO, TransformationConfiguration transformConfig) throws RuleException {
 		SAJoinPO joinPO = new SAJoinPO();
 		IPredicate pred = joinAO.getPredicate();
 		joinPO.setJoinPredicate(pred == null ? TruePredicate.getInstance() : pred.clone());

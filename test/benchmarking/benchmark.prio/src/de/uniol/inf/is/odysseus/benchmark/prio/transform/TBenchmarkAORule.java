@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.benchmark.prio.physical.PriorityBenchmarkPO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.priority.IPriority;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -36,7 +37,7 @@ public class TBenchmarkAORule extends AbstractTransformationRule<BenchmarkAO> {
 	}
 
 	@Override
-	public void execute(BenchmarkAO algebraOp, TransformationConfiguration trafo) {
+	public void execute(BenchmarkAO algebraOp, TransformationConfiguration trafo) throws RuleException {
 		BenchmarkPO po = createBenchmarkPO(algebraOp.getProcessingTimeInns(), algebraOp.getSelectivity(), trafo);
 		po.setOutputSchema(algebraOp.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(algebraOp, po);

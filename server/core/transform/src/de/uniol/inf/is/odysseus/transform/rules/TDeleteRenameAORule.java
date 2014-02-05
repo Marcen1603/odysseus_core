@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -34,7 +35,7 @@ public class TDeleteRenameAORule extends AbstractTransformationRule<RenameAO> {
 	}
 
 	@Override
-	public void execute(RenameAO rename, TransformationConfiguration transformConfig) {		
+	public void execute(RenameAO rename, TransformationConfiguration transformConfig) throws RuleException {		
 		Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(rename, true);
 		for (ILogicalOperator o : toUpdate) {
 			update(o);

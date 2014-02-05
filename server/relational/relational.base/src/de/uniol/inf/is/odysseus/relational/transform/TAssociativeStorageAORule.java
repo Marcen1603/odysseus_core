@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.storage.Associative
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.storage.AssociativeStorage3D;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -26,7 +27,7 @@ public class TAssociativeStorageAORule extends AbstractTransformationRule<Associ
      * {@inheritDoc}
      */
     @Override
-    public void execute(AssociativeStorageAO operator, TransformationConfiguration config) {
+    public void execute(AssociativeStorageAO operator, TransformationConfiguration config) throws RuleException {
         int dimension = operator.getDimension();
 
         IAssociativeStorage<Tuple<?>> store = null;

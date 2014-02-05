@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.LinearR
 import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.LinearRegressionMergeAO;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.SampleAO;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -69,7 +70,7 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
      * java.lang.Object)
      */
     @Override
-    public final void execute(final JoinAO operator, final TransformationConfiguration config) {
+    public final void execute(final JoinAO operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(config);
 

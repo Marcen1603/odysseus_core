@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.logicaloperator.RoundRobinFragmentAO;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.physicaloperator.RoundRobinFragmentPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -23,7 +24,7 @@ public class TRoundRobinFragmentAORule extends AbstractTransformationRule<RoundR
 	  
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void execute(RoundRobinFragmentAO fragmentAO, TransformationConfiguration config) { 
+	public void execute(RoundRobinFragmentAO fragmentAO, TransformationConfiguration config) throws RuleException { 
 		
 		defaultExecute(fragmentAO, new RoundRobinFragmentPO(fragmentAO), config, true, true);
 		 

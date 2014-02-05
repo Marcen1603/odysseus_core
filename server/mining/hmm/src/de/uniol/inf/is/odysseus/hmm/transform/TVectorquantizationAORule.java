@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.hmm.logicaloperator.VectorquantizationAO;
 import de.uniol.inf.is.odysseus.hmm.physicaloperator.VectorquantizationPO;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -19,7 +20,7 @@ public class TVectorquantizationAORule extends
 	}
 
 	@Override
-	public void execute(VectorquantizationAO operator, TransformationConfiguration config) {
+	public void execute(VectorquantizationAO operator, TransformationConfiguration config) throws RuleException {
 		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po;
 
 		int numCluster = operator.getNumCluster();
