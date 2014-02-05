@@ -1,10 +1,7 @@
 package de.uniol.inf.is.odysseus.server.intervalapproach.transform;
 
-import com.sun.org.apache.xml.internal.security.transforms.TransformationException;
-
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
