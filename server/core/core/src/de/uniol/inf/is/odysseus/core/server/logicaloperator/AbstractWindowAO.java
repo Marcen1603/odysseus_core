@@ -101,22 +101,31 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 	public TimeUnit getBaseTimeUnit() {
 		if (baseTimeUnit == null) {
 			baseTimeUnit = TimeUnit.MILLISECONDS;
-			// Find input schema attribute with type start timestamp
-			// It provides the correct base unit 
-			// if not given use MILLISECONDS as default
-			Collection<SDFAttribute> attrs = getInputSchema()
-					.getSDFDatatypeAttributes(SDFDatatype.START_TIMESTAMP);
-			if (attrs.isEmpty()) {
-				attrs = getInputSchema().getSDFDatatypeAttributes(
-						SDFDatatype.START_TIMESTAMP_STRING);
-			}
-			if (attrs.size() > 0) {
-				SDFAttribute attr = attrs.iterator().next();
-				SDFConstraint constr = attr.getDtConstraint(SDFConstraint.BASE_TIME_UNIT);
-				if (constr != null){
-					baseTimeUnit = (TimeUnit) constr.getValue();
+
+			SDFConstraint c = getInputSchema().getConstraint(
+					SDFConstraint.BASE_TIME_UNIT);
+			if (c != null) {
+				baseTimeUnit = (TimeUnit) c.getValue();
+			} else {
+
+				// Find input schema attribute with type start timestamp
+				// It provides the correct base unit
+				// if not given use MILLISECONDS as default
+				Collection<SDFAttribute> attrs = getInputSchema()
+						.getSDFDatatypeAttributes(SDFDatatype.START_TIMESTAMP);
+				if (attrs.isEmpty()) {
+					attrs = getInputSchema().getSDFDatatypeAttributes(
+							SDFDatatype.START_TIMESTAMP_STRING);
 				}
-			} 
+				if (attrs.size() > 0) {
+					SDFAttribute attr = attrs.iterator().next();
+					SDFConstraint constr = attr
+							.getDtConstraint(SDFConstraint.BASE_TIME_UNIT);
+					if (constr != null) {
+						baseTimeUnit = (TimeUnit) constr.getValue();
+					}
+				}
+			}
 
 		}
 		return baseTimeUnit;
