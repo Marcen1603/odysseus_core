@@ -39,6 +39,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableItem;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -47,21 +49,27 @@ public class ContextMapPage extends WizardPage {
 	private static class TableEntry {
 		public String key;
 		public String value;
+		public boolean fixed;
 
-		public TableEntry(String key, String value) {
+		public TableEntry(String key, String value, boolean fixed) {
 			this.key = key;
 			this.value = value;
+			this.fixed = fixed;
 		}
 	}
 
+	private final QueryFileSelectionPage queryPage;
+	
 	private TableViewer tableViewer;
 	private final List<TableEntry> tableEntries = Lists.newLinkedList();
 
-	public ContextMapPage(String pageName) {
+	public ContextMapPage(String pageName, QueryFileSelectionPage queryFilePage) {
 		super(pageName);
 
 		setTitle("Context of the query");
 		setDescription("Configure the context of the query with key-value-pairs.");
+		
+		this.queryPage = queryFilePage;
 	}
 
 	@Override
@@ -131,12 +139,12 @@ public class ContextMapPage extends WizardPage {
 				if( "key".equals(property)) {
 					entry.key = (String)value;
 					tableItem.setText(0, entry.key);
-					
-					checkForDuplicateKey();
 				} else {
 					entry.value = (String)value;
 					tableItem.setText(1, entry.value);
 				}
+				
+				checkKeys();
 			}
 		});
 
@@ -154,6 +162,8 @@ public class ContextMapPage extends WizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				tableEntries.add(generateNewTableEntry());
 				tableViewer.refresh();
+				
+				checkKeys();
 			}
 		});
 		
@@ -166,10 +176,13 @@ public class ContextMapPage extends WizardPage {
 				IStructuredSelection selection = (IStructuredSelection)tableViewer.getSelection();
 				for( Object selectedObject : selection.toArray() ) {
 					TableEntry entry = (TableEntry)selectedObject;
-					tableEntries.remove(entry);
+					if( !entry.fixed ) {
+						tableEntries.remove(entry);
+					}
 				}
 				
 				tableViewer.refresh();
+				checkKeys();
 			}
 		});
 		
@@ -184,7 +197,7 @@ public class ContextMapPage extends WizardPage {
 		return map;
 	}
 	
-	private void checkForDuplicateKey() {
+	private void checkKeys() {
 		for( int i = 0; i < tableEntries.size(); i++ ) {
 			String key = tableEntries.get(i).key;
 			
@@ -194,6 +207,14 @@ public class ContextMapPage extends WizardPage {
 					setErrorMessage("Duplicate key '" + key + "'");
 					return;
 				}
+			}
+		}
+		
+		for( TableEntry e : tableEntries ) {
+			if( e.fixed && Strings.isNullOrEmpty(e.value)) {
+				setPageComplete(false);
+				setErrorMessage("Value for key '" + e.key + "' is needed to execute query!");
+				return;
 			}
 		}
 		
@@ -212,13 +233,78 @@ public class ContextMapPage extends WizardPage {
 				}
 			}
 			
-			return new TableEntry(name, "value");
+			return new TableEntry(name, "value", false);
 		}
 	}
+	
 	private void finishCreation(Composite rootComposite) {
 		setErrorMessage(null);
 		setMessage(null);
 		setControl(rootComposite);
 		setPageComplete(true);
+	}
+	
+	@Override
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		
+		if( visible == true ) {
+			ImmutableList<String> queryText = queryPage.getQueryTextProvider().getQueryText();
+			scanForUndefinedReplacements(queryText);
+			tableViewer.refresh();
+			
+			checkKeys();
+		}
+	}
+
+	private void scanForUndefinedReplacements(ImmutableList<String> queryText) {
+		List<String> undefinedReplacements = Lists.newArrayList();
+		List<String> foundDefines = Lists.newArrayList();
+		List<String> preDefinedKeys = Lists.newArrayList();
+		preDefinedKeys.add("WORKSPACE");
+		preDefinedKeys.add("WORKSPACE/");
+		preDefinedKeys.add("WORKSPACE\\");
+		preDefinedKeys.add("PROJECT");
+		preDefinedKeys.add("PROJECTPATH");
+		preDefinedKeys.add("PROJECTPATH\\");
+		preDefinedKeys.add("PROJECTPATH/");
+		preDefinedKeys.add("WORKSPACEPROJECT");
+		preDefinedKeys.add("WORKSPACEPROJECT\\");
+		preDefinedKeys.add("WORKSPACEPROJECT/");
+		preDefinedKeys.add("\\");
+		preDefinedKeys.add("/");
+
+		
+		for( String line : queryText ) {
+			line = line.trim();
+			if( line.startsWith("#DEFINE")) {
+				String[] defineParts = line.split("\\ ", 3);
+				if( defineParts.length > 2 ) {
+					foundDefines.add(defineParts[1]);
+				}
+			} else {
+				
+				int startPos = 0; 
+				startPos = line.indexOf("${");
+				
+				while( startPos >= 0 ) {
+					int posEnd = line.indexOf("}", startPos);
+					if( posEnd != -1 ) {
+						String undefinedReplacement = line.substring(startPos + 2, posEnd);
+						
+						if( !undefinedReplacements.contains(undefinedReplacement) && !foundDefines.contains(undefinedReplacement) && !preDefinedKeys.contains(undefinedReplacement)) {
+							undefinedReplacements.add(undefinedReplacement);
+						}
+						startPos = line.indexOf("${", posEnd);
+					} else {
+						break;
+					}
+				}
+			}
+		}
+		
+		for( String undefinedReplacement : undefinedReplacements ) {
+			tableEntries.add(new TableEntry(undefinedReplacement, "", true));
+		}
 	}
 }
