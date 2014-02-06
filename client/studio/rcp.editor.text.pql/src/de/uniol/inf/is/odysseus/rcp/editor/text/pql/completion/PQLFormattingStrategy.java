@@ -193,7 +193,7 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 				partitionscanner, legalPartitions);
 		partitioner.connect(queryDocument);
 		queryDocument.setDocumentPartitioner(partitioner);
-		partitioner.printPartitions(queryDocument);
+		//partitioner.printPartitions(queryDocument);
 		return partitioner.computePartitioning(0, queryDocument.getLength());
 	}
 
