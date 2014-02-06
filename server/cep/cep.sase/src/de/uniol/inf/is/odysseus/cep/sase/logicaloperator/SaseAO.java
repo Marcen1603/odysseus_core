@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAtt
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name="SASE", minInputPorts=1, maxInputPorts=Integer.MAX_VALUE, doc="This operator can parse a query in SASE+ syntax.", category = {LogicalOperatorCategory.PATTERN})
+@LogicalOperator(name = "SASE", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE, doc = "This operator can parse a query in SASE+ syntax.", category = { LogicalOperatorCategory.PATTERN })
 public class SaseAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 15531070881194678L;
@@ -24,7 +24,7 @@ public class SaseAO extends AbstractLogicalOperator {
 	int heartbeatrate;
 	private List<SDFAttribute> attributes;
 	private String typeName;
-		
+
 	public SaseAO(SaseAO op) {
 		super(op);
 		this.query = op.query;
@@ -42,7 +42,7 @@ public class SaseAO extends AbstractLogicalOperator {
 		return query;
 	}
 
-	@Parameter(name="Query", type=StringParameter.class, optional=false)
+	@Parameter(name = "Query", type = StringParameter.class, optional = false)
 	public void setQuery(String query) {
 		this.query = query;
 	}
@@ -51,7 +51,7 @@ public class SaseAO extends AbstractLogicalOperator {
 		return oneMatchPerInstance;
 	}
 
-	@Parameter(name="OneMatchPerInstance", optional = true, type=BooleanParameter.class)
+	@Parameter(name = "OneMatchPerInstance", optional = true, type = BooleanParameter.class)
 	public void setOneMatchPerInstance(boolean oneMatchPerInstance) {
 		this.oneMatchPerInstance = oneMatchPerInstance;
 	}
@@ -60,29 +60,35 @@ public class SaseAO extends AbstractLogicalOperator {
 		return heartbeatrate;
 	}
 
-	@Parameter(name="Heartbeatrate", optional = true, type=IntegerParameter.class)
+	@Parameter(name = "Heartbeatrate", optional = true, type = IntegerParameter.class)
 	public void setHeartbeatrate(int heartbeatrate) {
 		this.heartbeatrate = heartbeatrate;
 	}
-	
-	@Parameter(name="SCHEMA", type=CreateSDFAttributeParameter.class, optional=false, isList=true)
-	public void setAttributes(List<SDFAttribute> attributes){
+
+	@Parameter(name = "SCHEMA", type = CreateSDFAttributeParameter.class, optional = false, isList = true)
+	public void setAttributes(List<SDFAttribute> attributes) {
 		this.attributes = attributes;
 	}
-	
-	@Parameter(name="Type", type=StringParameter.class, optional=false)
-	public void setTypeName(String typeName){
-		this.typeName=typeName;
+
+	@Parameter(name = "Type", type = StringParameter.class, optional = false)
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
 	}
-	
+
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		SDFSchema schema = SDFSchema.changeSourceName(getInputSchema(0), typeName);
-		schema = SDFSchema.changeType(schema, Tuple.class);
-		schema = new SDFSchema(schema, attributes);
+		// TODO: FIXME: Why is inputSchema == null?
+		SDFSchema schema = null;
+		if (getInputSchema(0) == null) {
+			schema = new SDFSchema(typeName, Tuple.class, attributes);
+		} else {
+			schema = SDFSchema.changeSourceName(getInputSchema(0), typeName);
+			schema = SDFSchema.changeType(schema, Tuple.class);
+			schema = new SDFSchema(schema, attributes);
+		}
 		return schema;
 	}
-	
+
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new SaseAO(this);
