@@ -51,7 +51,7 @@ public class SaseAO extends AbstractLogicalOperator {
 		return oneMatchPerInstance;
 	}
 
-	@Parameter(name="OneMatchPerInstance", type=BooleanParameter.class)
+	@Parameter(name="OneMatchPerInstance", optional = true, type=BooleanParameter.class)
 	public void setOneMatchPerInstance(boolean oneMatchPerInstance) {
 		this.oneMatchPerInstance = oneMatchPerInstance;
 	}
@@ -60,7 +60,7 @@ public class SaseAO extends AbstractLogicalOperator {
 		return heartbeatrate;
 	}
 
-	@Parameter(name="Heartbeatrate", type=IntegerParameter.class)
+	@Parameter(name="Heartbeatrate", optional = true, type=IntegerParameter.class)
 	public void setHeartbeatrate(int heartbeatrate) {
 		this.heartbeatrate = heartbeatrate;
 	}
