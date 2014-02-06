@@ -26,9 +26,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -76,10 +79,46 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tabFolder.setLayout(new GridLayout());
 
-		final Composite presentationTab = createTabComposite(tabFolder, "Presentation");
-		final Composite settingsTab = createTabComposite(tabFolder, "Settings");
-		createPresentationTabContent(presentationTab);
+		Composite presentationTab = createTabComposite(tabFolder, "Presentation");
+		Composite settingsTab = createTabComposite(tabFolder, "Settings");
+		
+		try {
+			createPresentationTabContent(presentationTab);
+		} catch( Exception ex ) {
+			for( Control ctrl : presentationTab.getChildren() ) {
+				if( !ctrl.isDisposed() ) {
+					ctrl.dispose();
+				}
+			}
+			Label l = new Label(presentationTab, SWT.NONE);
+			l.setText("Cannot show the dashboard part, since there are errors during creation.\nPlease fix the issue and reopen the dashboard part again.\n\nFollowing errors are occured:");
+			
+			Text errorText = new Text(presentationTab, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.READ_ONLY | SWT.BORDER);
+			errorText.setText(generateExceptionStatement(ex));
+			errorText.setLayoutData(new GridData(GridData.FILL_BOTH));
+		}
 		createSettingsTabContent(settingsTab);
+	}
+
+	private static String generateExceptionStatement(Exception ex) {
+		StringBuilder sb = new StringBuilder();
+		
+		Throwable t = ex;
+		sb.append(t.getClass().getSimpleName()).append(": ").append(t.getMessage()).append("\n");
+		
+		int index = 1;
+		t = t.getCause();
+		
+		while( t != null ) {
+			for( int i = 0; i < index; i++ ) {
+				sb.append("\t");
+			}
+			sb.append(t.getClass().getSimpleName()).append(": ").append(t.getMessage()).append("\n");
+			t = t.getCause(); 
+			index++;
+		}
+		
+		return sb.toString();
 	}
 
 	@Override
@@ -189,7 +228,7 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 		}
 	}
 
-	private void createPresentationTabContent(Composite presentationTab) {
+	private void createPresentationTabContent(Composite presentationTab) throws Exception {
 		dashboardPartToolBar = new DashboardPartEditorToolBar(presentationTab, this);
 
 		final Composite comp = new Composite(presentationTab, SWT.NONE);
@@ -202,7 +241,8 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 			dashboardPartController.start();
 		} catch (final Exception ex) {
 			dashboardPartToolBar.setStatusToStopped();
-			throw new RuntimeException(ex);
+			LOG.error("Could not open dashboard part", ex);
+			throw ex;
 		}
 	}	
 
