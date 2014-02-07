@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLStatementGenerator;
 
 public class PQLStatementGeneratorManager {
 
-	private static final IPQLStatementGenerator<ILogicalOperator> STANDARD_GENERATOR = new StandardPQLStatementGenerator();
+	private static final IPQLStatementGenerator<ILogicalOperator> STANDARD_GENERATOR = new StandardPQLStatementGenerator<ILogicalOperator>();
 
 	private static PQLStatementGeneratorManager instance;
 	

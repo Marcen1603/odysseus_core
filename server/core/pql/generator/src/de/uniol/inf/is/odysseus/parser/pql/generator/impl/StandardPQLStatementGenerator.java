@@ -7,16 +7,20 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.parser.pql.generator.AbstractPQLStatementGenerator;
 
-public class StandardPQLStatementGenerator extends AbstractPQLStatementGenerator<ILogicalOperator> {
+public class StandardPQLStatementGenerator<T extends ILogicalOperator> extends AbstractPQLStatementGenerator<T> {
 
 	@Override
-	protected String generateParameters(ILogicalOperator operator) {
-		Map<String, String> parameterMap = removeNullValues(operator.getParameterInfos());
+	protected String generateParameters(T operator) {
+		Map<String, String> parameterMap = removeNullValues(determineParameterMap(operator));
 		parameterMap.put("NAME", "'" + operator.getName() + "'");
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append(toPQLString(parameterMap));
 		return sb.toString();
+	}
+	
+	protected Map<String, String> determineParameterMap(T operator) {
+		return operator.getParameterInfos();
 	}
 
 	private String toPQLString(Map<String, String> parameterMap) {
@@ -43,8 +47,9 @@ public class StandardPQLStatementGenerator extends AbstractPQLStatementGenerator
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Class<ILogicalOperator> getOperatorClass() {
-		return ILogicalOperator.class;
+	public Class<T> getOperatorClass() {
+		return (Class<T>) ILogicalOperator.class;
 	}
 }
