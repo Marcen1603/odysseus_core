@@ -6,6 +6,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalNoGroupProcessor;
 import de.uniol.inf.is.odysseus.relational_interval.logicaloperator.RelationalFastMedianAO;
+import de.uniol.inf.is.odysseus.relational_interval.physicaloperator.AbstractFastMedianPO;
+import de.uniol.inf.is.odysseus.relational_interval.physicaloperator.RelationalFastMedianHistogramPO;
 import de.uniol.inf.is.odysseus.relational_interval.physicaloperator.RelationalFastMedianPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -22,8 +24,15 @@ public class TRelationalFastMedianAORule extends
 		SDFSchema inputSchema = operator.getInputSchema(0);
 		int medianAttrPos = inputSchema.findAttributeIndex(operator
 				.getMedianAttribute().getURI());
-		RelationalFastMedianPO po = new RelationalFastMedianPO(medianAttrPos,
-				operator.isNumericalMedian());
+		AbstractFastMedianPO po;
+		
+		if (operator.isUseHistogram()) {
+			po = new RelationalFastMedianHistogramPO<>(medianAttrPos,
+					operator.isNumericalMedian());
+		} else {
+			po = new RelationalFastMedianPO(medianAttrPos,
+					operator.isNumericalMedian());
+		}
 		if (operator.getGroupingAttributes() != null
 				&& operator.getGroupingAttributes().size() > 0) {
 			po.setGroupProcessor(new RelationalGroupProcessor(inputSchema,
@@ -40,11 +49,6 @@ public class TRelationalFastMedianAORule extends
 			TransformationConfiguration config) {
 		return operator.getInputSchema(0).getType() == Tuple.class
 				&& operator.isAllPhysicalInputSet();
-	}
-
-	@Override
-	public String getName() {
-		return "RelationalFastMedianAO --> RelationalFastMedianPO";
 	}
 
 	@Override

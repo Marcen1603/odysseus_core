@@ -19,6 +19,7 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 
 	private SDFAttribute medianAttribute;
 	private boolean numericalMedian = false; 
+	private boolean useHistogram = false;
 	private List<SDFAttribute> groupingAttributes;
 
 	public RelationalFastMedianAO(RelationalFastMedianAO op) {
@@ -29,6 +30,7 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 		}
 		this.medianAttribute = op.medianAttribute;
 		this.numericalMedian = op.numericalMedian;
+		this.useHistogram = op.useHistogram;
 	}
 
 	public RelationalFastMedianAO() {
@@ -64,6 +66,15 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 	
 	public boolean isNumericalMedian() {
 		return numericalMedian;
+	}
+	
+	@Parameter(name = "histogram", optional = true, type = BooleanParameter.class)
+	public void setUseHistogram(boolean useHistogram) {
+		this.useHistogram = useHistogram;
+	}
+	
+	public boolean isUseHistogram() {
+		return useHistogram;
 	}
 	
 	@Override
