@@ -39,9 +39,9 @@ public class RangeFragmentAO extends AbstractFragmentAO {
 	 */
 	private static List<String> preprocessRanges(List<String> ranges) throws QueryParseException {
 		
-		List<String> processedRanges = Lists.newArrayList(ranges);
+		List<String> processedRanges = Lists.newArrayList();
 		
-		for(String range : processedRanges) {
+		for(String range : ranges) {
 			
 			if(!range.startsWith("\"") || !range.endsWith("\"") || range.length() < 3) {
 				
@@ -49,8 +49,8 @@ public class RangeFragmentAO extends AbstractFragmentAO {
 						" is not a valid String range! String ranges must start and end with '\"'!");
 				
 			}
-			
-			range = range.substring(1, range.length() - 1);
+
+			processedRanges.add(range.substring(1, range.length() - 1));
 			
 		}
 		

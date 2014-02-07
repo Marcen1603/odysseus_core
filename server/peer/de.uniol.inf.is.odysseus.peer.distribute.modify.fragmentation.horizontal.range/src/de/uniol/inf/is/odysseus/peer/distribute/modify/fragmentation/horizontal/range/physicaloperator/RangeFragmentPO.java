@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range.physicaloperator;
 
+import java.text.Collator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -89,8 +90,9 @@ public class RangeFragmentPO<T extends IStreamObject<IMetaAttribute>>
 	@Override
 	protected int route(IStreamable object) {
 		
-		// TODO doesn't work correct M.B.
 		// XXX Only for tuple M.B.
+		
+		Collator collator = Collator.getInstance();
 		
 		if(object instanceof Tuple) {
 			
@@ -114,7 +116,7 @@ public class RangeFragmentPO<T extends IStreamObject<IMetaAttribute>>
 						String range = this.ranges.get(rangeNo);
 						String attr = (String) tuple.getAttribute(this.attributeIndex);
 						
-						if(attr.compareTo(range) >= 0)
+						if(collator.compare(attr, range) >= 0)
 							return rangeNo;
 						
 					}
