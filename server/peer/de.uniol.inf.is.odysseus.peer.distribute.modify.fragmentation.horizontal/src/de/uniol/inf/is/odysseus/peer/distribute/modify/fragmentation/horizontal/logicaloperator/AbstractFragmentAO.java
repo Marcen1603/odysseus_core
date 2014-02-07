@@ -28,8 +28,6 @@ public abstract class AbstractFragmentAO extends UnaryLogicalOp {
 	public AbstractFragmentAO() {
 		
 		super();
-		// no fragmentation per default
-		this.setNumberOfFragments(1);
 		
 	}
 

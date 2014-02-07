@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.physicaloperator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
@@ -15,6 +18,8 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
  */
 public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>> 
 		extends AbstractPipe<T, T> {
+	
+	private static final Logger log = LoggerFactory.getLogger(AbstractFragmentPO.class);
 	
 	/**
 	 * The number of fragments.
@@ -58,6 +63,7 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 	protected synchronized void process_next(T object, int port) {
 		// TODO: DO NOT SYNCHRONIZE ON THIS!
 		int outPort = this.route(object);
+		AbstractFragmentPO.log.debug("Routed " + object + " to output port " + outPort);
 		this.transfer(object, outPort);
 		
 		// Sending heartbeats to all other ports
@@ -74,6 +80,7 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
 		
 		int outPort = this.route(punctuation);
+		AbstractFragmentPO.log.debug("Routed " + punctuation + " to output port " + outPort);
 		this.sendPunctuation(punctuation, outPort);
 		
 		// Sending heartbeats to all other ports

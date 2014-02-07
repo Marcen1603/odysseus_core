@@ -106,32 +106,22 @@ public class RangeFragmentPO<T extends IStreamObject<IMetaAttribute>>
 						Double range = Double.valueOf(this.ranges.get(rangeNo));
 						Double attr = ((Number) tuple.getAttribute(this.attributeIndex)).doubleValue();
 						
-						if(Double.compare(attr, range) >= 0) {
-							
-//							RangeFragmentPO.log.debug("Routed " + object + " to output port " + rangeNo);
+						if(Double.compare(attr, range) >= 0)
 							return rangeNo;
-							
-						}
 						
 					} else { // String ranges
 						
 						String range = this.ranges.get(rangeNo);
 						String attr = (String) tuple.getAttribute(this.attributeIndex);
 						
-						if(attr.compareTo(range) >= 0) {
-							
-//							RangeFragmentPO.log.debug("Routed " + object + " to output port " + rangeNo);
+						if(attr.compareTo(range) >= 0)
 							return rangeNo;
-							
-						}
 						
 					}
 					
 				} catch(Exception e) {
 					
 					RangeFragmentPO.log.error("Could not cast {}! \n{}", tuple.getAttribute(this.attributeIndex), e.getStackTrace());
-					
-					RangeFragmentPO.log.debug(object + " is not a tuple");
 					return this.ranges.size();
 					
 				}
@@ -140,7 +130,6 @@ public class RangeFragmentPO<T extends IStreamObject<IMetaAttribute>>
 			
 		}
 		
-		RangeFragmentPO.log.debug(object + " is not a tuple");
 		return this.ranges.size();
 		
 	}
