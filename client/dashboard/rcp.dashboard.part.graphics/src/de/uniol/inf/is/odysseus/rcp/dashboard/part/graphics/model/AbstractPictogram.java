@@ -36,12 +36,15 @@ public abstract class AbstractPictogram extends AbstractPart {
 	private List<Connection> targetConnections = new ArrayList<>();
 
 	private String textTop = "";
+	private String textMiddle = "";
 	private String textBottom = "";
 
 	private SDFExpression bottomExpression;
+	private SDFExpression middleExpression;
 	private SDFExpression topExpression;
 
 	private String currentTextBottom;
+	private String currentTextMiddle;
 	private String currentTextTop;
 
 	public AbstractPictogram() {
@@ -53,6 +56,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 		this.constraint = old.constraint.getCopy();
 		setTextBottom(old.getTextBottom());
 		setTextTop(old.getTextTop());
+		setTextMiddle(old.getTextMiddle());
 
 	}
 
@@ -79,12 +83,13 @@ public abstract class AbstractPictogram extends AbstractPart {
 	protected void internalOpen(IPhysicalOperator root) {
 		try {
 			if (this.bottomExpression != null) {
-				this.bottomExpression.initAttributePositions(root
-						.getOutputSchema());
+				this.bottomExpression.initAttributePositions(root.getOutputSchema());
+			}
+			if (this.middleExpression != null) {
+				this.middleExpression.initAttributePositions(root.getOutputSchema());
 			}
 			if (this.topExpression != null) {
-				this.topExpression.initAttributePositions(root
-						.getOutputSchema());
+				this.topExpression.initAttributePositions(root.getOutputSchema());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -102,11 +107,13 @@ public abstract class AbstractPictogram extends AbstractPart {
 	@Override
 	protected void internalProcessRelavant(Tuple<?> tuple) {
 		if (this.topExpression != null) {
-			this.currentTextTop = getExpressionValue(topExpression, tuple);
+			this.currentTextTop = getExpressionValue(this.topExpression, tuple);
+		}
+		if (this.middleExpression != null) {
+			this.currentTextMiddle = getExpressionValue(this.middleExpression, tuple);
 		}
 		if (this.bottomExpression != null) {
-			this.currentTextBottom = getExpressionValue(this.bottomExpression,
-					tuple);
+			this.currentTextBottom = getExpressionValue(this.bottomExpression, tuple);
 		}
 	}
 
@@ -122,6 +129,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 		super.internalSave(values);
 		values.put("text_bottom", this.textBottom);
 		values.put("text_top", this.textTop);
+		values.put("text_middle", this.textMiddle);
 		values.put("identifier", getXMLIdentifier());
 	}
 
@@ -136,6 +144,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 	protected void internalLoad(Map<String, String> values) {
 		setTextBottom(loadValue(values.get("text_bottom"), ""));
 		setTextTop(loadValue(values.get("text_top"), ""));
+		setTextMiddle(loadValue(values.get("text_middle"), ""));
 		setId(Integer.parseInt(loadValue(values.get("identifier"), "-1")));
 		super.internalLoad(values);
 	}
@@ -180,8 +189,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 		constElement.setAttribute("x", Integer.toString(constraint.x));
 		constElement.setAttribute("y", Integer.toString(constraint.y));
 		constElement.setAttribute("width", Integer.toString(constraint.width));
-		constElement
-				.setAttribute("height", Integer.toString(constraint.height));
+		constElement.setAttribute("height", Integer.toString(constraint.height));
 		parent.appendChild(constElement);
 	}
 
@@ -213,14 +221,40 @@ public abstract class AbstractPictogram extends AbstractPart {
 	public void setTextTop(String textTop) {
 		this.textTop = textTop;
 		if (textTop.startsWith("=")) {
-			topExpression = new SDFExpression(textTop.substring(1),
-					MEP.getInstance());
+			topExpression = new SDFExpression(textTop.substring(1), MEP.getInstance());
 		} else {
 			topExpression = null;
 			this.currentTextTop = this.textTop;
 		}
 		setDirty();
 	}
+	
+
+	public String getTextTopToShow() {
+		return currentTextTop;
+	}
+
+	
+
+	public String getTextMiddle() {
+		return textMiddle;
+	}
+
+	public void setTextMiddle(String textMiddle) {
+		this.textMiddle = textMiddle;
+		if (textMiddle.startsWith("=")) {
+			middleExpression = new SDFExpression(textMiddle.substring(1), MEP.getInstance());
+		} else {
+			middleExpression = null;
+			this.currentTextMiddle = this.textMiddle;
+		}
+		setDirty();
+	}
+	
+	public String getTextMiddleToShow() {
+		return currentTextMiddle;
+	}
+
 
 	public String getTextBottom() {
 		return textBottom;
@@ -230,15 +264,10 @@ public abstract class AbstractPictogram extends AbstractPart {
 		return currentTextBottom;
 	}
 
-	public String getTextTopToShow() {
-		return currentTextTop;
-	}
-
 	public void setTextBottom(String textBottom) {
 		this.textBottom = textBottom;
 		if (textBottom.startsWith("=")) {
-			bottomExpression = new SDFExpression(textBottom.substring(1),
-					MEP.getInstance());
+			bottomExpression = new SDFExpression(textBottom.substring(1), MEP.getInstance());
 		} else {
 			bottomExpression = null;
 			this.currentTextBottom = this.textBottom;

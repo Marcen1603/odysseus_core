@@ -13,6 +13,9 @@ public abstract class AbstractPictogramDialog<T extends AbstractPictogram> exten
 	
 	private Text topTextText;
 	private String topText = "";
+	
+	private Text middleTextText;
+	private String middleText = "";
 
 	private Text bottomTextText;
 	private String bottomText = "";
@@ -26,6 +29,7 @@ public abstract class AbstractPictogramDialog<T extends AbstractPictogram> exten
 		super.init(part);
 		bottomText = part.getTextBottom();
 		topText = part.getTextTop();
+		middleText = part.getTextMiddle();
 	}
 	
 	
@@ -41,6 +45,13 @@ public abstract class AbstractPictogramDialog<T extends AbstractPictogram> exten
 		topTextText = new Text(container, SWT.BORDER);
 		topTextText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		topTextText.setText(topText);
+		
+		Label lblTextMiddle = new Label(container, SWT.NONE);
+		lblTextMiddle.setText("Text at the middle of the figure");
+
+		middleTextText = new Text(container, SWT.BORDER);
+		middleTextText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		middleTextText.setText(middleText);
 
 		Label lblTextBottom = new Label(container, SWT.NONE);
 		lblTextBottom.setText("Text at the bottom of the figure");
@@ -57,6 +68,7 @@ public abstract class AbstractPictogramDialog<T extends AbstractPictogram> exten
 	@Override
 	protected void okPressed() {
 		getPart().setTextBottom(bottomTextText.getText());
+		getPart().setTextMiddle(middleTextText.getText());
 		getPart().setTextTop(topTextText.getText());
 		super.okPressed();
 	}
