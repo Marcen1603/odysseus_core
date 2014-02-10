@@ -334,7 +334,7 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 
 		TableColumn col2 = new TableColumn(settingsTable, SWT.LEFT);
 		col2.setText("Value");
-		col2.setWidth(50);
+		col2.setWidth(300);
 		col2.setAlignment(SWT.CENTER);
 
 		settingsTable.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
