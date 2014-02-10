@@ -22,13 +22,9 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.impl.BasicEObjectImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import de.offis.nmea.python.PythonScript;
-import de.offis.nmea.sentence.Sentence;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -37,13 +33,17 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.Sentence;
+import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.SentenceFactory;
+import de.uniol.inf.is.odysseus.wrapper.nmea.util.SentenceUtils;
 
 /**
  * 
- * @author Christian Kuka <christian@kuka.cc>
+ * @author Jurgen Boger <juergen.boger@offis.de>
  * 
  */
 public class NMEAProtocolHandler extends AbstractProtocolHandler<KeyValueObject<? extends IMetaAttribute>> {
+    private final Logger LOG = LoggerFactory.getLogger(NMEAProtocolHandler.class);
     protected BufferedReader reader;
     private KeyValueObject<? extends IMetaAttribute> next = null;
 
@@ -72,12 +72,22 @@ public class NMEAProtocolHandler extends AbstractProtocolHandler<KeyValueObject<
         	return false;
         }
         String nmea = reader.readLine();
-        Sentence sentence = PythonScript.getInstance().parseNmea(nmea);
+        if (!SentenceUtils.validateSentence(nmea)) {
+        	return false;
+        }
+        
+        Sentence sentence = null;
+        try {
+	        sentence = SentenceFactory.getInstance().createSentence(nmea);
+        } catch (IllegalArgumentException e) {
+        	LOG.error(e.getMessage());
+        }
         if (sentence == null) {
         	return false;
         }
+        sentence.parse();
         Map<String, Object> event = new HashMap<String, Object>();
-        toMap(event, "", (BasicEObjectImpl) sentence);
+        sentence.fillMap(event);
         next = new KeyValueObject<>(event);
         next.setMetadata("object", sentence);
         return true;
@@ -129,29 +139,4 @@ public class NMEAProtocolHandler extends AbstractProtocolHandler<KeyValueObject<
             return true;
         }
     }
-    
-    public static Map<String, Object> toMap(Map<String, Object> res, String baseName, BasicEObjectImpl eObj) {
-		for (EAttribute attr : eObj.eClass().getEAllAttributes()) {
-			if (attr.getName().equals("nmea")) {
-				continue;
-			}
-			int id = attr.getFeatureID();
-			Object o = eObj.eGet(id, true, true);
-			if (attr.getEType() instanceof EEnum) {
-				res.put(baseName + attr.getName(), o.toString());
-			} else {
-				res.put(baseName + attr.getName(), o);
-			}
-		}
-		
-		for (EReference ref : eObj.eClass().getEAllReferences()) {
-			int id = ref.getFeatureID();
-			Object o = eObj.eGet(id, true, true);
-			if (o == null || !(o instanceof BasicEObjectImpl)) {
-				continue;
-			}
-			toMap(res, ref.getName() + ".", (BasicEObjectImpl) o);
-		}
-		return res;
-	}
 }
