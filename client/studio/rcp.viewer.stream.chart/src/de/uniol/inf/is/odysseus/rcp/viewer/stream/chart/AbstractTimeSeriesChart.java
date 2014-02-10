@@ -82,7 +82,8 @@ public abstract class AbstractTimeSeriesChart extends
 	private static final String CURRENT_TIME = "Current Time";
 	private int maxItems = DEFAULT_MAX_NUMBER_OF_ITEMS;
 	private long maxItemAge = DEFAULT_MAX_ITEM_AGE;
-
+	private boolean setVerticalTickLabels = false;
+	
 	// also milli
 	private String dateformat = "HH:mm:ss";
 	private int choosenXValue = -1;
@@ -100,20 +101,6 @@ public abstract class AbstractTimeSeriesChart extends
 	public void reloadChart() {
 		series.clear();
 		this.dataset.removeAllSeries();
-		// Will not work, because the list must be per input port!
-		// if (groupByList == null) {
-		// Map<String, TimeSeries> gseries = new HashMap<>();
-		// series.put(0L, gseries);
-		// for (Integer port : getPorts()) {
-		// for (int i = 0; i < getChoosenAttributes(port).size(); i++) {
-		// String name = getChoosenAttributes(port).get(i).getName();
-		// TimeSeries serie = new TimeSeries(name);
-		// serie.setMaximumItemCount(this.maxItems);
-		// gseries.put(name, serie);
-		// this.dataset.addSeries(serie);
-		// }
-		// }
-		// }
 
 		ValueAxis domainAxis = getChart().getXYPlot().getDomainAxis();
 		domainAxis.setLabel(xTitle);
@@ -129,6 +116,9 @@ public abstract class AbstractTimeSeriesChart extends
 			axis.setDateFormatOverride(new SimpleDateFormat(this.dateformat));
 			// axis.setTickUnit(new DateTickUnit(this.dateTickUnitType,
 			// this.dateTickUnitCount));
+		}
+		if (setVerticalTickLabels) {
+			getChart().getXYPlot().getDomainAxis().setVerticalTickLabels(true);
 		}
 
 		getChart().getXYPlot().getRangeAxis().setLabel(yTitle);
@@ -280,25 +270,26 @@ public abstract class AbstractTimeSeriesChart extends
 		}
 
 		String name = getChoosenAttributes(port).get(i).getName() + " "
-				+ groupName;;
+				+ groupName;
+		;
 		timeSeries = gSerie.get(name);
 		if (timeSeries == null) {
 
-			if (useShortNames){
-				timeSeries = new TimeSeries(getChoosenAttributes(port).get(i).getAttributeName() + " "
-						+ groupName);			
-			}else{
+			if (useShortNames) {
+				timeSeries = new TimeSeries(getChoosenAttributes(port).get(i)
+						.getAttributeName() + " " + groupName);
+			} else {
 				timeSeries = new TimeSeries(name);
 			}
-			
-			if (this.maxItems > 0){
+
+			if (this.maxItems > 0) {
 				timeSeries.setMaximumItemCount(this.maxItems);
 			}
 
-			if (this.maxItemAge > 0){
+			if (this.maxItemAge > 0) {
 				timeSeries.setMaximumItemAge(this.maxItemAge);
 			}
-			
+
 			gSerie.put(name, timeSeries);
 			this.dataset.addSeries(timeSeries);
 		}
@@ -355,6 +346,16 @@ public abstract class AbstractTimeSeriesChart extends
 		this.maxItemAge = maxItemAge;
 	}
 
+	@ChartSetting(name = "Show vertical Tick Labels ", type = Type.GET)
+	public boolean isSetVerticalTickLabels() {
+		return setVerticalTickLabels;
+	}
+	
+	@ChartSetting(name = "Show vertical Tick Labels ", type = Type.SET)
+	public void setSetVerticalTickLabels(boolean setVerticalTickLabels) {
+		this.setVerticalTickLabels = setVerticalTickLabels;
+	}
+	
 	@ChartSetting(name = "Date Time Format", type = Type.GET)
 	public String getDateFormat() {
 		return this.dateformat;
