@@ -20,13 +20,13 @@ public class NumericalHistogram<K extends Number,V extends IStreamObject<? exten
 			Entry<K, PriorityQueue<V>> e = null;
 			long center = getSize()/2;
 			long pos = 0;
-			while(pos <= center && iter.hasNext()){
+			while(pos < center){
 				e = iter.next();
 				pos += e.getValue().size();
 			}
 			
 			// Center is last element in current set
-			if (center + 1 == pos && iter.hasNext()){
+			if (center == pos && iter.hasNext()){
 				Entry<K, PriorityQueue<V>> e2 = iter.next();
 				Double numMedian = (e.getKey().doubleValue()+e2.getKey().doubleValue())/2.0;
 				return (K) numMedian;

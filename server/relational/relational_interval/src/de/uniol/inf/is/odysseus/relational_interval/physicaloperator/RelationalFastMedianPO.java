@@ -122,7 +122,7 @@ public class RelationalFastMedianPO<T extends Comparable<T>> extends
 					num_median = ((Number) groupList.get(middle).getE1())
 							.doubleValue();
 				}
-			} else {
+			} else { // group list == 1
 				num_median = ((Number) groupList.get(0).getE1()).doubleValue();
 			}
 			gr.append(num_median, false);
