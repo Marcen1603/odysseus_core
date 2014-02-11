@@ -125,6 +125,8 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		// else treat only objects that are at least from time watermark
 		if (watermark == null || start.afterOrEquals(watermark)) {
 			newHeartbeat(start, inPort);
+		}else{
+			logger.warn("Removed out of order element!" +object);
 		}
 	}
 
