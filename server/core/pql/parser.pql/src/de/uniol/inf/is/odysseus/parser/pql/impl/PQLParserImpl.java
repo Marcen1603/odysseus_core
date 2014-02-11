@@ -299,8 +299,8 @@ public class PQLParserImpl implements PQLParserImplConstants {
                   commands.add(new CreateStreamCommand(nameStr, op, user));
         }
         else
-        {       
-        	// Now done in CreateViewCommand
+        {
+        // Now done in CreateViewCommand
 //          RenameAO rename = new RenameAO();
 //		  rename.subscribeTo(op, op.getOutputSchema());
 //		  List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
@@ -624,11 +624,6 @@ public class PQLParserImpl implements PQLParserImplConstants {
     finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_3R_12() {
-    if (jj_scan_token(CHAR_LITERAL)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_6() {
     if (jj_scan_token(27)) return true;
     Token xsp;
@@ -734,6 +729,11 @@ public class PQLParserImpl implements PQLParserImplConstants {
     xsp = jj_scanpos;
     if (jj_3R_18()) jj_scanpos = xsp;
     if (jj_scan_token(28)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_12() {
+    if (jj_scan_token(CHAR_LITERAL)) return true;
     return false;
   }
 

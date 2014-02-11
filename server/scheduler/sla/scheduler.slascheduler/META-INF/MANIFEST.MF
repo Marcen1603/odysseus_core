@@ -4,27 +4,15 @@ Bundle-Name: SLA Scheduler
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scheduler.slascheduler;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: com.google.common.collect,
- de.uniol.inf.is.odysseus.billingmodel,
- de.uniol.inf.is.odysseus.billingmodel.physicaloperator,
- de.uniol.inf.is.odysseus.latency.physicaloperator,
- de.uniol.inf.is.odysseus.rcp.dashboard,
- de.uniol.inf.is.odysseus.rcp.dashboard.part,
- de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler,
- de.uniol.inf.is.odysseus.server.intervalapproach,
- org.eclipse.core.resources,
- org.jfree.chart,
- org.jfree.chart.axis,
- org.jfree.chart.plot,
- org.jfree.chart.renderer.category,
- org.jfree.data.category,
- org.jfree.data.general,
- org.jfree.data.time,
- org.osgi.service.component
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
- org.eclipse.ui;bundle-version="3.7.0"
+ org.eclipse.ui;bundle-version="3.7.0",
+ org.eclipse.osgi.services;bundle-version="3.3.0",
+ de.uniol.inf.is.odysseus.latency,
+ de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler,
+ de.uniol.inf.is.odysseus.billingmodel;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.server.intervalapproach
 Service-Component: OSGI-INF/*
 Export-Package: de.uniol.inf.is.odysseus.scheduler.slascheduler,
  de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance,
