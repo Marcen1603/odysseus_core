@@ -168,7 +168,7 @@ public class CreateRMap {
 		}
 		for (File f : rootDir.listFiles()) {
 			if (f.isDirectory()) {
-				if (!isOneOfIgnoreCase(f.getName(), ".metadata", "restricted", "application")) {
+				if (!ignoreDirs(f.getName())) {
 					if (f.getName().endsWith("de.uniol.inf.is.odysseus.updatesite") 
 							||f.getName().endsWith("de.uniol.inf.is.odysseus.update.p2")
 							) {
@@ -182,11 +182,23 @@ public class CreateRMap {
 					String name = parseFeatureDefinition(f);
 					if (!containsOnOf(name, "p2p_new", "peer")) {
 						names.put(name, f);
+					}else{
+						System.out.println("Omitted "+name+" while searching for features recursively");
 					}
 				}
 			}
 		}
 
+	}
+
+	private static boolean ignoreDirs(String name) {
+		if(isOneOfIgnoreCase(name, ".metadata", "restricted", "application")){
+			return true; 
+		}
+		if(name.toLowerCase().startsWith("buckminster")){
+			return true;
+		}
+		return false;
 	}
 
 	private static boolean containsOnOf(String name, String... strings) {
