@@ -14,11 +14,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
-import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
-import de.uniol.inf.is.odysseus.script.parser.ReplacementContainer;
-import de.uniol.inf.is.odysseus.script.parser.ReplacementException;
 
 public class QueryHyperlinkDetector extends AbstractHyperlinkDetector {
 
@@ -63,12 +59,15 @@ public class QueryHyperlinkDetector extends AbstractHyperlinkDetector {
 			
 			String qryFile = line.substring(index + 1, pos + 4);
 			
-			Context rcpContext = ParserClientUtil.createRCPContext(editor.getFile());
-			ReplacementContainer container = new ReplacementContainer();
-			container.connect(rcpContext);
+			//TODO: use context!
+//			try {
+//				Context rcpContext = ParserClientUtil.createRCPContext(editor.getFile());
+//				ReplacementContainer container = new ReplacementContainer();
+//				container.connect(rcpContext);		
+//				String realQryFile = container.use(qryFile);
 			
-			try {
-				String realQryFile = container.use(qryFile);
+				String realQryFile = qryFile;
+			
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				String rootName = root.getLocation().toString();
 				String realtiveFileName = realQryFile.substring(rootName.length());
@@ -78,9 +77,10 @@ public class QueryHyperlinkDetector extends AbstractHyperlinkDetector {
 					IRegion urlRegion= new Region(lineInfo.getOffset() + index + 1, qryFile.length());
 					return new IHyperlink[] {new QueryHyperlink(urlRegion, (IFile)resource)};
 				}
-			} catch (ReplacementException e) {
-				return null;
-			}
+				
+//			} catch (ReplacementException e) {
+//				return null;
+//			}
 		}
 		
 		return null;
