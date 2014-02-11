@@ -100,21 +100,22 @@ public class RelationalFastMedianPO<T extends Comparable<T>> extends
 		int medianPos = 0;
 		if (!numericalMedian) {
 			if (groupList.size() > 1) {
-				if (groupList.size() % 2 == 0) {
-					medianPos = (groupList.size() / 2) - 1;
-				} else {
-					medianPos = (groupList.size() / 2);
-				}
+				medianPos = (groupList.size()+1)/2;
+//				if (groupList.size() % 2 == 0) {
+//					medianPos = (groupList.size() / 2) - 1;
+//				} else {
+//					medianPos = (groupList.size() / 2);
+//				}
 			}
 			median = groupList.get(medianPos);
 			gr.append(median.getE1(), false);
 		} else {
 			Double num_median;
 			if (groupList.size() > 1) {
-				int middle = groupList.size() / 2;
+				int middle = (groupList.size()+1) / 2;
 				if (groupList.size() % 2 == 0) {
-					num_median = (((Number) groupList.get(middle - 1).getE1())
-							.doubleValue() + ((Number) groupList.get(middle)
+					num_median = (((Number) groupList.get(middle).getE1())
+							.doubleValue() + ((Number) groupList.get(middle+1)
 							.getE1()).doubleValue()) / 2;
 				} else {
 					num_median = ((Number) groupList.get(middle).getE1())

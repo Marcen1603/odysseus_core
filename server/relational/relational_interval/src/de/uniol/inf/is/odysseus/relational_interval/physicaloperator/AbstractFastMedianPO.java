@@ -48,7 +48,8 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 	}
 
 	@Override
-	final protected void process_next(Tuple<? extends ITimeInterval> object, int port) {
+	final protected void process_next(Tuple<? extends ITimeInterval> object,
+			int port) {
 
 		transfer.newElement(object, port);
 
@@ -63,10 +64,8 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 	public void createOutput(Long groupID, Tuple<? extends ITimeInterval> gr) {
 		Tuple<? extends ITimeInterval> last_gr = lastCreatedElement
 				.get(groupID);
-		// TODO what if element end is before "end" of groupList
 
-		// Element can be written, if next element is created (starttimestamp of
-		// next element is needed)
+		// TODO what if element end is before "end" of groupList
 
 		if (last_gr != null) {
 			if (last_gr.getMetadata().getStart()

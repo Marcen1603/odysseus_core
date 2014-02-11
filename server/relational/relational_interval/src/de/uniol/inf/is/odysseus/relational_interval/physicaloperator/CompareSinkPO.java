@@ -13,6 +13,8 @@ public class CompareSinkPO
 		extends
 		AbstractPipe<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> {
 
+	boolean sameOutputAsInputPort = true;
+
 	@SuppressWarnings("unchecked")
 	private DefaultTISweepArea<Tuple<? extends ITimeInterval>>[] sweepArea = new DefaultTISweepArea[2];
 
@@ -30,7 +32,7 @@ public class CompareSinkPO
 	@Override
 	protected void process_next(Tuple<? extends ITimeInterval> object, int port) {
 		synchronized (sweepArea) {
-//			System.err.println("Testing " + object + " from port " + port);
+			//System.err.println("Testing " + object + " from port " + port);
 			int otherport = port ^ 1;
 			// 1. find elements in other area that cannot be joined
 			// these are error elements!
@@ -38,30 +40,49 @@ public class CompareSinkPO
 					.extractElementsBefore(object.getMetadata().getStart());
 			while (elems.hasNext()) {
 				Tuple<? extends ITimeInterval> e = elems.next();
-				transfer(e);
-				System.err.println("Found wrong element " + e);
+				if (sameOutputAsInputPort) {
+					transfer(e, port);
+				} else {
+					transfer(e);
+				}
+				System.err.println(e + " from port " + otherport
+						+ " has not counterpart");
 			}
 			List<Tuple<? extends ITimeInterval>> startSame = sweepArea[otherport]
 					.extractEqualElementsStartingEquals(object);
 			if (startSame.size() == 0) {
 				sweepArea[port].insert(object);
-//				System.err.println("Not found inserting");
+				// System.err.println("Not found inserting");
 			} else {
-//				System.err.println("Remove corresponding element" + startSame);
+				int i=0;
+				for (Tuple<? extends ITimeInterval> t : startSame) {
+					System.err.print("Found " + t + " for " + object);
+					if (!(t.getMetadata().getEnd().equals(object.getMetadata()
+							.getEnd()))) {
+						System.err.print(" with DIFFERENT TIMESTAMP!!");
+					} 
+					i++;
+					if (i > 1){
+						System.err.print(" NOT REMOVED."+i+". element");
+					}
+					System.err.println();
+				}
+				// System.err.println("Remove corresponding element" +
+				// startSame);
 			}
 
-//			System.err
-//					.println("--------------------------------------------------------------------------------");
-//			System.err
-//					.println("--------------------------------------------------------------------------------");
-//			System.err.println(sweepArea[0]);
-//			System.err
-//					.println("--------------------------------------------------------------------------------");
-//			System.err.println(sweepArea[1]);
-//			System.err
-//					.println("--------------------------------------------------------------------------------");
-//			System.err
-//					.println("--------------------------------------------------------------------------------");
+			// System.err
+			// .println("--------------------------------------------------------------------------------");
+			// System.err
+			// .println("--------------------------------------------------------------------------------");
+			// System.err.println(sweepArea[0]);
+			// System.err
+			// .println("--------------------------------------------------------------------------------");
+			// System.err.println(sweepArea[1]);
+			// System.err
+			// .println("--------------------------------------------------------------------------------");
+			// System.err
+			// .println("--------------------------------------------------------------------------------");
 		}
 	}
 
@@ -78,12 +99,18 @@ public class CompareSinkPO
 	private void testRemaingTuples() {
 		synchronized (sweepArea) {
 			for (int i = 0; i < 2; i++) {
-				Iterator<Tuple<? extends ITimeInterval>> iter = sweepArea[0].extractAllElements();
-				while(iter.hasNext()){
+				Iterator<Tuple<? extends ITimeInterval>> iter = sweepArea[0]
+						.extractAllElements();
+				while (iter.hasNext()) {
 					System.err.print("UNASSIGNED TUPLES FROM PORT " + i);
 					Tuple<? extends ITimeInterval> e = iter.next();
-					transfer(e);
-					System.err.print("UNASSIGNED TUPLES FROM PORT " + i+" "+ e);
+					if (sameOutputAsInputPort) {
+						transfer(e, i);
+					} else {
+						transfer(e);
+					}
+					System.err.print("UNASSIGNED TUPLES FROM PORT " + i + " "
+							+ e);
 				}
 			}
 

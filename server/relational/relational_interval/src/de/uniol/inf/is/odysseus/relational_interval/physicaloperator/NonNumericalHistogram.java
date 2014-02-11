@@ -10,6 +10,5 @@ public class NonNumericalHistogram<K,V extends IStreamObject<? extends ITimeInte
 	public K getMedian() {
 		return getMenoid();	
 	}
-
-
+	
 }
