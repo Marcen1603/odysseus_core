@@ -11,79 +11,75 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
-abstract public class Histogram<K,V extends IStreamObject<? extends ITimeInterval>> {
+abstract public class Histogram<K, V extends IStreamObject<? extends ITimeInterval>> {
 
 	private long size;
 	private TreeMap<K, PriorityQueue<V>> h = new TreeMap<>();
-		
+
 	protected Set<Entry<K, PriorityQueue<V>>> getEntrySet() {
 		return h.entrySet();
 	}
 
 	protected long getSize() {
 		// DEBUG
-//		Iterator<Entry<K, PriorityQueue<V>>> iter = getEntrySet().iterator();
-//		long calcedSize = 0;
-//		while (iter.hasNext()){
-//			calcedSize += iter.next().getValue().size();
-//		}
-//		if (calcedSize != size){
-//			throw new RuntimeException("ERRRORRRRR");
-//		}
+		// Iterator<Entry<K, PriorityQueue<V>>> iter = getEntrySet().iterator();
+		// long calcedSize = 0;
+		// while (iter.hasNext()){
+		// calcedSize += iter.next().getValue().size();
+		// }
+		// if (calcedSize != size){
+		// throw new RuntimeException("ERRRORRRRR");
+		// }
 		return size;
 	}
-	
-	public void addElement(K key, V value){
+
+	public void addElement(K key, V value) {
 		PriorityQueue<V> l = h.get(key);
-		if (l == null){
-			// Sort elements concerning end time stamp, this order is used to remove elements by end time stamp
-			l = new PriorityQueue<V>(
-					11, new Comparator<V>(){
-						@Override
-						public int compare(
-								V o1,
-								V o2) {
-							return o1.getMetadata().getEnd().compareTo(o2.getMetadata().getEnd());
-						}
-					});
+		if (l == null) {
+			// Sort elements concerning end time stamp, this order is used to
+			// remove elements by end time stamp
+			l = new PriorityQueue<V>(11, new Comparator<V>() {
+				@Override
+				public int compare(V o1, V o2) {
+					return o1.getMetadata().getEnd()
+							.compareTo(o2.getMetadata().getEnd());
+				}
+			});
 			h.put(key, l);
 		}
 		l.add(value);
 		size++;
 	}
-	
-	public void cleanUp(PointInTime p){
+
+	public void cleanUp(PointInTime p) {
+
 		Iterator<PriorityQueue<V>> listIter = h.values().iterator();
-		while(listIter.hasNext()){
+		while (listIter.hasNext()) {
 			PriorityQueue<V> l = listIter.next();
 			V e = l.peek();
-			while (e.getMetadata().getEnd().beforeOrEquals(p)){
+			while (e != null && e.getMetadata().getEnd().beforeOrEquals(p)) {
 				l.poll();
 				size--;
 				e = l.peek();
 			}
-			if (l.isEmpty()){
+			if (l.isEmpty()) {
 				listIter.remove();
 			}
 		}
 	}
-	
+
 	public K getMenoid() {
 		Iterator<Entry<K, PriorityQueue<V>>> iter = getEntrySet().iterator();
 		Entry<K, PriorityQueue<V>> e = null;
-		long center = (getSize()+1)/2;
+		long center = (getSize() + 1) / 2;
 		long pos = 0;
-		while(pos <= center && iter.hasNext()){
+		while (pos <= center && iter.hasNext()) {
 			e = iter.next();
 			pos += e.getValue().size();
 		}
 		return e.getKey();
 	}
-	
+
 	abstract K getMedian();
-
-
-
-
 
 }
