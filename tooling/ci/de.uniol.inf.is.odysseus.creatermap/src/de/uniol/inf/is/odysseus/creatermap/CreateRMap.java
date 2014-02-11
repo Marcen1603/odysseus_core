@@ -52,11 +52,16 @@ public class CreateRMap {
 				// String rootPath = "E:\\Odysseus\\trunk";
 				String updatesiteFeature = args[1]; // normally this should be
 													// de.uniol.inf.is.odysseus.updatesite
-				String p2SiteFeature = args[2];
+				String p2SiteFeature = args[2]; // p2
+				
+				String ignore = "";
+				if(args.length==4){
+					ignore = args[3].trim();
+				}
 
 				System.out.println("Creating feature.xml for update site on root path: " + rootPath);
 				Map<String, File> names = new HashMap<>();
-				searchFeatures(rootPath, names);
+				searchFeatures(rootPath, names, ignore);
 				System.out.println("Found following features: ");
 				String featureList = new String();
 				for (String id : names.keySet()) {
@@ -155,13 +160,13 @@ public class CreateRMap {
 		saveFile(outputfile, projectDir + File.separatorChar + "feature.xml");
 	}
 
-	private static void searchFeatures(String rootPath, Map<String, File> names) {
+	private static void searchFeatures(String rootPath, Map<String, File> names, String ignore) {
 		File rootDir = new File(rootPath);
-		searchRecursiveFeature(rootDir, rootDir, names);
+		searchRecursiveFeature(rootDir, rootDir, names, ignore);
 
 	}
 
-	private static void searchRecursiveFeature(File rootDir, File mainRoot, Map<String, File> names) {
+	private static void searchRecursiveFeature(File rootDir, File mainRoot, Map<String, File> names, String ignore) {
 		if (rootDir == null) {
 			System.out.println("Error: " + rootDir + " not found (null)");
 			return;
@@ -171,11 +176,11 @@ public class CreateRMap {
 				if (!ignoreDirs(f.getName())) {
 					if (f.getName().endsWith("de.uniol.inf.is.odysseus.updatesite") 
 							||f.getName().endsWith("de.uniol.inf.is.odysseus.update.p2")
-							||f.getName().endsWith("de.uniol.inf.is.odysseus.ci.products")
+							|| f.getName().endsWith("ci.products."+ignore)
 							) {
 						continue;
 					}
-					searchRecursiveFeature(f, mainRoot, names);
+					searchRecursiveFeature(f, mainRoot, names, ignore);
 				}
 			} else {
 				if (f.isFile() && f.getName().equals("feature.xml")) {
