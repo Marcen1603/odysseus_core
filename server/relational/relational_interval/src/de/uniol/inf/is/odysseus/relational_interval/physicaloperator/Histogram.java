@@ -71,7 +71,7 @@ abstract public class Histogram<K, V extends IStreamObject<? extends ITimeInterv
 	public K getMenoid() {
 		Iterator<Entry<K, PriorityQueue<V>>> iter = getEntrySet().iterator();
 		Entry<K, PriorityQueue<V>> e = null;
-		long center = (getSize() + 1) / 2;
+		long center = getSize() / 2;
 		long pos = 0;
 		while (pos <= center && iter.hasNext()) {
 			e = iter.next();

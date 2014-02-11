@@ -32,7 +32,7 @@ public class CompareSinkPO
 	@Override
 	protected void process_next(Tuple<? extends ITimeInterval> object, int port) {
 		synchronized (sweepArea) {
-			System.err.println("Testing " + object + " from port " + port);
+			//System.err.println("Testing " + object + " from port " + port);
 			int otherport = port ^ 1;
 			// 1. find elements in other area that cannot be joined
 			// these are error elements!
@@ -54,37 +54,38 @@ public class CompareSinkPO
 			if (startSame.size() == 0) {
 				sweepArea[port].insert(object);
 				// System.err.println("Not found inserting");
-			} else {
-				int i = 0;
-				for (Tuple<? extends ITimeInterval> t : startSame) {
-					System.err.print("Found " + t + " for " + object);
-					if (!(t.getMetadata().getEnd().equals(object.getMetadata()
-							.getEnd()))) {
-						System.err.print(" with DIFFERENT TIMESTAMP!!");
-					}
-					i++;
-					if (i > 1) {
-						System.err.print(" NOT REMOVED." + i + ". element");
-					}
-					System.err.println();
-				}
+			}
+			//else {
+//				int i = 0;
+//				for (Tuple<? extends ITimeInterval> t : startSame) {
+//					System.err.print("Found " + t + " for " + object);
+//					if (!(t.getMetadata().getEnd().equals(object.getMetadata()
+//							.getEnd()))) {
+//						System.err.print(" with DIFFERENT TIMESTAMP!!");
+//					}
+//					i++;
+//					if (i > 1) {
+//						System.err.print(" NOT REMOVED." + i + ". element");
+//					}
+//					System.err.println();
+//				}
 				// System.err.println("Remove corresponding element" +
 				// startSame);
-			}
+			//}
 
-			if (sweepArea[0].size() > 0 || sweepArea[1].size() > 0) {
-				System.err
-						.println("AREA 0 --------------------------------------------------------------------------------");
-				System.err.println(sweepArea[0]);
-				System.err
-						.println("AREA 1--------------------------------------------------------------------------------");
-				System.err.println(sweepArea[1]);
-				System.err
-						.println("--------------------------------------------------------------------------------");
-			}else{
-				System.err
-				.println("--------------------------------------------------------------------------------");				
-			}
+//			if (sweepArea[0].size() > 0 || sweepArea[1].size() > 0) {
+//				System.err
+//						.println("AREA 0 --------------------------------------------------------------------------------");
+//				System.err.println(sweepArea[0]);
+//				System.err
+//						.println("AREA 1--------------------------------------------------------------------------------");
+//				System.err.println(sweepArea[1]);
+//				System.err
+//						.println("--------------------------------------------------------------------------------");
+//			}else{
+//				System.err
+//				.println("--------------------------------------------------------------------------------");				
+//			}
 		}
 	}
 
