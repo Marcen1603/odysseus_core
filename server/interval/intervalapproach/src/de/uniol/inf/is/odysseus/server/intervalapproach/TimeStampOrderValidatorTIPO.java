@@ -62,6 +62,8 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 	protected void process_next(T object, int port) {
 		if (validate(object.getMetadata(), port)) {
 			transfer(object);
+		}else{
+			transfer(object,Integer.MAX_VALUE);
 		}
 	}
 
@@ -97,6 +99,10 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 		} else {
 			return true;
 		}
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
 	}
 
 }

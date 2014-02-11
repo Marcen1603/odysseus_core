@@ -18,22 +18,37 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="TimeStampOrderValidate", doc="Assure that all elements are ordered by start timestamp and eliminate out of order elements.", category = {LogicalOperatorCategory.PROCESSING})
 public class TimeStampOrderValidatorAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -9204585315520513917L;
-
+	private boolean debug = false;
+	
 	public TimeStampOrderValidatorAO(){}
 	
 	public TimeStampOrderValidatorAO(
 			TimeStampOrderValidatorAO timeStampOrderValidatorAO) {
 		super(timeStampOrderValidatorAO);
+		this.debug = timeStampOrderValidatorAO.debug;
 	}
 
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new TimeStampOrderValidatorAO(this);
 	}
+	
+	@Parameter(name="debug", optional=true, type=BooleanParameter.class, doc="Print eliminated elements to console")
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+	
+	public boolean isDebug() {
+		return debug;
+	}
 
+	
+	
 }
