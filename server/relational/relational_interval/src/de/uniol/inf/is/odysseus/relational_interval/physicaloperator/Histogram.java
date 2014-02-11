@@ -48,7 +48,7 @@ abstract public class Histogram<K,V extends IStreamObject<? extends ITimeInterva
 		while(listIter.hasNext()){
 			PriorityQueue<V> l = listIter.next();
 			V e = l.peek();
-			while (e.getMetadata().getEnd().before(p)){
+			while (e.getMetadata().getEnd().beforeOrEquals(p)){
 				l.poll();
 				size--;
 				e = l.peek();
