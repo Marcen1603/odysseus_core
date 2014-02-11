@@ -22,7 +22,8 @@ public class RelationalFastMedianPO<T extends Comparable<T>> extends
 	}
 
 	@Override
-	protected void process_next(Tuple<? extends ITimeInterval> object, int port, Long groupID) {
+	protected void process_next(Tuple<? extends ITimeInterval> object,
+			int port, Long groupID) {
 
 		List<FESortedPair<T, Tuple<? extends ITimeInterval>>> groupList = getOrCreateGroupList(groupID);
 
@@ -62,7 +63,7 @@ public class RelationalFastMedianPO<T extends Comparable<T>> extends
 					pos++;
 				} else {
 					found = true;
-					pos = pos * -1;
+					pos = ((pos+1) * -1);
 				}
 			}
 		}
@@ -89,34 +90,34 @@ public class RelationalFastMedianPO<T extends Comparable<T>> extends
 		} else {
 			groupList.add(pos, p);
 		}
+		//assureOrder(groupList);
 	}
 
 	public Tuple<? extends ITimeInterval> createMedian(
 			Tuple<? extends ITimeInterval> object,
 			List<FESortedPair<T, Tuple<? extends ITimeInterval>>> groupList) {
+
+		// DEBUG
+		//assureOrder(groupList);
+
 		Tuple<? extends ITimeInterval> gr = groupProcessor
 				.getGroupingPart(object);
 		FESortedPair<T, Tuple<? extends ITimeInterval>> median = null;
 		int medianPos = 0;
 		if (!numericalMedian) {
 			if (groupList.size() > 1) {
-				medianPos = (groupList.size()+1)/2;
-//				if (groupList.size() % 2 == 0) {
-//					medianPos = (groupList.size() / 2) - 1;
-//				} else {
-//					medianPos = (groupList.size() / 2);
-//				}
+				medianPos = (groupList.size() + 1) / 2;
 			}
 			median = groupList.get(medianPos);
 			gr.append(median.getE1(), false);
 		} else {
 			Double num_median;
 			if (groupList.size() > 1) {
-				int middle = (groupList.size()+1) / 2;
+				int middle = (groupList.size() + 1) / 2;
 				if (groupList.size() % 2 == 0) {
 					num_median = (((Number) groupList.get(middle).getE1())
-							.doubleValue() + ((Number) groupList.get(middle+1)
-							.getE1()).doubleValue()) / 2;
+							.doubleValue() + ((Number) groupList
+							.get(middle + 1).getE1()).doubleValue()) / 2;
 				} else {
 					num_median = ((Number) groupList.get(middle).getE1())
 							.doubleValue();
@@ -128,15 +129,31 @@ public class RelationalFastMedianPO<T extends Comparable<T>> extends
 		}
 		return gr;
 	}
+
 	
-	@Override
-	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof RelationalFastMedianPO)){
-			return false;
+	@SuppressWarnings("unused")
+	private void assureOrder(
+			List<FESortedPair<T, Tuple<? extends ITimeInterval>>> groupList) {
+		if (groupList.size() > 1) {
+			Iterator<FESortedPair<T, Tuple<? extends ITimeInterval>>> i = groupList
+					.iterator();
+			FESortedPair<T, Tuple<? extends ITimeInterval>> last = i.next();
+			while (i.hasNext()) {
+				FESortedPair<T, Tuple<? extends ITimeInterval>> current = i.next();
+				if (last.getE1().compareTo(current.getE1()) > 0){
+					throw new IllegalArgumentException("WRONG ORDER IN GROUP_LIST "+last+" not before "+current);
+				}
+			}
 		}
-		
-		return super.isSemanticallyEqual(ipo);
 	}
 
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof RelationalFastMedianPO)) {
+			return false;
+		}
+
+		return super.isSemanticallyEqual(ipo);
+	}
 
 }

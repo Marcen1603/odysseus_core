@@ -21,6 +21,15 @@ abstract public class Histogram<K,V extends IStreamObject<? extends ITimeInterva
 	}
 
 	protected long getSize() {
+		// DEBUG
+//		Iterator<Entry<K, PriorityQueue<V>>> iter = getEntrySet().iterator();
+//		long calcedSize = 0;
+//		while (iter.hasNext()){
+//			calcedSize += iter.next().getValue().size();
+//		}
+//		if (calcedSize != size){
+//			throw new RuntimeException("ERRRORRRRR");
+//		}
 		return size;
 	}
 	
