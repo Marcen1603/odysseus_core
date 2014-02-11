@@ -171,6 +171,7 @@ public class CreateRMap {
 				if (!ignoreDirs(f.getName())) {
 					if (f.getName().endsWith("de.uniol.inf.is.odysseus.updatesite") 
 							||f.getName().endsWith("de.uniol.inf.is.odysseus.update.p2")
+							||f.getName().endsWith("de.uniol.inf.is.odysseus.ci.products")
 							) {
 						continue;
 					}
