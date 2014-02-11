@@ -22,9 +22,7 @@ public class RelationalFastMedianPO<T extends Comparable<T>> extends
 	}
 
 	@Override
-	protected void process_next(Tuple<? extends ITimeInterval> object, int port) {
-
-		Long groupID = groupProcessor.getGroupID(object);
+	protected void process_next(Tuple<? extends ITimeInterval> object, int port, Long groupID) {
 
 		List<FESortedPair<T, Tuple<? extends ITimeInterval>>> groupList = getOrCreateGroupList(groupID);
 

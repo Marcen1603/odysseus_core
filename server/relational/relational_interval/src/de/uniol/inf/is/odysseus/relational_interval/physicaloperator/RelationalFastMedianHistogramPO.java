@@ -18,9 +18,8 @@ public class RelationalFastMedianHistogramPO<T extends Comparable<T>>
 	}
 
 	@Override
-	protected void process_next(Tuple<? extends ITimeInterval> object, int port) {
-
-		Long groupID = groupProcessor.getGroupID(object);
+	protected void process_next(Tuple<? extends ITimeInterval> object, int port, Long groupID) {
+		
 		@SuppressWarnings("unchecked")
 		T medianAttribute = (T) object.getAttribute(medianAttrPos);
 

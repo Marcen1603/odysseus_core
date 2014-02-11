@@ -6,7 +6,10 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 
@@ -18,6 +21,8 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 
 	protected final int medianAttrPos;
 	protected final boolean numericalMedian;
+
+	final protected ITransferArea<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> transfer = new TITransferArea<>();
 
 	private Map<Long, Tuple<? extends ITimeInterval>> lastCreatedElement = new HashMap<>();
 
@@ -39,9 +44,21 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 	@Override
 	protected void process_open() throws OpenFailedException {
 		groupProcessor.init();
+		transfer.init(this, 1);
 	}
-	
-	
+
+	@Override
+	final protected void process_next(Tuple<? extends ITimeInterval> object, int port) {
+
+		transfer.newElement(object, port);
+
+		Long groupID = groupProcessor.getGroupID(object);
+
+		process_next(object, port, groupID);
+	}
+
+	abstract protected void process_next(Tuple<? extends ITimeInterval> object,
+			int port, Long groupID);
 
 	public void createOutput(Long groupID, Tuple<? extends ITimeInterval> gr) {
 		Tuple<? extends ITimeInterval> last_gr = lastCreatedElement
@@ -55,7 +72,7 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 			if (last_gr.getMetadata().getStart()
 					.before(gr.getMetadata().getStart())) {
 				last_gr.getMetadata().setEnd(gr.getMetadata().getStart());
-				transfer(last_gr);
+				transfer.transfer(last_gr);
 				lastCreatedElement.put(groupID, gr);
 			}
 		} else {
@@ -91,5 +108,11 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 		}
 
 		return false;
+	}
+
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		transfer.sendPunctuation(punctuation);
+		transfer.newElement(punctuation, port);
 	}
 }
