@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.commands;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -32,7 +33,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -60,10 +61,10 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 		if (selection == null)
 			return null;
 
-		Optional<IPhysicalOperator> optionalOpForStream = null;
+		Collection<IPhysicalOperator> optionalOpForStream = null;
 		if (selection instanceof IStructuredSelection) {
 			List<Object> selections = SelectionProvider.getSelection(event);
-			nextSelection: for (Object selectedObject : selections) {
+			for (Object selectedObject : selections) {
 
 				if( selectedObject instanceof Integer ) {
                     Integer queryID = (Integer)selectedObject;
@@ -75,50 +76,51 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 					IOdysseusNodeView nodeView = (IOdysseusNodeView) selectedObject;
 
 					// Auswahl holen
-					optionalOpForStream = Optional.of(nodeView.getModelNode().getContent());
+					optionalOpForStream = Lists.newArrayList(nodeView.getModelNode().getContent());
 				}
 
 				
-				if (optionalOpForStream != null && optionalOpForStream.isPresent()) {
+				if (optionalOpForStream != null && !optionalOpForStream.isEmpty()) {
 
-					IPhysicalOperator opForStream = optionalOpForStream.get();
-					// schauen, ob Editor für den Graphen schon offen ist
-					for (IEditorReference editorRef : page.getEditorReferences()) {
-						try {
-							IEditorInput i = editorRef.getEditorInput();
-							if (i instanceof StreamEditorInput) {
-								StreamEditorInput gInput = (StreamEditorInput) i;
-								if (gInput.getPhysicalOperator() == opForStream && gInput.getEditorTypeID().equals(editorTypeID)) {
-									page.activate(editorRef.getPart(false));
-									continue nextSelection;
-								}
-							}
-						} catch (PartInitException ex) {
-							ex.printStackTrace();
-							continue nextSelection;
-						}
-					}
-
-					// Ediortyp holen und anzeigen
-					for (StreamExtensionDefinition def : StreamEditorRegistry.getInstance().getStreamExtensionDefinitions()) {
-						if (def.getID().equals(editorTypeID)) {
+					nextOperator: for( IPhysicalOperator opForStream : optionalOpForStream ) {
+						
+						for (IEditorReference editorRef : page.getEditorReferences()) {
 							try {
-								final Object editorType = def.getConfigElement().createExecutableExtension("class");
-								if (editorType instanceof IStreamEditorType) {
-									IStreamEditorType editor = (IStreamEditorType) editorType;
-
-									// ViewModell erzeugen
-									StreamEditorInput input = new StreamEditorInput(opForStream, editor, editorTypeID, def.getLabel());
-
-									try {
-										page.openEditor(input, OdysseusRCPViewerPlugIn.STREAM_EDITOR_ID);
-										continue nextSelection;
-									} catch (PartInitException ex) {
-										ex.printStackTrace();
+								IEditorInput i = editorRef.getEditorInput();
+								if (i instanceof StreamEditorInput) {
+									StreamEditorInput gInput = (StreamEditorInput) i;
+									if (gInput.getPhysicalOperator() == opForStream && gInput.getEditorTypeID().equals(editorTypeID)) {
+										page.activate(editorRef.getPart(false));
+										continue nextOperator;
 									}
 								}
-							} catch (CoreException ex) {
+							} catch (PartInitException ex) {
 								ex.printStackTrace();
+								continue nextOperator;
+							}
+						}
+	
+						// Ediortyp holen und anzeigen
+						for (StreamExtensionDefinition def : StreamEditorRegistry.getInstance().getStreamExtensionDefinitions()) {
+							if (def.getID().equals(editorTypeID)) {
+								try {
+									final Object editorType = def.getConfigElement().createExecutableExtension("class");
+									if (editorType instanceof IStreamEditorType) {
+										IStreamEditorType editor = (IStreamEditorType) editorType;
+	
+										// ViewModell erzeugen
+										StreamEditorInput input = new StreamEditorInput(opForStream, editor, editorTypeID, def.getLabel());
+	
+										try {
+											page.openEditor(input, OdysseusRCPViewerPlugIn.STREAM_EDITOR_ID);
+											continue nextOperator;
+										} catch (PartInitException ex) {
+											ex.printStackTrace();
+										}
+									}
+								} catch (CoreException ex) {
+									ex.printStackTrace();
+								}
 							}
 						}
 					}
@@ -128,19 +130,19 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 		return null;
 	}
 	
-	private static Optional<IPhysicalOperator> chooseOperator( List<IPhysicalOperator> operators ) {
+	private static Collection<IPhysicalOperator> chooseOperator( List<IPhysicalOperator> operators ) {
 		if( operators.size() == 1 ) {
-			return Optional.of(operators.get(0));
+			return operators;
 		}
 		
 		ChooseOperatorWindow wnd = new ChooseOperatorWindow(PlatformUI.getWorkbench().getDisplay(), operators);
 		wnd.show();
 		
 		if( wnd.isCanceled() ) {
-			return Optional.absent();
+			return Lists.newArrayList();
 		} 
 		
-		return Optional.of(wnd.getSelectedOperator());
+		return wnd.getSelectedOperator();
 	}
 	
 }

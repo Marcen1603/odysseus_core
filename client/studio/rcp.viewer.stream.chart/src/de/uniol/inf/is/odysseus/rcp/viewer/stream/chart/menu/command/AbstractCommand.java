@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -28,7 +29,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IHasRoots;
@@ -41,39 +42,30 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
 public abstract class AbstractCommand extends AbstractHandler {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(AbstractCommand.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
 
-	public AbstractJFreeChart<?, ?> openView(
-			AbstractJFreeChart<?, ?> createView,
-			IPhysicalOperator observingOperator) {
-		IWorkbenchPage activePage = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage();
+	public void openView(AbstractJFreeChart<?, ?> createView, Collection<IPhysicalOperator> observingOperators) {
+		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		try {
-			String secondaryIdentifierPrefix = observingOperator.getClass()
-					.getCanonicalName()
-					+ observingOperator.getClass().hashCode();
-			String secondaryIdentifier = AbstractJFreeChart
-					.getUniqueSecondIdentifier(secondaryIdentifierPrefix);
-			AbstractJFreeChart<?, ?> view = (AbstractJFreeChart<?, ?>) activePage
-					.showView(createView.getViewID(), secondaryIdentifier,
-							IWorkbenchPage.VIEW_ACTIVATE);
-			view.initWithOperator(observingOperator);
-			return view;
+			for( IPhysicalOperator observingOperator : observingOperators ) {
+				String secondaryIdentifierPrefix = observingOperator.getClass().getCanonicalName() + observingOperator.getClass().hashCode();
+				String secondaryIdentifier = AbstractJFreeChart.getUniqueSecondIdentifier(secondaryIdentifierPrefix);
+				AbstractJFreeChart<?, ?> view = (AbstractJFreeChart<?, ?>) activePage.showView(createView.getViewID(), secondaryIdentifier, IWorkbenchPage.VIEW_ACTIVATE);
+				view.initWithOperator(observingOperator);
+			}
 		} catch (Exception e) {
 			LOG.error("Could not show view for chart", e);
 		}
-		return null;
 	}
 
-	public IPhysicalOperator getSelectedOperator(ExecutionEvent event) {
+	public Collection<IPhysicalOperator> getSelectedOperators(ExecutionEvent event) {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 
 		ISelection selection = window.getActivePage().getSelection();
 		if (selection == null)
 			return null;
 
-		Optional<IPhysicalOperator> opForStream = null;
+		Collection<IPhysicalOperator> opsForStream = null;
 		if (selection instanceof IStructuredSelection) {
 
 			IStructuredSelection structSelection = (IStructuredSelection) selection;
@@ -83,43 +75,37 @@ public abstract class AbstractCommand extends AbstractHandler {
 			// IPhysicalQuery
 			if (selectedObject instanceof IHasRoots) {
 				IHasRoots query = (IHasRoots) selectedObject;
-				opForStream = chooseOperator(query.getRoots());
+				opsForStream = chooseOperator(query.getRoots());
 			}
 
 			if (selectedObject instanceof IOdysseusNodeView) {
 				IOdysseusNodeView nodeView = (IOdysseusNodeView) selectedObject;
 				// Auswahl holen
-				opForStream = Optional.of(nodeView.getModelNode().getContent());
+				opsForStream = Lists.newArrayList(nodeView.getModelNode().getContent());
 			}
 
 			if (selectedObject instanceof Integer) {
 				Integer queryID = (Integer) selectedObject;
 				IExecutor executor = Activator.getExecutor();
-				opForStream = chooseOperator(executor.getPhysicalRoots(queryID, OdysseusRCPPlugIn.getActiveSession()));
+				opsForStream = chooseOperator(executor.getPhysicalRoots(queryID, OdysseusRCPPlugIn.getActiveSession()));
 			}
 		}
 
-		if (opForStream != null && opForStream.isPresent()) {
-			return opForStream.get();
-		}
-
-		return null;
+		return opsForStream;
 	}
 
-	private static Optional<IPhysicalOperator> chooseOperator(
-			List<IPhysicalOperator> operators) {
+	private static Collection<IPhysicalOperator> chooseOperator(List<IPhysicalOperator> operators) {
 		if (operators.size() == 1) {
-			return Optional.of(operators.get(0));
+			return operators;
 		}
 
-		ChooseOperatorWindow wnd = new ChooseOperatorWindow(PlatformUI
-				.getWorkbench().getDisplay(), operators);
+		ChooseOperatorWindow wnd = new ChooseOperatorWindow(PlatformUI.getWorkbench().getDisplay(), operators);
 		wnd.show();
 
 		if (wnd.isCanceled()) {
-			return Optional.absent();
+			return Lists.newArrayList();
 		}
 
-		return Optional.of(wnd.getSelectedOperator());
+		return wnd.getSelectedOperator();
 	}
 }

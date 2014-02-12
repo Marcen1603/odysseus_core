@@ -14,11 +14,15 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.rcp.chart.menu.command;
 
+import java.util.Collection;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.probabilistic.rcp.chart.ProbabilityChart3D;
@@ -30,22 +34,22 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.AbstractCom
  * 
  */
 public class ShowProbabilityChart3D extends AbstractCommand {
-    /*
-     * 
-     * @see
-     * org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands
-     * .ExecutionEvent)
-     */
+	
+	private static final Logger LOG = LoggerFactory.getLogger(ShowProbabilityChart3D.class);
+	
     @Override
     public final Object execute(final ExecutionEvent event) throws ExecutionException {
-        final IPhysicalOperator op = super.getSelectedOperator(event);
+        Collection<IPhysicalOperator> ops = super.getSelectedOperators(event);
 
-        final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         try {
-            final ProbabilityChart3D view = (ProbabilityChart3D) activePage.showView("de.offis.chart.charts.probabilitychart3d", "probabilitychart3d", IWorkbenchPage.VIEW_ACTIVATE);
-            view.initWithOperator(op);
+        	for( IPhysicalOperator op : ops ) {
+        		final ProbabilityChart3D view = (ProbabilityChart3D) activePage.showView("de.offis.chart.charts.probabilitychart3d", "probabilitychart3d", IWorkbenchPage.VIEW_ACTIVATE);
+        		view.initWithOperator(op);
+        	}
         }
-        catch (final PartInitException e) {
+        catch (PartInitException e) {
+        	LOG.error("Could not open probability chart 3d" ,e);
             e.printStackTrace();
         }
 

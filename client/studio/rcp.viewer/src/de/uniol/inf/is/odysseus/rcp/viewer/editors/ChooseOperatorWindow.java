@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.viewer.editors;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -39,9 +40,10 @@ public class ChooseOperatorWindow {
 
 	private final List<IPhysicalOperator> operators;
 	private final Display display;
+	private final Collection<IPhysicalOperator> selectedOperator = Lists.newArrayList();
 	
-	private List<RadioButtonOperatorPair> radioOperatorPairs;
-	private IPhysicalOperator selectedOperator;
+	private List<CheckBoxOperatorPair> checkBoxOperatorPairs;
+	
 	private Shell window;
 	private boolean canceled;
 
@@ -62,7 +64,8 @@ public class ChooseOperatorWindow {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				if( !isCanceled() ) {
-					selectedOperator = determineSelection(radioOperatorPairs);
+					selectedOperator.clear();
+					selectedOperator.addAll(determineSelection(checkBoxOperatorPairs));
 				}
 			}
 
@@ -71,7 +74,7 @@ public class ChooseOperatorWindow {
 		processWindow();
 	}
 	
-	public IPhysicalOperator getSelectedOperator() {
+	public Collection<IPhysicalOperator> getSelectedOperator() {
 		return selectedOperator;
 	}
 	
@@ -92,33 +95,34 @@ public class ChooseOperatorWindow {
 		wnd.setText("Choose operator to show stream");
 		wnd.setLayout(new GridLayout());
 
-		Label label = new Label(wnd, SWT.NONE);
-		label.setText("Query has more than one sink. Choose one operator\nto show the stream from.");
+		Label label = new Label(wnd, SWT.WRAP);
+		label.setText("Query has more than one sink. Choose one or more operators to show the streams from.");
 		
-		radioOperatorPairs = createRadioButtons(wnd, operators);
+		checkBoxOperatorPairs = createCheckBoxes(wnd, operators);
 		createButtons(wnd);
 
 		wnd.pack();
 		return wnd;
 	}
 	
-	private static List<RadioButtonOperatorPair> createRadioButtons(Shell shell, List<IPhysicalOperator> operators ) {
+	private static List<CheckBoxOperatorPair> createCheckBoxes(Shell shell, List<IPhysicalOperator> operators ) {
 		Composite attributesComposite = new Composite(shell, SWT.NONE);
 		attributesComposite.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true));
 		attributesComposite.setLayout(new GridLayout(1, true));
-		List<RadioButtonOperatorPair> radioButtons = Lists.newArrayList();
+		
+		List<CheckBoxOperatorPair> checkBoxes = Lists.newArrayList();
 		
 		for( IPhysicalOperator operator : operators ) {
-			Button radioButton = createRadioButton(attributesComposite, operator.getName());
-			radioButtons.add(new RadioButtonOperatorPair(operator, radioButton));
+			Button checkButton = createCheckBox(attributesComposite, operator.getName());
+			checkBoxes.add(new CheckBoxOperatorPair(operator, checkButton));
 		}
 		
-		return radioButtons;
+		return checkBoxes;
 	}
 	
-	private static Button createRadioButton( Composite composite, String title ) {
-		Button checkBox = new Button(composite, SWT.RADIO);
-		checkBox.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true));
+	private static Button createCheckBox( Composite composite, String title ) {
+		Button checkBox = new Button(composite, SWT.CHECK);
+		checkBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		checkBox.setText(title);
 		return checkBox;
 	}
@@ -126,9 +130,32 @@ public class ChooseOperatorWindow {
 	private void createButtons(final Shell wnd) {
 		Composite composite = new Composite(wnd, SWT.NONE);
 		composite.setLayoutData(new GridData());
-		composite.setLayout(new GridLayout(2, true));
-			
+		composite.setLayout(new GridLayout(4, true));
+		
+		Button selectAllButton = createButton(composite, "Select all");
+		selectAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		selectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for( CheckBoxOperatorPair pair : checkBoxOperatorPairs ) {
+					pair.checkBox.setSelection(true);
+				}
+			}
+		});
+		
+		Button selectNoneButton = createButton(composite, "Select none");
+		selectNoneButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		selectNoneButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for( CheckBoxOperatorPair pair : checkBoxOperatorPairs ) {
+					pair.checkBox.setSelection(false);
+				}
+			}
+		});
+
 		Button cancelButton = createButton(composite, "Cancel");
+		cancelButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		cancelButton.addSelectionListener(new SelectionAdapter() {
 			
 			@Override
@@ -139,42 +166,42 @@ public class ChooseOperatorWindow {
 			
 		});
 		Button okButton = createButton(composite, "OK");
+		okButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		okButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				canceled = false;
 				wnd.dispose();
 			}
-		});
-		
+		});		
 	}
 		
 	private static Button createButton( Composite composite, String title ) {
 		Button button = new Button(composite, SWT.PUSH);
 		button.setText(title);
-		button.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		return button;
 	}
 	
-	private static IPhysicalOperator determineSelection(List<RadioButtonOperatorPair> checkBoxes) {
-		for( RadioButtonOperatorPair pair : checkBoxes ) {
-			if( pair.radioButton.getSelection()) {
-				return pair.operator;
+	private static Collection<IPhysicalOperator> determineSelection(List<CheckBoxOperatorPair> checkBoxes) {
+		Collection<IPhysicalOperator> selectedOperators = Lists.newArrayList();
+		for( CheckBoxOperatorPair pair : checkBoxes ) {
+			if( pair.checkBox.getSelection()) {
+				selectedOperators.add(pair.operator);
 			}
 		}
-		throw new IllegalStateException("No physical operator chosen!");
+		
+		return selectedOperators;
 	}
-
 }
 
-class RadioButtonOperatorPair {
+class CheckBoxOperatorPair {
 	
 	public IPhysicalOperator operator;
-	public Button radioButton;
+	public Button checkBox;
 	
-	public RadioButtonOperatorPair( IPhysicalOperator operator, Button radioButton) {
+	public CheckBoxOperatorPair( IPhysicalOperator operator, Button radioButton) {
 		this.operator = operator;
-		this.radioButton = radioButton;
+		this.checkBox = radioButton;
 	}
 	
 }
