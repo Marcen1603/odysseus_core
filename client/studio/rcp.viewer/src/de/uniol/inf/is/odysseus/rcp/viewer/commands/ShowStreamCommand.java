@@ -25,6 +25,7 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -135,14 +136,12 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 			return operators;
 		}
 		
-		ChooseOperatorWindow wnd = new ChooseOperatorWindow(PlatformUI.getWorkbench().getDisplay(), operators);
-		wnd.show();
+		ChooseOperatorWindow wnd = new ChooseOperatorWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), operators);
+		if( wnd.open() == Window.OK) {
+			return wnd.getSelectedOperator();
+		}
 		
-		if( wnd.isCanceled() ) {
-			return Lists.newArrayList();
-		} 
-		
-		return wnd.getSelectedOperator();
+		return Lists.newArrayList();
 	}
 	
 }
