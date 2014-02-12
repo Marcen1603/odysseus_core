@@ -3,7 +3,6 @@
 
 <product name="Odysseus Server Platform" uid="de.uniol.inf.is.odysseus.product.server" id="de.uniol.inf.is.odysseus.product.server.starter.odysseusserverproduct" application="de.uniol.inf.is.odysseus.server.starter.OdysseusServerApplication" version="1.0.0" useFeatures="true" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
@@ -15,7 +14,6 @@
 
    <windowImages/>
 
-
    <launcher name="odysseus">
       <solaris/>
       <win useIco="false">
@@ -23,8 +21,9 @@
       </win>
    </launcher>
 
-
    <vm>
+      <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</linux>
+      <macos include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</macos>
       <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</windows>
    </vm>
 
