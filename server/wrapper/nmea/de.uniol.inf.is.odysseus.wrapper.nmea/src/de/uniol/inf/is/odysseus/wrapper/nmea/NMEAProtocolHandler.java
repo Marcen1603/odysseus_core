@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +58,15 @@ public class NMEAProtocolHandler extends AbstractProtocolHandler<KeyValueObject<
     @Override
     public void open() throws UnknownHostException, IOException {
         getTransportHandler().open();
-        reader = new BufferedReader(new InputStreamReader(getTransportHandler().getInputStream()));
+        if (this.getDirection().equals(ITransportDirection.IN)) {
+			if ((this.getAccess().equals(IAccessPattern.PULL))
+					|| (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
+				this.reader = new BufferedReader(new InputStreamReader(getTransportHandler().getInputStream()));
+			}
+		} else {
+			// TODO: Implement output NMEA
+			// this.output = this.getTransportHandler().getOutputStream();
+		}
     }
 
     @Override
@@ -72,8 +81,35 @@ public class NMEAProtocolHandler extends AbstractProtocolHandler<KeyValueObject<
         	return false;
         }
         String nmea = reader.readLine();
-        if (!SentenceUtils.validateSentence(nmea)) {
+        KeyValueObject<? extends IMetaAttribute> res = parseString(nmea);
+        if (res != null) {
+        	next = res;
+        	return true;
+        } else {
         	return false;
+        }
+    }
+
+    @Override
+    public KeyValueObject<? extends IMetaAttribute> getNext() throws IOException {
+        return next;
+    }
+    
+    @Override
+    public void process(ByteBuffer message) {
+    	byte[] m = new byte[message.limit()];
+    	message.get(m);
+    	String nmea = (new String(m)).trim();
+    	KeyValueObject<? extends IMetaAttribute> res = parseString(nmea);
+    	if (res == null)
+    		return;
+    	
+    	getTransfer().transfer(res);
+    }
+    
+    private KeyValueObject<? extends IMetaAttribute> parseString(String nmea) {
+    	if (!SentenceUtils.validateSentence(nmea)) {
+        	return null;
         }
         
         Sentence sentence = null;
@@ -83,19 +119,14 @@ public class NMEAProtocolHandler extends AbstractProtocolHandler<KeyValueObject<
         	LOG.error(e.getMessage());
         }
         if (sentence == null) {
-        	return false;
+        	return null;
         }
         sentence.parse();
         Map<String, Object> event = new HashMap<String, Object>();
         sentence.fillMap(event);
-        next = new KeyValueObject<>(event);
-        next.setMetadata("object", sentence);
-        return true;
-    }
-
-    @Override
-    public KeyValueObject<? extends IMetaAttribute> getNext() throws IOException {
-        return next;
+        KeyValueObject<? extends IMetaAttribute> res = new KeyValueObject<>(event);
+        res.setMetadata("object", sentence);
+        return res;
     }
 
     @Override

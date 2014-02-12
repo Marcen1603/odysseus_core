@@ -71,8 +71,18 @@ public class RMCSentence extends Sentence {
 
 	@Override
 	public void fillMap(Map<String, Object> res) {
-		if (latitude != null) res.put("latitude", ParseUtils.toString(latitude, 2));
-		if (longitude != null) res.put("longitude", ParseUtils.toString(longitude, 3));
+		if (time != null) res.put("time", time);
+		if (status != Status.NULL) res.put("status", status.name());
+		if (latitude != null) res.put("latitude", latitude);
+		if (latitudeHem != Hemisphere.NULL) res.put("latitudeHem", latitudeHem);
+		if (longitude != null) res.put("longitude", longitude);
+		if (longitudeHem != Hemisphere.NULL) res.put("longitudeHem", longitudeHem);
+		if (speedOverGround != null) res.put("speedOverGround", speedOverGround);
+		if (trackMadeGood != null) res.put("trackMadeGood", trackMadeGood);
+		if (date != null) res.put("date", date);
+		if (magneticVariation != null) res.put("magneticVariation", magneticVariation);
+		if (magneticHem != Hemisphere.NULL) res.put("magneticHem", magneticHem);
+		if (signalIntegrity != SignalIntegrity.NULL) res.put("signalIntegrity", signalIntegrity);
 	}
 
 	public Date getTime() {

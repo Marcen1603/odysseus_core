@@ -77,8 +77,20 @@ public class GGASentence extends Sentence {
 
 	@Override
 	public void fillMap(Map<String, Object> res) {
-		if (latitude != null) res.put("latitude", ParseUtils.toString(latitude, 2));
-		if (longitude != null) res.put("longitude", ParseUtils.toString(longitude, 3));
+		if (time != null) res.put("time", time);
+		if (latitude != null) res.put("latitude", latitude);
+		if (latitudeHem != Hemisphere.NULL) res.put("latitudeHem", latitudeHem);
+		if (longitude != null) res.put("longitude", longitude);
+		if (longitudeHem != Hemisphere.NULL) res.put("longitudeHem", longitudeHem);
+		res.put("gpsQuality", gpsQuality);
+		if (numberOfSattelites != null) res.put("numberOfSattelites", numberOfSattelites);
+		if (horizontalDilution != null) res.put("horizontalDilution", horizontalDilution);
+		if (antennaAltitude != null) res.put("antennaAltitude", antennaAltitude);
+		if (antennaAltUnits != Unit.NULL) res.put("antennaAltUnits", antennaAltUnits);
+		if (geoidalSeparation != null) res.put("geoidalSeparation", geoidalSeparation);
+		if (geoidalSepUnits != Unit.NULL) res.put("geoidalSepUnits", geoidalSepUnits);
+		if (ageOfDgps != null) res.put("ageOfDgps", ageOfDgps);
+		if (differentialRefId != null) res.put("differentialRefId", differentialRefId);
 	}
 
 	public Date getTime() {

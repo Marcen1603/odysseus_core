@@ -20,6 +20,7 @@ public class SentenceFactory {
 	private SentenceFactory() {
 		registerSentenceType("RMC", RMCSentence.class);
 		registerSentenceType("GGA", GGASentence.class);
+		registerSentenceType("HDG", HDGSentence.class);
 	}
 	
 	public Sentence createSentence(String nmea) {

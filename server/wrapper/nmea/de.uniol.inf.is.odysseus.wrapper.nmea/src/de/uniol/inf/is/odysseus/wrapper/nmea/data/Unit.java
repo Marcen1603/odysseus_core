@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.nmea.data;
 
+
 public enum Unit {
 	METERS("M"),
 	NULL("");
