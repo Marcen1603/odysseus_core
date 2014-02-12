@@ -43,7 +43,7 @@
                 <property key="iu" value="${product.serverandstudio.id}" />  
                 <property key="features" value="${product.serverandstudio.features}" />  
             </properties>     
-            <products alias="destination" base="${product.destination}">  
+            <products alias="destination" base="${ws.root}/${product.destination}">  
                 <path path="${product.name}.serverandstudio.${target.ws}.${target.os}.${target.arch}/" />  
             </products>            
         </public>  
@@ -56,7 +56,7 @@
             <prerequisites alias="action.requirements">  
                 <attribute name="create.serverandstudio.product" />  
             </prerequisites>  
-            <products alias="action.output" base="${product.zipdestination}/serverandstudio">  
+            <products alias="action.output" base="${ws.root}/${product.zipdestination}">  
                 <path path="odysseus.serverandstudio.${target.ws}.${target.os}.${target.arch}.zip" />  
             </products>  
         </public> 
@@ -72,7 +72,7 @@
                 <property key="iu" value="${product.studio.id}" />  
                 <property key="features" value="${product.studio.features}" />  
             </properties>             
-            <products alias="destination" base="${product.destination}">  
+            <products alias="destination" base="${ws.root}/${product.destination}">  
                 <path path="${product.name}.studio.${target.ws}.${target.os}.${target.arch}/" />  
             </products>            
         </public>  
@@ -85,7 +85,7 @@
             <prerequisites alias="action.requirements">  
                 <attribute name="create.studio.product" />  
             </prerequisites>  
-            <products alias="action.output" base="${product.zipdestination}/studio">  
+            <products alias="action.output" base="${ws.root}/${product.zipdestination}">  
                 <path path="odysseus.studio.${target.ws}.${target.os}.${target.arch}.zip" />  
             </products>  
         </public>     
