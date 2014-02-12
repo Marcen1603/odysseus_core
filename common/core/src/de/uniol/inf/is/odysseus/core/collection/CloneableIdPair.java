@@ -19,8 +19,8 @@ import de.uniol.inf.is.odysseus.core.IClone;
 
 public class CloneableIdPair<E1 extends IClone, E2 extends IClone> implements IPair<E1, E2> {
 
-	protected E1 e1;
-	protected E2 e2;
+	final E1 e1;
+	final E2 e2;
 	
 	public CloneableIdPair(E1 e1, E2 e2) {
 		this.e1 = e1;
@@ -43,19 +43,10 @@ public class CloneableIdPair<E1 extends IClone, E2 extends IClone> implements IP
 		return e1;
 	}
 
-	@Override
-	public void setE1(E1 e1) {
-		this.e1 = e1;
-	}
 	
 	@Override
 	public E2 getE2() {
 		return e2;
-	}
-	
-	@Override
-	public void setE2(E2 e2) {
-		this.e2 = e2;
 	}
 	
 	@Override

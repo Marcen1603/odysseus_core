@@ -112,7 +112,7 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 			LOG.debug("Already using fittest plan");
 			// return;
 			// FIXME (Merlin): nur zu testzwecken. wir wollen migrationen sehen!
-			fittest.setE1(query.getAlternativeLogicalPlans().get((useFirst ? 1 : 0)));
+			//fittest.setE1(query.getAlternativeLogicalPlans().get((useFirst ? 1 : 0)));
 		}
 		// gehen wir davon aus, dass es erstmal nur eine wurzel gibt.
 		IPhysicalOperator oldPlan = physicalQuery.getPhysicalChilds().get(0);

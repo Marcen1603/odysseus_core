@@ -17,8 +17,8 @@ package de.uniol.inf.is.odysseus.core.collection;
 
 public class Pair<E1, E2> implements IPair<E1, E2>{
 
-	protected E1 e1;
-	protected E2 e2;
+	final E1 e1;
+	final E2 e2;
 	
 	public Pair(E1 e1, E2 e2) {
 		this.e1 = e1;
@@ -64,20 +64,8 @@ public class Pair<E1, E2> implements IPair<E1, E2>{
 
 
 	@Override
-	public void setE1(E1 e1) {
-		this.e1 = e1;
-	}
-
-
-	@Override
 	public E2 getE2() {
 		return e2;
-	}
-
-
-	@Override
-	public void setE2(E2 e2) {
-		this.e2 = e2;
 	}
 	
 	@Override

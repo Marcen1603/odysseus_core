@@ -194,9 +194,11 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 					+ ") is not known to the RouterPO (" + hashCode() + ")");
 		}
 		if (port == inPortOld) {
-			pair.setE1(p);
+			pair = new Pair<IPunctuation, IPunctuation>(p, pair.getE2());
+			this.sourcesToPunctuations.put(p.getSource(), pair);
 		} else if (port == inPortNew) {
-			pair.setE2(p);
+			pair = new Pair<IPunctuation, IPunctuation>(pair.getE1(),p);
+			this.sourcesToPunctuations.put(p.getSource(), pair);			
 		}
 		if (pair.getE2() != null && pair.getE1() != null) {
 			// this source is satisfied.
