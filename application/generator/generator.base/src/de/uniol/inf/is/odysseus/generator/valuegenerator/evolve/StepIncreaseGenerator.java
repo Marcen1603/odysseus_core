@@ -35,8 +35,8 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractValueGenerator;
 
 /**
  * 
- * @author Dennis Geesen
- * Created at: 27.06.2011
+ * @author Dennis Geesen, Marco Grawunder
+ * Created at: 12.02.2014
  */
 public class StepIncreaseGenerator extends AbstractValueGenerator {
 		
