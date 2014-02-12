@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.WeibullDis
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.ZipfDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.AlternatingGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.StepIncreaseGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.switching.AlternatingDurationSwitchGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.switching.SwitchGenerator;
 
@@ -81,8 +82,10 @@ public class Activator implements BundleActivator {
         generators.put("ZipfDistributionGenerator".toUpperCase(), ZipfDistributionGenerator.class);
         generators.put("AlternatingGenerator".toUpperCase(), AlternatingGenerator.class);
         generators.put("IncreaseGenerator".toUpperCase(), IncreaseGenerator.class);
+        generators.put("StepIncreaseGenerator".toUpperCase(), StepIncreaseGenerator.class);
         generators.put("AlternatingDurationSwitchGenerator".toUpperCase(), AlternatingDurationSwitchGenerator.class);
         generators.put("SwitchGenerator".toUpperCase(), SwitchGenerator.class);
+        
     }
 
     static BundleContext getContext() {
