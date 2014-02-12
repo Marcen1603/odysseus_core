@@ -19,6 +19,7 @@ public class Pair<E1, E2> implements IPair<E1, E2>{
 
 	final E1 e1;
 	final E2 e2;
+	int hashCode = -1;
 	
 	public Pair(E1 e1, E2 e2) {
 		this.e1 = e1;
@@ -27,15 +28,20 @@ public class Pair<E1, E2> implements IPair<E1, E2>{
 	
 
 	@Override
-	public int hashCode() {
+	final public int hashCode() {
+		if (hashCode > 0){
+			return hashCode;
+		}
 		final int PRIME = 31;
 		int result = 1;
 		result = PRIME * result + ((e1 == null) ? 0 : e1.hashCode());
 		result = PRIME * result + ((e2 == null) ? 0 : e2.hashCode());
+		hashCode = result;
 		return result;
 	}
+	
 	@Override
-	public boolean equals(Object obj) {
+	final public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)

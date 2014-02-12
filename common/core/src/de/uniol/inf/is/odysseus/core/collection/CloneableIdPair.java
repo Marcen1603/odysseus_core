@@ -21,6 +21,7 @@ public class CloneableIdPair<E1 extends IClone, E2 extends IClone> implements IP
 
 	final E1 e1;
 	final E2 e2;
+	private int hashCode = -1;
 	
 	public CloneableIdPair(E1 e1, E2 e2) {
 		this.e1 = e1;
@@ -58,17 +59,21 @@ public class CloneableIdPair<E1 extends IClone, E2 extends IClone> implements IP
 	}
 
 	@Override
-	public int hashCode() {
+	final public int hashCode() {
+		if (hashCode > 0){
+			return hashCode;
+		}
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((e1 == null) ? 0 : e1.hashCode());
 		result = prime * result + ((e2 == null) ? 0 : e2.hashCode());
+		hashCode = result;
 		return result;
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public boolean equals(Object obj) {
+	final public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
