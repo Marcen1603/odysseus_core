@@ -3,6 +3,7 @@
  */
 package de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.aggregate.functions;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -26,6 +27,8 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
  */
     public GreenwaldKhannaMedianPartialAggregate() {
         this.summary = new LinkedList<Tuple>();
+        this.min = Double.POSITIVE_INFINITY;
+        this.max = Double.NEGATIVE_INFINITY;
     }
 
     /**
@@ -113,24 +116,20 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
     }
 
     private void insert(final double v) {
-        final Iterator<Tuple> iter = this.summary.iterator();
-        Tuple next = null;
-        int pos = 0;
-        while (iter.hasNext()) {
-            final Tuple tuple = iter.next();
-            if (v < tuple.value) {
-                next = tuple;
-                break;
-            }
-            pos++;
-        }
+        int pos = Collections.binarySearch(this.summary, new Tuple(v, 1.0, 0.0));
         double range = 0.0;
         if ((v < this.min) || (v > this.max)) {
             this.min = FastMath.min(this.min, v);
             this.max = FastMath.max(this.max, v);
         }
-        else if (next != null) {
-            range = (next.gain + next.range) - 1;
+        if (pos >= 0) {
+            if (pos < summary.size()) {
+                Tuple next = summary.get(pos + 1);
+                range = (next.gain + next.range) - 1;
+            }
+        }
+        else {
+            pos = -pos - 1;
         }
         this.summary.add(pos, new Tuple(v, 1.0, range));
     }
@@ -151,8 +150,8 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
             if (cur == this.summary.getFirst()) {
                 return;
             }
-            final int band = this.band(cur.range, this.count);
-            final int nextBand = this.band(next.range, this.count);
+            final int band = this.band(cur.range, 2.0 * this.epsilon() * n);
+            final int nextBand = this.band(next.range, 2.0 * this.epsilon() * n);
             if ((band <= nextBand) && ((cur.gain + next.gain + next.range) < (2.0 * this.epsilon() * n))) {
                 next = next.merge(cur);
                 iter.remove();
@@ -163,8 +162,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         }
     }
 
-    private int band(final double range, final int n) {
-        final double p = 2 * this.epsilon() * n;
+    private int band(final double range, final double p) {
         final int diff = (int) ((p - range) + 1.0);
         double band;
         if (diff == 1) {
