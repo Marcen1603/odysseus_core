@@ -96,7 +96,7 @@ public class ChooseOperatorWindow {
 		wnd.setLayout(new GridLayout());
 
 		Label label = new Label(wnd, SWT.WRAP);
-		label.setText("Query has more than one sink. Choose one or more operators to show the streams from.");
+		label.setText("Query has more than one sink. Choose one or more operators\n to show the streams from.");
 		
 		checkBoxOperatorPairs = createCheckBoxes(wnd, operators);
 		createButtons(wnd);
@@ -113,24 +113,33 @@ public class ChooseOperatorWindow {
 		List<CheckBoxOperatorPair> checkBoxes = Lists.newArrayList();
 		
 		for( IPhysicalOperator operator : operators ) {
-			Button checkButton = createCheckBox(attributesComposite, operator.getName());
+			Button checkButton = createCheckBox(attributesComposite, operator);
 			checkBoxes.add(new CheckBoxOperatorPair(operator, checkButton));
 		}
 		
 		return checkBoxes;
 	}
 	
-	private static Button createCheckBox( Composite composite, String title ) {
+	private static Button createCheckBox( Composite composite, IPhysicalOperator operator) {
 		Button checkBox = new Button(composite, SWT.CHECK);
 		checkBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		checkBox.setText(title);
+		checkBox.setText(determineTextForOperator(operator));
 		return checkBox;
+	}
+
+	private static String determineTextForOperator(IPhysicalOperator operator) {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(operator.getName());
+		sb.append(" (").append(operator.getClass().getSimpleName()).append(")");
+		
+		return sb.toString();
 	}
 
 	private void createButtons(final Shell wnd) {
 		Composite composite = new Composite(wnd, SWT.NONE);
 		composite.setLayoutData(new GridData());
-		composite.setLayout(new GridLayout(4, true));
+		composite.setLayout(new GridLayout(2, true));
 		
 		Button selectAllButton = createButton(composite, "Select all");
 		selectAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
