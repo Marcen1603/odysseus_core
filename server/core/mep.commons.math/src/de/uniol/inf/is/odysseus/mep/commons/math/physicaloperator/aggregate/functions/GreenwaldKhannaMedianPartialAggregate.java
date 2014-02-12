@@ -123,7 +123,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
             this.max = FastMath.max(this.max, v);
         }
         if (pos >= 0) {
-            if (pos < summary.size()) {
+            if (pos < summary.size()-1) {
                 Tuple next = summary.get(pos + 1);
                 range = (next.gain + next.range) - 1;
             }
