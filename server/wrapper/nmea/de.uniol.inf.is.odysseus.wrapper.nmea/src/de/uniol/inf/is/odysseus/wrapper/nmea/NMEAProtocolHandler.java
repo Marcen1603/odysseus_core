@@ -117,12 +117,11 @@ public class NMEAProtocolHandler extends
 		byte[] m = new byte[message.limit()];
 		message.get(m);
 		String nmea = (new String(m)).trim();
-		System.out.println(nmea);
-//		KeyValueObject<? extends IMetaAttribute> res = parseString(nmea);
-//		if (res == null)
-//			return;
+		KeyValueObject<? extends IMetaAttribute> res = parseString(nmea);
+		if (res == null)
+			return;
 
-		//getTransfer().transfer(res);
+		getTransfer().transfer(res);
 	}
 
 	/**
