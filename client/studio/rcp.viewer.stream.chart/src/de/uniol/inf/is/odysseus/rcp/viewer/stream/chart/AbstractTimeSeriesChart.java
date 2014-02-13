@@ -54,7 +54,7 @@ public abstract class AbstractTimeSeriesChart extends
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractTimeSeriesChart.class);
 
-	private Map<Long, Map<String, TimeSeries>> series = new HashMap<>();
+	private Map<Integer,Map<Long, Map<String, TimeSeries>>> series = new HashMap<>();
 	private Map<Long, String> groupNames = new HashMap<>();
 	private boolean useShortNames = true;
 
@@ -260,24 +260,32 @@ public abstract class AbstractTimeSeriesChart extends
 
 	private void addToSeries(int port, boolean update, FixedMillisecond ms,
 			int i, double value, Long groupID, String groupName) {
+		
 		TimeSeries timeSeries = null;
 
-		Map<String, TimeSeries> gSerie = series.get(groupID);
+		Map<Long, Map<String, TimeSeries>> pgSerie = series.get(port);
+		
+		if (pgSerie == null) {
+			pgSerie = new HashMap<>();
+			series.put(port, pgSerie);
+		}
+		
+		Map<String, TimeSeries> gSerie = pgSerie.get(groupID);
 
 		if (gSerie == null) {
 			gSerie = new HashMap<>();
-			series.put(groupID, gSerie);
+			pgSerie.put(groupID, gSerie);
 		}
 
 		String name = getChoosenAttributes(port).get(i).getName() + " "
-				+ groupName;
-		;
+				+ groupName + "("+port+")";
+		
 		timeSeries = gSerie.get(name);
 		if (timeSeries == null) {
 
 			if (useShortNames) {
 				timeSeries = new TimeSeries(getChoosenAttributes(port).get(i)
-						.getAttributeName() + " " + groupName);
+						.getAttributeName() + " " + groupName+ "("+port+")");
 			} else {
 				timeSeries = new TimeSeries(name);
 			}
