@@ -28,7 +28,7 @@ public class TRelationalFastMedianAORule extends
 		
 		if (operator.isUseHistogram()) {
 			po = new RelationalFastMedianHistogramPO<>(medianAttrPos,
-					operator.isNumericalMedian());
+					operator.isNumericalMedian(), operator.getRoundingFactor());
 		} else {
 			po = new RelationalFastMedianPO(medianAttrPos,
 					operator.isNumericalMedian());

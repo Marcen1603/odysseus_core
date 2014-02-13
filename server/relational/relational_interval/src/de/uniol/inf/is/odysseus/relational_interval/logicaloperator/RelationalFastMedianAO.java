@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 @LogicalOperator(name = "FastMedian", minInputPorts = 1, maxInputPorts = 1, doc = "Calculate the median for one attribute in the input tuples", category = { LogicalOperatorCategory.ADVANCED })
@@ -20,6 +21,7 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 	private SDFAttribute medianAttribute;
 	private boolean numericalMedian = false; 
 	private boolean useHistogram = false;
+	private double roundingFactor = 0;
 	private List<SDFAttribute> groupingAttributes;
 
 	public RelationalFastMedianAO(RelationalFastMedianAO op) {
@@ -77,6 +79,14 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 		return useHistogram;
 	}
 	
+	@Parameter(name = "roundingFactor", optional = true, type = DoubleParameter.class)
+	public void setRoundingFactor(double roundingFactor) {
+		this.roundingFactor = roundingFactor;
+	}
+	
+	public Double getRoundingFactor() {
+		return roundingFactor;
+	}
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		List<SDFAttribute> outattr = new LinkedList<>();
@@ -87,5 +97,7 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 		SDFSchema output = new SDFSchema(getInputSchema(0), outattr);
 		return output;
 	}
+
+
 
 }
