@@ -165,10 +165,10 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 	// mehreren Attributen anwenden zu k�nnen
 	// Methode nach [Kr�mer] Algorithmus 9 bzw. 10 funktioniert leider nicht
 	// korrekt. Deswegen eigene Version
-	protected synchronized List<PairMap<SDFSchema,AggregateFunction,W,Q>> updateSA(
+	protected synchronized List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
 			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			R elemToAdd, boolean outputPA) {
-		List<PairMap<SDFSchema,AggregateFunction,W,Q>> returnValues = new LinkedList<>();
+		List<PairMap<SDFSchema, AggregateFunction, W, Q>> returnValues = new LinkedList<>();
 		// System.err.println("");
 		// System.err
 		// .println("-------------------------------------------------------------------------");
@@ -188,38 +188,13 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 			// Overlapping --> Partial Aggregates need to be touched
 			// List of points. Do not use a set, because elements can have same
 			// start/end point!
-			List<_Point> pl = new LinkedList<_Point>();
+			List<_Point> pl = getSortedIntersectionPoints(t_probe, qualifies);
 
-			// Determine the list of all points of the overlapped elements in
-			// the sweep area
-			while (qualifies.hasNext()) {
-				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
-						.next();
-				ITimeInterval t_agg = element_agg.getMetadata();
-				// Add the points with corresponding partial aggregates and info
-				// if
-				// point is start oder end into list of points
-				pl.add(new _Point(t_agg.getStart(), true, element_agg));
-				pl.add(new _Point(t_agg.getEnd(), false, element_agg));
-			}
-			// Add the time interval of the element to add in the list of points
-			pl.add(new _Point(t_probe.getStart(), true, null));
-			pl.add(new _Point(t_probe.getEnd(), false, null));
-
-			// Sort the List
-			Collections.sort(pl);
-
-			// Sort the list of points ascending
 			Iterator<_Point> pointIter = pl.iterator();
 			_Point p1 = null;
 			_Point p2 = null;
-			// get the first point
-			// FIXME This looks useless, if pointerIter has no next element a
-			// NullPointer exception will be thrown in the next line anyway (CKu
-			// 20140123)
-			if (pointIter.hasNext()) {
-				p1 = pointIter.next();
-			}
+			// get the first point (Must be one)
+			p1 = pointIter.next();
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> lastPartialAggregate = p1.element_agg;
 			while (pointIter.hasNext()) {
 				p2 = pointIter.next();
@@ -243,27 +218,8 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 					// been an end point
 					if (p1.isStart() && p2.isStart()) {
 
-						// One of both elements must be new, else there would be
-						// no overlapping
-						if (p1.newElement()) {
-							// Insert new Element with interval from start to
-							// start
-							//
-							Q meta = elemToAdd.getMetadata();
-							@SuppressWarnings("unchecked")
-							Q newMeta = (Q) meta.clone();
-							newMeta.setStartAndEnd(p1.point, p2.point);
-							saInsert(sa, calcInit(elemToAdd), newMeta);
-							lastPartialAggregate = p2.element_agg;
-						} else {// p2.newElement()
-								// Insert element again with shorter interval
-								// (start to start)
-							@SuppressWarnings("unchecked")
-							Q newMeta = (Q) p1.element_agg.getMetadata()
-									.clone();
-							newMeta.setStartAndEnd(p1.point, p2.point);
-							saInsert(sa, p1.element_agg, newMeta);
-						}
+						lastPartialAggregate = updateSAStartStart(sa, elemToAdd,
+								p1, p2, lastPartialAggregate);
 
 						// This next case can only happen if p1 and p2 are from
 						// the one element and the element is a sub part of an
@@ -275,59 +231,16 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 
 					} else if (p1.isStart() && p2.isEnd()) {
 						// Add new element as a combination from current value
-						// and new
-						// element for new time interval
-						// FIXME Use logger
-						if (lastPartialAggregate == null) {
-							System.err.println("ONLY FOR DEBUGGER!!");
-							System.err.println(sa.toString());
-						}
+						// and new element for new time interval
 
-						// In some cases its possible to create output earlier
-						final boolean createNew;
-						if (!outputPA && p2.point.before(t_probe.getStart())) {
-							createNew = false;
-							PairMap<SDFSchema, AggregateFunction, W, Q> v = calcEval(lastPartialAggregate);
-							v.setMetadata(lastPartialAggregate.getMetadata());
-							v.getMetadata().setEnd(p2.point);
-							returnValues.add(v);
-						} else {
-							createNew = !(p1.point.equals(lastPartialAggregate
-									.getMetadata().getStart()) && p2.point
-									.equals(lastPartialAggregate.getMetadata()
-											.getEnd()));
-						}
-
-						Q newMeta = metadataMerge.mergeMetadata(
-								lastPartialAggregate.getMetadata(),
-								elemToAdd.getMetadata());
-						newMeta.setStartAndEnd(p1.point, p2.point);
-						saInsert(
-								sa,
-								calcMerge(lastPartialAggregate, elemToAdd,
-										createNew), newMeta);
+						updateSAStartEnd(sa, elemToAdd, outputPA, returnValues,
+								t_probe, p1, p2, lastPartialAggregate);
 
 					} else if (p1.isEnd() && p2.isStart()) {
-						// New element has a part that is newer than the partial
-						// aggregate
-						@SuppressWarnings("unchecked")
-						Q newTI = (Q) elemToAdd.getMetadata().clone();
-						newTI.setStartAndEnd(p1.point, p2.point);
-						saInsert(sa, calcInit(elemToAdd), newTI);
+						updateSAEndStart(sa, elemToAdd, p1, p2);
 					} else if (p1.isEnd() && p2.isEnd()) { // Element after
-						// OldEnd && NewEnd
-						if (p2.newElement()) {
-							@SuppressWarnings("unchecked")
-							Q newTI = (Q) elemToAdd.getMetadata().clone();
-							newTI.setStartAndEnd(p1.point, p2.point);
-							saInsert(sa, calcInit(elemToAdd), newTI);
-						} else { // New End && Old End
-							@SuppressWarnings("unchecked")
-							Q newTI = (Q) lastPartialAggregate.getMetadata()
-									.clone();
-							newTI.setStartAndEnd(p1.point, p2.point);
-							saInsert(sa, lastPartialAggregate, newTI);
-						}
+						updateSAEndEnd(sa, elemToAdd, p1, p2,
+								lastPartialAggregate);
 					}
 					// Remember the last seen partial aggregate (not the new
 					// element)
@@ -346,6 +259,125 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 		}
 		return returnValues;
 		// System.err.println(sa.toString());
+	}
+
+	public void updateSAEndEnd(
+			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+			R elemToAdd,
+			_Point p1,
+			_Point p2,
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> lastPartialAggregate) {
+		// OldEnd && NewEnd
+		if (p2.newElement()) {
+			updateSAEndStart(sa, elemToAdd, p1, p2);
+		} else { // New End && Old End
+			@SuppressWarnings("unchecked")
+			Q newTI = (Q) lastPartialAggregate.getMetadata()
+					.clone();
+			newTI.setStartAndEnd(p1.point, p2.point);
+			saInsert(sa, lastPartialAggregate, newTI);
+		}
+	}
+
+	public void updateSAEndStart(
+			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+			R elemToAdd, _Point p1, _Point p2) {
+		// New element has a part that is newer than the partial
+		// aggregate
+		@SuppressWarnings("unchecked")
+		Q newTI = (Q) elemToAdd.getMetadata().clone();
+		newTI.setStartAndEnd(p1.point, p2.point);
+		saInsert(sa, calcInit(elemToAdd), newTI);
+	}
+
+	public void updateSAStartEnd(
+			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+			R elemToAdd,
+			boolean outputPA,
+			List<PairMap<SDFSchema, AggregateFunction, W, Q>> returnValues,
+			Q t_probe,
+			_Point p1,
+			_Point p2,
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> lastPartialAggregate) {
+		// In some cases its possible to create output earlier
+		final boolean createNew;
+		if (!outputPA && p2.point.before(t_probe.getStart())) {
+			createNew = false;
+			PairMap<SDFSchema, AggregateFunction, W, Q> v = calcEval(lastPartialAggregate);
+			v.setMetadata(lastPartialAggregate.getMetadata());
+			v.getMetadata().setEnd(p2.point);
+			returnValues.add(v);
+		} else {
+			createNew = !(p1.point.equals(lastPartialAggregate
+					.getMetadata().getStart()) && p2.point
+					.equals(lastPartialAggregate.getMetadata()
+							.getEnd()));
+		}
+
+		Q newMeta = metadataMerge.mergeMetadata(
+				lastPartialAggregate.getMetadata(),
+				elemToAdd.getMetadata());
+		newMeta.setStartAndEnd(p1.point, p2.point);
+		saInsert(
+				sa,
+				calcMerge(lastPartialAggregate, elemToAdd,
+						createNew), newMeta);
+	}
+
+	public PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> updateSAStartStart(
+			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+			R elemToAdd,
+			_Point p1,
+			_Point p2,
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> lastPartialAggregate) {
+		// One of both elements must be new, else there would be
+		// no overlapping
+		if (p1.newElement()) {
+			// Insert new Element with interval from start to
+			// start
+			//
+			Q meta = elemToAdd.getMetadata();
+			@SuppressWarnings("unchecked")
+			Q newMeta = (Q) meta.clone();
+			newMeta.setStartAndEnd(p1.point, p2.point);
+			saInsert(sa, calcInit(elemToAdd), newMeta);
+			lastPartialAggregate = p2.element_agg;
+		} else {// p2.newElement()
+				// Insert element again with shorter interval
+				// (start to start)
+			@SuppressWarnings("unchecked")
+			Q newMeta = (Q) p1.element_agg.getMetadata()
+					.clone();
+			newMeta.setStartAndEnd(p1.point, p2.point);
+			saInsert(sa, p1.element_agg, newMeta);
+		}
+		return lastPartialAggregate;
+	}
+
+	public List<_Point> getSortedIntersectionPoints(
+			Q t_probe,
+			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> qualifies) {
+		List<_Point> pl = new LinkedList<_Point>();
+
+		// Determine the list of all points of the overlapped elements in
+		// the sweep area
+		while (qualifies.hasNext()) {
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
+					.next();
+			ITimeInterval t_agg = element_agg.getMetadata();
+			// Add the points with corresponding partial aggregates and info
+			// if
+			// point is start oder end into list of points
+			pl.add(new _Point(t_agg.getStart(), true, element_agg));
+			pl.add(new _Point(t_agg.getEnd(), false, element_agg));
+		}
+		// Add the time interval of the element to add in the list of points
+		pl.add(new _Point(t_probe.getStart(), true, null));
+		pl.add(new _Point(t_probe.getEnd(), false, null));
+
+		// Sort the List
+		Collections.sort(pl);
+		return pl;
 	}
 
 	// Updates SA by splitting all partial aggregates before split point

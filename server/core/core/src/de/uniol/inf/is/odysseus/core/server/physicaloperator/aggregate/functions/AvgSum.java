@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
 abstract public class AvgSum<R, W> extends AbstractAggregateFunction<R, W>{
 
@@ -29,7 +30,22 @@ abstract public class AvgSum<R, W> extends AbstractAggregateFunction<R, W>{
 		super (isAvg?"AVG":"SUM", partialAggregateInput);
 		this.isAvg = isAvg;
 	}
+	
+	@Override
+	public IPartialAggregate<R> init(IPartialAggregate<R> in) {
+		return new AvgSumPartialAggregate<R>(
+				(AvgSumPartialAggregate<R>) in);
+	}
+	
+	@Override
+	public IPartialAggregate<R> merge(IPartialAggregate<R> p,
+			R toMerge, boolean createNew) {
+		return process_merge(createNew?p.clone():p, toMerge);
+	}
 
+	abstract protected IPartialAggregate<R> process_merge(
+			IPartialAggregate<R> iPartialAggregate, R toMerge);
+	
 	public boolean isAvg(){
 		return isAvg;
 	}		

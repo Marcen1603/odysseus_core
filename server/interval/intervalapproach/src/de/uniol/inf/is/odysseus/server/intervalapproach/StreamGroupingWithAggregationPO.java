@@ -182,25 +182,18 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	private void createOutput(PointInTime timestamp) {
 		// optional: Build partial aggregates with validity end until timestamp
-		createOutputCounter++;
-		if (dumpAtValueCount > 0 && createOutputCounter >= dumpAtValueCount) {
-			createOutputCounter = 0;
-			for (DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa : groups
-					.values()) {
-				updateSA(sa, timestamp);
-			}
-
-		}
+		createAddOutput(timestamp);
 
 		// Extract all Elements before current Time!
-		for (Entry<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
-				.entrySet()) {
-			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
-					.getValue().extractElementsBefore(timestamp);
-			produceResults(results, entry.getKey());
-		}
+		cleanUpSweepArea(timestamp);
 
 		// Find minimal start time stamp from elements intersecting time stamp
+		//transferArea.newHeartbeat(findMinHeartbeat(timestamp), 0);
+		
+		transferArea.newHeartbeat(timestamp,0);
+	}
+
+	public PointInTime findMinHeartbeat(PointInTime timestamp) {
 		PointInTime border = timestamp;
 		for (Entry<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 				.entrySet()) {
@@ -214,15 +207,28 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 				}
 			}
 		}
-		// transferArea.newElement(new Heartbeat(border),0);
-		transferArea.newHeartbeat(border, 0);
-		// System.out.println(this+"Found Bordertime "+border+" at timestamp "+timestamp);
-		// for (Entry<Integer, DefaultTISweepArea<PairMap<SDFSchema,
-		// AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
-		// .entrySet()){
-		// System.out.println(entry.getKey()+" "+entry.getValue());
-		// }
+		return border;
+	}
 
+	public void cleanUpSweepArea(PointInTime timestamp) {
+		for (Entry<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+				.entrySet()) {
+			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
+					.getValue().extractElementsBefore(timestamp);
+			produceResults(results, entry.getKey());
+		}
+	}
+
+	public void createAddOutput(PointInTime timestamp) {
+		createOutputCounter++;
+		if (dumpAtValueCount > 0 && createOutputCounter >= dumpAtValueCount) {
+			createOutputCounter = 0;
+			for (DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa : groups
+					.values()) {
+				updateSA(sa, timestamp);
+			}
+
+		}
 	}
 
 	@SuppressWarnings("unchecked")

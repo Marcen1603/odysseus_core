@@ -33,6 +33,12 @@ public class AvgSumPartialAggregate<R> implements IPartialAggregate<R> {
 		this.aggValue = new Double(avgSumPartialAggregate.aggValue);
 	}
 
+	public AvgSumPartialAggregate<R> merge(AvgSumPartialAggregate<R> toMerge){
+		this.aggValue += toMerge.aggValue;
+		this.aggCount += toMerge.aggCount;
+		return this;
+	}
+	
 	public Double getAggValue(){
 		return aggValue;
 	}
@@ -41,9 +47,10 @@ public class AvgSumPartialAggregate<R> implements IPartialAggregate<R> {
 		return aggCount;
 	}
 	
-	public void addAggValue(Double toAdd){
+	public AvgSumPartialAggregate<R> addAggValue(Double toAdd){
 		this.aggValue += toAdd;
 		aggCount++;
+		return this;
 	}
 	
 	public void setAggValue(Double newAggValue, int newCount){
@@ -59,7 +66,6 @@ public class AvgSumPartialAggregate<R> implements IPartialAggregate<R> {
 	@Override
 	public String toString() {
 		return "SUM= "+aggValue+" COUNT="+aggCount;
-	}
-	
+	}	
 
 }

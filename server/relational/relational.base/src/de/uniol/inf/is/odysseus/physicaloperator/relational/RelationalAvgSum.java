@@ -24,29 +24,12 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class RelationalAvgSum extends AvgSum<Tuple<?>, Tuple<?>> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7768784425424062403L;
 
 	private int pos;
 
 	static public RelationalAvgSum getInstance(int pos, boolean isAvg,
 			boolean partialAggregateInput) {
-//		Map<Integer, RelationalAvgSum> in = instances.get(isAvg);
-//		RelationalAvgSum ret;
-//		if (in == null) {
-//			in = new HashMap<Integer, RelationalAvgSum>();
-//			instances.put(isAvg, in);
-//			ret = new RelationalAvgSum(pos, isAvg, partialAggregateInput);
-//			in.put(pos, ret);
-//		} else {
-//			ret = in.get(pos);
-//			if (ret == null) {
-//				ret = new RelationalAvgSum(pos, isAvg, partialAggregateInput);
-//				in.put(pos, ret);
-//			}
-//		}
 		return new RelationalAvgSum(pos, isAvg, partialAggregateInput);
 	}
 
@@ -66,45 +49,16 @@ public class RelationalAvgSum extends AvgSum<Tuple<?>, Tuple<?>> {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-	 * .AbstractAggregateFunction#init(de.uniol.inf.is.odysseus.core.server.
-	 * physicaloperator.aggregate.basefunctions.IPartialAggregate)
-	 */
 	@Override
-	public IPartialAggregate<Tuple<?>> init(IPartialAggregate<Tuple<?>> in) {
-		return new AvgSumPartialAggregate<Tuple<?>>(
-				(AvgSumPartialAggregate<Tuple<?>>) in);
-	}
-
-	@Override
-	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate p,
-			Tuple toMerge, boolean createNew) {
-		AvgSumPartialAggregate<Tuple> pa = null;
-		if (createNew) {
-			AvgSumPartialAggregate<Tuple> h = (AvgSumPartialAggregate<Tuple>) p;
-			pa = new AvgSumPartialAggregate<Tuple>(h.getAggValue(),
-					h.getCount());
-
-		} else {
-			pa = (AvgSumPartialAggregate<Tuple>) p;
-		}
-		return merge(pa, toMerge);
-	}
-
-	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate p, Tuple toMerge) {
+	protected IPartialAggregate<Tuple<?>> process_merge(IPartialAggregate p,
+			Tuple toMerge) {
 		AvgSumPartialAggregate pa = (AvgSumPartialAggregate) p;
 		if (isPartialAggregateInput()) {
 			return merge(p, (IPartialAggregate) toMerge.getAttribute(pos),
 					false);
 		} else {
-			Double newAggValue = pa.getAggValue().doubleValue()
-					+ ((Number) toMerge.getAttribute(pos)).doubleValue();
-			pa.setAggValue(newAggValue, pa.getCount() + 1);
-			return pa;
+			return pa.addAggValue(((Number) toMerge.getAttribute(pos))
+					.doubleValue());
 		}
 	}
 
@@ -119,23 +73,7 @@ public class RelationalAvgSum extends AvgSum<Tuple<?>, Tuple<?>> {
 		} else {
 			pa = (AvgSumPartialAggregate<Tuple<?>>) p;
 		}
-		return merge(pa, toMerge);
-	}
-
-	/**
-	 * @param pa
-	 * @param toMerge
-	 * @return
-	 */
-	public IPartialAggregate<Tuple<?>> merge(
-			AvgSumPartialAggregate<Tuple<?>> pa,
-			IPartialAggregate<Tuple<?>> toMerge) {
-
-		AvgSumPartialAggregate paToMerge = (AvgSumPartialAggregate) toMerge;
-		Double newAggValue = pa.getAggValue().doubleValue()
-				+ paToMerge.getAggValue().doubleValue();
-		pa.setAggValue(newAggValue, pa.getCount() + paToMerge.getCount());
-		return pa;
+		return pa.merge((AvgSumPartialAggregate) toMerge);
 	}
 
 	@Override
@@ -150,7 +88,7 @@ public class RelationalAvgSum extends AvgSum<Tuple<?>, Tuple<?>> {
 		}
 		return r;
 	}
-	
+
 	@Override
 	public SDFDatatype getPartialAggregateType() {
 		return SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE;
