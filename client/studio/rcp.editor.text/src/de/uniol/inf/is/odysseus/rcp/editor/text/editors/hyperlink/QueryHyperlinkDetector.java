@@ -14,16 +14,18 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
+import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 
 public class QueryHyperlinkDetector extends AbstractHyperlinkDetector {
 
-	private static final String[] FILE_ENDINGS = new String[] {"qry", "pql", "cql"};
+	private static final String[] FILE_ENDINGS = new String[] { "qry", "pql", "cql" };
 	private final OdysseusScriptEditor editor;
-	
+
 	public QueryHyperlinkDetector(OdysseusScriptEditor editor) {
 		Preconditions.checkNotNull(editor, "editor must not be null!");
-		
+
 		this.editor = editor;
 	}
 
@@ -48,48 +50,50 @@ public class QueryHyperlinkDetector extends AbstractHyperlinkDetector {
 		}
 
 		int pos = findFileEnding(line);
-		if( pos != -1 ) {
+		if (pos != -1) {
 
 			int index = pos;
-			for(; index >= 0; index--) {
-				if( line.charAt(index) == ' ') {
+			for (; index >= 0; index--) {
+				if (line.charAt(index) == ' ') {
 					break;
 				}
 			}
-			
+
 			String qryFile = line.substring(index + 1, pos + 4);
-			
-			//TODO: use context!
-//			try {
-//				Context rcpContext = ParserClientUtil.createRCPContext(editor.getFile());
-//				ReplacementContainer container = new ReplacementContainer();
-//				container.connect(rcpContext);		
-//				String realQryFile = container.use(qryFile);
-			
-				String realQryFile = qryFile;
-			
-				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				String rootName = root.getLocation().toString();
-				String realtiveFileName = realQryFile.substring(rootName.length());
-				
-				IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(realtiveFileName);
-				if( resource != null && resource instanceof IFile && resource.exists() ) {
-					IRegion urlRegion= new Region(lineInfo.getOffset() + index + 1, qryFile.length());
-					return new IHyperlink[] {new QueryHyperlink(urlRegion, (IFile)resource)};
-				}
-				
-//			} catch (ReplacementException e) {
-//				return null;
-//			}
+
+			Context rcpContext = ParserClientUtil.createRCPContext(editor.getFile());
+			String realQryFile = applyContext(qryFile, rcpContext);
+
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			String rootName = root.getLocation().toString();
+			String realtiveFileName = realQryFile.substring(rootName.length());
+
+			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(realtiveFileName);
+			if (resource != null && resource instanceof IFile && resource.exists()) {
+				IRegion urlRegion = new Region(lineInfo.getOffset() + index + 1, qryFile.length());
+				return new IHyperlink[] { new QueryHyperlink(urlRegion, (IFile) resource) };
+			}
 		}
-		
+
 		return null;
 	}
 
-	private static int findFileEnding(String line) {
-		for( String fileEnding : FILE_ENDINGS ) {
-			int pos = line.indexOf("." + fileEnding);
+	private static String applyContext(String qryFile, Context rcpContext) {
+		for( String key : rcpContext.getKeys() ) {
+			String replacementKey = "${" + key.trim() + "}";
+			
+			int pos = qryFile.indexOf(replacementKey);
 			if( pos != -1 ) {
+				qryFile = qryFile.substring(0, pos) + rcpContext.get(key) + qryFile.substring(pos + replacementKey.length());
+			}
+		}
+		return qryFile;
+	}
+
+	private static int findFileEnding(String line) {
+		for (String fileEnding : FILE_ENDINGS) {
+			int pos = line.indexOf("." + fileEnding);
+			if (pos != -1) {
 				return pos;
 			}
 		}
