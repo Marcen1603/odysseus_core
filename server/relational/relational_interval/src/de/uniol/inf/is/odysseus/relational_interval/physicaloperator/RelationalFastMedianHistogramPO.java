@@ -71,6 +71,12 @@ public class RelationalFastMedianHistogramPO<T extends Comparable<T>>
 			return false;
 		}
 		
+		@SuppressWarnings("unchecked")
+		RelationalFastMedianHistogramPO<T> po = (RelationalFastMedianHistogramPO<T>) ipo;
+		if (po.roundfactor != this.roundfactor){
+			return false;
+		}
+		
 		return super.isSemanticallyEqual(ipo);
 	}
 	
