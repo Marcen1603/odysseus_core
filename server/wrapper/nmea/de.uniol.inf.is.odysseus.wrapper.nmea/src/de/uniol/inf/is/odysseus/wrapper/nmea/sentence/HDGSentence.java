@@ -5,22 +5,63 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Hemisphere;
 import de.uniol.inf.is.odysseus.wrapper.nmea.util.ParseUtils;
 
+/**
+ * HDG - Heading-Deviation & Variation<br>
+ * <br>
+ * 
+ * <pre>
+ * {@code
+ * .      1   2   3 4   5 6
+ *        |   |   | |   | |
+ * $--HDG,x.x,x.x,a,x.x,a*hh
+ * }
+ * </pre>
+ * <ol>
+ * <li>Magnetic Sensor heading in degrees</li>
+ * <li>Magnetic Deviation, degrees</li>
+ * <li>Magnetic Deviation direction, E = Easterly, W = Westerly</li>
+ * <li>Magnetic Variation degrees</li>
+ * <li>Magnetic Variation direction, E = Easterly, W = Westerly</li>
+ * <li>Checksum</li>
+ * </ol>
+ * 
+ * @author jboger <juergen.boger@offis.de>
+ * 
+ */
 public class HDGSentence extends Sentence {
+	/** Default begin char for this sentence type. */
 	public static final char BEGIN_CHAR = '$';
+	/** Default talker for this sentence. */
 	public static final String DEFAULT_TALKER = "HC";
+	/** Sentence id. */
 	public static final String SENTENCE_ID = "HDG";
+	/** Default count of fields. */
 	public static final int FIELD_COUNT = 6;
 	
+	/** Magnetic Sensor heading in degrees */
 	private Double heading;
+	/** Magnetic Deviation, degrees */
 	private Double deviation;
+	/** Magnetic Deviation direction, E = Easterly, W = Westerly */
 	private Hemisphere deviationDir;
+	/** Magnetic Variation degrees */
 	private Double variation;
+	/** Magnetic Variation direction, E = Easterly, W = Westerly */
 	private Hemisphere variationDir;
 	
+	/**
+	 * Default constructor for writing. Empty Sentence to fill attributes and
+	 * call {@link #toNMEA()}.
+	 */
 	public HDGSentence() {
 		super(BEGIN_CHAR, DEFAULT_TALKER, SENTENCE_ID, FIELD_COUNT);
 	}
 	
+	/**
+	 * Default constructor for parsing.
+	 * @param nmea
+	 * Nmea String to be parsed.
+	 */
 	public HDGSentence(String nmea) {
 		super(nmea);
 	}
@@ -46,7 +87,7 @@ public class HDGSentence extends Sentence {
 	}
 
 	@Override
-	public void fillMap(Map<String, Object> res) {
+	protected void fillMap(Map<String, Object> res) {
 		if (heading != null) res.put("heading", heading);
 		if (deviation != null) res.put("deviation", deviation);
 		if (deviationDir != Hemisphere.NULL) res.put("deviationDir", deviationDir);

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -39,135 +38,164 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.SentenceFactory;
 import de.uniol.inf.is.odysseus.wrapper.nmea.util.SentenceUtils;
 
 /**
+ * This wrapper can be used as a ProtocolHandler (NMEA) with GenericPush or
+ * GenericPull. The DataHandler (KeyValueObject) should be used with this
+ * ProtocolHandler.
  * 
  * @author Jurgen Boger <juergen.boger@offis.de>
  * 
  */
-public class NMEAProtocolHandler extends AbstractProtocolHandler<KeyValueObject<? extends IMetaAttribute>> {
-    private final Logger LOG = LoggerFactory.getLogger(NMEAProtocolHandler.class);
-    protected BufferedReader reader;
-    private KeyValueObject<? extends IMetaAttribute> next = null;
+public class NMEAProtocolHandler extends
+		AbstractProtocolHandler<KeyValueObject<? extends IMetaAttribute>> {
+	/** Logger for this class. */
+	private final Logger LOG = LoggerFactory
+			.getLogger(NMEAProtocolHandler.class);
+	/** Input stream as BufferedReader (Only in GenericPull). */
+	protected BufferedReader reader;
+	/** Found next object to be returned for GenericPull. */
+	private KeyValueObject<? extends IMetaAttribute> next = null;
 
-    public NMEAProtocolHandler() {
-    }
+	public NMEAProtocolHandler() {
+	}
 
-    public NMEAProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
-        super(direction, access, dataHandler);
-    }
+	public NMEAProtocolHandler(ITransportDirection direction,
+			IAccessPattern access,
+			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
+		super(direction, access, dataHandler);
+	}
 
-    @Override
-    public void open() throws UnknownHostException, IOException {
-        getTransportHandler().open();
-        if (this.getDirection().equals(ITransportDirection.IN)) {
+	@Override
+	public void open() throws UnknownHostException, IOException {
+		getTransportHandler().open();
+		if (this.getDirection().equals(ITransportDirection.IN)) {
 			if ((this.getAccess().equals(IAccessPattern.PULL))
 					|| (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
-				this.reader = new BufferedReader(new InputStreamReader(getTransportHandler().getInputStream()));
+				this.reader = new BufferedReader(new InputStreamReader(
+						getTransportHandler().getInputStream()));
 			}
 		} else {
 			// TODO: Implement output NMEA
 			// this.output = this.getTransportHandler().getOutputStream();
 		}
-    }
+	}
 
-    @Override
-    public void close() throws IOException {
-        reader.close();
-        getTransportHandler().close();
-    }
+	@Override
+	public void close() throws IOException {
+		try {
+			if (reader != null) {
+				reader.close();
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+		getTransportHandler().close();
+	}
 
-    @Override
-    public boolean hasNext() throws IOException {
-        if (!reader.ready()) {
-        	return false;
-        }
-        String nmea = reader.readLine();
-        KeyValueObject<? extends IMetaAttribute> res = parseString(nmea);
-        if (res != null) {
-        	next = res;
-        	return true;
-        } else {
-        	return false;
-        }
-    }
+	@Override
+	public boolean hasNext() throws IOException {
+		if (!reader.ready()) {
+			return false;
+		}
+		String nmea = reader.readLine();
+		KeyValueObject<? extends IMetaAttribute> res = parseString(nmea);
+		if (res != null) {
+			next = res;
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-    @Override
-    public KeyValueObject<? extends IMetaAttribute> getNext() throws IOException {
-        return next;
-    }
-    
-    @Override
-    public void process(ByteBuffer message) {
-    	byte[] m = new byte[message.limit()];
-    	message.get(m);
-    	String nmea = (new String(m)).trim();
-    	KeyValueObject<? extends IMetaAttribute> res = parseString(nmea);
-    	if (res == null)
-    		return;
-    	
-    	getTransfer().transfer(res);
-    }
-    
-    private KeyValueObject<? extends IMetaAttribute> parseString(String nmea) {
-    	if (!SentenceUtils.validateSentence(nmea)) {
-        	return null;
-        }
-        
-        Sentence sentence = null;
-        try {
-	        sentence = SentenceFactory.getInstance().createSentence(nmea);
-        } catch (IllegalArgumentException e) {
-        	LOG.error(e.getMessage());
-        }
-        if (sentence == null) {
-        	return null;
-        }
-        sentence.parse();
-        Map<String, Object> event = new HashMap<String, Object>();
-        sentence.fillMap(event);
-        KeyValueObject<? extends IMetaAttribute> res = new KeyValueObject<>(event);
-        res.setMetadata("object", sentence);
-        return res;
-    }
+	@Override
+	public KeyValueObject<? extends IMetaAttribute> getNext()
+			throws IOException {
+		return next;
+	}
 
-    @Override
-    public void write(KeyValueObject<? extends IMetaAttribute> object) throws IOException {
-        throw new IllegalArgumentException("Currently not implemented");
-    }
+	@Override
+	public void process(ByteBuffer message) {
+		byte[] m = new byte[message.limit()];
+		message.get(m);
+		String nmea = (new String(m)).trim();
+		System.out.println(nmea);
+//		KeyValueObject<? extends IMetaAttribute> res = parseString(nmea);
+//		if (res == null)
+//			return;
 
-    @Override
-    public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(ITransportDirection direction, IAccessPattern access, Map<String, String> options,
-            IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
-        NMEAProtocolHandler instance = new NMEAProtocolHandler(direction, access, dataHandler);
-        instance.setOptionsMap(options);
-        return instance;
-    }
+		//getTransfer().transfer(res);
+	}
 
-    @Override
-    public String getName() {
-        return "NMEA";
-    }
+	/**
+	 * Parses the given String an return a KeyValueObject.
+	 * 
+	 * @param nmea
+	 *            String to be parsed.
+	 * @return KeyValueObject or null, if the String could not be parsed.
+	 */
+	private KeyValueObject<? extends IMetaAttribute> parseString(String nmea) {
+		if (!SentenceUtils.validateSentence(nmea)) {
+			return null;
+		}
 
-    @Override
-    public void onConnect(ITransportHandler caller) {
-        // TODO Auto-generated method stub
+		Sentence sentence = null;
+		try {
+			sentence = SentenceFactory.getInstance().createSentence(nmea);
+		} catch (IllegalArgumentException e) {
+			LOG.error(e.getMessage());
+		}
+		if (sentence == null) {
+			return null;
+		}
+		sentence.parse();
+		Map<String, Object> event = sentence.toMap();
+		KeyValueObject<? extends IMetaAttribute> res = new KeyValueObject<>(
+				event);
+		res.setMetadata("object", sentence);
+		return res;
+	}
 
-    }
+	@Override
+	public void write(KeyValueObject<? extends IMetaAttribute> object)
+			throws IOException {
+		throw new IllegalArgumentException("Currently not implemented");
+	}
 
-    @Override
-    public void onDisonnect(ITransportHandler caller) {
-        // TODO Auto-generated method stub
+	@Override
+	public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(
+			ITransportDirection direction, IAccessPattern access,
+			Map<String, String> options,
+			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
+		NMEAProtocolHandler instance = new NMEAProtocolHandler(direction,
+				access, dataHandler);
+		instance.setOptionsMap(options);
+		return instance;
+	}
 
-    }
+	@Override
+	public String getName() {
+		return "NMEA";
+	}
 
-    @Override
-    public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
-        if (!(o instanceof NMEAProtocolHandler)) {
-            return false;
-        }
-        else {
-            // the datahandler was already checked in the
-            // isSemanticallyEqual-Method of AbstracProtocolHandler
-            return true;
-        }
-    }
+	@Override
+	public void onConnect(ITransportHandler caller) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onDisonnect(ITransportHandler caller) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
+		if (!(o instanceof NMEAProtocolHandler)) {
+			return false;
+		} else {
+			// the datahandler was already checked in the
+			// isSemanticallyEqual-Method of AbstracProtocolHandler
+			return true;
+		}
+	}
 }

@@ -1,26 +1,101 @@
 package de.uniol.inf.is.odysseus.wrapper.nmea.util;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.Date;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.GpsQuality;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Hemisphere;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.SignalIntegrity;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Status;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.Time;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Unit;
 
+/**
+ * The parse utils provides some methods to parse enum values or other type of
+ * values from a String.
+ * 
+ * @author jboger <juergen.boger@offis.de>
+ * 
+ */
 public class ParseUtils {
-	public static final DateFormat UTC_TIME_FORMATTER = new SimpleDateFormat("HHmmss");
-	public static final DateFormat UTC_TIME_FORMATTER_MS = new SimpleDateFormat("HHmmss.SSS");
-	public static final DateFormat UTC_DATE_FORMATTER = new SimpleDateFormat("ddMMyy");
-	static {
-		UTC_TIME_FORMATTER.setTimeZone(TimeZone.getTimeZone("GMT"));
-		UTC_TIME_FORMATTER_MS.setTimeZone(TimeZone.getTimeZone("GMT"));
-		UTC_DATE_FORMATTER.setTimeZone(TimeZone.getTimeZone("GMT"));
+	/**
+	 * Parses a given String to a Date.
+	 * 
+	 * @param value
+	 *            String.
+	 * @return The date.
+	 */
+	public static Date parseDate(String value) {
+		Date res = new Date();
+		try {
+			res.setYear(Integer.parseInt(value.substring(0, 2)));
+			res.setMonth(Integer.parseInt(value.substring(2, 4)));
+			res.setDay(Integer.parseInt(value.substring(4, 6)));
+		} catch (Exception e) {
+			return null;
+		}
+		return res;
 	}
 	
+	/**
+	 * Converts the given date to a String.
+	 * 
+	 * @param value
+	 *            Date value.
+	 * @return String representation in nmea.
+	 */
+	public static String toString(Date value) {
+		return String.format("%02d%02d%02d", value.getYear(), value.getMonth(), value.getDay());
+	}
+	
+	/**
+	 * Parses a given String to a Time.
+	 * 
+	 * @param value
+	 *            String.
+	 * @return The time.
+	 */
+	public static Time parseTime(String value) {
+		Time res = new Time();
+		try {
+			if (value.contains(".")) {
+				String[] s = value.split("\\.");
+				res.setHours(Integer.parseInt(s[0].substring(0, 2)));
+				res.setMinutes(Integer.parseInt(s[0].substring(2, 4)));
+				res.setSeconds(Integer.parseInt(s[0].substring(4, 6)));
+				res.setMilliSeconds(Integer.parseInt(s[1]));
+			} else {
+				res.setHours(Integer.parseInt(value.substring(0, 2)));
+				res.setMinutes(Integer.parseInt(value.substring(2, 4)));
+				res.setSeconds(Integer.parseInt(value.substring(4, 6)));
+			}
+		} catch (Exception e) {
+			return null;
+		}
+		return res;
+	}
+	
+	/**
+	 * Converts the given time to a String.
+	 * 
+	 * @param value
+	 *            Time value.
+	 * @return String representation in nmea.
+	 */
+	public static String toString(Time value) {
+		if (value.getMilliSeconds() > 0) { 
+			return String.format("%02d%02d%02d.%03d", value.getHours(), value.getMinutes(), value.getSeconds(), value.getMilliSeconds());
+		} else {
+			return String.format("%02d%02d%02d", value.getHours(), value.getMinutes(), value.getSeconds());
+		}
+	}
+	
+	/**
+	 * Parses a given String value and calculates the coordinate in decimal
+	 * representation.
+	 * 
+	 * @param value
+	 *            String from nmea.
+	 * @return Double value of the coordinate.
+	 */
 	public static Double parseCoordinate(String value) {
 		try {
 			String[] gr = value.split("\\.");
@@ -34,6 +109,15 @@ public class ParseUtils {
 		}
 	}
 	
+	/**
+	 * Converts a given double value to a nmea String representation.
+	 * 
+	 * @param value
+	 *            The decimal value.
+	 * @param coordLength
+	 *            Use 2 for latitude and 3 for longitude.
+	 * @return String representation in nmea.
+	 */
 	public static String toString(Double value, int coordLength) {
 		double val = value;
 		int i1 = (int) val;
@@ -100,26 +184,6 @@ public class ParseUtils {
 		}
 	}
 	
-	public static Date parseUTCTime(String value) {
-		try {
-			if (value.contains(".")) {
-				return UTC_TIME_FORMATTER_MS.parse(value);
-			} else {
-				return UTC_TIME_FORMATTER.parse(value);
-			}
-		} catch (Exception e) {
-			return null;
-		}
-	}
-	
-	public static Date parseUTCDate(String value) {
-		try {
-			return UTC_DATE_FORMATTER.parse(value);
-		} catch (Exception e) {
-			return null;
-		}
-	}
-	
 	public static String toString(Integer value) {
 		if (value == null) {
 			return "";
@@ -154,25 +218,5 @@ public class ParseUtils {
 	
 	public static String toString(Status value) {
 		return value.getShortName();
-	}
-	
-	public static String getDate(Date value) {
-		if (value == null) {
-			return "";
-		} else {
-			return UTC_DATE_FORMATTER.format(value);
-		}
-	}
-	
-	public static String getTime(Date value) {
-		if (value == null) {
-			return "";
-		} else {
-			if (value.getTime() % 1000 == 0) {
-				return UTC_TIME_FORMATTER.format(value);
-			} else {
-				return UTC_TIME_FORMATTER_MS.format(value);
-			}
-		}
 	}
 }

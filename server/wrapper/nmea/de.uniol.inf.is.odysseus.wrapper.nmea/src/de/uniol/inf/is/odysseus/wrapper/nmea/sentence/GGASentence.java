@@ -1,38 +1,106 @@
 package de.uniol.inf.is.odysseus.wrapper.nmea.sentence;
 
-import java.util.Date;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.GpsQuality;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Hemisphere;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.Time;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Unit;
 import de.uniol.inf.is.odysseus.wrapper.nmea.util.ParseUtils;
 
+/**
+ * GGA - Global Positioning System Fix Data. Time, Position and fix related data
+ * for a GPS receiver<br>
+ * <br>
+ * 
+ * <pre>
+ * {@code
+ * .      1         2       3 4        5 6 7  8   9  10 11 12 13 14   15
+ *        |         |       | |        | | |  |   |   | |   | |   |    |
+ * $--GGA,hhmmss.ss,llll.ll,a,yyyyy.yy,a,x,xx,x.x,x.x,M,x.x,M,x.x,xxxx*hh
+ * }
+ * </pre>
+ * <ol>
+ * <li>Time (UTC)</li>
+ * <li>Latitude</li>
+ * <li>N or S (North or South)</li>
+ * <li>Longitude</li>
+ * <li>E or W (East or West)</li>
+ * <li>GPS Quality Indicator
+ * <ul>
+ * <li>0 - fix not available</li>
+ * <li>1 - GPS fix</li>
+ * <li>2 - Differential GPS fix</li>
+ * </ul>
+ * </li>
+ * <li>Number of satellites in view, 00 - 12</li>
+ * <li>Horizontal Dilution of precision</li>
+ * <li>Antenna Altitude above/below mean-sea-level (geoid)</li>
+ * <li>Units of antenna altitude, meters</li>
+ * <li>Geoidal separation, the difference between the WGS-84 earth ellipsoid and
+ * mean-sea-level (geoid), "-" means mean-sea-level below ellipsoid</li>
+ * <li>Units of geoidal separation, meters</li>
+ * <li>Age of differential GPS data, time in seconds since last SC104 type 1 or
+ * 9 update, null field when DGPS is not used</li>
+ * <li>Differential reference station ID, 0000-1023</li>
+ * <li>Checksum</li>
+ * </ol>
+ * 
+ * @author jboger <juergen.boger@offis.de>
+ * 
+ */
 public class GGASentence extends Sentence {
+	/** Default begin char for this sentence type. */
 	public static final char BEGIN_CHAR = '$';
+	/** Default talker for this sentence. */
 	public static final String DEFAULT_TALKER = "GP";
+	/** Sentence id. */
 	public static final String SENTENCE_ID = "GGA";
+	/** Default count of fields. */
 	public static final int FIELD_COUNT = 14;
 	
-	private Date time;
+	/** Time (UTC) */
+	private Time time;
+	/** Latitude */
 	private Double latitude;
+	/** N or S (North or South) */
 	private Hemisphere latitudeHem;
+	/** Longitude */
 	private Double longitude;
+	/** E or W (East or West) */
 	private Hemisphere longitudeHem;
+	/** GPS Quality Indicator */
 	private GpsQuality gpsQuality;
+	/** Number of satellites in view, 00 - 12 */
 	private Integer numberOfSattelites;
+	/** Horizontal Dilution of precision */
 	private Double horizontalDilution;
+	/** Antenna Altitude above/below mean-sea-level (geoid) */
 	private Double antennaAltitude;
+	/** Units of antenna altitude, meters */
 	private Unit antennaAltUnits;
+	/** Geoidal separation, the difference between the WGS-84 earth ellipsoid and mean-sea-level (geoid), "-" means mean-sea-level below ellipsoid */
 	private Double geoidalSeparation;
+	/** Units of geoidal separation, meters */
 	private Unit geoidalSepUnits;
+	/** Age of differential GPS data, time in seconds since last SC104 type 1 or 9 update, null field when DGPS is not used */
 	private Double ageOfDgps;
+	/** Differential reference station ID, 0000-1023 */
 	private Integer differentialRefId;
 	
+	/**
+	 * Default constructor for writing. Empty Sentence to fill attributes and
+	 * call {@link #toNMEA()}.
+	 */
 	public GGASentence() {
 		super(BEGIN_CHAR, DEFAULT_TALKER, SENTENCE_ID, FIELD_COUNT);
 	}
 	
+	/**
+	 * Default constructor for parsing.
+	 * @param nmea
+	 * Nmea String to be parsed.
+	 */
 	public GGASentence(String nmea) {
 		super(nmea);
 	}
@@ -40,7 +108,7 @@ public class GGASentence extends Sentence {
 	@Override
 	protected void decode() {
 		int index = 0;
-		time = ParseUtils.parseUTCTime(getValue(index++));
+		time = ParseUtils.parseTime(getValue(index++));
 		latitude = ParseUtils.parseCoordinate(getValue(index++));
 		latitudeHem = ParseUtils.parseHemisphere(getValue(index++));
 		longitude = ParseUtils.parseCoordinate(getValue(index++));
@@ -59,7 +127,7 @@ public class GGASentence extends Sentence {
 	@Override
 	protected void encode() {
 		int index = 0;
-		setValue(index++, ParseUtils.getTime(time));
+		setValue(index++, ParseUtils.toString(time));
 		setValue(index++, ParseUtils.toString(latitude, 2));
 		setValue(index++, ParseUtils.toString(latitudeHem));
 		setValue(index++, ParseUtils.toString(latitude, 3));
@@ -76,8 +144,8 @@ public class GGASentence extends Sentence {
 	}
 
 	@Override
-	public void fillMap(Map<String, Object> res) {
-		if (time != null) res.put("time", time);
+	protected void fillMap(Map<String, Object> res) {
+		if (time != null) time.addToMap("time", res);
 		if (latitude != null) res.put("latitude", latitude);
 		if (latitudeHem != Hemisphere.NULL) res.put("latitudeHem", latitudeHem);
 		if (longitude != null) res.put("longitude", longitude);
@@ -93,11 +161,11 @@ public class GGASentence extends Sentence {
 		if (differentialRefId != null) res.put("differentialRefId", differentialRefId);
 	}
 
-	public Date getTime() {
+	public Time getTime() {
 		return time;
 	}
 
-	public void setTime(Date time) {
+	public void setTime(Time time) {
 		this.time = time;
 	}
 

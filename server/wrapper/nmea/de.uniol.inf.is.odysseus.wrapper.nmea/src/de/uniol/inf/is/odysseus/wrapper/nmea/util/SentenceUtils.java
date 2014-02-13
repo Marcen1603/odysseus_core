@@ -4,16 +4,36 @@ import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.Sentence;
 
+/**
+ * This utility class provides some methods to validate sentences and calculate
+ * checksums.
+ * 
+ * @author jboger <juergen.boger@offis.de>
+ * 
+ */
 public class SentenceUtils {
+	/** Regular expression for a sentence with a checksum. */
 	private static final Pattern regExpChecksum = Pattern
 			.compile("^[$|!]{1}[A-Z0-9]{3,10}[,][\\x20-\\x7F]*[*][A-F0-9]{2}$");
 
+	/** Regular expression for a sentence without a checksum. */
 	private static final Pattern regExpNoChecksum = Pattern
 			.compile("^[$|!]{1}[A-Z0-9]{3,10}[,][\\x20-\\x7F]*$");
 
+	/**
+	 * Hide utility class constructor.
+	 */
 	private SentenceUtils() {
 	}
 
+	/**
+	 * Checks whether the given String could be a nmea sentence (Matching a
+	 * pattern).
+	 * 
+	 * @param nmea
+	 *            A String to check.
+	 * @return true, if the String matches one of the nmea patterns.
+	 */
 	public static boolean isSentence(String nmea) {
 		if (nmea == null || "".equals(nmea)) {
 			return false;
@@ -24,6 +44,14 @@ public class SentenceUtils {
 		return regExpChecksum.matcher(nmea).matches();
 	}
 
+	/**
+	 * Checks if the given sentence is valid. Also calculates and checks the
+	 * checksum.
+	 * 
+	 * @param nmea
+	 *            String to be checked.
+	 * @return true, if the given String is a valid nmea String.
+	 */
 	public static boolean validateSentence(String nmea) {
 		if (SentenceUtils.isSentence(nmea)) {
 			int i = nmea.indexOf(Sentence.CHECKSUM_DELIMITER);
@@ -37,6 +65,14 @@ public class SentenceUtils {
 		return false;
 	}
 	
+	/**
+	 * Calculates the checksum for a given nmea String an returns it as a 2 hex
+	 * digit formated String.
+	 * 
+	 * @param nmea
+	 *            String to calculate the checksum from.
+	 * @return 2 hex digit formated String.
+	 */
 	public static String calculateChecksum(String nmea) {
 		char ch;
 		int sum = 0;
@@ -56,6 +92,13 @@ public class SentenceUtils {
 		return String.format("%02X", sum);
 	}
 	
+	/**
+	 * Gets the sentenceId of the given nmea String.
+	 * @param nmea
+	 * Valid nmea String.
+	 * @return
+	 * The sentence id of the nmea String.
+	 */
 	public static String getSentenceId(String nmea) {
 		if (!isSentence(nmea)) {
 			throw new IllegalArgumentException("String is not a sentence");
@@ -67,6 +110,13 @@ public class SentenceUtils {
 		}
 	}
 	
+	/**
+	 * Gets the talkerId of the given nmea String.
+	 * @param nmea
+	 * Valid nmea String.
+	 * @return
+	 * The talker id of the nmea String.
+	 */
 	public static String getTalkerId(String nmea) {
 		if (!isSentence(nmea)) {
 			throw new IllegalArgumentException("String is not a sentence");
