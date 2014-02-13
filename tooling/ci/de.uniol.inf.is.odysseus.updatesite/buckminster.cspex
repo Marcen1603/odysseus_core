@@ -17,7 +17,7 @@
                 <property key="features" value="${product.server.features}" />  
             </properties>               
             <products alias="destination" base="${ws.root}/${product.destination}">  
-                <path path="${product.name}.server.${target.ws}.${target.os}.${target.arch}/" />  
+                <path path="odysseus.server.${target.ws}.${target.os}.${target.arch}/" />  
             </products>            
         </public>          
         <public name="create.server.product.zip" actor="ant">  
@@ -29,7 +29,7 @@
                 <attribute name="create.server.product" />  
             </prerequisites>  
             <products alias="action.output" base="${ws.root}/${product.zipdestination}">  
-                <path path="${product.name}.server.${target.ws}.${target.os}.${target.arch}.zip" />  
+                <path path="odysseus.server.${target.ws}.${target.os}.${target.arch}.zip" />  
             </products>  
         </public>   
         
@@ -44,7 +44,7 @@
                 <property key="features" value="${product.serverandstudio.features}" />  
             </properties>     
             <products alias="destination" base="${ws.root}/${product.destination}">  
-                <path path="${product.name}.serverandstudio.${target.ws}.${target.os}.${target.arch}/" />  
+                <path path="odysseus.serverandstudio.${target.ws}.${target.os}.${target.arch}/" />  
             </products>            
         </public>  
   			
@@ -73,7 +73,7 @@
                 <property key="features" value="${product.studio.features}" />  
             </properties>             
             <products alias="destination" base="${ws.root}/${product.destination}">  
-                <path path="${product.name}.studio.${target.ws}.${target.os}.${target.arch}/" />  
+                <path path="odysseus.studio.${target.ws}.${target.os}.${target.arch}/" />  
             </products>            
         </public>  
   
@@ -104,7 +104,7 @@
                 <attribute name="site.p2.publish" component="de.uniol.inf.is.odysseus.update.p2" />  
             </prerequisites>  
             <products alias="destination" base="${product.destionation.test}">  
-                <path path="${product.name}.test.${target.ws}.${target.os}.${target.arch}/" />  
+                <path path="odysseus.test.${target.ws}.${target.os}.${target.arch}/" />  
             </products>            
         </public>          
              
