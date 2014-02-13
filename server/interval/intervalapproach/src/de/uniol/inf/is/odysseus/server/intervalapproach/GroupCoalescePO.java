@@ -56,8 +56,9 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 		if (currentPartialAggregates != null
 				&& currentGroupID == lastGroupID
 				&& (maxElementsPerGroup == -1 || currentCount < maxElementsPerGroup)) {
+			// TODO: Is it really neceessary to create a new partial aggregate?
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> newP = calcMerge(
-					currentPartialAggregates, object);
+					currentPartialAggregates, object, true);
 			M newMeta = (M) object.getMetadata().clone();
 			// keep start
 			newMeta.setStart(currentPartialAggregates.getMetadata().getStart());

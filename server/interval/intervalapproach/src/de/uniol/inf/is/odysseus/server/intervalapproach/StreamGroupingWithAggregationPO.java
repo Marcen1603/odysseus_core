@@ -64,8 +64,10 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	public StreamGroupingWithAggregationPO(SDFSchema inputSchema,
 			SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
-			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations, boolean fastGrouping) {
-		super(inputSchema, outputSchema, groupingAttributes, aggregations, fastGrouping);
+			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
+			boolean fastGrouping) {
+		super(inputSchema, outputSchema, groupingAttributes, aggregations,
+				fastGrouping);
 		transferArea = new TITransferArea<W, W>();
 	}
 
@@ -151,7 +153,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	@Override
 	protected void process_next(R object, int port) {
 
-//		System.err.println("AGGREGATE DEBUG MG: IN " + object);
+		// System.err.println("AGGREGATE DEBUG MG: IN " + object);
 		// Determine if there is any data from previous runs to write
 		// createOutput(object.getMetadata().getStart());
 
@@ -163,11 +165,16 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		if (sa == null) {
 			sa = new DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>();
 			groups.put(groupID, sa);
-			//System.out.println("Created new Sweep Area for group id " + groupID+ " --> #"+groups.size());
+			// System.out.println("Created new Sweep Area for group id " +
+			// groupID+ " --> #"+groups.size());
 		}
 
 		// Update sweep area with new element
-		updateSA(sa, object);
+		List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(
+				sa, object, outputPA);
+		if (results.size() > 0) {
+			produceResults(results, groupID);
+		}
 
 		// Is there any new output to write now?
 		createOutput(object.getMetadata().getStart());
@@ -216,6 +223,19 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		// System.out.println(entry.getKey()+" "+entry.getValue());
 		// }
 
+	}
+
+	@SuppressWarnings("unchecked")
+	private void produceResults(
+			List<PairMap<SDFSchema, AggregateFunction, W, Q>> results,
+			Long groupID) {
+		List<W> outList = new LinkedList<>();
+		for (PairMap<SDFSchema, AggregateFunction, W, Q> e : results) {
+			W out = getGroupProcessor().createOutputElement(groupID, e);
+			out.setMetadata((Q) e.getMetadata().clone());
+			outList.add(out);
+		}
+		transferArea.transfer(outList);
 	}
 
 	private void produceResults(

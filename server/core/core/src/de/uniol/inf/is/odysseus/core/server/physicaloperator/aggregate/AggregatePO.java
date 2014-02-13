@@ -171,14 +171,14 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
 	// dem passenden Merger)
 	protected synchronized PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> calcMerge(
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> toMerge,
-			R element) {
+			R element, boolean createNew) {
 		PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> ret = new PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M>();
 
 		// Jedes Element in toMerge mit element mergen
 		for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<R>> e : toMerge
 				.entrySet()) {
 			IMerger<R> mf = getMergeFunction(e.getKey());
-			IPartialAggregate<R> pa = mf.merge(e.getValue(), element, true);
+			IPartialAggregate<R> pa = mf.merge(e.getValue(), element, createNew);
 			ret.put(e.getKey(), pa);
 		}
 

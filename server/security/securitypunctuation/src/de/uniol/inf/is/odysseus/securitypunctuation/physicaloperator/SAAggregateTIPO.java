@@ -55,15 +55,16 @@ public class SAAggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>
 	}
 
 	@Override
-	protected synchronized void updateSA(
+	protected synchronized List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
 			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
-			R elemToAdd) {
+			R elemToAdd, boolean outputPA) {
 		if (evaluator.evaluate(elemToAdd, this.getOwner(),
 				this.getOutputSchema())) {
-			super.updateSA(sa, elemToAdd);
 			LOG.debug("evaluated");
+			return super.updateSA(sa, elemToAdd, outputPA);
 		} else {
 			LOG.debug("not evaluated");
+			return null;
 		}
 	}
 

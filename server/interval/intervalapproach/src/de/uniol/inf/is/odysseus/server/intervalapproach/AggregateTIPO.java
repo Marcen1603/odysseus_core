@@ -15,24 +15,24 @@
  */
 package de.uniol.inf.is.odysseus.server.intervalapproach;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.collection.PairMap;
-import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregatePO;
@@ -40,7 +40,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 
 public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<?>>
-		extends AggregatePO<Q, R, W> implements IHasMetadataMergeFunction<Q>, IStatefulOperator {
+		extends AggregatePO<Q, R, W> implements IHasMetadataMergeFunction<Q>,
+		IStatefulOperator {
 
 	protected IMetadataMergeFunction<Q> metadataMerge;
 
@@ -142,8 +143,10 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 
 	public AggregateTIPO(SDFSchema inputSchema, SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
-			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations, boolean fastGrouping) {
-		super(inputSchema, outputSchema, groupingAttributes, aggregations, fastGrouping);
+			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
+			boolean fastGrouping) {
+		super(inputSchema, outputSchema, groupingAttributes, aggregations,
+				fastGrouping);
 	}
 
 	@Override
@@ -162,13 +165,14 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 	// mehreren Attributen anwenden zu k�nnen
 	// Methode nach [Kr�mer] Algorithmus 9 bzw. 10 funktioniert leider nicht
 	// korrekt. Deswegen eigene Version
-	protected synchronized void updateSA(
+	protected synchronized List<PairMap<SDFSchema,AggregateFunction,W,Q>> updateSA(
 			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
-			R elemToAdd) {
-//		System.err.println("");
-//		System.err
-//				.println("-------------------------------------------------------------------------");
-//		System.err.println("INPUT " + elemToAdd);
+			R elemToAdd, boolean outputPA) {
+		List<PairMap<SDFSchema,AggregateFunction,W,Q>> returnValues = new LinkedList<>();
+		// System.err.println("");
+		// System.err
+		// .println("-------------------------------------------------------------------------");
+		// System.err.println("INPUT " + elemToAdd);
 		assert (elemToAdd != null);
 		R newElement = elemToAdd;
 		Q t_probe = elemToAdd.getMetadata();
@@ -184,7 +188,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 			// Overlapping --> Partial Aggregates need to be touched
 			// List of points. Do not use a set, because elements can have same
 			// start/end point!
-			List<_Point> pl = new ArrayList<_Point>();
+			List<_Point> pl = new LinkedList<_Point>();
 
 			// Determine the list of all points of the overlapped elements in
 			// the sweep area
@@ -210,7 +214,9 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 			_Point p1 = null;
 			_Point p2 = null;
 			// get the first point
-			// FIXME This looks useless, if pointerIter has no next element a NullPointer exception will be thrown in the next line anyway (CKu 20140123)
+			// FIXME This looks useless, if pointerIter has no next element a
+			// NullPointer exception will be thrown in the next line anyway (CKu
+			// 20140123)
 			if (pointIter.hasNext()) {
 				p1 = pointIter.next();
 			}
@@ -271,18 +277,35 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 						// Add new element as a combination from current value
 						// and new
 						// element for new time interval
-					    // FIXME Use logger
+						// FIXME Use logger
 						if (lastPartialAggregate == null) {
 							System.err.println("ONLY FOR DEBUGGER!!");
 							System.err.println(sa.toString());
 						}
+
+						// In some cases its possible to create output earlier
+						final boolean createNew;
+						if (!outputPA && p2.point.before(t_probe.getStart())) {
+							createNew = false;
+							PairMap<SDFSchema, AggregateFunction, W, Q> v = calcEval(lastPartialAggregate);
+							v.setMetadata(lastPartialAggregate.getMetadata());
+							v.getMetadata().setEnd(p2.point);
+							returnValues.add(v);
+						} else {
+							createNew = !(p1.point.equals(lastPartialAggregate
+									.getMetadata().getStart()) && p2.point
+									.equals(lastPartialAggregate.getMetadata()
+											.getEnd()));
+						}
+
 						Q newMeta = metadataMerge.mergeMetadata(
 								lastPartialAggregate.getMetadata(),
 								elemToAdd.getMetadata());
 						newMeta.setStartAndEnd(p1.point, p2.point);
-						saInsert(sa,
-								calcMerge(lastPartialAggregate, elemToAdd),
-								newMeta);
+						saInsert(
+								sa,
+								calcMerge(lastPartialAggregate, elemToAdd,
+										createNew), newMeta);
 
 					} else if (p1.isEnd() && p2.isStart()) {
 						// New element has a part that is newer than the partial
@@ -311,7 +334,8 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 					lastPartialAggregate = (p1.newElement()) ? lastPartialAggregate
 							: p1.element_agg;
 				} else { // if (p1.point.before(p2.point))
-					lastPartialAggregate = (p2.newElement())? lastPartialAggregate: p2.element_agg;
+					lastPartialAggregate = (p2.newElement()) ? lastPartialAggregate
+							: p2.element_agg;
 				}
 
 				p1 = p2;
@@ -320,7 +344,8 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 		if (logger.isTraceEnabled()) {
 			logger.trace(sa.toString());
 		}
-//		System.err.println(sa.toString());
+		return returnValues;
+		// System.err.println(sa.toString());
 	}
 
 	// Updates SA by splitting all partial aggregates before split point

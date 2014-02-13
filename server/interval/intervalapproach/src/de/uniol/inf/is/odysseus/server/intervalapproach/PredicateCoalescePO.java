@@ -53,8 +53,9 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 			currentPartialAggregates = calcInit(object);
 			currentPartialAggregates.setMetadata((M)object.getMetadata().clone());
 		} else {
+			// TODO: Is it really neceessary to create a new partial aggregate?
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> newP = calcMerge(
-					currentPartialAggregates, object);
+					currentPartialAggregates, object, true);
 			newP.setMetadata((M) currentPartialAggregates.getMetadata().clone());
 			currentPartialAggregates = newP;
 		}
