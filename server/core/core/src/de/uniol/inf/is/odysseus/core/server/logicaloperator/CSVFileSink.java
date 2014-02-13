@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractCSVHandler;
@@ -10,6 +12,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.FileNameParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 
@@ -33,6 +37,14 @@ public class CSVFileSink extends AbstractSenderAO {
 	@Override
 	public CSVFileSink clone() {
 		return new CSVFileSink(this);
+	}
+	
+	@Override
+	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options.")
+	public void setOptions(List<Option> value) {
+		for (Option o:value){
+			addOption(o.getName(), o.getValue());
+		}
 	}
 	
 	@Parameter(type = FileNameParameter.class, name = "filename", optional = false)
