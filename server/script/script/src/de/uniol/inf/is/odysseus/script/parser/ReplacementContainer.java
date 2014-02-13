@@ -12,6 +12,7 @@ public final class ReplacementContainer {
 	
 	public static final String PARAMETER_KEY = "#";
 	public static final String REPLACEMENT_DEFINITION_KEY = "DEFINE";
+	private static final String UNDEF_KEY = "UNDEF";
 
 	public static final String REPLACEMENT_START_KEY = "${";
 	public static final String REPLACEMENT_END_KEY = "}";
@@ -92,7 +93,7 @@ public final class ReplacementContainer {
 			return true;
 		}
 		
-		if (line.indexOf(PARAMETER_KEY + IfController.UNDEF_KEY) != -1) {
+		if (line.indexOf(PARAMETER_KEY + UNDEF_KEY) != -1) {
 			String[] parts = line.trim().split(" |\t", 3);
 			String key = parts[1].toUpperCase();
 			
