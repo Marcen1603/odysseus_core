@@ -12,7 +12,7 @@ public class RelationalFastMedianHistogramPO<T extends Comparable<T>>
 		AbstractFastMedianPO<T> {
 
 	Map<Long, Histogram<T, Tuple<? extends ITimeInterval>>> elements = new HashMap<>();
-	long roundfactor = 100;
+	double roundfactor = 100;
 
 	public RelationalFastMedianHistogramPO(int medianAttrPos, boolean numericalMedian, long roundfactor) {
 		super(medianAttrPos , numericalMedian);
@@ -29,7 +29,7 @@ public class RelationalFastMedianHistogramPO<T extends Comparable<T>>
 				groupID, medianAttribute);
 		groupHistogram.cleanUp(object.getMetadata().getStart());
 		if (roundfactor>0){
-			groupHistogram.addElement((T)new Double((Math.round(((Number)medianAttribute).doubleValue()*roundfactor)/roundfactor)), object);
+			groupHistogram.addElement((T)new Double((Math.round(((Number)medianAttribute).doubleValue()*roundfactor)/(roundfactor))), object);
 		}else{
 			groupHistogram.addElement(medianAttribute, object);
 		}
