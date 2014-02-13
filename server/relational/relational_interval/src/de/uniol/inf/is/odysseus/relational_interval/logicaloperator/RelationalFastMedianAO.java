@@ -33,6 +33,7 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 		this.medianAttribute = op.medianAttribute;
 		this.numericalMedian = op.numericalMedian;
 		this.useHistogram = op.useHistogram;
+		this.roundingFactor = op.roundingFactor;
 	}
 
 	public RelationalFastMedianAO() {
