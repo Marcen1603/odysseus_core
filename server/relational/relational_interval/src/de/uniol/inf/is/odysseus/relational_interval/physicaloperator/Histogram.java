@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.relational_interval.physicaloperator;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -66,6 +68,23 @@ abstract public class Histogram<K, V extends IStreamObject<? extends ITimeInterv
 				listIter.remove();
 			}
 		}
+	}
+
+	public List<K> getPercentiles(List<Double> percentiles) {
+		List<K> values = new LinkedList<>();
+		Iterator<Double> pIter = percentiles.iterator();
+		Iterator<Entry<K, PriorityQueue<V>>> iter = getEntrySet().iterator();
+		Entry<K, PriorityQueue<V>> e = null;
+		long pos = 0;
+		while (pIter.hasNext()) {
+			long toFind = Math.round(getSize() * pIter.next());
+			while (pos <= toFind && iter.hasNext()) {
+				e = iter.next();
+				pos += e.getValue().size();	
+			}
+			values.add(e.getKey());
+		}
+		return values;
 	}
 
 	public K getMenoid() {

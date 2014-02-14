@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.relational_interval.physicaloperator;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -26,6 +27,8 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 
 	private Map<Long, Tuple<? extends ITimeInterval>> lastCreatedElement = new HashMap<>();
 
+	protected List<Double> percentiles;
+
 	public AbstractFastMedianPO(int medianAttrPos, boolean numericalMedian) {
 		this.medianAttrPos = medianAttrPos;
 		this.numericalMedian = numericalMedian;
@@ -36,6 +39,10 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 		this.groupProcessor = groupProcessor;
 	}
 
+	public void setPercentiles(List<Double> percentiles) {
+		this.percentiles = percentiles;
+	}
+	
 	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
@@ -114,4 +121,6 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 		transfer.sendPunctuation(punctuation);
 		transfer.newElement(punctuation, port);
 	}
+
+
 }

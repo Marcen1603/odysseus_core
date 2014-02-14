@@ -33,6 +33,9 @@ public class TRelationalFastMedianAORule extends
 			po = new RelationalFastMedianPO(medianAttrPos,
 					operator.isNumericalMedian());
 		}
+		
+		po.setPercentiles(operator.getPercentiles());
+		
 		if (operator.getGroupingAttributes() != null
 				&& operator.getGroupingAttributes().size() > 0) {
 			po.setGroupProcessor(new RelationalGroupProcessor(inputSchema,
