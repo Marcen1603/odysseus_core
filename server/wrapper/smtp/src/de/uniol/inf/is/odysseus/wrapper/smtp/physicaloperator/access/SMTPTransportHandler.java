@@ -289,7 +289,6 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
 
     @Override
     public void processOutClose() throws IOException {
-
         transport = null;
         session = null;
         this.fireOnDisconnect();
@@ -301,16 +300,15 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
             return false;
         }
         SMTPTransportHandler other = (SMTPTransportHandler) o;
-        if (!this.host.equals(other.host)) {
-            return false;
-        }
-        else if (!this.from.equals(other.from)) {
+        if (!this.from.equals(other.from)) {
             return false;
         }
         else if (!this.to.equals(other.to)) {
             return false;
         }
-
+        else if (!this.subject.equals(other.subject)) {
+            return false;
+        }
         return true;
     }
 }
