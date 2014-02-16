@@ -48,6 +48,7 @@ public class OrOperator extends AbstractBinaryOperator<Boolean> {
 
 	@Override
 	public int getPrecedence() {
+	    //TODO Change to 15 because of XOR operator (CKu 20140216)
 		return 14;
 	}
 
