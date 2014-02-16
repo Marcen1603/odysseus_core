@@ -1,0 +1,85 @@
+/**
+ * 
+ */
+package de.uniol.inf.is.odysseus.rcp.server.views.access;
+
+import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.part.ViewPart;
+
+import com.google.common.collect.ImmutableList;
+
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
+import de.uniol.inf.is.odysseus.rcp.server.l10n.OdysseusNLS;
+
+/**
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
+public class ProtocolsView extends ViewPart {
+
+    private TableViewer tableViewer;
+
+    @Override
+    public void createPartControl(Composite parent) {
+        final GridLayout gridLayout = new GridLayout();
+        gridLayout.numColumns = 1;
+        parent.setLayout(gridLayout);
+
+        Composite tableComposite = new Composite(parent, SWT.NONE);
+        tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        TableColumnLayout tableColumnLayout = new TableColumnLayout();
+        tableComposite.setLayout(tableColumnLayout);
+
+        tableViewer = new TableViewer(tableComposite);
+        tableViewer.getTable().setHeaderVisible(true);
+        tableViewer.getTable().setLinesVisible(true);
+        tableViewer.setContentProvider(ArrayContentProvider.getInstance());
+
+        createColumns(tableViewer, tableColumnLayout);
+        insertTableContent(tableViewer, "");
+
+    }
+
+    @Override
+    public void setFocus() {
+        tableViewer.getTable().setFocus();
+    }
+
+    public void refresh() {
+        insertTableContent(tableViewer, "");
+        tableViewer.refresh();
+    }
+
+    private static void insertTableContent(TableViewer tableViewer, String filter) {
+        ImmutableList<String> protocols = ProtocolHandlerRegistry.getHandlerNames();
+        tableViewer.setInput(protocols);
+    }
+
+    private static void createColumns(TableViewer tableViewer, TableColumnLayout tableColumnLayout) {
+        createColumn(tableViewer, tableColumnLayout, OdysseusNLS.Symbol, new CellLabelProvider() {
+            @Override
+            public void update(ViewerCell cell) {
+                cell.setText(((String) cell.getElement()));
+            }
+        }, 5);
+    }
+
+    private static TableViewerColumn createColumn(TableViewer tableViewer, TableColumnLayout tableColumnLayout, String title, CellLabelProvider labelProvider, int weight) {
+        TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
+        column.getColumn().setText(title);
+        column.setLabelProvider(labelProvider);
+        tableColumnLayout.setColumnData(column.getColumn(), new ColumnWeightData(weight, 25, true));
+        return column;
+    }
+
+}

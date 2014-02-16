@@ -28,6 +28,22 @@
             restorable="true">
       </view>
       <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.server.views.access.ProtocolsView"
+            icon="icons/protocols.png"
+            id="de.uniol.inf.is.odysseus.rcp.views.ProtocolsView"
+            name="Protocols"
+            restorable="true">
+      </view>
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.server.views.access.TransportsView"
+            icon="icons/transports.png"
+            id="de.uniol.inf.is.odysseus.rcp.views.TransportsView"
+            name="Transports"
+            restorable="true">
+      </view>
+      <view
             allowMultiple="false"
             category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.server.views.mepfunctions.MEPFunctionsView"
