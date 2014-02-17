@@ -11,6 +11,7 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.generator.StreamServer;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.ConstantValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.TimeGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.BetaDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.BinomialDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.CauchyDistributionGenerator;
@@ -37,8 +38,13 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.UniformRea
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.WeibullDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.ZipfDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.AlternatingGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.CosineGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.DirichletEtaFunctionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.PrimeGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.SineGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.StepIncreaseGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.TangentGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.switching.AlternatingDurationSwitchGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.switching.SwitchGenerator;
 
@@ -83,9 +89,15 @@ public class Activator implements BundleActivator {
         generators.put("AlternatingGenerator".toUpperCase(), AlternatingGenerator.class);
         generators.put("IncreaseGenerator".toUpperCase(), IncreaseGenerator.class);
         generators.put("StepIncreaseGenerator".toUpperCase(), StepIncreaseGenerator.class);
+        generators.put("SineGenerator".toUpperCase(), SineGenerator.class);
+        generators.put("CosineGenerator".toUpperCase(), CosineGenerator.class);
+        generators.put("TangentGenerator".toUpperCase(), TangentGenerator.class);
+        generators.put("PrimeGenerator".toUpperCase(), PrimeGenerator.class);
+        generators.put("DirichletEtaFunctionGenerator".toUpperCase(), DirichletEtaFunctionGenerator.class);
+        generators.put("TimeGenerator".toUpperCase(), TimeGenerator.class);
         generators.put("AlternatingDurationSwitchGenerator".toUpperCase(), AlternatingDurationSwitchGenerator.class);
         generators.put("SwitchGenerator".toUpperCase(), SwitchGenerator.class);
-        
+
     }
 
     static BundleContext getContext() {
