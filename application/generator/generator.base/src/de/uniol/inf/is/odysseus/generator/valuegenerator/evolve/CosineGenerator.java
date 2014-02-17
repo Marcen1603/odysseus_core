@@ -35,6 +35,14 @@ public class CosineGenerator extends AbstractValueGenerator {
         this.increase = increase;
     }
 
+    public CosineGenerator(IErrorModel errorModel, double start) {
+        this(errorModel, start, 1.0);
+    }
+
+    public CosineGenerator(IErrorModel errorModel) {
+        this(errorModel, 0.0, 1.0);
+    }
+
     @Override
     public double generateValue() {
         current = current + increase;
