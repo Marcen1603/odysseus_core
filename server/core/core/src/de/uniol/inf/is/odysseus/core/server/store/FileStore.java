@@ -58,6 +58,9 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 		File f = FileUtils.openOrCreateFile(path);
 		ObjectInputStream in = null;
 		try {
+			if(!f.exists()){
+				System.out.println("File "+f.getAbsolutePath()+" does not exist!");
+			}
 			in = new OsgiObjectInputStream(new FileInputStream(f));
 			IDType key = null;
 			try {
