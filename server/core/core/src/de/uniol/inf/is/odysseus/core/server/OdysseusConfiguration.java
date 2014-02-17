@@ -222,17 +222,25 @@ public class OdysseusConfiguration {
 	}
 
 	public static String getFileProperty(String key, String tenantName) {
+		String home = odysseusDefaultHome;
+		if(!home.endsWith(File.separator)){
+			home = home + File.separator;
+		}
 		if (tenantName != null && tenantName.length() > 0) {
-			return odysseusDefaultHome + File.separator + "store"
+			return home + "store"
 					+ File.separator + tenantName + File.separator + get(key);
 		} else {
-			return odysseusDefaultHome + File.separator + "store"
+			return home + "store"
 					+ File.separator +"_default"+ File.separator+ get(key);
 		}
 	}
 
 	public static String getFileProperty(String key) {
-			return odysseusDefaultHome + File.separator + "store"
+		String home = odysseusDefaultHome;
+		if(!home.endsWith(File.separator)){
+			home = home + File.separator;
+		}
+		return home + "store"
 					+ File.separator + get(key);
 	}
 
