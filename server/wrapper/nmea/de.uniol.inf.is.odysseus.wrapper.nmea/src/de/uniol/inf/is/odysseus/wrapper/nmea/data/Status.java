@@ -30,8 +30,8 @@ public enum Status {
 
 	/**
 	 * Gets the nmea representation of this enum.
-	 * @return
-	 * Nmea String.
+	 * 
+	 * @return Nmea String.
 	 */
 	public String getShortName() {
 		return shortName;
@@ -39,18 +39,17 @@ public enum Status {
 
 	/**
 	 * Parses the given String and returns the enum.
+	 * 
 	 * @param s
-	 * Nmea String.
-	 * @return
-	 * Enum for the given String.
+	 *            Nmea String.
+	 * @return Enum for the given String.
 	 */
 	public static Status parse(String s) {
-		if (s.equals("A")) {
-			return OK;
-		} else if (s.equals("V")) {
-			return WARNING;
-		} else {
-			return NULL;
+		for (Status r : Status.class.getEnumConstants()) {
+			if (r.shortName.equals(s)) {
+				return r;
+			}
 		}
+		return NULL;
 	}
 }

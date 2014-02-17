@@ -91,6 +91,7 @@ public class NioUdpConnection implements IConnection, ReadWriteSelectorHandler {
 					this.writeBuffer.clear();
 					// this.resumeReading();
 				}
+				channel.close();
 			}
 		} catch (IOException e) {
 			this.close();

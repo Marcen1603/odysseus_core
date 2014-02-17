@@ -53,20 +53,11 @@ public enum SignalIntegrity {
 	 * Enum for the given String.
 	 */
 	public static SignalIntegrity parse(String s) {
-		if (s.equals("A")) {
-			return AUTONOMOUS_MODE;
-		} else if (s.equals("D")) {
-			return DIFFERENTIAL_MODE;
-		} else if (s.equals("E")) {
-			return ESTIMATED_MODE;
-		} else if (s.equals("M")) {
-			return MANUAL_INPUT_MODE;
-		} else if (s.equals("S")) {
-			return SIMULATED_MODE;
-		} else if (s.equals("N")) {
-			return NOT_VALID;
-		} else {
-			return NULL;
+		for (SignalIntegrity r : SignalIntegrity.class.getEnumConstants()) {
+			if (r.shortName.equals(s)) {
+				return r;
+			}
 		}
+		return NULL;
 	}
 }

@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.Sentence;
 public class SentenceUtils {
 	/** Regular expression for a sentence with a checksum. */
 	private static final Pattern regExpChecksum = Pattern
-			.compile("^[$|!]{1}[A-Z0-9]{3,10}[,][\\x20-\\x7F]*[*][A-F0-9]{2}$");
+			.compile("^[$|!]{1}[A-Z0-9]{3,10}[,][\\x20-\\x7F]*[*][A-Fa-f0-9]{2}$");
 
 	/** Regular expression for a sentence without a checksum. */
 	private static final Pattern regExpNoChecksum = Pattern
@@ -57,7 +57,7 @@ public class SentenceUtils {
 			int i = nmea.indexOf(Sentence.CHECKSUM_DELIMITER);
 			if (i > 0) {
 				String sum = nmea.substring(++i, nmea.length());
-				return sum.equals(calculateChecksum(nmea));
+				return sum.equalsIgnoreCase(calculateChecksum(nmea));
 			} else {
 				return true;
 			}

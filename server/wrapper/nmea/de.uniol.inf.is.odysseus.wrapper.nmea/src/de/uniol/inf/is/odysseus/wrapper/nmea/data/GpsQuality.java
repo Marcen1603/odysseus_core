@@ -47,14 +47,11 @@ public enum GpsQuality {
 	 * Enum for the given String.
 	 */
 	public static GpsQuality parse(String s) {
-		if (s.equals("1")) {
-			return GPS;
-		} else if (s.equals("2")) {
-			return DGPS;
-		} else if (s.equals("6")) {
-			return ESTIMATE;
-		} else {
-			return INVALID;
+		for (GpsQuality e : GpsQuality.class.getEnumConstants()) {
+			if (s.equals(String.valueOf(e.value))) {
+				return e;
+			}
 		}
+		return INVALID;
 	}
 }

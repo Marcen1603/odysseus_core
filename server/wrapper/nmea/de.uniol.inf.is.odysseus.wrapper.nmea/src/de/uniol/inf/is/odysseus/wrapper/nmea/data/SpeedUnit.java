@@ -1,21 +1,21 @@
 package de.uniol.inf.is.odysseus.wrapper.nmea.data;
 
 /**
- * Enumeration type for units. Also provides method to parse and representation
+ * Enumeration type for speed units. Also provides method to parse and representation
  * in nmea.
  * 
  * @author jboger <juergen.boger@offis.de>
  * 
  */
-public enum Unit {
-	/** Meters. */
-	METERS("M"),
-	/** Kilometers. */
-	KILOMETERS("K"),
-	/** Kilometers. */
-	STATUTE_MILES("S"),
-	/** Kilometers. */
-	NAUTICAL_MILES("N"),
+public enum SpeedUnit {
+	/** Meters per second. */
+	METERS_PER_SECOND("M"),
+	/** Kilometers per Hour. */
+	KILOMETERS_PER_HOUR("K"),
+	/** Statute miles per hour. */
+	STATUTE_MILES_PER_HOUR("S"),
+	/** Knots. */
+	KNOTS("N"),
 	/** Invalid or not set. */
 	NULL("");
 
@@ -28,7 +28,7 @@ public enum Unit {
 	 * @param shortName
 	 *            Nmea representation.
 	 */
-	Unit(String shortName) {
+	SpeedUnit(String shortName) {
 		this.shortName = shortName;
 	}
 
@@ -48,8 +48,8 @@ public enum Unit {
 	 *            Nmea String.
 	 * @return Enum for the given String.
 	 */
-	public static Unit parse(String s) {
-		for (Unit r : Unit.class.getEnumConstants()) {
+	public static SpeedUnit parse(String s) {
+		for (SpeedUnit r : SpeedUnit.class.getEnumConstants()) {
 			if (r.shortName.equals(s)) {
 				return r;
 			}

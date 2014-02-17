@@ -54,6 +54,8 @@ public class NMEAProtocolHandler extends
 	protected BufferedReader reader;
 	/** Found next object to be returned for GenericPull. */
 	private KeyValueObject<? extends IMetaAttribute> next = null;
+	/** Delay on GenericPull. */
+	private long delay = 0;
 
 	public NMEAProtocolHandler() {
 	}
@@ -109,6 +111,12 @@ public class NMEAProtocolHandler extends
 	@Override
 	public KeyValueObject<? extends IMetaAttribute> getNext()
 			throws IOException {
+		if (delay > 0) {
+			try {
+				Thread.sleep(delay);
+			} catch (InterruptedException e) {
+			}
+		}
 		return next;
 	}
 
@@ -156,7 +164,16 @@ public class NMEAProtocolHandler extends
 	@Override
 	public void write(KeyValueObject<? extends IMetaAttribute> object)
 			throws IOException {
-		throw new IllegalArgumentException("Currently not implemented");
+		try {
+			Object obj = object.getMetadata("object");
+			if (!(obj instanceof Sentence)) {
+				return;
+			}
+			Sentence sentence = (Sentence) obj;
+			getTransportHandler().send(sentence.toNMEA().getBytes());
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
 	}
 
 	@Override
@@ -167,6 +184,7 @@ public class NMEAProtocolHandler extends
 		NMEAProtocolHandler instance = new NMEAProtocolHandler(direction,
 				access, dataHandler);
 		instance.setOptionsMap(options);
+		if (options.containsKey("delay")) instance.delay = Integer.parseInt(options.get("delay"));
 		return instance;
 	}
 

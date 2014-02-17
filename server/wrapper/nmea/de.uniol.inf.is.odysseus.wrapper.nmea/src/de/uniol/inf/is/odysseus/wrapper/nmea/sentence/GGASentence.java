@@ -130,7 +130,7 @@ public class GGASentence extends Sentence {
 		setValue(index++, ParseUtils.toString(time));
 		setValue(index++, ParseUtils.toString(latitude, 2));
 		setValue(index++, ParseUtils.toString(latitudeHem));
-		setValue(index++, ParseUtils.toString(latitude, 3));
+		setValue(index++, ParseUtils.toString(longitude, 3));
 		setValue(index++, ParseUtils.toString(longitudeHem));
 		setValue(index++, ParseUtils.toString(gpsQuality));
 		setValue(index++, ParseUtils.toString(numberOfSattelites));

@@ -180,7 +180,7 @@ public abstract class Sentence {
 			res = sb.toString();
 		}
 		String sum = SentenceUtils.calculateChecksum(res);
-		return res + CHECKSUM_DELIMITER + sum;
+		return res + CHECKSUM_DELIMITER + sum + TERMINATOR;
 	}
 
 	/**

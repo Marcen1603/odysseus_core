@@ -3,8 +3,12 @@ package de.uniol.inf.is.odysseus.wrapper.nmea.util;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Date;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.GpsQuality;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Hemisphere;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.Reference;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.SignalIntegrity;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.Source;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.SpeedUnit;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Status;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.TemperatureUnit;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Time;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Unit;
 
@@ -61,7 +65,7 @@ public class ParseUtils {
 				res.setHours(Integer.parseInt(s[0].substring(0, 2)));
 				res.setMinutes(Integer.parseInt(s[0].substring(2, 4)));
 				res.setSeconds(Integer.parseInt(s[0].substring(4, 6)));
-				res.setMilliSeconds(Integer.parseInt(s[1]));
+				res.setMilliSeconds(Integer.parseInt(s[1]) * 10);
 			} else {
 				res.setHours(Integer.parseInt(value.substring(0, 2)));
 				res.setMinutes(Integer.parseInt(value.substring(2, 4)));
@@ -82,7 +86,7 @@ public class ParseUtils {
 	 */
 	public static String toString(Time value) {
 		if (value.getMilliSeconds() > 0) { 
-			return String.format("%02d%02d%02d.%03d", value.getHours(), value.getMinutes(), value.getSeconds(), value.getMilliSeconds());
+			return String.format("%02d%02d%02d.%02d", value.getHours(), value.getMinutes(), value.getSeconds(), (value.getMilliSeconds() / 10));
 		} else {
 			return String.format("%02d%02d%02d", value.getHours(), value.getMinutes(), value.getSeconds());
 		}
@@ -182,6 +186,54 @@ public class ParseUtils {
 		} catch (Exception e) {
 			return Status.NULL;
 		}
+	}
+	
+	public static Reference parseReference(String value) {
+		try {
+			return Reference.parse(value);
+		} catch (Exception e) {
+			return Reference.NULL;
+		}
+	}
+	
+	public static String toString(Reference value) {
+		return value.getShortName();
+	}
+	
+	public static TemperatureUnit parseTemperatureUnit(String value) {
+		try {
+			return TemperatureUnit.parse(value);
+		} catch (Exception e) {
+			return TemperatureUnit.NULL;
+		}
+	}
+	
+	public static String toString(TemperatureUnit value) {
+		return value.getShortName();
+	}
+	
+	public static SpeedUnit parseSpeedUnit(String value) {
+		try {
+			return SpeedUnit.parse(value);
+		} catch (Exception e) {
+			return SpeedUnit.NULL;
+		}
+	}
+	
+	public static String toString(SpeedUnit value) {
+		return value.getShortName();
+	}
+	
+	public static Source parseSource(String value) {
+		try {
+			return Source.parse(value);
+		} catch (Exception e) {
+			return Source.NULL;
+		}
+	}
+	
+	public static String toString(Source value) {
+		return value.getShortName();
 	}
 	
 	public static String toString(Integer value) {

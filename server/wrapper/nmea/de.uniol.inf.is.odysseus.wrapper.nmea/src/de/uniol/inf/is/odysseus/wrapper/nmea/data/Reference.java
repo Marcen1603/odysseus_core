@@ -1,21 +1,17 @@
 package de.uniol.inf.is.odysseus.wrapper.nmea.data;
 
 /**
- * Enumeration type for units. Also provides method to parse and representation
- * in nmea.
+ * Enumeration type for relative reference measurements. Also provides method to
+ * parse and representation in nmea.
  * 
  * @author jboger <juergen.boger@offis.de>
  * 
  */
-public enum Unit {
-	/** Meters. */
-	METERS("M"),
-	/** Kilometers. */
-	KILOMETERS("K"),
-	/** Kilometers. */
-	STATUTE_MILES("S"),
-	/** Kilometers. */
-	NAUTICAL_MILES("N"),
+public enum Reference {
+	/** True value. */
+	TRUE("T"),
+	/** Relative value. */
+	RELATIVE("R"),
 	/** Invalid or not set. */
 	NULL("");
 
@@ -28,7 +24,7 @@ public enum Unit {
 	 * @param shortName
 	 *            Nmea representation.
 	 */
-	Unit(String shortName) {
+	Reference(String shortName) {
 		this.shortName = shortName;
 	}
 
@@ -48,8 +44,8 @@ public enum Unit {
 	 *            Nmea String.
 	 * @return Enum for the given String.
 	 */
-	public static Unit parse(String s) {
-		for (Unit r : Unit.class.getEnumConstants()) {
+	public static Reference parse(String s) {
+		for (Reference r : Reference.class.getEnumConstants()) {
 			if (r.shortName.equals(s)) {
 				return r;
 			}

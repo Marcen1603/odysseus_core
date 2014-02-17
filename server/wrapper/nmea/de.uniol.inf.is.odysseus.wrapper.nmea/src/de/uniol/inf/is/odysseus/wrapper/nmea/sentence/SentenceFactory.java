@@ -41,8 +41,20 @@ public class SentenceFactory {
 	 */
 	private SentenceFactory() {
 		registerSentenceType("RMC", RMCSentence.class);
+		registerSentenceType("GLL", GLLSentence.class);
+		registerSentenceType("VTG", VTGSentence.class);
+		registerSentenceType("VBW", VBWSentence.class);
+		registerSentenceType("RSA", RSASentence.class);
+		registerSentenceType("MWV", MWVSentence.class);
+		registerSentenceType("MTW", MTWSentence.class);
+		registerSentenceType("RPM", RPMSentence.class);
+		registerSentenceType("HDT", HDTSentence.class);
+		registerSentenceType("DPT", DPTSentence.class);
 		registerSentenceType("GGA", GGASentence.class);
 		registerSentenceType("HDG", HDGSentence.class);
+		registerSentenceType("TTM", TTMSentence.class);
+		registerSentenceType("VDM", AISSentence.class);
+		registerSentenceType("VDO", AISSentence.class);
 	}
 	
 	/**

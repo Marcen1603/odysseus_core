@@ -54,16 +54,11 @@ public enum Hemisphere {
 	 * Enum for the given String.
 	 */
 	public static Hemisphere parse(String s) {
-		if (s.equals("N")) {
-			return NORTH;
-		} else if (s.equals("E")) {
-			return EAST;
-		} else if (s.equals("S")) {
-			return SOUTH;
-		} else if (s.equals("W")) {
-			return WEST;
-		} else {
-			return NULL;
+		for (Hemisphere r : Hemisphere.class.getEnumConstants()) {
+			if (r.shortName.equals(s)) {
+				return r;
+			}
 		}
+		return NULL;
 	}
 }
