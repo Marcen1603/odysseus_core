@@ -47,10 +47,9 @@ public class OrOperator extends AbstractBinaryOperator<Boolean> {
 	}
 
 	@Override
-	public int getPrecedence() {
-	    //TODO Change to 15 because of XOR operator (CKu 20140216)
-		return 14;
-	}
+    public int getPrecedence() {
+        return 15;
+    }
 
 	@Override
 	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
