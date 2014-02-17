@@ -57,12 +57,9 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 	private void loadCache() throws IOException {
 		File f = FileUtils.openOrCreateFile(path);
 		ObjectInputStream in = null;
-		try {
-			if(!f.exists()){
-				System.out.println("File "+f.getAbsolutePath()+" does not exist!");
-			}
+		try {			
 			in = new OsgiObjectInputStream(new FileInputStream(f));
-			IDType key = null;
+			IDType key = null;			
 			try {
 				while ((key = (IDType) in.readObject()) != null) {
 					// Could be unreadable input
