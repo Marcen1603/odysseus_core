@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class StoreFunction extends AbstractFunction<Double> {
+public class StoredValueFunction extends AbstractFunction<Double> {
 
     /**
      * 
@@ -44,7 +44,7 @@ public class StoreFunction extends AbstractFunction<Double> {
 
     @Override
     public String getSymbol() {
-        return "store";
+        return "storedValue";
     }
 
     @Override
