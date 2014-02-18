@@ -26,14 +26,14 @@ public class TimeGenerator extends AbstractValueGenerator {
 
     private final Calendar calendar;
 
-    public TimeGenerator(IErrorModel errorModel) {
+    public TimeGenerator(final IErrorModel errorModel) {
         super(errorModel);
         this.calendar = Calendar.getInstance();
     }
 
     @Override
     public double generateValue() {
-        return calendar.getTimeInMillis();
+        return this.calendar.getTimeInMillis();
     }
 
     @Override

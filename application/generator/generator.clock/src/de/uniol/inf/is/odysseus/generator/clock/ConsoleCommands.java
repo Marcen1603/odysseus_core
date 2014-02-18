@@ -12,19 +12,19 @@ import org.eclipse.osgi.framework.console.CommandProvider;
  */
 public class ConsoleCommands implements CommandProvider {
 
-    public void _stopClients(CommandInterpreter ci) {
+    public void _stopClients(final CommandInterpreter ci) {
         Activator.stop();
     }
 
-    public void _pauseClients(CommandInterpreter ci) {
+    public void _pauseClients(final CommandInterpreter ci) {
         Activator.pause();
     }
 
-    public void _proceedClients(CommandInterpreter ci) {
+    public void _proceedClients(final CommandInterpreter ci) {
         Activator.proceed();
     }
 
-    public void _stats(CommandInterpreter ci) {
+    public void _stats(final CommandInterpreter ci) {
         Activator.printStatus();
     }
 

@@ -25,24 +25,24 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractValueGenerator;
  */
 public class DirichletEtaFunctionGenerator extends AbstractValueGenerator {
 
-    private double s;
+    private final double s;
     private int k;
 
-    public DirichletEtaFunctionGenerator(IErrorModel errorModel, double s) {
+    public DirichletEtaFunctionGenerator(final IErrorModel errorModel, final double s) {
         super(errorModel);
         this.s = s;
     }
 
     @Override
     public double generateValue() {
-        double value = FastMath.pow(-1.0, k - 1.0) / FastMath.pow(k, s);
-        k++;
+        final double value = FastMath.pow(-1.0, this.k - 1.0) / FastMath.pow(this.k, this.s);
+        this.k++;
         return value;
     }
 
     @Override
     public void initGenerator() {
-        k = 0;
+        this.k = 0;
     }
 
 }

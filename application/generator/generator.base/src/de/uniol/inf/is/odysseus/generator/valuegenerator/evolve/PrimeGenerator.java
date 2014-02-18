@@ -26,9 +26,9 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractValueGenerator;
 public class PrimeGenerator extends AbstractValueGenerator {
 
     private int current;
-    private int start;
+    private final int start;
 
-    public PrimeGenerator(IErrorModel errorModel, int start) {
+    public PrimeGenerator(final IErrorModel errorModel, final int start) {
         super(errorModel);
         this.start = start;
         this.current = start;
@@ -36,14 +36,14 @@ public class PrimeGenerator extends AbstractValueGenerator {
 
     @Override
     public double generateValue() {
-        int prime = Primes.nextPrime(current);
-        current++;
+        final int prime = Primes.nextPrime(this.current);
+        this.current++;
         return prime;
     }
 
     @Override
     public void initGenerator() {
-        current = start;
+        this.current = this.start;
     }
 
 }

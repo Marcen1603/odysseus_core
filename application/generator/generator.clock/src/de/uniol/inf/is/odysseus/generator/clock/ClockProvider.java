@@ -31,22 +31,22 @@ public class ClockProvider extends AbstractDataGenerator {
      */
     @Override
     public synchronized List<DataTuple> next() {
-        DataTuple tuple = new DataTuple();
+        final DataTuple tuple = new DataTuple();
         tuple.addLong(this.generator.nextValue());
         try {
             Thread.sleep(1000);
         }
-        catch (InterruptedException e) {
+        catch (final InterruptedException e) {
             e.printStackTrace();
         }
-        List<DataTuple> list = new ArrayList<DataTuple>();
+        final List<DataTuple> list = new ArrayList<DataTuple>();
         list.add(tuple);
         return list;
     }
 
     @Override
     public void process_init() {
-        generator = new TimeGenerator(new NoError());
+        this.generator = new TimeGenerator(new NoError());
     }
 
     @Override
@@ -60,11 +60,11 @@ public class ClockProvider extends AbstractDataGenerator {
     }
 
     public static void main(final String[] args) {
-        Activator activator = new Activator();
+        final Activator activator = new Activator();
         try {
             activator.start(null);
         }
-        catch (Exception e) {
+        catch (final Exception e) {
             e.printStackTrace();
         }
     }

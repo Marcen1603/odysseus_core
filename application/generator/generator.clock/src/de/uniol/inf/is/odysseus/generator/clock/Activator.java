@@ -15,7 +15,7 @@ public class Activator implements BundleActivator {
     private static List<StreamServer> server = new ArrayList<StreamServer>();
 
     static BundleContext getContext() {
-        return context;
+        return Activator.context;
     }
 
     /*
@@ -26,15 +26,15 @@ public class Activator implements BundleActivator {
      * )
      */
     @Override
-    public void start(BundleContext bundleContext) throws Exception {
+    public void start(final BundleContext bundleContext) throws Exception {
         if (bundleContext != null) {
             Activator.context = bundleContext;
 
             bundleContext.registerService(CommandProvider.class.getName(), new ConsoleCommands(), null);
         }
-        StreamServer genericServer = new StreamServer(54325, new ClockProvider());
+        final StreamServer genericServer = new StreamServer(54325, new ClockProvider());
         genericServer.start();
-        server.add(genericServer);
+        Activator.server.add(genericServer);
     }
 
     /*
@@ -44,7 +44,7 @@ public class Activator implements BundleActivator {
      * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
     @Override
-    public void stop(BundleContext bundleContext) throws Exception {
+    public void stop(final BundleContext bundleContext) throws Exception {
         Activator.context = null;
     }
 
@@ -52,24 +52,24 @@ public class Activator implements BundleActivator {
      * 
      */
     public static void pause() {
-        synchronized (server) {
-            for (StreamServer s : server) {
+        synchronized (Activator.server) {
+            for (final StreamServer s : Activator.server) {
                 s.pauseClients();
             }
         }
     }
 
     public static void proceed() {
-        synchronized (server) {
-            for (StreamServer s : server) {
+        synchronized (Activator.server) {
+            for (final StreamServer s : Activator.server) {
                 s.proceedClients();
             }
         }
     }
 
     public static void stop() {
-        synchronized (server) {
-            for (StreamServer s : server) {
+        synchronized (Activator.server) {
+            for (final StreamServer s : Activator.server) {
                 s.stopClients();
             }
         }
@@ -79,8 +79,8 @@ public class Activator implements BundleActivator {
      * 
      */
     public static void printStatus() {
-        synchronized (server) {
-            for (StreamServer s : server) {
+        synchronized (Activator.server) {
+            for (final StreamServer s : Activator.server) {
                 s.printStats();
             }
         }
