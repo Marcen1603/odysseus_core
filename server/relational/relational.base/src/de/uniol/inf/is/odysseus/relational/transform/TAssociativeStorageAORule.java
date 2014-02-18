@@ -40,7 +40,7 @@ public class TAssociativeStorageAORule extends AbstractTransformationRule<Associ
         else {
             throw new TransformationException("Dimension not supported");
         }
-        AssociativeStorageManager.create(operator.getName(), store);
+        AssociativeStorageManager.create(operator.getStorageName(), store);
         AssociativeStoragePO<Tuple<?>> storage = new AssociativeStoragePO<Tuple<?>>(store, operator.getHierachyPositions(), operator.getIndexPositions(), operator.getValuePosition());
 
         defaultExecute(operator, storage, config, true, true);

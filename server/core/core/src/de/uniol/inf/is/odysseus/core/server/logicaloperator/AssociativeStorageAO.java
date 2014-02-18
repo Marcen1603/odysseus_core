@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -30,6 +31,7 @@ public class AssociativeStorageAO extends AbstractLogicalOperator {
     private List<SDFAttribute> indexAttributes;
     private SDFAttribute valueAttribute;
     private List<Integer> sizes;
+    private String storageName;
 
     /**
  * 
@@ -46,6 +48,7 @@ public class AssociativeStorageAO extends AbstractLogicalOperator {
         this.indexAttributes = operator.indexAttributes;
         this.valueAttribute = operator.valueAttribute;
         this.sizes = operator.sizes;
+        this.storageName = operator.storageName;
     }
 
     @Parameter(name = "HIERARCHY", optional = false, type = ResolvedSDFAttributeParameter.class, isList = true)
@@ -89,6 +92,15 @@ public class AssociativeStorageAO extends AbstractLogicalOperator {
         this.sizes = sizes;
     }
 
+    public String getStorageName() {
+		return storageName;
+	}
+    
+    @Parameter(name = "StorageName", optional = false, type = StringParameter.class)
+    public void setStorageName(String storageName) {
+		this.storageName = storageName;
+	}
+    
     /**
      * @return the sizes
      */
