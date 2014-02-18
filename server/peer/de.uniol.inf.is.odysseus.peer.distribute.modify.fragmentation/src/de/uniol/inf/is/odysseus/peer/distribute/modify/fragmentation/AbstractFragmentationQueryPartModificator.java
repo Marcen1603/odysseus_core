@@ -1058,8 +1058,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		else if(sourceName == null)
 			throw new NullPointerException("Name of the source to be fragmented must be not null!");
 		
-		if(operator.getSubscribedToSource().isEmpty() && operator instanceof AccessAO && 
-				((AccessAO) operator).getAccessAOName().getResourceName().equals(sourceName))
+		if(operator.getSubscribedToSource().isEmpty() && operator instanceof AbstractAccessAO && 
+				((AbstractAccessAO) operator).getAccessAOName().getResourceName().equals(sourceName))
 			return true;
 		
 		for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
