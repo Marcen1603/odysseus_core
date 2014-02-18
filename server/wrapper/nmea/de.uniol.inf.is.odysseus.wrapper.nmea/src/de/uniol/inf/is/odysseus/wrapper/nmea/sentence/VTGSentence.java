@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.wrapper.nmea.sentence;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.wrapper.nmea.data.Status;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.Reference;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Unit;
 import de.uniol.inf.is.odysseus.wrapper.nmea.util.ParseUtils;
 
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.util.ParseUtils;
  * <li>K = Kilometers Per Hour</li>
  * </ol>
  * 
- * @author aoppermann <alexander.oppermann@offis.de>
+ * @author jboger <juergen.boger@offis.de>
  *
  */
 public class VTGSentence extends Sentence{
@@ -42,21 +42,21 @@ public class VTGSentence extends Sentence{
 	public static final int FIELD_COUNT = 8;
 	
 	/** Track Degrees */
-	private Double degreesT;
+	private Double headingTrack;
 	/** T = True */
-	private Status status;
+	private Reference trackReference;
 	/** Track Degrees */
-	private Double degreesM;
+	private Double headingMagnetic;
 	/** M = Magnetic */
-	private String magnetic;
+	private Reference magneticReference;
 	/** Speed Knots */
 	private Double speedKnots;
 	/** N = Knots */
-	private Unit knots;
+	private Unit speedKnotsUnits;
 	/** Speed Kilometers Per Hour */
 	private Double speedKilometers;
 	/** K = Kilometers per Hour */
-	private Unit kilometersPerHour;
+	private Unit speedKilometersUnits;
 	
 	/**
 	 * Default constructor for writing. Empty Sentence to fill attributes and
@@ -79,102 +79,102 @@ public class VTGSentence extends Sentence{
 	@Override
 	protected void decode() {
 		int index = 0;
-		degreesT = ParseUtils.parseDouble(getValue(index++));
-		status = ParseUtils.parseStatus(getValue(index++));
-		degreesM = ParseUtils.parseDouble(getValue(index++));
-		magnetic = getValue(index++);
+		headingTrack = ParseUtils.parseDouble(getValue(index++));
+		trackReference = ParseUtils.parseReference(getValue(index++));
+		headingMagnetic = ParseUtils.parseDouble(getValue(index++));
+		magneticReference = ParseUtils.parseReference(getValue(index++));
 		speedKnots = ParseUtils.parseDouble(getValue(index++));
-		knots = ParseUtils.parseUnit(getValue(index++));
+		speedKnotsUnits = ParseUtils.parseUnit(getValue(index++));
 		speedKilometers = ParseUtils.parseDouble(getValue(index++));
-		kilometersPerHour = ParseUtils.parseUnit(getValue(index++));
+		speedKilometersUnits = ParseUtils.parseUnit(getValue(index++));
 	}
 
 	@Override
 	protected void encode() {
 		int index = 0;
-		setValue(index++, ParseUtils.toString(degreesT));
-		setValue(index++, ParseUtils.toString(status));
-		setValue(index++, ParseUtils.toString(degreesM));
-		setValue(index++, magnetic);
+		setValue(index++, ParseUtils.toString(headingTrack));
+		setValue(index++, ParseUtils.toString(trackReference));
+		setValue(index++, ParseUtils.toString(headingMagnetic));
+		setValue(index++, ParseUtils.toString(magneticReference));
 		setValue(index++, ParseUtils.toString(speedKnots));
-		setValue(index++, ParseUtils.toString(knots));
+		setValue(index++, ParseUtils.toString(speedKnotsUnits));
 		setValue(index++, ParseUtils.toString(speedKilometers));
-		setValue(index++, ParseUtils.toString(kilometersPerHour));
+		setValue(index++, ParseUtils.toString(speedKilometersUnits));
 	}
 
 	@Override
 	protected void fillMap(Map<String, Object> res) {
-		if (degreesT != null) res.put("degreesT", degreesT);
-		if (status != null) res.put("status", status);
-		if (degreesM != null) res.put("degreesM", degreesM);
-		if (magnetic != null) res.put("magnetic", magnetic);
+		if (headingTrack != null) res.put("headingTrack", headingTrack);
+		if (trackReference != Reference.NULL) res.put("trackReference", trackReference);
+		if (headingMagnetic != null) res.put("headingMagnetic", headingMagnetic);
+		if (magneticReference != Reference.NULL) res.put("magneticReference", magneticReference);
 		if (speedKnots != null) res.put("speedKnots", speedKnots);
-		if (knots != null) res.put("knots", knots);
+		if (speedKnotsUnits != Unit.NULL) res.put("speedKnotsUnits", speedKnotsUnits);
 		if (speedKilometers != null) res.put("speedKilometers", speedKilometers);
-		if (kilometersPerHour != null) res.put("kilometers", kilometersPerHour);
+		if (speedKilometersUnits != Unit.NULL) res.put("speedKilometersUnits", speedKilometersUnits);
 	}
 
-	public Double getDegreesT(){
-		return degreesT;
+	public Double getHeadingTrack() {
+		return headingTrack;
 	}
-	
-	public void setDegreesT(Double degreesT){
-		this.degreesT = degreesT;
+
+	public void setHeadingTrack(Double headingTrack) {
+		this.headingTrack = headingTrack;
 	}
-	
-	public Status getStatus(){
-		return status;
+
+	public Reference getTrackReference() {
+		return trackReference;
 	}
-	
-	public void setStatus(Status status){
-		this.status = status;
+
+	public void setTrackReference(Reference trackReference) {
+		this.trackReference = trackReference;
 	}
-	
-	public Double getDegreesM(){
-		return degreesM;
+
+	public Double getHeadingMagnetic() {
+		return headingMagnetic;
 	}
-	
-	public void setDegreesM(Double degreesM){
-		this.degreesM = degreesM;
+
+	public void setHeadingMagnetic(Double headingMagnetic) {
+		this.headingMagnetic = headingMagnetic;
 	}
-	
-	public String getMagnetic(){
-		return magnetic;
+
+	public Reference getMagneticReference() {
+		return magneticReference;
 	}
-	
-	public void setMagnetic(String magnetic){
-		this.magnetic = magnetic;
+
+	public void setMagneticReference(Reference magneticReference) {
+		this.magneticReference = magneticReference;
 	}
-	
-	public Double getSpeedKnots(){
+
+	public Double getSpeedKnots() {
 		return speedKnots;
 	}
-	
-	public void setSpeedKnots(Double speedKnots){
+
+	public void setSpeedKnots(Double speedKnots) {
 		this.speedKnots = speedKnots;
 	}
-	
-	public Unit getKnots(){
-		return knots;
+
+	public Unit getSpeedKnotsUnits() {
+		return speedKnotsUnits;
 	}
-	
-	public void setKnots(Unit knots){
-		this.knots = knots;
+
+	public void setSpeedKnotsUnits(Unit speedKnotsUnits) {
+		this.speedKnotsUnits = speedKnotsUnits;
 	}
-	
-	public Double getSpeedKilometers(){
+
+	public Double getSpeedKilometers() {
 		return speedKilometers;
 	}
-	
-	public void setSpeedKilometers(Double speedKilometers){
+
+	public void setSpeedKilometers(Double speedKilometers) {
 		this.speedKilometers = speedKilometers;
 	}
-	
-	public Unit getKilometersPerHour(){
-		return kilometersPerHour;
+
+	public Unit getSpeedKilometersUnits() {
+		return speedKilometersUnits;
 	}
-	
-	public void setKilometersPerHour(Unit kilometersPerHour){
-		this.kilometersPerHour = kilometersPerHour;
+
+	public void setSpeedKilometersUnits(Unit speedKilometersUnits) {
+		this.speedKilometersUnits = speedKilometersUnits;
 	}
 }

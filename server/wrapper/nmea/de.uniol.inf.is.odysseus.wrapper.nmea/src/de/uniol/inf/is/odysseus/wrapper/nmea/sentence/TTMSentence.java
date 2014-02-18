@@ -2,6 +2,11 @@ package de.uniol.inf.is.odysseus.wrapper.nmea.sentence;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.Acquisition;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.Reference;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.TargetNumber;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.TargetReference;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.TargetStatus;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Time;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Unit;
 import de.uniol.inf.is.odysseus.wrapper.nmea.util.ParseUtils;
@@ -50,19 +55,19 @@ public class TTMSentence extends Sentence {
 	public static final int FIELD_COUNT = 15;
 	
 	/** Target Number */
-	private String targetNumber;
+	private TargetNumber targetNumber;
 	/** Target Distance */
 	private Double targetDistance;
 	/** Bearing from own ship */
 	private Double bearing;
 	/** Bearing Units */
-	private String bearingUnit;
+	private Reference bearingUnit;
 	/** Target speed */
 	private Double targetSpeed;
 	/** Target Course */
 	private Double targetCourse;
 	/** Course Units */
-	private String courseUnit;
+	private Reference courseUnit;
 	/** Distance of closest-point-of-approach */
 	private Double closestPointOfApproach;
 	/** Time until closest-point-of-approach "-" means increasing */
@@ -72,13 +77,13 @@ public class TTMSentence extends Sentence {
 	/** Target name */
 	private String targetLabel;
 	/** Target Status (T = Target, L = Lost target, Q = Target being acquired) */
-	private String targetStatus;
+	private TargetStatus targetStatus;
 	/** Reference Target (R = Reference target, blank = designated fixed target) */
-	private String referenceTarget;
+	private TargetReference referenceTarget;
 	/** Time (UTC) */
 	private Time time;
 	/** Type acquisition (M = manual, A = automatic) */
-	private String typeAcquisition;
+	private Acquisition typeAcquisition;
 	
 	/**
 	 * Default constructor for writing. Empty Sentence to fill attributes and
@@ -100,67 +105,67 @@ public class TTMSentence extends Sentence {
 	@Override
 	protected void decode() {
 		int index = 0;
-		targetNumber = getValue(index++);
+		targetNumber = ParseUtils.parseTargetNumber(getValue(index++));
 		targetDistance = ParseUtils.parseDouble(getValue(index++));
 		bearing = ParseUtils.parseDouble(getValue(index++));
-		bearingUnit = getValue(index++);
+		bearingUnit = ParseUtils.parseReference(getValue(index++));
 		targetSpeed = ParseUtils.parseDouble(getValue(index++));
 		targetCourse = ParseUtils.parseDouble(getValue(index++));
-		courseUnit = getValue(index++);
+		courseUnit = ParseUtils.parseReference(getValue(index++));
 		closestPointOfApproach = ParseUtils.parseDouble(getValue(index++));
 		timeUntilClosestPoint = ParseUtils.parseDouble(getValue(index++));
 		distanceUnit = ParseUtils.parseUnit(getValue(index++));
 		targetLabel = getValue(index++);
-		targetStatus = getValue(index++);
-		referenceTarget = getValue(index++);
+		targetStatus = ParseUtils.parseTargetStatus(getValue(index++));
+		referenceTarget = ParseUtils.parseTargetReference(getValue(index++));
 		time = ParseUtils.parseTime(getValue(index++));
-		typeAcquisition = getValue(index++);
+		typeAcquisition = ParseUtils.parseAcquisition(getValue(index++));
 	}
 
 	@Override
 	protected void encode() {
 		int index = 0;
-		setValue(index++, targetNumber);
+		setValue(index++, ParseUtils.toString(targetNumber));
 		setValue(index++, ParseUtils.toString(targetDistance));
 		setValue(index++, ParseUtils.toString(bearing));
-		setValue(index++, bearingUnit);
+		setValue(index++, ParseUtils.toString(bearingUnit));
 		setValue(index++, ParseUtils.toString(targetSpeed));
 		setValue(index++, ParseUtils.toString(targetCourse));
-		setValue(index++, courseUnit);
+		setValue(index++, ParseUtils.toString(courseUnit));
 		setValue(index++, ParseUtils.toString(closestPointOfApproach));
 		setValue(index++, ParseUtils.toString(timeUntilClosestPoint));
 		setValue(index++, ParseUtils.toString(distanceUnit));
 		setValue(index++, targetLabel);
-		setValue(index++, targetStatus);
-		setValue(index++, referenceTarget);
+		setValue(index++, ParseUtils.toString(targetStatus));
+		setValue(index++, ParseUtils.toString(referenceTarget));
 		setValue(index++, ParseUtils.toString(time));
-		setValue(index++, typeAcquisition);
+		setValue(index++, ParseUtils.toString(typeAcquisition));
 	}
 
 	@Override
 	protected void fillMap(Map<String, Object> res) {
-		if (targetNumber != null) res.put("targetNumber", targetNumber);
+		if (targetNumber != null) res.put("targetNumber", targetNumber.getNumber());
 		if (targetDistance != null) res.put("targetDistance", targetDistance);
 		if (bearing != null) res.put("bearing", bearing);
-		if (bearingUnit != null) res.put("bearingUnit", bearingUnit);
+		if (bearingUnit != Reference.NULL) res.put("bearingUnit", bearingUnit);
 		if (targetSpeed != null) res.put("targetSpeed", targetSpeed);
 		if (targetCourse != null) res.put("targetCourse", targetCourse);
-		if (courseUnit != null) res.put("courseUnit", courseUnit);
+		if (courseUnit != Reference.NULL) res.put("courseUnit", courseUnit);
 		if (closestPointOfApproach != null) res.put("closestPointOfApproach", closestPointOfApproach);
 		if (timeUntilClosestPoint != null) res.put("timeUntilClosestPoint", timeUntilClosestPoint);
 		if (distanceUnit != Unit.NULL) res.put("distanceUnit", distanceUnit);
 		if (targetLabel != null) res.put("targetLabel", targetLabel);
-		if (targetStatus != null) res.put("targetStatus", targetStatus);
+		if (targetStatus != TargetStatus.NULL) res.put("targetStatus", targetStatus);
 		if (referenceTarget != null) res.put("referenceTarget", referenceTarget);
 		if (time != null) time.addToMap("time", res);
-		if (typeAcquisition != null) res.put("typeAcquisition", typeAcquisition);
+		if (typeAcquisition != Acquisition.NULL) res.put("typeAcquisition", typeAcquisition);
 	}
 
-	public String getTargetNumber() {
+	public TargetNumber getTargetNumber() {
 		return targetNumber;
 	}
 
-	public void setTargetNumber(String targetNumber) {
+	public void setTargetNumber(TargetNumber targetNumber) {
 		this.targetNumber = targetNumber;
 	}
 
@@ -180,11 +185,11 @@ public class TTMSentence extends Sentence {
 		this.bearing = bearing;
 	}
 
-	public String getBearingUnit() {
+	public Reference getBearingUnit() {
 		return bearingUnit;
 	}
 
-	public void setBearingUnit(String bearingUnit) {
+	public void setBearingUnit(Reference bearingUnit) {
 		this.bearingUnit = bearingUnit;
 	}
 
@@ -204,11 +209,11 @@ public class TTMSentence extends Sentence {
 		this.targetCourse = targetCourse;
 	}
 
-	public String getCourseUnit() {
+	public Reference getCourseUnit() {
 		return courseUnit;
 	}
 
-	public void setCourseUnit(String courseUnit) {
+	public void setCourseUnit(Reference courseUnit) {
 		this.courseUnit = courseUnit;
 	}
 
@@ -244,19 +249,19 @@ public class TTMSentence extends Sentence {
 		this.targetLabel = targetLabel;
 	}
 
-	public String getTargetStatus() {
+	public TargetStatus getTargetStatus() {
 		return targetStatus;
 	}
 
-	public void setTargetStatus(String targetStatus) {
+	public void setTargetStatus(TargetStatus targetStatus) {
 		this.targetStatus = targetStatus;
 	}
 
-	public String getReferenceTarget() {
+	public TargetReference getReferenceTarget() {
 		return referenceTarget;
 	}
 
-	public void setReferenceTarget(String referenceTarget) {
+	public void setReferenceTarget(TargetReference referenceTarget) {
 		this.referenceTarget = referenceTarget;
 	}
 
@@ -268,11 +273,11 @@ public class TTMSentence extends Sentence {
 		this.time = time;
 	}
 
-	public String getTypeAcquisition() {
+	public Acquisition getTypeAcquisition() {
 		return typeAcquisition;
 	}
 
-	public void setTypeAcquisition(String typeAcquisition) {
+	public void setTypeAcquisition(Acquisition typeAcquisition) {
 		this.typeAcquisition = typeAcquisition;
 	}
 }

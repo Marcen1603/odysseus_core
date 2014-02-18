@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.nmea.util;
 
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.Acquisition;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Date;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.GpsQuality;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Hemisphere;
@@ -8,6 +9,9 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.data.SignalIntegrity;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Source;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.SpeedUnit;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Status;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.TargetNumber;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.TargetReference;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.TargetStatus;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.TemperatureUnit;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Time;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Unit;
@@ -20,6 +24,28 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.data.Unit;
  * 
  */
 public class ParseUtils {
+	/**
+	 * Parses a given String to a Target Number.
+	 * 
+	 * @param value
+	 *            String.
+	 * @return A TargetNumber.
+	 */
+	public static TargetNumber parseTargetNumber(String value) {
+		return TargetNumber.parse(value);
+	}
+	
+	/**
+	 * Converts the given TargetNumber to a two digit number.
+	 * 
+	 * @param number
+	 *            The TargetNumber
+	 * @return Two digit nmea representation.
+	 */
+	public static String toString(TargetNumber number) {
+		return number.toString();
+	}
+	
 	/**
 	 * Parses a given String to a Date.
 	 * 
@@ -233,6 +259,42 @@ public class ParseUtils {
 	}
 	
 	public static String toString(Source value) {
+		return value.getShortName();
+	}
+	
+	public static Acquisition parseAcquisition(String value) {
+		try {
+			return Acquisition.parse(value);
+		} catch (Exception e) {
+			return Acquisition.NULL;
+		}
+	}
+	
+	public static String toString(Acquisition value) {
+		return value.getShortName();
+	}
+	
+	public static TargetStatus parseTargetStatus(String value) {
+		try {
+			return TargetStatus.parse(value);
+		} catch (Exception e) {
+			return TargetStatus.NULL;
+		}
+	}
+	
+	public static String toString(TargetStatus value) {
+		return value.getShortName();
+	}
+	
+	public static TargetReference parseTargetReference(String value) {
+		try {
+			return TargetReference.parse(value);
+		} catch (Exception e) {
+			return TargetReference.NOT_DESIGNATED;
+		}
+	}
+	
+	public static String toString(TargetReference value) {
 		return value.getShortName();
 	}
 	

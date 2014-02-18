@@ -1,19 +1,17 @@
 package de.uniol.inf.is.odysseus.wrapper.nmea.data;
 
 /**
- * Enumeration type for relative reference measurements. Also provides method to
- * parse and representation in nmea.
+ * Enumeration type for acquisition. Also provides method to parse and representation
+ * in nmea.
  * 
  * @author jboger <juergen.boger@offis.de>
  * 
  */
-public enum Reference {
-	/** True value. */
-	TRUE("T"),
-	/** Relative value. */
-	RELATIVE("R"),
-	/** Relative value. */
-	MAGNETIC("M"),
+public enum Acquisition {
+	/** Automatic acquisition. */
+	AUTOMATIC("A"),
+	/** Manual acquisition. */
+	MANUAL("M"),
 	/** Invalid or not set. */
 	NULL("");
 
@@ -26,7 +24,7 @@ public enum Reference {
 	 * @param shortName
 	 *            Nmea representation.
 	 */
-	Reference(String shortName) {
+	Acquisition(String shortName) {
 		this.shortName = shortName;
 	}
 
@@ -46,8 +44,8 @@ public enum Reference {
 	 *            Nmea String.
 	 * @return Enum for the given String.
 	 */
-	public static Reference parse(String s) {
-		for (Reference r : Reference.class.getEnumConstants()) {
+	public static Acquisition parse(String s) {
+		for (Acquisition r : Acquisition.class.getEnumConstants()) {
 			if (r.shortName.equals(s)) {
 				return r;
 			}

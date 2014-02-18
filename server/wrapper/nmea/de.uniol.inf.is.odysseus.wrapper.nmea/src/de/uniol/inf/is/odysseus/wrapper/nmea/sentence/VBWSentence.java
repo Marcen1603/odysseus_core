@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.util.ParseUtils;
  * <li>Status, A = data valid</li>
  * </ol>
  * 
- * @author aoppermann <alexander.oppermann@offis.de>
+ * @author jboger <juergen.boger@offis.de>
  *
  */
 public class VBWSentence extends Sentence{
@@ -39,17 +39,17 @@ public class VBWSentence extends Sentence{
 	public static final int FIELD_COUNT = 6;
 	
 	/** Longitudinal water speed, "-" means astern. */
-	private Double waterSpeedL;
+	private Double waterSpeedLongitudinal;
 	/** Transverse water speed, "-" means port. */
-	private Double waterSpeedT;
+	private Double waterSpeedTransverse;
 	/** Status, A = data valid. */
-	private Status statusWater;
+	private Status statusWaterSpeed;
 	/** Longitudinal ground speed, "-" means astern. */
-	private Double groundSpeedL;
+	private Double groundSpeedLongitudinal;
 	/** Transverse ground speed, "-" means port. */
-	private Double groundSpeedT;
+	private Double groundSpeedTransverse;
 	/** Status, A = data valid. */
-	private Status statusGround;
+	private Status statusGroundSpeed;
 	
 	/**
 	 * Default constructor for writing. Empty Sentence to fill attributes and
@@ -72,80 +72,80 @@ public class VBWSentence extends Sentence{
 	@Override
 	protected void decode() {
 		int index = 0;
-		waterSpeedL = ParseUtils.parseDouble(getValue(index++));
-		waterSpeedT = ParseUtils.parseDouble(getValue(index++));
-		statusWater = ParseUtils.parseStatus(getValue(index++));
-		groundSpeedL = ParseUtils.parseDouble(getValue(index++));
-		groundSpeedT = ParseUtils.parseDouble(getValue(index++));
-		statusGround = ParseUtils.parseStatus(getValue(index++));
+		waterSpeedLongitudinal = ParseUtils.parseDouble(getValue(index++));
+		waterSpeedTransverse = ParseUtils.parseDouble(getValue(index++));
+		statusWaterSpeed = ParseUtils.parseStatus(getValue(index++));
+		groundSpeedLongitudinal = ParseUtils.parseDouble(getValue(index++));
+		groundSpeedTransverse = ParseUtils.parseDouble(getValue(index++));
+		statusGroundSpeed = ParseUtils.parseStatus(getValue(index++));
 	}
 
 	@Override
 	protected void encode() {
 		int index = 0;
-		setValue(index++, ParseUtils.toString(waterSpeedL));
-		setValue(index++, ParseUtils.toString(waterSpeedT));
-		setValue(index++, ParseUtils.toString(statusWater));
-		setValue(index++, ParseUtils.toString(groundSpeedL));
-		setValue(index++, ParseUtils.toString(groundSpeedT));
-		setValue(index++, ParseUtils.toString(statusGround));
+		setValue(index++, ParseUtils.toString(waterSpeedLongitudinal));
+		setValue(index++, ParseUtils.toString(waterSpeedTransverse));
+		setValue(index++, ParseUtils.toString(statusWaterSpeed));
+		setValue(index++, ParseUtils.toString(groundSpeedLongitudinal));
+		setValue(index++, ParseUtils.toString(groundSpeedTransverse));
+		setValue(index++, ParseUtils.toString(statusGroundSpeed));
 	}
 
 	@Override
 	protected void fillMap(Map<String, Object> res) {
-		if (waterSpeedL != null) res.put("waterSpeedL", waterSpeedL);
-		if (waterSpeedT != null) res.put("waterSpeedT", waterSpeedT);
-		if (statusWater != null) res.put("statusWater", statusWater);
-		if (groundSpeedL != null) res.put("groundSpeedL", groundSpeedL);
-		if (groundSpeedT != null) res.put("groundSpeedT", groundSpeedT);
-		if (statusGround != null) res.put("statusGround", statusGround);
+		if (waterSpeedLongitudinal != null) res.put("waterSpeedLongitudinal", waterSpeedLongitudinal);
+		if (waterSpeedTransverse != null) res.put("waterSpeedTransverse", waterSpeedTransverse);
+		if (statusWaterSpeed != null) res.put("statusWaterSpeed", statusWaterSpeed);
+		if (groundSpeedLongitudinal != null) res.put("groundSpeedLongitudinal", groundSpeedLongitudinal);
+		if (groundSpeedTransverse != null) res.put("groundSpeedTransverse", groundSpeedTransverse);
+		if (statusGroundSpeed != null) res.put("statusGroundSpeed", statusGroundSpeed);
 	}
 
-	public Double getWaterSpeedL(){
-		return waterSpeedL;
+	public Double getWaterSpeedLongitudinal() {
+		return waterSpeedLongitudinal;
 	}
-	
-	public void setWaterSpeedL(Double waterSpeedL){
-		this.waterSpeedL = waterSpeedL;
+
+	public void setWaterSpeedLongitudinal(Double waterSpeedLongitudinal) {
+		this.waterSpeedLongitudinal = waterSpeedLongitudinal;
 	}
-	
-	public Double getWaterSpeedT(){
-		return waterSpeedT;
+
+	public Double getWaterSpeedTransverse() {
+		return waterSpeedTransverse;
 	}
-	
-	public void setWaterSpeedT(Double waterSpeedT){
-		this.waterSpeedT = waterSpeedT;
+
+	public void setWaterSpeedTransverse(Double waterSpeedTransverse) {
+		this.waterSpeedTransverse = waterSpeedTransverse;
 	}
-	
-	public Status getStatusWater(){
-		return statusWater;
+
+	public Status getStatusWaterSpeed() {
+		return statusWaterSpeed;
 	}
-	
-	public void setStatusWater(Status statusWater){
-		this.statusWater = statusWater;
+
+	public void setStatusWaterSpeed(Status statusWaterSpeed) {
+		this.statusWaterSpeed = statusWaterSpeed;
 	}
-	
-	public Double getGroundSpeedL(){
-		return groundSpeedL;
+
+	public Double getGroundSpeedLongitudinal() {
+		return groundSpeedLongitudinal;
 	}
-	
-	public void setGroundSpeedL(Double groundSpeedL){
-		this.groundSpeedL = groundSpeedL;
+
+	public void setGroundSpeedLongitudinal(Double groundSpeedLongitudinal) {
+		this.groundSpeedLongitudinal = groundSpeedLongitudinal;
 	}
-	
-	public Double getGroundSpeedT(){
-		return groundSpeedT;
+
+	public Double getGroundSpeedTransverse() {
+		return groundSpeedTransverse;
 	}
-	
-	public void setGroundSpeedT(Double groundSpeedT){
-		this.groundSpeedT = groundSpeedT;
+
+	public void setGroundSpeedTransverse(Double groundSpeedTransverse) {
+		this.groundSpeedTransverse = groundSpeedTransverse;
 	}
-	
-	public Status getStatusGround(){
-		return statusGround;
+
+	public Status getStatusGroundSpeed() {
+		return statusGroundSpeed;
 	}
-	
-	public void setStatusGround(Status statusGround){
-		this.statusGround = statusGround;
+
+	public void setStatusGroundSpeed(Status statusGroundSpeed) {
+		this.statusGroundSpeed = statusGroundSpeed;
 	}
 }

@@ -1,21 +1,17 @@
 package de.uniol.inf.is.odysseus.wrapper.nmea.data;
 
 /**
- * Enumeration type for relative reference measurements. Also provides method to
- * parse and representation in nmea.
+ * Enumeration type for target reference. Also provides method to parse and representation
+ * in nmea.
  * 
  * @author jboger <juergen.boger@offis.de>
  * 
  */
-public enum Reference {
-	/** True value. */
-	TRUE("T"),
-	/** Relative value. */
-	RELATIVE("R"),
-	/** Relative value. */
-	MAGNETIC("M"),
-	/** Invalid or not set. */
-	NULL("");
+public enum TargetReference {
+	/** Reference target designated. */
+	REFERENCE_TARGET("R"),
+	/** Not designated. */
+	NOT_DESIGNATED("");
 
 	/** Stores the nmea representation. */
 	private String shortName;
@@ -26,7 +22,7 @@ public enum Reference {
 	 * @param shortName
 	 *            Nmea representation.
 	 */
-	Reference(String shortName) {
+	TargetReference(String shortName) {
 		this.shortName = shortName;
 	}
 
@@ -46,12 +42,12 @@ public enum Reference {
 	 *            Nmea String.
 	 * @return Enum for the given String.
 	 */
-	public static Reference parse(String s) {
-		for (Reference r : Reference.class.getEnumConstants()) {
+	public static TargetReference parse(String s) {
+		for (TargetReference r : TargetReference.class.getEnumConstants()) {
 			if (r.shortName.equals(s)) {
 				return r;
 			}
 		}
-		return NULL;
+		return NOT_DESIGNATED;
 	}
 }

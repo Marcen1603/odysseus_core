@@ -39,13 +39,13 @@ public class RSASentence extends Sentence{
 	public static final int FIELD_COUNT = 4;
 	
 	/** Starboard (or single) rudder sensor, "-" means Turn To Port. */
-	private Double srSensorValue;
+	private Double starboard;
 	/** Status, A means data is valid. */
-	private Status srStatus;
+	private Status sbStatus;
 	/** Port rudder sensor. */
-	private Double prSensorValue;
+	private Double portboard;
 	/** Status, A means data is valid. */
-	private Status prStatus;
+	private Status pbStatus;
 	
 	
 	/**
@@ -69,58 +69,58 @@ public class RSASentence extends Sentence{
 	@Override
 	protected void decode() {
 		int index = 0;
-		srSensorValue = ParseUtils.parseDouble(getValue(index++));
-		srStatus = ParseUtils.parseStatus(getValue(index++));
-		prSensorValue = ParseUtils.parseDouble(getValue(index++));
-		prStatus = ParseUtils.parseStatus(getValue(index++));
+		starboard = ParseUtils.parseDouble(getValue(index++));
+		sbStatus = ParseUtils.parseStatus(getValue(index++));
+		portboard = ParseUtils.parseDouble(getValue(index++));
+		pbStatus = ParseUtils.parseStatus(getValue(index++));
 	}
 
 	@Override
 	protected void encode() {
 		int index = 0;
-		setValue(index++, ParseUtils.toString(srSensorValue));
-		setValue(index++, ParseUtils.toString(srStatus));
-		setValue(index++, ParseUtils.toString(prSensorValue));
-		setValue(index++, ParseUtils.toString(prStatus));
+		setValue(index++, ParseUtils.toString(starboard));
+		setValue(index++, ParseUtils.toString(sbStatus));
+		setValue(index++, ParseUtils.toString(portboard));
+		setValue(index++, ParseUtils.toString(pbStatus));
 	}
 
 	@Override
 	protected void fillMap(Map<String, Object> res) {
-		if (srSensorValue != null) res.put("srSensorValue", srSensorValue);
-		if (srStatus != null) res.put("srStatus", srStatus);
-		if (prSensorValue != null) res.put("prSensorValue", prSensorValue);
-		if (prStatus != null) res.put("prStatus", prStatus);
+		if (starboard != null) res.put("starboard", starboard);
+		if (sbStatus != null) res.put("sbStatus", sbStatus);
+		if (portboard != null) res.put("portboard", portboard);
+		if (pbStatus != null) res.put("pbStatus", pbStatus);
 	}
 
-	public Double getStarboardRudderSensor(){
-		return srSensorValue;
+	public Double getStarboard(){
+		return starboard;
 	}
 	
-	public void setStarboardRudderSensor(Double srSensorValue){
-		this.srSensorValue = srSensorValue;
+	public void setStarboard(Double starboard){
+		this.starboard = starboard;
 	}
 	
-	public Status getStarboardRudderStatus(){
-		return srStatus;
+	public Status getStarboardStatus(){
+		return sbStatus;
 	}
 	
-	public void setStarboardRudderStatus(Status srStatus){
-		this.srStatus = srStatus;
+	public void setStarboardStatus(Status sbStatus){
+		this.sbStatus = sbStatus;
 	}
 	
-	public Double getPortRudderSensor(){
-		return prSensorValue;
+	public Double getPortboard(){
+		return portboard;
 	}
 	
-	public void setPortRudderSensor(Double prSensorValue){
-		this.prSensorValue = prSensorValue;
+	public void setPortboard(Double portboard){
+		this.portboard = portboard;
 	}
 	
-	public Status getPortRudderStatus(){
-		return prStatus;
+	public Status getPortboardStatus(){
+		return pbStatus;
 	}
 	
-	public void setPortRudderStatus(Status prStatus){
-		this.prStatus = prStatus;
+	public void setPortboardStatus(Status pbStatus){
+		this.pbStatus = pbStatus;
 	}
 }

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.wrapper.nmea.sentence;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.Source;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Status;
 import de.uniol.inf.is.odysseus.wrapper.nmea.util.ParseUtils;
 
@@ -40,7 +41,7 @@ public class RPMSentence extends Sentence{
 	public static final int FIELD_COUNT = 5;
 	
 	/** Source; S = Shaft, E = Engine. */
-	private String source;
+	private Source source;
 	/** Engine or shaft number. */
 	private Integer number;
 	/** Speed, Revolutions per minute. */
@@ -71,7 +72,7 @@ public class RPMSentence extends Sentence{
 	@Override
 	protected void decode() {
 		int index = 0;
-		source = getValue(index++);
+		source = ParseUtils.parseSource(getValue(index++));
 		number = ParseUtils.parseInteger(getValue(index++));
 		speed = ParseUtils.parseDouble(getValue(index++));
 		pitch = ParseUtils.parseDouble(getValue(index++));
@@ -82,7 +83,7 @@ public class RPMSentence extends Sentence{
 	@Override
 	protected void encode() {
 		int index = 0;
-		setValue(index++, source);
+		setValue(index++, ParseUtils.toString(source));
 		setValue(index++, ParseUtils.toString(number));
 		setValue(index++, ParseUtils.toString(speed));
 		setValue(index++, ParseUtils.toString(pitch));
@@ -91,18 +92,18 @@ public class RPMSentence extends Sentence{
 
 	@Override
 	protected void fillMap(Map<String, Object> res) {
-		if (source != null) res.put("source", source);
+		if (source != Source.NULL) res.put("source", source);
 		if (number != null) res.put("number", number);
 		if (speed != null) res.put("speed", speed);
 		if (pitch != null) res.put("pitch", pitch);
 		if (status != Status.NULL) res.put("status", status);
 	}
 
-	public String getSource(){
+	public Source getSource(){
 		return source;
 	}
 	
-	public void setSource(String source){
+	public void setSource(Source source){
 		this.source = source;
 	}
 	
