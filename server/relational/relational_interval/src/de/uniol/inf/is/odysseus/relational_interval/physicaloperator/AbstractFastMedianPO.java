@@ -29,6 +29,10 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 
 	protected List<Double> percentiles;
 
+	protected boolean appendGlobalMedian;
+
+	private Tuple<? extends ITimeInterval> globalMedian;
+
 	public AbstractFastMedianPO(int medianAttrPos, boolean numericalMedian) {
 		this.medianAttrPos = medianAttrPos;
 		this.numericalMedian = numericalMedian;
@@ -42,7 +46,7 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 	public void setPercentiles(List<Double> percentiles) {
 		this.percentiles = percentiles;
 	}
-	
+
 	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
@@ -60,8 +64,11 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 
 		transfer.newElement(object, port);
 
-		Long groupID = groupProcessor.getGroupID(object);
+		if (appendGlobalMedian) {
+			process_next(object, port, -1L);
+		}
 
+		Long groupID = groupProcessor.getGroupID(object);
 		process_next(object, port, groupID);
 	}
 
@@ -69,20 +76,28 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 			int port, Long groupID);
 
 	public void createOutput(Long groupID, Tuple<? extends ITimeInterval> gr) {
-		Tuple<? extends ITimeInterval> last_gr = lastCreatedElement
-				.get(groupID);
 
-		// TODO what if element end is before "end" of groupList
-
-		if (last_gr != null) {
-			if (last_gr.getMetadata().getStart()
-					.before(gr.getMetadata().getStart())) {
-				last_gr.getMetadata().setEnd(gr.getMetadata().getStart());
-				transfer.transfer(last_gr);
+		// just remember global median
+		if (groupID == -1) {
+			globalMedian = gr;
+		} else {
+			Tuple<? extends ITimeInterval> last_gr = lastCreatedElement
+					.get(groupID);
+			
+			if (appendGlobalMedian) { // append the global median
+				gr = gr.append(globalMedian.getAttribute(globalMedian.size() - 1), true);
+			}
+			
+			if (last_gr != null) {
+				if (last_gr.getMetadata().getStart()
+						.before(gr.getMetadata().getStart())) {
+					last_gr.getMetadata().setEnd(gr.getMetadata().getStart());
+					transfer.transfer(last_gr);
+					lastCreatedElement.put(groupID, gr);
+				}
+			} else {
 				lastCreatedElement.put(groupID, gr);
 			}
-		} else {
-			lastCreatedElement.put(groupID, gr);
 		}
 	}
 
@@ -105,6 +120,15 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 			return false;
 		}
 
+		if ((this.percentiles == null && po.percentiles == null)
+				|| (percentiles != null && !(percentiles.equals(po.percentiles)))) {
+			return false;
+		}
+
+		if (appendGlobalMedian != po.appendGlobalMedian) {
+			return false;
+		}
+
 		if (this.groupProcessor == null && po.groupProcessor == null) {
 			return true;
 		}
@@ -122,5 +146,8 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 		transfer.newElement(punctuation, port);
 	}
 
+	public void appendGlobalMedian(boolean appendGlobalMedian) {
+		this.appendGlobalMedian = appendGlobalMedian;
+	}
 
 }

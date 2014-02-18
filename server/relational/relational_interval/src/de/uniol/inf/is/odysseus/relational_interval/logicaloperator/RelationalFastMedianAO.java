@@ -24,6 +24,7 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 	private boolean numericalMedian = false;
 	private boolean useHistogram = false;
 	private long roundingFactor = 0;
+	private boolean appendGlobalMedian = false;
 	private List<Double> percentiles = null;
 	private List<SDFAttribute> groupingAttributes;
 
@@ -38,6 +39,7 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 		this.useHistogram = op.useHistogram;
 		this.roundingFactor = op.roundingFactor;
 		this.percentiles = op.percentiles;
+		this.appendGlobalMedian = op.appendGlobalMedian;
 	}
 
 	public RelationalFastMedianAO() {
@@ -57,6 +59,15 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 		return groupingAttributes;
 	}
 
+	@Parameter(name = "appendGlobalMedian", optional = true, type = BooleanParameter.class, doc="If a GROUP_BY element is given, the global median (i.e. median without respecting groups) will be annotated to each element.")
+	public void setAppendGlobalMedian(boolean appendGlobalMedian) {
+		this.appendGlobalMedian = appendGlobalMedian;
+	}
+	
+	public boolean isAppendGlobalMedian() {
+		return appendGlobalMedian;
+	}
+	
 	@Parameter(name = "Attribute", optional = false, type = ResolvedSDFAttributeParameter.class)
 	public void setMedianAttribute(SDFAttribute attribute) {
 		this.medianAttribute = attribute;
@@ -109,6 +120,10 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 			outattr.addAll(groupingAttributes);
 		}
 		outattr.add(medianAttribute);
+		if (appendGlobalMedian){
+			SDFAttribute globaleMedianAttribute = new SDFAttribute(medianAttribute.getSourceName(), "global_"+medianAttribute.getAttributeName(), medianAttribute);
+			outattr.add(globaleMedianAttribute);
+		}
 		SDFSchema output = new SDFSchema(getInputSchema(0), outattr);
 		return output;
 	}
