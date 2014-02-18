@@ -26,32 +26,32 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractValueGenerator;
 public class TangentGenerator extends AbstractValueGenerator {
 
     private double current;
-    private double start;
-    private double increase;
+    private final double start;
+    private final double increase;
 
-    public TangentGenerator(IErrorModel errorModel, double start, double increase) {
+    public TangentGenerator(final IErrorModel errorModel, final double start, final double increase) {
         super(errorModel);
         this.start = start;
         this.increase = increase;
     }
 
-    public TangentGenerator(IErrorModel errorModel, double start) {
-        this(errorModel, start, 1.0);
+    public TangentGenerator(final IErrorModel errorModel, final double start) {
+        this(errorModel, start, 0.01);
     }
 
-    public TangentGenerator(IErrorModel errorModel) {
-        this(errorModel, 0.0, 1.0);
+    public TangentGenerator(final IErrorModel errorModel) {
+        this(errorModel, 0.0);
     }
 
     @Override
     public double generateValue() {
-        current = current + increase;
-        return FastMath.tan(current);
+        this.current = this.current + this.increase;
+        return FastMath.tan(this.current);
     }
 
     @Override
     public void initGenerator() {
-        current = start;
+        this.current = this.start;
     }
 
 }

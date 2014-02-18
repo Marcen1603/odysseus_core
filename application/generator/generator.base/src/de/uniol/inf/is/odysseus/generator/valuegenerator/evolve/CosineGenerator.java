@@ -26,32 +26,32 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractValueGenerator;
 public class CosineGenerator extends AbstractValueGenerator {
 
     private double current;
-    private double start;
-    private double increase;
+    private final double start;
+    private final double increase;
 
-    public CosineGenerator(IErrorModel errorModel, double start, double increase) {
+    public CosineGenerator(final IErrorModel errorModel, final double start, final double increase) {
         super(errorModel);
         this.start = start;
         this.increase = increase;
     }
 
-    public CosineGenerator(IErrorModel errorModel, double start) {
-        this(errorModel, start, 1.0);
+    public CosineGenerator(final IErrorModel errorModel, final double start) {
+        this(errorModel, start, 0.01);
     }
 
-    public CosineGenerator(IErrorModel errorModel) {
-        this(errorModel, 0.0, 1.0);
+    public CosineGenerator(final IErrorModel errorModel) {
+        this(errorModel, 0.0);
     }
 
     @Override
     public double generateValue() {
-        current = current + increase;
-        return FastMath.cos(current);
+        this.current = this.current + this.increase;
+        return FastMath.cos(this.current);
     }
 
     @Override
     public void initGenerator() {
-        current = start;
+        this.current = this.start;
     }
 
 }

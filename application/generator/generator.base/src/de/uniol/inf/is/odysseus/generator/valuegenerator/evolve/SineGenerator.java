@@ -26,32 +26,32 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractValueGenerator;
 public class SineGenerator extends AbstractValueGenerator {
 
     private double current;
-    private double start;
-    private double increase;
+    private final double start;
+    private final double increase;
 
-    public SineGenerator(IErrorModel errorModel, double start, double increase) {
+    public SineGenerator(final IErrorModel errorModel, final double start, final double increase) {
         super(errorModel);
         this.start = start;
         this.increase = increase;
     }
 
-    public SineGenerator(IErrorModel errorModel, double start) {
-        this(errorModel, start, 1.0);
+    public SineGenerator(final IErrorModel errorModel, final double start) {
+        this(errorModel, start, 0.01);
     }
 
-    public SineGenerator(IErrorModel errorModel) {
-        this(errorModel, 0.0, 1.0);
+    public SineGenerator(final IErrorModel errorModel) {
+        this(errorModel, 0.0);
     }
 
     @Override
     public double generateValue() {
-        current = current + increase;
-        return FastMath.sin(current);
+        this.current = this.current + this.increase;
+        return FastMath.sin(this.current);
     }
 
     @Override
     public void initGenerator() {
-        current = start;
+        this.current = this.start;
     }
 
 }
