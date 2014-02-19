@@ -77,7 +77,7 @@ public class MEPFunctionInfo {
 		try {
 			return function.getReturnType().getQualName();
 		} catch( Throwable t ) {
-			LOG.error("Could not determine return type of function {}", function.getSymbol());
+			LOG.debug("Could not determine return type of function {}", function.getSymbol());
 			return UNKNOWN_RETURN_TYPE_NAME;
 		}
 	}
