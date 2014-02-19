@@ -1,9 +1,16 @@
 package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.physicaloperator;
 
+import java.util.List;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
+
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.logicaloperator.HashFragmentAO;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.physicaloperator.AbstractFragmentPO;
 
@@ -16,9 +23,9 @@ public class HashFragmentPO<T extends IStreamObject<IMetaAttribute>>
 		extends AbstractFragmentPO<T> {
 	
 	/**
-	 * The counter for all incoming objects.
+	 * The indices of the attributes forming the hash key, if the key is not the whole tuple.
 	 */
-	private long objectCounter;
+	private Optional<List<Integer>> attributeIndices;
 
 	/**
 	 * Constructs a new {@link HashFragmentPO}.
@@ -27,7 +34,29 @@ public class HashFragmentPO<T extends IStreamObject<IMetaAttribute>>
 	public HashFragmentPO(HashFragmentAO fragmentAO) {
 		
 		super(fragmentAO);
-		this.objectCounter = 0;
+		
+		if(fragmentAO.isPartialKey()) {
+		
+			List<Integer> attributeIndices = Lists.newArrayList();
+			
+			// Determine indices of attributes
+			for(int index = 0; index < fragmentAO.getInputSchema().size(); index++) {
+				
+				if(fragmentAO.getAttributes().contains(fragmentAO.getInputSchema().get(index).getURI()))
+					attributeIndices.add(index);
+				
+			}
+			
+			if(attributeIndices.size() != fragmentAO.getAttributes().size())
+				throw new QueryParseException("Could not find all attributes within " + fragmentAO.getInputSchema() + "!");
+			else if(attributeIndices.size() == fragmentAO.getInputSchema().size()) {
+				
+				// All attributes chosen -> no partial key
+				this.attributeIndices = Optional.absent();
+				
+			} else this.attributeIndices = Optional.of(attributeIndices);
+			
+		} else this.attributeIndices = Optional.absent();
 		
 	}
 
@@ -38,7 +67,13 @@ public class HashFragmentPO<T extends IStreamObject<IMetaAttribute>>
 	public HashFragmentPO(HashFragmentPO<T> fragmentPO) {
 		
 		super(fragmentPO);
-		this.objectCounter = fragmentPO.objectCounter;
+		
+		if(fragmentPO.isPartialKey()) {
+			
+			List<Integer> attributeIndices = Lists.newArrayList(fragmentPO.attributeIndices.get());
+			this.attributeIndices = Optional.of(attributeIndices);
+			
+		} else this.attributeIndices = Optional.absent();
 		
 	}
 	
@@ -52,9 +87,31 @@ public class HashFragmentPO<T extends IStreamObject<IMetaAttribute>>
 	@Override
 	protected int route(IStreamable object) {
 		
-		int outputPort = (int) (this.objectCounter % this.numFragments);
-		this.objectCounter++;
-		return outputPort;
+		int hashCode = 0;
+		
+		if(this.isPartialKey() && object instanceof Tuple) {
+			
+			@SuppressWarnings("unchecked")
+			Tuple<IMetaAttribute> tuple = (Tuple<IMetaAttribute>) object;
+			int[] indices = new int[this.attributeIndices.get().size()];
+			
+			for(int index = 0; index < this.attributeIndices.get().size(); index++)
+				indices[index] = this.attributeIndices.get().get(index);
+			
+			hashCode = Math.abs(tuple.restrictedHashCode(indices));
+			
+		} else hashCode = Math.abs(object.hashCode());
+		
+		return (int) (hashCode % this.numFragments);
+		
+	}
+	
+	/**
+	 * Checks, if the key is not the whole tuple.
+	 */
+	public boolean isPartialKey() {
+		
+		return this.attributeIndices.isPresent();
 		
 	}
 	
