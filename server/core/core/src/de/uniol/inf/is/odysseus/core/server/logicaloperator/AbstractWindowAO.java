@@ -331,9 +331,10 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 
 	@Override
 	public void initialize() {
+		TimeUnit useTime = getBaseTimeUnit();
+		
 		// overwrite values, if only unit parameter is used (old version)
 		// TODO: remove this, when deprecated "timeUnit" value is removed!
-		TimeUnit useTime = TimeUnit.MILLISECONDS;
 		if (this.timeUnit != null) {
 			useTime = timeUnit;
 		}
