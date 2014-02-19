@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 
@@ -133,7 +133,7 @@ public class HashFragmentAO extends AbstractFragmentAO {
 	/**
 	 * Sets the URIs of the attributes forming the hash key, if the key is not the whole tuple.
 	 */
-	@Parameter(type = ListParameter.class, name = "ATTRIBUTES", optional = true, isList = true)
+	@Parameter(type = StringParameter.class, name = "ATTRIBUTES", optional = true, isList = true)
 	public void setAttributes(List<String> uris) {
 		
 		this.attributeURIs = Optional.fromNullable(uris);

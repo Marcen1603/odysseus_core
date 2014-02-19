@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
@@ -225,7 +224,7 @@ public class RangeFragmentAO extends AbstractFragmentAO {
 	/**
 	 * Sets the minimum values of each range.
 	 */
-	@Parameter(type = ListParameter.class, name = "RANGES", optional = false, isList = true)
+	@Parameter(type = StringParameter.class, name = "RANGES", optional = false, isList = true)
 	public void setRanges(List<String> ranges) {
 	
 		this.ranges.clear();
