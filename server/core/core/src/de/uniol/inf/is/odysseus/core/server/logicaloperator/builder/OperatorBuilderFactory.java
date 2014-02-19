@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +109,10 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 		return null;
 	}
 
+    public static Collection<String> getUdfs() {
+        return Collections.unmodifiableCollection(udfs.keySet());
+    }
+	
 	public static void removeUdf(String nameToRemove) {
 		udfs.remove(nameToRemove);
 	}

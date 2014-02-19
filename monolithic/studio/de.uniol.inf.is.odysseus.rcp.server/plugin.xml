@@ -29,6 +29,14 @@
       </view>
       <view
             category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.server.views.udf.UdfsView"
+            icon="icons/udfs.png"
+            id="de.uniol.inf.is.odysseus.rcp.views.UdfsView"
+            name="UDFs"
+            restorable="true">
+      </view>
+      <view
+            category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.server.views.access.ProtocolsView"
             icon="icons/protocols.png"
             id="de.uniol.inf.is.odysseus.rcp.views.ProtocolsView"
