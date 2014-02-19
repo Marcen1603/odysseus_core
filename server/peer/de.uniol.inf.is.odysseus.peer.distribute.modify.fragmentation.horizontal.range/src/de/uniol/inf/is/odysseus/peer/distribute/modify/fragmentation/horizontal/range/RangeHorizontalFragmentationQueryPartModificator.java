@@ -13,7 +13,9 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
 /**
  * A concrete modifier of {@link ILogicalQueryPart}s, which fragments data streams horizontally and by given ranges from a given source 
  * into parallel query parts and inserts operators to merge the result sets of the parallel fragments 
- * for each relative sink within every single query part.
+ * for each relative sink within every single query part. <br />
+ * Usage in Odysseus Script: <br />
+ * #PEER_MODIFICATION fragmentation_horizontal_range &lt;source name&gt;.&lt;attribute name&gt; &lt;lower bound 1&gt; ... &lt;lower bound n&gt;
  * @author Michael Brand
  */
 public class RangeHorizontalFragmentationQueryPartModificator extends

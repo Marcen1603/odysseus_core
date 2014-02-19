@@ -28,7 +28,9 @@ import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
 /**
  * A modifier of {@link ILogicalQueryPart}s, which replicates query parts and inserts operators to 
- * merge the result sets of the replicates for each relative sink within every single query part.
+ * merge the result sets of the replicates for each relative sink within every single query part. <br />
+ * Usage in Odysseus Script: <br />
+ * #PEER_MODIFICATION replication &lt;number of replicates&gt;
  * @author Michael Brand
  */
 public class ReplicationQueryPartModificator implements IQueryPartModificator {

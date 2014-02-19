@@ -11,7 +11,9 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
 /**
  * A concrete modifier of {@link ILogicalQueryPart}s, which fragments data streams horizontally and round robin from a given source 
  * into parallel query parts and inserts operators to merge the result sets of the parallel fragments 
- * for each relative sink within every single query part.
+ * for each relative sink within every single query part. <br />
+ * Usage in Odysseus Script: <br />
+ * #PEER_MODIFICATION fragmentation_horizontal_roundrobin &lt;source name&gt; &lt;number of fragments&gt;
  * @author Michael Brand
  */
 public class RoundRobinHorizontalFragmentationQueryPartModificator extends
