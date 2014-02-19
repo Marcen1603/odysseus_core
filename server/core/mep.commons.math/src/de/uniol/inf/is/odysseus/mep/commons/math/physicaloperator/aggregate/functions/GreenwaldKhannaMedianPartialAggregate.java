@@ -79,11 +79,11 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
     public Double getAggValue() {
         int i = 0;
         final Iterator<Tuple> iter = this.summary.iterator();
-        final int quantile = this.count / 2;
+        final double quantile = this.count / 2.0;
         while (iter.hasNext()) {
             final Tuple cur = iter.next();
             if (quantile <= (i + cur.gain)) {
-                if (((this.count % 2) == 0) || ((quantile + 1) <= (i + cur.gain))) {
+                if (((this.count % 2) != 0) || ((quantile + 1) <= (i + cur.gain))) {
                     return cur.value;
                 }
                 else {
