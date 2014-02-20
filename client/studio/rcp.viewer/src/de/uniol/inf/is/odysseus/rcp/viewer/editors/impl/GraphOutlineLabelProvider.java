@@ -182,6 +182,9 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 			} else {
 				styledString.append(attribute.getAttributeName());
 			}
+			if (attribute.getNumber() >= 0){
+				styledString.append(" "+attribute.getNumber()+" ");
+			}
 			styledString.append("  " + attribute.getDatatype().toString(),
 					StyledString.QUALIFIER_STYLER);
 			return styledString;

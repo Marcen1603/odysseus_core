@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalNoGroupProcessor;
 
 @SuppressWarnings("rawtypes")
 public class RelationalMapPOHelper extends AbstractPhysicalOperatorHelper<RelationalMapPO> {
@@ -63,7 +64,8 @@ public class RelationalMapPOHelper extends AbstractPhysicalOperatorHelper<Relati
 		for(Entry<Integer, SDFExpression> e : expressionsMap.entrySet()) {
 			expressions[e.getKey()] = e.getValue();
 		}
-		RelationalMapPO result = new RelationalMapPO<IMetaAttribute>(inputSchema, expressions, false, false);
+		@SuppressWarnings("unchecked")
+		RelationalMapPO result = new RelationalMapPO<IMetaAttribute>(inputSchema, expressions, false, false, RelationalNoGroupProcessor.getInstance());
 		return new SimpleImmutableEntry<Integer, RelationalMapPO>(operatorId,result);
 	}
 

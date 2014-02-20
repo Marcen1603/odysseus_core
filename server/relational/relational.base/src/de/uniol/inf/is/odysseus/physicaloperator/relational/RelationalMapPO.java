@@ -15,8 +15,10 @@
  */
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +27,10 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
@@ -39,15 +42,17 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 	private VarHelper[][] variables; // Expression.Index
 	private SDFExpression[] expressions;
 	private final SDFSchema inputSchema;
-	final private LinkedList<Tuple<T>> lastObjects = new LinkedList<>();
+	final private Map<Long, LinkedList<Tuple<T>>> groupsLastObjects = new HashMap<>();
+	final private IGroupProcessor<Tuple<T>, Tuple<T>> groupProcessor;
 	private int maxHistoryElements = 0;
 	final private boolean statebased;
 	final private boolean allowNull;
 
-	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions, boolean statebased, boolean allowNullInOutput) {
+	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions, boolean statebased, boolean allowNullInOutput, IGroupProcessor<Tuple<T>, Tuple<T>> groupProcessor) {
 		this.inputSchema = inputSchema;
 		this.statebased = statebased;
 		this.allowNull = allowNullInOutput;
+		this.groupProcessor = groupProcessor;
 		init(inputSchema, expressions);
 	}
 
@@ -65,35 +70,21 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 			this.variables[i++] = newArray;
 			int j = 0;
 			for (SDFAttribute curAttribute : neededAttributes) {
-				if (curAttribute.getSourceName() != null && curAttribute.getSourceName().startsWith("__last_")) {
+				if (curAttribute.getNumber() > 0) {
 					if (!statebased) {
 						throw new RuntimeException("Map cannot be used with __last_! Used StateMap instead!");
 					}
-					int pos = Integer.parseInt(curAttribute.getSourceName().substring("__last_".length(), curAttribute.getSourceName().indexOf('.')));
+					int pos = curAttribute.getNumber();
 					if (pos > maxHistoryElements) {
 						maxHistoryElements = pos + 1;
 					}
-					String realAttrStr = curAttribute.getURI().substring(curAttribute.getURI().indexOf('.') + 1);
-					String newSource = realAttrStr.substring(0, realAttrStr.indexOf('.'));
-					String newName = realAttrStr.substring(realAttrStr.indexOf('.') + 1);
-					if ("null".equals(newSource)) {
-						newSource = null;
-					}
-					SDFAttribute newAttribute = new SDFAttribute(newSource, newName, curAttribute);
-					int index = schema.indexOf(newAttribute);
+					int index = schema.indexOf(curAttribute);
 					newArray[j++] = new VarHelper(index, pos);
 				} else {
 					newArray[j++] = new VarHelper(schema.indexOf(curAttribute), 0);
 				}
 			}
 		}
-	}
-
-	public RelationalMapPO(RelationalMapPO<T> relationalMapPO) {
-		this.inputSchema = relationalMapPO.inputSchema.clone();
-		this.statebased = relationalMapPO.statebased;
-		this.allowNull = relationalMapPO.allowNull;
-		init(relationalMapPO.inputSchema, relationalMapPO.expressions);
 	}
 
 	@Override
@@ -105,9 +96,17 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 	@Override
 	final protected void process_next(Tuple<T> object, int port) {
 		boolean nullValueOccured = false;
+		Long groupId = groupProcessor.getGroupID(object);
+		LinkedList<Tuple<T>> lastObjects = groupsLastObjects.get(groupId);
+		
+		if (lastObjects == null){
+			lastObjects = new LinkedList<>();
+			groupsLastObjects.put(groupId, lastObjects);
+		}
+		
 		Tuple<T> outputVal = new Tuple<T>(this.expressions.length, false);
 		outputVal.setMetadata((T) object.getMetadata().clone());
-		int lastObjectSize = this.lastObjects.size();
+		int lastObjectSize = lastObjects.size();
 		if (lastObjectSize > maxHistoryElements) {
 			lastObjects.removeLast();
 			lastObjectSize--;
@@ -157,7 +156,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 
 	@Override
 	public RelationalMapPO<T> clone() {
-		return new RelationalMapPO<T>(this);
+		throw new IllegalArgumentException("Not implemented!");
 	}
 
 	@Override
@@ -169,6 +168,11 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 		RelationalMapPO rmpo = (RelationalMapPO) ipo;
 		
 		if (!this.getOutputSchema().equals(rmpo.getOutputSchema())){
+			return false;
+		}
+		
+		if ((this.groupProcessor == null && rmpo.groupProcessor != null) || 
+				!this.groupProcessor.equals(rmpo.groupProcessor)){
 			return false;
 		}
 		

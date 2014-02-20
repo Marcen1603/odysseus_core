@@ -15,10 +15,14 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 /**
  * @author Marco Grawunder
@@ -28,6 +32,7 @@ public class StateMapAO extends MapAO {
 
 	private static final long serialVersionUID = 1695948732660010522L;
 	private boolean allowNull = false;
+	private List<SDFAttribute> groupingAttributes;
 
 
 	public StateMapAO() {
@@ -37,6 +42,7 @@ public class StateMapAO extends MapAO {
 	public StateMapAO(StateMapAO ao) {
 		super(ao);
 		allowNull = ao.allowNull;
+		this.groupingAttributes = ao.groupingAttributes;
 	}
 
 	
@@ -56,5 +62,16 @@ public class StateMapAO extends MapAO {
 	public boolean isAllowNullInOutput() {
 		return allowNull;
 	}
+	
+	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
+	public void setGroupingAttributes(List<SDFAttribute> attributes) {
+		this.groupingAttributes = attributes;
+	}
+
+	public List<SDFAttribute> getGroupingAttributes() {
+		return groupingAttributes;
+	}
+	
+	
 
 }

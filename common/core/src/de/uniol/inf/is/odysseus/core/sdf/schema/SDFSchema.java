@@ -199,6 +199,13 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	public SDFAttribute findAttribute(String attributeNameToFind) {
 		String[] attributeToFindParts = splitIfNeeded(attributeNameToFind);
 
+		// Special Handling of __ Attributes (e.g. for Map)
+		if (attributeNameToFind.startsWith("__last_")){
+			SDFAttribute attr = findAttribute(attributeNameToFind.substring(attributeNameToFind.indexOf('.')+1));
+			int pos = Integer.parseInt(attributeNameToFind.substring("__last_".length(), attributeNameToFind.indexOf('.')));
+			return attr.clone(pos);
+		}
+		
 		for (SDFAttribute attribute : this.elements) {
 
 			String[] attributeParts = splitIfNeeded(attribute.getSourceName()

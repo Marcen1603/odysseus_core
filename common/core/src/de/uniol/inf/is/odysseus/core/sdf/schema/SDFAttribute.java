@@ -63,6 +63,11 @@ public class SDFAttribute extends SDFElement implements
 
 	private SDFSchema subSchema;
 
+	/**
+	 * Can be used for different thinks, e.g. position in statemap
+	 */
+	private int number = -1;
+
 //	/**
 //	 * Create a new SDFAttribute
 //	 * 
@@ -331,6 +336,19 @@ public class SDFAttribute extends SDFElement implements
 				dt,this.getUnit(), new LinkedList<>(this.dtConstraints.values()));
 	}
 
+	private SDFAttribute(SDFAttribute attr, int number){
+		this(attr.getSourceName(), attr.getAttributeName(), attr);
+		this.number = number;
+	}
+	
+	public int getNumber() {
+		return number;
+	}
+	
+	public SDFAttribute clone(int pos){
+		return new SDFAttribute(this,pos);
+	}
+	
 	@Override
 	public int compareTo(SDFAttribute o) {
 		int comp = 0;
@@ -352,6 +370,9 @@ public class SDFAttribute extends SDFElement implements
 		ret.append(".").append(getAttributeName());
 		if (unit != null){
 			ret.append("[").append(unit).append("]");
+		}
+		if (number >= 0){
+			ret.append(" ").append(number);
 		}
 		
 		return ret.toString();
