@@ -66,6 +66,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParamete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MapParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -358,7 +359,28 @@ public class WebserviceServer {
 			idCounter = visitor.getIdCounter();
 		}
 		return graph;
-
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public SimpleGraph getPlanByQueryID(
+			@WebParam(name = "securitytoken") String securityToken,
+			@WebParam(name = "queryID") Integer queryID)
+			throws InvalidUserDataException, QueryNotExistsException {
+		ISession session = loginWithSecurityToken(securityToken);
+		SimpleGraph graph = new SimpleGraph();
+		IServerExecutor executer = ExecutorServiceBinding.getExecutor();
+		int idCounter = 0;
+		List<IPhysicalOperator> roots = executer.getPhysicalRoots(queryID,
+				session);
+		for (IPhysicalOperator op : roots) {
+			GraphNodeVisitor<IPhysicalOperator> visitor = new GraphNodeVisitor<IPhysicalOperator>();
+			visitor.setIdCounter(idCounter);
+			GenericGraphWalker walker = new GenericGraphWalker();
+			walker.prefixWalkPhysical(op, visitor);
+			graph.addRootNode(visitor.getResult());
+			idCounter = visitor.getIdCounter();
+		}
+		return graph;
 	}
 
 	public QueryResponse getLogicalQuery(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "id") String id) throws InvalidUserDataException, QueryNotExistsException {
