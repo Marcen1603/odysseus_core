@@ -424,9 +424,12 @@ public class OdysseusScriptParser implements IOdysseusScriptParser,
 
 	private void resetDefaultReplacements() {
 		setReplacement("NOW", System.currentTimeMillis() + "");
-        setReplacement("OS.ARCH", System.getenv("os.arch") + "");
-        setReplacement("OS.VERSION", System.getenv("os.version") + "");
-        setReplacement("OS", System.getenv("os.name") + "");
+        setReplacement("OS.ARCH", System.getProperty("os.arch") + "");
+        setReplacement("OS.VERSION", System.getProperty("os.version") + "");
+        setReplacement("OS.NAME", System.getProperty("os.name") + "");
+        setReplacement("VM.VERSION", System.getProperty("java.vm.version") + "");
+        setReplacement("VM.VENDOR", System.getProperty("java.vm.vendor") + "");
+        setReplacement("VM.NAME", System.getProperty("java.vm.name") + "");
         Runtime rt = Runtime.getRuntime();
         setReplacement("MEM", rt.totalMemory() + "");
         setReplacement("CPU", rt.availableProcessors() + "");
