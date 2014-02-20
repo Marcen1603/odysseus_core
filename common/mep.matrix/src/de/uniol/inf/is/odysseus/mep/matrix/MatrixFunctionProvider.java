@@ -23,32 +23,34 @@ import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 public class MatrixFunctionProvider implements IFunctionProvider {
 
-	public MatrixFunctionProvider() {
-	}
+    public MatrixFunctionProvider() {
+    }
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public List<IFunction<?>> getFunctions() {
+    @SuppressWarnings("deprecation")
+    @Override
+    public List<IFunction<?>> getFunctions() {
 
-		List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
-		functions.add(new MatrixAdd());
-		functions.add(new MatrixGetEntry());
-		functions.add(new MatrixInvert());
-		functions.add(new MatrixMult());
-		functions.add(new MatrixSub());
-		functions.add(new MatrixTranspose());
+        List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+        functions.add(new MatrixAdd());
+        functions.add(new MatrixGetEntry());
+        functions.add(new MatrixInvert());
+        functions.add(new MatrixMult());
+        functions.add(new MatrixSub());
+        functions.add(new MatrixTranspose());
 
-		functions.add(new MatrixEqualsOperator());
-		functions.add(new MatrixMinusOperator());
-		functions.add(new MatrixMultiplicationOperator());
-		functions.add(new MatrixPlusOperator());
-		functions.add(new MatrixPowerOperator());
-		functions.add(new MatrixDeterminantFunction());
-		functions.add(new MatrixTraceFunction());
-		functions.add(new MatrixTransposeFunction());
-		functions.add(new MatrixInverseFunction());
-		functions.add(new MatrixIdentityMatrixFunction());
+        functions.add(new MatrixEqualsOperator());
+        functions.add(new MatrixMinusOperator());
+        functions.add(new MatrixMultiplicationOperator());
+        functions.add(new MatrixPlusOperator());
+        functions.add(new MatrixPowerOperator());
+        functions.add(new MatrixDeterminantFunction());
+        functions.add(new MatrixTraceFunction());
+        functions.add(new MatrixTransposeFunction());
+        functions.add(new MatrixInverseFunction());
+        functions.add(new MatrixIdentityMatrixFunction());
 
+        functions.add(new MatrixSubMatrixFunction());
+        
         // Aggregation functions
         functions.add(new MatrixSMinFunction());
         functions.add(new MatrixSMaxFunction());
@@ -61,7 +63,7 @@ public class MatrixFunctionProvider implements IFunctionProvider {
         functions.add(new VectorSCountFunction());
         functions.add(new VectorSSumFunction());
         functions.add(new VectorSAVGFunction());
-		return functions;
-	}
+        return functions;
+    }
 
 }
