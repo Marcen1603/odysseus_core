@@ -13,9 +13,12 @@ public class ParserClientUtil {
 	public static Context createRCPContext(IFile file) {
 		IProject project = file.getProject();
 		String localRootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
-
-		String projectName = project.getName();
-		Context context = Context.empty();
+        File parent = file.getLocation().makeAbsolute().toFile().getParentFile();
+        String projectName = project.getName();
+        Context context = Context.empty();
+        context.put("ROOT", parent.getAbsolutePath());
+        context.put("ROOT\\", parent.getAbsolutePath() + File.separator);
+        context.put("ROOT/", parent.getAbsolutePath() + File.separator);
 		context.put("WORKSPACE", localRootLocation);
 		context.put("WORKSPACE/", localRootLocation + File.separator);
 		context.put("WORKSPACE\\", localRootLocation + File.separator);
