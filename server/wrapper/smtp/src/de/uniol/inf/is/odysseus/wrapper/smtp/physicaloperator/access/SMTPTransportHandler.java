@@ -254,7 +254,8 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
         return ((getUsername() != null) && (getPassword() != null));
     }
 
-    public void processInOpen() throws UnknownHostException, IOException {
+    @Override
+	public void processInOpen() throws UnknownHostException, IOException {
 
     }
 
@@ -268,7 +269,8 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
         properties.setProperty("mail.smtp.port", Integer.toString(getPort()));
         try {
             session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
+                @Override
+				protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(getUsername(), getPassword());
                 }
             });

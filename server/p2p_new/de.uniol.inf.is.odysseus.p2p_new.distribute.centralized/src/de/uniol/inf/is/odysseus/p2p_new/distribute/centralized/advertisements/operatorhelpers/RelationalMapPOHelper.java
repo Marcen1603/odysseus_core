@@ -64,8 +64,7 @@ public class RelationalMapPOHelper extends AbstractPhysicalOperatorHelper<Relati
 		for(Entry<Integer, SDFExpression> e : expressionsMap.entrySet()) {
 			expressions[e.getKey()] = e.getValue();
 		}
-		@SuppressWarnings("unchecked")
-		RelationalMapPO result = new RelationalMapPO<IMetaAttribute>(inputSchema, expressions, false, false, RelationalNoGroupProcessor.getInstance());
+		RelationalMapPO result = new RelationalMapPO<IMetaAttribute>(inputSchema, expressions, false);
 		return new SimpleImmutableEntry<Integer, RelationalMapPO>(operatorId,result);
 	}
 
