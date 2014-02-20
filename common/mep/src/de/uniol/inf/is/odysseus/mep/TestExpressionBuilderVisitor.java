@@ -41,7 +41,7 @@ public class TestExpressionBuilderVisitor {
 						.println("Value for " + curVar.getIdentifier() + ": ");
 				BufferedReader reader = new BufferedReader(
 						new InputStreamReader(System.in));
-				curVar.bind(Double.parseDouble(reader.readLine()));
+				curVar.bind(Double.parseDouble(reader.readLine()), null);
 			}
 			System.out.println("expression [type= "
 					+ expression.getReturnType() + "]: "

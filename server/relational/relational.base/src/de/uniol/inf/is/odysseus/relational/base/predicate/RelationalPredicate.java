@@ -192,6 +192,7 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
     @Override
     public boolean evaluate(Tuple<?> left, Tuple<?> right) {
         Object[] values = new Object[this.attributePositions.length];
+        // TODO: IMetaAttribute
         for (int i = 0; i < values.length; ++i) {
             Tuple<?> r = fromRightChannel[i] ? right : left;
             values[i] = r.getAttribute(this.attributePositions[i]);

@@ -88,6 +88,11 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		return (S) arguments[argumentPos].getValue();
 	}
 
+	final protected IMetaAttribute getInputMetadata(int argumentPos) {
+		return ((Variable) arguments[argumentPos]).getMetadata();
+	}
+
+	
 	final protected Double getNumericalInputValue(int argumentPos) {
 		return ((Number) arguments[argumentPos].getValue()).doubleValue();
 	}

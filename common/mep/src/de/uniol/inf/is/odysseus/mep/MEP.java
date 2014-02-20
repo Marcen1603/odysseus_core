@@ -41,8 +41,8 @@ import de.uniol.inf.is.odysseus.mep.functions.RandomFunction2;
 import de.uniol.inf.is.odysseus.mep.functions.SMaxFunction;
 import de.uniol.inf.is.odysseus.mep.functions.SMinFunction;
 import de.uniol.inf.is.odysseus.mep.functions.SleepFunction;
-import de.uniol.inf.is.odysseus.mep.functions.StoredValueFunction;
 import de.uniol.inf.is.odysseus.mep.functions.StoredLineFunction;
+import de.uniol.inf.is.odysseus.mep.functions.StoredValueFunction;
 import de.uniol.inf.is.odysseus.mep.functions.UUIDFunction;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
@@ -141,7 +141,9 @@ import de.uniol.inf.is.odysseus.mep.functions.time.SecondFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.SecondStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.SecondsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.StreamDateFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.StreamDateFunction2;
 import de.uniol.inf.is.odysseus.mep.functions.time.SysDateFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.TimestampFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.WeekFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.WeekStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.WeekdayFunction;
@@ -372,6 +374,8 @@ public class MEP implements IExpressionParser {
         
         registerFunction(new SysDateFunction());
         registerFunction(new StreamDateFunction());
+        registerFunction(new StreamDateFunction2());
+        registerFunction(new TimestampFunction());
         
         registerFunction(new MD5Function());
         registerFunction(new SHA1Function());

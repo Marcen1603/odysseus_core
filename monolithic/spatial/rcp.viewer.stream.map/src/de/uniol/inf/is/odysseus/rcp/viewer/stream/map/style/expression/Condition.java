@@ -51,7 +51,7 @@ public abstract class Condition<T>{
 					int index = schema.indexOf(attr);
 					variables.put(index, variable);
 					if (variable.getIdentifier().equals("defaultValue")){
-						variable.bind(defaultValue);
+						variable.bind(defaultValue, null);
 					}
 				}
 				this.variables = variables.entrySet();
@@ -66,7 +66,7 @@ public abstract class Condition<T>{
 		T eval = null;
 		if (tuple != null && exp != null){
 			for (Entry<Integer,Variable> element : this.variables) {
-				element.getValue().bind(tuple.getAttribute(element.getKey()));
+				element.getValue().bind(tuple.getAttribute(element.getKey()), tuple.getMetadata());
 			}
 			eval = getValue(this.exp.getValue());
 		}

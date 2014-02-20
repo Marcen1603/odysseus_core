@@ -21,6 +21,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
@@ -40,6 +41,10 @@ public class Variable implements IExpression<Object> {
 	 * The bounded value, could be null
 	 */
 	private Object value;
+	/**
+	 * The metadata for this object, could be null
+	 */
+	private IMetaAttribute metadata;
 	/**
 	 * The name of the variable
 	 */
@@ -84,13 +89,18 @@ public class Variable implements IExpression<Object> {
 	 * Bind the value to the variable
 	 * @param value The value to bind
 	 */
-	public void bind(Object value) {
+	public void bind(Object value, IMetaAttribute metadata) {
 		this.value = value;
+		this.metadata = metadata;
 	}
 
 	@Override
 	public Object getValue() {
 		return this.value;
+	}
+	
+	public IMetaAttribute getMetadata() {
+		return metadata;
 	}
 
 	@Override

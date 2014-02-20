@@ -116,6 +116,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 		synchronized (this.expressions) {
 			for (int i = 0; i < this.expressions.length; ++i) {
 				Object[] values = new Object[this.variables[i].length];
+				IMetaAttribute[] meta = new IMetaAttribute[this.variables[i].length];
 				for (int j = 0; j < this.variables[i].length; ++j) {
 					Tuple<T> obj = null;
 					if (lastObjectSize > this.variables[i][j].objectPosToUse) {
@@ -123,13 +124,14 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 					}
 					if (obj != null) {
 						values[j] = obj.getAttribute(this.variables[i][j].pos);
+						meta[j] = obj.getMetadata();
 					}
 				}
 
 				try {
 					this.expressions[i].bindMetaAttribute(object.getMetadata());
 					this.expressions[i].bindAdditionalContent(object.getAdditionalContent());
-					this.expressions[i].bindVariables(values);
+					this.expressions[i].bindVariables(meta, values);
 					Object expr = this.expressions[i].getValue();
 					outputVal.setAttribute(i, expr);
 					if (expr == null) {

@@ -53,7 +53,7 @@ public class MEPOutputSchemeEntry extends AbstractOutputSchemeEntry {
 
 	@Override
 	public void setValue(CepVariable varName, Object newValue) {
-		symbolTable.get(varName).bind(newValue);
+		symbolTable.get(varName).bind(newValue, null);
 	}
 
 	@Override
