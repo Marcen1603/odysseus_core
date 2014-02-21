@@ -153,7 +153,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
                 final Tuple<M> left = leftObjects.getFirst();
 
                 PointInTime leftStreamTime = left.getMetadata().getStart();
-                if (lastObjects.getFirst().getMetadata().getStart().after(object.getMetadata().getStart())) {
+                if ((lastObjects.size() > 0) && (lastObjects.getFirst().getMetadata().getStart().after(object.getMetadata().getStart()))) {
                     leftStreamTime = lastObjects.getFirst().getMetadata().getStart();
                 }
                 final PointInTime rightStreamTime = object.getMetadata().getStart();
@@ -182,7 +182,8 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
         while (!outputQueue.isEmpty()) {
             if (outputQueue.peek().getMetadata().getStart().beforeOrEquals(min)) {
                 transfer(outputQueue.poll());
-            }else {
+            }
+            else {
                 break;
             }
         }
