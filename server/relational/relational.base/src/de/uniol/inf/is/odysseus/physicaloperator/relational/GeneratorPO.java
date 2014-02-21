@@ -163,7 +163,11 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     private void generateData(final LinkedList<Tuple<M>> lastObjects, final Tuple<M> object, final Tuple<M> sample, final int amount) {
         for (int g = 0; g < amount; g++) {
             final Tuple<M> outputVal = sample.clone();
-            final M metadata = sample.getMetadata();
+            M metadata = sample.getMetadata();
+            Tuple<M> first = lastObjects.getFirst();
+            if (first.getMetadata().getStart().after(sample.getMetadata().getStart())) {
+                metadata = first.getMetadata();
+            }
             outputVal.getMetadata().setStartAndEnd(metadata.getStart().plus((g + 1) * TimeUnit.MILLISECONDS.convert(this.frequency, this.getBaseTimeUnit())),
                     metadata.getEnd().plus((g + 1) * TimeUnit.MILLISECONDS.convert(this.frequency, this.getBaseTimeUnit())));
             boolean nullValueOccured = false;
