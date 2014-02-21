@@ -18,6 +18,9 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -34,6 +37,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     private final Map<Long, LinkedList<Tuple<M>>> leftGroupsLastObjects = new HashMap<>();
     private final Map<Long, LinkedList<Tuple<M>>> rightGroupsLastObjects = new HashMap<>();
     private IGroupProcessor<Tuple<M>, Tuple<M>> groupProcessor = null;
+    private ITransferArea<Tuple<M>, Tuple<M>> transfer = new TITransferArea<>();
     private VarHelper[][] variables; // Expression.Index
     private final SDFExpression[] expressions;
     @SuppressWarnings("rawtypes")
@@ -124,6 +128,20 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     /**
      * {@inheritDoc}
      */
+    @Override
+    protected void process_open() throws OpenFailedException {
+        super.process_open();
+        transfer.init(this, 1);
+    }
+    @Override
+    public void processPunctuation(IPunctuation punctuation, int port) {
+        transfer.newElement(punctuation, port);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
     @SuppressWarnings("unchecked")
     @Override
     protected void process_next(final Tuple<M> object, final int port) {
@@ -171,26 +189,16 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
             lastObjects.addFirst(object);
 
         }
-        synchronized (this.outputQueue) {
-            outputQueue.add(object);
-        }
+        transfer.transfer(object);
+
         PointInTime min = PointInTime.getInfinityTime();
         for (LinkedList<Tuple<M>> group : this.leftGroupsLastObjects.values()) {
             PointInTime start = group.getFirst().getMetadata().getStart();
-            if (min.after(start)) {
+            if (min.afterOrEquals(start)) {
                 min = start;
             }
         }
-        synchronized (this.outputQueue) {
-            while (!outputQueue.isEmpty()) {
-                if (outputQueue.peek().getMetadata().getStart().beforeOrEquals(min)) {
-                    transfer(outputQueue.poll());
-                }
-                else {
-                    break;
-                }
-            }
-        }
+        transfer.newHeartbeat(min, 0);
 
     }
 
@@ -251,9 +259,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
                 }
             }
             if (!nullValueOccured || (nullValueOccured && this.allowNull)) {
-                synchronized (this.outputQueue) {
-                    outputQueue.add(outputVal);
-                }
+                transfer.transfer(outputVal);
             }
         }
 
