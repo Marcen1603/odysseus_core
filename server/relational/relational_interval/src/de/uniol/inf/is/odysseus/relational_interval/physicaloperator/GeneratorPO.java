@@ -153,7 +153,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
                 final Tuple<M> left = leftObjects.getFirst();
 
                 PointInTime leftStreamTime = left.getMetadata().getStart();
-                if ((lastObjects.size() > 0) && (lastObjects.getFirst().getMetadata().getStart().after(object.getMetadata().getStart()))) {
+                if ((lastObjects.size() > 0) && (lastObjects.getFirst().getMetadata().getStart().after(leftStreamTime))) {
                     leftStreamTime = lastObjects.getFirst().getMetadata().getStart();
                 }
                 final PointInTime rightStreamTime = object.getMetadata().getStart();
@@ -171,7 +171,9 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
             lastObjects.addFirst(object);
 
         }
-        outputQueue.offer(object);
+        synchronized (this.outputQueue) {
+            outputQueue.add(object);
+        }
         PointInTime min = PointInTime.getInfinityTime();
         for (LinkedList<Tuple<M>> group : this.leftGroupsLastObjects.values()) {
             PointInTime start = group.getFirst().getMetadata().getStart();
@@ -179,12 +181,14 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
                 min = start;
             }
         }
-        while (!outputQueue.isEmpty()) {
-            if (outputQueue.peek().getMetadata().getStart().beforeOrEquals(min)) {
-                transfer(outputQueue.poll());
-            }
-            else {
-                break;
+        synchronized (this.outputQueue) {
+            while (!outputQueue.isEmpty()) {
+                if (outputQueue.peek().getMetadata().getStart().beforeOrEquals(min)) {
+                    transfer(outputQueue.poll());
+                }
+                else {
+                    break;
+                }
             }
         }
 
@@ -247,7 +251,9 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
                 }
             }
             if (!nullValueOccured || (nullValueOccured && this.allowNull)) {
-                outputQueue.offer(outputVal);
+                synchronized (this.outputQueue) {
+                    outputQueue.add(outputVal);
+                }
             }
         }
 
