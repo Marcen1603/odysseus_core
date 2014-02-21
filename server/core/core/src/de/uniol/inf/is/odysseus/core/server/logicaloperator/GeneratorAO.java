@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -16,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 
@@ -48,6 +50,13 @@ public class GeneratorAO extends UnaryLogicalOp {
         this.frequency = ao.frequency;
     }
 
+    @SuppressWarnings("rawtypes")
+    @Override
+    @Parameter(type = PredicateParameter.class)
+    public void setPredicate(IPredicate predicate) {
+        super.setPredicate(predicate);
+    }
+    
     @Parameter(type = BooleanParameter.class, optional = true)
     public void setAllowNullInOutput(boolean allowNull) {
         this.allowNull = allowNull;
