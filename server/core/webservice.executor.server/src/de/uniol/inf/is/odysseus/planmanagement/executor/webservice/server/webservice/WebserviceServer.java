@@ -453,7 +453,8 @@ public class WebserviceServer {
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(handler);
 			SocketSinkPO sink = new SocketSinkPO(port, "", new ByteBufferSinkStreamHandlerBuilder(), true, false, objectHandler, false);
 
-			rootAsSource.connectSink((ISink) sink, 0, 0, root.getOutputSchema());
+			rootAsSource.subscribeSink((ISink) sink, 0, 0, root.getOutputSchema(), true, 0);
+			//rootAsSource.connectSink((ISink) sink, 0, 0, root.getOutputSchema());
 			sink.startListening();
 
 		} else {
