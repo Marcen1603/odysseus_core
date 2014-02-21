@@ -122,11 +122,11 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
         super.process_open();
         transfer.init(this, 1);
     }
+
     @Override
     public void processPunctuation(IPunctuation punctuation, int port) {
         transfer.sendPunctuation(punctuation);
     }
-
 
     /**
      * {@inheritDoc}
@@ -158,16 +158,21 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
             final LinkedList<Tuple<M>> leftObjects = this.leftGroupsLastObjects.get(groupId);
             if ((leftObjects != null) && (leftObjects.size() > 0)) {
                 final Tuple<M> left = leftObjects.getFirst();
-
-                PointInTime leftStreamTime = left.getMetadata().getStart();
-                if ((lastObjects.size() > 0) && (lastObjects.getFirst().getMetadata().getStart().after(leftStreamTime))) {
-                    leftStreamTime = lastObjects.getFirst().getMetadata().getStart();
+                // We have two cases:
+                // 1. In the right group is an element with t-2 and in the left
+                // group is an element with t-1 -> Use the timestamp from the
+                // left
+                // 2. In the right group is an element with t-1 and in the left
+                // group is an element with t-2 -> Use the timestamp from the
+                // right
+                M leftStreamTimeinterval = left.getMetadata();
+                if ((lastObjects.size() > 0) && (lastObjects.getFirst().getMetadata().getStart().after(leftStreamTimeinterval.getStart()))) {
+                    leftStreamTimeinterval = lastObjects.getFirst().getMetadata();
                 }
-                final PointInTime rightStreamTime = object.getMetadata().getStart();
-                final PointInTime delta = rightStreamTime.minus(leftStreamTime);
-                final int amount = (int) (delta.getMainPoint() / this.frequency);
+                final PointInTime delta = object.getMetadata().getStart().minus(leftStreamTimeinterval.getStart());
+                final int amount = (int) (delta.getMainPoint() / this.frequency) - 1;
                 if (amount > 0) {
-                    this.generateData(lastObjects, object, left, amount);
+                    this.generateData(lastObjects, object, left, leftStreamTimeinterval, amount);
                 }
             }
             final int lastObjectSize = lastObjects.size();
@@ -196,15 +201,10 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
      * @param lastObjects
      * @param amount
      */
-    private void generateData(final LinkedList<Tuple<M>> lastObjects, final Tuple<M> object, final Tuple<M> sample, final int amount) {
+    private void generateData(final LinkedList<Tuple<M>> lastObjects, final Tuple<M> object, final Tuple<M> sample, M base, final int amount) {
         for (int g = 0; g < amount; g++) {
             final Tuple<M> outputVal = sample.clone();
-            M metadata = sample.getMetadata();
-            Tuple<M> first = lastObjects.getFirst();
-            if (first.getMetadata().getStart().after(sample.getMetadata().getStart())) {
-                metadata = first.getMetadata();
-            }
-            outputVal.getMetadata().setStartAndEnd(metadata.getStart().plus((g + 1) * this.frequency), metadata.getEnd().plus((g + 1) * this.frequency));
+            outputVal.getMetadata().setStartAndEnd(base.getStart().plus((g + 1) * this.frequency), base.getEnd().plus((g + 1) * this.frequency));
             boolean nullValueOccured = false;
             synchronized (this.expressions) {
                 for (int i = 0; i < this.expressions.length; ++i) {
