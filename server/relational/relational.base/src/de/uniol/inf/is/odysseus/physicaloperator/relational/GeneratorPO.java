@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -32,6 +33,8 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     private IGroupProcessor<Tuple<M>, Tuple<M>> groupProcessor = null;
     private VarHelper[][] variables; // Expression.Index
     private final SDFExpression[] expressions;
+    @SuppressWarnings("rawtypes")
+    private final IPredicate predicate;
     private final SDFSchema inputSchema;
     private final boolean allowNull;
     private final int maxHistoryElements = 0;
@@ -41,11 +44,13 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     /**
  * 
  */
-    public GeneratorPO(final SDFSchema inputSchema, final SDFExpression[] expressions, final boolean allowNullInOutput, final IGroupProcessor<Tuple<M>, Tuple<M>> groupProcessor, final int frequency) {
+    public GeneratorPO(final SDFSchema inputSchema, final SDFExpression[] expressions, final boolean allowNullInOutput, final IGroupProcessor<Tuple<M>, Tuple<M>> groupProcessor,
+            IPredicate<?> iPredicate, final int frequency) {
         this.expressions = new SDFExpression[expressions.length];
         this.inputSchema = inputSchema;
         this.allowNull = allowNullInOutput;
         this.groupProcessor = groupProcessor;
+        this.predicate = iPredicate;
         this.frequency = frequency;
         this.init(inputSchema, expressions);
     }
@@ -58,6 +63,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
         this.inputSchema = po.inputSchema;
         this.allowNull = po.allowNull;
         this.groupProcessor = po.groupProcessor;
+        this.predicate = po.predicate;
         this.frequency = po.frequency;
         this.baseTimeUnit = po.baseTimeUnit;
         this.init(this.inputSchema, po.expressions);
@@ -103,12 +109,13 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     protected void process_next(final Tuple<M> object, final int port) {
         final Long groupId = this.groupProcessor.getGroupID(object);
 
         // Left stream is the stream with missing elements
-        if (port == 0) {
+        if (predicate.evaluate(object)) {
             LinkedList<Tuple<M>> lastObjects = this.leftGroupsLastObjects.get(groupId);
             if (lastObjects == null) {
                 lastObjects = new LinkedList<>();

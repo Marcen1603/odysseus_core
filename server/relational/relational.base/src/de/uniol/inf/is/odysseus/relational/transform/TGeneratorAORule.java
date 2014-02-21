@@ -30,9 +30,7 @@ public class TGeneratorAORule extends AbstractTransformationRule<GeneratorAO> {
 
     @Override
     public int getPriority() {
-        // Must be higher Prio than Map because MapRule fires before StateMap
-        // Rule
-        return 10;
+        return 0;
     }
 
     @Override
@@ -41,14 +39,14 @@ public class TGeneratorAORule extends AbstractTransformationRule<GeneratorAO> {
         @SuppressWarnings("rawtypes")
         IGroupProcessor gp = null;
         if (gAttr != null) {
-            gp = new RelationalGroupProcessor<>(ao.getInputSchema(0), ao.getOutputSchema(), gAttr, null, false);
+            gp = new RelationalGroupProcessor<>(ao.getInputSchema(), ao.getOutputSchema(), gAttr, null, false);
         }
         else {
             gp = RelationalNoGroupProcessor.getInstance();
         }
         @SuppressWarnings("unchecked")
-        GeneratorPO<?> po = new GeneratorPO<ITimeInterval>(ao.getInputSchema(0), ao.getExpressions().toArray(new SDFExpression[0]), ao.isAllowNullInOutput(), gp, ao.getFrequency());
-        SDFConstraint c = ao.getInputSchema(0).getConstraint(SDFConstraint.BASE_TIME_UNIT);
+        GeneratorPO<?> po = new GeneratorPO<ITimeInterval>(ao.getInputSchema(), ao.getExpressions().toArray(new SDFExpression[0]), ao.isAllowNullInOutput(), gp, ao.getPredicate(), ao.getFrequency());
+        SDFConstraint c = ao.getInputSchema().getConstraint(SDFConstraint.BASE_TIME_UNIT);
         if (c != null) {
             po.setBasetimeUnit((TimeUnit) c.getValue());
         }
@@ -57,8 +55,8 @@ public class TGeneratorAORule extends AbstractTransformationRule<GeneratorAO> {
 
     @Override
     public boolean isExecutable(GeneratorAO ao, TransformationConfiguration transformConfig) {
-        if ((ao.getInputSchema(0).getType() == Tuple.class) && (ao.getInputSchema(1).getType() == Tuple.class)) {
-            if ((ao.getPhysSubscriptionTo(0) != null) && (ao.getPhysSubscriptionTo(1) != null)) {
+        if (ao.getInputSchema().getType() == Tuple.class) {
+            if (ao.getPhysSubscriptionTo() != null) {
                 return true;
             }
         }
