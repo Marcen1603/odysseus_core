@@ -146,7 +146,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
                 }
                 final PointInTime rightStreamTime = object.getMetadata().getStart();
                 final PointInTime delta = rightStreamTime.minus(leftStreamTime);
-                final int amount = (int) (TimeUnit.MILLISECONDS.convert(delta.getMainPoint(), this.getBaseTimeUnit()) / this.frequency);
+                final int amount = (int) (delta.getMainPoint() / this.frequency);
                 if (amount > 0) {
                     this.generateData(lastObjects, object, left, amount);
                 }
