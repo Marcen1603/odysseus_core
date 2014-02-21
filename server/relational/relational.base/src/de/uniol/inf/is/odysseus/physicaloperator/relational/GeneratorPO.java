@@ -37,7 +37,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     private final IPredicate predicate;
     private final SDFSchema inputSchema;
     private final boolean allowNull;
-    private final int maxHistoryElements = 0;
+    private int maxHistoryElements = 0;
     private final int frequency;
     private TimeUnit baseTimeUnit;
 
@@ -82,6 +82,9 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
             int j = 0;
             for (final SDFAttribute curAttribute : neededAttributes) {
                 newArray[j++] = this.initAttribute(schema, curAttribute);
+                if (newArray[j - 1].objectPosToUse > 0) {
+                    this.maxHistoryElements = Math.max(maxHistoryElements, newArray[j - 1].objectPosToUse);
+                }
             }
         }
     }
@@ -146,6 +149,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
                 }
             }
             final int lastObjectSize = lastObjects.size();
+            // maxHistoryElements is not set. -> Always removes last element
             if (lastObjectSize > this.maxHistoryElements) {
                 lastObjects.removeLast();
             }
@@ -168,8 +172,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
             if (first.getMetadata().getStart().after(sample.getMetadata().getStart())) {
                 metadata = first.getMetadata();
             }
-            outputVal.getMetadata().setStartAndEnd(metadata.getStart().plus((g + 1) * TimeUnit.MILLISECONDS.convert(this.frequency, this.getBaseTimeUnit())),
-                    metadata.getEnd().plus((g + 1) * TimeUnit.MILLISECONDS.convert(this.frequency, this.getBaseTimeUnit())));
+            outputVal.getMetadata().setStartAndEnd(metadata.getStart().plus((g + 1) * this.frequency), metadata.getEnd().plus((g + 1) * this.frequency));
             boolean nullValueOccured = false;
             synchronized (this.expressions) {
                 for (int i = 0; i < this.expressions.length; ++i) {
