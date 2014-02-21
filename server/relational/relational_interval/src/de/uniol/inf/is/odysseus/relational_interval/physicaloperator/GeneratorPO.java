@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.physicaloperator.relational;
+package de.uniol.inf.is.odysseus.relational_interval.physicaloperator;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -40,6 +40,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     private int maxHistoryElements = 0;
     private final int frequency;
     private TimeUnit baseTimeUnit;
+    
 
     /**
  * 
@@ -239,4 +240,20 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     public void setGroupProcessor(final IGroupProcessor<Tuple<M>, Tuple<M>> groupProcessor) {
         this.groupProcessor = groupProcessor;
     }
+}
+
+class VarHelper {
+	int pos;
+	int objectPosToUse;
+
+	public VarHelper(int pos, int objectPosToUse) {
+		super();
+		this.pos = pos;
+		this.objectPosToUse = objectPosToUse;
+	}
+
+	@Override
+	public String toString() {
+		return pos+" "+objectPosToUse;
+	}
 }
