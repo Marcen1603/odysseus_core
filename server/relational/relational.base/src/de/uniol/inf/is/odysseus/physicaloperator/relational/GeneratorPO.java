@@ -140,7 +140,10 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
             if ((leftObjects != null) && (leftObjects.size() > 0)) {
                 final Tuple<M> left = leftObjects.getFirst();
 
-                final PointInTime leftStreamTime = left.getMetadata().getStart();
+                PointInTime leftStreamTime = left.getMetadata().getStart();
+                if (lastObjects.getFirst().getMetadata().getStart().after(object.getMetadata().getStart())) {
+                    leftStreamTime = lastObjects.getFirst().getMetadata().getStart();
+                }
                 final PointInTime rightStreamTime = object.getMetadata().getStart();
                 final PointInTime delta = rightStreamTime.minus(leftStreamTime);
                 final int amount = (int) (TimeUnit.MILLISECONDS.convert(delta.getMainPoint(), this.getBaseTimeUnit()) / this.frequency);
