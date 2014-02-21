@@ -124,7 +124,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     }
     @Override
     public void processPunctuation(IPunctuation punctuation, int port) {
-        transfer.newElement(punctuation, port);
+        transfer.sendPunctuation(punctuation);
     }
 
 
