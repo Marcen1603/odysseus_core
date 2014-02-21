@@ -76,7 +76,7 @@ public class MTWSentence extends Sentence{
 	@Override
 	protected void fillMap(Map<String, Object> res) {
 		if (degrees != null) res.put("degrees", degrees);
-		if (unit != TemperatureUnit.NULL) res.put("unit", unit);
+		if (unit != TemperatureUnit.NULL) res.put("unit", unit.name());
 	}
 
 	public Double getDegrees(){

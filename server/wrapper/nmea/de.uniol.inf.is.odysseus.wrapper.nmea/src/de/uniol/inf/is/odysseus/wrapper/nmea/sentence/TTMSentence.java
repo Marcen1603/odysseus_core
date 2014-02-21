@@ -147,18 +147,18 @@ public class TTMSentence extends Sentence {
 		if (targetNumber != null) res.put("targetNumber", targetNumber.getNumber());
 		if (targetDistance != null) res.put("targetDistance", targetDistance);
 		if (bearing != null) res.put("bearing", bearing);
-		if (bearingUnit != Reference.NULL) res.put("bearingUnit", bearingUnit);
+		if (bearingUnit != Reference.NULL) res.put("bearingUnit", bearingUnit.name());
 		if (targetSpeed != null) res.put("targetSpeed", targetSpeed);
 		if (targetCourse != null) res.put("targetCourse", targetCourse);
-		if (courseUnit != Reference.NULL) res.put("courseUnit", courseUnit);
+		if (courseUnit != Reference.NULL) res.put("courseUnit", courseUnit.name());
 		if (closestPointOfApproach != null) res.put("closestPointOfApproach", closestPointOfApproach);
 		if (timeUntilClosestPoint != null) res.put("timeUntilClosestPoint", timeUntilClosestPoint);
-		if (distanceUnit != Unit.NULL) res.put("distanceUnit", distanceUnit);
+		if (distanceUnit != Unit.NULL) res.put("distanceUnit", distanceUnit.name());
 		if (targetLabel != null) res.put("targetLabel", targetLabel);
-		if (targetStatus != TargetStatus.NULL) res.put("targetStatus", targetStatus);
+		if (targetStatus != TargetStatus.NULL) res.put("targetStatus", targetStatus.name());
 		if (referenceTarget != null) res.put("referenceTarget", referenceTarget);
 		if (time != null) time.addToMap("time", res);
-		if (typeAcquisition != Acquisition.NULL) res.put("typeAcquisition", typeAcquisition);
+		if (typeAcquisition != Acquisition.NULL) res.put("typeAcquisition", typeAcquisition.name());
 	}
 
 	public TargetNumber getTargetNumber() {

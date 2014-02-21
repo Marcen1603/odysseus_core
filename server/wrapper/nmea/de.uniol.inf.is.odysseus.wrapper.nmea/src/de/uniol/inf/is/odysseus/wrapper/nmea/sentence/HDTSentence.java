@@ -75,7 +75,7 @@ public class HDTSentence extends Sentence{
 	@Override
 	protected void fillMap(Map<String, Object> res) {
 		if (degrees != null) res.put("degrees", degrees);
-		if (reference != Reference.NULL) res.put("reference", reference);
+		if (reference != Reference.NULL) res.put("reference", reference.name());
 	}
 
 	public Double getDegrees(){

@@ -95,10 +95,10 @@ public class VBWSentence extends Sentence{
 	protected void fillMap(Map<String, Object> res) {
 		if (waterSpeedLongitudinal != null) res.put("waterSpeedLongitudinal", waterSpeedLongitudinal);
 		if (waterSpeedTransverse != null) res.put("waterSpeedTransverse", waterSpeedTransverse);
-		if (statusWaterSpeed != null) res.put("statusWaterSpeed", statusWaterSpeed);
+		if (statusWaterSpeed != Status.NULL) res.put("statusWaterSpeed", statusWaterSpeed.name());
 		if (groundSpeedLongitudinal != null) res.put("groundSpeedLongitudinal", groundSpeedLongitudinal);
 		if (groundSpeedTransverse != null) res.put("groundSpeedTransverse", groundSpeedTransverse);
-		if (statusGroundSpeed != null) res.put("statusGroundSpeed", statusGroundSpeed);
+		if (statusGroundSpeed != Status.NULL) res.put("statusGroundSpeed", statusGroundSpeed.name());
 	}
 
 	public Double getWaterSpeedLongitudinal() {

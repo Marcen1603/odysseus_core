@@ -147,16 +147,16 @@ public class GGASentence extends Sentence {
 	protected void fillMap(Map<String, Object> res) {
 		if (time != null) time.addToMap("time", res);
 		if (latitude != null) res.put("latitude", latitude);
-		if (latitudeHem != Hemisphere.NULL) res.put("latitudeHem", latitudeHem);
+		if (latitudeHem != Hemisphere.NULL) res.put("latitudeHem", latitudeHem.name());
 		if (longitude != null) res.put("longitude", longitude);
-		if (longitudeHem != Hemisphere.NULL) res.put("longitudeHem", longitudeHem);
-		res.put("gpsQuality", gpsQuality);
+		if (longitudeHem != Hemisphere.NULL) res.put("longitudeHem", longitudeHem.name());
+		res.put("gpsQuality", gpsQuality.name());
 		if (numberOfSattelites != null) res.put("numberOfSattelites", numberOfSattelites);
 		if (horizontalDilution != null) res.put("horizontalDilution", horizontalDilution);
 		if (antennaAltitude != null) res.put("antennaAltitude", antennaAltitude);
-		if (antennaAltUnits != Unit.NULL) res.put("antennaAltUnits", antennaAltUnits);
+		if (antennaAltUnits != Unit.NULL) res.put("antennaAltUnits", antennaAltUnits.name());
 		if (geoidalSeparation != null) res.put("geoidalSeparation", geoidalSeparation);
-		if (geoidalSepUnits != Unit.NULL) res.put("geoidalSepUnits", geoidalSepUnits);
+		if (geoidalSepUnits != Unit.NULL) res.put("geoidalSepUnits", geoidalSepUnits.name());
 		if (ageOfDgps != null) res.put("ageOfDgps", ageOfDgps);
 		if (differentialRefId != null) res.put("differentialRefId", differentialRefId);
 	}

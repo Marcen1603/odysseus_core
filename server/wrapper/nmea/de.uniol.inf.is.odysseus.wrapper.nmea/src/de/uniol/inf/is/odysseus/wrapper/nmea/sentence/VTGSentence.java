@@ -105,13 +105,13 @@ public class VTGSentence extends Sentence{
 	@Override
 	protected void fillMap(Map<String, Object> res) {
 		if (headingTrack != null) res.put("headingTrack", headingTrack);
-		if (trackReference != Reference.NULL) res.put("trackReference", trackReference);
+		if (trackReference != Reference.NULL) res.put("trackReference", trackReference.name());
 		if (headingMagnetic != null) res.put("headingMagnetic", headingMagnetic);
-		if (magneticReference != Reference.NULL) res.put("magneticReference", magneticReference);
+		if (magneticReference != Reference.NULL) res.put("magneticReference", magneticReference.name());
 		if (speedKnots != null) res.put("speedKnots", speedKnots);
-		if (speedKnotsUnits != Unit.NULL) res.put("speedKnotsUnits", speedKnotsUnits);
+		if (speedKnotsUnits != Unit.NULL) res.put("speedKnotsUnits", speedKnotsUnits.name());
 		if (speedKilometers != null) res.put("speedKilometers", speedKilometers);
-		if (speedKilometersUnits != Unit.NULL) res.put("speedKilometersUnits", speedKilometersUnits);
+		if (speedKilometersUnits != Unit.NULL) res.put("speedKilometersUnits", speedKilometersUnits.name());
 	}
 
 	public Double getHeadingTrack() {

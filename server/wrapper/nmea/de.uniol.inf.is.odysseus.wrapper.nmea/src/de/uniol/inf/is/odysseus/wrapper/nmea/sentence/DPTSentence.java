@@ -5,7 +5,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.wrapper.nmea.util.ParseUtils;
 
 /**
- * DPT - Heading – Deviation & Variation<br>
+ * DPT - Depth of Water<br>
  * <br>
  * 
  * <pre>

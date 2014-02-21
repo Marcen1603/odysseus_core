@@ -90,9 +90,9 @@ public class HDGSentence extends Sentence {
 	protected void fillMap(Map<String, Object> res) {
 		if (heading != null) res.put("heading", heading);
 		if (deviation != null) res.put("deviation", deviation);
-		if (deviationDir != Hemisphere.NULL) res.put("deviationDir", deviationDir);
+		if (deviationDir != Hemisphere.NULL) res.put("deviationDir", deviationDir.name());
 		if (variation != null) res.put("variation", variation);
-		if (variationDir != Hemisphere.NULL) res.put("variationDir", variationDir);
+		if (variationDir != Hemisphere.NULL) res.put("variationDir", variationDir.name());
 	}
 
 	public Double getHeading() {

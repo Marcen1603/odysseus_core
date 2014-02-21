@@ -98,11 +98,11 @@ public class GLLSentence extends Sentence {
 	@Override
 	protected void fillMap(Map<String, Object> res) {
 		if (latitude != null) res.put("latitude", latitude);
-		if (latitudeHem != Hemisphere.NULL) res.put("latitudeHem", latitudeHem);
+		if (latitudeHem != Hemisphere.NULL) res.put("latitudeHem", latitudeHem.name());
 		if (longitude != null) res.put("longitude", longitude);
-		if (longitudeHem != Hemisphere.NULL) res.put("longitudeHem", longitudeHem);
+		if (longitudeHem != Hemisphere.NULL) res.put("longitudeHem", longitudeHem.name());
 		if (time != null) time.addToMap("time", res);
-		if (status != Status.NULL) res.put("status", status);
+		if (status != Status.NULL) res.put("status", status.name());
 	}
 
 	public Double getLatitude() {

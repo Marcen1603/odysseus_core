@@ -92,11 +92,11 @@ public class RPMSentence extends Sentence{
 
 	@Override
 	protected void fillMap(Map<String, Object> res) {
-		if (source != Source.NULL) res.put("source", source);
+		if (source != Source.NULL) res.put("source", source.name());
 		if (number != null) res.put("number", number);
 		if (speed != null) res.put("speed", speed);
 		if (pitch != null) res.put("pitch", pitch);
-		if (status != Status.NULL) res.put("status", status);
+		if (status != Status.NULL) res.put("status", status.name());
 	}
 
 	public Source getSource(){

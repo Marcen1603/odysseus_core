@@ -93,10 +93,10 @@ public class MWVSentence extends Sentence{
 	@Override
 	protected void fillMap(Map<String, Object> res) {
 		if (angle != null) res.put("angle", angle);
-		if (reference != Reference.NULL) res.put("reference", reference);
+		if (reference != Reference.NULL) res.put("reference", reference.name());
 		if (speed != null) res.put("speed", speed);
-		if (speedUnit != SpeedUnit.NULL) res.put("speedUnit", speedUnit);
-		if (status != Status.NULL) res.put("status", status);
+		if (speedUnit != SpeedUnit.NULL) res.put("speedUnit", speedUnit.name());
+		if (status != Status.NULL) res.put("status", status.name());
 	}
 
 	public Double getAngle(){

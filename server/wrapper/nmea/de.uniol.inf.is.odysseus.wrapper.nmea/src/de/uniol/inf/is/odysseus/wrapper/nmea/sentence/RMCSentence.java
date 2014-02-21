@@ -129,15 +129,15 @@ public class RMCSentence extends Sentence {
 		if (time != null) res.put("time", time);
 		if (status != Status.NULL) res.put("status", status.name());
 		if (latitude != null) res.put("latitude", latitude);
-		if (latitudeHem != Hemisphere.NULL) res.put("latitudeHem", latitudeHem);
+		if (latitudeHem != Hemisphere.NULL) res.put("latitudeHem", latitudeHem.name());
 		if (longitude != null) res.put("longitude", longitude);
-		if (longitudeHem != Hemisphere.NULL) res.put("longitudeHem", longitudeHem);
+		if (longitudeHem != Hemisphere.NULL) res.put("longitudeHem", longitudeHem.name());
 		if (speedOverGround != null) res.put("speedOverGround", speedOverGround);
 		if (trackMadeGood != null) res.put("trackMadeGood", trackMadeGood);
 		if (date != null) res.put("date", date);
 		if (magneticVariation != null) res.put("magneticVariation", magneticVariation);
-		if (magneticHem != Hemisphere.NULL) res.put("magneticHem", magneticHem);
-		if (signalIntegrity != SignalIntegrity.NULL) res.put("signalIntegrity", signalIntegrity);
+		if (magneticHem != Hemisphere.NULL) res.put("magneticHem", magneticHem.name());
+		if (signalIntegrity != SignalIntegrity.NULL) res.put("signalIntegrity", signalIntegrity.name());
 	}
 
 	public Time getTime() {

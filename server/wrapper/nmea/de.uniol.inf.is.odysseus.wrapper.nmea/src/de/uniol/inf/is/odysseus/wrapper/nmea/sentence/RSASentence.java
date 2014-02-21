@@ -87,9 +87,9 @@ public class RSASentence extends Sentence{
 	@Override
 	protected void fillMap(Map<String, Object> res) {
 		if (starboard != null) res.put("starboard", starboard);
-		if (sbStatus != null) res.put("sbStatus", sbStatus);
+		if (sbStatus != Status.NULL) res.put("sbStatus", sbStatus.name());
 		if (portboard != null) res.put("portboard", portboard);
-		if (pbStatus != null) res.put("pbStatus", pbStatus);
+		if (pbStatus != Status.NULL) res.put("pbStatus", pbStatus.name());
 	}
 
 	public Double getStarboard(){
