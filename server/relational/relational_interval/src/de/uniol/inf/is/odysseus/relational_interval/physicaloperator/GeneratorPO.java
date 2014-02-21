@@ -3,10 +3,12 @@
  */
 package de.uniol.inf.is.odysseus.relational_interval.physicaloperator;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -15,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -40,7 +43,15 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     private int maxHistoryElements = 0;
     private final int frequency;
     private TimeUnit baseTimeUnit;
-    
+    protected PriorityQueue<Tuple<M>> outputQueue = new PriorityQueue<>(11, new Comparator<Tuple<M>>() {
+
+        @Override
+        public int compare(Tuple<M> left, Tuple<M> right) {
+            PointInTime l = left.isPunctuation() ? ((IPunctuation) left).getTime() : left.getMetadata().getStart();
+            PointInTime r = right.isPunctuation() ? ((IPunctuation) right).getTime() : right.getMetadata().getStart();
+            return l.compareTo(r);
+        }
+    });
 
     /**
  * 
@@ -160,7 +171,22 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
             lastObjects.addFirst(object);
 
         }
-        this.transfer(object);
+        outputQueue.offer(object);
+        PointInTime min = PointInTime.getInfinityTime();
+        for (LinkedList<Tuple<M>> group : this.leftGroupsLastObjects.values()) {
+            PointInTime start = group.getFirst().getMetadata().getStart();
+            if (min.after(start)) {
+                min = start;
+            }
+        }
+        while (!outputQueue.isEmpty()) {
+            if (outputQueue.peek().getMetadata().getStart().beforeOrEquals(min)) {
+                transfer(outputQueue.poll());
+            }else {
+                break;
+            }
+        }
+
     }
 
     /**
@@ -220,7 +246,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
                 }
             }
             if (!nullValueOccured || (nullValueOccured && this.allowNull)) {
-                this.transfer(outputVal);
+                outputQueue.offer(outputVal);
             }
         }
 
@@ -240,20 +266,21 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     public void setGroupProcessor(final IGroupProcessor<Tuple<M>, Tuple<M>> groupProcessor) {
         this.groupProcessor = groupProcessor;
     }
+
 }
 
 class VarHelper {
-	int pos;
-	int objectPosToUse;
+    int pos;
+    int objectPosToUse;
 
-	public VarHelper(int pos, int objectPosToUse) {
-		super();
-		this.pos = pos;
-		this.objectPosToUse = objectPosToUse;
-	}
+    public VarHelper(int pos, int objectPosToUse) {
+        super();
+        this.pos = pos;
+        this.objectPosToUse = objectPosToUse;
+    }
 
-	@Override
-	public String toString() {
-		return pos+" "+objectPosToUse;
-	}
+    @Override
+    public String toString() {
+        return pos + " " + objectPosToUse;
+    }
 }
