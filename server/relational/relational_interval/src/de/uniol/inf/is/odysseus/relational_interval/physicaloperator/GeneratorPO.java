@@ -3,12 +3,10 @@
  */
 package de.uniol.inf.is.odysseus.relational_interval.physicaloperator;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -47,15 +45,6 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     private int maxHistoryElements = 0;
     private final int frequency;
     private TimeUnit baseTimeUnit;
-    protected PriorityQueue<Tuple<M>> outputQueue = new PriorityQueue<>(11, new Comparator<Tuple<M>>() {
-
-        @Override
-        public int compare(Tuple<M> left, Tuple<M> right) {
-            PointInTime l = left.isPunctuation() ? ((IPunctuation) left).getTime() : left.getMetadata().getStart();
-            PointInTime r = right.isPunctuation() ? ((IPunctuation) right).getTime() : right.getMetadata().getStart();
-            return l.compareTo(r);
-        }
-    });
 
     /**
  * 

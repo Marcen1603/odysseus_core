@@ -56,9 +56,7 @@ public class TGeneratorAORule extends AbstractTransformationRule<GeneratorAO> {
     @Override
     public boolean isExecutable(GeneratorAO ao, TransformationConfiguration transformConfig) {
         if (ao.getInputSchema().getType() == Tuple.class) {
-            if (ao.getPhysSubscriptionTo() != null) {
-                return true;
-            }
+            return ao.isAllPhysicalInputSet();
         }
         return false;
 
