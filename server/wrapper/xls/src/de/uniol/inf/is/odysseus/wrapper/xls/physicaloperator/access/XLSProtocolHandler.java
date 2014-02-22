@@ -100,7 +100,7 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
      * 
      * @param schema
      */
-    private XLSProtocolHandler(final ITransportDirection direction, final IAccessPattern access, IDataHandler<T> dataHandler) {
+    private XLSProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IDataHandler<T> dataHandler) {
         super(direction, access, dataHandler);
 
     }
@@ -109,7 +109,7 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
      * {@inheritDoc}
      */
     @Override
-    public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, Map<String, String> options, IDataHandler<T> dataHandler) {
+    public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final Map<String, String> options, final IDataHandler<T> dataHandler) {
         final XLSProtocolHandler<T> instance = new XLSProtocolHandler<T>(direction, access, dataHandler);
         instance.setOptionsMap(options);
         instance.init(options);
@@ -121,7 +121,7 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
      */
     @Override
     public String getName() {
-        return NAME;
+        return XLSProtocolHandler.NAME;
     }
 
     @Override
@@ -137,42 +137,49 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
     @Override
     public void open() throws IOException {
         this.getTransportHandler().open();
-        lineCounter = 0;
+        this.lineCounter = 0;
         if (this.getDirection().equals(ITransportDirection.IN)) {
             if ((this.getAccess().equals(IAccessPattern.PULL)) || (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
                 this.input = this.getTransportHandler().getInputStream();
+                this.workBook = new WorkBookHandle(this.input);
+                try {
+                    this.sheet = this.workBook.getWorkSheet(this.getWorksheet());
+                }
+                catch (final WorkSheetNotFoundException e) {
+                    XLSProtocolHandler.LOG.error(e.getMessage(), e);
+                    throw new IOException(e);
+                }
             }
         }
         else {
             this.output = this.getTransportHandler().getOutputStream();
             this.workBook = new WorkBookHandle();
             try {
-                sheet = workBook.getWorkSheet(getWorksheet());
+                this.sheet = this.workBook.getWorkSheet(this.getWorksheet());
             }
-            catch (WorkSheetNotFoundException e) {
-                LOG.debug(e.getMessage(), e);
-                sheet = workBook.createWorkSheet(getWorksheet());
-
+            catch (final WorkSheetNotFoundException e) {
+                XLSProtocolHandler.LOG.debug(e.getMessage(), e);
+                this.sheet = this.workBook.createWorkSheet(this.getWorksheet());
             }
-            sheet.setFastCellAdds(true);
+            this.sheet.setFastCellAdds(true);
             final SDFSchema schema = this.getDataHandler().getSchema();
             int i = 0;
-            if (addLineNumber) {
+            if (this.addLineNumber) {
                 i++;
             }
             for (; i < schema.size(); i++) {
-                this.sheet.add(schema.get(i).getAttributeName(), lineCounter, i);
+                this.sheet.add(schema.get(i).getAttributeName(), this.lineCounter, i);
             }
-            lineCounter++;
+            this.lineCounter++;
         }
-        delayCounter = 0;
+        this.delayCounter = 0;
 
-        isDone = false;
-        firstLineSkipped = false;
-        if (debug) {
+        this.isDone = false;
+        this.firstLineSkipped = false;
+        if (this.debug) {
             ProtocolMonitor.getInstance().addToMonitor(this);
-            if (dumpFile != null) {
-                dumpOut = new PrintWriter(dumpFile);
+            if (this.dumpFile != null) {
+                this.dumpOut = new PrintWriter(this.dumpFile);
             }
         }
     }
@@ -185,7 +192,7 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
             }
         }
         else {
-            workBook.write(this.output);
+            this.workBook.write(this.output);
             this.output.flush();
             if (this.sheet != null) {
                 this.sheet.close();
@@ -196,22 +203,22 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
             }
         }
         this.getTransportHandler().close();
-        if (debug) {
-            ProtocolMonitor.getInstance().informMonitor(this, lineCounter);
+        if (this.debug) {
+            ProtocolMonitor.getInstance().informMonitor(this, this.lineCounter);
             ProtocolMonitor.getInstance().removeFromMonitor(this);
-            if (dumpOut != null) {
-                dumpOut.close();
+            if (this.dumpOut != null) {
+                this.dumpOut.close();
             }
         }
     }
 
     @Override
-    public void onConnect(ITransportHandler caller) {
+    public void onConnect(final ITransportHandler caller) {
 
     }
 
     @Override
-    public void onDisonnect(ITransportHandler caller) {
+    public void onDisonnect(final ITransportHandler caller) {
 
     }
 
@@ -222,75 +229,74 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
 
     @Override
     public T getNext() throws IOException {
-        T tuple = getNextLine();
+        final T tuple = this.getNextLine();
         return tuple;
     }
 
     protected T getNextLine() throws IOException {
-        if (!firstLineSkipped && !readFirstLine) {
-            lineCounter++;
-            firstLineSkipped = true;
+        if (!this.firstLineSkipped && !this.readFirstLine) {
+            this.lineCounter++;
+            this.firstLineSkipped = true;
         }
-        delay();
+        this.delay();
         final SDFSchema schema = this.getDataHandler().getSchema();
-        final String[] tuple = new String[schema.size() + (addLineNumber ? 1 : 0)];
+        final String[] tuple = new String[schema.size() + (this.addLineNumber ? 1 : 0)];
         int i = 0;
-        if (addLineNumber) {
-            tuple[i++] = lineCounter + "";
+        if (this.addLineNumber) {
+            tuple[i++] = this.lineCounter + "";
         }
         for (; i < schema.size(); i++) {
             try {
-                CellHandle value = this.sheet.getCell(lineCounter, i);
+                final CellHandle value = this.sheet.getCell(this.lineCounter, i);
                 String valueString = value.getStringVal();
-                if (trim) {
+                if (this.trim) {
                     valueString = valueString.trim();
                 }
                 tuple[i] = valueString;
             }
-            catch (CellNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            catch (final CellNotFoundException e) {
+                LOG.error(e.getMessage(), e);
             }
         }
-        if (debug) {
-            if (dumpEachLine > 0) {
-                if (lineCounter % dumpEachLine == 0) {
-                    long time = System.currentTimeMillis();
-                    LOG.debug(lineCounter + " " + time + " " + (time - lastDumpTime) + " (" + Integer.toHexString(hashCode()) + ") line: " + Arrays.toString(tuple));
-                    lastDumpTime = time;
+        if (this.debug) {
+            if (this.dumpEachLine > 0) {
+                if ((this.lineCounter % this.dumpEachLine) == 0) {
+                    final long time = System.currentTimeMillis();
+                    XLSProtocolHandler.LOG.debug(this.lineCounter + " " + time + " " + (time - this.lastDumpTime) + " (" + Integer.toHexString(this.hashCode()) + ") line: " + Arrays.toString(tuple));
+                    this.lastDumpTime = time;
                 }
             }
-            if (measureEachLine > 0) {
-                if (lineCounter % measureEachLine == 0) {
-                    long time = System.currentTimeMillis();
+            if (this.measureEachLine > 0) {
+                if ((this.lineCounter % this.measureEachLine) == 0) {
+                    final long time = System.currentTimeMillis();
                     // measurements.append(lineCounter).append(";").append(time
                     // - basetime).append("\n");
-                    if (dumpOut != null) {
-                        dumpOut.println(lineCounter + ";" + (time - basetime) + ";" + (time - lastMeasureTime));
+                    if (this.dumpOut != null) {
+                        this.dumpOut.println(this.lineCounter + ";" + (time - this.basetime) + ";" + (time - this.lastMeasureTime));
                     }
-                    lastMeasureTime = time;
+                    this.lastMeasureTime = time;
                 }
             }
 
-            if (lastLine == lineCounter || lineCounter == 0) {
-                long time = System.currentTimeMillis();
-                if (lineCounter == 0) {
-                    basetime = time;
+            if ((this.lastLine == this.lineCounter) || (this.lineCounter == 0)) {
+                final long time = System.currentTimeMillis();
+                if (this.lineCounter == 0) {
+                    this.basetime = time;
                 }
-                LOG.debug(lineCounter + " " + time);
-                if (dumpOut != null) {
-                    dumpOut.println(lineCounter + ";" + (time - basetime) + ";" + (time - lastMeasureTime));
+                XLSProtocolHandler.LOG.debug(this.lineCounter + " " + time);
+                if (this.dumpOut != null) {
+                    this.dumpOut.println(this.lineCounter + ";" + (time - this.basetime) + ";" + (time - this.lastMeasureTime));
                 }
                 // measurements.append(lineCounter).append(";").append(time -
                 // basetime).append("\n");
-                if (lastLine == lineCounter) {
+                if (this.lastLine == this.lineCounter) {
                     // System.out.println(measurements);
-                    ProtocolMonitor.getInstance().informMonitor(this, lineCounter);
-                    isDone = true;
+                    ProtocolMonitor.getInstance().informMonitor(this, this.lineCounter);
+                    this.isDone = true;
                 }
             }
         }
-        lineCounter++;
+        this.lineCounter++;
 
         return this.getDataHandler().readData(tuple);
     }
@@ -299,31 +305,31 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
     public void write(final T object) throws IOException {
         final SDFSchema schema = this.getDataHandler().getSchema();
         int i = 0;
-        if (addLineNumber) {
-            this.sheet.add(lineCounter + "", lineCounter, i);
+        if (this.addLineNumber) {
+            this.sheet.add(this.lineCounter + "", this.lineCounter, i);
         }
         for (; i < schema.size(); i++) {
-            Object curAttribute = object.getAttribute(i);
+            final Object curAttribute = object.getAttribute(i);
 
             if (curAttribute instanceof Number) {
-                if ((curAttribute instanceof Double || curAttribute instanceof Float) && floatingFormatter != null) {
-                    this.sheet.add(floatingFormatter.format(curAttribute), lineCounter, i);
+                if (((curAttribute instanceof Double) || (curAttribute instanceof Float)) && (this.floatingFormatter != null)) {
+                    this.sheet.add(this.floatingFormatter.format(curAttribute), this.lineCounter, i);
                 }
-                else if (!((curAttribute instanceof Double || curAttribute instanceof Float)) && numberFormatter != null) {
-                    this.sheet.add(numberFormatter.format(curAttribute), lineCounter, i);
+                else if (!(((curAttribute instanceof Double) || (curAttribute instanceof Float))) && (this.numberFormatter != null)) {
+                    this.sheet.add(this.numberFormatter.format(curAttribute), this.lineCounter, i);
                 }
                 else {
-                    this.sheet.add(curAttribute, lineCounter, i);
+                    this.sheet.add(curAttribute, this.lineCounter, i);
                 }
             }
             else {
-                this.sheet.add(curAttribute, lineCounter, i);
+                this.sheet.add(curAttribute, this.lineCounter, i);
             }
         }
-        if (writeMetadata) {
-            this.sheet.add(object.getMetadata().toString(), lineCounter, i + 1);
+        if (this.writeMetadata) {
+            this.sheet.add(object.getMetadata().toString(), this.lineCounter, i + 1);
         }
-        lineCounter++;
+        this.lineCounter++;
     }
 
     /**
@@ -337,95 +343,95 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
      * @param worksheet
      *            the worksheet to set
      */
-    public void setWorksheet(String worksheet) {
+    public void setWorksheet(final String worksheet) {
         this.worksheet = worksheet;
     }
 
     public long getDelay() {
-        return delay;
+        return this.delay;
     }
 
-    public void setDelay(long delay) {
+    public void setDelay(final long delay) {
         this.delay = delay;
     }
 
     public int getNanodelay() {
-        return nanodelay;
+        return this.nanodelay;
     }
 
-    public void setNanodelay(int nanodelay) {
+    public void setNanodelay(final int nanodelay) {
         this.nanodelay = nanodelay;
     }
 
     public int getDelayeach() {
-        return delayeach;
+        return this.delayeach;
     }
 
-    public void setDelayeach(int delayeach) {
+    public void setDelayeach(final int delayeach) {
         this.delayeach = delayeach;
     }
 
     @Override
     public boolean isDone() {
-        return isDone;
+        return this.isDone;
     }
 
     @Override
-    public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
+    public boolean isSemanticallyEqualImpl(final IProtocolHandler<?> o) {
         if (!(o instanceof XLSProtocolHandler)) {
             return false;
         }
-        XLSProtocolHandler<?> other = (XLSProtocolHandler<?>) o;
-        if (this.nanodelay != other.getNanodelay() || this.delay != other.getDelay() || this.delayeach != other.getDelayeach() || this.dumpEachLine != other.getDumpEachLine()
-                || this.measureEachLine != other.getMeasureEachLine() || this.lastLine != other.getLastLine() || this.debug != other.isDebug() || this.readFirstLine != other.isReadFirstLine()) {
+        final XLSProtocolHandler<?> other = (XLSProtocolHandler<?>) o;
+        if ((this.nanodelay != other.getNanodelay()) || (this.delay != other.getDelay()) || (this.delayeach != other.getDelayeach()) || (this.dumpEachLine != other.getDumpEachLine())
+                || (this.measureEachLine != other.getMeasureEachLine()) || (this.lastLine != other.getLastLine()) || (this.debug != other.isDebug()) || (this.readFirstLine != other.isReadFirstLine())) {
             return false;
         }
         return true;
     }
 
     public boolean isReadFirstLine() {
-        return readFirstLine;
+        return this.readFirstLine;
     }
 
     public long getDumpEachLine() {
-        return dumpEachLine;
+        return this.dumpEachLine;
     }
 
     public long getLastLine() {
-        return lastLine;
+        return this.lastLine;
     }
 
     public boolean isDebug() {
-        return debug;
+        return this.debug;
     }
 
     public long getMeasureEachLine() {
-        return measureEachLine;
+        return this.measureEachLine;
     }
 
     private void delay() {
-        if (delayeach > 0) {
-            delayCounter++;
-            if (delayCounter < delayeach) {
+        if (this.delayeach > 0) {
+            this.delayCounter++;
+            if (this.delayCounter < this.delayeach) {
                 return;
             }
-            delayCounter = 0;
+            this.delayCounter = 0;
         }
-        if (delay > 0) {
+        if (this.delay > 0) {
             try {
-                Thread.sleep(delay);
+                Thread.sleep(this.delay);
             }
-            catch (InterruptedException e) {
+            catch (final InterruptedException e) {
                 // interrupting the delay might be correct
                 // e.printStackTrace();
             }
         }
         else {
-            if (nanodelay > 0) {
+            if (this.nanodelay > 0) {
                 try {
-                    Thread.sleep(0L, nanodelay);
+                    Thread.sleep(0L, this.nanodelay);
                 }
-                catch (InterruptedException e) {
+                catch (final InterruptedException e) {
                     // interrupting the delay might be correct
                     // e.printStackTrace();
                 }
@@ -433,65 +439,65 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
         }
     }
 
-    private void init(Map<String, String> options) {
-        if (options.containsKey(WORKSHEET)) {
-            setWorksheet(options.get(WORKSHEET));
+    private void init(final Map<String, String> options) {
+        if (options.containsKey(XLSProtocolHandler.WORKSHEET)) {
+            this.setWorksheet(options.get(XLSProtocolHandler.WORKSHEET));
         }
         else {
-            setWorksheet("Sheet1");
+            this.setWorksheet("Sheet1");
         }
-        if (options.containsKey(DELAY)) {
-            setDelay(Long.parseLong(options.get(DELAY)));
+        if (options.containsKey(XLSProtocolHandler.DELAY)) {
+            this.setDelay(Long.parseLong(options.get(XLSProtocolHandler.DELAY)));
         }
-        if (options.containsKey(NANODELAY)) {
-            setNanodelay(Integer.parseInt(options.get(NANODELAY)));
+        if (options.containsKey(XLSProtocolHandler.NANODELAY)) {
+            this.setNanodelay(Integer.parseInt(options.get(XLSProtocolHandler.NANODELAY)));
         }
-        if (options.containsKey(DELAYEACH)) {
-            setDelayeach(Integer.parseInt(options.get(DELAYEACH)));
+        if (options.containsKey(XLSProtocolHandler.DELAYEACH)) {
+            this.setDelayeach(Integer.parseInt(options.get(XLSProtocolHandler.DELAYEACH)));
         }
-        if (options.containsKey(XLS_FLOATING_FORMATTER)) {
-            floatingFormatter = new DecimalFormat(options.get(XLS_FLOATING_FORMATTER));
+        if (options.containsKey(XLSProtocolHandler.XLS_FLOATING_FORMATTER)) {
+            this.floatingFormatter = new DecimalFormat(options.get(XLSProtocolHandler.XLS_FLOATING_FORMATTER));
         }
-        if (options.containsKey(XLS_NUMBER_FORMATTER)) {
-            numberFormatter = new DecimalFormat(options.get(XLS_NUMBER_FORMATTER));
+        if (options.containsKey(XLSProtocolHandler.XLS_NUMBER_FORMATTER)) {
+            this.numberFormatter = new DecimalFormat(options.get(XLSProtocolHandler.XLS_NUMBER_FORMATTER));
         }
 
-        if (options.containsKey(XLS_WRITE_METADATA)) {
-            writeMetadata = Boolean.parseBoolean(options.get(XLS_WRITE_METADATA));
+        if (options.containsKey(XLSProtocolHandler.XLS_WRITE_METADATA)) {
+            this.writeMetadata = Boolean.parseBoolean(options.get(XLSProtocolHandler.XLS_WRITE_METADATA));
         }
-        if (options.containsKey(XLS_TRIM)) {
-            trim = Boolean.parseBoolean(options.get(XLS_TRIM));
+        if (options.containsKey(XLSProtocolHandler.XLS_TRIM)) {
+            this.trim = Boolean.parseBoolean(options.get(XLSProtocolHandler.XLS_TRIM));
         }
-        if (options.containsKey(ADDLINENUMBERS)) {
-            addLineNumber = Boolean.parseBoolean(options.get(ADDLINENUMBERS));
+        if (options.containsKey(XLSProtocolHandler.ADDLINENUMBERS)) {
+            this.addLineNumber = Boolean.parseBoolean(options.get(XLSProtocolHandler.ADDLINENUMBERS));
         }
-        if (options.containsKey(READFIRSTLINE)) {
-            readFirstLine = Boolean.parseBoolean(options.get(READFIRSTLINE));
+        if (options.containsKey(XLSProtocolHandler.READFIRSTLINE)) {
+            this.readFirstLine = Boolean.parseBoolean(options.get(XLSProtocolHandler.READFIRSTLINE));
         }
         else {
-            readFirstLine = true;
+            this.readFirstLine = true;
         }
-        if (options.containsKey(DUMP_EACH_LINE)) {
-            dumpEachLine = Integer.parseInt(options.get(DUMP_EACH_LINE));
-        }
-
-        if (options.containsKey(MEASURE_EACH_LINE)) {
-            measureEachLine = Integer.parseInt(options.get(MEASURE_EACH_LINE));
+        if (options.containsKey(XLSProtocolHandler.DUMP_EACH_LINE)) {
+            this.dumpEachLine = Integer.parseInt(options.get(XLSProtocolHandler.DUMP_EACH_LINE));
         }
 
-        if (options.containsKey(LAST_LINE)) {
-            lastLine = Integer.parseInt(options.get(LAST_LINE));
+        if (options.containsKey(XLSProtocolHandler.MEASURE_EACH_LINE)) {
+            this.measureEachLine = Integer.parseInt(options.get(XLSProtocolHandler.MEASURE_EACH_LINE));
         }
-        if (options.containsKey(MAX_LINES)) {
-            lastLine = Integer.parseInt(options.get(MAX_LINES));
+
+        if (options.containsKey(XLSProtocolHandler.LAST_LINE)) {
+            this.lastLine = Integer.parseInt(options.get(XLSProtocolHandler.LAST_LINE));
         }
-        if (options.containsKey(DEBUG)) {
-            debug = Boolean.parseBoolean(options.get(DEBUG));
+        if (options.containsKey(XLSProtocolHandler.MAX_LINES)) {
+            this.lastLine = Integer.parseInt(options.get(XLSProtocolHandler.MAX_LINES));
         }
-        if (options.containsKey(DUMPFILE)) {
-            dumpFile = options.get(DUMPFILE);
+        if (options.containsKey(XLSProtocolHandler.DEBUG)) {
+            this.debug = Boolean.parseBoolean(options.get(XLSProtocolHandler.DEBUG));
         }
-        lastDumpTime = System.currentTimeMillis();
+        if (options.containsKey(XLSProtocolHandler.DUMPFILE)) {
+            this.dumpFile = options.get(XLSProtocolHandler.DUMPFILE);
+        }
+        this.lastDumpTime = System.currentTimeMillis();
 
     }
 
