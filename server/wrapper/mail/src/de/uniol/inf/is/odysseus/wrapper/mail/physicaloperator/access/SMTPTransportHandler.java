@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.wrapper.smtp.physicaloperator.access;
+package de.uniol.inf.is.odysseus.wrapper.mail.physicaloperator.access;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -67,16 +67,16 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
     @Override
     public void send(final byte[] message) throws IOException {
         try {
-            Message mimeMessage = new MimeMessage(session);
-            mimeMessage.setSubject(getSubject());
+            final Message mimeMessage = new MimeMessage(this.session);
+            mimeMessage.setSubject(this.getSubject());
             mimeMessage.setText(ByteBuffer.wrap(message).asCharBuffer().toString());
-            mimeMessage.setFrom(new InternetAddress(getFrom()));
-            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(getTo()));
-            transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+            mimeMessage.setFrom(new InternetAddress(this.getFrom()));
+            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(this.getTo()));
+            this.transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
         }
-        catch (MessagingException e) {
-            LOG.error(e.getMessage(), e);
-            LOG.debug(ByteBuffer.wrap(message).asCharBuffer().toString());
+        catch (final MessagingException e) {
+            this.LOG.error(e.getMessage(), e);
+            this.LOG.debug(ByteBuffer.wrap(message).asCharBuffer().toString());
             throw new IOException(e);
         }
     }
@@ -90,51 +90,51 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
     }
 
     private void init(final Map<String, String> options) {
-        if (options.containsKey(HOST)) {
-            setHost(options.get(HOST));
+        if (options.containsKey(SMTPTransportHandler.HOST)) {
+            this.setHost(options.get(SMTPTransportHandler.HOST));
         }
         else {
-            setHost("localhost");
+            this.setHost("localhost");
         }
-        if (options.containsKey(PORT)) {
-            setPort(Integer.parseInt(options.get(PORT)));
-        }
-        else {
-            setPort(587);
-        }
-        if (options.containsKey(TLS)) {
-            setTLS(Boolean.parseBoolean(options.get(TLS)));
+        if (options.containsKey(SMTPTransportHandler.PORT)) {
+            this.setPort(Integer.parseInt(options.get(SMTPTransportHandler.PORT)));
         }
         else {
-            setTLS(true);
+            this.setPort(587);
         }
-        if (options.containsKey(FROM)) {
-            setFrom(options.get(FROM));
+        if (options.containsKey(SMTPTransportHandler.TLS)) {
+            this.setTLS(Boolean.parseBoolean(options.get(SMTPTransportHandler.TLS)));
         }
-        if (options.containsKey(TO)) {
-            setTo(options.get(TO));
+        else {
+            this.setTLS(true);
         }
-        if (options.containsKey(SUBJECT)) {
-            setSubject(options.get(SUBJECT));
+        if (options.containsKey(SMTPTransportHandler.FROM)) {
+            this.setFrom(options.get(SMTPTransportHandler.FROM));
         }
-        if (options.containsKey(USERNAME)) {
-            setUsername(options.get(USERNAME));
+        if (options.containsKey(SMTPTransportHandler.TO)) {
+            this.setTo(options.get(SMTPTransportHandler.TO));
         }
-        if (options.containsKey(PASSWORD)) {
-            setPassword(options.get(PASSWORD));
+        if (options.containsKey(SMTPTransportHandler.SUBJECT)) {
+            this.setSubject(options.get(SMTPTransportHandler.SUBJECT));
+        }
+        if (options.containsKey(SMTPTransportHandler.USERNAME)) {
+            this.setUsername(options.get(SMTPTransportHandler.USERNAME));
+        }
+        if (options.containsKey(SMTPTransportHandler.PASSWORD)) {
+            this.setPassword(options.get(SMTPTransportHandler.PASSWORD));
         }
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return SMTPTransportHandler.NAME;
     }
 
     /**
      * @param to
      *            the to to set
      */
-    public void setTo(String to) {
+    public void setTo(final String to) {
         this.to = to;
     }
 
@@ -149,7 +149,7 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
      * @param from
      *            the from to set
      */
-    public void setFrom(String from) {
+    public void setFrom(final String from) {
         this.from = from;
     }
 
@@ -164,7 +164,7 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
      * @param subject
      *            the subject to set
      */
-    public void setSubject(String subject) {
+    public void setSubject(final String subject) {
         this.subject = subject;
     }
 
@@ -179,7 +179,7 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
      * @param username
      *            the username to set
      */
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username = username;
     }
 
@@ -194,7 +194,7 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
      * @param password
      *            the password to set
      */
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 
@@ -209,7 +209,7 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
      * @param host
      *            the host to set
      */
-    public void setHost(String host) {
+    public void setHost(final String host) {
         this.host = host;
     }
 
@@ -224,7 +224,7 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
      * @param port
      *            the port to set
      */
-    public void setPort(int port) {
+    public void setPort(final int port) {
         this.port = port;
     }
 
@@ -239,7 +239,7 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
      * @param tls
      *            the tls to set
      */
-    public void setTLS(boolean flag) {
+    public void setTLS(final boolean flag) {
         this.tls = flag;
     }
 
@@ -251,35 +251,34 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
     }
 
     private boolean isAuth() {
-        return ((getUsername() != null) && (getPassword() != null));
+        return ((this.getUsername() != null) && (this.getPassword() != null));
     }
 
     @Override
-	public void processInOpen() throws UnknownHostException, IOException {
+    public void processInOpen() throws UnknownHostException, IOException {
 
     }
 
     @Override
     public void processOutOpen() throws IOException {
-        Properties properties = System.getProperties();
-        properties.setProperty("mail.smtp.host", getHost());
-        properties.setProperty("mail.smtp.auth", Boolean.toString(isAuth()));
-        properties.setProperty("mail.smtp.starttls.enable", Boolean.toString(isTLS()));
-        properties.setProperty("mail.smtp.host", getHost());
-        properties.setProperty("mail.smtp.port", Integer.toString(getPort()));
+        final Properties properties = System.getProperties();
+        properties.setProperty("mail.smtp.auth", Boolean.toString(this.isAuth()));
+        properties.setProperty("mail.smtp.starttls.enable", Boolean.toString(this.isTLS()));
+        properties.setProperty("mail.smtp.host", this.getHost());
+        properties.setProperty("mail.smtp.port", Integer.toString(this.getPort()));
         try {
-            session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
+            this.session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
                 @Override
-				protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(getUsername(), getPassword());
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(SMTPTransportHandler.this.getUsername(), SMTPTransportHandler.this.getPassword());
                 }
             });
-            transport = session.getTransport("smtp");
-            transport.connect();
+            this.transport = this.session.getTransport("smtp");
+            this.transport.connect();
         }
-        catch (MessagingException e) {
-            LOG.error(e.getMessage(), e);
-            LOG.debug(properties.toString());
+        catch (final MessagingException e) {
+            this.LOG.error(e.getMessage(), e);
+            this.LOG.debug(properties.toString());
             throw new IOException(e);
         }
     }
@@ -291,17 +290,17 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
 
     @Override
     public void processOutClose() throws IOException {
-        transport = null;
-        session = null;
+        this.transport = null;
+        this.session = null;
         this.fireOnDisconnect();
     }
 
     @Override
-    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    public boolean isSemanticallyEqualImpl(final ITransportHandler o) {
         if (!(o instanceof SMTPTransportHandler)) {
             return false;
         }
-        SMTPTransportHandler other = (SMTPTransportHandler) o;
+        final SMTPTransportHandler other = (SMTPTransportHandler) o;
         if (!this.from.equals(other.from)) {
             return false;
         }

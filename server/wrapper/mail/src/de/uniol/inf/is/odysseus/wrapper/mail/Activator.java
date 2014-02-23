@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.smtp;
+package de.uniol.inf.is.odysseus.wrapper.mail;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
