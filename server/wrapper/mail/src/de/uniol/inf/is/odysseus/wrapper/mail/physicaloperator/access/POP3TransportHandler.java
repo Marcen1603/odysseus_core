@@ -22,6 +22,7 @@ import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.mail.search.SubjectTerm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,11 +47,13 @@ public class POP3TransportHandler extends AbstractPullTransportHandler {
     private static final String PASSWORD = "password";
     private static final String FOLDER = "folder";
     private static final String KEEP = "keep";
+    private static final String PATTERN = "pattern";
     private String host;
     private String username;
     private String password;
     private int port;
     private boolean keep;
+    private String pattern;
     private String folder;
     private Store store;
     private Session session;
@@ -109,6 +112,12 @@ public class POP3TransportHandler extends AbstractPullTransportHandler {
         }
         else {
             setFolder("INBOX");
+        }
+        if (options.containsKey(POP3TransportHandler.PATTERN)) {
+            this.setPattern(options.get(POP3TransportHandler.PATTERN));
+        }
+        else {
+            this.setPattern("");
         }
     }
 
@@ -193,6 +202,21 @@ public class POP3TransportHandler extends AbstractPullTransportHandler {
     }
 
     /**
+     * @param pattern
+     *            the pattern to set
+     */
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
+
+    /**
+     * @return the pattern
+     */
+    public String getPattern() {
+        return this.pattern;
+    }
+
+    /**
      * @param folder
      *            the folder to set
      */
@@ -262,7 +286,7 @@ public class POP3TransportHandler extends AbstractPullTransportHandler {
      */
     @Override
     public InputStream getInputStream() {
-        return new POP3InputStream(this.store, getFolder());
+        return new POP3InputStream(this.store, getFolder(), getPattern(), isKeep());
     }
 
     /**
@@ -285,6 +309,12 @@ public class POP3TransportHandler extends AbstractPullTransportHandler {
         else if (!this.username.equals(other.username)) {
             return false;
         }
+        else if (!this.folder.equals(other.folder)) {
+            return false;
+        }
+        else if (!this.pattern.equals(other.pattern)) {
+            return false;
+        }
         return true;
     }
 
@@ -292,10 +322,14 @@ public class POP3TransportHandler extends AbstractPullTransportHandler {
         private InputStream inputStream;
         private final Store store;
         private final String folder;
+        private final String pattern;
+        private final boolean keep;
 
-        public POP3InputStream(final Store store, final String folder) {
+        public POP3InputStream(final Store store, final String folder, final String pattern, final boolean keep) {
             this.store = store;
             this.folder = folder;
+            this.pattern = pattern;
+            this.keep = keep;
         }
 
         @Override
@@ -362,8 +396,16 @@ public class POP3TransportHandler extends AbstractPullTransportHandler {
                 if (!inbox.isOpen()) {
                     inbox.open(Folder.READ_ONLY);
                 }
-                if (inbox.getMessageCount() > 0) {
-                    final Message message = inbox.getMessage(1);
+                final Message[] messages;
+                if ((pattern != null) && (!"".equals(pattern))) {
+                    SubjectTerm term = new SubjectTerm(pattern);
+                    messages = inbox.search(term);
+                }
+                else {
+                    messages = inbox.getMessages();
+                }
+                if (messages.length > 0) {
+                    final Message message = messages[0];
                     Object content = message.getContent();
                     if (content instanceof String) {
                         this.inputStream = new ByteArrayInputStream(((String) content).getBytes());
@@ -378,7 +420,7 @@ public class POP3TransportHandler extends AbstractPullTransportHandler {
                     else if (content instanceof InputStream) {
                         this.inputStream = (InputStream) content;
                     }
-                    if (!isKeep()) {
+                    if (!keep) {
                         message.setFlag(Flags.Flag.DELETED, true);
                     }
                 }
