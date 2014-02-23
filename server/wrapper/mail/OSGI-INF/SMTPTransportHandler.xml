@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.wrapper.mail.physicaloperator.access.SMTPTransportHandler">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.wrapper.mail.SMTPTransportHandler">
    <implementation class="de.uniol.inf.is.odysseus.wrapper.mail.physicaloperator.access.SMTPTransportHandler"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler"/>
