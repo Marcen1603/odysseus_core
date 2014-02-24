@@ -52,7 +52,8 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements
 			final IUser user = userDao.findByName(username);
 			if (user != null && user.isActive()
 					&& ((checkLogin && user.validatePassword(password))||!checkLogin)) {
-				ISession session = updateSessionStore(user, tenant);
+				final Session session = new Session(user, tenant);
+				this.sessionStore.put(session.getId(), session);
 				fire(new UserLoggedInEvent(session));
 				return session;
 			}
@@ -82,14 +83,6 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements
 		return loginSuperUser(secret, UserManagementProvider.getDefaultTenant().getName());
 	}
 	
-	protected ISession updateSessionStore(final IUser user, final ITenant tenant) {
-		if (this.sessionStore.containsKey(user.getId())) {
-			this.sessionStore.remove(user.getId());
-		}
-		final Session session = new Session(user, tenant);
-		this.sessionStore.put(user.getId(), session);
-		return session;
-	}
 
 	/*
 	 * (non-Javadoc)
