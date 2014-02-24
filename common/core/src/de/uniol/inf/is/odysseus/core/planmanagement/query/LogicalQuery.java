@@ -90,6 +90,8 @@ public class LogicalQuery implements ILogicalQuery {
 	private int priority = 0;
 
 	transient final private Map<String, Object> parameters = new HashMap<String, Object>();
+	
+	private String notice;
 
 	// TODO: check in which constructors alternativeLogicalPlans have to be set!
 	
@@ -410,5 +412,15 @@ public class LogicalQuery implements ILogicalQuery {
 	@Override
 	public void done(IOwnedOperator op) {
 		// Ignore in logical query
+	}
+	
+	@Override
+	public String getNotice() {
+		return notice;
+	}
+	
+	@Override
+	public void setNotice(String notice) {
+		this.notice = notice;
 	}
 }

@@ -171,6 +171,11 @@ public class PhysicalQuery implements IPhysicalQuery {
 	boolean markedToStopped = false;
 
 	boolean isStarting = false;
+
+	/**
+	 * Notice can be used to annotade a query
+	 */
+	private String notice;
 	
 	/**
 	 * Creates a query based on a physical plan and
@@ -836,5 +841,19 @@ public class PhysicalQuery implements IPhysicalQuery {
 	@Override
 	public synchronized void setAsStopping(boolean isStopping) {
 		this.markedToStopped = isStopping;
+	}
+	
+	@Override
+	public String getNotice() {
+		return query!=null?query.getNotice():notice;
+	}
+	
+	@Override
+	public void setNotice(String notice) {
+		if (query!=null){
+			query.setNotice(notice);
+		}else{
+			this.notice=notice;		
+		}
 	}
 }

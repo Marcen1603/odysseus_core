@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author Wolf Bauer, Marco Grawunder
  * 
  */
-public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializable, Comparable<IOperatorOwner>, IQuery{
+ public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializable, Comparable<IOperatorOwner>, IQuery{
 
 	/**
 	 * ID of this query. Should be unique.
@@ -40,13 +40,13 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializab
 	 * @return ID of this query. Should be unique.
 	 */
 	@Override
-	public int getID();
+	 int getID();
 
 	/**
 	 * A query can be named, retrieve the value
 	 * @return
 	 */
-	public String getName();
+	 String getName();
 	
 	/**
 	 * A query can be named, set the value
@@ -59,7 +59,7 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializab
 	 * 
 	 * @return The priority with which this query should be scheduled.
 	 */
-	public int getPriority();
+	 int getPriority();
 
 	/**
 	 * Sets the priority with which this query should be scheduled.
@@ -67,21 +67,21 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializab
 	 * @param priority
 	 *            The new priority with which this query should be scheduled.
 	 */
-	public void setPriority(int priority);
+	 void setPriority(int priority);
 
 	@Override
-	public String getParserId();
+	 String getParserId();
 
-	public void setParserId(String parserId);
+	 void setParserId(String parserId);
 
 	@Override
-	public String getQueryText();
+	 String getQueryText();
 
-	public void setQueryText(String queryText);
+	 void setQueryText(String queryText);
 
-	public ISession getUser();
+	 ISession getUser();
 
-	public void setUser(ISession user);
+	 void setUser(ISession user);
 
 	/**
 	 * Set the logical plan of this query.
@@ -95,14 +95,14 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializab
 	 * @throws IllegalArgumentException
 	 *             if setOwner is false and no owners are set
 	 */
-	public void setLogicalPlan(ILogicalOperator logicalPlan, boolean setOwner);
+	 void setLogicalPlan(ILogicalOperator logicalPlan, boolean setOwner);
 
 	/**
 	 * Returns the logical plan of this query.
 	 * 
 	 * @return The logical plan of this query.
 	 */
-	public ILogicalOperator getLogicalPlan();
+	 ILogicalOperator getLogicalPlan();
 
 	/**
 	 * Set a list of alternative logical plans for this query.
@@ -112,34 +112,41 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializab
 	 * 
 	 * TODO: setOwner checken!
 	 */
-	public void setAlternativeLogicalPlans(List<ILogicalOperator> altPlans);
+	 void setAlternativeLogicalPlans(List<ILogicalOperator> altPlans);
 	
 	/**
 	 * Returns the list of alternative logical plans for this query.
 	 * 
 	 * @return The list of alternative logical plans for this query.
 	 */
-	public List<ILogicalOperator> getAlternativeLogicalPlans();
+	 List<ILogicalOperator> getAlternativeLogicalPlans();
 	
 	/**
 	 * @return true if this plan contains cycles, typically the graph is cycle
 	 *         free
 	 */
-	public boolean containsCycles();
+	 boolean containsCycles();
 
 	/**
 	 * Store key values pairs
 	 * @param key
 	 * @param value
 	 */
-	public void setParameter(String key, Object value);
+	 void setParameter(String key, Object value);
 
 	/**
 	 * Retrieve value for key
 	 * @param key
 	 * @return
 	 */
-	public Object getParameter(String key);
+	 Object getParameter(String key);
+	
+	/**
+	 * Notice for additional information (e.g. stopped by runtime)
+	 */
+	void setNotice(String notice);
+	
+	String getNotice();
 
 }
 
