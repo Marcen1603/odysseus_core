@@ -133,12 +133,15 @@ public class DataHandlerRegistry {
 		registerDataHandler(new ByteDataHandler());
 		registerDataHandler(new ShortDataHandler());
 		registerDataHandler(new DateHandler());
+		registerDataHandler(new FloatDataHandler());
 		registerDataHandler(new DoubleHandler());
 		registerDataHandler(new IntegerHandler());
 		registerDataHandler(new ListDataHandler());
 		registerDataHandler(new LongHandler());
 		registerDataHandler(new ObjectDataHandler<>());
 		registerDataHandler(new StringHandler());
+		registerDataHandler(new VectorDataHandler());
+		registerDataHandler(new MatrixDataHandler());
 		registerDataHandler(new TupleDataHandler());
 	}
 }
