@@ -17,7 +17,7 @@ public class P2PNewPlugIn implements BundleActivator {
 	private static final Logger LOG = LoggerFactory.getLogger(P2PNewPlugIn.class);
 	private static final String LOG_PROPERTIES_FILENAME = "log4j.properties";
 	private static final String JXTA_LOGGER_NAME = "net.jxta";
-	private static final java.util.logging.Level JXTA_LOG_LEVEL = java.util.logging.Level.SEVERE;
+	private static final java.util.logging.Level JXTA_LOG_LEVEL = java.util.logging.Level.ALL;
 	
 	public static final int TRANSPORT_BUFFER_SIZE = 640*480*3+(1+4);
 
@@ -43,8 +43,6 @@ public class P2PNewPlugIn implements BundleActivator {
 		} else {
 			LOG.warn("Could not get JXTA-Logger for setting level to {}", JXTA_LOG_LEVEL);
 		}
-		jxtaLogger = java.util.logging.Logger.getLogger("net.jxta.impl.endpoint.router.EndpointRouter");
-		jxtaLogger.setLevel(java.util.logging.Level.OFF);
 		
 		PropertyConfigurator.configure(bundle.getResource(LOG_PROPERTIES_FILENAME));
 	}
