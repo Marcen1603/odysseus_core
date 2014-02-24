@@ -33,6 +33,8 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IServerExecutor serverExecutor;
 	
+	private static ResourceUsageAdvertisement resAdv;
+	
 	private final Sigar sigar = new Sigar();
 	private long previousInputTotal = 0;
 	private long previousOutputTotal = 0;
@@ -154,12 +156,16 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 					LOG.debug("Set new current local resource usage: {}", usage);
 					resourceUsageManager.setLocalResourceUsage(usage);
 					
-					ResourceUsageAdvertisement adv = (ResourceUsageAdvertisement)AdvertisementFactory.newAdvertisement(ResourceUsageAdvertisement.getAdvertisementType());
-					adv.setResourceUsage(usage);
+					if( resAdv == null ) {
+						resAdv = (ResourceUsageAdvertisement)AdvertisementFactory.newAdvertisement(ResourceUsageAdvertisement.getAdvertisementType());
+					}
+					resAdv.setResourceUsage(usage);
 					
 					try {
-						jxtaServicesProvider.getDiscoveryService().remotePublish(adv, REFRESH_INTERVAL_MILLIS);
-						jxtaServicesProvider.getDiscoveryService().publish(adv, REFRESH_INTERVAL_MILLIS, REFRESH_INTERVAL_MILLIS);
+						jxtaServicesProvider.getDiscoveryService().flushAdvertisement(resAdv);
+						
+						jxtaServicesProvider.getDiscoveryService().remotePublish(resAdv, REFRESH_INTERVAL_MILLIS);
+						jxtaServicesProvider.getDiscoveryService().publish(resAdv, REFRESH_INTERVAL_MILLIS, REFRESH_INTERVAL_MILLIS);
 					} catch (IOException e) {
 						LOG.error("Could not publish resource usage advertisement", e);
 					}
