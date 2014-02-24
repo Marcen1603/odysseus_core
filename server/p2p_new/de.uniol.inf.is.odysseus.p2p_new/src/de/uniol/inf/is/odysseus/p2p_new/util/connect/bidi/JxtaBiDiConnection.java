@@ -35,7 +35,7 @@ public class JxtaBiDiConnection extends AbstractJxtaConnection implements PipeMs
 			pipe.close();
 			
 		} catch (IOException e) {
-			LOG.error("Co uld not close JxtaBiDiPipe", e);
+			LOG.error("Could not close JxtaBiDiPipe", e);
 		} finally {
 			super.disconnect();
 		}

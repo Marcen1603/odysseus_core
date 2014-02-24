@@ -39,7 +39,9 @@ public class JxtaBiDiServerConnection extends AbstractJxtaServerConnection imple
 	@Override
 	public void start() throws IOException {
 		Preconditions.checkState(accepterThread == null, "JxtaServerConnection is already running!");
-				
+		
+		LOG.debug("Starting jxta bibi server connection");
+		
 		serverPipe = new JxtaServerPipe(P2PNetworkManager.getInstance().getLocalPeerGroup(), pipeAdvertisement);
 		serverPipe.setPipeTimeout(0);
 
@@ -47,12 +49,16 @@ public class JxtaBiDiServerConnection extends AbstractJxtaServerConnection imple
 			@Override
 			public void doJob() {
 				try {
+					LOG.debug("Waiting to accept pipe from client...");
 					JxtaBiDiPipe pipeToClient = serverPipe.accept();
+					
+					LOG.debug("Accepted new pipe to client");
 					
 					JxtaBiDiConnection connection = new JxtaBiDiConnection(pipeToClient);
 					connection.addListener(JxtaBiDiServerConnection.this);
 					connection.connect();
 					
+					LOG.debug("Got new connection!");
 					activeConnections.add(connection);
 					fireConnectionAddEvent(connection);
 					
@@ -66,6 +72,8 @@ public class JxtaBiDiServerConnection extends AbstractJxtaServerConnection imple
 
 	@Override
 	public void stop() {
+		LOG.debug("Stopping jxta bidi server connection");
+		
 		if( accepterThread != null ) {
 			accepterThread.stopRunning();
 			accepterThread.interrupt();
@@ -99,6 +107,8 @@ public class JxtaBiDiServerConnection extends AbstractJxtaServerConnection imple
 
 	@Override
 	public void onDisconnect(IJxtaConnection sender) {
+		LOG.debug("Lost one connection");
+		
 		activeConnections.remove(sender);
 		fireConnectionRemoveEvent(sender);
 	}

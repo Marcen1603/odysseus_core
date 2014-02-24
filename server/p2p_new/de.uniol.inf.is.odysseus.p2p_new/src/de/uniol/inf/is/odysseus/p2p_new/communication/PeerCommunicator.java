@@ -49,7 +49,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 	
 	private final Map<PeerID, IJxtaConnection> activeConnectionsOut_PeerID = Maps.newHashMap();
 	private final Map<PeerID, IJxtaConnection> activeConnectionsIn_PeerID = Maps.newHashMap();
-
+	
 	private IP2PDictionary p2pDictionary;
 
 	// called by OSGi-DS
@@ -68,7 +68,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 					waitForP2PNetworkManager();
 					LOG.debug("Network manager is active now");
 
-					serverConnection = new JxtaBiDiServerConnection(createPipeAdvertisement(P2PNetworkManager.getInstance().getLocalPeerID(), P2PNetworkManager.getInstance().getLocalPeerName()));
+					serverConnection = new JxtaBiDiServerConnection(createPipeAdvertisement(P2PNetworkManager.getInstance().getLocalPeerName()));
 					serverConnection.addListener(PeerCommunicator.this);
 					serverConnection.start();
 					LOG.debug("Waiting for client peer connections");
@@ -277,14 +277,14 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 	public void remotePeerAdded(IP2PDictionary sender, PeerID id, String name) {
 		LOG.debug("New peer discovered: name = {}", name);
 
-		IJxtaConnection clientConnection = new JxtaBiDiClientConnection(createPipeAdvertisement(id, name));
+		IJxtaConnection clientConnection = new JxtaBiDiClientConnection(createPipeAdvertisement(name));
 		clientConnection.addListener(this);
 		tryConnectAsync(clientConnection, id, name);
 
 	}
 
 	private void tryConnectAsync(final IJxtaConnection connection, final PeerID peerID, final String peerName) {
-		LOG.debug("Trying to connect to peer {}", peerName);
+		LOG.debug("Trying to connect to (server)peer {}", peerName);
 
 		final Thread t = new Thread(new Runnable() {
 			@Override
@@ -325,13 +325,16 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		return Optional.absent();
 	}
 
-	private static PipeAdvertisement createPipeAdvertisement(PeerID peerID, String peerName) {
+	private PipeAdvertisement createPipeAdvertisement(String peerName) {
 		PipeID pipeID = IDFactory.newPipeID(P2PNetworkManager.getInstance().getLocalPeerGroupID(), peerName.getBytes());
 
-		final PipeAdvertisement advertisement = (PipeAdvertisement) AdvertisementFactory.newAdvertisement(PipeAdvertisement.getAdvertisementType());
+		PipeAdvertisement advertisement = (PipeAdvertisement) AdvertisementFactory.newAdvertisement(PipeAdvertisement.getAdvertisementType());
 		advertisement.setName(peerName);
 		advertisement.setPipeID(pipeID);
 		advertisement.setType(PipeService.UnicastType);
+		
+		LOG.debug("Created pipe advertisement for {} with id {}", peerName, advertisement.getPipeID());
+		
 		return advertisement;
 	}
 	

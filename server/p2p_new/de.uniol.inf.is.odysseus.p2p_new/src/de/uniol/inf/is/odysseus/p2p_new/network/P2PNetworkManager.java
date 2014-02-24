@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Random;
 
 import net.jxta.id.IDFactory;
+import net.jxta.impl.cm.CacheManager;
+import net.jxta.impl.peergroup.StdPeerGroup;
 import net.jxta.peer.PeerID;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.peergroup.PeerGroupID;
@@ -103,7 +105,10 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 			PeerGroupID peerGroupID = IDFactory.newPeerGroupID(PeerGroupID.defaultNetPeerGroupID, groupName.getBytes());
 			
 			peerGroup = createSubGroup(netPeerGroup, peerGroupID, groupName);
-			started = true;
+	        CacheManager cacheManager = ((StdPeerGroup) peerGroup).getCacheManager();
+	        cacheManager.setTrackDeltas(false);
+
+	        started = true;
 			LOG.debug("P2P network started");
 			
 			fireStartEvent();
