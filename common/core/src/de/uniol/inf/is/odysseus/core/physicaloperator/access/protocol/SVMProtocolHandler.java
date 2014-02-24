@@ -128,9 +128,6 @@ public class SVMProtocolHandler<T extends Tuple<?>> extends LineProtocolHandler<
     public T getNext() throws IOException {
         String line = super.getNextLine();
         if (line != null) {
-            if (addLineNumber) {
-                line = super.lineCounter + delimiterString + line;
-            }
             return readLine(line);
         }
         return null;
@@ -273,15 +270,19 @@ public class SVMProtocolHandler<T extends Tuple<?>> extends LineProtocolHandler<
             }
         }
         elements.add(elem.toString());
-        String[] ret = new String[getDataHandler().getSchema().size()];
+        String[] ret = new String[getDataHandler().getSchema().size() + (addLineNumber ? 1 : 0)];
         Arrays.fill(ret, "0");
+        int i = 0;
+        if (addLineNumber) {
+            ret[i++] = super.lineCounter + "";
+        }
         if (trim) {
-            ret[0] = elements.get(0).trim();
+            ret[i++] = elements.get(0).trim();
         }
         else {
-            ret[0] = elements.get(0);
+            ret[i++] = elements.get(0);
         }
-        for (int i = 1; i < elements.size(); i++) {
+        for (; i < elements.size(); i++) {
             String e[] = elements.get(i).split(":");
             int index = Integer.parseInt(e[0]);
             if (index < ret.length) {
