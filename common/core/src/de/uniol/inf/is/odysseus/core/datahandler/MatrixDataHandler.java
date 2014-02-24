@@ -85,6 +85,32 @@ public class MatrixDataHandler extends AbstractDataHandler<double[][]> {
      * {@inheritDoc}
      */
     @Override
+    public double[][] readData(List<String> input) {
+        int size = input.size();
+        double[][] value = new double[size][];
+        for (int i = 0; i < size; i++) {
+            value[i] = this.handler.readData(input.get(i));
+        }
+        return value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double[][] readData(String[] input) {
+        int size = input.length;
+        double[][] value = new double[size][];
+        for (int i = 0; i < size; i++) {
+            value[i] = this.handler.readData(input[i]);
+        }
+        return value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void writeData(ByteBuffer buffer, Object data) {
         double[][] value = (double[][]) data;
         buffer.putInt(value.length);
