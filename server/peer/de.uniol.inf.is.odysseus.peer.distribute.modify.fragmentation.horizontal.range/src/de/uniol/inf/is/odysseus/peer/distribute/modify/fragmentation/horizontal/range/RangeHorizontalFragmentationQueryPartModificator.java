@@ -2,6 +2,11 @@ package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -21,6 +26,22 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
 public class RangeHorizontalFragmentationQueryPartModificator extends
 		AbstractHorizontalFragmentationQueryPartModificator {
 	
+	private static final Logger log = LoggerFactory.getLogger(RangeHorizontalFragmentationQueryPartModificator.class);
+	
+	@Override
+	protected Optional<List<String>> determineKeyAttributes(List<String> modificationParameters) {
+		
+		Preconditions.checkNotNull(modificationParameters, "Modification parameters must be not null!");
+		Preconditions.checkArgument(!modificationParameters.isEmpty(), "There must be at least one modification parameter!");
+		
+		// The return value
+		String attribute = modificationParameters.get(0).split("\\.")[1];
+		List<String> attributes = Lists.newArrayList(attribute);		
+		RangeHorizontalFragmentationQueryPartModificator.log.debug("Found '" + attributes +  "' as attributes to form a key.");
+		return Optional.of(attributes);
+		
+	}
+	
 	/**
 	 * Determines the attribute to be fragmented given by the user (Odysseus script). <br />
 	 * #PEER_MODIFICATION fragmentation_horizontal_range <code>source.attribute</code> <code>range1</code> ... <code>rangeN</code>
@@ -28,7 +49,7 @@ public class RangeHorizontalFragmentationQueryPartModificator extends
 	 * @return The attribute to be fragmented given by the user.
 	 * @throws NullPointerException if <code>modificatorParameters</code> is null or if there is no attribute to be fragmented.
 	 */
-	private static String determineAttribute(List<String> modificationParameters)
+	private static String determineFullQualifiedAttribute(List<String> modificationParameters)
 			throws NullPointerException {
 		
 		// Preconditions 1
@@ -77,7 +98,7 @@ public class RangeHorizontalFragmentationQueryPartModificator extends
 		if(numFragments < 1)
 			throw new QueryPartModificationException("Invalid number of fragments: " + numFragments);
 		
-		String attribute = RangeHorizontalFragmentationQueryPartModificator.determineAttribute(modificationParameters);
+		String attribute = RangeHorizontalFragmentationQueryPartModificator.determineFullQualifiedAttribute(modificationParameters);
 		List<String> ranges = RangeHorizontalFragmentationQueryPartModificator.determineRanges(modificationParameters);
 			
 		RangeFragmentAO fragmentAO = new RangeFragmentAO();

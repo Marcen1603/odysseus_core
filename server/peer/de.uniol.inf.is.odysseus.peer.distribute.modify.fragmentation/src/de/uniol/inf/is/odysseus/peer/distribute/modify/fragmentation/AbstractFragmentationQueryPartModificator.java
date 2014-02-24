@@ -129,7 +129,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			// Modify each query part to be fragmented for insertion of operators for reunion
 			for(ILogicalQueryPart originPart : partsToBeFragmented) {
 				
-				copiesToOrigin = this.modifyPartForMerging(originPart, copiesToOrigin, partsToBeFragmented, historyOfFragmentationOperators);
+				copiesToOrigin = this.modifyPartForMerging(originPart, copiesToOrigin, partsToBeFragmented, historyOfFragmentationOperators, modificatorParameters);
 				
 			}
 			
@@ -502,6 +502,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @param historyOfOperatorsForFragmentation The history for origin relative sources (key), 
 	 * inserted operators for fragmentation (value.getE1()) 
 	 * and the subscription to the origin relative source (value.getE2()).
+	 * @param modificatorParameters The parameters for the modification given by the user without the parameter <code>fragmentation-strategy-name</code>.
 	 * @return A modified mapping of copies to origin query parts.
 	 * @throws NullPointerException if <code>originPart</code>, <code>copiesToOrigin</code> or <code>partsToBeFragmented</code>, 
 	 * <code>historyOfOperatorsForFragmentation</code> is null.
@@ -514,7 +515,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			ILogicalQueryPart originPart,
 			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin, 
 			Collection<ILogicalQueryPart> partsToBeFragmented,
-			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation)
+			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation,
+			List<String> modificationParameters)
 			throws NullPointerException, IllegalArgumentException, QueryPartModificationException {
 		
 		// Preconditions
@@ -530,6 +532,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			throw new IllegalArgumentException("Collection of relevant parts for fragmentation must contain the origin query part for modification!");
 		else if(historyOfOperatorsForFragmentation == null)
 			throw new NullPointerException("The history of inserted operator for fragmentation must be not null!");
+		else if(modificationParameters == null)
+			throw new NullPointerException("Modification parameters must be not null!");
 	
 		// The return value
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> modifiedCopiesToOrigin = Maps.newHashMap(copiesToOrigin);
@@ -549,7 +553,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				Optional<LogicalSubscription> optSubscription = Optional.absent();
 				
 				modifiedCopiesToOrigin = this.insertOperatorForReunion(originPart, modifiedCopiesToOrigin, originSink, copiedSinks, 
-						optSubscription, targets, historyOfOperatorsForFragmentation);
+						optSubscription, targets, historyOfOperatorsForFragmentation, modificationParameters);
 				
 			} else {
 				
@@ -571,7 +575,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 							LogicalSubscription subscription = new LogicalSubscription(originSink, subToSink.getSinkInPort(), 
 									subToSink.getSourceOutPort(), subToSink.getSchema());
 							
-							if(this.canOptimizeSubscription(originPart, modifiedCopiesToOrigin, originSink, copiedSinks, subToSink)) {
+							if(this.canOptimizeSubscription(originPart, modifiedCopiesToOrigin, originSink, copiedSinks, subToSink, modificationParameters)) {
 							
 								modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.removeOperatorForFragmentation(
 										modifiedCopiesToOrigin, subToSink.getTarget(), subscription, historyOfOperatorsForFragmentation);
@@ -602,7 +606,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 					} else targets.add(target);
 						
 					modifiedCopiesToOrigin = this.insertOperatorForReunion(originPart, modifiedCopiesToOrigin, originSink, copiedSinks, 
-							Optional.of(subToSink), targets, historyOfOperatorsForFragmentation);
+							Optional.of(subToSink), targets, historyOfOperatorsForFragmentation, modificationParameters);
 					
 				}
 				
@@ -661,6 +665,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @param historyOfOperatorsForFragmentation The history for origin relative sources (key), 
 	 * inserted operators for fragmentation (value.getE1()) 
 	 * and the subscription to the origin relative source (value.getE2()).
+	 * @param modificatorParameters The parameters for the modification given by the user without the parameter <code>fragmentation-strategy-name</code>.
 	 * @return A modified mapping of copies to origin query parts.
 	 * @throws NullPointerException if <code>originPart</code>, <code>copiesToOrigin</code>, <code>originSink</code>, <code>copiesOfOriginSink</code>, 
 	 * <code>optSubscription</code> or <code>targets</code> is null.
@@ -673,7 +678,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			Collection<ILogicalOperator> copiesOfOriginSink,
 			Optional<LogicalSubscription> optSubscription,
 			Collection<ILogicalOperator> targets,
-			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation)
+			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation,
+			List<String> modificationParameters)
 			throws NullPointerException, QueryPartModificationException{
 		
 		// Preconditions
@@ -691,6 +697,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			throw new NullPointerException("The targets must be not null!");
 		else if(historyOfOperatorsForFragmentation == null)
 			throw new NullPointerException("The history of inserted operator for fragmentation must be not null!");
+		else if(modificationParameters == null)
+			throw new NullPointerException("Modification parameters must be not null!");
 		
 		// The return value
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> modifiedCopiesToOrigin = Maps.newHashMap(copiesToOrigin);
@@ -885,6 +893,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @param originSink The origin, relative sink.
 	 * @param copiesOfOriginSink The copies of <code>originSink</code>.
 	 * @param subscription The origin subscription of <code>originSink</code>.
+	 * @param modificatorParameters The parameters for the modification given by the user without the parameter <code>fragmentation-strategy-name</code>.
 	 * @throws QueryPartModificationException if any error occurs.
 	 */
 	protected abstract boolean canOptimizeSubscription(
@@ -892,7 +901,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin,
 			ILogicalOperator originSink,
 			Collection<ILogicalOperator> copiesOfOriginSink,
-			LogicalSubscription subscription)
+			LogicalSubscription subscription,
+			List<String> modificationParameters)
 			throws QueryPartModificationException;
 
 	/**
@@ -1148,6 +1158,12 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		return modificatorParameters.get(0);
 		
 	}
+	
+	/**
+	 * Determines the attributes given by the user (Odysseus script), if there are any.
+	 * @param modificatorParameters The parameters for the modification given by the user without the name of the fragmentation strategy.
+	 */
+	protected abstract Optional<List<String>> determineKeyAttributes(List<String> modificationParameters);
 	
 	/**
 	 * Unions a query part, which contains only an operator for fragmentation, with a given part.

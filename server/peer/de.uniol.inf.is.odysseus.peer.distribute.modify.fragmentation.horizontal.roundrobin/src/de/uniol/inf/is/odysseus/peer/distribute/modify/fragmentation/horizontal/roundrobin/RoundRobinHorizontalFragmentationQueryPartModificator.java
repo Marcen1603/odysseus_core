@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal
 
 import java.util.List;
 
+import com.google.common.base.Optional;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
@@ -18,6 +20,14 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
  */
 public class RoundRobinHorizontalFragmentationQueryPartModificator extends
 		AbstractHorizontalFragmentationQueryPartModificator {
+	
+	@Override
+	protected Optional<List<String>> determineKeyAttributes(List<String> modificationParameters) {
+		
+		// There can be no key attributes for a round robin fragmentation
+		return Optional.absent();
+		
+	}
 
 	@Override
 	public String getName() {

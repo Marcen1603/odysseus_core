@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -57,22 +58,33 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin,
 			ILogicalOperator originSink,
 			Collection<ILogicalOperator> copiesOfOriginSink,
-			LogicalSubscription subscription)
+			LogicalSubscription subscription,
+			List<String> modificationParameters)
 			throws QueryPartModificationException {
 		
 		// Preconditions
 		if(originPart == null)
 			throw new QueryPartModificationException("Origin query part for modification must be not null!");
+		else if(modificationParameters == null)
+			throw new QueryPartModificationException("Modification parameters must be not null!");
 		
 		// The inverse return value
 		boolean foundAggregation = false;
 		
 		for(ILogicalOperator operator : originPart.getOperators()) {
 			
-			if(operator instanceof AggregateAO && !foundAggregation)
-				foundAggregation = true;
-			else if(operator instanceof AggregateAO)
-				throw new QueryPartModificationException("Can not fragment a query part containing more than one aggregation!");
+			if(operator instanceof AggregateAO) {
+				
+				AggregateAO aggregation = (AggregateAO) operator;
+				boolean needsPartialAggregates = this.needPartialAggregates(aggregation, modificationParameters);
+				
+				if(!needsPartialAggregates)
+					continue;
+				else if(!foundAggregation)
+					foundAggregation = true;
+				else throw new QueryPartModificationException("Can not fragment a query part containing more than one aggregation!");
+				
+			}
 			
 		}
 		
@@ -80,6 +92,32 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 		
 	}
 	
+	/**
+	 * Determines, if a given aggregation needs to be changed due to a creation of partial aggregates.
+	 * @param aggregation The aggregation to be checked.
+	 * @param modificatorParameters The parameters for the modification given by the user without the parameter <code>fragmentation-strategy-name</code>.
+	 * @return True, if the list of key attributes given by the user ({@link #determineKeyAttributes(List)}) contains any group-by-attributes of the aggregation; false, else
+	 */
+	private boolean needPartialAggregates(AggregateAO aggregation, List<String> modificationParameters) {
+		
+		Preconditions.checkNotNull(modificationParameters, "Modification parameters must be not null!");
+		Preconditions.checkNotNull(aggregation, "Aggregation must be not null!");
+		
+		Optional<List<String>> attributes = this.determineKeyAttributes(modificationParameters);
+		
+		if(!attributes.isPresent())
+			return true;
+		
+		for(SDFAttribute attribute : aggregation.getGroupingAttributes()) {
+			
+			if(attributes.get().contains(attribute.getAttributeName()))
+				return false;
+			
+		}
+		
+		return true;
+	}
+
 	@Override
 	protected Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> insertOperatorForReunion(
 			ILogicalQueryPart originPart,
@@ -88,7 +126,8 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			Collection<ILogicalOperator> copiesOfOriginSink,
 			Optional<LogicalSubscription> optSubscription,
 			Collection<ILogicalOperator> targets,
-			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation)
+			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation,
+			List<String> modificationParameters)
 			throws NullPointerException, QueryPartModificationException{
 		
 		// Preconditions
@@ -104,6 +143,8 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			throw new NullPointerException("The optional of the subscription to modify must be not null!");
 		else if(targets == null)
 			throw new NullPointerException("The targets must be not null!");
+		else if(modificationParameters == null)
+			throw new NullPointerException("Modification parameters must be not null!");
 		
 		// The return value
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> modifiedCopiesToOrigin = Maps.newHashMap(copiesToOrigin);
@@ -134,8 +175,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 		ILogicalOperator lastOperatorOfReunionPart = operatorForReunion;
 		
 		// Handling of aggregations
-		Optional<AggregateAO> optAggregation = 
-				AbstractHorizontalFragmentationQueryPartModificator.handleAggregation(originPart, modifiedCopiesToOrigin);
+		Optional<AggregateAO> optAggregation = this.handleAggregation(originPart, modifiedCopiesToOrigin, modificationParameters);
 		if(optAggregation.isPresent()) {
 			
 			lastOperatorOfReunionPart = optAggregation.get();
@@ -168,13 +208,15 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 	 * @param originPart The query part to modify.
 	 * @param copiesToOrigin A mapping of copies to origin query parts.
 	 * @return The origin aggregation, if there is exactly one within the query part.
-	 * @throws NullPointerException if <code>originPart</code> or <code>copiesToOrigin</code> is null.
+	 * @param modificatorParameters The parameters for the modification given by the user without the parameter <code>fragmentation-strategy-name</code>.
+	 * @throws NullPointerException if <code>originPart</code>, <code>copiesToOrigin</code> or <code>modificationParameters</code> is null.
 	 * @throws IllegalArgumentException if <code>copiesToOrigin</code> does not contain <code>originPart</code> as a key.
 	 * @throws QueryPartModificationException if there is more than one aggregation.
 	 */
-	private static Optional<AggregateAO> handleAggregation(
+	private Optional<AggregateAO> handleAggregation(
 			ILogicalQueryPart originPart,
-			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin)
+			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin,
+			List<String> modificationParameters)
 			throws NullPointerException, IllegalArgumentException, QueryPartModificationException {
 		
 		// Preconditions
@@ -184,21 +226,31 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			throw new NullPointerException("Mapping of copies to origin query parts must be not null!");
 		else if(!copiesToOrigin.keySet().contains(originPart))
 			throw new IllegalArgumentException("Mapping of copies to origin query parts must contain the origin query part for modification!");
+		else if(modificationParameters == null)
+			throw new NullPointerException("Modification parameters must be not null!");
 		
 		// The return value
 		Optional<AggregateAO> optAggregation = Optional.absent();
 		
 		for(ILogicalOperator operator : originPart.getOperators()) {
 			
-			if(operator instanceof AggregateAO && !optAggregation.isPresent()) {
+			if(operator instanceof AggregateAO) {
 				
-				AbstractHorizontalFragmentationQueryPartModificator.log.debug("Found {} as an aggregation in {}", operator, originPart);
-			
-				optAggregation = Optional.of(AbstractHorizontalFragmentationQueryPartModificator.changeAggregation(
-						originPart, copiesToOrigin, (AggregateAO) operator)); 
-			
-			} else if(operator instanceof AggregateAO)
-				throw new QueryPartModificationException("Can not fragment a query part containing more than one aggregation!");
+				AggregateAO aggregation = (AggregateAO) operator;
+				boolean needsPartialAggregates = this.needPartialAggregates(aggregation, modificationParameters);
+				
+				if(!needsPartialAggregates)
+					continue;
+				else if(!optAggregation.isPresent()) {
+					
+					AbstractHorizontalFragmentationQueryPartModificator.log.debug("Found {} as an aggregation, which needs to be changed in {}", operator, originPart);
+				
+					optAggregation = Optional.of(AbstractHorizontalFragmentationQueryPartModificator.changeAggregation(
+							originPart, copiesToOrigin, (AggregateAO) operator)); 
+				
+				} else throw new QueryPartModificationException("Can not fragment a query part containing more than one aggregation!");
+				
+			}
 			
 		}
 		

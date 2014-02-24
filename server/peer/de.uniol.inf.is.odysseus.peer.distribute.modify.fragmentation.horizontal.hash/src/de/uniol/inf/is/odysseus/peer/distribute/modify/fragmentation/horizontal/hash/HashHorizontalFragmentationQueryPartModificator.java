@@ -2,7 +2,11 @@ package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -25,29 +29,55 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
 public class HashHorizontalFragmentationQueryPartModificator extends
 		AbstractHorizontalFragmentationQueryPartModificator {
 	
+	private static final Logger log = LoggerFactory.getLogger(HashHorizontalFragmentationQueryPartModificator.class);
+	
+	@Override
+	protected Optional<List<String>> determineKeyAttributes(List<String> modificationParameters) {
+		
+		int firstIndexOfKeyAttributes = 2;
+		
+		Preconditions.checkNotNull(modificationParameters, "Modification parameters must be not null!");
+		Preconditions.checkArgument(modificationParameters.size() >= firstIndexOfKeyAttributes, "There must be at least " + firstIndexOfKeyAttributes + " modification parameters!");
+		
+		if(modificationParameters.size() == firstIndexOfKeyAttributes) {
+			
+			HashHorizontalFragmentationQueryPartModificator.log.debug("Found no attributes to form a key.");
+			return Optional.absent();
+			
+		}
+		
+		// The return value
+		List<String> attributes = Lists.newArrayList(modificationParameters.subList(firstIndexOfKeyAttributes, modificationParameters.size()));		
+		HashHorizontalFragmentationQueryPartModificator.log.debug("Found '" + attributes +  "' as attributes to form a key.");
+		return Optional.of(attributes);
+		
+	}
+	
 	/**
-	 * Determines the attributes given by the user (Odysseus script), if there are any. <br />
-	 * #PEER_MODIFICATION fragmentation_horizontal_hash &lt;source name&gt; &lt;number of fragments&gt; &lt;attribute1&gt ... &lt;attributeN&gt
-	 * @param modificatorParameters The parameters for the modification given by the user without the parameter fragmentation_horizontal_hash.
-	 * @return The attributes given by the user, if there are any.
+	 * Determines the attributes to be fragmented given by the user (Odysseus script). <br />
+	 * #PEER_MODIFICATION fragmentation_horizontal_hash <code>source</code> <code>number of fragments</code> <code>attribute1</code> ... <code>attributeN</code>
+	 * @param modificatorParameters The parameters for the modification given by the user without the parameter fragmentation_horizontal_range.
+	 * @return The attributes to be fragmented given by the user, if there are any.
 	 * @throws NullPointerException if <code>modificatorParameters</code> is null.
 	 */
-	private static Optional<List<String>> determineAttributes(List<String> modificationParameters) 
+	private Optional<List<String>> determineFullQualifiedAttributes(List<String> modificationParameters)
 			throws NullPointerException {
 		
 		// Preconditions 1
 		if(modificationParameters == null)
 			throw new NullPointerException("Parameters for query part fragmentation strategy must not be null!");
-		else if(modificationParameters.size() == 2)
-			return Optional.absent();
 		
 		String sourceName = modificationParameters.get(0);
-		List<String> attributes = Lists.newArrayList();
+		Optional<List<String>> attributes = this.determineKeyAttributes(modificationParameters);
 		
-		for(int index = 2; index < modificationParameters.size(); index++)
-			attributes.add(sourceName + "." + modificationParameters.get(index));
+		if(!attributes.isPresent())
+			return attributes;
 		
-		return Optional.of(attributes);
+		// The return value
+		List<String> fullQualifiedAttributes = Lists.newArrayList();
+		for(String attribute : attributes.get())
+			fullQualifiedAttributes.add(sourceName + "." + attribute);
+		return Optional.of(fullQualifiedAttributes);
 		
 	}
 
@@ -67,7 +97,7 @@ public class HashHorizontalFragmentationQueryPartModificator extends
 		if(numFragments < 1)
 			throw new QueryPartModificationException("Invalid number of fragments: " + numFragments);
 		
-		Optional<List<String>> attributes = HashHorizontalFragmentationQueryPartModificator.determineAttributes(modificationParameters);
+		Optional<List<String>> attributes = this.determineFullQualifiedAttributes(modificationParameters);
 			
 		HashFragmentAO fragmentAO = new HashFragmentAO();
 		fragmentAO.setNumberOfFragments(numFragments);
