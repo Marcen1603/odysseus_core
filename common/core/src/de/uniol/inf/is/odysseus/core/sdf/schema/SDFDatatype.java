@@ -230,6 +230,9 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		types.add(SDFDatatype.TIMESTAMP);
 		types.add(SDFDatatype.BOOLEAN);
 
+        types.add(SDFDatatype.VECTOR_DOUBLE);
+        types.add(SDFDatatype.MATRIX_DOUBLE);
+	      
 		types.add(SDFDatatype.PARTIAL_AGGREGATE);
 		types.add(SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE);
 		types.add(SDFDatatype.COUNT_PARTIAL_AGGREGATE);
