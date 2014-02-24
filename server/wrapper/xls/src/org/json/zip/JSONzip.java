@@ -1,6 +1,5 @@
 package org.json.zip;
 
-
 /*
  Copyright (c) 2013 JSON.org
 
@@ -35,13 +34,13 @@ package org.json.zip;
  * substantially reduced. It uses a character encoding called Kim (Keep it
  * minimal) that is smaller than UTF-8 for most East European, African, and
  * Asian scripts.
- *
+ * 
  * JSONzip tends to reduce most content by about half. If there is a lot of
  * recurring information, the reduction can be much more dramatic.
- *
+ * 
  * FOR EVALUATION PURPOSES ONLY. THIS PACKAGE HAS NOT YET BEEN TESTED
  * ADEQUATELY FOR PRODUCTION USE.
- *
+ * 
  * @author JSON.org
  * @version 2013-04-18
  */
@@ -49,17 +48,12 @@ public abstract class JSONzip implements None, PostMortem {
     /**
      * Powers of 2.
      */
-    public static final int[] twos = {
-        1, 2, 4, 8, 16, 32, 64, 128, 256, 512,
-        1024, 2048, 4096, 8192, 16384, 32768, 65536
-    };
+    public static final int[] twos = { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536 };
 
     /**
      * The characters in JSON numbers can be reduced to 4 bits each.
      */
-    public static final byte[] bcd = {
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '-', '+', 'E'
-    };
+    public static final byte[] bcd = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '-', '+', 'E' };
 
     /**
      * The number of integers that can be encoded in 4 bits.
@@ -84,7 +78,7 @@ public abstract class JSONzip implements None, PostMortem {
     /**
      * The end of number code.
      */
-    public static final int endOfNumber = bcd.length;
+    public static final int endOfNumber = JSONzip.bcd.length;
 
     /**
      * The maximum substring length when registering many. The registration of
@@ -182,26 +176,29 @@ public abstract class JSONzip implements None, PostMortem {
      * Initialize the data structures.
      */
     protected JSONzip() {
-        this.namehuff = new Huff(end + 1);
+        this.namehuff = new Huff(JSONzip.end + 1);
         this.namekeep = new MapKeep(9);
         this.stringkeep = new MapKeep(11);
-        this.substringhuff = new Huff(end + 1);
+        this.substringhuff = new Huff(JSONzip.end + 1);
         this.substringkeep = new TrieKeep(12);
         this.values = new MapKeep(10);
 
-// Increase the weights of the ASCII letters, digits, and special characters
-// because they are highly likely to occur more frequently. The weight of each
-// character will increase as it is used. The Huffman encoder will tend to
-// use fewer bits to encode heavier characters.
+        // Increase the weights of the ASCII letters, digits, and special
+        // characters
+        // because they are highly likely to occur more frequently. The weight
+        // of each
+        // character will increase as it is used. The Huffman encoder will tend
+        // to
+        // use fewer bits to encode heavier characters.
 
         this.namehuff.tick(' ', '}');
         this.namehuff.tick('a', 'z');
-        this.namehuff.tick(end);
-        this.namehuff.tick(end);
+        this.namehuff.tick(JSONzip.end);
+        this.namehuff.tick(JSONzip.end);
         this.substringhuff.tick(' ', '}');
         this.substringhuff.tick('a', 'z');
-        this.substringhuff.tick(end);
-        this.substringhuff.tick(end);
+        this.substringhuff.tick(JSONzip.end);
+        this.substringhuff.tick(JSONzip.end);
     }
 
     /**
@@ -216,48 +213,49 @@ public abstract class JSONzip implements None, PostMortem {
      * Write an end-of-line to the console.
      */
     static void log() {
-        log("\n");
+        JSONzip.log("\n");
     }
 
     /**
      * Write an integer to the console.
-     *
+     * 
      * @param integer
      */
-    static void log(int integer) {
-        log(integer + " ");
+    static void log(final int integer) {
+        JSONzip.log(integer + " ");
     }
 
     /**
      * Write two integers, separated by ':' to the console.
-     *
+     * 
      * @param integer
      * @param width
      */
-    static void log(int integer, int width) {
-        log(integer + ":" + width + " ");
+    static void log(final int integer, final int width) {
+        JSONzip.log(integer + ":" + width + " ");
     }
 
     /**
      * Write a string to the console.
-     *
+     * 
      * @param string
      */
-    static void log(String string) {
+    static void log(final String string) {
         System.out.print(string);
     }
 
     /**
      * Write a character or its code to the console.
-     *
+     * 
      * @param integer
      * @param width
      */
-    static void logchar(int integer, int width) {
-        if (integer > ' ' && integer <= '}') {
-            log("'" + (char) integer + "':" + width + " ");
-        } else {
-            log(integer, width);
+    static void logchar(final int integer, final int width) {
+        if ((integer > ' ') && (integer <= '}')) {
+            JSONzip.log("'" + (char) integer + "':" + width + " ");
+        }
+        else {
+            JSONzip.log(integer, width);
         }
     }
 
@@ -266,16 +264,13 @@ public abstract class JSONzip implements None, PostMortem {
      * suitable for any other purpose. It is used to compare a Compressor and a
      * Decompressor, verifying that the data structures that were built during
      * zipping and unzipping were the same.
-     *
+     * 
      * @return true if the structures match.
      */
-    public boolean postMortem(PostMortem pm) {
-        JSONzip that = (JSONzip) pm;
-        return this.namehuff.postMortem(that.namehuff)
-                && this.namekeep.postMortem(that.namekeep)
-                && this.stringkeep.postMortem(that.stringkeep)
-                && this.substringhuff.postMortem(that.substringhuff)
-                && this.substringkeep.postMortem(that.substringkeep)
-                && this.values.postMortem(that.values);
+    @Override
+    public boolean postMortem(final PostMortem pm) {
+        final JSONzip that = (JSONzip) pm;
+        return this.namehuff.postMortem(that.namehuff) && this.namekeep.postMortem(that.namekeep) && this.stringkeep.postMortem(that.stringkeep) && this.substringhuff.postMortem(that.substringhuff)
+                && this.substringkeep.postMortem(that.substringkeep) && this.values.postMortem(that.values);
     }
 }

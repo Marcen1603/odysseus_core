@@ -1,6 +1,5 @@
 package org.json.zip;
 
-
 /*
  Copyright (c) 2013 JSON.org
 
@@ -28,7 +27,7 @@ package org.json.zip;
 /**
  * A keep is a data structure that associates strings (or substrings) with
  * numbers. This allows the sending of small integers instead of strings.
- *
+ * 
  * @author JSON.org
  * @version 2013-04-18
  */
@@ -38,7 +37,7 @@ abstract class Keep implements None, PostMortem {
     protected int power;
     protected long[] uses;
 
-    public Keep(int bits) {
+    public Keep(final int bits) {
         this.capacity = JSONzip.twos[bits];
         this.length = 0;
         this.power = 0;
@@ -47,12 +46,12 @@ abstract class Keep implements None, PostMortem {
 
     /**
      * When an item ages, its use count is reduced by at least half.
-     *
+     * 
      * @param use
      *            The current use count of an item.
      * @return The new use count for that item.
      */
-    public static long age(long use) {
+    public static long age(final long use) {
         return use >= 32 ? 16 : use / 2;
     }
 
@@ -71,13 +70,15 @@ abstract class Keep implements None, PostMortem {
     /**
      * Increase the usage count on an integer value.
      */
-    public void tick(int integer) {
+    public void tick(final int integer) {
         this.uses[integer] += 1;
     }
 
     /**
      * Get the value associated with an integer.
-     * @param integer The number of an item in the keep.
+     * 
+     * @param integer
+     *            The number of an item in the keep.
      * @return The value.
      */
     abstract public Object value(int integer);

@@ -29,9 +29,9 @@ import java.io.InputStream;
 
 /**
  * This is a big endian bit reader. It reads its bits from an InputStream.
- *
+ * 
  * @version 2013-04-18
- *
+ * 
  */
 public class BitInputStream implements BitReader {
     /**
@@ -52,7 +52,7 @@ public class BitInputStream implements BitReader {
     /**
      * The source of the bits.
      */
-    private InputStream in;
+    private final InputStream in;
 
     /**
      * The number of bits read so far. This is used in padding.
@@ -62,11 +62,11 @@ public class BitInputStream implements BitReader {
     /**
      * Make a BitReader from an InputStream. The BitReader will take bytes from
      * the InputStream and unpack them into bits.
-     *
+     * 
      * @param in
      *            An InputStream.
      */
-    public BitInputStream(InputStream in) {
+    public BitInputStream(final InputStream in) {
         this.in = in;
     }
 
@@ -75,13 +75,13 @@ public class BitInputStream implements BitReader {
      * bytes are obtained from the InputStream. This makes it possible to look
      * at the first byte of a stream before deciding that it should be read as
      * bits.
-     *
+     * 
      * @param in
      *            An InputStream
      * @param firstByte
      *            The first byte, which was probably read from in.
      */
-    public BitInputStream(InputStream in, int firstByte) {
+    public BitInputStream(final InputStream in, final int firstByte) {
         this.in = in;
         this.unread = firstByte;
         this.available = 8;
@@ -89,11 +89,12 @@ public class BitInputStream implements BitReader {
 
     /**
      * Read one bit.
-     *
+     * 
      * @return true if it is a 1 bit.
      */
+    @Override
     public boolean bit() throws IOException {
-        return read(1) != 0;
+        return this.read(1) != 0;
     }
 
     /**
@@ -101,16 +102,17 @@ public class BitInputStream implements BitReader {
      * This includes pad bits that have been skipped, but might not include
      * bytes that have been read from the underlying InputStream that have not
      * yet been delivered as bits.
-     *
+     * 
      * @return The number of bits read so far.
      */
+    @Override
     public long nrBits() {
         return this.nrBits;
     }
 
     /**
      * Check that the rest of the block has been padded with zeroes.
-     *
+     * 
      * @param factor
      *            The size of the block to pad. This will typically be 8, 16,
      *            32, 64, 128, 256, etc.
@@ -118,12 +120,13 @@ public class BitInputStream implements BitReader {
      *         contains any one bits.
      * @throws IOException
      */
-    public boolean pad(int factor) throws IOException {
-        int padding = factor - (int) (this.nrBits % factor);
+    @Override
+    public boolean pad(final int factor) throws IOException {
+        final int padding = factor - (int) (this.nrBits % factor);
         boolean result = true;
 
         for (int i = 0; i < padding; i += 1) {
-            if (bit()) {
+            if (this.bit()) {
                 result = false;
             }
         }
@@ -132,17 +135,18 @@ public class BitInputStream implements BitReader {
 
     /**
      * Read some bits.
-     *
+     * 
      * @param width
      *            The number of bits to read. (0..32)
      * @throws IOException
      * @return the bits
      */
+    @Override
     public int read(int width) throws IOException {
         if (width == 0) {
             return 0;
         }
-        if (width < 0 || width > 32) {
+        if ((width < 0) || (width > 32)) {
             throw new IOException("Bad read width.");
         }
         int result = 0;
@@ -158,8 +162,7 @@ public class BitInputStream implements BitReader {
             if (take > this.available) {
                 take = this.available;
             }
-            result |= ((this.unread >>> (this.available - take)) & mask[take])
-                    << (width - take);
+            result |= ((this.unread >>> (this.available - take)) & BitInputStream.mask[take]) << (width - take);
             this.nrBits += take;
             this.available -= take;
             width -= take;

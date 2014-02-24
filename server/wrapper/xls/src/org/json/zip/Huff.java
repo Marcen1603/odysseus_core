@@ -37,7 +37,7 @@ import org.json.JSONException;
  * map to characters or other symbols. Symbols that are used frequently are
  * given shorter codes than symbols that are used infrequently. This usually
  * produces shorter messages.
- *
+ * 
  * Initially, all of the symbols are given the same weight. The weight of a
  * symbol is incremented by the tick method. The generate method is used to
  * generate the encoding table. The table must be generated before encoding or
@@ -80,11 +80,11 @@ public class Huff implements None, PostMortem {
 
         /**
          * Make a symbol representing a character or other value.
-         *
+         * 
          * @param integer
          *            The symbol's number
          */
-        public Symbol(int integer) {
+        public Symbol(final int integer) {
             this.integer = integer;
             this.weight = 0;
             this.next = null;
@@ -93,30 +93,33 @@ public class Huff implements None, PostMortem {
             this.zero = null;
         }
 
-        public boolean postMortem(PostMortem pm) {
+        @Override
+        public boolean postMortem(final PostMortem pm) {
             boolean result = true;
-            Symbol that = (Symbol) pm;
+            final Symbol that = (Symbol) pm;
 
-            if (this.integer != that.integer || this.weight != that.weight) {
+            if ((this.integer != that.integer) || (this.weight != that.weight)) {
                 return false;
             }
             if ((this.back != null) != (that.back != null)) {
                 return false;
             }
-            Symbol zero = this.zero;
-            Symbol one = this.one;
+            final Symbol zero = this.zero;
+            final Symbol one = this.one;
             if (zero == null) {
                 if (that.zero != null) {
                     return false;
                 }
-            } else {
+            }
+            else {
                 result = zero.postMortem(that.zero);
             }
             if (one == null) {
                 if (that.one != null) {
                     return false;
                 }
-            } else {
+            }
+            else {
                 result = one.postMortem(that.one);
             }
             return result;
@@ -126,38 +129,38 @@ public class Huff implements None, PostMortem {
 
     /**
      * Construct a Huffman encoder/decoder.
-     *
+     * 
      * @param domain
      *            The number of values known to the object.
      */
-    public Huff(int domain) {
+    public Huff(final int domain) {
         this.domain = domain;
-        int length = domain * 2 - 1;
+        final int length = (domain * 2) - 1;
         this.symbols = new Symbol[length];
 
-// Make the leaf symbols.
+        // Make the leaf symbols.
 
         for (int i = 0; i < domain; i += 1) {
-            symbols[i] = new Symbol(i);
+            this.symbols[i] = new Symbol(i);
         }
 
-// SMake the links.
+        // SMake the links.
 
         for (int i = domain; i < length; i += 1) {
-            symbols[i] = new Symbol(none);
+            this.symbols[i] = new Symbol(None.none);
         }
     }
 
     /**
      * Generate the encoding/decoding table. The table determines the bit
      * sequences used by the read and write methods.
-     *
+     * 
      * @return this
      */
     public void generate() {
         if (!this.upToDate) {
 
-// Phase One: Sort the symbols by weight into a linked list.
+            // Phase One: Sort the symbols by weight into a linked list.
 
             Symbol head = this.symbols[0];
             Symbol next;
@@ -167,28 +170,34 @@ public class Huff implements None, PostMortem {
             this.table = null;
             head.next = null;
             for (int i = 1; i < this.domain; i += 1) {
-                symbol = symbols[i];
+                symbol = this.symbols[i];
 
-// If this symbol weights less than the head, then it becomes the new head.
+                // If this symbol weights less than the head, then it becomes
+                // the new head.
 
                 if (symbol.weight < head.weight) {
                     symbol.next = head;
                     head = symbol;
-                } else {
+                }
+                else {
 
-// To save time, we will start the search from the previous symbol instead
-// of the head unless the current symbol weights less than the previous symbol.
+                    // To save time, we will start the search from the previous
+                    // symbol instead
+                    // of the head unless the current symbol weights less than
+                    // the previous symbol.
 
                     if (symbol.weight < previous.weight) {
                         previous = head;
                     }
 
-// Find a connected pair (previous and next) where the symbol weighs the same
-// or more than previous but less than the next. Link the symbol between them.
+                    // Find a connected pair (previous and next) where the
+                    // symbol weighs the same
+                    // or more than previous but less than the next. Link the
+                    // symbol between them.
 
                     while (true) {
                         next = previous.next;
-                        if (next == null || symbol.weight < next.weight) {
+                        if ((next == null) || (symbol.weight < next.weight)) {
                             break;
                         }
                         previous = next;
@@ -199,8 +208,10 @@ public class Huff implements None, PostMortem {
                 }
             }
 
-// Phase Two: Make new symbols from the two lightest symbols until only one
-// symbol remains. The final symbol becomes the root of the table binary tree.
+            // Phase Two: Make new symbols from the two lightest symbols until
+            // only one
+            // symbol remains. The final symbol becomes the root of the table
+            // binary tree.
 
             int avail = this.domain;
             Symbol first;
@@ -222,16 +233,17 @@ public class Huff implements None, PostMortem {
                     break;
                 }
 
-// Insert the new symbol back into the sorted list.
+                // Insert the new symbol back into the sorted list.
 
                 if (symbol.weight < head.weight) {
                     symbol.next = head;
                     head = symbol;
                     previous = head;
-                } else {
+                }
+                else {
                     while (true) {
                         next = previous.next;
-                        if (next == null || symbol.weight < next.weight) {
+                        if ((next == null) || (symbol.weight < next.weight)) {
                             break;
                         }
                         previous = next;
@@ -243,30 +255,32 @@ public class Huff implements None, PostMortem {
 
             }
 
-// The last remaining symbol is the root of the table.
+            // The last remaining symbol is the root of the table.
 
             this.table = symbol;
             this.upToDate = true;
         }
     }
 
-    private boolean postMortem(int integer) {
-        int[] bits = new int[this.domain];
+    private boolean postMortem(final int integer) {
+        final int[] bits = new int[this.domain];
         Symbol symbol = this.symbols[integer];
         if (symbol.integer != integer) {
             return false;
         }
         int i = 0;
         while (true) {
-            Symbol back = symbol.back;
+            final Symbol back = symbol.back;
             if (back == null) {
                 break;
             }
             if (back.zero == symbol) {
                 bits[i] = 0;
-            } else if (back.one == symbol) {
+            }
+            else if (back.one == symbol) {
                 bits[i] = 1;
-            } else {
+            }
+            else {
                 return false;
             }
             i += 1;
@@ -277,23 +291,25 @@ public class Huff implements None, PostMortem {
         }
         this.width = 0;
         symbol = this.table;
-        while (symbol.integer == none) {
+        while (symbol.integer == None.none) {
             i -= 1;
             symbol = bits[i] != 0 ? symbol.one : symbol.zero;
         }
-        return symbol.integer == integer && i == 0;
+        return (symbol.integer == integer) && (i == 0);
     }
 
     /**
      * Compare two Huffman tables.
      */
-    public boolean postMortem(PostMortem pm) {
+    @Override
+    public boolean postMortem(final PostMortem pm) {
 
-// Go through every integer in the domain, generating its bit sequence, and
-// then proving that that bit sequence produces the same integer.
+        // Go through every integer in the domain, generating its bit sequence,
+        // and
+        // then proving that that bit sequence produces the same integer.
 
         for (int integer = 0; integer < this.domain; integer += 1) {
-            if (!postMortem(integer)) {
+            if (!this.postMortem(integer)) {
                 JSONzip.log("\nBad huff ");
                 JSONzip.logchar(integer, integer);
                 return false;
@@ -305,81 +321,83 @@ public class Huff implements None, PostMortem {
     /**
      * Read bits until a symbol can be identified. The weight of the read
      * symbol will be incremented.
-     *
+     * 
      * @param bitreader
      *            The source of bits.
      * @return The integer value of the symbol.
      * @throws JSONException
      */
-    public int read(BitReader bitreader) throws JSONException {
+    public int read(final BitReader bitreader) throws JSONException {
         try {
             this.width = 0;
             Symbol symbol = this.table;
-            while (symbol.integer == none) {
+            while (symbol.integer == None.none) {
                 this.width += 1;
                 symbol = bitreader.bit() ? symbol.one : symbol.zero;
             }
-            tick(symbol.integer);
+            this.tick(symbol.integer);
             if (JSONzip.probe) {
                 JSONzip.logchar(symbol.integer, this.width);
             }
             return symbol.integer;
-        } catch (Throwable e) {
+        }
+        catch (final Throwable e) {
             throw new JSONException(e);
         }
     }
 
     /**
      * Increase by 1 the weight associated with a value.
-     *
+     * 
      * @param value
      *            The number of the symbol to tick
      * @return this
      */
-    public void tick(int value) {
+    public void tick(final int value) {
         this.symbols[value].weight += 1;
         this.upToDate = false;
     }
 
     /**
      * Increase by 1 the weight associated with a range of values.
-     *
+     * 
      * @param from
      *            The first symbol to tick
      * @param to
      *            The last symbol to tick
      * @return this
      */
-    public void tick(int from, int to) {
+    public void tick(final int from, final int to) {
         for (int value = from; value <= to; value += 1) {
-            tick(value);
+            this.tick(value);
         }
     }
 
     /**
      * Recur from a symbol back, emitting bits. We recur before emitting to
      * make the bits come out in the right order.
-     *
+     * 
      * @param symbol
      *            The symbol to write.
      * @param bitwriter
      *            The bitwriter to write it to.
      * @throws JSONException
      */
-    private void write(Symbol symbol, BitWriter bitwriter)
-            throws JSONException {
+    private void write(final Symbol symbol, final BitWriter bitwriter) throws JSONException {
         try {
-            Symbol back = symbol.back;
+            final Symbol back = symbol.back;
             if (back != null) {
                 this.width += 1;
-                write(back, bitwriter);
+                this.write(back, bitwriter);
                 if (back.zero == symbol) {
                     bitwriter.zero();
-                } else {
+                }
+                else {
                     bitwriter.one();
                 }
             }
-        } catch (Throwable e) {
+        }
+        catch (final Throwable e) {
             throw new JSONException(e);
         }
     }
@@ -387,7 +405,7 @@ public class Huff implements None, PostMortem {
     /**
      * Write the bits corresponding to a symbol. The weight of the symbol will
      * be incremented.
-     *
+     * 
      * @param value
      *            The number of the symbol to write
      * @param bitwriter
@@ -395,10 +413,10 @@ public class Huff implements None, PostMortem {
      * @return this
      * @throws JSONException
      */
-    public void write(int value, BitWriter bitwriter) throws JSONException {
+    public void write(final int value, final BitWriter bitwriter) throws JSONException {
         this.width = 0;
-        write(this.symbols[value], bitwriter);
-        tick(value);
+        this.write(this.symbols[value], bitwriter);
+        this.tick(value);
         if (JSONzip.probe) {
             JSONzip.logchar(value, this.width);
         }

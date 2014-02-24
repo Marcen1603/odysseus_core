@@ -43,47 +43,47 @@ class TrieKeep extends Keep {
          * has an integer value.
          */
         public Node() {
-            this.integer = none;
+            this.integer = None.none;
             this.next = null;
         }
 
         /**
          * Get one of a node's 256 links. If it is a leaf node, it returns
          * null.
-         *
+         * 
          * @param cell
          *            A integer between 0 and 255.
          * @return
          */
-        public Node get(int cell) {
+        public Node get(final int cell) {
             return this.next == null ? null : this.next[cell];
         }
 
         /**
          * Get one of a node's 256 links. If it is a leap node, it returns
          * null. The argument is treated as an unsigned integer.
-         *
+         * 
          * @param cell
          *            A byte.
          * @return
          */
-        public Node get(byte cell) {
-            return get(((int) cell) & 0xFF);
+        public Node get(final byte cell) {
+            return this.get((cell) & 0xFF);
         }
 
         /**
          * Compare two nodes. Their lengths must be equal. Their links must
          * also compare.
          */
-        public boolean postMortem(PostMortem pm) {
-            Node that = (Node) pm;
+        @Override
+        public boolean postMortem(final PostMortem pm) {
+            final Node that = (Node) pm;
             if (that == null) {
                 JSONzip.log("\nMisalign");
                 return false;
             }
             if (this.integer != that.integer) {
-                JSONzip.log("\nInteger " + this.integer + " <> " +
-                        that.integer);
+                JSONzip.log("\nInteger " + this.integer + " <> " + that.integer);
                 return false;
             }
             if (this.next == null) {
@@ -94,12 +94,13 @@ class TrieKeep extends Keep {
                 return false;
             }
             for (int i = 0; i < 256; i += 1) {
-                Node node = this.next[i];
+                final Node node = this.next[i];
                 if (node != null) {
                     if (!node.postMortem(that.next[i])) {
                         return false;
                     }
-                } else if (that.next[i] != null) {
+                }
+                else if (that.next[i] != null) {
                     JSONzip.log("\nMisalign " + i);
                     return false;
                 }
@@ -109,18 +110,18 @@ class TrieKeep extends Keep {
 
         /**
          * Set a node's link to another node.
-         *
+         * 
          * @param cell
          *            An integer between 0 and 255.
          * @param node
          *            The new value for the cell.
          */
-        public void set(int cell, Node node) {
+        public void set(final int cell, final Node node) {
             if (this.next == null) {
                 this.next = new Node[256];
             }
             if (JSONzip.probe) {
-                if (node == null || this.next[cell] != null) {
+                if ((node == null) || (this.next[cell] != null)) {
                     JSONzip.log("\nUnexpected set.\n");
                 }
             }
@@ -129,29 +130,29 @@ class TrieKeep extends Keep {
 
         /**
          * Set a node's link to another node.
-         *
+         * 
          * @param cell
          *            A byte.
          * @param node
          *            The new value for the cell.
          */
-        public void set(byte cell, Node node) {
-            set(((int) cell) & 0xFF, node);
+        public void set(final byte cell, final Node node) {
+            this.set((cell) & 0xFF, node);
         }
 
         /**
          * Get one of a node's 256 links. It will not return null. If there is
          * no link, then a link is manufactured.
-         *
+         * 
          * @param cell
          *            A integer between 0 and 255.
          * @return
          */
-        public Node vet(int cell) {
-            Node node = get(cell);
+        public Node vet(final int cell) {
+            Node node = this.get(cell);
             if (node == null) {
                 node = new Node();
-                set(cell, node);
+                this.set(cell, node);
             }
             return node;
         }
@@ -159,29 +160,29 @@ class TrieKeep extends Keep {
         /**
          * Get one of a node's 256 links. It will not return null. If there is
          * no link, then a link is manufactured.
-         *
+         * 
          * @param cell
          *            A byte.
          * @return
          */
-        public Node vet(byte cell) {
-            return vet(((int) cell) & 0xFF);
+        public Node vet(final byte cell) {
+            return this.vet((cell) & 0xFF);
         }
     }
 
-    private int[] froms;
-    private int[] thrus;
+    private final int[] froms;
+    private final int[] thrus;
     private Node root;
-    private Kim[] kims;
+    private final Kim[] kims;
 
     /**
      * Create a new Keep of kims.
-     *
+     * 
      * @param bits
      *            The log2 of the capacity of the Keep. For example, if bits is
      *            12, then the keep's capacity will be 4096.
      */
-    public TrieKeep(int bits) {
+    public TrieKeep(final int bits) {
         super(bits);
         this.froms = new int[this.capacity];
         this.thrus = new int[this.capacity];
@@ -191,15 +192,15 @@ class TrieKeep extends Keep {
 
     /**
      * Get the kim associated with an integer.
-     *
+     * 
      * @param integer
      * @return
      */
-    public Kim kim(int integer) {
+    public Kim kim(final int integer) {
         Kim kim = this.kims[integer];
-        int from = this.froms[integer];
-        int thru = this.thrus[integer];
-        if (from != 0 || thru != kim.length) {
+        final int from = this.froms[integer];
+        final int thru = this.thrus[integer];
+        if ((from != 0) || (thru != kim.length)) {
             kim = new Kim(kim, from, thru);
             this.froms[integer] = 0;
             this.thrus[integer] = kim.length;
@@ -211,31 +212,31 @@ class TrieKeep extends Keep {
     /**
      * Get the length of the Kim associated with an integer. This is sometimes
      * much faster than get(integer).length.
-     *
+     * 
      * @param integer
      * @return
      */
-    public int length(int integer) {
+    public int length(final int integer) {
         return this.thrus[integer] - this.froms[integer];
     }
 
     /**
      * Find the integer value associated with this key, or nothing if this key
      * is not in the keep.
-     *
+     * 
      * @param key
      *            An object.
      * @return An integer
      */
-    public int match(Kim kim, int from, int thru) {
+    public int match(final Kim kim, int from, final int thru) {
         Node node = this.root;
-        int best = none;
+        int best = None.none;
         for (int at = from; at < thru; at += 1) {
             node = node.get(kim.get(at));
             if (node == null) {
                 break;
             }
-            if (node.integer != none) {
+            if (node.integer != None.none) {
                 best = node.integer;
             }
             from += 1;
@@ -243,21 +244,21 @@ class TrieKeep extends Keep {
         return best;
     }
 
-    public boolean postMortem(PostMortem pm) {
+    @Override
+    public boolean postMortem(final PostMortem pm) {
         boolean result = true;
-        TrieKeep that = (TrieKeep) pm;
+        final TrieKeep that = (TrieKeep) pm;
         if (this.length != that.length) {
             JSONzip.log("\nLength " + this.length + " <> " + that.length);
             return false;
         }
         if (this.capacity != that.capacity) {
-            JSONzip.log("\nCapacity " + this.capacity + " <> " +
-                    that.capacity);
+            JSONzip.log("\nCapacity " + this.capacity + " <> " + that.capacity);
             return false;
         }
         for (int i = 0; i < this.length; i += 1) {
-            Kim thiskim = this.kim(i);
-            Kim thatkim = that.kim(i);
+            final Kim thiskim = this.kim(i);
+            final Kim thatkim = that.kim(i);
             if (!thiskim.equals(thatkim)) {
                 JSONzip.log("\n[" + i + "] " + thiskim + " <> " + thatkim);
                 result = false;
@@ -266,13 +267,13 @@ class TrieKeep extends Keep {
         return result && this.root.postMortem(that.root);
     }
 
-    public void registerMany(Kim kim) {
-        int length = kim.length;
+    public void registerMany(final Kim kim) {
+        final int length = kim.length;
         int limit = this.capacity - this.length;
         if (limit > JSONzip.substringLimit) {
             limit = JSONzip.substringLimit;
         }
-        int until = length - (JSONzip.minSubstringLength - 1);
+        final int until = length - (JSONzip.minSubstringLength - 1);
         for (int from = 0; from < until; from += 1) {
             int len = length - from;
             if (len > JSONzip.maxSubstringLength) {
@@ -281,9 +282,8 @@ class TrieKeep extends Keep {
             len += from;
             Node node = this.root;
             for (int at = from; at < len; at += 1) {
-                Node next = node.vet(kim.get(at));
-                if (next.integer == none
-                        && at - from >= (JSONzip.minSubstringLength - 1)) {
+                final Node next = node.vet(kim.get(at));
+                if ((next.integer == None.none) && ((at - from) >= (JSONzip.minSubstringLength - 1))) {
                     next.integer = this.length;
                     this.uses[this.length] = 1;
                     this.kims[this.length] = kim;
@@ -291,9 +291,9 @@ class TrieKeep extends Keep {
                     this.thrus[this.length] = at + 1;
                     if (JSONzip.probe) {
                         try {
-                            JSONzip.log("<<" + this.length + " "
-                                    + new Kim(kim, from, at + 1) + ">> ");
-                        } catch (Throwable ignore) {
+                            JSONzip.log("<<" + this.length + " " + new Kim(kim, from, at + 1) + ">> ");
+                        }
+                        catch (final Throwable ignore) {
                         }
                     }
                     this.length += 1;
@@ -307,21 +307,21 @@ class TrieKeep extends Keep {
         }
     }
 
-    public void registerOne(Kim kim) {
-        int integer = registerOne(kim, 0, kim.length);
-        if (integer != none) {
+    public void registerOne(final Kim kim) {
+        final int integer = this.registerOne(kim, 0, kim.length);
+        if (integer != None.none) {
             this.kims[integer] = kim;
         }
     }
 
-    public int registerOne(Kim kim, int from, int thru) {
+    public int registerOne(final Kim kim, final int from, final int thru) {
         if (this.length < this.capacity) {
             Node node = this.root;
             for (int at = from; at < thru; at += 1) {
                 node = node.vet(kim.get(at));
             }
-            if (node.integer == none) {
-                int integer = this.length;
+            if (node.integer == None.none) {
+                final int integer = this.length;
                 node.integer = integer;
                 this.uses[integer] = 1;
                 this.kims[integer] = kim;
@@ -330,14 +330,15 @@ class TrieKeep extends Keep {
                 if (JSONzip.probe) {
                     try {
                         JSONzip.log("<<" + integer + " " + new Kim(kim, from, thru) + ">> ");
-                    } catch (Throwable ignore) {
+                    }
+                    catch (final Throwable ignore) {
                     }
                 }
                 this.length += 1;
                 return integer;
             }
         }
-        return none;
+        return None.none;
     }
 
     /**
@@ -347,21 +348,21 @@ class TrieKeep extends Keep {
      * survivors.
      */
     public void reserve() {
-        if (this.capacity - this.length < JSONzip.substringLimit) {
+        if ((this.capacity - this.length) < JSONzip.substringLimit) {
             int from = 0;
             int to = 0;
             this.root = new Node();
             while (from < this.capacity) {
                 if (this.uses[from] > 1) {
-                    Kim kim = this.kims[from];
-                    int thru = this.thrus[from];
+                    final Kim kim = this.kims[from];
+                    final int thru = this.thrus[from];
                     Node node = this.root;
                     for (int at = this.froms[from]; at < thru; at += 1) {
-                        Node next = node.vet(kim.get(at));
+                        final Node next = node.vet(kim.get(at));
                         node = next;
                     }
                     node.integer = to;
-                    this.uses[to] = age(this.uses[from]);
+                    this.uses[to] = Keep.age(this.uses[from]);
                     this.froms[to] = this.froms[from];
                     this.thrus[to] = thru;
                     this.kims[to] = kim;
@@ -370,10 +371,10 @@ class TrieKeep extends Keep {
                 from += 1;
             }
 
-// It is possible, but highly unlikely, that too many items survive.
-// If that happens, clear the keep.
+            // It is possible, but highly unlikely, that too many items survive.
+            // If that happens, clear the keep.
 
-            if (this.capacity - to < JSONzip.substringLimit) {
+            if ((this.capacity - to) < JSONzip.substringLimit) {
                 this.power = 0;
                 this.root = new Node();
                 to = 0;
@@ -390,7 +391,8 @@ class TrieKeep extends Keep {
         }
     }
 
-    public Object value(int integer) {
-        return kim(integer);
+    @Override
+    public Object value(final int integer) {
+        return this.kim(integer);
     }
 }

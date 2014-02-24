@@ -36,19 +36,20 @@ import org.json.Kim;
  * value.
  */
 class MapKeep extends Keep {
-    private Object[] list;
-    private HashMap map;
+    private final Object[] list;
+    private final HashMap<Object, Integer> map;
 
     /**
      * Create a new Keep.
+     * 
      * @param bits
-     *              The capacity of the keep expressed in the number of bits
-     *              required to hold an integer.
+     *            The capacity of the keep expressed in the number of bits
+     *            required to hold an integer.
      */
-    public MapKeep(int bits) {
+    public MapKeep(final int bits) {
         super(bits);
         this.list = new Object[this.capacity];
-        this.map = new HashMap(this.capacity);
+        this.map = new HashMap<Object, Integer>(this.capacity);
     }
 
     /**
@@ -60,21 +61,23 @@ class MapKeep extends Keep {
         int from = 0;
         int to = 0;
         while (from < this.capacity) {
-            Object key = this.list[from];
-            long usage = age(this.uses[from]);
+            final Object key = this.list[from];
+            final long usage = Keep.age(this.uses[from]);
             if (usage > 0) {
                 this.uses[to] = usage;
                 this.list[to] = key;
                 this.map.put(key, new Integer(to));
                 to += 1;
-            } else {
+            }
+            else {
                 this.map.remove(key);
             }
             from += 1;
         }
         if (to < this.capacity) {
             this.length = to;
-        } else {
+        }
+        else {
             this.map.clear();
             this.length = 0;
         }
@@ -84,18 +87,19 @@ class MapKeep extends Keep {
     /**
      * Find the integer value associated with this key, or nothing if this key
      * is not in the keep.
-     *
+     * 
      * @param key
      *            An object.
      * @return An integer
      */
-    public int find(Object key) {
-        Object o = this.map.get(key);
-        return o instanceof Integer ? ((Integer) o).intValue() : none;
+    public int find(final Object key) {
+        final Object o = this.map.get(key);
+        return o instanceof Integer ? ((Integer) o).intValue() : None.none;
     }
 
-    public boolean postMortem(PostMortem pm) {
-        MapKeep that = (MapKeep) pm;
+    @Override
+    public boolean postMortem(final PostMortem pm) {
+        final MapKeep that = (MapKeep) pm;
         if (this.length != that.length) {
             JSONzip.log(this.length + " <> " + that.length);
             return false;
@@ -104,7 +108,8 @@ class MapKeep extends Keep {
             boolean b;
             if (this.list[i] instanceof Kim) {
                 b = ((Kim) this.list[i]).equals(that.list[i]);
-            } else {
+            }
+            else {
                 Object o = this.list[i];
                 Object q = that.list[i];
                 if (o instanceof Number) {
@@ -116,9 +121,7 @@ class MapKeep extends Keep {
                 b = o.equals(q);
             }
             if (!b) {
-                JSONzip.log("\n[" + i + "]\n " + this.list[i] + "\n "
-                        + that.list[i] + "\n " + this.uses[i] + "\n "
-                        + that.uses[i]);
+                JSONzip.log("\n[" + i + "]\n " + this.list[i] + "\n " + that.list[i] + "\n " + this.uses[i] + "\n " + that.uses[i]);
                 return false;
             }
         }
@@ -128,17 +131,19 @@ class MapKeep extends Keep {
     /**
      * Register a value in the keep. Compact the keep if it is full. The next
      * time this value is encountered, its integer can be sent instead.
-     * @param value A value.
+     * 
+     * @param value
+     *            A value.
      */
-    public void register(Object value) {
+    public void register(final Object value) {
         if (JSONzip.probe) {
-            int integer = find(value);
+            final int integer = this.find(value);
             if (integer >= 0) {
                 JSONzip.log("\nDuplicate key " + value);
             }
         }
         if (this.length >= this.capacity) {
-            compact();
+            this.compact();
         }
         this.list[this.length] = value;
         this.map.put(value, new Integer(this.length));
@@ -151,10 +156,13 @@ class MapKeep extends Keep {
 
     /**
      * Return the value associated with the integer.
-     * @param integer The number of an item in the keep.
+     * 
+     * @param integer
+     *            The number of an item in the keep.
      * @return The value.
      */
-    public Object value(int integer) {
+    @Override
+    public Object value(final int integer) {
         return this.list[integer];
     }
 }

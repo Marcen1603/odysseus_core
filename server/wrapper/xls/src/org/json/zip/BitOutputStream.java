@@ -29,9 +29,9 @@ import java.io.OutputStream;
 
 /**
  * This is a big endian bit writer. It writes its bits to an OutputStream.
- *
+ * 
  * @version 2013-04-18
- *
+ * 
  */
 public class BitOutputStream implements BitWriter {
 
@@ -43,7 +43,7 @@ public class BitOutputStream implements BitWriter {
     /**
      * The destination of the bits.
      */
-    private OutputStream out;
+    private final OutputStream out;
 
     /**
      * Holder of bits not yet written.
@@ -58,11 +58,11 @@ public class BitOutputStream implements BitWriter {
     /**
      * Use an OutputStream to produce a BitWriter. The BitWriter will send its
      * bits to the OutputStream as each byte is filled.
-     *
+     * 
      * @param out
      *            An Output Stream
      */
-    public BitOutputStream(OutputStream out) {
+    public BitOutputStream(final OutputStream out) {
         this.out = out;
     }
 
@@ -71,32 +71,35 @@ public class BitOutputStream implements BitWriter {
      * bitOutputStream. This may include bits that have not yet been written
      * to the underlying outputStream.
      */
+    @Override
     public long nrBits() {
         return this.nrBits;
     }
 
     /**
      * Write a 1 bit.
-     *
+     * 
      * @throws IOException
      */
+    @Override
     public void one() throws IOException {
-        write(1, 1);
+        this.write(1, 1);
     }
 
     /**
      * Pad the rest of the block with zeroes and flush. pad(8) flushes the last
      * unfinished byte. The underlying OutputStream will be flushed.
-     *
+     * 
      * @param factor
      *            The size of the block to pad. This will typically be 8, 16,
      *            32, 64, 128, 256, etc.
      * @return this
      * @throws IOException
      */
-    public void pad(int factor) throws IOException {
-        int padding = factor - (int) (nrBits % factor);
-        int excess = padding & 7;
+    @Override
+    public void pad(final int factor) throws IOException {
+        int padding = factor - (int) (this.nrBits % factor);
+        final int excess = padding & 7;
         if (excess > 0) {
             this.write(0, excess);
             padding -= excess;
@@ -110,18 +113,19 @@ public class BitOutputStream implements BitWriter {
 
     /**
      * Write some bits. Up to 32 bits can be written at a time.
-     *
+     * 
      * @param bits
      *            The bits to be written.
      * @param width
      *            The number of bits to write. (0..32)
      * @throws IOException
      */
-    public void write(int bits, int width) throws IOException {
-        if (bits == 0 && width == 0) {
+    @Override
+    public void write(final int bits, int width) throws IOException {
+        if ((bits == 0) && (width == 0)) {
             return;
         }
-        if (width <= 0 || width > 32) {
+        if ((width <= 0) || (width > 32)) {
             throw new IOException("Bad write width.");
         }
         while (width > 0) {
@@ -129,10 +133,9 @@ public class BitOutputStream implements BitWriter {
             if (actual > this.vacant) {
                 actual = this.vacant;
             }
-            this.unwritten |= ((bits >>> (width - actual)) &
-                    BitInputStream.mask[actual]) << (this.vacant - actual);
+            this.unwritten |= ((bits >>> (width - actual)) & BitInputStream.mask[actual]) << (this.vacant - actual);
             width -= actual;
-            nrBits += actual;
+            this.nrBits += actual;
             this.vacant -= actual;
             if (this.vacant == 0) {
                 this.out.write(this.unwritten);
@@ -144,11 +147,12 @@ public class BitOutputStream implements BitWriter {
 
     /**
      * Write a 0 bit.
-     *
+     * 
      * @throws IOException
      */
+    @Override
     public void zero() throws IOException {
-        write(0, 1);
+        this.write(0, 1);
 
     }
 }
