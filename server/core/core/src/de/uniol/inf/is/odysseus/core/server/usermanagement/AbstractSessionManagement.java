@@ -87,7 +87,7 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements
 			this.sessionStore.remove(user.getId());
 		}
 		final Session session = new Session(user, tenant);
-		this.sessionStore.put(session.getId(), session);
+		this.sessionStore.put(user.getId(), session);
 		return session;
 	}
 
