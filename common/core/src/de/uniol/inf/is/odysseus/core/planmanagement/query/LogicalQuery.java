@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "logicalQueryInfo", propOrder = { "id", "queryText",
-		"parserID", "containsCycles", "priority", "name"})
+		"parserID", "containsCycles", "priority", "name", "notice"})
 public class LogicalQuery implements ILogicalQuery {
 
 	private static final long serialVersionUID = -7357156628145329724L;
