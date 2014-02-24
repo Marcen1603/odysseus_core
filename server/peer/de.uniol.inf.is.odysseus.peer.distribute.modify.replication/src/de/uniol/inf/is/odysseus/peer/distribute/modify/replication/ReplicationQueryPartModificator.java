@@ -679,7 +679,10 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 				else strSinks += ", ";
 				
 			}
-			ReplicationQueryPartModificator.log.debug("Inserted a merger between {} and {}.", strSinks, replicatedTarget.get().getName());
+			String target = "";
+			if(replicatedTarget.isPresent())
+				target = replicatedTarget.get().getName();
+			ReplicationQueryPartModificator.log.debug("Inserted a merger between {} and {}.", strSinks, target);
 			
 		}
 		return modifiedReplicatesToOrigin;
