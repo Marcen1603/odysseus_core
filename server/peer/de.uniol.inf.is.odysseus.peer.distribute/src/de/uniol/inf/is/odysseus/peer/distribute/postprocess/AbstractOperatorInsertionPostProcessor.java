@@ -28,7 +28,7 @@ public abstract class AbstractOperatorInsertionPostProcessor implements IQueryDi
 	private static final Logger log = LoggerFactory.getLogger(AbstractOperatorInsertionPostProcessor.class);
 	
 	// TODO javaDoc
-	private static boolean isRealSink(ILogicalOperator operator) {
+	protected static boolean isRealSink(ILogicalOperator operator) {
 		
 		return operator.isSinkOperator() && !operator.isSourceOperator();
 		
