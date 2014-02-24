@@ -35,7 +35,7 @@ public class ViewExporterThread extends RepeatingJobThread {
 			// only views must be exported regulary
 			if( exportedSource.isView() ) {
 				try {
-					JxtaServicesProvider.getInstance().getDiscoveryService().publish(exportedSource, advLifeTime, advLifeTime);
+					JxtaServicesProvider.getInstance().getDiscoveryService().flushAdvertisement(exportedSource);
 					JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(exportedSource, advLifeTime);
 				} catch (IOException e) {
 					LOG.error("Could not locally publish exported source {}", exportedSource.getName(), e);
