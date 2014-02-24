@@ -54,6 +54,7 @@ public class Helper {
 	private static OperatorCostModel costModel;
 	private static IPQLGenerator pqlGenerator;
 	private static IServerExecutor serverExecutor;
+	private static ISession session;
 
 	// called by OSGi-DS
 	public static void bindPQLGenerator(IPQLGenerator serv) {
@@ -110,7 +111,10 @@ public class Helper {
 	}
 
 	public static ISession getActiveSession() {
-		return UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
+		if( session == null || !session.isValid() ) {
+			session = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
+		}
+		return session;
 	}
 
 	public static List<ILogicalOperator> allSubscriptions(ILogicalOperator target) {

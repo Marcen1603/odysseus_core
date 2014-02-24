@@ -49,6 +49,7 @@ public class Helper {
 	@SuppressWarnings("rawtypes")
 	private static OperatorCostModel costModel;
 	private static IServerExecutor executor;
+	private static ISession session;
 
 	// called by OSGi-DS
 	public static void bindExecutor(IExecutor serv) {
@@ -84,7 +85,10 @@ public class Helper {
 	}
 
 	public static ISession getActiveSession() {
-		return UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
+		if( session == null || !session.isValid() ) {
+			session = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
+		}
+		return session;
 	}
 
 	public static IPhysicalQuery getPhysicalQuery(ILogicalQuery query, String transCfgName) {

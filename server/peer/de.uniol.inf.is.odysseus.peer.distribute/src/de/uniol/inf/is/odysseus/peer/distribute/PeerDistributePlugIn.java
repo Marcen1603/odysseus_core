@@ -24,7 +24,7 @@ public class PeerDistributePlugIn implements BundleActivator {
 	}
 
 	public static ISession getActiveSession() {
-		if(activeSession == null) {	
+		if(activeSession == null || !activeSession.isValid()) {	
 			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
 		}
 		

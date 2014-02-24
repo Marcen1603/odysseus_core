@@ -116,7 +116,7 @@ public final class CostEstimationHelper {
 	}
 
 	private static ISession getActiveSession() {
-		if( activeSession == null ) {
+		if( activeSession == null && !activeSession.isValid()) {
 			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
 		} 
 		return activeSession;
