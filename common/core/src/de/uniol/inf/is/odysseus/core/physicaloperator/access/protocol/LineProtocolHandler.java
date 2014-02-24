@@ -212,6 +212,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 //					measurements.append(lineCounter).append(";").append(time - basetime).append("\n");
 					if (dumpOut != null){
 						dumpOut.println(lineCounter+";"+(time - basetime)+";"+(time - lastMeasureTime));
+						dumpOut.flush();
 					}	
 					lastMeasureTime = time;
 				}
@@ -225,6 +226,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 				LOG.debug(lineCounter + " " + time);
 				if (dumpOut != null){
 					dumpOut.println(lineCounter+";"+(time - basetime)+";"+(time - lastMeasureTime));
+					dumpOut.flush();	
 				}
 //				measurements.append(lineCounter).append(";").append(time - basetime).append("\n");
 				if (lastLine == lineCounter) {
