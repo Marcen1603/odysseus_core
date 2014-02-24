@@ -21,10 +21,11 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
- * @author André Bolles
+ * @author Andrï¿½ Bolles
  *
  */
 public class ListDataHandler extends AbstractDataHandler<List<?>>{
@@ -32,6 +33,7 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	static protected List<String> types = new ArrayList<String>();
 	static{
 		types.add("MULTI_VALUE"); //??
+		types.add(SDFDatatype.LIST.getURI());
 	}
 	
 	SDFSchema subType = null;

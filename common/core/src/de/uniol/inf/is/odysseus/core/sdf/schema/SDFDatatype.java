@@ -81,7 +81,9 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			"PointInTime");
 
 	private static final SDFDatatype MV = new SDFDatatype("MV");
-
+    public static final SDFDatatype LIST = new SDFDatatype("List",
+            SDFDatatype.KindOfDatatype.BASE, SDFDatatype.OBJECT);
+    
 	public static final SDFDatatype MATRIX_DOUBLE = new SDFDatatype("Matrix",
 			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.DOUBLE);
 	public static final SDFDatatype MATRIX_FLOAT = new SDFDatatype(
