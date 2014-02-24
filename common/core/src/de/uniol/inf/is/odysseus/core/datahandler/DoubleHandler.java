@@ -28,7 +28,6 @@ public class DoubleHandler extends AbstractDataHandler<Double> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		types.add(SDFDatatype.DOUBLE.getURI());
-		types.add(SDFDatatype.FLOAT.getURI());
 		types.add("MV"); //??
 	}
 
