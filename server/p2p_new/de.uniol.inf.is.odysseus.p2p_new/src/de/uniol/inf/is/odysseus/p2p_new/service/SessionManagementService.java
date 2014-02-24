@@ -6,8 +6,14 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
 public class SessionManagementService {
+	
+	private static ISession currentSession;
+	
 	public static ISession getActiveSession() {
-		return UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
+		if( currentSession == null || !currentSession.isValid()) {
+			currentSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
+		}
+		return currentSession;
 	}
 
 	public static ISessionManagement getSessionManagement() {
