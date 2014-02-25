@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -190,7 +192,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		waitingServerConnections.add(addedConnection);
 		addedConnection.addListener(this);
 	}
-
+	
 	@Override
 	public void connectionRemoved(IJxtaServerConnection sender, IJxtaConnection removedConnection) {
 		LOG.debug("Lost connection to remote client");
@@ -360,6 +362,12 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		activeConnectionsAsServer_PeerID.put(peerID, sender);
 		
 		LOG.debug("Got connection info from client peer name={} with id={}", peerName, peerID);
+	}
+	
+
+	@Override
+	public ImmutableCollection<PeerID> getConnectedPeers() {
+		return ImmutableList.copyOf(activeConnectionsAsServer_PeerID.keySet());
 	}
 
 	private static int getInt(byte[] bytes, int offset) {

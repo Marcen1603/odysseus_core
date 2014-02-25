@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.resource;
 
 import java.util.Collection;
+import java.util.concurrent.Future;
 
 import net.jxta.peer.PeerID;
 
@@ -8,13 +9,9 @@ import com.google.common.base.Optional;
 
 public interface IPeerResourceUsageManager {
 
-	public Optional<IResourceUsage> getRemoteResourceUsage( PeerID peerID );
-	public boolean hasRemoteResourceUsage(PeerID peerID);
-	
+	public Future<Optional<IResourceUsage>> getRemoteResourceUsage( PeerID peerID );
 	public Optional<IResourceUsage> getLocalResourceUsage();
 	
-	public Collection<PeerID> getRemotePeers();
-	
-	public void addListener( IPeerResourceUsageManagerListener listener);
-	public void removeListener( IPeerResourceUsageManagerListener listener);
+	public Collection<PeerID> getRemotePeerIDs();
+	public PeerID getLocalPeerID();
 }

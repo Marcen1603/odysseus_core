@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.distribute.allocate.loadbalancing;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import net.jxta.peer.PeerID;
 
@@ -80,16 +81,20 @@ public class LoadBalancingAllocator implements IQueryPartAllocator {
 	}
 
 	private static Map<PeerID, IResourceUsage> determineCurrentResourceUsagesOfPeers() {
-		Collection<PeerID> remotePeers = peerResourceUsageManager.getRemotePeers();
+		Collection<PeerID> remotePeers = peerResourceUsageManager.getRemotePeerIDs();
 		
 		Map<PeerID, IResourceUsage> usages = Maps.newHashMap();
 		for( PeerID remotePeer : remotePeers ) {
-			usages.put(remotePeer, peerResourceUsageManager.getRemoteResourceUsage(remotePeer).get());
+			try {
+				usages.put(remotePeer, peerResourceUsageManager.getRemoteResourceUsage(remotePeer).get().get());
+			} catch (InterruptedException | ExecutionException e) {
+				LOG.error("Could not determine resource usage", e);
+			}
 		}
 		
 		Optional<IResourceUsage> localUsage = peerResourceUsageManager.getLocalResourceUsage();
 		if( localUsage.isPresent() ) {
-			usages.put(localUsage.get().getPeerID(), localUsage.get());
+			usages.put(peerResourceUsageManager.getLocalPeerID(), localUsage.get());
 		}
 		
 		return usages;
