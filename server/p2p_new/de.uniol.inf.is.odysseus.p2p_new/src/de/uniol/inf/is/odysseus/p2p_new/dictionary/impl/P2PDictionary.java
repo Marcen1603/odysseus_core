@@ -932,7 +932,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 				}
 			}
 		} catch (Throwable t) {
-			LOG.error("Could not determine address of peerid {}", peerID, t);
+			LOG.debug("Could not determine address of peerid {}", peerID, t);
 		}
 		return Optional.absent();
 	}
