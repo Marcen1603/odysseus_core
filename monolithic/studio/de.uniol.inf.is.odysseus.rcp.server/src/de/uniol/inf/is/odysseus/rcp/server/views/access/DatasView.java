@@ -27,14 +27,14 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.rcp.server.l10n.OdysseusNLS;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProtocolsView extends ViewPart {
+public class DatasView extends ViewPart {
 
     private TableViewer tableViewer;
 
@@ -56,11 +56,12 @@ public class ProtocolsView extends ViewPart {
         this.tableViewer.setComparator(new ViewerComparator() {
             @Override
             public int compare(final Viewer viewer, final Object e1, final Object e2) {
-                return ProtocolsView.this.compareElements(e1, e2);
+                return DatasView.this.compareElements(e1, e2);
             }
         });
         this.createColumns(this.tableViewer, tableColumnLayout);
-        ProtocolsView.insertTableContent(this.tableViewer, "");
+        DatasView.insertTableContent(this.tableViewer, "");
+
     }
 
     @Override
@@ -69,36 +70,37 @@ public class ProtocolsView extends ViewPart {
     }
 
     public void refresh() {
-        ProtocolsView.insertTableContent(this.tableViewer, "");
+        DatasView.insertTableContent(this.tableViewer, "");
         this.tableViewer.refresh();
     }
 
     private static void insertTableContent(final TableViewer tableViewer, final String filter) {
-        final List<String> protocols = new ArrayList<String>(ProtocolHandlerRegistry.getHandlerNames());
-        Collections.sort(protocols);
-        tableViewer.setInput(protocols);
+        final List<String> datas = new ArrayList<String>(DataHandlerRegistry.getHandlerNames());
+        Collections.sort(datas);
+        tableViewer.setInput(datas);
     }
 
     private void createColumns(final TableViewer tableViewer, final TableColumnLayout tableColumnLayout) {
-        final TableViewerColumn symbolColumn = ProtocolsView.createColumn(tableViewer, tableColumnLayout, OdysseusNLS.Symbol, new CellLabelProvider() {
+        final TableViewerColumn symbolColumn = this.createColumn(tableViewer, tableColumnLayout, OdysseusNLS.Symbol, new CellLabelProvider() {
             @Override
             public void update(final ViewerCell cell) {
                 cell.setText(((String) cell.getElement()));
             }
         }, 5);
         this.addColumnSelectionListener(symbolColumn.getColumn());
+
     }
 
     private void addColumnSelectionListener(final TableColumn column) {
         column.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                ProtocolsView.this.tableColumnClicked((TableColumn) e.widget);
+                DatasView.this.tableColumnClicked((TableColumn) e.widget);
             }
         });
     }
 
-    private static TableViewerColumn createColumn(final TableViewer tableViewer, final TableColumnLayout tableColumnLayout, final String title, final CellLabelProvider labelProvider, final int weight) {
+    private TableViewerColumn createColumn(final TableViewer tableViewer, final TableColumnLayout tableColumnLayout, final String title, final CellLabelProvider labelProvider, final int weight) {
         final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
         column.getColumn().setText(title);
         column.setLabelProvider(labelProvider);

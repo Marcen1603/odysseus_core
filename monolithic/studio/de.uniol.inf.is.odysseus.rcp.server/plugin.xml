@@ -37,10 +37,18 @@
       </view>
       <view
             category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.server.views.access.DatasView"
+            icon="icons/datas.png"
+            id="de.uniol.inf.is.odysseus.rcp.views.DatasView"
+            name="Data handler"
+            restorable="true">
+      </view>
+      <view
+            category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.server.views.access.ProtocolsView"
             icon="icons/protocols.png"
             id="de.uniol.inf.is.odysseus.rcp.views.ProtocolsView"
-            name="Protocols"
+            name="Protocol handler"
             restorable="true">
       </view>
       <view
@@ -48,7 +56,7 @@
             class="de.uniol.inf.is.odysseus.rcp.server.views.access.TransportsView"
             icon="icons/transports.png"
             id="de.uniol.inf.is.odysseus.rcp.views.TransportsView"
-            name="Transports"
+            name="Transport handler"
             restorable="true">
       </view>
       <view
