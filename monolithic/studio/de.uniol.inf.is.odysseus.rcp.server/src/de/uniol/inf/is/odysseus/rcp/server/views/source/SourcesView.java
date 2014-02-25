@@ -145,8 +145,10 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 
 							if (!streamsAndViews.isEmpty()) {
 								stackLayout.topControl = getTreeViewer().getTree();
+								setPartName("Sources (" + streamsAndViews.size() + ")");
 							} else {
 								stackLayout.topControl = label;
+								setPartName("Sources (0)");
 							}
 							parent.layout();
 						}
