@@ -207,7 +207,7 @@ public class ForceModel {
 	
 	private static ForceNode determineForceNode(ILogicalQueryPart queryPart, Collection<ForceNode> forceNodes) {
 		for( ForceNode forceNode : forceNodes ) {
-			if( !forceNode.isFixed() && queryPart.equals(forceNode.getQueryPart())) {
+			if( queryPart.equals(forceNode.getQueryPart())) {
 				return forceNode;
 			}
 		}
