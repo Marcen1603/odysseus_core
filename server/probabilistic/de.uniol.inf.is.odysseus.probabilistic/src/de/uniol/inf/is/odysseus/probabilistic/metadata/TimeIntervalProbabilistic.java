@@ -36,7 +36,7 @@ public class TimeIntervalProbabilistic extends TimeInterval implements ITimeInte
     private static final long serialVersionUID = -9030157268224460919L;
     /** The classes. */
     @SuppressWarnings("unchecked")
-    public static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] { ITimeInterval.class, IProbabilistic.class, ITimeIntervalProbabilistic.class };
+    public static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] { ITimeInterval.class, IProbabilistic.class };
     /** The tuple probability. */
     private final IProbabilistic probabilistic;
 
