@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.script.keyword.TransCfgPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
+@SuppressWarnings("deprecation")
 public class KeywordProvider implements IPreParserKeywordProvider {
 
 	@Override

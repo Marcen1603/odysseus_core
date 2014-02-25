@@ -59,6 +59,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.latency.physicaloperator.LatencyCalculationPipe;
 
+@SuppressWarnings("deprecation")
 public class Benchmark implements IErrorEventListener, IBenchmark, IEventListener {
 	private long maxResults;
 	private String scheduler;

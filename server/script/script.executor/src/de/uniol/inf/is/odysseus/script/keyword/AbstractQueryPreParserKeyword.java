@@ -20,8 +20,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import sun.security.action.GetLongAction;
-
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -42,6 +40,8 @@ import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
 
+
+@SuppressWarnings("deprecation")
 public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	@Override
