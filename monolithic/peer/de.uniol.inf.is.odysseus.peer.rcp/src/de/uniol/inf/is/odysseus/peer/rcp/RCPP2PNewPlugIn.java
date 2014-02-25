@@ -150,7 +150,7 @@ public class RCPP2PNewPlugIn extends AbstractUIPlugin {
 	}
 	
 	public static ISession getActiveSession() {
-		if( activeSession == null && !activeSession.isValid() ) {
+		if( activeSession == null || !activeSession.isValid() ) {
 			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, "");
 		}
 		return activeSession;
