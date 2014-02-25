@@ -352,15 +352,17 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 					usageMap.clear();
 
 					IPeerResourceUsageManager usageManager = RCPP2PNewPlugIn.getPeerResourceUsageManager();
-					for (PeerID remotePeerID : foundPeerIDs) {
-						Future<Optional<IResourceUsage>> futureUsage = usageManager.getRemoteResourceUsage(remotePeerID);
-						try {
-							Optional<IResourceUsage> optResourceUsage = futureUsage.get();
-							if (optResourceUsage.isPresent()) {
-								usageMap.put(remotePeerID, optResourceUsage.get());
+					synchronized( foundPeerIDs ) {
+						for (PeerID remotePeerID : foundPeerIDs) {
+							Future<Optional<IResourceUsage>> futureUsage = usageManager.getRemoteResourceUsage(remotePeerID);
+							try {
+								Optional<IResourceUsage> optResourceUsage = futureUsage.get();
+								if (optResourceUsage.isPresent()) {
+									usageMap.put(remotePeerID, optResourceUsage.get());
+								}
+							} catch (InterruptedException | ExecutionException e) {
+								LOG.error("Could not get resource usage", e);
 							}
-						} catch (InterruptedException | ExecutionException e) {
-							LOG.error("Could not get resource usage", e);
 						}
 					}
 				}
