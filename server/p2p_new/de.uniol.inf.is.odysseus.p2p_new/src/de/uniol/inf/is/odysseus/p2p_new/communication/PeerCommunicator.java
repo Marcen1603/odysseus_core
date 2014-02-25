@@ -90,11 +90,11 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 	public void deactivate() {
 		LOG.debug("Deactivated");
 		
-		for( IJxtaConnection con : activeConnectionsAsClient.keySet() ) {
+		for( IJxtaConnection con : activeConnectionsAsClient.keySet().toArray(new IJxtaConnection[0]) ) {
 			con.disconnect();
 		}
 		
-		for( IJxtaConnection con : activeConnectionsAsServer.keySet() ) {
+		for( IJxtaConnection con : activeConnectionsAsServer.keySet().toArray(new IJxtaConnection[0]) ) {
 			con.disconnect();
 		}
 		
