@@ -49,7 +49,7 @@ public class PingMapView extends ViewPart implements PaintListener, MouseMoveLis
 		canvas.addPaintListener(this);
 		canvas.addMouseMoveListener(this);
 		
-		updateThread = new RepeatingJobThread(2000) {
+		updateThread = new RepeatingJobThread(1000) {
 			@Override
 			public void doJob() {
 				if( canvas.isDisposed() ) {
