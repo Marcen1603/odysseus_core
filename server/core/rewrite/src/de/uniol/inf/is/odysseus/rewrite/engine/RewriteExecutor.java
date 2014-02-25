@@ -89,6 +89,7 @@ public class RewriteExecutor implements IRewrite {
 			LOGGER.trace("After rewriting: \n" + planPrinter.createString(ret));
 		}
 		LOGGER.info("Rewriting finished.");
+		env.getWorkingMemory().clear();
 		return ret;
 	}
 
