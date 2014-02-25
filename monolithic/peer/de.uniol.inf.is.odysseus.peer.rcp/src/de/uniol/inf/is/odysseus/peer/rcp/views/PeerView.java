@@ -331,6 +331,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerR
 				public void run() {
 					if (!peersTable.getTable().isDisposed()) {
 						peersTable.refresh();
+						setPartName("Peers (" + foundPeerIDs.size() + ")");
 					}
 				}
 			});
