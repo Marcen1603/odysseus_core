@@ -9,6 +9,8 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.p2p_new.communication.CommunicationAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.communication.CommunicationAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.SourceAdvertisementInstantiator;
 
@@ -34,6 +36,7 @@ public class P2PNewPlugIn implements BundleActivator {
 
 	private static void registerAdvertisementTypes() {
 		AdvertisementFactory.registerAdvertisementInstance(SourceAdvertisement.getAdvertisementType(), new SourceAdvertisementInstantiator());
+		AdvertisementFactory.registerAdvertisementInstance(CommunicationAdvertisement.getAdvertisementType(), new CommunicationAdvertisementInstantiator());
 	}
 	
 	private static void configureLogging(Bundle bundle) {

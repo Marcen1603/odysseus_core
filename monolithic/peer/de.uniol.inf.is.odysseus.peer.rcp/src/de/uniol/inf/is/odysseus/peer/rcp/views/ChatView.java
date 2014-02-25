@@ -338,7 +338,7 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 	public void remotePeerAdded(IP2PDictionary sender, PeerID id, String name) {
 		peerIDs.add(id);
 		refreshTableAsync();
-		appendToChatTextAsync("<New peer '" + name + "' discovered>");
+		appendToChatTextAsync("\n<New peer '" + name + "' discovered>");
 	}
 
 	@Override
@@ -346,6 +346,6 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 		peerIDs.remove(id);
 		refreshTableAsync();
 		
-		appendToChatTextAsync("<Peer '" + name + "' disappeared>");
+		appendToChatTextAsync("\n<Peer '" + name + "' disappeared>");
 	}
 }

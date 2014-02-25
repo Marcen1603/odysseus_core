@@ -112,7 +112,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 				}
 			}
 		} catch (PeerCommunicationException e) {
-			LOG.error("Could not send ping message", e);
+			//LOG.error("Could not send ping message", e);
 		}
 	}
 
