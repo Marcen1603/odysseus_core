@@ -111,11 +111,8 @@ public class PingMapView extends ViewPart implements PaintListener, MouseMoveLis
 			}
 		}
 		
-		double xDist = maxX - minX;
-		double yDist = maxY - minY;
-		
-		double xFactor = e.width / ( xDist + e.width * 0.1);
-		double yFactor = e.height / ( yDist + e.height * 0.1);
+		double xFactor = 3;
+		double yFactor = 3;
 		
 		GC gc = e.gc;
 		drawBackground(gc, e, xFactor, yFactor);
