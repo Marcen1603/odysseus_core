@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import sun.security.action.GetLongAction;
+
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -61,7 +63,8 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 
 			String transCfg = (String) variables.get(TransCfgPreParserKeyword.TRANSCFG);
 			if (transCfg == null) {
-				throw new OdysseusScriptException("TransformationConfiguration not set");
+				variables.put(TransCfgPreParserKeyword.TRANSCFG, "Standard");
+				//throw new OdysseusScriptException("TransformationConfiguration not set");
 			}
 
 		} catch (Exception ex) {
@@ -74,6 +77,9 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		String parserID = (String) variables.get(ParserPreParserKeyword.PARSER);
 		String transCfgName = (String) variables.get(TransCfgPreParserKeyword.TRANSCFG);
+		if (transCfgName == null){
+			transCfgName = "Standard";
+		}
 		List<IQueryBuildSetting<?>> addSettings = (List<IQueryBuildSetting<?>>) variables.get(AbstractPreParserKeyword.ADD_TRANS_PARAMS);
 
 		ISession queryCaller = (ISession) variables.get("USER");
