@@ -46,6 +46,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
@@ -53,6 +54,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -60,6 +62,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
@@ -341,6 +345,55 @@ public class WebserviceServer {
 	public StringResponse getName() {
 		return new StringResponse(ExecutorServiceBinding.getExecutor().getName(), true);
 
+	}
+	
+	public SimpleGraph getLogicalQueryPlan(
+			@WebParam(name = "securitytoken") String securityToken,
+			@WebParam(name = "queryID") Integer queryID)
+			throws InvalidUserDataException, QueryNotExistsException {
+		ISession session = loginWithSecurityToken(securityToken);
+		IServerExecutor executer = ExecutorServiceBinding.getExecutor();
+		ILogicalQuery logicalQuery = executer.getLogicalQueryById(queryID, session);
+		ILogicalOperator operator = logicalQuery.getLogicalPlan();
+		Map<Integer, GraphNode> visitedOperators = new HashMap<Integer, GraphNode>();
+		SimpleGraph graph = new SimpleGraph();		
+		for (LogicalSubscription subscription : operator.getSubscribedToSource()) {
+			graph.addRootNode(this.createGraphNode(subscription, visitedOperators));
+		}
+		return graph;
+	}
+	
+	private GraphNode createGraphNode(LogicalSubscription subscription, Map<Integer, GraphNode> visitedOperators) {
+		ILogicalOperator operator = subscription.getTarget();
+		GraphNode newNode = new GraphNode();		
+		newNode.setName(operator.getName());	
+		newNode.setParameterInfos(operator.getParameterInfos());
+		
+		// begin temporary solution		
+		// AccessAO -> getName() -> source
+		// SenderAO -> getName() -> sink
+		LogicalOperator logicalOperatorAnnotation = operator.getClass().getAnnotation(LogicalOperator.class);
+		newNode.setOperatorType(logicalOperatorAnnotation.name());
+		
+		//Source -> getName() -> stream
+		if (operator instanceof StreamAO) {
+			newNode.setSourceOperator(true);
+			StreamAO streamAO = (StreamAO) operator;
+			newNode.setName(streamAO.getStreamname().getResourceName());
+		}  
+		// end temporary solution
+		
+		visitedOperators.put(operator.hashCode(), newNode);
+		for (LogicalSubscription subs: operator.getSubscribedToSource()) {
+			ILogicalOperator op = subs.getTarget();
+			GraphNode node = visitedOperators.get(op.hashCode());
+			if (node == null) {
+				newNode.addChild(this.createGraphNode(subs, visitedOperators), subs.getSourceOutPort());
+			} else {
+				newNode.addChild(node, subs.getSinkInPort());
+			}
+		}
+		return newNode;
 	}
 
 	@SuppressWarnings("unchecked")
