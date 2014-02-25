@@ -83,7 +83,7 @@ public class TransformationConfiguration {
 	}
 
 	public SortedSet<String> getMetaTypes() {
-		return (SortedSet<String>) Collections.unmodifiableSet(metaTypes);
+		return metaTypes;
 	}
 	
 	public void setVirtualTransformation(boolean virtualTransformation) {
