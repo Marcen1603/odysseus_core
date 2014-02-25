@@ -316,6 +316,7 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 				public void run() {
 					if( !sourcesTable.getTable().isDisposed() ) {
 						sourcesTable.refresh();
+						setPartName("P2P Sources (" + input.size() + ")");
 					}
 				}
 			});
