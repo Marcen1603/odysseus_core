@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.ide.IDE;
@@ -103,7 +104,7 @@ public class Activator extends AbstractUIPlugin {
 
 		IDE.registerAdapters();
 
-		Set<Set<String>> allTypeCombination = MetadataRegistry.getAvailableMetadataCombinations();
+		Set<SortedSet<String>> allTypeCombination = MetadataRegistry.getAvailableMetadataCombinations();
 		allSingleTypes = new HashSet<String>();
 		for (Set<String> x : allTypeCombination) {
 			allSingleTypes.addAll(x);

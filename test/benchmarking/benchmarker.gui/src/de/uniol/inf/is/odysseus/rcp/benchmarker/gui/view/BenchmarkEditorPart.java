@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
@@ -157,7 +158,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 				ActionFactory.SAVE_ALL.create(getSite().getWorkbenchWindow()));
 
 		// vorhandene Metadaten aus Odysseus holen
-		Set<Set<String>> allTypeCombination = MetadataRegistry.getAvailableMetadataCombinations();
+		Set<SortedSet<String>> allTypeCombination = MetadataRegistry.getAvailableMetadataCombinations();
 		for (Set<String> typeCombinations : allTypeCombination) {
 			for (String type : typeCombinations) {
 				if (!benchmarkParam.getAllSingleTypes().containsKey(type)) {
@@ -698,7 +699,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	 */
 	@SuppressWarnings("rawtypes")
 	private boolean checkMetadataCombination() {
-		Set<Set<String>> allTypeCombination = MetadataRegistry.getAvailableMetadataCombinations();
+		Set<SortedSet<String>> allTypeCombination = MetadataRegistry.getAvailableMetadataCombinations();
 		@SuppressWarnings("unchecked")
 		Set<String> set = new HashSet(Arrays.asList(benchmarkParam.getMetadataCombination()));
 		if (allTypeCombination.contains(set)) {

@@ -21,12 +21,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class TransformationConfiguration {
-	private final Set<String> metaTypes = new TreeSet<String>();
+	private final SortedSet<String> metaTypes = new TreeSet<String>();
 	final private Map<String, Object> options = new HashMap<String, Object>();
 	final private ITransformationHelper transformHelper = new StandardTransformationHelper();;
 	private boolean virtualTransformation;
@@ -81,8 +82,8 @@ public class TransformationConfiguration {
 				.asList(strings)));
 	}
 
-	public Set<String> getMetaTypes() {
-		return Collections.unmodifiableSet(metaTypes);
+	public SortedSet<String> getMetaTypes() {
+		return (SortedSet<String>) Collections.unmodifiableSet(metaTypes);
 	}
 	
 	public void setVirtualTransformation(boolean virtualTransformation) {

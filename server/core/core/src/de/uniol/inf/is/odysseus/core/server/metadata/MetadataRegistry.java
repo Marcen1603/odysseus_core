@@ -16,9 +16,10 @@
 package de.uniol.inf.is.odysseus.core.server.metadata;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ public class MetadataRegistry {
 	
 	private static final String LOGGER_NAME = MetadataRegistry.class.getName();
 
-	private static Map<Set<String>, Class<? extends IMetaAttribute>> combinedMetadataTypes = new HashMap<Set<String>, Class<? extends IMetaAttribute>>();
+	private static Map<SortedSet<String>, Class<? extends IMetaAttribute>> combinedMetadataTypes = new HashMap<>();
 	
 	private static Map<String, Class<? extends IMetaAttribute>> byName = new HashMap<>();
 
@@ -43,7 +44,7 @@ public class MetadataRegistry {
 		byName.put(type.getName(), type.getClass());
 		
 		Class<? extends IMetaAttribute> implementationType = type.getClass();		
-		HashSet<String> typeSet = toStringSet(type.getClasses());
+		SortedSet<String> typeSet = toStringSet(type.getClasses());
 		synchronized (combinedMetadataTypes) {
 			if (combinedMetadataTypes.containsKey(typeSet)
 					&& combinedMetadataTypes.get(typeSet) != implementationType) {
@@ -67,7 +68,7 @@ public class MetadataRegistry {
 
 	public static Class<? extends IMetaAttribute> getMetadataType(
 			String... types) {
-		HashSet<String> typeSet = new HashSet<String>();
+		SortedSet<String> typeSet = new TreeSet<String>();
 		for (String typeString : types) {
 			typeSet.add(typeString);
 		}
@@ -75,7 +76,7 @@ public class MetadataRegistry {
 	}
 
 	public static Class<? extends IMetaAttribute> getMetadataType(
-			Set<String> types) {
+			SortedSet<String> types) {
 		synchronized (combinedMetadataTypes) {
 			Class<? extends IMetaAttribute> type = combinedMetadataTypes
 					.get(types);
@@ -101,14 +102,14 @@ public class MetadataRegistry {
 		return type;
 	}
 	
-	public static Set<Set<String>> getAvailableMetadataCombinations() {
+	public static Set<SortedSet<String>> getAvailableMetadataCombinations() {
 		synchronized (combinedMetadataTypes) {
 			return combinedMetadataTypes.keySet();
 		}
 	}
 
 	public static void removeMetadataType(IMetaAttribute type) {
-		HashSet<String> typeSet = toStringSet(type.getClasses());
+		SortedSet<String> typeSet = toStringSet(type.getClasses());
 		synchronized (combinedMetadataTypes) {
 			combinedMetadataTypes.remove(typeSet);
 		}
@@ -117,7 +118,7 @@ public class MetadataRegistry {
 	@SafeVarargs
 	public static void removeCombinedMetadataType(
 			Class<? extends IMetaAttribute>... combinationOf) {
-		HashSet<String> typeSet = toStringSet(combinationOf);
+		SortedSet<String> typeSet = toStringSet(combinationOf);
 
 		synchronized (combinedMetadataTypes) {
 			combinedMetadataTypes.remove(typeSet);
@@ -125,9 +126,9 @@ public class MetadataRegistry {
 	}
 
 	@SafeVarargs
-	private static HashSet<String> toStringSet(
+	private static SortedSet<String> toStringSet(
 			Class<? extends IMetaAttribute>... combinationOf) {
-		HashSet<String> typeSet = new HashSet<String>();
+		SortedSet<String> typeSet = new TreeSet<String>();
 		for (Class<?> c : combinationOf) {
 			typeSet.add(c.getName());
 		}
