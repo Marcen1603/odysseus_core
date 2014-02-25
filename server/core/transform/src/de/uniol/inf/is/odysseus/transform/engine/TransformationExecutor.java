@@ -126,6 +126,7 @@ public class TransformationExecutor implements ITransformation {
 			}
 		}
 		LOGGER.info("Transformation of " + logicalOp + " finished");
+		env.getWorkingMemory().clear();
 		return resultPlan;
 	}
 

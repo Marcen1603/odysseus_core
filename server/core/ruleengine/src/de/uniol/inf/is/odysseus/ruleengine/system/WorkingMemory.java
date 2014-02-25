@@ -41,7 +41,7 @@ public class WorkingMemory {
 	
 	private Map<IRule<?, ?>, Object> notexecuted = new HashMap<IRule<?, ?>, Object>();
 
-	private IWorkingEnvironment<?> env;
+	final private IWorkingEnvironment<?> env;
 	private Collection<Object> objects = new HashSet<Object>();
 	private volatile boolean hasChanged = false;
 	private int executedRules = 0;
@@ -49,8 +49,8 @@ public class WorkingMemory {
 	private Map<Class<?>, Collection<Object>> objectMap = new HashMap<Class<?>, Collection<Object>>();
 //	private Map<IRuleFlowGroup, Map<Class<?>, List<IRule<?, ?>>>> ruleTree = new HashMap<>();
 
-	private ISession caller;
-	private IDataDictionary dd;
+	final private ISession caller;
+	final private IDataDictionary dd;
 
 	public WorkingMemory(IWorkingEnvironment<?> env, ISession caller, IDataDictionary dd) {
 		this.env = env;
@@ -78,6 +78,10 @@ public class WorkingMemory {
 
 	public void removeObject(Object o) {
 		this.removeObject(o, false);
+	}
+	
+	public void clear(){
+		objectMap.clear();
 	}
 
 	public void insertObject(Object o) {
