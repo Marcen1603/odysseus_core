@@ -17,7 +17,6 @@ public class CQLScriptTemplate implements IOdysseusScriptTemplate {
 	@Override
 	public String getText() {
 		return 	"#PARSER CQL\n" +
-				"#TRANSCFG Standard\n" +
 				"#RUNQUERY\n" +
 				"///Your first cql-query here";		
 	}

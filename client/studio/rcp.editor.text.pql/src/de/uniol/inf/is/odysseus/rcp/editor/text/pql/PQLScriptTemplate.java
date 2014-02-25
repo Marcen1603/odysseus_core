@@ -17,7 +17,6 @@ public class PQLScriptTemplate implements IOdysseusScriptTemplate {
 	@Override
 	public String getText() {
 		return 	"#PARSER PQL\n" +
-				"#TRANSCFG Standard\n" +
 				"#RUNQUERY\n" +
 				"///Your first pql-query here";		
 	}
