@@ -85,6 +85,13 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 		}
 		transferArea.newElement(object, port);
 	}
+
+	@Override
+	protected void process_close() {
+		for (int i=0;i<getSubscribedToSource().size();i++){
+			transferArea.done(i);
+		}
+	}
 	
 	@Override
 	protected void process_done(int port) {
