@@ -17,6 +17,7 @@ public class RefreshPeerViewCommand extends AbstractHandler {
 			PeerView view = optView.get();
 			
 			view.refreshTableAsync();
+			view.refreshUsagesAsync();
 		}
 		
 		return null;
