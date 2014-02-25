@@ -354,6 +354,9 @@ public class WebserviceServer {
 		ISession session = loginWithSecurityToken(securityToken);
 		IServerExecutor executer = ExecutorServiceBinding.getExecutor();
 		ILogicalQuery logicalQuery = executer.getLogicalQueryById(queryID, session);
+		if (logicalQuery == null) {
+			throw new QueryNotExistsException();
+		}
 		ILogicalOperator operator = logicalQuery.getLogicalPlan();
 		Map<Integer, GraphNode> visitedOperators = new HashMap<Integer, GraphNode>();
 		SimpleGraph graph = new SimpleGraph();		
@@ -369,6 +372,7 @@ public class WebserviceServer {
 		newNode.setName(operator.getName());	
 		newNode.setParameterInfos(operator.getParameterInfos());
 		
+
 		// begin temporary solution		
 		// AccessAO -> getName() -> source
 		// SenderAO -> getName() -> sink
@@ -423,8 +427,13 @@ public class WebserviceServer {
 		SimpleGraph graph = new SimpleGraph();
 		IServerExecutor executer = ExecutorServiceBinding.getExecutor();
 		int idCounter = 0;
-		List<IPhysicalOperator> roots = executer.getPhysicalRoots(queryID,
-				session);
+		List<IPhysicalOperator> roots = null;
+		try {
+			roots = executer.getPhysicalRoots(queryID,session);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new QueryNotExistsException();
+		}
 		for (IPhysicalOperator op : roots) {
 			GraphNodeVisitor<IPhysicalOperator> visitor = new GraphNodeVisitor<IPhysicalOperator>();
 			visitor.setIdCounter(idCounter);
@@ -441,15 +450,11 @@ public class WebserviceServer {
 	}
 
 	public QueryResponse getLogicalQueryById(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "id") String id) throws InvalidUserDataException, QueryNotExistsException {
-		loginWithSecurityToken(securityToken);
-
-		IPhysicalQuery queryById;
-		LogicalQuery logicalQuery;
 		ISession user = loginWithSecurityToken(securityToken);
-		try {
-			queryById = ExecutorServiceBinding.getExecutor().getExecutionPlan().getQueryById(Integer.valueOf(id));
-			logicalQuery = (LogicalQuery) ExecutorServiceBinding.getExecutor().getLogicalQueryById(Integer.valueOf(id), user);
-		} catch (Exception e) {
+
+		IPhysicalQuery queryById = ExecutorServiceBinding.getExecutor().getExecutionPlan().getQueryById(Integer.valueOf(id));
+		LogicalQuery logicalQuery = (LogicalQuery) ExecutorServiceBinding.getExecutor().getLogicalQueryById(Integer.valueOf(id), user);
+		if (queryById == null ||logicalQuery==null) {
 			throw new QueryNotExistsException();
 		}
 		return new QueryResponse(logicalQuery, queryById.getSession().getUser().getName(), queryById.isOpened(), queryById.getRoots().size(), true);
@@ -524,18 +529,6 @@ public class WebserviceServer {
 		return port;
 	}
 
-	public SDFSchemaResponse getOutputSchema(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "queryId") int queryId) throws InvalidUserDataException, QueryNotExistsException {
-		ISession session = loginWithSecurityToken(securityToken);
-		SDFSchema schema;
-		try {
-			schema = ExecutorServiceBinding.getExecutor().getOutputSchema(queryId, session);
-		} catch (Exception e) {
-			throw new QueryNotExistsException();
-		}
-		return createSDFSchemaInformation(schema);
-
-	}
-
 	private SDFSchemaResponse createSDFSchemaInformation(SDFSchema schema) {
 		Collection<SDFAttribute> attributes = schema.getAttributes();
 		Collection<SDFAttributeInformation> attrInfo = new ArrayList<SDFAttributeInformation>();
@@ -546,9 +539,14 @@ public class WebserviceServer {
 		return new SDFSchemaResponse(info, true);
 	}
 
-	public SDFSchemaResponse getOutputSchemaByQueryId(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "queryId") int queryId) throws InvalidUserDataException {
+	public SDFSchemaResponse getOutputSchemaByQueryId(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "queryId") int queryId) throws InvalidUserDataException, QueryNotExistsException {
 		ISession session = loginWithSecurityToken(securityToken);
-		SDFSchema schema = ExecutorServiceBinding.getExecutor().getOutputSchema(queryId, session);
+		SDFSchema schema;
+		try {
+			schema = ExecutorServiceBinding.getExecutor().getOutputSchema(queryId, session);
+		} catch (Exception e) {
+			throw new QueryNotExistsException();
+		}
 		return createSDFSchemaInformation(schema);
 
 	}
