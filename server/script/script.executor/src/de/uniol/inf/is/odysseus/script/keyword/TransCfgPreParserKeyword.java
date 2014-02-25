@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
  * @author Timo Michelsen, Marco Grawunder
  * 
  */
+@Deprecated
 public class TransCfgPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	public static final String TRANSCFG = "TRANSCFG";	

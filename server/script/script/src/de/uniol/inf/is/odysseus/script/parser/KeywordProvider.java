@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.script.parser.keyword.OdysseusDefaultsPreParserK
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ReloadFromLogPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ResumeOnErrorPreParserKeyword;
-import de.uniol.inf.is.odysseus.script.parser.keyword.SleepPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.TrafoOptionPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.UseAdaptionPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.UseFragmentationPreParserKeyword;
@@ -46,7 +45,6 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(UseDistributePreParserKeyword.DODISTRIBUTE, UseDistributePreParserKeyword.class);
 		keywords.put(UseFragmentationPreParserKeyword.DODATAFRAGMENTATION, UseFragmentationPreParserKeyword.class);
 		keywords.put(UseAdaptionPreParserKeyword.DOADAPT, UseAdaptionPreParserKeyword.class);
-		keywords.put(SleepPreParserKeyword.SLEEP, SleepPreParserKeyword.class);
 		keywords.put(QueryNamePreParserKeyword.QNAME, QueryNamePreParserKeyword.class);
 		keywords.put(ResumeOnErrorPreParserKeyword.KEYWORD, ResumeOnErrorPreParserKeyword.class);
 		keywords.put(ConfigPreParserKeyword.KEYWORD, ConfigPreParserKeyword.class);

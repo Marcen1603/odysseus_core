@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 
+@Deprecated
 public class StandardLatencyQueryBuildConfigurationTemplate extends
 		AbstractQueryBuildConfigurationTemplate {
 
