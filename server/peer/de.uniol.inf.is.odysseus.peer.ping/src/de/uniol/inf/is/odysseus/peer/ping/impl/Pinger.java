@@ -26,7 +26,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	private static final Random RAND = new Random();
 	private static final int MAX_PEERS_TO_PING = 5;
 
-	private static final int PING_INTERVAL = 5000;
+	private static final int PING_INTERVAL = 2000;
 
 	private static final byte PING_FLAG_BYTE = 78;
 	private static final byte PONG_FLAG_BYTE = 79;
