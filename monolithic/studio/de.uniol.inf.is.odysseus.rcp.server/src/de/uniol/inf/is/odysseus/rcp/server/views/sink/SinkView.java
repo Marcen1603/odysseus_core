@@ -107,8 +107,10 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 						
 						if( !sinks.isEmpty() ) {
 							stackLayout.topControl = getTreeViewer().getTree();
+							setPartName("Sinks (" + sinks.size() + ")");
 						} else {
 							stackLayout.topControl = label;
+							setPartName("Sinks (0)");
 						}
 						parent.layout();
 					}
