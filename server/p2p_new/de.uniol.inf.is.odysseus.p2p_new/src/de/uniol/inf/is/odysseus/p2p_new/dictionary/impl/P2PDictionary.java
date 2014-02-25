@@ -47,6 +47,7 @@ import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.RemoveSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
@@ -62,10 +63,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private static final String AUTOIMPORT_SYS_PROPERTY = "peer.autoimport";
 	private static final String AUTOEXPORT_SYS_PROPERTY = "peer.autoexport";
 	
-	private static final int EXPORT_INTERVAL_MILLIS = 15000;
-	private static final int EXPORT_LIFETIME_MILLIS = 60000;
 	private static final int REACHABLE_TIMEOUT_MILLIS = 5000;
-	private static final int SOURCE_CHECK_INTERVAL_MILLIS = 10000;
 	
 	private static P2PDictionary instance;
 
@@ -74,12 +72,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private final List<SourceAdvertisement> publishedSources = Lists.newArrayList();
 	private final Map<SourceAdvertisement, List<SourceAdvertisement>> sameSourceMap = Maps.newHashMap();
 	private final Map<SourceAdvertisement, List<SourceAdvertisement.Same>> cachedSameMap = Maps.newHashMap();
-	private final SourceChecker sourceChecker = new SourceChecker(SOURCE_CHECK_INTERVAL_MILLIS, this);
 
 	private final Map<SourceAdvertisement, String> importedSources = Maps.newHashMap();
 
 	private final Map<SourceAdvertisement, Integer> exportedSourcesQueryMap = Maps.newHashMap();
-	private final ViewExporterThread viewExporterThread = new ViewExporterThread(EXPORT_INTERVAL_MILLIS, EXPORT_LIFETIME_MILLIS, this);
 	private AutoExporter autoExporter;
 	
 	private final Map<PeerID, String> knownPeersMap = Maps.newHashMap();
@@ -90,21 +86,25 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		instance = this;
 		
 		DataDictionaryProvider.subscribe(SessionManagementService.getTenant(), this);
-		viewExporterThread.start();
-		sourceChecker.start();
-		
 	}
 
 	// called by OSGi-DS
 	public void deactivate() {
 		instance = null;
 		
-		sourceChecker.stopRunning();
-		viewExporterThread.stopRunning();
+		removeAllExportedViews();
 		
 		DataDictionaryProvider.unsubscribe(this);
 	}
 	
+	private void removeAllExportedViews() {
+		for( SourceAdvertisement srcAdvertisement : exportedSourcesQueryMap.keySet() ) {
+			if( srcAdvertisement.isView() ) {
+				publishRemoveSourceAdvertisement(srcAdvertisement);
+			}
+		}
+	}
+
 	@Override
 	public void newDatadictionary(IDataDictionary dataDictionary) {
 		// TODO: Handle unbinding of dd?
@@ -144,7 +144,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		Preconditions.checkArgument(!existsSource(srcAdvertisement), "SourceAdvertisement already added!");
 
 		if( checkIt && !checkSource( srcAdvertisement ) ) {
-			throw new InvalidP2PSource("Source {} is invalid");
+			throw new InvalidP2PSource("Source " + srcAdvertisement.getName() + " is invalid");
 		}
 		
 		publishedSources.add(srcAdvertisement);
@@ -186,8 +186,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		
 		throw new IllegalArgumentException("SourceAdvertisement is not a view nor a stream: " + srcAdvertisement.getName());
 	}
-	
-
 
 	public boolean removeSource(SourceAdvertisement srcAdvertisement) {
 		boolean result = false;
@@ -414,9 +412,27 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 			tryFlushAdvertisement(exportAdvertisement);
 			removeSource(exportAdvertisement);
+			
+			if( exportAdvertisement.isView() ) {
+				publishRemoveSourceAdvertisement(exportAdvertisement);
+			}
+			
 			return true;
 		}
 		return false;
+	}
+
+	private static void publishRemoveSourceAdvertisement(SourceAdvertisement sourceAdvToRemove) {
+		RemoveSourceAdvertisement removeSourceAdvertisement = (RemoveSourceAdvertisement)AdvertisementFactory.newAdvertisement(RemoveSourceAdvertisement.getAdvertisementType());
+		removeSourceAdvertisement.setID(IDFactory.newPipeID(P2PNetworkManager.getInstance().getLocalPeerGroupID()));
+		removeSourceAdvertisement.setSourceAdvertisementID(sourceAdvToRemove.getID());
+		
+		try {
+			JxtaServicesProvider.getInstance().getDiscoveryService().publish(removeSourceAdvertisement);
+			JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(removeSourceAdvertisement);
+		} catch (IOException e) {
+			LOG.error("Could not publish removeSourceAdvertisement", e);
+		}
 	}
 
 	@Override
@@ -465,10 +481,22 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			LOG.debug("Remove peer, name = {}, id = {}", peerName, peerID);
 			
 			peersAddressMap.remove(peerID);
+			
+			removeExportedSourcesFromRemotePeer(peerID);
+			
 			firePeerRemoveEvent(peerID, peerName);
 		}
 	}
 	
+	private void removeExportedSourcesFromRemotePeer(PeerID peerID) {
+		for( SourceAdvertisement srcAdvertisement : publishedSources.toArray(new SourceAdvertisement[0]) ) {
+			if( peerID.equals(srcAdvertisement.getPeerID()) && srcAdvertisement.isView() ) {
+				LOG.debug("Removing source {} due to peer loss", srcAdvertisement.getName() );
+				removeSource(srcAdvertisement);
+			}
+		}
+	}
+
 	public ImmutableMap<PeerID, String> getKnownPeersMap() {
 		return ImmutableMap.copyOf(knownPeersMap);
 	}
@@ -722,9 +750,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			viewAdvertisement.setName(removeUserFromName(viewName));
 			viewAdvertisement.setPeerID(P2PNetworkManager.getInstance().getLocalPeerID());
 
-			JxtaServicesProvider.getInstance().getDiscoveryService().publish(viewAdvertisement, EXPORT_LIFETIME_MILLIS, EXPORT_LIFETIME_MILLIS);
-			JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(viewAdvertisement, EXPORT_LIFETIME_MILLIS);
-			
+			JxtaServicesProvider.getInstance().getDiscoveryService().publish(viewAdvertisement);
+			JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(viewAdvertisement);
 
 			final JxtaSenderAO jxtaSender = new JxtaSenderAO();
 			jxtaSender.setName(viewName + "_Send");
@@ -844,7 +871,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		}
 		
 		if( !JxtaServicesProvider.getInstance().getEndpointService().isReachable(sourcePeerID, false)) {
-			LOG.error("Could not reach peer with exported source {}", srcAdvertisement.getName());
+			LOG.debug("Could not reach peer with exported source {}", srcAdvertisement.getName());
 			return false;
 		}
 		return true;

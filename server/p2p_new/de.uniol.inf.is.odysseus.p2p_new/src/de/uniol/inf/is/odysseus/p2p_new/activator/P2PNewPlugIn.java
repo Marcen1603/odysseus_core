@@ -11,7 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.communication.CommunicationAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.communication.CommunicationAdvertisementInstantiator;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.RemoveSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.RemoveSourceAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.SourceAdvertisementInstantiator;
 
 public class P2PNewPlugIn implements BundleActivator {
@@ -37,6 +39,7 @@ public class P2PNewPlugIn implements BundleActivator {
 	private static void registerAdvertisementTypes() {
 		AdvertisementFactory.registerAdvertisementInstance(SourceAdvertisement.getAdvertisementType(), new SourceAdvertisementInstantiator());
 		AdvertisementFactory.registerAdvertisementInstance(CommunicationAdvertisement.getAdvertisementType(), new CommunicationAdvertisementInstantiator());
+		AdvertisementFactory.registerAdvertisementInstance(RemoveSourceAdvertisement.getAdvertisementType(), new RemoveSourceAdvertisementInstantiator());
 	}
 	
 	private static void configureLogging(Bundle bundle) {
