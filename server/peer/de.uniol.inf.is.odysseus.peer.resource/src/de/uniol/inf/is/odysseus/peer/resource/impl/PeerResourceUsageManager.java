@@ -129,7 +129,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 			usageMap.remove(peerID);
 			peerCommunicator.send(peerID, message);
 		} catch (PeerCommunicationException e) {
-			LOG.error("Could not send message for asking for remote resource usage", e);
+			LOG.debug("Could not send message for asking for remote resource usage", e);
 			return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
 		}
 		
