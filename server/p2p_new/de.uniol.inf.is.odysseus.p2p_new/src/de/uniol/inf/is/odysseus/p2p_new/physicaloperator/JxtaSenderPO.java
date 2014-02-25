@@ -15,6 +15,7 @@ import net.jxta.protocol.PipeAdvertisement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
@@ -160,9 +161,12 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 							connectionsOpenCalled.put(sender, directConnectionServer);
 
 							if (connectionsOpenCalled.size() == 1) {
-								final int queryID = determineQueryID(getOwner());
-								LOG.debug("{} : Starting query {}", getName(), queryID);
-								ServerExecutorService.getServerExecutor().startQuery(queryID, SessionManagementService.getActiveSession());
+								Optional<Integer> optQueryID = determineQueryID(getOwner());
+								if( optQueryID.isPresent() ) {
+									int queryID = optQueryID.get();
+									LOG.debug("{} : Starting query {}", getName(), queryID);
+									ServerExecutorService.getServerExecutor().startQuery(queryID, SessionManagementService.getActiveSession());
+								}
 							}
 
 						} catch (IOException ex) {
@@ -183,9 +187,12 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 						connectionsOpenCalled.remove(sender);
 
 						if (connectionsOpenCalled.isEmpty()) {
-							final int queryID = determineQueryID(getOwner());
-							LOG.debug("{} : Stopping query {}", getName(), queryID);
-							ServerExecutorService.getServerExecutor().stopQuery(queryID, SessionManagementService.getActiveSession());
+							Optional<Integer> optQueryID = determineQueryID(getOwner());
+							if( optQueryID.isPresent() ) {
+								int queryID = optQueryID.get();
+								LOG.debug("{} : Stopping query {}", getName(), queryID);
+								ServerExecutorService.getServerExecutor().stopQuery(queryID, SessionManagementService.getActiveSession());
+							}
 						}
 					} else {
 						LOG.error("Got close event from connection which hasnt called open before");
@@ -376,8 +383,11 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		return advertisement;
 	}
 
-	private static int determineQueryID(List<IOperatorOwner> owner) {
-		return owner.get(0).getID();
+	private static Optional<Integer> determineQueryID(List<IOperatorOwner> owner) {
+		if( owner.isEmpty() ) {
+			return Optional.absent();
+		}
+		return Optional.of(owner.get(0).getID());
 	}
 
 	/**
