@@ -3,21 +3,13 @@ package de.uniol.inf.is.odysseus.p2p_new.dictionary.impl;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
-import net.jxta.endpoint.EndpointAddress;
-import net.jxta.endpoint.MessageTransport;
-import net.jxta.endpoint.router.RouteController;
 import net.jxta.id.IDFactory;
-import net.jxta.impl.endpoint.router.EndpointRouter;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
-import net.jxta.protocol.RouteAdvertisement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -436,8 +428,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		removeSourceAdvertisement.setSourceAdvertisementID(sourceAdvToRemove.getID());
 		
 		try {
-			JxtaServicesProvider.getInstance().getDiscoveryService().publish(removeSourceAdvertisement);
-			JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(removeSourceAdvertisement);
+			JxtaServicesProvider.getInstance().publish(removeSourceAdvertisement);
+			JxtaServicesProvider.getInstance().remotePublish(removeSourceAdvertisement);
 		} catch (IOException e) {
 			LOG.error("Could not publish removeSourceAdvertisement", e);
 		}
@@ -475,7 +467,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		
 		LOG.debug("Added new peer, name = {}, id = {}", peerName, peerID);
 		knownPeersMap.put(peerID, peerName);
-		Optional<String> optAddress = determineRemotePeerAddress(peerID);
+		Optional<String> optAddress = JxtaServicesProvider.getInstance().getRemotePeerAddress(peerID);
 		if( optAddress.isPresent() ) {
 			peersAddressMap.put(peerID, optAddress.get());
 		}
@@ -544,7 +536,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 		String address = peersAddressMap.get(peerID);
 		if( Strings.isNullOrEmpty(address)) {
-			Optional<String> address2 = determineRemotePeerAddress(peerID);
+			Optional<String> address2 = JxtaServicesProvider.getInstance().getRemotePeerAddress(peerID);
 			if( address2.isPresent() ) {
 				peersAddressMap.put(peerID, address2.get());
 				return Optional.of(address2.get());
@@ -731,8 +723,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			srcAdvertisement.setOutputSchema(stream.getOutputSchema());
 
 			try {
-				JxtaServicesProvider.getInstance().getDiscoveryService().publish(srcAdvertisement, DiscoveryService.INFINITE_LIFETIME, DiscoveryService.NO_EXPIRATION);
-				JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(srcAdvertisement, DiscoveryService.NO_EXPIRATION);
+				JxtaServicesProvider.getInstance().publishInfinite(srcAdvertisement);
+				JxtaServicesProvider.getInstance().remotePublishInfinite(srcAdvertisement);
 				addSource(srcAdvertisement, false);
 
 				exportedSourcesQueryMap.put(srcAdvertisement, -1);
@@ -758,8 +750,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			viewAdvertisement.setName(removeUserFromName(viewName));
 			viewAdvertisement.setPeerID(P2PNetworkManager.getInstance().getLocalPeerID());
 
-			JxtaServicesProvider.getInstance().getDiscoveryService().publish(viewAdvertisement, DiscoveryService.INFINITE_LIFETIME, DiscoveryService.NO_EXPIRATION);
-			JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(viewAdvertisement, DiscoveryService.NO_EXPIRATION);
+			JxtaServicesProvider.getInstance().publishInfinite(viewAdvertisement);
+			JxtaServicesProvider.getInstance().remotePublishInfinite(viewAdvertisement);
 
 			final JxtaSenderAO jxtaSender = new JxtaSenderAO();
 			jxtaSender.setName(viewName + "_Send");
@@ -817,7 +809,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private static void tryFlushAdvertisement(SourceAdvertisement srcAdvertisement) {
 		try {
-			JxtaServicesProvider.getInstance().getDiscoveryService().flushAdvertisement(srcAdvertisement);
+			JxtaServicesProvider.getInstance().flushAdvertisement(srcAdvertisement);
 		} catch (IOException e) {
 			LOG.error("Could not flush source advertisement {}", srcAdvertisement, e);
 		}
@@ -878,7 +870,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			return true;
 		}
 		
-		if( !JxtaServicesProvider.getInstance().getEndpointService().isReachable(sourcePeerID, false)) {
+		if( !JxtaServicesProvider.getInstance().isReachable(sourcePeerID)) {
 			LOG.debug("Could not reach peer with exported source {}", srcAdvertisement.getName());
 			return false;
 		}
@@ -917,31 +909,5 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		} 
 		
 		return true;
-	}
-	
-	private static Optional<String> determineRemotePeerAddress(PeerID peerID) {
-		try {
-			Iterator<MessageTransport> allMessageTransports = JxtaServicesProvider.getInstance().getEndpointService().getAllMessageTransports();
-			while (allMessageTransports.hasNext()) {
-				MessageTransport next = allMessageTransports.next();
-				if (next instanceof EndpointRouter) {
-					RouteController routeController = ((EndpointRouter) next).getRouteController();
-
-					Collection<RouteAdvertisement> routes = routeController.getRoutes(peerID);
-					for (RouteAdvertisement route : routes) {
-						if (peerID.equals(route.getDestPeerID())) {
-							List<EndpointAddress> destEndpointAddresses = route.getDestEndpointAddresses();
-							for (EndpointAddress destEndpointAddress : destEndpointAddresses) {
-								String address = destEndpointAddress.getProtocolAddress();
-								return Optional.of(address);
-							}
-						}
-					}
-				}
-			}
-		} catch (Throwable t) {
-			LOG.debug("Could not determine address of peerid {}", peerID, t);
-		}
-		return Optional.absent();
 	}
 }

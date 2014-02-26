@@ -30,7 +30,7 @@ public abstract class OutputPipeResolver extends StoppableThread {
 		OutputPipe outputPipe = null;
 		while (isRunning()) {
 			try {
-				outputPipe = JxtaServicesProvider.getInstance().getPipeService().createOutputPipe(pipeAdvertisement, TIMEOUT_MILLIS);
+				outputPipe = JxtaServicesProvider.getInstance().createOutputPipe(pipeAdvertisement, TIMEOUT_MILLIS);
 				outputPipeResolved(outputPipe);
 				stopRunning();
 			} catch (final IOException ex) {

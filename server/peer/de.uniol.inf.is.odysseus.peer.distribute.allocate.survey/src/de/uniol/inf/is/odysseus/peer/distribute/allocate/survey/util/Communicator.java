@@ -101,8 +101,8 @@ public class Communicator implements IAdvertisementListener {
 		}
 		
 		try {
-			jxtaServicesProvider.getDiscoveryService().publish(adv, WAIT_TIME_MILLIS, WAIT_TIME_MILLIS);
-			jxtaServicesProvider.getDiscoveryService().remotePublish(adv, WAIT_TIME_MILLIS);
+			jxtaServicesProvider.publish(adv, WAIT_TIME_MILLIS, WAIT_TIME_MILLIS);
+			jxtaServicesProvider.remotePublish(adv, WAIT_TIME_MILLIS);
 		} catch (IOException e) {
 			LOG.error("Could not publish auction", e);
 		}
@@ -143,12 +143,12 @@ public class Communicator implements IAdvertisementListener {
 			if (optBidValue.isPresent()) {
 				double bidValue = optBidValue.get();
 				
-				AuctionResponseAdvertisement bid = (AuctionResponseAdvertisement) AdvertisementFactory.newAdvertisement(AuctionResponseAdvertisement.getAdvertisementType());
-				bid.setAuctionId(adv.getAuctionId());
-				bid.setBid(new Bid(p2pNetworkManager.getLocalPeerID(), bidValue));
-				bid.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
+				AuctionResponseAdvertisement auctionBidAdvertisement = (AuctionResponseAdvertisement) AdvertisementFactory.newAdvertisement(AuctionResponseAdvertisement.getAdvertisementType());
+				auctionBidAdvertisement.setAuctionId(adv.getAuctionId());
+				auctionBidAdvertisement.setBid(new Bid(p2pNetworkManager.getLocalPeerID(), bidValue));
+				auctionBidAdvertisement.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
 				
-				jxtaServicesProvider.getDiscoveryService().remotePublish(adv.getOwnerPeerId().toString(), bid, WAIT_TIME_MILLIS);
+				jxtaServicesProvider.remotePublishToPeer(auctionBidAdvertisement, adv.getOwnerPeerId(), WAIT_TIME_MILLIS);
 
 				LOG.debug("Sent bid {} to auction {} of peer {}", new String[] { "" + bidValue, adv.getAuctionId().toString(), adv.getOwnerPeerId().toString() });
 			} else {

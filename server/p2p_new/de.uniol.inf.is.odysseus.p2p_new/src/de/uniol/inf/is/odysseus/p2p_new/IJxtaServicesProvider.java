@@ -1,17 +1,48 @@
 package de.uniol.inf.is.odysseus.p2p_new;
 
-import net.jxta.content.ContentService;
-import net.jxta.discovery.DiscoveryService;
-import net.jxta.endpoint.EndpointService;
-import net.jxta.peer.PeerInfoService;
-import net.jxta.pipe.PipeService;
+import java.io.IOException;
+import java.util.Enumeration;
+
+import com.google.common.base.Optional;
+
+import net.jxta.document.Advertisement;
+import net.jxta.peer.PeerID;
+import net.jxta.pipe.InputPipe;
+import net.jxta.pipe.OutputPipe;
+import net.jxta.pipe.PipeMsgListener;
+import net.jxta.protocol.PipeAdvertisement;
 
 public interface IJxtaServicesProvider {
 
-	public ContentService getContentService();
-	public DiscoveryService getDiscoveryService();
-	public EndpointService getEndpointService();
-	public PipeService getPipeService();
-	public PeerInfoService getPeerInfoService();
+	public void publish(Advertisement adv) throws IOException;
+
+	public void publish(Advertisement adv, long lifetime, long expirationTime) throws IOException;
+
+	public void publishInfinite(Advertisement adv) throws IOException;
+
+	public void remotePublish(Advertisement adv);
+
+	public void remotePublish(Advertisement adv, long expirationTime);
 	
+	public void remotePublishToPeer( Advertisement adv, PeerID peerID, long expirationTime );
+
+	public void remotePublishInfinite(Advertisement adv);
+
+	public void flushAdvertisement(Advertisement adv) throws IOException;
+
+	public void getRemoteAdvertisements();
+
+	public Enumeration<Advertisement> getLocalAdvertisements() throws IOException ;
+
+	public void getRemotePeerAdvertisements();
+
+	public Enumeration<Advertisement> getPeerAdvertisements() throws IOException ;
+
+	public boolean isReachable(PeerID peerID);
+
+	public Optional<String> getRemotePeerAddress(PeerID peerID);
+
+	public InputPipe createInputPipe(PipeAdvertisement pipeAdv, PipeMsgListener listener) throws IOException ;
+
+	public OutputPipe createOutputPipe(PipeAdvertisement pipeAdv, long timeoutMillis) throws IOException ;
 }

@@ -6,7 +6,6 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Map;
 
-import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
@@ -241,8 +240,8 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		waitForJxtaServices();
 
 		try {
-			JxtaServicesProvider.getInstance().getDiscoveryService().publish(adv, DiscoveryService.DEFAULT_LIFETIME, DiscoveryService.DEFAULT_EXPIRATION);
-			JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(adv, DiscoveryService.DEFAULT_EXPIRATION);
+			JxtaServicesProvider.getInstance().publish(adv);
+			JxtaServicesProvider.getInstance().remotePublish(adv);
 			LOG.debug("Published communication advertisement");
 			
 		} catch (IOException e) {

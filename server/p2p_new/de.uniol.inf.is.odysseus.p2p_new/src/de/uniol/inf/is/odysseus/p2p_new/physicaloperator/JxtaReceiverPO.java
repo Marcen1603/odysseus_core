@@ -311,7 +311,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 			return false;
 		}
 		
-		if( !JxtaServicesProvider.getInstance().getEndpointService().isReachable(peerID, false)) {
+		if( !JxtaServicesProvider.getInstance().isReachable(peerID)) {
 			LOG.error("PeerID is not reachable for direct connection: {}", peerID);
 			return false;
 		}

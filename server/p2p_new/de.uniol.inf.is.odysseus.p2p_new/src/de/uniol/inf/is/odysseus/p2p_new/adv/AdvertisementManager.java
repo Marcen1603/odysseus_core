@@ -4,7 +4,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
-import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.id.ID;
 
@@ -109,7 +108,7 @@ public class AdvertisementManager implements IAdvertisementManager {
 
 	@Override
 	public void refreshAdvertisements() {
-		JxtaServicesProvider.getInstance().getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99);
+		JxtaServicesProvider.getInstance().getRemoteAdvertisements();
 	}
 
 	protected final void fireAdvertisementAddEvent(Advertisement advertisement) {

@@ -107,7 +107,7 @@ public final class Communicator implements IAdvertisementListener {
 		adv.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
 		for (PeerID id : p2pDictionary.getRemotePeerIDs()) {
 			if (!id.equals(p2pNetworkManager.getLocalPeerID())) {
-				jxtaServicesProvider.getDiscoveryService().remotePublish(id.toString(), adv, WAIT_TIME);
+				jxtaServicesProvider.remotePublishToPeer(adv, id, WAIT_TIME);
 			}
 		}
 		return executorService.submit(new Callable<List<CostResponseAdvertisement>>() {
@@ -159,7 +159,7 @@ public final class Communicator implements IAdvertisementListener {
 						costAdv.setPercentageOfBearableCpuCosts(relativeCosts.getCpuCost());
 						costAdv.setPercentageOfBearableMemCosts(relativeCosts.getMemCost());
 						costAdv.setBid(bid);
-						jxtaServicesProvider.getDiscoveryService().remotePublish(adv.getOwnerPeerId().toString(), costAdv, WAIT_TIME);
+						jxtaServicesProvider.remotePublishToPeer(costAdv, adv.getOwnerPeerId(), WAIT_TIME);
 						LOG.info("Sent costs ({}) for plan {} to peer {}", new String[] { sum.toString(), adv.getSharedQueryID().toString(), adv.getOwnerPeerId().toString() });
 					} catch (Exception e) {
 						e.printStackTrace();

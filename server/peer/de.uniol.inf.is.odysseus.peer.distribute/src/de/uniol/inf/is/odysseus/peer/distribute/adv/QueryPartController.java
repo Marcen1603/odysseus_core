@@ -242,7 +242,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 		try {
 			if (!inputPipeMap.containsKey(sharedQueryID)) {
 				final PipeAdvertisement adv = createPipeAdvertisement(sharedQueryID);
-				final InputPipe inputPipe = jxtaServicesProvider.getPipeService().createInputPipe(adv, this);
+				final InputPipe inputPipe = jxtaServicesProvider.createInputPipe(adv, this);
 				
 				inputPipeMap.put(sharedQueryID, inputPipe);
 				LOG.debug("Created new input pipe for shared query id {}", sharedQueryID);

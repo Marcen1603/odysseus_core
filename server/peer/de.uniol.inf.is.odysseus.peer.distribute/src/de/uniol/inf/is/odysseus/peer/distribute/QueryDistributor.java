@@ -236,7 +236,7 @@ public class QueryDistributor implements IQueryDistributor {
 				adv.setSharedQueryID(sharedQueryID);
 				adv.setTransCfgName(parameters.getName());
 
-				jxtaServicesProvider.getDiscoveryService().remotePublish(peerID.toString(), adv, 15000);
+				jxtaServicesProvider.remotePublishToPeer(adv, peerID, 15000);
 				LOG.debug("Sent query part {} to peerID {}", part, peerID);
 				LOG.debug("PQL-Query of query part {} is\n{}", part, adv.getPqlStatement());
 			}

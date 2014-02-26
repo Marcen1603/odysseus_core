@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.p2p_new.adv;
 import java.io.IOException;
 import java.util.Enumeration;
 
+import net.jxta.document.Advertisement;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.jxta.discovery.DiscoveryService;
-import net.jxta.document.Advertisement;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
@@ -26,15 +26,15 @@ abstract class AdvertisementDiscoverer extends RepeatingJobThread {
 	
 	@Override
 	public void doJob() {
-		if (JxtaServicesProvider.isActivated() && JxtaServicesProvider.getInstance().getDiscoveryService() != null) {
+		if (JxtaServicesProvider.isActivated() ) {
 			
 			if( remoteCounter == 0 ) {
-				JxtaServicesProvider.getInstance().getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99);
+				JxtaServicesProvider.getInstance().getRemoteAdvertisements();
 			}
 			remoteCounter = (remoteCounter + 1 ) % REMOTE_DISCOVERY_COUNT;
 			
 			try {
-				Enumeration<Advertisement> localAdvertisements = JxtaServicesProvider.getInstance().getDiscoveryService().getLocalAdvertisements(DiscoveryService.ADV, null, null);
+				Enumeration<Advertisement> localAdvertisements = JxtaServicesProvider.getInstance().getLocalAdvertisements();
 				process(localAdvertisements);
 				
 			} catch (IOException e) {

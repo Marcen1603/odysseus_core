@@ -5,7 +5,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
-import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.peer.PeerID;
 import net.jxta.protocol.PeerAdvertisement;
@@ -37,9 +36,9 @@ public class PeerManager {
 			public void doJob() {
 				if( JxtaServicesProvider.isActivated() ) {
 					try {
-						JxtaServicesProvider.getInstance().getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0);
+						JxtaServicesProvider.getInstance().getRemotePeerAdvertisements();
 					
-						Enumeration<Advertisement> advs = JxtaServicesProvider.getInstance().getDiscoveryService().getLocalAdvertisements(DiscoveryService.PEER, null, null);
+						Enumeration<Advertisement> advs = JxtaServicesProvider.getInstance().getPeerAdvertisements();
 						List<PeerAdvertisement> peerAdvs = Lists.newArrayList();
 						while (advs.hasMoreElements()) {
 							Advertisement adv = advs.nextElement();
@@ -80,7 +79,7 @@ public class PeerManager {
 		for( PeerAdvertisement peerAdvertisement : advertisements ) {
 			final PeerID peerID = peerAdvertisement.getPeerID();
 
-			if (!peerID.equals(localPeerID) && JxtaServicesProvider.getInstance().getEndpointService().isReachable(peerID, false)) {
+			if (!peerID.equals(localPeerID) && JxtaServicesProvider.getInstance().isReachable(peerID)) {
 				final String peerName = peerAdvertisement.getName();
 				
 				newIds.put(peerID, peerName);

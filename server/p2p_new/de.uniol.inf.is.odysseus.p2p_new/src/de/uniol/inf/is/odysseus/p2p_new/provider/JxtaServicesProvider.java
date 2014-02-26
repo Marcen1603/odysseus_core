@@ -1,14 +1,32 @@
 package de.uniol.inf.is.odysseus.p2p_new.provider;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+
+import net.jxta.discovery.DiscoveryService;
+import net.jxta.document.Advertisement;
+import net.jxta.endpoint.EndpointAddress;
+import net.jxta.endpoint.EndpointService;
+import net.jxta.endpoint.MessageTransport;
+import net.jxta.endpoint.router.RouteController;
+import net.jxta.impl.endpoint.router.EndpointRouter;
+import net.jxta.peer.PeerID;
+import net.jxta.peergroup.PeerGroup;
+import net.jxta.pipe.InputPipe;
+import net.jxta.pipe.OutputPipe;
+import net.jxta.pipe.PipeMsgListener;
+import net.jxta.pipe.PipeService;
+import net.jxta.protocol.PipeAdvertisement;
+import net.jxta.protocol.RouteAdvertisement;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.jxta.content.ContentService;
-import net.jxta.discovery.DiscoveryService;
-import net.jxta.endpoint.EndpointService;
-import net.jxta.peer.PeerInfoService;
-import net.jxta.peergroup.PeerGroup;
-import net.jxta.pipe.PipeService;
+import com.google.common.base.Optional;
+
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 
@@ -19,10 +37,8 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	
 	private static JxtaServicesProvider instance;
 	
-	private ContentService contentService;
 	private DiscoveryService discoveryService;
 	private EndpointService endpointService;
-	private PeerInfoService informationService;
 	private PipeService pipeService;
 	
 	// called by OSGi
@@ -36,11 +52,9 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 				
 				PeerGroup ownPeerGroup = P2PNetworkManager.getInstance().getLocalPeerGroup();
 				
-				contentService = ownPeerGroup.getContentService();
 				discoveryService = ownPeerGroup.getDiscoveryService();
 				endpointService = ownPeerGroup.getEndpointService();
 				pipeService = ownPeerGroup.getPipeService();	
-				informationService = ownPeerGroup.getPeerInfoService();
 				
 				instance = JxtaServicesProvider.this;
 			}
@@ -64,7 +78,6 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	
 	// called by OSGi
 	public void deactivate() {
-		contentService = null;
 		discoveryService = null;
 		endpointService = null;
 		pipeService = null;
@@ -73,37 +86,114 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 		
 		LOG.debug("Jxta services provider deactivated");
 	}
-	
-	@Override
-	public ContentService getContentService() {
-		return contentService;
-	}
-
-	@Override
-	public DiscoveryService getDiscoveryService() {
-		return discoveryService;
-	}
-
-	@Override
-	public EndpointService getEndpointService() {
-		return endpointService;
-	}
-
-	@Override
-	public PipeService getPipeService() {
-		return pipeService;
-	}
-	
-	@Override
-	public PeerInfoService getPeerInfoService() {
-		return informationService;
-	}
-	
+		
 	public static JxtaServicesProvider getInstance() {
 		return instance;
 	}
 
 	public static boolean isActivated() {
 		return instance != null && P2PNetworkManager.getInstance() != null && P2PNetworkManager.getInstance().isStarted();
+	}
+	
+	@Override
+	public void publish(Advertisement adv) throws IOException {
+		discoveryService.publish(adv, DiscoveryService.DEFAULT_LIFETIME, DiscoveryService.DEFAULT_EXPIRATION);
+	}
+
+	@Override
+	public void publish(Advertisement adv, long lifetime, long expirationTime) throws IOException {
+		discoveryService.publish(adv, lifetime, expirationTime);
+	}
+
+	@Override
+	public void publishInfinite(Advertisement adv) throws IOException {
+		publish( adv, DiscoveryService.INFINITE_LIFETIME, DiscoveryService.NO_EXPIRATION);
+	}
+
+	@Override
+	public void remotePublish(Advertisement adv) {
+		discoveryService.remotePublish(adv, DiscoveryService.DEFAULT_EXPIRATION);
+	}
+
+	@Override
+	public void remotePublish(Advertisement adv, long expirationTime) {
+		discoveryService.remotePublish(adv, expirationTime);
+	}
+	
+	@Override
+	public void remotePublishToPeer(Advertisement adv, PeerID peerID, long expirationTime) {
+		discoveryService.remotePublish(peerID.toString(), adv, expirationTime);
+	}
+
+	@Override
+	public void remotePublishInfinite(Advertisement adv) {
+		remotePublish(adv, DiscoveryService.NO_EXPIRATION);
+	}
+
+	@Override
+	public void flushAdvertisement(Advertisement adv) throws IOException {
+		discoveryService.flushAdvertisement(adv);
+	}
+
+	@Override
+	public void getRemoteAdvertisements() {
+		discoveryService.getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99);
+	}
+
+	@Override
+	public Enumeration<Advertisement> getLocalAdvertisements() throws IOException {
+		return discoveryService.getLocalAdvertisements(DiscoveryService.ADV, null, null);
+	}
+
+	@Override
+	public void getRemotePeerAdvertisements() {
+		discoveryService.getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0);
+	}
+
+	@Override
+	public Enumeration<Advertisement> getPeerAdvertisements() throws IOException {
+		return discoveryService.getLocalAdvertisements(DiscoveryService.PEER, null, null);
+	}
+
+	@Override
+	public boolean isReachable(PeerID peerID) {
+		return endpointService.isReachable(peerID, false);
+	}
+
+	@Override
+	public Optional<String> getRemotePeerAddress(PeerID peerID) {
+		try {
+			Iterator<MessageTransport> allMessageTransports = endpointService.getAllMessageTransports();
+			while (allMessageTransports.hasNext()) {
+				MessageTransport next = allMessageTransports.next();
+				if (next instanceof EndpointRouter) {
+					RouteController routeController = ((EndpointRouter) next).getRouteController();
+
+					Collection<RouteAdvertisement> routes = routeController.getRoutes(peerID);
+					for (RouteAdvertisement route : routes) {
+						if (peerID.equals(route.getDestPeerID())) {
+							List<EndpointAddress> destEndpointAddresses = route.getDestEndpointAddresses();
+							for (EndpointAddress destEndpointAddress : destEndpointAddresses) {
+								String address = destEndpointAddress.getProtocolAddress();
+								return Optional.of(address);
+							}
+						}
+					}
+				}
+			}
+		} catch (Throwable t) {
+			LOG.debug("Could not determine address of peerid {}", peerID, t);
+		}
+		return Optional.absent();
+	}
+
+	@Override
+	public InputPipe createInputPipe(PipeAdvertisement pipeAdv, PipeMsgListener listener) throws IOException {
+		return pipeService.createInputPipe(pipeAdv, listener);
+	}
+
+	@Override
+	public OutputPipe createOutputPipe(PipeAdvertisement pipeAdv, long timeoutMillis) throws IOException {
+		return pipeService.createOutputPipe(pipeAdv, timeoutMillis);
 	}
 }
