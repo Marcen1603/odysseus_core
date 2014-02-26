@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary.sources;
 
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.document.Element;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 
 public final class SourceAdvertisementInstantiator implements AdvertisementFactory.Instantiator {
 	/**

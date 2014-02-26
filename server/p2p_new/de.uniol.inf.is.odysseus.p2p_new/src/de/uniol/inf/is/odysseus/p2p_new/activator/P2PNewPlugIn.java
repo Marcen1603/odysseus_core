@@ -11,8 +11,12 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.communication.CommunicationAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.communication.CommunicationAdvertisementInstantiator;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.MultipleSourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.RemoveMultipleSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.RemoveSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.MultipleSourceAdvertisementInstantiator;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.RemoveMultipleSourceAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.RemoveSourceAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.SourceAdvertisementInstantiator;
 
@@ -40,6 +44,8 @@ public class P2PNewPlugIn implements BundleActivator {
 		AdvertisementFactory.registerAdvertisementInstance(SourceAdvertisement.getAdvertisementType(), new SourceAdvertisementInstantiator());
 		AdvertisementFactory.registerAdvertisementInstance(CommunicationAdvertisement.getAdvertisementType(), new CommunicationAdvertisementInstantiator());
 		AdvertisementFactory.registerAdvertisementInstance(RemoveSourceAdvertisement.getAdvertisementType(), new RemoveSourceAdvertisementInstantiator());
+		AdvertisementFactory.registerAdvertisementInstance(MultipleSourceAdvertisement.getAdvertisementType(), new MultipleSourceAdvertisementInstantiator());
+		AdvertisementFactory.registerAdvertisementInstance(RemoveMultipleSourceAdvertisement.getAdvertisementType(), new RemoveMultipleSourceAdvertisementInstantiator());
 	}
 	
 	private static void configureLogging(Bundle bundle) {

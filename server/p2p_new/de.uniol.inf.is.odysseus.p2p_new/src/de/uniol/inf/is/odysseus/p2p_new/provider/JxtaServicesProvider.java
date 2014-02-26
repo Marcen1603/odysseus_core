@@ -36,6 +36,7 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaServicesProvider.class);
 	
 	private static JxtaServicesProvider instance;
+	private static JxtaJobExecutor executor = new JxtaJobExecutor();
 	
 	private DiscoveryService discoveryService;
 	private EndpointService endpointService;
@@ -63,6 +64,8 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 		thread.setName("Jxta Services providing thread");
 		thread.setDaemon(true);
 		thread.start();
+		
+		executor.start();
 	}
 	
 	private static void waitForP2PNetwork() {
@@ -78,6 +81,8 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	
 	// called by OSGi
 	public void deactivate() {
+		executor.stop();
+		
 		discoveryService = null;
 		endpointService = null;
 		pipeService = null;
@@ -97,37 +102,37 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	
 	@Override
 	public void publish(Advertisement adv) throws IOException {
-		discoveryService.publish(adv, DiscoveryService.DEFAULT_LIFETIME, DiscoveryService.DEFAULT_EXPIRATION);
+		executor.addJob(new PublishJob(discoveryService, adv, DiscoveryService.DEFAULT_LIFETIME, DiscoveryService.DEFAULT_EXPIRATION));
 	}
 
 	@Override
 	public void publish(Advertisement adv, long lifetime, long expirationTime) throws IOException {
-		discoveryService.publish(adv, lifetime, expirationTime);
+		executor.addJob(new PublishJob(discoveryService, adv, lifetime, expirationTime));
 	}
 
 	@Override
 	public void publishInfinite(Advertisement adv) throws IOException {
-		publish( adv, DiscoveryService.INFINITE_LIFETIME, DiscoveryService.NO_EXPIRATION);
+		executor.addJob(new PublishJob(discoveryService, adv, DiscoveryService.INFINITE_LIFETIME, DiscoveryService.NO_EXPIRATION));
 	}
 
 	@Override
 	public void remotePublish(Advertisement adv) {
-		discoveryService.remotePublish(adv, DiscoveryService.DEFAULT_EXPIRATION);
+		executor.addJob(new RemotePublishJob(discoveryService, adv, DiscoveryService.DEFAULT_EXPIRATION));
 	}
 
 	@Override
 	public void remotePublish(Advertisement adv, long expirationTime) {
-		discoveryService.remotePublish(adv, expirationTime);
+		executor.addJob(new RemotePublishJob(discoveryService, adv, expirationTime));
 	}
 	
 	@Override
 	public void remotePublishToPeer(Advertisement adv, PeerID peerID, long expirationTime) {
-		discoveryService.remotePublish(peerID.toString(), adv, expirationTime);
+		executor.addJob(new RemotePublishToPeerJob(discoveryService, adv, peerID, expirationTime));
 	}
 
 	@Override
 	public void remotePublishInfinite(Advertisement adv) {
-		remotePublish(adv, DiscoveryService.NO_EXPIRATION);
+		executor.addJob(new RemotePublishJob(discoveryService, adv, DiscoveryService.NO_EXPIRATION));
 	}
 
 	@Override

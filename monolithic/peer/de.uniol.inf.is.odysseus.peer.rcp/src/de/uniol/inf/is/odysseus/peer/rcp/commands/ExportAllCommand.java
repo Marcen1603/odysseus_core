@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.rcp.commands;
 
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -9,6 +10,8 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -23,25 +26,26 @@ public class ExportAllCommand extends AbstractHandler implements IHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Set<Entry<Resource, ILogicalOperator>> streamsAndViews = RCPP2PNewPlugIn.getServerExecutor().getDataDictionary(RCPP2PNewPlugIn.getActiveSession().getTenant()).getStreamsAndViews(RCPP2PNewPlugIn.getActiveSession());
-		int okCount = 0;
+		
+		List<String> sourceNames = Lists.newArrayList();
 		for( Entry<Resource, ILogicalOperator> streamOrView : streamsAndViews ) {
 			// FIXME: Use Resources
 			//Resource sourceName = streamOrView.getKey();
 			String sourceName = streamOrView.getKey().toString();
-			
-			// TODO: Transcfg wählen lassen
-			try {
-				if( !RCPP2PNewPlugIn.getP2PDictionary().isExported(sourceName) && !RCPP2PNewPlugIn.getP2PDictionary().isImported(sourceName)) {
-					RCPP2PNewPlugIn.getP2PDictionary().exportSource(sourceName, "Standard");
-					okCount++;
-				}
-			} catch (PeerException e) {
-				LOG.error("Could not export source {}", sourceName, e);
+			if( !RCPP2PNewPlugIn.getP2PDictionary().isExported(sourceName) && !RCPP2PNewPlugIn.getP2PDictionary().isImported(sourceName)) {
+				sourceNames.add(sourceName);
 			}
 		}
+			
+		// TODO: Transcfg wählen lassen
+		try {
+			RCPP2PNewPlugIn.getP2PDictionary().exportSources(sourceNames, "Standard");
+		} catch (PeerException e) {
+			LOG.error("Could not export source {}", sourceNames, e);
+		}
 		
-		if( okCount > 0 ) {
-			StatusBarManager.getInstance().setMessage("Exported " + okCount + " sources");
+		if( !sourceNames.isEmpty() ) {
+			StatusBarManager.getInstance().setMessage("Exported " + sourceNames.size() + " sources");
 		}
 		return null;
 	}

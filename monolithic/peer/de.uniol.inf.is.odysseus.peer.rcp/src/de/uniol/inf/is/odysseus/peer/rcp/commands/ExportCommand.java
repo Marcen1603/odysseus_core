@@ -10,7 +10,8 @@ import org.eclipse.core.commands.IHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.Resource;
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
@@ -23,21 +24,25 @@ public class ExportCommand extends AbstractHandler implements IHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		List<Entry<?, ?>> selections = SelectionHelper.getSelection();
 
-		int okCount = 0;
-		for (Entry<?, ?> selectedObject : selections) {
-
-			// TODO: Transformationscfg wählen lassen
-			String sourceName = ((Resource) selectedObject.getKey()).getResourceName();
-			try {
-				if (!RCPP2PNewPlugIn.getP2PDictionary().isExported(sourceName) && !RCPP2PNewPlugIn.getP2PDictionary().isImported(sourceName)) {
-					RCPP2PNewPlugIn.getP2PDictionary().exportSource(sourceName, "Standard");
-					okCount++;
-				}
-			} catch (PeerException e) {
-				LOG.error("Could not export {}", sourceName, e);
+		List<String> sourceNames = Lists.newArrayList();
+		for( Entry<?, ?> streamOrView : selections ) {
+			// FIXME: Use Resources
+			//Resource sourceName = streamOrView.getKey();
+			String sourceName = streamOrView.getKey().toString();
+			if( !RCPP2PNewPlugIn.getP2PDictionary().isExported(sourceName) && !RCPP2PNewPlugIn.getP2PDictionary().isImported(sourceName)) {
+				sourceNames.add(sourceName);
 			}
-
-			StatusBarManager.getInstance().setMessage("Exported " + okCount + " sources");
+		}
+			
+		// TODO: Transcfg wählen lassen
+		try {
+			RCPP2PNewPlugIn.getP2PDictionary().exportSources(sourceNames, "Standard");
+		} catch (PeerException e) {
+			LOG.error("Could not export source {}", sourceNames, e);
+		}
+		
+		if( !sourceNames.isEmpty() ) {
+			StatusBarManager.getInstance().setMessage("Exported " + sourceNames.size() + " sources");
 		}
 		return null;
 	}

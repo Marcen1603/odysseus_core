@@ -18,9 +18,9 @@ public class UnexportPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
-		final String sourceToPublish = parameter.trim();
+		final String sourceToUnpublish = parameter.trim();
 		
-		P2PDictionary.getInstance().removeSourceExport(sourceToPublish);
+		P2PDictionary.getInstance().removeSourceExport(sourceToUnpublish);
 		
 		return null;
 	}

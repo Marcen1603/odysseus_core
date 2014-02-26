@@ -126,7 +126,40 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		if (doc instanceof Attributable) {
 			((Attributable) doc).addAttribute("xmlns:jxta", "http://jxta.org");
 		}
+		
+		appendTo(doc);
 
+//		appendElement(doc, ID_TAG, id.toString());
+//		appendElement(doc, NAME_TAG, name);
+//		appendElement(doc, PEER_ID_TAG, peerID.toString());
+//		
+//		if( accessAO != null ) {
+//			// external source
+//			final Element<?> element = appendElement(doc, ACCESS_AO_TAG);
+//			AccessAOConverter.toDocument(element, accessAO);
+//			
+//		} else {
+//			// internal source
+//			appendElement(doc, PIPEID_TAG, pipeID.toString());
+//			
+//			if( sameAs != null && !sameAs.isEmpty() ) {
+//				final Element<?> sameElement = appendElement(doc, SAME_AS_TAG);
+//				for( Same same : sameAs ) {
+//					appendElement(sameElement, same.getPeerID().toString(), same.getName());
+//				}
+//			}
+//		}
+//		
+//		final Element<?> outSchemaElement = appendElement(doc, OUTPUTSCHEMA_TAG, outputSchema.getURI());
+//		for (final SDFAttribute attr : outputSchema) {
+//			appendElement(outSchemaElement, attr.getAttributeName(), attr.getDatatype().getURI());
+//		}
+
+
+		return doc;
+	}
+	
+	void appendTo( Element<?> doc ) {
 		appendElement(doc, ID_TAG, id.toString());
 		appendElement(doc, NAME_TAG, name);
 		appendElement(doc, PEER_ID_TAG, peerID.toString());
@@ -151,10 +184,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		final Element<?> outSchemaElement = appendElement(doc, OUTPUTSCHEMA_TAG, outputSchema.getURI());
 		for (final SDFAttribute attr : outputSchema) {
 			appendElement(outSchemaElement, attr.getAttributeName(), attr.getDatatype().getURI());
-		}
-
-
-		return doc;
+		}	
 	}
 
 	@Override
@@ -294,12 +324,12 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static Element appendElement(StructuredDocument appendTo, String tag, String value) {
-		final Element createElement = appendTo.createElement(tag, value);
-		appendTo.appendChild(createElement);
-		return createElement;
-	}
+//	@SuppressWarnings({ "rawtypes", "unchecked" })
+//	private static Element appendElement(StructuredDocument appendTo, String tag, String value) {
+//		final Element createElement = appendTo.createElement(tag, value);
+//		appendTo.appendChild(createElement);
+//		return createElement;
+//	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Element appendElement(Element appendTo, String tag, String value) {

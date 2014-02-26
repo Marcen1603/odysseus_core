@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary;
 
+import java.util.Collection;
+
 import net.jxta.peer.PeerID;
 
 import com.google.common.base.Optional;
@@ -30,7 +32,9 @@ public interface IP2PDictionary {
 	ImmutableList<SourceAdvertisement> getImportedSources();
 	
 	SourceAdvertisement exportSource( String viewName, String queryBuildConfigurationName ) throws PeerException;
+	Collection<SourceAdvertisement> exportSources( Collection<String> viewNames, String queryBuildConfigurationName ) throws PeerException;
 	boolean removeSourceExport( String viewName );
+	boolean removeSourcesExport( Collection<String> viewNames);
 	boolean isExported( String viewName );
 	Optional<SourceAdvertisement> getExportedSource( String viewName );
 	ImmutableList<SourceAdvertisement> getExportedSources();
