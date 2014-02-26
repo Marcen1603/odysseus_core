@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 
 public class JxtaServicesProvider implements IJxtaServicesProvider {
 
+	private static final int WAIT_INTERVAL_MILLIS = 500;
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaServicesProvider.class);
 	
 	private static JxtaServicesProvider instance;
@@ -31,11 +32,7 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 		Thread thread = new Thread( new Runnable() {
 			@Override
 			public void run() {
-				LOG.debug("Waiting for started p2p network");
-				
-				waitForStartedP2PNetwork();
-				
-				LOG.debug("P2P network has started");
+				waitForP2PNetwork();
 				
 				PeerGroup ownPeerGroup = P2PNetworkManager.getInstance().getLocalPeerGroup();
 				
@@ -47,20 +44,22 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 				
 				instance = JxtaServicesProvider.this;
 			}
-
-			private void waitForStartedP2PNetwork() {
-				while( P2PNetworkManager.getInstance() == null || !P2PNetworkManager.getInstance().isStarted() ) {
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException ex) {
-					}
-				}
-			}
 		});
 		
 		thread.setName("Jxta Services providing thread");
 		thread.setDaemon(true);
 		thread.start();
+	}
+	
+	private static void waitForP2PNetwork() {
+		LOG.debug("Waiting for started p2p network");
+		while( P2PNetworkManager.getInstance() == null || !P2PNetworkManager.getInstance().isStarted() ) {
+			try {
+				Thread.sleep(WAIT_INTERVAL_MILLIS);
+			} catch (InterruptedException ex) {
+			}
+		}
+		LOG.debug("P2P network has started");
 	}
 	
 	// called by OSGi
