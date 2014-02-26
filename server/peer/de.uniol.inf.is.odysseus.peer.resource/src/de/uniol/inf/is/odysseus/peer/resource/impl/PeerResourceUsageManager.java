@@ -13,6 +13,7 @@ import net.jxta.peer.PeerID;
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.NetInterfaceStat;
 import org.hyperic.sigar.Sigar;
+import org.hyperic.sigar.SigarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +58,12 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 
 	private final Map<PeerID, IResourceUsage> usageMap = Maps.newHashMap();
 
+	private int cpuMax;
+	private CpuPerc perc;
+	private long maxMemory;
+	private double bandwidthInKBs;
+	private NetInterfaceStat net;
+	
 	private long previousInputTotal = 0;
 	private long previousOutputTotal = 0;
 
@@ -102,6 +109,31 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		LOG.debug("Activated");
 
 		peerCommunicator.addListener(this);
+		
+		try {
+			cpuMax = SIGAR.getCpuPercList().length;
+			perc = SIGAR.getCpuPerc();
+		} catch( SigarException e ) {
+			LOG.error("Could not determine cpu max value", e);
+			
+			cpuMax = 1;
+			perc = null;
+		}
+		
+		maxMemory = RUNTIME.maxMemory();
+		
+		try {
+			String interfaceName = SIGAR.getNetInterfaceConfig(null).getName();
+			net = SIGAR.getNetInterfaceStat(interfaceName);
+			long rawSpeed = net.getSpeed(); 
+			bandwidthInKBs = rawSpeed >= 0 ? rawSpeed / 1024.0 : DEFAULT_BANDWIDTH_KB;
+		} catch( SigarException e ) {
+			LOG.error("Could not determine maximum bandwitdh", e);
+			
+			bandwidthInKBs = DEFAULT_BANDWIDTH_KB;
+			net = null;
+		}
+
 	}
 
 	// called by OSGi-DS
@@ -229,21 +261,14 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 			if (!p2pNetworkManager.isStarted() || serverExecutor == null) {
 				return Optional.absent();
 			}
-			int cpuMax = SIGAR.getCpuPercList().length;
 	
-			CpuPerc perc = SIGAR.getCpuPerc();
-			double cpuFree = cpuMax - (perc.getUser()) * cpuMax;
-	
-			long maxMemory = RUNTIME.totalMemory();
+			double cpuFree = cpuMax - (perc != null ? perc.getUser() : 0.0) * cpuMax;
+			cpuFree = Math.max(0, Math.min(cpuFree, cpuMax));
+			
 			long freeMemory = RUNTIME.freeMemory();
 	
-			String interfaceName = SIGAR.getNetInterfaceConfig(null).getName();
-			long rawSpeed = SIGAR.getNetInterfaceStat(interfaceName).getSpeed(); 
-			double bandwidthInKBs = rawSpeed >= 0 ? rawSpeed / 1024.0 : DEFAULT_BANDWIDTH_KB;
-			NetInterfaceStat net = SIGAR.getNetInterfaceStat(interfaceName);
-	
-			long inputTotal = net.getRxBytes();
-			long outputTotal = net.getTxBytes();
+			long inputTotal = net != null ? net.getRxBytes() : 0;
+			long outputTotal = net != null ? net.getTxBytes() : 0;
 	
 			double netInputRate = (inputTotal - previousInputTotal) / 1024;
 			double netOutputRate = (outputTotal - previousOutputTotal) / 1024;
@@ -278,35 +303,4 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	public PeerID getLocalPeerID() {
 		return p2pNetworkManager.getLocalPeerID();
 	}
-
-	// @Override
-	// public void advertisementAdded(IAdvertisementManager sender,
-	// Advertisement adv) {
-	// if( adv instanceof ResourceUsageAdvertisement ) {
-	// ResourceUsageAdvertisement resourceUsageAdv =
-	// (ResourceUsageAdvertisement)adv;
-	// IResourceUsage usage = resourceUsageAdv.getResourceUsage();
-	// PeerID peerID = usage.getPeerID();
-	// if( !peerID.equals(p2pNetworkManager.getLocalPeerID())) {
-	// LOG.debug("Got resource usage {} from peerid {}", usage, peerID);
-	//
-	// if( usageMap.containsKey(peerID)) {
-	// IResourceUsage oldUsage = usageMap.get(peerID);
-	// if( isOlder(oldUsage, usage)) {
-	// usageMap.put(peerID, usage);
-	// fireChangeEvent(usage);
-	// }
-	// } else {
-	// usageMap.put(peerID, usage);
-	// fireChangeEvent(usage);
-	// }
-	// }
-	// }
-	// }
-
-	// @Override
-	// public void advertisementRemoved(IAdvertisementManager sender,
-	// Advertisement adv) {
-	// // do nothing
-	// }
 }

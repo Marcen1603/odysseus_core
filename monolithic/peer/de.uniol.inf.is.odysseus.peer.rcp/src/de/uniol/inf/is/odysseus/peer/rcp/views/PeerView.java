@@ -377,6 +377,8 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	}
 
 	public void refreshTableAsync() {
+		refreshPeerIDs();
+		
 		Display disp = PlatformUI.getWorkbench().getDisplay();
 		if (!disp.isDisposed()) {
 			disp.asyncExec(new Runnable() {
@@ -391,6 +393,21 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 					}
 				}
 			});
+		}
+	}
+
+	private void refreshPeerIDs() {
+		synchronized( foundPeerIDs ) {
+			foundPeerIDs.clear();
+			foundPeerIDs.addAll(p2pDictionary.getRemotePeerIDs());
+		}
+		
+		synchronized(usageMap) {
+			for( PeerID peerID : usageMap.keySet().toArray(new PeerID[0]) ) {
+				if( !foundPeerIDs.contains(peerID)) {
+					usageMap.remove(peerID);
+				}
+			}
 		}
 	}
 
@@ -440,19 +457,13 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 
 	@Override
 	public void remotePeerAdded(IP2PDictionary sender, PeerID id, String name) {
-		synchronized (foundPeerIDs) {
-			foundPeerIDs.add(id);
-		}
-		
+		refreshPeerIDs();
 		refreshTableAsync();
 	}
 
 	@Override
 	public void remotePeerRemoved(IP2PDictionary sender, PeerID id, String name) {
-		synchronized (foundPeerIDs) {
-			foundPeerIDs.remove(id);
-		}
-		
+		refreshPeerIDs();
 		refreshTableAsync();
 	}
 }
