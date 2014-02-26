@@ -124,6 +124,10 @@ public class MetadataRegistry {
 			combinedMetadataTypes.remove(typeSet);
 		}
 	}
+	
+	public static Set<String> getNames(){
+		return byName.keySet();
+	}
 
 	@SafeVarargs
 	private static SortedSet<String> toStringSet(

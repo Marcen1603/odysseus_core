@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.script.parser.keyword;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -60,6 +61,14 @@ public class MetadataPreParserKeyword extends AbstractPreParserKeyword {
 		addSettings.add(p);
 
 		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword#getAllowedParameters(de.uniol.inf.is.odysseus.core.usermanagement.ISession)
+	 */
+	@Override
+	public Collection<String> getAllowedParameters(ISession caller) {
+		return MetadataRegistry.getNames();
 	}
 
 }
