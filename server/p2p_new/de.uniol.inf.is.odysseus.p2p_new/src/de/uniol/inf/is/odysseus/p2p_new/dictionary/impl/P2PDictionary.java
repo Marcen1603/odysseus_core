@@ -50,6 +50,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.RemoveSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.SourceChecker;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
@@ -71,30 +72,34 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private final List<IP2PDictionaryListener> listeners = Lists.newArrayList();
 
 	private final List<SourceAdvertisement> publishedSources = Lists.newArrayList();
+	
 	private final Map<SourceAdvertisement, List<SourceAdvertisement>> sameSourceMap = Maps.newHashMap();
 	private final Map<SourceAdvertisement, List<SourceAdvertisement.Same>> cachedSameMap = Maps.newHashMap();
 
 	private final Map<SourceAdvertisement, String> importedSources = Maps.newHashMap();
-
 	private final Map<SourceAdvertisement, Integer> exportedSourcesQueryMap = Maps.newHashMap();
-	private AutoExporter autoExporter;
-	
+
 	private final Map<PeerID, String> knownPeersMap = Maps.newHashMap();
 	private final Map<PeerID, String> peersAddressMap = Maps.newHashMap();
+	
+	private AutoExporter autoExporter;
+	private SourceChecker sourceChecker;
 
 	// called by OSGi-DS
 	public void activate() {
 		instance = this;
 		
 		DataDictionaryProvider.subscribe(SessionManagementService.getTenant(), this);
+		sourceChecker = new SourceChecker(this);
+		sourceChecker.start();
 	}
 
 	// called by OSGi-DS
 	public void deactivate() {
 		instance = null;
+		sourceChecker.stopRunning();
 		
 		removeAllExportedViews();
-		
 		DataDictionaryProvider.unsubscribe(this);
 	}
 	
