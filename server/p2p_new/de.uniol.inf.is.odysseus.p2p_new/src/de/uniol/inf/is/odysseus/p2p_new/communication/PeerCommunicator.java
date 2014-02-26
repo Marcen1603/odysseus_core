@@ -165,16 +165,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		adv.setID(IDFactory.newPipeID(P2PNetworkManager.getInstance().getLocalPeerGroupID()));
 		adv.setPeerName(peerName);
 
-		waitForJxtaServices();
-		
-		try {
-			JxtaServicesProvider.getInstance().getDiscoveryService().publish(adv, DiscoveryService.DEFAULT_LIFETIME, DiscoveryService.DEFAULT_EXPIRATION);
-			JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(adv, DiscoveryService.DEFAULT_EXPIRATION);
-			LOG.debug("Published communication advertisement");
-			
-		} catch (IOException e) {
-			LOG.error("Could not publish communication advertisement", e);
-		}
+		publishCommunicationAdvertisement(adv);
 	}
 	
 	private static void waitForJxtaServices() {
@@ -221,7 +212,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		if( adv instanceof CommunicationAdvertisement ) {
 			CommunicationAdvertisement commAdv = (CommunicationAdvertisement)adv;
 			LOG.debug("New communication advertisement received from peer {}...", commAdv.getPeerName());
-			if( isNotOwnPeer(commAdv) && hasNoConnection(commAdv)) {
+			if( !isOwnPeer(commAdv) && hasNoConnection(commAdv)) {
 				LOG.debug("...and is a new interesting one");
 				IJxtaConnection clientConnection = new JxtaBiDiClientConnection(createPipeAdvertisement(commAdv.getPipeID()));
 				clientConnection.addListener(this);
@@ -231,15 +222,42 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 			}
 		}
 	}
+	
+	@Override
+	public void advertisementRemoved(IAdvertisementManager sender, Advertisement adv) {
+		if( adv instanceof CommunicationAdvertisement ) {
+			CommunicationAdvertisement commAdv = (CommunicationAdvertisement)adv;
+			LOG.debug("Communication advertisement removed now for peer {}...", commAdv.getPeerName());
+			if( isOwnPeer(commAdv)) {
+				LOG.debug("...and thats our own! Republishing it.");
+				
+				// we are still alive!
+				publishCommunicationAdvertisement(commAdv);
+			}
+		}
+	}
+
+	private static void publishCommunicationAdvertisement(CommunicationAdvertisement adv) {
+		waitForJxtaServices();
+
+		try {
+			JxtaServicesProvider.getInstance().getDiscoveryService().publish(adv, DiscoveryService.DEFAULT_LIFETIME, DiscoveryService.DEFAULT_EXPIRATION);
+			JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(adv, DiscoveryService.DEFAULT_EXPIRATION);
+			LOG.debug("Published communication advertisement");
+			
+		} catch (IOException e) {
+			LOG.error("Could not publish communication advertisement", e);
+		}
+	}
 
 	private boolean hasNoConnection(CommunicationAdvertisement commAdv) {
 		return !activeConnectionsAsClient_PeerID.containsKey(commAdv.getPeerID()) &&
 				!getWaitingClientConnection(commAdv.getPeerID()).isPresent();
 	}
 
-	private static boolean isNotOwnPeer(CommunicationAdvertisement commAdv) {
-		return !commAdv.getPeerID().equals(P2PNetworkManager.getInstance().getLocalPeerID()) 
-				&& !commAdv.getPeerName().equals(P2PNetworkManager.getInstance().getLocalPeerName());
+	private static boolean isOwnPeer(CommunicationAdvertisement commAdv) {
+		return commAdv.getPeerID().equals(P2PNetworkManager.getInstance().getLocalPeerID()) 
+				&& commAdv.getPeerName().equals(P2PNetworkManager.getInstance().getLocalPeerName());
 	}
 
 	private void tryConnectAsync(final IJxtaConnection connection, final PeerID peerID, final String peerName) {
@@ -300,10 +318,6 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 			activeConnectionsAsClient.remove(sender);
 			activeConnectionsAsClient_PeerID.remove(peerID);
 		}
-	}
-	
-	@Override
-	public void advertisementRemoved(IAdvertisementManager sender, Advertisement adv) {
 	}
 
 	@Override

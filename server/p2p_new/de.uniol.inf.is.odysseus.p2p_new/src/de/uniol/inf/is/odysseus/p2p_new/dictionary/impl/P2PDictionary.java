@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.endpoint.EndpointAddress;
 import net.jxta.endpoint.MessageTransport;
@@ -202,7 +203,9 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 				for (List<SourceAdvertisement> sameList : sameSourceMap.values()) {
 					sameList.remove(srcAdvertisement);
 				}
-
+				
+				tryFlushAdvertisement(srcAdvertisement);
+				
 				fireSourceRemoveEvent(srcAdvertisement);
 				result = true;
 			}
@@ -723,8 +726,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			srcAdvertisement.setOutputSchema(stream.getOutputSchema());
 
 			try {
-				JxtaServicesProvider.getInstance().getDiscoveryService().publish(srcAdvertisement);
-				JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(srcAdvertisement);
+				JxtaServicesProvider.getInstance().getDiscoveryService().publish(srcAdvertisement, DiscoveryService.INFINITE_LIFETIME, DiscoveryService.NO_EXPIRATION);
+				JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(srcAdvertisement, DiscoveryService.NO_EXPIRATION);
 				addSource(srcAdvertisement, false);
 
 				exportedSourcesQueryMap.put(srcAdvertisement, -1);
@@ -750,8 +753,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			viewAdvertisement.setName(removeUserFromName(viewName));
 			viewAdvertisement.setPeerID(P2PNetworkManager.getInstance().getLocalPeerID());
 
-			JxtaServicesProvider.getInstance().getDiscoveryService().publish(viewAdvertisement);
-			JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(viewAdvertisement);
+			JxtaServicesProvider.getInstance().getDiscoveryService().publish(viewAdvertisement, DiscoveryService.INFINITE_LIFETIME, DiscoveryService.NO_EXPIRATION);
+			JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(viewAdvertisement, DiscoveryService.NO_EXPIRATION);
 
 			final JxtaSenderAO jxtaSender = new JxtaSenderAO();
 			jxtaSender.setName(viewName + "_Send");
@@ -811,7 +814,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		try {
 			JxtaServicesProvider.getInstance().getDiscoveryService().flushAdvertisement(srcAdvertisement);
 		} catch (IOException e) {
-			LOG.error("Could not flush view advertisement {}", srcAdvertisement, e);
+			LOG.error("Could not flush source advertisement {}", srcAdvertisement, e);
 		}
 	}
 

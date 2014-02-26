@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
+import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.RemoveSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
@@ -31,8 +32,6 @@ public class SourceAdvertisementReceiver implements IAdvertisementListener {
 			if( !P2PDictionary.getInstance().existsSource(srcAdvertisement) && !removedSourceIDs.contains(srcAdvertisement.getID())) {
 				
 				if( srcAdvertisement.getPeerID().equals(P2PNetworkManager.getInstance().getLocalPeerID()) && srcAdvertisement.isView() ) {
-					// Überbleibsel aus alter veröffentlichung (Advertisement-Echo)
-					// --> ignorieren
 					return;
 				}
 				
@@ -65,7 +64,20 @@ public class SourceAdvertisementReceiver implements IAdvertisementListener {
 	public void advertisementRemoved(IAdvertisementManager sender, Advertisement adv) {
 		if (adv instanceof SourceAdvertisement) {
 			SourceAdvertisement srcAdvertisement = (SourceAdvertisement) adv;
-			P2PDictionary.getInstance().removeSource(srcAdvertisement);
+			P2PDictionary p2pDictionary = P2PDictionary.getInstance();
+
+			if( srcAdvertisement.getPeerID().equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
+				if( p2pDictionary.isExported(srcAdvertisement.getName()) && !p2pDictionary.isImported(srcAdvertisement)) {
+					try {
+						// republish
+						p2pDictionary.removeSource(srcAdvertisement);
+						p2pDictionary.exportSource(srcAdvertisement.getName(), "Standard");
+					} catch (PeerException e) {
+						LOG.debug("Could not reexport source", e);
+					}
+				}
+			}			
+			
 		}  else if( adv instanceof RemoveSourceAdvertisement ) {
 			removedSourceIDs.remove(((RemoveSourceAdvertisement)adv).getSourceAdvertisementID());
 		}
