@@ -59,7 +59,6 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	private final Map<PeerID, IResourceUsage> usageMap = Maps.newHashMap();
 
 	private int cpuMax;
-	private CpuPerc perc;
 	private long maxMemory;
 	private double bandwidthInKBs;
 	private NetInterfaceStat net;
@@ -112,12 +111,10 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		
 		try {
 			cpuMax = SIGAR.getCpuPercList().length;
-			perc = SIGAR.getCpuPerc();
 		} catch( SigarException e ) {
 			LOG.error("Could not determine cpu max value", e);
 			
 			cpuMax = 1;
-			perc = null;
 		}
 		
 		maxMemory = RUNTIME.maxMemory();
@@ -262,6 +259,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 				return Optional.absent();
 			}
 	
+			CpuPerc perc = SIGAR.getCpuPerc();
 			double cpuFree = cpuMax - (perc != null ? perc.getUser() : 0.0) * cpuMax;
 			cpuFree = Math.max(0, Math.min(cpuFree, cpuMax));
 			
