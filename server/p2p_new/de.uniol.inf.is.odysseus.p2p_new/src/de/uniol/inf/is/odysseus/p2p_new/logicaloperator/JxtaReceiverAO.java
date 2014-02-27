@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.p2p_new.logicaloperator;
 
 import java.util.List;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
@@ -14,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 
 @LogicalOperator(name = "JXTARECEIVER", doc = "Received data with JXTA", minInputPorts = 0, maxInputPorts = 0, category = {LogicalOperatorCategory.SOURCE}, hidden = true)
 public class JxtaReceiverAO extends AbstractLogicalOperator {
@@ -23,6 +25,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 	private String pipeID;
 	
 	private SDFSchema assignedSchema;
+	private SourceAdvertisement importedSrcAdvertisement;
 
 	public JxtaReceiverAO() {
 		super();
@@ -33,6 +36,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		
 		this.pipeID = other.pipeID;
 		this.assignedSchema = other.assignedSchema.clone();
+		this.importedSrcAdvertisement = other.importedSrcAdvertisement;
 		
 		setParameterInfos(other.getParameterInfos());
 	}
@@ -49,6 +53,14 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 	@Override
 	public boolean isValid() {
 		return !Strings.isNullOrEmpty(this.pipeID);
+	}
+	
+	public Optional<SourceAdvertisement> getImportedSourceAdvertisement() {
+		return Optional.fromNullable(importedSrcAdvertisement);
+	}
+	
+	public void setImportedSourceAdvertisement(SourceAdvertisement sourceAdvertisement) {
+		this.importedSrcAdvertisement = sourceAdvertisement;
 	}
 	
 	/*

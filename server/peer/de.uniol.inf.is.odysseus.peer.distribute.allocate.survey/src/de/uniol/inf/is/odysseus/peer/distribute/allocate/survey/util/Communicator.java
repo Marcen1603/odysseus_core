@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider
 public class Communicator implements IAdvertisementListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Communicator.class);
-	private static final long WAIT_TIME_MILLIS = 8 * 1000;
+	private static final long WAIT_TIME_MILLIS = 12 * 1000;
 
 	private static Communicator instance;
 	private static IP2PNetworkManager p2pNetworkManager;
@@ -159,6 +159,11 @@ public class Communicator implements IAdvertisementListener {
 
 	private void processAuctionResponeAdvertisement(AuctionResponseAdvertisement advertisement) {
 		if (!advertisement.getBid().getBidderPeerID().equals(p2pNetworkManager.getLocalPeerID())) {
+			LOG.debug("Received bid from {} valued {}", 
+					p2pDictionary.getRemotePeerName(advertisement.getBid().getBidderPeerID()).get(), 
+					advertisement.getBid().getValue());
+			
+			
 			synchronized (this.mailboxForAuctions) {
 				Collection<Bid> mailbox = mailboxForAuctions.get(advertisement.getAuctionId().toString());
 				if( mailbox != null ) {

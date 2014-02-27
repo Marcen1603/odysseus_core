@@ -313,8 +313,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			receiverOperator.setOutputSchema(advertisement.getOutputSchema());
 			receiverOperator.setSchema(advertisement.getOutputSchema().getAttributes());
 			receiverOperator.setName(realSrcNameToUse + "_Receive");
-			receiverOperator.setDestinationName("local");
-
+			receiverOperator.setImportedSourceAdvertisement(advertisement);
+			
 			final RenameAO renameNoOp = new RenameAO();
 			renameNoOp.setDestinationName("local");
 			renameNoOp.setNoOp(true);

@@ -189,7 +189,11 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 			Collection<Bid> bids = auction.getBidsFuture().get();
 
 			if( ownBid || bids.isEmpty()) {
-				LOG.debug("Generating own bid since there was no bild for query part {}", auction.getLogicalQueryPart());
+				if( ownBid ) {
+					LOG.debug("Generating own bid because we can: {}", auction.getLogicalQueryPart());
+				} else {
+					LOG.debug("Generating own bid since there was no bids for: {}", auction.getLogicalQueryPart());
+				}
 				Optional<Double> bidValue = bidProvider.calculateBid(Helper.getLogicalQuery(auction.getAuctionAdvertisement().getPqlStatement()).get(0), auction.getAuctionAdvertisement().getTransCfgName());
 				if (bidValue.isPresent()) {
 					bids.add(new Bid(localPeerID, bidValue.get()));
@@ -202,7 +206,21 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 			bidPlanMap.put(auction.getLogicalQueryPart(), bids);
 		}
+		
+		if( LOG.isDebugEnabled() ) {
+			printBidPlan(bidPlanMap);
+		}
 
 		return bidPlanMap;
+	}
+
+	private static void printBidPlan(Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap) {
+		LOG.debug("Following bids received");
+		for( ILogicalQueryPart queryPart : bidPlanMap.keySet() ) {
+			LOG.debug("\t{}:", queryPart);
+			for( Bid bid : bidPlanMap.get(queryPart)) {
+				LOG.debug("\t\t{}:\t{}", p2pDictionary.getRemotePeerName(bid.getBidderPeerID()).get(), bid.getValue());
+			}
+		}
 	}
 }

@@ -51,10 +51,10 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 
 	private final Map<IJxtaConnection, PeerID> activeConnectionsAsServer = Maps.newHashMap();
 	private final Map<IJxtaConnection, PeerID> activeConnectionsAsClient = Maps.newHashMap();
-	
+
 	private final Map<PeerID, IJxtaConnection> activeConnectionsAsServer_PeerID = Maps.newHashMap();
 	private final Map<PeerID, IJxtaConnection> activeConnectionsAsClient_PeerID = Maps.newHashMap();
-	
+
 	private IP2PDictionary p2pDictionary;
 	private PipeID serverPipeID;
 	private IJxtaServerConnection serverConnection;
@@ -69,7 +69,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 			remotePeerAdded(p2pDictionary, remotePeerID, p2pDictionary.getRemotePeerName(remotePeerID).get());
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public void unbindP2PDictionary(IP2PDictionary dict) {
 		if (dict == p2pDictionary) {
@@ -79,7 +79,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 			p2pDictionary = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public void activate() {
 		LOG.debug("Activated");
@@ -90,15 +90,15 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 	// called by OSGi-DS
 	public void deactivate() {
 		LOG.debug("Deactivated");
-		
-		for( IJxtaConnection con : activeConnectionsAsClient.keySet().toArray(new IJxtaConnection[0]) ) {
+
+		for (IJxtaConnection con : activeConnectionsAsClient.keySet().toArray(new IJxtaConnection[0])) {
 			con.disconnect();
 		}
-		
-		for( IJxtaConnection con : activeConnectionsAsServer.keySet().toArray(new IJxtaConnection[0]) ) {
+
+		for (IJxtaConnection con : activeConnectionsAsServer.keySet().toArray(new IJxtaConnection[0])) {
 			con.disconnect();
 		}
-		
+
 		activeConnectionsAsClient.clear();
 		activeConnectionsAsClient_PeerID.clear();
 		activeConnectionsAsServer.clear();
@@ -121,7 +121,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 					serverConnection.addListener(PeerCommunicator.this);
 					serverConnection.start();
 					LOG.debug("Waiting for client peer connections");
-					
+
 					AdvertisementManager.getInstance().addAdvertisementListener(PeerCommunicator.this);
 					publishConnectionAdvertisement(serverPipeID, P2PNetworkManager.getInstance().getLocalPeerName());
 
@@ -135,7 +135,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		t.setName("Peer Communication server thread");
 		t.start();
 	}
-	
+
 	private static void waitForP2PNetworkManager() {
 		while (!P2PNetworkManager.isActivated() || !P2PNetworkManager.getInstance().isStarted()) {
 			waitSomeTime();
@@ -157,8 +157,8 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 	}
 
 	private void publishConnectionAdvertisement(PipeID pipeID, String peerName) {
-		CommunicationAdvertisement adv = (CommunicationAdvertisement)AdvertisementFactory.newAdvertisement(CommunicationAdvertisement.getAdvertisementType());
-		
+		CommunicationAdvertisement adv = (CommunicationAdvertisement) AdvertisementFactory.newAdvertisement(CommunicationAdvertisement.getAdvertisementType());
+
 		adv.setPeerID(P2PNetworkManager.getInstance().getLocalPeerID());
 		adv.setPipeID(pipeID);
 		adv.setID(IDFactory.newPipeID(P2PNetworkManager.getInstance().getLocalPeerGroupID()));
@@ -166,15 +166,15 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 
 		publishCommunicationAdvertisement(adv);
 	}
-	
+
 	private static void waitForJxtaServices() {
 		LOG.debug("Waiting for jxta services become active...");
-		while( !JxtaServicesProvider.isActivated() ) {
+		while (!JxtaServicesProvider.isActivated()) {
 			waitSomeTime();
 		}
 		LOG.debug("Got jxta services! Begin repeated publishing of communication advertisement");
 	}
-		
+
 	@Override
 	public void connectionAdded(IJxtaServerConnection sender, IJxtaConnection addedConnection) {
 		LOG.debug("Established new connection to remote client");
@@ -182,21 +182,21 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		waitingServerConnections.add(addedConnection);
 		addedConnection.addListener(this);
 	}
-	
+
 	@Override
 	public void connectionRemoved(IJxtaServerConnection sender, IJxtaConnection removedConnection) {
 		LOG.debug("Lost connection to remote client");
-		
-		if( waitingServerConnections.contains(removedConnection)) {
+
+		if (waitingServerConnections.contains(removedConnection)) {
 			LOG.debug("Interrupt waiting server connection");
 			waitingServerConnections.remove(removedConnection);
 		}
-		
-		if( activeConnectionsAsServer.containsKey(removedConnection)) {
+
+		if (activeConnectionsAsServer.containsKey(removedConnection)) {
 			PeerID peerID = activeConnectionsAsServer.get(removedConnection);
 			activeConnectionsAsServer.remove(removedConnection);
 			activeConnectionsAsServer_PeerID.remove(peerID);
-			
+
 			LOG.debug("Removed active connection as server");
 		}
 	}
@@ -208,28 +208,41 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 
 	@Override
 	public void advertisementAdded(IAdvertisementManager sender, Advertisement adv) {
-		if( adv instanceof CommunicationAdvertisement ) {
-			CommunicationAdvertisement commAdv = (CommunicationAdvertisement)adv;
+		if (adv instanceof CommunicationAdvertisement) {
+			CommunicationAdvertisement commAdv = (CommunicationAdvertisement) adv;
 			LOG.debug("New communication advertisement received from peer {}...", commAdv.getPeerName());
-			if( !isOwnPeer(commAdv) && hasNoConnection(commAdv)) {
+			if (!isOwnPeer(commAdv) && hasNoConnection(commAdv)) {
 				LOG.debug("...and is a new interesting one");
-				IJxtaConnection clientConnection = new JxtaBiDiClientConnection(createPipeAdvertisement(commAdv.getPipeID()));
-				clientConnection.addListener(this);
-				tryConnectAsync(clientConnection, commAdv.getPeerID(), commAdv.getPeerName());
+				
+				if( JxtaServicesProvider.getInstance().isReachable(commAdv.getPeerID()) ) { 
+					IJxtaConnection clientConnection = new JxtaBiDiClientConnection(createPipeAdvertisement(commAdv.getPipeID()));
+					clientConnection.addListener(this);
+					tryConnectAsync(clientConnection, commAdv.getPeerID(), commAdv.getPeerName());
+				} else {
+					tryFlushAdvertisement(commAdv);
+				}
 			} else {
 				LOG.debug("...but is our own peer or we have already a connection to that peer");
 			}
 		}
 	}
-	
+
+	private static void tryFlushAdvertisement(CommunicationAdvertisement commAdv) {
+		try {
+			JxtaServicesProvider.getInstance().flushAdvertisement(commAdv);
+		} catch (IOException e) {
+			LOG.error("Could not flush communication advertisement", e);
+		}
+	}
+
 	@Override
 	public void advertisementRemoved(IAdvertisementManager sender, Advertisement adv) {
-		if( adv instanceof CommunicationAdvertisement ) {
-			CommunicationAdvertisement commAdv = (CommunicationAdvertisement)adv;
+		if (adv instanceof CommunicationAdvertisement) {
+			CommunicationAdvertisement commAdv = (CommunicationAdvertisement) adv;
 			LOG.debug("Communication advertisement removed now for peer {}...", commAdv.getPeerName());
-			if( isOwnPeer(commAdv)) {
+			if (isOwnPeer(commAdv)) {
 				LOG.debug("...and thats our own! Republishing it.");
-				
+
 				// we are still alive!
 				publishCommunicationAdvertisement(commAdv);
 			}
@@ -243,20 +256,18 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 			JxtaServicesProvider.getInstance().publish(adv);
 			JxtaServicesProvider.getInstance().remotePublish(adv);
 			LOG.debug("Published communication advertisement");
-			
+
 		} catch (IOException e) {
 			LOG.error("Could not publish communication advertisement", e);
 		}
 	}
 
 	private boolean hasNoConnection(CommunicationAdvertisement commAdv) {
-		return !activeConnectionsAsClient_PeerID.containsKey(commAdv.getPeerID()) &&
-				!getWaitingClientConnection(commAdv.getPeerID()).isPresent();
+		return !activeConnectionsAsClient_PeerID.containsKey(commAdv.getPeerID()) && !getWaitingClientConnection(commAdv.getPeerID()).isPresent();
 	}
 
 	private static boolean isOwnPeer(CommunicationAdvertisement commAdv) {
-		return commAdv.getPeerID().equals(P2PNetworkManager.getInstance().getLocalPeerID()) 
-				&& commAdv.getPeerName().equals(P2PNetworkManager.getInstance().getLocalPeerName());
+		return commAdv.getPeerID().equals(P2PNetworkManager.getInstance().getLocalPeerID()) && commAdv.getPeerName().equals(P2PNetworkManager.getInstance().getLocalPeerName());
 	}
 
 	private void tryConnectAsync(final IJxtaConnection connection, final PeerID peerID, final String peerName) {
@@ -275,7 +286,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		t.setDaemon(true);
 		t.start();
 	}
-	
+
 	@Override
 	public void onConnect(IJxtaConnection sender) {
 		PeerID connectedServerPeerID = waitingClientConnections.get(sender);
@@ -283,7 +294,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		waitingClientConnections.remove(sender);
 
 		LOG.debug("Established connection to remote server peer");
-		
+
 		activeConnectionsAsClient.put(sender, connectedServerPeerID);
 		activeConnectionsAsClient_PeerID.put(connectedServerPeerID, sender);
 
@@ -293,7 +304,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 			LOG.error("Could not name infos to server peer", e);
 		}
 	}
-	
+
 	private static void sendNameInfos(IJxtaConnection destination) throws IOException {
 		String localName = P2PNetworkManager.getInstance().getLocalPeerName();
 		String localID = P2PNetworkManager.getInstance().getLocalPeerID().toString();
@@ -306,14 +317,14 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		System.arraycopy(localID.getBytes(), 0, message, 4 + localName.length() + 4, localID.length());
 
 		destination.send(message);
-	}	
-	
+	}
+
 	@Override
 	public void onDisconnect(IJxtaConnection sender) {
-		if( activeConnectionsAsClient.containsKey(sender)) {
+		if (activeConnectionsAsClient.containsKey(sender)) {
 			PeerID peerID = activeConnectionsAsClient.get(sender);
 			LOG.debug("Lost connection to remote server peer");
-			
+
 			activeConnectionsAsClient.remove(sender);
 			activeConnectionsAsClient_PeerID.remove(peerID);
 		}
@@ -323,7 +334,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 	public void send(PeerID destinationPeer, byte[] message) throws PeerCommunicationException {
 		Preconditions.checkNotNull(destinationPeer, "Destination peer to send message must not be null!");
 		Preconditions.checkNotNull(message, "Message to send must not be null!");
-		
+
 		IJxtaConnection connection = activeConnectionsAsServer_PeerID.get(destinationPeer);
 		try {
 			connection.send(message);
@@ -336,23 +347,23 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 	public void onReceiveData(IJxtaConnection sender, byte[] data) {
 		// receive data as server
 		if (waitingServerConnections.contains(sender)) {
-			
+
 			readAndProcessNameInfos(sender, data);
 			waitingServerConnections.remove(sender);
 			return;
 		}
-		
+
 		// receiver data as client
 		PeerID peerID = activeConnectionsAsClient.get(sender);
-		if( peerID == null ) {
+		if (peerID == null) {
 			throw new RuntimeException("Got message from unknown connection/peer");
 		}
-		
+
 		Collection<IPeerCommunicatorListener> listeners = PeerCommunicatorListenerRegistry.getInstance().getAll();
-		for( IPeerCommunicatorListener listener : listeners ) {
+		for (IPeerCommunicatorListener listener : listeners) {
 			try {
 				listener.receivedMessage(this, peerID, data);
-			} catch( Throwable t ) {
+			} catch (Throwable t) {
 				LOG.error("Exception in peer communicator listener", t);
 			}
 		}
@@ -373,10 +384,9 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		PeerID peerID = toID(peerIDStr);
 		activeConnectionsAsServer.put(sender, peerID);
 		activeConnectionsAsServer_PeerID.put(peerID, sender);
-		
+
 		LOG.debug("Got connection info from client peer name={} with id={}", peerName, peerID);
 	}
-	
 
 	@Override
 	public ImmutableCollection<PeerID> getConnectedPeers() {
@@ -414,50 +424,49 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		// do nothing
 	}
 
-
 	@Override
 	public void remotePeerRemoved(IP2PDictionary sender, PeerID id, String name) {
 		LOG.debug("Discovered (server-)peer lost: name = {}", name);
-		
+
 		Optional<IJxtaConnection> optWaitingConnection = getWaitingClientConnection(id);
-		if( optWaitingConnection.isPresent()) {
+		if (optWaitingConnection.isPresent()) {
 			IJxtaConnection waitingConnection = optWaitingConnection.get();
 			waitingConnection.disconnect();
-			
+
 			LOG.debug("Stopped waiting connection to peer {}", name);
 		}
-		
-		if( activeConnectionsAsServer_PeerID.containsKey(id)) {
+
+		if (activeConnectionsAsServer_PeerID.containsKey(id)) {
 			IJxtaConnection removed = activeConnectionsAsServer_PeerID.remove(id);
 			removed.disconnect();
-			
+
 			activeConnectionsAsServer.remove(removed);
 			LOG.debug("Removed active connection to client peer {}", name);
 		}
-		
-		if( activeConnectionsAsClient_PeerID.containsKey(id)) {
+
+		if (activeConnectionsAsClient_PeerID.containsKey(id)) {
 			IJxtaConnection removed = activeConnectionsAsClient_PeerID.remove(id);
 			removed.disconnect();
-			
+
 			activeConnectionsAsClient.remove(removed);
 			LOG.debug("Removed active connection to server peer {}", name);
 		}
 	}
 
 	private Optional<IJxtaConnection> getWaitingClientConnection(PeerID id) {
-		for( IJxtaConnection connection : waitingClientConnections.keySet() ) {
-			if( waitingClientConnections.get(connection).equals(id)) {
+		for (IJxtaConnection connection : waitingClientConnections.keySet()) {
+			if (waitingClientConnections.get(connection).equals(id)) {
 				return Optional.of(connection);
 			}
 		}
 		return Optional.absent();
 	}
-	
+
 	@Override
 	public void addListener(IPeerCommunicatorListener listener) {
 		PeerCommunicatorListenerRegistry.getInstance().add(listener);
 	}
-	
+
 	@Override
 	public void removeListener(IPeerCommunicatorListener listener) {
 		PeerCommunicatorListenerRegistry.getInstance().remove(listener);
