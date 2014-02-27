@@ -54,7 +54,7 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 	}
 
 	private boolean inOrder = true;
-	
+
 	final protected Map<Integer, PointInTime> minTsForPort = new HashMap<Integer, PointInTime>();
 	private PointInTime minTs = null;
 	protected IProcessInternal<T> po;
@@ -80,6 +80,10 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 	}
 
 	public TIInputStreamSyncArea(int inputPortCount) {
+		initMintTS(inputPortCount);
+	}
+
+	private void initMintTS(int inputPortCount) {
 		for (int i = 0; i < inputPortCount; i++) {
 			minTsForPort.put(i, null);
 		}
@@ -97,6 +101,8 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 	public void init(IProcessInternal<T> po) {
 		this.po = po;
 		this.inputQueue.clear();
+		minTs = null;
+		initMintTS(minTsForPort.size());
 	}
 
 	@Override
@@ -120,7 +126,7 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 	@SuppressWarnings("unchecked")
 	@Override
 	public synchronized void newElement(IStreamable object, int inPort) {
-		//getLogger().debug("New Element "+object+" Port="+inPort+" current min "+minTs+" size"+inputQueue.size());
+		// getLogger().debug("New Element "+object+" Port="+inPort+" current min "+minTs+" size"+inputQueue.size());
 
 		// Remove all elements that are before minTS
 		// can happen if a new source is appended at runtime
@@ -138,7 +144,7 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 			} else {
 				getLogger().warn(
 						"Removed out of time element " + object + " from port "
-								+ inPort);
+								+ inPort + " minTS = " + minTs);
 			}
 		} else {
 			getLogger().warn(
@@ -152,7 +158,8 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 	public void done() {
 		for (IPair<IStreamable, Integer> element : inputQueue) {
 			if (element.getE1().isPunctuation()) {
-				po.process_punctuation_intern((IPunctuation) element.getE1(), element.getE2());
+				po.process_punctuation_intern((IPunctuation) element.getE1(),
+						element.getE2());
 			} else {
 				po.process_internal((T) element.getE1(), element.getE2());
 			}
@@ -187,30 +194,35 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 					boolean elementsSend = false;
 					while (elem != null)
 						if (elem.getE1().isPunctuation()) {
-							if (((IPunctuation) elem.getE1()).getTime().beforeOrEquals(minTs)) {
+							if (((IPunctuation) elem.getE1()).getTime()
+									.beforeOrEquals(minTs)) {
 								this.inputQueue.poll();
-								po.process_punctuation_intern((IPunctuation)elem.getE1(), elem.getE2());
+								po.process_punctuation_intern(
+										(IPunctuation) elem.getE1(),
+										elem.getE2());
 								elem = this.inputQueue.peek();
-							}else{
+							} else {
 								elem = null;
 							}
-							
+
 						} else {
 							if (((T) elem.getE1()).getMetadata().getStart()
 									.beforeOrEquals(minTs)) {
 								this.inputQueue.poll();
 
-								po.process_internal((T)elem.getE1(), elem.getE2());
+								po.process_internal((T) elem.getE1(),
+										elem.getE2());
 								// getLogger().debug("Process "+elem.getE1()+" on Port "+elem.getE2());
 								elem = this.inputQueue.peek();
 								elementsSend = true;
-							}else{
+							} else {
 								elem = null;
 							}
 						}
 					// // Avoid unnecessary punctuations!
 					if (!elementsSend && isInOrder()) {
-						po.process_newHeartbeat(Heartbeat.createNewHeartbeat(minTs));
+						po.process_newHeartbeat(Heartbeat
+								.createNewHeartbeat(minTs));
 					}
 				}
 			}
@@ -238,12 +250,12 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 					+ minTs + " " + minimum);
 		}
 	}
-	
+
 	@Override
 	public boolean isInOrder() {
 		return inOrder;
 	}
-	
+
 	@Override
 	public void setInOrder(boolean isInOrder) {
 		this.inOrder = isInOrder;
@@ -327,10 +339,9 @@ class TestClass<R extends IStreamObject<? extends ITimeInterval>> implements
 
 	@Override
 	public void process_punctuation_intern(IPunctuation punctuation, int port) {
-		validate(punctuation.getTime(),null);
+		validate(punctuation.getTime(), null);
 	}
 
-	
 	private void validate(PointInTime start, R event) {
 		if (lastElement == null) {
 			lastElement = start;
@@ -343,6 +354,5 @@ class TestClass<R extends IStreamObject<? extends ITimeInterval>> implements
 			}
 		}
 	}
-
 
 }
