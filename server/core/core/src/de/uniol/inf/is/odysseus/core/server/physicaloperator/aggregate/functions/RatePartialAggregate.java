@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.function
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
 public class RatePartialAggregate<T> extends AbstractPartialAggregate<T> {
 	int count = 0;

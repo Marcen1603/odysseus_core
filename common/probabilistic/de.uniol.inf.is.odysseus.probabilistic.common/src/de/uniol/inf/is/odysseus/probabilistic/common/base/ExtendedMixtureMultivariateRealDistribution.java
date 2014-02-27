@@ -85,7 +85,8 @@ public class ExtendedMixtureMultivariateRealDistribution<T extends MultivariateR
     }
 
     /** {@inheritDoc} */
-    public double density(final double[] values) {
+    @Override
+	public double density(final double[] values) {
         double p = 0;
         for (int i = 0; i < weight.length; i++) {
             p += weight[i] * distribution.get(i).density(values);
@@ -94,7 +95,8 @@ public class ExtendedMixtureMultivariateRealDistribution<T extends MultivariateR
     }
 
     /** {@inheritDoc} */
-    public double probability(final double[] a) {
+    @Override
+	public double probability(final double[] a) {
         double p = 0;
         for (int i = 0; i < weight.length; i++) {
             p += weight[i] * distribution.get(i).probability(a);
@@ -103,7 +105,8 @@ public class ExtendedMixtureMultivariateRealDistribution<T extends MultivariateR
     }
 
     /** {@inheritDoc} */
-    public double probability(final double[] a, final double[] b) {
+    @Override
+	public double probability(final double[] a, final double[] b) {
         double p = 0;
         for (int i = 0; i < weight.length; i++) {
             p += weight[i] * distribution.get(i).probability(a, b);
@@ -112,7 +115,8 @@ public class ExtendedMixtureMultivariateRealDistribution<T extends MultivariateR
     }
 
     /** {@inheritDoc} */
-    public double[] sample() {
+    @Override
+	public double[] sample() {
         // Sampled values.
         double[] vals = null;
 
@@ -141,7 +145,8 @@ public class ExtendedMixtureMultivariateRealDistribution<T extends MultivariateR
     }
 
     /** {@inheritDoc} */
-    public void reseedRandomGenerator(long seed) {
+    @Override
+	public void reseedRandomGenerator(long seed) {
         // Seed needs to be propagated to underlying components
         // in order to maintain consistency between runs.
         super.reseedRandomGenerator(seed);

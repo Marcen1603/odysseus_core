@@ -50,7 +50,6 @@ abstract public class AbstractRelationalMedian extends Median<Tuple<?>, Tuple<?>
         final IMedianPartialAggregate pa = (IMedianPartialAggregate) p;
         final Tuple r = new Tuple(1, false);
         r.setAttribute(0, new Double(pa.getAggValue().doubleValue()));
-        pa.clear();
         return r;
     }
 

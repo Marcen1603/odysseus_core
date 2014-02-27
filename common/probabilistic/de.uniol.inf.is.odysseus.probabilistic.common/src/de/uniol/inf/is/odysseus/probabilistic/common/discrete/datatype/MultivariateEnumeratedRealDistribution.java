@@ -53,7 +53,8 @@ public class MultivariateEnumeratedRealDistribution extends AbstractMultivariate
         innerDistribution = new EnumeratedDistribution<double[]>(rng, samples);
     }
 
-    public double probability(final double[] a) {
+    @Override
+	public double probability(final double[] a) {
         double probability = 0;
 
         for (final Pair<double[], Double> sample : innerDistribution.getPmf()) {
@@ -72,7 +73,8 @@ public class MultivariateEnumeratedRealDistribution extends AbstractMultivariate
         return probability;
     }
 
-    public double probability(final double[] a, final double[] b) {
+    @Override
+	public double probability(final double[] a, final double[] b) {
         double probability = 0;
         if (Arrays.equals(a, b)) {
             // This is the PMF
@@ -122,7 +124,8 @@ public class MultivariateEnumeratedRealDistribution extends AbstractMultivariate
      * 
      * @return {@code sum(singletons[i] * probabilities[i])}
      */
-    public double[] getNumericalMean() {
+    @Override
+	public double[] getNumericalMean() {
         double[] mean = new double[getDimension()];
 
         for (final Pair<double[], Double> sample : innerDistribution.getPmf()) {
@@ -139,7 +142,8 @@ public class MultivariateEnumeratedRealDistribution extends AbstractMultivariate
      * 
      * @return {@code sum((singletons[i] - mean) ^ 2 * probabilities[i])}
      */
-    public double[][] getNumericalVariance() {
+    @Override
+	public double[][] getNumericalVariance() {
         double[] mean = new double[getDimension()];
         double[] meanOfSquares = new double[getDimension()];
         double[][] result = new double[getDimension()][getDimension()];

@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
 
 public class CountPartialAggregate<T> extends AbstractPartialAggregate<T> {

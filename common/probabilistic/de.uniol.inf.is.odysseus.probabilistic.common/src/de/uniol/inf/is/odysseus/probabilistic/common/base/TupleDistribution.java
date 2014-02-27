@@ -5,7 +5,6 @@ package de.uniol.inf.is.odysseus.probabilistic.common.base;
 
 import java.util.Arrays;
 
-import org.apache.commons.math3.distribution.MixtureMultivariateRealDistribution;
 import org.apache.commons.math3.distribution.MultivariateRealDistribution;
 import org.apache.commons.math3.linear.RealMatrix;
 

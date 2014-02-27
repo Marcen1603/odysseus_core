@@ -13,6 +13,4 @@ public interface IMedianPartialAggregate<R> extends IPartialAggregate<R> {
     IMedianPartialAggregate<R> add(final Double value);
 
     Double getAggValue();
-
-    void clear();
 }
