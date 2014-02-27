@@ -218,20 +218,10 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 					IJxtaConnection clientConnection = new JxtaBiDiClientConnection(createPipeAdvertisement(commAdv.getPipeID()));
 					clientConnection.addListener(this);
 					tryConnectAsync(clientConnection, commAdv.getPeerID(), commAdv.getPeerName());
-				} else {
-					tryFlushAdvertisement(commAdv);
-				}
+				} 
 			} else {
 				LOG.debug("...but is our own peer or we have already a connection to that peer");
 			}
-		}
-	}
-
-	private static void tryFlushAdvertisement(CommunicationAdvertisement commAdv) {
-		try {
-			JxtaServicesProvider.getInstance().flushAdvertisement(commAdv);
-		} catch (IOException e) {
-			LOG.error("Could not flush communication advertisement", e);
 		}
 	}
 
