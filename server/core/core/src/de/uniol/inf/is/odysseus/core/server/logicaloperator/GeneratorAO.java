@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressio
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "GENERATOR", doc = "Generats missing values in a stream", category = { LogicalOperatorCategory.ADVANCED })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "GENERATOR", doc = "Generates missing values in a stream", category = { LogicalOperatorCategory.ADVANCED })
 public class GeneratorAO extends UnaryLogicalOp {
 
     /**
