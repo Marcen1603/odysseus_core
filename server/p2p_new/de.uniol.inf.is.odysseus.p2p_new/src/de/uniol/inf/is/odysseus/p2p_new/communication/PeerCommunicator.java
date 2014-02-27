@@ -264,12 +264,14 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					LOG.debug("Beginning connection to server peer {}", peerName);
-					waitingClientConnections.put(connection, peerID);
-					connection.connect();
-				} catch (final IOException ex) {
-					waitingClientConnections.remove(connection);
+				synchronized( waitingClientConnections ) {
+					try {
+						LOG.debug("Beginning connection to server peer {}", peerName);
+						waitingClientConnections.put(connection, peerID);
+						connection.connect();
+					} catch (final IOException ex) {
+						waitingClientConnections.remove(connection);
+					}
 				}
 			}
 		});
@@ -279,10 +281,11 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 
 	@Override
 	public void onConnect(IJxtaConnection sender) {
-		PeerID connectedServerPeerID = waitingClientConnections.get(sender);
-
-		waitingClientConnections.remove(sender);
-
+		PeerID connectedServerPeerID = null;
+		synchronized( waitingClientConnections ) {
+			connectedServerPeerID = waitingClientConnections.remove(sender);
+		}
+		
 		LOG.debug("Established connection to remote server peer");
 
 		activeConnectionsAsClient.put(sender, connectedServerPeerID);
@@ -444,12 +447,14 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 	}
 
 	private Optional<IJxtaConnection> getWaitingClientConnection(PeerID id) {
-		for (IJxtaConnection connection : waitingClientConnections.keySet()) {
-			if (waitingClientConnections.get(connection).equals(id)) {
-				return Optional.of(connection);
+		synchronized( waitingClientConnections ) {
+			for (IJxtaConnection connection : waitingClientConnections.keySet()) {
+				if (waitingClientConnections.get(connection).equals(id)) {
+					return Optional.of(connection);
+				}
 			}
+			return Optional.absent();
 		}
-		return Optional.absent();
 	}
 
 	@Override
