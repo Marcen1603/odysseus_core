@@ -11,8 +11,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 
 final class ForceNode {
 
-	private static final double DAMPING_FACTOR = 0.1;
-
 	private static long idCounter = 0;
 
 	private final Collection<Force> attachedForces = Lists.newArrayList();
@@ -98,7 +96,7 @@ final class ForceNode {
 		return sb.toString();
 	}
 
-	public void tick() {
+	public void tick(double frame) {
 		if (!isFixed()) {
 			Vector3D direction = new Vector3D();
 			for (Force force : attachedForces) {
@@ -108,10 +106,9 @@ final class ForceNode {
 				} else {
 					otherNode = force.getNodeA();
 				}
-				Vector3D dist = otherNode.position.subtract(position).scalarMultiply(force.getDataRate());
+				Vector3D dist = otherNode.position.subtract(position).scalarMultiply(force.getDataRate() * frame);
 				direction = direction.add(dist);
 			}
-			direction = direction.scalarMultiply(DAMPING_FACTOR);
 			
 			position = position.add(direction);
 		}

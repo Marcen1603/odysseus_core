@@ -204,7 +204,7 @@ public class ForceModel {
 									ForceNode peerForceNode = new ForceNode(optNode.get().getPosition());
 									forceNodes.add(peerForceNode);
 									
-									new Force( peerForceNode, forceNode, 10);
+									new Force( peerForceNode, forceNode, 1000);
 								} 
 							}
 						}
@@ -251,7 +251,7 @@ public class ForceModel {
 	public void run() {
 		for( int i = 0; i < MAX_ITERATIONS; i++ ) {
 			for( ForceNode node : forceNodes ) {
-				node.tick();
+				node.tick( 1.0 / MAX_ITERATIONS);
 			}
 		}
 		
@@ -332,7 +332,8 @@ public class ForceModel {
 			double distZ = Math.abs(normPosition.getZ() - normPositionOfPeer.getZ());
 			double distB = 1 - bidValueOfPeer;
 			
-			double peerDistanceToPerfect = Math.sqrt( (distX * distX) + (distY * distY ) + (distZ * distZ) + (distB * distB));
+			double peerDistanceToPerfectLatency = Math.sqrt( (distX * distX) + (distY * distY ) + (distZ * distZ) );
+			double peerDistanceToPerfect = ( peerDistanceToPerfectLatency + distB ) / 2.0; 
 			peerValues.add( new ValuePeerPair(peerDistanceToPerfect, peerID));
 			
 			if( LOG.isDebugEnabled() ) {
