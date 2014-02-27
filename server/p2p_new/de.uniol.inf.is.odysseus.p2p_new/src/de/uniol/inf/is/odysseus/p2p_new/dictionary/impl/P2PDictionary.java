@@ -32,7 +32,6 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritab
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDatadictionaryProviderListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
@@ -315,14 +314,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			receiverOperator.setName(realSrcNameToUse + "_Receive");
 			receiverOperator.setImportedSourceAdvertisement(advertisement);
 			
-			final RenameAO renameNoOp = new RenameAO();
-			renameNoOp.setDestinationName("local");
-			renameNoOp.setNoOp(true);
-
-			receiverOperator.subscribeSink(renameNoOp, 0, 0, receiverOperator.getOutputSchema());
-			renameNoOp.initialize();
-
-			getDataDictionary().setView(realSrcNameToUse, renameNoOp, SessionManagementService.getActiveSession());
+			getDataDictionary().setView(realSrcNameToUse, receiverOperator, SessionManagementService.getActiveSession());
 		}
 
 		fireSourceImportEvent(advertisement, realSrcNameToUse);
