@@ -6,7 +6,9 @@ package de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.aggregate.fun
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Random;
 
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.util.FastMath;
 
 /**
@@ -21,6 +23,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
     private double min;
     private double max;
     private int count;
+    private int stream;
 
     /**
      * 
@@ -32,13 +35,15 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         this.summary = new LinkedList<Tuple>();
         this.min = Double.POSITIVE_INFINITY;
         this.max = Double.NEGATIVE_INFINITY;
+        this.count = 0;
+        this.stream = 0;
     }
 
     /**
      * Default constructor with an allowed error of epsilon=0.25.
      */
     public GreenwaldKhannaMedianPartialAggregate() {
-        this(0.25);
+        this(0.0005);
     }
 
     /**
@@ -52,19 +57,21 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         this.min = partialAggregate.min;
         this.max = partialAggregate.max;
         this.count = partialAggregate.count;
+        this.stream = partialAggregate.stream;
         this.summary = new LinkedList<>(partialAggregate.summary);
     }
 
     /**
      * {@inheritDoc}
-     * @return 
+     * 
+     * @return
      */
     @Override
     public GreenwaldKhannaMedianPartialAggregate<R> add(final Double value) {
         if ((this.count % (1.0 / (2.0 * this.epsilon()))) == 0.0) {
-            this.compress(this.count);
+            this.compress(this.count, this.stream);
         }
-        this.insert(value);
+        this.insert(value, this.count);
         this.count++;
         return this;
     }
@@ -124,51 +131,78 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         return new GreenwaldKhannaMedianPartialAggregate<R>(this);
     }
 
-    private void insert(final double v) {
+    private void insert(final double v, int n) {
         int pos = Collections.binarySearch(this.summary, new Tuple(v, 1.0, 0.0));
         double range = 0.0;
         if ((v < this.min) || (v > this.max)) {
             this.min = FastMath.min(this.min, v);
             this.max = FastMath.max(this.max, v);
         }
+        Tuple prev = null;
+        Tuple next = null;
         if (pos >= 0) {
-            if (pos < (this.summary.size() - 1)) {
-                final Tuple next = this.summary.get(pos + 1);
-                range = (next.gain + next.range) - 1;
+            next = this.summary.get(pos);
+            range = (next.gain + next.range) - 1;
+            if (pos > 0) {
+                prev = this.summary.get(pos - 1);
             }
         }
         else {
             pos = -pos - 1;
+            if (pos > 0) {
+                prev = this.summary.get(pos - 1);
+            }
+            if ((pos == 0) && (this.summary.size() > 0)) {
+                next = this.summary.get(pos);
+            }
         }
-        this.summary.add(pos, new Tuple(v, 1.0, range));
+        Tuple cur = new Tuple(v, 1.0, range);
+        if ((prev != null) && (band(prev.range, 2.0 * this.epsilon() * n) < band(cur.range, 2.0 * this.epsilon() * n))) {
+            cur.setParent(prev);
+        }
+        if ((next != null) && (band(cur.range, 2.0 * this.epsilon() * n) < band(next.range, 2.0 * this.epsilon() * n))) {
+            next.setParent(cur);
+        }
+        this.summary.add(pos, cur);
+        this.stream++;
     }
 
-    private void compress(final int n) {
+    private void compress(final int n, final int s) {
         if (this.summary.size() <= 1) {
             return;
         }
-        final Iterator<Tuple> iter = this.summary.descendingIterator();
-        // Skip last element
-        Tuple next = null;
-        if (iter.hasNext()) {
-            next = iter.next();
-        }
-        while (iter.hasNext()) {
-            final Tuple cur = iter.next();
-            // Ignore min value
-            if (cur == this.summary.getFirst()) {
-                return;
-            }
+        double sum = 0.0;
+        for (int i = s - 2; i > 0; i--) {
+            Tuple cur = this.summary.get(i);
+            Tuple next = this.summary.get(i + 1);
             final int band = this.band(cur.range, 2.0 * this.epsilon() * n);
             final int nextBand = this.band(next.range, 2.0 * this.epsilon() * n);
-            if ((band <= nextBand) && ((cur.gain + next.gain + next.range) < (2.0 * this.epsilon() * n))) {
-                next = next.merge(cur);
-                iter.remove();
+            if ((next.parent != null) && (next.parent.equals(cur))) {
+                sum += cur.gain;
             }
             else {
-                next = cur;
+                sum = cur.gain;
             }
+            if ((band <= nextBand) && ((sum + next.gain + next.range) < (2.0 * this.epsilon() * n))) {
+                cur = delete(cur, next);
+                this.summary.remove(i);
+                if (i + 1 < summary.size()) {
+                    next = this.summary.get(i + 1);
+                    while ((next.parent != null) && (next.parent.equals(cur))) {
+                        cur = delete(cur, next);
+                        this.summary.remove(i);
+                        next = this.summary.get(i + 1);
+                    }
+                }
+            }
+
         }
+    }
+
+    private Tuple delete(Tuple cur, Tuple next) {
+        Tuple merged = next.merge(cur);
+        this.stream--;
+        return merged;
     }
 
     private int band(final double range, final double p) {
@@ -178,7 +212,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
             return (0);
         }
         else {
-            band = FastMath.log(diff) / FastMath.log(2);
+            band = FastMath.log((double) diff) / FastMath.log(2.0);
             return ((int) band);
         }
     }
@@ -199,6 +233,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         private double gain;
         private final double range;
         private final double value;
+        private Tuple parent;
 
         /**
          * 
@@ -212,6 +247,10 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         public Tuple merge(final Tuple t) {
             this.gain += t.gain;
             return this;
+        }
+
+        public void setParent(Tuple tuple) {
+            this.parent = tuple;
         }
 
         /**
@@ -232,19 +271,50 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
     }
 
     public static void main(final String[] args) {
-        final GreenwaldKhannaMedianPartialAggregate<?> agg = new GreenwaldKhannaMedianPartialAggregate<>();
-        agg.add(12.0);
-        agg.add(10.0);
-        agg.add(11.0);
-        agg.add(10.0);
-        agg.add(1.0);
-        agg.add(10.0);
-        agg.add(11.0);
-        agg.add(9.0);
-        agg.add(6.0);
+        DescriptiveStatistics stats = new DescriptiveStatistics();
+        GreenwaldKhannaMedianPartialAggregate<?> agg = new GreenwaldKhannaMedianPartialAggregate<>();
+        for (double i = 0.0; i < 500.0; i += 0.5) {
+            agg.add(i);
+            stats.addValue(i);
+        }
+        assert (agg.getAggValue() == stats.getPercentile(50));
+        System.out.println(agg + " == " + stats.getPercentile(50));
+        stats = new DescriptiveStatistics();
+        agg = new GreenwaldKhannaMedianPartialAggregate<>();
+        for (double i = 5000.0; i > 0.0; i -= 0.5) {
+            agg.add(i);
+            stats.addValue(i);
+        }
+        assert (agg.getAggValue() == stats.getPercentile(50));
+        System.out.println(agg + " == " + stats.getPercentile(50));
 
-        assert (agg.getAggValue() == 10.0);
-        System.out.println(agg);
+        stats = new DescriptiveStatistics();
+        agg = new GreenwaldKhannaMedianPartialAggregate<>();
+        for (double i = 5000.0; i > 0.0; i -= 0.5) {
+            agg.add(i);
+            stats.addValue(i);
+        }
+        for (double i = .0; i < 5000.0; i += 0.5) {
+            agg.add(i);
+            stats.addValue(i);
+        }
+        for (double i = 5000.0; i > 0.0; i -= 0.25) {
+            agg.add(i);
+            stats.addValue(i);
+        }
+        assert (agg.getAggValue() == stats.getPercentile(50));
+        System.out.println(agg + " == " + stats.getPercentile(50));
+
+        stats = new DescriptiveStatistics();
+        agg = new GreenwaldKhannaMedianPartialAggregate<>();
+        Random random = new Random();
+        int n = 50000;
+        for (int i = 0; i < n; i++) {
+            double value = random.nextDouble() * 100;
+            agg.add(value);
+            stats.addValue(value);
+        }
+        assert (agg.getAggValue() == stats.getPercentile(50));
+        System.out.println(agg + " == " + stats.getPercentile(50) + " -> " + (stats.getPercentile(50) - agg.getAggValue()) + " < " + agg.epsilon * 50000);
     }
-
 }
