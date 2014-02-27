@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary.impl;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -61,8 +59,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private static final String AUTOIMPORT_SYS_PROPERTY = "peer.autoimport";
 	private static final String AUTOEXPORT_SYS_PROPERTY = "peer.autoexport";
 
-	private static final int REACHABLE_TIMEOUT_MILLIS = 5000;
-
 	private static P2PDictionary instance;
 
 	private final List<IP2PDictionaryListener> listeners = Lists.newArrayList();
@@ -80,6 +76,9 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private AutoExporter autoExporter;
 	private SourceChecker sourceChecker;
+	
+	private final RemoveSourceAdvertisementCollector removeSourceAdvCollector = new RemoveSourceAdvertisementCollector();
+	private final SourceAdvertisementCollector sourceAdvCollector = new SourceAdvertisementCollector();
 
 	// called by OSGi-DS
 	public void activate() {
@@ -88,12 +87,17 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		DataDictionaryProvider.subscribe(SessionManagementService.getTenant(), this);
 		sourceChecker = new SourceChecker(this);
 		sourceChecker.start();
+		
+		removeSourceAdvCollector.start();
+		sourceAdvCollector.start();
 	}
 
 	// called by OSGi-DS
 	public void deactivate() {
 		instance = null;
 		sourceChecker.stopRunning();
+		removeSourceAdvCollector.stopRunning();
+		sourceAdvCollector.stopRunning();
 
 		removeAllExportedViews();
 		DataDictionaryProvider.unsubscribe(this);
@@ -181,7 +185,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	@Override
 	public boolean checkSource(SourceAdvertisement srcAdvertisement) {
 		if (srcAdvertisement.isStream()) {
-			return checkStreamAdvertisement(srcAdvertisement);
+			return true;
 		} else if (srcAdvertisement.isView()) {
 			return checkViewAdvertisement(srcAdvertisement);
 		}
@@ -378,12 +382,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(queryBuildConfigurationName), "queryBuildConfigurationName must not be null or empty");
 
 		SourceAdvertisement adv = createSourceAdvertisement(queryBuildConfigurationName, sourceName);
-
-		try {
-			JxtaServicesProvider.getInstance().publishInfinite(adv);
-		} catch (IOException e) {
-			throw new PeerException("Could not publish stream source", e);
-		}
+		sourceAdvCollector.add(adv);
+		
 		return adv;
 	}
 
@@ -500,16 +500,12 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		return false;
 	}
 
-	private static void publishRemoveSourceAdvertisement(SourceAdvertisement sourceAdvToRemove) {
+	private void publishRemoveSourceAdvertisement(SourceAdvertisement sourceAdvToRemove) {
 		RemoveSourceAdvertisement removeSourceAdvertisement = (RemoveSourceAdvertisement) AdvertisementFactory.newAdvertisement(RemoveSourceAdvertisement.getAdvertisementType());
 		removeSourceAdvertisement.setID(IDFactory.newPipeID(P2PNetworkManager.getInstance().getLocalPeerGroupID()));
 		removeSourceAdvertisement.setSourceAdvertisementID(sourceAdvToRemove.getID());
 
-		try {
-			JxtaServicesProvider.getInstance().publish(removeSourceAdvertisement);
-		} catch (IOException e) {
-			LOG.error("Could not publish removeSourceAdvertisement", e);
-		}
+		removeSourceAdvCollector.add(removeSourceAdvertisement);
 	}
 
 	@Override
@@ -946,40 +942,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			LOG.debug("Could not reach peer with exported source {}", srcAdvertisement.getName());
 			return false;
 		}
-		return true;
-	}
-
-	private static boolean checkStreamAdvertisement(SourceAdvertisement srcAdvertisement) {
-		final AbstractAccessAO accessAO = srcAdvertisement.getAccessAO();
-		final Map<String, String> optionsMap = accessAO.getOptionsMap();
-
-		String host = optionsMap.get("host");
-		if (Strings.isNullOrEmpty(host)) {
-			LOG.error("Host not specified. Invalid sourceAdvertisement in p2p-context: {}", srcAdvertisement.getName());
-			return false;
-		}
-
-		if (host.equalsIgnoreCase("localhost") && srcAdvertisement.getPeerID().equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
-			LOG.error("SourceAdvertisement has localhost as host (with non local origin peer): {}", srcAdvertisement.getName());
-			return false;
-		}
-
-		try {
-			// Nicht zuverlässig. Kann true zurückgeben, obwohl der host
-			// nicht erreichbar ist
-			InetAddress hostAddress = InetAddress.getByName(host);
-			if (!hostAddress.isReachable(REACHABLE_TIMEOUT_MILLIS)) {
-				LOG.error("Host {} is not reachable");
-				return false;
-			}
-		} catch (UnknownHostException e) {
-			LOG.error("Unknown host {}", host, e);
-			return false;
-		} catch (IOException e) {
-			LOG.error("Could not test for reachability host {}", host, e);
-			return false;
-		}
-
 		return true;
 	}
 }
