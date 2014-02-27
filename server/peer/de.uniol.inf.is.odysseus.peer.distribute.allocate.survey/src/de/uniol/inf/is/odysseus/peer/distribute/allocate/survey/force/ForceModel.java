@@ -204,7 +204,7 @@ public class ForceModel {
 									ForceNode peerForceNode = new ForceNode(optNode.get().getPosition());
 									forceNodes.add(peerForceNode);
 									
-									new Force( peerForceNode, forceNode, 1);
+									new Force( peerForceNode, forceNode, 10);
 								} 
 							}
 						}
