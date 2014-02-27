@@ -265,6 +265,14 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 			CpuPerc perc = SIGAR.getCpuPerc();
 			double cpuFree = cpuMax - (perc != null ? perc.getUser() : 0.0) * cpuMax;
 			cpuFree = Math.max(0, Math.min(cpuFree, cpuMax));
+			if( Double.isNaN(cpuFree)) {
+				cpuFree = 0.0;
+				if( perc != null ) {
+					LOG.error("Warning: CpuFree was NAN, percUser is {}, cpuMax is {}", perc.getUser(), cpuMax);
+				} else {
+					LOG.error("Warning: CpuFree was NAN, percUser is null, cpuMax is {}", cpuMax);
+				}
+			}
 			
 			long freeMemory = RUNTIME.freeMemory();
 	
