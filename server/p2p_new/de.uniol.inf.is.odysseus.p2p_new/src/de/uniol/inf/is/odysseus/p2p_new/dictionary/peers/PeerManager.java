@@ -68,7 +68,7 @@ public class PeerManager {
 	}
 
 	private static void processPeerAdvertisements(List<PeerAdvertisement> advertisements) {
-		if( !P2PDictionary.isActivated() ) {
+		if( !P2PDictionary.isActivated() || !JxtaServicesProvider.isActivated() ) {
 			return;
 		}
 		
