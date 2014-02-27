@@ -431,14 +431,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		ILogicalOperator stream = getDataDictionary().getStreamForTransformation(realSourceName, SessionManagementService.getActiveSession());
 		
 		if (stream != null) {
-			Optional<AbstractAccessAO> optAccessAO = determineAccessAO(stream);
-			
-			if( optAccessAO.isPresent() ) {
-				AbstractAccessAO accessAO = optAccessAO.get();
-				
-				if( accessAO instanceof CSVFileSource ) {
-					return exportView(realSourceName, queryBuildConfigurationName, stream);
-				}
+			if( isStreamAView(stream) ) {
+				return exportView(realSourceName, queryBuildConfigurationName, stream);
 			}
 			
 			return exportStream(realSourceName, queryBuildConfigurationName, stream);
@@ -450,6 +444,24 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		}
 
 		throw new PeerException("Could not find view or stream '" + realSourceName + "' in datadictionary");
+	}
+
+	private boolean isStreamAView(ILogicalOperator stream) throws PeerException {
+		Optional<AbstractAccessAO> optAccessAO = determineAccessAO(stream);
+		
+		if( optAccessAO.isPresent() ) {
+			AbstractAccessAO accessAO = optAccessAO.get();
+			
+			if( accessAO instanceof CSVFileSource ) {
+				return true;
+			}
+			
+			if( accessAO.getTransportHandler().equalsIgnoreCase("file") ) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	@Override
