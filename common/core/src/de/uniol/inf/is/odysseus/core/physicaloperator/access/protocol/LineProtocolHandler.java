@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	public static final String NAME = "Line";
+	static final Runtime RUNTIME = Runtime.getRuntime();
 
 	Logger LOG = LoggerFactory.getLogger(LineProtocolHandler.class);
 
@@ -45,7 +46,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	private int nanodelay;
 	private int delayeach = 0;
 	private long delayCounter = 0L;
-	
+
 	protected boolean readFirstLine = true;
 	protected boolean firstLineSkipped = false;
 	private long dumpEachLine = -1;
@@ -53,33 +54,35 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	protected long lineCounter = 0L;
 	private boolean debug = false;
 	private boolean isDone = false;
-//	private StringBuffer measurements = new StringBuffer("");
+	// private StringBuffer measurements = new StringBuffer("");
 	private long measureEachLine = -1;
 	private long lastDumpTime = 0;
 	private long lastMeasureTime = 0;
 	private long basetime;
 	private String dumpFile = null;
 	private PrintWriter dumpOut;
-	
-	private Map<String,String> optionsMap;
+	private boolean dumpMemory;
 
-	public static final String DELAY = "delay"; 
-	public static final String NANODELAY = "delay"; 
+	private Map<String, String> optionsMap;
+
+	public static final String DELAY = "delay";
+	public static final String NANODELAY = "delay";
 	public static final String DELAYEACH = "delayeach";
 	public static final String READFIRSTLINE = "readfirstline";
 	public static final String DUMP_EACH_LINE = "dumpeachline";
 	public static final String MEASURE_EACH_LINE = "measureeachline";
 	public static final String LAST_LINE = "lastline";
-	public static final String MAX_LINES ="maxlines";
+	public static final String MAX_LINES = "maxlines";
 	public static final String DEBUG = "debug";
 	public static final String DUMPFILE = "dumpfile";
-	
-	
+	public static final String DUMPMEMORY = "dumpmemory";
+
 	public LineProtocolHandler() {
 		super();
 	}
 
-	public LineProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler) {
+	public LineProtocolHandler(ITransportDirection direction,
+			IAccessPattern access, IDataHandler<T> dataHandler) {
 		super(direction, access, dataHandler);
 	}
 
@@ -105,11 +108,15 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 		if (options.get(MEASURE_EACH_LINE) != null) {
 			measureEachLine = Integer.parseInt(options.get(MEASURE_EACH_LINE));
-//			measurements.setLength(0);
+			// measurements.setLength(0);
 		}
 
-		if (options.get(LAST_LINE ) != null) {
-			lastLine = Integer.parseInt(options.get(LAST_LINE ));
+		if (options.get(DUMPMEMORY) != null) {
+			dumpMemory = Boolean.parseBoolean(options.get(DUMPMEMORY));
+		}
+
+		if (options.get(LAST_LINE) != null) {
+			lastLine = Integer.parseInt(options.get(LAST_LINE));
 		}
 		if (options.get(MAX_LINES) != null) {
 			lastLine = Integer.parseInt(options.get(MAX_LINES));
@@ -117,7 +124,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		if (options.get(DEBUG) != null) {
 			debug = Boolean.parseBoolean(options.get(DEBUG));
 		}
-		if (options.get(DUMPFILE) != null){
+		if (options.get(DUMPFILE) != null) {
 			dumpFile = options.get(DUMPFILE);
 		}
 		lastDumpTime = System.currentTimeMillis();
@@ -125,24 +132,28 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	@Override
-	public void open() throws UnknownHostException, IOException {		
+	public void open() throws UnknownHostException, IOException {
 		getTransportHandler().open();
 		if (getDirection().equals(ITransportDirection.IN)) {
-			if ((this.getAccess().equals(IAccessPattern.PULL)) || (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
-				reader = new BufferedReader(new InputStreamReader(getTransportHandler().getInputStream()));
+			if ((this.getAccess().equals(IAccessPattern.PULL))
+					|| (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
+				reader = new BufferedReader(new InputStreamReader(
+						getTransportHandler().getInputStream()));
 			}
-        } else {
-            if ((this.getAccess().equals(IAccessPattern.PULL)) || (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
-                writer = new BufferedWriter(new OutputStreamWriter(getTransportHandler().getOutputStream()));
-            }
-        }
+		} else {
+			if ((this.getAccess().equals(IAccessPattern.PULL))
+					|| (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
+				writer = new BufferedWriter(new OutputStreamWriter(
+						getTransportHandler().getOutputStream()));
+			}
+		}
 		delayCounter = 0;
 		lineCounter = 0;
 		isDone = false;
 		firstLineSkipped = false;
-		if(debug){
+		if (debug) {
 			ProtocolMonitor.getInstance().addToMonitor(this);
-			if (dumpFile != null){
+			if (dumpFile != null) {
 				dumpOut = new PrintWriter(dumpFile);
 			}
 		}
@@ -154,16 +165,16 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 			if (reader != null) {
 				reader.close();
 			}
-        } else {
-            if (writer != null) {
-                writer.close();
-            }
-        }
+		} else {
+			if (writer != null) {
+				writer.close();
+			}
+		}
 		getTransportHandler().close();
-		if(debug){
+		if (debug) {
 			ProtocolMonitor.getInstance().informMonitor(this, lineCounter);
 			ProtocolMonitor.getInstance().removeFromMonitor(this);
-			if (dumpOut != null){
+			if (dumpOut != null) {
 				dumpOut.close();
 			}
 		}
@@ -171,12 +182,12 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public boolean hasNext() throws IOException {
-		try{
+		try {
 			if (reader.ready() == false) {
 				isDone = true;
 				return false;
-			}			
-		}catch(Exception e){
+			}
+		} catch (Exception e) {
 			isDone = true;
 			return false;
 		}
@@ -194,7 +205,9 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 			line = reader.readLine();
 		} else {
 			long time = System.currentTimeMillis();
-			LOG.debug("Read last line. "+ lineCounter + " " + time + " " + (time - lastDumpTime) + " (" + Integer.toHexString(hashCode()) + ") line.");
+			LOG.debug("Read last line. " + lineCounter + " " + time + " "
+					+ (time - lastDumpTime) + " ("
+					+ Integer.toHexString(hashCode()) + ") line.");
 			return null;
 		}
 
@@ -202,18 +215,21 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 			if (dumpEachLine > 0) {
 				if (lineCounter % dumpEachLine == 0) {
 					long time = System.currentTimeMillis();
-					LOG.debug(lineCounter + " " + time + " " + (time - lastDumpTime) + " (" + Integer.toHexString(hashCode()) + ") line: " + line);
+					LOG.debug(lineCounter + " " + time + " "
+							+ (time - lastDumpTime) 
+							+ (dumpMemory ? " M = "+RUNTIME.freeMemory()+" " : "") + line+ " ("
+							+ Integer.toHexString(hashCode()) + ") line: ");
 					lastDumpTime = time;
 				}
 			}
 			if (measureEachLine > 0) {
 				if (lineCounter % measureEachLine == 0) {
 					long time = System.currentTimeMillis();
-//					measurements.append(lineCounter).append(";").append(time - basetime).append("\n");
-					if (dumpOut != null){
-						dumpOut.println(lineCounter+";"+(time - basetime)+";"+(time - lastMeasureTime));
-						dumpOut.flush();
-					}	
+					// measurements.append(lineCounter).append(";").append(time
+					// - basetime).append("\n");
+					if (dumpOut != null) {
+						dumpOut(time);
+					}
 					lastMeasureTime = time;
 				}
 			}
@@ -224,20 +240,32 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 					basetime = time;
 				}
 				LOG.debug(lineCounter + " " + time);
-				if (dumpOut != null){
-					dumpOut.println(lineCounter+";"+(time - basetime)+";"+(time - lastMeasureTime));
-					dumpOut.flush();	
+				if (dumpOut != null) {
+					dumpOut(time);
 				}
-//				measurements.append(lineCounter).append(";").append(time - basetime).append("\n");
+				// measurements.append(lineCounter).append(";").append(time -
+				// basetime).append("\n");
 				if (lastLine == lineCounter) {
-					//System.out.println(measurements);
-					ProtocolMonitor.getInstance().informMonitor(this, lineCounter);
+					// System.out.println(measurements);
+					ProtocolMonitor.getInstance().informMonitor(this,
+							lineCounter);
 					isDone = true;
 				}
-			}		
+			}
 		}
 		lineCounter++;
 		return line;
+	}
+
+	public void dumpOut(long time) {
+		dumpOut.print(lineCounter + ";" + (time - basetime) + ";"
+				+ (time - lastMeasureTime));
+		if (dumpMemory) {
+			dumpOut.println(RUNTIME.freeMemory());
+		} else {
+			dumpOut.println();
+		}
+		dumpOut.flush();
 	}
 
 	@Override
@@ -283,10 +311,13 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	@Override
-	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, Map<String, String> options, IDataHandler<T> dataHandler) {
-		LineProtocolHandler<T> instance = new LineProtocolHandler<T>(direction, access, dataHandler);
+	public IProtocolHandler<T> createInstance(ITransportDirection direction,
+			IAccessPattern access, Map<String, String> options,
+			IDataHandler<T> dataHandler) {
+		LineProtocolHandler<T> instance = new LineProtocolHandler<T>(direction,
+				access, dataHandler);
 		instance.setOptionsMap(options);
-		instance.init(options);		
+		instance.init(options);
 		return instance;
 	}
 
@@ -347,23 +378,23 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
-		if(!(o instanceof LineProtocolHandler)) {
+		if (!(o instanceof LineProtocolHandler)) {
 			return false;
 		}
-		LineProtocolHandler<?> other = (LineProtocolHandler<?>)o;
-		if(this.nanodelay != other.getNanodelay() ||
-				this.delay != other.getDelay() ||
-				this.delayeach != other.getDelayeach() ||
-				this.dumpEachLine != other.getDumpEachLine() ||
-				this.measureEachLine != other.getMeasureEachLine() ||
-				this.lastLine != other.getLastLine() ||
-				this.debug != other.isDebug() ||
-				this.readFirstLine != other.isReadFirstLine()) {
+		LineProtocolHandler<?> other = (LineProtocolHandler<?>) o;
+		if (this.nanodelay != other.getNanodelay()
+				|| this.delay != other.getDelay()
+				|| this.delayeach != other.getDelayeach()
+				|| this.dumpEachLine != other.getDumpEachLine()
+				|| this.measureEachLine != other.getMeasureEachLine()
+				|| this.lastLine != other.getLastLine()
+				|| this.debug != other.isDebug()
+				|| this.readFirstLine != other.isReadFirstLine()) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	@Override
 	public Map<String, String> getOptionsMap() {
 		return optionsMap;
