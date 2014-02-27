@@ -143,7 +143,7 @@ public class State implements Serializable{
 	
 	@Override
 	public String toString() {
-		return id+(accepting?"<F>":"")+" "+(transitions==null?"null":transitions+" ");
+		return (negated?"NOT ":"")+ id+(accepting?"<F>":"")+" "+(transitions==null?"null":transitions+" ");
 	}
 
 	public String prettyPrint() {
