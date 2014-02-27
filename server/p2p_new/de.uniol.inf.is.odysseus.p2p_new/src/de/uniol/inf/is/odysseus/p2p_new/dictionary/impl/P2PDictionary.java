@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListen
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDatadictionaryProviderListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
@@ -428,7 +429,18 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		}
 
 		ILogicalOperator stream = getDataDictionary().getStreamForTransformation(realSourceName, SessionManagementService.getActiveSession());
+		
 		if (stream != null) {
+			Optional<AbstractAccessAO> optAccessAO = determineAccessAO(stream);
+			
+			if( optAccessAO.isPresent() ) {
+				AbstractAccessAO accessAO = optAccessAO.get();
+				
+				if( accessAO instanceof CSVFileSource ) {
+					return exportView(realSourceName, queryBuildConfigurationName, stream);
+				}
+			}
+			
 			return exportStream(realSourceName, queryBuildConfigurationName, stream);
 		} else {
 			ILogicalOperator view = getDataDictionary().getView(realSourceName, SessionManagementService.getActiveSession());

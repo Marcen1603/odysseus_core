@@ -45,6 +45,7 @@ public abstract class AdvertisementCollector<A extends Advertisement, R extends 
 		if( resultAdvertisement != null ) {
 			try {
 				JxtaServicesProvider.getInstance().publish(resultAdvertisement);
+				JxtaServicesProvider.getInstance().remotePublish(resultAdvertisement);
 			} catch (IOException e) {
 				LOG.error("Could not publish result advertisement of collector", e);
 			}
