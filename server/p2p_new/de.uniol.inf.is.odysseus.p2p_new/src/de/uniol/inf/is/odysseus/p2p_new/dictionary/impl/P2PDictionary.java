@@ -481,7 +481,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private void removeSourceExportImpl(String realSourceName, SourceAdvertisement exportAdvertisement) {
 		Integer queryID = exportedSourcesQueryMap.get(exportAdvertisement);
 		exportedSourcesQueryMap.remove(exportAdvertisement);
-		if (queryID != -1 && ServerExecutorService.getServerExecutor().getExecutionPlan().getQueryById(queryID) != null) {
+		if (queryID != -1 && ServerExecutorService.isBound() && ServerExecutorService.getServerExecutor().getExecutionPlan().getQueryById(queryID) != null) {
 			ServerExecutorService.getServerExecutor().removeQuery(queryID, SessionManagementService.getActiveSession());
 		}
 
