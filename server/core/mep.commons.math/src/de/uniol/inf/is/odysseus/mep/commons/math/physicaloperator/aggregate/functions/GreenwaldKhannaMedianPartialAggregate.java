@@ -16,33 +16,39 @@ import org.apache.commons.math3.util.FastMath;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialAggregate<R> {
-    private final static double EPSILON = 0.25;
+    private final double epsilon;
     private LinkedList<Tuple> summary;
     private double min;
     private double max;
     private int count;
 
     /**
- * 
- */
-    public GreenwaldKhannaMedianPartialAggregate() {
+     * 
+     * @param epsilon
+     *            The allowed error according to the stream length.
+     */
+    public GreenwaldKhannaMedianPartialAggregate(final double epsilon) {
+        this.epsilon = epsilon;
         this.summary = new LinkedList<Tuple>();
         this.min = Double.POSITIVE_INFINITY;
         this.max = Double.NEGATIVE_INFINITY;
     }
 
     /**
- * 
- */
-    public GreenwaldKhannaMedianPartialAggregate(final double value) {
-        this();
-        this.add(value);
+     * Default constructor with an allowed error of epsilon=0.25.
+     */
+    public GreenwaldKhannaMedianPartialAggregate() {
+        this(0.25);
     }
 
     /**
- * 
- */
+     * Copy constructor
+     * 
+     * @param partialAggregate
+     *            The copy
+     */
     public GreenwaldKhannaMedianPartialAggregate(final GreenwaldKhannaMedianPartialAggregate<R> partialAggregate) {
+        this.epsilon = partialAggregate.epsilon;
         this.min = partialAggregate.min;
         this.max = partialAggregate.max;
         this.count = partialAggregate.count;
@@ -51,25 +57,28 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
 
     /**
      * {@inheritDoc}
+     * @return 
      */
     @Override
-    public void add(final Double value) {
+    public GreenwaldKhannaMedianPartialAggregate<R> add(final Double value) {
         if ((this.count % (1.0 / (2.0 * this.epsilon()))) == 0.0) {
             this.compress(this.count);
         }
         this.insert(value);
         this.count++;
+        return this;
     }
 
     /**
      * @param paToMerge
      */
-    public void add(GreenwaldKhannaMedianPartialAggregate<R> partialAggregate) {
-        for (Tuple t : partialAggregate.summary) {
+    public GreenwaldKhannaMedianPartialAggregate<R> merge(final GreenwaldKhannaMedianPartialAggregate<R> partialAggregate) {
+        for (final Tuple t : partialAggregate.summary) {
             for (int i = 0; i < t.gain; i++) {
-                add(t.value);
+                this.add(t.value);
             }
         }
+        return this;
     }
 
     /**
@@ -123,8 +132,8 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
             this.max = FastMath.max(this.max, v);
         }
         if (pos >= 0) {
-            if (pos < summary.size() - 1) {
-                Tuple next = summary.get(pos + 1);
+            if (pos < (this.summary.size() - 1)) {
+                final Tuple next = this.summary.get(pos + 1);
                 range = (next.gain + next.range) - 1;
             }
         }
@@ -175,7 +184,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
     }
 
     private double epsilon() {
-        return GreenwaldKhannaMedianPartialAggregate.EPSILON;
+        return this.epsilon;
     }
 
     /**

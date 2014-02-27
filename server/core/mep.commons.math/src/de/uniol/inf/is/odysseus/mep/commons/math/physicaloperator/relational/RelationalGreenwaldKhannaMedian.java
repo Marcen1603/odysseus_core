@@ -37,62 +37,34 @@ public class RelationalGreenwaldKhannaMedian extends AbstractRelationalMedian {
             return this.init((GreenwaldKhannaMedianPartialAggregate<Tuple<?>>) in.getAttribute(this.pos));
         }
         else {
-            return new GreenwaldKhannaMedianPartialAggregate<Tuple<?>>(((Number) in.getAttribute(this.pos)).doubleValue());
+            GreenwaldKhannaMedianPartialAggregate<Tuple<?>> pa = new GreenwaldKhannaMedianPartialAggregate<>();
+            pa.add(((Number) in.getAttribute(this.pos)).doubleValue());
+            return pa;
         }
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
-    public IPartialAggregate<Tuple<?>> init(final IPartialAggregate<Tuple<?>> in) {
-        return new GreenwaldKhannaMedianPartialAggregate<Tuple<?>>((GreenwaldKhannaMedianPartialAggregate<Tuple<?>>) in);
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate p, final Tuple toMerge, final boolean createNew) {
-        GreenwaldKhannaMedianPartialAggregate<Tuple> pa = null;
-        if (createNew) {
-            final GreenwaldKhannaMedianPartialAggregate<Tuple> h = (GreenwaldKhannaMedianPartialAggregate<Tuple>) p;
-            pa = new GreenwaldKhannaMedianPartialAggregate<Tuple>(h);
+    protected IPartialAggregate<Tuple<?>> process_merge(IPartialAggregate p, Tuple toMerge) {
+        GreenwaldKhannaMedianPartialAggregate pa = (GreenwaldKhannaMedianPartialAggregate) p;
+        if (isPartialAggregateInput()) {
+            return merge(p, (IPartialAggregate) toMerge.getAttribute(pos), false);
         }
         else {
-            pa = (GreenwaldKhannaMedianPartialAggregate<Tuple>) p;
+            return pa.add(((Number) toMerge.getAttribute(pos)).doubleValue());
         }
-        return this.merge(pa, toMerge);
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
-    public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final IPartialAggregate<Tuple<?>> toMerge, final boolean createNew) {
+    public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p, IPartialAggregate<Tuple<?>> toMerge, boolean createNew) {
         GreenwaldKhannaMedianPartialAggregate<Tuple<?>> pa = null;
         if (createNew) {
-            final GreenwaldKhannaMedianPartialAggregate<Tuple<?>> h = (GreenwaldKhannaMedianPartialAggregate<Tuple<?>>) p;
+            GreenwaldKhannaMedianPartialAggregate<Tuple<?>> h = (GreenwaldKhannaMedianPartialAggregate<Tuple<?>>) p;
             pa = new GreenwaldKhannaMedianPartialAggregate<Tuple<?>>(h);
         }
         else {
             pa = (GreenwaldKhannaMedianPartialAggregate<Tuple<?>>) p;
         }
-        return this.merge(pa, toMerge);
+        return pa.merge((GreenwaldKhannaMedianPartialAggregate) toMerge);
     }
 
-    /**
-     * 
-     * @param pa
-     * @param toMerge
-     * @return
-     */
-    public IPartialAggregate<Tuple<?>> merge(final GreenwaldKhannaMedianPartialAggregate<Tuple<?>> pa, final IPartialAggregate<Tuple<?>> toMerge) {
-        final GreenwaldKhannaMedianPartialAggregate paToMerge = (GreenwaldKhannaMedianPartialAggregate) toMerge;
-        pa.add(paToMerge);
-        return pa;
-    }
 }

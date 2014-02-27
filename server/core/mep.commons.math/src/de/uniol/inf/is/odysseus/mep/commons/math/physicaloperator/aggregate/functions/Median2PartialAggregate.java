@@ -31,8 +31,8 @@ public class Median2PartialAggregate<R> implements IMedianPartialAggregate<R> {
         }
     });
 
-    public Median2PartialAggregate(final Double value) {
-        this.add(value);
+    public Median2PartialAggregate() {
+
     }
 
     public Median2PartialAggregate(final Queue<Double> lower, final Queue<Double> upper) {
@@ -50,7 +50,7 @@ public class Median2PartialAggregate<R> implements IMedianPartialAggregate<R> {
     }
 
     @Override
-	public Double getAggValue() {
+    public Double getAggValue() {
         if ((this.lower.isEmpty()) && (this.upper.isEmpty())) {
             return null;
         }
@@ -68,7 +68,7 @@ public class Median2PartialAggregate<R> implements IMedianPartialAggregate<R> {
     }
 
     @Override
-	public void add(final Double value) {
+    public Median2PartialAggregate<R> add(final Double value) {
         if ((this.lower.isEmpty()) && (this.upper.isEmpty())) {
             this.lower.add(value);
         }
@@ -81,12 +81,14 @@ public class Median2PartialAggregate<R> implements IMedianPartialAggregate<R> {
             }
             this.rebalance();
         }
+        return this;
     }
 
-    public void add(final Median2PartialAggregate<?> value) {
+    public Median2PartialAggregate<R> merge(final Median2PartialAggregate<?> value) {
         this.lower.addAll(value.lower);
         this.upper.addAll(value.upper);
         this.rebalance();
+        return this;
     }
 
     // public void remove(final Double value) {
@@ -111,7 +113,7 @@ public class Median2PartialAggregate<R> implements IMedianPartialAggregate<R> {
      * 
      */
     @Override
-	public void clear() {
+    public void clear() {
         lower.clear();
         upper.clear();
     }
@@ -136,7 +138,8 @@ public class Median2PartialAggregate<R> implements IMedianPartialAggregate<R> {
     }
 
     public static void main(final String[] args) {
-        final Median2PartialAggregate<?> agg = new Median2PartialAggregate<>(1.0);
+        final Median2PartialAggregate<?> agg = new Median2PartialAggregate<>();
+        agg.add(1.0);
         agg.add(3.0);
         agg.add(2.0);
         agg.add(0.0);

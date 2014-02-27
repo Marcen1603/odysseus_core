@@ -134,8 +134,6 @@ public class DynamicHistogramDataset extends AbstractIntervalXYDataset implement
     }
 
     public TimeSeries getSeries(final int series) {
-        // Preconditions.checkArgument((series < 0) || (series >=
-        // this.getSeriesCount()));
         return this.data.get(series);
     }
 

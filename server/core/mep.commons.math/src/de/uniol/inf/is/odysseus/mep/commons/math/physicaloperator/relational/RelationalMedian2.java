@@ -27,73 +27,39 @@ public class RelationalMedian2 extends AbstractRelationalMedian {
         super("MEDIAN2", pos, partialAggregateInput);
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
-    public IPartialAggregate<Tuple<?>> init(final Tuple in) {
-        if (this.isPartialAggregateInput()) {
-            return this.init((Median2PartialAggregate<Tuple<?>>) in.getAttribute(this.pos));
+    public IPartialAggregate<Tuple<?>> init(Tuple in) {
+        if (isPartialAggregateInput()) {
+            return init((Median2PartialAggregate<Tuple<?>>) in.getAttribute(pos));
         }
         else {
-            return new Median2PartialAggregate<Tuple<?>>(((Number) in.getAttribute(this.pos)).doubleValue());
+            Median2PartialAggregate<Tuple<?>> pa = new Median2PartialAggregate<Tuple<?>>();
+            pa.add(((Number) in.getAttribute(this.pos)).doubleValue());
+            return pa;
         }
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
-    public IPartialAggregate<Tuple<?>> init(final IPartialAggregate<Tuple<?>> in) {
-        return new Median2PartialAggregate<Tuple<?>>((Median2PartialAggregate<Tuple<?>>) in);
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate p, final Tuple toMerge, final boolean createNew) {
-        Median2PartialAggregate<Tuple> pa = null;
-        if (createNew) {
-            final Median2PartialAggregate<Tuple> h = (Median2PartialAggregate<Tuple>) p;
-            pa = new Median2PartialAggregate<Tuple>(h);
+    protected IPartialAggregate<Tuple<?>> process_merge(IPartialAggregate p, Tuple toMerge) {
+        Median2PartialAggregate pa = (Median2PartialAggregate) p;
+        if (isPartialAggregateInput()) {
+            return merge(p, (IPartialAggregate) toMerge.getAttribute(pos), false);
         }
         else {
-            pa = (Median2PartialAggregate<Tuple>) p;
+            return pa.add(((Number) toMerge.getAttribute(pos)).doubleValue());
         }
-        return this.merge(pa, toMerge);
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
-    public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final IPartialAggregate<Tuple<?>> toMerge, final boolean createNew) {
+    public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p, IPartialAggregate<Tuple<?>> toMerge, boolean createNew) {
         Median2PartialAggregate<Tuple<?>> pa = null;
         if (createNew) {
-            final Median2PartialAggregate<Tuple<?>> h = (Median2PartialAggregate<Tuple<?>>) p;
+            Median2PartialAggregate<Tuple<?>> h = (Median2PartialAggregate<Tuple<?>>) p;
             pa = new Median2PartialAggregate<Tuple<?>>(h);
         }
         else {
             pa = (Median2PartialAggregate<Tuple<?>>) p;
         }
-        return this.merge(pa, toMerge);
+        return pa.merge((Median2PartialAggregate) toMerge);
     }
-
-    /**
-     * 
-     * @param pa
-     * @param toMerge
-     * @return
-     */
-    public IPartialAggregate<Tuple<?>> merge(final Median2PartialAggregate<Tuple<?>> pa, final IPartialAggregate<Tuple<?>> toMerge) {
-        final Median2PartialAggregate paToMerge = (Median2PartialAggregate) toMerge;
-        pa.add(paToMerge);
-        return pa;
-    }
-
 }

@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  * 
  */
 public interface IMedianPartialAggregate<R> extends IPartialAggregate<R> {
-    void add(final Double value);
+    IMedianPartialAggregate<R> add(final Double value);
 
     Double getAggValue();
 

@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.mep.commons.math.Interval;
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
- * FIXME: Not working yet!!
+ *         FIXME: Not working yet!!
  */
 @SuppressWarnings("unused")
 public class GuhaMedianPartialAggregate<R> implements IMedianPartialAggregate<R> {
@@ -62,7 +62,7 @@ public class GuhaMedianPartialAggregate<R> implements IMedianPartialAggregate<R>
      * {@inheritDoc}
      */
     @Override
-    public void add(Double value) {
+    public GuhaMedianPartialAggregate<R> add(Double value) {
         // int i = instatiation;
         // if (count == start(i)) {
         // Instance instance = new Instance(length(i), end(i));
@@ -120,7 +120,7 @@ public class GuhaMedianPartialAggregate<R> implements IMedianPartialAggregate<R>
         // this.aggregate = ab.inf() + (ab.sup() - ab.inf()) / 2.0;
         // }
         // TODO Auto-generated method stub
-
+        return this;
     }
 
     /**
