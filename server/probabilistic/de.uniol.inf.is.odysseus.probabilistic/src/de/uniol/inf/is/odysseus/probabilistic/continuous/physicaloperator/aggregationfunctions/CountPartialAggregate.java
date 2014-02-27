@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
 
@@ -23,7 +24,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalD
  * 
  * @param <T>
  */
-public class CountPartialAggregate<T> implements IPartialAggregate<T> {
+public class CountPartialAggregate<T> extends AbstractPartialAggregate<T> {
     /** The value of the aggregate. */
     private double count = 0.0;
     /** The result data type. */

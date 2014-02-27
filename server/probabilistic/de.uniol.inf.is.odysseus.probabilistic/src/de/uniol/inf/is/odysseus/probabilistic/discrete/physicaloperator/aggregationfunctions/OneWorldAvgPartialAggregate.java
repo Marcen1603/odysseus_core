@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.Polynomial;
 
@@ -32,7 +33,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.Polynomial;
  * 
  * @param <T>
  */
-public class OneWorldAvgPartialAggregate<T> implements IPartialAggregate<T> {
+public class OneWorldAvgPartialAggregate<T> extends AbstractPartialAggregate<T> {
     /** The logger. */
     private static final Logger LOG = LoggerFactory.getLogger(OneWorldAvgPartialAggregate.class);
 

@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.ProbabilisticDouble;
@@ -29,7 +30,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.Probabili
  * 
  * @param <T>
  */
-public class MultiWorldSumPartialAggregate<T> implements IPartialAggregate<T> {
+public class MultiWorldSumPartialAggregate<T> extends AbstractPartialAggregate<T> {
     /** The value of the aggregate. */
     private AbstractProbabilisticValue<?> aggregate;
     /** The result data type. */

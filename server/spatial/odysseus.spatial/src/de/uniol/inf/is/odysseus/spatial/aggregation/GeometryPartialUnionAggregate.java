@@ -17,12 +17,13 @@ package de.uniol.inf.is.odysseus.spatial.aggregation;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class GeometryPartialUnionAggregate<T> implements IPartialAggregate<T> {
+public class GeometryPartialUnionAggregate<T> extends AbstractPartialAggregate<T> {
 
     private Geometry geometry;
 
