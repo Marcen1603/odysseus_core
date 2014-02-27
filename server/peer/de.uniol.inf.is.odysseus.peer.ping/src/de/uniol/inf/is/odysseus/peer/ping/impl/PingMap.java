@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.ping.impl;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
 
@@ -13,12 +14,14 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.P2PDictionaryAdapter;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
+import de.uniol.inf.is.odysseus.peer.ping.IPingMapListener;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMapNode;
 
 public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
@@ -32,6 +35,7 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	private static IP2PNetworkManager networkManager;
 	
 	private final Map<PeerID, PingMapNode> nodes = Maps.newHashMap();
+	private final Collection<IPingMapListener> listeners = Lists.newArrayList();
 	
 	private Vector3D localPosition = new Vector3D();
 	private double timestep = 1.0;
@@ -145,8 +149,21 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		timestep = Math.max( 0.01, timestep - 0.01);
 		
 		localPosition = localPosition.add(displacement);
+		firePingMapChangeEvent();
 		
 		LOG.debug("Local position is now {}", localPosition);
+	}
+
+	private void firePingMapChangeEvent() {
+		synchronized( listeners ) {
+			for( IPingMapListener listener : listeners ) {
+				try {
+					listener.pingMapChanged();
+				} catch( Throwable t ) {
+					LOG.error("Exception in ping map listener", t);
+				}
+			}
+		}
 	}
 
 	private static double getLength( Vector3D v ) {
@@ -212,4 +229,18 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		return Optional.of(latency);
 	}
 
+	@Override
+	public void addListener(IPingMapListener listener) {
+		Preconditions.checkNotNull(listener, "Pingmap listener to add must not be null!");
+		synchronized( listeners ) {
+			listeners.add(listener);
+		}
+	}
+	
+	@Override
+	public void removeListener(IPingMapListener listener) {
+		synchronized(listeners ) {
+			listeners.remove(listener);
+		}
+	}
 }

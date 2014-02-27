@@ -17,4 +17,6 @@ public interface IPingMap {
 	public PeerID getLocalPeerID();
 	public Vector3D getLocalPosition();
 
+	public void addListener( IPingMapListener listener );
+	public void removeListener( IPingMapListener listener );
 }

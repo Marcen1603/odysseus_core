@@ -25,15 +25,13 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
+import de.uniol.inf.is.odysseus.peer.ping.IPingMapListener;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMapNode;
 import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
 
-public class PingMapView extends ViewPart implements PaintListener, MouseMoveListener {
+public class PingMapView extends ViewPart implements PaintListener, MouseMoveListener, IPingMapListener {
 
-	private RepeatingJobThread updateThread;
-	
 	private Map<Vector2D, String> currentPoints = Maps.newHashMap();
 
 	private Canvas canvas;
@@ -49,35 +47,19 @@ public class PingMapView extends ViewPart implements PaintListener, MouseMoveLis
 		canvas.addPaintListener(this);
 		canvas.addMouseMoveListener(this);
 		
-		updateThread = new RepeatingJobThread(1000) {
-			@Override
-			public void doJob() {
-				if( canvas.isDisposed() ) {
-					return;
-				}
-				
-				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if( !canvas.isDisposed() ) {
-							canvas.redraw();
-						}
-					}					
-				});
-			}
-		};
-		updateThread.start();
+		RCPP2PNewPlugIn.getPingMap().addListener(this);
 	}
 	
 	@Override
 	public void dispose() {
-		super.dispose();
+		RCPP2PNewPlugIn.getPingMap().removeListener(this);
 		
-		updateThread.stopRunning();
+		super.dispose();
 	}
 
 	@Override
 	public void setFocus() {
+		canvas.setFocus();
 	}
 
 	@Override
@@ -202,5 +184,22 @@ public class PingMapView extends ViewPart implements PaintListener, MouseMoveLis
 		} else {
 			canvas.setToolTipText("");
 		}
+	}
+
+	@Override
+	public void pingMapChanged() {
+		if( canvas.isDisposed() ) {
+			return;
+		}
+		
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				if( !canvas.isDisposed() ) {
+					canvas.redraw();
+				}
+			}
+		});
 	}
 }
