@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
@@ -27,6 +28,7 @@ public class RCPP2PNewPlugIn extends AbstractUIPlugin {
 	private static IPeerResourceUsageManager peerResourceUsageManager;
 	private static IPingMap pingMap;
 	private static IServerExecutor serverExecutor;
+	private static IAdvertisementManager advertisementManager;
 
 	// called by OSGi-DS
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
@@ -100,6 +102,18 @@ public class RCPP2PNewPlugIn extends AbstractUIPlugin {
 		}
 	}
 	
+	// called by OSGi-DS
+	public static void bindAdvertisementManager(IAdvertisementManager serv) {
+		advertisementManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindAdvertisementManager(IAdvertisementManager serv) {
+		if (advertisementManager == serv) {
+			advertisementManager = null;
+		}
+	}
+	
 	public static IP2PNetworkManager getP2PNetworkManager() {
 		return p2pNetworkManager;
 	}
@@ -122,6 +136,10 @@ public class RCPP2PNewPlugIn extends AbstractUIPlugin {
 	
 	public static IServerExecutor getServerExecutor() {
 		return serverExecutor;
+	}
+	
+	public static IAdvertisementManager getAdvertisementManager() {
+		return advertisementManager;
 	}
 	
 	@Override

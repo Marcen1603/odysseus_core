@@ -38,6 +38,12 @@
             name="Ping Map"
             restorable="true">
       </view>
+      <view
+            class="de.uniol.inf.is.odysseus.peer.rcp.views.AdvertisementsView"
+            id="de.uniol.inf.is.odysseus.rcp.peer.AdvertisementView"
+            name="Advertisements"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
