@@ -71,6 +71,13 @@
                   tooltip="Shows a continuous bar chart">
             </command>
             <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowHistogramChartCommand"
+                  icon="icons/chart_bar.png"
+                  label="Histogram Chart"
+                  style="push"
+                  tooltip="Shows a continuous histogram chart">
+            </command>
+            <command
                   commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowStepChartCommand"
                   icon="icons/border-horizontal.png"
                   label="Step Chart"
@@ -149,6 +156,11 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYBarChartCommand"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYBarChartCommand"
             name="XY Bar Command">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowHistogramChartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowHistogramChartCommand"
+            name="Histogram Command">
       </command>
       <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYLineChart"
@@ -236,6 +248,15 @@
             icon="icons/chart_bar.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.xybarchart"
             name="XY Bar Chart"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="true"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.HistogramChart"
+            icon="icons/chart_bar.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.histogramchart"
+            name="Histogram Chart"
             restorable="false">
       </view>
       <view
@@ -331,6 +352,10 @@
       </activityPatternBinding>
       <activityPatternBinding
             activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
+            pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.histogramchart">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
             pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.xylinechart">
       </activityPatternBinding>
       <activityPatternBinding
@@ -399,6 +424,11 @@
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYBarChart"
             configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
             name="XY Bar Chart">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.HistogramChart"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
+            name="Histogram Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.StepChart"
