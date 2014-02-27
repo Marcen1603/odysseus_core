@@ -24,6 +24,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.util.Pair;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
@@ -32,7 +33,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalD
  * @author Christian Kuka <christian@kuka.cc>
  * @param <T>
  */
-public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
+public class AvgPartialAggregate<T> extends AbstractPartialAggregate<T> {
     /** The sum value of the aggregate. */
     private NormalDistributionMixture sum;
     /** The count value of the aggregate. */

@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.math3.util.FastMath;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.ProbabilisticDouble;
@@ -17,7 +18,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.Probabili
  * @author Christian Kuka <christian@kuka.cc>
  * @param <T>
  */
-public class MultiWorldMinMaxPartialAggregate<T> implements IPartialAggregate<T> {
+public class MultiWorldMinMaxPartialAggregate<T> extends AbstractPartialAggregate<T> {
     /** The sum of the aggregate. */
     private AbstractProbabilisticValue<?> aggregate;
     /** Flag for min and max. */

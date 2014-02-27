@@ -257,8 +257,8 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 		if (logger.isTraceEnabled()) {
 			logger.trace(sa.toString());
 		}
+		//System.err.println(sa.toString());
 		return returnValues;
-		// System.err.println(sa.toString());
 	}
 
 	public void updateSAEndEnd(
@@ -303,7 +303,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 		final boolean createNew;
 		if (!outputPA && p2.point.before(t_probe.getStart())) {
 			createNew = false;
-			PairMap<SDFSchema, AggregateFunction, W, Q> v = calcEval(lastPartialAggregate);
+			PairMap<SDFSchema, AggregateFunction, W, Q> v = calcEval(lastPartialAggregate, false);
 			v.setMetadata(lastPartialAggregate.getMetadata());
 			v.getMetadata().setEnd(p2.point);
 			returnValues.add(v);

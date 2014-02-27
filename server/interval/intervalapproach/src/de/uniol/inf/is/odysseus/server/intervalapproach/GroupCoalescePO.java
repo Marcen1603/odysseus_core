@@ -81,7 +81,7 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 	}
 
 	protected void createAndSend() {
-		PairMap<SDFSchema, AggregateFunction, IStreamObject<M>, ?> result = calcEval(currentPartialAggregates);
+		PairMap<SDFSchema, AggregateFunction, IStreamObject<M>, ?> result = calcEval(currentPartialAggregates, false);
 		IStreamObject<M> out = getGroupProcessor().createOutputElement(
 				lastGroupID, result);
 		out.setMetadata(currentPartialAggregates.getMetadata());

@@ -15,10 +15,11 @@
   */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
 
-public class AvgSumPartialAggregate<R> implements IPartialAggregate<R> {
+public class AvgSumPartialAggregate<R> extends AbstractPartialAggregate<R> {
 	Double aggValue;
 	int aggCount;
 	

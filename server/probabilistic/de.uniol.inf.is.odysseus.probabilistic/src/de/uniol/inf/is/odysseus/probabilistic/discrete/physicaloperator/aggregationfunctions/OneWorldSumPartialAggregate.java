@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggrega
 
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 
@@ -28,7 +29,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractP
  * 
  * @param <T>
  */
-public class OneWorldSumPartialAggregate<T> implements IPartialAggregate<T> {
+public class OneWorldSumPartialAggregate<T> extends AbstractPartialAggregate<T> {
     /** The value of the aggregate. */
     private double aggregate = 0;
     /** The result data type. */

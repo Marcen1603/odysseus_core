@@ -187,13 +187,16 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
 
 	// Auswerten aller Elemente in der toEval map (mit dem passenden Evaluator)
 	protected PairMap<SDFSchema, AggregateFunction, W, M> calcEval(
-			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> toEval) {
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> toEval, boolean clearPartialAggregate) {
 		PairMap<SDFSchema, AggregateFunction, W, M> ret = new PairMap<SDFSchema, AggregateFunction, W, M>();
 		for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<R>> e : toEval
 				.entrySet()) {
 			IEvaluator<R, W> eval = getEvalFunction(e.getKey());
 			W value = eval.evaluate(e.getValue());
 			ret.put(e.getKey(), value);
+			if (clearPartialAggregate){
+				e.getValue().clear();
+			}
 		}
 		return ret;
 	}

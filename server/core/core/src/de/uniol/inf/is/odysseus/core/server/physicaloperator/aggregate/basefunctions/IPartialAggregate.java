@@ -20,6 +20,12 @@ import de.uniol.inf.is.odysseus.core.IClone;
 
 
 public interface IPartialAggregate<T> extends IClone{
+	/**
+	 * Method will be called after removing a partial aggregate from sweep area
+	 */
+	void clear();
 	@Override
-	public IPartialAggregate<T> clone();
+	IPartialAggregate<T> clone();
+	
+	
 }

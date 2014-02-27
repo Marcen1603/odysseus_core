@@ -19,9 +19,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
-public class ListPartialAggregate<T> implements IPartialAggregate<T>, Iterable<T>{
+public class ListPartialAggregate<T> extends AbstractPartialAggregate<T> implements Iterable<T>{
 	
 	final List<T> elems;
 	

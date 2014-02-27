@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -255,7 +256,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			if (outputPA) {
 				out = getGroupProcessor().createOutputElement2(groupID, e);
 			} else {
-				PairMap<SDFSchema, AggregateFunction, W, ? extends ITimeInterval> r = calcEval(e);
+				PairMap<SDFSchema, AggregateFunction, W, ? extends ITimeInterval> r = calcEval(e, true);
 				out = getGroupProcessor().createOutputElement(groupID, r);
 			}
 			out.setMetadata(e.getMetadata());

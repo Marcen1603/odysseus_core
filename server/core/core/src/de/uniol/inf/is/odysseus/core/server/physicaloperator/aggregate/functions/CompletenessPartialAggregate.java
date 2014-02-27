@@ -3,13 +3,14 @@
  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class CompletenessPartialAggregate<T> implements IPartialAggregate<T> {
+public class CompletenessPartialAggregate<T> extends AbstractPartialAggregate<T> {
     /** The number of non-null items (depending on implementation). */
     private double nonNullCount = 0.0;
     /** The number of total items. */

@@ -3,13 +3,14 @@
  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions;
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
+
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class AvgPartialAggregate<R> implements IPartialAggregate<R> {
+public class AvgPartialAggregate<R> extends AbstractPartialAggregate<R> {
     private double mean;
     private int count;
 
