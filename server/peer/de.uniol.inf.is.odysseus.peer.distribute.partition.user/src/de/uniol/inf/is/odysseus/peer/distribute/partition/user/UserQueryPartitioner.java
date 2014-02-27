@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -19,7 +22,9 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartitionException;
 
 public class UserQueryPartitioner implements IQueryPartitioner {
 
+	private static final Logger LOG = LoggerFactory.getLogger(UserQueryPartitioner.class);
 	private static final String LOCAL_DESTINATION_NAME = "local";
+	private static final String UNKNOWN_DESTINATION_NAME = "____unknown_____";
 
 	@Override
 	public String getName() {
@@ -56,7 +61,9 @@ public class UserQueryPartitioner implements IQueryPartitioner {
 	private static Collection<ILogicalQueryPart> generateQueryParts(Map<String, Collection<ILogicalOperator>> revertedDestinationMap) {
 		Collection<ILogicalQueryPart> parts = Lists.newArrayList();
 		for( String destinationName : revertedDestinationMap.keySet() ) {
-			parts.add( new LogicalQueryPart(revertedDestinationMap.get(destinationName)));
+			LogicalQueryPart queryPart = new LogicalQueryPart(revertedDestinationMap.get(destinationName));
+			parts.add( queryPart);
+			LOG.debug("Created destination name {} to query part {}", destinationName, queryPart);
 		}
 		return parts;
 	}
@@ -64,12 +71,23 @@ public class UserQueryPartitioner implements IQueryPartitioner {
 	private static Map<ILogicalOperator, String> determineDestinationNames(Collection<ILogicalOperator> operators) {
 		final Map<ILogicalOperator, String> destinationNames = Maps.newHashMap();
 
-		for (final ILogicalOperator operator : operators) {
+		for (ILogicalOperator operator : operators) {
 			String destinationName = getDestinationName(operator);
 			if( Strings.isNullOrEmpty(destinationName)) {
 				throw new RuntimeException("Could not determine destination name of operator " + operator);
 			}
 			destinationNames.put(operator, destinationName);
+		}
+		
+		for (ILogicalOperator operator : operators) {
+			String dst = destinationNames.get(operator);
+			if( dst.equals(UNKNOWN_DESTINATION_NAME) ) {
+				if( operator.getSubscriptions().isEmpty() ) {
+					destinationNames.put(operator, LOCAL_DESTINATION_NAME); 
+				} else {
+					destinationNames.put(operator, destinationNames.get(operator.getSubscriptions().iterator().next().getTarget()));
+				}
+			}
 		}
 
 		return destinationNames;
@@ -86,8 +104,8 @@ public class UserQueryPartitioner implements IQueryPartitioner {
 		if (operator.getSubscribedToSource().size() > 0) {
 			return getDestinationName(getOnePreviousOperator(operator));
 		}
-
-		return LOCAL_DESTINATION_NAME;
+		
+		return UNKNOWN_DESTINATION_NAME;
 	}
 
 	private static ILogicalOperator getOnePreviousOperator(ILogicalOperator operator) {
