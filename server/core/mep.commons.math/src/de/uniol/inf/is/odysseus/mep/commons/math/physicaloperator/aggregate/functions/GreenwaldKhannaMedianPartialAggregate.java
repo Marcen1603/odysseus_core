@@ -6,6 +6,7 @@ package de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.aggregate.fun
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Random;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -18,6 +19,7 @@ import org.apache.commons.math3.util.FastMath;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialAggregate<R> {
+   
     private final double epsilon;
     private LinkedList<Tuple> summary;
     private double min;
@@ -43,7 +45,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
      * Default constructor with an allowed error of epsilon=0.25.
      */
     public GreenwaldKhannaMedianPartialAggregate() {
-        this(0.0005);
+        this(0.1);
     }
 
     /**
@@ -121,6 +123,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
     public void clear() {
         this.summary.clear();
         this.count = 0;
+        this.stream = 0;
     }
 
     /**
@@ -131,7 +134,12 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         return new GreenwaldKhannaMedianPartialAggregate<R>(this);
     }
 
-    private void insert(final double v, int n) {
+    private void insert(final double v, final int n) {
+        if (this.summary.size() == 0) {
+            this.summary.add(new Tuple(v, 1.0, 0.0));
+            this.stream++;
+            return;
+        }
         int pos = Collections.binarySearch(this.summary, new Tuple(v, 1.0, 0.0));
         double range = 0.0;
         if ((v < this.min) || (v > this.max)) {
@@ -142,7 +150,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         Tuple next = null;
         if (pos >= 0) {
             next = this.summary.get(pos);
-            range = (next.gain + next.range) - 1;
+            range = FastMath.floor(2.0 * this.epsilon() * n);
             if (pos > 0) {
                 prev = this.summary.get(pos - 1);
             }
@@ -152,15 +160,15 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
             if (pos > 0) {
                 prev = this.summary.get(pos - 1);
             }
-            if ((pos == 0) && (this.summary.size() > 0)) {
-                next = this.summary.get(pos);
+            if (pos == 0) {
+                next = this.summary.get(0);
             }
         }
-        Tuple cur = new Tuple(v, 1.0, range);
-        if ((prev != null) && (band(prev.range, 2.0 * this.epsilon() * n) < band(cur.range, 2.0 * this.epsilon() * n))) {
+        final Tuple cur = new Tuple(v, 1.0, range);
+        if ((prev != null) && (this.band(prev.range, 2.0 * this.epsilon() * n) < this.band(cur.range, 2.0 * this.epsilon() * n))) {
             cur.setParent(prev);
         }
-        if ((next != null) && (band(cur.range, 2.0 * this.epsilon() * n) < band(next.range, 2.0 * this.epsilon() * n))) {
+        if ((next != null) && (this.band(cur.range, 2.0 * this.epsilon() * n) < this.band(next.range, 2.0 * this.epsilon() * n))) {
             next.setParent(cur);
         }
         this.summary.add(pos, cur);
@@ -168,13 +176,19 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
     }
 
     private void compress(final int n, final int s) {
-        if (this.summary.size() <= 1) {
+        if (s <= 1) {
             return;
         }
+        final ListIterator<Tuple> iter = this.summary.listIterator(s - 1);
+        Tuple next = null;
+        Tuple cur = null;
         double sum = 0.0;
-        for (int i = s - 2; i > 0; i--) {
-            Tuple cur = this.summary.get(i);
-            Tuple next = this.summary.get(i + 1);
+        while (iter.hasPrevious()) {
+            cur = iter.previous();
+            iter.next();
+            next = iter.next();
+            iter.previous();
+            iter.previous();
             final int band = this.band(cur.range, 2.0 * this.epsilon() * n);
             final int nextBand = this.band(next.range, 2.0 * this.epsilon() * n);
             if ((next.parent != null) && (next.parent.equals(cur))) {
@@ -184,23 +198,29 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
                 sum = cur.gain;
             }
             if ((band <= nextBand) && ((sum + next.gain + next.range) < (2.0 * this.epsilon() * n))) {
-                cur = delete(cur, next);
-                this.summary.remove(i);
-                if (i + 1 < summary.size()) {
-                    next = this.summary.get(i + 1);
+                cur = this.delete(cur, next);
+                iter.remove();
+                iter.next();
+                if (iter.hasNext()) {
+                    next = iter.next();
                     while ((next.parent != null) && (next.parent.equals(cur))) {
-                        cur = delete(cur, next);
-                        this.summary.remove(i);
-                        next = this.summary.get(i + 1);
+                        cur = this.delete(cur, next);
+                        iter.remove();
+                        iter.next();
+                        next = iter.next();
+                        iter.previous();
+                        iter.previous();
                     }
+                    iter.previous();
                 }
+                iter.previous();
+                sum = 0.0;
             }
-
         }
     }
 
-    private Tuple delete(Tuple cur, Tuple next) {
-        Tuple merged = next.merge(cur);
+    private Tuple delete(final Tuple cur, final Tuple next) {
+        final Tuple merged = next.merge(cur);
         this.stream--;
         return merged;
     }
@@ -212,7 +232,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
             return (0);
         }
         else {
-            band = FastMath.log((double) diff) / FastMath.log(2.0);
+            band = FastMath.log(diff) / FastMath.log(2.0);
             return ((int) band);
         }
     }
@@ -249,7 +269,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
             return this;
         }
 
-        public void setParent(Tuple tuple) {
+        public void setParent(final Tuple tuple) {
             this.parent = tuple;
         }
 
@@ -268,6 +288,60 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         public String toString() {
             return "(" + this.value + "," + this.gain + "," + this.range + ")";
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = (prime * result) + this.getOuterType().hashCode();
+            long temp;
+            temp = Double.doubleToLongBits(this.gain);
+            result = (prime * result) + (int) (temp ^ (temp >>> 32));
+            temp = Double.doubleToLongBits(this.range);
+            result = (prime * result) + (int) (temp ^ (temp >>> 32));
+            temp = Double.doubleToLongBits(this.value);
+            result = (prime * result) + (int) (temp ^ (temp >>> 32));
+            return result;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (this.getClass() != obj.getClass()) {
+                return false;
+            }
+            @SuppressWarnings("unchecked")
+            final Tuple other = (Tuple) obj;
+            if (!this.getOuterType().equals(other.getOuterType())) {
+                return false;
+            }
+            if (Double.doubleToLongBits(this.gain) != Double.doubleToLongBits(other.gain)) {
+                return false;
+            }
+            if (Double.doubleToLongBits(this.range) != Double.doubleToLongBits(other.range)) {
+                return false;
+            }
+            if (Double.doubleToLongBits(this.value) != Double.doubleToLongBits(other.value)) {
+                return false;
+            }
+            return true;
+        }
+
+        private GreenwaldKhannaMedianPartialAggregate<R> getOuterType() {
+            return GreenwaldKhannaMedianPartialAggregate.this;
+        }
+
     }
 
     public static void main(final String[] args) {
@@ -307,14 +381,14 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
 
         stats = new DescriptiveStatistics();
         agg = new GreenwaldKhannaMedianPartialAggregate<>();
-        Random random = new Random();
-        int n = 50000;
+        final Random random = new Random();
+        final int n = 250000;
         for (int i = 0; i < n; i++) {
-            double value = random.nextDouble() * 100;
+            final double value = random.nextDouble() * 100;
             agg.add(value);
             stats.addValue(value);
         }
         assert (agg.getAggValue() == stats.getPercentile(50));
-        System.out.println(agg + " == " + stats.getPercentile(50) + " -> " + (stats.getPercentile(50) - agg.getAggValue()) + " < " + agg.epsilon * 50000);
+        System.out.println(agg + " == " + stats.getPercentile(50) + " -> " + (stats.getPercentile(50) - agg.getAggValue()) + " < " + (agg.epsilon * 50000));
     }
 }
