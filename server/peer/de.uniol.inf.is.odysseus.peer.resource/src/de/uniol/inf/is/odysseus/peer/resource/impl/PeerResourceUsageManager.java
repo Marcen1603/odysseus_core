@@ -148,7 +148,10 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	@Override
 	public Future<Optional<IResourceUsage>> getRemoteResourceUsage(final PeerID peerID) {
 		Preconditions.checkNotNull(peerID, "PeerID to get current resource usage must not be null!");
-
+		if( peerCommunicator == null ) {
+			return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
+		}
+		
 		if( !peerCommunicator.isConnected(peerID)) {
 			return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
 		}
