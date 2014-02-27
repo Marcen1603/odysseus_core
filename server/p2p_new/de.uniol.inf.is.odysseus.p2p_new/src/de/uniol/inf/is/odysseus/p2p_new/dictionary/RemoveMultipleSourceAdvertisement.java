@@ -47,17 +47,14 @@ public class RemoveMultipleSourceAdvertisement extends Advertisement implements 
 		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
 
 		final Enumeration<?> elements = doc.getChildren();
-		System.err.println("handleElement() start");
 		while (elements.hasMoreElements()) {
 			final TextElement<?> elem = (TextElement<?>) elements.nextElement();
 			handleElement(elem);
 		}
-		System.err.println("handleElement() end");
 	}
 
 	public RemoveMultipleSourceAdvertisement(InputStream stream) throws IOException {
 		this(StructuredDocumentFactory.newStructuredDocument(MimeMediaType.XMLUTF8, Preconditions.checkNotNull(stream, "Stream must not be null!")));
-		System.err.println("constructor() input stream");
 	}
 
 	public RemoveMultipleSourceAdvertisement(RemoveMultipleSourceAdvertisement viewAdvertisement) {
@@ -65,11 +62,9 @@ public class RemoveMultipleSourceAdvertisement extends Advertisement implements 
 
 		id = viewAdvertisement.id;
 		sourceAdvertisementIDs = viewAdvertisement.sourceAdvertisementIDs;
-		System.err.println("copy constructor()");
 	}
 
 	public RemoveMultipleSourceAdvertisement() {
-		System.err.println("constructor()");
 		// for JXTA-side instances
 	}
 
@@ -80,7 +75,6 @@ public class RemoveMultipleSourceAdvertisement extends Advertisement implements 
 
 	@Override
 	public Document getDocument(MimeMediaType asMimeType) {
-		System.err.println("getDocument() start");
 		final StructuredDocument<?> doc = StructuredDocumentFactory.newStructuredDocument(asMimeType, getAdvertisementType());
 		if (doc instanceof Attributable) {
 			((Attributable) doc).addAttribute("xmlns:jxta", "http://jxta.org");
@@ -92,7 +86,6 @@ public class RemoveMultipleSourceAdvertisement extends Advertisement implements 
 			appendElement(sourcesElement, SOURCE_ADV_ID_TAG, id.toString());
 		}
 		
-		System.err.println("getDocument() end");
 		return doc;
 	}
 

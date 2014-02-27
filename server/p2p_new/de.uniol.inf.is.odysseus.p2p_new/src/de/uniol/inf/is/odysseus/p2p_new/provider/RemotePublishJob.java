@@ -18,6 +18,5 @@ public class RemotePublishJob implements IJxtaJob {
 	@Override
 	public void execute() throws Exception {
 		service.remotePublish(adv, expiration);
-		System.err.println("Publish " + adv.getAdvType());
 	}
 }

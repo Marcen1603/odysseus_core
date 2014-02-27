@@ -27,7 +27,6 @@ public class JxtaJobExecutor {
 	public void executeJobs() {
 		synchronized( pendingJobs ) {
 			
-			System.err.println("Execute " + pendingJobs.size() + " jobs");
 			int jobsExecuted = 0;
 			while( jobsExecuted < JOBS_PER_BATCH && !pendingJobs.isEmpty()) {
 				

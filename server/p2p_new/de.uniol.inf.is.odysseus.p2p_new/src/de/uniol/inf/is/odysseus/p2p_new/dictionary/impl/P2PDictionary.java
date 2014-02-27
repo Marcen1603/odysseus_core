@@ -490,7 +490,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			adv.setSourceAdvertisementIDs(sourceIDRemoved);
 			
 			try {
-				System.err.println("publishing");
 				JxtaServicesProvider.getInstance().publish(adv);
 				JxtaServicesProvider.getInstance().remotePublish(adv);
 			} catch (IOException e) {

@@ -20,6 +20,5 @@ public class PublishJob implements IJxtaJob {
 	@Override
 	public void execute() throws Exception {
 		service.publish(adv, lifetime, expiration);
-		System.err.println("Publish " + adv.getAdvType());
 	}
 }

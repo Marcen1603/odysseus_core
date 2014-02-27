@@ -142,7 +142,6 @@ public class AdvertisementManager implements IAdvertisementManager {
 			oldAdvertisements = Maps.newHashMap(knownAdvertisements);
 		}
 		
-		int c = 0;
 		while (advs.hasMoreElements()) {
 			final Advertisement adv = advs.nextElement();
 			newAdvertisements.put(adv.getID(), adv);
@@ -152,9 +151,7 @@ public class AdvertisementManager implements IAdvertisementManager {
 			} else {
 				fireAdvertisementAddEvent(adv);
 			}
-			c++;
 		}
-		System.err.println("Got " + c + " advertisements");
 		
 		for( Advertisement removedAdvertisement : oldAdvertisements.values()) {
 			fireAdvertisementRemoveEvent(removedAdvertisement);
