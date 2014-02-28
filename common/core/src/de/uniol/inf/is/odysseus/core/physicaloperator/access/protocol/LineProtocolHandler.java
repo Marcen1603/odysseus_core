@@ -217,7 +217,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 					long time = System.currentTimeMillis();
 					LOG.debug(lineCounter + " " + time + " "
 							+ (time - lastDumpTime) 
-							+ (dumpMemory ? " M = "+RUNTIME.freeMemory()+" " : "") + line+ " ("
+							+ (dumpMemory ? " M = "+RUNTIME.freeMemory()+" " : " ") + line+ " ("
 							+ Integer.toHexString(hashCode()) + ") line: ");
 					lastDumpTime = time;
 				}
