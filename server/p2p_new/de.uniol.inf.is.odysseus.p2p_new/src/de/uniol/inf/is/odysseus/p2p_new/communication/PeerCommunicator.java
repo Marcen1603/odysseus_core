@@ -329,6 +329,11 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		Preconditions.checkNotNull(message, "Message to send must not be null!");
 
 		IJxtaConnection connection = activeConnectionsAsServer_PeerID.get(destinationPeer);
+		if( connection == null ) {
+			activeConnectionsAsServer_PeerID.remove(destinationPeer);
+			throw new PeerCommunicationException("Could not send message since there is no connection to specified peerID " + destinationPeer);
+		}
+		
 		try {
 			connection.send(message);
 		} catch (IOException e) {
