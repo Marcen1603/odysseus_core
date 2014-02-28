@@ -25,7 +25,6 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
     private double min;
     private double max;
     private int count;
-    private int stream;
 
     /**
      * 
@@ -38,7 +37,6 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         this.min = Double.POSITIVE_INFINITY;
         this.max = Double.NEGATIVE_INFINITY;
         this.count = 0;
-        this.stream = 0;
     }
 
     /**
@@ -59,8 +57,11 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         this.min = partialAggregate.min;
         this.max = partialAggregate.max;
         this.count = partialAggregate.count;
-        this.stream = partialAggregate.stream;
-        this.summary = new LinkedList<>(partialAggregate.summary);
+
+        this.summary = new LinkedList<>();
+        for (Tuple t : partialAggregate.summary) {
+            this.summary.add(t.clone());
+        }
     }
 
     /**
@@ -73,7 +74,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         // Compress if number of values n=0mod1/2e but at least after 1000
         // values
         if ((this.count % 1000 == 0) || ((this.count % (1.0 / (2.0 * this.epsilon()))) == 0)) {
-            this.compress(this.count, this.stream);
+            this.compress(this.count);
         }
         this.insert(value, this.count);
         this.count++;
@@ -125,7 +126,8 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
     public void clear() {
         this.summary.clear();
         this.count = 0;
-        this.stream = 0;
+        this.min = Double.POSITIVE_INFINITY;
+        this.max = Double.NEGATIVE_INFINITY;
     }
 
     /**
@@ -139,7 +141,6 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
     private void insert(final double v, final int n) {
         if (this.summary.size() == 0) {
             this.summary.add(new Tuple(v, 1, 0));
-            this.stream++;
             return;
         }
         int pos = Collections.binarySearch(this.summary, new Tuple(v, 1, 0));
@@ -152,6 +153,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         Tuple next = null;
         if (pos >= 0) {
             next = this.summary.get(pos);
+            next.setParent(null);
             range = (next.gain + next.range) - 1;
             if (pos > 0) {
                 prev = this.summary.get(pos - 1);
@@ -174,14 +176,13 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
             next.setParent(cur);
         }
         this.summary.add(pos, cur);
-        this.stream++;
     }
 
-    private void compress(final int n, final int s) {
-        if (s <= 1) {
+    private void compress(final int n) {
+        if (this.summary.size() <= 1) {
             return;
         }
-        final ListIterator<Tuple> iter = this.summary.listIterator(s - 1);
+        final ListIterator<Tuple> iter = this.summary.listIterator(this.summary.size() - 1);
         Tuple next = null;
         Tuple cur = null;
         int sum = 0;
@@ -189,6 +190,9 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
             cur = iter.previous();
             iter.next();
             next = iter.next();
+            if ((next.parent == null) && (this.band(cur.range, 2.0 * this.epsilon() * n) < this.band(next.range, 2.0 * this.epsilon() * n))) {
+                next.setParent(cur);
+            }
             iter.previous();
             iter.previous();
             final int band = this.band(cur.range, 2.0 * this.epsilon() * n);
@@ -208,10 +212,12 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
                     while ((next.parent != null) && (next.parent.equals(cur))) {
                         cur = this.delete(cur, next);
                         iter.remove();
-                        iter.next();
-                        next = iter.next();
-                        iter.previous();
-                        iter.previous();
+                        if (iter.hasNext()) {
+                            iter.next();
+                            next = iter.next();
+                            iter.previous();
+                            iter.previous();
+                        }
                     }
                     iter.previous();
                 }
@@ -223,7 +229,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
 
     private Tuple delete(final Tuple cur, final Tuple next) {
         final Tuple merged = next.merge(cur);
-        this.stream--;
+        cur.setParent(null);
         return merged;
     }
 
@@ -249,7 +255,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         return "MEDIAN= " + this.getAggValue() + " with " + this.summary.size() + " tuples";
     }
 
-    private class Tuple implements Comparable<Tuple> {
+    private class Tuple implements Comparable<Tuple>, Cloneable {
         private int gain;
         private final int range;
         private final double value;
@@ -264,8 +270,18 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
             this.range = range;
         }
 
+        /**
+         * @param tuple
+         */
+        public Tuple(Tuple tuple) {
+            this.value = tuple.value;
+            this.gain = tuple.gain;
+            this.range = tuple.range;
+        }
+
         public Tuple merge(final Tuple t) {
             this.gain += t.gain;
+            this.parent = t.parent;
             return this;
         }
 
@@ -279,6 +295,14 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         @Override
         public int compareTo(final Tuple o) {
             return Double.compare(this.value, o.value);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Tuple clone() {
+            return new Tuple(this);
         }
 
         /**
