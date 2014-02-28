@@ -190,13 +190,13 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
             cur = iter.previous();
             iter.next();
             next = iter.next();
-            if ((next.parent == null) && (this.band(cur.range, 2.0 * this.epsilon() * n) < this.band(next.range, 2.0 * this.epsilon() * n))) {
+            final int band = this.band(cur.range, 2.0 * this.epsilon() * n);
+            final int nextBand = this.band(next.range, 2.0 * this.epsilon() * n);
+            if ((next.parent == null) && (band < nextBand)) {
                 next.setParent(cur);
             }
             iter.previous();
             iter.previous();
-            final int band = this.band(cur.range, 2.0 * this.epsilon() * n);
-            final int nextBand = this.band(next.range, 2.0 * this.epsilon() * n);
             if ((next.parent != null) && (next.parent.equals(cur))) {
                 sum += cur.gain;
             }
