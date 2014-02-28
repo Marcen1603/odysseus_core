@@ -119,6 +119,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser,
 		strings.add(IfController.SRCDEF_KEY);
 		strings.add(IfController.SRCNDEF_KEY);
 		strings.add(IfController.IF_KEY);
+		strings.add(IfController.PRINT_KEY);
 		strings.add(InputStatementParser.INPUT_KEY);
 		return strings;
 	}

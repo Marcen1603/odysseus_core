@@ -45,6 +45,8 @@ public class IfController {
 	
 	public static final String IF_KEY = "IF";
 	
+	public static final String PRINT_KEY = "PRINT";
+	
 	private final String[] text;
 	private final ISession caller;
 	private final List<String> defined = Lists.newArrayList();
@@ -100,6 +102,27 @@ public class IfController {
 				return false;
 			}
 			
+            Optional<String> optionalPrint = determinePrint(currentLine);
+            if (optionalPrint.isPresent()) {
+                String stringExpression = optionalPrint.get();
+                SDFExpression expression = new SDFExpression(stringExpression, MEP.getInstance());
+                
+                List<SDFAttribute> attributes = expression.getAllAttributes();
+                List<Object> values = Lists.newArrayList();
+                Map<String, String> replacementMap = replacements.toMap();
+                for( SDFAttribute attribute : attributes ) {
+                    String name = attribute.getAttributeName().toUpperCase();
+                    if( !replacementMap.containsKey(name)) {
+                        throw new OdysseusScriptException("Replacementkey " + name + " not known in #PRINT-statement");
+                    } 
+                    
+                    values.add(replacementMap.get(name));
+                }
+                expression.bindVariables(values.toArray());
+                System.out.println(expression.getValue());
+                return false;
+            }
+	            
 			Optional<String> optionalIfDef = determineIfDef( currentLine );
 			if(optionalIfDef.isPresent()) {
 				
@@ -209,6 +232,15 @@ public class IfController {
 		return determineReplacement(PARAMETER_KEY + SRCNDEF_KEY, textLine);
 	}	
 	
+    private static Optional<String> determinePrint(String textLine) {
+        String strToFind = PARAMETER_KEY + PRINT_KEY + " ";
+        int pos = textLine.indexOf(strToFind);
+        if( pos != -1 ) {
+            return Optional.of(textLine.substring(pos + strToFind.length() ));
+        }
+        return Optional.absent();
+    }
+	   
 	private static Optional<String> determineIf(String textLine) {
 		String strToFind = PARAMETER_KEY + IF_KEY + " ";
 		int pos = textLine.indexOf(strToFind);
