@@ -62,7 +62,11 @@ public class RelationalFastMedianHistogramPO<T extends Comparable<T>>
 
 		Tuple<? extends ITimeInterval> gr = groupProcessor
 				.getGroupingPart(object);
-		return gr.append(groupHistogram.getMedian());
+		if (percentiles == null){
+			return gr.append(groupHistogram.getMedian());
+		}else{
+			return gr.appendList(groupHistogram.getPercentiles(percentiles), true);
+		}
 	}
 	
 	@Override

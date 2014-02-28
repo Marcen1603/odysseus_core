@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.relational_interval.physicaloperator;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,9 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 	}
 
 	public void setPercentiles(List<Double> percentiles) {
-		this.percentiles = percentiles;
+		if (percentiles != null){
+			this.percentiles = new LinkedList<>(percentiles);
+		}
 	}
 
 	@Override

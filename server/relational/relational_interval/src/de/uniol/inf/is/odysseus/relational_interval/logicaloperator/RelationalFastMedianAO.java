@@ -59,15 +59,15 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 		return groupingAttributes;
 	}
 
-	@Parameter(name = "appendGlobalMedian", optional = true, type = BooleanParameter.class, doc="If a GROUP_BY element is given, the global median (i.e. median without respecting groups) will be annotated to each element.")
+	@Parameter(name = "appendGlobalMedian", optional = true, type = BooleanParameter.class, doc = "If a GROUP_BY element is given, the global median (i.e. median without respecting groups) will be annotated to each element.")
 	public void setAppendGlobalMedian(boolean appendGlobalMedian) {
 		this.appendGlobalMedian = appendGlobalMedian;
 	}
-	
+
 	public boolean isAppendGlobalMedian() {
 		return appendGlobalMedian;
 	}
-	
+
 	@Parameter(name = "Attribute", optional = false, type = ResolvedSDFAttributeParameter.class)
 	public void setMedianAttribute(SDFAttribute attribute) {
 		this.medianAttribute = attribute;
@@ -119,9 +119,22 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 		if (groupingAttributes != null) {
 			outattr.addAll(groupingAttributes);
 		}
-		outattr.add(medianAttribute);
-		if (appendGlobalMedian){
-			SDFAttribute globaleMedianAttribute = new SDFAttribute(medianAttribute.getSourceName(), "global_"+medianAttribute.getAttributeName(), medianAttribute);
+		if (percentiles != null) {
+			for (Double d : percentiles) {
+				SDFAttribute pAttr = new SDFAttribute(
+						medianAttribute.getSourceName(), 
+								medianAttribute.getAttributeName()+"_p_"+d,
+						medianAttribute);
+				outattr.add(pAttr);
+			}
+		} else {
+			outattr.add(medianAttribute);
+		}
+		if (appendGlobalMedian) {
+			SDFAttribute globaleMedianAttribute = new SDFAttribute(
+					medianAttribute.getSourceName(), "global_"
+							+ medianAttribute.getAttributeName(),
+					medianAttribute);
 			outattr.add(globaleMedianAttribute);
 		}
 		SDFSchema output = new SDFSchema(getInputSchema(0), outattr);
@@ -140,6 +153,11 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 			addError(new IllegalParameterException(
 					"You can only use percentiles or numerical median!"));
 			isValid = false;
+		}
+		if (!useHistogram && percentiles != null){
+			addError(new IllegalParameterException(
+					"Percentiles only allowed for histogram version!"));
+			isValid = false;			
 		}
 		return isValid && super.isValid();
 	}
