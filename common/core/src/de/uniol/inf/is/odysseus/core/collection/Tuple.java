@@ -21,6 +21,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import com.rits.cloning.Cloner;
 
@@ -303,6 +304,29 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		} else {
 			newAttrs = new Object[1];
 			newAttrs[0] = object;
+		}
+		if (createNew) {
+			Tuple<T> newTuple = new Tuple<T>(this, newAttrs, requiresDeepClone);
+			return newTuple;
+		}
+		this.attributes = newAttrs;
+		return this;
+	}
+	
+	
+	public Tuple<T> appendList(List<?> objects, boolean createNew) {
+		Object[] newAttrs = null;
+		if (this.attributes != null) {
+			newAttrs = Arrays.copyOf(this.attributes,
+					this.attributes.length + objects.size());
+			for (int i=0;i<objects.size();i++){
+				newAttrs[this.attributes.length+i] = objects.get(i);
+			}
+		} else {
+			newAttrs = new Object[objects.size()];
+			for (int i=0;i<objects.size();i++){
+				newAttrs[i] = objects.get(i);
+			}
 		}
 		if (createNew) {
 			Tuple<T> newTuple = new Tuple<T>(this, newAttrs, requiresDeepClone);
