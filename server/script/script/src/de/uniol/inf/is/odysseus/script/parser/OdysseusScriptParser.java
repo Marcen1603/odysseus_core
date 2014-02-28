@@ -118,6 +118,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser,
 		strings.add(IfController.UNDEF_KEY);
 		strings.add(IfController.SRCDEF_KEY);
 		strings.add(IfController.SRCNDEF_KEY);
+		strings.add(IfController.IF_KEY);
 		strings.add(InputStatementParser.INPUT_KEY);
 		return strings;
 	}
@@ -267,7 +268,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser,
 				String line = text[currentLine].trim();
 
 				// check if we are an executable line
-				if (!ifController.canExecuteNextLine()) {
+				if (!ifController.canExecuteNextLine(replacements)) {
 					continue;
 				}
 

@@ -16,13 +16,17 @@
 package de.uniol.inf.is.odysseus.script.parser;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.script.parser.activator.Activator;
 
 public class IfController {
@@ -39,6 +43,8 @@ public class IfController {
 	public static final String SRCDEF_KEY = "IFSRCDEF";
 	public static final String SRCNDEF_KEY = "IFSRCNDEF";
 	
+	public static final String IF_KEY = "IF";
+	
 	private final String[] text;
 	private final ISession caller;
 	private final List<String> defined = Lists.newArrayList();
@@ -54,7 +60,7 @@ public class IfController {
 		this.caller = caller;
 	}
 
-	public boolean canExecuteNextLine() throws OdysseusScriptException {
+	public boolean canExecuteNextLine(ReplacementContainer replacements) throws OdysseusScriptException {
 		try {
 			
 			String currentLine = text[this.currentLine].trim();
@@ -138,12 +144,35 @@ public class IfController {
 				return false;
 			}			
 			
+			Optional<String> optionalIf = determineIf(currentLine);
+			if( optionalIf.isPresent() ) {
+				String stringExpression = optionalIf.get();
+				SDFExpression expression = new SDFExpression(stringExpression, MEP.getInstance());
+				
+				List<SDFAttribute> attributes = expression.getAllAttributes();
+				List<Object> values = Lists.newArrayList();
+				Map<String, String> replacementMap = replacements.toMap();
+				for( SDFAttribute attribute : attributes ) {
+					String name = attribute.getAttributeName().toUpperCase();
+					if( !replacementMap.containsKey(name)) {
+						throw new OdysseusScriptException("Replacementkey " + name + " not known in #IF-statement");
+					} 
+					
+					values.add(replacementMap.get(name));
+				}
+				
+				expression.bindVariables(values.toArray());
+				
+				inIfClause = expression.getValue();
+				return false;
+			}
+			
 			return true;
 		} finally {
 			currentLine++;
 		}
 	}
-	
+
 	private static boolean existsSource(String sourceName, ISession caller) {
 		return Activator.getExecutor().containsViewOrStream(new Resource(caller.getUser(), sourceName), caller);
 	}
@@ -179,6 +208,15 @@ public class IfController {
 	private static Optional<String> determineIfSrcNDef(String textLine) throws OdysseusScriptException {
 		return determineReplacement(PARAMETER_KEY + SRCNDEF_KEY, textLine);
 	}	
+	
+	private static Optional<String> determineIf(String textLine) {
+		String strToFind = PARAMETER_KEY + IF_KEY + " ";
+		int pos = textLine.indexOf(strToFind);
+		if( pos != -1 ) {
+			return Optional.of(textLine.substring(pos + strToFind.length() ));
+		}
+		return Optional.absent();
+	}
 	
 	private static boolean hasPreParserKeyword( String keyword, String textLine ) {
 		return textLine.indexOf(keyword) != -1;
