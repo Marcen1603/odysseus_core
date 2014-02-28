@@ -46,6 +46,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.SineGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.StepIncreaseGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.TangentGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.switching.AlternatingDurationSwitchGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.switching.SignGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.switching.SwitchGenerator;
 
 /**
@@ -97,7 +98,7 @@ public class Activator implements BundleActivator {
         generators.put("TimeGenerator".toUpperCase(), TimeGenerator.class);
         generators.put("AlternatingDurationSwitchGenerator".toUpperCase(), AlternatingDurationSwitchGenerator.class);
         generators.put("SwitchGenerator".toUpperCase(), SwitchGenerator.class);
-
+        generators.put("SignGenerator".toUpperCase(), SignGenerator.class);
     }
 
     static BundleContext getContext() {
@@ -122,7 +123,7 @@ public class Activator implements BundleActivator {
 
             bundleContext.registerService(CommandProvider.class.getName(), new ConsoleCommands(), null);
         }
-        StreamServer genericServer = new StreamServer(54325, new GenericProvider("schema.txt"));
+        StreamServer genericServer = new StreamServer(54325, new GenericProvider("schema.txt", 1000l));
         genericServer.start();
         server.add(genericServer);
     }

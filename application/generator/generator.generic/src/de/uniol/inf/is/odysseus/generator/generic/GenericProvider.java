@@ -29,12 +29,14 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
 public class GenericProvider extends AbstractDataGenerator {
     private final Map<String, IValueGenerator> generators = new HashMap<String, IValueGenerator>();
     private String schemaFile;
+    private long frequency;
 
     /**
      * 
      */
-    public GenericProvider(String schemaFile) {
+    public GenericProvider(String schemaFile, long frequency) {
         this.schemaFile = schemaFile;
+        this.frequency = frequency;
     }
 
     /**
@@ -48,7 +50,9 @@ public class GenericProvider extends AbstractDataGenerator {
                 tuple.addDouble(this.generators.get(attribute).nextValue());
             }
             try {
-                Thread.sleep(1000);
+                if (this.frequency < 1000l) {
+                    Thread.sleep(1000 / this.frequency);
+                }
             }
             catch (InterruptedException e) {
                 e.printStackTrace();
@@ -173,7 +177,7 @@ public class GenericProvider extends AbstractDataGenerator {
 
     @Override
     public GenericProvider newCleanInstance() {
-        return new GenericProvider("schema.txt");
+        return new GenericProvider("schema.txt", 10l);
     }
 
     public static void main(final String[] args) {
