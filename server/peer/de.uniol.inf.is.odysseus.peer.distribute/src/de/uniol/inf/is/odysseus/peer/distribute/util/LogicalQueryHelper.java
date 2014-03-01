@@ -169,8 +169,11 @@ public final class LogicalQueryHelper {
 
 	private static void setDestinationNames(ILogicalOperator fromOperator, ILogicalOperator toOperator) {
 		Collection<ILogicalOperator> streamPlanOperators = getAllOperators(toOperator);
+		String destinationName = fromOperator.getDestinationName();
+		if(destinationName == null && toOperator.getDestinationName() != null)
+			destinationName = toOperator.getDestinationName();
 		for (ILogicalOperator streamPlanOperator : streamPlanOperators) {
-			streamPlanOperator.setDestinationName(fromOperator.getDestinationName());
+			streamPlanOperator.setDestinationName(destinationName);
 		}
 	}
 

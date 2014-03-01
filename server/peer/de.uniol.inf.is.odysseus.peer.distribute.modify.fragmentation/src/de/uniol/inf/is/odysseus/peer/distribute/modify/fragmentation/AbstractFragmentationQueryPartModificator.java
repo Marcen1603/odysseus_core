@@ -728,6 +728,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		// Subscribe the targets to the operator for reunion
 		for(ILogicalOperator target : targets)
 			operatorForReunion.subscribeSink(target, sinkInPort, 0, schema);
+		if(targets.size() == 1)
+			operatorForReunion.setDestinationName(targets.iterator().next().getDestinationName());
 		
 		AbstractFragmentationQueryPartModificator.log.debug("Inserted an operator for reunion between {} and {}", 
 				copiesOfOriginSink, targets);

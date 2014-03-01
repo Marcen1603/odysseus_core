@@ -640,6 +640,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		if(!replicatedTarget.isPresent()) {
 			
 			merger.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(), 0, subscription.getSchema());
+			merger.setDestinationName(subscription.getTarget().getDestinationName());
 			
 			// Create new query part
 			Collection<ILogicalQueryPart> modifiedQueryParts = Lists.newArrayList();
@@ -651,6 +652,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		else {
 			
 			merger.subscribeSink(replicatedTarget.get(), subscription.getSinkInPort(), 0, subscription.getSchema());
+			merger.setDestinationName(replicatedTarget.get().getDestinationName());
 			
 			// Create modified query part
 			Collection<ILogicalOperator> operatorsWithMerger = Lists.newArrayList(queryPartOfReplicatedTarget.get().getOperators());
