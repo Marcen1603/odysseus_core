@@ -7,7 +7,7 @@ operator=$(find ../../ -name \*.java -type f |xargs grep "@LogicalOperator" | se
 parameter=$(find ../../ -name \*.java -type f |xargs grep "@Parameter" | sed -rn 's/.*name\s?\=\s?\"([a-zA-Z]*)\".*/\U\1/p'  | sort -fu | sed -r ':a ;$! N; s/\n(.*)/ \1/; ta ; P ; D' )
 
 cat > shBrushPql.js <<- EOF
-SyntaxHighlighter.brushes.Processing = function()
+SyntaxHighlighter.brushes.Pql = function()
 {
 // Copyright 2014 Christian Kuka christian@kuka.cc
 	
