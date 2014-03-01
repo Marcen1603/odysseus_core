@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Find all logical operator
-operator=$(find ../../ -name \*.java -type f |xargs grep "@LogicalOperator" | sed -rn 's/.*name\s?\=\s?\"([a-zA-Z]*)\".*/\U\1/p' | sort | sed -r ':a ;$! N; s/\n(.*)/ \1/; ta ; P ; D' )
+operator=$(find ../../ -name \*.java -type f |xargs grep "@LogicalOperator" | sed -rn 's/.*name\s?\=\s?\"([a-zA-Z_]*)\".*/\U\1/p' | sort | sed -r ':a ;$! N; s/\n(.*)/ \1/; ta ; P ; D' )
 
 # Find all logical operator parameter
-parameter=$(find ../../ -name \*.java -type f |xargs grep "@Parameter" | sed -rn 's/.*name\s?\=\s?\"([a-zA-Z]*)\".*/\U\1/p'  | sort -fu | sed -r ':a ;$! N; s/\n(.*)/ \1/; ta ; P ; D' )
+parameter=$(find ../../ -name \*.java -type f |xargs grep "@Parameter" | sed -rn 's/.*name\s?\=\s?\"([a-zA-Z_]*)\".*/\U\1/p'  | sort -fu | sed -r ':a ;$! N; s/\n(.*)/ \1/; ta ; P ; D' )
 
 cat > shBrushPql.js <<- EOF
 SyntaxHighlighter.brushes.Pql = function()
