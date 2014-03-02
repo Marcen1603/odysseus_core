@@ -459,6 +459,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			operatorForFragmentation.subscribeSink(copiedSource, subscription.getSinkInPort(), sourceNo, subscription.getSchema());
 			
 		}
+		operatorForFragmentation.setDestinationName(copiesOfOriginSource.iterator().next().getDestinationName());
 		
 		AbstractFragmentationQueryPartModificator.log.debug("Inserted an operator for fragmentation before {}", copiesOfOriginSource);
 		
