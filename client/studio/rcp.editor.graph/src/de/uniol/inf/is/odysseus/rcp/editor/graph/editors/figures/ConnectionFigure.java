@@ -27,6 +27,7 @@ import org.eclipse.draw2d.PolylineConnection;
  */
 public class ConnectionFigure extends PolylineConnection {
 
+	private static final int CONNECTION_PORT_DISTANCE = 1;
 	private Label targetPortLabel;
 	private Label sourcePortLabel;
 
@@ -38,11 +39,16 @@ public class ConnectionFigure extends PolylineConnection {
 
 		targetPortLabel = new Label(Integer.toString(0));
 		targetPortLabel.setOpaque(false);		
-		add(targetPortLabel, new ConnectionEndpointLocator(this, true));
+		ConnectionEndpointLocator targetLocator = new ConnectionEndpointLocator(this, true);
+		targetLocator.setUDistance(CONNECTION_PORT_DISTANCE);
+		
+		add(targetPortLabel, targetLocator);
 
 		sourcePortLabel = new Label(Integer.toString(0));
 		sourcePortLabel.setOpaque(false);
-		add(sourcePortLabel, new ConnectionEndpointLocator(this, false));
+		ConnectionEndpointLocator sourceLocator = new ConnectionEndpointLocator(this, false);
+		sourceLocator.setUDistance(CONNECTION_PORT_DISTANCE);
+		add(sourcePortLabel, sourceLocator);
 	}
 
 	@Override
