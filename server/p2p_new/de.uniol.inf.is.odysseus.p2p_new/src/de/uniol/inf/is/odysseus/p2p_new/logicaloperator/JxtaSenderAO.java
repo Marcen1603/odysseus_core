@@ -17,6 +17,7 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 
 	private String pipeID;
 	private boolean useUDP;
+	private boolean useMultiple;
 
 	public JxtaSenderAO() {
 		super();
@@ -27,6 +28,7 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 		
 		this.pipeID = other.pipeID;
 		this.useUDP = other.useUDP;
+		this.useMultiple = other.useMultiple;
 	}
 
 	@Override
@@ -48,6 +50,16 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 		return useUDP;
 	}
 
+	public boolean isUseMultiple() {
+		return useMultiple;
+	}
+	
+	@Parameter(name = "useMultiple", doc = "Specifies if the sender should support multiple connections", type = BooleanParameter.class, optional = true)
+	public void setUseMultiple(boolean useMultiple) {
+		this.useMultiple = useMultiple;
+		addParameterInfo("useMultiple", "'" + (useMultiple ? "true" : "false") + "'");
+	}
+	
 	@Override
 	public boolean isValid() {
 		return !Strings.isNullOrEmpty(this.pipeID);

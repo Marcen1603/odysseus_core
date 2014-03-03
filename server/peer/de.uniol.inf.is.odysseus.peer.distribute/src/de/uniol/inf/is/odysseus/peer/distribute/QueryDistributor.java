@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.distribute;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.ID;
@@ -13,14 +14,17 @@ import net.jxta.pipe.PipeID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.IQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
@@ -28,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
@@ -60,7 +65,7 @@ public class QueryDistributor implements IQueryDistributor {
 			pqlGenerator = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindJxtaServicesProvider(IJxtaServicesProvider serv) {
 		jxtaServicesProvider = serv;
@@ -72,7 +77,7 @@ public class QueryDistributor implements IQueryDistributor {
 			jxtaServicesProvider = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
 		p2pDictionary = serv;
@@ -96,7 +101,7 @@ public class QueryDistributor implements IQueryDistributor {
 			p2pNetworkManager = null;
 		}
 	}
-	
+
 	@Override
 	public void distribute(final IServerExecutor serverExecutor, final ISession caller, final Collection<ILogicalQuery> queriesToDistribute, final QueryBuildConfiguration config) {
 		QueryDistributorThread thread = new QueryDistributorThread(serverExecutor, caller, queriesToDistribute, config);
@@ -124,26 +129,27 @@ public class QueryDistributor implements IQueryDistributor {
 		List<InterfaceParametersPair<IQueryPartModificator>> modificators = ParameterHelper.determineQueryPartModificators(config);
 		List<InterfaceParametersPair<IQueryPartAllocator>> allocators = ParameterHelper.determineQueryPartAllocators(config);
 		List<InterfaceParametersPair<IQueryDistributionPostProcessor>> postProcessors = ParameterHelper.determineQueryDistributionPostProcessors(config);
-		
+
 		LoggingHelper.printUsedInterfaces(preProcessors, partitioners, modificators, allocators, postProcessors);
 
 		for (ILogicalQuery query : queries) {
 			LOG.debug("Start distribution of query {}", query);
-			
+
 			QueryDistributorHelper.tryPreProcess(serverExecutor, caller, config, preProcessors, query);
 
 			Collection<ILogicalOperator> operators = QueryDistributorHelper.collectRelevantOperators(query);
 			LOG.debug("Following operators are condidered during distribution: {}", operators);
-			
+
 			QueryDistributorHelper.tryCheckDistribution(config, query, operators);
 			Collection<ILogicalQueryPart> queryParts = QueryDistributorHelper.tryPartitionQuery(config, partitioners, operators, query);
-			Collection<ILogicalQueryPart> modifiedQueryParts = QueryDistributorHelper.tryModifyQueryParts(config, modificators, queryParts, query );
+			Collection<ILogicalQueryPart> modifiedQueryParts = QueryDistributorHelper.tryModifyQueryParts(config, modificators, queryParts, query);
 			Map<ILogicalQueryPart, PeerID> allocationMap = QueryDistributorHelper.tryAllocate(config, allocators, modifiedQueryParts, query);
-			
+
 			QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMap, config, postProcessors, query);
-		
+
 			ID sharedQueryID = IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
 			insertJxtaOperators(allocationMap.keySet());
+			replaceAccessAOsOfExportedViews(allocationMap.keySet());
 			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(sharedQueryID, allocationMap, config);
 
 			if (!localQueryParts.isEmpty()) {
@@ -161,6 +167,37 @@ public class QueryDistributor implements IQueryDistributor {
 
 	}
 
+	private static void replaceAccessAOsOfExportedViews(Set<ILogicalQueryPart> queryParts) {
+		for (ILogicalQueryPart queryPart : queryParts) {
+			for (ILogicalOperator operator : queryPart.getOperators().toArray(new ILogicalOperator[0])) {
+				if (operator instanceof AbstractAccessAO) {
+					AbstractAccessAO accessAO = (AbstractAccessAO) operator;
+					Optional<SourceAdvertisement> optSourceAdv = p2pDictionary.getExportedSource(accessAO.getAccessAOName().getResourceName());
+					if (optSourceAdv.isPresent() && optSourceAdv.get().isView()) {
+						SourceAdvertisement advertisement = optSourceAdv.get();
+						LOG.debug("Found accessAO for exported view which has to be send to peer: " + accessAO);
+
+						final JxtaReceiverAO receiverOperator = new JxtaReceiverAO();
+						receiverOperator.setPipeID(advertisement.getPipeID().toString());
+						receiverOperator.setOutputSchema(advertisement.getOutputSchema());
+						receiverOperator.setSchema(advertisement.getOutputSchema().getAttributes());
+						receiverOperator.setName(accessAO.getAccessAOName().getResourceName() + "_Receive");
+						receiverOperator.setImportedSourceAdvertisement(advertisement);
+
+						Collection<LogicalSubscription> subscriptions = accessAO.getSubscriptions();
+						for (LogicalSubscription subscription : subscriptions.toArray(new LogicalSubscription[0])) {
+							accessAO.unsubscribeSink(subscription);
+							receiverOperator.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(), 0, subscription.getSchema());
+						}
+						
+						queryPart.addOperator(receiverOperator);
+						queryPart.removeOperator(accessAO);
+					}
+				}
+			}
+		}
+	}
+
 	private static Collection<ILogicalQuery> copyAllQueries(Collection<ILogicalQuery> queriesToDistribute) {
 		Collection<ILogicalQuery> copiedQueries = Lists.newArrayList();
 		for (ILogicalQuery queryToDistribute : queriesToDistribute) {
@@ -173,28 +210,27 @@ public class QueryDistributor implements IQueryDistributor {
 	private static void callExecutorToAddLocalQueries(ILogicalQuery query, ID sharedQueryID, IServerExecutor serverExecutor, ISession caller, QueryBuildConfiguration config) throws QueryDistributionException {
 		try {
 			int queryID = serverExecutor.addQuery(query.getLogicalPlan(), caller, config.getName());
-			
+
 			QueryPartController.getInstance().registerAsMaster(query, queryID, sharedQueryID);
 		} catch (Throwable ex) {
 			throw new QueryDistributionException("Could not add local query to server executor", ex);
 		}
 	}
 
-
 	private static void insertJxtaOperators(Collection<ILogicalQueryPart> queryParts) {
 		LogicalQueryHelper.disconnectQueryParts(queryParts, new IOperatorGenerator() {
-			
+
 			private PipeID pipeID;
 			private ILogicalOperator sourceOp;
-			
+
 			@Override
 			public void beginDisconnect(ILogicalOperator sourceOperator, ILogicalOperator sinkOperator) {
-				LOG.debug("Create JXTA-Connection between {} and {}", new Object[] {sourceOperator, sinkOperator });
-				
+				LOG.debug("Create JXTA-Connection between {} and {}", new Object[] { sourceOperator, sinkOperator });
+
 				pipeID = IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID());
 				sourceOp = sourceOperator;
 			}
-			
+
 			@Override
 			public ILogicalOperator createSourceofSink(ILogicalOperator sink) {
 				JxtaReceiverAO access = new JxtaReceiverAO();
@@ -202,14 +238,14 @@ public class QueryDistributor implements IQueryDistributor {
 				access.setSchema(sourceOp.getOutputSchema().getAttributes());
 				return access;
 			}
-			
+
 			@Override
 			public ILogicalOperator createSinkOfSource(ILogicalOperator source) {
 				JxtaSenderAO sender = new JxtaSenderAO();
 				sender.setPipeID(pipeID.toString());
 				return sender;
 			}
-			
+
 			@Override
 			public void endDisconnect() {
 				pipeID = null;
@@ -246,13 +282,13 @@ public class QueryDistributor implements IQueryDistributor {
 
 	private static ILogicalQuery buildLocalQuery(Collection<ILogicalQueryPart> localQueryParts) {
 		Collection<ILogicalOperator> sinks = Lists.newArrayList();
-		for( ILogicalQueryPart localPart : localQueryParts ) {
+		for (ILogicalQueryPart localPart : localQueryParts) {
 			Collection<ILogicalOperator> partOperators = localPart.getOperators();
-			
+
 			Collection<ILogicalOperator> allOperators = Lists.newArrayList();
-			for( ILogicalOperator operator : partOperators) {
-				for( ILogicalOperator op : LogicalQueryHelper.getAllOperators(operator)) {
-					if( !allOperators.contains(op)) {
+			for (ILogicalOperator operator : partOperators) {
+				for (ILogicalOperator op : LogicalQueryHelper.getAllOperators(operator)) {
+					if (!allOperators.contains(op)) {
 						allOperators.add(op);
 					}
 				}

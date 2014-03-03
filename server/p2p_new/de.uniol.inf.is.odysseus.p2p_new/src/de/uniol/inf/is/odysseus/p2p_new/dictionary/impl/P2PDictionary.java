@@ -70,6 +70,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private final Map<SourceAdvertisement, String> importedSources = Maps.newHashMap();
 	private final Map<SourceAdvertisement, Integer> exportedSourcesQueryMap = Maps.newHashMap();
+	private final Map<SourceAdvertisement, JxtaSenderAO> exportedSenderMap = Maps.newHashMap();
 
 	private final Map<PeerID, String> knownPeersMap = Maps.newHashMap();
 	private final Map<PeerID, String> peersAddressMap = Maps.newHashMap();
@@ -476,6 +477,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		if (queryID != -1 && ServerExecutorService.isBound() && ServerExecutorService.getServerExecutor().getExecutionPlan().getQueryById(queryID) != null) {
 			ServerExecutorService.getServerExecutor().removeQuery(queryID, SessionManagementService.getActiveSession());
 		}
+		exportedSenderMap.remove(exportAdvertisement);
 
 		fireSourceExportRemoveEvent(exportAdvertisement, realSourceName);
 
@@ -852,6 +854,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			logicalQuery.setQueryText("Exporting " + viewName);
 
 			exportedSourcesQueryMap.put(viewAdvertisement, queryID);
+			exportedSenderMap.put(viewAdvertisement, jxtaSender);
 			addSource(viewAdvertisement, false);
 
 			fireSourceExportEvent(viewAdvertisement, viewName);
@@ -861,6 +864,11 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		} catch (InvalidP2PSource e) {
 			throw new PeerException("Could not publish view '" + viewName + "'", e);
 		}
+	}
+	
+	@Override
+	public Optional<JxtaSenderAO> getExportingSenderAO(SourceAdvertisement advertisement) {
+		return Optional.fromNullable(exportedSenderMap.get(advertisement));
 	}
 
 	private Optional<SourceAdvertisement> find(PeerID peerID, String sourceName) {

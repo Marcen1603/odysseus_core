@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 
 public interface IP2PDictionary {
 	void addListener( IP2PDictionaryListener listener );
@@ -38,6 +39,7 @@ public interface IP2PDictionary {
 	boolean isExported( String viewName );
 	Optional<SourceAdvertisement> getExportedSource( String viewName );
 	ImmutableList<SourceAdvertisement> getExportedSources();
+	Optional<JxtaSenderAO> getExportingSenderAO( SourceAdvertisement advertisement);
 	
 	ImmutableList<PeerID> getRemotePeerIDs();
 	boolean existsRemotePeer( PeerID peerID );
