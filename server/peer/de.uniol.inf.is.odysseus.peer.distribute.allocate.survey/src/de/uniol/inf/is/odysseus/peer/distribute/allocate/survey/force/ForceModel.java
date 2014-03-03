@@ -37,28 +37,33 @@ public class ForceModel {
 	private static class ValuePeerPair implements Comparable<ValuePeerPair> {
 		public final double value;
 		public final PeerID peerID;
-		
+
 		public ValuePeerPair(double value, PeerID peerID) {
 			Preconditions.checkNotNull(peerID, "PeerID must not be null!");
 
 			this.value = value;
 			this.peerID = peerID;
 		}
-		
+
 		@Override
 		public int compareTo(ValuePeerPair o) {
 			return Double.compare(value, o.value);
 		}
 	}
-	
+
 	private static final int MAX_ITERATIONS = 10000;
+
+	private static final int BID_WEIGHT = 1;
+	private static final int LATENCY_WEIGHT = 1;
+	private static final int WEIGHT_SUM = BID_WEIGHT + LATENCY_WEIGHT;
+
 	private static final Logger LOG = LoggerFactory.getLogger(ForceModel.class);
 	private static final Random RAND = new Random();
 
 	private static IPingMap pingMap;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IP2PDictionary p2pDictionary;
-	
+
 	private final ForceNode localForceNode;
 	private final Collection<ForceNode> forceNodes;
 	private final Map<ILogicalQueryPart, Collection<Bid>> bids;
@@ -86,7 +91,7 @@ public class ForceModel {
 			p2pNetworkManager = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
 		p2pDictionary = serv;
@@ -98,20 +103,20 @@ public class ForceModel {
 			p2pDictionary = null;
 		}
 	}
-	
+
 	public ForceModel() {
 		// used for OSGi-DS
 		localForceNode = null;
 		forceNodes = Lists.newArrayList();
 		bids = Maps.newHashMap();
 	}
-	
+
 	public ForceModel(Map<ILogicalQueryPart, Collection<Bid>> bids, QueryPartGraph partGraph, Map<ILogicalOperator, Double> operatorDataRateMap) {
 		Preconditions.checkNotNull(bids, "Map of bid must not be null!");
 		Preconditions.checkNotNull(partGraph, "Query Part graph must not be null!");
-		
+
 		this.bids = bids;
-		
+
 		localForceNode = createLocalForceNode();
 
 		forceNodes = createForceNodes(bids, partGraph);
@@ -119,9 +124,9 @@ public class ForceModel {
 
 		LOG.debug("Force Nodes");
 		printForceNodes(forceNodes);
-		
+
 		createForces(forceNodes, localForceNode, partGraph, operatorDataRateMap);
-		
+
 		LOG.debug("Attached forces");
 		printForceNodes(forceNodes);
 	}
@@ -129,7 +134,7 @@ public class ForceModel {
 	private static ForceNode createLocalForceNode() {
 		Optional<IPingMapNode> optPingMapNode = pingMap.getNode(p2pNetworkManager.getLocalPeerID());
 		Vector3D nodePosition = optPingMapNode.isPresent() ? optPingMapNode.get().getPosition() : createRandomVector3D();
-		
+
 		return new ForceNode(nodePosition);
 	}
 
@@ -139,82 +144,82 @@ public class ForceModel {
 
 	private Collection<ForceNode> createForceNodes(Map<ILogicalQueryPart, Collection<Bid>> bids, QueryPartGraph partGraph) {
 		Collection<ForceNode> forceNodes = Lists.newArrayList();
-		
-		if( LOG.isDebugEnabled() ) {
-			for( PeerID peerID : pingMap.getRemotePeerIDs() ) {
+
+		if (LOG.isDebugEnabled()) {
+			for (PeerID peerID : pingMap.getRemotePeerIDs()) {
 				Vector3D position = pingMap.getNode(peerID).get().getPosition();
 				LOG.debug("Current position of {}: {}", p2pDictionary.getRemotePeerName(peerID).get(), toString(position));
 			}
 			LOG.debug("Current position of {}: {}", p2pNetworkManager.getLocalPeerName(), toString(pingMap.getLocalPosition()));
 		}
-		
-		for( ILogicalQueryPart queryPart : bids.keySet() ) {
-			
+
+		for (ILogicalQueryPart queryPart : bids.keySet()) {
+
 			Collection<Bid> queryPartBids = bids.get(queryPart);
 			Bid bestBid = determineBestBid(queryPartBids);
 			Optional<IPingMapNode> optPingMapNode = pingMap.getNode(bestBid.getBidderPeerID());
 			LOG.debug("Best bid for query part {} is from {}", queryPart, p2pDictionary.getRemotePeerName(bestBid.getBidderPeerID()).get());
-			
+
 			Vector3D nodePosition = optPingMapNode.isPresent() ? optPingMapNode.get().getPosition() : createRandomVector3D();
-			forceNodes.add(new ForceNode(nodePosition, queryPart, queryPartBids.size() == 1));	
-		}		
-		
+			forceNodes.add(new ForceNode(nodePosition, queryPart, queryPartBids.size() == 1));
+		}
+
 		return forceNodes;
 	}
-	
+
 	private static void createForces(Collection<ForceNode> forceNodes, ForceNode localForceNode, QueryPartGraph partGraph, Map<ILogicalOperator, Double> operatorDataRateMap) {
-		for( ForceNode forceNode : forceNodes.toArray(new ForceNode[0]) ) {
-			if( !forceNode.isFixed() ) {
+		for (ForceNode forceNode : forceNodes.toArray(new ForceNode[0])) {
+			if (!forceNode.isFixed()) {
 				ILogicalQueryPart queryPart = forceNode.getQueryPart();
-				
+
 				QueryPartGraphNode graphNode = partGraph.getGraphNode(queryPart);
 				Collection<QueryPartGraphConnection> nextQueryPartConnections = graphNode.getConnectionsAsStart();
-				
-				if( !nextQueryPartConnections.isEmpty() ) {
-					for( QueryPartGraphConnection nextQueryPartConnection : nextQueryPartConnections ) {
+
+				if (!nextQueryPartConnections.isEmpty()) {
+					for (QueryPartGraphConnection nextQueryPartConnection : nextQueryPartConnections) {
 						ILogicalOperator relativeSource = nextQueryPartConnection.getStartOperator();
 						Double dataRate = operatorDataRateMap.get(relativeSource);
-						
+
 						ILogicalQueryPart nextQueryPart = nextQueryPartConnection.getEndNode().getQueryPart();
-						
+
 						ForceNode nextForceNode = determineForceNode(nextQueryPart, forceNodes);
-						new Force(forceNode, nextForceNode, dataRate != null ? dataRate : 1); 
+						new Force(forceNode, nextForceNode, dataRate != null ? dataRate : 1);
 					}
-					
+
 				} else {
 					Collection<ILogicalOperator> relativeSinks = LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(queryPart);
 					ILogicalOperator firstRelativeSink = relativeSinks.iterator().next();
 					Double dataRate = operatorDataRateMap.get(firstRelativeSink);
-					
-					new Force( forceNode, localForceNode, dataRate != null ? dataRate : 1);
+
+					new Force(forceNode, localForceNode, dataRate != null ? dataRate : 1);
 				}
-				
-				if( graphNode.getConnectionsAsEnd().isEmpty() ) {
+
+				if (graphNode.getConnectionsAsEnd().isEmpty()) {
 					Collection<ILogicalOperator> sources = LogicalQueryHelper.getRelativeSourcesOfLogicalQueryPart(queryPart);
-					for( ILogicalOperator source : sources ) {
-						
-						if( source instanceof JxtaReceiverAO ) {
-							JxtaReceiverAO ao = (JxtaReceiverAO)source;
+					for (ILogicalOperator source : sources) {
+
+						if (source instanceof JxtaReceiverAO) {
+							JxtaReceiverAO ao = (JxtaReceiverAO) source;
 							Optional<SourceAdvertisement> optAdv = ao.getImportedSourceAdvertisement();
 							// an imported source with clear providing peer?
-							if( optAdv.isPresent() ) {
+							if (optAdv.isPresent()) {
 								PeerID providingPeerID = optAdv.get().getPeerID();
 								Optional<IPingMapNode> optNode = pingMap.getNode(providingPeerID);
-								if( optNode.isPresent() ) {
+								if (optNode.isPresent()) {
 									ForceNode peerForceNode = new ForceNode(optNode.get().getPosition());
 									forceNodes.add(peerForceNode);
-									
-									new Force( peerForceNode, forceNode, 1000);
-								} 
+
+									new Force(peerForceNode, forceNode, 1000);
+								}
 							}
 						}
-						
+
 					}
 				}
 			}
 		}
 	}
-	
+
 	private static Bid determineBestBid(Collection<Bid> bids) {
 		Bid bestBid = null;
 		for (Bid bid : bids) {
@@ -224,24 +229,24 @@ public class ForceModel {
 		}
 		return bestBid;
 	}
-	
+
 	private static void printForceNodes(Collection<ForceNode> nodes) {
-		if( LOG.isDebugEnabled() ) {
+		if (LOG.isDebugEnabled()) {
 			StringBuilder sb = new StringBuilder();
-			
+
 			sb.append("[\n");
-			for( ForceNode node : nodes ) {
+			for (ForceNode node : nodes) {
 				sb.append("\t").append(node).append("\n");
 			}
-			
+
 			sb.append("]");
 			LOG.debug(sb.toString());
 		}
 	}
-	
+
 	private static ForceNode determineForceNode(ILogicalQueryPart queryPart, Collection<ForceNode> forceNodes) {
-		for( ForceNode forceNode : forceNodes ) {
-			if( queryPart.equals(forceNode.getQueryPart())) {
+		for (ForceNode forceNode : forceNodes) {
+			if (queryPart.equals(forceNode.getQueryPart())) {
 				return forceNode;
 			}
 		}
@@ -249,21 +254,21 @@ public class ForceModel {
 	}
 
 	public void run() {
-		for( int i = 0; i < MAX_ITERATIONS; i++ ) {
-			for( ForceNode node : forceNodes ) {
-				node.tick( 1.0 / MAX_ITERATIONS);
+		for (int i = 0; i < MAX_ITERATIONS; i++) {
+			for (ForceNode node : forceNodes) {
+				node.tick(1.0 / MAX_ITERATIONS);
 			}
 		}
-		
+
 		LOG.debug("Finished model-Running");
 		printForceNodes(forceNodes);
 	}
 
 	public Map<ILogicalQueryPart, PeerID> getResult() {
 		LOG.debug("Evaluating force-results");
-		
+
 		Map<PeerID, Vector3D> positionMap = Maps.newHashMap();
-		for( PeerID peerID : pingMap.getRemotePeerIDs() ) {
+		for (PeerID peerID : pingMap.getRemotePeerIDs()) {
 			Vector3D position = pingMap.getNode(peerID).get().getPosition();
 			positionMap.put(peerID, position);
 			LOG.debug("Current position of {}: {}", p2pDictionary.getRemotePeerName(peerID).get(), toString(position));
@@ -271,41 +276,41 @@ public class ForceModel {
 		LOG.debug("Current position of {}: {}", p2pNetworkManager.getLocalPeerName(), toString(pingMap.getLocalPosition()));
 
 		positionMap.put(pingMap.getLocalPeerID(), pingMap.getLocalPosition());
-		
+
 		Map<ILogicalQueryPart, PeerID> result = Maps.newHashMap();
 		PositionNormalizer normalizer = new PositionNormalizer(positionMap.values());
-		for( ILogicalQueryPart queryPart : bids.keySet() ) {
+		for (ILogicalQueryPart queryPart : bids.keySet()) {
 			LOG.debug("Determine best peer for queryPart {}", queryPart);
-			
+
 			Collection<Bid> bidsForQueryPart = bids.get(queryPart);
-			if( bidsForQueryPart.size() == 1 ) {
+			if (bidsForQueryPart.size() == 1) {
 				Bid oneAndOnlyBid = bidsForQueryPart.iterator().next();
 				result.put(queryPart, oneAndOnlyBid.getBidderPeerID());
-				
+
 				LOG.debug("Got only one bid (value={}) from peer {}", oneAndOnlyBid.getValue(), p2pDictionary.getRemotePeerName(oneAndOnlyBid.getBidderPeerID()).get());
 			} else {
 				LOG.debug("Got {} bids for this query part", bidsForQueryPart.size());
-				
+
 				ForceNode forceNodeOfQueryPart = determineForceNode(queryPart, forceNodes);
 				Collection<PeerID> avoidingPeers = determineAvoidingPeers(queryPart.getAvoidingQueryParts(), result);
-				PeerID bestPeer = determineNearestPeerWithBestBid( forceNodeOfQueryPart.getPosition(), positionMap, normalizer, bidsForQueryPart, avoidingPeers);
-				
+				PeerID bestPeer = determineNearestPeerWithBestBid(forceNodeOfQueryPart.getPosition(), positionMap, normalizer, bidsForQueryPart, avoidingPeers);
+
 				result.put(queryPart, bestPeer);
 			}
 		}
-		
+
 		return result;
 	}
 
 	private static Collection<PeerID> determineAvoidingPeers(ImmutableCollection<ILogicalQueryPart> avoidingQueryParts, Map<ILogicalQueryPart, PeerID> currentAllocationMap) {
 		Collection<PeerID> avoidedPeers = Lists.newLinkedList();
-		for( ILogicalQueryPart queryPart : avoidingQueryParts ) {
+		for (ILogicalQueryPart queryPart : avoidingQueryParts) {
 			PeerID avoidedPeer = currentAllocationMap.get(queryPart);
-			if( avoidedPeer != null && !avoidedPeers.contains(avoidedPeer) ) {
-				if(LOG.isDebugEnabled() ) {
+			if (avoidedPeer != null && !avoidedPeers.contains(avoidedPeer)) {
+				if (LOG.isDebugEnabled()) {
 					LOG.debug("One avoiding part is {} from {}", avoidingQueryParts, p2pDictionary.getRemotePeerName(avoidedPeer).get());
 				}
-				
+
 				avoidedPeers.add(avoidedPeer);
 			}
 		}
@@ -315,72 +320,79 @@ public class ForceModel {
 	private static PeerID determineNearestPeerWithBestBid(Vector3D position, Map<PeerID, Vector3D> positionMap, PositionNormalizer normalizer, Collection<Bid> bidsForQueryPart, Collection<PeerID> avoidedPeers) {
 		Map<PeerID, Bid> bidMap = createBidMap(bidsForQueryPart);
 
-		List<ValuePeerPair> peerValues = Lists.newLinkedList();
-		
-		Vector3D normPosition = normalizer.normalize(position);
-		
-		if( LOG.isDebugEnabled() && !avoidedPeers.isEmpty()) {
-			printAvoidingPeerList(avoidedPeers);
-		}
-		
-		for( PeerID peerID : bidMap.keySet() ) {
-			double bidValueOfPeer = bidMap.get(peerID).getValue();
-			Vector3D normPositionOfPeer = normalizer.normalize(positionMap.get(peerID));
+		Map<PeerID, Double> peerLatencyDistances = Maps.newHashMap();
+		double maximumLatencyDistance = Double.MIN_VALUE;
+		Map<PeerID, Double> peerInvertedBids = Maps.newHashMap();
+		for (PeerID peerID : bidMap.keySet()) {
 
-			double distX = Math.abs(normPosition.getX() - normPositionOfPeer.getX());
-			double distY = Math.abs(normPosition.getY() - normPositionOfPeer.getY());
-			double distZ = Math.abs(normPosition.getZ() - normPositionOfPeer.getZ());
-			double distB = 1 - bidValueOfPeer;
-			
-			double peerDistanceToPerfectLatency = Math.sqrt( (distX * distX) + (distY * distY ) + (distZ * distZ) );
-			double peerDistanceToPerfect = ( peerDistanceToPerfectLatency + distB ) / 2.0; 
-			peerValues.add( new ValuePeerPair(peerDistanceToPerfect, peerID));
-			
-			if( LOG.isDebugEnabled() ) {
-				double latency = Math.sqrt( (distX * distX) + (distY * distY ) + (distZ * distZ));
-				LOG.debug("Peer {} has bidValue of {} and due to latency {} a peerValue of {}", 
-						new Object[] {p2pDictionary.getRemotePeerName(peerID).get(), bidValueOfPeer, latency, peerDistanceToPerfect});
+			Vector3D peerPosition = positionMap.get(peerID);
+
+			double distX = Math.abs(position.getX() - peerPosition.getX());
+			double distY = Math.abs(position.getY() - peerPosition.getY());
+			double distZ = Math.abs(position.getZ() - peerPosition.getZ());
+			double peerDistance = Math.sqrt((distX * distX) + (distY * distY) + (distZ * distZ));
+
+			peerLatencyDistances.put(peerID, peerDistance);
+			peerInvertedBids.put(peerID, 1 - bidMap.get(peerID).getValue());
+			if (peerDistance > maximumLatencyDistance) {
+				maximumLatencyDistance = peerDistance;
 			}
 		}
-		
+
+		List<ValuePeerPair> peerValues = Lists.newLinkedList();
+		LOG.debug("PeerValues ({} bids):", bidMap.size());
+		for (PeerID peerID : bidMap.keySet()) {
+			double latencyFactor = peerLatencyDistances.get(peerID) / maximumLatencyDistance;
+			double invertedBid = peerInvertedBids.get(peerID);
+			
+
+			double peerValue = ((latencyFactor * LATENCY_WEIGHT) + (invertedBid * BID_WEIGHT)) / WEIGHT_SUM;
+			LOG.debug("\t{}:\tPeerValue={} \t(BidValue={}\tLatencyValue={} )", new Object[] {p2pDictionary.getRemotePeerName(peerID).get(), peerValue, invertedBid, latencyFactor});
+
+			peerValues.add(new ValuePeerPair(peerValue, peerID));
+		}
+		if (LOG.isDebugEnabled() && !avoidedPeers.isEmpty()) {
+			printAvoidingPeerList(avoidedPeers);
+		}
+
 		Collections.sort(peerValues);
-		
+
 		int index = 0;
 		PeerID currentChoice = peerValues.get(0).peerID;
-		while( avoidedPeers.contains(currentChoice) ) {
+		while (avoidedPeers.contains(currentChoice)) {
 			index++;
-			
-			if( index == peerValues.size() ) {
+
+			if (index == peerValues.size()) {
 				// checked all...
 				currentChoice = peerValues.get(0).peerID;
 				break;
 			}
-			
+
 			currentChoice = peerValues.get(index).peerID;
 		}
-		
+
 		LOG.debug("Best (non-avoided) peer is {}", p2pDictionary.getRemotePeerName(currentChoice).get());
 		return currentChoice;
 	}
 
 	private static void printAvoidingPeerList(Collection<PeerID> avoidedPeers) {
 		StringBuilder sb = new StringBuilder();
-		
+
 		sb.append("Avoiding peers: ");
-		for( PeerID peerID : avoidedPeers ) {
+		for (PeerID peerID : avoidedPeers) {
 			sb.append(p2pDictionary.getRemotePeerName(peerID).get()).append("  ");
 		}
-		
+
 		LOG.debug(sb.toString());
 	}
-	
-	private static String toString( Vector3D v ) {
+
+	private static String toString(Vector3D v) {
 		return v.getX() + "/" + v.getY() + "/" + v.getZ();
 	}
 
 	private static Map<PeerID, Bid> createBidMap(Collection<Bid> bids) {
 		Map<PeerID, Bid> bidMap = Maps.newHashMap();
-		for( Bid bid : bids ) {
+		for (Bid bid : bids) {
 			bidMap.put(bid.getBidderPeerID(), bid);
 		}
 		return bidMap;
