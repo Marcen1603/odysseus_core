@@ -270,12 +270,13 @@ public class OperatorNode extends Observable implements Observer {
 			// }
 			// completeQuery = completeQuery+ScriptGenerator.buildPQL(graph);
 			// TODO: Determine Context?
-			Context context = null;
+			Context context = Context.empty();
 			if (!completeQuery.isEmpty()) {
 				Activator.getDefault().getExecutor().determineOutputSchema(completeQuery, "PQL", Activator.getDefault().getCaller(), 0, context);
 			}
 		} catch (Exception e) {
 			addProblemMarker("Operator \"" + getReadableName() + "\" is not satisfied because: " + getRootmessage(e));
+//			e.printStackTrace();
 			return false;
 		}
 

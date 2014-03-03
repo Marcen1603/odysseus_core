@@ -23,7 +23,7 @@ public class Context {
 		return new Context();
 	}
 	
-	public void put(String key, Serializable value){
+	public void put(String key, Serializable value){		
 		if (containsKey(key)){
 			throw new IllegalArgumentException("Key "+key+" already used. Delete first.");
 		}
@@ -42,7 +42,7 @@ public class Context {
 	}
 	
 	public Serializable get(String key){
-		return contextMap.get(key);
+		return contextMap.get(key.toUpperCase());
 	}
 	
 	public final boolean containsKey( String key ) {
