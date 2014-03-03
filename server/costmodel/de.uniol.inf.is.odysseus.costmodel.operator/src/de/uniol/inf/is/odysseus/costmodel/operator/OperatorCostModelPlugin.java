@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.Monitori
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.PlanMonitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPostOptimizationAction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.CPURateSaver;
 
@@ -78,7 +79,7 @@ public class OperatorCostModelPlugin implements BundleActivator, IPostOptimizati
 	}
 
 	@Override
-	public void run(IPhysicalQuery query, OptimizationConfiguration parameter) {
+	public void run(IPhysicalQuery query, OptimizationConfiguration parameter, IExecutionPlan currentExecutionPlan) {
 		// Bei jeder neuen Anfrage werden "datarate", "selectivity" und
 		// "median_processing_time" an alle Operatoren gehängt.
 		

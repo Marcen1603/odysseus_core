@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.Monitori
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.PlanMonitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPostOptimizationAction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 public class InstallStandardMetadataListener implements IPostOptimizationAction {
@@ -27,7 +28,7 @@ public class InstallStandardMetadataListener implements IPostOptimizationAction 
 	private static long MONITORING_PERIOD = 30000;
 
 	@Override
-	public void run(IPhysicalQuery query, OptimizationConfiguration parameter) {
+	public void run(IPhysicalQuery query, OptimizationConfiguration parameter, IExecutionPlan currentExecutionPlan) {
 		query.addPlanMonitor(MonitoringDataTypes.DATARATE.name,
 				new PlanMonitor(query, false,false,
 						MonitoringDataTypes.DATARATE.name,

@@ -6,12 +6,13 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.Monitori
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.PlanMonitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPostOptimizationAction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 public class SLAPostOptimizationAction implements IPostOptimizationAction {
 
 	@Override
-	public void run(IPhysicalQuery query, OptimizationConfiguration parameter) {
+	public void run(IPhysicalQuery query, OptimizationConfiguration parameter, IExecutionPlan currentExecutionPlan) {
 		for (IPhysicalOperator operator : query.getPhysicalChilds()) {
 			if (operator.isSink()) {
 				if (operator.getMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name) == null) {

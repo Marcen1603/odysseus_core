@@ -18,12 +18,13 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.installprocesscalls
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.ProcessCallsMonitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPostOptimizationAction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 public class InstallProcessCallsMonitor implements IPostOptimizationAction {
 
 	@Override
-	public void run(IPhysicalQuery query, OptimizationConfiguration parameter) {
+	public void run(IPhysicalQuery query, OptimizationConfiguration parameter, IExecutionPlan currentExecutionPlan) {
 		query.addPlanMonitor("Root Monitor", new ProcessCallsMonitor(query,
 				true,false, "Root Monitor",true));
 		query.addPlanMonitor("Buffer Monitor", new ProcessCallsMonitor(query,

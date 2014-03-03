@@ -254,10 +254,10 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	}
 
 	
-	protected void doPostOptimizationActions(IPhysicalQuery query, OptimizationConfiguration parameter) {
+	protected void doPostOptimizationActions(IPhysicalQuery query, OptimizationConfiguration parameter, IExecutionPlan currentExecPlan) {
 		for (IPostOptimizationAction action: postOptimizationActions){
 			getLogger().debug("Do PostOptimizationAction "+action);
-			action.run(query, parameter);
+			action.run(query, parameter, currentExecPlan);
 		}
 	}
 	

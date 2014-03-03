@@ -56,7 +56,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			ParameterDoPlanAdaption adaption = parameter.getParameterDoPlanAdaption();
 			for (ILogicalQuery query : queries) {								
 				IPhysicalQuery optimized = this.queryOptimizer.optimizeQuery(executor, query, parameter, dd);		
-				doPostOptimizationActions(optimized, parameter);
+				doPostOptimizationActions(optimized, parameter, currentExecPlan);
 				optimizedQueries.add(optimized);
 				// set the adaption parameter for each query
 				if(optimized != null && adaption != null && adaption == ParameterDoPlanAdaption.TRUE) {

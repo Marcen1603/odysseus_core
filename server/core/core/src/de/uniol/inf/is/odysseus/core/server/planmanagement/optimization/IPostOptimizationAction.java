@@ -16,10 +16,11 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.optimization;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 public interface IPostOptimizationAction {
 
-	public void run(IPhysicalQuery query, OptimizationConfiguration parameter);
+	public void run(IPhysicalQuery query, OptimizationConfiguration parameter, IExecutionPlan currentExecutionPlan);
 
 }
