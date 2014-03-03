@@ -4,8 +4,8 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.mining.evaluation.command.StartEvaluationCommand"
-            id="de.uniol.inf.is.odysseus.mining.evaluation.start"
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.evaluation.command.StartEvaluationCommand"
+            id="de.uniol.inf.is.odysseus.rcp.evaluation.start"
             name="Start Evaluation Command">
       </command>
    </extension>
@@ -15,7 +15,7 @@
             allPopups="true"
             locationURI="toolbar:org.eclipse.ui.main.toolbar">
          <command
-               commandId="de.uniol.inf.is.odysseus.mining.evaluation.start"
+               commandId="de.uniol.inf.is.odysseus.rcp.evaluation.start"
                icon="icons/application-run.png"
                label="Start Evaluation"
                style="push">
@@ -25,7 +25,7 @@
             allPopups="false"
             locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
          <command
-               commandId="de.uniol.inf.is.odysseus.mining.evaluation.start"
+               commandId="de.uniol.inf.is.odysseus.rcp.evaluation.start"
                icon="icons/application-run.png"
                label="Start Evaluation"
                style="push">
@@ -35,7 +35,7 @@
             allPopups="true"
             locationURI="popup:#EditorContext?after=additions">
          <command
-               commandId="de.uniol.inf.is.odysseus.mining.evaluation.start"
+               commandId="de.uniol.inf.is.odysseus.rcp.evaluation.start"
                icon="icons/application-run.png"
                label="Start Evaluation"
                style="push">

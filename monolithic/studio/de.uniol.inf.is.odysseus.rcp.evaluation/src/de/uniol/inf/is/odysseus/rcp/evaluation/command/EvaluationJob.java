@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.mining.evaluation.command;
+package de.uniol.inf.is.odysseus.rcp.evaluation.command;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -27,7 +27,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
+import de.uniol.inf.is.odysseus.rcp.evaluation.Activator;
+import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 
 public class EvaluationJob extends Job implements IPlanModificationListener {
 
@@ -46,7 +47,7 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		IServerExecutor executor = (IServerExecutor) OdysseusRCPEditorTextPlugIn.getExecutor();
+		IServerExecutor executor = (IServerExecutor) Activator.getExecutor();
 		executor.addPlanModificationListener(this);
 
 		try {
@@ -97,7 +98,7 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 	}
 
 	private int runEvalStep(Deque<Integer> index, List<String> names, Map<String, List<String>> values, int counter, int totalEvals, IProgressMonitor monitor) throws Exception {
-		IServerExecutor executor = (IServerExecutor) OdysseusRCPEditorTextPlugIn.getExecutor();
+		IServerExecutor executor = (IServerExecutor) Activator.getExecutor();
 		NumberFormat nf = NumberFormat.getInstance();
 		DateFormat dateFormat = new SimpleDateFormat("ddMMyy-HHmmss");
 		Calendar cal = Calendar.getInstance();
@@ -123,9 +124,13 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 				thislines = thislines.replaceAll(currentValue.getKey(), currentValue.getValue());
 			}
 			monitor.subTask(prefix + "Executing Script \"" + file.getName() + "\"... ");
+			Context context = ParserClientUtil.createRCPContext(file);
 			long timeStarted = System.currentTimeMillis();
-			Collection<Integer> ids = executor.addQuery(thislines, "OdysseusScript", caller, "Standard", (Context)null);
+			Collection<Integer> ids = executor.addQuery(thislines, "OdysseusScript", caller, "Standard", context);
 			monitor.subTask(prefix + "Running query and waiting for stop...");
+			for(int id : ids){
+				executor.startQuery(id, caller);
+			}
 			this.wait();
 			monitor.worked(1);
 			System.out.println("Evaluation job takes " + nf.format(System.currentTimeMillis() - timeStarted) + " ms");

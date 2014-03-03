@@ -1,4 +1,5 @@
-package de.uniol.inf.is.odysseus.mining.evaluation.command;
+package de.uniol.inf.is.odysseus.rcp.evaluation.command;
+
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -21,8 +22,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
-import de.uniol.inf.is.odysseus.mining.evaluation.Activator;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
+import de.uniol.inf.is.odysseus.rcp.evaluation.Activator;
 
 public class StartEvaluationCommand extends AbstractHandler {
 

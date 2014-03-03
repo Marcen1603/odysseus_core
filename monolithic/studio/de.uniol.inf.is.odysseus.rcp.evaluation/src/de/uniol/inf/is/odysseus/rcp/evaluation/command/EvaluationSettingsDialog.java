@@ -1,4 +1,5 @@
-package de.uniol.inf.is.odysseus.mining.evaluation.command;
+package de.uniol.inf.is.odysseus.rcp.evaluation.command;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +42,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import de.uniol.inf.is.odysseus.mining.evaluation.Activator;
+import de.uniol.inf.is.odysseus.rcp.evaluation.Activator;
 
 public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellModifier, IStructuredContentProvider, ITableLabelProvider {
 
