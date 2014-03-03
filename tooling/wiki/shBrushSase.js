@@ -21,5 +21,5 @@ this.regexList = [
 ];
 };
 
-SyntaxHighlighter.brushes.Processing.prototype = new SyntaxHighlighter.Highlighter();
-SyntaxHighlighter.brushes.Processing.aliases = ['Sase', 'sase'];
+SyntaxHighlighter.brushes.Sase.prototype = new SyntaxHighlighter.Highlighter();
+SyntaxHighlighter.brushes.Sase.aliases = ['Sase', 'sase'];

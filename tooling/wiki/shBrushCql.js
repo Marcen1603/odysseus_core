@@ -21,5 +21,5 @@ this.regexList = [
 ];
 };
 
-SyntaxHighlighter.brushes.Processing.prototype = new SyntaxHighlighter.Highlighter();
-SyntaxHighlighter.brushes.Processing.aliases = ['CQL', 'cql'];
+SyntaxHighlighter.brushes.Cql.prototype = new SyntaxHighlighter.Highlighter();
+SyntaxHighlighter.brushes.Cql.aliases = ['CQL', 'cql'];

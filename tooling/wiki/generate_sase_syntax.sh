@@ -10,7 +10,7 @@ cat > shBrushSase.js <<- EOF
 SyntaxHighlighter.brushes.Sase = function()
 {
 // Copyright 2014 Christian Kuka christian@kuka.cc
-	
+
 // SASE keywords
 var keywords =	'$keywords';
 
@@ -30,8 +30,8 @@ this.regexList = [
 ];
 };
 
-SyntaxHighlighter.brushes.Processing.prototype = new SyntaxHighlighter.Highlighter();
-SyntaxHighlighter.brushes.Processing.aliases = ['Sase', 'sase'];
+SyntaxHighlighter.brushes.Sase.prototype = new SyntaxHighlighter.Highlighter();
+SyntaxHighlighter.brushes.Sase.aliases = ['Sase', 'sase'];
 EOF
 
 
