@@ -34,6 +34,9 @@ import de.uniol.inf.is.odysseus.peer.ping.IPingMapNode;
 
 public class ForceModel {
 
+	private static final int DATA_RATE_TO_IMPORTED_SOURCE = 100;
+	private static final int DEFAULT_DATA_RATE = 1;
+
 	private static class ValuePeerPair implements Comparable<ValuePeerPair> {
 		public final double value;
 		public final PeerID peerID;
@@ -53,10 +56,6 @@ public class ForceModel {
 
 	private static final int MAX_ITERATIONS = 10000;
 
-	private static final int BID_WEIGHT = 1;
-	private static final int LATENCY_WEIGHT = 1;
-	private static final int WEIGHT_SUM = BID_WEIGHT + LATENCY_WEIGHT;
-
 	private static final Logger LOG = LoggerFactory.getLogger(ForceModel.class);
 	private static final Random RAND = new Random();
 
@@ -67,6 +66,9 @@ public class ForceModel {
 	private final ForceNode localForceNode;
 	private final Collection<ForceNode> forceNodes;
 	private final Map<ILogicalQueryPart, Collection<Bid>> bids;
+	
+	private final int bidWeight;
+	private final int latencyWeight;
 
 	// called by OSGi-DS
 	public static void bindPingMap(IPingMap serv) {
@@ -109,13 +111,19 @@ public class ForceModel {
 		localForceNode = null;
 		forceNodes = Lists.newArrayList();
 		bids = Maps.newHashMap();
+		this.latencyWeight = 1;
+		this.bidWeight = 1;
 	}
 
-	public ForceModel(Map<ILogicalQueryPart, Collection<Bid>> bids, QueryPartGraph partGraph, Map<ILogicalOperator, Double> operatorDataRateMap) {
+	public ForceModel(Map<ILogicalQueryPart, Collection<Bid>> bids, QueryPartGraph partGraph, Map<ILogicalOperator, Double> operatorDataRateMap, int bidWeight, int latencyWeight) {
 		Preconditions.checkNotNull(bids, "Map of bid must not be null!");
 		Preconditions.checkNotNull(partGraph, "Query Part graph must not be null!");
+		Preconditions.checkArgument(bidWeight >= 0, "Bid weight must be non-negative!");
+		Preconditions.checkArgument(latencyWeight >= 0, "Latency weight must be non-negative!");
 
 		this.bids = bids;
+		this.bidWeight = bidWeight;
+		this.latencyWeight = latencyWeight;
 
 		localForceNode = createLocalForceNode();
 
@@ -183,7 +191,7 @@ public class ForceModel {
 						ILogicalQueryPart nextQueryPart = nextQueryPartConnection.getEndNode().getQueryPart();
 
 						ForceNode nextForceNode = determineForceNode(nextQueryPart, forceNodes);
-						new Force(forceNode, nextForceNode, dataRate != null ? dataRate : 1);
+						new Force(forceNode, nextForceNode, dataRate != null ? dataRate : DEFAULT_DATA_RATE);
 					}
 
 				} else {
@@ -191,7 +199,7 @@ public class ForceModel {
 					ILogicalOperator firstRelativeSink = relativeSinks.iterator().next();
 					Double dataRate = operatorDataRateMap.get(firstRelativeSink);
 
-					new Force(forceNode, localForceNode, dataRate != null ? dataRate : 1);
+					new Force(forceNode, localForceNode, dataRate != null ? dataRate : DEFAULT_DATA_RATE);
 				}
 
 				if (graphNode.getConnectionsAsEnd().isEmpty()) {
@@ -209,7 +217,7 @@ public class ForceModel {
 									ForceNode peerForceNode = new ForceNode(optNode.get().getPosition());
 									forceNodes.add(peerForceNode);
 
-									new Force(peerForceNode, forceNode, 1000);
+									new Force(peerForceNode, forceNode, DATA_RATE_TO_IMPORTED_SOURCE);
 								}
 							}
 						}
@@ -279,6 +287,7 @@ public class ForceModel {
 
 		Map<ILogicalQueryPart, PeerID> result = Maps.newHashMap();
 		PositionNormalizer normalizer = new PositionNormalizer(positionMap.values());
+		LOG.debug("Latency Weight = {}, Bid Weight = {}", latencyWeight, bidWeight);
 		for (ILogicalQueryPart queryPart : bids.keySet()) {
 			LOG.debug("Determine best peer for queryPart {}", queryPart);
 
@@ -317,7 +326,7 @@ public class ForceModel {
 		return avoidedPeers;
 	}
 
-	private static PeerID determineNearestPeerWithBestBid(Vector3D position, Map<PeerID, Vector3D> positionMap, PositionNormalizer normalizer, Collection<Bid> bidsForQueryPart, Collection<PeerID> avoidedPeers) {
+	private PeerID determineNearestPeerWithBestBid(Vector3D position, Map<PeerID, Vector3D> positionMap, PositionNormalizer normalizer, Collection<Bid> bidsForQueryPart, Collection<PeerID> avoidedPeers) {
 		Map<PeerID, Bid> bidMap = createBidMap(bidsForQueryPart);
 
 		Map<PeerID, Double> peerLatencyDistances = Maps.newHashMap();
@@ -346,7 +355,7 @@ public class ForceModel {
 			double invertedBid = peerInvertedBids.get(peerID);
 			
 
-			double peerValue = ((latencyFactor * LATENCY_WEIGHT) + (invertedBid * BID_WEIGHT)) / WEIGHT_SUM;
+			double peerValue = ((latencyFactor * latencyWeight) + (invertedBid * bidWeight)) / (bidWeight + latencyWeight);
 			LOG.debug("\t{}:\tPeerValue={} \t(BidValue={}\tLatencyValue={} )", new Object[] {p2pDictionary.getRemotePeerName(peerID).get(), peerValue, invertedBid, latencyFactor});
 
 			peerValues.add(new ValuePeerPair(peerValue, peerID));

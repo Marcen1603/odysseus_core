@@ -94,16 +94,40 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap = LogicalQueryHelper.copyQueryPartsDeep(queryParts);
 		List<ILogicalQueryPart> queryPartsToSurvey = Lists.newArrayList(queryPartsCopyMap.keySet());
 
-		Map<ILogicalQueryPart, PeerID> allocationMap = allocate(queryPartsToSurvey, query, config, isOwnBidUsed(allocatorParameters));
+		int latencyWeight = determineLatencyWeight(allocatorParameters);
+		int bidWeight = determineBidWeight(allocatorParameters);
+		boolean isOwnBidUsed = isOwnBidUsed(allocatorParameters);
+		
+		Map<ILogicalQueryPart, PeerID> allocationMap = allocate(queryPartsToSurvey, query, config, isOwnBidUsed, latencyWeight, bidWeight);
 		Map<ILogicalQueryPart, PeerID> allocationMapParts = transformToOriginalLogicalQueryParts(allocationMap, queryPartsCopyMap);
 
 		return allocationMapParts;
 	}
-
-	private static boolean isOwnBidUsed(List<String> allocatorParameters) {
-		return allocatorParameters.isEmpty() || !allocatorParameters.get(0).equalsIgnoreCase("notlocal");
+	
+	private static int determineLatencyWeight(List<String> allocatorParameters) {
+		if( allocatorParameters.size() >= 1 ) {
+			try {
+				return Integer.valueOf(allocatorParameters.get(0));
+			} catch( Throwable t ) {
+			}
+		}
+		return 1;
 	}
 
+	private static int determineBidWeight(List<String> allocatorParameters) {
+		if( allocatorParameters.size() >= 2 ) {
+			try {
+				return Integer.valueOf(allocatorParameters.get(1));
+			} catch( Throwable t ) {
+			}
+		}
+		return 1;
+	}
+
+	private static boolean isOwnBidUsed(List<String> allocatorParameters) {
+		return allocatorParameters.size() < 3 || !allocatorParameters.get(2).equalsIgnoreCase("notlocal");
+	}
+	
 	private static Map<ILogicalQueryPart, PeerID> transformToOriginalLogicalQueryParts(Map<ILogicalQueryPart, PeerID> allocationMapPeerID, Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap) {
 		Map<ILogicalQueryPart, PeerID> partMap = Maps.newHashMap();
 
@@ -115,7 +139,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		return partMap;
 	}
 
-	private static Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, ILogicalQuery query, QueryBuildConfiguration transCfg, boolean ownBid) throws QueryPartAllocationException {
+	private static Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, ILogicalQuery query, QueryBuildConfiguration transCfg, boolean ownBid, int latencyWeight, int bidWeight) throws QueryPartAllocationException {
 		QueryPartGraph partGraph = new QueryPartGraph(queryParts);
 		
 		Collection<ILogicalOperator> operators = Lists.newArrayList();
@@ -126,7 +150,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		Map<ILogicalOperator, OperatorEstimation<?>> logicalOperatorEstimationMap = Helper.determineOperatorCostEstimations(operators, transCfg.getName());
 		
 		List<AuctionSummary> auctions = publishAuctionsForRemoteSubPlans(queryParts, logicalOperatorEstimationMap, transCfg);
-		Map<ILogicalQueryPart, PeerID> destinationMap = determinePeerAssignment(auctions, partGraph, ownBid, logicalOperatorEstimationMap);
+		Map<ILogicalQueryPart, PeerID> destinationMap = determinePeerAssignment(auctions, partGraph, ownBid, latencyWeight, bidWeight, logicalOperatorEstimationMap);
 		return destinationMap;
 	}
 
@@ -154,12 +178,12 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		return auctions;
 	}
 
-	private static Map<ILogicalQueryPart, PeerID> determinePeerAssignment(List<AuctionSummary> auctions, QueryPartGraph partGraph, boolean ownBid, Map<ILogicalOperator, OperatorEstimation<?>> logicalOperatorEstimationMap) throws QueryPartAllocationException {
+	private static Map<ILogicalQueryPart, PeerID> determinePeerAssignment(List<AuctionSummary> auctions, QueryPartGraph partGraph, boolean ownBid, int latencyWeight, int bidWeight, Map<ILogicalOperator, OperatorEstimation<?>> logicalOperatorEstimationMap) throws QueryPartAllocationException {
 		try {
 			Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap = determineBidPlanMap(auctions, ownBid);
 
 			Map<ILogicalOperator, Double> dataRateMap = createDataRateMap(logicalOperatorEstimationMap);
-			ForceModel model = new ForceModel(bidPlanMap, partGraph, dataRateMap);
+			ForceModel model = new ForceModel(bidPlanMap, partGraph, dataRateMap, bidWeight, latencyWeight);
 			model.run();
 			
 			return model.getResult();
