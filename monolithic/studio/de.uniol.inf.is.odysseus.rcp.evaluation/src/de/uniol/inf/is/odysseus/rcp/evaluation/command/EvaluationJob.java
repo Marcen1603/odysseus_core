@@ -12,6 +12,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import java.util.TreeMap;
 
 import org.eclipse.core.resources.IFile;
@@ -121,7 +122,7 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 			String thislines = allLines.replaceAll("SPECIAL_STAMP", date + "-" + i);
 			for (Entry<String, String> currentValue : currentValues.entrySet()) {
 				prefix = prefix + " - " + currentValue.getKey() + ": " + currentValue.getValue() + "\n";
-				thislines = thislines.replaceAll(currentValue.getKey(), currentValue.getValue());
+				thislines = thislines.replaceAll(Pattern.quote("${"+currentValue.getKey()+"}"), currentValue.getValue());
 			}
 			monitor.subTask(prefix + "Executing Script \"" + file.getName() + "\"... ");
 			Context context = ParserClientUtil.createRCPContext(file);

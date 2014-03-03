@@ -35,8 +35,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -58,9 +60,11 @@ public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellMo
 	private int times = 3;
 	private Button saveAll;
 	private Table table;
-	private Text timeText;
+	private Spinner timeText;
 	private TableViewer tableViewer;
 	private List<String> columnNames = new ArrayList<String>(Arrays.asList("On", "Variable Name", "Variable Value"));
+	private Text locationText;
+	private String location = "";
 
 	protected EvaluationSettingsDialog(Shell parentShell) {
 		super(parentShell);
@@ -74,7 +78,7 @@ public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellMo
 	}
 
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(final Composite parent) {
 
 		String[] names = store.getArray("EVALUATION_NAMES");
 		if (names != null) {
@@ -85,6 +89,11 @@ public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellMo
 				e.activated = store.getBoolean(name + "__ACTIVATE");
 				this.variables.add(e);
 			}
+		}
+		if(this.store.get("RESULT_LOCATION")!=null){
+			this.location = store.get("RESULT_LOCATION");
+		}else{
+			this.location = "";
 		}
 
 		super.setTitle("Start Evaluation");
@@ -145,6 +154,52 @@ public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellMo
 			}
 		});
 
+		Label labelLocation = new Label(parent, SWT.NONE);
+		labelLocation.setText("Choose location where to store the results");
+		
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout compositeLayout = new GridLayout(2, false);
+		compositeLayout.marginWidth = 0;
+		compositeLayout.marginHeight = 0;
+		composite.setLayout(compositeLayout);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		locationText = new Text(composite, SWT.BORDER);
+		GridData gd_dataFolderText = new GridData(GridData.FILL_HORIZONTAL);
+		gd_dataFolderText.widthHint = 287;
+		locationText.setLayoutData(gd_dataFolderText);
+		locationText.setText(getLocation());
+		locationText.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent e) {
+				location = locationText.getText();
+				
+			}
+		});
+
+		Button button = new Button(composite, SWT.PUSH);
+		button.setText("Browse...");
+
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {			
+				DirectoryDialog dialog = new DirectoryDialog(getShell());												
+				dialog.setFilterPath(locationText.getText());
+				dialog.setText("Result directory");
+				dialog.setMessage("Choose a directory");
+
+				String dir = dialog.open();
+				if (dir!=null) {					
+					locationText.setText(dir);
+				}			
+			}
+		});
+		
+		
+		
+		//********************************* OTHER STUFF ****************************
+		
 		Composite othersettingsComp = new Composite(parent, SWT.NONE);
 		GridLayout gl = new GridLayout(2, false);
 		othersettingsComp.setLayout(gl);
@@ -152,13 +207,15 @@ public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellMo
 		gridData.grabExcessHorizontalSpace = true;		
 		othersettingsComp.setLayoutData(gridData);
 
-		timeText = new Text(othersettingsComp, SWT.BORDER);
+		
+		timeText = new Spinner(othersettingsComp, SWT.BORDER);
 		int times = 5;
 		if (store.get("TIMES") != null) {
 			times = store.getInt("TIMES");
 		}
-		timeText.setText(Integer.toString(times));
-		timeText.setSize(100, timeText.getSize().y);
+		timeText.setMinimum(0);
+		timeText.setSelection(times);		
+//		timeText.setSize(100, timeText.getSize().y);
 		timeText.addModifyListener(new ModifyListener() {
 
 			@Override
@@ -174,6 +231,10 @@ public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellMo
 		saveAll.setSelection(true);
 		Label label2 = new Label(othersettingsComp, SWT.NONE);
 		label2.setText("Save all settings for next evaluation start!");
+		
+		
+		
+		
 		return parent;
 	}
 
@@ -267,7 +328,7 @@ public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellMo
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 
-		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		createButton(parent, IDialogConstants.OK_ID, "Start", true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 
@@ -290,6 +351,7 @@ public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellMo
 			}
 			this.store.put("EVALUATION_NAMES", names.toArray(new String[0]));			
 			this.store.put("TIMES", this.times);
+			this.store.put("RESULT_LOCATION", this.getLocation());
 		}
 		super.okPressed();
 	}
@@ -408,6 +470,14 @@ public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellMo
 
 	private void refreshTable() {
 		this.tableViewer.setInput(variables);
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 }
