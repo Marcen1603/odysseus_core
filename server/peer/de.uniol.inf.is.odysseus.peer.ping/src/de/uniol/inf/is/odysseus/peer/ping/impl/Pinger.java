@@ -168,7 +168,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, byte[] message) {
-		if (message[0] == PING_FLAG_BYTE) {
+		if (message[0] == PING_FLAG_BYTE && PingMap.isActivated()) {
 			byte[] pongMessage = createPongMessage(message);
 			try {
 				if (communicator.isConnected(senderPeer)) {
