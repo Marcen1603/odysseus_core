@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Marco Grawunder
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DISTINCT", doc = "This operator removes duplicates.", category={LogicalOperatorCategory.BASE})
+///@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DISTINCT", doc = "This operator removes duplicates.", category={LogicalOperatorCategory.BASE})
 public class DistinctAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -1992998023364461468L;
