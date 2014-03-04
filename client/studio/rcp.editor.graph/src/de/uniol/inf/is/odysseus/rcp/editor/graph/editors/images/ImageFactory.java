@@ -157,7 +157,7 @@ public class ImageFactory {
 			file = "brain.png";
 			break;
 		case "GENERATOR":
-			file = "geat_add.png";
+			file = "gear_add.png";
 			break;
 		default:
 			file = "gear.png";
