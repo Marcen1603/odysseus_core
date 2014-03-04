@@ -26,6 +26,7 @@ public class TAssureHeartbeatAORule extends
 		physical.setRealTimeDelay(operator.getRealTimeDelay(), operator.getTimeUnit());
 		physical.setSendAlwaysHeartbeat(operator.isSendAlwaysHeartbeat());
 		physical.setAllowOutOfOrder(operator.isAllowOutOfOrder());
+		physical.setStartTimerAfterFirstElement(operator.isStartTimerAfterFirstElement());
 		defaultExecute(operator, physical, config, true, true);
 	}
 

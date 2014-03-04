@@ -81,6 +81,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	};
 
 	private Runner generateHeartbeat = new Runner();
+	private boolean startTimerAfterFirstElement = false;
 
 	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
@@ -89,11 +90,18 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		generateHeartbeat.start();
+		if (!startTimerAfterFirstElement){
+			generateHeartbeat.start();
+		}
 	}
 
 	@Override
 	protected void process_next(R object, int port) {
+		if (startTimerAfterFirstElement){
+			if (!generateHeartbeat.isAlive()){
+				generateHeartbeat.start();
+			}
+		}
 //		System.err.println("process next " + object + " watermark "
 //				+ getWatermark());
 		PointInTime marker = object.getMetadata().getStart();
@@ -166,6 +174,13 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	@Override
 	public AbstractPipe<R, R> clone() {
 		throw new IllegalArgumentException("Clone not supported");
+	}
+	/**
+	 * @param startTimerAfterFirstElement
+	 */
+	public void setStartTimerAfterFirstElement(
+			boolean startTimerAfterFirstElement) {
+		this.startTimerAfterFirstElement  = startTimerAfterFirstElement;
 	}
 
 }
