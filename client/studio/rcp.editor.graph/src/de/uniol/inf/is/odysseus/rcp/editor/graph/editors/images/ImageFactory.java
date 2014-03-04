@@ -39,7 +39,7 @@ public class ImageFactory {
 			break;
 		case "AGGREGATE":
 		case "FASTMEDIAN":
-			file = "sum.png";
+			file = "text_sum.png";
 			break;
 		case "PROJECT":
 			file = "project.png";
@@ -63,6 +63,7 @@ public class ImageFactory {
 		case "DBENRICH":
 		case "BUFFER":
 		case "CACHE":
+		case "ASSOCIATIVESTORAGE":
 			file = "database.png";
 			break;
 		case "CSVFILESOURCE":
