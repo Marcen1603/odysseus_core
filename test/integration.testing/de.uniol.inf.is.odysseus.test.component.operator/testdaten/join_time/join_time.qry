@@ -1,6 +1,5 @@
 ///OdysseusScript
 #PARSER PQL
-#TRANSCFG Standard
 #RUNQUERY
 wind = ACCESS({
 	source='wind', 
