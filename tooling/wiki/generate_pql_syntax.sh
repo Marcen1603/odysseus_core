@@ -7,31 +7,36 @@ operator=$(find ../../ -name \*.java -type f |xargs grep "@LogicalOperator" | se
 parameter=$(find ../../ -name \*.java -type f |xargs grep "@Parameter" | sed -rn 's/.*name\s*\=\s*\"([a-zA-Z_]*)\".*/\U\1/p'  | sort -fu | sed -r ':a ;$! N; s/\n(.*)/ \1/; ta ; P ; D' )
 
 cat > shBrushPql.js <<- EOF
-SyntaxHighlighter.brushes.Pql = function()
+;(function()
 {
-// Copyright 2014 Christian Kuka christian@kuka.cc
-	
+// CommonJS
+typeof(require) != 'undefined' ? SyntaxHighlighter = require('shCore').SyntaxHighlighter : null;
+
+function Brush()
+{	
 // PQL Operator
-var operator =	'$operator';
+var operators =	'$operator';
 
 // PQL Parameter		
-var parameter = '$parameter';
+var parameters = '$parameter';
 	
-// Odysseus Script
-var preprocessors = '#ADDQUERY #BUFFERPLACEMENT #CONFIG #DEFINE #DOQUERYSHARING #DOREWRITE #DROPALLQUERIES #DROPALLSINKS #DROPALLSOURCES #ENDIF #IF #IFDEF #IFNDEF #IFSRCDEF #IFSRCNDEF #INPUT #INCLUDE #LOGIN #LOGOUT #LOOP #METADATA #ODYSSEUS_PARAM #PRINT #PARSER #QName #QUERY #RELOADFROMLOG #RUNQUERY #SCHEDULER #SLEEP #STARTQUERIES #STARTSCHEDULER #STOPSCHEDULER #TRANSCFG #UNDEF';
-
 this.regexList = [
 { regex: /\/\/\/(.*)$/gm, css: 'comments' },// comments
 { regex: SyntaxHighlighter.regexLib.multiLineDoubleQuotedString, css: 'string' },// double quoted strings
 { regex: SyntaxHighlighter.regexLib.multiLineSingleQuotedString, css: 'string' },// single quoted strings
-{ regex: new RegExp(this.getKeywords(preprocessors), 'gm'), css: 'preprocessor' },// Odysseus Script
-{ regex: new RegExp(this.getKeywords(operators), 'gm'), css: 'color5' },// PQL operator
-{ regex: new RegExp(this.getKeywords(parameters), 'gm'), css: 'color4' }// PQL operator parameter
+{ regex: /\s*#.*/gm, css: 'preprocessor' },// Odysseus Script
+{ regex: new RegExp(this.getKeywords(operators), 'gmi'), css: 'keyword' },// PQL operator
+{ regex: new RegExp(this.getKeywords(parameters), 'gmi'), css: 'color2' }// PQL operator parameter
 ];
+this.forHtmlScript(SyntaxHighlighter.regexLib.scriptScriptTags);
 };
 
-SyntaxHighlighter.brushes.Pql.prototype = new SyntaxHighlighter.Highlighter();
-SyntaxHighlighter.brushes.Pql.aliases = ['PQL', 'pql'];
+Brush.prototype	= new SyntaxHighlighter.Highlighter();
+Brush.aliases	= ['pql', 'PQL'];
+SyntaxHighlighter.brushes.Pql = Brush;
+// CommonJS
+typeof(exports) != 'undefined' ? exports.Brush = Brush : null;
+})();
 EOF
 
 
