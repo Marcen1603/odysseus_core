@@ -27,5 +27,13 @@ public class CreateQueryCommand extends AbstractExecutorCommand {
 		return query;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "CREATE QUERY "+query;
+	}
+	
 
 }

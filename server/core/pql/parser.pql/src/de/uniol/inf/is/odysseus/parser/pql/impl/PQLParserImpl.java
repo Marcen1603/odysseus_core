@@ -120,7 +120,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
   static final public List < IExecutorCommand > query() throws ParseException {
   Map < String, ILogicalOperator > namedOps = new HashMap < String, ILogicalOperator > ();
   Map < String, Map < String, Object > > namedOpParameters = new HashMap < String, Map < String, Object > > ();
-  List< IExecutorCommand > commands = new LinkedList< IExecutorCommand >();
+  Map< String, IExecutorCommand > commands = new HashMap<String, IExecutorCommand >();
 
   ILogicalOperator outputStream;
     label_1:
@@ -233,13 +233,17 @@ public class PQLParserImpl implements PQLParserImplConstants {
         namingOp = topOperator.getSubscribedToSource(0).getTarget();
       }
       query.setName(namingOp.getName());
-      commands.add(new CreateQueryCommand( query, getUser()));
+     // TODO:Find a better solution
+     /// if (!commands.containsKey(namingOp.getName())){
+      if (commands.isEmpty()){
+          commands.put(namingOp.getName(), new CreateQueryCommand( query, getUser()));
+      }
     }
-    {if (true) return commands;}
+    {if (true) return new LinkedList(commands.values());}
     throw new Error("Missing return statement in function");
   }
 
-  static final public void namedStream(Map < String, ILogicalOperator > namedOps, Map < String, Map < String, Object > > namedOpParameters, List<IExecutorCommand > commands) throws ParseException {
+  static final public void namedStream(Map < String, ILogicalOperator > namedOps, Map < String, Map < String, Object > > namedOpParameters, Map<String, IExecutorCommand > commands) throws ParseException {
   Token name;
   ILogicalOperator op;
   boolean isView = false;
@@ -296,7 +300,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
         }
         if (isSharedSource)
         {
-                  commands.add(new CreateStreamCommand(nameStr, op, user));
+                  commands.put(nameStr, new CreateStreamCommand(nameStr, op, user));
         }
         else
         {
@@ -309,7 +313,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
 //		  }
 //		  rename.setOutputSchema(new SDFSchema(nameStr, op.getOutputSchema(), attributes));
 //		  op = rename;
-          commands.add(new CreateViewCommand(nameStr, op, user));
+          commands.put(nameStr,new CreateViewCommand(nameStr, op, user));
         }
         //get access operator for view, so other operators don't get subscribed
         //to top operator of the view
@@ -624,20 +628,6 @@ public class PQLParserImpl implements PQLParserImplConstants {
     finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_3R_6() {
-    if (jj_scan_token(27)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_7()) jj_scanpos = xsp;
-    if (jj_scan_token(28)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_11() {
-    if (jj_scan_token(INTEGER)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_10() {
     if (jj_scan_token(FLOAT)) return true;
     return false;
@@ -734,6 +724,20 @@ public class PQLParserImpl implements PQLParserImplConstants {
 
   static private boolean jj_3R_12() {
     if (jj_scan_token(CHAR_LITERAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_6() {
+    if (jj_scan_token(27)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_7()) jj_scanpos = xsp;
+    if (jj_scan_token(28)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_11() {
+    if (jj_scan_token(INTEGER)) return true;
     return false;
   }
 
