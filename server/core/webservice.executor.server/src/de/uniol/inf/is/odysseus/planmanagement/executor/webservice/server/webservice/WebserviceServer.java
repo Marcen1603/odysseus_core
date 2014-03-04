@@ -371,21 +371,15 @@ public class WebserviceServer {
 		GraphNode newNode = new GraphNode();		
 		newNode.setName(operator.getName());	
 		newNode.setParameterInfos(operator.getParameterInfos());
-		
-
-		// begin temporary solution		
-		// AccessAO -> getName() -> source
-		// SenderAO -> getName() -> sink
-		LogicalOperator logicalOperatorAnnotation = operator.getClass().getAnnotation(LogicalOperator.class);
-		newNode.setOperatorType(logicalOperatorAnnotation.name());
+		newNode.setOutputSchema(this.createSDFSchemaInformation(operator.getOutputSchema()).getResponseValue());
+		newNode.setClassName(operator.getClass().getSimpleName());
 		
 		//Source -> getName() -> stream
 		if (operator instanceof StreamAO) {
-			newNode.setSourceOperator(true);
+			newNode.setSource(true);
 			StreamAO streamAO = (StreamAO) operator;
 			newNode.setName(streamAO.getStreamname().getResourceName());
 		}  
-		// end temporary solution
 		
 		visitedOperators.put(operator.hashCode(), newNode);
 		for (LogicalSubscription subs: operator.getSubscribedToSource()) {
@@ -399,6 +393,8 @@ public class WebserviceServer {
 		}
 		return newNode;
 	}
+	
+	
 
 	@SuppressWarnings("unchecked")
 	public SimpleGraph getPlan(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {

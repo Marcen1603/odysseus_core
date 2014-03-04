@@ -46,10 +46,16 @@ public class GraphNode {
 
 	private Map<GraphNode, Integer> childsMap = new HashMap<GraphNode, Integer>();
 	private String name;	
-	private String operatorType;
-	private boolean sourceOperator;
 	private int id;
 	private Map<String, String> parameterInfos;
+	private SDFSchemaInformation outputSchema;
+	private boolean open;
+	private boolean source;
+	private boolean sink;
+	private boolean pipe;
+	private String ownerIDs;
+	private int hash;
+	private String className;
 	
 	public int getId() {
 		return id;
@@ -101,6 +107,7 @@ public class GraphNode {
 	}
 
 	public void setChilds(GraphNode[] childs) {
+		this.childsMap.clear();
 		for(GraphNode g : childs){
 			this.addChild(g);
 		}
@@ -121,20 +128,69 @@ public class GraphNode {
 		return this.parameterInfos;
 	}
 
-	public void setSourceOperator(boolean sourceOperator) {
-		this.sourceOperator = sourceOperator;
+	public void setOutputSchema(SDFSchemaInformation outputSchema) {
+		this.outputSchema = outputSchema;
 	}
 	
-	public boolean isSourceOperator() {
-		return this.sourceOperator;
+	public SDFSchemaInformation getOutputSchema() {
+		return this.outputSchema;
 	}
 
-	public void setOperatorType(String operatorType) {
-		this.operatorType = operatorType;
+	public void setOpen(boolean open) {
+		this.open = open;
+	}
+
+	public void setSource(boolean source) {
+		this.source = source;
+	}
+
+	public void setSink(boolean sink) {
+		this.sink = sink;
+	}
+
+	public void setPipe(boolean pipe) {
+		this.pipe = pipe;
+	}
+
+	public void setOwnerIDs(String ownerIDs) {
+		this.ownerIDs = ownerIDs;
+	}
+
+	public void setHash(int hash) {
+		this.hash = hash;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	public boolean isOpen() {
+		return open;
+	}
+
+	public boolean isSource() {
+		return source;
+	}
+
+	public boolean isSink() {
+		return sink;
+	}
+
+	public boolean isPipe() {
+		return pipe;
+	}
+
+	public String getOwnerIDs() {
+		return ownerIDs;
+	}
+
+	public int getHash() {
+		return hash;
+	}
+
+	public String getClassName() {
+		return className;
 	}
 	
-	public String getOperatorType() {
-		return this.operatorType;
-	}
 	
 }
