@@ -35,7 +35,7 @@ public class ImageFactory {
 			file = "join2.png";
 			break;
 		case "RENAME":
-			file = "document_edit.png";
+			file = "pencil.png";
 			break;
 		case "AGGREGATE":
 		case "FASTMEDIAN":
