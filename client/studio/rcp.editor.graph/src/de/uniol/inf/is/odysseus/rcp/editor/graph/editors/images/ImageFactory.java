@@ -34,7 +34,11 @@ public class ImageFactory {
 		case "LEFTJOIN":
 			file = "join2.png";
 			break;
+		case "RENAME":
+			file = "document_edit.png";
+			break;
 		case "AGGREGATE":
+		case "FASTMEDIAN":
 			file = "sum.png";
 			break;
 		case "PROJECT":
@@ -142,8 +146,21 @@ public class ImageFactory {
 		case "REGRESSION":
 			file = "graph.png";
 			break;
+		case "CLASSIFICATION_LEARN":
+		case "CLASSIFY":
+		case "CLUSTERING":
+		case "FEATUREEXTRACTION":
+		case "FREQUENTITEMSET":
+		case "GENERATERULES":
+		case "HMM":
+		case "VECTORQUANTIZATION":
+			file = "brain.png";
+			break;
+		case "GENERATOR":
+			file = "geat_add.png";
+			break;
 		default:
-			file = "default.png";
+			file = "gear.png";
 			break;
 		}
 
