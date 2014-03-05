@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 public class BlockingBufferPO<T extends IStreamObject<?>> extends BufferPO<T> {
 
@@ -48,5 +49,19 @@ public class BlockingBufferPO<T extends IStreamObject<?>> extends BufferPO<T> {
 				}
 			}
 		}
+	}
+	
+	@Override
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof BlockingBufferPO)){
+			return false;
+		}
+		@SuppressWarnings("unchecked")
+		BlockingBufferPO<T> b = (BlockingBufferPO<T>)ipo;
+		if (b.maxBufferSize != this.maxBufferSize){
+			return false;
+		}
+		
+		return super.process_isSemanticallyEqual(ipo);
 	}
 }

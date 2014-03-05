@@ -192,6 +192,9 @@ public class BufferPO<T extends IStreamObject<?>> extends
 		if (!(ipo instanceof BufferPO)) {
 			return false;
 		}
+		if (!ipo.getName().equals(this.getName())){
+			return false;
+		}
 		BufferPO bp = (BufferPO) ipo;
 		if (this.buffername.equals(bp.buffername)) {
 			return true;
