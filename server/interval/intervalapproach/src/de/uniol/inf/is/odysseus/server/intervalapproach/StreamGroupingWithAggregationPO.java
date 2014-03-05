@@ -220,8 +220,10 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 
 	public void createAddOutput(PointInTime timestamp) {
+		if (dumpAtValueCount > 0) {
+
 		createOutputCounter++;
-		if (dumpAtValueCount > 0 && createOutputCounter >= dumpAtValueCount) {
+		if (createOutputCounter >= dumpAtValueCount) {
 			createOutputCounter = 0;
 			
 			for (Entry<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups.entrySet()) {
@@ -232,6 +234,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 				}
 			}
 
+		}
 		}
 	}
 
