@@ -214,9 +214,13 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 			if (!isOwnPeer(commAdv) && hasNoConnection(commAdv)) {
 				LOG.debug("...and is a new interesting one");
 
-				IJxtaConnection clientConnection = new JxtaBiDiClientConnection(createPipeAdvertisement(commAdv.getPipeID()));
-				clientConnection.addListener(this);
-				tryConnectAsync(clientConnection, commAdv.getPeerID(), commAdv.getPeerName());
+				if( JxtaServicesProvider.getInstance().isReachable(commAdv.getPeerID())) {
+					IJxtaConnection clientConnection = new JxtaBiDiClientConnection(createPipeAdvertisement(commAdv.getPipeID()));
+					clientConnection.addListener(this);
+					tryConnectAsync(clientConnection, commAdv.getPeerID(), commAdv.getPeerName());
+				} else {
+					LOG.debug("... but is not reachable");
+				}
 			} else {
 				LOG.debug("...but is our own peer or we have already a connection to that peer");
 			}
@@ -262,18 +266,21 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				synchronized (waitingClientConnections) {
-					try {
-						LOG.debug("Beginning connection to server peer {}", peerName);
+				try {
+					LOG.debug("Beginning connection to server peer {}", peerName);
+					synchronized (waitingClientConnections) {
 						waitingClientConnections.put(connection, peerID);
-						connection.connect();
-					} catch (final IOException ex) {
+					}
+					connection.connect();
+				} catch (final IOException ex) {
+					synchronized(waitingClientConnections) {
 						waitingClientConnections.remove(connection);
 					}
 				}
 			}
 		});
 		t.setDaemon(true);
+		t.setName("Connecting thread to " + peerName);
 		t.start();
 	}
 
