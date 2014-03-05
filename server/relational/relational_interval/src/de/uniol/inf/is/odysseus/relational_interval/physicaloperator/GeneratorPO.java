@@ -164,26 +164,34 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
             if ((leftObjects != null) && (leftObjects.size() > 0)) {
                 final Tuple<M> left = leftObjects.getFirst();
                 // We have two cases:
-                // 1. In the right group is an element with t-2 and in the left
-                // group is an element with t-1 -> Use the timestamp from the
-                // left
-                // 2. In the right group is an element with t-1 and in the left
-                // group is an element with t-2 -> Use the timestamp from the
+                // 1. In the right group is an element with t_R and in the left
+                // group is an element with t_L and t_L > t_R -> Use the
+                // timestamp from the
+                // left plus the frequency
+                // 2. In the right group is an element with t_R and in the left
+                // group is an element with t_L and t_R > t_L -> Use the
+                // timestamp from the
                 // right
-                M leftStreamTimeinterval = left.getMetadata();
-                if ((lastObjects.size() > 0) && (lastObjects.getFirst().getMetadata().getStart().after(leftStreamTimeinterval.getStart()))) {
-                    leftStreamTimeinterval = lastObjects.getFirst().getMetadata();
+                M streamTimeinterval = left.getMetadata();
+                streamTimeinterval.setStartAndEnd(streamTimeinterval.getStart().plus(this.frequency), streamTimeinterval.getEnd().plus(this.frequency));
+                if ((lastObjects.size() > 0) && (lastObjects.getFirst().getMetadata().getStart().after(streamTimeinterval.getStart()))) {
+                    streamTimeinterval = lastObjects.getFirst().getMetadata();
                 }
-                final PointInTime delta = object.getMetadata().getStart().minus(leftStreamTimeinterval.getStart());
-                final int amount = (int) (delta.getMainPoint() / this.frequency) - 1;
-                if (amount > 0) {
+                final PointInTime delta = object.getMetadata().getStart().minus(streamTimeinterval.getStart());
+                // Number of tuples that should exist between the last
+                // generation and the current tuple (not inclusive)
+                final int n = (int) (delta.getMainPoint() / this.frequency) - 1;
+                if (n > 0) {
+                    // Generate one tuple with timestamp [t_0, t_0 +
+                    // n*frequency)
                     if (!this.multi) {
-                        this.generateData(lastObjects, object, left, leftStreamTimeinterval.getStart().plus(this.frequency), leftStreamTimeinterval.getStart().plus((amount + 1) * this.frequency));
+                        this.generateData(lastObjects, object, left, streamTimeinterval.getStart(), streamTimeinterval.getStart().plus(n * this.frequency));
                     }
                     else {
-                        for (int g = 0; g < amount; g++) {
-                            this.generateData(lastObjects, object, left, leftStreamTimeinterval.getStart().plus((g + 1) * this.frequency),
-                                    leftStreamTimeinterval.getEnd().plus((g + 1) * this.frequency));
+                        // Generate n tuple with timestamp [t_i, t_i +
+                        // frequency)
+                        for (int i = 0; i < n; i++) {
+                            this.generateData(lastObjects, object, left, streamTimeinterval.getStart().plus(i * this.frequency), streamTimeinterval.getEnd().plus((i + 1) * this.frequency));
                         }
                     }
                 }
