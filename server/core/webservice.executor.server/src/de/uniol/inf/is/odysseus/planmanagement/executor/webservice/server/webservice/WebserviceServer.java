@@ -373,7 +373,8 @@ public class WebserviceServer {
 		newNode.setParameterInfos(operator.getParameterInfos());
 		newNode.setOutputSchema(this.createSDFSchemaInformation(operator.getOutputSchema()).getResponseValue());
 		newNode.setClassName(operator.getClass().getSimpleName());
-		
+		newNode.setHash(operator.hashCode());
+
 		//Source -> getName() -> stream
 		if (operator instanceof StreamAO) {
 			newNode.setSource(true);
@@ -413,6 +414,7 @@ public class WebserviceServer {
 		}
 		return graph;
 	}
+
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public SimpleGraph getPlanByQueryID(
