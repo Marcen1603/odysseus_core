@@ -151,7 +151,17 @@ public class RCPP2PNewPlugIn extends AbstractUIPlugin {
 	}
 	
 	public static String determineP2PTitleSuffix() {
-		return p2pNetworkManager.getLocalPeerGroupName() + ":" + p2pNetworkManager.getLocalPeerName();
+		StringBuilder sb = new StringBuilder();
+		sb.append( p2pNetworkManager.getLocalPeerGroupName() );
+		sb.append( ":" );
+		sb.append( p2pNetworkManager.getLocalPeerName() );
+		if( p2pNetworkManager.isRendevousPeer() ) {
+			sb.append(" <rendevous>");
+		}
+		if( p2pNetworkManager.getRendevousPeerAddress() != null ) {
+			sb.append(" <rdv to " + p2pNetworkManager.getRendevousPeerAddress().toString() + ">");
+		}
+		return sb.toString(); 
 	}
 	
 	public static void setWindowTitleSuffix(final String titleSuffix) {

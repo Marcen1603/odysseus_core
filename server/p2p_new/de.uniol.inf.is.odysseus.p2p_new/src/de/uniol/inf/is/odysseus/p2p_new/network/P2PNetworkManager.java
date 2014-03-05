@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new.network;
 
 import java.io.File;
-import java.util.Random;
+import java.net.URI;
 
 import net.jxta.id.IDFactory;
 import net.jxta.impl.cm.CacheManager;
@@ -11,6 +11,7 @@ import net.jxta.peergroup.PeerGroup;
 import net.jxta.peergroup.PeerGroupID;
 import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
+import net.jxta.platform.NetworkManager.ConfigMode;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,17 +28,19 @@ import de.uniol.inf.is.odysseus.p2p_new.P2PNetworkException;
 public final class P2PNetworkManager implements IP2PNetworkManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(P2PNetworkManager.class);
-	private static final int PORT = new Random().nextInt(20000) + 10000;
-	
+
 	private static P2PNetworkManager instance;
 	
 	private String peerName;
+	private int port;
 	private String groupName;
 	private PeerID peerID;
 	private PeerGroup peerGroup;
 	
 	private boolean started;
 	private NetworkManager manager;
+	private URI rendevousPeerURI;
+	private boolean isRendevousPeer;
 	
 	// called by OSGi-DS
 	public void activate() {
@@ -86,6 +89,36 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 	}
 	
 	@Override
+	public void setRendevousPeerAddress( URI addressURI ) {
+		rendevousPeerURI = addressURI;
+	}
+	
+	@Override
+	public URI getRendevousPeerAddress() {
+		return rendevousPeerURI;
+	}
+	
+	@Override
+	public boolean isRendevousPeer() {
+		return isRendevousPeer;
+	}
+	
+	@Override
+	public void setRendevousPeer( boolean isRendevousPeer ) {
+		this.isRendevousPeer = isRendevousPeer;
+	}
+	
+	@Override
+	public int getPort() {
+		return port;
+	}
+	
+	@Override
+	public void setPort(int port) {
+		this.port = port;
+	}
+	
+	@Override
 	public void start() throws P2PNetworkException {
 		Preconditions.checkState(!started, "P2P network already started");
 		
@@ -97,16 +130,19 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 		peerID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID);
 		
 		try {
-			manager = new NetworkManager(NetworkManager.ConfigMode.ADHOC, peerName, conf.toURI());
+			manager = new NetworkManager(getConfigMode(), peerName, conf.toURI());
 	
-			configureNetwork(manager.getConfigurator(), peerID, peerName);
+			configureNetwork(manager.getConfigurator(), peerID, peerName, port, rendevousPeerURI);
 	
 			PeerGroup netPeerGroup = manager.startNetwork();
 			PeerGroupID peerGroupID = IDFactory.newPeerGroupID(PeerGroupID.defaultNetPeerGroupID, groupName.getBytes());
 			
 			peerGroup = createSubGroup(netPeerGroup, peerGroupID, groupName);
-	        CacheManager cacheManager = ((StdPeerGroup) peerGroup).getCacheManager();
-	        cacheManager.setTrackDeltas(false);
+			
+			if( !isRendevousPeer && rendevousPeerURI == null ) {
+		        CacheManager cacheManager = ((StdPeerGroup) peerGroup).getCacheManager();
+		        cacheManager.setTrackDeltas(false);
+			}
 
 	        started = true;
 			LOG.debug("P2P network started");
@@ -118,6 +154,13 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 			
 			throw new P2PNetworkException("Could not initialize/connect p2p network", ex);
 		}		
+	}
+
+	private ConfigMode getConfigMode() {
+		if( isRendevousPeer ) {
+			return NetworkManager.ConfigMode.RENDEZVOUS;
+		} 
+		return NetworkManager.ConfigMode.ADHOC;
 	}
 	
 	private void fireStartEvent() {
@@ -131,14 +174,17 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 		}
 	}
 
-	private static void configureNetwork(NetworkConfigurator configurator, PeerID peerID, String peerName) {
-		configurator.setTcpPort(PORT);
+	private static void configureNetwork(NetworkConfigurator configurator, PeerID peerID, String peerName, int port, URI rdvAddress) {
+		configurator.setTcpPort(port);
 		configurator.setTcpEnabled(true);
 		configurator.setTcpIncoming(true);
 		configurator.setTcpOutgoing(true);
 		configurator.setUseMulticast(true);
 		configurator.setPeerID(peerID);
 		configurator.setName(peerName);
+		if( rdvAddress != null ) {
+			configurator.addSeedRendezvous(rdvAddress);
+		}
 	}
 
 	private static PeerGroup createSubGroup(PeerGroup parentPeerGroup, PeerGroupID subGroupID, String subGroupName) throws Exception {

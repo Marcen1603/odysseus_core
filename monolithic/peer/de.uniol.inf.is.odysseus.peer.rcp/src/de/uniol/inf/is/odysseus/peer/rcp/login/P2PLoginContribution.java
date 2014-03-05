@@ -1,12 +1,20 @@
 package de.uniol.inf.is.odysseus.peer.rcp.login;
 
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.Map;
+import java.util.Random;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -27,13 +35,19 @@ import de.uniol.inf.is.odysseus.rcp.login.ILoginContributionContainer;
 public class P2PLoginContribution implements ILoginContribution {
 
 	private static final Logger LOG = LoggerFactory.getLogger(P2PLoginContribution.class);
-	
+
 	private static final String PEER_NAME_SYS_PROPERTY = "peer.name";
 	private static final String PEER_GROUP_NAME_SYS_PROPERTY = "peer.group.name";
+	private static final String RENDEVOUS_ADDRESS_SYS_PROPERTY = "peer.rdv.address";
+	private static final String RENDEVOUS_ACTIVE_SYS_PROPERTY = "peer.rdv.active";
+	private static final String PEER_PORT_SYS_PROPERTY = "peer.port";
 
 	private String groupName;
 	private String peerName;
-	
+	private int peerPort;
+	private String rendevousAddress;
+	private boolean rendevousActive;
+
 	@Override
 	public void onInit() {
 	}
@@ -42,30 +56,166 @@ public class P2PLoginContribution implements ILoginContribution {
 	public void onLoad(Map<String, String> savedConfig) {
 		Optional<String> optPeerName = determinePeerName();
 		Optional<String> optGroupName = determinePeerGroupName();
-		
-		if( optPeerName.isPresent() ) {
+		Optional<String> optRendevousAddress = determineRendevousAddress();
+		Optional<Boolean> optRendevousActive = determineRendevousActive();
+		Optional<Integer> optPeerPort = determinePeerPort();
+
+		if (optPeerName.isPresent()) {
 			peerName = optPeerName.get();
 		} else {
-			peerName = savedConfig.get("peer.name");
-			if( peerName == null ) {
+			peerName = savedConfig.get(PEER_NAME_SYS_PROPERTY);
+			if (peerName == null) {
 				peerName = "";
 			}
 		}
-		
-		if( optGroupName.isPresent() ) {
+
+		if (optGroupName.isPresent()) {
 			groupName = optGroupName.get();
 		} else {
-			groupName = savedConfig.get("peer.groupname");
-			
-			if( groupName == null ) {
+			groupName = savedConfig.get(PEER_GROUP_NAME_SYS_PROPERTY);
+
+			if (groupName == null) {
 				groupName = "";
 			}
 		}
+
+		if (optRendevousAddress.isPresent()) {
+			rendevousAddress = optRendevousAddress.get();
+			if( rendevousAddress.equalsIgnoreCase("none")) {
+				rendevousAddress = "";
+			}
+		} else {
+			rendevousAddress = savedConfig.get(RENDEVOUS_ADDRESS_SYS_PROPERTY);
+
+			if (rendevousAddress == null) {
+				rendevousAddress = "";
+			}
+			
+			if( rendevousAddress.equalsIgnoreCase("none")) {
+				rendevousAddress = "";
+			}
+		}
+
+		if (optRendevousActive.isPresent()) {
+			rendevousActive = optRendevousActive.get();
+		} else {
+			try {
+				String rendevousActiveStr = savedConfig.get(RENDEVOUS_ACTIVE_SYS_PROPERTY);
+
+				if (rendevousActiveStr == null) {
+					rendevousActive = false;
+				}
+
+				rendevousActive = Boolean.valueOf(rendevousActiveStr);
+			} catch (Throwable t) {
+				LOG.error("Could not get if rendevous peer is active here", t);
+				rendevousActive = false;
+			}
+		}
+		
+		if (optPeerPort.isPresent()) {
+			peerPort = optPeerPort.get();
+		} else {
+			try {
+				String peerPortStr = savedConfig.get(PEER_PORT_SYS_PROPERTY);
+				
+				if( peerPortStr == null ) {
+					peerPort = determineRandomPort();
+				}
+				
+				peerPort = Integer.valueOf(peerPortStr);
+			} catch( Throwable t ) {
+				LOG.error("Could not determine port", t);
+				peerPort = determineRandomPort();
+			}
+		}
+
+	}
+
+	private static int determineRandomPort() {
+		return new Random().nextInt(20000) + 10000;
+	}
+
+	private static Optional<String> determinePeerName() {
+		String peerName = System.getProperty(PEER_NAME_SYS_PROPERTY);
+		if (!Strings.isNullOrEmpty(peerName)) {
+			return Optional.of(peerName);
+		}
+
+		peerName = OdysseusConfiguration.get(PEER_NAME_SYS_PROPERTY);
+		if (!Strings.isNullOrEmpty(peerName)) {
+			return Optional.of(peerName);
+		}
+
+		return Optional.absent();
+	}
+
+	private static Optional<String> determinePeerGroupName() {
+		String peerGroupName = System.getProperty(PEER_GROUP_NAME_SYS_PROPERTY);
+		if (!Strings.isNullOrEmpty(peerGroupName)) {
+			return Optional.of(peerGroupName);
+		}
+
+		peerGroupName = OdysseusConfiguration.get(PEER_GROUP_NAME_SYS_PROPERTY);
+		if (!Strings.isNullOrEmpty(peerGroupName)) {
+			return Optional.of(peerGroupName);
+		}
+
+		return Optional.absent();
+	}
+
+	private static Optional<String> determineRendevousAddress() {
+		String rendevousAddress = System.getProperty(RENDEVOUS_ADDRESS_SYS_PROPERTY);
+		if (!Strings.isNullOrEmpty(rendevousAddress)) {
+			return Optional.of(rendevousAddress);
+		}
+
+		rendevousAddress = OdysseusConfiguration.get(RENDEVOUS_ADDRESS_SYS_PROPERTY);
+		if (!Strings.isNullOrEmpty(rendevousAddress)) {
+			return Optional.of(rendevousAddress);
+		}
+
+		return Optional.absent();
+	}
+
+	private static Optional<Boolean> determineRendevousActive() {
+		try {
+			String rendevousAddress = System.getProperty(RENDEVOUS_ACTIVE_SYS_PROPERTY);
+			if (!Strings.isNullOrEmpty(rendevousAddress)) {
+				return Optional.of(Boolean.valueOf(rendevousAddress));
+			}
+
+			rendevousAddress = OdysseusConfiguration.get(RENDEVOUS_ACTIVE_SYS_PROPERTY);
+			if (!Strings.isNullOrEmpty(rendevousAddress)) {
+				return Optional.of(Boolean.valueOf(rendevousAddress));
+			}
+		} catch (Throwable t) {
+			LOG.error("Could not determine if this peer is a rendevous peer", t);
+		}
+		return Optional.absent();
+	}
+
+	private static Optional<Integer> determinePeerPort() {
+		try {
+			String rendevousAddress = System.getProperty(PEER_PORT_SYS_PROPERTY);
+			if (!Strings.isNullOrEmpty(rendevousAddress)) {
+				return Optional.of(Integer.valueOf(rendevousAddress));
+			}
+	
+			rendevousAddress = OdysseusConfiguration.get(PEER_PORT_SYS_PROPERTY);
+			if (!Strings.isNullOrEmpty(rendevousAddress)) {
+				return Optional.of(Integer.valueOf(rendevousAddress));
+			}
+		} catch( Throwable t ) {
+			LOG.error("Could not determine port", t);
+		}
+
+		return Optional.absent();
 	}
 
 	@Override
 	public boolean isValid() {
-		return !Strings.isNullOrEmpty(peerName) && !Strings.isNullOrEmpty(groupName);
+		return !Strings.isNullOrEmpty(peerName) && !Strings.isNullOrEmpty(groupName) && ( peerPort > 1023 && peerPort <= 65535 );
 	}
 
 	@Override
@@ -75,10 +225,12 @@ public class P2PLoginContribution implements ILoginContribution {
 
 	@Override
 	public void createPartControl(Composite parent, final ILoginContributionContainer container) {
+		waitForP2PNetworkManager();
+
 		Composite rootComposite = new Composite(parent, SWT.NONE);
 		rootComposite.setLayout(new GridLayout(2, false));
 		rootComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		createLabel(rootComposite, "Peer name");
 		final Text peerNameText = new Text(rootComposite, SWT.BORDER);
 		peerNameText.setText(peerName);
@@ -87,13 +239,31 @@ public class P2PLoginContribution implements ILoginContribution {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				peerName = peerNameText.getText();
-				
+
 				container.changed();
 				updateMessages(container);
 			}
 
 		});
 		
+		createLabel(rootComposite, "Peer port");
+		final Text peerPortText = new Text(rootComposite, SWT.BORDER);
+		peerPortText.setText(String.valueOf(peerPort));
+		peerPortText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		peerPortText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				try {
+					peerPort = Integer.valueOf(peerPortText.getText());
+					container.changed();
+					
+					updateMessages(container);
+				} catch( Throwable t ) {
+				}
+			}
+
+		});
+
 		createLabel(rootComposite, "Group name");
 		final Text groupNameText = new Text(rootComposite, SWT.BORDER);
 		groupNameText.setText(groupName);
@@ -102,24 +272,60 @@ public class P2PLoginContribution implements ILoginContribution {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				groupName = groupNameText.getText();
-				
+
+				container.changed();
+			}
+		});
+
+		createLabel(rootComposite, "Rendevous Address");
+		final Text rendevousAddressText = new Text(rootComposite, SWT.BORDER);
+		rendevousAddressText.setText(rendevousAddress);
+		rendevousAddressText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		rendevousAddressText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				rendevousAddress = rendevousAddressText.getText();
+
+				container.changed();
+			}
+		});
+
+		final Button isRendevousActiveButton = new Button(rootComposite, SWT.CHECK);
+		isRendevousActiveButton.setText("Is rendevous (own IP is " + determineOwnIPAddress() + ")");
+		isRendevousActiveButton.setSelection(rendevousActive);
+		isRendevousActiveButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				rendevousActive = isRendevousActiveButton.getSelection();
+
 				container.changed();
 			}
 		});
 	}
-	
+
+	private String determineOwnIPAddress() {
+		try {
+			return InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			LOG.error("Could not determine own ip address");
+			return "unknown";
+		}
+	}
+
 	private void updateMessages(ILoginContributionContainer container) {
-		if( Strings.isNullOrEmpty(peerName)) {
+		if (Strings.isNullOrEmpty(peerName)) {
 			container.setErrorMessage("Peer name must be specified");
-		} else if( Strings.isNullOrEmpty(groupName)) {
+		} else if (Strings.isNullOrEmpty(groupName)) {
 			container.setErrorMessage("Peer group name must be specified");
+		} else if (peerPort <= 1023 || peerPort > 65535) {
+			container.setErrorMessage("Port must be between 1024 and 65535");
 		} else {
 			container.setErrorMessage(null);
 		}
 	}
 
 	private static void createLabel(Composite rootComposite, String text) {
-		Label peerNameLabel = new Label( rootComposite, SWT.NONE);
+		Label peerNameLabel = new Label(rootComposite, SWT.NONE);
 		peerNameLabel.setText(text);
 	}
 
@@ -130,34 +336,51 @@ public class P2PLoginContribution implements ILoginContribution {
 	@Override
 	public Map<String, String> onSave() {
 		Map<String, String> saved = Maps.newHashMap();
-		saved.put("peer.name", peerName);
-		saved.put("peer.groupname", groupName);
+		saved.put(PEER_NAME_SYS_PROPERTY, peerName);
+		saved.put(PEER_PORT_SYS_PROPERTY, String.valueOf(peerPort));
+		saved.put(PEER_GROUP_NAME_SYS_PROPERTY, groupName);
+		saved.put(RENDEVOUS_ADDRESS_SYS_PROPERTY, rendevousAddress);
+		saved.put(RENDEVOUS_ACTIVE_SYS_PROPERTY, String.valueOf(rendevousActive));
 		return saved;
 	}
 
 	@Override
 	public boolean onFinish() {
-		waitForP2PNetworkManager();
-		
 		IP2PNetworkManager networkManager = RCPP2PNewPlugIn.getP2PNetworkManager();
 		String currentPeerName = networkManager.getLocalPeerName();
 		String currentGroupName = networkManager.getLocalPeerGroupName();
-		
-		if( !peerName.equals(currentPeerName) || !groupName.equals(currentGroupName)) {
-			if( networkManager.isStarted() ) {
+		URI currentRendevousAddressURI = networkManager.getRendevousPeerAddress();
+		String currentRendevousAddress = currentRendevousAddressURI != null ? currentRendevousAddressURI.getHost() : "";
+		int currentPort = networkManager.getPort();
+		boolean currentIsRendevousActive = networkManager.isRendevousPeer();
+
+		if (!peerName.equals(currentPeerName) || currentPort != peerPort || !groupName.equals(currentGroupName) || !currentRendevousAddress.equals(rendevousAddress) || currentIsRendevousActive != rendevousActive) {
+			if (networkManager.isStarted()) {
 				networkManager.stop();
 			}
-			
+
 			networkManager.setLocalPeerGroupName(groupName);
 			networkManager.setLocalPeerName(peerName);
-			
+			networkManager.setRendevousPeerAddress(toURI(rendevousAddress));
+			networkManager.setRendevousPeer(rendevousActive);
+			networkManager.setPort(peerPort);
+
 			return tryStartNetwork(networkManager);
 		}
 		return true;
 	}
 
+	private static URI toURI(String address) {
+		try {
+			return new URI("//" + address);
+		} catch (URISyntaxException e) {
+			LOG.error("Could not transform address '" + address + "' to URI", e);
+			return null;
+		}
+	}
+
 	private static void waitForP2PNetworkManager() {
-		while( RCPP2PNewPlugIn.getP2PNetworkManager() == null ) {
+		while (RCPP2PNewPlugIn.getP2PNetworkManager() == null) {
 			try {
 				Thread.sleep(250);
 			} catch (InterruptedException e) {
@@ -175,34 +398,6 @@ public class P2PLoginContribution implements ILoginContribution {
 		}
 	}
 
-	private static Optional<String> determinePeerName() {
-		String peerName = System.getProperty(PEER_NAME_SYS_PROPERTY);
-		if (!Strings.isNullOrEmpty(peerName)) {
-			return Optional.of(peerName);
-		}
-
-		peerName = OdysseusConfiguration.get(PEER_NAME_SYS_PROPERTY);
-		if (!Strings.isNullOrEmpty(peerName)) {
-			return Optional.of(peerName);
-		}
-
-		return Optional.absent();
-	}
-	
-	private static Optional<String> determinePeerGroupName() {
-		String peerGroupName = System.getProperty(PEER_GROUP_NAME_SYS_PROPERTY);
-		if (!Strings.isNullOrEmpty(peerGroupName)) {
-			return Optional.of(peerGroupName);
-		}
-
-		peerGroupName = OdysseusConfiguration.get(PEER_GROUP_NAME_SYS_PROPERTY);
-		if (!Strings.isNullOrEmpty(peerGroupName)) {
-			return Optional.of(peerGroupName);
-		}
-
-		return Optional.absent();
-	}
-	
 	@Override
 	public int getPriority() {
 		return 0;
