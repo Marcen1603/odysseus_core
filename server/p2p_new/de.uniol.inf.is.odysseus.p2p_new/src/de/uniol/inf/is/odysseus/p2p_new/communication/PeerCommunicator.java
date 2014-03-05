@@ -213,12 +213,10 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 			LOG.debug("New communication advertisement received from peer {}...", commAdv.getPeerName());
 			if (!isOwnPeer(commAdv) && hasNoConnection(commAdv)) {
 				LOG.debug("...and is a new interesting one");
-				
-				if( JxtaServicesProvider.getInstance().isReachable(commAdv.getPeerID()) ) { 
-					IJxtaConnection clientConnection = new JxtaBiDiClientConnection(createPipeAdvertisement(commAdv.getPipeID()));
-					clientConnection.addListener(this);
-					tryConnectAsync(clientConnection, commAdv.getPeerID(), commAdv.getPeerName());
-				} 
+
+				IJxtaConnection clientConnection = new JxtaBiDiClientConnection(createPipeAdvertisement(commAdv.getPipeID()));
+				clientConnection.addListener(this);
+				tryConnectAsync(clientConnection, commAdv.getPeerID(), commAdv.getPeerName());
 			} else {
 				LOG.debug("...but is our own peer or we have already a connection to that peer");
 			}
@@ -264,7 +262,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				synchronized( waitingClientConnections ) {
+				synchronized (waitingClientConnections) {
 					try {
 						LOG.debug("Beginning connection to server peer {}", peerName);
 						waitingClientConnections.put(connection, peerID);
@@ -282,10 +280,10 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 	@Override
 	public void onConnect(IJxtaConnection sender) {
 		PeerID connectedServerPeerID = null;
-		synchronized( waitingClientConnections ) {
+		synchronized (waitingClientConnections) {
 			connectedServerPeerID = waitingClientConnections.remove(sender);
 		}
-		
+
 		LOG.debug("Established connection to remote server peer");
 
 		activeConnectionsAsClient.put(sender, connectedServerPeerID);
@@ -329,11 +327,11 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		Preconditions.checkNotNull(message, "Message to send must not be null!");
 
 		IJxtaConnection connection = activeConnectionsAsServer_PeerID.get(destinationPeer);
-		if( connection == null ) {
+		if (connection == null) {
 			activeConnectionsAsServer_PeerID.remove(destinationPeer);
 			throw new PeerCommunicationException("Could not send message since there is no connection to specified peerID " + destinationPeer);
 		}
-		
+
 		try {
 			connection.send(message);
 		} catch (IOException e) {
@@ -452,7 +450,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 	}
 
 	private Optional<IJxtaConnection> getWaitingClientConnection(PeerID id) {
-		synchronized( waitingClientConnections ) {
+		synchronized (waitingClientConnections) {
 			for (IJxtaConnection connection : waitingClientConnections.keySet()) {
 				if (waitingClientConnections.get(connection).equals(id)) {
 					return Optional.of(connection);
