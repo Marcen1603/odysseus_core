@@ -57,6 +57,7 @@ public class DoubleParameterPresentation extends AbstractParameterPresentation<D
 		sp.setDigits(3);
 		sp.setSelection((int)(val*1000));
 		sp.setIncrement(10);
+		sp.setMaximum(Integer.MAX_VALUE);
 		sp.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
