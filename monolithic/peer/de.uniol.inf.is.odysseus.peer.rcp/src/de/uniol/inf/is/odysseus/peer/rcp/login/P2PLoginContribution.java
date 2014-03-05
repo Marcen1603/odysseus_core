@@ -346,6 +346,8 @@ public class P2PLoginContribution implements ILoginContribution {
 
 	@Override
 	public boolean onFinish() {
+		waitForP2PNetworkManager();
+
 		IP2PNetworkManager networkManager = RCPP2PNewPlugIn.getP2PNetworkManager();
 		String currentPeerName = networkManager.getLocalPeerName();
 		String currentGroupName = networkManager.getLocalPeerGroupName();
