@@ -130,15 +130,23 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 		peerID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID);
 		
 		try {
-			manager = new NetworkManager(getConfigMode(), peerName, conf.toURI());
+			manager = new NetworkManager(determineConfigMode(), peerName, conf.toURI());
 	
 			configureNetwork(manager.getConfigurator(), peerID, peerName, port, rendevousPeerURI);
 	
 			PeerGroup netPeerGroup = manager.startNetwork();
+			
+			if( rendevousPeerURI != null ) {
+				LOG.debug("Waiting for rendevous connection...");
+				if( !manager.waitForRendezvousConnection(10000) ) {
+					throw new P2PNetworkException("Could not connect to rendevous peer " + rendevousPeerURI);
+				}
+				LOG.debug("Sucessful connected to rendevous peer");
+			}
+				
 			PeerGroupID peerGroupID = IDFactory.newPeerGroupID(PeerGroupID.defaultNetPeerGroupID, groupName.getBytes());
 			
 			peerGroup = createSubGroup(netPeerGroup, peerGroupID, groupName);
-			
 			if( !isRendevousPeer && rendevousPeerURI == null ) {
 		        CacheManager cacheManager = ((StdPeerGroup) peerGroup).getCacheManager();
 		        cacheManager.setTrackDeltas(false);
@@ -156,10 +164,13 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 		}		
 	}
 
-	private ConfigMode getConfigMode() {
+	private ConfigMode determineConfigMode() {
 		if( isRendevousPeer ) {
-			return NetworkManager.ConfigMode.RENDEZVOUS;
+			return NetworkManager.ConfigMode.SUPER;
 		} 
+		if( rendevousPeerURI != null ) {
+			return NetworkManager.ConfigMode.EDGE;
+		}
 		return NetworkManager.ConfigMode.ADHOC;
 	}
 	
