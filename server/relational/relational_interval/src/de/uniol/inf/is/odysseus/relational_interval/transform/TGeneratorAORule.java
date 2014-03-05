@@ -34,8 +34,8 @@ public class TGeneratorAORule extends AbstractTransformationRule<GeneratorAO> {
     }
 
     @Override
-    public void execute(GeneratorAO ao, TransformationConfiguration transformConfig) throws RuleException {
-        List<SDFAttribute> gAttr = ao.getGroupingAttributes();
+    public void execute(final GeneratorAO ao, final TransformationConfiguration transformConfig) throws RuleException {
+        final List<SDFAttribute> gAttr = ao.getGroupingAttributes();
         @SuppressWarnings("rawtypes")
         IGroupProcessor gp = null;
         if (gAttr != null) {
@@ -45,16 +45,17 @@ public class TGeneratorAORule extends AbstractTransformationRule<GeneratorAO> {
             gp = RelationalNoGroupProcessor.getInstance();
         }
         @SuppressWarnings("unchecked")
-        GeneratorPO<?> po = new GeneratorPO<ITimeInterval>(ao.getInputSchema(), ao.getExpressions().toArray(new SDFExpression[0]), ao.isAllowNullInOutput(), gp, ao.getPredicate(), ao.getFrequency());
-        SDFConstraint c = ao.getInputSchema().getConstraint(SDFConstraint.BASE_TIME_UNIT);
+        final GeneratorPO<?> po = new GeneratorPO<ITimeInterval>(ao.getInputSchema(), ao.getExpressions().toArray(new SDFExpression[0]), ao.isAllowNullInOutput(), gp, ao.getPredicate(),
+                ao.getFrequency(), ao.isMulti());
+        final SDFConstraint c = ao.getInputSchema().getConstraint(SDFConstraint.BASE_TIME_UNIT);
         if (c != null) {
             po.setBasetimeUnit((TimeUnit) c.getValue());
         }
-        defaultExecute(ao, po, transformConfig, true, true);
+        this.defaultExecute(ao, po, transformConfig, true, true);
     }
 
     @Override
-    public boolean isExecutable(GeneratorAO ao, TransformationConfiguration transformConfig) {
+    public boolean isExecutable(final GeneratorAO ao, final TransformationConfiguration transformConfig) {
         if (ao.getInputSchema().getType() == Tuple.class) {
             return ao.isAllPhysicalInputSet();
         }

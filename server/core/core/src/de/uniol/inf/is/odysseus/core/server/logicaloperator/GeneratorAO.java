@@ -37,28 +37,30 @@ public class GeneratorAO extends UnaryLogicalOp {
     private boolean allowNull = false;
     private List<SDFAttribute> groupingAttributes;
     private int frequency;
+    private boolean multi = false;
 
     public GeneratorAO() {
         super();
     }
 
-    public GeneratorAO(GeneratorAO ao) {
+    public GeneratorAO(final GeneratorAO ao) {
         super(ao);
         this.setExpressions(ao.namedExpressions);
-        allowNull = ao.allowNull;
+        this.allowNull = ao.allowNull;
         this.groupingAttributes = ao.groupingAttributes;
         this.frequency = ao.frequency;
+        this.multi = ao.multi;
     }
 
     @SuppressWarnings("rawtypes")
     @Override
     @Parameter(type = PredicateParameter.class)
-    public void setPredicate(IPredicate predicate) {
+    public void setPredicate(final IPredicate predicate) {
         super.setPredicate(predicate);
     }
-    
+
     @Parameter(type = BooleanParameter.class, optional = true)
-    public void setAllowNullInOutput(boolean allowNull) {
+    public void setAllowNullInOutput(final boolean allowNull) {
         this.allowNull = allowNull;
     }
 
@@ -66,11 +68,27 @@ public class GeneratorAO extends UnaryLogicalOp {
      * @return
      */
     public boolean isAllowNullInOutput() {
-        return allowNull;
+        return this.allowNull;
+    }
+
+    /**
+     * @param multi
+     *            the multi to set
+     */
+    @Parameter(type = BooleanParameter.class, optional = true)
+    public void setMulti(final boolean multi) {
+        this.multi = multi;
+    }
+
+    /**
+     * @return the multi
+     */
+    public boolean isMulti() {
+        return this.multi;
     }
 
     @Parameter(type = IntegerParameter.class, optional = false)
-    public void setFrequency(int frequency) {
+    public void setFrequency(final int frequency) {
         this.frequency = frequency;
     }
 
@@ -78,34 +96,34 @@ public class GeneratorAO extends UnaryLogicalOp {
      * @return
      */
     public int getFrequency() {
-        return frequency;
+        return this.frequency;
     }
 
     @Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
-    public void setGroupingAttributes(List<SDFAttribute> attributes) {
+    public void setGroupingAttributes(final List<SDFAttribute> attributes) {
         this.groupingAttributes = attributes;
     }
 
     public List<SDFAttribute> getGroupingAttributes() {
-        return groupingAttributes;
+        return this.groupingAttributes;
     }
 
     @Parameter(type = SDFExpressionParameter.class, isList = true)
-    public void setExpressions(List<NamedExpressionItem> namedExpressions) {
+    public void setExpressions(final List<NamedExpressionItem> namedExpressions) {
         this.namedExpressions = namedExpressions;
-        expressions = new ArrayList<>();
-        for (NamedExpressionItem e : namedExpressions) {
-            expressions.add(e.expression);
+        this.expressions = new ArrayList<>();
+        for (final NamedExpressionItem e : namedExpressions) {
+            this.expressions.add(e.expression);
         }
     }
 
     public List<SDFExpression> getExpressions() {
-        return Collections.unmodifiableList(expressions);
+        return Collections.unmodifiableList(this.expressions);
     }
 
     @Override
-    public SDFSchema getOutputSchemaIntern(int pos) {
-        return getInputSchema();
+    public SDFSchema getOutputSchemaIntern(final int pos) {
+        return this.getInputSchema();
     }
 
     @Override

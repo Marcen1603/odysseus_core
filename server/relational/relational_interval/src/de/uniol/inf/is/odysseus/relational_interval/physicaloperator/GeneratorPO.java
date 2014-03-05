@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -34,8 +35,9 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     private static final Logger LOG = LoggerFactory.getLogger(GeneratorPO.class);
     private final Map<Long, LinkedList<Tuple<M>>> leftGroupsLastObjects = new HashMap<>();
     private final Map<Long, LinkedList<Tuple<M>>> rightGroupsLastObjects = new HashMap<>();
-    private IGroupProcessor<Tuple<M>, Tuple<M>> groupProcessor = null;
-    private ITransferArea<Tuple<M>, Tuple<M>> transfer = new TITransferArea<>();
+    private IGroupProcessor<Tuple<M>, Tuple<M>> groupProcessor;
+    private final ITransferArea<Tuple<M>, Tuple<M>> transfer = new TITransferArea<>();
+    private final boolean multi;
     private VarHelper[][] variables; // Expression.Index
     private final SDFExpression[] expressions;
     @SuppressWarnings("rawtypes")
@@ -50,13 +52,14 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
  * 
  */
     public GeneratorPO(final SDFSchema inputSchema, final SDFExpression[] expressions, final boolean allowNullInOutput, final IGroupProcessor<Tuple<M>, Tuple<M>> groupProcessor,
-            IPredicate<?> iPredicate, final int frequency) {
+            final IPredicate<?> iPredicate, final int frequency, final boolean multi) {
         this.expressions = new SDFExpression[expressions.length];
         this.inputSchema = inputSchema;
         this.allowNull = allowNullInOutput;
         this.groupProcessor = groupProcessor;
         this.predicate = iPredicate;
         this.frequency = frequency;
+        this.multi = multi;
         this.init(inputSchema, expressions);
     }
 
@@ -71,6 +74,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
         this.predicate = po.predicate;
         this.frequency = po.frequency;
         this.baseTimeUnit = po.baseTimeUnit;
+        this.multi = po.multi;
         this.init(this.inputSchema, po.expressions);
     }
 
@@ -88,7 +92,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
             for (final SDFAttribute curAttribute : neededAttributes) {
                 newArray[j++] = this.initAttribute(schema, curAttribute);
                 if (newArray[j - 1].objectPosToUse > 0) {
-                    this.maxHistoryElements = Math.max(maxHistoryElements, newArray[j - 1].objectPosToUse);
+                    this.maxHistoryElements = Math.max(this.maxHistoryElements, newArray[j - 1].objectPosToUse);
                 }
             }
         }
@@ -120,12 +124,12 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     @Override
     protected void process_open() throws OpenFailedException {
         super.process_open();
-        transfer.init(this, 1);
+        this.transfer.init(this, 1);
     }
 
     @Override
-    public void processPunctuation(IPunctuation punctuation, int port) {
-        transfer.sendPunctuation(punctuation);
+    public void processPunctuation(final IPunctuation punctuation, final int port) {
+        this.transfer.sendPunctuation(punctuation);
     }
 
     /**
@@ -134,10 +138,11 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     @SuppressWarnings("unchecked")
     @Override
     protected void process_next(final Tuple<M> object, final int port) {
+        Objects.requireNonNull(this.groupProcessor);
         final Long groupId = this.groupProcessor.getGroupID(object);
 
         // Left stream is the stream with missing elements
-        if (predicate.evaluate(object)) {
+        if (this.predicate.evaluate(object)) {
             LinkedList<Tuple<M>> lastObjects = this.leftGroupsLastObjects.get(groupId);
             if (lastObjects == null) {
                 lastObjects = new LinkedList<>();
@@ -172,7 +177,15 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
                 final PointInTime delta = object.getMetadata().getStart().minus(leftStreamTimeinterval.getStart());
                 final int amount = (int) (delta.getMainPoint() / this.frequency) - 1;
                 if (amount > 0) {
-                    this.generateData(lastObjects, object, left, leftStreamTimeinterval, amount);
+                    if (!this.multi) {
+                        this.generateData(lastObjects, object, left, leftStreamTimeinterval.getStart().plus(this.frequency), leftStreamTimeinterval.getStart().plus(amount * this.frequency));
+                    }
+                    else {
+                        for (int g = 0; g < amount; g++) {
+                            this.generateData(lastObjects, object, left, leftStreamTimeinterval.getStart().plus((g + 1) * this.frequency),
+                                    leftStreamTimeinterval.getEnd().plus((g + 1) * this.frequency));
+                        }
+                    }
                 }
             }
             final int lastObjectSize = lastObjects.size();
@@ -183,16 +196,16 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
             lastObjects.addFirst(object);
 
         }
-        transfer.transfer(object);
+        this.transfer.transfer(object);
 
         PointInTime min = PointInTime.getInfinityTime();
-        for (LinkedList<Tuple<M>> group : this.leftGroupsLastObjects.values()) {
-            PointInTime start = group.getFirst().getMetadata().getStart();
+        for (final LinkedList<Tuple<M>> group : this.leftGroupsLastObjects.values()) {
+            final PointInTime start = group.getFirst().getMetadata().getStart();
             if (min.afterOrEquals(start)) {
                 min = start;
             }
         }
-        transfer.newHeartbeat(min, 0);
+        this.transfer.newHeartbeat(min, 0);
 
     }
 
@@ -201,57 +214,54 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
      * @param lastObjects
      * @param amount
      */
-    private void generateData(final LinkedList<Tuple<M>> lastObjects, final Tuple<M> object, final Tuple<M> sample, M base, final int amount) {
-        for (int g = 0; g < amount; g++) {
-            final Tuple<M> outputVal = sample.clone();
-            outputVal.getMetadata().setStartAndEnd(base.getStart().plus((g + 1) * this.frequency), base.getEnd().plus((g + 1) * this.frequency));
-            boolean nullValueOccured = false;
-            synchronized (this.expressions) {
-                for (int i = 0; i < this.expressions.length; ++i) {
-                    final Object[] values = new Object[this.variables[i].length];
-                    for (int j = 0; j < this.variables[i].length; ++j) {
-                        Tuple<M> obj = null;
-                        if (this.variables[i][j].objectPosToUse == 0) {
-                            obj = object;
-                        }
-                        else {
-                            if (lastObjects.size() >= this.variables[i][j].objectPosToUse) {
-                                obj = lastObjects.get(this.variables[i][j].objectPosToUse - 1);
-                            }
-                        }
-                        if (obj != null) {
-                            values[j] = obj.getAttribute(this.variables[i][j].pos);
+    private void generateData(final LinkedList<Tuple<M>> lastObjects, final Tuple<M> object, final Tuple<M> sample, final PointInTime start, final PointInTime end) {
+        final Tuple<M> outputVal = sample.clone();
+        outputVal.getMetadata().setStartAndEnd(start, end);
+        boolean nullValueOccured = false;
+        synchronized (this.expressions) {
+            for (int i = 0; i < this.expressions.length; ++i) {
+                final Object[] values = new Object[this.variables[i].length];
+                for (int j = 0; j < this.variables[i].length; ++j) {
+                    Tuple<M> obj = null;
+                    if (this.variables[i][j].objectPosToUse == 0) {
+                        obj = object;
+                    }
+                    else {
+                        if (lastObjects.size() >= this.variables[i][j].objectPosToUse) {
+                            obj = lastObjects.get(this.variables[i][j].objectPosToUse - 1);
                         }
                     }
-
-                    try {
-                        this.expressions[i].bindMetaAttribute(object.getMetadata());
-                        this.expressions[i].bindAdditionalContent(object.getAdditionalContent());
-                        this.expressions[i].bindVariables(values);
-                        final Object expr = this.expressions[i].getValue();
-                        outputVal.setAttribute(i, expr);
-                        if (expr == null) {
-                            nullValueOccured = true;
-                        }
-                    }
-                    catch (final Exception e) {
-                        nullValueOccured = true;
-                        if (!(e instanceof NullPointerException)) {
-                            GeneratorPO.LOG.error("Cannot calc result for " + object + " with expression " + this.expressions[i], e);
-                            // Not needed. Value is null, if not set!
-                            // outputVal.setAttribute(i, null);
-                        }
-                    }
-                    if (this.expressions[i].getType().requiresDeepClone()) {
-                        outputVal.setRequiresDeepClone(true);
+                    if (obj != null) {
+                        values[j] = obj.getAttribute(this.variables[i][j].pos);
                     }
                 }
-            }
-            if (!nullValueOccured || (nullValueOccured && this.allowNull)) {
-                transfer.transfer(outputVal);
+
+                try {
+                    this.expressions[i].bindMetaAttribute(object.getMetadata());
+                    this.expressions[i].bindAdditionalContent(object.getAdditionalContent());
+                    this.expressions[i].bindVariables(values);
+                    final Object expr = this.expressions[i].getValue();
+                    outputVal.setAttribute(i, expr);
+                    if (expr == null) {
+                        nullValueOccured = true;
+                    }
+                }
+                catch (final Exception e) {
+                    nullValueOccured = true;
+                    if (!(e instanceof NullPointerException)) {
+                        GeneratorPO.LOG.error("Cannot calc result for " + object + " with expression " + this.expressions[i], e);
+                        // Not needed. Value is null, if not set!
+                        // outputVal.setAttribute(i, null);
+                    }
+                }
+                if (this.expressions[i].getType().requiresDeepClone()) {
+                    outputVal.setRequiresDeepClone(true);
+                }
             }
         }
-
+        if (!nullValueOccured || (nullValueOccured && this.allowNull)) {
+            this.transfer.transfer(outputVal);
+        }
     }
 
     /**
@@ -275,7 +285,7 @@ class VarHelper {
     int pos;
     int objectPosToUse;
 
-    public VarHelper(int pos, int objectPosToUse) {
+    public VarHelper(final int pos, final int objectPosToUse) {
         super();
         this.pos = pos;
         this.objectPosToUse = objectPosToUse;
@@ -283,6 +293,6 @@ class VarHelper {
 
     @Override
     public String toString() {
-        return pos + " " + objectPosToUse;
+        return this.pos + " " + this.objectPosToUse;
     }
 }
