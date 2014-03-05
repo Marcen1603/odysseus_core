@@ -215,7 +215,7 @@ public class P2PLoginContribution implements ILoginContribution {
 
 	@Override
 	public boolean isValid() {
-		return !Strings.isNullOrEmpty(peerName) && !Strings.isNullOrEmpty(groupName) && ( peerPort > 1023 && peerPort <= 65535 );
+		return !Strings.isNullOrEmpty(peerName) && !Strings.isNullOrEmpty(groupName) && ( peerPort > 1023 && peerPort <= 65535 ) && tryToURIIfNotNull(rendevousAddress);
 	}
 
 	@Override
@@ -319,10 +319,27 @@ public class P2PLoginContribution implements ILoginContribution {
 			container.setErrorMessage("Peer group name must be specified");
 		} else if (peerPort <= 1023 || peerPort > 65535) {
 			container.setErrorMessage("Port must be between 1024 and 65535");
+		} else if( !tryToURIIfNotNull(rendevousAddress)) {
+			container.setErrorMessage("Rendevous address is invalid");
 		} else {
 			container.setErrorMessage(null);
 		}
 	}
+
+	private static boolean tryToURIIfNotNull(String address) {
+		if(Strings.isNullOrEmpty(address)) {
+			return true;
+		}
+		
+		try {
+			new URI("//" + address);
+		} catch (URISyntaxException e) {
+			return false;
+		}
+		
+		return true;
+	}
+
 
 	private static void createLabel(Composite rootComposite, String text) {
 		Label peerNameLabel = new Label(rootComposite, SWT.NONE);
@@ -373,7 +390,7 @@ public class P2PLoginContribution implements ILoginContribution {
 	}
 
 	private static URI toURI(String address) {
-		if( !Strings.isNullOrEmpty(address)) {
+		if( Strings.isNullOrEmpty(address)) {
 			return null;
 		}
 		
