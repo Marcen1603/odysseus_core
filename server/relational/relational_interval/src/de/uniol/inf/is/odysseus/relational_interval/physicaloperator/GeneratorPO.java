@@ -215,7 +215,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
      * @param amount
      */
     private void generateData(final LinkedList<Tuple<M>> lastObjects, final Tuple<M> object, final Tuple<M> sample, final PointInTime start, final PointInTime end) {
-        final Tuple<M> outputVal = sample.clone();
+        final Tuple<M> outputVal = object.clone();
         outputVal.getMetadata().setStartAndEnd(start, end);
         boolean nullValueOccured = false;
         synchronized (this.expressions) {
