@@ -385,8 +385,8 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 	protected synchronized List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
 			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			PointInTime splitPoint) {
-		System.err.println("BEFORE "+splitPoint);
-		System.err.println(sa.toString());
+//		System.err.println("BEFORE "+splitPoint);
+//		System.err.println(sa.toString());
 		ITimeInterval t_probe = new TimeInterval(splitPoint, splitPoint.plus(1));
 		List<PairMap<SDFSchema, AggregateFunction, W, Q>> returnValues = new LinkedList<>();
 		
@@ -406,8 +406,8 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 			sa.insert(element_agg);
 		}
 		
-		System.err.println("AFTER ");
-		System.err.println(sa.toString());
+//		System.err.println("AFTER ");
+//		System.err.println(sa.toString());
 
 		
 		return returnValues;
