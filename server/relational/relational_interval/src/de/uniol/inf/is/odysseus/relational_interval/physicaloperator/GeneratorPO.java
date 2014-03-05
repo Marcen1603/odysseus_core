@@ -178,7 +178,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
                 final int amount = (int) (delta.getMainPoint() / this.frequency) - 1;
                 if (amount > 0) {
                     if (!this.multi) {
-                        this.generateData(lastObjects, object, left, leftStreamTimeinterval.getStart().plus(this.frequency), leftStreamTimeinterval.getStart().plus(amount * this.frequency));
+                        this.generateData(lastObjects, object, left, leftStreamTimeinterval.getStart().plus(this.frequency), leftStreamTimeinterval.getStart().plus((amount + 1) * this.frequency));
                     }
                     else {
                         for (int g = 0; g < amount; g++) {
