@@ -382,12 +382,14 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 
 	// Updates SA by splitting all partial aggregates before split point
 	@SuppressWarnings("unchecked")
-	protected synchronized void updateSA(
+	protected synchronized List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
 			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			PointInTime splitPoint) {
-
+		System.err.println("BEFORE "+splitPoint);
+		System.err.println(sa.toString());
 		ITimeInterval t_probe = new TimeInterval(splitPoint, splitPoint.plus(1));
-
+		List<PairMap<SDFSchema, AggregateFunction, W, Q>> returnValues = new LinkedList<>();
+		
 		// Determine elements in this sweep area containing splitpoint
 		Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> qualifies = sa
 				.extractOverlaps(t_probe);
@@ -395,21 +397,20 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
 					.next();
 			if (element_agg.getMetadata().getStart().before(splitPoint)) {
-				// TODO: Is removal necessary or is update of metadata enough?
-				// Remove current element
-				// sa.remove(element_agg);
-				// and split into two new elements
-				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> copy = new PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>(
-						element_agg, true);
-
-				copy.setMetadata((Q) element_agg.getMetadata().clone());
-				element_agg.getMetadata().setEnd(splitPoint);
-				sa.insert(element_agg);
-				copy.getMetadata().setStart(splitPoint);
-				sa.insert(copy);
+				PairMap<SDFSchema, AggregateFunction, W, Q> e = calcEval(element_agg, false);
+				e.setMetadata((Q) element_agg.getMetadata().clone());
+				e.getMetadata().setEnd(splitPoint);
+				element_agg.getMetadata().setStart(splitPoint);
+				returnValues.add(e);
 			}
-
+			sa.insert(element_agg);
 		}
+		
+		System.err.println("AFTER ");
+		System.err.println(sa.toString());
+
+		
+		return returnValues;
 	}
 
 	private void saInsert(

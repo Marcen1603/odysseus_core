@@ -181,11 +181,11 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 
 	private void createOutput(PointInTime timestamp) {
-		// optional: Build partial aggregates with validity end until timestamp
-		createAddOutput(timestamp);
-
 		// Extract all Elements before current Time!
 		cleanUpSweepArea(timestamp);
+		
+		// optional: Build partial aggregates with validity end until timestamp
+		createAddOutput(timestamp);
 
 		// Find minimal start time stamp from elements intersecting time stamp
 		//transferArea.newHeartbeat(findMinHeartbeat(timestamp), 0);
@@ -223,9 +223,13 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		createOutputCounter++;
 		if (dumpAtValueCount > 0 && createOutputCounter >= dumpAtValueCount) {
 			createOutputCounter = 0;
-			for (DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa : groups
-					.values()) {
-				updateSA(sa, timestamp);
+			
+			for (Entry<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups.entrySet()) {
+				System.err.println("Updating "+entry.getKey());				
+				List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(entry.getValue(), timestamp);
+				if (results.size() > 0) {
+					produceResults(results, entry.getKey());
+				}
 			}
 
 		}
