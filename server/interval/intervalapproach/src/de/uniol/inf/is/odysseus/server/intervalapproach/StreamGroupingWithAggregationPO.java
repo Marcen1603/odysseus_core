@@ -225,7 +225,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			createOutputCounter = 0;
 			
 			for (Entry<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups.entrySet()) {
-				System.err.println("Updating "+entry.getKey());				
+//				System.err.println("Updating "+entry.getKey());				
 				List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(entry.getValue(), timestamp);
 				if (results.size() > 0) {
 					produceResults(results, entry.getKey());
