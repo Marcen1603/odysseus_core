@@ -214,8 +214,10 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
                         iter.remove();
                         if (iter.hasNext()) {
                             iter.next();
-                            next = iter.next();
-                            iter.previous();
+                            if (iter.hasNext()) {
+                                next = iter.next();
+                                iter.previous();
+                            }
                             iter.previous();
                         }
                     }
