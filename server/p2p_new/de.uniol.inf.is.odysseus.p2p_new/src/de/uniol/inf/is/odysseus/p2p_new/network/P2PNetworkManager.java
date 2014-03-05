@@ -136,14 +136,14 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 	
 			PeerGroup netPeerGroup = manager.startNetwork();
 			
-			if( rendevousPeerURI != null ) {
-				LOG.debug("Waiting for rendevous connection...");
-				if( !manager.waitForRendezvousConnection(10000) ) {
-					throw new P2PNetworkException("Could not connect to rendevous peer " + rendevousPeerURI);
-				}
-				LOG.debug("Sucessful connected to rendevous peer");
-			}
-				
+//			if( rendevousPeerURI != null ) {
+//				LOG.debug("Waiting for rendevous connection...");
+//				if( !manager.waitForRendezvousConnection(10000) ) {
+//					throw new P2PNetworkException("Could not connect to rendevous peer " + rendevousPeerURI);
+//				}
+//				LOG.debug("Sucessful connected to rendevous peer");
+//			}
+			
 			PeerGroupID peerGroupID = IDFactory.newPeerGroupID(PeerGroupID.defaultNetPeerGroupID, groupName.getBytes());
 			
 			peerGroup = createSubGroup(netPeerGroup, peerGroupID, groupName);
@@ -152,6 +152,11 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 		        cacheManager.setTrackDeltas(false);
 			}
 
+			if( isRendevousPeer ) {
+				LOG.debug("Starting rendevous");
+				peerGroup.getRendezVousService().startRendezVous();				
+			}
+			
 	        started = true;
 			LOG.debug("P2P network started");
 			
@@ -166,11 +171,11 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 
 	private ConfigMode determineConfigMode() {
 		if( isRendevousPeer ) {
-			return NetworkManager.ConfigMode.SUPER;
+			return NetworkManager.ConfigMode.RENDEZVOUS;
 		} 
-		if( rendevousPeerURI != null ) {
-			return NetworkManager.ConfigMode.EDGE;
-		}
+//		if( rendevousPeerURI != null ) {
+//			return NetworkManager.ConfigMode.EDGE;
+//		}
 		return NetworkManager.ConfigMode.ADHOC;
 	}
 	
