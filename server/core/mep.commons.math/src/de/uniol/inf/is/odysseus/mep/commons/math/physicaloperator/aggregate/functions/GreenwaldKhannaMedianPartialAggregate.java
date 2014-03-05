@@ -11,6 +11,8 @@ import java.util.Random;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.util.FastMath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of M. Greenwald and S. Khanna. Space-efficient online
@@ -19,6 +21,7 @@ import org.apache.commons.math3.util.FastMath;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialAggregate<R> {
+    private static final Logger LOG = LoggerFactory.getLogger(GreenwaldKhannaMedianPartialAggregate.class);
 
     private final double epsilon;
     private LinkedList<Tuple> summary;
@@ -71,10 +74,20 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
      */
     @Override
     public GreenwaldKhannaMedianPartialAggregate<R> add(final Double value) {
-        // Compress if number of values n=0mod1/2e but at least after 1000
-        // values
-        if ((this.count % 1000 == 0) || ((this.count % (1.0 / (2.0 * this.epsilon()))) == 0)) {
-            this.compress(this.count);
+        // Compress if number of values n=0mod1/2e
+        if ((this.count % (1.0 / (2.0 * this.epsilon()))) == 0) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Running compress before inserting the {}. element with value: {}", this.count + 1, value);
+            }
+            try {
+                this.compress(this.count);
+            }
+            catch (Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Summary size {}", summary.size());
+            }
         }
         this.insert(value, this.count);
         this.count++;
@@ -209,15 +222,13 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
                 iter.next();
                 if (iter.hasNext()) {
                     next = iter.next();
-                    while ((next.parent != null) && (next.parent.equals(cur))) {
+                    while ((next != null) && (next.parent != null) && (next.parent.equals(cur))) {
                         cur = this.delete(cur, next);
                         iter.remove();
-                        if (iter.hasNext()) {
+                        if (cur != this.summary.getLast()) {
                             iter.next();
-                            if (iter.hasNext()) {
-                                next = iter.next();
-                                iter.previous();
-                            }
+                            next = iter.next();
+                            iter.previous();
                             iter.previous();
                         }
                     }
@@ -369,83 +380,113 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
     }
 
     public static void main(final String[] args) {
-        DescriptiveStatistics stats = new DescriptiveStatistics();
-        GreenwaldKhannaMedianPartialAggregate<?> agg = new GreenwaldKhannaMedianPartialAggregate<>();
-        for (double i = 0.0; i < 10E6; i += 1.0) {
-            agg.add(i);
-            stats.addValue(i);
-        }
-        System.out.println(agg + " == " + stats.getPercentile(50));
-        try {
-            Thread.sleep(1000);
-        }
-        catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        stats = new DescriptiveStatistics();
-        agg = new GreenwaldKhannaMedianPartialAggregate<>();
-        for (double i = 10E6; i > 0.0; i -= 1.0) {
-            agg.add(i);
-            stats.addValue(i);
-        }
-        System.out.println(agg + " == " + stats.getPercentile(50));
-        try {
-            Thread.sleep(1000);
-        }
-        catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        stats = new DescriptiveStatistics();
-        agg = new GreenwaldKhannaMedianPartialAggregate<>();
-        for (double i = 10E6 / 3.0; i > 0.0; i -= 1.0) {
-            agg.add(i);
-            stats.addValue(i);
-        }
-        for (double i = .0; i < 10E6 / 3.0; i += 1.0) {
-            agg.add(i);
-            stats.addValue(i);
-        }
-        for (double i = 10E6 / 3.0; i > 0.0; i -= 1.0) {
-            agg.add(i);
-            stats.addValue(i);
-        }
-        System.out.println(agg + " == " + stats.getPercentile(50));
-        try {
-            Thread.sleep(1000);
-        }
-        catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         final Random random = new Random();
         random.setSeed(0l);
-        final int n = (int) 10E6;
+        int n = (int) 10E6;
         double[] values = new double[n];
         for (int i = 0; i < n; i++) {
-            values[i] = random.nextDouble() * 100;
+            values[i] = random.nextDouble() * 1000.0;
         }
-        stats = new DescriptiveStatistics();
-        agg = new GreenwaldKhannaMedianPartialAggregate<>();
+        DescriptiveStatistics stats = new DescriptiveStatistics();
+        GreenwaldKhannaMedianPartialAggregate<Object> agg = new GreenwaldKhannaMedianPartialAggregate<>();
+        long mem = 0;
+        long lastMem = 0;
+        long maxMem = 0;
+        Runtime.getRuntime().gc();
+        System.out.println("Running median with " + n + " values");
         for (int i = 0; i < n; i++) {
             agg.add(values[i]);
             stats.addValue(values[i]);
+            if (i % 100000 == 0) {
+                Runtime rt = Runtime.getRuntime();
+                mem = (rt.totalMemory() - rt.freeMemory());
+                maxMem = Math.max(maxMem, mem);
+                System.out.println("Memory: " + mem / 1024 + "kb " + (mem > lastMem ? "^" : "v") + " Max: " + maxMem / 1024000 + "MB");
+                lastMem = mem;
+            }
         }
         System.out.println(agg + " == " + stats.getPercentile(50));
-        try {
-            Thread.sleep(1000);
-        }
-        catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        long time = System.currentTimeMillis();
-        agg = new GreenwaldKhannaMedianPartialAggregate<>();
 
+        long time = System.currentTimeMillis();
+        n = (int) 10E5;
+        random.setSeed(0l);
+        agg = new GreenwaldKhannaMedianPartialAggregate<>();
+        mem = 0;
+        lastMem = 0;
+        maxMem = 0;
+        Runtime.getRuntime().gc();
+        System.out.println("Running median with " + n + " values");
         for (int i = 0; i < n; i++) {
-            agg.add(values[i]);
+            agg.add(random.nextDouble() * 1000.0);
+            if (i % 100000 == 0) {
+                Runtime rt = Runtime.getRuntime();
+                mem = (rt.totalMemory() - rt.freeMemory());
+                maxMem = Math.max(maxMem, mem);
+                System.out.println("Memory: " + mem / 1024 + "kb " + (mem > lastMem ? "^" : "v") + " Max: " + maxMem / 1024000 + "MB");
+                lastMem = mem;
+            }
         }
         System.out.println(agg + " of " + n + " values in " + (System.currentTimeMillis() - time) + "ms");
+        time = System.currentTimeMillis();
+        n = (int) 10E6;
+        random.setSeed(0l);
+        agg = new GreenwaldKhannaMedianPartialAggregate<>();
+        mem = 0;
+        lastMem = 0;
+        maxMem = 0;
+        Runtime.getRuntime().gc();
+        System.out.println("Running median with " + n + " values");
+        for (int i = 0; i < n; i++) {
+            agg.add(random.nextDouble() * 1000.0);
+            if (i % 100000 == 0) {
+                Runtime rt = Runtime.getRuntime();
+                mem = (rt.totalMemory() - rt.freeMemory());
+                maxMem = Math.max(maxMem, mem);
+                System.out.println("Memory: " + mem / 1024 + "kb " + (mem > lastMem ? "^" : "v") + " Max: " + maxMem / 1024000 + "MB");
+                lastMem = mem;
+            }
+        }
+        System.out.println(agg + " of " + n + " values in " + (System.currentTimeMillis() - time) + "ms");
+        time = System.currentTimeMillis();
+        n = (int) 10E7;
+        random.setSeed(0l);
+        agg = new GreenwaldKhannaMedianPartialAggregate<>();
+        mem = 0;
+        lastMem = 0;
+        maxMem = 0;
+        Runtime.getRuntime().gc();
+        System.out.println("Running median with " + n + " values");
+        for (int i = 0; i < n; i++) {
+            agg.add(random.nextDouble() * 1000.0);
+            if (i % 100000 == 0) {
+                Runtime rt = Runtime.getRuntime();
+                mem = (rt.totalMemory() - rt.freeMemory());
+                maxMem = Math.max(maxMem, mem);
+                System.out.println("Memory: " + mem / 1024 + "kb " + (mem > lastMem ? "^" : "v") + " Max: " + maxMem / 1024000 + "MB");
+                lastMem = mem;
+            }
+        }
+        System.out.println(agg + " of " + n + " values in " + (System.currentTimeMillis() - time) + "ms");
+        time = System.currentTimeMillis();
+        n = (int) 10E8;
+        random.setSeed(0l);
+        agg = new GreenwaldKhannaMedianPartialAggregate<>();
+        mem = 0;
+        lastMem = 0;
+        maxMem = 0;
+        Runtime.getRuntime().gc();
+        System.out.println("Running median with " + n + " values");
+        for (int i = 0; i < n; i++) {
+            agg.add(random.nextDouble() * 1000.0);
+            if (i % 100000 == 0) {
+                Runtime rt = Runtime.getRuntime();
+                mem = (rt.totalMemory() - rt.freeMemory());
+                maxMem = Math.max(maxMem, mem);
+                System.out.println("Memory: " + mem / 1024 + "kb " + (mem > lastMem ? "^" : "v") + " Max: " + maxMem / 1024000 + "MB");
+                lastMem = mem;
+            }
+        }
+        System.out.println(agg + " of " + n + " values in " + (System.currentTimeMillis() - time) + "ms");
+
     }
 }
