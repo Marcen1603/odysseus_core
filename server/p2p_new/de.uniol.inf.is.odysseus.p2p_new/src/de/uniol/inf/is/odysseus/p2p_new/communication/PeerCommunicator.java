@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaServerConnectionListener;
 import de.uniol.inf.is.odysseus.p2p_new.util.connect.bidi.JxtaBiDiClientConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.connect.bidi.JxtaBiDiServerConnection;
 
+@Deprecated
 public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommunicator, IJxtaConnectionListener, IJxtaServerConnectionListener, IAdvertisementListener {
 
 	private static final int WAIT_INTERVAL_MILLIS = 200;

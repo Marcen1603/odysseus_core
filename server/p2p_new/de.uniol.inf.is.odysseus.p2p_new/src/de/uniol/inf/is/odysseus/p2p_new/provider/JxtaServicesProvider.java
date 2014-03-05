@@ -100,6 +100,10 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 		return instance != null && P2PNetworkManager.getInstance() != null && P2PNetworkManager.getInstance().isStarted();
 	}
 	
+	public EndpointService getEndpointService() {
+		return endpointService;
+	}
+	
 	@Override
 	public void publish(Advertisement adv) throws IOException {
 		executor.addJob(new PublishJob(discoveryService, adv, DiscoveryService.DEFAULT_LIFETIME, DiscoveryService.DEFAULT_EXPIRATION));
