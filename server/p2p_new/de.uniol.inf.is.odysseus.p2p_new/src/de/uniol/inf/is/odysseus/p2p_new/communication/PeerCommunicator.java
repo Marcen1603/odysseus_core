@@ -213,18 +213,42 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 			LOG.debug("New communication advertisement received from peer {}...", commAdv.getPeerName());
 			if (!isOwnPeer(commAdv) && hasNoConnection(commAdv)) {
 				LOG.debug("...and is a new interesting one");
-
-				if( JxtaServicesProvider.getInstance().isReachable(commAdv.getPeerID())) {
-					IJxtaConnection clientConnection = new JxtaBiDiClientConnection(createPipeAdvertisement(commAdv.getPipeID()));
-					clientConnection.addListener(this);
-					tryConnectAsync(clientConnection, commAdv.getPeerID(), commAdv.getPeerName());
-				} else {
-					LOG.debug("... but is not reachable");
-				}
+				tryConnectAsync(commAdv);
 			} else {
 				LOG.debug("...but is our own peer or we have already a connection to that peer");
 			}
 		}
+	}
+
+	private void tryConnectAsync(final CommunicationAdvertisement commAdv) {
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				LOG.debug("Begin trying to connect to peer {}...", commAdv.getPeerName());
+				if (JxtaServicesProvider.getInstance().isReachable(commAdv.getPeerID(), false)) {
+					LOG.debug("...and it is reachable!");
+
+					IJxtaConnection clientConnection = new JxtaBiDiClientConnection(createPipeAdvertisement(commAdv.getPipeID()));
+					clientConnection.addListener(PeerCommunicator.this);
+
+					try {
+						synchronized (waitingClientConnections) {
+							waitingClientConnections.put(clientConnection, commAdv.getPeerID());
+						}
+						clientConnection.connect();
+					} catch (final IOException ex) {
+						synchronized (waitingClientConnections) {
+							waitingClientConnections.remove(clientConnection);
+						}
+					}
+				} else {
+					LOG.debug("... but peer {} is not reachable anymore", commAdv.getPeerName());
+				}
+			}
+		});
+		t.setDaemon(true);
+		t.setName("Connecting thread to " + commAdv.getPeerName());
+		t.start();
 	}
 
 	@Override
@@ -260,28 +284,6 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 
 	private static boolean isOwnPeer(CommunicationAdvertisement commAdv) {
 		return commAdv.getPeerID().equals(P2PNetworkManager.getInstance().getLocalPeerID()) && commAdv.getPeerName().equals(P2PNetworkManager.getInstance().getLocalPeerName());
-	}
-
-	private void tryConnectAsync(final IJxtaConnection connection, final PeerID peerID, final String peerName) {
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					LOG.debug("Beginning connection to server peer {}", peerName);
-					synchronized (waitingClientConnections) {
-						waitingClientConnections.put(connection, peerID);
-					}
-					connection.connect();
-				} catch (final IOException ex) {
-					synchronized(waitingClientConnections) {
-						waitingClientConnections.remove(connection);
-					}
-				}
-			}
-		});
-		t.setDaemon(true);
-		t.setName("Connecting thread to " + peerName);
-		t.start();
 	}
 
 	@Override

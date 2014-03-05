@@ -162,7 +162,12 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 
 	@Override
 	public boolean isReachable(PeerID peerID) {
-		return endpointService.isReachable(peerID, false);
+		return isReachable(peerID, false);
+	}
+	
+	@Override
+	public boolean isReachable(PeerID peerID, boolean tryToConnect) {
+		return endpointService.isReachable(peerID, tryToConnect);
 	}
 
 	@Override

@@ -40,6 +40,8 @@ public interface IJxtaServicesProvider {
 
 	public boolean isReachable(PeerID peerID);
 
+	boolean isReachable(PeerID peerID, boolean tryToConnect);
+	
 	public Optional<String> getRemotePeerAddress(PeerID peerID);
 
 	public InputPipe createInputPipe(PipeAdvertisement pipeAdv, PipeMsgListener listener) throws IOException ;
