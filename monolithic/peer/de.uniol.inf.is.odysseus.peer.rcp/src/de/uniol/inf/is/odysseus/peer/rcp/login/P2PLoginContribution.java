@@ -373,6 +373,10 @@ public class P2PLoginContribution implements ILoginContribution {
 	}
 
 	private static URI toURI(String address) {
+		if( !Strings.isNullOrEmpty(address)) {
+			return null;
+		}
+		
 		try {
 			return new URI("//" + address);
 		} catch (URISyntaxException e) {
