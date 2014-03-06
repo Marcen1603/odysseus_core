@@ -34,6 +34,8 @@ import de.uniol.inf.is.odysseus.rcp.login.ILoginContributionContainer;
 
 public class P2PLoginContribution implements ILoginContribution {
 
+	private static final String ADDRESS_PREFIX = "tcp://";
+
 	private static final Logger LOG = LoggerFactory.getLogger(P2PLoginContribution.class);
 
 	private static final String PEER_NAME_SYS_PROPERTY = "peer.name";
@@ -332,7 +334,7 @@ public class P2PLoginContribution implements ILoginContribution {
 		}
 		
 		try {
-			new URI("//" + address);
+			new URI(ADDRESS_PREFIX + address);
 		} catch (URISyntaxException e) {
 			return false;
 		}
@@ -395,9 +397,9 @@ public class P2PLoginContribution implements ILoginContribution {
 		}
 		
 		try {
-			return new URI("//" + address);
+			return new URI(ADDRESS_PREFIX + address);
 		} catch (URISyntaxException e) {
-			LOG.error("Could not transform address '" + address + "' to URI", e);
+			LOG.error("Could not transform address '" + ADDRESS_PREFIX + address + "' to URI", e);
 			return null;
 		}
 	}
