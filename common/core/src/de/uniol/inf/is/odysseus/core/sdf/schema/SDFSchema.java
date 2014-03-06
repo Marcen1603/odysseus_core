@@ -238,7 +238,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			String attributeToFindPart = listA[indexA];
 			String attributePart = listB[indexB];
 
-			if (!attributeToFindPart.equals(attributePart)) {
+			if (!attributeToFindPart.equalsIgnoreCase(attributePart)) {
 				return false;
 			}
 
