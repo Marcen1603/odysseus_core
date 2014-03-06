@@ -1,6 +1,5 @@
 ///OdysseusScript
 #PARSER CQL
-#TRANSCFG Standard
 #RUNQUERY
 DROP STREAM nexmark:auction2;
 #RUNQUERY

@@ -1,6 +1,5 @@
 ///OdysseusScript
 #PARSER CQL
-#TRANSCFG Standard
 #RUNQUERY
 DROP STREAM nexmark:bid2 if exists;
 #RUNQUERY

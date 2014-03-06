@@ -1,6 +1,5 @@
 ///OdysseusScript
 #PARSER CQL
-#TRANSCFG Standard
 #ADDQUERY
 DROP STREAM nexmark:person2;
 #ADDQUERY
