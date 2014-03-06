@@ -110,6 +110,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		synchronized (g) {
 			g.init();
 			transferArea.init(this, getSubscribedToSource().size());
+			groups.clear();
 		}
 	}
 
@@ -172,6 +173,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		// Update sweep area with new element
 		List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(
 				sa, object, outputPA);
+		// /System.err.println(sa);
 		if (results.size() > 0) {
 			produceResults(results, groupID);
 		}
@@ -183,14 +185,15 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	private void createOutput(PointInTime timestamp) {
 		// Extract all Elements before current Time!
 		cleanUpSweepArea(timestamp);
-		
+
 		// optional: Build partial aggregates with validity end until timestamp
 		createAddOutput(timestamp);
 
 		// Find minimal start time stamp from elements intersecting time stamp
-		//transferArea.newHeartbeat(findMinHeartbeat(timestamp), 0);
-		
-		transferArea.newHeartbeat(timestamp,0);
+		transferArea.newHeartbeat(findMinHeartbeat(timestamp), 0);
+
+		// THIS HEARTBEAT IS TO HIGH!!
+		//transferArea.newHeartbeat(timestamp, 0);
 	}
 
 	public PointInTime findMinHeartbeat(PointInTime timestamp) {
@@ -213,6 +216,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	public void cleanUpSweepArea(PointInTime timestamp) {
 		for (Entry<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 				.entrySet()) {
+			System.err.println(entry.getValue());
 			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
 					.getValue().extractElementsBefore(timestamp);
 			produceResults(results, entry.getKey());
@@ -222,19 +226,21 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	public void createAddOutput(PointInTime timestamp) {
 		if (dumpAtValueCount > 0) {
 
-		createOutputCounter++;
-		if (createOutputCounter >= dumpAtValueCount) {
-			createOutputCounter = 0;
-			
-			for (Entry<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups.entrySet()) {
-//				System.err.println("Updating "+entry.getKey());				
-				List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(entry.getValue(), timestamp);
-				if (results.size() > 0) {
-					produceResults(results, entry.getKey());
-				}
-			}
+			createOutputCounter++;
+			if (createOutputCounter >= dumpAtValueCount) {
+				createOutputCounter = 0;
 
-		}
+				for (Entry<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+						.entrySet()) {
+					// System.err.println("Updating "+entry.getKey());
+					List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(
+							entry.getValue(), timestamp);
+					if (results.size() > 0) {
+						produceResults(results, entry.getKey());
+					}
+				}
+
+			}
 		}
 	}
 
@@ -242,19 +248,16 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	private void produceResults(
 			List<PairMap<SDFSchema, AggregateFunction, W, Q>> results,
 			Long groupID) {
-		List<W> outList = new LinkedList<>();
 		for (PairMap<SDFSchema, AggregateFunction, W, Q> e : results) {
 			W out = getGroupProcessor().createOutputElement(groupID, e);
 			out.setMetadata((Q) e.getMetadata().clone());
-			outList.add(out);
+			transferArea.transfer(out);
 		}
-		transferArea.transfer(outList);
 	}
 
 	private void produceResults(
 			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results,
 			Long groupID) {
-		List<W> outList = new LinkedList<>();
 		while (results.hasNext()) {
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> e = results
 					.next();
@@ -262,13 +265,14 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			if (outputPA) {
 				out = getGroupProcessor().createOutputElement2(groupID, e);
 			} else {
-				PairMap<SDFSchema, AggregateFunction, W, ? extends ITimeInterval> r = calcEval(e, true);
+				PairMap<SDFSchema, AggregateFunction, W, ? extends ITimeInterval> r = calcEval(
+						e, true);
 				out = getGroupProcessor().createOutputElement(groupID, r);
 			}
 			out.setMetadata(e.getMetadata());
-			outList.add(out);
+			transferArea.transfer(out);
 		}
-		transferArea.transfer(outList);
+
 	}
 
 	@Override

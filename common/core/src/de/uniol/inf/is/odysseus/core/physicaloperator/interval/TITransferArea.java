@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.interval;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
@@ -146,6 +145,9 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 					outputQueue.add(new Pair<IStreamable, Integer>(object, toPort));
 					sendData();
 				}
+			}else {
+				logger.warn("Out of order element read " + object
+						+ " before last send element " + watermark + " ! Ignoring");
 			}
 		}
 	}
@@ -154,13 +156,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	public void transfer(W object) {
 		transfer(object, outputPort);
 	}
-	
-	@Override
-	public void transfer(List<W> objectList){
-		for (W w:objectList){
-			transfer(w);
-		}
-	}
+
 	
 	@Override
 	public void sendPunctuation(IPunctuation punctuation, int toPort) {

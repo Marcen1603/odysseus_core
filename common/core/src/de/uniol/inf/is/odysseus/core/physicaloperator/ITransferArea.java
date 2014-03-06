@@ -46,7 +46,6 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 	 * @param object Objekt, das in den Heap eingefuegt werden soll.
 	 */
 	void transfer(W object);
-	void transfer(List<W> objectList);
 	void transfer(W object, int toPort);
 	/**
 	 * To avoid packing time stamps into a punctuation, this

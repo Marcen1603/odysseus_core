@@ -175,7 +175,9 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		synchronized (buffers) {
 			for (List<T> b : buffers.values()) {
 				transferBuffer(b, b.size(), lastTs);
-				transferArea.transfer(b);
+				for (T t : b) {
+					transferArea.transfer(t);
+				}
 			}
 		}
 		transferArea.newHeartbeat(lastTs, 0);

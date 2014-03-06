@@ -112,11 +112,6 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 		// outputQueue.add(object);
 		// }
 	}
-
-	@Override
-	public void transfer(List<W> objectList) {
-		this.po.transfer(objectList);
-	}
 	
 	@Override
 	public void transfer(W object, int toPort) {
