@@ -16,6 +16,8 @@ import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.rendezvous.RendezvousEvent;
 import net.jxta.rendezvous.RendezvousListener;
 
+import org.apache.log4j.PropertyConfigurator;
+import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +29,14 @@ import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkListener;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNetworkException;
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
 
 public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(P2PNetworkManager.class);
+	private static final String LOG_PROPERTIES_FILENAME = "log4j.properties";
+	private static final String JXTA_LOGGER_NAME = "net.jxta";
+	private static final java.util.logging.Level JXTA_LOG_LEVEL = java.util.logging.Level.SEVERE;
 
 	private static P2PNetworkManager instance;
 
@@ -124,13 +130,14 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 	@Override
 	public void start() throws P2PNetworkException {
 		Preconditions.checkState(!started, "P2P network already started");
+		
+		configureLogging(P2PNewPlugIn.getBundle());
 
-		LOG.debug("Starting p2p network. peerName = {}, groupName = {}", peerName, groupName);
-
-		final File conf = new File(OdysseusConfiguration.getHomeDir() + "peers" + File.separator + peerName);
+		File conf = new File(OdysseusConfiguration.getHomeDir() + "peers" + File.separator + peerName);
 		NetworkManager.RecursiveDelete(conf);
 
 		peerID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID);
+		LOG.debug("Starting p2p network. peerName = {}, groupName = {}, peerID = {}", new Object[] {peerName, groupName, peerID});
 
 		try {
 			manager = new NetworkManager(determineConfigMode(), peerName, conf.toURI());
@@ -139,15 +146,17 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 
 			PeerGroup netPeerGroup = manager.startNetwork();
 			if( !isRendevousPeer ) {
+				LOG.debug("Deactivating rendevous service");
 				netPeerGroup.getRendezVousService().setAutoStart(false);
 			}
 
 			PeerGroupID peerGroupID = IDFactory.newPeerGroupID(PeerGroupID.defaultNetPeerGroupID, groupName.getBytes());
-
+			LOG.debug("Peer Group ID is {}", peerGroupID.toString());
 			peerGroup = createSubGroup(netPeerGroup, peerGroupID, groupName);
 			if (!isRendevousPeer && rendevousPeerURI == null) {
 				CacheManager cacheManager = ((StdPeerGroup) peerGroup).getCacheManager();
 				cacheManager.setTrackDeltas(false);
+				LOG.debug("Deactivating cache manager");
 			}
 
 			if (peerGroup.startApp(new String[0]) != Module.START_OK) {
@@ -155,10 +164,10 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 			}
 
 			if (isRendevousPeer) {
-				LOG.debug("Starting rendevous");
+				LOG.debug("Starting rendevous service");
 				peerGroup.getRendezVousService().startRendezVous();
 				peerGroup.getRendezVousService().addListener(this);
-			} 
+			}
 			
 			started = true;
 			LOG.debug("P2P network started");
@@ -172,13 +181,20 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 		}
 	}
 
+	private static void configureLogging(Bundle bundle) {
+		java.util.logging.Logger jxtaLogger = java.util.logging.Logger.getLogger(JXTA_LOGGER_NAME);
+		jxtaLogger.setLevel(JXTA_LOG_LEVEL);
+		
+		PropertyConfigurator.configure(bundle.getResource(LOG_PROPERTIES_FILENAME));
+	}
+
 	private ConfigMode determineConfigMode() {
 		if (isRendevousPeer) {
 			LOG.debug("Peer is RENDEVOUS");
 			return NetworkManager.ConfigMode.RENDEZVOUS;
 		}
 		if (rendevousPeerURI != null) {
-			LOG.debug("Peer is EDGE");
+			LOG.debug("Peer is EDGE using rendervous address " + rendevousPeerURI);
 			return NetworkManager.ConfigMode.EDGE;
 		}
 		LOG.debug("Peer is ADHOC");
@@ -204,9 +220,12 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 		configurator.setUseMulticast(true);
 		configurator.setPeerID(peerID);
 		configurator.setName(peerName);
+		
 		if (rdvAddress != null) {
 			configurator.clearRendezvousSeeds();
 			configurator.addSeedRendezvous(rdvAddress);
+			configurator.setUseOnlyRendezvousSeeds(true);
+			configurator.setUseOnlyRendezvousSeeds(true);
 		}
 	}
 
