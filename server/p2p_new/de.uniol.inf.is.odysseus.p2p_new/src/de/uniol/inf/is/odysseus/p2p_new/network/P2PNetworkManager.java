@@ -158,7 +158,7 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 				cacheManager.setTrackDeltas(false);
 				LOG.debug("Deactivating cache manager");
 			}
-
+			
 			if (peerGroup.startApp(new String[0]) != Module.START_OK) {
 				throw new P2PNetworkException("Could not start child group");
 			}

@@ -84,7 +84,17 @@ public class EndpointPeerCommunicator implements IPeerCommunicator, IP2PDictiona
 	@Override
 	public void send(PeerID destinationPeer, byte[] message) throws PeerCommunicationException {
 		Messenger messenger = messengerMap.get(destinationPeer);
-
+		if( messenger == null ) {
+			LOG.error("Wanted to send message to unknown peer {}", destinationPeer);
+			return;
+		}
+		
+		if( messenger.isClosed() ) {
+			LOG.error("Tried to send message with closed messenger (e.g. lost peer): {}", destinationPeer);
+			messengerMap.remove(destinationPeer);
+			return;
+		}
+		
 		Message msg = new Message();
 		msg.addMessageElement(new ByteArrayMessageElement("bytes", null, message, null));
 
