@@ -93,7 +93,7 @@ public class DBEnrichAO extends AbstractEnrichAO {
 			logger.debug(sdfSchemaToString(getOutputSchema(), "Output stream: "
 					+ getInputSchema().getURI()));
 		} catch (SQLException e) {
-			throw new RuntimeException("Error while analysing SQL query", e);
+			throw new RuntimeException("Error while analysing SQL query "+e.getMessage(), e);
 		} finally {
 			if (preparedStatement != null) {
 				try {
