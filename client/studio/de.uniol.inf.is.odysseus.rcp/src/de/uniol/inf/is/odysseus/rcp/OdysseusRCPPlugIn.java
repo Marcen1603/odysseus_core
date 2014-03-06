@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 package de.uniol.inf.is.odysseus.rcp;
-
-import java.util.concurrent.Semaphore;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -63,8 +61,6 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 	private static IExecutor executor = null;
 	private static ISession activeSession;
 	private static ImageManager imageManager;
-	
-	private static Semaphore waitForExecutorLock = new Semaphore(0);
 
 	public static OdysseusRCPPlugIn getDefault() {
 		return instance;
@@ -74,27 +70,22 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 		OdysseusRCPPlugIn.activeSession = session;
 	}
 
-	public static ISession getActiveSession() {		
+	public static ISession getActiveSession() {
 		return activeSession;
 	}
-	
-	
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		super.start(bundleContext);		
+		super.start(bundleContext);
 		// Bilder registrieren
 		imageManager = new ImageManager(bundleContext.getBundle());
-		
+
 		imageManager.register("repository", "icons/repository_rep.gif");
 		imageManager.register("user", "icons/user.png");
 		imageManager.register("sla", "icons/document-block.png");
 		imageManager.register("percentile", "icons/document-tag.png");
 		imageManager.register("view", "icons/table.png");
 
-		
-		
-		
 		instance = this;
 	}
 
@@ -103,10 +94,10 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 		super.stop(bundleContext);
 
 		instance = null;
-		
+
 		imageManager.disposeAll();
 	}
-	
+
 	public static ImageManager getImageManager() {
 		return imageManager;
 	}
@@ -116,13 +107,20 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 	}
 
 	public void bindExecutor(IExecutor ex) throws PlanManagementException {
-		executor = ex;		
-		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, OdysseusNLS.Executor + " " + executor.getName() + " " + OdysseusNLS.Ready);
-		waitForExecutorLock.release();			
+		synchronized (OdysseusRCPPlugIn.class) {
+			executor = ex;
+			StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, OdysseusNLS.Executor + " " + executor.getName() + " " + OdysseusNLS.Ready);
+			OdysseusRCPPlugIn.class.notifyAll();
+		}
+
 	}
-	
-	public static void waitForExecutor() throws InterruptedException{
-		waitForExecutorLock.acquire();
+
+	public static void waitForExecutor() throws InterruptedException {
+		synchronized (OdysseusRCPPlugIn.class) {
+			while (executor == null) {
+				OdysseusRCPPlugIn.class.wait(1000);
+			}
+		}
 	}
 
 	public void unbindExecutor(IExecutor ex) {
