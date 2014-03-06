@@ -190,25 +190,34 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		createAddOutput(timestamp);
 
 		// Find minimal start time stamp from elements intersecting time stamp
-		transferArea.newHeartbeat(findMinHeartbeat(timestamp), 0);
+		transferArea.newHeartbeat(findMinTimestamp(timestamp), 0);
 
 		// THIS HEARTBEAT IS TO HIGH!!
-		//transferArea.newHeartbeat(timestamp, 0);
+		// transferArea.newHeartbeat(timestamp, 0);
 	}
 
-	public PointInTime findMinHeartbeat(PointInTime timestamp) {
+	private PointInTime findMinTimestamp(PointInTime timestamp) {
 		PointInTime border = timestamp;
 		for (Entry<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 				.entrySet()) {
-			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> iter = entry
-					.getValue().peekElementsContaing(timestamp, false);
-			while (iter.hasNext()) {
-				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> v = iter
-						.next();
-				if (v.getMetadata().getStart().before(border)) {
-					border = v.getMetadata().getStart();
+			PointInTime sa_min_ts = entry.getValue().getMinTs();
+			if (sa_min_ts != null) {
+				if (sa_min_ts.before(border)) {
+					border = sa_min_ts;
 				}
 			}
+			// WTF ... ??
+			// Iterator<PairMap<SDFSchema, AggregateFunction,
+			// IPartialAggregate<R>, Q>> iter = entry
+			// .getValue().peekElementsContaing(timestamp, false);
+			// while (iter.hasNext()) {
+			// PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> v
+			// = iter
+			// .next();
+			// if (v.getMetadata().getStart().before(border)) {
+			// border = v.getMetadata().getStart();
+			// }
+			// }
 		}
 		return border;
 	}
