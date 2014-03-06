@@ -42,7 +42,7 @@ public class Communicator implements IAdvertisementListener {
 	private static IJxtaServicesProvider jxtaServicesProvider;
 
 	private final ExecutorService executorService = Executors.newCachedThreadPool();
-	
+
 	private final Map<String, Collection<Bid>> mailboxForAuctions = Maps.newHashMap();
 
 	// called by OSGi-DS
@@ -97,9 +97,9 @@ public class Communicator implements IAdvertisementListener {
 
 	public Future<Collection<Bid>> publishAuction(final AuctionQueryAdvertisement adv) {
 		synchronized (mailboxForAuctions) {
-			mailboxForAuctions.put(adv.getAuctionId().toString(), Lists.<Bid>newArrayList());
+			mailboxForAuctions.put(adv.getAuctionId().toString(), Lists.<Bid> newArrayList());
 		}
-		
+
 		try {
 			jxtaServicesProvider.publish(adv, WAIT_TIME_MILLIS, WAIT_TIME_MILLIS);
 			jxtaServicesProvider.remotePublish(adv, WAIT_TIME_MILLIS);
@@ -131,10 +131,10 @@ public class Communicator implements IAdvertisementListener {
 
 	private void processActionQueryAdvertisement(AuctionQueryAdvertisement adv) {
 		if (!adv.getOwnerPeerId().equals(p2pNetworkManager.getLocalPeerID())) {
-			
+
 			LOG.debug("Received query to bid to auction {}", adv.getAuctionId());
 			LOG.debug("PQL-Statement is \n{}", adv.getPqlStatement());
-			
+
 			ILogicalQuery query = Helper.getLogicalQuery(adv.getPqlStatement()).get(0);
 
 			IBidProvider bidProvider = SurveyBasedAllocationPlugIn.getSelectedBidProvider();
@@ -142,12 +142,12 @@ public class Communicator implements IAdvertisementListener {
 
 			if (optBidValue.isPresent()) {
 				double bidValue = optBidValue.get();
-				
+
 				AuctionResponseAdvertisement auctionBidAdvertisement = (AuctionResponseAdvertisement) AdvertisementFactory.newAdvertisement(AuctionResponseAdvertisement.getAdvertisementType());
 				auctionBidAdvertisement.setAuctionId(adv.getAuctionId());
 				auctionBidAdvertisement.setBid(new Bid(p2pNetworkManager.getLocalPeerID(), bidValue));
 				auctionBidAdvertisement.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
-				
+
 				jxtaServicesProvider.remotePublishToPeer(auctionBidAdvertisement, adv.getOwnerPeerId(), WAIT_TIME_MILLIS);
 
 				LOG.debug("Sent bid {} to auction {} of peer {}", new String[] { "" + bidValue, adv.getAuctionId().toString(), adv.getOwnerPeerId().toString() });
@@ -159,17 +159,16 @@ public class Communicator implements IAdvertisementListener {
 
 	private void processAuctionResponeAdvertisement(AuctionResponseAdvertisement advertisement) {
 		if (!advertisement.getBid().getBidderPeerID().equals(p2pNetworkManager.getLocalPeerID())) {
-			LOG.debug("Received bid from {} valued {}", 
-					p2pDictionary.getRemotePeerName(advertisement.getBid().getBidderPeerID()).get(), 
-					advertisement.getBid().getValue());
-			
-			
-			synchronized (this.mailboxForAuctions) {
-				Collection<Bid> mailbox = mailboxForAuctions.get(advertisement.getAuctionId().toString());
-				if( mailbox != null ) {
-					mailbox.add(advertisement.getBid());
-				} 
+			Collection<Bid> mailbox = null;
+			synchronized (mailboxForAuctions) {
+				mailbox = mailboxForAuctions.get(advertisement.getAuctionId().toString());
 			}
+
+			if (mailbox != null) {
+				mailbox.add(advertisement.getBid());
+			}
+			LOG.debug("Received bid from {} valued {}", p2pDictionary.getRemotePeerName(advertisement.getBid().getBidderPeerID()).get(), advertisement.getBid().getValue());
+
 		}
 	}
 
