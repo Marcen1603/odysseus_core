@@ -351,11 +351,12 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 				throw new RuntimeException(e);
 			}
 			// Set Type of view to name of view
-			if (topOperator.getOutputSchema() != null) {
-				SDFSchema oldSchema = topOperator.getOutputSchema();
-				SDFSchema newSchema = SDFSchema.changeSourceName(oldSchema, viewname.getShortString(caller.getUser().getName()));
-				topOperator.setOutputSchema(newSchema);
-			}
+// MG: REMOVED 
+			//			if (topOperator.getOutputSchema() != null) {
+//				SDFSchema oldSchema = topOperator.getOutputSchema();
+//				SDFSchema newSchema = SDFSchema.changeSourceName(oldSchema, viewname.getShortString(caller.getUser().getName()));
+//				topOperator.setOutputSchema(newSchema);
+//			}
 			fireViewAddEvent(viewname, topOperator);
 		} else {
 			throw new PermissionException("User " + caller.getUser().getName() + " has no permission to add a view.");
