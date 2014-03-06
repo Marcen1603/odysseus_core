@@ -11,8 +11,6 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
@@ -72,8 +70,8 @@ public class SignalAggregateFunctionBuilder implements IAggregateFunctionBuilder
         Preconditions.checkElementIndex(0, pos.length);
         Preconditions.checkElementIndex(pos[0], schema.size());
 
-        SDFAttribute attribute = schema.get(pos[0]);
-        Preconditions.checkArgument(attribute.getDatatype() instanceof SDFDatatype);
+        //SDFAttribute attribute = schema.get(pos[0]);
+       // Preconditions.checkArgument(attribute.getDatatype() instanceof SDFDatatype);
 
         IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
         if (key.getName().equalsIgnoreCase(SignalAggregateFunctionBuilder.FFT)) {

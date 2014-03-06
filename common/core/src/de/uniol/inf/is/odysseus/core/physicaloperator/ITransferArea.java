@@ -15,8 +15,6 @@
   */
 package de.uniol.inf.is.odysseus.core.physicaloperator;
 
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;

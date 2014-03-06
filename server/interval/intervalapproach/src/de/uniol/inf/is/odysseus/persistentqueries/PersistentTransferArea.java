@@ -15,17 +15,16 @@
  */
 package de.uniol.inf.is.odysseus.persistentqueries;
 
-import java.util.List;
 import java.util.PriorityQueue;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
-import de.uniol.inf.is.odysseus.core.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 
 /**
