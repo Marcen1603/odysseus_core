@@ -65,7 +65,7 @@ public abstract class AbstractPQLStatementGenerator<T extends ILogicalOperator> 
 		LogicalSubscription[] subscriptions = operator.getSubscribedToSource().toArray(new LogicalSubscription[0]);
 		for (int i = 0; i < subscriptions.length; i++) {
 			ILogicalOperator target = subscriptions[i].getTarget();
-			sb.append(subscriptions[i].getSourceOutPort()).append(":");
+			sb.append(subscriptions[i].getSinkInPort()).append(":");
 			sb.append(otherOperatorNames.get(target));
 			if (i < subscriptions.length - 1) {
 				sb.append(",");
