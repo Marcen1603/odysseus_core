@@ -16,10 +16,6 @@ public class CreateQueryException_Exception
 {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 579144300873765109L;
-	/**
      * Java type that goes as soapenv:Fault detail element.
      * 
      */

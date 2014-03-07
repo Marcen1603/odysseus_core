@@ -16,10 +16,6 @@ public class InvalidUserDataException_Exception
 {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 2713901793192142489L;
-	/**
      * Java type that goes as soapenv:Fault detail element.
      * 
      */

@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 
 @Deprecated
-public class BenchmarkQueryBuildConfigurationTemplate extends
+class BenchmarkQueryBuildConfigurationTemplate extends
 		AbstractQueryBuildConfigurationTemplate {
 	
 	public BenchmarkQueryBuildConfigurationTemplate() {

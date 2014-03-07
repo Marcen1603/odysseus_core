@@ -16,10 +16,6 @@ public class QueryNotExistsException_Exception
 {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 7114884109997989350L;
-	/**
      * Java type that goes as soapenv:Fault detail element.
      * 
      */

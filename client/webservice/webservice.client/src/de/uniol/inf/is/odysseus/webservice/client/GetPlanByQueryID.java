@@ -7,17 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getOutputSchema complex type.
+ * <p>Java class for getPlanByQueryID complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getOutputSchema">
+ * &lt;complexType name="getPlanByQueryID">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="securitytoken" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="queryId" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="queryID" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -27,14 +27,14 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getOutputSchema", propOrder = {
+@XmlType(name = "getPlanByQueryID", propOrder = {
     "securitytoken",
-    "queryId"
+    "queryID"
 })
-public class GetOutputSchema {
+public class GetPlanByQueryID {
 
     protected String securitytoken;
-    protected int queryId;
+    protected Integer queryID;
 
     /**
      * Gets the value of the securitytoken property.
@@ -61,19 +61,27 @@ public class GetOutputSchema {
     }
 
     /**
-     * Gets the value of the queryId property.
+     * Gets the value of the queryID property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getQueryId() {
-        return queryId;
+    public Integer getQueryID() {
+        return queryID;
     }
 
     /**
-     * Sets the value of the queryId property.
+     * Sets the value of the queryID property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setQueryId(int value) {
-        this.queryId = value;
+    public void setQueryID(Integer value) {
+        this.queryID = value;
     }
 
 }

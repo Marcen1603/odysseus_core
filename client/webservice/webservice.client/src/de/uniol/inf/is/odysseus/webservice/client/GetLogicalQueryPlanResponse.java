@@ -8,16 +8,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getOutputSchemaResponse complex type.
+ * <p>Java class for getLogicalQueryPlanResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getOutputSchemaResponse">
+ * &lt;complexType name="getLogicalQueryPlanResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}sdfSchemaResponse" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}simpleGraph" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -27,23 +27,23 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getOutputSchemaResponse", propOrder = {
+@XmlType(name = "getLogicalQueryPlanResponse", propOrder = {
     "_return"
 })
-public class GetOutputSchemaResponse {
+public class GetLogicalQueryPlanResponse {
 
     @XmlElement(name = "return")
-    protected SdfSchemaResponse _return;
+    protected SimpleGraph _return;
 
     /**
      * Gets the value of the return property.
      * 
      * @return
      *     possible object is
-     *     {@link SdfSchemaResponse }
+     *     {@link SimpleGraph }
      *     
      */
-    public SdfSchemaResponse getReturn() {
+    public SimpleGraph getReturn() {
         return _return;
     }
 
@@ -52,10 +52,10 @@ public class GetOutputSchemaResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link SdfSchemaResponse }
+     *     {@link SimpleGraph }
      *     
      */
-    public void setReturn(SdfSchemaResponse value) {
+    public void setReturn(SimpleGraph value) {
         this._return = value;
     }
 

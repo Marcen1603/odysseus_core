@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="containsCycles" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="priority" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="notice" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,7 +38,8 @@ import javax.xml.bind.annotation.XmlType;
     "parserID",
     "containsCycles",
     "priority",
-    "name"
+    "name",
+    "notice"
 })
 public class LogicalQueryInfo {
 
@@ -47,6 +49,7 @@ public class LogicalQueryInfo {
     protected boolean containsCycles;
     protected int priority;
     protected String name;
+    protected String notice;
 
     /**
      * Gets the value of the id property.
@@ -166,6 +169,30 @@ public class LogicalQueryInfo {
      */
     public void setName(String value) {
         this.name = value;
+    }
+
+    /**
+     * Gets the value of the notice property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNotice() {
+        return notice;
+    }
+
+    /**
+     * Sets the value of the notice property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNotice(String value) {
+        this.notice = value;
     }
 
 }
