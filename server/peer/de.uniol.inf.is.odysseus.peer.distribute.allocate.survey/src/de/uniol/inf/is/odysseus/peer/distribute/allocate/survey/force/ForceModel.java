@@ -329,9 +329,12 @@ public class ForceModel {
 	private PeerID determineNearestPeerWithBestBid(Vector3D position, Map<PeerID, Vector3D> positionMap, PositionNormalizer normalizer, Collection<Bid> bidsForQueryPart, Collection<PeerID> avoidedPeers) {
 		Map<PeerID, Bid> bidMap = createBidMap(bidsForQueryPart);
 
-		Map<PeerID, Double> peerLatencyDistances = Maps.newHashMap();
 		double maximumLatencyDistance = Double.MIN_VALUE;
+		double maximumInvertedBid = Double.MIN_VALUE;
+		
+		Map<PeerID, Double> peerLatencyDistances = Maps.newHashMap();
 		Map<PeerID, Double> peerInvertedBids = Maps.newHashMap();
+		
 		for (PeerID peerID : bidMap.keySet()) {
 
 			Vector3D peerPosition = positionMap.get(peerID);
@@ -340,11 +343,15 @@ public class ForceModel {
 			double distY = Math.abs(position.getY() - peerPosition.getY());
 			double distZ = Math.abs(position.getZ() - peerPosition.getZ());
 			double peerDistance = Math.sqrt((distX * distX) + (distY * distY) + (distZ * distZ));
+			double invertedBid = 1 - bidMap.get(peerID).getValue();
 
 			peerLatencyDistances.put(peerID, peerDistance);
-			peerInvertedBids.put(peerID, 1 - bidMap.get(peerID).getValue());
+			peerInvertedBids.put(peerID, invertedBid);
 			if (peerDistance > maximumLatencyDistance) {
 				maximumLatencyDistance = peerDistance;
+			}
+			if( invertedBid > maximumInvertedBid ) {
+				maximumInvertedBid = invertedBid;
 			}
 		}
 
@@ -352,11 +359,11 @@ public class ForceModel {
 		LOG.debug("PeerValues ({} bids):", bidMap.size());
 		for (PeerID peerID : bidMap.keySet()) {
 			double latencyFactor = peerLatencyDistances.get(peerID) / maximumLatencyDistance;
-			double invertedBid = peerInvertedBids.get(peerID);
+			double invertedBidFactor = peerInvertedBids.get(peerID) / maximumInvertedBid;
 			
-
-			double peerValue = ((latencyFactor * latencyWeight) + (invertedBid * bidWeight)) / (bidWeight + latencyWeight);
-			LOG.debug("\t{}:\tPeerValue={} \t(BidValue={}\tLatencyValue={} )", new Object[] {p2pDictionary.getRemotePeerName(peerID).get(), peerValue, invertedBid, latencyFactor});
+			// Absichtlich umgedreht!
+			double peerValue = ((latencyFactor * bidWeight) + (invertedBidFactor * latencyWeight)) / (bidWeight + latencyWeight);
+			LOG.debug("\t{}:\tPeerValue={} \t(BidValue={}\tLatencyValue={} )", new Object[] {p2pDictionary.getRemotePeerName(peerID).get(), peerValue, invertedBidFactor, latencyFactor});
 
 			peerValues.add(new ValuePeerPair(peerValue, peerID));
 		}

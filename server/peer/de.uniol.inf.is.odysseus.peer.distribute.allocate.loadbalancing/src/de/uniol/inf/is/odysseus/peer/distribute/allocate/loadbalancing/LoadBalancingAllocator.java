@@ -10,7 +10,6 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
@@ -92,10 +91,8 @@ public class LoadBalancingAllocator implements IQueryPartAllocator {
 			}
 		}
 		
-		Optional<IResourceUsage> localUsage = peerResourceUsageManager.getLocalResourceUsage();
-		if( localUsage.isPresent() ) {
-			usages.put(peerResourceUsageManager.getLocalPeerID(), localUsage.get());
-		}
+		IResourceUsage localUsage = peerResourceUsageManager.getLocalResourceUsage();
+		usages.put(peerResourceUsageManager.getLocalPeerID(), localUsage);
 		
 		return usages;
 	}
