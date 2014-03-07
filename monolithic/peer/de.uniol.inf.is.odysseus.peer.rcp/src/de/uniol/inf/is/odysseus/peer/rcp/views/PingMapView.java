@@ -6,7 +6,6 @@ import java.util.Map;
 import net.jxta.peer.PeerID;
 
 import org.apache.commons.math.geometry.Vector3D;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -32,7 +31,7 @@ import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
 
 public class PingMapView extends ViewPart implements PaintListener, MouseMoveListener, IPingMapListener {
 
-	private Map<Vector2D, String> currentPoints = Maps.newHashMap();
+	private Map<Vector3D, String> currentPoints = Maps.newHashMap();
 
 	private Canvas canvas;
 	
@@ -71,28 +70,6 @@ public class PingMapView extends ViewPart implements PaintListener, MouseMoveLis
 		
 		Map<Vector3D, String> shiftedPoints = shiftPoints( localPoint, points );
 
-		// consider centered local coordinates and default size of 15
-		double minX = -15;
-		double minY = -15;
-		double maxX = 15;
-		double maxY = 15;
-		
-		for( Vector3D shiftedPoint : shiftedPoints.keySet() ) {
-			if( shiftedPoint.getX() < minX ) {
-				minX = shiftedPoint.getX();
-			}
-			if( shiftedPoint.getY() < minY ) {
-				minY = shiftedPoint.getY();
-			}
-
-			if( shiftedPoint.getX() > maxX ) {
-				maxX = shiftedPoint.getX();
-			}
-			if( shiftedPoint.getY() > maxY ) {
-				maxY = shiftedPoint.getY();
-			}
-		}
-		
 		double xFactor = 3;
 		double yFactor = 3;
 		
@@ -101,16 +78,18 @@ public class PingMapView extends ViewPart implements PaintListener, MouseMoveLis
 
 		currentPoints.clear();
 		gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
-		drawPingSymbol(gc, e.width / 2, e.height / 2);
-		currentPoints.put(new Vector2D(e.width / 2, e.height / 2), RCPP2PNewPlugIn.getP2PNetworkManager().getLocalPeerName());
+		drawPingSymbol(gc, e.width / 2, e.height / 2, 1);
+		currentPoints.put(new Vector3D(e.width / 2, e.height / 2), RCPP2PNewPlugIn.getP2PNetworkManager().getLocalPeerName());
 		
 		gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 		for( Vector3D shiftedPoint : shiftedPoints.keySet() ) {
 			double x = ( e.width / 2 ) + ( shiftedPoint.getX() * xFactor);
 			double y = ( e.height / 2 ) + ( shiftedPoint.getY() * yFactor);
+			double z = shiftedPoint.getZ();
 			
-			drawPingSymbol(gc, (int)x, (int)y);
-			currentPoints.put(new Vector2D(x, y), shiftedPoints.get(shiftedPoint));
+			double sizeFactor = ( z / localPoint.getZ() ) * 10;
+			drawPingSymbol(gc, (int)x, (int)y, sizeFactor);
+			currentPoints.put(new Vector3D(x, y, z), shiftedPoints.get(shiftedPoint));
 		}
 	}
 	
@@ -131,8 +110,10 @@ public class PingMapView extends ViewPart implements PaintListener, MouseMoveLis
 		gc.drawOval(e.width / 2 - (xRadius / 2), e.height / 2 - (yRadius / 2), xRadius, yRadius);
 	}
 
-	private static void drawPingSymbol(GC gc, int x, int y) {
-		gc.fillOval(x - 5, y - 5, 10, 10);
+	private static void drawPingSymbol(GC gc, int x, int y, double factor) {
+		int size = (int)(10 * factor);
+		size = Math.min(30, Math.max(size, 3));
+		gc.fillOval(x - 5, y - 5, (int)(10 * factor), size);
 	}
 
 	private static Collection<IPingMapNode> collectNodes(IPingMap pingMap) {
@@ -168,7 +149,7 @@ public class PingMapView extends ViewPart implements PaintListener, MouseMoveLis
 	public void mouseMove(MouseEvent e) {
 		double minDist = Double.MAX_VALUE;
 		String minName = null;
-		for( Vector2D currentPoint : currentPoints.keySet() ) {
+		for( Vector3D currentPoint : currentPoints.keySet() ) {
 			double distX = currentPoint.getX() - e.x;
 			double distY = currentPoint.getY() - e.y;
 			double dist = (distX * distX) + (distY * distY);
@@ -179,7 +160,7 @@ public class PingMapView extends ViewPart implements PaintListener, MouseMoveLis
 			}
 		}
 		
-		if( minDist < 10) {
+		if( minDist < 15) {
 			canvas.setToolTipText(minName);
 		} else {
 			canvas.setToolTipText("");
