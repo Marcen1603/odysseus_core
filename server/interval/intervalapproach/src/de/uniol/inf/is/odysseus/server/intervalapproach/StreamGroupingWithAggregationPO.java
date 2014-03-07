@@ -224,7 +224,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	public void cleanUpSweepArea(PointInTime timestamp) {
 		for (Entry<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 				.entrySet()) {
-			System.err.println(entry.getValue());
+			///System.err.println(entry.getValue());
 			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
 					.getValue().extractElementsBefore(timestamp);
 			produceResults(results, entry.getKey());
