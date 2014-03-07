@@ -96,7 +96,7 @@ final class ForceNode {
 		return sb.toString();
 	}
 
-	public void tick(double frame) {
+	public double tick(double frame) {
 		if (!isFixed()) {
 			Vector3D direction = new Vector3D();
 			for (Force force : attachedForces) {
@@ -111,6 +111,10 @@ final class ForceNode {
 			}
 			
 			position = position.add(direction);
+			return Math.sqrt((direction.getX() * direction.getX()) + (direction.getY() * direction.getY()) + (direction.getZ() * direction.getZ()));
+		} else {
+			return 0.0;
 		}
+
 	}
 }

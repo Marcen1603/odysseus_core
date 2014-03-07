@@ -54,8 +54,6 @@ public class ForceModel {
 		}
 	}
 
-	private static final int MAX_ITERATIONS = 10000;
-
 	private static final Logger LOG = LoggerFactory.getLogger(ForceModel.class);
 	private static final Random RAND = new Random();
 
@@ -262,12 +260,22 @@ public class ForceModel {
 	}
 
 	public void run() {
-		for (int i = 0; i < MAX_ITERATIONS; i++) {
+		double factor = 0.001;
+		double moved = 0.0;
+		double waitTime = 0;
+		do {
+			long Starttimestamp = System.nanoTime();
+			
+			moved = 0.0;
 			for (ForceNode node : forceNodes) {
-				node.tick(1.0 / MAX_ITERATIONS);
+				moved += node.tick(factor);
 			}
-		}
-
+			long elapsedTime = System.nanoTime() - Starttimestamp;
+			factor = elapsedTime / 1000000000.0;
+			
+			waitTime += factor;
+		} while( moved > factor && waitTime < 4);
+		
 		LOG.debug("Finished model-Running");
 		printForceNodes(forceNodes);
 	}
