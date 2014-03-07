@@ -15,24 +15,19 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.filter.DefaultMeasurementModel;
 import org.apache.commons.math3.filter.DefaultProcessModel;
-import org.apache.commons.math3.filter.KalmanFilter;
 import org.apache.commons.math3.filter.MeasurementModel;
 import org.apache.commons.math3.filter.ProcessModel;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3_patch.filter.KalmanFilterPatched;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -49,7 +44,7 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
     /** The measurement model. */
     private final MeasurementModel measurementModel;
     /** The Kalman filter. */
-    private final KalmanFilter filter;
+    private final KalmanFilterPatched filter;
 
     /**
      * 
@@ -72,16 +67,14 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
     public KalmanFilterPO(final int[] attributes, final double[][] stateTransition, final double[][] control, final double[][] processNoise, final double[][] measurement,
             final double[][] measurementNoise) {
         this.attributes = attributes;
-        this.measurementModel = new DefaultMeasurementModel(measurement, measurementNoise);
-        if (control == null) {
-            this.processModel = new DefaultProcessModel(new Array2DRowRealMatrix(stateTransition), null, new Array2DRowRealMatrix(processNoise), null, null);
-
+        if (control != null) {
+            this.processModel = new DefaultProcessModel(new Array2DRowRealMatrix(stateTransition), new Array2DRowRealMatrix(control), new Array2DRowRealMatrix(processNoise), null, null);
         }
         else {
-            this.processModel = new DefaultProcessModel(stateTransition, control, processNoise);
-
+            this.processModel = new DefaultProcessModel(new Array2DRowRealMatrix(stateTransition), null, new Array2DRowRealMatrix(processNoise), null, null);
         }
-        this.filter = new KalmanFilter(this.processModel, this.measurementModel);
+        this.measurementModel = new DefaultMeasurementModel(measurement, measurementNoise);
+        this.filter = new KalmanFilterPatched(this.processModel, this.measurementModel);
     }
 
     /**
@@ -102,9 +95,21 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
             measurementNoise = kalmanPO.measurementModel.getMeasurementNoise().copy();
         }
         this.measurementModel = new DefaultMeasurementModel(measurementMatrix, measurementNoise);
-        this.processModel = new DefaultProcessModel(kalmanPO.processModel.getStateTransitionMatrix().copy(), kalmanPO.processModel.getControlMatrix().copy(), kalmanPO.processModel.getProcessNoise()
-                .copy(), kalmanPO.processModel.getInitialStateEstimate().copy(), kalmanPO.processModel.getInitialErrorCovariance().copy());
-        this.filter = new KalmanFilter(this.processModel, this.measurementModel);
+        RealMatrix controlMatrix = null;
+        RealVector initialStateEstimate = null;
+        RealMatrix initialErrorCovariance = null;
+        if (kalmanPO.processModel.getControlMatrix() != null) {
+            controlMatrix = kalmanPO.processModel.getControlMatrix().copy();
+        }
+        if (kalmanPO.processModel.getInitialStateEstimate() != null) {
+            initialStateEstimate = kalmanPO.processModel.getInitialStateEstimate().copy();
+        }
+        if (kalmanPO.processModel.getInitialErrorCovariance() != null) {
+            initialErrorCovariance = kalmanPO.processModel.getInitialErrorCovariance().copy();
+        }
+        this.processModel = new DefaultProcessModel(kalmanPO.processModel.getStateTransitionMatrix().copy(), controlMatrix, kalmanPO.processModel.getProcessNoise().copy(), initialStateEstimate,
+                initialErrorCovariance);
+        this.filter = new KalmanFilterPatched(this.processModel, this.measurementModel);
     }
 
     /**
@@ -118,10 +123,16 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
         final NormalDistributionMixture[] distributions = object.getDistributions();
-        final ProbabilisticTuple<T> outputVal = object.clone();
+        final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(new Object[object.getAttributes().length + 2], new NormalDistributionMixture[distributions.length],
+                object.requiresDeepClone());
+        System.arraycopy(distributions, 0, outputVal.getDistributions(), 0, distributions.length);
+        System.arraycopy(object.getAttributes(), 0, outputVal.getAttributes(), 0, object.getAttributes().length);
+
+        this.filter.predict();
 
         final double[] value = new double[this.attributes.length];
         for (int i = 0; i < this.attributes.length; i++) {
@@ -129,29 +140,52 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
         }
         this.filter.correct(value);
 
-        final double[] state = this.filter.getStateEstimation();
-        final double[][] covariance = this.filter.getErrorCovariance();
+        RealVector state = this.filter.getStateEstimationVector();
 
-        final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-        final MultivariateNormalDistribution component = new MultivariateNormalDistribution(state, covariance);
-        mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));
-
-        final NormalDistributionMixture mixture = new NormalDistributionMixture(mvns);
-        mixture.setAttributes(this.attributes);
-
-        final NormalDistributionMixture[] outputValDistributions = new NormalDistributionMixture[distributions.length + 1];
-
-        for (final int attribute : this.attributes) {
-            outputVal.setAttribute(attribute, new ProbabilisticContinuousDouble(distributions.length));
-        }
-        // Copy the old distribution to the new tuple
-        System.arraycopy(distributions, 0, outputValDistributions, 0, distributions.length);
-        // And append the new distribution to the end of the array
-        outputValDistributions[distributions.length] = mixture;
-        outputVal.setDistributions(outputValDistributions);
+        RealMatrix covariance = this.filter.getErrorCovarianceMatrix();
+        outputVal.setAttribute(object.getAttributes().length, state.toArray());
+        outputVal.setAttribute(object.getAttributes().length + 1, covariance.getData());
+        outputVal.setMetadata((T) object.getMetadata().clone());
 
         // KTHXBYE
         this.transfer(outputVal);
+
+        // try {
+        // final List<Pair<Double, MultivariateNormalDistribution>> mvns = new
+        // ArrayList<Pair<Double, MultivariateNormalDistribution>>();
+        // final MultivariateNormalDistribution component = new
+        // MultivariateNormalDistribution(state.toArray(),
+        // covariance.getData());
+        // mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0,
+        // component));
+        //
+        // final NormalDistributionMixture mixture = new
+        // NormalDistributionMixture(mvns);
+        // mixture.setAttributes(this.attributes);
+        //
+        // final NormalDistributionMixture[] outputValDistributions = new
+        // NormalDistributionMixture[distributions.length + 1];
+        //
+        // for (final int attribute : this.attributes) {
+        // outputVal.setAttribute(attribute, new
+        // ProbabilisticContinuousDouble(distributions.length));
+        // }
+        // // Copy the old distribution to the new tuple
+        // System.arraycopy(distributions, 0, outputValDistributions, 0,
+        // distributions.length);
+        // // And append the new distribution to the end of the array
+        // outputValDistributions[distributions.length] = mixture;
+        // outputVal.setDistributions(outputValDistributions);
+        //
+        // // KTHXBYE
+        // this.transfer(outputVal);
+        // }
+        // catch (SingularMatrixException | NonPositiveDefiniteMatrixException
+        // e) {
+        // System.out.println(e.getClass());
+        // System.out.println(state);
+        // System.out.println(covariance);
+        // }
     }
 
     /**

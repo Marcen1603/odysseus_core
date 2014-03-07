@@ -19,18 +19,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.math.linear.MatrixUtils;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MatrixParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
-import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -45,15 +44,15 @@ public class KalmanFilterAO extends UnaryLogicalOp {
     /** The attributes to build the distribution from. */
     private List<SDFAttribute> attributes;
     /** The state transition matrix. */
-    private double[][] stateTransition;
+    private NamedExpressionItem stateTransitionExpression;
     /** The control matrix. */
-    private double[][] control;
+    private NamedExpressionItem controlExpression;
     /** The measurement matrix. */
-    private double[][] measurement;
+    private NamedExpressionItem measurementExpression;
     /** The noise of the process. */
-    private double[][] processNoise;
+    private NamedExpressionItem processNoiseExpression;
     /** The noise of the measurement. */
-    private double[][] measurementNoise;
+    private NamedExpressionItem measurementNoiseExpression;
 
     /**
      * Creates a new Kalman Filter logical operator.
@@ -71,10 +70,11 @@ public class KalmanFilterAO extends UnaryLogicalOp {
     public KalmanFilterAO(final KalmanFilterAO kalmanAO) {
         super(kalmanAO);
         this.attributes = new ArrayList<SDFAttribute>(kalmanAO.attributes);
-        this.stateTransition = kalmanAO.stateTransition;
-        this.control = kalmanAO.control;
-        this.processNoise = kalmanAO.processNoise;
-        this.measurementNoise = kalmanAO.measurementNoise;
+        this.stateTransitionExpression = kalmanAO.stateTransitionExpression;
+        this.controlExpression = kalmanAO.controlExpression;
+        this.processNoiseExpression = kalmanAO.processNoiseExpression;
+        this.measurementExpression = kalmanAO.measurementExpression;
+        this.measurementNoiseExpression = kalmanAO.measurementNoiseExpression;
     }
 
     /**
@@ -104,12 +104,12 @@ public class KalmanFilterAO extends UnaryLogicalOp {
     /**
      * Sets the state transition for the Kalman correction.
      * 
-     * @param stateTransition
+     * @param stateTransitionExpression
      *            The state transition
      */
-    @Parameter(type = MatrixParameter.class, name = "TRANSITION", isList = false, optional = true)
-    public final void setStateTransition(final double[][] stateTransition) {
-        this.stateTransition = stateTransition;
+    @Parameter(type = SDFExpressionParameter.class, name = "TRANSITION", isList = false, optional = false)
+    public final void setStateTransitionExpression(final NamedExpressionItem stateTransitionExpression) {
+        this.stateTransitionExpression = stateTransitionExpression;
     }
 
     /**
@@ -118,11 +118,12 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @return The state transition
      */
     @GetParameter(name = "TRANSITION")
+    public final NamedExpressionItem getStateTransitionExpression() {
+        return this.stateTransitionExpression;
+    }
+
     public final double[][] getStateTransition() {
-        if (this.stateTransition == null) {
-            return MatrixUtils.createRealIdentityMatrix(this.getAttributes().size()).getData();
-        }
-        return this.stateTransition;
+        return this.stateTransitionExpression.expression.getValue();
     }
 
     /**
@@ -131,9 +132,9 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @param control
      *            The control
      */
-    @Parameter(type = MatrixParameter.class, name = "CONTROL", isList = false, optional = true)
-    public final void setControl(final double[][] control) {
-        this.control = control;
+    @Parameter(type = SDFExpressionParameter.class, name = "CONTROL", isList = false, optional = true)
+    public final void setControlExpression(final NamedExpressionItem controlExpression) {
+        this.controlExpression = controlExpression;
     }
 
     /**
@@ -142,8 +143,15 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @return The control
      */
     @GetParameter(name = "CONTROL")
+    public final NamedExpressionItem getControlExpression() {
+        return this.controlExpression;
+    }
+
     public final double[][] getControl() {
-        return this.control;
+        if (this.controlExpression == null) {
+            return null;
+        }
+        return this.controlExpression.expression.getValue();
     }
 
     /**
@@ -152,9 +160,9 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @param noise
      *            The process noise
      */
-    @Parameter(type = MatrixParameter.class, name = "PROCESSNOISE", isList = false, optional = true)
-    public final void setProcessNoise(final double[][] noise) {
-        this.processNoise = noise;
+    @Parameter(type = SDFExpressionParameter.class, name = "PROCESSNOISE", isList = false, optional = false)
+    public final void setProcessNoiseExpression(final NamedExpressionItem processNoiseExpression) {
+        this.processNoiseExpression = processNoiseExpression;
     }
 
     /**
@@ -163,22 +171,23 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @return The state transition
      */
     @GetParameter(name = "PROCESSNOISE")
+    public final NamedExpressionItem getProcessNoiseExpression() {
+        return this.processNoiseExpression;
+    }
+
     public final double[][] getProcessNoise() {
-        if (this.processNoise == null) {
-            return MatrixUtils.createRealIdentityMatrix(this.getAttributes().size()).getData();
-        }
-        return this.processNoise;
+        return this.processNoiseExpression.expression.getValue();
     }
 
     /**
      * Sets the measurement for the Kalman correction.
      * 
-     * @param measurement
+     * @param measurementExpression
      *            The measurement
      */
-    @Parameter(type = MatrixParameter.class, name = "MEASUREMENT", isList = false, optional = true)
-    public final void setMeasurement(final double[][] measurement) {
-        this.measurement = measurement;
+    @Parameter(type = SDFExpressionParameter.class, name = "MEASUREMENT", isList = false, optional = false)
+    public final void setMeasurementExpression(final NamedExpressionItem measurementExpression) {
+        this.measurementExpression = measurementExpression;
     }
 
     /**
@@ -187,22 +196,23 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @return The measurement
      */
     @GetParameter(name = "MEASUREMENT")
+    public final NamedExpressionItem getMeasurementExpression() {
+        return this.measurementExpression;
+    }
+
     public final double[][] getMeasurement() {
-        if (this.measurement == null) {
-            return MatrixUtils.createRealIdentityMatrix(this.getAttributes().size()).getData();
-        }
-        return this.measurement;
+        return this.measurementExpression.expression.getValue();
     }
 
     /**
      * Sets the measurement noise for the Kalman correction.
      * 
-     * @param noise
+     * @param measurementNoiseExpression
      *            The measurement noise
      */
-    @Parameter(type = MatrixParameter.class, name = "MEASUREMENTNOISE", isList = false, optional = true)
-    public final void setMeasurementNoise(final double[][] noise) {
-        this.measurementNoise = noise;
+    @Parameter(type = SDFExpressionParameter.class, name = "MEASUREMENTNOISE", isList = false, optional = false)
+    public final void setMeasurementNoiseExpression(final NamedExpressionItem measurementNoiseExpression) {
+        this.measurementNoiseExpression = measurementNoiseExpression;
     }
 
     /**
@@ -211,11 +221,12 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @return The measurement noise
      */
     @GetParameter(name = "MEASUREMENTNOISE")
+    public final NamedExpressionItem getMeasurementNoiseExpression() {
+        return this.measurementNoiseExpression;
+    }
+
     public final double[][] getMeasurementNoise() {
-        if (this.measurementNoise == null) {
-            return MatrixUtils.createColumnRealMatrix(new double[1]).getData();
-        }
-        return this.measurementNoise;
+        return this.measurementNoiseExpression.expression.getValue();
     }
 
     /**
@@ -248,18 +259,44 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      */
     @Override
     public final void initialize() {
-        final Collection<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
-        for (final SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
-            if (this.getAttributes().contains(inAttr)) {
-                outputAttributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, null, null, null));
-            }
-            else {
-                outputAttributes.add(inAttr);
-            }
-        }
+        final Collection<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>(this.getInputSchema().getAttributes());
+
+        outputAttributes.add(new SDFAttribute("", "state", SDFDatatype.VECTOR_DOUBLE, null, null, null));
+        outputAttributes.add(new SDFAttribute("", "covariance", SDFDatatype.MATRIX_DOUBLE, null, null, null));
 
         final SDFSchema outputSchema = new SDFSchema(this.getInputSchema(), outputAttributes);
         this.setOutputSchema(outputSchema);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isValid() {
+        double[][] stateTransition = getStateTransition();
+        double[][] processNoise = getProcessNoise();
+        double[][] measurement = getMeasurement();
+        double[][] measurementNoise = getMeasurementNoise();
+        double[][] control = getControl();
+        if ((stateTransition == null) || (stateTransition.length < 1) || (stateTransition.length != stateTransition[0].length)) {
+            return false;
+        }
+        if ((processNoise == null) || (processNoise.length < 1) || (processNoise.length != processNoise[0].length) || (processNoise.length != stateTransition.length)) {
+            return false;
+        }
+        if ((getAttributes() == null) || (getAttributes().isEmpty())) {
+            return false;
+        }
+
+        if ((measurement == null) || (measurement.length < 1) || (measurement[0].length != stateTransition.length) || (measurement.length != getAttributes().size())) {
+            return false;
+        }
+        if ((measurementNoise == null) || (measurementNoise.length < 1) || (measurementNoise.length != getAttributes().size())) {
+            return false;
+        }
+        if ((control != null) && ((control.length < 1) || (control.length != control[0].length) || (control.length != stateTransition.length))) {
+            return false;
+        }
+        return super.isValid();
+    }
 }
