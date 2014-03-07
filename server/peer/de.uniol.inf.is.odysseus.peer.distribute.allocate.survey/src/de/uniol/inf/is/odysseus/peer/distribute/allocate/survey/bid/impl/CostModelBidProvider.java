@@ -17,6 +17,8 @@ import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.SurveyBasedAlloc
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.CostSummary;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
+import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
+import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
 public class CostModelBidProvider implements IBidProvider {
 
@@ -24,6 +26,7 @@ public class CostModelBidProvider implements IBidProvider {
 
 	@SuppressWarnings("rawtypes")
 	private static OperatorCostModel costModel;
+	private static IPeerResourceUsageManager resourceUsageManager;
 
 	// called by OSGi-DS
 	public static void bindCostModel(ICostModel<?> serv) {
@@ -37,6 +40,18 @@ public class CostModelBidProvider implements IBidProvider {
 		}
 	}
 
+	// called by OSGi-DS
+	public static void bindPeerResourceUsageManager(IPeerResourceUsageManager serv) {
+		resourceUsageManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPeerResourceUsageManager(IPeerResourceUsageManager serv) {
+		if (resourceUsageManager == serv) {
+			resourceUsageManager = null;
+		}
+	}
+	
 	@Override
 	public String getName() {
 		return SurveyBasedAllocationPlugIn.DEFAULT_BID_PROVIDER_NAME;
@@ -71,27 +86,25 @@ public class CostModelBidProvider implements IBidProvider {
 
 	private static Optional<Double> calcBidImpl(ILogicalOperator query, double cpuCosts, double memCosts) {
 		if (!Helper.allSourcesAvailable(query)) {
-			LOG.debug("Not all sources are available. Bid = 0 then.");
+			LOG.debug("Not all sources are available. No bid then.");
 			return Optional.absent();
 		}
 
-		OperatorCost<?> maximumCost = (OperatorCost<?>) costModel.getMaximumCost();
-		LOG.debug("Maximum costs     : {}", maximumCost);
-
-		OperatorCost<?> overallCost = (OperatorCost<?>) costModel.getOverallCost();
-		LOG.debug("Current costs     : {}", overallCost);
-
-		double remainingCpu = maximumCost.getCpuCost() - overallCost.getCpuCost();
-		double remainingMem = maximumCost.getMemCost() - overallCost.getMemCost();
-		LOG.debug("Cost for query    : {}", formatCosts(memCosts, cpuCosts));
-		LOG.debug("Remaining costs   : {}", formatCosts(remainingMem, remainingCpu));
+		IResourceUsage localResourceUsage = resourceUsageManager.getLocalResourceUsage();
+		
+		double remainingCpu = localResourceUsage.getCpuFree();
+		double remainingMem = localResourceUsage.getMemFreeBytes();
+		
+		LOG.debug("Cost for query        : {}", formatCosts(memCosts, cpuCosts));
+		LOG.debug("Remaining resources   : {}", formatCosts(remainingMem, remainingCpu));
 		if (memCosts > remainingMem || cpuCosts > remainingCpu) {
-			LOG.debug("Costs are too high. Bid = 0 then.");
+			LOG.debug("Costs are too high. No bid then.");
 			return Optional.absent();
 		}
 
-		double remainingMemPerc = (remainingMem - memCosts) / maximumCost.getMemCost();
-		double remainingCpuPerc = (remainingCpu - cpuCosts) / maximumCost.getCpuCost();
+		double remainingMemPerc = (remainingMem - memCosts) / localResourceUsage.getMemFreeBytes();
+		double remainingCpuPerc = (remainingCpu - cpuCosts) / localResourceUsage.getCpuFree();
+		
 		LOG.debug("Remaining costs(%): MEM at {} %, CPU at {} %", remainingMemPerc * 100, remainingCpuPerc * 100);
 
 		double bid = (remainingMemPerc + remainingCpuPerc) / 2;
