@@ -441,6 +441,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			}
 
 		} catch (Exception e) {
+			LOG.error("ERROR IN ADD QUERY ",e);
 			throw new QueryOptimizationException(e);
 		} finally {
 			// end synchronize of the process
