@@ -10,7 +10,7 @@ import com.google.common.base.Optional;
 public interface IPeerResourceUsageManager {
 
 	public Future<Optional<IResourceUsage>> getRemoteResourceUsage( PeerID peerID );
-	public Optional<IResourceUsage> getLocalResourceUsage();
+	public IResourceUsage getLocalResourceUsage();
 	
 	public Collection<PeerID> getRemotePeerIDs();
 	public PeerID getLocalPeerID();
