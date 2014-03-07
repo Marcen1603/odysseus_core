@@ -52,6 +52,12 @@ public class TransportHandlerRegistry {
 			return ret.createInstance(protocolHandler, options);
 		}
 		logger.error("No handler with name "+name+" found!");
+		if (logger.isDebugEnabled()){
+			logger.debug("Available handler: ");
+			for (String k: handlers.keySet()){
+				logger.debug(k);
+			}
+		}
 		return null;
 	}
 	

@@ -66,6 +66,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -93,8 +94,6 @@ import de.uniol.inf.is.odysseus.webservice.client.SdfSchemaInformation;
 import de.uniol.inf.is.odysseus.webservice.client.StringMapListEntry;
 import de.uniol.inf.is.odysseus.webservice.client.WebserviceServer;
 import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
-
-import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 
 /**
  * 
@@ -428,8 +427,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 		IProtocolHandler h = ProtocolHandlerRegistry.getInstance("SizeByteBuffer", ITransportDirection.IN, IAccessPattern.PUSH, options, dataHandler);
 		// Must be done to add the transport to the protocoll ... seems not
 		// really intuitive ...
-		TransportHandlerRegistry.getInstance("TCP Client", h, options);
-
+		ITransportHandler th = TransportHandlerRegistry.getInstance("TCPClient", h, options);
+		h.setTransportHandler(th);
 		ClientReceiver receiver = new ClientReceiver(h);
 		receiver.open(null, 0, 0, null, null);
 		receivers.put(queryId, receiver);

@@ -960,23 +960,24 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	@Override
 	public void reloadStoredQueries(ISession caller) {
-		LOG.debug("Try to load queries from data dictionary");
-		if (getDataDictionary(caller) != null) {
-			List<ILogicalQuery> q = getDataDictionary(caller).getQueries(caller.getUser(), caller);
-			for (ILogicalQuery query : q) {
-				try {
-					if (query.getQueryText() != null) {
-						addQuery(query.getQueryText(), query.getParserId(), caller, getDataDictionary(caller).getQueryBuildConfigName(query.getID()), (Context) null);
-					} else if (query.getLogicalPlan() != null) {
-						addQuery(query.getLogicalPlan(), caller, getDataDictionary(caller).getQueryBuildConfigName(query.getID()));
-					} else {
-						LOG.warn("Query " + query + " cannot be loaded");
-					}
-				} catch (Throwable t) {
-					LOG.error("Could not execute stored query", t);
-				}
-			}
-		}
+		
+//		LOG.debug("Try to load queries from data dictionary");
+//		if (getDataDictionary(caller) != null) {
+//			List<ILogicalQuery> q = getDataDictionary(caller).getQueries(caller.getUser(), caller);
+//			for (ILogicalQuery query : q) {
+//				try {
+//					if (query.getQueryText() != null) {
+//						addQuery(query.getQueryText(), query.getParserId(), caller, getDataDictionary(caller).getQueryBuildConfigName(query.getID()), (Context) null);
+//					} else if (query.getLogicalPlan() != null) {
+//						addQuery(query.getLogicalPlan(), caller, getDataDictionary(caller).getQueryBuildConfigName(query.getID()));
+//					} else {
+//						LOG.warn("Query " + query + " cannot be loaded");
+//					}
+//				} catch (Throwable t) {
+//					LOG.error("Could not execute stored query", t);
+//				}
+//			}
+//		}
 	}
 
 	// Session specific delegates
