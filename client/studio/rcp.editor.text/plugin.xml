@@ -111,13 +111,6 @@
             colorR="255"
             name="ParserIDs">
       </group>
-      <group
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.groups.TransCfgKeywordGroup"
-            colorB="255"
-            colorG="0"
-            colorR="255"
-            name="TransCfgs">
-      </group>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
