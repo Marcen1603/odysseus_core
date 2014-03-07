@@ -94,6 +94,8 @@ import de.uniol.inf.is.odysseus.webservice.client.StringMapListEntry;
 import de.uniol.inf.is.odysseus.webservice.client.WebserviceServer;
 import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
 
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
+
 /**
  * 
  * @author Merlin Wasmann
@@ -458,7 +460,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public SDFSchema getOutputSchema(int queryId, ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				return createSchemaFromInformation(getWebserviceServer().getOutputSchema(caller.getToken(), queryId).getResponseValue());
+				return createSchemaFromInformation(getWebserviceServer().getOutputSchemaByQueryId(caller.getToken(), queryId).getResponseValue());
 			} catch (InvalidUserDataException_Exception | QueryNotExistsException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -656,6 +658,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public List<StoredProcedure> getStoredProcedures(ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
+				
 				return getWebserviceServer().getStoredProcedures(caller.getToken()).getResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
