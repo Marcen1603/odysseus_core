@@ -43,7 +43,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
     }
 
     /**
-     * Default constructor with an allowed error of epsilon=0.25.
+     * Default constructor with an allowed error of epsilon=0.005.
      */
     public GreenwaldKhannaMedianPartialAggregate() {
         this(0.005);
