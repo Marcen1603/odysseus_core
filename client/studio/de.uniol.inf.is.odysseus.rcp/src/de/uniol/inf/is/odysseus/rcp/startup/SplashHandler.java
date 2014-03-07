@@ -30,9 +30,9 @@ public class SplashHandler extends AbstractSplashHandler {
 	@Override
 	public void init(Shell splash) {	
 		super.init(splash);
-		
+		LOG.debug("Starting login screen and waiting for executor...");
 		waitForExecutor();	
-		
+		LOG.debug("There is one executor, so show up the login window.");
 		Login.login(splash, false, false);
 	}
 
