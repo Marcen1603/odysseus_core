@@ -5,6 +5,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
+
 
 /**
  * <p>Java class for addStoredProcedure complex type.
