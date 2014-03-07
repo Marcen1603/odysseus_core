@@ -153,11 +153,9 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 			PeerGroupID peerGroupID = IDFactory.newPeerGroupID(PeerGroupID.defaultNetPeerGroupID, groupName.getBytes());
 			LOG.debug("Peer Group ID is {}", peerGroupID.toString());
 			peerGroup = createSubGroup(netPeerGroup, peerGroupID, groupName);
-			if (!isRendevousPeer && rendevousPeerURI == null) {
-				CacheManager cacheManager = ((StdPeerGroup) peerGroup).getCacheManager();
-				cacheManager.setTrackDeltas(false);
-				LOG.debug("Deactivating cache manager");
-			}
+			
+			CacheManager cacheManager = ((StdPeerGroup) peerGroup).getCacheManager();
+			cacheManager.setTrackDeltas(false);
 			
 			if (peerGroup.startApp(new String[0]) != Module.START_OK) {
 				throw new P2PNetworkException("Could not start child group");
