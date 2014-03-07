@@ -102,8 +102,8 @@ public class CostModelBidProvider implements IBidProvider {
 			return Optional.absent();
 		}
 
-		double remainingMemPerc = (remainingMem - memCosts) / localResourceUsage.getMemFreeBytes();
-		double remainingCpuPerc = (remainingCpu - cpuCosts) / localResourceUsage.getCpuFree();
+		double remainingMemPerc = (remainingMem - memCosts) / localResourceUsage.getMemMaxBytes();
+		double remainingCpuPerc = (remainingCpu - cpuCosts) / localResourceUsage.getCpuMax();
 		
 		LOG.debug("Remaining costs(%): MEM at {} %, CPU at {} %", remainingMemPerc * 100, remainingCpuPerc * 100);
 
