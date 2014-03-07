@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
@@ -61,15 +63,13 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		final TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
 
-		peersTable = new TableViewer(tableComposite, SWT.MULTI
-				| SWT.FULL_SELECTION);
+		peersTable = new TableViewer(tableComposite, SWT.MULTI | SWT.FULL_SELECTION);
 		peersTable.getTable().setHeaderVisible(true);
 		peersTable.getTable().setLinesVisible(true);
 		peersTable.setContentProvider(ArrayContentProvider.getInstance());
 
 		/************* Index ****************/
-		TableViewerColumn indexColumn = new TableViewerColumn(peersTable,
-				SWT.NONE);
+		TableViewerColumn indexColumn = new TableViewerColumn(peersTable, SWT.NONE);
 		indexColumn.getColumn().setText("#");
 		indexColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -78,10 +78,8 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				cell.setText(String.valueOf(index));
 			}
 		});
-		tableColumnLayout.setColumnData(indexColumn.getColumn(),
-				new ColumnWeightData(1, 10, true));
-		ColumnViewerSorter sorter = new ColumnViewerSorter(peersTable,
-				indexColumn) {
+		tableColumnLayout.setColumnData(indexColumn.getColumn(), new ColumnWeightData(2, 10, true));
+		ColumnViewerSorter sorter = new ColumnViewerSorter(peersTable, indexColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				int index1 = foundPeerIDs.indexOf(e1);
@@ -92,8 +90,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		sorter.setSorter(sorter, ColumnViewerSorter.NONE);
 
 		/************* Name ****************/
-		TableViewerColumn nameColumn = new TableViewerColumn(peersTable,
-				SWT.NONE);
+		TableViewerColumn nameColumn = new TableViewerColumn(peersTable, SWT.NONE);
 		nameColumn.getColumn().setText("Name");
 		nameColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -101,8 +98,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				cell.setText(determinePeerName((PeerID) cell.getElement()));
 			}
 		});
-		tableColumnLayout.setColumnData(nameColumn.getColumn(),
-				new ColumnWeightData(10, 25, true));
+		tableColumnLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(10, 25, true));
 		new ColumnViewerSorter(peersTable, nameColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -112,15 +108,12 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 			}
 		};
 		/************* Address ****************/
-		TableViewerColumn addressColumn = new TableViewerColumn(peersTable,
-				SWT.NONE);
+		TableViewerColumn addressColumn = new TableViewerColumn(peersTable, SWT.NONE);
 		addressColumn.getColumn().setText("Address");
 		addressColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				Optional<String> optAddress = RCPP2PNewPlugIn
-						.getP2PDictionary().getRemotePeerAddress(
-								(PeerID) cell.getElement());
+				Optional<String> optAddress = RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerAddress((PeerID) cell.getElement());
 				if (optAddress.isPresent()) {
 					cell.setText(optAddress.get());
 				} else {
@@ -128,8 +121,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				}
 			}
 		});
-		tableColumnLayout.setColumnData(addressColumn.getColumn(),
-				new ColumnWeightData(10, 25, true));
+		tableColumnLayout.setColumnData(addressColumn.getColumn(), new ColumnWeightData(10, 25, true));
 		new ColumnViewerSorter(peersTable, addressColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -138,24 +130,30 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		};
 
 		/************* MEM ****************/
-		TableViewerColumn memColumn = new TableViewerColumn(peersTable,
-				SWT.NONE);
+		TableViewerColumn memColumn = new TableViewerColumn(peersTable, SWT.NONE);
 		memColumn.getColumn().setText("MEM (%)");
 		memColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				Optional<IResourceUsage> optUsage = determineResourceUsage((PeerID) cell
-						.getElement());
+				if( cell.getImage() != null ) {
+					cell.getImage().dispose();
+					cell.setImage(null);
+				}
+
+				Optional<IResourceUsage> optUsage = determineResourceUsage((PeerID) cell.getElement());
 				if (optUsage.isPresent()) {
 					double memPerc = calcMemPercentage(optUsage.get());
 					cell.setText(String.format("%-3.1f", memPerc));
+					
+					Image img = createWarnImage(memPerc);
+					cell.setImage(img);
+
 				} else {
 					cell.setText("<unknown>");
 				}
 			}
 		});
-		tableColumnLayout.setColumnData(memColumn.getColumn(),
-				new ColumnWeightData(3, 25, true));
+		tableColumnLayout.setColumnData(memColumn.getColumn(), new ColumnWeightData(3, 25, true));
 		new ColumnViewerSorter(peersTable, memColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -172,30 +170,36 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 
 				IResourceUsage usage1 = optUsage1.get();
 				IResourceUsage usage2 = optUsage2.get();
-				return Double.compare(calcMemPercentage(usage1),
-						calcMemPercentage(usage2));
+				return Double.compare(calcMemPercentage(usage1), calcMemPercentage(usage2));
 			}
 		};
 
 		/************* CPU ****************/
-		TableViewerColumn cpuColumn = new TableViewerColumn(peersTable,
-				SWT.NONE);
+		TableViewerColumn cpuColumn = new TableViewerColumn(peersTable, SWT.NONE);
 		cpuColumn.getColumn().setText("CPU (%)");
 		cpuColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				Optional<IResourceUsage> optUsage = determineResourceUsage((PeerID) cell
-						.getElement());
+				if( cell.getImage() != null ) {
+					cell.getImage().dispose();
+					cell.setImage(null);
+				}
+				
+				Optional<IResourceUsage> optUsage = determineResourceUsage((PeerID) cell.getElement());
 				if (optUsage.isPresent()) {
 					double cpuPerc = calcCpuPercentage(optUsage.get());
 					cell.setText(String.format("%-3.1f", cpuPerc));
+					
+					Image img = createWarnImage(cpuPerc);
+					cell.setImage(img);
+					
 				} else {
 					cell.setText("<unknown>");
+					cell.setImage(null);
 				}
 			}
 		});
-		tableColumnLayout.setColumnData(cpuColumn.getColumn(),
-				new ColumnWeightData(3, 25, true));
+		tableColumnLayout.setColumnData(cpuColumn.getColumn(), new ColumnWeightData(3, 25, true));
 		new ColumnViewerSorter(peersTable, cpuColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -212,33 +216,26 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 
 				IResourceUsage usage1 = optUsage1.get();
 				IResourceUsage usage2 = optUsage2.get();
-				return Double.compare(calcCpuPercentage(usage1),
-						calcCpuPercentage(usage2));
+				return Double.compare(calcCpuPercentage(usage1), calcCpuPercentage(usage2));
 			}
 		};
 
 		/************* Querycounts ****************/
-		TableViewerColumn queriesColumn = new TableViewerColumn(peersTable,
-				SWT.NONE);
+		TableViewerColumn queriesColumn = new TableViewerColumn(peersTable, SWT.NONE);
 		queriesColumn.getColumn().setText("Queries");
 		queriesColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				Optional<IResourceUsage> optUsage = determineResourceUsage((PeerID) cell
-						.getElement());
+				Optional<IResourceUsage> optUsage = determineResourceUsage((PeerID) cell.getElement());
 				if (optUsage.isPresent()) {
 					IResourceUsage usage = optUsage.get();
-					cell.setText(usage.getRunningQueriesCount()
-							+ " / "
-							+ (usage.getRunningQueriesCount() + usage
-									.getStoppedQueriesCount()));
+					cell.setText(usage.getRunningQueriesCount() + " / " + (usage.getRunningQueriesCount() + usage.getStoppedQueriesCount()));
 				} else {
 					cell.setText("<unknown>");
 				}
 			}
 		});
-		tableColumnLayout.setColumnData(queriesColumn.getColumn(),
-				new ColumnWeightData(5, 25, true));
+		tableColumnLayout.setColumnData(queriesColumn.getColumn(), new ColumnWeightData(5, 25, true));
 		new ColumnViewerSorter(peersTable, queriesColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -255,33 +252,26 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 
 				IResourceUsage usage1 = optUsage1.get();
 				IResourceUsage usage2 = optUsage2.get();
-				return Double.compare(usage1.getRunningQueriesCount(),
-						usage2.getRunningQueriesCount());
+				return Double.compare(usage1.getRunningQueriesCount(), usage2.getRunningQueriesCount());
 			}
 		};
 
 		/************* Bandwidth ****************/
-		TableViewerColumn netColumn = new TableViewerColumn(peersTable,
-				SWT.NONE);
+		TableViewerColumn netColumn = new TableViewerColumn(peersTable, SWT.NONE);
 		netColumn.getColumn().setText("Network");
 		netColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				Optional<IResourceUsage> optUsage = determineResourceUsage((PeerID) cell
-						.getElement());
+				Optional<IResourceUsage> optUsage = determineResourceUsage((PeerID) cell.getElement());
 				if (optUsage.isPresent()) {
 					IResourceUsage usage = optUsage.get();
-					cell.setText((usage.getNetInputRate() + usage
-							.getNetOutputRate())
-							+ " / "
-							+ usage.getNetBandwidthMax());
+					cell.setText(String.format("%-3.1f", (usage.getNetInputRate() + usage.getNetOutputRate())) + " / " + usage.getNetBandwidthMax());
 				} else {
 					cell.setText("<unknown>");
 				}
 			}
 		});
-		tableColumnLayout.setColumnData(netColumn.getColumn(),
-				new ColumnWeightData(5, 25, true));
+		tableColumnLayout.setColumnData(netColumn.getColumn(), new ColumnWeightData(5, 25, true));
 		new ColumnViewerSorter(peersTable, netColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -290,30 +280,34 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		};
 
 		/************* Ping ****************/
-		TableViewerColumn pingColumn = new TableViewerColumn(peersTable,
-				SWT.NONE);
+		TableViewerColumn pingColumn = new TableViewerColumn(peersTable, SWT.NONE);
 		pingColumn.getColumn().setText("Ping (ms)");
 		pingColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				Optional<Double> optPing = RCPP2PNewPlugIn.getPingMap()
-						.getPing((PeerID) cell.getElement());
+				if( cell.getImage() != null ) {
+					cell.getImage().dispose();
+					cell.setImage(null);
+				}
+				
+				Optional<Double> optPing = RCPP2PNewPlugIn.getPingMap().getPing((PeerID) cell.getElement());
 				if (optPing.isPresent()) {
-					cell.setText(String.valueOf((long) (double) optPing.get()));
+					long ping = (long) (double) optPing.get();
+					cell.setText(String.valueOf(ping));
+					
+					Image img = createWarnImage( (ping / 10.0));
+					cell.setImage(img);
 				} else {
 					cell.setText("<unknown>");
 				}
 			}
 		});
-		tableColumnLayout.setColumnData(pingColumn.getColumn(),
-				new ColumnWeightData(3, 25, true));
+		tableColumnLayout.setColumnData(pingColumn.getColumn(), new ColumnWeightData(3, 25, true));
 		new ColumnViewerSorter(peersTable, pingColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				Optional<Double> ping1 = RCPP2PNewPlugIn.getPingMap().getPing(
-						(PeerID) e1);
-				Optional<Double> ping2 = RCPP2PNewPlugIn.getPingMap().getPing(
-						(PeerID) e2);
+				Optional<Double> ping1 = RCPP2PNewPlugIn.getPingMap().getPing((PeerID) e1);
+				Optional<Double> ping2 = RCPP2PNewPlugIn.getPingMap().getPing((PeerID) e2);
 
 				if (!ping1.isPresent() && !ping2.isPresent()) {
 					return 0;
@@ -330,8 +324,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		};
 
 		/************* PeerID ****************/
-		TableViewerColumn peerIDColumn = new TableViewerColumn(peersTable,
-				SWT.NONE);
+		TableViewerColumn peerIDColumn = new TableViewerColumn(peersTable, SWT.NONE);
 		peerIDColumn.getColumn().setText("PeerID");
 		peerIDColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -339,8 +332,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				cell.setText(((PeerID) cell.getElement()).toString());
 			}
 		});
-		tableColumnLayout.setColumnData(peerIDColumn.getColumn(),
-				new ColumnWeightData(10, 25, true));
+		tableColumnLayout.setColumnData(peerIDColumn.getColumn(), new ColumnWeightData(10, 25, true));
 		sorter = new ColumnViewerSorter(peersTable, peerIDColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -351,8 +343,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		peersTable.setInput(foundPeerIDs);
 		refreshTableAsync();
 
-		refresher = new RepeatingJobThread(REFRESH_INTERVAL_MILLIS,
-				"Refresher of PeerView") {
+		refresher = new RepeatingJobThread(REFRESH_INTERVAL_MILLIS, "Refresher of PeerView") {
 			@Override
 			public void doJob() {
 				refreshUsagesAsync();
@@ -363,9 +354,32 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		instance = this;
 	}
 
+	private static Image createWarnImage(double cpuPerc) {
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		Image img = new Image(display, 10, 10);
+		
+		GC gc = new GC(img);
+		gc.setBackground(display.getSystemColor(setWarnColorID(cpuPerc)));
+		gc.fillRectangle(0, 0, 10, 10);
+		gc.dispose();
+		return img;
+	}
+	
+	private static int setWarnColorID(double cpuPerc) {
+		if( cpuPerc < 25.0 ) {
+			return SWT.COLOR_BLUE;
+		}
+		if( cpuPerc < 50.0 ) {
+			return SWT.COLOR_GREEN;
+		}
+		if( cpuPerc < 75.0 ) {
+			return SWT.COLOR_YELLOW;
+		}
+		return SWT.COLOR_RED;
+	}
+
 	private static double calcMemPercentage(IResourceUsage resourceUsage) {
-		return 100.0 - (((double) resourceUsage.getMemFreeBytes() / (double) resourceUsage
-				.getMemMaxBytes()) * 100.0);
+		return 100.0 - (((double) resourceUsage.getMemFreeBytes() / (double) resourceUsage.getMemMaxBytes()) * 100.0);
 	}
 
 	private static double calcCpuPercentage(IResourceUsage resourceUsage) {
@@ -392,20 +406,17 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				synchronized (usageMap) {
 					usageMap.clear();
 				}
-				IPeerResourceUsageManager usageManager = RCPP2PNewPlugIn
-						.getPeerResourceUsageManager();
+				IPeerResourceUsageManager usageManager = RCPP2PNewPlugIn.getPeerResourceUsageManager();
 				Collection<PeerID> foundPeerIDsCopy = null;
 				synchronized (foundPeerIDs) {
 					foundPeerIDsCopy = Lists.newArrayList(foundPeerIDs);
 				}
 				for (PeerID remotePeerID : foundPeerIDsCopy) {
-					Future<Optional<IResourceUsage>> futureUsage = usageManager
-							.getRemoteResourceUsage(remotePeerID);
+					Future<Optional<IResourceUsage>> futureUsage = usageManager.getRemoteResourceUsage(remotePeerID);
 					try {
-						Optional<IResourceUsage> optResourceUsage = futureUsage
-								.get();
+						Optional<IResourceUsage> optResourceUsage = futureUsage.get();
 						if (optResourceUsage.isPresent()) {
-							synchronized(usageMap) {
+							synchronized (usageMap) {
 								usageMap.put(remotePeerID, optResourceUsage.get());
 							}
 						}
@@ -479,33 +490,27 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	}
 
 	@Override
-	public void sourceAdded(IP2PDictionary sender,
-			SourceAdvertisement advertisement) {
+	public void sourceAdded(IP2PDictionary sender, SourceAdvertisement advertisement) {
 	}
 
 	@Override
-	public void sourceRemoved(IP2PDictionary sender,
-			SourceAdvertisement advertisement) {
+	public void sourceRemoved(IP2PDictionary sender, SourceAdvertisement advertisement) {
 	}
 
 	@Override
-	public void sourceImported(IP2PDictionary sender,
-			SourceAdvertisement advertisement, String sourceName) {
+	public void sourceImported(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
 	}
 
 	@Override
-	public void sourceImportRemoved(IP2PDictionary sender,
-			SourceAdvertisement advertisement, String sourceName) {
+	public void sourceImportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
 	}
 
 	@Override
-	public void sourceExported(IP2PDictionary sender,
-			SourceAdvertisement advertisement, String sourceName) {
+	public void sourceExported(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
 	}
 
 	@Override
-	public void sourceExportRemoved(IP2PDictionary sender,
-			SourceAdvertisement advertisement, String sourceName) {
+	public void sourceExportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
 	}
 
 	@Override
