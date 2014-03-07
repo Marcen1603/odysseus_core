@@ -113,7 +113,7 @@ public class PingMapView extends ViewPart implements PaintListener, MouseMoveLis
 	private static void drawPingSymbol(GC gc, int x, int y, double factor) {
 		int size = (int)(10 * factor);
 		size = Math.min(30, Math.max(size, 3));
-		gc.fillOval(x - 5, y - 5, size, size);
+		gc.fillOval(x - (size / 2), y - (size / 2), size, size);
 	}
 
 	private static Collection<IPingMapNode> collectNodes(IPingMap pingMap) {
