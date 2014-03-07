@@ -5,6 +5,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
@@ -15,11 +18,12 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.logicaloperator.ReplicationMergeAO;
 
 /**
  * A {@link ReplicationMergePO} can be used to realize a {@link ReplicationMergeAO}. <br />
@@ -28,6 +32,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
  */
 public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>> 
 		extends AbstractPipe<T, T> {
+	
+	private static final Logger log = LoggerFactory.getLogger(ReplicationMergePO.class);
 	
 	/**
 	 * The {@link PriorityQueue} to keep in mind which elements have been seen by this {@link ReplicationMergePO}.
@@ -172,6 +178,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	@Override
 	protected synchronized void process_next(T object, int port) {
 		// TODO: DO NOT SYNCHRONIZE ON THIS!
+		ReplicationMergePO.log.debug("New object {} at port {}.", object, port);
 		this.transferFunction.newElement(object, port);
 		this.purgeElements(this.getTS(object, true));
 		this.mergeElement(object, port);
