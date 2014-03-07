@@ -48,6 +48,7 @@ public class ExecutorServiceBinding {
 	public void bindExecutor(IExecutor ex) {
 		if (ex instanceof IServerExecutor) {
 			executor = (IServerExecutor) ex;
+			executor.startExecution();
 		} else {
 			throw new IllegalArgumentException("Only serverbased Executor can be bound!");
 		}
@@ -55,6 +56,7 @@ public class ExecutorServiceBinding {
 	}
 
 	public void unbindExecutor(IExecutor ex) {
+		executor.stopExecution();
 		executor = null;
 	}
 }
