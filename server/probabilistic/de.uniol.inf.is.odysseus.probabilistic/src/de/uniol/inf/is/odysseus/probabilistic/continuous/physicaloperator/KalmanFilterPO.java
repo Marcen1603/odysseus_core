@@ -15,28 +15,39 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.filter.DefaultMeasurementModel;
 import org.apache.commons.math3.filter.DefaultProcessModel;
 import org.apache.commons.math3.filter.MeasurementModel;
 import org.apache.commons.math3.filter.ProcessModel;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.NonPositiveDefiniteMatrixException;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.linear.SingularMatrixException;
+import org.apache.commons.math3.util.Pair;
 import org.apache.commons.math3_patch.filter.KalmanFilterPatched;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
- *         FIXME not fully working, have to handle the input and output right.
- *         Also no prediction is implemented yet
  * @param <T>
  */
 public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
+    /** Logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(KalmanFilterPO.class);
+
     /** The attribute positions. */
     private final int[] attributes;
     /** The process model. */
@@ -123,14 +134,10 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
         final NormalDistributionMixture[] distributions = object.getDistributions();
-        final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(new Object[object.getAttributes().length + 2], new NormalDistributionMixture[distributions.length],
-                object.requiresDeepClone());
-        System.arraycopy(distributions, 0, outputVal.getDistributions(), 0, distributions.length);
-        System.arraycopy(object.getAttributes(), 0, outputVal.getAttributes(), 0, object.getAttributes().length);
+        final ProbabilisticTuple<T> outputVal = object.clone();
 
         this.filter.predict();
 
@@ -141,51 +148,33 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
         this.filter.correct(value);
 
         RealVector state = this.filter.getStateEstimationVector();
-
         RealMatrix covariance = this.filter.getErrorCovarianceMatrix();
-        outputVal.setAttribute(object.getAttributes().length, state.toArray());
-        outputVal.setAttribute(object.getAttributes().length + 1, covariance.getData());
-        outputVal.setMetadata((T) object.getMetadata().clone());
 
-        // KTHXBYE
-        this.transfer(outputVal);
+        try {
+            final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
+            final MultivariateNormalDistribution component = new MultivariateNormalDistribution(state.toArray(), covariance.getData());
+            mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));
 
-        // try {
-        // final List<Pair<Double, MultivariateNormalDistribution>> mvns = new
-        // ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-        // final MultivariateNormalDistribution component = new
-        // MultivariateNormalDistribution(state.toArray(),
-        // covariance.getData());
-        // mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0,
-        // component));
-        //
-        // final NormalDistributionMixture mixture = new
-        // NormalDistributionMixture(mvns);
-        // mixture.setAttributes(this.attributes);
-        //
-        // final NormalDistributionMixture[] outputValDistributions = new
-        // NormalDistributionMixture[distributions.length + 1];
-        //
-        // for (final int attribute : this.attributes) {
-        // outputVal.setAttribute(attribute, new
-        // ProbabilisticContinuousDouble(distributions.length));
-        // }
-        // // Copy the old distribution to the new tuple
-        // System.arraycopy(distributions, 0, outputValDistributions, 0,
-        // distributions.length);
-        // // And append the new distribution to the end of the array
-        // outputValDistributions[distributions.length] = mixture;
-        // outputVal.setDistributions(outputValDistributions);
-        //
-        // // KTHXBYE
-        // this.transfer(outputVal);
-        // }
-        // catch (SingularMatrixException | NonPositiveDefiniteMatrixException
-        // e) {
-        // System.out.println(e.getClass());
-        // System.out.println(state);
-        // System.out.println(covariance);
-        // }
+            final NormalDistributionMixture mixture = new NormalDistributionMixture(mvns);
+            mixture.setAttributes(this.attributes);
+
+            final NormalDistributionMixture[] outputValDistributions = new NormalDistributionMixture[distributions.length + 1];
+
+            for (final int attribute : this.attributes) {
+                outputVal.setAttribute(attribute, new ProbabilisticContinuousDouble(distributions.length));
+            }
+            // Copy the old distribution to the new tuple
+            System.arraycopy(distributions, 0, outputValDistributions, 0, distributions.length);
+            // And append the new distribution to the end of the array
+            outputValDistributions[distributions.length] = mixture;
+            outputVal.setDistributions(outputValDistributions);
+
+            // KTHXBYE
+            this.transfer(outputVal);
+        }
+        catch (SingularMatrixException | NonPositiveDefiniteMatrixException e) {
+            LOG.warn(e.getMessage(), e);
+        }
     }
 
     /**

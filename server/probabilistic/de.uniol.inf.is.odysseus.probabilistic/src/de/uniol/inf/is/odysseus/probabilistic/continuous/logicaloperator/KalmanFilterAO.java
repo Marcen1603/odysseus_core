@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
@@ -30,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpress
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
+import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -259,10 +259,15 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      */
     @Override
     public final void initialize() {
-        final Collection<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>(this.getInputSchema().getAttributes());
-
-        outputAttributes.add(new SDFAttribute("", "state", SDFDatatype.VECTOR_DOUBLE, null, null, null));
-        outputAttributes.add(new SDFAttribute("", "covariance", SDFDatatype.MATRIX_DOUBLE, null, null, null));
+        final Collection<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
+        for (final SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
+            if (this.getAttributes().contains(inAttr)) {
+                outputAttributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, null, null, null));
+            }
+            else {
+                outputAttributes.add(inAttr);
+            }
+        }
 
         final SDFSchema outputSchema = new SDFSchema(this.getInputSchema(), outputAttributes);
         this.setOutputSchema(outputSchema);

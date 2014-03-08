@@ -16,6 +16,8 @@
 package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
 
 import org.apache.commons.math3.linear.RealMatrix;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -30,6 +32,10 @@ import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.Probabi
  * @param <T>
  */
 public class LinearRegressionPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
+    /** Logger. */
+    @SuppressWarnings("unused")
+    private static final Logger LOG = LoggerFactory.getLogger(LinearRegressionPO.class);
+   
     /** The sweep area. */
     private final LinearRegressionTISweepArea area;
 
