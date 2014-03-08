@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.generator.error.NoError;
 import de.uniol.inf.is.odysseus.generator.noise.DuplicateNoise;
 import de.uniol.inf.is.odysseus.generator.noise.JitterNoise;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.ConstantValueGenerator;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.ISingleValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.PredifinedValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.UniformDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.AlternatingGenerator;
@@ -66,7 +66,7 @@ public class WindGenerator extends AbstractDataGenerator{
 		Location
 	}
 	
-	private Map<Attribute, IValueGenerator> generators = new HashMap<Attribute, IValueGenerator>();
+	private Map<Attribute, ISingleValueGenerator> generators = new HashMap<Attribute, ISingleValueGenerator>();
 
 	@Override
 	public List<DataTuple> next() {
@@ -97,24 +97,24 @@ public class WindGenerator extends AbstractDataGenerator{
 	@Override
 	public void process_init() {
 		//Time
-		IValueGenerator timeGenerator = new IncreaseGenerator(new NoError(), 0, 1);
+	    ISingleValueGenerator timeGenerator = new IncreaseGenerator(new NoError(), 0, 1);
 		timeGenerator.init();
 		this.generators.put(Attribute.Time, timeGenerator);		
 		//Beaufort
-		IValueGenerator bftGenerator = new UniformDistributionGenerator(new ContinuousErrorModel(new DuplicateNoise(), 3), 2, 3);
+		ISingleValueGenerator bftGenerator = new UniformDistributionGenerator(new ContinuousErrorModel(new DuplicateNoise(), 3), 2, 3);
 		bftGenerator.init();
 		this.generators.put(Attribute.Beaufort, bftGenerator);
 		//speed
 		//IValueGenerator speedGenerator = new ConstantValueGenerator(new RandomErrorModel(new JitterNoise(5)), 18);
-		IValueGenerator speedGenerator = new PredifinedValueGenerator(101,164,454,324,145,123,241,232,322);
+		ISingleValueGenerator speedGenerator = new PredifinedValueGenerator(101,164,454,324,145,123,241,232,322);
 		speedGenerator.init();
 		this.generators.put(Attribute.Speed, speedGenerator);
 		//Direction
-		IValueGenerator directionGenerator = new ConstantValueGenerator(new BurstErrorModel(new JitterNoise(50), 10, 4), 182);
+		ISingleValueGenerator directionGenerator = new ConstantValueGenerator(new BurstErrorModel(new JitterNoise(50), 10, 4), 182);
 		directionGenerator.init();
 		this.generators.put(Attribute.Direction, directionGenerator);		
 		//Location
-		IValueGenerator locationGenerator = new AlternatingGenerator(new NoError(), 0, 2, 0, 20);
+		ISingleValueGenerator locationGenerator = new AlternatingGenerator(new NoError(), 0, 2, 0, 20);
 		locationGenerator.init();
 		this.generators.put(Attribute.Location, locationGenerator);
 		

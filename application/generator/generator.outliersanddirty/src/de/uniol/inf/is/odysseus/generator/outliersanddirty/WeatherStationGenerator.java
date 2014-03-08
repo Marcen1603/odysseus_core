@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.generator.error.RandomErrorModel;
 import de.uniol.inf.is.odysseus.generator.noise.DuplicateNoise;
 import de.uniol.inf.is.odysseus.generator.noise.JitterNoise;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.ConstantValueGenerator;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.ISingleValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.GaussianRandomGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.UniformDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.AlternatingGenerator;
@@ -67,7 +67,7 @@ public class WeatherStationGenerator extends AbstractDataGenerator {
 		Location
 	}
 		
-	private Map<Attribute, IValueGenerator> generators = new HashMap<Attribute, IValueGenerator>();
+	private Map<Attribute, ISingleValueGenerator> generators = new HashMap<Attribute, ISingleValueGenerator>();
 	
 	
 	@Override
@@ -103,27 +103,27 @@ public class WeatherStationGenerator extends AbstractDataGenerator {
 	@Override
 	public void process_init() {
 		//Time
-		IValueGenerator timeGenerator = new IncreaseGenerator(new NoError(), 0, 1);
+	    ISingleValueGenerator timeGenerator = new IncreaseGenerator(new NoError(), 0, 1);
 		timeGenerator.init();
 		this.generators.put(Attribute.Time, timeGenerator);		
 		//Temperature
-		IValueGenerator tempGenerator = new UniformDistributionGenerator(new ContinuousErrorModel(new DuplicateNoise(), 3), 18, 25);
+		ISingleValueGenerator tempGenerator = new UniformDistributionGenerator(new ContinuousErrorModel(new DuplicateNoise(), 3), 18, 25);
 		tempGenerator.init();
 		this.generators.put(Attribute.Temperature, tempGenerator);
 		//Humidity
-		IValueGenerator humGenerator = new ConstantValueGenerator(new RandomErrorModel(new JitterNoise(5)), 1020);
+		ISingleValueGenerator humGenerator = new ConstantValueGenerator(new RandomErrorModel(new JitterNoise(5)), 1020);
 		humGenerator.init();
 		this.generators.put(Attribute.Humidity, humGenerator);
 		//Rain
-		IValueGenerator rainGenerator = new GaussianRandomGenerator(new BurstErrorModel(new JitterNoise(50), 10, 4), 50, 2);
+		ISingleValueGenerator rainGenerator = new GaussianRandomGenerator(new BurstErrorModel(new JitterNoise(50), 10, 4), 50, 2);
 		rainGenerator.init();
 		this.generators.put(Attribute.Rain, rainGenerator);
 		//Pressure
-		IValueGenerator pressGenerator = new ConstantValueGenerator(new NoError(), 100);
+		ISingleValueGenerator pressGenerator = new ConstantValueGenerator(new NoError(), 100);
 		pressGenerator.init();
 		this.generators.put(Attribute.Pressure, pressGenerator);
 		//Location
-		IValueGenerator locationGenerator = new AlternatingGenerator(new NoError(), 0, 2, 0, 20);
+		ISingleValueGenerator locationGenerator = new AlternatingGenerator(new NoError(), 0, 2, 0, 20);
 		locationGenerator.init();
 		this.generators.put(Attribute.Location, locationGenerator);
 

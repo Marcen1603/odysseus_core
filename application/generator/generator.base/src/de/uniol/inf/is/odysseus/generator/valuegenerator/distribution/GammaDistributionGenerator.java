@@ -19,13 +19,13 @@ import org.apache.commons.math3.distribution.GammaDistribution;
 import org.apache.commons.math3.distribution.RealDistribution;
 
 import de.uniol.inf.is.odysseus.generator.error.IErrorModel;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractSingleValueGenerator;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class GammaDistributionGenerator extends AbstractValueGenerator {
+public class GammaDistributionGenerator extends AbstractSingleValueGenerator {
 
     private final long seed;
     private final RealDistribution distribution;

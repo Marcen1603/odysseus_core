@@ -13,39 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.generator.valuegenerator.switching;
+package de.uniol.inf.is.odysseus.generator.valuegenerator;
 
 import de.uniol.inf.is.odysseus.generator.error.IErrorModel;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractSingleValueGenerator;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class SignGenerator extends AbstractSingleValueGenerator {
+public abstract class AbstractMultiValueGenerator implements IMultiValueGenerator {
 
-    private final double value;
-    private double current;
+    protected IErrorModel errorModel;
 
-    public SignGenerator(final IErrorModel errorModel, final double value) {
-        super(errorModel);
-        this.value = value;
-        this.current = value;
-    }
-
-    public SignGenerator(final IErrorModel errorModel) {
-        this(errorModel, 1.0);
+    public AbstractMultiValueGenerator(IErrorModel errorModel) {
+        this.errorModel = errorModel;
     }
 
     @Override
-    public double generateValue() {
-        this.current = -this.current;
-        return this.current;
+    public final double[] nextValue() {
+        double[] newValue = generateValue();
+        for (int i = 0; i < newValue.length; i++) {
+            newValue[i] = this.errorModel.pollute(newValue[i]);
+        }
+        return newValue;
     }
 
+    public abstract double[] generateValue();
+
+    public abstract void initGenerator();
+
     @Override
-    public void initGenerator() {
-        this.current = this.value;
+    public final void init() {
+        errorModel.init();
+        initGenerator();
     }
 
 }

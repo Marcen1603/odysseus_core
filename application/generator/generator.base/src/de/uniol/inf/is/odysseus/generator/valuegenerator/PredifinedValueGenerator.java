@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.generator.error.NoError;
  * @author Dennis Geesen
  * Created at: 11.07.2011
  */
-public class PredifinedValueGenerator  extends AbstractValueGenerator {
+public class PredifinedValueGenerator  extends AbstractSingleValueGenerator {
 
 	private double[] values;
 	private int pointer = 0;

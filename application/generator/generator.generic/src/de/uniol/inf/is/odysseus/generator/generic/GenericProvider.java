@@ -13,13 +13,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.IMultiValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.ISingleValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
 
 /**
@@ -27,7 +29,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
  * 
  */
 public class GenericProvider extends AbstractDataGenerator {
-    private final Map<String, IValueGenerator> generators = new HashMap<String, IValueGenerator>();
+    private final Map<String, IValueGenerator> generators = new LinkedHashMap<String, IValueGenerator>();
     private String schemaFile;
     private long frequency;
 
@@ -47,7 +49,15 @@ public class GenericProvider extends AbstractDataGenerator {
         DataTuple tuple = new DataTuple();
         if (generators.size() > 0) {
             for (String attribute : generators.keySet()) {
-                tuple.addDouble(this.generators.get(attribute).nextValue());
+                if (this.generators.get(attribute) instanceof IMultiValueGenerator) {
+                    double[] value = ((IMultiValueGenerator) this.generators.get(attribute)).nextValue();
+                    for (int i = 0; i < value.length; i++) {
+                        tuple.addDouble(value[i]);
+                    }
+                }
+                else if (this.generators.get(attribute) instanceof ISingleValueGenerator) {
+                    tuple.addDouble(((ISingleValueGenerator) this.generators.get(attribute)).nextValue());
+                }
             }
             try {
                 if (this.frequency < 1000l) {
@@ -103,7 +113,6 @@ public class GenericProvider extends AbstractDataGenerator {
                             // Class.forName(attributeParameter[1]
                             // + "Generator");
                             Class<?> generatorClass = Activator.getGeneratorClass((attributeParameter[1] + "Generator").toUpperCase());
-
                             Constructor<?>[] constructors = generatorClass.getDeclaredConstructors();
                             for (Constructor<?> constructor : constructors) {
                                 Class<?>[] params = constructor.getParameterTypes();
@@ -156,8 +165,20 @@ public class GenericProvider extends AbstractDataGenerator {
                     if (schema.length() != 0) {
                         schema.append(",");
                     }
-                    schema.append(attribute);
-                    schema.append(" DOUBLE");
+                    if (this.generators.get(attribute) instanceof IMultiValueGenerator) {
+                        IMultiValueGenerator generator = (IMultiValueGenerator) this.generators.get(attribute);
+                        for (int i = 0; i < generator.dimension(); i++) {
+                            if (i != 0) {
+                                schema.append(",");
+                            }
+                            schema.append(attribute + i);
+                            schema.append(" DOUBLE");
+                        }
+                    }
+                    else if (this.generators.get(attribute) instanceof ISingleValueGenerator) {
+                        schema.append(attribute);
+                        schema.append(" DOUBLE");
+                    }
                 }
                 schema.insert(0, "Use the following statement to access the stream\nATTACH STREAM generator (");
                 schema.append(")\nWRAPPER 'GenericPush'\nPROTOCOL 'SizeByteBuffer'\nTRANSPORT 'NonBlockingTcp'\nDATAHANDLER 'Tuple'\nOPTIONS ( 'port' '54325', 'host' 'localhost', 'ByteOrder' 'Little_Endian')");

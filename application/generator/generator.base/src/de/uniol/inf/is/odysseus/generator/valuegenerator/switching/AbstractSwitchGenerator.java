@@ -31,14 +31,14 @@
 package de.uniol.inf.is.odysseus.generator.valuegenerator.switching;
 
 import de.uniol.inf.is.odysseus.generator.error.IErrorModel;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractSingleValueGenerator;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 19.04.2012
  */
-public abstract class AbstractSwitchGenerator extends AbstractValueGenerator {
+public abstract class AbstractSwitchGenerator extends AbstractSingleValueGenerator {
 
 	protected int upDuration;
 	protected double down;

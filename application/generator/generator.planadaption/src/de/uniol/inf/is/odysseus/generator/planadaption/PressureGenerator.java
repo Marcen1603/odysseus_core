@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.error.ContinuousErrorModel;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
 import de.uniol.inf.is.odysseus.generator.noise.DuplicateNoise;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.ISingleValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.PredifinedValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.UniformDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerator;
@@ -43,9 +43,9 @@ public class PressureGenerator extends AbstractDataGenerator {
 	
 	
 	// ValueGenerators
-	private IValueGenerator time;
-	private IValueGenerator pressure;
-	private IValueGenerator location;
+	private ISingleValueGenerator time;
+	private ISingleValueGenerator pressure;
+	private ISingleValueGenerator location;
 	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.generator.StreamClientHandler#init()

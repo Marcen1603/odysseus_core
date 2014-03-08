@@ -1,4 +1,5 @@
-/** Copyright 2014 The Odysseus Team
+/********************************************************************************** 
+ * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,31 +15,14 @@
  */
 package de.uniol.inf.is.odysseus.generator.valuegenerator;
 
-import java.util.Calendar;
-
-import de.uniol.inf.is.odysseus.generator.error.IErrorModel;
-
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TimeGenerator extends AbstractSingleValueGenerator {
+public interface IMultiValueGenerator extends IValueGenerator {
+    double[] nextValue();
 
-    private final Calendar calendar;
+    void init();
 
-    public TimeGenerator(final IErrorModel errorModel) {
-        super(errorModel);
-        this.calendar = Calendar.getInstance();
-    }
-
-    @Override
-    public double generateValue() {
-        return this.calendar.getTimeInMillis();
-    }
-
-    @Override
-    public void initGenerator() {
-
-    }
-
+    int dimension();
 }

@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.generator.error.IErrorModel;
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public class ConstantValueGenerator extends AbstractValueGenerator {
+public class ConstantValueGenerator extends AbstractSingleValueGenerator {
 
 	private double value;
 	

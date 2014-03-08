@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.ConstantValueGenerator;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.ISingleValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.NormalDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerator;
 import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
@@ -39,9 +39,9 @@ public class ProbabilisticProvider extends AbstractDataGenerator {
         Time, Class, X, Y
     }
 
-    private List<IValueGenerator> discreteProbabilityGenerators = new ArrayList<IValueGenerator>();
-    private List<IValueGenerator> continuousProbabilityGenerators = new ArrayList<IValueGenerator>();
-    private final Map<Attribute, IValueGenerator> generators = new HashMap<Attribute, IValueGenerator>();
+    private List<ISingleValueGenerator> discreteProbabilityGenerators = new ArrayList<ISingleValueGenerator>();
+    private List<ISingleValueGenerator> continuousProbabilityGenerators = new ArrayList<ISingleValueGenerator>();
+    private final Map<Attribute, ISingleValueGenerator> generators = new HashMap<Attribute, ISingleValueGenerator>();
 
     public ProbabilisticProvider() {
 
@@ -72,7 +72,7 @@ public class ProbabilisticProvider extends AbstractDataGenerator {
 
     @Override
     public void process_init() {
-        IValueGenerator timeGenerator = new IncreaseGenerator(new NoError(), 0, 1);
+        ISingleValueGenerator timeGenerator = new IncreaseGenerator(new NoError(), 0, 1);
         timeGenerator.init();
         this.generators.put(Attribute.Time, timeGenerator);
 
@@ -81,16 +81,16 @@ public class ProbabilisticProvider extends AbstractDataGenerator {
         for (int i = 0; i < discreteProbabilityGenerators.size(); i++) {
             discreteProbabilityGenerators.get(i).init();
         }
-        IValueGenerator classGenerator = new NormalDistributionGenerator(new NoError());
+        ISingleValueGenerator classGenerator = new NormalDistributionGenerator(new NoError());
         classGenerator.init();
         this.generators.put(Attribute.Class, classGenerator);
 
         continuousProbabilityGenerators.add(new ConstantValueGenerator(new NoError(), 0.75));
         continuousProbabilityGenerators.add(new ConstantValueGenerator(new NoError(), 0.25));
-        IValueGenerator xGenerator = new NormalDistributionGenerator(new NoError());
+        ISingleValueGenerator xGenerator = new NormalDistributionGenerator(new NoError());
         xGenerator.init();
         this.generators.put(Attribute.X, xGenerator);
-        IValueGenerator yGenerator = new NormalDistributionGenerator(new NoError());
+        ISingleValueGenerator yGenerator = new NormalDistributionGenerator(new NoError());
         yGenerator.init();
         this.generators.put(Attribute.Y, yGenerator);
 

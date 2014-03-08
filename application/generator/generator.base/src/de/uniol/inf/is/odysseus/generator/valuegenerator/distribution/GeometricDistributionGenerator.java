@@ -18,13 +18,13 @@ package de.uniol.inf.is.odysseus.generator.valuegenerator.distribution;
 import org.apache.commons.math3.distribution.IntegerDistribution;
 
 import de.uniol.inf.is.odysseus.generator.error.IErrorModel;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractSingleValueGenerator;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class GeometricDistributionGenerator extends AbstractValueGenerator {
+public class GeometricDistributionGenerator extends AbstractSingleValueGenerator {
     private final long seed;
     private final IntegerDistribution distribution;
 

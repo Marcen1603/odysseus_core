@@ -36,7 +36,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.ISingleValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.AlternatingGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerator;
 
@@ -49,9 +49,9 @@ public class RegressionGenerator extends AbstractDataGenerator{
 
 	// CREATE STREAM clusters (timestamp STARTTIMESTAMP, valX DOUBLE, valY DOUBLE) CHANNEL localhost : 54321;
 	
-	private IValueGenerator timeGenerator;
-	private IValueGenerator xGenerator;
-	private IValueGenerator yGenerator;
+	private ISingleValueGenerator timeGenerator;
+	private ISingleValueGenerator xGenerator;
+	private ISingleValueGenerator yGenerator;
 	
 	@Override
 	public void process_init() {

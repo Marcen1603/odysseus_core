@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.GeometricD
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.HypergeometricDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.LevyDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.LogNormalDistributionGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.MultivariateNormalDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.NormalDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.ParetoDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.PascalDistributionGenerator;
@@ -99,6 +100,8 @@ public class Activator implements BundleActivator {
         generators.put("AlternatingDurationSwitchGenerator".toUpperCase(), AlternatingDurationSwitchGenerator.class);
         generators.put("SwitchGenerator".toUpperCase(), SwitchGenerator.class);
         generators.put("SignGenerator".toUpperCase(), SignGenerator.class);
+        generators.put("MultivariateNormalDistributionGenerator".toUpperCase(), MultivariateNormalDistributionGenerator.class);
+
     }
 
     static BundleContext getContext() {

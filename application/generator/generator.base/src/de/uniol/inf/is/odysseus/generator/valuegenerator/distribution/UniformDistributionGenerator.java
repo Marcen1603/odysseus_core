@@ -33,14 +33,14 @@ package de.uniol.inf.is.odysseus.generator.valuegenerator.distribution;
 import java.util.Random;
 
 import de.uniol.inf.is.odysseus.generator.error.IErrorModel;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractSingleValueGenerator;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public class UniformDistributionGenerator extends AbstractValueGenerator{
+public class UniformDistributionGenerator extends AbstractSingleValueGenerator{
 
 	private double min;
 	private double max;

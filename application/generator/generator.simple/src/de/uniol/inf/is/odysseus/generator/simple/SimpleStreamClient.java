@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.ConstantValueGenerator;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.ISingleValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.AlternatingGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerator;
 
@@ -32,9 +32,9 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerato
  */
 public class SimpleStreamClient extends AbstractDataGenerator {
 
-	private IValueGenerator timeGenerator;
-	private IValueGenerator alternatingGenerator;
-	private IValueGenerator constantGenerator;
+	private ISingleValueGenerator timeGenerator;
+	private ISingleValueGenerator alternatingGenerator;
+	private ISingleValueGenerator constantGenerator;
 	
 	@Override
 	public void process_init() {

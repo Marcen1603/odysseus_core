@@ -17,13 +17,13 @@ package de.uniol.inf.is.odysseus.generator.valuegenerator.evolve;
 import org.apache.commons.math3.util.FastMath;
 
 import de.uniol.inf.is.odysseus.generator.error.IErrorModel;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractSingleValueGenerator;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TangentGenerator extends AbstractValueGenerator {
+public class TangentGenerator extends AbstractSingleValueGenerator {
 
     private double current;
     private final double start;

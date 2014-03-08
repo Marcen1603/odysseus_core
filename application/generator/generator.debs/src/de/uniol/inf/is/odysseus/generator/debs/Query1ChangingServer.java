@@ -36,7 +36,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.ISingleValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.switching.AlternatingDurationSwitchGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.switching.SwitchGenerator;
@@ -51,13 +51,13 @@ public class Query1ChangingServer extends AbstractDataGenerator {
 	// DOUBLE, bm07 DOUBLE, bm08 DOUBLE, bm09 DOUBLE, bm10 DOUBLE)
 	// CHANNEL localhost : 54321;
 
-	private IValueGenerator timeGenerator;
-	private IValueGenerator bm05;
-	private IValueGenerator bm06;
-	private IValueGenerator bm07;
-	private IValueGenerator bm08;
-	private IValueGenerator bm09;
-	private IValueGenerator bm10;
+	private ISingleValueGenerator timeGenerator;
+	private ISingleValueGenerator bm05;
+	private ISingleValueGenerator bm06;
+	private ISingleValueGenerator bm07;
+	private ISingleValueGenerator bm08;
+	private ISingleValueGenerator bm09;
+	private ISingleValueGenerator bm10;
 
 	@Override
 	public void process_init() {

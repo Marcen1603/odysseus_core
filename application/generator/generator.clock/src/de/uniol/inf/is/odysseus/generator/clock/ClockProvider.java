@@ -9,7 +9,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.ISingleValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.TimeGenerator;
 
 /**
@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.TimeGenerator;
  * 
  */
 public class ClockProvider extends AbstractDataGenerator {
-    private IValueGenerator generator;
+    private ISingleValueGenerator generator;
 
     /**
      * 

@@ -31,14 +31,14 @@
 package de.uniol.inf.is.odysseus.generator.valuegenerator.evolve;
 
 import de.uniol.inf.is.odysseus.generator.error.IErrorModel;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractSingleValueGenerator;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public class AlternatingGenerator extends AbstractValueGenerator {
+public class AlternatingGenerator extends AbstractSingleValueGenerator {
 
 	private double currentValue;
 	private double startValue;
