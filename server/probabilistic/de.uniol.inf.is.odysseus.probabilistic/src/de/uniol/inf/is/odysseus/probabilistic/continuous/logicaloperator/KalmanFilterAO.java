@@ -53,6 +53,10 @@ public class KalmanFilterAO extends UnaryLogicalOp {
     private NamedExpressionItem processNoiseExpression;
     /** The noise of the measurement. */
     private NamedExpressionItem measurementNoiseExpression;
+    /** The initial state. */
+    private NamedExpressionItem initialStateExpression;
+    /** The initial error. */
+    private NamedExpressionItem initialErrorExpression;
 
     /**
      * Creates a new Kalman Filter logical operator.
@@ -75,6 +79,8 @@ public class KalmanFilterAO extends UnaryLogicalOp {
         this.processNoiseExpression = kalmanAO.processNoiseExpression;
         this.measurementExpression = kalmanAO.measurementExpression;
         this.measurementNoiseExpression = kalmanAO.measurementNoiseExpression;
+        this.initialStateExpression = kalmanAO.initialStateExpression;
+        this.initialErrorExpression = kalmanAO.initialErrorExpression;
     }
 
     /**
@@ -227,6 +233,56 @@ public class KalmanFilterAO extends UnaryLogicalOp {
 
     public final double[][] getMeasurementNoise() {
         return this.measurementNoiseExpression.expression.getValue();
+    }
+
+    /**
+     * Sets the initial state for the Kalman correction.
+     * 
+     * @param initialStateExpression
+     *            The initial state
+     */
+    @Parameter(type = SDFExpressionParameter.class, name = "INITIALSTATE", isList = false, optional = true)
+    public final void setInitialStateExpression(final NamedExpressionItem initialStateExpression) {
+        this.initialStateExpression = initialStateExpression;
+    }
+
+    /**
+     * Gets the initial state for the Kalman correction.
+     * 
+     * @return The initial state
+     */
+    @GetParameter(name = "INITIALSTATE")
+    public final NamedExpressionItem getInitialStateExpression() {
+        return this.initialStateExpression;
+    }
+
+    public final double[] getInitialState() {
+        return ((double[][])this.initialStateExpression.expression.getValue())[0];
+    }
+
+    /**
+     * Sets the initial error for the Kalman correction.
+     * 
+     * @param initialErrorExpression
+     *            The initial error
+     */
+    @Parameter(type = SDFExpressionParameter.class, name = "INITIALERROR", isList = false, optional = true)
+    public final void setInitialErrorExpression(final NamedExpressionItem initialErrorExpression) {
+        this.initialErrorExpression = initialErrorExpression;
+    }
+
+    /**
+     * Gets the initial error for the Kalman correction.
+     * 
+     * @return The initial error
+     */
+    @GetParameter(name = "INITIALERROR")
+    public final NamedExpressionItem getInitialErrorExpression() {
+        return this.initialErrorExpression;
+    }
+
+    public final double[][] getInitialError() {
+        return this.initialErrorExpression.expression.getValue();
     }
 
     /**

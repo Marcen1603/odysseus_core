@@ -244,7 +244,6 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
     public final void setSupport(final Interval[] support) {
         Objects.requireNonNull(support);
         Preconditions.checkArgument(support.length > 0);
-        Preconditions.checkArgument(support.length == this.attributes.length);
         this.support = support;
     }
 
@@ -298,7 +297,6 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
     public final void setAttributes(final int[] attributes) {
         Objects.requireNonNull(attributes);
         Preconditions.checkArgument(attributes.length > 0);
-        Preconditions.checkArgument(attributes.length == this.support.length);
         this.attributes = attributes;
     }
 

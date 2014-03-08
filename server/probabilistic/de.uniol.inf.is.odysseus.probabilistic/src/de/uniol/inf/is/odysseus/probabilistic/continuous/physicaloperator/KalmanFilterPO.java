@@ -24,6 +24,7 @@ import org.apache.commons.math3.filter.DefaultProcessModel;
 import org.apache.commons.math3.filter.MeasurementModel;
 import org.apache.commons.math3.filter.ProcessModel;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.NonPositiveDefiniteMatrixException;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -76,14 +77,22 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
      *            The measurement noise matrix
      */
     public KalmanFilterPO(final int[] attributes, final double[][] stateTransition, final double[][] control, final double[][] processNoise, final double[][] measurement,
-            final double[][] measurementNoise) {
+            final double[][] measurementNoise, final double[] initialState, final double[][] initialError) {
         this.attributes = attributes;
+        Array2DRowRealMatrix controlMatrix = null;
+        RealVector initialStateMatrix = null;
+        Array2DRowRealMatrix initialErrorMatrix = null;
         if (control != null) {
-            this.processModel = new DefaultProcessModel(new Array2DRowRealMatrix(stateTransition), new Array2DRowRealMatrix(control), new Array2DRowRealMatrix(processNoise), null, null);
+            controlMatrix = new Array2DRowRealMatrix(control);
         }
-        else {
-            this.processModel = new DefaultProcessModel(new Array2DRowRealMatrix(stateTransition), null, new Array2DRowRealMatrix(processNoise), null, null);
+        if (initialState != null) {
+            initialStateMatrix = new ArrayRealVector(initialState);
         }
+        if (initialError != null) {
+            initialErrorMatrix = new Array2DRowRealMatrix(initialError);
+        }
+        this.processModel = new DefaultProcessModel(new Array2DRowRealMatrix(stateTransition), controlMatrix, new Array2DRowRealMatrix(processNoise), initialStateMatrix, initialErrorMatrix);
+
         this.measurementModel = new DefaultMeasurementModel(measurement, measurementNoise);
         this.filter = new KalmanFilterPatched(this.processModel, this.measurementModel);
     }
@@ -147,12 +156,12 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
         }
         this.filter.correct(value);
 
-        RealVector state = this.filter.getStateEstimationVector();
-        RealMatrix covariance = this.filter.getErrorCovarianceMatrix();
+        double[] state = this.filter.getStateEstimationVector().toArray();
+        double[][] covariance = this.filter.getErrorCovarianceMatrix().getData();
 
         try {
             final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-            final MultivariateNormalDistribution component = new MultivariateNormalDistribution(state.toArray(), covariance.getData());
+            final MultivariateNormalDistribution component = new MultivariateNormalDistribution(state, covariance);
             mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));
 
             final NormalDistributionMixture mixture = new NormalDistributionMixture(mvns);

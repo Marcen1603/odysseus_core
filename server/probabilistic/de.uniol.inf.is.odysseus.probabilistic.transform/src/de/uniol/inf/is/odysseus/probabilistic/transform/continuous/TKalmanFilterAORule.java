@@ -52,9 +52,9 @@ public class TKalmanFilterAORule extends AbstractTransformationRule<KalmanFilter
     @Override
     public final void execute(final KalmanFilterAO operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
-       Objects.requireNonNull(config);
-           final IPhysicalOperator filterPO = new KalmanFilterPO<ITimeInterval>(operator.determineAttributesList(), operator.getStateTransition(), operator.getControl(), operator.getProcessNoise(),
-                operator.getMeasurement(), operator.getMeasurementNoise());
+        Objects.requireNonNull(config);
+        final IPhysicalOperator filterPO = new KalmanFilterPO<ITimeInterval>(operator.determineAttributesList(), operator.getStateTransition(), operator.getControl(), operator.getProcessNoise(),
+                operator.getMeasurement(), operator.getMeasurementNoise(), operator.getInitialState(), operator.getInitialError());
         this.defaultExecute(operator, filterPO, config, true, true);
     }
 
@@ -70,7 +70,7 @@ public class TKalmanFilterAORule extends AbstractTransformationRule<KalmanFilter
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getInputSchema());
         Objects.requireNonNull(config);
-          if (operator.isAllPhysicalInputSet()) {
+        if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 return true;
             }
