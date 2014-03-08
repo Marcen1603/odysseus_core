@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
@@ -41,8 +42,10 @@ public class KalmanFilterAO extends UnaryLogicalOp {
 	 * 
 	 */
     private static final long serialVersionUID = 5147945532482073567L;
-    /** The attributes to build the distribution from. */
+    /** The attributes to feed the Kalman Filter. */
     private List<SDFAttribute> attributes;
+    /** The variable names. */
+    private List<String> variables;
     /** The state transition matrix. */
     private NamedExpressionItem stateTransitionExpression;
     /** The control matrix. */
@@ -74,6 +77,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
     public KalmanFilterAO(final KalmanFilterAO kalmanAO) {
         super(kalmanAO);
         this.attributes = new ArrayList<SDFAttribute>(kalmanAO.attributes);
+        this.variables = new ArrayList<String>(kalmanAO.variables);
         this.stateTransitionExpression = kalmanAO.stateTransitionExpression;
         this.controlExpression = kalmanAO.controlExpression;
         this.processNoiseExpression = kalmanAO.processNoiseExpression;
@@ -81,6 +85,30 @@ public class KalmanFilterAO extends UnaryLogicalOp {
         this.measurementNoiseExpression = kalmanAO.measurementNoiseExpression;
         this.initialStateExpression = kalmanAO.initialStateExpression;
         this.initialErrorExpression = kalmanAO.initialErrorExpression;
+    }
+
+    /**
+     * Sets the variable names for the Kalman correction.
+     * 
+     * @param attributes
+     *            The list of variable names
+     */
+    @Parameter(type = StringParameter.class, name = "VARIABLES", isList = true, optional = false)
+    public final void setVariabless(final List<String> variables) {
+        this.variables = variables;
+    }
+
+    /**
+     * Gets the variable names for the Kalman correction.
+     * 
+     * @return The list of variable names
+     */
+    @GetParameter(name = "VARIABLES")
+    public final List<String> getVariables() {
+        if (this.variables == null) {
+            this.variables = new ArrayList<String>();
+        }
+        return this.variables;
     }
 
     /**
@@ -257,7 +285,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
     }
 
     public final double[] getInitialState() {
-        return ((double[][])this.initialStateExpression.expression.getValue())[0];
+        return ((double[][]) this.initialStateExpression.expression.getValue())[0];
     }
 
     /**
@@ -317,14 +345,11 @@ public class KalmanFilterAO extends UnaryLogicalOp {
     public final void initialize() {
         final Collection<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
         for (final SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
-            if (this.getAttributes().contains(inAttr)) {
-                outputAttributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, null, null, null));
-            }
-            else {
-                outputAttributes.add(inAttr);
-            }
+            outputAttributes.add(inAttr);
         }
-
+        for (int i = 0; i < this.getStateTransition().length; i++) {
+            outputAttributes.add(new SDFAttribute("", this.getVariables().get(i), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, null, null, null));
+        }
         final SDFSchema outputSchema = new SDFSchema(this.getInputSchema(), outputAttributes);
         this.setOutputSchema(outputSchema);
     }
@@ -334,28 +359,40 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      */
     @Override
     public boolean isValid() {
-        double[][] stateTransition = getStateTransition();
-        double[][] processNoise = getProcessNoise();
-        double[][] measurement = getMeasurement();
-        double[][] measurementNoise = getMeasurementNoise();
-        double[][] control = getControl();
+        final List<String> variables = this.getVariables();
+        final double[] initialState = this.getInitialState();
+        final double[][] initialError = this.getInitialError();
+        final double[][] stateTransition = this.getStateTransition();
+        final double[][] processNoise = this.getProcessNoise();
+        final double[][] measurement = this.getMeasurement();
+        final double[][] measurementNoise = this.getMeasurementNoise();
+        final double[][] control = this.getControl();
         if ((stateTransition == null) || (stateTransition.length < 1) || (stateTransition.length != stateTransition[0].length)) {
             return false;
         }
         if ((processNoise == null) || (processNoise.length < 1) || (processNoise.length != processNoise[0].length) || (processNoise.length != stateTransition.length)) {
             return false;
         }
-        if ((getAttributes() == null) || (getAttributes().isEmpty())) {
+        if ((this.getAttributes() == null) || (this.getAttributes().isEmpty())) {
             return false;
         }
 
-        if ((measurement == null) || (measurement.length < 1) || (measurement[0].length != stateTransition.length) || (measurement.length != getAttributes().size())) {
+        if ((measurement == null) || (measurement.length < 1) || (measurement[0].length != stateTransition.length) || (measurement.length != this.getAttributes().size())) {
             return false;
         }
-        if ((measurementNoise == null) || (measurementNoise.length < 1) || (measurementNoise.length != getAttributes().size())) {
+        if ((measurementNoise == null) || (measurementNoise.length < 1) || (measurementNoise.length != this.getAttributes().size())) {
             return false;
         }
         if ((control != null) && ((control.length < 1) || (control.length != control[0].length) || (control.length != stateTransition.length))) {
+            return false;
+        }
+        if ((initialState != null) && ((initialState.length < 1) || (initialState.length != stateTransition.length))) {
+            return false;
+        }
+        if ((initialError != null) && ((initialError.length < 1) || (initialError.length != initialError[0].length) || (initialError.length != stateTransition.length))) {
+            return false;
+        }
+        if ((variables == null) || (variables.size() != stateTransition.length)) {
             return false;
         }
         return super.isValid();

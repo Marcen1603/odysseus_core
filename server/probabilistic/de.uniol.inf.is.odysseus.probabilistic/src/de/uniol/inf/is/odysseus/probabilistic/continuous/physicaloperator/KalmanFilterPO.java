@@ -19,12 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math3.exception.MathUnsupportedOperationException;
 import org.apache.commons.math3.filter.DefaultMeasurementModel;
 import org.apache.commons.math3.filter.DefaultProcessModel;
 import org.apache.commons.math3.filter.MeasurementModel;
 import org.apache.commons.math3.filter.ProcessModel;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.CholeskyDecomposition;
 import org.apache.commons.math3.linear.NonPositiveDefiniteMatrixException;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -57,6 +59,7 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
     private final MeasurementModel measurementModel;
     /** The Kalman filter. */
     private final KalmanFilterPatched filter;
+    private RealMatrix errorCovariance;
 
     /**
      * 
@@ -143,10 +146,11 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
-        final NormalDistributionMixture[] distributions = object.getDistributions();
-        final ProbabilisticTuple<T> outputVal = object.clone();
+        final NormalDistributionMixture[] inputDistributions = object.getDistributions();
+        final Object[] inputAttributes = object.getAttributes();
 
         this.filter.predict();
 
@@ -156,34 +160,43 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
         }
         this.filter.correct(value);
 
-        double[] state = this.filter.getStateEstimationVector().toArray();
-        double[][] covariance = this.filter.getErrorCovarianceMatrix().getData();
-
+        final double[] state = this.filter.getStateEstimationVector().toArray();
+        final double[][] covariance = this.filter.getErrorCovarianceMatrix().getData();
+        final NormalDistributionMixture[] outputDistributions = new NormalDistributionMixture[inputDistributions.length + 1];
+        final Object[] outputAttributes = new Object[inputAttributes.length + state.length];
+        // Copy the old distributions to the new tuple
+        System.arraycopy(inputDistributions, 0, outputDistributions, 0, inputDistributions.length);
+        // Copy the old attributes to the new tuple
+        System.arraycopy(inputAttributes, 0, outputAttributes, 0, inputAttributes.length);
+        // And append the new references
+        final int[] outputAttributePositions = new int[state.length];
+        for (int i = 0; i < state.length; i++) {
+            outputAttributes[inputAttributes.length + i] = new ProbabilisticContinuousDouble(inputDistributions.length);
+            outputAttributePositions[i] = inputAttributes.length + i;
+        }
+        final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
+        MultivariateNormalDistribution component;
         try {
-            final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-            final MultivariateNormalDistribution component = new MultivariateNormalDistribution(state, covariance);
-            mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));
-
-            final NormalDistributionMixture mixture = new NormalDistributionMixture(mvns);
-            mixture.setAttributes(this.attributes);
-
-            final NormalDistributionMixture[] outputValDistributions = new NormalDistributionMixture[distributions.length + 1];
-
-            for (final int attribute : this.attributes) {
-                outputVal.setAttribute(attribute, new ProbabilisticContinuousDouble(distributions.length));
-            }
-            // Copy the old distribution to the new tuple
-            System.arraycopy(distributions, 0, outputValDistributions, 0, distributions.length);
-            // And append the new distribution to the end of the array
-            outputValDistributions[distributions.length] = mixture;
-            outputVal.setDistributions(outputValDistributions);
-
-            // KTHXBYE
-            this.transfer(outputVal);
+            component = new MultivariateNormalDistribution(state, covariance);
+            this.errorCovariance = this.filter.getErrorCovarianceMatrix().copy();
         }
-        catch (SingularMatrixException | NonPositiveDefiniteMatrixException e) {
-            LOG.warn(e.getMessage(), e);
+        catch (SingularMatrixException | NonPositiveDefiniteMatrixException | MathUnsupportedOperationException e) {
+            KalmanFilterPO.LOG.warn(e.getMessage() + ": " + this.filter.getErrorCovarianceMatrix(), e);
+            component = new MultivariateNormalDistribution(state, errorCovariance.getData());
         }
+        mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));
+
+        final NormalDistributionMixture mixture = new NormalDistributionMixture(mvns);
+
+        // And append the new distribution to the end of the array
+        outputDistributions[inputDistributions.length] = mixture;
+
+        mixture.setAttributes(outputAttributePositions);
+        final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<>(outputAttributes, outputDistributions, true);
+        outputVal.setMetadata((T) object.getMetadata().clone());
+
+        // KTHXBYE
+        this.transfer(outputVal);
     }
 
     /**
