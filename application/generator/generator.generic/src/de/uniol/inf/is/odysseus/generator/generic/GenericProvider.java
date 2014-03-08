@@ -140,6 +140,28 @@ public class GenericProvider extends AbstractDataGenerator {
                                         else if (params[i - 1] == double.class) {
                                             args[i - 1] = Double.parseDouble(attributeParameter[i]);
                                         }
+                                        else if (params[i - 1] == double[].class) {
+                                            String[] column = attributeParameter[i].split(",");
+                                            Double[] value = new Double[column.length];
+                                            for (int c = 0; c < column.length; c++) {
+                                                value[c] = Double.parseDouble(column[c]);
+                                            }
+                                            args[i - 1] = value;
+                                        }
+                                        else if (params[i - 1] == double[][].class) {
+                                            String[] row = attributeParameter[i].split(";");
+                                            if (row.length > 0) {
+                                                String[] column = row[0].split(",");
+                                                Double[][] value = new Double[row.length][column.length];
+                                                for (int r = 0; r < row.length; r++) {
+                                                    column = row[r].split(",");
+                                                    for (int c = 0; c < column.length; c++) {
+                                                        value[r][c] = Double.parseDouble(column[c]);
+                                                    }
+                                                }
+                                                args[i - 1] = value;
+                                            }
+                                        }
                                     }
                                     generator = (IValueGenerator) constructor.newInstance(args);
                                     config.append(String.format("Attribute %s initialized with %s(%s)\n", attributeParameter[0], generatorClass.getSimpleName(), Arrays.toString(args)));
