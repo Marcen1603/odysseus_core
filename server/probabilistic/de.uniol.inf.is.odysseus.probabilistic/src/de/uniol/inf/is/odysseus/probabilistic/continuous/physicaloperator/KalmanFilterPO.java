@@ -26,7 +26,6 @@ import org.apache.commons.math3.filter.MeasurementModel;
 import org.apache.commons.math3.filter.ProcessModel;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.CholeskyDecomposition;
 import org.apache.commons.math3.linear.NonPositiveDefiniteMatrixException;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -181,7 +180,10 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
             this.errorCovariance = this.filter.getErrorCovarianceMatrix().copy();
         }
         catch (SingularMatrixException | NonPositiveDefiniteMatrixException | MathUnsupportedOperationException e) {
-            KalmanFilterPO.LOG.warn(e.getMessage() + ": " + this.filter.getErrorCovarianceMatrix(), e);
+            if (LOG.isTraceEnabled()) {
+                KalmanFilterPO.LOG.trace(e.getMessage() + ": " + this.filter.getErrorCovarianceMatrix(), e);
+            }
+            // Take the last estimated covariance
             component = new MultivariateNormalDistribution(state, errorCovariance.getData());
         }
         mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));
