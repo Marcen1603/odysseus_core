@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.p2p_new.network;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 import net.jxta.id.IDFactory;
 import net.jxta.impl.cm.CacheManager;
@@ -130,17 +132,25 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 	@Override
 	public void start() throws P2PNetworkException {
 		Preconditions.checkState(!started, "P2P network already started");
-		
+	
+		ClassLoader cl = ClassLoader.getSystemClassLoader();
+
+		URL[] urls = ((URLClassLoader) cl).getURLs();
+
+		for (URL url : urls) {
+			System.err.println(url.getFile());
+		}
+
 		System.setProperty("net.jxta.impl.cm.cache.impl", "net.jxta.impl.cm.sql.H2AdvertisementCache");
 		System.setProperty("net.jxta.impl.cm.SrdiIndex.backend.impl", "net.jxta.impl.cm.InMemorySrdi");
-		
+
 		configureLogging(P2PNewPlugIn.getBundle());
 
 		File conf = new File(OdysseusConfiguration.getHomeDir() + "peers" + File.separator + peerName);
 		NetworkManager.RecursiveDelete(conf);
 
 		peerID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID);
-		LOG.debug("Starting p2p network. peerName = {}, groupName = {}, peerID = {}", new Object[] {peerName, groupName, peerID});
+		LOG.debug("Starting p2p network. peerName = {}, groupName = {}, peerID = {}", new Object[] { peerName, groupName, peerID });
 
 		try {
 			manager = new NetworkManager(determineConfigMode(), peerName, conf.toURI());
@@ -148,7 +158,7 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 			configureNetwork(manager.getConfigurator(), peerID, peerName, port, rendevousPeerURI);
 
 			PeerGroup netPeerGroup = manager.startNetwork();
-			if( !isRendevousPeer ) {
+			if (!isRendevousPeer) {
 				LOG.debug("Deactivating rendevous service");
 				netPeerGroup.getRendezVousService().setAutoStart(false);
 			}
@@ -156,7 +166,7 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 			PeerGroupID peerGroupID = IDFactory.newPeerGroupID(PeerGroupID.defaultNetPeerGroupID, groupName.getBytes());
 			LOG.debug("Peer Group ID is {}", peerGroupID.toString());
 			peerGroup = createSubGroup(netPeerGroup, peerGroupID, groupName);
-			
+
 			if (peerGroup.startApp(new String[0]) != Module.START_OK) {
 				throw new P2PNetworkException("Could not start child group");
 			}
@@ -166,10 +176,10 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 				peerGroup.getRendezVousService().startRendezVous();
 			}
 			peerGroup.getRendezVousService().addListener(this);
-			
+
 			deactiveDeltaTracker(netPeerGroup);
 			deactiveDeltaTracker(peerGroup);
-			
+
 			started = true;
 			LOG.debug("P2P network started");
 
@@ -190,7 +200,7 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 	private static void configureLogging(Bundle bundle) {
 		java.util.logging.Logger jxtaLogger = java.util.logging.Logger.getLogger(JXTA_LOGGER_NAME);
 		jxtaLogger.setLevel(JXTA_LOG_LEVEL);
-		
+
 		PropertyConfigurator.configure(bundle.getResource(LOG_PROPERTIES_FILENAME));
 	}
 
@@ -226,7 +236,7 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 		configurator.setUseMulticast(true);
 		configurator.setPeerID(peerID);
 		configurator.setName(peerName);
-		
+
 		if (rdvAddress != null) {
 			configurator.clearRendezvousSeeds();
 			configurator.addSeedRendezvous(rdvAddress);
@@ -313,7 +323,7 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 		} else if (event.getType() == RendezvousEvent.BECAMEEDGE) {
 			LOG.debug("This peer became EDGE");
 		}
-		
+
 		// BAD HACK
 		deactiveDeltaTracker(manager.getNetPeerGroup());
 		deactiveDeltaTracker(peerGroup);
