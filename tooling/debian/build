@@ -1,53 +1,54 @@
 #!/bin/sh
 
-#sudo aptitude install dh-make debhelper devscripts fakeroot 
-
-echo "Building server"
-
 mkdir -p tmp
 
+echo "Building server"
 echo "Downloading server binaries.."
-#wget -o http://odysseus.offis.uni-oldenburg.de/download/studio/nightlybuild/server/odysseus.server.gtk.linux.x86.zip tmp/odysseus.server.x86.zip
-
-#wget -o http://odysseus.offis.uni-oldenburg.de/download/studio/nightlybuild/server/odysseus.server.gtk.linux.x86_64.zip tmp/odysseus.server.x86_64.zip
-echo "Done."
-
-
-echo "Building client"
-
-echo "Downloading client binaries.."
-#wget -o http://odysseus.offis.uni-oldenburg.de/download/studio/nightlybuild/studio/odysseus.studio.gtk.linux.x86.zip tmp/odysseus.client.x86.zip
-
-#wget -o http://odysseus.offis.uni-oldenburg.de/download/studio/nightlybuild/studio/odysseus.studio.gtk.linux.x86_64.zip tmp/odysseus.client.x86_64.zip
+wget http://odysseus.offis.uni-oldenburg.de/download/products/server/lastBuild/odysseus.server.gtk.linux.x86_64.zip -O tmp/odysseus.server.x86_64.zip
 echo "Done."
 
 rm -rf odysseus-server-0.1
 mkdir -p odysseus-server-0.1
 cd odysseus-server-0.1
-mkdir -p usr/share
-mkdir -p usr/bin
-unzip ../tmp/odysseus.server.zip -d usr/share
-mv usr/share/Odysseus.server.gtk.linux.x86_64 usr/share/odysseus-server
-ln -s ../share/odysseus-server/odysseus usr/bin/odysseus-server
-cp -R ../etc etc
-
 mkdir -p DEBIAN
 chmod 755 DEBIAN
+mkdir -p usr/share
+mkdir -p usr/bin
+
 cp ../odysseus-server-control DEBIAN/control
+
+unzip ../tmp/odysseus.server.x86_64.zip -d usr/share
+mv usr/share/odysseus.server.gtk.linux.x86_64 usr/share/odysseus-server
+ln -s ../share/odysseus-server/odysseus usr/bin/odysseus-server
+
+cp -R ../etc etc
+
 cd ..
+
 dpkg-deb -b odysseus-server-0.1
+
+
+
+echo "Building client"
+echo "Downloading client binaries.."
+wget http://odysseus.offis.uni-oldenburg.de/download/products/studio/lastBuild/odysseus.studio.gtk.linux.x86_64.zip -O tmp/odysseus.client.x86_64.zip
+echo "Done."
+
 
 rm -rf odysseus-client-0.1
 mkdir -p odysseus-client-0.1
 cd odysseus-client-0.1
-mkdir -p usr/share
-mkdir -p usr/bin
-unzip ../tmp/odysseus.client.zip -d usr/share
-mv usr/share/Odysseus.client.gtk.linux.x86_64 usr/share/odysseus-client
-ln -s ../share/odysseus-client/odysseus usr/bin/odysseus-client
-
 mkdir -p DEBIAN
 chmod 755 DEBIAN
+mkdir -p usr/share
+mkdir -p usr/bin
+
 cp ../odysseus-client-control DEBIAN/control
+
+unzip ../tmp/odysseus.client.x86_64.zip -d usr/share
+mv usr/share/odysseus.client.gtk.linux.x86_64 usr/share/odysseus-client
+ln -s ../share/odysseus-client/odysseus usr/bin/odysseus-client
+
 cd ..
+
 dpkg-deb -b odysseus-client-0.1
