@@ -13,7 +13,7 @@
 # Description:    Init script for the Odysseus server
 ### END INIT INFO
 
-NAME=odysseus
+NAME=odysseus-server
 DESC="Odysseus data stream management system"
 USERNAME=odysseus
 PIDFILE=/var/run/$NAME.pid
@@ -21,7 +21,7 @@ SCRIPTNAME=/etc/init.d/$NAME
 
 SCREENNAME=$NAME.screen
 DAEMON=$NAME
-DAEMON_PATH="/usr/lib/odysseus"
+DAEMON_PATH="/usr/share/odysseus-server"
 
 
 ME=`whoami`
