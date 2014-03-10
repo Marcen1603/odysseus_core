@@ -131,6 +131,9 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 	public void start() throws P2PNetworkException {
 		Preconditions.checkState(!started, "P2P network already started");
 		
+		System.setProperty("net.jxta.impl.cm.cache.impl", "net.jxta.impl.cm.sql.H2AdvertisementCache");
+		System.setProperty("net.jxta.impl.cm.SrdiIndex.backend.impl", "net.jxta.impl.cm.InMemorySrdi");
+		
 		configureLogging(P2PNewPlugIn.getBundle());
 
 		File conf = new File(OdysseusConfiguration.getHomeDir() + "peers" + File.separator + peerName);
@@ -154,9 +157,6 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 			LOG.debug("Peer Group ID is {}", peerGroupID.toString());
 			peerGroup = createSubGroup(netPeerGroup, peerGroupID, groupName);
 			
-			CacheManager cacheManager = ((StdPeerGroup) peerGroup).getCacheManager();
-			cacheManager.setTrackDeltas(false);
-			
 			if (peerGroup.startApp(new String[0]) != Module.START_OK) {
 				throw new P2PNetworkException("Could not start child group");
 			}
@@ -164,8 +164,11 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 			if (isRendevousPeer) {
 				LOG.debug("Starting rendevous service");
 				peerGroup.getRendezVousService().startRendezVous();
-				peerGroup.getRendezVousService().addListener(this);
 			}
+			peerGroup.getRendezVousService().addListener(this);
+			
+			deactiveDeltaTracker(netPeerGroup);
+			deactiveDeltaTracker(peerGroup);
 			
 			started = true;
 			LOG.debug("P2P network started");
@@ -177,6 +180,11 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 
 			throw new P2PNetworkException("Could not initialize/connect p2p network", ex);
 		}
+	}
+
+	private static void deactiveDeltaTracker(PeerGroup peerGroup) {
+		CacheManager cacheManager = ((StdPeerGroup) peerGroup).getCacheManager();
+		cacheManager.setTrackDeltas(false);
 	}
 
 	private static void configureLogging(Bundle bundle) {
@@ -305,5 +313,9 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 		} else if (event.getType() == RendezvousEvent.BECAMEEDGE) {
 			LOG.debug("This peer became EDGE");
 		}
+		
+		// BAD HACK
+		deactiveDeltaTracker(manager.getNetPeerGroup());
+		deactiveDeltaTracker(peerGroup);
 	}
 }
