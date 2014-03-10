@@ -46,8 +46,8 @@ mkdir -p usr/bin
 cp ../odysseus-client-control DEBIAN/control
 
 unzip ../tmp/odysseus.client.x86_64.zip -d usr/share
-mv usr/share/odysseus.client.gtk.linux.x86_64 usr/share/odysseus-client
-ln -s ../share/odysseus-client/odysseus usr/bin/odysseus-client
+mv usr/share/odysseus.studio.gtk.linux.x86_64 usr/share/odysseus-client
+ln -s ../share/odysseus-client/studio usr/bin/odysseus-client
 
 cd ..
 
