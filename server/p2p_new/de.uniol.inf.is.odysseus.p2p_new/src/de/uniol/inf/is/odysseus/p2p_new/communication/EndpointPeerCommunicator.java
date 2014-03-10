@@ -85,8 +85,14 @@ public class EndpointPeerCommunicator implements IPeerCommunicator, IP2PDictiona
 	public void send(PeerID destinationPeer, byte[] message) throws PeerCommunicationException {
 		Messenger messenger = messengerMap.get(destinationPeer);
 		if( messenger == null ) {
-			LOG.error("Wanted to send message to unknown peer {}", destinationPeer);
-			return;
+			EndpointAddress addr = new EndpointAddress(destinationPeer, null, null);
+			messenger = JxtaServicesProvider.getInstance().getEndpointService().getMessenger(addr);
+			if( messenger == null ) {
+				LOG.error("Wanted to send message to unknown peer {}", destinationPeer);
+				return;
+			}
+			
+			messengerMap.put(destinationPeer, messenger);
 		}
 		
 		if( messenger.isClosed() ) {
