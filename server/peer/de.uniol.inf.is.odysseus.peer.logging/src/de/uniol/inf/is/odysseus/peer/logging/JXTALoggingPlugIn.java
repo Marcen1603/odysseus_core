@@ -1,23 +1,24 @@
 package de.uniol.inf.is.odysseus.peer.logging;
 
-import org.apache.log4j.Logger;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 
 public class JXTALoggingPlugIn implements BundleActivator {
 
+	private static final P2PNetworkManagerListener p2pNetworkManagerListener = new P2PNetworkManagerListener();
+	
 	private static IPeerCommunicator peerCommunicator;
 	private static IP2PDictionary p2pDictionary;
 	private static IAdvertisementManager advertisementManager;
 	private static IJxtaServicesProvider jxtaServicesProvider;
-
-	private JXTAAppender jxtaAppender;
-
+	private static IP2PNetworkManager p2pNetworkManager;
+	
 	// called by OSGi-DS
 	public static void bindPeerCommunicator(IPeerCommunicator serv) {
 		peerCommunicator = serv;
@@ -66,18 +67,20 @@ public class JXTALoggingPlugIn implements BundleActivator {
 		}
 	}
 	
-	@Override
-	public void start(BundleContext bundleContext) throws Exception {
-		jxtaAppender = new JXTAAppender();
-		
-		Logger.getRootLogger().addAppender(jxtaAppender);
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		p2pNetworkManager = serv;
+		p2pNetworkManager.addListener(p2pNetworkManagerListener);
 	}
 
-	@Override
-	public void stop(BundleContext bundleContext) throws Exception {
-		Logger.getRootLogger().removeAppender(jxtaAppender);
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (p2pNetworkManager == serv) {
+			p2pNetworkManager.removeListener(p2pNetworkManagerListener);
+			p2pNetworkManager = null;
+		}
 	}
-
+	
 	public static IPeerCommunicator getPeerCommunicator() {
 		return peerCommunicator;
 	}
@@ -92,5 +95,17 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	
 	public static IJxtaServicesProvider getJxtaServicesProvider() {
 		return jxtaServicesProvider;
+	}
+	
+	public static IP2PNetworkManager getP2PNetworkManager() {
+		return p2pNetworkManager;
+	}
+	
+	@Override
+	public void start(BundleContext bundleContext) throws Exception {
+	}
+
+	@Override
+	public void stop(BundleContext bundleContext) throws Exception {
 	}
 }
