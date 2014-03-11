@@ -13,12 +13,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
+import de.uniol.inf.is.odysseus.generator.StreamServer;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.IMultiValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.ISingleValueGenerator;
@@ -224,13 +226,71 @@ public class GenericProvider extends AbstractDataGenerator {
     }
 
     public static void main(final String[] args) {
-        Activator activator = new Activator();
+        Map<String, String> options = new HashMap<>();
+        options.put("p", "port");
+        options.put("f", "freq");
+        options.put("s", "schema");
+        int port = 54325;
+        long frequency = 1000l;
+        String schemaFile = "schema.txt";
+        for (int i = 0; i < args.length; i++) {
+            switch (args[i].charAt(0)) {
+                case '-':
+                    String argstring = null;
+                    if (args[i].charAt(1) == '-') {
+                        argstring = args[i].toString();
+                        argstring = argstring.substring(2, argstring.length());
+                    }
+                    else {
+                        argstring = args[i].toString();
+                        argstring = argstring.substring(1, argstring.length());
+                        if (options.containsKey(argstring)) {
+                            argstring = options.get(argstring);
+                        }
+                    }
+                    if (argstring != null) {
+                        if (argstring.equalsIgnoreCase("port")) {
+                            port = Integer.parseInt(args[i + 1]);
+                        }
+                        else if (argstring.equalsIgnoreCase("freq")) {
+                            frequency = Long.parseLong(args[i + 1]);
+                        }
+                        else if (argstring.equalsIgnoreCase("schema")) {
+                            schemaFile = args[i + 1];
+                        }
+                        else {
+                            System.err.println("Unknown parameter " + argstring);
+                            help();
+                            System.exit(1);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        System.out.println("Generator started with -p " + port + " -f " + frequency + " -s " + schemaFile);
+
         try {
-            activator.start(null);
+            StreamServer genericServer = new StreamServer(port, new GenericProvider(schemaFile, frequency));
+            genericServer.start();
         }
         catch (Exception e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
     }
 
+    public static void help(){
+        System.out.println("Usage: generator OPTION... \n" + 
+                "Runs the generator server.\n" + 
+                "\n" + 
+                "Possible arguments.\n" + 
+                "  -p, --port\t\tthe port to listen on\n" + 
+                "  -f, --freq\t\tthe data frequency in milliseconds\n" + 
+                "  -s, --schema\t\tthe path to the schema file\n" + 
+                " ");
+    }
 }
