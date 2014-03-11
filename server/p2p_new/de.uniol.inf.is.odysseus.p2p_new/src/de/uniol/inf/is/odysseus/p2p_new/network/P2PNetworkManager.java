@@ -318,4 +318,14 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 		deactiveDeltaTracker(manager.getNetPeerGroup());
 		deactiveDeltaTracker(peerGroup);
 	}
+	
+	@Override
+	public void addListener(IP2PNetworkListener listener) {
+		P2PNetworkListenerRegistry.getInstance().add(listener);
+	}
+	
+	@Override
+	public void removeListener(IP2PNetworkListener listener) {
+		P2PNetworkListenerRegistry.getInstance().remove(listener);
+	}
 }

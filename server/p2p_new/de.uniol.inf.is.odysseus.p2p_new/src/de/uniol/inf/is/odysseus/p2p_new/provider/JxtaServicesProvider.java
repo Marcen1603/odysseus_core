@@ -100,6 +100,11 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 		return instance != null && P2PNetworkManager.getInstance() != null && P2PNetworkManager.getInstance().isStarted();
 	}
 	
+	@Override
+	public boolean isActive() {
+		return isActivated();
+	}
+	
 	public EndpointService getEndpointService() {
 		return endpointService;
 	}

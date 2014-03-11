@@ -14,6 +14,8 @@ import net.jxta.protocol.PipeAdvertisement;
 
 public interface IJxtaServicesProvider {
 
+	public boolean isActive();
+	
 	public void publish(Advertisement adv) throws IOException;
 
 	public void publish(Advertisement adv, long lifetime, long expirationTime) throws IOException;

@@ -26,4 +26,7 @@ public interface IP2PNetworkManager {
 	public PeerID getLocalPeerID();
 	public PeerGroup getLocalPeerGroup();
 	public PeerGroupID getLocalPeerGroupID();
+	
+	public void addListener( IP2PNetworkListener listener );
+	public void removeListener( IP2PNetworkListener listener );
 }
