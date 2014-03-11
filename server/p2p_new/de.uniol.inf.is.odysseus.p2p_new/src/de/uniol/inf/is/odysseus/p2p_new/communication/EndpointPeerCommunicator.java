@@ -68,7 +68,7 @@ public class EndpointPeerCommunicator implements IPeerCommunicator, IP2PDictiona
 
 	// called by OSGi-DS
 	public void deactivate() {
-		LOG.debug("Activated");
+		LOG.debug("Deactivated");
 	}
 
 	@Override
