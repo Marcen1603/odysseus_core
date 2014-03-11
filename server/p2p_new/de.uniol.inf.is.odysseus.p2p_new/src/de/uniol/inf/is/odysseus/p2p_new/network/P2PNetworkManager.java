@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.p2p_new.network;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 import net.jxta.id.IDFactory;
 import net.jxta.impl.cm.CacheManager;
@@ -133,14 +131,6 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 	public void start() throws P2PNetworkException {
 		Preconditions.checkState(!started, "P2P network already started");
 	
-		ClassLoader cl = ClassLoader.getSystemClassLoader();
-
-		URL[] urls = ((URLClassLoader) cl).getURLs();
-
-		for (URL url : urls) {
-			System.err.println(url.getFile());
-		}
-
 		System.setProperty("net.jxta.impl.cm.cache.impl", "net.jxta.impl.cm.sql.H2AdvertisementCache");
 		System.setProperty("net.jxta.impl.cm.SrdiIndex.backend.impl", "net.jxta.impl.cm.InMemorySrdi");
 
