@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.logging;
 
+import net.jxta.document.AdvertisementFactory;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -103,6 +105,7 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
+		AdvertisementFactory.registerAdvertisementInstance(LoggingAdvertisement.getAdvertisementType(), new LoggingAdvertisementInstatiator());
 	}
 
 	@Override
