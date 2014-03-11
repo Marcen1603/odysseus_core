@@ -156,7 +156,15 @@ public class KalmanFilterAO extends UnaryLogicalOp {
         return this.stateTransitionExpression;
     }
 
-    public final double[][] getStateTransition() {
+    private final double[][] getStateTransition() {
+        if (!this.stateTransitionExpression.expression.getMEPExpression().isConstant()) {
+            final List<SDFAttribute> neededAttributes = this.stateTransitionExpression.expression.getAllAttributes();
+            final Object[] values = new Object[neededAttributes.size()];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = 1.0;
+            }
+            this.stateTransitionExpression.expression.bindVariables(values);
+        }
         return this.stateTransitionExpression.expression.getValue();
     }
 
@@ -181,9 +189,17 @@ public class KalmanFilterAO extends UnaryLogicalOp {
         return this.controlExpression;
     }
 
-    public final double[][] getControl() {
+    private final double[][] getControl() {
         if (this.controlExpression == null) {
             return null;
+        }
+        if (!this.controlExpression.expression.getMEPExpression().isConstant()) {
+            final List<SDFAttribute> neededAttributes = this.controlExpression.expression.getAllAttributes();
+            final Object[] values = new Object[neededAttributes.size()];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = 1.0;
+            }
+            this.controlExpression.expression.bindVariables(values);
         }
         return this.controlExpression.expression.getValue();
     }
@@ -209,7 +225,15 @@ public class KalmanFilterAO extends UnaryLogicalOp {
         return this.processNoiseExpression;
     }
 
-    public final double[][] getProcessNoise() {
+    private final double[][] getProcessNoise() {
+        if (!this.processNoiseExpression.expression.getMEPExpression().isConstant()) {
+            final List<SDFAttribute> neededAttributes = this.processNoiseExpression.expression.getAllAttributes();
+            final Object[] values = new Object[neededAttributes.size()];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = 1.0;
+            }
+            this.processNoiseExpression.expression.bindVariables(values);
+        }
         return this.processNoiseExpression.expression.getValue();
     }
 
@@ -234,7 +258,15 @@ public class KalmanFilterAO extends UnaryLogicalOp {
         return this.measurementExpression;
     }
 
-    public final double[][] getMeasurement() {
+    private final double[][] getMeasurement() {
+        if (!this.measurementExpression.expression.getMEPExpression().isConstant()) {
+            final List<SDFAttribute> neededAttributes = this.measurementExpression.expression.getAllAttributes();
+            final Object[] values = new Object[neededAttributes.size()];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = 1.0;
+            }
+            this.measurementExpression.expression.bindVariables(values);
+        }
         return this.measurementExpression.expression.getValue();
     }
 
@@ -259,7 +291,15 @@ public class KalmanFilterAO extends UnaryLogicalOp {
         return this.measurementNoiseExpression;
     }
 
-    public final double[][] getMeasurementNoise() {
+    private final double[][] getMeasurementNoise() {
+        if (!this.measurementNoiseExpression.expression.getMEPExpression().isConstant()) {
+            final List<SDFAttribute> neededAttributes = this.measurementNoiseExpression.expression.getAllAttributes();
+            final Object[] values = new Object[neededAttributes.size()];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = 1.0;
+            }
+            this.measurementNoiseExpression.expression.bindVariables(values);
+        }
         return this.measurementNoiseExpression.expression.getValue();
     }
 
@@ -367,6 +407,12 @@ public class KalmanFilterAO extends UnaryLogicalOp {
         final double[][] measurement = this.getMeasurement();
         final double[][] measurementNoise = this.getMeasurementNoise();
         final double[][] control = this.getControl();
+        if ((this.initialStateExpression != null) && (!this.initialStateExpression.expression.getMEPExpression().isConstant())) {
+            return false;
+        }
+        if ((this.initialErrorExpression != null) && (!this.initialErrorExpression.expression.getMEPExpression().isConstant())) {
+            return false;
+        }
         if ((stateTransition == null) || (stateTransition.length < 1) || (stateTransition.length != stateTransition[0].length)) {
             return false;
         }

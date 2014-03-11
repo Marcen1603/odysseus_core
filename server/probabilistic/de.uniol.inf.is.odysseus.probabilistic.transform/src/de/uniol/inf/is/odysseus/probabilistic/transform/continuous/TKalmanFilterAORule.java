@@ -53,8 +53,9 @@ public class TKalmanFilterAORule extends AbstractTransformationRule<KalmanFilter
     public final void execute(final KalmanFilterAO operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(config);
-        final IPhysicalOperator filterPO = new KalmanFilterPO<ITimeInterval>(operator.determineAttributesList(), operator.getStateTransition(), operator.getControl(), operator.getProcessNoise(),
-                operator.getMeasurement(), operator.getMeasurementNoise(), operator.getInitialState(), operator.getInitialError());
+        final IPhysicalOperator filterPO = new KalmanFilterPO<ITimeInterval>(operator.getInputSchema(), operator.determineAttributesList(), operator.getStateTransitionExpression().expression,
+                operator.getControlExpression() != null ? operator.getControlExpression().expression : null, operator.getProcessNoiseExpression().expression,
+                operator.getMeasurementExpression().expression, operator.getMeasurementNoiseExpression().expression, operator.getInitialState(), operator.getInitialError());
         this.defaultExecute(operator, filterPO, config, true, true);
     }
 
