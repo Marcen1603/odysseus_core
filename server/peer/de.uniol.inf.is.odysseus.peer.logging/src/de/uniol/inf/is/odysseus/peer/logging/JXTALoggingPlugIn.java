@@ -18,6 +18,10 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	private static final Logger LOG = LoggerFactory.getLogger(JXTALoggingPlugIn.class);
 	private static final P2PNetworkManagerListener P2P_NETWORKMANAGER_LISTENER = new P2PNetworkManagerListener();
 	private static final AdvertisementManagerListener ADVERTISEMENT_MANAGER_LISTENER = new AdvertisementManagerListener();
+	private static final LogMessageReceiver LOGMESSAGE_RECEIVER = new LogMessageReceiver();
+	private static final P2PDictionaryListener P2PDICTIONARY_LISTENER = new P2PDictionaryListener();
+	
+	public static final byte LOG_BYTE = 111;
 	
 	private static IPeerCommunicator peerCommunicator;
 	private static IP2PDictionary p2pDictionary;
@@ -29,6 +33,7 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	// called by OSGi-DS
 	public static void bindPeerCommunicator(IPeerCommunicator serv) {
 		peerCommunicator = serv;
+		peerCommunicator.addListener(LOGMESSAGE_RECEIVER);
 		
 		LOG.debug("Bound PeerCommunicator {}", serv);
 	}
@@ -36,7 +41,9 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	// called by OSGi-DS
 	public static void unbindPeerCommunicator(IPeerCommunicator serv) {
 		if (peerCommunicator == serv) {
+			peerCommunicator.removeListener(LOGMESSAGE_RECEIVER);
 			peerCommunicator = null;
+			
 			LOG.debug("Unbound PeerCommunicator {}", serv);
 		}
 	}
@@ -44,6 +51,7 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
 		p2pDictionary = serv;
+		p2pDictionary.addListener(P2PDICTIONARY_LISTENER);
 		
 		LOG.debug("Bound P2PDictionary {}", serv);
 	}
@@ -51,6 +59,7 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	// called by OSGi-DS
 	public static void unbindP2PDictionary(IP2PDictionary serv) {
 		if (p2pDictionary == serv) {
+			p2pDictionary.removeListener(P2PDICTIONARY_LISTENER);
 			p2pDictionary = null;
 			
 			LOG.debug("Unbound P2PDictionary {}", serv);

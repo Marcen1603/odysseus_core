@@ -19,11 +19,13 @@ public class P2PNetworkManagerListener implements IP2PNetworkListener {
 
 	@Override
 	public void networkStarted(IP2PNetworkManager sender) {
-		LOG.debug("P2PNetwork started. Adding JXTAAppender");
-		Logger.getRootLogger().addAppender(jxtaAppender);
-		
-		if( JXTALogConfigProvider.isLogging() ) {
+		LOG.debug("P2PNetwork started");		
+
+		if( LogConfigChecker.isLogging() ) {
 			publishLoggingAdvertisementAsync(sender);
+		} else {			
+			LOG.debug("Adding JXTAAppender");
+			Logger.getRootLogger().addAppender(jxtaAppender);
 		}
 	}
 

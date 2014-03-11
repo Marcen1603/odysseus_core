@@ -8,12 +8,12 @@ import com.google.common.base.Strings;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 
 
-public class JXTALogConfigProvider {
+public class LogConfigChecker {
 
 	private static final String LOGACTIVE_SYS_PROPERTY = "peer.log";
-	private static final Logger LOG = LoggerFactory.getLogger(JXTALogConfigProvider.class);
+	private static final Logger LOG = LoggerFactory.getLogger(LogConfigChecker.class);
 	
-	private JXTALogConfigProvider() {
+	private LogConfigChecker() {
 	}
 	
 	public static boolean isLogging() {
