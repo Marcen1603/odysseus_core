@@ -36,6 +36,7 @@ import org.apache.commons.math3_patch.filter.KalmanFilterPatched;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -222,89 +223,35 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
         return OutputMode.NEW_ELEMENT;
     }
 
-    private Object getAttribute(ProbabilisticTuple<T> object, VarHelper var) {
+    private ProbabilisticTuple<T> getObject(final ProbabilisticTuple<T> object, final VarHelper var) {
         ProbabilisticTuple<T> obj = object;
-        if (lastObjects.size() > var.objectPosToUse) {
-            obj = lastObjects.get(var.objectPosToUse);
+        if (this.lastObjects.size() > var.objectPosToUse) {
+            obj = this.lastObjects.get(var.objectPosToUse);
         }
-        if (obj != null) {
-            return obj.getAttribute(var.pos);
-        }
-        return null;
+        return obj;
     }
 
-    private void updateStateTransition(final ProbabilisticTuple<T> object) {
-        final Object[] values = new Object[this.stateTransitionVariables.length];
-        for (int j = 0; j < this.stateTransitionVariables.length; ++j) {
-            values[j] = getAttribute(object, this.stateTransitionVariables[j]);
-        }
-        try {
-            this.stateTransitionExpression.bindMetaAttribute(object.getMetadata());
-            this.stateTransitionExpression.bindAdditionalContent(object.getAdditionalContent());
-            this.stateTransitionExpression.bindVariables(values);
-            final double[][] out = this.stateTransitionExpression.getValue();
-            for (int i = 0; i < this.stateTransitionRef.length; i++) {
-                System.arraycopy(out[i], 0, this.stateTransitionRef[i], 0, out[i].length);
+    private void update(final ProbabilisticTuple<T> object, final VarHelper[] variables, final SDFExpression expression, final double[][] ref) {
+        final Object[] values = new Object[variables.length];
+        final IMetaAttribute[] meta = new IMetaAttribute[variables.length];
+        for (int j = 0; j < variables.length; ++j) {
+            final ProbabilisticTuple<T> obj = this.getObject(object, variables[j]);
+            if (obj != null) {
+                values[j] = obj.getAttribute(variables[j].pos);
+                meta[j] = obj.getMetadata();
             }
         }
-        catch (Exception e) {
-
+        try {
+            expression.bindMetaAttribute(object.getMetadata());
+            expression.bindAdditionalContent(object.getAdditionalContent());
+            expression.bindVariables(meta, values);
+            final double[][] out = expression.getValue();
+            for (int i = 0; i < ref.length; i++) {
+                System.arraycopy(out[i], 0, ref[i], 0, out[i].length);
+            }
         }
-    }
-
-    private void updateControl(final ProbabilisticTuple<T> object) {
-        final Object[] values = new Object[this.controlVariables.length];
-        for (int j = 0; j < this.controlVariables.length; ++j) {
-            values[j] = getAttribute(object, this.controlVariables[j]);
-        }
-        this.controlExpression.bindMetaAttribute(object.getMetadata());
-        this.controlExpression.bindAdditionalContent(object.getAdditionalContent());
-        this.controlExpression.bindVariables(values);
-        final double[][] out = this.controlExpression.getValue();
-        for (int i = 0; i < this.controlRef.length; i++) {
-            System.arraycopy(out[i], 0, this.controlRef[i], 0, out[i].length);
-        }
-    }
-
-    private void updateProcessNoise(final ProbabilisticTuple<T> object) {
-        final Object[] values = new Object[this.processNoiseVariables.length];
-        for (int j = 0; j < this.processNoiseVariables.length; ++j) {
-            values[j] = getAttribute(object, this.processNoiseVariables[j]);
-        }
-        this.processNoiseExpression.bindMetaAttribute(object.getMetadata());
-        this.processNoiseExpression.bindAdditionalContent(object.getAdditionalContent());
-        this.processNoiseExpression.bindVariables(values);
-        final double[][] out = this.processNoiseExpression.getValue();
-        for (int i = 0; i < this.processNoiseRef.length; i++) {
-            System.arraycopy(out[i], 0, this.processNoiseRef[i], 0, out[i].length);
-        }
-    }
-
-    private void updateMeasurementNoise(final ProbabilisticTuple<T> object) {
-        final Object[] values = new Object[this.measurementNoiseVariables.length];
-        for (int j = 0; j < this.measurementNoiseVariables.length; ++j) {
-            values[j] = getAttribute(object, this.measurementNoiseVariables[j]);
-        }
-        this.measurementNoiseExpression.bindMetaAttribute(object.getMetadata());
-        this.measurementNoiseExpression.bindAdditionalContent(object.getAdditionalContent());
-        this.measurementNoiseExpression.bindVariables(values);
-        final double[][] out = this.measurementNoiseExpression.getValue();
-        for (int i = 0; i < this.measurementNoiseRef.length; i++) {
-            System.arraycopy(out[i], 0, this.measurementNoiseRef[i], 0, out[i].length);
-        }
-    }
-
-    private void updateMeasurement(final ProbabilisticTuple<T> object) {
-        final Object[] values = new Object[this.measurementVariables.length];
-        for (int j = 0; j < this.measurementVariables.length; ++j) {
-            values[j] = getAttribute(object, this.measurementVariables[j]);
-        }
-        this.measurementExpression.bindMetaAttribute(object.getMetadata());
-        this.measurementExpression.bindAdditionalContent(object.getAdditionalContent());
-        this.measurementExpression.bindVariables(values);
-        final double[][] out = this.measurementExpression.getValue();
-        for (int i = 0; i < this.measurementRef.length; i++) {
-            System.arraycopy(out[i], 0, this.measurementRef[i], 0, out[i].length);
+        catch (final Exception e) {
+            KalmanFilterPO.LOG.error(String.format("Unable to update %s with %s because of %s", expression, object, e.getMessage()), e);
         }
     }
 
@@ -318,7 +265,6 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
             expression.bindVariables(values);
         }
         return expression.getValue();
-
     }
 
     /**
@@ -327,24 +273,24 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
     @SuppressWarnings("unchecked")
     @Override
     protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
-        if (lastObjects.size() > maxHistoryElements) {
-            lastObjects.removeLast();
+        if (this.lastObjects.size() > this.maxHistoryElements) {
+            this.lastObjects.removeLast();
         }
-        lastObjects.addFirst(object);
+        this.lastObjects.addFirst(object);
         if (!this.stateTransitionExpression.getMEPExpression().isConstant()) {
-            this.updateStateTransition(object);
+            this.update(object, this.stateTransitionVariables, this.stateTransitionExpression, this.stateTransitionRef);
         }
         if ((this.controlExpression != null) && (!this.controlExpression.getMEPExpression().isConstant())) {
-            this.updateControl(object);
+            this.update(object, this.controlVariables, this.controlExpression, this.controlRef);
         }
         if (!this.processNoiseExpression.getMEPExpression().isConstant()) {
-            this.updateProcessNoise(object);
+            this.update(object, this.processNoiseVariables, this.processNoiseExpression, this.processNoiseRef);
         }
         if (!this.measurementNoiseExpression.getMEPExpression().isConstant()) {
-            this.updateMeasurementNoise(object);
+            this.update(object, this.measurementNoiseVariables, this.measurementNoiseExpression, this.measurementNoiseRef);
         }
         if (!this.measurementExpression.getMEPExpression().isConstant()) {
-            this.updateMeasurement(object);
+            this.update(object, this.measurementVariables, this.measurementExpression, this.measurementRef);
         }
         final NormalDistributionMixture[] inputDistributions = object.getDistributions();
         final Object[] inputAttributes = object.getAttributes();
@@ -378,9 +324,9 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
             this.errorCovariance = this.filter.getErrorCovarianceMatrix().copy();
         }
         catch (SingularMatrixException | NonPositiveDefiniteMatrixException | MathUnsupportedOperationException e) {
-            // if (KalmanFilterPO.LOG.isTraceEnabled()) {
-            KalmanFilterPO.LOG.debug(e.getMessage() + ": " + this.filter.getErrorCovarianceMatrix(), e);
-            // }
+            if (KalmanFilterPO.LOG.isDebugEnabled()) {
+                KalmanFilterPO.LOG.debug(e.getMessage() + ": " + this.filter.getErrorCovarianceMatrix(), e);
+            }
             // Take the last estimated covariance
             component = new MultivariateNormalDistribution(state, this.errorCovariance.getData());
         }
@@ -466,11 +412,11 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
 
     private VarHelper initAttribute(final SDFSchema schema, final SDFAttribute curAttribute) {
         if (curAttribute.getNumber() > 0) {
-            int pos = curAttribute.getNumber();
-            if (pos > maxHistoryElements) {
-                maxHistoryElements = pos + 1;
+            final int pos = curAttribute.getNumber();
+            if (pos > this.maxHistoryElements) {
+                this.maxHistoryElements = pos + 1;
             }
-            int index = schema.indexOf(curAttribute);
+            final int index = schema.indexOf(curAttribute);
             return new VarHelper(index, pos);
         }
         else {
