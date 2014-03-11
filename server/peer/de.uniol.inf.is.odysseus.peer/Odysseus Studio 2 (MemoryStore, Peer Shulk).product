@@ -19,7 +19,7 @@ http://odysseus.informatik.uni-oldenburg.de/
 
    <launcherArgs>
       <programArgs>-clean -console -debug -nl en -data @noDefault</programArgs>
-      <vmArgs>-Xms1000M -Xmx1000M -Dorg.osgi.framework.os.name=win32 -Dpeer.name=Shulk -Dpeer.group.name=Xenoblade -Dpeer.port=40001 -Dpeer.rdv.address=none -Dpeer.rdv.active=true -XX:+HeapDumpOnOutOfMemoryError</vmArgs>
+      <vmArgs>-Xms1000M -Xmx1000M -Dorg.osgi.framework.os.name=win32 -Dpeer.name=Shulk -Dpeer.group.name=Xenoblade -Dpeer.port=40001 -Dpeer.rdv.address=none -Dpeer.rdv.active=true -XX:+HeapDumpOnOutOfMemoryError -Dpeer.log=true</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
