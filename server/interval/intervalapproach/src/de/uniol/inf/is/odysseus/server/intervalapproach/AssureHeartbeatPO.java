@@ -2,6 +2,9 @@ package de.uniol.inf.is.odysseus.server.intervalapproach;
 
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -28,6 +31,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 		extends AbstractPipe<R, R> {
 
+	static final Logger LOG = LoggerFactory.getLogger(AssureHeartbeatPO.class);
+	
 	private long realTimeDelay;
 	private long applicationTimeDelay;
 	private boolean sendAlwaysHeartbeat = false;
@@ -102,8 +107,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 				generateHeartbeat.start();
 			}
 		}
-//		System.err.println("process next " + object + " watermark "
-//				+ getWatermark());
+
 		PointInTime marker = object.getMetadata().getStart();
 		if (marker.afterOrEquals(getWatermark())) {
 			transfer(object);
@@ -112,7 +116,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 			}
 			restartTimer();
 		} else {
-			//System.err.println("Object " + object + " rejected");
+			LOG.warn("Obejct removed because out of order "+object);
 			transfer(object, 99);
 		}
 	}
@@ -124,13 +128,21 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		sendPunctuation(punctuation);
+		PointInTime marker = punctuation.getTime();
+		if (marker.afterOrEquals(getWatermark())){
+			sendPunctuation(punctuation);
+			if (!allowOutofOrder){
+				setWatermark(marker);
+			}
+			restartTimer();
+		}else{
+			LOG.warn("Punctuation removed because out of order "+punctuation);
+		}
 	}
 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation) {
 		PointInTime timestamp = punctuation.getTime();
-		//System.err.println("Send Punctuation " + timestamp);
 		if (timestamp.afterOrEquals(getWatermark())) {
 			super.sendPunctuation(punctuation);
 			setWatermark(timestamp);
