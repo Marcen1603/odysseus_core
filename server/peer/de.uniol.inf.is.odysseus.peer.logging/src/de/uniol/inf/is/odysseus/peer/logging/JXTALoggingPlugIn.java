@@ -5,6 +5,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
+import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 
@@ -13,6 +14,7 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	private static IPeerCommunicator peerCommunicator;
 	private static IP2PDictionary p2pDictionary;
 	private static IAdvertisementManager advertisementManager;
+	private static IJxtaServicesProvider jxtaServicesProvider;
 
 	private JXTAAppender jxtaAppender;
 
@@ -52,6 +54,18 @@ public class JXTALoggingPlugIn implements BundleActivator {
 		}
 	}
 	
+	// called by OSGi-DS
+	public static void bindJxtaServicesProvider(IJxtaServicesProvider serv) {
+		jxtaServicesProvider = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindJxtaServicesProvider(IJxtaServicesProvider serv) {
+		if (jxtaServicesProvider == serv) {
+			jxtaServicesProvider = null;
+		}
+	}
+	
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		jxtaAppender = new JXTAAppender();
@@ -74,5 +88,9 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	
 	public static IAdvertisementManager getAdvertisementManager() {
 		return advertisementManager;
+	}
+	
+	public static IJxtaServicesProvider getJxtaServicesProvider() {
+		return jxtaServicesProvider;
 	}
 }
