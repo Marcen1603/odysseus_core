@@ -49,7 +49,7 @@ public class MovingCircleGenerator extends AbstractMultiValueGenerator {
      * @param errorModel
      */
     public MovingCircleGenerator(final IErrorModel errorModel, final double diameter, final double x, final double y) {
-        this(errorModel, diameter, 0.01, x, y);
+        this(errorModel, diameter, 1.0, x, y);
     }
 
     /**

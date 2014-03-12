@@ -34,7 +34,7 @@ public class MovingPolynomialGenerator extends AbstractMultiValueGenerator {
      * @param errorModel
      */
     public MovingPolynomialGenerator(final IErrorModel errorModel, final Double[] coefficients) {
-        this(errorModel, coefficients, 0.0, 0.01);
+        this(errorModel, coefficients, 0.0, 1.0);
     }
 
     public MovingPolynomialGenerator(final IErrorModel errorModel, final Double[] coefficients, final double increase) {
