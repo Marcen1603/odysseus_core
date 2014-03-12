@@ -197,6 +197,15 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
     }
 
     /**
+     * @param object
+     */
+    public ProbabilisticTuple(Tuple<T> copy) {
+        super(copy);
+        Preconditions.checkNotNull(copy);
+        this.distributions = new NormalDistributionMixture[0];
+    }
+
+    /**
      * Gets the distributions at the given index.
      * 
      * @param index

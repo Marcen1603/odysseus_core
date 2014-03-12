@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.util.Pair;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.Probabi
  * @author Christian Kuka <christian@kuka.cc>
  * @param <T>
  */
-public class AssignDistributionPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
+public class AssignDistributionPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, ProbabilisticTuple<T>> {
     /** The attribute positions. */
     private final int[] attributes;
     /** The variance. */
@@ -80,9 +81,9 @@ public class AssignDistributionPO<T extends ITimeInterval> extends AbstractPipe<
      * process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
      */
     @Override
-    protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
-        final NormalDistributionMixture[] distributions = object.getDistributions();
-        final ProbabilisticTuple<T> outputVal = object.clone();
+    protected final void process_next(final Tuple<T> object, final int port) {
+        final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(object);
+        final NormalDistributionMixture[] distributions = outputVal.getDistributions();
 
         final double[] means = new double[this.attributes.length];
         for (int i = 0; i < this.attributes.length; i++) {
@@ -121,7 +122,7 @@ public class AssignDistributionPO<T extends ITimeInterval> extends AbstractPipe<
      * ()
      */
     @Override
-    public final AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> clone() {
+    public final AbstractPipe<Tuple<T>, ProbabilisticTuple<T>> clone() {
         return new AssignDistributionPO<T>(this);
     }
 
