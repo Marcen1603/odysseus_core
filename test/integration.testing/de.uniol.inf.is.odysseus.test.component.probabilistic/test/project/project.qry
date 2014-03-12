@@ -10,8 +10,7 @@ data = ACCESS({
     protocol='SimpleCSV',
     dataHandler='ProbabilisticTuple', 
     options=[
-       /// ['filename', '${BUNDLE-ROOT}\test\project\input0.csv'], 
-        ['filename', '${ROOT}/input0.csv'], 
+        ['filename', '${BUNDLE-ROOT}\test\project\input0.csv'], 
         ['csv.delimiter', ','],
         ['csv.trim', 'true']
         ], 
@@ -23,4 +22,3 @@ data = ACCESS({
 
 in = Distribution({attributes = ['x', 'y'], variance = 'variance'}, Map({expressions = [['timestamp','timestamp'], ['x','x'], ['y','y'], ['[1.0, 0.5; 0.5, 1.0]','variance']]}, data))
 out = project({attributes = ['x']}, in)
-
