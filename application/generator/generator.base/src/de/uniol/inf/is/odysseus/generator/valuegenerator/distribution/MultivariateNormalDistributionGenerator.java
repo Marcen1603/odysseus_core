@@ -15,6 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.generator.valuegenerator.distribution;
 
+import java.util.Objects;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.distribution.MultivariateRealDistribution;
 
@@ -64,7 +67,7 @@ public class MultivariateNormalDistributionGenerator extends AbstractMultiValueG
      *             if standardDeviation <= 0.
      * 
      */
-    public MultivariateNormalDistributionGenerator(IErrorModel errorModel, double[] means, double[][] covariances) {
+    public MultivariateNormalDistributionGenerator(IErrorModel errorModel, Double[] means, Double[][] covariances) {
         this(errorModel, means, covariances, 1l);
     }
 
@@ -84,9 +87,15 @@ public class MultivariateNormalDistributionGenerator extends AbstractMultiValueG
      *             if standardDeviation <= 0.
      * 
      */
-    public MultivariateNormalDistributionGenerator(IErrorModel errorModel, double[] means, double[][] covariances, long seed) {
+    public MultivariateNormalDistributionGenerator(IErrorModel errorModel, Double[] means, Double[][] covariances, long seed) {
         super(errorModel);
-        this.distribution = new MultivariateNormalDistribution(means, covariances);
+        Objects.requireNonNull(means);
+        Objects.requireNonNull(covariances);
+        double[][] covariancesPrimitives = new double[covariances.length][];
+        for (int i = 0; i < covariances.length; i++) {
+            covariancesPrimitives[i] = ArrayUtils.toPrimitive(covariances[i]);
+        }
+        this.distribution = new MultivariateNormalDistribution(ArrayUtils.toPrimitive(means), covariancesPrimitives);
         this.seed = seed;
     }
 
@@ -97,6 +106,7 @@ public class MultivariateNormalDistributionGenerator extends AbstractMultiValueG
     public int dimension() {
         return this.distribution.getDimension();
     }
+
     /**
      * 
      * {@inheritDoc}

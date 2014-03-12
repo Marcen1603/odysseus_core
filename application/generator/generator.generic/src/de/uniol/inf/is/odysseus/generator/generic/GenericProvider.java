@@ -183,7 +183,7 @@ public class GenericProvider extends AbstractDataGenerator {
                                         else if (params[i - 1] == double.class) {
                                             args[i - 1] = Double.parseDouble(attributeParameter[i]);
                                         }
-                                        else if (params[i - 1] == double[].class) {
+                                        else if (params[i - 1] == Double[].class) {
                                             final String[] column = attributeParameter[i].split(",");
                                             final Double[] value = new Double[column.length];
                                             for (int c = 0; c < column.length; c++) {
@@ -191,7 +191,7 @@ public class GenericProvider extends AbstractDataGenerator {
                                             }
                                             args[i - 1] = value;
                                         }
-                                        else if (params[i - 1] == double[][].class) {
+                                        else if (params[i - 1] == Double[][].class) {
                                             final String[] row = attributeParameter[i].split(";");
                                             if (row.length > 0) {
                                                 String[] column = row[0].split(",");
