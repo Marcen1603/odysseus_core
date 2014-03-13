@@ -56,7 +56,8 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 	@SuppressWarnings("unchecked")
 	private void loadCache() throws IOException {
 		File f = FileUtils.openOrCreateFile(path);
-		ObjectInputStream in = null;
+		ObjectInputStream in = null; 
+		
 		try {			
 			in = new OsgiObjectInputStream(new FileInputStream(f));
 			IDType key = null;			
