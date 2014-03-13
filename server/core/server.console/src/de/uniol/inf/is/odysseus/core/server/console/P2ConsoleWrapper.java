@@ -55,58 +55,62 @@ public class P2ConsoleWrapper {
 		/* 2. check for updates */
 
 		// run update checks causing I/O
-		final IStatus status = operation.resolveModal(monitor);
+		try {
+			final IStatus status = operation.resolveModal(monitor);
 
-		// failed to find updates (inform user and exit)
-		if (status.getCode() == UpdateOperation.STATUS_NOTHING_TO_UPDATE) {
-			System.out.println("No update. No updates for the current installation have been found");
-			return Status.CANCEL_STATUS;
-		}
-
-		/* 3. Ask if updates should be installed and run installation */
-
-		// found updates, ask user if to install?
-		if (status.isOK() && status.getSeverity() != IStatus.ERROR) {
-
-			String updates = "";
-			Update[] possibleUpdates = operation.getPossibleUpdates();
-			for (Update update : possibleUpdates) {
-				updates += update + "\n";
-			}
-			System.out.println("Updates for: "+updates);
-			doInstall = true;
-		}
-
-		// start installation
-		if (doInstall) {
-			final ProvisioningJob provisioningJob = operation.getProvisioningJob(monitor);
-			// updates cannot run from within Eclipse IDE!!!
-			if (provisioningJob == null) {
-				System.err.println("Running update from within Eclipse IDE? This won't work!!! Use exported product!");
-				throw new NullPointerException();
+			// failed to find updates (inform user and exit)
+			if (status.getCode() == UpdateOperation.STATUS_NOTHING_TO_UPDATE) {
+				System.out.println("No update. No updates for the current installation have been found");
+				return Status.CANCEL_STATUS;
 			}
 
-			// register a job change listener to track
-			// installation progress and notify user upon success
-			provisioningJob.addJobChangeListener(new JobChangeAdapter() {
-				@Override
-				public void done(IJobChangeEvent event) {
-					if (event.getResult().isOK()) {
-						boolean restart = true;
-						//
-						// "Updates installed, restart?",
-						// "Updates have been installed successfully, do you want to restart?");
-						if (restart) {
-							System.out.println("TODO: restart!");
-							// workbench.restart();
-						}
+			/* 3. Ask if updates should be installed and run installation */
 
-					}
-					super.done(event);
+			// found updates, ask user if to install?
+			if (status.isOK() && status.getSeverity() != IStatus.ERROR) {
+
+				String updates = "";
+				Update[] possibleUpdates = operation.getPossibleUpdates();
+				for (Update update : possibleUpdates) {
+					updates += update + "\n";
 				}
-			});
+				System.out.println("Updates for: " + updates);
+				doInstall = true;
+			}
 
-			provisioningJob.schedule();
+			// start installation
+			if (doInstall) {
+				final ProvisioningJob provisioningJob = operation.getProvisioningJob(monitor);
+				// updates cannot run from within Eclipse IDE!!!
+				if (provisioningJob == null) {
+					System.err.println("Running update from within Eclipse IDE? This won't work!!! Use exported product!");
+					throw new NullPointerException();
+				}
+
+				// register a job change listener to track
+				// installation progress and notify user upon success
+				provisioningJob.addJobChangeListener(new JobChangeAdapter() {
+					@Override
+					public void done(IJobChangeEvent event) {
+						if (event.getResult().isOK()) {
+							boolean restart = true;
+							//
+							// "Updates installed, restart?",
+							// "Updates have been installed successfully, do you want to restart?");
+							if (restart) {
+								System.out.println("TODO: restart!");
+								// workbench.restart();
+							}
+
+						}
+						super.done(event);
+					}
+				});
+
+				provisioningJob.schedule();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return Status.OK_STATUS;
 
