@@ -24,7 +24,7 @@ import org.osgi.framework.ServiceReference;
 
 public class P2ConsoleWrapper {
 
-	private static final String REPOSITORY_LOC = "https://odysseus.informatik.uni-oldenburg.de/update";
+	private static final String REPOSITORY_LOC = "http://odysseus.informatik.uni-oldenburg.de/update";
 
 	public static IStatus checkForUpdates(CommandInterpreter ci) throws OperationCanceledException {
 		BundleContext context = Activator.getContext();
