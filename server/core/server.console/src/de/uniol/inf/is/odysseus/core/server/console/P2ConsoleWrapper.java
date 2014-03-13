@@ -38,17 +38,14 @@ public class P2ConsoleWrapper {
 //	}
 
 	public static List<IInstallableUnit> getInstalledFeatures(){
-		BundleContext context = Activator.getContext();
-		IProvisioningAgent agent = getAgent(context);
-		IProfileRegistry regProfile = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
-		IProfile profileSelf = regProfile.getProfile(IProfileRegistry.SELF);
-		String pID = Platform.getProduct().getId();
-		IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(pID);
-		IQueryResult<IInstallableUnit> allIUs = profileSelf.query(query, new NullProgressMonitor());
-
-		List<IInstallableUnit> units = new ArrayList<>();
-		units.addAll(allIUs.toUnmodifiableSet());
-		return units;		
+		List<IInstallableUnit> units = getInstallableUnits();
+		List<IInstallableUnit> features = new ArrayList<>();
+		for(IInstallableUnit unit :units){
+			if(unit.getId().contains("feature")){
+				features.add(unit);
+			}
+		}
+		return features;
 	}
 	
 	public static List<IInstallableUnit> getInstallableUnits() {
