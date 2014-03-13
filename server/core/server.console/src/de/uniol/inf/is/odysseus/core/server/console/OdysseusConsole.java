@@ -1443,10 +1443,6 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 
 	}
 	
-	public void _updateOLD(CommandInterpreter ci){
-		P2ConsoleWrapper.checkForUpdatesOLD(ci);
-	}
-
 	/**
 	 * Reads a file from the current working directory and executes each line as
 	 * if it comes from the console

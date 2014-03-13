@@ -56,21 +56,21 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 	@SuppressWarnings("unchecked")
 	private void loadCache() throws IOException {
 		File f = FileUtils.openOrCreateFile(path);
-		ObjectInputStream in = null; 
+		OsgiObjectInputStream in = null; 
 		
 		try {			
-			in = new OsgiObjectInputStream(new FileInputStream(f));
+			FileInputStream fis = new FileInputStream(f);
+			in = new OsgiObjectInputStream(fis);
 			IDType key = null;			
 			try {
 				while ((key = (IDType) in.readObject()) != null) {
 					// Could be unreadable input
-					try {
+					try {						
 						STORETYPE element = (STORETYPE) in.readObject();
 						cache.put(key, element);
 						// Object that have been written must be serializable
 						// ;-)
-						serializableTestPassed.put(key, Boolean.TRUE);
-
+						serializableTestPassed.put(key, Boolean.TRUE);						
 					} catch (Exception e) {
 						logger.error("Error reading from " + path + " "
 								+ e.getMessage());
