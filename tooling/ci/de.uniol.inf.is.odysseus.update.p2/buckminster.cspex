@@ -11,6 +11,7 @@
                 <property key="source" value="${buckminster.output}/site.p2/" />
                 <property key="destination" value="/opt/jenkins/output/nightly/update" />
             </properties>
+            
             <prerequisites alias="repository">
                 <attribute name="site.p2" />
             </prerequisites>
