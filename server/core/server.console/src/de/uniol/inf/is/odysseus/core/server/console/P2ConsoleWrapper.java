@@ -2,27 +2,69 @@ package de.uniol.inf.is.odysseus.core.server.console;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.engine.IProfile;
+import org.eclipse.equinox.p2.engine.IProfileRegistry;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.operations.ProvisioningJob;
 import org.eclipse.equinox.p2.operations.ProvisioningSession;
 import org.eclipse.equinox.p2.operations.Update;
 import org.eclipse.equinox.p2.operations.UpdateOperation;
+import org.eclipse.equinox.p2.query.IQuery;
+import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
-import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 public class P2ConsoleWrapper {
 
 	private static final String REPOSITORY_LOC = "http://odysseus.informatik.uni-oldenburg.de/update";
+
+//	public static IStatus installFeature(String id) {
+//		
+//	}
+
+	public static List<IInstallableUnit> getInstalledFeatures(){
+		BundleContext context = Activator.getContext();
+		IProvisioningAgent agent = getAgent(context);
+		IProfileRegistry regProfile = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
+		IProfile profileSelf = regProfile.getProfile(IProfileRegistry.SELF);
+		String pID = Platform.getProduct().getId();
+		IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(pID);
+		IQueryResult<IInstallableUnit> allIUs = profileSelf.query(query, new NullProgressMonitor());
+
+		List<IInstallableUnit> units = new ArrayList<>();
+		units.addAll(allIUs.toUnmodifiableSet());
+		return units;		
+	}
+	
+	public static List<IInstallableUnit> getInstallableUnits() {
+		BundleContext context = Activator.getContext();
+		IProvisioningAgent agent = getAgent(context);
+		IProfileRegistry regProfile = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
+		IProfile profileSelf = regProfile.getProfile(IProfileRegistry.SELF);
+
+		IQuery<IInstallableUnit> query = QueryUtil.createIUAnyQuery();
+		IQueryResult<IInstallableUnit> allIUs = profileSelf.query(query, new NullProgressMonitor());
+
+		List<IInstallableUnit> units = new ArrayList<>();
+		units.addAll(allIUs.toUnmodifiableSet());
+		Collections.sort(units);
+		return units;		
+	}
 
 	public static IStatus checkForUpdates(CommandInterpreter ci) throws OperationCanceledException {
 		BundleContext context = Activator.getContext();
@@ -92,12 +134,8 @@ public class P2ConsoleWrapper {
 					public void done(IJobChangeEvent event) {
 						if (event.getResult().isOK()) {
 							boolean restart = true;
-							//
-							// "Updates installed, restart?",
-							// "Updates have been installed successfully, do you want to restart?");
 							if (restart) {
-								System.out.println("Updates we're installed. Restarting Odysseus...");
-								 PlatformUI.getWorkbench().restart();
+								System.out.println("Updates we're installed. You have to restart Odysseus for the changed to take effekt!");								
 							}
 
 						}
@@ -114,8 +152,6 @@ public class P2ConsoleWrapper {
 
 	}
 
-	
-	
 	public static IProvisioningAgent getAgent(BundleContext context) {
 		IProvisioningAgent agent = null;
 
@@ -130,7 +166,5 @@ public class P2ConsoleWrapper {
 
 		return agent;
 	}
-
-
 
 }

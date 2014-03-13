@@ -36,6 +36,7 @@ import java.util.TreeMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.osgi.framework.Bundle;
@@ -1300,6 +1301,24 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	@Help(parameter = "", description = "tries to update odysseus")
 	public void _updateOdysseus(CommandInterpreter ci) {
 		P2ConsoleWrapper.checkForUpdates(ci);
+	}
+	
+	@Help(parameter = "", description = "lists current installed bundles")
+	public void _installedBundles(CommandInterpreter ci) {
+		List<IInstallableUnit> units = P2ConsoleWrapper.getInstallableUnits();
+		ci.println("Following installable units are installed:");
+		for(IInstallableUnit unit : units){			
+			ci.println(" - "+unit);
+		}
+	}
+	
+	@Help(parameter = "", description = "lists current installed bundles")
+	public void _installedFeatures(CommandInterpreter ci) {
+		List<IInstallableUnit> units = P2ConsoleWrapper.getInstalledFeatures();
+		ci.println("Following features are installed:");
+		for(IInstallableUnit unit : units){			
+			ci.println(" - "+unit);
+		}
 	}
 
 	@Override
