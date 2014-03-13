@@ -81,7 +81,6 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.PrintGraphVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class OdysseusConsole implements CommandProvider, IPlanExecutionListener, IPlanModificationListener, IErrorEventListener, ICompilerListener {
@@ -259,6 +258,8 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		this.executor.addErrorEventListener(this);
 		this.executor.addPlanExecutionListener(this);
 		this.executor.addPlanModificationListener(this);
+		
+		currentUser = UserManagementProvider.getUsermanagement().getSessionManagement().loginSuperUser(null);
 	}
 
 	public void unbindExecutor(IExecutor executor) {
@@ -813,22 +814,23 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 
 	@Help(parameter = "<login username password>", description = "Login user with name, password and tenantname.")
 	public void _login(CommandInterpreter ci) {
-		String[] args = support.getArgs(ci);
-		try {
-			if (args.length == 3) {
-				ITenant tenant = UserManagementProvider.getTenant(args[2]);
-				currentUser = UserManagementProvider.getSessionmanagement().login(args[0], args[1].getBytes(), tenant);
-				if (currentUser != null) {
-					ci.println("User " + args[0] + " successfully logged in.");
-				} else {
-					ci.println("Error logging in user " + args[0]);
-				}
-			} else {
-				ci.println("Must be username and password");
-			}
-		} catch (Exception e) {
-			ci.println(e.getMessage());
-		}
+//		String[] args = support.getArgs(ci);
+//		try {
+//			if (args.length == 3) {
+//				ITenant tenant = UserManagementProvider.getTenant(args[2]);
+//				currentUser = UserManagementProvider.getSessionmanagement().login(args[0], args[1].getBytes(), tenant);
+//				if (currentUser != null) {
+//					ci.println("User " + args[0] + " successfully logged in.");
+//				} else {
+//					ci.println("Error logging in user " + args[0]);
+//				}
+//			} else {
+//				ci.println("Must be username and password");
+//			}
+//		} catch (Exception e) {
+//			ci.println(e.getMessage());
+//		}
+		currentUser = UserManagementProvider.getUsermanagement().getSessionManagement().loginSuperUser(null);
 	}
 
 	@Help(parameter = "<logout>", description = "Logout current user.")
