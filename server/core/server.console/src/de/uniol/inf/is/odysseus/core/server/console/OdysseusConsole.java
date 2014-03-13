@@ -54,17 +54,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.event.AbstractPlanExecutionEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
@@ -78,11 +73,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
-import de.uniol.inf.is.odysseus.core.server.util.PrintGraphVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({"rawtypes" })
 public class OdysseusConsole implements CommandProvider, IPlanExecutionListener, IPlanModificationListener, IErrorEventListener, ICompilerListener {
 
 	private static Logger logger = LoggerFactory.getLogger(OdysseusConsole.class);
@@ -219,31 +212,6 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		}
 	}
 
-	private String[][] nexmarkQ = new String[][] { {
-			// Q1
-			"SELECT b.auction, DolToEur(b.price) AS euroPrice, b.bidder, b.datetime FROM nexmark:bid [UNBOUNDED] AS b",
-			// Q2
-			"SELECT auction, price FROM nexmark:bid WHERE auction=7 OR auction=20 OR auction=21 OR auction=59 OR auction=87",
-			// Q3
-			"SELECT p.name, p.city, p.state, a.id FROM nexmark:auction [UNBOUNDED] AS a, nexmark:person [UNBOUNDED] AS p WHERE a.seller=p.id AND a.category < 150 AND (p.state='Oregon' OR p.state='Idaho' OR p.state='California')",
-			// Q4
-			"SELECT AVG(q.final) FROM nexmark:category AS c, (SELECT MAX(b.price) AS final, a.category FROM nexmark:auction [UNBOUNDED] AS a, nexmark:bid [UNBOUNDED] AS b  WHERE a.id = b.auction AND b.datetime < a.expires AND  a.expires < Now() GROUP BY a.id, a.category) AS q WHERE q.category = c.id GROUP BY c.id",
-			// Q7
-			"SELECT b.auction, b.price, b.bidder FROM nexmark:bid [SIZE 1000 ADVANCE 1000 TIME] AS b,(SELECT MAX(price) AS max_price FROM nexmark:bid [SIZE 1000 ADVANCE 1000 TIME]) AS sub WHERE sub.max_price = b.price",
-			// Q8
-			"SELECT p.id, p.name, a.reserve FROM nexmark:person [SIZE 12 HOURS ADVANCE 1 TIME] AS p, nexmark:auction [SIZE 12 HOURS ADVANCE 1 TIME] AS a WHERE p.id = a.seller" }, { // Q1
-			"SELECT b.auction, DolToEur(b.price) AS euroPrice, b.bidder, b.datetime FROM nexmark:bid2 [UNBOUNDED] AS b",
-					// Q2
-					"SELECT auction, price FROM nexmark:bid2 WHERE auction=7 OR auction=20 OR auction=21 OR auction=59 OR auction=87",
-					// Q3
-					"SELECT p.name, p.city, p.state, a.id FROM nexmark:auction2 [UNBOUNDED] AS a, nexmark:person2 [UNBOUNDED] AS p WHERE a.seller=p.id AND a.category < 150 AND (p.state='Oregon' OR p.state='Idaho' OR p.state='California')",
-					// Q4
-					"SELECT AVG(q.final) FROM nexmark:category2 AS c, (SELECT MAX(b.price) AS final, a.category FROM nexmark:auction2 [UNBOUNDED] AS a, nexmark:bid2 [UNBOUNDED] AS b  WHERE a.id = b.auction AND b.datetime < a.expires AND  a.expires < Now() GROUP BY a.id, a.category) AS q WHERE q.category = c.id GROUP BY c.id",
-					// Q7
-					"SELECT b.auction, b.price, b.bidder	FROM nexmark:bid2 [SIZE 1000 ADVANCE 1000 TIME] AS b,(SELECT MAX(price) AS max_price FROM nexmark:bid2 [SIZE 1000 ADVANCE 1000 TIME]) AS sub WHERE sub.max_price = b.price",
-					// Q8
-					"SELECT p.id, p.name, a.reserve FROM nexmark:person2 [SIZE 12 HOURS ADVANCE 1 TIME] AS p, nexmark:auction2 [SIZE 12 HOURS ADVANCE 1 TIME] AS a WHERE p.id = a.seller" } };
-
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(new TransformationConfiguration(ITimeInterval.class));
 
 	private LinkedList<Command> currentCommands;
@@ -258,7 +226,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		this.executor.addErrorEventListener(this);
 		this.executor.addPlanExecutionListener(this);
 		this.executor.addPlanModificationListener(this);
-		
+
 		currentUser = UserManagementProvider.getUsermanagement().getSessionManagement().loginSuperUser(null);
 	}
 
@@ -279,10 +247,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		throw new Exception("No parser found");
 	}
 
-	/**
-	 * _ExecutorInfo schreibt Informationen �ber die Ausf�hrungsumgebung in
-	 * die Konsole. Kann in der OSGi-Konsole verwendet werden.
-	 */
+
 	@Help(description = "show internal information about the executor")
 	public void _ExecutorInfo(CommandInterpreter ci) {
 		System.out.print(this.executor.getInfos());
@@ -416,7 +381,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 				String bufferName = args[0];
 				Set<String> list = this.executor.getRegisteredBufferPlacementStrategiesIDs(currentUser);
 				if (list.contains(bufferName)) {
-					this.executor.getConfiguration(currentUser).set(new ParameterBufferPlacementStrategy(executor.getBufferPlacementStrategy(bufferName,currentUser)));
+					this.executor.getConfiguration(currentUser).set(new ParameterBufferPlacementStrategy(executor.getBufferPlacementStrategy(bufferName, currentUser)));
 					ci.println("Strategy " + bufferName + " set.");
 					return;
 				}
@@ -661,84 +626,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		}
 	}
 
-	@Help(description = "register NIO nexmark sources and views")
-	public void _nmsn(CommandInterpreter ci) {
-		_nexmarkSourcesNIO(ci);
-	}
-
-	@Help(description = "register NIO nexmark sources and views")
-	public void _nexmarkSourcesNIO(CommandInterpreter ci) {
-		addCommand();
-		String[] q = new String[8];
-		q[0] = "CREATE STREAM nexmark:person2 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440";
-		q[4] = "CREATE STREAM nexmark:person2_v (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) FROM (SELECT * FROM nexmark:person2 [UNBOUNDED])";
-		q[1] = "CREATE STREAM nexmark:bid2 (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442";
-		q[5] = "CREATE STREAM nexmark:bid2_v (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) FROM (SELECT * FROM nexmark:bid2 [UNBOUNDED])";
-		q[2] = "CREATE STREAM nexmark:auction2 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441";
-		q[6] = "CREATE STREAM nexmark:auction2_v (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) FROM (SELECT * FROM nexmark:auction2 [UNBOUNDED])";
-		q[3] = "CREATE STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443";
-		q[7] = "CREATE STREAM nexmark:category2_v (id INTEGER, name STRING, description STRING, parentid INTEGER) FROM (SELECT * FROM nexmark:category2 [UNBOUNDED])";
-		for (String s : q) {
-			try {
-				resetBuildConfig();
-				this.executor.addQuery(s, parser(), currentUser, defaultBuildConfiguration, (Context) null);
-			} catch (PlanManagementException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		ci.println("Nexmark Sources with NIO added.");
-	}
-
-	@Help(description = "register nexmark sources")
-	public void _nms(CommandInterpreter ci) {
-		_nexmarkSources(ci);
-	}
-
-	@Help(description = "register nexmark sources")
-	public void _nexmarkSources(CommandInterpreter ci) {
-		addCommand();
-		String[] q = new String[4];
-		q[0] = "CREATE STREAM nexmark:person (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) SOCKET localhost : 65430";
-		q[1] = "CREATE STREAM nexmark:bid (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) SOCKET localhost : 65432";
-		q[2] = "CREATE STREAM nexmark:auction (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) SOCKET localhost : 65431";
-		q[3] = "CREATE STREAM nexmark:category (id INTEGER, name STRING, description STRING, parentid INTEGER) SOCKET localhost : 65433";
-		for (String s : q) {
-			try {
-				resetBuildConfig();
-				this.executor.addQuery(s, parser(), currentUser, defaultBuildConfiguration, (Context) null);
-			} catch (PlanManagementException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		ci.println("Nexmark Sources without NIO added.");
-	}
-
-	@Help(parameter = "<query id | *> [n]", description = "add nexmark queries (single query via id, or all via '*'). parameter 'n' registers a NIO query.")
-	public void _nmq(CommandInterpreter ci) {
-		String[] args = support.getArgs(ci);
-		addCommand(args);
-		if (args != null && args.length >= 1) {
-			int j = 0;
-			if (args.length > 1 && args[1].startsWith("n")) {
-				j = 1;
-			}
-			if ("*".equals(args[0])) {
-				for (String q : nexmarkQ[j]) {
-					addQuery(q);
-				}
-			} else {
-				addQuery(nexmarkQ[j][Integer.parseInt(args[0])]);
-			}
-		} else {
-			ci.println("usage [0-5]|* [nio]");
-		}
-
-	}
-
+	
 	@Help(parameter = "<filename>", description = "Set a filename for result dump. Each result is dumped to this file. Call without parameter to unset.")
 	public void _setOutputFilename(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
@@ -759,18 +647,6 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 			ci.println("Output written to " + outputputFilename);
 		} else {
 			ci.println("No output file set");
-		}
-	}
-
-	private void addQuery(String q) {
-		try {
-			resetBuildConfig();
-			this.executor.addQuery(q, parser(), currentUser, defaultBuildConfiguration, (Context) null);
-
-		} catch (PlanManagementException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -796,40 +672,27 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		throw new IllegalArgumentException("can't convert '" + string + "' to boolean value");
 	}
 
-	@Help(parameter = "<query string without CREATE>", description = "CREATE Command\n\tExample: CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )")
-	public void _CREATE(CommandInterpreter ci) {
-		String[] args = support.getArgs(ci);
-		StringBuffer q = new StringBuffer("CREATE ");
-		for (int i = 0; i < args.length - 1; i++) {
-			q.append(args[i]).append(" ");
-		}
-		try {
-			q.append(args[args.length - 1]);
-			resetBuildConfig();
-			this.executor.addQuery(q.toString(), parser(), currentUser, defaultBuildConfiguration, (Context) null);
-		} catch (Exception e) {
-			ci.println(e.getMessage());
-		}
-	}
-
 	@Help(parameter = "<login username password>", description = "Login user with name, password and tenantname.")
 	public void _login(CommandInterpreter ci) {
-//		String[] args = support.getArgs(ci);
-//		try {
-//			if (args.length == 3) {
-//				ITenant tenant = UserManagementProvider.getTenant(args[2]);
-//				currentUser = UserManagementProvider.getSessionmanagement().login(args[0], args[1].getBytes(), tenant);
-//				if (currentUser != null) {
-//					ci.println("User " + args[0] + " successfully logged in.");
-//				} else {
-//					ci.println("Error logging in user " + args[0]);
-//				}
-//			} else {
-//				ci.println("Must be username and password");
-//			}
-//		} catch (Exception e) {
-//			ci.println(e.getMessage());
-//		}
+		//TODO: switch user here!
+		// String[] args = support.getArgs(ci);
+		// try {
+		// if (args.length == 3) {
+		// ITenant tenant = UserManagementProvider.getTenant(args[2]);
+		// currentUser =
+		// UserManagementProvider.getSessionmanagement().login(args[0],
+		// args[1].getBytes(), tenant);
+		// if (currentUser != null) {
+		// ci.println("User " + args[0] + " successfully logged in.");
+		// } else {
+		// ci.println("Error logging in user " + args[0]);
+		// }
+		// } else {
+		// ci.println("Must be username and password");
+		// }
+		// } catch (Exception e) {
+		// ci.println(e.getMessage());
+		// }
 		currentUser = UserManagementProvider.getUsermanagement().getSessionManagement().loginSuperUser(null);
 	}
 
@@ -844,44 +707,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		}
 	}
 
-	@Help(parameter = "<query string without SELECT> [<S>|<F> filename|<E>]", description = "add query [with console-output-sink|File output|eclipse output]\n\tExample:SELECT (a * 2) as value FROM test WHERE a > 2 <S>")
-	public void _SELECT(CommandInterpreter ci) {
-		String[] args = support.getArgs(ci);
-		StringBuffer q = new StringBuffer("SELECT ");
-		for (int i = 0; i < args.length - 2; i++) {
-			q.append(args[i]).append(" ");
-		}
-		try {
-			// TODO: FIXME!
-			resetBuildConfig();
-			if (args[args.length - 1].toUpperCase().equals("<S>")) {
-				q.append(args[args.length - 2]).append(" ");
-				// this.executor
-				// .getQueryBuildConfiguration(defaultBuildConfiguration)
-				// .getConfiguration()
-				// .add(new ParameterDefaultRoot(new ConsoleSink()));
-				this.executor.addQuery(q.toString(), parser(), currentUser, defaultBuildConfiguration, (Context) null);
-			} else if (args[args.length - 2].toUpperCase().equals("<F>")) {
-				// this.executor
-				// .getQueryBuildConfiguration(defaultBuildConfiguration)
-				// .getConfiguration()
-				// .add(new ParameterDefaultRoot(new FileSinkPO(
-				// args[args.length - 1], "", -1, true, false)));
-				this.executor.addQuery(q.toString(), parser(), currentUser, defaultBuildConfiguration, (Context) null);
-
-			} else if (args[args.length - 1].toUpperCase().equals("<E>")) {
-				q.append(args[args.length - 2]).append(" ");
-				this.addQueryWithEclipseConsoleOutput(q.toString());
-			} else {
-				q.append(args[args.length - 2]).append(" ");
-				q.append(args[args.length - 1]).append(" ");
-				this.executor.addQuery(q.toString(), parser(), currentUser, defaultBuildConfiguration, (Context) null);
-			}
-		} catch (Exception e) {
-			ci.println(e.getMessage());
-		}
-	}
-
+	
 	@Help(parameter = "-q <query string> [S|E] -r [true|false] [-m <true>|<false>]", description = "add query [with console-output-sink|eclipse-outputsink] \n" + "[with|without restructuring the query plan, default true] \n" + "[with|without metadata set in physical operators]\n" + "\tExamples:\n\tadd 'CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )'\n\tadd 'SELECT (a * 2) as value FROM test WHERE a > 2' S")
 	public void _add(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
@@ -969,88 +795,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		}
 	}
 
-	@Help(parameter = "<filename> [useProp]", description = "Add query declared in <filename> [filepath automatically read from user.files, otherwise in current directory]")
-	public void _cyclicQueryFromFile(CommandInterpreter ci) {
-		String[] args = support.getArgs(ci);
-		addCommand(args);
-
-		String filename = null;
-
-		for (int i = 0; i < args.length; i++) {
-			if (args[i].equalsIgnoreCase("useProp")) {
-				this.path = System.getProperty("user.files");
-			}
-
-			else if (args[i].equalsIgnoreCase("-f")) {
-				filename = args[i + 1];
-				i++;
-			}
-		}
-
-		if (args.length > 0) {
-			BufferedReader br = null;
-			File file = null;
-			try {
-				file = new File(this.path != null ? this.path + filename : filename);
-				br = new BufferedReader(new FileReader(file));
-			} catch (FileNotFoundException e) {
-				ci.println("File not found: " + file.getAbsolutePath());
-				return;
-			}
-
-			String queries = "";
-			try {
-				String line = null;
-				while ((line = br.readLine()) != null) {
-					queries += line + "\n";
-				}
-			} catch (IOException e) {
-				ci.printStackTrace(e);
-				return;
-			}
-
-			try {
-				List<IExecutorCommand> plans = executor.translateQuery(queries, parser(), currentUser, null);
-
-				// DEBUG: Print the logical plan.
-				PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
-				GenericGraphWalker walker = new GenericGraphWalker();
-				for (IExecutorCommand plan : plans) {
-					if (plan instanceof CreateQueryCommand) {
-						System.out.println("PRINT PARTIAL PLAN: ");
-						walker.prefixWalk(((CreateQueryCommand) plan).getQuery().getLogicalPlan(), pv);
-						System.out.println(pv.getResult());
-						pv.clear();
-						walker.clearVisited();
-						System.out.println("PRINT END.");
-					}
-				}
-
-				// DEBUG:
-				System.out.println("ExecutorConsole: trafoConfigHelper: " + this.trafoConfigParam.getValue().getTransformationHelper());
-
-				// the last plan is the complete plan
-				// so transform this one
-				ILogicalQuery query = ((CreateQueryCommand) plans.get(plans.size() - 1)).getQuery();
-				IPhysicalQuery transQuery = executor.transform(query, this.trafoConfigParam.getValue(), currentUser);
-
-				Integer addedQuery = this.executor.addQuery(transQuery.getRoots(), currentUser, defaultBuildConfiguration);
-				this.executor.startQuery(addedQuery, currentUser);
-
-			} catch (QueryParseException e1) {
-				e1.printStackTrace();
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-
-			try {
-				br.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
+	
 	/**
 	 * This method is used by _addQuery and _addFromFile
 	 * 
@@ -1444,7 +1189,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		}
 
 	}
-	
+
 	/**
 	 * Reads a file from the current working directory and executes each line as
 	 * if it comes from the console
@@ -1708,134 +1453,6 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	@Override
 	public void planGeneratorBound() {
 		System.out.println("PlanGeneration bound");
-	}
-
-	/*
-	 * Test code for simulation of SLA Scheduler should be removed after
-	 * simulation is done
-	 */
-
-	private static final int NUMBER_OF_SIMULATIONS = 10;
-	private static final long SIM_LENGTH = 1800000; // millis
-	private static final long EXTRA_TIME = 300000; // millis
-	// private static final String SCHED1 = "SLA Scheduler";
-	private static final String SCHED1 = "SLA Dynamic Priority Scheduler";
-	private static final String SCHED2 = "Round Robin";
-
-	@Help(description = "starts simulation of SLA Scheduler")
-	public void _sim(CommandInterpreter ci) {
-		// load queries
-		File file1 = new File(OdysseusConfiguration.getHomeDir(), "sla.qry");
-		File[] file2 = new File[NUMBER_OF_SIMULATIONS];
-		for (int i = 0; i < NUMBER_OF_SIMULATIONS; i++) {
-			file2[i] = new File(OdysseusConfiguration.getHomeDir(), "ops" + i + ".qry");
-		}
-		File file3 = new File(OdysseusConfiguration.getHomeDir(), "run.qry");
-
-		String query1 = this.readScript(file1);
-		String[] query2 = new String[NUMBER_OF_SIMULATIONS];
-		for (int i = 0; i < NUMBER_OF_SIMULATIONS; i++) {
-			query2[i] = this.readScript(file2[i]);
-		}
-		String query3 = this.readScript(file3);
-
-		ci.println("queries loaded");
-
-		for (int i = 0; i < NUMBER_OF_SIMULATIONS; i++) {
-			ci.println("strating simulation run number " + i);
-			// init/refresh scheduling
-			try {
-				this.executor.stopExecution();
-			} catch (PlanManagementException e1) {
-				e1.printStackTrace();
-			}
-			this.executor.setScheduler("Single Thread Scheduler RR", SCHED2, currentUser);
-			this.executor.setScheduler(SCHED1, SCHED2, currentUser);
-			ci.println("scheduler set to: " + this.executor.getCurrentSchedulerID(currentUser));
-			try {
-				this.executor.startExecution();
-			} catch (PlanManagementException e1) {
-				e1.printStackTrace();
-			}
-			System.gc();
-
-			// parse and run queries
-			ISession user = UserManagementProvider.getSessionmanagement().loginSuperUser(null, "");
-
-			if (i == 0) {
-				ci.println("parsing and running query :");
-				ci.println(query1);
-				executor.addQuery(query1, "OdysseusScript", user, null, Context.empty());
-				// scriptParser.parseAndExecute(query1, user, null,
-				// Context.empty());
-			}
-			ci.println("parsing and running query :");
-			ci.println(query2);
-			executor.addQuery(query2[i], "OdysseusScript", user, null, Context.empty());
-			// scriptParser.parseAndExecute(query2[i], user, null,
-			// Context.empty());
-			ci.println("parsing and running query :");
-			ci.println(query3);
-			executor.addQuery(query3, "OdysseusScript", user, null, Context.empty());
-			// scriptParser.parseAndExecute(query3, user, null,
-			// Context.empty());
-
-			ci.println("waiting for timeout...");
-
-			// init timeout
-			long startTime = System.currentTimeMillis();
-			while (startTime + SIM_LENGTH + EXTRA_TIME > System.currentTimeMillis()) {
-				try {
-					synchronized (this) {
-						this.wait(60000);
-					}
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-
-			ci.println("...timeout");
-
-			ci.println("starting clean up");
-			// clear sources
-			List<Resource> sourceNames = new ArrayList<>();
-			for (Entry<Resource, ILogicalOperator> sourceDef : this.executor.getStreamsAndViews(user)) {
-				sourceNames.add(sourceDef.getKey());
-			}
-			for (Resource name : sourceNames) {
-				System.out.println("removing source: " + name);
-				this.executor.removeViewOrStream(name, user);
-			}
-
-			// cleanup
-			this.executor.removeAllQueries(user);
-
-			System.gc();
-
-			ci.println("finished clean up");
-		}
-
-		// stop execution after time out
-	}
-
-	private String readScript(File file) {
-		StringBuilder sb = new StringBuilder();
-
-		try {
-			FileReader reader = new FileReader(file);
-			int character;
-
-			while ((character = reader.read()) != -1) {
-				sb.append((char) character);
-			}
-			reader.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return sb.toString();
 	}
 
 }
