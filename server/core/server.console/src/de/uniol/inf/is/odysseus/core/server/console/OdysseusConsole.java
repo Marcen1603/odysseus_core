@@ -1320,6 +1320,16 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 			ci.println(" - "+unit);
 		}
 	}
+	
+	@Help(parameter = "", description = "lists current installed bundles")
+	public void _installFeature(CommandInterpreter ci) {
+		String id = ci.nextArgument();
+		if(id!=null && !id.isEmpty()){
+			P2ConsoleWrapper.installFeature(id);
+		}else{
+			ci.println("You have to provide an id of a feature!");
+		}
+	}
 
 	@Override
 	public String getHelp() {

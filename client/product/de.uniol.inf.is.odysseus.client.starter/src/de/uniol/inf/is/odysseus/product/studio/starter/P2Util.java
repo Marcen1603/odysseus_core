@@ -94,7 +94,7 @@ public class P2Util {
 		try {
 			URI uri = new URI(repo);
 			metadataManager.addRepository(uri);
-			artifactManager.addRepository(uri);
+			artifactManager.addRepository(uri);			
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
