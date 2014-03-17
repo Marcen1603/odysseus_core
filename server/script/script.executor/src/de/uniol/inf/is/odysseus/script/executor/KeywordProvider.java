@@ -28,15 +28,19 @@ import de.uniol.inf.is.odysseus.script.keyword.DropAllSourcesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.DropStoredProcedure;
 import de.uniol.inf.is.odysseus.script.keyword.ExecuteQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.FragmentationTypePreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.InstallFeaturePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.LoginUserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.LogoutUserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.ParserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.PlanGenerationMethodPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.RequiredAndInstallFeaturePreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.RequiredFeaturePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.SchedulerPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.StartAllClosedQueriesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.StartSchedulerPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.StopSchedulerPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.TransCfgPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.UpdateFeaturePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
@@ -67,6 +71,10 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(CreateStoredProcedureKeyword.STORED_PROCEDURE, CreateStoredProcedureKeyword.class);
 		keywords.put(DropStoredProcedure.DROPPROCEDURE, DropStoredProcedure.class);
 		keywords.put(PlanGenerationMethodPreParserKeyword.PLANGENERATIONMETHOD, PlanGenerationMethodPreParserKeyword.class);
+		keywords.put(RequiredFeaturePreParserKeyword.REQUIRED, RequiredFeaturePreParserKeyword.class);
+		keywords.put(RequiredAndInstallFeaturePreParserKeyword.REQUIRED_AND_INSTALL, RequiredAndInstallFeaturePreParserKeyword.class);
+		keywords.put(InstallFeaturePreParserKeyword.INSTALL, InstallFeaturePreParserKeyword.class);
+		keywords.put(UpdateFeaturePreParserKeyword.UPDATE, UpdateFeaturePreParserKeyword.class);
 		return keywords;
 	}
 

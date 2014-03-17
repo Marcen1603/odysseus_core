@@ -75,7 +75,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.updater.P2Util;
+import de.uniol.inf.is.odysseus.updater.FeatureUpdateUtility;
 
 @SuppressWarnings({"rawtypes" })
 public class OdysseusConsole implements CommandProvider, IPlanExecutionListener, IPlanModificationListener, IErrorEventListener, ICompilerListener {
@@ -1300,13 +1300,13 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	}
 
 	@Help(parameter = "", description = "tries to update odysseus")
-	public void _updateOdysseus(CommandInterpreter ci) {
-		P2Util.checkForUpdates();
+	public void _updateFeatures(CommandInterpreter ci) {
+		FeatureUpdateUtility.checkForUpdates(this.currentUser);
 	}
 	
 	@Help(parameter = "", description = "lists current installed bundles")
 	public void _installedBundles(CommandInterpreter ci) {
-		List<IInstallableUnit> units = P2Util.getInstallableUnits();
+		List<IInstallableUnit> units = FeatureUpdateUtility.getInstallableUnits(this.currentUser);
 		ci.println("Following installable units are installed:");
 		for(IInstallableUnit unit : units){			
 			ci.println(" - "+unit);
@@ -1315,7 +1315,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	
 	@Help(parameter = "", description = "lists current installed bundles")
 	public void _installedFeatures(CommandInterpreter ci) {
-		List<IInstallableUnit> units = P2Util.getInstalledFeatures();
+		List<IInstallableUnit> units = FeatureUpdateUtility.getInstalledFeatures(this.currentUser);
 		ci.println("Following features are installed:");
 		for(IInstallableUnit unit : units){			
 			ci.println(" - "+unit);
@@ -1326,7 +1326,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	public void _installFeature(CommandInterpreter ci) {
 		String id = ci.nextArgument();
 		if(id!=null && !id.isEmpty()){
-			P2Util.installFeature(id);
+			FeatureUpdateUtility.installFeature(id, this.currentUser);
 		}else{
 			ci.println("You have to provide an id of a feature!");
 		}

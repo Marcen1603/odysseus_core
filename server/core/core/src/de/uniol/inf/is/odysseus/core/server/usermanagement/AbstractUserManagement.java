@@ -748,6 +748,21 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 		confPrivilege = getPrivilegeDAO(t).create(confPrivilege);
 		configurationRole.addPrivilege(confPrivilege);
 		getRoleDAO(t).update(configurationRole);
+		
+		// --- Updater Role ----
+				ROLE updaterRole = createEmptyRole();
+				updaterRole.setName("updating");
+				updaterRole = getRoleDAO(t).create(updaterRole);
+
+				PRIVILEGE updatePrivilege = createEmptyPrivilege();
+				updatePrivilege.setObjectURI(UpdatePermission.objectURI);
+				for (IPermission permission : UpdatePermission.class
+						.getEnumConstants()) {
+					updatePrivilege.addPermission(permission);
+				}
+				updatePrivilege = getPrivilegeDAO(t).create(updatePrivilege);
+				updaterRole.addPrivilege(updatePrivilege);
+				getRoleDAO(t).update(updaterRole);
 
 		// --- Query Execution Role ----
 		ROLE queryexecutor = createEmptyRole();
@@ -768,6 +783,7 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 		user.addRole(dictionaryRole);
 		user.addRole(configurationRole);
 		user.addRole(queryexecutor);
+		user.addRole(updaterRole);
 		user.setActive(true);
 
 		ROLE pub = createEmptyRole();
