@@ -1301,7 +1301,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 
 	@Help(parameter = "", description = "tries to update odysseus")
 	public void _updateOdysseus(CommandInterpreter ci) {
-		P2Util.checkForUpdates(ci);
+		P2Util.checkForUpdates();
 	}
 	
 	@Help(parameter = "", description = "lists current installed bundles")
