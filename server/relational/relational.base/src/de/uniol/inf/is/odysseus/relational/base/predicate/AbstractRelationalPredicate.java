@@ -115,8 +115,9 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
         int i = 0;
         for (SDFAttribute curAttr : neededAttributes) {
             SDFAttribute curAttribute = leftSchema.findAttribute(curAttr.getURI());
-            if (curAttribute == null){
-            	System.err.println("Attribute "+curAttr.getURI()+" not found in "+leftSchema);
+            if (curAttribute == null && !checkRightSchema){
+            	logger.error("Attribute "+curAttr.getURI()+" not found in "+leftSchema);
+            	 throw new IllegalArgumentException("Attribute "+curAttr.getURI()+" not found in "+leftSchema);
             }
             int pos = leftSchema.indexOf(curAttribute);
             if (pos == -1) {
