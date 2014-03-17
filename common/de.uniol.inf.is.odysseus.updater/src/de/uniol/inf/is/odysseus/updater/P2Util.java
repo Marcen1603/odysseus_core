@@ -28,7 +28,6 @@ import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
-import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -38,6 +37,7 @@ public class P2Util{
 
 	public static IStatus installFeature(String id) {
 
+		
 		List<IInstallableUnit> units = getInstallableUnits(id);
 
 		if (units != null && !units.isEmpty()) {
@@ -126,6 +126,16 @@ public class P2Util{
 		}
 		return null;
 	}
+	
+	public static boolean isFeatureInstalled(String id){
+		List<IInstallableUnit> units = getInstalledFeatures();
+		for(IInstallableUnit unit : units){
+			if(unit.getId().startsWith(id)){
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public static List<IInstallableUnit> getInstalledFeatures() {
 		BundleContext context = Activator.getContext();
@@ -164,7 +174,7 @@ public class P2Util{
 		return units;
 	}
 
-	public static IStatus checkForUpdates(CommandInterpreter ci) throws OperationCanceledException {
+	public static IStatus checkForUpdates() throws OperationCanceledException {
 		BundleContext context = Activator.getContext();
 		IProvisioningAgent agent = getAgent(context);
 		return checkForUpdates(agent, new NullProgressMonitor());
