@@ -48,6 +48,10 @@ public class Autostart implements BundleActivator {
 			}
 		}
 	}
+	
+	public void unbindExecutor(IExecutor exec) {
+		executor = null;
+	}
 
 	public void bindExecutor(IExecutor exec) {
 		executor = exec;
