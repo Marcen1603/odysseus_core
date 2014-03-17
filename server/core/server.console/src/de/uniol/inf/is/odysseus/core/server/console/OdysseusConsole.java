@@ -75,6 +75,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.updater.P2Util;
 
 @SuppressWarnings({"rawtypes" })
 public class OdysseusConsole implements CommandProvider, IPlanExecutionListener, IPlanModificationListener, IErrorEventListener, ICompilerListener {
@@ -1300,12 +1301,12 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 
 	@Help(parameter = "", description = "tries to update odysseus")
 	public void _updateOdysseus(CommandInterpreter ci) {
-		P2ConsoleWrapper.checkForUpdates(ci);
+		P2Util.checkForUpdates(ci);
 	}
 	
 	@Help(parameter = "", description = "lists current installed bundles")
 	public void _installedBundles(CommandInterpreter ci) {
-		List<IInstallableUnit> units = P2ConsoleWrapper.getInstallableUnits();
+		List<IInstallableUnit> units = P2Util.getInstallableUnits();
 		ci.println("Following installable units are installed:");
 		for(IInstallableUnit unit : units){			
 			ci.println(" - "+unit);
@@ -1314,7 +1315,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	
 	@Help(parameter = "", description = "lists current installed bundles")
 	public void _installedFeatures(CommandInterpreter ci) {
-		List<IInstallableUnit> units = P2ConsoleWrapper.getInstalledFeatures();
+		List<IInstallableUnit> units = P2Util.getInstalledFeatures();
 		ci.println("Following features are installed:");
 		for(IInstallableUnit unit : units){			
 			ci.println(" - "+unit);
@@ -1325,7 +1326,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	public void _installFeature(CommandInterpreter ci) {
 		String id = ci.nextArgument();
 		if(id!=null && !id.isEmpty()){
-			P2ConsoleWrapper.installFeature(id);
+			P2Util.installFeature(id);
 		}else{
 			ci.println("You have to provide an id of a feature!");
 		}
