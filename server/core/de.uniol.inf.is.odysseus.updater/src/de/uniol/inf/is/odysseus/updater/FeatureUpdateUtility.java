@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -28,9 +27,7 @@ import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UpdatePermission;
@@ -68,9 +65,9 @@ public class FeatureUpdateUtility {
 				operation.getProvisioningContext().setArtifactRepositories(new URI[] { uri });
 				operation.getProvisioningContext().setMetadataRepositories(new URI[] { uri });
 				System.out.println("Starting install process...");
-				IStatus status = operation.resolveModal(new NullProgressMonitor());
-				if (status.isOK()) {					
-					final ProvisioningJob provisioningJob = operation.getProvisioningJob(new NullProgressMonitor());					
+				IStatus status = operation.resolveModal(getDefaultMonitor());
+				if (status.isOK()) {
+					final ProvisioningJob provisioningJob = operation.getProvisioningJob(getDefaultMonitor());
 					// updates cannot run from within Eclipse IDE!!!
 					if (provisioningJob == null) {
 						System.err.println("Running update from within Eclipse IDE? This won't work!!! Use exported product!");
@@ -118,10 +115,10 @@ public class FeatureUpdateUtility {
 			try {
 				URI uri = null;
 				uri = new URI(REPOSITORY_LOC);
-				IMetadataRepository repo = metadataManager.loadRepository(uri, new NullProgressMonitor());
-				IQueryResult<IInstallableUnit> units = repo.query(QueryUtil.createIUGroupQuery(), new NullProgressMonitor());
+				IMetadataRepository repo = metadataManager.loadRepository(uri, getDefaultMonitor());
+				IQueryResult<IInstallableUnit> units = repo.query(QueryUtil.createIUGroupQuery(), getDefaultMonitor());
 				List<IInstallableUnit> toinstall = new ArrayList<>();
-				id = id+".feature.group";
+				id = id + ".feature.group";
 				for (IInstallableUnit unit : units.toSet()) {
 					// use starts with to ignore version and qualifier
 					if (unit.getId().startsWith(id)) {
@@ -165,7 +162,7 @@ public class FeatureUpdateUtility {
 			IProfile profileSelf = regProfile.getProfile(IProfileRegistry.SELF);
 
 			IQuery<IInstallableUnit> query = QueryUtil.createIUGroupQuery();
-			IQueryResult<IInstallableUnit> allIUs = profileSelf.query(query, new NullProgressMonitor());
+			IQueryResult<IInstallableUnit> allIUs = profileSelf.query(query, getDefaultMonitor());
 
 			List<IInstallableUnit> units = new ArrayList<>();
 			units.addAll(allIUs.toUnmodifiableSet());
@@ -191,7 +188,7 @@ public class FeatureUpdateUtility {
 			IProfile profileSelf = regProfile.getProfile(IProfileRegistry.SELF);
 
 			IQuery<IInstallableUnit> query = QueryUtil.createIUAnyQuery();
-			IQueryResult<IInstallableUnit> allIUs = profileSelf.query(query, new NullProgressMonitor());
+			IQueryResult<IInstallableUnit> allIUs = profileSelf.query(query, getDefaultMonitor());
 
 			List<IInstallableUnit> units = new ArrayList<>();
 			units.addAll(allIUs.toUnmodifiableSet());
@@ -208,7 +205,7 @@ public class FeatureUpdateUtility {
 
 			BundleContext context = Activator.getContext();
 			IProvisioningAgent agent = getAgent(context);
-			IProgressMonitor monitor = new NullProgressMonitor();
+			IProgressMonitor monitor = getDefaultMonitor();
 
 			boolean doInstall = true;
 			/* 1. Prepare update plumbing */
@@ -303,22 +300,75 @@ public class FeatureUpdateUtility {
 		}
 		if (agent == null) {
 			System.out.println("No provisioning agent found.  This application is not set up for updates.");
-		}	
+		}
 		return agent;
 	}
-	
-	private static void restart(ISession caller){
-		System.out.println("Forcing a refresh of all bundles...");
-		Bundle bundle = Activator.getContext().getBundle(0);
-		try {
-			if(bundle!=null){
-				bundle.update();
-			}else{
-				System.out.println("restart failed, because there osgi bundle was not found!");
+
+	private static void restart(ISession caller) {
+		System.out.println("System must be restarted manually so that changes may take effekt!");
+		// System.out.println("Forcing a refresh of all bundles...");
+		// Bundle bundle = Activator.getContext().getBundle(0);
+		// try {
+		// if(bundle!=null){
+		// bundle.update();
+		// }else{
+		// System.out.println("restart failed, because there osgi bundle was not found!");
+		// }
+		// } catch (BundleException e) {
+		// e.printStackTrace();
+		// }
+	}
+
+	private static IProgressMonitor getDefaultMonitor() {
+		return new IProgressMonitor() {
+
+			private boolean canceled = false;
+			private String name;
+			private String subtask;
+			private int worked = 0;
+
+			@Override
+			public void worked(int work) {
+				this.worked = work;
 			}
-		} catch (BundleException e) {
-			e.printStackTrace();
-		}
+
+			@Override
+			public void subTask(String name) {
+				this.subtask = name;
+			}
+
+			@Override
+			public void setTaskName(String name) {
+				this.name = name;
+			}
+
+			@Override
+			public void setCanceled(boolean value) {
+				this.canceled = value;
+			}
+
+			@Override
+			public boolean isCanceled() {
+				return this.canceled;
+			}
+
+			@Override
+			public void internalWorked(double work) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void done() {
+				System.out.println("Task " + this.name + " done");
+			}
+
+			@Override
+			public void beginTask(String name, int totalWork) {
+				System.out.println("Starting task: \"" + name + "\"...");
+
+			}
+		};
 	}
 
 }
