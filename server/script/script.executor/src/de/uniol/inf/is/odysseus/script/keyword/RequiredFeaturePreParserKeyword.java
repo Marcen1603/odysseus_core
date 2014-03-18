@@ -23,7 +23,7 @@ public class RequiredFeaturePreParserKeyword extends AbstractPreParserKeyword {
 		String id = params[0];
 		boolean install = true;
 		if (params.length > 1) {
-			install = params[1].trim().equalsIgnoreCase("true");
+			install = !params[1].trim().equalsIgnoreCase("false");
 		}
 		if (!FeatureUpdateUtility.isFeatureInstalled(id, caller)) {
 			if (install) {

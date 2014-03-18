@@ -31,32 +31,32 @@ public class ChooseWorkspaceDialogExtended extends ChooseWorkspaceDialog {
 
 	private static Logger LOG = LoggerFactory.getLogger(ChooseWorkspaceDialogExtended.class);
 	private final ChooseWorkspaceData launchData;
-	
+
 	public ChooseWorkspaceDialogExtended(Shell parentShell, ChooseWorkspaceData launchData, boolean suppressAskAgain, boolean centerOnMonitor) {
 		super(parentShell, launchData, suppressAskAgain, centerOnMonitor);
-		
+
 		this.launchData = launchData;
 	}
-	
+
 	@Override
 	protected void okPressed() {
-		
+
 		String workspaceSelection = TextProcessor.deprocess(getWorkspaceLocation());
-		
+
 		if (workspaceSelection != null) {
 			launchData.workspaceSelected(workspaceSelection);
 			launchData.writePersistedData();
 
-			if( !releaseAndSetLocation(workspaceSelection) ) {
+			if (!releaseAndSetLocation(workspaceSelection)) {
 				setErrorMessage("Could not set workspace " + workspaceSelection + ".\nPlease choose a different one.");
 				return;
 			}
 		}
-		
+
 		setReturnCode(OK);
 		close();
 	}
-	
+
 	@Override
 	protected void cancelPressed() {
 		super.cancelPressed();
@@ -65,12 +65,12 @@ public class ChooseWorkspaceDialogExtended extends ChooseWorkspaceDialog {
 	private static boolean releaseAndSetLocation(String selection) {
 		try {
 			Location instanceLoc = Platform.getInstanceLocation();
-			if (instanceLoc.isSet()) {
-				instanceLoc.release();
+			if (!instanceLoc.isSet()) {
+				return instanceLoc.set(new URL("file", null, selection), true);
+			} else {
+				return true;
 			}
-	
-			return instanceLoc.set(new URL("file", null, selection), true);
-		} catch( Exception ex ) {			
+		} catch (Exception ex) {
 			LOG.error("Could not release and set location", ex);
 			return false;
 		}

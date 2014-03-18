@@ -18,8 +18,10 @@ package de.uniol.inf.is.odysseus.product.studio.starter;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
+import org.eclipse.ui.ide.IDEActionFactory;
 
 /**
  * An action bar advisor is responsible for creating, adding, and disposing of
@@ -41,6 +43,11 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		register(ActionFactory.DELETE.create(window));
 		register(ActionFactory.COPY.create(window));
 		register(ActionFactory.PASTE.create(window));
+		
+		
+		IWorkbenchAction openWorkspaceAction = IDEActionFactory.OPEN_WORKSPACE
+                .create(window);
+        register(openWorkspaceAction);
 	}
 
 	@Override

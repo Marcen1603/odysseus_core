@@ -28,7 +28,9 @@ import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UpdatePermission;
@@ -40,7 +42,7 @@ public class FeatureUpdateUtility {
 
 	private static final String REPOSITORY_LOC = "http://odysseus.informatik.uni-oldenburg.de/update";
 
-	public static IStatus installFeature(String id, ISession caller) {
+	public static IStatus installFeature(String id, final ISession caller) {
 		if (UserManagementProvider.getUsermanagement().hasPermission(caller, UpdatePermission.INSTALL, UpdatePermission.objectURI)) {
 			List<IInstallableUnit> units = getInstallableUnits(id, caller);
 
@@ -67,8 +69,8 @@ public class FeatureUpdateUtility {
 				operation.getProvisioningContext().setMetadataRepositories(new URI[] { uri });
 				System.out.println("Starting install process...");
 				IStatus status = operation.resolveModal(new NullProgressMonitor());
-				if (status.isOK()) {
-					final ProvisioningJob provisioningJob = operation.getProvisioningJob(new NullProgressMonitor());
+				if (status.isOK()) {					
+					final ProvisioningJob provisioningJob = operation.getProvisioningJob(new NullProgressMonitor());					
 					// updates cannot run from within Eclipse IDE!!!
 					if (provisioningJob == null) {
 						System.err.println("Running update from within Eclipse IDE? This won't work!!! Use exported product!");
@@ -84,6 +86,7 @@ public class FeatureUpdateUtility {
 								boolean restart = true;
 								if (restart) {
 									System.out.println("Features were installed. You have to restart Odysseus for the changed to take effekt!");
+									restart(caller);
 								}
 
 							}
@@ -118,7 +121,9 @@ public class FeatureUpdateUtility {
 				IMetadataRepository repo = metadataManager.loadRepository(uri, new NullProgressMonitor());
 				IQueryResult<IInstallableUnit> units = repo.query(QueryUtil.createIUGroupQuery(), new NullProgressMonitor());
 				List<IInstallableUnit> toinstall = new ArrayList<>();
+				id = id+".feature.group";
 				for (IInstallableUnit unit : units.toSet()) {
+					// use starts with to ignore version and qualifier
 					if (unit.getId().startsWith(id)) {
 						toinstall.add(unit);
 					}
@@ -197,7 +202,7 @@ public class FeatureUpdateUtility {
 		}
 	}
 
-	public static IStatus checkForUpdates(ISession caller) throws OperationCanceledException {
+	public static IStatus checkForUpdates(final ISession caller) throws OperationCanceledException {
 
 		if (UserManagementProvider.getUsermanagement().hasPermission(caller, UpdatePermission.UPDATE, UpdatePermission.objectURI)) {
 
@@ -268,6 +273,7 @@ public class FeatureUpdateUtility {
 								boolean restart = true;
 								if (restart) {
 									System.out.println("Updates were installed. You have to restart Odysseus for the changed to take effekt!");
+									restart(caller);
 								}
 
 							}
@@ -297,9 +303,22 @@ public class FeatureUpdateUtility {
 		}
 		if (agent == null) {
 			System.out.println("No provisioning agent found.  This application is not set up for updates.");
-		}
-
+		}	
 		return agent;
+	}
+	
+	private static void restart(ISession caller){
+		System.out.println("Forcing a refresh of all bundles...");
+		Bundle bundle = Activator.getContext().getBundle(0);
+		try {
+			if(bundle!=null){
+				bundle.update();
+			}else{
+				System.out.println("restart failed, because there osgi bundle was not found!");
+			}
+		} catch (BundleException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

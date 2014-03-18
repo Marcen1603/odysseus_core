@@ -79,6 +79,13 @@
                   visible="true">
             </separator>
             <command
+                  commandId="org.eclipse.ui.file.openWorkspace"
+                  style="push">
+            </command>
+            <separator
+                  name="de.uniol.inf.is.odysseus.client.starter.separator1">
+            </separator>
+            <command
                   commandId="org.eclipse.ui.file.exit"
                   label="Exit"
                   style="push">
@@ -140,9 +147,6 @@
                   style="push">
             </command>
          </menu>
-         <separator
-               name="additions">
-         </separator>
          <menu
                id="window"
                label="Window">
