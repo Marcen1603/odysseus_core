@@ -14,18 +14,22 @@ public class RequiredFeaturePreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
-		
+
 	}
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		String params[] = getSimpleParameters(parameter);
 		String id = params[0];
-		if(!FeatureUpdateUtility.isFeatureInstalled(id, caller)){
-			if(params[1].trim().equalsIgnoreCase("INSTALL")){
+		boolean install = true;
+		if (params.length > 1) {
+			install = params[1].trim().equalsIgnoreCase("true");
+		}
+		if (!FeatureUpdateUtility.isFeatureInstalled(id, caller)) {
+			if (install) {
 				FeatureUpdateUtility.installFeature(id, caller);
-			}else{
-				throw new OdysseusScriptException("This script requires feature "+id+" which is not installed!");
+			} else {
+				throw new OdysseusScriptException("This script requires feature " + id + " which is not installed!");
 			}
 		}
 		return null;
