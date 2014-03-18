@@ -18,20 +18,21 @@ package de.uniol.inf.is.odysseus.mep.functions.time;
 import java.util.Calendar;
 import java.util.Date;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+
 /**
  * Extracts the day part of the date
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class DayFunction extends AbstractDateFunction{
+public class DayFunction extends AbstractUnaryDateFunction<Integer>{
 
 	private static final long serialVersionUID = -6576541212390310506L;
 
-	@Override
-	public String getSymbol() {
-		return "day";
+	public DayFunction() {
+		super("day", SDFDatatype.INTEGER);
 	}
-
+	
 	@Override
 	public Integer getValue() {
 		Calendar calendar = Calendar.getInstance();
@@ -39,12 +40,4 @@ public class DayFunction extends AbstractDateFunction{
 		return calendar.get(Calendar.DATE);
 	}
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
-    }
 }

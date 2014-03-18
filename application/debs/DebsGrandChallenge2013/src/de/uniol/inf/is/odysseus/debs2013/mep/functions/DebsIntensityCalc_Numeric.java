@@ -28,25 +28,8 @@ public class DebsIntensityCalc_Numeric extends AbstractFunction<Integer> {
 		SpeedIntensity.high, SpeedIntensity.high /* 24 */};
 	
 	
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > 0){
-			throw new IllegalArgumentException("ceil has only 1 argument.");
-		}
-        return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "DebsIntensityNumeric";
+	public DebsIntensityCalc_Numeric() {
+		super("DebsIntensityNumeric",1,accTypes,SDFDatatype.INTEGER);
 	}
 
 	@Override
@@ -56,11 +39,6 @@ public class DebsIntensityCalc_Numeric extends AbstractFunction<Integer> {
 			return SpeedIntensity.sprint.ordinal();
 		else 
 			return speedMap[attribute].ordinal();
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {		
-		return SDFDatatype.STRING;
 	}
 
 }

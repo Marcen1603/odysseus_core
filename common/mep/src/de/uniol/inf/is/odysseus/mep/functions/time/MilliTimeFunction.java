@@ -24,32 +24,12 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * 
  * @author Marco Grawunder
  */
-public class NowFunction extends AbstractFunction<Long> {
+public class MilliTimeFunction extends AbstractFunction<Long> {
 
 	private static final long serialVersionUID = 806341829287058045L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] {};
 
-	@Override
-	public int getArity() {
-		return 0;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos >= 0) {
-			throw new IllegalArgumentException(this.getSymbol()
-					+ " has no argument(s).");
-		}
-		return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "now";
+	public MilliTimeFunction() {
+		super("milliTime",0,null,SDFDatatype.LONG,false);
 	}
 
 	@Override
@@ -57,17 +37,5 @@ public class NowFunction extends AbstractFunction<Long> {
 		return System.currentTimeMillis();
 	}
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.LONG;
-	}
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return false;
-    }
 }

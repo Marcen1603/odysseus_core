@@ -27,46 +27,24 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class MatrixSCountFunction extends AbstractFunction<Double> {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -8757824402331405540L;
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
+	private static final long serialVersionUID = -8757824402331405540L;
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
+			SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
+			SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
 
-    @Override
-    public String getSymbol() {
-        return "sCount";
-    }
+	public MatrixSCountFunction() {
+		super("sCount", 1, accTypes, SDFDatatype.DOUBLE);
+	}
 
-    @Override
-    public Double getValue() {
-        RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this.getInputValue(0));
-        return getValueInternal(a);
-    }
+	@Override
+	public Double getValue() {
+		RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this
+				.getInputValue(0));
+		return getValueInternal(a);
+	}
 
-    protected double getValueInternal(RealMatrix a) {
-        return a.getColumnDimension() * a.getRowDimension();
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.DOUBLE;
-    }
-
-    @Override
-    public int getArity() {
-        return 1;
-    }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > this.getArity() - 1) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
-    }
+	protected double getValueInternal(RealMatrix a) {
+		return a.getColumnDimension() * a.getRowDimension();
+	}
 
 }

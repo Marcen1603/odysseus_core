@@ -16,37 +16,15 @@ public class DebsIntensityCalc2 extends AbstractFunction<String> {
 	static final SpeedIntensity speedMap[] = { SpeedIntensity.stop,	SpeedIntensity.trot,
 		SpeedIntensity.low, SpeedIntensity.medium, SpeedIntensity.high, SpeedIntensity.sprint};
 	
+	public DebsIntensityCalc2() {
+		super("DebsIntensity",1,accTypes, SDFDatatype.STRING);
+	}
 	
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > 0){
-			throw new IllegalArgumentException("ceil has only 1 argument.");
-		}
-        return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "DebsIntensity";
-	}
 
 	@Override
 	public String getValue() {
 		int attribute = new Double(Math.ceil(getNumericalInputValue(0))).intValue();
 		return speedMap[attribute].name();
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {		
-		return SDFDatatype.STRING;
 	}
 
 }

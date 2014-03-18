@@ -39,6 +39,10 @@ public class ProbabilisticIntegrateMultivariateFunction extends AbstractIntegrat
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE },
             { SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE }, { SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE } };
 
+    public ProbabilisticIntegrateMultivariateFunction() {
+    	super(ACC_TYPES);
+    }
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
@@ -49,21 +53,6 @@ public class ProbabilisticIntegrateMultivariateFunction extends AbstractIntegrat
         final RealVector lowerBound = MatrixUtils.createRealVector(((double[][]) this.getInputValue(1))[0]);
         final RealVector upperBound = MatrixUtils.createRealVector(((double[][]) this.getInputValue(2))[0]);
         return this.getValueInternal(continuousDouble, lowerBound, upperBound);
-    }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: A distribution and the lower and upper support.");
-        }
-        return ProbabilisticIntegrateMultivariateFunction.ACC_TYPES[argPos];
     }
 
 }

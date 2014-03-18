@@ -13,16 +13,13 @@ import java.util.Date;
  */
 public class WeekdayStringFunction extends AbstractDateStringFunction {
 
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = 446718113949626907L;
 
-    @Override
-    public String getSymbol() {
-        return "weekday";
+    public WeekdayStringFunction() {
+    	super("weekday");
     }
-
+    
     @Override
     public Integer getValue() {
         Date date = null;
@@ -37,12 +34,5 @@ public class WeekdayStringFunction extends AbstractDateStringFunction {
         return calendar.get(Calendar.DAY_OF_WEEK);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
-    }
 
 }

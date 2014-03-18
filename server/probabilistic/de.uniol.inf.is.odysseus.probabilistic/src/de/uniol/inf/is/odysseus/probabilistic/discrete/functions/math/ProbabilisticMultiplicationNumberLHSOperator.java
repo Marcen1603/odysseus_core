@@ -35,7 +35,11 @@ public class ProbabilisticMultiplicationNumberLHSOperator extends ProbabilisticM
 	 */
     private static final long serialVersionUID = -2201151609608243659L;
 
-    /*
+    public ProbabilisticMultiplicationNumberLHSOperator() {
+    	super(ACC_TYPES);
+    }
+    
+    /* *
      * 
      * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.
      * ProbabilisticMultiplicationOperator#getValue()
@@ -63,20 +67,5 @@ public class ProbabilisticMultiplicationNumberLHSOperator extends ProbabilisticM
         return false;
     }
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.
-     * ProbabilisticMultiplicationOperator#getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > (this.getArity() - 1)) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticMultiplicationNumberLHSOperator.ACC_TYPES[argPos];
-    }
 
 }

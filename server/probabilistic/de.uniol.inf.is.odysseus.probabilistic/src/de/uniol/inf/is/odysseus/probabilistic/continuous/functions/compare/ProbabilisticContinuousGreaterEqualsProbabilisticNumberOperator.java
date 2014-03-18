@@ -25,13 +25,15 @@ public class ProbabilisticContinuousGreaterEqualsProbabilisticNumberOperator ext
      */
     private static final long serialVersionUID = -3834057191681240434L;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getSymbol() {
-        return ">=";
+    public ProbabilisticContinuousGreaterEqualsProbabilisticNumberOperator() {
+    	this(">=");
     }
+
+    protected ProbabilisticContinuousGreaterEqualsProbabilisticNumberOperator(String symbol) {
+    	super(symbol,ACC_TYPES);
+    }
+    
+  
 
     /**
      * 
@@ -72,19 +74,5 @@ public class ProbabilisticContinuousGreaterEqualsProbabilisticNumberOperator ext
      */
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_NUMBERS, SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS };
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticContinuousGreaterEqualsProbabilisticNumberOperator.ACC_TYPES[argPos];
-    }
 
 }

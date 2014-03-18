@@ -21,25 +21,12 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 public class MatrixLine extends AbstractFunction<double[]> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2878724836669428853L;
-	private int arity;
-	
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DOUBLE};
+		
 	public MatrixLine(IExpression<?>[] values) {
-		this.arity = values.length;
+		super("__matrixline",values.length,accTypes,SDFDatatype.VECTOR_DOUBLE);
 		setArguments(values);
-	}
-
-	@Override
-	public int getArity() {
-		return arity;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "__matrixline";
 	}
 
 	@Override
@@ -52,21 +39,6 @@ public class MatrixLine extends AbstractFunction<double[]> {
 		return value;
 	}
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.VECTOR_DOUBLE;
-	}
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DOUBLE};
 	
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > arity){
-			throw new IllegalArgumentException("AbsValue has only 1 argument.");
-		}
-        return accTypes;
-	}
 }

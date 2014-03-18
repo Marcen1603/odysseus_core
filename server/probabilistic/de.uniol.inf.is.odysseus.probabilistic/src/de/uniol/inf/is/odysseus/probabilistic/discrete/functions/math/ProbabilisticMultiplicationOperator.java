@@ -42,6 +42,18 @@ public class ProbabilisticMultiplicationOperator extends AbstractProbabilisticBi
 	 */
     private static final long serialVersionUID = 1356177009585423741L;
 
+    public ProbabilisticMultiplicationOperator(SDFDatatype[][] accTypes) {
+    	super("*", accTypes, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
+    }
+
+    public ProbabilisticMultiplicationOperator(SDFDatatype[] accTypes) {
+    	super("*", accTypes, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
+    }
+    
+    public ProbabilisticMultiplicationOperator() {
+    	this(ACC_TYPES);
+    }
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#getPrecedence()
@@ -49,15 +61,6 @@ public class ProbabilisticMultiplicationOperator extends AbstractProbabilisticBi
     @Override
     public final int getPrecedence() {
         return 5;
-    }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-     */
-    @Override
-    public final String getSymbol() {
-        return "*";
     }
 
     /*
@@ -98,16 +101,7 @@ public class ProbabilisticMultiplicationOperator extends AbstractProbabilisticBi
         }
         return new ProbabilisticDouble(values);
     }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE;
-    }
-
+    
     /*
      * 
      * @see
@@ -168,19 +162,6 @@ public class ProbabilisticMultiplicationOperator extends AbstractProbabilisticBi
     public static final SDFDatatype[] ACC_TYPES = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT,
             SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG };
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-     */
-    @Override
-    public SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticMultiplicationOperator.ACC_TYPES;
-    }
+ 
 
 }

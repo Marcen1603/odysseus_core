@@ -18,20 +18,21 @@ package de.uniol.inf.is.odysseus.mep.functions.time;
 import java.util.Calendar;
 import java.util.Date;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+
 /**
  * Extracts the hour part of the date
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class HourFunction extends AbstractDateFunction{
+public class HourFunction extends AbstractUnaryDateFunction<Integer>{
 
 	private static final long serialVersionUID = -622255720592751554L;
 
-	@Override
-	public String getSymbol() {
-		return "hour";
+	public HourFunction() {
+		super("hour", SDFDatatype.INTEGER);
 	}
-
+	
 	@Override
 	public Integer getValue() {
 		Calendar calendar = Calendar.getInstance();
@@ -39,12 +40,4 @@ public class HourFunction extends AbstractDateFunction{
 		return calendar.get(Calendar.HOUR_OF_DAY);
 	}
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
-    }
 }

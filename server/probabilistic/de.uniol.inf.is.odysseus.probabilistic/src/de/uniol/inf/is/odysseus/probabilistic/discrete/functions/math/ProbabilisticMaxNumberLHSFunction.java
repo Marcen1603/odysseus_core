@@ -19,6 +19,10 @@ public class ProbabilisticMaxNumberLHSFunction extends ProbabilisticMaxFunction 
  */
     private static final long serialVersionUID = 1254264947883248821L;
 
+    public ProbabilisticMaxNumberLHSFunction() {
+    	super(ACC_TYPES);
+    }
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.

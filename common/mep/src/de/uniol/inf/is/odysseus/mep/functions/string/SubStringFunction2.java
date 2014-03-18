@@ -15,24 +15,29 @@
  */
 package de.uniol.inf.is.odysseus.mep.functions.string;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * Returns a new string that is a substring of the value.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class SubStringFunction2 extends SubStringFunction {
+public class SubStringFunction2 extends AbstractFunction<String> {
 
 	private static final long serialVersionUID = 3177285577975351278L;
 
-	@Override
-    public int getArity() {
-        return 2;
-    }
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+			{ SDFDatatype.STRING }, SDFDatatype.NUMBERS };
 
-    @Override
-    public String getValue() {
-        return ((String) getInputValue(0)).substring(getNumericalInputValue(1).intValue());
-    }
+	public SubStringFunction2() {
+		super("substring", 2, accTypes, SDFDatatype.STRING);
+	}
+
+	@Override
+	public String getValue() {
+		return ((String) getInputValue(0)).substring(getNumericalInputValue(1)
+				.intValue());
+	}
 
 }

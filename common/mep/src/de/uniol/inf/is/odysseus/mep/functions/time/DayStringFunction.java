@@ -13,16 +13,12 @@ import java.util.Date;
  */
 public class DayStringFunction extends AbstractDateStringFunction {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 6970261543869855556L;
 
-    @Override
-    public String getSymbol() {
-        return "day";
+    public DayStringFunction() {
+    	super("day");
     }
-
+   
     @Override
     public Integer getValue() {
         Date date = null;
@@ -37,12 +33,5 @@ public class DayStringFunction extends AbstractDateStringFunction {
         return calendar.get(Calendar.DATE);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
-    }
 
 }

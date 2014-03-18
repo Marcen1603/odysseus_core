@@ -35,6 +35,10 @@ public class ProbabilisticMinusNumberRHSOperator extends ProbabilisticMinusOpera
 	 */
     private static final long serialVersionUID = 1707790307800370824L;
 
+    public ProbabilisticMinusNumberRHSOperator() {
+    	super(ACC_TYPES);
+    }
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.
@@ -63,22 +67,6 @@ public class ProbabilisticMinusNumberRHSOperator extends ProbabilisticMinusOpera
     @Override
     public final boolean isCommutative() {
         return false;
-    }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.
-     * ProbabilisticMinusOperator#getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > (this.getArity() - 1)) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticMinusNumberRHSOperator.ACC_TYPES[argPos];
     }
 
 }

@@ -24,6 +24,10 @@ abstract public class AbstractProbabilisticContinuousCompareOperator extends Abs
      */
     private static final long serialVersionUID = -7850744519118122850L;
 
+    public AbstractProbabilisticContinuousCompareOperator(String symbol,SDFDatatype[][] accTypes) {
+    	super(symbol,accTypes, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+    }
+    
     protected final NormalDistributionMixture getValueInternal(final NormalDistributionMixture a, final RealVector lowerBound, final RealVector upperBound) {
         final double value = ProbabilisticContinuousUtils.cumulativeProbability(a, lowerBound, upperBound);
         a.setScale(a.getScale() / value);
@@ -34,15 +38,6 @@ abstract public class AbstractProbabilisticContinuousCompareOperator extends Abs
         }
         a.setSupport(support);
         return a;
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE;
     }
 
     /**

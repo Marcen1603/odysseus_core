@@ -27,33 +27,13 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class DSASignFunction extends AbstractFunction<String> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 7967448067146263399L;
     private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.OBJECT }, { SDFDatatype.STRING } };
 
-    @Override
-    public int getArity() {
-        return 2;
+    public DSASignFunction() {
+    	super("DSASign",2,accTypes,SDFDatatype.STRING);
     }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s): an object and a private key");
-        }
-        return accTypes[argPos];
-    }
-
-    @Override
-    public String getSymbol() {
-        return "DSASign";
-    }
-
+    
     @Override
     public String getValue() {
         Serializable object = (Serializable) getInputValue(0);
@@ -73,9 +53,5 @@ public class DSASignFunction extends AbstractFunction<String> {
         }
     }
 
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.STRING;
-    }
 
 }

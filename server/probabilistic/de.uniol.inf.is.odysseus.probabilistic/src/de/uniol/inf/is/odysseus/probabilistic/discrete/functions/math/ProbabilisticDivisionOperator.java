@@ -42,6 +42,18 @@ public class ProbabilisticDivisionOperator extends AbstractProbabilisticBinaryOp
 	 */
     private static final long serialVersionUID = 4483919351512050581L;
 
+    public ProbabilisticDivisionOperator() {
+    	this(ACC_TYPES);
+    }
+    
+    public ProbabilisticDivisionOperator(SDFDatatype[] accTypes) {
+    	super("/", accTypes, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);    	
+    }    
+    
+    public ProbabilisticDivisionOperator(SDFDatatype[][] accTypes) {
+    	super("/", accTypes, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);    	
+    }
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#getPrecedence()
@@ -51,15 +63,7 @@ public class ProbabilisticDivisionOperator extends AbstractProbabilisticBinaryOp
         return 5;
     }
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-     */
-    @Override
-    public final String getSymbol() {
-        return "/";
-    }
-
+  
     /*
      * 
      * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
@@ -98,15 +102,7 @@ public class ProbabilisticDivisionOperator extends AbstractProbabilisticBinaryOp
         return new ProbabilisticDouble(values);
     }
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE;
-    }
-
+  
     /*
      * 
      * @see
@@ -166,19 +162,5 @@ public class ProbabilisticDivisionOperator extends AbstractProbabilisticBinaryOp
     public static final SDFDatatype[] ACC_TYPES = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT,
             SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG };
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-     */
-    @Override
-    public SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticDivisionOperator.ACC_TYPES;
-    }
 
 }

@@ -38,15 +38,10 @@ public class ProbabilisticContinuousEqualsVectorOperator extends AbstractProbabi
      */
     private static final long serialVersionUID = 3016679134461973157L;
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public final String getSymbol() {
-        return "==";
+    public ProbabilisticContinuousEqualsVectorOperator() {
+    	super("==", ACC_TYPES);
     }
-
+    
     /**
      * 
      * {@inheritDoc}
@@ -92,18 +87,5 @@ public class ProbabilisticContinuousEqualsVectorOperator extends AbstractProbabi
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE },
             { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE } };
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticContinuousEqualsVectorOperator.ACC_TYPES[argPos];
-    }
+ 
 }

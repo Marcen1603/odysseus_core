@@ -13,31 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.mep.functions;
+package de.uniol.inf.is.odysseus.mep.functions.string;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-abstract public class AbstractBooleanStringFunction extends AbstractFunction<Boolean> {
+abstract public class AbstractBinaryStringFunction<T> extends AbstractFunction<T> {
 
 	private static final long serialVersionUID = 5682688277582609459L;
-	public static SDFDatatype[] accTypes = new SDFDatatype[]{
-		SDFDatatype.STRING};
+	public static SDFDatatype[][] accTypes = new SDFDatatype[][]{
+		{SDFDatatype.STRING},{SDFDatatype.STRING}};
 	
-	@Override
-	public int getArity() {
-		return 2;
+	public AbstractBinaryStringFunction(String symbol, SDFDatatype datatype) {
+		super(symbol,2,accTypes, datatype);
 	}
-
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		return accTypes;
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.BOOLEAN;
-	}
-
+	
 }

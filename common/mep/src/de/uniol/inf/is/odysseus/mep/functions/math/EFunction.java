@@ -24,49 +24,16 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class EFunction extends AbstractFunction<Double> {
-    /**
-     * 
-     */
-    private static final long          serialVersionUID = -7314339800913778449L;
-    private static final SDFDatatype[] accTypes         = new SDFDatatype[] {};
 
-    @Override
-    public int getArity() {
-        return 0;
+	private static final long          serialVersionUID = -7314339800913778449L;
+
+    public EFunction() {
+    	super("e",0,null,SDFDatatype.DOUBLE,true);
     }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= 0) {
-            throw new IllegalArgumentException(this.getSymbol() + " has no argument(s).");
-        }
-        return accTypes;
-    }
-
-    @Override
-    public String getSymbol() {
-        return "e";
-    }
-
+    
     @Override
     public Double getValue() {
         return Math.E;
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.DOUBLE;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
     }
 
 }

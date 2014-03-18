@@ -27,50 +27,15 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class UUIDFunction extends AbstractFunction<String> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7270267952231320389L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] {};
 
-	@Override
-	public int getArity() {
-		return 0;
+	public UUIDFunction() {
+		super("uuid",0,null,SDFDatatype.STRING, false);
 	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has "
-					+ this.getArity() + " arguments.");
-		}
-		return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "uuid";
-	}
-
+	
 	@Override
 	public String getValue() {
 		return UUID.randomUUID().toString();
 	}
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.STRING;
-	}
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return false;
-    }
 }

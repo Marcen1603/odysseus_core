@@ -32,15 +32,16 @@ public class IntervalPowerOperator extends AbstractBinaryOperator<IntervalDouble
 	 */
 	private static final long serialVersionUID = -8262009270818213996L;
 
+	public IntervalPowerOperator() {
+		super("^",accTypes,SDFIntervalDatatype.INTERVAL_DOUBLE);
+	}
+	
 	@Override
 	public int getPrecedence() {
 		return 1;
 	}
 
-	@Override
-	public String getSymbol() {
-		return "^";
-	}
+
 
 	@Override
 	public IntervalDouble getValue() {
@@ -53,11 +54,6 @@ public class IntervalPowerOperator extends AbstractBinaryOperator<IntervalDouble
 		final double inf = Math.min(Math.pow(a.inf(), b), Math.pow(a.sup(), b));
 		final double sup = Math.max(Math.pow(a.inf(), b), Math.pow(a.sup(), b));
 		return new IntervalDouble(inf, sup);
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFIntervalDatatype.INTERVAL_DOUBLE;
 	}
 
 	@Override
@@ -94,18 +90,5 @@ public class IntervalPowerOperator extends AbstractBinaryOperator<IntervalDouble
 					SDFIntervalDatatype.INTERVAL_LONG },
 			{ SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER,
 					SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE } };
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity() - 1) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
-		}
-		return accTypes[argPos];
-	}
 
 }

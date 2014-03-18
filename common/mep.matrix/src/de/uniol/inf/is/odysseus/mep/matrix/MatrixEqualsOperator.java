@@ -16,23 +16,18 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
  */
 public class MatrixEqualsOperator extends AbstractBinaryOperator<Boolean> {
 
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -7610056055246507473L;
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
-			SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {SDFDatatype.MATRIXS,SDFDatatype.MATRIXS};
 
+	public MatrixEqualsOperator() {
+		super("==",accTypes,SDFDatatype.BOOLEAN);
+	}
+	
 	@Override
 	public int getPrecedence() {
 		return 9;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "==";
 	}
 
 	@Override
@@ -46,11 +41,6 @@ public class MatrixEqualsOperator extends AbstractBinaryOperator<Boolean> {
 
 	protected boolean getValueInternal(RealMatrix a, RealMatrix b) {
 		return Arrays.equals(a.getData(), b.getData());
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.BOOLEAN;
 	}
 
 	@Override
@@ -76,20 +66,6 @@ public class MatrixEqualsOperator extends AbstractBinaryOperator<Boolean> {
 	@Override
 	public boolean isRightDistributiveWith(IOperator<Boolean> operator) {
 		return false;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity() - 1) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
-		}
-
-		return accTypes;
 	}
 
 }

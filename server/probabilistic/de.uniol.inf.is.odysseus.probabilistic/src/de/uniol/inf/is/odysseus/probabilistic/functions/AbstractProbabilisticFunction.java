@@ -22,6 +22,7 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
 
@@ -40,6 +41,14 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
     /** The distributions. */
     private final List<NormalDistributionMixture> distributions = new ArrayList<NormalDistributionMixture>();
 
+    public AbstractProbabilisticFunction(String symbol, int arity, SDFDatatype[][] accTypes, SDFDatatype returnType) {
+    	super(symbol,arity,accTypes,returnType);
+	}
+    
+    public AbstractProbabilisticFunction(String symbol, int arity, SDFDatatype[] accTypes, SDFDatatype returnType) {
+    	super(symbol,arity,accTypes,returnType);
+	}
+    
     /**
      * Gets the normal distribution mixtures at the given position.
      * 

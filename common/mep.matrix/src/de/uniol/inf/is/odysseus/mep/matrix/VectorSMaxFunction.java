@@ -27,17 +27,13 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class VectorSMaxFunction extends AbstractFunction<Double> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 7768144136126905733L;
     public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.VECTOR_BOOLEAN, SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE };
 
-    @Override
-    public String getSymbol() {
-        return "sMax";
+    public VectorSMaxFunction() {
+    	super("sMax",1,accTypes,SDFDatatype.DOUBLE);
     }
-
+    
     @Override
     public Double getValue() {
         RealVector a = MatrixUtils.createRealVector((double[]) this.getInputValue(0));
@@ -46,26 +42,5 @@ public class VectorSMaxFunction extends AbstractFunction<Double> {
 
     protected double getValueInternal(RealVector a) {
         return a.getMaxValue();
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.DOUBLE;
-    }
-
-    @Override
-    public int getArity() {
-        return 1;
-    }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > this.getArity() - 1) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
     }
 }

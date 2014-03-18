@@ -16,51 +16,24 @@
 package de.uniol.inf.is.odysseus.mep.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
 /**
  * Returns the hyperbolic sine of a double value
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class HyperbolicSinusFunction extends AbstractFunction<Double> {
+public class HyperbolicSinusFunction extends AbstractUnaryNumberInputFunction<Double> {
 
-    /**
-     * 
-     */
     private static final long          serialVersionUID = -7505484909265341674L;
-    private static final SDFDatatype[] accTypes         = new SDFDatatype[] { SDFDatatype.DOUBLE, SDFDatatype.BYTE,
-            SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG };
 
-    @Override
-    public int getArity() {
-        return 1;
-    }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > 0) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
-    }
-
-    @Override
-    public String getSymbol() {
-        return "sinh";
+    public HyperbolicSinusFunction() {
+    	super("sinh", SDFDatatype.DOUBLE);
     }
 
     @Override
     public Double getValue() {
         return Math.sinh(getNumericalInputValue(0));
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.DOUBLE;
     }
 
 }

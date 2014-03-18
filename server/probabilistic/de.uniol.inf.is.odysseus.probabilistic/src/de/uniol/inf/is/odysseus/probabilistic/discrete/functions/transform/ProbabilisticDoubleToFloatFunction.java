@@ -30,71 +30,36 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFun
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticDoubleToFloatFunction extends AbstractProbabilisticFunction<ProbabilisticFloat> {
+public class ProbabilisticDoubleToFloatFunction extends
+		AbstractProbabilisticFunction<ProbabilisticFloat> {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = 5545298100153510227L;
+	private static final long serialVersionUID = 5545298100153510227L;
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
-     */
-    @Override
-    public final int getArity() {
-        return 1;
-    }
+	public ProbabilisticDoubleToFloatFunction() {
+		super("doubleToFloat", 1, ACC_TYPES,
+				SDFProbabilisticDatatype.PROBABILISTIC_FLOAT);
+	}
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-     */
-    @Override
-    public final String getSymbol() {
-        return "doubleToFloat";
-    }
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
+	 */
+	@Override
+	public final ProbabilisticFloat getValue() {
+		final Map<Float, Double> values = new HashMap<Float, Double>();
+		for (final Entry<?, Double> value : ((AbstractProbabilisticValue<?>) this
+				.getInputValue(0)).getValues().entrySet()) {
+			values.put(((Number) value.getKey()).floatValue(), value.getValue());
+		}
+		return new ProbabilisticFloat(values);
+	}
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
-     */
-    @Override
-    public final ProbabilisticFloat getValue() {
-        final Map<Float, Double> values = new HashMap<Float, Double>();
-        for (final Entry<?, Double> value : ((AbstractProbabilisticValue<?>) this.getInputValue(0)).getValues().entrySet()) {
-            values.put(((Number) value.getKey()).floatValue(), value.getValue());
-        }
-        return new ProbabilisticFloat(values);
-    }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_FLOAT;
-    }
-
-    /**
-     * Accepted data types.
-     */
-    public static final SDFDatatype[] ACC_TYPES = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > 0) {
-            throw new IllegalArgumentException("doubleToFloat has only 1 argument.");
-        }
-        return ProbabilisticDoubleToFloatFunction.ACC_TYPES;
-    }
+	/**
+	 * Accepted data types.
+	 */
+	public static final SDFDatatype[] ACC_TYPES = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
 
 }

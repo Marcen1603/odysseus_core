@@ -29,65 +29,47 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class MatrixSMinFunction extends AbstractFunction<Double> {
 
-    /**
+	/**
      * 
      */
-    private static final long serialVersionUID = 8985079762992918561L;
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
+	private static final long serialVersionUID = 8985079762992918561L;
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
+			SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
+			SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
 
-    @Override
-    public String getSymbol() {
-        return "sMin";
-    }
+	public MatrixSMinFunction() {
+		super("sMin", 1, accTypes, SDFDatatype.DOUBLE);
+	}
 
-    @Override
-    public Double getValue() {
-        RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this.getInputValue(0));
-        return getValueInternal(a);
-    }
+	@Override
+	public Double getValue() {
+		RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this
+				.getInputValue(0));
+		return getValueInternal(a);
+	}
 
-    protected double getValueInternal(RealMatrix a) {
-        return a.walkInOptimizedOrder(new RealMatrixPreservingVisitor() {
-            private double min;
+	protected double getValueInternal(RealMatrix a) {
+		return a.walkInOptimizedOrder(new RealMatrixPreservingVisitor() {
+			private double min;
 
-            @Override
-            public void start(int rows, int columns, int startRow, int endRow, int startColumn, int endColumn) {
-                min = Double.MAX_VALUE;
-            }
+			@Override
+			public void start(int rows, int columns, int startRow, int endRow,
+					int startColumn, int endColumn) {
+				min = Double.MAX_VALUE;
+			}
 
-            @Override
-            public void visit(int row, int column, double value) {
-                min = FastMath.min(min, value);
+			@Override
+			public void visit(int row, int column, double value) {
+				min = FastMath.min(min, value);
 
-            }
+			}
 
-            @Override
-            public double end() {
-                return min;
-            }
+			@Override
+			public double end() {
+				return min;
+			}
 
-        });
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.DOUBLE;
-    }
-
-    @Override
-    public int getArity() {
-        return 1;
-    }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > this.getArity() - 1) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
-    }
+		});
+	}
 
 }

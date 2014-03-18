@@ -38,6 +38,10 @@ public class ProbabilisticIntegrateFunction extends AbstractIntegrateMultivariat
      */
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
 
+    public ProbabilisticIntegrateFunction() {
+    	super(ACC_TYPES);
+    }
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.
@@ -51,20 +55,5 @@ public class ProbabilisticIntegrateFunction extends AbstractIntegrateMultivariat
         return this.getValueInternal(continuousDouble, lowerBound, upperBound);
     }
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.
-     * ProbabilisticIntegrateMultivariateFunction#getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: A distribution, a covariance matrix and the lower and upper support.");
-        }
-        return ProbabilisticIntegrateFunction.ACC_TYPES[argPos];
-    }
 
 }

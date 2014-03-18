@@ -13,19 +13,18 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
  */
 public class StringMinusOperator extends AbstractBinaryOperator<String> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1216499852673159550L;
 
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+		{ SDFDatatype.STRING }, { SDFDatatype.STRING } };
+
+	public StringMinusOperator() {
+		super("-", accTypes, SDFDatatype.STRING);
+	}
+    
     @Override
     public int getPrecedence() {
         return 6;
-    }
-
-    @Override
-    public String getSymbol() {
-        return "-";
     }
 
     @Override
@@ -33,11 +32,6 @@ public class StringMinusOperator extends AbstractBinaryOperator<String> {
         String a = getInputValue(0);
         String b = getInputValue(1);
         return a.replace(b, "");
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.STRING;
     }
 
     @Override
@@ -65,17 +59,5 @@ public class StringMinusOperator extends AbstractBinaryOperator<String> {
         return ASSOCIATIVITY.LEFT_TO_RIGHT;
     }
 
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.STRING };
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
-    }
 
 }

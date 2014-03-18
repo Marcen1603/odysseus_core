@@ -34,18 +34,8 @@ public class BhattacharyyaDistanceFunction extends AbstractBhattacharyyaDistance
      */
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE } };
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: Two distribution.");
-        }
-        return BhattacharyyaDistanceFunction.ACC_TYPES[argPos];
+    public BhattacharyyaDistanceFunction() {
+    	super(ACC_TYPES);
     }
 
     /**

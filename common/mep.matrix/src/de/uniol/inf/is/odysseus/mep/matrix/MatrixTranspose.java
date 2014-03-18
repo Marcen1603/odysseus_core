@@ -26,26 +26,12 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class MatrixTranspose extends AbstractFunction<Object> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4225196063477856350L;
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.MATRIX_DOUBLE};
 
-	/*
-	 * Liefert die Anzahl der m�glichen �bergabeparameter zur�ck.
-	 */
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	/*
-	 * Liefert den Namen zur�ck mit welchem die Funktion aufgerufen wird.
-	 */
-	@Override
-	public String getSymbol() {
-		return "MatrixTrans";
-	}
+	public MatrixTranspose() {
+		super("MatrixTrans",1,accTypes,SDFDatatype.MATRIX_DOUBLE);
+	}	
 
 	/*
 	 * Liefert die Transponierte der �bergebenen Matrix zur�ck.
@@ -56,24 +42,5 @@ public class MatrixTranspose extends AbstractFunction<Object> {
 		return v;
 	}
 
-	/*
-	 * Liefert den Klassentyp des Wertes der durch getValue() berechnet wird.
-	 */
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.MATRIX_DOUBLE;
-	}
-
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.MATRIX_DOUBLE};
 	
-	@Override
-    public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > 0){
-			throw new IllegalArgumentException("MatrixTrans has only 1 argument.");
-		}
-        return accTypes;
-	}
 }

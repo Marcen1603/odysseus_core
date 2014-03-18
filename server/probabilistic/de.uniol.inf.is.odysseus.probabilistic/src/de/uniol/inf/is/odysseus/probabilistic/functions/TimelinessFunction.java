@@ -22,24 +22,11 @@ public class TimelinessFunction extends AbstractFunction<Double> {
      */
     private static final long serialVersionUID = 4703040530419998760L;
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
-     */
-    @Override
-    public final int getArity() {
-        return 1;
+    public TimelinessFunction() {
+    	super("timeliness",1,ACC_TYPES,SDFProbabilisticDatatype.PROBABILISTIC_BYTE,false);
     }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-     */
-    @Override
-    public final String getSymbol() {
-        return "timeliness";
-    }
-
+    
+  
     /*
      * 
      * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
@@ -59,41 +46,12 @@ public class TimelinessFunction extends AbstractFunction<Double> {
         return timeliness;
     }
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_BYTE;
-    }
+ 
 
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[] ACC_TYPES = SDFDatatype.NUMBERS;
+    public static final SDFDatatype[][] ACC_TYPES = {SDFDatatype.NUMBERS,SDFDatatype.NUMBERS};
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return TimelinessFunction.ACC_TYPES;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        // We need access to the meta data of each tuple
-        return false;
-    }
+ 
 }

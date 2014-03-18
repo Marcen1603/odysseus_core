@@ -21,40 +21,15 @@ public class ToPointCloud extends AbstractFunction<KinectPointCloud> {
             {SDFKinectDatatype.KINECT_COLOR_MAP},
             {SDFKinectDatatype.KINECT_DEPTH_MAP}};
 
-    @Override
-    public int getArity() {
-        return 2;
+    public ToPointCloud() {
+    	super("ToPointCloud",2,ACC_TYPES,SDFKinectDatatype.KINECT_POINT_CLOUD);
     }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException(
-                    "negative argument index not allowed");
-        }
-        if (argPos > this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only "
-                    + this.getArity()
-                    + " argument(s): A color map, a depth map.");
-        }
-        return ToPointCloud.ACC_TYPES[argPos];
-    }
-
-    @Override
-    public String getSymbol() {
-        return "ToPointCloud";
-    }
-
+    
     @Override
     public KinectPointCloud getValue() {
         final KinectColorMap colorMap = (KinectColorMap) this.getInputValue(0);
         final KinectDepthMap depthMap = (KinectDepthMap) this.getInputValue(1);
         return new KinectPointCloud(colorMap, depthMap);
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFKinectDatatype.KINECT_POINT_CLOUD;
     }
 
 }

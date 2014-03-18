@@ -1,37 +1,19 @@
 package de.uniol.inf.is.odysseus.mep.functions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
-public class IsNaNFunction extends AbstractFunction<Boolean> {
+public class IsNaNFunction extends AbstractUnaryNumberInputFunction<Boolean> {
 
 	private static final long serialVersionUID = -6023606894827478154L;
-	private static final SDFDatatype[] acceptedTypes = {SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
+
+	public IsNaNFunction() {
+		super("isNaN",SDFDatatype.BOOLEAN);
+	}
 	
-	
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		return acceptedTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "isNaN";
-	}
-
 	@Override
 	public Boolean getValue() {
 		return Double.isNaN(getNumericalInputValue(0));
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.BOOLEAN;
 	}
 	
 

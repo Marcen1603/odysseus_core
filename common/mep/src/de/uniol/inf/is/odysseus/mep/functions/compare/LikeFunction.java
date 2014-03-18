@@ -15,18 +15,18 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.mep.functions.compare;
 
-import de.uniol.inf.is.odysseus.mep.functions.AbstractBooleanStringFunction;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.mep.functions.string.AbstractBinaryStringFunction;
 
 
-public class LikeFunction extends AbstractBooleanStringFunction{
+public class LikeFunction extends AbstractBinaryStringFunction<Boolean>{
 
 	private static final long serialVersionUID = 7705981108537461304L;
 
-	@Override
-	public String getSymbol() {
-		return "strlike";
+	public LikeFunction() {
+		super("strlike", SDFDatatype.BOOLEAN);
 	}
-
+	
 	@Override
 	public Boolean getValue() {
 		return ((String)getInputValue(0)).matches((String)getInputValue(1));

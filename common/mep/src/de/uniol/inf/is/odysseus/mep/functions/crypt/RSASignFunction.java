@@ -27,31 +27,11 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class RSASignFunction extends AbstractFunction<String> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 7131880564635503710L;
     private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.OBJECT }, { SDFDatatype.STRING } };
 
-    @Override
-    public int getArity() {
-        return 2;
-    }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s): an object and a private key");
-        }
-        return accTypes[argPos];
-    }
-
-    @Override
-    public String getSymbol() {
-        return "RSASign";
+    public RSASignFunction() {
+    	super("RSASign", 2, accTypes, SDFDatatype.STRING);
     }
 
     @Override
@@ -71,11 +51,6 @@ public class RSASignFunction extends AbstractFunction<String> {
         catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | IOException | InvalidKeySpecException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.STRING;
     }
 
 }

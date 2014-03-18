@@ -11,21 +11,19 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
 public class StringPlusOperator extends AbstractBinaryOperator<String> {
 
 
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6758609091849696249L;
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+		{ SDFDatatype.STRING }, { SDFDatatype.STRING } };
+
+	public StringPlusOperator() {
+		super("+",accTypes, SDFDatatype.STRING);
+	}
 
 	@Override
 	public int getPrecedence() {
 		return 6;
 	}
 
-	@Override
-	public String getSymbol() {
-		return "+";
-	}
 
 	@Override
 	public String getValue() {
@@ -33,11 +31,6 @@ public class StringPlusOperator extends AbstractBinaryOperator<String> {
 		sb.append(getInputValue(0));
 		sb.append(getInputValue(1));
 		return sb.toString();
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.STRING;
 	}
 
 	@Override
@@ -63,20 +56,6 @@ public class StringPlusOperator extends AbstractBinaryOperator<String> {
 	@Override
 	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
 		return ASSOCIATIVITY.LEFT_TO_RIGHT;
-	}
-
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.STRING};
-	
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos >= this.getArity()){
-			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
-		}
-        //			accTypes[1] = String.class; // string concatenation
-        return accTypes;
 	}
 
 }

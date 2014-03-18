@@ -14,16 +14,12 @@ import java.util.Date;
 public class WeekStringFunction extends AbstractDateStringFunction {
 
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1291666144673163996L;
 
-    @Override
-    public String getSymbol() {
-        return "week";
+    public WeekStringFunction() {
+    	super("week");
     }
-
+    
     @Override
     public Integer getValue() {
         Date date = null;
@@ -37,14 +33,5 @@ public class WeekStringFunction extends AbstractDateStringFunction {
         calendar.setTime(date);
         return calendar.get(Calendar.WEEK_OF_YEAR);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
-    }
-
 
 }

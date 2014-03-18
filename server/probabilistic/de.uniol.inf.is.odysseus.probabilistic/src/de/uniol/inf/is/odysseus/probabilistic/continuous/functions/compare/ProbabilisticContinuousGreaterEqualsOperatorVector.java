@@ -37,22 +37,21 @@ public class ProbabilisticContinuousGreaterEqualsOperatorVector extends Abstract
 	 */
     private static final long serialVersionUID = -9122605635777338549L;
 
-    /**
+    public ProbabilisticContinuousGreaterEqualsOperatorVector() {
+    	this(">=");
+    }
+    
+    protected ProbabilisticContinuousGreaterEqualsOperatorVector(String symbol) {
+    	super(symbol, ACC_TYPES);
+	}
+
+	/**
      * 
      * {@inheritDoc}
      */
     @Override
     public final int getPrecedence() {
         return 8;
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public String getSymbol() {
-        return ">=";
     }
 
     /**
@@ -83,19 +82,5 @@ public class ProbabilisticContinuousGreaterEqualsOperatorVector extends Abstract
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE },
             { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE } };
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticContinuousGreaterEqualsOperatorVector.ACC_TYPES[argPos];
-    }
 
 }

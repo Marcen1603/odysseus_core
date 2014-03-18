@@ -21,31 +21,16 @@ public class SplittFunction extends AbstractFunction<List<String>> {
 	private static final SDFDatatype[] returnTypes = new SDFDatatype[] {
 			SDFDatatype.STRING};
 
-	@Override
-	public int getArity() {
-		return 3;
+	public SplittFunction() {
+		super("Split",3,accTypes,SDFDatatype.TUPLE);
 	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		return accTypes[argPos];
-	}
-
-	@Override
-	public String getSymbol() {
-		return "Split";
-	}
+	
 
 	@Override
 	public List<String> getValue() {
 		String[] v = CSVParser.parseCSV((String)getInputValue(0), ((String)getInputValue(1)).toCharArray()[0], true);
 		List<String> ret = Arrays.asList(v);
 		return ret;
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.TUPLE;
 	}
 
 	@Override

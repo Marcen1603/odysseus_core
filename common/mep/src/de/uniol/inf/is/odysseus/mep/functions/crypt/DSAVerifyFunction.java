@@ -35,27 +35,10 @@ public class DSAVerifyFunction extends AbstractFunction<Boolean> {
     private static final long serialVersionUID = -5099251099894653726L;
     private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.OBJECT }, { SDFDatatype.STRING }, { SDFDatatype.STRING } };
 
-    @Override
-    public int getArity() {
-        return 3;
+    public DSAVerifyFunction() {
+    	super("DSAVerify",3,accTypes,SDFDatatype.BOOLEAN);
     }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s): an object, a signature, and a public key");
-        }
-        return accTypes[argPos];
-    }
-
-    @Override
-    public String getSymbol() {
-        return "DSAVerify";
-    }
-
+    
     @Override
     public Boolean getValue() {
         Serializable object = (Serializable) getInputValue(0);
@@ -83,11 +66,6 @@ public class DSAVerifyFunction extends AbstractFunction<Boolean> {
         catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | InvalidKeySpecException | IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.BOOLEAN;
     }
 
 }

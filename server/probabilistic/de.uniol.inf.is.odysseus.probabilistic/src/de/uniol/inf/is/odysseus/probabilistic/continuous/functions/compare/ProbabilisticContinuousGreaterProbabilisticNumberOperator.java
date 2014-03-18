@@ -15,13 +15,8 @@ public class ProbabilisticContinuousGreaterProbabilisticNumberOperator extends P
 
     private static final long serialVersionUID = 3981025281707408907L;
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public final String getSymbol() {
-        return ">";
+    public ProbabilisticContinuousGreaterProbabilisticNumberOperator() {
+    	super(">");
     }
-
+    
 }

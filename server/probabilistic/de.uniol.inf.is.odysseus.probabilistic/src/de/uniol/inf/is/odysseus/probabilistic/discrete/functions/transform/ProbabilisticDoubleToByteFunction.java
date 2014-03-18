@@ -36,25 +36,15 @@ public class ProbabilisticDoubleToByteFunction extends AbstractProbabilisticFunc
 	 * 
 	 */
     private static final long serialVersionUID = 2574577913106674914L;
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
+    /**
+     * Accepted data types.
      */
-    @Override
-    public final int getArity() {
-        return 1;
-    }
+    private static final SDFDatatype[] ACC_TYPES = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-     */
-    @Override
-    public final String getSymbol() {
-        return "doubleToByte";
+    public ProbabilisticDoubleToByteFunction() {
+    	super("doubleToByte", 1, ACC_TYPES, SDFProbabilisticDatatype.PROBABILISTIC_BYTE);
     }
-
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
@@ -68,33 +58,8 @@ public class ProbabilisticDoubleToByteFunction extends AbstractProbabilisticFunc
         return new ProbabilisticByte(values);
     }
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_BYTE;
-    }
+  
+  
 
-    /**
-     * Accepted data types.
-     */
-    public static final SDFDatatype[] ACC_TYPES = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > 0) {
-            throw new IllegalArgumentException("doubleToByte has only 1 argument.");
-        }
-        return ProbabilisticDoubleToByteFunction.ACC_TYPES;
-    }
-
+  
 }

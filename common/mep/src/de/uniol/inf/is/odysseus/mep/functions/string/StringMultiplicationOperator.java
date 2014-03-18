@@ -13,19 +13,18 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
  */
 public class StringMultiplicationOperator extends AbstractBinaryOperator<String> {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -2822365268366862280L;
 
+    private static final long serialVersionUID = -2822365268366862280L;
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+		{ SDFDatatype.STRING }, { SDFDatatype.STRING } };
+
+	public StringMultiplicationOperator() {
+		super("*", accTypes, SDFDatatype.STRING);
+	}
+	
     @Override
     public int getPrecedence() {
         return 5;
-    }
-
-    @Override
-    public String getSymbol() {
-        return "*";
     }
 
     @Override
@@ -37,11 +36,6 @@ public class StringMultiplicationOperator extends AbstractBinaryOperator<String>
             sb.append(a);
         }
         return sb.toString();
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.STRING;
     }
 
     @Override
@@ -67,19 +61,6 @@ public class StringMultiplicationOperator extends AbstractBinaryOperator<String>
     @Override
     public boolean isRightDistributiveWith(IOperator<String> operator) {
         return operator.getClass() == StringPlusOperator.class || operator.getClass() == StringMinusOperator.class;
-    }
-
-    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.STRING }, SDFDatatype.NUMBERS };
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes[argPos];
     }
 
 }

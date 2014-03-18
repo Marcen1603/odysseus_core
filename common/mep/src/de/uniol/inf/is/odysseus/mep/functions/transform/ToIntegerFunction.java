@@ -25,21 +25,11 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class ToIntegerFunction extends AbstractFunction<Integer> {
 
-
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 2799997996073155068L;
 
-	@Override
-    public int getArity() {
-        return 1;
-    }
-
-    @Override
-    public String getSymbol() {
-        return "toInteger";
-    }
+	public ToIntegerFunction() {
+		super("toInteger",1,SDFDatatype.INTEGER);
+	}	
 
     @Override
     public Integer getValue() {
@@ -52,25 +42,5 @@ public class ToIntegerFunction extends AbstractFunction<Integer> {
         }
         Double val = Double.parseDouble(getInputValue(0).toString());
         return val.intValue();
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.INTEGER;
-    }
-
-    private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DOUBLE, SDFDatatype.SHORT,
-            SDFDatatype.BYTE, SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.STRING,
-            SDFDatatype.BOOLEAN                };
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > 0) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
     }
 }

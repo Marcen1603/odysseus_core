@@ -28,15 +28,12 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class VectorSAVGFunction extends AbstractFunction<Double> {
 
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = -8567153407682230931L;
     public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.VECTOR_BOOLEAN, SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE };
 
-    @Override
-    public String getSymbol() {
-        return "sAVG";
+    public VectorSAVGFunction() {
+    	super("sAVG",1,accTypes,SDFDatatype.DOUBLE);
     }
 
     @Override
@@ -67,26 +64,5 @@ public class VectorSAVGFunction extends AbstractFunction<Double> {
                 return sum / count;
             }
         });
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.DOUBLE;
-    }
-
-    @Override
-    public int getArity() {
-        return 1;
-    }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > this.getArity() - 1) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
     }
 }

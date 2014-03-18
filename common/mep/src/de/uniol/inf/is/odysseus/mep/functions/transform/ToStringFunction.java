@@ -20,43 +20,14 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 public class ToStringFunction extends AbstractFunction<String> {
 
-    /**
-	 * 
-	 */
-    private static final long serialVersionUID = -3960501264856271045L;
+	private static final long serialVersionUID = -3960501264856271045L;
 
-    @Override
-    public int getArity() {
-        return 1;
-    }
+	public ToStringFunction() {
+		super("toString", 1, SDFDatatype.STRING);
+	}
 
-    @Override
-    public String getSymbol() {
-        return "toString";
-    }
-
-    @Override
-    public String getValue() {
-        return getInputValue(0).toString();
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.STRING;
-    }
-
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DOUBLE, SDFDatatype.SHORT, SDFDatatype.BYTE, SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG,
-            SDFDatatype.STRING, SDFDatatype.BOOLEAN, SDFDatatype.DATE };
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > 0) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
-    }
-
+	@Override
+	public String getValue() {
+		return getInputValue(0).toString();
+	}
 }

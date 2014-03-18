@@ -14,16 +14,12 @@ import java.util.Date;
 public class YearStringFunction extends AbstractDateStringFunction {
 
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -1986704598369818575L;
 
-    @Override
-    public String getSymbol() {
-        return "year";
+    public YearStringFunction() {
+    	super("year");
     }
-
+    
     @Override
     public Integer getValue() {
         Date date = null;
@@ -36,14 +32,6 @@ public class YearStringFunction extends AbstractDateStringFunction {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar.get(Calendar.YEAR);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
     }
 
 

@@ -39,28 +39,10 @@ public class IntervalDifferenceFunction extends
 			SDFIntervalDatatype.INTERVAL_DOUBLE,
 			SDFIntervalDatatype.INTERVAL_LONG };
 
-	@Override
-	public int getArity() {
-		return 2;
+	public IntervalDifferenceFunction() {
+		super("difference",2,accTypes,SDFIntervalDatatype.INTERVAL_DOUBLE);
 	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-	    if (argPos < 0) {
-            throw new IllegalArgumentException(
-                    "negative argument index not allowed");
-        }
-        if (argPos > this.getArity() - 1) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only "
-                    + this.getArity() + " argument(s).");
-        }
-        return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "difference";
-	}
+	
 
 	@Override
 	public IntervalDouble getValue() {
@@ -79,11 +61,6 @@ public class IntervalDifferenceFunction extends
 			return new IntervalDouble(a.inf(), b.inf());
 		}
 		return new IntervalDouble(Double.MAX_VALUE, Double.MIN_VALUE);
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFIntervalDatatype.INTERVAL_DOUBLE;
 	}
 
 	private boolean intersects(final IntervalDouble a, final IntervalDouble b) {

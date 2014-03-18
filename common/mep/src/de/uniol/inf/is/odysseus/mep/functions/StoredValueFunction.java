@@ -26,26 +26,10 @@ public class StoredValueFunction extends AbstractFunction<Double> {
     private static final long serialVersionUID = 6045568038655218127L;
     private static final SDFDatatype[][] acceptedTypes = { { SDFDatatype.STRING }, { SDFDatatype.MATRIX_DOUBLE }, { SDFDatatype.MATRIX_DOUBLE } };
 
-    @Override
-    public int getArity() {
-        return 3;
+    public StoredValueFunction() {
+    	super("storedValue",3, acceptedTypes,SDFDatatype.DOUBLE, false);
     }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return acceptedTypes[argPos];
-    }
-
-    @Override
-    public String getSymbol() {
-        return "storedValue";
-    }
+    
 
     @Override
     public Double getValue() {
@@ -64,13 +48,4 @@ public class StoredValueFunction extends AbstractFunction<Double> {
         }
     }
 
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.DOUBLE;
-    }
-
-    @Override
-    public boolean optimizeConstantParameter() {
-        return false;
-    }
 }

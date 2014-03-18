@@ -28,27 +28,10 @@ public class RSAFunction extends AbstractFunction<List<Tuple<?>>> {
     private static final long serialVersionUID = -6780447347683930090L;
     private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.NUMBERS };
 
-    @Override
-    public int getArity() {
-        return 1;
+    public RSAFunction() {
+    	super("rsa",1,accTypes,SDFDatatype.TUPLE);
     }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s): a string");
-        }
-        return accTypes[argPos];
-    }
-
-    @Override
-    public String getSymbol() {
-        return "rsa";
-    }
-
+    
     @Override
     public List<Tuple<?>> getValue() {
         int size = getNumericalInputValue(0).intValue();
@@ -72,11 +55,6 @@ public class RSAFunction extends AbstractFunction<List<Tuple<?>>> {
             throw new RuntimeException(e);
         }
         return keys;
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.TUPLE;
     }
 
 }

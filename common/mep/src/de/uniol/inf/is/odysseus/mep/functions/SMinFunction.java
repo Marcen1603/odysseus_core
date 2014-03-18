@@ -12,38 +12,17 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * 
  */
 public class SMinFunction extends AbstractFunction<Double> {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 8052397285858330468L;
 	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
 			{ SDFDatatype.OBJECT },
 			{ SDFDatatype.DOUBLE, SDFDatatype.BYTE, SDFDatatype.FLOAT,
 					SDFDatatype.INTEGER, SDFDatatype.LONG } };
 
-	@Override
-	public int getArity() {
-		return 2;
+	public SMinFunction() {
+		super("SMIN", 2, accTypes, SDFDatatype.DOUBLE);
 	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity()
-					+ " argument(s): a tuple list and the position");
-		}
-		return accTypes[argPos];
-	}
-
-	@Override
-	public String getSymbol() {
-		return "SMIN";
-	}
+	
 
 	@Override
 	public Double getValue() {
@@ -62,8 +41,4 @@ public class SMinFunction extends AbstractFunction<Double> {
 		return result;
 	}
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
-	}
 }

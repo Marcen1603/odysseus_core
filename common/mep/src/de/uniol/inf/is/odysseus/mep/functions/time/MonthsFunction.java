@@ -17,53 +17,33 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class MonthsFunction extends AbstractFunction<Integer> {
 
-    /**
+	/**
      * 
      */
-    private static final long serialVersionUID = -4615281071966679283L;
-    private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DATE };
+	private static final long serialVersionUID = -4615281071966679283L;
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+			{ SDFDatatype.DATE }, { SDFDatatype.DATE } };
 
-    @Override
-    public int getArity() {
-        return 2;
+	public MonthsFunction() {
+    	super("months",2,accTypes, SDFDatatype.INTEGER);
     }
 
-    @Override
-    public String getSymbol() {
-        return "months";
-    }
+	@Override
+	public Integer getValue() {
+		Calendar a = Calendar.getInstance();
+		a.setTime((Date) getInputValue(0));
+		Calendar b = Calendar.getInstance();
+		b.setTime((Date) getInputValue(1));
+		int months = 0;
+		while (a.compareTo(b) <= 0) {
+			months++;
+			a.add(Calendar.MONTH, 1);
+		}
+		if (months > 0) {
+			months--;
+		}
+		return months;
+	}
 
-    @Override
-    public Integer getValue() {
-        Calendar a = Calendar.getInstance();
-        a.setTime((Date) getInputValue(0));
-        Calendar b = Calendar.getInstance();
-        b.setTime((Date) getInputValue(1));
-        int months = 0;
-        while (a.compareTo(b) <= 0) {
-            months++;
-            a.add(Calendar.MONTH, 1);
-        }
-        if (months > 0) {
-            months--;
-        }
-        return months;
-    }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s): two dates");
-        }
-        return accTypes;
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.INTEGER;
-    }
 
 }

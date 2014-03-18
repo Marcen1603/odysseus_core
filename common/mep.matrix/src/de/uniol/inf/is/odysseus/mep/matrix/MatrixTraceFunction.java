@@ -27,18 +27,16 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * 
  */
 public class MatrixTraceFunction extends AbstractFunction<Double> {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 8984761356858742631L;
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
 			SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
 			SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
 
-	@Override
-	public String getSymbol() {
-		return "tr";
+	public MatrixTraceFunction() {
+		super("tr",1,accTypes, SDFDatatype.DOUBLE);
 	}
+	
 
 	@Override
 	public Double getValue() {
@@ -49,29 +47,6 @@ public class MatrixTraceFunction extends AbstractFunction<Double> {
 
 	protected double getValueInternal(RealMatrix a) {
 		return a.getTrace();
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
-	}
-
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity() - 1) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
-		}
-		return accTypes;
 	}
 
 }

@@ -26,16 +26,11 @@ public class MatrixFunctionProvider implements IFunctionProvider {
     public MatrixFunctionProvider() {
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public List<IFunction<?>> getFunctions() {
 
         List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
-        functions.add(new MatrixAdd());
         functions.add(new MatrixGetEntry());
-        functions.add(new MatrixInvert());
-        functions.add(new MatrixMult());
-        functions.add(new MatrixSub());
         functions.add(new MatrixTranspose());
 
         functions.add(new MatrixEqualsOperator());

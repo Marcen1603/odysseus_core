@@ -42,6 +42,10 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
 	 */
     private static final long serialVersionUID = 3516509026688087365L;
 
+    public ProbabilisticContinuousMinusOperator() {
+    	super("-",ACC_TYPES,SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+    }
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.mep.IOperator#getPrecedence()
@@ -49,15 +53,6 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
     @Override
     public final int getPrecedence() {
         return 6;
-    }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-     */
-    @Override
-    public final String getSymbol() {
-        return "-";
     }
 
     /*
@@ -109,15 +104,6 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
         result.setSupport(support);
         result.setScale(a.getScale() * b.getScale());
         return result;
-    }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE;
     }
 
     /*
@@ -176,19 +162,5 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
             SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE,
             SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG };
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > (this.getArity() - 1)) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticContinuousMinusOperator.ACC_TYPES;
-    }
 
 }

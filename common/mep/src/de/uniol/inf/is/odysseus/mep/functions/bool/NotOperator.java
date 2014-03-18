@@ -20,19 +20,16 @@ import de.uniol.inf.is.odysseus.mep.AbstractUnaryOperator;
 
 public class NotOperator extends AbstractUnaryOperator<Boolean> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3762757228260146398L;
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{new SDFDatatype[]{SDFDatatype.BOOLEAN}};
 
+	public NotOperator() {
+		super("!",accTypes, SDFDatatype.BOOLEAN);
+	}
+	
 	@Override
 	public int getPrecedence() {
 		return 3;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "!";
 	}
 
 	@Override
@@ -41,29 +38,9 @@ public class NotOperator extends AbstractUnaryOperator<Boolean> {
 	}
 
 	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.BOOLEAN;
-	}
-
-	@Override
 	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
 		return ASSOCIATIVITY.RIGHT_TO_LEFT;
 	}
 	
-	public static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.BOOLEAN};
-	
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > 0){
-			throw new IllegalArgumentException("! has only 1 argument.");
-		}
-        SDFDatatype[] accTypes = new SDFDatatype[1];
-        accTypes[0] = SDFDatatype.BOOLEAN;
-        return accTypes;
-	}
-
 
 }

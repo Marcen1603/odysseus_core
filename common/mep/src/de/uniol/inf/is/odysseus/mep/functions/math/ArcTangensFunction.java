@@ -16,51 +16,25 @@
 package de.uniol.inf.is.odysseus.mep.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
 /**
  * Returns the arc tangent of a value
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class ArcTangensFunction extends AbstractFunction<Double> {
+public class ArcTangensFunction extends AbstractUnaryNumberInputFunction<Double> {
 
-    /**
-     * 
-     */
     private static final long          serialVersionUID = 7533138658078177214L;
-    private static final SDFDatatype[] accTypes         = new SDFDatatype[] { SDFDatatype.DOUBLE, SDFDatatype.BYTE,
-            SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG };
 
-    @Override
-    public int getArity() {
-        return 1;
+
+    public ArcTangensFunction() {
+    	super("atan", SDFDatatype.DOUBLE);
     }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > 0) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
-    }
-
-    @Override
-    public String getSymbol() {
-        return "atan";
-    }
-
+    
     @Override
     public Double getValue() {
         return Math.atan(getNumericalInputValue(0));
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.DOUBLE;
     }
 
 }

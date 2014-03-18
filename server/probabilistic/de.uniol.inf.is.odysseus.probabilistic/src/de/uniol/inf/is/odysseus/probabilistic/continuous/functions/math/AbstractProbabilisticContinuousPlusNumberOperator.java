@@ -41,6 +41,10 @@ public abstract class AbstractProbabilisticContinuousPlusNumberOperator extends 
 	 */
     private static final long serialVersionUID = 4535153232522764588L;
 
+    public AbstractProbabilisticContinuousPlusNumberOperator(SDFDatatype[][] accTypes) {
+    	super("+", accTypes,SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+    }
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.mep.IOperator#getPrecedence()
@@ -48,15 +52,6 @@ public abstract class AbstractProbabilisticContinuousPlusNumberOperator extends 
     @Override
     public final int getPrecedence() {
         return 6;
-    }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-     */
-    @Override
-    public final String getSymbol() {
-        return "+";
     }
 
     /**
@@ -88,15 +83,6 @@ public abstract class AbstractProbabilisticContinuousPlusNumberOperator extends 
         }
         result.setSupport(support);
         return result;
-    }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE;
     }
 
     /*

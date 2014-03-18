@@ -32,19 +32,15 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class MatrixDeterminantFunction extends AbstractFunction<Double> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5178021143045609051L;
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
 			SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
 			SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
 
-	@Override
-	public String getSymbol() {
-		return "det";
+	public MatrixDeterminantFunction() {
+		super("det",1,accTypes,SDFDatatype.DOUBLE);
 	}
-
+	
 	@Override
 	public Double getValue() {
 		RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this
@@ -59,29 +55,6 @@ public class MatrixDeterminantFunction extends AbstractFunction<Double> {
 				| NonPositiveDefiniteMatrixException e) {
 			return new LUDecomposition(a).getDeterminant();
 		}
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
-	}
-
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity() - 1) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
-		}
-		return accTypes;
 	}
 
 }

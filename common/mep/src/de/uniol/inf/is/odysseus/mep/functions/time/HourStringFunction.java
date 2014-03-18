@@ -13,16 +13,12 @@ import java.util.Date;
  */
 public class HourStringFunction extends AbstractDateStringFunction {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -6681108594943533499L;
 
-    @Override
-    public String getSymbol() {
-        return "hour";
+    public HourStringFunction() {
+    	super("hour");
     }
-
+    
     @Override
     public Integer getValue() {
         Date date = null;
@@ -35,14 +31,6 @@ public class HourStringFunction extends AbstractDateStringFunction {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar.get(Calendar.HOUR_OF_DAY);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
     }
 
 }

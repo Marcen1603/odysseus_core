@@ -16,47 +16,19 @@
 package de.uniol.inf.is.odysseus.mep.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
-public class CeilFunction extends AbstractFunction<Double> {
+public class CeilFunction extends AbstractUnaryNumberInputFunction<Double> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3179317408857566584L;
 
-	@Override
-	public int getArity() {
-		return 1;
+	public CeilFunction() {
+		super("ceil",SDFDatatype.DOUBLE);
 	}
-
-	@Override
-	public String getSymbol() {
-		return "ceil";
-	}
-
+	
 	@Override
 	public Double getValue() {
 		return Math.ceil(getNumericalInputValue(0));
 	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
-	}
-	
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
-	
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > 0){
-			throw new IllegalArgumentException("ceil has only 1 argument.");
-		}
-        return accTypes;
-	}
-
 
 }

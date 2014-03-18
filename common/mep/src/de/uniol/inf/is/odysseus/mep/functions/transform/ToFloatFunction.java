@@ -24,51 +24,23 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ToFloatFunction extends AbstractFunction<Float> {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1201584883722391034L;
 
-    @Override
-    public int getArity() {
-        return 1;
-    }
+	private static final long serialVersionUID = 1201584883722391034L;
 
-    @Override
-    public String getSymbol() {
-        return "toFloat";
-    }
+	public ToFloatFunction() {
+		super("toFloat", 1, SDFDatatype.FLOAT);
+	}
 
-    @Override
-    public Float getValue() {
-        String s = getInputValue(0).toString();
-        if (s.equalsIgnoreCase("true")) {
-            return 1f;
-        }
-        else if (s.equalsIgnoreCase("false")) {
-            return 0f;
-        }
-        Double val = Double.parseDouble(getInputValue(0).toString());
-        return val.floatValue();
-    }
+	@Override
+	public Float getValue() {
+		String s = getInputValue(0).toString();
+		if (s.equalsIgnoreCase("true")) {
+			return 1f;
+		} else if (s.equalsIgnoreCase("false")) {
+			return 0f;
+		}
+		Double val = Double.parseDouble(getInputValue(0).toString());
+		return val.floatValue();
+	}
 
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.FLOAT;
-    }
-
-    private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DOUBLE, SDFDatatype.SHORT,
-            SDFDatatype.BYTE, SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.STRING,
-            SDFDatatype.BOOLEAN                };
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > 0) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
-    }
 }

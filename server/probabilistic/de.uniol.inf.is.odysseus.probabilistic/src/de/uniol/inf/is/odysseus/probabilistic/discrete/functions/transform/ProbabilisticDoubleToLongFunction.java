@@ -37,23 +37,10 @@ public class ProbabilisticDoubleToLongFunction extends AbstractProbabilisticFunc
 	 */
     private static final long serialVersionUID = -6138521245333044959L;
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
-     */
-    @Override
-    public final int getArity() {
-        return 1;
+    public ProbabilisticDoubleToLongFunction() {
+    	super("doubleToLong",1,ACC_TYPES,SDFProbabilisticDatatype.PROBABILISTIC_LONG);
     }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-     */
-    @Override
-    public final String getSymbol() {
-        return "doubleToLong";
-    }
+    
 
     /*
      * 
@@ -68,33 +55,10 @@ public class ProbabilisticDoubleToLongFunction extends AbstractProbabilisticFunc
         return new ProbabilisticLong(values);
     }
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_LONG;
-    }
 
     /**
      * Accepted data types.
      */
     public static final SDFDatatype[] ACC_TYPES = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > 0) {
-            throw new IllegalArgumentException("doubleToLong has only 1 argument.");
-        }
-        return ProbabilisticDoubleToLongFunction.ACC_TYPES;
-    }
 
 }

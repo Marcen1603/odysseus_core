@@ -18,20 +18,21 @@ package de.uniol.inf.is.odysseus.mep.functions.time;
 import java.util.Calendar;
 import java.util.Date;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+
 /**
  * Extracts the second part of the date
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class SecondFunction extends AbstractDateFunction{
+public class SecondFunction extends AbstractUnaryDateFunction<Integer>{
 
     private static final long serialVersionUID = -3236866061595832366L;
 
-    @Override
-    public String getSymbol() {
-        return "second";
+    public SecondFunction() {
+    	super("second", SDFDatatype.INTEGER);
     }
-
+    
     @Override
     public Integer getValue() {
 		Calendar calendar = Calendar.getInstance();
@@ -39,12 +40,4 @@ public class SecondFunction extends AbstractDateFunction{
 		return calendar.get(Calendar.SECOND);
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
-    }
 }

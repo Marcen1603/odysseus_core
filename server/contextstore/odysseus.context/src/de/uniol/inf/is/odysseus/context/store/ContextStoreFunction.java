@@ -50,34 +50,21 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 public class ContextStoreFunction extends AbstractFunction<Object> {
 
 	private static final long serialVersionUID = 8083562782642549093L;
-	private static Logger LOG = LoggerFactory.getLogger(ContextStoreFunction.class);
+	private static Logger LOG = LoggerFactory
+			.getLogger(ContextStoreFunction.class);
+	static final SDFDatatype accTypes[][] = new SDFDatatype[][] { {
+			SDFDatatype.STRING, SDFDatatype.INTEGER } };
 
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		SDFDatatype types[] = { SDFDatatype.STRING, SDFDatatype.INTEGER };
-		return types;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "ContextStore";
-	}
-
-	@Override
-	public boolean optimizeConstantParameter() {
-		return false;
+	public ContextStoreFunction() {
+		super("ContextStore", 1, accTypes, null, false);
 	}
 
 	@Override
 	public Object getValue() {
 		String storeName = resolveStoreName();
 
-		List<Tuple<? extends ITimeInterval>> values = ContextStoreManager.getStore(storeName).getLastValues();
+		List<Tuple<? extends ITimeInterval>> values = ContextStoreManager
+				.getStore(storeName).getLastValues();
 		if (values == null) {
 			return "<empty>";
 		}
@@ -89,8 +76,9 @@ public class ContextStoreFunction extends AbstractFunction<Object> {
 	}
 
 	@Override
-	public SDFDatatype getReturnType() {
-		SDFSchema schema = ContextStoreManager.getStore(resolveStoreName()).getSchema();
+	protected SDFDatatype determineReturnType() {
+		SDFSchema schema = ContextStoreManager.getStore(resolveStoreName())
+				.getSchema();
 		AttributeResolver resolver = new AttributeResolver();
 		resolver.addAttributes(schema);
 		SDFAttribute attribute = resolver.getAttribute(resolveAttributeName());
@@ -103,7 +91,8 @@ public class ContextStoreFunction extends AbstractFunction<Object> {
 		if (symbols.length >= 2) {
 			return symbols[0];
 		}
-		throw new IllegalArgumentException("for context access you have to define store and attribute like \"thestore.theattribute\"");
+		throw new IllegalArgumentException(
+				"for context access you have to define store and attribute like \"thestore.theattribute\"");
 	}
 
 	private String resolveAttributeName() {
@@ -112,7 +101,8 @@ public class ContextStoreFunction extends AbstractFunction<Object> {
 		if (symbols.length >= 2) {
 			return symbols[1];
 		}
-		throw new IllegalArgumentException("for context access you have to define store and attribute like \"thestore.theattribute\"");
+		throw new IllegalArgumentException(
+				"for context access you have to define store and attribute like \"thestore.theattribute\"");
 	}
 
 }

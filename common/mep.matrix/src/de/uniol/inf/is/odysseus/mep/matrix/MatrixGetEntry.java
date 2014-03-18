@@ -22,56 +22,25 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 /*
  * Diese Klasse dient dazu, einen bestimmten Wert aus einer Matrix auszulesen.
  */
-public class MatrixGetEntry extends AbstractFunction<Object>{
+public class MatrixGetEntry extends AbstractFunction<Double>{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8960765237278191962L;
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER};
 
-	/*
-	 * Liefert die Anzahl der m�glichen �bergabeparameter zur�ck.
-	 */
-	@Override
-	public int getArity() {
-		return 3;
+	public MatrixGetEntry() {
+		super("MatrixEntry",3,accTypes,SDFDatatype.DOUBLE);
 	}
-
-	/*
-	 * Liefert den Namen zur�ck mit welchem die Funktion aufgerufen wird.
-	 */
-	@Override
-	public String getSymbol() {
-		return "MatrixEntry";
-	}
-
+		
 	/*
 	 * Liefert einen bestimmten Wert aus einer �bergebenen Matrix zur�ck.
 	 */
 	@Override
-	public Object getValue() {
+	public Double getValue() {
 		double d = ((double[][]) getInputValue(0))[((Double)getInputValue(1)).intValue()][((Double)getInputValue(2)).intValue()];
 		return d;
 	}
 
-	/*
-	 * Liefert den Klassentyp des Wertes der durch getValue() berechnet wird.
-	 */
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
-	}
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER};
+
 	
-	@Override
-    public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > 2){
-			throw new IllegalArgumentException("AbsValue has only 1 argument.");
-		}
-        return accTypes;
-	}
 }

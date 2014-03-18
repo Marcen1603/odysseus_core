@@ -16,6 +16,7 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.functions;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 
@@ -32,15 +33,14 @@ public abstract class AbstractProbabilisticBinaryOperator<T> extends AbstractPro
 	 */
     private static final long serialVersionUID = -2604513567977149416L;
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
-     */
-    @Override
-    public final int getArity() {
-        return 2;
-    }
-
+    public AbstractProbabilisticBinaryOperator(String symbol, SDFDatatype[][] accTypes, SDFDatatype returnType) {
+    	super(symbol,2,accTypes,returnType);
+	}
+    
+    public AbstractProbabilisticBinaryOperator(String symbol, SDFDatatype[] accTypes, SDFDatatype returnType) {
+    	super(symbol,2,accTypes,returnType);
+	}
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.mep.IOperator#isBinary()

@@ -34,20 +34,10 @@ public class EuclideanDistanceFunction extends AbstractEuclideanDistanceFunction
      */
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: Two distribution.");
-        }
-        return EuclideanDistanceFunction.ACC_TYPES[argPos];
+    public EuclideanDistanceFunction() {
+    	super(ACC_TYPES);
     }
-
+    
     /**
      * 
      * {@inheritDoc}

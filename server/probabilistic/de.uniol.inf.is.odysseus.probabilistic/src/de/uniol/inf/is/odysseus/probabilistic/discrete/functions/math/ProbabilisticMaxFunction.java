@@ -30,38 +30,14 @@ public class ProbabilisticMaxFunction extends AbstractProbabilisticFunction<Prob
      */
     private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS, SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS };
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
-     */
-    @Override
-    public final int getArity() {
-        return 2;
+    public ProbabilisticMaxFunction() {
+    	super("sMax",2,ACC_TYPES,SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
     }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticMaxFunction.ACC_TYPES[argPos];
+    
+    public ProbabilisticMaxFunction(SDFDatatype[][] accTypes) {
+    	super("sMax",2,accTypes,SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
     }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-     */
-    @Override
-    public final String getSymbol() {
-        return "sMax";
-    }
+    
 
     /*
      * 
@@ -99,15 +75,6 @@ public class ProbabilisticMaxFunction extends AbstractProbabilisticFunction<Prob
             }
         }
         return new ProbabilisticDouble(values);
-    }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE;
     }
 
 }

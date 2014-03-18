@@ -23,18 +23,15 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare;
  */
 public class ProbabilisticContinuousGreaterOperator extends ProbabilisticContinuousGreaterEqualsOperator {
 
-    /**
+    
+	public ProbabilisticContinuousGreaterOperator() {
+		super(">");
+	}
+	
+	/**
      * 
      */
     private static final long serialVersionUID = -483068049948774552L;
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public final String getSymbol() {
-        return ">";
-    }
 
 }

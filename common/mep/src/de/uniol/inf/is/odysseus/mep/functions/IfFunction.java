@@ -26,55 +26,42 @@ public class IfFunction extends AbstractFunction<Object> {
 	private static final Logger LOG = LoggerFactory.getLogger(IfFunction.class);
 	private static final long serialVersionUID = 7330905069703118113L;
 
-	@Override
-	public int getArity() {
-		return 3;
-	}
+	public static SDFDatatype[][] accTypes = new SDFDatatype[][]{
+		{SDFDatatype.BOOLEAN},
+		{SDFDatatype.OBJECT},
+		{SDFDatatype.OBJECT}};
 
-	@Override
-	public String getSymbol() {
-		return "eif";
+	
+	public IfFunction() {
+		super("eif",3,accTypes,null);
 	}
+	
 
 	@Override
 	public Object getValue() {
 		return getInputValue(0) ? getInputValue(1) : getInputValue(2);
 	}
 
-	@Override
-	public SDFDatatype getReturnType() {
-		// if then and else arguments have the same type, we are sure to return
-		// a value of that type
-		SDFDatatype type1 = getArguments()[1].getReturnType();
-		SDFDatatype type2 = getArguments()[2].getReturnType();
-		if (type1 == type2) {
-			return getArguments()[1].getReturnType();
-		}
-		
-		if( type1.compatibleTo(type2)) {
-			return type2;
-		} else if( type2.compatibleTo(type1)) {
-			return type1;
-		} else {
-			LOG.warn("Incompatible return types in if-Function");
-			return SDFDatatype.OBJECT;
-		}
-	}
 	
-	public static SDFDatatype[][] accTypes = new SDFDatatype[][]{
-															{SDFDatatype.BOOLEAN},
-															{SDFDatatype.OBJECT},
-															{SDFDatatype.OBJECT}};
+//	@Override
+//	protected SDFDatatype determineReturnType() {
+//		// if then and else arguments have the same type, we are sure to return
+//		// a value of that type
+//		SDFDatatype type1 = getArguments()[1].getReturnType();
+//		SDFDatatype type2 = getArguments()[2].getReturnType();
+//		if (type1 == type2) {
+//			return getArguments()[1].getReturnType();
+//		}
+//		
+//		if( type1.compatibleTo(type2)) {
+//			return type2;
+//		} else if( type2.compatibleTo(type1)) {
+//			return type1;
+//		} else {
+//			LOG.warn("Incompatible return types in if-Function");
+//			return SDFDatatype.OBJECT;
+//		}
+//	}
 	
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > 2){
-			throw new IllegalArgumentException("iffunction has 3 arguments.");
-		}
-        return accTypes[argPos];
-	}
 
 }

@@ -7,20 +7,16 @@ public class DEBSDistance extends AbstractFunction<Integer>{
 
 	private static final long serialVersionUID = 8159082937727522598L;
 
-		
-	@Override
-	public int getArity() {
-		return 6;
+	public DEBSDistance() {
+		super("DEBSDistance",6, accTypes,SDFDatatype.INTEGER);
 	}
+		
+
 	
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
     	SDFDatatype.LONG
 	};
 
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		return accTypes;
-	}
 
 	@Override
 	public Integer getValue() {
@@ -34,13 +30,4 @@ public class DEBSDistance extends AbstractFunction<Integer>{
 		return (int) (Math.sqrt(Math.pow((x - playerX), 2) + Math.pow((y - playerY), 2) + Math.pow((z - playerZ), 2)));
 	 }
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.INTEGER;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "DEBSDistance";
-	}
 }

@@ -27,45 +27,23 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class VectorSMinFunction extends AbstractFunction<Double> {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -8723597840827450528L;
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.VECTOR_BOOLEAN, SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE };
+	private static final long serialVersionUID = -8723597840827450528L;
+	private static final SDFDatatype[] accTypes = new SDFDatatype[] {
+			SDFDatatype.VECTOR_BOOLEAN, SDFDatatype.VECTOR_BYTE,
+			SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE };
 
-    @Override
-    public String getSymbol() {
-        return "sMin";
-    }
+	public VectorSMinFunction() {
+		super("sMin", 1, accTypes, SDFDatatype.DOUBLE);
+	}
 
-    @Override
-    public Double getValue() {
-        RealVector a = MatrixUtils.createRealVector((double[]) this.getInputValue(0));
-        return getValueInternal(a);
-    }
+	@Override
+	public Double getValue() {
+		RealVector a = MatrixUtils.createRealVector((double[]) this
+				.getInputValue(0));
+		return getValueInternal(a);
+	}
 
-    protected double getValueInternal(RealVector a) {
-        return a.getMinValue();
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.DOUBLE;
-    }
-
-    @Override
-    public int getArity() {
-        return 1;
-    }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > this.getArity() - 1) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
-    }
+	protected double getValueInternal(RealVector a) {
+		return a.getMinValue();
+	}
 }

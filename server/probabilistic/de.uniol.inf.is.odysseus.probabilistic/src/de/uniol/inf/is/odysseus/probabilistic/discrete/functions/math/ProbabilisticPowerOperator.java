@@ -41,6 +41,10 @@ public class ProbabilisticPowerOperator extends AbstractProbabilisticBinaryOpera
 	 */
     private static final long serialVersionUID = 4646698914179052402L;
 
+    public ProbabilisticPowerOperator() {
+    	super("^",ACC_TYPES,SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
+    }
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.mep.IOperator#getPrecedence()
@@ -50,14 +54,6 @@ public class ProbabilisticPowerOperator extends AbstractProbabilisticBinaryOpera
         return 1;
     }
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-     */
-    @Override
-    public final String getSymbol() {
-        return "^";
-    }
 
     /*
      * 
@@ -96,14 +92,6 @@ public class ProbabilisticPowerOperator extends AbstractProbabilisticBinaryOpera
         return new ProbabilisticDouble(values);
     }
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE;
-    }
 
     /*
      * 
@@ -157,19 +145,5 @@ public class ProbabilisticPowerOperator extends AbstractProbabilisticBinaryOpera
      */
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS, SDFDatatype.NUMBERS };
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticPowerOperator.ACC_TYPES[argPos];
-    }
 
 }

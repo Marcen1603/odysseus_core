@@ -17,46 +17,20 @@ package de.uniol.inf.is.odysseus.mep.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
-public class CosinusFunction extends AbstractFunction<Double> {
+public class CosinusFunction extends AbstractUnaryNumberInputFunction<Double> {
 
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = -9054387962883836702L;
 
-	@Override
-	public int getArity() {
-		return 1;
+	public CosinusFunction() {
+		super("cos",SDFDatatype.DOUBLE);
 	}
-
-	@Override
-	public String getSymbol() {
-		return "cos";
-	}
-
+	
 	@Override
 	public Double getValue() {
 		return Math.cos(getNumericalInputValue(0));
 	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
-	}
-	
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
-	
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > 1){
-			throw new IllegalArgumentException("cos has only 1 argument.");
-		}
-        return accTypes;
-	}
-
 
 }

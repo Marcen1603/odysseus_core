@@ -13,17 +13,12 @@ import java.util.Date;
  */
 public class SecondStringFunction extends AbstractDateStringFunction {
 
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = -6940408854397385715L;
 
-    @Override
-    public String getSymbol() {
-        return "second";
+    public SecondStringFunction() {
+    	super("second");
     }
-
+    
     @Override
     public Integer getValue() {
         Date date = null;
@@ -37,14 +32,5 @@ public class SecondStringFunction extends AbstractDateStringFunction {
         calendar.setTime(date);
         return calendar.get(Calendar.SECOND);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
-    }
-
 
 }

@@ -14,16 +14,12 @@ import java.util.Date;
 public class MonthStringFunction extends AbstractDateStringFunction {
 
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -7178932074154225687L;
 
-    @Override
-    public String getSymbol() {
-        return "month";
+    public MonthStringFunction() {
+    	super("month");
     }
-
+    
     @Override
     public Integer getValue() {
         Date date = null;
@@ -37,14 +33,4 @@ public class MonthStringFunction extends AbstractDateStringFunction {
         calendar.setTime(date);
         return calendar.get(Calendar.MONTH) + 1;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
-    }
-
-
 }

@@ -38,28 +38,10 @@ public class IntervalUnionFunction extends AbstractFunction<IntervalDouble> {
 			SDFIntervalDatatype.INTERVAL_DOUBLE,
 			SDFIntervalDatatype.INTERVAL_LONG };
 
-	@Override
-	public int getArity() {
-		return 2;
+	public IntervalUnionFunction() {
+		super("union",2,accTypes,SDFIntervalDatatype.INTERVAL_DOUBLE);
 	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-	    if (argPos < 0) {
-            throw new IllegalArgumentException(
-                    "negative argument index not allowed");
-        }
-        if (argPos > this.getArity() - 1) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only "
-                    + this.getArity() + " argument(s).");
-        }
-        return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "union";
-	}
+	
 
 	@Override
 	public IntervalDouble getValue() {
@@ -67,11 +49,6 @@ public class IntervalUnionFunction extends AbstractFunction<IntervalDouble> {
 		IntervalDouble b = this.getInputValue(1);
 		return new IntervalDouble(Math.min(a.inf(), b.inf()), Math.max(a.sup(),
 				b.sup()));
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFIntervalDatatype.INTERVAL_DOUBLE;
 	}
 
 }

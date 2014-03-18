@@ -34,20 +34,10 @@ public class EuclideanDistanceFunctionVector extends AbstractEuclideanDistanceFu
      */
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.MATRIX_DOUBLE }, { SDFDatatype.MATRIX_DOUBLE } };
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: Two distribution.");
-        }
-        return EuclideanDistanceFunctionVector.ACC_TYPES[argPos];
+    public EuclideanDistanceFunctionVector() {
+    	super(ACC_TYPES);
     }
-
+    
     /**
      * 
      * {@inheritDoc}

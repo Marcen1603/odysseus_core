@@ -12,42 +12,16 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class DoubleToBooleanFunction extends AbstractFunction<Boolean> {
 
-    /**
-     * 
-     */
+   
     private static final long serialVersionUID = -5506465071311430245L;
+    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { {SDFDatatype.DOUBLE} };
 
-    @Override
-    public int getArity() {
-        return 1;
+    public DoubleToBooleanFunction() {
+    	super("doubleToBoolean",1,accTypes,SDFDatatype.BOOLEAN);
     }
-
-    @Override
-    public String getSymbol() {
-        return "doubleToBoolean";
-    }
-
+    
     @Override
     public Boolean getValue() {
         return getNumericalInputValue(0).doubleValue() != 0.0;
     }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.BOOLEAN;
-    }
-
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DOUBLE };
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > 0) {
-            throw new IllegalArgumentException("doubleToBoolean has only 1 argument.");
-        }
-        return accTypes;
-    }
-
 }

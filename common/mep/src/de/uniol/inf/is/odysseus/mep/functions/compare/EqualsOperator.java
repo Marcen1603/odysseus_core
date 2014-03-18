@@ -24,19 +24,26 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
 public class EqualsOperator extends AbstractBinaryOperator<Boolean> {
 
 	private static final long serialVersionUID = 6011800156304578501L;
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.STRING
-	    };
+	public static final SDFDatatype[][] accTypes =
+				new SDFDatatype[][]{new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.STRING},new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.STRING}};
+	
+	public EqualsOperator() {
+		this("=");
+	}
 
+	public EqualsOperator(String symbol){
+		super(symbol,accTypes, SDFDatatype.BOOLEAN);
+	}
+	
+	public EqualsOperator(String symbol, SDFDatatype[][] accTypes){
+		super(symbol,accTypes, SDFDatatype.BOOLEAN);
+	}
+	
 	private boolean isNumeric = false;
 
 	@Override
 	public int getPrecedence() {
 		return 9;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "=";
 	}
 
 	@Override
@@ -56,10 +63,6 @@ public class EqualsOperator extends AbstractBinaryOperator<Boolean> {
 		return isNumeric ? getNumericalInputValue(0).equals(getNumericalInputValue(1)) : getInputValue(0).equals(getInputValue(1));
 	}
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.BOOLEAN;
-	}
 
 	@Override
 	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
@@ -86,15 +89,4 @@ public class EqualsOperator extends AbstractBinaryOperator<Boolean> {
 		return false;
 	}
 
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if (argPos > this.getArity() - 1) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-		} 
-		
-		return accTypes;
-	}
 }

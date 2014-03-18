@@ -42,23 +42,11 @@ public abstract class AbstractMahalanobisDistanceFunction extends AbstractProbab
 	 */
     private static final long serialVersionUID = -4636005230557634127L;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final int getArity() {
-        return 2;
+    public AbstractMahalanobisDistanceFunction(SDFDatatype[][] accTypes) {
+    	super("distance", 2, accTypes, SDFDatatype.DOUBLE);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final String getSymbol() {
-        return "distance";
-    }
-
-    /**
+    
+     /**
      * 
      * @param a
      *            The normal distribution mixture
@@ -89,12 +77,5 @@ public abstract class AbstractMahalanobisDistanceFunction extends AbstractProbab
         return weightedMahalanobisDistance;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFDatatype.DOUBLE;
-    }
 
 }

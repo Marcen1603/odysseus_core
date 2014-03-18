@@ -29,31 +29,11 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class RSAVerifyFunction extends AbstractFunction<Boolean> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 4613323785918265105L;
     private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.OBJECT }, { SDFDatatype.STRING }, { SDFDatatype.STRING } };
 
-    @Override
-    public int getArity() {
-        return 3;
-    }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s): an object, a signature, and a public key");
-        }
-        return accTypes[argPos];
-    }
-
-    @Override
-    public String getSymbol() {
-        return "RSAVerify";
+    public RSAVerifyFunction() {
+    	super("RSAVerify", 3, accTypes, SDFDatatype.BOOLEAN);
     }
 
     @Override
@@ -83,11 +63,6 @@ public class RSAVerifyFunction extends AbstractFunction<Boolean> {
         catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | InvalidKeySpecException | IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.BOOLEAN;
     }
 
 }

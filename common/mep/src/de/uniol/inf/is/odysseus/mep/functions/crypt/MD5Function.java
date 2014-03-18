@@ -31,36 +31,14 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class MD5Function extends AbstractFunction<String> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2100227355791982930L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.STRING };
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][]{ new SDFDatatype[] { SDFDatatype.STRING }};
 	private final Charset charset = Charset.forName("UTF8");
 
-	@Override
-	public int getArity() {
-		return 1;
+	public MD5Function() {
+		super("md5",1,accTypes, SDFDatatype.STRING);
 	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos >= this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s): a string");
-		}
-		return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "md5";
-	}
-
+	
 	@Override
 	public String getValue() {
 		StringBuilder sb = new StringBuilder();
@@ -73,11 +51,6 @@ public class MD5Function extends AbstractFunction<String> {
 			throw new RuntimeException(e);
 		}
 		return sb.toString();
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.STRING;
 	}
 
 }

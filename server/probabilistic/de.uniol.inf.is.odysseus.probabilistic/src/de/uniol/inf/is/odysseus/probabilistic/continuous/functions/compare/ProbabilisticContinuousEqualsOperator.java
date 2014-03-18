@@ -38,14 +38,10 @@ public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilistic
      */
     private static final long serialVersionUID = 3016679134461973157L;
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-     */
-    @Override
-    public final String getSymbol() {
-        return "==";
+    public ProbabilisticContinuousEqualsOperator() {
+    	super("==",ACC_TYPES);
     }
+    
 
     /*
      * 
@@ -88,18 +84,5 @@ public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilistic
      */
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_NUMBERS, SDFDatatype.NUMBERS };
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticContinuousEqualsOperator.ACC_TYPES[argPos];
-    }
+ 
 }

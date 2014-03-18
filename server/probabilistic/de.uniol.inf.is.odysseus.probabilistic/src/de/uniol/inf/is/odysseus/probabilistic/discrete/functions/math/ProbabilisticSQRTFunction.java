@@ -44,39 +44,10 @@ public class ProbabilisticSQRTFunction extends AbstractProbabilisticFunction<Pro
      */
     private static final SDFDatatype[] ACC_TYPES = SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS;
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
-     */
-    @Override
-    public final int getArity() {
-        return 1;
-    }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticSQRTFunction.ACC_TYPES;
-    }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-     */
-    @Override
-    public final String getSymbol() {
-        return "sqrt";
-    }
-
+    public ProbabilisticSQRTFunction() {
+    	super("sqrt",1,ACC_TYPES,SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
+	}
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
@@ -109,13 +80,5 @@ public class ProbabilisticSQRTFunction extends AbstractProbabilisticFunction<Pro
         return new ProbabilisticDouble(values);
     }
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE;
-    }
 
 }

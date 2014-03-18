@@ -12,17 +12,13 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class MatrixIdentityMatrixFunction extends AbstractFunction<double[][]> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8690713611947801279L;
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
 			SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER,
 			SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE };
 
-	@Override
-	public String getSymbol() {
-		return "identity";
+	public MatrixIdentityMatrixFunction() {
+		super("identity", 1, accTypes, SDFDatatype.MATRIX_DOUBLE);
 	}
 
 	@Override
@@ -35,26 +31,4 @@ public class MatrixIdentityMatrixFunction extends AbstractFunction<double[][]> {
 		return MatrixUtils.createRealIdentityMatrix(dimension).getData();
 	}
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.MATRIX_DOUBLE;
-	}
-
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity() - 1) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
-		}
-		return accTypes;
-	}
 }

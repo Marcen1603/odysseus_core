@@ -14,20 +14,17 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
  * 
  */
 public class DatePlusNumberOperator extends AbstractBinaryOperator<Date> {
-
-    /**
-     * 
-     */
+	
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.DATE }, SDFDatatype.NUMBERS };
     private static final long serialVersionUID = 2647216982143728497L;
 
+    public DatePlusNumberOperator() {
+    	super("+", accTypes, SDFDatatype.DATE);
+    }
+    
     @Override
     public int getPrecedence() {
         return 6;
-    }
-
-    @Override
-    public String getSymbol() {
-        return "+";
     }
 
     @Override
@@ -39,11 +36,6 @@ public class DatePlusNumberOperator extends AbstractBinaryOperator<Date> {
 
     protected Date getValueInternal(Date a, long b) {
         return new Date(a.getTime() + b);
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.DATE;
     }
 
     @Override
@@ -69,19 +61,6 @@ public class DatePlusNumberOperator extends AbstractBinaryOperator<Date> {
     @Override
     public boolean isRightDistributiveWith(IOperator<Date> operator) {
         return false;
-    }
-
-    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.DATE }, SDFDatatype.NUMBERS };
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes[argPos];
     }
 
 }

@@ -38,13 +38,8 @@ public abstract class AbstractIntegrateMultivariateFunction extends AbstractProb
 	 */
     private static final long serialVersionUID = 6128844979837446517L;
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-     */
-    @Override
-    public final String getSymbol() {
-        return "int";
+    public AbstractIntegrateMultivariateFunction(SDFDatatype[][] accTypes) {
+    	super("int", 3, accTypes, SDFDatatype.DOUBLE);
     }
 
     /**
@@ -62,23 +57,6 @@ public abstract class AbstractIntegrateMultivariateFunction extends AbstractProb
         return this.cumulativeProbability(function, lowerBound, upperBound);
     }
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFDatatype.DOUBLE;
-    }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
-     */
-    @Override
-    public final int getArity() {
-        return 3;
-    }
 
     /**
      * Calculates the cumulative probability of the given distribution between

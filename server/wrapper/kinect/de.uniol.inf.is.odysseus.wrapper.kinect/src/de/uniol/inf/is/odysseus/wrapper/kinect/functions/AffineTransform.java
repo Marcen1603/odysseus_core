@@ -18,27 +18,8 @@ public class AffineTransform extends AbstractFunction<KinectColorMap> {
             {SDFKinectDatatype.KINECT_COLOR_MAP},
             {SDFDatatype.MATRIX_DOUBLE, SDFDatatype.MATRIX_FLOAT}};
 
-    @Override
-    public int getArity() {
-        return 2;
-    }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException(
-                    "negative argument index not allowed");
-        }
-        if (argPos > this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only "
-                    + this.getArity() + " argument(s): A color map, a matrix.");
-        }
-        return AffineTransform.ACC_TYPES[argPos];
-    }
-
-    @Override
-    public String getSymbol() {
-        return "AffineTransform";
+    public AffineTransform() {
+    	super("AffineTransform",2,ACC_TYPES,SDFKinectDatatype.KINECT_COLOR_MAP);
     }
 
     @Override
@@ -50,8 +31,4 @@ public class AffineTransform extends AbstractFunction<KinectColorMap> {
         return res;
     }
 
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFKinectDatatype.KINECT_COLOR_MAP;
-    }
 }

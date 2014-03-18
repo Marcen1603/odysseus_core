@@ -25,51 +25,21 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class ToByteFunction extends AbstractFunction<Byte> {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 6268335067252659860L;
+	private static final long serialVersionUID = 6268335067252659860L;
 
-    @Override
-    public int getArity() {
-        return 1;
-    }
+	public ToByteFunction() {
+		super("toByte", 1, SDFDatatype.BYTE);
+	}
 
-    @Override
-    public String getSymbol() {
-        return "toByte";
-    }
-
-    @Override
-    public Byte getValue() {
-        String s = getInputValue(0).toString();
-        if (s.equalsIgnoreCase("true")) {
-            return (byte) 0x1;
-        }
-        else if (s.equalsIgnoreCase("false")) {
-            return (byte) 0x0;
-        }
-        Double val = Double.parseDouble(getInputValue(0).toString());
-        return val.byteValue();
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.BYTE;
-    }
-
-    private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DOUBLE, SDFDatatype.SHORT,
-            SDFDatatype.BYTE, SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.STRING,
-            SDFDatatype.BOOLEAN                };
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > 0) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
-    }
+	@Override
+	public Byte getValue() {
+		String s = getInputValue(0).toString();
+		if (s.equalsIgnoreCase("true")) {
+			return (byte) 0x1;
+		} else if (s.equalsIgnoreCase("false")) {
+			return (byte) 0x0;
+		}
+		Double val = Double.parseDouble(getInputValue(0).toString());
+		return val.byteValue();
+	}
 }

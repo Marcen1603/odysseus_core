@@ -25,48 +25,15 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class PIFunction extends AbstractFunction<Double> {
 
-    /**
-     * 
-     */
     private static final long          serialVersionUID = 4793964768596073245L;
-    private static final SDFDatatype[] accTypes         = new SDFDatatype[] {};
 
-    @Override
-    public int getArity() {
-        return 0;
+    public PIFunction() {
+    	super("pi",0,null, SDFDatatype.DOUBLE, true);
     }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= 0) {
-            throw new IllegalArgumentException(this.getSymbol() + " has no argument(s).");
-        }
-        return accTypes;
-    }
-
-    @Override
-    public String getSymbol() {
-        return "pi";
-    }
-
+    
     @Override
     public Double getValue() {
         return Math.PI;
     }
 
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.DOUBLE;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
-    }
 }

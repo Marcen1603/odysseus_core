@@ -22,37 +22,15 @@ public class RoundFunction extends AbstractFunction<Double> {
 
 	private static final long serialVersionUID = 5571924782173674368L;
 
-	@Override
-	public int getArity() {
-		return 2;
-	}
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {SDFDatatype.NUMBERS, {SDFDatatype.INTEGER, SDFDatatype.LONG}};
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
+	public RoundFunction() {
+		super("round",2,accTypes,SDFDatatype.DOUBLE);
+	}
 	
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > 1){
-			throw new IllegalArgumentException("floor needs 2 arguments.");
-		}
-        return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "round";
-	}
-
 	@Override
 	public Double getValue() {
 		return Math.round(getNumericalInputValue(0)*(getNumericalInputValue(1)*10))/(getNumericalInputValue(1)*10);
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
 	}
 
 }

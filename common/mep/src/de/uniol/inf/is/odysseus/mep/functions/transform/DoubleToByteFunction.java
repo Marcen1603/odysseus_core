@@ -25,42 +25,15 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class DoubleToByteFunction extends AbstractFunction<Byte> {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -3472340389470448274L;
+	private static final long serialVersionUID = -3472340389470448274L;
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.DOUBLE } };
 
-    @Override
-    public int getArity() {
-        return 1;
-    }
+	public DoubleToByteFunction() {
+		super("doubleToByte", 1, accTypes, SDFDatatype.BYTE);
+	}
 
-    @Override
-    public String getSymbol() {
-        return "doubleToByte";
-    }
-
-    @Override
-    public Byte getValue() {
-        return getNumericalInputValue(0).byteValue();
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.BYTE;
-    }
-
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DOUBLE };
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > 0) {
-            throw new IllegalArgumentException("doubleToByte has only 1 argument.");
-        }
-        return accTypes;
-    }
-
+	@Override
+	public Byte getValue() {
+		return getNumericalInputValue(0).byteValue();
+	}
 }

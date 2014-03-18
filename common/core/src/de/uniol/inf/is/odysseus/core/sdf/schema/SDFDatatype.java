@@ -93,6 +93,9 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype MATRIX_BOOLEAN = new SDFDatatype(
 			"MatrixBoolean", SDFDatatype.KindOfDatatype.BASE,
 			SDFDatatype.BOOLEAN);
+	public static final SDFDatatype[] MATRIXS = new SDFDatatype[] {
+		SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
+		SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
 
 	public static final SDFDatatype VECTOR_DOUBLE = new SDFDatatype("Vector",
 			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.DOUBLE);

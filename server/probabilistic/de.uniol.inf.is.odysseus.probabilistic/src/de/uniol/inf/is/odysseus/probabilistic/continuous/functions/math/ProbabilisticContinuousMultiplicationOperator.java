@@ -38,6 +38,10 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
 	 */
     private static final long serialVersionUID = -2233338064657887517L;
 
+    public ProbabilisticContinuousMultiplicationOperator() {
+    	super("*",ACC_TYPES,SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+    }
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.mep.IOperator#getPrecedence()
@@ -46,16 +50,7 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
     public final int getPrecedence() {
         return 5;
     }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-     */
-    @Override
-    public final String getSymbol() {
-        return "*";
-    }
-
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
@@ -116,15 +111,6 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
 
     /*
      * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE;
-    }
-
-    /*
-     * 
      * @see de.uniol.inf.is.odysseus.mep.IOperator#getAssociativity()
      */
     @Override
@@ -179,19 +165,5 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
             SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE,
             SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG };
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > (this.getArity() - 1)) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticContinuousPlusOperator.ACC_TYPES;
-    }
 
 }

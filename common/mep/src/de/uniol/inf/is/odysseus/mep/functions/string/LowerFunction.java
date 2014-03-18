@@ -13,55 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.mep.functions.math;
+package de.uniol.inf.is.odysseus.mep.functions.string;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 /**
  * Returns the string converted to lowercase.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class LowerFunction  extends AbstractFunction<String> {
+public class LowerFunction  extends AbstractUnaryStringFunction<String> {
 
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8730230919768943810L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.STRING };
 
-	@Override
-	public int getArity() {
-		return 1;
+	public LowerFunction() {
+		super("lower",SDFDatatype.STRING);
 	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol()
-					+ " has one argument.");
-		}
-		return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "lower";
-	}
-
+	
 	@Override
 	public String getValue() {
 		return getInputValue(0).toString().toLowerCase();
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.STRING;
 	}
 
 }

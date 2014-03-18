@@ -2,36 +2,18 @@ package de.uniol.inf.is.odysseus.mep;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
-public class AssureNumber extends AbstractFunction<Double> {
+public class AssureNumber extends AbstractUnaryNumberInputFunction<Double> {
 
 	private static final long serialVersionUID = 4773853278635916486L;
-	private static final SDFDatatype[] acceptedTypes = {SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
 
-	@Override
-	public int getArity() {
-		return 1;
+	public AssureNumber() {
+		super("assureNumber",SDFDatatype.DOUBLE);
 	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		return acceptedTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "assureNumber";
-	}
-
+	
 	@Override
 	public Double getValue() {
 		Double in = getNumericalInputValue(0);
 		return Double.isNaN(in)?null:in;
 	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
-	}
-	
 
 }

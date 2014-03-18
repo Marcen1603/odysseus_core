@@ -37,16 +37,17 @@ public class ProbabilisticContinuousGreaterEqualsOperator extends AbstractProbab
 	 */
     private static final long serialVersionUID = -9122605635777338549L;
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public String getSymbol() {
-        return ">=";
+    public ProbabilisticContinuousGreaterEqualsOperator() {
+    	this(">=");
+    }
+    
+
+    protected ProbabilisticContinuousGreaterEqualsOperator(String symbol) {
+    	super(symbol, ACC_TYPES);
     }
 
-    /**
+
+	/**
      * 
      * {@inheritDoc}
      */
@@ -80,19 +81,5 @@ public class ProbabilisticContinuousGreaterEqualsOperator extends AbstractProbab
      */
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_NUMBERS, SDFDatatype.NUMBERS };
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticContinuousGreaterEqualsOperator.ACC_TYPES[argPos];
-    }
 
 }

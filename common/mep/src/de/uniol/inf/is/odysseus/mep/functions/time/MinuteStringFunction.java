@@ -13,16 +13,12 @@ import java.util.Date;
  */
 public class MinuteStringFunction extends AbstractDateStringFunction {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -8682444436851670349L;
 
-    @Override
-    public String getSymbol() {
-        return "minute";
+    public MinuteStringFunction() {
+    	super("minute");
     }
-
+    
     @Override
     public Integer getValue() {
         Date date = null;
@@ -35,14 +31,6 @@ public class MinuteStringFunction extends AbstractDateStringFunction {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar.get(Calendar.MINUTE);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
     }
 
 }

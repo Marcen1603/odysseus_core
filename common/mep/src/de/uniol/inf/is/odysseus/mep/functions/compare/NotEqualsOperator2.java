@@ -20,8 +20,7 @@ public class NotEqualsOperator2 extends NotEqualsOperator {
 
 	private static final long serialVersionUID = 7945221506609744353L;
 
-	@Override
-	public String getSymbol() {
-		return "<>";
-	}
+	public NotEqualsOperator2() {
+		super("<>");
+	}	
 }

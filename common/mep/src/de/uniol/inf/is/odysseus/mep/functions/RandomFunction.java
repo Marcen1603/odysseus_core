@@ -25,34 +25,13 @@ public class RandomFunction extends AbstractFunction<Double> {
 	 */
 	private static final long serialVersionUID = -5923905039135136079L;
 
-	@Override
-	public int getArity() {
-		return 0;
+	public RandomFunction() {
+		super("rnd",0,null,SDFDatatype.DOUBLE,false);
 	}
-
-	@Override
-	public String getSymbol() {
-		return "rnd";
-	}
-
+	
 	@Override
 	public Double getValue() {
 		return Math.random();
 	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
-	}
 	
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-		throw new IllegalArgumentException("rnd has no arguments");
-	}
-	
-	@Override
-	public boolean optimizeConstantParameter() {
-		return false;
-	}
-
 }

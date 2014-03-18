@@ -36,26 +36,12 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFun
  */
 public abstract class AbstractBhattacharyyaDistanceFunction extends AbstractProbabilisticFunction<Double> {
 
-    /**
-	 * 
-	 */
     private static final long serialVersionUID = -4978963210815853709L;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final int getArity() {
-        return 2;
+    public AbstractBhattacharyyaDistanceFunction(SDFDatatype[][] accTypes) {
+    	super("similarity", 2, accTypes, SDFDatatype.DOUBLE);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final String getSymbol() {
-        return "similarity";
-    }
+    
 
     /**
      * 
@@ -97,14 +83,6 @@ public abstract class AbstractBhattacharyyaDistanceFunction extends AbstractProb
             }
         }
         return weightedBhattacharyyaDistance;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFDatatype.DOUBLE;
     }
 
     /**

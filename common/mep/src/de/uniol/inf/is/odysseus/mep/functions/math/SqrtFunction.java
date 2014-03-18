@@ -16,52 +16,24 @@
 package de.uniol.inf.is.odysseus.mep.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
 /**
  * Returns the square root of a double value
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class SqrtFunction extends AbstractFunction<Double> {
+public class SqrtFunction extends AbstractUnaryNumberInputFunction<Double> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 487637946406721528L;
-	private static final SDFDatatype[] accTypes =  SDFDatatype.NUMBERS;
 
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > 0) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
-		}
-		return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "sqrt";
+	public SqrtFunction() {
+		super("sqrt", SDFDatatype.DOUBLE);
 	}
 
 	@Override
 	public Double getValue() {
 		return Math.sqrt(getNumericalInputValue(0));
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
 	}
 
 }

@@ -34,21 +34,10 @@ public class ProbabilisticContinuousPlusNumberLHSOperator extends AbstractProbab
      */
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.NUMBERS, { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE } };
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > (this.getArity() - 1)) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticContinuousPlusNumberLHSOperator.ACC_TYPES[argPos];
+    public ProbabilisticContinuousPlusNumberLHSOperator() {
+    	super(ACC_TYPES);
     }
-
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.

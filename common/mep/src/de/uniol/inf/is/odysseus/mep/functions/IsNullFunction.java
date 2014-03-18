@@ -22,29 +22,13 @@ public class IsNullFunction extends AbstractFunction<Boolean> {
 
 	private static final long serialVersionUID = 4074484016029763344L;
 
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "isNull";
-	}
-
-	@Override
-	public Boolean getValue() {
-		return getInputValue(0) == null;
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.BOOLEAN;
+	public IsNullFunction() {
+		super("isNull",1,SDFDatatype.BOOLEAN);
 	}
 	
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-        return SDFDatatype.getTypes().toArray(new SDFDatatype[0]);
+	public Boolean getValue() {
+		return getInputValue(0) == null;
 	}
 
 }

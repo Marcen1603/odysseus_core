@@ -16,34 +16,25 @@
 package de.uniol.inf.is.odysseus.mep.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
+import de.uniol.inf.is.odysseus.mep.AbstractBinaryNumberInputOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 
-public class PowerOperator extends AbstractBinaryOperator<Double> {
+public class PowerOperator extends AbstractBinaryNumberInputOperator<Double> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1875154948427727513L;
 
+	public PowerOperator() {
+		super("^", SDFDatatype.DOUBLE);
+	}
+	
 	@Override
 	public int getPrecedence() {
 		return 1;
 	}
-
-	@Override
-	public String getSymbol() {
-		return "^";
-	}
-
+	
 	@Override
 	public Double getValue() {
 		return Math.pow(getNumericalInputValue(0), getNumericalInputValue(1));
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
 	}
 
 	@Override
@@ -71,24 +62,4 @@ public class PowerOperator extends AbstractBinaryOperator<Double> {
 		return null;
 	}
 
-	public static final SDFDatatype[] accTypes0 = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
-	public static final SDFDatatype[] accTypes1 = new SDFDatatype[] { SDFDatatype.INTEGER };
-	
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > this.getArity()-1){
-			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
-		}
-        SDFDatatype[] accTypes = null;
-        switch(argPos){
-        case 0: 
-        	return accTypes0;
-        case 1:
-        	return accTypes1;
-        }
-        return accTypes;
-	}
 }

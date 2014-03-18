@@ -6,21 +6,21 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 public class ShotOnGoalDetection extends AbstractFunction<Integer>{
 
 	private static final long serialVersionUID = 8159082937727522598L;
-		
-	@Override
-	public int getArity() {
-		return 6;
-	}
 	
+	public ShotOnGoalDetection() {
+		this("IsShotOnGoal");
+	}
+
+	public ShotOnGoalDetection(String symbol) {
+		super(symbol,6,accTypes,SDFDatatype.INTEGER);
+	}
+
+
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
     	SDFDatatype.LONG,
     	SDFDatatype.INTEGER
 	};
 
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		return accTypes;
-	}
 
 	//1 = rechtes Tor, 0 = kein Torschuss, -1 = linkes Tor
 	@Override
@@ -63,13 +63,4 @@ public class ShotOnGoalDetection extends AbstractFunction<Integer>{
 		return 0;
 	 }
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.INTEGER;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "IsShotOnGoal";
-	}
 }

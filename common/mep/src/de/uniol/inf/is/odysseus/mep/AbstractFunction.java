@@ -22,6 +22,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpressionVisitor;
@@ -32,15 +35,111 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 public abstract class AbstractFunction<T> implements IFunction<T> {
 
-	/**
-	 * 
-	 */
+	static final Logger LOG = LoggerFactory.getLogger(AbstractFunction.class);
+
 	private static final long serialVersionUID = 3805396798229438499L;
 	private IExpression<?>[] arguments;
 	private Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
 	private IMetaAttribute[] metaAttribute = new IMetaAttribute[1];
 	private TimeUnit baseTimeUnit = TimeUnit.MILLISECONDS;
+	private final String symbol;
+	private final int arity;
+	private final SDFDatatype[][] acceptedTypes;
+	private final SDFDatatype[] acceptedTypes2;
+	private final SDFDatatype returnType;
+	private final boolean optimizeConstantParameter;
 
+	public AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType) {
+		this(symbol, arity, acceptedTypes, returnType, true);
+		if (optimizeConstantParameter == true && arity == 0){
+			LOG.warn("This function will be precompiled and creates the same value in each run.");
+		}
+	}	
+
+	public AbstractFunction(String symbol, int arity, SDFDatatype returnType) {
+		this(symbol, arity, null, null, returnType, true);
+		if (optimizeConstantParameter == true && arity == 0){
+			LOG.warn("This function will be precompiled and creates the same value in each run.");
+		}		
+	}
+
+	
+	public AbstractFunction(String symbol, int arity, SDFDatatype[] acceptedTypes, SDFDatatype returnType) {
+		this(symbol, arity, null, acceptedTypes, returnType, true);
+		if (optimizeConstantParameter == true && arity == 0){
+			LOG.warn("This function will be precompiled and creates the same value in each run.");
+		}
+	}	
+	
+	public AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType, boolean optimizeConstantParameter) {
+		this(symbol, arity, acceptedTypes, null, returnType, optimizeConstantParameter);
+	}
+	
+	private AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes,SDFDatatype[] acceptedTypes2, SDFDatatype returnType, boolean optimizeConstantParameter) {
+		this.symbol = symbol;
+		this.arity = arity;
+		this.optimizeConstantParameter = optimizeConstantParameter;
+		if (acceptedTypes != null){
+			this.acceptedTypes = acceptedTypes;
+			if (acceptedTypes.length != arity){
+				throw new IllegalArgumentException("Error: arity and types do not fit for "+symbol+" "+this.getClass());
+				//System.err.println("Error: arity and types do not fit for "+symbol+" "+this.getClass());
+			}
+		}else{
+			this.acceptedTypes = new SDFDatatype[arity][];
+			for (int i=0;i<arity;i++){
+				this.acceptedTypes[i] = SDFDatatype.getTypes().toArray(new SDFDatatype[0]);
+			}
+		}
+		this.acceptedTypes2 = acceptedTypes2;
+		if (returnType != null){
+			this.returnType = returnType;
+		}else{
+			this.returnType = determineReturnType();
+		}
+	}
+	
+	protected SDFDatatype determineReturnType(){
+		return SDFDatatype.OBJECT;
+	}
+	
+	@Override
+	final public SDFDatatype[] getAcceptedTypes(int argPos){
+		if(argPos < 0){
+			throw new IllegalArgumentException("negative argument index not allowed");
+		}
+		if(argPos > arity){
+			throw new IllegalArgumentException(symbol+" has only "+arity+" argument(s).");
+		}
+		if (acceptedTypes != null){
+			return acceptedTypes[argPos];
+		}else{
+			return acceptedTypes2;
+		}
+	}
+
+	@Override
+	final public String getSymbol() {
+		return symbol;
+	}
+
+	@Override
+	final public int getArity() {
+		return arity;
+	}
+	
+	
+	
+	@Override
+	final public SDFDatatype getReturnType() {
+		return returnType;
+	}
+	
+	@Override
+	final public boolean optimizeConstantParameter() {
+		return optimizeConstantParameter;
+	}
+	
 	@Override
 	final public void setArguments(IExpression<?>... arguments) {
 		if (arguments.length != getArity()) {
@@ -154,11 +253,6 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	 */
 	protected String _internalToString() {
 		return null;
-	}
-
-	@Override
-	public boolean optimizeConstantParameter() {
-		return true;
 	}
 
 	@Override

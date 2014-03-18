@@ -42,6 +42,10 @@ public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBi
 	 */
     private static final long serialVersionUID = 2533914833718506956L;
 
+    public ProbabilisticContinuousPlusOperator() {
+    	super("+", ACC_TYPES,SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+    }
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.mep.IOperator#getPrecedence()
@@ -51,14 +55,7 @@ public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBi
         return 6;
     }
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-     */
-    @Override
-    public final String getSymbol() {
-        return "+";
-    }
+  
 
     /*
      * 
@@ -113,14 +110,6 @@ public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBi
         return result;
     }
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE;
-    }
 
     /*
      * 
@@ -178,19 +167,6 @@ public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBi
             SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE,
             SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG };
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > (this.getArity() - 1)) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticContinuousPlusOperator.ACC_TYPES;
-    }
+
 
 }

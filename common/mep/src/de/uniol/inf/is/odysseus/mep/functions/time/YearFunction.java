@@ -18,18 +18,19 @@ package de.uniol.inf.is.odysseus.mep.functions.time;
 import java.util.Calendar;
 import java.util.Date;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+
 /**
  * Extracts the year part of the date
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class YearFunction extends AbstractDateFunction {
+public class YearFunction extends AbstractUnaryDateFunction<Integer> {
 
 	private static final long serialVersionUID = -1800299483260669086L;
 
-	@Override
-	public String getSymbol() {
-		return "year";
+	public YearFunction() {
+		super("year", SDFDatatype.INTEGER);
 	}
 
 	@Override
@@ -39,12 +40,4 @@ public class YearFunction extends AbstractDateFunction {
 		return calendar.get(Calendar.YEAR);
 	}
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
-    }
 }

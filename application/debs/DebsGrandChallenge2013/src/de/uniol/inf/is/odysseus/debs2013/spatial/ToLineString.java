@@ -32,23 +32,14 @@ public class ToLineString extends AbstractFunction<Geometry> {
 
 	private static final long serialVersionUID = 7202373953195273323L;
 
-	@Override
-	public int getArity() {
-		return 4;
+	public ToLineString() {
+		super("ToLineString",4,accTypes,SDFSpatialDatatype.SPATIAL_LINE_STRING);
 	}
+	
 	
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
 		 SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.INTEGER };
 
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "ToLineString";
-	}
 
 	@Override
 	public Geometry getValue() {
@@ -58,10 +49,5 @@ public class ToLineString extends AbstractFunction<Geometry> {
 		coordinates[1] = new Coordinate(getNumericalInputValue(2), getNumericalInputValue(3));
 		return gf.createLineString(coordinates);
 	 }
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFSpatialDatatype.SPATIAL_LINE_STRING;
-	}
 
 }

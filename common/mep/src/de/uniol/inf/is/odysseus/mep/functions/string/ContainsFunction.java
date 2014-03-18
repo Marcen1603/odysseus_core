@@ -15,18 +15,17 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.mep.functions.string;
 
-import de.uniol.inf.is.odysseus.mep.functions.AbstractBooleanStringFunction;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 
-public class ContainsFunction extends AbstractBooleanStringFunction {
+public class ContainsFunction extends AbstractBinaryStringFunction<Boolean> {
 
 	private static final long serialVersionUID = -2241632788238873550L;
 
-	@Override
-	public String getSymbol() {
-		return "strcontains";
+	public ContainsFunction() {
+		super("strcontains", SDFDatatype.BOOLEAN);
 	}
-
+	
 	@Override
 	public Boolean getValue() {
 		return ((String)getInputValue(0)).toLowerCase().contains(((String)getInputValue(1)).toLowerCase());

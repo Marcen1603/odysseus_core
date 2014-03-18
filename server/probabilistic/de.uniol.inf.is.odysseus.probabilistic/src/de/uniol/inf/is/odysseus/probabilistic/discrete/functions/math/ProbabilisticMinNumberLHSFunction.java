@@ -19,6 +19,10 @@ public class ProbabilisticMinNumberLHSFunction extends ProbabilisticMinFunction 
 	 */
     private static final long serialVersionUID = -6012592181479843565L;
 
+    public ProbabilisticMinNumberLHSFunction() {
+    	super(ACC_TYPES);
+    }
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.

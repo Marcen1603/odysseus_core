@@ -15,19 +15,16 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
  */
 public class DateMinusOperator extends AbstractBinaryOperator<Date> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -2548802151737120316L;
-
+    private static SDFDatatype[][] accTypes = new SDFDatatype[][]{{SDFDatatype.DATE},{SDFDatatype.DATE}}; 
+    
+    public DateMinusOperator() {
+    	super("-", accTypes, SDFDatatype.DATE);
+    }
+    
     @Override
     public int getPrecedence() {
         return 6;
-    }
-
-    @Override
-    public String getSymbol() {
-        return "-";
     }
 
     @Override
@@ -41,10 +38,6 @@ public class DateMinusOperator extends AbstractBinaryOperator<Date> {
         return new Date(a.getTime() - b.getTime());
     }
 
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.DATE;
-    }
 
     @Override
     public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
@@ -71,16 +64,4 @@ public class DateMinusOperator extends AbstractBinaryOperator<Date> {
         return false;
     }
 
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DATE };
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
-    }
 }

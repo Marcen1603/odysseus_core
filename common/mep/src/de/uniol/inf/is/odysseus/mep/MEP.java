@@ -83,12 +83,10 @@ import de.uniol.inf.is.odysseus.mep.functions.math.DivisionOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.EFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.ExpFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.FloorFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.GetAbsoluteValue;
 import de.uniol.inf.is.odysseus.mep.functions.math.HyperbolicCosinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.HyperbolicSinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.HyperbolicTangensFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.LogFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.LowerFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.MinusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.ModuloOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.MultiplicationOperator;
@@ -99,22 +97,21 @@ import de.uniol.inf.is.odysseus.mep.functions.math.RoundFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.SignFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.SinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.SqrtFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.SqrtValue;
-import de.uniol.inf.is.odysseus.mep.functions.math.SquareValue;
 import de.uniol.inf.is.odysseus.mep.functions.math.TangensFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.ToDegrees;
 import de.uniol.inf.is.odysseus.mep.functions.math.ToRadians;
 import de.uniol.inf.is.odysseus.mep.functions.math.UnaryMinusOperator;
-import de.uniol.inf.is.odysseus.mep.functions.math.UpperFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.ConcatFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.ContainsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.LengthFunction;
+import de.uniol.inf.is.odysseus.mep.functions.string.LowerFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.StringDivisionOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.StringMinusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.StringMultiplicationOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.StringPlusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.SubStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.SubStringFunction2;
+import de.uniol.inf.is.odysseus.mep.functions.string.UpperFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.BusinessDaysFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.CurDateFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.DateMinusNumberOperator;
@@ -126,10 +123,10 @@ import de.uniol.inf.is.odysseus.mep.functions.time.DayOfMonthFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.DayOfMonthStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.DayStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.DaysFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.DebsDateFormatParse;
 import de.uniol.inf.is.odysseus.mep.functions.time.HourFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.HourStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.HoursFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.MilliTimeFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.MinuteFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.MinuteOfDayFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.MinuteStringFunction;
@@ -138,7 +135,6 @@ import de.uniol.inf.is.odysseus.mep.functions.time.MonthFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.MonthStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.MonthsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.NanoTimeFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.NowFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.SecondFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.SecondStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.SecondsFunction;
@@ -233,6 +229,7 @@ public class MEP implements IExpressionParser {
     private static Map<FunctionSignature, IFunction<?>> functions     = new HashMap<FunctionSignature, IFunction<?>>();
     private static FunctionStore                        functionStore = FunctionStore.getInstance();
     static {
+    	
         getLogger().debug("Register Base Function");
         /** Boolean Functions */
         registerFunction(new AndOperator());
@@ -305,10 +302,6 @@ public class MEP implements IExpressionParser {
         registerFunction(new ExpFunction());
         registerFunction(new LogFunction());
         
-        registerFunction(new GetAbsoluteValue());
-        registerFunction(new SquareValue());
-        registerFunction(new SqrtValue());
-
         registerFunction(new ToRadians());
         registerFunction(new ToDegrees());
 
@@ -331,7 +324,6 @@ public class MEP implements IExpressionParser {
         registerFunction(new LowerFunction());
         
         /** Date Functions */
-        registerFunction(new DebsDateFormatParse());
         registerFunction(new ToDateFromStringFunction());      
         registerFunction(new ToDateFromNumberFunction());
         registerFunction(new DateToStringFunction()); 
@@ -371,7 +363,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new YearsFunction());
         registerFunction(new BusinessDaysFunction());
         
-        registerFunction(new NowFunction());
+        registerFunction(new MilliTimeFunction());
         registerFunction(new CurDateFunction());
         registerFunction(new NanoTimeFunction());
         
@@ -413,20 +405,25 @@ public class MEP implements IExpressionParser {
      *            The function instance
      */
     public static void registerFunction(IFunction<?> function) {
-        String symbol = function.getSymbol();
-        List<SDFDatatype[]> parameters = new ArrayList<SDFDatatype[]>();
-        int arity = function.getArity();
-        for (int i = 0; i < arity; i++) {
-			if (function.getAcceptedTypes(i) != null) {
-				parameters.add(function.getAcceptedTypes(i).clone());
+    	
+        try {
+			String symbol = function.getSymbol();
+			List<SDFDatatype[]> parameters = new ArrayList<SDFDatatype[]>();
+			int arity = function.getArity();
+			for (int i = 0; i < arity; i++) {
+				if (function.getAcceptedTypes(i) != null) {
+					parameters.add(function.getAcceptedTypes(i));
+				}
 			}
-        }
-        FunctionSignature signature = new FunctionSignature(symbol, parameters);
-        if (functionStore.containsSignature(signature)) {
-            throw new IllegalArgumentException("multiple definition of function " + symbol);
-        }
-        // getLogger().debug("Register Function: " + function.getSymbol());
-        functionStore.put(signature, function);
+			FunctionSignature signature = new FunctionSignature(symbol, parameters);
+			if (functionStore.containsSignature(signature)) {
+			    throw new IllegalArgumentException("multiple definition of function " + symbol);
+			}
+			// getLogger().debug("Register Function: " + function.getSymbol());
+			functionStore.put(signature, function);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
     }
 
     /**

@@ -28,31 +28,28 @@ import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilistic
  */
 public class ProbabilisticGreaterThanOperator extends GreaterThanOperator {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = 3581873882761358906L;
-    /**
-     * Accepted data types.
-     */
-    public static final SDFDatatype[] ACC_TYPES = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT,
-            SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG,
-            SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT };
+	private static final long serialVersionUID = 3581873882761358906L;
+	/**
+	 * Accepted data types.
+	 */
+	private static final SDFDatatype[] ACC_TYPES1 = new SDFDatatype[] {
+			SDFProbabilisticDatatype.PROBABILISTIC_BYTE,
+			SDFProbabilisticDatatype.PROBABILISTIC_SHORT,
+			SDFProbabilisticDatatype.PROBABILISTIC_INTEGER,
+			SDFProbabilisticDatatype.PROBABILISTIC_FLOAT,
+			SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE,
+			SDFProbabilisticDatatype.PROBABILISTIC_LONG, SDFDatatype.BYTE,
+			SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG,
+			SDFDatatype.DOUBLE, SDFDatatype.FLOAT };
+	private static final SDFDatatype[][] ACC_TYPES = 
+			new SDFDatatype[][] {ACC_TYPES1,ACC_TYPES1};
+	
+	public ProbabilisticGreaterThanOperator() {
+		super(ACC_TYPES);
+	}
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.mep.functions.compare.GreaterThanOperator#
-     * getAcceptedTypes(int)
-     */
-    @Override
-    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > (this.getArity() - 1)) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return ProbabilisticGreaterThanOperator.ACC_TYPES;
-    }
 
 }

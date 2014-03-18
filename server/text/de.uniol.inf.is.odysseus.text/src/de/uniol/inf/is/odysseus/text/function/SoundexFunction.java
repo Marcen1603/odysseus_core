@@ -34,27 +34,8 @@ public class SoundexFunction extends AbstractFunction<String> {
 	private static final long serialVersionUID = 3286522655596260036L;
 	private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.STRING };
 
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > 0) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
-		}
-		return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "soundex";
+	public SoundexFunction() {
+		super("soundex",1,accTypes,SDFDatatype.STRING);
 	}
 
 	@Override
@@ -63,10 +44,4 @@ public class SoundexFunction extends AbstractFunction<String> {
 		String soundexValue = soundex.soundex(getInputValue(0).toString());
 		return soundexValue;
 	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.STRING;
-	}
-
 }

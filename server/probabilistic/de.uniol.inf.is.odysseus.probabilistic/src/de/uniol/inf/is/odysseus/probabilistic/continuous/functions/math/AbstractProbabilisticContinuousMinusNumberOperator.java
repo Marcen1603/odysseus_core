@@ -41,6 +41,10 @@ public abstract class AbstractProbabilisticContinuousMinusNumberOperator extends
 	 */
     private static final long serialVersionUID = 3009938859392034200L;
 
+    public AbstractProbabilisticContinuousMinusNumberOperator(SDFDatatype[][] accTypes) {
+    	super("-", accTypes, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+    }
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.mep.IOperator#getPrecedence()
@@ -49,16 +53,7 @@ public abstract class AbstractProbabilisticContinuousMinusNumberOperator extends
     public final int getPrecedence() {
         return 6;
     }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-     */
-    @Override
-    public final String getSymbol() {
-        return "-";
-    }
-
+    
     /**
      * Subtracts the given value from the given distribution.
      * 
@@ -88,15 +83,6 @@ public abstract class AbstractProbabilisticContinuousMinusNumberOperator extends
         }
         result.setSupport(support);
         return result;
-    }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE;
     }
 
     /*

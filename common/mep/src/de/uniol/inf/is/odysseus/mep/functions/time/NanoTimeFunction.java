@@ -25,33 +25,10 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class NanoTimeFunction extends AbstractFunction<Long> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1135046519531015301L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] {};
 
-	@Override
-	public int getArity() {
-		return 0;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos >= this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has "
-					+ this.getArity() + " argument(s).");
-		}
-		return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "nanoTime";
+	public NanoTimeFunction() {
+		super("nanoTime",0,null, SDFDatatype.LONG, false);
 	}
 
 	@Override
@@ -59,17 +36,4 @@ public class NanoTimeFunction extends AbstractFunction<Long> {
 		return System.nanoTime();
 	}
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.LONG;
-	}
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return false;
-    }
 }

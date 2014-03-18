@@ -15,21 +15,12 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class DaysFunction extends AbstractFunction<Integer> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 6462413832840844826L;
-    private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DATE };
+    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { new SDFDatatype[]{SDFDatatype.DATE},new SDFDatatype[]{SDFDatatype.DATE} };
 
-    @Override
-    public int getArity() {
-        return 2;
-    }
-
-    @Override
-    public String getSymbol() {
-        return "days";
-    }
+    public DaysFunction() {
+    	super("days",2,accTypes,SDFDatatype.INTEGER);
+	}
 
     @Override
     public Integer getValue() {
@@ -46,22 +37,6 @@ public class DaysFunction extends AbstractFunction<Integer> {
             days--;
         }
         return days;
-    }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s): two dates");
-        }
-        return accTypes;
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.INTEGER;
     }
 
 }

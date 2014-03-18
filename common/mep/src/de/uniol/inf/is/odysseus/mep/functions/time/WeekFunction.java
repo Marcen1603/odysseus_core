@@ -18,19 +18,21 @@ package de.uniol.inf.is.odysseus.mep.functions.time;
 import java.util.Calendar;
 import java.util.Date;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+
 /**
  * Extracts the week part of the date
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class WeekFunction extends AbstractDateFunction{
+public class WeekFunction extends AbstractUnaryDateFunction<Integer>{
 
 	private static final long serialVersionUID = -3089145220450028398L;
 
-	@Override
-	public String getSymbol() {
-		return "week";
+	public WeekFunction() {
+		super("week", SDFDatatype.INTEGER);
 	}
+	
 
 	@Override
 	public Integer getValue() {
@@ -39,12 +41,4 @@ public class WeekFunction extends AbstractDateFunction{
 		return calendar.get(Calendar.WEEK_OF_YEAR);
 	}
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
-    }
 }

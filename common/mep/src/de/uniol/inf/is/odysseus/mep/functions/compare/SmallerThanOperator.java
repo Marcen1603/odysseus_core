@@ -21,20 +21,28 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
 
 public class SmallerThanOperator extends AbstractBinaryOperator<Boolean> {
 
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = -6857126775649444062L;
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+		new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG,
+				SDFDatatype.DOUBLE, SDFDatatype.FLOAT },
+		new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG,
+				SDFDatatype.DOUBLE, SDFDatatype.FLOAT } };
+
+	
+	public SmallerThanOperator() {
+		super("<",accTypes, SDFDatatype.BOOLEAN);
+	}
+	
+	protected SmallerThanOperator(SDFDatatype[][] accTypes) {
+		super("<",accTypes, SDFDatatype.BOOLEAN);
+	}
 
 	@Override
 	public int getPrecedence() {
 		return 8;
 	}
 
-	@Override
-	public String getSymbol() {
-		return "<";
-	}
 
 	@Override
 	public Boolean getValue() {
@@ -44,10 +52,6 @@ public class SmallerThanOperator extends AbstractBinaryOperator<Boolean> {
 		return val0 < val1;
 	}
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.BOOLEAN;
-	}
 
 	@Override
 	public boolean isCommutative() {
@@ -72,19 +76,5 @@ public class SmallerThanOperator extends AbstractBinaryOperator<Boolean> {
 	@Override
 	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
 		return ASSOCIATIVITY.LEFT_TO_RIGHT;
-	}
-	
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
-	
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > this.getArity()-1){
-			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
-		}
-        //	accTypes[1] = String.class; // alphabetical order
-        return accTypes;
 	}
 }

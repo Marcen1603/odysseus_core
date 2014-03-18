@@ -16,51 +16,24 @@
 package de.uniol.inf.is.odysseus.mep.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
 /**
  * Returns the arc cosine of a value
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class ArcCosinusFunction extends AbstractFunction<Double> {
+public class ArcCosinusFunction extends AbstractUnaryNumberInputFunction<Double> {
 
-    /**
-     * 
-     */
-    private static final long          serialVersionUID = 2212720684617240595L;
-    private static final SDFDatatype[] accTypes         = new SDFDatatype[] { SDFDatatype.DOUBLE, SDFDatatype.BYTE,
-            SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG };
+	private static final long serialVersionUID = 2212720684617240595L;
 
-    @Override
-    public int getArity() {
-        return 1;
-    }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > 0) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
-    }
-
-    @Override
-    public String getSymbol() {
-        return "acos";
-    }
-
-    @Override
-    public Double getValue() {
-        return Math.acos(getNumericalInputValue(0));
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.DOUBLE;
-    }
+	public ArcCosinusFunction() {
+		super("acos",SDFDatatype.DOUBLE);
+	}
+	
+	@Override
+	public Double getValue() {
+		return Math.acos(getNumericalInputValue(0));
+	}
 
 }

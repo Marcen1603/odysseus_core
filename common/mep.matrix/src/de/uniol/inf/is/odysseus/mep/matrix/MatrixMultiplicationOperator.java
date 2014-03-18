@@ -32,19 +32,17 @@ import de.uniol.inf.is.odysseus.mep.functions.math.PlusOperator;
 public class MatrixMultiplicationOperator extends
 		AbstractBinaryOperator<double[][]> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1646121521152263872L;
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+			SDFDatatype.MATRIXS, SDFDatatype.MATRIXS };
+
+	public MatrixMultiplicationOperator() {
+		super("*",accTypes,SDFDatatype.MATRIX_DOUBLE);
+	}
 
 	@Override
 	public int getPrecedence() {
 		return 5;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "*";
 	}
 
 	@Override
@@ -59,11 +57,6 @@ public class MatrixMultiplicationOperator extends
 
 	protected double[][] getValueInternal(RealMatrix a, RealMatrix b) {
 		return a.multiply(b).getData();
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.MATRIX_DOUBLE;
 	}
 
 	@Override
@@ -97,20 +90,4 @@ public class MatrixMultiplicationOperator extends
 				|| operator.getClass() == MinusOperator.class;
 	}
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
-			SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity() - 1) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
-		}
-		return accTypes;
-	}
 }

@@ -11,58 +11,22 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * Returns the application time
+ * 
  * @author Christian Kuka <christian@kuka.cc>
- *
+ * 
  */
 public class SysDateFunction extends AbstractFunction<Date> {
 
-     /**
-     * 
-     */
-    private static final long serialVersionUID = -3364300386518966013L;
-    private static final SDFDatatype[] accTypes = new SDFDatatype[] {};
+	private static final long serialVersionUID = -3364300386518966013L;
 
-    @Override
-    public int getArity() {
-        return 0;
-    }
+	public SysDateFunction() {
+		super("sysdate", 0, null, SDFDatatype.DATE, false);
+	}
 
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException(
-                    "negative argument index not allowed");
-        }
-        if (argPos >= 0) {
-            throw new IllegalArgumentException(this.getSymbol()
-                    + " has no argument(s).");
-        }
-        return accTypes;
-    }
-
-    @Override
-    public String getSymbol() {
-        return "sysdate";
-    }
-
-    @Override
-    public Date getValue() {
-        Calendar calendar = Calendar.getInstance();
-        return calendar.getTime();
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.DATE;
-    }
-    
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return false;
-    }
+	@Override
+	public Date getValue() {
+		Calendar calendar = Calendar.getInstance();
+		return calendar.getTime();
+	}
 
 }

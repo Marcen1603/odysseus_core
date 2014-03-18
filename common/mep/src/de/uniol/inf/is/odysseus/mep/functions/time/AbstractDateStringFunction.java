@@ -21,27 +21,10 @@ public abstract class AbstractDateStringFunction extends AbstractFunction<Intege
     private static final long serialVersionUID = -5679329641413535288L;
     private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.STRING }, { SDFDatatype.STRING } };
 
-    @Override
-    public int getArity() {
-        return 2;
+    public AbstractDateStringFunction(String symbol) {
+    	super(symbol, 2, accTypes, SDFDatatype.INTEGER);
     }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s): a date string");
-        }
-        return accTypes[argPos];
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.INTEGER;
-    }
-
+    
     protected DateFormat getDateTimeFormat(String pattern) {
         return new SimpleDateFormat(pattern);
     }

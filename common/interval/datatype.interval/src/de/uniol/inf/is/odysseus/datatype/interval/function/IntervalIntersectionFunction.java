@@ -33,27 +33,10 @@ public class IntervalIntersectionFunction extends AbstractFunction<IntervalDoubl
     private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFIntervalDatatype.INTERVAL_BYTE, SDFIntervalDatatype.INTERVAL_SHORT, SDFIntervalDatatype.INTERVAL_INTEGER,
             SDFIntervalDatatype.INTERVAL_FLOAT, SDFIntervalDatatype.INTERVAL_DOUBLE, SDFIntervalDatatype.INTERVAL_LONG };
 
-    @Override
-    public int getArity() {
-        return 2;
+    public IntervalIntersectionFunction() {
+    	super("intersection",2,accTypes,SDFIntervalDatatype.INTERVAL_DOUBLE);
     }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > this.getArity() - 1) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
-    }
-
-    @Override
-    public String getSymbol() {
-        return "intersection";
-    }
-
+    
     @Override
     public IntervalDouble getValue() {
         IntervalDouble a = this.getInputValue(0);
@@ -66,11 +49,6 @@ public class IntervalIntersectionFunction extends AbstractFunction<IntervalDoubl
         else {
             return new IntervalDouble(Double.NaN, Double.NaN);
         }
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFIntervalDatatype.INTERVAL_DOUBLE;
     }
 
 }

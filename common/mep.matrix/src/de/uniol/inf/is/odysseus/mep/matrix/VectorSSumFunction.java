@@ -22,21 +22,19 @@ import org.apache.commons.math3.linear.RealVectorPreservingVisitor;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
+
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 public class VectorSSumFunction extends AbstractFunction<Double> {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -4545165996858726420L;
+		
+	private static final long serialVersionUID = -4545165996858726420L;
     public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.VECTOR_BOOLEAN, SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE };
 
-    @Override
-    public String getSymbol() {
-        return "sSum";
+    public VectorSSumFunction() {
+    	super("sSum", 1, accTypes, SDFDatatype.DOUBLE);
     }
 
     @Override
@@ -64,27 +62,6 @@ public class VectorSSumFunction extends AbstractFunction<Double> {
                 return sum;
             }
         });
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.DOUBLE;
-    }
-
-    @Override
-    public int getArity() {
-        return 1;
-    }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > this.getArity() - 1) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
     }
 
 }

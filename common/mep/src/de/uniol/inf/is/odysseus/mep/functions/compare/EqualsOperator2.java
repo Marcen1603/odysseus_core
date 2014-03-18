@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.mep.functions.compare;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+
 
 public class EqualsOperator2 extends EqualsOperator {
 
@@ -23,9 +25,12 @@ public class EqualsOperator2 extends EqualsOperator {
 	 */
 	private static final long serialVersionUID = -554431221703732387L;
 
-	@Override
-	public String getSymbol() {
-		return "==";
+	public EqualsOperator2() {
+		super("==");
 	}
-
+	
+	public EqualsOperator2(SDFDatatype[][] accTypes){
+		super("==",accTypes);
+	}
+	
 }

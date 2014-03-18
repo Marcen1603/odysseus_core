@@ -16,52 +16,23 @@
 package de.uniol.inf.is.odysseus.mep.functions.string;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * Returns the length of a string.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class LengthFunction extends AbstractFunction<Integer> {
+public class LengthFunction extends AbstractUnaryStringFunction<Integer> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3128369768278903586L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.STRING };
 
-	@Override
-	public int getArity() {
-		return 1;
+	public LengthFunction() {
+		super("length", SDFDatatype.INTEGER);
 	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s): a string");
-		}
-		return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "length";
-	}
-
+	
 	@Override
 	public Integer getValue() {
 		return getInputValue(0).toString().length();
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.INTEGER;
 	}
 
 }

@@ -28,33 +28,10 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class CurDateFunction extends AbstractFunction<Date> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4345526267977522373L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] {};
 
-	@Override
-	public int getArity() {
-		return 0;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos >= 0) {
-			throw new IllegalArgumentException(this.getSymbol()
-					+ " has no argument(s).");
-		}
-		return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "curdate";
+	public CurDateFunction() {
+		super("curdate",0,null,SDFDatatype.DATE, false);
 	}
 
 	@Override
@@ -63,17 +40,4 @@ public class CurDateFunction extends AbstractFunction<Date> {
 		return calendar.getTime();
 	}
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DATE;
-	}
-	
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return false;
-    }
 }

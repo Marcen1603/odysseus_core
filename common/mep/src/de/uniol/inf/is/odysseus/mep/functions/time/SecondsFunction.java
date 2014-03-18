@@ -14,44 +14,19 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class SecondsFunction extends AbstractFunction<Integer> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 4363071806485599553L;
-    private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DATE };
+    private static final SDFDatatype[][] accTypes = new SDFDatatype[][]{ { SDFDatatype.DATE },{ SDFDatatype.DATE }};
 
-    @Override
-    public int getArity() {
-        return 2;
+    public SecondsFunction() {
+    	super("seconds",2,accTypes,SDFDatatype.INTEGER);
     }
-
-    @Override
-    public String getSymbol() {
-        return "seconds";
-    }
-
+    
     @Override
     public Integer getValue() {
         Date a = (Date) getInputValue(0);
         Date b = (Date) getInputValue(1);
 
         return (int) ((b.getTime() - a.getTime()) / 1000);
-    }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s): two dates");
-        }
-        return accTypes;
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.INTEGER;
     }
 
 }

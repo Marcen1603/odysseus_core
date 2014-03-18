@@ -20,50 +20,25 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 public class DolToEur extends AbstractFunction<Double> {
 
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = -8220565259943514844L;
 	private static double EXCHANGERATE = 1d / 1.55d;
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] {SDFDatatype.DOUBLE};
 
-	@Override
-	public String getSymbol() {
-		return "DolToEur";
+	public DolToEur() {
+		super("DolToEur",1,accTypes, SDFDatatype.DOUBLE);
 	}
-
+	
 	public static void setExchangeRate(double value) {
 		EXCHANGERATE = value;
 	}
 
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
+	
 	@Override
 	public Double getValue() {
 		double value = ((Number) getInputValue(0)).doubleValue();
 		value *= EXCHANGERATE;
 		return value;
 	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
-	}
-	
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {SDFDatatype.DOUBLE};
-	
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > 0){
-			throw new IllegalArgumentException("dolToEur has only 1 argument.");
-		}
-        return accTypes;
-	}
-
 
 }

@@ -31,14 +31,13 @@ public class MatrixTransposeFunction extends AbstractFunction<double[][]> {
 	 * 
 	 */
 	private static final long serialVersionUID = 1175537055491410345L;
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
-			SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
-
-	@Override
-	public String getSymbol() {
-		return "trans";
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+			SDFDatatype.MATRIXS };
+	
+	public MatrixTransposeFunction() {
+		super("trans",1,accTypes, SDFDatatype.MATRIX_DOUBLE);
 	}
+	
 
 	@Override
 	public double[][] getValue() {
@@ -51,26 +50,4 @@ public class MatrixTransposeFunction extends AbstractFunction<double[][]> {
 		return a.transpose().getData();
 	}
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.MATRIX_DOUBLE;
-	}
-
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity() - 1) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
-		}
-		return accTypes;
-	}
 }

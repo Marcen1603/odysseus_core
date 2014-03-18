@@ -29,23 +29,14 @@ public class MatrixFunction extends AbstractFunction<double[][]> {
 	 * 
 	 */
 	private static final long serialVersionUID = -742218734048620320L;
-	private int arity;
+	public static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.VECTOR_DOUBLE};
+
 
 	public MatrixFunction(IExpression<?>[] lines) {
-		this.arity = lines.length;
+		super("__matrix",lines.length,accTypes,SDFDatatype.MATRIX_DOUBLE);
 		setArguments(lines);
 	}
 	
-	@Override
-	public int getArity() {
-		return arity;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "__matrix";
-	}
-
 	@Override
 	public double[][] getValue() {
 		int arity = getArity();
@@ -57,21 +48,4 @@ public class MatrixFunction extends AbstractFunction<double[][]> {
 		return value;
 	}
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.MATRIX_DOUBLE;
-	}
-
-	public static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.VECTOR_DOUBLE};
-	
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > arity){
-			throw new IllegalArgumentException("AbsValue has only 1 argument.");
-		}
-        return accTypes;
-	}
 }

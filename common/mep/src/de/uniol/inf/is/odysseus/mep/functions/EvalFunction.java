@@ -13,35 +13,13 @@ import de.uniol.inf.is.odysseus.mep.MEP;
  */
 public class EvalFunction extends AbstractFunction<Object> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1282864723656994864L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.STRING };
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { new SDFDatatype[]{SDFDatatype.STRING }};
 
-	@Override
-	public int getArity() {
-		return 1;
+	public EvalFunction() {
+		super("eval", 1, accTypes, SDFDatatype.OBJECT, false);
 	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > 0) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
-		}
-		return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "eval";
-	}
-
+	
 	@Override
 	public Object getValue() {
 		SDFExpression expression = new SDFExpression("",
@@ -49,16 +27,4 @@ public class EvalFunction extends AbstractFunction<Object> {
 		return expression.getValue();
 	}
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.OBJECT;
-	}
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return false;
-    }
 }

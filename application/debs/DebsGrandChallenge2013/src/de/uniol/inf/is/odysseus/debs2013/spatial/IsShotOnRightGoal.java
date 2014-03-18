@@ -28,6 +28,7 @@ public class IsShotOnRightGoal extends ShotOnGoalDetection{
 	private static final long serialVersionUID = -7862407733680877781L;
 
 	public IsShotOnRightGoal() {
+		super("IsShotOnRightGoal");
 		//GeometryFactory gf = new GeometryFactory();
 		Coordinate[] coordinates = new Coordinate[2];
 		coordinates[0] = new Coordinate(29898.5, 33941);
@@ -35,8 +36,4 @@ public class IsShotOnRightGoal extends ShotOnGoalDetection{
 //		setGoal(gf.createLineString(coordinates));
 	}
 
-	@Override
-	public String getSymbol() {
-		return "IsShotOnRightGoal";
-	}
 }

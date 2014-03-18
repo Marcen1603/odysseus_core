@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.mep.functions.math;
+package de.uniol.inf.is.odysseus.mep.functions.string;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
@@ -22,46 +22,17 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class UpperFunction  extends AbstractFunction<String> {
+public class UpperFunction  extends AbstractUnaryStringFunction<String> {
 
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6102731678146622066L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.STRING };
 
-	@Override
-	public int getArity() {
-		return 1;
+	public UpperFunction() {
+		super("upper",SDFDatatype.STRING);
 	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol()
-					+ " has one argument.");
-		}
-		return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "upper";
-	}
-
+	
 	@Override
 	public String getValue() {
 		return getInputValue(0).toString().toUpperCase();
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.STRING;
 	}
 
 }

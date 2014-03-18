@@ -18,20 +18,21 @@ package de.uniol.inf.is.odysseus.mep.functions.time;
 import java.util.Calendar;
 import java.util.Date;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+
 /**
  * Extracts the month part of the date
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class MonthFunction extends AbstractDateFunction{
+public class MonthFunction extends AbstractUnaryDateFunction<Integer>{
 
 	private static final long serialVersionUID = -3089145220450028398L;
 
-	@Override
-	public String getSymbol() {
-		return "month";
+	public MonthFunction() {
+		super("month", SDFDatatype.INTEGER);
 	}
-
+	
 	@Override
 	public Integer getValue() {
 		// The first month is 1 not 0
@@ -40,12 +41,4 @@ public class MonthFunction extends AbstractDateFunction{
 		return calendar.get(Calendar.MONTH) + 1;
 	}
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
-    }
 }

@@ -32,17 +32,11 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class MatrixInverseFunction extends AbstractFunction<double[][]> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1627768697759701027L;
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
-			SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS };
 
-	@Override
-	public String getSymbol() {
-		return "inv";
+	public MatrixInverseFunction() {
+		super("inv", 1, accTypes, SDFDatatype.MATRIX_DOUBLE);
 	}
 
 	@Override
@@ -60,29 +54,6 @@ public class MatrixInverseFunction extends AbstractFunction<double[][]> {
 				| NonPositiveDefiniteMatrixException e) {
 			return new LUDecomposition(a).getSolver().getInverse().getData();
 		}
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.MATRIX_DOUBLE;
-	}
-
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity() - 1) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
-		}
-		return accTypes;
 	}
 
 }

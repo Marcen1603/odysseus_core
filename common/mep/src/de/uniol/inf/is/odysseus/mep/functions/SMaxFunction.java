@@ -12,37 +12,15 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * 
  */
 public class SMaxFunction extends AbstractFunction<Double> {
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = -9061250775833636682L;
 	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
 			{ SDFDatatype.OBJECT },
 			{ SDFDatatype.DOUBLE, SDFDatatype.BYTE, SDFDatatype.FLOAT,
 					SDFDatatype.INTEGER, SDFDatatype.LONG } };
 
-	@Override
-	public int getArity() {
-		return 2;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity()
-					+ " argument(s): a tuple list and the position");
-		}
-		return accTypes[argPos];
-	}
-
-	@Override
-	public String getSymbol() {
-		return "SMAX";
+	public SMaxFunction() {
+		super("SMAX",2,accTypes, SDFDatatype.DOUBLE);
 	}
 
 	@Override
@@ -62,8 +40,4 @@ public class SMaxFunction extends AbstractFunction<Double> {
 		return result;
 	}
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
-	}
 }

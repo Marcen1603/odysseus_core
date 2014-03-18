@@ -18,21 +18,19 @@ package de.uniol.inf.is.odysseus.mep.functions.time;
 import java.util.Calendar;
 import java.util.Date;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+
 /**
  * Extracts the minute part of the date
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class MinuteFunction extends AbstractDateFunction{
+public class MinuteFunction extends AbstractUnaryDateFunction<Integer> {
 
-	/**
-     * 
-     */
 	private static final long serialVersionUID = 4347133590398246468L;
 
-	@Override
-	public String getSymbol() {
-		return "minute";
+	public MinuteFunction() {
+		super("minute", SDFDatatype.INTEGER);
 	}
 
 	@Override
@@ -42,12 +40,4 @@ public class MinuteFunction extends AbstractDateFunction{
 		return calendar.get(Calendar.MINUTE);
 	}
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean optimizeConstantParameter() {
-        return true;
-    }
 }

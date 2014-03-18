@@ -28,45 +28,18 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class LevensteinFunction extends AbstractFunction<Integer> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5254931226986934896L;
 	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
 			{ SDFDatatype.STRING }, { SDFDatatype.STRING } };
 
-	@Override
-	public int getArity() {
-		return 2;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s): two strings");
-		}
-		return accTypes[argPos];
-	}
-
-	@Override
-	public String getSymbol() {
-		return "levenstein";
+	public LevensteinFunction() {
+		super("levenstein", 2, accTypes, SDFDatatype.INTEGER);
 	}
 
 	@Override
 	public Integer getValue() {
 		return StringUtils.getLevenshteinDistance(getInputValue(0).toString(),
 				getInputValue(1).toString());
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.INTEGER;
 	}
 
 }

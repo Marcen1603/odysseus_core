@@ -33,14 +33,13 @@ public class IntervalPlusOperator extends AbstractBinaryOperator<IntervalDouble>
 	 */
 	private static final long serialVersionUID = 5061875515922895924L;
 
+	public IntervalPlusOperator() {
+		super("+",accTypes,SDFIntervalDatatype.INTERVAL_DOUBLE);
+	}
+	
 	@Override
 	public int getPrecedence() {
 		return 6;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "+";
 	}
 
 	@Override
@@ -53,12 +52,7 @@ public class IntervalPlusOperator extends AbstractBinaryOperator<IntervalDouble>
 	protected IntervalDouble getValueInternal(IntervalDouble a, IntervalDouble b) {
 		return new IntervalDouble(a.inf() + b.inf(), a.sup() + b.sup());
 	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFIntervalDatatype.INTERVAL_DOUBLE;
-	}
-
+	
 	@Override
 	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
 		return ASSOCIATIVITY.LEFT_TO_RIGHT;
@@ -91,18 +85,5 @@ public class IntervalPlusOperator extends AbstractBinaryOperator<IntervalDouble>
 			SDFIntervalDatatype.INTERVAL_FLOAT,
 			SDFIntervalDatatype.INTERVAL_DOUBLE,
 			SDFIntervalDatatype.INTERVAL_LONG };
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity() - 1) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
-		}
-		return accTypes;
-	}
 
 }

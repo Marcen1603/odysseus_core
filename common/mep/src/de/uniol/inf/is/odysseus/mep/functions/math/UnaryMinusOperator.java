@@ -20,19 +20,16 @@ import de.uniol.inf.is.odysseus.mep.AbstractUnaryOperator;
 
 public class UnaryMinusOperator extends AbstractUnaryOperator<Double> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5934608915212061886L;
-
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.NUMBERS};
+	
+	public UnaryMinusOperator() {
+		super("UnaryMinus", accTypes, SDFDatatype.DOUBLE);
+	}
+	
 	@Override
 	public int getPrecedence() {
 		return 3;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "UnaryMinus";
 	}
 
 	@Override
@@ -41,26 +38,9 @@ public class UnaryMinusOperator extends AbstractUnaryOperator<Double> {
 	}
 
 	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
-	}
-
-	@Override
 	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
 		return ASSOCIATIVITY.RIGHT_TO_LEFT;
 	}
 	
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
-	
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > 0){
-			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
-		}
-        return accTypes;
-	}
 
 }

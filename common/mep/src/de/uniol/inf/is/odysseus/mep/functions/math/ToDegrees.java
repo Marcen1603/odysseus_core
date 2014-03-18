@@ -16,50 +16,23 @@
 package de.uniol.inf.is.odysseus.mep.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ToDegrees extends AbstractFunction<Double> {
-	/**
-	 * 
-	 */
+public class ToDegrees extends AbstractUnaryNumberInputFunction<Double> {
+	
 	private static final long serialVersionUID = 3137250935924025881L;
-    private static final SDFDatatype[] accTypes =  SDFDatatype.NUMBERS;
 
-	@Override
-	public int getArity() {
-		return 1;
+	public ToDegrees() {
+		super("ToDegrees", SDFDatatype.DOUBLE);
 	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > 0) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
-		}
-        return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "ToDegrees";
-	}
-
+	
 	@Override
 	public Double getValue() {
 	    Double val = getNumericalInputValue(0).doubleValue();
 		return Math.toDegrees(val);
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
 	}
 
 }

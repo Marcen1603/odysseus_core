@@ -34,14 +34,13 @@ public class IntervalMultiplicationOperator extends AbstractBinaryOperator<Inter
 	 */
     private static final long serialVersionUID = 7746637195241980728L;
 
+    public IntervalMultiplicationOperator() {
+    	super("*",accTypes,SDFIntervalDatatype.INTERVAL_DOUBLE);
+    }
+    
     @Override
     public int getPrecedence() {
         return 5;
-    }
-
-    @Override
-    public String getSymbol() {
-        return "*";
     }
 
     @Override
@@ -55,11 +54,6 @@ public class IntervalMultiplicationOperator extends AbstractBinaryOperator<Inter
         final double inf = Math.min(Math.min(a.inf() * b.inf(), a.inf() * b.sup()), Math.min(a.sup() * b.inf(), a.sup() * b.sup()));
         final double sup = Math.max(Math.max(a.inf() * b.inf(), a.inf() * b.sup()), Math.max(a.sup() * b.inf(), a.sup() * b.sup()));
         return new IntervalDouble(inf, sup);
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFIntervalDatatype.INTERVAL_DOUBLE;
     }
 
     @Override
@@ -90,15 +84,5 @@ public class IntervalMultiplicationOperator extends AbstractBinaryOperator<Inter
     public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFIntervalDatatype.INTERVAL_BYTE, SDFIntervalDatatype.INTERVAL_SHORT, SDFIntervalDatatype.INTERVAL_INTEGER,
             SDFIntervalDatatype.INTERVAL_FLOAT, SDFIntervalDatatype.INTERVAL_DOUBLE, SDFIntervalDatatype.INTERVAL_LONG };
 
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > this.getArity() - 1) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
-    }
 
 }

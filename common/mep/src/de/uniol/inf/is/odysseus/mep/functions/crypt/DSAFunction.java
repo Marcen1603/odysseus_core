@@ -23,33 +23,16 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class DSAFunction extends AbstractFunction<List<Tuple<?>>> {
 
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = -7234007414686423002L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.NUMBERS };
+    
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{
+		new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT}};
 
-    @Override
-    public int getArity() {
-        return 1;
+    public DSAFunction() {
+    	super("dsa",1, accTypes,SDFDatatype.TUPLE);
     }
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s): a string");
-        }
-        return accTypes[argPos];
-    }
-
-    @Override
-    public String getSymbol() {
-        return "dsa";
-    }
-
+    
     @Override
     public List<Tuple<?>> getValue() {
         int size = getNumericalInputValue(0).intValue();
@@ -75,9 +58,5 @@ public class DSAFunction extends AbstractFunction<List<Tuple<?>>> {
         return keys;
     }
 
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.TUPLE;
-    }
 
 }

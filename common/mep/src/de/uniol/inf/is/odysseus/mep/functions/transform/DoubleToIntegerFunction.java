@@ -25,43 +25,15 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class DoubleToIntegerFunction extends AbstractFunction<Integer> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 903337299667941417L;
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.DOUBLE } };
 
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "doubleToInteger";
+	public DoubleToIntegerFunction() {
+		super("doubleToInteger", 1, accTypes, SDFDatatype.INTEGER);
 	}
 
 	@Override
 	public Integer getValue() {
 		return getNumericalInputValue(0).intValue();
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.INTEGER;
-	}
-
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DOUBLE };
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > 0) {
-			throw new IllegalArgumentException(
-					"doubleToShort has only 1 argument.");
-		}
-		return accTypes;
 	}
 }

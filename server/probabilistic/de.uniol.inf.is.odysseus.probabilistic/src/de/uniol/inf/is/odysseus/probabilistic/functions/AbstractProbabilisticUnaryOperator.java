@@ -16,6 +16,7 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.functions;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 
 /**
@@ -31,6 +32,10 @@ public abstract class AbstractProbabilisticUnaryOperator<T> extends AbstractProb
 	 */
     private static final long serialVersionUID = -5406076763880872083L;
 
+    public AbstractProbabilisticUnaryOperator(String symbol, SDFDatatype[][] accTypes, SDFDatatype returnType) {
+    	super(symbol, 1, accTypes, returnType);
+    }
+    
     /*
      * 
      * @see de.uniol.inf.is.odysseus.mep.IOperator#isBinary()
@@ -49,12 +54,4 @@ public abstract class AbstractProbabilisticUnaryOperator<T> extends AbstractProb
         return true;
     }
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
-     */
-    @Override
-    public final int getArity() {
-        return 1;
-    }
 }

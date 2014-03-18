@@ -14,22 +14,13 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class HoursFunction extends AbstractFunction<Integer> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -8275068277830086990L;
-    private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DATE };
+    private static SDFDatatype[][] accTypes = new SDFDatatype[][]{{SDFDatatype.DATE},{SDFDatatype.DATE}}; 
 
-    @Override
-    public int getArity() {
-        return 2;
+    public HoursFunction() {
+    	super("hours",2, accTypes, SDFDatatype.INTEGER);
     }
-
-    @Override
-    public String getSymbol() {
-        return "hours";
-    }
-
+    
     @Override
     public Integer getValue() {
         Date a = (Date) getInputValue(0);
@@ -38,19 +29,4 @@ public class HoursFunction extends AbstractFunction<Integer> {
         return (int) ((b.getTime() - a.getTime()) / 1000 / 60 / 60);
     }
 
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s): two dates");
-        }
-        return accTypes;
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.INTEGER;
-    }
 }

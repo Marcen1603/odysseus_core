@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.mep.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
 /**
  * Returns the angle theta from the conversion of rectangular coordinates (x, y)
@@ -24,46 +24,18 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class ArcTangens2Function extends AbstractFunction<Double> {
+public class ArcTangens2Function extends
+		AbstractUnaryNumberInputFunction<Double> {
 
-    /**
-     * 
-     */
-    private static final long            serialVersionUID = 1824826421970268927L;
-    private static final SDFDatatype[][] accTypes         = new SDFDatatype[][] {
-            { SDFDatatype.DOUBLE, SDFDatatype.BYTE, SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG },
-            { SDFDatatype.DOUBLE, SDFDatatype.BYTE, SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG } };
+	private static final long serialVersionUID = 1824826421970268927L;
 
-    @Override
-    public int getArity() {
-        return 2;
-    }
+	public ArcTangens2Function() {
+		super("atan2", SDFDatatype.DOUBLE);
+	}
 
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity()
-                    + " argument(s): y the ordinate coordinate and x the abscissa coordinate");
-        }
-        return accTypes[argPos];
-    }
-
-    @Override
-    public String getSymbol() {
-        return "atan2";
-    }
-
-    @Override
-    public Double getValue() {
-        return Math.atan2(getNumericalInputValue(0), getNumericalInputValue(1));
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.DOUBLE;
-    }
+	@Override
+	public Double getValue() {
+		return Math.atan2(getNumericalInputValue(0), getNumericalInputValue(1));
+	}
 
 }

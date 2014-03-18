@@ -16,6 +16,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.debs2013.spatial;
 
+import org.eclipse.core.runtime.ISafeRunnable;
+
 import com.vividsolutions.jts.geom.Coordinate;
 //import com.vividsolutions.jts.geom.GeometryFactory;
 
@@ -26,8 +28,10 @@ import com.vividsolutions.jts.geom.Coordinate;
 public class IsShotOnLeftGoal extends ShotOnGoalDetection{
 	
 	private static final long serialVersionUID = -7862407733680877781L;
-
+	
+	
 	public IsShotOnLeftGoal() {
+		super("IsShotOnLeftGoal");
 		//GeometryFactory gf = new GeometryFactory();
 		Coordinate[] coordinates = new Coordinate[2];
 		coordinates[0] = new Coordinate(29880, -33968);
@@ -35,8 +39,4 @@ public class IsShotOnLeftGoal extends ShotOnGoalDetection{
 //		setGoal(gf.createLineString(coordinates));
 	}
 
-	@Override
-	public String getSymbol() {
-		return "IsShotOnLeftGoal";
-	}
 }
