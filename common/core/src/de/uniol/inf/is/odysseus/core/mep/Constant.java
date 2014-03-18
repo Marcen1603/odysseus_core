@@ -79,6 +79,16 @@ public class Constant<T> implements IExpression<T> {
 	public SDFDatatype getReturnType() {
 		return type;
 	}
+	
+	@Override
+	public int getReturnTypeCard() {
+		return 1;
+	}
+	
+	@Override
+	public SDFDatatype getReturnType(int pos) {
+		return getReturnType();
+	}
 
 	@Override
 	public Variable getVariable(String name) {

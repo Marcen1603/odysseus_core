@@ -137,6 +137,16 @@ public class Variable implements IExpression<Object> {
 	public SDFDatatype getReturnType() {
 		return type;
 	}
+	
+	@Override
+	public int getReturnTypeCard() {
+		return 1;
+	}
+	
+	@Override
+	public SDFDatatype getReturnType(int pos) {
+		return getReturnType();
+	}
 
 	@Override
 	public boolean isVariable() {

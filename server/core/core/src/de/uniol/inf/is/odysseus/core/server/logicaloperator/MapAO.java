@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -34,14 +35,14 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 /**
  * @author Jonas Jacobi
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "MAP", doc="Performs a mapping of incoming attributes to out-coming attributes using map functions. Odysseus also provides a wide range of mapping functions. Hint: Map is stateless. To used Map in a statebased fashion see: StateMap",category={LogicalOperatorCategory.BASE})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "MAP", doc = "Performs a mapping of incoming attributes to out-coming attributes using map functions. Odysseus also provides a wide range of mapping functions. Hint: Map is stateless. To used Map in a statebased fashion see: StateMap", category = { LogicalOperatorCategory.BASE })
 public class MapAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -2120387285754464451L;
 	private List<NamedExpressionItem> namedExpressions;
-    private List<SDFExpression> expressions;
-    /** The number of threads used for processing the expressions. */
-    private int threads = 0;
+	private List<SDFExpression> expressions;
+	/** The number of threads used for processing the expressions. */
+	private int threads = 0;
 
 	public MapAO() {
 		super();
@@ -61,9 +62,9 @@ public class MapAO extends UnaryLogicalOp {
 		if (namedExpressions != null) {
 			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 			for (NamedExpressionItem expr : namedExpressions) {
-				
+
 				// TODO: Maybe here should an attribute resolver be used?
-				
+
 				SDFAttribute attr = null;
 				IExpression<?> mepExpression = expr.expression
 						.getMEPExpression();
@@ -71,10 +72,10 @@ public class MapAO extends UnaryLogicalOp {
 				boolean isOnlyAttribute = false;
 
 				exprString = expr.expression.toString();
-				// Replace '(' and ')' so the expression will not be recognized as expression in the next operator (e.g. if it is a map) 
+				// Replace '(' and ')' so the expression will not be recognized
+				// as expression in the next operator (e.g. if it is a map)
 				exprString = exprString.replace('(', '_').replace(')', '_');
-				
-				
+
 				// Variable could be source.name oder name, we are looking
 				// for
 				// name!
@@ -82,9 +83,10 @@ public class MapAO extends UnaryLogicalOp {
 				String toSplit;
 				if (exprString.startsWith("__")) {
 					toSplit = exprString.substring(exprString.indexOf(".") + 1);
-                    if (exprString.indexOf(".") > -1) {
-                        lastString = exprString.substring(0, exprString.indexOf(".") - 1);
-                    }
+					if (exprString.indexOf(".") > -1) {
+						lastString = exprString.substring(0,
+								exprString.indexOf(".") - 1);
+					}
 				} else {
 					toSplit = exprString;
 				}
@@ -123,11 +125,16 @@ public class MapAO extends UnaryLogicalOp {
 									+ "."
 									+ elem.getQualName() : elem.getQualName();
 							attr = new SDFAttribute(lastString, attrName,
-									attribute.getDatatype(), attribute.getUnit(), attribute.getDtConstraints());
+									attribute.getDatatype(),
+									attribute.getUnit(),
+									attribute.getDtConstraints());
 						} else {
 							attr = new SDFAttribute(
 									elem.getURIWithoutQualName(),
-									elem.getQualName(), attribute.getDatatype(), attribute.getUnit(), attribute.getDtConstraints());
+									elem.getQualName(),
+									attribute.getDatatype(),
+									attribute.getUnit(),
+									attribute.getDtConstraints());
 						}
 						isOnlyAttribute = true;
 					}
@@ -137,7 +144,8 @@ public class MapAO extends UnaryLogicalOp {
 				// type
 				if (isOnlyAttribute) {
 					if (!"".equals(expr.name)) {
-						if (attr.getSourceName()!=null && !attr.getSourceName().startsWith("__")) {
+						if (attr.getSourceName() != null
+								&& !attr.getSourceName().startsWith("__")) {
 							attr = new SDFAttribute(attr.getSourceName(),
 									expr.name, attr);
 						} else {
@@ -148,13 +156,30 @@ public class MapAO extends UnaryLogicalOp {
 
 				// else use the expression data type
 				if (attr == null) {
-					attr = new SDFAttribute(null, !"".equals(expr.name) ? expr.name
-							: exprString, mepExpression.getReturnType(), null, null, null);
+					// Special Handling if return type if tuple
+					if (mepExpression.getReturnType() == SDFDatatype.TUPLE) {
+						int card = mepExpression.getReturnTypeCard();
+						for (int i=0;i<card;i++){
+							String name = !"".equals(expr.name) ? expr.name : exprString;
+							attr = new SDFAttribute(null,
+									name+"_"+i,
+									mepExpression.getReturnType(i), null, null, null);
+							attrs.add(attr);							
+						}
+						
+					} else {
+						attr = new SDFAttribute(null,
+								!"".equals(expr.name) ? expr.name : exprString,
+								mepExpression.getReturnType(), null, null, null);
+						attrs.add(attr);
+					}
+				} else {
+					attrs.add(attr);
 				}
-				attrs.add(attr);
 
 			}
-			SDFSchema s = SDFSchema.changeSourceName(new SDFSchema(getInputSchema(), attrs), getInputSchema().getURI());
+			SDFSchema s = SDFSchema.changeSourceName(new SDFSchema(
+					getInputSchema(), attrs), getInputSchema().getURI());
 			setOutputSchema(s);
 		}
 	}
@@ -168,31 +193,31 @@ public class MapAO extends UnaryLogicalOp {
 		}
 		setOutputSchema(null);
 	}
-	
-    /**
-     * Sets the number of threads used for processing the expressions. A value
-     * greater than 1 indicates the number of simultaneous processing. A value
-     * equal to 1 or 0 indicates that no threads should be used. And a value
-     * lower than 0 indicates automatic threads number selection based on the
-     * number of expressions and the number of available processors.
-     * 
-     * @param threads
-     *            The number of threads
-     */
-    @Parameter(type = IntegerParameter.class, name = "threads", optional = true, doc = "Number of threads used to calculate the result.")
-    public void setThreads(int threads) {
-        this.threads = threads;
-    }
 
-    /**
-     * Gets the number of threads used for processing the expressions
-     * 
-     * @return The number of threads
-     */
-    public int getThreads() {
-        return threads;
-    }
-    
+	/**
+	 * Sets the number of threads used for processing the expressions. A value
+	 * greater than 1 indicates the number of simultaneous processing. A value
+	 * equal to 1 or 0 indicates that no threads should be used. And a value
+	 * lower than 0 indicates automatic threads number selection based on the
+	 * number of expressions and the number of available processors.
+	 * 
+	 * @param threads
+	 *            The number of threads
+	 */
+	@Parameter(type = IntegerParameter.class, name = "threads", optional = true, doc = "Number of threads used to calculate the result.")
+	public void setThreads(int threads) {
+		this.threads = threads;
+	}
+
+	/**
+	 * Gets the number of threads used for processing the expressions
+	 * 
+	 * @return The number of threads
+	 */
+	public int getThreads() {
+		return threads;
+	}
+
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		calcOutputSchema();
@@ -208,7 +233,5 @@ public class MapAO extends UnaryLogicalOp {
 	public MapAO clone() {
 		return new MapAO(this);
 	}
-
-
 
 }

@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -32,21 +33,24 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
+public class RelationalMapPO<T extends IMetaAttribute> extends
+		AbstractPipe<Tuple<T>, Tuple<T>> {
 
-	static private Logger logger = LoggerFactory.getLogger(RelationalMapPO.class);
+	static private Logger logger = LoggerFactory
+			.getLogger(RelationalMapPO.class);
 
 	protected VarHelper[][] variables; // Expression.Index
 	private SDFExpression[] expressions;
 	private final SDFSchema inputSchema;
 	final private boolean allowNull;
 
-	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions, boolean allowNullInOutput) {
+	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions,
+			boolean allowNullInOutput) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
 		init(inputSchema, expressions);
 	}
-	
+
 	protected RelationalMapPO(SDFSchema inputSchema, boolean allowNullInOutput) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
@@ -79,23 +83,24 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	final protected void process_next(Tuple<T> object, int port) {
 		boolean nullValueOccured = false;
-		
+
 		LinkedList<Tuple<T>> preProcessResult = preProcess(object);
-		
-		Tuple<T> outputVal = new Tuple<T>(this.expressions.length, false);
+
+		Tuple<T> outputVal = new Tuple<T>(this.getOutputSchema().size(), false);
 		outputVal.setMetadata((T) object.getMetadata().clone());
-		
+
 		synchronized (this.expressions) {
+			int outAttrPos = 0;
 			for (int i = 0; i < this.expressions.length; ++i) {
 				Object[] values = new Object[this.variables[i].length];
 				IMetaAttribute[] meta = new IMetaAttribute[this.variables[i].length];
 				for (int j = 0; j < this.variables[i].length; ++j) {
-					Tuple<T> obj = determineObjectForExpression(object, preProcessResult, i,
-							j);
+					Tuple<T> obj = determineObjectForExpression(object,
+							preProcessResult, i, j);
 					if (obj != null) {
 						values[j] = obj.getAttribute(this.variables[i][j].pos);
 						meta[j] = obj.getMetadata();
@@ -104,17 +109,25 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 
 				try {
 					this.expressions[i].bindMetaAttribute(object.getMetadata());
-					this.expressions[i].bindAdditionalContent(object.getAdditionalContent());
+					this.expressions[i].bindAdditionalContent(object
+							.getAdditionalContent());
 					this.expressions[i].bindVariables(meta, values);
 					Object expr = this.expressions[i].getValue();
-					outputVal.setAttribute(i, expr);
-					if (expr == null) {
-						nullValueOccured = true;
+					if (expressions[i].getMEPExpression().getReturnType() != SDFDatatype.TUPLE) {
+						outputVal.setAttribute(outAttrPos++, expr);
+						if (expr == null) {
+							nullValueOccured = true;
+						}
+					} else {
+						for(Object o : (List)expr){
+							outputVal.setAttribute(outAttrPos++, o);							
+						}
 					}
 				} catch (Exception e) {
 					nullValueOccured = true;
 					if (!(e instanceof NullPointerException)) {
-						logger.error("Cannot calc result for "+object+" with expression "+expressions[i], e);
+						logger.error("Cannot calc result for " + object
+								+ " with expression " + expressions[i], e);
 						// Not needed. Value is null, if not set!
 						// outputVal.setAttribute(i, null);
 					}
@@ -139,7 +152,6 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 		return null;
 	}
 
-	
 	@Override
 	public RelationalMapPO<T> clone() {
 		throw new IllegalArgumentException("Not implemented!");
@@ -152,11 +164,11 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 			return false;
 		}
 		RelationalMapPO rmpo = (RelationalMapPO) ipo;
-		
-		if (!this.getOutputSchema().equals(rmpo.getOutputSchema())){
+
+		if (!this.getOutputSchema().equals(rmpo.getOutputSchema())) {
 			return false;
 		}
-		
+
 		if (this.inputSchema.compareTo(rmpo.inputSchema) == 0) {
 			if (this.expressions.length == rmpo.expressions.length) {
 				for (int i = 0; i < this.expressions.length; i++) {
@@ -194,6 +206,6 @@ class VarHelper {
 
 	@Override
 	public String toString() {
-		return pos+" "+objectPosToUse;
+		return pos + " " + objectPosToUse;
 	}
 }

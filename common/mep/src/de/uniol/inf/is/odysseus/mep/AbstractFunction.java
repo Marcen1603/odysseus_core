@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.mep.IExpressionVisitor;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 public abstract class AbstractFunction<T> implements IFunction<T> {
 
@@ -39,7 +40,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	private Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
 	private IMetaAttribute[] metaAttribute = new IMetaAttribute[1];
 	private TimeUnit baseTimeUnit = TimeUnit.MILLISECONDS;
-	
+
 	@Override
 	final public void setArguments(IExpression<?>... arguments) {
 		if (arguments.length != getArity()) {
@@ -67,7 +68,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	public Map<String, Serializable> getAdditionalContents() {
 		return additionalContent;
 	}
-	
+
 	@Override
 	public Serializable getAdditionalContent(String name) {
 		return additionalContent.get(name);
@@ -77,12 +78,12 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	public IMetaAttribute[] getMetaAttributeContainer() {
 		return metaAttribute;
 	}
-	
+
 	@Override
 	public IMetaAttribute getMetaAttribute() {
 		return metaAttribute[0];
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	final protected <S> S getInputValue(int argumentPos) {
 		return (S) arguments[argumentPos].getValue();
@@ -92,7 +93,6 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		return ((Variable) arguments[argumentPos]).getMetadata();
 	}
 
-	
 	final protected Double getNumericalInputValue(int argumentPos) {
 		return ((Number) arguments[argumentPos].getValue()).doubleValue();
 	}
@@ -124,12 +124,12 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 
 	@Override
 	final public String toString() {
-		
+
 		String ret = _internalToString();
-		if (ret != null){
+		if (ret != null) {
 			return ret;
 		}
-		
+
 		StringBuilder builder = new StringBuilder(getSymbol());
 		builder.append('(');
 		if (getArity() > 0) {
@@ -144,10 +144,12 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		builder.append(')');
 		return builder.toString();
 	}
-	
+
 	/**
-	 * Use this method to overwrite the string representation of the operator/function
-	 * WARNING: Do only overwrite if needed and if you know what you are doing ;-)
+	 * Use this method to overwrite the string representation of the
+	 * operator/function WARNING: Do only overwrite if needed and if you know
+	 * what you are doing ;-)
+	 * 
 	 * @return internal Representation
 	 */
 	protected String _internalToString() {
@@ -193,13 +195,24 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	public Constant<T> toConstant() {
 		throw new RuntimeException("cannot convert IFunction to Constant");
 	}
-	
+
 	@Override
 	public void setBasetimeUnit(TimeUnit baseTimeUnit) {
 		this.baseTimeUnit = baseTimeUnit;
 	}
-	
+
 	public TimeUnit getBaseTimeUnit() {
 		return baseTimeUnit;
 	}
+
+	@Override
+	public int getReturnTypeCard() {
+		return 1;
+	}
+	
+	@Override
+	public SDFDatatype getReturnType(int pos) {
+		return getReturnType();
+	}	
+	
 }

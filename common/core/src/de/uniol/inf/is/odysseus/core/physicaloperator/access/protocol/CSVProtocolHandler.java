@@ -15,10 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
@@ -48,38 +48,7 @@ public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 
 	@Override
 	protected T readLine(String line) {
-		List<String> ret = new LinkedList<String>();
-		StringBuffer elem = new StringBuffer();
-		boolean overreadModus1 = false;
-		boolean overreadModus2 = false;
-
-		for (char c : line.toCharArray()) {
-
-			if (c == textDelimiter) {
-				overreadModus1 = !overreadModus1;
-				// elem.append(c);
-			} else {
-				if (overreadModus1 || overreadModus2) {
-					elem.append(c);
-				} else {
-					if (delimiter == c) {
-						ret.add(elem.toString());
-						elem = new StringBuffer();
-					} else {
-						elem.append(c);
-					}
-				}
-
-			}
-		}
-		ret.add(elem.toString());
-		if (trim){
-			List<String> trimmed = new LinkedList<String>();
-			for (String l: ret){
-				trimmed.add(l.trim());
-			}
-			ret = trimmed;
-		}
+		List<String> ret = CSVParser.parseCSV(line, textDelimiter, delimiter, trim);
 		T retValue = getDataHandler().readData(ret);
 		return retValue;
 	}

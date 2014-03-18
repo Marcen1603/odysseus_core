@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.mep.functions.SMinFunction;
 import de.uniol.inf.is.odysseus.mep.functions.SleepFunction;
 import de.uniol.inf.is.odysseus.mep.functions.StoredLineFunction;
 import de.uniol.inf.is.odysseus.mep.functions.StoredValueFunction;
+import de.uniol.inf.is.odysseus.mep.functions.SplittFunction;
 import de.uniol.inf.is.odysseus.mep.functions.UUIDFunction;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
@@ -399,6 +400,8 @@ public class MEP implements IExpressionParser {
         
         registerFunction(new StoredValueFunction());
         registerFunction(new StoredLineFunction());
+        
+        registerFunction(new SplittFunction());
     }
 
     /**

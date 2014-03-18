@@ -19,6 +19,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.connection,
+ de.uniol.inf.is.odysseus.core.conversion,
  de.uniol.inf.is.odysseus.core.datahandler,
  de.uniol.inf.is.odysseus.core.datatype,
  de.uniol.inf.is.odysseus.core.event,

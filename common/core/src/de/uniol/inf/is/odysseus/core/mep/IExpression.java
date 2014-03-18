@@ -62,7 +62,20 @@ public interface IExpression<T> extends Serializable{
 	 * @return The SDFExpression
 	 */
 	public SDFDatatype getReturnType();
-	
+
+	/**
+	 * For some return types (e.g. TUPLE) the size of the result
+	 * @return
+	 */
+	public int getReturnTypeCard();
+
+	/**
+	 * For some types (e.g. TUPLE) there may be sub types
+	 * @param pos the position of the type in the return element
+	 * @return the type at position pos
+	 */
+	public SDFDatatype getReturnType(int pos);
+
 	/**
 	 * To avoid instanceof
 	 * @return true if this expression is a variable
@@ -98,4 +111,6 @@ public interface IExpression<T> extends Serializable{
 	 * @return the constant if this expression is a constant, runtime exception else
 	 */
 	public Constant<T> toConstant();
+
+
 }

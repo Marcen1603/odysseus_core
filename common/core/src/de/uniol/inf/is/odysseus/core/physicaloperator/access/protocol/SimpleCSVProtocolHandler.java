@@ -16,11 +16,11 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
@@ -41,14 +41,7 @@ public class SimpleCSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 
 	@Override
 	protected T readLine(String line) {
-		String[] ret = line.split(Pattern.quote(""+delimiter));
-		if (trim) {
-			String[] trimmed = new String[ret.length];
-			for (int i = 0; i < ret.length; i++) {
-				trimmed[i] = (ret[i].trim());
-			}
-			ret = trimmed;
-		}
+		String[] ret = CSVParser.parseCSV(line, delimiter, trim);
 		return getDataHandler().readData(ret);
 	}
 
