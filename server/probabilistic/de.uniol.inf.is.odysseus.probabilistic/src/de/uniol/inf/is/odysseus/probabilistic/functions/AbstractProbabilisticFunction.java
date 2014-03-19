@@ -17,7 +17,6 @@
 package de.uniol.inf.is.odysseus.probabilistic.functions;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
@@ -69,7 +68,7 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
      * @return All normal distribution mixtures
      */
     public final List<MultivariateMixtureDistribution> getDistributions() {
-        return Collections.unmodifiableList(this.distributions);
+        return this.distributions;
     }
 
     public final void setDistributions(final MultivariateMixtureDistribution... distributions) {
@@ -94,7 +93,7 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
     }
 
     public final List<Integer> getPositions() {
-        return Collections.unmodifiableList(this.positions);
+        return this.positions;
     }
 
     public final int getPosition(final int index) {

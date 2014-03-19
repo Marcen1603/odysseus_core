@@ -15,30 +15,27 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.functions.bool;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
-import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryBooleanOperator;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticOrOperator extends AbstractProbabilisticBinaryOperator<ProbabilisticBooleanResult> {
+public class ProbabilisticOrOperator extends AbstractProbabilisticBinaryBooleanOperator<ProbabilisticBooleanResult> {
 
     /**
      * 
      */
     private static final long serialVersionUID = -5335479850255317776L;
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN };
 
     /**
  * 
  */
     public ProbabilisticOrOperator() {
-        super("||", ProbabilisticOrOperator.accTypes, SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN);
+        super("||");
     }
 
     @Override

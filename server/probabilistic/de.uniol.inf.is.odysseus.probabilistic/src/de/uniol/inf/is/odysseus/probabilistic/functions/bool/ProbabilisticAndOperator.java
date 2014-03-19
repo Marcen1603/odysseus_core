@@ -15,19 +15,17 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.functions.bool;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryBooleanOperator;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticAndOperator extends AbstractProbabilisticBinaryOperator<ProbabilisticBooleanResult> {
+public class ProbabilisticAndOperator extends AbstractProbabilisticBinaryBooleanOperator<ProbabilisticBooleanResult> {
     // Assume input is a mixture with a scale factor and return the distribution
     // with the lower scale factor
     // I need the diff between the scale factors!!!!!
@@ -40,13 +38,12 @@ public class ProbabilisticAndOperator extends AbstractProbabilisticBinaryOperato
      * 
      */
     private static final long serialVersionUID = -3269321870083257533L;
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN };
 
     /**
  * 
  */
     public ProbabilisticAndOperator() {
-        super("&&", ProbabilisticAndOperator.accTypes, SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN);
+        super("&&");
     }
 
     @Override

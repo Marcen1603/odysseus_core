@@ -34,6 +34,11 @@ public class ProbabilisticSubtractOperator extends AbstractProbabilisticBinaryOp
 	 */
     private static final long serialVersionUID = 3516509026688087365L;
 
+    /**
+     * Accepted data types.
+     */
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS, SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS };
+
     public ProbabilisticSubtractOperator() {
         super("-", ProbabilisticSubtractOperator.ACC_TYPES, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
     }
@@ -127,10 +132,5 @@ public class ProbabilisticSubtractOperator extends AbstractProbabilisticBinaryOp
     public final boolean isRightDistributiveWith(final IOperator<IMultivariateDistribution> operator) {
         return false;
     }
-
-    /**
-     * Accepted data types.
-     */
-    public static final SDFDatatype[] ACC_TYPES = SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS;
 
 }

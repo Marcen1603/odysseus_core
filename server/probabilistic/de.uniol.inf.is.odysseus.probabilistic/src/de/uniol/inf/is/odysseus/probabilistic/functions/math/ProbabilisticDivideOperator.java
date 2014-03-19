@@ -33,6 +33,11 @@ public class ProbabilisticDivideOperator extends AbstractProbabilisticBinaryOper
 	 */
     private static final long serialVersionUID = 235281739675461233L;
 
+    /**
+     * Accepted data types.
+     */
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS, SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS };
+
     public ProbabilisticDivideOperator() {
         super("/", ProbabilisticDivideOperator.ACC_TYPES, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
     }
@@ -121,10 +126,5 @@ public class ProbabilisticDivideOperator extends AbstractProbabilisticBinaryOper
     public final boolean isRightDistributiveWith(final IOperator<IMultivariateDistribution> operator) {
         return false;
     }
-
-    /**
-     * Accepted data types.
-     */
-    public static final SDFDatatype[] ACC_TYPES = SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS;
 
 }
