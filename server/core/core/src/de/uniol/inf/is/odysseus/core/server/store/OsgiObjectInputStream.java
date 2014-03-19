@@ -47,7 +47,9 @@ public class OsgiObjectInputStream extends ObjectInputStream {
 
         try {
         	System.out.println("TRY TO FIND CLASS "+desc.getName()+ " "+desc);
-            return BundleClassLoading.findClass(desc.getName(), Activator.getBundleContext().getBundle());
+            Class<?> ret = BundleClassLoading.findClass(desc.getName(), Activator.getBundleContext().getBundle());
+            System.out.println("FOUND "+ret);
+            return ret;
         } catch (ClassNotFoundException e) {
         	LOG.error("Unable to find class "+desc.getName()+" "+e);
         } catch( NullPointerException e ) {
