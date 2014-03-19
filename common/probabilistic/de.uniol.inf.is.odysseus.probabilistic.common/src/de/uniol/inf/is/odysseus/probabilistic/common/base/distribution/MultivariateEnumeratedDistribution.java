@@ -17,8 +17,12 @@ import org.apache.commons.math3.util.Pair;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ExtendedMultivariateEnumeratedRealDistribution implements IMultivariateRealDistribution {
+public class MultivariateEnumeratedDistribution implements IMultivariateDistribution {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7901800746273849189L;
     private List<Pair<double[], Double>> sampleSpace;
 
     /**
@@ -27,7 +31,7 @@ public class ExtendedMultivariateEnumeratedRealDistribution implements IMultivar
      * @param singletons
      * @param probabilities
      */
-    public ExtendedMultivariateEnumeratedRealDistribution(final double[][] singletons, final double[] probabilities) {
+    public MultivariateEnumeratedDistribution(final double[][] singletons, final double[] probabilities) {
         sampleSpace = new ArrayList<Pair<double[], Double>>(singletons.length);
         for (int i = 0; i < singletons.length; i++) {
             sampleSpace.add(new Pair<double[], Double>(singletons[i], probabilities[i]));
@@ -38,7 +42,7 @@ public class ExtendedMultivariateEnumeratedRealDistribution implements IMultivar
     /**
      * @param extendedMultivariateEnumeratedRealDistribution
      */
-    public ExtendedMultivariateEnumeratedRealDistribution(ExtendedMultivariateEnumeratedRealDistribution copy) {
+    public MultivariateEnumeratedDistribution(MultivariateEnumeratedDistribution copy) {
         sampleSpace = new ArrayList<Pair<double[], Double>>(copy.sampleSpace.size());
         for (Pair<double[], Double> sample : copy.sampleSpace) {
             sampleSpace.add(new Pair<double[], Double>(MathArrays.copyOf(sample.getKey()), sample.getValue()));
@@ -260,15 +264,52 @@ public class ExtendedMultivariateEnumeratedRealDistribution implements IMultivar
      * {@inheritDoc}
      */
     @Override
-    public ExtendedMultivariateEnumeratedRealDistribution clone() {
-        return new ExtendedMultivariateEnumeratedRealDistribution(this);
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.sampleSpace == null) ? 0 : this.sampleSpace.hashCode());
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        MultivariateEnumeratedDistribution other = (MultivariateEnumeratedDistribution) obj;
+        if (this.sampleSpace == null) {
+            if (other.sampleSpace != null) {
+                return false;
+            }
+        }
+        else if (!this.sampleSpace.equals(other.sampleSpace)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MultivariateEnumeratedDistribution clone() {
+        return new MultivariateEnumeratedDistribution(this);
     }
 
     public static void main(String[] args) {
         double[][] singletons = new double[][] { { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } };
         double[] probabilities = new double[] { 0.25, 0.5, 0.25 };
 
-        ExtendedMultivariateEnumeratedRealDistribution distribution = new ExtendedMultivariateEnumeratedRealDistribution(singletons, probabilities);
+        MultivariateEnumeratedDistribution distribution = new MultivariateEnumeratedDistribution(singletons, probabilities);
         Array2DRowRealMatrix restrictMatrix = new Array2DRowRealMatrix(new double[][] { { 1.0, 0.0, 0.0 }, { 0.0, 0.0, 1.0 } });
         System.out.println("Distribution: " + distribution);
         System.out.println("Restrict to: " + restrictMatrix);

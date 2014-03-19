@@ -26,7 +26,11 @@ import de.uniol.inf.is.odysseus.probabilistic.math.genz.QSIMVN;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ExtendedMultivariateNormalDistribution implements IMultivariateRealDistribution {
+public class MultivariateNormalDistribution implements IMultivariateDistribution {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5482504990362339784L;
     /** &radic;(2) */
     private static final double SQRT2 = FastMath.sqrt(2.0);
     private double[] means;
@@ -41,12 +45,12 @@ public class ExtendedMultivariateNormalDistribution implements IMultivariateReal
      * @throws DimensionMismatchException
      * @throws NonPositiveDefiniteMatrixException
      */
-    public ExtendedMultivariateNormalDistribution(double[] means, double[][] covariances) throws SingularMatrixException, DimensionMismatchException, NonPositiveDefiniteMatrixException {
+    public MultivariateNormalDistribution(double[] means, double[][] covariances) throws SingularMatrixException, DimensionMismatchException, NonPositiveDefiniteMatrixException {
         this.means = means;
         this.covariance = new Array2DRowRealMatrix(covariances);
     }
 
-    public ExtendedMultivariateNormalDistribution(double[] means, double[] covariancesUpper) throws SingularMatrixException, DimensionMismatchException, NonPositiveDefiniteMatrixException {
+    public MultivariateNormalDistribution(double[] means, double[] covariancesUpper) throws SingularMatrixException, DimensionMismatchException, NonPositiveDefiniteMatrixException {
         this(means, CovarianceMatrixUtils.toMatrix(covariancesUpper).getData());
 
     }
@@ -54,7 +58,7 @@ public class ExtendedMultivariateNormalDistribution implements IMultivariateReal
     /**
      * @param extendedMultivariateNormalDistribution
      */
-    public ExtendedMultivariateNormalDistribution(ExtendedMultivariateNormalDistribution copy) {
+    public MultivariateNormalDistribution(MultivariateNormalDistribution copy) {
         this.means = MathArrays.copyOf(copy.means);
         this.covariance = copy.covariance.copy();
     }
@@ -202,15 +206,56 @@ public class ExtendedMultivariateNormalDistribution implements IMultivariateReal
      * {@inheritDoc}
      */
     @Override
-    public ExtendedMultivariateNormalDistribution clone() {
-        return new ExtendedMultivariateNormalDistribution(this);
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.covariance == null) ? 0 : this.covariance.hashCode());
+        result = prime * result + Arrays.hashCode(this.means);
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        MultivariateNormalDistribution other = (MultivariateNormalDistribution) obj;
+        if (this.covariance == null) {
+            if (other.covariance != null) {
+                return false;
+            }
+        }
+        else if (!this.covariance.equals(other.covariance)) {
+            return false;
+        }
+        if (!Arrays.equals(this.means, other.means)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MultivariateNormalDistribution clone() {
+        return new MultivariateNormalDistribution(this);
     }
 
     public static void main(String[] args) {
         double[] means = new double[] { 1.0, 2.0, 3.0 };
         double[][] covariance = new double[][] { { 1.0, 0.5, 0.5 }, { 0.5, 1.0, 0.5 }, { 0.5, 0.5, 1.0 } };
 
-        ExtendedMultivariateNormalDistribution distribution = new ExtendedMultivariateNormalDistribution(means, covariance);
+        MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(means, covariance);
         Array2DRowRealMatrix restrictMatrix = new Array2DRowRealMatrix(new double[][] { { 1.0, 0.0, 0.0 }, { 0.0, 0.0, 1.0 } });
         System.out.println("Distribution: " + distribution);
         System.out.println("Restrict to: " + restrictMatrix);

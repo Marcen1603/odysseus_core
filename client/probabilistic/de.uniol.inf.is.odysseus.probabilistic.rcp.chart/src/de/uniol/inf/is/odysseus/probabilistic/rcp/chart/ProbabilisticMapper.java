@@ -15,7 +15,7 @@
 package de.uniol.inf.is.odysseus.probabilistic.rcp.chart;
 
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 
 /**
  * 
@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedM
 public class ProbabilisticMapper implements net.ericaro.surfaceplotter.Mapper {
 
     /** The mixtures. */
-    private ExtendedMixtureMultivariateRealDistribution distribution;
+    private MultivariateMixtureDistribution distribution;
     /** The scale. */
     private double scale = 1.0;
     /** The interval. */
@@ -36,7 +36,7 @@ public class ProbabilisticMapper implements net.ericaro.surfaceplotter.Mapper {
      * @param mixture
      *            The normal distribution mixture
      */
-    public final void setup(final ExtendedMixtureMultivariateRealDistribution mixture) {
+    public final void setup(final MultivariateMixtureDistribution mixture) {
         this.distribution = mixture;
         this.scale = mixture.getScale();
         this.interval = mixture.getSupport();

@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.VarHelper;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
@@ -325,7 +325,7 @@ public class ProbabilisticContinuousJoinTISweepArea<K extends IProbabilisticTime
                     if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
                         int index = ((ProbabilisticContinuousDouble) attribute).getDistribution();
                         attribute = outputVal.getDistribution(index);
-                        scale = ((ExtendedMixtureMultivariateRealDistribution) attribute).getScale();
+                        scale = ((MultivariateMixtureDistribution) attribute).getScale();
                         // FIXME What happens if we have more than one
                         // distribution inside an expression or even other
                         // functions? (CKu 17.12.2013)
@@ -344,7 +344,7 @@ public class ProbabilisticContinuousJoinTISweepArea<K extends IProbabilisticTime
 
                 final Object expr = this.expressions[i].getValue();
                 if (this.expressions[i].getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {
-                    final ExtendedMixtureMultivariateRealDistribution distribution = (ExtendedMixtureMultivariateRealDistribution) expr;
+                    final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) expr;
                     jointProbability *= scale / distribution.getScale();
                     // distribution.getAttributes()[0] = i;
                     outputVal.setDistribution(d, distribution);

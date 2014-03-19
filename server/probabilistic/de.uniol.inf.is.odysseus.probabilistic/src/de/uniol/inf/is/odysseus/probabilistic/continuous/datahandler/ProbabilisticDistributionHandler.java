@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +35,9 @@ import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMultivariateNormalDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 
 /**
  * Distribution handler to read and write continuous probabilistic distributions
@@ -47,7 +46,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalD
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticDistributionHandler extends AbstractDataHandler<ExtendedMixtureMultivariateRealDistribution> {
+public class ProbabilisticDistributionHandler extends AbstractDataHandler<MultivariateMixtureDistribution> {
     /** The logger. */
     private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticDistributionHandler.class);
     /** The supported data types. */
@@ -61,13 +60,13 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Extend
      * nio.ByteBuffer)
      */
     @Override
-    public final ExtendedMixtureMultivariateRealDistribution readData(final ByteBuffer buffer) {
+    public final MultivariateMixtureDistribution readData(final ByteBuffer buffer) {
         Objects.requireNonNull(buffer);
         Preconditions.checkArgument(buffer.remaining() >= 4);
-        ExtendedMixtureMultivariateRealDistribution distributionMixture = null;
+        MultivariateMixtureDistribution distributionMixture = null;
         final int size = buffer.getInt();
         if (size > 0) {
-            final List<Pair<Double, IMultivariateRealDistribution>> mixtures = new ArrayList<Pair<Double, IMultivariateRealDistribution>>();
+            final List<Pair<Double, IMultivariateDistribution>> mixtures = new ArrayList<Pair<Double, IMultivariateDistribution>>();
             final int dimension = buffer.getInt();
             for (int m = 0; m < size; m++) {
                 final double weight = buffer.getDouble();
@@ -80,8 +79,8 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Extend
                     entries[i] = buffer.getDouble();
                 }
                 try {
-                    final IMultivariateRealDistribution distribution = new ExtendedMultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
-                    mixtures.add(new Pair<Double, IMultivariateRealDistribution>(weight, distribution));
+                    final IMultivariateDistribution distribution = new MultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
+                    mixtures.add(new Pair<Double, IMultivariateDistribution>(weight, distribution));
                 }
                 catch (final Exception e) {
                     ProbabilisticDistributionHandler.LOG.warn(e.getMessage(), e);
@@ -94,7 +93,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Extend
                 support[i] = new Interval(buffer.getDouble(), buffer.getDouble());
             }
 
-            distributionMixture = new ExtendedMixtureMultivariateRealDistribution(mixtures);
+            distributionMixture = new MultivariateMixtureDistribution(mixtures);
             distributionMixture.setScale(scale);
             distributionMixture.setSupport(support);
         }
@@ -109,11 +108,11 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Extend
      * io.ObjectInputStream)
      */
     @Override
-    public final ExtendedMixtureMultivariateRealDistribution readData(final ObjectInputStream inputStream) throws IOException {
+    public final MultivariateMixtureDistribution readData(final ObjectInputStream inputStream) throws IOException {
         Objects.requireNonNull(inputStream);
         Preconditions.checkArgument(inputStream.available() >= 4);
         final int size = inputStream.readInt();
-        final List<Pair<Double, IMultivariateRealDistribution>> mixtures = new ArrayList<Pair<Double, IMultivariateRealDistribution>>();
+        final List<Pair<Double, IMultivariateDistribution>> mixtures = new ArrayList<Pair<Double, IMultivariateDistribution>>();
         final int dimension = inputStream.readInt();
         for (int m = 0; m < size; m++) {
             final double weight = inputStream.readDouble();
@@ -126,8 +125,8 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Extend
                 entries[i] = inputStream.readDouble();
             }
 
-            final IMultivariateRealDistribution distribution = new ExtendedMultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
-            mixtures.add(new Pair<Double, IMultivariateRealDistribution>(weight, distribution));
+            final IMultivariateDistribution distribution = new MultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
+            mixtures.add(new Pair<Double, IMultivariateDistribution>(weight, distribution));
         }
         final double scale = inputStream.readDouble();
         final Interval[] support = new Interval[dimension];
@@ -135,7 +134,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Extend
             support[i] = new Interval(inputStream.readDouble(), inputStream.readDouble());
         }
 
-        final ExtendedMixtureMultivariateRealDistribution distributionMixture = new ExtendedMixtureMultivariateRealDistribution(mixtures);
+        final MultivariateMixtureDistribution distributionMixture = new MultivariateMixtureDistribution(mixtures);
         distributionMixture.setScale(scale);
         distributionMixture.setSupport(support);
 
@@ -150,7 +149,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Extend
      * lang.String)
      */
     @Override
-    public final ExtendedMixtureMultivariateRealDistribution readData(final String string) {
+    public final MultivariateMixtureDistribution readData(final String string) {
         Objects.requireNonNull(string);
         Preconditions.checkArgument(!string.isEmpty());
         final String[] covarianceMatrix = string.split(":");
@@ -173,17 +172,17 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Extend
     public final void writeData(final ByteBuffer buffer, final Object data) {
         Objects.requireNonNull(buffer);
         Objects.requireNonNull(data);
-        final NormalDistributionMixture value = (NormalDistributionMixture) data;
-        buffer.putInt(value.getMixtures().getComponents().size());
+        final MultivariateMixtureDistribution value = (MultivariateMixtureDistribution) data;
+        buffer.putInt(value.getComponents().size());
         buffer.putInt(value.getDimension());
 
-        for (final Pair<Double, MultivariateNormalDistribution> entry : value.getMixtures().getComponents()) {
+        for (final Pair<Double, IMultivariateDistribution> entry : value.getComponents()) {
             buffer.putDouble(entry.getKey());
-            final double[] mean = entry.getValue().getMeans();
+            final double[] mean = entry.getValue().getMean();
             for (final double element : mean) {
                 buffer.putDouble(element);
             }
-            final double[] entries = CovarianceMatrixUtils.fromMatrix(entry.getValue().getCovariances());
+            final double[] entries = CovarianceMatrixUtils.fromMatrix(new Array2DRowRealMatrix(entry.getValue().getVariance()));
             for (final double entrie : entries) {
                 buffer.putDouble(entrie);
             }
@@ -207,8 +206,8 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Extend
     @Override
     public final int memSize(final Object attribute) {
         Objects.requireNonNull(attribute);
-        final NormalDistributionMixture value = (NormalDistributionMixture) attribute;
-        final int numberOfMixtures = value.getMixtures().getComponents().size();
+        final MultivariateMixtureDistribution value = (MultivariateMixtureDistribution) attribute;
+        final int numberOfMixtures = value.getComponents().size();
         final int dimension = value.getDimension();
         final int covarianceMatrixSize = (int) (-0.5 + Math.sqrt(0.25 + (dimension * 2)));
         // Number of mixtures: 1
@@ -230,7 +229,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Extend
      * (de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema)
      */
     @Override
-    protected final IDataHandler<ExtendedMixtureMultivariateRealDistribution> getInstance(final SDFSchema schema) {
+    protected final IDataHandler<MultivariateMixtureDistribution> getInstance(final SDFSchema schema) {
         return new ProbabilisticDistributionHandler();
     }
 
@@ -247,6 +246,6 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Extend
 
     @Override
     public final Class<?> createsType() {
-        return NormalDistributionMixture.class;
+        return MultivariateMixtureDistribution.class;
     }
 }

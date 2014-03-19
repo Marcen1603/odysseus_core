@@ -7,8 +7,8 @@ import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.probabilistic.common.VarHelper;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
@@ -52,17 +52,17 @@ public class ContinuousDistributionPredicateEvaluator implements IPredicateEvalu
 
             final Object expr = expression.getValue();
             if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {
-                final ExtendedMixtureMultivariateRealDistribution newDistribution = (ExtendedMixtureMultivariateRealDistribution) expr;
+                final MultivariateMixtureDistribution newDistribution = (MultivariateMixtureDistribution) expr;
                 int index = ((ProbabilisticContinuousDouble) output.getAttribute(newDistribution.getAttribute(0))).getDistribution();
-                final ExtendedMixtureMultivariateRealDistribution oldDistribution = output.getDistribution(index);
+                final MultivariateMixtureDistribution oldDistribution = output.getDistribution(index);
 
                 for (int i = 0; i < newDistribution.getSupport().length; i++) {
                     double newMu = 0.0;
                     double oldMu = 0.0;
-                    for (Pair<Double, IMultivariateRealDistribution> component : ((ExtendedMixtureMultivariateRealDistribution) newDistribution).getComponents()) {
+                    for (Pair<Double, IMultivariateDistribution> component : ((MultivariateMixtureDistribution) newDistribution).getComponents()) {
                         newMu += component.getKey() * component.getValue().getMean()[i];
                     }
-                    for (Pair<Double, IMultivariateRealDistribution> component : ((ExtendedMixtureMultivariateRealDistribution) oldDistribution).getComponents()) {
+                    for (Pair<Double, IMultivariateDistribution> component : ((MultivariateMixtureDistribution) oldDistribution).getComponents()) {
                         oldMu += component.getKey() * component.getValue().getMean()[i];
                     }
                     oldDistribution.setSupport(i, newDistribution.getSupport()[i].sub(newMu - oldMu));

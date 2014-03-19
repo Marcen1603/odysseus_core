@@ -26,8 +26,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMultivariateNormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.Probabilistic;
 
@@ -85,13 +85,13 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
      * @return A probabilistic tuple with a uniivariate prob. distribution
      */
     private IStreamObject<?> provideSimpleTuple() {
-        ExtendedMultivariateNormalDistribution distribution = new ExtendedMultivariateNormalDistribution(new double[] { 2.0 }, new double[][] { { 1.5 } });
-        final ExtendedMixtureMultivariateRealDistribution mixture = new ExtendedMixtureMultivariateRealDistribution(1.0, distribution);
+        MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(new double[] { 2.0 }, new double[][] { { 1.5 } });
+        final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(1.0, distribution);
         final Object[] attrs = new Object[] { "FirstAttribute", new ProbabilisticContinuousDouble(0) };
         mixture.setAttributes(new int[] { 1 });
         mixture.setScale(1.0);
         mixture.setSupport(new Interval[] { new Interval(-3.0, 6.0) });
-        final ProbabilisticTuple<IMetaAttribute> tuple = new ProbabilisticTuple<>(attrs, new ExtendedMixtureMultivariateRealDistribution[] { mixture }, true);
+        final ProbabilisticTuple<IMetaAttribute> tuple = new ProbabilisticTuple<>(attrs, new MultivariateMixtureDistribution[] { mixture }, true);
         tuple.setMetadata(new Probabilistic());
         return tuple;
     }
@@ -101,13 +101,13 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
      * @return A probabilistic tuple with a univariate prob. distribution
      */
     private IStreamObject<?> provideUnivariateTuple() {
-        ExtendedMultivariateNormalDistribution distribution = new ExtendedMultivariateNormalDistribution(new double[] { 2.0 }, new double[][] { { 1.5 } });
-        final ExtendedMixtureMultivariateRealDistribution mixture = new ExtendedMixtureMultivariateRealDistribution(1.0, distribution);
+        MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(new double[] { 2.0 }, new double[][] { { 1.5 } });
+        final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(1.0, distribution);
         final Object[] attrs = new Object[] { "FirstAttribute", new ProbabilisticContinuousDouble(0), "ThirdAttribute" };
         mixture.setAttributes(new int[] { 1 });
         mixture.setScale(1.0);
         mixture.setSupport(new Interval[] { new Interval(-3.0, 6.0) });
-        final ProbabilisticTuple<IMetaAttribute> tuple = new ProbabilisticTuple<>(attrs, new ExtendedMixtureMultivariateRealDistribution[] { mixture }, true);
+        final ProbabilisticTuple<IMetaAttribute> tuple = new ProbabilisticTuple<>(attrs, new MultivariateMixtureDistribution[] { mixture }, true);
         tuple.setMetadata(new Probabilistic());
         return tuple;
     }
@@ -117,13 +117,13 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
      * @return A probabilistic tuple with a multivariate prob. distribution
      */
     private IStreamObject<?> provideMultivariateTuple1() {
-        ExtendedMultivariateNormalDistribution distribution = new ExtendedMultivariateNormalDistribution(new double[] { 2.0, 3.0 }, new double[] { 2.0, 2.0, 2.0 });
-        final ExtendedMixtureMultivariateRealDistribution mixture = new ExtendedMixtureMultivariateRealDistribution(1.0, distribution);
+        MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(new double[] { 2.0, 3.0 }, new double[] { 2.0, 2.0, 2.0 });
+        final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(1.0, distribution);
         final Object[] attrs = new Object[] { new ProbabilisticContinuousDouble(0), "FirstAttribute", "ThirdAttribute", new ProbabilisticContinuousDouble(0) };
         mixture.setAttributes(new int[] { 1, 3 });
         mixture.setScale(1.0);
         mixture.setSupport(new Interval[] { new Interval(-3.0, 6.0), new Interval(-7.0, 14.0) });
-        final ProbabilisticTuple<IMetaAttribute> tuple = new ProbabilisticTuple<>(attrs, new ExtendedMixtureMultivariateRealDistribution[] { mixture }, true);
+        final ProbabilisticTuple<IMetaAttribute> tuple = new ProbabilisticTuple<>(attrs, new MultivariateMixtureDistribution[] { mixture }, true);
         tuple.setMetadata(new Probabilistic());
         return tuple;
     }
@@ -133,13 +133,13 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
      * @return A probabilistic tuple with a multivariate prob. distribution
      */
     private IStreamObject<?> provideMultivariateTuple2() {
-        ExtendedMultivariateNormalDistribution distribution = new ExtendedMultivariateNormalDistribution(new double[] { 2.0, 3.0 }, new double[] { 2.0, 2.0, 2.0 });
-        final ExtendedMixtureMultivariateRealDistribution mixture = new ExtendedMixtureMultivariateRealDistribution(1.0, distribution);
+        MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(new double[] { 2.0, 3.0 }, new double[] { 2.0, 2.0, 2.0 });
+        final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(1.0, distribution);
         final Object[] attrs = new Object[] { "FirstAttribute", new ProbabilisticContinuousDouble(0), "ThirdAttribute", new ProbabilisticContinuousDouble(0) };
         mixture.setAttributes(new int[] { 1, 3 });
         mixture.setScale(1.0);
         mixture.setSupport(new Interval[] { new Interval(-3.0, 6.0), new Interval(-7.0, 14.0) });
-        final ProbabilisticTuple<IMetaAttribute> tuple = new ProbabilisticTuple<>(attrs, new ExtendedMixtureMultivariateRealDistribution[] { mixture }, true);
+        final ProbabilisticTuple<IMetaAttribute> tuple = new ProbabilisticTuple<>(attrs, new MultivariateMixtureDistribution[] { mixture }, true);
         tuple.setMetadata(new Probabilistic());
         return tuple;
     }
@@ -149,13 +149,13 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
      * @return A probabilistic tuple with a multivariate prob. distribution
      */
     private IStreamObject<?> provideMultivariateTuple3() {
-        ExtendedMultivariateNormalDistribution distribution = new ExtendedMultivariateNormalDistribution(new double[] { 2.0, 3.0 }, new double[] { 2.0, 2.0, 2.0 });
-        final ExtendedMixtureMultivariateRealDistribution mixture = new ExtendedMixtureMultivariateRealDistribution(1.0, distribution);
+        MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(new double[] { 2.0, 3.0 }, new double[] { 2.0, 2.0, 2.0 });
+        final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(1.0, distribution);
         final Object[] attrs = new Object[] { "FirstAttribute", new ProbabilisticContinuousDouble(0), "ThirdAttribute", new ProbabilisticContinuousDouble(0) };
         mixture.setAttributes(new int[] { 3, 1 });
         mixture.setScale(1.0);
         mixture.setSupport(new Interval[] { new Interval(-3.0, 6.0), new Interval(-7.0, 14.0) });
-        final ProbabilisticTuple<IMetaAttribute> tuple = new ProbabilisticTuple<>(attrs, new ExtendedMixtureMultivariateRealDistribution[] { mixture }, true);
+        final ProbabilisticTuple<IMetaAttribute> tuple = new ProbabilisticTuple<>(attrs, new MultivariateMixtureDistribution[] { mixture }, true);
         tuple.setMetadata(new Probabilistic());
         return tuple;
     }
@@ -165,15 +165,15 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
      * @return A probabilistic tuple with a multivariate prob. distribution
      */
     private IStreamObject<?> provideMultivariateTuple4() {
-        ExtendedMultivariateNormalDistribution distribution1 = new ExtendedMultivariateNormalDistribution(new double[] { 2.0 }, new double[][] { { 1.5 } });
-        final ExtendedMixtureMultivariateRealDistribution mixture1 = new ExtendedMixtureMultivariateRealDistribution(0.5, distribution1);
+        MultivariateNormalDistribution distribution1 = new MultivariateNormalDistribution(new double[] { 2.0 }, new double[][] { { 1.5 } });
+        final MultivariateMixtureDistribution mixture1 = new MultivariateMixtureDistribution(0.5, distribution1);
 
         mixture1.setAttributes(new int[] { 3 });
         mixture1.setScale(1.0);
         mixture1.setSupport(new Interval[] { new Interval(-3.0, 6.0) });
 
-        ExtendedMultivariateNormalDistribution distribution2 = new ExtendedMultivariateNormalDistribution(new double[] { 3.0 }, new double[][] { { 2.5 } });
-        final ExtendedMixtureMultivariateRealDistribution mixture2 = new ExtendedMixtureMultivariateRealDistribution(0.5, distribution2);
+        MultivariateNormalDistribution distribution2 = new MultivariateNormalDistribution(new double[] { 3.0 }, new double[][] { { 2.5 } });
+        final MultivariateMixtureDistribution mixture2 = new MultivariateMixtureDistribution(0.5, distribution2);
 
         mixture2.setAttributes(new int[] { 1 });
         mixture2.setScale(1.0);
@@ -181,7 +181,7 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
 
         final Object[] attrs = new Object[] { "FirstAttribute", new ProbabilisticContinuousDouble(1), "ThirdAttribute", new ProbabilisticContinuousDouble(0) };
 
-        final ProbabilisticTuple<IMetaAttribute> tuple = new ProbabilisticTuple<>(attrs, new ExtendedMixtureMultivariateRealDistribution[] { mixture1, mixture2 }, true);
+        final ProbabilisticTuple<IMetaAttribute> tuple = new ProbabilisticTuple<>(attrs, new MultivariateMixtureDistribution[] { mixture1, mixture2 }, true);
         tuple.setMetadata(new Probabilistic());
         return tuple;
     }

@@ -41,24 +41,25 @@ public class TProbabilisticProjectAORule extends TProjectAORule {
      * {@inheritDoc}
      */
     @Override
-    public final void execute(final ProjectAO projectAO, final TransformationConfiguration transformConfig) throws RuleException {
-        super.execute(projectAO, transformConfig);
+    public final void execute(final ProjectAO operator, final TransformationConfiguration config) throws RuleException {
+        // The probabilistic tuple overrides the restrict function of the relational tuple.
+        super.execute(operator, config);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final boolean isExecutable(final ProjectAO operator, final TransformationConfiguration transformConfig) {
+    public final boolean isExecutable(final ProjectAO operator, final TransformationConfiguration config) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getInputSchema());
-        Objects.requireNonNull(transformConfig);
+        Objects.requireNonNull(config);
 
         if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 return true;
             }
         }
-        return super.isExecutable(operator, transformConfig);
+        return super.isExecutable(operator, config);
     }
 }

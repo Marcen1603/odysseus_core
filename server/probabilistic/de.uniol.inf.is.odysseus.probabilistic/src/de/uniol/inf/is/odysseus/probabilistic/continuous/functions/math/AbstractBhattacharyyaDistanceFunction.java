@@ -27,8 +27,8 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 
 /**
@@ -52,13 +52,13 @@ public abstract class AbstractBhattacharyyaDistanceFunction extends AbstractProb
      *            The other distribution
      * @return The distance measure
      */
-    protected final double getValueInternal(final ExtendedMixtureMultivariateRealDistribution a, final ExtendedMixtureMultivariateRealDistribution b) {
+    protected final double getValueInternal(final MultivariateMixtureDistribution a, final MultivariateMixtureDistribution b) {
         double weightedBhattacharyyaDistance = 0.0;
-        for (final Pair<Double, IMultivariateRealDistribution> aEntry : a.getComponents()) {
+        for (final Pair<Double, IMultivariateDistribution> aEntry : a.getComponents()) {
             final RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getValue().getMean());
             final RealMatrix aCovariance = new Array2DRowRealMatrix(aEntry.getValue().getVariance());
             final double aDeterminant = this.getDeterminant(aCovariance);
-            for (final Pair<Double, IMultivariateRealDistribution> bEntry : b.getComponents()) {
+            for (final Pair<Double, IMultivariateDistribution> bEntry : b.getComponents()) {
                 final RealMatrix bMean = MatrixUtils.createColumnRealMatrix(bEntry.getValue().getMean());
                 final RealMatrix bCovariance = new Array2DRowRealMatrix(bEntry.getValue().getVariance());
                 final double bDeterminant = this.getDeterminant(aCovariance);

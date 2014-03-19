@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 import org.apache.commons.math3.linear.RealVector;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 
@@ -67,7 +67,7 @@ public abstract class AbstractIntegrateMultivariateFunction extends AbstractProb
      */
     private double cumulativeProbability(final ProbabilisticContinuousDouble distribution, final RealVector lowerBound, final RealVector upperBound) {
 
-        final ExtendedMixtureMultivariateRealDistribution mixtures = this.getDistributions(distribution.getDistribution());
+        final MultivariateMixtureDistribution mixtures = this.getDistributions(distribution.getDistribution());
 
         return mixtures.probability(lowerBound.toArray(), upperBound.toArray());
     }

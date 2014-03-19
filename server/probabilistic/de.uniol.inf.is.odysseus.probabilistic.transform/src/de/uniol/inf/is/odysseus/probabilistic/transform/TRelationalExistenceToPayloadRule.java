@@ -20,6 +20,7 @@ import java.util.Objects;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.logicaloperator.ExistenceToPayloadAO;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.RelationalExistenceToPayloadPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -65,9 +66,11 @@ public class TRelationalExistenceToPayloadRule extends AbstractTransformationRul
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getInputSchema(0));
         Objects.requireNonNull(config);
-        if (operator.getInputSchema(0).getType() == ProbabilisticTuple.class) {
-            if (operator.isAllPhysicalInputSet()) {
-                return true;
+        if (config.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
+            if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+                if (operator.isAllPhysicalInputSet()) {
+                    return true;
+                }
             }
         }
         return false;

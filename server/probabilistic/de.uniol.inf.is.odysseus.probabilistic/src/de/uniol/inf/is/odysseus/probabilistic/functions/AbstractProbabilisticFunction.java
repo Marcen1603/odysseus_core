@@ -17,14 +17,13 @@
 package de.uniol.inf.is.odysseus.probabilistic.functions;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 
 /**
  * 
@@ -39,7 +38,7 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
 	 */
     private static final long serialVersionUID = 1726038091049996390L;
     /** The distributions. */
-    private final List<ExtendedMixtureMultivariateRealDistribution> distributions = new ArrayList<ExtendedMixtureMultivariateRealDistribution>();
+    private final List<MultivariateMixtureDistribution> distributions = new ArrayList<MultivariateMixtureDistribution>();
 
     public AbstractProbabilisticFunction(String symbol, int arity, SDFDatatype[][] accTypes, SDFDatatype returnType) {
     	super(symbol,arity,accTypes,returnType);
@@ -56,7 +55,7 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
      *            The position of the mixtures
      * @return The normal distribution mixtures at the given position
      */
-    public final ExtendedMixtureMultivariateRealDistribution getDistributions(final int pos) {
+    public final MultivariateMixtureDistribution getDistributions(final int pos) {
         Preconditions.checkPositionIndex(pos, this.distributions.size());
         return this.distributions.get(pos);
     }
@@ -66,7 +65,9 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
      * 
      * @return All normal distribution mixtures
      */
-    public final List<ExtendedMixtureMultivariateRealDistribution> getDistributions() {
-        return Collections.unmodifiableList(this.distributions);
+    public final List<MultivariateMixtureDistribution> getDistributions() {
+        // return Collections.unmodifiableList(this.distributions);
+        return this.distributions;
+
     }
 }

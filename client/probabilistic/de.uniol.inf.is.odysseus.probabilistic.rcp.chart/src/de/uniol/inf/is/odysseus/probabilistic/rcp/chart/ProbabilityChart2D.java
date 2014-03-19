@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -38,8 +37,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.rcp.chart.datatype.ProbabilisticViewSchema;
 import de.uniol.inf.is.odysseus.probabilistic.rcp.chart.datatype.ProbabilisticViewableSDFAttribute;
@@ -378,7 +376,6 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
                     while (iter.hasNext()) {
                         final ProbabilisticViewableSDFAttribute attribute = (ProbabilisticViewableSDFAttribute) iter.next();
                         final String key = attribute.getName();
-                        final SDFProbabilisticDatatype type = (SDFProbabilisticDatatype) attribute.getSDFDatatype();
                         final int index = attribute.getIndex();
                         XYSeries currentserie;
                         if (!ProbabilityChart2D.this.containsSeriesWithKey(key)) {
@@ -392,12 +389,7 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
 
                         final Object x = tuple.get(serie);
                         currentserie.clear();
-                        if (type.isContinuous()) {
-                            ProbabilityChart2D.this.updateSerie(currentserie, (NormalDistributionMixture) x, index);
-                        }
-                        else if (type.isDiscrete()) {
-                            ProbabilityChart2D.this.updateSerie(currentserie, (AbstractProbabilisticValue<?>) x);
-                        }
+                        ProbabilityChart2D.this.updateSerie(currentserie, (MultivariateMixtureDistribution) x, index);
 
                         ProbabilityChart2D.this.count++;
                         if (ProbabilityChart2D.this.count > ProbabilityChart2D.this.redrawEach) {
@@ -462,22 +454,6 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
     }
 
     /**
-     * Updates the given series with the given discrete probabilistic value.
-     * 
-     * @param series
-     *            The series
-     * @param value
-     *            The probabilistic value
-     */
-    private void updateSerie(final XYSeries series, final AbstractProbabilisticValue<?> value) {
-        for (final Entry<?, Double> e : value.getValues().entrySet()) {
-            series.add(((Number) e.getKey()).doubleValue() - Double.MIN_VALUE, 0.0);
-            series.add(((Number) e.getKey()).doubleValue(), e.getValue());
-            series.add(((Number) e.getKey()).doubleValue() + Double.MIN_VALUE, 0.0);
-        }
-    }
-
-    /**
      * Updates the given series with the given continuous probabilistic value.
      * 
      * @param series
@@ -487,7 +463,7 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
      * @param dimensionIndex
      *            The dimension
      */
-    private void updateSerie(final XYSeries series, final NormalDistributionMixture mixture, final int dimensionIndex) {
+    private void updateSerie(final XYSeries series, final MultivariateMixtureDistribution mixture, final int dimensionIndex) {
         if (mixture.getDimension() < 1) {
             return; // no dimension
         }
@@ -502,7 +478,7 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
         }
         dimension = d;
 
-        final MixtureMultivariateNormalDistribution distribution = mixture.getMixtures();
+        final MultivariateMixtureDistribution distribution = mixture;
         final Interval[] interval = mixture.getSupport();
         final double scale = mixture.getScale();
 

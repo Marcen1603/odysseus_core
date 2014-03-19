@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
 /**
@@ -32,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * 
  */
 @LogicalOperator(name = "ExistenceToPayload", minInputPorts = 1, maxInputPorts = 1, doc = "The input object gets one new field with tuple existence.", category = { LogicalOperatorCategory.PROBABILISTIC })
-public class ExistenceToPayloadAO extends AbstractLogicalOperator {
+public class ExistenceToPayloadAO extends UnaryLogicalOp {
     /** */
     private static final long serialVersionUID = -3582366102984336742L;
 

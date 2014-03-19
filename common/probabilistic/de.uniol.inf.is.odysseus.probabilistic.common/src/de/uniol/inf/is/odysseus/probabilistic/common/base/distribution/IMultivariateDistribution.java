@@ -3,13 +3,17 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.common.base.distribution;
 
+import java.io.Serializable;
+
 import org.apache.commons.math3.linear.RealMatrix;
+
+import de.uniol.inf.is.odysseus.core.IClone;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public interface IMultivariateRealDistribution {
+public interface IMultivariateDistribution extends Serializable, Cloneable, IClone {
     /**
      * For a random variable {@code X} whose values are distributed according
      * to this distribution, this method returns {@code P(a < X <= b)}.
@@ -67,5 +71,5 @@ public interface IMultivariateRealDistribution {
      */
     void restrict(RealMatrix restrict);
 
-    IMultivariateRealDistribution clone();
+    IMultivariateDistribution clone();
 }

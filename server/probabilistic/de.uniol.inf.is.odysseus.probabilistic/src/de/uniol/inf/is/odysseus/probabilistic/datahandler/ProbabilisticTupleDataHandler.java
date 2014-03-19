@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datahandler.ProbabilisticContinuousHandler;
@@ -167,7 +167,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
         for (int i = 0; i < this.dataHandlers.length; i++) {
             attributes[i] = this.dataHandlers[i].readData(inputStream);
         }
-        final ExtendedMixtureMultivariateRealDistribution[] distribution = new ExtendedMixtureMultivariateRealDistribution[this.maxDistributions];
+        final MultivariateMixtureDistribution[] distribution = new MultivariateMixtureDistribution[this.maxDistributions];
         int distributions = 0;
         for (int i = 0; i < this.maxDistributions; i++) {
             if (inputStream.available() > 0) {
@@ -212,7 +212,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
                 attributes[i] = null;
             }
         }
-        final ExtendedMixtureMultivariateRealDistribution[] distribution = new ExtendedMixtureMultivariateRealDistribution[this.maxDistributions];
+        final MultivariateMixtureDistribution[] distribution = new MultivariateMixtureDistribution[this.maxDistributions];
         int distributions = 0;
         if (this.maxDistributions > 0) {
             for (int i = attributes.length; i < input.length; i++) {
@@ -251,7 +251,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
                 attributes[i] = null;
             }
         }
-        final ExtendedMixtureMultivariateRealDistribution[] distribution = new ExtendedMixtureMultivariateRealDistribution[this.maxDistributions];
+        final MultivariateMixtureDistribution[] distribution = new MultivariateMixtureDistribution[this.maxDistributions];
         int distributions = 0;
         if (this.maxDistributions > 0) {
             for (int i = attributes.length; i < input.size(); i++) {
@@ -297,7 +297,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
                     }
                 }
             }
-            final ExtendedMixtureMultivariateRealDistribution[] distribution = new ExtendedMixtureMultivariateRealDistribution[this.maxDistributions];
+            final MultivariateMixtureDistribution[] distribution = new MultivariateMixtureDistribution[this.maxDistributions];
             int distributions = 0;
             try {
                 for (int i = 0; i < this.maxDistributions; i++) {
@@ -322,7 +322,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
                 if (SchemaUtils.isContinuousProbabilisticAttribute(attr)) {
                     final int attributeIndex = this.getSchema().indexOf(attr);
                     final int distributionIndex = ((ProbabilisticContinuousDouble) attributes[attributeIndex]).getDistribution();
-                    ((ExtendedMixtureMultivariateRealDistribution) distribution[distributionIndex]).setAttribute(distributionsDimensions[distributionIndex], attributeIndex);
+                    ((MultivariateMixtureDistribution) distribution[distributionIndex]).setAttribute(distributionsDimensions[distributionIndex], attributeIndex);
                     distributionsDimensions[distributionIndex]++;
                 }
             }

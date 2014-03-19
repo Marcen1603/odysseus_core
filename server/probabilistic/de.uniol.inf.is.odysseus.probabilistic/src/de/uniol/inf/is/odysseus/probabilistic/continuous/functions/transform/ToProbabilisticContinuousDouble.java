@@ -19,14 +19,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.util.Pair;
 
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 
@@ -34,7 +35,7 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFun
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ToProbabilisticContinuousDouble extends AbstractProbabilisticFunction<NormalDistributionMixture> {
+public class ToProbabilisticContinuousDouble extends AbstractProbabilisticFunction<IMultivariateDistribution> {
 
     /**
 	 * 
@@ -52,7 +53,7 @@ public class ToProbabilisticContinuousDouble extends AbstractProbabilisticFuncti
      * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
      */
     @Override
-    public final NormalDistributionMixture getValue() {
+    public final IMultivariateDistribution getValue() {
         final double[] means = ((double[][]) this.getInputValue(0))[0];
         final double[][] variances = (double[][]) this.getInputValue(1);
         Objects.requireNonNull(means);
@@ -60,11 +61,11 @@ public class ToProbabilisticContinuousDouble extends AbstractProbabilisticFuncti
         Preconditions.checkArgument(means.length > 0);
         Preconditions.checkArgument(means.length == variances.length);
         Preconditions.checkArgument(variances.length == variances[0].length);
-        final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-        final MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, variances);
-        mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));
+        final List<Pair<Double, IMultivariateDistribution>> mvns = new ArrayList<Pair<Double, IMultivariateDistribution>>();
+        final IMultivariateDistribution component = new MultivariateNormalDistribution(means, variances);
+        mvns.add(new Pair<Double, IMultivariateDistribution>(1.0, component));
 
-        final NormalDistributionMixture result = new NormalDistributionMixture(mvns);
+        final MultivariateMixtureDistribution result = new MultivariateMixtureDistribution(mvns);
         final Interval[] support = new Interval[result.getSupport().length];
         for (int i = 0; i < result.getSupport().length; i++) {
             support[i] = Interval.MAX;

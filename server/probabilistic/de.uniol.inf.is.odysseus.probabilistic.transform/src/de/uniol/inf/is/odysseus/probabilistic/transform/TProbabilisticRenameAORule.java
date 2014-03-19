@@ -41,24 +41,24 @@ public class TProbabilisticRenameAORule extends TRenameAORule {
      * {@inheritDoc}
      */
     @Override
-    public final void execute(final RenameAO operator, final TransformationConfiguration transformConfig) throws RuleException {
-        super.execute(operator, transformConfig);
+    public final void execute(final RenameAO operator, final TransformationConfiguration config) throws RuleException {
+        super.execute(operator, config);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final boolean isExecutable(final RenameAO operator, final TransformationConfiguration transformConfig) {
+    public final boolean isExecutable(final RenameAO operator, final TransformationConfiguration config) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getInputSchema());
-        Objects.requireNonNull(transformConfig);
+        Objects.requireNonNull(config);
 
         if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 return true;
             }
         }
-        return super.isExecutable(operator, transformConfig);
+        return super.isExecutable(operator, config);
     }
 }

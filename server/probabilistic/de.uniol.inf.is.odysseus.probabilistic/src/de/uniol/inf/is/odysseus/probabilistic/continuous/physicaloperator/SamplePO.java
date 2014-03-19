@@ -5,7 +5,7 @@ import com.google.common.primitives.Ints;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 
 /**
@@ -64,12 +64,12 @@ public class SamplePO<T extends ITimeInterval> extends AbstractPipe<Probabilisti
      */
     @Override
     protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
-        final ExtendedMixtureMultivariateRealDistribution[] distributions = object.getDistributions();
+        final MultivariateMixtureDistribution[] distributions = object.getDistributions();
         for (int i = 0; i < this.samples; i++) {
             final ProbabilisticTuple<T> outputVal = object.clone();
 
             for (final int attributePos : this.attributes) {
-                final ExtendedMixtureMultivariateRealDistribution distribution = distributions[((ProbabilisticContinuousDouble) object.getAttribute(attributePos)).getDistribution()];
+                final MultivariateMixtureDistribution distribution = distributions[((ProbabilisticContinuousDouble) object.getAttribute(attributePos)).getDistribution()];
                 final int dimension = Ints.asList(distribution.getAttributes()).indexOf(attributePos);
                 outputVal.setAttribute(attributePos, this.sample(distribution, dimension));
             }
@@ -99,7 +99,7 @@ public class SamplePO<T extends ITimeInterval> extends AbstractPipe<Probabilisti
      *            The dimension to sample from
      * @return The sample
      */
-    private Double sample(final ExtendedMixtureMultivariateRealDistribution mixture, final int dimension) {
+    private Double sample(final MultivariateMixtureDistribution mixture, final int dimension) {
         // double sample = mixture.sample()[dimension];
         // if (!mixture.getSupport(dimension).contains(sample)) {
         // sample = 0.0;

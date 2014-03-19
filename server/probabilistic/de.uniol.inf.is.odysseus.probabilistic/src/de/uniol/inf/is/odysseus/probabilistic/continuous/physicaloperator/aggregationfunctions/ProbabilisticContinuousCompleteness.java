@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Completeness;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.CompletenessPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 
 /**
@@ -76,7 +76,7 @@ public class ProbabilisticContinuousCompleteness extends Completeness<Probabilis
      * @param value
      *            The atribute value
      */
-    private double getCount(ExtendedMixtureMultivariateRealDistribution value) {
+    private double getCount(MultivariateMixtureDistribution value) {
         return 1.0 / value.getScale();
     }
 }

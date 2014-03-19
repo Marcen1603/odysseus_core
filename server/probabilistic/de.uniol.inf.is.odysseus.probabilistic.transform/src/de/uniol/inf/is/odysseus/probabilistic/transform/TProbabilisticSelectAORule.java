@@ -43,19 +43,19 @@ public class TProbabilisticSelectAORule extends TSelectAORule {
      * {@inheritDoc}
      */
     @Override
-    public final void execute(final SelectAO selectAO, final TransformationConfiguration transformConfig) throws RuleException {
-        super.execute(selectAO, transformConfig);
+    public final void execute(final SelectAO selectAO, final TransformationConfiguration config) throws RuleException {
+        super.execute(selectAO, config);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
+    public final boolean isExecutable(final SelectAO operator, final TransformationConfiguration config) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getInputSchema());
         Objects.requireNonNull(operator.getPredicate());
-        Objects.requireNonNull(transformConfig);
+        Objects.requireNonNull(config);
         if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 if (!SchemaUtils.containsProbabilisticAttributes(PredicateUtils.getAttributes(operator.getPredicate()))) {
@@ -63,6 +63,6 @@ public class TProbabilisticSelectAORule extends TSelectAORule {
                 }
             }
         }
-        return super.isExecutable(operator, transformConfig);
+        return super.isExecutable(operator, config);
     }
 }

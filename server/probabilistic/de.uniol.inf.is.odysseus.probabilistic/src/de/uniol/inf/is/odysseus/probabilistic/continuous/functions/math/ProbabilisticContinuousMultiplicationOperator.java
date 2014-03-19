@@ -23,8 +23,8 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.probabilistic.UnivariateNormalMixtureExpectationMaximization;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.ProbabilisticConstants;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
 
@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBin
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousMultiplicationOperator extends AbstractProbabilisticBinaryOperator<IMultivariateRealDistribution> {
+public class ProbabilisticContinuousMultiplicationOperator extends AbstractProbabilisticBinaryOperator<IMultivariateDistribution> {
 
     /**
 	 * 
@@ -57,9 +57,9 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
      * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
      */
     @Override
-    public final IMultivariateRealDistribution getValue() {
-        final ExtendedMixtureMultivariateRealDistribution a = (ExtendedMixtureMultivariateRealDistribution) this.getInputValue(0);
-        final ExtendedMixtureMultivariateRealDistribution b = (ExtendedMixtureMultivariateRealDistribution) this.getInputValue(1);
+    public final IMultivariateDistribution getValue() {
+        final MultivariateMixtureDistribution a = (MultivariateMixtureDistribution) this.getInputValue(0);
+        final MultivariateMixtureDistribution b = (MultivariateMixtureDistribution) this.getInputValue(1);
         return this.getValueInternal(a, b);
     }
 
@@ -76,7 +76,7 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
      * @return The approximated distribution of a*b
      */
     @SuppressWarnings("null")
-    protected final IMultivariateRealDistribution getValueInternal(final ExtendedMixtureMultivariateRealDistribution a, final ExtendedMixtureMultivariateRealDistribution b) {
+    protected final IMultivariateDistribution getValueInternal(final MultivariateMixtureDistribution a, final MultivariateMixtureDistribution b) {
         // final double[][] aSamples =
         // a.sample(ProbabilisticConstants.MEP_SAMPLES);
         // final double[][] bSamples =
@@ -88,7 +88,7 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
         // samples[i][j] = aSamples[i][j] * bSamples[i][j];
         // }
         // }
-        final ExtendedMixtureMultivariateRealDistribution result = null;
+        final MultivariateMixtureDistribution result = null;
         if (samples[0].length < 2) {
             final MixtureMultivariateNormalDistribution model = UnivariateNormalMixtureExpectationMaximization.estimate(samples, a.getComponents().size() + b.getComponents().size());
             final UnivariateNormalMixtureExpectationMaximization em = new UnivariateNormalMixtureExpectationMaximization(samples);
@@ -147,7 +147,7 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
      * .uniol.inf.is.odysseus.mep.IOperator)
      */
     @Override
-    public final boolean isLeftDistributiveWith(final IOperator<IMultivariateRealDistribution> operator) {
+    public final boolean isLeftDistributiveWith(final IOperator<IMultivariateDistribution> operator) {
         return false;
     }
 
@@ -158,7 +158,7 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
      * de.uniol.inf.is.odysseus.mep.IOperator)
      */
     @Override
-    public final boolean isRightDistributiveWith(final IOperator<IMultivariateRealDistribution> operator) {
+    public final boolean isRightDistributiveWith(final IOperator<IMultivariateDistribution> operator) {
         return false;
     }
 

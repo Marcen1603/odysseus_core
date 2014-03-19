@@ -25,9 +25,9 @@ import org.apache.commons.math3.util.Pair;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMultivariateNormalDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
 
@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBin
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public abstract class AbstractProbabilisticContinuousDivisionNumberOperator extends AbstractProbabilisticBinaryOperator<IMultivariateRealDistribution> {
+public abstract class AbstractProbabilisticContinuousDivisionNumberOperator extends AbstractProbabilisticBinaryOperator<IMultivariateDistribution> {
 
     /**
 	 * 
@@ -66,20 +66,20 @@ public abstract class AbstractProbabilisticContinuousDivisionNumberOperator exte
      *            The value
      * @return The distribution of a/b
      */
-    protected final IMultivariateRealDistribution getValueInternal(final ExtendedMixtureMultivariateRealDistribution a, final Double b) {
-        final List<Pair<Double, IMultivariateRealDistribution>> mvns = new ArrayList<Pair<Double, IMultivariateRealDistribution>>();
-        for (final Pair<Double, IMultivariateRealDistribution> entry : a.getComponents()) {
-            final IMultivariateRealDistribution normalDistribution = entry.getValue();
+    protected final IMultivariateDistribution getValueInternal(final MultivariateMixtureDistribution a, final Double b) {
+        final List<Pair<Double, IMultivariateDistribution>> mvns = new ArrayList<Pair<Double, IMultivariateDistribution>>();
+        for (final Pair<Double, IMultivariateDistribution> entry : a.getComponents()) {
+            final IMultivariateDistribution normalDistribution = entry.getValue();
             final Double weight = entry.getKey();
             final double[] means = normalDistribution.getMean();
             for (int i = 0; i < means.length; i++) {
                 means[i] /= b;
             }
             final RealMatrix covariances = new Array2DRowRealMatrix(normalDistribution.getVariance()).scalarMultiply(1.0 / (b * b));
-            final IMultivariateRealDistribution component = new ExtendedMultivariateNormalDistribution(means, covariances.getData());
-            mvns.add(new Pair<Double, IMultivariateRealDistribution>(weight, component));
+            final IMultivariateDistribution component = new MultivariateNormalDistribution(means, covariances.getData());
+            mvns.add(new Pair<Double, IMultivariateDistribution>(weight, component));
         }
-        final ExtendedMixtureMultivariateRealDistribution result = new ExtendedMixtureMultivariateRealDistribution(mvns);
+        final MultivariateMixtureDistribution result = new MultivariateMixtureDistribution(mvns);
         final Interval[] support = new Interval[result.getSupport().length];
         for (int i = 0; i < result.getSupport().length; i++) {
             support[i] = result.getSupport(i).div(b);
@@ -124,7 +124,7 @@ public abstract class AbstractProbabilisticContinuousDivisionNumberOperator exte
      * .uniol.inf.is.odysseus.mep.IOperator)
      */
     @Override
-    public final boolean isLeftDistributiveWith(final IOperator<IMultivariateRealDistribution> operator) {
+    public final boolean isLeftDistributiveWith(final IOperator<IMultivariateDistribution> operator) {
         return false;
     }
 
@@ -135,7 +135,7 @@ public abstract class AbstractProbabilisticContinuousDivisionNumberOperator exte
      * de.uniol.inf.is.odysseus.mep.IOperator)
      */
     @Override
-    public final boolean isRightDistributiveWith(final IOperator<IMultivariateRealDistribution> operator) {
+    public final boolean isRightDistributiveWith(final IOperator<IMultivariateDistribution> operator) {
         return false;
     }
 

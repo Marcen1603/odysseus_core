@@ -54,8 +54,8 @@ import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
@@ -451,7 +451,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
      * @param dimensionIndex
      *            The dimension
      */
-    private void updateSerie(final XYSeries series, final ExtendedMixtureMultivariateRealDistribution mixture, final int dimensionIndex) {
+    private void updateSerie(final XYSeries series, final MultivariateMixtureDistribution mixture, final int dimensionIndex) {
         if (mixture.getDimension() < 1) {
             return; // no dimension
         }
@@ -466,8 +466,8 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
             d++;
         }
         dimension = d;
-        for (final Pair<Double, IMultivariateRealDistribution> entry : mixture.getComponents()) {
-            final IMultivariateRealDistribution normalDistribution = entry.getValue();
+        for (final Pair<Double, IMultivariateDistribution> entry : mixture.getComponents()) {
+            final IMultivariateDistribution normalDistribution = entry.getValue();
             final Double weight = entry.getKey();
             final double means = normalDistribution.getMean()[dimension];
             final double sigma = normalDistribution.getVariance()[dimension][dimension];

@@ -39,8 +39,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSelectedAttributesAction;
@@ -58,7 +58,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.MethodSetting;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilityChart3D extends AbstractProbabilityChart<ExtendedMixtureMultivariateRealDistribution, IMetaAttribute> implements IChartSettingChangeable {
+public class ProbabilityChart3D extends AbstractProbabilityChart<MultivariateMixtureDistribution, IMetaAttribute> implements IChartSettingChangeable {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(ProbabilityChart3D.class);
     /** The view ID. */
@@ -72,7 +72,7 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<ExtendedMixture
     /** The continuous mapper. */
     private final ProbabilisticMapper mapper = new ProbabilisticMapper();
     /** The actions. */
-    private ChangeSelectedAttributesAction<ExtendedMixtureMultivariateRealDistribution> changeAttributesAction;
+    private ChangeSelectedAttributesAction<MultivariateMixtureDistribution> changeAttributesAction;
     /** The settings action. */
     private ChangeSettingsAction changeSettingsAction;
 
@@ -93,7 +93,7 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<ExtendedMixture
      * @param mixture
      *            The normal distribution mixture
      */
-    private void updateChart(final ExtendedMixtureMultivariateRealDistribution mixture) {
+    private void updateChart(final MultivariateMixtureDistribution mixture) {
         if (mixture.getDimension() < 2) {
             return; // No multivariate distribution mixture
         }
@@ -104,7 +104,7 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<ExtendedMixture
         double minX = Double.POSITIVE_INFINITY;
         double minY = Double.POSITIVE_INFINITY;
         double standardDeviationY = 0.0;
-        for (final Pair<Double, IMultivariateRealDistribution> component : mixture.getComponents()) {
+        for (final Pair<Double, IMultivariateDistribution> component : mixture.getComponents()) {
             maxX = Math.max(maxX, component.getValue().getMean()[0]);
             minX = Math.min(minX, component.getValue().getMean()[0]);
             // standardDeviationX = Math.max(standardDeviationX,
@@ -145,7 +145,7 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<ExtendedMixture
      * int)
      */
     @Override
-    protected final void processElement(final List<ExtendedMixtureMultivariateRealDistribution> tuple, final IMetaAttribute metadata, final int port) {
+    protected final void processElement(final List<MultivariateMixtureDistribution> tuple, final IMetaAttribute metadata, final int port) {
 
         this.getSite().getShell().getDisplay().asyncExec(new Runnable() {
             @Override
@@ -228,7 +228,7 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<ExtendedMixture
      * Creates the view actions.
      */
     private void createActions() {
-        this.changeAttributesAction = new ChangeSelectedAttributesAction<ExtendedMixtureMultivariateRealDistribution>(this.getSite().getShell(), this);
+        this.changeAttributesAction = new ChangeSelectedAttributesAction<MultivariateMixtureDistribution>(this.getSite().getShell(), this);
         this.changeAttributesAction.setText("Change Attributes");
         this.changeAttributesAction.setToolTipText("Configure the attributes that will be shown by the chart");
         this.changeAttributesAction.setImageDescriptor(ProbabilityChart3D.IMG_MONITOR_EDIT);
@@ -563,7 +563,7 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<ExtendedMixture
     @Override
     protected final void initConnection(final IStreamConnection<IStreamObject<?>> streamConnection) {
         for (final ISubscription<? extends ISource<?>> s : streamConnection.getSubscriptions()) {
-            this.viewSchema.put(s.getSinkInPort(), new ViewSchema<ExtendedMixtureMultivariateRealDistribution>(s.getSchema(), s.getTarget().getMetaAttributeSchema(), s.getSinkInPort()));
+            this.viewSchema.put(s.getSinkInPort(), new ViewSchema<MultivariateMixtureDistribution>(s.getSchema(), s.getTarget().getMetaAttributeSchema(), s.getSinkInPort()));
         }
 
         if (this.validate()) {

@@ -26,9 +26,9 @@ import org.apache.commons.math3.util.Pair;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMultivariateNormalDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
 
@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBin
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticBinaryOperator<IMultivariateRealDistribution> {
+public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticBinaryOperator<IMultivariateDistribution> {
 
     /**
 	 * 
@@ -62,9 +62,9 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
      * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
      */
     @Override
-    public final IMultivariateRealDistribution getValue() {
-        final ExtendedMixtureMultivariateRealDistribution a = (ExtendedMixtureMultivariateRealDistribution) this.getInputValue(0);
-        final ExtendedMixtureMultivariateRealDistribution b = (ExtendedMixtureMultivariateRealDistribution) this.getInputValue(1);
+    public final IMultivariateDistribution getValue() {
+        final MultivariateMixtureDistribution a = (MultivariateMixtureDistribution) this.getInputValue(0);
+        final MultivariateMixtureDistribution b = (MultivariateMixtureDistribution) this.getInputValue(1);
         return this.getValueInternal(a, b);
     }
 
@@ -85,21 +85,21 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
      *            The distribution to subtract
      * @return The distribution of a-b
      */
-    protected final IMultivariateRealDistribution getValueInternal(final ExtendedMixtureMultivariateRealDistribution a,
-            final ExtendedMixtureMultivariateRealDistribution b) {
-        final List<Pair<Double, IMultivariateRealDistribution>> mixtures = new ArrayList<Pair<Double, IMultivariateRealDistribution>>();
-        for (final Pair<Double, IMultivariateRealDistribution> aEntry : a.getComponents()) {
+    protected final IMultivariateDistribution getValueInternal(final MultivariateMixtureDistribution a,
+            final MultivariateMixtureDistribution b) {
+        final List<Pair<Double, IMultivariateDistribution>> mixtures = new ArrayList<Pair<Double, IMultivariateDistribution>>();
+        for (final Pair<Double, IMultivariateDistribution> aEntry : a.getComponents()) {
             final RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getValue().getMean());
             final RealMatrix aCovarianceMatrix = new Array2DRowRealMatrix(aEntry.getValue().getVariance());
-            for (final Pair<Double, IMultivariateRealDistribution> bEntry : b.getComponents()) {
+            for (final Pair<Double, IMultivariateDistribution> bEntry : b.getComponents()) {
                 final RealMatrix bMean = MatrixUtils.createColumnRealMatrix(bEntry.getValue().getMean());
                 final RealMatrix bCovarianceMatrix = new Array2DRowRealMatrix(bEntry.getValue().getVariance());
 
-                final IMultivariateRealDistribution distribution = new ExtendedMultivariateNormalDistribution(aMean.subtract(bMean).getColumn(0), aCovarianceMatrix.add(bCovarianceMatrix).getData());
-                mixtures.add(new Pair<Double, IMultivariateRealDistribution>(aEntry.getKey() * bEntry.getKey(), distribution));
+                final IMultivariateDistribution distribution = new MultivariateNormalDistribution(aMean.subtract(bMean).getColumn(0), aCovarianceMatrix.add(bCovarianceMatrix).getData());
+                mixtures.add(new Pair<Double, IMultivariateDistribution>(aEntry.getKey() * bEntry.getKey(), distribution));
             }
         }
-        final ExtendedMixtureMultivariateRealDistribution result = new ExtendedMixtureMultivariateRealDistribution(mixtures);
+        final MultivariateMixtureDistribution result = new MultivariateMixtureDistribution(mixtures);
         final Interval[] support = new Interval[a.getSupport().length];
         for (int i = 0; i < a.getSupport().length; i++) {
             support[i] = a.getSupport(i).sub(b.getSupport(i));
@@ -143,7 +143,7 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
      * .uniol.inf.is.odysseus.mep.IOperator)
      */
     @Override
-    public final boolean isLeftDistributiveWith(final IOperator<IMultivariateRealDistribution> operator) {
+    public final boolean isLeftDistributiveWith(final IOperator<IMultivariateDistribution> operator) {
         return false;
     }
 
@@ -154,7 +154,7 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
      * de.uniol.inf.is.odysseus.mep.IOperator)
      */
     @Override
-    public final boolean isRightDistributiveWith(final IOperator<IMultivariateRealDistribution> operator) {
+    public final boolean isRightDistributiveWith(final IOperator<IMultivariateDistribution> operator) {
         return false;
     }
 

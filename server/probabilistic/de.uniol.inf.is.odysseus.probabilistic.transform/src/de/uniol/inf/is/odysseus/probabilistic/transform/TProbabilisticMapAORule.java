@@ -47,29 +47,28 @@ public class TProbabilisticMapAORule extends TMapAORule {
      * .Object, java.lang.Object)
      */
     @Override
-    public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
+    public final boolean isExecutable(final MapAO operator, final TransformationConfiguration config) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getInputSchema());
-        Objects.requireNonNull(transformConfig);
+        Objects.requireNonNull(config);
 
         if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-
-                boolean isProbabilisticDiscreteOrContinuous = false;
+                boolean isProbabilisticExpression = false;
                 for (final SDFExpression expr : operator.getExpressions()) {
                     if (SchemaUtils.containsProbabilisticAttributes(expr.getAllAttributes())) {
-                        isProbabilisticDiscreteOrContinuous = true;
+                        isProbabilisticExpression = true;
                     }
                     if (expr.getType() instanceof SDFProbabilisticDatatype) {
-                        isProbabilisticDiscreteOrContinuous = true;
+                        isProbabilisticExpression = true;
                     }
                 }
-                if (!isProbabilisticDiscreteOrContinuous) {
+                if (!isProbabilisticExpression) {
                     return true;
                 }
             }
         }
-        return false;
+        return super.isExecutable(operator, config);
     }
 
 }

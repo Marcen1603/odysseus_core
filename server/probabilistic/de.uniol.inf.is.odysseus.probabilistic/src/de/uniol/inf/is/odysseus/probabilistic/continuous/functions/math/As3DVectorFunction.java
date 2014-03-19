@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 
@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFun
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class As3DVectorFunction extends AbstractProbabilisticFunction<NormalDistributionMixture[]> {
+public class As3DVectorFunction extends AbstractProbabilisticFunction<IMultivariateDistribution[]> {
 
     /**
 	 * 
@@ -46,9 +46,9 @@ public class As3DVectorFunction extends AbstractProbabilisticFunction<NormalDist
      * ProbabilisticIntegrateMultivariateFunction#getValue()
      */
     @Override
-    public final NormalDistributionMixture[] getValue() {
-        return new NormalDistributionMixture[] { (NormalDistributionMixture) this.getInputValue(0), (NormalDistributionMixture) this.getInputValue(1),
-                (NormalDistributionMixture) this.getInputValue(2) };
+    public final IMultivariateDistribution[] getValue() {
+        return new IMultivariateDistribution[] { (IMultivariateDistribution) this.getInputValue(0), (IMultivariateDistribution) this.getInputValue(1),
+                (IMultivariateDistribution) this.getInputValue(2) };
     }
 
 }
