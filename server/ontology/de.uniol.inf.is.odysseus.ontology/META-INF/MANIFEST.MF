@@ -16,6 +16,9 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.rewrite.rule,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.server.intervalapproach,
+ de.uniol.inf.is.odysseus.transform.flow,
+ de.uniol.inf.is.odysseus.transform.rule,
  org.apache.commons.math3.util;version="3.2.0",
  org.osgi.framework,
  org.osgi.service.component,
@@ -23,5 +26,5 @@ Import-Package: com.google.common.base,
  org.slf4j.spi
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core
-Service-Component: OSGI-INF/RewriteRuleProvider.xml,
- OSGI-INF/SensorOntologyService.xml
+Service-Component: OSGI-INF/RewriteRuleProvider.xml,OSGI-INF/SensorOntologyService.xml,OSGI-INF/QualityMetadata.xml,
+ OSGI-INF/QualityTimeIntervalMetadata.xml
