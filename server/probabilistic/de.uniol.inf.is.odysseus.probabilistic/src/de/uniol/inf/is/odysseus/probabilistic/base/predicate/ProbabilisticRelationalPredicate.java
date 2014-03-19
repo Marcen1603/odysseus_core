@@ -39,9 +39,11 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 import de.uniol.inf.is.odysseus.relational.base.predicate.AbstractRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -122,7 +124,9 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         }
     }
 
-    public ProbabilisticBooleanResult probabilisticEvaluate(ProbabilisticTuple<?> input) {
+    public ProbabilisticTuple<?> probabilisticEvaluate(ProbabilisticTuple<?> input) {
+        ProbabilisticTuple<?> output =  input.clone();
+
         Object[] values = new Object[this.attributePositions.length];
         final List<Integer> positions = new ArrayList<Integer>(this.attributePositions.length);
         for (int i = 0; i < values.length; ++i) {
@@ -137,7 +141,16 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         probabilisticExpression.bindAdditionalContent(input.getAdditionalContent());
         probabilisticExpression.bindVariables(values);
 
-        return probabilisticExpression.getValue();
+        final Object expr = probabilisticExpression.getValue();
+        if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_RESULT)) {
+            final ProbabilisticBooleanResult result = (ProbabilisticBooleanResult) expr;
+            for (final IMultivariateDistribution distr : result.getDistributions()) {
+                final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) distr;
+                final int index = ((ProbabilisticDouble) input.getAttribute(distribution.getAttribute(0))).getDistribution();
+                output.setDistribution(index, distribution);
+            }
+        }
+        return output;
     }
 
     @Override
@@ -180,7 +193,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         }
     }
 
-    public ProbabilisticBooleanResult probabilisticEvaluate(ProbabilisticTuple<?> left, ProbabilisticTuple<?> right) {
+    public ProbabilisticTuple<?> probabilisticEvaluate(ProbabilisticTuple<?> left, ProbabilisticTuple<?> right) {
         // FIXME 20140319 christian@kuka.cc Restrict tuple before concatenate
         // them
         int distributionsLength = 0;
@@ -209,7 +222,17 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         probabilisticExpression.bindPositions(positions);
         probabilisticExpression.bindAdditionalContent(additionalContent);
         probabilisticExpression.bindVariables(values);
-        return probabilisticExpression.getValue();
+
+        final Object expr = probabilisticExpression.getValue();
+        if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_RESULT)) {
+            final ProbabilisticBooleanResult result = (ProbabilisticBooleanResult) expr;
+            for (final IMultivariateDistribution distr : result.getDistributions()) {
+                final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) distr;
+                final int index = ((ProbabilisticDouble) newAttributes[distribution.getAttribute(0)]).getDistribution();
+                newDistributions[index] = distribution;
+            }
+        }
+        return new ProbabilisticTuple<>(newAttributes, newDistributions, true);
     }
 
     public boolean evaluate(ProbabilisticTuple<?> input, KeyValueObject<?> additional) {

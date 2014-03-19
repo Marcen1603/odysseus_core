@@ -59,7 +59,7 @@ public class TProbabilisticJoinAOSetSARule extends AbstractTransformationRule<Jo
     public void execute(final JoinTIPO operator, final TransformationConfiguration transformConfig) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(transformConfig);
-        final ProbabilisticJoinTISweepArea<?, ?>[] areas = new ProbabilisticJoinTISweepArea[2];
+        final ProbabilisticJoinTISweepArea[] areas = new ProbabilisticJoinTISweepArea[2];
 
         final IDataMergeFunction<Tuple<IProbabilisticTimeInterval>, IProbabilisticTimeInterval> dataMerge = new ProbabilisticMergeFunction<Tuple<IProbabilisticTimeInterval>, IProbabilisticTimeInterval>(
                 operator.getOutputSchema().size());
@@ -91,7 +91,10 @@ public class TProbabilisticJoinAOSetSARule extends AbstractTransformationRule<Jo
         final int[] leftProbabilisticAttributePos = SchemaUtils.getAttributePos(leftSchema, leftAttributes);
 
         for (int port = 0; port < 2; port++) {
-            areas[port] = new ProbabilisticJoinTISweepArea(leftProbabilisticAttributePos, rightProbabilisticAttributePos, dataMerge, metadataMerge);
+            //FIXME 20140319 christian@kuka.cc Do I need the dataMerge and MetadataMerge instances in the sweep area?
+            // areas[port] = new ProbabilisticJoinTISweepArea( dataMerge,
+            // metadataMerge);
+            areas[port] = new ProbabilisticJoinTISweepArea();
         }
 
         operator.setAreas(areas);

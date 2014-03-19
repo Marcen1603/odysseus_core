@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
 import de.uniol.inf.is.odysseus.probabilistic.base.predicate.ProbabilisticRelationalPredicate;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
@@ -67,9 +66,10 @@ public class ProbabilisticJoinTISweepArea<T extends ProbabilisticTuple<? extends
                             break;
                         }
                         ProbabilisticRelationalPredicate probabilisticPredicate = ((ProbabilisticRelationalPredicate) getQueryPredicate());
-                        ProbabilisticBooleanResult probabilisticResult = probabilisticPredicate.probabilisticEvaluate(element, next);
-                        if (probabilisticResult.getProbability() > 0.0) {
-                            result.add(next);
+                       @SuppressWarnings("unchecked")
+                    T merge = (T) probabilisticPredicate.probabilisticEvaluate(element, next);
+                        if (merge !=null) {
+                            result.add(merge);
                             if (extract) {
                                 iter.remove();
                             }
@@ -87,8 +87,11 @@ public class ProbabilisticJoinTISweepArea<T extends ProbabilisticTuple<? extends
                         if (TimeInterval.totallyAfter(next.getMetadata(), element.getMetadata())) {
                             break;
                         }
-                        if (getQueryPredicate().evaluate(next, element)) {
-                            result.add(next);
+                        ProbabilisticRelationalPredicate probabilisticPredicate = ((ProbabilisticRelationalPredicate) getQueryPredicate());
+                        @SuppressWarnings("unchecked")
+                        T merge = (T) probabilisticPredicate.probabilisticEvaluate(next, element);
+                        if (merge!=null) {
+                            result.add(merge);
                             if (extract) {
                                 iter.remove();
                             }
