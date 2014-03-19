@@ -70,16 +70,19 @@ public class QualityAO extends UnaryLogicalOp {
     /**
      * Clone constructor.
      * 
-     * @param qualityAO
+     * @param clone
      *            The instance to clone from
      */
-    public QualityAO(final QualityAO qualityAO) {
-        super(qualityAO);
-        Objects.requireNonNull(qualityAO);
-        this.attributes = new ArrayList<SDFAttribute>(qualityAO.attributes);
-        this.properties = new ArrayList<String>(qualityAO.properties);
-        if (qualityAO.expressions != null) {
-            this.expressions = qualityAO.expressions.clone();
+    public QualityAO(final QualityAO clone) {
+        super(clone);
+        Objects.requireNonNull(clone);
+        this.attributes = new ArrayList<SDFAttribute>(clone.attributes);
+        this.properties = new ArrayList<String>(clone.properties);
+        if (clone.expressions != null) {
+            this.expressions = new SDFExpression[clone.expressions.length];
+            for (int i = 0; i < this.expressions.length; i++) {
+                this.expressions[i] = clone.expressions[i].clone();
+            }
         }
     }
 
@@ -151,12 +154,13 @@ public class QualityAO extends UnaryLogicalOp {
 
     private void calcOutputSchema() {
         final List<SDFAttribute> outputSchemaAttributes = new ArrayList<SDFAttribute>();
-        for (final SDFAttribute attribute : this.getAttributes()) {
-            outputSchemaAttributes.add(attribute);
+
+        for (final SDFAttribute attribute : this.getInputSchema()) {
+            outputSchemaAttributes.add(attribute.clone());
         }
         for (final SDFAttribute attribute : this.getAttributes()) {
             for (final String property : this.properties) {
-                final SDFAttribute propertyAttribute = new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName() + "_" + property, SDFDatatype.DOUBLE, attribute.getUnit(),
+                final SDFAttribute propertyAttribute = new SDFAttribute(attribute.getURIWithoutQualName(), attribute.getAttributeName() + "_" + property, SDFDatatype.DOUBLE, attribute.getUnit(),
                         attribute.getDtConstraints());
                 outputSchemaAttributes.add(propertyAttribute);
             }
@@ -186,11 +190,11 @@ public class QualityAO extends UnaryLogicalOp {
         final List<SDFAttribute> attributes = this.getAttributes();
         final List<String> measurementPropertyNames = this.getProperties();
 
-        final SDFExpression[] expressions = new SDFExpression[(attributes.size() * measurementPropertyNames.size()) + attributes.size()];
+        final SDFExpression[] expressions = new SDFExpression[(attributes.size() * measurementPropertyNames.size()) + this.getInputSchema().size()];
 
         int i = 0;
-        for (final SDFAttribute attribute : attributes) {
-            expressions[i] = new SDFExpression(attribute.getAttributeName(), MEP.getInstance());
+        for (final SDFAttribute attribute : this.getInputSchema()) {
+            expressions[i] = new SDFExpression(attribute.getQualName(), MEP.getInstance());
             i++;
         }
 

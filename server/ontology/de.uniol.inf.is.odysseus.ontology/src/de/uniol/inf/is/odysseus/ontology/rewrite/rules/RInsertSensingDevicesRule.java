@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
@@ -137,7 +138,9 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
         for (final ILogicalOperator o : toUpdate) {
             this.update(o);
         }
-        this.retract(operator);
+        update(mapAO);
+        retract(operator);
+      
     }
 
     /**
@@ -147,17 +150,7 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
     public boolean isExecutable(final QualityAO operator, final RewriteConfiguration config) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(config);
-        if (operator.getSubscriptions().size() > 1) {
-            return false;
-        }
-
-        // if (operator.getInputSchema().getType() == ProbabilisticTuple.class)
-        // {
-        if (operator.getInputAO() != null) {
-            return true;
-        }
-        // }
-        return false;
+        return operator.getInputSchema().getType().isAssignableFrom(Tuple.class);
     }
 
     /**
@@ -265,7 +258,7 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
         final List<NamedExpressionItem> namedExpressions = new ArrayList<>();
         for (int i = 0; i < parent.getOutputSchema().size(); i++) {
             final SDFExpression expr = parent.getExpressions()[i];
-            namedExpressions.add(new NamedExpressionItem(parent.getOutputSchema().get(i).getURI(), expr));
+            namedExpressions.add(new NamedExpressionItem(parent.getOutputSchema().get(i).getAttributeName(), expr));
         }
         mapAO.setExpressions(namedExpressions);
         if (RInsertSensingDevicesRule.LOG.isDebugEnabled()) {
