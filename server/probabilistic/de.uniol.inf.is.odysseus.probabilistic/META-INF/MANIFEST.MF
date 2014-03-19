@@ -41,6 +41,7 @@ Service-Component: OSGI-INF/*
 Bundle-Vendor: Christian Kuka
 Export-Package: de.uniol.inf.is.odysseus.probabilistic,
  de.uniol.inf.is.odysseus.probabilistic.base.common,
+ de.uniol.inf.is.odysseus.probabilistic.base.predicate,
  de.uniol.inf.is.odysseus.probabilistic.functions,
  de.uniol.inf.is.odysseus.probabilistic.functions.compare,
  de.uniol.inf.is.odysseus.probabilistic.functions.math,

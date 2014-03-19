@@ -136,11 +136,6 @@ public class ProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPip
             for (final SDFAttribute curAttribute : neededAttributes) {
                 newArray[j++] = new VarHelper(schema.indexOf(curAttribute), 0);
             }
-            // if
-            // (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE))
-            // {
-            // distributions++;
-            // }
         }
     }
 

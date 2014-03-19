@@ -16,126 +16,109 @@
 package de.uniol.inf.is.odysseus.probabilistic.transform;
 
 import java.util.Objects;
-import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
-import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
-import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
+import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.probabilistic.base.predicate.ProbabilisticRelationalPredicate;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.DefaultProbabilisticTIDummyDataCreation;
-import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticJoinTIPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
-import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
+import de.uniol.inf.is.odysseus.server.intervalapproach.DefaultTIDummyDataCreation;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.transform.join.TJoinAORule;
 
 /**
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class TProbabilisiticJoinAORule extends AbstractTransformationRule<JoinAO> {
-    /*
+@SuppressWarnings({ "unchecked", "rawtypes" })
+public class TProbabilisiticJoinAORule extends TJoinAORule {
+    /**
      * 
-     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+     * {@inheritDoc}
      */
     @Override
     public final int getPriority() {
         return TransformationConstants.PRIORITY;
     }
 
-    /*
+    /**
      * 
-     * @see
-     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
-     * java.lang.Object)
+     * {@inheritDoc}
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public final void execute(final JoinAO operator, final TransformationConfiguration config) throws RuleException {
-        Objects.requireNonNull(operator);
-        Objects.requireNonNull(config);
-        final ProbabilisticJoinTIPO joinPO = new ProbabilisticJoinTIPO();
-
-        boolean isCross = false;
-        final IPredicate pred = operator.getPredicate();
+        IPredicate pred = operator.getPredicate();
         if (pred == null) {
-            joinPO.setJoinPredicate(TruePredicate.getInstance());
-            isCross = true;
+            super.execute(operator, config);
         }
         else {
-            joinPO.setJoinPredicate(pred.clone());
-        }
+            JoinTIPO joinPO = new JoinTIPO();
+            boolean isCross = false;
 
-        joinPO.setTransferFunction(new TITransferArea());
-        joinPO.setMetadataMerge(new CombinedMergeFunction());
-        joinPO.setCreationFunction(new DefaultProbabilisticTIDummyDataCreation());
+            joinPO.setJoinPredicate(new ProbabilisticRelationalPredicate(getExpression(operator)));
+            joinPO.setCardinalities(operator.getCard());
 
-        this.defaultExecute(operator, joinPO, config, true, true);
-        if (isCross) {
-            joinPO.setName("Crossproduct");
+            joinPO.setTransferFunction(new TITransferArea());
+
+            joinPO.setMetadataMerge(new CombinedMergeFunction());
+            joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
+
+            defaultExecute(operator, joinPO, config, true, true);
+            if (isCross) {
+                joinPO.setName("Crossproduct");
+            }
         }
     }
 
-    /*
+    /**
      * 
-     * @see
-     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
-     * .Object, java.lang.Object)
+     * {@inheritDoc}
      */
     @Override
     public final boolean isExecutable(final JoinAO operator, final TransformationConfiguration config) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getInputSchema(0));
+        Objects.requireNonNull(operator.getInputSchema(1));
         Objects.requireNonNull(config);
-        final IPredicate<?> predicate = operator.getPredicate();
-        if (predicate != null) {
-            if ((operator.getInputSchema(0).getType() == ProbabilisticTuple.class) || (operator.getInputSchema(1).getType() == ProbabilisticTuple.class)) {
 
-                if (operator.isAllPhysicalInputSet() && !(operator instanceof LeftJoinAO)) {
-                    final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-                    if (SchemaUtils.containsProbabilisticAttributes(attributes)) {
-                        return true;
-                    }
-                }
+        if (operator.isAllPhysicalInputSet()) {
+            if ((operator.getInputSchema(0).getType() == ProbabilisticTuple.class) && (operator.getInputSchema(1).getType() == ProbabilisticTuple.class)) {
+                return true;
             }
         }
-        return false;
+        return super.isExecutable(operator, config);
     }
 
-    /*
+    /**
      * 
-     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+     * {@inheritDoc}
      */
     @Override
     public final String getName() {
         return "JoinAO -> probabilistic Join";
     }
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
-     */
-    @Override
-    public final IRuleFlowGroup getRuleFlowGroup() {
-        return TransformRuleFlowGroup.TRANSFORMATION;
-    }
+    private SDFExpression getExpression(final ILogicalOperator operator) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getPredicate());
+        final String mepString = operator.getPredicate().toString();
+        final SDFSchema leftInputSchema = operator.getInputSchema(0);
+        final SDFSchema rightInputSchema = operator.getInputSchema(1);
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
-     */
-    @Override
-    public final Class<? super JoinAO> getConditionClass() {
-        return JoinAO.class;
+        final SDFSchema inputSchema = SDFSchema.union(leftInputSchema, rightInputSchema);
+        final IAttributeResolver attrRes = new DirectAttributeResolver(inputSchema);
+        final SDFExpression expr = new SDFExpression(null, mepString, attrRes, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
+        return expr;
     }
-
 }
