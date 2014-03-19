@@ -255,8 +255,12 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
                             outputVal.setDistribution(distributionIndex, distribution);
                             outputVal.setAttribute(i, new ProbabilisticDouble(distributionIndex));
                             distributionIndex++;
-                            // FIXME Setting the output existence??
-                            // outputVal.getMetadata().setExistence(outputVal.getMetadata().getExistence());
+                            // FIXED Setting the output existence?? Yes, because
+                            //  the metadata holds the probability and all
+                            // distributions are normalized using the scale
+                            // factor. Thus, all changes on the distribution has
+                            // to be stored back in the meta data
+                            outputVal.getMetadata().setExistence(outputVal.getMetadata().getExistence() * (1.0 / distribution.getScale()) / existence);
                         }
                         else {
                             outputVal.setAttribute(i, expr);
