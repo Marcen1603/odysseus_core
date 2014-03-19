@@ -13,36 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions;
-
-import java.util.Map.Entry;
+package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.ProbabilisticDouble;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
+ * 
+ *         FIXME Implement probabilistic StdDev aggregation function
  */
-public class ProbabilisticDiscreteOneWorldAvg extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
-
+public class ProbabilisticDiscreteStdDev extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
     /**
 	 * 
 	 */
-    private static final long serialVersionUID = -2188835286391575126L;
-    // TODO Move to a global configuration
-    /** The maximum error. */
-    private static final double ERROR = 0.004;
-    /** The probability bound. */
-    private static final double BOUND = 1.0 / Math.E;
+    private static final long serialVersionUID = -45894921488698597L;
     /** The attribute position. */
+    @SuppressWarnings("unused")
     private final int pos;
     /** The result data type. */
     private final String datatype;
 
     /**
-     * Gets an instance of {@link ProbabilisticDiscreteOneWorldAvg}.
+     * Gets an instance of {@link ProbabilisticDiscreteStdDev}.
      * 
      * @param pos
      *            The attribute position
@@ -50,14 +45,14 @@ public class ProbabilisticDiscreteOneWorldAvg extends AbstractAggregateFunction<
      *            The partial aggregate input
      * @param datatype
      *            The result datatype
-     * @return An instance of {@link ProbabilisticDiscreteOneWorldAvg}
+     * @return An instance of {@link ProbabilisticDiscreteStdDev}
      */
-    public static ProbabilisticDiscreteOneWorldAvg getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-        return new ProbabilisticDiscreteOneWorldAvg(pos, partialAggregateInput, datatype);
+    public static ProbabilisticDiscreteStdDev getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+        return new ProbabilisticDiscreteStdDev(pos, partialAggregateInput, datatype);
     }
 
     /**
-     * Creates a new instance of {@link ProbabilisticDiscreteOneWorldAvg}.
+     * Creates a new instance of {@link ProbabilisticDiscreteStdDev}.
      * 
      * @param pos
      *            The attribute position
@@ -66,8 +61,8 @@ public class ProbabilisticDiscreteOneWorldAvg extends AbstractAggregateFunction<
      * @param datatype
      *            The result datatype
      */
-    protected ProbabilisticDiscreteOneWorldAvg(final int pos, final boolean partialAggregateInput, final String datatype) {
-        super("AVG", partialAggregateInput);
+    protected ProbabilisticDiscreteStdDev(final int pos, final boolean partialAggregateInput, final String datatype) {
+        super("STDDEV", partialAggregateInput);
         this.pos = pos;
         this.datatype = datatype;
     }
@@ -80,12 +75,7 @@ public class ProbabilisticDiscreteOneWorldAvg extends AbstractAggregateFunction<
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final OneWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = new OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>(ProbabilisticDiscreteOneWorldAvg.ERROR,
-                ProbabilisticDiscreteOneWorldAvg.BOUND, this.datatype);
-        for (final Entry<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues().entrySet()) {
-            pa.update(value.getKey(), value.getValue());
-        }
-        return pa;
+        return new ElementPartialAggregate<ProbabilisticTuple<?>>(in, this.datatype);
     }
 
     /*
@@ -98,17 +88,8 @@ public class ProbabilisticDiscreteOneWorldAvg extends AbstractAggregateFunction<
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
-        OneWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = null;
-        if (createNew) {
-            pa = new OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>(ProbabilisticDiscreteOneWorldAvg.ERROR, ProbabilisticDiscreteOneWorldAvg.BOUND, this.datatype);
-        }
-        else {
-            pa = (OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p;
-        }
+        final ElementPartialAggregate<ProbabilisticTuple<?>> pa = null;
 
-        for (final Entry<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues().entrySet()) {
-            pa.update(value.getKey(), value.getValue());
-        }
         return pa;
     }
 
@@ -120,13 +101,9 @@ public class ProbabilisticDiscreteOneWorldAvg extends AbstractAggregateFunction<
      * IEvaluator#evaluate(de.uniol.inf.is.odysseus.core.server.physicaloperator
      * .aggregate.basefunctions.IPartialAggregate)
      */
-    @SuppressWarnings("rawtypes")
     @Override
     public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
-        final OneWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = (OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p;
-        final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, true);
-        r.setAttribute(0, new Double(pa.getAggregate()));
-        return r;
+        final ElementPartialAggregate<ProbabilisticTuple<?>> pa = (ElementPartialAggregate<ProbabilisticTuple<?>>) p;
+        return pa.getElem();
     }
-
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions;
+package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
@@ -21,23 +21,21 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 
 /**
- * 
  * @author Christian Kuka <christian@kuka.cc>
- * 
  */
-public class ProbabilisticDiscreteMultiWorldSum extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
+public class ProbabilisticDiscreteOneWorldSum extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
 
     /**
 	 * 
 	 */
-    private static final long serialVersionUID = -8795838136903520490L;
+    private static final long serialVersionUID = 6272207178324419258L;
     /** The attribute position. */
     private final int pos;
     /** The result data type. */
     private final String datatype;
 
     /**
-     * Gets an instance of {@link ProbabilisticDiscreteMultiWorldSum}.
+     * Gets an instance of {@link ProbabilisticDiscreteOneWorldSum}.
      * 
      * @param pos
      *            The attribute position
@@ -45,14 +43,14 @@ public class ProbabilisticDiscreteMultiWorldSum extends AbstractAggregateFunctio
      *            The partial aggregate input
      * @param datatype
      *            The result datatype
-     * @return An instance of {@link ProbabilisticDiscreteMultiWorldSum}
+     * @return An instance of {@link ProbabilisticDiscreteOneWorldSum}
      */
-    public static ProbabilisticDiscreteMultiWorldSum getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-        return new ProbabilisticDiscreteMultiWorldSum(pos, partialAggregateInput, datatype);
+    public static ProbabilisticDiscreteOneWorldSum getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+        return new ProbabilisticDiscreteOneWorldSum(pos, partialAggregateInput, datatype);
     }
 
     /**
-     * Creates a new instance of {@link ProbabilisticDiscreteMultiWorldSum}.
+     * Creates a new instance of {@link ProbabilisticDiscreteOneWorldSum}.
      * 
      * @param pos
      *            The attribute position
@@ -61,7 +59,7 @@ public class ProbabilisticDiscreteMultiWorldSum extends AbstractAggregateFunctio
      * @param datatype
      *            The result datatype
      */
-    protected ProbabilisticDiscreteMultiWorldSum(final int pos, final boolean partialAggregateInput, final String datatype) {
+    protected ProbabilisticDiscreteOneWorldSum(final int pos, final boolean partialAggregateInput, final String datatype) {
         super("SUM", partialAggregateInput);
         this.pos = pos;
         this.datatype = datatype;
@@ -75,7 +73,7 @@ public class ProbabilisticDiscreteMultiWorldSum extends AbstractAggregateFunctio
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final MultiWorldSumPartialAggregate<ProbabilisticTuple<?>> pa = new MultiWorldSumPartialAggregate<ProbabilisticTuple<?>>(this.datatype);
+        final OneWorldSumPartialAggregate<ProbabilisticTuple<?>> pa = new OneWorldSumPartialAggregate<ProbabilisticTuple<?>>(this.datatype);
 
         pa.add((AbstractProbabilisticValue<?>) in.getAttribute(this.pos));
 
@@ -92,14 +90,13 @@ public class ProbabilisticDiscreteMultiWorldSum extends AbstractAggregateFunctio
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
-        MultiWorldSumPartialAggregate<ProbabilisticTuple<?>> pa = null;
+        OneWorldSumPartialAggregate<ProbabilisticTuple<?>> pa = null;
         if (createNew) {
-            pa = new MultiWorldSumPartialAggregate<ProbabilisticTuple<?>>(((MultiWorldSumPartialAggregate<ProbabilisticTuple<?>>) p).getAggregate(), this.datatype);
+            pa = new OneWorldSumPartialAggregate<ProbabilisticTuple<?>>(((OneWorldSumPartialAggregate<ProbabilisticTuple<?>>) p).getAggregate(), this.datatype);
         }
         else {
-            pa = (MultiWorldSumPartialAggregate<ProbabilisticTuple<?>>) p;
+            pa = (OneWorldSumPartialAggregate<ProbabilisticTuple<?>>) p;
         }
-
         pa.add((AbstractProbabilisticValue<?>) toMerge.getAttribute(this.pos));
 
         return pa;
@@ -116,9 +113,9 @@ public class ProbabilisticDiscreteMultiWorldSum extends AbstractAggregateFunctio
     @SuppressWarnings("rawtypes")
     @Override
     public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
-        final MultiWorldSumPartialAggregate<ProbabilisticTuple<?>> pa = (MultiWorldSumPartialAggregate<ProbabilisticTuple<?>>) p;
+        final OneWorldSumPartialAggregate<ProbabilisticTuple<?>> pa = (OneWorldSumPartialAggregate<ProbabilisticTuple<?>>) p;
         final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, true);
-        r.setAttribute(0, pa.getAggregate());
+        r.setAttribute(0, new Double(pa.getAggregate()));
         return r;
     }
 

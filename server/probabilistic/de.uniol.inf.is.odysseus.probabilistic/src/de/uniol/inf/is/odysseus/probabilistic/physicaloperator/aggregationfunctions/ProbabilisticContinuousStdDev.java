@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions;
+package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
@@ -23,12 +23,12 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousMin extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
+public class ProbabilisticContinuousStdDev extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -8900416639623457093L;
+    private static final long serialVersionUID = -1163695821240885784L;
     /** The attribute position. */
     @SuppressWarnings("unused")
     private final int pos;
@@ -37,7 +37,7 @@ public class ProbabilisticContinuousMin extends AbstractAggregateFunction<Probab
     private final String datatype;
 
     /**
-     * Gets an instance of {@link ProbabilisticContinuousMin}.
+     * Gets an instance of {@link ProbabilisticContinuousStdDev}.
      * 
      * @param pos
      *            The attribute position
@@ -45,10 +45,10 @@ public class ProbabilisticContinuousMin extends AbstractAggregateFunction<Probab
      *            The partial aggregate input
      * @param datatype
      *            The result datatype
-     * @return An instance of {@link ProbabilisticContinuousMin}
+     * @return An instance of {@link ProbabilisticContinuousStdDev}
      */
-    public static ProbabilisticContinuousMin getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-        return new ProbabilisticContinuousMin(pos, partialAggregateInput, datatype);
+    public static ProbabilisticContinuousStdDev getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+        return new ProbabilisticContinuousStdDev(pos, partialAggregateInput, datatype);
     }
 
     /**
@@ -61,8 +61,8 @@ public class ProbabilisticContinuousMin extends AbstractAggregateFunction<Probab
      * @param datatype
      *            The result datatype
      */
-    protected ProbabilisticContinuousMin(final int pos, final boolean partialAggregateInput, final String datatype) {
-        super("MIN", partialAggregateInput);
+    protected ProbabilisticContinuousStdDev(final int pos, final boolean partialAggregateInput, final String datatype) {
+        super("STDDEV", partialAggregateInput);
         this.pos = pos;
         this.datatype = datatype;
     }

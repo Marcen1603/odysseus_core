@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions;
+package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
+import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.ProbabilisticDouble;
 
 /**
- * Sum Aggregation on probabilistic data stream according to T.S.Jayram et al.
- * "Estimating statistical aggregates on probabilistic data streams"
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  * @param <T>
  */
-public class OneWorldSumPartialAggregate<T> extends AbstractPartialAggregate<T> {
+public class MultiWorldSumPartialAggregate<T> extends AbstractPartialAggregate<T> {
     /** The value of the aggregate. */
-    private double aggregate = 0;
+    private AbstractProbabilisticValue<?> aggregate;
     /** The result data type. */
     private final String datatype;
 
@@ -40,35 +41,22 @@ public class OneWorldSumPartialAggregate<T> extends AbstractPartialAggregate<T> 
      * @param datatype
      *            The result datatype
      */
-    public OneWorldSumPartialAggregate(final String datatype) {
-        this.aggregate = 0.0;
+    public MultiWorldSumPartialAggregate(final String datatype) {
+        this.aggregate = new ProbabilisticDouble(0.0, 1.0);
         this.datatype = datatype;
-    }
-
-    /**
-     * Creates a new partial aggregate with the given value.
-     * 
-     * @param value
-     *            The value
-     * @param datatype
-     *            The result datatype
-     */
-    public OneWorldSumPartialAggregate(final AbstractProbabilisticValue<?> value, final String datatype) {
-        this.datatype = datatype;
-        this.add(value);
     }
 
     /**
      * Creates a new partial aggregate with the given value.
      * 
      * @param aggregate
-     *            The value of the sum
+     *            The aggregate
      * @param datatype
      *            The result datatype
      */
-    public OneWorldSumPartialAggregate(final double aggregate, final String datatype) {
-        this.aggregate = aggregate;
+    public MultiWorldSumPartialAggregate(final AbstractProbabilisticValue<?> aggregate, final String datatype) {
         this.datatype = datatype;
+        this.add(aggregate);
     }
 
     /**
@@ -77,17 +65,17 @@ public class OneWorldSumPartialAggregate<T> extends AbstractPartialAggregate<T> 
      * @param sumPartialAggregate
      *            The object to copy from
      */
-    public OneWorldSumPartialAggregate(final OneWorldSumPartialAggregate<T> sumPartialAggregate) {
+    public MultiWorldSumPartialAggregate(final MultiWorldSumPartialAggregate<T> sumPartialAggregate) {
         this.aggregate = sumPartialAggregate.aggregate;
         this.datatype = sumPartialAggregate.datatype;
     }
 
     /**
-     * Gets the value of the sum property.
+     * Gets the value of the aggregate.
      * 
-     * @return the sum
+     * @return the aggregate
      */
-    public final double getAggregate() {
+    public final AbstractProbabilisticValue<?> getAggregate() {
         return this.aggregate;
     }
 
@@ -98,9 +86,19 @@ public class OneWorldSumPartialAggregate<T> extends AbstractPartialAggregate<T> 
      *            The value
      */
     public final void add(final AbstractProbabilisticValue<?> value) {
-        for (final Entry<?, Double> entry : value.getValues().entrySet()) {
-            this.aggregate += ((Number) entry.getKey()).doubleValue() * entry.getValue();
+        final Map<Double, Double> newValues = new HashMap<Double, Double>(this.aggregate.getValues().size() * value.getValues().size());
+        for (final Entry<?, Double> sumEntry : this.aggregate.getValues().entrySet()) {
+            for (final Entry<?, Double> valueEntry : value.getValues().entrySet()) {
+                final double newValue = ((Number) sumEntry.getKey()).doubleValue() + ((Number) valueEntry.getKey()).doubleValue();
+                if (newValues.containsKey(newValue)) {
+                    newValues.put(newValue, newValues.get(newValue) + (sumEntry.getValue() * valueEntry.getValue()));
+                }
+                else {
+                    newValues.put(newValue, sumEntry.getValue() * valueEntry.getValue());
+                }
+            }
         }
+        this.aggregate = new ProbabilisticDouble(newValues);
     }
 
     /*
@@ -109,7 +107,7 @@ public class OneWorldSumPartialAggregate<T> extends AbstractPartialAggregate<T> 
      */
     @Override
     public final String toString() {
-        final StringBuffer ret = new StringBuffer("OneWorldSumPartialAggregate (").append(this.hashCode()).append(")").append(this.aggregate);
+        final StringBuffer ret = new StringBuffer("MultiWorldSumPartialAggregate (").append(this.hashCode()).append(")").append(this.aggregate);
         return ret.toString();
     }
 
@@ -118,7 +116,7 @@ public class OneWorldSumPartialAggregate<T> extends AbstractPartialAggregate<T> 
      * @see java.lang.Object#clone()
      */
     @Override
-    public final OneWorldSumPartialAggregate<T> clone() {
-        return new OneWorldSumPartialAggregate<T>(this);
+    public final MultiWorldSumPartialAggregate<T> clone() {
+        return new MultiWorldSumPartialAggregate<T>(this);
     }
 }

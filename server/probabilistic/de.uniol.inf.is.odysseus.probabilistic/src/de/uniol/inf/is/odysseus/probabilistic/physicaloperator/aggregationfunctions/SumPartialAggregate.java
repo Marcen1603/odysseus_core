@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions;
+package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +30,14 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.Multivari
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 
 /**
+ * 
  * @author Christian Kuka <christian@kuka.cc>
+ * 
  * @param <T>
  */
-public class AvgPartialAggregate<T> extends AbstractPartialAggregate<T> {
-    /** The sum value of the aggregate. */
+public class SumPartialAggregate<T> extends AbstractPartialAggregate<T> {
+    /** The value of the aggregate. */
     private MultivariateMixtureDistribution sum;
-    /** The count value of the aggregate. */
-    private int count = 0;
     /** The result data type. */
     private final String datatype;
 
@@ -49,22 +49,20 @@ public class AvgPartialAggregate<T> extends AbstractPartialAggregate<T> {
      * @param datatype
      *            The result datatype
      */
-    public AvgPartialAggregate(final MultivariateMixtureDistribution distribution, final String datatype) {
+    public SumPartialAggregate(final MultivariateMixtureDistribution distribution, final String datatype) {
         this.sum = distribution;
-        this.count = 1;
         this.datatype = datatype;
     }
 
     /**
      * Copy constructor.
      * 
-     * @param avgPartialAggregate
+     * @param sumPartialAggregate
      *            The object to copy from
      */
-    public AvgPartialAggregate(final AvgPartialAggregate<T> avgPartialAggregate) {
-        this.sum = avgPartialAggregate.sum;
-        this.count = avgPartialAggregate.count;
-        this.datatype = avgPartialAggregate.datatype;
+    public SumPartialAggregate(final SumPartialAggregate<T> sumPartialAggregate) {
+        this.sum = sumPartialAggregate.sum;
+        this.datatype = sumPartialAggregate.datatype;
     }
 
     /**
@@ -74,44 +72,6 @@ public class AvgPartialAggregate<T> extends AbstractPartialAggregate<T> {
      */
     public final MultivariateMixtureDistribution getSum() {
         return this.sum;
-    }
-
-    /**
-     * Gets the value of the count property.
-     * 
-     * @return the count
-     */
-    public final int getCount() {
-        return this.count;
-    }
-
-    /**
-     * Gets the current average.
-     * 
-     * @return The average.
-     */
-    public final MultivariateMixtureDistribution getAvg() {
-        final List<Pair<Double, IMultivariateDistribution>> mvns = new ArrayList<Pair<Double, IMultivariateDistribution>>();
-        for (final Pair<Double, IMultivariateDistribution> entry : ((MultivariateMixtureDistribution) this.sum).getComponents()) {
-            final IMultivariateDistribution normalDistribution = entry.getValue();
-            final Double weight = entry.getKey();
-            final double[] means = normalDistribution.getMean();
-            for (int i = 0; i < means.length; i++) {
-                means[i] /= this.count;
-            }
-            final RealMatrix covariances = new Array2DRowRealMatrix(normalDistribution.getVariance()).scalarMultiply(1.0 / (this.count * this.count));
-            final IMultivariateDistribution component = new MultivariateNormalDistribution(means, covariances.getData());
-            mvns.add(new Pair<Double, IMultivariateDistribution>(weight, component));
-        }
-        final MultivariateMixtureDistribution result = new MultivariateMixtureDistribution(mvns);
-        final Interval[] support = new Interval[result.getSupport().length];
-        for (int i = 0; i < result.getSupport().length; i++) {
-            support[i] = result.getSupport(i).div(this.count);
-        }
-        result.setSupport(support);
-        result.setAttributes(sum.getAttributes());
-        result.setScale(sum.getScale());
-        return result;
     }
 
     /**
@@ -142,7 +102,6 @@ public class AvgPartialAggregate<T> extends AbstractPartialAggregate<T> {
         }
         result.setSupport(support);
         result.setScale(this.sum.getScale() * value.getScale());
-        this.count++;
         this.sum = result;
     }
 
@@ -152,7 +111,7 @@ public class AvgPartialAggregate<T> extends AbstractPartialAggregate<T> {
      */
     @Override
     public final String toString() {
-        final StringBuffer ret = new StringBuffer("AvgPartialAggregate (").append(this.hashCode()).append(")").append(this.sum).append(this.count);
+        final StringBuffer ret = new StringBuffer("SumPartialAggregate (").append(this.hashCode()).append(")").append(this.sum);
         return ret.toString();
     }
 
@@ -161,7 +120,7 @@ public class AvgPartialAggregate<T> extends AbstractPartialAggregate<T> {
      * @see java.lang.Object#clone()
      */
     @Override
-    public final AvgPartialAggregate<T> clone() {
-        return new AvgPartialAggregate<T>(this);
+    public final SumPartialAggregate<T> clone() {
+        return new SumPartialAggregate<T>(this);
     }
 }

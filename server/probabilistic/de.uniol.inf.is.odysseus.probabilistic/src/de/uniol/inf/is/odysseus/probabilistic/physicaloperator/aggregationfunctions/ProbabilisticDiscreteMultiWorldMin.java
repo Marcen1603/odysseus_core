@@ -1,5 +1,5 @@
-/**
- * Copyright 2013 The Odysseus Team
+/********************************************************************************** 
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,31 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions;
+package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
+ *         FIXME Implement probabilistic Min aggregation function
  */
-public class ProbabilisticContinuousCount extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
-
+public class ProbabilisticDiscreteMultiWorldMin extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
     /**
-     * 
-     */
-    private static final long serialVersionUID = -6877363889418249296L;
+	 * 
+	 */
+    private static final long serialVersionUID = -6400744203001252061L;
     /** The attribute position. */
     private final int pos;
     /** The result data type. */
     private final String datatype;
 
     /**
-     * Gets an instance of {@link ProbabilisticContinuousCount}.
+     * Gets an instance of {@link ProbabilisticDiscreteMultiWorldMin}.
      * 
      * @param pos
      *            The attribute position
@@ -45,14 +44,14 @@ public class ProbabilisticContinuousCount extends AbstractAggregateFunction<Prob
      *            The partial aggregate input
      * @param datatype
      *            The result datatype
-     * @return An instance of {@link ProbabilisticContinuousCount}
+     * @return An instance of {@link ProbabilisticDiscreteMultiWorldMin}
      */
-    public static ProbabilisticContinuousCount getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-        return new ProbabilisticContinuousCount(pos, partialAggregateInput, datatype);
+    public static ProbabilisticDiscreteMultiWorldMin getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+        return new ProbabilisticDiscreteMultiWorldMin(pos, partialAggregateInput, datatype);
     }
 
     /**
-     * Creates a new instance of {@link ProbabilisticContinuousAvg}.
+     * Creates a new instance of {@link ProbabilisticDiscreteMultiWorldMin}.
      * 
      * @param pos
      *            The attribute position
@@ -61,8 +60,8 @@ public class ProbabilisticContinuousCount extends AbstractAggregateFunction<Prob
      * @param datatype
      *            The result datatype
      */
-    protected ProbabilisticContinuousCount(final int pos, final boolean partialAggregateInput, final String datatype) {
-        super("COUNT", partialAggregateInput);
+    protected ProbabilisticDiscreteMultiWorldMin(final int pos, final boolean partialAggregateInput, final String datatype) {
+        super("MIN", partialAggregateInput);
         this.pos = pos;
         this.datatype = datatype;
     }
@@ -75,8 +74,10 @@ public class ProbabilisticContinuousCount extends AbstractAggregateFunction<Prob
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final MultivariateMixtureDistribution distribution = in.getDistribution(((ProbabilisticContinuousDouble) in.getAttribute(this.pos)).getDistribution());
-        final CountPartialAggregate<ProbabilisticTuple<?>> pa = new CountPartialAggregate<ProbabilisticTuple<?>>(distribution, this.datatype);
+        final MultiWorldMinMaxPartialAggregate<ProbabilisticTuple<?>> pa = new MultiWorldMinMaxPartialAggregate<ProbabilisticTuple<?>>(this.datatype, false);
+
+        pa.add((AbstractProbabilisticValue<?>) in.getAttribute(this.pos));
+
         return pa;
     }
 
@@ -90,16 +91,16 @@ public class ProbabilisticContinuousCount extends AbstractAggregateFunction<Prob
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
-        CountPartialAggregate<ProbabilisticTuple<?>> pa = null;
+        MultiWorldMinMaxPartialAggregate<ProbabilisticTuple<?>> pa = null;
         if (createNew) {
-            pa = new CountPartialAggregate<ProbabilisticTuple<?>>(((CountPartialAggregate<ProbabilisticTuple<?>>) p).getCount(), this.datatype);
+            pa = new MultiWorldMinMaxPartialAggregate<ProbabilisticTuple<?>>(((MultiWorldMinMaxPartialAggregate<ProbabilisticTuple<?>>) p).getAggregate(), this.datatype, false);
         }
         else {
-            pa = (CountPartialAggregate<ProbabilisticTuple<?>>) p;
+            pa = (MultiWorldMinMaxPartialAggregate<ProbabilisticTuple<?>>) p;
         }
-        final MultivariateMixtureDistribution distribution = toMerge.getDistribution(((ProbabilisticContinuousDouble) toMerge.getAttribute(this.pos)).getDistribution());
 
-        pa.add(distribution);
+        pa.add((AbstractProbabilisticValue<?>) toMerge.getAttribute(this.pos));
+
         return pa;
     }
 
@@ -114,9 +115,10 @@ public class ProbabilisticContinuousCount extends AbstractAggregateFunction<Prob
     @SuppressWarnings("rawtypes")
     @Override
     public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
-        final CountPartialAggregate<ProbabilisticTuple<?>> pa = (CountPartialAggregate<ProbabilisticTuple<?>>) p;
-        final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, 0, true);
-        r.setAttribute(0, pa.getCount());
+        final MultiWorldMinMaxPartialAggregate<ProbabilisticTuple<?>> pa = (MultiWorldMinMaxPartialAggregate<ProbabilisticTuple<?>>) p;
+        final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, true);
+        r.setAttribute(0, pa.getAggregate());
         return r;
     }
+
 }

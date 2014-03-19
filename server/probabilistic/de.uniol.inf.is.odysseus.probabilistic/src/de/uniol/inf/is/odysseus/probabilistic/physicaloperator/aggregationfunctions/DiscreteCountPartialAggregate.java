@@ -1,5 +1,5 @@
-/**
- * Copyright 2013 The Odysseus Team
+/********************************************************************************** 
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions;
+package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 
 /**
+ * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  * @param <T>
  */
-public class CountPartialAggregate<T> extends AbstractPartialAggregate<T> {
+public class DiscreteCountPartialAggregate<T> extends AbstractPartialAggregate<T> {
     /** The value of the aggregate. */
-    private double count = 0.0;
+    private double count = 0;
     /** The result data type. */
     private final String datatype;
 
@@ -35,7 +35,7 @@ public class CountPartialAggregate<T> extends AbstractPartialAggregate<T> {
      * @param datatype
      *            The result datatype
      */
-    public CountPartialAggregate(final String datatype) {
+    public DiscreteCountPartialAggregate(final String datatype) {
         this.count = 0.0;
         this.datatype = datatype;
     }
@@ -48,21 +48,8 @@ public class CountPartialAggregate<T> extends AbstractPartialAggregate<T> {
      * @param datatype
      *            The result datatype
      */
-    public CountPartialAggregate(final double count, final String datatype) {
+    public DiscreteCountPartialAggregate(final double count, final String datatype) {
         this.count = count;
-        this.datatype = datatype;
-    }
-
-    /**
-     * Creates a new partial aggregate with the given value.
-     * 
-     * @param value
-     *            The normal distribution mixture
-     * @param datatype
-     *            The result datatype
-     */
-    public CountPartialAggregate(final MultivariateMixtureDistribution value, final String datatype) {
-        this.count = value.getScale();
         this.datatype = datatype;
     }
 
@@ -72,20 +59,9 @@ public class CountPartialAggregate<T> extends AbstractPartialAggregate<T> {
      * @param countPartialAggregate
      *            The object to copy from
      */
-    public CountPartialAggregate(final CountPartialAggregate<T> countPartialAggregate) {
+    public DiscreteCountPartialAggregate(final DiscreteCountPartialAggregate<T> countPartialAggregate) {
         this.count = countPartialAggregate.count;
         this.datatype = countPartialAggregate.datatype;
-    }
-
-    /**
-     * Add the given value to the aggregate.
-     * 
-     * @param value
-     *            The value to add
-     */
-    public final void add(final MultivariateMixtureDistribution value) {
-        // TODO Check if inverse scale is the current probability!
-        this.count += value.getScale();
     }
 
     /**
@@ -95,6 +71,16 @@ public class CountPartialAggregate<T> extends AbstractPartialAggregate<T> {
      */
     public final double getCount() {
         return this.count;
+    }
+
+    /**
+     * Add the given value to the aggregate.
+     * 
+     * @param probability
+     *            The value to add
+     */
+    public final void add(final double probability) {
+        this.count += probability;
     }
 
     /*
@@ -112,8 +98,8 @@ public class CountPartialAggregate<T> extends AbstractPartialAggregate<T> {
      * @see java.lang.Object#clone()
      */
     @Override
-    public final CountPartialAggregate<T> clone() {
-        return new CountPartialAggregate<T>(this);
+    public final DiscreteCountPartialAggregate<T> clone() {
+        return new DiscreteCountPartialAggregate<T>(this);
     }
 
 }
