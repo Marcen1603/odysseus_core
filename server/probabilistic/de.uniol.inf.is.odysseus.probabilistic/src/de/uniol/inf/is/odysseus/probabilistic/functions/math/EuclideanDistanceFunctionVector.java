@@ -15,7 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.functions.math;
 
-import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -44,8 +44,8 @@ public class EuclideanDistanceFunctionVector extends AbstractEuclideanDistanceFu
      */
     @Override
     public final Double getValue() {
-        final RealMatrix a = MatrixUtils.createColumnRealMatrix(((double[][]) this.getInputValue(0))[0]);
-        final RealMatrix b = MatrixUtils.createColumnRealMatrix(((double[][]) this.getInputValue(1))[0]);
+        final RealMatrix a = new Array2DRowRealMatrix((double[][]) this.getInputValue(0));
+        final RealMatrix b = new Array2DRowRealMatrix((double[][]) this.getInputValue(1));
         return this.getValueInternal(a, b);
     }
 }
