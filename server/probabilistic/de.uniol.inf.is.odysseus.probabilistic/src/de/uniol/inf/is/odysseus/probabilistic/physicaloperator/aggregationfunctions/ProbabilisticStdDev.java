@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
- *         FIXME Implement probabilistic StdDev aggregation function
+ *         FIXME  20140319 christian@kuka.cc Implement probabilistic StdDev aggregation function
  */
 public class ProbabilisticStdDev extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
     /**
