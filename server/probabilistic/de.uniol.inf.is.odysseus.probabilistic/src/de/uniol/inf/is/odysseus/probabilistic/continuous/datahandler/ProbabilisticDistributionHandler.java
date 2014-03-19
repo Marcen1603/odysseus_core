@@ -35,6 +35,9 @@ import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMultivariateNormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
 
 /**
@@ -44,7 +47,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalD
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticDistributionHandler extends AbstractDataHandler<NormalDistributionMixture> {
+public class ProbabilisticDistributionHandler extends AbstractDataHandler<ExtendedMixtureMultivariateRealDistribution> {
     /** The logger. */
     private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticDistributionHandler.class);
     /** The supported data types. */
@@ -58,13 +61,13 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
      * nio.ByteBuffer)
      */
     @Override
-    public final NormalDistributionMixture readData(final ByteBuffer buffer) {
+    public final ExtendedMixtureMultivariateRealDistribution readData(final ByteBuffer buffer) {
         Objects.requireNonNull(buffer);
         Preconditions.checkArgument(buffer.remaining() >= 4);
-        NormalDistributionMixture distributionMixture = null;
+        ExtendedMixtureMultivariateRealDistribution distributionMixture = null;
         final int size = buffer.getInt();
         if (size > 0) {
-            final List<Pair<Double, MultivariateNormalDistribution>> mixtures = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
+            final List<Pair<Double, IMultivariateRealDistribution>> mixtures = new ArrayList<Pair<Double, IMultivariateRealDistribution>>();
             final int dimension = buffer.getInt();
             for (int m = 0; m < size; m++) {
                 final double weight = buffer.getDouble();
@@ -77,8 +80,8 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
                     entries[i] = buffer.getDouble();
                 }
                 try {
-                    final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
-                    mixtures.add(new Pair<Double, MultivariateNormalDistribution>(weight, distribution));
+                    final IMultivariateRealDistribution distribution = new ExtendedMultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
+                    mixtures.add(new Pair<Double, IMultivariateRealDistribution>(weight, distribution));
                 }
                 catch (final Exception e) {
                     ProbabilisticDistributionHandler.LOG.warn(e.getMessage(), e);
@@ -91,7 +94,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
                 support[i] = new Interval(buffer.getDouble(), buffer.getDouble());
             }
 
-            distributionMixture = new NormalDistributionMixture(mixtures);
+            distributionMixture = new ExtendedMixtureMultivariateRealDistribution(mixtures);
             distributionMixture.setScale(scale);
             distributionMixture.setSupport(support);
         }
@@ -106,11 +109,11 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
      * io.ObjectInputStream)
      */
     @Override
-    public final NormalDistributionMixture readData(final ObjectInputStream inputStream) throws IOException {
+    public final ExtendedMixtureMultivariateRealDistribution readData(final ObjectInputStream inputStream) throws IOException {
         Objects.requireNonNull(inputStream);
         Preconditions.checkArgument(inputStream.available() >= 4);
         final int size = inputStream.readInt();
-        final List<Pair<Double, MultivariateNormalDistribution>> mixtures = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
+        final List<Pair<Double, IMultivariateRealDistribution>> mixtures = new ArrayList<Pair<Double, IMultivariateRealDistribution>>();
         final int dimension = inputStream.readInt();
         for (int m = 0; m < size; m++) {
             final double weight = inputStream.readDouble();
@@ -123,8 +126,8 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
                 entries[i] = inputStream.readDouble();
             }
 
-            final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
-            mixtures.add(new Pair<Double, MultivariateNormalDistribution>(weight, distribution));
+            final IMultivariateRealDistribution distribution = new ExtendedMultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
+            mixtures.add(new Pair<Double, IMultivariateRealDistribution>(weight, distribution));
         }
         final double scale = inputStream.readDouble();
         final Interval[] support = new Interval[dimension];
@@ -132,7 +135,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
             support[i] = new Interval(inputStream.readDouble(), inputStream.readDouble());
         }
 
-        final NormalDistributionMixture distributionMixture = new NormalDistributionMixture(mixtures);
+        final ExtendedMixtureMultivariateRealDistribution distributionMixture = new ExtendedMixtureMultivariateRealDistribution(mixtures);
         distributionMixture.setScale(scale);
         distributionMixture.setSupport(support);
 
@@ -147,7 +150,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
      * lang.String)
      */
     @Override
-    public final NormalDistributionMixture readData(final String string) {
+    public final ExtendedMixtureMultivariateRealDistribution readData(final String string) {
         Objects.requireNonNull(string);
         Preconditions.checkArgument(!string.isEmpty());
         final String[] covarianceMatrix = string.split(":");
@@ -227,7 +230,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
      * (de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema)
      */
     @Override
-    protected final IDataHandler<NormalDistributionMixture> getInstance(final SDFSchema schema) {
+    protected final IDataHandler<ExtendedMixtureMultivariateRealDistribution> getInstance(final SDFSchema schema) {
         return new ProbabilisticDistributionHandler();
     }
 

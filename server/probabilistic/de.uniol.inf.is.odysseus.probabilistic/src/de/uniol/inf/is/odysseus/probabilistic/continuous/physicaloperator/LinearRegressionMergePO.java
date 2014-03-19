@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.util.Pair;
@@ -32,7 +32,9 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMultivariateNormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 
 /**
@@ -108,22 +110,22 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
     @Override
     protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
         final int currentMixturePos = ((ProbabilisticContinuousDouble) object.getAttribute(this.dependentAttributePos[0])).getDistribution();
-        final NormalDistributionMixture currentMixture = object.getDistribution(currentMixturePos);
+        final ExtendedMixtureMultivariateRealDistribution currentMixture = object.getDistribution(currentMixturePos);
 
         final int distributionIndex = ((ProbabilisticContinuousDouble) object.getAttribute(this.explanatoryAttributePos[0])).getDistribution();
         final RealMatrix residual = MatrixUtils.createRealMatrix((double[][]) object.getAttribute(this.residualPos));
         final RealMatrix regressionCoefficients = MatrixUtils.createRealMatrix((double[][]) object.getAttribute(this.regressionCoefficientsPos));
 
-        final List<Pair<Double, MultivariateNormalDistribution>> newMixtureComponents = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-        for (final Pair<Double, MultivariateNormalDistribution> entry : currentMixture.getMixtures().getComponents()) {
-            final MultivariateNormalDistribution normalDistribution = entry.getValue();
+        final List<Pair<Double, IMultivariateRealDistribution>> newMixtureComponents = new ArrayList<Pair<Double, IMultivariateRealDistribution>>();
+        for (final Pair<Double, IMultivariateRealDistribution> entry : ((ExtendedMixtureMultivariateRealDistribution) currentMixture).getComponents()) {
+            final IMultivariateRealDistribution normalDistribution = entry.getValue();
             final Double weight = entry.getKey();
 
-            final RealMatrix mean = MatrixUtils.createColumnRealMatrix(normalDistribution.getMeans());
+            final RealMatrix mean = MatrixUtils.createColumnRealMatrix(normalDistribution.getMean());
             final RealMatrix regressionCoefficientsMatrix = MatrixUtils.createRealMatrix(mean.getRowDimension(), mean.getColumnDimension());
             regressionCoefficientsMatrix.setSubMatrix(regressionCoefficients.getData(), mean.getRowDimension() - regressionCoefficients.getRowDimension(),
                     regressionCoefficients.getColumnDimension() - 1);
-            final RealMatrix covarianceMatrix = normalDistribution.getCovariances();
+            final RealMatrix covarianceMatrix = new Array2DRowRealMatrix(normalDistribution.getVariance());
 
             // Create the new \mu = (\mu, \mu \beta)
             final double[] newMean = new double[mean.getRowDimension() + regressionCoefficients.getRowDimension()];
@@ -144,25 +146,25 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
             newCovarianceMatrix.setSubMatrix(regressionCoefficientsMatrix.transpose().multiply(covarianceMatrix).multiply(regressionCoefficientsMatrix).add(residual).getData(),
                     covarianceMatrix.getRowDimension(), covarianceMatrix.getColumnDimension());
             try {
-                newMixtureComponents.add(new Pair<Double, MultivariateNormalDistribution>(weight, new MultivariateNormalDistribution(newMean, newCovarianceMatrix.getData())));
+                newMixtureComponents.add(new Pair<Double, IMultivariateRealDistribution>(weight, new ExtendedMultivariateNormalDistribution(newMean, newCovarianceMatrix.getData())));
             }
             catch (final Exception e) {
                 final double[] diagonal = new double[newCovarianceMatrix.getColumnDimension()];
                 Arrays.fill(diagonal, 10E-5);
                 newCovarianceMatrix = newCovarianceMatrix.add(MatrixUtils.createRealDiagonalMatrix(diagonal));
-                newMixtureComponents.add(new Pair<Double, MultivariateNormalDistribution>(weight, new MultivariateNormalDistribution(newMean, newCovarianceMatrix.getData())));
+                newMixtureComponents.add(new Pair<Double, IMultivariateRealDistribution>(weight, new ExtendedMultivariateNormalDistribution(newMean, newCovarianceMatrix.getData())));
                 LinearRegressionMergePO.LOG.warn(e.getMessage(), e);
             }
         }
 
         // Create the new mixture pointing to all attributes (dependent first,
         // then explanatory)
-        final NormalDistributionMixture newMixture = new NormalDistributionMixture(newMixtureComponents);
+        final ExtendedMixtureMultivariateRealDistribution newMixture = new ExtendedMixtureMultivariateRealDistribution(newMixtureComponents);
         System.arraycopy(this.dependentAttributePos, 0, newMixture.getAttributes(), 0, this.dependentAttributePos.length);
         System.arraycopy(this.explanatoryAttributePos, 0, newMixture.getAttributes(), this.dependentAttributePos.length, this.explanatoryAttributePos.length);
 
         // Replace the old distribution with the new one
-        final List<NormalDistributionMixture> distributions = new LinkedList<NormalDistributionMixture>(Arrays.asList(object.getDistributions()));
+        final List<ExtendedMixtureMultivariateRealDistribution> distributions = new LinkedList<ExtendedMixtureMultivariateRealDistribution>(Arrays.asList(object.getDistributions()));
         distributions.set(currentMixturePos, newMixture);
 
         for (final int explanatoryAttributePo : this.explanatoryAttributePos) {
@@ -174,7 +176,7 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
                 ((ProbabilisticContinuousDouble) object.getAttribute(j)).setDistribution(i);
             }
         }
-        object.setDistributions(distributions.toArray(new NormalDistributionMixture[distributions.size()]));
+        object.setDistributions(distributions.toArray(new ExtendedMixtureMultivariateRealDistribution[distributions.size()]));
         object.setMetadata((T) object.getMetadata().clone());
         // KTHXBYE
         this.transfer(object);

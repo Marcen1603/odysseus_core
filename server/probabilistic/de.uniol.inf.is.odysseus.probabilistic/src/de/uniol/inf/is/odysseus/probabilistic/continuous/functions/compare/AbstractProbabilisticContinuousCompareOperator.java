@@ -8,7 +8,8 @@ import org.apache.commons.math3.linear.RealVector;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.common.ProbabilisticContinuousUtils;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
@@ -17,7 +18,7 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBin
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-abstract public class AbstractProbabilisticContinuousCompareOperator extends AbstractProbabilisticBinaryOperator<NormalDistributionMixture> {
+abstract public class AbstractProbabilisticContinuousCompareOperator extends AbstractProbabilisticBinaryOperator<IMultivariateRealDistribution> {
 
     /**
      * 
@@ -27,9 +28,9 @@ abstract public class AbstractProbabilisticContinuousCompareOperator extends Abs
     public AbstractProbabilisticContinuousCompareOperator(String symbol,SDFDatatype[][] accTypes) {
     	super(symbol,accTypes, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
     }
-    
-    protected final NormalDistributionMixture getValueInternal(final NormalDistributionMixture a, final RealVector lowerBound, final RealVector upperBound) {
-        final double value = ProbabilisticContinuousUtils.cumulativeProbability(a, lowerBound, upperBound);
+
+    protected final IMultivariateRealDistribution getValueInternal(final ExtendedMixtureMultivariateRealDistribution a, final RealVector lowerBound, final RealVector upperBound) {
+        final double value = a.probability(lowerBound.toArray(), upperBound.toArray());
         a.setScale(a.getScale() / value);
         final Interval[] support = new Interval[a.getDimension()];
         for (int i = 0; i < a.getDimension(); i++) {
@@ -63,7 +64,7 @@ abstract public class AbstractProbabilisticContinuousCompareOperator extends Abs
      * {@inheritDoc}
      */
     @Override
-    public final boolean isLeftDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
+    public final boolean isLeftDistributiveWith(final IOperator<IMultivariateRealDistribution> operator) {
         return false;
     }
 
@@ -72,7 +73,7 @@ abstract public class AbstractProbabilisticContinuousCompareOperator extends Abs
      * {@inheritDoc}
      */
     @Override
-    public final boolean isRightDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
+    public final boolean isRightDistributiveWith(final IOperator<IMultivariateRealDistribution> operator) {
         return false;
     }
 

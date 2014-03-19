@@ -16,10 +16,15 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution;
+import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.exception.ConvergenceException;
 import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
+import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +34,9 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMultivariateNormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 
 /**
@@ -100,7 +107,7 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
      */
     @Override
     protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
-        final NormalDistributionMixture[] distributions = object.getDistributions();
+        final ExtendedMixtureMultivariateRealDistribution[] distributions = object.getDistributions();
         final ProbabilisticTuple<T> outputVal = object.clone();
         // Purge old elements out of the sweep area.
         synchronized (this.area) {
@@ -116,11 +123,19 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 
             // Construct the multivariate distribution
             final BatchEMTISweepArea emArea = (BatchEMTISweepArea) this.area;
-            final MixtureMultivariateNormalDistribution model = emArea.getModel();
+            MixtureMultivariateNormalDistribution model = emArea.getModel();
             if (model != null) {
-                final NormalDistributionMixture mixture = new NormalDistributionMixture(model.getComponents());
+                double[] weights = new double[model.getComponents().size()];
+                List<IMultivariateRealDistribution> distr = new ArrayList<IMultivariateRealDistribution>(model.getComponents().size());
+
+                for (int i = 0; i < model.getComponents().size(); i++) {
+                    Pair<Double, MultivariateNormalDistribution> component = model.getComponents().get(i);
+                    weights[i] = component.getKey();
+                    distr.add(new ExtendedMultivariateNormalDistribution(component.getValue().getMeans(), component.getValue().getCovariances().getData()));
+                }
+                final ExtendedMixtureMultivariateRealDistribution mixture = new ExtendedMixtureMultivariateRealDistribution(weights, distr);
                 mixture.setAttributes(this.attributes);
-                final NormalDistributionMixture[] outputValDistributions = new NormalDistributionMixture[distributions.length + 1];
+                final ExtendedMixtureMultivariateRealDistribution[] outputValDistributions = new ExtendedMixtureMultivariateRealDistribution[distributions.length + 1];
 
                 for (final int attribute : this.attributes) {
                     outputVal.setAttribute(attribute, new ProbabilisticContinuousDouble(distributions.length));

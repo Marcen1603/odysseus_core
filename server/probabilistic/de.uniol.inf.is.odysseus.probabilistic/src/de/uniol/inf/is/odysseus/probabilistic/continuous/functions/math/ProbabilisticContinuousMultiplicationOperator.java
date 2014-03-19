@@ -23,7 +23,8 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.probabilistic.UnivariateNormalMixtureExpectationMaximization;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.ProbabilisticConstants;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
 
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBin
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousMultiplicationOperator extends AbstractProbabilisticBinaryOperator<NormalDistributionMixture> {
+public class ProbabilisticContinuousMultiplicationOperator extends AbstractProbabilisticBinaryOperator<IMultivariateRealDistribution> {
 
     /**
 	 * 
@@ -56,9 +57,9 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
      * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
      */
     @Override
-    public final NormalDistributionMixture getValue() {
-        final NormalDistributionMixture a = (NormalDistributionMixture) this.getInputValue(0);
-        final NormalDistributionMixture b = (NormalDistributionMixture) this.getInputValue(1);
+    public final IMultivariateRealDistribution getValue() {
+        final ExtendedMixtureMultivariateRealDistribution a = (ExtendedMixtureMultivariateRealDistribution) this.getInputValue(0);
+        final ExtendedMixtureMultivariateRealDistribution b = (ExtendedMixtureMultivariateRealDistribution) this.getInputValue(1);
         return this.getValueInternal(a, b);
     }
 
@@ -74,30 +75,33 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
      *            The distribution to multiply
      * @return The approximated distribution of a*b
      */
-    protected final NormalDistributionMixture getValueInternal(final NormalDistributionMixture a, final NormalDistributionMixture b) {
-        final double[][] aSamples = a.getMixtures().sample(ProbabilisticConstants.MEP_SAMPLES);
-        final double[][] bSamples = b.getMixtures().sample(ProbabilisticConstants.MEP_SAMPLES);
+    @SuppressWarnings("null")
+    protected final IMultivariateRealDistribution getValueInternal(final ExtendedMixtureMultivariateRealDistribution a, final ExtendedMixtureMultivariateRealDistribution b) {
+        // final double[][] aSamples =
+        // a.sample(ProbabilisticConstants.MEP_SAMPLES);
+        // final double[][] bSamples =
+        // b.sample(ProbabilisticConstants.MEP_SAMPLES);
         final double[][] samples = new double[ProbabilisticConstants.MEP_SAMPLES][a.getDimension()];
 
-        for (int i = 0; i < ProbabilisticConstants.MEP_SAMPLES; i++) {
-            for (int j = 0; j < samples[i].length; j++) {
-                samples[i][j] = aSamples[i][j] * bSamples[i][j];
-            }
-        }
-        final NormalDistributionMixture result;
+        // for (int i = 0; i < ProbabilisticConstants.MEP_SAMPLES; i++) {
+        // for (int j = 0; j < samples[i].length; j++) {
+        // samples[i][j] = aSamples[i][j] * bSamples[i][j];
+        // }
+        // }
+        final ExtendedMixtureMultivariateRealDistribution result = null;
         if (samples[0].length < 2) {
-            final MixtureMultivariateNormalDistribution model = UnivariateNormalMixtureExpectationMaximization.estimate(samples, a.getMixtures().getComponents().size()
-                    + b.getMixtures().getComponents().size());
+            final MixtureMultivariateNormalDistribution model = UnivariateNormalMixtureExpectationMaximization.estimate(samples, a.getComponents().size() + b.getComponents().size());
             final UnivariateNormalMixtureExpectationMaximization em = new UnivariateNormalMixtureExpectationMaximization(samples);
             em.fit(model, ProbabilisticConstants.MEP_MAX_ITERATIONS, ProbabilisticConstants.MEP_THRESHOLD);
-            result = new NormalDistributionMixture(em.getFittedModel().getComponents());
+            // result = new
+            // NormalDistributionMixture(em.getFittedModel().getComponents());
         }
         else {
-            final MixtureMultivariateNormalDistribution model = MultivariateNormalMixtureExpectationMaximization.estimate(samples, a.getMixtures().getComponents().size()
-                    + b.getMixtures().getComponents().size());
+            final MixtureMultivariateNormalDistribution model = MultivariateNormalMixtureExpectationMaximization.estimate(samples, a.getComponents().size() + b.getComponents().size());
             final MultivariateNormalMixtureExpectationMaximization em = new MultivariateNormalMixtureExpectationMaximization(samples);
             em.fit(model, ProbabilisticConstants.MEP_MAX_ITERATIONS, ProbabilisticConstants.MEP_THRESHOLD);
-            result = new NormalDistributionMixture(em.getFittedModel().getComponents());
+            // result = new
+            // NormalDistributionMixture(em.getFittedModel().getComponents());
         }
 
         final Interval[] support = new Interval[a.getSupport().length];
@@ -143,7 +147,7 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
      * .uniol.inf.is.odysseus.mep.IOperator)
      */
     @Override
-    public final boolean isLeftDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
+    public final boolean isLeftDistributiveWith(final IOperator<IMultivariateRealDistribution> operator) {
         return false;
     }
 
@@ -154,7 +158,7 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
      * de.uniol.inf.is.odysseus.mep.IOperator)
      */
     @Override
-    public final boolean isRightDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
+    public final boolean isRightDistributiveWith(final IOperator<IMultivariateRealDistribution> operator) {
         return false;
     }
 

@@ -22,7 +22,8 @@ import org.apache.commons.math3.linear.RealVector;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -47,9 +48,9 @@ public class ProbabilisticContinuousEqualsVectorOperator extends AbstractProbabi
      * {@inheritDoc}
      */
     @Override
-    public final NormalDistributionMixture getValue() {
+    public final IMultivariateRealDistribution getValue() {
         final Object[] aVector = this.getInputValue(0);
-        final NormalDistributionMixture a = ((NormalDistributionMixture) aVector[0]).clone();
+        final ExtendedMixtureMultivariateRealDistribution a = ((ExtendedMixtureMultivariateRealDistribution) aVector[0]).clone();
 
         final double[][] b = (double[][]) this.getInputValue(1);
         final double[] lowerBoundData = new double[a.getDimension()];

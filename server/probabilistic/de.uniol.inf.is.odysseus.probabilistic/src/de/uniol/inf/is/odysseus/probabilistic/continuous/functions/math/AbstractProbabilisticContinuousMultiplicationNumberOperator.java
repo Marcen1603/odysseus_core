@@ -18,15 +18,16 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution;
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMultivariateNormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
 
@@ -35,7 +36,7 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBin
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public abstract class AbstractProbabilisticContinuousMultiplicationNumberOperator extends AbstractProbabilisticBinaryOperator<NormalDistributionMixture> {
+public abstract class AbstractProbabilisticContinuousMultiplicationNumberOperator extends AbstractProbabilisticBinaryOperator<IMultivariateRealDistribution> {
 
     /**
 	 * 
@@ -64,26 +65,27 @@ public abstract class AbstractProbabilisticContinuousMultiplicationNumberOperato
      *            The value
      * @return The distribution of a*b
      */
-    protected final NormalDistributionMixture getValueInternal(final NormalDistributionMixture a, final Double b) {
-        final NormalDistributionMixture result = a.clone();
-        final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-        for (final Pair<Double, MultivariateNormalDistribution> entry : a.getMixtures().getComponents()) {
-            final MultivariateNormalDistribution normalDistribution = entry.getValue();
+    protected final IMultivariateRealDistribution getValueInternal(final ExtendedMixtureMultivariateRealDistribution a, final Double b) {
+        final List<Pair<Double, IMultivariateRealDistribution>> mvns = new ArrayList<Pair<Double, IMultivariateRealDistribution>>();
+        for (final Pair<Double, IMultivariateRealDistribution> entry : a.getComponents()) {
+            final IMultivariateRealDistribution normalDistribution = entry.getValue();
             final Double weight = entry.getKey();
-            final double[] means = normalDistribution.getMeans();
+            final double[] means = normalDistribution.getMean();
             for (int i = 0; i < means.length; i++) {
                 means[i] *= b;
             }
-            final RealMatrix covariances = normalDistribution.getCovariances().scalarMultiply(b * b);
-            final MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, covariances.getData());
-            mvns.add(new Pair<Double, MultivariateNormalDistribution>(weight, component));
+            final RealMatrix covariances = new Array2DRowRealMatrix(normalDistribution.getVariance()).scalarMultiply(b * b);
+            final IMultivariateRealDistribution component = new ExtendedMultivariateNormalDistribution(means, covariances.getData());
+            mvns.add(new Pair<Double, IMultivariateRealDistribution>(weight, component));
         }
-        result.setMixtures(new MixtureMultivariateNormalDistribution(mvns));
+        final ExtendedMixtureMultivariateRealDistribution result = new ExtendedMixtureMultivariateRealDistribution(mvns);
         final Interval[] support = new Interval[result.getSupport().length];
         for (int i = 0; i < result.getSupport().length; i++) {
             support[i] = result.getSupport(i).mul(b);
         }
         result.setSupport(support);
+        result.setScale(a.getScale());
+        result.setAttributes(a.getAttributes());
         return result;
     }
 
@@ -122,7 +124,7 @@ public abstract class AbstractProbabilisticContinuousMultiplicationNumberOperato
      * .uniol.inf.is.odysseus.mep.IOperator)
      */
     @Override
-    public final boolean isLeftDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
+    public final boolean isLeftDistributiveWith(final IOperator<IMultivariateRealDistribution> operator) {
         return false;
     }
 
@@ -133,7 +135,7 @@ public abstract class AbstractProbabilisticContinuousMultiplicationNumberOperato
      * de.uniol.inf.is.odysseus.mep.IOperator)
      */
     @Override
-    public final boolean isRightDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
+    public final boolean isRightDistributiveWith(final IOperator<IMultivariateRealDistribution> operator) {
         return false;
     }
 

@@ -25,7 +25,8 @@ import org.testng.annotations.Test;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMultivariateNormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 
 /**
@@ -93,13 +94,14 @@ public class TestProbabilisticTuple {
      * @return The prob. tuple
      */
     private IStreamObject<?> provideUnivariateTuple(final Integer[] pos, final int length) {
-        final NormalDistributionMixture[] mixtures = new NormalDistributionMixture[pos.length];
+        final ExtendedMixtureMultivariateRealDistribution[] mixtures = new ExtendedMixtureMultivariateRealDistribution[pos.length];
         final Object[] attrs = new Object[length];
 
         final List<Integer> positionList = Arrays.asList(pos);
         for (Integer i = 0; i < length; i++) {
             if (positionList.contains(i)) {
-                mixtures[positionList.indexOf(i)] = new NormalDistributionMixture(new double[] { 1.5 }, new double[][] { { 2.5 } });
+                ExtendedMultivariateNormalDistribution distribution = new ExtendedMultivariateNormalDistribution(new double[] { 1.5 }, new double[][] { { 2.5 } });
+                mixtures[positionList.indexOf(i)] = new ExtendedMixtureMultivariateRealDistribution(1.0, distribution);
                 attrs[i] = new ProbabilisticContinuousDouble(positionList.indexOf(i));
                 mixtures[positionList.indexOf(i)].setAttributes(new int[] { i });
             }

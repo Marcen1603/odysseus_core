@@ -19,7 +19,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -47,7 +47,7 @@ public class MahalanobisDistanceFunction extends AbstractMahalanobisDistanceFunc
      */
     @Override
     public final Double getValue() {
-        final NormalDistributionMixture a = (NormalDistributionMixture) this.getInputValue(0);
+        final ExtendedMixtureMultivariateRealDistribution a = (ExtendedMixtureMultivariateRealDistribution) this.getInputValue(0);
         final double scalar = this.getNumericalInputValue(1);
         final RealMatrix b = MatrixUtils.createColumnRealMatrix(new double[] { scalar });
         return this.getValueInternal(a, b);

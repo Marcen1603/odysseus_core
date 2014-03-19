@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.util.Pair;
@@ -26,7 +26,9 @@ import org.apache.commons.math3.util.Pair;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMultivariateNormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
 
@@ -35,7 +37,7 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBin
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBinaryOperator<NormalDistributionMixture> {
+public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBinaryOperator<IMultivariateRealDistribution> {
 
     /**
 	 * 
@@ -62,9 +64,9 @@ public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBi
      * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
      */
     @Override
-    public final NormalDistributionMixture getValue() {
-        final NormalDistributionMixture a = (NormalDistributionMixture) this.getInputValue(0);
-        final NormalDistributionMixture b = (NormalDistributionMixture) this.getInputValue(1);
+    public final IMultivariateRealDistribution getValue() {
+        final ExtendedMixtureMultivariateRealDistribution a = (ExtendedMixtureMultivariateRealDistribution) this.getInputValue(0);
+        final ExtendedMixtureMultivariateRealDistribution b = (ExtendedMixtureMultivariateRealDistribution) this.getInputValue(1);
         return this.getValueInternal(a, b);
     }
 
@@ -85,22 +87,22 @@ public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBi
      *            The distribution to add
      * @return The distribution of a+b
      */
-    protected final NormalDistributionMixture getValueInternal(final NormalDistributionMixture a, final NormalDistributionMixture b) {
-        final List<Pair<Double, MultivariateNormalDistribution>> mixtures = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-        for (final Pair<Double, MultivariateNormalDistribution> aEntry : a.getMixtures().getComponents()) {
-            final RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getValue().getMeans());
-            final RealMatrix aCovarianceMatrix = aEntry.getValue().getCovariances();
+    protected final IMultivariateRealDistribution getValueInternal(final ExtendedMixtureMultivariateRealDistribution a, final ExtendedMixtureMultivariateRealDistribution b) {
+        final List<Pair<Double, IMultivariateRealDistribution>> mixtures = new ArrayList<Pair<Double, IMultivariateRealDistribution>>();
+        for (final Pair<Double, IMultivariateRealDistribution> aEntry : a.getComponents()) {
+            final RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getValue().getMean());
+            final RealMatrix aCovarianceMatrix = new Array2DRowRealMatrix(aEntry.getValue().getVariance());
 
-            for (final Pair<Double, MultivariateNormalDistribution> bEntry : b.getMixtures().getComponents()) {
-                final RealMatrix bMean = MatrixUtils.createColumnRealMatrix(bEntry.getValue().getMeans());
-                final RealMatrix bCovarianceMatrix = bEntry.getValue().getCovariances();
+            for (final Pair<Double, IMultivariateRealDistribution> bEntry : b.getComponents()) {
+                final RealMatrix bMean = MatrixUtils.createColumnRealMatrix(bEntry.getValue().getMean());
+                final RealMatrix bCovarianceMatrix = new Array2DRowRealMatrix(bEntry.getValue().getVariance());
 
-                final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(aMean.add(bMean).getColumn(0), aCovarianceMatrix.add(bCovarianceMatrix).getData());
-                mixtures.add(new Pair<Double, MultivariateNormalDistribution>(aEntry.getKey() * bEntry.getKey(), distribution));
+                final IMultivariateRealDistribution distribution = new ExtendedMultivariateNormalDistribution(aMean.add(bMean).getColumn(0), aCovarianceMatrix.add(bCovarianceMatrix).getData());
+                mixtures.add(new Pair<Double, IMultivariateRealDistribution>(aEntry.getKey() * bEntry.getKey(), distribution));
             }
         }
 
-        final NormalDistributionMixture result = new NormalDistributionMixture(mixtures);
+        final ExtendedMixtureMultivariateRealDistribution result = new ExtendedMixtureMultivariateRealDistribution(mixtures);
         final Interval[] support = new Interval[a.getSupport().length];
         for (int i = 0; i < a.getSupport().length; i++) {
             support[i] = a.getSupport(i).add(b.getSupport(i));
@@ -145,7 +147,7 @@ public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBi
      * .uniol.inf.is.odysseus.mep.IOperator)
      */
     @Override
-    public final boolean isLeftDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
+    public final boolean isLeftDistributiveWith(final IOperator<IMultivariateRealDistribution> operator) {
         return false;
     }
 
@@ -156,7 +158,7 @@ public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBi
      * de.uniol.inf.is.odysseus.mep.IOperator)
      */
     @Override
-    public final boolean isRightDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
+    public final boolean isRightDistributiveWith(final IOperator<IMultivariateRealDistribution> operator) {
         return false;
     }
 

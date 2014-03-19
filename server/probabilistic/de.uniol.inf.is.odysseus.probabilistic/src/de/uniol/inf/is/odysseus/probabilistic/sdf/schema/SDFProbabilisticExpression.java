@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 
 /**
@@ -47,7 +47,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
 	 */
     private static final long serialVersionUID = -2862460974715363031L;
     /** The Gaussion Mixture Models. */
-    private List<NormalDistributionMixture> distributions = new ArrayList<NormalDistributionMixture>();
+    private List<ExtendedMixtureMultivariateRealDistribution> distributions = new ArrayList<ExtendedMixtureMultivariateRealDistribution>();
 
     /**
      * Constructs a new probabilistic expression from the given expression using
@@ -148,7 +148,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
      * @param newDistributions
      *            The distributions
      */
-    public final void bindDistributions(final NormalDistributionMixture[] newDistributions) {
+    public final void bindDistributions(final ExtendedMixtureMultivariateRealDistribution[] newDistributions) {
         if ((this.getMEPExpression() instanceof Constant) || (this.getMEPExpression() instanceof Variable)) {
             return;
         }
@@ -164,7 +164,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
      *            The distribution index
      * @return The distribution at the given index
      */
-    public final NormalDistributionMixture getDistributions(final int distributionIndex) {
+    public final ExtendedMixtureMultivariateRealDistribution getDistributions(final int distributionIndex) {
         Preconditions.checkPositionIndex(distributionIndex, this.distributions.size());
         return this.distributions.get(distributionIndex);
     }
@@ -175,7 +175,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
      * @param distributions
      *            The distributions
      */
-    private void setDistributions(final List<NormalDistributionMixture> distributions) {
+    private void setDistributions(final List<ExtendedMixtureMultivariateRealDistribution> distributions) {
         Objects.requireNonNull(distributions);
         this.distributions.clear();
         this.distributions.addAll(distributions);

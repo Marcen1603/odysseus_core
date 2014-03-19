@@ -18,14 +18,15 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMultivariateNormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 
 /**
@@ -83,7 +84,7 @@ public class AssignDistributionPO<T extends ITimeInterval> extends AbstractPipe<
     @Override
     protected final void process_next(final Tuple<T> object, final int port) {
         final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(object);
-        final NormalDistributionMixture[] distributions = outputVal.getDistributions();
+        final ExtendedMixtureMultivariateRealDistribution[] distributions = outputVal.getDistributions();
 
         final double[] means = new double[this.attributes.length];
         for (int i = 0; i < this.attributes.length; i++) {
@@ -92,14 +93,14 @@ public class AssignDistributionPO<T extends ITimeInterval> extends AbstractPipe<
 
         final double[][] variances = (double[][]) object.getAttribute(this.variance);
 
-        final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-        final MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, variances);
-        mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));
+        final List<Pair<Double, IMultivariateRealDistribution>> mvns = new ArrayList<Pair<Double, IMultivariateRealDistribution>>();
+        final IMultivariateRealDistribution component = new ExtendedMultivariateNormalDistribution(means, variances);
+        mvns.add(new Pair<Double, IMultivariateRealDistribution>(1.0, component));
 
-        final NormalDistributionMixture mixture = new NormalDistributionMixture(mvns);
+        final ExtendedMixtureMultivariateRealDistribution mixture = new ExtendedMixtureMultivariateRealDistribution(mvns);
         mixture.setAttributes(this.attributes);
 
-        final NormalDistributionMixture[] outputValDistributions = new NormalDistributionMixture[distributions.length + 1];
+        final ExtendedMixtureMultivariateRealDistribution[] outputValDistributions = new ExtendedMixtureMultivariateRealDistribution[distributions.length + 1];
 
         for (final int attribute : this.attributes) {
             outputVal.setAttribute(attribute, new ProbabilisticContinuousDouble(distributions.length));

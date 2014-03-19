@@ -23,7 +23,6 @@ import java.util.Set;
 import net.ericaro.surfaceplotter.JSurfacePanel;
 import net.ericaro.surfaceplotter.ProgressiveSurfaceModel;
 
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.util.Pair;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -40,7 +39,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSelectedAttributesAction;
@@ -58,7 +58,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.MethodSetting;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilityChart3D extends AbstractProbabilityChart<NormalDistributionMixture, IMetaAttribute> implements IChartSettingChangeable {
+public class ProbabilityChart3D extends AbstractProbabilityChart<ExtendedMixtureMultivariateRealDistribution, IMetaAttribute> implements IChartSettingChangeable {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(ProbabilityChart3D.class);
     /** The view ID. */
@@ -72,7 +72,7 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<NormalDistribut
     /** The continuous mapper. */
     private final ProbabilisticMapper mapper = new ProbabilisticMapper();
     /** The actions. */
-    private ChangeSelectedAttributesAction<NormalDistributionMixture> changeAttributesAction;
+    private ChangeSelectedAttributesAction<ExtendedMixtureMultivariateRealDistribution> changeAttributesAction;
     /** The settings action. */
     private ChangeSettingsAction changeSettingsAction;
 
@@ -93,7 +93,7 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<NormalDistribut
      * @param mixture
      *            The normal distribution mixture
      */
-    private void updateChart(final NormalDistributionMixture mixture) {
+    private void updateChart(final ExtendedMixtureMultivariateRealDistribution mixture) {
         if (mixture.getDimension() < 2) {
             return; // No multivariate distribution mixture
         }
@@ -104,13 +104,15 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<NormalDistribut
         double minX = Double.POSITIVE_INFINITY;
         double minY = Double.POSITIVE_INFINITY;
         double standardDeviationY = 0.0;
-        for (final Pair<Double, MultivariateNormalDistribution> component : mixture.getMixtures().getComponents()) {
-            maxX = Math.max(maxX, component.getValue().getMeans()[0]);
-            minX = Math.min(minX, component.getValue().getMeans()[0]);
-            standardDeviationX = Math.max(standardDeviationX, component.getValue().getStandardDeviations()[0]);
-            maxY = Math.max(maxY, component.getValue().getMeans()[1]);
-            minY = Math.min(minY, component.getValue().getMeans()[1]);
-            standardDeviationY = Math.max(standardDeviationY, component.getValue().getStandardDeviations()[1]);
+        for (final Pair<Double, IMultivariateRealDistribution> component : mixture.getComponents()) {
+            maxX = Math.max(maxX, component.getValue().getMean()[0]);
+            minX = Math.min(minX, component.getValue().getMean()[0]);
+            // standardDeviationX = Math.max(standardDeviationX,
+            // component.getValue().getStandardDeviations()[0]);
+            maxY = Math.max(maxY, component.getValue().getMean()[1]);
+            minY = Math.min(minY, component.getValue().getMean()[1]);
+            // standardDeviationY = Math.max(standardDeviationY,
+            // component.getValue().getStandardDeviations()[1]);
         }
         this.adjust(minX - (3 * standardDeviationX), maxX + (3 * standardDeviationX), minY - (3 * standardDeviationY), maxY + (3 * standardDeviationY));
         this.mapper.setup(mixture);
@@ -143,7 +145,7 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<NormalDistribut
      * int)
      */
     @Override
-    protected final void processElement(final List<NormalDistributionMixture> tuple, final IMetaAttribute metadata, final int port) {
+    protected final void processElement(final List<ExtendedMixtureMultivariateRealDistribution> tuple, final IMetaAttribute metadata, final int port) {
 
         this.getSite().getShell().getDisplay().asyncExec(new Runnable() {
             @Override
@@ -226,7 +228,7 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<NormalDistribut
      * Creates the view actions.
      */
     private void createActions() {
-        this.changeAttributesAction = new ChangeSelectedAttributesAction<NormalDistributionMixture>(this.getSite().getShell(), this);
+        this.changeAttributesAction = new ChangeSelectedAttributesAction<ExtendedMixtureMultivariateRealDistribution>(this.getSite().getShell(), this);
         this.changeAttributesAction.setText("Change Attributes");
         this.changeAttributesAction.setToolTipText("Configure the attributes that will be shown by the chart");
         this.changeAttributesAction.setImageDescriptor(ProbabilityChart3D.IMG_MONITOR_EDIT);
@@ -561,7 +563,7 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<NormalDistribut
     @Override
     protected final void initConnection(final IStreamConnection<IStreamObject<?>> streamConnection) {
         for (final ISubscription<? extends ISource<?>> s : streamConnection.getSubscriptions()) {
-            this.viewSchema.put(s.getSinkInPort(), new ViewSchema<NormalDistributionMixture>(s.getSchema(), s.getTarget().getMetaAttributeSchema(), s.getSinkInPort()));
+            this.viewSchema.put(s.getSinkInPort(), new ViewSchema<ExtendedMixtureMultivariateRealDistribution>(s.getSchema(), s.getTarget().getMetaAttributeSchema(), s.getSinkInPort()));
         }
 
         if (this.validate()) {

@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.VarHelper;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
@@ -253,7 +253,7 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
                     this.expressions[i].bindVariables(values);
                     final Object expr = this.expressions[i].getValue();
                     if (this.expressions[i].getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {
-                        final NormalDistributionMixture distribution = (NormalDistributionMixture) expr;
+                        final ExtendedMixtureMultivariateRealDistribution distribution = (ExtendedMixtureMultivariateRealDistribution) expr;
                         distribution.getAttributes()[0] = i;
                         outputVal.setDistribution(d, distribution);
                         outputVal.setAttribute(i, new ProbabilisticContinuousDouble(d));

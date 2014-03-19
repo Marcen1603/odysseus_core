@@ -15,8 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.CholeskyDecomposition;
 import org.apache.commons.math3.linear.DecompositionSolver;
 import org.apache.commons.math3.linear.LUDecomposition;
@@ -28,7 +28,8 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 
 /**
@@ -55,14 +56,14 @@ public abstract class AbstractMahalanobisDistanceFunction extends AbstractProbab
      * @throws DimensionMismatchException
      * @return The distance measure
      */
-    protected final double getValueInternal(final NormalDistributionMixture a, final RealMatrix b) {
+    protected final double getValueInternal(final ExtendedMixtureMultivariateRealDistribution a, final RealMatrix b) {
         if (b.getColumnDimension() > 1) {
             throw new DimensionMismatchException(b.getColumnDimension(), 1);
         }
         double weightedMahalanobisDistance = 0.0;
-        for (final Pair<Double, MultivariateNormalDistribution> aEntry : a.getMixtures().getComponents()) {
-            final RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getValue().getMeans());
-            final RealMatrix aCovariance = aEntry.getValue().getCovariances();
+        for (final Pair<Double, IMultivariateRealDistribution> aEntry : a.getComponents()) {
+            final RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getValue().getMean());
+            final RealMatrix aCovariance = new Array2DRowRealMatrix(aEntry.getValue().getVariance());
             DecompositionSolver solver;
             try {
                 solver = new CholeskyDecomposition(aCovariance).getSolver();

@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -42,12 +42,13 @@ public class BhattacharyyaDistanceFunctionVector extends AbstractBhattacharyyaDi
      * 
      * {@inheritDoc}
      */
+
     @Override
     public final Double getValue() {
         final Object[] aVector = this.getInputValue(0);
         final Object[] bVector = this.getInputValue(1);
-        final NormalDistributionMixture a = (NormalDistributionMixture) aVector[0];
-        final NormalDistributionMixture b = (NormalDistributionMixture) bVector[0];
+        final ExtendedMixtureMultivariateRealDistribution a = (ExtendedMixtureMultivariateRealDistribution) aVector[0];
+        final ExtendedMixtureMultivariateRealDistribution b = (ExtendedMixtureMultivariateRealDistribution) bVector[0];
         return this.getValueInternal(a, b);
     }
 

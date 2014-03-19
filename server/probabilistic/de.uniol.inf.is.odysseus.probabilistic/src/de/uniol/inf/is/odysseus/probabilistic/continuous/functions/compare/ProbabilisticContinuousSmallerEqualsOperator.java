@@ -21,7 +21,8 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -56,8 +57,8 @@ public class ProbabilisticContinuousSmallerEqualsOperator extends AbstractProbab
      * {@inheritDoc}
      */
     @Override
-    public final NormalDistributionMixture getValue() {
-        final NormalDistributionMixture a = ((NormalDistributionMixture) this.getInputValue(0)).clone();
+    public final IMultivariateRealDistribution getValue() {
+        final ExtendedMixtureMultivariateRealDistribution a = ((ExtendedMixtureMultivariateRealDistribution) this.getInputValue(0)).clone();
 
         final Double b = this.getNumericalInputValue(1);
         final double[] lowerBoundData = new double[a.getDimension()];

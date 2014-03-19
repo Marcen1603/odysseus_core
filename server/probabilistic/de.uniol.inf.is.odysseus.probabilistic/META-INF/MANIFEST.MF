@@ -92,7 +92,6 @@ Export-Package: de.uniol.inf.is.odysseus.probabilistic;
    de.uniol.inf.is.odysseus.server.intervalapproach",
  de.uniol.inf.is.odysseus.probabilistic.functions;uses:="de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype,de.uniol.inf.is.odysseus.mep",
  de.uniol.inf.is.odysseus.probabilistic.logicaloperator;uses:="de.uniol.inf.is.odysseus.core.server.logicaloperator,de.uniol.inf.is.odysseus.core.sdf.schema",
- de.uniol.inf.is.odysseus.probabilistic.math,
  de.uniol.inf.is.odysseus.probabilistic.metadata;
   uses:="de.uniol.inf.is.odysseus.core.collection,
    de.uniol.inf.is.odysseus.core.metadata,

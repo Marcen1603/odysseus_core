@@ -15,17 +15,12 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
-import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.linear.RealVector;
-import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
-import de.uniol.inf.is.odysseus.probabilistic.math.genz.Matrix;
-import de.uniol.inf.is.odysseus.probabilistic.math.genz.QSIMVN;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -71,63 +66,10 @@ public abstract class AbstractIntegrateMultivariateFunction extends AbstractProb
      * @return The cumulative probability
      */
     private double cumulativeProbability(final ProbabilisticContinuousDouble distribution, final RealVector lowerBound, final RealVector upperBound) {
-        double probability = 0.0;
-        final NormalDistributionMixture mixtures = this.getDistributions(distribution.getDistribution());
-        final int dimension = mixtures.getDimension();
-        if (dimension == 1) {
-            probability = this.univariateCumulativeProbability(mixtures, lowerBound.getEntry(0), upperBound.getEntry(0));
-        }
-        else {
-            probability = this.multivariateCumulativeProbability(mixtures, lowerBound, upperBound);
-        }
-        return probability;
+
+        final ExtendedMixtureMultivariateRealDistribution mixtures = this.getDistributions(distribution.getDistribution());
+
+        return mixtures.probability(lowerBound.toArray(), upperBound.toArray());
     }
 
-    /**
-     * Calculates the cumulative probability of the given univariate
-     * distribution between the lower and the upper bound.
-     * 
-     * @param distribution
-     *            The univariate distribution
-     * @param lowerBound
-     *            The lower bound
-     * @param upperBound
-     *            The upper bound
-     * @return The cumulative probability
-     */
-    private double univariateCumulativeProbability(final NormalDistributionMixture distribution, final double lowerBound, final double upperBound) {
-        double probability = 0.0;
-        for (final Pair<Double, MultivariateNormalDistribution> entry : distribution.getMixtures().getComponents()) {
-            final MultivariateNormalDistribution normalDistribution = entry.getValue();
-            final Double weight = entry.getKey();
-            final NormalDistribution tmpDistribution = new NormalDistribution(normalDistribution.getMeans()[0], normalDistribution.getCovariances().getEntry(0, 0));
-            probability += tmpDistribution.probability(lowerBound, upperBound) * weight;
-        }
-        return probability;
-    }
-
-    /**
-     * Calculates the cumulative probability of the given multivariate
-     * distribution between the lower and the upper bound.
-     * 
-     * @param distribution
-     *            The multivariate distribution
-     * @param lowerBound
-     *            The lower bound
-     * @param upperBound
-     *            The upper bound
-     * @return The cumulative probability
-     */
-    private double multivariateCumulativeProbability(final NormalDistributionMixture distribution, final RealVector lowerBound, final RealVector upperBound) {
-        double probability = 0.0;
-        for (final Pair<Double, MultivariateNormalDistribution> entry : distribution.getMixtures().getComponents()) {
-            final MultivariateNormalDistribution normalDistribution = entry.getValue();
-            final Double weight = entry.getKey();
-            final Matrix covarianceMatrix = new Matrix(normalDistribution.getCovariances().getData());
-            final Matrix lower = new Matrix(new double[][] { lowerBound.toArray() });
-            final Matrix upper = new Matrix(new double[][] { upperBound.toArray() });
-            probability += QSIMVN.cumulativeProbability(5000, covarianceMatrix, lower, upper).getProbability() * weight;
-        }
-        return probability;
-    }
 }

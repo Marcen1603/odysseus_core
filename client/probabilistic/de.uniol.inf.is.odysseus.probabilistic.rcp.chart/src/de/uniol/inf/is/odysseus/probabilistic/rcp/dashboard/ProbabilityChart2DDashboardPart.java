@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.util.Pair;
 import org.eclipse.swt.SWT;
@@ -55,7 +54,8 @@ import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
@@ -451,7 +451,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
      * @param dimensionIndex
      *            The dimension
      */
-    private void updateSerie(final XYSeries series, final NormalDistributionMixture mixture, final int dimensionIndex) {
+    private void updateSerie(final XYSeries series, final ExtendedMixtureMultivariateRealDistribution mixture, final int dimensionIndex) {
         if (mixture.getDimension() < 1) {
             return; // no dimension
         }
@@ -466,11 +466,11 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
             d++;
         }
         dimension = d;
-        for (final Pair<Double, MultivariateNormalDistribution> entry : mixture.getMixtures().getComponents()) {
-            final MultivariateNormalDistribution normalDistribution = entry.getValue();
+        for (final Pair<Double, IMultivariateRealDistribution> entry : mixture.getComponents()) {
+            final IMultivariateRealDistribution normalDistribution = entry.getValue();
             final Double weight = entry.getKey();
-            final double means = normalDistribution.getMeans()[dimension];
-            final double sigma = normalDistribution.getCovariances().getEntry(dimension, dimension);
+            final double means = normalDistribution.getMean()[dimension];
+            final double sigma = normalDistribution.getVariance()[dimension][dimension];
             functions.put(new NormalDistribution(means, sigma), weight);
         }
         final Interval[] interval = mixture.getSupport();

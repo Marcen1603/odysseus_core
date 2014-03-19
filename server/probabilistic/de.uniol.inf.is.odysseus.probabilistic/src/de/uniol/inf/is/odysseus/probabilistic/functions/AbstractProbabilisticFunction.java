@@ -24,7 +24,7 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
 
 /**
  * 
@@ -39,7 +39,7 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
 	 */
     private static final long serialVersionUID = 1726038091049996390L;
     /** The distributions. */
-    private final List<NormalDistributionMixture> distributions = new ArrayList<NormalDistributionMixture>();
+    private final List<ExtendedMixtureMultivariateRealDistribution> distributions = new ArrayList<ExtendedMixtureMultivariateRealDistribution>();
 
     public AbstractProbabilisticFunction(String symbol, int arity, SDFDatatype[][] accTypes, SDFDatatype returnType) {
     	super(symbol,arity,accTypes,returnType);
@@ -56,7 +56,7 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
      *            The position of the mixtures
      * @return The normal distribution mixtures at the given position
      */
-    public final NormalDistributionMixture getDistributions(final int pos) {
+    public final ExtendedMixtureMultivariateRealDistribution getDistributions(final int pos) {
         Preconditions.checkPositionIndex(pos, this.distributions.size());
         return this.distributions.get(pos);
     }
@@ -66,7 +66,7 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
      * 
      * @return All normal distribution mixtures
      */
-    public final List<NormalDistributionMixture> getDistributions() {
+    public final List<ExtendedMixtureMultivariateRealDistribution> getDistributions() {
         return Collections.unmodifiableList(this.distributions);
     }
 }

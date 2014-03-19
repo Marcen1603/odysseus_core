@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.exception.MathUnsupportedOperationException;
 import org.apache.commons.math3.filter.DefaultMeasurementModel;
 import org.apache.commons.math3.filter.DefaultProcessModel;
@@ -43,7 +42,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMultivariateNormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 
 /**
@@ -292,7 +293,7 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
         if (!this.measurementExpression.getMEPExpression().isConstant()) {
             this.update(object, this.measurementVariables, this.measurementExpression, this.measurementRef);
         }
-        final NormalDistributionMixture[] inputDistributions = object.getDistributions();
+        final ExtendedMixtureMultivariateRealDistribution[] inputDistributions = object.getDistributions();
         final Object[] inputAttributes = object.getAttributes();
 
         this.filter.predict();
@@ -305,7 +306,7 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
 
         final double[] state = this.filter.getStateEstimationVector().toArray();
         final double[][] covariance = this.filter.getErrorCovarianceMatrix().getData();
-        final NormalDistributionMixture[] outputDistributions = new NormalDistributionMixture[inputDistributions.length + 1];
+        final ExtendedMixtureMultivariateRealDistribution[] outputDistributions = new ExtendedMixtureMultivariateRealDistribution[inputDistributions.length + 1];
         final Object[] outputAttributes = new Object[inputAttributes.length + state.length];
         // Copy the old distributions to the new tuple
         System.arraycopy(inputDistributions, 0, outputDistributions, 0, inputDistributions.length);
@@ -317,10 +318,10 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
             outputAttributes[inputAttributes.length + i] = new ProbabilisticContinuousDouble(inputDistributions.length);
             outputAttributePositions[i] = inputAttributes.length + i;
         }
-        final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-        MultivariateNormalDistribution component;
+        final List<Pair<Double, IMultivariateRealDistribution>> mvns = new ArrayList<Pair<Double, IMultivariateRealDistribution>>();
+        IMultivariateRealDistribution component;
         try {
-            component = new MultivariateNormalDistribution(state, covariance);
+            component = new ExtendedMultivariateNormalDistribution(state, covariance);
             this.errorCovariance = this.filter.getErrorCovarianceMatrix().copy();
         }
         catch (SingularMatrixException | NonPositiveDefiniteMatrixException | MathUnsupportedOperationException e) {
@@ -328,17 +329,17 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
                 KalmanFilterPO.LOG.debug(e.getMessage() + ": " + this.filter.getErrorCovarianceMatrix(), e);
             }
             // Take the last estimated covariance
-            component = new MultivariateNormalDistribution(state, this.errorCovariance.getData());
+            component = new ExtendedMultivariateNormalDistribution(state, this.errorCovariance.getData());
         }
-        mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));
+        mvns.add(new Pair<Double, IMultivariateRealDistribution>(1.0, component));
 
-        final NormalDistributionMixture mixture = new NormalDistributionMixture(mvns);
+        final ExtendedMixtureMultivariateRealDistribution mixture = new ExtendedMixtureMultivariateRealDistribution(mvns);
 
         // And append the new distribution to the end of the array
         outputDistributions[inputDistributions.length] = mixture;
 
         mixture.setAttributes(outputAttributePositions);
-        final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<>(outputAttributes, outputDistributions, true);
+        final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(outputAttributes, outputDistributions, true);
         outputVal.setMetadata((T) object.getMetadata().clone());
 
         // KTHXBYE
