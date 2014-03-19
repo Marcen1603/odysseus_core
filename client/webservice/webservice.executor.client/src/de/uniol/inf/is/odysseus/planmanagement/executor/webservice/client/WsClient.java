@@ -430,6 +430,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 		ITransportHandler th = TransportHandlerRegistry.getInstance("TCPClient", h, options);
 		h.setTransportHandler(th);
 		ClientReceiver receiver = new ClientReceiver(h);
+		receiver.setOutputSchema(outputSchema);
 		receiver.open(null, 0, 0, null, null);
 		receivers.put(queryId, receiver);
 		return Optional.of(receiver);
