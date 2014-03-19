@@ -65,6 +65,9 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 	 * @param executor
 	 */
 	private static void tryStartExecutor(IServerExecutor executor) {
+		if (executor == null){
+			LOG.error("NO EXECUTOR BOUND!");
+		}
 		try {
 			LOG.debug("Starting executor...");			
 			executor.startExecution();
