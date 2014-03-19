@@ -65,17 +65,16 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 	 * @param executor
 	 */
 	private static void tryStartExecutor(IServerExecutor executor) {
-		if (executor == null){
-			LOG.error("NO EXECUTOR BOUND!");
-		}
 		try {
-			LOG.debug("Starting executor...");			
+			LOG.debug("Starting executor...");		
+			
 			executor.startExecution();
 		} catch (PlanManagementException e1) {
 			throw new RuntimeException(e1);
 		}
 	}
-
+	
+	
 	/**
 	 * Taken from de.uniol.inf.is.odysseus.test.TestComponent
 	 * 
