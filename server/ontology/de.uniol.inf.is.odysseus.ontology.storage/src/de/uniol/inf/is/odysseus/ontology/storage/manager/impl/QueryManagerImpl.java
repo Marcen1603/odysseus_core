@@ -528,8 +528,8 @@ public class QueryManagerImpl implements QueryManager {
                         measurementCapability.addMeasurementProperty(measurementProperty);
                     }
                 }
-                catch (NullPointerException e) {
-                    LOG.error("Invalid measurement property in " + measurementPropertyResource.toString() + ", check ontology", e);
+                catch (final NullPointerException e) {
+                    QueryManagerImpl.LOG.error("Invalid measurement property in " + measurementPropertyResource.toString() + ", check ontology", e);
                 }
             }
         }

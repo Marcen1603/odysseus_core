@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.ontology.transform.rules;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ontology.metadata.IQuality;
@@ -38,13 +40,19 @@ public class TJoinQualityRule extends AbstractTransformationRule<JoinTIPO<?, ?>>
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public void execute(JoinTIPO<?, ?> joinPO, TransformationConfiguration config) throws RuleException {
-        ((CombinedMergeFunction) joinPO.getMetadataMerge()).add(new QualityMetadataMergeFunction());
+    public void execute(final JoinTIPO<?, ?> operator, final TransformationConfiguration config) throws RuleException {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getMetadataMerge());
+        ((CombinedMergeFunction) operator.getMetadataMerge()).add(new QualityMetadataMergeFunction());
     }
 
     @Override
-    public boolean isExecutable(JoinTIPO<?, ?> joinPO, TransformationConfiguration config) {
-        if (joinPO.getMetadataMerge() instanceof CombinedMergeFunction) {
+    public boolean isExecutable(final JoinTIPO<?, ?> operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getMetadataMerge());
+        Objects.requireNonNull(config);
+        Objects.requireNonNull(config.getMetaTypes());
+        if (operator.getMetadataMerge() instanceof CombinedMergeFunction) {
             if (config.getMetaTypes().contains(IQuality.class.getCanonicalName())) {
                 return true;
             }

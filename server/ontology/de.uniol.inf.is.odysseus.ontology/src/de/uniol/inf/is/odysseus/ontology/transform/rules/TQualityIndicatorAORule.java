@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.ontology.transform.rules;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
@@ -35,7 +37,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TSetQualityRule extends AbstractTransformationRule<QualityIndicatorAO> {
+public class TQualityIndicatorAORule extends AbstractTransformationRule<QualityIndicatorAO> {
 
     @Override
     public int getPriority() {
@@ -43,15 +45,16 @@ public class TSetQualityRule extends AbstractTransformationRule<QualityIndicator
     }
 
     @Override
-    public void execute(QualityIndicatorAO operator, TransformationConfiguration transformConfig) throws RuleException {
-
+    public void execute(final QualityIndicatorAO operator, final TransformationConfiguration transformConfig) throws RuleException {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema());
         @SuppressWarnings("rawtypes")
         IMetadataUpdater mUpdater;
         if (Tuple.class.isAssignableFrom(operator.getInputSchema().getType())) {
-            SDFSchema schema = operator.getInputSchema();
-            int completenessPos = schema.indexOf(operator.getCompleteness());
-            int consistencyPos = schema.indexOf(operator.getConsistency());
-            int frequencyPos = schema.indexOf(operator.getFrequency());
+            final SDFSchema schema = operator.getInputSchema();
+            final int completenessPos = schema.indexOf(operator.getCompleteness());
+            final int consistencyPos = schema.indexOf(operator.getConsistency());
+            final int frequencyPos = schema.indexOf(operator.getFrequency());
             if (frequencyPos < 0) {
                 mUpdater = new QualityFactory<IQuality, Tuple<IQuality>>(completenessPos, consistencyPos);
             }
@@ -64,13 +67,16 @@ public class TSetQualityRule extends AbstractTransformationRule<QualityIndicator
         }
 
         @SuppressWarnings("unchecked")
-        MetadataUpdatePO<?, ?> po = new MetadataUpdatePO<IQuality, Tuple<? extends IQuality>>(mUpdater);
-        defaultExecute(operator, po, transformConfig, true, true);
+        final MetadataUpdatePO<?, ?> po = new MetadataUpdatePO<IQuality, Tuple<? extends IQuality>>(mUpdater);
+        this.defaultExecute(operator, po, transformConfig, true, true);
     }
 
     @Override
-    public boolean isExecutable(QualityIndicatorAO operator, TransformationConfiguration transformConfig) {
-        if (transformConfig.getMetaTypes().contains(IQuality.class.getCanonicalName())) {
+    public boolean isExecutable(final QualityIndicatorAO operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(config);
+        Objects.requireNonNull(config.getMetaTypes());
+        if (config.getMetaTypes().contains(IQuality.class.getCanonicalName())) {
             if (operator.isAllPhysicalInputSet()) {
                 return true;
             }

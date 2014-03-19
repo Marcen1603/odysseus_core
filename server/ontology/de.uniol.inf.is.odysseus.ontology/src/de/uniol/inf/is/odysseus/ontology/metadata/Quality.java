@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.ontology.metadata;
 
 import java.text.NumberFormat;
 
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 /**
@@ -30,7 +32,7 @@ public class Quality implements IQuality {
     private static final long serialVersionUID = 1333608827870132800L;
 
     @SuppressWarnings("unchecked")
-    public final static Class<? extends IMetaAttribute>[] classes = new Class[] { IQuality.class };
+    public final static Class<? extends IMetaAttribute>[] CLASSES = new Class[] { IQuality.class };
 
     private double completeness;
     private double consistency;
@@ -72,6 +74,7 @@ public class Quality implements IQuality {
      */
     @Override
     public void setCompleteness(final double completeness) {
+        Preconditions.checkArgument((completeness >= 0.0) && (completeness <= 1.0));
         this.completeness = completeness;
     }
 
@@ -80,6 +83,7 @@ public class Quality implements IQuality {
      */
     @Override
     public void setConsistency(final double consistency) {
+        Preconditions.checkArgument((consistency >= 0.0) && (consistency <= 1.0));
         this.consistency = consistency;
     }
 
@@ -112,7 +116,7 @@ public class Quality implements IQuality {
 
     @Override
     public Class<? extends IMetaAttribute>[] getClasses() {
-        return Quality.classes;
+        return Quality.CLASSES;
     }
 
     @Override

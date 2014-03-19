@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.ontology.transform.rules;
 
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,14 +42,20 @@ public class TQualityValidator extends AbstractTransformationRule<IHasMetadataMe
     }
 
     @Override
-    public void execute(IHasMetadataMergeFunction<?> operator, TransformationConfiguration config) throws RuleException {
+    public void execute(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) throws RuleException {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getMetadataMerge());
         if (!((CombinedMergeFunction<?>) operator.getMetadataMerge()).providesMergeFunctionFor(IQuality.class)) {
-            LOG.warn("No Quality merge function set for " + operator);
+            TQualityValidator.LOG.warn("No Quality merge function set for " + operator);
         }
     }
 
     @Override
-    public boolean isExecutable(IHasMetadataMergeFunction<?> operator, TransformationConfiguration config) {
+    public boolean isExecutable(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getMetadataMerge());
+        Objects.requireNonNull(config);
+        Objects.requireNonNull(config.getMetaTypes());
         if (operator.getMetadataMerge() instanceof CombinedMergeFunction) {
             if (config.getMetaTypes().contains(IQuality.class.getCanonicalName())) {
                 return true;

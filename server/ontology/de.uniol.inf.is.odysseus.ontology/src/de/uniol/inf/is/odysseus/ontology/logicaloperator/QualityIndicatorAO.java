@@ -56,9 +56,9 @@ public class QualityIndicatorAO extends UnaryLogicalOp {
     public QualityIndicatorAO(final QualityIndicatorAO ao) {
         super(ao);
         Objects.requireNonNull(ao);
-        setCompleteness(ao.completeness);
-        setConsistency(ao.consistency);
-        setFrequency(ao.frequency);
+        this.setCompleteness(ao.completeness);
+        this.setConsistency(ao.consistency);
+        this.setFrequency(ao.frequency);
 
     }
 

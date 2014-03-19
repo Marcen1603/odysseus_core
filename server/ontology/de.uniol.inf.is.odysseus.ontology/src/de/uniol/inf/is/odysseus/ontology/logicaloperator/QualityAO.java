@@ -156,7 +156,8 @@ public class QualityAO extends UnaryLogicalOp {
         }
         for (final SDFAttribute attribute : this.getAttributes()) {
             for (final String property : this.properties) {
-                final SDFAttribute propertyAttribute = new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName() + "_" + property, SDFDatatype.DOUBLE, attribute.getUnit(), attribute.getDtConstraints());
+                final SDFAttribute propertyAttribute = new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName() + "_" + property, SDFDatatype.DOUBLE, attribute.getUnit(),
+                        attribute.getDtConstraints());
                 outputSchemaAttributes.add(propertyAttribute);
             }
         }

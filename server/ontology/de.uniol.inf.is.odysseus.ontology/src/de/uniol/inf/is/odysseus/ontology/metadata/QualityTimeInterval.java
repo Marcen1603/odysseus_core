@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.ontology.metadata;
 
 import java.text.NumberFormat;
 
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -29,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 public class QualityTimeInterval extends TimeInterval implements IQuality, IQualityTimeInterval {
 
     @SuppressWarnings("unchecked")
-    public final static Class<? extends IMetaAttribute>[] classes = new Class[] { ITimeInterval.class, IQuality.class };
+    public final static Class<? extends IMetaAttribute>[] CLASSES = new Class[] { ITimeInterval.class, IQuality.class };
 
     private static final long serialVersionUID = -3129934770814427153L;
     private final IQuality quality;
@@ -41,10 +43,10 @@ public class QualityTimeInterval extends TimeInterval implements IQuality, IQual
         this.frequency = 1.0;
     }
 
-    public QualityTimeInterval(final QualityTimeInterval clone) {
-        super(clone);
-        this.quality = clone.quality.clone();
-        this.frequency = clone.frequency;
+    public QualityTimeInterval(final QualityTimeInterval copy) {
+        super(copy);
+        this.quality = copy.quality.clone();
+        this.frequency = copy.frequency;
     }
 
     /**
@@ -52,8 +54,8 @@ public class QualityTimeInterval extends TimeInterval implements IQuality, IQual
      */
     @Override
     public double getTimeliness() {
-        PointInTime endTime = PointInTime.currentPointInTime();
-        return Math.max(0.0, 1.0 - (((double)endTime.minus(this.getStart()).getMainPoint()) / (this.frequency * 1000.0)));
+        final PointInTime endTime = PointInTime.currentPointInTime();
+        return Math.max(0.0, 1.0 - ((endTime.minus(this.getStart()).getMainPoint()) / (this.frequency * 1000.0)));
     }
 
     /**
@@ -61,6 +63,7 @@ public class QualityTimeInterval extends TimeInterval implements IQuality, IQual
      */
     @Override
     public void setFrequency(final double frequency) {
+        Preconditions.checkArgument(frequency > 0.0);
         this.frequency = frequency;
     }
 
@@ -111,7 +114,7 @@ public class QualityTimeInterval extends TimeInterval implements IQuality, IQual
 
     @Override
     public String toString() {
-        return "( i= " + super.toString() + " | " + " q=" + this.quality.toString().substring(0, this.quality.toString().length() - 1) + ", timeliness=" + getTimeliness() + "])";
+        return "( i= " + super.toString() + " | q=" + this.quality.toString().substring(0, this.quality.toString().length() - 1) + ", timeliness=" + this.getTimeliness() + "])";
     }
 
     @Override
@@ -134,7 +137,7 @@ public class QualityTimeInterval extends TimeInterval implements IQuality, IQual
 
     @Override
     public Class<? extends IMetaAttribute>[] getClasses() {
-        return QualityTimeInterval.classes;
+        return QualityTimeInterval.CLASSES;
     }
 
     @Override
