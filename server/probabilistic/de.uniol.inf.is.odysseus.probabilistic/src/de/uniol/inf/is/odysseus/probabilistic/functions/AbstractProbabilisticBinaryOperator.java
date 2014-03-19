@@ -41,10 +41,6 @@ public abstract class AbstractProbabilisticBinaryOperator<T> extends AbstractPro
         super(symbol, 2, accTypes, returnType);
     }
 
-    public AbstractProbabilisticBinaryOperator(final String symbol, final SDFDatatype[] accTypes, final SDFDatatype returnType) {
-        super(symbol, 2, accTypes, returnType);
-    }
-
     /*
      * 
      * @see de.uniol.inf.is.odysseus.mep.IOperator#isBinary()

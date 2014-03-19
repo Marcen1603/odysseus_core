@@ -46,9 +46,6 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
         super(symbol, arity, accTypes, returnType);
     }
 
-    public AbstractProbabilisticFunction(final String symbol, final int arity, final SDFDatatype[] accTypes, final SDFDatatype returnType) {
-        super(symbol, arity, accTypes, returnType);
-    }
 
     /**
      * Gets the normal distribution mixtures at the given position.
