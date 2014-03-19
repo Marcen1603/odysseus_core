@@ -1,11 +1,13 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.relational;
+package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.aggregate.functions.MedianPartialAggregate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Median;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.MedianPartialAggregate;
 
 /**
  * Estimates the median of the given attribute.
@@ -14,21 +16,27 @@ import de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.aggregate.func
  * 
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class RelationalMedian extends AbstractRelationalMedian {
+public class RelationalMedian extends Median<Tuple<?>, Tuple<?>> {
 
     /**
      * 
      */
     private static final long serialVersionUID = -7768784425424062403L;
+    private int pos;
 
     static public RelationalMedian getInstance(final int pos, final boolean partialAggregateInput) {
         return new RelationalMedian(pos, partialAggregateInput);
     }
 
     private RelationalMedian(final int pos, final boolean partialAggregateInput) {
-        super("MEDIAN", pos, partialAggregateInput);
+        super(partialAggregateInput);
+        this.pos = pos;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public IPartialAggregate<Tuple<?>> init(Tuple in) {
         if (isPartialAggregateInput()) {
@@ -41,6 +49,10 @@ public class RelationalMedian extends AbstractRelationalMedian {
         }
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     protected IPartialAggregate<Tuple<?>> process_merge(IPartialAggregate p, Tuple toMerge) {
         MedianPartialAggregate pa = (MedianPartialAggregate) p;
@@ -52,9 +64,13 @@ public class RelationalMedian extends AbstractRelationalMedian {
         }
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p, IPartialAggregate<Tuple<?>> toMerge, boolean createNew) {
-        MedianPartialAggregate<Tuple<?>> pa = null;
+        final MedianPartialAggregate<Tuple<?>> pa;
         if (createNew) {
             MedianPartialAggregate<Tuple<?>> h = (MedianPartialAggregate<Tuple<?>>) p;
             pa = new MedianPartialAggregate<Tuple<?>>(h);
@@ -65,4 +81,24 @@ public class RelationalMedian extends AbstractRelationalMedian {
         return pa.merge((MedianPartialAggregate) toMerge);
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Tuple evaluate(IPartialAggregate p) {
+        MedianPartialAggregate pa = (MedianPartialAggregate) p;
+        Tuple r = new Tuple(1, false);
+        r.setAttribute(0, new Double(pa.getAggValue().doubleValue()));
+        return r;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public SDFDatatype getPartialAggregateType() {
+        return SDFDatatype.MEDIAN_PARTIAL_AGGREGATE;
+    }
 }

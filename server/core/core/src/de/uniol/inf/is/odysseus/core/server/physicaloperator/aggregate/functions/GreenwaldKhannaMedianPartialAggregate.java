@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.aggregate.functions;
+package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -9,10 +9,10 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Random;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.util.FastMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
 
 /**
  * Implementation of M. Greenwald and S. Khanna. Space-efficient online
@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialAggregate<R> {
+public class GreenwaldKhannaMedianPartialAggregate<T> extends AbstractPartialAggregate<T> {
     private static final Logger LOG = LoggerFactory.getLogger(GreenwaldKhannaMedianPartialAggregate.class);
 
     private final double epsilon;
@@ -55,14 +55,14 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
      * @param partialAggregate
      *            The copy
      */
-    public GreenwaldKhannaMedianPartialAggregate(final GreenwaldKhannaMedianPartialAggregate<R> partialAggregate) {
+    public GreenwaldKhannaMedianPartialAggregate(final GreenwaldKhannaMedianPartialAggregate<T> partialAggregate) {
         this.epsilon = partialAggregate.epsilon;
         this.min = partialAggregate.min;
         this.max = partialAggregate.max;
         this.count = partialAggregate.count;
 
         this.summary = new LinkedList<>();
-        for (Tuple t : partialAggregate.summary) {
+        for (final Tuple t : partialAggregate.summary) {
             this.summary.add(t.clone());
         }
     }
@@ -72,21 +72,20 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
      * 
      * @return
      */
-    @Override
-    public GreenwaldKhannaMedianPartialAggregate<R> add(final Double value) {
+    public GreenwaldKhannaMedianPartialAggregate<T> add(final Double value) {
         // Compress if number of values n=0mod1/2e
         if ((this.count % (1.0 / (2.0 * this.epsilon()))) == 0) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Running compress before inserting the {}. element with value: {}", this.count + 1, value);
+            if (GreenwaldKhannaMedianPartialAggregate.LOG.isTraceEnabled()) {
+                GreenwaldKhannaMedianPartialAggregate.LOG.trace("Running compress before inserting the {}. element with value: {}", this.count + 1, value);
             }
             try {
                 this.compress(this.count);
             }
-            catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+            catch (final Exception e) {
+                GreenwaldKhannaMedianPartialAggregate.LOG.error(e.getMessage(), e);
             }
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Summary size {}", summary.size());
+            if (GreenwaldKhannaMedianPartialAggregate.LOG.isTraceEnabled()) {
+                GreenwaldKhannaMedianPartialAggregate.LOG.trace("Summary size {}", this.summary.size());
             }
         }
         this.insert(value, this.count);
@@ -97,7 +96,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
     /**
      * @param paToMerge
      */
-    public GreenwaldKhannaMedianPartialAggregate<R> merge(final GreenwaldKhannaMedianPartialAggregate<R> partialAggregate) {
+    public GreenwaldKhannaMedianPartialAggregate<T> merge(final GreenwaldKhannaMedianPartialAggregate<T> partialAggregate) {
         for (final Tuple t : partialAggregate.summary) {
             for (int i = 0; i < t.gain; i++) {
                 this.add(t.value);
@@ -109,7 +108,6 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
     /**
      * {@inheritDoc}
      */
-    @Override
     public Double getAggValue() {
         int i = 0;
         final Iterator<Tuple> iter = this.summary.iterator();
@@ -147,8 +145,8 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
      * {@inheritDoc}
      */
     @Override
-    public GreenwaldKhannaMedianPartialAggregate<R> clone() {
-        return new GreenwaldKhannaMedianPartialAggregate<R>(this);
+    public GreenwaldKhannaMedianPartialAggregate<T> clone() {
+        return new GreenwaldKhannaMedianPartialAggregate<T>(this);
     }
 
     private void insert(final double v, final int n) {
@@ -159,8 +157,8 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         int pos = Collections.binarySearch(this.summary, new Tuple(v, 1, 0));
         int range = 0;
         if ((v < this.min) || (v > this.max)) {
-            this.min = FastMath.min(this.min, v);
-            this.max = FastMath.max(this.max, v);
+            this.min = Math.min(this.min, v);
+            this.max = Math.max(this.max, v);
         }
         Tuple prev = null;
         Tuple next = null;
@@ -252,7 +250,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
             return (0);
         }
         else {
-            return (int) (FastMath.log(diff) / FastMath.log(2.0));
+            return (int) (Math.log(diff) / Math.log(2.0));
         }
     }
 
@@ -286,7 +284,7 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         /**
          * @param tuple
          */
-        public Tuple(Tuple tuple) {
+        public Tuple(final Tuple tuple) {
             this.value = tuple.value;
             this.gain = tuple.gain;
             this.range = tuple.range;
@@ -333,12 +331,12 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + getOuterType().hashCode();
-            result = prime * result + this.gain;
-            result = prime * result + this.range;
+            result = (prime * result) + this.getOuterType().hashCode();
+            result = (prime * result) + this.gain;
+            result = (prime * result) + this.range;
             long temp;
             temp = Double.doubleToLongBits(this.value);
-            result = prime * result + (int) (temp ^ (temp >>> 32));
+            result = (prime * result) + (int) (temp ^ (temp >>> 32));
             return result;
         }
 
@@ -346,19 +344,19 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
          * {@inheritDoc}
          */
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }
             if (obj == null) {
                 return false;
             }
-            if (getClass() != obj.getClass()) {
+            if (this.getClass() != obj.getClass()) {
                 return false;
             }
             @SuppressWarnings("unchecked")
-            Tuple other = (Tuple) obj;
-            if (!getOuterType().equals(other.getOuterType())) {
+            final Tuple other = (Tuple) obj;
+            if (!this.getOuterType().equals(other.getOuterType())) {
                 return false;
             }
             if (this.gain != other.gain) {
@@ -373,42 +371,21 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
             return true;
         }
 
-        private GreenwaldKhannaMedianPartialAggregate<R> getOuterType() {
+        private GreenwaldKhannaMedianPartialAggregate<T> getOuterType() {
             return GreenwaldKhannaMedianPartialAggregate.this;
         }
 
     }
 
     public static void main(final String[] args) {
+        Runtime.getRuntime().gc();
         final Random random = new Random();
-        random.setSeed(0l);
-        int n = (int) 10E6;
-        double[] values = new double[n];
-        for (int i = 0; i < n; i++) {
-            values[i] = random.nextDouble() * 1000.0;
-        }
-        DescriptiveStatistics stats = new DescriptiveStatistics();
         GreenwaldKhannaMedianPartialAggregate<Object> agg = new GreenwaldKhannaMedianPartialAggregate<>();
         long mem = 0;
         long lastMem = 0;
         long maxMem = 0;
-        Runtime.getRuntime().gc();
-        System.out.println("Running median with " + n + " values");
-        for (int i = 0; i < n; i++) {
-            agg.add(values[i]);
-            stats.addValue(values[i]);
-            if (i % 100000 == 0) {
-                Runtime rt = Runtime.getRuntime();
-                mem = (rt.totalMemory() - rt.freeMemory());
-                maxMem = Math.max(maxMem, mem);
-                System.out.println("Memory: " + mem / 1024 + "kb " + (mem > lastMem ? "^" : "v") + " Max: " + maxMem / 1024000 + "MB");
-                lastMem = mem;
-            }
-        }
-        System.out.println(agg + " == " + stats.getPercentile(50));
-
         long time = System.currentTimeMillis();
-        n = (int) 10E5;
+        int n = (int) 10E5;
         random.setSeed(0l);
         agg = new GreenwaldKhannaMedianPartialAggregate<>();
         mem = 0;
@@ -418,11 +395,11 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         System.out.println("Running median with " + n + " values");
         for (int i = 0; i < n; i++) {
             agg.add(random.nextDouble() * 1000.0);
-            if (i % 100000 == 0) {
-                Runtime rt = Runtime.getRuntime();
+            if ((i % 100000) == 0) {
+                final Runtime rt = Runtime.getRuntime();
                 mem = (rt.totalMemory() - rt.freeMemory());
                 maxMem = Math.max(maxMem, mem);
-                System.out.println("Memory: " + mem / 1024 + "kb " + (mem > lastMem ? "^" : "v") + " Max: " + maxMem / 1024000 + "MB");
+                System.out.println("Memory: " + (mem / 1024) + "kb " + (mem > lastMem ? "^" : "v") + " Max: " + (maxMem / 1024000) + "MB");
                 lastMem = mem;
             }
         }
@@ -438,11 +415,11 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         System.out.println("Running median with " + n + " values");
         for (int i = 0; i < n; i++) {
             agg.add(random.nextDouble() * 1000.0);
-            if (i % 100000 == 0) {
-                Runtime rt = Runtime.getRuntime();
+            if ((i % 100000) == 0) {
+                final Runtime rt = Runtime.getRuntime();
                 mem = (rt.totalMemory() - rt.freeMemory());
                 maxMem = Math.max(maxMem, mem);
-                System.out.println("Memory: " + mem / 1024 + "kb " + (mem > lastMem ? "^" : "v") + " Max: " + maxMem / 1024000 + "MB");
+                System.out.println("Memory: " + (mem / 1024) + "kb " + (mem > lastMem ? "^" : "v") + " Max: " + (maxMem / 1024000) + "MB");
                 lastMem = mem;
             }
         }
@@ -458,11 +435,11 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         System.out.println("Running median with " + n + " values");
         for (int i = 0; i < n; i++) {
             agg.add(random.nextDouble() * 1000.0);
-            if (i % 100000 == 0) {
-                Runtime rt = Runtime.getRuntime();
+            if ((i % 100000) == 0) {
+                final Runtime rt = Runtime.getRuntime();
                 mem = (rt.totalMemory() - rt.freeMemory());
                 maxMem = Math.max(maxMem, mem);
-                System.out.println("Memory: " + mem / 1024 + "kb " + (mem > lastMem ? "^" : "v") + " Max: " + maxMem / 1024000 + "MB");
+                System.out.println("Memory: " + (mem / 1024) + "kb " + (mem > lastMem ? "^" : "v") + " Max: " + (maxMem / 1024000) + "MB");
                 lastMem = mem;
             }
         }
@@ -478,11 +455,11 @@ public class GreenwaldKhannaMedianPartialAggregate<R> implements IMedianPartialA
         System.out.println("Running median with " + n + " values");
         for (int i = 0; i < n; i++) {
             agg.add(random.nextDouble() * 1000.0);
-            if (i % 100000 == 0) {
-                Runtime rt = Runtime.getRuntime();
+            if ((i % 100000) == 0) {
+                final Runtime rt = Runtime.getRuntime();
                 mem = (rt.totalMemory() - rt.freeMemory());
                 maxMem = Math.max(maxMem, mem);
-                System.out.println("Memory: " + mem / 1024 + "kb " + (mem > lastMem ? "^" : "v") + " Max: " + maxMem / 1024000 + "MB");
+                System.out.println("Memory: " + (mem / 1024) + "kb " + (mem > lastMem ? "^" : "v") + " Max: " + (maxMem / 1024000) + "MB");
                 lastMem = mem;
             }
         }

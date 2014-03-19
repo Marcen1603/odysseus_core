@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.mep.commons.math.Interval;
  *         FIXME: Not working yet!!
  */
 @SuppressWarnings("unused")
-public class GuhaMedianPartialAggregate<R> implements IMedianPartialAggregate<R> {
+public class GuhaMedianPartialAggregate<R> {
 
     // McGregor stuff
     private final static double DELTA = 0.95;
@@ -61,7 +61,7 @@ public class GuhaMedianPartialAggregate<R> implements IMedianPartialAggregate<R>
     /**
      * {@inheritDoc}
      */
-    @Override
+
     public GuhaMedianPartialAggregate<R> add(Double value) {
         // int i = instatiation;
         // if (count == start(i)) {
@@ -126,7 +126,7 @@ public class GuhaMedianPartialAggregate<R> implements IMedianPartialAggregate<R>
     /**
      * {@inheritDoc}
      */
-    @Override
+
     public Double getAggValue() {
         return aggregate;
     }
@@ -134,7 +134,7 @@ public class GuhaMedianPartialAggregate<R> implements IMedianPartialAggregate<R>
     /**
      * {@inheritDoc}
      */
-    @Override
+
     public void clear() {
         // TODO Auto-generated method stub
 

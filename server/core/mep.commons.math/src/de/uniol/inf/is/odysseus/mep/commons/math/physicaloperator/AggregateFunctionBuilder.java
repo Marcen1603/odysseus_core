@@ -12,9 +12,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
-import de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.relational.RelationalGreenwaldKhannaMedian;
-import de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.relational.RelationalMedian;
-import de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.relational.RelationalMedian2;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -22,28 +19,23 @@ import de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.relational.Rel
  */
 public class AggregateFunctionBuilder implements IAggregateFunctionBuilder {
 
-    private final static String MEDIAN = "MEDIAN";
-    private final static String AMEDIAN = "AMEDIAN";
-    private final static String MEDIAN2 = "MEDIAN2";
+    private final static String AMEDIAN2 = "AMEDIAN2";
+
     private static Collection<String> names = new LinkedList<String>();
     {
-        names.add(MEDIAN);
-        names.add(AMEDIAN);
-        names.add(MEDIAN2);
+
+        names.add(AMEDIAN2);
+
     }
 
     @Override
     public IAggregateFunction<Tuple<?>, Tuple<?>> createAggFunction(AggregateFunction key, SDFSchema schema, int[] pos, boolean partialAggregateInput, String datatype) {
         IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
-        if (key.getName().equalsIgnoreCase(MEDIAN)) {
-            aggFunc = RelationalMedian.getInstance(pos[0], partialAggregateInput);
+        if (key.getName().equalsIgnoreCase(AMEDIAN2)) {
+            // aggFunc = RelationalMedian.getInstance(pos[0],
+            // partialAggregateInput);
         }
-        else if (key.getName().equalsIgnoreCase(AMEDIAN)) {
-            aggFunc = RelationalGreenwaldKhannaMedian.getInstance(pos[0], partialAggregateInput);
-        }
-        else if (key.getName().equalsIgnoreCase(MEDIAN2)) {
-            aggFunc = RelationalMedian2.getInstance(pos[0], partialAggregateInput);
-        }
+
         else {
             throw new IllegalArgumentException("No such Aggregatefunction");
         }

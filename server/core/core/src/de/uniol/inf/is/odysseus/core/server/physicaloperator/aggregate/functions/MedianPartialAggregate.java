@@ -1,18 +1,20 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.aggregate.functions;
+package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
+
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class Median2PartialAggregate<R> implements IMedianPartialAggregate<R> {
+public class MedianPartialAggregate<T> extends AbstractPartialAggregate<T> {
 
     private final Queue<Double> upper = new PriorityQueue<Double>();
 
@@ -31,25 +33,24 @@ public class Median2PartialAggregate<R> implements IMedianPartialAggregate<R> {
         }
     });
 
-    public Median2PartialAggregate() {
+    public MedianPartialAggregate() {
 
     }
 
-    public Median2PartialAggregate(final Queue<Double> lower, final Queue<Double> upper) {
+    public MedianPartialAggregate(final Queue<Double> lower, final Queue<Double> upper) {
         this.lower.addAll(lower);
         this.upper.addAll(upper);
     }
 
-    public Median2PartialAggregate(final List<Double> values) {
+    public MedianPartialAggregate(final List<Double> values) {
         this.addAll(values);
     }
 
-    public Median2PartialAggregate(final Median2PartialAggregate<R> medianPartialAggregate) {
+    public MedianPartialAggregate(final MedianPartialAggregate<T> medianPartialAggregate) {
         this.lower.addAll(medianPartialAggregate.lower);
         this.upper.addAll(medianPartialAggregate.upper);
     }
 
-    @Override
     public Double getAggValue() {
         if ((this.lower.isEmpty()) && (this.upper.isEmpty())) {
             return null;
@@ -67,8 +68,7 @@ public class Median2PartialAggregate<R> implements IMedianPartialAggregate<R> {
         }
     }
 
-    @Override
-    public Median2PartialAggregate<R> add(final Double value) {
+    public MedianPartialAggregate<T> add(final Double value) {
         if ((this.lower.isEmpty()) && (this.upper.isEmpty())) {
             this.lower.add(value);
         }
@@ -84,18 +84,12 @@ public class Median2PartialAggregate<R> implements IMedianPartialAggregate<R> {
         return this;
     }
 
-    public Median2PartialAggregate<R> merge(final Median2PartialAggregate<?> value) {
+    public MedianPartialAggregate<T> merge(final MedianPartialAggregate<?> value) {
         this.lower.addAll(value.lower);
         this.upper.addAll(value.upper);
         this.rebalance();
         return this;
     }
-
-    // public void remove(final Double value) {
-    // if ((this.lower.remove(value)) || (this.upper.remove(value))) {
-    // this.rebalance();
-    // }
-    // }
 
     public void addAll(final double[] values) {
         for (final double val : values) {
@@ -109,18 +103,14 @@ public class Median2PartialAggregate<R> implements IMedianPartialAggregate<R> {
         }
     }
 
-    /**
-     * 
-     */
-    @Override
     public void clear() {
         lower.clear();
         upper.clear();
     }
 
     @Override
-    public Median2PartialAggregate<R> clone() {
-        return new Median2PartialAggregate<R>(this);
+    public MedianPartialAggregate<T> clone() {
+        return new MedianPartialAggregate<T>(this);
     }
 
     @Override
@@ -138,7 +128,7 @@ public class Median2PartialAggregate<R> implements IMedianPartialAggregate<R> {
     }
 
     public static void main(final String[] args) {
-        final Median2PartialAggregate<?> agg = new Median2PartialAggregate<>();
+        final MedianPartialAggregate<?> agg = new MedianPartialAggregate<>();
         agg.add(1.0);
         agg.add(3.0);
         agg.add(2.0);
