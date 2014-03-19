@@ -32,7 +32,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
-import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.DefaultProbabilisticTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
@@ -70,7 +69,7 @@ public class TProbabilisticContinuousEquiJoinAORule extends AbstractTransformati
     public final void execute(final JoinAO operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(config);
-         final JoinTIPO joinPO = new JoinTIPO();
+        final JoinTIPO joinPO = new JoinTIPO();
 
         boolean isCross = false;
         final IPredicate pred = operator.getPredicate();
@@ -107,9 +106,11 @@ public class TProbabilisticContinuousEquiJoinAORule extends AbstractTransformati
             if ((operator.getInputSchema(0).getType() == ProbabilisticTuple.class) || (operator.getInputSchema(1).getType() == ProbabilisticTuple.class)) {
                 if (operator.isAllPhysicalInputSet() && !(operator instanceof LeftJoinAO)) {
 
-//                    if (!SchemaUtils.containsContinuousProbabilisticAttributes(operator.getPredicate().getAttributes())) {
-//                        return false;
-//                    }
+                    // if
+                    // (!SchemaUtils.containsContinuousProbabilisticAttributes(operator.getPredicate().getAttributes()))
+                    // {
+                    // return false;
+                    // }
                     final SDFExpression expr = this.getExpression(operator);
 
                     if (PredicateUtils.isEquiExpression(expr.getMEPExpression())) {

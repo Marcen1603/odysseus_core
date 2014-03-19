@@ -77,12 +77,14 @@ public class ProbabilisticOneWorldAvg extends AbstractAggregateFunction<Probabil
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final OneWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = new OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>(ProbabilisticOneWorldAvg.ERROR,
-                ProbabilisticOneWorldAvg.BOUND, this.datatype);
-//        MultivariateMixtureDistribution distribution = in.getDistribution(((ProbabilisticDouble) in.getAttribute(this.pos)).getDistribution());
-//        for (final Entry<Double, Double> value : distribution.entrySet()) {
-//            pa.update(value.getKey(), value.getValue());
-//        }
+        final OneWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = new OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>(ProbabilisticOneWorldAvg.ERROR, ProbabilisticOneWorldAvg.BOUND,
+                this.datatype);
+        // MultivariateMixtureDistribution distribution =
+        // in.getDistribution(((ProbabilisticDouble)
+        // in.getAttribute(this.pos)).getDistribution());
+        // for (final Entry<Double, Double> value : distribution.entrySet()) {
+        // pa.update(value.getKey(), value.getValue());
+        // }
         return pa;
     }
 

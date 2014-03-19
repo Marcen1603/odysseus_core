@@ -39,9 +39,9 @@ public class ProbabilisticIntegrateFunction extends AbstractIntegrateFunction {
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE }, SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
 
     public ProbabilisticIntegrateFunction() {
-    	super(ACC_TYPES);
+        super(ProbabilisticIntegrateFunction.ACC_TYPES);
     }
-    
+
     /*
      * 
      * @see de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.
@@ -54,6 +54,5 @@ public class ProbabilisticIntegrateFunction extends AbstractIntegrateFunction {
         final RealVector upperBound = MatrixUtils.createRealVector(new double[] { this.getNumericalInputValue(2) });
         return this.getValueInternal(continuousDouble, lowerBound, upperBound);
     }
-
 
 }

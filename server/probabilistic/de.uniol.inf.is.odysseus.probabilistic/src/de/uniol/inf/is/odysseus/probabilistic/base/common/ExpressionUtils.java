@@ -70,13 +70,13 @@ public final class ExpressionUtils {
      * @return A set of expressions
      */
     public static Collection<IExpression<?>> conjunctiveSplitExpression(final IExpression<?> expression) {
-        Set<IExpression<?>> result = new HashSet<IExpression<?>>();
+        final Set<IExpression<?>> result = new HashSet<IExpression<?>>();
         if (ExpressionUtils.isAndOperator(expression)) {
-            Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            final Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
             expressionStack.push(expression);
 
             while (!expressionStack.isEmpty()) {
-                IExpression<?> curExpression = expressionStack.pop();
+                final IExpression<?> curExpression = expressionStack.pop();
                 if (ExpressionUtils.isAndOperator(curExpression)) {
                     expressionStack.push(curExpression.toFunction().getArgument(0));
                     expressionStack.push(curExpression.toFunction().getArgument(1));
@@ -101,14 +101,14 @@ public final class ExpressionUtils {
      * @return A set of expressions
      */
     public static Collection<IExpression<?>> disjunctiveSplitExpression(final IExpression<?> expression) {
-        Set<IExpression<?>> result = new HashSet<IExpression<?>>();
+        final Set<IExpression<?>> result = new HashSet<IExpression<?>>();
 
         if (ExpressionUtils.isOrOperator(expression)) {
-            Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            final Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
             expressionStack.push(expression);
 
             while (!expressionStack.isEmpty()) {
-                IExpression<?> curExpression = expressionStack.pop();
+                final IExpression<?> curExpression = expressionStack.pop();
                 if (ExpressionUtils.isOrOperator(curExpression)) {
                     expressionStack.push(curExpression.toFunction().getArgument(0));
                     expressionStack.push(curExpression.toFunction().getArgument(1));
@@ -133,25 +133,25 @@ public final class ExpressionUtils {
      * @return A set of expressions
      */
     public static Collection<SDFExpression> conjunctiveSplitExpression(final SDFExpression expression) {
-        Set<SDFExpression> result = new TreeSet<SDFExpression>(new Comparator<SDFExpression>() {
+        final Set<SDFExpression> result = new TreeSet<SDFExpression>(new Comparator<SDFExpression>() {
 
             @Override
-			public int compare(SDFExpression o1, SDFExpression o2) {
+            public int compare(final SDFExpression o1, final SDFExpression o2) {
                 return Integer.compare(o1.getAllAttributes().size(), o2.getAllAttributes().size());
             }
         });
         if (ExpressionUtils.isAndOperator(expression.getMEPExpression())) {
-            Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            final Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
             expressionStack.push(expression.getMEPExpression());
 
             while (!expressionStack.isEmpty()) {
-                IExpression<?> curExpression = expressionStack.pop();
+                final IExpression<?> curExpression = expressionStack.pop();
                 if (ExpressionUtils.isAndOperator(curExpression)) {
                     expressionStack.push(curExpression.toFunction().getArgument(0));
                     expressionStack.push(curExpression.toFunction().getArgument(1));
                 }
                 else {
-                    SDFExpression sdfExpression = new SDFExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
+                    final SDFExpression sdfExpression = new SDFExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
                     result.add(sdfExpression);
                 }
             }
@@ -171,25 +171,25 @@ public final class ExpressionUtils {
      * @return A set of expressions
      */
     public static Collection<SDFProbabilisticExpression> conjunctiveSplitExpression(final SDFProbabilisticExpression expression) {
-        Set<SDFProbabilisticExpression> result = new TreeSet<SDFProbabilisticExpression>(new Comparator<SDFProbabilisticExpression>() {
+        final Set<SDFProbabilisticExpression> result = new TreeSet<SDFProbabilisticExpression>(new Comparator<SDFProbabilisticExpression>() {
 
             @Override
-			public int compare(SDFProbabilisticExpression o1, SDFProbabilisticExpression o2) {
+            public int compare(final SDFProbabilisticExpression o1, final SDFProbabilisticExpression o2) {
                 return Integer.compare(o1.getAllAttributes().size(), o2.getAllAttributes().size());
             }
         });
         if (ExpressionUtils.isAndOperator(expression.getMEPExpression())) {
-            Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            final Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
             expressionStack.push(expression.getMEPExpression());
 
             while (!expressionStack.isEmpty()) {
-                IExpression<?> curExpression = expressionStack.pop();
+                final IExpression<?> curExpression = expressionStack.pop();
                 if (ExpressionUtils.isAndOperator(curExpression)) {
                     expressionStack.push(curExpression.toFunction().getArgument(0));
                     expressionStack.push(curExpression.toFunction().getArgument(1));
                 }
                 else {
-                    SDFProbabilisticExpression sdfExpression = new SDFProbabilisticExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
+                    final SDFProbabilisticExpression sdfExpression = new SDFProbabilisticExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
                     result.add(sdfExpression);
                 }
             }
@@ -209,25 +209,25 @@ public final class ExpressionUtils {
      * @return A set of expressions
      */
     public static Collection<SDFExpression> disjunctiveSplitExpression(final SDFExpression expression) {
-        Set<SDFExpression> result = new TreeSet<SDFExpression>(new Comparator<SDFExpression>() {
+        final Set<SDFExpression> result = new TreeSet<SDFExpression>(new Comparator<SDFExpression>() {
 
             @Override
-			public int compare(SDFExpression o1, SDFExpression o2) {
+            public int compare(final SDFExpression o1, final SDFExpression o2) {
                 return Integer.compare(o1.getAllAttributes().size(), o2.getAllAttributes().size());
             }
         });
         if (ExpressionUtils.isOrOperator(expression.getMEPExpression())) {
-            Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            final Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
             expressionStack.push(expression.getMEPExpression());
 
             while (!expressionStack.isEmpty()) {
-                IExpression<?> curExpression = expressionStack.pop();
+                final IExpression<?> curExpression = expressionStack.pop();
                 if (ExpressionUtils.isOrOperator(curExpression)) {
                     expressionStack.push(curExpression.toFunction().getArgument(0));
                     expressionStack.push(curExpression.toFunction().getArgument(1));
                 }
                 else {
-                    SDFExpression sdfExpression = new SDFExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
+                    final SDFExpression sdfExpression = new SDFExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
                     result.add(sdfExpression);
                 }
             }
@@ -247,25 +247,25 @@ public final class ExpressionUtils {
      * @return A set of expressions
      */
     public static Collection<SDFProbabilisticExpression> disjunctiveSplitExpression(final SDFProbabilisticExpression expression) {
-        Set<SDFProbabilisticExpression> result = new TreeSet<SDFProbabilisticExpression>(new Comparator<SDFProbabilisticExpression>() {
+        final Set<SDFProbabilisticExpression> result = new TreeSet<SDFProbabilisticExpression>(new Comparator<SDFProbabilisticExpression>() {
 
             @Override
-			public int compare(SDFProbabilisticExpression o1, SDFProbabilisticExpression o2) {
+            public int compare(final SDFProbabilisticExpression o1, final SDFProbabilisticExpression o2) {
                 return Integer.compare(o1.getAllAttributes().size(), o2.getAllAttributes().size());
             }
         });
         if (ExpressionUtils.isOrOperator(expression.getMEPExpression())) {
-            Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            final Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
             expressionStack.push(expression.getMEPExpression());
 
             while (!expressionStack.isEmpty()) {
-                IExpression<?> curExpression = expressionStack.pop();
+                final IExpression<?> curExpression = expressionStack.pop();
                 if (ExpressionUtils.isOrOperator(curExpression)) {
                     expressionStack.push(curExpression.toFunction().getArgument(0));
                     expressionStack.push(curExpression.toFunction().getArgument(1));
                 }
                 else {
-                    SDFProbabilisticExpression sdfExpression = new SDFProbabilisticExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
+                    final SDFProbabilisticExpression sdfExpression = new SDFProbabilisticExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
                     result.add(sdfExpression);
                 }
             }

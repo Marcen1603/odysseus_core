@@ -107,9 +107,11 @@ public class TProbabilisticContinuousJoinAOSetSARule extends AbstractTransformat
             if (operator.getAreas() == null) {
                 final IPredicate<?> predicate = operator.getPredicate();
                 final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-//                if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
-//                    return true;
-//                }
+                // if
+                // (SchemaUtils.containsContinuousProbabilisticAttributes(attributes))
+                // {
+                // return true;
+                // }
             }
         }
         return false;

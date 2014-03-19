@@ -127,7 +127,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
         if (copy.distributions != null) {
             this.distributions = new MultivariateMixtureDistribution[copy.distributions.length];
             for (int i = 0; i < copy.distributions.length; i++) {
-                this.distributions[i] = (MultivariateMixtureDistribution) copy.distributions[i].clone();
+                this.distributions[i] = copy.distributions[i].clone();
             }
         }
         else {
@@ -155,14 +155,14 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
         if (newDistrs != null) {
             this.distributions = new MultivariateMixtureDistribution[newDistrs.length];
             for (int i = 0; i < newDistrs.length; i++) {
-                this.distributions[i] = (MultivariateMixtureDistribution) newDistrs[i].clone();
+                this.distributions[i] = newDistrs[i].clone();
             }
         }
         else {
             if (copy.distributions != null) {
                 this.distributions = new MultivariateMixtureDistribution[copy.distributions.length];
                 for (int i = 0; i < copy.distributions.length; i++) {
-                    this.distributions[i] = (MultivariateMixtureDistribution) copy.distributions[i].clone();
+                    this.distributions[i] = copy.distributions[i].clone();
                 }
             }
             else {
@@ -184,7 +184,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
         if (copy.distributions != null) {
             this.distributions = new MultivariateMixtureDistribution[copy.distributions.length];
             for (int i = 0; i < copy.distributions.length; i++) {
-                this.distributions[i] = (MultivariateMixtureDistribution) copy.distributions[i].clone();
+                this.distributions[i] = copy.distributions[i].clone();
             }
         }
         else {
@@ -195,7 +195,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
     /**
      * @param object
      */
-    public ProbabilisticTuple(Tuple<T> copy) {
+    public ProbabilisticTuple(final Tuple<T> copy) {
         super(copy);
         Preconditions.checkNotNull(copy);
         this.distributions = new MultivariateMixtureDistribution[0];
@@ -393,10 +393,10 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
                 // Create the new distributions using the old distribution and
                 // the restriction matrix
                 if (createNew) {
-                    newDistributions[newLayerIndex] = (MultivariateMixtureDistribution) this.distributions[oldLayerIndex].clone();
+                    newDistributions[newLayerIndex] = this.distributions[oldLayerIndex].clone();
                 }
                 else {
-                    newDistributions[newLayerIndex] = (MultivariateMixtureDistribution) this.distributions[oldLayerIndex];
+                    newDistributions[newLayerIndex] = this.distributions[oldLayerIndex];
                 }
                 // First, update the covariance matrix and the mean in all
                 // mixtures
@@ -530,8 +530,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
      *            The offset for attribute reference
      * @return The merged distributions list
      */
-    private MultivariateMixtureDistribution[] mergeDistributions(final MultivariateMixtureDistribution[] leftDistributions,
-            final MultivariateMixtureDistribution[] rightDistributions, final int offset) {
+    private MultivariateMixtureDistribution[] mergeDistributions(final MultivariateMixtureDistribution[] leftDistributions, final MultivariateMixtureDistribution[] rightDistributions, final int offset) {
         int length = 0;
         int start = 0;
         if (leftDistributions != null) {

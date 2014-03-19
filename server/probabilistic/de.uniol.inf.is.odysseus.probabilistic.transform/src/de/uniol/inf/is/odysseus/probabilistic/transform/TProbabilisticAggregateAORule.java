@@ -61,9 +61,10 @@ public class TProbabilisticAggregateAORule extends TAggregatePORule {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(config);
         Objects.requireNonNull(operator.getInputSchema());
-        
+
         @SuppressWarnings({ "rawtypes" })
-        final RelationalGroupProcessor r = new RelationalGroupProcessor(operator.getInputSchema(), operator.getInternalOutputSchema(), operator.getGroupingAttribute(), operator.getAggregations(), false);
+        final RelationalGroupProcessor r = new RelationalGroupProcessor(operator.getInputSchema(), operator.getInternalOutputSchema(), operator.getGroupingAttribute(), operator.getAggregations(),
+                false);
         operator.setGroupProcessor(r);
         final SDFSchema inputSchema = operator.getInputSchema();
 

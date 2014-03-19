@@ -34,10 +34,10 @@ public abstract class AbstractProbabilisticDivisideNumberOperator extends Abstra
 	 */
     private static final long serialVersionUID = 7478030161128270461L;
 
-    public AbstractProbabilisticContinuousDivisionNumberOperator(SDFDatatype[][] accTypes) {
-    	super("/",accTypes,SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+    public AbstractProbabilisticDivisideNumberOperator(final SDFDatatype[][] accTypes) {
+        super("/", accTypes, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
     }
-    
+
     /*
      * 
      * @see de.uniol.inf.is.odysseus.mep.IOperator#getPrecedence()
@@ -46,7 +46,6 @@ public abstract class AbstractProbabilisticDivisideNumberOperator extends Abstra
     public final int getPrecedence() {
         return 5;
     }
-
 
     /**
      * Divide the given distribution by the given value.

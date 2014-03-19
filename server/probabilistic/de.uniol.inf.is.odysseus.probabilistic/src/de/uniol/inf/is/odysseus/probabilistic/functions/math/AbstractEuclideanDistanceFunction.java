@@ -32,10 +32,10 @@ public abstract class AbstractEuclideanDistanceFunction extends AbstractFunction
 	 */
     private static final long serialVersionUID = -5772371632099974669L;
 
-    public AbstractEuclideanDistanceFunction(SDFDatatype[][] accTypes) {
-    	super("distance",2,accTypes,SDFDatatype.DOUBLE);
+    public AbstractEuclideanDistanceFunction(final SDFDatatype[][] accTypes) {
+        super("distance", 2, accTypes, SDFDatatype.DOUBLE);
     }
-    
+
     /**
      * 
      * @param a
@@ -54,6 +54,5 @@ public abstract class AbstractEuclideanDistanceFunction extends AbstractFunction
         }
         return a.subtract(b).getFrobeniusNorm();
     }
-
 
 }

@@ -54,8 +54,8 @@ public class TLinearRegressionAORule extends AbstractTransformationRule<LinearRe
     @Override
     public final void execute(final LinearRegressionAO operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
-       Objects.requireNonNull(config);
-          final IPhysicalOperator linearRegressionPO = new LinearRegressionPO<ITimeInterval>(operator.determineDependentList(), operator.determineExplanatoryList());
+        Objects.requireNonNull(config);
+        final IPhysicalOperator linearRegressionPO = new LinearRegressionPO<ITimeInterval>(operator.determineDependentList(), operator.determineExplanatoryList());
         this.defaultExecute(operator, linearRegressionPO, config, true, true);
     }
 
@@ -71,7 +71,7 @@ public class TLinearRegressionAORule extends AbstractTransformationRule<LinearRe
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getInputSchema());
         Objects.requireNonNull(config);
-           if (operator.isAllPhysicalInputSet()) {
+        if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 return true;
             }

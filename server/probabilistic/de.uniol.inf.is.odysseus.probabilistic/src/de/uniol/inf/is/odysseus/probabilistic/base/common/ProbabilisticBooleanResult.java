@@ -29,7 +29,7 @@ public class ProbabilisticBooleanResult {
      * @param distribution
      * @param probability
      */
-    public ProbabilisticBooleanResult(IMultivariateDistribution distribution, double probability) {
+    public ProbabilisticBooleanResult(final IMultivariateDistribution distribution, final double probability) {
         this(new IMultivariateDistribution[] { distribution }, probability);
     }
 
@@ -37,7 +37,7 @@ public class ProbabilisticBooleanResult {
      * @param iMultivariateDistributions
      * @param probability2
      */
-    public ProbabilisticBooleanResult(IMultivariateDistribution[] distributions, double probability) {
+    public ProbabilisticBooleanResult(final IMultivariateDistribution[] distributions, final double probability) {
         super();
         this.distributions = distributions;
         this.probability = probability;

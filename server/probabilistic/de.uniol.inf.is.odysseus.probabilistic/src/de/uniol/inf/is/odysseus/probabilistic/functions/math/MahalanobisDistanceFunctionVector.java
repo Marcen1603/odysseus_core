@@ -38,9 +38,9 @@ public class MahalanobisDistanceFunctionVector extends AbstractMahalanobisDistan
             { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE } };
 
     public MahalanobisDistanceFunctionVector() {
-    	super(ACC_TYPES);
+        super(MahalanobisDistanceFunctionVector.ACC_TYPES);
     }
-    
+
     /**
      * 
      * {@inheritDoc}

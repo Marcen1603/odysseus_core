@@ -20,7 +20,6 @@ import java.util.Arrays;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -36,12 +35,12 @@ public class ProbabilisticSmallerEqualsOperator extends AbstractProbabilisticCom
 	 */
     private static final long serialVersionUID = -9122605635777338549L;
 
-    public ProbabilisticContinuousSmallerEqualsOperator() {
-    	this("<=");
+    public ProbabilisticSmallerEqualsOperator() {
+        this("<=");
     }
 
-    public ProbabilisticContinuousSmallerEqualsOperator(String symbol) {
-    	super(symbol, ACC_TYPES);
+    public ProbabilisticSmallerEqualsOperator(final String symbol) {
+        super(symbol, ProbabilisticSmallerEqualsOperator.ACC_TYPES);
     }
 
     /**
@@ -60,7 +59,7 @@ public class ProbabilisticSmallerEqualsOperator extends AbstractProbabilisticCom
     @Override
     public final ProbabilisticBooleanResult getValue() {
         final MultivariateMixtureDistribution a = ((MultivariateMixtureDistribution) this.getInputValue(0)).clone();
-        int pos = getPositions().get(0);
+        final int pos = this.getPositions().get(0);
         final Double b = this.getNumericalInputValue(1);
         final double[] lowerBound = new double[a.getDimension()];
         Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);

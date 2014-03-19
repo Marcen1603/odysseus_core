@@ -35,14 +35,13 @@ public class IntervalDivisionOperator extends AbstractBinaryOperator<IntervalDou
     private static final long serialVersionUID = -3502588472297137429L;
 
     public IntervalDivisionOperator() {
-    	super("/",accTypes,SDFIntervalDatatype.INTERVAL_DOUBLE);
+        super("/", accTypes, SDFIntervalDatatype.INTERVAL_DOUBLE);
     }
-    
+
     @Override
     public int getPrecedence() {
         return 5;
     }
-
 
     @Override
     public IntervalDouble getValue() {
@@ -97,5 +96,26 @@ public class IntervalDivisionOperator extends AbstractBinaryOperator<IntervalDou
 
     public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFIntervalDatatype.INTERVAL_BYTE, SDFIntervalDatatype.INTERVAL_SHORT, SDFIntervalDatatype.INTERVAL_INTEGER,
             SDFIntervalDatatype.INTERVAL_FLOAT, SDFIntervalDatatype.INTERVAL_DOUBLE, SDFIntervalDatatype.INTERVAL_LONG };
+
+    private final double divide(final double a, final double b) {
+        if ((Double.isInfinite(a)) && (b == 0.0)) {
+            return 0.0;
+        }
+        else if ((a == 0.0) && (b == 0.0)) {
+            return 0.0;
+        }
+        else if (Double.isInfinite(b)) {
+            return 0.0;
+        }
+        else if ((a > 0.0) && (b == 0.0)) {
+            return Double.POSITIVE_INFINITY;
+        }
+        else if ((a < 0.0) && (b == 0.0)) {
+            return Double.NEGATIVE_INFINITY;
+        }
+        else {
+            return a / b;
+        }
+    }
 
 }

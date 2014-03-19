@@ -147,7 +147,7 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
         final List<SDFAttribute> newSchemaAttributes = new ArrayList<>();
         for (int i = 0; i < expressionsList.length; ++i) {
             this.expressions[i] = expressionsList[i].clone();
-            for (SDFAttribute attr : this.expressions[i].getAllAttributes()) {
+            for (final SDFAttribute attr : this.expressions[i].getAllAttributes()) {
                 if (!newSchemaAttributes.contains(attr)) {
                     newSchemaAttributes.add(attr);
                 }
@@ -158,13 +158,13 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
         final SDFSchema restrictedSchema = new SDFSchema(schema, newSchemaAttributes);
         this.variables = new VarHelper[expressionsList.length][];
         int i = 0;
-        for (SDFExpression expression : expressions) {
-            List<SDFAttribute> neededAttributes = expression.getAllAttributes();
-            VarHelper[] newArray = new VarHelper[neededAttributes.size()];
+        for (final SDFExpression expression : this.expressions) {
+            final List<SDFAttribute> neededAttributes = expression.getAllAttributes();
+            final VarHelper[] newArray = new VarHelper[neededAttributes.size()];
             this.variables[i++] = newArray;
             int j = 0;
-            for (SDFAttribute curAttribute : neededAttributes) {
-                newArray[j++] = initAttribute(restrictedSchema, curAttribute);
+            for (final SDFAttribute curAttribute : neededAttributes) {
+                newArray[j++] = this.initAttribute(restrictedSchema, curAttribute);
             }
             if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE)) {
                 this.distributions++;
@@ -180,7 +180,7 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
      *            The attribute
      * @return An instance of {@link VarHelper} for that attribute
      */
-    public VarHelper initAttribute(SDFSchema schema, SDFAttribute curAttribute) {
+    public VarHelper initAttribute(final SDFSchema schema, final SDFAttribute curAttribute) {
         return new VarHelper(schema.indexOf(curAttribute), 0);
     }
 
@@ -206,25 +206,25 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
         outputVal.setMetadata((T) object.getMetadata().clone());
 
         final ProbabilisticTuple<T> restrictedObject = object.restrict(this.neededAttributePos, false);
-        LinkedList<ProbabilisticTuple<T>> preProcessResult = preProcess(restrictedObject);
+        final LinkedList<ProbabilisticTuple<T>> preProcessResult = this.preProcess(restrictedObject);
 
         synchronized (this.expressions) {
             int distributionIndex = 0;
             for (int i = 0; i < this.expressions.length; ++i) {
                 double existence = 1.0;
-                Object[] values = new Object[this.variables[i].length];
-                IMetaAttribute[] meta = new IMetaAttribute[this.variables[i].length];
+                final Object[] values = new Object[this.variables[i].length];
+                final IMetaAttribute[] meta = new IMetaAttribute[this.variables[i].length];
                 for (int j = 0; j < this.variables[i].length; ++j) {
-                    ProbabilisticTuple<T> obj = determineObjectForExpression(restrictedObject, preProcessResult, i, j);
+                    final ProbabilisticTuple<T> obj = this.determineObjectForExpression(restrictedObject, preProcessResult, i, j);
                     if (obj != null) {
                         values[j] = obj.getAttribute(this.variables[i][j].getPos());
                         if (values[j].getClass() == ProbabilisticDouble.class) {
                             MultivariateMixtureDistribution distribution = restrictedObject.getDistribution(((ProbabilisticDouble) values[j]).getDistribution());
-                            RealMatrix restrictMatrix = MatrixUtils.createRealMatrix(1, distribution.getDimension());
+                            final RealMatrix restrictMatrix = MatrixUtils.createRealMatrix(1, distribution.getDimension());
                             if (distribution.getDimension() > 1) {
                                 distribution = distribution.clone();
                             }
-                            int d = distribution.getDimension(this.variables[i][j].getPos());
+                            final int d = distribution.getDimension(this.variables[i][j].getPos());
                             restrictMatrix.setEntry(0, d, 1.0);
                             distribution.restrict(restrictMatrix);
                             values[j] = distribution;
@@ -238,7 +238,7 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
                     this.expressions[i].bindMetaAttribute(restrictedObject.getMetadata());
                     this.expressions[i].bindAdditionalContent(restrictedObject.getAdditionalContent());
                     this.expressions[i].bindVariables(meta, values);
-                    Object expr = this.expressions[i].getValue();
+                    final Object expr = this.expressions[i].getValue();
                     if (expr == null) {
                         nullValueOccured = true;
                     }
@@ -250,27 +250,27 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
                                 distribution.getAttributes()[0] = i;
                             }
                             else {
-                                LOG.error("Multivariate distribution not supported as a result");
+                                ProbabilisticMapPO.LOG.error("Multivariate distribution not supported as a result");
                             }
                             outputVal.setDistribution(distributionIndex, distribution);
                             outputVal.setAttribute(i, new ProbabilisticDouble(distributionIndex));
                             distributionIndex++;
                             // FIXED Setting the output existence?? Yes, because
-                            //  the metadata holds the probability and all
+                            // the metadata holds the probability and all
                             // distributions are normalized using the scale
                             // factor. Thus, all changes on the distribution has
                             // to be stored back in the meta data
-                            outputVal.getMetadata().setExistence(outputVal.getMetadata().getExistence() * (1.0 / distribution.getScale()) / existence);
+                            outputVal.getMetadata().setExistence((outputVal.getMetadata().getExistence() * (1.0 / distribution.getScale())) / existence);
                         }
                         else {
                             outputVal.setAttribute(i, expr);
                         }
                     }
                 }
-                catch (Exception e) {
+                catch (final Exception e) {
                     nullValueOccured = true;
                     if (!(e instanceof NullPointerException)) {
-                        LOG.error("Cannot calc result for " + object + " with expression " + expressions[i], e);
+                        ProbabilisticMapPO.LOG.error("Cannot calc result for " + object + " with expression " + this.expressions[i], e);
                     }
                 }
                 if (this.expressions[i].getType().requiresDeepClone()) {
@@ -278,17 +278,17 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
                 }
             }
         }
-        if (!nullValueOccured || (nullValueOccured && allowNull)) {
+        if (!nullValueOccured || (nullValueOccured && this.allowNull)) {
             // KTHXBYE
-            transfer(outputVal);
+            this.transfer(outputVal);
         }
     }
 
-    public ProbabilisticTuple<T> determineObjectForExpression(ProbabilisticTuple<T> object, LinkedList<ProbabilisticTuple<T>> preProcessResult, int i, int j) {
+    public ProbabilisticTuple<T> determineObjectForExpression(final ProbabilisticTuple<T> object, final LinkedList<ProbabilisticTuple<T>> preProcessResult, final int i, final int j) {
         return object;
     }
 
-    public LinkedList<ProbabilisticTuple<T>> preProcess(ProbabilisticTuple<T> object) {
+    public LinkedList<ProbabilisticTuple<T>> preProcess(final ProbabilisticTuple<T> object) {
         return null;
     }
 

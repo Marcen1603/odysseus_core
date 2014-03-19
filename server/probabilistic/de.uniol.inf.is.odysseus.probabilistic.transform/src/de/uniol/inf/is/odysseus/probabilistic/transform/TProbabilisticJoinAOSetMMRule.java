@@ -52,7 +52,7 @@ public class TProbabilisticJoinAOSetMMRule extends AbstractTransformationRule<Jo
         Objects.requireNonNull(operator.getMetadataMerge());
         Objects.requireNonNull(transformConfig);
         Objects.requireNonNull(transformConfig.getMetaTypes());
-        
+
         if (transformConfig.getMetaTypes().size() > 1) {
             ((CombinedMergeFunction) operator.getMetadataMerge()).add(new ProbabilisticMetadataMergeFunction());
         }
@@ -70,7 +70,7 @@ public class TProbabilisticJoinAOSetMMRule extends AbstractTransformationRule<Jo
         Objects.requireNonNull(operator);
         Objects.requireNonNull(transformConfig);
         Objects.requireNonNull(transformConfig.getMetaTypes());
-        
+
         if (transformConfig.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
             if (operator.getMetadataMerge() != null) {
                 if (operator.getMetadataMerge() instanceof CombinedMergeFunction) {

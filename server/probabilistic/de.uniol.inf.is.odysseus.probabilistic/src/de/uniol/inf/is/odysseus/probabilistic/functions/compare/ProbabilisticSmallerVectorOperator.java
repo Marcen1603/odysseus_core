@@ -28,8 +28,8 @@ public class ProbabilisticSmallerVectorOperator extends ProbabilisticSmallerEqua
      */
     private static final long serialVersionUID = 6744058190515174151L;
 
-    public ProbabilisticContinuousSmallerVectorOperator() {
-    	super("<");
+    public ProbabilisticSmallerVectorOperator() {
+        super("<");
     }
-    
+
 }

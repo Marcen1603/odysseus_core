@@ -27,8 +27,8 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 
 /**
@@ -39,10 +39,9 @@ public abstract class AbstractBhattacharyyaDistanceFunction extends AbstractProb
 
     private static final long serialVersionUID = -4978963210815853709L;
 
-    public AbstractBhattacharyyaDistanceFunction(SDFDatatype[][] accTypes) {
-    	super("similarity", 2, accTypes, SDFDatatype.DOUBLE);
+    public AbstractBhattacharyyaDistanceFunction(final SDFDatatype[][] accTypes) {
+        super("similarity", 2, accTypes, SDFDatatype.DOUBLE);
     }
-    
 
     /**
      * 

@@ -15,8 +15,8 @@ public class ProbabilisticGreaterProbabilisticNumberOperator extends Probabilist
 
     private static final long serialVersionUID = 3981025281707408907L;
 
-    public ProbabilisticContinuousGreaterProbabilisticNumberOperator() {
-    	super(">");
+    public ProbabilisticGreaterProbabilisticNumberOperator() {
+        super(">");
     }
-    
+
 }

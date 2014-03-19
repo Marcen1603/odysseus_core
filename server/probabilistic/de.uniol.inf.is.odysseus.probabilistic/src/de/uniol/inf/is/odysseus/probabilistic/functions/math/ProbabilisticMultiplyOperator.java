@@ -33,8 +33,8 @@ public class ProbabilisticMultiplyOperator extends AbstractProbabilisticBinaryOp
 	 */
     private static final long serialVersionUID = -2233338064657887517L;
 
-    public ProbabilisticContinuousMultiplicationOperator() {
-    	super("*",ACC_TYPES,SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+    public ProbabilisticMultiplyOperator() {
+        super("*", ProbabilisticMultiplyOperator.ACC_TYPES, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
     }
 
     /*
@@ -72,8 +72,6 @@ public class ProbabilisticMultiplyOperator extends AbstractProbabilisticBinaryOp
     protected final IMultivariateDistribution getValueInternal(final MultivariateMixtureDistribution a, final MultivariateMixtureDistribution b) {
         return a.multiply(b);
     }
-
-
 
     /*
      * 
@@ -128,6 +126,5 @@ public class ProbabilisticMultiplyOperator extends AbstractProbabilisticBinaryOp
      * Accepted data types.
      */
     public static final SDFDatatype[] ACC_TYPES = SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS;
-
 
 }

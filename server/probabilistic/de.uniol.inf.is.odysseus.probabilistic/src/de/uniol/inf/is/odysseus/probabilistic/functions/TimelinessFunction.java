@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -23,9 +22,8 @@ public class TimelinessFunction extends AbstractFunction<Double> {
     private static final long serialVersionUID = 4703040530419998760L;
 
     public TimelinessFunction() {
-    	super("timeliness",1,ACC_TYPES,SDFProbabilisticDatatype.PROBABILISTIC_BYTE,false);
+        super("timeliness", 1, TimelinessFunction.ACC_TYPES, SDFDatatype.DOUBLE, false);
     }
-
 
     /*
      * 
@@ -34,31 +32,29 @@ public class TimelinessFunction extends AbstractFunction<Double> {
     @Override
     public final Double getValue() {
         Objects.requireNonNull(this.getInputValue(0));
-        Objects.requireNonNull(getMetaAttribute());
-        double frequency = this.getNumericalInputValue(0);
-        PointInTime applicationTime = PointInTime.currentPointInTime();
-        PointInTime streamTime = ((ITimeInterval) getMetaAttribute()).getStart();
-        PointInTime difference = applicationTime.minus(streamTime);
-        double timeliness = (1.0 - difference.getMainPoint() / (1000.0 / frequency));
+        Objects.requireNonNull(this.getMetaAttribute());
+        final double frequency = this.getNumericalInputValue(0);
+        final PointInTime applicationTime = PointInTime.currentPointInTime();
+        final PointInTime streamTime = ((ITimeInterval) this.getMetaAttribute()).getStart();
+        final PointInTime difference = applicationTime.minus(streamTime);
+        double timeliness = (1.0 - (difference.getMainPoint() / (1000.0 / frequency)));
         if (timeliness < 0.0) {
             timeliness = 0.0;
         }
         return timeliness;
     }
 
-
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = {SDFDatatype.NUMBERS,SDFDatatype.NUMBERS};
-
+    public static final SDFDatatype[][] ACC_TYPES = { SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
 
     /**
      * {@inheritDoc}
      */
- //   @Override
- //   public boolean optimizeConstantParameter() {
-        // We need access to the meta data of each tuple
- //       return false;
- //   }
+    // @Override
+    // public boolean optimizeConstantParameter() {
+    // We need access to the meta data of each tuple
+    // return false;
+    // }
 }

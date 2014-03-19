@@ -34,10 +34,10 @@ public abstract class AbstractProbabilisticSubtractNumberOperator extends Abstra
 	 */
     private static final long serialVersionUID = 3009938859392034200L;
 
-    public AbstractProbabilisticContinuousMinusNumberOperator(SDFDatatype[][] accTypes) {
-    	super("-", accTypes, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+    public AbstractProbabilisticSubtractNumberOperator(final SDFDatatype[][] accTypes) {
+        super("-", accTypes, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
     }
-    
+
     /*
      * 
      * @see de.uniol.inf.is.odysseus.mep.IOperator#getPrecedence()

@@ -34,8 +34,8 @@ public class ProbabilisticAddOperator extends AbstractProbabilisticBinaryOperato
 	 */
     private static final long serialVersionUID = 2533914833718506956L;
 
-    public ProbabilisticContinuousPlusOperator() {
-    	super("+", ACC_TYPES,SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+    public ProbabilisticAddOperator() {
+        super("+", ProbabilisticAddOperator.ACC_TYPES, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
     }
 
     /*
@@ -46,7 +46,6 @@ public class ProbabilisticAddOperator extends AbstractProbabilisticBinaryOperato
     public final int getPrecedence() {
         return 6;
     }
-
 
     /*
      * 
@@ -79,7 +78,6 @@ public class ProbabilisticAddOperator extends AbstractProbabilisticBinaryOperato
     protected final IMultivariateDistribution getValueInternal(final MultivariateMixtureDistribution a, final MultivariateMixtureDistribution b) {
         return a.add(b);
     }
-
 
     /*
      * 
@@ -134,6 +132,5 @@ public class ProbabilisticAddOperator extends AbstractProbabilisticBinaryOperato
      * Accepted data types.
      */
     public static final SDFDatatype[] ACC_TYPES = SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS;
-
 
 }

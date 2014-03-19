@@ -33,14 +33,14 @@ public abstract class AbstractProbabilisticBinaryOperator<T> extends AbstractPro
 	 */
     private static final long serialVersionUID = -2604513567977149416L;
 
-    public AbstractProbabilisticBinaryOperator(String symbol, SDFDatatype[][] accTypes, SDFDatatype returnType) {
-    	super(symbol,2,accTypes,returnType);
-	}
-    
-    public AbstractProbabilisticBinaryOperator(String symbol, SDFDatatype[] accTypes, SDFDatatype returnType) {
-    	super(symbol,2,accTypes,returnType);
-	}
-    
+    public AbstractProbabilisticBinaryOperator(final String symbol, final SDFDatatype[][] accTypes, final SDFDatatype returnType) {
+        super(symbol, 2, accTypes, returnType);
+    }
+
+    public AbstractProbabilisticBinaryOperator(final String symbol, final SDFDatatype[] accTypes, final SDFDatatype returnType) {
+        super(symbol, 2, accTypes, returnType);
+    }
+
     /*
      * 
      * @see de.uniol.inf.is.odysseus.mep.IOperator#isBinary()

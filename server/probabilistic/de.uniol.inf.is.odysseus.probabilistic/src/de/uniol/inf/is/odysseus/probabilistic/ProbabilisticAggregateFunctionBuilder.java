@@ -97,7 +97,7 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
      * java.lang.String)
      */
     @Override
-    public final IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> createAggFunction(final AggregateFunction key, SDFSchema schema, final int[] pos,
+    public final IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> createAggFunction(final AggregateFunction key, final SDFSchema schema, final int[] pos,
             final boolean partialAggregateInput, final String outputDatatype) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(key.getName());
@@ -106,11 +106,12 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
         Preconditions.checkElementIndex(0, pos.length);
         Preconditions.checkElementIndex(pos[0], schema.size());
 
-        SDFAttribute attribute = schema.get(pos[0]);
+        final SDFAttribute attribute = schema.get(pos[0]);
         Preconditions.checkArgument(attribute.getDatatype() instanceof SDFProbabilisticDatatype);
 
         IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> aggFunc = null;
-        SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) attribute.getDatatype();
+        // SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype)
+        // attribute.getDatatype();
         if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.AVG)) {
             if (outputDatatype.equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.toString())) {
                 aggFunc = ProbabilisticAvg.getInstance(pos[0], partialAggregateInput, outputDatatype);

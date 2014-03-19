@@ -39,8 +39,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSelectedAttributesAction;
@@ -100,10 +100,10 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<MultivariateMix
 
         double maxX = Double.NEGATIVE_INFINITY;
         double maxY = Double.NEGATIVE_INFINITY;
-        double standardDeviationX = 0.0;
+        final double standardDeviationX = 0.0;
         double minX = Double.POSITIVE_INFINITY;
         double minY = Double.POSITIVE_INFINITY;
-        double standardDeviationY = 0.0;
+        final double standardDeviationY = 0.0;
         for (final Pair<Double, IMultivariateDistribution> component : mixture.getComponents()) {
             maxX = Math.max(maxX, component.getValue().getMean()[0]);
             minX = Math.min(minX, component.getValue().getMean()[0]);

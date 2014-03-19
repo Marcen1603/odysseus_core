@@ -110,12 +110,10 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends IProbabilisticTimeIn
                     iter = this.getElements().iterator();
                     while (iter.hasNext()) {
                         final T next = iter.next();
-                        if (TimeInterval.totallyBefore(next.getMetadata(), element
-                                .getMetadata())) {
+                        if (TimeInterval.totallyBefore(next.getMetadata(), element.getMetadata())) {
                             continue;
                         }
-                        if (TimeInterval.totallyAfter(next.getMetadata(), element
-                                .getMetadata())) {
+                        if (TimeInterval.totallyAfter(next.getMetadata(), element.getMetadata())) {
                             break;
                         }
                         world = this.evaluateWorld(this.getQueryPredicate(), element, next, this.leftProbabilisticAttributePos, this.rightProbabilisticAttributePos, order);
@@ -131,12 +129,10 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends IProbabilisticTimeIn
                     iter = this.getElements().iterator();
                     while (iter.hasNext()) {
                         final T next = iter.next();
-                        if (TimeInterval.totallyBefore(next.getMetadata(), element
-                                .getMetadata())) {
+                        if (TimeInterval.totallyBefore(next.getMetadata(), element.getMetadata())) {
                             continue;
                         }
-                        if (TimeInterval.totallyAfter(next.getMetadata(), element
-                                .getMetadata())) {
+                        if (TimeInterval.totallyAfter(next.getMetadata(), element.getMetadata())) {
                             break;
                         }
                         world = this.evaluateWorld(this.getQueryPredicate(), next, element, this.leftProbabilisticAttributePos, this.rightProbabilisticAttributePos, order);
@@ -275,19 +271,27 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends IProbabilisticTimeIn
             final Order order) {
         final T outputVal = (T) this.dataMerge.merge((T) left.clone(), (T) right.clone(), this.metadataMerge, order);
         final double[] outSum = new double[leftProbabilisticAttributePositions.length + rightProbabilisticAttributePositions.length];
-//        for (final int rightProbabilisticAttributePo : rightProbabilisticAttributePositions) {
-//            ((AbstractProbabilisticValue<?>) outputVal.getAttribute(left.size() + rightProbabilisticAttributePo)).getValues().clear();
-//        }
-//        for (final int leftProbabilisticAttributePo : leftProbabilisticAttributePositions) {
-//            ((AbstractProbabilisticValue<?>) outputVal.getAttribute(leftProbabilisticAttributePo)).getValues().clear();
-//        }
+        // for (final int rightProbabilisticAttributePo :
+        // rightProbabilisticAttributePositions) {
+        // ((AbstractProbabilisticValue<?>) outputVal.getAttribute(left.size() +
+        // rightProbabilisticAttributePo)).getValues().clear();
+        // }
+        // for (final int leftProbabilisticAttributePo :
+        // leftProbabilisticAttributePositions) {
+        // ((AbstractProbabilisticValue<?>)
+        // outputVal.getAttribute(leftProbabilisticAttributePo)).getValues().clear();
+        // }
 
         // Dummy tuple to hold the different worlds during evaluation
         final T leftSelectObject = (T) left.clone();
-//        final Object[][] leftWorlds = ProbabilisticDiscreteUtils.getWorlds(left, leftProbabilisticAttributePositions);
+        // final Object[][] leftWorlds =
+        // ProbabilisticDiscreteUtils.getWorlds(left,
+        // leftProbabilisticAttributePositions);
 
         final T rightSelectObject = (T) right.clone();
-//        final Object[][] rightWorlds = ProbabilisticDiscreteUtils.getWorlds(right, rightProbabilisticAttributePositions);
+        // final Object[][] rightWorlds =
+        // ProbabilisticDiscreteUtils.getWorlds(right,
+        // rightProbabilisticAttributePositions);
 
         // Evaluate each world and store the possible ones in the output tuple
         // for (int lw = 0; lw < leftWorlds.length; lw++) {

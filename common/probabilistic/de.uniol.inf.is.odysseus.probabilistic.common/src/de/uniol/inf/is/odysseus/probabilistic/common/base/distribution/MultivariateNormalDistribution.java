@@ -45,12 +45,12 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      * @throws DimensionMismatchException
      * @throws NonPositiveDefiniteMatrixException
      */
-    public MultivariateNormalDistribution(double[] means, double[][] covariances) throws SingularMatrixException, DimensionMismatchException, NonPositiveDefiniteMatrixException {
+    public MultivariateNormalDistribution(final double[] means, final double[][] covariances) throws SingularMatrixException, DimensionMismatchException, NonPositiveDefiniteMatrixException {
         this.means = means;
         this.covariance = new Array2DRowRealMatrix(covariances);
     }
 
-    public MultivariateNormalDistribution(double[] means, double[] covariancesUpper) throws SingularMatrixException, DimensionMismatchException, NonPositiveDefiniteMatrixException {
+    public MultivariateNormalDistribution(final double[] means, final double[] covariancesUpper) throws SingularMatrixException, DimensionMismatchException, NonPositiveDefiniteMatrixException {
         this(means, CovarianceMatrixUtils.toMatrix(covariancesUpper).getData());
 
     }
@@ -58,34 +58,35 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
     /**
      * @param extendedMultivariateNormalDistribution
      */
-    public MultivariateNormalDistribution(MultivariateNormalDistribution copy) {
+    public MultivariateNormalDistribution(final MultivariateNormalDistribution copy) {
         this.means = MathArrays.copyOf(copy.means);
         this.covariance = copy.covariance.copy();
     }
 
+    @Override
     public int getDimension() {
-        return means.length;
+        return this.means.length;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public double probability(double[] a) {
-        if (getDimension() == 1) {
-            final double dev = a[0] - means[0];
-            final double standardDeviation = covariance.getEntry(0, 0);
-            if (FastMath.abs(dev) > 40 * standardDeviation) {
+    public double probability(final double[] a) {
+        if (this.getDimension() == 1) {
+            final double dev = a[0] - this.means[0];
+            final double standardDeviation = this.covariance.getEntry(0, 0);
+            if (FastMath.abs(dev) > (40 * standardDeviation)) {
                 return dev < 0 ? 0.0d : 1.0d;
             }
-            return 0.5 * (1 + Erf.erf(dev / (standardDeviation * SQRT2)));
+            return 0.5 * (1 + Erf.erf(dev / (standardDeviation * MultivariateNormalDistribution.SQRT2)));
         }
         else {
             Matrix upper = new Matrix(new double[][] { a });
             upper = upper.substract(new Matrix(new double[][] { this.means }));
-            double[] lower = new double[a.length];
+            final double[] lower = new double[a.length];
             Arrays.fill(lower, Double.NEGATIVE_INFINITY);
-            final Matrix covarianceMatrix = new Matrix(covariance.getData());
+            final Matrix covarianceMatrix = new Matrix(this.covariance.getData());
             return QSIMVN.cumulativeProbability(5000, covarianceMatrix, new Matrix(new double[][] { lower }), upper).getProbability();
         }
     }
@@ -94,17 +95,17 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      * {@inheritDoc}
      */
     @Override
-    public double probability(double[] a, double[] b) {
+    public double probability(final double[] a, final double[] b) {
         if (Arrays.equals(a, b)) {
             return 0.0;
         }
-        if (getDimension() == 1) {
+        if (this.getDimension() == 1) {
             if (a[0] > b[0]) {
                 throw new NumberIsTooLargeException(LocalizedFormats.LOWER_ENDPOINT_ABOVE_UPPER_ENDPOINT, a[0], b[0], true);
             }
-            final double denom = covariance.getEntry(0, 0) * SQRT2;
-            final double v0 = (a[0] - means[0]) / denom;
-            final double v1 = (b[0] - means[0]) / denom;
+            final double denom = this.covariance.getEntry(0, 0) * MultivariateNormalDistribution.SQRT2;
+            final double v0 = (a[0] - this.means[0]) / denom;
+            final double v1 = (b[0] - this.means[0]) / denom;
             return 0.5 * Erf.erf(v0, v1);
         }
         else {
@@ -112,7 +113,7 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
             lower = lower.substract(new Matrix(new double[][] { this.means }));
             Matrix upper = new Matrix(new double[][] { b });
             upper = upper.substract(new Matrix(new double[][] { this.means }));
-            final Matrix covarianceMatrix = new Matrix(covariance.getData());
+            final Matrix covarianceMatrix = new Matrix(this.covariance.getData());
             return QSIMVN.cumulativeProbability(5000, covarianceMatrix, lower, upper).getProbability();
         }
     }
@@ -122,7 +123,7 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      */
     @Override
     public double[] getMean() {
-        return MathArrays.copyOf(means);
+        return MathArrays.copyOf(this.means);
     }
 
     /**
@@ -130,30 +131,30 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      */
     @Override
     public double[][] getVariance() {
-        return covariance.getData();
+        return this.covariance.getData();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public double density(double[] values) {
-        if (covarianceInverse == null) {
-            final EigenDecomposition covMatDec = new EigenDecomposition(covariance);
-            covarianceInverse = covMatDec.getSolver().getInverse();
-            covarianceDeterminant = covMatDec.getDeterminant();
+    public double density(final double[] values) {
+        if (this.covarianceInverse == null) {
+            final EigenDecomposition covMatDec = new EigenDecomposition(this.covariance);
+            this.covarianceInverse = covMatDec.getSolver().getInverse();
+            this.covarianceDeterminant = covMatDec.getDeterminant();
         }
 
         final double[] centered = new double[values.length];
         for (int i = 0; i < centered.length; i++) {
-            centered[i] = values[i] - means[i];
+            centered[i] = values[i] - this.means[i];
         }
-        final double[] preMultiplied = covarianceInverse.preMultiply(centered);
+        final double[] preMultiplied = this.covarianceInverse.preMultiply(centered);
         double sum = 0;
         for (int i = 0; i < preMultiplied.length; i++) {
             sum += preMultiplied[i] * centered[i];
         }
-        return FastMath.pow(2 * FastMath.PI, -0.5 * means.length) * FastMath.pow(covarianceDeterminant, -0.5) * FastMath.exp(-0.5 * sum);
+        return FastMath.pow(2 * FastMath.PI, -0.5 * this.means.length) * FastMath.pow(this.covarianceDeterminant, -0.5) * FastMath.exp(-0.5 * sum);
 
     }
 
@@ -161,14 +162,14 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      * {@inheritDoc}
      */
     @Override
-    public void restrict(RealMatrix restrict) {
-        final RealMatrix meansMatrix = restrict.multiply(MatrixUtils.createRealDiagonalMatrix(means)).multiply(restrict.transpose());
+    public void restrict(final RealMatrix restrict) {
+        final RealMatrix meansMatrix = restrict.multiply(MatrixUtils.createRealDiagonalMatrix(this.means)).multiply(restrict.transpose());
         this.means = new double[meansMatrix.getRowDimension()];
         for (int d = 0; d < meansMatrix.getRowDimension(); d++) {
-            means[d] = meansMatrix.getEntry(d, d);
+            this.means[d] = meansMatrix.getEntry(d, d);
         }
-        this.covariance = restrict.multiply(covariance).multiply(restrict.transpose());
-        covarianceInverse = null;
+        this.covariance = restrict.multiply(this.covariance).multiply(restrict.transpose());
+        this.covarianceInverse = null;
     }
 
     /**
@@ -178,24 +179,24 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("𝒩(");
-        if (getDimension() == 1) {
-            sb.append(means[0]);
+        if (this.getDimension() == 1) {
+            sb.append(this.means[0]);
             sb.append(",");
-            sb.append(covariance.getEntry(0, 0));
+            sb.append(this.covariance.getEntry(0, 0));
         }
         else {
-            sb.append(Arrays.toString(means));
+            sb.append(Arrays.toString(this.means));
             sb.append(",[");
-            for (int i = 0; i < covariance.getRowDimension(); i++) {
+            for (int i = 0; i < this.covariance.getRowDimension(); i++) {
                 if (i > 0) {
                     sb.append(",");
                 }
                 sb.append("[");
-                for (int j = 0; j < covariance.getColumnDimension(); j++) {
+                for (int j = 0; j < this.covariance.getColumnDimension(); j++) {
                     if (j > 0) {
                         sb.append(", ");
                     }
-                    sb.append(covariance.getEntry(i, j));
+                    sb.append(this.covariance.getEntry(i, j));
                 }
                 sb.append("]");
             }
@@ -212,8 +213,8 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.covariance == null) ? 0 : this.covariance.hashCode());
-        result = prime * result + Arrays.hashCode(this.means);
+        result = (prime * result) + ((this.covariance == null) ? 0 : this.covariance.hashCode());
+        result = (prime * result) + Arrays.hashCode(this.means);
         return result;
     }
 
@@ -221,17 +222,17 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (this.getClass() != obj.getClass()) {
             return false;
         }
-        MultivariateNormalDistribution other = (MultivariateNormalDistribution) obj;
+        final MultivariateNormalDistribution other = (MultivariateNormalDistribution) obj;
         if (this.covariance == null) {
             if (other.covariance != null) {
                 return false;
@@ -258,9 +259,9 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      * {@inheritDoc}
      */
     @Override
-    public IMultivariateDistribution add(Double number) {
-        RealMatrix thisMean = new Array2DRowRealMatrix(means);
-        RealMatrix thisCovariance = covariance;
+    public IMultivariateDistribution add(final Double number) {
+        final RealMatrix thisMean = new Array2DRowRealMatrix(this.means);
+        final RealMatrix thisCovariance = this.covariance;
         return new MultivariateNormalDistribution(thisMean.scalarAdd(number).getColumn(0), thisCovariance.getData());
 
     }
@@ -269,7 +270,7 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      * {@inheritDoc}
      */
     @Override
-    public IMultivariateDistribution subtract(Double number) {
+    public IMultivariateDistribution subtract(final Double number) {
         return this.add(-number);
     }
 
@@ -277,9 +278,9 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      * {@inheritDoc}
      */
     @Override
-    public IMultivariateDistribution multiply(Double number) {
-        RealMatrix thisMean = new Array2DRowRealMatrix(means);
-        RealMatrix thisCovariance = covariance;
+    public IMultivariateDistribution multiply(final Double number) {
+        final RealMatrix thisMean = new Array2DRowRealMatrix(this.means);
+        final RealMatrix thisCovariance = this.covariance;
         return new MultivariateNormalDistribution(thisMean.scalarMultiply(number).getColumn(0), thisCovariance.scalarMultiply(number * number).getData());
     }
 
@@ -287,7 +288,7 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      * {@inheritDoc}
      */
     @Override
-    public IMultivariateDistribution divide(Double number) {
+    public IMultivariateDistribution divide(final Double number) {
         return this.multiply(1.0 / number);
     }
 
@@ -295,11 +296,11 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      * {@inheritDoc}
      */
     @Override
-    public IMultivariateDistribution add(IMultivariateDistribution other) {
-        RealMatrix otherMean = new Array2DRowRealMatrix(other.getMean());
-        RealMatrix otherCovariance = new Array2DRowRealMatrix(other.getVariance());
-        RealMatrix thisMean = new Array2DRowRealMatrix(means);
-        RealMatrix thisCovariance = covariance;
+    public IMultivariateDistribution add(final IMultivariateDistribution other) {
+        final RealMatrix otherMean = new Array2DRowRealMatrix(other.getMean());
+        final RealMatrix otherCovariance = new Array2DRowRealMatrix(other.getVariance());
+        final RealMatrix thisMean = new Array2DRowRealMatrix(this.means);
+        final RealMatrix thisCovariance = this.covariance;
         return new MultivariateNormalDistribution(thisMean.add(otherMean).getColumn(0), thisCovariance.add(otherCovariance).getData());
     }
 
@@ -307,11 +308,11 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      * {@inheritDoc}
      */
     @Override
-    public IMultivariateDistribution subtract(IMultivariateDistribution other) {
-        RealMatrix otherMean = new Array2DRowRealMatrix(other.getMean());
-        RealMatrix otherCovariance = new Array2DRowRealMatrix(other.getVariance());
-        RealMatrix thisMean = new Array2DRowRealMatrix(means);
-        RealMatrix thisCovariance = covariance;
+    public IMultivariateDistribution subtract(final IMultivariateDistribution other) {
+        final RealMatrix otherMean = new Array2DRowRealMatrix(other.getMean());
+        final RealMatrix otherCovariance = new Array2DRowRealMatrix(other.getVariance());
+        final RealMatrix thisMean = new Array2DRowRealMatrix(this.means);
+        final RealMatrix thisCovariance = this.covariance;
         return new MultivariateNormalDistribution(thisMean.subtract(otherMean).getColumn(0), thisCovariance.add(otherCovariance).getData());
     }
 
@@ -319,7 +320,7 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      * {@inheritDoc}
      */
     @Override
-    public IMultivariateDistribution multiply(IMultivariateDistribution other) {
+    public IMultivariateDistribution multiply(final IMultivariateDistribution other) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -328,17 +329,17 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      * {@inheritDoc}
      */
     @Override
-    public IMultivariateDistribution divide(IMultivariateDistribution other) {
+    public IMultivariateDistribution divide(final IMultivariateDistribution other) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public static void main(String[] args) {
-        double[] means = new double[] { 1.0, 2.0, 3.0 };
-        double[][] covariance = new double[][] { { 1.0, 0.5, 0.5 }, { 0.5, 1.0, 0.5 }, { 0.5, 0.5, 1.0 } };
+    public static void main(final String[] args) {
+        final double[] means = new double[] { 1.0, 2.0, 3.0 };
+        final double[][] covariance = new double[][] { { 1.0, 0.5, 0.5 }, { 0.5, 1.0, 0.5 }, { 0.5, 0.5, 1.0 } };
 
-        MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(means, covariance);
-        Array2DRowRealMatrix restrictMatrix = new Array2DRowRealMatrix(new double[][] { { 1.0, 0.0, 0.0 }, { 0.0, 0.0, 1.0 } });
+        final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(means, covariance);
+        final Array2DRowRealMatrix restrictMatrix = new Array2DRowRealMatrix(new double[][] { { 1.0, 0.0, 0.0 }, { 0.0, 0.0, 1.0 } });
         System.out.println("Distribution: " + distribution);
         System.out.println("Restrict to: " + restrictMatrix);
         distribution.restrict(restrictMatrix);

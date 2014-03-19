@@ -29,6 +29,14 @@ public class ProbabilisticNotOperator extends AbstractProbabilisticUnaryOperator
      * 
      */
     private static final long serialVersionUID = -5355975430336339430L;
+    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN };
+
+    /**
+ * 
+ */
+    public ProbabilisticNotOperator() {
+        super("!", ProbabilisticNotOperator.accTypes, SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN);
+    }
 
     @Override
     public int getPrecedence() {
@@ -36,37 +44,14 @@ public class ProbabilisticNotOperator extends AbstractProbabilisticUnaryOperator
     }
 
     @Override
-    public String getSymbol() {
-        return "!";
-    }
-
-    @Override
     public ProbabilisticBooleanResult getValue() {
-        ProbabilisticBooleanResult input = (ProbabilisticBooleanResult) getInputValue(0);
+        final ProbabilisticBooleanResult input = (ProbabilisticBooleanResult) this.getInputValue(0);
         return new ProbabilisticBooleanResult(input.getDistributions(), 1.0 - input.getProbability());
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN;
     }
 
     @Override
     public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
         return ASSOCIATIVITY.RIGHT_TO_LEFT;
-    }
-
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN };
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > this.getArity() - 1) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
     }
 
 }

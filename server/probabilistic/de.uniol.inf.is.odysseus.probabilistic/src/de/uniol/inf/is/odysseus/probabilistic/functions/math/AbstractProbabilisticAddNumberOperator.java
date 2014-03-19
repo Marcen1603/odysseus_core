@@ -34,10 +34,10 @@ public abstract class AbstractProbabilisticAddNumberOperator extends AbstractPro
 	 */
     private static final long serialVersionUID = 4535153232522764588L;
 
-    public AbstractProbabilisticContinuousPlusNumberOperator(SDFDatatype[][] accTypes) {
-    	super("+", accTypes,SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+    public AbstractProbabilisticAddNumberOperator(final SDFDatatype[][] accTypes) {
+        super("+", accTypes, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
     }
-    
+
     /*
      * 
      * @see de.uniol.inf.is.odysseus.mep.IOperator#getPrecedence()
@@ -58,7 +58,7 @@ public abstract class AbstractProbabilisticAddNumberOperator extends AbstractPro
      */
     protected final IMultivariateDistribution getValueInternal(final MultivariateMixtureDistribution a, final Double b) {
         return a.add(b);
-}
+    }
 
     /*
      * 

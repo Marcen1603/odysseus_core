@@ -41,8 +41,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.rcp.chart.ProbabilisticMapper;
@@ -154,7 +154,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
                     final Object value = probabilisticElement.getAttribute(ProbabilityChart3DDashboardPart.this.positions[i]);
                     if (ProbabilityChart3DDashboardPart.this.isContinuous(i)) {
                         final ProbabilisticDouble continuousAttribute = (ProbabilisticDouble) value;
-                        MultivariateMixtureDistribution distribution = probabilisticElement.getDistribution(continuousAttribute.getDistribution());
+                        final MultivariateMixtureDistribution distribution = probabilisticElement.getDistribution(continuousAttribute.getDistribution());
                         if (distribution.getDimension() > 1) {
                             ProbabilityChart3DDashboardPart.this.getMapper().setup(distribution);
                         }

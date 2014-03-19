@@ -40,14 +40,14 @@ public class TAggregateProbabilisticRule extends AbstractTransformationRule<Aggr
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public void execute(AggregateTIPO<?, ?, ?> operator, TransformationConfiguration config) throws RuleException {
+    public void execute(final AggregateTIPO<?, ?, ?> operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getMetadataMerge());
         ((CombinedMergeFunction) operator.getMetadataMerge()).add(new ProbabilisticMetadataMergeFunction());
     }
 
     @Override
-    public boolean isExecutable(AggregateTIPO<?, ?, ?> operator, TransformationConfiguration config) {
+    public boolean isExecutable(final AggregateTIPO<?, ?, ?> operator, final TransformationConfiguration config) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getMetadataMerge());
         Objects.requireNonNull(config);

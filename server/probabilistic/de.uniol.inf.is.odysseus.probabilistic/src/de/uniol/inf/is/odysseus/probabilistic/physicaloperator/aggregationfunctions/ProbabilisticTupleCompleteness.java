@@ -19,22 +19,22 @@ public class ProbabilisticTupleCompleteness extends Completeness<ProbabilisticTu
      */
     private static final long serialVersionUID = -1459891904889134576L;
 
-    private ProbabilisticTupleCompleteness(boolean partialAggregateInput, String datatype) {
+    private ProbabilisticTupleCompleteness(final boolean partialAggregateInput, final String datatype) {
         super(partialAggregateInput, datatype);
     }
 
-    public static ProbabilisticTupleCompleteness getInstance(boolean partialAggregateInput, String datatype) {
+    public static ProbabilisticTupleCompleteness getInstance(final boolean partialAggregateInput, final String datatype) {
         return new ProbabilisticTupleCompleteness(partialAggregateInput, datatype);
     }
 
     @Override
-    public IPartialAggregate<ProbabilisticTuple<?>> init(ProbabilisticTuple<?> in) {
-        IPartialAggregate<ProbabilisticTuple<?>> pa = new CompletenessPartialAggregate<ProbabilisticTuple<?>>(getCount((IProbabilistic) in.getMetadata()));
+    public IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
+        final IPartialAggregate<ProbabilisticTuple<?>> pa = new CompletenessPartialAggregate<ProbabilisticTuple<?>>(this.getCount((IProbabilistic) in.getMetadata()));
         return pa;
     }
 
     @Override
-    public IPartialAggregate<ProbabilisticTuple<?>> merge(IPartialAggregate<ProbabilisticTuple<?>> p, ProbabilisticTuple<?> toMerge, boolean createNew) {
+    public IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
         CompletenessPartialAggregate<ProbabilisticTuple<?>> pa = null;
         if (createNew) {
             pa = new CompletenessPartialAggregate<ProbabilisticTuple<?>>(((CompletenessPartialAggregate<ProbabilisticTuple<?>>) p));
@@ -42,16 +42,16 @@ public class ProbabilisticTupleCompleteness extends Completeness<ProbabilisticTu
         else {
             pa = (CompletenessPartialAggregate<ProbabilisticTuple<?>>) p;
         }
-        pa.add(getCount((IProbabilistic) toMerge.getMetadata()));
+        pa.add(this.getCount((IProbabilistic) toMerge.getMetadata()));
         return pa;
     }
 
     @Override
-    public ProbabilisticTuple<?> evaluate(IPartialAggregate<ProbabilisticTuple<?>> p) {
-        CompletenessPartialAggregate<ProbabilisticTuple<?>> pa = (CompletenessPartialAggregate<ProbabilisticTuple<?>>) p;
+    public ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
+        final CompletenessPartialAggregate<ProbabilisticTuple<?>> pa = (CompletenessPartialAggregate<ProbabilisticTuple<?>>) p;
 
         @SuppressWarnings("rawtypes")
-        ProbabilisticTuple r = new ProbabilisticTuple(1, false);
+        final ProbabilisticTuple r = new ProbabilisticTuple(1, false);
         r.setAttribute(0, pa.getCompleteness());
         return r;
     }
@@ -62,7 +62,7 @@ public class ProbabilisticTupleCompleteness extends Completeness<ProbabilisticTu
      * @param value
      *            The tuple value
      */
-    private double getCount(IProbabilistic value) {
+    private double getCount(final IProbabilistic value) {
         return value.getExistence();
     }
 }

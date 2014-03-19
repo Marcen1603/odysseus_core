@@ -28,9 +28,8 @@ public class ProbabilisticSmallerOperator extends ProbabilisticSmallerEqualsOper
      */
     private static final long serialVersionUID = -1978828532807864673L;
 
-    public ProbabilisticContinuousSmallerOperator() {
-    	super("<");
+    public ProbabilisticSmallerOperator() {
+        super("<");
     }
-    
 
 }

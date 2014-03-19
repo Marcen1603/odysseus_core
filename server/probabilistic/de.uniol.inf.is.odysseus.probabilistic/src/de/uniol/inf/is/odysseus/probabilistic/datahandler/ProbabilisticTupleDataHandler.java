@@ -322,7 +322,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
                 if (SchemaUtils.isProbabilisticAttribute(attr)) {
                     final int attributeIndex = this.getSchema().indexOf(attr);
                     final int distributionIndex = ((ProbabilisticDouble) attributes[attributeIndex]).getDistribution();
-                    ((MultivariateMixtureDistribution) distribution[distributionIndex]).setAttribute(distributionsDimensions[distributionIndex], attributeIndex);
+                    distribution[distributionIndex].setAttribute(distributionsDimensions[distributionIndex], attributeIndex);
                     distributionsDimensions[distributionIndex]++;
                 }
             }

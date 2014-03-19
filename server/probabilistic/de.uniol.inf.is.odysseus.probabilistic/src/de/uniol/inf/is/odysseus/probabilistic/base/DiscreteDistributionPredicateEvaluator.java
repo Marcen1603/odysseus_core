@@ -20,14 +20,14 @@ public class DiscreteDistributionPredicateEvaluator implements IPredicateEvaluat
     /**
      * Creates a new instances of a predicate evaluator.
      */
-    public DiscreteDistributionPredicateEvaluator(SDFProbabilisticExpression expression, VarHelper[] varHelper, int[] probabilisticAttributePos) {
+    public DiscreteDistributionPredicateEvaluator(final SDFProbabilisticExpression expression, final VarHelper[] varHelper, final int[] probabilisticAttributePos) {
         this.expression = expression;
         this.varHelper = varHelper;
         this.probabilisticAttributePos = probabilisticAttributePos;
     }
 
     @Override
-    public ProbabilisticTuple<? extends IProbabilistic> evaluate(ProbabilisticTuple<? extends IProbabilistic> input) {
+    public ProbabilisticTuple<? extends IProbabilistic> evaluate(final ProbabilisticTuple<? extends IProbabilistic> input) {
         final ProbabilisticTuple<? extends IProbabilistic> output = input.clone();
         // Dummy tuple to hold the different worlds during evaluation
         // final ProbabilisticTuple<? extends IProbabilistic> selectObject =

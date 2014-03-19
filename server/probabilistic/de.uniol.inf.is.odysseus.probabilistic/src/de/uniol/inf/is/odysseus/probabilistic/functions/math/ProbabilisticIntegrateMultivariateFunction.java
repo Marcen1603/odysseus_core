@@ -40,9 +40,9 @@ public class ProbabilisticIntegrateMultivariateFunction extends AbstractIntegrat
             { SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE }, { SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE } };
 
     public ProbabilisticIntegrateMultivariateFunction() {
-    	super(ACC_TYPES);
+        super(ProbabilisticIntegrateMultivariateFunction.ACC_TYPES);
     }
-    
+
     /*
      * 
      * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()

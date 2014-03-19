@@ -85,7 +85,7 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
      * @return A probabilistic tuple with a uniivariate prob. distribution
      */
     private IStreamObject<?> provideSimpleTuple() {
-        MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(new double[] { 2.0 }, new double[][] { { 1.5 } });
+        final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(new double[] { 2.0 }, new double[][] { { 1.5 } });
         final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(1.0, distribution);
         final Object[] attrs = new Object[] { "FirstAttribute", new ProbabilisticDouble(0) };
         mixture.setAttributes(new int[] { 1 });
@@ -101,7 +101,7 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
      * @return A probabilistic tuple with a univariate prob. distribution
      */
     private IStreamObject<?> provideUnivariateTuple() {
-        MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(new double[] { 2.0 }, new double[][] { { 1.5 } });
+        final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(new double[] { 2.0 }, new double[][] { { 1.5 } });
         final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(1.0, distribution);
         final Object[] attrs = new Object[] { "FirstAttribute", new ProbabilisticDouble(0), "ThirdAttribute" };
         mixture.setAttributes(new int[] { 1 });
@@ -117,7 +117,7 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
      * @return A probabilistic tuple with a multivariate prob. distribution
      */
     private IStreamObject<?> provideMultivariateTuple1() {
-        MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(new double[] { 2.0, 3.0 }, new double[] { 2.0, 2.0, 2.0 });
+        final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(new double[] { 2.0, 3.0 }, new double[] { 2.0, 2.0, 2.0 });
         final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(1.0, distribution);
         final Object[] attrs = new Object[] { new ProbabilisticDouble(0), "FirstAttribute", "ThirdAttribute", new ProbabilisticDouble(0) };
         mixture.setAttributes(new int[] { 1, 3 });
@@ -133,7 +133,7 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
      * @return A probabilistic tuple with a multivariate prob. distribution
      */
     private IStreamObject<?> provideMultivariateTuple2() {
-        MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(new double[] { 2.0, 3.0 }, new double[] { 2.0, 2.0, 2.0 });
+        final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(new double[] { 2.0, 3.0 }, new double[] { 2.0, 2.0, 2.0 });
         final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(1.0, distribution);
         final Object[] attrs = new Object[] { "FirstAttribute", new ProbabilisticDouble(0), "ThirdAttribute", new ProbabilisticDouble(0) };
         mixture.setAttributes(new int[] { 1, 3 });
@@ -149,7 +149,7 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
      * @return A probabilistic tuple with a multivariate prob. distribution
      */
     private IStreamObject<?> provideMultivariateTuple3() {
-        MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(new double[] { 2.0, 3.0 }, new double[] { 2.0, 2.0, 2.0 });
+        final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(new double[] { 2.0, 3.0 }, new double[] { 2.0, 2.0, 2.0 });
         final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(1.0, distribution);
         final Object[] attrs = new Object[] { "FirstAttribute", new ProbabilisticDouble(0), "ThirdAttribute", new ProbabilisticDouble(0) };
         mixture.setAttributes(new int[] { 3, 1 });
@@ -165,14 +165,14 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
      * @return A probabilistic tuple with a multivariate prob. distribution
      */
     private IStreamObject<?> provideMultivariateTuple4() {
-        MultivariateNormalDistribution distribution1 = new MultivariateNormalDistribution(new double[] { 2.0 }, new double[][] { { 1.5 } });
+        final MultivariateNormalDistribution distribution1 = new MultivariateNormalDistribution(new double[] { 2.0 }, new double[][] { { 1.5 } });
         final MultivariateMixtureDistribution mixture1 = new MultivariateMixtureDistribution(0.5, distribution1);
 
         mixture1.setAttributes(new int[] { 3 });
         mixture1.setScale(1.0);
         mixture1.setSupport(new Interval[] { new Interval(-3.0, 6.0) });
 
-        MultivariateNormalDistribution distribution2 = new MultivariateNormalDistribution(new double[] { 3.0 }, new double[][] { { 2.5 } });
+        final MultivariateNormalDistribution distribution2 = new MultivariateNormalDistribution(new double[] { 3.0 }, new double[][] { { 2.5 } });
         final MultivariateMixtureDistribution mixture2 = new MultivariateMixtureDistribution(0.5, distribution2);
 
         mixture2.setAttributes(new int[] { 1 });

@@ -34,22 +34,22 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.AbstractCom
  * 
  */
 public class ShowProbabilityChart3D extends AbstractCommand {
-	
-	private static final Logger LOG = LoggerFactory.getLogger(ShowProbabilityChart3D.class);
-	
+
+    private static final Logger LOG = LoggerFactory.getLogger(ShowProbabilityChart3D.class);
+
     @Override
     public final Object execute(final ExecutionEvent event) throws ExecutionException {
-        Collection<IPhysicalOperator> ops = super.getSelectedOperators(event);
+        final Collection<IPhysicalOperator> ops = super.getSelectedOperators(event);
 
-        IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         try {
-        	for( IPhysicalOperator op : ops ) {
-        		final ProbabilityChart3D view = (ProbabilityChart3D) activePage.showView("de.offis.chart.charts.probabilitychart3d", "probabilitychart3d", IWorkbenchPage.VIEW_ACTIVATE);
-        		view.initWithOperator(op);
-        	}
+            for (final IPhysicalOperator op : ops) {
+                final ProbabilityChart3D view = (ProbabilityChart3D) activePage.showView("de.offis.chart.charts.probabilitychart3d", "probabilitychart3d", IWorkbenchPage.VIEW_ACTIVATE);
+                view.initWithOperator(op);
+            }
         }
-        catch (PartInitException e) {
-        	LOG.error("Could not open probability chart 3d" ,e);
+        catch (final PartInitException e) {
+            ShowProbabilityChart3D.LOG.error("Could not open probability chart 3d", e);
             e.printStackTrace();
         }
 

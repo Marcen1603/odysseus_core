@@ -19,13 +19,13 @@ public class DeterministicPredicateEvaluator implements IPredicateEvaluator {
     /**
      * Creates a new instances of a predicate evaluator.
      */
-    public DeterministicPredicateEvaluator(SDFProbabilisticExpression expression, VarHelper[] varHelper) {
+    public DeterministicPredicateEvaluator(final SDFProbabilisticExpression expression, final VarHelper[] varHelper) {
         this.expression = expression;
         this.varHelper = varHelper;
     }
 
     @Override
-	public ProbabilisticTuple<? extends IProbabilistic> evaluate(ProbabilisticTuple<? extends IProbabilistic> input) {
+    public ProbabilisticTuple<? extends IProbabilistic> evaluate(final ProbabilisticTuple<? extends IProbabilistic> input) {
         final ProbabilisticTuple<? extends IProbabilistic> output = input.clone();
         // double jointProbability = ((IProbabilistic)
         // input.getMetadata()).getExistence();
@@ -56,9 +56,10 @@ public class DeterministicPredicateEvaluator implements IPredicateEvaluator {
         // final boolean expr = (boolean) expression.getValue();
         //
         // if (!expr) {
-//            jointProbability = 0.0;
-//            ((IProbabilistic) output.getMetadata()).setExistence(jointProbability);
-//        }
+        // jointProbability = 0.0;
+        // ((IProbabilistic)
+        // output.getMetadata()).setExistence(jointProbability);
+        // }
         return output;
     }
 

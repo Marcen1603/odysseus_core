@@ -20,7 +20,6 @@ import java.util.Arrays;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -36,13 +35,13 @@ public class ProbabilisticGreaterEqualsOperatorVector extends AbstractProbabilis
 	 */
     private static final long serialVersionUID = -9122605635777338549L;
 
-    public ProbabilisticContinuousGreaterEqualsOperatorVector() {
-    	this(">=");
+    public ProbabilisticGreaterEqualsOperatorVector() {
+        this(">=");
     }
-    
-    protected ProbabilisticContinuousGreaterEqualsOperatorVector(String symbol) {
-    	super(symbol, ACC_TYPES);
-	}
+
+    protected ProbabilisticGreaterEqualsOperatorVector(final String symbol) {
+        super(symbol, ProbabilisticGreaterEqualsOperatorVector.ACC_TYPES);
+    }
 
     /**
      * 
@@ -77,6 +76,5 @@ public class ProbabilisticGreaterEqualsOperatorVector extends AbstractProbabilis
      */
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE },
             { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE } };
-
 
 }

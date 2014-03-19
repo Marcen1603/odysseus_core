@@ -124,9 +124,11 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
             if (operator instanceof ProbabilisticJoinTIPO) {
                 final IPredicate<?> predicate = operator.getPredicate();
                 final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-//                IF (SCHEMAUTILS.CONTAINSDISCRETEPROBABILISTICATTRIBUTES(ATTRIBUTES)) {
-//                    RETURN TRUE;
-//                }
+                // IF
+                // (SCHEMAUTILS.CONTAINSDISCRETEPROBABILISTICATTRIBUTES(ATTRIBUTES))
+                // {
+                // RETURN TRUE;
+                // }
             }
         }
         return false;

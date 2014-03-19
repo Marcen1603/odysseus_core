@@ -32,6 +32,14 @@ public class ProbabilisticOrOperator extends AbstractProbabilisticBinaryOperator
      * 
      */
     private static final long serialVersionUID = -5335479850255317776L;
+    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN };
+
+    /**
+ * 
+ */
+    public ProbabilisticOrOperator() {
+        super("||", ProbabilisticOrOperator.accTypes, SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN);
+    }
 
     @Override
     public boolean isCommutative() {
@@ -44,12 +52,12 @@ public class ProbabilisticOrOperator extends AbstractProbabilisticBinaryOperator
     }
 
     @Override
-    public boolean isLeftDistributiveWith(IOperator<ProbabilisticBooleanResult> operator) {
+    public boolean isLeftDistributiveWith(final IOperator<ProbabilisticBooleanResult> operator) {
         return operator.getClass() == AndOperator.class;
     }
 
     @Override
-    public boolean isRightDistributiveWith(IOperator<ProbabilisticBooleanResult> operator) {
+    public boolean isRightDistributiveWith(final IOperator<ProbabilisticBooleanResult> operator) {
         return operator.getClass() == AndOperator.class;
     }
 
@@ -64,38 +72,15 @@ public class ProbabilisticOrOperator extends AbstractProbabilisticBinaryOperator
     }
 
     @Override
-    public String getSymbol() {
-        return "||";
-    }
-
-    @Override
     public ProbabilisticBooleanResult getValue() {
-        ProbabilisticBooleanResult left = (ProbabilisticBooleanResult) getInputValue(0);
-        ProbabilisticBooleanResult right = (ProbabilisticBooleanResult) getInputValue(1);
+        final ProbabilisticBooleanResult left = (ProbabilisticBooleanResult) this.getInputValue(0);
+        final ProbabilisticBooleanResult right = (ProbabilisticBooleanResult) this.getInputValue(1);
         if (left.getProbability() >= right.getProbability()) {
             return left;
         }
         else {
             return right;
         }
-    }
-
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN;
-    }
-
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN };
-
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos > this.getArity() - 1) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-        }
-        return accTypes;
     }
 
 }

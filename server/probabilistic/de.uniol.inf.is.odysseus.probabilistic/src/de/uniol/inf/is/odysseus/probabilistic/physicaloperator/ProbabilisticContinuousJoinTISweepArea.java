@@ -98,9 +98,9 @@ public class ProbabilisticContinuousJoinTISweepArea<K extends IProbabilisticTime
      * {@inheritDoc}
      */
     @Override
-    public void setQueryPredicate(IPredicate<? super T> updatePredicate) {
+    public void setQueryPredicate(final IPredicate<? super T> updatePredicate) {
         super.setQueryPredicate(updatePredicate);
-        init(null, getQueryPredicate());
+        this.init(null, this.getQueryPredicate());
     }
 
     /*
@@ -323,7 +323,7 @@ public class ProbabilisticContinuousJoinTISweepArea<K extends IProbabilisticTime
                 for (int j = 0; j < this.variables[i].length; ++j) {
                     Object attribute = outputVal.getAttribute(this.variables[i][j].getPos());
                     if (attribute.getClass() == ProbabilisticDouble.class) {
-                        int index = ((ProbabilisticDouble) attribute).getDistribution();
+                        final int index = ((ProbabilisticDouble) attribute).getDistribution();
                         attribute = outputVal.getDistribution(index);
                         scale = ((MultivariateMixtureDistribution) attribute).getScale();
                         // FIXME What happens if we have more than one
@@ -338,7 +338,7 @@ public class ProbabilisticContinuousJoinTISweepArea<K extends IProbabilisticTime
                 }
 
                 this.expressions[i].bindMetaAttribute(outputVal.getMetadata());
-               // this.expressions[i].bindDistributions(outputVal.getDistributions());
+                // this.expressions[i].bindDistributions(outputVal.getDistributions());
                 this.expressions[i].bindAdditionalContent(outputVal.getAdditionalContent());
                 this.expressions[i].bindVariables(values);
 
@@ -366,8 +366,8 @@ public class ProbabilisticContinuousJoinTISweepArea<K extends IProbabilisticTime
     }
 
     @SuppressWarnings({ "unused", "unchecked" })
-    private T evaulateAndOperator(T input) {
-        T output = (T) input.clone();
+    private T evaulateAndOperator(final T input) {
+        final T output = (T) input.clone();
         // call first expression with output and store the result in output
         // again
         // Call second expression with output and store the result in output
@@ -377,9 +377,9 @@ public class ProbabilisticContinuousJoinTISweepArea<K extends IProbabilisticTime
     }
 
     @SuppressWarnings({ "unused", "unchecked" })
-    private T evaulateOrOperator(T input) {
-        T a = (T) input.clone();
-        T b = (T) input.clone();
+    private T evaulateOrOperator(final T input) {
+        final T a = (T) input.clone();
+        final T b = (T) input.clone();
         // call first expression with a and store the result in a again
         // Call second expression with b and store the result in b again
         if (a.getMetadata().getExistence() > b.getMetadata().getExistence()) {

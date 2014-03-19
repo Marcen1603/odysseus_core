@@ -19,8 +19,6 @@ import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnNestAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticDiscreteUnNestPO;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
@@ -47,8 +45,8 @@ public class TProbabilisticDiscreteUnNestAORule extends TUnnestAORule {
     @Override
     public final void execute(final UnNestAO operator, final TransformationConfiguration config) {
         Objects.requireNonNull(operator);
-        Objects.requireNonNull(config);   
-     
+        Objects.requireNonNull(config);
+
         final ProbabilisticDiscreteUnNestPO<?> po = new ProbabilisticDiscreteUnNestPO<IProbabilisticTimeInterval>(operator.getAttributePosition());
         this.defaultExecute(operator, po, config, true, true);
     }
@@ -70,11 +68,13 @@ public class TProbabilisticDiscreteUnNestAORule extends TUnnestAORule {
     public final boolean isExecutable(final UnNestAO operator, final TransformationConfiguration config) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getInputSchema());
-        Objects.requireNonNull(config);   
-         if (operator.isAllPhysicalInputSet()) {
-//            if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-//                return SchemaUtils.isDiscreteProbabilisticAttribute(operator.getInputSchema().get(operator.getAttributePosition()));
-//            }
+        Objects.requireNonNull(config);
+        if (operator.isAllPhysicalInputSet()) {
+            // if (operator.getInputSchema().getType() ==
+            // ProbabilisticTuple.class) {
+            // return
+            // SchemaUtils.isDiscreteProbabilisticAttribute(operator.getInputSchema().get(operator.getAttributePosition()));
+            // }
         }
         return false;
     }

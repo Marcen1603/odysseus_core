@@ -122,13 +122,13 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 
             // Construct the multivariate distribution
             final BatchEMTISweepArea emArea = (BatchEMTISweepArea) this.area;
-            MixtureMultivariateNormalDistribution model = emArea.getModel();
+            final MixtureMultivariateNormalDistribution model = emArea.getModel();
             if (model != null) {
-                double[] weights = new double[model.getComponents().size()];
-                List<IMultivariateDistribution> distr = new ArrayList<IMultivariateDistribution>(model.getComponents().size());
+                final double[] weights = new double[model.getComponents().size()];
+                final List<IMultivariateDistribution> distr = new ArrayList<IMultivariateDistribution>(model.getComponents().size());
 
                 for (int i = 0; i < model.getComponents().size(); i++) {
-                    Pair<Double, org.apache.commons.math3.distribution.MultivariateNormalDistribution> component = model.getComponents().get(i);
+                    final Pair<Double, org.apache.commons.math3.distribution.MultivariateNormalDistribution> component = model.getComponents().get(i);
                     weights[i] = component.getKey();
                     distr.add(new MultivariateNormalDistribution(component.getValue().getMeans(), component.getValue().getCovariances().getData()));
                 }

@@ -156,14 +156,14 @@ public class ProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPip
         double jointProbability = ((IProbabilistic) outputVal.getMetadata()).getExistence();
         synchronized (this.expressions) {
             for (int i = 0; i < this.expressions.length; ++i) {
-                SDFProbabilisticExpression expression = this.expressions[i];
+                final SDFProbabilisticExpression expression = this.expressions[i];
                 final Object[] values = new Object[this.variables[i].length];
-                List<Integer> positions = new ArrayList<Integer>(this.variables[i].length);
+                final List<Integer> positions = new ArrayList<Integer>(this.variables[i].length);
                 for (int j = 0; j < this.variables[i].length; ++j) {
                     positions.add(j, this.variables[i][j].getPos());
                     Object attribute = outputVal.getAttribute(this.variables[i][j].getPos());
                     if (attribute.getClass() == ProbabilisticDouble.class) {
-                        int index = ((ProbabilisticDouble) attribute).getDistribution();
+                        final int index = ((ProbabilisticDouble) attribute).getDistribution();
                         attribute = outputVal.getDistribution(index);
                     }
                     values[j] = attribute;
@@ -180,9 +180,9 @@ public class ProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPip
                 if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN)) {
                     final ProbabilisticBooleanResult result = (ProbabilisticBooleanResult) expr;
                     jointProbability *= result.getProbability();
-                    for (IMultivariateDistribution distr : result.getDistributions()) {
-                        MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) distr;
-                        int index = ((ProbabilisticDouble) outputVal.getAttribute(distribution.getAttribute(0))).getDistribution();
+                    for (final IMultivariateDistribution distr : result.getDistributions()) {
+                        final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) distr;
+                        final int index = ((ProbabilisticDouble) outputVal.getAttribute(distribution.getAttribute(0))).getDistribution();
                         outputVal.setDistribution(index, distribution);
 
                     }

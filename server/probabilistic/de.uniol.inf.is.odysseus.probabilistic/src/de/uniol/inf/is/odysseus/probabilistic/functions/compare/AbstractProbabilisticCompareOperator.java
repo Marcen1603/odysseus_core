@@ -3,8 +3,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.functions.compare;
 
-import org.apache.commons.math3.linear.RealVector;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
@@ -24,13 +22,13 @@ abstract public class AbstractProbabilisticCompareOperator extends AbstractProba
      */
     private static final long serialVersionUID = -7850744519118122850L;
 
-   public AbstractProbabilisticContinuousCompareOperator(String symbol,SDFDatatype[][] accTypes) {
-    	super(symbol,accTypes, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+    public AbstractProbabilisticCompareOperator(final String symbol, final SDFDatatype[][] accTypes) {
+        super(symbol, accTypes, SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN);
     }
 
     protected final ProbabilisticBooleanResult getValueInternal(final MultivariateMixtureDistribution a, final double[] lowerBound, final double[] upperBound) {
         final double probability = a.probability(lowerBound, upperBound);
-        MultivariateMixtureDistribution result = a.clone();
+        final MultivariateMixtureDistribution result = a.clone();
         if (probability == 0.0) {
             result.setScale(Double.POSITIVE_INFINITY);
         }

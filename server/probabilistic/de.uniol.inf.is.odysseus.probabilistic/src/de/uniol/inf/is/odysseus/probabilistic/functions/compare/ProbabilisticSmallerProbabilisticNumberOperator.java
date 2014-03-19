@@ -14,8 +14,8 @@ public class ProbabilisticSmallerProbabilisticNumberOperator extends Probabilist
      */
     private static final long serialVersionUID = 9197974946216206256L;
 
-    public ProbabilisticContinuousSmallerProbabilisticNumberOperator() {
-    	super("<");
+    public ProbabilisticSmallerProbabilisticNumberOperator() {
+        super("<");
     }
-    
+
 }

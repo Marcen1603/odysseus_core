@@ -171,7 +171,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
     /**
      * @param pos
      */
-    public void bindPositions(List<Integer> positions) {
+    public void bindPositions(final List<Integer> positions) {
         if ((this.getMEPExpression() instanceof Constant) || (this.getMEPExpression() instanceof Variable)) {
             return;
         }

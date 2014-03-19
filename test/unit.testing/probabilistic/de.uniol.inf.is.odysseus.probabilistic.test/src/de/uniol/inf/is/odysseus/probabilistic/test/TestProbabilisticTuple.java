@@ -23,9 +23,9 @@ import org.testng.annotations.Test;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 
 /**
@@ -88,37 +88,34 @@ public class TestProbabilisticTuple {
      */
     @DataProvider(name = "tuple")
     public final Object[][] provideTuple() {
-        MultivariateNormalDistribution distribution3D1 = new MultivariateNormalDistribution(new double[] { 3.0, 6.0, 9.0 }, new double[][] { { 1.0, 0.3, 0.3 }, { 0.3, 1.0, 0.3 },
+        final MultivariateNormalDistribution distribution3D1 = new MultivariateNormalDistribution(new double[] { 3.0, 6.0, 9.0 }, new double[][] { { 1.0, 0.3, 0.3 }, { 0.3, 1.0, 0.3 },
                 { 0.3, 0.3, 1.0 } });
-        MultivariateNormalDistribution distribution3D2 = new MultivariateNormalDistribution(new double[] { -3.0, -6.0, -9.0 }, new double[][] { { 1.0, 0.3, 0.3 }, { 0.3, 1.0, 0.3 },
+        final MultivariateNormalDistribution distribution3D2 = new MultivariateNormalDistribution(new double[] { -3.0, -6.0, -9.0 }, new double[][] { { 1.0, 0.3, 0.3 }, { 0.3, 1.0, 0.3 },
                 { 0.3, 0.3, 1.0 } });
 
-        MultivariateNormalDistribution distribution2D1 = new MultivariateNormalDistribution(new double[] { 2.0, 4.0 }, new double[][] { { 1.0, 0.2 }, { 0.2, 1.0 } });
-        MultivariateNormalDistribution distribution2D2 = new MultivariateNormalDistribution(new double[] { -2.0, -4.0 }, new double[][] { { 1.0, 0.2 }, { 0.2, 1.0 } });
+        final MultivariateNormalDistribution distribution2D1 = new MultivariateNormalDistribution(new double[] { 2.0, 4.0 }, new double[][] { { 1.0, 0.2 }, { 0.2, 1.0 } });
+        final MultivariateNormalDistribution distribution2D2 = new MultivariateNormalDistribution(new double[] { -2.0, -4.0 }, new double[][] { { 1.0, 0.2 }, { 0.2, 1.0 } });
 
-        MultivariateNormalDistribution distribution1D1 = new MultivariateNormalDistribution(new double[] { 1.0 }, new double[][] { { 1.0 } });
-        MultivariateNormalDistribution distribution1D2 = new MultivariateNormalDistribution(new double[] { -1.0 }, new double[][] { { 1.0 } });
+        final MultivariateNormalDistribution distribution1D1 = new MultivariateNormalDistribution(new double[] { 1.0 }, new double[][] { { 1.0 } });
+        final MultivariateNormalDistribution distribution1D2 = new MultivariateNormalDistribution(new double[] { -1.0 }, new double[][] { { 1.0 } });
 
-        MultivariateMixtureDistribution mixture3D = new MultivariateMixtureDistribution(new double[] { 0.75, 0.25 }, new IMultivariateDistribution[] { distribution3D1,
-                distribution3D2 });
+        final MultivariateMixtureDistribution mixture3D = new MultivariateMixtureDistribution(new double[] { 0.75, 0.25 }, new IMultivariateDistribution[] { distribution3D1, distribution3D2 });
         mixture3D.setAttributes(new int[] { 1, 3, 5 });
-        MultivariateMixtureDistribution mixture2D = new MultivariateMixtureDistribution(new double[] { 0.75, 0.25 }, new IMultivariateDistribution[] { distribution2D1,
-                distribution2D2 });
+        final MultivariateMixtureDistribution mixture2D = new MultivariateMixtureDistribution(new double[] { 0.75, 0.25 }, new IMultivariateDistribution[] { distribution2D1, distribution2D2 });
         mixture2D.setAttributes(new int[] { 2, 4 });
-        MultivariateMixtureDistribution mixture1D = new MultivariateMixtureDistribution(new double[] { 0.75, 0.25 }, new IMultivariateDistribution[] { distribution1D1,
-                distribution1D2 });
+        final MultivariateMixtureDistribution mixture1D = new MultivariateMixtureDistribution(new double[] { 0.75, 0.25 }, new IMultivariateDistribution[] { distribution1D1, distribution1D2 });
         mixture1D.setAttributes(new int[] { 0 });
 
-        ProbabilisticTuple<?> tuple3D = new ProbabilisticTuple<>(new Object[] { "zero", new ProbabilisticDouble(0), "two", new ProbabilisticDouble(0), "four",
-                new ProbabilisticDouble(0), "six" }, new MultivariateMixtureDistribution[] { mixture3D }, true);
-        ProbabilisticTuple<?> tuple2D = new ProbabilisticTuple<>(new Object[] { "zero", "one", new ProbabilisticDouble(0), "three", new ProbabilisticDouble(0), "five", "six" },
+        final ProbabilisticTuple<?> tuple3D = new ProbabilisticTuple<>(
+                new Object[] { "zero", new ProbabilisticDouble(0), "two", new ProbabilisticDouble(0), "four", new ProbabilisticDouble(0), "six" }, new MultivariateMixtureDistribution[] { mixture3D },
+                true);
+        final ProbabilisticTuple<?> tuple2D = new ProbabilisticTuple<>(new Object[] { "zero", "one", new ProbabilisticDouble(0), "three", new ProbabilisticDouble(0), "five", "six" },
                 new MultivariateMixtureDistribution[] { mixture2D }, true);
-        ProbabilisticTuple<?> tuple1D = new ProbabilisticTuple<>(new Object[] { new ProbabilisticDouble(0), "one", "two", "three", "four", "five", "six" },
+        final ProbabilisticTuple<?> tuple1D = new ProbabilisticTuple<>(new Object[] { new ProbabilisticDouble(0), "one", "two", "three", "four", "five", "six" },
                 new MultivariateMixtureDistribution[] { mixture1D }, true);
 
-        ProbabilisticTuple<?> tuple3D2D = new ProbabilisticTuple<>(new Object[] { "zero", new ProbabilisticDouble(0), new ProbabilisticDouble(1),
-                new ProbabilisticDouble(0), new ProbabilisticDouble(1), new ProbabilisticDouble(0), "six" }, new MultivariateMixtureDistribution[] {
-                mixture3D, mixture2D }, true);
+        final ProbabilisticTuple<?> tuple3D2D = new ProbabilisticTuple<>(new Object[] { "zero", new ProbabilisticDouble(0), new ProbabilisticDouble(1), new ProbabilisticDouble(0),
+                new ProbabilisticDouble(1), new ProbabilisticDouble(0), "six" }, new MultivariateMixtureDistribution[] { mixture3D, mixture2D }, true);
 
         return new Object[][] { { tuple3D.clone(), new int[] { 0, 2, 3 }, tuple3D.clone() }, { tuple2D.clone(), new int[] { 1, 2, 3 }, tuple2D.clone() },
                 { tuple1D.clone(), new int[] { 0, 2, 3 }, tuple1D.clone() }, { tuple3D2D.clone(), new int[] { 0, 2, 3 }, tuple3D2D.clone() } };

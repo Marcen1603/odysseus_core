@@ -35,9 +35,9 @@ public class BhattacharyyaDistanceFunctionVector extends AbstractBhattacharyyaDi
             { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE } };
 
     public BhattacharyyaDistanceFunctionVector() {
-    	super(ACC_TYPES);
+        super(BhattacharyyaDistanceFunctionVector.ACC_TYPES);
     }
-   
+
     /**
      * 
      * {@inheritDoc}

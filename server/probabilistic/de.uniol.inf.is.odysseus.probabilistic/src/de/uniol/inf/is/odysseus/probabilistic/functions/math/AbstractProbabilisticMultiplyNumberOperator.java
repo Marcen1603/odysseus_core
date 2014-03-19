@@ -34,10 +34,10 @@ public abstract class AbstractProbabilisticMultiplyNumberOperator extends Abstra
 	 */
     private static final long serialVersionUID = 395701154091726221L;
 
-    public AbstractProbabilisticContinuousMultiplicationNumberOperator(SDFDatatype[][] accTypes) {
-    	super("*",accTypes,SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+    public AbstractProbabilisticMultiplyNumberOperator(final SDFDatatype[][] accTypes) {
+        super("*", accTypes, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
     }
-    
+
     /*
      * 
      * @see de.uniol.inf.is.odysseus.mep.IOperator#getPrecedence()
@@ -58,15 +58,6 @@ public abstract class AbstractProbabilisticMultiplyNumberOperator extends Abstra
      */
     protected final IMultivariateDistribution getValueInternal(final MultivariateMixtureDistribution a, final Double b) {
         return a.multiply(b);
-    }
-
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-     */
-    @Override
-    public final SDFDatatype getReturnType() {
-        return SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE;
     }
 
     /*

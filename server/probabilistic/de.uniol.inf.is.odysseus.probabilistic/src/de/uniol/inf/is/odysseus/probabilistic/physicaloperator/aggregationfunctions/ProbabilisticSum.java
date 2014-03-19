@@ -116,7 +116,7 @@ public class ProbabilisticSum extends AbstractAggregateFunction<ProbabilisticTup
     public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
         final SumPartialAggregate<ProbabilisticTuple<?>> pa = (SumPartialAggregate<ProbabilisticTuple<?>>) p;
         final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, 1, true);
-        MultivariateMixtureDistribution sum = pa.getSum();
+        final MultivariateMixtureDistribution sum = pa.getSum();
         r.setDistribution(0, sum);
         sum.setAttribute(0, 0);
         r.setAttribute(0, new ProbabilisticDouble(0));

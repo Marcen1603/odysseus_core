@@ -19,13 +19,13 @@ public class ContinuousDistributionPredicateEvaluator implements IPredicateEvalu
     /**
      * Creates a new instances of a predicate evaluator.
      */
-    public ContinuousDistributionPredicateEvaluator(SDFProbabilisticExpression expression, VarHelper[] varHelper) {
+    public ContinuousDistributionPredicateEvaluator(final SDFProbabilisticExpression expression, final VarHelper[] varHelper) {
         this.expression = expression;
         this.varHelper = varHelper;
     }
 
     @Override
-    public ProbabilisticTuple<? extends IProbabilistic> evaluate(ProbabilisticTuple<? extends IProbabilistic> input) {
+    public ProbabilisticTuple<? extends IProbabilistic> evaluate(final ProbabilisticTuple<? extends IProbabilistic> input) {
         final ProbabilisticTuple<? extends IProbabilistic> output = input.clone();
         // double jointProbability = ((IProbabilistic)
         // input.getMetadata()).getExistence();

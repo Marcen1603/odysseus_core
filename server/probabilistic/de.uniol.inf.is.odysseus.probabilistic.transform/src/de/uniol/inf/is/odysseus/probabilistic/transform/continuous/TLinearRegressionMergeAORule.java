@@ -54,8 +54,8 @@ public class TLinearRegressionMergeAORule extends AbstractTransformationRule<Lin
     @Override
     public final void execute(final LinearRegressionMergeAO operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
-       Objects.requireNonNull(config);
-           final IPhysicalOperator linearRegressionMergePO = new LinearRegressionMergePO<ITimeInterval>(operator.getInputSchema(), operator.determineDependentList(), operator.determineExplanatoryList(),
+        Objects.requireNonNull(config);
+        final IPhysicalOperator linearRegressionMergePO = new LinearRegressionMergePO<ITimeInterval>(operator.getInputSchema(), operator.determineDependentList(), operator.determineExplanatoryList(),
                 operator.getRegressionCoefficientsPos(), operator.getResidualPos());
         this.defaultExecute(operator, linearRegressionMergePO, config, true, true);
     }
@@ -72,7 +72,7 @@ public class TLinearRegressionMergeAORule extends AbstractTransformationRule<Lin
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getInputSchema());
         Objects.requireNonNull(config);
-         if (operator.isAllPhysicalInputSet()) {
+        if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 return true;
             }

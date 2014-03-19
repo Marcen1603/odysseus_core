@@ -4,12 +4,10 @@
 package de.uniol.inf.is.odysseus.probabilistic.functions.compare;
 
 import java.util.Arrays;
-import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -23,15 +21,13 @@ public class ProbabilisticGreaterEqualsProbabilisticNumberOperator extends Abstr
      */
     private static final long serialVersionUID = -3834057191681240434L;
 
-    public ProbabilisticContinuousGreaterEqualsProbabilisticNumberOperator() {
-    	this(">=");
+    public ProbabilisticGreaterEqualsProbabilisticNumberOperator() {
+        this(">=");
     }
 
-    protected ProbabilisticContinuousGreaterEqualsProbabilisticNumberOperator(String symbol) {
-    	super(symbol,ACC_TYPES);
+    protected ProbabilisticGreaterEqualsProbabilisticNumberOperator(final String symbol) {
+        super(symbol, ProbabilisticGreaterEqualsProbabilisticNumberOperator.ACC_TYPES);
     }
-    
-  
 
     /**
      * 
@@ -57,10 +53,10 @@ public class ProbabilisticGreaterEqualsProbabilisticNumberOperator extends Abstr
         final double[] upperBound = new double[a.getDimension()];
         Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
 
-        ProbabilisticBooleanResult result = this.getValueInternal(a, lowerBound, upperBound);
-        double scale = ((MultivariateMixtureDistribution) result.getDistribution()).getScale();
+        final ProbabilisticBooleanResult result = this.getValueInternal(a, lowerBound, upperBound);
+        final double scale = ((MultivariateMixtureDistribution) result.getDistribution()).getScale();
         // Assume symmetry
-        ProbabilisticBooleanResult scaledResult = new ProbabilisticBooleanResult(result.getDistribution(), result.getProbability() * 0.5);
+        final ProbabilisticBooleanResult scaledResult = new ProbabilisticBooleanResult(result.getDistribution(), result.getProbability() * 0.5);
         ((MultivariateMixtureDistribution) scaledResult.getDistribution()).setScale(scale * 0.5);
         return scaledResult;
     }
@@ -69,6 +65,5 @@ public class ProbabilisticGreaterEqualsProbabilisticNumberOperator extends Abstr
      * Accepted data types.
      */
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS, SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS };
-
 
 }

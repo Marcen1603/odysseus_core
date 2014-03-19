@@ -186,16 +186,18 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
             return new Interval(Double.NaN, Double.NaN);
         }
         else if (0.0 <= other.inf()) {
-            final double inf = Math.min(Math.min(divide(this.inf(), other.inf()), divide(this.inf(), other.sup())), Math.min(divide(this.sup(), other.inf()), divide(this.sup(), other.sup())));
-            final double sup = Math.max(Math.max(divide(this.inf(), other.inf()), divide(this.inf(), other.sup())), Math.max(divide(this.sup(), other.inf()), divide(this.sup(), other.sup())));
+            final double inf = Math.min(Math.min(this.divide(this.inf(), other.inf()), this.divide(this.inf(), other.sup())),
+                    Math.min(this.divide(this.sup(), other.inf()), this.divide(this.sup(), other.sup())));
+            final double sup = Math.max(Math.max(this.divide(this.inf(), other.inf()), this.divide(this.inf(), other.sup())),
+                    Math.max(this.divide(this.sup(), other.inf()), this.divide(this.sup(), other.sup())));
             return new Interval(inf, sup);
         }
         else if (other.sup() <= 0.0) {
             return (new Interval(-this.sup(), -this.inf())).divide(new Interval(-other.sup(), -other.inf()));
         }
         else {
-            Interval left = this.divide(new Interval(other.inf(), 0.0));
-            Interval right = this.divide(new Interval(0.0, other.sup()));
+            final Interval left = this.divide(new Interval(other.inf(), 0.0));
+            final Interval right = this.divide(new Interval(0.0, other.sup()));
             return left.union(right);
         }
     }

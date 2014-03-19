@@ -16,8 +16,8 @@
 package de.uniol.inf.is.odysseus.probabilistic.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -35,8 +35,8 @@ public class ProbabilisticAddNumberLHSOperator extends AbstractProbabilisticAddN
      */
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.NUMBERS, { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE } };
 
-    public ProbabilisticContinuousPlusNumberLHSOperator() {
-    	super(ACC_TYPES);
+    public ProbabilisticAddNumberLHSOperator() {
+        super(ProbabilisticAddNumberLHSOperator.ACC_TYPES);
     }
 
     /*

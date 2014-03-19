@@ -34,8 +34,8 @@ public class ProbabilisticSubtractOperator extends AbstractProbabilisticBinaryOp
 	 */
     private static final long serialVersionUID = 3516509026688087365L;
 
-    public ProbabilisticContinuousMinusOperator() {
-    	super("-",ACC_TYPES,SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+    public ProbabilisticSubtractOperator() {
+        super("-", ProbabilisticSubtractOperator.ACC_TYPES, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
     }
 
     /*
@@ -132,6 +132,5 @@ public class ProbabilisticSubtractOperator extends AbstractProbabilisticBinaryOp
      * Accepted data types.
      */
     public static final SDFDatatype[] ACC_TYPES = SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS;
-
 
 }

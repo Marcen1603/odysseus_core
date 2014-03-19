@@ -42,7 +42,8 @@ public class TProbabilisticProjectAORule extends TProjectAORule {
      */
     @Override
     public final void execute(final ProjectAO operator, final TransformationConfiguration config) throws RuleException {
-        // The probabilistic tuple overrides the restrict function of the relational tuple.
+        // The probabilistic tuple overrides the restrict function of the
+        // relational tuple.
         super.execute(operator, config);
     }
 

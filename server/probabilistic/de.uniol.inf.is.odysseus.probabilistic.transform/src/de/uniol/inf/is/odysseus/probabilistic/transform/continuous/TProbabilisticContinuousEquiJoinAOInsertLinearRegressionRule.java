@@ -37,7 +37,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
-import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.logicaloperator.LinearRegressionAO;
@@ -108,9 +107,11 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
             if ((operator.getInputSchema(0).getType() == ProbabilisticTuple.class) || (operator.getInputSchema(1).getType() == ProbabilisticTuple.class)) {
                 if (!(operator instanceof LeftJoinAO)) {
 
-//                    if (!SchemaUtils.containsContinuousProbabilisticAttributes(operator.getPredicate().getAttributes())) {
-//                        return false;
-//                    }
+                    // if
+                    // (!SchemaUtils.containsContinuousProbabilisticAttributes(operator.getPredicate().getAttributes()))
+                    // {
+                    // return false;
+                    // }
                     final SDFExpression expr = this.getExpression(operator);
 
                     if (PredicateUtils.isEquiExpression(expr.getMEPExpression())) {
@@ -182,9 +183,11 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
 
     private boolean isContinuousEquiJoin(final ILogicalOperator operator) {
         final SDFExpression expr = this.getExpression(operator);
-//        if (PredicateUtils.isEquiContinuousExpression(expr.getMEPExpression())) {
-//            return true;
-//        }
+        // if
+        // (PredicateUtils.isEquiContinuousExpression(expr.getMEPExpression()))
+        // {
+        // return true;
+        // }
         return false;
     }
 
@@ -244,12 +247,16 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
         final Set<SDFAttribute> explanatoryList = new HashSet<SDFAttribute>();
         for (final SDFAttribute leftAttr : attributes.keySet()) {
             for (final SDFAttribute rightAttr : attributes.get(leftAttr)) {
-//                if ((leftAttr.getDatatype() instanceof SDFProbabilisticDatatype) && (((SDFProbabilisticDatatype) leftAttr.getDatatype()).isContinuous())) {
-//                    dependentList.add(rightAttr);
-//                }
-//                if ((rightAttr.getDatatype() instanceof SDFProbabilisticDatatype) && (((SDFProbabilisticDatatype) rightAttr.getDatatype()).isContinuous())) {
-//                    explanatoryList.add(leftAttr);
-//                }
+                // if ((leftAttr.getDatatype() instanceof
+                // SDFProbabilisticDatatype) && (((SDFProbabilisticDatatype)
+                // leftAttr.getDatatype()).isContinuous())) {
+                // dependentList.add(rightAttr);
+                // }
+                // if ((rightAttr.getDatatype() instanceof
+                // SDFProbabilisticDatatype) && (((SDFProbabilisticDatatype)
+                // rightAttr.getDatatype()).isContinuous())) {
+                // explanatoryList.add(leftAttr);
+                // }
             }
         }
         for (final SDFAttribute attr : operator.getInputSchema(port)) {
@@ -285,32 +292,38 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
     private void insertSampleAO(final ILogicalOperator operator, final SDFExpression expr) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(expr);
-//        final Map<SDFAttribute, List<SDFAttribute>> attributes = PredicateUtils.getEquiContinuousExpressionAtributes(expr.getMEPExpression(), expr.getAttributeResolver());
+        // final Map<SDFAttribute, List<SDFAttribute>> attributes =
+        // PredicateUtils.getEquiContinuousExpressionAtributes(expr.getMEPExpression(),
+        // expr.getAttributeResolver());
 
         // Get all continuous attributes used in the equi join and sort them
         // according to their stream.
         final Set<SDFAttribute> rightStreamAttributes = new HashSet<SDFAttribute>();
         final Set<SDFAttribute> leftStreamAttributes = new HashSet<SDFAttribute>();
-//        for (final SDFAttribute leftAttr : attributes.keySet()) {
-//            for (final SDFAttribute rightAttr : attributes.get(leftAttr)) {
-//                if ((leftAttr.getDatatype() instanceof SDFProbabilisticDatatype) && (((SDFProbabilisticDatatype) leftAttr.getDatatype()).isContinuous())) {
-//                    if (operator.getInputSchema(0).contains(leftAttr)) {
-//                        leftStreamAttributes.add(leftAttr);
-//                    }
-//                    else {
-//                        rightStreamAttributes.add(leftAttr);
-//                    }
-//                }
-//                if ((rightAttr.getDatatype() instanceof SDFProbabilisticDatatype) && (((SDFProbabilisticDatatype) rightAttr.getDatatype()).isContinuous())) {
-//                    if (operator.getInputSchema(0).contains(rightAttr)) {
-//                        leftStreamAttributes.add(rightAttr);
-//                    }
-//                    else {
-//                        rightStreamAttributes.add(rightAttr);
-//                    }
-//                }
-//            }
-//        }
+        // for (final SDFAttribute leftAttr : attributes.keySet()) {
+        // for (final SDFAttribute rightAttr : attributes.get(leftAttr)) {
+        // if ((leftAttr.getDatatype() instanceof SDFProbabilisticDatatype) &&
+        // (((SDFProbabilisticDatatype) leftAttr.getDatatype()).isContinuous()))
+        // {
+        // if (operator.getInputSchema(0).contains(leftAttr)) {
+        // leftStreamAttributes.add(leftAttr);
+        // }
+        // else {
+        // rightStreamAttributes.add(leftAttr);
+        // }
+        // }
+        // if ((rightAttr.getDatatype() instanceof SDFProbabilisticDatatype) &&
+        // (((SDFProbabilisticDatatype)
+        // rightAttr.getDatatype()).isContinuous())) {
+        // if (operator.getInputSchema(0).contains(rightAttr)) {
+        // leftStreamAttributes.add(rightAttr);
+        // }
+        // else {
+        // rightStreamAttributes.add(rightAttr);
+        // }
+        // }
+        // }
+        // }
         final SampleAO sampleAO = new SampleAO();
         // Sample from the stream with the lowest number of attributes to
         // decrease the number of total samples
@@ -367,24 +380,28 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
     private int getProbabilisticViewPort(final ILogicalOperator operator, final SDFExpression expr) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(expr);
-        int port = -1;
+        final int port = -1;
         final Map<SDFAttribute, List<SDFAttribute>> attributes = PredicateUtils.getEquiExpressionAtributes(expr.getMEPExpression(), expr.getAttributeResolver());
-//        for (final SDFAttribute leftAttr : attributes.keySet()) {
-//            for (final SDFAttribute rightAttr : attributes.get(leftAttr)) {
-//                if ((leftAttr.getDatatype() instanceof SDFProbabilisticDatatype) && (((SDFProbabilisticDatatype) leftAttr.getDatatype()).isContinuous())) {
-//                    // leftAttr is the continuous attribute
-//                    // Check if rightAttr is in left stream: yes -> return
-//                    // left(0), no -> return right(1)
-//                    port = (operator.getInputSchema(0).contains(rightAttr) ? 0 : 1);
-//                }
-//                else if ((rightAttr.getDatatype() instanceof SDFProbabilisticDatatype) && (((SDFProbabilisticDatatype) rightAttr.getDatatype()).isContinuous())) {
-//                    // rightAttr is the continuous attribute
-//                    // Check if leftAttr is in the left stream: yes -> return
-//                    // left(0), no -> return right(1)
-//                    port = (operator.getInputSchema(0).contains(leftAttr) ? 0 : 1);
-//                }
-//            }
-//        }
+        // for (final SDFAttribute leftAttr : attributes.keySet()) {
+        // for (final SDFAttribute rightAttr : attributes.get(leftAttr)) {
+        // if ((leftAttr.getDatatype() instanceof SDFProbabilisticDatatype) &&
+        // (((SDFProbabilisticDatatype) leftAttr.getDatatype()).isContinuous()))
+        // {
+        // // leftAttr is the continuous attribute
+        // // Check if rightAttr is in left stream: yes -> return
+        // // left(0), no -> return right(1)
+        // port = (operator.getInputSchema(0).contains(rightAttr) ? 0 : 1);
+        // }
+        // else if ((rightAttr.getDatatype() instanceof
+        // SDFProbabilisticDatatype) && (((SDFProbabilisticDatatype)
+        // rightAttr.getDatatype()).isContinuous())) {
+        // // rightAttr is the continuous attribute
+        // // Check if leftAttr is in the left stream: yes -> return
+        // // left(0), no -> return right(1)
+        // port = (operator.getInputSchema(0).contains(leftAttr) ? 0 : 1);
+        // }
+        // }
+        // }
         return port;
     }
 }

@@ -28,8 +28,8 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 
 /**
@@ -43,11 +43,11 @@ public abstract class AbstractMahalanobisDistanceFunction extends AbstractProbab
 	 */
     private static final long serialVersionUID = -4636005230557634127L;
 
-    public AbstractMahalanobisDistanceFunction(SDFDatatype[][] accTypes) {
-    	super("distance", 2, accTypes, SDFDatatype.DOUBLE);
+    public AbstractMahalanobisDistanceFunction(final SDFDatatype[][] accTypes) {
+        super("distance", 2, accTypes, SDFDatatype.DOUBLE);
     }
-    
-     /**
+
+    /**
      * 
      * @param a
      *            The normal distribution mixture
@@ -77,6 +77,5 @@ public abstract class AbstractMahalanobisDistanceFunction extends AbstractProbab
         }
         return weightedMahalanobisDistance;
     }
-
 
 }

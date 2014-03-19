@@ -32,9 +32,9 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 
 /**
@@ -117,7 +117,7 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
         final RealMatrix regressionCoefficients = MatrixUtils.createRealMatrix((double[][]) object.getAttribute(this.regressionCoefficientsPos));
 
         final List<Pair<Double, IMultivariateDistribution>> newMixtureComponents = new ArrayList<Pair<Double, IMultivariateDistribution>>();
-        for (final Pair<Double, IMultivariateDistribution> entry : ((MultivariateMixtureDistribution) currentMixture).getComponents()) {
+        for (final Pair<Double, IMultivariateDistribution> entry : currentMixture.getComponents()) {
             final IMultivariateDistribution normalDistribution = entry.getValue();
             final Double weight = entry.getKey();
 

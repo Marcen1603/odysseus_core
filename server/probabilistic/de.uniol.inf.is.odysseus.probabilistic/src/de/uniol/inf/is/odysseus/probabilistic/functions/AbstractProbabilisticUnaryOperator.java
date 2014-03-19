@@ -32,10 +32,10 @@ public abstract class AbstractProbabilisticUnaryOperator<T> extends AbstractProb
 	 */
     private static final long serialVersionUID = -5406076763880872083L;
 
-    public AbstractProbabilisticUnaryOperator(String symbol, SDFDatatype[][] accTypes, SDFDatatype returnType) {
-    	super(symbol, 1, accTypes, returnType);
+    public AbstractProbabilisticUnaryOperator(final String symbol, final SDFDatatype[] accTypes, final SDFDatatype returnType) {
+        super(symbol, 1, new SDFDatatype[][] { accTypes }, returnType);
     }
-    
+
     /*
      * 
      * @see de.uniol.inf.is.odysseus.mep.IOperator#isBinary()

@@ -23,10 +23,8 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalLeftMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
-import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -66,10 +64,12 @@ public class TProbabilisticContinuousLeftJoinAOSetDMRule extends AbstractTransfo
             if (operator.getDataMerge() == null) {
                 final IPredicate<?> predicate = operator.getPredicate();
                 final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-//                if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
-//                    throw new TransformationException("Not implemented");
-//
-//                }
+                // if
+                // (SchemaUtils.containsContinuousProbabilisticAttributes(attributes))
+                // {
+                // throw new TransformationException("Not implemented");
+                //
+                // }
             }
         }
         return false;

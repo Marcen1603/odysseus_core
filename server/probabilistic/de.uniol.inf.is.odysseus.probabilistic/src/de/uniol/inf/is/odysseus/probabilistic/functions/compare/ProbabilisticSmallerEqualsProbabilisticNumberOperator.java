@@ -4,12 +4,10 @@
 package de.uniol.inf.is.odysseus.probabilistic.functions.compare;
 
 import java.util.Arrays;
-import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -22,14 +20,13 @@ public class ProbabilisticSmallerEqualsProbabilisticNumberOperator extends Abstr
      */
     private static final long serialVersionUID = -3418450821273833863L;
 
-    public ProbabilisticContinuousSmallerEqualsProbabilisticNumberOperator(String symbol) {
-    	super(symbol,ACC_TYPES);
+    public ProbabilisticSmallerEqualsProbabilisticNumberOperator(final String symbol) {
+        super(symbol, ProbabilisticSmallerEqualsProbabilisticNumberOperator.ACC_TYPES);
     }
-    
-    public ProbabilisticContinuousSmallerEqualsProbabilisticNumberOperator() {
-    	this("<=");
+
+    public ProbabilisticSmallerEqualsProbabilisticNumberOperator() {
+        this("<=");
     }
-    
 
     /**
      * 
@@ -55,10 +52,10 @@ public class ProbabilisticSmallerEqualsProbabilisticNumberOperator extends Abstr
         Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
         System.arraycopy(b.getMean(), 0, upperBound, 0, b.getMean().length);
 
-        ProbabilisticBooleanResult result = this.getValueInternal(a, lowerBound, upperBound);
-        double scale = ((MultivariateMixtureDistribution) result.getDistribution()).getScale();
+        final ProbabilisticBooleanResult result = this.getValueInternal(a, lowerBound, upperBound);
+        final double scale = ((MultivariateMixtureDistribution) result.getDistribution()).getScale();
         // Assume symmetry
-        ProbabilisticBooleanResult scaledResult = new ProbabilisticBooleanResult(result.getDistribution(), result.getProbability() * 0.5);
+        final ProbabilisticBooleanResult scaledResult = new ProbabilisticBooleanResult(result.getDistribution(), result.getProbability() * 0.5);
         ((MultivariateMixtureDistribution) scaledResult.getDistribution()).setScale(scale * 0.5);
         return scaledResult;
     }

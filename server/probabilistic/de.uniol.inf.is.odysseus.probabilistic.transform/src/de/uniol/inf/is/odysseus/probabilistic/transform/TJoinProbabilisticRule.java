@@ -40,14 +40,14 @@ public class TJoinProbabilisticRule extends AbstractTransformationRule<JoinTIPO<
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public void execute(JoinTIPO<?, ?> operator, TransformationConfiguration config) throws RuleException {
+    public void execute(final JoinTIPO<?, ?> operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getMetadataMerge());
         ((CombinedMergeFunction) operator.getMetadataMerge()).add(new ProbabilisticMetadataMergeFunction());
     }
 
     @Override
-    public boolean isExecutable(JoinTIPO<?, ?> operator, TransformationConfiguration config) {
+    public boolean isExecutable(final JoinTIPO<?, ?> operator, final TransformationConfiguration config) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getMetadataMerge());
         Objects.requireNonNull(config);

@@ -88,15 +88,16 @@ public class LinearRegressionPO<T extends ITimeInterval> extends AbstractPipe<Pr
             final RealMatrix regressionCoefficients = this.area.getRegressionCoefficients();
             final RealMatrix residual = this.area.getResidual();
 
-//            final ExtendedMixtureMultivariateRealDistribution mixture = new ExtendedMixtureMultivariateRealDistribution(residual.getColumnDimension());
-//            mixture.setAttributes(this.area.getExplanatoryAttributePos());
+            // final ExtendedMixtureMultivariateRealDistribution mixture = new
+            // ExtendedMixtureMultivariateRealDistribution(residual.getColumnDimension());
+            // mixture.setAttributes(this.area.getExplanatoryAttributePos());
 
             final MultivariateMixtureDistribution[] distributions = object.getDistributions();
             final Object[] attributes = object.getAttributes();
 
             final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(new Object[attributes.length + 2], new MultivariateMixtureDistribution[distributions.length + 1],
                     object.requiresDeepClone());
-//            outputVal.setDistribution(distributions.length, mixture);
+            // outputVal.setDistribution(distributions.length, mixture);
 
             System.arraycopy(distributions, 0, outputVal.getDistributions(), 0, distributions.length);
             System.arraycopy(object.getAttributes(), 0, outputVal.getAttributes(), 0, object.getAttributes().length);

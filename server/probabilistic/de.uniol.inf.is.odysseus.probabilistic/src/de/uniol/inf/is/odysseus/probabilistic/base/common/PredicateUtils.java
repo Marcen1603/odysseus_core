@@ -113,14 +113,14 @@ public final class PredicateUtils {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static Collection<IPredicate<?>> conjunctiveSplit(final IPredicate<?> predicate) {
-        Collection<IPredicate<?>> result = new LinkedList<IPredicate<?>>();
+        final Collection<IPredicate<?>> result = new LinkedList<IPredicate<?>>();
         if (PredicateUtils.isAndPredicate(predicate)) {
             if (predicate instanceof AndPredicate) {
 
-                Stack<IPredicate<?>> predicateStack = new Stack<IPredicate<?>>();
+                final Stack<IPredicate<?>> predicateStack = new Stack<IPredicate<?>>();
                 predicateStack.push(predicate);
                 while (!predicateStack.isEmpty()) {
-                    IPredicate curPredicate = predicateStack.pop();
+                    final IPredicate curPredicate = predicateStack.pop();
                     if (curPredicate instanceof AndPredicate) {
                         predicateStack.push(((AndPredicate) curPredicate).getLeft());
                         predicateStack.push(((AndPredicate) curPredicate).getRight());
@@ -150,14 +150,14 @@ public final class PredicateUtils {
      */
     @SuppressWarnings("rawtypes")
     public static Collection<IPredicate<?>> disjunctiveSplit(final IPredicate<?> predicate) {
-        Collection<IPredicate<?>> result = new LinkedList<IPredicate<?>>();
+        final Collection<IPredicate<?>> result = new LinkedList<IPredicate<?>>();
         if (PredicateUtils.isAndPredicate(predicate)) {
             if (predicate instanceof OrPredicate) {
 
-                Stack<IPredicate<?>> predicateStack = new Stack<IPredicate<?>>();
+                final Stack<IPredicate<?>> predicateStack = new Stack<IPredicate<?>>();
                 predicateStack.push(predicate);
                 while (!predicateStack.isEmpty()) {
-                    IPredicate curPredicate = predicateStack.pop();
+                    final IPredicate curPredicate = predicateStack.pop();
                     if (curPredicate instanceof OrPredicate) {
                         predicateStack.push(((OrPredicate) curPredicate).getLeft());
                         predicateStack.push(((OrPredicate) curPredicate).getRight());

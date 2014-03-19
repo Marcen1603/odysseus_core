@@ -24,10 +24,10 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateEnumeratedDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 
 /**
@@ -49,7 +49,7 @@ public class AssignDistributionPO<T extends ITimeInterval> extends AbstractPipe<
      * @param variance
      *            The variance attribute position for the distribution
      */
-    public AssignDistributionPO(final int[] attributes, final int variance, boolean continuous) {
+    public AssignDistributionPO(final int[] attributes, final int variance, final boolean continuous) {
         this.attributes = attributes;
         this.variance = variance;
         this.continuous = continuous;
@@ -95,7 +95,7 @@ public class AssignDistributionPO<T extends ITimeInterval> extends AbstractPipe<
             means[i] = ((Number) object.getAttribute(this.attributes[i])).doubleValue();
         }
 
-        if (continuous) {
+        if (this.continuous) {
             final double[][] variances = (double[][]) object.getAttribute(this.variance);
 
             final IMultivariateDistribution component = new MultivariateNormalDistribution(means, variances);

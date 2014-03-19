@@ -35,7 +35,7 @@ public class BhattacharyyaDistanceFunction extends AbstractBhattacharyyaDistance
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE }, { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE } };
 
     public BhattacharyyaDistanceFunction() {
-    	super(ACC_TYPES);
+        super(BhattacharyyaDistanceFunction.ACC_TYPES);
     }
 
     /**

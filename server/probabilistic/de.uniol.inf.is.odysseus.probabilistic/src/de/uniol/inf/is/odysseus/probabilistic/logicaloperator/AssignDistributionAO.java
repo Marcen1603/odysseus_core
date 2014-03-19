@@ -134,7 +134,7 @@ public class AssignDistributionAO extends UnaryLogicalOp {
      *            the continuous to set
      */
     @Parameter(type = BooleanParameter.class, name = "CONTINUOUS", isList = false, optional = true, doc = "The distribution is continuous or discrete.")
-    public void setContinuous(boolean continuous) {
+    public void setContinuous(final boolean continuous) {
         this.continuous = continuous;
     }
 

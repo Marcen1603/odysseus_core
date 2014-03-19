@@ -35,9 +35,9 @@ public class EuclideanDistanceFunction extends AbstractEuclideanDistanceFunction
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
 
     public EuclideanDistanceFunction() {
-    	super(ACC_TYPES);
+        super(EuclideanDistanceFunction.ACC_TYPES);
     }
-    
+
     /**
      * 
      * {@inheritDoc}

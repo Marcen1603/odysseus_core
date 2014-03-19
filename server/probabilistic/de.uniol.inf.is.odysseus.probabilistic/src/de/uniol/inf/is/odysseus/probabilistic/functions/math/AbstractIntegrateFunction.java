@@ -33,8 +33,8 @@ public abstract class AbstractIntegrateFunction extends AbstractProbabilisticFun
 	 */
     private static final long serialVersionUID = 6128844979837446517L;
 
-    public AbstractIntegrateMultivariateFunction(SDFDatatype[][] accTypes) {
-    	super("int", 3, accTypes, SDFDatatype.DOUBLE);
+    public AbstractIntegrateFunction(final SDFDatatype[][] accTypes) {
+        super("int", 3, accTypes, SDFDatatype.DOUBLE);
     }
 
     /**
@@ -52,6 +52,5 @@ public abstract class AbstractIntegrateFunction extends AbstractProbabilisticFun
         final MultivariateMixtureDistribution mixtures = this.getDistributions(attribute.getDistribution());
         return mixtures.probability(lowerBound.toArray(), upperBound.toArray());
     }
-
 
 }

@@ -35,9 +35,9 @@ public class EuclideanDistanceFunctionVector extends AbstractEuclideanDistanceFu
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.MATRIX_DOUBLE }, { SDFDatatype.MATRIX_DOUBLE } };
 
     public EuclideanDistanceFunctionVector() {
-    	super(ACC_TYPES);
+        super(EuclideanDistanceFunctionVector.ACC_TYPES);
     }
-    
+
     /**
      * 
      * {@inheritDoc}

@@ -56,26 +56,26 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
 
     protected boolean[] fromRightChannel;
 
-    public ProbabilisticRelationalPredicate(SDFExpression expression) {
+    public ProbabilisticRelationalPredicate(final SDFExpression expression) {
         this.expression = new SDFProbabilisticExpression(expression);
         this.neededAttributes = expression.getAllAttributes();
     }
 
-    public ProbabilisticRelationalPredicate(SDFProbabilisticExpression expression) {
+    public ProbabilisticRelationalPredicate(final SDFProbabilisticExpression expression) {
         this.expression = expression;
         this.neededAttributes = expression.getAllAttributes();
     }
 
-    public ProbabilisticRelationalPredicate(RelationalPredicate predicate) {
+    public ProbabilisticRelationalPredicate(final RelationalPredicate predicate) {
         this(predicate.getExpression());
     }
 
-    public ProbabilisticRelationalPredicate(ProbabilisticRelationalPredicate predicate) {
+    public ProbabilisticRelationalPredicate(final ProbabilisticRelationalPredicate predicate) {
         this.attributePositions = predicate.attributePositions == null ? null : (int[]) predicate.attributePositions.clone();
         this.fromRightChannel = predicate.fromRightChannel == null ? null : (boolean[]) predicate.fromRightChannel.clone();
         this.expression = predicate.expression == null ? null : predicate.expression.clone();
         if (this.expression != null) {
-            this.neededAttributes = expression.getAllAttributes();
+            this.neededAttributes = this.expression.getAllAttributes();
         }
         else {
             this.neededAttributes = new ArrayList<SDFAttribute>();
@@ -87,8 +87,8 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
      * {@inheritDoc}
      */
     @Override
-    public boolean evaluate(ProbabilisticTuple<? extends IProbabilistic> input) {
-        ProbabilisticTuple<? extends IProbabilistic> result = probabilisticEvaluate(input);
+    public boolean evaluate(final ProbabilisticTuple<? extends IProbabilistic> input) {
+        final ProbabilisticTuple<? extends IProbabilistic> result = this.probabilisticEvaluate(input);
         return result.getMetadata().getExistence() > 0.0;
     }
 
@@ -96,7 +96,7 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
      * {@inheritDoc}
      */
     @Override
-    public boolean evaluate(ProbabilisticTuple<? extends IProbabilistic> left, ProbabilisticTuple<? extends IProbabilistic> right) {
+    public boolean evaluate(final ProbabilisticTuple<? extends IProbabilistic> left, final ProbabilisticTuple<? extends IProbabilistic> right) {
         // ProbabilisticTuple<? extends IProbabilistic> result =
         // probabilisticEvaluate(left, right);
         // return result.getMetadata().getExistence() > 0.0;
@@ -104,21 +104,21 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
 
     }
 
-    public ProbabilisticTuple<? extends IProbabilistic> probabilisticEvaluate(ProbabilisticTuple<? extends IProbabilistic> input) {
+    public ProbabilisticTuple<? extends IProbabilistic> probabilisticEvaluate(final ProbabilisticTuple<? extends IProbabilistic> input) {
         ProbabilisticTuple<? extends IProbabilistic> output = input;
-        for (int i = 0; i < this.deterministicExpressions.length; ++i) {
-            output = evaluateDeterministicPredicate(input, deterministicExpressions[i]);
+        for (final IPredicateEvaluator[] deterministicExpression : this.deterministicExpressions) {
+            output = this.evaluateDeterministicPredicate(input, deterministicExpression);
             if (output.getMetadata().getExistence() == 0.0) {
                 break;
             }
         }
         if (output.getMetadata().getExistence() > 0.0) {
-            for (int i = 0; i < this.discreteDistributionExpressions.length; ++i) {
-                output = evaluateDiscreteDistributionPredicate(output, discreteDistributionExpressions[i]);
+            for (final IPredicateEvaluator[] discreteDistributionExpression : this.discreteDistributionExpressions) {
+                output = this.evaluateDiscreteDistributionPredicate(output, discreteDistributionExpression);
             }
             if (output.getMetadata().getExistence() > 0.0) {
-                for (int i = 0; i < this.continuousDistributionExpressions.length; ++i) {
-                    output = evaluateContinuousDistributionPredicate(output, continuousDistributionExpressions[i]);
+                for (final IPredicateEvaluator[] continuousDistributionExpression : this.continuousDistributionExpressions) {
+                    output = this.evaluateContinuousDistributionPredicate(output, continuousDistributionExpression);
                 }
             }
             return output;
@@ -126,38 +126,38 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
         return output;
     }
 
-    public ProbabilisticTuple<? extends IProbabilistic> probabilisticEvaluate(ProbabilisticTuple<?> left, ProbabilisticTuple<?> right) {
+    public ProbabilisticTuple<? extends IProbabilistic> probabilisticEvaluate(final ProbabilisticTuple<?> left, final ProbabilisticTuple<?> right) {
         throw new UnsupportedOperationException("Not supported, merge first and call evaluate");
     }
 
-    public void init(SDFSchema schema) {
+    public void init(final SDFSchema schema) {
         Objects.requireNonNull(schema);
-        initExpression(schema, this.expression);
-        this.attributePositions = new int[neededAttributes.size()];
-        this.fromRightChannel = new boolean[neededAttributes.size()];
+        this.initExpression(schema, this.expression);
+        this.attributePositions = new int[this.neededAttributes.size()];
+        this.fromRightChannel = new boolean[this.neededAttributes.size()];
     }
 
     @Override
-    public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
-        init(leftSchema, rightSchema, true);
+    public void init(final SDFSchema leftSchema, final SDFSchema rightSchema) {
+        this.init(leftSchema, rightSchema, true);
     }
 
-    public void init(SDFSchema leftSchema, SDFSchema rightSchema, boolean checkRightSchema) {
+    public void init(final SDFSchema leftSchema, final SDFSchema rightSchema, final boolean checkRightSchema) {
         Objects.requireNonNull(leftSchema);
 
-        List<SDFAttribute> neededAttributes = expression.getAllAttributes();
+        final List<SDFAttribute> neededAttributes = this.expression.getAllAttributes();
         this.attributePositions = new int[neededAttributes.size()];
         this.fromRightChannel = new boolean[neededAttributes.size()];
 
         for (int i = 0; i < neededAttributes.size(); i++) {
-            SDFAttribute curAttribute = neededAttributes.get(i);
+            final SDFAttribute curAttribute = neededAttributes.get(i);
             int pos = leftSchema.indexOf(curAttribute);
             if (pos == -1) {
-                if (rightSchema == null && checkRightSchema) {
+                if ((rightSchema == null) && checkRightSchema) {
                     throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + leftSchema + " and rightSchema is null!");
                 }
                 if (checkRightSchema) {
-                    pos = indexOf(rightSchema, curAttribute);
+                    pos = this.indexOf(rightSchema, curAttribute);
                     if (pos == -1) {
                         throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + rightSchema);
                     }
@@ -168,11 +168,11 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
         }
     }
 
-    private int indexOf(SDFSchema schema, SDFAttribute attr) {
-        SDFAttribute cqlAttr = getReplacement(attr);
-        Iterator<SDFAttribute> it = schema.iterator();
+    private int indexOf(final SDFSchema schema, final SDFAttribute attr) {
+        final SDFAttribute cqlAttr = this.getReplacement(attr);
+        final Iterator<SDFAttribute> it = schema.iterator();
         for (int i = 0; it.hasNext(); ++i) {
-            SDFAttribute a = it.next();
+            final SDFAttribute a = it.next();
             if (cqlAttr.equalsCQL(a)) {
                 return i;
             }
@@ -180,10 +180,10 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
         return -1;
     }
 
-    private SDFAttribute getReplacement(SDFAttribute a) {
+    private SDFAttribute getReplacement(final SDFAttribute a) {
         SDFAttribute ret = a;
         SDFAttribute tmp = null;
-        while ((tmp = replacementMap.get(ret)) != null) {
+        while ((tmp = this.replacementMap.get(ret)) != null) {
             ret = tmp;
         }
         return ret;
@@ -201,12 +201,12 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
      * {@inheritDoc}
      */
     @Override
-    public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr) {
+    public void replaceAttribute(final SDFAttribute curAttr, final SDFAttribute newAttr) {
         if (!curAttr.equals(newAttr)) {
-            replacementMap.put(curAttr, newAttr);
+            this.replacementMap.put(curAttr, newAttr);
         }
         else {
-            LOG.warn("Replacement " + curAttr + " --> " + newAttr + " not added because they are equal!");
+            ProbabilisticRelationalPredicate.LOG.warn("Replacement " + curAttr + " --> " + newAttr + " not added because they are equal!");
         }
     }
 
@@ -215,24 +215,24 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public List<IPredicate> conjunctiveSplit(boolean init) {
-        List<IPredicate> result = new LinkedList<IPredicate>();
-        Collection<IExpression<?>> split = ExpressionUtils.conjunctiveSplitExpression(this.expression.getMEPExpression());
-        for (IExpression<?> expr : split) {
-            SDFProbabilisticExpression sdfExpression = new SDFProbabilisticExpression(expr, expression.getAttributeResolver(), MEP.getInstance());
-            ProbabilisticRelationalPredicate predicate = new ProbabilisticRelationalPredicate(sdfExpression);
+    public List<IPredicate> conjunctiveSplit(final boolean init) {
+        final List<IPredicate> result = new LinkedList<IPredicate>();
+        final Collection<IExpression<?>> split = ExpressionUtils.conjunctiveSplitExpression(this.expression.getMEPExpression());
+        for (final IExpression<?> expr : split) {
+            final SDFProbabilisticExpression sdfExpression = new SDFProbabilisticExpression(expr, this.expression.getAttributeResolver(), MEP.getInstance());
+            final ProbabilisticRelationalPredicate predicate = new ProbabilisticRelationalPredicate(sdfExpression);
             result.add(predicate);
         }
         return result;
     }
 
     @SuppressWarnings("rawtypes")
-    public List<IPredicate> disjunctiveSplit(boolean init) {
-        List<IPredicate> result = new LinkedList<IPredicate>();
-        Collection<IExpression<?>> split = ExpressionUtils.disjunctiveSplitExpression(this.expression.getMEPExpression());
-        for (IExpression<?> expr : split) {
-            SDFProbabilisticExpression sdfExpression = new SDFProbabilisticExpression(expr, expression.getAttributeResolver(), MEP.getInstance());
-            ProbabilisticRelationalPredicate predicate = new ProbabilisticRelationalPredicate(sdfExpression);
+    public List<IPredicate> disjunctiveSplit(final boolean init) {
+        final List<IPredicate> result = new LinkedList<IPredicate>();
+        final Collection<IExpression<?>> split = ExpressionUtils.disjunctiveSplitExpression(this.expression.getMEPExpression());
+        for (final IExpression<?> expr : split) {
+            final SDFProbabilisticExpression sdfExpression = new SDFProbabilisticExpression(expr, this.expression.getAttributeResolver(), MEP.getInstance());
+            final ProbabilisticRelationalPredicate predicate = new ProbabilisticRelationalPredicate(sdfExpression);
             result.add(predicate);
         }
         return result;
@@ -242,7 +242,7 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
      * {@inheritDoc}
      */
     @Override
-    public boolean isContainedIn(IPredicate<?> o) {
+    public boolean isContainedIn(final IPredicate<?> o) {
         return false;
     }
 
@@ -250,7 +250,7 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(IPredicate<ProbabilisticTuple<? extends IProbabilistic>> other) {
+    public boolean equals(final IPredicate<ProbabilisticTuple<? extends IProbabilistic>> other) {
         if (this.equals((Object) other)) {
             return true;
         }
@@ -266,7 +266,7 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.expression == null) ? 0 : this.expression.hashCode());
+        result = (prime * result) + ((this.expression == null) ? 0 : this.expression.hashCode());
         return result;
     }
 
@@ -274,17 +274,17 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (this.getClass() != obj.getClass()) {
             return false;
         }
-        ProbabilisticRelationalPredicate other = (ProbabilisticRelationalPredicate) obj;
+        final ProbabilisticRelationalPredicate other = (ProbabilisticRelationalPredicate) obj;
         if (this.expression == null) {
             if (other.expression != null) {
                 return false;
@@ -306,11 +306,11 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
         return this.expression.toString();
     }
 
-    private ProbabilisticTuple<? extends IProbabilistic> evaluateDeterministicPredicate(ProbabilisticTuple<? extends IProbabilistic> input, IPredicateEvaluator[] evaluators) {
+    private ProbabilisticTuple<? extends IProbabilistic> evaluateDeterministicPredicate(final ProbabilisticTuple<? extends IProbabilistic> input, final IPredicateEvaluator[] evaluators) {
         Objects.requireNonNull(input);
 
         ProbabilisticTuple<? extends IProbabilistic> output = null;
-        for (IPredicateEvaluator evaluator : evaluators) {
+        for (final IPredicateEvaluator evaluator : evaluators) {
             output = evaluator.evaluate(input);
             if (output.getMetadata().getExistence() > 0.0) {
                 return output;
@@ -322,13 +322,13 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
         return output;
     }
 
-    private ProbabilisticTuple<? extends IProbabilistic> evaluateDiscreteDistributionPredicate(ProbabilisticTuple<? extends IProbabilistic> input, IPredicateEvaluator[] evaluators) {
+    private ProbabilisticTuple<? extends IProbabilistic> evaluateDiscreteDistributionPredicate(final ProbabilisticTuple<? extends IProbabilistic> input, final IPredicateEvaluator[] evaluators) {
         Objects.requireNonNull(input);
 
         ProbabilisticTuple<? extends IProbabilistic> output = null;
         double existence = 0.0;
-        for (IPredicateEvaluator evaluator : evaluators) {
-            ProbabilisticTuple<? extends IProbabilistic> tmp = evaluator.evaluate(input.clone());
+        for (final IPredicateEvaluator evaluator : evaluators) {
+            final ProbabilisticTuple<? extends IProbabilistic> tmp = evaluator.evaluate(input.clone());
             if ((output == null) || (tmp.getMetadata().getExistence() > existence)) {
                 output = tmp;
                 existence = tmp.getMetadata().getExistence();
@@ -340,14 +340,14 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
         return output;
     }
 
-    private ProbabilisticTuple<? extends IProbabilistic> evaluateContinuousDistributionPredicate(ProbabilisticTuple<? extends IProbabilistic> input, IPredicateEvaluator[] evaluators) {
+    private ProbabilisticTuple<? extends IProbabilistic> evaluateContinuousDistributionPredicate(final ProbabilisticTuple<? extends IProbabilistic> input, final IPredicateEvaluator[] evaluators) {
         Objects.requireNonNull(input);
 
         ProbabilisticTuple<? extends IProbabilistic> output = null;
         double existence = 0.0;
         // Evaluate OR predicate
-        for (IPredicateEvaluator evaluator : evaluators) {
-            ProbabilisticTuple<? extends IProbabilistic> tmp = evaluator.evaluate(input.clone());
+        for (final IPredicateEvaluator evaluator : evaluators) {
+            final ProbabilisticTuple<? extends IProbabilistic> tmp = evaluator.evaluate(input.clone());
             if ((output == null) || (tmp.getMetadata().getExistence() > existence)) {
                 output = tmp;
                 existence = tmp.getMetadata().getExistence();
@@ -359,17 +359,17 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
         return output;
     }
 
-    private void initExpression(SDFSchema schema, SDFProbabilisticExpression expression) {
-        List<IPredicateEvaluator[]> deterministicExpr = new ArrayList<IPredicateEvaluator[]>();
-        List<IPredicateEvaluator[]> discreteDistributionExpr = new ArrayList<IPredicateEvaluator[]>();
-        List<IPredicateEvaluator[]> continuousDistributionExpr = new ArrayList<IPredicateEvaluator[]>();
+    private void initExpression(final SDFSchema schema, final SDFProbabilisticExpression expression) {
+        final List<IPredicateEvaluator[]> deterministicExpr = new ArrayList<IPredicateEvaluator[]>();
+        final List<IPredicateEvaluator[]> discreteDistributionExpr = new ArrayList<IPredicateEvaluator[]>();
+        final List<IPredicateEvaluator[]> continuousDistributionExpr = new ArrayList<IPredicateEvaluator[]>();
 
-        for (SDFExpression conjunctiveSplitExpression : ExpressionUtils.conjunctiveSplitExpression(expression)) {
-            List<IPredicateEvaluator> deterministicDisjunctiveExpr = new ArrayList<IPredicateEvaluator>();
-            List<IPredicateEvaluator> discreteDistributionDisjunctiveExpr = new ArrayList<IPredicateEvaluator>();
-            List<IPredicateEvaluator> continuousDistributionDisjunctiveExpr = new ArrayList<IPredicateEvaluator>();
+        for (final SDFExpression conjunctiveSplitExpression : ExpressionUtils.conjunctiveSplitExpression(expression)) {
+            final List<IPredicateEvaluator> deterministicDisjunctiveExpr = new ArrayList<IPredicateEvaluator>();
+            final List<IPredicateEvaluator> discreteDistributionDisjunctiveExpr = new ArrayList<IPredicateEvaluator>();
+            final List<IPredicateEvaluator> continuousDistributionDisjunctiveExpr = new ArrayList<IPredicateEvaluator>();
             if (!SchemaUtils.containsProbabilisticAttributes(conjunctiveSplitExpression.getAllAttributes())) {
-                for (SDFExpression disjunctiveSplitExpression : ExpressionUtils.disjunctiveSplitExpression(new SDFProbabilisticExpression(conjunctiveSplitExpression))) {
+                for (final SDFExpression disjunctiveSplitExpression : ExpressionUtils.disjunctiveSplitExpression(new SDFProbabilisticExpression(conjunctiveSplitExpression))) {
                     final List<SDFAttribute> neededAttributes = disjunctiveSplitExpression.getAllAttributes();
                     final VarHelper[] varHelper = new VarHelper[neededAttributes.size()];
                     for (int j = 0; j < neededAttributes.size(); j++) {
@@ -380,20 +380,20 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
                 }
             }
             else if (!SchemaUtils.containsProbabilisticAttributes(conjunctiveSplitExpression.getAllAttributes())) {
-                for (SDFExpression disjunctiveSplitExpression : ExpressionUtils.disjunctiveSplitExpression(new SDFProbabilisticExpression(conjunctiveSplitExpression))) {
+                for (final SDFExpression disjunctiveSplitExpression : ExpressionUtils.disjunctiveSplitExpression(new SDFProbabilisticExpression(conjunctiveSplitExpression))) {
                     final List<SDFAttribute> neededAttributes = disjunctiveSplitExpression.getAllAttributes();
                     final VarHelper[] varHelper = new VarHelper[neededAttributes.size()];
                     for (int j = 0; j < neededAttributes.size(); j++) {
                         final SDFAttribute curAttribute = neededAttributes.get(j);
                         varHelper[j++] = new VarHelper(schema.indexOf(curAttribute), 0);
                     }
-                    Collection<SDFAttribute> discreteProbabilisticAttributes = SchemaUtils.getProbabilisticAttributes(neededAttributes);
+                    final Collection<SDFAttribute> discreteProbabilisticAttributes = SchemaUtils.getProbabilisticAttributes(neededAttributes);
                     discreteDistributionDisjunctiveExpr.add(new DiscreteDistributionPredicateEvaluator(new SDFProbabilisticExpression(disjunctiveSplitExpression), varHelper, SchemaUtils
                             .getAttributePos(schema, discreteProbabilisticAttributes)));
                 }
             }
             else {
-                for (SDFExpression disjunctiveSplitExpression : ExpressionUtils.disjunctiveSplitExpression(new SDFProbabilisticExpression(conjunctiveSplitExpression))) {
+                for (final SDFExpression disjunctiveSplitExpression : ExpressionUtils.disjunctiveSplitExpression(new SDFProbabilisticExpression(conjunctiveSplitExpression))) {
                     final List<SDFAttribute> neededAttributes = disjunctiveSplitExpression.getAllAttributes();
                     final VarHelper[] varHelper = new VarHelper[neededAttributes.size()];
                     for (int j = 0; j < neededAttributes.size(); j++) {

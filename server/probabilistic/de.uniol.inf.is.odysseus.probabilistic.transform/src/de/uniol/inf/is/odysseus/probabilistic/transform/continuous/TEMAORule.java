@@ -54,7 +54,7 @@ public class TEMAORule extends AbstractTransformationRule<EMAO> {
     @Override
     public final void execute(final EMAO operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
-         Objects.requireNonNull(config);
+        Objects.requireNonNull(config);
         final IPhysicalOperator emPO = new EMPO<ITimeInterval>(operator.determineAttributesList(), operator.getMixtures(), operator.getIterations(), operator.getThreshold(), operator.isIncremental(),
                 operator.getPredicate());
         this.defaultExecute(operator, emPO, config, true, true);

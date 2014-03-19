@@ -33,8 +33,8 @@ public class ProbabilisticDivideOperator extends AbstractProbabilisticBinaryOper
 	 */
     private static final long serialVersionUID = 235281739675461233L;
 
-    public ProbabilisticContinuousDivisionOperator() {
-    	super("/", ACC_TYPES, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+    public ProbabilisticDivideOperator() {
+        super("/", ProbabilisticDivideOperator.ACC_TYPES, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
     }
 
     /*
@@ -72,7 +72,6 @@ public class ProbabilisticDivideOperator extends AbstractProbabilisticBinaryOper
     protected final IMultivariateDistribution getValueInternal(final MultivariateMixtureDistribution a, final MultivariateMixtureDistribution b) {
         return a.divide(b);
     }
-
 
     /*
      * 
@@ -127,6 +126,5 @@ public class ProbabilisticDivideOperator extends AbstractProbabilisticBinaryOper
      * Accepted data types.
      */
     public static final SDFDatatype[] ACC_TYPES = SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS;
-
 
 }
