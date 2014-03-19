@@ -77,7 +77,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 					}
 				}
 			} catch (Exception e) {
-				// e.printStackTrace();
+				e.printStackTrace();
 			}
 			in.close();
 		} catch (EOFException e) {

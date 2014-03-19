@@ -21,12 +21,17 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.Activator;
 import de.uniol.inf.is.odysseus.core.util.BundleClassLoading;
 
 public class OsgiObjectInputStream extends ObjectInputStream {
+	
+	static final Logger LOG = LoggerFactory.getLogger(OsgiObjectInputStream.class); 
 
     public OsgiObjectInputStream(FileInputStream fileInputStream) throws IOException {
         super(fileInputStream);
@@ -43,9 +48,9 @@ public class OsgiObjectInputStream extends ObjectInputStream {
         try {
             return BundleClassLoading.findClass(desc.getName(), Activator.getBundleContext().getBundle());
         } catch (ClassNotFoundException e) {
-            
+        	LOG.error("Unable to find class "+desc.getName()+" "+e);
         } catch( NullPointerException e ) {
-            
+            LOG.error("Nullpointer finding class "+desc.getName());
         }
         return super.resolveClass(desc);
     }
