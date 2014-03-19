@@ -99,7 +99,7 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
             for (final Pair<double[], Double> sample : sampleSpace) {
                 boolean inBound = true;
                 for (int d = 0; d < a.length; d++) {
-                    if ((sample.getKey()[d] <= a[d]) && (sample.getKey()[d] > b[d])) {
+                    if ((sample.getKey()[d] <= a[d]) || (sample.getKey()[d] > b[d])) {
                         inBound = false;
                         break;
                     }

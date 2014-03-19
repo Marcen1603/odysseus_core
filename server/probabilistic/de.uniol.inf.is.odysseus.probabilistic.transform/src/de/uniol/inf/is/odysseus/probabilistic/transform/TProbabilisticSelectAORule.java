@@ -23,11 +23,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
-import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticDiscreteSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticSelectPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
-import de.uniol.inf.is.odysseus.server.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.transform.rules.TSelectAORule;
 
 /**
@@ -58,10 +55,6 @@ public class TProbabilisticSelectAORule extends TSelectAORule {
         else {
             @SuppressWarnings({ "unchecked", "rawtypes" })
             final IPhysicalOperator selectPO = new ProbabilisticSelectPO(operator.getInputSchema(), operator.getPredicate());
-            if (operator.getHeartbeatRate() > 0) {
-                ((ProbabilisticDiscreteSelectPO<?>) selectPO)
-                        .setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration<IProbabilisticTimeInterval, ProbabilisticTuple<IProbabilisticTimeInterval>>(operator.getHeartbeatRate()));
-            }
             this.defaultExecute(operator, selectPO, config, true, true);
         }
     }
