@@ -24,9 +24,12 @@ import java.util.Random;
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
+ * FIXME 20140319 christian@kuka.cc Use apache math matrix
+ * 
  */
 public class Matrix {
     private double[][] data;
+    // private final RealMatrix newData;
     private int rows;
     private int columns;
 
@@ -37,6 +40,7 @@ public class Matrix {
      *            The values of the matrix
      */
     public Matrix(final double[][] values) {
+        // newData = new Array2DRowRealMatrix(values);
         this.data = new double[values.length][values[0].length];
 
         for (int i = 0; i < values.length; i++) {
@@ -65,6 +69,7 @@ public class Matrix {
      * @param n
      */
     public Matrix(final int m, final int n) {
+        // newData = new Array2DRowRealMatrix(m, n);
         this.data = new double[m][n];
         this.rows = m;
         this.columns = n;
@@ -76,6 +81,7 @@ public class Matrix {
      * @param rowVector
      */
     public Matrix(final double[] values, final boolean rowVector) {
+        // RealMatrix tmpMatrix = new Array2DRowRealMatrix(values);
         this.data = new double[1][values.length];
 
         for (int i = 0; i < values.length; i++) {
@@ -86,9 +92,13 @@ public class Matrix {
         this.columns = values.length;
 
         if (!rowVector) {
+            // newData = tmpMatrix.transpose();
             this.data = this.transArray(this.data);
             this.rows = values.length;
             this.columns = 1;
+        }
+        else {
+            // newData = tmpMatrix;
         }
     }
 
@@ -97,6 +107,7 @@ public class Matrix {
      * @return
      */
     public final int getRowDimension() {
+        // return this.newData.getRowDimension();
         return this.rows;
     }
 
@@ -105,6 +116,7 @@ public class Matrix {
      * @return
      */
     public final int getColumnDimension() {
+        // return this.newData.getColumnDimension();
         return this.columns;
     }
 
@@ -115,6 +127,7 @@ public class Matrix {
      * @return
      */
     public final double get(final int row, final int column) {
+        // return this.newData.getEntry(row-1, column-1);
         return this.data[row - 1][column - 1];
     }
 
@@ -124,6 +137,7 @@ public class Matrix {
      * @return
      */
     public final Matrix getRowVector(final int row) {
+        // return this.newData.getRow(row);
         return new Matrix(this.data[row], true);
     }
 

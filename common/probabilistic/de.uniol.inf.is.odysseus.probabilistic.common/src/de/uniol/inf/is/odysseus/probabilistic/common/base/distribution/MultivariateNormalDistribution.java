@@ -321,7 +321,7 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      */
     @Override
     public IMultivariateDistribution multiply(final IMultivariateDistribution other) {
-        // TODO Auto-generated method stub
+        // FIXME 20140319 christian@kuka.cc Use EM for result distribution estimation
         return null;
     }
 
@@ -330,7 +330,7 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      */
     @Override
     public IMultivariateDistribution divide(final IMultivariateDistribution other) {
-        // TODO Auto-generated method stub
+        // FIXME 20140319 christian@kuka.cc Use EM for result distribution estimation
         return null;
     }
 
