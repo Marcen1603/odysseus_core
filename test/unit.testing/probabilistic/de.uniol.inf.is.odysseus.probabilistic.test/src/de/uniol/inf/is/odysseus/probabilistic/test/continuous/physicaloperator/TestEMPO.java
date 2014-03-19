@@ -29,9 +29,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.EMPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticTimeInterval;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.EMPO;
 
 /**
  * 

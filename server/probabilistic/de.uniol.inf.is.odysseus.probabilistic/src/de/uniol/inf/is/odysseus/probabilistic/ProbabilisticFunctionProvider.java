@@ -24,69 +24,51 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousEqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousEqualsVectorOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousGreaterEqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousGreaterEqualsOperatorVector;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousGreaterOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousGreaterVectorOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerEqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerEqualsVectorOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerVectorOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.As2DVectorFunction;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.As3DVectorFunction;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.BhattacharyyaDistanceFunction;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.BhattacharyyaDistanceFunctionVector;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.EuclideanDistanceFunction;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.EuclideanDistanceFunctionVector;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.MahalanobisDistanceFunction;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.MahalanobisDistanceFunctionVector;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousDivisionNumberRHSOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousDivisionOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMinusNumberRHSOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMinusOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMultiplicationNumberLHSOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMultiplicationNumberRHSOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMultiplicationOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousPlusNumberLHSOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousPlusNumberRHSOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousPlusOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticIntegrateFunction;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticIntegrateMultivariateFunction;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.transform.ToProbabilisticContinuousDouble;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticEqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticGreaterEqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticGreaterThanOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticSmallerEqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticSmallerThanOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticDivisionNumberLHSOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticDivisionNumberRHSOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticDivisionOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMaxFunction;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMaxNumberLHSFunction;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMaxNumberRHSFunction;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinFunction;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinNumberLHSFunction;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinNumberRHSFunction;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinusNumberLHSOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinusNumberRHSOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinusOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMultiplicationNumberLHSOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMultiplicationNumberRHSOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMultiplicationOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticPlusNumberLHSOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticPlusNumberRHSOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticPlusOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticPowerOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticSQRTFunction;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.transform.ProbabilisticDoubleToByteFunction;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.transform.ProbabilisticDoubleToFloatFunction;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.transform.ProbabilisticDoubleToIntegerFunction;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.transform.ProbabilisticDoubleToLongFunction;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.transform.ProbabilisticDoubleToShortFunction;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.transform.ToProbabilisticDoubleFunction;
 import de.uniol.inf.is.odysseus.probabilistic.functions.TimelinessFunction;
+import de.uniol.inf.is.odysseus.probabilistic.functions.bool.ProbabilisticAndOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.bool.ProbabilisticNotOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.bool.ProbabilisticOrOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticEqualsOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticEqualsVectorOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticGreaterEqualsOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticGreaterEqualsOperatorVector;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticGreaterOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticGreaterVectorOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticSmallerEqualsOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticSmallerEqualsVectorOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticSmallerOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticSmallerVectorOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.As2DVectorFunction;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.As3DVectorFunction;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.BhattacharyyaDistanceFunction;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.BhattacharyyaDistanceFunctionVector;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.EuclideanDistanceFunction;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.EuclideanDistanceFunctionVector;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.MahalanobisDistanceFunction;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.MahalanobisDistanceFunctionVector;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.ProbabilisticAddNumberLHSOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.ProbabilisticAddNumberRHSOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.ProbabilisticAddOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.ProbabilisticDivideNumberLHSOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.ProbabilisticDivideNumberRHSOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.ProbabilisticDivideOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.ProbabilisticIntegrateFunction;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.ProbabilisticMultiplyNumberLHSOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.ProbabilisticMultiplyNumberRHSOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.ProbabilisticMultiplyOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.ProbabilisticSubtractNumberLHSOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.ProbabilisticSubtractNumberRHSOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.ProbabilisticSubtractOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.transform.ToProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.functions.transform.ToProbabilisticDiscreteDouble;
 
 /**
  * Function provider for probabilistic functions.
@@ -114,30 +96,24 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
     public final List<IFunction<?>> getFunctions() {
         final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
         try {
-            /** Boolean functions for discrete probabilistic values */
-            // functions.add(new ProbabilisticAndOperator());
-            // functions.add(new ProbabilisticOrOperator());
-            // functions.add(new ProbabilisticNotOperator());
+            /** Boolean functions for probabilistic values */
+            functions.add(new ProbabilisticAndOperator());
+            functions.add(new ProbabilisticOrOperator());
+            functions.add(new ProbabilisticNotOperator());
 
-            functions.add(new ProbabilisticEqualsOperator());
-            functions.add(new ProbabilisticSmallerEqualsOperator());
-            functions.add(new ProbabilisticSmallerThanOperator());
-            functions.add(new ProbabilisticGreaterEqualsOperator());
-            functions.add(new ProbabilisticGreaterThanOperator());
-
-            /** Arithmetic functions for discrete probabilistic values */
-            functions.add(new ProbabilisticMinusOperator());
-            functions.add(new ProbabilisticMinusNumberRHSOperator());
-            functions.add(new ProbabilisticMinusNumberLHSOperator());
-            functions.add(new ProbabilisticPlusOperator());
-            functions.add(new ProbabilisticPlusNumberRHSOperator());
-            functions.add(new ProbabilisticPlusNumberLHSOperator());
-            functions.add(new ProbabilisticMultiplicationOperator());
-            functions.add(new ProbabilisticMultiplicationNumberRHSOperator());
-            functions.add(new ProbabilisticMultiplicationNumberLHSOperator());
-            functions.add(new ProbabilisticDivisionOperator());
-            functions.add(new ProbabilisticDivisionNumberRHSOperator());
-            functions.add(new ProbabilisticDivisionNumberLHSOperator());
+            /** Arithmetic functions for probabilistic values */
+            functions.add(new ProbabilisticSubtractOperator());
+            functions.add(new ProbabilisticSubtractNumberRHSOperator());
+            functions.add(new ProbabilisticSubtractNumberLHSOperator());
+            functions.add(new ProbabilisticAddOperator());
+            functions.add(new ProbabilisticAddNumberRHSOperator());
+            functions.add(new ProbabilisticAddNumberLHSOperator());
+            functions.add(new ProbabilisticMultiplyOperator());
+            functions.add(new ProbabilisticMultiplyNumberRHSOperator());
+            functions.add(new ProbabilisticMultiplyNumberLHSOperator());
+            functions.add(new ProbabilisticDivideOperator());
+            functions.add(new ProbabilisticDivideNumberRHSOperator());
+            functions.add(new ProbabilisticDivideNumberLHSOperator());
             functions.add(new ProbabilisticPowerOperator());
             functions.add(new ProbabilisticSQRTFunction());
             functions.add(new ProbabilisticMinFunction());
@@ -147,45 +123,23 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
             functions.add(new ProbabilisticMaxNumberRHSFunction());
             functions.add(new ProbabilisticMaxNumberLHSFunction());
 
-            /** Convert functions */
-            functions.add(new ProbabilisticDoubleToByteFunction());
-            functions.add(new ProbabilisticDoubleToShortFunction());
-            functions.add(new ProbabilisticDoubleToIntegerFunction());
-            functions.add(new ProbabilisticDoubleToLongFunction());
-            functions.add(new ProbabilisticDoubleToFloatFunction());
-            functions.add(new ToProbabilisticDoubleFunction());
-
-            /** Boolean functions for continuous probabilistic values */
-            functions.add(new ProbabilisticIntegrateMultivariateFunction());
-            functions.add(new ProbabilisticIntegrateFunction());
-
-            functions.add(new ProbabilisticContinuousSmallerEqualsOperator());
-            functions.add(new ProbabilisticContinuousSmallerEqualsVectorOperator());
-            functions.add(new ProbabilisticContinuousSmallerOperator());
-            functions.add(new ProbabilisticContinuousSmallerVectorOperator());
-            functions.add(new ProbabilisticContinuousGreaterEqualsOperator());
-            functions.add(new ProbabilisticContinuousGreaterEqualsOperatorVector());
-            functions.add(new ProbabilisticContinuousGreaterOperator());
-            functions.add(new ProbabilisticContinuousGreaterVectorOperator());
-            functions.add(new ProbabilisticContinuousEqualsOperator());
-            functions.add(new ProbabilisticContinuousEqualsVectorOperator());
-
-            /** Arithmetic functions for discrete probabilistic values */
-            functions.add(new ProbabilisticContinuousMinusOperator());
-            functions.add(new ProbabilisticContinuousMinusNumberRHSOperator());
-            functions.add(new ProbabilisticContinuousPlusOperator());
-            functions.add(new ProbabilisticContinuousPlusNumberRHSOperator());
-            functions.add(new ProbabilisticContinuousPlusNumberLHSOperator());
-            functions.add(new ProbabilisticContinuousMultiplicationNumberRHSOperator());
-            functions.add(new ProbabilisticContinuousMultiplicationNumberLHSOperator());
-            functions.add(new ProbabilisticContinuousMultiplicationOperator());
-            functions.add(new ProbabilisticContinuousDivisionNumberRHSOperator());
-            functions.add(new ProbabilisticContinuousDivisionOperator());
+            /** Compare operators. */
+            functions.add(new ProbabilisticSmallerEqualsOperator());
+            functions.add(new ProbabilisticSmallerEqualsVectorOperator());
+            functions.add(new ProbabilisticSmallerOperator());
+            functions.add(new ProbabilisticSmallerVectorOperator());
+            functions.add(new ProbabilisticGreaterEqualsOperator());
+            functions.add(new ProbabilisticGreaterEqualsOperatorVector());
+            functions.add(new ProbabilisticGreaterOperator());
+            functions.add(new ProbabilisticGreaterVectorOperator());
+            functions.add(new ProbabilisticEqualsOperator());
+            functions.add(new ProbabilisticEqualsVectorOperator());
 
             /** Convert functions */
             functions.add(new ToProbabilisticContinuousDouble());
+            functions.add(new ToProbabilisticDiscreteDouble());
 
-            /** Additional functions for continuous probabilistic value */
+            /** Additional functions for probabilistic value */
             functions.add(new BhattacharyyaDistanceFunctionVector());
             functions.add(new BhattacharyyaDistanceFunction());
             functions.add(new MahalanobisDistanceFunctionVector());
@@ -196,6 +150,8 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 
             functions.add(new EuclideanDistanceFunction());
             functions.add(new EuclideanDistanceFunctionVector());
+
+            functions.add(new ProbabilisticIntegrateFunction());
             // ProbabilisticFunctionProvider.LOG.info(String.format(
             // "Register functions: %s", functions));
 

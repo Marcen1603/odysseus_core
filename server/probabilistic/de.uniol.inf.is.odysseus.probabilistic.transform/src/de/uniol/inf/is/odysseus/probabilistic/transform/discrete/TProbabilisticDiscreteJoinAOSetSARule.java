@@ -31,9 +31,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteJoinTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunction;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticDiscreteJoinTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticJoinTIPO;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;

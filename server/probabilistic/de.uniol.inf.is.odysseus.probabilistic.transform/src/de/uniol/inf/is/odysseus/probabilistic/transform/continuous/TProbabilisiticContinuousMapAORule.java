@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticContinuousMapPO;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticMapPO;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.relational.transform.TMapAORule;
@@ -64,7 +64,7 @@ public class TProbabilisiticContinuousMapAORule extends TMapAORule {
         for (int i = 0; i < expressions.length; i++) {
             expressions[i] = new SDFProbabilisticExpression(operator.getExpressions().get(i));
         }
-        mapPO = new ProbabilisticContinuousMapPO<IMetaAttribute>(operator.getInputSchema(), expressions, false, false);
+        mapPO = new ProbabilisticMapPO<IMetaAttribute>(operator.getInputSchema(), expressions, false, false);
 
         this.defaultExecute(operator, mapPO, transformConfig, true, true);
     }

@@ -84,9 +84,14 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
 
     /** Probabilistic tuple. */
     public static final SDFDatatype PROBABILISTIC_TUPLE = new SDFProbabilisticDatatype("ProbabilisticTuple");
+    /** Probabilistic continuous double datatype. */
+    public static final SDFDatatype PROBABILISTIC_CONTINUOUS_DOUBLE = new SDFProbabilisticDatatype("ProbabilisticContinuousDouble");
+    /** Probabilistic boolean datatype used for predicates. */
+    public static final SDFDatatype PROBABILISTIC_BOOLEAN = new SDFProbabilisticDatatype("ProbabilisticBoolean");
+
+    
     /** Probabilistic result used in probabilistic continuous predicates. */
     public static final SDFDatatype PROBABILISTIC_CONTINUOUS_PREDICATE_RESULT = new SDFProbabilisticDatatype("ProbabilisticContinuousPredicateResult");
-
     /** Probabilistic discrete double datatype. */
     public static final SDFDatatype PROBABILISTIC_DOUBLE = new SDFProbabilisticDatatype("ProbabilisticDouble");
     /** Probabilistic discrete float datatype. */
@@ -99,12 +104,10 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
     public static final SDFDatatype PROBABILISTIC_SHORT = new SDFProbabilisticDatatype("ProbabilisticShort");
     /** Probabilistic discrete byte datatype. */
     public static final SDFDatatype PROBABILISTIC_BYTE = new SDFProbabilisticDatatype("ProbabilisticByte");
-    /** Probabilistic discrete boolean datatype. */
-    public static final SDFDatatype PROBABILISTIC_BOOLEAN = new SDFProbabilisticDatatype("ProbabilisticBoolean");
+
     /** Probabilistic discrete string datatype. */
     public static final SDFDatatype PROBABILISTIC_STRING = new SDFProbabilisticDatatype("ProbabilisticString");
-    /** Probabilistic continuous double datatype. */
-    public static final SDFDatatype PROBABILISTIC_CONTINUOUS_DOUBLE = new SDFProbabilisticDatatype("ProbabilisticContinuousDouble");
+
     /** Probabilistic continuous float datatype. */
     public static final SDFDatatype PROBABILISTIC_CONTINUOUS_FLOAT = new SDFProbabilisticDatatype("ProbabilisticContinuousFloat");
     /** Probabilistic continuous long datatype. */

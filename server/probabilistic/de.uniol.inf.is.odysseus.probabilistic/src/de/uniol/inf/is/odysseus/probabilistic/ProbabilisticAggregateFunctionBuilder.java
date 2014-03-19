@@ -29,21 +29,21 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregat
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousAvg;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousCompleteness;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousCount;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousMax;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousMin;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousSum;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteCompleteness;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteCount;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldAvg;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldMax;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldMin;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldSum;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteOneWorldAvg;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteOneWorldSum;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteStdDev;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticContinuousAvg;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticContinuousCompleteness;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticContinuousCount;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticContinuousMax;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticContinuousMin;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticContinuousSum;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticDiscreteCompleteness;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticDiscreteCount;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldAvg;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldMax;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldMin;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldSum;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticDiscreteOneWorldAvg;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticDiscreteOneWorldSum;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticDiscreteStdDev;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>

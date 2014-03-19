@@ -21,8 +21,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnNestAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteUnNestPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticDiscreteUnNestPO;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.relational.transform.TUnnestAORule;
 

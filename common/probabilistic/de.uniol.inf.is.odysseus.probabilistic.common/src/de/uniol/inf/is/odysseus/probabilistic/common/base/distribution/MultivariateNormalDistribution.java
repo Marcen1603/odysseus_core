@@ -251,6 +251,85 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
         return new MultivariateNormalDistribution(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IMultivariateDistribution add(Double number) {
+        RealMatrix thisMean = new Array2DRowRealMatrix(means);
+        RealMatrix thisCovariance = covariance;
+        return new MultivariateNormalDistribution(thisMean.scalarAdd(number).getColumn(0), thisCovariance.getData());
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IMultivariateDistribution subtract(Double number) {
+        return this.add(-number);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IMultivariateDistribution multiply(Double number) {
+        RealMatrix thisMean = new Array2DRowRealMatrix(means);
+        RealMatrix thisCovariance = covariance;
+        return new MultivariateNormalDistribution(thisMean.scalarMultiply(number).getColumn(0), thisCovariance.scalarMultiply(number * number).getData());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IMultivariateDistribution divide(Double number) {
+        return this.multiply(1.0 / number);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IMultivariateDistribution add(IMultivariateDistribution other) {
+        RealMatrix otherMean = new Array2DRowRealMatrix(other.getMean());
+        RealMatrix otherCovariance = new Array2DRowRealMatrix(other.getVariance());
+        RealMatrix thisMean = new Array2DRowRealMatrix(means);
+        RealMatrix thisCovariance = covariance;
+        return new MultivariateNormalDistribution(thisMean.add(otherMean).getColumn(0), thisCovariance.add(otherCovariance).getData());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IMultivariateDistribution subtract(IMultivariateDistribution other) {
+        RealMatrix otherMean = new Array2DRowRealMatrix(other.getMean());
+        RealMatrix otherCovariance = new Array2DRowRealMatrix(other.getVariance());
+        RealMatrix thisMean = new Array2DRowRealMatrix(means);
+        RealMatrix thisCovariance = covariance;
+        return new MultivariateNormalDistribution(thisMean.subtract(otherMean).getColumn(0), thisCovariance.add(otherCovariance).getData());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IMultivariateDistribution multiply(IMultivariateDistribution other) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IMultivariateDistribution divide(IMultivariateDistribution other) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     public static void main(String[] args) {
         double[] means = new double[] { 1.0, 2.0, 3.0 };
         double[][] covariance = new double[][] { { 1.0, 0.5, 0.5 }, { 0.5, 1.0, 0.5 }, { 0.5, 0.5, 1.0 } };
@@ -261,5 +340,15 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
         System.out.println("Restrict to: " + restrictMatrix);
         distribution.restrict(restrictMatrix);
         System.out.println("Result: " + distribution);
+
+        System.out.println("Add: X+3 -> " + distribution.add(3.0));
+        System.out.println("Add: X-3 -> " + distribution.subtract(3.0));
+        System.out.println("Add: X*3 -> " + distribution.multiply(3.0));
+        System.out.println("Add: X/3 -> " + distribution.divide(3.0));
+
+        System.out.println("Add: X+X -> " + distribution.add(distribution));
+        System.out.println("Add: X-X -> " + distribution.subtract(distribution));
+        System.out.println("Add: X*X -> " + distribution.multiply(distribution));
+        System.out.println("Add: X/X -> " + distribution.divide(distribution));
     }
 }

@@ -35,9 +35,9 @@ import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.Probabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticDiscreteSelectPO;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**

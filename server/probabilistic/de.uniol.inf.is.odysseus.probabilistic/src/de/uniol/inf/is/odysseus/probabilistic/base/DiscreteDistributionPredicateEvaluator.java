@@ -3,11 +3,11 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.base;
 
+import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticDiscreteUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.VarHelper;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.common.ProbabilisticDiscreteUtils;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 

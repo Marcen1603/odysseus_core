@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteMapPO;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticDiscreteMapPO;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.relational.transform.TMapAORule;

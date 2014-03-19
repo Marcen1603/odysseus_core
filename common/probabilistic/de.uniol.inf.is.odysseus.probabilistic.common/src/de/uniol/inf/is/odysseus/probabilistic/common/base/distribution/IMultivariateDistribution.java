@@ -71,5 +71,21 @@ public interface IMultivariateDistribution extends Serializable, Cloneable, IClo
      */
     void restrict(RealMatrix restrict);
 
+    IMultivariateDistribution add(Double number);
+
+    IMultivariateDistribution subtract(Double number);
+
+    IMultivariateDistribution multiply(Double number);
+
+    IMultivariateDistribution divide(Double number);
+
+    IMultivariateDistribution add(IMultivariateDistribution other);
+
+    IMultivariateDistribution subtract(IMultivariateDistribution other);
+
+    IMultivariateDistribution multiply(IMultivariateDistribution other);
+
+    IMultivariateDistribution divide(IMultivariateDistribution other);
+
     IMultivariateDistribution clone();
 }

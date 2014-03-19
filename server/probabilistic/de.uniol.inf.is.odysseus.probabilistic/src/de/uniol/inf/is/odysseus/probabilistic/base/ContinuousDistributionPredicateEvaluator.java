@@ -65,7 +65,7 @@ public class ContinuousDistributionPredicateEvaluator implements IPredicateEvalu
                     for (Pair<Double, IMultivariateDistribution> component : ((MultivariateMixtureDistribution) oldDistribution).getComponents()) {
                         oldMu += component.getKey() * component.getValue().getMean()[i];
                     }
-                    oldDistribution.setSupport(i, newDistribution.getSupport()[i].sub(newMu - oldMu));
+                    oldDistribution.setSupport(i, newDistribution.getSupport()[i].subtract(newMu - oldMu));
 
                 }
                 jointProbability *= oldDistribution.getScale() / newDistribution.getScale();

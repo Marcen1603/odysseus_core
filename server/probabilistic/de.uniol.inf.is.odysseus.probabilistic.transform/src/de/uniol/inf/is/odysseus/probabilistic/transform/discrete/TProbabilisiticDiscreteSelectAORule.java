@@ -23,8 +23,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticDiscreteSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.server.intervalapproach.NElementHeartbeatGeneration;

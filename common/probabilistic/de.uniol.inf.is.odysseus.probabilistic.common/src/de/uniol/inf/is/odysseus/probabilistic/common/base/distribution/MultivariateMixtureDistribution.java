@@ -37,8 +37,6 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
     /** The support for each dimension. */
     private Interval[] support;
 
-
-
     public MultivariateMixtureDistribution(double weight, IMultivariateDistribution component) {
         distribution = new IMultivariateDistribution[] { component };
         this.weight = new double[] { weight };
@@ -49,6 +47,7 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
             support[i] = Interval.MAX;
         }
     }
+
     public MultivariateMixtureDistribution(double[] weights, IMultivariateDistribution[] components) {
         distribution = components;
         this.weight = weights;
@@ -59,6 +58,7 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
             support[i] = Interval.MAX;
         }
     }
+
     public MultivariateMixtureDistribution(double[] weights, List<IMultivariateDistribution> components) {
         distribution = components.toArray(new IMultivariateDistribution[components.size()]);
         this.weight = weights;
@@ -100,7 +100,7 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
         attributes = new int[copy.getDimension()];
         for (int i = 0; i < copy.getDimension(); i++) {
             support[i] = copy.support[i].clone();
-            attributes[i]=copy.attributes[i];
+            attributes[i] = copy.attributes[i];
         }
 
     }
@@ -336,15 +336,129 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
 
     }
 
-    // public void setDistributions(ExtendedMixtureMultivariateRealDistribution
-    // distributions) {
-    // for (IMultivariateRealDistribution distribution :
-    // distributions.distribution) {
-    // this.distribution.add((IMultivariateRealDistribution)
-    // distribution.clone());
-    // }
-    // this.weight = MathArrays.copyOf(distributions.weight);
-    // }
+    public MultivariateMixtureDistribution add(Double number) {
+        MultivariateMixtureDistribution mixture = this.clone();
+        for (int i = 0; i < this.distribution.length; i++) {
+            mixture.distribution[i] = this.distribution[i].add(number);
+        }
+        for (int i = 0; i < this.getDimension(); i++) {
+            mixture.support[i] = this.support[i].add(number);
+        }
+        return mixture;
+    }
+
+    public MultivariateMixtureDistribution subtract(Double number) {
+        MultivariateMixtureDistribution mixture = this.clone();
+        for (int i = 0; i < this.distribution.length; i++) {
+            mixture.distribution[i] = this.distribution[i].subtract(number);
+        }
+        for (int i = 0; i < this.getDimension(); i++) {
+            mixture.support[i] = this.support[i].subtract(number);
+        }
+        return mixture;
+    }
+
+    public MultivariateMixtureDistribution divide(Double number) {
+        MultivariateMixtureDistribution mixture = this.clone();
+        for (int i = 0; i < this.distribution.length; i++) {
+            mixture.distribution[i] = this.distribution[i].divide(number);
+        }
+        for (int i = 0; i < this.getDimension(); i++) {
+            mixture.support[i] = this.support[i].divide(number);
+        }
+        return mixture;
+    }
+
+    public MultivariateMixtureDistribution multiply(Double number) {
+        MultivariateMixtureDistribution mixture = this.clone();
+        for (int i = 0; i < this.distribution.length; i++) {
+            mixture.distribution[i] = this.distribution[i].multiply(number);
+        }
+        for (int i = 0; i < this.getDimension(); i++) {
+            mixture.support[i] = this.support[i].multiply(number);
+        }
+        return mixture;
+    }
+
+    public MultivariateMixtureDistribution add(IMultivariateDistribution other) {
+        MultivariateMixtureDistribution otherMixture = (MultivariateMixtureDistribution) other;
+
+        IMultivariateDistribution[] components = new IMultivariateDistribution[this.distribution.length * otherMixture.distribution.length];
+        double[] weights = new double[components.length];
+        for (int i = 0; i < this.distribution.length; i++) {
+            for (int j = 0; j < otherMixture.distribution.length; j++) {
+                components[i * this.distribution.length + j] = this.distribution[i].add(otherMixture.distribution[i]);
+                weights[i * this.distribution.length + j] = this.weight[i] * otherMixture.weight[j];
+            }
+        }
+        MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(weights, components);
+        for (int i = 0; i < this.getDimension(); i++) {
+            mixture.support[i] = this.support[i].add(otherMixture.support[i]);
+            mixture.attributes[i] = this.attributes[i];
+        }
+        mixture.scale = this.scale * otherMixture.scale;
+        return mixture;
+    }
+
+    public MultivariateMixtureDistribution subtract(IMultivariateDistribution other) {
+        MultivariateMixtureDistribution otherMixture = (MultivariateMixtureDistribution) other;
+
+        IMultivariateDistribution[] components = new IMultivariateDistribution[this.distribution.length * otherMixture.distribution.length];
+        double[] weights = new double[components.length];
+        for (int i = 0; i < this.distribution.length; i++) {
+            for (int j = 0; j < otherMixture.distribution.length; j++) {
+                components[i * this.distribution.length + j] = this.distribution[i].subtract(otherMixture.distribution[i]);
+                weights[i * this.distribution.length + j] = this.weight[i] * otherMixture.weight[j];
+            }
+        }
+        MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(weights, components);
+        for (int i = 0; i < this.getDimension(); i++) {
+            mixture.support[i] = this.support[i].subtract(otherMixture.support[i]);
+            mixture.attributes[i] = this.attributes[i];
+        }
+        mixture.scale = this.scale * otherMixture.scale;
+        return mixture;
+    }
+
+    public MultivariateMixtureDistribution divide(IMultivariateDistribution other) {
+        MultivariateMixtureDistribution otherMixture = (MultivariateMixtureDistribution) other;
+
+        IMultivariateDistribution[] components = new IMultivariateDistribution[this.distribution.length * otherMixture.distribution.length];
+        double[] weights = new double[components.length];
+        for (int i = 0; i < this.distribution.length; i++) {
+            for (int j = 0; j < otherMixture.distribution.length; j++) {
+                components[i * this.distribution.length + j] = this.distribution[i].divide(otherMixture.distribution[i]);
+                weights[i * this.distribution.length + j] = this.weight[i] * otherMixture.weight[j];
+            }
+        }
+        MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(weights, components);
+        for (int i = 0; i < this.getDimension(); i++) {
+            mixture.support[i] = this.support[i].divide(otherMixture.support[i]);
+            mixture.attributes[i] = this.attributes[i];
+        }
+        mixture.scale = this.scale * otherMixture.scale;
+        return mixture;
+    }
+
+    public MultivariateMixtureDistribution multiply(IMultivariateDistribution other) {
+        MultivariateMixtureDistribution otherMixture = (MultivariateMixtureDistribution) other;
+
+        IMultivariateDistribution[] components = new IMultivariateDistribution[this.distribution.length * otherMixture.distribution.length];
+        double[] weights = new double[components.length];
+        for (int i = 0; i < this.distribution.length; i++) {
+            for (int j = 0; j < otherMixture.distribution.length; j++) {
+                components[i * this.distribution.length + j] = this.distribution[i].multiply(otherMixture.distribution[i]);
+                weights[i * this.distribution.length + j] = this.weight[i] * otherMixture.weight[j];
+            }
+        }
+        MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(weights, components);
+        for (int i = 0; i < this.getDimension(); i++) {
+            mixture.support[i] = this.support[i].multiply(otherMixture.support[i]);
+            mixture.attributes[i] = this.attributes[i];
+        }
+        mixture.scale = this.scale * otherMixture.scale;
+        return mixture;
+    }
 
     /**
      * {@inheritDoc}
@@ -379,6 +493,7 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
         result = prime * result + Arrays.hashCode(this.weight);
         return result;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -408,22 +523,28 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
         }
         return true;
     }
+
     public static void main(String[] args) {
         double[] means1 = new double[] { 1.0, 2.0, 3.0 };
         double[][] covariance1 = new double[][] { { 1.0, 0.5, 0.5 }, { 0.5, 1.0, 0.5 }, { 0.5, 0.5, 1.0 } };
         double[] means2 = new double[] { 4.0, 5.0, 6.0 };
         double[][] covariance2 = new double[][] { { 1.0, 0.25, 0.25 }, { 0.25, 1.0, 0.25 }, { 0.25, 0.25, 1.0 } };
 
+        double[][] singletons = new double[][] { { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 } };
+        double[] probabilities = new double[] { 0.75, 0.25 };
+
         MultivariateNormalDistribution distribution1 = new MultivariateNormalDistribution(means1, covariance1);
         MultivariateNormalDistribution distribution2 = new MultivariateNormalDistribution(means2, covariance2);
+        MultivariateEnumeratedDistribution distribution3 = new MultivariateEnumeratedDistribution(singletons, probabilities);
+
         List<IMultivariateDistribution> distributions = new ArrayList<>();
         distributions.add(distribution1);
         distributions.add(distribution2);
+        distributions.add(distribution3);
 
-        MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(new double[] { 0.75, 0.25 }, distributions);
+        MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(new double[] { 0.55, 0.25, 0.2 }, distributions);
         mixture.setSupport(1, new Interval(-3.0, 5.0));
         mixture.setAttributes(new int[] { 2, 0, 3 });
-        // FIXME restrict support and attributes
 
         Array2DRowRealMatrix restrictMatrix = new Array2DRowRealMatrix(new double[][] { { 1.0, 0.0, 0.0 }, { 0.0, 0.0, 1.0 } });
         System.out.println("Distribution: " + mixture);
