@@ -22,6 +22,8 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -35,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.ontology.Activator;
 import de.uniol.inf.is.odysseus.ontology.common.SSN;
 import de.uniol.inf.is.odysseus.ontology.common.model.MeasurementCapability;
@@ -132,15 +135,14 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
 
         final MapAO mapAO = this.insertMapAO(operator);
 
-        mapAO.initialize();
-
         final Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(operator, true);
         for (final ILogicalOperator o : toUpdate) {
             this.update(o);
         }
         update(mapAO);
+        mapAO.initialize();
         retract(operator);
-      
+
     }
 
     /**
@@ -186,8 +188,6 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
         Objects.requireNonNull(observers);
         Objects.requireNonNull(frequencies);
 
-        final SDFSchema schema = operator.getInputSchema(0);
-
         for (final String sourceName : observers.keySet()) {
             final JoinAO joinAO = this.insertCrossproductAO(operator);
             joinAO.setName("Join " + sourceName);
@@ -205,7 +205,6 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
             joinAO.initialize();
             this.insert(joinAO);
 
-            joinAO.setOutputSchema(SDFSchema.union(schema, viewOrStream.getOutputSchema()));
         }
     }
 
@@ -256,9 +255,10 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
         mapAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
 
         final List<NamedExpressionItem> namedExpressions = new ArrayList<>();
+        final IAttributeResolver attrRes = new DirectAttributeResolver(mapAO.getInputSchema());
         for (int i = 0; i < parent.getOutputSchema().size(); i++) {
-            final SDFExpression expr = parent.getExpressions()[i];
-            namedExpressions.add(new NamedExpressionItem(parent.getOutputSchema().get(i).getAttributeName(), expr));
+            SDFExpression expr = new SDFExpression(parent.getExpressions()[i].getMEPExpression(), attrRes, MEP.getInstance());
+            namedExpressions.add(new NamedExpressionItem(parent.getOutputSchema().get(i).getURI(), expr));
         }
         mapAO.setExpressions(namedExpressions);
         if (RInsertSensingDevicesRule.LOG.isDebugEnabled()) {
@@ -267,6 +267,7 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
                 RInsertSensingDevicesRule.LOG.debug("{}. {} ", i, mapAO.getExpressions().get(i));
             }
         }
+
         return mapAO;
     }
 

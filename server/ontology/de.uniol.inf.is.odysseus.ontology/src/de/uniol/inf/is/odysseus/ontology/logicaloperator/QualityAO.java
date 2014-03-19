@@ -165,6 +165,7 @@ public class QualityAO extends UnaryLogicalOp {
                 outputSchemaAttributes.add(propertyAttribute);
             }
         }
+        
         this.setOutputSchema(new SDFSchema(this.getInputSchema(), outputSchemaAttributes));
         this.expressions = this.estimateExpressions();
     }
@@ -194,7 +195,7 @@ public class QualityAO extends UnaryLogicalOp {
 
         int i = 0;
         for (final SDFAttribute attribute : this.getInputSchema()) {
-            expressions[i] = new SDFExpression(attribute.getQualName(), MEP.getInstance());
+            expressions[i] = new SDFExpression(attribute.getAttributeName(), MEP.getInstance());
             i++;
         }
 
