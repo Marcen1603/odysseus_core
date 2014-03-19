@@ -1,5 +1,5 @@
-/**
- * Copyright 2013 The Odysseus Team
+/********************************************************************************** 
+ * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,56 +17,37 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
- * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TProbabilisticValidatorRule extends AbstractTransformationRule<IHasMetadataMergeFunction<?>> {
-    /** The Logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(TProbabilisticValidatorRule.class);
+public class TJoinProbabilisticRule extends AbstractTransformationRule<JoinTIPO<?, ?>> {
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
-    public final int getPriority() {
+    public int getPriority() {
         return 0;
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public final void execute(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) throws RuleException {
+    public void execute(JoinTIPO<?, ?> operator, TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getMetadataMerge());
-        Objects.requireNonNull(config);
-        if (!((CombinedMergeFunction<?>) operator.getMetadataMerge()).providesMergeFunctionFor(IProbabilistic.class)) {
-            TProbabilisticValidatorRule.LOG.warn("No Probabilistic merge function set for " + operator);
-        }
+        ((CombinedMergeFunction) operator.getMetadataMerge()).add(new ProbabilisticMetadataMergeFunction());
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
-    public final boolean isExecutable(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) {
+    public boolean isExecutable(JoinTIPO<?, ?> operator, TransformationConfiguration config) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getMetadataMerge());
         Objects.requireNonNull(config);
@@ -79,22 +60,19 @@ public class TProbabilisticValidatorRule extends AbstractTransformationRule<IHas
         return false;
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
-    public final String getName() {
-        return "Probabilistic Validation";
+    public String getName() {
+        return "JoinTIPO add MetadataMerge (IProbabilistic)";
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
-    public final IRuleFlowGroup getRuleFlowGroup() {
-        return TransformRuleFlowGroup.VALIDATE;
+    public IRuleFlowGroup getRuleFlowGroup() {
+        return TransformRuleFlowGroup.METAOBJECTS;
+    }
+
+    @Override
+    public Class<? super JoinTIPO<?, ?>> getConditionClass() {
+        return JoinTIPO.class;
     }
 
 }

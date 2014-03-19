@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.relational.AbstractRelationalMe
  * @param <K>
  * @param <T>
  */
-public class ProbabilisticMergeFunction<T extends Tuple<K>, K extends ITimeIntervalProbabilistic> extends AbstractRelationalMergeFunction<T, K> implements IDataMergeFunction<T, K>, Cloneable {
+public class ProbabilisticMergeFunction<T extends Tuple<K>, K extends IProbabilisticTimeInterval> extends AbstractRelationalMergeFunction<T, K> implements IDataMergeFunction<T, K>, Cloneable {
     /**
      * Default constructor.
      * 

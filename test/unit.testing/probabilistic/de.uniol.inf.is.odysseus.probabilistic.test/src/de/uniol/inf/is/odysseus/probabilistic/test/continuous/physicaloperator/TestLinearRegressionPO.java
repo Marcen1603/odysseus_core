@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.LinearRegressionPO;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.TimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticTimeInterval;
 
 /**
  * 
@@ -59,27 +59,27 @@ public class TestLinearRegressionPO {
         final Object[] attributes6 = new Object[] { 1.0, 6.0, 10.0, 16.0 };
 
         final ProbabilisticTuple<ITimeInterval> tuple1 = new ProbabilisticTuple<>(attributes1, true);
-        tuple1.setMetadata(new TimeIntervalProbabilistic());
+        tuple1.setMetadata(new ProbabilisticTimeInterval());
         tuple1.getMetadata().setStart(PointInTime.currentPointInTime());
 
         final ProbabilisticTuple<ITimeInterval> tuple2 = new ProbabilisticTuple<>(attributes2, true);
-        tuple2.setMetadata(new TimeIntervalProbabilistic());
+        tuple2.setMetadata(new ProbabilisticTimeInterval());
         tuple2.getMetadata().setStart(PointInTime.currentPointInTime());
 
         final ProbabilisticTuple<ITimeInterval> tuple3 = new ProbabilisticTuple<>(attributes3, true);
-        tuple3.setMetadata(new TimeIntervalProbabilistic());
+        tuple3.setMetadata(new ProbabilisticTimeInterval());
         tuple3.getMetadata().setStart(PointInTime.currentPointInTime());
 
         final ProbabilisticTuple<ITimeInterval> tuple4 = new ProbabilisticTuple<>(attributes4, true);
-        tuple4.setMetadata(new TimeIntervalProbabilistic());
+        tuple4.setMetadata(new ProbabilisticTimeInterval());
         tuple4.getMetadata().setStart(PointInTime.currentPointInTime());
 
         final ProbabilisticTuple<ITimeInterval> tuple5 = new ProbabilisticTuple<>(attributes5, true);
-        tuple5.setMetadata(new TimeIntervalProbabilistic());
+        tuple5.setMetadata(new ProbabilisticTimeInterval());
         tuple5.getMetadata().setStart(PointInTime.currentPointInTime());
 
         final ProbabilisticTuple<ITimeInterval> tuple6 = new ProbabilisticTuple<>(attributes6, true);
-        tuple6.setMetadata(new TimeIntervalProbabilistic());
+        tuple6.setMetadata(new ProbabilisticTimeInterval());
         tuple6.getMetadata().setStart(PointInTime.currentPointInTime());
 
         final LinearRegressionPO<ITimeInterval> linearRegression = new LinearRegressionPO<ITimeInterval>(new int[] { 0, 3 }, new int[] { 1, 2 });

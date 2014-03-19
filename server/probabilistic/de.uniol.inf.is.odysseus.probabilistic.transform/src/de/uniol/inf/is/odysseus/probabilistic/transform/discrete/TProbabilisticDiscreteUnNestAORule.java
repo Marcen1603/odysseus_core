@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteUnNestPO;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.relational.transform.TUnnestAORule;
 
@@ -49,7 +49,7 @@ public class TProbabilisticDiscreteUnNestAORule extends TUnnestAORule {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(config);   
      
-        final ProbabilisticDiscreteUnNestPO<?> po = new ProbabilisticDiscreteUnNestPO<ITimeIntervalProbabilistic>(operator.getAttributePosition());
+        final ProbabilisticDiscreteUnNestPO<?> po = new ProbabilisticDiscreteUnNestPO<IProbabilisticTimeInterval>(operator.getAttributePosition());
         this.defaultExecute(operator, po, config, true, true);
     }
 

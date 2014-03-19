@@ -28,14 +28,14 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.LinearRegressionMergePO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
 
 /**
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TestLinearRegressionMergePO extends LinearRegressionMergePO<ITimeIntervalProbabilistic> {
+public class TestLinearRegressionMergePO extends LinearRegressionMergePO<IProbabilisticTimeInterval> {
     /** The logger for debug purpose. */
     private static final Logger LOG = LoggerFactory.getLogger(TestLinearRegressionMergePO.class);
 
@@ -53,7 +53,7 @@ public class TestLinearRegressionMergePO extends LinearRegressionMergePO<ITimeIn
      * transfer(java.lang.Object)
      */
     @Override
-    public final void transfer(final ProbabilisticTuple<ITimeIntervalProbabilistic> object) {
+    public final void transfer(final ProbabilisticTuple<IProbabilisticTimeInterval> object) {
         TestLinearRegressionMergePO.LOG.debug(object.toString());
         Assert.assertTrue(((IProbabilistic) object.getMetadata()).getExistence() <= 1.0);
     }
@@ -68,7 +68,7 @@ public class TestLinearRegressionMergePO extends LinearRegressionMergePO<ITimeIn
      *            The prob. tuple
      */
     // @Test(dataProvider = "discreteProbabilisticTuple")
-    public final void testProcess(final ProbabilisticTuple<ITimeIntervalProbabilistic> tuple) {
+    public final void testProcess(final ProbabilisticTuple<IProbabilisticTimeInterval> tuple) {
         this.process_next(tuple, 0);
 
     }

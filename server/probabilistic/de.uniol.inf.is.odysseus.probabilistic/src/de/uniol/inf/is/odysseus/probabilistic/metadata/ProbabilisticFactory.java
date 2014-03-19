@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticFactory extends AbstractMetadataUpdater<IProbabilistic, Tuple<? extends IProbabilistic>> {
+public class ProbabilisticFactory<M extends IProbabilistic, T extends Tuple<M>> extends AbstractMetadataUpdater<M, T> {
     /** The position of the attribute holding the existence probability. */
     private final int existenceProbabilityPos;
 
@@ -37,14 +37,12 @@ public class ProbabilisticFactory extends AbstractMetadataUpdater<IProbabilistic
         this.existenceProbabilityPos = existenceProbabilityPos;
     }
 
-    /*
+    /**
      * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater#updateMetadata
-     * (de.uniol.inf.is.odysseus.core.metadata.IStreamObject)
+     * {@inheritDoc}
      */
     @Override
-    public final void updateMetadata(final Tuple<? extends IProbabilistic> inElem) {
+    public final void updateMetadata(final T inElem) {
         final IProbabilistic metadata = inElem.getMetadata();
         metadata.setExistence(((Number) inElem.getAttribute(this.existenceProbabilityPos)).doubleValue());
     }

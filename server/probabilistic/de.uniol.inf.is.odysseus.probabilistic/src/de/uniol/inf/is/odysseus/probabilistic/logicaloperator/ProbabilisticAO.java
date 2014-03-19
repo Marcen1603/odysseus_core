@@ -63,7 +63,7 @@ public class ProbabilisticAO extends UnaryLogicalOp {
      * @param attribute
      *            The attribute
      */
-    @Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTE", isList = false, optional = true, doc = "The name of the attribute for the existence uncertainty.")
+    @Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTE", isList = false, optional = false, doc = "The name of the attribute for the existence uncertainty.")
     public final void setAttribute(final SDFAttribute attribute) {
         Objects.requireNonNull(attribute);
         this.attribute = attribute;

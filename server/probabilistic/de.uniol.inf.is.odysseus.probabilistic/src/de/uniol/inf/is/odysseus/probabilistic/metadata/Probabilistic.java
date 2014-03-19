@@ -58,20 +58,35 @@ public class Probabilistic implements IProbabilistic {
     /**
      * Clone constructor.
      * 
-     * @param probability
+     * @param copy
      *            The object to copy from
      */
-    public Probabilistic(final Probabilistic probability) {
-        this.existence = probability.existence;
+    public Probabilistic(final Probabilistic copy) {
+        this.existence = copy.existence;
 
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see de.uniol.inf.is.odysseus.core.ICSVToString#csvToString(char,
-     * java.lang.Character, java.text.NumberFormat, java.text.NumberFormat,
-     * boolean)
+     * {@inheritDoc}
+     */
+    @Override
+    public final double getExistence() {
+        return this.existence;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public final void setExistence(final double existence) {
+        this.existence = existence;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
      */
     @Override
     public final String csvToString(final char delimiter, final Character textSeperator, final NumberFormat floatingFormatter, final NumberFormat numberFormatter, final boolean withMetadata) {
@@ -83,73 +98,49 @@ public class Probabilistic implements IProbabilistic {
         }
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see de.uniol.inf.is.odysseus.core.ICSVToString#getCSVHeader(char)
+     * {@inheritDoc}
      */
     @Override
     public final String getCSVHeader(final char delimiter) {
         return "probability";
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see java.lang.Object#clone()
+     * {@inheritDoc}
      */
     @Override
     public final IProbabilistic clone() {
         return new Probabilistic(this);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see
-     * de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic#getExistence
-     * ()
-     */
-    @Override
-    public final double getExistence() {
-        return this.existence;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic#setExistence
-     * (double)
-     */
-    @Override
-    public final void setExistence(final double existence) {
-        this.existence = existence;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      */
     @Override
     public final String toString() {
-        return "TEP: " + this.existence;
+        return "[existence= " + this.existence + "]";
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute#getClasses()
+     * {@inheritDoc}
      */
     @Override
     public final Class<? extends IMetaAttribute>[] getClasses() {
         return Probabilistic.CLASSES;
     }
-    
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
-    	return "Probabilistic";
+        return "Probabilistic";
     }
 
 }

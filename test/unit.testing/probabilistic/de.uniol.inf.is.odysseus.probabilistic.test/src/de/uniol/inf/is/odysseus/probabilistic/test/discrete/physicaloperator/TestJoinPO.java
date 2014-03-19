@@ -43,9 +43,9 @@ import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.Probabili
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteJoinTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunction;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.TimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticTimeInterval;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticJoinTIPO;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
@@ -55,7 +55,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetada
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TestJoinPO extends ProbabilisticJoinTIPO<ITimeIntervalProbabilistic, Tuple<ITimeIntervalProbabilistic>> {
+public class TestJoinPO extends ProbabilisticJoinTIPO<IProbabilisticTimeInterval, Tuple<IProbabilisticTimeInterval>> {
     /** The logger for debug purpose. */
     private static final Logger LOG = LoggerFactory.getLogger(TestJoinPO.class);
 
@@ -81,7 +81,7 @@ public class TestJoinPO extends ProbabilisticJoinTIPO<ITimeIntervalProbabilistic
      * transfer(java.lang.Object)
      */
     @Override
-    public final void transfer(final Tuple<ITimeIntervalProbabilistic> object) {
+    public final void transfer(final Tuple<IProbabilisticTimeInterval> object) {
         TestJoinPO.LOG.debug(object.toString());
         Assert.assertTrue(((IProbabilistic) object.getMetadata()).getExistence() <= 1.0);
     }
@@ -115,9 +115,9 @@ public class TestJoinPO extends ProbabilisticJoinTIPO<ITimeIntervalProbabilistic
      *            The tuple from the right stream
      */
     @Test(dataProvider = "discreteProbabilisticTuple")
-    public final void testProcess(final ProbabilisticTuple<ITimeIntervalProbabilistic> left, final ProbabilisticTuple<ITimeIntervalProbabilistic> right) {
+    public final void testProcess(final ProbabilisticTuple<IProbabilisticTimeInterval> left, final ProbabilisticTuple<IProbabilisticTimeInterval> right) {
         // object.getMetadata().setExistence(1.0);
-        final TimeIntervalProbabilistic metadata = new TimeIntervalProbabilistic();
+        final ProbabilisticTimeInterval metadata = new ProbabilisticTimeInterval();
         final PointInTime start = new PointInTime(1L);
         final PointInTime end = new PointInTime(3L);
         metadata.setStartAndEnd(start, end);
@@ -219,7 +219,7 @@ public class TestJoinPO extends ProbabilisticJoinTIPO<ITimeIntervalProbabilistic
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private static ProbabilisticDiscreteJoinTISweepArea[] getTestAreas() {
-        final ProbabilisticDiscreteJoinTISweepArea<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>[] areas = new ProbabilisticDiscreteJoinTISweepArea[2];
+        final ProbabilisticDiscreteJoinTISweepArea<IProbabilisticTimeInterval, ProbabilisticTuple<IProbabilisticTimeInterval>>[] areas = new ProbabilisticDiscreteJoinTISweepArea[2];
 
         final Collection<SDFAttribute> attributes = SchemaUtils.getDiscreteProbabilisticAttributes(TestJoinPO.getTestPredicate().getAttributes());
         final SDFSchema leftSchema = TestJoinPO.getSchema1();
@@ -235,9 +235,9 @@ public class TestJoinPO extends ProbabilisticJoinTIPO<ITimeIntervalProbabilistic
         final int[] rightProbabilisticAttributePos = SchemaUtils.getAttributePos(rightSchema, rightAttributes);
         final int[] leftProbabilisticAttributePos = SchemaUtils.getAttributePos(leftSchema, leftAttributes);
 
-        areas[0] = new ProbabilisticDiscreteJoinTISweepArea<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>(rightProbabilisticAttributePos, leftProbabilisticAttributePos,
+        areas[0] = new ProbabilisticDiscreteJoinTISweepArea<IProbabilisticTimeInterval, ProbabilisticTuple<IProbabilisticTimeInterval>>(rightProbabilisticAttributePos, leftProbabilisticAttributePos,
                 TestJoinPO.getTestDataMerge(), TestJoinPO.getTestMetadataMerge());
-        areas[1] = new ProbabilisticDiscreteJoinTISweepArea<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>(leftProbabilisticAttributePos, rightProbabilisticAttributePos,
+        areas[1] = new ProbabilisticDiscreteJoinTISweepArea<IProbabilisticTimeInterval, ProbabilisticTuple<IProbabilisticTimeInterval>>(leftProbabilisticAttributePos, rightProbabilisticAttributePos,
                 TestJoinPO.getTestDataMerge(), TestJoinPO.getTestMetadataMerge());
         return areas;
     }
@@ -257,8 +257,8 @@ public class TestJoinPO extends ProbabilisticJoinTIPO<ITimeIntervalProbabilistic
      * 
      * @return The merge function for payload data
      */
-    public static IDataMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic> getTestDataMerge() {
-        return new ProbabilisticMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic>(2 * TestJoinPO.getSchema1().size());
+    public static IDataMergeFunction<Tuple<IProbabilisticTimeInterval>, IProbabilisticTimeInterval> getTestDataMerge() {
+        return new ProbabilisticMergeFunction<Tuple<IProbabilisticTimeInterval>, IProbabilisticTimeInterval>(2 * TestJoinPO.getSchema1().size());
     }
 
     /**
@@ -267,9 +267,9 @@ public class TestJoinPO extends ProbabilisticJoinTIPO<ITimeIntervalProbabilistic
      */
     @SuppressWarnings("rawtypes")
     public static TITransferArea getTestTransferFunction() {
-        return new TITransferArea<Tuple<ITimeIntervalProbabilistic>, Tuple<ITimeIntervalProbabilistic>>() {
+        return new TITransferArea<Tuple<IProbabilisticTimeInterval>, Tuple<IProbabilisticTimeInterval>>() {
             @Override
-            public void transfer(final Tuple<ITimeIntervalProbabilistic> object) {
+            public void transfer(final Tuple<IProbabilisticTimeInterval> object) {
                 System.out.println(object);
                 Assert.assertTrue(((IProbabilistic) object.getMetadata()).getExistence() <= 1.0);
                 Assert.assertEquals(object.getAttribute(4), "LEFT");

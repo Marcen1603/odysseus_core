@@ -30,8 +30,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.EMPO;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.TimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticTimeInterval;
 
 /**
  * 
@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.TimeIntervalProbabilistic
  * 
  */
 @SuppressWarnings("unused")
-public class TestEMPO extends EMPO<ITimeIntervalProbabilistic> {
+public class TestEMPO extends EMPO<IProbabilisticTimeInterval> {
 
     /** The logger for debug purpose. */
     private static final Logger LOG = LoggerFactory.getLogger(TestEMPO.class);
@@ -58,7 +58,7 @@ public class TestEMPO extends EMPO<ITimeIntervalProbabilistic> {
      * transfer(java.lang.Object)
      */
     @Override
-    public final void transfer(final ProbabilisticTuple<ITimeIntervalProbabilistic> object) {
+    public final void transfer(final ProbabilisticTuple<IProbabilisticTimeInterval> object) {
         TestEMPO.LOG.debug(object.toString());
     }
 
@@ -69,7 +69,7 @@ public class TestEMPO extends EMPO<ITimeIntervalProbabilistic> {
      *            A prob. tuple
      */
     @Test(dataProvider = "tuple")
-    public final void testprocess(final ProbabilisticTuple<ITimeIntervalProbabilistic> tuple) {
+    public final void testprocess(final ProbabilisticTuple<IProbabilisticTimeInterval> tuple) {
         TestEMPO.LOG.debug("In: " + tuple);
         this.process_next(tuple, 0);
     }
@@ -93,7 +93,7 @@ public class TestEMPO extends EMPO<ITimeIntervalProbabilistic> {
             final double[] sample = samples[i];
             final Object[] attributes = new Object[] { sample[0], i, sample[1] };
             final ProbabilisticTuple<ITimeInterval> tuple = new ProbabilisticTuple<>(attributes, true);
-            tuple.setMetadata(new TimeIntervalProbabilistic());
+            tuple.setMetadata(new ProbabilisticTimeInterval());
             tuple.getMetadata().setStart(new PointInTime(1));
             tuple.getMetadata().setEnd(new PointInTime(110));
             tuples[i] = new Object[] { tuple };

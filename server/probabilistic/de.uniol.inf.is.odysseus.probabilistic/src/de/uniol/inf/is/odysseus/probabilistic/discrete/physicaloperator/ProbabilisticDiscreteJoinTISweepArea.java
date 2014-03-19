@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.common.ProbabilisticDiscreteUtils;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 
 /**
@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
  * @param <K>
  * @param <T>
  */
-public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabilistic, T extends Tuple<K>> extends JoinTISweepArea<T> implements Cloneable {
+public class ProbabilisticDiscreteJoinTISweepArea<K extends IProbabilisticTimeInterval, T extends Tuple<K>> extends JoinTISweepArea<T> implements Cloneable {
     /** The positions of the probabilistic attributes in the left stream. */
     private final int[] leftProbabilisticAttributePos;
     /** The positions of the probabilistic attributes in the right stream. */

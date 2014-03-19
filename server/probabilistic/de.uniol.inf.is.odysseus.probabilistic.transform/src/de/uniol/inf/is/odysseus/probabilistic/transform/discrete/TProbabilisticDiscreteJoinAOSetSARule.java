@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteJoinTISweepArea;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticJoinTIPO;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
@@ -50,7 +50,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>> {
+public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO<IProbabilisticTimeInterval, ProbabilisticTuple<IProbabilisticTimeInterval>>> {
     /*
      * 
      * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
@@ -73,11 +73,11 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
         Objects.requireNonNull(transformConfig);
         final ProbabilisticDiscreteJoinTISweepArea<?, ?>[] areas = new ProbabilisticDiscreteJoinTISweepArea[2];
 
-        final IDataMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic> dataMerge = new ProbabilisticMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic>(
+        final IDataMergeFunction<Tuple<IProbabilisticTimeInterval>, IProbabilisticTimeInterval> dataMerge = new ProbabilisticMergeFunction<Tuple<IProbabilisticTimeInterval>, IProbabilisticTimeInterval>(
                 operator.getOutputSchema().size());
         IMetadataMergeFunction<?> metadataMerge;
         if (transformConfig.getMetaTypes().size() > 1) {
-            final CombinedMergeFunction<ITimeIntervalProbabilistic> combinedMetadataMerge = new CombinedMergeFunction<ITimeIntervalProbabilistic>();
+            final CombinedMergeFunction<IProbabilisticTimeInterval> combinedMetadataMerge = new CombinedMergeFunction<IProbabilisticTimeInterval>();
             combinedMetadataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
             metadataMerge = combinedMetadataMerge;
         }

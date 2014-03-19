@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 
 /**
@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
  * @param <K>
  * @param <T>
  */
-public class ProbabilisticJoinTIPO<K extends ITimeIntervalProbabilistic, T extends IStreamObject<K>> extends JoinTIPO<K, T> {
+public class ProbabilisticJoinTIPO<K extends IProbabilisticTimeInterval, T extends IStreamObject<K>> extends JoinTIPO<K, T> {
     /** The logger. */
     private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticJoinTIPO.class);
 

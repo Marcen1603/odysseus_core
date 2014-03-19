@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.IDummyDataCreationFuncti
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class DefaultProbabilisticTIDummyDataCreation implements IDummyDataCreationFunction<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>, Cloneable {
+public class DefaultProbabilisticTIDummyDataCreation implements IDummyDataCreationFunction<IProbabilisticTimeInterval, ProbabilisticTuple<IProbabilisticTimeInterval>>, Cloneable {
     /**
      * Default constructor.
      */
@@ -46,7 +46,7 @@ public class DefaultProbabilisticTIDummyDataCreation implements IDummyDataCreati
      * #createMetadata(de.uniol.inf.is.odysseus.core.metadata.IStreamObject)
      */
     @Override
-    public final ProbabilisticTuple<ITimeIntervalProbabilistic> createMetadata(final ProbabilisticTuple<ITimeIntervalProbabilistic> source) {
+    public final ProbabilisticTuple<IProbabilisticTimeInterval> createMetadata(final ProbabilisticTuple<IProbabilisticTimeInterval> source) {
         return source.clone();
     }
 
@@ -57,7 +57,7 @@ public class DefaultProbabilisticTIDummyDataCreation implements IDummyDataCreati
      * #hasMetadata(de.uniol.inf.is.odysseus.core.metadata.IStreamObject)
      */
     @Override
-    public final boolean hasMetadata(final ProbabilisticTuple<ITimeIntervalProbabilistic> source) {
+    public final boolean hasMetadata(final ProbabilisticTuple<IProbabilisticTimeInterval> source) {
         return true;
     }
 

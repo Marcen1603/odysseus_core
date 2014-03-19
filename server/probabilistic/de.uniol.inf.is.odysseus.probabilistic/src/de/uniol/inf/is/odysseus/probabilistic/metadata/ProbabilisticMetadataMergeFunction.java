@@ -24,31 +24,27 @@ import de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunctio
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class ProbabilisticMetadataMergeFunction implements IInlineMetadataMergeFunction<IProbabilistic>, Cloneable {
-    /*
+    /**
      * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunction
-     * #mergeInto(java.lang.Object, java.lang.Object, java.lang.Object)
+     * {@inheritDoc}
      */
     @Override
     public final void mergeInto(final IProbabilistic result, final IProbabilistic inLeft, final IProbabilistic inRight) {
         result.setExistence(inLeft.getExistence() * inRight.getExistence());
     }
 
-    /*
+    /**
      * 
-     * @see java.lang.Object#clone()
+     * {@inheritDoc}
      */
     @Override
     public final ProbabilisticMetadataMergeFunction clone() {
         return new ProbabilisticMetadataMergeFunction();
     }
 
-    /*
+    /**
      * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunction
-     * #getMetadataType()
+     * {@inheritDoc}
      */
     @Override
     public final Class<? extends IMetaAttribute> getMetadataType() {

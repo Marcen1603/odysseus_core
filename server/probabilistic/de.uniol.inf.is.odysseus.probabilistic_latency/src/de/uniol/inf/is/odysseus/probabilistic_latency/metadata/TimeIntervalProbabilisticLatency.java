@@ -22,13 +22,13 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.TimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticTimeInterval;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TimeIntervalProbabilisticLatency extends TimeIntervalProbabilistic implements ILatency, ILatencyTimeIntervalProbabilistic {
+public class TimeIntervalProbabilisticLatency extends ProbabilisticTimeInterval implements ILatency, ILatencyTimeIntervalProbabilistic {
     /**
 	 * 
 	 */

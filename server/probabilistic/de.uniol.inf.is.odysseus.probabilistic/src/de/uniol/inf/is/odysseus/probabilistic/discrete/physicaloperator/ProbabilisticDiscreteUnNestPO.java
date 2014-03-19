@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
 
 /**
  * 
@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilisti
  * 
  * @param <T>
  */
-public class ProbabilisticDiscreteUnNestPO<T extends ITimeIntervalProbabilistic> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
+public class ProbabilisticDiscreteUnNestPO<T extends IProbabilisticTimeInterval> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
     /** The logger. */
     private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticDiscreteUnNestPO.class);
     /** The position of the probabilistic attribute. */

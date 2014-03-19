@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 /**
- * Probabilistic meta data for probabilistic realtional tuple.
+ * Probabilistic meta data for probabilistic relational tuple.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
@@ -42,10 +42,9 @@ public interface IProbabilistic extends IMetaAttribute, IClone {
      */
     void setExistence(double existence);
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
-     * @see de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute#clone()
+     * {@inheritDoc}
      */
     @Override
     IProbabilistic clone();

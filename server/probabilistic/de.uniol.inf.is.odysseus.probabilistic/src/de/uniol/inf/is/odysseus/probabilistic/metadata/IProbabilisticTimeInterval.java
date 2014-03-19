@@ -25,13 +25,12 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public interface ITimeIntervalProbabilistic extends ITimeInterval, IProbabilistic {
-    /*
-     * (non-Javadoc)
+public interface IProbabilisticTimeInterval extends ITimeInterval, IProbabilistic {
+    /**
      * 
-     * @see de.uniol.inf.is.odysseus.core.metadata.ITimeInterval#clone()
+     * {@inheritDoc}
      */
     @Override
-    ITimeIntervalProbabilistic clone();
+    IProbabilisticTimeInterval clone();
 
 }

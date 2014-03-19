@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalD
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 
@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousJoinTISweepArea<K extends ITimeIntervalProbabilistic, T extends ProbabilisticTuple<K>> extends JoinTISweepArea<T> implements Cloneable {
+public class ProbabilisticContinuousJoinTISweepArea<K extends IProbabilisticTimeInterval, T extends ProbabilisticTuple<K>> extends JoinTISweepArea<T> implements Cloneable {
     /** Attribute positions list required for variable bindings. */
     private VarHelper[][] variables;
     /** The expressions. */

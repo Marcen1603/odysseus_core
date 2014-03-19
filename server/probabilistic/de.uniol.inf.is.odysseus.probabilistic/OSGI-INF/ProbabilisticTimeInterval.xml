@@ -14,8 +14,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.probabilistic.IntervalProbabilistic">
-   <implementation class="de.uniol.inf.is.odysseus.probabilistic.metadata.TimeIntervalProbabilistic"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.probabilistic.ProbabilisticTimeInterval">
+   <implementation class="de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticTimeInterval"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute"/>
    </service>
