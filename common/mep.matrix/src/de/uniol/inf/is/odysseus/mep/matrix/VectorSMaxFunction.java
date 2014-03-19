@@ -15,7 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.mep.matrix;
 
-import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -31,12 +31,12 @@ public class VectorSMaxFunction extends AbstractFunction<Double> {
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.VECTORS };
 
     public VectorSMaxFunction() {
-    	super("sMax",1,accTypes,SDFDatatype.DOUBLE);
+        super("sMax", 1, accTypes, SDFDatatype.DOUBLE);
     }
-    
+
     @Override
     public Double getValue() {
-        RealVector a = MatrixUtils.createRealVector((double[]) this.getInputValue(0));
+        RealVector a = new ArrayRealVector((double[]) this.getInputValue(0), false);
         return getValueInternal(a);
     }
 

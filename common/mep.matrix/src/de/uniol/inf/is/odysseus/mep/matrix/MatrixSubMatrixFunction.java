@@ -3,7 +3,7 @@
  */
 package de.uniol.inf.is.odysseus.mep.matrix;
 
-import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -27,7 +27,7 @@ public class MatrixSubMatrixFunction extends AbstractFunction<double[][]> {
 
     @Override
     public double[][] getValue() {
-        RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this.getInputValue(0));
+        RealMatrix a = new Array2DRowRealMatrix((double[][]) this.getInputValue(0), false);
         int startRow = this.getNumericalInputValue(1).intValue();
         int endRow = this.getNumericalInputValue(2).intValue();
         int startColumn = this.getNumericalInputValue(3).intValue();

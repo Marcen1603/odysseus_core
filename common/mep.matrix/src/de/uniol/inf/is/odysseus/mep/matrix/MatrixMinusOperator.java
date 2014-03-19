@@ -15,7 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.mep.matrix;
 
-import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -29,56 +29,53 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
  */
 public class MatrixMinusOperator extends AbstractBinaryOperator<double[][]> {
 
-	private static final long serialVersionUID = 4563938126736979143L;
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			SDFDatatype.MATRIXS, SDFDatatype.MATRIXS };
+    private static final long serialVersionUID = 4563938126736979143L;
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS, SDFDatatype.MATRIXS };
 
-	public MatrixMinusOperator() {
-		super("-", accTypes, SDFDatatype.MATRIX_DOUBLE);
-	}
+    public MatrixMinusOperator() {
+        super("-", accTypes, SDFDatatype.MATRIX_DOUBLE);
+    }
 
-	@Override
-	public int getPrecedence() {
-		return 6;
-	}
+    @Override
+    public int getPrecedence() {
+        return 6;
+    }
 
-	@Override
-	public double[][] getValue() {
-		RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this
-				.getInputValue(0));
-		RealMatrix b = MatrixUtils.createRealMatrix((double[][]) this
-				.getInputValue(1));
+    @Override
+    public double[][] getValue() {
+        RealMatrix a = new Array2DRowRealMatrix((double[][]) this.getInputValue(0), false);
+        RealMatrix b = new Array2DRowRealMatrix((double[][]) this.getInputValue(1), false);
 
-		return getValueInternal(a, b);
-	}
+        return getValueInternal(a, b);
+    }
 
-	protected double[][] getValueInternal(RealMatrix a, RealMatrix b) {
-		return a.subtract(b).getData();
-	}
+    protected double[][] getValueInternal(RealMatrix a, RealMatrix b) {
+        return a.subtract(b).getData();
+    }
 
-	@Override
-	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
-		return ASSOCIATIVITY.LEFT_TO_RIGHT;
-	}
+    @Override
+    public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
+        return ASSOCIATIVITY.LEFT_TO_RIGHT;
+    }
 
-	@Override
-	public boolean isCommutative() {
-		return false;
-	}
+    @Override
+    public boolean isCommutative() {
+        return false;
+    }
 
-	@Override
-	public boolean isAssociative() {
-		return false;
-	}
+    @Override
+    public boolean isAssociative() {
+        return false;
+    }
 
-	@Override
-	public boolean isLeftDistributiveWith(IOperator<double[][]> operator) {
-		return false;
-	}
+    @Override
+    public boolean isLeftDistributiveWith(IOperator<double[][]> operator) {
+        return false;
+    }
 
-	@Override
-	public boolean isRightDistributiveWith(IOperator<double[][]> operator) {
-		return false;
-	}
+    @Override
+    public boolean isRightDistributiveWith(IOperator<double[][]> operator) {
+        return false;
+    }
 
 }

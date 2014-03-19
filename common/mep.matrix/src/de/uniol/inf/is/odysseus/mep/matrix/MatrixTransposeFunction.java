@@ -15,7 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.mep.matrix;
 
-import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -27,27 +27,24 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * 
  */
 public class MatrixTransposeFunction extends AbstractFunction<double[][]> {
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 1175537055491410345L;
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			SDFDatatype.MATRIXS };
-	
-	public MatrixTransposeFunction() {
-		super("trans",1,accTypes, SDFDatatype.MATRIX_DOUBLE);
-	}
-	
+    private static final long serialVersionUID = 1175537055491410345L;
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS };
 
-	@Override
-	public double[][] getValue() {
-		RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this
-				.getInputValue(0));
-		return getValueInternal(a);
-	}
+    public MatrixTransposeFunction() {
+        super("trans", 1, accTypes, SDFDatatype.MATRIX_DOUBLE);
+    }
 
-	protected double[][] getValueInternal(RealMatrix a) {
-		return a.transpose().getData();
-	}
+    @Override
+    public double[][] getValue() {
+        RealMatrix a = new Array2DRowRealMatrix((double[][]) this.getInputValue(0), false);
+        return getValueInternal(a);
+    }
+
+    protected double[][] getValueInternal(RealMatrix a) {
+        return a.transpose().getData();
+    }
 
 }

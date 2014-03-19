@@ -15,9 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.mep.matrix;
 
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.CholeskyDecomposition;
 import org.apache.commons.math3.linear.LUDecomposition;
-import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.NonPositiveDefiniteMatrixException;
 import org.apache.commons.math3.linear.NonSymmetricMatrixException;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -32,28 +32,26 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class MatrixInverseFunction extends AbstractFunction<double[][]> {
 
-	private static final long serialVersionUID = -1627768697759701027L;
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS };
+    private static final long serialVersionUID = -1627768697759701027L;
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS };
 
-	public MatrixInverseFunction() {
-		super("inv", 1, accTypes, SDFDatatype.MATRIX_DOUBLE);
-	}
+    public MatrixInverseFunction() {
+        super("inv", 1, accTypes, SDFDatatype.MATRIX_DOUBLE);
+    }
 
-	@Override
-	public double[][] getValue() {
-		RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this
-				.getInputValue(0));
-		return getValueInternal(a);
-	}
+    @Override
+    public double[][] getValue() {
+        RealMatrix a = new Array2DRowRealMatrix((double[][]) this.getInputValue(0), false);
+        return getValueInternal(a);
+    }
 
-	protected double[][] getValueInternal(RealMatrix a) {
-		try {
-			return new CholeskyDecomposition(a).getSolver().getInverse()
-					.getData();
-		} catch (NonSymmetricMatrixException
-				| NonPositiveDefiniteMatrixException e) {
-			return new LUDecomposition(a).getSolver().getInverse().getData();
-		}
-	}
+    protected double[][] getValueInternal(RealMatrix a) {
+        try {
+            return new CholeskyDecomposition(a).getSolver().getInverse().getData();
+        }
+        catch (NonSymmetricMatrixException | NonPositiveDefiniteMatrixException e) {
+            return new LUDecomposition(a).getSolver().getInverse().getData();
+        }
+    }
 
 }

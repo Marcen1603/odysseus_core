@@ -15,9 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.mep.matrix;
 
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.CholeskyDecomposition;
 import org.apache.commons.math3.linear.LUDecomposition;
-import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.NonPositiveDefiniteMatrixException;
 import org.apache.commons.math3.linear.NonSymmetricMatrixException;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -41,7 +41,7 @@ public class MatrixDeterminantFunction extends AbstractFunction<Double> {
 
     @Override
     public Double getValue() {
-        RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this.getInputValue(0));
+        RealMatrix a = new Array2DRowRealMatrix((double[][]) this.getInputValue(0), false);
         return getValueInternal(a);
     }
 

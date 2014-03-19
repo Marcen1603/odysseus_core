@@ -3,7 +3,7 @@
  */
 package de.uniol.inf.is.odysseus.mep.matrix;
 
-import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealMatrixPreservingVisitor;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -28,7 +28,7 @@ public class MatrixSMedianFunction extends AbstractFunction<Double> {
 
     @Override
     public Double getValue() {
-        RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this.getInputValue(0));
+        RealMatrix a = new Array2DRowRealMatrix((double[][]) this.getInputValue(0), false);
         return getValueInternal(a);
     }
 
