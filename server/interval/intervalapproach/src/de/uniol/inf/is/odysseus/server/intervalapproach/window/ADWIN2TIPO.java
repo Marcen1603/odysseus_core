@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * Ricard Gavalda, 2006
  * 
  * @author Christian Kuka <christian@kuka.cc>
- *         FIXME Implement ADWIN2 (CKu)
+ *         FIXME  20140319 christian@kuka.cc Implement ADWIN2 (CKu)
  */
 @SuppressWarnings("unused")
 public class ADWIN2TIPO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, T> {

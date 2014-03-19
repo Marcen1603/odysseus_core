@@ -29,13 +29,13 @@ public class ProbabilisticNotOperator extends AbstractProbabilisticUnaryOperator
      * 
      */
     private static final long serialVersionUID = -5355975430336339430L;
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN };
+    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_RESULT };
 
     /**
  * 
  */
     public ProbabilisticNotOperator() {
-        super("!", ProbabilisticNotOperator.accTypes, SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN);
+        super("!", ProbabilisticNotOperator.accTypes, SDFProbabilisticDatatype.PROBABILISTIC_RESULT);
     }
 
     @Override

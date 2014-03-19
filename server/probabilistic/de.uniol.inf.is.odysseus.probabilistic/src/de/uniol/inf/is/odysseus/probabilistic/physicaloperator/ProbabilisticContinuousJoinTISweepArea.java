@@ -326,7 +326,7 @@ public class ProbabilisticContinuousJoinTISweepArea<K extends IProbabilisticTime
                         final int index = ((ProbabilisticDouble) attribute).getDistribution();
                         attribute = outputVal.getDistribution(index);
                         scale = ((MultivariateMixtureDistribution) attribute).getScale();
-                        // FIXME What happens if we have more than one
+                        // FIXME  20140319 christian@kuka.cc What happens if we have more than one
                         // distribution inside an expression or even other
                         // functions? (CKu 17.12.2013)
                         if (d >= 0) {

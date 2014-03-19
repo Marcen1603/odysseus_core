@@ -93,7 +93,7 @@ public class SICKProtocolHandler extends AbstractByteBufferHandler<Tuple<?>> {
         return instance;
     }
 
-    // FIXME Currently not used
+    // FIXME 20140319 christian@kuka.cc Currently not used
     private void setPassword(String password) {
         this.password = password;
 

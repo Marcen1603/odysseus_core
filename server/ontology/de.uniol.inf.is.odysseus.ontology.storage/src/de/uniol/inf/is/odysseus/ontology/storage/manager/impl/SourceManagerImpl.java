@@ -172,7 +172,7 @@ public class SourceManagerImpl implements SourceManager {
     private Individual createMeasurementProperty(final MeasurementProperty measurementProperty) {
         final Individual thisMeasurementProperty = this.createMeasurementProperty(measurementProperty.getUri(), measurementProperty.getResource());
 
-        // FIXME Implement expression handling and storing
+        // FIXME  20140319 christian@kuka.cc Implement expression handling and storing
         this.getABox().add(thisMeasurementProperty, DUL.hasDataValue, measurementProperty.toString(), TypeMapper.getInstance().getTypeByValue(measurementProperty.toString()));
 
         this.getABox().add(thisMeasurementProperty, RDFS.subClassOf, measurementProperty.getResource());

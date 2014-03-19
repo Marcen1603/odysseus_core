@@ -296,7 +296,6 @@ public class MeanTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extend
             return new MeanTISweepArea(this);
         }
         catch (InstantiationException | IllegalAccessException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;

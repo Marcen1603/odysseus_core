@@ -177,7 +177,7 @@ public class ProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPip
                 expression.bindVariables(values);
 
                 final Object expr = expression.getValue();
-                if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN)) {
+                if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_RESULT)) {
                     final ProbabilisticBooleanResult result = (ProbabilisticBooleanResult) expr;
                     jointProbability *= result.getProbability();
                     for (final IMultivariateDistribution distr : result.getDistributions()) {

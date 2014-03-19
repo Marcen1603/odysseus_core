@@ -190,7 +190,7 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
      */
     @Override
     public double[][] getVariance() {
-        // FIXME I'm sure this is totally wrong
+        // FIXME  20140319 christian@kuka.cc I'm sure this is totally wrong
         RealMatrix variance = new Array2DRowRealMatrix(new double[this.getDimension()][this.getDimension()]);
         for (int i = 0; i < this.weight.length; i++) {
             variance = variance.add(new Array2DRowRealMatrix(this.distribution[i].getVariance()).scalarMultiply(this.weight[i]));

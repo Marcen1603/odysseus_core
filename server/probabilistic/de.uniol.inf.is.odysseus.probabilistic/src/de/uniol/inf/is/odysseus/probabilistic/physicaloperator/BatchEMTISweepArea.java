@@ -160,7 +160,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
                 }
             }
             catch (MaxCountExceededException | ConvergenceException | MathIllegalArgumentException e) {
-                // FIXME What to do now?
+                // FIXME  20140319 christian@kuka.cc What to do now?
                 // setModel(null);
                 // throw e;
                 BatchEMTISweepArea.LOG.trace(e.getMessage(), e);
@@ -389,8 +389,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
             return new BatchEMTISweepArea(this);
         }
         catch (InstantiationException | IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+           e.printStackTrace();
         }
         return null;
     }

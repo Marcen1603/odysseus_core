@@ -28,7 +28,7 @@ public class ProbabilisticOneWorldAvg extends AbstractAggregateFunction<Probabil
 	 * 
 	 */
     private static final long serialVersionUID = -2188835286391575126L;
-    // TODO Move to a global configuration
+    // TODO  20140319 christian@kuka.cc Move to a global configuration
     /** The maximum error. */
     private static final double ERROR = 0.004;
     /** The probability bound. */

@@ -34,8 +34,8 @@ public abstract class AbstractProbabilisticBinaryOperator<T> extends AbstractPro
 	 */
     private static final long serialVersionUID = -2604513567977149416L;
 
-    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN },
-            new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN } };
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_RESULT },
+            new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_RESULT } };
 
     public AbstractProbabilisticBinaryOperator(final String symbol, final SDFDatatype[][] accTypes, final SDFDatatype returnType) {
         super(symbol, 2, accTypes, returnType);

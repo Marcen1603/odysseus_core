@@ -23,7 +23,7 @@ abstract public class AbstractProbabilisticCompareOperator extends AbstractProba
     private static final long serialVersionUID = -7850744519118122850L;
 
     public AbstractProbabilisticCompareOperator(final String symbol, final SDFDatatype[][] accTypes) {
-        super(symbol, accTypes, SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN);
+        super(symbol, accTypes, SDFProbabilisticDatatype.PROBABILISTIC_RESULT);
     }
 
     protected final ProbabilisticBooleanResult getValueInternal(final MultivariateMixtureDistribution a, final double[] lowerBound, final double[] upperBound) {

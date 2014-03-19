@@ -84,7 +84,7 @@ public class CountPartialAggregate<T> extends AbstractPartialAggregate<T> {
      *            The value to add
      */
     public final void add(final MultivariateMixtureDistribution value) {
-        // TODO Check if inverse scale is the current probability!
+        // TODO  20140319 christian@kuka.cc Check if inverse scale is the current probability!
         this.count += value.getScale();
     }
 

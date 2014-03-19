@@ -87,13 +87,13 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
     /** Probabilistic double datatype. */
     public static final SDFDatatype PROBABILISTIC_DOUBLE = new SDFProbabilisticDatatype("ProbabilisticDouble");
     /** Probabilistic boolean datatype used for predicates. */
-    public static final SDFDatatype PROBABILISTIC_BOOLEAN = new SDFProbabilisticDatatype("ProbabilisticBoolean");
+    public static final SDFDatatype PROBABILISTIC_RESULT = new SDFProbabilisticDatatype("ProbabilisticResult");
 
     /** Probabilistic result used in probabilistic continuous predicates. */
-    public static final SDFDatatype PROBABILISTIC_CONTINUOUS_PREDICATE_RESULT = new SDFProbabilisticDatatype("ProbabilisticContinuousPredicateResult");
+   // public static final SDFDatatype PROBABILISTIC_CONTINUOUS_PREDICATE_RESULT = new SDFProbabilisticDatatype("ProbabilisticContinuousPredicateResult");
 
     /** Probabilistic continuous double vector datatype. */
-    public static final SDFDatatype VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE = new SDFProbabilisticDatatype("VectorProbabilisticContinuousDouble");
+    public static final SDFDatatype VECTOR_PROBABILISTIC_DOUBLE = new SDFProbabilisticDatatype("VectorProbabilisticDouble");
 
     /** Probabilistic numbers. */
     public static final SDFDatatype[] PROBABILISTIC_NUMBERS = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
@@ -168,8 +168,8 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
         final List<SDFDatatype> types = new ArrayList<>();
         types.addAll(SDFDatatype.getTypes());
         types.add(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
-        types.add(SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN);
-        types.add(SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE);
+        types.add(SDFProbabilisticDatatype.PROBABILISTIC_RESULT);
+        types.add(SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_DOUBLE);
 
         return types;
     }
