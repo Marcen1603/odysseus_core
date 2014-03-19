@@ -23,7 +23,7 @@ public class DolToEur extends AbstractFunction<Double> {
 	
 	private static final long serialVersionUID = -8220565259943514844L;
 	private static double EXCHANGERATE = 1d / 1.55d;
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {SDFDatatype.NUMBERS, SDFDatatype.NUMBERS};
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {SDFDatatype.NUMBERS};
 	
 
 	public DolToEur() {
