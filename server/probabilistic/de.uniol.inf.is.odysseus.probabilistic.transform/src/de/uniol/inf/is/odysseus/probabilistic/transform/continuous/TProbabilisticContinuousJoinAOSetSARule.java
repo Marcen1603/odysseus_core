@@ -48,7 +48,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
 public class TProbabilisticContinuousJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 
     @Override

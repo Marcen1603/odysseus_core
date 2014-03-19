@@ -50,6 +50,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
+@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
 public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO<IProbabilisticTimeInterval, ProbabilisticTuple<IProbabilisticTimeInterval>>> {
     /*
      * 
@@ -66,7 +67,6 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
      * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
      * java.lang.Object)
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public final void execute(final JoinTIPO operator, final TransformationConfiguration transformConfig) {
         Objects.requireNonNull(operator);
@@ -117,7 +117,7 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
      * .Object, java.lang.Object)
      */
     @Override
-    public final boolean isExecutable(@SuppressWarnings("rawtypes") final JoinTIPO operator, final TransformationConfiguration transformConfig) {
+    public final boolean isExecutable(final JoinTIPO operator, final TransformationConfiguration transformConfig) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(transformConfig);
         if (operator.getAreas() == null) {

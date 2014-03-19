@@ -52,6 +52,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
+@SuppressWarnings("unused")
 public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extends AbstractTransformationRule<JoinAO> {
     /*
      * 
@@ -180,6 +181,7 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
         final LogicalSubscription child = operator.getSubscribedToSource(port);
         return (child.getTarget() instanceof LinearRegressionAO);
     }
+
 
     private boolean isContinuousEquiJoin(final ILogicalOperator operator) {
         final SDFExpression expr = this.getExpression(operator);

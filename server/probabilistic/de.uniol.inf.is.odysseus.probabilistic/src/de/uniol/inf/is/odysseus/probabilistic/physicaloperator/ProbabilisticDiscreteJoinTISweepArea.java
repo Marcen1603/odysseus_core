@@ -266,7 +266,7 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends IProbabilisticTimeIn
      *            The order to evaluate
      * @return The result element
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "unused" })
     private T evaluateWorld(final IPredicate<? super T> predicate, final T left, final T right, final int[] leftProbabilisticAttributePositions, final int[] rightProbabilisticAttributePositions,
             final Order order) {
         final T outputVal = (T) this.dataMerge.merge((T) left.clone(), (T) right.clone(), this.metadataMerge, order);

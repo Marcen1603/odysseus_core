@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
+@SuppressWarnings({ "unused" })
 public class TProbabilisticContinuousLeftJoinAOSetDMRule extends AbstractTransformationRule<LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>>> {
 
     @Override

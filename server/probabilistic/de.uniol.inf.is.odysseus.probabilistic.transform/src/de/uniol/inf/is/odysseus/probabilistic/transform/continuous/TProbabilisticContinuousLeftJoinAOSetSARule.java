@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
 public class TProbabilisticContinuousLeftJoinAOSetSARule extends AbstractTransformationRule<LeftJoinTIPO> {
 
     @Override
@@ -45,7 +45,6 @@ public class TProbabilisticContinuousLeftJoinAOSetSARule extends AbstractTransfo
         return TransformationConstants.PRIORITY;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void execute(final LeftJoinTIPO operator, final TransformationConfiguration transformConfig) throws RuleException {
         Objects.requireNonNull(operator);
