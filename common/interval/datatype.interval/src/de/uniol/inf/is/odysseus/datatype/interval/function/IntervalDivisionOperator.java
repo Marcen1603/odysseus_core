@@ -55,12 +55,12 @@ public class IntervalDivisionOperator extends AbstractBinaryOperator<IntervalDou
         if ((b.inf() == 0.0) && (b.sup() == 0.0)) {
             return new IntervalDouble(Double.NaN, Double.NaN);
         }
-        else if (0 <= b.inf()) {
-            final double inf = Math.min(Math.min(a.inf() / b.inf(), a.inf() / b.sup()), Math.min(a.sup() / b.inf(), a.sup() / b.sup()));
-            final double sup = Math.max(Math.max(a.inf() / b.inf(), a.inf() / b.sup()), Math.max(a.sup() / b.inf(), a.sup() / b.sup()));
+        else if (0.0 <= b.inf()) {
+            final double inf = Math.min(Math.min(divide(a.inf(), b.inf()), divide(a.inf(), b.sup())), Math.min(divide(a.sup(), b.inf()), divide(a.sup(), b.sup())));
+            final double sup = Math.max(Math.max(divide(a.inf(), b.inf()), divide(a.inf(), b.sup())), Math.max(divide(a.sup(), b.inf()), divide(a.sup(), b.sup())));
             return new IntervalDouble(inf, sup);
         }
-        else if (b.sup() <= 0) {
+        else if (b.sup() <= 0.0) {
             return getValueInternal(new IntervalDouble(-a.sup(), -a.inf()), new IntervalDouble(-b.sup(), -b.inf()));
         }
         else {
