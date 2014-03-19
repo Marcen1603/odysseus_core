@@ -130,7 +130,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      *            The other interval
      * @return The result of the operation
      */
-    public final Interval sub(final Interval other) {
+    public final Interval subtract(final Interval other) {
         return new Interval(this.inf - other.sup, this.sup - other.inf);
     }
 
@@ -142,7 +142,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      *            The value
      * @return The result of the operation
      */
-    public final Interval sub(final double value) {
+    public final Interval subtract(final double value) {
         return new Interval(this.inf - value, this.sup - value);
     }
 
@@ -153,7 +153,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      *            The other interval
      * @return The result of the operation
      */
-    public final Interval mul(final Interval other) {
+    public final Interval multiply(final Interval other) {
         final double newInf = Math.min(Math.min(this.inf * other.inf, this.inf * other.sup), Math.min(this.sup * other.inf, this.sup * other.sup));
         final double newSup = Math.max(Math.max(this.inf * other.inf, this.inf * other.sup), Math.max(this.sup * other.inf, this.sup * other.sup));
 
@@ -168,7 +168,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      *            The value
      * @return The result of the operation
      */
-    public final Interval mul(final double value) {
+    public final Interval multiply(final double value) {
         return new Interval(Math.min(this.sup * value, this.inf * value), Math.max(this.sup * value, this.inf * value));
     }
 
@@ -181,17 +181,22 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      * @throws IntervalArithmeticException
      *             if the other interval contains zero
      */
-    public final Interval div(final Interval other) throws IntervalArithmeticException {
-        // FIXME Use Int Ari from abstract interpretation slides (26.11.2013)!!
-        // (Moore 66)
-        if (!other.contains(0.0)) {
-            final double newInf = Math.min(Math.min(this.inf / other.inf, this.inf / other.sup), Math.min(this.sup / other.inf, this.sup / other.sup));
-            final double newSup = Math.max(Math.max(this.inf / other.inf, this.inf / other.sup), Math.max(this.sup / other.inf, this.sup / other.sup));
-
-            return new Interval(newInf, newSup);
+    public final Interval divide(final Interval other) throws IntervalArithmeticException {
+        if ((other.inf() == 0.0) && (other.sup() == 0.0)) {
+            return new Interval(Double.NaN, Double.NaN);
+        }
+        else if (0 <= other.inf()) {
+            final double inf = Math.min(Math.min(this.inf() / other.inf(), this.inf() / other.sup()), Math.min(this.sup() / other.inf(), this.sup() / other.sup()));
+            final double sup = Math.max(Math.max(this.inf() / other.inf(), this.inf() / other.sup()), Math.max(this.sup() / other.inf(), this.sup() / other.sup()));
+            return new Interval(inf, sup);
+        }
+        else if (other.sup() <= 0) {
+            return (new Interval(-this.sup(), -this.inf())).divide(new Interval(-other.sup(), -other.inf()));
         }
         else {
-            throw new IntervalArithmeticException("Division by interval containing zero");
+            Interval left = this.divide(new Interval(other.inf(), 0.0));
+            Interval right = this.divide(new Interval(0.0, other.sup()));
+            return new Interval(Math.min(left.inf(), right.inf()), Math.max(left.sup(), right.sup()));
         }
     }
 
@@ -202,7 +207,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      *            The value
      * @return The result of the operation
      */
-    public final Interval div(final double value) {
+    public final Interval divide(final double value) {
         return new Interval(Math.min(this.inf / value, this.sup / value), Math.max(this.inf / value, this.sup / value));
     }
 
