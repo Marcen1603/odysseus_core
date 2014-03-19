@@ -34,6 +34,7 @@ public class ProbabilisticOneWorldAvg extends AbstractAggregateFunction<Probabil
     /** The probability bound. */
     private static final double BOUND = 1.0 / Math.E;
     /** The attribute position. */
+    @SuppressWarnings("unused")
     private final int pos;
     /** The result data type. */
     private final String datatype;
