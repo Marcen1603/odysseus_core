@@ -49,12 +49,4 @@ public class TimelinessFunction extends AbstractFunction<Double> {
      */
     public static final SDFDatatype[][] ACC_TYPES = { SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
 
-    /**
-     * {@inheritDoc}
-     */
-    // @Override
-    // public boolean optimizeConstantParameter() {
-    // We need access to the meta data of each tuple
-    // return false;
-    // }
 }
