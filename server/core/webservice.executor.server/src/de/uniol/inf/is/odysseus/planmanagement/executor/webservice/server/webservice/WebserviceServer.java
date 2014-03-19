@@ -593,6 +593,7 @@ public class WebserviceServer {
 				// no socketsink available so create one
 				port = getNextFreePort(minPort, maxPort);
 				addSocketSink(queryId, port);
+				socketPortMap.put(queryId,port);
 			} else {
 				// there is already a socketsink so we can use the port
 				port = socketPortMap.get(queryId);
