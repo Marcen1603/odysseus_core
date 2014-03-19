@@ -12,33 +12,17 @@ public class ToPoint extends AbstractFunction<Geometry> {
 
 	private static final long serialVersionUID = 7202373953195273323L;
 
-	@Override
-	public int getArity() {
-		return 3;
+	public ToPoint() {
+		super("ToPoint", 3, accTypes, SDFSpatialDatatype.SPATIAL_POINT);
 	}
 	
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
 		 SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.INTEGER };
 
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "ToPoint";
-	}
-
-	@Override
 	public Geometry getValue() {
 		GeometryFactory gf = new GeometryFactory();
 	    return gf.createPoint(new Coordinate(getNumericalInputValue(0), getNumericalInputValue(1), getNumericalInputValue(2)));
 	 }
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFSpatialDatatype.SPATIAL_POINT;
-	}
 
 }

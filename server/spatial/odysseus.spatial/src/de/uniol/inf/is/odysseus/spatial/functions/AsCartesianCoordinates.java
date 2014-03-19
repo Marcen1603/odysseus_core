@@ -39,28 +39,8 @@ public class AsCartesianCoordinates extends AbstractFunction<Geometry> {
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFSpatialDatatype.SPATIAL_POLAR_COORDINATE } };
 	private final GeometryFactory geometryFactory = new GeometryFactory();
 
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity()
-					+ " argument(s): An array of polar coordinates.");
-		}
-		return accTypes[argPos];
-	}
-
-	@Override
-	public String getSymbol() {
-		return "AsCartesianCoordinates";
+	public AsCartesianCoordinates() {
+		super("AsCartesianCoordinates",1,accTypes,SDFSpatialDatatype.SPATIAL_GEOMETRY);
 	}
 
 	@Override
@@ -84,11 +64,6 @@ public class AsCartesianCoordinates extends AbstractFunction<Geometry> {
 		}
 		return this.geometryFactory.createMultiPoint(points
 				.toArray(new Coordinate[points.size()]));
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFSpatialDatatype.SPATIAL_GEOMETRY;
 	}
 
 }

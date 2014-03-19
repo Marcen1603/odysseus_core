@@ -30,46 +30,17 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
  */
 public class AsMultiPoint extends AbstractFunction<Geometry> {
 
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -8850032331081355095L;
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
-	 */
-	@Override
-	public int getArity() {
-		// TODO Auto-generated method stub
-		return 1;
+	public AsMultiPoint() {
+		super("AsMultiPoint",1,accTypes,SDFSpatialDatatype.SPATIAL_MULTI_POINT);
 	}
-
+	
     public static final SDFDatatype[] accTypes = new SDFDatatype[]{
     	SDFSpatialDatatype.SPATIAL_GEOMETRY, SDFSpatialDatatype.SPATIAL_MULTI_POINT
     };
 	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getAcceptedTypes(int)
-	 */
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > this.getArity()){
-			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
-		}
-        return accTypes;
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getSymbol()
-	 */
-	@Override
-	public String getSymbol() {
-		return "AsMultiPoint";
-	}
-
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
 	 */
@@ -79,15 +50,6 @@ public class AsMultiPoint extends AbstractFunction<Geometry> {
 		if (g instanceof MultiPoint)
 			return (MultiPoint) g.clone();
         return g.getFactory().createMultiPoint(new Coordinate[0]);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getReturnType()
-	 */
-	@Override
-	public SDFDatatype getReturnType() {
-		// TODO Auto-generated method stub
-		return SDFSpatialDatatype.SPATIAL_MULTI_POINT;
 	}
 
 }

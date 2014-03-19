@@ -27,17 +27,10 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
  */
 public class SpatialDisjoint extends AbstractFunction<Boolean> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2946459222219510673L;
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
-	 */
-	@Override
-	public int getArity() {
-		return 2;
+	public SpatialDisjoint() {
+		super("SpatialDisjoint",2,accTypes,SDFDatatype.BOOLEAN);
 	}
 
     public static final SDFDatatype[] accTypes = new SDFDatatype[]{
@@ -50,28 +43,6 @@ public class SpatialDisjoint extends AbstractFunction<Boolean> {
     	SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION,
     	SDFSpatialDatatype.SPATIAL_GEOMETRY 
 	};
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getAcceptedTypes(int)
-	 */
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > 1){
-			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
-		}
-        return accTypes;
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getSymbol()
-	 */
-	@Override
-	public String getSymbol() {
-		return "SpatialDisjoint";
-	}
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
@@ -79,14 +50,6 @@ public class SpatialDisjoint extends AbstractFunction<Boolean> {
 	@Override
 	public Boolean getValue() {
 		return ((Geometry)this.getInputValue(0)).disjoint((Geometry)this.getInputValue(1));
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getReturnType()
-	 */
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.BOOLEAN;
 	}
 
 }

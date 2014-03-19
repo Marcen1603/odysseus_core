@@ -31,35 +31,13 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
  */
 public class AsPolarCoordinates extends AbstractFunction<PolarCoordinate[]> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8192680754462139112L;
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFSpatialDatatype.SPATIAL_GEOMETRY } };
 
-	@Override
-	public int getArity() {
-		return 1;
+	public AsPolarCoordinates() {
+		super("AsPolarCoordinates",1,accTypes,SDFSpatialDatatype.SPATIAL_POLAR_COORDINATE);
 	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s): A geometry.");
-		}
-		return accTypes[argPos];
-	}
-
-	@Override
-	public String getSymbol() {
-		return "AsPolarCoordinates";
-	}
-
+	
 	@Override
 	public PolarCoordinate[] getValue() {
 		Geometry geometry = (Geometry) this.getInputValue(0);
@@ -78,11 +56,6 @@ public class AsPolarCoordinates extends AbstractFunction<PolarCoordinate[]> {
 			polarCoordinates.add(new PolarCoordinate(radius,Math.toRadians(angle)));
 		}
 		return null;
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFSpatialDatatype.SPATIAL_POLAR_COORDINATE;
 	}
 
 }

@@ -33,16 +33,10 @@ public class AsGeometry extends AbstractFunction<Geometry> {
 	 */
 	private static final long serialVersionUID = -8850032331081355095L;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
-	 */
-	@Override
-	public int getArity() {
-		// TODO Auto-generated method stub
-		return 1;
+	public AsGeometry() {
+		super("AsGeometry",1,accTypes,SDFSpatialDatatype.SPATIAL_GEOMETRY);
 	}
+	
 
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] { 
 		SDFSpatialDatatype.SPATIAL_GEOMETRY, SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION,
@@ -50,32 +44,6 @@ public class AsGeometry extends AbstractFunction<Geometry> {
 		SDFSpatialDatatype.SPATIAL_LINE_STRING, SDFSpatialDatatype.SPATIAL_MULTI_LINE_STRING,
 		SDFSpatialDatatype.SPATIAL_POLYGON, SDFSpatialDatatype.SPATIAL_MULTI_POLYGON
 	};
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getAcceptedTypes(int)
-	 */
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
-		}
-        return accTypes;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getSymbol()
-	 */
-	@Override
-	public String getSymbol() {
-		return "AsGeometry";
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -88,15 +56,5 @@ public class AsGeometry extends AbstractFunction<Geometry> {
 		return (Geometry) g.clone();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getReturnType()
-	 */
-	@Override
-	public SDFDatatype getReturnType() {
-		// TODO Auto-generated method stub
-		return SDFSpatialDatatype.SPATIAL_GEOMETRY;
-	}
 
 }

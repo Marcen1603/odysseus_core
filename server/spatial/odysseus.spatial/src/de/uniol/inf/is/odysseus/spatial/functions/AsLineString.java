@@ -35,41 +35,14 @@ public class AsLineString extends AbstractFunction<Geometry> {
 	 */
 	private static final long serialVersionUID = -8850032331081355095L;
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
-	 */
-	@Override
-	public int getArity() {
-		// TODO Auto-generated method stub
-		return 1;
+	public AsLineString() {
+		super("AsLineString",1,accTypes, SDFSpatialDatatype.SPATIAL_LINE_STRING);
 	}
-
+	
     public static final SDFDatatype[] accTypes = new SDFDatatype[]{
     	SDFSpatialDatatype.SPATIAL_GEOMETRY, SDFSpatialDatatype.SPATIAL_LINE_STRING
     };
 	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getAcceptedTypes(int)
-	 */
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > this.getArity()){
-			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
-		}
-        return accTypes;
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getSymbol()
-	 */
-	@Override
-	public String getSymbol() {
-		return "AsLineString";
-	}
-
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
 	 */
@@ -79,15 +52,6 @@ public class AsLineString extends AbstractFunction<Geometry> {
 		if (g instanceof LineString)
 			return (LineString) g.clone();
         return g.getFactory().createLineString(new Coordinate[0]);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getReturnType()
-	 */
-	@Override
-	public SDFDatatype getReturnType() {
-		// TODO Auto-generated method stub
-		return SDFSpatialDatatype.SPATIAL_LINE_STRING;
 	}
 
 }

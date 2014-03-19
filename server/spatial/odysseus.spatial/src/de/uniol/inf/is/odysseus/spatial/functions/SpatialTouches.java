@@ -27,20 +27,12 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
  */
 public class SpatialTouches extends AbstractFunction<Boolean> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 920750867154923850L;
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
-	 */
-	@Override
-	public int getArity() {
-		// TODO Auto-generated method stub
-		return 2;
+	public SpatialTouches() {
+		super("SpatialTouches",2,accTypes,SDFDatatype.BOOLEAN);
 	}
-
+	
 	public static final SDFDatatype[] accTypes = new SDFDatatype[]{
     	SDFSpatialDatatype.SPATIAL_POINT, 
     	SDFSpatialDatatype.SPATIAL_LINE_STRING, 
@@ -52,40 +44,12 @@ public class SpatialTouches extends AbstractFunction<Boolean> {
     	SDFSpatialDatatype.SPATIAL_GEOMETRY 
 	};
 	
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > 1){
-			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
-		}
-        return accTypes;
-	}
-
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getSymbol()
-	 */
-	@Override
-	public String getSymbol() {
-		return "SpatialTouches";
-	}
-
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
 	 */
 	@Override
 	public Boolean getValue() {
 		return ((Geometry)this.getInputValue(0)).touches((Geometry)this.getInputValue(1));
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getReturnType()
-	 */
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.BOOLEAN;
 	}
 
 }

@@ -32,15 +32,10 @@ public class SpatialConvexHull extends AbstractFunction<Geometry> {
 	 */
 	private static final long serialVersionUID = -547535527365903486L;
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
-	 */
-	@Override
-	public int getArity() {
-		// TODO Auto-generated method stub
-		return 1;
+	public SpatialConvexHull() {
+		super("SpatialConvexHull",1,accTypes,SDFSpatialDatatype.SPATIAL_GEOMETRY);
 	}
-
+	
     public static final SDFDatatype[] accTypes = new SDFDatatype[]{
     	SDFSpatialDatatype.SPATIAL_POINT, 
     	SDFSpatialDatatype.SPATIAL_LINE_STRING, 
@@ -53,42 +48,11 @@ public class SpatialConvexHull extends AbstractFunction<Geometry> {
 	};
 	
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getAcceptedTypes(int)
-	 */
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > 1){
-			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
-		}
-        return accTypes;
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getSymbol()
-	 */
-	@Override
-	public String getSymbol() {
-		return "SpatialConvexHull";
-	}
-
-	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
 	 */
 	@Override
 	public Geometry getValue() {
 		return ((Geometry)this.getInputValue(0)).convexHull();
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getReturnType()
-	 */
-	@Override
-	public SDFDatatype getReturnType() {
-		// TODO Auto-generated method stub
-		return SDFSpatialDatatype.SPATIAL_GEOMETRY;
 	}
 
 }

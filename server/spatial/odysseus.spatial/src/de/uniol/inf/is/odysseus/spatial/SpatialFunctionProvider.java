@@ -63,46 +63,46 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 	@Override
 	public List<IFunction<?>> getFunctions() {
 		final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
-//		functions.add(new SpatialContains());
-//		functions.add(new SpatialCoveredBy());
-//		functions.add(new SpatialCovers());
-//		functions.add(new SpatialCrosses());
-//		functions.add(new SpatialDisjoint());
-//		functions.add(new SpatialEquals());
-//		functions.add(new SpatialIntersection());
-//		functions.add(new SpatialIsWithinDistance());
-//		functions.add(new SpatialTouches());
-//		functions.add(new SpatialWithin());
-//
-//		functions.add(new SpatialConvexHull());
-//		functions.add(new SpatialUnion());
-//		functions.add(new SpatialUnionBuffer());
-//		functions.add(new SpatialBuffer());
-//
-//		functions.add(new AsGeometry());
-//		functions.add(new AsGeometryCollection());
-//		functions.add(new AsPoint());
-//		functions.add(new AsMultiPoint());
-//		functions.add(new AsLineString());
-//		functions.add(new AsMultiLineString());
-//		functions.add(new AsPolygon());
-//		functions.add(new AsMultiPolygon());
-//		functions.add(new GetCentroid());
-//
-//		functions.add(new SpatialIsPolygon());
-//		functions.add(new SpatialIsLine());
-//		functions.add(new FromWKT());
-//		functions.add(new ST_Transform());
-//		functions.add(new ST_SetSRID());
-//
-//		functions.add(new AsPolarCoordinates());
-//		functions.add(new AsCartesianCoordinates());
-//		functions.add(new ToPolarCoordinate());
-//		functions.add(new ToCartesianCoordinate());
-//		
-//		functions.add(new ToPoint());
-//		
-//		functions.add(new SpatialDistance());
+		functions.add(new SpatialContains());
+		functions.add(new SpatialCoveredBy());
+		functions.add(new SpatialCovers());
+		functions.add(new SpatialCrosses());
+		functions.add(new SpatialDisjoint());
+		functions.add(new SpatialEquals());
+		functions.add(new SpatialIntersection());
+		functions.add(new SpatialIsWithinDistance());
+		functions.add(new SpatialTouches());
+		functions.add(new SpatialWithin());
+
+		functions.add(new SpatialConvexHull());
+		functions.add(new SpatialUnion());
+		functions.add(new SpatialUnionBuffer());
+		functions.add(new SpatialBuffer());
+
+		functions.add(new AsGeometry());
+		functions.add(new AsGeometryCollection());
+		functions.add(new AsPoint());
+		functions.add(new AsMultiPoint());
+		functions.add(new AsLineString());
+		functions.add(new AsMultiLineString());
+		functions.add(new AsPolygon());
+		functions.add(new AsMultiPolygon());
+		functions.add(new GetCentroid());
+
+		functions.add(new SpatialIsPolygon());
+		functions.add(new SpatialIsLine());
+		functions.add(new FromWKT());
+		functions.add(new ST_Transform());
+		functions.add(new ST_SetSRID());
+
+		functions.add(new AsPolarCoordinates());
+		functions.add(new AsCartesianCoordinates());
+		functions.add(new ToPolarCoordinate());
+		functions.add(new ToCartesianCoordinate());
+		
+		functions.add(new ToPoint());
+		
+		functions.add(new SpatialDistance());
 		return functions;
 	}
 

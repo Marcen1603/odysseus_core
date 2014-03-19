@@ -27,19 +27,12 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
  */
 public class SpatialContains extends AbstractFunction<Boolean> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6505087456838583141L;
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
-	 */
-	@Override
-	public int getArity() {
-		// TODO Auto-generated method stub
-		return 2;
+	
+	public SpatialContains() {
+		super("SpatialContains",2,accTypes, SDFDatatype.BOOLEAN);
 	}
-
+	
     public static final SDFDatatype[] accTypes = new SDFDatatype[]{
     	SDFSpatialDatatype.SPATIAL_POINT, 
     	SDFSpatialDatatype.SPATIAL_LINE_STRING, 
@@ -50,27 +43,6 @@ public class SpatialContains extends AbstractFunction<Boolean> {
     	SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION,
     	SDFSpatialDatatype.SPATIAL_GEOMETRY 
 	};
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getAcceptedTypes(int)
-	 */
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > this.getArity()){
-			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
-		}
-        return accTypes;
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getSymbol()
-	 */
-	@Override
-	public String getSymbol() {
-		return "SpatialContains";
-	}
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
@@ -79,14 +51,4 @@ public class SpatialContains extends AbstractFunction<Boolean> {
 	public Boolean getValue() {
 		return ((Geometry)this.getInputValue(0)).contains((Geometry)this.getInputValue(1));
 	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getReturnType()
-	 */
-	@Override
-	public SDFDatatype getReturnType() {
-		// TODO Auto-generated method stub
-		return SDFDatatype.BOOLEAN;
-	}
-
 }

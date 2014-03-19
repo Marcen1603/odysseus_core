@@ -29,49 +29,13 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
  */
 public class AsPolygon extends AbstractFunction<Geometry> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8850032331081355095L;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
-	 */
-	@Override
-	public int getArity() {
-		// TODO Auto-generated method stub
-		return 1;
+	public AsPolygon() {
+		super("AsPolygon",1,accTypes,SDFSpatialDatatype.SPATIAL_POLYGON);
 	}
-
+	
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFSpatialDatatype.SPATIAL_GEOMETRY, SDFSpatialDatatype.SPATIAL_POLYGON };
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getAcceptedTypes(int)
-	 */
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
-		}
-        return accTypes;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getSymbol()
-	 */
-	@Override
-	public String getSymbol() {
-		return "AsPolygon";
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -84,17 +48,6 @@ public class AsPolygon extends AbstractFunction<Geometry> {
 		if (g instanceof Polygon)
 			return (Polygon) g.clone();
         return g.getFactory().createPolygon(null, null);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getReturnType()
-	 */
-	@Override
-	public SDFDatatype getReturnType() {
-		// TODO Auto-generated method stub
-		return SDFSpatialDatatype.SPATIAL_POLYGON;
 	}
 
 }

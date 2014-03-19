@@ -28,46 +28,16 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
  */
 public class FromWKT extends AbstractFunction<Geometry> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8850032331081355095L;
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
-	 */
-	@Override
-	public int getArity() {
-		// TODO Auto-generated method stub
-		return 1;
+	public FromWKT() {
+		super("FromWKT",1,accTypes,SDFSpatialDatatype.SPATIAL_GEOMETRY);
 	}
-
+	
     public static final SDFDatatype[] accTypes = new SDFDatatype[]{
     	SDFDatatype.STRING
     };
 	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getAcceptedTypes(int)
-	 */
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > this.getArity()){
-			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
-		}
-        return accTypes;
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getSymbol()
-	 */
-	@Override
-	public String getSymbol() {
-		return "FromWKT";
-	}
-
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
 	 */
@@ -81,15 +51,6 @@ public class FromWKT extends AbstractFunction<Geometry> {
 		}
 		return g;
 	
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getReturnType()
-	 */
-	@Override
-	public SDFDatatype getReturnType() {
-		// TODO Auto-generated method stub
-		return SDFSpatialDatatype.SPATIAL_GEOMETRY;
 	}
 
 }

@@ -10,12 +10,10 @@ public class SpatialDistance extends AbstractFunction<Double> {
 
 	private static final long serialVersionUID = -3990201610683127634L;
 
-	@Override
-	public int getArity() {
-		return 2;
+	public SpatialDistance() {
+		super("SpatialDistance",2,accTypes,SDFDatatype.DOUBLE);
 	}
-
-
+	
     public static final SDFDatatype[] accTypes = new SDFDatatype[]{
     	SDFSpatialDatatype.SPATIAL_POINT, 
     	SDFSpatialDatatype.SPATIAL_LINE_STRING, 
@@ -26,25 +24,10 @@ public class SpatialDistance extends AbstractFunction<Double> {
     	SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION,
     	SDFSpatialDatatype.SPATIAL_GEOMETRY 
 	};
-    
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		return accTypes;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "SpatialDistance";
-	}
 
 	@Override
 	public Double getValue() {
 		return ((Geometry)this.getInputValue(0)).distance((Geometry)this.getInputValue(1));
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
 	}
 
 }

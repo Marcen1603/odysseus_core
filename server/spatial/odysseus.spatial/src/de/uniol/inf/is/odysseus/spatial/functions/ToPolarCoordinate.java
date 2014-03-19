@@ -32,30 +32,10 @@ public class ToPolarCoordinate extends AbstractFunction<PolarCoordinate> {
 			{ SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.INTEGER },
 			{ SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.INTEGER } };
 
-	@Override
-	public int getArity() {
-		return 2;
+	public ToPolarCoordinate() {
+		super("ToPolarCoordinate",2, accTypes,SDFSpatialDatatype.SPATIAL_POLAR_COORDINATE);
 	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity()
-					+ " argument(s): The radius and the angle in radian");
-		}
-		return accTypes[argPos];
-	}
-
-	@Override
-	public String getSymbol() {
-		return "ToPolarCoordinate";
-	}
-
+	
 	@Override
 	public PolarCoordinate getValue() {
 		double r = this.getNumericalInputValue(0);
@@ -63,8 +43,4 @@ public class ToPolarCoordinate extends AbstractFunction<PolarCoordinate> {
 		return new PolarCoordinate(r, a);
 	}
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFSpatialDatatype.SPATIAL_POLAR_COORDINATE;
-	}
 }
