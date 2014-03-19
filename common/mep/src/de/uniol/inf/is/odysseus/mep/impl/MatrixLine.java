@@ -26,7 +26,7 @@ public class MatrixLine extends AbstractFunction<double[]> {
     private static final long serialVersionUID = -2878724836669428853L;
 
     public MatrixLine(IExpression<?>[] values) {
-        super("__matrixline", values.length, getAccTypes(values.length), SDFDatatype.DOUBLE);
+        super("__matrixline", values.length, getAccTypes(values.length), SDFDatatype.VECTOR_DOUBLE);
         setArguments(values);
     }
 
