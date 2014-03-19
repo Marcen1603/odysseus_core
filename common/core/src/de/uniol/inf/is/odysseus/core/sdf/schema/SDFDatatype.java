@@ -106,7 +106,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype VECTOR_BOOLEAN = new SDFDatatype(
 			"VectorBoolean", SDFDatatype.KindOfDatatype.BASE,
 			SDFDatatype.BOOLEAN);
-
+    public static final SDFDatatype[] VECTORS = new SDFDatatype[] {
+        SDFDatatype.VECTOR_BOOLEAN, SDFDatatype.VECTOR_BYTE,
+        SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE };
+    
 	/**
 	 * Datatypes for aggregations (partial aggregates
 	 */

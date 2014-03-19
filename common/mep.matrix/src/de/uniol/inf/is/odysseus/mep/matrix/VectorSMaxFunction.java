@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 public class VectorSMaxFunction extends AbstractFunction<Double> {
 
     private static final long serialVersionUID = 7768144136126905733L;
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.VECTOR_BOOLEAN, SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE };
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.VECTORS };
 
     public VectorSMaxFunction() {
     	super("sMax",1,accTypes,SDFDatatype.DOUBLE);

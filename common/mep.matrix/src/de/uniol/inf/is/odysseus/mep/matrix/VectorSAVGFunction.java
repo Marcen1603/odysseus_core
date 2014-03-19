@@ -30,7 +30,7 @@ public class VectorSAVGFunction extends AbstractFunction<Double> {
 
 
     private static final long serialVersionUID = -8567153407682230931L;
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.VECTOR_BOOLEAN, SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE };
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.VECTORS };
 
     public VectorSAVGFunction() {
     	super("sAVG",1,accTypes,SDFDatatype.DOUBLE);

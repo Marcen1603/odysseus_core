@@ -12,23 +12,21 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class MatrixIdentityMatrixFunction extends AbstractFunction<double[][]> {
 
-	private static final long serialVersionUID = 8690713611947801279L;
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER,
-			SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE };
+    private static final long serialVersionUID = 8690713611947801279L;
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.NUMBERS };
 
-	public MatrixIdentityMatrixFunction() {
-		super("identity", 1, accTypes, SDFDatatype.MATRIX_DOUBLE);
-	}
+    public MatrixIdentityMatrixFunction() {
+        super("identity", 1, accTypes, SDFDatatype.MATRIX_DOUBLE);
+    }
 
-	@Override
-	public double[][] getValue() {
-		int dimension = getNumericalInputValue(0).intValue();
-		return getValueInternal(dimension);
-	}
+    @Override
+    public double[][] getValue() {
+        int dimension = getNumericalInputValue(0).intValue();
+        return getValueInternal(dimension);
+    }
 
-	protected double[][] getValueInternal(int dimension) {
-		return MatrixUtils.createRealIdentityMatrix(dimension).getData();
-	}
+    protected double[][] getValueInternal(int dimension) {
+        return MatrixUtils.createRealIdentityMatrix(dimension).getData();
+    }
 
 }

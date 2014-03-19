@@ -32,29 +32,26 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class MatrixDeterminantFunction extends AbstractFunction<Double> {
 
-	private static final long serialVersionUID = 5178021143045609051L;
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
-			SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
+    private static final long serialVersionUID = 5178021143045609051L;
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS };
 
-	public MatrixDeterminantFunction() {
-		super("det",1,accTypes,SDFDatatype.DOUBLE);
-	}
-	
-	@Override
-	public Double getValue() {
-		RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this
-				.getInputValue(0));
-		return getValueInternal(a);
-	}
+    public MatrixDeterminantFunction() {
+        super("det", 1, accTypes, SDFDatatype.DOUBLE);
+    }
 
-	protected double getValueInternal(RealMatrix a) {
-		try {
-			return new CholeskyDecomposition(a).getDeterminant();
-		} catch (NonSymmetricMatrixException
-				| NonPositiveDefiniteMatrixException e) {
-			return new LUDecomposition(a).getDeterminant();
-		}
-	}
+    @Override
+    public Double getValue() {
+        RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this.getInputValue(0));
+        return getValueInternal(a);
+    }
+
+    protected double getValueInternal(RealMatrix a) {
+        try {
+            return new CholeskyDecomposition(a).getDeterminant();
+        }
+        catch (NonSymmetricMatrixException | NonPositiveDefiniteMatrixException e) {
+            return new LUDecomposition(a).getDeterminant();
+        }
+    }
 
 }

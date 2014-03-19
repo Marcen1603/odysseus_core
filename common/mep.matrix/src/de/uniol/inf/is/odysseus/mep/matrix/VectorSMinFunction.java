@@ -27,23 +27,20 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class VectorSMinFunction extends AbstractFunction<Double> {
 
-	private static final long serialVersionUID = -8723597840827450528L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFDatatype.VECTOR_BOOLEAN, SDFDatatype.VECTOR_BYTE,
-			SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE };
+    private static final long serialVersionUID = -8723597840827450528L;
+    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.VECTORS };
 
-	public VectorSMinFunction() {
-		super("sMin", 1, accTypes, SDFDatatype.DOUBLE);
-	}
+    public VectorSMinFunction() {
+        super("sMin", 1, accTypes, SDFDatatype.DOUBLE);
+    }
 
-	@Override
-	public Double getValue() {
-		RealVector a = MatrixUtils.createRealVector((double[]) this
-				.getInputValue(0));
-		return getValueInternal(a);
-	}
+    @Override
+    public Double getValue() {
+        RealVector a = MatrixUtils.createRealVector((double[]) this.getInputValue(0));
+        return getValueInternal(a);
+    }
 
-	protected double getValueInternal(RealVector a) {
-		return a.getMinValue();
-	}
+    protected double getValueInternal(RealVector a) {
+        return a.getMinValue();
+    }
 }

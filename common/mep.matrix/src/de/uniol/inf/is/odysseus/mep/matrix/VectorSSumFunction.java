@@ -31,7 +31,7 @@ public class VectorSSumFunction extends AbstractFunction<Double> {
 
 		
 	private static final long serialVersionUID = -4545165996858726420L;
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.VECTOR_BOOLEAN, SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE };
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.VECTORS };
 
     public VectorSSumFunction() {
     	super("sSum", 1, accTypes, SDFDatatype.DOUBLE);

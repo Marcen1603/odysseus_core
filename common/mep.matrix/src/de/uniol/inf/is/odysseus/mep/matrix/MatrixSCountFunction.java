@@ -27,24 +27,21 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class MatrixSCountFunction extends AbstractFunction<Double> {
 
-	private static final long serialVersionUID = -8757824402331405540L;
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
-			SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
+    private static final long serialVersionUID = -8757824402331405540L;
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS };
 
-	public MatrixSCountFunction() {
-		super("sCount", 1, accTypes, SDFDatatype.DOUBLE);
-	}
+    public MatrixSCountFunction() {
+        super("sCount", 1, accTypes, SDFDatatype.DOUBLE);
+    }
 
-	@Override
-	public Double getValue() {
-		RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this
-				.getInputValue(0));
-		return getValueInternal(a);
-	}
+    @Override
+    public Double getValue() {
+        RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this.getInputValue(0));
+        return getValueInternal(a);
+    }
 
-	protected double getValueInternal(RealMatrix a) {
-		return a.getColumnDimension() * a.getRowDimension();
-	}
+    protected double getValueInternal(RealMatrix a) {
+        return a.getColumnDimension() * a.getRowDimension();
+    }
 
 }

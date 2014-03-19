@@ -28,44 +28,40 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class MatrixSSumFunction extends AbstractFunction<Double> {
 
-	private static final long serialVersionUID = -5678807422391034377L;
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
-			SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
+    private static final long serialVersionUID = -5678807422391034377L;
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS };
 
-	public MatrixSSumFunction() {
-		super("sSum", 1, accTypes, SDFDatatype.DOUBLE);
-	}
+    public MatrixSSumFunction() {
+        super("sSum", 1, accTypes, SDFDatatype.DOUBLE);
+    }
 
-	@Override
-	public Double getValue() {
-		RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this
-				.getInputValue(0));
-		return getValueInternal(a);
-	}
+    @Override
+    public Double getValue() {
+        RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this.getInputValue(0));
+        return getValueInternal(a);
+    }
 
-	protected double getValueInternal(RealMatrix a) {
-		return a.walkInOptimizedOrder(new RealMatrixPreservingVisitor() {
-			private double sum;
+    protected double getValueInternal(RealMatrix a) {
+        return a.walkInOptimizedOrder(new RealMatrixPreservingVisitor() {
+            private double sum;
 
-			@Override
-			public void start(int rows, int columns, int startRow, int endRow,
-					int startColumn, int endColumn) {
-				sum = 0.0;
-			}
+            @Override
+            public void start(int rows, int columns, int startRow, int endRow, int startColumn, int endColumn) {
+                sum = 0.0;
+            }
 
-			@Override
-			public void visit(int row, int column, double value) {
-				sum += value;
+            @Override
+            public void visit(int row, int column, double value) {
+                sum += value;
 
-			}
+            }
 
-			@Override
-			public double end() {
-				return sum;
-			}
+            @Override
+            public double end() {
+                return sum;
+            }
 
-		});
-	}
+        });
+    }
 
 }

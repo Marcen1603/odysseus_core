@@ -28,25 +28,21 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class MatrixTraceFunction extends AbstractFunction<Double> {
 
-	private static final long serialVersionUID = 8984761356858742631L;
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
-			SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
+    private static final long serialVersionUID = 8984761356858742631L;
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS };
 
-	public MatrixTraceFunction() {
-		super("tr",1,accTypes, SDFDatatype.DOUBLE);
-	}
-	
+    public MatrixTraceFunction() {
+        super("tr", 1, accTypes, SDFDatatype.DOUBLE);
+    }
 
-	@Override
-	public Double getValue() {
-		RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this
-				.getInputValue(0));
-		return getValueInternal(a);
-	}
+    @Override
+    public Double getValue() {
+        RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this.getInputValue(0));
+        return getValueInternal(a);
+    }
 
-	protected double getValueInternal(RealMatrix a) {
-		return a.getTrace();
-	}
+    protected double getValueInternal(RealMatrix a) {
+        return a.getTrace();
+    }
 
 }

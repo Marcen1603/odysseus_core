@@ -29,7 +29,7 @@ public class VectorSCountFunction extends AbstractFunction<Double> {
 
 
     private static final long serialVersionUID = 3872260101379886451L;
-    private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.VECTOR_BOOLEAN, SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE };
+    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.VECTORS };
 
     public VectorSCountFunction() {
     	super("sCount",1,accTypes,SDFDatatype.DOUBLE);

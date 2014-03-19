@@ -28,50 +28,46 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class MatrixSAVGFunction extends AbstractFunction<Double> {
 
-	/**
+    /**
      * 
      */
-	private static final long serialVersionUID = 1992400189729759176L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
-			SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
+    private static final long serialVersionUID = 1992400189729759176L;
+    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS };
 
-	public MatrixSAVGFunction() {
-    	super("sAVG",1,accTypes,SDFDatatype.DOUBLE);
+    public MatrixSAVGFunction() {
+        super("sAVG", 1, accTypes, SDFDatatype.DOUBLE);
     }
 
-	@Override
-	public Double getValue() {
-		RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this
-				.getInputValue(0));
-		return getValueInternal(a);
-	}
+    @Override
+    public Double getValue() {
+        RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this.getInputValue(0));
+        return getValueInternal(a);
+    }
 
-	protected double getValueInternal(RealMatrix a) {
-		return a.walkInOptimizedOrder(new RealMatrixPreservingVisitor() {
-			private double sum;
-			private int count;
+    protected double getValueInternal(RealMatrix a) {
+        return a.walkInOptimizedOrder(new RealMatrixPreservingVisitor() {
+            private double sum;
+            private int count;
 
-			@Override
-			public void start(int rows, int columns, int startRow, int endRow,
-					int startColumn, int endColumn) {
-				sum = 0.0;
-				count = 0;
-			}
+            @Override
+            public void start(int rows, int columns, int startRow, int endRow, int startColumn, int endColumn) {
+                sum = 0.0;
+                count = 0;
+            }
 
-			@Override
-			public void visit(int row, int column, double value) {
-				sum += value;
-				count++;
+            @Override
+            public void visit(int row, int column, double value) {
+                sum += value;
+                count++;
 
-			}
+            }
 
-			@Override
-			public double end() {
-				return sum / count;
-			}
+            @Override
+            public double end() {
+                return sum / count;
+            }
 
-		});
-	}
+        });
+    }
 
 }

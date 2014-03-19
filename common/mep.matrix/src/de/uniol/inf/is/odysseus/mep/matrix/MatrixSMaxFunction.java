@@ -29,47 +29,43 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class MatrixSMaxFunction extends AbstractFunction<Double> {
 
-	/**
+    /**
      * 
      */
-	private static final long serialVersionUID = 3618610509394067330L;
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
-			SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
+    private static final long serialVersionUID = 3618610509394067330L;
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS };
 
-	public MatrixSMaxFunction() {
-		super("sMax", 1, accTypes, SDFDatatype.DOUBLE);
-	}
+    public MatrixSMaxFunction() {
+        super("sMax", 1, accTypes, SDFDatatype.DOUBLE);
+    }
 
-	@Override
-	public Double getValue() {
-		RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this
-				.getInputValue(0));
-		return getValueInternal(a);
-	}
+    @Override
+    public Double getValue() {
+        RealMatrix a = MatrixUtils.createRealMatrix((double[][]) this.getInputValue(0));
+        return getValueInternal(a);
+    }
 
-	protected double getValueInternal(RealMatrix a) {
-		return a.walkInOptimizedOrder(new RealMatrixPreservingVisitor() {
-			private double max;
+    protected double getValueInternal(RealMatrix a) {
+        return a.walkInOptimizedOrder(new RealMatrixPreservingVisitor() {
+            private double max;
 
-			@Override
-			public void start(int rows, int columns, int startRow, int endRow,
-					int startColumn, int endColumn) {
-				max = Double.MIN_VALUE;
-			}
+            @Override
+            public void start(int rows, int columns, int startRow, int endRow, int startColumn, int endColumn) {
+                max = Double.MIN_VALUE;
+            }
 
-			@Override
-			public void visit(int row, int column, double value) {
-				max = FastMath.max(max, value);
+            @Override
+            public void visit(int row, int column, double value) {
+                max = FastMath.max(max, value);
 
-			}
+            }
 
-			@Override
-			public double end() {
-				return max;
-			}
+            @Override
+            public double end() {
+                return max;
+            }
 
-		});
-	}
+        });
+    }
 
 }

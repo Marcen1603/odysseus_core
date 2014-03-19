@@ -31,7 +31,6 @@ public class MatrixFunctionProvider implements IFunctionProvider {
 
         List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
         functions.add(new MatrixGetEntry());
-        functions.add(new MatrixTranspose());
 
         functions.add(new MatrixEqualsOperator());
         functions.add(new MatrixMinusOperator());
