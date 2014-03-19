@@ -58,7 +58,7 @@ public abstract class AbstractProbabilisticAddNumberOperator extends AbstractPro
      */
     protected final IMultivariateDistribution getValueInternal(final MultivariateMixtureDistribution a, final Double b) {
         return a.add(b);
-    }
+}
 
     /*
      * 

@@ -25,8 +25,8 @@ public class TimelinessFunction extends AbstractFunction<Double> {
     public TimelinessFunction() {
     	super("timeliness",1,ACC_TYPES,SDFProbabilisticDatatype.PROBABILISTIC_BYTE,false);
     }
-    
-  
+
+
     /*
      * 
      * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
@@ -46,12 +46,19 @@ public class TimelinessFunction extends AbstractFunction<Double> {
         return timeliness;
     }
 
- 
 
     /**
      * Accepted data types.
      */
     public static final SDFDatatype[][] ACC_TYPES = {SDFDatatype.NUMBERS,SDFDatatype.NUMBERS};
 
- 
+
+    /**
+     * {@inheritDoc}
+     */
+ //   @Override
+ //   public boolean optimizeConstantParameter() {
+        // We need access to the meta data of each tuple
+ //       return false;
+ //   }
 }

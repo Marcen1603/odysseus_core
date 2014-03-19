@@ -32,7 +32,7 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.ProbabilisticDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -79,7 +79,8 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
             final Double probability = inputStream.readDouble();
             values.put(value, probability);
         }
-        return new ProbabilisticDouble(values);
+//        return new ProbabilisticDouble(values);
+        return null;
     }
 
     /*
@@ -98,7 +99,8 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
             final String[] discreteValue = discreteValue2.split(":");
             values.put(Double.parseDouble(discreteValue[0]), Double.parseDouble(discreteValue[1]));
         }
-        return new ProbabilisticDouble(values);
+//        return new ProbabilisticDouble(values);
+        return null;
     }
 
     /*
@@ -118,7 +120,8 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
             final Double probability = buffer.getDouble();
             values.put(value, probability);
         }
-        return new ProbabilisticDouble(values);
+//        return new ProbabilisticDouble(values);
+        return null;
     }
 
     /*
@@ -129,14 +132,14 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
      */
     @Override
     public final void writeData(final ByteBuffer buffer, final Object data) {
-        Objects.requireNonNull(buffer);
-        Objects.requireNonNull(data);
-        final ProbabilisticDouble values = (ProbabilisticDouble) data;
-        buffer.putInt(values.getValues().size());
-        for (final Entry<Double, Double> value : values.getValues().entrySet()) {
-            buffer.putDouble(value.getKey());
-            buffer.putDouble(value.getValue());
-        }
+//        Objects.requireNonNull(buffer);
+//        Objects.requireNonNull(data);
+//        final ProbabilisticDouble values = (ProbabilisticDouble) data;
+//        buffer.putInt(values.getValues().size());
+//        for (final Entry<Double, Double> value : values.getValues().entrySet()) {
+//            buffer.putDouble(value.getKey());
+//            buffer.putDouble(value.getValue());
+//        }
     }
 
     /*
@@ -157,7 +160,8 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
      */
     @Override
     public final int memSize(final Object attribute) {
-        return (((ProbabilisticDouble) attribute).getValues().size() * Double.SIZE * 2) / 8;
+//        return (((ProbabilisticDouble) attribute).getValues().size() * Double.SIZE * 2) / 8;
+        return 0;
     }
 
     @Override

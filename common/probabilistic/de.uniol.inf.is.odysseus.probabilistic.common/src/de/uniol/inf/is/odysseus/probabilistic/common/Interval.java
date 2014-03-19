@@ -181,22 +181,43 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      * @throws IntervalArithmeticException
      *             if the other interval contains zero
      */
-    public final Interval divide(final Interval other)  {
+    public final Interval divide(final Interval other) {
         if ((other.inf() == 0.0) && (other.sup() == 0.0)) {
             return new Interval(Double.NaN, Double.NaN);
         }
-        else if (0 <= other.inf()) {
-            final double inf = Math.min(Math.min(this.inf() / other.inf(), this.inf() / other.sup()), Math.min(this.sup() / other.inf(), this.sup() / other.sup()));
-            final double sup = Math.max(Math.max(this.inf() / other.inf(), this.inf() / other.sup()), Math.max(this.sup() / other.inf(), this.sup() / other.sup()));
+        else if (0.0 <= other.inf()) {
+            final double inf = Math.min(Math.min(divide(this.inf(), other.inf()), divide(this.inf(), other.sup())), Math.min(divide(this.sup(), other.inf()), divide(this.sup(), other.sup())));
+            final double sup = Math.max(Math.max(divide(this.inf(), other.inf()), divide(this.inf(), other.sup())), Math.max(divide(this.sup(), other.inf()), divide(this.sup(), other.sup())));
             return new Interval(inf, sup);
         }
-        else if (other.sup() <= 0) {
+        else if (other.sup() <= 0.0) {
             return (new Interval(-this.sup(), -this.inf())).divide(new Interval(-other.sup(), -other.inf()));
         }
         else {
             Interval left = this.divide(new Interval(other.inf(), 0.0));
             Interval right = this.divide(new Interval(0.0, other.sup()));
-            return new Interval(Math.min(left.inf(), right.inf()), Math.max(left.sup(), right.sup()));
+            return left.union(right);
+        }
+    }
+
+    private final double divide(final double a, final double b) {
+        if ((Double.isInfinite(a)) && (b == 0.0)) {
+            return 0.0;
+        }
+        else if ((a == 0.0) && (b == 0.0)) {
+            return 0.0;
+        }
+        else if (Double.isInfinite(b)) {
+            return 0.0;
+        }
+        else if ((a > 0.0) && (b == 0.0)) {
+            return Double.POSITIVE_INFINITY;
+        }
+        else if ((a < 0.0) && (b == 0.0)) {
+            return Double.NEGATIVE_INFINITY;
+        }
+        else {
+            return a / b;
         }
     }
 

@@ -66,10 +66,10 @@ public class TProbabilisticContinuousLeftJoinAOSetDMRule extends AbstractTransfo
             if (operator.getDataMerge() == null) {
                 final IPredicate<?> predicate = operator.getPredicate();
                 final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-                if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
-                    throw new TransformationException("Not implemented");
-
-                }
+//                if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
+//                    throw new TransformationException("Not implemented");
+//
+//                }
             }
         }
         return false;

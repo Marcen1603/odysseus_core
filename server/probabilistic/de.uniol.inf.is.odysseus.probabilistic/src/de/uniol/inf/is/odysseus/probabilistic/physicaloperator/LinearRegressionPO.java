@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 
 /**
  * 
@@ -103,7 +103,7 @@ public class LinearRegressionPO<T extends ITimeInterval> extends AbstractPipe<Pr
 
             for (int i = 0; i < this.area.getExplanatoryAttributePos().length; i++) {
                 final int pos = this.area.getExplanatoryAttributePos()[i];
-                outputVal.setAttribute(pos, new ProbabilisticContinuousDouble(distributions.length));
+                outputVal.setAttribute(pos, new ProbabilisticDouble(distributions.length));
             }
             outputVal.setAttribute(object.getAttributes().length, regressionCoefficients.getData());
             outputVal.setAttribute(object.getAttributes().length + 1, residual.getData());

@@ -78,7 +78,7 @@ public class TProbabilisticDiscreteLeftJoinAOSetSARule extends AbstractTransform
         }
         final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
         if (operator.getPredicate() != null) {
-            attributes.addAll(SchemaUtils.getDiscreteProbabilisticAttributes(operator.getPredicate().getAttributes()));
+            attributes.addAll(SchemaUtils.getProbabilisticAttributes(operator.getPredicate().getAttributes()));
         }
 
         final SDFSchema leftSchema = operator.getSubscribedToSource(0).getSchema();
@@ -110,9 +110,9 @@ public class TProbabilisticDiscreteLeftJoinAOSetSARule extends AbstractTransform
             if (operator.getAreas() == null) {
                 final IPredicate<?> predicate = operator.getPredicate();
                 final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-                if (SchemaUtils.containsDiscreteProbabilisticAttributes(attributes)) {
-                    throw new IllegalArgumentException("Not implemented");
-                }
+//                if (SchemaUtils.containsDiscreteProbabilisticAttributes(attributes)) {
+//                    throw new IllegalArgumentException("Not implemented");
+//                }
                 // return true;
             }
         }

@@ -79,6 +79,6 @@ public class ProbabilisticSmallerEqualsOperator extends AbstractProbabilisticCom
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_NUMBERS, SDFDatatype.NUMBERS };
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS, SDFDatatype.NUMBERS };
 
 }

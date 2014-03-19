@@ -21,8 +21,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
-import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticDiscreteUtils;
-import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
 /**
@@ -78,36 +76,46 @@ public class ProbabilisticDiscreteSelectPO<T extends Tuple<?>> extends SelectPO<
         // Input and output joint probabilities
         final double[] inSum = new double[this.probabilisticAttributePos.length];
         final double[] outSum = new double[this.probabilisticAttributePos.length];
+        //
+        // for (int i = 0; i < this.probabilisticAttributePos.length; i++) {
+        // ((AbstractProbabilisticValue<?>)
+        // outputVal.getAttribute(this.probabilisticAttributePos[i])).getValues().clear();
+        // final AbstractProbabilisticValue<?> attribute =
+        // (AbstractProbabilisticValue<?>)
+        // object.getAttribute(this.probabilisticAttributePos[i]);
+        // for (final Double probability : attribute.getValues().values()) {
+        // inSum[i] += probability;
+        // }
+        // }
 
-        for (int i = 0; i < this.probabilisticAttributePos.length; i++) {
-            ((AbstractProbabilisticValue<?>) outputVal.getAttribute(this.probabilisticAttributePos[i])).getValues().clear();
-            final AbstractProbabilisticValue<?> attribute = (AbstractProbabilisticValue<?>) object.getAttribute(this.probabilisticAttributePos[i]);
-            for (final Double probability : attribute.getValues().values()) {
-                inSum[i] += probability;
-            }
-        }
-
-        final Object[][] worlds = ProbabilisticDiscreteUtils.getWorlds(object, this.probabilisticAttributePos);
+        // final Object[][] worlds =
+        // ProbabilisticDiscreteUtils.getWorlds(object,
+        // this.probabilisticAttributePos);
 
         // Evaluate each world and store the possible ones in the output tuple
-        for (int w = 0; w < worlds.length; w++) {
-            for (int i = 0; i < this.probabilisticAttributePos.length; i++) {
-                selectObject.setAttribute(this.probabilisticAttributePos[i], worlds[w][i]);
-            }
-            final boolean result = this.getPredicate().evaluate(selectObject);
-
-            if (result) {
-                for (int i = 0; i < this.probabilisticAttributePos.length; i++) {
-                    final AbstractProbabilisticValue<?> inAttribute = (AbstractProbabilisticValue<?>) object.getAttribute(this.probabilisticAttributePos[i]);
-                    final AbstractProbabilisticValue<Double> outAttribute = (AbstractProbabilisticValue<Double>) outputVal.getAttribute(this.probabilisticAttributePos[i]);
-                    final double probability = inAttribute.getValues().get(worlds[w][i]);
-                    if (!outAttribute.getValues().containsKey(worlds[w][i])) {
-                        outAttribute.getValues().put((Double) worlds[w][i], probability);
-                        outSum[i] += probability;
-                    }
-                }
-            }
-        }
+        // for (int w = 0; w < worlds.length; w++) {
+        // for (int i = 0; i < this.probabilisticAttributePos.length; i++) {
+        // selectObject.setAttribute(this.probabilisticAttributePos[i],
+        // worlds[w][i]);
+        // }
+        // final boolean result = this.getPredicate().evaluate(selectObject);
+        //
+        // if (result) {
+        // for (int i = 0; i < this.probabilisticAttributePos.length; i++) {
+        // final AbstractProbabilisticValue<?> inAttribute =
+        // (AbstractProbabilisticValue<?>)
+        // object.getAttribute(this.probabilisticAttributePos[i]);
+        // final AbstractProbabilisticValue<Double> outAttribute =
+        // (AbstractProbabilisticValue<Double>)
+        // outputVal.getAttribute(this.probabilisticAttributePos[i]);
+        // final double probability = inAttribute.getValues().get(worlds[w][i]);
+        // if (!outAttribute.getValues().containsKey(worlds[w][i])) {
+        // outAttribute.getValues().put((Double) worlds[w][i], probability);
+        // outSum[i] += probability;
+        // }
+        // }
+        // }
+        // }
         // Update the joint probability
         double jointProbability = ((IProbabilistic) outputVal.getMetadata()).getExistence();
         for (int i = 0; i < this.probabilisticAttributePos.length; i++) {

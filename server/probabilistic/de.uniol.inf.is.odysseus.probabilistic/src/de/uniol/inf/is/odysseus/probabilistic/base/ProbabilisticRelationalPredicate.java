@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.probabilistic.base.common.ExpressionUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.VarHelper;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -98,10 +97,11 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
      */
     @Override
     public boolean evaluate(ProbabilisticTuple<? extends IProbabilistic> left, ProbabilisticTuple<? extends IProbabilistic> right) {
-//        ProbabilisticTuple<? extends IProbabilistic> result = probabilisticEvaluate(left, right);
-//        return result.getMetadata().getExistence() > 0.0;
+        // ProbabilisticTuple<? extends IProbabilistic> result =
+        // probabilisticEvaluate(left, right);
+        // return result.getMetadata().getExistence() > 0.0;
         throw new UnsupportedOperationException("Not supported, merge first and call evaluate");
-        
+
     }
 
     public ProbabilisticTuple<? extends IProbabilistic> probabilisticEvaluate(ProbabilisticTuple<? extends IProbabilistic> input) {
@@ -138,7 +138,7 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
     }
 
     @Override
-	public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
+    public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
         init(leftSchema, rightSchema, true);
     }
 
@@ -374,20 +374,20 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
                     final VarHelper[] varHelper = new VarHelper[neededAttributes.size()];
                     for (int j = 0; j < neededAttributes.size(); j++) {
                         final SDFAttribute curAttribute = neededAttributes.get(j);
-                        varHelper[j++] = new VarHelper(schema.indexOf(curAttribute), 0, curAttribute.getDatatype() instanceof SDFProbabilisticDatatype);
+                        varHelper[j++] = new VarHelper(schema.indexOf(curAttribute), 0);
                     }
                     deterministicDisjunctiveExpr.add(new DeterministicPredicateEvaluator(new SDFProbabilisticExpression(disjunctiveSplitExpression), varHelper));
                 }
             }
-            else if (!SchemaUtils.containsContinuousProbabilisticAttributes(conjunctiveSplitExpression.getAllAttributes())) {
+            else if (!SchemaUtils.containsProbabilisticAttributes(conjunctiveSplitExpression.getAllAttributes())) {
                 for (SDFExpression disjunctiveSplitExpression : ExpressionUtils.disjunctiveSplitExpression(new SDFProbabilisticExpression(conjunctiveSplitExpression))) {
                     final List<SDFAttribute> neededAttributes = disjunctiveSplitExpression.getAllAttributes();
                     final VarHelper[] varHelper = new VarHelper[neededAttributes.size()];
                     for (int j = 0; j < neededAttributes.size(); j++) {
                         final SDFAttribute curAttribute = neededAttributes.get(j);
-                        varHelper[j++] = new VarHelper(schema.indexOf(curAttribute), 0, curAttribute.getDatatype() instanceof SDFProbabilisticDatatype);
+                        varHelper[j++] = new VarHelper(schema.indexOf(curAttribute), 0);
                     }
-                    Collection<SDFAttribute> discreteProbabilisticAttributes = SchemaUtils.getDiscreteProbabilisticAttributes(neededAttributes);
+                    Collection<SDFAttribute> discreteProbabilisticAttributes = SchemaUtils.getProbabilisticAttributes(neededAttributes);
                     discreteDistributionDisjunctiveExpr.add(new DiscreteDistributionPredicateEvaluator(new SDFProbabilisticExpression(disjunctiveSplitExpression), varHelper, SchemaUtils
                             .getAttributePos(schema, discreteProbabilisticAttributes)));
                 }
@@ -398,7 +398,7 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
                     final VarHelper[] varHelper = new VarHelper[neededAttributes.size()];
                     for (int j = 0; j < neededAttributes.size(); j++) {
                         final SDFAttribute curAttribute = neededAttributes.get(j);
-                        varHelper[j++] = new VarHelper(schema.indexOf(curAttribute), 0, curAttribute.getDatatype() instanceof SDFProbabilisticDatatype);
+                        varHelper[j++] = new VarHelper(schema.indexOf(curAttribute), 0);
                     }
                     continuousDistributionDisjunctiveExpr.add(new ContinuousDistributionPredicateEvaluator(new SDFProbabilisticExpression(disjunctiveSplitExpression), varHelper));
                 }

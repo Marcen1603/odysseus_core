@@ -253,7 +253,7 @@ public class EMAO extends UnaryLogicalOp {
         final Collection<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
         for (final SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
             if (this.getAttributes().contains(inAttr)) {
-                outputAttributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, null, null, null));
+                outputAttributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, null, null, null));
             }
             else {
                 outputAttributes.add(inAttr);

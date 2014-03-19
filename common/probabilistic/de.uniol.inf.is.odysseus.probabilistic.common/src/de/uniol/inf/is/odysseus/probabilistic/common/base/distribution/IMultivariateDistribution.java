@@ -88,4 +88,5 @@ public interface IMultivariateDistribution extends Serializable, Cloneable, IClo
     IMultivariateDistribution divide(IMultivariateDistribution other);
 
     IMultivariateDistribution clone();
+
 }

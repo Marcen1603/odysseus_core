@@ -15,14 +15,11 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
 
 /**
@@ -82,13 +79,19 @@ public class ProbabilisticDiscreteUnNestPO<T extends IProbabilisticTimeInterval>
     @Override
     protected final void process_next(final ProbabilisticTuple<T> tuple, final int port) {
         try {
-            final AbstractProbabilisticValue<?> probabilisticValue = (AbstractProbabilisticValue<?>) tuple.getAttribute(this.probabilisticAttributePos);
-            for (final Map.Entry<?, Double> entry : probabilisticValue.getValues().entrySet()) {
-                final ProbabilisticTuple<T> outputTuple = new ProbabilisticTuple<T>(tuple);
-                outputTuple.getMetadata().setExistence(tuple.getMetadata().getExistence() * entry.getValue());
-                outputTuple.setAttribute(this.probabilisticAttributePos, entry.getKey());
-                this.transfer(outputTuple);
-            }
+            // final AbstractProbabilisticValue<?> probabilisticValue =
+            // (AbstractProbabilisticValue<?>)
+            // tuple.getAttribute(this.probabilisticAttributePos);
+            // for (final Map.Entry<?, Double> entry :
+            // probabilisticValue.getValues().entrySet()) {
+            // final ProbabilisticTuple<T> outputTuple = new
+            // ProbabilisticTuple<T>(tuple);
+            // outputTuple.getMetadata().setExistence(tuple.getMetadata().getExistence()
+            // * entry.getValue());
+            // outputTuple.setAttribute(this.probabilisticAttributePos,
+            // entry.getKey());
+            // this.transfer(outputTuple);
+            // }
         }
         catch (final Exception e) {
             ProbabilisticDiscreteUnNestPO.LOG.error(e.getMessage(), e);

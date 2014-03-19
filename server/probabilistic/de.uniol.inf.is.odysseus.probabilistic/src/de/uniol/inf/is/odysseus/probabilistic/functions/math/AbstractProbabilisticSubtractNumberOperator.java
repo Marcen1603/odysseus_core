@@ -46,7 +46,7 @@ public abstract class AbstractProbabilisticSubtractNumberOperator extends Abstra
     public final int getPrecedence() {
         return 6;
     }
-    
+
     /**
      * Subtracts the given value from the given distribution.
      * 

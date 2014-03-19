@@ -34,7 +34,7 @@ public class ProbabilisticSubtractNumberRHSOperator extends AbstractProbabilisti
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, SDFDatatype.NUMBERS };
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE }, SDFDatatype.NUMBERS };
 
     public ProbabilisticContinuousMinusNumberRHSOperator() {
     	super(ACC_TYPES);

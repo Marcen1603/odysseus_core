@@ -79,9 +79,9 @@ public class TProbabilisiticContinuousSelectAORule extends TSelectAORule {
         Objects.requireNonNull(transformConfig); 
         if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-                if (SchemaUtils.containsContinuousProbabilisticAttributes(PredicateUtils.getAttributes(operator.getPredicate()))) {
-                    return true;
-                }
+//                if (SchemaUtils.containsContinuousProbabilisticAttributes(PredicateUtils.getAttributes(operator.getPredicate()))) {
+//                    return true;
+//                }
             }
         }
         return false;

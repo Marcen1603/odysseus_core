@@ -79,8 +79,8 @@ public class TestLinearRegressionMergePO extends LinearRegressionMergePO<IProbab
      */
     private static SDFSchema getSchema() {
         final Collection<SDFAttribute> attr = new ArrayList<SDFAttribute>();
-        attr.add(new SDFAttribute("", "a", SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, null, null, null));
-        attr.add(new SDFAttribute("", "b", SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, null, null, null));
+        attr.add(new SDFAttribute("", "a", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, null, null, null));
+        attr.add(new SDFAttribute("", "b", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, null, null, null));
         final SDFSchema schema = new SDFSchema("", ProbabilisticTuple.class, attr);
         return schema;
     }

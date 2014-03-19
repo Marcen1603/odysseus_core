@@ -24,14 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMaxFunction;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMaxNumberLHSFunction;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMaxNumberRHSFunction;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinFunction;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinNumberLHSFunction;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinNumberRHSFunction;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticPowerOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticSQRTFunction;
 import de.uniol.inf.is.odysseus.probabilistic.functions.TimelinessFunction;
 import de.uniol.inf.is.odysseus.probabilistic.functions.bool.ProbabilisticAndOperator;
 import de.uniol.inf.is.odysseus.probabilistic.functions.bool.ProbabilisticNotOperator;
@@ -114,14 +106,14 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
             functions.add(new ProbabilisticDivideOperator());
             functions.add(new ProbabilisticDivideNumberRHSOperator());
             functions.add(new ProbabilisticDivideNumberLHSOperator());
-            functions.add(new ProbabilisticPowerOperator());
-            functions.add(new ProbabilisticSQRTFunction());
-            functions.add(new ProbabilisticMinFunction());
-            functions.add(new ProbabilisticMinNumberRHSFunction());
-            functions.add(new ProbabilisticMinNumberLHSFunction());
-            functions.add(new ProbabilisticMaxFunction());
-            functions.add(new ProbabilisticMaxNumberRHSFunction());
-            functions.add(new ProbabilisticMaxNumberLHSFunction());
+            // functions.add(new ProbabilisticPowerOperator());
+            // functions.add(new ProbabilisticSQRTFunction());
+            // functions.add(new ProbabilisticMinFunction());
+            // functions.add(new ProbabilisticMinNumberRHSFunction());
+            // functions.add(new ProbabilisticMinNumberLHSFunction());
+            // functions.add(new ProbabilisticMaxFunction());
+            // functions.add(new ProbabilisticMaxNumberRHSFunction());
+            // functions.add(new ProbabilisticMaxNumberLHSFunction());
 
             /** Compare operators. */
             functions.add(new ProbabilisticSmallerEqualsOperator());

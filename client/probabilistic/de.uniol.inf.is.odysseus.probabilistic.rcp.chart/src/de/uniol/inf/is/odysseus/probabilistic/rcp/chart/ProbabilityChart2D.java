@@ -123,13 +123,7 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
             for (final IViewableAttribute attribute : attributes) {
                 final SDFDatatype type = attribute.getSDFDatatype();
                 if (type.getClass().equals(SDFProbabilisticDatatype.class)) {
-                    final SDFProbabilisticDatatype probType = (SDFProbabilisticDatatype) type;
-                    if (probType.isContinuous()) {
-                        sel++;
-                    }
-                    else if (probType.isDiscrete()) {
-                        sel++;
-                    }
+                    sel++;
                 }
             }
         }

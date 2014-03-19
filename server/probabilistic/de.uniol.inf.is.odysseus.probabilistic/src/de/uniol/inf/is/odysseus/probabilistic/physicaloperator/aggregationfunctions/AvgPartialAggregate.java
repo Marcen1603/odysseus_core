@@ -15,19 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.util.Pair;
-
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
-import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -91,27 +80,7 @@ public class AvgPartialAggregate<T> extends AbstractPartialAggregate<T> {
      * @return The average.
      */
     public final MultivariateMixtureDistribution getAvg() {
-        final List<Pair<Double, IMultivariateDistribution>> mvns = new ArrayList<Pair<Double, IMultivariateDistribution>>();
-        for (final Pair<Double, IMultivariateDistribution> entry : ((MultivariateMixtureDistribution) this.sum).getComponents()) {
-            final IMultivariateDistribution normalDistribution = entry.getValue();
-            final Double weight = entry.getKey();
-            final double[] means = normalDistribution.getMean();
-            for (int i = 0; i < means.length; i++) {
-                means[i] /= this.count;
-            }
-            final RealMatrix covariances = new Array2DRowRealMatrix(normalDistribution.getVariance()).scalarMultiply(1.0 / (this.count * this.count));
-            final IMultivariateDistribution component = new MultivariateNormalDistribution(means, covariances.getData());
-            mvns.add(new Pair<Double, IMultivariateDistribution>(weight, component));
-        }
-        final MultivariateMixtureDistribution result = new MultivariateMixtureDistribution(mvns);
-        final Interval[] support = new Interval[result.getSupport().length];
-        for (int i = 0; i < result.getSupport().length; i++) {
-            support[i] = result.getSupport(i).divide(this.count);
-        }
-        result.setSupport(support);
-        result.setAttributes(sum.getAttributes());
-        result.setScale(sum.getScale());
-        return result;
+        return this.sum.divide((double) this.count);
     }
 
     /**
@@ -121,29 +90,8 @@ public class AvgPartialAggregate<T> extends AbstractPartialAggregate<T> {
      *            The value to add
      */
     public final void add(final MultivariateMixtureDistribution value) {
-        final List<Pair<Double, IMultivariateDistribution>> mixtures = new ArrayList<Pair<Double, IMultivariateDistribution>>();
-        for (final Pair<Double, IMultivariateDistribution> sumEntry : ((MultivariateMixtureDistribution) this.sum).getComponents()) {
-            final RealMatrix sumMean = MatrixUtils.createColumnRealMatrix(sumEntry.getValue().getMean());
-            final RealMatrix sumCovarianceMatrix = new Array2DRowRealMatrix(sumEntry.getValue().getVariance());
-
-            for (final Pair<Double, IMultivariateDistribution> entry : ((MultivariateMixtureDistribution) value).getComponents()) {
-                final RealMatrix mean = MatrixUtils.createColumnRealMatrix(entry.getValue().getMean());
-                final RealMatrix covarianceMatrix = new Array2DRowRealMatrix(entry.getValue().getVariance());
-
-                final IMultivariateDistribution distribution = new MultivariateNormalDistribution(sumMean.add(mean).getColumn(0), sumCovarianceMatrix.add(covarianceMatrix).getData());
-                mixtures.add(new Pair<Double, IMultivariateDistribution>(sumEntry.getKey() * entry.getKey(), distribution));
-            }
-        }
-
-        final MultivariateMixtureDistribution result = new MultivariateMixtureDistribution(mixtures);
-        final Interval[] support = new Interval[this.sum.getSupport().length];
-        for (int i = 0; i < this.sum.getSupport().length; i++) {
-            support[i] = this.sum.getSupport(i).add(value.getSupport(i));
-        }
-        result.setSupport(support);
-        result.setScale(this.sum.getScale() * value.getScale());
         this.count++;
-        this.sum = result;
+        this.sum = this.sum.add(value);
     }
 
     /*

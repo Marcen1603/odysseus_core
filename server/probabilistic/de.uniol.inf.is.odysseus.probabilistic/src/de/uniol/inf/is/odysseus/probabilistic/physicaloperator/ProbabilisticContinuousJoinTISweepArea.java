@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.VarHelper;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
@@ -184,7 +184,7 @@ public class ProbabilisticContinuousJoinTISweepArea<K extends IProbabilisticTime
             this.variables[i++] = newArray;
             int j = 0;
             for (final SDFAttribute curAttribute : neededAttributes) {
-                newArray[j++] = new VarHelper(schema.indexOf(curAttribute), 0, curAttribute.getDatatype() instanceof SDFProbabilisticDatatype);
+                newArray[j++] = new VarHelper(schema.indexOf(curAttribute), 0);
             }
             // if
             // (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE))
@@ -322,8 +322,8 @@ public class ProbabilisticContinuousJoinTISweepArea<K extends IProbabilisticTime
                 final Object[] values = new Object[this.variables[i].length];
                 for (int j = 0; j < this.variables[i].length; ++j) {
                     Object attribute = outputVal.getAttribute(this.variables[i][j].getPos());
-                    if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
-                        int index = ((ProbabilisticContinuousDouble) attribute).getDistribution();
+                    if (attribute.getClass() == ProbabilisticDouble.class) {
+                        int index = ((ProbabilisticDouble) attribute).getDistribution();
                         attribute = outputVal.getDistribution(index);
                         scale = ((MultivariateMixtureDistribution) attribute).getScale();
                         // FIXME What happens if we have more than one
@@ -343,7 +343,7 @@ public class ProbabilisticContinuousJoinTISweepArea<K extends IProbabilisticTime
                 this.expressions[i].bindVariables(values);
 
                 final Object expr = this.expressions[i].getValue();
-                if (this.expressions[i].getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {
+                if (this.expressions[i].getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE)) {
                     final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) expr;
                     jointProbability *= scale / distribution.getScale();
                     // distribution.getAttributes()[0] = i;

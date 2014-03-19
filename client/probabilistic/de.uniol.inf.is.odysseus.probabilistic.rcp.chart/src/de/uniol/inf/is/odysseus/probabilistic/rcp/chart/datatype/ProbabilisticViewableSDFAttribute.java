@@ -18,8 +18,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
-import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewableSDFAttribute;
 
 /**
@@ -52,18 +51,8 @@ public class ProbabilisticViewableSDFAttribute extends ViewableSDFAttribute {
     @Override
     public final Object evaluate(final Tuple<? extends IMetaAttribute> tuple) {
         final ProbabilisticTuple<?> obj = (ProbabilisticTuple<?>) tuple;
-
-        final SDFProbabilisticDatatype type = (SDFProbabilisticDatatype) this.getSDFDatatype();
-
-        if (type.isContinuous()) {
-            final ProbabilisticContinuousDouble attr = (ProbabilisticContinuousDouble) obj.getAttribute(this.index);
-            return obj.getDistribution(attr.getDistribution());
-        }
-        else if (type.isDiscrete()) {
-            return obj.getAttribute(this.index);
-        }
-
-        return null;
+        final ProbabilisticDouble attr = (ProbabilisticDouble) obj.getAttribute(this.index);
+        return obj.getDistribution(attr.getDistribution());
     }
 
     /**

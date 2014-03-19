@@ -33,8 +33,7 @@ Export-Package: de.uniol.inf.is.odysseus.probabilistic.common;uses:="de.uniol.in
    de.uniol.inf.is.odysseus.core.metadata,
    de.uniol.inf.is.odysseus.core",
  de.uniol.inf.is.odysseus.probabilistic.common.base.distribution,
- de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype;uses:="org.apache.commons.math3.distribution,de.uniol.inf.is.odysseus.core,de.uniol.inf.is.odysseus.probabilistic.common",
- de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype;uses:="de.uniol.inf.is.odysseus.core",
+ de.uniol.inf.is.odysseus.probabilistic.common.datatype,
  de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema;uses:="de.uniol.inf.is.odysseus.core.sdf.schema",
  de.uniol.inf.is.odysseus.probabilistic.math,
  de.uniol.inf.is.odysseus.probabilistic.math.genz

@@ -38,7 +38,6 @@ import de.uniol.inf.is.odysseus.core.server.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.EqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 //import de.uniol.inf.is.odysseus.core.server.predicate.AndPredicate;
@@ -253,37 +252,6 @@ public final class PredicateUtils {
     }
 
     /**
-     * Return true if the given expression is of the form:
-     * 
-     * A.x=B.y AND A.y=B.z AND * ...
-     * 
-     * and the attributes are continuous probabilistic distributions
-     * 
-     * @param expression
-     *            The expression
-     * @return <code>true</code> iff the expression is of the given form
-     */
-    public static boolean isEquiContinuousExpression(final IExpression<?> expression) {
-        Objects.requireNonNull(expression);
-        if (expression instanceof AndOperator) {
-            return PredicateUtils.isEquiContinuousExpression(((AndOperator) expression).getArgument(0)) && PredicateUtils.isEquiContinuousExpression(((AndOperator) expression).getArgument(1));
-
-        }
-        if (expression instanceof EqualsOperator) {
-            final EqualsOperator eq = (EqualsOperator) expression;
-            final IExpression<?> arg1 = eq.getArgument(0);
-            final IExpression<?> arg2 = eq.getArgument(1);
-
-            if ((arg1 instanceof Variable) && (arg2 instanceof Variable)) {
-                if ((arg1.getReturnType() instanceof SDFProbabilisticDatatype) && (arg2.getReturnType() instanceof SDFProbabilisticDatatype)) {
-                    return ((SDFProbabilisticDatatype) arg1.getReturnType()).isContinuous() && ((SDFProbabilisticDatatype) arg2.getReturnType()).isContinuous();
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
      * Return the map of attributes used in a equi expression.
      * 
      * @param expression
@@ -322,54 +290,6 @@ public final class PredicateUtils {
                     attributes.put(key, new ArrayList<SDFAttribute>());
                 }
                 attributes.get(key).add(resolver.getAttribute(((Variable) arg2).getIdentifier()));
-            }
-        }
-        return attributes;
-    }
-
-    /**
-     * Return the map of attributes used in a equi continuous expression.
-     * 
-     * @param expression
-     *            The expression
-     * @param resolver
-     *            The attribute resolver
-     * @return The map of attributes
-     */
-    public static Map<SDFAttribute, List<SDFAttribute>> getEquiContinuousExpressionAtributes(final IExpression<?> expression, final IAttributeResolver resolver) {
-        Objects.requireNonNull(expression);
-        Objects.requireNonNull(resolver);
-        final Map<SDFAttribute, List<SDFAttribute>> attributes = new HashMap<SDFAttribute, List<SDFAttribute>>();
-        if (expression instanceof AndOperator) {
-            final Map<SDFAttribute, List<SDFAttribute>> leftAttributes = PredicateUtils.getEquiContinuousExpressionAtributes(((AndOperator) expression).getArgument(0), resolver);
-            for (final SDFAttribute key : leftAttributes.keySet()) {
-                if (!attributes.containsKey(key)) {
-                    attributes.put(key, new ArrayList<SDFAttribute>());
-                }
-                attributes.get(key).addAll(leftAttributes.get(key));
-            }
-            final Map<SDFAttribute, List<SDFAttribute>> rigthAttributes = PredicateUtils.getEquiContinuousExpressionAtributes(((AndOperator) expression).getArgument(1), resolver);
-            for (final SDFAttribute key : rigthAttributes.keySet()) {
-                if (!attributes.containsKey(key)) {
-                    attributes.put(key, new ArrayList<SDFAttribute>());
-                }
-                attributes.get(key).addAll(rigthAttributes.get(key));
-            }
-        }
-        if (expression instanceof EqualsOperator) {
-            final EqualsOperator eq = (EqualsOperator) expression;
-            final IExpression<?> arg1 = eq.getArgument(0);
-            final IExpression<?> arg2 = eq.getArgument(1);
-            if ((arg1 instanceof Variable) && (arg2 instanceof Variable)) {
-                if ((arg1.getReturnType() instanceof SDFProbabilisticDatatype) && (arg2.getReturnType() instanceof SDFProbabilisticDatatype)) {
-                    if (((SDFProbabilisticDatatype) arg1.getReturnType()).isContinuous() && ((SDFProbabilisticDatatype) arg2.getReturnType()).isContinuous()) {
-                        final SDFAttribute key = resolver.getAttribute(((Variable) arg1).getIdentifier());
-                        if (!attributes.containsKey(key)) {
-                            attributes.put(key, new ArrayList<SDFAttribute>());
-                        }
-                        attributes.get(key).add(resolver.getAttribute(((Variable) arg2).getIdentifier()));
-                    }
-                }
             }
         }
         return attributes;

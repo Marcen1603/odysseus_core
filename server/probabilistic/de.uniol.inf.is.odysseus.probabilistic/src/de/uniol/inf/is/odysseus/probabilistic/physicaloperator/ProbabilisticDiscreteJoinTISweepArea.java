@@ -25,8 +25,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticDiscreteUtils;
-import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 
@@ -277,53 +275,73 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends IProbabilisticTimeIn
             final Order order) {
         final T outputVal = (T) this.dataMerge.merge((T) left.clone(), (T) right.clone(), this.metadataMerge, order);
         final double[] outSum = new double[leftProbabilisticAttributePositions.length + rightProbabilisticAttributePositions.length];
-        for (final int rightProbabilisticAttributePo : rightProbabilisticAttributePositions) {
-            ((AbstractProbabilisticValue<?>) outputVal.getAttribute(left.size() + rightProbabilisticAttributePo)).getValues().clear();
-        }
-        for (final int leftProbabilisticAttributePo : leftProbabilisticAttributePositions) {
-            ((AbstractProbabilisticValue<?>) outputVal.getAttribute(leftProbabilisticAttributePo)).getValues().clear();
-        }
+//        for (final int rightProbabilisticAttributePo : rightProbabilisticAttributePositions) {
+//            ((AbstractProbabilisticValue<?>) outputVal.getAttribute(left.size() + rightProbabilisticAttributePo)).getValues().clear();
+//        }
+//        for (final int leftProbabilisticAttributePo : leftProbabilisticAttributePositions) {
+//            ((AbstractProbabilisticValue<?>) outputVal.getAttribute(leftProbabilisticAttributePo)).getValues().clear();
+//        }
 
         // Dummy tuple to hold the different worlds during evaluation
         final T leftSelectObject = (T) left.clone();
-        final Object[][] leftWorlds = ProbabilisticDiscreteUtils.getWorlds(left, leftProbabilisticAttributePositions);
+//        final Object[][] leftWorlds = ProbabilisticDiscreteUtils.getWorlds(left, leftProbabilisticAttributePositions);
 
         final T rightSelectObject = (T) right.clone();
-        final Object[][] rightWorlds = ProbabilisticDiscreteUtils.getWorlds(right, rightProbabilisticAttributePositions);
+//        final Object[][] rightWorlds = ProbabilisticDiscreteUtils.getWorlds(right, rightProbabilisticAttributePositions);
 
         // Evaluate each world and store the possible ones in the output tuple
-        for (int lw = 0; lw < leftWorlds.length; lw++) {
-            for (int rw = 0; rw < rightWorlds.length; rw++) {
-                for (int i = 0; i < leftProbabilisticAttributePositions.length; i++) {
-                    leftSelectObject.setAttribute(leftProbabilisticAttributePositions[i], leftWorlds[lw][i]);
-                }
-                for (int i = 0; i < rightProbabilisticAttributePositions.length; i++) {
-                    rightSelectObject.setAttribute(rightProbabilisticAttributePositions[i], rightWorlds[rw][i]);
-                }
-
-                if (predicate.evaluate(leftSelectObject, rightSelectObject)) {
-                    for (int i = 0; i < rightProbabilisticAttributePositions.length; i++) {
-                        final AbstractProbabilisticValue<?> inAttribute = (AbstractProbabilisticValue<?>) right.getAttribute(rightProbabilisticAttributePositions[i]);
-                        final AbstractProbabilisticValue<Double> outAttribute = (AbstractProbabilisticValue<Double>) outputVal.getAttribute(left.size() + rightProbabilisticAttributePositions[i]);
-                        final double probability = inAttribute.getValues().get(rightWorlds[rw][i]);
-                        if (!outAttribute.getValues().containsKey(rightWorlds[rw][i])) {
-                            outAttribute.getValues().put((Double) rightWorlds[rw][i], probability);
-                            outSum[leftProbabilisticAttributePositions.length + i] += probability;
-                        }
-                    }
-
-                    for (int i = 0; i < leftProbabilisticAttributePositions.length; i++) {
-                        final AbstractProbabilisticValue<?> inAttribute = (AbstractProbabilisticValue<?>) left.getAttribute(leftProbabilisticAttributePositions[i]);
-                        final AbstractProbabilisticValue<Double> outAttribute = (AbstractProbabilisticValue<Double>) outputVal.getAttribute(leftProbabilisticAttributePositions[i]);
-                        final double probability = inAttribute.getValues().get(leftWorlds[lw][i]);
-                        if (!outAttribute.getValues().containsKey(leftWorlds[lw][i])) {
-                            outAttribute.getValues().put((Double) leftWorlds[lw][i], probability);
-                            outSum[i] += probability;
-                        }
-                    }
-                }
-            }
-        }
+        // for (int lw = 0; lw < leftWorlds.length; lw++) {
+        // for (int rw = 0; rw < rightWorlds.length; rw++) {
+        // for (int i = 0; i < leftProbabilisticAttributePositions.length; i++)
+        // {
+        // leftSelectObject.setAttribute(leftProbabilisticAttributePositions[i],
+        // leftWorlds[lw][i]);
+        // }
+        // for (int i = 0; i < rightProbabilisticAttributePositions.length; i++)
+        // {
+        // rightSelectObject.setAttribute(rightProbabilisticAttributePositions[i],
+        // rightWorlds[rw][i]);
+        // }
+        //
+        // if (predicate.evaluate(leftSelectObject, rightSelectObject)) {
+        // for (int i = 0; i < rightProbabilisticAttributePositions.length; i++)
+        // {
+        // final AbstractProbabilisticValue<?> inAttribute =
+        // (AbstractProbabilisticValue<?>)
+        // right.getAttribute(rightProbabilisticAttributePositions[i]);
+        // final AbstractProbabilisticValue<Double> outAttribute =
+        // (AbstractProbabilisticValue<Double>)
+        // outputVal.getAttribute(left.size() +
+        // rightProbabilisticAttributePositions[i]);
+        // final double probability =
+        // inAttribute.getValues().get(rightWorlds[rw][i]);
+        // if (!outAttribute.getValues().containsKey(rightWorlds[rw][i])) {
+        // outAttribute.getValues().put((Double) rightWorlds[rw][i],
+        // probability);
+        // outSum[leftProbabilisticAttributePositions.length + i] +=
+        // probability;
+        // }
+        // }
+        //
+        // for (int i = 0; i < leftProbabilisticAttributePositions.length; i++)
+        // {
+        // final AbstractProbabilisticValue<?> inAttribute =
+        // (AbstractProbabilisticValue<?>)
+        // left.getAttribute(leftProbabilisticAttributePositions[i]);
+        // final AbstractProbabilisticValue<Double> outAttribute =
+        // (AbstractProbabilisticValue<Double>)
+        // outputVal.getAttribute(leftProbabilisticAttributePositions[i]);
+        // final double probability =
+        // inAttribute.getValues().get(leftWorlds[lw][i]);
+        // if (!outAttribute.getValues().containsKey(leftWorlds[lw][i])) {
+        // outAttribute.getValues().put((Double) leftWorlds[lw][i],
+        // probability);
+        // outSum[i] += probability;
+        // }
+        // }
+        // }
+        // }
+        // }
         double jointProbability = 1.0;
         for (final double element : outSum) {
             jointProbability *= element;

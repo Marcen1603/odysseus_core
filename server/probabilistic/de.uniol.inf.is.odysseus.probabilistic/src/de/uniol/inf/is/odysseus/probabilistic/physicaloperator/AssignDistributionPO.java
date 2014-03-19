@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.Multivari
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -113,7 +113,7 @@ public class AssignDistributionPO<T extends ITimeInterval> extends AbstractPipe<
         final MultivariateMixtureDistribution[] outputValDistributions = new MultivariateMixtureDistribution[distributions.length + 1];
 
         for (final int attribute : this.attributes) {
-            outputVal.setAttribute(attribute, new ProbabilisticContinuousDouble(distributions.length));
+            outputVal.setAttribute(attribute, new ProbabilisticDouble(distributions.length));
         }
         // Copy the old distribution to the new tuple
         System.arraycopy(distributions, 0, outputValDistributions, 0, distributions.length);

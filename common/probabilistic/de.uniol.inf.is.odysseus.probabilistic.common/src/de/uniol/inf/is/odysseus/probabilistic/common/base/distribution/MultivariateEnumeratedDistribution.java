@@ -393,6 +393,7 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("deprecation")
     @Override
     public IMultivariateDistribution multiply(IMultivariateDistribution other) {
         List<Pair<double[], Double>> thisSampleSpace = sampleSpace;
@@ -423,6 +424,7 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("deprecation")
     @Override
     public IMultivariateDistribution divide(IMultivariateDistribution other) {
         List<Pair<double[], Double>> thisSampleSpace = sampleSpace;

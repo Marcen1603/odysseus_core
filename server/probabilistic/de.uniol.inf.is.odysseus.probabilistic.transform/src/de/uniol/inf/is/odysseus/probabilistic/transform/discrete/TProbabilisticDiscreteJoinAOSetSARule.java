@@ -86,7 +86,7 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
         }
         final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
         if (operator.getPredicate() != null) {
-            attributes.addAll(SchemaUtils.getDiscreteProbabilisticAttributes(operator.getPredicate().getAttributes()));
+            attributes.addAll(SchemaUtils.getProbabilisticAttributes(operator.getPredicate().getAttributes()));
         }
 
         final SDFSchema leftSchema = operator.getSubscribedToSource(0).getSchema();
@@ -124,9 +124,9 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
             if (operator instanceof ProbabilisticJoinTIPO) {
                 final IPredicate<?> predicate = operator.getPredicate();
                 final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-                if (SchemaUtils.containsDiscreteProbabilisticAttributes(attributes)) {
-                    return true;
-                }
+//                IF (SCHEMAUTILS.CONTAINSDISCRETEPROBABILISTICATTRIBUTES(ATTRIBUTES)) {
+//                    RETURN TRUE;
+//                }
             }
         }
         return false;

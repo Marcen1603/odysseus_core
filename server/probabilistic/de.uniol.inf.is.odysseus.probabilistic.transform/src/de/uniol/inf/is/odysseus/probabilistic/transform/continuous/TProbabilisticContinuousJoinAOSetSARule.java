@@ -75,7 +75,7 @@ public class TProbabilisticContinuousJoinAOSetSARule extends AbstractTransformat
         }
         final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
         if (operator.getPredicate() != null) {
-            attributes.addAll(SchemaUtils.getContinuousProbabilisticAttributes(operator.getPredicate().getAttributes()));
+            attributes.addAll(SchemaUtils.getProbabilisticAttributes(operator.getPredicate().getAttributes()));
         }
 
         final SDFSchema leftSchema = operator.getSubscribedToSource(0).getSchema();
@@ -107,9 +107,9 @@ public class TProbabilisticContinuousJoinAOSetSARule extends AbstractTransformat
             if (operator.getAreas() == null) {
                 final IPredicate<?> predicate = operator.getPredicate();
                 final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-                if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
-                    return true;
-                }
+//                if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
+//                    return true;
+//                }
             }
         }
         return false;

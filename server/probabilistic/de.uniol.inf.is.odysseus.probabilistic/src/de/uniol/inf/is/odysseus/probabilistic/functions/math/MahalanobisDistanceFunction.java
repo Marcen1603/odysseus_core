@@ -35,7 +35,7 @@ public class MahalanobisDistanceFunction extends AbstractMahalanobisDistanceFunc
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, SDFDatatype.NUMBERS };
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE }, SDFDatatype.NUMBERS };
 
     public MahalanobisDistanceFunction() {
     	super(ACC_TYPES);

@@ -107,9 +107,9 @@ public class TProbabilisticContinuousEquiJoinAORule extends AbstractTransformati
             if ((operator.getInputSchema(0).getType() == ProbabilisticTuple.class) || (operator.getInputSchema(1).getType() == ProbabilisticTuple.class)) {
                 if (operator.isAllPhysicalInputSet() && !(operator instanceof LeftJoinAO)) {
 
-                    if (!SchemaUtils.containsContinuousProbabilisticAttributes(operator.getPredicate().getAttributes())) {
-                        return false;
-                    }
+//                    if (!SchemaUtils.containsContinuousProbabilisticAttributes(operator.getPredicate().getAttributes())) {
+//                        return false;
+//                    }
                     final SDFExpression expr = this.getExpression(operator);
 
                     if (PredicateUtils.isEquiExpression(expr.getMEPExpression())) {

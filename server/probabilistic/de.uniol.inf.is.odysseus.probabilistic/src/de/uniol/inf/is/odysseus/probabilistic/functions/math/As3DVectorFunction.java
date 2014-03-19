@@ -33,8 +33,8 @@ public class As3DVectorFunction extends AbstractProbabilisticFunction<IMultivari
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE },
-            { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE } };
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE }, { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE },
+            { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE } };
 
     public As3DVectorFunction() {
     	super("as3DVector",2,ACC_TYPES,SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE);

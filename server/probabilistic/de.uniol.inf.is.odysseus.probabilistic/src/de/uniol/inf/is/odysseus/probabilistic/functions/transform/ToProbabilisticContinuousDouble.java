@@ -44,9 +44,9 @@ public class ToProbabilisticContinuousDouble extends AbstractProbabilisticFuncti
 
     public ToProbabilisticContinuousDouble() {
     	super("toProbabilisticContinuousDouble",2,ACC_TYPES,SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
-	}
-    
-  
+    }
+
+
 
     /*
      * 
@@ -74,7 +74,7 @@ public class ToProbabilisticContinuousDouble extends AbstractProbabilisticFuncti
         return result;
     }
 
- 
+
 
     /**
      * Accepted data types.
@@ -82,6 +82,5 @@ public class ToProbabilisticContinuousDouble extends AbstractProbabilisticFuncti
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE },
             { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE } };
 
- 
 
 }

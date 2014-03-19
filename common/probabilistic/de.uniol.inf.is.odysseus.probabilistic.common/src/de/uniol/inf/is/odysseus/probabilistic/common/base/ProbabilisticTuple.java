@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 
 /**
  * A probabilistic tuple for probabilistic continuous data.
@@ -285,7 +285,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
     public final ProbabilisticTuple<T> restrict(final int attr, final boolean createNew) {
         RealMatrix restrictMatrix;
         final Object newAttr = this.attributes[attr];
-        if (newAttr.getClass() == ProbabilisticContinuousDouble.class) {
+        if (newAttr.getClass() == ProbabilisticDouble.class) {
             restrictMatrix = MatrixUtils.createRealMatrix(new double[][] { { 1.0 } });
         }
         else {
@@ -310,9 +310,9 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
         final List<Integer> restrictAttributePos = new ArrayList<Integer>(attrList.length);
         for (final int attributePos : attrList) {
             final Object attribute = this.attributes[attributePos];
-            if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
+            if (attribute.getClass() == ProbabilisticDouble.class) {
                 restrictAttributePos.add(new Integer(attributePos));
-                final ProbabilisticContinuousDouble continuousAttribute = (ProbabilisticContinuousDouble) attribute;
+                final ProbabilisticDouble continuousAttribute = (ProbabilisticDouble) attribute;
                 final int distributionPos = continuousAttribute.getDistribution();
                 newDistributionDimensions[distributionPos]++;
             }
@@ -415,7 +415,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
                             newDistributionAttributes[dimension] = attributeIndex;
                             // Update the link from the payload to the right
                             // index in the distribution layer
-                            ((ProbabilisticContinuousDouble) newAttributes[attributeIndex]).setDistribution(newLayerIndex);
+                            ((ProbabilisticDouble) newAttributes[attributeIndex]).setDistribution(newLayerIndex);
                             dimension++;
                             break;
                         }
@@ -511,9 +511,9 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
             System.arraycopy(rightAttributes, 0, newAttributes, leftAttributes.length, rightAttributes.length);
         }
         for (int i = start; i < length; i++) {
-            if (newAttributes[i].getClass() == ProbabilisticContinuousDouble.class) {
-                final ProbabilisticContinuousDouble value = ((ProbabilisticContinuousDouble) newAttributes[i]);
-                newAttributes[i] = new ProbabilisticContinuousDouble(value.getDistribution() + offset);
+            if (newAttributes[i].getClass() == ProbabilisticDouble.class) {
+                final ProbabilisticDouble value = ((ProbabilisticDouble) newAttributes[i]);
+                newAttributes[i] = new ProbabilisticDouble(value.getDistribution() + offset);
             }
         }
         return newAttributes;

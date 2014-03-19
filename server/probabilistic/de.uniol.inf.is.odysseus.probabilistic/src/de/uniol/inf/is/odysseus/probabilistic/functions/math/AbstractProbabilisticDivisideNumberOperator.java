@@ -47,7 +47,7 @@ public abstract class AbstractProbabilisticDivisideNumberOperator extends Abstra
         return 5;
     }
 
-  
+
     /**
      * Divide the given distribution by the given value.
      * 

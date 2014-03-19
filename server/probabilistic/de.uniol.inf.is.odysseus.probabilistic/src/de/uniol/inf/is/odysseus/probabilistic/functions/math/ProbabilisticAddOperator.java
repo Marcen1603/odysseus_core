@@ -19,8 +19,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
 
@@ -29,7 +27,7 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBin
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBinaryOperator<IMultivariateDistribution> {
+public class ProbabilisticAddOperator extends AbstractProbabilisticBinaryOperator<IMultivariateDistribution> {
 
     /**
 	 * 
@@ -49,7 +47,6 @@ public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBi
         return 6;
     }
 
-  
 
     /*
      * 
@@ -136,10 +133,7 @@ public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBi
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[] ACC_TYPES = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT,
-            SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE,
-            SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG };
-
+    public static final SDFDatatype[] ACC_TYPES = SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS;
 
 
 }

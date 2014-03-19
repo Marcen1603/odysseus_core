@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.rcp.chart.ProbabilisticMapper;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
@@ -153,8 +153,8 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
                 for (int i = 0; i < ProbabilityChart3DDashboardPart.this.attributes.length; i++) {
                     final Object value = probabilisticElement.getAttribute(ProbabilityChart3DDashboardPart.this.positions[i]);
                     if (ProbabilityChart3DDashboardPart.this.isContinuous(i)) {
-                        final ProbabilisticContinuousDouble continuousAttribute = (ProbabilisticContinuousDouble) value;
-                     MultivariateMixtureDistribution distribution = probabilisticElement.getDistribution(continuousAttribute.getDistribution());
+                        final ProbabilisticDouble continuousAttribute = (ProbabilisticDouble) value;
+                        MultivariateMixtureDistribution distribution = probabilisticElement.getDistribution(continuousAttribute.getDistribution());
                         if (distribution.getDimension() > 1) {
                             ProbabilityChart3DDashboardPart.this.getMapper().setup(distribution);
                         }
@@ -219,9 +219,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
             final SDFAttribute attribute = this.operator.getOutputSchema().get(this.positions[i]);
             if (attribute.getDatatype().getClass().equals(SDFProbabilisticDatatype.class)) {
                 final SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) attribute.getDatatype();
-                if (datatype.isContinuous()) {
-                    this.continuousAttributes[i] = true;
-                }
+                this.continuousAttributes[i] = true;
             }
         }
     }

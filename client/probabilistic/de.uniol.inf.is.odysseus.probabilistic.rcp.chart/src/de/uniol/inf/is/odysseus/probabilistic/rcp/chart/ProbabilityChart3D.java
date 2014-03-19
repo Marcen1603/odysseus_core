@@ -161,10 +161,7 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<MultivariateMix
                     }
                     ProbabilityChart3D.this.chart.setTitleText(name);
                     if (type.getClass().equals(SDFProbabilisticDatatype.class)) {
-                        final SDFProbabilisticDatatype probabilisticType = (SDFProbabilisticDatatype) type;
-                        if (probabilisticType.isContinuous()) {
-                            ProbabilityChart3D.this.updateChart(tuple.get(0));
-                        }
+                        ProbabilityChart3D.this.updateChart(tuple.get(0));
                     }
                 }
                 catch (final Exception e) {

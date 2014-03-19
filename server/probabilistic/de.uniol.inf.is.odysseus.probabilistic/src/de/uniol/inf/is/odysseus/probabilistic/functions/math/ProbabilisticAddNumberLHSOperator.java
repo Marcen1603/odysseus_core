@@ -33,7 +33,7 @@ public class ProbabilisticAddNumberLHSOperator extends AbstractProbabilisticAddN
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.NUMBERS, { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE } };
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.NUMBERS, { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE } };
 
     public ProbabilisticContinuousPlusNumberLHSOperator() {
     	super(ACC_TYPES);

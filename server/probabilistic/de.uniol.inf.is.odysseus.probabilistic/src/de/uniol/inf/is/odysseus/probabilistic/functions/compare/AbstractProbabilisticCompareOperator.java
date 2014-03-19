@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare;
+package de.uniol.inf.is.odysseus.probabilistic.functions.compare;
 
 import org.apache.commons.math3.linear.RealVector;
 
@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
 

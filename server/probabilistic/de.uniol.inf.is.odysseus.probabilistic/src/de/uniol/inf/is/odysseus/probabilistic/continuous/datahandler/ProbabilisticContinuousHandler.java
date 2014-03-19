@@ -28,7 +28,7 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -36,17 +36,12 @@ import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilistic
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousHandler extends AbstractDataHandler<ProbabilisticContinuousDouble> {
+public class ProbabilisticContinuousHandler extends AbstractDataHandler<ProbabilisticDouble> {
 
     /** The continuous probabilistic handler handles all distributions. */
     private static final List<String> TYPES = new ArrayList<String>();
     static {
-        ProbabilisticContinuousHandler.TYPES.add(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE.getURI());
-        ProbabilisticContinuousHandler.TYPES.add(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT.getURI());
-        ProbabilisticContinuousHandler.TYPES.add(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER.getURI());
-        ProbabilisticContinuousHandler.TYPES.add(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG.getURI());
-        ProbabilisticContinuousHandler.TYPES.add(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT.getURI());
-        ProbabilisticContinuousHandler.TYPES.add(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI());
+        ProbabilisticContinuousHandler.TYPES.add(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.getURI());
     }
 
     /*
@@ -56,11 +51,11 @@ public class ProbabilisticContinuousHandler extends AbstractDataHandler<Probabil
      * io.ObjectInputStream)
      */
     @Override
-    public final ProbabilisticContinuousDouble readData(final ObjectInputStream inputStream) throws IOException {
+    public final ProbabilisticDouble readData(final ObjectInputStream inputStream) throws IOException {
         Objects.requireNonNull(inputStream);
         Preconditions.checkArgument(inputStream.available() >= 4);
         final int distributionIndex = inputStream.readInt();
-        return new ProbabilisticContinuousDouble(distributionIndex);
+        return new ProbabilisticDouble(distributionIndex);
     }
 
     /*
@@ -70,11 +65,11 @@ public class ProbabilisticContinuousHandler extends AbstractDataHandler<Probabil
      * lang.String)
      */
     @Override
-    public final ProbabilisticContinuousDouble readData(final String string) {
+    public final ProbabilisticDouble readData(final String string) {
         Objects.requireNonNull(string);
         Preconditions.checkArgument(!string.isEmpty());
         final int distributionIndex = Integer.parseInt(string);
-        return new ProbabilisticContinuousDouble(distributionIndex);
+        return new ProbabilisticDouble(distributionIndex);
     }
 
     /*
@@ -84,11 +79,11 @@ public class ProbabilisticContinuousHandler extends AbstractDataHandler<Probabil
      * nio.ByteBuffer)
      */
     @Override
-    public final ProbabilisticContinuousDouble readData(final ByteBuffer buffer) {
+    public final ProbabilisticDouble readData(final ByteBuffer buffer) {
         Objects.requireNonNull(buffer);
         Preconditions.checkArgument(buffer.remaining() >= 4);
         final int distributionIndex = buffer.getInt();
-        return new ProbabilisticContinuousDouble(distributionIndex);
+        return new ProbabilisticDouble(distributionIndex);
     }
 
     /*
@@ -101,7 +96,7 @@ public class ProbabilisticContinuousHandler extends AbstractDataHandler<Probabil
     public final void writeData(final ByteBuffer buffer, final Object data) {
         Objects.requireNonNull(buffer);
         Objects.requireNonNull(data);
-        final ProbabilisticContinuousDouble value = (ProbabilisticContinuousDouble) data;
+        final ProbabilisticDouble value = (ProbabilisticDouble) data;
         buffer.putInt(value.getDistribution());
     }
 
@@ -123,7 +118,7 @@ public class ProbabilisticContinuousHandler extends AbstractDataHandler<Probabil
      * (de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema)
      */
     @Override
-    protected final IDataHandler<ProbabilisticContinuousDouble> getInstance(final SDFSchema schema) {
+    protected final IDataHandler<ProbabilisticDouble> getInstance(final SDFSchema schema) {
         return new ProbabilisticContinuousHandler();
     }
 
@@ -139,7 +134,7 @@ public class ProbabilisticContinuousHandler extends AbstractDataHandler<Probabil
 
     @Override
     public final Class<?> createsType() {
-        return ProbabilisticContinuousDouble.class;
+        return ProbabilisticDouble.class;
     }
 
 }

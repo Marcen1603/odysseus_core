@@ -388,7 +388,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
             outputAttributes.add(inAttr);
         }
         for (int i = 0; i < this.getStateTransition().length; i++) {
-            outputAttributes.add(new SDFAttribute("", this.getVariables().get(i), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, null, null, null));
+            outputAttributes.add(new SDFAttribute("", this.getVariables().get(i), SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, null, null, null));
         }
         final SDFSchema outputSchema = new SDFSchema(this.getInputSchema(), outputAttributes);
         this.setOutputSchema(outputSchema);

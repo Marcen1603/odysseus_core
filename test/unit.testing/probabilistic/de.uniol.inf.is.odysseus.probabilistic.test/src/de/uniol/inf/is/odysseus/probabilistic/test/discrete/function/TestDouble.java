@@ -15,14 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.test.discrete.function;
 
-import org.testng.Assert;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import de.uniol.inf.is.odysseus.core.mep.Constant;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.ProbabilisticDouble;
-import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
  * 
@@ -36,7 +29,7 @@ public class TestDouble {
 //     * Test "+"-operator for discrete values.
 //     * 
 //     * @param left
-//     *            The left value
+    // * The left value
 //     * @param right
 //     *            The right value
 //     * @param result

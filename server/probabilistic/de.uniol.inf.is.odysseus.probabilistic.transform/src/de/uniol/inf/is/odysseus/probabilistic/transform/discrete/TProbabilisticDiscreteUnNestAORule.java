@@ -72,9 +72,9 @@ public class TProbabilisticDiscreteUnNestAORule extends TUnnestAORule {
         Objects.requireNonNull(operator.getInputSchema());
         Objects.requireNonNull(config);   
          if (operator.isAllPhysicalInputSet()) {
-            if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-                return SchemaUtils.isDiscreteProbabilisticAttribute(operator.getInputSchema().get(operator.getAttributePosition()));
-            }
+//            if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+//                return SchemaUtils.isDiscreteProbabilisticAttribute(operator.getInputSchema().get(operator.getAttributePosition()));
+//            }
         }
         return false;
     }

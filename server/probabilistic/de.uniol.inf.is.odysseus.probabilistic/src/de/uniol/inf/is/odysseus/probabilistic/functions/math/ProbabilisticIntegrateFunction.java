@@ -19,7 +19,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -36,7 +36,7 @@ public class ProbabilisticIntegrateFunction extends AbstractIntegrateFunction {
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE }, SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
 
     public ProbabilisticIntegrateFunction() {
     	super(ACC_TYPES);
@@ -49,7 +49,7 @@ public class ProbabilisticIntegrateFunction extends AbstractIntegrateFunction {
      */
     @Override
     public final Double getValue() {
-        final ProbabilisticContinuousDouble continuousDouble = (ProbabilisticContinuousDouble) this.getInputValue(0);
+        final ProbabilisticDouble continuousDouble = (ProbabilisticDouble) this.getInputValue(0);
         final RealVector lowerBound = MatrixUtils.createRealVector(new double[] { this.getNumericalInputValue(1) });
         final RealVector upperBound = MatrixUtils.createRealVector(new double[] { this.getNumericalInputValue(2) });
         return this.getValueInternal(continuousDouble, lowerBound, upperBound);

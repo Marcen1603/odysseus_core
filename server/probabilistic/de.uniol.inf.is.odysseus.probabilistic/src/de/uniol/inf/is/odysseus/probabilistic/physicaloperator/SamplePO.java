@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 
 /**
  * 
@@ -69,7 +69,7 @@ public class SamplePO<T extends ITimeInterval> extends AbstractPipe<Probabilisti
             final ProbabilisticTuple<T> outputVal = object.clone();
 
             for (final int attributePos : this.attributes) {
-                final MultivariateMixtureDistribution distribution = distributions[((ProbabilisticContinuousDouble) object.getAttribute(attributePos)).getDistribution()];
+                final MultivariateMixtureDistribution distribution = distributions[((ProbabilisticDouble) object.getAttribute(attributePos)).getDistribution()];
                 final int dimension = Ints.asList(distribution.getAttributes()).indexOf(attributePos);
                 outputVal.setAttribute(attributePos, this.sample(distribution, dimension));
             }

@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 
 /**
  * 
@@ -109,10 +109,10 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
     @SuppressWarnings("unchecked")
     @Override
     protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
-        final int currentMixturePos = ((ProbabilisticContinuousDouble) object.getAttribute(this.dependentAttributePos[0])).getDistribution();
+        final int currentMixturePos = ((ProbabilisticDouble) object.getAttribute(this.dependentAttributePos[0])).getDistribution();
         final MultivariateMixtureDistribution currentMixture = object.getDistribution(currentMixturePos);
 
-        final int distributionIndex = ((ProbabilisticContinuousDouble) object.getAttribute(this.explanatoryAttributePos[0])).getDistribution();
+        final int distributionIndex = ((ProbabilisticDouble) object.getAttribute(this.explanatoryAttributePos[0])).getDistribution();
         final RealMatrix residual = MatrixUtils.createRealMatrix((double[][]) object.getAttribute(this.residualPos));
         final RealMatrix regressionCoefficients = MatrixUtils.createRealMatrix((double[][]) object.getAttribute(this.regressionCoefficientsPos));
 
@@ -168,12 +168,12 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
         distributions.set(currentMixturePos, newMixture);
 
         for (final int explanatoryAttributePo : this.explanatoryAttributePos) {
-            object.setAttribute(explanatoryAttributePo, new ProbabilisticContinuousDouble(currentMixturePos));
+            object.setAttribute(explanatoryAttributePo, new ProbabilisticDouble(currentMixturePos));
         }
         distributions.remove(distributionIndex);
         for (int i = distributionIndex; i < distributions.size(); i++) {
             for (final int j : distributions.get(i).getAttributes()) {
-                ((ProbabilisticContinuousDouble) object.getAttribute(j)).setDistribution(i);
+                ((ProbabilisticDouble) object.getAttribute(j)).setDistribution(i);
             }
         }
         object.setDistributions(distributions.toArray(new MultivariateMixtureDistribution[distributions.size()]));

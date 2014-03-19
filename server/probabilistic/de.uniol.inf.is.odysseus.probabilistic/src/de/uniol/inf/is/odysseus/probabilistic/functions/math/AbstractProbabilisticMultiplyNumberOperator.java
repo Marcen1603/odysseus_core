@@ -60,6 +60,14 @@ public abstract class AbstractProbabilisticMultiplyNumberOperator extends Abstra
         return a.multiply(b);
     }
 
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
+     */
+    @Override
+    public final SDFDatatype getReturnType() {
+        return SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE;
+    }
 
     /*
      * 

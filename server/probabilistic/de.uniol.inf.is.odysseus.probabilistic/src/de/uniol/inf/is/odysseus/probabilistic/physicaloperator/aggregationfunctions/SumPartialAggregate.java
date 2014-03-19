@@ -15,19 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.util.Pair;
-
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
-import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 
 /**
  * 
@@ -81,28 +70,7 @@ public class SumPartialAggregate<T> extends AbstractPartialAggregate<T> {
      *            The value to add
      */
     public final void add(final MultivariateMixtureDistribution value) {
-        final List<Pair<Double, IMultivariateDistribution>> mixtures = new ArrayList<Pair<Double, IMultivariateDistribution>>();
-        for (final Pair<Double, IMultivariateDistribution> sumEntry : ((MultivariateMixtureDistribution) this.sum).getComponents()) {
-            final RealMatrix sumMean = MatrixUtils.createColumnRealMatrix(sumEntry.getValue().getMean());
-            final RealMatrix sumCovarianceMatrix = new Array2DRowRealMatrix(sumEntry.getValue().getVariance());
-
-            for (final Pair<Double, IMultivariateDistribution> entry : ((MultivariateMixtureDistribution) value).getComponents()) {
-                final RealMatrix mean = MatrixUtils.createColumnRealMatrix(entry.getValue().getMean());
-                final RealMatrix covarianceMatrix = new Array2DRowRealMatrix(entry.getValue().getVariance());
-
-                final IMultivariateDistribution distribution = new MultivariateNormalDistribution(sumMean.add(mean).getColumn(0), sumCovarianceMatrix.add(covarianceMatrix).getData());
-                mixtures.add(new Pair<Double, IMultivariateDistribution>(sumEntry.getKey() * entry.getKey(), distribution));
-            }
-        }
-
-        final MultivariateMixtureDistribution result = new MultivariateMixtureDistribution(mixtures);
-        final Interval[] support = new Interval[this.sum.getSupport().length];
-        for (int i = 0; i < this.sum.getSupport().length; i++) {
-            support[i] = this.sum.getSupport(i).add(value.getSupport(i));
-        }
-        result.setSupport(support);
-        result.setScale(this.sum.getScale() * value.getScale());
-        this.sum = result;
+        this.sum = sum.add(value);
     }
 
     /*

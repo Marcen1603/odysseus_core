@@ -167,7 +167,7 @@ public class LinearRegressionAO extends UnaryLogicalOp {
         final Collection<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
         for (final SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
             if (this.getExplanatoryAttributes().contains(inAttr)) {
-                attributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, null, null, null));
+                attributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, null, null, null));
             }
             else {
                 attributes.add(inAttr);

@@ -45,7 +45,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -315,7 +315,7 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
         // And append the new references
         final int[] outputAttributePositions = new int[state.length];
         for (int i = 0; i < state.length; i++) {
-            outputAttributes[inputAttributes.length + i] = new ProbabilisticContinuousDouble(inputDistributions.length);
+            outputAttributes[inputAttributes.length + i] = new ProbabilisticDouble(inputDistributions.length);
             outputAttributePositions[i] = inputAttributes.length + i;
         }
         final List<Pair<Double, IMultivariateDistribution>> mvns = new ArrayList<Pair<Double, IMultivariateDistribution>>();

@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanRe
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticEqualsOperator;
@@ -62,10 +62,10 @@ public class TestDouble {
      */
 
     @Test(dataProvider = "continuousSmallerEqualsDouble")
-    public final void testDoubleSmallerEquals(final ProbabilisticContinuousDouble left, final MultivariateMixtureDistribution mixtures, final Double right, final double result) {
+    public final void testDoubleSmallerEquals(final ProbabilisticDouble left, final MultivariateMixtureDistribution mixtures, final Double right, final double result) {
         final IFunction<ProbabilisticBooleanResult> function = new ProbabilisticSmallerEqualsOperator();
         ((AbstractProbabilisticFunction<ProbabilisticBooleanResult>) function).getDistributions().add(mixtures);
-        function.setArguments(new Constant<IMultivariateDistribution>(mixtures, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(right, SDFDatatype.DOUBLE));
+        function.setArguments(new Constant<IMultivariateDistribution>(mixtures, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), new Constant<Double>(right, SDFDatatype.DOUBLE));
         Assert.assertEquals(((MultivariateMixtureDistribution) ((ProbabilisticBooleanResult) function.getValue()).getDistribution()).getScale(), result, TestConstants.EPSILON);
     }
 
@@ -82,10 +82,10 @@ public class TestDouble {
      *            The expected result
      */
     @Test(dataProvider = "continuousEqualsDouble")
-    public final void testDoubleEquals(final ProbabilisticContinuousDouble left, final MultivariateMixtureDistribution mixtures, final Double right, final double result) {
+    public final void testDoubleEquals(final ProbabilisticDouble left, final MultivariateMixtureDistribution mixtures, final Double right, final double result) {
         final IFunction<ProbabilisticBooleanResult> function = new ProbabilisticEqualsOperator();
         ((AbstractProbabilisticFunction<ProbabilisticBooleanResult>) function).getDistributions().add(mixtures);
-        function.setArguments(new Constant<IMultivariateDistribution>(mixtures, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(right, SDFDatatype.DOUBLE));
+        function.setArguments(new Constant<IMultivariateDistribution>(mixtures, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), new Constant<Double>(right, SDFDatatype.DOUBLE));
         Assert.assertEquals(((MultivariateMixtureDistribution) ((ProbabilisticBooleanResult) function.getValue()).getDistribution()).getScale(), result, TestConstants.EPSILON);
     }
 
@@ -102,10 +102,10 @@ public class TestDouble {
      *            The expected result
      */
     @Test(dataProvider = "continuousGreaterEqualsDouble")
-    public final void testDoubleGreaterEquals(final ProbabilisticContinuousDouble left, final MultivariateMixtureDistribution mixtures, final Double right, final double result) {
+    public final void testDoubleGreaterEquals(final ProbabilisticDouble left, final MultivariateMixtureDistribution mixtures, final Double right, final double result) {
         final IFunction<ProbabilisticBooleanResult> function = new ProbabilisticGreaterEqualsOperator();
         ((AbstractProbabilisticFunction<ProbabilisticBooleanResult>) function).getDistributions().add(mixtures);
-        function.setArguments(new Constant<IMultivariateDistribution>(mixtures, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(right, SDFDatatype.DOUBLE));
+        function.setArguments(new Constant<IMultivariateDistribution>(mixtures, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), new Constant<Double>(right, SDFDatatype.DOUBLE));
         Assert.assertEquals(((MultivariateMixtureDistribution) ((ProbabilisticBooleanResult) function.getValue()).getDistribution()).getScale(), result, TestConstants.EPSILON);
     }
 
@@ -122,8 +122,8 @@ public class TestDouble {
     @Test(dataProvider = "continuousPlusDouble")
     public final void testDoublePlus(final IMultivariateDistribution a, final IMultivariateDistribution b, final MultivariateMixtureDistribution result) {
         final IFunction<IMultivariateDistribution> function = new ProbabilisticAddOperator();
-        function.setArguments(new Constant<IMultivariateDistribution>(a, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<IMultivariateDistribution>(b,
-                SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE));
+        function.setArguments(new Constant<IMultivariateDistribution>(a, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), new Constant<IMultivariateDistribution>(b,
+                SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
         Assert.assertEquals(function.getValue(), result);
         Assert.assertNotEquals(function.getValue(), a);
     }
@@ -141,8 +141,8 @@ public class TestDouble {
     @Test(dataProvider = "continuousMinusDouble")
     public final void testDoubleMinus(final MultivariateMixtureDistribution a, final MultivariateMixtureDistribution b, final MultivariateMixtureDistribution result) {
         final IFunction<IMultivariateDistribution> function = new ProbabilisticSubtractOperator();
-        function.setArguments(new Constant<IMultivariateDistribution>(a, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<IMultivariateDistribution>(b,
-                SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE));
+        function.setArguments(new Constant<IMultivariateDistribution>(a, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), new Constant<IMultivariateDistribution>(b,
+                SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
         Assert.assertEquals(function.getValue(), result);
         Assert.assertNotEquals(function.getValue(), a);
     }
@@ -160,7 +160,7 @@ public class TestDouble {
     @Test(dataProvider = "continuousPlusDoubleNumber")
     public final void testDoubleNumberPlus(final MultivariateMixtureDistribution mixture, final double value, final MultivariateMixtureDistribution result) {
         final IFunction<IMultivariateDistribution> function = new ProbabilisticAddNumberRHSOperator();
-        function.setArguments(new Constant<IMultivariateDistribution>(mixture, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(value, SDFDatatype.DOUBLE));
+        function.setArguments(new Constant<IMultivariateDistribution>(mixture, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), new Constant<Double>(value, SDFDatatype.DOUBLE));
         Assert.assertEquals(function.getValue(), result);
         Assert.assertNotEquals(function.getValue(), mixture);
     }
@@ -178,7 +178,7 @@ public class TestDouble {
     @Test(dataProvider = "continuousMinusDoubleNumber")
     public final void testDoubleNumberMinus(final MultivariateMixtureDistribution mixture, final double value, final MultivariateMixtureDistribution result) {
         final IFunction<IMultivariateDistribution> function = new ProbabilisticSubtractNumberRHSOperator();
-        function.setArguments(new Constant<IMultivariateDistribution>(mixture, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(value, SDFDatatype.DOUBLE));
+        function.setArguments(new Constant<IMultivariateDistribution>(mixture, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), new Constant<Double>(value, SDFDatatype.DOUBLE));
         Assert.assertEquals(function.getValue(), result);
         Assert.assertNotEquals(function.getValue(), mixture);
     }
@@ -196,7 +196,7 @@ public class TestDouble {
     @Test(dataProvider = "continuousMultiplicationDoubleNumber")
     public final void testDoubleNumberMultiplication(final MultivariateMixtureDistribution mixture, final double value, final MultivariateMixtureDistribution result) {
         final IFunction<IMultivariateDistribution> function = new ProbabilisticMultiplyNumberRHSOperator();
-        function.setArguments(new Constant<IMultivariateDistribution>(mixture, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(value, SDFDatatype.DOUBLE));
+        function.setArguments(new Constant<IMultivariateDistribution>(mixture, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), new Constant<Double>(value, SDFDatatype.DOUBLE));
         Assert.assertEquals(function.getValue(), result);
         Assert.assertNotEquals(function.getValue(), mixture);
     }
@@ -214,7 +214,7 @@ public class TestDouble {
     @Test(dataProvider = "continuousDivisionDoubleNumber")
     public final void testDoubleNumberDivision(final MultivariateMixtureDistribution mixture, final double value, final MultivariateMixtureDistribution result) {
         final IFunction<IMultivariateDistribution> function = new ProbabilisticDivideNumberRHSOperator();
-        function.setArguments(new Constant<IMultivariateDistribution>(mixture, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(value, SDFDatatype.DOUBLE));
+        function.setArguments(new Constant<IMultivariateDistribution>(mixture, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), new Constant<Double>(value, SDFDatatype.DOUBLE));
         Assert.assertEquals(function.getValue(), result);
         Assert.assertNotEquals(function.getValue(), mixture);
     }
@@ -240,8 +240,8 @@ public class TestDouble {
                 new double[] { 1.0, 0.0, 1.0 }));
         final MultivariateMixtureDistribution multivariateMixtures = new MultivariateMixtureDistribution(1.0, new MultivariateNormalDistribution(new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0,
                 1.0 }));
-        return new Object[][] { { new ProbabilisticContinuousDouble(0), univariateMixtures, 3.0, 1.0 / 0.9973020261614356 },
-                { new ProbabilisticContinuousDouble(0), multivariateMixtures, 3.0, 1.0 / 0.9973020261614356 } };
+        return new Object[][] { { new ProbabilisticDouble(0), univariateMixtures, 3.0, 1.0 / 0.9973020261614356 },
+                { new ProbabilisticDouble(0), multivariateMixtures, 3.0, 1.0 / 0.9973020261614356 } };
     }
 
     /**
@@ -255,8 +255,8 @@ public class TestDouble {
                 new double[] { 1.0, 0.0, 1.0 }));
         final MultivariateMixtureDistribution multivariateMixtures = new MultivariateMixtureDistribution(1.0, new MultivariateNormalDistribution(new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0,
                 1.0 }));
-        return new Object[][] { { new ProbabilisticContinuousDouble(0), univariateMixtures, 3.0, Double.POSITIVE_INFINITY },
-                { new ProbabilisticContinuousDouble(0), multivariateMixtures, 3.0, Double.POSITIVE_INFINITY } };
+        return new Object[][] { { new ProbabilisticDouble(0), univariateMixtures, 3.0, Double.POSITIVE_INFINITY },
+                { new ProbabilisticDouble(0), multivariateMixtures, 3.0, Double.POSITIVE_INFINITY } };
     }
 
     /**
@@ -270,8 +270,8 @@ public class TestDouble {
                 new double[] { 1.0, 0.0, 1.0 }));
         final MultivariateMixtureDistribution multivariateMixtures = new MultivariateMixtureDistribution(1.0, new MultivariateNormalDistribution(new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0,
                 1.0 }));
-        return new Object[][] { { new ProbabilisticContinuousDouble(0), univariateMixtures, 3.0, 1.0 / 1.8222246957988279E-6 },
-                { new ProbabilisticContinuousDouble(0), multivariateMixtures, 3.0, 1.0 / 1.8222246957988279E-6 } };
+        return new Object[][] { { new ProbabilisticDouble(0), univariateMixtures, 3.0, 1.0 / 1.8222246957988279E-6 },
+                { new ProbabilisticDouble(0), multivariateMixtures, 3.0, 1.0 / 1.8222246957988279E-6 } };
     }
 
     /**

@@ -12,7 +12,6 @@ import org.apache.commons.math3.linear.RealVector;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
@@ -53,28 +52,29 @@ public class ProbabilisticGreaterEqualsProbabilisticNumberOperator extends Abstr
     @Override
     public final ProbabilisticBooleanResult getValue() {
         final MultivariateMixtureDistribution a = ((MultivariateMixtureDistribution) this.getInputValue(0)).clone();
+        final MultivariateMixtureDistribution b = ((MultivariateMixtureDistribution) this.getInputValue(1)).clone();
 
-        final AbstractProbabilisticValue<?> probabilisticVaue = (AbstractProbabilisticValue<?>) this.getInputValue(1);
-
-        double b = 0.0;
-        for (final Entry<?, Double> bEntry : probabilisticVaue.getValues().entrySet()) {
-            b += ((Number) bEntry.getKey()).doubleValue() * bEntry.getValue();
-        }
         final double[] lowerBoundData = new double[a.getDimension()];
         Arrays.fill(lowerBoundData, Double.NEGATIVE_INFINITY);
+        System.arraycopy(b.getMean(), 0, lowerBoundData, 0, b.getMean().length);
         final double[] upperBoundData = new double[a.getDimension()];
-        Arrays.fill(upperBoundData, b);
+        Arrays.fill(upperBoundData, Double.POSITIVE_INFINITY);
 
         final RealVector lowerBound = MatrixUtils.createRealVector(lowerBoundData);
         final RealVector upperBound = MatrixUtils.createRealVector(upperBoundData);
 
-        return this.getValueInternal(a, lowerBound, upperBound);
+        ProbabilisticBooleanResult result = this.getValueInternal(a, lowerBound, upperBound);
+        double scale = ((MultivariateMixtureDistribution) result.getDistribution()).getScale();
+        // Assume symmetry
+        ProbabilisticBooleanResult scaledResult = new ProbabilisticBooleanResult(result.getDistribution(), result.getProbability() * 0.5);
+        ((MultivariateMixtureDistribution) scaledResult.getDistribution()).setScale(scale * 0.5);
+        return scaledResult;
     }
 
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_NUMBERS, SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS };
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS, SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS };
 
 
 }

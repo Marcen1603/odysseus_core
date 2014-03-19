@@ -287,6 +287,15 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
         return this.attributes;
     }
 
+    public final int getDimension(final int pos) {
+        for (int i = 0; i < attributes.length; i++) {
+            if (pos == attributes[i]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -381,62 +390,62 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
     }
 
     public MultivariateMixtureDistribution add(IMultivariateDistribution other) {
-        MultivariateMixtureDistribution otherMixture = (MultivariateMixtureDistribution) other;
+        MultivariateMixtureDistribution o = (MultivariateMixtureDistribution) other;
 
-        IMultivariateDistribution[] components = new IMultivariateDistribution[this.distribution.length * otherMixture.distribution.length];
+        IMultivariateDistribution[] components = new IMultivariateDistribution[this.distribution.length * o.distribution.length];
         double[] weights = new double[components.length];
         for (int i = 0; i < this.distribution.length; i++) {
-            for (int j = 0; j < otherMixture.distribution.length; j++) {
-                components[i * this.distribution.length + j] = this.distribution[i].add(otherMixture.distribution[i]);
-                weights[i * this.distribution.length + j] = this.weight[i] * otherMixture.weight[j];
+            for (int j = 0; j < o.distribution.length; j++) {
+                components[i * this.distribution.length + j] = this.distribution[i].add(o.distribution[i]);
+                weights[i * this.distribution.length + j] = this.weight[i] * o.weight[j];
             }
         }
         MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(weights, components);
         for (int i = 0; i < this.getDimension(); i++) {
-            mixture.support[i] = this.support[i].add(otherMixture.support[i]);
+            mixture.support[i] = this.support[i].add(o.support[i]);
             mixture.attributes[i] = this.attributes[i];
         }
-        mixture.scale = this.scale * otherMixture.scale;
+        mixture.scale = this.scale * o.scale;
         return mixture;
     }
 
     public MultivariateMixtureDistribution subtract(IMultivariateDistribution other) {
-        MultivariateMixtureDistribution otherMixture = (MultivariateMixtureDistribution) other;
+        MultivariateMixtureDistribution o = (MultivariateMixtureDistribution) other;
 
-        IMultivariateDistribution[] components = new IMultivariateDistribution[this.distribution.length * otherMixture.distribution.length];
+        IMultivariateDistribution[] components = new IMultivariateDistribution[this.distribution.length * o.distribution.length];
         double[] weights = new double[components.length];
         for (int i = 0; i < this.distribution.length; i++) {
-            for (int j = 0; j < otherMixture.distribution.length; j++) {
-                components[i * this.distribution.length + j] = this.distribution[i].subtract(otherMixture.distribution[i]);
-                weights[i * this.distribution.length + j] = this.weight[i] * otherMixture.weight[j];
+            for (int j = 0; j < o.distribution.length; j++) {
+                components[i * this.distribution.length + j] = this.distribution[i].subtract(o.distribution[i]);
+                weights[i * this.distribution.length + j] = this.weight[i] * o.weight[j];
             }
         }
         MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(weights, components);
         for (int i = 0; i < this.getDimension(); i++) {
-            mixture.support[i] = this.support[i].subtract(otherMixture.support[i]);
+            mixture.support[i] = this.support[i].subtract(o.support[i]);
             mixture.attributes[i] = this.attributes[i];
         }
-        mixture.scale = this.scale * otherMixture.scale;
+        mixture.scale = this.scale * o.scale;
         return mixture;
     }
 
     public MultivariateMixtureDistribution divide(IMultivariateDistribution other) {
-        MultivariateMixtureDistribution otherMixture = (MultivariateMixtureDistribution) other;
+        MultivariateMixtureDistribution o = (MultivariateMixtureDistribution) other;
 
-        IMultivariateDistribution[] components = new IMultivariateDistribution[this.distribution.length * otherMixture.distribution.length];
+        IMultivariateDistribution[] components = new IMultivariateDistribution[this.distribution.length * o.distribution.length];
         double[] weights = new double[components.length];
         for (int i = 0; i < this.distribution.length; i++) {
-            for (int j = 0; j < otherMixture.distribution.length; j++) {
-                components[i * this.distribution.length + j] = this.distribution[i].divide(otherMixture.distribution[i]);
-                weights[i * this.distribution.length + j] = this.weight[i] * otherMixture.weight[j];
+            for (int j = 0; j < o.distribution.length; j++) {
+                components[i * this.distribution.length + j] = this.distribution[i].divide(o.distribution[i]);
+                weights[i * this.distribution.length + j] = this.weight[i] * o.weight[j];
             }
         }
         MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(weights, components);
         for (int i = 0; i < this.getDimension(); i++) {
-            mixture.support[i] = this.support[i].divide(otherMixture.support[i]);
+            mixture.support[i] = this.support[i].divide(o.support[i]);
             mixture.attributes[i] = this.attributes[i];
         }
-        mixture.scale = this.scale * otherMixture.scale;
+        mixture.scale = this.scale * o.scale;
         return mixture;
     }
 
@@ -552,4 +561,5 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
         mixture.restrict(restrictMatrix);
         System.out.println("Result: " + mixture);
     }
+
 }

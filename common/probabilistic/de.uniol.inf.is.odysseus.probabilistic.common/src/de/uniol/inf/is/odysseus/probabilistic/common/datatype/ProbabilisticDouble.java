@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype;
+package de.uniol.inf.is.odysseus.probabilistic.common.datatype;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.IClone;
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class ProbabilisticContinuousDouble implements Serializable, IClone {
+public class ProbabilisticDouble implements Serializable, IClone {
     /**
 	 * 
 	 */
@@ -39,7 +39,7 @@ public class ProbabilisticContinuousDouble implements Serializable, IClone {
      * @param distribution
      *            The index of the associated distribution
      */
-    public ProbabilisticContinuousDouble(final int distribution) {
+    public ProbabilisticDouble(final int distribution) {
         Preconditions.checkArgument(distribution >= 0);
         this.distribution = distribution;
     }
@@ -50,7 +50,7 @@ public class ProbabilisticContinuousDouble implements Serializable, IClone {
      * @param copy
      *            The object to clone from
      */
-    public ProbabilisticContinuousDouble(final ProbabilisticContinuousDouble copy) {
+    public ProbabilisticDouble(final ProbabilisticDouble copy) {
         Objects.requireNonNull(copy);
         this.distribution = copy.distribution;
     }
@@ -93,8 +93,8 @@ public class ProbabilisticContinuousDouble implements Serializable, IClone {
      * @see java.lang.Object#clone()
      */
     @Override
-    public final ProbabilisticContinuousDouble clone() {
-        return new ProbabilisticContinuousDouble(this);
+    public final ProbabilisticDouble clone() {
+        return new ProbabilisticDouble(this);
     }
 
     /*
@@ -123,7 +123,7 @@ public class ProbabilisticContinuousDouble implements Serializable, IClone {
         }
 
         if (this.getClass() == obj.getClass()) {
-            final ProbabilisticContinuousDouble other = (ProbabilisticContinuousDouble) obj;
+            final ProbabilisticDouble other = (ProbabilisticDouble) obj;
             return this.distribution == other.distribution;
         }
         else {

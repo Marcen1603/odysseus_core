@@ -56,8 +56,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
-import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
 /**
@@ -153,13 +152,8 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
                         currentserie = ProbabilityChart2DDashboardPart.this.dataset.getSeries(key);
                     }
                     currentserie.clear();
-                    if (ProbabilityChart2DDashboardPart.this.isContinuous(i)) {
-                        final ProbabilisticContinuousDouble continuousAttribute = (ProbabilisticContinuousDouble) value;
-                        ProbabilityChart2DDashboardPart.this.updateSerie(currentserie, restrictedElement.getDistribution(continuousAttribute.getDistribution()), i);
-                    }
-                    else if (ProbabilityChart2DDashboardPart.this.isDiscrete(i)) {
-                        ProbabilityChart2DDashboardPart.this.updateSerie(currentserie, (AbstractProbabilisticValue<?>) value);
-                    }
+                    final ProbabilisticDouble continuousAttribute = (ProbabilisticDouble) value;
+                    ProbabilityChart2DDashboardPart.this.updateSerie(currentserie, restrictedElement.getDistribution(continuousAttribute.getDistribution()), i);
                 }
 
                 if (!ProbabilityChart2DDashboardPart.this.chartComposite.isDisposed()) {
@@ -233,45 +227,10 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
         Arrays.fill(this.discreteAttributes, false);
         for (int i = 0; i < this.positions.length; i++) {
             final SDFAttribute attribute = this.operator.getOutputSchema().get(this.positions[i]);
-            if (SchemaUtils.isContinuousProbabilisticAttribute(attribute)) {
+            if (SchemaUtils.isProbabilisticAttribute(attribute)) {
                 this.continuousAttributes[i] = true;
             }
-            else if (SchemaUtils.isDiscreteProbabilisticAttribute(attribute)) {
-                this.discreteAttributes[i] = true;
-            }
         }
-    }
-
-    /**
-     * Checks whether the attribute at the given position is a continuous
-     * probabilistic attribute.
-     * 
-     * @param pos
-     *            The position
-     * @return <code>true</code> if the attribute at the given position is a
-     *         continuous probabilistic attribute
-     */
-    private boolean isContinuous(final int pos) {
-        if ((pos < 0) && (pos >= this.continuousAttributes.length)) {
-            return false;
-        }
-        return this.continuousAttributes[pos];
-    }
-
-    /**
-     * Checks whether the attribute at the given position is a discrete
-     * probabilistic attribute.
-     * 
-     * @param pos
-     *            The position
-     * @return <code>true</code> if the attribute at the given position is a
-     *         discrete probabilistic attribute
-     */
-    private boolean isDiscrete(final int pos) {
-        if ((pos < 0) && (pos >= this.discreteAttributes.length)) {
-            return false;
-        }
-        return this.discreteAttributes[pos];
     }
 
     /**
@@ -423,22 +382,6 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
         }
 
         return positions;
-    }
-
-    /**
-     * Update series with discrete probabilistic value.
-     * 
-     * @param series
-     *            The series
-     * @param value
-     *            The discrete probabilistic value
-     */
-    private void updateSerie(final XYSeries series, final AbstractProbabilisticValue<?> value) {
-        for (final Entry<?, Double> e : value.getValues().entrySet()) {
-            series.add(((Number) e.getKey()).doubleValue() - Double.MIN_VALUE, 0.0);
-            series.add(((Number) e.getKey()).doubleValue(), e.getValue());
-            series.add(((Number) e.getKey()).doubleValue() + Double.MIN_VALUE, 0.0);
-        }
     }
 
     /**

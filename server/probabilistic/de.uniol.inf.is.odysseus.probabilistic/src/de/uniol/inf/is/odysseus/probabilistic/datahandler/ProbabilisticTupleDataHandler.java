@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datahandler.ProbabilisticContinuousHandler;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datahandler.ProbabilisticDistributionHandler;
@@ -319,9 +319,9 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
             // Reverse mapping of attribute<->distribution
             final int[] distributionsDimensions = new int[distributions];
             for (final SDFAttribute attr : this.getSchema().getAttributes()) {
-                if (SchemaUtils.isContinuousProbabilisticAttribute(attr)) {
+                if (SchemaUtils.isProbabilisticAttribute(attr)) {
                     final int attributeIndex = this.getSchema().indexOf(attr);
-                    final int distributionIndex = ((ProbabilisticContinuousDouble) attributes[attributeIndex]).getDistribution();
+                    final int distributionIndex = ((ProbabilisticDouble) attributes[attributeIndex]).getDistribution();
                     ((MultivariateMixtureDistribution) distribution[distributionIndex]).setAttribute(distributionsDimensions[distributionIndex], attributeIndex);
                     distributionsDimensions[distributionIndex]++;
                 }
@@ -467,9 +467,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
             }
             if (probabilisticType != null) {
                 this.requiresDeepClone = true;
-                if (probabilisticType.isContinuous()) {
-                    this.maxDistributions++;
-                }
+                this.maxDistributions++;
             }
             if (!DataHandlerRegistry.containsDataHandler(uri)) {
                 throw new IllegalArgumentException("Unregistered datatype " + uri);

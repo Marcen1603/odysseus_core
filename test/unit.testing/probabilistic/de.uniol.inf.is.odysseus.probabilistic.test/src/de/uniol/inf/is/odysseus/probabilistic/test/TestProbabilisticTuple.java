@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 
 /**
  * 
@@ -48,8 +48,8 @@ public class TestProbabilisticTuple {
     @Test(dataProvider = "tuple")
     public final void testRestrict(final ProbabilisticTuple<IMetaAttribute> input, final int[] restrict, final ProbabilisticTuple<IMetaAttribute> output) {
         for (int i = 0; i < input.getAttributes().length; i++) {
-            if (input.getAttribute(i) instanceof ProbabilisticContinuousDouble) {
-                final int distribution = ((ProbabilisticContinuousDouble) input.getAttribute(i)).getDistribution();
+            if (input.getAttribute(i) instanceof ProbabilisticDouble) {
+                final int distribution = ((ProbabilisticDouble) input.getAttribute(i)).getDistribution();
                 boolean contains = false;
                 for (int d = 0; d < input.getDistribution(distribution).getAttributes().length; d++) {
                     if (input.getDistribution(distribution).getAttribute(d) == i) {
@@ -67,8 +67,8 @@ public class TestProbabilisticTuple {
         Assert.assertEquals(restricted, restrictedNew);
         Assert.assertEquals(restricted, input);
         for (int i = 0; i < restricted.getAttributes().length; i++) {
-            if (restricted.getAttribute(i) instanceof ProbabilisticContinuousDouble) {
-                final int distribution = ((ProbabilisticContinuousDouble) restricted.getAttribute(i)).getDistribution();
+            if (restricted.getAttribute(i) instanceof ProbabilisticDouble) {
+                final int distribution = ((ProbabilisticDouble) restricted.getAttribute(i)).getDistribution();
                 boolean contains = false;
                 for (int d = 0; d < restricted.getDistribution(distribution).getAttributes().length; d++) {
                     if (restricted.getDistribution(distribution).getAttribute(d) == i) {
@@ -109,15 +109,15 @@ public class TestProbabilisticTuple {
                 distribution1D2 });
         mixture1D.setAttributes(new int[] { 0 });
 
-        ProbabilisticTuple<?> tuple3D = new ProbabilisticTuple<>(new Object[] { "zero", new ProbabilisticContinuousDouble(0), "two", new ProbabilisticContinuousDouble(0), "four",
-                new ProbabilisticContinuousDouble(0), "six" }, new MultivariateMixtureDistribution[] { mixture3D }, true);
-        ProbabilisticTuple<?> tuple2D = new ProbabilisticTuple<>(new Object[] { "zero", "one", new ProbabilisticContinuousDouble(0), "three", new ProbabilisticContinuousDouble(0), "five", "six" },
+        ProbabilisticTuple<?> tuple3D = new ProbabilisticTuple<>(new Object[] { "zero", new ProbabilisticDouble(0), "two", new ProbabilisticDouble(0), "four",
+                new ProbabilisticDouble(0), "six" }, new MultivariateMixtureDistribution[] { mixture3D }, true);
+        ProbabilisticTuple<?> tuple2D = new ProbabilisticTuple<>(new Object[] { "zero", "one", new ProbabilisticDouble(0), "three", new ProbabilisticDouble(0), "five", "six" },
                 new MultivariateMixtureDistribution[] { mixture2D }, true);
-        ProbabilisticTuple<?> tuple1D = new ProbabilisticTuple<>(new Object[] { new ProbabilisticContinuousDouble(0), "one", "two", "three", "four", "five", "six" },
+        ProbabilisticTuple<?> tuple1D = new ProbabilisticTuple<>(new Object[] { new ProbabilisticDouble(0), "one", "two", "three", "four", "five", "six" },
                 new MultivariateMixtureDistribution[] { mixture1D }, true);
 
-        ProbabilisticTuple<?> tuple3D2D = new ProbabilisticTuple<>(new Object[] { "zero", new ProbabilisticContinuousDouble(0), new ProbabilisticContinuousDouble(1),
-                new ProbabilisticContinuousDouble(0), new ProbabilisticContinuousDouble(1), new ProbabilisticContinuousDouble(0), "six" }, new MultivariateMixtureDistribution[] {
+        ProbabilisticTuple<?> tuple3D2D = new ProbabilisticTuple<>(new Object[] { "zero", new ProbabilisticDouble(0), new ProbabilisticDouble(1),
+                new ProbabilisticDouble(0), new ProbabilisticDouble(1), new ProbabilisticDouble(0), "six" }, new MultivariateMixtureDistribution[] {
                 mixture3D, mixture2D }, true);
 
         return new Object[][] { { tuple3D.clone(), new int[] { 0, 2, 3 }, tuple3D.clone() }, { tuple2D.clone(), new int[] { 1, 2, 3 }, tuple2D.clone() },

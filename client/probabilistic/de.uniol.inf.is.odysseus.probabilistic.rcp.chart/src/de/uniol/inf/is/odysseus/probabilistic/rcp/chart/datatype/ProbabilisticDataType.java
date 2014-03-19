@@ -14,13 +14,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.rcp.chart.datatype;
 
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
-import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.ProbabilisticByte;
-import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.ProbabilisticDouble;
-import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.ProbabilisticFloat;
-import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.ProbabilisticInteger;
-import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.ProbabilisticLong;
-import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.ProbabilisticShort;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.AbstractViewableDatatype;
 
@@ -34,20 +28,7 @@ public class ProbabilisticDataType extends AbstractViewableDatatype<Object> {
      * Default constructor registering probabilistic data types.
      */
     public ProbabilisticDataType() {
-        super.addProvidedSDFDatatype(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
-        super.addProvidedSDFDatatype(SDFProbabilisticDatatype.PROBABILISTIC_BYTE);
-        super.addProvidedSDFDatatype(SDFProbabilisticDatatype.PROBABILISTIC_SHORT);
-        super.addProvidedSDFDatatype(SDFProbabilisticDatatype.PROBABILISTIC_INTEGER);
-        super.addProvidedSDFDatatype(SDFProbabilisticDatatype.PROBABILISTIC_LONG);
-        super.addProvidedSDFDatatype(SDFProbabilisticDatatype.PROBABILISTIC_FLOAT);
         super.addProvidedSDFDatatype(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
-
-        super.addProvidedClass(ProbabilisticContinuousDouble.class);
-        super.addProvidedClass(ProbabilisticByte.class);
-        super.addProvidedClass(ProbabilisticShort.class);
-        super.addProvidedClass(ProbabilisticInteger.class);
-        super.addProvidedClass(ProbabilisticLong.class);
-        super.addProvidedClass(ProbabilisticFloat.class);
         super.addProvidedClass(ProbabilisticDouble.class);
     }
 
