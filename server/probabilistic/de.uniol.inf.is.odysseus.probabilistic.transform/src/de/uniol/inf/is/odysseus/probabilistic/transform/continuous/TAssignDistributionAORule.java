@@ -54,7 +54,7 @@ public class TAssignDistributionAORule extends AbstractTransformationRule<Assign
     public final void execute(final AssignDistributionAO operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(config);
-        final IPhysicalOperator distributionPO = new AssignDistributionPO<ITimeInterval>(operator.determineAttributesList(), operator.determineVariance());
+        final IPhysicalOperator distributionPO = new AssignDistributionPO<ITimeInterval>(operator.determineAttributesList(), operator.determineVariance(), operator.isContinuous());
         this.defaultExecute(operator, distributionPO, config, true, true);
     }
 

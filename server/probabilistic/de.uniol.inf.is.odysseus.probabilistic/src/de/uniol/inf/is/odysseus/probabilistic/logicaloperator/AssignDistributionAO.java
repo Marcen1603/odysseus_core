@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
@@ -50,6 +51,8 @@ public class AssignDistributionAO extends UnaryLogicalOp {
     /** The attributes to build the distribution from. */
     private List<SDFAttribute> attributes;
 
+    private boolean continuous = true;
+
     /**
      * Creates a new Sample logical operator.
      */
@@ -60,13 +63,14 @@ public class AssignDistributionAO extends UnaryLogicalOp {
     /**
      * Clone Constructor.
      * 
-     * @param distributionAO
+     * @param ao
      *            The copy
      */
-    public AssignDistributionAO(final AssignDistributionAO distributionAO) {
-        super(distributionAO);
-        this.attributes = new ArrayList<SDFAttribute>(distributionAO.attributes);
-        this.variance = distributionAO.variance;
+    public AssignDistributionAO(final AssignDistributionAO ao) {
+        super(ao);
+        this.attributes = new ArrayList<SDFAttribute>(ao.attributes);
+        this.variance = ao.variance;
+        this.continuous = ao.continuous;
     }
 
     /**
@@ -115,6 +119,23 @@ public class AssignDistributionAO extends UnaryLogicalOp {
     public final void setVariance(final SDFAttribute variance) {
         Objects.requireNonNull(variance);
         this.variance = variance;
+    }
+
+    /**
+     * @return the continuous
+     */
+    @GetParameter(name = "CONTINUOUS")
+    public boolean isContinuous() {
+        return this.continuous;
+    }
+
+    /**
+     * @param continuous
+     *            the continuous to set
+     */
+    @Parameter(type = BooleanParameter.class, name = "CONTINUOUS", isList = false, optional = true, doc = "The distribution is continuous or discrete.")
+    public void setContinuous(boolean continuous) {
+        this.continuous = continuous;
     }
 
     /**

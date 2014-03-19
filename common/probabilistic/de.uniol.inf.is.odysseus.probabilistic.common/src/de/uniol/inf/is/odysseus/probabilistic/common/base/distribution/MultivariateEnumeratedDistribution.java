@@ -114,6 +114,9 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
     }
 
     public int getDimension() {
+        if (sampleSpace.size() > 0) {
+            return sampleSpace.get(0).getKey().length;
+        }
         return 0;
     }
 
@@ -453,12 +456,15 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+
         for (Pair<double[], Double> sample : sampleSpace) {
             if (sb.length() > 0) {
                 sb.append(",");
             }
-            sb.append(Arrays.toString(sample.getKey())).append(":").append(sample.getValue());
+            sb.append(Arrays.toString(sample.getKey())).append(",").append(sample.getValue());
         }
+        sb.append(")");
+        sb.insert(0, "D(");
         return sb.toString();
     }
 
@@ -517,12 +523,12 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
         System.out.println("Restrict to: " + restrictMatrix);
         distribution.restrict(restrictMatrix);
         System.out.println("Result: " + distribution);
-        
+
         System.out.println("Add: X+3 -> " + distribution.add(3.0));
         System.out.println("Add: X-3 -> " + distribution.subtract(3.0));
         System.out.println("Add: X*3 -> " + distribution.multiply(3.0));
         System.out.println("Add: X/3 -> " + distribution.divide(3.0));
-        
+
         System.out.println("Add: X+X -> " + distribution.add(distribution));
         System.out.println("Add: X-X -> " + distribution.subtract(distribution));
         System.out.println("Add: X*X -> " + distribution.multiply(distribution));

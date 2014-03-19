@@ -236,10 +236,11 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends AbstractPipe<P
                     if (obj != null) {
                         Object attribute = obj.getAttribute(this.variables[i][j].getPos());
                         if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
-                            // FIXME: if more than one dimension of a
-                            // distribution is used in a MAP expression, the
-                            // dimensions are also propagated to MEP functions
-                            // that only use less dimensions
+                            // FIXME: 
+
+                            // Take the attribute refs of the first distribution
+                            // and if there are more than one reference (more
+                            // than 1 dimensions) hold them as a vector!!!!
                             attribute = restrictedObject.getDistribution(((ProbabilisticContinuousDouble) attribute).getDistribution());
                         }
                         values[j] = attribute;

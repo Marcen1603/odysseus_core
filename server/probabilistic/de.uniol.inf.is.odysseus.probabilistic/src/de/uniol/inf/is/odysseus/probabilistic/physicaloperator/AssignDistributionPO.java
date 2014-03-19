@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateEnumeratedDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
@@ -38,6 +39,7 @@ public class AssignDistributionPO<T extends ITimeInterval> extends AbstractPipe<
     private final int[] attributes;
     /** The variance. */
     private final int variance;
+    private final boolean continuous;
 
     /**
      * Creates a new Sample operator.
@@ -47,21 +49,23 @@ public class AssignDistributionPO<T extends ITimeInterval> extends AbstractPipe<
      * @param variance
      *            The variance attribute position for the distribution
      */
-    public AssignDistributionPO(final int[] attributes, final int variance) {
+    public AssignDistributionPO(final int[] attributes, final int variance, boolean continuous) {
         this.attributes = attributes;
         this.variance = variance;
+        this.continuous = continuous;
     }
 
     /**
      * Clone constructor.
      * 
-     * @param distributionPO
+     * @param clone
      *            The copy
      */
-    public AssignDistributionPO(final AssignDistributionPO<T> distributionPO) {
-        super(distributionPO);
-        this.attributes = distributionPO.attributes.clone();
-        this.variance = distributionPO.variance;
+    public AssignDistributionPO(final AssignDistributionPO<T> clone) {
+        super(clone);
+        this.attributes = clone.attributes.clone();
+        this.variance = clone.variance;
+        this.continuous = clone.continuous;
     }
 
     /*
@@ -85,18 +89,24 @@ public class AssignDistributionPO<T extends ITimeInterval> extends AbstractPipe<
     protected final void process_next(final Tuple<T> object, final int port) {
         final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(object);
         final MultivariateMixtureDistribution[] distributions = outputVal.getDistributions();
-
+        final List<Pair<Double, IMultivariateDistribution>> mvns = new ArrayList<Pair<Double, IMultivariateDistribution>>();
         final double[] means = new double[this.attributes.length];
         for (int i = 0; i < this.attributes.length; i++) {
             means[i] = ((Number) object.getAttribute(this.attributes[i])).doubleValue();
         }
 
-        final double[][] variances = (double[][]) object.getAttribute(this.variance);
+        if (continuous) {
+            final double[][] variances = (double[][]) object.getAttribute(this.variance);
 
-        final List<Pair<Double, IMultivariateDistribution>> mvns = new ArrayList<Pair<Double, IMultivariateDistribution>>();
-        final IMultivariateDistribution component = new MultivariateNormalDistribution(means, variances);
-        mvns.add(new Pair<Double, IMultivariateDistribution>(1.0, component));
+            final IMultivariateDistribution component = new MultivariateNormalDistribution(means, variances);
+            mvns.add(new Pair<Double, IMultivariateDistribution>(1.0, component));
+        }
+        else {
+            final double probability = object.getAttribute(this.variance);
 
+            final IMultivariateDistribution component = new MultivariateEnumeratedDistribution(means, probability);
+            mvns.add(new Pair<Double, IMultivariateDistribution>(1.0, component));
+        }
         final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(mvns);
         mixture.setAttributes(this.attributes);
 
