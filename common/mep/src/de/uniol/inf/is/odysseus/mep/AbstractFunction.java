@@ -49,72 +49,86 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	private final SDFDatatype returnType;
 	private final boolean optimizeConstantParameter;
 
-	public AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType) {
+	public AbstractFunction(String symbol, int arity,
+			SDFDatatype[][] acceptedTypes, SDFDatatype returnType) {
 		this(symbol, arity, acceptedTypes, returnType, true);
-		if (optimizeConstantParameter == true && arity == 0){
+		if (optimizeConstantParameter == true && arity == 0) {
 			LOG.warn("This function will be precompiled and creates the same value in each run.");
 		}
-	}	
+	}
 
 	public AbstractFunction(String symbol, int arity, SDFDatatype returnType) {
 		this(symbol, arity, null, null, returnType, true);
-		if (optimizeConstantParameter == true && arity == 0){
-			LOG.warn("This function will be precompiled and creates the same value in each run.");
-		}		
-	}
-
-	
-	public AbstractFunction(String symbol, int arity, SDFDatatype[] acceptedTypes, SDFDatatype returnType) {
-		this(symbol, arity, null, acceptedTypes, returnType, true);
-		if (optimizeConstantParameter == true && arity == 0){
+		if (optimizeConstantParameter == true && arity == 0) {
 			LOG.warn("This function will be precompiled and creates the same value in each run.");
 		}
-	}	
-	
-	public AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType, boolean optimizeConstantParameter) {
-		this(symbol, arity, acceptedTypes, null, returnType, optimizeConstantParameter);
 	}
-	
-	private AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes,SDFDatatype[] acceptedTypes2, SDFDatatype returnType, boolean optimizeConstantParameter) {
+
+	public AbstractFunction(String symbol, int arity,
+			SDFDatatype[] acceptedTypes, SDFDatatype returnType) {
+		this(symbol, arity, null, acceptedTypes, returnType, true);
+		if (optimizeConstantParameter == true && arity == 0) {
+			LOG.warn("This function will be precompiled and creates the same value in each run.");
+		}
+	}
+
+	public AbstractFunction(String symbol, int arity,
+			SDFDatatype[][] acceptedTypes, SDFDatatype returnType,
+			boolean optimizeConstantParameter) {
+		this(symbol, arity, acceptedTypes, null, returnType,
+				optimizeConstantParameter);
+	}
+
+	private AbstractFunction(String symbol, int arity,
+			SDFDatatype[][] acceptedTypes, SDFDatatype[] acceptedTypes2,
+			SDFDatatype returnType, boolean optimizeConstantParameter) {
 		this.symbol = symbol;
 		this.arity = arity;
 		this.optimizeConstantParameter = optimizeConstantParameter;
-		if (acceptedTypes != null){
-			this.acceptedTypes = acceptedTypes;
-			if (acceptedTypes.length != arity){
-				throw new IllegalArgumentException("Error: arity and types do not fit for "+symbol+" "+this.getClass());
-				//System.err.println("Error: arity and types do not fit for "+symbol+" "+this.getClass());
-			}
-		}else{
-			this.acceptedTypes = new SDFDatatype[arity][];
-			for (int i=0;i<arity;i++){
-				this.acceptedTypes[i] = SDFDatatype.getTypes().toArray(new SDFDatatype[0]);
-			}
-		}
 		this.acceptedTypes2 = acceptedTypes2;
-		if (returnType != null){
+
+		if (acceptedTypes != null) {
+			this.acceptedTypes = acceptedTypes;
+			if (acceptedTypes.length != arity) {
+				throw new IllegalArgumentException(
+						"Error: arity and types do not fit for " + symbol + " "
+								+ this.getClass());
+				// System.err.println("Error: arity and types do not fit for "+symbol+" "+this.getClass());
+			}
+		} else {
+			this.acceptedTypes = new SDFDatatype[arity][];
+			for (int i = 0; i < arity; i++) {
+				this.acceptedTypes[i] = SDFDatatype.getTypes().toArray(
+						new SDFDatatype[0]);
+			}
+
+		}
+
+		if (returnType != null) {
 			this.returnType = returnType;
-		}else{
+		} else {
 			this.returnType = determineReturnType();
 		}
 	}
-	
-	protected SDFDatatype determineReturnType(){
+
+	protected SDFDatatype determineReturnType() {
 		return SDFDatatype.OBJECT;
 	}
-	
+
 	@Override
-	final public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
+	final public SDFDatatype[] getAcceptedTypes(int argPos) {
+		if (argPos < 0) {
+			throw new IllegalArgumentException(
+					"negative argument index not allowed");
 		}
-		if(argPos > arity){
-			throw new IllegalArgumentException(symbol+" has only "+arity+" argument(s).");
+		if (argPos > arity) {
+			throw new IllegalArgumentException(symbol + " has only " + arity
+					+ " argument(s).");
 		}
-		if (acceptedTypes != null){
-			return acceptedTypes[argPos];
-		}else{
+		if (acceptedTypes2 != null) {
 			return acceptedTypes2;
+		} else {
+			return acceptedTypes[argPos];
 		}
 	}
 
@@ -127,19 +141,17 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	final public int getArity() {
 		return arity;
 	}
-	
-	
-	
+
 	@Override
 	final public SDFDatatype getReturnType() {
 		return returnType;
 	}
-	
+
 	@Override
 	final public boolean optimizeConstantParameter() {
 		return optimizeConstantParameter;
 	}
-	
+
 	@Override
 	final public void setArguments(IExpression<?>... arguments) {
 		if (arguments.length != getArity()) {
@@ -303,10 +315,10 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	public int getReturnTypeCard() {
 		return 1;
 	}
-	
+
 	@Override
 	public SDFDatatype getReturnType(int pos) {
 		return getReturnType();
-	}	
-	
+	}
+
 }
