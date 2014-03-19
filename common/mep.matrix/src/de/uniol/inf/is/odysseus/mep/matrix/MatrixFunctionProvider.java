@@ -57,6 +57,9 @@ public class MatrixFunctionProvider implements IFunctionProvider {
         functions.add(new VectorSCountFunction());
         functions.add(new VectorSSumFunction());
         functions.add(new VectorSAVGFunction());
+        
+        functions.add(new MatrixToVectorFunction());
+        functions.add(new VectorToMatrixFunction());       
         return functions;
     }
 
