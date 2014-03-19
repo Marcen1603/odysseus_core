@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggre
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 
 /**
@@ -75,7 +75,7 @@ public class ProbabilisticContinuousAvg extends AbstractAggregateFunction<Probab
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final ExtendedMixtureMultivariateRealDistribution distribution = in.getDistribution(((ProbabilisticContinuousDouble) in.getAttribute(this.pos)).getDistribution());
+        final MultivariateMixtureDistribution distribution = in.getDistribution(((ProbabilisticContinuousDouble) in.getAttribute(this.pos)).getDistribution());
         final AvgPartialAggregate<ProbabilisticTuple<?>> pa = new AvgPartialAggregate<ProbabilisticTuple<?>>(distribution, this.datatype);
         return pa;
     }
@@ -97,7 +97,7 @@ public class ProbabilisticContinuousAvg extends AbstractAggregateFunction<Probab
         else {
             pa = (AvgPartialAggregate<ProbabilisticTuple<?>>) p;
         }
-        final ExtendedMixtureMultivariateRealDistribution distribution = toMerge.getDistribution(((ProbabilisticContinuousDouble) toMerge.getAttribute(this.pos)).getDistribution());
+        final MultivariateMixtureDistribution distribution = toMerge.getDistribution(((ProbabilisticContinuousDouble) toMerge.getAttribute(this.pos)).getDistribution());
 
         pa.add(distribution);
         return pa;

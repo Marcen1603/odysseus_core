@@ -25,9 +25,9 @@ import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMixtureMultivariateRealDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.ExtendedMultivariateNormalDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateRealDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 
 /**
  * 
@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivar
  */
 public class SumPartialAggregate<T> extends AbstractPartialAggregate<T> {
     /** The value of the aggregate. */
-    private ExtendedMixtureMultivariateRealDistribution sum;
+    private MultivariateMixtureDistribution sum;
     /** The result data type. */
     private final String datatype;
 
@@ -49,7 +49,7 @@ public class SumPartialAggregate<T> extends AbstractPartialAggregate<T> {
      * @param datatype
      *            The result datatype
      */
-    public SumPartialAggregate(final ExtendedMixtureMultivariateRealDistribution distribution, final String datatype) {
+    public SumPartialAggregate(final MultivariateMixtureDistribution distribution, final String datatype) {
         this.sum = distribution;
         this.datatype = datatype;
     }
@@ -70,7 +70,7 @@ public class SumPartialAggregate<T> extends AbstractPartialAggregate<T> {
      * 
      * @return the sum
      */
-    public final ExtendedMixtureMultivariateRealDistribution getSum() {
+    public final MultivariateMixtureDistribution getSum() {
         return this.sum;
     }
 
@@ -80,22 +80,22 @@ public class SumPartialAggregate<T> extends AbstractPartialAggregate<T> {
      * @param value
      *            The value to add
      */
-    public final void add(final ExtendedMixtureMultivariateRealDistribution value) {
-        final List<Pair<Double, IMultivariateRealDistribution>> mixtures = new ArrayList<Pair<Double, IMultivariateRealDistribution>>();
-        for (final Pair<Double, IMultivariateRealDistribution> sumEntry : ((ExtendedMixtureMultivariateRealDistribution) this.sum).getComponents()) {
+    public final void add(final MultivariateMixtureDistribution value) {
+        final List<Pair<Double, IMultivariateDistribution>> mixtures = new ArrayList<Pair<Double, IMultivariateDistribution>>();
+        for (final Pair<Double, IMultivariateDistribution> sumEntry : ((MultivariateMixtureDistribution) this.sum).getComponents()) {
             final RealMatrix sumMean = MatrixUtils.createColumnRealMatrix(sumEntry.getValue().getMean());
             final RealMatrix sumCovarianceMatrix = new Array2DRowRealMatrix(sumEntry.getValue().getVariance());
 
-            for (final Pair<Double, IMultivariateRealDistribution> entry : ((ExtendedMixtureMultivariateRealDistribution) value).getComponents()) {
+            for (final Pair<Double, IMultivariateDistribution> entry : ((MultivariateMixtureDistribution) value).getComponents()) {
                 final RealMatrix mean = MatrixUtils.createColumnRealMatrix(entry.getValue().getMean());
                 final RealMatrix covarianceMatrix = new Array2DRowRealMatrix(entry.getValue().getVariance());
 
-                final IMultivariateRealDistribution distribution = new ExtendedMultivariateNormalDistribution(sumMean.add(mean).getColumn(0), sumCovarianceMatrix.add(covarianceMatrix).getData());
-                mixtures.add(new Pair<Double, IMultivariateRealDistribution>(sumEntry.getKey() * entry.getKey(), distribution));
+                final IMultivariateDistribution distribution = new MultivariateNormalDistribution(sumMean.add(mean).getColumn(0), sumCovarianceMatrix.add(covarianceMatrix).getData());
+                mixtures.add(new Pair<Double, IMultivariateDistribution>(sumEntry.getKey() * entry.getKey(), distribution));
             }
         }
 
-        final ExtendedMixtureMultivariateRealDistribution result = new ExtendedMixtureMultivariateRealDistribution(mixtures);
+        final MultivariateMixtureDistribution result = new MultivariateMixtureDistribution(mixtures);
         final Interval[] support = new Interval[this.sum.getSupport().length];
         for (int i = 0; i < this.sum.getSupport().length; i++) {
             support[i] = this.sum.getSupport(i).add(value.getSupport(i));
