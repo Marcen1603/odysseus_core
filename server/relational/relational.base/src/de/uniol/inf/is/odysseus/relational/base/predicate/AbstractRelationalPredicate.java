@@ -44,7 +44,7 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
     // variable bindings
     protected int[] attributePositions;
 
-    final List<SDFAttribute> neededAttributes;
+    protected final List<SDFAttribute> neededAttributes;
 
     // fromRightChannel[i] stores if the getAttribute(attributePositions[i])
     // should be called on the left or on the right input tuple
