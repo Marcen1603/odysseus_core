@@ -11,7 +11,7 @@ public class DebsIntensityCalc2 extends AbstractFunction<String> {
 			SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE,
 			SDFDatatype.FLOAT };
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			accTypes1, accTypes1 };
+			accTypes1 };
 
 	enum SpeedIntensity {
 		stop, trot, low, medium, high, sprint
