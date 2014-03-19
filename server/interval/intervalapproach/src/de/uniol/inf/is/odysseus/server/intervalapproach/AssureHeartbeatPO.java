@@ -102,6 +102,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 
 	@Override
 	protected void process_next(R object, int port) {
+		//LOG.debug("New Element "+object);
 		if (startTimerAfterFirstElement){
 			if (!generateHeartbeat.isAlive()){
 				generateHeartbeat.start();
@@ -144,6 +145,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	public void sendPunctuation(IPunctuation punctuation) {
 		PointInTime timestamp = punctuation.getTime();
 		if (timestamp.afterOrEquals(getWatermark())) {
+			//LOG.debug("SEND PUNCTUATION "+punctuation+" oldWatermark="+getWatermark());
 			super.sendPunctuation(punctuation);
 			setWatermark(timestamp);
 			restartTimer();
@@ -163,6 +165,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	}
 
 	public synchronized void setWatermark(PointInTime watermark) {
+		//LOG.debug("Set new Watermark "+watermark);
 		this._watermark = watermark;
 	}
 
