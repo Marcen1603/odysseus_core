@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
  * 
  *         FIXME Implement probabilistic StdDev aggregation function
  */
-public class ProbabilisticDiscreteStdDev extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
+public class ProbabilisticStdDev extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
     /**
 	 * 
 	 */
@@ -37,7 +37,7 @@ public class ProbabilisticDiscreteStdDev extends AbstractAggregateFunction<Proba
     private final String datatype;
 
     /**
-     * Gets an instance of {@link ProbabilisticDiscreteStdDev}.
+     * Gets an instance of {@link ProbabilisticStdDev}.
      * 
      * @param pos
      *            The attribute position
@@ -45,14 +45,14 @@ public class ProbabilisticDiscreteStdDev extends AbstractAggregateFunction<Proba
      *            The partial aggregate input
      * @param datatype
      *            The result datatype
-     * @return An instance of {@link ProbabilisticDiscreteStdDev}
+     * @return An instance of {@link ProbabilisticStdDev}
      */
-    public static ProbabilisticDiscreteStdDev getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-        return new ProbabilisticDiscreteStdDev(pos, partialAggregateInput, datatype);
+    public static ProbabilisticStdDev getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+        return new ProbabilisticStdDev(pos, partialAggregateInput, datatype);
     }
 
     /**
-     * Creates a new instance of {@link ProbabilisticDiscreteStdDev}.
+     * Creates a new instance of {@link ProbabilisticStdDev}.
      * 
      * @param pos
      *            The attribute position
@@ -61,7 +61,7 @@ public class ProbabilisticDiscreteStdDev extends AbstractAggregateFunction<Proba
      * @param datatype
      *            The result datatype
      */
-    protected ProbabilisticDiscreteStdDev(final int pos, final boolean partialAggregateInput, final String datatype) {
+    protected ProbabilisticStdDev(final int pos, final boolean partialAggregateInput, final String datatype) {
         super("STDDEV", partialAggregateInput);
         this.pos = pos;
         this.datatype = datatype;

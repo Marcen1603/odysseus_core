@@ -19,13 +19,13 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousCount extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
+public class ProbabilisticCount extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
 
     /**
      * 
@@ -37,7 +37,7 @@ public class ProbabilisticContinuousCount extends AbstractAggregateFunction<Prob
     private final String datatype;
 
     /**
-     * Gets an instance of {@link ProbabilisticContinuousCount}.
+     * Gets an instance of {@link ProbabilisticCount}.
      * 
      * @param pos
      *            The attribute position
@@ -45,14 +45,14 @@ public class ProbabilisticContinuousCount extends AbstractAggregateFunction<Prob
      *            The partial aggregate input
      * @param datatype
      *            The result datatype
-     * @return An instance of {@link ProbabilisticContinuousCount}
+     * @return An instance of {@link ProbabilisticCount}
      */
-    public static ProbabilisticContinuousCount getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-        return new ProbabilisticContinuousCount(pos, partialAggregateInput, datatype);
+    public static ProbabilisticCount getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+        return new ProbabilisticCount(pos, partialAggregateInput, datatype);
     }
 
     /**
-     * Creates a new instance of {@link ProbabilisticContinuousAvg}.
+     * Creates a new instance of {@link ProbabilisticAvg}.
      * 
      * @param pos
      *            The attribute position
@@ -61,7 +61,7 @@ public class ProbabilisticContinuousCount extends AbstractAggregateFunction<Prob
      * @param datatype
      *            The result datatype
      */
-    protected ProbabilisticContinuousCount(final int pos, final boolean partialAggregateInput, final String datatype) {
+    protected ProbabilisticCount(final int pos, final boolean partialAggregateInput, final String datatype) {
         super("COUNT", partialAggregateInput);
         this.pos = pos;
         this.datatype = datatype;
@@ -75,8 +75,8 @@ public class ProbabilisticContinuousCount extends AbstractAggregateFunction<Prob
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final MultivariateMixtureDistribution distribution = in.getDistribution(((ProbabilisticContinuousDouble) in.getAttribute(this.pos)).getDistribution());
-        final ContinuousCountPartialAggregate<ProbabilisticTuple<?>> pa = new ContinuousCountPartialAggregate<ProbabilisticTuple<?>>(distribution, this.datatype);
+        final MultivariateMixtureDistribution distribution = in.getDistribution(((ProbabilisticDouble) in.getAttribute(this.pos)).getDistribution());
+        final CountPartialAggregate<ProbabilisticTuple<?>> pa = new CountPartialAggregate<ProbabilisticTuple<?>>(distribution, this.datatype);
         return pa;
     }
 
@@ -90,14 +90,14 @@ public class ProbabilisticContinuousCount extends AbstractAggregateFunction<Prob
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
-        ContinuousCountPartialAggregate<ProbabilisticTuple<?>> pa = null;
+        CountPartialAggregate<ProbabilisticTuple<?>> pa = null;
         if (createNew) {
-            pa = new ContinuousCountPartialAggregate<ProbabilisticTuple<?>>(((ContinuousCountPartialAggregate<ProbabilisticTuple<?>>) p).getCount(), this.datatype);
+            pa = new CountPartialAggregate<ProbabilisticTuple<?>>(((CountPartialAggregate<ProbabilisticTuple<?>>) p).getCount(), this.datatype);
         }
         else {
-            pa = (ContinuousCountPartialAggregate<ProbabilisticTuple<?>>) p;
+            pa = (CountPartialAggregate<ProbabilisticTuple<?>>) p;
         }
-        final MultivariateMixtureDistribution distribution = toMerge.getDistribution(((ProbabilisticContinuousDouble) toMerge.getAttribute(this.pos)).getDistribution());
+        final MultivariateMixtureDistribution distribution = toMerge.getDistribution(((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getDistribution());
 
         pa.add(distribution);
         return pa;
@@ -114,7 +114,7 @@ public class ProbabilisticContinuousCount extends AbstractAggregateFunction<Prob
     @SuppressWarnings("rawtypes")
     @Override
     public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
-        final ContinuousCountPartialAggregate<ProbabilisticTuple<?>> pa = (ContinuousCountPartialAggregate<ProbabilisticTuple<?>>) p;
+        final CountPartialAggregate<ProbabilisticTuple<?>> pa = (CountPartialAggregate<ProbabilisticTuple<?>>) p;
         final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, 0, true);
         r.setAttribute(0, pa.getCount());
         return r;

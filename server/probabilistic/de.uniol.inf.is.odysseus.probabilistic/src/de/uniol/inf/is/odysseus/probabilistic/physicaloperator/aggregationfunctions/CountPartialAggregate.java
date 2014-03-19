@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.Multivari
  * 
  * @param <T>
  */
-public class ContinuousCountPartialAggregate<T> extends AbstractPartialAggregate<T> {
+public class CountPartialAggregate<T> extends AbstractPartialAggregate<T> {
     /** The value of the aggregate. */
     private double count = 0.0;
     /** The result data type. */
@@ -35,7 +35,7 @@ public class ContinuousCountPartialAggregate<T> extends AbstractPartialAggregate
      * @param datatype
      *            The result datatype
      */
-    public ContinuousCountPartialAggregate(final String datatype) {
+    public CountPartialAggregate(final String datatype) {
         this.count = 0.0;
         this.datatype = datatype;
     }
@@ -48,7 +48,7 @@ public class ContinuousCountPartialAggregate<T> extends AbstractPartialAggregate
      * @param datatype
      *            The result datatype
      */
-    public ContinuousCountPartialAggregate(final double count, final String datatype) {
+    public CountPartialAggregate(final double count, final String datatype) {
         this.count = count;
         this.datatype = datatype;
     }
@@ -61,7 +61,7 @@ public class ContinuousCountPartialAggregate<T> extends AbstractPartialAggregate
      * @param datatype
      *            The result datatype
      */
-    public ContinuousCountPartialAggregate(final MultivariateMixtureDistribution value, final String datatype) {
+    public CountPartialAggregate(final MultivariateMixtureDistribution value, final String datatype) {
         this.count = value.getScale();
         this.datatype = datatype;
     }
@@ -72,7 +72,7 @@ public class ContinuousCountPartialAggregate<T> extends AbstractPartialAggregate
      * @param countPartialAggregate
      *            The object to copy from
      */
-    public ContinuousCountPartialAggregate(final ContinuousCountPartialAggregate<T> countPartialAggregate) {
+    public CountPartialAggregate(final CountPartialAggregate<T> countPartialAggregate) {
         this.count = countPartialAggregate.count;
         this.datatype = countPartialAggregate.datatype;
     }
@@ -112,8 +112,8 @@ public class ContinuousCountPartialAggregate<T> extends AbstractPartialAggregate
      * @see java.lang.Object#clone()
      */
     @Override
-    public final ContinuousCountPartialAggregate<T> clone() {
-        return new ContinuousCountPartialAggregate<T>(this);
+    public final CountPartialAggregate<T> clone() {
+        return new CountPartialAggregate<T>(this);
     }
 
 }

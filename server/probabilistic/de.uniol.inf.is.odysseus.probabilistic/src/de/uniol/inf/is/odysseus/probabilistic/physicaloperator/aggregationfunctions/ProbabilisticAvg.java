@@ -19,13 +19,13 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousAvg extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
+public class ProbabilisticAvg extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
 
     /**
 	 * 
@@ -37,7 +37,7 @@ public class ProbabilisticContinuousAvg extends AbstractAggregateFunction<Probab
     private final String datatype;
 
     /**
-     * Gets an instance of {@link ProbabilisticContinuousAvg}.
+     * Gets an instance of {@link ProbabilisticAvg}.
      * 
      * @param pos
      *            The attribute position
@@ -45,14 +45,14 @@ public class ProbabilisticContinuousAvg extends AbstractAggregateFunction<Probab
      *            The partial aggregate input
      * @param datatype
      *            The result datatype
-     * @return An instance of {@link ProbabilisticContinuousAvg}
+     * @return An instance of {@link ProbabilisticAvg}
      */
-    public static ProbabilisticContinuousAvg getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-        return new ProbabilisticContinuousAvg(pos, partialAggregateInput, datatype);
+    public static ProbabilisticAvg getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+        return new ProbabilisticAvg(pos, partialAggregateInput, datatype);
     }
 
     /**
-     * Creates a new instance of {@link ProbabilisticContinuousAvg}.
+     * Creates a new instance of {@link ProbabilisticAvg}.
      * 
      * @param pos
      *            The attribute position
@@ -61,7 +61,7 @@ public class ProbabilisticContinuousAvg extends AbstractAggregateFunction<Probab
      * @param datatype
      *            The result datatype
      */
-    protected ProbabilisticContinuousAvg(final int pos, final boolean partialAggregateInput, final String datatype) {
+    protected ProbabilisticAvg(final int pos, final boolean partialAggregateInput, final String datatype) {
         super("AVG", partialAggregateInput);
         this.pos = pos;
         this.datatype = datatype;
@@ -75,7 +75,7 @@ public class ProbabilisticContinuousAvg extends AbstractAggregateFunction<Probab
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final MultivariateMixtureDistribution distribution = in.getDistribution(((ProbabilisticContinuousDouble) in.getAttribute(this.pos)).getDistribution());
+        final MultivariateMixtureDistribution distribution = in.getDistribution(((ProbabilisticDouble) in.getAttribute(this.pos)).getDistribution());
         final AvgPartialAggregate<ProbabilisticTuple<?>> pa = new AvgPartialAggregate<ProbabilisticTuple<?>>(distribution, this.datatype);
         return pa;
     }
@@ -97,7 +97,7 @@ public class ProbabilisticContinuousAvg extends AbstractAggregateFunction<Probab
         else {
             pa = (AvgPartialAggregate<ProbabilisticTuple<?>>) p;
         }
-        final MultivariateMixtureDistribution distribution = toMerge.getDistribution(((ProbabilisticContinuousDouble) toMerge.getAttribute(this.pos)).getDistribution());
+        final MultivariateMixtureDistribution distribution = toMerge.getDistribution(((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getDistribution());
 
         pa.add(distribution);
         return pa;
@@ -117,7 +117,7 @@ public class ProbabilisticContinuousAvg extends AbstractAggregateFunction<Probab
         final AvgPartialAggregate<ProbabilisticTuple<?>> pa = (AvgPartialAggregate<ProbabilisticTuple<?>>) p;
         final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, 1, true);
         r.setDistribution(0, pa.getAvg());
-        r.setAttribute(0, new ProbabilisticContinuousDouble(0));
+        r.setAttribute(0, new ProbabilisticDouble(0));
         return r;
     }
 }

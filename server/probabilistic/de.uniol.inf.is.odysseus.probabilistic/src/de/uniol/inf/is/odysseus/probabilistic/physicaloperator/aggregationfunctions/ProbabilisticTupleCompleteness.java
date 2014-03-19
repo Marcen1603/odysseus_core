@@ -19,12 +19,12 @@ public class ProbabilisticTupleCompleteness extends Completeness<ProbabilisticTu
      */
     private static final long serialVersionUID = -1459891904889134576L;
 
-    private ProbabilisticTupleCompleteness(int pos, boolean partialAggregateInput, String datatype) {
+    private ProbabilisticTupleCompleteness(boolean partialAggregateInput, String datatype) {
         super(partialAggregateInput, datatype);
     }
 
-    public static ProbabilisticTupleCompleteness getInstance(int pos, boolean partialAggregateInput, String datatype) {
-        return new ProbabilisticTupleCompleteness(pos, partialAggregateInput, datatype);
+    public static ProbabilisticTupleCompleteness getInstance(boolean partialAggregateInput, String datatype) {
+        return new ProbabilisticTupleCompleteness(partialAggregateInput, datatype);
     }
 
     @Override
@@ -63,6 +63,6 @@ public class ProbabilisticTupleCompleteness extends Completeness<ProbabilisticTu
      *            The tuple value
      */
     private double getCount(IProbabilistic value) {
-         return value.getExistence();
+        return value.getExistence();
     }
 }

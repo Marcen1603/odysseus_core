@@ -19,13 +19,13 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousSum extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
+public class ProbabilisticSum extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
 
     /**
 	 * 
@@ -37,7 +37,7 @@ public class ProbabilisticContinuousSum extends AbstractAggregateFunction<Probab
     private final String datatype;
 
     /**
-     * Gets an instance of {@link ProbabilisticContinuousSum}.
+     * Gets an instance of {@link ProbabilisticSum}.
      * 
      * @param pos
      *            The attribute position
@@ -45,14 +45,14 @@ public class ProbabilisticContinuousSum extends AbstractAggregateFunction<Probab
      *            The partial aggregate input
      * @param datatype
      *            The result datatype
-     * @return An instance of {@link ProbabilisticContinuousSum}
+     * @return An instance of {@link ProbabilisticSum}
      */
-    public static ProbabilisticContinuousSum getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-        return new ProbabilisticContinuousSum(pos, partialAggregateInput, datatype);
+    public static ProbabilisticSum getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+        return new ProbabilisticSum(pos, partialAggregateInput, datatype);
     }
 
     /**
-     * Creates a new instance of {@link ProbabilisticContinuousSum}.
+     * Creates a new instance of {@link ProbabilisticSum}.
      * 
      * @param pos
      *            The attribute position
@@ -61,7 +61,7 @@ public class ProbabilisticContinuousSum extends AbstractAggregateFunction<Probab
      * @param datatype
      *            The result datatype
      */
-    protected ProbabilisticContinuousSum(final int pos, final boolean partialAggregateInput, final String datatype) {
+    protected ProbabilisticSum(final int pos, final boolean partialAggregateInput, final String datatype) {
         super("SUM", partialAggregateInput);
         this.pos = pos;
         this.datatype = datatype;
@@ -75,7 +75,7 @@ public class ProbabilisticContinuousSum extends AbstractAggregateFunction<Probab
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final MultivariateMixtureDistribution distribution = in.getDistribution(((ProbabilisticContinuousDouble) in.getAttribute(this.pos)).getDistribution());
+        final MultivariateMixtureDistribution distribution = in.getDistribution(((ProbabilisticDouble) in.getAttribute(this.pos)).getDistribution());
         final SumPartialAggregate<ProbabilisticTuple<?>> pa = new SumPartialAggregate<ProbabilisticTuple<?>>(distribution, this.datatype);
         return pa;
     }
@@ -97,7 +97,7 @@ public class ProbabilisticContinuousSum extends AbstractAggregateFunction<Probab
         else {
             pa = (SumPartialAggregate<ProbabilisticTuple<?>>) p;
         }
-        final MultivariateMixtureDistribution distribution = toMerge.getDistribution(((ProbabilisticContinuousDouble) toMerge.getAttribute(this.pos)).getDistribution());
+        final MultivariateMixtureDistribution distribution = toMerge.getDistribution(((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getDistribution());
 
         pa.add(distribution);
         return pa;
@@ -116,8 +116,10 @@ public class ProbabilisticContinuousSum extends AbstractAggregateFunction<Probab
     public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
         final SumPartialAggregate<ProbabilisticTuple<?>> pa = (SumPartialAggregate<ProbabilisticTuple<?>>) p;
         final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, 1, true);
-        r.setDistribution(0, pa.getSum());
-        r.setAttribute(0, new ProbabilisticContinuousDouble(0));
+        MultivariateMixtureDistribution sum = pa.getSum();
+        r.setDistribution(0, sum);
+        sum.setAttribute(0, 0);
+        r.setAttribute(0, new ProbabilisticDouble(0));
         return r;
     }
 }
