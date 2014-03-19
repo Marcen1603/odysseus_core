@@ -64,6 +64,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 			try {
 				while ((key = (IDType) in.readObject()) != null) {
 					// Could be unreadable input
+					System.err.println("READING FROM CACHE "+key);
 					try {						
 						STORETYPE element = (STORETYPE) in.readObject();
 						cache.put(key, element);
@@ -72,7 +73,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 						serializableTestPassed.put(key, Boolean.TRUE);						
 					} catch (Exception e) {
 						logger.error("Error reading from " + path + " "
-								+ e.getMessage());
+								+ e.getMessage()+" for key "+key);
 						 e.printStackTrace();
 					}
 				}
