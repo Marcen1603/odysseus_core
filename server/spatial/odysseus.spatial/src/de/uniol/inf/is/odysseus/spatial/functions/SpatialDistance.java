@@ -14,7 +14,7 @@ public class SpatialDistance extends AbstractFunction<Double> {
 		super("SpatialDistance",2,accTypes,SDFDatatype.DOUBLE);
 	}
 	
-    public static final SDFDatatype[] accTypes = new SDFDatatype[]{
+    public static final SDFDatatype[] accTypes1 = new SDFDatatype[]{
     	SDFSpatialDatatype.SPATIAL_POINT, 
     	SDFSpatialDatatype.SPATIAL_LINE_STRING, 
     	SDFSpatialDatatype.SPATIAL_POLYGON,
@@ -24,6 +24,7 @@ public class SpatialDistance extends AbstractFunction<Double> {
     	SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION,
     	SDFSpatialDatatype.SPATIAL_GEOMETRY 
 	};
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{accTypes1,accTypes1};
 
 	@Override
 	public Double getValue() {

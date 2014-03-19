@@ -31,13 +31,14 @@ public class IntervalDifferenceFunction extends
 	 * 
 	 */
 	private static final long serialVersionUID = -4670597155345841395L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] {
+	private static final SDFDatatype[] accTypes1 = new SDFDatatype[] {
 			SDFIntervalDatatype.INTERVAL_BYTE,
 			SDFIntervalDatatype.INTERVAL_SHORT,
 			SDFIntervalDatatype.INTERVAL_INTEGER,
 			SDFIntervalDatatype.INTERVAL_FLOAT,
 			SDFIntervalDatatype.INTERVAL_DOUBLE,
 			SDFIntervalDatatype.INTERVAL_LONG };
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][]{accTypes1,accTypes1};
 
 	public IntervalDifferenceFunction() {
 		super("difference",2,accTypes,SDFIntervalDatatype.INTERVAL_DOUBLE);

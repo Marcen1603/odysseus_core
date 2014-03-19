@@ -13,9 +13,11 @@ public class DEBSDistance extends AbstractFunction<Integer>{
 		
 
 	
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
+	public static final SDFDatatype[] accTypes1 = new SDFDatatype[] {
     	SDFDatatype.LONG
 	};
+
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{accTypes1,accTypes1,accTypes1,accTypes1,accTypes1,accTypes1};
 
 
 	@Override

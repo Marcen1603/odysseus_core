@@ -37,9 +37,9 @@ public class AsMultiPoint extends AbstractFunction<Geometry> {
 		super("AsMultiPoint",1,accTypes,SDFSpatialDatatype.SPATIAL_MULTI_POINT);
 	}
 	
-    public static final SDFDatatype[] accTypes = new SDFDatatype[]{
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{{
     	SDFSpatialDatatype.SPATIAL_GEOMETRY, SDFSpatialDatatype.SPATIAL_MULTI_POINT
-    };
+    }};
 	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()

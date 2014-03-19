@@ -36,7 +36,7 @@ public class AsPoint extends AbstractFunction<Geometry> {
 		super("AsPoint",1,accTypes,SDFSpatialDatatype.SPATIAL_POINT);
 	}
 	
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFSpatialDatatype.SPATIAL_GEOMETRY, SDFSpatialDatatype.SPATIAL_POINT };
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{ { SDFSpatialDatatype.SPATIAL_GEOMETRY, SDFSpatialDatatype.SPATIAL_POINT }};
 
 	/*
 	 * (non-Javadoc)

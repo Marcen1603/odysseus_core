@@ -64,6 +64,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		}
 	}
 
+	@Deprecated
 	public AbstractFunction(String symbol, int arity,
 			SDFDatatype[] acceptedTypes, SDFDatatype returnType) {
 		this(symbol, arity, null, acceptedTypes, returnType, true);

@@ -35,7 +35,7 @@ public class AsPolygon extends AbstractFunction<Geometry> {
 		super("AsPolygon",1,accTypes,SDFSpatialDatatype.SPATIAL_POLYGON);
 	}
 	
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFSpatialDatatype.SPATIAL_GEOMETRY, SDFSpatialDatatype.SPATIAL_POLYGON };
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{ { SDFSpatialDatatype.SPATIAL_GEOMETRY, SDFSpatialDatatype.SPATIAL_POLYGON }};
 
 	/*
 	 * (non-Javadoc)

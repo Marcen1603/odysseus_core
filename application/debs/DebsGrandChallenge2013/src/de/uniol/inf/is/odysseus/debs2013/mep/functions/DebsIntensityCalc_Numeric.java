@@ -8,8 +8,9 @@ public class DebsIntensityCalc_Numeric extends AbstractFunction<Integer> {
 
 	private static final long serialVersionUID = 3694633706627761769L;
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
-	
+	public static final SDFDatatype[] accTypes1 = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{accTypes1};
+
 	enum SpeedIntensity {
 		stop, trot, low, medium, high, sprint
 	}

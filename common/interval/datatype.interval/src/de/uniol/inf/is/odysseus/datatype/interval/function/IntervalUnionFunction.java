@@ -30,18 +30,19 @@ public class IntervalUnionFunction extends AbstractFunction<IntervalDouble> {
 	 * 
 	 */
 	private static final long serialVersionUID = 6741913271850798303L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] {
+	private static final SDFDatatype[] accTypes1 = new SDFDatatype[] {
 			SDFIntervalDatatype.INTERVAL_BYTE,
 			SDFIntervalDatatype.INTERVAL_SHORT,
 			SDFIntervalDatatype.INTERVAL_INTEGER,
 			SDFIntervalDatatype.INTERVAL_FLOAT,
 			SDFIntervalDatatype.INTERVAL_DOUBLE,
 			SDFIntervalDatatype.INTERVAL_LONG };
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+			accTypes1, accTypes1 };
 
 	public IntervalUnionFunction() {
-		super("union",2,accTypes,SDFIntervalDatatype.INTERVAL_DOUBLE);
+		super("union", 2, accTypes, SDFIntervalDatatype.INTERVAL_DOUBLE);
 	}
-	
 
 	@Override
 	public IntervalDouble getValue() {

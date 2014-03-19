@@ -38,11 +38,11 @@ public class AsGeometry extends AbstractFunction<Geometry> {
 	}
 	
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { 
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {{ 
 		SDFSpatialDatatype.SPATIAL_GEOMETRY, SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION,
 		SDFSpatialDatatype.SPATIAL_POINT, SDFSpatialDatatype.SPATIAL_MULTI_POINT,
 		SDFSpatialDatatype.SPATIAL_LINE_STRING, SDFSpatialDatatype.SPATIAL_MULTI_LINE_STRING,
-		SDFSpatialDatatype.SPATIAL_POLYGON, SDFSpatialDatatype.SPATIAL_MULTI_POLYGON
+		SDFSpatialDatatype.SPATIAL_POLYGON, SDFSpatialDatatype.SPATIAL_MULTI_POLYGON}
 	};
 
 	/*

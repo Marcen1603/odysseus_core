@@ -39,8 +39,8 @@ public class AsGeometryCollection extends AbstractFunction<Geometry> {
 	}
 	
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { 
-		SDFSpatialDatatype.SPATIAL_GEOMETRY, SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION };
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{ { 
+		SDFSpatialDatatype.SPATIAL_GEOMETRY, SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION }};
 
 
 	/*

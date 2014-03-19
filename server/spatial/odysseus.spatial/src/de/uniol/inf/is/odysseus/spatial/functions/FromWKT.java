@@ -34,9 +34,9 @@ public class FromWKT extends AbstractFunction<Geometry> {
 		super("FromWKT",1,accTypes,SDFSpatialDatatype.SPATIAL_GEOMETRY);
 	}
 	
-    public static final SDFDatatype[] accTypes = new SDFDatatype[]{
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{{
     	SDFDatatype.STRING
-    };
+    }};
 	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()

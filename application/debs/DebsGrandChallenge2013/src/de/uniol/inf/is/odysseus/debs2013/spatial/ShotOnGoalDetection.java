@@ -16,10 +16,12 @@ public class ShotOnGoalDetection extends AbstractFunction<Integer>{
 	}
 
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
+	public static final SDFDatatype[] accTypes1 = new SDFDatatype[] {
     	SDFDatatype.LONG,
     	SDFDatatype.INTEGER
 	};
+	
+	 public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{accTypes1,accTypes1,accTypes1,accTypes1,accTypes1,accTypes1};
 
 
 	//1 = rechtes Tor, 0 = kein Torschuss, -1 = linkes Tor

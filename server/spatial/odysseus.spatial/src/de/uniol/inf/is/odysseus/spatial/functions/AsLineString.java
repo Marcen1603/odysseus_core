@@ -39,9 +39,9 @@ public class AsLineString extends AbstractFunction<Geometry> {
 		super("AsLineString",1,accTypes, SDFSpatialDatatype.SPATIAL_LINE_STRING);
 	}
 	
-    public static final SDFDatatype[] accTypes = new SDFDatatype[]{
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{{
     	SDFSpatialDatatype.SPATIAL_GEOMETRY, SDFSpatialDatatype.SPATIAL_LINE_STRING
-    };
+    }};
 	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()

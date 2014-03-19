@@ -37,9 +37,10 @@ public class ToLineString extends AbstractFunction<Geometry> {
 	}
 	
 	
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
+	public static final SDFDatatype[] accTypes1 = new SDFDatatype[] {
 		 SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.INTEGER };
 
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{accTypes1,accTypes1,accTypes1,accTypes1};
 
 	@Override
 	public Geometry getValue() {

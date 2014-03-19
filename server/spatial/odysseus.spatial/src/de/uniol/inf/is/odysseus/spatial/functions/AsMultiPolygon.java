@@ -35,9 +35,9 @@ public class AsMultiPolygon extends AbstractFunction<Geometry> {
 		super("AsMultiPolygon",1,accTypes,SDFSpatialDatatype.SPATIAL_MULTI_POLYGON);
 	}
 	
-    public static final SDFDatatype[] accTypes = new SDFDatatype[]{
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{{
     	SDFSpatialDatatype.SPATIAL_GEOMETRY, SDFSpatialDatatype.SPATIAL_MULTI_POLYGON
-    };	
+    }};	
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()

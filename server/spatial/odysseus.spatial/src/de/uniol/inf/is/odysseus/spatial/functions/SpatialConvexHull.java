@@ -36,7 +36,7 @@ public class SpatialConvexHull extends AbstractFunction<Geometry> {
 		super("SpatialConvexHull",1,accTypes,SDFSpatialDatatype.SPATIAL_GEOMETRY);
 	}
 	
-    public static final SDFDatatype[] accTypes = new SDFDatatype[]{
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{{
     	SDFSpatialDatatype.SPATIAL_POINT, 
     	SDFSpatialDatatype.SPATIAL_LINE_STRING, 
     	SDFSpatialDatatype.SPATIAL_POLYGON,
@@ -45,7 +45,7 @@ public class SpatialConvexHull extends AbstractFunction<Geometry> {
     	SDFSpatialDatatype.SPATIAL_MULTI_POLYGON, 
     	SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION,
     	SDFSpatialDatatype.SPATIAL_GEOMETRY 
-	};
+	}};
 	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()

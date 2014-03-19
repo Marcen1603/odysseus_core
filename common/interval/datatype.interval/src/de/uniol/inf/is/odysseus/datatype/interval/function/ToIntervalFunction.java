@@ -17,7 +17,7 @@ public class ToIntervalFunction extends AbstractFunction<IntervalDouble> {
      * 
      */
     private static final long serialVersionUID = 8339004565543022768L;
-    public static final SDFDatatype[] accTypes = SDFDatatype.NUMBERS;
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{SDFDatatype.NUMBERS, SDFDatatype.NUMBERS};
 
     public ToIntervalFunction() {
     	super("toInterval",2, accTypes, SDFIntervalDatatype.INTERVAL_DOUBLE);

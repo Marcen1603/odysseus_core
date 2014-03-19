@@ -16,8 +16,9 @@ public class ToPoint extends AbstractFunction<Geometry> {
 		super("ToPoint", 3, accTypes, SDFSpatialDatatype.SPATIAL_POINT);
 	}
 	
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
+	public static final SDFDatatype[] accTypes1 = new SDFDatatype[] {
 		 SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.INTEGER };
+	 public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{accTypes1,accTypes1, accTypes1};
 
 	@Override
 	public Geometry getValue() {

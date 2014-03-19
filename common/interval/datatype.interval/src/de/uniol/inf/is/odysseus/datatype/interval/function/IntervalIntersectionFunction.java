@@ -25,30 +25,37 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class IntervalIntersectionFunction extends AbstractFunction<IntervalDouble> {
-    /**
+public class IntervalIntersectionFunction extends
+		AbstractFunction<IntervalDouble> {
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = 5436861306816764016L;
-    private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFIntervalDatatype.INTERVAL_BYTE, SDFIntervalDatatype.INTERVAL_SHORT, SDFIntervalDatatype.INTERVAL_INTEGER,
-            SDFIntervalDatatype.INTERVAL_FLOAT, SDFIntervalDatatype.INTERVAL_DOUBLE, SDFIntervalDatatype.INTERVAL_LONG };
+	private static final long serialVersionUID = 5436861306816764016L;
+	private static final SDFDatatype[] accTypes1 = new SDFDatatype[] {
+			SDFIntervalDatatype.INTERVAL_BYTE,
+			SDFIntervalDatatype.INTERVAL_SHORT,
+			SDFIntervalDatatype.INTERVAL_INTEGER,
+			SDFIntervalDatatype.INTERVAL_FLOAT,
+			SDFIntervalDatatype.INTERVAL_DOUBLE,
+			SDFIntervalDatatype.INTERVAL_LONG };
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+			accTypes1, accTypes1 };
 
-    public IntervalIntersectionFunction() {
-    	super("intersection",2,accTypes,SDFIntervalDatatype.INTERVAL_DOUBLE);
-    }
-    
-    @Override
-    public IntervalDouble getValue() {
-        IntervalDouble a = this.getInputValue(0);
-        IntervalDouble b = this.getInputValue(1);
-        double max = Math.max(a.inf(), b.inf());
-        double min = Math.min(a.sup(), b.sup());
-        if (max <= min) {
-           return new IntervalDouble(max, min);
-        }
-        else {
-            return new IntervalDouble(Double.NaN, Double.NaN);
-        }
-    }
+	public IntervalIntersectionFunction() {
+		super("intersection", 2, accTypes, SDFIntervalDatatype.INTERVAL_DOUBLE);
+	}
+
+	@Override
+	public IntervalDouble getValue() {
+		IntervalDouble a = this.getInputValue(0);
+		IntervalDouble b = this.getInputValue(1);
+		double max = Math.max(a.inf(), b.inf());
+		double min = Math.min(a.sup(), b.sup());
+		if (max <= min) {
+			return new IntervalDouble(max, min);
+		} else {
+			return new IntervalDouble(Double.NaN, Double.NaN);
+		}
+	}
 
 }

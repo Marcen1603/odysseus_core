@@ -29,7 +29,7 @@ import org.apache.commons.codec.language.ColognePhonetic;
 public class ColognePhoneticFunction extends AbstractFunction<String> {
 
 	private static final long serialVersionUID = 1265565609372371657L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.STRING };
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { {SDFDatatype.STRING},{SDFDatatype.STRING} };
 
 	public ColognePhoneticFunction() {
 		super("colognephonetic",1,accTypes,SDFDatatype.STRING);

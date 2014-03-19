@@ -32,7 +32,7 @@ public class SoundexFunction extends AbstractFunction<String> {
 	 * 
 	 */
 	private static final long serialVersionUID = 3286522655596260036L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.STRING };
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { {SDFDatatype.STRING},{SDFDatatype.STRING} };
 
 	public SoundexFunction() {
 		super("soundex",1,accTypes,SDFDatatype.STRING);

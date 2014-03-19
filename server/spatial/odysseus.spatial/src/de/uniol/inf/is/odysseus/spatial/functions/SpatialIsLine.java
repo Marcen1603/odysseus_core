@@ -29,7 +29,7 @@ public class SpatialIsLine extends AbstractFunction<Boolean>{
 		super("SpatialIsLine",1,accTypes, SDFDatatype.BOOLEAN);
 	}
 	
-    public static final SDFDatatype[] accTypes = new SDFDatatype[]{
+    public static final SDFDatatype[] accTypes1 = new SDFDatatype[]{
     	SDFSpatialDatatype.SPATIAL_POINT, 
     	SDFSpatialDatatype.SPATIAL_LINE_STRING, 
     	SDFSpatialDatatype.SPATIAL_POLYGON,
@@ -39,6 +39,7 @@ public class SpatialIsLine extends AbstractFunction<Boolean>{
     	SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION,
     	SDFSpatialDatatype.SPATIAL_GEOMETRY 
 	};
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{accTypes1,accTypes1};
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()

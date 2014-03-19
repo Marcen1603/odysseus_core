@@ -32,7 +32,7 @@ public class MetaphoneFunction extends AbstractFunction<String> {
 	 * 
 	 */
 	private static final long serialVersionUID = -8470425457909284574L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.STRING };
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { {SDFDatatype.STRING},{SDFDatatype.STRING} };
 
 	public MetaphoneFunction() {
 		super("metaphone",1,accTypes,SDFDatatype.STRING);
