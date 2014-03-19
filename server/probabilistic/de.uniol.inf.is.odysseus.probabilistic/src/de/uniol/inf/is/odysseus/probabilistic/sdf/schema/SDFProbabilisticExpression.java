@@ -16,12 +16,8 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.sdf.schema;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -47,7 +43,8 @@ public class SDFProbabilisticExpression extends SDFExpression {
 	 */
     private static final long serialVersionUID = -2862460974715363031L;
     /** The Gaussion Mixture Models. */
-    private List<MultivariateMixtureDistribution> distributions = new ArrayList<MultivariateMixtureDistribution>();
+    private List<MultivariateMixtureDistribution> distributions;
+    private List<Integer> positions;
 
     /**
      * Constructs a new probabilistic expression from the given expression using
@@ -138,7 +135,10 @@ public class SDFProbabilisticExpression extends SDFExpression {
     private void init(final IExpression<?> expression, final String string, final IAttributeResolver attributeResolver, final IExpressionParser parser) {
         if (this.getMEPExpression() instanceof AbstractProbabilisticFunction) {
             final AbstractProbabilisticFunction<?> probabilisticExpression = ((AbstractProbabilisticFunction<?>) this.getMEPExpression());
+            probabilisticExpression.propagateDistributionReference(probabilisticExpression.getDistributions());
+            probabilisticExpression.propagatePositionReference(probabilisticExpression.getPositions());
             this.setDistributions(probabilisticExpression.getDistributions());
+            this.setPositions(probabilisticExpression.getPositions());
         }
     }
 
@@ -148,25 +148,13 @@ public class SDFProbabilisticExpression extends SDFExpression {
      * @param newDistributions
      *            The distributions
      */
-    public final void bindDistributions(final MultivariateMixtureDistribution[] newDistributions) {
+    public final void bindDistributions(final List<MultivariateMixtureDistribution> newDistributions) {
         if ((this.getMEPExpression() instanceof Constant) || (this.getMEPExpression() instanceof Variable)) {
             return;
         }
         Objects.requireNonNull(newDistributions);
         this.distributions.clear();
-        this.distributions.addAll(Arrays.asList(newDistributions));
-    }
-
-    /**
-     * Gets the distribution at the given index.
-     * 
-     * @param distributionIndex
-     *            The distribution index
-     * @return The distribution at the given index
-     */
-    public final MultivariateMixtureDistribution getDistributions(final int distributionIndex) {
-        Preconditions.checkPositionIndex(distributionIndex, this.distributions.size());
-        return this.distributions.get(distributionIndex);
+        this.distributions.addAll(newDistributions);
     }
 
     /**
@@ -177,10 +165,25 @@ public class SDFProbabilisticExpression extends SDFExpression {
      */
     private void setDistributions(final List<MultivariateMixtureDistribution> distributions) {
         Objects.requireNonNull(distributions);
-        this.distributions.clear();
-        this.distributions.addAll(distributions);
+        this.distributions = distributions;
     }
 
+    /**
+     * @param pos
+     */
+    public void bindPositions(List<Integer> positions) {
+        if ((this.getMEPExpression() instanceof Constant) || (this.getMEPExpression() instanceof Variable)) {
+            return;
+        }
+        Objects.requireNonNull(positions);
+        this.positions.clear();
+        this.positions.addAll(positions);
+    }
+
+    private void setPositions(final List<Integer> positions) {
+        Objects.requireNonNull(positions);
+        this.positions = positions;
+    }
 
     /*
      * (non-Javadoc)
@@ -192,4 +195,5 @@ public class SDFProbabilisticExpression extends SDFExpression {
     public final SDFProbabilisticExpression clone() {
         return new SDFProbabilisticExpression(this);
     }
+
 }

@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,8 +34,10 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
+import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
 import de.uniol.inf.is.odysseus.probabilistic.common.VarHelper;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
@@ -46,9 +50,9 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpress
  * @author Christian Kuka <christian.kuka@offis.de>
  * @param <T>
  */
-public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
+public class ProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
     /** Logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticContinuousSelectPO.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticSelectPO.class);
     /** Attribute positions list required for variable bindings. */
     private VarHelper[][] variables; // Expression.Index
     /** The expressions. */
@@ -68,7 +72,7 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
      * @param iPredicate
      *            The predicate
      */
-    public ProbabilisticContinuousSelectPO(final SDFSchema inputSchema, final IPredicate<?> iPredicate) {
+    public ProbabilisticSelectPO(final SDFSchema inputSchema, final IPredicate<?> iPredicate) {
         this.inputSchema = inputSchema;
         this.predicate = iPredicate.clone();
         this.init(this.inputSchema, this.predicate);
@@ -80,10 +84,12 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
      * @param po
      *            The copy
      */
-    public ProbabilisticContinuousSelectPO(final ProbabilisticContinuousSelectPO<T> po) {
+    public ProbabilisticSelectPO(final ProbabilisticSelectPO<T> po) {
         this.inputSchema = po.inputSchema.clone();
         this.predicate = po.predicate.clone();
-        this.heartbeatGenerationStrategy = po.heartbeatGenerationStrategy.clone();
+        if (po.heartbeatGenerationStrategy != null) {
+            this.heartbeatGenerationStrategy = po.heartbeatGenerationStrategy.clone();
+        }
         this.init(this.inputSchema, this.predicate);
     }
 
@@ -149,43 +155,38 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
         final ProbabilisticTuple<T> outputVal = object.clone();
         double jointProbability = ((IProbabilistic) outputVal.getMetadata()).getExistence();
         synchronized (this.expressions) {
-            double scale = 1.0;
             for (int i = 0; i < this.expressions.length; ++i) {
-                int d = -1;
                 SDFProbabilisticExpression expression = this.expressions[i];
                 final Object[] values = new Object[this.variables[i].length];
+                List<Integer> positions = new ArrayList<Integer>(this.variables[i].length);
                 for (int j = 0; j < this.variables[i].length; ++j) {
+                    positions.add(j, this.variables[i][j].getPos());
                     Object attribute = outputVal.getAttribute(this.variables[i][j].getPos());
                     if (attribute.getClass() == ProbabilisticDouble.class) {
                         int index = ((ProbabilisticDouble) attribute).getDistribution();
                         attribute = outputVal.getDistribution(index);
-                        scale = ((MultivariateMixtureDistribution) attribute).getScale();
-                        // FIXME What happens if we have more than one
-                        // distribution inside an expression or even other
-                        // functions? (CKu 17.12.2013)
-                        if (d >= 0) {
-                            throw new IllegalArgumentException("More than one distribution not supported inside predicate");
-                        }
-                        d = index;
                     }
                     values[j] = attribute;
                 }
 
                 expression.bindMetaAttribute(outputVal.getMetadata());
-                expression.bindDistributions(outputVal.getDistributions());
+                expression.bindDistributions(Arrays.asList(outputVal.getDistributions()));
+                expression.bindPositions(positions);
                 expression.bindAdditionalContent(outputVal.getAdditionalContent());
+
                 expression.bindVariables(values);
 
                 final Object expr = expression.getValue();
-                if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE)) {
-                    final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) expr;
-                    jointProbability *= scale / distribution.getScale();
-                    // distribution.getAttributes()[0] = i;
-                    outputVal.setDistribution(d, distribution);
-                    // outputVal.setAttribute(i, new
-                    // ProbabilisticContinuousDouble(d));
+                if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN)) {
+                    final ProbabilisticBooleanResult result = (ProbabilisticBooleanResult) expr;
+                    jointProbability *= result.getProbability();
+                    for (IMultivariateDistribution distr : result.getDistributions()) {
+                        MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) distr;
+                        int index = ((ProbabilisticDouble) outputVal.getAttribute(distribution.getAttribute(0))).getDistribution();
+                        outputVal.setDistribution(index, distribution);
+
+                    }
                     ((IProbabilistic) outputVal.getMetadata()).setExistence(jointProbability);
-                    d++;
                 }
                 else {
                     if (!(Boolean) expr) {
@@ -202,8 +203,8 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
             // KTHXBYE
             this.transfer(outputVal);
         }
-        else if (ProbabilisticContinuousSelectPO.LOG.isTraceEnabled()) {
-            ProbabilisticContinuousSelectPO.LOG.trace("Drop tuple: " + outputVal.toString());
+        else if (ProbabilisticSelectPO.LOG.isTraceEnabled()) {
+            ProbabilisticSelectPO.LOG.trace("Drop tuple: " + outputVal.toString());
         }
     }
 
@@ -235,8 +236,8 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
      * ()
      */
     @Override
-    public final ProbabilisticContinuousSelectPO<T> clone() {
-        return new ProbabilisticContinuousSelectPO<T>(this);
+    public final ProbabilisticSelectPO<T> clone() {
+        return new ProbabilisticSelectPO<T>(this);
     }
 
     /*
@@ -280,11 +281,11 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
      */
     @Override
     public final boolean process_isSemanticallyEqual(final IPhysicalOperator ipo) {
-        if (!(ipo instanceof ProbabilisticContinuousSelectPO<?>)) {
+        if (!(ipo instanceof ProbabilisticSelectPO<?>)) {
             return false;
         }
         @SuppressWarnings("unchecked")
-        final ProbabilisticContinuousSelectPO<T> spo = (ProbabilisticContinuousSelectPO<T>) ipo;
+        final ProbabilisticSelectPO<T> spo = (ProbabilisticSelectPO<T>) ipo;
         // Different sources
         if (!this.hasSameSources(spo)) {
             return false;

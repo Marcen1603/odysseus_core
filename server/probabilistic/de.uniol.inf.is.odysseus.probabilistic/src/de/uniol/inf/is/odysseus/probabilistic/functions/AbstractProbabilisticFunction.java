@@ -19,9 +19,7 @@ package de.uniol.inf.is.odysseus.probabilistic.functions;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
-
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 
@@ -38,7 +36,8 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
 	 */
     private static final long serialVersionUID = 1726038091049996390L;
     /** The distributions. */
-    private final List<MultivariateMixtureDistribution> distributions = new ArrayList<MultivariateMixtureDistribution>();
+    private List<MultivariateMixtureDistribution> distributions = new ArrayList<MultivariateMixtureDistribution>();
+    private List<Integer> positions = new ArrayList<Integer>();
 
     public AbstractProbabilisticFunction(String symbol, int arity, SDFDatatype[][] accTypes, SDFDatatype returnType) {
     	super(symbol,arity,accTypes,returnType);
@@ -47,7 +46,7 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
     public AbstractProbabilisticFunction(String symbol, int arity, SDFDatatype[] accTypes, SDFDatatype returnType) {
     	super(symbol,arity,accTypes,returnType);
 	}
-    
+
     /**
      * Gets the normal distribution mixtures at the given position.
      * 
@@ -68,6 +67,62 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
     public final List<MultivariateMixtureDistribution> getDistributions() {
         // return Collections.unmodifiableList(this.distributions);
         return this.distributions;
+    }
 
+    public final void setDistributions(MultivariateMixtureDistribution... distributions) {
+        this.distributions.clear();
+        for (int i = 0; i < distributions.length; i++) {
+            setDistribution(i, distributions[i]);
+        }
+    }
+
+    public void setDistribution(int index, MultivariateMixtureDistribution distribution) {
+        this.distributions.set(index, distribution);
+    }
+
+    public final void setPositions(Integer... positions) {
+        if (positions.length != getArity()) {
+            throw new IllegalArgumentException("illegal number of position mappings for function " + getSymbol());
+        }
+
+        for (int i = 0; i < positions.length; i++) {
+            setPosition(i, positions[i]);
+        }
+    }
+
+    public final List<Integer> getPositions() {
+        return this.positions;
+    }
+
+    public final int getPosition(int index) {
+        return this.positions.get(index);
+    }
+
+    public void setPosition(int index, int position) {
+        this.positions.set(index, position);
+    }
+
+    /**
+     * @param positions
+     * 
+     */
+    public void propagatePositionReference(List<Integer> positions) {
+        this.positions = positions;
+        IExpression<?>[] arguments = getArguments();
+        for (IExpression<?> arg : arguments) {
+            if (arg instanceof AbstractProbabilisticFunction) {
+                ((AbstractProbabilisticFunction<?>) arg).propagatePositionReference(positions);
+            }
+        }
+    }
+
+    public void propagateDistributionReference(List<MultivariateMixtureDistribution> distributions) {
+        this.distributions = distributions;
+        IExpression<?>[] arguments = getArguments();
+        for (IExpression<?> arg : arguments) {
+            if (arg instanceof AbstractProbabilisticFunction) {
+                ((AbstractProbabilisticFunction<?>) arg).propagateDistributionReference(distributions);
+            }
+        }
     }
 }

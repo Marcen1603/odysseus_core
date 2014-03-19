@@ -28,8 +28,8 @@ abstract public class AbstractProbabilisticCompareOperator extends AbstractProba
     	super(symbol,accTypes, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
     }
 
-    protected final ProbabilisticBooleanResult getValueInternal(final MultivariateMixtureDistribution a, final RealVector lowerBound, final RealVector upperBound) {
-        final double probability = a.probability(lowerBound.toArray(), upperBound.toArray());
+    protected final ProbabilisticBooleanResult getValueInternal(final MultivariateMixtureDistribution a, final double[] lowerBound, final double[] upperBound) {
+        final double probability = a.probability(lowerBound, upperBound);
         MultivariateMixtureDistribution result = a.clone();
         if (probability == 0.0) {
             result.setScale(Double.POSITIVE_INFINITY);
@@ -39,7 +39,7 @@ abstract public class AbstractProbabilisticCompareOperator extends AbstractProba
         }
         final Interval[] support = new Interval[a.getDimension()];
         for (int i = 0; i < a.getDimension(); i++) {
-            final Interval interval = new Interval(lowerBound.getEntry(i), upperBound.getEntry(i));
+            final Interval interval = new Interval(lowerBound[i], upperBound[i]);
             support[i] = a.getSupport(i).intersection(interval);
         }
         result.setSupport(support);

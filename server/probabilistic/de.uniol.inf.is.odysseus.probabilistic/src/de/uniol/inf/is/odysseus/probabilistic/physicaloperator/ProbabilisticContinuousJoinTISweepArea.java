@@ -338,7 +338,7 @@ public class ProbabilisticContinuousJoinTISweepArea<K extends IProbabilisticTime
                 }
 
                 this.expressions[i].bindMetaAttribute(outputVal.getMetadata());
-                this.expressions[i].bindDistributions(outputVal.getDistributions());
+               // this.expressions[i].bindDistributions(outputVal.getDistributions());
                 this.expressions[i].bindAdditionalContent(outputVal.getAdditionalContent());
                 this.expressions[i].bindVariables(values);
 

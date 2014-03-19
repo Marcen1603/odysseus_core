@@ -6,9 +6,6 @@ package de.uniol.inf.is.odysseus.probabilistic.functions.compare;
 import java.util.Arrays;
 import java.util.Map.Entry;
 
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealVector;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
@@ -54,14 +51,11 @@ public class ProbabilisticGreaterEqualsProbabilisticNumberOperator extends Abstr
         final MultivariateMixtureDistribution a = ((MultivariateMixtureDistribution) this.getInputValue(0)).clone();
         final MultivariateMixtureDistribution b = ((MultivariateMixtureDistribution) this.getInputValue(1)).clone();
 
-        final double[] lowerBoundData = new double[a.getDimension()];
-        Arrays.fill(lowerBoundData, Double.NEGATIVE_INFINITY);
-        System.arraycopy(b.getMean(), 0, lowerBoundData, 0, b.getMean().length);
-        final double[] upperBoundData = new double[a.getDimension()];
-        Arrays.fill(upperBoundData, Double.POSITIVE_INFINITY);
-
-        final RealVector lowerBound = MatrixUtils.createRealVector(lowerBoundData);
-        final RealVector upperBound = MatrixUtils.createRealVector(upperBoundData);
+        final double[] lowerBound = new double[a.getDimension()];
+        Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
+        System.arraycopy(b.getMean(), 0, lowerBound, 0, b.getMean().length);
+        final double[] upperBound = new double[a.getDimension()];
+        Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
 
         ProbabilisticBooleanResult result = this.getValueInternal(a, lowerBound, upperBound);
         double scale = ((MultivariateMixtureDistribution) result.getDistribution()).getScale();

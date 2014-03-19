@@ -16,17 +16,17 @@
 package de.uniol.inf.is.odysseus.probabilistic.functions.bool;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
+import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticOrOperator extends AbstractBinaryOperator<ProbabilisticBooleanResult> {
+public class ProbabilisticOrOperator extends AbstractProbabilisticBinaryOperator<ProbabilisticBooleanResult> {
 
     /**
      * 

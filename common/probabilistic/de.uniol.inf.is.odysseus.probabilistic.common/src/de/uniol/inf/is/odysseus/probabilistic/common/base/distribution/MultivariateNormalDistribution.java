@@ -81,7 +81,8 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
             return 0.5 * (1 + Erf.erf(dev / (standardDeviation * SQRT2)));
         }
         else {
-            final Matrix upper = new Matrix(new double[][] { a });
+            Matrix upper = new Matrix(new double[][] { a });
+            upper = upper.substract(new Matrix(new double[][] { this.means }));
             double[] lower = new double[a.length];
             Arrays.fill(lower, Double.NEGATIVE_INFINITY);
             final Matrix covarianceMatrix = new Matrix(covariance.getData());
@@ -107,8 +108,10 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
             return 0.5 * Erf.erf(v0, v1);
         }
         else {
-            final Matrix lower = new Matrix(new double[][] { a });
-            final Matrix upper = new Matrix(new double[][] { b });
+            Matrix lower = new Matrix(new double[][] { a });
+            lower = lower.substract(new Matrix(new double[][] { this.means }));
+            Matrix upper = new Matrix(new double[][] { b });
+            upper = upper.substract(new Matrix(new double[][] { this.means }));
             final Matrix covarianceMatrix = new Matrix(covariance.getData());
             return QSIMVN.cumulativeProbability(5000, covarianceMatrix, lower, upper).getProbability();
         }

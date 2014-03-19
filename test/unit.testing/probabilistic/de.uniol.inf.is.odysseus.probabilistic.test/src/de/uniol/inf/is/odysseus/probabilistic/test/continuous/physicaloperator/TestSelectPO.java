@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDoubl
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.Probabilistic;
-import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticContinuousSelectPO;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticSelectPO;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**
@@ -49,7 +49,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TestSelectPO extends ProbabilisticContinuousSelectPO<IProbabilistic> {
+public class TestSelectPO extends ProbabilisticSelectPO<IProbabilistic> {
     /** The logger for debug purpose. */
     private static final Logger LOG = LoggerFactory.getLogger(TestSelectPO.class);
 

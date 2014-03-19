@@ -16,15 +16,15 @@
 package de.uniol.inf.is.odysseus.probabilistic.functions.bool;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractUnaryOperator;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
+import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticUnaryOperator;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticNotOperator extends AbstractUnaryOperator<ProbabilisticBooleanResult> {
+public class ProbabilisticNotOperator extends AbstractProbabilisticUnaryOperator<ProbabilisticBooleanResult> {
     /**
      * 
      */
