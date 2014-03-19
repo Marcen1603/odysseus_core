@@ -70,7 +70,7 @@ public class SumPartialAggregate<T> extends AbstractPartialAggregate<T> {
      *            The value to add
      */
     public final void add(final MultivariateMixtureDistribution value) {
-        this.sum = sum.add(value);
+        this.sum = this.sum.add(value);
     }
 
     /*
