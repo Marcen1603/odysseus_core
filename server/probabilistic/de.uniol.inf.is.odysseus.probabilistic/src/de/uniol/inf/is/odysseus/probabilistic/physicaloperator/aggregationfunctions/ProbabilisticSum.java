@@ -20,12 +20,13 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticSum extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
+public class ProbabilisticSum extends AbstractAggregateFunction<ProbabilisticTuple<IProbabilistic>, ProbabilisticTuple<?>> {
 
     /**
 	 * 
@@ -74,10 +75,10 @@ public class ProbabilisticSum extends AbstractAggregateFunction<ProbabilisticTup
      * .IInitializer#init(java.lang.Object)
      */
     @Override
-    public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        ProbabilisticTuple<?> restricted = in.restrict(pos, true);
+    public final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> init(final ProbabilisticTuple<IProbabilistic> in) {
+        ProbabilisticTuple<IProbabilistic> restricted = in.restrict(pos, true);
         final MultivariateMixtureDistribution distribution = restricted.getDistribution(((ProbabilisticDouble) restricted.getAttribute(0)).getDistribution());
-        final SumPartialAggregate<ProbabilisticTuple<?>> pa = new SumPartialAggregate<ProbabilisticTuple<?>>(distribution, this.datatype);
+        final SumPartialAggregate<ProbabilisticTuple<IProbabilistic>> pa = new SumPartialAggregate<ProbabilisticTuple<IProbabilistic>>(distribution, this.datatype);
         return pa;
     }
 
@@ -90,14 +91,15 @@ public class ProbabilisticSum extends AbstractAggregateFunction<ProbabilisticTup
      * .basefunctions.IPartialAggregate, java.lang.Object, boolean)
      */
     @Override
-    public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
-        ProbabilisticTuple<?> restricted = toMerge.restrict(pos, true);
-        SumPartialAggregate<ProbabilisticTuple<?>> pa = null;
+    public final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> merge(final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> p, final ProbabilisticTuple<IProbabilistic> toMerge,
+            final boolean createNew) {
+        ProbabilisticTuple<IProbabilistic> restricted = toMerge.restrict(pos, true);
+        SumPartialAggregate<ProbabilisticTuple<IProbabilistic>> pa = null;
         if (createNew) {
-            pa = new SumPartialAggregate<ProbabilisticTuple<?>>(((SumPartialAggregate<ProbabilisticTuple<?>>) p).getSum(), this.datatype);
+            pa = new SumPartialAggregate<ProbabilisticTuple<IProbabilistic>>(((SumPartialAggregate<ProbabilisticTuple<IProbabilistic>>) p).getSum(), this.datatype);
         }
         else {
-            pa = (SumPartialAggregate<ProbabilisticTuple<?>>) p;
+            pa = (SumPartialAggregate<ProbabilisticTuple<IProbabilistic>>) p;
         }
         final MultivariateMixtureDistribution distribution = restricted.getDistribution(((ProbabilisticDouble) restricted.getAttribute(0)).getDistribution());
 
@@ -113,11 +115,10 @@ public class ProbabilisticSum extends AbstractAggregateFunction<ProbabilisticTup
      * IEvaluator#evaluate(de.uniol.inf.is.odysseus.core.server.physicaloperator
      * .aggregate.basefunctions.IPartialAggregate)
      */
-    @SuppressWarnings("rawtypes")
     @Override
-    public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
-        final SumPartialAggregate<ProbabilisticTuple<?>> pa = (SumPartialAggregate<ProbabilisticTuple<?>>) p;
-        final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, 1, true);
+    public final ProbabilisticTuple<IProbabilistic> evaluate(final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> p) {
+        final SumPartialAggregate<ProbabilisticTuple<IProbabilistic>> pa = (SumPartialAggregate<ProbabilisticTuple<IProbabilistic>>) p;
+        final ProbabilisticTuple<IProbabilistic> r = new ProbabilisticTuple<IProbabilistic>(1, 1, true);
         final MultivariateMixtureDistribution sum = pa.getSum();
         r.setDistribution(0, sum);
         sum.setAttribute(0, 0);
