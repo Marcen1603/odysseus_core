@@ -115,32 +115,13 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
      */
     @Override
     public final void insert(final ProbabilisticTuple<? extends ITimeInterval> s) {
-
         final ProbabilisticTuple<? extends ITimeInterval> restricted = s.restrict(this.attributes, true);
 
-        // / REMOVE me (Data Sheet Distribution evaluation
-        super.insert(restricted);
-
-        // MultivariateNormalDistribution component = new
-        // MultivariateNormalDistribution(new double[] { ((Number)
-        // restricted.getAttribute(0)).doubleValue(),((Number)
-        // restricted.getAttribute(1)).doubleValue()}, new double[][] { {
-        // 4000000.0, 0.0 }, { 0.0, 4000000.0 } });
-        // components.add(new Pair<Double, MultivariateNormalDistribution>(1.0,
-        // component));
-        //
-        // setModel(new MixtureMultivariateNormalDistribution(components));
-        // setModel(estimateModel(getModel()));
-        // // REMOVE me END
-
-        // / Other evaluation
         if ((this.getPredicate() == null) || (this.predicate.evaluate(s))) {
-            // super.insert(restricted);
-
+            super.insert(restricted);
             try {
                 if ((!this.isIncremental()) || (this.getModel() == null)) {
                     final MixtureMultivariateNormalDistribution newModel = MultivariateNormalMixtureExpectationMaximization.estimate(this.getData(), this.mixtures);
-                    System.out.println("CREATE NEW MODEL");
                     if (newModel != null) {
                         this.setModel(newModel);
                     }
@@ -160,7 +141,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
                 }
             }
             catch (MaxCountExceededException | ConvergenceException | MathIllegalArgumentException e) {
-                // FIXME  20140319 christian@kuka.cc What to do now?
+                // FIXME 20140319 christian@kuka.cc What to do now?
                 // setModel(null);
                 // throw e;
                 BatchEMTISweepArea.LOG.trace(e.getMessage(), e);
@@ -389,7 +370,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
             return new BatchEMTISweepArea(this);
         }
         catch (InstantiationException | IllegalAccessException e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
         return null;
     }
