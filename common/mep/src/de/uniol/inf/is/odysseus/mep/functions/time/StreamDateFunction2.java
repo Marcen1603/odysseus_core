@@ -27,8 +27,15 @@ public class StreamDateFunction2 extends AbstractFunction<Date> {
     
     @Override
     public Date getValue() {
-        PointInTime streamTime = ((ITimeInterval) getInputMetadata(0)).getStart();
-        return new Date(TimeUnit.MILLISECONDS.convert(streamTime.getMainPoint(),getBaseTimeUnit()));
+        PointInTime streamTime;
+        if (getArgument(0).isVariable()) {
+            streamTime = ((ITimeInterval) getInputMetadata(0)).getStart();
+        }
+        else {
+            streamTime = ((ITimeInterval) getMetaAttribute()).getStart();
+        }
+        return new Date(TimeUnit.MILLISECONDS.convert(streamTime.getMainPoint(), getBaseTimeUnit()));
+
     }
 
 }
