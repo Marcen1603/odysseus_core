@@ -19,13 +19,15 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
- *         FIXME  20140319 christian@kuka.cc Implement probabilistic StdDev aggregation function
+ *         FIXME 20140319 christian@kuka.cc Implement probabilistic StdDev
+ *         aggregation function
  */
-public class ProbabilisticStdDev extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
+public class ProbabilisticStdDev extends AbstractAggregateFunction<ProbabilisticTuple<IProbabilistic>, ProbabilisticTuple<?>> {
     /**
 	 * 
 	 */
@@ -74,8 +76,8 @@ public class ProbabilisticStdDev extends AbstractAggregateFunction<Probabilistic
      * .IInitializer#init(java.lang.Object)
      */
     @Override
-    public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        return new ElementPartialAggregate<ProbabilisticTuple<?>>(in, this.datatype);
+    public final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> init(final ProbabilisticTuple<IProbabilistic> in) {
+        return new ElementPartialAggregate<ProbabilisticTuple<IProbabilistic>>(in, this.datatype);
     }
 
     /*
@@ -87,8 +89,9 @@ public class ProbabilisticStdDev extends AbstractAggregateFunction<Probabilistic
      * .basefunctions.IPartialAggregate, java.lang.Object, boolean)
      */
     @Override
-    public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
-        final ElementPartialAggregate<ProbabilisticTuple<?>> pa = null;
+    public final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> merge(final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> p, final ProbabilisticTuple<IProbabilistic> toMerge,
+            final boolean createNew) {
+        final ElementPartialAggregate<ProbabilisticTuple<IProbabilistic>> pa = null;
 
         return pa;
     }
@@ -102,8 +105,8 @@ public class ProbabilisticStdDev extends AbstractAggregateFunction<Probabilistic
      * .aggregate.basefunctions.IPartialAggregate)
      */
     @Override
-    public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
-        final ElementPartialAggregate<ProbabilisticTuple<?>> pa = (ElementPartialAggregate<ProbabilisticTuple<?>>) p;
+    public final ProbabilisticTuple<IProbabilistic> evaluate(final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> p) {
+        final ElementPartialAggregate<ProbabilisticTuple<IProbabilistic>> pa = (ElementPartialAggregate<ProbabilisticTuple<IProbabilistic>>) p;
         return pa.getElem();
     }
 }

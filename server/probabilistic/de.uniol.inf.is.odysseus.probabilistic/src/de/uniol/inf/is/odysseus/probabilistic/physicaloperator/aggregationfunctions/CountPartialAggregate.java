@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -36,7 +35,7 @@ public class CountPartialAggregate<T> extends AbstractPartialAggregate<T> {
      *            The result datatype
      */
     public CountPartialAggregate(final String datatype) {
-        this.count = 0.0;
+        count = 0.0;
         this.datatype = datatype;
     }
 
@@ -50,19 +49,6 @@ public class CountPartialAggregate<T> extends AbstractPartialAggregate<T> {
      */
     public CountPartialAggregate(final double count, final String datatype) {
         this.count = count;
-        this.datatype = datatype;
-    }
-
-    /**
-     * Creates a new partial aggregate with the given value.
-     * 
-     * @param value
-     *            The normal distribution mixture
-     * @param datatype
-     *            The result datatype
-     */
-    public CountPartialAggregate(final MultivariateMixtureDistribution value, final String datatype) {
-        this.count = value.getScale();
         this.datatype = datatype;
     }
 
@@ -83,9 +69,8 @@ public class CountPartialAggregate<T> extends AbstractPartialAggregate<T> {
      * @param value
      *            The value to add
      */
-    public final void add(final MultivariateMixtureDistribution value) {
-        // TODO  20140319 christian@kuka.cc Check if inverse scale is the current probability!
-        this.count += value.getScale();
+    public final void add(final double probability) {
+        this.count += probability;
     }
 
     /**

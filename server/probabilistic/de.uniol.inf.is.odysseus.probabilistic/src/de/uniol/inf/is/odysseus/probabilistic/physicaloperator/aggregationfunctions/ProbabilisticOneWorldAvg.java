@@ -18,17 +18,18 @@ package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunct
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class ProbabilisticOneWorldAvg extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
+public class ProbabilisticOneWorldAvg extends AbstractAggregateFunction<ProbabilisticTuple<IProbabilistic>, ProbabilisticTuple<?>> {
 
     /**
 	 * 
 	 */
     private static final long serialVersionUID = -2188835286391575126L;
-    // TODO  20140319 christian@kuka.cc Move to a global configuration
+    // TODO 20140319 christian@kuka.cc Move to a global configuration
     /** The maximum error. */
     private static final double ERROR = 0.004;
     /** The probability bound. */
@@ -77,9 +78,9 @@ public class ProbabilisticOneWorldAvg extends AbstractAggregateFunction<Probabil
      * .IInitializer#init(java.lang.Object)
      */
     @Override
-    public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final OneWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = new OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>(ProbabilisticOneWorldAvg.ERROR, ProbabilisticOneWorldAvg.BOUND,
-                this.datatype);
+    public final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> init(final ProbabilisticTuple<IProbabilistic> in) {
+        final OneWorldAvgPartialAggregate<ProbabilisticTuple<IProbabilistic>> pa = new OneWorldAvgPartialAggregate<ProbabilisticTuple<IProbabilistic>>(ProbabilisticOneWorldAvg.ERROR,
+                ProbabilisticOneWorldAvg.BOUND, this.datatype);
         // MultivariateMixtureDistribution distribution =
         // in.getDistribution(((ProbabilisticDouble)
         // in.getAttribute(this.pos)).getDistribution());
@@ -98,13 +99,14 @@ public class ProbabilisticOneWorldAvg extends AbstractAggregateFunction<Probabil
      * .basefunctions.IPartialAggregate, java.lang.Object, boolean)
      */
     @Override
-    public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
-        OneWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = null;
+    public final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> merge(final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> p, final ProbabilisticTuple<IProbabilistic> toMerge,
+            final boolean createNew) {
+        OneWorldAvgPartialAggregate<ProbabilisticTuple<IProbabilistic>> pa = null;
         if (createNew) {
-            pa = new OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>(ProbabilisticOneWorldAvg.ERROR, ProbabilisticOneWorldAvg.BOUND, this.datatype);
+            pa = new OneWorldAvgPartialAggregate<ProbabilisticTuple<IProbabilistic>>(ProbabilisticOneWorldAvg.ERROR, ProbabilisticOneWorldAvg.BOUND, this.datatype);
         }
         else {
-            pa = (OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p;
+            pa = (OneWorldAvgPartialAggregate<ProbabilisticTuple<IProbabilistic>>) p;
         }
 
         // for (final Entry<Double, Double> value : ((ProbabilisticDouble)
@@ -122,11 +124,10 @@ public class ProbabilisticOneWorldAvg extends AbstractAggregateFunction<Probabil
      * IEvaluator#evaluate(de.uniol.inf.is.odysseus.core.server.physicaloperator
      * .aggregate.basefunctions.IPartialAggregate)
      */
-    @SuppressWarnings("rawtypes")
     @Override
-    public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
-        final OneWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = (OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p;
-        final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, true);
+    public final ProbabilisticTuple<IProbabilistic> evaluate(final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> p) {
+        final OneWorldAvgPartialAggregate<ProbabilisticTuple<IProbabilistic>> pa = (OneWorldAvgPartialAggregate<ProbabilisticTuple<IProbabilistic>>) p;
+        final ProbabilisticTuple<IProbabilistic> r = new ProbabilisticTuple<IProbabilistic>(1, true);
         r.setAttribute(0, new Double(pa.getAggregate()));
         return r;
     }

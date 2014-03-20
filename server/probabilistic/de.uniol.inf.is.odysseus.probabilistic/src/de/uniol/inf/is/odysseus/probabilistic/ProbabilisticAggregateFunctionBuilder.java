@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticAvg;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticCount;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticOneWorldAvg;
@@ -98,7 +99,7 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
      * java.lang.String)
      */
     @Override
-    public final IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> createAggFunction(final AggregateFunction key, final SDFSchema schema, final int[] pos,
+    public final IAggregateFunction<ProbabilisticTuple<IProbabilistic>, ProbabilisticTuple<?>> createAggFunction(final AggregateFunction key, final SDFSchema schema, final int[] pos,
             final boolean partialAggregateInput, final String outputDatatype) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(key.getName());
@@ -111,7 +112,7 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
         // Preconditions.checkArgument(attribute.getDatatype() instanceof
         // SDFProbabilisticDatatype);
 
-        IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> aggFunc = null;
+        IAggregateFunction<ProbabilisticTuple<IProbabilistic>, ProbabilisticTuple<?>> aggFunc = null;
         // SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype)
         // attribute.getDatatype();
         if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.AVG)) {
@@ -132,7 +133,7 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
             }
         }
         else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.COUNT)) {
-            aggFunc = ProbabilisticCount.getInstance(pos[0], partialAggregateInput, outputDatatype);
+            aggFunc = ProbabilisticCount.getInstance(partialAggregateInput, outputDatatype);
         }
         else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.MIN)) {
             // aggFunc =
