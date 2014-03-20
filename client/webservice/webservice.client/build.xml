@@ -25,6 +25,7 @@
 		<delete verbose="true" file="${source-dir}/${package-dir}/Context.java"/>
 		<delete verbose="true" file="${source-dir}/${package-dir}/LogicalOperatorInformation.java"/>
 		<delete verbose="true" file="${source-dir}/${package-dir}/StoredProcedure.java"/>
+		<delete verbose="true" file="${source-dir}/${package-dir}/Pair.java"/>
 	</target>
 	
 	<target name="clean">
