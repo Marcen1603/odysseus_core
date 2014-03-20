@@ -1,9 +1,13 @@
 
 package de.uniol.inf.is.odysseus.webservice.client;
+import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
+				
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebEndpoint;
@@ -19,6 +23,7 @@ import javax.xml.ws.WebServiceFeature;
  * 
  */
 @WebServiceClient(name = "WebserviceServerService", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", wsdlLocation = "http://localhost:9669/odysseus?wsdl")
+@SuppressWarnings(value = { "all" })
 public class WebserviceServerService
     extends Service
 {

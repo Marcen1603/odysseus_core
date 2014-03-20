@@ -1,15 +1,15 @@
 
 package de.uniol.inf.is.odysseus.webservice.client;
+import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
+				
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
-
-import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.collection.Pair;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
-import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 
 
 /**
@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
  * 
  */
 @XmlRegistry
+@SuppressWarnings(value = { "all" })
 public class ObjectFactory {
 
     private final static QName _GetSourcesResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getSourcesResponse");

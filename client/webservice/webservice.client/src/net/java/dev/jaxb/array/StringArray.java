@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "stringArray", propOrder = {
     "items"
 })
+@SuppressWarnings(value = { "all" })
 public class StringArray {
 
     @XmlElement(name = "item", nillable = true)

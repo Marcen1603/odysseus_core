@@ -1,5 +1,10 @@
 
 package de.uniol.inf.is.odysseus.webservice.client;
+import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
+				
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -10,8 +15,6 @@ import javax.xml.ws.Action;
 import javax.xml.ws.FaultAction;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
-
-import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 
 
 /**
@@ -251,8 +254,8 @@ public interface WebserviceServer {
      * @param securitytoken
      * @return
      *     returns de.uniol.inf.is.odysseus.webservice.client.Response
-     * @throws QueryNotExistsException_Exception
      * @throws InvalidUserDataException_Exception
+     * @throws QueryNotExistsException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
@@ -346,8 +349,8 @@ public interface WebserviceServer {
      * @param securitytoken
      * @return
      *     returns de.uniol.inf.is.odysseus.webservice.client.Response
-     * @throws QueryNotExistsException_Exception
      * @throws InvalidUserDataException_Exception
+     * @throws QueryNotExistsException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
@@ -426,8 +429,8 @@ public interface WebserviceServer {
      * @param securitytoken
      * @return
      *     returns de.uniol.inf.is.odysseus.webservice.client.Response
-     * @throws QueryNotExistsException_Exception
      * @throws InvalidUserDataException_Exception
+     * @throws QueryNotExistsException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
@@ -471,8 +474,8 @@ public interface WebserviceServer {
      * @param securitytoken
      * @return
      *     returns de.uniol.inf.is.odysseus.webservice.client.QueryResponse
-     * @throws QueryNotExistsException_Exception
      * @throws InvalidUserDataException_Exception
+     * @throws QueryNotExistsException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
@@ -496,8 +499,8 @@ public interface WebserviceServer {
      * @param securitytoken
      * @return
      *     returns de.uniol.inf.is.odysseus.webservice.client.SdfSchemaResponse
-     * @throws QueryNotExistsException_Exception
      * @throws InvalidUserDataException_Exception
+     * @throws QueryNotExistsException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
@@ -604,8 +607,8 @@ public interface WebserviceServer {
      * @param securitytoken
      * @return
      *     returns de.uniol.inf.is.odysseus.webservice.client.SimpleGraph
-     * @throws QueryNotExistsException_Exception
      * @throws InvalidUserDataException_Exception
+     * @throws QueryNotExistsException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
@@ -649,8 +652,8 @@ public interface WebserviceServer {
      * @param securitytoken
      * @return
      *     returns de.uniol.inf.is.odysseus.webservice.client.QueryResponse
-     * @throws QueryNotExistsException_Exception
      * @throws InvalidUserDataException_Exception
+     * @throws QueryNotExistsException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
@@ -734,8 +737,8 @@ public interface WebserviceServer {
      * @param securitytoken
      * @return
      *     returns de.uniol.inf.is.odysseus.webservice.client.SimpleGraph
-     * @throws QueryNotExistsException_Exception
      * @throws InvalidUserDataException_Exception
+     * @throws QueryNotExistsException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")

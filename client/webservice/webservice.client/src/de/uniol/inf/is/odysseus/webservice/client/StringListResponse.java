@@ -1,9 +1,13 @@
 
 package de.uniol.inf.is.odysseus.webservice.client;
+import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
+				
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -33,6 +37,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "stringListResponse", propOrder = {
     "responseValue"
 })
+@SuppressWarnings(value = { "all" })
 public class StringListResponse
     extends Response
 {

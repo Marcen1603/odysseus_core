@@ -1,5 +1,10 @@
 
 package de.uniol.inf.is.odysseus.webservice.client;
+import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
+				
 
 import javax.xml.ws.WebFault;
 
@@ -11,6 +16,7 @@ import javax.xml.ws.WebFault;
  * 
  */
 @WebFault(name = "CreateQueryException", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/")
+@SuppressWarnings(value = { "all" })
 public class CreateQueryException_Exception
     extends Exception
 {

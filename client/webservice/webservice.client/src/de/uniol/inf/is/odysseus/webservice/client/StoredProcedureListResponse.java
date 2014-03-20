@@ -1,15 +1,17 @@
 
 package de.uniol.inf.is.odysseus.webservice.client;
+import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
+				
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-
-import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 
 
 /**
@@ -35,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 @XmlType(name = "storedProcedureListResponse", propOrder = {
     "responseValue"
 })
+@SuppressWarnings(value = { "all" })
 public class StoredProcedureListResponse
     extends Response
 {
