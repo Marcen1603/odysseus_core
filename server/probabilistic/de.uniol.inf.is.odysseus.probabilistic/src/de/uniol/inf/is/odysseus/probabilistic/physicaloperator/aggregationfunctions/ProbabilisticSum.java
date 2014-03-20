@@ -75,7 +75,8 @@ public class ProbabilisticSum extends AbstractAggregateFunction<ProbabilisticTup
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final MultivariateMixtureDistribution distribution = in.getDistribution(((ProbabilisticDouble) in.getAttribute(this.pos)).getDistribution());
+        ProbabilisticTuple<?> restricted = in.restrict(pos, true);
+        final MultivariateMixtureDistribution distribution = restricted.getDistribution(((ProbabilisticDouble) restricted.getAttribute(0)).getDistribution());
         final SumPartialAggregate<ProbabilisticTuple<?>> pa = new SumPartialAggregate<ProbabilisticTuple<?>>(distribution, this.datatype);
         return pa;
     }
@@ -90,6 +91,7 @@ public class ProbabilisticSum extends AbstractAggregateFunction<ProbabilisticTup
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
+        ProbabilisticTuple<?> restricted = toMerge.restrict(pos, true);
         SumPartialAggregate<ProbabilisticTuple<?>> pa = null;
         if (createNew) {
             pa = new SumPartialAggregate<ProbabilisticTuple<?>>(((SumPartialAggregate<ProbabilisticTuple<?>>) p).getSum(), this.datatype);
@@ -97,7 +99,7 @@ public class ProbabilisticSum extends AbstractAggregateFunction<ProbabilisticTup
         else {
             pa = (SumPartialAggregate<ProbabilisticTuple<?>>) p;
         }
-        final MultivariateMixtureDistribution distribution = toMerge.getDistribution(((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getDistribution());
+        final MultivariateMixtureDistribution distribution = restricted.getDistribution(((ProbabilisticDouble) restricted.getAttribute(0)).getDistribution());
 
         pa.add(distribution);
         return pa;

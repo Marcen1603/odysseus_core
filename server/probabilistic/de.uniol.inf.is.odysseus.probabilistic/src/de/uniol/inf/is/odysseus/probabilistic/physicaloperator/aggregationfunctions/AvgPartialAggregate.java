@@ -51,7 +51,7 @@ public class AvgPartialAggregate<T> extends AbstractPartialAggregate<T> {
      *            The object to copy from
      */
     public AvgPartialAggregate(final AvgPartialAggregate<T> avgPartialAggregate) {
-        this.sum = avgPartialAggregate.sum;
+        this.sum = avgPartialAggregate.sum.clone();
         this.count = avgPartialAggregate.count;
         this.datatype = avgPartialAggregate.datatype;
     }

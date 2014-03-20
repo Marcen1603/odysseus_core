@@ -75,7 +75,8 @@ public class ProbabilisticAvg extends AbstractAggregateFunction<ProbabilisticTup
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final MultivariateMixtureDistribution distribution = in.getDistribution(((ProbabilisticDouble) in.getAttribute(this.pos)).getDistribution());
+        ProbabilisticTuple<?> restricted = in.restrict(pos, true);
+        final MultivariateMixtureDistribution distribution = restricted.getDistribution(((ProbabilisticDouble) restricted.getAttribute(0)).getDistribution());
         final AvgPartialAggregate<ProbabilisticTuple<?>> pa = new AvgPartialAggregate<ProbabilisticTuple<?>>(distribution, this.datatype);
         return pa;
     }
@@ -90,6 +91,8 @@ public class ProbabilisticAvg extends AbstractAggregateFunction<ProbabilisticTup
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
+        ProbabilisticTuple<?> restricted = toMerge.restrict(pos, true);
+
         AvgPartialAggregate<ProbabilisticTuple<?>> pa = null;
         if (createNew) {
             pa = new AvgPartialAggregate<ProbabilisticTuple<?>>(((AvgPartialAggregate<ProbabilisticTuple<?>>) p).getSum(), this.datatype);
@@ -97,7 +100,7 @@ public class ProbabilisticAvg extends AbstractAggregateFunction<ProbabilisticTup
         else {
             pa = (AvgPartialAggregate<ProbabilisticTuple<?>>) p;
         }
-        final MultivariateMixtureDistribution distribution = toMerge.getDistribution(((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getDistribution());
+        final MultivariateMixtureDistribution distribution = restricted.getDistribution(((ProbabilisticDouble) restricted.getAttribute(0)).getDistribution());
 
         pa.add(distribution);
         return pa;
@@ -116,7 +119,9 @@ public class ProbabilisticAvg extends AbstractAggregateFunction<ProbabilisticTup
     public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
         final AvgPartialAggregate<ProbabilisticTuple<?>> pa = (AvgPartialAggregate<ProbabilisticTuple<?>>) p;
         final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, 1, true);
-        r.setDistribution(0, pa.getAvg());
+        final MultivariateMixtureDistribution avg = pa.getAvg();
+        r.setDistribution(0, avg);
+        avg.setAttribute(0, 0);
         r.setAttribute(0, new ProbabilisticDouble(0));
         return r;
     }
