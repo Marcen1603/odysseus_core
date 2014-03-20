@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.Multivari
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticGreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticSmallerEqualsOperator;
@@ -64,7 +63,6 @@ public class TestDouble {
     @Test(dataProvider = "continuousSmallerEqualsDouble")
     public final void testDoubleSmallerEquals(final ProbabilisticDouble left, final MultivariateMixtureDistribution mixtures, final Double right, final double result) {
         final IFunction<ProbabilisticBooleanResult> function = new ProbabilisticSmallerEqualsOperator();
-        ((AbstractProbabilisticFunction<ProbabilisticBooleanResult>) function).getDistributions().add(mixtures);
         function.setArguments(new Constant<IMultivariateDistribution>(mixtures, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), new Constant<Double>(right, SDFDatatype.DOUBLE));
         Assert.assertEquals(((MultivariateMixtureDistribution) function.getValue().getDistribution()).getScale(), result, TestConstants.EPSILON);
     }
@@ -84,7 +82,6 @@ public class TestDouble {
     @Test(dataProvider = "continuousEqualsDouble")
     public final void testDoubleEquals(final ProbabilisticDouble left, final MultivariateMixtureDistribution mixtures, final Double right, final double result) {
         final IFunction<ProbabilisticBooleanResult> function = new ProbabilisticEqualsOperator();
-        ((AbstractProbabilisticFunction<ProbabilisticBooleanResult>) function).getDistributions().add(mixtures);
         function.setArguments(new Constant<IMultivariateDistribution>(mixtures, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), new Constant<Double>(right, SDFDatatype.DOUBLE));
         Assert.assertEquals(((MultivariateMixtureDistribution) function.getValue().getDistribution()).getScale(), result, TestConstants.EPSILON);
     }
@@ -104,7 +101,6 @@ public class TestDouble {
     @Test(dataProvider = "continuousGreaterEqualsDouble")
     public final void testDoubleGreaterEquals(final ProbabilisticDouble left, final MultivariateMixtureDistribution mixtures, final Double right, final double result) {
         final IFunction<ProbabilisticBooleanResult> function = new ProbabilisticGreaterEqualsOperator();
-        ((AbstractProbabilisticFunction<ProbabilisticBooleanResult>) function).getDistributions().add(mixtures);
         function.setArguments(new Constant<IMultivariateDistribution>(mixtures, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), new Constant<Double>(right, SDFDatatype.DOUBLE));
         Assert.assertEquals(((MultivariateMixtureDistribution) function.getValue().getDistribution()).getScale(), result, TestConstants.EPSILON);
     }

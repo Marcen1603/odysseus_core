@@ -16,15 +16,8 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.functions;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.common.base.Preconditions;
-
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 
 /**
  * 
@@ -38,52 +31,8 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
 	 * 
 	 */
     private static final long serialVersionUID = 1726038091049996390L;
-    /** The distributions. */
-    private List<MultivariateMixtureDistribution> distributions = new ArrayList<MultivariateMixtureDistribution>();
 
     public AbstractProbabilisticFunction(final String symbol, final int arity, final SDFDatatype[][] accTypes, final SDFDatatype returnType) {
         super(symbol, arity, accTypes, returnType);
-    }
-
-    /**
-     * Gets the normal distribution mixtures at the given position.
-     * 
-     * @param pos
-     *            The position of the mixtures
-     * @return The normal distribution mixtures at the given position
-     */
-    public final MultivariateMixtureDistribution getDistributions(final int pos) {
-        Preconditions.checkPositionIndex(pos, this.distributions.size());
-        return this.distributions.get(pos);
-    }
-
-    /**
-     * Gets all normal distribution mixtures.
-     * 
-     * @return All normal distribution mixtures
-     */
-    public final List<MultivariateMixtureDistribution> getDistributions() {
-        return this.distributions;
-    }
-
-    public final void setDistributions(final MultivariateMixtureDistribution... distributions) {
-        this.distributions.clear();
-        for (int i = 0; i < distributions.length; i++) {
-            this.setDistribution(i, distributions[i]);
-        }
-    }
-
-    public void setDistribution(final int index, final MultivariateMixtureDistribution distribution) {
-        this.distributions.set(index, distribution);
-    }
-
-    public void propagateDistributionReference(final List<MultivariateMixtureDistribution> distributions) {
-        this.distributions = distributions;
-        final IExpression<?>[] arguments = this.getArguments();
-        for (final IExpression<?> arg : arguments) {
-            if (arg instanceof AbstractProbabilisticFunction) {
-                ((AbstractProbabilisticFunction<?>) arg).propagateDistributionReference(distributions);
-            }
-        }
     }
 }

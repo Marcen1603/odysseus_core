@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.probabilistic.base.predicate;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -153,7 +152,6 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         final SDFProbabilisticExpression probabilisticExpression = (SDFProbabilisticExpression) this.expression;
 
         probabilisticExpression.bindMetaAttribute(input.getMetadata());
-        probabilisticExpression.bindDistributions(Arrays.asList(input.getDistributions()));
         probabilisticExpression.bindAdditionalContent(input.getAdditionalContent());
         probabilisticExpression.bindVariables(this.attributePositions, meta, values);
 
@@ -203,7 +201,6 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         additionalContent.putAll(right.getAdditionalContent());
 
         final SDFProbabilisticExpression probabilisticExpression = (SDFProbabilisticExpression) this.expression;
-        probabilisticExpression.bindDistributions(Arrays.asList(newDistributions));
         probabilisticExpression.bindAdditionalContent(additionalContent);
         probabilisticExpression.bindVariables(positions, meta, values);
         final Object expr = probabilisticExpression.getValue();
@@ -245,7 +242,6 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 
         final SDFProbabilisticExpression probabilisticExpression = (SDFProbabilisticExpression) this.expression;
 
-        probabilisticExpression.bindDistributions(Arrays.asList(newDistributions));
         probabilisticExpression.bindAdditionalContent(additionalContent);
         probabilisticExpression.bindVariables(positions, meta, values);
 

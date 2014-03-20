@@ -19,7 +19,6 @@ import org.apache.commons.math3.linear.RealVector;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 
 /**
@@ -48,9 +47,8 @@ public abstract class AbstractIntegrateFunction extends AbstractProbabilisticFun
      *            The upper bound
      * @return The cumulative probability in the given bound
      */
-    protected final double getValueInternal(final ProbabilisticDouble attribute, final RealVector lowerBound, final RealVector upperBound) {
-        final MultivariateMixtureDistribution mixtures = this.getDistributions(attribute.getDistribution());
-        return mixtures.probability(lowerBound.toArray(), upperBound.toArray());
+    protected final double getValueInternal(final MultivariateMixtureDistribution distribution, final RealVector lowerBound, final RealVector upperBound) {
+        return distribution.probability(lowerBound.toArray(), upperBound.toArray());
     }
 
 }
