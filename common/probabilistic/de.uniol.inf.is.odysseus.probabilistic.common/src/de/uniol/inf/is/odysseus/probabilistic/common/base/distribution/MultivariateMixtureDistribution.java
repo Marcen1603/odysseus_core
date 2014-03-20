@@ -308,7 +308,7 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
      * @param newDistributionAttributes
      */
     public void setAttributes(final int[] attributes) {
-        this.attributes = attributes;
+        this.attributes = attributes.clone();
 
     }
 
@@ -316,7 +316,7 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
      * @param support2
      */
     public void setSupport(final Interval[] support) {
-        this.support = support;
+        this.support = support.clone();
 
     }
 

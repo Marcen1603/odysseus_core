@@ -19,16 +19,13 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticAvg;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticCount;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticOneWorldAvg;
@@ -40,26 +37,30 @@ import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfuncti
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunctionBuilder {
-    /** The SUM aggregate. */
-    private static final String SUM = "SUM";
-    /** The COUNT aggregate. */
-    private static final String COUNT = "COUNT";
     /** The AVG aggregate. */
-    private static final String AVG = "AVG";
+    private final static String AVG = "AVG";
+    /** The MEDIAN aggregate. */
+    private final static String MEDIAN = "MEDIAN";
+    /** The SUM aggregate. */
+    private final static String SUM = "SUM";
+    /** The COUNT aggregate. */
+    private final static String COUNT = "COUNT";
     /** The MIN aggregate. */
-    private static final String MIN = "MIN";
+    private final static String MIN = "MIN";
     /** The MAX aggregate. */
-    private static final String MAX = "MAX";
+    private final static String MAX = "MAX";
     /** The STDDEV aggregate. */
-    private static final String STDDEV = "STDDEV";
-    /** The STDDEV aggregate. */
-    private static final String COMPLETENESS = "COMPLETENESS";
+    private final static String STDDEV = "STDDEV";
+    /** The COMPLETENESS aggregate. */
+    private final static String COMPLETENESS = "COMPLETENESS";
+
     /** The available aggregate functions. */
     private static Collection<String> names = new LinkedList<String>();
     {
         ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.SUM);
         ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.COUNT);
         ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.AVG);
+        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.MEDIAN);
         ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.MIN);
         ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.MAX);
         ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.STDDEV);
@@ -103,30 +104,31 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
         Objects.requireNonNull(key.getName());
         Objects.requireNonNull(pos);
         Objects.requireNonNull(schema);
-        Preconditions.checkElementIndex(0, pos.length);
-        Preconditions.checkElementIndex(pos[0], schema.size());
+        // Preconditions.checkElementIndex(0, pos.length);
+        // Preconditions.checkElementIndex(pos[0], schema.size());
 
-        final SDFAttribute attribute = schema.get(pos[0]);
-        Preconditions.checkArgument(attribute.getDatatype() instanceof SDFProbabilisticDatatype);
+        // final SDFAttribute attribute = schema.get(pos[0]);
+        // Preconditions.checkArgument(attribute.getDatatype() instanceof
+        // SDFProbabilisticDatatype);
 
         IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> aggFunc = null;
         // SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype)
         // attribute.getDatatype();
         if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.AVG)) {
-            if (outputDatatype.equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.toString())) {
-                aggFunc = ProbabilisticAvg.getInstance(pos[0], partialAggregateInput, outputDatatype);
+            if (outputDatatype.equalsIgnoreCase(SDFDatatype.DOUBLE.toString())) {
+                aggFunc = ProbabilisticOneWorldAvg.getInstance(pos[0], partialAggregateInput, outputDatatype);
             }
             else {
-                aggFunc = ProbabilisticOneWorldAvg.getInstance(pos[0], partialAggregateInput, outputDatatype);
+                aggFunc = ProbabilisticAvg.getInstance(pos[0], partialAggregateInput, outputDatatype);
             }
         }
         else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.SUM)) {
-            if (outputDatatype.equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.toString())) {
-                aggFunc = ProbabilisticSum.getInstance(pos[0], partialAggregateInput, outputDatatype);
-            }
-            else {
+            if (outputDatatype.equalsIgnoreCase(SDFDatatype.DOUBLE.toString())) {
                 // aggFunc = ProbabilisticOneWorldSum.getInstance(pos[0],
                 // partialAggregateInput, outputDatatype);
+            }
+            else {
+                aggFunc = ProbabilisticSum.getInstance(pos[0], partialAggregateInput, outputDatatype);
             }
         }
         else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.COUNT)) {

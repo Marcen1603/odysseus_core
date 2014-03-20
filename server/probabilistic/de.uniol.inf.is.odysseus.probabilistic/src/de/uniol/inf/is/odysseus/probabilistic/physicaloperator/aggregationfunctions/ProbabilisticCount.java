@@ -75,7 +75,8 @@ public class ProbabilisticCount extends AbstractAggregateFunction<ProbabilisticT
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final MultivariateMixtureDistribution distribution = in.getDistribution(((ProbabilisticDouble) in.getAttribute(this.pos)).getDistribution());
+        ProbabilisticTuple<?> restricted = in.restrict(pos, true);
+        final MultivariateMixtureDistribution distribution = restricted.getDistribution(((ProbabilisticDouble) restricted.getAttribute(0)).getDistribution());
         final CountPartialAggregate<ProbabilisticTuple<?>> pa = new CountPartialAggregate<ProbabilisticTuple<?>>(distribution, this.datatype);
         return pa;
     }
@@ -90,6 +91,7 @@ public class ProbabilisticCount extends AbstractAggregateFunction<ProbabilisticT
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
+        ProbabilisticTuple<?> restricted = toMerge.restrict(pos, true);
         CountPartialAggregate<ProbabilisticTuple<?>> pa = null;
         if (createNew) {
             pa = new CountPartialAggregate<ProbabilisticTuple<?>>(((CountPartialAggregate<ProbabilisticTuple<?>>) p).getCount(), this.datatype);
@@ -97,7 +99,7 @@ public class ProbabilisticCount extends AbstractAggregateFunction<ProbabilisticT
         else {
             pa = (CountPartialAggregate<ProbabilisticTuple<?>>) p;
         }
-        final MultivariateMixtureDistribution distribution = toMerge.getDistribution(((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getDistribution());
+        final MultivariateMixtureDistribution distribution = restricted.getDistribution(((ProbabilisticDouble) restricted.getAttribute(0)).getDistribution());
 
         pa.add(distribution);
         return pa;

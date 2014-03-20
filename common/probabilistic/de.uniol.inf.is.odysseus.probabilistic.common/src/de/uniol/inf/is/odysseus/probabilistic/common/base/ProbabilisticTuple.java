@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
@@ -283,15 +284,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
      */
     @Override
     public final ProbabilisticTuple<T> restrict(final int attr, final boolean createNew) {
-        RealMatrix restrictMatrix;
-        final Object newAttr = this.attributes[attr];
-        if (newAttr.getClass() == ProbabilisticDouble.class) {
-            restrictMatrix = MatrixUtils.createRealMatrix(new double[][] { { 1.0 } });
-        }
-        else {
-            restrictMatrix = null;
-        }
-        return this.restrict(new int[] { attr }, new RealMatrix[] { restrictMatrix }, createNew);
+        return this.restrict(new int[] { attr }, createNew);
     }
 
     /*

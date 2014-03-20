@@ -50,7 +50,7 @@ public class SumPartialAggregate<T> extends AbstractPartialAggregate<T> {
      *            The object to copy from
      */
     public SumPartialAggregate(final SumPartialAggregate<T> sumPartialAggregate) {
-        this.sum = sumPartialAggregate.sum;
+        this.sum = sumPartialAggregate.sum.clone();
         this.datatype = sumPartialAggregate.datatype;
     }
 

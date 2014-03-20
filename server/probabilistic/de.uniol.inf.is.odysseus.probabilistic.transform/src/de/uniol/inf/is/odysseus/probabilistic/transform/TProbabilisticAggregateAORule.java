@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationExcepti
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfunctions.ProbabilisticGroupProcessor;
 import de.uniol.inf.is.odysseus.relational.transform.TAggregatePORule;
 
 /**
@@ -63,7 +64,7 @@ public class TProbabilisticAggregateAORule extends TAggregatePORule {
         Objects.requireNonNull(operator.getInputSchema());
 
         @SuppressWarnings({ "rawtypes" })
-        final RelationalGroupProcessor r = new RelationalGroupProcessor(operator.getInputSchema(), operator.getInternalOutputSchema(), operator.getGroupingAttribute(), operator.getAggregations(),
+        final RelationalGroupProcessor r = new ProbabilisticGroupProcessor(operator.getInputSchema(), operator.getInternalOutputSchema(), operator.getGroupingAttribute(), operator.getAggregations(),
                 false);
         operator.setGroupProcessor(r);
         final SDFSchema inputSchema = operator.getInputSchema();
