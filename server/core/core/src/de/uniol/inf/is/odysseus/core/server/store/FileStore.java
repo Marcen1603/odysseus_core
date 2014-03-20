@@ -55,33 +55,32 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 	@SuppressWarnings("unchecked")
 	private void loadCache() throws IOException {
 		File f = FileUtils.openOrCreateFile(path);
-		OsgiObjectInputStream in = null; 
-		
-		try {			
+		OsgiObjectInputStream in = null;
+
+		try {
 			FileInputStream fis = new FileInputStream(f);
 			in = new OsgiObjectInputStream(fis);
-			IDType key = null;			
+			IDType key = null;
 			try {
 				while ((key = (IDType) in.readObject()) != null) {
 					// Could be unreadable input
-					System.err.println("READING FROM CACHE "+key);
-					try {						
+					try {
 						STORETYPE element = (STORETYPE) in.readObject();
 						cache.put(key, element);
 						// Object that have been written must be serializable
 						// ;-)
-						serializableTestPassed.put(key, Boolean.TRUE);						
+						serializableTestPassed.put(key, Boolean.TRUE);
 					} catch (Exception e) {
 						logger.error("Error reading from " + path + " "
-								+ e.getMessage()+" for key "+key);
-						 e.printStackTrace();
+								+ e.getMessage() + " for key " + key);
+						e.printStackTrace();
 					}
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (EOFException e) {
+				// Ignore ;
 			}
 			in.close();
-		} catch (EOFException e) {
+		} catch (Exception e) {
 		}
 		initialzed = true;
 		logger.debug("Loaded from " + path + " " + cache.entrySet().size()
@@ -99,7 +98,8 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 					out.writeObject(e.getKey());
 					out.writeObject(e.getValue());
 				} catch (NotSerializableException ex) {
-					logger.error("Object " + e.getKey() + " could not be saved.");
+					logger.error("Object " + e.getKey()
+							+ " could not be saved.");
 				}
 			} else {
 				logger.error("Object " + e.getKey() + " could not be saved.");
