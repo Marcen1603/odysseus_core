@@ -362,13 +362,29 @@ public class SDFExpression implements Serializable, IClone {
 		}
 
 		for (int i = 0; i < values.length; ++i) {
-			variableArrayList.get(i).bind(values[i], null);
+			variableArrayList.get(i).bind(values[i], null, -1);
 		}
 
 		setValue(expression.getValue());
 	}
-	
-	public void bindVariables(IMetaAttribute[] metadata, Object... values) {
+
+    public void bindVariables(IMetaAttribute[] metadata, Object... values) {
+        if (expression instanceof Constant) {
+            return;
+        }
+
+        if (values.length != variableArrayList.size()) {
+            throw new IllegalArgumentException("illegal variable bindings in expression");
+        }
+
+        for (int i = 0; i < values.length; ++i) {
+            variableArrayList.get(i).bind(values[i], metadata[i], -1);
+        }
+
+        setValue(expression.getValue());
+    }
+	   
+	public void bindVariables(int[] positions, IMetaAttribute[] metadata, Object... values) {
 		if (expression instanceof Constant) {
 			return;
 		}
@@ -379,7 +395,7 @@ public class SDFExpression implements Serializable, IClone {
 		}
 
 		for (int i = 0; i < values.length; ++i) {
-			variableArrayList.get(i).bind(values[i], metadata[i]);
+			variableArrayList.get(i).bind(values[i], metadata[i], positions[i]);
 		}
 
 		setValue(expression.getValue());

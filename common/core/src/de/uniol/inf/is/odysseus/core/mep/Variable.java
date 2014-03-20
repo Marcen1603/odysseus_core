@@ -45,6 +45,8 @@ public class Variable implements IExpression<Object> {
 	 * The metadata for this object, could be null
 	 */
 	private IMetaAttribute metadata;
+	/** The position in the schema. */
+	private int position;
 	/**
 	 * The name of the variable
 	 */
@@ -89,9 +91,10 @@ public class Variable implements IExpression<Object> {
 	 * Bind the value to the variable
 	 * @param value The value to bind
 	 */
-	public void bind(Object value, IMetaAttribute metadata) {
+	public void bind(Object value, IMetaAttribute metadata, int position) {
 		this.value = value;
 		this.metadata = metadata;
+		this.position = position;
 	}
 
 	@Override
@@ -103,6 +106,10 @@ public class Variable implements IExpression<Object> {
 		return metadata;
 	}
 
+	public int getPosition(){
+	    return position;
+	}
+	
 	@Override
 	public Object acceptVisitor(IExpressionVisitor visitor, Object data) {
 		return visitor.visit(this, data);

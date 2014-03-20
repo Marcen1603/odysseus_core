@@ -205,6 +205,10 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		return ((Variable) arguments[argumentPos]).getMetadata();
 	}
 
+    final protected int getInputPosition(int argumentPos) {
+        return ((Variable) arguments[argumentPos]).getPosition();
+    }
+	   
 	final protected Double getNumericalInputValue(int argumentPos) {
 		return ((Number) arguments[argumentPos].getValue()).doubleValue();
 	}
