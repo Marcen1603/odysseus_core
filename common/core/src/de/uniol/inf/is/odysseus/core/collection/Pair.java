@@ -18,12 +18,24 @@ package de.uniol.inf.is.odysseus.core.collection;
 
 public class Pair<E1, E2> implements IPair<E1, E2>{
 
-	final E1 e1;
-	final E2 e2;
+	E1 e1;
+	E2 e2;
 	int hashCode = -1;
+	
+	public Pair(){
+		e1=null;e2=null;
+	}
 	
 	public Pair(E1 e1, E2 e2) {
 		this.e1 = e1;
+		this.e2 = e2;
+	}
+	
+	public void setE1(E1 e1) {
+		this.e1 = e1;
+	}
+	
+	public void setE2(E2 e2) {
 		this.e2 = e2;
 	}
 	
