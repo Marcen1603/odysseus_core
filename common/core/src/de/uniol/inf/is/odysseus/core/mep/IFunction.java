@@ -107,4 +107,14 @@ public interface IFunction<T> extends IExpression<T> {
 
 	public void setBasetimeUnit(TimeUnit baseTimeUnit);
 
+    /**
+     * @param additionalContents
+     */
+    void propagateAdditionalContentReference(Map<String, Serializable> additionalContents);
+
+    /**
+     * @param metaAttributeContainer
+     */
+    void propagateMetadataReference(IMetaAttribute[] metaAttributeContainer);
+
 }

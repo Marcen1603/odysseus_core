@@ -32,10 +32,6 @@ import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * @author Jonas Jacobi
@@ -228,6 +224,8 @@ public class SDFExpression implements Serializable, IClone {
 		}
 		if (this.expression instanceof IFunction) {
 			IFunction<?> function = (IFunction<?>) expression;
+	        function.propagateAdditionalContentReference(function.getAdditionalContents());
+	        function.propagateMetadataReference(function.getMetaAttributeContainer());
 			setAdditionalContent(function.getAdditionalContents());
 			setMetaAttribute(function.getMetaAttributeContainer());
 		}

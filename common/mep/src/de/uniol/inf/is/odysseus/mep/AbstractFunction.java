@@ -190,7 +190,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	public IMetaAttribute[] getMetaAttributeContainer() {
 		return metaAttribute;
 	}
-
+	
 	@Override
 	public IMetaAttribute getMetaAttribute() {
 		return metaAttribute[0];
@@ -212,7 +212,29 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	final protected Double getNumericalInputValue(int argumentPos) {
 		return ((Number) arguments[argumentPos].getValue()).doubleValue();
 	}
-
+	
+	@Override
+    public void propagateAdditionalContentReference(final Map<String, Serializable> additionalContent) {
+        this.additionalContent = additionalContent;
+        final IExpression<?>[] arguments = this.getArguments();
+        for (final IExpression<?> arg : arguments) {
+            if (arg instanceof AbstractFunction) {
+                ((AbstractFunction<?>) arg).propagateAdditionalContentReference(additionalContent);
+            }
+        }
+    }
+    
+	@Override
+    public void propagateMetadataReference(final IMetaAttribute[] metaAttribute) {
+        this.metaAttribute = metaAttribute;
+        final IExpression<?>[] arguments = this.getArguments();
+        for (final IExpression<?> arg : arguments) {
+            if (arg instanceof AbstractFunction) {
+                ((AbstractFunction<?>) arg).propagateMetadataReference(metaAttribute);
+            }
+        }
+    }
+    
 	@Override
 	public Object acceptVisitor(IExpressionVisitor visitor, Object data) {
 		return visitor.visit(this, data);

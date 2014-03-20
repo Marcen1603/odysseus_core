@@ -19,18 +19,16 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class StreamDateFunction extends AbstractFunction<Date> {
 
-	private static final long serialVersionUID = -9167197876743665507L;
+    private static final long serialVersionUID = -9167197876743665507L;
 
-	public StreamDateFunction() {
-		super("streamdate", 0,  SDFDatatype.DATE);
-	}
+    public StreamDateFunction() {
+        super("streamdate", 0, new SDFDatatype[0][0], SDFDatatype.DATE, false);
+    }
 
-	@Override
-	public Date getValue() {
-		PointInTime streamTime = ((ITimeInterval) getMetaAttribute())
-				.getStart();
-		return new Date(TimeUnit.MILLISECONDS.convert(
-				streamTime.getMainPoint(), getBaseTimeUnit()));
-	}
+    @Override
+    public Date getValue() {
+        PointInTime streamTime = ((ITimeInterval) getMetaAttribute()).getStart();
+        return new Date(TimeUnit.MILLISECONDS.convert(streamTime.getMainPoint(), getBaseTimeUnit()));
+    }
 
 }
