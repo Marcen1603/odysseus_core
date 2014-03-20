@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializable;
@@ -37,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "logicalQueryInfo", propOrder = { "id", "queryText",
-		"parserID", "containsCycles", "priority", "name", "notice"})
+		"parserID", "containsCycles", "priority", "name", "notice", "parameters"})
 public class LogicalQuery implements ILogicalQuery {
 
 	private static final long serialVersionUID = -7357156628145329724L;
@@ -89,7 +90,9 @@ public class LogicalQuery implements ILogicalQuery {
 	 */
 	private int priority = 0;
 
-	transient final private Map<String, Object> parameters = new HashMap<String, Object>();
+	// Parameter as List because of web service
+	final private List<Pair<String, Object>> parameters = new ArrayList<>();
+	final transient Map<String, Object> transParams = new HashMap<>();
 	
 	private String notice;
 
@@ -401,12 +404,34 @@ public class LogicalQuery implements ILogicalQuery {
 
 	@Override
 	public void setParameter(String key, Object value) {
-		parameters.put(key, value);
+		Pair<String, Object> p = new Pair<>(key, value);
+		if (getP(key) != null){
+			parameters.remove(p);
+		}
+		parameters.add(p);
+		transParams.put(key,value);
 	}
+	
+	private Pair<String, Object> getP(String key){
+		for (Pair<String, Object> p:parameters){
+			if (p.getE1().equals(key)){
+				return p;
+			}
+		}
+		return null;
+	}
+	
 
 	@Override
 	public Object getParameter(String key) {
-		return parameters.get(key);
+		Object v = transParams.get(key);
+		if (v == null){
+			Pair<String, Object> p = getP(key);
+			if (p != null){
+				v = p.getE2();
+			}
+		}
+		return v;
 	}
 
 	@Override

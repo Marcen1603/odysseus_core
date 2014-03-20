@@ -38,7 +38,11 @@ public class LogicalQueryViewData implements IQueryViewData {
 				"LogicalQuery must not be null");
 
 		id = logicalQuery.getID();
-		status = LOGICAL_QUERY_STATUS;
+		if (logicalQuery.getParameter("ISRUNNING")!=null){
+			status = Boolean.parseBoolean((String)logicalQuery.getParameter("ISRUNNING"))?"Running":"Stopped";
+		}else{
+			status = LOGICAL_QUERY_STATUS;
+		}
 		priority = logicalQuery.getPriority();
 		parser = logicalQuery.getParserId();
 		username = logicalQuery.getUser().getUser().getName();

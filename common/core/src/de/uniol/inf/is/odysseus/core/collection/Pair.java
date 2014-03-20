@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.core.collection;
 
+
 public class Pair<E1, E2> implements IPair<E1, E2>{
 
 	final E1 e1;

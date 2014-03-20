@@ -1246,6 +1246,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Pair }
+     * 
+     */
+    public Pair createPair() {
+        return new Pair();
+    }
+
+    /**
      * Create an instance of {@link ConnectionInformationResponse }
      * 
      */
