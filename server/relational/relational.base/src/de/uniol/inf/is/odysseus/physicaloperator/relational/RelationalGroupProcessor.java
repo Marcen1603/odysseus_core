@@ -123,14 +123,14 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 
 	// TODO: FIX THIS. THIS SHOULD NOT BE DONE WITH STRING COMPARE AND
 	// CAN BE PRE-CALCULATED
-	private int getOutputPos(
+	protected int getOutputPos(
 			FESortedClonablePair<SDFSchema, AggregateFunction> p) {
 		Integer pos = aggrOutputPos.get(p);
 		if (pos == null) {
 			Map<AggregateFunction, SDFAttribute> funcs = aggregations.get(p
 					.getE1());
 			SDFAttribute outAttr = funcs.get(p.getE2());
-			pos = outputSchema.indexOf(outAttr);
+			pos = getOutputSchema().indexOf(outAttr);
 			aggrOutputPos.put(p, pos);
 		}
 		return pos;
@@ -139,7 +139,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 	private int getOutputPos(SDFAttribute attribute) {
 		Integer pos = groupOutputPos.get(attribute);
 		if (pos == null) {
-			pos = outputSchema.indexOf(attribute);
+			pos = getOutputSchema().indexOf(attribute);
 			groupOutputPos.put(attribute, pos);
 		}
 		return pos;
@@ -148,7 +148,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 	@Override
 	public Tuple<T> createOutputElement(Long groupID,
 			PairMap<SDFSchema, AggregateFunction, Tuple<T>, ?> r) {
-		Tuple<T> returnTuple = new Tuple<T>(outputSchema.size(), false);
+		Tuple<T> returnTuple = new Tuple<T>(getOutputSchema().size(), false);
 
 		// in r stecken alle Aggregate drin
 		// notwendig: Finde die Ziel-Position in dem returnTuple
@@ -168,7 +168,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 	public Tuple<T> createOutputElement2(
 			Long groupID,
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<Tuple<T>>, ?> r) {
-		Tuple<T> returnTuple = new Tuple<T>(outputSchema.size(), false);
+		Tuple<T> returnTuple = new Tuple<T>(getOutputSchema().size(), false);
 
 		// in r stecken alle Aggregate drin
 		// notwendig: Finde die Ziel-Position in dem returnTuple
@@ -183,7 +183,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 		return returnTuple;
 	}
 
-	private void addGroupingAttributes(Long groupID, Tuple<T> returnTuple) {
+	protected void addGroupingAttributes(Long groupID, Tuple<T> returnTuple) {
 		Tuple<T> gruppAttr = tupleMap.get(groupID);
 		int groupTupPos = 0;
 		for (SDFAttribute ga : grAttribs) {
@@ -199,7 +199,14 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 		return elem.toString(gRestrict);
 	}
 
-	@Override
+	/**
+     * @return the outputSchema
+     */
+    protected SDFSchema getOutputSchema() {
+        return outputSchema;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -215,7 +222,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 		result = prime * result
 				+ ((inputSchema == null) ? 0 : inputSchema.hashCode());
 		result = prime * result
-				+ ((outputSchema == null) ? 0 : outputSchema.hashCode());
+				+ ((getOutputSchema() == null) ? 0 : getOutputSchema().hashCode());
 		return result;
 	}
 
@@ -256,10 +263,10 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 				return false;
 		} else if (!inputSchema.equals(other.inputSchema))
 			return false;
-		if (outputSchema == null) {
-			if (other.outputSchema != null)
+		if (getOutputSchema() == null) {
+			if (other.getOutputSchema() != null)
 				return false;
-		} else if (!outputSchema.equals(other.outputSchema))
+		} else if (!getOutputSchema().equals(other.getOutputSchema()))
 			return false;
 		return true;
 	}
