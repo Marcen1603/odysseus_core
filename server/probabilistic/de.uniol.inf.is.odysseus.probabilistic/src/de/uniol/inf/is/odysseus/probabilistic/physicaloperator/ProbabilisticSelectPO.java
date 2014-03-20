@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -153,23 +152,23 @@ public class ProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPip
             for (int i = 0; i < this.expressions.length; ++i) {
                 final SDFProbabilisticExpression expression = this.expressions[i];
                 final Object[] values = new Object[this.variables[i].length];
-                final List<Integer> positions = new ArrayList<Integer>(this.variables[i].length);
+                IMetaAttribute[] meta = new IMetaAttribute[this.variables[i].length];
+                final int[] positions = new int[this.variables[i].length];
                 for (int j = 0; j < this.variables[i].length; ++j) {
-                    positions.add(j, this.variables[i][j].getPos());
                     Object attribute = outputVal.getAttribute(this.variables[i][j].getPos());
                     if (attribute.getClass() == ProbabilisticDouble.class) {
                         final int index = ((ProbabilisticDouble) attribute).getDistribution();
                         attribute = outputVal.getDistribution(index);
                     }
                     values[j] = attribute;
+                    meta[j] = object.getMetadata();
+                    positions[j] = this.variables[i][j].getPos();
                 }
 
                 expression.bindMetaAttribute(outputVal.getMetadata());
                 expression.bindDistributions(Arrays.asList(outputVal.getDistributions()));
-                expression.bindPositions(positions);
                 expression.bindAdditionalContent(outputVal.getAdditionalContent());
-
-                expression.bindVariables(values);
+                expression.bindVariables(positions, meta, values);
 
                 final Object expr = expression.getValue();
                 if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_RESULT)) {

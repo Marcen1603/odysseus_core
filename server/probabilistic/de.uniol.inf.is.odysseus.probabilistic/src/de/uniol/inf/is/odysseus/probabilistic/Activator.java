@@ -18,12 +18,17 @@ package de.uniol.inf.is.odysseus.probabilistic;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.probabilistic.base.predicate.ProbabilisticRelationalPredicateBuilder;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class Activator implements BundleActivator {
     /** The bundle context. */
     private static BundleContext context;
+    private static final String PROBABILISTIC_RELATIONAL_PREDICATE = "PROBABILISTICRELATIONALPREDICATE";
 
     /**
      * Gets the bundle context.
@@ -44,6 +49,8 @@ public class Activator implements BundleActivator {
     @Override
     public final void start(final BundleContext bundleContext) throws Exception {
         Activator.context = bundleContext;
+        OperatorBuilderFactory.putPredicateBuilder(PROBABILISTIC_RELATIONAL_PREDICATE, new ProbabilisticRelationalPredicateBuilder());
+        OperatorBuilderFactory.putPredicateBuilder(ProbabilisticTuple.class.getName(), new ProbabilisticRelationalPredicateBuilder());
     }
 
     /*
@@ -54,6 +61,8 @@ public class Activator implements BundleActivator {
      */
     @Override
     public final void stop(final BundleContext bundleContext) throws Exception {
+        OperatorBuilderFactory.removePredicateBuilder(PROBABILISTIC_RELATIONAL_PREDICATE);
+        OperatorBuilderFactory.removePredicateBuilder(ProbabilisticTuple.class.getName());
         Activator.context = null;
     }
 

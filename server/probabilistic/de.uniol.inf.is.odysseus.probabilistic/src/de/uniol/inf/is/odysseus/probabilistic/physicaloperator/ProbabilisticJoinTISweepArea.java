@@ -66,9 +66,9 @@ public class ProbabilisticJoinTISweepArea<T extends ProbabilisticTuple<? extends
                             break;
                         }
                         ProbabilisticRelationalPredicate probabilisticPredicate = ((ProbabilisticRelationalPredicate) getQueryPredicate());
-                       @SuppressWarnings("unchecked")
-                    T merge = (T) probabilisticPredicate.probabilisticEvaluate(element, next);
-                        if (merge !=null) {
+                        @SuppressWarnings("unchecked")
+                        T merge = (T) probabilisticPredicate.probabilisticEvaluate(element, next, next.getMetadata());
+                        if (merge != null) {
                             result.add(merge);
                             if (extract) {
                                 iter.remove();
@@ -89,8 +89,8 @@ public class ProbabilisticJoinTISweepArea<T extends ProbabilisticTuple<? extends
                         }
                         ProbabilisticRelationalPredicate probabilisticPredicate = ((ProbabilisticRelationalPredicate) getQueryPredicate());
                         @SuppressWarnings("unchecked")
-                        T merge = (T) probabilisticPredicate.probabilisticEvaluate(next, element);
-                        if (merge!=null) {
+                        T merge = (T) probabilisticPredicate.probabilisticEvaluate(next, element, next.getMetadata());
+                        if (merge != null) {
                             result.add(merge);
                             if (extract) {
                                 iter.remove();

@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.sdf.schema;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -44,7 +45,6 @@ public class SDFProbabilisticExpression extends SDFExpression {
     private static final long serialVersionUID = -2862460974715363031L;
     /** The Gaussion Mixture Models. */
     private List<MultivariateMixtureDistribution> distributions;
-    private List<Integer> positions;
 
     /**
      * Constructs a new probabilistic expression from the given expression using
@@ -122,6 +122,18 @@ public class SDFProbabilisticExpression extends SDFExpression {
     }
 
     /**
+     * @param string
+     * @param predicate
+     * @param object
+     * @param instance
+     * @param aggregatePattern
+     */
+    public SDFProbabilisticExpression(String uri, String value, IAttributeResolver attributeResolver, IExpressionParser expressionParser, Pattern aggregatePattern) {
+        super(uri, value, attributeResolver, expressionParser, AggregateFunctionBuilderRegistry.getAggregatePattern());
+        this.init(null, value, attributeResolver, expressionParser);
+    }
+
+    /**
      * 
      * @param expression
      *            The expression
@@ -136,9 +148,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
         if (this.getMEPExpression() instanceof AbstractProbabilisticFunction) {
             final AbstractProbabilisticFunction<?> probabilisticExpression = ((AbstractProbabilisticFunction<?>) this.getMEPExpression());
             probabilisticExpression.propagateDistributionReference(probabilisticExpression.getDistributions());
-            probabilisticExpression.propagatePositionReference(probabilisticExpression.getPositions());
             this.setDistributions(probabilisticExpression.getDistributions());
-            this.setPositions(probabilisticExpression.getPositions());
         }
     }
 
@@ -166,23 +176,6 @@ public class SDFProbabilisticExpression extends SDFExpression {
     private void setDistributions(final List<MultivariateMixtureDistribution> distributions) {
         Objects.requireNonNull(distributions);
         this.distributions = distributions;
-    }
-
-    /**
-     * @param pos
-     */
-    public void bindPositions(final List<Integer> positions) {
-        if ((this.getMEPExpression() instanceof Constant) || (this.getMEPExpression() instanceof Variable)) {
-            return;
-        }
-        Objects.requireNonNull(positions);
-        this.positions.clear();
-        this.positions.addAll(positions);
-    }
-
-    private void setPositions(final List<Integer> positions) {
-        Objects.requireNonNull(positions);
-        this.positions = positions;
     }
 
     /*

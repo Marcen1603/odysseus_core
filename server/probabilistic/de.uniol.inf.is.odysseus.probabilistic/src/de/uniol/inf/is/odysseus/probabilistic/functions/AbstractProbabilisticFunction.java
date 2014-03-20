@@ -40,12 +40,10 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
     private static final long serialVersionUID = 1726038091049996390L;
     /** The distributions. */
     private List<MultivariateMixtureDistribution> distributions = new ArrayList<MultivariateMixtureDistribution>();
-    private List<Integer> positions = new ArrayList<Integer>();
 
     public AbstractProbabilisticFunction(final String symbol, final int arity, final SDFDatatype[][] accTypes, final SDFDatatype returnType) {
         super(symbol, arity, accTypes, returnType);
     }
-
 
     /**
      * Gets the normal distribution mixtures at the given position.
@@ -77,42 +75,6 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
 
     public void setDistribution(final int index, final MultivariateMixtureDistribution distribution) {
         this.distributions.set(index, distribution);
-    }
-
-    public final void setPositions(final Integer... positions) {
-        if (positions.length != this.getArity()) {
-            throw new IllegalArgumentException("illegal number of position mappings for function " + this.getSymbol());
-        }
-
-        for (int i = 0; i < positions.length; i++) {
-            this.setPosition(i, positions[i]);
-        }
-    }
-
-    public final List<Integer> getPositions() {
-        return this.positions;
-    }
-
-    public final int getPosition(final int index) {
-        return this.positions.get(index);
-    }
-
-    public void setPosition(final int index, final int position) {
-        this.positions.set(index, position);
-    }
-
-    /**
-     * @param positions
-     * 
-     */
-    public void propagatePositionReference(final List<Integer> positions) {
-        this.positions = positions;
-        final IExpression<?>[] arguments = this.getArguments();
-        for (final IExpression<?> arg : arguments) {
-            if (arg instanceof AbstractProbabilisticFunction) {
-                ((AbstractProbabilisticFunction<?>) arg).propagatePositionReference(positions);
-            }
-        }
     }
 
     public void propagateDistributionReference(final List<MultivariateMixtureDistribution> distributions) {

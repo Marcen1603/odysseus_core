@@ -50,7 +50,7 @@ public class ProbabilisticGreaterEqualsOperator extends AbstractProbabilisticCom
     @Override
     public final ProbabilisticBooleanResult getValue() {
         final MultivariateMixtureDistribution a = ((MultivariateMixtureDistribution) this.getInputValue(0)).clone();
-        final int pos = this.getPositions().get(0);
+        final int pos = this.getInputPosition(0);
         final Double b = this.getNumericalInputValue(1);
         final double[] lowerBound = new double[a.getDimension()];
         Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);

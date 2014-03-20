@@ -17,20 +17,13 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 
 import java.util.Objects;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.probabilistic.base.predicate.ProbabilisticRelationalPredicate;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticJoinTIPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.server.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
@@ -63,10 +56,9 @@ public class TProbabilisiticJoinAORule extends TJoinAORule {
             super.execute(operator, config);
         }
         else {
-            JoinTIPO joinPO = new JoinTIPO();
+            JoinTIPO joinPO = new ProbabilisticJoinTIPO();
             boolean isCross = false;
-
-            joinPO.setJoinPredicate(new ProbabilisticRelationalPredicate(getExpression(operator)));
+            joinPO.setJoinPredicate(pred);
             joinPO.setCardinalities(operator.getCard());
 
             joinPO.setTransferFunction(new TITransferArea());
@@ -109,16 +101,4 @@ public class TProbabilisiticJoinAORule extends TJoinAORule {
         return "JoinAO -> probabilistic Join";
     }
 
-    private SDFExpression getExpression(final ILogicalOperator operator) {
-        Objects.requireNonNull(operator);
-        Objects.requireNonNull(operator.getPredicate());
-        final String mepString = operator.getPredicate().toString();
-        final SDFSchema leftInputSchema = operator.getInputSchema(0);
-        final SDFSchema rightInputSchema = operator.getInputSchema(1);
-
-        final SDFSchema inputSchema = SDFSchema.union(leftInputSchema, rightInputSchema);
-        final IAttributeResolver attrRes = new DirectAttributeResolver(inputSchema);
-        final SDFExpression expr = new SDFExpression(null, mepString, attrRes, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
-        return expr;
-    }
 }
