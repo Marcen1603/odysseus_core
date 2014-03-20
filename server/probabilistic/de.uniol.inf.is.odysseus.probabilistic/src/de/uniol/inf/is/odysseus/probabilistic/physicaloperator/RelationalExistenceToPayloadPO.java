@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
@@ -25,7 +23,7 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class RelationalExistenceToPayloadPO extends ExistenceToPayloadPO<IProbabilistic, Tuple<IProbabilistic>> {
+public class RelationalExistenceToPayloadPO extends ExistenceToPayloadPO<IProbabilistic, ProbabilisticTuple<IProbabilistic>> {
 
     /**
      * Default constructor.
@@ -43,22 +41,19 @@ public class RelationalExistenceToPayloadPO extends ExistenceToPayloadPO<IProbab
         super(relationalExistenceToPayloadPO);
     }
 
-    /*
+    /**
      * 
-     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
-     * process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
+     * {@inheritDoc}
      */
     @Override
-    protected final void process_next(final Tuple<IProbabilistic> object, final int port) {
+    protected final void process_next(final ProbabilisticTuple<IProbabilistic> object, final int port) {
         final int inputSize = object.size();
-        final ProbabilisticTuple<IProbabilistic> out = new ProbabilisticTuple<IProbabilistic>(object.size() + 2, false);
+        Object[] attributes = new Object[object.size() + 1];
+        final ProbabilisticTuple<IProbabilistic> out = new ProbabilisticTuple<IProbabilistic>(object, attributes, false);
 
-        System.arraycopy(object.getAttributes(), 0, out.getAttributes(), 0, inputSize);
+        System.arraycopy(object.getAttributes(), 0, attributes, 0, inputSize);
 
         out.setAttribute(inputSize, object.getMetadata().getExistence());
-
-        out.setMetadata(object.getMetadata());
-        out.setRequiresDeepClone(object.requiresDeepClone());
         this.transfer(out);
     }
 
@@ -69,7 +64,7 @@ public class RelationalExistenceToPayloadPO extends ExistenceToPayloadPO<IProbab
      * ()
      */
     @Override
-    public final AbstractPipe<Tuple<IProbabilistic>, Tuple<IProbabilistic>> clone() {
+    public final RelationalExistenceToPayloadPO clone() {
         return new RelationalExistenceToPayloadPO(this);
     }
 
