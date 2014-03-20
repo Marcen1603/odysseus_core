@@ -74,7 +74,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	protected IDummyDataCreationFunction<K, T> creationFunction;
 
 	protected boolean inOrder = true;
-	private Cardinalities card = null;
+	protected Cardinalities card = null;
 
 	// ------------------------------------------------------------------------------------
 
