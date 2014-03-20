@@ -105,10 +105,9 @@ public class JSR223UDFunction implements IUserDefinedFunction<Tuple<? extends IM
         }
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public Tuple<? extends IMetaAttribute> process(Tuple<? extends IMetaAttribute> in, int port) {
-        Tuple<?> ret = null;
+        Tuple<IMetaAttribute> ret = null;
         Bindings bindings = this.engine.createBindings();
 
         Object[] attributes = in.getAttributes();
@@ -135,7 +134,13 @@ public class JSR223UDFunction implements IUserDefinedFunction<Tuple<? extends IM
         for (int i = 0; i < attributes.length; ++i) {
             retObj[i] = bindings.get(KEY_ATTRIBUTE + i);
         }
-        ret = new Tuple(retObj, false);
+        ret = new Tuple<IMetaAttribute>(retObj, false);
+        if (bindings.get(KEY_META) != null) {
+            ret.setMetadata((IMetaAttribute) bindings.get(KEY_META));
+        }
+        else {
+            ret.setMetadata(in.getMetadata().clone());
+        }
         return ret;
     }
 
