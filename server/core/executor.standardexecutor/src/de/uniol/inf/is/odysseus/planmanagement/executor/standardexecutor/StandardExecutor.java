@@ -441,7 +441,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			}
 
 		} catch (Exception e) {
-			LOG.error("ERROR IN ADD QUERY ",e);
+			LOG.error("ERROR IN ADD QUERY ", e);
 			throw new QueryOptimizationException(e);
 		} finally {
 			// end synchronize of the process
@@ -1426,10 +1426,12 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	@Override
 	public Collection<Integer> getLogicalQueryIds(ISession session) {
-		// TODO: Check access rights
 		Collection<Integer> result = new ArrayList<Integer>();
 		for (IPhysicalQuery pq : getExecutionPlan().getQueries()) {
-			result.add(pq.getID());
+			// TODO: Show queries of other users...
+			if (pq.getSession().getUser() == session.getUser()) {
+				result.add(pq.getID());
+			}
 		}
 		return result;
 	}
