@@ -29,23 +29,38 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewData;
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewDataProvider;
 import de.uniol.inf.is.odysseus.rcp.views.query.QueryView;
 
-public class LogicalQueryViewDataProvider implements IQueryViewDataProvider, IDoubleClickListener, KeyListener {
+public class LogicalQueryViewDataProvider implements IQueryViewDataProvider,
+		IDoubleClickListener, KeyListener, IUpdateEventListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(LogicalQueryViewDataProvider.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(LogicalQueryViewDataProvider.class);
 	private QueryView view;
-	
+
 	@Override
 	public void init(QueryView view) {
 		this.view = view;
 		this.view.getTableViewer().addDoubleClickListener(this);
-		this.view.getTableViewer().getTable().addKeyListener(this);		
+		this.view.getTableViewer().getTable().addKeyListener(this);
+		listenToExecutor();
+	}
+
+	private void listenToExecutor() {
+		IExecutor executor = LogicalQueryViewDataProviderPlugIn
+				.getExecutor();
+
+		if (executor instanceof IClientExecutor) {
+			((IClientExecutor)executor).addUpdateEventListener(this);
+		}
+		view.refreshTable();
 	}
 
 	@Override
@@ -76,38 +91,48 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider, IDo
 		IExecutor executor = LogicalQueryViewDataProviderPlugIn.getExecutor();
 
 		List<ILogicalQuery> logicalQueries = getLogicalQueries(executor);
-		List<IQueryViewData> transformed = Lists.transform(logicalQueries, new Function<ILogicalQuery, IQueryViewData>() {
-			@Override
-			public IQueryViewData apply(ILogicalQuery logicalQuery) {
-				return new LogicalQueryViewData(logicalQuery);
-			}
-		});
+		List<IQueryViewData> transformed = Lists.transform(logicalQueries,
+				new Function<ILogicalQuery, IQueryViewData>() {
+					@Override
+					public IQueryViewData apply(ILogicalQuery logicalQuery) {
+						return new LogicalQueryViewData(logicalQuery);
+					}
+				});
 
 		sender.clear();
-		for( IQueryViewData data : transformed ) {
+		for (IQueryViewData data : transformed) {
 			sender.addData(data);
 		}
 		sender.refreshTable();
 	}
-	
-	private void executeCommand( String cmdID ) {
-		IHandlerService handlerService = (IHandlerService) view.getSite().getService(IHandlerService.class);
+
+	private void executeCommand(String cmdID) {
+		IHandlerService handlerService = (IHandlerService) view.getSite()
+				.getService(IHandlerService.class);
 		try {
 			handlerService.executeCommand(cmdID, null);
 		} catch (Exception ex) {
 			LOG.error("Exception during executing command {}.", cmdID, ex);
-		}		
+		}
 	}
-	
-	private static List<ILogicalQuery> getLogicalQueries(IExecutor executor) {
-		Collection<Integer> logicalQueryIds = executor.getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession());
 
-		List<ILogicalQuery> logicalQueries = Lists.newArrayListWithCapacity(logicalQueryIds.size());
+	private static List<ILogicalQuery> getLogicalQueries(IExecutor executor) {
+		Collection<Integer> logicalQueryIds = executor
+				.getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession());
+
+		List<ILogicalQuery> logicalQueries = Lists
+				.newArrayListWithCapacity(logicalQueryIds.size());
 		for (Integer id : logicalQueryIds) {
-			logicalQueries.add(executor.getLogicalQueryById(id, OdysseusRCPPlugIn.getActiveSession()));
+			logicalQueries.add(executor.getLogicalQueryById(id,
+					OdysseusRCPPlugIn.getActiveSession()));
 		}
 
 		return logicalQueries;
+	}
+
+	@Override
+	public void doUpdate() {
+		view.refreshTable();
 	}
 
 }

@@ -121,4 +121,8 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 		// needed to detect punctuations
 	}
 
+	@Override
+	public String toString() {
+		return super.toString()+" "+listener.toString();
+	}
 }

@@ -77,7 +77,7 @@ class SinkConnectionListener extends Thread implements ISinkConnection {
 				Socket socket = null;
 				try {
 					boolean connectionAllowed = false;
-					logger.debug("Waiting for Server to connect on "+port);
+					logger.debug("Waiting for Client to connect on "+port);
 					socket = server.accept();
 					logger.debug("Connection from "
 							+ socket.getRemoteSocketAddress());
@@ -115,5 +115,10 @@ class SinkConnectionListener extends Thread implements ISinkConnection {
 			}
 		} 
 		logger.error("Could not create server for socket sink");
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString()+" p="+port;
 	}
 }

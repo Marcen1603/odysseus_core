@@ -28,6 +28,10 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public interface IClientExecutor {
 
-	public boolean connect(String connectString);	
-	public SocketAddress getSocketConnectionInformation(int queryId, ISession caller);	
+	boolean connect(String connectString);	
+	SocketAddress getSocketConnectionInformation(int queryId, ISession caller);	
+
+	void addUpdateEventListener(IUpdateEventListener listener);
+	void removeUpdateEventListener(IUpdateEventListener listener);
+	
 }
