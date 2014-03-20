@@ -22,6 +22,8 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticJoinTIPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -56,7 +58,13 @@ public class TProbabilisticJoinAORule extends TJoinAORule {
             super.execute(operator, config);
         }
         else {
-            JoinTIPO joinPO = new ProbabilisticJoinTIPO();
+            JoinTIPO joinPO;
+            if (!SchemaUtils.containsProbabilisticAttributes(PredicateUtils.getAttributes(pred))) {
+                joinPO = new ProbabilisticJoinTIPO();
+            }
+            else {
+                joinPO = new JoinTIPO();
+            }
             boolean isCross = false;
             joinPO.setJoinPredicate(pred);
             joinPO.setCardinalities(operator.getCard());
