@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -166,7 +165,6 @@ public class ProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPip
                 }
 
                 expression.bindMetaAttribute(outputVal.getMetadata());
-                expression.bindDistributions(Arrays.asList(outputVal.getDistributions()));
                 expression.bindAdditionalContent(outputVal.getAdditionalContent());
                 expression.bindVariables(positions, meta, values);
 

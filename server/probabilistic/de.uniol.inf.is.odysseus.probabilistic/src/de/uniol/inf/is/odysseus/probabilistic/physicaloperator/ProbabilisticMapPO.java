@@ -214,6 +214,7 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
                 double existence = 1.0;
                 final Object[] values = new Object[this.variables[i].length];
                 final IMetaAttribute[] meta = new IMetaAttribute[this.variables[i].length];
+                final int[] positions = new int[this.variables[i].length];
                 for (int j = 0; j < this.variables[i].length; ++j) {
                     final ProbabilisticTuple<T> obj = this.determineObjectForExpression(restrictedObject, preProcessResult, i, j);
                     if (obj != null) {
@@ -231,13 +232,14 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
                             existence *= 1.0 / distribution.getScale();
                         }
                         meta[j] = obj.getMetadata();
+                        positions[j] = this.variables[i][j].getPos();
                     }
                 }
 
                 try {
                     this.expressions[i].bindMetaAttribute(restrictedObject.getMetadata());
                     this.expressions[i].bindAdditionalContent(restrictedObject.getAdditionalContent());
-                    this.expressions[i].bindVariables(meta, values);
+                    this.expressions[i].bindVariables(positions, meta, values);
                     final Object expr = this.expressions[i].getValue();
                     if (expr == null) {
                         nullValueOccured = true;

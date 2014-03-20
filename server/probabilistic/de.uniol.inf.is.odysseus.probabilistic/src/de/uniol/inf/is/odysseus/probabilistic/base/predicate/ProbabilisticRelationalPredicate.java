@@ -121,7 +121,6 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         final SDFProbabilisticExpression probabilisticExpression = (SDFProbabilisticExpression) this.expression;
 
         probabilisticExpression.bindMetaAttribute(input.getMetadata());
-        probabilisticExpression.bindDistributions(Arrays.asList(input.getDistributions()));
         probabilisticExpression.bindAdditionalContent(input.getAdditionalContent());
         probabilisticExpression.bindVariables(this.attributePositions, meta, values);
 
