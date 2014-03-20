@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Stack;
 
 import org.slf4j.Logger;
@@ -56,43 +57,43 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
     private static final long serialVersionUID = 1222104352250883947L;
     Logger LOG = LoggerFactory.getLogger(ProbabilisticRelationalPredicate.class);
 
-    public ProbabilisticRelationalPredicate(SDFExpression expression) {
+    public ProbabilisticRelationalPredicate(final SDFExpression expression) {
         super(new SDFProbabilisticExpression(expression));
     }
 
-    public ProbabilisticRelationalPredicate(SDFProbabilisticExpression expression) {
+    public ProbabilisticRelationalPredicate(final SDFProbabilisticExpression expression) {
         super(expression);
     }
 
-    public ProbabilisticRelationalPredicate(ProbabilisticRelationalPredicate predicate) {
+    public ProbabilisticRelationalPredicate(final ProbabilisticRelationalPredicate predicate) {
         super(predicate);
     }
 
     /**
      * @param pred
      */
-    public ProbabilisticRelationalPredicate(AbstractRelationalPredicate<ProbabilisticTuple<?>> predicate) {
+    public ProbabilisticRelationalPredicate(final AbstractRelationalPredicate<ProbabilisticTuple<?>> predicate) {
         super(predicate);
     }
 
     @Override
     @SuppressWarnings("rawtypes")
     public List<IPredicate> splitPredicate() {
-        List<IPredicate> result = new LinkedList<IPredicate>();
-        if (isAndPredicate()) {
-            Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
-            expressionStack.push(expression.getMEPExpression());
+        final List<IPredicate> result = new LinkedList<IPredicate>();
+        if (this.isAndPredicate()) {
+            final Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            expressionStack.push(this.expression.getMEPExpression());
 
             while (!expressionStack.isEmpty()) {
-                IExpression<?> curExpression = expressionStack.pop();
-                if (isAndExpression(curExpression)) {
+                final IExpression<?> curExpression = expressionStack.pop();
+                if (this.isAndExpression(curExpression)) {
                     expressionStack.push(curExpression.toFunction().getArgument(0));
                     expressionStack.push(curExpression.toFunction().getArgument(1));
                 }
                 else {
-                    SDFExpression expr = new SDFExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
-                    RelationalPredicate relationalPredicate = new RelationalPredicate(expr);
-                    relationalPredicate.init(expression.getSchema(), false);
+                    final SDFExpression expr = new SDFExpression(curExpression, this.expression.getAttributeResolver(), MEP.getInstance());
+                    final RelationalPredicate relationalPredicate = new RelationalPredicate(expr);
+                    relationalPredicate.init(this.expression.getSchema(), false);
                     result.add(relationalPredicate);
                 }
             }
@@ -104,9 +105,10 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
     }
 
     @Override
-    public boolean evaluate(ProbabilisticTuple<?> input) {
-        Object[] values = new Object[this.attributePositions.length];
-        IMetaAttribute[] meta = new IMetaAttribute[this.attributePositions.length];
+    public boolean evaluate(final ProbabilisticTuple<?> input) {
+        Objects.requireNonNull(input);
+        final Object[] values = new Object[this.attributePositions.length];
+        final IMetaAttribute[] meta = new IMetaAttribute[this.attributePositions.length];
         for (int i = 0; i < values.length; ++i) {
             Object attribute = input.getAttribute(this.attributePositions[i]);
             if (attribute.getClass() == ProbabilisticDouble.class) {
@@ -133,12 +135,13 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         }
     }
 
-    public ProbabilisticTuple<?> probabilisticEvaluate(ProbabilisticTuple<?> input) {
+    public ProbabilisticTuple<?> probabilisticEvaluate(final ProbabilisticTuple<?> input) {
+        Objects.requireNonNull(input);
         @SuppressWarnings("unchecked")
-        ProbabilisticTuple<IProbabilistic> output = (ProbabilisticTuple<IProbabilistic>) input.clone();
+        final ProbabilisticTuple<IProbabilistic> output = (ProbabilisticTuple<IProbabilistic>) input.clone();
 
-        Object[] values = new Object[this.attributePositions.length];
-        IMetaAttribute[] meta = new IMetaAttribute[this.attributePositions.length];
+        final Object[] values = new Object[this.attributePositions.length];
+        final IMetaAttribute[] meta = new IMetaAttribute[this.attributePositions.length];
         for (int i = 0; i < values.length; ++i) {
             Object attribute = input.getAttribute(this.attributePositions[i]);
             if (attribute.getClass() == ProbabilisticDouble.class) {
@@ -156,48 +159,47 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         probabilisticExpression.bindVariables(this.attributePositions, meta, values);
 
         final Object expr = probabilisticExpression.getValue();
-        if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_RESULT)) {
+        if (this.expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_RESULT)) {
             final ProbabilisticBooleanResult result = (ProbabilisticBooleanResult) expr;
-            for (final IMultivariateDistribution distr : result.getDistributions()) {
-                final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) distr;
-                final int index = ((ProbabilisticDouble) input.getAttribute(distribution.getAttribute(0))).getDistribution();
-                output.setDistribution(index, distribution);
+            if (result.getProbability() > 0.0) {
+                for (final IMultivariateDistribution distr : result.getDistributions()) {
+                    final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) distr;
+                    final int index = ((ProbabilisticDouble) input.getAttribute(distribution.getAttribute(0))).getDistribution();
+                    output.setDistribution(index, distribution);
+                }
+                output.getMetadata().setExistence(result.getProbability());
+                return output;
             }
-            output.getMetadata().setExistence(result.getProbability());
-            return output;
         }
         return null;
     }
 
     @Override
-    public boolean evaluate(ProbabilisticTuple<?> left, ProbabilisticTuple<?> right) {
+    public boolean evaluate(final ProbabilisticTuple<?> left, final ProbabilisticTuple<?> right) {
+        Objects.requireNonNull(left);
+        Objects.requireNonNull(right);
         // FIXME 20140319 christian@kuka.cc Restrict tuple before concatenate
         // them
-        int distributionsLength = 0;
-        int attributesLength = 0;
-        if (left != null) {
-            distributionsLength = left.getDistributions().length;
-            attributesLength = left.getAttributes().length;
-        }
-        final MultivariateMixtureDistribution[] newDistributions = this.mergeDistributions(left, right, attributesLength);
-        final Object[] newAttributes = this.mergeAttributes(left, right, distributionsLength);
 
-        Object[] values = new Object[this.attributePositions.length];
-        IMetaAttribute[] meta = new IMetaAttribute[values.length];
-        int[] positions = new int[values.length];
+        final MultivariateMixtureDistribution[] newDistributions = this.mergeDistributions(left, right, left.getAttributes().length);
+        final Object[] newAttributes = this.mergeAttributes(left, right, left.getDistributions().length);
+
+        final Object[] values = new Object[this.attributePositions.length];
+        final IMetaAttribute[] meta = new IMetaAttribute[values.length];
+        final int[] positions = new int[values.length];
         for (int i = 0; i < values.length; ++i) {
-            int pos = fromRightChannel[i] ? left.getAttributes().length + this.attributePositions[i] : this.attributePositions[i];
+            final int pos = this.fromRightChannel[i] ? left.getAttributes().length + this.attributePositions[i] : this.attributePositions[i];
             Object attribute = newAttributes[pos];
             if (attribute.getClass() == ProbabilisticDouble.class) {
                 final int index = ((ProbabilisticDouble) attribute).getDistribution();
                 attribute = newDistributions[index];
             }
             values[i] = attribute;
-            meta[i] = fromRightChannel[i] ? left.getMetadata() : right.getMetadata();
+            meta[i] = this.fromRightChannel[i] ? left.getMetadata() : right.getMetadata();
             positions[i] = pos;
         }
 
-        Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
+        final Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
         additionalContent.putAll(left.getAdditionalContent());
         additionalContent.putAll(right.getAdditionalContent());
 
@@ -215,33 +217,30 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         }
     }
 
-    public ProbabilisticTuple<?> probabilisticEvaluate(ProbabilisticTuple<?> left, ProbabilisticTuple<?> right, IProbabilisticTimeInterval metadata) {
+    public ProbabilisticTuple<?> probabilisticEvaluate(final ProbabilisticTuple<?> left, final ProbabilisticTuple<?> right, final IProbabilisticTimeInterval metadata) {
+        Objects.requireNonNull(left);
+        Objects.requireNonNull(right);
         // FIXME 20140319 christian@kuka.cc Restrict tuple before concatenate
         // them
-        int distributionsLength = 0;
-        int attributesLength = 0;
-        if (left != null) {
-            distributionsLength = left.getDistributions().length;
-            attributesLength = left.getAttributes().length;
-        }
-        final MultivariateMixtureDistribution[] newDistributions = this.mergeDistributions(left, right, attributesLength);
-        final Object[] newAttributes = this.mergeAttributes(left, right, distributionsLength);
 
-        Object[] values = new Object[this.attributePositions.length];
-        IMetaAttribute[] meta = new IMetaAttribute[values.length];
-        int[] positions = new int[values.length];
+        final MultivariateMixtureDistribution[] newDistributions = this.mergeDistributions(left, right, left.getAttributes().length);
+        final Object[] newAttributes = this.mergeAttributes(left, right, left.getDistributions().length);
+
+        final Object[] values = new Object[this.attributePositions.length];
+        final IMetaAttribute[] meta = new IMetaAttribute[values.length];
+        final int[] positions = new int[values.length];
         for (int i = 0; i < values.length; ++i) {
-            int pos = fromRightChannel[i] ? left.getAttributes().length + this.attributePositions[i] : this.attributePositions[i];
+            final int pos = this.fromRightChannel[i] ? left.getAttributes().length + this.attributePositions[i] : this.attributePositions[i];
             Object attribute = newAttributes[pos];
             if (attribute.getClass() == ProbabilisticDouble.class) {
                 final int index = ((ProbabilisticDouble) attribute).getDistribution();
                 attribute = newDistributions[index];
             }
             values[i] = attribute;
-            meta[i] = fromRightChannel[i] ? left.getMetadata() : right.getMetadata();
+            meta[i] = this.fromRightChannel[i] ? left.getMetadata() : right.getMetadata();
             positions[i] = pos;
         }
-        Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
+        final Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
         additionalContent.putAll(left.getAdditionalContent());
         additionalContent.putAll(right.getAdditionalContent());
 
@@ -252,30 +251,32 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         probabilisticExpression.bindVariables(positions, meta, values);
 
         final Object expr = probabilisticExpression.getValue();
-        if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_RESULT)) {
+        if (this.expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_RESULT)) {
             final ProbabilisticBooleanResult result = (ProbabilisticBooleanResult) expr;
-            for (final IMultivariateDistribution distr : result.getDistributions()) {
-                final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) distr;
-                final int index = ((ProbabilisticDouble) newAttributes[distribution.getAttribute(0)]).getDistribution();
-                newDistributions[index] = distribution;
+            if (result.getProbability() > 0.0) {
+                for (final IMultivariateDistribution distr : result.getDistributions()) {
+                    final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) distr;
+                    final int index = ((ProbabilisticDouble) newAttributes[distribution.getAttribute(0)]).getDistribution();
+                    newDistributions[index] = distribution;
+                }
+                final ProbabilisticTuple<IProbabilistic> outputVal = new ProbabilisticTuple<>(newAttributes, newDistributions, true);
+                outputVal.setMetadata(metadata.clone());
+                outputVal.getMetadata().setExistence(outputVal.getMetadata().getExistence() * result.getProbability());
+                return outputVal;
             }
-            ProbabilisticTuple<IProbabilistic> outputVal = new ProbabilisticTuple<>(newAttributes, newDistributions, true);
-            outputVal.setMetadata(metadata.clone());
-            outputVal.getMetadata().setExistence(outputVal.getMetadata().getExistence() * result.getProbability());
-            return outputVal;
         }
         return null;
     }
 
-    public boolean evaluate(ProbabilisticTuple<?> input, KeyValueObject<?> additional) {
-        Object[] values = new Object[neededAttributes.size()];
+    public boolean evaluate(final ProbabilisticTuple<?> input, final KeyValueObject<?> additional) {
+        final Object[] values = new Object[this.neededAttributes.size()];
 
-        for (int i = 0; i < neededAttributes.size(); ++i) {
-            if (!fromRightChannel[i]) {
+        for (int i = 0; i < this.neededAttributes.size(); ++i) {
+            if (!this.fromRightChannel[i]) {
                 values[i] = input.getAttribute(this.attributePositions[i]);
             }
             else {
-                values[i] = additional.getAttribute(neededAttributes.get(i).getURI());
+                values[i] = additional.getAttribute(this.neededAttributes.get(i).getURI());
             }
         }
         this.expression.bindMetaAttribute(input.getMetadata());
@@ -290,7 +291,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
     }
 
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         if (!(other instanceof ProbabilisticRelationalPredicate)) {
             return false;
         }
@@ -339,7 +340,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         return newDistributions;
     }
 
-    private Object[] mergeAttributes(ProbabilisticTuple<?> left, ProbabilisticTuple<?> right, int offset) {
+    private Object[] mergeAttributes(final ProbabilisticTuple<?> left, final ProbabilisticTuple<?> right, final int offset) {
         int length = 0;
         int start = 0;
         if (left.getAttributes() != null) {
@@ -365,16 +366,16 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         return newAttributes;
     }
 
-    public static void main(String[] args) {
-        SDFAttribute a = new SDFAttribute("", "p_out", SDFDatatype.DOUBLE, null, null, null);
-        SDFSchema schema = new SDFSchema("", Tuple.class, a);
-        RelationalPredicate pred = new RelationalPredicate(new SDFExpression("p_out <=0 || isNaN(p_out)", MEP.getInstance()));
+    public static void main(final String[] args) {
+        final SDFAttribute a = new SDFAttribute("", "p_out", SDFDatatype.DOUBLE, null, null, null);
+        final SDFSchema schema = new SDFSchema("", Tuple.class, a);
+        final RelationalPredicate pred = new RelationalPredicate(new SDFExpression("p_out <=0 || isNaN(p_out)", MEP.getInstance()));
 
         System.out.println(pred.toString());
         pred.init(schema, null, false);
-        Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
+        final Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
         tuple.setAttribute(0, 8);
-        KeyValueObject<IMetaAttribute> additional = new KeyValueObject<IMetaAttribute>();
+        final KeyValueObject<IMetaAttribute> additional = new KeyValueObject<IMetaAttribute>();
         additional.setAttribute("b", 5);
         System.out.println(pred.evaluate(tuple, additional));
     }
