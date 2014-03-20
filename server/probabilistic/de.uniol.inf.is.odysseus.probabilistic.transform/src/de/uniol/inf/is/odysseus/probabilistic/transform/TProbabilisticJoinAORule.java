@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.transform.join.TJoinAORu
  * 
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class TProbabilisiticJoinAORule extends TJoinAORule {
+public class TProbabilisticJoinAORule extends TJoinAORule {
     /**
      * 
      * {@inheritDoc}

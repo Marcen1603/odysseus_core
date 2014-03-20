@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.relational.transform.TMapAORule;
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class TProbabilisiticMapAORule extends TMapAORule {
+public class TProbabilisticMapAORule extends TMapAORule {
     /**
      * 
      * {@inheritDoc}
