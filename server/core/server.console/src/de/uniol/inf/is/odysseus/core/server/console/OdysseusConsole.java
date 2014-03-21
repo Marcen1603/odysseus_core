@@ -1309,12 +1309,12 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		FeatureUpdateUtility.restart(this.currentUser);		
 	}
 	
-	@Help(parameter = "", description = "lists current installed bundles")
-	public void _installedBundles(CommandInterpreter ci) {
-		List<IInstallableUnit> units = FeatureUpdateUtility.getInstallableUnits(this.currentUser);
-		ci.println("Following installable units are installed:");
+	@Help(parameter = "", description = "lists features that can be installed")
+	public void _installableFeatures(CommandInterpreter ci) {
+		List<IInstallableUnit> units = FeatureUpdateUtility.getInstallableFeatures(this.currentUser);
+		ci.println("Following installable were found in the update site:");
 		for(IInstallableUnit unit : units){			
-			ci.println(" - "+unit);
+			ci.println(" - "+unit.getId());
 		}
 	}
 	
@@ -1323,7 +1323,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		List<IInstallableUnit> units = FeatureUpdateUtility.getInstalledFeatures(this.currentUser);
 		ci.println("Following features are installed:");
 		for(IInstallableUnit unit : units){			
-			ci.println(" - "+unit);
+			ci.println(" - "+unit.getId());
 		}
 	}
 	
