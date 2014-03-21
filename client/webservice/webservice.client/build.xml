@@ -36,11 +36,21 @@ import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 				</replacevalue>	
 	    </replace>
+
+		
 		<replace  dir="${source-dir}">
 			<replacetoken>public class</replacetoken>
 			<replacevalue>@SuppressWarnings(value = { "all" })
-public class</replacevalue>
+public class</replacevalue>			
 		</replace>
+
+		<replace dir="${source-dir}" >
+			<replacetoken>@SuppressWarnings(value = { "all" })
+@SuppressWarnings(value = { "all" })</replacetoken>
+			<replacevalue>@SuppressWarnings(value = { "all" })</replacevalue>
+		</replace>
+
+		
 	</target>
 	
 	<target name="clean">
