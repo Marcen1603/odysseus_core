@@ -54,6 +54,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
@@ -405,6 +406,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 	 */
 	public LogicalQuery createLogicalQueryFromInfo(LogicalQueryInfo info, ISession caller) {
 		LogicalQuery query = new LogicalQuery(info.getId(), info.getParserID(), null, info.getPriority());
+		query.setParameters(info.getParameters());
 		query.setContainsCycles(info.isContainsCycles());
 		query.setQueryText(info.getQueryText());
 		query.setUser(caller);

@@ -91,7 +91,7 @@ public class LogicalQuery implements ILogicalQuery {
 	private int priority = 0;
 
 	// Parameter as List because of web service
-	final private List<Pair<String, Object>> parameters = new ArrayList<>();
+	final private ArrayList<Pair<String, Object>> parameters = new ArrayList<>();
 	final transient Map<String, Object> transParams = new HashMap<>();
 	
 	private String notice;
@@ -447,5 +447,11 @@ public class LogicalQuery implements ILogicalQuery {
 	@Override
 	public void setNotice(String notice) {
 		this.notice = notice;
+	}
+
+	public void setParameters(@SuppressWarnings("rawtypes") List<Pair> parameters) {
+		for (Pair<String,Object> p:parameters){
+			setParameter(p.getE1(), p.getE2());
+		}
 	}
 }
