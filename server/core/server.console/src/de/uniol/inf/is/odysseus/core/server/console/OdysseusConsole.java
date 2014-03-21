@@ -1304,6 +1304,11 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		FeatureUpdateUtility.checkForUpdates(this.currentUser);
 	}
 	
+	@Help(parameter = "", description = "restarts odysseus")
+	public void _restart(CommandInterpreter ci) {
+		FeatureUpdateUtility.restart(this.currentUser);		
+	}
+	
 	@Help(parameter = "", description = "lists current installed bundles")
 	public void _installedBundles(CommandInterpreter ci) {
 		List<IInstallableUnit> units = FeatureUpdateUtility.getInstallableUnits(this.currentUser);
@@ -1474,6 +1479,8 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	public void rewriteBound() {
 		System.out.println("Rewrite bound");
 	}
+	
+	
 
 	@Override
 	public void transformationBound() {

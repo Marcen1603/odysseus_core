@@ -1,11 +1,5 @@
 
 package de.uniol.inf.is.odysseus.webservice.client;
-import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
-import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
-import de.uniol.inf.is.odysseus.core.collection.Pair;
-				
-
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 

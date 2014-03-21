@@ -13,6 +13,9 @@ public class Activator implements BundleActivator {
 		return context;
 	}
 
+
+//	private static Object executor;
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -58,4 +61,19 @@ public class Activator implements BundleActivator {
 		t.start();
 	}
 
+	
+//	public void bindExecutor(Object ex){
+//		synchronized (Activator.class) {
+//			executor = ex;			
+//			Activator.class.notifyAll();
+//		}
+//
+//	}
+//	public static void waitForExecutor() throws InterruptedException {
+//		synchronized (Activator.class) {
+//			while (executor == null) {
+//				Activator.class.wait(1000);
+//			}
+//		}
+//	}
 }

@@ -4,7 +4,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -29,6 +32,10 @@ import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventAdmin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UpdatePermission;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -36,6 +43,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public class FeatureUpdateUtility {
+
+	private static Logger LOGGER = LoggerFactory.getLogger(FeatureUpdateUtility.class);
 
 	private static final String REPOSITORY_LOC = "http://odysseus.informatik.uni-oldenburg.de/update";
 
@@ -304,19 +313,23 @@ public class FeatureUpdateUtility {
 		return agent;
 	}
 
-	private static void restart(ISession caller) {
-		System.out.println("System must be restarted manually so that changes may take effekt!");
-		// System.out.println("Forcing a refresh of all bundles...");
-		// Bundle bundle = Activator.getContext().getBundle(0);
-		// try {
-		// if(bundle!=null){
-		// bundle.update();
-		// }else{
-		// System.out.println("restart failed, because there osgi bundle was not found!");
-		// }
-		// } catch (BundleException e) {
-		// e.printStackTrace();
-		// }
+	public static void restart(ISession caller) {		
+		BundleContext context = Activator.getContext();
+		ServiceReference<?> eventAdminServiceReference = context.getServiceReference(EventAdmin.class.getName());
+
+		// EventAdmin Service lookup
+		final EventAdmin eventAdmin = (EventAdmin) context.getService(eventAdminServiceReference);
+
+		Executors.newSingleThreadExecutor().execute(new Runnable() {
+
+			@Override
+			public void run() {
+				LOGGER.debug("Sending restart event");
+				Map<String, String> hashMap = new HashMap<>();
+				hashMap.put("TYPE", "RESTART");
+				eventAdmin.sendEvent(new Event("de/uniol/inf/odysseus/application/" + System.currentTimeMillis(), hashMap));								
+			}
+		});
 	}
 
 	private static IProgressMonitor getDefaultMonitor() {
@@ -324,21 +337,24 @@ public class FeatureUpdateUtility {
 
 			private boolean canceled = false;
 			private String name;
-			private String subtask;
-			private int worked = 0;
+			private int totalWork = 100;
 
 			@Override
 			public void worked(int work) {
-				this.worked = work;
+				int percent = (work * 100) / totalWork;
+				LOGGER.info(this.name + ": " + percent + "% completed");
 			}
 
 			@Override
-			public void subTask(String name) {
-				this.subtask = name;
+			public void subTask(String subname) {
+				LOGGER.info(this.name + ": " + subname + "...");
 			}
 
 			@Override
 			public void setTaskName(String name) {
+				if (name == null) {
+					name = "";
+				}
 				this.name = name;
 			}
 
@@ -360,12 +376,17 @@ public class FeatureUpdateUtility {
 
 			@Override
 			public void done() {
-				System.out.println("Task " + this.name + " done");
+				LOGGER.info(this.name + ": 100% completed");
+				LOGGER.info("Task " + this.name + " done");
 			}
 
 			@Override
 			public void beginTask(String name, int totalWork) {
-				System.out.println("Starting task: \"" + name + "\"...");
+				if (name == null) {
+					name = "";
+				}
+				LOGGER.info("Starting task " + name + "...");
+				this.totalWork = totalWork;
 
 			}
 		};

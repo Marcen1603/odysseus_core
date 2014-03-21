@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.product.studio.starter;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
@@ -29,6 +31,10 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
 import org.eclipse.ui.internal.misc.Policy;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +64,7 @@ public class OdysseusStudioApplication implements IApplication {
 				return IApplication.EXIT_OK;
 			}
 
+			registerEventHandler(context.getBrandingBundle().getBundleContext());
 			return PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor()) 
 					== PlatformUI.RETURN_RESTART ? IApplication.EXIT_RESTART : IApplication.EXIT_OK; 
 		} catch (Throwable t) {
@@ -211,4 +218,36 @@ public class OdysseusStudioApplication implements IApplication {
 			return false;
 		}
 	}	
+	
+	public void registerEventHandler(BundleContext context) {
+
+		String[] topics = new String[] { EventConstants.EVENT_TOPIC, "de/uniol/inf/odysseus/application/*" };
+		Dictionary<String, Object> ht = new Hashtable<String, Object>();
+		ht.put(EventConstants.EVENT_TOPIC, topics);
+
+		context.registerService(EventHandler.class.getName(), new EventHandler() {
+			@Override
+			public void handleEvent(Event event) {
+				LOG.debug("got odysseus application message: " + event);				
+				if (event.getProperty("TYPE").equals("RESTART")) {	
+					Display.getDefault().syncExec(new Runnable() {						
+						@Override
+						public void run() {
+							PlatformUI.getWorkbench().restart();
+						}
+					});
+
+				}
+				if (event.getProperty("TYPE").equals("EXIT")) {					
+					Display.getDefault().syncExec(new Runnable() {						
+						@Override
+						public void run() {
+							PlatformUI.getWorkbench().close();
+						}
+					});
+				}
+			}
+		}, ht);
+
+	}
 }

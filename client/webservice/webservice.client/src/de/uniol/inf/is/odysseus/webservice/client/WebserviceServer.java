@@ -1,11 +1,5 @@
 
 package de.uniol.inf.is.odysseus.webservice.client;
-import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
-import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
-import de.uniol.inf.is.odysseus.core.collection.Pair;
-				
-
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
@@ -15,6 +9,8 @@ import javax.xml.ws.Action;
 import javax.xml.ws.FaultAction;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
+
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 
 
 /**

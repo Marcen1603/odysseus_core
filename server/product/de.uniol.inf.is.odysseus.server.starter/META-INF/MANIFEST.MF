@@ -4,6 +4,10 @@ Bundle-Name: Odysseus Server Starter
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.server.starter;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.product.server.starter.Activator
-Require-Bundle: org.eclipse.core.runtime
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.equinox.event;bundle-version="1.2.100",
+ org.eclipse.osgi.services,
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: University of Oldenburg
+Service-Component: OSGI-INF/executor.xml
