@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
+import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
@@ -159,12 +160,32 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         if (this.expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_RESULT)) {
             final ProbabilisticBooleanResult result = (ProbabilisticBooleanResult) expr;
             if (result.getProbability() > 0.0) {
+                double probability = result.getProbability();
                 for (final IMultivariateDistribution distr : result.getDistributions()) {
                     final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) distr;
                     final int index = ((ProbabilisticDouble) input.getAttribute(distribution.getAttribute(0))).getDistribution();
-                    output.setDistribution(index, distribution);
+
+                    MultivariateMixtureDistribution outputDistribution = output.getDistribution(index);
+                    // Adjust the support in case the distribution was
+                    // modified
+                    for (int d = 0; d < distribution.getDimension(); d++) {
+                        // New support is the resulting support of the
+                        // filtering subtract by the difference of the
+                        // new and the old mean
+                        Interval support = distribution.getSupport(d).subtract(distribution.getMean()[d] - input.getDistribution(index).getMean()[d]);
+                        if (outputDistribution.getSupport(d).intersects(support)) {
+                            Interval intersection = outputDistribution.getSupport(d).intersection(support);
+                            outputDistribution.setSupport(d, intersection);
+                        }
+                        else {
+                            probability = 0.0;
+                            break;
+                        }
+                    }
+                    outputDistribution.setScale(distribution.getScale());
+
                 }
-                output.getMetadata().setExistence(result.getProbability());
+                output.getMetadata().setExistence(output.getMetadata().getExistence() * probability);
                 return output;
             }
         }
@@ -249,14 +270,42 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         if (this.expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_RESULT)) {
             final ProbabilisticBooleanResult result = (ProbabilisticBooleanResult) expr;
             if (result.getProbability() > 0.0) {
+                double probability = 1.0;
                 for (final IMultivariateDistribution distr : result.getDistributions()) {
                     final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) distr;
                     final int index = ((ProbabilisticDouble) newAttributes[distribution.getAttribute(0)]).getDistribution();
+
+                    MultivariateMixtureDistribution outputDistribution = newDistributions[index];
+                    // Adjust the support in case the distribution was
+                    // modified
+                    MultivariateMixtureDistribution inputDistibution;
+                    if (distribution.getAttribute(0) > left.size()) {
+                        inputDistibution = right.getDistribution(((ProbabilisticDouble) (right.getAttribute(distribution.getAttribute(0) - right.size()))).getDistribution());
+                    }
+                    else {
+                        inputDistibution = left.getDistribution(((ProbabilisticDouble) (left.getAttribute(distribution.getAttribute(0)))).getDistribution());
+                    }
+                    for (int d = 0; d < distribution.getDimension(); d++) {
+                        // New support is the resulting support of the
+                        // filtering subtract by the difference of the
+                        // new and the old mean
+
+                        Interval support = distribution.getSupport(d).subtract(distribution.getMean()[d] - inputDistibution.getMean()[d]);
+                        if (outputDistribution.getSupport(d).intersects(support)) {
+                            Interval intersection = outputDistribution.getSupport(d).intersection(support);
+                            outputDistribution.setSupport(d, intersection);
+                        }
+                        else {
+                            probability = 0.0;
+                            break;
+                        }
+                    }
+
                     newDistributions[index] = distribution;
                 }
                 final ProbabilisticTuple<IProbabilistic> outputVal = new ProbabilisticTuple<>(newAttributes, newDistributions, true);
                 outputVal.setMetadata(metadata.clone());
-                outputVal.getMetadata().setExistence(outputVal.getMetadata().getExistence() * result.getProbability());
+                outputVal.getMetadata().setExistence(outputVal.getMetadata().getExistence() * probability);
                 return outputVal;
             }
         }

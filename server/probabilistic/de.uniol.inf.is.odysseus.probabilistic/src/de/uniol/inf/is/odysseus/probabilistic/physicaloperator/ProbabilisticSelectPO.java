@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGeneratio
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
+import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.VarHelper;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
@@ -172,11 +173,28 @@ public class ProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPip
                 if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_RESULT)) {
                     final ProbabilisticBooleanResult result = (ProbabilisticBooleanResult) expr;
                     jointProbability *= result.getProbability();
-                    for (final IMultivariateDistribution distr : result.getDistributions()) {
-                        final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) distr;
-                        final int index = ((ProbabilisticDouble) outputVal.getAttribute(distribution.getAttribute(0))).getDistribution();
-                        outputVal.setDistribution(index, distribution);
-
+                    if (jointProbability != 0.0) {
+                        for (final IMultivariateDistribution distr : result.getDistributions()) {
+                            final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) distr;
+                            final int index = ((ProbabilisticDouble) object.getAttribute(distribution.getAttribute(0))).getDistribution();
+                            MultivariateMixtureDistribution outputDistribution = outputVal.getDistribution(index);
+                            // Adjust the support in case the distribution was
+                            // modified
+                            for (int d = 0; d < distribution.getDimension(); d++) {
+                                // New support is the resulting support of the
+                                // filtering subtract by the difference of the
+                                // new and the old mean
+                                Interval support = distribution.getSupport(d).subtract(distribution.getMean()[d] - object.getDistribution(index).getMean()[d]);
+                                if (outputDistribution.getSupport(d).intersects(support)) {
+                                    Interval intersection = outputDistribution.getSupport(d).intersection(support);
+                                    outputDistribution.setSupport(d, intersection);
+                                }
+                                else {
+                                    jointProbability = 0.0;
+                                }
+                            }
+                            outputDistribution.setScale(distribution.getScale());
+                        }
                     }
                     ((IProbabilistic) outputVal.getMetadata()).setExistence(jointProbability);
                 }
@@ -185,6 +203,9 @@ public class ProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPip
                         jointProbability = 0.0;
                         ((IProbabilistic) outputVal.getMetadata()).setExistence(jointProbability);
                     }
+                }
+                if (jointProbability == 0.0) {
+                    break;
                 }
             }
         }

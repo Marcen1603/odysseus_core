@@ -88,6 +88,15 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
     }
 
     /**
+     * Checks whether this interval is NaN.
+     * 
+     * @return <code>true</code> if this interval is NaN
+     */
+    public final boolean isNaN() {
+        return ((Double.isNaN(this.inf)) || (Double.isNaN(this.sup)));
+    }
+
+    /**
      * Gets the length of this interval.
      * 
      * @return The length of the interval
@@ -254,7 +263,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      */
     public final Interval intersection(final Interval other) {
         if ((this.isEmpty()) || (other.isEmpty()) || (!(other.inf <= this.sup)) || (!(this.inf <= other.sup))) {
-            return new Interval(Double.MAX_VALUE, Double.MIN_VALUE);
+            return new Interval(Double.NaN, Double.NaN);
         }
         return new Interval(Math.max(this.inf, other.inf), Math.min(this.sup, other.sup));
     }
@@ -268,7 +277,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      */
     public final Interval[] difference(final Interval other) {
         if (!this.intersects(other)) {
-            return new Interval[] { new Interval(Double.MAX_VALUE, Double.MIN_VALUE) };
+            return new Interval[] { new Interval(Double.NaN, Double.NaN) };
         }
         if ((other.inf >= this.inf) && (other.sup <= this.sup)) {
             return new Interval[] { new Interval(this.inf, other.inf), new Interval(other.sup, this.sup) };
