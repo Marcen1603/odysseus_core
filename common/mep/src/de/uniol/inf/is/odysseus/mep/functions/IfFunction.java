@@ -15,15 +15,12 @@
   */
 package de.uniol.inf.is.odysseus.mep.functions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 public class IfFunction extends AbstractFunction<Object> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(IfFunction.class);
+//	private static final Logger LOG = LoggerFactory.getLogger(IfFunction.class);
 	private static final long serialVersionUID = 7330905069703118113L;
 
 	public static SDFDatatype[][] accTypes = new SDFDatatype[][]{

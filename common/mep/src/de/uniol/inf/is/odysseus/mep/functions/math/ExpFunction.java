@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.mep.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
 /**
