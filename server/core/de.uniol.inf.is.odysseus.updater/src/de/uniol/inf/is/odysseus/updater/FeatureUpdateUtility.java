@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.updater;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -127,7 +128,10 @@ public class FeatureUpdateUtility {
 				IMetadataRepository repo = metadataManager.loadRepository(uri, getDefaultMonitor());
 				IQueryResult<IInstallableUnit> units = repo.query(QueryUtil.createIUGroupQuery(), getDefaultMonitor());
 				List<IInstallableUnit> toinstall = new ArrayList<>();
-				id = id + ".feature.group";
+				if(!id.endsWith("feature.group")){
+					id = id + ".feature.group";
+				}
+				
 				for (IInstallableUnit unit : units.toSet()) {
 					// use starts with to ignore version and qualifier
 					if (unit.getId().startsWith(id)) {
@@ -189,23 +193,53 @@ public class FeatureUpdateUtility {
 		}
 	}
 
-	public static List<IInstallableUnit> getInstallableUnits(ISession caller) {
+	public static List<IInstallableUnit> getInstallableFeatures(ISession caller) {
 		if (UserManagementProvider.getUsermanagement().hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
 			BundleContext context = Activator.getContext();
 			IProvisioningAgent agent = getAgent(context);
-			IProfileRegistry regProfile = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
-			IProfile profileSelf = regProfile.getProfile(IProfileRegistry.SELF);
-
-			IQuery<IInstallableUnit> query = QueryUtil.createIUAnyQuery();
-			IQueryResult<IInstallableUnit> allIUs = profileSelf.query(query, getDefaultMonitor());
-
-			List<IInstallableUnit> units = new ArrayList<>();
-			units.addAll(allIUs.toUnmodifiableSet());
-			Collections.sort(units);
-			return units;
+			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+			try {
+				URI uri = null;
+				uri = new URI(REPOSITORY_LOC);
+				IMetadataRepository repo = metadataManager.loadRepository(uri, getDefaultMonitor());
+				IQueryResult<IInstallableUnit> units = repo.query(QueryUtil.createIUGroupQuery(), getDefaultMonitor());
+				List<IInstallableUnit> installable = new ArrayList<>();
+				String id = ".feature.group";
+				List<IInstallableUnit> alreadyInstalled = getInstalledFeatures(caller);
+				for (IInstallableUnit unit : units.toSet()) {
+					// use starts with to ignore version and qualifier
+					String unitid = unit.getId().toLowerCase();
+					
+					if (unitid.contains(id) && unitid.startsWith("de.uniol.inf.is") && !unitid.contains("source.feature")) {
+						if(!containsWithSameID(alreadyInstalled, unit)){
+							installable.add(unit);
+						}
+					}
+				}
+				Collections.sort(installable);
+				return installable;
+			} catch (final URISyntaxException e) {
+				System.out.println("URI invalid: " + e.getMessage());
+				return new ArrayList<>();
+			} catch (ProvisionException e) {
+				e.printStackTrace();
+			} catch (OperationCanceledException e) {
+				e.printStackTrace();
+			}
+			return null;
 		} else {
 			throw new PermissionException("This user may not list installable features!");
+		}		
+	}
+	
+	
+	private static boolean containsWithSameID(Collection<IInstallableUnit> list, IInstallableUnit unit){
+		for(IInstallableUnit inList : list){
+			if(inList.getId().equalsIgnoreCase(unit.getId())){
+				return true;
+			}
 		}
+		return false;
 	}
 
 	public static IStatus checkForUpdates(final ISession caller) throws OperationCanceledException {
@@ -336,13 +370,17 @@ public class FeatureUpdateUtility {
 		return new IProgressMonitor() {
 
 			private boolean canceled = false;
-			private String name;
+			private String name = "";
 			private int totalWork = 100;
 
 			@Override
 			public void worked(int work) {
 				int percent = (work * 100) / totalWork;
-				LOGGER.info(this.name + ": " + percent + "% completed");
+				if(this.name.isEmpty()){
+					LOGGER.info(percent + "% completed");
+				}else{
+					LOGGER.info(this.name + ": " + percent + "% completed");
+				}
 			}
 
 			@Override
@@ -352,7 +390,8 @@ public class FeatureUpdateUtility {
 
 			@Override
 			public void setTaskName(String name) {
-				if (name == null) {
+				name = name.trim();
+				if (name == null || name.equalsIgnoreCase("null")) {
 					name = "";
 				}
 				this.name = name;
@@ -376,7 +415,11 @@ public class FeatureUpdateUtility {
 
 			@Override
 			public void done() {
-				LOGGER.info(this.name + ": 100% completed");
+				if(this.name.isEmpty()){
+					LOGGER.info("100% completed");
+				}else{
+					LOGGER.info(this.name + ": 100% completed");
+				}
 				LOGGER.info("Task " + this.name + " done");
 			}
 
@@ -385,8 +428,11 @@ public class FeatureUpdateUtility {
 				if (name == null) {
 					name = "";
 				}
+				this.name = name;
 				LOGGER.info("Starting task " + name + "...");
-				this.totalWork = totalWork;
+				if(totalWork>0){
+					this.totalWork = totalWork;
+				}
 
 			}
 		};
