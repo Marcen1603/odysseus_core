@@ -26,8 +26,8 @@ public class OdysseusServerApplication implements IApplication {
 	public Object start(IApplicationContext context) throws Exception {
 
 		synchronized (OdysseusServerApplication.class) {
-//			Activator.waitForExecutor();			
-			registerEventHandler(context.getBrandingBundle().getBundleContext());
+//			Activator.waitForExecutor();					
+			registerEventHandler(Activator.getContext());
 			logger.debug("Odysseus application is fully started!");
 			while (stopRequested == StopRequest.NO) {
 				OdysseusServerApplication.class.wait(5000);
