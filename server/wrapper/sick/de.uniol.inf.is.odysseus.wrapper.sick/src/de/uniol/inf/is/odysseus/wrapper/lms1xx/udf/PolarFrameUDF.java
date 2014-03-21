@@ -114,13 +114,17 @@ public class PolarFrameUDF implements IUserDefinedFunction<Tuple<? extends IMeta
 
         public void process_next(final double[][] coordinate) {
             int nPoints = coordinate.length;
-            int[] xPoints = new int[coordinate.length];
-            int[] yPoints = new int[coordinate.length];
+            int[] xPoints = new int[coordinate.length + 2];
+            int[] yPoints = new int[coordinate.length + 2];
+            xPoints[0] = 500;
+            xPoints[coordinate.length + 1] = 500;
+            yPoints[0] = 500;
+            yPoints[coordinate.length + 1] = 500;
             for (int i = 0; i < coordinate.length; i++) {
                 double x = coordinate[i][0] * Math.cos(coordinate[i][1]);
                 double y = coordinate[i][0] * Math.sin(coordinate[i][1]);
-                xPoints[i] = 500 + (int) (x / this.map.getZoom());
-                yPoints[i] = 500 - (int) (y / this.map.getZoom());
+                xPoints[i + 1] = 500 + (int) (x / this.map.getZoom());
+                yPoints[i + 1] = 500 - (int) (y / this.map.getZoom());
             }
             this.map.draw(xPoints, yPoints, nPoints);
         }
@@ -173,7 +177,7 @@ public class PolarFrameUDF implements IUserDefinedFunction<Tuple<? extends IMeta
 
             graphics.fillPolygon(x, y, i);
             graphics.setColor(Color.RED);
-            for (int i = 0; i < this.i; i++) {
+            for (int i = 1; i < this.i - 1; i++) {
                 graphics.drawRect(x[i], y[i], 1, 1);
             }
             graphics.setColor(Color.WHITE);
