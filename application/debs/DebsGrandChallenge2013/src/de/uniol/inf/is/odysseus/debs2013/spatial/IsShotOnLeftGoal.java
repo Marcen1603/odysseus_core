@@ -16,8 +16,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.debs2013.spatial;
 
-import org.eclipse.core.runtime.ISafeRunnable;
-
 import com.vividsolutions.jts.geom.Coordinate;
 //import com.vividsolutions.jts.geom.GeometryFactory;
 
