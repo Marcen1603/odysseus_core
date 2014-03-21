@@ -10,4 +10,3 @@ Require-Bundle: org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: University of Oldenburg
-Service-Component: OSGI-INF/executor.xml
