@@ -51,13 +51,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.server.views.OperatorDragListener;
 import de.uniol.inf.is.odysseus.rcp.server.views.OperatorViewContentProvider;
@@ -67,7 +61,7 @@ import de.uniol.inf.is.odysseus.rcp.server.views.OperatorViewLabelProvider;
  * 
  * @author Dennis Geesen Created at: 24.08.2011
  */
-public class SinkView extends ViewPart implements IDataDictionaryListener, IUserManagementListener, ISessionListener {
+public class SinkView extends ViewPart implements IUpdateEventListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SinkView.class);
 	private TreeViewer viewer;
@@ -80,10 +74,9 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 	@Override
 	public void dispose() {
 		IExecutor e = OdysseusRCPPlugIn.getExecutor();
-		if (e instanceof IServerExecutor) {
-			((IServerExecutor) e).getDataDictionary(OdysseusRCPPlugIn.getActiveSession()).removeListener(this);
-			UserManagementProvider.getSessionmanagement().subscribe(this);
-		}
+		e.removeUpdateEventListener(this, IUpdateEventListener.DATADICTIONARY, OdysseusRCPPlugIn.getActiveSession());
+		e.removeUpdateEventListener(this, IUpdateEventListener.SESSION, null);
+		
 		super.dispose();
 	}
 
@@ -134,24 +127,11 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 	}
 
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+	public void eventOccured() {
 		refresh();
 	}
-
-	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		refresh();
-	}
-
-	@Override
-	public void usersChangedEvent() {
-		refresh();
-	}
-
-	@Override
-	public void roleChangedEvent() {
-		refresh();
-	}
+	
+	
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -170,9 +150,8 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 		
 		refresh();
 		IExecutor e = OdysseusRCPPlugIn.getExecutor();
-		if (e instanceof IServerExecutor) {
-			((IServerExecutor) e).getDataDictionary(OdysseusRCPPlugIn.getActiveSession()).addListener(this);
-		}
+		e.addUpdateEventListener(this, IUpdateEventListener.DATADICTIONARY, OdysseusRCPPlugIn.getActiveSession());
+		e.addUpdateEventListener(this,IUpdateEventListener.SESSION, null);
 		// UserManagement.getUsermanagement().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
 
@@ -189,16 +168,6 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 		stackLayout.topControl = label;
 		parent.layout();
 
-	}
-
-	@Override
-	public void dataDictionaryChanged(IDataDictionary sender) {
-		refresh();
-	}
-	
-	@Override
-	public void sessionEventOccured(ISessionEvent event) {
-		refresh();
 	}
 
 }

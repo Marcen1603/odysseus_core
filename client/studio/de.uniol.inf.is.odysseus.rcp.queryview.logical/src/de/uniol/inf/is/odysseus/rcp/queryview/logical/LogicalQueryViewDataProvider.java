@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -56,10 +55,8 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider,
 	private void listenToExecutor() {
 		IExecutor executor = LogicalQueryViewDataProviderPlugIn
 				.getExecutor();
-
-		if (executor instanceof IClientExecutor) {
-			((IClientExecutor)executor).addUpdateEventListener(this);
-		}
+		executor.addUpdateEventListener(this, IUpdateEventListener.QUERY, null);
+		
 		view.refreshTable();
 	}
 
@@ -131,7 +128,7 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider,
 	}
 
 	@Override
-	public void doUpdate() {
+	public void eventOccured() {
 		view.refreshTable();
 	}
 

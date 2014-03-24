@@ -104,7 +104,7 @@ import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
  */
 public class WsClient implements IExecutor, IClientExecutor {
 
-	final List<IUpdateEventListener> updateEventListener = new CopyOnWriteArrayList<>();
+	final Map<String, List<IUpdateEventListener>> updateEventListener = new HashMap<String, List<IUpdateEventListener>>();
 	
 	protected static Logger _logger = null;
 
@@ -124,18 +124,30 @@ public class WsClient implements IExecutor, IClientExecutor {
 	WebserviceServer server;
 
 	@Override
-	public void addUpdateEventListener(IUpdateEventListener listener) {
-		this.updateEventListener.add(listener);
+	public synchronized void addUpdateEventListener(IUpdateEventListener listener, String type, ISession session) {
+		List<IUpdateEventListener> l = updateEventListener.get(type);
+		if (l == null){
+			l = new CopyOnWriteArrayList<>();
+			this.updateEventListener.put(type,l);
+		}
+		l.add(listener);
 	}
 	
 	@Override
-	public void removeUpdateEventListener(IUpdateEventListener listener) {
-		this.updateEventListener.remove(listener);
+	public void removeUpdateEventListener(IUpdateEventListener listener, String type, ISession session) {
+		List<IUpdateEventListener> l = updateEventListener.get(type);
+		if (l != null){
+			l.remove(listener);
+			if (l.isEmpty()){
+				updateEventListener.remove(l);
+			}
+		}
 	}
 	
-	private void fireUpdateEvent(){
-		for (IUpdateEventListener l:updateEventListener){
-			l.doUpdate();
+	private void fireUpdateEvent(String type){
+		List<IUpdateEventListener> list = updateEventListener.get(type);
+		for (IUpdateEventListener l:list){
+			l.eventOccured();
 		}
 	}
 	
@@ -188,7 +200,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 		IUser user = new WsClientUser(username, password, true);
 		WsClientSession session = new WsClientSession(user, tenant);
 		session.setToken(securitytoken);
-		fireUpdateEvent();
+		fireUpdateEvent(IUpdateEventListener.SESSION);
 		return session;
 	}
 
@@ -201,7 +213,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 				throw new PlanManagementException(e);
 			}
 		}
-		fireUpdateEvent();
+		fireUpdateEvent(IUpdateEventListener.QUERY);
 	}
 
 	@Override
@@ -213,7 +225,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 				throw new PlanManagementException(e);
 			}
 		}
-		fireUpdateEvent();
+		fireUpdateEvent(IUpdateEventListener.QUERY);
 	}
 
 	@Override
@@ -225,7 +237,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 				throw new PlanManagementException(e);
 			}
 		}
-		fireUpdateEvent();
+		fireUpdateEvent(IUpdateEventListener.QUERY);
 	}
 
 	@Override
@@ -267,7 +279,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 				e.printStackTrace();
 			}
 		}
-		fireUpdateEvent();
+		fireUpdateEvent(IUpdateEventListener.QUERY);
 		return null;
 	}
 
@@ -370,7 +382,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public Collection<Integer> addQuery(String query, String parserID, ISession user, String queryBuildConfigurationName, Context context) throws PlanManagementException { //
 		try {
 			Collection<Integer> response = getWebserviceServer().addQuery(user.getToken(), parserID, query, queryBuildConfigurationName, context).getResponseValue();
-			fireUpdateEvent();
+			fireUpdateEvent(IUpdateEventListener.QUERY);
 			return response;
 		} catch (InvalidUserDataException_Exception | CreateQueryException_Exception e) {
 			throw new PlanManagementException(e);
@@ -415,7 +427,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 	@Override
 	public void logout(ISession caller) {
 		getWebserviceServer().logout(caller.getToken());
-		fireUpdateEvent();
+		fireUpdateEvent(IUpdateEventListener.SESSION);
 	}
 
 	@Override
@@ -522,7 +534,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 		if (getWebserviceServer() != null) {
 			try {
 				ILogicalOperator result = (ILogicalOperator) getWebserviceServer().removeSinkByName(name, caller.getToken()).getResponseValue();
-				fireUpdateEvent();
+				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 				return result;
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -539,7 +551,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 				ri.setResourceName(name.getResourceName());
 				ri.setUser(name.getUser());
 				ILogicalOperator result = (ILogicalOperator) getWebserviceServer().removeSinkByResource(ri, caller.getToken()).getResponseValue();
-				fireUpdateEvent();
+				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 				return result;
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -553,7 +565,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 		if (getWebserviceServer() != null) {
 			try {
 				getWebserviceServer().removeViewOrStreamByName(name, caller.getToken());
-				fireUpdateEvent();
+				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -568,7 +580,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 				ri.setResourceName(name.getResourceName());
 				ri.setUser(name.getUser());
 				getWebserviceServer().removeViewOrStreamByResource(ri, caller.getToken());
-				fireUpdateEvent();
+				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -660,7 +672,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 		if (getWebserviceServer() != null) {
 			try {
 				getWebserviceServer().addStoredProcedure(name, sp, caller.getToken());
-				fireUpdateEvent();
+				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -672,7 +684,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 		if (getWebserviceServer() != null) {
 			try {
 				StoredProcedure result = getWebserviceServer().getStoredProcedure(name, caller.getToken()).getResponseValue();
-				fireUpdateEvent();
+				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 				return result;
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -686,7 +698,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 		if (getWebserviceServer() != null) {
 			try {
 				getWebserviceServer().removeStoredProcedure(name, caller.getToken());
-				fireUpdateEvent();
+				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}

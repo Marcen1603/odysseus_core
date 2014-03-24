@@ -30,8 +30,5 @@ public interface IClientExecutor {
 
 	boolean connect(String connectString);	
 	SocketAddress getSocketConnectionInformation(int queryId, ISession caller);	
-
-	void addUpdateEventListener(IUpdateEventListener listener);
-	void removeUpdateEventListener(IUpdateEventListener listener);
 	
 }

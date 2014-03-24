@@ -443,5 +443,13 @@ public interface IExecutor extends IClientPlanManager {
 	 * @return a description of the logical operator
 	 */
 	public LogicalOperatorInformation getOperatorInformation(String name, ISession caller);
+	
+	/**
+	 * Generic Event Listener (for updates in views)
+	 */
 
+	void addUpdateEventListener(IUpdateEventListener listener, String type, ISession caller);
+	void removeUpdateEventListener(IUpdateEventListener listener, String type, ISession caller);
+
+	
 }

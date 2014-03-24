@@ -2,6 +2,11 @@ package de.uniol.inf.is.odysseus.core.planmanagement.executor;
 
 public interface IUpdateEventListener {
 	
-	void doUpdate();
+	static final String SESSION = "SESSION";
+	static final String DATADICTIONARY = "DATADICTIONARY";
+	static final String USER = "USER";
+	static final String QUERY = "QUERY";
+	
+	void eventOccured();
 
 }

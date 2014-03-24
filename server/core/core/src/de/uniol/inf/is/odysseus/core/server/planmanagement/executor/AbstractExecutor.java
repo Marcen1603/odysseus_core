@@ -46,12 +46,15 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionQuerySelector;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
@@ -98,6 +101,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQueryReoptimizeListener;
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -113,10 +118,14 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
  */
 public abstract class AbstractExecutor implements IServerExecutor,
 		ISettingChangeListener, IQueryReoptimizeListener,
-		IPlanReoptimizeListener, IAdmissionListener {
+		IPlanReoptimizeListener, IAdmissionListener, IDataDictionaryListener, ISessionListener {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractExecutor.class);
+
+	// Generic Event Handling
+	final Map<String, List<IUpdateEventListener>> updateEventListener = new HashMap<>();
+	final Map<IDataDictionary, List<IUpdateEventListener>> dataDictEventListener = new HashMap<>();
 
 	/**
 	 * Der aktuell ausgefuehrte physische Plan
@@ -635,15 +644,19 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			break;
 		case QUERY_ADDED:
 			getSchedulerManager().addQuery(affectedQuery);
+			fireGenericEvent(IUpdateEventListener.QUERY);
 			break;
 		case QUERY_REMOVE:
 			getSchedulerManager().removeQuery(affectedQuery);
+			fireGenericEvent(IUpdateEventListener.QUERY);
 			break;
 		case QUERY_START:
 			getSchedulerManager().startedQuery(affectedQuery);
+			fireGenericEvent(IUpdateEventListener.QUERY);
 			break;
 		case QUERY_STOP:
 			getSchedulerManager().stoppedQuery(affectedQuery);
+			fireGenericEvent(IUpdateEventListener.QUERY);
 			break;
 		}
 	}
@@ -805,7 +818,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 				lq.setParameter("ISRUNNING", pq.isOpened());
 			}
 			return lq;
-		}else{
+		} else {
 			return null;
 		}
 	}
@@ -893,6 +906,126 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			this.planExecutionListener.remove(listener);
 		}
 	}
+
+	// ----------------------------------------------------------------------------------------------------------
+	// GENERIC UPDATE EVENTS
+	// ----------------------------------------------------------------------------------------------------------
+
+	@Override
+	public void addUpdateEventListener(IUpdateEventListener listener,
+			String type, ISession session) {
+		// Remember Listener (must be different for dd and other, because each
+		// session could have another dd)
+		List<IUpdateEventListener> l;
+		if (type != IUpdateEventListener.DATADICTIONARY) {
+			l = updateEventListener.get(type);
+		} else {
+			l = dataDictEventListener.get(session);
+		}
+		if (l == null) {
+			l = new CopyOnWriteArrayList<>();
+			if (type != IUpdateEventListener.DATADICTIONARY) {
+				this.updateEventListener.put(type, l);
+			} else {
+				IDataDictionary dd = getDataDictionary(session);
+				dataDictEventListener.put(dd, l);
+			}
+		}
+		l.add(listener);
+
+		// Register for remote events (if first listener)
+		if (l.size() == 1) {
+			switch (type) {
+			case IUpdateEventListener.DATADICTIONARY:
+				getDataDictionary(session).addListener(this);
+				break;
+			case IUpdateEventListener.QUERY:
+				// Nothing to do for query. Is already listener
+				break;
+			case IUpdateEventListener.SESSION:
+				UserManagementProvider.getSessionmanagement().subscribe(this);
+				break;
+			case IUpdateEventListener.USER:
+				break;
+			}
+		}
+	}
+
+	@Override
+	public void removeUpdateEventListener(IUpdateEventListener listener,
+			String type, ISession session) {
+		List<IUpdateEventListener> l;
+		if (type != IUpdateEventListener.DATADICTIONARY) {
+			l = updateEventListener.get(type);
+		} else {
+			l = dataDictEventListener.get(session);
+		}
+		if (l != null) {
+			l.remove(listener);
+			if (l.isEmpty()) {
+				updateEventListener.remove(l);
+			}
+		}
+		
+		// Deregister from remote events
+		if (l.isEmpty()) {
+			switch (type) {
+			case IUpdateEventListener.DATADICTIONARY:
+				getDataDictionary(session).removeListener(this);
+				break;
+			case IUpdateEventListener.QUERY:
+				// Nothing to do for query. Stays listener
+				break;
+			case IUpdateEventListener.SESSION:
+				UserManagementProvider.getSessionmanagement().unsubscribe(this);
+				break;
+			case IUpdateEventListener.USER:
+				break;
+			}
+		}
+	}
+
+	@Override
+	public void addedViewDefinition(IDataDictionary sender, String name,
+			ILogicalOperator op) {
+		fireDataDictionaryEvent(sender);
+	}
+
+	@Override
+	public void removedViewDefinition(IDataDictionary sender, String name,
+			ILogicalOperator op) {
+		fireDataDictionaryEvent(sender);
+	}
+
+	@Override
+	public void dataDictionaryChanged(IDataDictionary sender) {
+		fireDataDictionaryEvent(sender);
+	}
+	
+	@Override
+	public void sessionEventOccured(ISessionEvent event){
+		fireGenericEvent(IUpdateEventListener.SESSION);
+	}
+	
+	public void fireDataDictionaryEvent(IDataDictionary dd){
+		List<IUpdateEventListener> list = dataDictEventListener.get(dd);			
+		if (list != null) {
+			for (IUpdateEventListener l : list) {
+				l.eventOccured();
+			}
+		}	
+	}
+	
+	public void fireGenericEvent(String type) {
+		List<IUpdateEventListener> list = updateEventListener.get(type);			
+		if (list != null) {
+			for (IUpdateEventListener l : list) {
+				l.eventOccured();
+			}
+		}
+	}
+
+	// ----------------------------------------------------------------------------------------------------------
 
 	/*
 	 * (non-Javadoc)

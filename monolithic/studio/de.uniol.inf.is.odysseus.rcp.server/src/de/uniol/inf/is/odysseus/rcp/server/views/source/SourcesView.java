@@ -36,21 +36,16 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.server.views.OperatorDragListener;
 import de.uniol.inf.is.odysseus.rcp.server.views.OperatorViewContentProvider;
 import de.uniol.inf.is.odysseus.rcp.server.views.OperatorViewLabelProvider;
 
-public class SourcesView extends ViewPart implements IDataDictionaryListener, IUserManagementListener, ISessionListener {
+public class SourcesView extends ViewPart implements IUpdateEventListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(SourcesView.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SourcesView.class);
 
 	private Composite parent;
 	private TreeViewer viewer;
@@ -67,25 +62,32 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 		stackLayout = new StackLayout();
 		parent.setLayout(stackLayout);
 
-		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
+		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL
+				| SWT.MULTI));
 		getTreeViewer().setContentProvider(new OperatorViewContentProvider());
-		getTreeViewer().setLabelProvider(new OperatorViewLabelProvider("source"));
+		getTreeViewer().setLabelProvider(
+				new OperatorViewLabelProvider("source"));
 
 		int operations = DND.DROP_MOVE;
-		Transfer[] transferTypes = new Transfer[]{LocalSelectionTransfer.getTransfer()};
-		getTreeViewer().addDragSupport(operations, transferTypes, new OperatorDragListener(getTreeViewer(), "STREAM"));
+		Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer
+				.getTransfer() };
+		getTreeViewer().addDragSupport(operations, transferTypes,
+				new OperatorDragListener(getTreeViewer(), "STREAM"));
 
 		refresh();
-		if (OdysseusRCPPlugIn.getExecutor() instanceof IServerExecutor) {
-			((IServerExecutor) OdysseusRCPPlugIn.getExecutor()).getDataDictionary(OdysseusRCPPlugIn.getActiveSession()).addListener(this);
-			UserManagementProvider.getSessionmanagement().subscribe(this);
-		}
+		OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this,
+				IUpdateEventListener.DATADICTIONARY,
+				OdysseusRCPPlugIn.getActiveSession());
+		OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this,
+				IUpdateEventListener.SESSION, null);
+
 		// UserManagement.getInstance().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
 
 		// Contextmenu
 		MenuManager menuManager = new MenuManager();
-		Menu contextMenu = menuManager.createContextMenu(getTreeViewer().getControl());
+		Menu contextMenu = menuManager.createContextMenu(getTreeViewer()
+				.getControl());
 		// Set the MenuManager
 		getTreeViewer().getControl().setMenu(contextMenu);
 		getSite().registerContextMenu(menuManager, getTreeViewer());
@@ -99,9 +101,11 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 
 	@Override
 	public void dispose() {
-		if (OdysseusRCPPlugIn.getExecutor() instanceof IServerExecutor) {
-			((IServerExecutor) OdysseusRCPPlugIn.getExecutor()).getDataDictionary(OdysseusRCPPlugIn.getActiveSession()).removeListener(this);
-		}
+		OdysseusRCPPlugIn.getExecutor().removeUpdateEventListener(this,
+				IUpdateEventListener.DATADICTIONARY,
+				OdysseusRCPPlugIn.getActiveSession());
+		OdysseusRCPPlugIn.getExecutor().removeUpdateEventListener(this,
+				IUpdateEventListener.SESSION, null);
 		super.dispose();
 	}
 
@@ -140,12 +144,17 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 					try {
 						isRefreshing = false;
 						if (!getTreeViewer().getTree().isDisposed()) {
-							Set<Entry<Resource, ILogicalOperator>> streamsAndViews = OdysseusRCPPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession());
+							Set<Entry<Resource, ILogicalOperator>> streamsAndViews = OdysseusRCPPlugIn
+									.getExecutor().getStreamsAndViews(
+											OdysseusRCPPlugIn
+													.getActiveSession());
 							getTreeViewer().setInput(streamsAndViews);
 
 							if (!streamsAndViews.isEmpty()) {
-								stackLayout.topControl = getTreeViewer().getTree();
-								setPartName("Sources (" + streamsAndViews.size() + ")");
+								stackLayout.topControl = getTreeViewer()
+										.getTree();
+								setPartName("Sources ("
+										+ streamsAndViews.size() + ")");
 							} else {
 								stackLayout.topControl = label;
 								setPartName("Sources (0)");
@@ -153,7 +162,9 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 							parent.layout();
 						}
 					} catch (Exception e) {
-						LOG.error("Exception during setting input for treeViewer in sourcesView", e);
+						LOG.error(
+								"Exception during setting input for treeViewer in sourcesView",
+								e);
 					}
 				}
 
@@ -166,27 +177,7 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 	}
 
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		refresh();
-	}
-
-	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		refresh();
-	}
-
-	@Override
-	public void usersChangedEvent() {
-		refresh();
-	}
-
-	@Override
-	public void roleChangedEvent() {
-		refresh();
-	}
-
-	@Override
-	public void dataDictionaryChanged(IDataDictionary sender) {
+	public void eventOccured() {
 		refresh();
 	}
 
@@ -196,10 +187,6 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 
 	public void setRefreshEnabled(boolean refreshEnabled) {
 		this.refreshEnabled = refreshEnabled;
-	}
-
-	@Override
-	public void sessionEventOccured(ISessionEvent event) {
 	}
 
 }
