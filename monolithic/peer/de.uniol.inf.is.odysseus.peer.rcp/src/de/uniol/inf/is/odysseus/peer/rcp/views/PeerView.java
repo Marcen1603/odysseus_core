@@ -45,6 +45,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	private static final String UNKNOWN_PEER_NAME = "<unknown>";
 	private static final long REFRESH_INTERVAL_MILLIS = 5000;
 	private static PeerView instance;
+	private static Image[] warnImages;
 
 	private final Map<PeerID, IResourceUsage> usageMap = Maps.newHashMap();
 	private final List<PeerID> foundPeerIDs = Lists.newArrayList();
@@ -53,6 +54,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 
 	private TableViewer peersTable;
 	private RepeatingJobThread refresher;
+	
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -135,17 +137,12 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		memColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				if( cell.getImage() != null ) {
-					cell.getImage().dispose();
-					cell.setImage(null);
-				}
-
 				Optional<IResourceUsage> optUsage = determineResourceUsage((PeerID) cell.getElement());
 				if (optUsage.isPresent()) {
 					double memPerc = calcMemPercentage(optUsage.get());
 					cell.setText(String.format("%-3.1f", memPerc));
 					
-					Image img = createWarnImage(memPerc);
+					Image img = getWarnImage(memPerc);
 					cell.setImage(img);
 
 				} else {
@@ -180,17 +177,12 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		cpuColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				if( cell.getImage() != null ) {
-					cell.getImage().dispose();
-					cell.setImage(null);
-				}
-				
 				Optional<IResourceUsage> optUsage = determineResourceUsage((PeerID) cell.getElement());
 				if (optUsage.isPresent()) {
 					double cpuPerc = calcCpuPercentage(optUsage.get());
 					cell.setText(String.format("%-3.1f", cpuPerc));
 					
-					Image img = createWarnImage(cpuPerc);
+					Image img = getWarnImage(cpuPerc);
 					cell.setImage(img);
 					
 				} else {
@@ -285,17 +277,12 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		pingColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				if( cell.getImage() != null ) {
-					cell.getImage().dispose();
-					cell.setImage(null);
-				}
-				
 				Optional<Double> optPing = RCPP2PNewPlugIn.getPingMap().getPing((PeerID) cell.getElement());
 				if (optPing.isPresent()) {
 					long ping = (long) (double) optPing.get();
 					cell.setText(String.valueOf(ping));
 					
-					Image img = createWarnImage( (ping / 10.0));
+					Image img = getWarnImage( (ping / 10.0));
 					cell.setImage(img);
 				} else {
 					cell.setText("<unknown>");
@@ -350,32 +337,37 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 			}
 		};
 		refresher.start();
+		
+		warnImages = createWarnImages();
 
 		instance = this;
 	}
 
-	private static Image createWarnImage(double cpuPerc) {
+	private static Image[] createWarnImages() {
+		Image[] images = new Image[4];
+		
+		images[0] = createWarnImage(SWT.COLOR_BLUE);
+		images[1] = createWarnImage(SWT.COLOR_GREEN);
+		images[2] = createWarnImage(SWT.COLOR_YELLOW);
+		images[3] = createWarnImage(SWT.COLOR_RED);
+		
+		return images;
+	}
+
+	private static Image createWarnImage(int color) {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		Image img = new Image(display, 10, 10);
 		
 		GC gc = new GC(img);
-		gc.setBackground(display.getSystemColor(setWarnColorID(cpuPerc)));
+		gc.setBackground(display.getSystemColor(color));
 		gc.fillRectangle(0, 0, 10, 10);
 		gc.dispose();
 		return img;
 	}
 	
-	private static int setWarnColorID(double cpuPerc) {
-		if( cpuPerc < 25.0 ) {
-			return SWT.COLOR_BLUE;
-		}
-		if( cpuPerc < 50.0 ) {
-			return SWT.COLOR_GREEN;
-		}
-		if( cpuPerc < 75.0 ) {
-			return SWT.COLOR_YELLOW;
-		}
-		return SWT.COLOR_RED;
+	private static Image getWarnImage(double perc) {
+		int imageIndex = Math.max(0, Math.min(3, (int)(perc / 25.0)));
+		return warnImages[imageIndex];
 	}
 
 	private static double calcMemPercentage(IResourceUsage resourceUsage) {
@@ -388,6 +380,8 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 
 	@Override
 	public void dispose() {
+		disposeWarnImages();
+		
 		instance = null;
 		p2pDictionary.removeListener(this);
 
@@ -397,6 +391,13 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		}
 
 		super.dispose();
+	}
+
+	private static void disposeWarnImages() {
+		for( Image image : warnImages ) {
+			image.dispose();
+		}
+		warnImages = null;
 	}
 
 	public void refreshUsagesAsync() {
