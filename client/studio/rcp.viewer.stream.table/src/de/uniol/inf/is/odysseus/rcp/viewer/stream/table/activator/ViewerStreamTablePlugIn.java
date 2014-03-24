@@ -18,8 +18,6 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.table.activator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.rcp.ImageManager;
-
 /**
  * The activator class controls the plug-in life cycle
  */

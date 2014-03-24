@@ -5,7 +5,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
-import de.uniol.inf.is.odysseus.rcp.server.AbstractKeyValueUpdaterProvider;
+import de.uniol.inf.is.odysseus.rcp.AbstractKeyValueUpdaterProvider;
 
 @SuppressWarnings("rawtypes")
 public class JxtaReceiverOperatorDetailProvider extends AbstractKeyValueUpdaterProvider<JxtaReceiverPO> {

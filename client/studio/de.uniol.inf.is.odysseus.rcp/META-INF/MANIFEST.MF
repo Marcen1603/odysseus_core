@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: org.eclipse.core.commands,
+Import-Package: de.uniol.inf.is.odysseus.mep,
+ org.eclipse.core.commands,
  org.eclipse.core.resources,
  org.eclipse.core.runtime;version="3.4.0",
  org.eclipse.core.runtime.jobs,
@@ -32,8 +33,9 @@ Export-Package: de.uniol.inf.is.odysseus.rcp,
  de.uniol.inf.is.odysseus.rcp.exception,
  de.uniol.inf.is.odysseus.rcp.queries,
  de.uniol.inf.is.odysseus.rcp.util,
+ de.uniol.inf.is.odysseus.rcp.views,
  de.uniol.inf.is.odysseus.rcp.views.query
-Service-Component: OSGI-INF/Executor.xml, OSGI-INF/queryViewDataProvider.xml
+Service-Component: OSGI-INF/Executor.xml, OSGI-INF/queryViewDataProvider.xml, OSGI-INF/generalProvider.xml, OSGI-INF/operatorDetailProviderRegistry.xml, OSGI-INF/outputSchemaOperatorDetailProvider.xml, OSGI-INF/parameterInfoOperatorDetailProvider.xml
 Require-Bundle: org.eclipse.ui.navigator.resources;bundle-version="3.4.300",
  de.uniol.inf.is.odysseus.core,
  com.google.guava;bundle-version="12.0.0",

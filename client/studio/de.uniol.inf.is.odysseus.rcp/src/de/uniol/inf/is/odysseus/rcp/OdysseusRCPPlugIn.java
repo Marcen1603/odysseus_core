@@ -19,11 +19,12 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
-public class OdysseusRCPPlugIn extends AbstractUIPlugin {
+public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventListener {
 
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp";
 
@@ -57,6 +58,13 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 
 	public static final String WIZARD_PROJECT_ID = "de.uniol.inf.is.odysseus.rcp.wizards.OdysseusProjectWizard";
 
+	public static final String USER_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.UserView";
+	public static final String PARTIAL_PLAN_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.PartialPlanView";
+	public static final String SOURCES_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.SourcesView";
+	public static final String SINK_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.SinkView";
+	public static final String MEP_FUNCTIONS_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.MEPFunctionsView";
+	public static final String STORED_PROCEDURES_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.StoredProceduresView";
+
 	private static OdysseusRCPPlugIn instance;
 	private static IExecutor executor = null;
 	private static ISession activeSession;
@@ -85,6 +93,15 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 		imageManager.register("sla", "icons/document-block.png");
 		imageManager.register("percentile", "icons/document-tag.png");
 		imageManager.register("view", "icons/table.png");
+		imageManager.register("constraint", "icons/document-attribute-c.png");
+		imageManager.register("unit", "icons/document-attribute-u.png");
+		imageManager.register("source", "icons/sources.png");
+		imageManager.register("sink", "icons/sinks.png");
+		imageManager.register("attribute", "icons/status.png");
+		imageManager.register("loggedinuser", "icons/user--plus.png");
+		imageManager.register("user", "icons/user.png");
+		imageManager.register("role", "icons/tick-small-circle.png");
+		imageManager.register("function", "icons/function.png");
 
 		instance = this;
 	}
@@ -110,6 +127,10 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 		synchronized (OdysseusRCPPlugIn.class) {
 			executor = ex;
 			StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, OdysseusNLS.Executor + " " + executor.getName() + " " + OdysseusNLS.Ready);
+			
+			executor.addUpdateEventListener(this, IUpdateEventListener.SCHEDULING, null);
+			executor.addUpdateEventListener(this, IUpdateEventListener.QUERY, null);
+			
 			OdysseusRCPPlugIn.class.notifyAll();
 		}
 
@@ -124,6 +145,29 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 	}
 
 	public void unbindExecutor(IExecutor ex) {
+		executor.removeUpdateEventListener(this, IUpdateEventListener.SCHEDULING, null);
+		executor.removeUpdateEventListener(this, IUpdateEventListener.QUERY, null);
 		executor = null;
+	}
+
+	@Override
+	public void eventOccured() {
+		try {
+			StatusBarManager.getInstance().setMessage(
+					StatusBarManager.SCHEDULER_ID,
+					determineStatusManagerExecutorInfo());
+		} catch (PlanManagementException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private String determineStatusManagerExecutorInfo() {
+		return executor.getCurrentSchedulerID(OdysseusRCPPlugIn
+				.getActiveSession())
+				+ " ("
+				+ executor
+						.getCurrentSchedulingStrategyID(OdysseusRCPPlugIn
+								.getActiveSession()) + ") "
+		;
 	}
 }

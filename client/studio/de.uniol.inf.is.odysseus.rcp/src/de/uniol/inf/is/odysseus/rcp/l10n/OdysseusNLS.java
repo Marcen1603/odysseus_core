@@ -69,6 +69,11 @@ public class OdysseusNLS extends NLS {
 	public static String ServiceNamespace;
 	public static String ConnectAutomatically;
 
+    public static String Filter;
+    public static String Symbol;
+    public static String ReturnType;
+    public static String Arity;
+    public static String ArgumentTypes;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, OdysseusNLS.class);

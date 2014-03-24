@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.ontology.common.model.SensingDevice;
 import de.uniol.inf.is.odysseus.ontology.common.model.condition.Condition;
 import de.uniol.inf.is.odysseus.ontology.common.model.property.MeasurementProperty;
 import de.uniol.inf.is.odysseus.ontology.rcp.SensorRegistryPlugIn;
-import de.uniol.inf.is.odysseus.rcp.server.views.AbstractViewLabelProvider;
+import de.uniol.inf.is.odysseus.rcp.views.AbstractViewLabelProvider;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>

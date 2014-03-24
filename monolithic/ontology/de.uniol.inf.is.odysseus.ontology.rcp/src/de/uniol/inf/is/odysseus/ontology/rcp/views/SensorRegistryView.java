@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.ontology.common.model.FeatureOfInterest;
 import de.uniol.inf.is.odysseus.ontology.common.model.MeasurementCapability;
 import de.uniol.inf.is.odysseus.ontology.common.model.SensingDevice;
 import de.uniol.inf.is.odysseus.ontology.rcp.SensorRegistryPlugIn;
-import de.uniol.inf.is.odysseus.rcp.server.views.OperatorDragListener;
+import de.uniol.inf.is.odysseus.rcp.views.OperatorDragListener;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
