@@ -367,6 +367,10 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	
 	private static Image getWarnImage(double perc) {
 		int imageIndex = Math.max(0, Math.min(3, (int)(perc / 25.0)));
+		if( warnImages == null ) {
+			warnImages = createWarnImages();
+		}
+		
 		return warnImages[imageIndex];
 	}
 
