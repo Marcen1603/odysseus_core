@@ -186,11 +186,11 @@ public class CreateRMap {
 				if (f.isFile() && f.getName().equals("feature.xml")) {
 					// feature.xml found:
 					String name = parseFeatureDefinition(f);
-					if (!containsOnOf(name, "p2p_new", "peer")) {
+//					if (!containsOnOf(name, "p2p_new", "peer")) {
 						names.put(name, f);
-					}else{
-						System.out.println("Omitted "+name+" while searching for features recursively");
-					}
+//					}else{
+//						System.out.println("Omitted "+name+" while searching for features recursively");
+//					}
 				}
 			}
 		}
@@ -207,14 +207,14 @@ public class CreateRMap {
 		return false;
 	}
 
-	private static boolean containsOnOf(String name, String... strings) {
-		for (String s : strings) {
-			if (name.contains(s)) {
-				return true;
-			}
-		}
-		return false;
-	}
+//	private static boolean containsOnOf(String name, String... strings) {
+//		for (String s : strings) {
+//			if (name.contains(s)) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 
 	private static boolean isOneOfIgnoreCase(String needle, String... haystack) {
 		for (String h : haystack) {

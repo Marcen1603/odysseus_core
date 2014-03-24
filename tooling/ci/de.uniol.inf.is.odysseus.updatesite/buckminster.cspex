@@ -106,7 +106,38 @@
             <products alias="destination" base="${product.destionation.test}">  
                 <path path="odysseus.test.${target.ws}.${target.os}.${target.arch}/" />  
             </products>            
-        </public>          
+        </public>       
+        
+        
+        
+        <public name="create.peer.product" actor="ant">  
+            <actorProperties>  
+                <property key="buildFile" value="product.ant" />  
+                <property key="targets" value="create.product" />  
+            </actorProperties>  
+           <properties>  
+                <property key="profile" value="${product.profile}" />  
+                <property key="iu" value="${product.server.id}" />  
+                <property key="features" value="${product.peer.features}" />  
+            </properties>             
+            <products alias="destination" base="${ws.root}/${product.destination}">  
+                <path path="odysseus.peer.${target.ws}.${target.os}.${target.arch}/" />  
+            </products>            
+        </public>  
+  
+        <public name="create.peer.product.zip" actor="ant">  
+            <actorProperties>  
+                <property key="buildFileId" value="buckminster.pdetasks" />  
+                <property key="targets" value="create.zip" />  
+            </actorProperties>  
+            <prerequisites alias="action.requirements">  
+                <attribute name="create.peer.product" />  
+            </prerequisites>  
+            <products alias="action.output" base="${ws.root}/${product.zipdestination}">  
+                <path path="odysseus.peer.${target.ws}.${target.os}.${target.arch}.zip" />  
+            </products>  
+        </public>  
+           
              
     </actions>
 </cspecExtension>
