@@ -91,6 +91,8 @@ public class PingMapView extends ViewPart implements PaintListener, MouseMoveLis
 			drawPingSymbol(gc, (int)x, (int)y, sizeFactor);
 			currentPoints.put(new Vector3D(x, y, z), shiftedPoints.get(shiftedPoint));
 		}
+		
+		gc.dispose();
 	}
 	
 	private static void drawBackground(GC gc, PaintEvent e, double xFactor, double yFactor) {
