@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 /**
  * IExecutor stellt die Hauptschnittstelle fuer externe Anwendungen zu Odysseus
@@ -444,12 +445,24 @@ public interface IExecutor extends IClientPlanManager {
 	 */
 	public LogicalOperatorInformation getOperatorInformation(String name, ISession caller);
 	
+	// User Management
+	
+	/**
+	 * @param caller 
+	 * 
+	 */
+	public List<IUser> getUsers(ISession caller);
+	
+	
 	/**
 	 * Generic Event Listener (for updates in views)
 	 */
 
 	void addUpdateEventListener(IUpdateEventListener listener, String type, ISession caller);
 	void removeUpdateEventListener(IUpdateEventListener listener, String type, ISession caller);
+
+	
+	public Collection<String> getUdfs();
 
 	
 }

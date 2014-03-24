@@ -895,5 +895,17 @@ public class WsClient implements IExecutor, IClientExecutor {
 		}
 		return new ArrayList<>();
 	}
+	
+	@Override
+	public List<IUser> getUsers(ISession session) {
+		// TODO: Implement getUsers for Web-Service
+		return null;
+	}
+	
+	@Override
+	public Collection<String> getUdfs() {
+		// TODO: Implement getUdfs for Web-Service
+		return null;
+	}
 
 }

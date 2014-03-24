@@ -82,6 +82,8 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 	private Map<IIterableSource<?>, Integer> sourceUsage = new HashMap<>();
 
+	private boolean shouldRun;
+
 	/**
 	 * OSGi-Method: Is called when this object will be activated by OSGi (after
 	 * constructor and bind-methods). This method can be used to configure this
@@ -166,11 +168,9 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		Set<String> schedulers = getScheduler();
 		Set<String> strats = getSchedulingStrategy();
 
-		boolean wasRunning = false;
 
 		if (activeScheduler != null && activeScheduler.isRunning()) {
 			activeScheduler.stopScheduling();
-			wasRunning = true;
 		}
 
 		// Test if this scheduler is loaded
@@ -206,7 +206,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 					this.activeScheduler));
 			this.activeSchedulingStrategy = schedulingStrategyToSet;
 			this.activeSchedulerString = schedulerToSet;
-			if (wasRunning) {
+			if (shouldRun) {
 				activeScheduler.startScheduling();
 			}
 		} catch (Exception e) {
@@ -276,10 +276,13 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	@Override
 	public void startScheduling() throws NoSchedulerLoadedException,
 			OpenFailedException {
-		if (!this.activeScheduler.isRunning()) {
-			logger.debug("Start scheduling.");
-			this.activeScheduler.startScheduling();
-			logger.debug("Scheduling started.");
+		shouldRun = true;
+		if (this.activeScheduler != null){
+			if (!this.activeScheduler.isRunning()) {
+				logger.debug("Start scheduling.");
+				this.activeScheduler.startScheduling();
+				logger.debug("Scheduling started.");
+			}			
 		}
 	}
 
@@ -292,6 +295,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	 */
 	@Override
 	public void stopScheduling() throws NoSchedulerLoadedException {
+		shouldRun = false;
 		if (this.activeScheduler.isRunning()) {
 			logger.debug("Stop scheduling.");
 			this.activeScheduler.stopScheduling();

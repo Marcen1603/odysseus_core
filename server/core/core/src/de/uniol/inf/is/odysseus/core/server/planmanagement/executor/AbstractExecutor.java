@@ -46,6 +46,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -107,6 +108,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
+import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 /**
  * AbstractExecutor bietet eine abstrakte Implementierung der
@@ -313,6 +315,11 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		this.schedulerManager.addErrorEventListener(this);
 		if (this.schedulerManager instanceof IPlanModificationListener) {
 			this.addPlanModificationListener((IPlanModificationListener) this.schedulerManager);
+		}
+		try {
+			schedulerManager.startScheduling();
+		} catch (OpenFailedException | NoSchedulerLoadedException e) {
+			e.printStackTrace();
 		}
 
 		LOG.debug("Schedulermanager bound " + schedulerManager);
@@ -641,6 +648,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		case QUERY_REOPTIMIZE:
 			LOG.info("Refresh Scheduling");
 			getSchedulerManager().refreshScheduling(this.getExecutionPlan());
+			fireGenericEvent(IUpdateEventListener.SCHEDULING);
 			break;
 		case QUERY_ADDED:
 			getSchedulerManager().addQuery(affectedQuery);
@@ -738,6 +746,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		}
 		LOG.info("Scheduler started.");
 
+		fireGenericEvent(IUpdateEventListener.SCHEDULING);
+		
 		firePlanExecutionEvent(new PlanExecutionEvent(this,
 				PlanExecutionEventType.EXECUTION_STARTED));
 	}
@@ -770,6 +780,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 				PlanExecutionEventType.EXECUTION_STOPPED));
 		// Stop Event Handler
 		EventHandler.stopDispatching();
+		fireGenericEvent(IUpdateEventListener.SCHEDULING);
 	}
 
 	/*
@@ -940,7 +951,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 				getDataDictionary(session).addListener(this);
 				break;
 			case IUpdateEventListener.QUERY:
-				// Nothing to do for query. Is already listener
+			case IUpdateEventListener.SCHEDULING:
+				// Nothing to do. Is already listener
 				break;
 			case IUpdateEventListener.SESSION:
 				UserManagementProvider.getSessionmanagement().subscribe(this);
@@ -974,7 +986,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 				getDataDictionary(session).removeListener(this);
 				break;
 			case IUpdateEventListener.QUERY:
-				// Nothing to do for query. Stays listener
+			case IUpdateEventListener.SCHEDULING:
+			// Nothing to do. Stays listener
 				break;
 			case IUpdateEventListener.SESSION:
 				UserManagementProvider.getSessionmanagement().unsubscribe(this);
@@ -1416,4 +1429,16 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			ISession user) {
 		return getCompiler().getQueryParserTokens(queryParser, user);
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IUser> getUsers(ISession caller) {
+		return (List<IUser>) UserManagementProvider.getUsermanagement().getUsers(caller);
+	}
+	
+	@Override
+	public Collection<String> getUdfs() {
+		return OperatorBuilderFactory.getUdfs();
+	}
+
 }
