@@ -91,7 +91,6 @@ public class ClientConnectionContribution implements ILoginContribution {
 
 		createLabel(rootComposite, "Instance");
 		final Text instanceText = createText(rootComposite, instance);
-		instanceText.setEchoChar('*');
 		instanceText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
