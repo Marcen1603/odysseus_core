@@ -24,16 +24,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
-public class UserView extends ViewPart implements IUserManagementListener, ISessionListener{
+public class UserView extends ViewPart implements IUpdateEventListener{
 	
 	private TreeViewer viewer;
 
@@ -44,8 +40,7 @@ public class UserView extends ViewPart implements IUserManagementListener, ISess
 			public void run() {
 				List<Object> l = new ArrayList<Object>();
 				try {
-					IUserManagement mmgt = UserManagementProvider.getUsermanagement();
-					List<? extends IUser> users = mmgt
+					List<? extends IUser> users = OdysseusRCPPlugIn.getExecutor()
 					.getUsers(
 							OdysseusRCPPlugIn.getActiveSession());
 					l.addAll(users);
@@ -66,9 +61,9 @@ public class UserView extends ViewPart implements IUserManagementListener, ISess
 		viewer.setContentProvider(new UserViewContentProvider());
 		viewer.setLabelProvider(new UserViewLabelProvider());
 		refresh();
-
-		UserManagementProvider.getUsermanagement().addUserManagementListener(this);
-		UserManagementProvider.getSessionmanagement().subscribe(this);
+		OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this,IUpdateEventListener.SESSION, null);
+		OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this,IUpdateEventListener.USER, null);
+		
 	}
 
 	@Override
@@ -77,17 +72,8 @@ public class UserView extends ViewPart implements IUserManagementListener, ISess
 	}
 
 	@Override
-	public void usersChangedEvent() {
+	public void eventOccured() {
 		refresh();
 	}
-
-	@Override
-	public void roleChangedEvent() {
-		refresh();
-	}
-	
-	@Override
-	public void sessionEventOccured(ISessionEvent event) {
-		refresh();
-	}
+		
 }

@@ -16,7 +16,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.server.l10n.OdysseusNLS;
 
 /**
@@ -59,7 +59,8 @@ public class UdfsView extends ViewPart {
     }
 
     private static void insertTableContent(TableViewer tableViewer, String filter) {
-        tableViewer.setInput(OperatorBuilderFactory.getUdfs());
+    	tableViewer.setInput(OdysseusRCPPlugIn.getExecutor().getUdfs());
+    	
     }
 
     private static void createColumns(TableViewer tableViewer, TableColumnLayout tableColumnLayout) {

@@ -11,18 +11,14 @@ import org.eclipse.ui.part.ViewPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
-public class StoredProceduresView extends ViewPart implements IDataDictionaryListener, ISessionListener {
+public class StoredProceduresView extends ViewPart implements
+		IUpdateEventListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(StoredProceduresView.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(StoredProceduresView.class);
 
 	private TreeViewer viewer;
 
@@ -30,20 +26,26 @@ public class StoredProceduresView extends ViewPart implements IDataDictionaryLis
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 
-		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
-		getTreeViewer().setContentProvider(new StoredProceduresViewContentProvider());
-		getTreeViewer().setLabelProvider(new StoredProceduresViewLabelProvider());
+		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL
+				| SWT.MULTI));
+		getTreeViewer().setContentProvider(
+				new StoredProceduresViewContentProvider());
+		getTreeViewer().setLabelProvider(
+				new StoredProceduresViewLabelProvider());
 		refresh();
-		if (OdysseusRCPPlugIn.getExecutor() instanceof IServerExecutor) {
-			((IServerExecutor) OdysseusRCPPlugIn.getExecutor()).getDataDictionary(OdysseusRCPPlugIn.getActiveSession()).addListener(this);
-			UserManagementProvider.getSessionmanagement().subscribe(this);
-		}
+		OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this,
+				IUpdateEventListener.DATADICTIONARY,
+				OdysseusRCPPlugIn.getActiveSession());
+		OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this,
+				IUpdateEventListener.SESSION, null);
+
 		// UserManagement.getInstance().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
 
 		// Contextmenu
 		MenuManager menuManager = new MenuManager();
-		Menu contextMenu = menuManager.createContextMenu(getTreeViewer().getControl());
+		Menu contextMenu = menuManager.createContextMenu(getTreeViewer()
+				.getControl());
 		// Set the MenuManager
 		getTreeViewer().getControl().setMenu(contextMenu);
 		getSite().registerContextMenu(menuManager, getTreeViewer());
@@ -52,9 +54,12 @@ public class StoredProceduresView extends ViewPart implements IDataDictionaryLis
 
 	@Override
 	public void dispose() {
-		if (OdysseusRCPPlugIn.getExecutor() instanceof IServerExecutor) {
-			((IServerExecutor) OdysseusRCPPlugIn.getExecutor()).getDataDictionary(OdysseusRCPPlugIn.getActiveSession()).removeListener(this);
-		}
+		OdysseusRCPPlugIn.getExecutor().removeUpdateEventListener(this,
+				IUpdateEventListener.DATADICTIONARY,
+				OdysseusRCPPlugIn.getActiveSession());
+		OdysseusRCPPlugIn.getExecutor().removeUpdateEventListener(this,
+				IUpdateEventListener.SESSION, null);
+
 		super.dispose();
 	}
 
@@ -73,9 +78,15 @@ public class StoredProceduresView extends ViewPart implements IDataDictionaryLis
 			@Override
 			public void run() {
 				try {
-					getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getStoredProcedures(OdysseusRCPPlugIn.getActiveSession()));
+					getTreeViewer().setInput(
+							OdysseusRCPPlugIn.getExecutor()
+									.getStoredProcedures(
+											OdysseusRCPPlugIn
+													.getActiveSession()));
 				} catch (Exception e) {
-					LOG.error("Exception during setting input for treeViewer in stored procedures view", e);
+					LOG.error(
+							"Exception during setting input for treeViewer in stored procedures view",
+							e);
 				}
 			}
 
@@ -87,22 +98,7 @@ public class StoredProceduresView extends ViewPart implements IDataDictionaryLis
 	}
 
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		refresh();
-	}
-
-	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		refresh();
-	}	
-
-	@Override
-	public void dataDictionaryChanged(IDataDictionary sender) {
-		refresh();
-	}
-	
-	@Override
-	public void sessionEventOccured(ISessionEvent event) {
+	public void eventOccured() {
 		refresh();
 	}
 

@@ -59,13 +59,13 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 	}
 
 	private static Collection<Integer> createQueryToSelectAllDataFromSource(Resource sourceName, ISession caller) {
-		return OdysseusRCPServerPlugIn.getServerExecutor().addQuery("SELECT * FROM " + sourceName + ";", "CQL", caller, "Standard", Context.empty());
+		return OdysseusRCPServerPlugIn.getExecutor().addQuery("SELECT * FROM " + sourceName + ";", "CQL", caller, "Standard", Context.empty());
 	}
 
 	private static void startQueries(Collection<Integer> queryIDs, ISession caller) {
 		for( Integer queryID : queryIDs ) {
 			try {
-				OdysseusRCPServerPlugIn.getServerExecutor().startQuery(queryID, caller);
+				OdysseusRCPServerPlugIn.getExecutor().startQuery(queryID, caller);
 			} catch( Throwable t ) {
 				LOG.error("Could not start query for viewing source data", t);
 			}
@@ -113,7 +113,7 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 	}
 
 	private static IPhysicalOperator getFirstPhysialRoot(Integer queryID) {
-		return OdysseusRCPServerPlugIn.getServerExecutor().getExecutionPlan().getQueryById(queryID).getRoots().iterator().next();
+		return OdysseusRCPServerPlugIn.getExecutor().getPhysicalRoots(queryID, OdysseusRCPPlugIn.getActiveSession()).iterator().next();
 	}
 
 //	private static String getRealSourcename(Resource sourceName) {
