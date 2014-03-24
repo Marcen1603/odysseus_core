@@ -105,7 +105,7 @@ import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
 public class WsClient implements IExecutor, IClientExecutor {
 
 	final Map<String, List<IUpdateEventListener>> updateEventListener = new HashMap<String, List<IUpdateEventListener>>();
-	
+
 	protected static Logger _logger = null;
 
 	protected synchronized static Logger getLogger() {
@@ -124,33 +124,37 @@ public class WsClient implements IExecutor, IClientExecutor {
 	WebserviceServer server;
 
 	@Override
-	public synchronized void addUpdateEventListener(IUpdateEventListener listener, String type, ISession session) {
+	public synchronized void addUpdateEventListener(
+			IUpdateEventListener listener, String type, ISession session) {
 		List<IUpdateEventListener> l = updateEventListener.get(type);
-		if (l == null){
+		if (l == null) {
 			l = new CopyOnWriteArrayList<>();
-			this.updateEventListener.put(type,l);
+			this.updateEventListener.put(type, l);
 		}
 		l.add(listener);
 	}
-	
+
 	@Override
-	public void removeUpdateEventListener(IUpdateEventListener listener, String type, ISession session) {
+	public void removeUpdateEventListener(IUpdateEventListener listener,
+			String type, ISession session) {
 		List<IUpdateEventListener> l = updateEventListener.get(type);
-		if (l != null){
+		if (l != null) {
 			l.remove(listener);
-			if (l.isEmpty()){
+			if (l.isEmpty()) {
 				updateEventListener.remove(l);
 			}
 		}
 	}
-	
-	private void fireUpdateEvent(String type){
+
+	private void fireUpdateEvent(String type) {
 		List<IUpdateEventListener> list = updateEventListener.get(type);
-		for (IUpdateEventListener l:list){
-			l.eventOccured();
+		if (list != null) {
+			for (IUpdateEventListener l : list) {
+				l.eventOccured();
+			}
 		}
 	}
-	
+
 	/**
 	 * connect
 	 * 
@@ -165,7 +169,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 		String[] subConnect = connectString.split(";");
 		if (subConnect.length > 1 && subConnect.length < 4) {
 			try {
-				startClient(new URL(subConnect[0]), new QName(subConnect[1], subConnect[2]));
+				startClient(new URL(subConnect[0]), new QName(subConnect[1],
+						subConnect[2]));
 				return true;
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -196,7 +201,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 
 	@Override
 	public ISession login(String username, byte[] password, String tenant) {
-		String securitytoken = getWebserviceServer().login(username, new String(password), tenant).getResponseValue();
+		String securitytoken = getWebserviceServer().login(username,
+				new String(password), tenant).getResponseValue();
 		IUser user = new WsClientUser(username, password, true);
 		WsClientSession session = new WsClientSession(user, tenant);
 		session.setToken(securitytoken);
@@ -205,11 +211,13 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public void removeQuery(int queryID, ISession caller) throws PlanManagementException {
+	public void removeQuery(int queryID, ISession caller)
+			throws PlanManagementException {
 		if (getWebserviceServer() != null) {
 			try {
 				getWebserviceServer().removeQuery(caller.getToken(), queryID);
-			} catch (QueryNotExistsException_Exception | InvalidUserDataException_Exception e) {
+			} catch (QueryNotExistsException_Exception
+					| InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
 		}
@@ -217,11 +225,13 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public void startQuery(int queryID, ISession caller) throws PlanManagementException {
+	public void startQuery(int queryID, ISession caller)
+			throws PlanManagementException {
 		if (getWebserviceServer() != null) {
 			try {
 				getWebserviceServer().startQuery(caller.getToken(), queryID);
-			} catch (QueryNotExistsException_Exception | InvalidUserDataException_Exception e) {
+			} catch (QueryNotExistsException_Exception
+					| InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
 		}
@@ -229,11 +239,13 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public void stopQuery(int queryID, ISession caller) throws PlanManagementException {
+	public void stopQuery(int queryID, ISession caller)
+			throws PlanManagementException {
 		if (getWebserviceServer() != null) {
 			try {
 				getWebserviceServer().stopQuery(caller.getToken(), queryID);
-			} catch (QueryNotExistsException_Exception | InvalidUserDataException_Exception e) {
+			} catch (QueryNotExistsException_Exception
+					| InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
 		}
@@ -244,7 +256,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public Collection<String> getQueryBuildConfigurationNames(ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				return getWebserviceServer().getQueryBuildConfigurationNames(caller.getToken()).getResponseValue();
+				return getWebserviceServer().getQueryBuildConfigurationNames(
+						caller.getToken()).getResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -253,10 +266,13 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public Set<String> getSupportedQueryParsers(ISession caller) throws PlanManagementException {
+	public Set<String> getSupportedQueryParsers(ISession caller)
+			throws PlanManagementException {
 		if (getWebserviceServer() != null) {
 			try {
-				List<String> parsers = getWebserviceServer().getSupportedQueryParsers(caller.getToken()).getResponseValue();
+				List<String> parsers = getWebserviceServer()
+						.getSupportedQueryParsers(caller.getToken())
+						.getResponseValue();
 				Set<String> parserSet = new HashSet<String>();
 				for (String parser : parsers) {
 					parserSet.add(parser);
@@ -287,7 +303,9 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public Set<String> getRegisteredBufferPlacementStrategiesIDs(ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				List<String> ids = getWebserviceServer().getRegisteredBufferPlacementStrategiesIDs(caller.getToken()).getResponseValue();
+				List<String> ids = getWebserviceServer()
+						.getRegisteredBufferPlacementStrategiesIDs(
+								caller.getToken()).getResponseValue();
 				Set<String> idSet = new HashSet<String>();
 				for (String id : ids) {
 					idSet.add(id);
@@ -304,7 +322,9 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public Set<String> getRegisteredSchedulingStrategies(ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				List<String> strats = getWebserviceServer().getRegisteredSchedulingStrategies(caller.getToken()).getResponseValue();
+				List<String> strats = getWebserviceServer()
+						.getRegisteredSchedulingStrategies(caller.getToken())
+						.getResponseValue();
 				Set<String> stratSet = new HashSet<String>();
 				for (String strat : strats) {
 					stratSet.add(strat);
@@ -321,7 +341,9 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public Set<String> getRegisteredSchedulers(ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				List<String> scheds = getWebserviceServer().getRegisteredSchedulingStrategies(caller.getToken()).getResponseValue();
+				List<String> scheds = getWebserviceServer()
+						.getRegisteredSchedulingStrategies(caller.getToken())
+						.getResponseValue();
 				Set<String> schedSet = new HashSet<String>();
 				for (String sched : scheds) {
 					schedSet.add(sched);
@@ -335,10 +357,12 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public void setScheduler(String scheduler, String schedulerStrategy, ISession caller) {
+	public void setScheduler(String scheduler, String schedulerStrategy,
+			ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				getWebserviceServer().setScheduler(caller.getToken(), scheduler, schedulerStrategy);
+				getWebserviceServer().setScheduler(caller.getToken(),
+						scheduler, schedulerStrategy);
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -350,7 +374,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public String getCurrentSchedulerID(ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				return getWebserviceServer().getCurrentSchedulerID(caller.getToken()).getResponseValue();
+				return getWebserviceServer().getCurrentSchedulerID(
+						caller.getToken()).getResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -362,7 +387,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public String getCurrentSchedulingStrategyID(ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				return getWebserviceServer().getCurrentSchedulingStrategyID(caller.getToken()).getResponseValue();
+				return getWebserviceServer().getCurrentSchedulingStrategyID(
+						caller.getToken()).getResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -379,22 +405,31 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public Collection<Integer> addQuery(String query, String parserID, ISession user, String queryBuildConfigurationName, Context context) throws PlanManagementException { //
+	public Collection<Integer> addQuery(String query, String parserID,
+			ISession user, String queryBuildConfigurationName, Context context)
+			throws PlanManagementException { //
 		try {
-			Collection<Integer> response = getWebserviceServer().addQuery(user.getToken(), parserID, query, queryBuildConfigurationName, context).getResponseValue();
+			Collection<Integer> response = getWebserviceServer().addQuery(
+					user.getToken(), parserID, query,
+					queryBuildConfigurationName, context).getResponseValue();
 			fireUpdateEvent(IUpdateEventListener.QUERY);
 			return response;
-		} catch (InvalidUserDataException_Exception | CreateQueryException_Exception e) {
+		} catch (InvalidUserDataException_Exception
+				| CreateQueryException_Exception e) {
 			throw new PlanManagementException(e);
 		}
-		
+
 	}
 
 	@Override
 	public ILogicalQuery getLogicalQueryById(int id, ISession caller) {
 		try {
-			return createLogicalQueryFromInfo(getWebserviceServer().getLogicalQueryById(caller.getToken(), Integer.toString(id)).getResponseValue(), caller);
-		} catch (InvalidUserDataException_Exception | QueryNotExistsException_Exception e) {
+			return createLogicalQueryFromInfo(
+					getWebserviceServer().getLogicalQueryById(
+							caller.getToken(), Integer.toString(id))
+							.getResponseValue(), caller);
+		} catch (InvalidUserDataException_Exception
+				| QueryNotExistsException_Exception e) {
 			throw new PlanManagementException(e);
 		}
 	}
@@ -402,7 +437,9 @@ public class WsClient implements IExecutor, IClientExecutor {
 	@Override
 	public ILogicalQuery getLogicalQueryByName(String name, ISession caller) {
 		try {
-			return createLogicalQueryFromInfo(getWebserviceServer().getLogicalQueryByName(caller.getToken(), name).getResponseValue(), caller);
+			return createLogicalQueryFromInfo(getWebserviceServer()
+					.getLogicalQueryByName(caller.getToken(), name)
+					.getResponseValue(), caller);
 		} catch (InvalidUserDataException_Exception e) {
 			throw new PlanManagementException(e);
 		}
@@ -415,8 +452,10 @@ public class WsClient implements IExecutor, IClientExecutor {
 	 * @param info
 	 * @return LogicalQuery
 	 */
-	public LogicalQuery createLogicalQueryFromInfo(LogicalQueryInfo info, ISession caller) {
-		LogicalQuery query = new LogicalQuery(info.getId(), info.getParserID(), null, info.getPriority());
+	public LogicalQuery createLogicalQueryFromInfo(LogicalQueryInfo info,
+			ISession caller) {
+		LogicalQuery query = new LogicalQuery(info.getId(), info.getParserID(),
+				null, info.getPriority());
 		query.setParameters(info.getParameters());
 		query.setContainsCycles(info.isContainsCycles());
 		query.setQueryText(info.getQueryText());
@@ -434,7 +473,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public Collection<Integer> getLogicalQueryIds(ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				return getWebserviceServer().getLogicalQueryIds(caller.getToken()).getResponseValue();
+				return getWebserviceServer().getLogicalQueryIds(
+						caller.getToken()).getResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -446,7 +486,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 	@Override
 	public List<IPhysicalOperator> getPhysicalRoots(int queryID, ISession caller) {
 		List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
-		Optional<ClientReceiver> receiver = createClientReceiver(this, queryID, caller);
+		Optional<ClientReceiver> receiver = createClientReceiver(this, queryID,
+				caller);
 		if (receiver.isPresent()) {
 			roots.add(receiver.get());
 		}
@@ -454,10 +495,13 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private Optional<ClientReceiver> createClientReceiver(IExecutor exec, int queryId, ISession caller) {
+	private Optional<ClientReceiver> createClientReceiver(IExecutor exec,
+			int queryId, ISession caller) {
 		SDFSchema outputSchema = exec.getOutputSchema(queryId, caller);
-		IDataHandler dataHandler = DataHandlerRegistry.getDataHandler("Tuple", outputSchema);
-		InetSocketAddress adr = (InetSocketAddress) ((IClientExecutor) exec).getSocketConnectionInformation(queryId, caller);
+		IDataHandler dataHandler = DataHandlerRegistry.getDataHandler("Tuple",
+				outputSchema);
+		InetSocketAddress adr = (InetSocketAddress) ((IClientExecutor) exec)
+				.getSocketConnectionInformation(queryId, caller);
 		Map<String, String> options = new HashMap<>();
 		options.put("port", "" + adr.getPort());
 		options.put("host", adr.getHostName());
@@ -465,10 +509,13 @@ public class WsClient implements IExecutor, IClientExecutor {
 		if (receivers.containsKey(queryId)) {
 			return Optional.of(receivers.get(queryId));
 		}
-		IProtocolHandler h = ProtocolHandlerRegistry.getInstance("SizeByteBuffer", ITransportDirection.IN, IAccessPattern.PUSH, options, dataHandler);
+		IProtocolHandler h = ProtocolHandlerRegistry.getInstance(
+				"SizeByteBuffer", ITransportDirection.IN, IAccessPattern.PUSH,
+				options, dataHandler);
 		// Must be done to add the transport to the protocoll ... seems not
 		// really intuitive ...
-		ITransportHandler th = TransportHandlerRegistry.getInstance("TCPClient", h, options);
+		ITransportHandler th = TransportHandlerRegistry.getInstance(
+				"TCPClient", h, options);
 		h.setTransportHandler(th);
 		ClientReceiver receiver = new ClientReceiver(h);
 		receiver.setOutputSchema(outputSchema);
@@ -485,11 +532,15 @@ public class WsClient implements IExecutor, IClientExecutor {
 	 * @return SocketAddress
 	 */
 	@Override
-	public SocketAddress getSocketConnectionInformation(int queryId, ISession caller) {
+	public SocketAddress getSocketConnectionInformation(int queryId,
+			ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				ConnectionInformation info = getWebserviceServer().getConnectionInformation(caller.getToken(), queryId).getResponseValue();
-				return new InetSocketAddress(InetAddress.getByName(info.getAddress()), info.getPort());
+				ConnectionInformation info = getWebserviceServer()
+						.getConnectionInformation(caller.getToken(), queryId)
+						.getResponseValue();
+				return new InetSocketAddress(InetAddress.getByName(info
+						.getAddress()), info.getPort());
 			} catch (UnknownHostException | InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -501,8 +552,11 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public SDFSchema getOutputSchema(int queryId, ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				return createSchemaFromInformation(getWebserviceServer().getOutputSchemaByQueryId(caller.getToken(), queryId).getResponseValue());
-			} catch (InvalidUserDataException_Exception | QueryNotExistsException_Exception e) {
+				return createSchemaFromInformation(getWebserviceServer()
+						.getOutputSchemaByQueryId(caller.getToken(), queryId)
+						.getResponseValue());
+			} catch (InvalidUserDataException_Exception
+					| QueryNotExistsException_Exception e) {
 				throw new PlanManagementException(e);
 			}
 		}
@@ -511,7 +565,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 
 	private SDFSchema createSchemaFromInformation(SdfSchemaInformation info) {
 		String uri = info.getUri();
-		Collection<SdfAttributeInformation> attributeInfos = info.getAttributes();
+		Collection<SdfAttributeInformation> attributeInfos = info
+				.getAttributes();
 		Collection<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		for (SdfAttributeInformation attrInfo : attributeInfos) {
 			attributes.add(createAttributeFromInformation(attrInfo));
@@ -520,12 +575,16 @@ public class WsClient implements IExecutor, IClientExecutor {
 		return new SDFSchema(uri, Tuple.class, attributes);
 	}
 
-	private SDFAttribute createAttributeFromInformation(SdfAttributeInformation info) {
-		// TODO Extend SdfAttributeInformation 
-		return new SDFAttribute(info.getSourcename(), info.getAttributename(), createDatatypeFromInformation(info.getDatatype()), null, null, null);
+	private SDFAttribute createAttributeFromInformation(
+			SdfAttributeInformation info) {
+		// TODO Extend SdfAttributeInformation
+		return new SDFAttribute(info.getSourcename(), info.getAttributename(),
+				createDatatypeFromInformation(info.getDatatype()), null, null,
+				null);
 	}
 
-	private SDFDatatype createDatatypeFromInformation(SdfDatatypeInformation info) {
+	private SDFDatatype createDatatypeFromInformation(
+			SdfDatatypeInformation info) {
 		return new SDFDatatype(info.getUri());
 	}
 
@@ -533,7 +592,9 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public ILogicalOperator removeSink(String name, ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				ILogicalOperator result = (ILogicalOperator) getWebserviceServer().removeSinkByName(name, caller.getToken()).getResponseValue();
+				ILogicalOperator result = (ILogicalOperator) getWebserviceServer()
+						.removeSinkByName(name, caller.getToken())
+						.getResponseValue();
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 				return result;
 			} catch (InvalidUserDataException_Exception e) {
@@ -550,7 +611,9 @@ public class WsClient implements IExecutor, IClientExecutor {
 				ResourceInformation ri = new ResourceInformation();
 				ri.setResourceName(name.getResourceName());
 				ri.setUser(name.getUser());
-				ILogicalOperator result = (ILogicalOperator) getWebserviceServer().removeSinkByResource(ri, caller.getToken()).getResponseValue();
+				ILogicalOperator result = (ILogicalOperator) getWebserviceServer()
+						.removeSinkByResource(ri, caller.getToken())
+						.getResponseValue();
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 				return result;
 			} catch (InvalidUserDataException_Exception e) {
@@ -564,7 +627,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public void removeViewOrStream(String name, ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				getWebserviceServer().removeViewOrStreamByName(name, caller.getToken());
+				getWebserviceServer().removeViewOrStreamByName(name,
+						caller.getToken());
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -579,7 +643,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 				ResourceInformation ri = new ResourceInformation();
 				ri.setResourceName(name.getResourceName());
 				ri.setUser(name.getUser());
-				getWebserviceServer().removeViewOrStreamByResource(ri, caller.getToken());
+				getWebserviceServer().removeViewOrStreamByResource(ri,
+						caller.getToken());
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -589,14 +654,18 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public Set<Entry<Resource, ILogicalOperator>> getStreamsAndViews(ISession caller) {
+	public Set<Entry<Resource, ILogicalOperator>> getStreamsAndViews(
+			ISession caller) {
 		HashMap<Resource, ILogicalOperator> set = new HashMap<>();
 		if (getWebserviceServer() != null) {
 			try {
-				List<ResourceInformationEntry> result = getWebserviceServer().getStreamsAndViews(caller.getToken()).getResponseValue();
+				List<ResourceInformationEntry> result = getWebserviceServer()
+						.getStreamsAndViews(caller.getToken())
+						.getResponseValue();
 
 				for (ResourceInformationEntry e : result) {
-					Resource r = new Resource(e.getResource().getUser(), e.getResource().getResourceName());
+					Resource r = new Resource(e.getResource().getUser(), e
+							.getResource().getResourceName());
 					ILogicalOperator op = (ILogicalOperator) e.getOperator();
 					set.put(r, op);
 				}
@@ -613,10 +682,12 @@ public class WsClient implements IExecutor, IClientExecutor {
 		HashMap<Resource, ILogicalOperator> set = new HashMap<>();
 		if (getWebserviceServer() != null) {
 			try {
-				List<ResourceInformationEntry> result = getWebserviceServer().getSinks(caller.getToken()).getResponseValue();
+				List<ResourceInformationEntry> result = getWebserviceServer()
+						.getSinks(caller.getToken()).getResponseValue();
 
 				for (ResourceInformationEntry e : result) {
-					Resource r = new Resource(e.getResource().getUser(), e.getResource().getResourceName());
+					Resource r = new Resource(e.getResource().getUser(), e
+							.getResource().getResourceName());
 					ILogicalOperator op = (ILogicalOperator) e.getOperator();
 					set.put(r, op);
 				}
@@ -647,7 +718,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 				ResourceInformation ri = new ResourceInformation();
 				ri.setResourceName(name.getResourceName());
 				ri.setUser(name.getUser());
-				return getWebserviceServer().containsViewOrStreamByResource(ri, caller.getToken()).isResponseValue();
+				return getWebserviceServer().containsViewOrStreamByResource(ri,
+						caller.getToken()).isResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -659,7 +731,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public boolean containsViewOrStream(String name, ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				return getWebserviceServer().containsViewOrStreamByName(name, caller.getToken()).isResponseValue();
+				return getWebserviceServer().containsViewOrStreamByName(name,
+						caller.getToken()).isResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -668,10 +741,12 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public void addStoredProcedure(String name, StoredProcedure sp, ISession caller) {
+	public void addStoredProcedure(String name, StoredProcedure sp,
+			ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				getWebserviceServer().addStoredProcedure(name, sp, caller.getToken());
+				getWebserviceServer().addStoredProcedure(name, sp,
+						caller.getToken());
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -683,7 +758,9 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public StoredProcedure getStoredProcedure(String name, ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				StoredProcedure result = getWebserviceServer().getStoredProcedure(name, caller.getToken()).getResponseValue();
+				StoredProcedure result = getWebserviceServer()
+						.getStoredProcedure(name, caller.getToken())
+						.getResponseValue();
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 				return result;
 			} catch (InvalidUserDataException_Exception e) {
@@ -697,7 +774,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public void removeStoredProcedure(String name, ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				getWebserviceServer().removeStoredProcedure(name, caller.getToken());
+				getWebserviceServer().removeStoredProcedure(name,
+						caller.getToken());
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -709,8 +787,9 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public List<StoredProcedure> getStoredProcedures(ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				
-				return getWebserviceServer().getStoredProcedures(caller.getToken()).getResponseValue();
+
+				return getWebserviceServer().getStoredProcedures(
+						caller.getToken()).getResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -722,7 +801,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public boolean containsStoredProcedures(String name, ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				return getWebserviceServer().containsStoredProcedures(name, caller.getToken()).isResponseValue();
+				return getWebserviceServer().containsStoredProcedures(name,
+						caller.getToken()).isResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -740,7 +820,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public List<String> getOperatorNames(ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				return getWebserviceServer().getOperatorNames(caller.getToken()).getResponseValue();
+				return getWebserviceServer()
+						.getOperatorNames(caller.getToken()).getResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -756,10 +837,12 @@ public class WsClient implements IExecutor, IClientExecutor {
 	 * (de.uniol.inf.is.odysseus.core.usermanagement.ISession)
 	 */
 	@Override
-	public List<LogicalOperatorInformation> getOperatorInformations(ISession caller) {
+	public List<LogicalOperatorInformation> getOperatorInformations(
+			ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				return getWebserviceServer().getOperatorInformations(caller.getToken()).getResponseValue();
+				return getWebserviceServer().getOperatorInformations(
+						caller.getToken()).getResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -775,10 +858,12 @@ public class WsClient implements IExecutor, IClientExecutor {
 	 * de.uniol.inf.is.odysseus.core.usermanagement.ISession)
 	 */
 	@Override
-	public LogicalOperatorInformation getOperatorInformation(String name, ISession caller) {
+	public LogicalOperatorInformation getOperatorInformation(String name,
+			ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				return getWebserviceServer().getOperatorInformation(name, caller.getToken()).getResponseValue();
+				return getWebserviceServer().getOperatorInformation(name,
+						caller.getToken()).getResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -787,21 +872,28 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public SDFSchema determineOutputSchema(String query, String parserID, ISession user, int port, Context context) {
+	public SDFSchema determineOutputSchema(String query, String parserID,
+			ISession user, int port, Context context) {
 		if (getWebserviceServer() != null) {
 			try {
-				SdfSchemaInformation si = getWebserviceServer().determineOutputSchema(query, parserID, user.getToken(), port, context).getResponseValue();
+				SdfSchemaInformation si = getWebserviceServer()
+						.determineOutputSchema(query, parserID,
+								user.getToken(), port, context)
+						.getResponseValue();
 				List<SDFAttribute> attributes = new ArrayList<>();
 				// TODO: extends SdfAttributeInformation
 				for (SdfAttributeInformation sda : si.getAttributes()) {
 					SDFDatatype dt = new SDFDatatype(sda.getDatatype().getUri());
-					attributes.add(new SDFAttribute(sda.getSourcename(), sda.getAttributename(), dt, null, null, null));
+					attributes.add(new SDFAttribute(sda.getSourcename(), sda
+							.getAttributename(), dt, null, null, null));
 				}
 				@SuppressWarnings({ "rawtypes", "unchecked" })
-				Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) Class.forName(si.getTypeClass());
+				Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) Class
+						.forName(si.getTypeClass());
 				SDFSchema schema = new SDFSchema(si.getUri(), type, attributes);
 				return schema;
-			} catch (InvalidUserDataException_Exception | ClassNotFoundException e) {
+			} catch (InvalidUserDataException_Exception
+					| ClassNotFoundException e) {
 				throw new PlanManagementException(e);
 			}
 		}
@@ -820,7 +912,9 @@ public class WsClient implements IExecutor, IClientExecutor {
 		if (getWebserviceServer() != null) {
 			try {
 				HashSet<SDFDatatype> set = new HashSet<>();
-				List<SdfDatatypeInformation> dts = getWebserviceServer().getRegisteredDatatypes(caller.getToken()).getResponseValue();
+				List<SdfDatatypeInformation> dts = getWebserviceServer()
+						.getRegisteredDatatypes(caller.getToken())
+						.getResponseValue();
 				for (SdfDatatypeInformation dt : dts) {
 					set.add(new SDFDatatype(dt.getUri()));
 				}
@@ -840,11 +934,15 @@ public class WsClient implements IExecutor, IClientExecutor {
 	 * de.uniol.inf.is.odysseus.core.usermanagement.ISession)
 	 */
 	@Override
-	public Set<String> getRegisteredAggregateFunctions(@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel, ISession caller) {
+	public Set<String> getRegisteredAggregateFunctions(
+			@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel,
+			ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
 				HashSet<String> set = new HashSet<>();
-				set.addAll(getWebserviceServer().getRegisteredAggregateFunctions(datamodel.getName(), caller.getToken()).getResponseValue());
+				set.addAll(getWebserviceServer()
+						.getRegisteredAggregateFunctions(datamodel.getName(),
+								caller.getToken()).getResponseValue());
 				return set;
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -858,7 +956,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 		if (getWebserviceServer() != null) {
 			try {
 				HashSet<String> set = new HashSet<>();
-				set.addAll(getWebserviceServer().getRegisteredWrapperNames(caller.getToken()).getResponseValue());
+				set.addAll(getWebserviceServer().getRegisteredWrapperNames(
+						caller.getToken()).getResponseValue());
 				return set;
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -868,11 +967,14 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public Map<String, List<String>> getQueryParserTokens(String queryParser, ISession user) {
+	public Map<String, List<String>> getQueryParserTokens(String queryParser,
+			ISession user) {
 		HashMap<String, List<String>> result = new HashMap<>();
 		if (getWebserviceServer() != null) {
 			try {
-				List<StringMapListEntry> entries = getWebserviceServer().getQueryParserTokens(queryParser, user.getToken()).getResponseValue();
+				List<StringMapListEntry> entries = getWebserviceServer()
+						.getQueryParserTokens(queryParser, user.getToken())
+						.getResponseValue();
 				for (StringMapListEntry e : entries) {
 					result.put(e.getKey(), e.getValue());
 				}
@@ -884,10 +986,13 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public List<String> getQueryParserSuggestions(String queryParser, String hint, ISession caller) {
+	public List<String> getQueryParserSuggestions(String queryParser,
+			String hint, ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				return getWebserviceServer().getQueryParserSuggestions(queryParser, hint, caller.getToken()).getResponseValue();
+				return getWebserviceServer().getQueryParserSuggestions(
+						queryParser, hint, caller.getToken())
+						.getResponseValue();
 
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -895,13 +1000,13 @@ public class WsClient implements IExecutor, IClientExecutor {
 		}
 		return new ArrayList<>();
 	}
-	
+
 	@Override
 	public List<IUser> getUsers(ISession session) {
 		// TODO: Implement getUsers for Web-Service
 		return null;
 	}
-	
+
 	@Override
 	public Collection<String> getUdfs() {
 		// TODO: Implement getUdfs for Web-Service
