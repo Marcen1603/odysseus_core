@@ -65,7 +65,7 @@ public class StreamClientHandler extends Thread implements IProviderRunner {
 
 	private boolean printthroughput = false;
 	private int throughputEach;
-	private int counter = 0;
+	private static int counter = 0;
 	private long lastTime = 0;
 	private long startTime = 0;
 	private int lastSize = 0;
@@ -76,6 +76,10 @@ public class StreamClientHandler extends Thread implements IProviderRunner {
 	private boolean delayEachTuple = false;
 	private IDataGenerator generator = null;
 
+	public StreamClientHandler(){
+		setPriority(MAX_PRIORITY);
+	}
+	
 	public void pause() {
 		synchronized (this) {
 			this.paused = true;
@@ -95,8 +99,8 @@ public class StreamClientHandler extends Thread implements IProviderRunner {
 
 	private void internalInit() {
 		this.startTime = System.currentTimeMillis();
-		this.lastTime = startTime;
-		this.counter = 0;
+		this.lastTime = startTime;				
+		counter = 0;		
 		generator.init(this);
 	}
 
@@ -188,16 +192,24 @@ public class StreamClientHandler extends Thread implements IProviderRunner {
 
 	private void printThroughput(DataTuple nextTuple) {
 		if (printthroughput) {
-			counter++;
+			increaseCounter();
 			int size = nextTuple.memSize;
 			this.totalSize += size;
 			this.lastSize += size;
-			if ((counter % throughputEach) == 0) {
+			if ((getCounter() % throughputEach) == 0) {
 				printStats();
 				lastTime = System.currentTimeMillis();
 				lastSize = 0;
 			}
 		}
+	}
+	
+	private static synchronized int getCounter() {
+		return counter;
+	}
+
+	private static synchronized void increaseCounter(){
+		counter++;
 	}
 
 	private void delay() {
@@ -228,13 +240,17 @@ public class StreamClientHandler extends Thread implements IProviderRunner {
 		System.out.println("Duration for last " + nf.format(throughputEach)
 				+ " elements: \t" + nf.format(needed) + "\t ms for "
 				+ nf.format(lastSize) + "\t bytes. Throughput: \t"
-				+ Math.round((lastSize / needed) * 100.) / 100. + " bytes/ms");
+				+ nf.format(Math.round((lastSize / needed) * 100.) / 100.) + " bytes/ms \t"
+				+ nf.format(Math.round((throughputEach / needed) * 1000.))
+				+ " tupel/s");
 		System.out
-				.println("Total for " + nf.format(counter) + " elements: \t\t"
+				.println("Total for " + nf.format(getCounter()) + " elements: \t\t"
 						+ nf.format(total) + "\t ms for "
 						+ nf.format(totalSize) + "\t bytes. Throughput: \t"
-						+ Math.round((totalSize / total) * 100.) / 100.
-						+ " \tbytes/ms");
+						+ nf.format(Math.round((totalSize / total) * 100.) / 100.)
+						+ " bytes/ms \t"
+						+ nf.format(Math.round((getCounter() / total) * 1000.))
+						+ " tupel/s");
 	}
 
 	@Override

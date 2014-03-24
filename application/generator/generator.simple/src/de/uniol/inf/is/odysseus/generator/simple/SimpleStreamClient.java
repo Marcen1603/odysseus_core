@@ -67,12 +67,12 @@ public class SimpleStreamClient extends AbstractDataGenerator {
 		
 	
 		
-		System.out.println(tuple);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+//		System.out.println(tuple);
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 		List<DataTuple> list = new ArrayList<DataTuple>();
 		list.add(tuple);
 		return list;
