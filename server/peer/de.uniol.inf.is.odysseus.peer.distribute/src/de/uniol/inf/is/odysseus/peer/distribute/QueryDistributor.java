@@ -93,6 +93,7 @@ public class QueryDistributor implements IQueryDistributor {
 	// called by OSGi-DS
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
 		p2pNetworkManager = serv;
+		LOG.debug("Bound p2p network manager {}", serv);
 	}
 
 	// called by OSGi-DS
