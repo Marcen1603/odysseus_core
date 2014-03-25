@@ -981,7 +981,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		}
 		
 		// Deregister from remote events
-		if (l.isEmpty()) {
+		if (l != null && l.isEmpty()) {
 			switch (type) {
 			case IUpdateEventListener.DATADICTIONARY:
 				getDataDictionary(session).removeListener(this);
