@@ -14,8 +14,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.equinox.p2.core.IAgentLocation;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.IProfile;
@@ -29,6 +31,7 @@ import org.eclipse.equinox.p2.operations.UpdateOperation;
 import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.osgi.framework.BundleContext;
@@ -128,10 +131,10 @@ public class FeatureUpdateUtility {
 				IMetadataRepository repo = metadataManager.loadRepository(uri, getDefaultMonitor());
 				IQueryResult<IInstallableUnit> units = repo.query(QueryUtil.createIUGroupQuery(), getDefaultMonitor());
 				List<IInstallableUnit> toinstall = new ArrayList<>();
-				if(!id.endsWith("feature.group")){
+				if (!id.endsWith("feature.group")) {
 					id = id + ".feature.group";
 				}
-				
+
 				for (IInstallableUnit unit : units.toSet()) {
 					// use starts with to ignore version and qualifier
 					if (unit.getId().startsWith(id)) {
@@ -209,9 +212,9 @@ public class FeatureUpdateUtility {
 				for (IInstallableUnit unit : units.toSet()) {
 					// use starts with to ignore version and qualifier
 					String unitid = unit.getId().toLowerCase();
-					
+
 					if (unitid.contains(id) && unitid.startsWith("de.uniol.inf.is") && !unitid.contains("source.feature")) {
-						if(!containsWithSameID(alreadyInstalled, unit)){
+						if (!containsWithSameID(alreadyInstalled, unit)) {
 							installable.add(unit);
 						}
 					}
@@ -229,75 +232,88 @@ public class FeatureUpdateUtility {
 			return null;
 		} else {
 			throw new PermissionException("This user may not list installable features!");
-		}		
+		}
 	}
-	
-	
-	private static boolean containsWithSameID(Collection<IInstallableUnit> list, IInstallableUnit unit){
-		for(IInstallableUnit inList : list){
-			if(inList.getId().equalsIgnoreCase(unit.getId())){
+
+	private static boolean containsWithSameID(Collection<IInstallableUnit> list, IInstallableUnit unit) {
+		for (IInstallableUnit inList : list) {
+			if (inList.getId().equalsIgnoreCase(unit.getId())) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public static IStatus checkForUpdates(final ISession caller) throws OperationCanceledException {
-
+	public static boolean checkForUpdates(ISession caller) {
 		if (UserManagementProvider.getUsermanagement().hasPermission(caller, UpdatePermission.UPDATE, UpdatePermission.objectURI)) {
-
-			BundleContext context = Activator.getContext();
-			IProvisioningAgent agent = getAgent(context);
-			IProgressMonitor monitor = getDefaultMonitor();
-
-			boolean doInstall = true;
-			/* 1. Prepare update plumbing */
-
-			final ProvisioningSession session = new ProvisioningSession(agent);
-			final UpdateOperation operation = new UpdateOperation(session);
-
-			// create uri
-			URI uri = null;
 			try {
-				uri = new URI(REPOSITORY_LOC);
-			} catch (final URISyntaxException e) {
-				System.out.println("URI invalid: " + e.getMessage());
-				return Status.CANCEL_STATUS;
-			}
 
-			// set location of artifact and metadata repo
-			operation.getProvisioningContext().setArtifactRepositories(new URI[] { uri });
-			operation.getProvisioningContext().setMetadataRepositories(new URI[] { uri });
+				BundleContext context = Activator.getContext();
+				IProvisioningAgent agent = getAgent(context);
+				IProgressMonitor monitor = getDefaultMonitor();
 
-			/* 2. check for updates */
+				final ProvisioningSession session = new ProvisioningSession(agent);
+				final UpdateOperation operation = new UpdateOperation(session);
 
-			// run update checks causing I/O
-			try {
+				URI uri = new URI(REPOSITORY_LOC);
+				refreshArtifactRepositories(uri, context);
+				operation.getProvisioningContext().setArtifactRepositories(new URI[] { uri });
+				operation.getProvisioningContext().setMetadataRepositories(new URI[] { uri });
 				final IStatus status = operation.resolveModal(monitor);
 
 				// failed to find updates (inform user and exit)
 				if (!status.isOK()) {
 					System.out.println(status.getMessage());
-					return Status.CANCEL_STATUS;
+					return false;
 				}
-
-				/* 3. Ask if updates should be installed and run installation */
-
-				// found updates, ask user if to install?
 				if (status.isOK() && status.getSeverity() != IStatus.ERROR) {
 
-					String updates = "";
 					Update[] possibleUpdates = operation.getPossibleUpdates();
-					for (Update update : possibleUpdates) {
-						updates += update + "\n";
-					}
-					System.out.println("Following updates found: \n" + updates);
-					doInstall = true;
-				}
+					if (possibleUpdates.length > 0) {
+						String updates = "";
+						for (Update update : possibleUpdates) {
+							updates += update + "\n";
+						}
+						System.out.println("Following updates found: \n" + updates);
 
-				// start installation
-				if (doInstall) {
-					final ProvisioningJob provisioningJob = operation.getProvisioningJob(monitor);
+						return true;
+					} else {
+						System.out.println("No updates found.");
+						return false;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			throw new PermissionException("User is not allowed to update the system!");
+		}
+		return false;
+	}
+
+	public static IStatus checkForAndInstallUpdates(final ISession caller) throws OperationCanceledException {
+
+		if (UserManagementProvider.getUsermanagement().hasPermission(caller, UpdatePermission.UPDATE, UpdatePermission.objectURI)) {
+
+			try {
+
+				BundleContext context = Activator.getContext();
+				IProvisioningAgent agent = getAgent(context);
+				IProgressMonitor monitor = getDefaultMonitor();
+
+				final ProvisioningSession session = new ProvisioningSession(agent);
+
+				final UpdateOperation operation = new UpdateOperation(session);
+
+				URI uri = new URI(REPOSITORY_LOC);
+				refreshArtifactRepositories(uri, context);
+				operation.getProvisioningContext().setArtifactRepositories(new URI[] { uri });
+				operation.getProvisioningContext().setMetadataRepositories(new URI[] { uri });
+
+				final IStatus status = operation.resolveModal(monitor);
+
+				if (status.isOK() && status.getSeverity() != IStatus.ERROR) {
+					final ProvisioningJob provisioningJob = operation.getProvisioningJob(getDefaultMonitor());
 					// updates cannot run from within Eclipse IDE!!!
 					if (provisioningJob == null) {
 						System.err.println("Running update from within Eclipse IDE? This won't work!!! Use exported product!");
@@ -333,6 +349,16 @@ public class FeatureUpdateUtility {
 
 	}
 
+	public static String getVersionNumber(ISession caller) {
+		List<IInstallableUnit> units = getInstalledFeatures(caller);
+		for (IInstallableUnit unit : units) {
+			if (unit.getId().toLowerCase().startsWith("de.uniol.inf.is.odysseus.core")) {
+				return unit.getVersion().toString();
+			}
+		}
+		return "-1";
+	}
+
 	public static IProvisioningAgent getAgent(BundleContext context) {
 		IProvisioningAgent agent = null;
 
@@ -347,7 +373,7 @@ public class FeatureUpdateUtility {
 		return agent;
 	}
 
-	public static void restart(ISession caller) {		
+	public static void restart(ISession caller) {
 		BundleContext context = Activator.getContext();
 		ServiceReference<?> eventAdminServiceReference = context.getServiceReference(EventAdmin.class.getName());
 
@@ -361,7 +387,7 @@ public class FeatureUpdateUtility {
 				LOGGER.debug("Sending restart event");
 				Map<String, String> hashMap = new HashMap<>();
 				hashMap.put("TYPE", "RESTART");
-				eventAdmin.sendEvent(new Event("de/uniol/inf/odysseus/application/" + System.currentTimeMillis(), hashMap));								
+				eventAdmin.sendEvent(new Event("de/uniol/inf/odysseus/application/" + System.currentTimeMillis(), hashMap));
 			}
 		});
 	}
@@ -376,9 +402,9 @@ public class FeatureUpdateUtility {
 			@Override
 			public void worked(int work) {
 				int percent = (work * 100) / totalWork;
-				if(this.name.isEmpty()){
+				if (this.name.isEmpty()) {
 					LOGGER.info(percent + "% completed");
-				}else{
+				} else {
 					LOGGER.info(this.name + ": " + percent + "% completed");
 				}
 			}
@@ -415,9 +441,9 @@ public class FeatureUpdateUtility {
 
 			@Override
 			public void done() {
-				if(this.name.isEmpty()){
+				if (this.name.isEmpty()) {
 					LOGGER.info("100% completed");
-				}else{
+				} else {
 					LOGGER.info(this.name + ": 100% completed");
 				}
 				LOGGER.info("Task " + this.name + " done");
@@ -430,12 +456,32 @@ public class FeatureUpdateUtility {
 				}
 				this.name = name;
 				LOGGER.info("Starting task " + name + "...");
-				if(totalWork>0){
+				if (totalWork > 0) {
 					this.totalWork = totalWork;
 				}
 
 			}
 		};
+	}
+
+	public static void refreshArtifactRepositories(URI uri, BundleContext context) throws ProvisionException {
+
+		IProvisioningAgent agent = getAgent(context);
+
+		if (agent != null) {
+			IAgentLocation agentLocation = (IAgentLocation) agent.getService(IAgentLocation.SERVICE_NAME);
+			IArtifactRepositoryManager manager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
+			URI locationUri = agentLocation.getDataArea("org.eclipse.equinox.p2.repository");
+			locationUri = URIUtil.append(locationUri, "cache/");
+			try {
+				manager.refreshRepository(locationUri, getDefaultMonitor());
+			} catch (ProvisionException e) {
+				System.out.println("Warn: Could not refresh repository, because there is no one!");
+			}
+
+		} else {
+			throw new ProvisionException("No repository manager found");
+		}
 	}
 
 }

@@ -18,7 +18,7 @@ public class UpdateFeaturePreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
-		FeatureUpdateUtility.checkForUpdates(caller);
+		FeatureUpdateUtility.checkForAndInstallUpdates(caller);
 		return null;
 	}
 }

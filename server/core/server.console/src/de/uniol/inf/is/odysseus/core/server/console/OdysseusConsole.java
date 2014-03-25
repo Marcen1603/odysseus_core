@@ -1299,8 +1299,20 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 
 	@Help(parameter = "", description = "tries to update odysseus")
 	public void _updateFeatures(CommandInterpreter ci) {
-		FeatureUpdateUtility.checkForUpdates(this.currentUser);
+		FeatureUpdateUtility.checkForAndInstallUpdates(this.currentUser);
 	}
+	
+	@Help(parameter = "", description = "checks if there are updates for odysseus")
+	public void _updateCheck(CommandInterpreter ci) {
+		FeatureUpdateUtility.checkForUpdates(currentUser);
+	}
+	
+	@Help(parameter = "", description = "checks if there are updates for odysseus")
+	public void _version(CommandInterpreter ci) {
+		String version = FeatureUpdateUtility.getVersionNumber(currentUser);
+		ci.println(version);
+	}
+	
 	
 	@Help(parameter = "", description = "restarts odysseus")
 	public void _restart(CommandInterpreter ci) {
