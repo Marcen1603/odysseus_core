@@ -1216,19 +1216,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ResourceInformationListResponse }
-     * 
-     */
-    public ResourceInformationListResponse createResourceInformationListResponse() {
-        return new ResourceInformationListResponse();
-    }
-
-    /**
      * Create an instance of {@link SdfAttributeInformation }
      * 
      */
     public SdfAttributeInformation createSdfAttributeInformation() {
         return new SdfAttributeInformation();
+    }
+
+    /**
+     * Create an instance of {@link SinkInformationWS }
+     * 
+     */
+    public SinkInformationWS createSinkInformationWS() {
+        return new SinkInformationWS();
     }
 
     /**
@@ -1389,14 +1389,6 @@ public class ObjectFactory {
      */
     public QueryResponse createQueryResponse() {
         return new QueryResponse();
-    }
-
-    /**
-     * Create an instance of {@link ResourceInformationEntry }
-     * 
-     */
-    public ResourceInformationEntry createResourceInformationEntry() {
-        return new ResourceInformationEntry();
     }
 
     /**

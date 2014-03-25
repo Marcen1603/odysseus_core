@@ -47,6 +47,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -1232,8 +1233,16 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	@Override
-	public Set<Entry<Resource, ILogicalOperator>> getSinks(ISession caller) {
-		return getDataDictionary(caller).getSinks(caller);
+	public List<SinkInformation> getSinks(ISession caller) {
+		Set<Entry<Resource, ILogicalOperator>> sinks = getDataDictionary(caller).getSinks(caller);
+		List<SinkInformation> ret = new ArrayList<>();
+		for (Entry<Resource, ILogicalOperator> s: sinks){
+			SinkInformation si = new SinkInformation();
+			si.setName(s.getKey());
+			si.setOutputSchema(s.getValue().getOutputSchema());
+			ret.add(si);
+		}
+		return ret;
 	}
 
 	@Override

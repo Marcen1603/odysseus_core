@@ -30,8 +30,7 @@
 
 package de.uniol.inf.is.odysseus.rcp.views.sink;
 
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.List;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.LocalSelectionTransfer;
@@ -48,8 +47,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
@@ -74,9 +72,10 @@ public class SinkView extends ViewPart implements IUpdateEventListener {
 	@Override
 	public void dispose() {
 		IExecutor e = OdysseusRCPPlugIn.getExecutor();
-		e.removeUpdateEventListener(this, IUpdateEventListener.DATADICTIONARY, OdysseusRCPPlugIn.getActiveSession());
+		e.removeUpdateEventListener(this, IUpdateEventListener.DATADICTIONARY,
+				OdysseusRCPPlugIn.getActiveSession());
 		e.removeUpdateEventListener(this, IUpdateEventListener.SESSION, null);
-		
+
 		super.dispose();
 	}
 
@@ -94,21 +93,31 @@ public class SinkView extends ViewPart implements IUpdateEventListener {
 			@Override
 			public void run() {
 				try {
-					if (!getTreeViewer().getTree().isDisposed() && !PlatformUI.getWorkbench().getDisplay().isDisposed()) {
-						Set<Entry<Resource, ILogicalOperator>> sinks = OdysseusRCPPlugIn.getExecutor().getSinks(OdysseusRCPPlugIn.getActiveSession());
-						getTreeViewer().setInput(sinks);
-						
-						if( !sinks.isEmpty() ) {
-							stackLayout.topControl = getTreeViewer().getTree();
-							setPartName("Sinks (" + sinks.size() + ")");
-						} else {
-							stackLayout.topControl = label;
-							setPartName("Sinks (0)");
+					if (!getTreeViewer().getTree().isDisposed()
+							&& !PlatformUI.getWorkbench().getDisplay()
+									.isDisposed()) {
+						List<SinkInformation> sinks = OdysseusRCPPlugIn
+								.getExecutor().getSinks(
+										OdysseusRCPPlugIn.getActiveSession());
+
+						if (sinks != null) {
+							getTreeViewer().setInput(sinks);
+
+							if (!sinks.isEmpty()) {
+								stackLayout.topControl = getTreeViewer()
+										.getTree();
+								setPartName("Sinks (" + sinks.size() + ")");
+							} else {
+								stackLayout.topControl = label;
+								setPartName("Sinks (0)");
+							}
 						}
 						parent.layout();
 					}
 				} catch (Exception e) {
-					LOG.error("Exception during setting input for treeViewer in sinkView", e);
+					LOG.error(
+							"Exception during setting input for treeViewer in sinkView",
+							e);
 				}
 				isRefreshing = false;
 			}
@@ -130,34 +139,39 @@ public class SinkView extends ViewPart implements IUpdateEventListener {
 	public void eventOccured() {
 		refresh();
 	}
-	
-	
 
 	@Override
 	public void createPartControl(Composite parent) {
 		this.parent = parent;
-		
+
 		stackLayout = new StackLayout();
 		parent.setLayout(stackLayout);
 
-		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
-		getTreeViewer().setContentProvider(new ResourceInformationContentProvider());
-		getTreeViewer().setLabelProvider(new ResourceInformationLabelProvider("sink"));
-		
+		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL
+				| SWT.MULTI));
+		getTreeViewer().setContentProvider(
+				new ResourceInformationContentProvider());
+		getTreeViewer().setLabelProvider(
+				new ResourceInformationLabelProvider("sink"));
+
 		int operations = DND.DROP_MOVE;
-		Transfer[] transferTypes = new Transfer[]{LocalSelectionTransfer.getTransfer()};
-		getTreeViewer().addDragSupport(operations, transferTypes, new OperatorDragListener(getTreeViewer(), "SINK"));
-		
+		Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer
+				.getTransfer() };
+		getTreeViewer().addDragSupport(operations, transferTypes,
+				new OperatorDragListener(getTreeViewer(), "SINK"));
+
 		refresh();
 		IExecutor e = OdysseusRCPPlugIn.getExecutor();
-		e.addUpdateEventListener(this, IUpdateEventListener.DATADICTIONARY, OdysseusRCPPlugIn.getActiveSession());
-		e.addUpdateEventListener(this,IUpdateEventListener.SESSION, null);
+		e.addUpdateEventListener(this, IUpdateEventListener.DATADICTIONARY,
+				OdysseusRCPPlugIn.getActiveSession());
+		e.addUpdateEventListener(this, IUpdateEventListener.SESSION, null);
 		// UserManagement.getUsermanagement().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
 
 		// Contextmenu
 		MenuManager menuManager = new MenuManager();
-		Menu contextMenu = menuManager.createContextMenu(getTreeViewer().getControl());
+		Menu contextMenu = menuManager.createContextMenu(getTreeViewer()
+				.getControl());
 		// Set the MenuManager
 		getTreeViewer().getControl().setMenu(contextMenu);
 		getSite().registerContextMenu(menuManager, getTreeViewer());

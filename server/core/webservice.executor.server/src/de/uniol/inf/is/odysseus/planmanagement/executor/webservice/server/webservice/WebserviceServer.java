@@ -55,6 +55,7 @@ import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -106,6 +107,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webser
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFSchemaInformation;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFSchemaResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SimpleGraph;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SinkInformationWS;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SourceInformation;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SourceListResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StoredProcedureListResponse;
@@ -912,17 +914,18 @@ public class WebserviceServer {
 		return resp;
 	}
 
-	public ResourceInformationListResponse getSinks(
+	public ArrayList<SinkInformationWS> getSinks(
 			@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
-		Set<Entry<Resource, ILogicalOperator>> result = getExecutor()
+		List<SinkInformation> result = getExecutor()
 				.getSinks(user);
-		ResourceInformationListResponse resp = new ResourceInformationListResponse(
-				true);
-		for (Entry<Resource, ILogicalOperator> entry : result) {
-			resp.addResponseValue(new ResourceInformationEntry(
-					new ResourceInformation(entry.getKey()), entry.getValue()));
+		ArrayList<SinkInformationWS> resp = new ArrayList<>();
+		for (SinkInformation entry : result) {
+			SinkInformationWS vi = new SinkInformationWS();
+			vi.setName(new ResourceInformation(entry.getName()));
+			vi.setSchema(toSchemaInformation(entry.getOutputSchema()));
+			resp.add(vi);
 		}
 		return resp;
 	}

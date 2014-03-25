@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.commands;
 
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -36,6 +37,7 @@ import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
@@ -58,7 +60,7 @@ public class DropAllSinksCommand extends AbstractHandler {
 		final IExecutor executor = Preconditions.checkNotNull(OdysseusRCPPlugIn.getExecutor(), "Executor must not be null!");
 		
 		if (executor != null ) {
-			final Set<Entry<Resource, ILogicalOperator>> sinks = executor.getSinks(OdysseusRCPPlugIn.getActiveSession());
+			final List<SinkInformation> sinks = executor.getSinks(OdysseusRCPPlugIn.getActiveSession());
 			if( sinks == null || sinks.isEmpty() ) {
 				LOG.debug("Nothing to drop");
 				StatusBarManager.getInstance().setMessage("No sinks to drop");
@@ -108,10 +110,10 @@ public class DropAllSinksCommand extends AbstractHandler {
 		return box.open() == SWT.OK;
 	}
 
-	private static ImmutableList<Resource> determineIds(Set<Entry<Resource, ILogicalOperator>> sinks) {
+	private static ImmutableList<Resource> determineIds(List<SinkInformation> sinks) {
 		ImmutableList.Builder<Resource> builder = ImmutableList.builder();
-		for( Entry<Resource, ILogicalOperator> sink : sinks ) {
-			builder.add(sink.getKey());
+		for( SinkInformation sink : sinks ) {
+			builder.add(sink.getName());
 		}
 		return builder.build();
 	}

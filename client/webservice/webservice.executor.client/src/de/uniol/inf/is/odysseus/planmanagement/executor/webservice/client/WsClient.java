@@ -42,7 +42,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -69,6 +68,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -90,10 +90,10 @@ import de.uniol.inf.is.odysseus.webservice.client.InvalidUserDataException_Excep
 import de.uniol.inf.is.odysseus.webservice.client.LogicalQueryInfo;
 import de.uniol.inf.is.odysseus.webservice.client.QueryNotExistsException_Exception;
 import de.uniol.inf.is.odysseus.webservice.client.ResourceInformation;
-import de.uniol.inf.is.odysseus.webservice.client.ResourceInformationEntry;
 import de.uniol.inf.is.odysseus.webservice.client.SdfAttributeInformation;
 import de.uniol.inf.is.odysseus.webservice.client.SdfDatatypeInformation;
 import de.uniol.inf.is.odysseus.webservice.client.SdfSchemaInformation;
+import de.uniol.inf.is.odysseus.webservice.client.SinkInformationWS;
 import de.uniol.inf.is.odysseus.webservice.client.StringMapListEntry;
 import de.uniol.inf.is.odysseus.webservice.client.ViewInformationWS;
 import de.uniol.inf.is.odysseus.webservice.client.WebserviceServer;
@@ -707,25 +707,24 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public Set<Entry<Resource, ILogicalOperator>> getSinks(ISession caller) {
-		HashMap<Resource, ILogicalOperator> set = new HashMap<>();
+	public List<SinkInformation> getSinks(ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				List<ResourceInformationEntry> result = getWebserviceServer()
-						.getSinks(caller.getToken()).getResponseValue();
-
-				for (ResourceInformationEntry e : result) {
-					Resource r = new Resource(e.getResource().getUser(), e
-							.getResource().getResourceName());
-					ILogicalOperator op = (ILogicalOperator) e.getOperator();
-					set.put(r, op);
+				List<SinkInformationWS> l = getWebserviceServer()
+						.getSinks(caller.getToken());
+				List<SinkInformation> result = new ArrayList<>();
+				for (SinkInformationWS viws : l) {
+					SinkInformation vi = new SinkInformation();
+					vi.setName(toResource(viws.getName()));
+					vi.setOutputSchema(toSDFSchema(viws.getSchema()));
+					result.add(vi);
 				}
-				return set.entrySet();
-			} catch (InvalidUserDataException_Exception e) {
+				return result;
+			} catch (InvalidUserDataException_Exception | ClassNotFoundException e) {
 				throw new PlanManagementException(e);
 			}
 		}
-		return set.entrySet();
+		return null;
 	}
 
 	@Override

@@ -41,7 +41,6 @@ import javax.xml.bind.annotation.XmlType;
     SourceListResponse.class,
     StoredProcedureListResponse.class,
     BooleanResponse.class,
-    ResourceInformationListResponse.class,
     StringListResponse.class,
     ConnectionInformationResponse.class,
     LogicalOperatorResponse.class,

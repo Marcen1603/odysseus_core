@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.core.planmanagement.executor;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -27,9 +26,10 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -372,7 +372,7 @@ public interface IExecutor extends IClientPlanManager {
 	 *            The current user
 	 * @return Pairs of resource description and the top operator
 	 */
-	public Set<Entry<Resource, ILogicalOperator>> getSinks(ISession caller);
+	public List<SinkInformation> getSinks(ISession caller);
 
 	/**
 	 * Checks whether the stream or view exists.

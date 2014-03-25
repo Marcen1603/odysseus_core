@@ -36,7 +36,11 @@ public abstract class AbstractViewLabelProvider extends StyledCellLabelProvider 
 	@Override
 	public void update(ViewerCell cell) {
 		Object obj = cell.getElement();
-		StyledString styledString = new StyledString(getText(obj));
+		String text = getText(obj);
+		if (text == null){
+			text = "";
+		}
+		StyledString styledString = new StyledString(text);
 
 		if (obj instanceof SDFAttribute) {
 			SDFAttribute attribute = (SDFAttribute) obj;

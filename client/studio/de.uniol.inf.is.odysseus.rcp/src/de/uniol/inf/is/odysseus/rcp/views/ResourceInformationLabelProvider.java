@@ -5,7 +5,6 @@ import java.util.Map.Entry;
 import org.eclipse.swt.graphics.Image;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.AbstractResourceInformation;
-import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 public class ResourceInformationLabelProvider extends AbstractViewLabelProvider {
@@ -37,8 +36,8 @@ public class ResourceInformationLabelProvider extends AbstractViewLabelProvider 
 					.append("]");
 			return sb.toString();
 		}
-		if (element instanceof ViewInformation) {
-			ViewInformation vi = (ViewInformation) element;
+		if (element instanceof AbstractResourceInformation) {
+			AbstractResourceInformation vi = (AbstractResourceInformation) element;
 			StringBuilder sb = new StringBuilder();
 			sb.append(vi.getName());
 			return sb.toString();
