@@ -85,7 +85,7 @@ public class SinkView extends ViewPart implements IUpdateEventListener {
 	}
 
 	public void refresh() {
-		if (isRefreshing) {
+		if (isRefreshing || PlatformUI.getWorkbench().getDisplay().isDisposed()) {
 			return;
 		}
 		isRefreshing = true;
@@ -94,7 +94,7 @@ public class SinkView extends ViewPart implements IUpdateEventListener {
 			@Override
 			public void run() {
 				try {
-					if (!getTreeViewer().getTree().isDisposed()) {
+					if (!getTreeViewer().getTree().isDisposed() && !PlatformUI.getWorkbench().getDisplay().isDisposed()) {
 						Set<Entry<Resource, ILogicalOperator>> sinks = OdysseusRCPPlugIn.getExecutor().getSinks(OdysseusRCPPlugIn.getActiveSession());
 						getTreeViewer().setInput(sinks);
 						
