@@ -75,7 +75,7 @@ public class StatusBarManager implements IWindowListener {
 
 	private void setStandardMessages() {
 		setMessage(StatusBarManager.EXECUTOR_ID, OdysseusNLS.NoExecutorFound);
-		setMessage(StatusBarManager.SCHEDULER_ID, OdysseusNLS.NoSchedulerFound);
+		setMessage(StatusBarManager.SCHEDULER_ID, " ");
 		setMessage(StatusBarManager.USER_ID, "anonymous");
 	}
 
