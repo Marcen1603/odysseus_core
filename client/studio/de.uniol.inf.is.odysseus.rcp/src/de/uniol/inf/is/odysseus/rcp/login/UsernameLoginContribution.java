@@ -85,6 +85,10 @@ public class UsernameLoginContribution implements ILoginContribution {
 			}
 		});
 
+	    Label separator = new Label(rootComposite, SWT.NONE);
+	    separator = new Label(rootComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
+	    separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
 		createLabel(rootComposite, "Tenant");
 		final Text tenantText = createText(rootComposite, tenant);
 		tenantText.addModifyListener(new ModifyListener() {
