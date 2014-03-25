@@ -34,11 +34,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SizeByteBu
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.StringArrayProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.TextProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.FileHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingTcpClientHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingTcpHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingTcpServerHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingUdpClientHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingUdpServerHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TcpSocketHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 

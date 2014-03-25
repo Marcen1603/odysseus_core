@@ -98,8 +98,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webser
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.ParameterInfo;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.QueryResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.ResourceInformation;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.ResourceInformationEntry;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.ResourceInformationListResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.Response;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFAttributeInformation;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFDatatypeInformation;
