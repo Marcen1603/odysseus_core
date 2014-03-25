@@ -82,6 +82,16 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private final SourceAdvertisementCollector sourceAdvCollector = new SourceAdvertisementCollector();
 
 	// called by OSGi-DS
+	public void bindListener(IP2PDictionaryListener serv) {
+		addListener(serv);
+	}
+
+	// called by OSGi-DS
+	public void unbindListener(IP2PDictionaryListener serv) {
+		removeListener(serv);
+	}
+	
+	// called by OSGi-DS
 	public void activate() {
 		instance = this;
 
@@ -573,18 +583,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 			peersAddressMap.remove(peerID);
 
-			removeExportedSourcesFromRemotePeer(peerID);
-
 			firePeerRemoveEvent(peerID, peerName);
-		}
-	}
-
-	private void removeExportedSourcesFromRemotePeer(PeerID peerID) {
-		for (SourceAdvertisement srcAdvertisement : publishedSources.toArray(new SourceAdvertisement[0])) {
-			if (peerID.equals(srcAdvertisement.getPeerID()) && srcAdvertisement.isView()) {
-				LOG.debug("Removing source {} due to peer loss", srcAdvertisement.getName());
-				removeSource(srcAdvertisement);
-			}
 		}
 	}
 

@@ -105,6 +105,21 @@ public class AdvertisementManager implements IAdvertisementManager {
 			return ImmutableList.copyOf(knownAdvertisements.values());
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends Advertisement> ImmutableCollection<T> getAdvertisements(Class<T> clazz) {
+		Preconditions.checkNotNull(clazz, "Advertisement class must not be null!");
+		
+		ImmutableCollection<Advertisement> advertisements = getAdvertisements();
+		List<T> result = Lists.newArrayList();
+		for( Advertisement adv : advertisements ) {
+			if( adv.getClass().equals(clazz)) {
+				result.add((T) adv);
+			}
+		}
+		return ImmutableList.copyOf(result);
+	}
 
 	@Override
 	public void refreshAdvertisements() {

@@ -6,17 +6,23 @@ import java.util.List;
 
 import net.jxta.document.Advertisement;
 import net.jxta.id.ID;
+import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
+import de.uniol.inf.is.odysseus.p2p_new.adv.AdvertisementManager;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.MultipleSourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.P2PDictionaryAdapter;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.RemoveMultipleSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.RemoveSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
@@ -24,7 +30,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 
-public class SourceAdvertisementReceiver implements IAdvertisementListener {
+public class SourceAdvertisementReceiver extends P2PDictionaryAdapter implements IAdvertisementListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SourceAdvertisementReceiver.class);
 	
@@ -143,6 +149,32 @@ public class SourceAdvertisementReceiver implements IAdvertisementListener {
 				} catch (PeerException e) {
 					LOG.debug("Could not reexport source", e);
 				}
+			}
+		}
+	}
+	
+	@Override
+	public void remotePeerAdded(IP2PDictionary sender, PeerID id, String name) {
+		ImmutableCollection<SourceAdvertisement> sourceAdvertisements = AdvertisementManager.getInstance().getAdvertisements(SourceAdvertisement.class);
+		for( SourceAdvertisement sourceAdvertisement : sourceAdvertisements ) {
+			processSourceAdvertisement(sourceAdvertisement);
+		}
+
+		ImmutableCollection<MultipleSourceAdvertisement> mulSourceAdvertisements = AdvertisementManager.getInstance().getAdvertisements(MultipleSourceAdvertisement.class);
+		for( MultipleSourceAdvertisement mulSrcAdv : mulSourceAdvertisements ) {
+			for( SourceAdvertisement srcAdvertisement : mulSrcAdv.getSourceAdvertisements() ) {
+				processSourceAdvertisement(srcAdvertisement);
+			}
+		}
+	}
+	
+	@Override
+	public void remotePeerRemoved(IP2PDictionary sender, PeerID id, String name) {
+		ImmutableList<SourceAdvertisement> publishedSources = sender.getSources();
+		for (SourceAdvertisement srcAdvertisement : publishedSources) {
+			if (id.equals(srcAdvertisement.getPeerID()) && srcAdvertisement.isView()) {
+				LOG.debug("Removing source {} due to peer loss", srcAdvertisement.getName());
+				((P2PDictionary)sender).removeSource(srcAdvertisement);
 			}
 		}
 	}

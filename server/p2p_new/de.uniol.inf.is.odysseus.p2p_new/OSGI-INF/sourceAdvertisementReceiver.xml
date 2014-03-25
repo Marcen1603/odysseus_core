@@ -3,5 +3,6 @@
    <implementation class="de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.SourceAdvertisementReceiver"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener"/>
+      <provide interface="de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener"/>
    </service>
 </scr:component>

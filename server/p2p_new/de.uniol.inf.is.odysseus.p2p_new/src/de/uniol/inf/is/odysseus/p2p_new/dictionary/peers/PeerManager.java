@@ -25,8 +25,11 @@ public class PeerManager {
 	private static final Logger LOG = LoggerFactory.getLogger(PeerManager.class);
 
 	private static final String PEER_DISCOVERY_THREAD_NAME = "Peer discovery thread";
-	private static final int PEER_DISCOVERY_INTERVAL_MILLIS = 5000;
+	private static final int PEER_DISCOVERY_INTERVAL_MILLIS = 2000;
+	private static final int PEER_LOSS_THREASHOLD = 3;
 
+	private final Map<PeerID, Integer> potencialPeerLossMap = Maps.newHashMap();
+	
 	private RepeatingJobThread peerDiscoveryThread;
 
 	// called by OSGi-DS
@@ -67,7 +70,7 @@ public class PeerManager {
 		LOG.debug("Peer manager deactivated");
 	}
 
-	private static void processPeerAdvertisements(List<PeerAdvertisement> advertisements) {
+	private void processPeerAdvertisements(List<PeerAdvertisement> advertisements) {
 		if( !P2PDictionary.isActivated() || !JxtaServicesProvider.isActivated() ) {
 			return;
 		}
@@ -92,7 +95,19 @@ public class PeerManager {
 		}
 
 		for( PeerID lostPeerID : oldIDs.keySet() ) {
-			P2PDictionary.getInstance().removePeer(lostPeerID);
+			
+			Integer count = potencialPeerLossMap.get(lostPeerID);
+			if( count == null ) {
+				potencialPeerLossMap.put(lostPeerID, 1);
+			} else {
+				count++;
+				if( count >= PEER_LOSS_THREASHOLD ) {
+					P2PDictionary.getInstance().removePeer(lostPeerID);
+					potencialPeerLossMap.remove(lostPeerID);
+				} else {
+					potencialPeerLossMap.put(lostPeerID, count);
+				}
+			}
 		}
 	}
 
