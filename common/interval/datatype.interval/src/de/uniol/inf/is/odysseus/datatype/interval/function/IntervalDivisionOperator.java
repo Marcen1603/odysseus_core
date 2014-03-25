@@ -94,8 +94,9 @@ public class IntervalDivisionOperator extends AbstractBinaryOperator<IntervalDou
         return false;
     }
 
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFIntervalDatatype.INTERVAL_BYTE, SDFIntervalDatatype.INTERVAL_SHORT, SDFIntervalDatatype.INTERVAL_INTEGER,
+    public static final SDFDatatype[] accTypes1 = new SDFDatatype[] { SDFIntervalDatatype.INTERVAL_BYTE, SDFIntervalDatatype.INTERVAL_SHORT, SDFIntervalDatatype.INTERVAL_INTEGER,
             SDFIntervalDatatype.INTERVAL_FLOAT, SDFIntervalDatatype.INTERVAL_DOUBLE, SDFIntervalDatatype.INTERVAL_LONG };
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {accTypes1, accTypes1 };
 
     private final double divide(final double a, final double b) {
         if ((Double.isInfinite(a)) && (b == 0.0)) {

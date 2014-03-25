@@ -27,62 +27,73 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class IntervalMultiplicationOperator extends AbstractBinaryOperator<IntervalDouble> {
+public class IntervalMultiplicationOperator extends
+		AbstractBinaryOperator<IntervalDouble> {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = 7746637195241980728L;
+	private static final long serialVersionUID = 7746637195241980728L;
 
-    public IntervalMultiplicationOperator() {
-    	super("*",accTypes,SDFIntervalDatatype.INTERVAL_DOUBLE);
-    }
-    
-    @Override
-    public int getPrecedence() {
-        return 5;
-    }
+	public IntervalMultiplicationOperator() {
+		super("*", accTypes, SDFIntervalDatatype.INTERVAL_DOUBLE);
+	}
 
-    @Override
-    public IntervalDouble getValue() {
-        IntervalDouble a = getInputValue(0);
-        IntervalDouble b = getInputValue(1);
-        return getValueInternal(a, b);
-    }
+	@Override
+	public int getPrecedence() {
+		return 5;
+	}
 
-    protected IntervalDouble getValueInternal(IntervalDouble a, IntervalDouble b) {
-        final double inf = Math.min(Math.min(a.inf() * b.inf(), a.inf() * b.sup()), Math.min(a.sup() * b.inf(), a.sup() * b.sup()));
-        final double sup = Math.max(Math.max(a.inf() * b.inf(), a.inf() * b.sup()), Math.max(a.sup() * b.inf(), a.sup() * b.sup()));
-        return new IntervalDouble(inf, sup);
-    }
+	@Override
+	public IntervalDouble getValue() {
+		IntervalDouble a = getInputValue(0);
+		IntervalDouble b = getInputValue(1);
+		return getValueInternal(a, b);
+	}
 
-    @Override
-    public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
-        return ASSOCIATIVITY.LEFT_TO_RIGHT;
-    }
+	protected IntervalDouble getValueInternal(IntervalDouble a, IntervalDouble b) {
+		final double inf = Math.min(
+				Math.min(a.inf() * b.inf(), a.inf() * b.sup()),
+				Math.min(a.sup() * b.inf(), a.sup() * b.sup()));
+		final double sup = Math.max(
+				Math.max(a.inf() * b.inf(), a.inf() * b.sup()),
+				Math.max(a.sup() * b.inf(), a.sup() * b.sup()));
+		return new IntervalDouble(inf, sup);
+	}
 
-    @Override
-    public boolean isCommutative() {
-        return true;
-    }
+	@Override
+	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
+		return ASSOCIATIVITY.LEFT_TO_RIGHT;
+	}
 
-    @Override
-    public boolean isAssociative() {
-        return true;
-    }
+	@Override
+	public boolean isCommutative() {
+		return true;
+	}
 
-    @Override
-    public boolean isLeftDistributiveWith(IOperator<IntervalDouble> operator) {
-        return false;
-    }
+	@Override
+	public boolean isAssociative() {
+		return true;
+	}
 
-    @Override
-    public boolean isRightDistributiveWith(IOperator<IntervalDouble> operator) {
-        return false;
-    }
+	@Override
+	public boolean isLeftDistributiveWith(IOperator<IntervalDouble> operator) {
+		return false;
+	}
 
-    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFIntervalDatatype.INTERVAL_BYTE, SDFIntervalDatatype.INTERVAL_SHORT, SDFIntervalDatatype.INTERVAL_INTEGER,
-            SDFIntervalDatatype.INTERVAL_FLOAT, SDFIntervalDatatype.INTERVAL_DOUBLE, SDFIntervalDatatype.INTERVAL_LONG };
+	@Override
+	public boolean isRightDistributiveWith(IOperator<IntervalDouble> operator) {
+		return false;
+	}
 
+	public static final SDFDatatype[] accTypes1 = new SDFDatatype[] {
+			SDFIntervalDatatype.INTERVAL_BYTE,
+			SDFIntervalDatatype.INTERVAL_SHORT,
+			SDFIntervalDatatype.INTERVAL_INTEGER,
+			SDFIntervalDatatype.INTERVAL_FLOAT,
+			SDFIntervalDatatype.INTERVAL_DOUBLE,
+			SDFIntervalDatatype.INTERVAL_LONG };
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+			accTypes1, accTypes1 };
 
 }

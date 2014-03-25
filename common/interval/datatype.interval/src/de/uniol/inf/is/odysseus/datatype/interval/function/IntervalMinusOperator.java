@@ -79,12 +79,13 @@ public class IntervalMinusOperator extends AbstractBinaryOperator<IntervalDouble
 		return false;
 	}
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
+	public static final SDFDatatype[] accTypes1 = new SDFDatatype[] {
 			SDFIntervalDatatype.INTERVAL_BYTE,
 			SDFIntervalDatatype.INTERVAL_SHORT,
 			SDFIntervalDatatype.INTERVAL_INTEGER,
 			SDFIntervalDatatype.INTERVAL_FLOAT,
 			SDFIntervalDatatype.INTERVAL_DOUBLE,
 			SDFIntervalDatatype.INTERVAL_LONG };
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{accTypes1, accTypes1}; 
 
 }
