@@ -1318,7 +1318,7 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	@Override
 	public String getName() {
-		return "Standard";
+		return "StandardExecutor";
 	}
 
 	@Override

@@ -126,7 +126,11 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventL
 	public void bindExecutor(IExecutor ex) throws PlanManagementException {
 		synchronized (OdysseusRCPPlugIn.class) {
 			executor = ex;
-			StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, OdysseusNLS.Executor + " " + executor.getName() + " " + OdysseusNLS.Ready);
+			String name = executor.getName();
+			if (name == null){
+				name = "";
+			}
+			StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, name + " " + OdysseusNLS.Ready);
 			
 			executor.addUpdateEventListener(this, IUpdateEventListener.SCHEDULING, null);
 			executor.addUpdateEventListener(this, IUpdateEventListener.QUERY, null);

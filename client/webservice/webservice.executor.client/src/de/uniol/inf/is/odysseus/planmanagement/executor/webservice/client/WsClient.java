@@ -447,7 +447,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 		if (getWebserviceServer() != null) {
 			return getWebserviceServer().getName().getResponseValue();
 		}
-		return null;
+		return "WebServiceExecutor";
 	}
 
 	@Override
