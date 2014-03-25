@@ -36,7 +36,7 @@ public class JSONException extends RuntimeException {
      *          or unknown.
      */
     @Override
-    public Throwable getCause() {
+    public synchronized Throwable getCause() {
         return this.cause;
     }
 }
