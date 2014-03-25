@@ -105,9 +105,36 @@ import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
  * 
  */
 public class WsClient implements IExecutor, IClientExecutor {
-
+	
 	final Map<String, List<IUpdateEventListener>> updateEventListener = new HashMap<String, List<IUpdateEventListener>>();
+	final long UPDATEINTERVAL = 5000;
+	
+	// Fire update events --> TODO: Get Events from Server and fire
+	private class Runner extends Thread {
 
+		@Override
+		public void run() {
+			while (true) {
+				try {
+					synchronized (this) {
+						wait(UPDATEINTERVAL);
+					}
+					WsClient.this.fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
+					WsClient.this.fireUpdateEvent(IUpdateEventListener.QUERY);
+					WsClient.this.fireUpdateEvent(IUpdateEventListener.SCHEDULING);
+					WsClient.this.fireUpdateEvent(IUpdateEventListener.SESSION);
+					WsClient.this.fireUpdateEvent(IUpdateEventListener.USER);
+				} catch (InterruptedException e) {
+					// e.printStackTrace();
+				}
+			}
+		}
+	};
+
+	private Runner generateEvents = new Runner();
+
+	
+	
 	protected static Logger _logger = null;
 
 	protected synchronized static Logger getLogger() {
@@ -191,6 +218,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public void startClient(URL wsdlLocation, QName service) {
 		this.service = new WebserviceServerService(wsdlLocation, service);
 		this.server = this.service.getWebserviceServerPort();
+		generateEvents.start();
 	}
 
 	public WebserviceServerService getWebserviceServerService() {
@@ -415,6 +443,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 					user.getToken(), parserID, query,
 					queryBuildConfigurationName, context).getResponseValue();
 			fireUpdateEvent(IUpdateEventListener.QUERY);
+			// Query could create schema information ... fire events
+			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 			return response;
 		} catch (InvalidUserDataException_Exception
 				| CreateQueryException_Exception e) {
