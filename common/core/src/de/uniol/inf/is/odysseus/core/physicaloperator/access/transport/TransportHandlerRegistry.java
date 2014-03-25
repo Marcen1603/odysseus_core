@@ -36,7 +36,7 @@ public class TransportHandlerRegistry {
 		if (!handlers.containsKey(handler.getName().toLowerCase())) {
 			handlers.put(handler.getName().toLowerCase(), handler);
 		} else {
-			logger.error("Handler with name " + handler.getName()
+			logger.warn("Handler with name " + handler.getName()
 					+ " already registered");
 		}
 	}

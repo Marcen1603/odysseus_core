@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.model.create.OdysseusModelProviderMul
 
 public class CallGraphEditorCommand extends AbstractHandler implements IHandler {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CallGraphEditorCommand.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(CallGraphEditorCommand.class);
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
@@ -50,16 +51,22 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
+				IWorkbenchWindow window = HandlerUtil
+						.getActiveWorkbenchWindow(event);
 				IWorkbenchPage page = window.getActivePage();
 
 				for (Object selection : SelectionProvider.getSelection(event)) {
 					if (selection instanceof Integer) {
 						Integer queryID = (Integer) selection;
-						IExecutor executor = OdysseusRCPViewerPlugIn.getExecutor();
-						openGraphEditor(page, executor.getPhysicalRoots(queryID, OdysseusRCPPlugIn.getActiveSession()), queryID);
+						IExecutor executor = OdysseusRCPViewerPlugIn
+								.getExecutor();
+						List<IPhysicalOperator> roots = executor.getPhysicalRoots(
+								queryID, OdysseusRCPPlugIn.getActiveSession());
+						openGraphEditor(page,roots,
+								queryID);
 					} else {
-						LOG.error("Selection of type " + selection.getClass() + " is not supported for graph presentation.");
+						LOG.error("Selection of type " + selection.getClass()
+								+ " is not supported for graph presentation.");
 					}
 				}
 			}
@@ -69,20 +76,29 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 
 	}
 
-	private static void openGraphEditor(IWorkbenchPage page, List<IPhysicalOperator> sinkOps, int queryId) {
-		Preconditions.checkNotNull(sinkOps, "Query provides null as roots!");
-		Preconditions.checkArgument(!sinkOps.isEmpty(), "Query to show graph has no roots!");
-
-		IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderMultipleSinkOneWay(sinkOps);
-
-		PhysicalGraphEditorInput input = new PhysicalGraphEditorInput(provider, queryId);
-
+	private static void openGraphEditor(IWorkbenchPage page,
+			List<IPhysicalOperator> sinkOps, int queryId) {
 		try {
-			page.openEditor(input, OdysseusRCPViewerPlugIn.GRAPH_EDITOR_ID);
+			Preconditions
+					.checkNotNull(sinkOps, "Query provides null as roots!");
+			Preconditions.checkArgument(!sinkOps.isEmpty(),
+					"Query to show graph has no roots!");
 
-		} catch (PartInitException ex) {
-			LOG.error("Exception during opening graph editor for query " + queryId, ex);
+			IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderMultipleSinkOneWay(
+					sinkOps);
+
+			PhysicalGraphEditorInput input = new PhysicalGraphEditorInput(
+					provider, queryId);
+
+			try {
+				page.openEditor(input, OdysseusRCPViewerPlugIn.GRAPH_EDITOR_ID);
+
+			} catch (PartInitException ex) {
+				LOG.error("Exception during opening graph editor for query "
+						+ queryId, ex);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
-
 }

@@ -530,6 +530,11 @@ public class WsClient implements IExecutor, IClientExecutor {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Optional<ClientReceiver> createClientReceiver(IExecutor exec,
 			int queryId, ISession caller) {
+		
+		if (receivers.containsKey(queryId)) {
+			return Optional.of(receivers.get(queryId));
+		}
+		
 		SDFSchema outputSchema = exec.getOutputSchema(queryId, caller);
 		IDataHandler dataHandler = DataHandlerRegistry.getDataHandler("Tuple",
 				outputSchema);
@@ -539,9 +544,6 @@ public class WsClient implements IExecutor, IClientExecutor {
 		options.put("port", "" + adr.getPort());
 		options.put("host", adr.getHostName());
 		// TODO username and password get from anywhere
-		if (receivers.containsKey(queryId)) {
-			return Optional.of(receivers.get(queryId));
-		}
 		IProtocolHandler h = ProtocolHandlerRegistry.getInstance(
 				"SizeByteBuffer", ITransportDirection.IN, IAccessPattern.PUSH,
 				options, dataHandler);

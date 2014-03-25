@@ -89,13 +89,17 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			// }
 			// children.add(new StringWrapper(owner.toString()));
 
-			NamedList n = new NamedList("Part of query");
-			for (IOperatorOwner o : node.getModelNode().getContent().getOwner()) {
-				n.addValue(o);
+			if (node.getModelNode().getContent().getOwner().size() > 0) {
+				NamedList n = new NamedList("Part of query");
+				for (IOperatorOwner o : node.getModelNode().getContent()
+						.getOwner()) {
+					n.addValue(o);
+				}
+				children.add(n);
 			}
-			children.add(n);
 
-			if (node.getModelNode().getContent().getUniqueIds().size() > 0) {
+			if (node.getModelNode().getContent().getUniqueIds() != null
+					&& node.getModelNode().getContent().getUniqueIds().size() > 0) {
 				StringBuffer ids = new StringBuffer("UIDs: ");
 				for (Entry<IOperatorOwner, Resource> id : node.getModelNode()
 						.getContent().getUniqueIds().entrySet()) {
@@ -105,10 +109,12 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			}
 
 			// Add Metadatainformation
-			for (String type : node.getModelNode().getContent()
-					.getProvidedMonitoringData()) {
-				children.add(node.getModelNode().getContent()
-						.getMonitoringData(type));
+			if (node.getModelNode().getContent().getProvidedMonitoringData() != null) {
+				for (String type : node.getModelNode().getContent()
+						.getProvidedMonitoringData()) {
+					children.add(node.getModelNode().getContent()
+							.getMonitoringData(type));
+				}
 			}
 			// Add Subscriptions to sources
 			if (node.getModelNode().getContent().isSink()) {
