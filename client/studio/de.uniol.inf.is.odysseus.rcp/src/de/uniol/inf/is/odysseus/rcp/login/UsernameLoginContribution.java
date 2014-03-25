@@ -58,18 +58,6 @@ public class UsernameLoginContribution implements ILoginContribution {
 		rootComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		rootComposite.setLayout(new GridLayout(2, false));
 		
-		createLabel( rootComposite, "Tenant" );
-		final Text tenantText = createText( rootComposite, tenant);
-		tenantText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				tenant = tenantText.getText();
-				container.changed();
-				
-				updateMessages(container);
-			}
-		});
-		
 		createLabel( rootComposite, "Username");
 		final Text usernameText = createText( rootComposite, username);
 		usernameText.addModifyListener(new ModifyListener() {
@@ -94,6 +82,19 @@ public class UsernameLoginContribution implements ILoginContribution {
 				updateMessages(container);
 			}
 		});
+		
+		createLabel( rootComposite, "Tenant" );
+		final Text tenantText = createText( rootComposite, tenant);
+		tenantText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				tenant = tenantText.getText();
+				container.changed();
+				
+				updateMessages(container);
+			}
+		});
+		
 		
 		updateMessages(container);
 	}
