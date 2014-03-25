@@ -25,12 +25,13 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 public class UsernameLoginContribution implements ILoginContribution {
 
-	private static final Logger LOG = LoggerFactory.getLogger(UsernameLoginContribution.class);
-	
+	private static final Logger LOG = LoggerFactory
+			.getLogger(UsernameLoginContribution.class);
+
 	private String tenant;
 	private String username;
 	private String password;
-	
+
 	@Override
 	public void onInit() {
 
@@ -41,7 +42,7 @@ public class UsernameLoginContribution implements ILoginContribution {
 		tenant = savedConfig.get("user.tenant");
 		username = savedConfig.get("user.name");
 		password = savedConfig.get("user.password");
-		
+
 		tenant = tenant != null ? tenant : "";
 		username = username != null ? username : "";
 		password = password != null ? password : "";
@@ -53,24 +54,25 @@ public class UsernameLoginContribution implements ILoginContribution {
 	}
 
 	@Override
-	public void createPartControl(Composite parent, final ILoginContributionContainer container) {
+	public void createPartControl(Composite parent,
+			final ILoginContributionContainer container) {
 		Composite rootComposite = new Composite(parent, SWT.NONE);
 		rootComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		rootComposite.setLayout(new GridLayout(2, false));
-		
-		createLabel( rootComposite, "Username");
-		final Text usernameText = createText( rootComposite, username);
+
+		createLabel(rootComposite, "Username");
+		final Text usernameText = createText(rootComposite, username);
 		usernameText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				username = usernameText.getText();
 				container.changed();
-				
+
 				updateMessages(container);
 			}
 		});
-		
-		createLabel( rootComposite, "Password");
+
+		createLabel(rootComposite, "Password");
 		final Text passwordText = createText(rootComposite, password);
 		passwordText.setEchoChar('*');
 		passwordText.addModifyListener(new ModifyListener() {
@@ -78,37 +80,36 @@ public class UsernameLoginContribution implements ILoginContribution {
 			public void modifyText(ModifyEvent e) {
 				password = passwordText.getText();
 				container.changed();
-				
+
 				updateMessages(container);
 			}
 		});
-		
-		createLabel( rootComposite, "Tenant" );
-		final Text tenantText = createText( rootComposite, tenant);
+
+		createLabel(rootComposite, "Tenant");
+		final Text tenantText = createText(rootComposite, tenant);
 		tenantText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				tenant = tenantText.getText();
 				container.changed();
-				
+
 				updateMessages(container);
 			}
 		});
-		
-		
+
 		updateMessages(container);
 	}
 
 	private void updateMessages(ILoginContributionContainer container) {
-		if( Strings.isNullOrEmpty(username)) {
+		if (Strings.isNullOrEmpty(username)) {
 			container.setErrorMessage("Username must be specified");
-		} else if( Strings.isNullOrEmpty(password)) {
+		} else if (Strings.isNullOrEmpty(password)) {
 			container.setErrorMessage("Password must be specified");
 		} else {
 			container.setErrorMessage(null);
 		}
 	}
-	
+
 	private static Text createText(Composite rootComposite, String txt) {
 		Text text = new Text(rootComposite, SWT.BORDER);
 		text.setText(txt);
@@ -124,7 +125,8 @@ public class UsernameLoginContribution implements ILoginContribution {
 
 	@Override
 	public boolean isValid() {
-		return !Strings.isNullOrEmpty(username) && !Strings.isNullOrEmpty(password);
+		return !Strings.isNullOrEmpty(username)
+				&& !Strings.isNullOrEmpty(password);
 	}
 
 	@Override
@@ -135,44 +137,50 @@ public class UsernameLoginContribution implements ILoginContribution {
 	@Override
 	public Map<String, String> onSave() {
 		HashMap<String, String> map = Maps.newHashMap();
-		
+
 		map.put("user.tenant", tenant);
 		map.put("user.name", username);
 		map.put("user.password", password);
-		
+
 		return map;
 	}
-	
+
 	@Override
 	public boolean onFinish() {
 		return realLogin(username, password, tenant);
 	}
-	
-	private static boolean realLogin(String username, String password, String tenant) {
+
+	private static boolean realLogin(String username, String password,
+			String tenant) {
 		try {
 			IExecutor executor = OdysseusRCPPlugIn.getExecutor();
-			ISession session = executor.login(username, password.getBytes(), tenant);
 
-			if( session == null ) {
+			ISession session = Strings.isNullOrEmpty(tenant) ? executor.login(
+					username, password.getBytes()) : executor.login(username,
+					password.getBytes(), tenant);
+
+			if (session == null) {
 				return false;
 			}
-			
+
 			OdysseusRCPPlugIn.setActiveSession(session);
-			StringBuffer message = new StringBuffer(OdysseusNLS.LoggedInAs).append(" ").append(username);
-			if (tenant.length() > 0){
+			StringBuffer message = new StringBuffer(OdysseusNLS.LoggedInAs)
+					.append(" ").append(username);
+			if (tenant.length() > 0) {
 				message.append(" [").append(tenant).append("]");
 			}
 			StatusBarManager.getInstance().setMessage(message.toString());
-			StatusBarManager.getInstance().setMessage(StatusBarManager.USER_ID, "User " + session.getUser().getName());
+			StatusBarManager.getInstance().setMessage(StatusBarManager.USER_ID,
+					"User " + session.getUser().getName());
 			executor.reloadStoredQueries(session);
 			return true;
-			
+
 		} catch (Throwable ex) {
 			LOG.error("Could not login user '" + username + "'", ex);
 			return false;
 		}
 	}
-	
+
 	@Override
 	public int getPriority() {
 		return 0;

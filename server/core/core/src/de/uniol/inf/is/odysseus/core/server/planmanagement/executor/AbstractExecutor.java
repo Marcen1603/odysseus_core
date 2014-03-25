@@ -1178,6 +1178,14 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	@Override
+	public ISession login(String username, byte[] password) {
+		ITenant tenantObj = UserManagementProvider.getDefaultTenant();
+		return UserManagementProvider.getSessionmanagement().login(username,
+				password, tenantObj);
+	}
+
+	
+	@Override
 	public void logout(ISession caller) {
 		UserManagementProvider.getSessionmanagement().logout(caller);
 	}

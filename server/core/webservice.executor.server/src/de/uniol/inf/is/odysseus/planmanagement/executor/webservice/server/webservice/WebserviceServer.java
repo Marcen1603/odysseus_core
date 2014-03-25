@@ -185,6 +185,22 @@ public class WebserviceServer {
 		return new StringResponse(null, false);
 	}
 
+	@WebResult(name = "securitytoken")
+	public StringResponse login2(@WebParam(name = "username") String username,
+			@WebParam(name = "password") String password) {
+		ITenant tenant = UserManagementProvider.getDefaultTenant();
+		ISession user = UserManagementProvider.getSessionmanagement().login(
+				username, password.getBytes(), tenant);
+		if (user != null) {
+			String token = user.getToken();
+			StringResponse response = new StringResponse(token, true);
+			// session-management...
+			sessions.put(token, user);
+			return response;
+		}
+		return new StringResponse(null, false);
+	}
+	
 	public Response logout(
 			@WebParam(name = "securitytoken") String securityToken) {
 		ISession user = sessions.get(securityToken);

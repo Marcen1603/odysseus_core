@@ -37,13 +37,12 @@ public class WsClientSession implements ISession {
 	private final static long SESSION_TIMEOUT = 10 * 60000;
 	private final String id = UUID.randomUUID().toString();
 	private final IUser user;
-	@SuppressWarnings("unused")
-	private final String tenant;
+	private final ITenant tenant;
 	private final long start;
 	private long end;
 	private String token = "";
 	
-	public WsClientSession(final IUser user, final String tenant) {
+	public WsClientSession(final IUser user, final ITenant tenant) {
 		this.user = user;
 		this.tenant = tenant;
 		start = System.currentTimeMillis();
@@ -62,8 +61,7 @@ public class WsClientSession implements ISession {
 	
 	@Override
 	public ITenant getTenant() {
-		// TODO: find a solution
-		throw new IllegalArgumentException("Tenants are currently not available on Client!");
+		return tenant;
 	}
 
 	@Override

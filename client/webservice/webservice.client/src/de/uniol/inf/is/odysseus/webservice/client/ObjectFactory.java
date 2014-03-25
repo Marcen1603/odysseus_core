@@ -63,8 +63,9 @@ public class ObjectFactory {
     private final static QName _DetermineOutputSchemaResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "determineOutputSchemaResponse");
     private final static QName _GetStoredProcedureResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getStoredProcedureResponse");
     private final static QName _RemoveSinkByName_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "removeSinkByName");
-    private final static QName _StopExecution_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "stopExecution");
     private final static QName _GetRegisteredAggregateFunctions_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getRegisteredAggregateFunctions");
+    private final static QName _StopExecution_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "stopExecution");
+    private final static QName _Login2_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "login2");
     private final static QName _ContainsViewOrStreamByNameResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "containsViewOrStreamByNameResponse");
     private final static QName _GetSinks_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getSinks");
     private final static QName _StopExecutionResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "stopExecutionResponse");
@@ -97,6 +98,7 @@ public class ObjectFactory {
     private final static QName _GetLogicalQueryByIdResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getLogicalQueryByIdResponse");
     private final static QName _GetQueryBuildConfigurationNames_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getQueryBuildConfigurationNames");
     private final static QName _GetInstalledQueriesResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getInstalledQueriesResponse");
+    private final static QName _Login2Response_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "login2Response");
     private final static QName _RemoveViewOrStreamByResourceResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "removeViewOrStreamByResourceResponse");
     private final static QName _GetLogicalQueryIdsResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getLogicalQueryIdsResponse");
     private final static QName _GetLogicalQueryByName_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getLogicalQueryByName");
@@ -616,6 +618,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Login2Response }
+     * 
+     */
+    public Login2Response createLogin2Response() {
+        return new Login2Response();
+    }
+
+    /**
      * Create an instance of {@link GetInstalledQueriesResponse }
      * 
      */
@@ -941,6 +951,14 @@ public class ObjectFactory {
      */
     public GetRegisteredAggregateFunctions createGetRegisteredAggregateFunctions() {
         return new GetRegisteredAggregateFunctions();
+    }
+
+    /**
+     * Create an instance of {@link Login2 }
+     * 
+     */
+    public Login2 createLogin2() {
+        return new Login2();
     }
 
     /**
@@ -1729,6 +1747,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetRegisteredAggregateFunctions }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getRegisteredAggregateFunctions")
+    public JAXBElement<GetRegisteredAggregateFunctions> createGetRegisteredAggregateFunctions(GetRegisteredAggregateFunctions value) {
+        return new JAXBElement<GetRegisteredAggregateFunctions>(_GetRegisteredAggregateFunctions_QNAME, GetRegisteredAggregateFunctions.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link StopExecution }{@code >}}
      * 
      */
@@ -1738,12 +1765,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetRegisteredAggregateFunctions }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Login2 }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getRegisteredAggregateFunctions")
-    public JAXBElement<GetRegisteredAggregateFunctions> createGetRegisteredAggregateFunctions(GetRegisteredAggregateFunctions value) {
-        return new JAXBElement<GetRegisteredAggregateFunctions>(_GetRegisteredAggregateFunctions_QNAME, GetRegisteredAggregateFunctions.class, null, value);
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "login2")
+    public JAXBElement<Login2> createLogin2(Login2 value) {
+        return new JAXBElement<Login2>(_Login2_QNAME, Login2 .class, null, value);
     }
 
     /**
@@ -2032,6 +2059,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getInstalledQueriesResponse")
     public JAXBElement<GetInstalledQueriesResponse> createGetInstalledQueriesResponse(GetInstalledQueriesResponse value) {
         return new JAXBElement<GetInstalledQueriesResponse>(_GetInstalledQueriesResponse_QNAME, GetInstalledQueriesResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Login2Response }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "login2Response")
+    public JAXBElement<Login2Response> createLogin2Response(Login2Response value) {
+        return new JAXBElement<Login2Response>(_Login2Response_QNAME, Login2Response.class, null, value);
     }
 
     /**

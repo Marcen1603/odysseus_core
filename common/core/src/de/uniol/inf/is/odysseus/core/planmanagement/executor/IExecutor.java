@@ -310,6 +310,18 @@ public interface IExecutor extends IClientPlanManager {
 	ISession login(String username, byte[] password, String tenantname);
 
 	/**
+	 * Logs a user in and creates a session (with default tenant)
+	 * 
+	 * @param username
+	 *            The user name
+	 * @param password
+	 *            The password of the user
+	 * @return the session of the logged in user
+	 */
+	ISession login(String username, byte[] password);
+
+	
+	/**
 	 * Logs the user out
 	 * 
 	 * @param caller

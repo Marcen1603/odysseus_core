@@ -95,6 +95,7 @@ import de.uniol.inf.is.odysseus.webservice.client.SdfDatatypeInformation;
 import de.uniol.inf.is.odysseus.webservice.client.SdfSchemaInformation;
 import de.uniol.inf.is.odysseus.webservice.client.SinkInformationWS;
 import de.uniol.inf.is.odysseus.webservice.client.StringMapListEntry;
+import de.uniol.inf.is.odysseus.webservice.client.StringResponse;
 import de.uniol.inf.is.odysseus.webservice.client.ViewInformationWS;
 import de.uniol.inf.is.odysseus.webservice.client.WebserviceServer;
 import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
@@ -234,12 +235,24 @@ public class WsClient implements IExecutor, IClientExecutor {
 		String securitytoken = getWebserviceServer().login(username,
 				new String(password), tenant).getResponseValue();
 		IUser user = new WsClientUser(username, password, true);
-		WsClientSession session = new WsClientSession(user, tenant);
+		WsClientSession session = new WsClientSession(user, null);
 		session.setToken(securitytoken);
 		fireUpdateEvent(IUpdateEventListener.SESSION);
 		return session;
 	}
 
+	@Override
+	public ISession login(String username, byte[] password) {
+		String securitytoken = getWebserviceServer().login2(username,
+				new String(password)).getResponseValue();
+		IUser user = new WsClientUser(username, password, true);
+		WsClientSession session = new WsClientSession(user, null);
+		session.setToken(securitytoken);
+		fireUpdateEvent(IUpdateEventListener.SESSION);
+		return session;
+	}
+
+	
 	@Override
 	public void removeQuery(int queryID, ISession caller)
 			throws PlanManagementException {
@@ -404,8 +417,11 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public String getCurrentSchedulerID(ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				return getWebserviceServer().getCurrentSchedulerID(
-						caller.getToken()).getResponseValue();
+				StringResponse response = getWebserviceServer().getCurrentSchedulerID(
+						caller.getToken());
+				if (response != null){
+					return response.getResponseValue();
+				}
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
