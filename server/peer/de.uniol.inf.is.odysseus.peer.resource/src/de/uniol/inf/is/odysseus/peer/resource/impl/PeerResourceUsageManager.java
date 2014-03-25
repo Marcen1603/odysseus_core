@@ -269,8 +269,8 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 			long rawSpeed = net.getSpeed();
 			double bandwidthInKBs = rawSpeed >= 0 ? rawSpeed / 1024.0 : DEFAULT_BANDWIDTH_KB;
 
-			long inputTotal = net != null ? net.getRxBytes() : 0;
-			long outputTotal = net != null ? net.getTxBytes() : 0;
+			long inputTotal = net != null ? net.getRxBytes() : previousInputTotal;
+			long outputTotal = net != null ? net.getTxBytes() : previousOutputTotal;
 
 			double netInputRate = (inputTotal - previousInputTotal) / 1024;
 			double netOutputRate = (outputTotal - previousOutputTotal) / 1024;

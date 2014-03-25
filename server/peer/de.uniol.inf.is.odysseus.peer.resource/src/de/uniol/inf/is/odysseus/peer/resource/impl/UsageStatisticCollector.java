@@ -29,8 +29,8 @@ public class UsageStatisticCollector {
 		Preconditions.checkArgument(cpuFree <= cpuMax, "Cpu free cannot be higher than cpu max: %s > %s", cpuFree, cpuMax);
 
 		Preconditions.checkArgument(netBandwidthMax >= 0, "Network maximum bandwidth must be zero or positive");
-		Preconditions.checkArgument(netOutputRate >= 0, "Network maximum bandwidth must be zero or positive");
-		Preconditions.checkArgument(netInputRate >= 0, "Network maximum bandwidth must be zero or positive");
+		Preconditions.checkArgument(netOutputRate >= 0, "Network output rate must be zero or positive");
+		Preconditions.checkArgument(netInputRate >= 0, "Network input rate must be zero or positive");
 
 		this.memFree.addValue(memFreeBytes);
 		this.cpuFree.addValue(cpuFree);
