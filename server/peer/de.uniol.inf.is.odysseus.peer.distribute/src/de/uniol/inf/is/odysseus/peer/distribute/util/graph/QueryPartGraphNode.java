@@ -68,6 +68,11 @@ public class QueryPartGraphNode {
 	}
 	
 	@Override
+	public int hashCode() {
+		return queryPart.hashCode();
+	}
+	
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("QueryPartGraphNode[").append(queryPart);

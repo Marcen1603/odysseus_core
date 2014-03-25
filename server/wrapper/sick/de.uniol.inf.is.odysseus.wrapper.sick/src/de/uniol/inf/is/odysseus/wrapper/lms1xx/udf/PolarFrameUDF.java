@@ -29,6 +29,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +100,7 @@ public class PolarFrameUDF implements IUserDefinedFunction<Tuple<? extends IMeta
         public PolarFrame() {
             this.map = new PolarFrameMap();
             this.setContentPane(this.map);
-            this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             this.map.setLayout(new GridLayout(1, 1));
             this.map.setVisible(true);
             this.map.setAlignmentX(Component.CENTER_ALIGNMENT);

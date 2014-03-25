@@ -22,7 +22,8 @@ package de.uniol.inf.is.odysseus.generator.valuegenerator;
 public interface IMultiValueGenerator extends IValueGenerator {
     double[] nextValue();
 
-    void init();
+    @Override
+	void init();
 
     int dimension();
 }

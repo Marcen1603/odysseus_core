@@ -100,6 +100,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		processingResultFolder = new Text(grpGeneral, SWT.BORDER);
 		processingResultFolder.setText(evaluationModel.getProcessingResultsPath());
 		processingResultFolder.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				setDirty(true);
 			}
@@ -123,6 +124,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		plotFolder.setText(evaluationModel.getPlotFilesPath());
 		plotFolder.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				setDirty(true);
 			}
@@ -206,6 +208,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 
 		parameterName = new Text(sashRightCompo, SWT.BORDER);
 		parameterName.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				String newName = parameterName.getText();
 				parameterName.setForeground(COLOR_BLACK);
@@ -231,6 +234,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 
 		parameterValues = new Text(sashRightCompo, SWT.BORDER | SWT.MULTI);
 		parameterValues.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				String[] content = parameterValues.getText().split(parameterValues.getLineDelimiter());
 				int index = parameterTable.getSelectionIndex();
@@ -470,7 +474,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 			public void run() {
 				IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
 				for (int i = 0; i < pages.length; i++) {
-					if (((FileEditorInput) getEditorInput()).getFile().equals(resource)) {
+					if ((getEditorInput()).getFile().equals(resource)) {
 						IEditorPart editorPart = pages[i].findEditor(getEditorInput());
 						pages[i].closeEditor(editorPart, true);
 					}

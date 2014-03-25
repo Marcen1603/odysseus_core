@@ -103,7 +103,8 @@ public class MedianPartialAggregate<T> extends AbstractPartialAggregate<T> {
         }
     }
 
-    public void clear() {
+    @Override
+	public void clear() {
         lower.clear();
         upper.clear();
     }

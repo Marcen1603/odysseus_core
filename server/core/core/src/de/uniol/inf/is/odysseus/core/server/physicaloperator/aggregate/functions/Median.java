@@ -42,6 +42,7 @@ public abstract class Median<R, W> extends AbstractMedian<R, W> {
         return process_merge(createNew ? p.clone() : p, toMerge);
     }
 
-    abstract protected IPartialAggregate<R> process_merge(IPartialAggregate<R> iPartialAggregate, R toMerge);
+    @Override
+	abstract protected IPartialAggregate<R> process_merge(IPartialAggregate<R> iPartialAggregate, R toMerge);
 
 }

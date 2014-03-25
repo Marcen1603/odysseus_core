@@ -57,6 +57,11 @@ public class TupleList<M extends ITimeInterval> extends AbstractStreamObject<M> 
 		return false;
 		// /return this.list.equals(other.list);
 	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 
 	@Override
 	public boolean equals(Object arg) {

@@ -44,18 +44,49 @@ public class QueryPartGraphConnection {
 	}
 	
 	@Override
-	public boolean equals(Object other) {
-		if( !(other instanceof QueryPartGraphConnection)) {
-			return false;
-		}
-		if( other == this ) {
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
-		}
-		
-		QueryPartGraphConnection conn = (QueryPartGraphConnection)other;
-		return conn.fromNode.equals(fromNode) && conn.toNode.equals(toNode) && 
-				( ( conn.fromOperator.equals(fromOperator) && conn.toOperator.equals(toOperator) ) ||
-				  ( conn.fromOperator.equals(toOperator) && conn.toOperator.equals(fromOperator) ) );
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		QueryPartGraphConnection other = (QueryPartGraphConnection) obj;
+		if (fromNode == null) {
+			if (other.fromNode != null)
+				return false;
+		} else if (!fromNode.equals(other.fromNode))
+			return false;
+		if (fromOperator == null) {
+			if (other.fromOperator != null)
+				return false;
+		} else if (!fromOperator.equals(other.fromOperator))
+			return false;
+		if (toNode == null) {
+			if (other.toNode != null)
+				return false;
+		} else if (!toNode.equals(other.toNode))
+			return false;
+		if (toOperator == null) {
+			if (other.toOperator != null)
+				return false;
+		} else if (!toOperator.equals(other.toOperator))
+			return false;
+		return true;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((fromNode == null) ? 0 : fromNode.hashCode());
+		result = prime * result
+				+ ((fromOperator == null) ? 0 : fromOperator.hashCode());
+		result = prime * result + ((toNode == null) ? 0 : toNode.hashCode());
+		result = prime * result
+				+ ((toOperator == null) ? 0 : toOperator.hashCode());
+		return result;
 	}
 	
 	@Override

@@ -565,6 +565,7 @@ public class PlotBuilder {
 
 	public static LegendItemSource getSource(final LegendItemCollection legendItemsOld) {
 		return new LegendItemSource() {
+			@Override
 			public LegendItemCollection getLegendItems() {
 				LegendItemCollection lic = new LegendItemCollection();
 				int itemCount = legendItemsOld.getItemCount();
