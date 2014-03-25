@@ -17,8 +17,6 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.wizards;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -39,12 +37,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
@@ -52,7 +50,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.GraphQueryFileProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvider;
-import org.eclipse.ui.model.WorkbenchContentProvider;
 
 public class QueryFileSelectionPage extends WizardPage {
 
@@ -168,11 +165,11 @@ public class QueryFileSelectionPage extends WizardPage {
 	}
 
 	private static String[] determineAvailableSources() {
-		Set<Entry<Resource, ILogicalOperator>> streamsAndViews = DashboardPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession());
+		List<ViewInformation> streamsAndViews = DashboardPlugIn.getExecutor().getStreamsAndViewsInformation(OdysseusRCPPlugIn.getActiveSession());
 		List<String> names = Lists.newArrayList();
-		for( Entry<Resource, ILogicalOperator> streamOrView : streamsAndViews ) {
+		for( ViewInformation streamOrView : streamsAndViews ) {
 			// FIXME: Use Resource
-			names.add(getPlainSourceName(streamOrView.getKey().toString()));
+			names.add(getPlainSourceName(streamOrView.getName().toString()));
 		}
 		Collections.sort(names);
 		return names.toArray(new String[names.size()]);

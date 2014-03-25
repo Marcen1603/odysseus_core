@@ -69,6 +69,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
@@ -94,6 +95,7 @@ import de.uniol.inf.is.odysseus.webservice.client.SdfAttributeInformation;
 import de.uniol.inf.is.odysseus.webservice.client.SdfDatatypeInformation;
 import de.uniol.inf.is.odysseus.webservice.client.SdfSchemaInformation;
 import de.uniol.inf.is.odysseus.webservice.client.StringMapListEntry;
+import de.uniol.inf.is.odysseus.webservice.client.ViewInformationWS;
 import de.uniol.inf.is.odysseus.webservice.client.WebserviceServer;
 import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
 
@@ -608,9 +610,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public ILogicalOperator removeSink(Resource name, ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				ResourceInformation ri = new ResourceInformation();
-				ri.setResourceName(name.getResourceName());
-				ri.setUser(name.getUser());
+				ResourceInformation ri = toResourceInformation(name);
 				ILogicalOperator result = (ILogicalOperator) getWebserviceServer()
 						.removeSinkByResource(ri, caller.getToken())
 						.getResponseValue();
@@ -640,9 +640,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public void removeViewOrStream(Resource name, ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				ResourceInformation ri = new ResourceInformation();
-				ri.setResourceName(name.getResourceName());
-				ri.setUser(name.getUser());
+				ResourceInformation ri = toResourceInformation(name);
 				getWebserviceServer().removeViewOrStreamByResource(ri,
 						caller.getToken());
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
@@ -654,27 +652,25 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public Set<Entry<Resource, ILogicalOperator>> getStreamsAndViews(
-			ISession caller) {
-		HashMap<Resource, ILogicalOperator> set = new HashMap<>();
+	public List<ViewInformation> getStreamsAndViewsInformation(ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				List<ResourceInformationEntry> result = getWebserviceServer()
-						.getStreamsAndViews(caller.getToken())
-						.getResponseValue();
-
-				for (ResourceInformationEntry e : result) {
-					Resource r = new Resource(e.getResource().getUser(), e
-							.getResource().getResourceName());
-					ILogicalOperator op = (ILogicalOperator) e.getOperator();
-					set.put(r, op);
+				List<ViewInformation> result = new ArrayList<>();
+				List<ViewInformationWS> l = getWebserviceServer()
+						.getStreamsAndViews(caller.getToken());
+				for (ViewInformationWS viws : l) {
+					ViewInformation vi = new ViewInformation();
+					vi.setName(toResource(viws.getName()));
+					vi.setOutputSchema(toSDFSchema(viws.getSchema()));
+					result.add(vi);
 				}
-				return set.entrySet();
-			} catch (InvalidUserDataException_Exception e) {
+				return result;
+			} catch (InvalidUserDataException_Exception
+					| ClassNotFoundException e) {
 				throw new PlanManagementException(e);
 			}
 		}
-		return set.entrySet();
+		return null;
 	}
 
 	@Override
@@ -715,9 +711,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public boolean containsViewOrStream(Resource name, ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				ResourceInformation ri = new ResourceInformation();
-				ri.setResourceName(name.getResourceName());
-				ri.setUser(name.getUser());
+				ResourceInformation ri = toResourceInformation(name);
 				return getWebserviceServer().containsViewOrStreamByResource(ri,
 						caller.getToken()).isResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
@@ -725,6 +719,18 @@ public class WsClient implements IExecutor, IClientExecutor {
 			}
 		}
 		return false;
+	}
+
+	public ResourceInformation toResourceInformation(Resource name) {
+		ResourceInformation ri = new ResourceInformation();
+		ri.setResourceName(name.getResourceName());
+		ri.setUser(name.getUser());
+		return ri;
+	}
+
+	public Resource toResource(ResourceInformation name) {
+		Resource ri = new Resource(name.getUser(), name.getResourceName());
+		return ri;
 	}
 
 	@Override
@@ -880,17 +886,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 						.determineOutputSchema(query, parserID,
 								user.getToken(), port, context)
 						.getResponseValue();
-				List<SDFAttribute> attributes = new ArrayList<>();
-				// TODO: extends SdfAttributeInformation
-				for (SdfAttributeInformation sda : si.getAttributes()) {
-					SDFDatatype dt = new SDFDatatype(sda.getDatatype().getUri());
-					attributes.add(new SDFAttribute(sda.getSourcename(), sda
-							.getAttributename(), dt, null, null, null));
-				}
-				@SuppressWarnings({ "rawtypes", "unchecked" })
-				Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) Class
-						.forName(si.getTypeClass());
-				SDFSchema schema = new SDFSchema(si.getUri(), type, attributes);
+				SDFSchema schema = toSDFSchema(si);
 				return schema;
 			} catch (InvalidUserDataException_Exception
 					| ClassNotFoundException e) {
@@ -898,6 +894,22 @@ public class WsClient implements IExecutor, IClientExecutor {
 			}
 		}
 		return null;
+	}
+
+	public SDFSchema toSDFSchema(SdfSchemaInformation si)
+			throws ClassNotFoundException {
+		List<SDFAttribute> attributes = new ArrayList<>();
+		// TODO: extends SdfAttributeInformation
+		for (SdfAttributeInformation sda : si.getAttributes()) {
+			SDFDatatype dt = new SDFDatatype(sda.getDatatype().getUri());
+			attributes.add(new SDFAttribute(sda.getSourcename(), sda
+					.getAttributename(), dt, null, null, null));
+		}
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) Class
+				.forName(si.getTypeClass());
+		SDFSchema schema = new SDFSchema(si.getUri(), type, attributes);
+		return schema;
 	}
 
 	/*

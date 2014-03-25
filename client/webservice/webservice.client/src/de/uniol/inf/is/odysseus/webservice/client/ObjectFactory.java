@@ -1216,19 +1216,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SdfAttributeInformation }
-     * 
-     */
-    public SdfAttributeInformation createSdfAttributeInformation() {
-        return new SdfAttributeInformation();
-    }
-
-    /**
      * Create an instance of {@link ResourceInformationListResponse }
      * 
      */
     public ResourceInformationListResponse createResourceInformationListResponse() {
         return new ResourceInformationListResponse();
+    }
+
+    /**
+     * Create an instance of {@link SdfAttributeInformation }
+     * 
+     */
+    public SdfAttributeInformation createSdfAttributeInformation() {
+        return new SdfAttributeInformation();
     }
 
     /**
@@ -1333,6 +1333,14 @@ public class ObjectFactory {
      */
     public SdfDatatypeListResponse createSdfDatatypeListResponse() {
         return new SdfDatatypeListResponse();
+    }
+
+    /**
+     * Create an instance of {@link ViewInformationWS }
+     * 
+     */
+    public ViewInformationWS createViewInformationWS() {
+        return new ViewInformationWS();
     }
 
     /**

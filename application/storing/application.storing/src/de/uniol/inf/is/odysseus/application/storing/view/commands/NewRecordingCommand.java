@@ -64,7 +64,7 @@ public class NewRecordingCommand extends AbstractRecordingCommand {
 			return null;
 		}
 
-		if (OdysseusRCPPlugIn.getExecutor().getStreamsAndViews(user).size() <= 0) {
+		if (OdysseusRCPPlugIn.getExecutor().getStreamsAndViewsInformation(user).size() <= 0) {
 			MessageBox mb = new MessageBox(shell);
 			mb.setText("No sources found");
 			mb.setMessage("There are no sources that can be recorded!\nCreate one first!");

@@ -7,14 +7,17 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 public class Resource implements Serializable, Comparable<Resource> {
 
 	private static final long serialVersionUID = -9162627611692098365L;
-	final private String user;
-	final private String resourceName;
+	private String user;
+	private String resourceName;
 
 	public Resource(IUser user, String resourceName) {
 		this.user = user.getName();
 		this.resourceName = resourceName;
 	}
 
+	public Resource() {
+	}
+	
 	public Resource(String resourcename) {
 		int pos = resourcename.indexOf('.');
 		if (pos > 0) {

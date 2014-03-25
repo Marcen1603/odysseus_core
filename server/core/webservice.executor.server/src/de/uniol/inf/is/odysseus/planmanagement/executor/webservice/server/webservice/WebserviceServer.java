@@ -55,6 +55,7 @@ import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
@@ -113,6 +114,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webser
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StringMapListEntry;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StringMapStringListResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StringResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.ViewInformationWS;
 
 /**
  * 
@@ -122,7 +124,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webser
 @WebService
 @SOAPBinding(style = Style.DOCUMENT)
 @XmlSeeAlso({ SimpleGraph.class, String[].class, GraphNode.class,
-		LogicalQuery.class, ConnectionInformation.class, Context.class })
+		LogicalQuery.class, ConnectionInformation.class, Context.class})
 public class WebserviceServer {
 
 	private static final int SINK_MIN_PORT = 10000;
@@ -218,9 +220,9 @@ public class WebserviceServer {
 			throws InvalidUserDataException {
 		StringListResponse response = new StringListResponse(true);
 		ISession user = loginWithSecurityToken(securityToken);
-		for (Entry<Resource, ILogicalOperator> e : getExecutor()
-				.getStreamsAndViews(user)) {
-			response.addResponseValue(e.getKey().toString());
+		for (ViewInformation e : getExecutor()
+				.getStreamsAndViewsInformation(user)) {
+			response.addResponseValue(e.getName().toString());
 		}
 		return response;
 
@@ -896,17 +898,18 @@ public class WebserviceServer {
 
 	}
 
-	public ResourceInformationListResponse getStreamsAndViews(
+	public ArrayList<ViewInformationWS> getStreamsAndViews(
 			@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
-		Set<Entry<Resource, ILogicalOperator>> result = getExecutor()
-				.getStreamsAndViews(user);
-		ResourceInformationListResponse resp = new ResourceInformationListResponse(
-				true);
-		for (Entry<Resource, ILogicalOperator> entry : result) {
-			resp.addResponseValue(new ResourceInformationEntry(
-					new ResourceInformation(entry.getKey()), entry.getValue()));
+		List<ViewInformation> result = getExecutor()
+				.getStreamsAndViewsInformation(user);
+		ArrayList<ViewInformationWS> resp = new ArrayList<>();
+		for (ViewInformation entry : result) {
+			ViewInformationWS vi = new ViewInformationWS();
+			vi.setName(new ResourceInformation(entry.getName()));
+			vi.setSchema(createSDFSchemaInformation(entry.getOutputSchema()).getResponseValue());
+			resp.add(vi);
 		}
 		return resp;
 	}
@@ -916,7 +919,7 @@ public class WebserviceServer {
 			throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
 		Set<Entry<Resource, ILogicalOperator>> result = getExecutor()
-				.getStreamsAndViews(user);
+				.getSinks(user);
 		ResourceInformationListResponse resp = new ResourceInformationListResponse(
 				true);
 		for (Entry<Resource, ILogicalOperator> entry : result) {

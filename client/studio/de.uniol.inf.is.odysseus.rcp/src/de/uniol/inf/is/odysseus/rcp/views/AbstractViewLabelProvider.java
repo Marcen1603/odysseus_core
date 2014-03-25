@@ -52,7 +52,6 @@ public abstract class AbstractViewLabelProvider extends StyledCellLabelProvider 
 
 	public String getText(Object element) {
 		if (element instanceof Entry) {
-
 			Entry<?, ?> entry = (Entry<?, ?>) element;
 			StringBuilder sb = new StringBuilder();
 			sb.append(entry.getKey()).append(" [").append(entry.getValue().getClass().getSimpleName()).append("]");

@@ -15,8 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.commands;
 
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -35,7 +34,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -52,7 +51,7 @@ public class DropAllSourcesCommand extends AbstractHandler {
 		LOG.debug("Dropping all sources");
 
 		final IExecutor executor = Preconditions.checkNotNull(OdysseusRCPPlugIn.getExecutor(), "Executor must not be null!");
-		final ImmutableList<Resource> sources = determineSourceIds(executor.getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession()));
+		final ImmutableList<Resource> sources = determineSourceIds(executor.getStreamsAndViewsInformation(OdysseusRCPPlugIn.getActiveSession()));
 				
 		if( sources.isEmpty() ) {
 			LOG.debug("Nothing to drop.");
@@ -98,14 +97,14 @@ public class DropAllSourcesCommand extends AbstractHandler {
 		return null;
 	}
 
-	private static ImmutableList<Resource> determineSourceIds(Set<Entry<Resource, ILogicalOperator>> sources) {
+	private static ImmutableList<Resource> determineSourceIds(List<ViewInformation> sources) {
 		if( sources == null || sources.isEmpty() ) {
 			return ImmutableList.of();
 		}
 		
 		ImmutableList.Builder<Resource> builder = ImmutableList.builder();
-		for( Entry<Resource, ILogicalOperator> source : sources ) {
-			builder.add(source.getKey());
+		for( ViewInformation source : sources ) {
+			builder.add(source.getName());
 		}
 		return builder.build();
 	}

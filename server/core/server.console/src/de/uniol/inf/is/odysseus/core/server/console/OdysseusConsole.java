@@ -29,7 +29,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -47,12 +46,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
@@ -880,8 +878,8 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	public void _lssources(CommandInterpreter ci) {
 		addCommand();
 		System.out.println("Current registered sources");
-		for (Entry<Resource, ILogicalOperator> e : this.executor.getStreamsAndViews(currentUser)) {
-			ci.println(e.getKey() + " | " + e.getValue());
+		for (ViewInformation e : this.executor.getStreamsAndViewsInformation(currentUser)) {
+			ci.println(e.getName() + " | " + e.getOutputSchema());
 		}
 	}
 

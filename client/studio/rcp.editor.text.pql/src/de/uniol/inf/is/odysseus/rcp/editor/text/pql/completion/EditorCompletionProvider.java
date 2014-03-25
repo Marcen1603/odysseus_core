@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -27,10 +26,9 @@ import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Point;
 
-import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorLanguagePropertiesProvider;
@@ -157,12 +155,12 @@ public class EditorCompletionProvider implements IEditorLanguagePropertiesProvid
 
 	private List<ICompletionProposal> buildCompletionProposalOperators(String currentToken, IDocument document, int offset, String prefix) {
 		List<ICompletionProposal> sources = new ArrayList<>();
-		for (Entry<Resource, ILogicalOperator> source : PQLEditorTextPlugIn.getCurrentSources()) {
-			String name = source.getKey().getResourceName();
+		for (ViewInformation source : PQLEditorTextPlugIn.getCurrentSources()) {
+			String name = source.getName().getResourceName();
 			if (name.toLowerCase().startsWith(prefix)) {
 				sources.add(SourceCompletionPart.buildCompletionProposal(name, offset-prefix.length(), currentToken.length(), document));
 			}
-			name = source.getKey().toString();
+			name = source.getName().toString();
 			if (name.toLowerCase().startsWith(prefix)) {
 				sources.add(SourceCompletionPart.buildCompletionProposal(name, offset-prefix.length(), currentToken.length(), document));
 			}

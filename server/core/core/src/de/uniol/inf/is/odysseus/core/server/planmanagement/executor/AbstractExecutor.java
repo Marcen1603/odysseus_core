@@ -47,6 +47,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -1216,11 +1217,18 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void removeViewOrStream(Resource name, ISession caller) {
 		getDataDictionary(caller).removeViewOrStream(name, caller);
 	}
-
+	
 	@Override
-	public Set<Entry<Resource, ILogicalOperator>> getStreamsAndViews(
-			ISession caller) {
-		return getDataDictionary(caller).getStreamsAndViews(caller);
+	public List<ViewInformation> getStreamsAndViewsInformation(ISession caller) {
+		Set<Entry<Resource, ILogicalOperator>> source = getDataDictionary(caller).getStreamsAndViews(caller);
+		List<ViewInformation> ret = new ArrayList<>();
+		for (Entry<Resource, ILogicalOperator> s: source){
+			ViewInformation vi = new ViewInformation();
+			vi.setName(s.getKey());
+			vi.setOutputSchema(s.getValue().getOutputSchema());
+			ret.add(vi);
+		}
+		return ret;
 	}
 
 	@Override

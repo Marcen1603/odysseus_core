@@ -1,15 +1,12 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.pql;
 
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
@@ -68,8 +65,8 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 		return OdysseusRCPEditorTextPlugIn.getExecutor().getOperatorInformations(OdysseusRCPPlugIn.getActiveSession());
 	}
 
-	public static Set<Entry<Resource,ILogicalOperator>> getCurrentSources() {
-		return OdysseusRCPEditorTextPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession());
+	public static List<ViewInformation> getCurrentSources() {
+		return OdysseusRCPEditorTextPlugIn.getExecutor().getStreamsAndViewsInformation(OdysseusRCPPlugIn.getActiveSession());
 		
 	}
 }

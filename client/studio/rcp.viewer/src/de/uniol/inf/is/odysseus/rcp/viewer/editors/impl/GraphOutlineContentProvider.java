@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
-// TODO: Double Code see also OperatorViewContentProvider
+// TODO: Double Code see also ResourceInformationContentProvider
 
 public class GraphOutlineContentProvider implements ITreeContentProvider {
 

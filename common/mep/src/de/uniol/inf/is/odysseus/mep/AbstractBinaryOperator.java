@@ -28,7 +28,7 @@ public abstract class AbstractBinaryOperator<T> extends AbstractFunction<T>
 	public AbstractBinaryOperator(String symbol,SDFDatatype[][] accDatatypes, SDFDatatype returnType) {
 		super(symbol,2,accDatatypes, returnType);
 	}	
-	
+		
 	public AbstractBinaryOperator(String symbol,SDFDatatype[] accDatatypes, SDFDatatype returnType) {
 		super(symbol,2,accDatatypes, returnType);
 	}

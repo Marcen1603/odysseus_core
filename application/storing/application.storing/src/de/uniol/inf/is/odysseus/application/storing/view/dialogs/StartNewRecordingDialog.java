@@ -30,8 +30,6 @@
 
 package de.uniol.inf.is.odysseus.application.storing.view.dialogs;
 
-import java.util.Map.Entry;
-
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
@@ -54,8 +52,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordingController;
-import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
@@ -131,8 +128,8 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 		label2.setText("From stream:");
 
 		comboDropDownStreams = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
-		for (Entry<Resource, ILogicalOperator> e : this.executor.getStreamsAndViews(user)) {
-			comboDropDownStreams.add(e.getKey().toString());
+		for (ViewInformation e : this.executor.getStreamsAndViewsInformation(user)) {
+			comboDropDownStreams.add(e.getName().toString());
 		}
 
 		Label label3 = new Label(parent, SWT.NONE);

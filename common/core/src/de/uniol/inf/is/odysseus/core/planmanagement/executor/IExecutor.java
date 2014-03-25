@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -58,7 +59,8 @@ public interface IExecutor extends IClientPlanManager {
 	 * 
 	 * @throws PlanManagementException
 	 */
-	public Set<String> getSupportedQueryParsers(ISession session) throws PlanManagementException;
+	public Set<String> getSupportedQueryParsers(ISession session)
+			throws PlanManagementException;
 
 	/**
 	 * A list of tokens like static key words for a certain query parser that
@@ -70,7 +72,8 @@ public interface IExecutor extends IClientPlanManager {
 	 *            current user
 	 * @return a parser dependent key-multiple-values map
 	 */
-	public Map<String, List<String>> getQueryParserTokens(String queryParser, ISession user);
+	public Map<String, List<String>> getQueryParserTokens(String queryParser,
+			ISession user);
 
 	/**
 	 * Returns a list of suggestions for a certain query parser based on a hint.
@@ -84,7 +87,8 @@ public interface IExecutor extends IClientPlanManager {
 	 *            the current user
 	 * @return a list of suggestions
 	 */
-	public List<String> getQueryParserSuggestions(String queryParser, String hint, ISession user);
+	public List<String> getQueryParserSuggestions(String queryParser,
+			String hint, ISession user);
 
 	/**
 	 * Adds a new query
@@ -105,7 +109,9 @@ public interface IExecutor extends IClientPlanManager {
 	 * @return A (potential empty) list of the IDs of the installed queries
 	 * @throws PlanManagementException
 	 */
-	public Collection<Integer> addQuery(String query, String parserID, ISession user, String queryBuildConfigurationName, Context context) throws PlanManagementException;
+	public Collection<Integer> addQuery(String query, String parserID,
+			ISession user, String queryBuildConfigurationName, Context context)
+			throws PlanManagementException;
 
 	/**
 	 * This method tries to translate the given query to a logical plan and
@@ -123,7 +129,8 @@ public interface IExecutor extends IClientPlanManager {
 	 *            The port for which the schema should be returned
 	 * @return The output schema from the top operator for the given port
 	 */
-	public SDFSchema determineOutputSchema(String query, String parserID, ISession user, int port, Context context);
+	public SDFSchema determineOutputSchema(String query, String parserID,
+			ISession user, int port, Context context);
 
 	// TODO, Multiple roots
 	// public SDFSchema determinedOutputSchema(String query, String parserID,
@@ -171,7 +178,8 @@ public interface IExecutor extends IClientPlanManager {
 	 *            The current user
 	 * @return All physical root operators
 	 */
-	public List<IPhysicalOperator> getPhysicalRoots(int queryID, ISession session);
+	public List<IPhysicalOperator> getPhysicalRoots(int queryID,
+			ISession session);
 
 	/**
 	 * Starts all queries that are currently not running
@@ -190,7 +198,8 @@ public interface IExecutor extends IClientPlanManager {
 	 * 
 	 * @return A set of IDs of the strategies
 	 */
-	public Set<String> getRegisteredBufferPlacementStrategiesIDs(ISession session);
+	public Set<String> getRegisteredBufferPlacementStrategiesIDs(
+			ISession session);
 
 	/**
 	 * Provides a set of all registered scheduling strategies
@@ -224,11 +233,14 @@ public interface IExecutor extends IClientPlanManager {
 	 * @param session
 	 *            The current user
 	 */
-	public void setScheduler(String scheduler, String schedulerStrategy, ISession session);
+	public void setScheduler(String scheduler, String schedulerStrategy,
+			ISession session);
 
 	/**
 	 * Get the current active scheduler represented by an id.
-	 * @param session The current user
+	 * 
+	 * @param session
+	 *            The current user
 	 * 
 	 * @return id of the current scheduler
 	 */
@@ -237,7 +249,8 @@ public interface IExecutor extends IClientPlanManager {
 	/**
 	 * Get the current active scheduling strategy factory represented by an id.
 	 * 
-	 * @param session The current user
+	 * @param session
+	 *            The current user
 	 * @return id of the current active scheduling strategy factory
 	 */
 	public String getCurrentSchedulingStrategyID(ISession session);
@@ -245,14 +258,17 @@ public interface IExecutor extends IClientPlanManager {
 	/**
 	 * Returns all registered data types
 	 * 
-	 * @param caller The current user
+	 * @param caller
+	 *            The current user
 	 * @return The set of data types
 	 */
 	public Set<SDFDatatype> getRegisteredDatatypes(ISession caller);
 
 	/**
 	 * Returns all registered wrapper names
-	 * @param caller The current user
+	 * 
+	 * @param caller
+	 *            The current user
 	 * @return A set of wrapper IDs
 	 */
 	public Set<String> getRegisteredWrapperNames(ISession caller);
@@ -260,17 +276,21 @@ public interface IExecutor extends IClientPlanManager {
 	/**
 	 * Returns all registered aggregated functions for a certain data model
 	 * 
-	 * @param datamodel The data model 
-	 * @param caller The current user
+	 * @param datamodel
+	 *            The data model
+	 * @param caller
+	 *            The current user
 	 * @return A list of the function
 	 */
 
-	public Set<String> getRegisteredAggregateFunctions(@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel, ISession caller);
+	public Set<String> getRegisteredAggregateFunctions(
+			@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel,
+			ISession caller);
 
 	/**
 	 * The name of the executor
 	 * 
-	 * @return the name 
+	 * @return the name
 	 */
 	public String getName();
 
@@ -278,72 +298,78 @@ public interface IExecutor extends IClientPlanManager {
 	// Session Management methods
 	/**
 	 * Logs a user in and creates a session
-	 * @param username The user name
-	 * @param password The password of the user
-	 * @param tenantname The tenant
+	 * 
+	 * @param username
+	 *            The user name
+	 * @param password
+	 *            The password of the user
+	 * @param tenantname
+	 *            The tenant
 	 * @return the session of the logged in user
 	 */
 	ISession login(String username, byte[] password, String tenantname);
 
 	/**
 	 * Logs the user out
-	 * @param caller The user to be logged out
+	 * 
+	 * @param caller
+	 *            The user to be logged out
 	 */
 	void logout(ISession caller);
 
 	// Facade for DataDictionary
 	/**
 	 * Removes a sink using its simple name
-	 *  
-	 * @param name The name of the sink
-	 * @param caller The current user
+	 * 
+	 * @param name
+	 *            The name of the sink
+	 * @param caller
+	 *            The current user
 	 * @return The operator of the sink that was removed
-	 */	
+	 */
 	public ILogicalOperator removeSink(String name, ISession caller);
 
 	/**
 	 * Removes a sink using its resource name
-	 *  
-	 * @param name The resource description of the sink
-	 * @param caller The current user
+	 * 
+	 * @param name
+	 *            The resource description of the sink
+	 * @param caller
+	 *            The current user
 	 * @return The operator of the sink that was removed
-	 */	
+	 */
 	public ILogicalOperator removeSink(Resource name, ISession caller);
 
 	/**
 	 * Removes a view or stream using its simple name
-	 *  
-	 * @param name The name of the stream or view
-	 * @param caller The current user
-	 */	
+	 * 
+	 * @param name
+	 *            The name of the stream or view
+	 * @param caller
+	 *            The current user
+	 */
 	public void removeViewOrStream(String name, ISession caller);
 
 	/**
 	 * Removes a view or stream using its resource description
-	 *  
-	 * @param name The resource description of the stream or view
-	 * @param caller The current user
-	 */	
-	public void removeViewOrStream(Resource name, ISession caller);
-
-	/**
-	 * Delivers a user-dependent set of all installed streams and views
 	 * 
-	 * A stream or view is named by a resource description and is represented by 
-	 * its top most logical operator
-	 * 
-	 * @param caller The current user
-	 * @return Pairs of resource description and the top operator
+	 * @param name
+	 *            The resource description of the stream or view
+	 * @param caller
+	 *            The current user
 	 */
-	public Set<Entry<Resource, ILogicalOperator>> getStreamsAndViews(ISession caller);
+	public void removeViewOrStream(Resource name, ISession caller);
+	
+	public List<ViewInformation> getStreamsAndViewsInformation(ISession caller);
 
 	/**
 	 * Delivers a user-dependent set of all installed sinks
 	 * 
-	 * A sink is named by a resource description and is represented by 
-	 * its top most logical operator
+	 * A sink is named by a resource description and is represented by its top
+	 * most logical operator
 	 * 
-	 * @param caller The current user
+	 * @param caller
+	 *            The current user
 	 * @return Pairs of resource description and the top operator
 	 */
 	public Set<Entry<Resource, ILogicalOperator>> getSinks(ISession caller);
@@ -351,8 +377,10 @@ public interface IExecutor extends IClientPlanManager {
 	/**
 	 * Checks whether the stream or view exists.
 	 * 
-	 * @param name The resource description to be checked
-	 * @param caller the current user
+	 * @param name
+	 *            The resource description to be checked
+	 * @param caller
+	 *            the current user
 	 * @return true, if the view or stream exists
 	 */
 	public boolean containsViewOrStream(Resource name, ISession caller);
@@ -360,8 +388,10 @@ public interface IExecutor extends IClientPlanManager {
 	/**
 	 * Checks whether the stream or view exists.
 	 * 
-	 * @param name The name to be checked
-	 * @param caller the current user
+	 * @param name
+	 *            The name to be checked
+	 * @param caller
+	 *            the current user
 	 * @return true, if the view or stream exists
 	 */
 	public boolean containsViewOrStream(String name, ISession caller);
@@ -369,53 +399,72 @@ public interface IExecutor extends IClientPlanManager {
 	/**
 	 * Invokes to reload stored queries.
 	 * 
-	 * @param caller The current user
+	 * @param caller
+	 *            The current user
 	 */
 	void reloadStoredQueries(ISession caller);
 
 	/**
 	 * Returns the output schema of the query identified by the given ID
-	 *    
-	 * @param queryId The ID of the query
-	 * @param session The current user 
+	 * 
+	 * @param queryId
+	 *            The ID of the query
+	 * @param session
+	 *            The current user
 	 * @return the schema of the query
 	 */
 	public SDFSchema getOutputSchema(int queryId, ISession session);
 
 	/**
 	 * Adds a new stored procedure, which should be saved
-	 * @param name A unique name of the procedure
-	 * @param proc The stored procedure
-	 * @param caller The current user
+	 * 
+	 * @param name
+	 *            A unique name of the procedure
+	 * @param proc
+	 *            The stored procedure
+	 * @param caller
+	 *            The current user
 	 */
-	public void addStoredProcedure(String name, StoredProcedure proc, ISession caller);
+	public void addStoredProcedure(String name, StoredProcedure proc,
+			ISession caller);
 
 	/**
 	 * Removes a saved procedure
-	 * @param name The name of the stored procedure that should be removed
-	 * @param caller The current user
+	 * 
+	 * @param name
+	 *            The name of the stored procedure that should be removed
+	 * @param caller
+	 *            The current user
 	 */
 	public void removeStoredProcedure(String name, ISession caller);
 
 	/**
-	 * Gets the stored procedure by its name 
-	 * @param name The name of the procedure
-	 * @param caller The current user
+	 * Gets the stored procedure by its name
+	 * 
+	 * @param name
+	 *            The name of the procedure
+	 * @param caller
+	 *            The current user
 	 * @return The stored procedure
 	 */
 	public StoredProcedure getStoredProcedure(String name, ISession caller);
 
 	/**
 	 * Returns the list of all saved stored procedures for the user
-	 * @param caller The current user
+	 * 
+	 * @param caller
+	 *            The current user
 	 * @return A list of stored procedures
 	 */
 	public List<StoredProcedure> getStoredProcedures(ISession caller);
 
 	/**
 	 * Checks whether a stored procedure exists
-	 * @param name The name of the stored procedure
-	 * @param caller The current user
+	 * 
+	 * @param name
+	 *            The name of the stored procedure
+	 * @param caller
+	 *            The current user
 	 * @return true, if there is a stored procedure with this name
 	 */
 	public boolean containsStoredProcedures(String name, ISession caller);
@@ -423,46 +472,53 @@ public interface IExecutor extends IClientPlanManager {
 	/**
 	 * Gets the name of all installed operators
 	 * 
-	 * @param caller The current user
+	 * @param caller
+	 *            The current user
 	 * @return A list of the names
 	 */
 	public List<String> getOperatorNames(ISession caller);
 
 	/**
-	 * Gets a description of all installed operators that can be used e.g. in PQL
+	 * Gets a description of all installed operators that can be used e.g. in
+	 * PQL
 	 * 
-	 * @param caller The current user
+	 * @param caller
+	 *            The current user
 	 * @return a list of operator information
 	 */
-	public List<LogicalOperatorInformation> getOperatorInformations(ISession caller);
+	public List<LogicalOperatorInformation> getOperatorInformations(
+			ISession caller);
 
 	/**
 	 * Gets the logical description of a certain operator
-	 *  
-	 * @param name The name of the operator
-	 * @param caller The current user
+	 * 
+	 * @param name
+	 *            The name of the operator
+	 * @param caller
+	 *            The current user
 	 * @return a description of the logical operator
 	 */
-	public LogicalOperatorInformation getOperatorInformation(String name, ISession caller);
-	
+	public LogicalOperatorInformation getOperatorInformation(String name,
+			ISession caller);
+
 	// User Management
-	
+
 	/**
-	 * @param caller 
+	 * @param caller
 	 * 
 	 */
 	public List<IUser> getUsers(ISession caller);
-	
-	
+
 	/**
 	 * Generic Event Listener (for updates in views)
 	 */
 
-	void addUpdateEventListener(IUpdateEventListener listener, String type, ISession caller);
-	void removeUpdateEventListener(IUpdateEventListener listener, String type, ISession caller);
+	void addUpdateEventListener(IUpdateEventListener listener, String type,
+			ISession caller);
 
-	
+	void removeUpdateEventListener(IUpdateEventListener listener, String type,
+			ISession caller);
+
 	public Collection<String> getUdfs();
 
-	
 }

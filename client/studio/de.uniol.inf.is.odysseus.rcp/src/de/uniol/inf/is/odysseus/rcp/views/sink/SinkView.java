@@ -54,8 +54,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.views.OperatorDragListener;
-import de.uniol.inf.is.odysseus.rcp.views.OperatorViewContentProvider;
-import de.uniol.inf.is.odysseus.rcp.views.OperatorViewLabelProvider;
+import de.uniol.inf.is.odysseus.rcp.views.ResourceInformationContentProvider;
+import de.uniol.inf.is.odysseus.rcp.views.ResourceInformationLabelProvider;
 
 /**
  * 
@@ -141,8 +141,8 @@ public class SinkView extends ViewPart implements IUpdateEventListener {
 		parent.setLayout(stackLayout);
 
 		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
-		getTreeViewer().setContentProvider(new OperatorViewContentProvider());
-		getTreeViewer().setLabelProvider(new OperatorViewLabelProvider("sink"));
+		getTreeViewer().setContentProvider(new ResourceInformationContentProvider());
+		getTreeViewer().setLabelProvider(new ResourceInformationLabelProvider("sink"));
 		
 		int operations = DND.DROP_MOVE;
 		Transfer[] transferTypes = new Transfer[]{LocalSelectionTransfer.getTransfer()};
