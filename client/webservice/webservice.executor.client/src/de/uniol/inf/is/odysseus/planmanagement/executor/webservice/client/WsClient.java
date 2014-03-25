@@ -108,7 +108,7 @@ import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
 public class WsClient implements IExecutor, IClientExecutor {
 	
 	final Map<String, List<IUpdateEventListener>> updateEventListener = new HashMap<String, List<IUpdateEventListener>>();
-	final long UPDATEINTERVAL = 5000;
+	final long UPDATEINTERVAL = 60000;
 	
 	// Fire update events --> TODO: Get Events from Server and fire
 	private class Runner extends Thread {
