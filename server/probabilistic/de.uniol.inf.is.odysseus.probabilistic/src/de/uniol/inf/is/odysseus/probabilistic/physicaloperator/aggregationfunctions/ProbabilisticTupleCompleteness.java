@@ -29,7 +29,7 @@ public class ProbabilisticTupleCompleteness extends Completeness<ProbabilisticTu
 
     @Override
     public IPartialAggregate<ProbabilisticTuple<IProbabilistic>> init(final ProbabilisticTuple<IProbabilistic> in) {
-        final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> pa = new CompletenessPartialAggregate<ProbabilisticTuple<IProbabilistic>>(this.getCount((IProbabilistic) in.getMetadata()));
+        final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> pa = new CompletenessPartialAggregate<ProbabilisticTuple<IProbabilistic>>(this.getCount(in.getMetadata()));
         return pa;
     }
 
@@ -43,7 +43,7 @@ public class ProbabilisticTupleCompleteness extends Completeness<ProbabilisticTu
         else {
             pa = (CompletenessPartialAggregate<ProbabilisticTuple<IProbabilistic>>) p;
         }
-        pa.add(this.getCount((IProbabilistic) toMerge.getMetadata()));
+        pa.add(this.getCount(toMerge.getMetadata()));
         return pa;
     }
 
