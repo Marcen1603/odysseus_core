@@ -43,6 +43,7 @@ public class LogMessageReceiver implements IPeerCommunicatorListener {
 		return loggerName.substring(pos + 1);
 	}
 
+	@SuppressWarnings("static-access")
 	private static String toLevel(int logLevel) {
 		switch (logLevel) {
 		case Level.TRACE_INT:
