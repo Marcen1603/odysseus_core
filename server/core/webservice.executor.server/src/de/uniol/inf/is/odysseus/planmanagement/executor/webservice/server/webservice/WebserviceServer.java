@@ -262,6 +262,7 @@ public class WebserviceServer {
 		ISession user = loginWithSecurityToken(securityToken);
 		try {
 			ExecutorServiceBinding.getExecutor().removeQuery(queryID, user);
+			socketPortMap.remove(queryID);
 		} catch (Exception e) {
 			throw new QueryNotExistsException();
 		}
@@ -665,15 +666,7 @@ public class WebserviceServer {
 	}
 
 	private SDFSchemaResponse createSDFSchemaInformation(SDFSchema schema) {
-		Collection<SDFAttribute> attributes = schema.getAttributes();
-		Collection<SDFAttributeInformation> attrInfo = new ArrayList<SDFAttributeInformation>();
-		for (SDFAttribute attr : attributes) {
-			attrInfo.add(new SDFAttributeInformation(attr.getSourceName(), attr
-					.getAttributeName(), new SDFDatatypeInformation(attr
-					.getDatatype().getURI())));
-		}
-		SDFSchemaInformation info = new SDFSchemaInformation(schema.getURI(),
-				attrInfo, schema.getType());
+		SDFSchemaInformation info = toSchemaInformation(schema);
 		return new SDFSchemaResponse(info, true);
 	}
 
@@ -715,21 +708,26 @@ public class WebserviceServer {
 		List<SourceInformation> sourceInfos = new ArrayList<SourceInformation>();
 		for (Entry<Resource, ILogicalOperator> source : sources) {
 			SDFSchema schema = source.getValue().getOutputSchema();
-			Collection<SDFAttribute> attributes = schema.getAttributes();
-			Collection<SDFAttributeInformation> attributeInfos = new ArrayList<SDFAttributeInformation>();
-			for (SDFAttribute attribute : attributes) {
-				attributeInfos.add(new SDFAttributeInformation(attribute
-						.getSourceName(), attribute.getAttributeName(),
-						new SDFDatatypeInformation(attribute.getDatatype()
-								.getURI())));
-			}
-			SDFSchemaInformation schemaInfo = new SDFSchemaInformation(
-					schema.getURI(), attributeInfos, schema.getType());
+			SDFSchemaInformation schemaInfo = toSchemaInformation(schema);
 			// FIXME: Use Resource
 			sourceInfos.add(new SourceInformation(schemaInfo, source.getKey()
 					.toString(), source.getValue().getOwnerIDs()));
 		}
 		return new SourceListResponse(sourceInfos, true);
+	}
+
+	private SDFSchemaInformation toSchemaInformation(SDFSchema schema) {
+		Collection<SDFAttribute> attributes = schema.getAttributes();
+		Collection<SDFAttributeInformation> attributeInfos = new ArrayList<SDFAttributeInformation>();
+		for (SDFAttribute attribute : attributes) {
+			attributeInfos.add(new SDFAttributeInformation(attribute
+					.getSourceName(), attribute.getAttributeName(),
+					new SDFDatatypeInformation(attribute.getDatatype()
+							.getURI())));
+		}
+		SDFSchemaInformation schemaInfo = new SDFSchemaInformation(
+				schema.getURI(), attributeInfos, schema.getType());
+		return schemaInfo;
 	}
 
 	public OperatorBuilderListResponse getOperatorBuilderList(
@@ -908,7 +906,7 @@ public class WebserviceServer {
 		for (ViewInformation entry : result) {
 			ViewInformationWS vi = new ViewInformationWS();
 			vi.setName(new ResourceInformation(entry.getName()));
-			vi.setSchema(createSDFSchemaInformation(entry.getOutputSchema()).getResponseValue());
+			vi.setSchema(toSchemaInformation(entry.getOutputSchema()));
 			resp.add(vi);
 		}
 		return resp;
