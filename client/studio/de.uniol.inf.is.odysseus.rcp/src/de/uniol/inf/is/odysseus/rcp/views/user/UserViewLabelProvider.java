@@ -44,7 +44,7 @@ public class UserViewLabelProvider extends LabelProvider {
 			return role.getName();
 		}
 		if (obj instanceof IPrivilege) {
-			return "Priviledge : " + ((IPrivilege) obj).getObjectURI();
+			return "Privilege : " + ((IPrivilege) obj).getObjectURI();
 		}
 		if (obj instanceof IPermission){
 			return "Permission : "+ obj;
