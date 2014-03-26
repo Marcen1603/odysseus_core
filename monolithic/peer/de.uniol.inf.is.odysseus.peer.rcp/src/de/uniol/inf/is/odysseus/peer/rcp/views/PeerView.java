@@ -12,13 +12,18 @@ import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
@@ -353,6 +358,8 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				return 0;
 			}
 		};
+		
+		hideSelectionIfNeeded(peersTable);
 
 		peersTable.setInput(foundPeerIDs);
 		refreshTableAsync();
@@ -368,6 +375,17 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		warnImages = createWarnImages();
 
 		instance = this;
+	}
+	
+	private void hideSelectionIfNeeded(final TableViewer tableViewer) {
+		tableViewer.getTable().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				if( tableViewer.getTable().getItem(new Point(e.x,e.y)) == null ) {
+					tableViewer.setSelection(new StructuredSelection());
+				}
+			}
+		});
 	}
 
 	private static Image[] createWarnImages() {
@@ -429,6 +447,17 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 			image.dispose();
 		}
 		warnImages = null;
+	}
+	
+	public Collection<PeerID> getSelectedPeerIDs() {
+		IStructuredSelection selection = (IStructuredSelection) peersTable.getSelection();
+		Collection<PeerID> peers = Lists.newArrayList();
+		
+		for( Object selectedObject : selection.toArray()) {
+			peers.add((PeerID)selectedObject);
+		}
+		
+		return peers;
 	}
 
 	public void refreshUsagesAsync() {
