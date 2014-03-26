@@ -97,6 +97,11 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.RefreshP2PSourcesCommand"
             name="Refresh P2PSources">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.rcp.commands.UpdateRemotePeersCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.UpdateRemotePeers"
+            name="Update remote peers">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -109,6 +114,13 @@
                label="Refresh"
                style="push"
                tooltip="Refresh">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.UpdateRemotePeers"
+               icon="icons/update.png"
+               label="Update Remote Peers"
+               style="push"
+               tooltip="Update remote peers">
          </command>
       </menuContribution>
       <menuContribution
