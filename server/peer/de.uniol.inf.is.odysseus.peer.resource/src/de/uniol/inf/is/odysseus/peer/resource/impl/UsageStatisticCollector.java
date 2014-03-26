@@ -73,7 +73,7 @@ public class UsageStatisticCollector {
 			return new int[] { 0, 0, 0, 0};
 		}
 		
-		String[] versionStringParts = versionString.split(".");
+		String[] versionStringParts = versionString.split("\\.");
 		if( versionStringParts.length != 4 ) {
 			LOG.error("Could not determine version digits from version string '{}'", versionString);
 			return new int[] { 0, 0, 0, 0};			
