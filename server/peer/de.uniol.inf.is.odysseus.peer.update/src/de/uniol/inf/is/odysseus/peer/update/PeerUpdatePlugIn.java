@@ -68,10 +68,14 @@ public class PeerUpdatePlugIn implements BundleActivator, IPeerCommunicatorListe
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		DoUpdateMessage msg = (DoUpdateMessage)message;
-		LOG.debug("Got message to update: ", msg);
+		LOG.debug("Got message to update: {}", msg);
 		
 		try {
-			FeatureUpdateUtility.checkForAndInstallUpdates(getActiveSession());
+			if( FeatureUpdateUtility.checkForUpdates(getActiveSession()) ) {
+				FeatureUpdateUtility.checkForAndInstallUpdates(getActiveSession());
+			} else {
+				LOG.error("No updates available");
+			}
 		} catch( Throwable t ) {
 			LOG.error("Cannot update", t);
 		}
