@@ -9,6 +9,8 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
@@ -51,10 +53,13 @@ public class PeerUpdatePlugIn implements BundleActivator, IPeerCommunicatorListe
 	}
 
 	public static void sendUpdateMessageToRemotePeers() {
-		LOG.debug("Sending update message to remote peers");
+		sendUpdateMessageToRemotePeers(peerCommunicator.getConnectedPeers());
+	}
+	
+	public static void sendUpdateMessageToRemotePeers(Collection<PeerID> remotePeers) {
+		Preconditions.checkNotNull(remotePeers, "List of remote peer ids must not be null!");
 		
-		Collection<PeerID> remotePeers = peerCommunicator.getConnectedPeers();
-		
+		LOG.debug("Sending update message to {} remote peers", remotePeers.size());
 		DoUpdateMessage msg = new DoUpdateMessage();
 		for( PeerID remotePeer : remotePeers ) {
 			try {
@@ -64,7 +69,7 @@ public class PeerUpdatePlugIn implements BundleActivator, IPeerCommunicatorListe
 			}
 		}
 	}
-
+	
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		DoUpdateMessage msg = (DoUpdateMessage)message;
