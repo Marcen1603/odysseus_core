@@ -9,13 +9,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 
 public final class PeerCommunicatorListenerRegistry {
 
 	private static PeerCommunicatorListenerRegistry instance;
 
-	private final Map<Integer, Collection<IPeerCommunicatorListener>> listenerMap = Maps.newHashMap();
+	private final Map<Class<? extends IMessage>, Collection<IPeerCommunicatorListener>> listenerMap = Maps.newHashMap();
 
 	public static PeerCommunicatorListenerRegistry getInstance() {
 		if (instance == null) {
@@ -25,37 +26,37 @@ public final class PeerCommunicatorListenerRegistry {
 		return instance;
 	}
 
-	public void add(int id, IPeerCommunicatorListener listener) {
+	public void add(IPeerCommunicatorListener listener, Class<? extends IMessage> messageType) {
 		Preconditions.checkNotNull(listener, "Peer communicator listener to add to registry must not be null!");
 
 		synchronized (listenerMap) {
-			Collection<IPeerCommunicatorListener> listeners = listenerMap.get(id);
+			Collection<IPeerCommunicatorListener> listeners = listenerMap.get(messageType);
 			if( listeners == null  ) {
 				listeners = Lists.newArrayList();
-				listenerMap.put(id, listeners);
+				listenerMap.put(messageType, listeners);
 			}
 			listeners.add(listener);
 		}
 	}
 
-	public void remove(int id, IPeerCommunicatorListener listener) {
+	public void remove(IPeerCommunicatorListener listener, Class<? extends IMessage> messageType) {
 		Preconditions.checkNotNull(listener, "Peer communicator listener to remove from registry must not be null!");
 
 		synchronized (listenerMap) {
-			Collection<IPeerCommunicatorListener> listeners = listenerMap.get(id);
+			Collection<IPeerCommunicatorListener> listeners = listenerMap.get(messageType);
 			if( listeners != null ) {
 				listeners.remove(listener);
 				if( listeners.isEmpty() ) {
-					listenerMap.remove(id);
+					listenerMap.remove(messageType);
 				}
 			}
 		}
 	}
 
-	public ImmutableCollection<IPeerCommunicatorListener> getListeners(int id) {
+	public ImmutableCollection<IPeerCommunicatorListener> getListeners(Class<? extends IMessage> messageType) {
 		Collection<IPeerCommunicatorListener> listeners = null;
 		synchronized (listenerMap) {
-			listeners = listenerMap.get(id);
+			listeners = listenerMap.get(messageType);
 		}
 
 		return listeners != null ? ImmutableList.copyOf(listeners) : ImmutableList.<IPeerCommunicatorListener>of();

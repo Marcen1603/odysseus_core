@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.resource.impl;
 
-import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -23,6 +22,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
@@ -49,9 +49,6 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 
 	private static final double DEFAULT_BANDWIDTH_KB = 1024.0;
 	
-	private static final int ASK_BYTE = 54;
-	private static final int ANSWER_BYTE = 55;
-
 	private static PeerResourceUsageManager instance;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
@@ -80,11 +77,17 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	// called by OSGi-DS
 	public static void bindPeerCommunicator(IPeerCommunicator serv) {
 		peerCommunicator = serv;
+		
+		peerCommunicator.registerMessageType(AskUsageMessage.class);
+		peerCommunicator.registerMessageType(AnswerUsageMessage.class);
 	}
 
 	// called by OSGi-DS
 	public static void unbindPeerCommunicator(IPeerCommunicator serv) {
 		if (peerCommunicator == serv) {
+			peerCommunicator.unregisterMessageType(AskUsageMessage.class);
+			peerCommunicator.unregisterMessageType(AnswerUsageMessage.class);
+			
 			peerCommunicator = null;
 		}
 	}
@@ -106,8 +109,8 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		instance = this;
 		LOG.debug("Activated");
 
-		peerCommunicator.addListener(ASK_BYTE, this);
-		peerCommunicator.addListener(ANSWER_BYTE, this);
+		peerCommunicator.addListener(this, AskUsageMessage.class);
+		peerCommunicator.addListener(this, AnswerUsageMessage.class);
 
 		localUsageChecker = new RepeatingJobThread(1500, "Local usage checker") {
 			@Override
@@ -125,8 +128,8 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		instance = null;
 		LOG.debug("Deactivated");
 
-		peerCommunicator.removeListener(ASK_BYTE, this);
-		peerCommunicator.removeListener(ANSWER_BYTE, this);
+		peerCommunicator.removeListener(this, AskUsageMessage.class);
+		peerCommunicator.removeListener(this, AnswerUsageMessage.class);
 	}
 
 	public static PeerResourceUsageManager getInstance() {
@@ -144,10 +147,9 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 			return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
 		}
 
-		byte[] message = new byte[0];
 		try {
 			usageMap.remove(peerID);
-			peerCommunicator.send(peerID, ASK_BYTE, message);
+			peerCommunicator.send(peerID, new AskUsageMessage());
 		} catch (PeerCommunicationException e) {
 			LOG.debug("Could not send message for asking for remote resource usage", e);
 			return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
@@ -187,22 +189,21 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	}
 
 	@Override
-	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, int messageID, byte[] message) {
-		if (messageID == ASK_BYTE) {
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
+		if (message instanceof AskUsageMessage) {
 			IResourceUsage localUsage = getLocalResourceUsage();
-			ByteBuffer bb = ResourceUsageBytesConverter.toByteBuffer(localUsage);
+			AnswerUsageMessage answer = new AnswerUsageMessage(localUsage);
 
 			try {
-				communicator.send(senderPeer, ANSWER_BYTE, bb.array());
+				communicator.send(senderPeer, answer);
 			} catch (PeerCommunicationException e) {
 				LOG.error("Could not send aswer to resource usage asking", e);
 			}
-		} else if (messageID == ANSWER_BYTE) {
-			ByteBuffer bb = ByteBuffer.wrap(message);
-			IResourceUsage remoteUsage = ResourceUsageBytesConverter.toResourceUsage(bb);
+		} else if (message instanceof AnswerUsageMessage) {
+			AnswerUsageMessage answer = (AnswerUsageMessage)message;
 
 			synchronized (usageMap) {
-				usageMap.put(senderPeer, remoteUsage);
+				usageMap.put(senderPeer, answer.getResourceUsage());
 			}
 		}
 	}

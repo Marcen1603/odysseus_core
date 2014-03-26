@@ -39,11 +39,11 @@ public class JXTAAppender extends AppenderSkeleton {
 		try {
 			if (!logDestinations.isEmpty()) {
 
-				byte[] message = buildMessage(log);
+				LogMessage logMessage = new LogMessage(log);
 
 				for (PeerID logDestination : logDestinations) {
 					try {
-						peerCommunicator.send(logDestination, JXTALoggingPlugIn.LOG_BYTE, message);
+						peerCommunicator.send(logDestination, logMessage);
 					} catch (PeerCommunicationException e) {
 					}
 				}
@@ -53,27 +53,4 @@ public class JXTAAppender extends AppenderSkeleton {
 		}
 	}
 
-	private static byte[] buildMessage(LoggingEvent log) {
-		String strMessage = (String)log.getMessage();
-		String loggerName = log.getLoggerName();
-		
-		byte[] message = new byte[ 4 + 4 + strMessage.length() + 4 + loggerName.length() ];
-		
-		insertInt(message, 0, log.getLevel().toInt());
-		
-		insertInt(message, 4, strMessage.length());
-		System.arraycopy(strMessage.getBytes(), 0, message, 8, strMessage.length());
-		
-		insertInt(message, 8 + strMessage.length(), loggerName.length());
-		System.arraycopy(loggerName.getBytes(), 0, message, 8 + strMessage.length() + 4, loggerName.length());
-		
-		return message;
-	}
-	
-	public static void insertInt(byte[] destArray, int offset, int value) {
-		destArray[offset] = (byte) (value >>> 24);
-		destArray[offset + 1] = (byte) (value >>> 16);
-		destArray[offset + 2] = (byte) (value >>> 8);
-		destArray[offset + 3] = (byte) (value);
-	}
 }

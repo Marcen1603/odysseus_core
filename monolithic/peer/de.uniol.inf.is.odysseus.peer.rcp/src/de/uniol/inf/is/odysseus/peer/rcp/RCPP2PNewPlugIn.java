@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
+import de.uniol.inf.is.odysseus.peer.rcp.views.ChatMessage;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
 public class RCPP2PNewPlugIn extends AbstractUIPlugin {
@@ -45,11 +46,13 @@ public class RCPP2PNewPlugIn extends AbstractUIPlugin {
 	// called by OSGi-DS
 	public static void bindPeerCommunicator(IPeerCommunicator serv) {
 		peerCommunicator = serv;
+		peerCommunicator.registerMessageType(ChatMessage.class);
 	}
 
 	// called by OSGi-DS
 	public static void unbindPeerCommunicator(IPeerCommunicator serv) {
 		if (peerCommunicator == serv) {
+			peerCommunicator.unregisterMessageType(ChatMessage.class);
 			peerCommunicator = null;
 		}
 	}

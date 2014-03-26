@@ -18,10 +18,13 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
@@ -38,6 +41,8 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 	private static IP2PDictionary p2pDictionary;
 
 	private final Map<PeerID, Messenger> messengerMap = Maps.newHashMap();
+	private final Map<Class<? extends IMessage>, Integer> messageTypeMap = Maps.newHashMap();
+	private final Map<Integer, Class<? extends IMessage>> messageIDMap = Maps.newHashMap();
 
 	// called by OSGi-DS
 	public void bindP2PDictionary(IP2PDictionary dict) {
@@ -81,47 +86,91 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 	}
 
 	@Override
-	public void send(PeerID destinationPeer, int messageID, byte[] message) throws PeerCommunicationException {
+	public void registerMessageType(Class<? extends IMessage> messageType) {
+		Preconditions.checkNotNull(messageType, "MessageType must not be null!");
+		Preconditions.checkArgument(!messageTypeMap.containsKey(messageType), "MessageType %s already registered", messageType);
+		Preconditions.checkArgument(hasDefaultConstructor(messageType), "MessageType %s has no default constructor which is needed!", messageType);
+		
+		int messageID = messageType.toString().hashCode();
+		messageTypeMap.put(messageType, messageID);
+		messageIDMap.put(messageID, messageType);
+	}
+
+	private static boolean hasDefaultConstructor(Class<? extends IMessage> messageType) {
+		try {
+			messageType.newInstance();
+			return true;
+		} catch (InstantiationException | IllegalAccessException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public void unregisterMessageType(Class<? extends IMessage> messageType) {
+		Preconditions.checkNotNull(messageType, "MessageType must not be null!");
+
+		Integer msgID = messageTypeMap.remove(messageType);
+		if (msgID != null) {
+			messageIDMap.remove(msgID);
+		}
+	}
+
+	@Override
+	public void send(PeerID destinationPeer, IMessage message) throws PeerCommunicationException {
 		Messenger messenger = messengerMap.get(destinationPeer);
-		if( messenger == null ) {
+		if (messenger == null) {
 			EndpointAddress addr = new EndpointAddress(destinationPeer, null, null);
 			messenger = JxtaServicesProvider.getInstance().getEndpointService().getMessenger(addr);
-			if( messenger == null ) {
+			if (messenger == null) {
 				LOG.error("Wanted to send message to unknown peer {}", destinationPeer);
 				return;
 			}
-			
+
 			messengerMap.put(destinationPeer, messenger);
 		}
-		
-		if( messenger.isClosed() ) {
+
+		if (messenger.isClosed()) {
 			LOG.error("Tried to send message with closed messenger (e.g. lost peer): {}", destinationPeer);
 			messengerMap.remove(destinationPeer);
 			return;
 		}
-		
-		Message msg = new Message();
-		byte[] data = new byte[message.length + 4];
-		insertInt(data, 0, messageID);
-		System.arraycopy(message, 0, data, 4, message.length);
-		
-		msg.addMessageElement(new ByteArrayMessageElement("bytes", null, data, null));
+
+		Class<? extends IMessage> messageType = message.getClass();
+		Integer messageID = messageTypeMap.get(messageType);
+		if (messageID == null) {
+			throw new PeerCommunicationException("MessageType " + messageType + " is not registered");
+		}
+		byte[] messageData = message.toBytes();
+		if (messageData == null) {
+			throw new PeerCommunicationException("Message " + message.toString() + " has returned null as bytes!");
+		}
+
+		Message msgToSend = new Message();
+		byte[] payload = new byte[messageData.length + 4];
+		insertInt(payload, 0, messageID);
+		System.arraycopy(messageData, 0, payload, 4, messageData.length);
+
+		msgToSend.addMessageElement(new ByteArrayMessageElement("bytes", null, payload, null));
 
 		try {
-			messenger.sendMessage(msg, COMMUNICATION_SERVICE_ID, null);
+			messenger.sendMessage(msgToSend, COMMUNICATION_SERVICE_ID, null);
 		} catch (IOException e) {
 			throw new PeerCommunicationException("Could not send message", e);
 		}
 	}
 
 	@Override
-	public void addListener(int id, IPeerCommunicatorListener listener) {
-		PeerCommunicatorListenerRegistry.getInstance().add(id, listener);
+	public void addListener(IPeerCommunicatorListener listener, Class<? extends IMessage> messageType) {
+		if (!messageTypeMap.containsKey(messageType)) {
+			throw new RuntimeException("Listener cannot be registered for unknown message type " + messageType);
+		}
+
+		PeerCommunicatorListenerRegistry.getInstance().add(listener, messageType);
 	}
 
 	@Override
-	public void removeListener(int id, IPeerCommunicatorListener listener) {
-		PeerCommunicatorListenerRegistry.getInstance().remove(id, listener);
+	public void removeListener(IPeerCommunicatorListener listener, Class<? extends IMessage> messageType) {
+		PeerCommunicatorListenerRegistry.getInstance().remove(listener, messageType);
 	}
 
 	@Override
@@ -146,23 +195,45 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 	public void processIncomingMessage(Message message, EndpointAddress srcAddr, EndpointAddress dstAddr) {
 		PeerID pid = (PeerID) toID("urn:jxta:" + srcAddr.getProtocolAddress());
 
-		ByteArrayMessageElement messageElement = (ByteArrayMessageElement)message.getMessageElement("bytes");
+		ByteArrayMessageElement messageElement = (ByteArrayMessageElement) message.getMessageElement("bytes");
 		byte[] data = messageElement.getBytes();
-		
+
 		int msgId = byteArrayToInt(data, 0);
-		Collection<IPeerCommunicatorListener> listeners = PeerCommunicatorListenerRegistry.getInstance().getListeners(msgId);
-		if( !listeners.isEmpty() ) {
-		
-			byte[] msgBytes = new byte[data.length - 4];
-			System.arraycopy(data, 4, msgBytes, 0, msgBytes.length);
+		Collection<IPeerCommunicatorListener> listeners = PeerCommunicatorListenerRegistry.getInstance().getListeners(messageIDMap.get(msgId));
+		if (!listeners.isEmpty()) {
 			
-			for (IPeerCommunicatorListener listener : listeners) {
-				try {
-					listener.receivedMessage(this, pid, msgId, msgBytes);
-				} catch (Throwable t) {
-					LOG.error("Exception in peer communicator listener", t);
+			Optional<IMessage> optMsg = createNewMessageInstance(msgId);
+			if (optMsg.isPresent()) {
+
+				byte[] msgBytes = new byte[data.length - 4];
+				System.arraycopy(data, 4, msgBytes, 0, msgBytes.length);
+				
+				IMessage msg = optMsg.get();
+				msg.fromBytes(msgBytes);
+
+				for (IPeerCommunicatorListener listener : listeners) {
+					try {
+						listener.receivedMessage(this, pid, msg);
+					} catch (Throwable t) {
+						LOG.error("Exception in peer communicator listener", t);
+					}
 				}
 			}
+		}
+	}
+
+	private Optional<IMessage> createNewMessageInstance(int msgId) {
+		Class<? extends IMessage> messageType = messageIDMap.get(msgId);
+		if (messageType == null) {
+			LOG.error("Got message of unknown type: " + msgId);
+			return Optional.absent();
+		}
+
+		try {
+			return Optional.<IMessage> of(messageType.newInstance());
+		} catch (InstantiationException | IllegalAccessException e) {
+			LOG.error("Could not create message of type {}", messageType, e);
+			return Optional.absent();
 		}
 	}
 
@@ -175,14 +246,14 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 			return null;
 		}
 	}
-	
+
 	private static void insertInt(byte[] destArray, int offset, int value) {
 		destArray[offset] = (byte) (value >>> 24);
 		destArray[offset + 1] = (byte) (value >>> 16);
 		destArray[offset + 2] = (byte) (value >>> 8);
 		destArray[offset + 3] = (byte) (value);
 	}
-	
+
 	private static int byteArrayToInt(byte[] b, int offset) {
 		return b[3 + offset] & 0xFF | (b[2 + offset] & 0xFF) << 8 | (b[1 + offset] & 0xFF) << 16 | (b[0 + offset] & 0xFF) << 24;
 	}
