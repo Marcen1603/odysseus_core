@@ -63,8 +63,15 @@ public class UsageStatisticCollector {
 	}
 	
 	public synchronized IResourceUsage getCurrentResourceUsage() {
-		String versionString = FeatureUpdateUtility.getVersionNumber(getActiveSession());
-		int[] version = toVersionDigits(versionString);
+		int[] version = null;
+		try {
+			String versionString = FeatureUpdateUtility.getVersionNumber(getActiveSession());
+			version = toVersionDigits(versionString);
+		} catch( Throwable t ) {
+			LOG.error("Could not determine version");
+			version = new int[] {0,0,0,0};
+		}
+		
 		return new ResourceUsage((long) memFree.getAverage(), memMaxBytes, cpuFree.getAverage(), cpuMax, runningQueriesCount, stoppedQueriesCount, netBandwidthMax, netOutputRate.getAverage(), netInputRate.getAverage(), version);
 	}
 
