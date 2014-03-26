@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -25,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorInput;
@@ -39,13 +39,13 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		List<Entry<?, ?>> selectedSourceEntries = getSelection();
+		List<ViewInformation> selectedSourceEntries = getSelection();
 		
 		ISession activeUser = OdysseusRCPPlugIn.getActiveSession();
 
 		if( !selectedSourceEntries.isEmpty() ) {
-			for( Entry<?, ?> sourceEntry : selectedSourceEntries ) {
-				Resource sourceName = (Resource) sourceEntry.getKey();
+			for( ViewInformation sourceEntry : selectedSourceEntries ) {
+				Resource sourceName = sourceEntry.getName();
 				
 				Collection<Integer> queryIDs = createQueryToSelectAllDataFromSource(sourceName, activeUser);
 				startQueries(queryIDs, activeUser);
