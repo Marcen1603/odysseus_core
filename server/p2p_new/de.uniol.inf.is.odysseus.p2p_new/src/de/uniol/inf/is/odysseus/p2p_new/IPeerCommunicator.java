@@ -8,8 +8,8 @@ public interface IPeerCommunicator {
 
 	public ImmutableCollection<PeerID> getConnectedPeers();
 	public boolean isConnected( PeerID destinationPeer );
-	public void send( PeerID destinationPeer, byte[] message ) throws PeerCommunicationException;
+	public void send( PeerID destinationPeer, int messageID, byte[] message ) throws PeerCommunicationException;
 	
-	public void addListener( IPeerCommunicatorListener listener );
-	public void removeListener( IPeerCommunicatorListener listener );
+	public void addListener( int id, IPeerCommunicatorListener listener );
+	public void removeListener( int id, IPeerCommunicatorListener listener );
 }

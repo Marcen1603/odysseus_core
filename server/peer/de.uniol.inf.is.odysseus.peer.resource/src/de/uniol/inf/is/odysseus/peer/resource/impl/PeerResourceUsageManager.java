@@ -48,8 +48,9 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	};
 
 	private static final double DEFAULT_BANDWIDTH_KB = 1024.0;
-	private static final byte ASK_BYTE = 54;
-	private static final byte ANSWER_BYTE = 55;
+	
+	private static final int ASK_BYTE = 54;
+	private static final int ANSWER_BYTE = 55;
 
 	private static PeerResourceUsageManager instance;
 	private static IP2PNetworkManager p2pNetworkManager;
@@ -105,7 +106,8 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		instance = this;
 		LOG.debug("Activated");
 
-		peerCommunicator.addListener(this);
+		peerCommunicator.addListener(ASK_BYTE, this);
+		peerCommunicator.addListener(ANSWER_BYTE, this);
 
 		localUsageChecker = new RepeatingJobThread(1500, "Local usage checker") {
 			@Override
@@ -123,7 +125,8 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		instance = null;
 		LOG.debug("Deactivated");
 
-		peerCommunicator.removeListener(this);
+		peerCommunicator.removeListener(ASK_BYTE, this);
+		peerCommunicator.removeListener(ANSWER_BYTE, this);
 	}
 
 	public static PeerResourceUsageManager getInstance() {
@@ -141,10 +144,10 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 			return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
 		}
 
-		byte[] message = buildAskUsageMessage();
+		byte[] message = new byte[0];
 		try {
 			usageMap.remove(peerID);
-			peerCommunicator.send(peerID, message);
+			peerCommunicator.send(peerID, ASK_BYTE, message);
 		} catch (PeerCommunicationException e) {
 			LOG.debug("Could not send message for asking for remote resource usage", e);
 			return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
@@ -178,29 +181,23 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		});
 	}
 
-	private static byte[] buildAskUsageMessage() {
-		byte[] message = new byte[1];
-		message[0] = ASK_BYTE;
-		return message;
-	}
-
 	@Override
 	public Collection<PeerID> getRemotePeerIDs() {
 		return peerCommunicator.getConnectedPeers();
 	}
 
 	@Override
-	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, byte[] message) {
-		if (message[0] == ASK_BYTE) {
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, int messageID, byte[] message) {
+		if (messageID == ASK_BYTE) {
 			IResourceUsage localUsage = getLocalResourceUsage();
-			ByteBuffer bb = ResourceUsageBytesConverter.toByteBuffer(ANSWER_BYTE, localUsage);
+			ByteBuffer bb = ResourceUsageBytesConverter.toByteBuffer(localUsage);
 
 			try {
-				communicator.send(senderPeer, bb.array());
+				communicator.send(senderPeer, ANSWER_BYTE, bb.array());
 			} catch (PeerCommunicationException e) {
 				LOG.error("Could not send aswer to resource usage asking", e);
 			}
-		} else if (message[0] == ANSWER_BYTE) {
+		} else if (messageID == ANSWER_BYTE) {
 			ByteBuffer bb = ByteBuffer.wrap(message);
 			IResourceUsage remoteUsage = ResourceUsageBytesConverter.toResourceUsage(bb);
 

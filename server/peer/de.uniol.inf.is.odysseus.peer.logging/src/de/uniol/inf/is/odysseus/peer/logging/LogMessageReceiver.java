@@ -12,24 +12,22 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 public class LogMessageReceiver implements IPeerCommunicatorListener {
 
 	@Override
-	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, byte[] message) {
-		if (message[0] == JXTALoggingPlugIn.LOG_BYTE) {
-			int logLevel = byteArrayToInt(message, 1);
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, int messageID, byte[] message) {
+		int logLevel = byteArrayToInt(message, 0);
 			
-			int msgLength = byteArrayToInt(message, 5); 
-			byte[] msgBytes = new byte[msgLength];
-			System.arraycopy(message, 9, msgBytes, 0, msgLength);
-			String msg = new String(msgBytes);
-			
-			int loggerLength = byteArrayToInt(message, 9 + msgLength);
-			byte[] moggerBytes = new byte[loggerLength];
-			System.arraycopy(message, 9 + msgLength + 4, moggerBytes, 0, loggerLength);
-			String logger = new String(moggerBytes);
+		int msgLength = byteArrayToInt(message, 4); 
+		byte[] msgBytes = new byte[msgLength];
+		System.arraycopy(message, 8, msgBytes, 0, msgLength);
+		String msg = new String(msgBytes);
+		
+		int loggerLength = byteArrayToInt(message, 8 + msgLength);
+		byte[] moggerBytes = new byte[loggerLength];
+		System.arraycopy(message, 8 + msgLength + 4, moggerBytes, 0, loggerLength);
+		String logger = new String(moggerBytes);
 
-			String peerName = determinePeerName(senderPeer);
+		String peerName = determinePeerName(senderPeer);
 
-			printPeerMessage(logLevel, peerName, logger, msg);
-		}
+		printPeerMessage(logLevel, peerName, logger, msg);
 	}
 
 	private static void printPeerMessage(int logLevel, String peerName, String loggerName, String messageText) {
@@ -43,7 +41,6 @@ public class LogMessageReceiver implements IPeerCommunicatorListener {
 		return loggerName.substring(pos + 1);
 	}
 
-	@SuppressWarnings("static-access")
 	private static String toLevel(int logLevel) {
 		switch (logLevel) {
 		case Level.TRACE_INT:

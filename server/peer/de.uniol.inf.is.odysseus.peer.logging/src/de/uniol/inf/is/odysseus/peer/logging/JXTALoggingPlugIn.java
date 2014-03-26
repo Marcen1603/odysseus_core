@@ -21,7 +21,7 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	private static final LogMessageReceiver LOGMESSAGE_RECEIVER = new LogMessageReceiver();
 	private static final P2PDictionaryListener P2PDICTIONARY_LISTENER = new P2PDictionaryListener();
 	
-	public static final byte LOG_BYTE = 111;
+	public static final int LOG_BYTE = 111;
 	
 	private static IPeerCommunicator peerCommunicator;
 	private static IP2PDictionary p2pDictionary;
@@ -33,7 +33,7 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	// called by OSGi-DS
 	public static void bindPeerCommunicator(IPeerCommunicator serv) {
 		peerCommunicator = serv;
-		peerCommunicator.addListener(LOGMESSAGE_RECEIVER);
+		peerCommunicator.addListener(LOG_BYTE, LOGMESSAGE_RECEIVER);
 		
 		LOG.debug("Bound PeerCommunicator {}", serv);
 	}
@@ -41,7 +41,7 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	// called by OSGi-DS
 	public static void unbindPeerCommunicator(IPeerCommunicator serv) {
 		if (peerCommunicator == serv) {
-			peerCommunicator.removeListener(LOGMESSAGE_RECEIVER);
+			peerCommunicator.removeListener(LOG_BYTE, LOGMESSAGE_RECEIVER);
 			peerCommunicator = null;
 			
 			LOG.debug("Unbound PeerCommunicator {}", serv);

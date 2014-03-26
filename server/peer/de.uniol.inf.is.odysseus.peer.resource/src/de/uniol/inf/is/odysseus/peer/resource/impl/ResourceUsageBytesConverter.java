@@ -9,9 +9,8 @@ public final class ResourceUsageBytesConverter {
 	private ResourceUsageBytesConverter() {
 	}
 	
-	public static ByteBuffer toByteBuffer(byte flagByte, IResourceUsage localUsage) {
-		ByteBuffer bb = ByteBuffer.allocate(81);
-		bb.put(flagByte);
+	public static ByteBuffer toByteBuffer(IResourceUsage localUsage) {
+		ByteBuffer bb = ByteBuffer.allocate(80);
 		bb.putLong(localUsage.getMemFreeBytes());
 		bb.putLong(localUsage.getMemMaxBytes());
 		bb.putDouble(localUsage.getCpuFree());
@@ -33,8 +32,6 @@ public final class ResourceUsageBytesConverter {
 	}
 	
 	public static IResourceUsage toResourceUsage(ByteBuffer bb) {
-		bb.get();
-
 		long memFree = bb.getLong();
 		long memMax = bb.getLong();
 		double cpuFree = bb.getDouble();

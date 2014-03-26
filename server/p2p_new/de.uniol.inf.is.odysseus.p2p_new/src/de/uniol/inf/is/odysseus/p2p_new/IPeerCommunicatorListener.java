@@ -4,6 +4,6 @@ import net.jxta.peer.PeerID;
 
 public interface IPeerCommunicatorListener {
 
-	public void receivedMessage( IPeerCommunicator communicator, PeerID senderPeer, byte[] message );
+	public void receivedMessage( IPeerCommunicator communicator, PeerID senderPeer, int messageID, byte[] message );
 	
 }

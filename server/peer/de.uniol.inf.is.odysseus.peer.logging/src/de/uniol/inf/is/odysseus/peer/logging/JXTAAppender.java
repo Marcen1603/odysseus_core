@@ -43,7 +43,7 @@ public class JXTAAppender extends AppenderSkeleton {
 
 				for (PeerID logDestination : logDestinations) {
 					try {
-						peerCommunicator.send(logDestination, message);
+						peerCommunicator.send(logDestination, JXTALoggingPlugIn.LOG_BYTE, message);
 					} catch (PeerCommunicationException e) {
 					}
 				}
@@ -57,16 +57,15 @@ public class JXTAAppender extends AppenderSkeleton {
 		String strMessage = (String)log.getMessage();
 		String loggerName = log.getLoggerName();
 		
-		byte[] message = new byte[ 1 + 4 + 4 + strMessage.length() + 4 + loggerName.length() ];
+		byte[] message = new byte[ 4 + 4 + strMessage.length() + 4 + loggerName.length() ];
 		
-		message[0] = JXTALoggingPlugIn.LOG_BYTE;
-		insertInt(message, 1, log.getLevel().toInt());
+		insertInt(message, 0, log.getLevel().toInt());
 		
-		insertInt(message, 5, strMessage.length());
-		System.arraycopy(strMessage.getBytes(), 0, message, 9, strMessage.length());
+		insertInt(message, 4, strMessage.length());
+		System.arraycopy(strMessage.getBytes(), 0, message, 8, strMessage.length());
 		
-		insertInt(message, 9 + strMessage.length(), loggerName.length());
-		System.arraycopy(loggerName.getBytes(), 0, message, 9 + strMessage.length() + 4, loggerName.length());
+		insertInt(message, 8 + strMessage.length(), loggerName.length());
+		System.arraycopy(loggerName.getBytes(), 0, message, 8 + strMessage.length() + 4, loggerName.length());
 		
 		return message;
 	}

@@ -26,11 +26,10 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.P2PDictionaryAdapter;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 
-public class EndpointPeerCommunicator implements IPeerCommunicator, IP2PDictionaryListener, EndpointListener {
+public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IPeerCommunicator, EndpointListener {
 
 	private static final String COMMUNICATION_SERVICE_ID = "odysseusP2PComm";
 
@@ -82,7 +81,7 @@ public class EndpointPeerCommunicator implements IPeerCommunicator, IP2PDictiona
 	}
 
 	@Override
-	public void send(PeerID destinationPeer, byte[] message) throws PeerCommunicationException {
+	public void send(PeerID destinationPeer, int messageID, byte[] message) throws PeerCommunicationException {
 		Messenger messenger = messengerMap.get(destinationPeer);
 		if( messenger == null ) {
 			EndpointAddress addr = new EndpointAddress(destinationPeer, null, null);
@@ -102,7 +101,11 @@ public class EndpointPeerCommunicator implements IPeerCommunicator, IP2PDictiona
 		}
 		
 		Message msg = new Message();
-		msg.addMessageElement(new ByteArrayMessageElement("bytes", null, message, null));
+		byte[] data = new byte[message.length + 4];
+		insertInt(data, 0, messageID);
+		System.arraycopy(message, 0, data, 4, message.length);
+		
+		msg.addMessageElement(new ByteArrayMessageElement("bytes", null, data, null));
 
 		try {
 			messenger.sendMessage(msg, COMMUNICATION_SERVICE_ID, null);
@@ -112,37 +115,13 @@ public class EndpointPeerCommunicator implements IPeerCommunicator, IP2PDictiona
 	}
 
 	@Override
-	public void addListener(IPeerCommunicatorListener listener) {
-		PeerCommunicatorListenerRegistry.getInstance().add(listener);
+	public void addListener(int id, IPeerCommunicatorListener listener) {
+		PeerCommunicatorListenerRegistry.getInstance().add(id, listener);
 	}
 
 	@Override
-	public void removeListener(IPeerCommunicatorListener listener) {
-		PeerCommunicatorListenerRegistry.getInstance().remove(listener);
-	}
-
-	@Override
-	public void sourceAdded(IP2PDictionary sender, SourceAdvertisement advertisement) {
-	}
-
-	@Override
-	public void sourceRemoved(IP2PDictionary sender, SourceAdvertisement advertisement) {
-	}
-
-	@Override
-	public void sourceImported(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
-	}
-
-	@Override
-	public void sourceImportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
-	}
-
-	@Override
-	public void sourceExported(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
-	}
-
-	@Override
-	public void sourceExportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
+	public void removeListener(int id, IPeerCommunicatorListener listener) {
+		PeerCommunicatorListenerRegistry.getInstance().remove(id, listener);
 	}
 
 	@Override
@@ -168,12 +147,21 @@ public class EndpointPeerCommunicator implements IPeerCommunicator, IP2PDictiona
 		PeerID pid = (PeerID) toID("urn:jxta:" + srcAddr.getProtocolAddress());
 
 		ByteArrayMessageElement messageElement = (ByteArrayMessageElement)message.getMessageElement("bytes");
-		Collection<IPeerCommunicatorListener> listeners = PeerCommunicatorListenerRegistry.getInstance().getAll();
-		for (IPeerCommunicatorListener listener : listeners) {
-			try {
-				listener.receivedMessage(this, pid, messageElement.getBytes());
-			} catch (Throwable t) {
-				LOG.error("Exception in peer communicator listener", t);
+		byte[] data = messageElement.getBytes();
+		
+		int msgId = byteArrayToInt(data, 0);
+		Collection<IPeerCommunicatorListener> listeners = PeerCommunicatorListenerRegistry.getInstance().getListeners(msgId);
+		if( !listeners.isEmpty() ) {
+		
+			byte[] msgBytes = new byte[data.length - 4];
+			System.arraycopy(data, 4, msgBytes, 0, msgBytes.length);
+			
+			for (IPeerCommunicatorListener listener : listeners) {
+				try {
+					listener.receivedMessage(this, pid, msgId, msgBytes);
+				} catch (Throwable t) {
+					LOG.error("Exception in peer communicator listener", t);
+				}
 			}
 		}
 	}
@@ -186,5 +174,16 @@ public class EndpointPeerCommunicator implements IPeerCommunicator, IP2PDictiona
 			LOG.error("Could not set id", ex);
 			return null;
 		}
+	}
+	
+	private static void insertInt(byte[] destArray, int offset, int value) {
+		destArray[offset] = (byte) (value >>> 24);
+		destArray[offset + 1] = (byte) (value >>> 16);
+		destArray[offset + 2] = (byte) (value >>> 8);
+		destArray[offset + 3] = (byte) (value);
+	}
+	
+	private static int byteArrayToInt(byte[] b, int offset) {
+		return b[3 + offset] & 0xFF | (b[2 + offset] & 0xFF) << 8 | (b[1 + offset] & 0xFF) << 16 | (b[0 + offset] & 0xFF) << 24;
 	}
 }

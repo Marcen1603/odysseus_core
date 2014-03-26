@@ -28,8 +28,8 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 
 	private static final int PING_INTERVAL = 2000;
 
-	private static final byte PING_FLAG_BYTE = 78;
-	private static final byte PONG_FLAG_BYTE = 79;
+	private static final int PING_FLAG_BYTE = 78;
+	private static final int PONG_FLAG_BYTE = 79;
 
 	private static IP2PDictionary dictionary;
 	private static IPeerCommunicator peerCommunicator;
@@ -96,7 +96,14 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	
 	@Override
 	public void beforeJob() {
-		peerCommunicator.addListener(this);
+		peerCommunicator.addListener(PING_FLAG_BYTE, this);
+		peerCommunicator.addListener(PONG_FLAG_BYTE, this);
+	}
+	
+	@Override
+	public void afterJob() {
+		peerCommunicator.removeListener(PING_FLAG_BYTE, this);
+		peerCommunicator.removeListener(PONG_FLAG_BYTE, this);
 	}
 
 	@Override
@@ -108,12 +115,16 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 		try {
 			for (PeerID remotePeer : selectedPeers) {
 				if (peerCommunicator.isConnected(remotePeer)) {
-					peerCommunicator.send(remotePeer, message);
+					peerCommunicator.send(remotePeer, PING_FLAG_BYTE, message);
 				}
 			}
 		} catch (PeerCommunicationException e) {
 			//LOG.error("Could not send ping message", e);
 		}
+	}
+	
+	private static byte[] createPingMessage() {
+		return ByteBuffer.allocate(8).putLong(System.currentTimeMillis()).array();
 	}
 
 	private static Collection<PeerID> selectRandomPeers(Collection<PeerID> remotePeers) {
@@ -138,48 +149,36 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 		return selectedPeers;
 	}
 
-	private static byte[] createPingMessage() {
-		byte[] longArray = ByteBuffer.allocate(8).putLong(System.currentTimeMillis()).array();
-
-		byte[] message = new byte[9];
-		message[0] = PING_FLAG_BYTE;
-		System.arraycopy(longArray, 0, message, 1, longArray.length);
-		return message;
-	}
-
 	private static byte[] createPongMessage(byte[] pingMessage) {
 		ByteBuffer buffer = ByteBuffer.wrap(pingMessage);
-		buffer.get(); // PING_FLAG_BYTE
 
 		byte[] longArray = ByteBuffer.allocate(8).putLong(buffer.getLong()).array();
 		byte[] doubleXArray = ByteBuffer.allocate(8).putDouble(pingMap.getLocalPosition().getX()).array();
 		byte[] doubleYArray = ByteBuffer.allocate(8).putDouble(pingMap.getLocalPosition().getY()).array();
 		byte[] doubleZArray = ByteBuffer.allocate(8).putDouble(pingMap.getLocalPosition().getZ()).array();
 
-		byte[] message = new byte[33];
-		message[0] = PONG_FLAG_BYTE;
-		System.arraycopy(longArray, 0, message, 1, longArray.length);
-		System.arraycopy(doubleXArray, 0, message, 9, doubleXArray.length);
-		System.arraycopy(doubleYArray, 0, message, 17, doubleYArray.length);
-		System.arraycopy(doubleZArray, 0, message, 25, doubleZArray.length);
+		byte[] message = new byte[32];
+		System.arraycopy(longArray, 0, message, 0, longArray.length);
+		System.arraycopy(doubleXArray, 0, message, 8, doubleXArray.length);
+		System.arraycopy(doubleYArray, 0, message, 16, doubleYArray.length);
+		System.arraycopy(doubleZArray, 0, message, 24, doubleZArray.length);
 
 		return message;
 	}
 
 	@Override
-	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, byte[] message) {
-		if (message[0] == PING_FLAG_BYTE && PingMap.isActivated()) {
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, int messageID, byte[] message) {
+		if (messageID == PING_FLAG_BYTE && PingMap.isActivated()) {
 			byte[] pongMessage = createPongMessage(message);
 			try {
 				if (communicator.isConnected(senderPeer)) {
-					communicator.send(senderPeer, pongMessage);
+					communicator.send(senderPeer, PONG_FLAG_BYTE, pongMessage);
 				}
 			} catch (PeerCommunicationException e) {
 				LOG.error("Could not send pong-message", e);
 			}
-		} else if (message[0] == PONG_FLAG_BYTE) {
+		} else if (messageID == PONG_FLAG_BYTE) {
 			ByteBuffer buffer = ByteBuffer.wrap(message);
-			buffer.get();
 
 			long latency = System.currentTimeMillis() - buffer.getLong();
 			double remoteX = buffer.getDouble();

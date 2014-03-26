@@ -48,9 +48,9 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 
 	private static final Logger LOG = LoggerFactory.getLogger(ChatView.class);
 
-	private static final byte CHAT_MESSAGE_FLAG_BYTE = 111;
-	private static final byte SAY_BYTE = 0;
-	private static final byte WHISPER_BYTE = 1;
+	private static final int CHAT_MESSAGE_FLAG_BYTE = 111;
+	private static final int SAY_BYTE = 0;
+	private static final int WHISPER_BYTE = 1;
 
 	private final List<PeerID> peerIDs = Lists.newArrayList();
 
@@ -68,7 +68,10 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 		createChatTextfield(rootComposite);
 		createChatInput(rootComposite);
 
-		RCPP2PNewPlugIn.getPeerCommunicator().addListener(this);
+		RCPP2PNewPlugIn.getPeerCommunicator().addListener(CHAT_MESSAGE_FLAG_BYTE, this);
+		RCPP2PNewPlugIn.getPeerCommunicator().addListener(SAY_BYTE, this);
+		RCPP2PNewPlugIn.getPeerCommunicator().addListener(WHISPER_BYTE, this);
+		
 		RCPP2PNewPlugIn.getP2PDictionary().addListener(this);
 	}
 
@@ -192,18 +195,18 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 	private void sendMessageAsync(String text) {
 		Optional<PeerID> selectedPeerID = determineSelectedPeerID();
 
-		byte[] message = buildMessage(text, selectedPeerID);
-
+		byte[] message = text.getBytes();
+				
 		try {
 			if (selectedPeerID.isPresent()) {
 				appendToChatTextAsync(getCurrentTime() + " " + RCPP2PNewPlugIn.getP2PNetworkManager().getLocalPeerName() + " (to " + determinePeerName(selectedPeerID.get()) + "): " + text);
 
-				RCPP2PNewPlugIn.getPeerCommunicator().send(selectedPeerID.get(), message);
+				RCPP2PNewPlugIn.getPeerCommunicator().send(selectedPeerID.get(), WHISPER_BYTE, message);
 			} else {
 				appendToChatTextAsync(getCurrentTime() + " " + RCPP2PNewPlugIn.getP2PNetworkManager().getLocalPeerName() + ": " + text);
 				
 				for (PeerID peerID : RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerIDs()) {
-					RCPP2PNewPlugIn.getPeerCommunicator().send(peerID, message);
+					RCPP2PNewPlugIn.getPeerCommunicator().send(peerID, SAY_BYTE, message);
 				}
 			}
 			
@@ -224,30 +227,6 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 		}
 
 		return Optional.of((PeerID) selection.getFirstElement());
-	}
-
-	private static byte[] buildMessage(String text, Optional<PeerID> selectedPeerID) {
-		byte[] message = new byte[1 + 1 + 4 + text.length()];
-
-		message[0] = CHAT_MESSAGE_FLAG_BYTE;
-
-		if (selectedPeerID.isPresent()) {
-			message[1] = WHISPER_BYTE;
-		} else {
-			message[1] = SAY_BYTE;
-		}
-
-		insertInt(message, 2, text.length());
-		System.arraycopy(text.getBytes(), 0, message, 6, text.length());
-
-		return message;
-	}
-
-	private static void insertInt(byte[] destArray, int offset, int value) {
-		destArray[offset] = (byte) (value >>> 24);
-		destArray[offset + 1] = (byte) (value >>> 16);
-		destArray[offset + 2] = (byte) (value >>> 8);
-		destArray[offset + 3] = (byte) (value);
 	}
 
 	private void appendToChatTextAsync(final String text) {
@@ -273,7 +252,11 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 	@Override
 	public void dispose() {
 		RCPP2PNewPlugIn.getP2PDictionary().removeListener(this);
-		RCPP2PNewPlugIn.getPeerCommunicator().removeListener(this);
+		
+		RCPP2PNewPlugIn.getPeerCommunicator().removeListener(CHAT_MESSAGE_FLAG_BYTE, this);
+		RCPP2PNewPlugIn.getPeerCommunicator().removeListener(SAY_BYTE, this);
+		RCPP2PNewPlugIn.getPeerCommunicator().removeListener(WHISPER_BYTE, this);
+		
 		super.dispose();
 	}
 
@@ -283,31 +266,15 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 	}
 
 	@Override
-	public void receivedMessage(IPeerCommunicator communciator, PeerID senderPeer, byte[] message) {
-		if( message[0] == CHAT_MESSAGE_FLAG_BYTE ) {
-			byte chatType = message[1];
-			
-			int textLength = getInt(message, 2);
-			byte[] textBytes = new byte[textLength];
-			System.arraycopy(message, 6, textBytes, 0, textLength);
-			String text = new String(textBytes);
-			
-			String senderPeerName = determinePeerName(senderPeer);
-			if( chatType == SAY_BYTE ) {
-				appendToChatTextAsync(getCurrentTime() + " " + senderPeerName + ": " + text);
-			} else {
-				appendToChatTextAsync(getCurrentTime() + " " + senderPeerName + " (whisper): " + text);
-			}
+	public void receivedMessage(IPeerCommunicator communciator, PeerID senderPeer, int messageID, byte[] message) {
+		String text = new String(message);
+		
+		String senderPeerName = determinePeerName(senderPeer);
+		if( messageID == SAY_BYTE ) {
+			appendToChatTextAsync(getCurrentTime() + " " + senderPeerName + ": " + text);
+		} else {
+			appendToChatTextAsync(getCurrentTime() + " " + senderPeerName + " (whisper): " + text);
 		}
-	}
-
-	private static int getInt(byte[] bytes, int offset) {
-		int ret = 0;
-		for (int i = 0; i < 4 && i + offset < bytes.length; i++) {
-			ret <<= 8;
-			ret |= bytes[i + offset] & 0xFF;
-		}
-		return ret;
 	}
 
 	@Override
