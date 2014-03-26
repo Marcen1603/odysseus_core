@@ -109,7 +109,7 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 			return (ICost<T>) estimatePhysical((List<IPhysicalOperator>) operators, onUpdate, baseHistograms);
 		}
 
-		return (ICost<T>) estimateLogical((List<ILogicalOperator>) operators, onUpdate, baseHistograms);
+		return (ICost<T>) estimateLogical((List<ILogicalOperator>) operators, baseHistograms);
 	}
 
 	@Override
@@ -157,7 +157,7 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 		return true;
 	}
 
-	private static ICost<ILogicalOperator> estimateLogical(List<ILogicalOperator> operators, final boolean onUpdate, final Map<SDFAttribute, IHistogram> baseHistograms) {
+	private static ICost<ILogicalOperator> estimateLogical(List<ILogicalOperator> operators, final Map<SDFAttribute, IHistogram> baseHistograms) {
 		final Map<ILogicalOperator, OperatorEstimation<ILogicalOperator>> estimatedOperators = Maps.newHashMap();
 		final LogicalGraphWalker walker = new LogicalGraphWalker(operators);
 		walker.walk(new IOperatorWalker<ILogicalOperator>() {

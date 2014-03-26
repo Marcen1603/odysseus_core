@@ -52,7 +52,7 @@ public class JoinEstimator implements IOperatorEstimator<JoinTIPO> {
 
 		IPredicate predicate = instance.getPredicate();
 		if (predicate instanceof TruePredicate || predicate.toString().equalsIgnoreCase("true"))
-			return estimateCrossProductOperator(instance, prevOperators, baseHistograms);
+			return estimateCrossProductOperator(instance, prevOperators );
 
 		OperatorEstimation<JoinTIPO> estimation = new OperatorEstimation<JoinTIPO>(instance);
 		/** 1. Histograms **/
@@ -108,7 +108,7 @@ public class JoinEstimator implements IOperatorEstimator<JoinTIPO> {
 	}
 
 	// Kreuzprodukt
-	private static OperatorEstimation<JoinTIPO> estimateCrossProductOperator(JoinTIPO instance, List<OperatorEstimation<?>> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+	private static OperatorEstimation<JoinTIPO> estimateCrossProductOperator(JoinTIPO instance, List<OperatorEstimation<?>> prevOperators ) {
 		OperatorEstimation<JoinTIPO> estimation = new OperatorEstimation<JoinTIPO>(instance);
 
 		OperatorEstimation<?> op1 = prevOperators.get(0);

@@ -35,7 +35,10 @@ public class ExecutorHandler {
 	}
 
 	public void unbindExecutor(IExecutor e) {
-		executor = null;
+		if( executor == e ) {
+			executor = null;
+			LOG.error("Unbound executor {}", e);
+		}
 	}
 
 	public static IServerExecutor getServerExecutor() {

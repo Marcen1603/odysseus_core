@@ -46,7 +46,9 @@ public class Activator implements BundleActivator {
 	}
 
 	public void unbindExecutor(IExecutor e) {
-		executor = null;
+		if( executor == e ) {
+			executor = null;
+		}
 	}
 	
 	

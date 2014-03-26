@@ -82,7 +82,7 @@ public class SLAPossibleExecutionGenerator implements IAdmissionQuerySelector {
 		}
 	}
 	
-	public void unbindExecutor(IExecutor executor) {
+	public void unbindExecutor(@SuppressWarnings("unused") IExecutor executor) {
 		this.slaRegistry = null;
 	}
 
