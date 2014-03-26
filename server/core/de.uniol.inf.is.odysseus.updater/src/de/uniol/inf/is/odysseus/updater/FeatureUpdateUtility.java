@@ -48,7 +48,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public class FeatureUpdateUtility {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(FeatureUpdateUtility.class);
+	private static Logger LOG = LoggerFactory.getLogger(FeatureUpdateUtility.class);
 
 	private static final String REPOSITORY_LOC = "http://odysseus.informatik.uni-oldenburg.de/update";
 
@@ -57,9 +57,9 @@ public class FeatureUpdateUtility {
 			List<IInstallableUnit> units = getInstallableUnits(id, caller);
 
 			if (units != null && !units.isEmpty()) {
-				System.out.println("Found following features that will be installed now: ");
+				LOG.debug("Found following features that will be installed now: ");
 				for (IInstallableUnit unit : units) {
-					System.out.println(" - " + unit.getId());
+					LOG.debug("\t" + unit.getId());
 				}
 				BundleContext context = Activator.getContext();
 				IProvisioningAgent agent = getAgent(context);
@@ -70,20 +70,20 @@ public class FeatureUpdateUtility {
 				try {
 					uri = new URI(REPOSITORY_LOC);
 				} catch (final URISyntaxException e) {
-					System.out.println("URI invalid: " + e.getMessage());
+					LOG.error("URI invalid: " + e.getMessage());
 					return Status.CANCEL_STATUS;
 				}
 
 				// set location of artifact and metadata repo
 				operation.getProvisioningContext().setArtifactRepositories(new URI[] { uri });
 				operation.getProvisioningContext().setMetadataRepositories(new URI[] { uri });
-				System.out.println("Starting install process...");
+				LOG.debug("Starting install process...");
 				IStatus status = operation.resolveModal(getDefaultMonitor());
 				if (status.isOK()) {
 					final ProvisioningJob provisioningJob = operation.getProvisioningJob(getDefaultMonitor());
 					// updates cannot run from within Eclipse IDE!!!
 					if (provisioningJob == null) {
-						System.err.println("Running update from within Eclipse IDE? This won't work!!! Use exported product!");
+						LOG.error("Running update from within Eclipse IDE? This won't work!!! Use exported product!");
 						throw new NullPointerException();
 					}
 
@@ -95,7 +95,7 @@ public class FeatureUpdateUtility {
 							if (event.getResult().isOK()) {
 								boolean restart = true;
 								if (restart) {
-									System.out.println("Features were installed. You have to restart Odysseus for the changed to take effekt!");
+									LOG.debug("Features were installed. You have to restart Odysseus for the changed to take effekt!");
 									restart(caller);
 								}
 
@@ -107,17 +107,16 @@ public class FeatureUpdateUtility {
 					provisioningJob.schedule();
 
 					return Status.OK_STATUS;
-				} else {
-					System.out.println(status.getMessage());
-					return Status.CANCEL_STATUS;
-				}
-			} else {
-				System.out.println("There is no update with this feature id");
+				} 
+				LOG.error(status.getMessage());
 				return Status.CANCEL_STATUS;
-			}
-		} else {
-			throw new PermissionException("This user is not allowed to install new features!");
+				
+			} 
+			LOG.error("There is no update with this feature id");
+			return Status.CANCEL_STATUS;
+			
 		}
+		throw new PermissionException("This user is not allowed to install new features!");
 	}
 
 	private static List<IInstallableUnit> getInstallableUnits(String id, ISession caller) {
@@ -143,7 +142,7 @@ public class FeatureUpdateUtility {
 				}
 				return toinstall;
 			} catch (final URISyntaxException e) {
-				System.out.println("URI invalid: " + e.getMessage());
+				LOG.error("URI invalid: " + e.getMessage());
 				return new ArrayList<>();
 			} catch (ProvisionException e) {
 				e.printStackTrace();
@@ -222,7 +221,7 @@ public class FeatureUpdateUtility {
 				Collections.sort(installable);
 				return installable;
 			} catch (final URISyntaxException e) {
-				System.out.println("URI invalid: " + e.getMessage());
+				LOG.error("URI invalid: " + e.getMessage());
 				return new ArrayList<>();
 			} catch (ProvisionException e) {
 				e.printStackTrace();
@@ -263,7 +262,7 @@ public class FeatureUpdateUtility {
 
 				// failed to find updates (inform user and exit)
 				if (!status.isOK()) {
-					System.out.println(status.getMessage());
+					LOG.error(status.getMessage());
 					return false;
 				}
 				if (status.isOK() && status.getSeverity() != IStatus.ERROR) {
@@ -274,13 +273,12 @@ public class FeatureUpdateUtility {
 						for (Update update : possibleUpdates) {
 							updates += update + "\n";
 						}
-						System.out.println("Following updates found: \n" + updates);
+						LOG.debug("Following updates found: \n" + updates);
 
 						return true;
-					} else {
-						System.out.println("No updates found.");
-						return false;
-					}
+					} 
+					LOG.debug("No updates found.");
+					return false;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -328,7 +326,7 @@ public class FeatureUpdateUtility {
 							if (event.getResult().isOK()) {
 								boolean restart = true;
 								if (restart) {
-									System.out.println("Updates were installed. You have to restart Odysseus for the changed to take effekt!");
+									LOG.debug("Updates were installed. You have to restart Odysseus for the changed to take effekt!");
 									restart(caller);
 								}
 
@@ -343,10 +341,8 @@ public class FeatureUpdateUtility {
 				e.printStackTrace();
 			}
 			return Status.OK_STATUS;
-		} else {
-			throw new PermissionException("User is not allowed to update the system!");
-		}
-
+		} 
+		throw new PermissionException("User is not allowed to update the system!");
 	}
 
 	public static String getVersionNumber(ISession caller) {
@@ -368,7 +364,7 @@ public class FeatureUpdateUtility {
 			context.ungetService(reference);
 		}
 		if (agent == null) {
-			System.out.println("No provisioning agent found.  This application is not set up for updates.");
+			LOG.error("No provisioning agent found.  This application is not set up for updates.");
 		}
 		return agent;
 	}
@@ -384,7 +380,7 @@ public class FeatureUpdateUtility {
 
 			@Override
 			public void run() {
-				LOGGER.debug("Sending restart event");
+				LOG.debug("Sending restart event");
 				Map<String, String> hashMap = new HashMap<>();
 				hashMap.put("TYPE", "RESTART");
 				eventAdmin.sendEvent(new Event("de/uniol/inf/odysseus/application/" + System.currentTimeMillis(), hashMap));
@@ -403,15 +399,15 @@ public class FeatureUpdateUtility {
 			public void worked(int work) {
 				int percent = (work * 100) / totalWork;
 				if (this.name.isEmpty()) {
-					LOGGER.info(percent + "% completed");
+					LOG.info(percent + "% completed");
 				} else {
-					LOGGER.info(this.name + ": " + percent + "% completed");
+					LOG.info(this.name + ": " + percent + "% completed");
 				}
 			}
 
 			@Override
 			public void subTask(String subname) {
-				LOGGER.info(this.name + ": " + subname + "...");
+				LOG.info(this.name + ": " + subname + "...");
 			}
 
 			@Override
@@ -442,11 +438,11 @@ public class FeatureUpdateUtility {
 			@Override
 			public void done() {
 				if (this.name.isEmpty()) {
-					LOGGER.info("100% completed");
+					LOG.info("100% completed");
 				} else {
-					LOGGER.info(this.name + ": 100% completed");
+					LOG.info(this.name + ": 100% completed");
 				}
-				LOGGER.info("Task " + this.name + " done");
+				LOG.info("Task " + this.name + " done");
 			}
 
 			@Override
@@ -455,7 +451,7 @@ public class FeatureUpdateUtility {
 					name = "";
 				}
 				this.name = name;
-				LOGGER.info("Starting task " + name + "...");
+				LOG.info("Starting task " + name + "...");
 				if (totalWork > 0) {
 					this.totalWork = totalWork;
 				}
@@ -476,7 +472,7 @@ public class FeatureUpdateUtility {
 			try {
 				manager.refreshRepository(locationUri, getDefaultMonitor());
 			} catch (ProvisionException e) {
-				System.out.println("Warn: Could not refresh repository, because there is no one!");
+				LOG.warn("Could not refresh repository, because there is no one!");
 			}
 
 		} else {
