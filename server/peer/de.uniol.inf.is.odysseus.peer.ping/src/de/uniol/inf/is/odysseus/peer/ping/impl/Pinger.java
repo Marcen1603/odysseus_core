@@ -83,12 +83,20 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	public void activate() {
 		instance = this;
 		
+		peerCommunicator.addListener(this, PingMessage.class);
+		peerCommunicator.addListener(this, PongMessage.class);
+		
 		start();
 	}
 
 	// called by OSGi-DS
 	public void deactivate() {
 		instance = null;
+		
+		if( peerCommunicator != null ) {
+			peerCommunicator.removeListener(this, PingMessage.class);
+			peerCommunicator.removeListener(this, PongMessage.class);
+		}
 		
 		stopRunning();
 	}
@@ -97,18 +105,6 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 		return instance;
 	}
 	
-	@Override
-	public void beforeJob() {
-		peerCommunicator.addListener(this, PingMessage.class);
-		peerCommunicator.addListener(this, PongMessage.class);
-	}
-	
-	@Override
-	public void afterJob() {
-		peerCommunicator.removeListener(this, PingMessage.class);
-		peerCommunicator.removeListener(this, PongMessage.class);
-	}
-
 	@Override
 	public void doJob() {
 		Collection<PeerID> remotePeers = dictionary.getRemotePeerIDs();
