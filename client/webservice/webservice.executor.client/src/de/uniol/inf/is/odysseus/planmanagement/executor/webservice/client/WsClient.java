@@ -85,6 +85,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.util.WsClientSession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.util.WsClientUser;
 import de.uniol.inf.is.odysseus.webservice.client.ConnectionInformation;
+import de.uniol.inf.is.odysseus.webservice.client.ConnectionInformationResponse;
 import de.uniol.inf.is.odysseus.webservice.client.CreateQueryException_Exception;
 import de.uniol.inf.is.odysseus.webservice.client.InvalidUserDataException_Exception;
 import de.uniol.inf.is.odysseus.webservice.client.LogicalQueryInfo;
@@ -106,10 +107,10 @@ import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
  * 
  */
 public class WsClient implements IExecutor, IClientExecutor {
-	
+
 	final Map<String, List<IUpdateEventListener>> updateEventListener = new HashMap<String, List<IUpdateEventListener>>();
 	final long UPDATEINTERVAL = 60000;
-	
+
 	// Fire update events --> TODO: Get Events from Server and fire
 	private class Runner extends Thread {
 
@@ -120,9 +121,11 @@ public class WsClient implements IExecutor, IClientExecutor {
 					synchronized (this) {
 						wait(UPDATEINTERVAL);
 					}
-					WsClient.this.fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
+					WsClient.this
+							.fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 					WsClient.this.fireUpdateEvent(IUpdateEventListener.QUERY);
-					WsClient.this.fireUpdateEvent(IUpdateEventListener.SCHEDULING);
+					WsClient.this
+							.fireUpdateEvent(IUpdateEventListener.SCHEDULING);
 					WsClient.this.fireUpdateEvent(IUpdateEventListener.SESSION);
 					WsClient.this.fireUpdateEvent(IUpdateEventListener.USER);
 				} catch (InterruptedException e) {
@@ -134,8 +137,6 @@ public class WsClient implements IExecutor, IClientExecutor {
 
 	private Runner generateEvents = new Runner();
 
-	
-	
 	protected static Logger _logger = null;
 
 	protected synchronized static Logger getLogger() {
@@ -252,7 +253,6 @@ public class WsClient implements IExecutor, IClientExecutor {
 		return session;
 	}
 
-	
 	@Override
 	public void removeQuery(int queryID, ISession caller)
 			throws PlanManagementException {
@@ -417,9 +417,9 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public String getCurrentSchedulerID(ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				StringResponse response = getWebserviceServer().getCurrentSchedulerID(
-						caller.getToken());
-				if (response != null){
+				StringResponse response = getWebserviceServer()
+						.getCurrentSchedulerID(caller.getToken());
+				if (response != null) {
 					return response.getResponseValue();
 				}
 			} catch (InvalidUserDataException_Exception e) {
@@ -546,11 +546,11 @@ public class WsClient implements IExecutor, IClientExecutor {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Optional<ClientReceiver> createClientReceiver(IExecutor exec,
 			int queryId, ISession caller) {
-		
+
 		if (receivers.containsKey(queryId)) {
 			return Optional.of(receivers.get(queryId));
 		}
-		
+
 		SDFSchema outputSchema = exec.getOutputSchema(queryId, caller);
 		IDataHandler dataHandler = DataHandlerRegistry.getDataHandler("Tuple",
 				outputSchema);
@@ -559,6 +559,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 		Map<String, String> options = new HashMap<>();
 		options.put("port", "" + adr.getPort());
 		options.put("host", adr.getHostName());
+		// TODO: Send logininfo to server
+		// Toptions.put("logininfo", caller.getToken() + "\n");
 		// TODO username and password get from anywhere
 		IProtocolHandler h = ProtocolHandlerRegistry.getInstance(
 				"SizeByteBuffer", ITransportDirection.IN, IAccessPattern.PUSH,
@@ -587,11 +589,15 @@ public class WsClient implements IExecutor, IClientExecutor {
 			ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				ConnectionInformation info = getWebserviceServer()
-						.getConnectionInformation(caller.getToken(), queryId)
-						.getResponseValue();
-				return new InetSocketAddress(InetAddress.getByName(info
-						.getAddress()), info.getPort());
+				ConnectionInformationResponse infoResponse = getWebserviceServer()
+						.getConnectionInformation(caller.getToken(), queryId);
+
+				if (infoResponse != null) {
+					ConnectionInformation info = infoResponse
+							.getResponseValue();
+					return new InetSocketAddress(InetAddress.getByName(info
+							.getAddress()), info.getPort());
+				}
 			} catch (UnknownHostException | InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -726,8 +732,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public List<SinkInformation> getSinks(ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {
-				List<SinkInformationWS> l = getWebserviceServer()
-						.getSinks(caller.getToken());
+				List<SinkInformationWS> l = getWebserviceServer().getSinks(
+						caller.getToken());
 				List<SinkInformation> result = new ArrayList<>();
 				for (SinkInformationWS viws : l) {
 					SinkInformation vi = new SinkInformation();
@@ -736,7 +742,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 					result.add(vi);
 				}
 				return result;
-			} catch (InvalidUserDataException_Exception | ClassNotFoundException e) {
+			} catch (InvalidUserDataException_Exception
+					| ClassNotFoundException e) {
 				throw new PlanManagementException(e);
 			}
 		}

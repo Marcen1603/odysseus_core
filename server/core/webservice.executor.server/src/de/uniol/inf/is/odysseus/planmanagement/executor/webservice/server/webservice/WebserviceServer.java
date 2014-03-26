@@ -124,7 +124,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webser
 @WebService
 @SOAPBinding(style = Style.DOCUMENT)
 @XmlSeeAlso({ SimpleGraph.class, String[].class, GraphNode.class,
-		LogicalQuery.class, ConnectionInformation.class, Context.class})
+		LogicalQuery.class, ConnectionInformation.class, Context.class })
 public class WebserviceServer {
 
 	private static final int SINK_MIN_PORT = 10000;
@@ -138,16 +138,14 @@ public class WebserviceServer {
 	@XmlTransient
 	private Map<String, ISession> sessions = new HashMap<String, ISession>();
 
-	@XmlTransient
-	private Map<Integer, Integer> socketPortMap = new HashMap<Integer, Integer>();
-
 	/**
 	 * Socket Management
 	 */
-	// Map<queryID, Port>
-	protected Map<Integer, Integer> socketMap;
+
+	@XmlTransient
+	private Map<Integer, Integer> socketPortMap = new HashMap<>();
 	// Map<queryID, SocketSinkPO>
-	protected Map<Integer, ILogicalOperator> socketSinkMap;
+	private Map<Integer, SocketSinkPO> socketSinkMap = new HashMap<>();
 	private InetAddress address;
 
 	public static void startServer() {
@@ -200,13 +198,16 @@ public class WebserviceServer {
 		}
 		return new StringResponse(null, false);
 	}
-	
+
 	public Response logout(
 			@WebParam(name = "securitytoken") String securityToken) {
 		ISession user = sessions.get(securityToken);
 		if (user != null) {
 			UserManagementProvider.getSessionmanagement().logout(user);
 			sessions.remove(securityToken);
+			for (SocketSinkPO po : socketSinkMap.values()) {
+				po.removeAllowedSessionId(securityToken);
+			}
 			return new Response(true);
 		}
 		return new Response(false);
@@ -236,8 +237,8 @@ public class WebserviceServer {
 			throws InvalidUserDataException {
 		StringListResponse response = new StringListResponse(true);
 		ISession user = loginWithSecurityToken(securityToken);
-		for (ViewInformation e : getExecutor()
-				.getStreamsAndViewsInformation(user)) {
+		for (ViewInformation e : getExecutor().getStreamsAndViewsInformation(
+				user)) {
 			response.addResponseValue(e.getName().toString());
 		}
 		return response;
@@ -279,6 +280,7 @@ public class WebserviceServer {
 		try {
 			ExecutorServiceBinding.getExecutor().removeQuery(queryID, user);
 			socketPortMap.remove(queryID);
+			socketSinkMap.remove(queryID);
 		} catch (Exception e) {
 			throw new QueryNotExistsException();
 		}
@@ -608,15 +610,19 @@ public class WebserviceServer {
 		try {
 			loginWithSecurityToken(securityToken);
 			int port = 0;
+			SocketSinkPO po;
 			if (!socketPortMap.containsKey(queryId)) {
 				// no socketsink available so create one
 				port = getNextFreePort(minPort, maxPort);
-				addSocketSink(queryId, port);
-				socketPortMap.put(queryId,port);
+				po = addSocketSink(queryId, port);
+				socketSinkMap.put(queryId, po);
+				socketPortMap.put(queryId, port);
 			} else {
 				// there is already a socketsink so we can use the port
 				port = socketPortMap.get(queryId);
+				po = socketSinkMap.get(queryId);
 			}
+			po.addAllowedSessionId(securityToken);
 			if (this.address == null) {
 
 				Enumeration<NetworkInterface> interfaces = NetworkInterface
@@ -629,7 +635,9 @@ public class WebserviceServer {
 					if (ni.isLoopback()) {
 						continue;
 					}
-					this.address = ni.getInetAddresses().nextElement();
+					if (ni.getInetAddresses().hasMoreElements()) {
+						this.address = ni.getInetAddresses().nextElement();
+					}
 				}
 			}
 
@@ -643,7 +651,7 @@ public class WebserviceServer {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void addSocketSink(int queryId, int port) {
+	private SocketSinkPO addSocketSink(int queryId, int port) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor()
 				.getExecutionPlan();
 		IPhysicalQuery query = plan.getQueryById(queryId);
@@ -657,19 +665,22 @@ public class WebserviceServer {
 					.getOutputSchema());
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 					handler);
+			// TODO: force login again
 			SocketSinkPO sink = new SocketSinkPO(port, "",
 					new ByteBufferSinkStreamHandlerBuilder(), true, false,
-					objectHandler, false);
+					false, objectHandler, false);
 
 			rootAsSource.subscribeSink((ISink) sink, 0, 0,
 					root.getOutputSchema(), true, 0);
 			// rootAsSource.connectSink((ISink) sink, 0, 0,
 			// root.getOutputSchema());
 			sink.startListening();
+			return sink;
 
 		} else {
 			// TODO solution for a plan with more roots
 			// see JIRA: ODY-595
+			return null;
 		}
 	}
 
@@ -736,10 +747,11 @@ public class WebserviceServer {
 		Collection<SDFAttribute> attributes = schema.getAttributes();
 		Collection<SDFAttributeInformation> attributeInfos = new ArrayList<SDFAttributeInformation>();
 		for (SDFAttribute attribute : attributes) {
-			attributeInfos.add(new SDFAttributeInformation(attribute
-					.getSourceName(), attribute.getAttributeName(),
-					new SDFDatatypeInformation(attribute.getDatatype()
-							.getURI())));
+			attributeInfos
+					.add(new SDFAttributeInformation(attribute.getSourceName(),
+							attribute.getAttributeName(),
+							new SDFDatatypeInformation(attribute.getDatatype()
+									.getURI())));
 		}
 		SDFSchemaInformation schemaInfo = new SDFSchemaInformation(
 				schema.getURI(), attributeInfos, schema.getType());
@@ -932,8 +944,7 @@ public class WebserviceServer {
 			@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
-		List<SinkInformation> result = getExecutor()
-				.getSinks(user);
+		List<SinkInformation> result = getExecutor().getSinks(user);
 		ArrayList<SinkInformationWS> resp = new ArrayList<>();
 		for (SinkInformation entry : result) {
 			SinkInformationWS vi = new SinkInformationWS();

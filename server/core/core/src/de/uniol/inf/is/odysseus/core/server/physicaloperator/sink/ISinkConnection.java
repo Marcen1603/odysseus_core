@@ -23,5 +23,9 @@ public interface ISinkConnection {
 	
 	public void start();
 
+	void addSessionId(String sessionId);
+
+	void removeSessionId(String sessionId);
+
 
 }

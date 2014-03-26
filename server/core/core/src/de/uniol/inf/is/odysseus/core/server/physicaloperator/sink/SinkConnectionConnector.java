@@ -85,4 +85,16 @@ public class SinkConnectionConnector implements ISinkConnection {
 
 	}
 
+	@Override
+	public void addSessionId(String sessionId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeSessionId(String sessionId) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.core.connection;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
@@ -15,13 +16,25 @@ public class TCPConnector implements ConnectorSelectorHandler {
 	private final InetSocketAddress remoteAddress;
 	private final SelectorThread selectorThread;
 	private SocketChannel channel;
-
+	private ByteBuffer loginInfo;
+	
 	public TCPConnector(final SelectorThread selector,
 			final InetSocketAddress remoteAddress,
 			final TCPConnectorListener listener) {
 		this.selectorThread = selector;
 		this.remoteAddress = remoteAddress;
 		this.listener = listener;
+	}
+
+	public TCPConnector(final SelectorThread selector,
+			final InetSocketAddress remoteAddress,
+			final TCPConnectorListener listener, String loginInfo) {
+		this.selectorThread = selector;
+		this.remoteAddress = remoteAddress;
+		this.listener = listener;
+		byte[] loginBytes = loginInfo.getBytes();
+		this.loginInfo = ByteBuffer.allocate(loginBytes.length+10);
+		this.loginInfo.put(loginBytes);
 	}
 
 	public void connect() throws IOException {

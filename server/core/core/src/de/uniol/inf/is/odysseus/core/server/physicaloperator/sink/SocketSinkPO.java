@@ -37,11 +37,11 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 	private boolean isStarted;
 	private IObjectHandler objectHandler = null;
 
-	public SocketSinkPO(int serverPort, String host, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO, boolean loginNeeded, IObjectHandler objectHandler, boolean push) {
+	public SocketSinkPO(int serverPort, String host, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO, boolean loginNeeded, boolean loginWithSessionId, IObjectHandler objectHandler, boolean push) {
 		if (push) {
 			listener = new SinkConnectionConnector(serverPort, host, sinkStreamHandlerBuilder, subscribe, useNIO, loginNeeded);
 		} else {
-			listener = new SinkConnectionListener(serverPort, sinkStreamHandlerBuilder, subscribe, useNIO, loginNeeded);
+			listener = new SinkConnectionListener(serverPort, sinkStreamHandlerBuilder, subscribe, useNIO, loginNeeded,loginWithSessionId);
 		}
 		if (objectHandler == null) {
 			throw new IllegalArgumentException("ObjectHandler cannot be null!");
@@ -125,4 +125,13 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 	public String toString() {
 		return super.toString()+" "+listener.toString();
 	}
+
+	public void addAllowedSessionId(String securityToken) {
+		listener.addSessionId(securityToken);
+	}
+	
+	public void removeAllowedSessionId(String securityToken) {
+		listener.removeSessionId(securityToken);
+	}
+	
 }
