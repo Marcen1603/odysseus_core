@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.mining.MiningDatatypes;
+import de.uniol.inf.is.odysseus.mining.classification.WekaClassificationLearner;
 
 /**
  * @author Dennis Geesen
@@ -86,7 +87,7 @@ public class ClassificationLearnAO extends AbstractLogicalOperator {
 	}
 	
 
-	@Parameter(name = "algorithm", type = StringParameter.class, optional = true, isMap = true)
+	@Parameter(name = "options", type = StringParameter.class, optional = true, isMap = true)
 	public void setOptions(Map<String, String> options) {
 		for (Entry<String, String> o : options.entrySet()) {
 			this.options.put(o.getKey().toLowerCase(), o.getValue());
@@ -116,13 +117,23 @@ public class ClassificationLearnAO extends AbstractLogicalOperator {
 		return learner;
 	}
 
-	@Parameter(name = "learner", type = StringParameter.class, optional = true, possibleValues = "getLearnerValues")
+	@Parameter(name = "algorithm", type = StringParameter.class, possibleValues = "getAlgorithmValues")
+	public void setAlgorithm(String algorithm) {
+		this.options.put("model", algorithm);
+	}
+	
+	@Parameter(name = "learner", type = StringParameter.class, possibleValues = "getLearnerValues")
 	public void setLearner(String learner) {
 		this.learner = learner;
 	}
 	
 	public List<String> getLearnerValues(){
 		return Arrays.asList("weka");
+	}
+	
+	public List<String> getAlgorithmValues(){
+		return Arrays.asList(WekaClassificationLearner.MODELS);
+				
 	}
 
 }
