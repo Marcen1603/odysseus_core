@@ -560,7 +560,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 		options.put("port", "" + adr.getPort());
 		options.put("host", adr.getHostName());
 		// TODO: Send logininfo to server
-		// Toptions.put("logininfo", caller.getToken() + "\n");
+		options.put("logininfo", caller.getToken() + "\n");
 		// TODO username and password get from anywhere
 		IProtocolHandler h = ProtocolHandlerRegistry.getInstance(
 				"SizeByteBuffer", ITransportDirection.IN, IAccessPattern.PUSH,

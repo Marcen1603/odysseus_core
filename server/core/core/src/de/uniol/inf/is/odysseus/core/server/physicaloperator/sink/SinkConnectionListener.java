@@ -100,6 +100,7 @@ class SinkConnectionListener extends Thread implements ISinkConnection {
 					logger.debug("Connection from "
 							+ socket.getRemoteSocketAddress());
 					if (loginNeeded) {
+						logger.debug("Waiting for login ");
 						BufferedReader in = new BufferedReader(
 								new InputStreamReader(socket.getInputStream()));
 						if (loginWithSessionId) {

@@ -35,6 +35,7 @@ public class TCPConnector implements ConnectorSelectorHandler {
 		byte[] loginBytes = loginInfo.getBytes();
 		this.loginInfo = ByteBuffer.allocate(loginBytes.length+10);
 		this.loginInfo.put(loginBytes);
+		this.loginInfo.flip();
 	}
 
 	public void connect() throws IOException {
@@ -59,6 +60,9 @@ public class TCPConnector implements ConnectorSelectorHandler {
 				return;
 			}
 			this.listener.connectionEstablished(this, this.channel);
+			if (loginInfo != null){
+				this.channel.write(loginInfo);
+			}
 		} catch (final IOException ex) {
 			this.listener.connectionFailed(this, ex);
 		}

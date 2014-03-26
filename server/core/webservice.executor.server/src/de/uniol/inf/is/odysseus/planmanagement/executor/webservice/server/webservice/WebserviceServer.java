@@ -665,10 +665,9 @@ public class WebserviceServer {
 					.getOutputSchema());
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 					handler);
-			// TODO: force login again
 			SocketSinkPO sink = new SocketSinkPO(port, "",
-					new ByteBufferSinkStreamHandlerBuilder(), true, false,
-					false, objectHandler, false);
+					new ByteBufferSinkStreamHandlerBuilder(), true, true,
+					true, objectHandler, false);
 
 			rootAsSource.subscribeSink((ISink) sink, 0, 0,
 					root.getOutputSchema(), true, 0);
