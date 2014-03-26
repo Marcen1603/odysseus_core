@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.mining.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,9 +116,13 @@ public class ClassificationLearnAO extends AbstractLogicalOperator {
 		return learner;
 	}
 
-	@Parameter(name = "learner", type = StringParameter.class, optional = true)
+	@Parameter(name = "learner", type = StringParameter.class, optional = true, possibleValues = "getLearnerValues")
 	public void setLearner(String learner) {
 		this.learner = learner;
+	}
+	
+	public List<String> getLearnerValues(){
+		return Arrays.asList("weka");
 	}
 
 }
