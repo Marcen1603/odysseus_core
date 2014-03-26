@@ -47,7 +47,11 @@ public class Autostart implements BundleActivator {
 					// or somewhere else
 					if (inputStream == null) {
 						LOG.debug("Running autostartfile "+path);
-						inputStream = new FileInputStream(path);
+						try {
+							inputStream = new FileInputStream(path);
+						} catch (Exception e) {
+							// Ignore
+						}
 					}
 
 					if (inputStream != null) {
