@@ -181,7 +181,7 @@ public class OperatorDetailView extends ViewPart implements ISelectionListener {
 		}
 	}
 
-	private static Optional<IPhysicalOperator> determineSelectedOperatorClass(@SuppressWarnings("unused") ISelection selection) {
+	private static Optional<IPhysicalOperator> determineSelectedOperatorClass(ISelection selection) {
 //		if( !selection.isEmpty() && selection instanceof IStructuredSelection ) {
 //			IStructuredSelection structSelection = (IStructuredSelection)selection;
 //			

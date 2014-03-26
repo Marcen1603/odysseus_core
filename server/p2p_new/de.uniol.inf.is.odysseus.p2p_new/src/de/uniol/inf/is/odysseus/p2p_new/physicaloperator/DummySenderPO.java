@@ -15,7 +15,7 @@ public class DummySenderPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 		super(po);
 	}
 	
-	public DummySenderPO(@SuppressWarnings("unused") DummyAO dummyAO) {
+	public DummySenderPO(DummyAO dummyAO) {
 		// TODO Auto-generated constructor stub
 	}
 
