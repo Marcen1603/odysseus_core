@@ -3,9 +3,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.properties;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Scanner;
 
 import org.eclipse.core.runtime.CoreException;
@@ -44,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorPart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.AttributeListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.DialogUtils;
@@ -95,9 +92,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 	 * @param parentShell
 	 * @param editor
 	 */
-	public MapPropertiesDialog(Shell parentShell,
-			LinkedList<ILayer> layerOrder, MapEditorModel map,
-			Collection<LayerUpdater> connections, StreamMapEditorPart editor) {
+	public MapPropertiesDialog(Shell parentShell,MapEditorModel map, StreamMapEditorPart editor) {
 		super(parentShell);
 		this.setShellStyle(SWT.MAX | SWT.RESIZE);
 		this.map = map;

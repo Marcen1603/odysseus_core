@@ -367,8 +367,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 											.getDisplay().getActiveShell();
 
 									StylePropertiesDialog dialog = new StylePropertiesDialog(
-											shell, model.getLayers(), element,
-											model.getConnectionCollection());
+											shell,  element);
 									dialog.create();
 									dialog.open();
 									if (dialog.getReturnCode() == Window.OK) {
@@ -398,8 +397,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 									.getDisplay().getActiveShell();
 
 							MapPropertiesDialog dialog = new MapPropertiesDialog(
-									shell, model.getLayers(), map, model
-											.getConnectionCollection(), editor);
+									shell, map, editor);
 							dialog.create();
 							dialog.selectLayer((ILayer) i.getFirstElement());
 							dialog.open();
@@ -514,7 +512,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 		Collection<GroupLayer> groups = new ArrayList<GroupLayer>();
 		GroupLayer empty = new GroupLayer(new GroupLayerConfiguration("New Group ... "));
 		groups.add(empty);
-		groups.addAll(this.model.getGroups(element));
+		groups.addAll(this.model.getGroups());
 		dlg.setElements(groups.toArray());
 		dlg.setTitle("Add Layer to Group");
 		dlg.setMultipleSelection(false);

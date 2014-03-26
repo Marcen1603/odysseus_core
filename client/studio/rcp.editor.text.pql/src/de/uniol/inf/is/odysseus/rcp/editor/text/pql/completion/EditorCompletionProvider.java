@@ -78,7 +78,7 @@ public class EditorCompletionProvider implements IEditorLanguagePropertiesProvid
 				if (param != null) {
 					// so we ask the parameter what we can insert here as the
 					// list part --> the value of the
-					result.addAll(ParameterValueCompletionPart.buildCompletionProposals(param, offset, prefix.length(), document, ","));
+					result.addAll(ParameterValueCompletionPart.buildCompletionProposals(param, offset, document, ","));
 				}
 			}
 			// or it must be a whole parameter including the name (if we are
@@ -130,7 +130,7 @@ public class EditorCompletionProvider implements IEditorLanguagePropertiesProvid
 				if (builder != null) {
 					LogicalParameterInformation param = getParamAtPosition(document, offset - 1, builder);
 					if (param != null) {
-						result.addAll(ParameterValueCompletionPart.buildCompletionProposals(param, offset, prefix.length(), document, "="));
+						result.addAll(ParameterValueCompletionPart.buildCompletionProposals(param, offset, document, "="));
 						return result;
 					}
 				}
@@ -146,7 +146,7 @@ public class EditorCompletionProvider implements IEditorLanguagePropertiesProvid
 				if (param != null) {
 					// so we ask the parameter what we can insert here as the
 					// list part --> the value of the
-					result.addAll(ParameterValueCompletionPart.buildCompletionProposals(param, offset, prefix.length(), document, "="));
+					result.addAll(ParameterValueCompletionPart.buildCompletionProposals(param, offset, document, "="));
 				}
 			}
 		}
@@ -228,9 +228,9 @@ public class EditorCompletionProvider implements IEditorLanguagePropertiesProvid
 				if (document.getChar(n) == '[') {
 					if (closed == 0) {
 						return true;
-					} else {
-						closed--;
-					}
+					} 
+					closed--;
+					
 				}
 				n--;
 			}

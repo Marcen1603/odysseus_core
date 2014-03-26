@@ -102,7 +102,7 @@ public class ExceptionWindow {
 			public void widgetSelected(SelectionEvent e) {
 				if( stackTrace != null ) {
 					// Stacktrace wird schon angezeigt --> ausblenden
-					hideStackTrace(placeHolder);
+					hideStackTrace();
 					stackTraceButton.setText(OdysseusNLS.ShowStackTrace);
 				} else {
 					// Stacktrace noch unsichtbar --> einblenden
@@ -140,7 +140,7 @@ public class ExceptionWindow {
 		this.stackTrace = stackTrace;
 	}
 	
-	protected void hideStackTrace( Composite comp ) {
+	protected void hideStackTrace() {
 		if( stackTrace != null ) {
 			stackTrace.dispose();
 			stackTrace = null;

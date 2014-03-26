@@ -60,7 +60,7 @@ public class TransportsView extends ViewPart {
             }
         });
         this.createColumns(this.tableViewer, tableColumnLayout);
-        TransportsView.insertTableContent(this.tableViewer, "");
+        TransportsView.insertTableContent(this.tableViewer);
 
     }
 
@@ -70,11 +70,11 @@ public class TransportsView extends ViewPart {
     }
 
     public void refresh() {
-        TransportsView.insertTableContent(this.tableViewer, "");
+        TransportsView.insertTableContent(this.tableViewer);
         this.tableViewer.refresh();
     }
 
-    private static void insertTableContent(final TableViewer tableViewer, final String filter) {
+    private static void insertTableContent(final TableViewer tableViewer) {
         final List<String> transports = new ArrayList<String>(TransportHandlerRegistry.getHandlerNames());
         Collections.sort(transports);
         tableViewer.setInput(transports);

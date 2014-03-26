@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors;
 
-import java.net.URI;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -286,7 +285,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 		return pm != null ? pm : new NullProgressMonitor();
 	}
 
-	protected void doSaveAs(URI uri, IEditorInput editorInput) {
+	protected void doSaveAs(IEditorInput editorInput) {
 		setInputWithNotify(editorInput);
 		setPageText(3, editorInput.getName());
 		IProgressMonitor progressMonitor = new NullProgressMonitor();

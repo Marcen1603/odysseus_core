@@ -450,7 +450,7 @@ class SvgLoader {
 		return null;
 	}
 
-	private static Map<String, String> getIdStyles(SvgElement element, char[] ca, int start, int end) {
+	private static Map<String, String> getIdStyles(SvgElement element) {
 		String s = element.getId();
 		if(s != null) {
 			Map<String, String> styles = new HashMap<String, String>();
@@ -756,7 +756,7 @@ class SvgLoader {
 	}
 
 	private static void parseFill(SvgGraphic element, char[] ca, int start, int end) {
-		Map<String, String> idStyles = getIdStyles(element, ca, start, end);
+		Map<String, String> idStyles = getIdStyles(element);
 		Map<String, String> classStyles = getClassStyles(element, ca, start, end);
 		Map<String, String> attrStyles = parseStyles(getAttrValue(ca, start, end, ATTR_STYLE));
 
@@ -794,7 +794,7 @@ class SvgLoader {
 			int endAttrs = closer(ca, start, end);
 			SvgGradientStop stop = new SvgGradientStop(gradient, getAttrValue(ca, start, endAttrs, ATTR_ID));
 
-			Map<String, String> idStyles = getIdStyles(stop, ca, start, endAttrs);
+			Map<String, String> idStyles = getIdStyles(stop);
 			Map<String, String> classStyles = getClassStyles(stop, ca, start, endAttrs);
 			Map<String, String> attrStyles = parseStyles(getAttrValue(ca, start, endAttrs, ATTR_STYLE));
 
@@ -1291,7 +1291,7 @@ class SvgLoader {
 	}
 
 	private static void parseStroke(SvgGraphic element, char[] ca, int start, int end) {
-		Map<String, String> idStyles = getIdStyles(element, ca, start, end);
+		Map<String, String> idStyles = getIdStyles(element);
 		Map<String, String> classStyles = getClassStyles(element, ca, start, end);
 		Map<String, String> attrStyles = parseStyles(getAttrValue(ca, start, end, ATTR_STYLE));
 

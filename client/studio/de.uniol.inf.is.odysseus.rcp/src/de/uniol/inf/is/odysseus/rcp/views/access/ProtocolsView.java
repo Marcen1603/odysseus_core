@@ -60,7 +60,7 @@ public class ProtocolsView extends ViewPart {
             }
         });
         this.createColumns(this.tableViewer, tableColumnLayout);
-        ProtocolsView.insertTableContent(this.tableViewer, "");
+        ProtocolsView.insertTableContent(this.tableViewer);
     }
 
     @Override
@@ -69,11 +69,11 @@ public class ProtocolsView extends ViewPart {
     }
 
     public void refresh() {
-        ProtocolsView.insertTableContent(this.tableViewer, "");
+        ProtocolsView.insertTableContent(this.tableViewer);
         this.tableViewer.refresh();
     }
 
-    private static void insertTableContent(final TableViewer tableViewer, final String filter) {
+    private static void insertTableContent(final TableViewer tableViewer) {
         final List<String> protocols = new ArrayList<String>(ProtocolHandlerRegistry.getHandlerNames());
         Collections.sort(protocols);
         tableViewer.setInput(protocols);

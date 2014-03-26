@@ -115,7 +115,6 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 	@SuppressWarnings("unchecked")
 	@Override
 	public void draw(GC gc) {
-		int[] offset = new int[] { this.offset.x, this.offset.y };
 		LinkedList<BufferTile> old = null;
 		synchronized (tileBuffer) {
 			old = (LinkedList<BufferTile>) tileBuffer.clone();
@@ -123,7 +122,7 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 		while (!old.isEmpty()) {
 			BufferTile image = null;
 			image = old.poll();
-			paintTile(image, gc, offset);
+			paintTile(image, gc);
 		}
 //		int[] uv = transformation.transformCoord(manager.getCenter(), manager.getSRID());
 //		gc.drawLine(uv[0], uv[1], uv[0] + 20, uv[1]);
@@ -143,7 +142,7 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 		manager.redraw();
 	}
 
-	private void paintTile(BufferTile tile, GC gc, int[] offset) {
+	private void paintTile(BufferTile tile, GC gc) {
 		Image image = tile.image.getImage(Display.getDefault());
 		if ( image != null && !image.isDisposed()) {
 			tile.update();

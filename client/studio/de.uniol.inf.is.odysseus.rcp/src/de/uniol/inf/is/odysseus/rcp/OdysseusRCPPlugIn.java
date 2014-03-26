@@ -149,9 +149,11 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventL
 	}
 
 	public void unbindExecutor(IExecutor ex) {
-		executor.removeUpdateEventListener(this, IUpdateEventListener.SCHEDULING, null);
-		executor.removeUpdateEventListener(this, IUpdateEventListener.QUERY, null);
-		executor = null;
+		if( executor == ex ) {
+			executor.removeUpdateEventListener(this, IUpdateEventListener.SCHEDULING, null);
+			executor.removeUpdateEventListener(this, IUpdateEventListener.QUERY, null);
+			executor = null;
+		}
 	}
 
 	@Override

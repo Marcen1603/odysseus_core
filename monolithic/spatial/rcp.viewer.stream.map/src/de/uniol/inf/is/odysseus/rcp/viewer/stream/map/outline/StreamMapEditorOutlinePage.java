@@ -83,7 +83,7 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 		createContextMenu();
 	}
 
-	public void setInput(StreamMapEditorPart editor) {
+	public void setInput() {
 		treeViewer.setInput(getMapEditorModell());
 	}
 

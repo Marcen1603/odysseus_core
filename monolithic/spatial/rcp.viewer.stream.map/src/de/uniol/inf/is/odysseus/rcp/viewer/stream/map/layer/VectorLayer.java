@@ -201,7 +201,7 @@ public class VectorLayer extends AbstractLayer<VectorLayerConfiguration> {
 		this.style.draw(gc, path, tuple);
 	}
 
-	private int[] drawLinearRing(LineString lineString, GC gc, Tuple<?> tuple) {
+	private int[] drawLinearRing(LineString lineString) {
 		int i = 0;
 		int[] path = new int[lineString.getNumPoints() + lineString.getNumPoints()];
 		for (Coordinate coord : lineString.getCoordinates()) {
@@ -214,9 +214,9 @@ public class VectorLayer extends AbstractLayer<VectorLayerConfiguration> {
 
 	private void drawPolygon(Polygon polygon, GC gc, Tuple<?> tuple) {
 		int[][] list = new int[polygon.getNumInteriorRing() + 1][];
-		list[0] = drawLinearRing(polygon.getExteriorRing(), gc, tuple);
+		list[0] = drawLinearRing(polygon.getExteriorRing());
 		for (int n = 0; n < polygon.getNumInteriorRing(); n++) {
-			list[n + 1] = drawLinearRing(polygon.getInteriorRingN(n), gc, tuple);
+			list[n + 1] = drawLinearRing(polygon.getInteriorRingN(n));
 		}
 		this.style.setActiveStyle(STYLE.POLYGON);
 

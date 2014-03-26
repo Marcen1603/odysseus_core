@@ -45,8 +45,8 @@ public class OdysseusScriptStructureProvider {
 				ODYSSEUS_SCRIPT, caller);
 		if (values.get("DEPRECATED").contains(key)) {
 			return true;
-		} else {
-			return false;
 		}
+		return false;
+		
 	}
 }

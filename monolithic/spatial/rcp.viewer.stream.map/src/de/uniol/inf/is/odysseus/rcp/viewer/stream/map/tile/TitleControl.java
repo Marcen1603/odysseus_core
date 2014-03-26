@@ -54,7 +54,7 @@ public class TitleControl extends Canvas {
         addDisposeListener(new DisposeListener() {
             @Override
             public void widgetDisposed(DisposeEvent e) {
-                onDispose(e);
+                onDispose();
             }
         });
         
@@ -83,7 +83,7 @@ public class TitleControl extends Canvas {
         }
     }
 
-    private void onDispose(DisposeEvent e) {
+    private void onDispose() {
         font.dispose();
         gradient1Color.dispose();
         gradient2Color.dispose();

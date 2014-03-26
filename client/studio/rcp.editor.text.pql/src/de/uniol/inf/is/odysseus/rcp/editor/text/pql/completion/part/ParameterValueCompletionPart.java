@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.pql.completion.part.ParameterPar
 
 public class ParameterValueCompletionPart extends AbstractCompletionPart {
 
-	public static List<ICompletionProposal> buildCompletionProposals(LogicalParameterInformation param, int offset, int length, IDocument doc, String tokenBefore) {
+	public static List<ICompletionProposal> buildCompletionProposals(LogicalParameterInformation param, int offset, IDocument doc, String tokenBefore) {
 		tokenBefore = tokenBefore.trim();
 
 		IParameterProposal pp = ParameterProposalFactory.getProposal(param);
@@ -47,7 +47,7 @@ public class ParameterValueCompletionPart extends AbstractCompletionPart {
 			// we already have something of the parameter value
 			else {
 
-				Pair<ParameterPart, ParameterPart> rootActive = buildParameterTree(paramValue, relativepointer, offset, param);
+				Pair<ParameterPart, ParameterPart> rootActive = buildParameterTree(paramValue, relativepointer);
 //				ParameterPart root = rootActive.getE1();
 				ParameterPart active = rootActive.getE2();
 //				System.out.println("----------------------");
@@ -120,7 +120,7 @@ public class ParameterValueCompletionPart extends AbstractCompletionPart {
 		return tp;
 	}
 
-	private static Pair<ParameterPart, ParameterPart> buildParameterTree(String paramValue, int relativeOffset, int realOffset, LogicalParameterInformation param) {
+	private static Pair<ParameterPart, ParameterPart> buildParameterTree(String paramValue, int relativeOffset) {
 		EntryType type = EntryType.NUMBER;
 		int n = 0;
 		ParameterPart root = new ParameterPart(type, n);

@@ -82,9 +82,11 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	}
 
 	public void unbindExecutor(IExecutor e) {
-		executor = null;
-		Platform.getExtensionRegistry().removeListener(KeywordRegistry.getInstance());
-		OdysseusScriptTemplateRegistry.getInstance().unregisterAll();
+		if (executor == e) {
+			executor = null;
+			Platform.getExtensionRegistry().removeListener(KeywordRegistry.getInstance());
+			OdysseusScriptTemplateRegistry.getInstance().unregisterAll();
+		}
 	}
 
 	/**
@@ -120,21 +122,20 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	public static IEditorLanguagePropertiesProvider getEditorCompletionProvider(String parserName) {
 		return completionproviders.get(parserName);
 	}
-	
-	
-	public static List<String> getDatatypeNames(){
+
+	public static List<String> getDatatypeNames() {
 		List<String> list = new ArrayList<>();
 		ISession caller = OdysseusRCPPlugIn.getActiveSession();
 		Set<SDFDatatype> dts = OdysseusRCPEditorTextPlugIn.getExecutor().getRegisteredDatatypes(caller);
-		for(SDFDatatype dt : dts){
+		for (SDFDatatype dt : dts) {
 			list.add(dt.getQualName());
 		}
 		Collections.sort(list);
 		return list;
 	}
-	
-	public synchronized List<String> getInstalledAggregateFunctions(@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel){
-		if(cachedAggregateFunctions == null){
+
+	public synchronized List<String> getInstalledAggregateFunctions(@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel) {
+		if (cachedAggregateFunctions == null) {
 			cachedAggregateFunctions = new ArrayList<String>(getExecutor().getRegisteredAggregateFunctions(datamodel, OdysseusRCPPlugIn.getActiveSession()));
 			Collections.sort(cachedAggregateFunctions);
 		}

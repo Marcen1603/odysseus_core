@@ -48,9 +48,9 @@ public class ParameterCompletionPart extends AbstractCompletionPart {
 		List<String> temps = createTemplates(p);
 		if(temps.size()>0){
 			return temps.get(0);
-		}else{
-			return "";
 		}
+		return "";
+		
 	}
 
 }

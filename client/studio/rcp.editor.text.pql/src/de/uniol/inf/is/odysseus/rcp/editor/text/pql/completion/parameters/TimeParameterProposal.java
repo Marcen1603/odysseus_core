@@ -34,9 +34,9 @@ public class TimeParameterProposal extends AbstractParameterProposal{
 		String name = param.getName().toLowerCase();
 		if(position==0){
 			return Arrays.asList("${"+name+"value}");
-		}else{
-			return Arrays.asList("'${"+name+"unit}'");
 		}
+		return Arrays.asList("'${"+name+"unit}'");
+		
 	}
 	
 	@Override

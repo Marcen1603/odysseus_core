@@ -48,7 +48,7 @@ public class PolygonStyle extends Style{
 	}	
 	
 	protected void draw(GC gc, int[][] list, Color fcolor, Color bcolor, Tuple<?> tuple) {
-		fill(gc, list, bcolor, tuple);
+		fill(gc, list, bcolor);
 		gc.setLineWidth(this.getLineWidth(tuple));
 		for (int i = 0; i < list.length; i++) {
 			draw(gc, list[i], fcolor, bcolor, tuple);
@@ -69,7 +69,7 @@ public class PolygonStyle extends Style{
 		super.draw(gc, list, tuple);
 	}	
 
-	private void fill(GC gc, int[][] list, Color bcolor, Tuple<?> tuple) {
+	private void fill(GC gc, int[][] list, Color bcolor) {
 		if (getFillColor() != null){
 			Region polygon = new Region();
 			polygon.add(list[0]);

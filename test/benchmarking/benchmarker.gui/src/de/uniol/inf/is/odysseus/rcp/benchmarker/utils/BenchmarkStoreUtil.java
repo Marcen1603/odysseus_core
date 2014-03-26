@@ -186,13 +186,13 @@ public class BenchmarkStoreUtil {
 		for (File benchmarkFile : benchmarkFiles) {
 			// param.xml in BenchmarkParam
 			if ("param.xml".equals(benchmarkFile.getName())) {
-				benchmark = loadBenchmarkObject(benchmarkFile, Benchmark.class);
+				benchmark = loadBenchmarkObject(benchmarkFile);
 				// result*.xml in BenchmarkResult
 			} else if (benchmarkFile.getName().contains(RESULT_PREFIX) && benchmarkFile.getName().endsWith(".xml")) {
 				results.add(loadBenchmarkResult(benchmarkFile));
 				// metadata.xml in BenchmarkMetadata
 			} else if ("metadata.xml".equals(benchmarkFile.getName())) {
-				metadata = loadBenchmarkObject(benchmarkFile, BenchmarkMetadata.class);
+				metadata = loadBenchmarkObject(benchmarkFile);
 			}
 		}
 
@@ -237,8 +237,8 @@ public class BenchmarkStoreUtil {
 		return result;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static <T> T loadBenchmarkObject(File benchmarkPartFile, Class T) {
+	@SuppressWarnings("unchecked")
+	private static <T> T loadBenchmarkObject(File benchmarkPartFile) {
 
 		FileInputStream fis = null;
 		try {

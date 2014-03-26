@@ -71,7 +71,7 @@ public final class OdysseusModelProviderMultipleSinkOneWay implements IModelProv
 		
 		logger.info( "reading operator-tree from ODYSSEUS" );
 		for( IPhysicalOperator operator: operators ) {
-			parse( operator, null, graphModel, null);
+			parse( operator, graphModel, null);
 		}
 		
 		logger.info( "reading operator-tree finished successfully!" );
@@ -90,7 +90,7 @@ public final class OdysseusModelProviderMultipleSinkOneWay implements IModelProv
 	// Verarbeitet eine Senke und dessen Subscriptions
 	// Handelt es sich um eine ISource, so werden dessen Subscriptions ebenfalls
 	// verarbeitet
-	private <T extends IStreamObject<?>> void parse( IPhysicalOperator operator, PhysicalSubscription<?> fromSub, IGraphModel<IPhysicalOperator> graphModel, INodeModel<IPhysicalOperator> srcNode) {
+	private <T extends IStreamObject<?>> void parse( IPhysicalOperator operator, IGraphModel<IPhysicalOperator> graphModel, INodeModel<IPhysicalOperator> srcNode) {
 		
 		// Suchen, ob der Objekt schon im Graphen ist.
 		// Ist dieser schon im Graphenmodell vorhanden, so wird der
@@ -130,16 +130,16 @@ public final class OdysseusModelProviderMultipleSinkOneWay implements IModelProv
 			Collection< PhysicalSubscription< ISource<? extends T> >> sources = sink.getSubscribedToSource();
 			for( PhysicalSubscription< ISource<? extends T> > sub : sources ) {
 				if( sub.getTarget().isSink() ) {
-					parse( (ISink<?>)sub.getTarget(), sub, graphModel, node);
+					parse( (ISink<?>)sub.getTarget(), graphModel, node);
 				} else {
-					parse( sub.getTarget(), sub, graphModel, node);
+					parse( sub.getTarget(), graphModel, node);
 				}
 			}
 		}
 	}
 	
 	// Verarbeitet eine Quelle und dessen Subscriptions
-	private <T> void parse( ISource< ? > source, PhysicalSubscription<?> fromSub, IGraphModel<IPhysicalOperator> graphModel, INodeModel<IPhysicalOperator> srcNode) {
+	private <T> void parse( ISource< ? > source, IGraphModel<IPhysicalOperator> graphModel, INodeModel<IPhysicalOperator> srcNode) {
 
 		// Suchen, ob der Objekt schon im Graphen ist.
 		// Ist dieser schon im Graphenmodell vorhanden, so wird der

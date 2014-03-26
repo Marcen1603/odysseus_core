@@ -60,7 +60,7 @@ public class DatasView extends ViewPart {
             }
         });
         this.createColumns(this.tableViewer, tableColumnLayout);
-        DatasView.insertTableContent(this.tableViewer, "");
+        DatasView.insertTableContent(this.tableViewer);
 
     }
 
@@ -70,11 +70,11 @@ public class DatasView extends ViewPart {
     }
 
     public void refresh() {
-        DatasView.insertTableContent(this.tableViewer, "");
+        DatasView.insertTableContent(this.tableViewer);
         this.tableViewer.refresh();
     }
 
-    private static void insertTableContent(final TableViewer tableViewer, final String filter) {
+    private static void insertTableContent(final TableViewer tableViewer) {
         final List<String> datas = new ArrayList<String>(DataHandlerRegistry.getHandlerNames());
         Collections.sort(datas);
         tableViewer.setInput(datas);

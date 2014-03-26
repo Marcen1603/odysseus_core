@@ -44,7 +44,7 @@ public class UdfsView extends ViewPart {
         tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 
         createColumns(tableViewer, tableColumnLayout);
-        insertTableContent(tableViewer, "");
+        insertTableContent(tableViewer);
 
     }
 
@@ -54,11 +54,11 @@ public class UdfsView extends ViewPart {
     }
 
     public void refresh() {
-        insertTableContent(tableViewer, "");
+        insertTableContent(tableViewer);
         tableViewer.refresh();
     }
 
-    private static void insertTableContent(TableViewer tableViewer, String filter) {
+    private static void insertTableContent(TableViewer tableViewer) {
     	tableViewer.setInput(OdysseusRCPPlugIn.getExecutor().getUdfs());
     	
     }

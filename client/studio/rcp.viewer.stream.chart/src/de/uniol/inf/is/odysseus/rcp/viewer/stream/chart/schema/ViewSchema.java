@@ -207,9 +207,9 @@ public class ViewSchema<T> {
 	public TimeUnit getTimeUnit(TimeUnit defaultUnit) {
 		if (timeUnit == null) {
 			return defaultUnit;
-		} else {
-			return timeUnit;
-		}
+		} 
+		return timeUnit;
+		
 	}
 
 	public int[] getGroupRestrictList() {

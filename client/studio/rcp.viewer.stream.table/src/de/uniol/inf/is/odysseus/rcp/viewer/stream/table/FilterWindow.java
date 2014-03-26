@@ -52,7 +52,7 @@ public class FilterWindow {
 	}
 
 	public void show() {
-		window = createWindow(display);
+		window = createWindow();
 		window.setVisible(true);
 		window.open();
 		
@@ -92,7 +92,7 @@ public class FilterWindow {
 				display.sleep();
 	}
 
-	private Shell createWindow(Display display2) {
+	private Shell createWindow() {
 		Shell wnd = new Shell(display);
 		wnd.setSize(500, 500);
 

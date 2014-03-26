@@ -458,9 +458,8 @@ public class OperatorNode extends Observable implements Observer {
 		}
 		if (v != null && v.toString().length() > 0) {
 			return v.toString();
-		} else {
-			return getOperatorInformation().getOperatorName();
-		}				
+		} 
+		return getOperatorInformation().getOperatorName();				
 	}
 	
 	private Object getValue(String valueType) {

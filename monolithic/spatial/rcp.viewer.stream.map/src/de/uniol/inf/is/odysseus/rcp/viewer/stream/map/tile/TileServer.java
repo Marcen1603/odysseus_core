@@ -60,7 +60,7 @@ public final class TileServer {
         }
     }
     
-    public void init(int tileSize, int maxZoom, int minZoom, String format, int tilesize, int srid, Envelope coverage){
+    public void init(){
     	
     }
     

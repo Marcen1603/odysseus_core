@@ -22,9 +22,9 @@ public class CreateSDFParameterProposal extends AbstractParameterProposal{
 		List<String> values = new ArrayList<>();
 		if(position==0){
 			return values;
-		}else{
-			return OdysseusRCPEditorTextPlugIn.getDatatypeNames();			
-		}		
+		}
+		return OdysseusRCPEditorTextPlugIn.getDatatypeNames();			
+		
 	}
 
 
@@ -33,9 +33,9 @@ public class CreateSDFParameterProposal extends AbstractParameterProposal{
 		String name = param.getName().toLowerCase();
 		if(position==0){
 			return Arrays.asList("${"+name+"name}");
-		}else{			
-			return Arrays.asList("${"+name+"datatype}");
-		}
+		}		
+		return Arrays.asList("${"+name+"datatype}");
+		
 	}
 	
 	@Override

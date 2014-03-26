@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 public class SDFExpressionParameterPresentation extends AbstractParameterPresentation<Pair<String, String>> {
 
 	private int port = 0;
-	private Text textName;	
+	private Text textName;
 	private Combo combo;
 
 	/*
@@ -56,16 +56,17 @@ public class SDFExpressionParameterPresentation extends AbstractParameterPresent
 
 		String expression = getValue().getE1();
 		String name = getValue().getE2();
-		
+
 		if (name == null) {
-			return "'"+expression+"'";
-		} else {
-			StringBuilder sb = new StringBuilder();
-			sb.append("[");
-			sb.append("'").append(expression).append("', '").append(name).append("'");
-			sb.append("]");
-			return sb.toString();
+			return "'" + expression + "'";
 		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		sb.append("'").append(expression).append("', '").append(name).append("'");
+		sb.append("]");
+		return sb.toString();
+
 	}
 
 	/*
@@ -91,23 +92,23 @@ public class SDFExpressionParameterPresentation extends AbstractParameterPresent
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		PairModifyListener pml = new PairModifyListener();
-				
+
 		combo = new Combo(container, SWT.BORDER | SWT.DROP_DOWN);
 		if (getOperator().getInputSchemas() != null && getOperator().getInputSchemas().get(port) != null) {
 			for (SDFAttribute posVal : getOperator().getInputSchemas().get(port).getAttributes()) {
 				combo.add(posVal.getURI());
 			}
-		} 
+		}
 		combo.setText(expression);
-		
+
 		combo.addModifyListener(pml);
 		combo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		
+
 		textName = new Text(container, SWT.BORDER);
 		textName.setText(name);
 		textName.addModifyListener(pml);
 		textName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		
+
 		return container;
 	}
 
@@ -136,7 +137,7 @@ public class SDFExpressionParameterPresentation extends AbstractParameterPresent
 
 	private class PairModifyListener implements ModifyListener {
 		@Override
-		public void modifyText(ModifyEvent e) {		
+		public void modifyText(ModifyEvent e) {
 			Pair<String, String> attributePair = new Pair<String, String>(combo.getText(), textName.getText());
 			setValue(attributePair);
 		}
@@ -183,7 +184,7 @@ public class SDFExpressionParameterPresentation extends AbstractParameterPresent
 			}
 		}
 
-		if (expression != null && name != null) {			
+		if (expression != null && name != null) {
 			Pair<String, String> pair = new Pair<String, String>(expression, name);
 			setValue(pair);
 		}

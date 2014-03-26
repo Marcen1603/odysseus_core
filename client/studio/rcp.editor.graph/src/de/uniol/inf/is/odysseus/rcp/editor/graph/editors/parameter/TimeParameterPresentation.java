@@ -58,13 +58,13 @@ public class TimeParameterPresentation extends AbstractParameterPresentation<Pai
 		
 		if (unit == null || unit.isEmpty()) {
 			return Integer.toString(value);
-		} else {
-			StringBuilder sb = new StringBuilder();
-			sb.append("[");
-			sb.append("").append(value).append(", '").append(unit).append("'");
-			sb.append("]");
-			return sb.toString();
-		}
+		} 
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		sb.append("").append(value).append(", '").append(unit).append("'");
+		sb.append("]");
+		return sb.toString();
 	}
 
 	/*

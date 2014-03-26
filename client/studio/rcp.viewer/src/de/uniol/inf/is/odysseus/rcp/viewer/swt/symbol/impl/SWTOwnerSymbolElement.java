@@ -50,7 +50,7 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 			Integer firstOwner = ownerIDs.remove(0);
 			
 			drawOwnerRectangle(position, width, height, zoomFactor, firstOwner);
-			drawOwnerCircles(position, width, zoomFactor, ownerIDs, firstOwner);
+			drawOwnerCircles(position, width, zoomFactor, ownerIDs);
 		} else {
 			drawOwnerlessRectangle(position, width, height, zoomFactor);
 		}
@@ -89,7 +89,7 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 		return false;
 	}
 
-	private void drawOwnerCircles(Vector position, int width, float zoomFactor, List<Integer> ownerIDs, Integer firstOwner) {
+	private void drawOwnerCircles(Vector position, int width, float zoomFactor, List<Integer> ownerIDs) {
 		if (ownerIDs.isEmpty()) {
 			return;
 		}

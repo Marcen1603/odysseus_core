@@ -13,7 +13,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -92,7 +91,7 @@ public final class AsyncImage implements Runnable {
 		}
 	}
 
-	public ImageData getImageData(Device device) {
+	public ImageData getImageData() {
 		return imageData.get();
 	}
 

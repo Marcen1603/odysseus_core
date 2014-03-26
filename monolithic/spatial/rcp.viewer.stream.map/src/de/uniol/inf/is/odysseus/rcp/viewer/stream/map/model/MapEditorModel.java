@@ -669,13 +669,6 @@ public class MapEditorModel extends ModelObject {
 		return names.toArray(new String[names.size()]);
 	}
 
-	public Collection<GroupLayer> getGroups(ILayer element) {
-		@SuppressWarnings("unused")
-		LinkedList<GroupLayer> list = new LinkedList<GroupLayer>();
-		// for()
-		return this.groups.values();
-	}
-
 	public String getNextLayerName() {
 		// TODO Auto-generated method stub
 		return "Layer" + layercount++;

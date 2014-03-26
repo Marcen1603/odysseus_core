@@ -2,10 +2,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.properties;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -13,6 +11,10 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -20,21 +22,22 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Tree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
@@ -47,13 +50,6 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.expression.ColorCondition;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.expression.IntegerCondition;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.expression.ShapeCondition;
-
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TreeViewer;
 
 /**
  * 
@@ -111,9 +107,7 @@ public class StylePropertiesDialog extends TitleAreaDialog {
 	 * 
 	 * @param parentShell
 	 */
-	public StylePropertiesDialog(Shell parentShell,
-			LinkedList<ILayer> layerOrder, ILayer layer,
-			Collection<LayerUpdater> connections) {
+	public StylePropertiesDialog(Shell parentShell,ILayer layer) {
 		super(parentShell);
 		this.setShellStyle(SWT.MAX | SWT.RESIZE);
 		this.layer = (VectorLayer) layer;

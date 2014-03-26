@@ -148,8 +148,7 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 		return buffer.toString();
 	}
 
-	private String addAfter(String content, String search, String add,
-			boolean trimAfter) {
+	private String addAfter(String content, String search, String add) {
 		final String[] parts = content.split(search);
 		String sep = "";
 		content = "";
@@ -282,7 +281,7 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 				partText = partText.toLowerCase();
 				if (partText.trim().startsWith(",")) {
 					partText = addAfter(partText, ",", System.lineSeparator()
-							+ newIndent + TAB, true);
+							+ newIndent + TAB);
 				}
 				if (partText.trim().startsWith("{")) {
 					partText = "{" + System.lineSeparator() + newIndent + TAB
