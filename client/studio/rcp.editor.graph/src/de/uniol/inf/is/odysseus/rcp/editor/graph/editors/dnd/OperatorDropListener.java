@@ -15,17 +15,14 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dnd;
 
-import java.util.Map.Entry;
-
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.dnd.AbstractTransferDropTargetListener;
 import org.eclipse.gef.requests.CreateRequest;
 import org.eclipse.jface.viewers.TreeSelection;
 
-import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
 import de.uniol.inf.is.odysseus.rcp.util.OperatorDragTransfer;
 
@@ -45,9 +42,8 @@ public class OperatorDropListener extends AbstractTransferDropTargetListener {
 		TreeSelection selection = (TreeSelection) OperatorDragTransfer.getTransfer().getSelection();
 		if (selection != null) {
 			CreateRequest request = new CreateRequest();
-			@SuppressWarnings("unchecked")
-			Entry<Resource, ILogicalOperator> entry = (Entry<Resource, ILogicalOperator>) selection.getFirstElement();
-			String resourceName = entry.getKey().toString();
+			ViewInformation entry = (ViewInformation) selection.getFirstElement();
+			String resourceName = entry.getName().toString();
 			String operatorName = OperatorDragTransfer.getTransfer().getOperatorName();
 			LogicalOperatorInformation loi = Activator.getDefault().getExecutor().getOperatorInformation(operatorName, Activator.getDefault().getCaller());
 			request.setFactory(new DropOperatorNodeFactory(loi, resourceName));
