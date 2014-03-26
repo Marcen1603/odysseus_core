@@ -165,7 +165,7 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 	}
 
 	private void createChatTextfield(Composite parent) {
-		chatText = new Text(parent, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI);
+		chatText = new Text(parent, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		chatText.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
@@ -232,12 +232,7 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 				@Override
 				public void run() {
 					if (!chatText.isDisposed()) {
-						String oldText = chatText.getText();
-						if( !Strings.isNullOrEmpty(oldText)) {
-							chatText.setText(oldText + "\n" + text);
-						} else {
-							chatText.setText(text);
-						}
+						chatText.append("\n" + text);
 					}
 				}
 			});
