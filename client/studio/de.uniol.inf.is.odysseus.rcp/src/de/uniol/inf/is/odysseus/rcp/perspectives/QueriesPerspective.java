@@ -41,7 +41,7 @@ public class QueriesPerspective implements IPerspectiveFactory {
 		bottom.addView(OdysseusRCPPlugIn.QUERY_VIEW_ID);
 		bottom.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 		bottom.addView("org.eclipse.pde.runtime.LogView");		
-
+		
 		// Wizards
 		layout.addNewWizardShortcut(OdysseusRCPPlugIn.WIZARD_PROJECT_ID);
 				

@@ -218,6 +218,14 @@
             </command>
          </menu>
          <menu
+               id="org.eclipse.search.menu"
+               label="Search">
+         </menu>
+         <menu
+               id="org.eclipse.ui.run"
+               label="Run">
+         </menu>
+         <menu
                id="help"
                label="Help">           
             <separator
@@ -259,6 +267,6 @@
                value="icons/16_16.gif,icons/32_32.gif,icons/48_48.gif,icons/64_64.gif,icons/128_128.gif">
          </property>
       </product>
-   </extension>   
+   </extension>
 
 </plugin>
