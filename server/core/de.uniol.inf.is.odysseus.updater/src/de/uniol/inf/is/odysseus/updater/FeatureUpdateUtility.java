@@ -302,7 +302,7 @@ public class FeatureUpdateUtility {
 				IProgressMonitor monitor = getDefaultMonitor();
 
 				final ProvisioningSession session = new ProvisioningSession(agent);
-
+				
 				final UpdateOperation operation = new UpdateOperation(session);
 
 				URI uri = new URI(REPOSITORY_LOC);
