@@ -150,7 +150,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				return version[0] + "." + version[1] + "." + version[2] + "." + version[3];
 			}
 		});
-		tableColumnLayout.setColumnData(versionColumn.getColumn(), new ColumnWeightData(10, 25, true));
+		tableColumnLayout.setColumnData(versionColumn.getColumn(), new ColumnWeightData(5, 25, true));
 		new ColumnViewerSorter(peersTable, versionColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
