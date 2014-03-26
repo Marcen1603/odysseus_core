@@ -11,9 +11,11 @@ public interface IResourceUsage {
 	public int getRunningQueriesCount();
 	public int getStoppedQueriesCount();
 
-	double getNetBandwidthMax();
-	double getNetInputRate();
-	double getNetOutputRate();
+	public double getNetBandwidthMax();
+	public double getNetInputRate();
+	public double getNetOutputRate();
+	
+	public int[] getVersion();
 	
 	public IResourceUsage clone();
 }

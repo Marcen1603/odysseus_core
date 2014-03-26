@@ -130,6 +130,33 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				return 0;
 			}
 		};
+		
+		/************* Version ****************/
+		TableViewerColumn versionColumn = new TableViewerColumn(peersTable, SWT.NONE);
+		versionColumn.getColumn().setText("Version");
+		versionColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				Optional<IResourceUsage> optUsage = determineResourceUsage((PeerID) cell.getElement());
+				if (optUsage.isPresent()) {
+					IResourceUsage usage = optUsage.get();
+					cell.setText(toVersionString(usage.getVersion()));
+				} else {
+					cell.setText("<unknown>");
+				}
+			}
+
+			private String toVersionString(int[] version) {
+				return version[0] + "." + version[1] + "." + version[2] + "." + version[3];
+			}
+		});
+		tableColumnLayout.setColumnData(versionColumn.getColumn(), new ColumnWeightData(10, 25, true));
+		new ColumnViewerSorter(peersTable, versionColumn) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				return 0;
+			}
+		};
 
 		/************* MEM ****************/
 		TableViewerColumn memColumn = new TableViewerColumn(peersTable, SWT.NONE);

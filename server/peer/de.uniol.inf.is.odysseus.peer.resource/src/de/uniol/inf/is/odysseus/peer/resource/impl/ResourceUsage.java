@@ -6,8 +6,6 @@ import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
 public final class ResourceUsage implements IResourceUsage {
 
-	private static final double SIMILARITY_FACTOR_PERCENT = 9;
-
 	private final long memFreeBytes;
 	private final long memMaxBytes;
 
@@ -20,9 +18,11 @@ public final class ResourceUsage implements IResourceUsage {
 	private final double netBandwidthMax;
 	private final double netOutputRate;
 	private final double netInputRate;
+	
+	private final int[] version;
 
 	ResourceUsage(long memFreeBytes, long memMaxBytes, double cpuFree, double cpuMax, int runningQueriesCount, int stoppedQueriesCount, 
-			double netBandwidthMax, double netOutputRate, double netInputRate ) {
+			double netBandwidthMax, double netOutputRate, double netInputRate, int[] version ) {
 		
 		Preconditions.checkArgument(memFreeBytes >= 0, "Memory free bytes cannot be negative: %s", memFreeBytes);
 		Preconditions.checkArgument(memMaxBytes >= 0, "Memory max bytes cannot be negative: %s", memMaxBytes);
@@ -35,6 +35,8 @@ public final class ResourceUsage implements IResourceUsage {
 		Preconditions.checkArgument(netBandwidthMax >= 0, "Network maximum bandwidth must be zero or positive");
 		Preconditions.checkArgument(netOutputRate >= 0, "Network maximum bandwidth must be zero or positive");
 		Preconditions.checkArgument(netInputRate >= 0, "Network maximum bandwidth must be zero or positive");
+		
+		Preconditions.checkNotNull(version, "Version must not be null!");
 
 		this.memFreeBytes = memFreeBytes;
 		this.memMaxBytes = memMaxBytes;
@@ -47,6 +49,8 @@ public final class ResourceUsage implements IResourceUsage {
 		this.netBandwidthMax = netBandwidthMax;
 		this.netOutputRate = netOutputRate;
 		this.netInputRate = netInputRate;
+		
+		this.version = version;
 	}
 	
 	private ResourceUsage( ResourceUsage copy ) {
@@ -62,42 +66,7 @@ public final class ResourceUsage implements IResourceUsage {
 		netBandwidthMax = copy.netBandwidthMax;
 		netInputRate = copy.netInputRate;
 		netOutputRate = copy.netOutputRate;
-	}
-		
-	static boolean areSimilar(IResourceUsage one, IResourceUsage other) {
-		Preconditions.checkNotNull(one, "First resource usage to check similarity must not be null!");
-		Preconditions.checkNotNull(other, "Second resource usage to check similarity must not be null!");
-		
-		// shortcut to avoid calculations below if possible
-		if( one.getRunningQueriesCount() != other.getRunningQueriesCount() || one.getStoppedQueriesCount() != other.getStoppedQueriesCount() ) {
-			return false;
-		}
-
-		double memFreeDiffPercent = determineDiffPercent(one.getMemFreeBytes(), other.getMemFreeBytes());
-		double memMaxDiffPercent = determineDiffPercent(one.getMemMaxBytes(), other.getMemMaxBytes());
-		double cpuFreeDiffPercent = determineDiffPercent(one.getCpuFree(), other.getCpuFree());
-		double cpuMaxDiffPercent = determineDiffPercent(one.getCpuMax(), other.getCpuMax());
-		double netBandwidthMaxPercent = determineDiffPercent(one.getNetBandwidthMax(), other.getNetBandwidthMax());
-		double netOutputRatePercent = determineDiffPercent(one.getNetInputRate(), other.getNetInputRate());
-		double netInputRatePercent = determineDiffPercent(one.getNetOutputRate(), other.getNetOutputRate());
-		
-		return areAllValuesBelowThan(SIMILARITY_FACTOR_PERCENT, memFreeDiffPercent, memMaxDiffPercent, cpuFreeDiffPercent, cpuMaxDiffPercent, netBandwidthMaxPercent, netOutputRatePercent, netInputRatePercent);
-	}
-
-	private static double determineDiffPercent(double a, double b) {
-		double dist = Math.abs(a - b);
-		double factor = dist / a;
-
-		return factor * 100.0;
-	}
-
-	private static boolean areAllValuesBelowThan(double max, double... values) {
-		for( double value : values ) {
-			if( value > max ) {
-				return false;
-			}
-		}
-		return true;
+		version = copy.version;
 	}
 	
 	@Override
@@ -157,5 +126,10 @@ public final class ResourceUsage implements IResourceUsage {
 	@Override
 	public double getNetOutputRate() {
 		return netOutputRate;
+	}
+	
+	@Override
+	public int[] getVersion() {
+		return version;
 	}
 }

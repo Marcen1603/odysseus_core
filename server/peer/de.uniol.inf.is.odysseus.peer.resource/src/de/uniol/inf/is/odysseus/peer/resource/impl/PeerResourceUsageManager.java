@@ -193,7 +193,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, byte[] message) {
 		if (message[0] == ASK_BYTE) {
 			IResourceUsage localUsage = getLocalResourceUsage();
-			ByteBuffer bb = toByteBuffer(localUsage);
+			ByteBuffer bb = ResourceUsageBytesConverter.toByteBuffer(ANSWER_BYTE, localUsage);
 
 			try {
 				communicator.send(senderPeer, bb.array());
@@ -202,44 +202,12 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 			}
 		} else if (message[0] == ANSWER_BYTE) {
 			ByteBuffer bb = ByteBuffer.wrap(message);
-			IResourceUsage remoteUsage = toResourceUsage(bb);
+			IResourceUsage remoteUsage = ResourceUsageBytesConverter.toResourceUsage(bb);
 
 			synchronized (usageMap) {
 				usageMap.put(senderPeer, remoteUsage);
 			}
 		}
-	}
-
-	private static ByteBuffer toByteBuffer(IResourceUsage localUsage) {
-		ByteBuffer bb = ByteBuffer.allocate(65);
-		bb.put(ANSWER_BYTE);
-		bb.putLong(localUsage.getMemFreeBytes());
-		bb.putLong(localUsage.getMemMaxBytes());
-		bb.putDouble(localUsage.getCpuFree());
-		bb.putDouble(localUsage.getCpuMax());
-		bb.putInt(localUsage.getRunningQueriesCount());
-		bb.putInt(localUsage.getStoppedQueriesCount());
-		bb.putDouble(localUsage.getNetBandwidthMax());
-		bb.putDouble(localUsage.getNetOutputRate());
-		bb.putDouble(localUsage.getNetInputRate());
-		bb.flip();
-		return bb;
-	}
-	
-	private static IResourceUsage toResourceUsage(ByteBuffer bb) {
-		bb.get();
-
-		long memFree = bb.getLong();
-		long memMax = bb.getLong();
-		double cpuFree = bb.getDouble();
-		double cpuMax = bb.getDouble();
-		int runQ = bb.getInt();
-		int stopQ = bb.getInt();
-		double netMax = bb.getDouble();
-		double netOut = bb.getDouble();
-		double netIn = bb.getDouble();
-
-		return new ResourceUsage(memFree, memMax, cpuFree, cpuMax, runQ, stopQ, netMax, netOut, netIn);
 	}
 
 	@Override

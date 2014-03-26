@@ -161,6 +161,7 @@ public class RCPP2PNewPlugIn extends AbstractUIPlugin {
 		if( p2pNetworkManager.getRendevousPeerAddress() != null ) {
 			sb.append(" <rdv to " + p2pNetworkManager.getRendevousPeerAddress().toString() + ">");
 		}
+		
 		return sb.toString(); 
 	}
 	

@@ -15,6 +15,9 @@ Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.executor,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
  de.uniol.inf.is.odysseus.core.server.planmanagement.plan,
  de.uniol.inf.is.odysseus.core.server.planmanagement.query,
+ de.uniol.inf.is.odysseus.core.server.usermanagement,
+ de.uniol.inf.is.odysseus.core.usermanagement,
+ de.uniol.inf.is.odysseus.updater,
  net.jxta.peer,
  org.osgi.framework
 Export-Package: de.uniol.inf.is.odysseus.peer.resource
