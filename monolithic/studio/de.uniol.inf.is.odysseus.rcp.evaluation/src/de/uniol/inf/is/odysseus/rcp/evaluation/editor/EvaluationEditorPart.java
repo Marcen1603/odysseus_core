@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.swt.SWT;
@@ -316,8 +317,32 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
 		Button btnStartEvaluation = new Button(composite, SWT.NONE);
+		btnStartEvaluation.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				startEvaluation(parent.getShell());
+			}
+		});
 		btnStartEvaluation.setText("Start Evaluation");
 
+	}
+
+	protected void startEvaluation(Shell shell) {
+		if(isDirty()){
+			if(MessageDialog.openConfirm(shell, "Save before?", "Do you want to save before starting?")){						
+				doSave(new NullProgressMonitor());
+			}else{
+				return;
+			}
+		}
+		super.showBusy(true);
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {		
+			e.printStackTrace();
+		}
+		super.showBusy(false);
+		
 	}
 
 	protected void removeParamater(EvaluationVariable var) {
@@ -426,7 +451,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
-	}
+	}	
 
 	@Override
 	public FileEditorInput getEditorInput() {
