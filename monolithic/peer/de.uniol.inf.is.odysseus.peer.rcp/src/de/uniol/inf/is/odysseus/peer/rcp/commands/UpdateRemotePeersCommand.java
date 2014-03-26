@@ -30,7 +30,7 @@ public class UpdateRemotePeersCommand extends AbstractHandler implements IHandle
 					PeerUpdatePlugIn.sendUpdateMessageToRemotePeers();
 				}
 			} else {
-				if( MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Update remote peers", "Are you sure to update the selected " + selectedPeerIDs.size() + " remote peers?") ) {
+				if( MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Update remote peers", "Are you sure to update the selected " + selectedPeerIDs.size() + " remote peer(s)?") ) {
 					PeerUpdatePlugIn.sendUpdateMessageToRemotePeers(selectedPeerIDs);
 				}
 			}
