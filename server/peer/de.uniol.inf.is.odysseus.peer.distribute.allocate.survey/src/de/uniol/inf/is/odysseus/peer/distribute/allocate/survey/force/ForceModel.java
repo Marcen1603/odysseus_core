@@ -125,7 +125,7 @@ public class ForceModel {
 
 		localForceNode = createLocalForceNode();
 
-		forceNodes = createForceNodes(bids, partGraph);
+		forceNodes = createForceNodes(bids);
 		forceNodes.add(localForceNode);
 
 		LOG.debug("Force Nodes");
@@ -148,7 +148,7 @@ public class ForceModel {
 		return new Vector3D(RAND.nextDouble() * 1000.0, RAND.nextDouble() * 1000.0, RAND.nextDouble() * 1000.0);
 	}
 
-	private Collection<ForceNode> createForceNodes(Map<ILogicalQueryPart, Collection<Bid>> bids, QueryPartGraph partGraph) {
+	private Collection<ForceNode> createForceNodes(Map<ILogicalQueryPart, Collection<Bid>> bids) {
 		Collection<ForceNode> forceNodes = Lists.newArrayList();
 
 		if (LOG.isDebugEnabled()) {
@@ -294,7 +294,6 @@ public class ForceModel {
 		positionMap.put(pingMap.getLocalPeerID(), pingMap.getLocalPosition());
 
 		Map<ILogicalQueryPart, PeerID> result = Maps.newHashMap();
-		PositionNormalizer normalizer = new PositionNormalizer(positionMap.values());
 		LOG.debug("Latency Weight = {}, Bid Weight = {}", latencyWeight, bidWeight);
 		for (ILogicalQueryPart queryPart : bids.keySet()) {
 			LOG.debug("Determine best peer for queryPart {}", queryPart);
@@ -310,7 +309,7 @@ public class ForceModel {
 
 				ForceNode forceNodeOfQueryPart = determineForceNode(queryPart, forceNodes);
 				Collection<PeerID> avoidingPeers = determineAvoidingPeers(queryPart.getAvoidingQueryParts(), result);
-				PeerID bestPeer = determineNearestPeerWithBestBid(forceNodeOfQueryPart.getPosition(), positionMap, normalizer, bidsForQueryPart, avoidingPeers);
+				PeerID bestPeer = determineNearestPeerWithBestBid(forceNodeOfQueryPart.getPosition(), positionMap, bidsForQueryPart, avoidingPeers);
 
 				result.put(queryPart, bestPeer);
 			}
@@ -334,7 +333,7 @@ public class ForceModel {
 		return avoidedPeers;
 	}
 
-	private PeerID determineNearestPeerWithBestBid(Vector3D position, Map<PeerID, Vector3D> positionMap, PositionNormalizer normalizer, Collection<Bid> bidsForQueryPart, Collection<PeerID> avoidedPeers) {
+	private PeerID determineNearestPeerWithBestBid(Vector3D position, Map<PeerID, Vector3D> positionMap, Collection<Bid> bidsForQueryPart, Collection<PeerID> avoidedPeers) {
 		Map<PeerID, Bid> bidMap = createBidMap(bidsForQueryPart);
 
 		double maximumLatencyDistance = Double.MIN_VALUE;

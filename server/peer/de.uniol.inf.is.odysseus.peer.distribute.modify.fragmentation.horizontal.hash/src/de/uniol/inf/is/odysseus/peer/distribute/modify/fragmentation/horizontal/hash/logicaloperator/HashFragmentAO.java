@@ -119,15 +119,12 @@ public class HashFragmentAO extends AbstractFragmentAO {
 	@GetParameter(name = "ATTRIBUTES")
 	public List<String> getAttributes() {
 
-		if(this.isPartialKey())
+		if(this.isPartialKey()) {
 			return this.attributeURIs.get();
-		else {
+		} 
 			
-			List<String> attributes = Lists.newArrayList();
-			return attributes;
-			
-		}
-		
+		List<String> attributes = Lists.newArrayList();
+		return attributes;
 	}
 
 	/**

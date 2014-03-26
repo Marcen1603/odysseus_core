@@ -438,18 +438,18 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 				return exportView(realSourceName, queryBuildConfigurationName, stream);
 			}
 			
-			return exportStream(realSourceName, queryBuildConfigurationName, stream);
-		} else {
-			ILogicalOperator view = getDataDictionary().getView(realSourceName, SessionManagementService.getActiveSession());
-			if (view != null) {
-				return exportView(realSourceName, queryBuildConfigurationName, view);
-			}
+			return exportStream(realSourceName, stream);
+		}
+		
+		ILogicalOperator view = getDataDictionary().getView(realSourceName, SessionManagementService.getActiveSession());
+		if (view != null) {
+			return exportView(realSourceName, queryBuildConfigurationName, view);
 		}
 
 		throw new PeerException("Could not find view or stream '" + realSourceName + "' in datadictionary");
 	}
 
-	private boolean isStreamAView(ILogicalOperator stream) throws PeerException {
+	private boolean isStreamAView(ILogicalOperator stream) {
 		Optional<AbstractAccessAO> optAccessAO = determineAccessAO(stream);
 		
 		if( optAccessAO.isPresent() ) {
@@ -801,7 +801,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		}
 	}
 
-	private SourceAdvertisement exportStream(String streamName, String queryBuildConfigurationName, ILogicalOperator stream) throws PeerException {
+	private SourceAdvertisement exportStream(String streamName, ILogicalOperator stream) throws PeerException {
 		Optional<AbstractAccessAO> optAccessAO = determineAccessAO(stream);
 		if (optAccessAO.isPresent()) {
 

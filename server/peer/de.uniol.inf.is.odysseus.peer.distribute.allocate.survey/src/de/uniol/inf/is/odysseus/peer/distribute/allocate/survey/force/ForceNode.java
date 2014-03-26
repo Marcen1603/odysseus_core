@@ -112,9 +112,9 @@ final class ForceNode {
 			
 			position = position.add(direction);
 			return Math.sqrt((direction.getX() * direction.getX()) + (direction.getY() * direction.getY()) + (direction.getZ() * direction.getZ()));
-		} else {
-			return 0.0;
-		}
+		} 
+		
+		return 0.0;
 
 	}
 }

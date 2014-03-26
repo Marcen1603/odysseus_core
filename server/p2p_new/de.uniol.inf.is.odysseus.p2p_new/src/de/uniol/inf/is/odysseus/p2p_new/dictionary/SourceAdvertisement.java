@@ -305,7 +305,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 			setOutputSchema(handleOutputSchemaTag(elem, getName()));
 
 		} else if (elem.getName().equals(SAME_AS_TAG)) {
-			setSameAs(handleSameAsTag(elem, getName()));
+			setSameAs(handleSameAsTag(elem));
 
 		}
 	}
@@ -357,7 +357,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		return new SDFSchema(root.getTextValue(), Tuple.class, attributes);
 	}
 	
-	private static List<Same> handleSameAsTag(TextElement<?> root, String viewName) {
+	private static List<Same> handleSameAsTag(TextElement<?> root) {
 		final Enumeration<?> children = root.getChildren();
 		final List<Same> sameAsList = Lists.newArrayList();
 		while (children.hasMoreElements()) {

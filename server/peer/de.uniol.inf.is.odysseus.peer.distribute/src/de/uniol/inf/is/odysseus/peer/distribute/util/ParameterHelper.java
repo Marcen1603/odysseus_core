@@ -85,9 +85,9 @@ public final class ParameterHelper {
 		if( setting == null ) {
 			if( isOptional ) {
 				return Lists.newArrayList();
-			} else {
-				throw new QueryDistributionException("Setting of " + settingName + " is not set but needed.");
 			}
+			
+			throw new QueryDistributionException("Setting of " + settingName + " is not set but needed.");
 		}
 				
 		return setting.getPairs();

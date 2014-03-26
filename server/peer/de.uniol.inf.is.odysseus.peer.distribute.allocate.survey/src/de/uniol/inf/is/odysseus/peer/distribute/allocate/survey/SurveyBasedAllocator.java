@@ -98,7 +98,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		int bidWeight = determineBidWeight(allocatorParameters);
 		boolean isOwnBidUsed = isOwnBidUsed(allocatorParameters);
 		
-		Map<ILogicalQueryPart, PeerID> allocationMap = allocate(queryPartsToSurvey, query, config, isOwnBidUsed, latencyWeight, bidWeight);
+		Map<ILogicalQueryPart, PeerID> allocationMap = allocate(queryPartsToSurvey, config, isOwnBidUsed, latencyWeight, bidWeight);
 		Map<ILogicalQueryPart, PeerID> allocationMapParts = transformToOriginalLogicalQueryParts(allocationMap, queryPartsCopyMap);
 
 		return allocationMapParts;
@@ -139,7 +139,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		return partMap;
 	}
 
-	private static Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, ILogicalQuery query, QueryBuildConfiguration transCfg, boolean ownBid, int latencyWeight, int bidWeight) throws QueryPartAllocationException {
+	private static Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, QueryBuildConfiguration transCfg, boolean ownBid, int latencyWeight, int bidWeight) throws QueryPartAllocationException {
 		QueryPartGraph partGraph = new QueryPartGraph(queryParts);
 		
 		Collection<ILogicalOperator> operators = Lists.newArrayList();
