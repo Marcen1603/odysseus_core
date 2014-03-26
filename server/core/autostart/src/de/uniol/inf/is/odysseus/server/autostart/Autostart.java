@@ -1,54 +1,83 @@
 package de.uniol.inf.is.odysseus.server.autostart;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class Autostart implements BundleActivator {
 
-	private static final String AUTOSTARTFILE = "/autostart/autostart.qry";
+	private static final String AUTOSTARTFILE[] = {
+			"/autostart/autostart.qry",
+			OdysseusConfiguration.getHomeDir() + "autostart" + File.separator
+					+ "autostart.qry" };
 	static private BundleContext context;
 	static private IExecutor executor;
+	static final Logger LOG = LoggerFactory.getLogger(Autostart.class);
 
 	private void runAutostart() {
 		if (context != null && executor != null) {
 			try {
 				Bundle bundle = context.getBundle();
-				URL fileURL = bundle.getEntry(AUTOSTARTFILE);
-				InputStream inputStream = fileURL.openConnection()
-						.getInputStream();
-				BufferedReader in = new BufferedReader(new InputStreamReader(
-						inputStream));
-				String inputLine;
-				StringBuffer query = new StringBuffer();
+				for (String path : AUTOSTARTFILE) {
+					LOG.debug("Trying to start " + path);
+					URL fileURL = bundle.getEntry(path);
+					InputStream inputStream = null;
+					// could be inside of bundle
+					if (fileURL != null) {
+						LOG.debug("Running autostartfile " + fileURL);
+						URLConnection con = fileURL.openConnection();
+						inputStream = con.getInputStream();
+					}
+					// or somewhere else
+					if (inputStream == null) {
+						LOG.debug("Running autostartfile "+path);
+						inputStream = new FileInputStream(path);
+					}
 
-				while ((inputLine = in.readLine()) != null) {
-					query.append(inputLine).append("\n");
-				}
-				if (query.length() > 0) {
-					ISession user = UserManagementProvider
-							.getSessionmanagement().loginSuperUser(null);
-					executor.addQuery(query.toString(), "OdysseusScript", user,
-							"Standard", Context.empty());
-				}
-				in.close();
+					if (inputStream != null) {
+						BufferedReader in = new BufferedReader(
+								new InputStreamReader(inputStream));
+						String inputLine;
+						StringBuffer query = new StringBuffer();
 
+						while ((inputLine = in.readLine()) != null) {
+							query.append(inputLine).append("\n");
+						}
+						if (query.length() > 0) {
+							ISession user = UserManagementProvider
+									.getSessionmanagement()
+									.loginSuperUser(null);
+							executor.addQuery(query.toString(),
+									"OdysseusScript", user, "Standard",
+									Context.empty());
+						}
+						in.close();
+					} else {
+						LOG.debug(" no autostartfile found");
+					}
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	public void unbindExecutor(IExecutor exec) {
 		executor = null;
 	}
