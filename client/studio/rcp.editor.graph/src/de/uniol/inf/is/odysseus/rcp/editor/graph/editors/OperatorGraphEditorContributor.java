@@ -139,18 +139,19 @@ public class OperatorGraphEditorContributor extends MultiPageEditorActionBarCont
 		toolBarManager.add(getAction(ActionFactory.REDO.getId()));
 		toolBarManager.add(getAction(ActionFactory.COPY.getId()));
 		toolBarManager.add(getAction(ActionFactory.PASTE.getId()));
-		toolBarManager.add(getAction(ActionFactory.DELETE.getId()));
+		toolBarManager.add(getAction(ActionFactory.DELETE.getId()));		
 		toolBarManager.add(new Separator());
+		
 		toolBarManager.add(getAction(GEFActionConstants.ZOOM_IN));
 		toolBarManager.add(getAction(GEFActionConstants.ZOOM_OUT));
-		toolBarManager.add(new ZoomComboContributionItem(getPage()));
+		toolBarManager.add(new ZoomComboContributionItem(getPage()));			
 
 	}
 
 	@Override
 	public void contributeToMenu(IMenuManager menubar) {
 		super.contributeToMenu(menubar);
-		MenuManager viewMenu = new MenuManager("View");
+		MenuManager viewMenu = new MenuManager("View", "view");
 		viewMenu.add(getAction(GEFActionConstants.ZOOM_IN));
 		viewMenu.add(getAction(GEFActionConstants.ZOOM_OUT));
 		menubar.insertAfter(IWorkbenchActionConstants.M_EDIT, viewMenu);

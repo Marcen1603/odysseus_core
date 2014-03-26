@@ -110,7 +110,7 @@ public class GraphPalette {
 
 	private static void createToolsGroup(PaletteRoot palette) {
 		PaletteToolbar toolbar = new PaletteToolbar("Tools");
-		ToolEntry tool = new PanningSelectionToolEntry();
+		ToolEntry tool = new PanningSelectionToolEntry();		
 		toolbar.add(tool);
 		palette.setDefaultEntry(tool);
 		toolbar.add(new MarqueeToolEntry());

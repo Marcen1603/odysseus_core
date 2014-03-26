@@ -16,6 +16,7 @@
 
 package de.uniol.inf.is.odysseus.rcp.editor.text.pql.windows;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -131,10 +132,15 @@ class InputSchemaTableViewer {
 
 		});
 
+		List<String> items = new ArrayList<>();
+		for(SDFDatatype type : dataTypes){
+			items.add(type.toString());
+		}
+		
 		tableViewer.setColumnProperties(new String[] { "index", "type" });
 		tableViewer.setCellEditors(new CellEditor[] {
 				null,
-				new ComboBoxCellEditor(tableViewer.getTable(), dataTypes
+				new ComboBoxCellEditor(tableViewer.getTable(), items
 						.toArray(new String[0]), SWT.READ_ONLY) });
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 

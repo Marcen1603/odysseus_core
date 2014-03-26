@@ -68,7 +68,7 @@
             allPopups="false"
             locationURI="toolbar:org.eclipse.ui.main.toolbar">
          <toolbar
-               id="de.uniol.inf.is.odysseus.rcp.editor.text.pql.toolbar1">
+               id="de.uniol.inf.is.odysseus.rcp.odysseus.wizards">
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.editor.text.pql.ShowPQLAccessStatementGenWindow"
                   icon="icons/sources-new.png"

@@ -222,10 +222,6 @@
                label="Search">
          </menu>
          <menu
-               id="org.eclipse.ui.run"
-               label="Run">
-         </menu>
-         <menu
                id="help"
                label="Help">           
             <separator

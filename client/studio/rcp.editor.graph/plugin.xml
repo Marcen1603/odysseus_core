@@ -74,5 +74,22 @@
             type="org.eclipse.core.resources.problemmarker">
       </super>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.odysseus.views?after=operators">        
+            <command
+                  commandId="org.eclipse.ui.views.showView"
+                  icon="icons/operator_edit.png"
+                  label="Graph Operator Properties"
+                  style="push">
+               <parameter
+                     name="org.eclipse.ui.views.showView.viewId"
+                     value="de.uniol.inf.is.odysseus.rcp.editor.graph.operatorGraphView">
+               </parameter>
+            </command>         
+      </menuContribution>
+   </extension>
 
 </plugin>
