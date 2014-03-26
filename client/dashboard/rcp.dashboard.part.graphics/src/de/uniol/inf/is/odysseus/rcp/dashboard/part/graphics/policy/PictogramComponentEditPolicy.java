@@ -39,12 +39,12 @@ public class PictogramComponentEditPolicy extends ComponentEditPolicy {
 	@Override
 	public Command getCommand(Request request) {
 		if(request.getType().equals(CopyAction.GRAPHICS_COPY_ACTION)){
-			return createCopyCommand((GroupRequest) request);
+			return createCopyCommand();
 		}
 		return super.getCommand(request);
 	}	
 	
-	private Command createCopyCommand(GroupRequest request) {
+	private Command createCopyCommand() {
 		PictogramCopyCommand copyCommand = new PictogramCopyCommand();		
 		copyCommand.setPictogram((AbstractPictogram) getHost().getModel());
 		return copyCommand;

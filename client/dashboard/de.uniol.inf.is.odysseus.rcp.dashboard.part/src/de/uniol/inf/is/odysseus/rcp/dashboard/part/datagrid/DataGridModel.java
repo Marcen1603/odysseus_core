@@ -135,7 +135,7 @@ public final class DataGridModel {
 		return false;
 	}
 
-	public void updateValues(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
+	public void updateValues(IPhysicalOperator senderOperator, IStreamObject<?> element) {
 		if (!(element instanceof Tuple)) {
 			LOG.error("Data Grid Model only supports tuple and not {}", element.getClass());
 			return;

@@ -53,12 +53,6 @@ public class SoccerOverviewConfigurer extends AbstractDashboardPartConfigurer<So
 
 		Composite attributeComposite = createComposite(parent);
 		createAttributeControls(attributeComposite);
-
-		Composite sensorIDsComposite = createComposite(parent);
-		createSensorIDsControls(sensorIDsComposite);
-
-		Composite visualComposite = createComposite(parent);
-		createVisualControls(visualComposite);
 	}
 
 	private static Composite createComposite(Composite parent) {
@@ -223,14 +217,6 @@ public class SoccerOverviewConfigurer extends AbstractDashboardPartConfigurer<So
 		label.setText(text);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return label;
-	}
-
-	private void createSensorIDsControls(Composite parent) {
-
-	}
-
-	private void createVisualControls(Composite parent) {
-
 	}
 
 	@Override

@@ -68,9 +68,7 @@ public abstract class AbstractPart extends Observable implements Observer {
 	}
 
 	
-	protected void internalProcessRelavant(Tuple<?> tuple) {
-				
-	}
+	protected abstract void internalProcessRelavant(Tuple<?> t);
 
 	protected String getExpressionValue(SDFExpression expression, Tuple<?> tuple) {
 		int[] positions = expression.getAttributePositions();

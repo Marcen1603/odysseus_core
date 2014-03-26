@@ -55,9 +55,8 @@ public class KeyedTuples {
 	private int determineHashOfTuple(Tuple<?> tuple) {
 		if (keyAttributeIndices != null && keyAttributeIndices.length > 0) {
 			return tuple.restrictedHashCode(keyAttributeIndices);
-		} else {
-			return tuple.hashCode();
-		}
+		} 
+		return tuple.hashCode();
 	}
 	
 	public void add( Tuple<?> tuple ) {

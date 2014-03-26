@@ -59,10 +59,8 @@ public class GraphQueryFileProvider implements IDashboardPartQueryTextProvider {
 				
 				return ImmutableList.of(pqlText);
 				
-			} else {
-				throw new IOException("Could not find pql-Node in graph file");
-			}
-			
+			} 
+			throw new IOException("Could not find pql-Node in graph file");
 		} catch (CoreException | ParserConfigurationException | SAXException | IOException e) {
 			LOG.error("Could not get pql-Statement from graph file", e);
 			return ImmutableList.of();

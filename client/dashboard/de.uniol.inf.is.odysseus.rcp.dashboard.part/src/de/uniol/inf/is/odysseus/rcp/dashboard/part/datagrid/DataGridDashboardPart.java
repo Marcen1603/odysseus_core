@@ -129,7 +129,7 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 
 	@Override
 	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
-		model.updateValues(senderOperator, element, port);
+		model.updateValues(senderOperator, element);
 	}
 
 	@Override

@@ -207,9 +207,8 @@ public class QueryFileSelectionPage extends WizardPage {
 		if( isQueryFileSelected() ) {
 			if( getSelectedQueryFile().getFileExtension().equalsIgnoreCase("grp")) {
 				return new GraphQueryFileProvider(getSelectedQueryFile());
-			} else {
-				return new ResourceFileQueryTextProvider(getSelectedQueryFile());
-			}
+			} 
+			return new ResourceFileQueryTextProvider(getSelectedQueryFile());
 		}
 		
 		List<String> sourceSelectAllText = Lists.newArrayList();

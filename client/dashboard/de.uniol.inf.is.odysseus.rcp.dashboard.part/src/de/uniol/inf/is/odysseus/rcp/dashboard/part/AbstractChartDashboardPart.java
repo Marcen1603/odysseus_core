@@ -61,7 +61,7 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 			@Override
 			public void run() {
 				if (!chartComposite.isDisposed()) {
-					addPunctuationToChart(punctuation, port);
+					addPunctuationToChart();
 				}
 			}
 		});
@@ -73,7 +73,7 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 			@Override
 			public void run() {
 				if (!chartComposite.isDisposed()) {
-					addSecurityPunctuationToChart(sp, port);
+					addSecurityPunctuationToChart();
 				}
 			}
 		});
@@ -96,10 +96,10 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 		});
 	}
 
-	protected void addPunctuationToChart(IPunctuation punctuation, int port) {
+	protected void addPunctuationToChart() {
 	}
 
-	protected void addSecurityPunctuationToChart(ISecurityPunctuation punctuation, int port) {
+	protected void addSecurityPunctuationToChart() {
 	}
 
 	protected abstract void addStreamElementToChart(IPhysicalOperator senderOperator, Tuple<?> element, int port);

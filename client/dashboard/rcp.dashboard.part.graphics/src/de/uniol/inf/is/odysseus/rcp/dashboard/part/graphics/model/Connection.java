@@ -440,4 +440,7 @@ public class Connection extends AbstractPart {
 
 	}
 
+	@Override
+	protected void internalProcessRelavant(Tuple<?> t) {
+	}
 }

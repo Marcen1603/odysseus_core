@@ -180,12 +180,12 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				processElement(senderOperator, element, port);
+				processElement(senderOperator, element );
 			}
 		});
 	}
 
-	protected void processElement(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
+	protected void processElement(IPhysicalOperator senderOperator, IStreamObject<?> element) {
 		// System.out.println(element);
 		Tuple<?> tuple = (Tuple<?>) element;
 		this.pictogramGroup.processTuple(senderOperator, tuple);
