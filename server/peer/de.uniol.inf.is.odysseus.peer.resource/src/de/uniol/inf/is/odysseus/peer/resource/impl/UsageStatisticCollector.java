@@ -83,8 +83,17 @@ public class UsageStatisticCollector {
 			tryToInt(versionStringParts[0]),
 			tryToInt(versionStringParts[1]),
 			tryToInt(versionStringParts[2]),
-			tryToInt(versionStringParts[3]),
+			tryToIntAdvanced(versionStringParts[3]),
 		};
+	}
+
+	private static int tryToIntAdvanced(String string) {
+		int pos = string.indexOf("-");
+		if( pos != -1 ) {
+			string = string.substring(0, pos);
+		}
+		
+		return tryToInt(string);
 	}
 
 	private static int tryToInt(String string) {
