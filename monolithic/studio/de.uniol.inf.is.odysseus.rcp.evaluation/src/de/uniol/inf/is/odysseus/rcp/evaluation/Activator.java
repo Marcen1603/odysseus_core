@@ -36,7 +36,9 @@ public class Activator extends AbstractUIPlugin {
 	}
 	
 	public void unbindExecutor(IExecutor e){
-		executor = null;
+		if( executor == e ) {
+			executor = null;
+		}
 	}
 
 	public static IExecutor getExecutor() {

@@ -15,18 +15,18 @@ public class SpecialFileComparator implements Comparator<File> {
 			if (splitsL[0].equals(splitsR[0])) {
 				if (splitsL[1].equals(splitsR[1])) {
 					return 0;
-				} else {
-					try {
-						Integer leftInt = Integer.parseInt(splitsL[1].trim());
-						Integer rightInt = Integer.parseInt(splitsR[1].trim());
-						return leftInt.compareTo(rightInt);
-					} catch (NumberFormatException e) {
-						return splitsL[1].compareTo(splitsR[1]);
-					}
 				}
-			} else {
-				return splitsL[0].compareTo(splitsR[0]);
+				
+				try {
+					Integer leftInt = Integer.parseInt(splitsL[1].trim());
+					Integer rightInt = Integer.parseInt(splitsR[1].trim());
+					return leftInt.compareTo(rightInt);
+				} catch (NumberFormatException e) {
+					return splitsL[1].compareTo(splitsR[1]);
+				}
 			}
+			
+			return splitsL[0].compareTo(splitsR[0]);
 		}
 		return 0;
 	}
