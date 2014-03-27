@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.ping.impl;
 
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import net.jxta.peer.PeerID;
@@ -127,18 +127,12 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 			return Lists.newArrayList(remotePeers);
 		}
 
+		List<PeerID> availablePeers = Lists.newArrayList(remotePeers);
 		Collection<PeerID> selectedPeers = Lists.newArrayList();
 		while (selectedPeers.size() < MAX_PEERS_TO_PING) {
-			int index = RAND.nextInt(remotePeers.size());
-			Iterator<PeerID> iterator = remotePeers.iterator();
-			PeerID lastIteratedPeer = null;
-			for (int counter = 0; counter < index; counter++) {
-				lastIteratedPeer = iterator.next();
-			}
-
-			if (!selectedPeers.contains(lastIteratedPeer)) {
-				selectedPeers.add(lastIteratedPeer);
-			}
+			int index = RAND.nextInt(availablePeers.size());
+			
+			selectedPeers.add(availablePeers.remove(index));
 		}
 		
 		return selectedPeers;
@@ -147,6 +141,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		if (message instanceof PingMessage && PingMap.isActivated()) {
+			LOG.debug("Got ping from " + dictionary.getRemotePeerName(senderPeer).get());
 			IMessage pongMessage = new PongMessage( (PingMessage)message, pingMap.getLocalPosition());
 			try {
 				if (communicator.isConnected(senderPeer)) {
@@ -156,6 +151,8 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 				LOG.error("Could not send pong-message", e);
 			}
 		} else if (message instanceof PongMessage) {
+			LOG.debug("Got pong from " + dictionary.getRemotePeerName(senderPeer).get());
+			
 			PongMessage pongMessage = (PongMessage)message;
 			long latency = System.currentTimeMillis() - pongMessage.getTimestamp();
 			pingMap.update(senderPeer, pongMessage.getPosition(), latency);
