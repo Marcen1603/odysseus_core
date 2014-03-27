@@ -20,12 +20,6 @@ Import-Package: de.uniol.inf.is.odysseus.rcp,
  org.eclipse.swt.graphics,
  org.eclipse.swt.layout,
  org.eclipse.swt.widgets,
- org.eclipse.ui,
- org.eclipse.ui.handlers,
- org.eclipse.ui.menus,
- org.eclipse.ui.part,
- org.eclipse.ui.plugin,
- org.eclipse.ui.services,
  org.eclipse.ui.views.contentoutline,
  org.osgi.framework;version="1.3.0",
  org.slf4j
@@ -37,7 +31,8 @@ Export-Package: de.uniol.inf.is.odysseus.rcp.viewer,
  de.uniol.inf.is.odysseus.rcp.viewer.model.meta,
  de.uniol.inf.is.odysseus.rcp.viewer.view,
  de.uniol.inf.is.odysseus.rcp.viewer.view.impl
-Service-Component: OSGI-INF/Executor.xml
+Service-Component: OSGI-INF/Executor.xml, OSGI-INF/operatorDetailProviderRegistry.xml
 Require-Bundle: com.google.guava;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core,
- org.eclipse.core.expressions;bundle-version="3.4.300"
+ org.eclipse.core.expressions;bundle-version="3.4.300",
+ org.eclipse.ui;bundle-version="3.7.0"

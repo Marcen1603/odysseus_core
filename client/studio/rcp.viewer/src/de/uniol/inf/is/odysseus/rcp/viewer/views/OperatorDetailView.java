@@ -1,9 +1,10 @@
-package de.uniol.inf.is.odysseus.rcp.views.opdetail;
+package de.uniol.inf.is.odysseus.rcp.viewer.views;
 
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -26,6 +27,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.IOperatorDetailProvider;
 import de.uniol.inf.is.odysseus.rcp.IOperatorGeneralDetailProvider;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
 public class OperatorDetailView extends ViewPart implements ISelectionListener {
 
@@ -182,17 +184,17 @@ public class OperatorDetailView extends ViewPart implements ISelectionListener {
 	}
 
 	private static Optional<IPhysicalOperator> determineSelectedOperatorClass(ISelection selection) {
-//		if( !selection.isEmpty() && selection instanceof IStructuredSelection ) {
-//			IStructuredSelection structSelection = (IStructuredSelection)selection;
-//			
-//			Object selectedObject = structSelection.getFirstElement();
-//			if( selectedObject instanceof IOdysseusNodeView ) {
-//				IOdysseusNodeView nodeView = (IOdysseusNodeView)selectedObject;
-//				if( nodeView.getModelNode() != null && nodeView.getModelNode().getContent() != null ) {
-//					return Optional.of(nodeView.getModelNode().getContent());
-//				}
-//			}
-//		}
+		if( !selection.isEmpty() && selection instanceof IStructuredSelection ) {
+			IStructuredSelection structSelection = (IStructuredSelection)selection;
+			
+			Object selectedObject = structSelection.getFirstElement();
+			if( selectedObject instanceof IOdysseusNodeView ) {
+				IOdysseusNodeView nodeView = (IOdysseusNodeView)selectedObject;
+				if( nodeView.getModelNode() != null && nodeView.getModelNode().getContent() != null ) {
+					return Optional.of(nodeView.getModelNode().getContent());
+				}
+			}
+		}
 		return Optional.absent();
 	}
 	

@@ -211,4 +211,15 @@
             label="List - Show all last elements">
       </editor>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.views.OperatorDetailView"
+            icon="icons/operator_details.png"
+            id="de.uniol.inf.is.odysseus.rcp.views.OperatorDetailView"
+            name="Operator Detail Info"
+            restorable="true">
+      </view>
+   </extension>
 </plugin>

@@ -89,14 +89,6 @@
             name="Stored Procedures"
             restorable="true">
       </view>
-      <view
-            category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.views.opdetail.OperatorDetailView"
-            icon="icons/operator_details.png"
-            id="de.uniol.inf.is.odysseus.rcp.views.OperatorDetailView"
-            name="Operator Detail Info"
-            restorable="true">
-      </view>
      </extension>
    <extension
          point="org.eclipse.ui.perspectives">

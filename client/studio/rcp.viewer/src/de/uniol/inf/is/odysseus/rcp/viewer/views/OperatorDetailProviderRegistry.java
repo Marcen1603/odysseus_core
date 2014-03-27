@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.views.opdetail;
+package de.uniol.inf.is.odysseus.rcp.viewer.views;
 
 import java.util.Collection;
 import java.util.List;
