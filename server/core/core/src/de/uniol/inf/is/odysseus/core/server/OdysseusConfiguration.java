@@ -183,7 +183,11 @@ public class OdysseusConfiguration {
 		props.setProperty("adaption_blockingTime", "30000");
 		
 		// Web-Service
-		props.setProperty("WebService.Endpoint","http://0.0.0.0:9669/odysseus");
+		props.setProperty("WebService.Endpoint1","http://0.0.0.0");
+		props.setProperty("WebService.Port","9669");
+		props.setProperty("WebService.Endpoint2","/odysseus");
+		props.setProperty("WebService.MaxPort","10000");
+		
 		
 		// security and crypto stuff, e.g. for creating self-signed certificates
 		props.setProperty("security.applicationName", "Odysseus");

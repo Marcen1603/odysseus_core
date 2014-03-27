@@ -150,11 +150,31 @@ public class WebserviceServer {
 
 	public static void startServer() {
 		WebserviceServer server = new WebserviceServer();
-		String webServiceEndpoint = OdysseusConfiguration
-				.get("WebService.Endpoint");
-		Endpoint endpoint = Endpoint.publish(webServiceEndpoint, server);
-		if (endpoint.isPublished()) {
+		long port = Integer.parseInt(OdysseusConfiguration
+				.get("WebService.Port"));
+		long maxPort = Integer.parseInt(OdysseusConfiguration
+				.get("WebService.MaxPort"));
+		Endpoint endpoint = null;
+		String webServiceEndpoint = "";
+		Exception ex = null;
+		while (port <= maxPort ){
+			webServiceEndpoint = OdysseusConfiguration
+					.get("WebService.Endpoint1")+":"+port+OdysseusConfiguration
+					.get("WebService.Endpoint2");
+			try {
+				endpoint = Endpoint.publish(webServiceEndpoint, server);
+				// if no exception if thrown, service endpoint could be established
+				// break while
+				break;
+			} catch (Exception e) {
+				ex = e;
+			}
+			port++;
+		}
+		if (endpoint != null && endpoint.isPublished()) {
 			LOGGER.info("Webservice published at " + webServiceEndpoint);
+		}else{
+			LOGGER.error("Webservice could not be published", ex);
 		}
 	}
 
