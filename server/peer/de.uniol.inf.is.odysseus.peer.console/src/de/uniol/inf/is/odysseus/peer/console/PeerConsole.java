@@ -159,13 +159,13 @@ public class PeerConsole implements CommandProvider {
 		
 		if( logLevel.equalsIgnoreCase("debug")) {
 			LOG.debug(text);
-		} else if( logLevel.equals("warn")) {
+		} else if( logLevel.equalsIgnoreCase("warn")) {
 			LOG.warn(text);
-		} else if( logLevel.equals("error")) {
+		} else if( logLevel.equalsIgnoreCase("error")) {
 			LOG.error(text);
-		} else if( logLevel.equals("trace")) {
+		} else if( logLevel.equalsIgnoreCase("trace")) {
 			LOG.trace(text);
-		} else if( logLevel.equals("info")) {
+		} else if( logLevel.equalsIgnoreCase("info")) {
 			LOG.trace(text);
 		} else {
 			System.out.println("Unknown loglevel! Valid: trace, info, debug, warn, error");
