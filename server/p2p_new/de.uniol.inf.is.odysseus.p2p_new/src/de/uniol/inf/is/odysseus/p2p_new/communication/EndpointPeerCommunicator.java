@@ -80,10 +80,13 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 	@Override
 	public ImmutableCollection<PeerID> getConnectedPeers() {
 		List<PeerID> connectedPeers = Lists.newArrayList();
-		for( PeerID peerID : messengerMap.keySet() ) {
+		for( PeerID peerID : messengerMap.keySet().toArray(new PeerID[0]) ) {
 			Messenger messenger = messengerMap.get(peerID);
 			if( messenger != null && !messenger.isClosed() ) {
 				connectedPeers.add(peerID);
+			} else {
+				// not valid anymore
+				messengerMap.remove(peerID);
 			}
 		}
 		return ImmutableList.copyOf(connectedPeers);
