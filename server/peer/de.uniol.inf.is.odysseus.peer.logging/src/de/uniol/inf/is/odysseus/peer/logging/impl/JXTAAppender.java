@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
+import de.uniol.inf.is.odysseus.peer.logging.JxtaLoggingDestinations;
 
 public class JXTAAppender extends AppenderSkeleton {
 
@@ -35,7 +36,7 @@ public class JXTAAppender extends AppenderSkeleton {
 			peerCommunicator = JXTALoggingPlugIn.getPeerCommunicator();
 		}
 
-		Collection<PeerID> logDestinations = LoggingDestinations.getInstance().getDestinations();
+		Collection<PeerID> logDestinations = JxtaLoggingDestinations.getInstance().getDestinations();
 
 		try {
 			if (!logDestinations.isEmpty()) {

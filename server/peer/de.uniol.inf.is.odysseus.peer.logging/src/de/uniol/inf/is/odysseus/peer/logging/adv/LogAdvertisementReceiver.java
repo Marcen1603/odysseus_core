@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
-import de.uniol.inf.is.odysseus.peer.logging.impl.LoggingDestinations;
+import de.uniol.inf.is.odysseus.peer.logging.JxtaLoggingDestinations;
 
 public class LogAdvertisementReceiver implements IAdvertisementListener {
 
@@ -21,7 +21,7 @@ public class LogAdvertisementReceiver implements IAdvertisementListener {
 			LOG.debug("Got LoggingAdvertisement...");
 			if( !logAdv.getPeerID().equals( JXTALoggingPlugIn.getP2PNetworkManager().getLocalPeerID())) {
 				LOG.debug("... and its from peerID {}", logAdv.getPeerID());
-				LoggingDestinations.getInstance().addLoggingAdvertisement(logAdv);
+				JxtaLoggingDestinations.getInstance().addLoggingAdvertisement(logAdv);
 			} else {
 				LOG.debug("... and its ours");
 			}
@@ -34,7 +34,7 @@ public class LogAdvertisementReceiver implements IAdvertisementListener {
 			LoggingAdvertisement logAdv = (LoggingAdvertisement)adv;
 			LOG.debug("Removed LoggingAdvertisement");
 			if( !logAdv.getPeerID().equals( JXTALoggingPlugIn.getP2PNetworkManager().getLocalPeerID())) {
-				LoggingDestinations.getInstance().removeLoggingAdvertisement(logAdv);
+				JxtaLoggingDestinations.getInstance().removeLoggingAdvertisement(logAdv);
 			}
 		}
 	}

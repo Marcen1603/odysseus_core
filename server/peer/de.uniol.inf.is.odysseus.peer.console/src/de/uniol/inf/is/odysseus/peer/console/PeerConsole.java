@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.console;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Collection;
 import java.util.Enumeration;
 
 import net.jxta.peer.PeerID;
@@ -19,6 +20,8 @@ import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
+import de.uniol.inf.is.odysseus.peer.logging.JxtaLoggingDestinations;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
@@ -210,6 +213,20 @@ public class PeerConsole implements CommandProvider {
 					System.out.println("\t" + elem.getName() + " = " + elem.getLevel());
 				}
 			}
+		}
+	}
+	
+	public void _jxtaLogDestinations( CommandInterpreter ci ) {
+		if( JXTALoggingPlugIn.isLogging() ) {
+			System.out.println("Local peer receives log messages.");
+		}
+		Collection<PeerID> destinations = JxtaLoggingDestinations.getInstance().getDestinations();
+		if( !destinations.isEmpty() ) {
+			for( PeerID destination : destinations ) {
+				System.out.println(p2pDictionary.getRemotePeerName(destination).get());
+			}
+		} else {
+			System.out.println("No destination set.");
 		}
 	}
 }

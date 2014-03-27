@@ -23,7 +23,7 @@ public class P2PNetworkManagerListener implements IP2PNetworkListener {
 	public void networkStarted(IP2PNetworkManager sender) {
 		LOG.debug("P2PNetwork started");		
 
-		if( LogConfigChecker.isLogging() ) {
+		if( JXTALoggingPlugIn.isLogging() ) {
 			publishLoggingAdvertisementAsync(sender);
 		} else {			
 			LOG.debug("Adding JXTAAppender");

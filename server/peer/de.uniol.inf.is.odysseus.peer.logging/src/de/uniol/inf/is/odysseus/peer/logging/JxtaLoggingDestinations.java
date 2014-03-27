@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.logging.impl;
+package de.uniol.inf.is.odysseus.peer.logging;
 
 import java.util.Collection;
 import java.util.List;
@@ -15,10 +15,10 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisement;
 
-public class LoggingDestinations {
+public class JxtaLoggingDestinations {
 
-	private static final Logger LOG = LoggerFactory.getLogger(LoggingDestinations.class);
-	private static final LoggingDestinations INSTANCE = new LoggingDestinations();
+	private static final Logger LOG = LoggerFactory.getLogger(JxtaLoggingDestinations.class);
+	private static final JxtaLoggingDestinations INSTANCE = new JxtaLoggingDestinations();
 
 	private final Map<PeerID, LoggingAdvertisement> advertisementMap = Maps.newHashMap();
 	private final List<PeerID> knownPeers = Lists.newArrayList();
@@ -26,11 +26,11 @@ public class LoggingDestinations {
 	private List<PeerID> destinations;
 	private boolean changed = true;
 	
-	private LoggingDestinations() {
+	private JxtaLoggingDestinations() {
 
 	}
 
-	public static LoggingDestinations getInstance() {
+	public static JxtaLoggingDestinations getInstance() {
 		return INSTANCE;
 	}
 

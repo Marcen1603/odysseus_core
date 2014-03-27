@@ -17,3 +17,5 @@ Service-Component: OSGI-INF/JXTALoggingPlugIn.xml,OSGI-INF/JxtaLogMessageReceive
  OSGI-INF/ConsoleJxtaLogMessageReceiver.xml
 Import-Package: org.apache.commons.lang3
 Bundle-ClassPath: .
+Export-Package: de.uniol.inf.is.odysseus.peer.logging,
+ de.uniol.inf.is.odysseus.peer.logging.adv
