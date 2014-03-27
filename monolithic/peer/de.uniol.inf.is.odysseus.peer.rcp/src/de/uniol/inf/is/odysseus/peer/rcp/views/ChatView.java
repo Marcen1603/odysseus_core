@@ -57,7 +57,6 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 
 	@Override
 	public void createPartControl(Composite parent) {
-
 		Composite rootComposite = new Composite(parent, SWT.NONE);
 		rootComposite.setLayout(new GridLayout(2, false));
 
@@ -188,6 +187,8 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 	}
 
 	private void sendMessageAsync(String text) {
+		LOG.debug("Sending chat message '{}'", text);
+		
 		Optional<PeerID> selectedPeerID = determineSelectedPeerID();
 
 		try {
