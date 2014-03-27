@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import net.jxta.endpoint.ByteArrayMessageElement;
@@ -22,6 +23,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
@@ -77,7 +79,14 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 
 	@Override
 	public ImmutableCollection<PeerID> getConnectedPeers() {
-		return ImmutableList.copyOf(messengerMap.keySet());
+		List<PeerID> connectedPeers = Lists.newArrayList();
+		for( PeerID peerID : messengerMap.keySet() ) {
+			Messenger messenger = messengerMap.get(peerID);
+			if( messenger != null && !messenger.isClosed() ) {
+				connectedPeers.add(peerID);
+			}
+		}
+		return ImmutableList.copyOf(connectedPeers);
 	}
 
 	@Override
@@ -122,17 +131,15 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 			EndpointAddress addr = new EndpointAddress(destinationPeer, null, null);
 			messenger = JxtaServicesProvider.getInstance().getEndpointService().getMessenger(addr);
 			if (messenger == null) {
-				LOG.error("Wanted to send message to unknown peer {}", destinationPeer);
-				return;
+				throw new PeerCommunicationException("Wanted to send message to unknown peer " + destinationPeer);
 			}
 
 			messengerMap.put(destinationPeer, messenger);
 		}
 
 		if (messenger.isClosed()) {
-			LOG.error("Tried to send message with closed messenger (e.g. lost peer): {}", destinationPeer);
 			messengerMap.remove(destinationPeer);
-			return;
+			throw new PeerCommunicationException("Tried to send message with closed messenger (e.g. lost peer): " + destinationPeer);
 		}
 
 		Class<? extends IMessage> messageType = message.getClass();
