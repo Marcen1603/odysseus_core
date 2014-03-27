@@ -68,7 +68,6 @@ public class UsageStatisticCollector {
 			String versionString = FeatureUpdateUtility.getVersionNumber(getActiveSession());
 			version = toVersionDigits(versionString);
 		} catch( Throwable t ) {
-			LOG.error("Could not determine version");
 			version = new int[] {0,0,0,0};
 		}
 		
