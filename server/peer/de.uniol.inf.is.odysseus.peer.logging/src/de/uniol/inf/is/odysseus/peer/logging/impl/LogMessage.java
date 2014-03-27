@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.logging;
+package de.uniol.inf.is.odysseus.peer.logging.impl;
 
 import org.apache.log4j.spi.LoggingEvent;
 

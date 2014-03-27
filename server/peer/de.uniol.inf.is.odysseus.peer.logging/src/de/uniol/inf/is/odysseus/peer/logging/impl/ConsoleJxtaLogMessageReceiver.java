@@ -1,24 +1,20 @@
-package de.uniol.inf.is.odysseus.peer.logging;
-
-import net.jxta.peer.PeerID;
+package de.uniol.inf.is.odysseus.peer.logging.impl;
 
 import org.apache.log4j.Level;
 
 import com.google.common.base.Optional;
 
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
+import net.jxta.peer.PeerID;
+import de.uniol.inf.is.odysseus.peer.logging.IJxtaLogMessageReceiver;
+import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
 
-public class LogMessageReceiver implements IPeerCommunicatorListener {
+public class ConsoleJxtaLogMessageReceiver implements IJxtaLogMessageReceiver {
 
 	@Override
-	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
-		LogMessage logMessage = (LogMessage)message;
-		
-		String peerName = determinePeerName(senderPeer);
+	public void logMessage(PeerID senderPeerID, int logLevel, String loggerName, String text) {
+		String peerName = determinePeerName(senderPeerID);
 
-		printPeerMessage(logMessage.getLevel(), peerName, logMessage.getLoggerName(), logMessage.getText());
+		printPeerMessage(logLevel, peerName, loggerName, text);
 	}
 
 	private static void printPeerMessage(int logLevel, String peerName, String loggerName, String messageText) {

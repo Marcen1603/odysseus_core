@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.logging;
+package de.uniol.inf.is.odysseus.peer.logging.impl;
 
 import java.io.IOException;
 
@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkListener;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
+import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisement;
 
 public class P2PNetworkManagerListener implements IP2PNetworkListener {
 

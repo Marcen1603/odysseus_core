@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.logging;
+package de.uniol.inf.is.odysseus.peer.logging.adv;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory.Instantiator;

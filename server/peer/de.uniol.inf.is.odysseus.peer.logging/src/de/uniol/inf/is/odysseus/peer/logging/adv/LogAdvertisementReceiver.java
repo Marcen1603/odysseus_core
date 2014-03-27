@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.logging;
+package de.uniol.inf.is.odysseus.peer.logging.adv;
 
 import net.jxta.document.Advertisement;
 
@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
+import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
+import de.uniol.inf.is.odysseus.peer.logging.impl.LoggingDestinations;
 
 public class LogAdvertisementReceiver implements IAdvertisementListener {
 

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.logging;
+package de.uniol.inf.is.odysseus.peer.logging.impl;
 
 import java.util.Collection;
 
@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
 
 public class JXTAAppender extends AppenderSkeleton {
 

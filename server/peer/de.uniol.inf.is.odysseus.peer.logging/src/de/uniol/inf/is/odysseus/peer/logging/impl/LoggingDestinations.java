@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.logging;
+package de.uniol.inf.is.odysseus.peer.logging.impl;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisement;
 
 public class LoggingDestinations {
 

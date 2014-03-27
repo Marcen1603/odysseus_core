@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.logging;
+package de.uniol.inf.is.odysseus.peer.logging.adv;
 
 import java.io.IOException;
 import java.io.InputStream;

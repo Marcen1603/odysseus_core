@@ -12,6 +12,13 @@ import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.peer.logging.adv.LogAdvertisementReceiver;
+import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisement;
+import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisementInstatiator;
+import de.uniol.inf.is.odysseus.peer.logging.impl.LogMessage;
+import de.uniol.inf.is.odysseus.peer.logging.impl.LogMessageReceiver;
+import de.uniol.inf.is.odysseus.peer.logging.impl.P2PNetworkManagerListener;
+import de.uniol.inf.is.odysseus.peer.logging.impl.RemotePeerChangeListener;
 
 public class JXTALoggingPlugIn implements BundleActivator {
 

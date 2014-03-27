@@ -13,6 +13,7 @@ Require-Bundle: org.eclipse.core.runtime,
  Jxta_2.6_Source;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/JXTALoggingPlugIn.xml
+Service-Component: OSGI-INF/JXTALoggingPlugIn.xml,OSGI-INF/JxtaLogMessageReceiverRegistry.xml,
+ OSGI-INF/ConsoleJxtaLogMessageReceiver.xml
 Import-Package: org.apache.commons.lang3
 Bundle-ClassPath: .

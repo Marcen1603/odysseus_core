@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.logging;
+package de.uniol.inf.is.odysseus.peer.logging.impl;
 
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
