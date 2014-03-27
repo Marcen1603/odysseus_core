@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.LineProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractFileHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
@@ -143,7 +144,10 @@ public class LMS1xxProtocolHandler extends LineProtocolHandler<KeyValueObject<? 
      */
     @Override
     public void onConnect(final ITransportHandler caller) {
-        if (caller.getExchangePattern().equals(ITransportExchangePattern.InOut)) {
+        if (!(caller instanceof AbstractFileHandler)) {
+            // if
+            // (caller.getExchangePattern().equals(ITransportExchangePattern.InOut))
+            // {
             try {
                 LMS1xxProtocolHandler.LOG.debug("Connected");
                 if (this.username.equalsIgnoreCase("maintainer")) {
