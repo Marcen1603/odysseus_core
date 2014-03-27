@@ -14,6 +14,7 @@
       <view
             category="de.uniol.inf.is.odysseus.rcp.peer.PeerCategory"
             class="de.uniol.inf.is.odysseus.peer.rcp.views.P2PSourcesViewPart"
+            icon="icons/sources.png"
             id="de.uniol.inf.is.odysseus.rcp.peer.P2PSources"
             name="P2P Sources"
             restorable="true">
@@ -34,12 +35,15 @@
             allowMultiple="false"
             category="de.uniol.inf.is.odysseus.rcp.peer.PeerCategory"
             class="de.uniol.inf.is.odysseus.peer.rcp.views.PingMapView"
+            icon="icons/ping.gif"
             id="de.uniol.inf.is.odysseus.rcp.peer.PingMap"
             name="Ping Map"
             restorable="true">
       </view>
       <view
+            category="de.uniol.inf.is.odysseus.rcp.peer.PeerCategory"
             class="de.uniol.inf.is.odysseus.peer.rcp.views.AdvertisementsView"
+            icon="icons/advertisement.gif"
             id="de.uniol.inf.is.odysseus.rcp.peer.AdvertisementView"
             name="Advertisements"
             restorable="true">
