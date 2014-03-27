@@ -81,7 +81,14 @@ public class PeerConsole implements CommandProvider {
 	
 	@Override
 	public String getHelp() {
-		return "---Peer commands---";
+		StringBuilder sb = new StringBuilder();
+		sb.append("---Peer commands---\n");
+		sb.append("    listPeers      - Lists all known peers with their ids\n");
+		sb.append("    resourceStatus - Current status of local MEM, CPU, NET\n");
+		sb.append("    ping           - Lists the current latencies to known peers\n");
+		sb.append("    peerStatus     - Summarizes the current peer status (peerName, ids, etc.)\n");
+		sb.append("    log            - Creates a logging statement\n");
+		return sb.toString();
 	}
 
 	public void _listPeers(CommandInterpreter ci) {
