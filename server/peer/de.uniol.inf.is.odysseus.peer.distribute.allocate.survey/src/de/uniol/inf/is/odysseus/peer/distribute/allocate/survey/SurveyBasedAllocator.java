@@ -243,7 +243,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		for( ILogicalQueryPart queryPart : bidPlanMap.keySet() ) {
 			LOG.debug("\t{}:", queryPart);
 			for( Bid bid : bidPlanMap.get(queryPart)) {
-				LOG.debug("\t\t{}:\t{}", p2pDictionary.getRemotePeerName(bid.getBidderPeerID()).get(), bid.getValue());
+				LOG.debug("\t\t{}:\t{}", p2pDictionary.getRemotePeerName(bid.getBidderPeerID()), bid.getValue());
 			}
 		}
 	}

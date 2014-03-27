@@ -166,9 +166,8 @@ public class Communicator implements IAdvertisementListener {
 
 			if (mailbox != null) {
 				mailbox.add(advertisement.getBid());
+				LOG.debug("Received bid from {} valued {}", p2pDictionary.getRemotePeerName(advertisement.getBid().getBidderPeerID()), advertisement.getBid().getValue());
 			}
-			LOG.debug("Received bid from {} valued {}", p2pDictionary.getRemotePeerName(advertisement.getBid().getBidderPeerID()).get(), advertisement.getBid().getValue());
-
 		}
 	}
 

@@ -64,7 +64,7 @@ public class ForceModel {
 	private final ForceNode localForceNode;
 	private final Collection<ForceNode> forceNodes;
 	private final Map<ILogicalQueryPart, Collection<Bid>> bids;
-	
+
 	private final int bidWeight;
 	private final int latencyWeight;
 
@@ -164,7 +164,7 @@ public class ForceModel {
 			Collection<Bid> queryPartBids = bids.get(queryPart);
 			Bid bestBid = determineBestBid(queryPartBids);
 			Optional<IPingMapNode> optPingMapNode = pingMap.getNode(bestBid.getBidderPeerID());
-			LOG.debug("Best bid for query part {} is from {}", queryPart, p2pDictionary.getRemotePeerName(bestBid.getBidderPeerID()).get());
+			LOG.debug("Best bid for query part {} is from {}", queryPart, p2pDictionary.getRemotePeerName(bestBid.getBidderPeerID()));
 
 			Vector3D nodePosition = optPingMapNode.isPresent() ? optPingMapNode.get().getPosition() : createRandomVector3D();
 			forceNodes.add(new ForceNode(nodePosition, queryPart, queryPartBids.size() == 1));
@@ -265,17 +265,17 @@ public class ForceModel {
 		double waitTime = 0;
 		do {
 			long Starttimestamp = System.nanoTime();
-			
+
 			moved = 0.0;
 			for (ForceNode node : forceNodes) {
 				moved += node.tick(factor);
 			}
 			long elapsedTime = System.nanoTime() - Starttimestamp;
 			factor = elapsedTime / 1000000000.0;
-			
+
 			waitTime += factor;
-		} while( moved > factor && waitTime < 4);
-		
+		} while (moved > factor && waitTime < 4);
+
 		LOG.debug("Finished model-Running");
 		printForceNodes(forceNodes);
 	}
@@ -338,10 +338,10 @@ public class ForceModel {
 
 		double maximumLatencyDistance = Double.MIN_VALUE;
 		double maximumInvertedBid = Double.MIN_VALUE;
-		
+
 		Map<PeerID, Double> peerLatencyDistances = Maps.newHashMap();
 		Map<PeerID, Double> peerInvertedBids = Maps.newHashMap();
-		
+
 		for (PeerID peerID : bidMap.keySet()) {
 
 			Vector3D peerPosition = positionMap.get(peerID);
@@ -357,7 +357,7 @@ public class ForceModel {
 			if (peerDistance > maximumLatencyDistance) {
 				maximumLatencyDistance = peerDistance;
 			}
-			if( invertedBid > maximumInvertedBid ) {
+			if (invertedBid > maximumInvertedBid) {
 				maximumInvertedBid = invertedBid;
 			}
 		}
@@ -367,10 +367,10 @@ public class ForceModel {
 		for (PeerID peerID : bidMap.keySet()) {
 			double latencyFactor = peerLatencyDistances.get(peerID) / maximumLatencyDistance;
 			double invertedBidFactor = peerInvertedBids.get(peerID) / maximumInvertedBid;
-			
+
 			// Absichtlich umgedreht!
 			double peerValue = ((latencyFactor * bidWeight) + (invertedBidFactor * latencyWeight)) / (bidWeight + latencyWeight);
-			LOG.debug("\t{}:\tPeerValue={} \t(BidValue={}\tLatencyValue={} )", new Object[] {p2pDictionary.getRemotePeerName(peerID).get(), peerValue, invertedBidFactor, latencyFactor});
+			LOG.debug("\t{}:\tPeerValue={} \t(BidValue={}\tLatencyValue={} )", new Object[] { p2pDictionary.getRemotePeerName(peerID).get(), peerValue, invertedBidFactor, latencyFactor });
 
 			peerValues.add(new ValuePeerPair(peerValue, peerID));
 		}
