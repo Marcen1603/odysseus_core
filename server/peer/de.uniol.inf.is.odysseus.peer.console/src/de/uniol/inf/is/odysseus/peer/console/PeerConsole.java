@@ -105,6 +105,7 @@ public class PeerConsole implements CommandProvider {
 		sb.append("    resourceStatus                 - Current status of local MEM, CPU, NET\n");
 		sb.append("    ping                           - Lists the current latencies to known peers\n");
 		sb.append("    peerStatus                     - Summarizes the current peer status (peerName, ids, etc.)\n");
+		sb.append("    listEndpointConnections        - Lists all peers which have a true endpoint connection\n");
 		sb.append("\n");
 		sb.append("    log <level> <text>             - Creates a log statement\n");
 		sb.append("    setLog <logger> <level>        - Sets the logging level of a specific logger\n");
@@ -259,5 +260,9 @@ public class PeerConsole implements CommandProvider {
 		for( PeerID remotePeerID : connectedPeers ) {
 			System.out.println("\t" + p2pDictionary.getRemotePeerName(remotePeerID).get() + " = " + remotePeerID) ;
 		}
+	}
+	
+	public void _lsEndpointConnections(CommandInterpreter ci) {
+		_listEndpointConnections(ci);
 	}
 }
