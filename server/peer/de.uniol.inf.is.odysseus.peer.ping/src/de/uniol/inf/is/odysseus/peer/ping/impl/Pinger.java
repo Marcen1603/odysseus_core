@@ -141,7 +141,6 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		if (message instanceof PingMessage && PingMap.isActivated()) {
-			LOG.debug("Got ping from " + dictionary.getRemotePeerName(senderPeer).get());
 			IMessage pongMessage = new PongMessage( (PingMessage)message, pingMap.getLocalPosition());
 			try {
 				if (communicator.isConnected(senderPeer)) {
@@ -151,8 +150,6 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 				LOG.error("Could not send pong-message", e);
 			}
 		} else if (message instanceof PongMessage) {
-			LOG.debug("Got pong from " + dictionary.getRemotePeerName(senderPeer).get());
-			
 			PongMessage pongMessage = (PongMessage)message;
 			long latency = System.currentTimeMillis() - pongMessage.getTimestamp();
 			pingMap.update(senderPeer, pongMessage.getPosition(), latency);
