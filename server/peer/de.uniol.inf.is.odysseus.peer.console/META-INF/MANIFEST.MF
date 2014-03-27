@@ -11,4 +11,5 @@ Import-Package: de.uniol.inf.is.odysseus.peer.ping,
  org.eclipse.osgi.framework.console
 Require-Bundle: de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0",
  com.google.guava,
- Jxta_2.6_Source
+ Jxta_2.6_Source,
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"

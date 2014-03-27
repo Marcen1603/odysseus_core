@@ -7,8 +7,11 @@ import net.jxta.peer.PeerID;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
@@ -21,6 +24,8 @@ import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 @SuppressWarnings("unused")
 public class PeerConsole implements CommandProvider {
 
+	private static final Logger LOG = LoggerFactory.getLogger(PeerConsole.class);
+	
 	private static IP2PDictionary p2pDictionary;
 	private static IPeerResourceUsageManager peerResourceUsageManager;
 	private static IPingMap pingMap;
@@ -125,5 +130,33 @@ public class PeerConsole implements CommandProvider {
 		} catch (UnknownHostException e) {
 		}
 		System.out.println("Port: " + p2pNetworkManager.getPort());
+	}
+	
+	public void _log(CommandInterpreter ci ) {
+		String logLevel = ci.nextArgument();
+		if( Strings.isNullOrEmpty(logLevel) ) {
+			System.out.println("usage: log <logLevel> <message>");
+			return;
+		}
+		
+		String text = ci.nextArgument();
+		if( Strings.isNullOrEmpty(text)) {
+			System.out.println("usage: log <loglevel> <message>");
+			return;
+		}
+		
+		if( logLevel.equalsIgnoreCase("debug")) {
+			LOG.debug(text);
+		} else if( logLevel.equals("warn")) {
+			LOG.warn(text);
+		} else if( logLevel.equals("error")) {
+			LOG.error(text);
+		} else if( logLevel.equals("trace")) {
+			LOG.trace(text);
+		} else if( logLevel.equals("info")) {
+			LOG.trace(text);
+		} else {
+			System.out.println("Unknown loglevel! Valid: trace, info, debug, warn, error");
+		}
 	}
 }
