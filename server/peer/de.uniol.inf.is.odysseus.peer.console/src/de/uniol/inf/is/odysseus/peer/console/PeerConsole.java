@@ -90,9 +90,9 @@ public class PeerConsole implements CommandProvider {
 		sb.append("    ping                    - Lists the current latencies to known peers\n");
 		sb.append("    peerStatus              - Summarizes the current peer status (peerName, ids, etc.)\n");
 		sb.append("\n");
-		sb.append("    log <level> <text>	   - Creates a log statement\n");
+		sb.append("    log <level> <text>      - Creates a log statement\n");
 		sb.append("    setLog <logger> <level> - Sets the logging level of a specific logger\n");
-		sb.append("    listLoggers <filter>	   - Lists all known loggers by name\n");
+		sb.append("    listLoggers <filter>    - Lists all known loggers by name\n");
 		return sb.toString();
 	}
 
