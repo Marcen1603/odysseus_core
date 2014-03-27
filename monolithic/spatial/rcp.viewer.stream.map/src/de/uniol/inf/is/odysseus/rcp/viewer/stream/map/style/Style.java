@@ -193,7 +193,7 @@ public abstract class Style {
 		return false;
 	}
 
-	public void setActiveStyle(STYLE s) {
+	public void setActiveStyle(@SuppressWarnings("unused") STYLE s) {
 	}
 
 	abstract protected void draw(GC gc, int[] list, Color fcolor, Color bcolor, Tuple<?> tuple);

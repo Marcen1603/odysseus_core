@@ -87,7 +87,7 @@ public class BasicLayer extends AbstractLayer<NullConfiguration>{
 	
 
 	
-	protected void widgetDisposed(DisposeEvent e) {
+	protected void widgetDisposed(@SuppressWarnings("unused") DisposeEvent e) {
 		waitBackground.dispose();
 		waitForeground.dispose();
 	}
