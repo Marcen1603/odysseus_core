@@ -427,16 +427,21 @@ public class Measurement {
         sb.append(this.encoders).append(",");
         sb.append(this.encoderPosition).append(",");
         sb.append(this.encoderSpeed).append(",");
-        sb.append("[");
-        for (final Sample sample : this.samples16Bit) {
-            sb.append("[").append(sample.toCSVString()).append("]");
+        if (this.samples16Bit != null) {
+            sb.append("[");
+            for (final Sample sample : this.samples16Bit) {
+                sb.append("[").append(sample.toCSVString()).append("]");
+            }
+            sb.append("]");
         }
-        sb.append("],");
-        sb.append("[");
-        for (final Sample sample : this.samples8Bit) {
-            sb.append("[").append(sample.toCSVString()).append("]");
+        sb.append(",");
+        if (this.samples8Bit != null) {
+            sb.append("[");
+            for (final Sample sample : this.samples8Bit) {
+                sb.append("[").append(sample.toCSVString()).append("]");
+            }
+            sb.append("]");
         }
-        sb.append("]");
         return sb.toString();
     }
 
