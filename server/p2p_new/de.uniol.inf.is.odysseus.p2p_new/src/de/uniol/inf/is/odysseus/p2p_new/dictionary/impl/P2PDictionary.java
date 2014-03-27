@@ -433,19 +433,19 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			throw new PeerException("Source " + realSourceName + " is imported and cannot be exported directly");
 		}
 
-		ILogicalOperator stream = copyLogicalPlan(getDataDictionary().getStreamForTransformation(realSourceName, SessionManagementService.getActiveSession()));
+		ILogicalOperator originalStream = getDataDictionary().getStreamForTransformation(realSourceName, SessionManagementService.getActiveSession());
 		
-		if (stream != null) {
-			if( isStreamAView(stream) ) {
-				return exportView(realSourceName, queryBuildConfigurationName, stream);
+		if (originalStream != null) {
+			if( isStreamAView(originalStream) ) {
+				return exportView(realSourceName, queryBuildConfigurationName, copyLogicalPlan(originalStream));
 			}
 			
-			return exportStream(realSourceName, stream);
+			return exportStream(realSourceName, copyLogicalPlan(originalStream));
 		}
 		
 		ILogicalOperator view = getDataDictionary().getView(realSourceName, SessionManagementService.getActiveSession());
 		if (view != null) {
-			return exportView(realSourceName, queryBuildConfigurationName, view);
+			return exportView(realSourceName, queryBuildConfigurationName, copyLogicalPlan(view));
 		}
 
 		throw new PeerException("Could not find view or stream '" + realSourceName + "' in datadictionary");
