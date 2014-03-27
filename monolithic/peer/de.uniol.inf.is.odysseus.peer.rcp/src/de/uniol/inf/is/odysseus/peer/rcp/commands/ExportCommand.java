@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.rcp.commands;
 
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -12,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
@@ -22,13 +22,13 @@ public class ExportCommand extends AbstractHandler implements IHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		List<Entry<?, ?>> selections = SelectionHelper.getSelection();
+		List<ViewInformation> selections = SelectionHelper.getSelection();
 
 		List<String> sourceNames = Lists.newArrayList();
-		for( Entry<?, ?> streamOrView : selections ) {
+		for( ViewInformation streamOrView : selections ) {
 			// FIXME: Use Resources
 			//Resource sourceName = streamOrView.getKey();
-			String sourceName = streamOrView.getKey().toString();
+			String sourceName = streamOrView.getName().getResourceName().toString();
 			if( !RCPP2PNewPlugIn.getP2PDictionary().isExported(sourceName) && !RCPP2PNewPlugIn.getP2PDictionary().isImported(sourceName)) {
 				sourceNames.add(sourceName);
 			}
