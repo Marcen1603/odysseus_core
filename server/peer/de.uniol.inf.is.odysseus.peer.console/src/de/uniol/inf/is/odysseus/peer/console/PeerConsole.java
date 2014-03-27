@@ -88,14 +88,14 @@ public class PeerConsole implements CommandProvider {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("---Peer commands---\n");
-		sb.append("    listPeers               - Lists all known peers with their ids\n");
-		sb.append("    resourceStatus          - Current status of local MEM, CPU, NET\n");
-		sb.append("    ping                    - Lists the current latencies to known peers\n");
-		sb.append("    peerStatus              - Summarizes the current peer status (peerName, ids, etc.)\n");
+		sb.append("    listPeers/lsPeers              - Lists all known peers with their ids\n");
+		sb.append("    resourceStatus                 - Current status of local MEM, CPU, NET\n");
+		sb.append("    ping                           - Lists the current latencies to known peers\n");
+		sb.append("    peerStatus                     - Summarizes the current peer status (peerName, ids, etc.)\n");
 		sb.append("\n");
-		sb.append("    log <level> <text>      - Creates a log statement\n");
-		sb.append("    setLog <logger> <level> - Sets the logging level of a specific logger\n");
-		sb.append("    listLoggers <filter>    - Lists all known loggers by name\n");
+		sb.append("    log <level> <text>             - Creates a log statement\n");
+		sb.append("    setLog <logger> <level>        - Sets the logging level of a specific logger\n");
+		sb.append("    listLoggers/lsLoggers <filter> - Lists all known loggers by name\n");
 		return sb.toString();
 	}
 
@@ -105,6 +105,10 @@ public class PeerConsole implements CommandProvider {
 		for( PeerID remotePeerID : remotePeerIDs ) {
 			System.out.println("\t" + p2pDictionary.getRemotePeerName(remotePeerID).get() + " = " + remotePeerID) ;
 		}
+	}
+	
+	public void _lsPeers(CommandInterpreter ci ) {
+		_listPeers(ci);
 	}
 	
 	public void _resourceStatus(CommandInterpreter ci) {
@@ -214,6 +218,10 @@ public class PeerConsole implements CommandProvider {
 				}
 			}
 		}
+	}
+	
+	public void _lsLoggers(CommandInterpreter ci ) {
+		_listLoggers(ci);
 	}
 	
 	public void _jxtaLogDestinations( CommandInterpreter ci ) {
