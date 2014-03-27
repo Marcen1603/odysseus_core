@@ -60,7 +60,6 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	private TableViewer peersTable;
 	private RepeatingJobThread refresher;
 	
-
 	@Override
 	public void createPartControl(Composite parent) {
 		p2pDictionary = RCPP2PNewPlugIn.getP2PDictionary();
@@ -367,7 +366,17 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		refresher = new RepeatingJobThread(REFRESH_INTERVAL_MILLIS, "Refresher of PeerView") {
 			@Override
 			public void doJob() {
-				refreshUsagesAsync();
+				Display display = PlatformUI.getWorkbench().getDisplay();
+				if( !display.isDisposed() && !peersTable.getTable().isDisposed() ) {
+					display.asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							if(getViewSite().getPage().isPartVisible(PeerView.this)) {
+								refreshUsagesAsync();
+							}
+						}
+					});
+				}
 			}
 		};
 		refresher.start();
@@ -375,6 +384,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		warnImages = createWarnImages();
 
 		instance = this;
+		
 	}
 	
 	private void hideSelectionIfNeeded(final TableViewer tableViewer) {
