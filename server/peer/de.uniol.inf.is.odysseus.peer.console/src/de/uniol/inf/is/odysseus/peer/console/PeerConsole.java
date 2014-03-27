@@ -3,7 +3,9 @@ package de.uniol.inf.is.odysseus.peer.console;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 
 import net.jxta.peer.PeerID;
 
@@ -16,6 +18,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
@@ -30,13 +33,13 @@ import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 public class PeerConsole implements CommandProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerConsole.class);
-	
+
 	private static IP2PDictionary p2pDictionary;
 	private static IPeerResourceUsageManager peerResourceUsageManager;
 	private static IPingMap pingMap;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
-	
+
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
 		p2pDictionary = serv;
@@ -60,7 +63,7 @@ public class PeerConsole implements CommandProvider {
 			peerResourceUsageManager = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindPingMap(IPingMap serv) {
 		pingMap = serv;
@@ -84,7 +87,7 @@ public class PeerConsole implements CommandProvider {
 			p2pNetworkManager = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindPeerCommunicator(IPeerCommunicator serv) {
 		peerCommunicator = serv;
@@ -96,7 +99,7 @@ public class PeerConsole implements CommandProvider {
 			peerCommunicator = null;
 		}
 	}
-	
+
 	@Override
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
@@ -117,28 +120,32 @@ public class PeerConsole implements CommandProvider {
 	public void _listPeers(CommandInterpreter ci) {
 		ImmutableList<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
 		System.out.println("Remote peers known: " + remotePeerIDs.size());
-		for( PeerID remotePeerID : remotePeerIDs ) {
-			System.out.println("\t" + p2pDictionary.getRemotePeerName(remotePeerID).get() + " = " + remotePeerID) ;
+		
+		List<String> output = Lists.newLinkedList();
+		for (PeerID remotePeerID : remotePeerIDs) {
+			output.add(p2pDictionary.getRemotePeerName(remotePeerID).get() + " = " + remotePeerID);
 		}
+		
+		sortAndPrintList(output);
 	}
-	
-	public void _lsPeers(CommandInterpreter ci ) {
+
+	public void _lsPeers(CommandInterpreter ci) {
 		_listPeers(ci);
 	}
-	
+
 	public void _resourceStatus(CommandInterpreter ci) {
 		IResourceUsage u = peerResourceUsageManager.getLocalResourceUsage();
-		
+
 		System.out.println("Version " + toVersionString(u.getVersion()));
-		System.out.println("MEM: " + u.getMemFreeBytes() + " of " + u.getMemMaxBytes() + " Bytes free ( " + (((double)u.getMemFreeBytes() / u.getMemMaxBytes()) * 100.0 ) + " %)");
-		System.out.println("CPU: " + u.getCpuFree() + " of " + u.getCpuMax() + " free ( " + ((u.getCpuFree() / u.getCpuMax()) * 100.0 ) + " %)");
-		System.out.println("NET: Max   = " + u.getNetBandwidthMax() );
-		System.out.println("NET: Input = " + u.getNetInputRate() );
-		System.out.println("NET: Output= " + u.getNetOutputRate() );
+		System.out.println("MEM: " + u.getMemFreeBytes() + " of " + u.getMemMaxBytes() + " Bytes free ( " + (((double) u.getMemFreeBytes() / u.getMemMaxBytes()) * 100.0) + " %)");
+		System.out.println("CPU: " + u.getCpuFree() + " of " + u.getCpuMax() + " free ( " + ((u.getCpuFree() / u.getCpuMax()) * 100.0) + " %)");
+		System.out.println("NET: Max   = " + u.getNetBandwidthMax());
+		System.out.println("NET: Input = " + u.getNetInputRate());
+		System.out.println("NET: Output= " + u.getNetOutputRate());
 		System.out.println(u.getStoppedQueriesCount() + " queries stopped");
 		System.out.println(u.getRunningQueriesCount() + " queries running");
 	}
-	
+
 	private static String toVersionString(int[] version) {
 		return version[0] + "." + version[1] + "." + version[2] + "." + version[3];
 	}
@@ -146,15 +153,19 @@ public class PeerConsole implements CommandProvider {
 	public void _ping(CommandInterpreter ci) {
 		ImmutableCollection<PeerID> remotePeerIDs = pingMap.getRemotePeerIDs();
 		System.out.println("Current known ping(s):");
-		for( PeerID remotePeerID : remotePeerIDs ) {
+		
+		List<String> output = Lists.newLinkedList();
+		for (PeerID remotePeerID : remotePeerIDs) {
 			Optional<Double> optPing = pingMap.getPing(remotePeerID);
-			if( optPing.isPresent() ) {
-				System.out.println("\t" + p2pDictionary.getRemotePeerName(remotePeerID).get() + " : " + optPing.get());
+			if (optPing.isPresent()) {
+				output.add(p2pDictionary.getRemotePeerName(remotePeerID).get() + " : " + optPing.get());
 			}
 		}
+		
+		sortAndPrintList(output);
 	}
-	
-	public void _peerStatus(CommandInterpreter ci ) {
+
+	public void _peerStatus(CommandInterpreter ci) {
 		System.out.println("Peername: " + p2pNetworkManager.getLocalPeerName());
 		System.out.println("PeerID: " + p2pNetworkManager.getLocalPeerID());
 		System.out.println("Peergroup: " + p2pNetworkManager.getLocalPeerGroupName());
@@ -165,75 +176,75 @@ public class PeerConsole implements CommandProvider {
 		}
 		System.out.println("Port: " + p2pNetworkManager.getPort());
 	}
-	
-	public void _log(CommandInterpreter ci ) {
+
+	public void _log(CommandInterpreter ci) {
 		String logLevel = ci.nextArgument();
-		if( Strings.isNullOrEmpty(logLevel) ) {
+		if (Strings.isNullOrEmpty(logLevel)) {
 			System.out.println("usage: log <logLevel> <message>");
 			return;
 		}
-		
+
 		String text = ci.nextArgument();
-		if( Strings.isNullOrEmpty(text)) {
+		if (Strings.isNullOrEmpty(text)) {
 			System.out.println("usage: log <loglevel> <message>");
 			return;
 		}
-		
-		if( logLevel.equalsIgnoreCase("debug")) {
+
+		if (logLevel.equalsIgnoreCase("debug")) {
 			LOG.debug(text);
-		} else if( logLevel.equalsIgnoreCase("warn")) {
+		} else if (logLevel.equalsIgnoreCase("warn")) {
 			LOG.warn(text);
-		} else if( logLevel.equalsIgnoreCase("error")) {
+		} else if (logLevel.equalsIgnoreCase("error")) {
 			LOG.error(text);
-		} else if( logLevel.equalsIgnoreCase("trace")) {
+		} else if (logLevel.equalsIgnoreCase("trace")) {
 			LOG.trace(text);
-		} else if( logLevel.equalsIgnoreCase("info")) {
+		} else if (logLevel.equalsIgnoreCase("info")) {
 			LOG.trace(text);
 		} else {
 			System.out.println("Unknown loglevel! Valid: trace, info, debug, warn, error");
 		}
 	}
-	
-	public void _setLogger(CommandInterpreter ci ) {
+
+	public void _setLogger(CommandInterpreter ci) {
 		String loggerName = ci.nextArgument();
-		if( Strings.isNullOrEmpty(loggerName) ) {
+		if (Strings.isNullOrEmpty(loggerName)) {
 			System.out.println("usage: setlog <loggerName> <logLevel>");
 			return;
 		}
-		
+
 		String logLevel = ci.nextArgument();
-		if( Strings.isNullOrEmpty(logLevel) ) {
+		if (Strings.isNullOrEmpty(logLevel)) {
 			System.out.println("usage: setlog <loggerName> <logLevel>");
 			return;
 		}
-		
+
 		final int duration = tryToInt(ci.nextArgument());
-		
+
 		org.apache.log4j.Level level = null;
 		try {
 			level = org.apache.log4j.Level.toLevel(logLevel.toUpperCase());
-		} catch( Throwable t ) {
+		} catch (Throwable t) {
 			System.out.println("Level '" + logLevel + "' is invalid.");
 			return;
 		}
-		
+
 		final org.apache.log4j.Logger logger = org.apache.log4j.LogManager.getLogger(loggerName);
 		final org.apache.log4j.Level prevLevel = logger.getLevel();
 		logger.setLevel(level);
-				
+
 		System.out.println("Set level of logger '" + loggerName + "' to '" + level.toString() + "'");
-		
-		if( duration > 0 ) {
+
+		if (duration > 0) {
 			System.out.println("Level will be set back after " + duration + " ms");
-			
-			Thread t = new Thread( new Runnable() {
+
+			Thread t = new Thread(new Runnable() {
 				@Override
 				public void run() {
 					try {
 						Thread.sleep(duration);
 					} catch (InterruptedException e) {
 					}
-					
+
 					logger.setLevel(prevLevel);
 					System.out.println("Set level of logger '" + logger.getName() + "' back");
 				}
@@ -243,61 +254,80 @@ public class PeerConsole implements CommandProvider {
 			t.start();
 		}
 	}
-	
+
 	private static int tryToInt(String time) {
-		if( Strings.isNullOrEmpty(time)) {
+		if (Strings.isNullOrEmpty(time)) {
 			return 0;
 		}
-		
+
 		try {
 			return Integer.valueOf(time);
-		} catch( Throwable t ) {
+		} catch (Throwable t) {
 			return -1;
 		}
 	}
 
-	public void _listLoggers(CommandInterpreter ci ) {
+	public void _listLoggers(CommandInterpreter ci) {
 		String filter = ci.nextArgument();
-		
-		Enumeration<?> loggerNames = org.apache.log4j.LogManager.getCurrentLoggers(); 
-		while( loggerNames.hasMoreElements() ) {
-			org.apache.log4j.Logger elem = (org.apache.log4j.Logger)loggerNames.nextElement();
-			
-			if( elem.getLevel() != null ) {
-				if( Strings.isNullOrEmpty(filter) || (elem.getName().contains(filter))) {
-					System.out.println("\t" + elem.getName() + " = " + elem.getLevel());
+
+		Enumeration<?> loggerNames = org.apache.log4j.LogManager.getCurrentLoggers();
+		List<String> output = Lists.newLinkedList();
+		while (loggerNames.hasMoreElements()) {
+			org.apache.log4j.Logger elem = (org.apache.log4j.Logger) loggerNames.nextElement();
+
+			if (elem.getLevel() != null) {
+				if (Strings.isNullOrEmpty(filter) || (elem.getName().contains(filter))) {
+					output.add(elem.getName() + " = " + elem.getLevel());
 				}
 			}
 		}
+
+		sortAndPrintList(output);
 	}
-	
-	public void _lsLoggers(CommandInterpreter ci ) {
+
+	public void _lsLoggers(CommandInterpreter ci) {
 		_listLoggers(ci);
 	}
-	
-	public void _jxtaLogDestinations( CommandInterpreter ci ) {
-		if( JXTALoggingPlugIn.isLogging() ) {
+
+	public void _jxtaLogDestinations(CommandInterpreter ci) {
+		if (JXTALoggingPlugIn.isLogging()) {
 			System.out.println("Local peer receives log messages.");
 		}
 		Collection<PeerID> destinations = JxtaLoggingDestinations.getInstance().getDestinations();
-		if( !destinations.isEmpty() ) {
-			for( PeerID destination : destinations ) {
-				System.out.println(p2pDictionary.getRemotePeerName(destination).get());
+
+		if (!destinations.isEmpty()) {
+			List<String> output = Lists.newLinkedList();
+			for (PeerID destination : destinations) {
+				output.add(p2pDictionary.getRemotePeerName(destination).get());
 			}
+
+			sortAndPrintList(output);
 		} else {
 			System.out.println("No destination set.");
 		}
 	}
-	
-	public void _listEndpointConnections(CommandInterpreter ci ) {
+
+	public void _listEndpointConnections(CommandInterpreter ci) {
 		ImmutableCollection<PeerID> connectedPeers = peerCommunicator.getConnectedPeers();
-		
+
 		System.out.println("Connected peers count: " + connectedPeers.size());
-		for( PeerID remotePeerID : connectedPeers ) {
-			System.out.println("\t" + p2pDictionary.getRemotePeerName(remotePeerID).get() + " = " + remotePeerID) ;
+		List<String> output = Lists.newLinkedList();
+		for (PeerID remotePeerID : connectedPeers) {
+			output.add(p2pDictionary.getRemotePeerName(remotePeerID).get() + " = " + remotePeerID);
+		}
+
+		sortAndPrintList(output);
+	}
+
+	private static void sortAndPrintList(List<String> list) {
+		if (list != null && !list.isEmpty()) {
+			Collections.sort(list);
+			for (String line : list) {
+				System.out.println("\t" + line);
+			}
 		}
 	}
-	
+
 	public void _lsEndpointConnections(CommandInterpreter ci) {
 		_listEndpointConnections(ci);
 	}
