@@ -36,6 +36,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
@@ -431,7 +433,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			throw new PeerException("Source " + realSourceName + " is imported and cannot be exported directly");
 		}
 
-		ILogicalOperator stream = getDataDictionary().getStreamForTransformation(realSourceName, SessionManagementService.getActiveSession());
+		ILogicalOperator stream = copyLogicalPlan(getDataDictionary().getStreamForTransformation(realSourceName, SessionManagementService.getActiveSession()));
 		
 		if (stream != null) {
 			if( isStreamAView(stream) ) {
@@ -447,6 +449,17 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		}
 
 		throw new PeerException("Could not find view or stream '" + realSourceName + "' in datadictionary");
+	}
+	
+	private static ILogicalOperator copyLogicalPlan(ILogicalOperator originPlan) {
+		Preconditions.checkNotNull(originPlan, "Logical plan to copy must not be null!");
+
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(originPlan.getOwner());
+
+		GenericGraphWalker<ILogicalOperator> walker = new GenericGraphWalker<>();
+
+		walker.prefixWalk(originPlan, copyVisitor);
+		return copyVisitor.getResult();
 	}
 
 	private boolean isStreamAView(ILogicalOperator stream) {
