@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
 
+import java.util.Map.Entry;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -25,6 +27,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * @author DGeesen
@@ -32,13 +35,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
  */
 public class ResolvedSDFAttributeParameterPresentation extends AbstractParameterPresentation<String> {
 
-	private int port = 0;
 	private Combo combo;
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#getPQLString()
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
+	 * IParameterPresentation#getPQLString()
 	 */
 	@Override
 	public String getPQLString() {
@@ -48,7 +51,9 @@ public class ResolvedSDFAttributeParameterPresentation extends AbstractParameter
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#saveValueToXML(org.w3c.dom.Node, org.w3c.dom.Document)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
+	 * IParameterPresentation#saveValueToXML(org.w3c.dom.Node,
+	 * org.w3c.dom.Document)
 	 */
 	@Override
 	public void saveValueToXML(Node parent, Document builder) {
@@ -58,7 +63,8 @@ public class ResolvedSDFAttributeParameterPresentation extends AbstractParameter
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#loadValueFromXML(org.w3c.dom.Node)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
+	 * IParameterPresentation#loadValueFromXML(org.w3c.dom.Node)
 	 */
 	@Override
 	public void loadValueFromXML(Node parent) {
@@ -73,7 +79,9 @@ public class ResolvedSDFAttributeParameterPresentation extends AbstractParameter
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.AbstractParameterPresentation#createParameterWidget(org.eclipse.swt.widgets.Composite)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
+	 * AbstractParameterPresentation
+	 * #createParameterWidget(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected Control createParameterWidget(Composite parent) {
@@ -81,11 +89,13 @@ public class ResolvedSDFAttributeParameterPresentation extends AbstractParameter
 		combo = new Combo(parent, SWT.BORDER | SWT.DROP_DOWN);
 		int select = 0;
 		combo.add("");
-		if (getOperator().getInputSchemas() != null && getOperator().getInputSchemas().get(port) != null) {
-			for (SDFAttribute posVal : getOperator().getInputSchemas().get(port).getAttributes()) {
-				combo.add(posVal.getURI());
-				if (posVal.getURI().equals(attribute)) {
-					select = combo.getItemCount() - 1;
+		if (getOperator().getInputSchemas() != null) {
+			for (Entry<Integer, SDFSchema> e : getOperator().getInputSchemas().entrySet()) {
+				for (SDFAttribute posVal : e.getValue().getAttributes()) {
+					combo.add(posVal.getURI());
+					if (posVal.getURI().equals(attribute)) {
+						select = combo.getItemCount() - 1;
+					}
 				}
 			}
 		} else {
