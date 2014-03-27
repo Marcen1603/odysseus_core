@@ -17,9 +17,9 @@ public class JXTALoggingPlugIn implements BundleActivator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JXTALoggingPlugIn.class);
 	private static final P2PNetworkManagerListener P2P_NETWORKMANAGER_LISTENER = new P2PNetworkManagerListener();
-	private static final AdvertisementManagerListener ADVERTISEMENT_MANAGER_LISTENER = new AdvertisementManagerListener();
+	private static final LogAdvertisementReceiver ADVERTISEMENT_MANAGER_LISTENER = new LogAdvertisementReceiver();
 	private static final LogMessageReceiver LOGMESSAGE_RECEIVER = new LogMessageReceiver();
-	private static final P2PDictionaryListener P2PDICTIONARY_LISTENER = new P2PDictionaryListener();
+	private static final RemotePeerChangeListener P2PDICTIONARY_LISTENER = new RemotePeerChangeListener();
 
 	private static IPeerCommunicator peerCommunicator;
 	private static IP2PDictionary p2pDictionary;

@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 
-public class AdvertisementManagerListener implements IAdvertisementListener {
+public class LogAdvertisementReceiver implements IAdvertisementListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AdvertisementManagerListener.class);
+	private static final Logger LOG = LoggerFactory.getLogger(LogAdvertisementReceiver.class);
 	
 	@Override
 	public void advertisementAdded(IAdvertisementManager sender, Advertisement adv) {
