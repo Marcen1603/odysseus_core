@@ -14,10 +14,11 @@
 
    <windowImages/>
 
-   <launcher>
+   <launcher name="odysseus">
+      <macosx icon="/de.uniol.inf.is.odysseus.core/icons/Odysseus-icons-mac.icns"/>
       <solaris/>
-      <win useIco="false">
-         <ico path="/de.uniol.inf.is.odysseus.rcp.starter/icons/Odysseus.ico"/>
+      <win useIco="true">
+         <ico path="/de.uniol.inf.is.odysseus.core/icons/Odysseus-icons-win.ico"/>
          <bmp/>
       </win>
    </launcher>

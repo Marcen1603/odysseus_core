@@ -28,17 +28,11 @@ http://odysseus.informatik.uni-oldenburg.de/
    <splash
       location="de.uniol.inf.is.odysseus.rcp.starter" />
    <launcher name="studio">
-      <macosx icon="/de.uniol.inf.is.odysseus.rcp.benchmarker.gui/icons/alt_launcher.icns"/>
+      <macosx icon="/de.uniol.inf.is.odysseus.core/icons/Odysseus-icons-mac.icns"/>
       <solaris/>
       <win useIco="true">
-         <ico path="/de.uniol.inf.is.odysseus.rcp.starter/icons/Odysseus.ico"/>
-         <bmp
-            winSmallHigh="/de.uniol.inf.is.odysseus.rcp.starter/icons/16_16_32.bmp"
-            winSmallLow="/de.uniol.inf.is.odysseus.rcp.starter/icons/16_16_8.bmp"
-            winMediumHigh="/de.uniol.inf.is.odysseus.rcp.starter/icons/32_32_32.bmp"
-            winMediumLow="/de.uniol.inf.is.odysseus.rcp.starter/icons/32_32_8.bmp"
-            winLargeHigh="/de.uniol.inf.is.odysseus.rcp.starter/icons/48_48_32.bmp"
-            winLargeLow="/de.uniol.inf.is.odysseus.rcp.starter/icons/48_48_8.bmp"/>
+         <ico path="/de.uniol.inf.is.odysseus.core/icons/Odysseus-icons-win.ico"/>
+         <bmp/>
       </win>
    </launcher>
 
