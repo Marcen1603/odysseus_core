@@ -2,9 +2,11 @@ package de.uniol.inf.is.odysseus.peer.console;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
 
 import net.jxta.peer.PeerID;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.slf4j.Logger;
@@ -83,11 +85,14 @@ public class PeerConsole implements CommandProvider {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("---Peer commands---\n");
-		sb.append("    listPeers      - Lists all known peers with their ids\n");
-		sb.append("    resourceStatus - Current status of local MEM, CPU, NET\n");
-		sb.append("    ping           - Lists the current latencies to known peers\n");
-		sb.append("    peerStatus     - Summarizes the current peer status (peerName, ids, etc.)\n");
-		sb.append("    log            - Creates a logging statement\n");
+		sb.append("    listPeers               - Lists all known peers with their ids\n");
+		sb.append("    resourceStatus          - Current status of local MEM, CPU, NET\n");
+		sb.append("    ping                    - Lists the current latencies to known peers\n");
+		sb.append("    peerStatus              - Summarizes the current peer status (peerName, ids, etc.)\n");
+		sb.append("\n");
+		sb.append("    log <level> <text>	   - Creates a log statement\n");
+		sb.append("    setLog <logger> <level> - Sets the logging level of a specific logger\n");
+		sb.append("    listLoggers <filter>	   - Lists all known loggers by name\n");
 		return sb.toString();
 	}
 
@@ -164,6 +169,47 @@ public class PeerConsole implements CommandProvider {
 			LOG.trace(text);
 		} else {
 			System.out.println("Unknown loglevel! Valid: trace, info, debug, warn, error");
+		}
+	}
+	
+	public void _setLogger(CommandInterpreter ci ) {
+		String loggerName = ci.nextArgument();
+		if( Strings.isNullOrEmpty(loggerName) ) {
+			System.out.println("usage: setlog <loggerName> <logLevel>");
+			return;
+		}
+		
+		String logLevel = ci.nextArgument();
+		if( Strings.isNullOrEmpty(logLevel) ) {
+			System.out.println("usage: setlog <loggerName> <logLevel>");
+			return;
+		}
+		org.apache.log4j.Level level = null;
+		try {
+			level = org.apache.log4j.Level.toLevel(logLevel.toUpperCase());
+		} catch( Throwable t ) {
+			System.out.println("Level '" + logLevel + "' is invalid.");
+			return;
+		}
+		
+		org.apache.log4j.Logger logger = org.apache.log4j.LogManager.getLogger(loggerName);
+		logger.setLevel(level);
+		
+		System.out.println("Set level of logger '" + loggerName + "' to '" + level.toString() + "'");
+	}
+	
+	public void _listLoggers(CommandInterpreter ci ) {
+		String filter = ci.nextArgument();
+		
+		Enumeration<?> loggerNames = org.apache.log4j.LogManager.getCurrentLoggers(); 
+		while( loggerNames.hasMoreElements() ) {
+			org.apache.log4j.Logger elem = (org.apache.log4j.Logger)loggerNames.nextElement();
+			
+			if( elem.getLevel() != null ) {
+				if( Strings.isNullOrEmpty(filter) || (elem.getName().contains(filter))) {
+					System.out.println("\t" + elem.getName() + " = " + elem.getLevel());
+				}
+			}
 		}
 	}
 }
