@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.logging.impl;
 
 import org.apache.log4j.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
@@ -10,6 +12,8 @@ import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
 
 public class ConsoleJxtaLogMessageReceiver implements IJxtaLogMessageReceiver {
 
+	private static final Logger LOG = LoggerFactory.getLogger(ConsoleJxtaLogMessageReceiver.class);
+	
 	@Override
 	public void logMessage(PeerID senderPeerID, int logLevel, String loggerName, String text) {
 		String peerName = determinePeerName(senderPeerID);
@@ -20,7 +24,9 @@ public class ConsoleJxtaLogMessageReceiver implements IJxtaLogMessageReceiver {
 	private static void printPeerMessage(int logLevel, String peerName, String loggerName, String messageText) {
 		String levelStr = toLevel(logLevel);
 
-		System.out.println(peerName + " [" + levelStr + "] " + truncToClass(loggerName) + " - " + messageText);
+		if( levelStr != null ) {
+			System.out.println(peerName + " [" + levelStr + "] " + truncToClass(loggerName) + " - " + messageText);
+		}
 	}
 
 	private static String truncToClass(String loggerName) {
@@ -31,20 +37,20 @@ public class ConsoleJxtaLogMessageReceiver implements IJxtaLogMessageReceiver {
 	private static String toLevel(int logLevel) {
 		switch (logLevel) {
 		case Level.TRACE_INT:
-			return "TRACE";
+			return LOG.isTraceEnabled() ? "TRACE" : null;
 
 		case Level.DEBUG_INT:
-			return "DEBUG";
+			return LOG.isDebugEnabled() ? "DEBUG" : null;
 
 		case Level.ERROR_INT:
 		case Level.FATAL_INT:
-			return "ERROR";
+			return LOG.isErrorEnabled() ? "ERROR" : null;
 
 		case Level.INFO_INT:
-			return "INFO";
+			return LOG.isInfoEnabled() ? "INFO" : null;
 
 		case Level.WARN_INT:
-			return "WARN";
+			return LOG.isWarnEnabled() ? "WARN" : null;
 
 		default:
 			return "MSG";
