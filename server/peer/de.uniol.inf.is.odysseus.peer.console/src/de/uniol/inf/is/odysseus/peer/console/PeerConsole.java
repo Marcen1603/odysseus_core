@@ -7,7 +7,6 @@ import java.util.Enumeration;
 
 import net.jxta.peer.PeerID;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.slf4j.Logger;
@@ -19,6 +18,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
 import de.uniol.inf.is.odysseus.peer.logging.JxtaLoggingDestinations;
@@ -35,6 +35,7 @@ public class PeerConsole implements CommandProvider {
 	private static IPeerResourceUsageManager peerResourceUsageManager;
 	private static IPingMap pingMap;
 	private static IP2PNetworkManager p2pNetworkManager;
+	private static IPeerCommunicator peerCommunicator;
 	
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
@@ -84,6 +85,18 @@ public class PeerConsole implements CommandProvider {
 		}
 	}
 	
+	// called by OSGi-DS
+	public static void bindPeerCommunicator(IPeerCommunicator serv) {
+		peerCommunicator = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPeerCommunicator(IPeerCommunicator serv) {
+		if (peerCommunicator == serv) {
+			peerCommunicator = null;
+		}
+	}
+	
 	@Override
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
@@ -96,6 +109,7 @@ public class PeerConsole implements CommandProvider {
 		sb.append("    log <level> <text>             - Creates a log statement\n");
 		sb.append("    setLog <logger> <level>        - Sets the logging level of a specific logger\n");
 		sb.append("    listLoggers/lsLoggers <filter> - Lists all known loggers by name\n");
+		sb.append("    jxtaLogDestinations            - Lists all peers to send log messages to\n");
 		return sb.toString();
 	}
 
@@ -235,6 +249,15 @@ public class PeerConsole implements CommandProvider {
 			}
 		} else {
 			System.out.println("No destination set.");
+		}
+	}
+	
+	public void _listEndpointConnections(CommandInterpreter ci ) {
+		ImmutableCollection<PeerID> connectedPeers = peerCommunicator.getConnectedPeers();
+		
+		System.out.println("Connected peers count: " + connectedPeers.size());
+		for( PeerID remotePeerID : connectedPeers ) {
+			System.out.println("\t" + p2pDictionary.getRemotePeerName(remotePeerID).get() + " = " + remotePeerID) ;
 		}
 	}
 }
