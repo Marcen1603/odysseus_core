@@ -19,7 +19,7 @@
    <launcher name="odysseus">
       <solaris/>
       <win useIco="true">
-         <ico path="/de.uniol.inf.is.odysseus.client.starter/icons/Odysseus-icons-win.ico"/>
+         <ico path="/de.uniol.inf.is.odysseus.core/icons/Odysseus-icons-win.ico"/>
          <bmp/>
       </win>
    </launcher>
