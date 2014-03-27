@@ -55,15 +55,13 @@ public class BrokerSubscription<T extends IStreamObject<?>> implements Comparabl
 	public boolean hasTopics() {
 		if (!topics.isEmpty())
 			return true;
-		else
-			return false;
+		return false;
 	}
 
 	public boolean hasPredicates() {
 		if (!predicates.isEmpty())
 			return true;
-		else
-			return false;
+		return false;
 	}
 
 	public SubscribePO<T> getSubscriber() {
@@ -121,15 +119,14 @@ public class BrokerSubscription<T extends IStreamObject<?>> implements Comparabl
 	public int compareTo(BrokerSubscription<T> other) {
 		if (weightedPredicates.isEmpty()){
 			return -1;			
-		} else {
-			// get highest predicate weight of this subscription
-			Integer highestWeight = this.getHighestPredicateWeight();
-			
-			// get highest predicate weight of other subscription
-			Integer highestWeightOther = other.getHighestPredicateWeight();
-			
-			return highestWeight.compareTo(highestWeightOther);
 		}
+		// get highest predicate weight of this subscription
+		Integer highestWeight = this.getHighestPredicateWeight();
+		
+		// get highest predicate weight of other subscription
+		Integer highestWeightOther = other.getHighestPredicateWeight();
+		
+		return highestWeight.compareTo(highestWeightOther);
 		
 	}
 

@@ -130,29 +130,27 @@ public class BrokerTopologyRegistry {
 					pendingSubscribers.remove(domain.toLowerCase());
 				}
 				return topology;				
-			} else {
-				// Broker with domain exists, but has a different type
-				logger.info("Domain: '"+ domain +"' already exists with a different topology type. It's not possible to register a Topology with the same domain and a different topologyType.");
-				return null;
 			}
-		} else {
-			// Broker with type and domain does not exists, create new Instance
-			IBrokerTopology<?> topology = brokerTopologyTypes.get(topologyType.toLowerCase());
-			IBrokerTopology<?> ret = topology.<T>getInstance(domain.toLowerCase());
-			if (ret.needsRouting()){
-				ret.setRoutingType(routing);
-			}
-			brokerTopologies.put(domain.toLowerCase(), ret);
-			// if peending subscribers exists, add them to topology 
-			if (pendingSubscribers.containsKey(domain.toLowerCase())){
-				for (SubscribePO<?> pendingSubscriber : pendingSubscribers.get(domain.toLowerCase())) {
-					pendingSubscriber.subscribe(ret);
-				}
-				// and remove from pending list
-				pendingSubscribers.remove(domain.toLowerCase());
-			}		
-			return ret;
+			// Broker with domain exists, but has a different type
+			logger.info("Domain: '"+ domain +"' already exists with a different topology type. It's not possible to register a Topology with the same domain and a different topologyType.");
+			return null;
 		}
+		// Broker with type and domain does not exists, create new Instance
+		IBrokerTopology<?> topology = brokerTopologyTypes.get(topologyType.toLowerCase());
+		IBrokerTopology<?> ret = topology.<T>getInstance(domain.toLowerCase());
+		if (ret.needsRouting()){
+			ret.setRoutingType(routing);
+		}
+		brokerTopologies.put(domain.toLowerCase(), ret);
+		// if peending subscribers exists, add them to topology 
+		if (pendingSubscribers.containsKey(domain.toLowerCase())){
+			for (SubscribePO<?> pendingSubscriber : pendingSubscribers.get(domain.toLowerCase())) {
+				pendingSubscriber.subscribe(ret);
+			}
+			// and remove from pending list
+			pendingSubscribers.remove(domain.toLowerCase());
+		}		
+		return ret;
 	}
 	
 	/**
@@ -164,9 +162,8 @@ public class BrokerTopologyRegistry {
 		// Check if domain exists
 		if (brokerTopologies.containsKey(domain.toLowerCase())){
 			return brokerTopologies.get(domain.toLowerCase());			
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	/**

@@ -202,30 +202,27 @@ public class DescriptiveStatistics implements IDescriptiveStatistics{
 				floatingFormatter.format(getPercentile(75))+delimiter+
 				floatingFormatter.format(getPercentile(90))+delimiter+
 				floatingFormatter.format(getPercentile(95));
-		}else{
-			if (floatingFormatter != null){
-				return getMin()+delimiter+getMax()+delimiter+floatingFormatter.format(getMean())+delimiter+getN()+delimiter+
-						floatingFormatter.format(getStandardDeviation())+delimiter+floatingFormatter.format(getVariance())+delimiter
-								+floatingFormatter.format(getPercentile(5))+delimiter+
-								floatingFormatter.format(getPercentile(10))+delimiter+
-								floatingFormatter.format(getPercentile(25))+delimiter+
-								floatingFormatter.format(getPercentile(50))+delimiter+
-								floatingFormatter.format(getPercentile(75))+delimiter+
-								floatingFormatter.format(getPercentile(90))+delimiter+
-								floatingFormatter.format(getPercentile(95));				
-			}else{
-				return ""+getMin()+delimiter+getMax()+delimiter+getMean()+delimiter+getN()+delimiter+
-						getStandardDeviation()+delimiter+getVariance()+delimiter+
-								getPercentile(5)+delimiter+
-								getPercentile(10)+delimiter+
-								getPercentile(25)+delimiter+
-								getPercentile(50)+delimiter+
-								getPercentile(75)+delimiter+
-								getPercentile(90)+delimiter+
-								getPercentile(95);
-
-			}
 		}
+		if (floatingFormatter != null){
+			return getMin()+delimiter+getMax()+delimiter+floatingFormatter.format(getMean())+delimiter+getN()+delimiter+
+					floatingFormatter.format(getStandardDeviation())+delimiter+floatingFormatter.format(getVariance())+delimiter
+							+floatingFormatter.format(getPercentile(5))+delimiter+
+							floatingFormatter.format(getPercentile(10))+delimiter+
+							floatingFormatter.format(getPercentile(25))+delimiter+
+							floatingFormatter.format(getPercentile(50))+delimiter+
+							floatingFormatter.format(getPercentile(75))+delimiter+
+							floatingFormatter.format(getPercentile(90))+delimiter+
+							floatingFormatter.format(getPercentile(95));				
+		}
+		return ""+getMin()+delimiter+getMax()+delimiter+getMean()+delimiter+getN()+delimiter+
+				getStandardDeviation()+delimiter+getVariance()+delimiter+
+						getPercentile(5)+delimiter+
+						getPercentile(10)+delimiter+
+						getPercentile(25)+delimiter+
+						getPercentile(50)+delimiter+
+						getPercentile(75)+delimiter+
+						getPercentile(90)+delimiter+
+						getPercentile(95);
 		
 	}
 	
