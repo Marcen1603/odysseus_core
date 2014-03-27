@@ -108,7 +108,7 @@ public class PeerConsole implements CommandProvider {
 		sb.append("    listEndpointConnections        - Lists all peers which have a true endpoint connection\n");
 		sb.append("\n");
 		sb.append("    log <level> <text>             - Creates a log statement\n");
-		sb.append("    setLog <logger> <level>        - Sets the logging level of a specific logger\n");
+		sb.append("    setLogger <logger> <level>     - Sets the logging level of a specific logger\n");
 		sb.append("    listLoggers/lsLoggers <filter> - Lists all known loggers by name\n");
 		sb.append("    jxtaLogDestinations            - Lists all peers to send log messages to\n");
 		return sb.toString();
@@ -206,6 +206,9 @@ public class PeerConsole implements CommandProvider {
 			System.out.println("usage: setlog <loggerName> <logLevel>");
 			return;
 		}
+		
+		final int duration = tryToInt(ci.nextArgument());
+		
 		org.apache.log4j.Level level = null;
 		try {
 			level = org.apache.log4j.Level.toLevel(logLevel.toUpperCase());
@@ -214,12 +217,45 @@ public class PeerConsole implements CommandProvider {
 			return;
 		}
 		
-		org.apache.log4j.Logger logger = org.apache.log4j.LogManager.getLogger(loggerName);
+		final org.apache.log4j.Logger logger = org.apache.log4j.LogManager.getLogger(loggerName);
+		final org.apache.log4j.Level prevLevel = logger.getLevel();
 		logger.setLevel(level);
-		
+				
 		System.out.println("Set level of logger '" + loggerName + "' to '" + level.toString() + "'");
+		
+		if( duration > 0 ) {
+			System.out.println("Level will be set back after " + duration + " ms");
+			
+			Thread t = new Thread( new Runnable() {
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(duration);
+					} catch (InterruptedException e) {
+					}
+					
+					logger.setLevel(prevLevel);
+					System.out.println("Set level of logger '" + logger.getName() + "' back");
+				}
+			});
+			t.setDaemon(true);
+			t.setName("Logger reset waiting");
+			t.start();
+		}
 	}
 	
+	private static int tryToInt(String time) {
+		if( Strings.isNullOrEmpty(time)) {
+			return 0;
+		}
+		
+		try {
+			return Integer.valueOf(time);
+		} catch( Throwable t ) {
+			return -1;
+		}
+	}
+
 	public void _listLoggers(CommandInterpreter ci ) {
 		String filter = ci.nextArgument();
 		
