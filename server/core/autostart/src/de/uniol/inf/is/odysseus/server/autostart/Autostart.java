@@ -76,7 +76,7 @@ public class Autostart implements BundleActivator {
 						}
 						in.close();
 					} else {
-						LOG.debug(" no autostartfile found");
+						LOG.debug("No autostartfile found");
 					}
 				}
 			} catch (Exception e) {
