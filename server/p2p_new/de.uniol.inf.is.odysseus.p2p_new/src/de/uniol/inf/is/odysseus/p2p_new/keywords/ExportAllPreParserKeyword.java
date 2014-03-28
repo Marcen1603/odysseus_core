@@ -47,12 +47,10 @@ public class ExportAllPreParserKeyword extends AbstractPreParserKeyword {
 
 		List<String> sources = determineCurrentSourceNames();
 		List<String> exportableSources = determineExportableSources(sources);
-		for (String exportableSource : exportableSources) {
-			try {
-				P2PDictionary.getInstance().exportSources(sources, transCfgName);
-			} catch (PeerException e) {
-				throw new OdysseusScriptException("Could not export " + exportableSource, e);
-			}
+		try {
+			P2PDictionary.getInstance().exportSources(exportableSources, transCfgName);
+		} catch (PeerException e) {
+			throw new OdysseusScriptException("Could not export " + exportableSources, e);
 		}
 
 		return null;
@@ -60,8 +58,8 @@ public class ExportAllPreParserKeyword extends AbstractPreParserKeyword {
 
 	private static List<String> determineExportableSources(List<String> sources) {
 		List<String> exportableSources = Lists.newArrayList();
-		for( String source : sources ) {
-			if( !P2PDictionary.getInstance().isExported(source)) {
+		for (String source : sources) {
+			if (!P2PDictionary.getInstance().isExported(source)) {
 				exportableSources.add(source);
 			}
 		}
