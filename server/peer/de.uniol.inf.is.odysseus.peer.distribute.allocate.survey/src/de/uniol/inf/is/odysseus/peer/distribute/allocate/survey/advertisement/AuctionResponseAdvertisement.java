@@ -19,6 +19,7 @@ import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 
+import org.apache.commons.math.geometry.Vector3D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,11 +37,15 @@ public final class AuctionResponseAdvertisement extends Advertisement implements
 	private static final String AUCTION_ID_TAG = "auctionId";
 	private static final String BID_TAG = "bid";
 	private static final String PEER_ID_TAG = "peerid";
+	private static final String POSITION_X_ID_TAG = "positionX";
+	private static final String POSITION_Y_ID_TAG = "positionY";
+	private static final String POSITION_Z_ID_TAG = "positionZ";
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, AUCTION_ID_TAG };
 
 	private ID id;
 	private Bid bid;
 	private ID auctionId;
+	private Vector3D pingMapPosition;
 
 	public static String getAdvertisementType() {
 		return ADVERTISEMENT_TYPE;
@@ -66,6 +71,7 @@ public final class AuctionResponseAdvertisement extends Advertisement implements
 		this.id = adv.id;
 		this.auctionId = adv.auctionId;
 		this.bid = adv.bid;
+		this.pingMapPosition = adv.pingMapPosition;
 	}
 
 	@Override
@@ -97,6 +103,9 @@ public final class AuctionResponseAdvertisement extends Advertisement implements
 		appendElement(doc, AUCTION_ID_TAG, auctionId.toString());
 		appendElement(doc, PEER_ID_TAG, bid.getBidderPeerID().toString());
 		appendElement(doc, BID_TAG, String.valueOf(bid.getValue()));
+		appendElement(doc, POSITION_X_ID_TAG, String.valueOf(pingMapPosition.getX()));
+		appendElement(doc, POSITION_Y_ID_TAG, String.valueOf(pingMapPosition.getY()));
+		appendElement(doc, POSITION_Z_ID_TAG, String.valueOf(pingMapPosition.getZ()));
 
 		return doc;
 	}
@@ -130,12 +139,21 @@ public final class AuctionResponseAdvertisement extends Advertisement implements
 	public void setAuctionId(ID auctionId) {
 		this.auctionId = auctionId;
 	}
+	
+	public Vector3D getPingMapPosition() {
+		return pingMapPosition;
+	}
+	
+	public void setPingMapPosition(Vector3D pingMapPosition) {
+		this.pingMapPosition = pingMapPosition;
+	}
 
 	private void determineFields(TextElement<?> root) {
 		final Enumeration<?> elements = root.getChildren();
 
 		PeerID bidder = null;
 		double bidValue = -1;
+		Vector3D pos = new Vector3D(0, 0, 0);
 		while (elements.hasMoreElements()) {
 			final TextElement<?> elem = (TextElement<?>) elements.nextElement();
 			if (elem.getName().equals(ID_TAG)) {
@@ -146,9 +164,16 @@ public final class AuctionResponseAdvertisement extends Advertisement implements
 				bidder = convertToPeerID(elem.getTextValue());
 			} else if (elem.getName().equals(BID_TAG)) {
 				bidValue = Double.valueOf(elem.getTextValue());
+			} else if( elem.getName().equals(POSITION_X_ID_TAG)) {
+				pos.add(new Vector3D(Double.valueOf(elem.getTextValue()), 0, 0));
+			} else if( elem.getName().equals(POSITION_Y_ID_TAG)) {
+				pos.add(new Vector3D(0, Double.valueOf(elem.getTextValue()), 0));
+			} else if( elem.getName().equals(POSITION_Z_ID_TAG)) {
+				pos.add(new Vector3D(0, 0, Double.valueOf(elem.getTextValue())));
 			}
 		}
 		
+		pingMapPosition = pos;
 		bid = new Bid(bidder, bidValue);
 	}
 

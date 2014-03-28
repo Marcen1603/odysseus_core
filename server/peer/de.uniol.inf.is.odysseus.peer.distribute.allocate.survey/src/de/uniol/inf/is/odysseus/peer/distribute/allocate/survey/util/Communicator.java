@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.Au
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionResponseAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.Bid;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
+import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 
 public class Communicator implements IAdvertisementListener {
 
@@ -40,6 +41,7 @@ public class Communicator implements IAdvertisementListener {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IP2PDictionary p2pDictionary;
 	private static IJxtaServicesProvider jxtaServicesProvider;
+	private static IPingMap pingMap;
 
 	private final ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -78,6 +80,18 @@ public class Communicator implements IAdvertisementListener {
 	public static void unbindJxtaServicesProvider(IJxtaServicesProvider serv) {
 		if (jxtaServicesProvider == serv) {
 			jxtaServicesProvider = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindPingMap(IPingMap serv) {
+		pingMap = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPingMap(IPingMap serv) {
+		if (pingMap == serv) {
+			pingMap = null;
 		}
 	}
 
@@ -147,6 +161,7 @@ public class Communicator implements IAdvertisementListener {
 				auctionBidAdvertisement.setAuctionId(adv.getAuctionId());
 				auctionBidAdvertisement.setBid(new Bid(p2pNetworkManager.getLocalPeerID(), bidValue));
 				auctionBidAdvertisement.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
+				auctionBidAdvertisement.setPingMapPosition(pingMap.getLocalPosition());
 
 				jxtaServicesProvider.remotePublishToPeer(auctionBidAdvertisement, adv.getOwnerPeerId(), WAIT_TIME_MILLIS);
 
@@ -168,6 +183,8 @@ public class Communicator implements IAdvertisementListener {
 				mailbox.add(advertisement.getBid());
 				LOG.debug("Received bid from {} valued {}", p2pDictionary.getRemotePeerName(advertisement.getBid().getBidderPeerID()), advertisement.getBid().getValue());
 			}
+			
+			pingMap.setPosition(advertisement.getBid().getBidderPeerID(), advertisement.getPingMapPosition());
 		}
 	}
 

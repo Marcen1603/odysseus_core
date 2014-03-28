@@ -120,11 +120,7 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		Preconditions.checkNotNull(position, "New position for update must not be null!");
 		Preconditions.checkArgument(latency >= 0, "Latency to set in ping map must be positive!");
 		
-		PingMapNode node = nodes.get(peerID);
-		if( node == null ) {
-			node = new PingMapNode(peerID);
-			nodes.put(peerID, node);
-		}
+		PingMapNode node = getPingMapNode(peerID);
 		node.setPosition(position);
 		
 		if( LOG.isDebugEnabled() ) {
@@ -135,7 +131,6 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		
 		if( Math.abs(direction.getX()) < 0.00000001 && Math.abs(direction.getY()) < 0.00000001 && Math.abs(direction.getZ()) < 0.00000001) {
 			direction = new Vector3D(RAND.nextDouble() * 1000.0, RAND.nextDouble() * 1000.0, RAND.nextDouble() * 1000.0);
-//			direction = new Vector3D(RAND.nextDouble() * 1000.0, RAND.nextDouble() * 1000.0, 0.0);
 		}
 		
 		double dirLength = getLength(direction);
@@ -152,6 +147,25 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		firePingMapChangeEvent();
 		
 		LOG.debug("Local position is now {}", localPosition);
+	}
+
+	private PingMapNode getPingMapNode(PeerID peerID) {
+		PingMapNode node = nodes.get(peerID);
+		if( node == null ) {
+			node = new PingMapNode(peerID);
+			nodes.put(peerID, node);
+		}
+		return node;
+	}
+	
+	@Override
+	public void setPosition( PeerID peerID, Vector3D position ) {
+		Preconditions.checkNotNull(peerID, "peerID must not be null!");
+		Preconditions.checkNotNull(position, "Position must not be null!");
+		Preconditions.checkArgument(!peerID.equals(networkManager.getLocalPeerID()), "Cannot set position of local peer directly!");
+		
+		PingMapNode node = getPingMapNode(peerID);
+		node.setPosition(position);
 	}
 
 	private void firePingMapChangeEvent() {

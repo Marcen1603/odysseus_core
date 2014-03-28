@@ -16,7 +16,9 @@ public interface IPingMap {
 	public ImmutableCollection<PeerID> getRemotePeerIDs();
 	public PeerID getLocalPeerID();
 	public Vector3D getLocalPosition();
+	public void setPosition(PeerID peerID, Vector3D position);
 
 	public void addListener( IPingMapListener listener );
 	public void removeListener( IPingMapListener listener );
+	
 }
