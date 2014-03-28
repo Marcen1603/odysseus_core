@@ -152,8 +152,6 @@ public class PeerManager implements IPeerCommunicatorListener {
 				}
 			}
 		}
-		
-		
 	}
 
 	@Override
