@@ -9,9 +9,6 @@ import java.util.concurrent.Future;
 
 import net.jxta.peer.PeerID;
 
-import org.hyperic.sigar.CpuPerc;
-import org.hyperic.sigar.NetInterfaceStat;
-import org.hyperic.sigar.Sigar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +32,8 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerResourceUsageManager.class);
 
-	private static final Sigar SIGAR = new Sigar();
+	private static final SigarWrapper SIGAR_WRAPPER = new SigarWrapper();
+	
 	private static final Runtime RUNTIME = Runtime.getRuntime();
 	private static final ExecutorService FUTURE_SERVICE = Executors.newCachedThreadPool();
 	private static final long MAX_WAIT = 5000;
@@ -47,8 +45,6 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		}
 	};
 
-	private static final double DEFAULT_BANDWIDTH_KB = 1024.0;
-	
 	private static PeerResourceUsageManager instance;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
@@ -56,9 +52,6 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 
 	private final Map<PeerID, IResourceUsage> usageMap = Maps.newHashMap();
 	private final UsageStatisticCollector usageCollector = new UsageStatisticCollector();
-
-	private long previousInputTotal = 0;
-	private long previousOutputTotal = 0;
 
 	private RepeatingJobThread localUsageChecker;
 
@@ -219,29 +212,8 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 				return;
 			}
 
-			CpuPerc perc = SIGAR.getCpuPerc();
-			double cpuMax = SIGAR.getCpuPercList().length;
-			double cpuFree = cpuMax - (perc != null ? perc.getUser() : 0.0) * cpuMax;
-			cpuFree = Math.max(0, Math.min(cpuFree, cpuMax));
-			if (Double.isNaN(cpuFree)) {
-				return;
-			}
-
 			long totalMemory = RUNTIME.totalMemory();
 			long freeMemory = RUNTIME.freeMemory();
-
-			String interfaceName = SIGAR.getNetInterfaceConfig(null).getName();
-			NetInterfaceStat net = SIGAR.getNetInterfaceStat(interfaceName);
-			long rawSpeed = net.getSpeed();
-			double bandwidthInKBs = rawSpeed >= 0 ? rawSpeed / 1024.0 : DEFAULT_BANDWIDTH_KB;
-
-			long inputTotal = net != null ? net.getRxBytes() : previousInputTotal;
-			long outputTotal = net != null ? net.getTxBytes() : previousOutputTotal;
-
-			double netInputRate = Math.max(0, (inputTotal - previousInputTotal) / 1024);
-			double netOutputRate = Math.max(0, (outputTotal - previousOutputTotal) / 1024);
-			previousInputTotal = inputTotal;
-			previousOutputTotal = outputTotal;
 
 			int runningQueries = 0;
 			int stoppedQueries = 0;
@@ -258,7 +230,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 				}
 			}
 
-			usageCollector.addStatistics(freeMemory, totalMemory, cpuFree, cpuMax, runningQueries, stoppedQueries, bandwidthInKBs, netOutputRate, netInputRate);
+			usageCollector.addStatistics(freeMemory, totalMemory, SIGAR_WRAPPER.getCpuFree(), SIGAR_WRAPPER.getCpuMax(), runningQueries, stoppedQueries, SIGAR_WRAPPER.getNetInputRate(), SIGAR_WRAPPER.getNetOutputRate(), SIGAR_WRAPPER.getNetMax());
 		} catch (Throwable t) {
 			LOG.error("Cannot determine own resource usage", t);
 		}
