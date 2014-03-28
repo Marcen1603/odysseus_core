@@ -238,8 +238,8 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 			long inputTotal = net != null ? net.getRxBytes() : previousInputTotal;
 			long outputTotal = net != null ? net.getTxBytes() : previousOutputTotal;
 
-			double netInputRate = (inputTotal - previousInputTotal) / 1024;
-			double netOutputRate = (outputTotal - previousOutputTotal) / 1024;
+			double netInputRate = Math.max(0, (inputTotal - previousInputTotal) / 1024);
+			double netOutputRate = Math.max(0, (outputTotal - previousOutputTotal) / 1024);
 			previousInputTotal = inputTotal;
 			previousOutputTotal = outputTotal;
 
