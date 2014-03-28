@@ -99,6 +99,11 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 				LOG.error("Could not send close message", e);
 			}
 		}
+		
+		try {
+			Thread.sleep(1500);
+		} catch (InterruptedException e) {
+		}
 	}
 
 	@Override
@@ -256,7 +261,7 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 				}
 			}
 		} else {
-			LOG.warn("Got message with too few bytes");
+			LOG.warn("Got message with too few bytes from " + p2pDictionary.getRemotePeerName(pid));
 		}
 	}
 
