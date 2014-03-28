@@ -111,7 +111,7 @@ public class PeerConsole implements CommandProvider {
 
 	// called by OSGi-DS
 	public void deactivate() {
-		LOG.debug("Peer console activated");
+		LOG.debug("Peer console deactivated");
 	}
 
 	@Override
