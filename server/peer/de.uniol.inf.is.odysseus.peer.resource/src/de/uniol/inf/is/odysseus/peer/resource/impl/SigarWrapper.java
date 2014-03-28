@@ -10,10 +10,14 @@ public class SigarWrapper {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SigarWrapper.class);
 	
-	private final Sigar sigar = new Sigar();
+	private final Sigar sigar;
 	
 	private long previousInputTotal = 0;
 	private long previousOutputTotal = 0;
+	
+	public SigarWrapper() {
+		sigar = new Sigar();
+	}
 	
 	public double getCpuMax() {
 		try {
