@@ -103,6 +103,16 @@ public class PeerConsole implements CommandProvider {
 			peerCommunicator = null;
 		}
 	}
+	
+	// called by OSGi-DS
+	public void activate() {
+		LOG.debug("Peer console activated");
+	}
+
+	// called by OSGi-DS
+	public void deactivate() {
+		LOG.debug("Peer console activated");
+	}
 
 	@Override
 	public String getHelp() {
