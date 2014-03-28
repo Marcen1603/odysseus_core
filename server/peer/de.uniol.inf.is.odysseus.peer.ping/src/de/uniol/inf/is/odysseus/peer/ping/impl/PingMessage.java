@@ -2,28 +2,51 @@ package de.uniol.inf.is.odysseus.peer.ping.impl;
 
 import java.nio.ByteBuffer;
 
+import org.apache.commons.math.geometry.Vector3D;
+
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
 public class PingMessage implements IMessage {
 
 	private long timestamp;
+	private Vector3D position;
 	
 	public PingMessage() {
+		
+	}
+	
+	public PingMessage(Vector3D position) {
 		timestamp = System.currentTimeMillis();
+		this.position = position;
 	}
 	
 	@Override
 	public byte[] toBytes() {
-		return ByteBuffer.allocate(8).putLong(System.currentTimeMillis()).array();
+		ByteBuffer bb = ByteBuffer.allocate(32);
+		bb.putLong(timestamp);
+		bb.putDouble(position.getX());
+		bb.putDouble(position.getY());
+		bb.putDouble(position.getZ());
+		return bb.array();
 	}
 
 	@Override
 	public void fromBytes(byte[] data) {
-		timestamp = ByteBuffer.wrap(data).getLong();
+		ByteBuffer buffer = ByteBuffer.wrap(data);
+
+		timestamp = buffer.getLong();
+		
+		double x = buffer.getDouble();
+		double y = buffer.getDouble();
+		double z = buffer.getDouble();
+		position = new Vector3D(x,y,z);
 	}
 	
 	public long getTimestamp() {
 		return timestamp;
 	}
 
+	public Vector3D getPosition() {
+		return position;
+	}
 }

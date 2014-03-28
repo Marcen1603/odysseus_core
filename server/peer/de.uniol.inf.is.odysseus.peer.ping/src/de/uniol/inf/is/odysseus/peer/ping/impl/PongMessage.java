@@ -21,18 +21,12 @@ public class PongMessage implements IMessage {
 	
 	@Override
 	public byte[] toBytes() {
-		byte[] longArray = ByteBuffer.allocate(8).putLong(timestamp).array();
-		byte[] doubleXArray = ByteBuffer.allocate(8).putDouble(position.getX()).array();
-		byte[] doubleYArray = ByteBuffer.allocate(8).putDouble(position.getY()).array();
-		byte[] doubleZArray = ByteBuffer.allocate(8).putDouble(position.getZ()).array();
-
-		byte[] message = new byte[32];
-		System.arraycopy(longArray, 0, message, 0, longArray.length);
-		System.arraycopy(doubleXArray, 0, message, 8, doubleXArray.length);
-		System.arraycopy(doubleYArray, 0, message, 16, doubleYArray.length);
-		System.arraycopy(doubleZArray, 0, message, 24, doubleZArray.length);
-
-		return message;
+		ByteBuffer bb = ByteBuffer.allocate(32);
+		bb.putLong(timestamp);
+		bb.putDouble(position.getX());
+		bb.putDouble(position.getY());
+		bb.putDouble(position.getZ());
+		return bb.array();
 	}
 
 	@Override
