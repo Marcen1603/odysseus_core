@@ -30,6 +30,8 @@ public class UsageStatisticCollector {
 	private int stoppedQueriesCount;
 	private double netBandwidthMax;
 	
+	private int[] version;
+	
 	public static ISession getActiveSession() {
 		if( currentSession == null || !currentSession.isValid()) {
 			currentSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
@@ -63,12 +65,13 @@ public class UsageStatisticCollector {
 	}
 	
 	public synchronized IResourceUsage getCurrentResourceUsage() {
-		int[] version = null;
-		try {
-			String versionString = FeatureUpdateUtility.getVersionNumber(getActiveSession());
-			version = toVersionDigits(versionString);
-		} catch( Throwable t ) {
-			version = new int[] {0,0,0,0};
+		if( version == null ) {
+			try {
+				String versionString = FeatureUpdateUtility.getVersionNumber(getActiveSession());
+				version = toVersionDigits(versionString);
+			} catch( Throwable t ) {
+				version = new int[] {0,0,0,0};
+			}
 		}
 		
 		return new ResourceUsage((long) memFree.getAverage(), memMaxBytes, cpuFree.getAverage(), cpuMax, runningQueriesCount, stoppedQueriesCount, netBandwidthMax, netOutputRate.getAverage(), netInputRate.getAverage(), version);
