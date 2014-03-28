@@ -37,7 +37,7 @@ public class ExecutorHandler {
 	public void unbindExecutor(IExecutor e) {
 		if( executor == e ) {
 			executor = null;
-			LOG.error("Unbound executor {}", e);
+			LOG.debug("Unbound executor {}", e);
 		}
 	}
 
