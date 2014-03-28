@@ -29,9 +29,12 @@ public class Autostart implements BundleActivator {
 	static private BundleContext context;
 	static private IExecutor executor;
 	static final Logger LOG = LoggerFactory.getLogger(Autostart.class);
+	
+	private static boolean autostartRun = false;
 
 	private void runAutostart() {
-		if (context != null && executor != null) {
+		if (!autostartRun && context != null && executor != null) {
+			autostartRun = true;
 			try {
 				Bundle bundle = context.getBundle();
 				for (String path : AUTOSTARTFILE) {
@@ -77,13 +80,15 @@ public class Autostart implements BundleActivator {
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
-			}
+				LOG.error("Could not execute autostart", e);
+			} 
 		}
 	}
 
 	public void unbindExecutor(IExecutor exec) {
-		executor = null;
+		if( exec == executor ) {
+			executor = null;
+		}
 	}
 
 	public void bindExecutor(IExecutor exec) {
