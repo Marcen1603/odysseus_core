@@ -22,7 +22,10 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
+import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
 import de.uniol.inf.is.odysseus.peer.logging.JxtaLoggingDestinations;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
@@ -109,6 +112,11 @@ public class PeerConsole implements CommandProvider {
 		sb.append("    ping                           - Lists the current latencies to known peers\n");
 		sb.append("    peerStatus                     - Summarizes the current peer status (peerName, ids, etc.)\n");
 		sb.append("    listEndpointConnections        - Lists all peers which have a true endpoint connection\n");
+		sb.append("    listExportedSources/ls...      - Lists all exported source names\n");
+		sb.append("    listImportedSources/ls...      - Lists all exported source names\n");
+		sb.append("    exportSource <sourceName>      - Exports a local source into the p2p network\n");
+		sb.append("    importSource <sourceName>      - Imports a source from the p2p network\n");
+		sb.append("    listAvailableSources <filter>  - Lists known sources from the p2p network\n");
 		sb.append("\n");
 		sb.append("    log <level> <text>             - Creates a log statement\n");
 		sb.append("    setLogger <logger> <level>     - Sets the logging level of a specific logger\n");
@@ -330,5 +338,104 @@ public class PeerConsole implements CommandProvider {
 
 	public void _lsEndpointConnections(CommandInterpreter ci) {
 		_listEndpointConnections(ci);
+	}
+	
+	public void _lsExportedSources(CommandInterpreter ci) {
+		ImmutableList<SourceAdvertisement> exportedSources = p2pDictionary.getExportedSources();
+		List<String> output = Lists.newArrayList();
+		
+		for( SourceAdvertisement exportedSource : exportedSources ) {
+			output.add(exportedSource.getName() + " " + sourceTypeString(exportedSource));
+		}
+		
+		sortAndPrintList(output);
+	}
+	
+	private static String sourceTypeString(SourceAdvertisement adv) {
+		if( adv.isStream() ) {
+			return "[stream]";
+		}
+		return "[view]";
+	}
+
+	public void _listExportedSources(CommandInterpreter ci ) {
+		_lsExportedSources(ci);
+	}
+	
+	public void _lsImportedSources(CommandInterpreter ci) {
+		ImmutableList<SourceAdvertisement> importedSources = p2pDictionary.getImportedSources();
+		List<String> output = Lists.newArrayList();
+		
+		for( SourceAdvertisement importedSource : importedSources ) {
+			output.add(importedSource.getName() + " " + sourceTypeString(importedSource) + " (from " + p2pDictionary.getRemotePeerName(importedSource.getPeerID()) + ")");
+		}
+		
+		sortAndPrintList(output);
+	}
+	
+	public void _listImportedSources(CommandInterpreter ci ) {
+		_lsImportedSources(ci);
+	}
+	
+	public void _exportSource( CommandInterpreter ci ) {
+		String sourceName = ci.nextArgument();
+		if( Strings.isNullOrEmpty(sourceName)) {
+			System.out.println("usage: exportSource <sourceName>");
+			return;
+		}
+		
+		try {
+			SourceAdvertisement adv = p2pDictionary.exportSource(sourceName, "Standard");
+			System.out.println("Source '" + sourceName + "' exported as " + sourceTypeString(adv));
+		} catch (PeerException e) {
+			System.out.println("Export failed: " + e.getMessage());
+		}
+	}
+	
+	public void _importSource( CommandInterpreter ci ) {
+		String sourceName = ci.nextArgument();
+		if( Strings.isNullOrEmpty(sourceName)) {
+			System.out.println("usage: importSource <availableSourceName>");
+			return;
+		}
+		
+		try {
+			ImmutableList<SourceAdvertisement> sources = p2pDictionary.getSources(sourceName);
+			if( sources.size() > 1 ) {
+				System.out.println("Source '" + sourceName + "' is ambiguous. Currently not supported.");
+				return;
+			}
+			if( sources.isEmpty() ) {
+				System.out.println("No such source '" + sourceName + "' available");
+				return;
+			}
+			SourceAdvertisement adv = sources.get(0);
+			p2pDictionary.importSource(adv, sourceName);
+			System.out.println("Source '" + sourceName + "' imported as " + sourceTypeString(adv));
+		} catch( InvalidP2PSource | PeerException e ) {
+			System.out.println("Could not import source '" + sourceName + "': " + e.getMessage());
+		} 
+	}
+	
+	public void _lsAvailableSources( CommandInterpreter ci ) {
+		String filter = ci.nextArgument();
+		
+		ImmutableList<SourceAdvertisement> sources = p2pDictionary.getSources();
+		List<String> output = Lists.newArrayList();
+		
+		for( SourceAdvertisement src : sources ) {
+			String txt = src.getName() + " " + sourceTypeString(src);
+			txt += " from " + p2pDictionary.getRemotePeerName(src.getPeerID());
+			
+			if( !Strings.isNullOrEmpty(filter) || txt.contains(filter)) {
+				output.add(txt);
+			}
+		}
+		
+		sortAndPrintList(output);
+	}
+	
+	public void _listAvailableSources(CommandInterpreter ci ) {
+		_lsAvailableSources(ci);
 	}
 }
