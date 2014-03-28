@@ -111,11 +111,13 @@ public class PeerConsole implements CommandProvider {
 		sb.append("    resourceStatus                 - Current status of local MEM, CPU, NET\n");
 		sb.append("    ping                           - Lists the current latencies to known peers\n");
 		sb.append("    peerStatus                     - Summarizes the current peer status (peerName, ids, etc.)\n");
-		sb.append("    listEndpointConnections        - Lists all peers which have a true endpoint connection\n");
+		sb.append("    listEndpointConnections/ls...  - Lists all peers which have a true endpoint connection\n");
 		sb.append("    listExportedSources/ls...      - Lists all exported source names\n");
 		sb.append("    listImportedSources/ls...      - Lists all exported source names\n");
 		sb.append("    exportSource <sourceName>      - Exports a local source into the p2p network\n");
+		sb.append("    unexportSource <sourceName>    - Undo export of a local source\n");
 		sb.append("    importSource <sourceName>      - Imports a source from the p2p network\n");
+		sb.append("    unimportSource <sourceName>    - Undo import of a source\n");
 		sb.append("    listAvailableSources <filter>  - Lists known sources from the p2p network\n");
 		sb.append("\n");
 		sb.append("    log <level> <text>             - Creates a log statement\n");
@@ -415,6 +417,40 @@ public class PeerConsole implements CommandProvider {
 		} catch( InvalidP2PSource | PeerException e ) {
 			System.out.println("Could not import source '" + sourceName + "': " + e.getMessage());
 		} 
+	}
+	
+	public void _unexportSource( CommandInterpreter ci ) {
+		String sourceName = ci.nextArgument();
+		if( Strings.isNullOrEmpty(sourceName)) {
+			System.out.println("usage: unexportSource <sourceName>");
+			return;
+		}
+		
+		if( p2pDictionary.isExported(sourceName) ) {
+			p2pDictionary.removeSourceExport(sourceName);
+			System.out.println("Source '" + sourceName + "' not exported now.");
+		} else {
+			System.out.println("Source '" + sourceName + "' is currently not exported");
+		}
+	}
+	
+	public void _unimportSource( CommandInterpreter ci ) {
+		String sourceName = ci.nextArgument();
+		if( Strings.isNullOrEmpty(sourceName)) {
+			System.out.println("usage: unimportSource <sourceName>");
+			return;
+		}
+		
+		if( p2pDictionary.isImported(sourceName) ) {
+			ImmutableList<SourceAdvertisement> adv = p2pDictionary.getSources(sourceName);
+			
+			if( !adv.isEmpty() ) {
+				p2pDictionary.removeSourceImport(adv.get(0));
+				System.out.println("Source '" + sourceName + "' not imported now.");
+			}
+		} else {
+			System.out.println("Source '" + sourceName + "' is currently not imported");
+		}
 	}
 	
 	public void _lsAvailableSources( CommandInterpreter ci ) {
