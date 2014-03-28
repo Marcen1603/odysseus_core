@@ -46,7 +46,6 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.MultipleSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.RemoveMultipleSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.RemoveSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.SourceChecker;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
@@ -78,7 +77,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private final Map<PeerID, String> peersAddressMap = Maps.newHashMap();
 
 	private AutoExporter autoExporter;
-	private SourceChecker sourceChecker;
 	
 	private final RemoveSourceAdvertisementCollector removeSourceAdvCollector = new RemoveSourceAdvertisementCollector();
 	private final SourceAdvertisementCollector sourceAdvCollector = new SourceAdvertisementCollector();
@@ -98,8 +96,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		instance = this;
 
 		DataDictionaryProvider.subscribe(SessionManagementService.getTenant(), this);
-		sourceChecker = new SourceChecker(this);
-		sourceChecker.start();
 		
 		removeSourceAdvCollector.start();
 		sourceAdvCollector.start();
@@ -108,7 +104,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	// called by OSGi-DS
 	public void deactivate() {
 		instance = null;
-		sourceChecker.stopRunning();
 		removeSourceAdvCollector.stopRunning();
 		sourceAdvCollector.stopRunning();
 

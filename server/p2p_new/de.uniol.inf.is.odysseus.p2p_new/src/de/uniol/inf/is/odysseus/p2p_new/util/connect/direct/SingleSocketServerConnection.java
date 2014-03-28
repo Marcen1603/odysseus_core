@@ -46,7 +46,7 @@ public class SingleSocketServerConnection extends AbstractJxtaServerConnection i
 		Preconditions.checkState(isStarted() == false, "Server socket already started");
 
 		started = true;
-		accepterThread = new RepeatingJobThread() {
+		accepterThread = new RepeatingJobThread(0, "Single socket server accept") {
 			@Override
 			public void doJob() {
 				try {

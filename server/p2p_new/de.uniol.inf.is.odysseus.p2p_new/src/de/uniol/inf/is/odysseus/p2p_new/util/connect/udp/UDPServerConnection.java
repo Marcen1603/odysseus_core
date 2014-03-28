@@ -32,7 +32,7 @@ public class UDPServerConnection extends AbstractJxtaServerConnection {
 	public void start() throws IOException {
 		socket = new DatagramSocket();
 
-		receiverThread = new RepeatingJobThread() {
+		receiverThread = new RepeatingJobThread(0, "Udp server connection accept") {
 			@Override
 			public void doJob() {
 

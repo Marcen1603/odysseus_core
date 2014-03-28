@@ -17,10 +17,12 @@ import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 public abstract class AdvertisementCollector<A extends Advertisement, R extends Advertisement> extends RepeatingJobThread {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdvertisementCollector.class);
+	private static final int UPDATE_INTERVAL_MILLIS = 3500;
+	
 	private final List<A> collectedAdvertisements = Lists.newArrayList();
 	
 	public AdvertisementCollector() {
-		super(2000, "Advertisement collector");
+		super(UPDATE_INTERVAL_MILLIS, "Advertisement collector");
 	}
 	
 	public void add( A advertisement ) {

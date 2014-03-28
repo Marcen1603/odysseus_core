@@ -15,10 +15,7 @@ abstract class AdvertisementDiscoverer extends RepeatingJobThread {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdvertisementDiscoverer.class);
 	
-	private static final int REMOTE_DISCOVERY_COUNT = 2;
-	private static final long DISCOVERY_INTERVAL_MILLIS = 2 * 1000;
-
-	private int remoteCounter = 0;
+	private static final long DISCOVERY_INTERVAL_MILLIS = 4 * 1000;
 
 	public AdvertisementDiscoverer() {
 		super(DISCOVERY_INTERVAL_MILLIS);
@@ -28,10 +25,7 @@ abstract class AdvertisementDiscoverer extends RepeatingJobThread {
 	public void doJob() {
 		if (JxtaServicesProvider.isActivated() ) {
 			
-			if( remoteCounter == 0 ) {
-				JxtaServicesProvider.getInstance().getRemoteAdvertisements();
-			}
-			remoteCounter = (remoteCounter + 1 ) % REMOTE_DISCOVERY_COUNT;
+			JxtaServicesProvider.getInstance().getRemoteAdvertisements();
 			
 			try {
 				Enumeration<Advertisement> localAdvertisements = JxtaServicesProvider.getInstance().getLocalAdvertisements();

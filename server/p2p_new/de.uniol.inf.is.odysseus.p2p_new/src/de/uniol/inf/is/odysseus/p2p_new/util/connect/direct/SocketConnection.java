@@ -40,7 +40,7 @@ public class SocketConnection extends AbstractJxtaConnection {
 		outStream = socket.getOutputStream();
 		inStream = socket.getInputStream();
 		
-		receiverThread = new RepeatingJobThread() {
+		receiverThread = new RepeatingJobThread(0, "Socket connection reading data") {
 			@Override
 			public void doJob() {
 				try {

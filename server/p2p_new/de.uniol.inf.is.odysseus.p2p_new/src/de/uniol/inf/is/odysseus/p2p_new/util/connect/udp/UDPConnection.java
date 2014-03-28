@@ -54,7 +54,7 @@ public class UDPConnection extends AbstractJxtaConnection {
 		this.socket = new DatagramSocket();
 		this.isServer = false;
 
-		receiverThread = new RepeatingJobThread() {
+		receiverThread = new RepeatingJobThread(0, "Udp connection reading data") {
 			@Override
 			public void doJob() {
 				
@@ -77,7 +77,7 @@ public class UDPConnection extends AbstractJxtaConnection {
 	@Override
 	public void connect() throws IOException {
 		if( !isServer ) {
-			connectThread = new RepeatingJobThread(1000) {
+			connectThread = new RepeatingJobThread(1000, "Udp connect") {
 				@Override
 				public void doJob() {
 					try {

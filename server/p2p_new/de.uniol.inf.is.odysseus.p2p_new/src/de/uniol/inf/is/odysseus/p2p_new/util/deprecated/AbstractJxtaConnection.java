@@ -51,7 +51,7 @@ public abstract class AbstractJxtaConnection implements IJxtaConnectionOld {
 		socketOutputStream = getOutputStream();
 
 		isConnected = true;
-		readingDataThread = new RepeatingJobThread() {
+		readingDataThread = new RepeatingJobThread(0, "JxtaConnection reading data") {
 
 			private final byte[] buffer = new byte[P2PNewPlugIn.TRANSPORT_BUFFER_SIZE];
 

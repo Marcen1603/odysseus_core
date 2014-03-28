@@ -45,7 +45,7 @@ public class JxtaBiDiServerConnection extends AbstractJxtaServerConnection imple
 		serverPipe = new JxtaServerPipe(P2PNetworkManager.getInstance().getLocalPeerGroup(), pipeAdvertisement);
 		serverPipe.setPipeTimeout(0);
 
-		accepterThread = new RepeatingJobThread() {
+		accepterThread = new RepeatingJobThread(0, "JxtaConnection server accept") {
 			@Override
 			public void doJob() {
 				try {

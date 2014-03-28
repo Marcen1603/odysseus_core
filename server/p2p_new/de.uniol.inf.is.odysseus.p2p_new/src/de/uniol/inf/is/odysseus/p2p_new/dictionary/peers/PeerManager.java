@@ -29,7 +29,7 @@ public class PeerManager implements IPeerCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerManager.class);
 
-	private static final String PEER_DISCOVERY_THREAD_NAME = "Peer discovery thread";
+	private static final String PEER_DISCOVERY_THREAD_NAME = "Peer discovery";
 	private static final int PEER_DISCOVERY_INTERVAL_MILLIS = 2000;
 	private static final int PEER_LOSS_THREASHOLD = 3;
 	
