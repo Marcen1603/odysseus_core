@@ -463,7 +463,7 @@ public class PeerConsole implements CommandProvider {
 			String txt = src.getName() + " " + sourceTypeString(src);
 			txt += " from " + p2pDictionary.getRemotePeerName(src.getPeerID());
 			
-			if( !Strings.isNullOrEmpty(filter) || txt.contains(filter)) {
+			if( Strings.isNullOrEmpty(filter) || txt.contains(filter)) {
 				output.add(txt);
 			}
 		}
