@@ -13,11 +13,14 @@ import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.part.FileEditorInput;
 
 import de.uniol.inf.is.odysseus.rcp.evaluation.editor.EvaluationEditorPart;
+import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationModel;
 
 public class NewEvaluationWizard extends Wizard implements INewWizard {
 
+	private static final String TITLE_NEW_EVALUATION_JOB = "New Evaluation Job";
 	private IStructuredSelection selection;
 	private WizardNewFileCreationPage newFileCreationPage;
+	private ChooseQueryFilePage chooseQueryFilePage;
 
 	public NewEvaluationWizard() {
 		// TODO Auto-generated constructor stub
@@ -26,31 +29,41 @@ public class NewEvaluationWizard extends Wizard implements INewWizard {
 	@Override
 	public void addPages() {
 		addPage(newFileCreationPage);
+		addPage(chooseQueryFilePage);
 	}
 
-	private void createEmptyFilePage() {
+	private void createNewFileCreationPage() {
 		newFileCreationPage = new WizardNewFileCreationPage("Filename", this.selection);
-		newFileCreationPage.setTitle("Create new evaluation job");
+		newFileCreationPage.setTitle(TITLE_NEW_EVALUATION_JOB);
 		newFileCreationPage.setDescription("Choose project and file name.");
 		newFileCreationPage.setFileExtension("eval");
 		newFileCreationPage.setAllowExistingResources(false);
-		newFileCreationPage.setFileName("evaluation.eval");
+		newFileCreationPage.setFileName("evaluation.eval");		
+	}
+	
+	private void createNewLinkPage(){
+		chooseQueryFilePage = new ChooseQueryFilePage("Script to run");		
+		chooseQueryFilePage.setTitle(TITLE_NEW_EVALUATION_JOB+"2");		
 	}
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
-		createEmptyFilePage();
+		createNewFileCreationPage();
+		createNewLinkPage();
 
 	}
 
 	@Override
 	public boolean performFinish() {
+		
 		IFile file = newFileCreationPage.createNewFile();
 		if (file == null) {
 			return false;
 		}
-		FileEditorInput input = new FileEditorInput(file);
+		EvaluationModel model = EvaluationModel.createEmpty(chooseQueryFilePage.getQueryFile());
+		model.save(file);
+		FileEditorInput input = new FileEditorInput(file);		
 		try {
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			IWorkbenchPage page = window.getActivePage();			

@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.evaluation.command;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -12,10 +14,11 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -29,21 +32,17 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.evaluation.Activator;
+import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationModel;
+import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationVariable;
 import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 
 public class EvaluationJob extends Job implements IPlanModificationListener {
 
-	private int number;
-	private String allLines;
-	private IFile file;
-	private Map<String, List<String>> values;
+	private EvaluationModel model;
 
-	public EvaluationJob(String name, Map<String, List<String>> values, int number, String allLines, IFile file) {
-		super(name);
-		this.values = values;
-		this.number = number;
-		this.allLines = allLines;
-		this.file = file;
+	public EvaluationJob(EvaluationModel model) {
+		super("Running Evaluation...");
+		this.model = model;
 	}
 
 	@Override
@@ -54,24 +53,22 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 		try {
 			synchronized (this) {
 
-				// String[] algorithms = {"J48", "DECISIONTABLE", "NaiveBayes"};
-				// String[] algorithms = {"SIMPLEKMEANS", "EM", "DENSITY_KMEANS"};
-				// String[] algorithms = {"5", "10", "15", "20"};
-
-				List<String> variableNames = new ArrayList<>();
-
-				int totalEvaluations = number;
+				int totalEvaluations = model.getNumberOfRuns();
+				List<EvaluationVariable> variables = new ArrayList<>();
 				ArrayList<Integer> ranges = new ArrayList<>();
-				for (String variable : values.keySet()) {
-					variableNames.add(variable);
-					List<String> thevals = values.get(variable);
-					totalEvaluations = totalEvaluations * thevals.size();
-					ranges.add(thevals.size());
+				for (EvaluationVariable variable : model.getVariables()) {
+					if (variable.isActive()) {
+						variables.add(variable);
+						totalEvaluations = totalEvaluations * variable.getValues().size();
+						ranges.add(variable.getValues().size());
+					}
 				}
-				Collections.reverse(variableNames);
-				Collections.reverse(ranges);				
+				Collections.reverse(ranges);
+
+				String lines = fileToLines(model.getQueryFile());
+
 				monitor.beginTask("Running evaluations...", totalEvaluations);
-				int counter = recursiveFor(new ArrayDeque<Integer>(), variableNames, ranges, ranges.size(), 0, totalEvaluations, values, monitor);
+				int counter = recursiveFor(new ArrayDeque<Integer>(), ranges, ranges.size(), 0, totalEvaluations, variables, monitor, lines);
 				if (counter < totalEvaluations) {
 					return Status.CANCEL_STATUS;
 				}
@@ -85,54 +82,55 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 		return Status.OK_STATUS;
 	}
 
-	private int recursiveFor(Deque<Integer> indices, List<String> names, List<Integer> ranges, int n, int counter, int totalEvals, Map<String, List<String>> values, IProgressMonitor monitor) throws Exception {
+	private int recursiveFor(Deque<Integer> indices, List<Integer> ranges, int n, int counter, int totalEvals, List<EvaluationVariable> values, IProgressMonitor monitor, String lines) throws Exception {
 		if (n != 0) {
 			for (int i = 0; i < ranges.get(n - 1); i++) {
 				indices.push(i);
-				counter = recursiveFor(indices, names, ranges, n - 1, counter, totalEvals, values, monitor);
+				counter = recursiveFor(indices, ranges, n - 1, counter, totalEvals, values, monitor, lines);
 				indices.pop();
 			}
-		} else {			
-			counter = runEvalStep(indices, names, values, counter, totalEvals, monitor);
+		} else {
+			counter = runEvalStep(indices, values, counter, totalEvals, monitor, lines);
 		}
 		return counter;
 	}
 
-	private int runEvalStep(Deque<Integer> index, List<String> names, Map<String, List<String>> values, int counter, int totalEvals, IProgressMonitor monitor) throws Exception {
+	private int runEvalStep(Deque<Integer> index, List<EvaluationVariable> values, int counter, int totalEvals, IProgressMonitor monitor, String allLines) throws Exception {
 		IServerExecutor executor = (IServerExecutor) Activator.getExecutor();
 		NumberFormat nf = NumberFormat.getInstance();
 		DateFormat dateFormat = new SimpleDateFormat("ddMMyy-HHmmss");
 		Calendar cal = Calendar.getInstance();
 		String date = dateFormat.format(cal.getTime());
 		ISession caller = OdysseusRCPPlugIn.getActiveSession();
+
 		Map<String, String> currentValues = new TreeMap<>();
 		Integer[] pointers = index.toArray(new Integer[0]);
 		for (int i = pointers.length - 1; i >= 0; i--) {
-			String name = names.get(i);
-			String value = values.get(name).get(pointers[i]);
-			currentValues.put(name, value);
-
+			EvaluationVariable var = values.get(i);
+			String value = var.getValues().get(pointers[i]);
+			currentValues.put(var.getName(), value);
 		}
-		for (int i = 1; i <= number; i++) {
+		for (int i = 1; i <= model.getNumberOfRuns(); i++) {
 			counter++;
-			String prefix = "Performing Evaluation number " + i + " / " + number + " for total " + counter + "/" + totalEvals + "\n";
+			String prefix = "Performing Evaluation number " + i + " / " + model.getNumberOfRuns() + " for total " + counter + "/" + totalEvals + "\n";
 			if (monitor.isCanceled()) {
 				throw new InterruptedException();
 			}
 			String thislines = allLines.replaceAll("SPECIAL_STAMP", date + "-" + i);
 			for (Entry<String, String> currentValue : currentValues.entrySet()) {
 				prefix = prefix + " - " + currentValue.getKey() + ": " + currentValue.getValue() + "\n";
-				thislines = thislines.replaceAll(Pattern.quote("${"+currentValue.getKey()+"}"), currentValue.getValue());
+				thislines = thislines.replaceAll(Pattern.quote("${" + currentValue.getKey() + "}"), currentValue.getValue());
 			}
-			monitor.subTask(prefix + "Executing Script \"" + file.getName() + "\"... ");
-			Context context = ParserClientUtil.createRCPContext(file);
+			monitor.subTask(prefix + "Executing Script \"" + model.getQueryFile().getName() + "\"... ");
+			Context context = ParserClientUtil.createRCPContext((IFile) model.getQueryFile());
 			long timeStarted = System.currentTimeMillis();
+			System.out.println(currentValues);
 			Collection<Integer> ids = executor.addQuery(thislines, "OdysseusScript", caller, "Standard", context);
 			monitor.subTask(prefix + "Running query and waiting for stop...");
-			for(int id : ids){
+			for (int id : ids) {
 				executor.startQuery(id, caller);
 			}
-			this.wait();
+			this.wait(1000);
 			monitor.worked(1);
 			System.out.println("Evaluation job takes " + nf.format(System.currentTimeMillis() - timeStarted) + " ms");
 			monitor.subTask(prefix + "Process done. Removing query...");
@@ -153,7 +151,22 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 				this.notifyAll();
 			}
 		}
-
 	}
+
+	private static String fileToLines(IResource res) throws Exception {
+		if (!res.isSynchronized(IResource.DEPTH_ZERO)) {
+			res.refreshLocal(IResource.DEPTH_ZERO, null);
+		}
+		IFile file = (IFile) res;
+		String lines = "";
+		BufferedReader br = new BufferedReader(new InputStreamReader(file.getContents()));
+		String line = br.readLine();
+		while (line != null) {
+			lines = lines + line + "\n";
+			line = br.readLine();
+		}
+		br.close();
+		return lines;
+	}	
 
 }

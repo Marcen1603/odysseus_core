@@ -8,7 +8,9 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 
@@ -23,9 +25,10 @@ public class EvaluationModel {
 	private static final String WITH_THROUGHPUT = "WITH_THROUGHPUT";
 	private static final String WITH_LATENCY = "WITH_LATENCY";
 	private static final String NUMBER_OF_RUNS = "NUMBER_OF_RUNS";
-	private IFile file;
+	private static final String QUERY_FILE = "QUERY_FILE";
 	
-
+	private IResource queryFile;
+	
 	private String processingResultsPath = "";
 	private String plotFilesPath = "";
 
@@ -35,13 +38,26 @@ public class EvaluationModel {
 	private int numberOfRuns = 10;
 	private List<EvaluationVariable> variables = new ArrayList<>();
 
-	public EvaluationModel(IFile file) {
-		this.file = file;		
+	
+	private EvaluationModel() {		
 		this.variables.add(new EvaluationVariable("var_1", "a", "b", "c"));
 		this.variables.add(new EvaluationVariable("var_2","x", "y", "z"));
 	}
+	
+	public static EvaluationModel createEmpty(IResource iResource) {
+		EvaluationModel model = new EvaluationModel();
+		model.setQueryFile(iResource);
+		return model;
+	}
+	
 
-	public void save() {
+	public static EvaluationModel load(IFile file){
+		EvaluationModel model = new EvaluationModel();
+		model.loadFromFile(file);
+		return model;
+	}
+
+	private void saveToFile(IFile file) {
 		try {
 			XMLMemento memento = XMLMemento.createWriteRoot("evaluation");
 			memento.putString(PROCESSING_RESULTS_PATH, processingResultsPath);
@@ -49,6 +65,7 @@ public class EvaluationModel {
 			memento.putBoolean(WITH_LATENCY, withLatency);
 			memento.putBoolean(WITH_THROUGHPUT, withThroughput);
 			memento.putInteger(NUMBER_OF_RUNS, numberOfRuns);
+			memento.putString(QUERY_FILE, queryFile.getProjectRelativePath().toPortableString());
 
 			IMemento varMem = memento.createChild(VARIABLES);
 			for (EvaluationVariable var : this.variables) {
@@ -68,7 +85,7 @@ public class EvaluationModel {
 		}
 	}
 
-	public void load() {
+	private void loadFromFile(IFile file) {
 		try {
 			InputStream is = file.getContents();
 			String content = IOUtils.toString(is);
@@ -81,7 +98,10 @@ public class EvaluationModel {
 				this.withLatency = memento.getBoolean(WITH_LATENCY);
 				this.withThroughput = memento.getBoolean(WITH_THROUGHPUT);
 				this.numberOfRuns = memento.getInteger(NUMBER_OF_RUNS);
-
+				
+				String path = memento.getString(QUERY_FILE);				
+				this.queryFile = (IFile) file.getProject().findMember(Path.fromPortableString(path));
+				
 				this.variables.clear();
 				IMemento varMem = memento.getChild(VARIABLES);
 				for (IMemento mem : varMem.getChildren(VARIABLE)) {
@@ -152,5 +172,19 @@ public class EvaluationModel {
 		}
 		return false;
 	}
+
+	public IResource getQueryFile() {
+		return queryFile;
+	}
+
+	public void setQueryFile(IResource queryFile) {
+		this.queryFile = queryFile;
+	}
+
+	public void save(IFile file) {
+		saveToFile(file);
+	}
+
+
 
 }

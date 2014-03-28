@@ -13,8 +13,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlAdapter;
@@ -34,6 +36,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -46,10 +49,12 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
+import de.uniol.inf.is.odysseus.rcp.evaluation.QueryTreeSelectionDialog;
+import de.uniol.inf.is.odysseus.rcp.evaluation.command.EvaluationJob;
 import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationModel;
 import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationVariable;
 
-public class EvaluationEditorPart extends EditorPart implements IResourceChangeListener, IResourceDeltaVisitor{
+public class EvaluationEditorPart extends EditorPart implements IResourceChangeListener, IResourceDeltaVisitor {
 
 	public static final String ID = "de.uniol.inf.is.odysseus.rcp.evaluation.editor.EvaluationEditorPart"; //$NON-NLS-1$
 	private Text processingResultFolder;
@@ -66,6 +71,9 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 	private Text parameterName;
 	private Color COLOR_RED;
 	private Color COLOR_BLACK;
+	private Text queryFileText;
+	private Spinner numberOfTimesSpinner;
+	private Button btnStartEvaluation;
 
 	public EvaluationEditorPart() {
 	}
@@ -93,6 +101,39 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		gd_grpGeneral.heightHint = 132;
 		grpGeneral.setLayoutData(gd_grpGeneral);
 		grpGeneral.setText("General");
+
+		Composite composite_1 = new Composite(grpGeneral, SWT.NONE);
+		composite_1.setLayout(new GridLayout(2, false));
+		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		Label lblQueryFile = new Label(composite_1, SWT.NONE);
+		lblQueryFile.setText("Query File:");
+
+		queryFileText = new Text(composite_1, SWT.BORDER);
+		queryFileText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		queryFileText.setText(evaluationModel.getQueryFile().getProjectRelativePath().toOSString());
+		queryFileText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				setDirty(true);
+			}
+		});
+
+		Button btnBrowse_2 = new Button(grpGeneral, SWT.NONE);
+		btnBrowse_2.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				QueryTreeSelectionDialog dialog = new QueryTreeSelectionDialog(parent.getShell(), input.getFile());
+				if (dialog.open() == Window.OK) {
+					IResource queryResource = (IResource) dialog.getFirstResult();
+					String text = queryResource.getProjectRelativePath().toString();
+					if(!text.equals(queryFileText.getText())){
+						queryFileText.setText(text);
+					}
+				}
+			}
+		});
+		btnBrowse_2.setText("Browse...");
 
 		Label lblDiagramFolder = new Label(grpGeneral, SWT.NONE);
 		lblDiagramFolder.setText("Folder for processing results");
@@ -170,10 +211,10 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 					EvaluationVariable var = evaluationModel.getVariables().get(index);
 					showVariableValues(var);
 				}
-				
-				for(TableItem item : parameterTable.getItems()){					
-					EvaluationVariable var = ((EvaluationVariable)item.getData());					
-					if(!var.isActive()==item.getChecked()){
+
+				for (TableItem item : parameterTable.getItems()) {
+					EvaluationVariable var = ((EvaluationVariable) item.getData());
+					if (!var.isActive() == item.getChecked()) {
 						var.setActive(item.getChecked());
 						setDirty(true);
 					}
@@ -189,15 +230,14 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 				tblclmnName.setWidth(table.getSize().x - 5);
 			}
 		});
-		
-		
 
 		tblclmnName = new TableColumn(parameterTable, SWT.NONE);
 		tblclmnName.setWidth(100);
-		tblclmnName.setText("Name");
+		tblclmnName.setText("Name");		
 		checkboxTableViewer.setLabelProvider(new EvaluationVariableContentProvider());
 		checkboxTableViewer.setContentProvider(new EvaluationVariableContentProvider());
 		checkboxTableViewer.setInput(evaluationModel);
+		checkboxTableViewer.setCheckStateProvider(new EvaluationVariableContentProvider());
 
 		Composite sashRightCompo = new Composite(sashForm, SWT.NONE);
 		sashRightCompo.setLayout(new GridLayout(1, false));
@@ -253,12 +293,15 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		parameterValues.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		Composite buttonsParameters = new Composite(grpParameters, SWT.NONE);
-		GridLayout gl_buttonsParameters = new GridLayout(2, false);
+		GridLayout gl_buttonsParameters = new GridLayout(2, true);
 		gl_buttonsParameters.marginHeight = 0;
 		buttonsParameters.setLayout(gl_buttonsParameters);
-		buttonsParameters.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		GridData gd_buttonsParameters = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_buttonsParameters.heightHint = 66;
+		buttonsParameters.setLayoutData(gd_buttonsParameters);
 
 		Button btnAdd = new Button(buttonsParameters, SWT.NONE);
+		btnAdd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnAdd.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -269,9 +312,10 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		btnAdd.setText("Add");
 
 		Button btnRemove = new Button(buttonsParameters, SWT.NONE);
+		btnRemove.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		btnRemove.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {				
+			public void widgetSelected(SelectionEvent e) {
 				int index = parameterTable.getSelectionIndex();
 				if (index >= 0) {
 					EvaluationVariable var = evaluationModel.getVariables().get(index);
@@ -281,7 +325,23 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		});
 		btnRemove.setBounds(0, 0, 75, 25);
 		btnRemove.setText("Remove");
-
+		
+		Label lblNewLabel = new Label(buttonsParameters, SWT.NONE);
+		lblNewLabel.setText("How often repeat one evaluation setting?");
+		
+		numberOfTimesSpinner = new Spinner(buttonsParameters, SWT.BORDER);
+		numberOfTimesSpinner.setMaximum(10000000);
+		numberOfTimesSpinner.setMinimum(1);
+		numberOfTimesSpinner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		numberOfTimesSpinner.setSelection(evaluationModel.getNumberOfRuns());
+		numberOfTimesSpinner.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent e) {
+				setDirty(true);				
+			}
+		});
+		
 		Group grpLatency = new Group(container, SWT.NONE);
 		grpLatency.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		grpLatency.setText("Latency");
@@ -316,7 +376,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		composite.setLayout(new GridLayout(1, false));
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
-		Button btnStartEvaluation = new Button(composite, SWT.NONE);
+		btnStartEvaluation = new Button(composite, SWT.NONE);
 		btnStartEvaluation.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -328,32 +388,29 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 	}
 
 	protected void startEvaluation(Shell shell) {
-		if(isDirty()){
-			if(MessageDialog.openConfirm(shell, "Save before?", "Do you want to save before starting?")){						
+		if (isDirty()) {
+			if (MessageDialog.openConfirm(shell, "Save before?", "Do you want to save before starting?")) {
 				doSave(new NullProgressMonitor());
-			}else{
+			} else {
 				return;
 			}
-		}
-		super.showBusy(true);
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {		
-			e.printStackTrace();
-		}
-		super.showBusy(false);
+		}		
 		
+		Job job = new EvaluationJob(evaluationModel);		
+		job.setUser(true);				
+		job.schedule();		
+
 	}
 
 	protected void removeParamater(EvaluationVariable var) {
 		Shell shell = parameterTable.getShell();
-		if(MessageDialog.openConfirm(shell, "Delete?", "Do you really want to delete \""+var.getName()+"\"?")){			
+		if (MessageDialog.openConfirm(shell, "Delete?", "Do you really want to delete \"" + var.getName() + "\"?")) {
 			evaluationModel.getVariables().remove(var);
 			refreshParameterTables();
 			setDirty(true);
-			selectParameter(0);	
-		}		
-		
+			selectParameter(0);
+		}
+
 	}
 
 	protected void showVariableValues(EvaluationVariable var) {
@@ -365,9 +422,8 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		parameterValues.setText(sb.toString());
 		parameterName.setText(var.getName());
 	}
-	
-	
-	private void selectParameter(int index){		
+
+	private void selectParameter(int index) {
 		parameterTable.forceFocus();
 		parameterTable.setSelection(index);
 		parameterTable.notifyListeners(SWT.Selection, null);
@@ -378,15 +434,15 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 
 		if (evaluationModel.parameterNameExists(name)) {
 			int i = 1;
-			while (evaluationModel.parameterNameExists(name + "_"+i)) {
+			while (evaluationModel.parameterNameExists(name + "_" + i)) {
 				i++;
 			}
-			name = name+"_"+i;
+			name = name + "_" + i;
 		}
 		evaluationModel.getVariables().add(new EvaluationVariable(name));
 		refreshParameterTables();
 		setDirty(true);
-		selectParameter(parameterTable.getItemCount()-1);
+		selectParameter(parameterTable.getItemCount() - 1);
 	}
 
 	private void refreshParameterTables() {
@@ -414,11 +470,15 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
+		
+		evaluationModel.setQueryFile(input.getFile().getProject().findMember(queryFileText.getText()));
 		evaluationModel.setPlotFilesPath(this.plotFolder.getText());
 		evaluationModel.setProcessingResultsPath(this.processingResultFolder.getText());
 		evaluationModel.setWithLatency(btnActivateLatencyMeasurements.getSelection());
 		evaluationModel.setWithThroughput(btnActivateThroughputMeasurments.getSelection());
-		evaluationModel.save();
+		evaluationModel.setNumberOfRuns(numberOfTimesSpinner.getSelection());
+		// variables are directly saved
+		evaluationModel.save(this.input.getFile());
 		setDirty(false);
 	}
 
@@ -431,8 +491,8 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		this.input = (FileEditorInput) input;
-		evaluationModel = new EvaluationModel(this.input.getFile());
-		evaluationModel.load();
+		evaluationModel = EvaluationModel.load(this.input.getFile());
+		setPartName(this.input.getName());
 		setSite(site);
 		setInput(input);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
@@ -451,13 +511,13 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
-	}	
+	}
 
 	@Override
 	public FileEditorInput getEditorInput() {
 		return (FileEditorInput) super.getEditorInput();
 	}
-	
+
 	@Override
 	public void resourceChanged(final IResourceChangeEvent event) {
 		if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
@@ -492,7 +552,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		}
 		return true;
 	}
-	
+
 	private void closeEditor(final IResource resource) {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
@@ -506,6 +566,5 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 				}
 			}
 		});
-	}
-
+	}	
 }

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.evaluation.editor;
 
+import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -9,7 +10,7 @@ import org.eclipse.swt.graphics.Image;
 import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationModel;
 import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationVariable;
 
-public class EvaluationVariableContentProvider implements IStructuredContentProvider, ITableLabelProvider {
+public class EvaluationVariableContentProvider implements IStructuredContentProvider, ITableLabelProvider, ICheckStateProvider {
 
 	@Override
 	public Object[] getElements(Object inputElement) {
@@ -67,4 +68,17 @@ public class EvaluationVariableContentProvider implements IStructuredContentProv
 		return null;
 	}
 
-}
+
+	@Override
+	public boolean isChecked(Object element) {
+		if(element instanceof EvaluationVariable){
+			EvaluationVariable var = (EvaluationVariable) element;
+			return var.isActive();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isGrayed(Object element) {		
+		return false;
+	}}
