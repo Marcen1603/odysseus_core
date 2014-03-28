@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.peer.logging.JxtaLoggingDestinations;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
+import de.uniol.inf.is.odysseus.peer.update.PeerUpdatePlugIn;
 
 @SuppressWarnings("unused")
 public class PeerConsole implements CommandProvider {
@@ -119,6 +120,7 @@ public class PeerConsole implements CommandProvider {
 		sb.append("    importSource <sourceName>      - Imports a source from the p2p network\n");
 		sb.append("    unimportSource <sourceName>    - Undo import of a source\n");
 		sb.append("    listAvailableSources <filter>  - Lists known sources from the p2p network\n");
+		sb.append("    remoteUpdateAll                - Sends update signals to remote peers with matching filter\n");
 		sb.append("\n");
 		sb.append("    log <level> <text>             - Creates a log statement\n");
 		sb.append("    setLogger <logger> <level>     - Sets the logging level of a specific logger\n");
@@ -473,5 +475,11 @@ public class PeerConsole implements CommandProvider {
 	
 	public void _listAvailableSources(CommandInterpreter ci ) {
 		_lsAvailableSources(ci);
+	}
+	
+	public void _remoteUpdateAll( CommandInterpreter ci ) {
+		PeerUpdatePlugIn.sendUpdateMessageToRemotePeers();
+		
+		System.out.println("Send update message to remote peers");
 	}
 }
