@@ -69,12 +69,36 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 
 	// called by OSGi-DS
 	public void activate() {
+		registerMessageType(PeerCloseMessage.class);
+		
 		LOG.debug("Activated");
 	}
 
 	// called by OSGi-DS
 	public void deactivate() {
+		sendCloseMessageToRemotePeers();
+		
+		unregisterMessageType(PeerCloseMessage.class);
+		
+		messengerMap.clear();
+		messageTypeMap.clear();
+		messageIDMap.clear();
+		
 		LOG.debug("Deactivated");
+	}
+
+	private void sendCloseMessageToRemotePeers() {
+		LOG.debug("Sending close message since we close gracefully.");
+		
+		ImmutableCollection<PeerID> connectedPeers = getConnectedPeers();
+		PeerCloseMessage msg = new PeerCloseMessage();
+		for( PeerID connectedPeer : connectedPeers ) {
+			try {
+				send(connectedPeer, msg);
+			} catch (PeerCommunicationException e) {
+				LOG.error("Could not send close message", e);
+			}
+		}
 	}
 
 	@Override
