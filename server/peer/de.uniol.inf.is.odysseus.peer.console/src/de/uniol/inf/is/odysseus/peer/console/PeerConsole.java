@@ -145,7 +145,7 @@ public class PeerConsole implements CommandProvider {
 		
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : remotePeerIDs) {
-			output.add(p2pDictionary.getRemotePeerName(remotePeerID).get() + " = " + remotePeerID);
+			output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " = " + remotePeerID);
 		}
 		
 		sortAndPrintList(output);
@@ -180,7 +180,7 @@ public class PeerConsole implements CommandProvider {
 		for (PeerID remotePeerID : remotePeerIDs) {
 			Optional<Double> optPing = pingMap.getPing(remotePeerID);
 			if (optPing.isPresent()) {
-				output.add(p2pDictionary.getRemotePeerName(remotePeerID).get() + " : " + optPing.get());
+				output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " : " + optPing.get());
 			}
 		}
 		
@@ -320,7 +320,7 @@ public class PeerConsole implements CommandProvider {
 		if (!destinations.isEmpty()) {
 			List<String> output = Lists.newLinkedList();
 			for (PeerID destination : destinations) {
-				output.add(p2pDictionary.getRemotePeerName(destination).get());
+				output.add(p2pDictionary.getRemotePeerName(destination));
 			}
 
 			sortAndPrintList(output);
@@ -335,7 +335,7 @@ public class PeerConsole implements CommandProvider {
 		System.out.println("Connected peers count: " + connectedPeers.size());
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : connectedPeers) {
-			output.add(p2pDictionary.getRemotePeerName(remotePeerID).get() + " = " + remotePeerID);
+			output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " = " + remotePeerID);
 		}
 
 		sortAndPrintList(output);

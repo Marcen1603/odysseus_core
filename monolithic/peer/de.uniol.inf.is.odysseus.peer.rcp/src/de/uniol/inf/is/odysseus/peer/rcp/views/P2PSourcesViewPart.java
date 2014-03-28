@@ -48,7 +48,6 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 		public String portedName;
 	}
 
-	private static final String UNKNOWN_TEXT = "<unknown>";
 	private static final String IMPORT_TAG = "[import]";
 	private static final String EXPORT_TAG = "[export]";
 	
@@ -396,11 +395,7 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 			return "_local_";
 		}
 		
-		Optional<String> optPeerName = dict.getRemotePeerName(peerID);
-		if( optPeerName.isPresent() ) {
-			return optPeerName.get();
-		} 
-		return UNKNOWN_TEXT;
+		return dict.getRemotePeerName(peerID);
 	}
 	
 	private static String determinePortedName( IP2PDictionary dict, SourceAdvertisement srcAdv ) {

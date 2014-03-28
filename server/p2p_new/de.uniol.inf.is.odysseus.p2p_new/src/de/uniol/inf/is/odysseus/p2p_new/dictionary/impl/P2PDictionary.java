@@ -59,6 +59,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private static final String AUTOIMPORT_SYS_PROPERTY = "peer.autoimport";
 	private static final String AUTOEXPORT_SYS_PROPERTY = "peer.autoexport";
+	private static final String UNKNOWN_PEER_NAME = "<unknown>";
 
 	private static P2PDictionary instance;
 
@@ -619,13 +620,19 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 
 	@Override
-	public Optional<String> getRemotePeerName(PeerID peerID) {
+	public String getRemotePeerName(PeerID peerID) {
 		Preconditions.checkNotNull(peerID, "PeerID to get the name from must not be null!");
 
 		if (peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
-			return Optional.of(P2PNetworkManager.getInstance().getLocalPeerName());
+			return P2PNetworkManager.getInstance().getLocalPeerName();
 		}
-		return Optional.fromNullable(knownPeersMap.get(peerID));
+		String name = knownPeersMap.get(peerID);
+		return !Strings.isNullOrEmpty(name) ? name : UNKNOWN_PEER_NAME;
+	}
+	
+	@Override
+	public boolean isRemotePeerNamed(PeerID peerID) {
+		return knownPeersMap.containsKey(peerID);
 	}
 
 	@Override

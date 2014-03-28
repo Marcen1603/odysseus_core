@@ -137,8 +137,7 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 	}
 
 	private static String determinePeerName(PeerID peerID) {
-		Optional<String> optPeerName = RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerName(peerID);
-		return optPeerName.isPresent() ? optPeerName.get() : "<unknown>";
+		return RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerName(peerID);
 	}
 
 	private void updateTable() {

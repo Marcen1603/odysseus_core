@@ -9,8 +9,6 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryDistributionPostProcessor;
@@ -72,8 +70,7 @@ public final class LoggingHelper {
 		if( LOG.isDebugEnabled() ) {
 			for (ILogicalQueryPart part : allocationMap.keySet()) {
 				PeerID allocatedPeerID = allocationMap.get(part);
-				Optional<String> remotePeerName = p2pDictionary.getRemotePeerName(allocatedPeerID);
-				LOG.debug("Allocated query part {} --> {}", part, remotePeerName.isPresent() ? remotePeerName.get() : "<unknownName>");
+				LOG.debug("Allocated query part {} --> {}", part, p2pDictionary.getRemotePeerName(allocatedPeerID));
 			}
 		}
 	}

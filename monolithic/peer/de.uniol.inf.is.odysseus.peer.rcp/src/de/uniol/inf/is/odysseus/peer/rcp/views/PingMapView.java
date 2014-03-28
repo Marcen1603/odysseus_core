@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -135,8 +134,7 @@ public class PingMapView extends ViewPart implements PaintListener, MouseMoveLis
 	}
 
 	private static String determinePeerName(IPingMapNode node) {
-		Optional<String> optName = RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerName(node.getPeerID());
-		return optName.isPresent() ? optName.get() : "<unknown>";
+		return RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerName(node.getPeerID());
 	}
 
 	private static Map<Vector3D, String> shiftPoints(Vector3D localPoint, Map<Vector3D, String> points) {

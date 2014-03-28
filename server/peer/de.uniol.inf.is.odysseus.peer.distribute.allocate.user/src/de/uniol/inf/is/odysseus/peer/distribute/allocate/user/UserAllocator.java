@@ -8,7 +8,6 @@ import java.util.Random;
 
 import net.jxta.peer.PeerID;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
@@ -88,9 +87,9 @@ public class UserAllocator implements IQueryPartAllocator {
 
 		Map<String, PeerID> peerNameMap = Maps.newHashMap();
 		for( PeerID remotePeerID : remotePeerIDs ) {
-			Optional<String> optPeerName = p2pDictionary.getRemotePeerName(remotePeerID);
-			if( optPeerName.isPresent() ) {
-				peerNameMap.put(optPeerName.get(), remotePeerID);
+			String peerName = p2pDictionary.getRemotePeerName(remotePeerID);
+			if( !peerName.equals("<unknown>") ) {
+				peerNameMap.put(peerName, remotePeerID);
 			}
 		}
 		

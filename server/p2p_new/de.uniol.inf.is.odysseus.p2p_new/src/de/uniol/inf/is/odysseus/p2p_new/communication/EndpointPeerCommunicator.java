@@ -53,7 +53,7 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 
 		p2pDictionary.addListener(this);
 		for (PeerID remotePeerID : p2pDictionary.getRemotePeerIDs()) {
-			remotePeerAdded(p2pDictionary, remotePeerID, p2pDictionary.getRemotePeerName(remotePeerID).get());
+			remotePeerAdded(p2pDictionary, remotePeerID, p2pDictionary.getRemotePeerName(remotePeerID));
 		}
 	}
 

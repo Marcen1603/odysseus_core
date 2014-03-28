@@ -47,7 +47,6 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerView.class);
 
-	private static final String UNKNOWN_PEER_NAME = "<unknown>";
 	private static final long REFRESH_INTERVAL_MILLIS = 5000;
 	private static PeerView instance;
 	private static Image[] warnImages;
@@ -550,8 +549,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	}
 
 	private String determinePeerName(PeerID id) {
-		Optional<String> optPeerName = p2pDictionary.getRemotePeerName(id);
-		return optPeerName.isPresent() ? optPeerName.get() : UNKNOWN_PEER_NAME;
+		return p2pDictionary.getRemotePeerName(id);
 	}
 
 	private Optional<IResourceUsage> determineResourceUsage(PeerID id) {

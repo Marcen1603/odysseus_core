@@ -304,7 +304,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		LOG.debug("{} : Port is {}", getName(), port);
 		PeerID peerID = determinePeerID(message);
 		LOG.debug("{} : PeerID is {}", getName(), peerID.toString());
-		connectedPeerName = determinePeerName(peerID);
+		connectedPeerName = P2PDictionary.getInstance().getRemotePeerName(peerID);
 		LOG.debug("{} : PeerName is {}", getName(), connectedPeerName);
 		
 		if( FORCE_JXTA_DATA_TRANSMISSION ) {
@@ -342,11 +342,6 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 			LOG.error("Could not establish a direct connection to {}", optAddress.get());
 			return false;
 		}
-	}
-
-	private static String determinePeerName(PeerID peerID) {
-		Optional<String> optPeerName = P2PDictionary.getInstance().getRemotePeerName(peerID);
-		return optPeerName.isPresent() ? optPeerName.get() : "<unknown>";
 	}
 
 	private void stopDirectConnection() {
