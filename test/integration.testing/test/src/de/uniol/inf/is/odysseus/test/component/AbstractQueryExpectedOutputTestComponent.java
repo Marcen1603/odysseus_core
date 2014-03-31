@@ -43,7 +43,7 @@ public abstract class AbstractQueryExpectedOutputTestComponent<T extends ITestCo
 					ISource<Tuple<ITimeInterval>> oldSink = (ISource<Tuple<ITimeInterval>>) operator;
 					oldSink.subscribeSink(sink, 0, 0, operator.getOutputSchema());
 				}
-				physicalQuery.setRoots(roots);
+				physicalQuery.initializePhysicalRoots(roots);
 			}
 
 		} catch (PlanManagementException e) {
