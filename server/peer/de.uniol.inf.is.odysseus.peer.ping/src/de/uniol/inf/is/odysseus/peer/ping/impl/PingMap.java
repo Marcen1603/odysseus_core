@@ -200,8 +200,6 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		Vector3D direction = node.getPosition().subtract(localPosition);
 		double latency = getLength(direction);
 		
-		LOG.debug("Latency is {} of peer {}", latency, peerID);
-		
 		return Optional.of(latency);
 	}
 
