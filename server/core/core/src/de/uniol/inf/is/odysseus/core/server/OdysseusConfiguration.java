@@ -239,10 +239,8 @@ public class OdysseusConfiguration {
 		if (tenantName != null && tenantName.length() > 0) {
 			return home + "store"
 					+ File.separator + tenantName + File.separator + get(key);
-		} else {
-			return home + "store"
-					+ File.separator +"_default"+ File.separator+ get(key);
-		}
+		} 
+		return home + "store" + File.separator +"_default"+ File.separator+ get(key);
 	}
 
 	public static String getFileProperty(String key) {
