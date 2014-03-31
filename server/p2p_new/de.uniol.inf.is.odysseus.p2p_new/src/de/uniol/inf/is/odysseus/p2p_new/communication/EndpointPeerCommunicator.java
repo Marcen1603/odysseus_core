@@ -96,7 +96,7 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 			try {
 				send(connectedPeer, msg);
 			} catch (PeerCommunicationException e) {
-				LOG.error("Could not send close message", e);
+				LOG.debug("Could not send close message", e);
 			}
 		}
 		
