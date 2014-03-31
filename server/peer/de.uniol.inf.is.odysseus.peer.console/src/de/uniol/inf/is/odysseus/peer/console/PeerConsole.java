@@ -492,4 +492,39 @@ public class PeerConsole implements CommandProvider {
 		
 		System.out.println("Send update message to remote peers");
 	}
+	
+	public void _lsSystemProperties( CommandInterpreter ci ) {
+		String filter = ci.nextArgument();
+		
+		Enumeration<Object> keys = System.getProperties().keys();
+		while( keys.hasMoreElements() ) {
+			Object key = keys.nextElement();
+			String keyName = key.toString();
+			
+			if( Strings.isNullOrEmpty(filter) || keyName.contains(filter)) {
+				System.out.println(keyName + " = " + System.getProperty(keyName));
+			}
+		}
+	}
+	
+	public void _listSystemProperties( CommandInterpreter ci ) {
+		_lsSystemProperties(ci);
+	}
+	
+	public void _setSystemProperty( CommandInterpreter ci ) {
+		String propName = ci.nextArgument();
+		if( Strings.isNullOrEmpty(propName)) {
+			System.out.println("usage: setSystemProperty <propName> <value>");
+			return;
+		}
+		
+		String value = ci.nextArgument();
+		if( Strings.isNullOrEmpty(value)) {
+			System.out.println("usage: setSystemProperty <propName> <value>");
+			return;
+		}
+		
+		System.setProperty(propName, value);
+		System.out.println("SystemProperty '" + propName + "' set to '" + value + "'");
+	}
 }
