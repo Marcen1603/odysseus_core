@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.ping.impl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import net.jxta.peer.PeerID;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
@@ -26,12 +28,15 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	private static final int MAX_PEERS_TO_PING = 2;
 
 	private static final int PING_INTERVAL = 6000;
+	private static final int MAX_PONG_WAIT_MILLIS = 20000;
 
 	private static IP2PDictionary dictionary;
 	private static IPeerCommunicator peerCommunicator;
 	private static PingMap pingMap;
 	private static Pinger instance;
 
+	private final Map<PeerID, Long> waitingPongMap = Maps.newHashMap();
+	
 	public Pinger() {
 		super(PING_INTERVAL, "Ping Thread");
 	}
@@ -98,6 +103,10 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 			peerCommunicator.removeListener(this, PongMessage.class);
 		}
 		
+		synchronized( waitingPongMap ) {
+			waitingPongMap.clear();
+		}
+		
 		stopRunning();
 	}
 
@@ -112,9 +121,26 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 
 		try {
 			IMessage pingMessage = new PingMessage(pingMap.getLocalPosition());
-			for (PeerID remotePeer : selectedPeers) {
-				if (peerCommunicator.isConnected(remotePeer)) {
-					peerCommunicator.send(remotePeer, pingMessage);
+			synchronized( waitingPongMap ) {
+				for (PeerID remotePeer : selectedPeers) {
+					
+					if( waitingPongMap.containsKey(remotePeer)) {
+						long ts = waitingPongMap.get(remotePeer);
+						if( System.currentTimeMillis() - ts < MAX_PONG_WAIT_MILLIS ) {
+							// still waiting for pong from prev ping
+							continue;
+						} 
+	
+						// ping was too long ago... try again then
+						waitingPongMap.remove(remotePeer);
+					}
+					
+					if (peerCommunicator.isConnected(remotePeer)) {
+						peerCommunicator.send(remotePeer, pingMessage);
+						waitingPongMap.put(remotePeer, System.currentTimeMillis());
+					} else {
+						waitingPongMap.remove(remotePeer);
+					}
 				}
 			}
 		} catch (PeerCommunicationException e) {
@@ -154,6 +180,10 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 			}
 		} else if (message instanceof PongMessage) {
 			PongMessage pongMessage = (PongMessage)message;
+			synchronized( waitingPongMap ) {
+				waitingPongMap.remove(senderPeer);
+			}
+			
 			long latency = System.currentTimeMillis() - pongMessage.getTimestamp();
 			pingMap.update(senderPeer, pongMessage.getPosition(), latency);
 		}
