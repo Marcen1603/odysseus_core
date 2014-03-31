@@ -6,6 +6,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
+import net.jxta.discovery.DiscoveryEvent;
+import net.jxta.discovery.DiscoveryListener;
 import net.jxta.document.Advertisement;
 import net.jxta.peer.PeerID;
 import net.jxta.protocol.PeerAdvertisement;
@@ -25,7 +27,7 @@ import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
-public class PeerManager implements IPeerCommunicatorListener {
+public class PeerManager implements IPeerCommunicatorListener, DiscoveryListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerManager.class);
 
@@ -40,6 +42,7 @@ public class PeerManager implements IPeerCommunicatorListener {
 	private final Object dictionaryObject = new Object();
 	
 	private RepeatingJobThread peerDiscoveryThread;
+	private Boolean onDiscovering = false;
 
 	// called by OSGi-DS
 	public void bindPeerCommunicator(IPeerCommunicator serv) {
@@ -64,7 +67,12 @@ public class PeerManager implements IPeerCommunicatorListener {
 			public void doJob() {
 				if( JxtaServicesProvider.isActivated() ) {
 					try {
-						JxtaServicesProvider.getInstance().getRemotePeerAdvertisements();
+						synchronized( onDiscovering ) {
+							if( !onDiscovering ) {
+								onDiscovering = true;
+								JxtaServicesProvider.getInstance().getRemotePeerAdvertisements(PeerManager.this);
+							}
+						}
 					
 						Enumeration<Advertisement> advs = JxtaServicesProvider.getInstance().getPeerAdvertisements();
 						List<PeerAdvertisement> peerAdvs = Lists.newArrayList();
@@ -88,6 +96,13 @@ public class PeerManager implements IPeerCommunicatorListener {
 		
 
 		LOG.debug("Peer manager activated");
+	}
+
+	@Override
+	public void discoveryEvent(DiscoveryEvent event) {
+		synchronized( onDiscovering ) {
+			onDiscovering = false;
+		}
 	}
 	
 	// called by OSGi-DS

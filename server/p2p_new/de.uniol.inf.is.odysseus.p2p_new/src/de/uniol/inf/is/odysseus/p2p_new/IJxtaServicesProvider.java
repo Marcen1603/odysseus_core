@@ -41,8 +41,10 @@ public interface IJxtaServicesProvider {
 
 	public void getRemotePeerAdvertisements();
 
+	public void getRemotePeerAdvertisements(DiscoveryListener listener);
+	
 	public Enumeration<Advertisement> getPeerAdvertisements() throws IOException ;
-
+	
 	public boolean isReachable(PeerID peerID);
 
 	boolean isReachable(PeerID peerID, boolean tryToConnect);
@@ -52,4 +54,5 @@ public interface IJxtaServicesProvider {
 	public InputPipe createInputPipe(PipeAdvertisement pipeAdv, PipeMsgListener listener) throws IOException ;
 
 	public OutputPipe createOutputPipe(PipeAdvertisement pipeAdv, long timeoutMillis) throws IOException ;
+
 }

@@ -172,6 +172,11 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	public void getRemotePeerAdvertisements() {
 		discoveryService.getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0);
 	}
+	
+	@Override
+	public void getRemotePeerAdvertisements(DiscoveryListener listener) {
+		discoveryService.getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0, listener);
+	}
 
 	@Override
 	public Enumeration<Advertisement> getPeerAdvertisements() throws IOException {
