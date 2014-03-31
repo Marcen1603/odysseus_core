@@ -51,7 +51,7 @@ public class FeatureUpdateUtility {
 
 	private static URI REPOSITORY_LOC;
 
-	static {		
+	static {
 		try {
 			REPOSITORY_LOC = new URI("http://odysseus.informatik.uni-oldenburg.de/update/");
 		} catch (final URISyntaxException e) {
@@ -71,10 +71,10 @@ public class FeatureUpdateUtility {
 				BundleContext context = Activator.getContext();
 				IProvisioningAgent agent = getAgent(context);
 				final ProvisioningSession session = new ProvisioningSession(agent);
-				final InstallOperation operation = new InstallOperation(session, units);				
+				final InstallOperation operation = new InstallOperation(session, units);
 
 				// set location of artifact and metadata repo
-				
+
 				operation.getProvisioningContext().setArtifactRepositories(new URI[] { REPOSITORY_LOC });
 				operation.getProvisioningContext().setMetadataRepositories(new URI[] { REPOSITORY_LOC });
 				LOG.debug("Starting install process...");
@@ -124,7 +124,7 @@ public class FeatureUpdateUtility {
 			BundleContext context = Activator.getContext();
 			IProvisioningAgent agent = getAgent(context);
 			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
-			try {				
+			try {
 				IMetadataRepository repo = metadataManager.loadRepository(REPOSITORY_LOC, getDefaultMonitor());
 				IQueryResult<IInstallableUnit> units = repo.query(QueryUtil.createIUGroupQuery(), getDefaultMonitor());
 				List<IInstallableUnit> toinstall = new ArrayList<>();
@@ -138,7 +138,7 @@ public class FeatureUpdateUtility {
 						toinstall.add(unit);
 					}
 				}
-				return toinstall;			
+				return toinstall;
 			} catch (ProvisionException e) {
 				e.printStackTrace();
 			} catch (OperationCanceledException e) {
@@ -195,7 +195,7 @@ public class FeatureUpdateUtility {
 			BundleContext context = Activator.getContext();
 			IProvisioningAgent agent = getAgent(context);
 			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
-			try {				
+			try {
 				IMetadataRepository repo = metadataManager.loadRepository(REPOSITORY_LOC, getDefaultMonitor());
 				IQueryResult<IInstallableUnit> units = repo.query(QueryUtil.createIUGroupQuery(), getDefaultMonitor());
 				List<IInstallableUnit> installable = new ArrayList<>();
@@ -212,7 +212,7 @@ public class FeatureUpdateUtility {
 					}
 				}
 				Collections.sort(installable);
-				return installable;			
+				return installable;
 			} catch (ProvisionException e) {
 				e.printStackTrace();
 			} catch (OperationCanceledException e) {
@@ -243,10 +243,10 @@ public class FeatureUpdateUtility {
 
 				final ProvisioningSession session = new ProvisioningSession(agent);
 				final UpdateOperation operation = new UpdateOperation(session);
-			
-				refreshArtifactRepositories(REPOSITORY_LOC, context);
-				operation.getProvisioningContext().setArtifactRepositories(new URI[] { REPOSITORY_LOC});
-				operation.getProvisioningContext().setMetadataRepositories(new URI[] { REPOSITORY_LOC});
+
+				refreshArtifactRepositories(REPOSITORY_LOC, context, caller);
+				operation.getProvisioningContext().setArtifactRepositories(new URI[] { REPOSITORY_LOC });
+				operation.getProvisioningContext().setMetadataRepositories(new URI[] { REPOSITORY_LOC });
 				final IStatus status = operation.resolveModal(monitor);
 
 				// failed to find updates (inform user and exit)
@@ -291,10 +291,10 @@ public class FeatureUpdateUtility {
 				final ProvisioningSession session = new ProvisioningSession(agent);
 
 				final UpdateOperation operation = new UpdateOperation(session);
-				
-				refreshArtifactRepositories(REPOSITORY_LOC, context);
-				operation.getProvisioningContext().setArtifactRepositories(new URI[] { REPOSITORY_LOC});
-				operation.getProvisioningContext().setMetadataRepositories(new URI[] { REPOSITORY_LOC});
+
+				refreshArtifactRepositories(REPOSITORY_LOC, context, caller);
+				operation.getProvisioningContext().setArtifactRepositories(new URI[] { REPOSITORY_LOC });
+				operation.getProvisioningContext().setMetadataRepositories(new URI[] { REPOSITORY_LOC });
 
 				final IStatus status = operation.resolveModal(monitor);
 
@@ -334,16 +334,20 @@ public class FeatureUpdateUtility {
 	}
 
 	public static String getVersionNumber(ISession caller) {
-		List<IInstallableUnit> units = getInstalledFeatures(caller);
-		for (IInstallableUnit unit : units) {
-			if (unit.getId().toLowerCase().startsWith("de.uniol.inf.is.odysseus.core")) {
-				return unit.getVersion().toString();
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
+			List<IInstallableUnit> units = getInstalledFeatures(caller);
+			for (IInstallableUnit unit : units) {
+				if (unit.getId().toLowerCase().startsWith("de.uniol.inf.is.odysseus.core")) {
+					return unit.getVersion().toString();
+				}
 			}
+		} else {
+			throw new PermissionException("This user may not list the installed features!");
 		}
 		return "-1";
 	}
 
-	public static IProvisioningAgent getAgent(BundleContext context) {
+	private static IProvisioningAgent getAgent(BundleContext context) {
 		IProvisioningAgent agent = null;
 
 		ServiceReference<?> reference = context.getServiceReference(IProvisioningAgent.SERVICE_NAME);
@@ -358,22 +362,26 @@ public class FeatureUpdateUtility {
 	}
 
 	public static void restart(ISession caller) {
-		BundleContext context = Activator.getContext();
-		ServiceReference<?> eventAdminServiceReference = context.getServiceReference(EventAdmin.class.getName());
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.INSTALL, UpdatePermission.objectURI)) {
+			BundleContext context = Activator.getContext();
+			ServiceReference<?> eventAdminServiceReference = context.getServiceReference(EventAdmin.class.getName());
 
-		// EventAdmin Service lookup
-		final EventAdmin eventAdmin = (EventAdmin) context.getService(eventAdminServiceReference);
+			// EventAdmin Service lookup
+			final EventAdmin eventAdmin = (EventAdmin) context.getService(eventAdminServiceReference);
 
-		Executors.newSingleThreadExecutor().execute(new Runnable() {
+			Executors.newSingleThreadExecutor().execute(new Runnable() {
 
-			@Override
-			public void run() {
-				LOG.debug("Sending restart event");
-				Map<String, String> hashMap = new HashMap<>();
-				hashMap.put("TYPE", "RESTART");
-				eventAdmin.sendEvent(new Event("de/uniol/inf/odysseus/application/" + System.currentTimeMillis(), hashMap));
-			}
-		});
+				@Override
+				public void run() {
+					LOG.debug("Sending restart event");
+					Map<String, String> hashMap = new HashMap<>();
+					hashMap.put("TYPE", "RESTART");
+					eventAdmin.sendEvent(new Event("de/uniol/inf/odysseus/application/" + System.currentTimeMillis(), hashMap));
+				}
+			});
+		} else {
+			throw new PermissionException("This user may not restart the system!");
+		}
 	}
 
 	private static IProgressMonitor getDefaultMonitor() {
@@ -418,9 +426,7 @@ public class FeatureUpdateUtility {
 			}
 
 			@Override
-			public void internalWorked(double work) {
-				// TODO Auto-generated method stub
-
+			public void internalWorked(double work) {				
 			}
 
 			@Override
@@ -448,22 +454,25 @@ public class FeatureUpdateUtility {
 		};
 	}
 
-	public static void refreshArtifactRepositories(URI location, BundleContext context) throws ProvisionException {
+	public static void refreshArtifactRepositories(URI location, BundleContext context, ISession caller) throws ProvisionException {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
+			IProvisioningAgent agent = getAgent(context);
 
-		IProvisioningAgent agent = getAgent(context);
-
-		if (agent != null) {			
-			LOG.info("Reloading artifact repository...");
-			IArtifactRepositoryManager manager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
-			manager.loadRepository(location, new NullProgressMonitor());
-			manager.refreshRepository(location, new NullProgressMonitor());
-			LOG.info("Reloading metadata repository...");
-			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);										
-			metadataManager.loadRepository(location, new NullProgressMonitor());
-			metadataManager.refreshRepository(location, new NullProgressMonitor());
-			LOG.info("Repositories refreshed");
+			if (agent != null) {
+				LOG.info("Reloading artifact repository...");
+				IArtifactRepositoryManager manager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
+				manager.loadRepository(location, new NullProgressMonitor());
+				manager.refreshRepository(location, new NullProgressMonitor());
+				LOG.info("Reloading metadata repository...");
+				IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+				metadataManager.loadRepository(location, new NullProgressMonitor());
+				metadataManager.refreshRepository(location, new NullProgressMonitor());
+				LOG.info("Repositories refreshed");
+			} else {
+				throw new ProvisionException("No repository manager found");
+			}
 		} else {
-			throw new ProvisionException("No repository manager found");
+			throw new PermissionException("User is not allowed to update the system!");
 		}
 	}
 }
