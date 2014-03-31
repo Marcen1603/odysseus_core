@@ -70,7 +70,7 @@ public class UserManagementProvider {
 				"StoretypeUserMgmt").toLowerCase());
 		while (ret == null) {
 			try {
-				UserManagementProvider.class.wait(10000);
+				UserManagementProvider.class.wait(1000);
 				logger.debug("Waiting for UserManagement "
 						+ OdysseusConfiguration.get("StoretypeUserMgmt"));
 				ret = usrMgmt.get(OdysseusConfiguration.get(
