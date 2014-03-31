@@ -6,6 +6,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
+import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.endpoint.EndpointAddress;
@@ -26,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
@@ -152,6 +154,13 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	@Override
 	public void getRemoteAdvertisements() {
 		discoveryService.getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99);
+	}
+	
+	@Override
+	public void getRemoteAdvertisements(DiscoveryListener listener) {
+		Preconditions.checkNotNull(listener, "DiscoveryListener must not be null!");
+		
+		discoveryService.getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99, listener);
 	}
 
 	@Override

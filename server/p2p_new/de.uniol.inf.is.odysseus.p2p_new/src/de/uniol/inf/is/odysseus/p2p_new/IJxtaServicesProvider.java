@@ -5,6 +5,7 @@ import java.util.Enumeration;
 
 import com.google.common.base.Optional;
 
+import net.jxta.discovery.DiscoveryListener;
 import net.jxta.document.Advertisement;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.InputPipe;
@@ -33,6 +34,8 @@ public interface IJxtaServicesProvider {
 	public void flushAdvertisement(Advertisement adv) throws IOException;
 
 	public void getRemoteAdvertisements();
+	
+	public void getRemoteAdvertisements(DiscoveryListener listener);
 
 	public Enumeration<Advertisement> getLocalAdvertisements() throws IOException ;
 
