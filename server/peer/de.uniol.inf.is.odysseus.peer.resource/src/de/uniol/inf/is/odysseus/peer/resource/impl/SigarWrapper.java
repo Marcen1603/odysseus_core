@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 public class SigarWrapper {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SigarWrapper.class);
+
+	private static final long DEFAULT_NET_BANDWIDTH_KB = 1024 * 10;
 	
 	private final Sigar sigar;
 	
@@ -32,7 +34,8 @@ public class SigarWrapper {
 		try {
 			CpuPerc perc = sigar.getCpuPerc();
 			double cpuMax = sigar.getCpuPercList().length;
-			return cpuMax - (perc != null ? perc.getUser() : 0.0) * cpuMax;
+			double cpuFree = cpuMax - (perc != null ? perc.getUser() : 0.0) * cpuMax;
+			return Math.min(cpuMax, Math.max(0, cpuFree));
 		} catch( Throwable t ) {
 			LOG.warn("Could not get cpu free from sigar", t);
 			return Runtime.getRuntime().availableProcessors();
@@ -71,7 +74,8 @@ public class SigarWrapper {
 		try {
 			String interfaceName = sigar.getNetInterfaceConfig(null).getName();
 			NetInterfaceStat net = sigar.getNetInterfaceStat(interfaceName);
-			return net.getSpeed();
+			long speed = net.getSpeed();
+			return speed >= 0 ? speed : DEFAULT_NET_BANDWIDTH_KB;
 		} catch( Throwable t ) {
 			LOG.warn("Could not get net output rate from sigar", t);
 			return 1024;
