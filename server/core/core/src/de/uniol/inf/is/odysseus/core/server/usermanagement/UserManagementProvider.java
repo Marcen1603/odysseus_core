@@ -29,6 +29,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public class UserManagementProvider {
 
+	static final UserManagementProvider instance = new UserManagementProvider();
+	
 	static Logger logger = LoggerFactory
 			.getLogger(UserManagementProvider.class);
 
@@ -42,13 +44,13 @@ public class UserManagementProvider {
 		return getTenant(defaultTenantName);
 	}
 
-	public static synchronized ITenant getTenant(String name) {
+	static public synchronized ITenant getTenant(String name) {
 		return TenantDAO.getInstance().findByName(name);
 	}
 
-	public static synchronized ITenant createNewTenant(String name,
+	static public synchronized ITenant createNewTenant(String name,
 			ISession caller) {
-		if (getUsermanagement().hasPermission(caller,
+		if (waitForUsermanagement().hasPermission(caller,
 				UserManagementPermission.CREATE_TENANT,
 				UserManagementPermission.objectUri)) {
 
@@ -60,12 +62,31 @@ public class UserManagementProvider {
 		throw new PermissionException("Not right to create tenant");
 
 	}
-
-	public static synchronized List<ITenant> getTenants() {
+	
+	static public synchronized List<ITenant> getTenants() {
 		return TenantDAO.getInstance().findAll();
 	}
 
-	static synchronized public IUserManagement getUsermanagement() {
+	/**
+	 * Get the current user management.
+	 * @param wait if not bound, wait for user management
+	 * @return the user management, could be null if wait is false
+	 */
+	static public IUserManagement getUsermanagement(boolean wait) {
+		if (wait) {
+			return waitForUsermanagement();
+		} else {
+			return usrMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt")
+					.toLowerCase());
+		}
+	}
+	
+	@Deprecated
+	static public IUserManagement getUsermanagent(){
+		return getUsermanagement(true);
+	}
+
+	static synchronized private IUserManagement waitForUsermanagement() {
 		IUserManagement ret = usrMgmt.get(OdysseusConfiguration.get(
 				"StoretypeUserMgmt").toLowerCase());
 		while (ret == null) {
@@ -73,8 +94,8 @@ public class UserManagementProvider {
 				UserManagementProvider.class.wait(1000);
 				logger.debug("Waiting for UserManagement "
 						+ OdysseusConfiguration.get("StoretypeUserMgmt"));
-				ret = usrMgmt.get(OdysseusConfiguration.get(
-						"StoretypeUserMgmt").toLowerCase());
+				ret = usrMgmt.get(OdysseusConfiguration
+						.get("StoretypeUserMgmt").toLowerCase());
 			} catch (InterruptedException e) {
 			}
 		}
@@ -89,7 +110,7 @@ public class UserManagementProvider {
 	}
 
 	static public ISessionManagement getSessionmanagement() {
-		ISessionManagement ret = getUsermanagement().getSessionManagement();
+		ISessionManagement ret = waitForUsermanagement().getSessionManagement();
 		return ret;
 	}
 
@@ -117,5 +138,7 @@ public class UserManagementProvider {
 					+ usermanagement.getType() + " not bound!");
 		}
 	}
+
+
 
 }

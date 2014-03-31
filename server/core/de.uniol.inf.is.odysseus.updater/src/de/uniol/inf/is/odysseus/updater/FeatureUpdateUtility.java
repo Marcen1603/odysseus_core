@@ -60,7 +60,7 @@ public class FeatureUpdateUtility {
 	}
 
 	public static IStatus installFeature(String id, final ISession caller) {
-		if (UserManagementProvider.getUsermanagement().hasPermission(caller, UpdatePermission.INSTALL, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.INSTALL, UpdatePermission.objectURI)) {
 			List<IInstallableUnit> units = getInstallableUnits(id, caller);
 
 			if (units != null && !units.isEmpty()) {
@@ -120,7 +120,7 @@ public class FeatureUpdateUtility {
 	}
 
 	private static List<IInstallableUnit> getInstallableUnits(String id, ISession caller) {
-		if (UserManagementProvider.getUsermanagement().hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
 			BundleContext context = Activator.getContext();
 			IProvisioningAgent agent = getAgent(context);
 			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
@@ -151,7 +151,7 @@ public class FeatureUpdateUtility {
 	}
 
 	public static boolean isFeatureInstalled(String id, ISession caller) {
-		if (UserManagementProvider.getUsermanagement().hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
 			List<IInstallableUnit> units = getInstalledFeatures(caller);
 			for (IInstallableUnit unit : units) {
 				if (unit.getId().startsWith(id)) {
@@ -165,7 +165,7 @@ public class FeatureUpdateUtility {
 	}
 
 	public static List<IInstallableUnit> getInstalledFeatures(ISession caller) {
-		if (UserManagementProvider.getUsermanagement().hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
 			BundleContext context = Activator.getContext();
 			IProvisioningAgent agent = getAgent(context);
 			IProfileRegistry regProfile = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
@@ -191,7 +191,7 @@ public class FeatureUpdateUtility {
 	}
 
 	public static List<IInstallableUnit> getInstallableFeatures(ISession caller) {
-		if (UserManagementProvider.getUsermanagement().hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
 			BundleContext context = Activator.getContext();
 			IProvisioningAgent agent = getAgent(context);
 			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
@@ -234,7 +234,7 @@ public class FeatureUpdateUtility {
 	}
 
 	public static boolean checkForUpdates(ISession caller) {
-		if (UserManagementProvider.getUsermanagement().hasPermission(caller, UpdatePermission.UPDATE, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.UPDATE, UpdatePermission.objectURI)) {
 			try {
 
 				BundleContext context = Activator.getContext();
@@ -280,7 +280,7 @@ public class FeatureUpdateUtility {
 
 	public static IStatus checkForAndInstallUpdates(final ISession caller) throws OperationCanceledException {
 
-		if (UserManagementProvider.getUsermanagement().hasPermission(caller, UpdatePermission.UPDATE, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.UPDATE, UpdatePermission.objectURI)) {
 
 			try {
 

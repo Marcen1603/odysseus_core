@@ -156,7 +156,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 */
 	private IAdmissionControl admissionControl = null;
 	private IAdmissionQuerySelector admissionQuerySelector = null;
-
+	
 	private Map<String, ILogicalQueryDistributor> logicalQueryDistributors = Maps
 			.newHashMap();
 	private IQueryDistributor queryDistributor;
@@ -340,14 +340,6 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		}
 	}
 
-	public void bindUserManagement(IUserManagement mgmt) {
-		// do nothing --> use UserManagement instead
-	}
-
-	public void unbindUserManagement(IUserManagement mgmt) {
-		// do nothing --> use UserManagement instead
-	}
-
 	public void bindAdmissionControl(IAdmissionControl control) {
 		if (admissionControl != null) {
 			admissionControl.removeListener(this);
@@ -382,6 +374,14 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		}
 	}
 
+	public void bindUserManagement(IUserManagement mgmt) {
+		// do nothing --> use UserManagement instead
+	}
+
+	public void unbindUserManagement(IUserManagement mgmt) {
+		// do nothing --> use UserManagement instead
+	}
+	
 	public final void bindLogicalQueryDistributor(ILogicalQueryDistributor d) {
 
 		logicalQueryDistributors.put(d.getName(), d);
@@ -541,8 +541,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void unbindQueryBuildConfiguration(
 			IQueryBuildConfigurationTemplate config) {
 		queryBuildConfigs.remove(config.getName());
-	}
-
+	}	
+	
 	// ----------------------------------------------------------------------------------------
 	// Getter/Setter
 	// ----------------------------------------------------------------------------------------
@@ -1458,7 +1458,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IUser> getUsers(ISession caller) {
-		return (List<IUser>) UserManagementProvider.getUsermanagement().getUsers(caller);
+		return (List<IUser>) UserManagementProvider.getUsermanagement(true).getUsers(caller);
 	}
 	
 	@Override

@@ -399,7 +399,7 @@ public class StandardExecutor extends AbstractExecutor implements
 				LOG.debug("Executing " + cmd);
 				cmd.execute(getDataDictionary(cmd.getCaller()),
 						(IUserManagementWritable) UserManagementProvider
-								.getUsermanagement());
+								.getUsermanagement(true));
 			}
 		}
 
@@ -982,13 +982,13 @@ public class StandardExecutor extends AbstractExecutor implements
 			ExecutorPermission executorAction) {
 		if (!(
 		// User has right
-		UserManagementProvider.getUsermanagement().hasPermission(caller,
+		UserManagementProvider.getUsermanagement(true).hasPermission(caller,
 				executorAction, "Query " + query.getID())
 				||
 				// User is owner
 				query.isOwner(caller) ||
 		// User has higher right
-		UserManagementProvider.getUsermanagement().hasPermission(caller,
+		UserManagementProvider.getUsermanagement(true).hasPermission(caller,
 				ExecutorPermission.hasSuperAction(executorAction),
 				ExecutorPermission.objectURI))) {
 			throw new PermissionException("No Right to execute "
@@ -1002,10 +1002,10 @@ public class StandardExecutor extends AbstractExecutor implements
 			ExecutorPermission executorAction) {
 		if (!(
 		// User has right
-		UserManagementProvider.getUsermanagement().hasPermission(caller,
+		UserManagementProvider.getUsermanagement(true).hasPermission(caller,
 				executorAction, ExecutorPermission.objectURI) ||
 		// User has higher right
-		UserManagementProvider.getUsermanagement().hasPermission(caller,
+		UserManagementProvider.getUsermanagement(true).hasPermission(caller,
 				ExecutorPermission.hasSuperAction(executorAction),
 				ExecutorPermission.objectURI))) {
 			throw new PermissionException("No Right to execute "
@@ -1499,4 +1499,6 @@ public class StandardExecutor extends AbstractExecutor implements
 	public boolean containsStoredProcedures(String name, ISession caller) {
 		return getDataDictionary(caller).containsStoredProcedure(name, caller);
 	}
+	
+
 }

@@ -935,7 +935,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throw new QueryParseException("unknown sla: " + slaName);
 		}
 		
-		IUser user = UserManagementProvider.getUsermanagement().findUser(userName, this.caller);
+		IUser user = UserManagementProvider.getUsermanagement(true).findUser(userName, this.caller);
 		if (user == null) {
 			throw new QueryParseException(new UsernameNotExistException("Unknown user: " + userName));
 		}

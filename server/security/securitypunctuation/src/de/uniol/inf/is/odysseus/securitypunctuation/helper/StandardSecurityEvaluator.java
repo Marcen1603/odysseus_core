@@ -48,11 +48,11 @@ public class StandardSecurityEvaluator<T extends IStreamObject<? extends ITimeIn
 	protected ISecurityPunctuation sp;
 	
 	public StandardSecurityEvaluator() {
-		UserManagementProvider.getUsermanagement().addUserManagementListener(this);
+		UserManagementProvider.getUsermanagement(true).addUserManagementListener(this);
 	}
 	
 	public StandardSecurityEvaluator(AbstractPipe<T, T> po) {
-		UserManagementProvider.getUsermanagement().addUserManagementListener(this);
+		UserManagementProvider.getUsermanagement(true).addUserManagementListener(this);
 	}
 	
 	public Boolean evaluate(T object, List<IOperatorOwner> ownerList, SDFSchema outputSchema) {

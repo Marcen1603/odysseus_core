@@ -292,12 +292,12 @@ public class OdysseusConfiguration {
 	public static void set(String key, String value, boolean permanent,
 			ISession caller) {
 
-		if (UserManagementProvider.getUsermanagement().hasPermission(caller,
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller,
 				ConfigurationPermission.SET_PARAM,
 				ConfigurationPermission.objectURI)) {
 			props.setProperty(key, value);
 			if (permanent) {
-				if (UserManagementProvider.getUsermanagement().hasPermission(
+				if (UserManagementProvider.getUsermanagement(true).hasPermission(
 						caller, ConfigurationPermission.SAVE_PARAM,
 						ConfigurationPermission.objectURI)) {
 					savePropertyFile(homeDir);
