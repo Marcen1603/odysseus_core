@@ -25,10 +25,10 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 
 	private static final Logger LOG = LoggerFactory.getLogger(Pinger.class);
 	private static final Random RAND = new Random();
-	private static final int MAX_PEERS_TO_PING = 5;
+	private static final int MAX_PEERS_TO_PING = 2;
 
 	private static final int PING_INTERVAL = 6000;
-	private static final int MAX_PONG_WAIT_MILLIS = 20000;
+	private static final int MAX_PONG_WAIT_MILLIS = 15000;
 
 	private static IP2PDictionary dictionary;
 	private static IPeerCommunicator peerCommunicator;
@@ -117,24 +117,15 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	@Override
 	public void doJob() {
 		Collection<PeerID> remotePeers = dictionary.getRemotePeerIDs();
+		
+		cleanWaitingPongMap();
+		
 		Collection<PeerID> selectedPeers = selectRandomPeers(remotePeers);
 
 		try {
 			IMessage pingMessage = new PingMessage(pingMap.getLocalPosition());
 			synchronized( waitingPongMap ) {
 				for (PeerID remotePeer : selectedPeers) {
-					
-					if( waitingPongMap.containsKey(remotePeer)) {
-						long ts = waitingPongMap.get(remotePeer);
-						if( System.currentTimeMillis() - ts < MAX_PONG_WAIT_MILLIS ) {
-							// still waiting for pong from prev ping
-							continue;
-						} 
-	
-						// ping was too long ago... try again then
-						waitingPongMap.remove(remotePeer);
-					}
-					
 					if (peerCommunicator.isConnected(remotePeer)) {
 						LOG.debug("Send ping-message to {}", dictionary.getRemotePeerName(remotePeer));
 						
@@ -150,14 +141,28 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 		}
 	}
 
-	private static Collection<PeerID> selectRandomPeers(Collection<PeerID> remotePeers) {
+	private void cleanWaitingPongMap() {
+		long timestamp = System.currentTimeMillis();
+		synchronized (waitingPongMap) {
+			for( PeerID pid : waitingPongMap.keySet().toArray(new PeerID[0])) {
+				if( timestamp - waitingPongMap.get(pid) > MAX_PONG_WAIT_MILLIS ) {
+					waitingPongMap.remove(pid);
+				}
+			}
+		}
+	}
+
+	private Collection<PeerID> selectRandomPeers(Collection<PeerID> remotePeers) {
 		if (remotePeers.size() <= MAX_PEERS_TO_PING) {
 			return Lists.newArrayList(remotePeers);
 		}
 
 		List<PeerID> availablePeers = Lists.newArrayList(remotePeers);
+		synchronized( waitingPongMap ) {
+			availablePeers.removeAll(waitingPongMap.keySet());
+		}
 		Collection<PeerID> selectedPeers = Lists.newArrayList();
-		while (selectedPeers.size() < MAX_PEERS_TO_PING) {
+		while (!availablePeers.isEmpty() && selectedPeers.size() < MAX_PEERS_TO_PING) {
 			int index = RAND.nextInt(availablePeers.size());
 			
 			selectedPeers.add(availablePeers.remove(index));
@@ -171,7 +176,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 		if (message instanceof PingMessage && PingMap.isActivated()) {
 			LOG.debug("Got ping message from {}", dictionary.getRemotePeerName(senderPeer));
 			PingMessage pingMessage = (PingMessage)message;
-//			pingMap.setPosition(senderPeer, pingMessage.getPosition());
+			pingMap.setPosition(senderPeer, pingMessage.getPosition());
 			
 			IMessage pongMessage = new PongMessage( pingMessage, pingMap.getLocalPosition());
 			try {
