@@ -25,7 +25,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 
 	private static final Logger LOG = LoggerFactory.getLogger(Pinger.class);
 	private static final Random RAND = new Random();
-	private static final int MAX_PEERS_TO_PING = 2;
+	private static final int MAX_PEERS_TO_PING = 5;
 
 	private static final int PING_INTERVAL = 6000;
 	private static final int MAX_PONG_WAIT_MILLIS = 15000;
@@ -36,7 +36,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	private static Pinger instance;
 
 	private final Map<PeerID, Long> waitingPongMap = Maps.newHashMap();
-	
+
 	public Pinger() {
 		super(PING_INTERVAL, "Ping Thread");
 	}
@@ -56,7 +56,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	// called by OSGi-DS
 	public static void bindPeerCommunicator(IPeerCommunicator serv) {
 		peerCommunicator = serv;
-		
+
 		peerCommunicator.registerMessageType(PingMessage.class);
 		peerCommunicator.registerMessageType(PongMessage.class);
 	}
@@ -64,17 +64,17 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	// called by OSGi-DS
 	public static void unbindPeerCommunicator(IPeerCommunicator serv) {
 		if (peerCommunicator == serv) {
-			
+
 			peerCommunicator.unregisterMessageType(PingMessage.class);
 			peerCommunicator.unregisterMessageType(PongMessage.class);
-			
+
 			peerCommunicator = null;
 		}
 	}
 
 	// called by OSGi-DS
 	public static void bindPingMap(IPingMap serv) {
-		pingMap = (PingMap)serv;
+		pingMap = (PingMap) serv;
 	}
 
 	// called by OSGi-DS
@@ -87,67 +87,67 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	// called by OSGi-DS
 	public void activate() {
 		instance = this;
-		
+
 		peerCommunicator.addListener(this, PingMessage.class);
 		peerCommunicator.addListener(this, PongMessage.class);
-		
+
 		start();
 	}
 
 	// called by OSGi-DS
 	public void deactivate() {
 		instance = null;
-		
-		if( peerCommunicator != null ) {
+
+		if (peerCommunicator != null) {
 			peerCommunicator.removeListener(this, PingMessage.class);
 			peerCommunicator.removeListener(this, PongMessage.class);
 		}
-		
-		synchronized( waitingPongMap ) {
+
+		synchronized (waitingPongMap) {
 			waitingPongMap.clear();
 		}
-		
+
 		stopRunning();
 	}
 
 	public static Pinger getInstance() {
 		return instance;
 	}
-	
+
 	@Override
 	public void doJob() {
 		Collection<PeerID> remotePeers = dictionary.getRemotePeerIDs();
-		
+
 		cleanWaitingPongMap();
-		
+
 		Collection<PeerID> selectedPeers = selectRandomPeers(remotePeers);
 
 		try {
-			IMessage pingMessage = new PingMessage(pingMap.getLocalPosition());
-				for (PeerID remotePeer : selectedPeers) {
-					if (peerCommunicator.isConnected(remotePeer)) {
-						LOG.debug("Send ping-message to {}", dictionary.getRemotePeerName(remotePeer));
-						
-						peerCommunicator.send(remotePeer, pingMessage);
-						synchronized( waitingPongMap ) {
-							waitingPongMap.put(remotePeer, System.currentTimeMillis());
-						}
-					} else {
-						synchronized( waitingPongMap ) {
-							waitingPongMap.remove(remotePeer);
-						}
+			IMessage pingMessage = new PingMessage();
+			for (PeerID remotePeer : selectedPeers) {
+				if (peerCommunicator.isConnected(remotePeer)) {
+					LOG.debug("Send ping-message to {}", dictionary.getRemotePeerName(remotePeer));
+
+					peerCommunicator.send(remotePeer, pingMessage);
+					synchronized (waitingPongMap) {
+						waitingPongMap.put(remotePeer, System.currentTimeMillis());
 					}
+				} else {
+					synchronized (waitingPongMap) {
+						waitingPongMap.remove(remotePeer);
+					}
+				}
 			}
 		} catch (PeerCommunicationException e) {
-			//LOG.error("Could not send ping message", e);
+			// LOG.error("Could not send ping message", e);
 		}
 	}
 
 	private void cleanWaitingPongMap() {
 		long timestamp = System.currentTimeMillis();
 		synchronized (waitingPongMap) {
-			for( PeerID pid : waitingPongMap.keySet().toArray(new PeerID[0])) {
-				if( timestamp - waitingPongMap.get(pid) > MAX_PONG_WAIT_MILLIS ) {
+			for (PeerID pid : waitingPongMap.keySet().toArray(new PeerID[0])) {
+				if (timestamp - waitingPongMap.get(pid) > MAX_PONG_WAIT_MILLIS) {
 					waitingPongMap.remove(pid);
 				}
 			}
@@ -160,16 +160,16 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 		}
 
 		List<PeerID> availablePeers = Lists.newArrayList(remotePeers);
-		synchronized( waitingPongMap ) {
+		synchronized (waitingPongMap) {
 			availablePeers.removeAll(waitingPongMap.keySet());
 		}
 		Collection<PeerID> selectedPeers = Lists.newArrayList();
 		while (!availablePeers.isEmpty() && selectedPeers.size() < MAX_PEERS_TO_PING) {
 			int index = RAND.nextInt(availablePeers.size());
-			
+
 			selectedPeers.add(availablePeers.remove(index));
 		}
-		
+
 		return selectedPeers;
 	}
 
@@ -177,10 +177,9 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		if (message instanceof PingMessage && PingMap.isActivated()) {
 			LOG.debug("Got ping message from {}", dictionary.getRemotePeerName(senderPeer));
-			PingMessage pingMessage = (PingMessage)message;
-			pingMap.setPosition(senderPeer, pingMessage.getPosition());
-			
-			IMessage pongMessage = new PongMessage( pingMessage, pingMap.getLocalPosition());
+			PingMessage pingMessage = (PingMessage) message;
+
+			IMessage pongMessage = new PongMessage(pingMessage, pingMap.getLocalPosition());
 			try {
 				if (communicator.isConnected(senderPeer)) {
 					communicator.send(senderPeer, pongMessage);
@@ -190,11 +189,11 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 			}
 		} else if (message instanceof PongMessage) {
 			LOG.debug("Got pong message from {}", dictionary.getRemotePeerName(senderPeer));
-			PongMessage pongMessage = (PongMessage)message;
-			synchronized( waitingPongMap ) {
+			PongMessage pongMessage = (PongMessage) message;
+			synchronized (waitingPongMap) {
 				waitingPongMap.remove(senderPeer);
 			}
-			
+
 			long latency = System.currentTimeMillis() - pongMessage.getTimestamp();
 			pingMap.update(senderPeer, pongMessage.getPosition(), latency);
 		}
