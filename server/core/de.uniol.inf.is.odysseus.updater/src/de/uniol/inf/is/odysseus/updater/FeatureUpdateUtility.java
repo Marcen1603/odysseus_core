@@ -12,12 +12,11 @@ import java.util.concurrent.Executors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.equinox.p2.core.IAgentLocation;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.IProfile;
@@ -50,7 +49,15 @@ public class FeatureUpdateUtility {
 
 	private static Logger LOG = LoggerFactory.getLogger(FeatureUpdateUtility.class);
 
-	private static final String REPOSITORY_LOC = "http://odysseus.informatik.uni-oldenburg.de/update";
+	private static URI REPOSITORY_LOC;
+
+	static {		
+		try {
+			REPOSITORY_LOC = new URI("http://odysseus.informatik.uni-oldenburg.de/update/");
+		} catch (final URISyntaxException e) {
+			LOG.error("URI invalid: " + e.getMessage());
+		}
+	}
 
 	public static IStatus installFeature(String id, final ISession caller) {
 		if (UserManagementProvider.getUsermanagement().hasPermission(caller, UpdatePermission.INSTALL, UpdatePermission.objectURI)) {
@@ -64,19 +71,12 @@ public class FeatureUpdateUtility {
 				BundleContext context = Activator.getContext();
 				IProvisioningAgent agent = getAgent(context);
 				final ProvisioningSession session = new ProvisioningSession(agent);
-				final InstallOperation operation = new InstallOperation(session, units);
-
-				URI uri = null;
-				try {
-					uri = new URI(REPOSITORY_LOC);
-				} catch (final URISyntaxException e) {
-					LOG.error("URI invalid: " + e.getMessage());
-					return Status.CANCEL_STATUS;
-				}
+				final InstallOperation operation = new InstallOperation(session, units);				
 
 				// set location of artifact and metadata repo
-				operation.getProvisioningContext().setArtifactRepositories(new URI[] { uri });
-				operation.getProvisioningContext().setMetadataRepositories(new URI[] { uri });
+				
+				operation.getProvisioningContext().setArtifactRepositories(new URI[] { REPOSITORY_LOC });
+				operation.getProvisioningContext().setMetadataRepositories(new URI[] { REPOSITORY_LOC });
 				LOG.debug("Starting install process...");
 				IStatus status = operation.resolveModal(getDefaultMonitor());
 				if (status.isOK()) {
@@ -107,14 +107,14 @@ public class FeatureUpdateUtility {
 					provisioningJob.schedule();
 
 					return Status.OK_STATUS;
-				} 
+				}
 				LOG.error(status.getMessage());
 				return Status.CANCEL_STATUS;
-				
-			} 
+
+			}
 			LOG.error("There is no update with this feature id");
 			return Status.CANCEL_STATUS;
-			
+
 		}
 		throw new PermissionException("This user is not allowed to install new features!");
 	}
@@ -124,10 +124,8 @@ public class FeatureUpdateUtility {
 			BundleContext context = Activator.getContext();
 			IProvisioningAgent agent = getAgent(context);
 			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
-			try {
-				URI uri = null;
-				uri = new URI(REPOSITORY_LOC);
-				IMetadataRepository repo = metadataManager.loadRepository(uri, getDefaultMonitor());
+			try {				
+				IMetadataRepository repo = metadataManager.loadRepository(REPOSITORY_LOC, getDefaultMonitor());
 				IQueryResult<IInstallableUnit> units = repo.query(QueryUtil.createIUGroupQuery(), getDefaultMonitor());
 				List<IInstallableUnit> toinstall = new ArrayList<>();
 				if (!id.endsWith("feature.group")) {
@@ -140,10 +138,7 @@ public class FeatureUpdateUtility {
 						toinstall.add(unit);
 					}
 				}
-				return toinstall;
-			} catch (final URISyntaxException e) {
-				LOG.error("URI invalid: " + e.getMessage());
-				return new ArrayList<>();
+				return toinstall;			
 			} catch (ProvisionException e) {
 				e.printStackTrace();
 			} catch (OperationCanceledException e) {
@@ -200,10 +195,8 @@ public class FeatureUpdateUtility {
 			BundleContext context = Activator.getContext();
 			IProvisioningAgent agent = getAgent(context);
 			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
-			try {
-				URI uri = null;
-				uri = new URI(REPOSITORY_LOC);
-				IMetadataRepository repo = metadataManager.loadRepository(uri, getDefaultMonitor());
+			try {				
+				IMetadataRepository repo = metadataManager.loadRepository(REPOSITORY_LOC, getDefaultMonitor());
 				IQueryResult<IInstallableUnit> units = repo.query(QueryUtil.createIUGroupQuery(), getDefaultMonitor());
 				List<IInstallableUnit> installable = new ArrayList<>();
 				String id = ".feature.group";
@@ -219,10 +212,7 @@ public class FeatureUpdateUtility {
 					}
 				}
 				Collections.sort(installable);
-				return installable;
-			} catch (final URISyntaxException e) {
-				LOG.error("URI invalid: " + e.getMessage());
-				return new ArrayList<>();
+				return installable;			
 			} catch (ProvisionException e) {
 				e.printStackTrace();
 			} catch (OperationCanceledException e) {
@@ -253,11 +243,10 @@ public class FeatureUpdateUtility {
 
 				final ProvisioningSession session = new ProvisioningSession(agent);
 				final UpdateOperation operation = new UpdateOperation(session);
-
-				URI uri = new URI(REPOSITORY_LOC);
-				refreshArtifactRepositories(uri, context);
-				operation.getProvisioningContext().setArtifactRepositories(new URI[] { uri });
-				operation.getProvisioningContext().setMetadataRepositories(new URI[] { uri });
+			
+				refreshArtifactRepositories(REPOSITORY_LOC, context);
+				operation.getProvisioningContext().setArtifactRepositories(new URI[] { REPOSITORY_LOC});
+				operation.getProvisioningContext().setMetadataRepositories(new URI[] { REPOSITORY_LOC});
 				final IStatus status = operation.resolveModal(monitor);
 
 				// failed to find updates (inform user and exit)
@@ -276,7 +265,7 @@ public class FeatureUpdateUtility {
 						LOG.debug("Following updates found: \n" + updates);
 
 						return true;
-					} 
+					}
 					LOG.debug("No updates found.");
 					return false;
 				}
@@ -300,13 +289,12 @@ public class FeatureUpdateUtility {
 				IProgressMonitor monitor = getDefaultMonitor();
 
 				final ProvisioningSession session = new ProvisioningSession(agent);
-				
-				final UpdateOperation operation = new UpdateOperation(session);
 
-				URI uri = new URI(REPOSITORY_LOC);
-				refreshArtifactRepositories(uri, context);
-				operation.getProvisioningContext().setArtifactRepositories(new URI[] { uri });
-				operation.getProvisioningContext().setMetadataRepositories(new URI[] { uri });
+				final UpdateOperation operation = new UpdateOperation(session);
+				
+				refreshArtifactRepositories(REPOSITORY_LOC, context);
+				operation.getProvisioningContext().setArtifactRepositories(new URI[] { REPOSITORY_LOC});
+				operation.getProvisioningContext().setMetadataRepositories(new URI[] { REPOSITORY_LOC});
 
 				final IStatus status = operation.resolveModal(monitor);
 
@@ -341,7 +329,7 @@ public class FeatureUpdateUtility {
 				e.printStackTrace();
 			}
 			return Status.OK_STATUS;
-		} 
+		}
 		throw new PermissionException("User is not allowed to update the system!");
 	}
 
@@ -460,24 +448,22 @@ public class FeatureUpdateUtility {
 		};
 	}
 
-	public static void refreshArtifactRepositories(URI uri, BundleContext context) throws ProvisionException {
+	public static void refreshArtifactRepositories(URI location, BundleContext context) throws ProvisionException {
 
 		IProvisioningAgent agent = getAgent(context);
 
-		if (agent != null) {
-			IAgentLocation agentLocation = (IAgentLocation) agent.getService(IAgentLocation.SERVICE_NAME);
+		if (agent != null) {			
+			LOG.info("Reloading artifact repository...");
 			IArtifactRepositoryManager manager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
-			URI locationUri = agentLocation.getDataArea("org.eclipse.equinox.p2.repository");
-			locationUri = URIUtil.append(locationUri, "cache/");
-			try {
-				manager.refreshRepository(locationUri, getDefaultMonitor());
-			} catch (ProvisionException e) {
-				LOG.warn("Could not refresh repository, because there is no one!");
-			}
-
+			manager.loadRepository(location, new NullProgressMonitor());
+			manager.refreshRepository(location, new NullProgressMonitor());
+			LOG.info("Reloading metadata repository...");
+			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);										
+			metadataManager.loadRepository(location, new NullProgressMonitor());
+			metadataManager.refreshRepository(location, new NullProgressMonitor());
+			LOG.info("Repositories refreshed");
 		} else {
 			throw new ProvisionException("No repository manager found");
 		}
 	}
-
 }
