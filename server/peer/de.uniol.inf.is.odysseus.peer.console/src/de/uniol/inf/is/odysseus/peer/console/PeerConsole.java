@@ -136,6 +136,9 @@ public class PeerConsole implements CommandProvider {
 		sb.append("    setLogger <logger> <level>     - Sets the logging level of a specific logger\n");
 		sb.append("    listLoggers/lsLoggers <filter> - Lists all known loggers by name\n");
 		sb.append("    jxtaLogDestinations            - Lists all peers to send log messages to\n");
+		sb.append("    listSystemProperties/ls...     - Lists all set system properties. Filter possible\n");
+		sb.append("    setSystemProperty <name> <value>- Stes system property.\n");
+		sb.append("    listThreads/ls... <filter>     - Lists all currently running thread. Filter possible\n");
 		return sb.toString();
 	}
 
@@ -497,14 +500,17 @@ public class PeerConsole implements CommandProvider {
 		String filter = ci.nextArgument();
 		
 		Enumeration<Object> keys = System.getProperties().keys();
+		List<String> output = Lists.newLinkedList();
 		while( keys.hasMoreElements() ) {
 			Object key = keys.nextElement();
 			String keyName = key.toString();
 			
 			if( Strings.isNullOrEmpty(filter) || keyName.contains(filter)) {
-				System.out.println(keyName + " = " + System.getProperty(keyName));
+				output.add(keyName + " = " + System.getProperty(keyName));
 			}
 		}
+		
+		sortAndPrintList(output);
 	}
 	
 	public void _listSystemProperties( CommandInterpreter ci ) {
@@ -526,5 +532,28 @@ public class PeerConsole implements CommandProvider {
 		
 		System.setProperty(propName, value);
 		System.out.println("SystemProperty '" + propName + "' set to '" + value + "'");
+	}
+	
+	public void _lsThreads( CommandInterpreter ci ) {
+		String filter = ci.nextArgument();
+
+		int threadCount = Thread.activeCount();
+		Thread[] tarray = new Thread[threadCount];
+		Thread.enumerate(tarray);
+		
+		List<String> output = Lists.newLinkedList();
+		for( Thread t : tarray ) {
+			String text = t.getName() + ": " + t.getState();
+			if( Strings.isNullOrEmpty(filter) || text.contains(filter)) {
+				output.add(text);
+			}
+		}
+		
+		System.out.println("Thread count: " + threadCount);
+		sortAndPrintList(output);
+	}
+	
+	public void _listThreads( CommandInterpreter ci ) {
+		_lsThreads(ci);
 	}
 }
