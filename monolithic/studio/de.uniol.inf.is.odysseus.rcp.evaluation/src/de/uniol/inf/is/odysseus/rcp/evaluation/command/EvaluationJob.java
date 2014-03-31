@@ -25,11 +25,19 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.GetQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.logicaloperator.latency.CalcLatencyAO;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.evaluation.Activator;
 import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationModel;
@@ -124,13 +132,44 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 			monitor.subTask(prefix + "Executing Script \"" + model.getQueryFile().getName() + "\"... ");
 			Context context = ParserClientUtil.createRCPContext((IFile) model.getQueryFile());
 			long timeStarted = System.currentTimeMillis();
-			System.out.println(currentValues);
-			Collection<Integer> ids = executor.addQuery(thislines, "OdysseusScript", caller, "Standard", context);
+
+			List<IExecutorCommand> commands = executor.translateQuery(thislines, "OdysseusScript", caller, context);
+			List<ILogicalQuery> queries = new ArrayList<>();
+			for (IExecutorCommand command : commands) {
+				if (command instanceof CreateQueryCommand) {
+					queries.add(((CreateQueryCommand) command).getQuery());
+				}
+				if (command instanceof GetQueryCommand) {
+					int id = ((GetQueryCommand) command).getQueryID();
+					ILogicalQuery query = executor.getLogicalQueryById(id, caller);
+					queries.add(query);
+					executor.stopQuery(id, caller);
+				}
+			}
+			// Collection<Integer> ids = executor.addQuery(thislines,
+			// "OdysseusScript", caller, "Standard", context);
+			if (model.isWithLatency()) {
+				monitor.subTask(prefix + "Preparing queries for latency calculation");
+				addLatencyCalculations(queries, model);
+			}
+
+			if (model.isWithThroughput()) {
+				monitor.subTask(prefix + "Preparing queries for throughput calculation");
+				addThroughputCalculations(queries, model);
+			}
+
+			Collection<Integer> ids = new ArrayList<>();
+
+			for (ILogicalQuery query : queries) {
+				QueryBuildConfiguration buildConfig = executor.getBuildConfigForQuery(query);
+				ids.add(executor.addQuery(query.getLogicalPlan(), caller, buildConfig.getName()));
+			}
+
 			monitor.subTask(prefix + "Running query and waiting for stop...");
 			for (int id : ids) {
 				executor.startQuery(id, caller);
 			}
-			this.wait(1000);
+			this.wait();
 			monitor.worked(1);
 			System.out.println("Evaluation job takes " + nf.format(System.currentTimeMillis() - timeStarted) + " ms");
 			monitor.subTask(prefix + "Process done. Removing query...");
@@ -140,6 +179,49 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 			monitor.subTask(prefix + "Run done. Starting next...");
 		}
 		return counter;
+
+	}
+
+	private void addThroughputCalculations(Collection<ILogicalQuery> queries, EvaluationModel model2) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void addLatencyCalculations(List<ILogicalQuery> queries, EvaluationModel evaluationModel) {
+		try {
+			// IServerExecutor executor = (IServerExecutor)
+			// Activator.getExecutor();
+			// ISession caller = OdysseusRCPPlugIn.getActiveSession();
+			for (ILogicalQuery query : queries) {
+
+				// // add latency calculation
+				// LatencyCalculationPipe<Tuple<IntervalLatency>> latency =
+				// new LatencyCalculationPipe<>();
+				// @SuppressWarnings("unchecked")
+				// ISource<Tuple<IntervalLatency>> oldSink =
+				// (ISource<Tuple<IntervalLatency>>) operator;
+				// latency.setOutputSchema(oldSink.getOutputSchema());
+				// oldSink.subscribeSink(latency, 0, 0,
+				// operator.getOutputSchema());
+				// // add latency to payload using an ao to create correct
+				// // output schema
+				// LatencyToPayloadAO ao = new LatencyToPayloadAO();
+				// SDFSchema outputSchema =
+				// ao.buildOutputSchema(latency.getOutputSchema());
+				// LatencyToPayloadPO<IntervalLatency,
+				// Tuple<IntervalLatency>> ltp = new LatencyToPayloadPO<>();
+				// ltp.setOutputSchema(outputSchema);
+				// latency.subscribeSink(ltp, 0, 0,
+				// latency.getOutputSchema());
+				ILogicalOperator root = query.getLogicalPlan();
+				CalcLatencyAO latency = new CalcLatencyAO();
+				latency.subscribeToSource(root, 0, 0, root.getOutputSchema());
+				query.setLogicalPlan(latency, true);
+			}
+
+		} catch (PlanManagementException e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -167,6 +249,6 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 		}
 		br.close();
 		return lines;
-	}	
+	}
 
 }
