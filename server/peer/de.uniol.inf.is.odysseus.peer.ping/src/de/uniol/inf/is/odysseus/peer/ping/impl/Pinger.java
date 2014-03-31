@@ -25,7 +25,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 
 	private static final Logger LOG = LoggerFactory.getLogger(Pinger.class);
 	private static final Random RAND = new Random();
-	private static final int MAX_PEERS_TO_PING = 2;
+	private static final int MAX_PEERS_TO_PING = 5;
 
 	private static final int PING_INTERVAL = 6000;
 	private static final int MAX_PONG_WAIT_MILLIS = 20000;
@@ -171,7 +171,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 		if (message instanceof PingMessage && PingMap.isActivated()) {
 			LOG.debug("Got ping message from {}", dictionary.getRemotePeerName(senderPeer));
 			PingMessage pingMessage = (PingMessage)message;
-			pingMap.setPosition(senderPeer, pingMessage.getPosition());
+//			pingMap.setPosition(senderPeer, pingMessage.getPosition());
 			
 			IMessage pongMessage = new PongMessage( pingMessage, pingMap.getLocalPosition());
 			try {
