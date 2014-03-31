@@ -203,6 +203,7 @@ public class OdysseusConfiguration {
 		props.setProperty("security.default.password", "ithaka");
 		
 		// P2P
+		props.setProperty("peer.name", "OdysseusPeer");
 		props.setProperty("peer.group.name", "OdysseusPeers");
 		props.setProperty("peer.rdv.address", "");
 		props.setProperty("peer.rdv.active", "false");
