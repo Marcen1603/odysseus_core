@@ -47,7 +47,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerView.class);
 
-	private static final long REFRESH_INTERVAL_MILLIS = 5000;
+	private static final long REFRESH_INTERVAL_MILLIS = 15000;
 	private static PeerView instance;
 	private static Image[] warnImages;
 
