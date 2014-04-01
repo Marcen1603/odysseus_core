@@ -32,6 +32,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerResourceUsageManager.class);
 
+	private static final int RESOURCE_USAGE_UPDATE_INTERVAL_MILLIS = 15000;
 	private static final SigarWrapper SIGAR_WRAPPER = new SigarWrapper();
 	
 	private static final Runtime RUNTIME = Runtime.getRuntime();
@@ -105,7 +106,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		peerCommunicator.addListener(this, AskUsageMessage.class);
 		peerCommunicator.addListener(this, AnswerUsageMessage.class);
 
-		localUsageChecker = new RepeatingJobThread(1500, "Local usage checker") {
+		localUsageChecker = new RepeatingJobThread(RESOURCE_USAGE_UPDATE_INTERVAL_MILLIS, "Local usage checker") {
 			@Override
 			public void doJob() {
 				updateLocalUsage();
@@ -203,7 +204,10 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 
 	@Override
 	public IResourceUsage getLocalResourceUsage() {
-		return usageCollector.getCurrentResourceUsage();
+		updateLocalUsage();
+		synchronized( usageCollector ) {
+			return usageCollector.getCurrentResourceUsage();
+		}
 	}
 
 	private void updateLocalUsage() {
@@ -229,8 +233,10 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 					stoppedQueries++;
 				}
 			}
-
-			usageCollector.addStatistics(freeMemory, totalMemory, SIGAR_WRAPPER.getCpuFree(), SIGAR_WRAPPER.getCpuMax(), runningQueries, stoppedQueries, SIGAR_WRAPPER.getNetInputRate(), SIGAR_WRAPPER.getNetOutputRate(), SIGAR_WRAPPER.getNetMax());
+			
+			synchronized( usageCollector ) {
+				usageCollector.addStatistics(freeMemory, totalMemory, SIGAR_WRAPPER.getCpuFree(), SIGAR_WRAPPER.getCpuMax(), runningQueries, stoppedQueries, SIGAR_WRAPPER.getNetInputRate(), SIGAR_WRAPPER.getNetOutputRate(), SIGAR_WRAPPER.getNetMax());
+			}
 		} catch (Throwable t) {
 			LOG.error("Cannot determine own resource usage", t);
 		}

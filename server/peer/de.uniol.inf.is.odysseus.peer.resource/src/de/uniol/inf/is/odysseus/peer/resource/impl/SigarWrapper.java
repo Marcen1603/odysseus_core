@@ -17,11 +17,17 @@ public class SigarWrapper {
 	private long previousInputTotal = 0;
 	private long previousOutputTotal = 0;
 	
+	private double cpuMax;
+	private long netMax;
+	
 	public SigarWrapper() {
 		sigar = new Sigar();
+		
+		cpuMax = getCpuMaxImpl();
+		netMax = getNetMaxImpl();
 	}
 	
-	public double getCpuMax() {
+	private double getCpuMaxImpl() {
 		try {
 			return sigar.getCpuPercList().length;
 		} catch (Throwable e) {
@@ -30,10 +36,25 @@ public class SigarWrapper {
 		}
 	}
 	
+	private long getNetMaxImpl() {
+		try {
+			String interfaceName = sigar.getNetInterfaceConfig(null).getName();
+			NetInterfaceStat net = sigar.getNetInterfaceStat(interfaceName);
+			long speed = net.getSpeed();
+			return speed >= 0 ? speed : DEFAULT_NET_BANDWIDTH_KB;
+		} catch( Throwable t ) {
+			LOG.warn("Could not get net output rate from sigar", t);
+			return 1024;
+		}
+	}
+	
+	public double getCpuMax() {
+		return cpuMax;
+	}
+	
 	public double getCpuFree() {
 		try {
 			CpuPerc perc = sigar.getCpuPerc();
-			double cpuMax = sigar.getCpuPercList().length;
 			double cpuFree = cpuMax - (perc != null ? perc.getUser() : 0.0) * cpuMax;
 			return Math.min(cpuMax, Math.max(0, cpuFree));
 		} catch( Throwable t ) {
@@ -71,14 +92,6 @@ public class SigarWrapper {
 	}
 	
 	public long getNetMax() {
-		try {
-			String interfaceName = sigar.getNetInterfaceConfig(null).getName();
-			NetInterfaceStat net = sigar.getNetInterfaceStat(interfaceName);
-			long speed = net.getSpeed();
-			return speed >= 0 ? speed : DEFAULT_NET_BANDWIDTH_KB;
-		} catch( Throwable t ) {
-			LOG.warn("Could not get net output rate from sigar", t);
-			return 1024;
-		}
+		return netMax;
 	}
 }

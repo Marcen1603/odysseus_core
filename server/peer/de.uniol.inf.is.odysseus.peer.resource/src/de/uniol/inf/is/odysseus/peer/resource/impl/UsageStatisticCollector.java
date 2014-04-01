@@ -10,7 +10,7 @@ public class UsageStatisticCollector {
 
 //	private static final Logger LOG = LoggerFactory.getLogger(UsageStatisticCollector.class);
 	
-	private static final int MAX_STAT_COUNT = 20;
+	private static final int MAX_STAT_COUNT = 7;
 	
 	private static ISession currentSession;
 	
