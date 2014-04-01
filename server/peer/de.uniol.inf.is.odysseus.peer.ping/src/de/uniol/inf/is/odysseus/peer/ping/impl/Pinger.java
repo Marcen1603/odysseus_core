@@ -123,23 +123,29 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 		Collection<PeerID> selectedPeers = selectRandomPeers(remotePeers);
 
 		try {
-			IMessage pingMessage = new PingMessage();
-			for (PeerID remotePeer : selectedPeers) {
-				if (peerCommunicator.isConnected(remotePeer)) {
-					LOG.debug("Send ping-message to {}", dictionary.getRemotePeerName(remotePeer));
-
-					peerCommunicator.send(remotePeer, pingMessage);
-					synchronized (waitingPongMap) {
-						waitingPongMap.put(remotePeer, System.currentTimeMillis());
+			if( !selectedPeers.isEmpty() ) {
+				IMessage pingMessage = new PingMessage();
+				for (PeerID remotePeer : selectedPeers) {
+					if (peerCommunicator.isConnected(remotePeer)) {
+						LOG.debug("Send ping-message to {}", dictionary.getRemotePeerName(remotePeer));
+	
+						peerCommunicator.send(remotePeer, pingMessage);
+						synchronized (waitingPongMap) {
+							waitingPongMap.put(remotePeer, System.currentTimeMillis());
+						}
+					} else {
+						synchronized (waitingPongMap) {
+							waitingPongMap.remove(remotePeer);
+						}
 					}
-				} else {
-					synchronized (waitingPongMap) {
-						waitingPongMap.remove(remotePeer);
-					}
+				}
+			} else {
+				synchronized( waitingPongMap ) {
+					LOG.debug("No peers for pinging available. Waiting for {} pong messages...", waitingPongMap.size());
 				}
 			}
 		} catch (PeerCommunicationException e) {
-			// LOG.error("Could not send ping message", e);
+			LOG.debug("Could not send ping message", e);
 		}
 	}
 
