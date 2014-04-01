@@ -119,6 +119,7 @@ public class PeerConsole implements CommandProvider {
 		StringBuilder sb = new StringBuilder();
 		sb.append("---Peer commands---\n");
 		sb.append("    listPeers/lsPeers              		- Lists all known peers with their ids\n");
+		sb.append("    listPeerAddresses/ls...              - Lists all peer addresses (ips)\n");
 		sb.append("    resourceStatus                 		- Current status of local MEM, CPU, NET\n");
 		sb.append("    ping                           		- Lists the current latencies to known peers\n");
 		sb.append("    peerStatus                     		- Summarizes the current peer status (peerName, ids, etc.)\n");
@@ -578,5 +579,23 @@ public class PeerConsole implements CommandProvider {
 
 	public void _listThreads(CommandInterpreter ci) {
 		_lsThreads(ci);
+	}
+	
+	public void _listPeerAddresses( CommandInterpreter ci ) {
+		ImmutableList<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
+		System.out.println("Remote peers known: " + remotePeerIDs.size());
+
+		List<String> output = Lists.newLinkedList();
+		for (PeerID remotePeerID : remotePeerIDs) {
+			Optional<String> optAddress = p2pDictionary.getRemotePeerAddress(remotePeerID);
+			output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " : " + ( optAddress.isPresent() ? optAddress.get() : "<unknown>"));
+		}
+
+		sortAndPrintList(output);
+		
+	}
+	
+	public void _lsPeerAddresses( CommandInterpreter ci ) {
+		_listPeerAddresses(ci);
 	}
 }
