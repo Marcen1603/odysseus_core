@@ -103,7 +103,7 @@ public class PeerConsole implements CommandProvider {
 			peerCommunicator = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public void activate() {
 		LOG.debug("Peer console activated");
@@ -118,39 +118,40 @@ public class PeerConsole implements CommandProvider {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("---Peer commands---\n");
-		sb.append("    listPeers/lsPeers              - Lists all known peers with their ids\n");
-		sb.append("    resourceStatus                 - Current status of local MEM, CPU, NET\n");
-		sb.append("    ping                           - Lists the current latencies to known peers\n");
-		sb.append("    peerStatus                     - Summarizes the current peer status (peerName, ids, etc.)\n");
-		sb.append("    listEndpointConnections/ls...  - Lists all peers which have a true endpoint connection\n");
-		sb.append("    listExportedSources/ls...      - Lists all exported source names\n");
-		sb.append("    listImportedSources/ls...      - Lists all exported source names\n");
-		sb.append("    exportSource <sourceName>      - Exports a local source into the p2p network\n");
-		sb.append("    unexportSource <sourceName>    - Undo export of a local source\n");
-		sb.append("    importSource <sourceName>      - Imports a source from the p2p network\n");
-		sb.append("    unimportSource <sourceName>    - Undo import of a source\n");
-		sb.append("    listAvailableSources <filter>  - Lists known sources from the p2p network\n");
-		sb.append("    remoteUpdateAll                - Sends update signals to remote peers with matching filter\n");
+		sb.append("    listPeers/lsPeers              		- Lists all known peers with their ids\n");
+		sb.append("    resourceStatus                 		- Current status of local MEM, CPU, NET\n");
+		sb.append("    ping                           		- Lists the current latencies to known peers\n");
+		sb.append("    peerStatus                     		- Summarizes the current peer status (peerName, ids, etc.)\n");
+		sb.append("    listEndpointConnections/ls...  		- Lists all peers which have a true endpoint connection\n");
+		sb.append("    listExportedSources/ls...      		- Lists all exported source names\n");
+		sb.append("    listImportedSources/ls...      		- Lists all exported source names\n");
+		sb.append("    exportSource <sourceName>      		- Exports a local source into the p2p network\n");
+		sb.append("    unexportSource <sourceName>    		- Undo export of a local source\n");
+		sb.append("    importSource <sourceName>     		- Imports a source from the p2p network\n");
+		sb.append("    unimportSource <sourceName>    		- Undo import of a source\n");
+		sb.append("    listAvailableSources <filter>  		- Lists known sources from the p2p network\n");
+		sb.append("    remoteUpdateAll                		- Sends update signals to remote peers with matching filter\n");
 		sb.append("\n");
-		sb.append("    log <level> <text>             - Creates a log statement\n");
-		sb.append("    setLogger <logger> <level>     - Sets the logging level of a specific logger\n");
-		sb.append("    listLoggers/lsLoggers <filter> - Lists all known loggers by name\n");
-		sb.append("    jxtaLogDestinations            - Lists all peers to send log messages to\n");
-		sb.append("    listSystemProperties/ls...     - Lists all set system properties. Filter possible\n");
-		sb.append("    setSystemProperty <name> <value>- Stes system property.\n");
-		sb.append("    listThreads/ls... <filter>     - Lists all currently running thread. Filter possible\n");
+		sb.append("    log <level> <text>             		- Creates a log statement\n");
+		sb.append("    setLogger <logger> <level>     		- Sets the logging level of a specific logger\n");
+		sb.append("    setLoggerOdysseus <logger> <level>	- Sets the logging level of a Odysseus-logger (de.uniol.inf.is.odysseus)\n");
+		sb.append("    listLoggers/lsLoggers <filter> 		- Lists all known loggers by name\n");
+		sb.append("    jxtaLogDestinations           		- Lists all peers to send log messages to\n");
+		sb.append("    listSystemProperties/ls...     		- Lists all set system properties. Filter possible\n");
+		sb.append("    setSystemProperty <name> <value>		- Stes system property.\n");
+		sb.append("    listThreads/ls... <filter>     		- Lists all currently running thread. Filter possible\n");
 		return sb.toString();
 	}
 
 	public void _listPeers(CommandInterpreter ci) {
 		ImmutableList<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
 		System.out.println("Remote peers known: " + remotePeerIDs.size());
-		
+
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : remotePeerIDs) {
 			output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " = " + remotePeerID);
 		}
-		
+
 		sortAndPrintList(output);
 	}
 
@@ -178,7 +179,7 @@ public class PeerConsole implements CommandProvider {
 	public void _ping(CommandInterpreter ci) {
 		ImmutableCollection<PeerID> remotePeerIDs = pingMap.getRemotePeerIDs();
 		System.out.println("Current known ping(s):");
-		
+
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : remotePeerIDs) {
 			Optional<Double> optPing = pingMap.getPing(remotePeerID);
@@ -186,7 +187,7 @@ public class PeerConsole implements CommandProvider {
 				output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " : " + optPing.get());
 			}
 		}
-		
+
 		sortAndPrintList(output);
 	}
 
@@ -245,6 +246,28 @@ public class PeerConsole implements CommandProvider {
 
 		final int duration = tryToInt(ci.nextArgument());
 
+		setLoggerImpl(loggerName, logLevel, duration);
+	}
+
+	public void _setLoggerOdysseus(CommandInterpreter ci) {
+		String loggerName = ci.nextArgument();
+		if (Strings.isNullOrEmpty(loggerName)) {
+			System.out.println("usage: setlog <loggerName> <logLevel>");
+			return;
+		}
+
+		String logLevel = ci.nextArgument();
+		if (Strings.isNullOrEmpty(logLevel)) {
+			System.out.println("usage: setlog <loggerName> <logLevel>");
+			return;
+		}
+
+		final int duration = tryToInt(ci.nextArgument());
+
+		setLoggerImpl("de.uniol.inf.is.odysseus." + loggerName, logLevel, duration );
+	}
+
+	private static void setLoggerImpl(String loggerName, String logLevel, final int duration) {
 		org.apache.log4j.Level level = null;
 		try {
 			level = org.apache.log4j.Level.toLevel(logLevel.toUpperCase());
@@ -356,51 +379,51 @@ public class PeerConsole implements CommandProvider {
 	public void _lsEndpointConnections(CommandInterpreter ci) {
 		_listEndpointConnections(ci);
 	}
-	
+
 	public void _lsExportedSources(CommandInterpreter ci) {
 		ImmutableList<SourceAdvertisement> exportedSources = p2pDictionary.getExportedSources();
 		List<String> output = Lists.newArrayList();
-		
-		for( SourceAdvertisement exportedSource : exportedSources ) {
+
+		for (SourceAdvertisement exportedSource : exportedSources) {
 			output.add(exportedSource.getName() + " " + sourceTypeString(exportedSource));
 		}
-		
+
 		sortAndPrintList(output);
 	}
-	
+
 	private static String sourceTypeString(SourceAdvertisement adv) {
-		if( adv.isStream() ) {
+		if (adv.isStream()) {
 			return "[stream]";
 		}
 		return "[view]";
 	}
 
-	public void _listExportedSources(CommandInterpreter ci ) {
+	public void _listExportedSources(CommandInterpreter ci) {
 		_lsExportedSources(ci);
 	}
-	
+
 	public void _lsImportedSources(CommandInterpreter ci) {
 		ImmutableList<SourceAdvertisement> importedSources = p2pDictionary.getImportedSources();
 		List<String> output = Lists.newArrayList();
-		
-		for( SourceAdvertisement importedSource : importedSources ) {
+
+		for (SourceAdvertisement importedSource : importedSources) {
 			output.add(importedSource.getName() + " " + sourceTypeString(importedSource) + " (from " + p2pDictionary.getRemotePeerName(importedSource.getPeerID()) + ")");
 		}
-		
+
 		sortAndPrintList(output);
 	}
-	
-	public void _listImportedSources(CommandInterpreter ci ) {
+
+	public void _listImportedSources(CommandInterpreter ci) {
 		_lsImportedSources(ci);
 	}
-	
-	public void _exportSource( CommandInterpreter ci ) {
+
+	public void _exportSource(CommandInterpreter ci) {
 		String sourceName = ci.nextArgument();
-		if( Strings.isNullOrEmpty(sourceName)) {
+		if (Strings.isNullOrEmpty(sourceName)) {
 			System.out.println("usage: exportSource <sourceName>");
 			return;
 		}
-		
+
 		try {
 			SourceAdvertisement adv = p2pDictionary.exportSource(sourceName, "Standard");
 			System.out.println("Source '" + sourceName + "' exported as " + sourceTypeString(adv));
@@ -408,58 +431,58 @@ public class PeerConsole implements CommandProvider {
 			System.out.println("Export failed: " + e.getMessage());
 		}
 	}
-	
-	public void _importSource( CommandInterpreter ci ) {
+
+	public void _importSource(CommandInterpreter ci) {
 		String sourceName = ci.nextArgument();
-		if( Strings.isNullOrEmpty(sourceName)) {
+		if (Strings.isNullOrEmpty(sourceName)) {
 			System.out.println("usage: importSource <availableSourceName>");
 			return;
 		}
-		
+
 		try {
 			ImmutableList<SourceAdvertisement> sources = p2pDictionary.getSources(sourceName);
-			if( sources.size() > 1 ) {
+			if (sources.size() > 1) {
 				System.out.println("Source '" + sourceName + "' is ambiguous. Currently not supported.");
 				return;
 			}
-			if( sources.isEmpty() ) {
+			if (sources.isEmpty()) {
 				System.out.println("No such source '" + sourceName + "' available");
 				return;
 			}
 			SourceAdvertisement adv = sources.get(0);
 			p2pDictionary.importSource(adv, sourceName);
 			System.out.println("Source '" + sourceName + "' imported as " + sourceTypeString(adv));
-		} catch( InvalidP2PSource | PeerException e ) {
+		} catch (InvalidP2PSource | PeerException e) {
 			System.out.println("Could not import source '" + sourceName + "': " + e.getMessage());
-		} 
+		}
 	}
-	
-	public void _unexportSource( CommandInterpreter ci ) {
+
+	public void _unexportSource(CommandInterpreter ci) {
 		String sourceName = ci.nextArgument();
-		if( Strings.isNullOrEmpty(sourceName)) {
+		if (Strings.isNullOrEmpty(sourceName)) {
 			System.out.println("usage: unexportSource <sourceName>");
 			return;
 		}
-		
-		if( p2pDictionary.isExported(sourceName) ) {
+
+		if (p2pDictionary.isExported(sourceName)) {
 			p2pDictionary.removeSourceExport(sourceName);
 			System.out.println("Source '" + sourceName + "' not exported now.");
 		} else {
 			System.out.println("Source '" + sourceName + "' is currently not exported");
 		}
 	}
-	
-	public void _unimportSource( CommandInterpreter ci ) {
+
+	public void _unimportSource(CommandInterpreter ci) {
 		String sourceName = ci.nextArgument();
-		if( Strings.isNullOrEmpty(sourceName)) {
+		if (Strings.isNullOrEmpty(sourceName)) {
 			System.out.println("usage: unimportSource <sourceName>");
 			return;
 		}
-		
-		if( p2pDictionary.isImported(sourceName) ) {
+
+		if (p2pDictionary.isImported(sourceName)) {
 			ImmutableList<SourceAdvertisement> adv = p2pDictionary.getSources(sourceName);
-			
-			if( !adv.isEmpty() ) {
+
+			if (!adv.isEmpty()) {
 				p2pDictionary.removeSourceImport(adv.get(0));
 				System.out.println("Source '" + sourceName + "' not imported now.");
 			}
@@ -467,93 +490,93 @@ public class PeerConsole implements CommandProvider {
 			System.out.println("Source '" + sourceName + "' is currently not imported");
 		}
 	}
-	
-	public void _lsAvailableSources( CommandInterpreter ci ) {
+
+	public void _lsAvailableSources(CommandInterpreter ci) {
 		String filter = ci.nextArgument();
-		
+
 		ImmutableList<SourceAdvertisement> sources = p2pDictionary.getSources();
 		List<String> output = Lists.newArrayList();
-		
-		for( SourceAdvertisement src : sources ) {
+
+		for (SourceAdvertisement src : sources) {
 			String txt = src.getName() + " " + sourceTypeString(src);
 			txt += " from " + p2pDictionary.getRemotePeerName(src.getPeerID());
-			
-			if( Strings.isNullOrEmpty(filter) || txt.contains(filter)) {
+
+			if (Strings.isNullOrEmpty(filter) || txt.contains(filter)) {
 				output.add(txt);
 			}
 		}
-		
+
 		sortAndPrintList(output);
 	}
-	
-	public void _listAvailableSources(CommandInterpreter ci ) {
+
+	public void _listAvailableSources(CommandInterpreter ci) {
 		_lsAvailableSources(ci);
 	}
-	
-	public void _remoteUpdateAll( CommandInterpreter ci ) {
+
+	public void _remoteUpdateAll(CommandInterpreter ci) {
 		PeerUpdatePlugIn.sendUpdateMessageToRemotePeers();
-		
+
 		System.out.println("Send update message to remote peers");
 	}
-	
-	public void _lsSystemProperties( CommandInterpreter ci ) {
+
+	public void _lsSystemProperties(CommandInterpreter ci) {
 		String filter = ci.nextArgument();
-		
+
 		Enumeration<Object> keys = System.getProperties().keys();
 		List<String> output = Lists.newLinkedList();
-		while( keys.hasMoreElements() ) {
+		while (keys.hasMoreElements()) {
 			Object key = keys.nextElement();
 			String keyName = key.toString();
-			
-			if( Strings.isNullOrEmpty(filter) || keyName.contains(filter)) {
+
+			if (Strings.isNullOrEmpty(filter) || keyName.contains(filter)) {
 				output.add(keyName + " = " + System.getProperty(keyName));
 			}
 		}
-		
+
 		sortAndPrintList(output);
 	}
-	
-	public void _listSystemProperties( CommandInterpreter ci ) {
+
+	public void _listSystemProperties(CommandInterpreter ci) {
 		_lsSystemProperties(ci);
 	}
-	
-	public void _setSystemProperty( CommandInterpreter ci ) {
+
+	public void _setSystemProperty(CommandInterpreter ci) {
 		String propName = ci.nextArgument();
-		if( Strings.isNullOrEmpty(propName)) {
+		if (Strings.isNullOrEmpty(propName)) {
 			System.out.println("usage: setSystemProperty <propName> <value>");
 			return;
 		}
-		
+
 		String value = ci.nextArgument();
-		if( Strings.isNullOrEmpty(value)) {
+		if (Strings.isNullOrEmpty(value)) {
 			System.out.println("usage: setSystemProperty <propName> <value>");
 			return;
 		}
-		
+
 		System.setProperty(propName, value);
 		System.out.println("SystemProperty '" + propName + "' set to '" + value + "'");
 	}
-	
-	public void _lsThreads( CommandInterpreter ci ) {
+
+	public void _lsThreads(CommandInterpreter ci) {
 		String filter = ci.nextArgument();
 
 		int threadCount = Thread.activeCount();
 		Thread[] tarray = new Thread[threadCount];
 		Thread.enumerate(tarray);
-		
+
 		List<String> output = Lists.newLinkedList();
-		for( Thread t : tarray ) {
+		for (Thread t : tarray) {
 			String text = t.getName() + ": " + t.getState();
-			if( Strings.isNullOrEmpty(filter) || text.contains(filter)) {
+			if (Strings.isNullOrEmpty(filter) || text.contains(filter)) {
 				output.add(text);
 			}
 		}
-		
+
 		System.out.println("Thread count: " + threadCount);
 		sortAndPrintList(output);
 	}
-	
-	public void _listThreads( CommandInterpreter ci ) {
+
+	public void _listThreads(CommandInterpreter ci) {
 		_lsThreads(ci);
 	}
 }
