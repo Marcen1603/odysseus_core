@@ -901,7 +901,7 @@ public class OdysseusConsole implements CommandProvider,
 		}
 
 		this.executor.addQuery(query, parser(), currentUser,
-				defaultBuildConfiguration, (Context) null);
+				defaultBuildConfiguration, Context.empty());
 		return;
 	}
 
@@ -1511,7 +1511,7 @@ public class OdysseusConsole implements CommandProvider,
 			// this.executor.getQueryBuildConfiguration(defaultBuildConfiguration)
 			// .getConfiguration().add(new ParameterDefaultRoot(ecSink));
 			this.executor.addQuery(query, parser(), currentUser,
-					defaultBuildConfiguration, (Context) null);
+					defaultBuildConfiguration, Context.empty());
 		} catch (ClassNotFoundException e) {
 			System.err.println("Eclipse Console Plugin is missing!");
 		} catch (Exception e) {
