@@ -195,6 +195,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 			}
 
 			long latency = System.currentTimeMillis() - pongMessage.getTimestamp();
+			LOG.debug("Latency to {} is now {} ms", dictionary.getRemotePeerName(senderPeer), latency);
 			pingMap.update(senderPeer, pongMessage.getPosition(), latency);
 		}
 	}
