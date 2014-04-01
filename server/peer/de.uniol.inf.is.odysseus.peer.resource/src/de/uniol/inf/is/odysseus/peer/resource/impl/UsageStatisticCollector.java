@@ -1,19 +1,14 @@
 package de.uniol.inf.is.odysseus.peer.resource.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
-import de.uniol.inf.is.odysseus.updater.FeatureUpdateUtility;
 
 public class UsageStatisticCollector {
 
-	private static final Logger LOG = LoggerFactory.getLogger(UsageStatisticCollector.class);
+//	private static final Logger LOG = LoggerFactory.getLogger(UsageStatisticCollector.class);
 	
 	private static final int MAX_STAT_COUNT = 20;
 	
@@ -66,51 +61,51 @@ public class UsageStatisticCollector {
 	
 	public synchronized IResourceUsage getCurrentResourceUsage() {
 		if( version == null ) {
-			try {
-				String versionString = FeatureUpdateUtility.getVersionNumber(getActiveSession());
-				version = toVersionDigits(versionString);
-			} catch( Throwable t ) {
-				version = new int[] {0,0,0,0};
-			}
+//			try {
+//				String versionString = FeatureUpdateUtility.getVersionNumber(getActiveSession());
+//				version = toVersionDigits(versionString);
+//			} catch( Throwable t ) {
+			version = new int[] {0,0,0,0};
+//			}
 		}
 		
 		return new ResourceUsage((long) memFree.getAverage(), memMaxBytes, cpuFree.getAverage(), cpuMax, runningQueriesCount, stoppedQueriesCount, netBandwidthMax, netOutputRate.getAverage(), netInputRate.getAverage(), version);
 	}
 
-	private static int[] toVersionDigits(String versionString) {
-		if( Strings.isNullOrEmpty(versionString) || versionString.equals("-1")) {
-			return new int[] { 0, 0, 0, 0};
-		}
-		
-		String[] versionStringParts = versionString.split("\\.");
-		if( versionStringParts.length != 4 ) {
-			LOG.error("Could not determine version digits from version string '{}'", versionString);
-			return new int[] { 0, 0, 0, 0};			
-		}
-			
-		return new int[] {
-			tryToInt(versionStringParts[0]),
-			tryToInt(versionStringParts[1]),
-			tryToInt(versionStringParts[2]),
-			tryToIntAdvanced(versionStringParts[3]),
-		};
-	}
+//	private static int[] toVersionDigits(String versionString) {
+//		if( Strings.isNullOrEmpty(versionString) || versionString.equals("-1")) {
+//			return new int[] { 0, 0, 0, 0};
+//		}
+//		
+//		String[] versionStringParts = versionString.split("\\.");
+//		if( versionStringParts.length != 4 ) {
+//			LOG.error("Could not determine version digits from version string '{}'", versionString);
+//			return new int[] { 0, 0, 0, 0};			
+//		}
+//			
+//		return new int[] {
+//			tryToInt(versionStringParts[0]),
+//			tryToInt(versionStringParts[1]),
+//			tryToInt(versionStringParts[2]),
+//			tryToIntAdvanced(versionStringParts[3]),
+//		};
+//	}
 
-	private static int tryToIntAdvanced(String string) {
-		int pos = string.indexOf("-");
-		if( pos != -1 ) {
-			string = string.substring(0, pos);
-		}
-		
-		return tryToInt(string);
-	}
-
-	private static int tryToInt(String string) {
-		try {
-			return Integer.valueOf(string);
-		} catch( Throwable t ) {
-			LOG.error("Illegal version digit string: {}", string);
-			return 0;
-		}
-	}
+//	private static int tryToIntAdvanced(String string) {
+//		int pos = string.indexOf("-");
+//		if( pos != -1 ) {
+//			string = string.substring(0, pos);
+//		}
+//		
+//		return tryToInt(string);
+//	}
+//
+//	private static int tryToInt(String string) {
+//		try {
+//			return Integer.valueOf(string);
+//		} catch( Throwable t ) {
+//			LOG.error("Illegal version digit string: {}", string);
+//			return 0;
+//		}
+//	}
 }
