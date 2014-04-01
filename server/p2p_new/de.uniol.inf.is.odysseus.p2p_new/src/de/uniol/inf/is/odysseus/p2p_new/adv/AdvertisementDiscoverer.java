@@ -18,8 +18,9 @@ abstract class AdvertisementDiscoverer extends RepeatingJobThread implements Dis
 	private static final Logger LOG = LoggerFactory.getLogger(AdvertisementDiscoverer.class);
 	
 	private static final long DISCOVERY_INTERVAL_MILLIS = 4 * 1000;
+	private static final int MAX_DISCOVERY_WAIT_MILLIS = 10 * 1000;
 	
-	private Boolean onDiscovering = false;
+	private Long discoverTimestamp = 0L;
 
 	public AdvertisementDiscoverer() {
 		super(DISCOVERY_INTERVAL_MILLIS);
@@ -29,9 +30,10 @@ abstract class AdvertisementDiscoverer extends RepeatingJobThread implements Dis
 	public void doJob() {
 		if (JxtaServicesProvider.isActivated() ) {
 			
-			synchronized( onDiscovering ) {
-				if( !onDiscovering ) {
-					onDiscovering = true;
+			synchronized( discoverTimestamp ) {
+				if( System.currentTimeMillis() - discoverTimestamp > MAX_DISCOVERY_WAIT_MILLIS ) {
+					LOG.debug("Discovering advertisements started");
+					discoverTimestamp = System.currentTimeMillis();
 					JxtaServicesProvider.getInstance().getRemoteAdvertisements(this);
 				}
 			}
@@ -50,8 +52,9 @@ abstract class AdvertisementDiscoverer extends RepeatingJobThread implements Dis
 	
 	@Override
 	public void discoveryEvent(DiscoveryEvent event) {
-		synchronized( onDiscovering ) {
-			onDiscovering = false;
+		synchronized( discoverTimestamp ) {
+			discoverTimestamp = 0L;
+			LOG.debug("Discovering advertisements finished!");
 		}
 	}
 }

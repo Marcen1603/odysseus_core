@@ -33,6 +33,7 @@ public class PeerManager implements IPeerCommunicatorListener, DiscoveryListener
 
 	private static final String PEER_DISCOVERY_THREAD_NAME = "Peer discovery";
 	private static final int PEER_DISCOVERY_INTERVAL_MILLIS = 2000;
+	private static final int MAX_DISCOVERY_WAIT_MILLIS = 10000;
 	private static final int PEER_LOSS_THREASHOLD = 3;
 	
 	private static IPeerCommunicator peerCommunicator;
@@ -42,7 +43,7 @@ public class PeerManager implements IPeerCommunicatorListener, DiscoveryListener
 	private final Object dictionaryObject = new Object();
 	
 	private RepeatingJobThread peerDiscoveryThread;
-	private Boolean onDiscovering = false;
+	private Long discoveringTimestamp = 0L;
 
 	// called by OSGi-DS
 	public void bindPeerCommunicator(IPeerCommunicator serv) {
@@ -67,9 +68,10 @@ public class PeerManager implements IPeerCommunicatorListener, DiscoveryListener
 			public void doJob() {
 				if( JxtaServicesProvider.isActivated() ) {
 					try {
-						synchronized( onDiscovering ) {
-							if( !onDiscovering ) {
-								onDiscovering = true;
+						synchronized( discoveringTimestamp ) {
+							if( System.currentTimeMillis() - discoveringTimestamp > MAX_DISCOVERY_WAIT_MILLIS ) {
+								discoveringTimestamp = System.currentTimeMillis();
+								LOG.debug("Remote discovering of peer advertisements started");
 								JxtaServicesProvider.getInstance().getRemotePeerAdvertisements(PeerManager.this);
 							}
 						}
@@ -100,8 +102,9 @@ public class PeerManager implements IPeerCommunicatorListener, DiscoveryListener
 
 	@Override
 	public void discoveryEvent(DiscoveryEvent event) {
-		synchronized( onDiscovering ) {
-			onDiscovering = false;
+		synchronized( discoveringTimestamp ) {
+			discoveringTimestamp = 0L;
+			LOG.debug("Remote discovering finished");
 		}
 	}
 	
@@ -116,6 +119,14 @@ public class PeerManager implements IPeerCommunicatorListener, DiscoveryListener
 		if( !P2PDictionary.isActivated() || !JxtaServicesProvider.isActivated() ) {
 			return;
 		}
+		
+		if( LOG.isDebugEnabled() ) {
+			LOG.debug("Got {} PeerAdvertisements:", advertisements.size());
+			for( PeerAdvertisement adv : advertisements ) {
+				LOG.debug("\t{}", adv.getPeerID());
+			}
+		}
+		
 		
 		final Map<PeerID, String> newIds = Maps.newHashMap();
 		final Map<PeerID, String> oldIDs = Maps.newHashMap();
