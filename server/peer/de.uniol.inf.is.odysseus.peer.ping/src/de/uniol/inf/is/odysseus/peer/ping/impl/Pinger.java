@@ -155,14 +155,14 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	}
 
 	private Collection<PeerID> selectRandomPeers(Collection<PeerID> remotePeers) {
-		if (remotePeers.size() <= MAX_PEERS_TO_PING) {
-			return Lists.newArrayList(remotePeers);
-		}
-
 		List<PeerID> availablePeers = Lists.newArrayList(remotePeers);
 		synchronized (waitingPongMap) {
 			availablePeers.removeAll(waitingPongMap.keySet());
 		}
+		if (availablePeers.size() <= MAX_PEERS_TO_PING) {
+			return Lists.newArrayList(availablePeers);
+		}
+		
 		Collection<PeerID> selectedPeers = Lists.newArrayList();
 		while (!availablePeers.isEmpty() && selectedPeers.size() < MAX_PEERS_TO_PING) {
 			int index = RAND.nextInt(availablePeers.size());
