@@ -34,11 +34,9 @@ public class PeerManager implements IPeerCommunicatorListener, DiscoveryListener
 	private static final String PEER_DISCOVERY_THREAD_NAME = "Peer discovery";
 	private static final int PEER_DISCOVERY_INTERVAL_MILLIS = 20000;
 	private static final int MAX_DISCOVERY_WAIT_MILLIS = 30000;
-	private static final int PEER_LOSS_THREASHOLD = 3;
 	
 	private static IPeerCommunicator peerCommunicator;
 
-	private final Map<PeerID, Integer> potencialPeerLossMap = Maps.newHashMap();
 	private final Collection<PeerID> gracefullyDisconnectedPeers = Lists.newArrayList();
 	private final Object dictionaryObject = new Object();
 	
@@ -154,38 +152,18 @@ public class PeerManager implements IPeerCommunicatorListener, DiscoveryListener
 		}
 
 		for( PeerID lostPeerID : oldIDs.keySet() ) {
+			synchronized( dictionaryObject ) {
+				P2PDictionary.getInstance().removePeer(lostPeerID);
+			}
 			
-			synchronized( potencialPeerLossMap ) {
-				Integer count = potencialPeerLossMap.get(lostPeerID);
-				if( count == null ) {
-					potencialPeerLossMap.put(lostPeerID, 1);
-				} else {
-					count++;
-					if( count >= PEER_LOSS_THREASHOLD ) {
-						
-						synchronized( dictionaryObject ) {
-							P2PDictionary.getInstance().removePeer(lostPeerID);
-						}
-						
-						synchronized( gracefullyDisconnectedPeers ) {
-							gracefullyDisconnectedPeers.remove(lostPeerID);
-						}
-						
-						potencialPeerLossMap.remove(lostPeerID);
-					} else {
-						potencialPeerLossMap.put(lostPeerID, count);
-					}
-				}
+			synchronized( gracefullyDisconnectedPeers ) {
+				gracefullyDisconnectedPeers.remove(lostPeerID);
 			}
 		}
 	}
 
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
-		synchronized(potencialPeerLossMap ) {
-			potencialPeerLossMap.remove(senderPeer);
-		}
-		
 		Collection<PeerID> currentlyKnownPeerIDs = null;
 		synchronized( dictionaryObject ) {
 			currentlyKnownPeerIDs = P2PDictionary.getInstance().getRemotePeerIDs();
