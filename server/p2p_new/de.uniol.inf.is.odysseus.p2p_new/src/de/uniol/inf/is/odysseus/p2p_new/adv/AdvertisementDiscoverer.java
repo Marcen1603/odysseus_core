@@ -17,8 +17,8 @@ abstract class AdvertisementDiscoverer extends RepeatingJobThread implements Dis
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdvertisementDiscoverer.class);
 	
-	private static final long DISCOVERY_INTERVAL_MILLIS = 5 * 1000;
-	private static final int MAX_DISCOVERY_WAIT_MILLIS = 15 * 1000;
+	private static final long DISCOVERY_INTERVAL_MILLIS = 20 * 1000;
+	private static final int MAX_DISCOVERY_WAIT_MILLIS = 30 * 1000;
 	
 	private Long discoverTimestamp = 0L;
 

@@ -32,8 +32,8 @@ public class PeerManager implements IPeerCommunicatorListener, DiscoveryListener
 	private static final Logger LOG = LoggerFactory.getLogger(PeerManager.class);
 
 	private static final String PEER_DISCOVERY_THREAD_NAME = "Peer discovery";
-	private static final int PEER_DISCOVERY_INTERVAL_MILLIS = 5000;
-	private static final int MAX_DISCOVERY_WAIT_MILLIS = 15000;
+	private static final int PEER_DISCOVERY_INTERVAL_MILLIS = 20000;
+	private static final int MAX_DISCOVERY_WAIT_MILLIS = 30000;
 	private static final int PEER_LOSS_THREASHOLD = 3;
 	
 	private static IPeerCommunicator peerCommunicator;
