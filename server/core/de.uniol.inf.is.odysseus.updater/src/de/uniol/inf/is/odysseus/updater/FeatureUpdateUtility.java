@@ -145,9 +145,9 @@ public class FeatureUpdateUtility {
 				e.printStackTrace();
 			}
 			return null;
-		} else {
-			throw new PermissionException("This user may not list the installed features!");
-		}
+		} 
+			
+		throw new PermissionException("This user may not list the installed features!");
 	}
 
 	public static boolean isFeatureInstalled(String id, ISession caller) {
@@ -159,9 +159,9 @@ public class FeatureUpdateUtility {
 				}
 			}
 			return false;
-		} else {
-			throw new PermissionException("This user may not list the installed features!");
-		}
+		} 
+		
+		throw new PermissionException("This user may not list the installed features!");
 	}
 
 	public static List<IInstallableUnit> getInstalledFeatures(ISession caller) {
@@ -185,9 +185,10 @@ public class FeatureUpdateUtility {
 				}
 			}
 			return features;
-		} else {
-			throw new PermissionException("This user may not list the installed features!");
-		}
+		} 
+		
+		throw new PermissionException("This user may not list the installed features!");
+		
 	}
 
 	public static List<IInstallableUnit> getInstallableFeatures(ISession caller) {
@@ -219,9 +220,9 @@ public class FeatureUpdateUtility {
 				e.printStackTrace();
 			}
 			return null;
-		} else {
-			throw new PermissionException("This user may not list installable features!");
-		}
+		} 
+			
+		throw new PermissionException("This user may not list installable features!");
 	}
 
 	private static boolean containsWithSameID(Collection<IInstallableUnit> list, IInstallableUnit unit) {

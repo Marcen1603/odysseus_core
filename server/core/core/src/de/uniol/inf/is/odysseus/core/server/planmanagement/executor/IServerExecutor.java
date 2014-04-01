@@ -32,7 +32,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManag
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
-import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
@@ -202,10 +201,6 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	
 	ICompiler getCompiler();
 
-	Optional<ILogicalQueryDistributor> getLogicalQueryDistributor(String name);
-
-	ImmutableCollection<String> getLogicalQueryDistributorNames();
-	
 	/**
 	 * Returns the data fragmentation strategy by the given name, if it is bound.
 	 * @author Michael Brand
@@ -259,4 +254,6 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 */
 	public Integer addIdenticalQuery(Integer idOfRunningQuery, ILogicalQuery q, ISession user, String confName);
 
+	public Collection<String> getPreTransformationHandlerNames();
+	public boolean hasPreTransformationHandler(String name);
 }

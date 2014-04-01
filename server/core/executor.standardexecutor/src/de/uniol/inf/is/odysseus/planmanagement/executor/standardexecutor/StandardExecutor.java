@@ -28,7 +28,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
@@ -51,7 +50,6 @@ import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
-import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
@@ -60,6 +58,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.AbstractExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPermission;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPreTransformationHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.GetQueryCommand;
@@ -74,9 +73,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.No
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.QueryAddException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDistributionType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDistribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.ExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
@@ -266,6 +265,8 @@ public class StandardExecutor extends AbstractExecutor implements
 				queries.add(((CreateQueryCommand) cmd).getQuery());
 			}
 		}
+		
+		executePreTransformationHandlers(user, parameters, queries);
 
 		// Distribution handler only for queries
 		if (parameters.get(ParameterDoDistribute.class).getValue()) {
@@ -284,6 +285,31 @@ public class StandardExecutor extends AbstractExecutor implements
 		}
 
 		return commands;
+	}
+
+	private void executePreTransformationHandlers(ISession user, QueryBuildConfiguration parameters, List<ILogicalQuery> queries) throws QueryParseException {
+		PreTransformationHandlerParameter preTransformationHandlerParameter = parameters.get(PreTransformationHandlerParameter.class);
+		if (preTransformationHandlerParameter != null && preTransformationHandlerParameter.hasPairs()) {
+			List<PreTransformationHandlerParameter.Pair> pairs = preTransformationHandlerParameter.getPairs();
+
+			for( ILogicalQuery query : queries ) {
+				for (PreTransformationHandlerParameter.Pair pair : pairs) {
+					String handlerName = pair.name;
+					List<String> handlerParameters = pair.parameters;
+					
+					try {
+						IPreTransformationHandler handler = getPreTransformationHandler(handlerName);
+						try {
+							handler.preTransform(this, user, query, parameters, handlerParameters);
+						} catch( Throwable t ) {
+							throw new QueryParseException("PreTransformationHandler called '" + handlerName + "' throwed an exception", t);
+						}
+					} catch (InstantiationException | IllegalAccessException e) {
+						throw new QueryParseException("Could not use preTransformationHandler '" + handlerName + "'", e);
+					}
+				}
+			}
+		}
 	}
 
 	private void annotateQueries(List<IExecutorCommand> queries,
@@ -324,30 +350,8 @@ public class StandardExecutor extends AbstractExecutor implements
 	private List<ILogicalQuery> distributeQueries(
 			QueryBuildConfiguration parameters, ISession caller,
 			List<ILogicalQuery> queries) {
-		String[] strParameters = parameters
-				.get(ParameterDistributionType.class).getValue().split(" ");
-		String distributorName = strParameters[0];
-
-		List<ILogicalQuery> resultQueries = Lists.newArrayList();
-
 		LOG.debug("Beginning distribution of queries");
-		if (!ParameterDistributionType.UNDEFINED.equals(distributorName)) {
-			Optional<ILogicalQueryDistributor> optDistributor = getLogicalQueryDistributor(distributorName);
-			if (optDistributor.isPresent()) {
-				LOG.debug("Using old way to distribute (p2p_new)");
-				List<ILogicalQuery> distributionResult = optDistributor.get()
-						.distributeLogicalQueries(this, queries, parameters);
-				if (distributionResult != null && !distributionResult.isEmpty()) {
-					resultQueries = distributionResult;
-				} else {
-					LOG.error("Queries are fully distributed. Nothing to do locally.");
-				}
-			} else {
-				throw new QueryParseException(
-						"Could not distribute query. Logical distributor '"
-								+ distributorName + "' was not found.");
-			}
-		} else if (hasQueryDistributor()) {
+		if (hasQueryDistributor()) {
 			LOG.debug("Using new way to distribute (peer)");
 
 			// distribution is async. If there are local queries, the
@@ -355,8 +359,8 @@ public class StandardExecutor extends AbstractExecutor implements
 			getQueryDistributor().distribute(this, caller, queries, parameters);
 			return Lists.newArrayList();
 		}
-
-		return resultQueries;
+		
+		return queries;
 	}
 
 	private void setQueryBuildParameters(ILogicalQuery query,

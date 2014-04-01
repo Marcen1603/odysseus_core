@@ -1,0 +1,92 @@
+package de.uniol.inf.is.odysseus.script.keyword;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
+import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
+
+public class PreTransformationHandlerPreParserKeyword extends AbstractPreParserExecutorKeyword {
+
+	public static final String KEYWORD = "PRETRANSFORM";
+	
+	@Override
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+		
+		if( Strings.isNullOrEmpty(parameter)) {
+			throw new OdysseusScriptException("PreTransformationHandler's name is missing");
+		}
+		
+		String[] splitted = parameter.trim().split(" ");
+		String preTransformationHandlerName = splitted[0].trim();
+
+		if( !getServerExecutor().hasPreTransformationHandler(preTransformationHandlerName)) {
+			throw new OdysseusScriptException("Query distribution preprocessor name '" + preTransformationHandlerName + "' is not registered!");
+		}
+	}
+
+	@Override
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+		
+		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
+		
+		String[] splitted = parameter.trim().split(" ");
+		List<String> parameters = generateParameterList(splitted);
+		
+		Optional<PreTransformationHandlerParameter> optParameter = getQueryBuildSettingOfType( settings, PreTransformationHandlerParameter.class);
+		if( optParameter.isPresent() ) {
+			optParameter.get().add(splitted[0], parameters);
+		} else {
+			PreTransformationHandlerParameter param = new PreTransformationHandlerParameter();
+			param.add(splitted[0], parameters);
+			settings.add(param);
+		}
+		
+		return null;
+	}
+	
+	private static List<String> generateParameterList(String[] splitted) {
+		if (splitted.length == 1) {
+			return Lists.newArrayList();
+		}
+
+		List<String> parameters = Lists.newArrayList();
+		for (int i = 1; i < splitted.length; i++) {
+			parameters.add(splitted[i]);
+		}
+
+		return parameters;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T extends IQueryBuildSetting<?>> Optional<T> getQueryBuildSettingOfType(List<IQueryBuildSetting<?>> settings, Class<T> parameterClass) {
+		Preconditions.checkNotNull(settings, "List of settings must not be null!");
+		Preconditions.checkNotNull(parameterClass, "Class of parameter to find must not be null!");
+		
+		for( IQueryBuildSetting<?> setting : settings ) {
+			if( setting.getClass().equals(parameterClass)) {
+				return (Optional<T>) Optional.of(setting);
+			}
+		}
+		return Optional.absent();
+	}
+	
+	@Override
+	public Collection<String> getAllowedParameters(ISession caller) {
+		try {
+			return getServerExecutor().getPreTransformationHandlerNames();
+		} catch (OdysseusScriptException e) {
+			return Lists.newArrayList();
+		}
+	}
+
+}

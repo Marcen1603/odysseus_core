@@ -21,13 +21,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrat
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Configuration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterAllowRestructuringOfCurrentPlan;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDistributionType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDistribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterFragmentationType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterShareSimilarOperators;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
 
 /**
  * QueryBuildConfiguration provides a set of {@link IQueryBuildSetting}.
@@ -77,9 +77,6 @@ public class QueryBuildConfiguration extends
 		if (!contains(ParameterDoDistribute.class)){
 			set(ParameterDoDistribute.FALSE);
 		}
-		if( !contains(ParameterDistributionType.class)) {
-			set(new ParameterDistributionType(ParameterDistributionType.UNDEFINED));
-		}
 		if (!contains(ParameterDoDataFragmentation.class)){
 			set(ParameterDoDataFragmentation.FALSE);
 		}
@@ -95,7 +92,9 @@ public class QueryBuildConfiguration extends
 		if (!contains(ParameterShareSimilarOperators.class)) {
 			set(ParameterShareSimilarOperators.FALSE);
 		}
-		
+		if (!contains(PreTransformationHandlerParameter.class)) {
+			set(new PreTransformationHandlerParameter());
+		}
 	}
 
 	/**

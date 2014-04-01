@@ -21,7 +21,6 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.script.keyword.AddQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.BufferPlacementPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.CreateStoredProcedureKeyword;
-import de.uniol.inf.is.odysseus.script.keyword.DistributionTypePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.DropAllQueriesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.DropAllSinksPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.DropAllSourcesPreParserKeyword;
@@ -32,6 +31,7 @@ import de.uniol.inf.is.odysseus.script.keyword.LoginUserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.LogoutUserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.ParserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.PlanGenerationMethodPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.PreTransformationHandlerPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.RequiredFeaturePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.SchedulerPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.StartAllClosedQueriesPreParserKeyword;
@@ -64,13 +64,13 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(BufferPlacementPreParserKeyword.BUFFERPLACEMENT, BufferPlacementPreParserKeyword.class);
 		keywords.put(ParserPreParserKeyword.PARSER, ParserPreParserKeyword.class);
 		keywords.put(TransCfgPreParserKeyword.TRANSCFG, TransCfgPreParserKeyword.class);			
-		keywords.put(DistributionTypePreParserKeyword.KEYWORD, DistributionTypePreParserKeyword.class);
 		keywords.put(FragmentationTypePreParserKeyword.KEYWORD, FragmentationTypePreParserKeyword.class);
 		keywords.put(CreateStoredProcedureKeyword.STORED_PROCEDURE, CreateStoredProcedureKeyword.class);
 		keywords.put(DropStoredProcedure.DROPPROCEDURE, DropStoredProcedure.class);
 		keywords.put(PlanGenerationMethodPreParserKeyword.PLANGENERATIONMETHOD, PlanGenerationMethodPreParserKeyword.class);
 		keywords.put(RequiredFeaturePreParserKeyword.REQUIRED, RequiredFeaturePreParserKeyword.class);		
 		keywords.put(UpdateFeaturePreParserKeyword.UPDATE, UpdateFeaturePreParserKeyword.class);
+		keywords.put(PreTransformationHandlerPreParserKeyword.KEYWORD, PreTransformationHandlerPreParserKeyword.class);
 		return keywords;
 	}
 

@@ -34,8 +34,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -60,7 +63,6 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
-import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.distribution.IQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
@@ -151,14 +153,10 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 */
 	private ICompiler compiler;
 
-	/**
-	 * Admission Control-Komponente (optional)
-	 */
 	private IAdmissionControl admissionControl = null;
 	private IAdmissionQuerySelector admissionQuerySelector = null;
 	
-	private Map<String, ILogicalQueryDistributor> logicalQueryDistributors = Maps
-			.newHashMap();
+	private static Map<String, Class<? extends IPreTransformationHandler>> preTransformationHandlerMap = Maps.newHashMap();
 	private IQueryDistributor queryDistributor;
 
 	/**
@@ -381,33 +379,6 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void unbindUserManagement(IUserManagement mgmt) {
 		// do nothing --> use UserManagement instead
 	}
-	
-	public final void bindLogicalQueryDistributor(ILogicalQueryDistributor d) {
-
-		logicalQueryDistributors.put(d.getName(), d);
-
-		LOG.debug("Logical query distributor bound '{}'", d.getName());
-	}
-
-	public final void unbindLogicalQueryDistributor(ILogicalQueryDistributor d) {
-		String distributorName = d.getName();
-		if (logicalQueryDistributors.containsKey(distributorName)) {
-			logicalQueryDistributors.remove(distributorName);
-
-			LOG.debug("Logical query distributor unbound '{}'", distributorName);
-		}
-	}
-
-	@Override
-	public final ImmutableCollection<String> getLogicalQueryDistributorNames() {
-		return ImmutableSet.copyOf(logicalQueryDistributors.keySet());
-	}
-
-	@Override
-	public final Optional<ILogicalQueryDistributor> getLogicalQueryDistributor(
-			String name) {
-		return Optional.fromNullable(logicalQueryDistributors.get(name));
-	}
 
 	public final void bindQueryDistributor(IQueryDistributor distributor) {
 		queryDistributor = distributor;
@@ -417,6 +388,55 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		if (queryDistributor == distributor) {
 			distributor = null;
 		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindPreTransformationHandler(IPreTransformationHandler serv) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(serv.getName()), "preTransformationHandler's name must not be null or empty!");
+		Preconditions.checkArgument(!preTransformationHandlerMap.containsKey(serv.getName().toUpperCase()), "There is already a preTransformationHandler called '%s'", serv.getName().toUpperCase());
+		Preconditions.checkArgument(canCreateInstance(serv.getClass()), "Could not create instance of IPreTransformationHandler-class '%s'", serv.getClass());
+		
+		LOG.debug("Bound preTransformationHandler called '{}': {}", serv.getName().toUpperCase(), serv.getClass());
+		preTransformationHandlerMap.put(serv.getName().toUpperCase(), serv.getClass());
+	}
+
+	// called by OSGi-DS
+	public static void unbindPreTransformationHandler(IPreTransformationHandler serv) {
+		if( preTransformationHandlerMap.containsKey(serv.getName().toUpperCase())) {
+			preTransformationHandlerMap.remove(serv.getName().toUpperCase());
+			
+			LOG.debug("Unbound preTransformationHandler called '{}' : {}", serv.getName().toUpperCase(), serv.getClass());
+		}
+	}
+	
+	private static boolean canCreateInstance( Class<? extends IPreTransformationHandler> handler ) {
+		try {
+			handler.newInstance();
+			return true;
+		} catch (InstantiationException | IllegalAccessException e) {
+			return false;
+		}
+	}
+	
+	public IPreTransformationHandler getPreTransformationHandler( String name ) throws InstantiationException, IllegalAccessException {
+		Preconditions.checkNotNull(Strings.isNullOrEmpty(name), "Name of PreTransformationHandler must not be null or empty!");
+		
+		Class<? extends IPreTransformationHandler> clazz = preTransformationHandlerMap.get(name.toUpperCase());
+		if( clazz != null ) {
+			return clazz.newInstance();
+		}
+		
+		throw new InstantiationException("IPreTransformationHandler '" + name.toUpperCase() + "' is not known!");
+	}
+	
+	@Override
+	public boolean hasPreTransformationHandler( String name ) {
+		return preTransformationHandlerMap.containsKey(name.toUpperCase());
+	}
+	
+	@Override
+	public Collection<String> getPreTransformationHandlerNames() {
+		return Lists.newArrayList(preTransformationHandlerMap.keySet());
 	}
 
 	public final boolean hasQueryDistributor() {
@@ -831,9 +851,9 @@ public abstract class AbstractExecutor implements IServerExecutor,
 				lq.setParameter("ISRUNNING", pq.isOpened());
 			}
 			return lq;
-		} else {
-			return null;
 		}
+		
+		return null;
 	}
 
 	@Override
