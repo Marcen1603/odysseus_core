@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.mep;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.Set;
 
