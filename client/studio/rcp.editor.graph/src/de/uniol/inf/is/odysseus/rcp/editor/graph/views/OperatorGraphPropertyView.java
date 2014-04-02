@@ -55,8 +55,7 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 	private static final int COLOR_DEPRECATED = SWT.COLOR_DARK_GRAY;
 	private static final int COLOR_OK = SWT.COLOR_BLACK;
 	private static final int COLOR_FAILED = SWT.COLOR_RED;
-	
-	
+
 	private List<IParameterPresentation<?>> widgets = new ArrayList<>();
 	private Map<Control, Label> labels = new HashMap<>();
 
@@ -64,10 +63,13 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 	private ScrolledComposite parameterScroller;
 	private SchemaContainer outputSchema;
 	private SchemaContainer inputSchema;
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 * @see
+	 * org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets
+	 * .Composite)
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
@@ -76,9 +78,8 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 
 		final CTabFolder tabFolder = new CTabFolder(parent, SWT.BORDER | SWT.FLAT | SWT.BOTTOM);
 		tabFolder.setBorderVisible(false);
-		tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));	
-		
-		
+		tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+
 		CTabItem tabParameters = new CTabItem(tabFolder, SWT.NONE);
 		tabParameters.setText("Parameters");
 		parameterScroller = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.V_SCROLL);
@@ -90,14 +91,19 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 		parameterScroller.setExpandHorizontal(true);
 		parameterScroller.setMinHeight(parameterContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 		tabParameters.setControl(parameterScroller);
-		
+
 		inputSchema = new SchemaContainer();
 		inputSchema.createContainer(tabFolder, "Input Schema");
-		
+
 		outputSchema = new SchemaContainer();
 		outputSchema.createContainer(tabFolder, "Output Schema");
 
 		tabFolder.setSelection(tabParameters);
+		chooseCurrentlySelected();
+	}
+
+	private void chooseCurrentlySelected() {
+		refreshModel(OperatorGraphSelectionProvider.getInstance().getCurrentlySelected());
 	}
 
 	/*
@@ -118,7 +124,7 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 	 */
 	@Override
 	public void setFocus() {
-
+		chooseCurrentlySelected();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -160,11 +166,12 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 				} else {
 					label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(COLOR_OK));
 				}
-				if(param.getKey().isDeprecated()){
+				if (param.getKey().isDeprecated()) {
 					label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(COLOR_DEPRECATED));
+					label.setToolTipText("This value is DEPRECATED! " + param.getKey().getDoc());
 				}
 				label.setText(param.getKey().getName());
-				label.setToolTipText("This value is DEPRECATED! "+param.getKey().getDoc());
+				
 
 				IParameterPresentation<?> widget = param.getValue();
 				Control control = widget.createWidget(parentGroup);
@@ -172,7 +179,7 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 
 				labels.put(control, label);
 				widgets.add(widget);
-				if(param.getKey().isDeprecated()){
+				if (param.getKey().isDeprecated()) {
 					widget.getControl().setEnabled(false);
 				}
 				widget.addParameterValueChangedListener(new IParameterValueChangeListener() {
@@ -198,10 +205,10 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 		}
 	}
 
-	private void updateSchemas(OperatorNode node) {		
-		this.inputSchema.updateSchemas(node.getInputSchemas());		
+	private void updateSchemas(OperatorNode node) {
+		this.inputSchema.updateSchemas(node.getInputSchemas());
 		this.outputSchema.updateSchemas(node.getOutputSchemas());
-		
+
 	}
 
 	private void saveToOperatorNode(OperatorNode currentNode) {
@@ -212,10 +219,10 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 		currentNode.setParameterValues(parameterValues);
 	}
 
-	private void setLabelColor(Label label, IParameterPresentation<?> value) {		
-		if(value.getLogicalParameterInformation().isDeprecated()){
+	private void setLabelColor(Label label, IParameterPresentation<?> value) {
+		if (value.getLogicalParameterInformation().isDeprecated()) {
 			label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(COLOR_DEPRECATED));
-		}else{
+		} else {
 			if (value.getLogicalParameterInformation().isMandatory() && !value.hasValidValue()) {
 				label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(COLOR_FAILED));
 			} else {

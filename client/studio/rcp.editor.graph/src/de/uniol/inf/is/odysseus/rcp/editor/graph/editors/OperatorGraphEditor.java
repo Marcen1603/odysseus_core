@@ -451,6 +451,12 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 		super.selectionChanged(part, selection);
 	}
 
+	
+	@Override
+	public void dispose() {	
+		super.dispose();
+		OperatorGraphSelectionProvider.getInstance().setCurrentlySelected(null);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -461,6 +467,7 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		if (event.getSelection() instanceof StructuredSelection) {
+			OperatorGraphSelectionProvider.getInstance().setCurrentlySelected(null);
 			StructuredSelection strucSel = (StructuredSelection) event.getSelection();
 			if (strucSel.getFirstElement() != null && strucSel.getFirstElement() instanceof OperatorNodeEditPart) {
 				OperatorNodeEditPart opnodeeditpart = (OperatorNodeEditPart) strucSel.getFirstElement();
