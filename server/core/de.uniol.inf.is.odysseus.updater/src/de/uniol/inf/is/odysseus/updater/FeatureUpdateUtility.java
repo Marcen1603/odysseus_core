@@ -334,7 +334,7 @@ public class FeatureUpdateUtility {
 		throw new PermissionException("User is not allowed to update the system!");
 	}
 
-	public static String getVersionNumber(ISession caller) {
+	public static String getVersionNumberFromFeatures(ISession caller) {
 		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
 			List<IInstallableUnit> units = getInstalledFeatures(caller);
 			for (IInstallableUnit unit : units) {
@@ -346,6 +346,14 @@ public class FeatureUpdateUtility {
 			throw new PermissionException("This user may not list the installed features!");
 		}
 		return "-1";
+	}
+	
+	public static String getVersionNumber(ISession caller) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
+			return Activator.getContext().getBundle().getVersion().toString();			
+		} else {
+			throw new PermissionException("This user may not list the installed features!");
+		}		
 	}
 
 	private static IProvisioningAgent getAgent(BundleContext context) {
