@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPart;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.experimental.chart.swt.ChartComposite;
@@ -155,10 +156,12 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 				break;
 			}
 		}
-		decorateChart(this.chart);
-
-		chartComposite = new ChartComposite(parent, SWT.NONE, this.chart, true);
-		chartComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		decorateChart(this.chart);		
+		ChartPanel panel = new ChartPanel(chart);
+		panel.setPopupMenu(null);
+		chartComposite = new StreamChartComposite(parent, SWT.NONE, this.chart);
+		chartComposite.setLayoutData(new GridData(GridData.FILL_BOTH));		
 		createActions(parent.getShell());
 	}
 
@@ -381,6 +384,8 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 	
 	@Override
 	public void onSaveXML( Document document, Element element ) {
+		
+		
 	}
 
 	@Override
