@@ -36,7 +36,7 @@ public class JXTAAppender extends AppenderSkeleton {
 			peerCommunicator = JXTALoggingPlugIn.getPeerCommunicator();
 		}
 
-		Collection<PeerID> logDestinations = JxtaLoggingDestinations.getInstance().getDestinations();
+		Collection<PeerID> logDestinations = JxtaLoggingDestinations.getDestinations();
 
 		try {
 			if (!logDestinations.isEmpty()) {

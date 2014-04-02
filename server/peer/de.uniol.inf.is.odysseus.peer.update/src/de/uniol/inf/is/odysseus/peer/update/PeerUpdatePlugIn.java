@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.updater.FeatureUpdateUtility;
 
 public class PeerUpdatePlugIn implements BundleActivator, IPeerCommunicatorListener {
@@ -25,6 +26,7 @@ public class PeerUpdatePlugIn implements BundleActivator, IPeerCommunicatorListe
 	
 	private static IPeerCommunicator peerCommunicator;
 	private static ISession activeSession;
+	private static IP2PDictionary p2pDictionary;
 	
 	// called by OSGi-DS
 	public void bindPeerCommunicator(IPeerCommunicator serv) {
@@ -44,6 +46,18 @@ public class PeerUpdatePlugIn implements BundleActivator, IPeerCommunicatorListe
 		}
 	}
 	
+	// called by OSGi-DS
+	public static void bindP2PDictionary(IP2PDictionary serv) {
+		p2pDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PDictionary(IP2PDictionary serv) {
+		if (p2pDictionary == serv) {
+			p2pDictionary = null;
+		}
+	}
+	
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 	}
@@ -53,7 +67,7 @@ public class PeerUpdatePlugIn implements BundleActivator, IPeerCommunicatorListe
 	}
 
 	public static void sendUpdateMessageToRemotePeers() {
-		sendUpdateMessageToRemotePeers(peerCommunicator.getConnectedPeers());
+		sendUpdateMessageToRemotePeers(p2pDictionary.getRemotePeerIDs());
 	}
 	
 	public static void sendUpdateMessageToRemotePeers(Collection<PeerID> remotePeers) {

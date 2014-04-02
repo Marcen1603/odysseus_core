@@ -16,13 +16,8 @@ public interface IP2PDictionary {
 	void removeListener( IP2PDictionaryListener listener );
 	
 	boolean checkSource(SourceAdvertisement srcAdvertisement);
-	boolean existsSource( SourceAdvertisement advertisement );
-	boolean existsSource( String viewName );
-	ImmutableList<SourceAdvertisement> getSources();
-	ImmutableList<SourceAdvertisement> getSources( String viewName );
-	
-	ImmutableList<SourceAdvertisement> getSame( SourceAdvertisement advertisement );
-	boolean isSame( SourceAdvertisement a, SourceAdvertisement b );
+	Collection<SourceAdvertisement> getSources();
+	Collection<SourceAdvertisement> getSources( String viewName );
 	
 	void importSource( SourceAdvertisement advertisement, String viewNameToUse ) throws PeerException, InvalidP2PSource;
 	boolean removeSourceImport( SourceAdvertisement advertisement );
@@ -41,11 +36,8 @@ public interface IP2PDictionary {
 	ImmutableList<SourceAdvertisement> getExportedSources();
 	Optional<JxtaSenderAO> getExportingSenderAO( SourceAdvertisement advertisement);
 	
-	ImmutableList<PeerID> getRemotePeerIDs();
-	boolean existsRemotePeer( PeerID peerID );
-	boolean existsRemotePeer( String peerName );
+	Collection<PeerID> getRemotePeerIDs();
 	String getRemotePeerName( PeerID peerID );
-	boolean isRemotePeerNamed( PeerID peerID );
 	Optional<String> getRemotePeerAddress( PeerID peerID );
 
 }

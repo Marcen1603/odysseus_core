@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
+import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
@@ -29,7 +29,7 @@ public class RCPP2PNewPlugIn extends AbstractUIPlugin {
 	private static IPeerResourceUsageManager peerResourceUsageManager;
 	private static IPingMap pingMap;
 	private static IServerExecutor serverExecutor;
-	private static IAdvertisementManager advertisementManager;
+	private static IJxtaServicesProvider jxtaServicesProvider;
 
 	// called by OSGi-DS
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
@@ -106,14 +106,14 @@ public class RCPP2PNewPlugIn extends AbstractUIPlugin {
 	}
 	
 	// called by OSGi-DS
-	public static void bindAdvertisementManager(IAdvertisementManager serv) {
-		advertisementManager = serv;
+	public static void bindJxtaServicesProvider(IJxtaServicesProvider serv) {
+		jxtaServicesProvider = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindAdvertisementManager(IAdvertisementManager serv) {
-		if (advertisementManager == serv) {
-			advertisementManager = null;
+	public static void unbindJxtaServicesProvider(IJxtaServicesProvider serv) {
+		if (jxtaServicesProvider == serv) {
+			jxtaServicesProvider = null;
 		}
 	}
 	
@@ -141,8 +141,8 @@ public class RCPP2PNewPlugIn extends AbstractUIPlugin {
 		return serverExecutor;
 	}
 	
-	public static IAdvertisementManager getAdvertisementManager() {
-		return advertisementManager;
+	public static IJxtaServicesProvider getJxtaServicesProvider() {
+		return jxtaServicesProvider;
 	}
 	
 	@Override

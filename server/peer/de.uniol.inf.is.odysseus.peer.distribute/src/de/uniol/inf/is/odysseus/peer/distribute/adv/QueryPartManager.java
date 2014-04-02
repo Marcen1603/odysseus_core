@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
-import net.jxta.document.Advertisement;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,12 +28,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.C
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
+import de.uniol.inf.is.odysseus.peer.distribute.message.AddQueryPartMessage;
 
-public class QueryPartManager implements IAdvertisementListener, IDataDictionaryListener {
+public class QueryPartManager implements IDataDictionaryListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryPartManager.class);
 
@@ -43,10 +40,9 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 
 	private static IServerExecutor executor;
 	private static ICompiler compiler;
-	private static IAdvertisementManager advertisementManager;
 	private static IP2PNetworkManager p2pNetworkManager;
 
-	private ConcurrentMap<QueryPartAdvertisement, List<String>> neededSourcesMap = Maps.newConcurrentMap();
+	private ConcurrentMap<AddQueryPartMessage, List<String>> neededSourcesMap = Maps.newConcurrentMap();
 
 	public QueryPartManager() {
 		instance = this;
@@ -77,18 +73,6 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 	}
 
 	// called by OSGi-DS
-	public static void bindAdvertisementManager(IAdvertisementManager serv) {
-		advertisementManager = serv;
-	}
-
-	// called by OSGi-DS
-	public static void unbindAdvertisementManager(IAdvertisementManager serv) {
-		if (advertisementManager == serv) {
-			advertisementManager = null;
-		}
-	}
-
-	// called by OSGi-DS
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
 		p2pNetworkManager = serv;
 	}
@@ -99,32 +83,29 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 			p2pNetworkManager = null;
 		}
 	}
-
-	@Override
-	public void advertisementAdded(IAdvertisementManager sender, Advertisement advertisement) {
-		if (advertisement instanceof QueryPartAdvertisement) {
-			final QueryPartAdvertisement adv = (QueryPartAdvertisement) advertisement;
-
-			if (adv.getPeerID().equals(p2pNetworkManager.getLocalPeerID())) {
-				LOG.debug("PQL statement to be executed on peer {}: {}", p2pNetworkManager.getLocalPeerName(), ((QueryPartAdvertisement) advertisement).getPqlStatement());
-				final List<String> neededSources = determineNeededSources(adv);
-
-				if (neededSources.isEmpty()) {
-					callExecutor(adv);
-					LOG.debug("All source available for advertisement {}", adv);
-				} else {
-					synchronized (neededSourcesMap) {
-						neededSourcesMap.put(adv, neededSources);
-					}
-				}
+	
+	public void addQueryPart( AddQueryPartMessage message ) {
+		LOG.debug("PQL statement to be executed: {}", message.getPqlStatement());
+		List<String> neededSources = determineNeededSources(message);
+		
+		if (neededSources.isEmpty()) {
+			LOG.debug("All source available");
+			
+			callExecutor(message);
+		} else {
+			LOG.debug("Not all sources are available: {}", neededSources);
+			
+			synchronized (neededSourcesMap) {
+				neededSourcesMap.put(message, neededSources);
 			}
 		}
 	}
 
-	private List<String> determineNeededSources(final QueryPartAdvertisement adv) {
+	private List<String> determineNeededSources(AddQueryPartMessage message) {
 		final List<String> neededSources = Lists.newArrayList();
-		neededSourcesMap.putIfAbsent(adv, neededSources);
-		final List<IExecutorCommand> queries = compiler.translateQuery(adv.getPqlStatement(), "PQL", PeerDistributePlugIn.getActiveSession(), getDataDictionary(), Context.empty());
+		neededSourcesMap.putIfAbsent(message, neededSources);
+		
+		final List<IExecutorCommand> queries = compiler.translateQuery(message.getPqlStatement(), "PQL", PeerDistributePlugIn.getActiveSession(), getDataDictionary(), Context.empty());
 		for (IExecutorCommand q : queries) {
 
 			if (q instanceof CreateQueryCommand) {
@@ -141,20 +122,19 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 
 					List<String> oldNeededSources;
 					do {
-
-						oldNeededSources = neededSourcesMap.get(adv);
+						oldNeededSources = neededSourcesMap.get(message);
 
 						// TODO not a good solution to concatenate user name and
 						// source name
 						ISession session = PeerDistributePlugIn.getActiveSession();
-						if (getDataDictionary().containsViewOrStream(session.getUser().getName() + "." + source, session) || neededSourcesMap.get(adv).contains(source))
+						if (getDataDictionary().containsViewOrStream(session.getUser().getName() + "." + source, session) || neededSourcesMap.get(message).contains(source)) {
 							break;
+						}
 
 						neededSources.add(source);
-						LOG.debug("Source {} needed for query {}", source, adv.getPqlStatement());
-						advertisementManager.refreshAdvertisements();
+						LOG.debug("Source {} needed for query {}", source, message.getPqlStatement());
 
-					} while (!neededSourcesMap.replace(adv, oldNeededSources, neededSources));
+					} while (!neededSourcesMap.replace(message, oldNeededSources, neededSources));
 
 				}
 			}
@@ -163,21 +143,16 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 		return neededSources;
 	}
 
-	private void callExecutor(QueryPartAdvertisement adv) {
+	private void callExecutor(AddQueryPartMessage message) {
 		try {
-			final List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, adv.getTransCfgName());
-			final Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", PeerDistributePlugIn.getActiveSession(), adv.getTransCfgName(), Context.empty(), configuration);
+			final List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, message.getTransCfgName());
+			final Collection<Integer> ids = executor.addQuery(message.getPqlStatement(), "PQL", PeerDistributePlugIn.getActiveSession(), message.getTransCfgName(), Context.empty(), configuration);
 
-			QueryPartController.getInstance().registerAsSlave(ids, adv.getSharedQueryID());
+			QueryPartController.getInstance().registerAsSlave(ids, message.getSharedQueryID());
 
 		} catch (final Throwable t) {
 			LOG.error("Could not execute query part", t);
 		}
-	}
-
-	@Override
-	public void advertisementRemoved(IAdvertisementManager sender, Advertisement adv) {
-		// do nothing
 	}
 
 	public IDataDictionary getDataDictionary() {
@@ -217,24 +192,24 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 
 		}
 
-		for (QueryPartAdvertisement adv : neededSourcesMap.keySet()) {
+		for (AddQueryPartMessage message : neededSourcesMap.keySet()) {
 
 			List<String> oldNeededSources;
 			List<String> newNeededSources;
 
-			if (neededSourcesMap.get(adv).contains(source)) {
+			if (neededSourcesMap.get(message).contains(source)) {
 
 				do {
 
-					newNeededSources = neededSourcesMap.get(adv);
+					newNeededSources = neededSourcesMap.get(message);
 					oldNeededSources = ImmutableList.copyOf(newNeededSources);
 					newNeededSources.remove(source);
-					LOG.debug("Needed Source {} available for advertisement {}", name, adv);
+					LOG.debug("Needed Source {} available for advertisement {}", name, message);
 
-				} while (!neededSourcesMap.replace(adv, oldNeededSources, newNeededSources));
+				} while (!neededSourcesMap.replace(message, oldNeededSources, newNeededSources));
 
-				if ((oldNeededSources = neededSourcesMap.get(adv)).isEmpty() && neededSourcesMap.remove(adv, oldNeededSources))
-					callExecutor(adv);
+				if ((oldNeededSources = neededSourcesMap.get(message)).isEmpty() && neededSourcesMap.remove(message, oldNeededSources))
+					callExecutor(message);
 
 			}
 
@@ -251,5 +226,4 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 	public void dataDictionaryChanged(IDataDictionary sender) {
 		// Nothing do do.
 	}
-
 }

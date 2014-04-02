@@ -14,6 +14,7 @@ Service-Component: OSGI-INF/PeerUpdatePlugIn.xml
 Import-Package: de.uniol.inf.is.odysseus.core.server.usermanagement,
  de.uniol.inf.is.odysseus.core.usermanagement,
  de.uniol.inf.is.odysseus.p2p_new,
+ de.uniol.inf.is.odysseus.p2p_new.dictionary,
  de.uniol.inf.is.odysseus.updater,
  net.jxta.peer
 Export-Package: de.uniol.inf.is.odysseus.peer.update

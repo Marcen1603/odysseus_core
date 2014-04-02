@@ -123,24 +123,18 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 		Collection<PeerID> selectedPeers = selectRandomPeers(remotePeers);
 
 		try {
-			if( !selectedPeers.isEmpty() ) {
+			if (!selectedPeers.isEmpty()) {
 				IMessage pingMessage = new PingMessage();
 				for (PeerID remotePeer : selectedPeers) {
-					if (peerCommunicator.isConnected(remotePeer)) {
-						LOG.debug("Send ping-message to {}", dictionary.getRemotePeerName(remotePeer));
-	
-						peerCommunicator.send(remotePeer, pingMessage);
-						synchronized (waitingPongMap) {
-							waitingPongMap.put(remotePeer, System.currentTimeMillis());
-						}
-					} else {
-						synchronized (waitingPongMap) {
-							waitingPongMap.remove(remotePeer);
-						}
+					LOG.debug("Send ping-message to {}", dictionary.getRemotePeerName(remotePeer));
+
+					peerCommunicator.send(remotePeer, pingMessage);
+					synchronized (waitingPongMap) {
+						waitingPongMap.put(remotePeer, System.currentTimeMillis());
 					}
 				}
 			} else {
-				synchronized( waitingPongMap ) {
+				synchronized (waitingPongMap) {
 					LOG.debug("No peers for pinging available. Waiting for {} pong messages...", waitingPongMap.size());
 				}
 			}
@@ -168,7 +162,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 		if (availablePeers.size() <= MAX_PEERS_TO_PING) {
 			return Lists.newArrayList(availablePeers);
 		}
-		
+
 		Collection<PeerID> selectedPeers = Lists.newArrayList();
 		while (!availablePeers.isEmpty() && selectedPeers.size() < MAX_PEERS_TO_PING) {
 			int index = RAND.nextInt(availablePeers.size());
@@ -187,9 +181,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 
 			IMessage pongMessage = new PongMessage(pingMessage, pingMap.getLocalPosition());
 			try {
-				if (communicator.isConnected(senderPeer)) {
-					communicator.send(senderPeer, pongMessage);
-				}
+				communicator.send(senderPeer, pongMessage);
 			} catch (PeerCommunicationException e) {
 				LOG.error("Could not send pong-message", e);
 			}

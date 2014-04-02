@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
+import net.jxta.document.Advertisement;
 import net.jxta.peer.PeerID;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -20,6 +21,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
@@ -43,6 +45,7 @@ public class PeerConsole implements CommandProvider {
 	private static IPingMap pingMap;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
+	private static IJxtaServicesProvider jxtaServicesProvider;
 
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
@@ -103,6 +106,18 @@ public class PeerConsole implements CommandProvider {
 			peerCommunicator = null;
 		}
 	}
+	
+	// called by OSGi-DS
+	public static void bindJxtaServicesProvider(IJxtaServicesProvider serv) {
+		jxtaServicesProvider = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindJxtaServicesProvider(IJxtaServicesProvider serv) {
+		if (jxtaServicesProvider == serv) {
+			jxtaServicesProvider = null;
+		}
+	}
 
 	// called by OSGi-DS
 	public void activate() {
@@ -145,7 +160,7 @@ public class PeerConsole implements CommandProvider {
 	}
 
 	public void _listPeers(CommandInterpreter ci) {
-		ImmutableList<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
+		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
 		System.out.println("Remote peers known: " + remotePeerIDs.size());
 
 		List<String> output = Lists.newLinkedList();
@@ -342,7 +357,7 @@ public class PeerConsole implements CommandProvider {
 		if (JXTALoggingPlugIn.isLogging()) {
 			System.out.println("Local peer receives log messages.");
 		}
-		Collection<PeerID> destinations = JxtaLoggingDestinations.getInstance().getDestinations();
+		Collection<PeerID> destinations = JxtaLoggingDestinations.getDestinations();
 
 		if (!destinations.isEmpty()) {
 			List<String> output = Lists.newLinkedList();
@@ -357,7 +372,7 @@ public class PeerConsole implements CommandProvider {
 	}
 
 	public void _listEndpointConnections(CommandInterpreter ci) {
-		ImmutableCollection<PeerID> connectedPeers = peerCommunicator.getConnectedPeers();
+		Collection<PeerID> connectedPeers = p2pDictionary.getRemotePeerIDs();
 
 		System.out.println("Connected peers count: " + connectedPeers.size());
 		List<String> output = Lists.newLinkedList();
@@ -441,7 +456,7 @@ public class PeerConsole implements CommandProvider {
 		}
 
 		try {
-			ImmutableList<SourceAdvertisement> sources = p2pDictionary.getSources(sourceName);
+			Collection<SourceAdvertisement> sources = p2pDictionary.getSources(sourceName);
 			if (sources.size() > 1) {
 				System.out.println("Source '" + sourceName + "' is ambiguous. Currently not supported.");
 				return;
@@ -450,12 +465,12 @@ public class PeerConsole implements CommandProvider {
 				System.out.println("No such source '" + sourceName + "' available");
 				return;
 			}
-			SourceAdvertisement adv = sources.get(0);
+			SourceAdvertisement adv = sources.iterator().next();
 			p2pDictionary.importSource(adv, sourceName);
 			System.out.println("Source '" + sourceName + "' imported as " + sourceTypeString(adv));
 		} catch (InvalidP2PSource | PeerException e) {
 			System.out.println("Could not import source '" + sourceName + "': " + e.getMessage());
-		}
+		} 
 	}
 
 	public void _unexportSource(CommandInterpreter ci) {
@@ -481,10 +496,10 @@ public class PeerConsole implements CommandProvider {
 		}
 
 		if (p2pDictionary.isImported(sourceName)) {
-			ImmutableList<SourceAdvertisement> adv = p2pDictionary.getSources(sourceName);
+			Collection<SourceAdvertisement> adv = p2pDictionary.getSources(sourceName);
 
 			if (!adv.isEmpty()) {
-				p2pDictionary.removeSourceImport(adv.get(0));
+				p2pDictionary.removeSourceImport(adv.iterator().next());
 				System.out.println("Source '" + sourceName + "' not imported now.");
 			}
 		} else {
@@ -495,7 +510,7 @@ public class PeerConsole implements CommandProvider {
 	public void _lsAvailableSources(CommandInterpreter ci) {
 		String filter = ci.nextArgument();
 
-		ImmutableList<SourceAdvertisement> sources = p2pDictionary.getSources();
+		Collection<SourceAdvertisement> sources = p2pDictionary.getSources();
 		List<String> output = Lists.newArrayList();
 
 		for (SourceAdvertisement src : sources) {
@@ -582,7 +597,7 @@ public class PeerConsole implements CommandProvider {
 	}
 	
 	public void _listPeerAddresses( CommandInterpreter ci ) {
-		ImmutableList<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
+		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
 		System.out.println("Remote peers known: " + remotePeerIDs.size());
 
 		List<String> output = Lists.newLinkedList();
@@ -592,10 +607,34 @@ public class PeerConsole implements CommandProvider {
 		}
 
 		sortAndPrintList(output);
-		
 	}
 	
 	public void _lsPeerAddresses( CommandInterpreter ci ) {
 		_listPeerAddresses(ci);
+	}
+	
+	public void _lsAdvertisements( CommandInterpreter ci ) {
+		String filter = ci.nextArgument();
+		
+		Collection<Advertisement> advs = jxtaServicesProvider.getLocalAdvertisements();
+		advs.addAll(jxtaServicesProvider.getPeerAdvertisements());
+		
+		List<String> output = Lists.newLinkedList();
+		for( Advertisement adv : advs ) {
+			String txt = adv.getClass().getName();
+			if( Strings.isNullOrEmpty(filter) || txt.contains(filter)) {
+				output.add(txt);
+			}
+		}
+		
+		sortAndPrintList(output);
+	}
+	
+	public void _listAdvertisement( CommandInterpreter ci ) {
+		_lsAdvertisements(ci);
+	}
+	
+	public void _refreshAdvertisements( CommandInterpreter ci ) {
+		jxtaServicesProvider.getRemoteAdvertisements();
 	}
 }

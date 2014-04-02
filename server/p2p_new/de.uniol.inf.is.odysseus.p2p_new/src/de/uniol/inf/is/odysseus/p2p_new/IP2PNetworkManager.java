@@ -29,4 +29,7 @@ public interface IP2PNetworkManager {
 	
 	public void addListener( IP2PNetworkListener listener );
 	public void removeListener( IP2PNetworkListener listener );
+	public void addAdvertisementListener( IAdvertisementDiscovererListener listener);
+	public void removeAdvertisementListener( IAdvertisementDiscovererListener listener);
+
 }

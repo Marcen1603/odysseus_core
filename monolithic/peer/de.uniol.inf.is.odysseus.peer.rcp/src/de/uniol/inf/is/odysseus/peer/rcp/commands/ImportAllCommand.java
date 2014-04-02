@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.rcp.commands;
 
+import java.util.Collection;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -8,8 +10,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
@@ -29,7 +29,7 @@ public class ImportAllCommand extends AbstractHandler implements IHandler {
 		IP2PDictionary dictionary = RCPP2PNewPlugIn.getP2PDictionary();
 		IDataDictionary dataDictionary = RCPP2PNewPlugIn.getServerExecutor().getDataDictionary(RCPP2PNewPlugIn.getActiveSession().getTenant());
 
-		ImmutableList<SourceAdvertisement> sources = dictionary.getSources();
+		Collection<SourceAdvertisement> sources = dictionary.getSources();
 		int okCount = 0;
 		int badCount = 0;
 		for (SourceAdvertisement source : sources) {

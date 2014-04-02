@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
 
 public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2PDictionaryListener {
@@ -54,6 +55,8 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 	private TableViewer peersTable;
 	private Text chatText;
 	private Text inputText;
+
+	private RepeatingJobThread updater;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -133,6 +136,15 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 		});
 
 		peersTable.setInput(peerIDs);
+		
+		updater = new RepeatingJobThread(5000, "ChatView updater") {
+			@Override
+			public void doJob() {
+				updateTable();
+			}
+		};
+		updater.start();
+		
 		updateTable();
 	}
 
@@ -241,6 +253,8 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 
 	@Override
 	public void dispose() {
+		updater.stopRunning();
+		
 		RCPP2PNewPlugIn.getP2PDictionary().removeListener(this);
 		
 		RCPP2PNewPlugIn.getPeerCommunicator().removeListener(this, ChatMessage.class);
@@ -287,20 +301,5 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 
 	@Override
 	public void sourceExportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
-	}
-
-	@Override
-	public void remotePeerAdded(IP2PDictionary sender, PeerID id, String name) {
-		peerIDs.add(id);
-		refreshTableAsync();
-		appendToChatTextAsync("\n<New peer '" + name + "' discovered>");
-	}
-
-	@Override
-	public void remotePeerRemoved(IP2PDictionary sender, PeerID id, String name) {
-		peerIDs.remove(id);
-		refreshTableAsync();
-		
-		appendToChatTextAsync("\n<Peer '" + name + "' disappeared>");
 	}
 }

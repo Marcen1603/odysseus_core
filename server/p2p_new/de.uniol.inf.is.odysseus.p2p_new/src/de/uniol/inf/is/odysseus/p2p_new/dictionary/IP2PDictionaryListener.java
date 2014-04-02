@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary;
 
-import net.jxta.peer.PeerID;
 
 public interface IP2PDictionaryListener {
 
@@ -12,6 +11,4 @@ public interface IP2PDictionaryListener {
 	void sourceExported( IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName);
 	void sourceExportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName);
 	
-	void remotePeerAdded( IP2PDictionary sender, PeerID id, String name );
-	void remotePeerRemoved( IP2PDictionary sender, PeerID id, String name );
 }

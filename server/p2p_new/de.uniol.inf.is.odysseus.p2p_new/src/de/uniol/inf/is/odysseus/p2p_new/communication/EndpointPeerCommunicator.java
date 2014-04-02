@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import net.jxta.endpoint.ByteArrayMessageElement;
@@ -21,9 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
@@ -52,9 +48,6 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 		LOG.debug("Bound P2PDictionary {}", dict);
 
 		p2pDictionary.addListener(this);
-		for (PeerID remotePeerID : p2pDictionary.getRemotePeerIDs()) {
-			remotePeerAdded(p2pDictionary, remotePeerID, p2pDictionary.getRemotePeerName(remotePeerID));
-		}
 	}
 
 	// called by OSGi-DS
@@ -70,6 +63,18 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 	// called by OSGi-DS
 	public void activate() {
 		registerMessageType(PeerCloseMessage.class);
+		
+		Thread waitingThread = new Thread( new Runnable() {
+
+			@Override
+			public void run() {
+				JxtaServicesProvider.waitFor();
+				JxtaServicesProvider.getInstance().getEndpointService().addIncomingMessageListener(EndpointPeerCommunicator.this, COMMUNICATION_SERVICE_ID, null);
+			}
+		});
+		waitingThread.setName("Endpoint peer communicator waiting thread");
+		waitingThread.setDaemon(true);
+		waitingThread.start();
 		
 		LOG.debug("Activated");
 	}
@@ -90,7 +95,7 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 	private void sendCloseMessageToRemotePeers() {
 		LOG.debug("Sending close message since we close gracefully.");
 		
-		ImmutableCollection<PeerID> connectedPeers = getConnectedPeers();
+		Collection<PeerID> connectedPeers = p2pDictionary.getRemotePeerIDs();
 		PeerCloseMessage msg = new PeerCloseMessage();
 		for( PeerID connectedPeer : connectedPeers ) {
 			try {
@@ -104,26 +109,6 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 			Thread.sleep(1500);
 		} catch (InterruptedException e) {
 		}
-	}
-
-	@Override
-	public ImmutableCollection<PeerID> getConnectedPeers() {
-		List<PeerID> connectedPeers = Lists.newArrayList();
-		for( PeerID peerID : messengerMap.keySet().toArray(new PeerID[0]) ) {
-			Messenger messenger = messengerMap.get(peerID);
-			if( messenger != null && !messenger.isClosed() ) {
-				connectedPeers.add(peerID);
-			} else {
-				// not valid anymore
-				messengerMap.remove(peerID);
-			}
-		}
-		return ImmutableList.copyOf(connectedPeers);
-	}
-
-	@Override
-	public boolean isConnected(PeerID destinationPeer) {
-		return messengerMap.containsKey(destinationPeer);
 	}
 
 	@Override
@@ -210,24 +195,6 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 	@Override
 	public void removeListener(IPeerCommunicatorListener listener, Class<? extends IMessage> messageType) {
 		PeerCommunicatorListenerRegistry.getInstance().remove(listener, messageType);
-	}
-
-	@Override
-	public void remotePeerAdded(IP2PDictionary sender, PeerID id, String name) {
-		LOG.debug("Got new peer {}, id = {}", name, id);
-
-		EndpointAddress addr = new EndpointAddress(id, null, null);
-		Messenger peerMessenger = JxtaServicesProvider.getInstance().getEndpointService().getMessenger(addr);
-		messengerMap.put(id, peerMessenger);
-
-		JxtaServicesProvider.getInstance().getEndpointService().addIncomingMessageListener(this, COMMUNICATION_SERVICE_ID, null);
-	}
-
-	@Override
-	public void remotePeerRemoved(IP2PDictionary sender, PeerID id, String name) {
-		LOG.debug("Peer {} is lost", name);
-
-		messengerMap.remove(id);
 	}
 
 	@Override

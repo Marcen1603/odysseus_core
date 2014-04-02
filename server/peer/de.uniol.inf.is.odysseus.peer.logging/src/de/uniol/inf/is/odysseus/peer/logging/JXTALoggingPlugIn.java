@@ -10,31 +10,25 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.peer.logging.adv.LogAdvertisementReceiver;
 import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisement;
 import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisementInstatiator;
 import de.uniol.inf.is.odysseus.peer.logging.impl.LogMessage;
 import de.uniol.inf.is.odysseus.peer.logging.impl.LogMessageReceiver;
 import de.uniol.inf.is.odysseus.peer.logging.impl.P2PNetworkManagerListener;
-import de.uniol.inf.is.odysseus.peer.logging.impl.RemotePeerChangeListener;
 
 public class JXTALoggingPlugIn implements BundleActivator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JXTALoggingPlugIn.class);
 	private static final P2PNetworkManagerListener P2P_NETWORKMANAGER_LISTENER = new P2PNetworkManagerListener();
-	private static final LogAdvertisementReceiver ADVERTISEMENT_MANAGER_LISTENER = new LogAdvertisementReceiver();
 	private static final LogMessageReceiver LOGMESSAGE_RECEIVER = new LogMessageReceiver();
-	private static final RemotePeerChangeListener P2PDICTIONARY_LISTENER = new RemotePeerChangeListener();
 	private static final String LOGACTIVE_SYS_PROPERTY = "peer.log";
 
 	private static IPeerCommunicator peerCommunicator;
 	private static IP2PDictionary p2pDictionary;
-	private static IAdvertisementManager advertisementManager;
 	private static IJxtaServicesProvider jxtaServicesProvider;
 	private static IP2PNetworkManager p2pNetworkManager;
 
@@ -62,7 +56,6 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
 		p2pDictionary = serv;
-		p2pDictionary.addListener(P2PDICTIONARY_LISTENER);
 		
 		LOG.debug("Bound P2PDictionary {}", serv);
 	}
@@ -70,27 +63,9 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	// called by OSGi-DS
 	public static void unbindP2PDictionary(IP2PDictionary serv) {
 		if (p2pDictionary == serv) {
-			p2pDictionary.removeListener(P2PDICTIONARY_LISTENER);
 			p2pDictionary = null;
 			
 			LOG.debug("Unbound P2PDictionary {}", serv);
-		}
-	}
-
-	// called by OSGi-DS
-	public static void bindAdvertisementManager(IAdvertisementManager serv) {
-		advertisementManager = serv;
-		advertisementManager.addAdvertisementListener(ADVERTISEMENT_MANAGER_LISTENER);
-		
-		LOG.debug("Bound Advertisement Manager {}", serv);
-	}
-
-	// called by OSGi-DS
-	public static void unbindAdvertisementManager(IAdvertisementManager serv) {
-		if (advertisementManager == serv) {
-			advertisementManager.removeAdvertisementListener(ADVERTISEMENT_MANAGER_LISTENER);
-			advertisementManager = null;
-			LOG.debug("Unbound Advertisement Manager {}", serv);
 		}
 	}
 	
@@ -131,10 +106,6 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	
 	public static IP2PDictionary getP2PDictionary() {
 		return p2pDictionary;
-	}
-	
-	public static IAdvertisementManager getAdvertisementManager() {
-		return advertisementManager;
 	}
 	
 	public static IJxtaServicesProvider getJxtaServicesProvider() {

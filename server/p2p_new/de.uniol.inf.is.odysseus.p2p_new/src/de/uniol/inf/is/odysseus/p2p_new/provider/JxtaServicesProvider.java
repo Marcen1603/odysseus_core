@@ -20,6 +20,7 @@ import net.jxta.pipe.InputPipe;
 import net.jxta.pipe.OutputPipe;
 import net.jxta.pipe.PipeMsgListener;
 import net.jxta.pipe.PipeService;
+import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.protocol.RouteAdvertisement;
 
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
@@ -58,7 +60,7 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 				discoveryService = ownPeerGroup.getDiscoveryService();
 				endpointService = ownPeerGroup.getEndpointService();
 				pipeService = ownPeerGroup.getPipeService();	
-				
+
 				instance = JxtaServicesProvider.this;
 			}
 		});
@@ -92,6 +94,15 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 		instance = null;
 		
 		LOG.debug("Jxta services provider deactivated");
+	}
+	
+	public static void waitFor() {
+		while( !isActivated() ) {
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+			}
+		}
 	}
 		
 	public static JxtaServicesProvider getInstance() {
@@ -164,8 +175,34 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	}
 
 	@Override
-	public Enumeration<Advertisement> getLocalAdvertisements() throws IOException {
-		return discoveryService.getLocalAdvertisements(DiscoveryService.ADV, null, null);
+	public Collection<Advertisement> getLocalAdvertisements() {
+		try {
+			return toCollection(discoveryService.getLocalAdvertisements(DiscoveryService.ADV, null, null));
+		} catch (IOException e) {
+			LOG.error("Could not get local advertisements", e);
+			return Lists.newArrayList();
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends Advertisement> Collection<T> getLocalAdvertisements(Class<T> advertisementClass)  {
+		Collection<Advertisement> advs = getLocalAdvertisements();
+		Collection<T> result = Lists.newLinkedList();
+		for( Advertisement adv : advs ) {
+			if( adv.getClass().equals(advertisementClass)) {
+				result.add((T) adv);
+			}
+		}
+		return result;
+	}
+
+	private static Collection<Advertisement> toCollection(Enumeration<Advertisement> advs) {
+		List<Advertisement> list = Lists.newLinkedList();
+		while( advs.hasMoreElements() ) {
+			list.add(advs.nextElement());
+		}
+		return list;
 	}
 
 	@Override
@@ -179,8 +216,21 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	}
 
 	@Override
-	public Enumeration<Advertisement> getPeerAdvertisements() throws IOException {
-		return discoveryService.getLocalAdvertisements(DiscoveryService.PEER, null, null);
+	public Collection<PeerAdvertisement> getPeerAdvertisements() {
+		try {
+			return toPeerAdvCollection(discoveryService.getLocalAdvertisements(DiscoveryService.PEER, null, null));
+		} catch (IOException e) {
+			LOG.error("Could not get peer advertisements", e);
+			return Lists.newArrayList();
+		}
+	}
+
+	private static Collection<PeerAdvertisement> toPeerAdvCollection(Enumeration<Advertisement> advs) {
+		List<PeerAdvertisement> list = Lists.newLinkedList();
+		while( advs.hasMoreElements() ) {
+			list.add((PeerAdvertisement) advs.nextElement());
+		}
+		return list;
 	}
 
 	@Override
@@ -228,5 +278,15 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	@Override
 	public OutputPipe createOutputPipe(PipeAdvertisement pipeAdv, long timeoutMillis) throws IOException {
 		return pipeService.createOutputPipe(pipeAdv, timeoutMillis);
+	}
+
+	@Override
+	public void addDiscoveryListener(DiscoveryListener listener) {
+		discoveryService.addDiscoveryListener(listener);
+	}
+	
+	@Override
+	public void removeDiscoveryListener(DiscoveryListener listener) {
+		discoveryService.removeDiscoveryListener(listener);
 	}
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
@@ -30,14 +29,19 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
+import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
+import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
-import de.uniol.inf.is.odysseus.peer.distribute.adv.QueryPartAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.adv.QueryPartController;
+import de.uniol.inf.is.odysseus.peer.distribute.adv.QueryPartManager;
+import de.uniol.inf.is.odysseus.peer.distribute.message.AddQueryPartMessage;
 import de.uniol.inf.is.odysseus.peer.distribute.util.IOperatorGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.util.InterfaceParametersPair;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LoggingHelper;
@@ -45,7 +49,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.util.ParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.util.QueryDistributorHelper;
 
-public class QueryDistributor implements IQueryDistributor {
+public class QueryDistributor implements IQueryDistributor, IPeerCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryDistributor.class);
 
@@ -53,6 +57,7 @@ public class QueryDistributor implements IQueryDistributor {
 	private static IJxtaServicesProvider jxtaServicesProvider;
 	private static IP2PDictionary p2pDictionary;
 	private static IP2PNetworkManager p2pNetworkManager;
+	private static IPeerCommunicator peerCommunicator;
 
 	// called by OSGi-DS
 	public static void bindPQLGenerator(IPQLGenerator serv) {
@@ -100,6 +105,23 @@ public class QueryDistributor implements IQueryDistributor {
 	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
 		if (p2pNetworkManager == serv) {
 			p2pNetworkManager = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public void bindPeerCommunicator(IPeerCommunicator serv) {
+		peerCommunicator = serv;
+		
+		peerCommunicator.registerMessageType(AddQueryPartMessage.class);
+		peerCommunicator.addListener(this, AddQueryPartMessage.class);
+	}
+
+	// called by OSGi-DS
+	public void unbindPeerCommunicator(IPeerCommunicator serv) {
+		if (peerCommunicator == serv) {
+			peerCommunicator.unregisterMessageType(AddQueryPartMessage.class);
+			
+			peerCommunicator = null;
 		}
 	}
 
@@ -266,19 +288,26 @@ public class QueryDistributor implements IQueryDistributor {
 				LOG.debug("Query part {} stays local", part);
 
 			} else {
-				final QueryPartAdvertisement adv = (QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
-				adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
-				adv.setPeerID(peerID);
-				adv.setPqlStatement(LogicalQueryHelper.generatePQLStatementFromQueryPart(part));
-				adv.setSharedQueryID(sharedQueryID);
-				adv.setTransCfgName(parameters.getName());
-
-				jxtaServicesProvider.remotePublishToPeer(adv, peerID, 15000);
-				LOG.debug("Sent query part {} to peerID {}", part, peerID);
-				LOG.debug("PQL-Query of query part {} is\n{}", part, adv.getPqlStatement());
+				try {
+					AddQueryPartMessage msg = new AddQueryPartMessage(sharedQueryID, LogicalQueryHelper.generatePQLStatementFromQueryPart(part), parameters.getName());
+					peerCommunicator.send(peerID, msg);
+					
+					LOG.debug("Sent query part {} to peerID {}", part, peerID);
+					LOG.debug("PQL-Query of query part {} is\n{}", part, msg.getPqlStatement());
+				} catch (PeerCommunicationException e) {
+					LOG.error("Could not send AddQueryPartMessage", e);
+				}
 			}
 		}
 		return localParts;
+	}
+
+	@Override
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
+		LOG.debug("Received AddQueryPartMessage");
+		
+		AddQueryPartMessage addQueryPartMessage = (AddQueryPartMessage)message;
+		QueryPartManager.getInstance().addQueryPart(addQueryPartMessage);
 	}
 
 	private static ILogicalQuery buildLocalQuery(Collection<ILogicalQueryPart> localQueryParts) {

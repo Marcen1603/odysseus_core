@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.resource.impl;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -24,6 +23,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
@@ -50,6 +50,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IServerExecutor serverExecutor;
+	private static IP2PDictionary p2pDictionary;
 
 	private final Map<PeerID, IResourceUsage> usageMap = Maps.newHashMap();
 	private final UsageStatisticCollector usageCollector = new UsageStatisticCollector();
@@ -97,6 +98,18 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 			serverExecutor = null;
 		}
 	}
+	
+	// called by OSGi-DS
+	public static void bindP2PDictionary(IP2PDictionary serv) {
+		p2pDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PDictionary(IP2PDictionary serv) {
+		if (p2pDictionary == serv) {
+			p2pDictionary = null;
+		}
+	}
 
 	// called by OSGi-DS
 	public void activate() {
@@ -137,7 +150,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 			return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
 		}
 
-		if (!peerCommunicator.isConnected(peerID)) {
+		if (!p2pDictionary.getRemotePeerIDs().contains(peerID)) {
 			return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
 		}
 
@@ -145,7 +158,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 			usageMap.remove(peerID);
 			peerCommunicator.send(peerID, new AskUsageMessage());
 		} catch (PeerCommunicationException e) {
-			LOG.debug("Could not send message for asking for remote resource usage", e);
+			LOG.error("Could not send message for asking for remote resource usage", e);
 			return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
 		}
 
@@ -175,11 +188,6 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 				return Optional.of(remoteUsage);
 			}
 		});
-	}
-
-	@Override
-	public Collection<PeerID> getRemotePeerIDs() {
-		return peerCommunicator.getConnectedPeers();
 	}
 
 	@Override
@@ -240,10 +248,5 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		} catch (Throwable t) {
 			LOG.error("Cannot determine own resource usage", t);
 		}
-	}
-
-	@Override
-	public PeerID getLocalPeerID() {
-		return p2pNetworkManager.getLocalPeerID();
 	}
 }

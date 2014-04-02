@@ -208,18 +208,6 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	}
 	
 	@Override
-	public void remotePeerAdded(IP2PDictionary sender, PeerID id, String name) {
-		if( !nodes.containsKey(id)) {
-			nodes.put(id, new PingMapNode(id));		
-		}
-	}
-
-	@Override
-	public void remotePeerRemoved(IP2PDictionary sender, PeerID id, String name) {
-		nodes.remove(id);
-	}
-
-	@Override
 	public Optional<Double> getRemotePing(PeerID start, PeerID end) {
 		Preconditions.checkNotNull(start, "Starting peerID must not be null!");
 		Preconditions.checkNotNull(end, "Ending peerID must not be null!");

@@ -9,7 +9,6 @@ import java.util.Random;
 import net.jxta.peer.PeerID;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -83,7 +82,7 @@ public class UserAllocator implements IQueryPartAllocator {
 	}
 
 	private static Map<String, PeerID> determinePeerNames() {
-		ImmutableList<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
+		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
 
 		Map<String, PeerID> peerNameMap = Maps.newHashMap();
 		for( PeerID remotePeerID : remotePeerIDs ) {

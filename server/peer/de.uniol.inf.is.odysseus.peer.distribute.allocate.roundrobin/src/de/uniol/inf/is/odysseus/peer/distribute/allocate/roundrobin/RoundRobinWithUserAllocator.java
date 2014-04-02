@@ -4,9 +4,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import net.jxta.peer.PeerID;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -17,7 +18,6 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
-import net.jxta.peer.PeerID;
 
 // TODO javaDoc
 public class RoundRobinWithUserAllocator extends AbstractRoundRobinAllocator {
@@ -58,7 +58,7 @@ public class RoundRobinWithUserAllocator extends AbstractRoundRobinAllocator {
 	
 	private static Map<String, PeerID> determinePeerNames() {
 		
-		ImmutableList<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
+		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
 
 		Map<String, PeerID> peerNameMap = Maps.newHashMap();
 		

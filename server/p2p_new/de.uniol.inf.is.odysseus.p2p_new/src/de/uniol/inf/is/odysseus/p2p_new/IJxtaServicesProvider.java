@@ -1,9 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new;
 
 import java.io.IOException;
-import java.util.Enumeration;
-
-import com.google.common.base.Optional;
+import java.util.Collection;
 
 import net.jxta.discovery.DiscoveryListener;
 import net.jxta.document.Advertisement;
@@ -11,7 +9,10 @@ import net.jxta.peer.PeerID;
 import net.jxta.pipe.InputPipe;
 import net.jxta.pipe.OutputPipe;
 import net.jxta.pipe.PipeMsgListener;
+import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
+
+import com.google.common.base.Optional;
 
 public interface IJxtaServicesProvider {
 
@@ -37,13 +38,15 @@ public interface IJxtaServicesProvider {
 	
 	public void getRemoteAdvertisements(DiscoveryListener listener);
 
-	public Enumeration<Advertisement> getLocalAdvertisements() throws IOException ;
+	public Collection<Advertisement> getLocalAdvertisements();
+	
+	public <T extends Advertisement> Collection<T> getLocalAdvertisements( Class<T> advertisementClass);
 
 	public void getRemotePeerAdvertisements();
 
 	public void getRemotePeerAdvertisements(DiscoveryListener listener);
 	
-	public Enumeration<Advertisement> getPeerAdvertisements() throws IOException ;
+	public Collection<PeerAdvertisement> getPeerAdvertisements();
 	
 	public boolean isReachable(PeerID peerID);
 
@@ -54,5 +57,9 @@ public interface IJxtaServicesProvider {
 	public InputPipe createInputPipe(PipeAdvertisement pipeAdv, PipeMsgListener listener) throws IOException ;
 
 	public OutputPipe createOutputPipe(PipeAdvertisement pipeAdv, long timeoutMillis) throws IOException ;
+
+	public void addDiscoveryListener(DiscoveryListener listener);
+
+	public void removeDiscoveryListener(DiscoveryListener listener);
 
 }

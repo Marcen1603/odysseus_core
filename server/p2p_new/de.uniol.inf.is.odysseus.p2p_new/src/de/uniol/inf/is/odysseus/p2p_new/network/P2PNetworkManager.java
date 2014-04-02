@@ -26,6 +26,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
+import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkListener;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNetworkException;
@@ -50,6 +51,8 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 	private NetworkManager manager;
 	private URI rendevousPeerURI;
 	private boolean isRendevousPeer;
+	
+	private final AdvertisementDiscoverer advDiscoverer = new AdvertisementDiscoverer();
 
 	// called by OSGi-DS
 	public void activate() {
@@ -62,6 +65,15 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 
 		if (started) {
 			stop();
+		}
+	}
+	
+	public static void waitFor() {
+		while( !isActivated() ) {
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+			}
 		}
 	}
 
@@ -170,6 +182,7 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 			deactiveDeltaTracker(netPeerGroup);
 			deactiveDeltaTracker(peerGroup);
 
+			advDiscoverer.start();
 			started = true;
 			LOG.debug("P2P network started");
 
@@ -248,6 +261,8 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 	public void stop() {
 		Preconditions.checkState(started, "P2P network already stopped!");
 
+		advDiscoverer.stopRunning();
+		
 		LOG.debug("Stopping p2p network");
 		if (manager != null) {
 			manager.stopNetwork();
@@ -327,5 +342,15 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 	@Override
 	public void removeListener(IP2PNetworkListener listener) {
 		P2PNetworkListenerRegistry.getInstance().remove(listener);
+	}
+	
+	@Override
+	public void addAdvertisementListener(IAdvertisementDiscovererListener listener) {
+		advDiscoverer.addListener(listener);
+	}
+	
+	@Override
+	public void removeAdvertisementListener(IAdvertisementDiscovererListener listener) {
+		advDiscoverer.removeListener(listener);
 	}
 }

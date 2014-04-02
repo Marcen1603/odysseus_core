@@ -16,6 +16,8 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
@@ -30,6 +32,8 @@ public class LoadBalancingAllocator implements IQueryPartAllocator {
 	private static final Logger LOG = LoggerFactory.getLogger(LoadBalancingAllocator.class);
 	
 	private static IPeerResourceUsageManager peerResourceUsageManager;
+	private static IP2PNetworkManager p2pNetworkManager;
+	private static IP2PDictionary p2pDictionary;
 
 	// called by OSGi-DS
 	public static void bindPeerResourceUsageManager(IPeerResourceUsageManager serv) {
@@ -40,6 +44,30 @@ public class LoadBalancingAllocator implements IQueryPartAllocator {
 	public static void unbindPeerResourceUsageManager(IPeerResourceUsageManager serv) {
 		if (peerResourceUsageManager == serv) {
 			peerResourceUsageManager = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		p2pNetworkManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (p2pNetworkManager == serv) {
+			p2pNetworkManager = null;
+		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindP2PDictionary(IP2PDictionary serv) {
+		p2pDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PDictionary(IP2PDictionary serv) {
+		if (p2pDictionary == serv) {
+			p2pDictionary = null;
 		}
 	}
 	
@@ -80,7 +108,7 @@ public class LoadBalancingAllocator implements IQueryPartAllocator {
 	}
 
 	private static Map<PeerID, IResourceUsage> determineCurrentResourceUsagesOfPeers() {
-		Collection<PeerID> remotePeers = peerResourceUsageManager.getRemotePeerIDs();
+		Collection<PeerID> remotePeers = p2pDictionary.getRemotePeerIDs();
 		
 		Map<PeerID, IResourceUsage> usages = Maps.newHashMap();
 		for( PeerID remotePeer : remotePeers ) {
@@ -92,7 +120,7 @@ public class LoadBalancingAllocator implements IQueryPartAllocator {
 		}
 		
 		IResourceUsage localUsage = peerResourceUsageManager.getLocalResourceUsage();
-		usages.put(peerResourceUsageManager.getLocalPeerID(), localUsage);
+		usages.put(p2pNetworkManager.getLocalPeerID(), localUsage);
 		
 		return usages;
 	}

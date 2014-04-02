@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -10,6 +9,7 @@ import java.util.concurrent.Future;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
+import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 
 import org.slf4j.Logger;
@@ -17,11 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
+import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
@@ -32,10 +30,10 @@ import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.Bid;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 
-public class Communicator implements IAdvertisementListener {
+public class Communicator implements IAdvertisementDiscovererListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Communicator.class);
-	private static final long WAIT_TIME_MILLIS = 12 * 1000;
+	private static final long WAIT_TIME_MILLIS = 21 * 1000;
 
 	private static Communicator instance;
 	private static IP2PNetworkManager p2pNetworkManager;
@@ -44,17 +42,18 @@ public class Communicator implements IAdvertisementListener {
 	private static IPingMap pingMap;
 
 	private final ExecutorService executorService = Executors.newCachedThreadPool();
-
-	private final Map<String, Collection<Bid>> mailboxForAuctions = Maps.newHashMap();
+	private final Collection<ID> processedQueryIDs = Lists.newLinkedList();
 
 	// called by OSGi-DS
-	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+	public void bindP2PNetworkManager(IP2PNetworkManager serv) {
 		p2pNetworkManager = serv;
+		p2pNetworkManager.addAdvertisementListener(this);
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+	public void unbindP2PNetworkManager(IP2PNetworkManager serv) {
 		if (p2pNetworkManager == serv) {
+			p2pNetworkManager.removeAdvertisementListener(this);
 			p2pNetworkManager = null;
 		}
 	}
@@ -110,10 +109,6 @@ public class Communicator implements IAdvertisementListener {
 	}
 
 	public Future<Collection<Bid>> publishAuction(final AuctionQueryAdvertisement adv) {
-		synchronized (mailboxForAuctions) {
-			mailboxForAuctions.put(adv.getAuctionId().toString(), Lists.<Bid> newArrayList());
-		}
-
 		try {
 			jxtaServicesProvider.publish(adv, WAIT_TIME_MILLIS, WAIT_TIME_MILLIS);
 			jxtaServicesProvider.remotePublish(adv, WAIT_TIME_MILLIS);
@@ -125,21 +120,52 @@ public class Communicator implements IAdvertisementListener {
 			@Override
 			public Collection<Bid> call() throws Exception {
 				Thread.sleep(WAIT_TIME_MILLIS);
-
-				synchronized (mailboxForAuctions) {
-					return mailboxForAuctions.remove(adv.getAuctionId().toString());
-				}
+				
+				Collection<AuctionResponseAdvertisement> allResponses = jxtaServicesProvider.getLocalAdvertisements(AuctionResponseAdvertisement.class);
+				Collection<AuctionResponseAdvertisement> relevantResponses = filterForAuctionID(allResponses, adv.getAuctionId());
+				updatePingMap(relevantResponses);
+				
+				return getBids(relevantResponses);
 			}
+
 		});
 	}
+	
+	private static Collection<AuctionResponseAdvertisement> filterForAuctionID(Collection<AuctionResponseAdvertisement> allResponses, ID auctionId) {
+		Collection<AuctionResponseAdvertisement> result = Lists.newLinkedList();
+		for( AuctionResponseAdvertisement response : allResponses ) {
+			if( response.getAuctionId().equals(auctionId)) {
+				result.add(response);
+			}
+		}
+		return result;
+	}
+	
+	private static void updatePingMap(Collection<AuctionResponseAdvertisement> relevantResponses) {
+		for( AuctionResponseAdvertisement relevantResponse : relevantResponses ) {
+			pingMap.setPosition(relevantResponse.getBid().getBidderPeerID(), relevantResponse.getPingMapPosition());
+		}
+	}
 
+	private Collection<Bid> getBids(Collection<AuctionResponseAdvertisement> relevantResponses) {
+		Collection<Bid> bids = Lists.newLinkedList();
+		for( AuctionResponseAdvertisement relevantResponse : relevantResponses ) {
+			bids.add(relevantResponse.getBid());
+		}
+		return bids;
+	}
+	
 	@Override
-	public void advertisementAdded(IAdvertisementManager sender, Advertisement advertisement) {
-		if (advertisement instanceof AuctionResponseAdvertisement) {
-			processAuctionResponeAdvertisement((AuctionResponseAdvertisement) advertisement);
-
-		} else if (advertisement instanceof AuctionQueryAdvertisement) {
-			processActionQueryAdvertisement((AuctionQueryAdvertisement) advertisement);
+	public void advertisementDiscovered(Advertisement advertisement) {
+		if( advertisement instanceof AuctionQueryAdvertisement ) {
+			AuctionQueryAdvertisement adv = (AuctionQueryAdvertisement)advertisement;
+			if( !processedQueryIDs.contains(adv.getAuctionId())) {
+				try {
+					processActionQueryAdvertisement(adv);
+				} finally {
+					processedQueryIDs.add(adv.getAuctionId());
+				}
+			}
 		}
 	}
 
@@ -170,26 +196,5 @@ public class Communicator implements IAdvertisementListener {
 				LOG.debug("Offering no bid to auction {} of peer {}", adv.getAuctionId(), adv.getOwnerPeerId().toString());
 			}
 		}
-	}
-
-	private void processAuctionResponeAdvertisement(AuctionResponseAdvertisement advertisement) {
-		if (!advertisement.getBid().getBidderPeerID().equals(p2pNetworkManager.getLocalPeerID())) {
-			Collection<Bid> mailbox = null;
-			synchronized (mailboxForAuctions) {
-				mailbox = mailboxForAuctions.get(advertisement.getAuctionId().toString());
-			}
-
-			if (mailbox != null) {
-				mailbox.add(advertisement.getBid());
-				LOG.debug("Received bid from {} valued {}", p2pDictionary.getRemotePeerName(advertisement.getBid().getBidderPeerID()), advertisement.getBid().getValue());
-			}
-			
-			pingMap.setPosition(advertisement.getBid().getBidderPeerID(), advertisement.getPingMapPosition());
-		}
-	}
-
-	@Override
-	public void advertisementRemoved(IAdvertisementManager sender, Advertisement adv) {
-		// do nothing
 	}
 }

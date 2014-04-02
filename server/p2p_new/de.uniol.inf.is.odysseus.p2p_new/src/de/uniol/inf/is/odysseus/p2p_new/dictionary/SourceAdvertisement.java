@@ -129,33 +129,6 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		
 		appendTo(doc);
 
-//		appendElement(doc, ID_TAG, id.toString());
-//		appendElement(doc, NAME_TAG, name);
-//		appendElement(doc, PEER_ID_TAG, peerID.toString());
-//		
-//		if( accessAO != null ) {
-//			// external source
-//			final Element<?> element = appendElement(doc, ACCESS_AO_TAG);
-//			AccessAOConverter.toDocument(element, accessAO);
-//			
-//		} else {
-//			// internal source
-//			appendElement(doc, PIPEID_TAG, pipeID.toString());
-//			
-//			if( sameAs != null && !sameAs.isEmpty() ) {
-//				final Element<?> sameElement = appendElement(doc, SAME_AS_TAG);
-//				for( Same same : sameAs ) {
-//					appendElement(sameElement, same.getPeerID().toString(), same.getName());
-//				}
-//			}
-//		}
-//		
-//		final Element<?> outSchemaElement = appendElement(doc, OUTPUTSCHEMA_TAG, outputSchema.getURI());
-//		for (final SDFAttribute attr : outputSchema) {
-//			appendElement(outSchemaElement, attr.getAttributeName(), attr.getDatatype().getURI());
-//		}
-
-
 		return doc;
 	}
 	

@@ -19,14 +19,15 @@ import org.eclipse.ui.part.ViewPart;
 
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
+import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
 
-public class AdvertisementsView extends ViewPart implements IAdvertisementListener {
+public class AdvertisementsView extends ViewPart {
 
+	private static final int REFRESH_INTERVAL = 5000;
 	private TableViewer advTable;
 	private final List<Advertisement> advertisements = Lists.newArrayList();
+	private RepeatingJobThread updaterThread;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -86,14 +87,20 @@ public class AdvertisementsView extends ViewPart implements IAdvertisementListen
 			}
 		};
 
+		updaterThread = new RepeatingJobThread(REFRESH_INTERVAL, "Advertisement view updater") {
+			@Override
+			public void doJob() {
+				refreshTable();
+			}
+		};
+		updaterThread.start();
+		
 		advTable.setInput(advertisements);
-		RCPP2PNewPlugIn.getAdvertisementManager().addAdvertisementListener(this);
 	}
-
+	
 	@Override
 	public void dispose() {
-		RCPP2PNewPlugIn.getAdvertisementManager().removeAdvertisementListener(this);
-		super.dispose();
+		updaterThread.stopRunning();
 	}
 
 	@Override
@@ -106,6 +113,10 @@ public class AdvertisementsView extends ViewPart implements IAdvertisementListen
 			return;
 		}
 
+		advertisements.clear();
+		advertisements.addAll(RCPP2PNewPlugIn.getJxtaServicesProvider().getLocalAdvertisements());
+		advertisements.addAll(RCPP2PNewPlugIn.getJxtaServicesProvider().getPeerAdvertisements());
+		
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 			@Override
@@ -117,24 +128,5 @@ public class AdvertisementsView extends ViewPart implements IAdvertisementListen
 				}
 			}
 		});
-	}
-
-	@Override
-	public void advertisementAdded(IAdvertisementManager sender, Advertisement adv) {
-		String className = adv.getClass().toString();
-		if( className.startsWith("class de.uniol.inf.is.odysseus")) {
-			synchronized (advertisements) {
-				advertisements.add(adv);
-			}
-		}
-		refreshTable();
-	}
-
-	@Override
-	public void advertisementRemoved(IAdvertisementManager sender, Advertisement adv) {
-		synchronized (advertisements) {
-			advertisements.remove(adv);
-		}
-		refreshTable();
 	}
 }
