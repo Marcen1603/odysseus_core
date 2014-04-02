@@ -62,10 +62,10 @@ public class Constant<T> implements IExpression<T> {
 
 	@Override
 	public String toString() {
-		if( type.isNumeric() ){
-			NumberFormat f = new DecimalFormat("#");
-			return f.format(value);
-		}
+//		if( type.isNumeric() ){
+//			NumberFormat f = new DecimalFormat("#");
+//			return f.format(value);
+//		}
 		return value.toString();
 	}
 

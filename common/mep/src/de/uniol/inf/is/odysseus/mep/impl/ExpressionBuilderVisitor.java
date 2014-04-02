@@ -165,26 +165,19 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 		SDFDatatype type = SDFDatatype.OBJECT;
 		if (node.getValue() instanceof Double) {
 			type = SDFDatatype.DOUBLE;
-		}
-		if (node.getValue() instanceof Float) {
+		}else if (node.getValue() instanceof Float) {
 			type = SDFDatatype.FLOAT;
-		}
-		if (node.getValue() instanceof Short) {
+		}else if (node.getValue() instanceof Short) {
 			type = SDFDatatype.SHORT;
-		}
-		if (node.getValue() instanceof Byte) {
+		}else if (node.getValue() instanceof Byte) {
 			type = SDFDatatype.BYTE;
-		}
-		if (node.getValue() instanceof Integer) {
+		}else if (node.getValue() instanceof Integer) {
 			type = SDFDatatype.INTEGER;
-		}
-		if (node.getValue() instanceof Boolean) {
+		}else if (node.getValue() instanceof Boolean) {
 			type = SDFDatatype.BOOLEAN;
-		}
-		if (node.getValue() instanceof Long) {
+		}else if (node.getValue() instanceof Long) {
 			type = SDFDatatype.LONG;
-		}
-		if (node.getValue() instanceof String) {
+		}else if (node.getValue() instanceof String) {
 			type = SDFDatatype.STRING;
 		}
 		return new Constant<Object>(node.getValue(), type);
