@@ -738,4 +738,8 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		System.out.println("Output from '" + p2pDictionary.getRemotePeerName(senderPeer) + "':");
 		System.out.println(cmd.getOutput());
 	}
+	
+	public void _execCommand(CommandInterpreter ci) {
+		_executeCommand(ci);
+	}
 }
