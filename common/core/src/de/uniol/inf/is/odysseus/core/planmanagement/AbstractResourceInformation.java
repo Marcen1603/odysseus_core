@@ -26,5 +26,10 @@ abstract public class AbstractResourceInformation {
 	public SDFSchema getOutputSchema() {
 		return outputSchema;
 	}
+	
+	@Override
+	public String toString() {	
+		return getName().toString();
+	}
 
 }
