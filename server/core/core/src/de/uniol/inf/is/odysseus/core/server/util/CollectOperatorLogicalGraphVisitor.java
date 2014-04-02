@@ -16,7 +16,7 @@ public class CollectOperatorLogicalGraphVisitor<T extends ILogicalOperator> impl
 		this.operatorClasses = new HashSet<Class<? extends T>>();
 		this.operatorClasses.add(operatorClass);
 		this.operators = new HashSet<T>();
-	}
+	}	
 	
 	public CollectOperatorLogicalGraphVisitor(Set<Class<? extends T>> operatorClasses) {
 		this.operatorClasses = operatorClasses;

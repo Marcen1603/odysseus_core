@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.script.parser;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
@@ -9,20 +10,20 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 
 public final class ReplacementContainer {
-	
+
 	public static final String PARAMETER_KEY = "#";
 	public static final String REPLACEMENT_DEFINITION_KEY = "DEFINE";
 	private static final String UNDEF_KEY = "UNDEF";
 
 	public static final String REPLACEMENT_START_KEY = "${";
 	public static final String REPLACEMENT_END_KEY = "}";
-	
+
 	private static final Map<String, String> defaultReplacements = Maps.newHashMap();
-	private final Map<String, String> replacements = Maps.newHashMap();
-	
+	private final Map<String, Serializable> replacements = Maps.newHashMap();
+
 	private Context currentContext;
 	private Context context;
-	
+
 	public ReplacementContainer() {
 		replacements.putAll(defaultReplacements);
 	}
@@ -31,27 +32,27 @@ public final class ReplacementContainer {
 		Preconditions.checkNotNull(context, "Context must not be null");
 		this.context = context;
 		this.currentContext = context;
-		
+
 		fromContextToReplacements();
 		fromReplacementsToContext();
 	}
 
+	// TODO: this assumes that each context entry is a replacement
 	private void fromContextToReplacements() {
-		for( String key : context.getKeys()) {
-			Object value = context.get(key);
-			
-			replacements.put(key, value.toString());
+		for (String key : context.getKeys()) {
+			Serializable value = context.get(key);
+			replacements.put(key, value);
 		}
 	}
 
 	private void fromReplacementsToContext() {
-		for( String key : replacements.keySet() ) {
+		for (String key : replacements.keySet()) {
 			context.putOrReplace(key, replacements.get(key));
 			currentContext.putOrReplace(key, replacements.get(key));
 		}
 	}
-	
-	public String use( String lineToReplace ) throws ReplacementException {
+
+	public String use(String lineToReplace) throws ReplacementException {
 		Preconditions.checkNotNull(lineToReplace, "Line to use replacements must not be null!");
 
 		int posStart = lineToReplace.indexOf(REPLACEMENT_START_KEY);
@@ -64,7 +65,7 @@ public final class ReplacementContainer {
 			if (posEnd != -1 && posStart < posEnd) {
 
 				String key = lineToReplace.substring(posStart + REPLACEMENT_START_KEY.length(), posEnd);
-				String replacement = replacements.get(key.toUpperCase());
+				String replacement = replacements.get(key.toUpperCase()).toString();
 				if (replacement == null) {
 					throw new ReplacementException("Replacement key " + key + " not defined or has no value!");
 				}
@@ -87,28 +88,28 @@ public final class ReplacementContainer {
 			if (parts.length >= 3) {
 				String key = parts[1].trim().toUpperCase();
 				String value = parts[2].trim();
-				
+
 				put(key, value);
 			}
 			return true;
 		}
-		
+
 		if (line.indexOf(PARAMETER_KEY + UNDEF_KEY) != -1) {
 			String[] parts = line.trim().split(" |\t", 3);
 			String key = parts[1].toUpperCase();
-			
+
 			removeImpl(key);
-			
+
 			return true;
 		}
-		
+
 		return false;
 	}
-	
-	public void put( String key, String value ) {
+
+	public void put(String key, String value) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "Key for replacement not be null or empty");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(value), "Value for replacement must not be null or empty");
-		
+
 		putImpl(key, value);
 	}
 
@@ -121,19 +122,19 @@ public final class ReplacementContainer {
 		replacements.put(key, value);
 		context.putOrReplace(key, value);
 	}
-	
-	public static void addDefault( String key, String value ) {
+
+	public static void addDefault(String key, String value) {
 		defaultReplacements.put(key, value);
 	}
-	
-	public Map<String, String> toMap() {
+
+	public Map<String, Serializable> toMap() {
 		return Maps.newHashMap(replacements);
 	}
-	
+
 	public Context getCurrentContext() {
 		return currentContext;
 	}
-	
+
 	public Context getNowContext() {
 		return context;
 	}

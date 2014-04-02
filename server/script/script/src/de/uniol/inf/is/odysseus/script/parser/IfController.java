@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.script.parser;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -109,7 +110,7 @@ public class IfController {
                 
                 List<SDFAttribute> attributes = expression.getAllAttributes();
                 List<Object> values = Lists.newArrayList();
-                Map<String, String> replacementMap = replacements.toMap();
+                Map<String, Serializable> replacementMap = replacements.toMap();
                 for( SDFAttribute attribute : attributes ) {
                     String name = attribute.getAttributeName().toUpperCase();
                     if( !replacementMap.containsKey(name)) {
@@ -174,7 +175,7 @@ public class IfController {
 				
 				List<SDFAttribute> attributes = expression.getAllAttributes();
 				List<Object> values = Lists.newArrayList();
-				Map<String, String> replacementMap = replacements.toMap();
+				Map<String, Serializable> replacementMap = replacements.toMap();
 				for( SDFAttribute attribute : attributes ) {
 					String name = attribute.getAttributeName().toUpperCase();
 					if( !replacementMap.containsKey(name)) {

@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.script.parser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -535,20 +536,20 @@ public class OdysseusScriptParser implements IOdysseusScriptParser,
 						throw new OdysseusScriptException(
 								"Missing parameters in loop definition. Definition should be like \"variable 1 TO 10\"");
 					}
-					Map<String, String> repl = getReplacements(
+					Map<String, Serializable> repl = getReplacements(
 							Arrays.copyOf(textToParse, from - 1), context);
 					String variable = parts[0].trim();
 					String fromStr = parts[1].trim();
 					if (fromStr.startsWith(REPLACEMENT_START_KEY)
 							&& fromStr.endsWith(REPLACEMENT_END_KEY)) {
 						fromStr = repl.get(fromStr.substring(2,
-								fromStr.length() - 1).toUpperCase());
+								fromStr.length() - 1).toUpperCase()).toString();
 					}
 					String toStr = parts[3].trim();
 					if (toStr.startsWith(REPLACEMENT_START_KEY)
 							&& toStr.endsWith(REPLACEMENT_END_KEY)) {
 						toStr = repl.get(toStr.substring(2, toStr.length() - 1)
-								.toUpperCase());
+								.toUpperCase()).toString();
 					}
 
 					String offsetVariable = "";
@@ -620,7 +621,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser,
 		return text.toArray(new String[0]);
 	}
 
-	private static Map<String, String> getReplacements(String[] text,
+	private static Map<String, Serializable> getReplacements(String[] text,
 			Context context) throws OdysseusScriptException {
 		ReplacementContainer repl = new ReplacementContainer();
 		repl.connect(context);
