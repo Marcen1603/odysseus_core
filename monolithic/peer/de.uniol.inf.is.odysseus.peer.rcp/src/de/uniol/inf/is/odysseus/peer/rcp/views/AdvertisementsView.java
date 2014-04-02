@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
@@ -29,6 +30,8 @@ public class AdvertisementsView extends ViewPart {
 	private final List<Advertisement> advertisements = Lists.newArrayList();
 	private RepeatingJobThread updaterThread;
 
+	private static AdvertisementsView instance = null;
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		final Composite tableComposite = new Composite(parent, SWT.NONE);
@@ -96,11 +99,17 @@ public class AdvertisementsView extends ViewPart {
 		updaterThread.start();
 		
 		advTable.setInput(advertisements);
+		instance = this;
 	}
 	
 	@Override
 	public void dispose() {
 		updaterThread.stopRunning();
+		instance = null;
+	}
+	
+	public static Optional<AdvertisementsView> getInstance() {
+		return Optional.fromNullable(instance);
 	}
 
 	@Override
@@ -108,7 +117,7 @@ public class AdvertisementsView extends ViewPart {
 		advTable.getTable().setFocus();
 	}
 
-	private void refreshTable() {
+	public void refreshTable() {
 		if (advTable.getTable().isDisposed()) {
 			return;
 		}
