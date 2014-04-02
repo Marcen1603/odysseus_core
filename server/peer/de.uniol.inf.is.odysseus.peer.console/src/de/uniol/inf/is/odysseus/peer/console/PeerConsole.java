@@ -173,7 +173,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		sb.append("    listLoggers/lsLoggers <filter> 		- Lists all known loggers by name\n");
 		sb.append("    jxtaLogDestinations           		- Lists all peers to send log messages to\n");
 		sb.append("    listSystemProperties/ls...     		- Lists all set system properties. Filter possible\n");
-		sb.append("    setSystemProperty <name> <value>		- Stes system property.\n");
+		sb.append("    setSystemProperty <name> <value>		- Sets system property.\n");
 		sb.append("    listThreads/ls... <filter>     		- Lists all currently running thread. Filter possible\n");
 		return sb.toString();
 	}
