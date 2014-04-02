@@ -1,9 +1,12 @@
 package de.uniol.inf.is.odysseus.peer.console;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -12,6 +15,7 @@ import net.jxta.peer.PeerID;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
+import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +26,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
+import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
+import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
@@ -36,7 +43,7 @@ import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 import de.uniol.inf.is.odysseus.peer.update.PeerUpdatePlugIn;
 
 @SuppressWarnings("unused")
-public class PeerConsole implements CommandProvider {
+public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerConsole.class);
 
@@ -96,17 +103,23 @@ public class PeerConsole implements CommandProvider {
 	}
 
 	// called by OSGi-DS
-	public static void bindPeerCommunicator(IPeerCommunicator serv) {
+	public void bindPeerCommunicator(IPeerCommunicator serv) {
 		peerCommunicator = serv;
+
+		peerCommunicator.registerMessageType(CommandMessage.class);
+		peerCommunicator.addListener(this, CommandMessage.class);
 	}
 
 	// called by OSGi-DS
-	public static void unbindPeerCommunicator(IPeerCommunicator serv) {
+	public void unbindPeerCommunicator(IPeerCommunicator serv) {
 		if (peerCommunicator == serv) {
+			peerCommunicator.removeListener(this, CommandMessage.class);
+			peerCommunicator.unregisterMessageType(CommandMessage.class);
+
 			peerCommunicator = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindJxtaServicesProvider(IJxtaServicesProvider serv) {
 		jxtaServicesProvider = serv;
@@ -147,6 +160,8 @@ public class PeerConsole implements CommandProvider {
 		sb.append("    unimportSource <sourceName>    		- Undo import of a source\n");
 		sb.append("    listAvailableSources <filter>  		- Lists known sources from the p2p network\n");
 		sb.append("    remoteUpdateAll                		- Sends update signals to remote peers with matching filter\n");
+		sb.append("    listAdvertisements/ls.. <filter>     - Lists all advertisements (class names)\n");
+		sb.append("    refreshAdvertisements/ls.. <filter>  - Forces to get remote advertisements again\n");
 		sb.append("\n");
 		sb.append("    log <level> <text>             		- Creates a log statement\n");
 		sb.append("    setLogger <logger> <level>     		- Sets the logging level of a specific logger\n");
@@ -280,7 +295,7 @@ public class PeerConsole implements CommandProvider {
 
 		final int duration = tryToInt(ci.nextArgument());
 
-		setLoggerImpl("de.uniol.inf.is.odysseus." + loggerName, logLevel, duration );
+		setLoggerImpl("de.uniol.inf.is.odysseus." + loggerName, logLevel, duration);
 	}
 
 	private static void setLoggerImpl(String loggerName, String logLevel, final int duration) {
@@ -470,7 +485,7 @@ public class PeerConsole implements CommandProvider {
 			System.out.println("Source '" + sourceName + "' imported as " + sourceTypeString(adv));
 		} catch (InvalidP2PSource | PeerException e) {
 			System.out.println("Could not import source '" + sourceName + "': " + e.getMessage());
-		} 
+		}
 	}
 
 	public void _unexportSource(CommandInterpreter ci) {
@@ -595,46 +610,147 @@ public class PeerConsole implements CommandProvider {
 	public void _listThreads(CommandInterpreter ci) {
 		_lsThreads(ci);
 	}
-	
-	public void _listPeerAddresses( CommandInterpreter ci ) {
+
+	public void _listPeerAddresses(CommandInterpreter ci) {
 		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
 		System.out.println("Remote peers known: " + remotePeerIDs.size());
 
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : remotePeerIDs) {
 			Optional<String> optAddress = p2pDictionary.getRemotePeerAddress(remotePeerID);
-			output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " : " + ( optAddress.isPresent() ? optAddress.get() : "<unknown>"));
+			output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " : " + (optAddress.isPresent() ? optAddress.get() : "<unknown>"));
 		}
 
 		sortAndPrintList(output);
 	}
-	
-	public void _lsPeerAddresses( CommandInterpreter ci ) {
+
+	public void _lsPeerAddresses(CommandInterpreter ci) {
 		_listPeerAddresses(ci);
 	}
-	
-	public void _lsAdvertisements( CommandInterpreter ci ) {
+
+	public void _lsAdvertisements(CommandInterpreter ci) {
 		String filter = ci.nextArgument();
-		
+
 		Collection<Advertisement> advs = jxtaServicesProvider.getLocalAdvertisements();
 		advs.addAll(jxtaServicesProvider.getPeerAdvertisements());
-		
+
 		List<String> output = Lists.newLinkedList();
-		for( Advertisement adv : advs ) {
+		for (Advertisement adv : advs) {
 			String txt = adv.getClass().getName();
-			if( Strings.isNullOrEmpty(filter) || txt.contains(filter)) {
+			if (Strings.isNullOrEmpty(filter) || txt.contains(filter)) {
 				output.add(txt);
 			}
 		}
-		
+
 		sortAndPrintList(output);
 	}
-	
-	public void _listAdvertisement( CommandInterpreter ci ) {
+
+	public void _listAdvertisements(CommandInterpreter ci) {
 		_lsAdvertisements(ci);
 	}
-	
-	public void _refreshAdvertisements( CommandInterpreter ci ) {
+
+	public void _refreshAdvertisements(CommandInterpreter ci) {
 		jxtaServicesProvider.getRemoteAdvertisements();
+	}
+
+	public void _executeCommand(CommandInterpreter ci) {
+		String peerName = ci.nextArgument();
+		if (Strings.isNullOrEmpty(peerName)) {
+			System.out.println("usage: executeCommand <peername> <command>");
+			return;
+		}
+
+		String command = ci.nextArgument();
+		if (Strings.isNullOrEmpty(command)) {
+			System.out.println("usage: executeCommand <peername> <command>");
+			return;
+		}
+
+		Optional<PeerID> optPID = determinePeerID(peerName);
+		if (optPID.isPresent()) {
+			PeerID pid = optPID.get();
+			CommandMessage cmd = new CommandMessage(command);
+			try {
+				peerCommunicator.send(pid, cmd);
+			} catch (PeerCommunicationException e) {
+				System.out.println("Could not send command to peer named '" + peerName + "': " + e.getMessage());
+			}
+		} else {
+			System.out.println("Peername '" + peerName + "' not known.");
+		}
+	}
+
+	private static Optional<PeerID> determinePeerID(String peerName) {
+		for (PeerID pid : p2pDictionary.getRemotePeerIDs()) {
+			if (p2pDictionary.getRemotePeerName(pid).equals(peerName)) {
+				return Optional.of(pid);
+			}
+		}
+		return Optional.absent();
+	}
+
+	@Override
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
+		CommandMessage cmd = (CommandMessage) message;
+
+		String[] splitted = cmd.getCommandString().split("\\ ", 2);
+		String command = splitted[0];
+		String parameters = splitted.length > 1 ? splitted[1] : null;
+
+		try {
+			Method m = this.getClass().getMethod("_" + command, CommandInterpreter.class);
+			CommandInterpreter delegateCi = new DelegateCommandInterpreter(parameters != null ? parameters.split("\\ ") : new String[0]);
+
+			m.invoke(this, delegateCi);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			LOG.debug("Could not execute remote command", e);
+		}
+	}
+
+	private static class DelegateCommandInterpreter implements CommandInterpreter {
+
+		private int i = 0;
+		private final String[] args;
+
+		public DelegateCommandInterpreter(String[] args) {
+			this.args = args;
+		}
+
+		@Override
+		public Object execute(String cmd) {
+			return null;
+		}
+
+		@Override
+		public String nextArgument() {
+			if (i < args.length) {
+				return this.args[i++];
+			}
+			return null;
+		}
+
+		@Override
+		public void print(Object o) {
+		}
+
+		@Override
+		public void printBundleResource(Bundle bundle, String resource) {
+		}
+
+		@Override
+		public void printDictionary(@SuppressWarnings("rawtypes") Dictionary dic, String title) {
+		}
+
+		@Override
+		public void printStackTrace(Throwable t) {
+		}
+
+		@Override
+		public void println() {
+		}
+
+		@Override
+		public void println(Object o) {
+		}
 	}
 }

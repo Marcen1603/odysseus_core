@@ -10,7 +10,8 @@ Import-Package: de.uniol.inf.is.odysseus.peer.logging,
  de.uniol.inf.is.odysseus.peer.ping,
  de.uniol.inf.is.odysseus.peer.resource,
  de.uniol.inf.is.odysseus.peer.update,
- org.eclipse.osgi.framework.console
+ org.eclipse.osgi.framework.console,
+ org.osgi.framework;version="1.6.0"
 Require-Bundle: de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0",
  com.google.guava,
  Jxta_2.6_Source,
