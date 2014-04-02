@@ -59,7 +59,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private static final Logger LOG = LoggerFactory.getLogger(P2PDictionary.class);
 
-	// private static final String AUTOIMPORT_SYS_PROPERTY = "peer.autoimport";
 	private static final String AUTOEXPORT_SYS_PROPERTY = "peer.autoexport";
 	private static final String UNKNOWN_PEER_NAME = "<unknown>";
 
@@ -811,15 +810,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		}
 		return streamName;
 	}
-
-	//
-	// private static boolean isAutoImport() {
-	// String property = System.getProperty(AUTOIMPORT_SYS_PROPERTY);
-	// if (!Strings.isNullOrEmpty(property)) {
-	// return property.equalsIgnoreCase("true");
-	// }
-	// return false;
-	// }
 
 	private static boolean isAutoExport() {
 		String property = System.getProperty(AUTOEXPORT_SYS_PROPERTY);
