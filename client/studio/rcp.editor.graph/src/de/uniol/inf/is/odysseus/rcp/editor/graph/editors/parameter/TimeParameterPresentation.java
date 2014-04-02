@@ -139,8 +139,12 @@ public class TimeParameterPresentation extends AbstractParameterPresentation<Pai
 	private class PairModifyListener implements ModifyListener {
 		@Override
 		public void modifyText(ModifyEvent e) {					
-			Pair<Integer, String> attributePair = new Pair<Integer, String>(sp.getSelection(), combo.getText());
-			setValue(attributePair);
+			if(sp.getSelection()>0){
+				Pair<Integer, String> attributePair = new Pair<Integer, String>(sp.getSelection(), combo.getText());
+				setValue(attributePair);
+			}else{
+				setValue(null);
+			}
 		}
 	}
 
