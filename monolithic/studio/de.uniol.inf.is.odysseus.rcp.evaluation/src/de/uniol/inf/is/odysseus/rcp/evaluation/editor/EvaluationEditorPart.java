@@ -50,7 +50,7 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
 import de.uniol.inf.is.odysseus.rcp.evaluation.QueryTreeSelectionDialog;
-import de.uniol.inf.is.odysseus.rcp.evaluation.command.EvaluationJob;
+import de.uniol.inf.is.odysseus.rcp.evaluation.execution.EvaluationJob;
 import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationModel;
 import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationVariable;
 

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.mining.logicaloperator;
+package de.uniol.inf.is.odysseus.rcp.evaluation.processing.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.evaluation.command;
+package de.uniol.inf.is.odysseus.rcp.evaluation.execution;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -133,6 +133,8 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 			Context context = ParserClientUtil.createRCPContext((IFile) model.getQueryFile());
 			long timeStarted = System.currentTimeMillis();
 
+			context.put(EvaluationModel.class.getName(), model);
+			
 			List<IExecutorCommand> commands = executor.translateQuery(thislines, "OdysseusScript", caller, context);
 			List<ILogicalQuery> queries = new ArrayList<>();
 			for (IExecutorCommand command : commands) {

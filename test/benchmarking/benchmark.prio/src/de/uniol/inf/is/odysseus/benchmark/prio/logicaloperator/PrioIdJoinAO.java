@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.benchmark.prio.logicaloperator;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -24,8 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 //@LogicalOperator(name = "PRIOIDJOIN", minInputPorts = 2, maxInputPorts = 2, category={LogicalOperatorCategory.PROCESSING}, doc="Currently not working!")
-public class PrioIdJoinAO extends AbstractLogicalOperator implements
-		ILogicalOperator {
+public class PrioIdJoinAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = 7562422981222202288L;
 
 	private int leftPos = -1;

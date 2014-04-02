@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.mining.transform;
+package de.uniol.inf.is.odysseus.rcp.evaluation.processing.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.mining.logicaloperator.MeasureThroughputAO;
-import de.uniol.inf.is.odysseus.mining.physicaloperator.MeasureThroughputPO;
+import de.uniol.inf.is.odysseus.rcp.evaluation.processing.logicaloperator.MeasureThroughputAO;
+import de.uniol.inf.is.odysseus.rcp.evaluation.processing.physicaloperator.MeasureThroughputPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;

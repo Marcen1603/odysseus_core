@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.mining.physicaloperator;
+package de.uniol.inf.is.odysseus.rcp.evaluation.processing.physicaloperator;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,7 +21,7 @@ public class MeasureThroughputPO<M extends IMetaAttribute> extends AbstractPipe<
 	private ArrayList<Integer> counts = new ArrayList<>();
 	private ArrayList<Long> times = new ArrayList<>();	
 	private int counter;
-	private File file;
+//	private File file;
 	private long totalstart;
 
 	public MeasureThroughputPO(int each, String filename, boolean active, boolean dump) {
@@ -46,11 +46,11 @@ public class MeasureThroughputPO<M extends IMetaAttribute> extends AbstractPipe<
 	@Override
 	protected void process_open() throws OpenFailedException {
 		totalstart = System.currentTimeMillis();
-		try {
-			this.file = FileUtils.openOrCreateFile(this.filename);
-		} catch (IOException e) {
-			throw new OpenFailedException(e);
-		}		
+//		try {
+//			this.file = FileUtils.openOrCreateFile(this.filename);
+//		} catch (IOException e) {
+//			throw new OpenFailedException(e);
+//		}		
 		this.counter = 0;
 		this.times.clear();
 		this.counts.clear();
@@ -59,17 +59,19 @@ public class MeasureThroughputPO<M extends IMetaAttribute> extends AbstractPipe<
 	@Override
 	protected void process_close() {
 		try {
-			System.out.println("Writing throughputs to " + this.file.getAbsolutePath());
-			BufferedWriter bw = new BufferedWriter(new FileWriter(this.file));			
+//			System.out.println("Writing throughputs to " + this.file.getAbsolutePath());
+//			BufferedWriter bw = new BufferedWriter(new FileWriter(this.file));			
 			int count = 0;
 			for (int i = 0; i < counts.size(); i++) {
 				Integer c = counts.get(i);				
 				Long time = times.get(i);
-				bw.write(c + ";" + time + System.lineSeparator());
+				String line = c + ";" + time + System.lineSeparator();
+				System.out.println(line);
+//				bw.write(c + ";" + time + System.lineSeparator());
 				count++;
 			}
 			System.out.println(count + " lines were written!");
-			bw.close();
+//			bw.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

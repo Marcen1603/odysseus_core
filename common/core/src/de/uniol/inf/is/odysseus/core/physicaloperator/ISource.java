@@ -102,7 +102,5 @@ public interface ISource<T> extends IPhysicalOperator,
 	void block();
 	boolean isBlocked();
 
-	public void unsubscribeFromAllSinks();
-
 
 }

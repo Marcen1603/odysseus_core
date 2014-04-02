@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.evaluation.model;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -14,8 +15,10 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 
-public class EvaluationModel {
+public class EvaluationModel implements Serializable{
 
+	private static final long serialVersionUID = 112449710812448224L;
+	
 	private static final String ACTIVE = "ACTIVE";
 	private static final String VALUE = "value";
 	private static final String VARIABLE = "variable";

@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.hmm.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -21,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * 
  */
 @LogicalOperator(name = "FEATUREEXTRACTION", minInputPorts = 1, maxInputPorts = 1, doc="Feature Extraction is used to extract the most important information from an input stream, e.g. calculating the orientation angle from given coordinates.",category={LogicalOperatorCategory.MINING})
-public class FeatureExtractionAO extends UnaryLogicalOp implements ILogicalOperator {
+public class FeatureExtractionAO extends UnaryLogicalOp {
 
 	/**
 	 * Auto-generated serial by eclipse

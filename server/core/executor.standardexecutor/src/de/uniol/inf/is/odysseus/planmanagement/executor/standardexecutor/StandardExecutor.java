@@ -266,7 +266,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			}
 		}
 		
-		executePreTransformationHandlers(user, parameters, queries);
+		executePreTransformationHandlers(user, parameters, queries, context);
 
 		// Distribution handler only for queries
 		if (parameters.get(ParameterDoDistribute.class).getValue()) {
@@ -287,7 +287,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		return commands;
 	}
 
-	private void executePreTransformationHandlers(ISession user, QueryBuildConfiguration parameters, List<ILogicalQuery> queries) throws QueryParseException {
+	private void executePreTransformationHandlers(ISession user, QueryBuildConfiguration parameters, List<ILogicalQuery> queries, Context context) throws QueryParseException {
 		PreTransformationHandlerParameter preTransformationHandlerParameter = parameters.get(PreTransformationHandlerParameter.class);
 		if (preTransformationHandlerParameter != null && preTransformationHandlerParameter.hasPairs()) {
 			List<PreTransformationHandlerParameter.Pair> pairs = preTransformationHandlerParameter.getPairs();
@@ -300,7 +300,7 @@ public class StandardExecutor extends AbstractExecutor implements
 					try {
 						IPreTransformationHandler handler = getPreTransformationHandler(handlerName);
 						try {
-							handler.preTransform(this, user, query, parameters, handlerParameters);
+							handler.preTransform(this, user, query, parameters, handlerParameters, context);
 						} catch( Throwable t ) {
 							throw new QueryParseException("PreTransformationHandler called '" + handlerName + "' throwed an exception", t);
 						}

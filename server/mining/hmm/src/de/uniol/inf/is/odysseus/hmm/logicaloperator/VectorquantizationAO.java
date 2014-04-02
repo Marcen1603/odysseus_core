@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.hmm.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -25,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
  *
  */
 @LogicalOperator(name = "VECTORQUANTIZATION", minInputPorts = 1, maxInputPorts = 1, doc="Process the incoming feature vector, from the Feature Extraction operator  to determine the cluster id. Distinguish autonomous the incoming data, e.g. orientation, velocity, coordinates, to determine the correct method to work with", category={LogicalOperatorCategory.MINING})
-public class VectorquantizationAO extends UnaryLogicalOp implements	ILogicalOperator {
+public class VectorquantizationAO extends UnaryLogicalOp {
 
 	// Attributes
 	private int numCluster;

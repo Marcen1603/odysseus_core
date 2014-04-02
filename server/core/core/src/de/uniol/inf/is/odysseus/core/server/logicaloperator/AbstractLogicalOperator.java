@@ -555,6 +555,14 @@ public abstract class AbstractLogicalOperator implements Serializable,
 			this.recalcAllPhyInputSet = true;
 		}
 	}
+	
+	@Override
+	public void unsubscribeFromAllSinks() {
+		Iterator<LogicalSubscription> subscriptions = this.subscriptions.iterator();
+		while(subscriptions.hasNext()){
+			unsubscribeSink(subscriptions.next());
+		}		
+	}
 
 	@Override
 	final public Collection<LogicalSubscription> getSubscriptions() {

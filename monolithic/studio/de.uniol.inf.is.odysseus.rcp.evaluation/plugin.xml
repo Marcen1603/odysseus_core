@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.evaluation.command.StartEvaluationCommand"
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.evaluation.execution.StartEvaluationCommand"
             id="de.uniol.inf.is.odysseus.rcp.evaluation.start"
             name="Start Evaluation Command">
       </command>

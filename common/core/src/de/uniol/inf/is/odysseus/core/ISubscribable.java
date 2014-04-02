@@ -49,6 +49,8 @@ public interface ISubscribable<T, S extends ISubscription<T>> {
 	 */
 	public void unsubscribeSink(S subscription);
 	public Collection<S> getSubscriptions();
+	public void unsubscribeFromAllSinks();
+	
 	
 	/**
 	 * Same as subscribeSink but needs no open. Especially for terminal sinks, that connect at runtime
