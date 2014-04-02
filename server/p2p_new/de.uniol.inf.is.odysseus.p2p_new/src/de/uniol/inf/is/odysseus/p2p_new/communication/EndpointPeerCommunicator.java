@@ -14,6 +14,7 @@ import net.jxta.endpoint.Messenger;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
+import net.jxta.protocol.PeerAdvertisement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.P2PDictionaryAdapter;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 
-public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IPeerCommunicator, EndpointListener {
+public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IPeerCommunicator, EndpointListener, IPeerCommunicatorListener {
 
 	private static final String COMMUNICATION_SERVICE_ID = "odysseusP2PComm";
 
@@ -63,6 +64,7 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 	// called by OSGi-DS
 	public void activate() {
 		registerMessageType(PeerCloseMessage.class);
+		addListener(this, PeerCloseMessage.class);
 		
 		Thread waitingThread = new Thread( new Runnable() {
 
@@ -83,6 +85,7 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 	public void deactivate() {
 		sendCloseMessageToRemotePeers();
 		
+		removeListener(this, PeerCloseMessage.class);
 		unregisterMessageType(PeerCloseMessage.class);
 		
 		messengerMap.clear();
@@ -266,5 +269,21 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 
 	private static int byteArrayToInt(byte[] b, int offset) {
 		return b[3 + offset] & 0xFF | (b[2 + offset] & 0xFF) << 8 | (b[1 + offset] & 0xFF) << 16 | (b[0 + offset] & 0xFF) << 24;
+	}
+
+	@Override
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
+		// message is PeerCloseMessage
+		Collection<PeerAdvertisement> peerAdvertisements = JxtaServicesProvider.getInstance().getPeerAdvertisements();
+		for( PeerAdvertisement peerAdvertisement : peerAdvertisements ) {
+			if(peerAdvertisement.getPeerID().equals(senderPeer)) {
+				try {
+					JxtaServicesProvider.getInstance().flushAdvertisement(peerAdvertisement);
+				} catch (IOException e) {
+					LOG.error("Could not flush peer advertisement due to peer close", e);
+				} 
+				break;
+			}
+		}
 	}
 }
