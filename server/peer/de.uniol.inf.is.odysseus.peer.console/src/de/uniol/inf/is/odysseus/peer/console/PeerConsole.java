@@ -742,4 +742,8 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public void _execCommand(CommandInterpreter ci) {
 		_executeCommand(ci);
 	}
+	
+	public void _execCmd(CommandInterpreter ci) {
+		_executeCommand(ci);
+	}
 }
