@@ -1,12 +1,12 @@
 package de.uniol.inf.is.odysseus.peer.console;
 
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -15,7 +15,6 @@ import net.jxta.peer.PeerID;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,14 +106,18 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		peerCommunicator = serv;
 
 		peerCommunicator.registerMessageType(CommandMessage.class);
+		peerCommunicator.registerMessageType(CommandOutputMessage.class);
 		peerCommunicator.addListener(this, CommandMessage.class);
+		peerCommunicator.addListener(this, CommandOutputMessage.class);
 	}
 
 	// called by OSGi-DS
 	public void unbindPeerCommunicator(IPeerCommunicator serv) {
 		if (peerCommunicator == serv) {
 			peerCommunicator.removeListener(this, CommandMessage.class);
+			peerCommunicator.removeListener(this, CommandOutputMessage.class);
 			peerCommunicator.unregisterMessageType(CommandMessage.class);
+			peerCommunicator.unregisterMessageType(CommandOutputMessage.class);
 
 			peerCommunicator = null;
 		}
@@ -691,66 +694,47 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
-		CommandMessage cmd = (CommandMessage) message;
+		if (message instanceof CommandMessage) {
+			CommandMessage cmd = (CommandMessage) message;
+			processCommandMessage(communicator, senderPeer, cmd);
+		} else if (message instanceof CommandOutputMessage) {
+			CommandOutputMessage cmd = (CommandOutputMessage) message;
+			processCommandOutputMessage(communicator, senderPeer, cmd);
+		}
+	}
 
+	private void processCommandMessage(IPeerCommunicator communicator, PeerID senderPeer, CommandMessage cmd) {
 		String[] splitted = cmd.getCommandString().split("\\ ", 2);
 		String command = splitted[0];
 		String parameters = splitted.length > 1 ? splitted[1] : null;
 
 		try {
-			Method m = this.getClass().getMethod("_" + command, CommandInterpreter.class);
+			Method m = getClass().getMethod("_" + command, CommandInterpreter.class);
 			CommandInterpreter delegateCi = new DelegateCommandInterpreter(parameters != null ? parameters.split("\\ ") : new String[0]);
 
+			PrintStream oldOut = System.out;
+			ConsoleOutputStream cos = new ConsoleOutputStream(System.out);
+
+			System.setOut(cos);
 			m.invoke(this, delegateCi);
+			System.setOut(oldOut);
+
+			String text = cos.getOutput();
+
+			CommandOutputMessage out = new CommandOutputMessage(text);
+			try {
+				communicator.send(senderPeer, out);
+			} catch (PeerCommunicationException e) {
+				LOG.debug("Could not send console output", e);
+			}
+
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			LOG.debug("Could not execute remote command", e);
 		}
 	}
 
-	private static class DelegateCommandInterpreter implements CommandInterpreter {
-
-		private int i = 0;
-		private final String[] args;
-
-		public DelegateCommandInterpreter(String[] args) {
-			this.args = args;
-		}
-
-		@Override
-		public Object execute(String cmd) {
-			return null;
-		}
-
-		@Override
-		public String nextArgument() {
-			if (i < args.length) {
-				return this.args[i++];
-			}
-			return null;
-		}
-
-		@Override
-		public void print(Object o) {
-		}
-
-		@Override
-		public void printBundleResource(Bundle bundle, String resource) {
-		}
-
-		@Override
-		public void printDictionary(@SuppressWarnings("rawtypes") Dictionary dic, String title) {
-		}
-
-		@Override
-		public void printStackTrace(Throwable t) {
-		}
-
-		@Override
-		public void println() {
-		}
-
-		@Override
-		public void println(Object o) {
-		}
+	private void processCommandOutputMessage(IPeerCommunicator communicator, PeerID senderPeer, CommandOutputMessage cmd) {
+		System.out.println("Output from '" + p2pDictionary.getRemotePeerName(senderPeer) + "':");
+		System.out.println(cmd.getOutput());
 	}
 }
