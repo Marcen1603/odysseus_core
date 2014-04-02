@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
  * @author Dennis Geesen
@@ -38,6 +39,7 @@ public class ClassificationAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = 1231999597473176237L;
 	private SDFAttribute classifierAttribute;
 	private boolean oneClassifier = false;
+	private String className = "clazz";
 	
 	public ClassificationAO() {
 		
@@ -46,6 +48,7 @@ public class ClassificationAO extends AbstractLogicalOperator {
 	public ClassificationAO(ClassificationAO classificationAO) {
 		this.classifierAttribute = classificationAO.classifierAttribute;
 		this.oneClassifier = classificationAO.oneClassifier;
+		this.className = classificationAO.className;
 	}
 
 	@Override
@@ -56,7 +59,7 @@ public class ClassificationAO extends AbstractLogicalOperator {
 			attributes.add(new SDFAttribute(null, oldAttribute.getAttributeName(), oldAttribute.getDatatype(), oldAttribute.getUnit(), oldAttribute.getDtConstraints()));
 		}
 		
-		SDFAttribute attributeId = new SDFAttribute(null, "clazz", SDFDatatype.DOUBLE, null, null, null);
+		SDFAttribute attributeId = new SDFAttribute(null, className, SDFDatatype.DOUBLE, null, null, null);
 		attributes.add(attributeId);
 		
 		SDFSchema outSchema = new SDFSchema(getInputSchema(0), attributes);
@@ -85,5 +88,14 @@ public class ClassificationAO extends AbstractLogicalOperator {
 	@Parameter(name="oneClassifier", type=BooleanParameter.class, doc="Use only one classifier at once", optional = true)
 	public void setOneClassifier(boolean oneClassifier) {
 		this.oneClassifier = oneClassifier;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	@Parameter(name="classname", type=StringParameter.class, doc="The name of the classification result", optional = true)
+	public void setClassName(String className) {
+		this.className = className;
 	}
 }
