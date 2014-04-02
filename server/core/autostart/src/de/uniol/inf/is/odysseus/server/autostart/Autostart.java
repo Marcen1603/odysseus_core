@@ -14,11 +14,8 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class Autostart implements BundleActivator {
 
@@ -67,12 +64,8 @@ public class Autostart implements BundleActivator {
 							query.append(inputLine).append("\n");
 						}
 						if (query.length() > 0) {
-							ISession user = UserManagementProvider
-									.getSessionmanagement()
-									.loginSuperUser(null);
-							executor.addQuery(query.toString(),
-									"OdysseusScript", user, "Standard",
-									Context.empty());
+							AutostartExecuteThread t = new AutostartExecuteThread(executor, query.toString());
+							t.start();
 						}
 						in.close();
 					} else {
