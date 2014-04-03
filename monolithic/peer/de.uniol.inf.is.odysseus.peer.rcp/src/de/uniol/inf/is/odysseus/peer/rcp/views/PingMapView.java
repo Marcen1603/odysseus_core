@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -120,7 +121,10 @@ public class PingMapView extends ViewPart implements PaintListener, MouseMoveLis
 	private static Collection<IPingMapNode> collectNodes(IPingMap pingMap) {
 		Collection<IPingMapNode> nodes = Lists.newArrayList(); 
 		for( PeerID peerID : RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerIDs()) {
-			nodes.add(pingMap.getNode(peerID).get());
+			Optional<IPingMapNode> optNode = pingMap.getNode(peerID);
+			if( optNode.isPresent() ) {
+				nodes.add(optNode.get());
+			}
 		}
 		return nodes;
 	}
