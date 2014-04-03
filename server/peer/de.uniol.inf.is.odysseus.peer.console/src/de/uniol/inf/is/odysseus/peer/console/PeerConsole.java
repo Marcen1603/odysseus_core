@@ -20,10 +20,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
@@ -41,7 +42,6 @@ import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 import de.uniol.inf.is.odysseus.peer.update.PeerUpdatePlugIn;
 
-@SuppressWarnings("unused")
 public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerConsole.class);
@@ -52,6 +52,10 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IJxtaServicesProvider jxtaServicesProvider;
+	private static IExecutor executor;
+
+	private final Collection<PeerID> loggedInPeers = Lists.newArrayList();
+	private final Collection<PeerID> loggedToPeers = Lists.newArrayList();
 
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
@@ -107,8 +111,16 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 		peerCommunicator.registerMessageType(CommandMessage.class);
 		peerCommunicator.registerMessageType(CommandOutputMessage.class);
+		peerCommunicator.registerMessageType(LoginMessage.class);
+		peerCommunicator.registerMessageType(LoginOKMessage.class);
+		peerCommunicator.registerMessageType(LogoutMessage.class);
+		peerCommunicator.registerMessageType(LogoutOKMessage.class);
 		peerCommunicator.addListener(this, CommandMessage.class);
 		peerCommunicator.addListener(this, CommandOutputMessage.class);
+		peerCommunicator.addListener(this, LoginMessage.class);
+		peerCommunicator.addListener(this, LoginOKMessage.class);
+		peerCommunicator.addListener(this, LogoutMessage.class);
+		peerCommunicator.addListener(this, LogoutOKMessage.class);
 	}
 
 	// called by OSGi-DS
@@ -116,8 +128,16 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		if (peerCommunicator == serv) {
 			peerCommunicator.removeListener(this, CommandMessage.class);
 			peerCommunicator.removeListener(this, CommandOutputMessage.class);
+			peerCommunicator.removeListener(this, LoginMessage.class);
+			peerCommunicator.removeListener(this, LoginOKMessage.class);
+			peerCommunicator.removeListener(this, LogoutMessage.class);
+			peerCommunicator.removeListener(this, LogoutOKMessage.class);
 			peerCommunicator.unregisterMessageType(CommandMessage.class);
 			peerCommunicator.unregisterMessageType(CommandOutputMessage.class);
+			peerCommunicator.unregisterMessageType(LoginMessage.class);
+			peerCommunicator.unregisterMessageType(LoginOKMessage.class);
+			peerCommunicator.unregisterMessageType(LogoutMessage.class);
+			peerCommunicator.unregisterMessageType(LogoutOKMessage.class);
 
 			peerCommunicator = null;
 		}
@@ -132,6 +152,18 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public static void unbindJxtaServicesProvider(IJxtaServicesProvider serv) {
 		if (jxtaServicesProvider == serv) {
 			jxtaServicesProvider = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindExecutor(IExecutor serv) {
+		executor = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindExecutor(IExecutor serv) {
+		if (executor == serv) {
+			executor = null;
 		}
 	}
 
@@ -163,9 +195,15 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		sb.append("    unimportSource <sourceName>    		- Undo import of a source\n");
 		sb.append("    listAvailableSources <filter>  		- Lists known sources from the p2p network\n");
 		sb.append("    remoteUpdateAll                		- Sends update signals to remote peers with matching filter\n");
-		sb.append("    executeCommand <peerName> <cmd>      - Remotely execute a command on a peer. Outputs are send back\n");
 		sb.append("    listAdvertisements/ls.. <filter>     - Lists all advertisements (class names)\n");
 		sb.append("    refreshAdvertisements/ls.. <filter>  - Forces to get remote advertisements again\n");
+		sb.append("\n");
+		sb.append("    login <peername> <username> <passw>  - Login to remote peer to execute osgi-commands there\n");
+		sb.append("    logout <peername> 			        - Logout from remote peer\n");
+		sb.append("    listLoggedInPeers/ls...              - Lists all remote peers which are logged in here\n");
+		sb.append("    listLoggedToPeers/ls...              - Lists all remote peers which we are logged in to\n");
+		sb.append("    revokeLogin <peername>               - Removes login of remote peer\n");
+		sb.append("    executeCommand <peerName> <cmd>      - Remotely execute a command on a peer. Outputs are send back. Login needed!\n");
 		sb.append("\n");
 		sb.append("    log <level> <text>             		- Creates a log statement\n");
 		sb.append("    setLogger <logger> <level>     		- Sets the logging level of a specific logger\n");
@@ -659,6 +697,67 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		jxtaServicesProvider.getRemoteAdvertisements();
 	}
 
+	public void _loginPeer(CommandInterpreter ci) {
+		String peername = ci.nextArgument();
+		if (Strings.isNullOrEmpty(peername)) {
+			System.out.println("usage: login <peername> <username> <password>");
+			return;
+		}
+
+		String username = ci.nextArgument();
+		if (Strings.isNullOrEmpty(username)) {
+			System.out.println("usage: login <peername> <username> <password>");
+			return;
+		}
+
+		String password = ci.nextArgument();
+		if (Strings.isNullOrEmpty(password)) {
+			System.out.println("usage: login <peername> <username> <password>");
+			return;
+		}
+
+		LoginMessage loginMsg = new LoginMessage(username, password);
+
+		Optional<PeerID> optPeerID = determinePeerID(peername);
+		if (optPeerID.isPresent()) {
+			try {
+				peerCommunicator.send(optPeerID.get(), loginMsg);
+				System.out.println("Send login to peer '" + peername + "'");
+			} catch (PeerCommunicationException e) {
+				System.out.println("Could not send login to peer '" + peername + "': " + e.getMessage());
+			}
+		} else {
+			System.out.println("Peer '" + peername + "' not known.");
+		}
+	}
+
+	public void _logoutPeer(CommandInterpreter ci) {
+		String peerName = ci.nextArgument();
+		if (Strings.isNullOrEmpty(peerName)) {
+			System.out.println("usage: logout <peername>");
+			return;
+		}
+
+		Optional<PeerID> optPid = determinePeerID(peerName);
+		if (optPid.isPresent()) {
+			PeerID pid = optPid.get();
+			if (loggedToPeers.contains(pid)) {
+				sendLogoutMessage(pid, peerName);
+			} else {
+				System.out.println("Not logged in peer '" + peerName + "'");
+			}
+		}
+	}
+
+	private static void sendLogoutMessage(PeerID pid, String peername) {
+		LogoutMessage msg = new LogoutMessage();
+		try {
+			peerCommunicator.send(pid, msg);
+		} catch (PeerCommunicationException e) {
+			System.out.println("Could not send logout to peer '" + peername + "': " + e.getMessage());
+		}
+	}
+
 	public void _executeCommand(CommandInterpreter ci) {
 		String peerName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(peerName)) {
@@ -675,15 +774,23 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		Optional<PeerID> optPID = determinePeerID(peerName);
 		if (optPID.isPresent()) {
 			PeerID pid = optPID.get();
-			CommandMessage cmd = new CommandMessage(command);
-			try {
-				peerCommunicator.send(pid, cmd);
-				System.out.println("Command send to '" + peerName + "'");
-			} catch (PeerCommunicationException e) {
-				System.out.println("Could not send command to peer named '" + peerName + "': " + e.getMessage());
+			if (loggedToPeers.contains(pid)) {
+				sendCommandMessage(peerName, pid, command);
+			} else {
+				System.out.println("Not logged in peer '" + peerName + "'");
 			}
 		} else {
 			System.out.println("Peername '" + peerName + "' not known.");
+		}
+	}
+
+	private static void sendCommandMessage(String peerName, PeerID pid, String command) {
+		CommandMessage cmd = new CommandMessage(command);
+		try {
+			peerCommunicator.send(pid, cmd);
+			System.out.println("Command send to '" + peerName + "'");
+		} catch (PeerCommunicationException e) {
+			System.out.println("Could not send command to peer named '" + peerName + "': " + e.getMessage());
 		}
 	}
 
@@ -699,15 +806,65 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		if (message instanceof CommandMessage) {
+			if (!loggedInPeers.contains(senderPeer)) {
+				return;
+			}
+
 			CommandMessage cmd = (CommandMessage) message;
-			processCommandMessage(communicator, senderPeer, cmd);
+			processCommandMessage(senderPeer, cmd);
 		} else if (message instanceof CommandOutputMessage) {
 			CommandOutputMessage cmd = (CommandOutputMessage) message;
 			processCommandOutputMessage(communicator, senderPeer, cmd);
+		} else if (message instanceof LoginMessage) {
+			if (loggedInPeers.contains(senderPeer)) {
+				sendLoginOKMessage(senderPeer);
+				LOG.debug("Peer {} already logged in", p2pDictionary.getRemotePeerName(senderPeer));
+				return;
+			}
+
+			processLoginMessage(senderPeer, message);
+		} else if (message instanceof LoginOKMessage) {
+			loggedToPeers.add(senderPeer);
+			System.out.println("Login to peer '" + p2pDictionary.getRemotePeerName(senderPeer) + "' ok");
+		} else if( message instanceof LogoutMessage ) {
+			loggedInPeers.remove(senderPeer);
+			LOG.debug("Peer '{}' logged out", p2pDictionary.getRemotePeerName(senderPeer));
+			
+			sendLogoutOKMessage( senderPeer );
+		} else if( message instanceof LogoutOKMessage ) {
+			loggedToPeers.remove(senderPeer);
+			System.out.println("Logout from peer '" + p2pDictionary.getRemotePeerName(senderPeer) + "' ok");
 		}
 	}
 
-	private void processCommandMessage(IPeerCommunicator communicator, PeerID senderPeer, CommandMessage cmd) {
+	private static void sendLogoutOKMessage(PeerID senderPeer) {
+		LogoutOKMessage msg = new LogoutOKMessage();
+		try {
+			peerCommunicator.send(senderPeer, msg);
+		} catch (PeerCommunicationException e) {
+			LOG.debug("Could not send logoutOK message to peer '{}'", p2pDictionary.getRemotePeerName(senderPeer), e);
+		}
+	}
+
+	private void processLoginMessage(PeerID senderPeer, IMessage message) {
+		LoginMessage loginMsg = (LoginMessage) message;
+		ISession session = executor.login(loginMsg.getUsername(), loginMsg.getPassword().getBytes());
+		if (session != null) {
+			loggedInPeers.add(senderPeer);
+			sendLoginOKMessage(senderPeer);
+		}
+	}
+
+	private static void sendLoginOKMessage(PeerID senderPeer) {
+		LoginOKMessage okMsg = new LoginOKMessage();
+		try {
+			peerCommunicator.send(senderPeer, okMsg);
+		} catch (PeerCommunicationException e) {
+			LOG.error("Could not send ok message to peer {}", p2pDictionary.getRemotePeerName(senderPeer), e);
+		}
+	}
+
+	private void processCommandMessage(PeerID senderPeer, CommandMessage cmd) {
 		String[] splitted = cmd.getCommandString().split("\\ ", 2);
 		String command = splitted[0];
 		String parameters = splitted.length > 1 ? splitted[1] : null;
@@ -729,7 +886,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			CommandOutputMessage out = new CommandOutputMessage(text);
 			try {
 				LOG.debug("Command executed. Send results back");
-				communicator.send(senderPeer, out);
+				peerCommunicator.send(senderPeer, out);
 			} catch (PeerCommunicationException e) {
 				LOG.debug("Could not send console output", e);
 			}
@@ -743,12 +900,62 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		System.out.println("Output from '" + p2pDictionary.getRemotePeerName(senderPeer) + "':");
 		System.out.println(cmd.getOutput());
 	}
-	
+
 	public void _execCommand(CommandInterpreter ci) {
 		_executeCommand(ci);
 	}
-	
+
 	public void _execCmd(CommandInterpreter ci) {
 		_executeCommand(ci);
+	}
+	
+	public void _lsLoggedInPeers( CommandInterpreter ci ) {
+		List<String> output = Lists.newArrayList();
+		for( PeerID loggedInPeer : loggedInPeers ) {
+			output.add( p2pDictionary.getRemotePeerName(loggedInPeer));
+		}
+		
+		System.out.println("Following remote peers are logged in here:");
+		sortAndPrintList(output);
+	}
+	
+	public void _listLoggedInPeers( CommandInterpreter ci ) {
+		_lsLoggedInPeers(ci);
+	}
+	
+	public void _lsLoggedToPeers( CommandInterpreter ci ) {
+		List<String> output = Lists.newArrayList();
+		for( PeerID loggedInPeer : loggedToPeers ) {
+			output.add( p2pDictionary.getRemotePeerName(loggedInPeer));
+		}
+		
+		System.out.println("Following remote peers we are logged in:");
+		sortAndPrintList(output);
+	}
+	
+	public void _listLoggedToPeers( CommandInterpreter ci ) {
+		_lsLoggedToPeers(ci);
+	}
+	
+	public void _revokeLogin( CommandInterpreter ci ) {
+		String peername = ci.nextArgument();
+		if(Strings.isNullOrEmpty(peername)) {
+			System.out.println("usage: revokeLogin <peername>");
+			return;
+		}
+		
+		Optional<PeerID> optPid = determinePeerID(peername);
+		if( optPid.isPresent() ) {
+			PeerID pid = optPid.get();
+			if( loggedInPeers.contains(pid)) {
+				loggedInPeers.remove(pid);
+				sendLogoutOKMessage(pid);
+				System.out.println("Login of peer '" + peername + "' revoked");
+			} else {
+				System.out.println("Peer '" + peername + "' is not logged in here");
+			}
+		} else {
+			System.out.println("Peer '" + peername + "' not known");
+		}
 	}
 }
