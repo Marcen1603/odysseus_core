@@ -133,18 +133,12 @@ public class WebserviceServer {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(WebserviceServer.class);
 
-	// Session management needed for logout.
-	// identified by securitytoken
-	@XmlTransient
-	private Map<String, ISession> sessions = new HashMap<String, ISession>();
-
 	/**
 	 * Socket Management
 	 */
 
 	@XmlTransient
 	private Map<Integer, Integer> socketPortMap = new HashMap<>();
-	// Map<queryID, SocketSinkPO>
 	private Map<Integer, SocketSinkPO> socketSinkMap = new HashMap<>();
 	private InetAddress address;
 
@@ -196,8 +190,6 @@ public class WebserviceServer {
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
-			// session-management...
-			sessions.put(token, user);
 			return response;
 		}
 		return new StringResponse(null, false);
@@ -212,8 +204,6 @@ public class WebserviceServer {
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
-			// session-management...
-			sessions.put(token, user);
 			return response;
 		}
 		return new StringResponse(null, false);
@@ -221,10 +211,10 @@ public class WebserviceServer {
 
 	public Response logout(
 			@WebParam(name = "securitytoken") String securityToken) {
-		ISession user = sessions.get(securityToken);
-		if (user != null) {
-			UserManagementProvider.getSessionmanagement().logout(user);
-			sessions.remove(securityToken);
+		ISession session = UserManagementProvider.getSessionmanagement().login(
+				securityToken);		
+		if (session != null) {
+			UserManagementProvider.getSessionmanagement().logout(session);
 			for (SocketSinkPO po : socketSinkMap.values()) {
 				po.removeAllowedSessionId(securityToken);
 			}
