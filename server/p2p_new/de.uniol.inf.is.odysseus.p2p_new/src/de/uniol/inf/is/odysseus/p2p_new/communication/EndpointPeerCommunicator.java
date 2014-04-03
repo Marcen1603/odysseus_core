@@ -274,13 +274,17 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		// message is PeerCloseMessage
+		LOG.debug("Got close message from {}", p2pDictionary.getRemotePeerName(senderPeer));
+		
 		Collection<PeerAdvertisement> peerAdvertisements = JxtaServicesProvider.getInstance().getPeerAdvertisements();
 		for( PeerAdvertisement peerAdvertisement : peerAdvertisements ) {
 			if(peerAdvertisement.getPeerID().equals(senderPeer)) {
 				try {
 					JxtaServicesProvider.getInstance().flushAdvertisement(peerAdvertisement);
+					LOG.debug("Removed peer advertisement from {}", peerAdvertisement.getName());
+					
 				} catch (IOException e) {
-					LOG.error("Could not flush peer advertisement due to peer close", e);
+					LOG.error("Could not flush peer advertisement due to peer close from {}", peerAdvertisement.getName(), e);
 				} 
 				break;
 			}
