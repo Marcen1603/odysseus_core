@@ -212,7 +212,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	}
 
 	public void _ping(CommandInterpreter ci) {
-		ImmutableCollection<PeerID> remotePeerIDs = pingMap.getRemotePeerIDs();
+		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
 		System.out.println("Current known ping(s):");
 
 		List<String> output = Lists.newLinkedList();
@@ -220,6 +220,8 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			Optional<Double> optPing = pingMap.getPing(remotePeerID);
 			if (optPing.isPresent()) {
 				output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " : " + optPing.get());
+			} else {
+				output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " : <unknown>");
 			}
 		}
 

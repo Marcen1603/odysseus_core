@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -105,16 +103,6 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		return localPosition;
 	}
 
-	@Override
-	public ImmutableCollection<PeerID> getRemotePeerIDs() {
-		return ImmutableSet.copyOf(nodes.keySet());
-	}
-	
-	@Override
-	public PeerID getLocalPeerID() {
-		return networkManager.getLocalPeerID();
-	}
-	
 	public void update( PeerID peerID, Vector3D position, long latency ) {
 		Preconditions.checkNotNull(peerID, "PeerID to set latency must not be null!");
 		Preconditions.checkNotNull(position, "New position for update must not be null!");

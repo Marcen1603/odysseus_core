@@ -119,7 +119,7 @@ public class PingMapView extends ViewPart implements PaintListener, MouseMoveLis
 
 	private static Collection<IPingMapNode> collectNodes(IPingMap pingMap) {
 		Collection<IPingMapNode> nodes = Lists.newArrayList(); 
-		for( PeerID peerID : pingMap.getRemotePeerIDs()) {
+		for( PeerID peerID : RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerIDs()) {
 			nodes.add(pingMap.getNode(peerID).get());
 		}
 		return nodes;

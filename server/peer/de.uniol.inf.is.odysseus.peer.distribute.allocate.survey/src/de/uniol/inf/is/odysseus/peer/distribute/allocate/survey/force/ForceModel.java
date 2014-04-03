@@ -152,7 +152,7 @@ public class ForceModel {
 		Collection<ForceNode> forceNodes = Lists.newArrayList();
 
 		if (LOG.isDebugEnabled()) {
-			for (PeerID peerID : pingMap.getRemotePeerIDs()) {
+			for (PeerID peerID : p2pDictionary.getRemotePeerIDs()) {
 				Vector3D position = pingMap.getNode(peerID).get().getPosition();
 				LOG.debug("Current position of {}: {}", p2pDictionary.getRemotePeerName(peerID), toString(position));
 			}
@@ -284,14 +284,14 @@ public class ForceModel {
 		LOG.debug("Evaluating force-results");
 
 		Map<PeerID, Vector3D> positionMap = Maps.newHashMap();
-		for (PeerID peerID : pingMap.getRemotePeerIDs()) {
+		for (PeerID peerID : p2pDictionary.getRemotePeerIDs()) {
 			Vector3D position = pingMap.getNode(peerID).get().getPosition();
 			positionMap.put(peerID, position);
 			LOG.debug("Current position of {}: {}", p2pDictionary.getRemotePeerName(peerID), toString(position));
 		}
 		LOG.debug("Current position of {}: {}", p2pNetworkManager.getLocalPeerName(), toString(pingMap.getLocalPosition()));
 
-		positionMap.put(pingMap.getLocalPeerID(), pingMap.getLocalPosition());
+		positionMap.put(p2pNetworkManager.getLocalPeerID(), pingMap.getLocalPosition());
 
 		Map<ILogicalQueryPart, PeerID> result = Maps.newHashMap();
 		LOG.debug("Latency Weight = {}, Bid Weight = {}", latencyWeight, bidWeight);

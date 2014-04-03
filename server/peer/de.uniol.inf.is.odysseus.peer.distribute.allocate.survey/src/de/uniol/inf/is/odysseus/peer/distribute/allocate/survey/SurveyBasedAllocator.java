@@ -213,12 +213,14 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 			Collection<Bid> bids = auction.getBidsFuture().get();
 
 			if( ownBid || bids.isEmpty()) {
+				Optional<Double> bidValue;
 				if( ownBid ) {
 					LOG.debug("Generating own bid because we can: {}", auction.getLogicalQueryPart());
+					bidValue = bidProvider.calculateBid(Helper.getLogicalQuery(auction.getAuctionAdvertisement().getPqlStatement()).get(0), auction.getAuctionAdvertisement().getTransCfgName());
 				} else {
 					LOG.debug("Generating own bid since there was no bids for: {}", auction.getLogicalQueryPart());
+					bidValue = Optional.of(1.0); // do not need to check cost model... we are the only one here
 				}
-				Optional<Double> bidValue = bidProvider.calculateBid(Helper.getLogicalQuery(auction.getAuctionAdvertisement().getPqlStatement()).get(0), auction.getAuctionAdvertisement().getTransCfgName());
 				if (bidValue.isPresent()) {
 					bids.add(new Bid(localPeerID, bidValue.get()));
 				}
