@@ -243,7 +243,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 			}
 			
 			synchronized( usageCollector ) {
-				usageCollector.addStatistics(freeMemory, totalMemory, SIGAR_WRAPPER.getCpuFree(), SIGAR_WRAPPER.getCpuMax(), runningQueries, stoppedQueries, SIGAR_WRAPPER.getNetInputRate(), SIGAR_WRAPPER.getNetOutputRate(), SIGAR_WRAPPER.getNetMax());
+				usageCollector.addStatistics(freeMemory, totalMemory, SIGAR_WRAPPER.getCpuFree(), SIGAR_WRAPPER.getCpuMax(), runningQueries, stoppedQueries, SIGAR_WRAPPER.getNetMax(), SIGAR_WRAPPER.getNetOutputRate(), SIGAR_WRAPPER.getNetInputRate());
 			}
 		} catch (Throwable t) {
 			LOG.error("Cannot determine own resource usage", t);
