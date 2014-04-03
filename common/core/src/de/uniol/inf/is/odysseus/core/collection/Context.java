@@ -68,7 +68,8 @@ public class Context {
 	public Context copy() {
 		Context copy = new Context();
 		for( String key : contextMap.keySet() ) {
-			copy.contextMap.put(key, contextMap.get(key));
+			Serializable o = contextMap.get(key);
+			copy.contextMap.put(key, o);
 		}
 		return copy;
 	}

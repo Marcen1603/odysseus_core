@@ -83,10 +83,10 @@ public class TransformationExecutor implements ITransformation {
 
 		Map<Integer, IPhysicalOperator> roots = top.getPhysInputOperators();
 		if (roots == null || roots.size() == 0) {
-			LOGGER.warn("PhysicalInput of TopAO is null!");
-			LOGGER.warn("Current working memory:");
-			LOGGER.warn(env.getWorkingMemory().getCurrentContent().toString());
-			LOGGER.warn("Further information: \n" + env.getWorkingMemory().getDebugTrace());
+			LOGGER.error("PhysicalInput of TopAO is null!");
+			LOGGER.error("Current working memory:");
+			LOGGER.error(env.getWorkingMemory().getCurrentContent().toString());
+			LOGGER.error("Further information: \n" + env.getWorkingMemory().getDebugTrace());
 			throw new TransformationException("Error during transformation of " + logicalOp);
 		}
 
