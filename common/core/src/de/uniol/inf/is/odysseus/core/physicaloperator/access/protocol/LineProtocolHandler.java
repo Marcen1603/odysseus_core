@@ -54,6 +54,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	protected long lineCounter = 0L;
 	private boolean debug = false;
 	private boolean isDone = false;
+	private boolean noDone = false;
 	// private StringBuffer measurements = new StringBuffer("");
 	private long measureEachLine = -1;
 	private long lastDumpTime = 0;
@@ -76,6 +77,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public static final String DEBUG = "debug";
 	public static final String DUMPFILE = "dumpfile";
 	public static final String DUMPMEMORY = "dumpmemory";
+	public static final String NODONE = "nodone";
 
 	public LineProtocolHandler() {
 		super();
@@ -126,6 +128,9 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		}
 		if (options.get(DUMPFILE) != null) {
 			dumpFile = options.get(DUMPFILE);
+		}
+		if (options.get(NODONE) != null) {
+			noDone = Boolean.parseBoolean(options.get(NODONE));
 		}
 		lastDumpTime = System.currentTimeMillis();
 
@@ -215,9 +220,13 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 			if (dumpEachLine > 0) {
 				if (lineCounter % dumpEachLine == 0) {
 					long time = System.currentTimeMillis();
-					LOG.debug(lineCounter + " " + time + " "
-							+ (time - lastDumpTime) 
-							+ (dumpMemory ? " M = "+RUNTIME.freeMemory()+" " : " ") + line+ " ("
+					LOG.debug(lineCounter
+							+ " "
+							+ time
+							+ " "
+							+ (time - lastDumpTime)
+							+ (dumpMemory ? " M = " + RUNTIME.freeMemory()
+									+ " " : " ") + line + " ("
 							+ Integer.toHexString(hashCode()) + ") line: ");
 					lastDumpTime = time;
 				}
@@ -373,7 +382,11 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public boolean isDone() {
-		return isDone;
+		if (noDone) {
+			return false;
+		} else {
+			return isDone;
+		}
 	}
 
 	@Override
