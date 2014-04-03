@@ -676,6 +676,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			CommandMessage cmd = new CommandMessage(command);
 			try {
 				peerCommunicator.send(pid, cmd);
+				System.out.println("Command send to '" + peerName + "'");
 			} catch (PeerCommunicationException e) {
 				System.out.println("Could not send command to peer named '" + peerName + "': " + e.getMessage());
 			}
@@ -708,7 +709,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		String[] splitted = cmd.getCommandString().split("\\ ", 2);
 		String command = splitted[0];
 		String parameters = splitted.length > 1 ? splitted[1] : null;
-
+		LOG.debug("Got command message: " + command);
 		try {
 			Method m = getClass().getMethod("_" + command, CommandInterpreter.class);
 			CommandInterpreter delegateCi = new DelegateCommandInterpreter(parameters != null ? parameters.split("\\ ") : new String[0]);
@@ -716,6 +717,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			PrintStream oldOut = System.out;
 			ConsoleOutputStream cos = new ConsoleOutputStream(System.out);
 
+			LOG.debug("Executing command");
 			System.setOut(cos);
 			m.invoke(this, delegateCi);
 			System.setOut(oldOut);
@@ -724,6 +726,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 			CommandOutputMessage out = new CommandOutputMessage(text);
 			try {
+				LOG.debug("Command executed. Send results back");
 				communicator.send(senderPeer, out);
 			} catch (PeerCommunicationException e) {
 				LOG.debug("Could not send console output", e);
