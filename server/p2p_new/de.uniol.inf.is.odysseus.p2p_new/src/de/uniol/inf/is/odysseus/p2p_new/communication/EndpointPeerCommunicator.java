@@ -102,9 +102,10 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 		PeerCloseMessage msg = new PeerCloseMessage();
 		for( PeerID connectedPeer : connectedPeers ) {
 			try {
+				LOG.debug("Send close message to {}", p2pDictionary.getRemotePeerName(connectedPeer));
 				send(connectedPeer, msg);
 			} catch (PeerCommunicationException e) {
-				LOG.debug("Could not send close message", e);
+				LOG.debug("Could not send close message to {}", p2pDictionary.getRemotePeerName(connectedPeer), e);
 			}
 		}
 		
