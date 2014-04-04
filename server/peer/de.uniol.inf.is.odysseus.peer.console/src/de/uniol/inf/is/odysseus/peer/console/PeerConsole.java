@@ -193,7 +193,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		sb.append("    unexportSource <sourceName>    		- Undo export of a local source\n");
 		sb.append("    importSource <sourceName>     		- Imports a source from the p2p network\n");
 		sb.append("    unimportSource <sourceName>    		- Undo import of a source\n");
-		sb.append("    listAvailableSources <filter>  		- Lists known sources from the p2p network\n");
+		sb.append("    listAvailableSources <filter>/ls...	- Lists known sources from the p2p network\n");
 		sb.append("    remoteUpdateAll                		- Sends update signals to remote peers with matching filter\n");
 		sb.append("    listAdvertisements/ls.. <filter>     - Lists all advertisements (class names)\n");
 		sb.append("    refreshAdvertisements/ls.. <filter>  - Forces to get remote advertisements again\n");
