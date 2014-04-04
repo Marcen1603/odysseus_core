@@ -39,24 +39,6 @@ import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 
 public class SourceAdvertisement extends Advertisement implements Serializable {
 
-	public static class Same {
-		private final PeerID peerID;
-		private final String name;
-		
-		public Same( PeerID peerID, String name ) {
-			this.peerID = peerID;
-			this.name = name;
-		}
-		
-		public PeerID getPeerID() {
-			return peerID;
-		}
-		
-		public String getName() {
-			return name;
-		}
-	}
-	
 	private static final String ADVERTISEMENT_TYPE = "jxta:SourceAdvertisement";
 
 	private static final long serialVersionUID = 1L;
@@ -72,12 +54,9 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 	// internal sources
 	private static final String PIPEID_TAG = "pipeid";
 	private static final String OUTPUTSCHEMA_TAG = "outputSchema";
-	private static final String SAME_AS_TAG = "sameAs";
 
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, NAME_TAG, PEER_ID_TAG };
 
-	private List<Same> sameAs;
-	
 	private ID id;
 	private String name;
 	private PipeID pipeID;
@@ -145,13 +124,6 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		} else {
 			// internal source
 			appendElement(doc, PIPEID_TAG, pipeID.toString());
-			
-			if( sameAs != null && !sameAs.isEmpty() ) {
-				final Element<?> sameElement = appendElement(doc, SAME_AS_TAG);
-				for( Same same : sameAs ) {
-					appendElement(sameElement, same.getPeerID().toString(), same.getName());
-				}
-			}
 		}
 		
 		final Element<?> outSchemaElement = appendElement(doc, OUTPUTSCHEMA_TAG, outputSchema.getURI());
@@ -213,14 +185,6 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		this.name = name;
 	}
 	
-	public void setSameAs(List<Same> sameAs) {
-		this.sameAs = sameAs;
-	}
-	
-	public List<Same> getSameAs() {
-		return sameAs;
-	}
-	
 	public AbstractAccessAO getAccessAO() {
 		return accessAO;
 	}
@@ -277,10 +241,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		} else if (elem.getName().equals(OUTPUTSCHEMA_TAG)) {
 			setOutputSchema(handleOutputSchemaTag(elem, getName()));
 
-		} else if (elem.getName().equals(SAME_AS_TAG)) {
-			setSameAs(handleSameAsTag(elem));
-
-		}
+		} 
 	}
 	
 	private static ID toID(TextElement<?> elem) {
@@ -296,13 +257,6 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 			return null;
 		}
 	}
-
-//	@SuppressWarnings({ "rawtypes", "unchecked" })
-//	private static Element appendElement(StructuredDocument appendTo, String tag, String value) {
-//		final Element createElement = appendTo.createElement(tag, value);
-//		appendTo.appendChild(createElement);
-//		return createElement;
-//	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Element appendElement(Element appendTo, String tag, String value) {
@@ -329,16 +283,5 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 
 		return new SDFSchema(root.getTextValue(), Tuple.class, attributes);
 	}
-	
-	private static List<Same> handleSameAsTag(TextElement<?> root) {
-		final Enumeration<?> children = root.getChildren();
-		final List<Same> sameAsList = Lists.newArrayList();
-		while (children.hasMoreElements()) {
-			final TextElement<?> elem = (TextElement<?>) children.nextElement();
-			final Same s = new Same((PeerID)toID(elem.getKey()), elem.getTextValue());
-			sameAsList.add(s);
-		}
 
-		return sameAsList;
-	}
 }
