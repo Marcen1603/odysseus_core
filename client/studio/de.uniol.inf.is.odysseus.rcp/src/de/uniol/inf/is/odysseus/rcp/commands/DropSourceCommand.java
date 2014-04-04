@@ -31,7 +31,6 @@
 package de.uniol.inf.is.odysseus.rcp.commands;
 
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -47,6 +46,7 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -67,9 +67,9 @@ public class DropSourceCommand extends AbstractHandler implements IHandler {
 
 		Logger logger = LoggerFactory.getLogger(DropSourceCommand.class);
 
-		List<Entry<?, ?>> selections = SelectionProvider.getSelection(event);
-		for (Entry<?, ?> selection : selections) {
-			final String param = selection.getKey().toString();
+		List<ViewInformation> selections = SelectionProvider.getSelection(event);
+		for (ViewInformation selection : selections) {
+			final String sourceName = selection.getName().getResourceName().toString();
 			final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 			if (executor != null) {
 				Job job = new Job("Drop source") {
@@ -77,7 +77,7 @@ public class DropSourceCommand extends AbstractHandler implements IHandler {
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
 							ISession user = OdysseusRCPPlugIn.getActiveSession();
-							executor.addQuery("DROP STREAM " + param, "CQL", user, "Standard", null);
+							executor.addQuery("DROP STREAM " + sourceName, "CQL", user, "Standard", null);
 							StatusBarManager.getInstance().setMessage("Source dropped");
 						} catch (PlanManagementException e) {
 							return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cannot remove source:\n See error log for details", e);
