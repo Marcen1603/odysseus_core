@@ -21,6 +21,7 @@ public class StreamAO extends AbstractLogicalOperator {
 	public StreamAO(Resource name) {
 		super();
 		this.streamname = name;
+		setName(this.streamname.getResourceName());
 	}
 
 	public StreamAO(StreamAO streamAO) {
