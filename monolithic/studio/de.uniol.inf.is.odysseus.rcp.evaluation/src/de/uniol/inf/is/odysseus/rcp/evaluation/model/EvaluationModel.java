@@ -15,10 +15,10 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 
-public class EvaluationModel implements Serializable{
+public class EvaluationModel implements Serializable {
 
 	private static final long serialVersionUID = 112449710812448224L;
-	
+
 	private static final String ACTIVE = "ACTIVE";
 	private static final String VALUE = "value";
 	private static final String VARIABLE = "variable";
@@ -29,9 +29,9 @@ public class EvaluationModel implements Serializable{
 	private static final String WITH_LATENCY = "WITH_LATENCY";
 	private static final String NUMBER_OF_RUNS = "NUMBER_OF_RUNS";
 	private static final String QUERY_FILE = "QUERY_FILE";
-	
+
 	private IResource queryFile;
-	
+
 	private String processingResultsPath = "";
 	private String plotFilesPath = "";
 
@@ -41,20 +41,18 @@ public class EvaluationModel implements Serializable{
 	private int numberOfRuns = 10;
 	private List<EvaluationVariable> variables = new ArrayList<>();
 
-	
-	private EvaluationModel() {		
+	private EvaluationModel() {
 		this.variables.add(new EvaluationVariable("var_1", "a", "b", "c"));
-		this.variables.add(new EvaluationVariable("var_2","x", "y", "z"));
+		this.variables.add(new EvaluationVariable("var_2", "x", "y", "z"));
 	}
-	
+
 	public static EvaluationModel createEmpty(IResource iResource) {
 		EvaluationModel model = new EvaluationModel();
 		model.setQueryFile(iResource);
 		return model;
 	}
-	
 
-	public static EvaluationModel load(IFile file){
+	public static EvaluationModel load(IFile file) {
 		EvaluationModel model = new EvaluationModel();
 		model.loadFromFile(file);
 		return model;
@@ -101,10 +99,10 @@ public class EvaluationModel implements Serializable{
 				this.withLatency = memento.getBoolean(WITH_LATENCY);
 				this.withThroughput = memento.getBoolean(WITH_THROUGHPUT);
 				this.numberOfRuns = memento.getInteger(NUMBER_OF_RUNS);
-				
-				String path = memento.getString(QUERY_FILE);				
+
+				String path = memento.getString(QUERY_FILE);
 				this.queryFile = (IFile) file.getProject().findMember(Path.fromPortableString(path));
-				
+
 				this.variables.clear();
 				IMemento varMem = memento.getChild(VARIABLES);
 				for (IMemento mem : varMem.getChildren(VARIABLE)) {
@@ -129,6 +127,7 @@ public class EvaluationModel implements Serializable{
 
 	public void setProcessingResultsPath(String processingResultsPath) {
 		this.processingResultsPath = processingResultsPath;
+
 	}
 
 	public String getPlotFilesPath() {
@@ -137,6 +136,7 @@ public class EvaluationModel implements Serializable{
 
 	public void setPlotFilesPath(String plotFilesPath) {
 		this.plotFilesPath = plotFilesPath;
+
 	}
 
 	public boolean isWithLatency() {
@@ -153,6 +153,7 @@ public class EvaluationModel implements Serializable{
 
 	public void setWithThroughput(boolean withThroughput) {
 		this.withThroughput = withThroughput;
+
 	}
 
 	public int getNumberOfRuns() {
@@ -168,8 +169,8 @@ public class EvaluationModel implements Serializable{
 	}
 
 	public boolean parameterNameExists(String newName) {
-		for(EvaluationVariable var : this.variables){
-			if(var.getName().equalsIgnoreCase(newName)){
+		for (EvaluationVariable var : this.variables) {
+			if (var.getName().equalsIgnoreCase(newName)) {
 				return true;
 			}
 		}
@@ -187,7 +188,5 @@ public class EvaluationModel implements Serializable{
 	public void save(IFile file) {
 		saveToFile(file);
 	}
-
-
 
 }

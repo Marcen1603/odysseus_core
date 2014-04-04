@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 public class MeasureThroughputAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -8773782766638078153L;
-	private int each = 0;
+	private int each = 100;
 	private boolean dump = false;
 	private boolean active = true;
 	private String filename = "";	
