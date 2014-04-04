@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.wrapper.web.logicaloperator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.LineProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -22,7 +23,7 @@ public class HttpStreamAccessAO extends AbstractAccessAO{
 		setTransportHandler(HTTPStreamTransportHandler.NAME);
 		setWrapper(Constants.GENERIC_PULL);
 		// This is needed if line transport handler is used
-		addOption("NODONE", "true");
+		addOption(LineProtocolHandler.NODONE, "true");
 	}
 	
 	public HttpStreamAccessAO(HttpStreamAccessAO httpStreamAccessAO) {
