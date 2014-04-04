@@ -544,7 +544,9 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 					}
 				}
 				
-				usageMap.put(RCPP2PNewPlugIn.getP2PNetworkManager().getLocalPeerID(), usageManager.getLocalResourceUsage());
+				if( RCPP2PNewPlugIn.getP2PNetworkManager() != null && usageManager != null) {
+					usageMap.put(RCPP2PNewPlugIn.getP2PNetworkManager().getLocalPeerID(), usageManager.getLocalResourceUsage());
+				}
 
 				refreshTableAsync();
 			}
