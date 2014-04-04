@@ -67,7 +67,11 @@ public class P2PLoginContribution implements ILoginContribution {
 		} else {
 			peerName = savedConfig.get(PEER_NAME_SYS_PROPERTY);
 			if (peerName == null) {
-				peerName = "";
+				try {
+					peerName = InetAddress.getLocalHost().getHostAddress();
+				} catch (UnknownHostException e) {
+					peerName = "";
+				}
 			}
 		}
 

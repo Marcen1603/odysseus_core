@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.peer.server;
 
+import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.Random;
 
 import org.osgi.framework.BundleActivator;
@@ -41,7 +43,7 @@ public class PeerServerPlugIn implements BundleActivator {
 	
 	private static void startP2PNetwork() throws P2PNetworkException {
 		Integer peerPort = determinePeerPort();
-		String peerName = determinePeerName(peerPort);
+		String peerName = determinePeerName();
 		String groupName = determinePeerGroupName();
 		String rendevousAddress = determineRendevousAddress();
 		Boolean rendevousActive = determineRendevousActive();
@@ -91,7 +93,7 @@ public class PeerServerPlugIn implements BundleActivator {
 	}
 
 
-	private static String determinePeerName(int port) {
+	private static String determinePeerName() {
 		String peerName = System.getProperty(PEER_NAME_SYS_PROPERTY);
 		if (!Strings.isNullOrEmpty(peerName)) {
 			return peerName;
@@ -102,7 +104,11 @@ public class PeerServerPlugIn implements BundleActivator {
 			return peerName;
 		}
 
-		return "OdysseusPeer" + port;
+		try {
+			return InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			return "OdysseusPeer";
+		}
 	}
 
 	private static String determinePeerGroupName() {
