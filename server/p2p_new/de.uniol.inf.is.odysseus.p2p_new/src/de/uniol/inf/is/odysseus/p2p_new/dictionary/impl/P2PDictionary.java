@@ -59,6 +59,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private static final Logger LOG = LoggerFactory.getLogger(P2PDictionary.class);
 
+	private static final String AUTOIMPORT_SYS_PROPERTY = "peer.autoimport";
 	private static final String AUTOEXPORT_SYS_PROPERTY = "peer.autoexport";
 	private static final String UNKNOWN_PEER_NAME = "<unknown>";
 
@@ -821,6 +822,14 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		}
 		return false;
 	}
+	
+	private static boolean isAutoImport() {
+		String property = System.getProperty(AUTOIMPORT_SYS_PROPERTY);
+		if (!Strings.isNullOrEmpty(property)) {
+			return property.equalsIgnoreCase("true");
+		}
+		return false;
+	}
 
 	private static boolean checkViewAdvertisement(SourceAdvertisement srcAdvertisement) {
 		PeerID sourcePeerID = srcAdvertisement.getPeerID();
@@ -871,6 +880,29 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			}
 			
 			processedAdvIDs.add(adv.getID());
+		} 
+		
+		if( isAutoImport() ) {
+			if( adv instanceof SourceAdvertisement ) {
+				SourceAdvertisement srcAdv = (SourceAdvertisement)adv;
+				tryAutoImportSource(srcAdv);
+			} else if( adv instanceof MultipleSourceAdvertisement ) {
+				MultipleSourceAdvertisement multSrcAdv = (MultipleSourceAdvertisement)adv;
+				for( SourceAdvertisement srcAdv : multSrcAdv.getSourceAdvertisements()) {
+					tryAutoImportSource(srcAdv);
+				}
+			}
+		}
+	}
+
+	private void tryAutoImportSource(SourceAdvertisement srcAdv) {
+		if( !isImported(srcAdv) && !isImported(srcAdv.getName())) {
+			try {
+				importSource(srcAdv, srcAdv.getName());
+				LOG.debug("Autoimporting source {}", srcAdv.getName());
+			} catch (PeerException | InvalidP2PSource e) {
+				LOG.error("Could not autoimport source {}", srcAdv.getName(), e);
+			}
 		}
 	}
 }
