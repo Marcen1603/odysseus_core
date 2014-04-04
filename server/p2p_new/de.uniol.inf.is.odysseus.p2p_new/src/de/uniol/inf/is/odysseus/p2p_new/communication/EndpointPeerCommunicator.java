@@ -14,7 +14,6 @@ import net.jxta.endpoint.Messenger;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
-import net.jxta.protocol.PeerAdvertisement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.P2PDictionaryAdapter;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 
-public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IPeerCommunicator, EndpointListener, IPeerCommunicatorListener {
+public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IPeerCommunicator, EndpointListener {
 
 	private static final String COMMUNICATION_SERVICE_ID = "odysseusP2PComm";
 
@@ -63,9 +62,6 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 
 	// called by OSGi-DS
 	public void activate() {
-		registerMessageType(PeerCloseMessage.class);
-		addListener(this, PeerCloseMessage.class);
-		
 		Thread waitingThread = new Thread( new Runnable() {
 
 			@Override
@@ -83,36 +79,11 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 
 	// called by OSGi-DS
 	public void deactivate() {
-		sendCloseMessageToRemotePeers();
-		
-		removeListener(this, PeerCloseMessage.class);
-		unregisterMessageType(PeerCloseMessage.class);
-		
 		messengerMap.clear();
 		messageTypeMap.clear();
 		messageIDMap.clear();
 		
 		LOG.debug("Deactivated");
-	}
-
-	private void sendCloseMessageToRemotePeers() {
-		LOG.debug("Sending close message since we close gracefully.");
-		
-		Collection<PeerID> connectedPeers = p2pDictionary.getRemotePeerIDs();
-		PeerCloseMessage msg = new PeerCloseMessage();
-		for( PeerID connectedPeer : connectedPeers ) {
-			try {
-				LOG.debug("Send close message to {}", p2pDictionary.getRemotePeerName(connectedPeer));
-				send(connectedPeer, msg);
-			} catch (PeerCommunicationException e) {
-				LOG.debug("Could not send close message to {}", p2pDictionary.getRemotePeerName(connectedPeer), e);
-			}
-		}
-		
-		try {
-			Thread.sleep(1500);
-		} catch (InterruptedException e) {
-		}
 	}
 
 	@Override
@@ -270,25 +241,5 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 
 	private static int byteArrayToInt(byte[] b, int offset) {
 		return b[3 + offset] & 0xFF | (b[2 + offset] & 0xFF) << 8 | (b[1 + offset] & 0xFF) << 16 | (b[0 + offset] & 0xFF) << 24;
-	}
-
-	@Override
-	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
-		// message is PeerCloseMessage
-		LOG.debug("Got close message from {}", p2pDictionary.getRemotePeerName(senderPeer));
-		
-		Collection<PeerAdvertisement> peerAdvertisements = JxtaServicesProvider.getInstance().getPeerAdvertisements();
-		for( PeerAdvertisement peerAdvertisement : peerAdvertisements ) {
-			if(peerAdvertisement.getPeerID().equals(senderPeer)) {
-				try {
-					JxtaServicesProvider.getInstance().flushAdvertisement(peerAdvertisement);
-					LOG.debug("Removed peer advertisement from {}", peerAdvertisement.getName());
-					
-				} catch (IOException e) {
-					LOG.error("Could not flush peer advertisement due to peer close from {}", peerAdvertisement.getName(), e);
-				} 
-				break;
-			}
-		}
 	}
 }

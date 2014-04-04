@@ -32,9 +32,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
+import de.uniol.inf.is.odysseus.p2p_new.IMessage;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
+import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.p2p_new.communication.PeerCloseMessage;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 
-public class JxtaServicesProvider implements IJxtaServicesProvider {
+public class JxtaServicesProvider implements IJxtaServicesProvider, IPeerCommunicatorListener {
 
 	private static final int WAIT_INTERVAL_MILLIS = 500;
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaServicesProvider.class);
@@ -45,6 +50,26 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	private DiscoveryService discoveryService;
 	private EndpointService endpointService;
 	private PipeService pipeService;
+	
+	private static IPeerCommunicator peerCommunicator;
+
+	// called by OSGi-DS
+	public void bindPeerCommunicator(IPeerCommunicator serv) {
+		peerCommunicator = serv;
+		
+		peerCommunicator.registerMessageType(PeerCloseMessage.class);
+		peerCommunicator.addListener(this, PeerCloseMessage.class);
+	}
+
+	// called by OSGi-DS
+	public void unbindPeerCommunicator(IPeerCommunicator serv) {
+		if (peerCommunicator == serv) {
+			peerCommunicator.removeListener(this, PeerCloseMessage.class);
+			peerCommunicator.unregisterMessageType(PeerCloseMessage.class);
+
+			peerCommunicator = null;
+		}
+	}
 	
 	// called by OSGi
 	public void activate() {
@@ -85,6 +110,8 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	
 	// called by OSGi
 	public void deactivate() {
+		sendCloseMessageToRemotePeers();
+		
 		executor.stop();
 		
 		discoveryService = null;
@@ -94,6 +121,27 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 		instance = null;
 		
 		LOG.debug("Jxta services provider deactivated");
+	}
+	
+	private void sendCloseMessageToRemotePeers() {
+		LOG.debug("Sending close message since we close gracefully.");
+		
+		Collection<PeerAdvertisement> connectedPeers = getPeerAdvertisements();
+		PeerCloseMessage msg = new PeerCloseMessage();
+		for( PeerAdvertisement connectedPeer : connectedPeers ) {
+			PeerID pid = connectedPeer.getPeerID();
+			try {
+				LOG.debug("Send close message to {}", pid.toString());
+				peerCommunicator.send(pid, msg);
+			} catch (PeerCommunicationException e) {
+				LOG.debug("Could not send close message to {}", pid.toString());
+			}
+		}
+		
+		try {
+			Thread.sleep(1500);
+		} catch (InterruptedException e) {
+		}
 	}
 	
 	public static void waitFor() {
@@ -289,4 +337,23 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	public void removeDiscoveryListener(DiscoveryListener listener) {
 		discoveryService.removeDiscoveryListener(listener);
 	}
-}
+
+	@Override
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
+		// message is PeerCloseMessage
+		LOG.debug("Got close message from {}", senderPeer.toString());
+		
+		Collection<PeerAdvertisement> peerAdvertisements = JxtaServicesProvider.getInstance().getPeerAdvertisements();
+		for( PeerAdvertisement peerAdvertisement : peerAdvertisements ) {
+			if(peerAdvertisement.getPeerID().equals(senderPeer)) {
+				try {
+					JxtaServicesProvider.getInstance().flushAdvertisement(peerAdvertisement);
+					LOG.debug("Removed peer advertisement from {}", peerAdvertisement.getName());
+					
+				} catch (IOException e) {
+					LOG.error("Could not flush peer advertisement due to peer close from {}", peerAdvertisement.getName(), e);
+				} 
+				break;
+			}
+		}
+	}}
