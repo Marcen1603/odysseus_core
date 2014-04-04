@@ -26,10 +26,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ReceiveAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -102,6 +105,20 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			((RenameAO) inputOp).setOutputSchema(createAliasSchema(
 					node.getAlias(), access));
 			sourceName = node.getAlias();
+		} else {
+			if (!(inputOp instanceof AccessAO)
+					&& !(inputOp instanceof ReceiveAO)
+					&& !(inputOp instanceof StreamAO)) {
+				for (String n : inputOp.getOutputSchema().getBaseSourceNames()) {
+
+					try {
+						this.attributeResolver.addSource(n, inputOp);
+					} catch (Exception e) {
+						// TODO: handle exception
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 
 		if (node.hasWindow()) {
@@ -112,9 +129,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 				inputOp);
 		this.attributeResolver.addSource(originalName, inputOp);
 		this.attributeResolver.addSource(sourceName, inputOp);
-		for (String n : inputOp.getOutputSchema().getBaseSourceNames()) {
-			this.attributeResolver.addSource(n, inputOp);
-		}
+
 	}
 
 	private static AbstractWindowAO createWindow(ASTWindow windowNode,
