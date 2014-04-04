@@ -32,7 +32,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  */
 public class HTTPStreamTransportHandler extends AbstractPullTransportHandler {
     
-    private InputStream input;
+    public static final String URI = "uri";
+	public static final String NAME = "HTTPStream";
+	private InputStream input;
     private OutputStream output;
     private String uri;        
     /**
@@ -63,8 +65,8 @@ public class HTTPStreamTransportHandler extends AbstractPullTransportHandler {
     }
 
     protected void init(Map<String, String> options) {
-        if (options.get("uri") != null) {
-            setURI(options.get("uri"));
+        if (options.get(URI) != null) {
+            setURI(options.get(URI));
         }       
     }
 
@@ -75,7 +77,7 @@ public class HTTPStreamTransportHandler extends AbstractPullTransportHandler {
 
     @Override
     public String getName() {
-        return "HTTPStream";
+        return NAME;
     }
 
     @Override
