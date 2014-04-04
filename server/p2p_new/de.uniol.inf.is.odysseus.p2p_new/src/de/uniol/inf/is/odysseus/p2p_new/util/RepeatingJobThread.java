@@ -23,7 +23,7 @@ public class RepeatingJobThread extends StoppableThread {
 
 	private static final String DEFAULT_THREAD_NAME = "Repeating job";
 
-	private final long executionIntervalMillis;
+	private long executionIntervalMillis;
 
 	private long lastExecutionTimestamp = 0;
 
@@ -70,6 +70,12 @@ public class RepeatingJobThread extends StoppableThread {
 
 	protected final long getIntervalMillis() {
 		return executionIntervalMillis;
+	}
+	
+	protected final void setIntervalMillis( long intervalMillis) {
+		Preconditions.checkArgument(intervalMillis >= 0, "Interval must be non-negative");
+		
+		executionIntervalMillis = intervalMillis;
 	}
 
 	protected final long getLastExecutionTimestamp() {

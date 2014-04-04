@@ -7,6 +7,7 @@ import java.util.List;
 import net.jxta.discovery.DiscoveryEvent;
 import net.jxta.discovery.DiscoveryListener;
 import net.jxta.document.Advertisement;
+import net.jxta.protocol.PeerAdvertisement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,42 +22,51 @@ public class AdvertisementDiscoverer extends RepeatingJobThread implements Disco
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdvertisementDiscoverer.class);
 
+	private static final long DISCOVERY_INTERVAL_MILLIS_WITHOUT_PEERS = 6 * 1000;
 	private static final long DISCOVERY_INTERVAL_MILLIS = 20 * 1000;
-	private static final int MAX_DISCOVERY_WAIT_MILLIS = 30 * 1000;
-
-	private Long discoverTimestamp = 0L;
 
 	private final Collection<IAdvertisementDiscovererListener> listenerMap = Lists.newLinkedList();
 
+	private boolean foundPeer = false;
+
 	public AdvertisementDiscoverer() {
-		super(DISCOVERY_INTERVAL_MILLIS, "Advertisement discoverer");
+		super(DISCOVERY_INTERVAL_MILLIS_WITHOUT_PEERS, "Advertisement discoverer");
+	}
+
+	@Override
+	public void beforeJob() {
+		JxtaServicesProvider.waitFor();
 	}
 
 	@Override
 	public void doJob() {
-		if (JxtaServicesProvider.isActivated()) {
-			synchronized (discoverTimestamp) {
-				if (System.currentTimeMillis() - discoverTimestamp > MAX_DISCOVERY_WAIT_MILLIS) {
-					LOG.debug("Discovering advertisements started");
-					JxtaServicesProvider.getInstance().getRemoteAdvertisements(this);
-					JxtaServicesProvider.getInstance().getRemotePeerAdvertisements(this);
-
-					discoverTimestamp = System.currentTimeMillis();
-				}
-			}
-		}
+		LOG.debug("Discovering advertisements... (interval is {} ms)", getIntervalMillis());
+		
+		JxtaServicesProvider.getInstance().getRemoteAdvertisements(this);
+		JxtaServicesProvider.getInstance().getRemotePeerAdvertisements(this);
 	}
 
 	@Override
 	public void discoveryEvent(DiscoveryEvent event) {
-		synchronized (discoverTimestamp) {
-			discoverTimestamp = 0L;
-			LOG.debug("Discovering advertisements finished!");
-		}
-
 		Collection<Advertisement> advertisements = toCollection(event.getResponse().getAdvertisements());
 		for (Advertisement advertisement : advertisements) {
+			if (!foundPeer) {
+				checkIfPeerFound(advertisement);
+			}
+
 			fireAdvertisementListeners(advertisement);
+		}
+	}
+
+	private void checkIfPeerFound(Advertisement advertisement) {
+		if (advertisement instanceof PeerAdvertisement) {
+			PeerAdvertisement peerAdv = (PeerAdvertisement) advertisement;
+			if (!peerAdv.getPeerID().equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
+				// found our first peer --> slow discovery down now
+				LOG.debug("Found our first remote peer. Slow discovery down to {} ms", DISCOVERY_INTERVAL_MILLIS);
+				setIntervalMillis(DISCOVERY_INTERVAL_MILLIS);
+				foundPeer = true;
+			}
 		}
 	}
 
