@@ -67,7 +67,8 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTSimpleSource node, Object data) throws QueryParseException {
+	public Object visit(ASTSimpleSource node, Object data)
+			throws QueryParseException {
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();
 		if (dd.containsViewOrStream(sourceString, caller)) {
@@ -86,7 +87,9 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		try {
 			access = dd.getViewOrStream(srcName, caller);
 			if (access instanceof AbstractAccessAO) {
-				((AbstractAccessAO) access).setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));				
+				((AbstractAccessAO) access)
+						.setDataHandler(new TupleDataHandler()
+								.getSupportedDataTypes().get(0));
 			}
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e.getMessage());
@@ -96,7 +99,8 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		if (node.hasAlias()) {
 			inputOp = new RenameAO();
 			inputOp.subscribeToSource(access, 0, 0, access.getOutputSchema());
-			((RenameAO) inputOp).setOutputSchema(createAliasSchema(node.getAlias(), access));
+			((RenameAO) inputOp).setOutputSchema(createAliasSchema(
+					node.getAlias(), access));
 			sourceName = node.getAlias();
 		}
 
@@ -104,12 +108,17 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			AbstractWindowAO window = createWindow(node.getWindow(), inputOp);
 			inputOp = window;
 		}
-		this.attributeResolver.addSourceOriginal(originalName.toString(), inputOp);
+		this.attributeResolver.addSourceOriginal(originalName.toString(),
+				inputOp);
 		this.attributeResolver.addSource(originalName, inputOp);
 		this.attributeResolver.addSource(sourceName, inputOp);
+		for (String n : inputOp.getOutputSchema().getBaseSourceNames()) {
+			this.attributeResolver.addSource(n, inputOp);
+		}
 	}
 
-	private static AbstractWindowAO createWindow(ASTWindow windowNode, ILogicalOperator inputOp) {
+	private static AbstractWindowAO createWindow(ASTWindow windowNode,
+			ILogicalOperator inputOp) {
 		AbstractWindowAO window = new WindowAO();
 		window.subscribeToSource(inputOp, 0, 0, inputOp.getOutputSchema());
 
@@ -131,7 +140,8 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 					}
 				}
 				if (!found) {
-					throw new IllegalArgumentException("invalid partioning attribute");
+					throw new IllegalArgumentException(
+							"invalid partioning attribute");
 				}
 			}
 			window.setPartitionBy(partitionAttributes);
@@ -140,12 +150,15 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		window.setWindowType(windowNode.getType());
 
 		if (!windowNode.isUnbounded()) {
-			window.setWindowSize(new TimeValueItem(windowNode.getSize(), TimeUnit.MILLISECONDS));
+			window.setWindowSize(new TimeValueItem(windowNode.getSize(),
+					TimeUnit.MILLISECONDS));
 			Long advance = windowNode.getAdvance();
 			long advanceValue = advance != null ? advance : 1;
-			window.setWindowAdvance(new TimeValueItem(advanceValue, TimeUnit.MILLISECONDS));
+			window.setWindowAdvance(new TimeValueItem(advanceValue,
+					TimeUnit.MILLISECONDS));
 			if (windowNode.getSlide() != null) {
-				window.setWindowSlide(new TimeValueItem(windowNode.getSlide(), TimeUnit.MILLISECONDS));
+				window.setWindowSlide(new TimeValueItem(windowNode.getSlide(),
+						TimeUnit.MILLISECONDS));
 			}
 		}
 		return window;
@@ -168,12 +181,15 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	// }
 
 	@Override
-	public Object visit(ASTSubselect node, Object data) throws QueryParseException {
-		ASTComplexSelectStatement childNode = (ASTComplexSelectStatement) node.jjtGetChild(0);
+	public Object visit(ASTSubselect node, Object data)
+			throws QueryParseException {
+		ASTComplexSelectStatement childNode = (ASTComplexSelectStatement) node
+				.jjtGetChild(0);
 		CQLParser v = new CQLParser();
 		v.setUser(caller);
 		v.setDataDictionary(dd);
-		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(childNode, null);
+		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(
+				childNode, null);
 
 		Node asNode = node.jjtGetChild(1);
 		if (asNode instanceof ASTWindow) {
@@ -189,11 +205,13 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		return null;
 	}
 
-	private static SDFSchema createAliasSchema(String alias, ILogicalOperator access) {
+	private static SDFSchema createAliasSchema(String alias,
+			ILogicalOperator access) {
 		// Keep the original Type not the alias
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		for (SDFAttribute attribute : access.getOutputSchema()) {
-			SDFAttribute newAttribute = attribute.clone(alias, attribute.getAttributeName());
+			SDFAttribute newAttribute = attribute.clone(alias,
+					attribute.getAttributeName());
 			// newAttribute.setSourceName(alias);
 			attributes.add(newAttribute);
 		}
