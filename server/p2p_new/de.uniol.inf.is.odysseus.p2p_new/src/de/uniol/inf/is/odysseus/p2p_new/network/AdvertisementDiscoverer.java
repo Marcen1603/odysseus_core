@@ -42,8 +42,9 @@ public class AdvertisementDiscoverer extends RepeatingJobThread implements Disco
 	public void doJob() {
 		LOG.debug("Discovering advertisements... (interval is {} ms)", getIntervalMillis());
 		
-		JxtaServicesProvider.getInstance().getRemoteAdvertisements(this);
-		JxtaServicesProvider.getInstance().getRemotePeerAdvertisements(this);
+		JxtaServicesProvider jxta = JxtaServicesProvider.getInstance();
+		jxta.getRemoteAdvertisements(this);
+		jxta.getRemotePeerAdvertisements(this);
 	}
 
 	@Override

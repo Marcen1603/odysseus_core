@@ -537,9 +537,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			if( !P2PNetworkManager.getInstance().getLocalPeerID().equals(adv.getPeerID()) ) {
 				if( JxtaServicesProvider.getInstance().isReachable(adv.getPeerID())) {
 					ids.add(adv.getPeerID());
-				} else {
-					LOG.debug("Flushed peer adv from peer {}!", adv.getName());
-					tryFlushAdvertisement(adv);
 				} 
 			} 
 		}
