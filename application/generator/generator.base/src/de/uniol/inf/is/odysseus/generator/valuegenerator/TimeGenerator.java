@@ -25,15 +25,21 @@ import de.uniol.inf.is.odysseus.generator.error.IErrorModel;
 public class TimeGenerator extends AbstractSingleValueGenerator {
 
     private final Calendar calendar;
+    private long offset;
 
-    public TimeGenerator(final IErrorModel errorModel) {
+    public TimeGenerator(final IErrorModel errorModel, final long offset) {
         super(errorModel);
         this.calendar = Calendar.getInstance();
+        this.offset = offset;
+    }
+
+    public TimeGenerator(final IErrorModel errorModel) {
+        this(errorModel, 0l);
     }
 
     @Override
     public double generateValue() {
-        return this.calendar.getTimeInMillis();
+        return this.calendar.getTimeInMillis() + this.offset;
     }
 
     @Override
