@@ -22,8 +22,8 @@ public class AdvertisementDiscoverer extends RepeatingJobThread implements Disco
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdvertisementDiscoverer.class);
 
-	private static final long DISCOVERY_INTERVAL_MILLIS_WITHOUT_PEERS = 6 * 1000;
-	private static final long DISCOVERY_INTERVAL_MILLIS = 20 * 1000;
+	private static final long DISCOVERY_INTERVAL_MILLIS_WITHOUT_PEERS = 2 * 1000;
+	private static final long DISCOVERY_INTERVAL_MILLIS = 4 * 1000;
 
 	private final Collection<IAdvertisementDiscovererListener> listenerMap = Lists.newLinkedList();
 
