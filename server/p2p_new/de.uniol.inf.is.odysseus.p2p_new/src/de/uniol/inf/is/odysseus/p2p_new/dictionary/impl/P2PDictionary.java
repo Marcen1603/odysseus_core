@@ -533,13 +533,32 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		return Lists.newArrayList();
 	}
 
+	private static final Map<PeerAdvertisement, Long> toFlushMap = Maps.newHashMap();
+	
 	private static Collection<PeerID> toPeerIDs(Collection<PeerAdvertisement> peerAdvs) {
 		Collection<PeerID> ids = Lists.newLinkedList();
 		for (PeerAdvertisement adv : peerAdvs) {
 			if( !P2PNetworkManager.getInstance().getLocalPeerID().equals(adv.getPeerID()) ) {
 				if( JxtaServicesProvider.getInstance().isReachable(adv.getPeerID())) {
 					ids.add(adv.getPeerID());
-				} 
+					
+					synchronized( toFlushMap ){
+						toFlushMap.remove(adv);
+					}
+					
+				} else {
+					synchronized( toFlushMap ) {
+						if( !toFlushMap.containsKey(adv)) {
+							toFlushMap.put(adv, System.currentTimeMillis());
+						} else {
+							Long ts = toFlushMap.get(adv);
+							if( System.currentTimeMillis() - ts > 5000 ) {
+								tryFlushAdvertisement(adv);
+								toFlushMap.remove(adv);
+							}
+						}
+					}
+				}
 			} 
 		}
 		return ids;
