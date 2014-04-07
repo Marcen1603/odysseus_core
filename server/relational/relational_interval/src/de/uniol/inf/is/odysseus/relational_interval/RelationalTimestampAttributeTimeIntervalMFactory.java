@@ -58,21 +58,25 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		this.startAttrPos = startAttrPos;
 		this.endAttrPos = endAttrPos;
 
+		if (timezone != null) {
+			this.timezone = TimeZone.getTimeZone(timezone);
+		} else {
+			this.timezone = TimeZone.getTimeZone("UTC");
+		}
+		
 		if (dateFormat != null) {
 			if (locale != null) {
 				df = new SimpleDateFormat(dateFormat, locale);
 			} else {
 				df = new SimpleDateFormat(dateFormat);
 			}
+			df.setTimeZone(this.timezone);
 		} else {
 			df = null;
 		}
 
-		if (timezone != null) {
-			this.timezone = TimeZone.getTimeZone(timezone);
-		} else {
-			this.timezone = TimeZone.getTimeZone("UTC");
-		}
+		
+		
 		startTimestampYearPos = -1;
 		startTimestampMonthPos = -1;
 		startTimestampDayPos = -1;
@@ -169,7 +173,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		if (df != null) {
 			String timeString = (String) inElem.getAttribute(attrPos);
 			try {
-				timeN = df.parse(timeString).getTime();
+				timeN = df.parse(timeString).getTime();				
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new RuntimeException("Date cannot be parsed! "

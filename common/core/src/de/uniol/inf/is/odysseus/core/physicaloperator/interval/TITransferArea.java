@@ -125,7 +125,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		if (watermark == null || start.afterOrEquals(watermark)) {
 			newHeartbeat(start, inPort);
 		}else{
-			logger.warn("Removed out of order element!" +object);
+			logger.warn("Removed out of order element!" +object + " - ("+this.po+")");
 		}
 	}
 
@@ -147,7 +147,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 				}
 			}else {
 				logger.warn("Out of order element read " + object
-						+ " before last send element " + watermark + " ! Ignoring");
+						+ " before last send element " + watermark + " ! Ignoring"+ " - ("+this.po+")");
 			}
 		}
 	}
@@ -234,7 +234,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			sendData();
 		} else {
 			logger.warn("Out of order element read " + heartbeat
-					+ " before last send element " + watermark + " ! Ignoring");
+					+ " from port "+inPort+" before last send element " + watermark + " ! Ignoring"+ " - ("+this.po+")");
 		}
 	}
 

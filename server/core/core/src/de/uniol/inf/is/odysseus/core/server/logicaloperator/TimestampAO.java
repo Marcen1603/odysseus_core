@@ -285,7 +285,7 @@ public class TimestampAO extends UnaryLogicalOp {
 	}
 	
 	public String getTimezone() {
-		return dateFormat;
+		return timezone;
 	}
 
 	@Parameter(type = StringParameter.class, name = "timezone", isList = false, optional = true, doc="The timezone in Java syntax.")
