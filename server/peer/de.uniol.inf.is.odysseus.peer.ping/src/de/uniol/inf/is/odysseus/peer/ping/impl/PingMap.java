@@ -129,7 +129,7 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		Vector3D displacement = direction.scalarMultiply(distToPoint);
 		displacement = displacement.scalarMultiply(timestep);
 		
-		timestep = Math.max( 0.2, timestep - 0.1);
+		timestep = Math.max( 0.2, timestep - 0.05);
 		
 		localPosition = localPosition.add(displacement);
 		firePingMapChangeEvent();
