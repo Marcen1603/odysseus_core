@@ -28,6 +28,7 @@ public class AdvertisementDiscoverer extends RepeatingJobThread implements Disco
 	private final Collection<IAdvertisementDiscovererListener> listenerMap = Lists.newLinkedList();
 
 	private boolean foundPeer = false;
+	private Object discovering = new Object();
 
 	public AdvertisementDiscoverer() {
 		super(DISCOVERY_INTERVAL_MILLIS_WITHOUT_PEERS, "Advertisement discoverer");
@@ -40,22 +41,26 @@ public class AdvertisementDiscoverer extends RepeatingJobThread implements Disco
 
 	@Override
 	public void doJob() {
-		LOG.debug("Discovering advertisements... (interval is {} ms)", getIntervalMillis());
-		
-		JxtaServicesProvider jxta = JxtaServicesProvider.getInstance();
-		jxta.getRemoteAdvertisements(this);
-		jxta.getRemotePeerAdvertisements(this);
+		synchronized( discovering ) {
+			LOG.debug("Discovering advertisements... (interval is {} ms)", getIntervalMillis());
+			
+			JxtaServicesProvider jxta = JxtaServicesProvider.getInstance();
+			jxta.getRemoteAdvertisements(this);
+			jxta.getRemotePeerAdvertisements(this);
+		}
 	}
 
 	@Override
 	public void discoveryEvent(DiscoveryEvent event) {
-		Collection<Advertisement> advertisements = toCollection(event.getResponse().getAdvertisements());
-		for (Advertisement advertisement : advertisements) {
-			if (!foundPeer) {
-				checkIfPeerFound(advertisement);
+		synchronized( discovering ) {
+			Collection<Advertisement> advertisements = toCollection(event.getResponse().getAdvertisements());
+			for (Advertisement advertisement : advertisements) {
+				if (!foundPeer) {
+					checkIfPeerFound(advertisement);
+				}
+	
+				fireAdvertisementListeners(advertisement);
 			}
-
-			fireAdvertisementListeners(advertisement);
 		}
 	}
 
