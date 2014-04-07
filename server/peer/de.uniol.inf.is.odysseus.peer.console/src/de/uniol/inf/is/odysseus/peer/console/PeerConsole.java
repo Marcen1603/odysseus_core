@@ -695,6 +695,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	public void _refreshAdvertisements(CommandInterpreter ci) {
 		jxtaServicesProvider.getRemoteAdvertisements();
+		System.out.println("Refresh done.");
 	}
 
 	public void _loginPeer(CommandInterpreter ci) {
