@@ -65,11 +65,11 @@ public final class ReplacementContainer {
 			if (posEnd != -1 && posStart < posEnd) {
 
 				String key = lineToReplace.substring(posStart + REPLACEMENT_START_KEY.length(), posEnd);
-				String replacement = replacements.get(key.toUpperCase()).toString();
-				if (replacement == null) {
+				Serializable replacementSer = replacements.get(key.toUpperCase());
+				if (replacementSer == null) {
 					throw new ReplacementException("Replacement key " + key + " not defined or has no value!");
 				}
-				lineToReplace = lineToReplace.substring(0, posStart) + replacement + lineToReplace.substring(posEnd + REPLACEMENT_END_KEY.length());
+				lineToReplace = lineToReplace.substring(0, posStart) + replacementSer.toString() + lineToReplace.substring(posEnd + REPLACEMENT_END_KEY.length());
 			}
 			int searchAt = posStart + REPLACEMENT_START_KEY.length();
 			posStart = lineToReplace.indexOf(REPLACEMENT_START_KEY, searchAt);
