@@ -792,7 +792,9 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private static void tryFlushAdvertisement(Advertisement srcAdvertisement) {
 		try {
-			JxtaServicesProvider.getInstance().flushAdvertisement(srcAdvertisement);
+			if( JxtaServicesProvider.isActivated() ) {
+				JxtaServicesProvider.getInstance().flushAdvertisement(srcAdvertisement);
+			}
 		} catch (IOException e) {
 			LOG.error("Could not flush advertisement {}", srcAdvertisement, e);
 		}
