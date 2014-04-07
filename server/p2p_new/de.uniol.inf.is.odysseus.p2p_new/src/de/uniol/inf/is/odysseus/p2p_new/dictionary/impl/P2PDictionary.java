@@ -91,14 +91,14 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		instance = this;
 
 		DataDictionaryProvider.subscribe(SessionManagementService.getTenant(), this);
-		Thread waitingThread = new Thread( new Runnable() {
+		Thread waitingThread = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				P2PNetworkManager.waitFor();
 				P2PNetworkManager.getInstance().addAdvertisementListener(P2PDictionary.this);
 			}
-			
+
 		});
 		waitingThread.setDaemon(true);
 		waitingThread.setName("Waiting for p2p network instance");
@@ -111,7 +111,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	// called by OSGi-DS
 	public void deactivate() {
 		P2PNetworkManager.getInstance().removeAdvertisementListener(this);
-		
+
 		instance = null;
 		removeSourceAdvCollector.stopRunning();
 		sourceAdvCollector.stopRunning();
@@ -123,7 +123,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private void removeAllExportedViews() {
 		List<String> srcs = Lists.newArrayList();
 		for (SourceAdvertisement srcAdvertisement : exportedSourcesQueryMap.keySet()) {
-			if( srcAdvertisement.isView() ) {
+			if (srcAdvertisement.isView()) {
 				srcs.add(srcAdvertisement.getName());
 			}
 		}
@@ -527,40 +527,36 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	@Override
 	public Collection<PeerID> getRemotePeerIDs() {
-		if( JxtaServicesProvider.isActivated() ) {
+		if (JxtaServicesProvider.isActivated()) {
 			return toPeerIDs(JxtaServicesProvider.getInstance().getPeerAdvertisements());
-		} 
+		}
 		return Lists.newArrayList();
 	}
 
-	private static final Map<PeerAdvertisement, Long> toFlushMap = Maps.newHashMap();
-	
+	private static final Map<PeerAdvertisement, Long> toFlushMap = Maps.newConcurrentMap();
+
 	private static Collection<PeerID> toPeerIDs(Collection<PeerAdvertisement> peerAdvs) {
 		Collection<PeerID> ids = Lists.newLinkedList();
 		for (PeerAdvertisement adv : peerAdvs) {
-			if( !P2PNetworkManager.getInstance().getLocalPeerID().equals(adv.getPeerID()) ) {
-				if( JxtaServicesProvider.getInstance().isReachable(adv.getPeerID())) {
+			if (!P2PNetworkManager.getInstance().getLocalPeerID().equals(adv.getPeerID())) {
+				if (JxtaServicesProvider.getInstance().isReachable(adv.getPeerID())) {
 					ids.add(adv.getPeerID());
-					
-					synchronized( toFlushMap ){
-						toFlushMap.remove(adv);
-					}
-					
+
+					toFlushMap.remove(adv);
+
 				} else {
-					synchronized( toFlushMap ) {
-						if( !toFlushMap.containsKey(adv)) {
-							toFlushMap.put(adv, System.currentTimeMillis());
-						} else {
-							Long ts = toFlushMap.get(adv);
-							if( System.currentTimeMillis() - ts > 5000 ) {
-								ResolvePeerThread t = new ResolvePeerThread(adv);
-								t.start();
-								toFlushMap.remove(adv);
-							}
+					if (!toFlushMap.containsKey(adv)) {
+						toFlushMap.put(adv, System.currentTimeMillis());
+					} else {
+						Long ts = toFlushMap.get(adv);
+						if (System.currentTimeMillis() - ts > 5000) {
+							ResolvePeerThread t = new ResolvePeerThread(adv);
+							t.start();
+							toFlushMap.remove(adv);
 						}
 					}
 				}
-			} 
+			}
 		}
 		return ids;
 	}
@@ -841,7 +837,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		}
 		return false;
 	}
-	
+
 	private static boolean isAutoImport() {
 		String property = System.getProperty(AUTOIMPORT_SYS_PROPERTY);
 		if (!Strings.isNullOrEmpty(property)) {
@@ -864,50 +860,50 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 
 	private final List<ID> processedAdvIDs = Lists.newArrayList();
-	
+
 	@Override
 	public void advertisementDiscovered(Advertisement adv) {
-		if( processedAdvIDs.contains(adv.getID()) ) {
+		if (processedAdvIDs.contains(adv.getID())) {
 			return;
 		}
-		
-		if( adv instanceof RemoveSourceAdvertisement ) {
-			RemoveSourceAdvertisement removeSourceAdvertisement = (RemoveSourceAdvertisement)adv;
-			
+
+		if (adv instanceof RemoveSourceAdvertisement) {
+			RemoveSourceAdvertisement removeSourceAdvertisement = (RemoveSourceAdvertisement) adv;
+
 			LOG.debug("Got a remove source advertisement");
 
 			ImmutableList<SourceAdvertisement> importedSources = getImportedSources();
-			for( SourceAdvertisement importedSourceAdv : importedSources ) {
-				if( removeSourceAdvertisement.getSourceAdvertisementID().equals(importedSourceAdv.getID())) {
+			for (SourceAdvertisement importedSourceAdv : importedSources) {
+				if (removeSourceAdvertisement.getSourceAdvertisementID().equals(importedSourceAdv.getID())) {
 					removeSourceImport(importedSourceAdv);
 					break;
 				}
 			}
 			processedAdvIDs.add(adv.getID());
-			
-		} else if( adv instanceof RemoveMultipleSourceAdvertisement ) {
-			RemoveMultipleSourceAdvertisement removeMultipleSrcAdvertisement = (RemoveMultipleSourceAdvertisement)adv;
+
+		} else if (adv instanceof RemoveMultipleSourceAdvertisement) {
+			RemoveMultipleSourceAdvertisement removeMultipleSrcAdvertisement = (RemoveMultipleSourceAdvertisement) adv;
 			LOG.debug("Got a multiple remove source advertisement");
-			
+
 			Collection<ID> idsToRemove = removeMultipleSrcAdvertisement.getSourceAdvertisementIDs();
-			
+
 			ImmutableList<SourceAdvertisement> importedSources = getImportedSources();
-			for( SourceAdvertisement sourceAdv : importedSources ) {
-				if( idsToRemove.contains(sourceAdv.getID())) {
+			for (SourceAdvertisement sourceAdv : importedSources) {
+				if (idsToRemove.contains(sourceAdv.getID())) {
 					removeSourceImport(sourceAdv);
 				}
 			}
-			
+
 			processedAdvIDs.add(adv.getID());
-		} 
-		
-		if( isAutoImport() ) {
-			if( adv instanceof SourceAdvertisement ) {
-				SourceAdvertisement srcAdv = (SourceAdvertisement)adv;
+		}
+
+		if (isAutoImport()) {
+			if (adv instanceof SourceAdvertisement) {
+				SourceAdvertisement srcAdv = (SourceAdvertisement) adv;
 				tryAutoImportSource(srcAdv);
-			} else if( adv instanceof MultipleSourceAdvertisement ) {
-				MultipleSourceAdvertisement multSrcAdv = (MultipleSourceAdvertisement)adv;
-				for( SourceAdvertisement srcAdv : multSrcAdv.getSourceAdvertisements()) {
+			} else if (adv instanceof MultipleSourceAdvertisement) {
+				MultipleSourceAdvertisement multSrcAdv = (MultipleSourceAdvertisement) adv;
+				for (SourceAdvertisement srcAdv : multSrcAdv.getSourceAdvertisements()) {
 					tryAutoImportSource(srcAdv);
 				}
 			}
@@ -915,7 +911,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 
 	private void tryAutoImportSource(SourceAdvertisement srcAdv) {
-		if( !isImported(srcAdv) && !isImported(srcAdv.getName())) {
+		if (!isImported(srcAdv) && !isImported(srcAdv.getName())) {
 			try {
 				importSource(srcAdv, srcAdv.getName());
 				LOG.debug("Autoimporting source {}", srcAdv.getName());
