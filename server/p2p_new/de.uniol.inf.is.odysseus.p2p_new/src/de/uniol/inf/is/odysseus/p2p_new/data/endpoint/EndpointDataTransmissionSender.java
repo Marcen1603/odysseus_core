@@ -10,6 +10,7 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -22,12 +23,12 @@ import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSender;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSenderListener;
 
 public class EndpointDataTransmissionSender implements ITransmissionSender, IPeerCommunicatorListener {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(EndpointDataTransmissionSender.class);
 
 	private final Collection<ITransmissionSenderListener> listeners = Lists.newArrayList();
-	
-	private final PeerID pid;
+
+	private final Collection<PeerID> pid = Lists.newLinkedList();
 	private final int idHash;
 	private final IPeerCommunicator communicator;
 
@@ -35,8 +36,11 @@ public class EndpointDataTransmissionSender implements ITransmissionSender, IPee
 		this.communicator = communicator;
 		this.communicator.addListener(this, OpenMessage.class);
 		this.communicator.addListener(this, CloseMessage.class);
-		
-		pid = toPeerID(destinationPeer);
+
+		if (!Strings.isNullOrEmpty(destinationPeer)) {
+			pid.add(toPeerID(destinationPeer));
+		}
+
 		idHash = id.hashCode();
 	}
 
@@ -44,27 +48,27 @@ public class EndpointDataTransmissionSender implements ITransmissionSender, IPee
 	public void sendData(byte[] data) throws DataTransmissionException {
 		DataMessage msg = new DataMessage(idHash, data);
 		try {
-			communicator.send(pid, msg);
+			sendMessageToPeers(msg);
 		} catch (PeerCommunicationException e) {
 			throw new DataTransmissionException("Could not send data", e);
 		}
 	}
-	
+
 	@Override
 	public void sendPunctuation(IPunctuation punctuation) throws DataTransmissionException {
 		PunctuationMessage msg = new PunctuationMessage(punctuation, idHash);
-		
+
 		try {
-			communicator.send(pid, msg);
+			sendMessageToPeers(msg);
 		} catch (PeerCommunicationException e) {
 			throw new DataTransmissionException("Could not send punctuation", e);
 		}
 	}
-	
+
 	@Override
 	public void sendDone() throws DataTransmissionException {
 		try {
-			communicator.send(pid, new DoneMessage(idHash));
+			sendMessageToPeers(new DoneMessage(idHash));
 		} catch (PeerCommunicationException e) {
 			throw new DataTransmissionException("Could not send done message", e);
 		}
@@ -72,16 +76,37 @@ public class EndpointDataTransmissionSender implements ITransmissionSender, IPee
 
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
-		if( message instanceof OpenMessage ) {
-			OpenMessage copenMessage = (OpenMessage)message;
-			if( copenMessage.getIdHash() == idHash ) {
-				fireCloseEvent();
+		if (message instanceof OpenMessage) {
+			OpenMessage copenMessage = (OpenMessage) message;
+			if (copenMessage.getIdHash() == idHash) {
+				synchronized (pid) {
+					if (!pid.contains(senderPeer)) {
+						pid.add(senderPeer);
+					}
+					if (pid.size() == 1) {
+						fireOpenEvent();
+					}
+				}
 			}
-			fireOpenEvent();
-		} else if( message instanceof CloseMessage ) {
-			CloseMessage closeMessage = (CloseMessage)message;
-			if( closeMessage.getIdHash() == idHash ) {
-				fireCloseEvent();
+		} else if (message instanceof CloseMessage) {
+			CloseMessage closeMessage = (CloseMessage) message;
+			if (closeMessage.getIdHash() == idHash) {
+				synchronized (pid) {
+					pid.remove(senderPeer);
+					
+					if( pid.isEmpty() ) {
+						fireCloseEvent();
+					}
+				}
+				
+			}
+		}
+	}
+
+	private void sendMessageToPeers(IMessage msg) throws PeerCommunicationException {
+		synchronized (pid) {
+			for (PeerID pi : pid) {
+				communicator.send(pi, msg);
 			}
 		}
 	}
@@ -98,36 +123,36 @@ public class EndpointDataTransmissionSender implements ITransmissionSender, IPee
 
 	@Override
 	public void addListener(ITransmissionSenderListener listener) {
-		synchronized(listeners) {
+		synchronized (listeners) {
 			listeners.add(listener);
 		}
 	}
 
 	@Override
 	public void removeListener(ITransmissionSenderListener listener) {
-		synchronized(listener) {
+		synchronized (listener) {
 			listeners.remove(listener);
 		}
 	}
-	
+
 	private void fireOpenEvent() {
-		synchronized( listeners ) {
-			for( ITransmissionSenderListener listener : listeners ) {
+		synchronized (listeners) {
+			for (ITransmissionSenderListener listener : listeners) {
 				try {
 					listener.onReceiveOpen(this);
-				} catch( Throwable t ) {
+				} catch (Throwable t) {
 					LOG.error("Exeption in transmission listener during open", t);
 				}
 			}
 		}
 	}
-	
+
 	private void fireCloseEvent() {
-		synchronized( listeners ) {
-			for( ITransmissionSenderListener listener : listeners ) {
+		synchronized (listeners) {
+			for (ITransmissionSenderListener listener : listeners) {
 				try {
 					listener.onReceiveClose(this);
-				} catch( Throwable t ) {
+				} catch (Throwable t) {
 					LOG.error("Exeption in transmission listener during close", t);
 				}
 			}
