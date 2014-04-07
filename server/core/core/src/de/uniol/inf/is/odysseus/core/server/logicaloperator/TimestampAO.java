@@ -260,7 +260,7 @@ public class TimestampAO extends UnaryLogicalOp {
 
 	@Parameter(type = StringParameter.class, name = "dateFormat", isList = false, optional = true, doc="If using a string for date information, use this format to parse the date (in Java syntax).")
 	public void setDateFormat(String dateFormat) {
-		addParameterInfo("DATEFORMAT", dateFormat);
+		addParameterInfo("DATEFORMAT", "'" + dateFormat + "'");
 		this.dateFormat = dateFormat;
 	}
 
