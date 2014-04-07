@@ -180,7 +180,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				processElement(senderOperator, element );
+				processElement(senderOperator, element);
 			}
 		});
 	}
@@ -224,14 +224,14 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	}
 
 	@Override
-	public void onLoadXML(Document document, Element xmlElement) {		
+	public void onLoadXML(Document document, Element xmlElement) {
 		if (xmlElement.getChildNodes().getLength() > 0) {
 			NodeList pictogramList = xmlElement.getChildNodes();
-		
-			if(!xmlElement.getNodeName().equals("pictogramgroup")){
+
+			if (!xmlElement.getNodeName().equals("pictogramgroup")) {
 				pictogramList = xmlElement.getChildNodes().item(0).getChildNodes();
 			}
-			
+
 			try {
 				for (int i = 0; i < pictogramList.getLength(); i++) {
 					Node pictogramNode = pictogramList.item(i);
@@ -334,7 +334,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		actionRegistry.registerAction(new RedoAction(part));
 		actionRegistry.registerAction(new DeleteAction(part));
 		actionRegistry.registerAction(new CopyAction(part));
-		actionRegistry.registerAction(new PasteAction(part));		
+		actionRegistry.registerAction(new PasteAction(part));
 	}
 
 	protected ActionRegistry getActionRegistry() {
@@ -354,12 +354,12 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		// zooming
 		ZoomManager zoomManager = ((ScalableFreeformRootEditPart) viewer.getRootEditPart()).getZoomManager();
 		registerAndBindingService(new ZoomInAction(zoomManager));
-		registerAndBindingService(new ZoomOutAction(zoomManager));		
+		registerAndBindingService(new ZoomOutAction(zoomManager));
 		List<String> zoomContributions = Arrays.asList(new String[] { ZoomManager.FIT_ALL, ZoomManager.FIT_HEIGHT, ZoomManager.FIT_WIDTH });
 		zoomManager.setZoomLevelContributions(zoomContributions);
 		viewer.setProperty(MouseWheelHandler.KeyGenerator.getKey(SWT.MOD1), MouseWheelZoomHandler.SINGLETON);
 		viewer.setKeyHandler(new GraphicalViewerKeyHandler(viewer));
-		
+
 		// layouting
 		registerAndBindingService(GEFActionConstants.ALIGN_LEFT, new AlignmentAction(getWorkbenchPart(), PositionConstants.LEFT));
 		registerAndBindingService(GEFActionConstants.ALIGN_CENTER, new AlignmentAction(getWorkbenchPart(), PositionConstants.CENTER));
@@ -399,7 +399,9 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		while (iterator.hasNext()) {
 			Object action = iterator.next();
 			if (action instanceof UpdateAction) {
-				((UpdateAction) action).update();
+
+				UpdateAction updateAction = (UpdateAction) action;
+				updateAction.update();
 			}
 		}
 		if (editDomain.getCommandStack().isDirty()) {
@@ -450,7 +452,13 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	 */
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		updateActions();
+		try {
+			if(part instanceof DashboardGraphicsPart){
+				updateActions();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*
