@@ -62,7 +62,7 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 
 	// called by OSGi-DS
 	public void activate() {
-		Thread waitingThread = new Thread( new Runnable() {
+		Thread waitingThread = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
@@ -73,7 +73,7 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 		waitingThread.setName("Endpoint peer communicator waiting thread");
 		waitingThread.setDaemon(true);
 		waitingThread.start();
-		
+
 		LOG.debug("Activated");
 	}
 
@@ -82,7 +82,7 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 		messengerMap.clear();
 		messageTypeMap.clear();
 		messageIDMap.clear();
-		
+
 		LOG.debug("Deactivated");
 	}
 
@@ -91,7 +91,7 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 		Preconditions.checkNotNull(messageType, "MessageType must not be null!");
 		Preconditions.checkArgument(!messageTypeMap.containsKey(messageType), "MessageType %s already registered", messageType);
 		Preconditions.checkArgument(hasDefaultConstructor(messageType), "MessageType %s has no default constructor which is needed!", messageType);
-		
+
 		int messageID = messageType.toString().hashCode();
 		messageTypeMap.put(messageType, messageID);
 		messageIDMap.put(messageID, messageType);
@@ -179,20 +179,20 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 		ByteArrayMessageElement messageElement = (ByteArrayMessageElement) message.getMessageElement("bytes");
 		byte[] data = messageElement.getBytes();
 
-		if( data != null && data.length >= 4 ) {
+		if (data != null && data.length >= 4) {
 			int msgId = byteArrayToInt(data, 0);
 			Collection<IPeerCommunicatorListener> listeners = PeerCommunicatorListenerRegistry.getInstance().getListeners(messageIDMap.get(msgId));
 			if (!listeners.isEmpty()) {
-				
+
 				Optional<IMessage> optMsg = createNewMessageInstance(msgId);
 				if (optMsg.isPresent()) {
-	
+
 					byte[] msgBytes = new byte[data.length - 4];
 					System.arraycopy(data, 4, msgBytes, 0, msgBytes.length);
-					
+
 					IMessage msg = optMsg.get();
 					msg.fromBytes(msgBytes);
-	
+
 					for (IPeerCommunicatorListener listener : listeners) {
 						try {
 							listener.receivedMessage(this, pid, msg);

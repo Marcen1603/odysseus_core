@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
 public class JxtaBiDiClientConnection extends JxtaBiDiConnection {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaBiDiClientConnection.class);
-	private static final int MAX_CONNECT_WAITING_TIME_MILLIS = 45000;
+	private static final int MAX_CONNECT_WAITING_TIME_MILLIS = 60000;
 	private final PipeAdvertisement pipeAdvertisement;
 	
 	public JxtaBiDiClientConnection(PipeAdvertisement adv) {
