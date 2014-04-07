@@ -226,9 +226,6 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 		return chartComposite;
 	}
 
-	public void setChart(JFreeChart chart) {
-		this.chart = chart;
-	}
 
 	protected int getSelectedValueCount(boolean[] values) {
 		int count = 0;

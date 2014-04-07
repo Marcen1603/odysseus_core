@@ -22,10 +22,12 @@ public class TimeshiftPO<M extends ITimeInterval> extends AbstractPipe<AbstractS
 		return OutputMode.INPUT;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(AbstractStreamObject<M> object, int port) {
-		ITimeInterval old = object.getMetadata();		
-		object.getMetadata().setStartAndEnd(old.getStart().plus(timeToShift), old.getEnd().plus(timeToShift));
+		ITimeInterval newMetadata = object.getMetadata().clone();		
+		newMetadata.setStartAndEnd(newMetadata.getStart().plus(timeToShift), newMetadata.getEnd().plus(timeToShift));
+		object.setMetadata((M) newMetadata);
 		transfer(object);		
 	}
 

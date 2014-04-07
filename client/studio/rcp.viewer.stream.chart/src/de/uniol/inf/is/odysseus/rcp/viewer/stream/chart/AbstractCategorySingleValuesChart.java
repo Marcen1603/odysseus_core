@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,24 +30,30 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 
-public abstract class AbstractCategorySingleValuesChart extends
-		AbstractJFreeChart<Double, IMetaAttribute> {
+public abstract class AbstractCategorySingleValuesChart extends AbstractJFreeChart<Double, IMetaAttribute> {
 
 	private DefaultCategoryDataset dcds = new DefaultCategoryDataset();
 
-	private double max = 0.0;
+	private double max = 1.0;
 	private int adjustCounter = 0;
 
-	private int maxAdjustTimes = 10;
+	private int maxAdjustTimes = 100;
+	private Double min = 0.0;
+	private boolean autoadjust = false;
+
+	private boolean keepUpperBound = true;
+
+	private double maxBound = 1.0;
 
 	protected CategoryDataset getDataset() {
 		return dcds;
 	}
 
 	@Override
-	protected void processElement(final List<Double> tuple,
-			final IMetaAttribute metadata, final int port) {
+	protected void processElement(final List<Double> tuple, final IMetaAttribute metadata, final int port) {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -56,8 +62,7 @@ public abstract class AbstractCategorySingleValuesChart extends
 					for (int i = 0; i < getChoosenAttributes(port).size(); i++) {
 						double value = tuple.get(i);
 						recalcAxis(value);
-						dcds.setValue(value, getChoosenAttributes(port).get(i)
-								.getName(), "");
+						dcds.setValue(value, getChoosenAttributes(port).get(i).getName(), "");
 					}
 				} catch (SWTException e) {
 					dispose();
@@ -87,15 +92,26 @@ public abstract class AbstractCategorySingleValuesChart extends
 	}
 
 	private void recalcAxis(double value) {
-		if (value > max || adjustCounter >= maxAdjustTimes) {
-			max = value * 1.05;
-			adjustCounter = 0;
+		if (!autoadjust) {
+			ValueAxis va = this.getChart().getCategoryPlot().getRangeAxis();
+			va.setAutoRange(false);
+			if (keepUpperBound) {
+				maxBound  = Math.max(this.max, maxBound);
+				if (value > maxBound || adjustCounter >= getMaxAdjustTimes()) {
+					maxBound = value * 1.05;
+					adjustCounter = 0;
+				} else {
+					adjustCounter++;
+				}
+				va.setUpperBound(maxBound);
+			} else {
+				va.setUpperBound(this.max);
+			}
+			va.setLowerBound(this.min);
 		} else {
-			adjustCounter++;
+			ValueAxis va = this.getChart().getCategoryPlot().getRangeAxis();
+			va.setAutoRange(true);
 		}
-		ValueAxis va = this.getChart().getCategoryPlot().getRangeAxis();
-		va.setAutoRange(false);
-		va.setUpperBound(max);
 	}
 
 	@Override
@@ -104,9 +120,58 @@ public abstract class AbstractCategorySingleValuesChart extends
 	}
 
 	@Override
-	public String isValidSelection(
-			Map<Integer, Set<IViewableAttribute>> selectAttributes) {
+	public String isValidSelection(Map<Integer, Set<IViewableAttribute>> selectAttributes) {
 		return checkAtLeastOneSelectedAttribute(selectAttributes);
+	}
+
+	@ChartSetting(name = "Lower Bound for Y-Axis", type = Type.SET)
+	public void setMin(Double min) {
+		this.min = min;
+	}
+
+	@ChartSetting(name = "Lower Bound for Y-Axis", type = Type.GET)
+	public Double getMin() {
+		return this.min;
+	}
+
+	@ChartSetting(name = "Upper Bound for Y-Axis", type = Type.SET)
+	public void setMax(Double max) {
+		this.max = max;
+	}
+
+	@ChartSetting(name = "Upper Bound for Y-Axis", type = Type.GET)
+	public Double getMax() {
+		return this.max;
+	}
+
+	@ChartSetting(name = "Autoadjust Bounds", type = Type.GET)
+	public boolean isAutoadjust() {
+		return autoadjust;
+	}
+
+	@ChartSetting(name = "Autoadjust Bounds", type = Type.SET)
+	public void setAutoadjust(boolean autoadjust) {
+		this.autoadjust = autoadjust;
+	}
+
+	@ChartSetting(name = "Keep upper bound for autoadjust", type = Type.GET)
+	public boolean isKeepUpperBound() {
+		return this.keepUpperBound;
+	}
+
+	@ChartSetting(name = "Keep upper bound for autoadjust", type = Type.SET)
+	public void setKeepUpperBound(boolean keepUpperBound) {
+		this.keepUpperBound = keepUpperBound;
+	}
+
+	@ChartSetting(name = "Keep upper bound during autoadjust only x elements", type = Type.GET)
+	public int getMaxAdjustTimes() {
+		return maxAdjustTimes;
+	}
+
+	@ChartSetting(name = "Keep upper bound during autoadjust only x elements", type = Type.SET)
+	public void setMaxAdjustTimes(int maxAdjustTimes) {
+		this.maxAdjustTimes = maxAdjustTimes;
 	}
 
 }
