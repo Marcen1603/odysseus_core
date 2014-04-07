@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.data;
+package de.uniol.inf.is.odysseus.p2p_new.data.endpoint;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,6 +16,9 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
+import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiver;
+import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiverListener;
 
 public class EndpointDataTransmissionReceiver implements ITransmissionReceiver, IPeerCommunicatorListener {
 

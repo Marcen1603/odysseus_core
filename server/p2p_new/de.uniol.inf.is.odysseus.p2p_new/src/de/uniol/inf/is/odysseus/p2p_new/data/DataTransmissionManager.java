@@ -1,6 +1,13 @@
 package de.uniol.inf.is.odysseus.p2p_new.data;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.CloseMessage;
+import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.DataMessage;
+import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.DoneMessage;
+import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.EndpointDataTransmissionReceiver;
+import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.EndpointDataTransmissionSender;
+import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.OpenMessage;
+import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.PunctuationMessage;
 
 public class DataTransmissionManager {
 	

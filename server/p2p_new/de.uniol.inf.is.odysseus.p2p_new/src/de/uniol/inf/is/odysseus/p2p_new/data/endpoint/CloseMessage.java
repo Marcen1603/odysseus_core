@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.data;
+package de.uniol.inf.is.odysseus.p2p_new.data.endpoint;
 
 import java.nio.ByteBuffer;
 
