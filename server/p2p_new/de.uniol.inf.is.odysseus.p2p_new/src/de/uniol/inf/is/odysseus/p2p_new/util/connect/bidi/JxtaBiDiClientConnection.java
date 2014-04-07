@@ -31,7 +31,7 @@ public class JxtaBiDiClientConnection extends JxtaBiDiConnection {
 			final long startTime = System.currentTimeMillis();
 			while( !connected ) {
 				try {
-					getPipe().connect(P2PNetworkManager.getInstance().getLocalPeerGroup(), null, pipeAdvertisement, 20000, this);
+					getPipe().connect(P2PNetworkManager.getInstance().getLocalPeerGroup(), null, pipeAdvertisement, 1500, this);
 					connected = true;
 				} catch( SocketTimeoutException ex ) {
 					
