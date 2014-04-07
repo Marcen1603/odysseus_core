@@ -16,6 +16,7 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = 1L;
 
 	private String pipeID;
+	private String peerID;
 	private boolean useUDP;
 	private boolean useMultiple;
 
@@ -27,6 +28,7 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 		super(other);
 		
 		this.pipeID = other.pipeID;
+		this.peerID = other.peerID;
 		this.useUDP = other.useUDP;
 		this.useMultiple = other.useMultiple;
 	}
@@ -70,6 +72,18 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(pipeID), "PipeID for sender ao must not be null or empty!");
 		this.pipeID = pipeID;
 		addParameterInfo("PIPEID", "'" + pipeID + "'");
+	}
+	
+	@Parameter(name = "PEERID", doc = "Jxta Peer ID to communicate with", type = StringParameter.class, optional = false)
+	public void setPeerID( String peerID ) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(peerID), "PeerID for sender ao must not be null or empty!");
+		
+		this.peerID = peerID;
+		addParameterInfo("PEERID", "'" + peerID + "'");
+	}
+	
+	public String getPeerID() {
+		return peerID;
 	}
 	
 	@Override

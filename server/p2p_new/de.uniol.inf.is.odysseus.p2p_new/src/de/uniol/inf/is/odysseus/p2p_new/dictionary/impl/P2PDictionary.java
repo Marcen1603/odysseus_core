@@ -278,6 +278,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			receiverOperator.setSchema(advertisement.getOutputSchema().getAttributes());
 			receiverOperator.setName(realSrcNameToUse + "_Receive");
 			receiverOperator.setImportedSourceAdvertisement(advertisement);
+			receiverOperator.setPeerID(advertisement.getPeerID().toString());
 
 			getDataDictionary().setView(realSrcNameToUse, receiverOperator, SessionManagementService.getActiveSession());
 		}

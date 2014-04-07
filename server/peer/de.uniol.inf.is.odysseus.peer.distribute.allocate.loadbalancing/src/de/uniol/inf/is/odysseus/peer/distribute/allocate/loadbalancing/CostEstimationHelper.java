@@ -65,17 +65,17 @@ public final class CostEstimationHelper {
 		LogicalQueryHelper.disconnectQueryParts(queryParts, new IOperatorGenerator() {
 			
 			@Override
-			public void beginDisconnect(ILogicalOperator sourceOperator, ILogicalOperator sinkOperator) {
+			public void beginDisconnect(ILogicalQueryPart sourceQueryPart, ILogicalOperator sourceOperator, ILogicalQueryPart sinkQueryPart, ILogicalOperator sinkOperator) {
 				
 			}
 			
 			@Override
-			public ILogicalOperator createSourceofSink(ILogicalOperator sink) {
+			public ILogicalOperator createSourceofSink(ILogicalQueryPart sinkQueryPart, ILogicalOperator sink) {
 				return new DummyAO();
 			}
 			
 			@Override
-			public ILogicalOperator createSinkOfSource(ILogicalOperator source) {
+			public ILogicalOperator createSinkOfSource(ILogicalQueryPart sinkQueryPart, ILogicalOperator source) {
 				return new DummyAO();
 			}
 

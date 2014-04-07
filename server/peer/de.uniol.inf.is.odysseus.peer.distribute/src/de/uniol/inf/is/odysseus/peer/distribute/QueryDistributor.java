@@ -171,7 +171,7 @@ public class QueryDistributor implements IQueryDistributor, IPeerCommunicatorLis
 			QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMap, config, postProcessors, query);
 
 			ID sharedQueryID = IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
-			insertJxtaOperators(allocationMap.keySet());
+			insertJxtaOperators(allocationMap);
 			replaceAccessAOsOfExportedViews(allocationMap.keySet());
 			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(sharedQueryID, allocationMap, config);
 
@@ -206,6 +206,7 @@ public class QueryDistributor implements IQueryDistributor, IPeerCommunicatorLis
 						receiverOperator.setSchema(advertisement.getOutputSchema().getAttributes());
 						receiverOperator.setName(accessAO.getAccessAOName().getResourceName() + "_Receive");
 						receiverOperator.setImportedSourceAdvertisement(advertisement);
+						receiverOperator.setPeerID(advertisement.getPeerID().toString());
 
 						Collection<LogicalSubscription> subscriptions = accessAO.getSubscriptions();
 						for (LogicalSubscription subscription : subscriptions.toArray(new LogicalSubscription[0])) {
@@ -240,32 +241,41 @@ public class QueryDistributor implements IQueryDistributor, IPeerCommunicatorLis
 		}
 	}
 
-	private static void insertJxtaOperators(Collection<ILogicalQueryPart> queryParts) {
+	private static void insertJxtaOperators(final Map<ILogicalQueryPart, PeerID> allocationMap) {
+		Set<ILogicalQueryPart> queryParts = allocationMap.keySet();
 		LogicalQueryHelper.disconnectQueryParts(queryParts, new IOperatorGenerator() {
 
 			private PipeID pipeID;
 			private ILogicalOperator sourceOp;
+			
+			private ILogicalQueryPart sourceQueryPart;
+			private ILogicalQueryPart sinkQueryPart;
 
 			@Override
-			public void beginDisconnect(ILogicalOperator sourceOperator, ILogicalOperator sinkOperator) {
+			public void beginDisconnect(ILogicalQueryPart sourceQueryPart, ILogicalOperator sourceOperator, ILogicalQueryPart sinkQueryPart, ILogicalOperator sinkOperator) {
 				LOG.debug("Create JXTA-Connection between {} and {}", new Object[] { sourceOperator, sinkOperator });
 
 				pipeID = IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID());
 				sourceOp = sourceOperator;
+				
+				this.sourceQueryPart = sourceQueryPart;
+				this.sinkQueryPart = sinkQueryPart;
 			}
 
 			@Override
-			public ILogicalOperator createSourceofSink(ILogicalOperator sink) {
+			public ILogicalOperator createSourceofSink(ILogicalQueryPart sinkQueryPart, ILogicalOperator sink) {
 				JxtaReceiverAO access = new JxtaReceiverAO();
 				access.setPipeID(pipeID.toString());
 				access.setSchema(sourceOp.getOutputSchema().getAttributes());
+				access.setPeerID(allocationMap.get(sourceQueryPart).toString());
 				return access;
 			}
 
 			@Override
-			public ILogicalOperator createSinkOfSource(ILogicalOperator source) {
+			public ILogicalOperator createSinkOfSource(ILogicalQueryPart sourceQueryPart, ILogicalOperator source) {
 				JxtaSenderAO sender = new JxtaSenderAO();
 				sender.setPipeID(pipeID.toString());
+				sender.setPeerID(allocationMap.get(sinkQueryPart).toString());
 				return sender;
 			}
 

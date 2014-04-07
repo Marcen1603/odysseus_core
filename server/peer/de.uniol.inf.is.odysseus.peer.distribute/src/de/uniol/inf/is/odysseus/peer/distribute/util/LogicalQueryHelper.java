@@ -420,13 +420,16 @@ public final class LogicalQueryHelper {
 			ILogicalOperator sourceOperator = subsToReplace.get(subToReplace);
 			ILogicalOperator sinkOperator = subToReplace.getTarget();
 
-			generator.beginDisconnect(sourceOperator, sinkOperator);
+			ILogicalQueryPart sinkQueryPart = queryPartAssignment.get(sinkOperator);
+			ILogicalQueryPart sourceQueryPart = queryPartAssignment.get(sourceOperator);
+			generator.beginDisconnect(sourceQueryPart, sourceOperator, sinkQueryPart, sinkOperator);
 
-			ILogicalOperator source = generator.createSourceofSink(sinkOperator);
+			ILogicalOperator source = generator.createSourceofSink(sinkQueryPart, sinkOperator);
 			source.setOutputSchema(sourceOperator.getOutputSchema().clone());
 			source.setName("RCV_" + connectionCounter);
 
-			ILogicalOperator sink = generator.createSinkOfSource(sourceOperator);
+			
+			ILogicalOperator sink = generator.createSinkOfSource(sourceQueryPart, sourceOperator);
 			sink.setOutputSchema(sourceOperator.getOutputSchema().clone());
 			sink.setName("SND_" + connectionCounter);
 

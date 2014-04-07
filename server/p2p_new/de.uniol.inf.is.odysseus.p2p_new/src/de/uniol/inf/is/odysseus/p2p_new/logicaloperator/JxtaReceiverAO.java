@@ -23,6 +23,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = 1L;
 
 	private String pipeID;
+	private String peerID;
 	
 	private SDFSchema assignedSchema;
 	private SourceAdvertisement importedSrcAdvertisement;
@@ -35,6 +36,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		super(other);
 		
 		this.pipeID = other.pipeID;
+		this.peerID = other.peerID;
 		this.assignedSchema = other.assignedSchema.clone();
 		this.importedSrcAdvertisement = other.importedSrcAdvertisement;
 		
@@ -63,13 +65,6 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		this.importedSrcAdvertisement = sourceAdvertisement;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
-	 * #setPOName (java.lang.String)
-	 */
 	@Override
 	@Parameter(name = "Name", type = StringParameter.class, optional = true)
 	public void setName(String name) {
@@ -89,6 +84,18 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(pipeID), "PipeID for sender ao must not be null or empty!");
 		this.pipeID = pipeID;
 		addParameterInfo("PIPEID", "'" + pipeID + "'");
+	}
+	
+	@Parameter(name = "PEERID", doc = "Jxta Peer ID to communicate with", type = StringParameter.class, optional = false)
+	public void setPeerID( String peerID ) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(peerID), "PeerID for sender ao must not be null or empty!");
+		
+		this.peerID = peerID;
+		addParameterInfo("PEERID", "'" + peerID + "'");
+	}
+	
+	public String getPeerID() {
+		return peerID;
 	}
 
 	@Parameter(name="SCHEMA", type = CreateSDFAttributeParameter.class, isList=true,optional=false)

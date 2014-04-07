@@ -15,11 +15,11 @@ public class JxtaReceiverOperatorDetailProvider extends AbstractKeyValueUpdaterP
 	@Override
 	protected Map<String, String> getKeyValuePairs(JxtaReceiverPO operator) {
 		Map<String, String> pairs = Maps.newHashMap();
-		pairs.put("PipeID", operator.getPipeAdvertisement().getPipeID().toString());
-		pairs.put("Peer", operator.getConnectedPeerName());
-		pairs.put("Downloaded", toByteFormat(operator.getReceivedByteCount()));
-		pairs.put("Download / s", toByteFormat(operator.getReceivedByteDataRate()));
-		pairs.put("Transfertype", operator.getConnectionType().getName());
+		pairs.put("PipeID", "<not implemented yet>");
+		pairs.put("Peer", "<not implemented yet>");
+		pairs.put("Downloaded", "<not implemented yet>");
+		pairs.put("Download / s", "<not implemented yet>");
+		pairs.put("Transfertype", "<not implemented yet>");
 		return pairs;
 	}
 	
@@ -33,23 +33,23 @@ public class JxtaReceiverOperatorDetailProvider extends AbstractKeyValueUpdaterP
 		return JxtaReceiverPO.class;
 	}
 	
-	private static String toByteFormat(double receivedByteDataRate) {
-		double rawDataRate = receivedByteDataRate;
-		final String[] units = new String[] { "Bytes", "KB", "MB", "GB" };
-		
-		int unitIndex = -1;
-		for( int i = 0; i < units.length ; i++) {
-			if( rawDataRate < 1024.0 ) {
-				unitIndex = i;
-				break;
-			} 
-			rawDataRate /= 1024.0;
-		}
-		if( unitIndex == -1 ) {
-			unitIndex = units.length - 1;
-		}
-		
-		return String.format("%-10.1f", rawDataRate) + " " + units[unitIndex];
-	}
+//	private static String toByteFormat(double receivedByteDataRate) {
+//		double rawDataRate = receivedByteDataRate;
+//		final String[] units = new String[] { "Bytes", "KB", "MB", "GB" };
+//		
+//		int unitIndex = -1;
+//		for( int i = 0; i < units.length ; i++) {
+//			if( rawDataRate < 1024.0 ) {
+//				unitIndex = i;
+//				break;
+//			} 
+//			rawDataRate /= 1024.0;
+//		}
+//		if( unitIndex == -1 ) {
+//			unitIndex = units.length - 1;
+//		}
+//		
+//		return String.format("%-10.1f", rawDataRate) + " " + units[unitIndex];
+//	}
 
 }
