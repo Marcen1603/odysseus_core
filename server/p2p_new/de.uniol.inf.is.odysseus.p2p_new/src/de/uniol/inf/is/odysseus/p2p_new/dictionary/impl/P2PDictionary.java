@@ -123,7 +123,9 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private void removeAllExportedViews() {
 		List<String> srcs = Lists.newArrayList();
 		for (SourceAdvertisement srcAdvertisement : exportedSourcesQueryMap.keySet()) {
-			srcs.add(srcAdvertisement.getName());
+			if( srcAdvertisement.isView() ) {
+				srcs.add(srcAdvertisement.getName());
+			}
 		}
 		removeSourcesExport(srcs);
 	}
