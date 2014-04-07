@@ -33,6 +33,7 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	private static IP2PNetworkManager networkManager;
 	
 	private final Map<PeerID, PingMapNode> nodes = Maps.newHashMap();
+	private final Map<PeerID, NumberAverager> ownPings = Maps.newConcurrentMap();
 	private final Collection<IPingMapListener> listeners = Lists.newArrayList();
 	
 	private Vector3D localPosition = new Vector3D();
@@ -108,6 +109,9 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		Preconditions.checkNotNull(position, "New position for update must not be null!");
 		Preconditions.checkArgument(latency >= 0, "Latency to set in ping map must be positive!");
 		
+		addLatencyData(peerID, latency);
+		latency = (long)ownPings.get(peerID).getAverage();
+		
 		PingMapNode node = getPingMapNode(peerID);
 		node.setPosition(position);
 		
@@ -132,9 +136,20 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		timestep = Math.max( 0.2, timestep - 0.05);
 		
 		localPosition = localPosition.add(displacement);
+		
+		
 		firePingMapChangeEvent();
 		
 		LOG.debug("Local position is now {}", localPosition);
+	}
+
+	private void addLatencyData(PeerID peerID, long latency) {
+		NumberAverager numberAverager = ownPings.get(peerID);
+		if( numberAverager == null ) {
+			numberAverager = new NumberAverager(6);
+			ownPings.put(peerID, numberAverager);
+		}
+		numberAverager.addValue(latency);
 	}
 
 	private PingMapNode getPingMapNode(PeerID peerID) {
@@ -180,15 +195,8 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 			return Optional.of(0.0);
 		}
 		
-		PingMapNode node = nodes.get(peerID);
-		if( node == null ) {
-			return Optional.absent();
-		}
-		
-		Vector3D direction = node.getPosition().subtract(localPosition);
-		double latency = getLength(direction);
-		
-		return Optional.of(latency);
+		NumberAverager avg = ownPings.get(peerID);
+		return avg != null ? Optional.of(avg.getAverage()) : Optional.<Double>absent();
 	}
 
 	private boolean isLocalPeerID(PeerID peerID) {
