@@ -553,7 +553,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 						} else {
 							Long ts = toFlushMap.get(adv);
 							if( System.currentTimeMillis() - ts > 5000 ) {
-								tryFlushAdvertisement(adv);
+								ResolvePeerThread t = new ResolvePeerThread(adv);
+								t.start();
 								toFlushMap.remove(adv);
 							}
 						}
