@@ -194,12 +194,23 @@ public class QueryDistributor implements IQueryDistributor, IPeerCommunicatorLis
 				localQuery.setName(query.getName());
 				localQuery.setUser(caller);
 
-				callExecutorToAddLocalQueries(localQuery, sharedQueryID, serverExecutor, caller, config);
+				callExecutorToAddLocalQueries(localQuery, sharedQueryID, serverExecutor, caller, config, determineSlavePeers(allocationMap));
 			} else {
 				LOG.debug("No local query part of query {} remains.", query);
 			}
 		}
 
+	}
+
+	private static Collection<PeerID> determineSlavePeers(Map<ILogicalQueryPart, PeerID> allocationMap) {
+		Collection<PeerID> slavePeers = Lists.newArrayList();
+		for( ILogicalQueryPart queryPart : allocationMap.keySet() ) {
+			PeerID pid = allocationMap.get(queryPart);
+			if( !slavePeers.contains(pid) && !p2pNetworkManager.getLocalPeerID().equals(pid)) {
+				slavePeers.add(pid);
+			}
+		}
+		return slavePeers;
 	}
 
 	private static void replaceAccessAOsOfExportedViews(Set<ILogicalQueryPart> queryParts) {
@@ -243,12 +254,12 @@ public class QueryDistributor implements IQueryDistributor, IPeerCommunicatorLis
 		return copiedQueries;
 	}
 
-	private static void callExecutorToAddLocalQueries(ILogicalQuery query, ID sharedQueryID, IServerExecutor serverExecutor, ISession caller, QueryBuildConfiguration config)
+	private static void callExecutorToAddLocalQueries(ILogicalQuery query, ID sharedQueryID, IServerExecutor serverExecutor, ISession caller, QueryBuildConfiguration config, Collection<PeerID> slavePeers)
 			throws QueryDistributionException {
 		try {
 			int queryID = serverExecutor.addQuery(query.getLogicalPlan(), caller, config.getName());
 
-			QueryPartController.getInstance().registerAsMaster(query, queryID, sharedQueryID);
+			QueryPartController.getInstance().registerAsMaster(query, queryID, sharedQueryID, slavePeers);
 		} catch (Throwable ex) {
 			throw new QueryDistributionException("Could not add local query to server executor", ex);
 		}
@@ -347,8 +358,10 @@ public class QueryDistributor implements IQueryDistributor, IPeerCommunicatorLis
 			QueryPartAddAckMessage ackMessage = (QueryPartAddAckMessage)message;
 			
 			RepeatingMessageSend sender = senderMap.get(ackMessage.getQueryPartID());
-			sender.stopRunning();
-			senderMap.remove(ackMessage.getQueryPartID());
+			if( sender != null ) {
+				sender.stopRunning();
+				senderMap.remove(ackMessage.getQueryPartID());
+			}
 		}
 	}
 
