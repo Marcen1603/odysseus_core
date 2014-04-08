@@ -74,28 +74,33 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		if (message instanceof OpenMessage) {
-			OpenMessage copenMessage = (OpenMessage) message;
-			if (copenMessage.getIdHash() == idHash) {
-				synchronized (pid) {
-					if (!pid.contains(senderPeer)) {
-						pid.add(senderPeer);
-					}
-					if (pid.size() == 1) {
-						fireOpenEvent();
-					}
+			processOpenMessage(senderPeer, (OpenMessage)message);
+		} else if (message instanceof CloseMessage) {
+			processCloseMessage(senderPeer, (CloseMessage)message);
+		}
+	}
+
+	protected void processOpenMessage(PeerID senderPeer, OpenMessage message) {
+		if (message.getIdHash() == idHash) {
+			synchronized (pid) {
+				if (!pid.contains(senderPeer)) {
+					pid.add(senderPeer);
+				}
+				if (pid.size() == 1) {
+					fireOpenEvent();
 				}
 			}
-		} else if (message instanceof CloseMessage) {
-			CloseMessage closeMessage = (CloseMessage) message;
-			if (closeMessage.getIdHash() == idHash) {
-				synchronized (pid) {
-					pid.remove(senderPeer);
-					
-					if( pid.isEmpty() ) {
-						fireCloseEvent();
-					}
-				}
+		}
+	}
+
+	protected void processCloseMessage(PeerID senderPeer, CloseMessage message) {
+		if (message.getIdHash() == idHash) {
+			synchronized (pid) {
+				pid.remove(senderPeer);
 				
+				if( pid.isEmpty() ) {
+					fireCloseEvent();
+				}
 			}
 		}
 	}
@@ -117,4 +122,5 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 			return null;
 		}
 	}
+	
 }
