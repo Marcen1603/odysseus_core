@@ -25,7 +25,7 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 
 	private static final Logger LOG = LoggerFactory.getLogger(EndpointDataTransmissionSender.class);
 
-	private final Collection<PeerID> pid = Lists.newLinkedList();
+	private final Collection<PeerID> pids = Lists.newLinkedList();
 	private final int idHash;
 	private final IPeerCommunicator communicator;
 
@@ -35,7 +35,7 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 		this.communicator.addListener(this, CloseMessage.class);
 
 		if (!Strings.isNullOrEmpty(destinationPeer)) {
-			pid.add(toPeerID(destinationPeer));
+			pids.add(toPeerID(destinationPeer));
 		}
 
 		idHash = id.hashCode();
@@ -82,11 +82,11 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 
 	protected void processOpenMessage(PeerID senderPeer, OpenMessage message) {
 		if (message.getIdHash() == idHash) {
-			synchronized (pid) {
-				if (!pid.contains(senderPeer)) {
-					pid.add(senderPeer);
+			synchronized (pids) {
+				if (!pids.contains(senderPeer)) {
+					pids.add(senderPeer);
 				}
-				if (pid.size() == 1) {
+				if (pids.size() == 1) {
 					fireOpenEvent();
 				}
 			}
@@ -95,25 +95,29 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 
 	protected void processCloseMessage(PeerID senderPeer, CloseMessage message) {
 		if (message.getIdHash() == idHash) {
-			synchronized (pid) {
-				pid.remove(senderPeer);
+			synchronized (pids) {
+				pids.remove(senderPeer);
 				
-				if( pid.isEmpty() ) {
+				if( pids.isEmpty() ) {
 					fireCloseEvent();
 				}
 			}
 		}
 	}
+	
+	protected final Collection<PeerID> getOpenedPeers() {
+		return pids;
+	}
 
 	private void sendMessageToPeers(IMessage msg) throws PeerCommunicationException {
-		synchronized (pid) {
-			for (PeerID pi : pid) {
+		synchronized (pids) {
+			for (PeerID pi : pids) {
 				communicator.send(pi, msg);
 			}
 		}
 	}
 
-	private static PeerID toPeerID(String text) {
+	protected static PeerID toPeerID(String text) {
 		try {
 			final URI id = new URI(text);
 			return (PeerID) IDFactory.fromURI(id);

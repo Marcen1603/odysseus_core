@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.EndpointDataTransmissionRe
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.EndpointDataTransmissionSender;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.OpenMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.PunctuationMessage;
+import de.uniol.inf.is.odysseus.p2p_new.data.socket.PortMessage;
 
 public class DataTransmissionManager {
 	
@@ -22,6 +23,7 @@ public class DataTransmissionManager {
 		peerCommunicator.registerMessageType(OpenMessage.class);
 		peerCommunicator.registerMessageType(CloseMessage.class);
 		peerCommunicator.registerMessageType(DoneMessage.class);
+		peerCommunicator.registerMessageType(PortMessage.class);
 		peerCommunicator.registerMessageType(PunctuationMessage.class);
 	}
 	
@@ -32,6 +34,7 @@ public class DataTransmissionManager {
 			peerCommunicator.unregisterMessageType(OpenMessage.class);
 			peerCommunicator.unregisterMessageType(CloseMessage.class);
 			peerCommunicator.unregisterMessageType(DoneMessage.class);
+			peerCommunicator.unregisterMessageType(PortMessage.class);
 			peerCommunicator.unregisterMessageType(PunctuationMessage.class);
 			
 			peerCommunicator = null;

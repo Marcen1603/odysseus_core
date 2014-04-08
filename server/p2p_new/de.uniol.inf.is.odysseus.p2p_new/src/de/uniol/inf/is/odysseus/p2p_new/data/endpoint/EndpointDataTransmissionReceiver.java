@@ -73,7 +73,7 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 		}
 	}
 	
-	private static PeerID toPeerID(String text) {
+	protected static PeerID toPeerID(String text) {
 		try {
 			final URI id = new URI(text);
 			return (PeerID) IDFactory.fromURI(id);
