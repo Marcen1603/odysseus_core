@@ -1,11 +1,13 @@
 package de.uniol.inf.is.odysseus.p2p_new.data;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.CloseAckMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.CloseMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.DataMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.DoneMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.EndpointDataTransmissionReceiver;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.EndpointDataTransmissionSender;
+import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.OpenAckMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.OpenMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.PunctuationMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.socket.PortMessage;
@@ -21,7 +23,9 @@ public class DataTransmissionManager {
 		
 		peerCommunicator.registerMessageType(DataMessage.class);
 		peerCommunicator.registerMessageType(OpenMessage.class);
+		peerCommunicator.registerMessageType(OpenAckMessage.class);
 		peerCommunicator.registerMessageType(CloseMessage.class);
+		peerCommunicator.registerMessageType(CloseAckMessage.class);
 		peerCommunicator.registerMessageType(DoneMessage.class);
 		peerCommunicator.registerMessageType(PortMessage.class);
 		peerCommunicator.registerMessageType(PunctuationMessage.class);
@@ -32,7 +36,9 @@ public class DataTransmissionManager {
 		if( peerCommunicator == serv ) {
 			peerCommunicator.unregisterMessageType(DataMessage.class);
 			peerCommunicator.unregisterMessageType(OpenMessage.class);
+			peerCommunicator.unregisterMessageType(OpenAckMessage.class);
 			peerCommunicator.unregisterMessageType(CloseMessage.class);
+			peerCommunicator.unregisterMessageType(CloseAckMessage.class);
 			peerCommunicator.unregisterMessageType(DoneMessage.class);
 			peerCommunicator.unregisterMessageType(PortMessage.class);
 			peerCommunicator.unregisterMessageType(PunctuationMessage.class);

@@ -85,28 +85,43 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 			synchronized (pids) {
 				if (!pids.contains(senderPeer)) {
 					pids.add(senderPeer);
-				}
-				if (pids.size() == 1) {
-					fireOpenEvent();
+					
+					if (pids.size() == 1) {
+						fireOpenEvent();
+					}
 				}
 			}
+			
+			trySend(senderPeer, new OpenAckMessage(idHash));
 		}
 	}
 
 	protected void processCloseMessage(PeerID senderPeer, CloseMessage message) {
 		if (message.getIdHash() == idHash) {
 			synchronized (pids) {
-				pids.remove(senderPeer);
-				
-				if( pids.isEmpty() ) {
-					fireCloseEvent();
+				if( pids.contains(senderPeer)) {
+					pids.remove(senderPeer);
+					
+					if( pids.isEmpty() ) {
+						fireCloseEvent();
+					}
 				}
 			}
+			
+			trySend(senderPeer, new CloseAckMessage(idHash));
 		}
 	}
 	
 	protected final Collection<PeerID> getOpenedPeers() {
 		return pids;
+	}
+	
+	private void trySend(PeerID senderPeer, IMessage message) {
+		try {
+			communicator.send(senderPeer, message);
+		} catch (PeerCommunicationException e) {
+			LOG.debug("Could not send openack message", e);
+		}
 	}
 
 	private void sendMessageToPeers(IMessage msg) throws PeerCommunicationException {

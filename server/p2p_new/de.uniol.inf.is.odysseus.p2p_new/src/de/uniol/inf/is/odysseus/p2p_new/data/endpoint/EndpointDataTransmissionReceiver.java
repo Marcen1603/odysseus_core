@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.p2p_new.communication.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.p2p_new.data.AbstractTransmissionReceiver;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 
@@ -23,11 +24,16 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 	private final IPeerCommunicator peerCommunicator;
 	private final PeerID pid;
 	private final int idHash;
+
+	private RepeatingMessageSend openRepeater;
+	private RepeatingMessageSend closeRepeater;
 	
 	public EndpointDataTransmissionReceiver(IPeerCommunicator communicator, String peerID, String id) {
 		this.peerCommunicator = communicator;
 		this.peerCommunicator.addListener(this, DataMessage.class);
 		this.peerCommunicator.addListener(this, PunctuationMessage.class);
+		this.peerCommunicator.addListener(this, OpenAckMessage.class);
+		this.peerCommunicator.addListener(this, CloseAckMessage.class);
 		this.peerCommunicator.addListener(this, DoneMessage.class);
 		
 		pid = toPeerID(peerID);
@@ -52,13 +58,30 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 			if( msg.getIdHash() == idHash ) {
 				fireDoneEvent();
 			}
+		} else if( message instanceof OpenAckMessage ) {
+			OpenAckMessage msg = (OpenAckMessage)message;
+			if( msg.getIdHash() == idHash ) {
+				openRepeater.stopRunning();
+				openRepeater = null;
+			}
+		} else if( message instanceof CloseAckMessage ) {
+			CloseAckMessage msg = (CloseAckMessage)message;
+			if( msg.getIdHash() == idHash ) {
+				closeRepeater.stopRunning();
+				closeRepeater = null;
+			}
 		}
 	}
 	
 	@Override
 	public void sendOpen() throws DataTransmissionException {
 		try {
-			peerCommunicator.send(pid, new OpenMessage(idHash));
+			final OpenMessage openMessage = new OpenMessage(idHash);
+			peerCommunicator.send(pid, openMessage);
+
+			openRepeater = new RepeatingMessageSend(peerCommunicator, openMessage, pid);
+			openRepeater.start();
+			
 		} catch (PeerCommunicationException e) {
 			throw new DataTransmissionException("Could not send open message", e);
 		}
@@ -67,7 +90,12 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 	@Override
 	public void sendClose() throws DataTransmissionException {
 		try {
-			peerCommunicator.send(pid, new CloseMessage(idHash));
+			CloseMessage closeMessage = new CloseMessage(idHash);
+			peerCommunicator.send(pid, closeMessage);
+			
+			closeRepeater = new RepeatingMessageSend(peerCommunicator, closeMessage, pid);
+			closeRepeater.start();
+			
 		} catch (PeerCommunicationException e) {
 			throw new DataTransmissionException("Could not send close message", e);
 		}
