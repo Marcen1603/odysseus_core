@@ -33,6 +33,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		
 		transmission = DataTransmissionManager.getInstance().registerTransmissionReceiver(ao.getPeerID(), ao.getPipeID());
 		transmission.addListener(this);
+		transmission.open();
 	}
 
 	public JxtaReceiverPO(JxtaReceiverPO<T> po) {
@@ -90,5 +91,9 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	@Override
 	public void onReceiveDone(ITransmissionReceiver receiver) {
 		process_done();
+	}
+	
+	public final ITransmissionReceiver getTransmission() {
+		return transmission;
 	}
 }

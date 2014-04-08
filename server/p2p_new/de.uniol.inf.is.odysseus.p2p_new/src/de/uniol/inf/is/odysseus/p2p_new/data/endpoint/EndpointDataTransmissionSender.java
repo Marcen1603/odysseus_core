@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.data.AbstractTransmissionSender;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 
 public class EndpointDataTransmissionSender extends AbstractTransmissionSender implements IPeerCommunicatorListener {
 
@@ -31,14 +32,24 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 
 	public EndpointDataTransmissionSender(IPeerCommunicator communicator, String destinationPeer, String id) {
 		this.communicator = communicator;
-		this.communicator.addListener(this, OpenMessage.class);
-		this.communicator.addListener(this, CloseMessage.class);
 
 		if (!Strings.isNullOrEmpty(destinationPeer)) {
 			pids.add(toPeerID(destinationPeer));
 		}
 
 		idHash = id.hashCode();
+	}
+	
+	@Override
+	public void open() {
+		this.communicator.addListener(this, OpenMessage.class);
+		this.communicator.addListener(this, CloseMessage.class);
+	}
+	
+	@Override
+	public void close() {
+		this.communicator.removeListener(this, OpenMessage.class);
+		this.communicator.removeListener(this, CloseMessage.class);
 	}
 
 	@Override
@@ -74,19 +85,25 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		if (message instanceof OpenMessage) {
-			processOpenMessage(senderPeer, (OpenMessage)message);
+			processOpenMessage(senderPeer, (OpenMessage) message);
 		} else if (message instanceof CloseMessage) {
-			processCloseMessage(senderPeer, (CloseMessage)message);
+			processCloseMessage(senderPeer, (CloseMessage) message);
 		}
 	}
 
 	protected void processOpenMessage(PeerID senderPeer, OpenMessage message) {
 		if (message.getIdHash() == idHash) {
+			LOG.debug("Got open message from '{}'", P2PDictionary.getInstance().getRemotePeerName(senderPeer));
+
 			synchronized (pids) {
-				if (!pids.contains(senderPeer)) {
+				if( pids.size() == 1 && pids.contains(senderPeer)) {
+					LOG.debug("Call open event");
+					fireOpenEvent();
+				} else if (!pids.contains(senderPeer)) {
 					pids.add(senderPeer);
-					
+
 					if (pids.size() == 1) {
+						LOG.debug("Call open event");
 						fireOpenEvent();
 					}
 				}
@@ -98,11 +115,14 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 
 	protected void processCloseMessage(PeerID senderPeer, CloseMessage message) {
 		if (message.getIdHash() == idHash) {
+			LOG.debug("Got close message from '{}'", P2PDictionary.getInstance().getRemotePeerName(senderPeer));
+
 			synchronized (pids) {
-				if( pids.contains(senderPeer)) {
+				if (pids.contains(senderPeer)) {
 					pids.remove(senderPeer);
-					
-					if( pids.isEmpty() ) {
+
+					if (pids.isEmpty()) {
+						LOG.debug("Call close event");
 						fireCloseEvent();
 					}
 				}
@@ -111,11 +131,11 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 			trySend(senderPeer, new CloseAckMessage(idHash));
 		}
 	}
-	
+
 	protected final Collection<PeerID> getOpenedPeers() {
 		return pids;
 	}
-	
+
 	private void trySend(PeerID senderPeer, IMessage message) {
 		try {
 			communicator.send(senderPeer, message);
@@ -141,5 +161,5 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 			return null;
 		}
 	}
-	
+
 }

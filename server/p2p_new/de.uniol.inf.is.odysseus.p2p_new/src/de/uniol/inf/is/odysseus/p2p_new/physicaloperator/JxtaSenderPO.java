@@ -34,6 +34,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	public JxtaSenderPO(JxtaSenderAO ao) {
 		this.transmission = DataTransmissionManager.getInstance().registerTransmissionSender(ao.getPeerID(), ao.getPipeID());
 		this.transmission.addListener(this);
+		this.transmission.open();
 	}
 
 	public JxtaSenderPO(JxtaSenderPO<T> po) {
@@ -42,7 +43,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		this.dataHandler = po.dataHandler;
 		this.transmission = po.transmission;
 	}
-
+	
 	@Override
 	public AbstractSink<T> clone() {
 		return new JxtaSenderPO<T>(this);
@@ -137,5 +138,9 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		} catch (DataTransmissionException e) {
 			LOG.error("Could not send done message", e);
 		}
+	}
+	
+	public final ITransmissionSender getTransmission() {
+		return transmission;
 	}
 }

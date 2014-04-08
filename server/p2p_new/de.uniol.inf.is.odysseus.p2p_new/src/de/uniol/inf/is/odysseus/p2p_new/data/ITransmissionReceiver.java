@@ -7,4 +7,7 @@ public interface ITransmissionReceiver {
 	
 	public void sendOpen() throws DataTransmissionException;
 	public void sendClose() throws DataTransmissionException;
+	
+	public void open();
+	public void close();
 }

@@ -28,6 +28,8 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 	@Override
 	public void doJob() {
 		try {
+			LOG.debug("Retrying sending message of type '{}'", message.getClass().getName());
+			
 			communicator.send(peerID, message);
 		} catch (PeerCommunicationException e) {
 			LOG.error("Could not repeatedly send message");

@@ -11,4 +11,6 @@ public interface ITransmissionSender {
 	public void addListener( ITransmissionSenderListener listener );
 	public void removeListener( ITransmissionSenderListener listener );
 
+	public void open();
+	public void close();
 }
