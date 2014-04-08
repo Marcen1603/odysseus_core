@@ -1,12 +1,9 @@
-package de.uniol.inf.is.odysseus.p2p_new.communication;
+package de.uniol.inf.is.odysseus.p2p_new;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.jxta.peer.PeerID;
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
 public class RepeatingMessageSend extends RepeatingJobThread {

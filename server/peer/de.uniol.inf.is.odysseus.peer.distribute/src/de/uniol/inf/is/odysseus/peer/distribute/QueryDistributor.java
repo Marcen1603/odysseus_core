@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -34,6 +35,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
@@ -42,6 +44,7 @@ import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.adv.QueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.adv.QueryPartManager;
 import de.uniol.inf.is.odysseus.peer.distribute.message.AddQueryPartMessage;
+import de.uniol.inf.is.odysseus.peer.distribute.message.QueryPartAddAckMessage;
 import de.uniol.inf.is.odysseus.peer.distribute.util.IOperatorGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.util.InterfaceParametersPair;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LoggingHelper;
@@ -58,6 +61,10 @@ public class QueryDistributor implements IQueryDistributor, IPeerCommunicatorLis
 	private static IP2PDictionary p2pDictionary;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
+
+	private static int queryPartIDCounter = 0;
+	private static Map<Integer, RepeatingMessageSend> senderMap = Maps.newConcurrentMap();
+	private static Collection<Integer> processQueryPartIDs = Lists.newLinkedList();
 
 	// called by OSGi-DS
 	public static void bindPQLGenerator(IPQLGenerator serv) {
@@ -111,16 +118,21 @@ public class QueryDistributor implements IQueryDistributor, IPeerCommunicatorLis
 	// called by OSGi-DS
 	public void bindPeerCommunicator(IPeerCommunicator serv) {
 		peerCommunicator = serv;
-		
+
 		peerCommunicator.registerMessageType(AddQueryPartMessage.class);
+		peerCommunicator.registerMessageType(QueryPartAddAckMessage.class);
 		peerCommunicator.addListener(this, AddQueryPartMessage.class);
+		peerCommunicator.addListener(this, QueryPartAddAckMessage.class);
 	}
 
 	// called by OSGi-DS
 	public void unbindPeerCommunicator(IPeerCommunicator serv) {
 		if (peerCommunicator == serv) {
+			peerCommunicator.removeListener(this, AddQueryPartMessage.class);
+			peerCommunicator.removeListener(this, QueryPartAddAckMessage.class);
 			peerCommunicator.unregisterMessageType(AddQueryPartMessage.class);
-			
+			peerCommunicator.unregisterMessageType(QueryPartAddAckMessage.class);
+
 			peerCommunicator = null;
 		}
 	}
@@ -213,7 +225,7 @@ public class QueryDistributor implements IQueryDistributor, IPeerCommunicatorLis
 							accessAO.unsubscribeSink(subscription);
 							receiverOperator.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(), 0, subscription.getSchema());
 						}
-						
+
 						queryPart.addOperator(receiverOperator);
 						queryPart.removeOperator(accessAO);
 					}
@@ -231,7 +243,8 @@ public class QueryDistributor implements IQueryDistributor, IPeerCommunicatorLis
 		return copiedQueries;
 	}
 
-	private static void callExecutorToAddLocalQueries(ILogicalQuery query, ID sharedQueryID, IServerExecutor serverExecutor, ISession caller, QueryBuildConfiguration config) throws QueryDistributionException {
+	private static void callExecutorToAddLocalQueries(ILogicalQuery query, ID sharedQueryID, IServerExecutor serverExecutor, ISession caller, QueryBuildConfiguration config)
+			throws QueryDistributionException {
 		try {
 			int queryID = serverExecutor.addQuery(query.getLogicalPlan(), caller, config.getName());
 
@@ -247,7 +260,7 @@ public class QueryDistributor implements IQueryDistributor, IPeerCommunicatorLis
 
 			private PipeID pipeID;
 			private ILogicalOperator sourceOp;
-			
+
 			private ILogicalQueryPart sourceQueryPart;
 			private ILogicalQueryPart sinkQueryPart;
 
@@ -257,7 +270,7 @@ public class QueryDistributor implements IQueryDistributor, IPeerCommunicatorLis
 
 				pipeID = IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID());
 				sourceOp = sourceOperator;
-				
+
 				this.sourceQueryPart = sourceQueryPart;
 				this.sinkQueryPart = sinkQueryPart;
 			}
@@ -298,15 +311,14 @@ public class QueryDistributor implements IQueryDistributor, IPeerCommunicatorLis
 				LOG.debug("Query part {} stays local", part);
 
 			} else {
-				try {
-					AddQueryPartMessage msg = new AddQueryPartMessage(sharedQueryID, LogicalQueryHelper.generatePQLStatementFromQueryPart(part), parameters.getName());
-					peerCommunicator.send(peerID, msg);
-					
-					LOG.debug("Sent query part {} to peerID {}", part, peerID);
-					LOG.debug("PQL-Query of query part {} is\n{}", part, msg.getPqlStatement());
-				} catch (PeerCommunicationException e) {
-					LOG.error("Could not send AddQueryPartMessage", e);
-				}
+				AddQueryPartMessage msg = new AddQueryPartMessage(sharedQueryID, LogicalQueryHelper.generatePQLStatementFromQueryPart(part), parameters.getName(), queryPartIDCounter++);
+
+				RepeatingMessageSend msgSender = new RepeatingMessageSend(peerCommunicator, msg, peerID);
+				senderMap.put(msg.getQueryPartID(), msgSender);
+				msgSender.start();
+
+				LOG.debug("Sent query part {} to peerID {}", part, peerID);
+				LOG.debug("PQL-Query of query part {} is\n{}", part, msg.getPqlStatement());
 			}
 		}
 		return localParts;
@@ -314,10 +326,30 @@ public class QueryDistributor implements IQueryDistributor, IPeerCommunicatorLis
 
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
-		LOG.debug("Received AddQueryPartMessage");
+		if( message instanceof AddQueryPartMessage ) {
+			LOG.debug("Received AddQueryPartMessage");
+	
+			AddQueryPartMessage addQueryPartMessage = (AddQueryPartMessage) message;
+			
+			if( !processQueryPartIDs.contains(addQueryPartMessage.getQueryPartID())) {
+				processQueryPartIDs.add(addQueryPartMessage.getQueryPartID());
+				
+				QueryPartAddAckMessage ackMessage = new QueryPartAddAckMessage(addQueryPartMessage);
+				try {
+					communicator.send(senderPeer, ackMessage);
+				} catch (PeerCommunicationException e) {
+					LOG.debug("Send query part add ack message failed", e);
+				}
 		
-		AddQueryPartMessage addQueryPartMessage = (AddQueryPartMessage)message;
-		QueryPartManager.getInstance().addQueryPart(addQueryPartMessage);
+				QueryPartManager.getInstance().addQueryPart(addQueryPartMessage);
+			}
+		} else if( message instanceof QueryPartAddAckMessage ) {
+			QueryPartAddAckMessage ackMessage = (QueryPartAddAckMessage)message;
+			
+			RepeatingMessageSend sender = senderMap.get(ackMessage.getQueryPartID());
+			sender.stopRunning();
+			senderMap.remove(ackMessage.getQueryPartID());
+		}
 	}
 
 	private static ILogicalQuery buildLocalQuery(Collection<ILogicalQueryPart> localQueryParts) {

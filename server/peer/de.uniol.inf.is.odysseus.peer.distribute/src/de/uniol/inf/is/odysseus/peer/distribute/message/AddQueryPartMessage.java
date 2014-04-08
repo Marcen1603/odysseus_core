@@ -18,15 +18,17 @@ public class AddQueryPartMessage implements IMessage {
 	private String pqlStatement;
 	private ID sharedQueryID;
 	private String transCfgName;
+	private int queryPartID;
 	
 	public AddQueryPartMessage() {
 		
 	}
 	
-	public AddQueryPartMessage( ID sharedQueryID, String pqlStatement, String transCfgName ) {
+	public AddQueryPartMessage( ID sharedQueryID, String pqlStatement, String transCfgName, int queryPartID ) {
 		this.pqlStatement = pqlStatement;
 		this.sharedQueryID = sharedQueryID;
 		this.transCfgName = transCfgName;
+		this.queryPartID = queryPartID;
 	}
 	
 	@Override
@@ -35,8 +37,9 @@ public class AddQueryPartMessage implements IMessage {
 		byte[] sharedQueryIDBytes = sharedQueryID.toString().getBytes();
 		byte[] transCfgNameBytes = transCfgName.getBytes();
 		
-		ByteBuffer bb = ByteBuffer.allocate( 4 + pqlStatementBytes.length + 4 + sharedQueryIDBytes.length + 4 + transCfgNameBytes.length );
+		ByteBuffer bb = ByteBuffer.allocate( 4 + 4 + pqlStatementBytes.length + 4 + sharedQueryIDBytes.length + 4 + transCfgNameBytes.length );
 		
+		bb.putInt(queryPartID);
 		bb.putInt(pqlStatementBytes.length);
 		bb.putInt(sharedQueryIDBytes.length);
 		bb.putInt(transCfgNameBytes.length);
@@ -54,6 +57,7 @@ public class AddQueryPartMessage implements IMessage {
 	public void fromBytes(byte[] data) {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		
+		queryPartID = bb.getInt();
 		int pqlStatementLength = bb.getInt();
 		int sharedQueryIDLength = bb.getInt();
 		int transCfgNameLength = bb.getInt();
@@ -91,5 +95,9 @@ public class AddQueryPartMessage implements IMessage {
 	
 	public String getTransCfgName() {
 		return transCfgName;
+	}
+	
+	public int getQueryPartID() {
+		return queryPartID;
 	}
 }
