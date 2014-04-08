@@ -18,15 +18,12 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.p2p_new.data.AbstractTransmissionSender;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
-import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSender;
-import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSenderListener;
 
-public class EndpointDataTransmissionSender implements ITransmissionSender, IPeerCommunicatorListener {
+public class EndpointDataTransmissionSender extends AbstractTransmissionSender implements IPeerCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EndpointDataTransmissionSender.class);
-
-	private final Collection<ITransmissionSenderListener> listeners = Lists.newArrayList();
 
 	private final Collection<PeerID> pid = Lists.newLinkedList();
 	private final int idHash;
@@ -118,44 +115,6 @@ public class EndpointDataTransmissionSender implements ITransmissionSender, IPee
 		} catch (URISyntaxException | ClassCastException ex) {
 			LOG.error("Could not set id", ex);
 			return null;
-		}
-	}
-
-	@Override
-	public void addListener(ITransmissionSenderListener listener) {
-		synchronized (listeners) {
-			listeners.add(listener);
-		}
-	}
-
-	@Override
-	public void removeListener(ITransmissionSenderListener listener) {
-		synchronized (listener) {
-			listeners.remove(listener);
-		}
-	}
-
-	private void fireOpenEvent() {
-		synchronized (listeners) {
-			for (ITransmissionSenderListener listener : listeners) {
-				try {
-					listener.onReceiveOpen(this);
-				} catch (Throwable t) {
-					LOG.error("Exeption in transmission listener during open", t);
-				}
-			}
-		}
-	}
-
-	private void fireCloseEvent() {
-		synchronized (listeners) {
-			for (ITransmissionSenderListener listener : listeners) {
-				try {
-					listener.onReceiveClose(this);
-				} catch (Throwable t) {
-					LOG.error("Exeption in transmission listener during close", t);
-				}
-			}
 		}
 	}
 }
