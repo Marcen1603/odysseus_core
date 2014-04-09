@@ -76,16 +76,20 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 			if (msg.getIdHash() == idHash) {
 				LOG.debug("Got open ack from '{}'", P2PDictionary.getInstance().getRemotePeerName(senderPeer));
 
-				openRepeater.stopRunning();
-				openRepeater = null;
+				if( openRepeater != null ) {
+					openRepeater.stopRunning();
+					openRepeater = null;
+				}
 			}
 		} else if (message instanceof CloseAckMessage) {
 			CloseAckMessage msg = (CloseAckMessage) message;
 			if (msg.getIdHash() == idHash) {
 				LOG.debug("Got close ack from '{}'", P2PDictionary.getInstance().getRemotePeerName(senderPeer));
 
-				closeRepeater.stopRunning();
-				closeRepeater = null;
+				if( closeRepeater != null ) {
+					closeRepeater.stopRunning();
+					closeRepeater = null;
+				}
 			}
 		}
 	}
