@@ -75,6 +75,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private final RemoveSourceAdvertisementCollector removeSourceAdvCollector = new RemoveSourceAdvertisementCollector();
 	private final SourceAdvertisementCollector sourceAdvCollector = new SourceAdvertisementCollector();
+	private final Map<PeerID, String> remotePeerNameMap = Maps.newHashMap();
 
 	// called by OSGi-DS
 	public void bindListener(IP2PDictionaryListener serv) {
@@ -536,7 +537,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private static final Map<PeerAdvertisement, Long> toFlushMap = Maps.newConcurrentMap();
 
-	private static Collection<PeerID> toPeerIDs(Collection<PeerAdvertisement> peerAdvs) {
+	private Collection<PeerID> toPeerIDs(Collection<PeerAdvertisement> peerAdvs) {
 		Collection<PeerID> ids = Lists.newLinkedList();
 		for (PeerAdvertisement adv : peerAdvs) {
 			if (!P2PNetworkManager.getInstance().getLocalPeerID().equals(adv.getPeerID())) {
@@ -546,6 +547,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 					toFlushMap.remove(adv);
 
 				} else {
+					remotePeerNameMap.remove(adv.getPeerID());
+					
 					if (!toFlushMap.containsKey(adv)) {
 						toFlushMap.put(adv, System.currentTimeMillis());
 					} else {
@@ -569,12 +572,18 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		if (peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
 			return P2PNetworkManager.getInstance().getLocalPeerName();
 		}
+		if( remotePeerNameMap.containsKey(peerID)) {
+			return remotePeerNameMap.get(peerID);
+		}
+		
 		Collection<PeerAdvertisement> peerAdvs = JxtaServicesProvider.getInstance().getPeerAdvertisements();
 		for (PeerAdvertisement peerAdv : peerAdvs) {
 			if (peerAdv.getPeerID().equals(peerID)) {
+				remotePeerNameMap.put(peerID, peerAdv.getName());
 				return peerAdv.getName();
 			}
 		}
+		
 		return UNKNOWN_PEER_NAME;
 	}
 
