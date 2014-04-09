@@ -39,8 +39,6 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
-import de.uniol.inf.is.odysseus.p2p_new.communication.PeerCloseAckMessage;
-import de.uniol.inf.is.odysseus.p2p_new.communication.PeerCloseMessage;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 
 public class JxtaServicesProvider implements IJxtaServicesProvider, IPeerCommunicatorListener {

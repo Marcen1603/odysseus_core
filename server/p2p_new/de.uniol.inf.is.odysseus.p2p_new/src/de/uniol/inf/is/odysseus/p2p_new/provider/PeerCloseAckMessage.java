@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.communication;
+package de.uniol.inf.is.odysseus.p2p_new.provider;
 
 import de.uniol.inf.is.odysseus.p2p_new.EmptyMessage;
 
