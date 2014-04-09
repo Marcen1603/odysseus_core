@@ -152,6 +152,11 @@ public class StandardExecutor extends AbstractExecutor implements
 	}
 
 	public void deactivate() {
+		// Remove all queries
+		LOG.debug("Removing all queries before shutdown");
+		// TODO: What if queries are stored persistently?
+		this.removeAllQueries(UserManagementProvider.getSessionmanagement()
+				.loginSuperUser(null));
 		instance = null;
 	}
 
@@ -265,7 +270,7 @@ public class StandardExecutor extends AbstractExecutor implements
 				queries.add(((CreateQueryCommand) cmd).getQuery());
 			}
 		}
-		
+
 		executePreTransformationHandlers(user, parameters, queries, context);
 
 		// Distribution handler only for queries
@@ -287,25 +292,36 @@ public class StandardExecutor extends AbstractExecutor implements
 		return commands;
 	}
 
-	private void executePreTransformationHandlers(ISession user, QueryBuildConfiguration parameters, List<ILogicalQuery> queries, Context context) throws QueryParseException {
-		PreTransformationHandlerParameter preTransformationHandlerParameter = parameters.get(PreTransformationHandlerParameter.class);
-		if (preTransformationHandlerParameter != null && preTransformationHandlerParameter.hasPairs()) {
-			List<PreTransformationHandlerParameter.Pair> pairs = preTransformationHandlerParameter.getPairs();
+	private void executePreTransformationHandlers(ISession user,
+			QueryBuildConfiguration parameters, List<ILogicalQuery> queries,
+			Context context) throws QueryParseException {
+		PreTransformationHandlerParameter preTransformationHandlerParameter = parameters
+				.get(PreTransformationHandlerParameter.class);
+		if (preTransformationHandlerParameter != null
+				&& preTransformationHandlerParameter.hasPairs()) {
+			List<PreTransformationHandlerParameter.Pair> pairs = preTransformationHandlerParameter
+					.getPairs();
 
-			for( ILogicalQuery query : queries ) {
+			for (ILogicalQuery query : queries) {
 				for (PreTransformationHandlerParameter.Pair pair : pairs) {
 					String handlerName = pair.name;
 					List<String> handlerParameters = pair.parameters;
-					
+
 					try {
 						IPreTransformationHandler handler = getPreTransformationHandler(handlerName);
 						try {
-							handler.preTransform(this, user, query, parameters, handlerParameters, context);
-						} catch( Throwable t ) {
-							throw new QueryParseException("PreTransformationHandler called '" + handlerName + "' throwed an exception", t);
+							handler.preTransform(this, user, query, parameters,
+									handlerParameters, context);
+						} catch (Throwable t) {
+							throw new QueryParseException(
+									"PreTransformationHandler called '"
+											+ handlerName
+											+ "' throwed an exception", t);
 						}
 					} catch (InstantiationException | IllegalAccessException e) {
-						throw new QueryParseException("Could not use preTransformationHandler '" + handlerName + "'", e);
+						throw new QueryParseException(
+								"Could not use preTransformationHandler '"
+										+ handlerName + "'", e);
 					}
 				}
 			}
@@ -359,7 +375,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			getQueryDistributor().distribute(this, caller, queries, parameters);
 			return Lists.newArrayList();
 		}
-		
+
 		return queries;
 	}
 
@@ -875,21 +891,24 @@ public class StandardExecutor extends AbstractExecutor implements
 				if (queryToRemove.getLogicalQuery() != null) {
 					queryBuildParameter.remove(queryToRemove.getLogicalQuery());
 				}
-				getDataDictionary(caller).removeClosedSources();
-				getDataDictionary(caller).removeClosedSinks();
+				if (getDataDictionary(caller) != null) {
+					getDataDictionary(caller).removeClosedSources();
+					getDataDictionary(caller).removeClosedSinks();
+				}
 				LOG.info("Query " + queryToRemove.getID() + " removed.");
 				firePlanModificationEvent(new QueryPlanModificationEvent(this,
 						PlanModificationEventType.QUERY_REMOVE, queryToRemove));
 				if (queryToRemove.getLogicalQuery() != null) {
-					getDataDictionary(caller).removeQuery(
-							queryToRemove.getLogicalQuery(), caller);
-					this.reloadLog.removeQuery(queryToRemove.getLogicalQuery()
-							.getQueryText());
+					if (getDataDictionary(caller) != null) {
+						getDataDictionary(caller).removeQuery(
+								queryToRemove.getLogicalQuery(), caller);
+						this.reloadLog.removeQuery(queryToRemove
+								.getLogicalQuery().getQueryText());
+					}
 				}
 			} catch (Exception e) {
-				LOG.warn("Query not removed. An Error while optimizing occurd (ID: "
+				LOG.warn("Query not removed. An Error while removing occurd (ID: "
 						+ queryID + ").");
-				e.printStackTrace();
 				throw new PlanManagementException(e);
 			} finally {
 				executionPlanLock.unlock();
@@ -1065,9 +1084,6 @@ public class StandardExecutor extends AbstractExecutor implements
 					firePlanModificationEvent(new QueryPlanModificationEvent(
 							this, PlanModificationEventType.QUERY_STOP,
 							queryToStop));
-				} else {
-					throw new RuntimeException(
-							"Scheduler not running. Query cannot be stopped");
 				}
 			} catch (Exception e) {
 				LOG.warn("Query not stopped. An Error while optimizing occurd (ID: "
@@ -1503,6 +1519,5 @@ public class StandardExecutor extends AbstractExecutor implements
 	public boolean containsStoredProcedures(String name, ISession caller) {
 		return getDataDictionary(caller).containsStoredProcedure(name, caller);
 	}
-	
 
 }

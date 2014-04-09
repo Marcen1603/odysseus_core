@@ -158,7 +158,9 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 										}
 									}
 								} catch (InterruptedException e) {
-									e.printStackTrace();
+									if (logger.isTraceEnabled()) {
+										logger.trace("Scheduler interrupted",e);
+									}
 								}
 							}
 							transfer(s);
