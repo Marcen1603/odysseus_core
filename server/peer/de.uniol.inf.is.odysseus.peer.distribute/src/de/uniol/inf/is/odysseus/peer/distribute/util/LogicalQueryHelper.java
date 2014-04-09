@@ -152,12 +152,12 @@ public final class LogicalQueryHelper {
 				ILogicalOperator streamPlan = serverExecutor.getDataDictionary(PeerDistributePlugIn.getActiveSession().getTenant()).getStreamForTransformation(((StreamAO) operator).getStreamname(), PeerDistributePlugIn.getActiveSession());
 
 				ILogicalOperator streamPlanCopy = copyLogicalPlan(streamPlan);
+				operatorsToRemove.add(operator);
+				operatorsToAdd.addAll(getAllOperators(streamPlanCopy));
 
 				setDestinationNames(operator, streamPlanCopy);
 				replaceWithSubplan(operator, streamPlanCopy);
 
-				operatorsToRemove.add(operator);
-				operatorsToAdd.add(streamPlanCopy);
 			}
 		}
 
