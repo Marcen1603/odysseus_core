@@ -27,7 +27,6 @@
    <reference bind="bindAdmissionControl" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl" name="IAdmissionControl" policy="dynamic" unbind="unbindAdmissionControl"/>
    <reference bind="bindUserManagement" cardinality="1..n" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement" name="IUserManagement" policy="dynamic" unbind="unbindUserManagement"/>
    <reference bind="bindAdmissionQuerySelector" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.server.ac.IAdmissionQuerySelector" name="IAdmissionQuerySelector" policy="static" unbind="unbindAdmissionQuerySelector"/>
-   <reference bind="bindLogicalQueryDistributor" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor" name="ILogicalQueryDistributor" policy="dynamic" unbind="unbindLogicalQueryDistributor"/>
    <reference bind="bindPlanAdaption" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionEngine" name="IPlanAdaptionEngine" policy="dynamic" unbind="unbindPlanAdaption"/>
    <reference bind="bindDataFragmentation" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation" name="IDataFragmentation" policy="dynamic" unbind="unbindDataFragmentation"/>
    <reference bind="bindQueryDistributor" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.server.distribution.IQueryDistributor" name="IQueryDistributor" policy="static" unbind="unbindQueryDistributor"/>
