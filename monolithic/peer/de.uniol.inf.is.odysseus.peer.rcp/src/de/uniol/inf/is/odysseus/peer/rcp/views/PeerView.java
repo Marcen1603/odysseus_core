@@ -522,9 +522,6 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				synchronized (usageMap) {
-					usageMap.clear();
-				}
 				IPeerResourceUsageManager usageManager = RCPP2PNewPlugIn.getPeerResourceUsageManager();
 				Collection<PeerID> foundPeerIDsCopy = null;
 				synchronized (foundPeerIDs) {
@@ -544,10 +541,14 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 					}
 				}
 				
-				if( RCPP2PNewPlugIn.getP2PNetworkManager() != null && usageManager != null) {
-					usageMap.put(RCPP2PNewPlugIn.getP2PNetworkManager().getLocalPeerID(), usageManager.getLocalResourceUsage());
+				synchronized( usageMap ) {
+					for( PeerID pid : usageMap.keySet().toArray(new PeerID[0])) {
+						if( !foundPeerIDsCopy.contains(pid)) {
+							usageMap.remove(pid);
+						}
+					}
 				}
-
+				
 				refreshTableAsync();
 			}
 		});
