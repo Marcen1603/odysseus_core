@@ -61,6 +61,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 
 	private TableViewer peersTable;
 	private RepeatingJobThread refresher;
+	private Boolean refreshing = false;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -519,37 +520,50 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	}
 
 	public void refreshUsagesAsync() {
+		synchronized( refreshing ) {
+			if( refreshing ) {
+				return;
+			}
+			refreshing = true;
+		}
+		
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				IPeerResourceUsageManager usageManager = RCPP2PNewPlugIn.getPeerResourceUsageManager();
-				Collection<PeerID> foundPeerIDsCopy = null;
-				synchronized (foundPeerIDs) {
-					foundPeerIDsCopy = Lists.newArrayList(foundPeerIDs);
-				}
-				for (PeerID remotePeerID : foundPeerIDsCopy) {
-					Future<Optional<IResourceUsage>> futureUsage = usageManager.getRemoteResourceUsage(remotePeerID);
-					try {
-						Optional<IResourceUsage> optResourceUsage = futureUsage.get();
-						if (optResourceUsage.isPresent()) {
-							synchronized (usageMap) {
-								usageMap.put(remotePeerID, optResourceUsage.get());
+				try { 
+					IPeerResourceUsageManager usageManager = RCPP2PNewPlugIn.getPeerResourceUsageManager();
+					Collection<PeerID> foundPeerIDsCopy = null;
+					synchronized (foundPeerIDs) {
+						foundPeerIDsCopy = Lists.newArrayList(foundPeerIDs);
+					}
+					for (PeerID remotePeerID : foundPeerIDsCopy) {
+						Future<Optional<IResourceUsage>> futureUsage = usageManager.getRemoteResourceUsage(remotePeerID);
+						try {
+							Optional<IResourceUsage> optResourceUsage = futureUsage.get();
+							if (optResourceUsage.isPresent()) {
+								synchronized (usageMap) {
+									usageMap.put(remotePeerID, optResourceUsage.get());
+								}
+							}
+						} catch (InterruptedException | ExecutionException e) {
+							LOG.error("Could not get resource usage", e);
+						}
+					}
+					
+					synchronized( usageMap ) {
+						for( PeerID pid : usageMap.keySet().toArray(new PeerID[0])) {
+							if( !foundPeerIDsCopy.contains(pid)) {
+								usageMap.remove(pid);
 							}
 						}
-					} catch (InterruptedException | ExecutionException e) {
-						LOG.error("Could not get resource usage", e);
+					}
+					
+					refreshTableAsync();
+				} finally {
+					synchronized( refreshing ) {
+						refreshing = false;
 					}
 				}
-				
-				synchronized( usageMap ) {
-					for( PeerID pid : usageMap.keySet().toArray(new PeerID[0])) {
-						if( !foundPeerIDsCopy.contains(pid)) {
-							usageMap.remove(pid);
-						}
-					}
-				}
-				
-				refreshTableAsync();
 			}
 		});
 
