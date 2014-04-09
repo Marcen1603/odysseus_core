@@ -45,7 +45,7 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 			}
 			
 		} catch (PeerCommunicationException e) {
-			LOG.error("Could not repeatedly send message");
+			LOG.error("Could not repeatedly send message of type {}", message.getClass().getName(), e);
 			stopRunning();
 		}
 	}
