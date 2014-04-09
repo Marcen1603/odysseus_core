@@ -904,11 +904,13 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			if (adv instanceof SourceAdvertisement) {
 				SourceAdvertisement srcAdv = (SourceAdvertisement) adv;
 				tryAutoImportSource(srcAdv);
+				processedAdvIDs.add(adv.getID());
 			} else if (adv instanceof MultipleSourceAdvertisement) {
 				MultipleSourceAdvertisement multSrcAdv = (MultipleSourceAdvertisement) adv;
 				for (SourceAdvertisement srcAdv : multSrcAdv.getSourceAdvertisements()) {
 					tryAutoImportSource(srcAdv);
 				}
+				processedAdvIDs.add(adv.getID());
 			}
 		}
 	}
