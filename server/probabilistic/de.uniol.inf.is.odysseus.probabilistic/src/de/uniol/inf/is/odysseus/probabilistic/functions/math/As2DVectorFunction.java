@@ -36,7 +36,7 @@ public class As2DVectorFunction extends AbstractProbabilisticFunction<IMultivari
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE }, { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE } };
 
     public As2DVectorFunction() {
-        super("as2DVector", 1, As2DVectorFunction.ACC_TYPES, SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_DOUBLE);
+        super("as2DVector", 2, As2DVectorFunction.ACC_TYPES, SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_DOUBLE);
     }
 
     /*

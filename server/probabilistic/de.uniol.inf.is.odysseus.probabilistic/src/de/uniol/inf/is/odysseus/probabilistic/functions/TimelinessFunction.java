@@ -47,6 +47,6 @@ public class TimelinessFunction extends AbstractFunction<Double> {
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = { SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
+    public static final SDFDatatype[][] ACC_TYPES = { SDFDatatype.NUMBERS };
 
 }

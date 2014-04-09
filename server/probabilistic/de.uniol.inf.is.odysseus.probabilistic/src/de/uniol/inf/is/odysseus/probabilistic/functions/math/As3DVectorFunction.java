@@ -37,7 +37,7 @@ public class As3DVectorFunction extends AbstractProbabilisticFunction<IMultivari
             { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE } };
 
     public As3DVectorFunction() {
-        super("as3DVector", 2, As3DVectorFunction.ACC_TYPES, SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_DOUBLE);
+        super("as3DVector", 3, As3DVectorFunction.ACC_TYPES, SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_DOUBLE);
     }
 
     /*
