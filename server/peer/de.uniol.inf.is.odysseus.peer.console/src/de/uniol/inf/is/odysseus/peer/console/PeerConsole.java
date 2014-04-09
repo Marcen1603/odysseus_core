@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.console.OdysseusConsole;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
@@ -871,7 +872,18 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		String parameters = splitted.length > 1 ? splitted[1] : null;
 		LOG.debug("Got command message: " + command);
 		try {
-			Method m = getClass().getMethod("_" + command, CommandInterpreter.class);
+			Method m = null;
+			
+			try {
+				m = getClass().getMethod("_" + command, CommandInterpreter.class);
+			} catch ( NoSuchMethodException e ) {
+				try {
+					m = OdysseusConsole.class.getMethod("_" + command, CommandInterpreter.class);
+				} catch (NoSuchMethodException e1) {
+					LOG.debug("Could not execute remote command", e);
+					return;
+				}
+			}
 			CommandInterpreter delegateCi = new DelegateCommandInterpreter(parameters != null ? parameters.split("\\ ") : new String[0]);
 
 			PrintStream oldOut = System.out;
@@ -892,7 +904,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 				LOG.debug("Could not send console output", e);
 			}
 
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
 			LOG.debug("Could not execute remote command", e);
 		}
 	}

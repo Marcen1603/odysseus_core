@@ -7,6 +7,7 @@ Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Service-Component: OSGI-INF/PeerConsole.xml
 Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.server.console,
  de.uniol.inf.is.odysseus.core.usermanagement,
  de.uniol.inf.is.odysseus.peer.logging,
  de.uniol.inf.is.odysseus.peer.ping,
