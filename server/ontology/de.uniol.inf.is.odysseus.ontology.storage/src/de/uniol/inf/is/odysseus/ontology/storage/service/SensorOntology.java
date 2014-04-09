@@ -39,6 +39,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.ontology.common.model.FeatureOfInterest;
 import de.uniol.inf.is.odysseus.ontology.common.model.Property;
 import de.uniol.inf.is.odysseus.ontology.common.model.SensingDevice;
@@ -244,7 +245,8 @@ public class SensorOntology {
 
     private OntModel getModel() throws IOException {
         if (this.model == null) {
-            final File root = new File(this.STORE);
+            String home = OdysseusConfiguration.getHomeDir();
+            final File root = new File(home, this.STORE);
             if (!root.exists()) {
                 this.createModel(root);
             }
@@ -257,11 +259,6 @@ public class SensorOntology {
 
             final Model base = maker.openModel(this.MODEL, false);
             this.model = ModelFactory.createOntologyModel(ontModelSpec, base);
-            //
-            // final ModelMaker maker = ModelFactory.createFileModelMaker(root
-            // .getAbsolutePath());
-            //
-            // this.dataModel = maker.openModel(this.MODEL, false);
 
             this.model.setNsPrefix("ssn", SSN.getURI());
             this.model.setNsPrefix("xsd", XSD.getURI());
