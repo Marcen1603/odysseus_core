@@ -108,7 +108,7 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
     /** {@inheritDoc} */
     @Override
     public double density(final double[] a) {
-        double p = 0;
+        double p = 0.0;
         for (int i = 0; i < this.getDimension(); i++) {
             if (!this.support[i].contains(a[i])) {
                 return 0.0;
@@ -117,7 +117,7 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
         for (int i = 0; i < this.weight.length; i++) {
             p += this.weight[i] * this.distribution[i].density(a);
         }
-        return p;
+        return p * scale;
     }
 
     /** {@inheritDoc} */
@@ -179,8 +179,10 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
     @Override
     public double[] getMean() {
         final double[] mean = new double[this.getDimension()];
-        for (int i = 0; i < this.weight.length; i++) {
-            mean[i] += this.weight[i] * this.distribution[i].getMean()[i];
+        for (int i = 0; i < this.getDimension(); i++) {
+            for (int j = 0; j < this.weight.length; j++) {
+                mean[i] += this.weight[j] * this.distribution[j].getMean()[i];
+            }
         }
         return mean;
     }
@@ -190,7 +192,7 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
      */
     @Override
     public double[][] getVariance() {
-        // FIXME  20140319 christian@kuka.cc I'm sure this is totally wrong
+        // FIXME 20140319 christian@kuka.cc I'm sure this is totally wrong
         RealMatrix variance = new Array2DRowRealMatrix(new double[this.getDimension()][this.getDimension()]);
         for (int i = 0; i < this.weight.length; i++) {
             variance = variance.add(new Array2DRowRealMatrix(this.distribution[i].getVariance()).scalarMultiply(this.weight[i]));

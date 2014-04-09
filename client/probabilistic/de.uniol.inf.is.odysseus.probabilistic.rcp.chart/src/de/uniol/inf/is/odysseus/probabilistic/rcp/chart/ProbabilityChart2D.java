@@ -36,7 +36,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
-import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.rcp.chart.datatype.ProbabilisticViewSchema;
@@ -473,20 +472,15 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
         dimension = d;
 
         final MultivariateMixtureDistribution distribution = mixture;
-        final Interval[] interval = mixture.getSupport();
-        final double scale = mixture.getScale();
 
         final Function2D function = new Function2D() {
 
             @Override
             public double getValue(final double x) {
-                if (!interval[dimension].contains(x)) {
-                    return 0.0;
-                }
                 final double[] values = new double[mixture.getDimension()];
                 values[dimension] = x;
                 final double density = distribution.density(values);
-                return density * scale;
+                return density ;
             }
         };
         @SuppressWarnings("unchecked")
