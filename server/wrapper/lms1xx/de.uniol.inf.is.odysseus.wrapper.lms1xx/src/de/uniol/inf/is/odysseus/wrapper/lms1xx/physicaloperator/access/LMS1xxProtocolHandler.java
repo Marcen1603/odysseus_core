@@ -84,6 +84,7 @@ public class LMS1xxProtocolHandler extends LineProtocolHandler<KeyValueObject<? 
     private final static String SCANNING_FREQUENCY_ATTRIBUTE = "SCANNINGFREQUENCY";
     private final static String MEASUREMENT_FREQUENCY_ATTRIBUTE = "MEASUREMENTFREQUENCY";
     private final static String POSITION_ATTRIBUTE = "POSITION";
+    private final static String POSITIONROTATIONTYPE_ATTRIBUTE = "POSITIONROTATIONTYPE";
     private final static String DISTANCE_8BIT_ATTRIBUTE = "DISTANCE8BIT";
     private final static String REMISSION_8BIT_ATTRIBUTE = "REMISSION8BIT";
     private final static String DISTANCE2_8BIT_ATTRIBUTE = "DISTANCE8BIT2";
@@ -505,7 +506,7 @@ public class LMS1xxProtocolHandler extends LineProtocolHandler<KeyValueObject<? 
 
         final int hasPosition = Integer.parseInt(data[pos++], 16);
         if (hasPosition == 1) {
-            final float[][] position = new float[3][3];
+            final double[][] position = new double[3][3];
             position[0][0] = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
             position[1][0] = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
             position[2][0] = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
@@ -582,8 +583,10 @@ public class LMS1xxProtocolHandler extends LineProtocolHandler<KeyValueObject<? 
         event.put(LMS1xxProtocolHandler.OUTPUT_STATUS_ATTRIBUTE, measurement.isOutputStatus());
         event.put(LMS1xxProtocolHandler.SCANNING_FREQUENCY_ATTRIBUTE, measurement.getScanningFrequency());
         event.put(LMS1xxProtocolHandler.MEASUREMENT_FREQUENCY_ATTRIBUTE, measurement.getMeasurementFrequency());
-        event.put(LMS1xxProtocolHandler.POSITION_ATTRIBUTE, measurement.getPosition());
-
+        if (measurement.getPosition() != null) {
+            event.put(LMS1xxProtocolHandler.POSITION_ATTRIBUTE, measurement.getPosition());
+            event.put(LMS1xxProtocolHandler.POSITIONROTATIONTYPE_ATTRIBUTE, measurement.getPositionRotationType());
+        }
         if (measurement.get8BitSamples() != null) {
             final double[][] distance8Bit = new double[measurement.get8BitSamples().length][2];
             final double[] remission8Bit = new double[measurement.get8BitSamples().length];

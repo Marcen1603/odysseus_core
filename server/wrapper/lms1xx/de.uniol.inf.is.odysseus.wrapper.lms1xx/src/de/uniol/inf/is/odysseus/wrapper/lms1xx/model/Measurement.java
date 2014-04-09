@@ -53,7 +53,7 @@ public class Measurement {
     private Sample[] samples16Bit;
     private Sample[] samples8Bit;
 
-    private float[][] position;
+    private double[][] position;
     private int positionRotationType;
 
     /**
@@ -210,14 +210,14 @@ public class Measurement {
      * @param position
      *            the position to set
      */
-    public void setPosition(float[][] position) {
+    public void setPosition(double[][] position) {
         this.position = position;
     }
 
     /**
      * @return the position
      */
-    public float[][] getPosition() {
+    public double[][] getPosition() {
         return this.position;
     }
 
