@@ -71,11 +71,13 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private final Map<SourceAdvertisement, Integer> exportedSourcesQueryMap = Maps.newHashMap();
 	private final Map<SourceAdvertisement, JxtaSenderAO> exportedSenderMap = Maps.newHashMap();
 
-	private AutoExporter autoExporter;
-
 	private final RemoveSourceAdvertisementCollector removeSourceAdvCollector = new RemoveSourceAdvertisementCollector();
 	private final SourceAdvertisementCollector sourceAdvCollector = new SourceAdvertisementCollector();
 	private final Map<PeerID, String> remotePeerNameMap = Maps.newHashMap();
+
+	private AutoExporter autoExporter;
+	private boolean sourcesChanged = true;
+	private Collection<SourceAdvertisement> srcAdvs;
 
 	// called by OSGi-DS
 	public void bindListener(IP2PDictionaryListener serv) {
@@ -178,8 +180,12 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	@Override
 	public Collection<SourceAdvertisement> getSources() {
-		Collection<SourceAdvertisement> srcAdvs = collectSourceAdvertisements();
-		applyRemoveSourceAdvertisements(srcAdvs);
+		if (sourcesChanged) {
+			srcAdvs = collectSourceAdvertisements();
+			applyRemoveSourceAdvertisements(srcAdvs);
+
+			sourcesChanged = false;
+		}
 
 		return srcAdvs;
 	}
@@ -224,14 +230,19 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 		String realSourceName = removeUserFromName(sourceName);
 
-		Collection<SourceAdvertisement> srcAdvs = collectSourceAdvertisements();
+		if (sourcesChanged) {
+			srcAdvs = collectSourceAdvertisements();
+			applyRemoveSourceAdvertisements(srcAdvs);
+
+			sourcesChanged = false;
+		}
+
 		Collection<SourceAdvertisement> namedAdvs = Lists.newArrayList();
 		for (SourceAdvertisement srcAdv : srcAdvs) {
 			if (srcAdv.getName().equals(realSourceName)) {
 				namedAdvs.add(srcAdv);
 			}
 		}
-		applyRemoveSourceAdvertisements(namedAdvs);
 
 		return namedAdvs;
 	}
@@ -548,7 +559,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 				} else {
 					remotePeerNameMap.remove(adv.getPeerID());
-					
+
 					if (!toFlushMap.containsKey(adv)) {
 						toFlushMap.put(adv, System.currentTimeMillis());
 					} else {
@@ -572,10 +583,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		if (peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
 			return P2PNetworkManager.getInstance().getLocalPeerName();
 		}
-		if( remotePeerNameMap.containsKey(peerID)) {
+		if (remotePeerNameMap.containsKey(peerID)) {
 			return remotePeerNameMap.get(peerID);
 		}
-		
+
 		Collection<PeerAdvertisement> peerAdvs = JxtaServicesProvider.getInstance().getPeerAdvertisements();
 		for (PeerAdvertisement peerAdv : peerAdvs) {
 			if (peerAdv.getPeerID().equals(peerID)) {
@@ -583,7 +594,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 				return peerAdv.getName();
 			}
 		}
-		
+
 		return UNKNOWN_PEER_NAME;
 	}
 
@@ -801,7 +812,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private static void tryFlushAdvertisement(Advertisement srcAdvertisement) {
 		try {
-			if( JxtaServicesProvider.isActivated() ) {
+			if (JxtaServicesProvider.isActivated()) {
 				JxtaServicesProvider.getInstance().flushAdvertisement(srcAdvertisement);
 			}
 		} catch (IOException e) {
@@ -892,6 +903,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 				}
 			}
 			processedAdvIDs.add(adv.getID());
+			sourcesChanged = true;
 
 		} else if (adv instanceof RemoveMultipleSourceAdvertisement) {
 			RemoveMultipleSourceAdvertisement removeMultipleSrcAdvertisement = (RemoveMultipleSourceAdvertisement) adv;
@@ -907,20 +919,25 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			}
 
 			processedAdvIDs.add(adv.getID());
+			sourcesChanged = true;
 		}
 
-		if (isAutoImport()) {
-			if (adv instanceof SourceAdvertisement) {
+		if (adv instanceof SourceAdvertisement) {
+			if (isAutoImport()) {
 				SourceAdvertisement srcAdv = (SourceAdvertisement) adv;
 				tryAutoImportSource(srcAdv);
 				processedAdvIDs.add(adv.getID());
-			} else if (adv instanceof MultipleSourceAdvertisement) {
+			}
+			sourcesChanged = true;
+		} else if (adv instanceof MultipleSourceAdvertisement) {
+			if (isAutoImport()) {
 				MultipleSourceAdvertisement multSrcAdv = (MultipleSourceAdvertisement) adv;
 				for (SourceAdvertisement srcAdv : multSrcAdv.getSourceAdvertisements()) {
 					tryAutoImportSource(srcAdv);
 				}
 				processedAdvIDs.add(adv.getID());
 			}
+			sourcesChanged = true;
 		}
 	}
 
