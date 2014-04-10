@@ -16,14 +16,20 @@
 
 package de.uniol.inf.is.odysseus.p2p_new.util;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 public class RepeatingJobThread extends StoppableThread {
 
+	private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(20);
+	
 	private static final String DEFAULT_THREAD_NAME = "Repeating job";
 
 	private long executionIntervalMillis;
+	private String threadName;
 
 	private long lastExecutionTimestamp = 0;
 
@@ -41,8 +47,7 @@ public class RepeatingJobThread extends StoppableThread {
 
 		this.executionIntervalMillis = executionIntervalMillis;
 
-		setName(threadName);
-		setDaemon(true);
+		this.threadName = threadName;
 	}
 
 	public void afterJob() {
@@ -67,6 +72,10 @@ public class RepeatingJobThread extends StoppableThread {
 		}
 		afterJob();
 	}
+	
+	public final void start() {
+		EXECUTOR_SERVICE.execute(this);
+	}
 
 	protected final long getIntervalMillis() {
 		return executionIntervalMillis;
@@ -89,4 +98,7 @@ public class RepeatingJobThread extends StoppableThread {
 		}
 	}
 
+	protected String getThreadName() {
+		return threadName;
+	}
 }

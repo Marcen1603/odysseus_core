@@ -550,8 +550,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private Collection<PeerID> toPeerIDs(Collection<PeerAdvertisement> peerAdvs) {
 		Collection<PeerID> ids = Lists.newLinkedList();
+		PeerID localPeerID = P2PNetworkManager.getInstance().getLocalPeerID();
+		
 		for (PeerAdvertisement adv : peerAdvs) {
-			if (!P2PNetworkManager.getInstance().getLocalPeerID().equals(adv.getPeerID())) {
+			if (!localPeerID.equals(adv.getPeerID())) {
 				if (JxtaServicesProvider.getInstance().isReachable(adv.getPeerID())) {
 					ids.add(adv.getPeerID());
 

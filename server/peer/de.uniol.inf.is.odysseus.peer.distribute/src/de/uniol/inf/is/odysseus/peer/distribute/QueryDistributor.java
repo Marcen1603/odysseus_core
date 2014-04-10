@@ -413,7 +413,7 @@ public class QueryDistributor implements IQueryDistributor, IPeerCommunicatorLis
 
 		for (int queryPartID : senderMap.keySet()) {
 			RepeatingMessageSend sender = senderMap.get(queryPartID);
-			if (sender.isAlive()) {
+			if (sender.isRunning()) {
 				return true;
 			}
 		}
