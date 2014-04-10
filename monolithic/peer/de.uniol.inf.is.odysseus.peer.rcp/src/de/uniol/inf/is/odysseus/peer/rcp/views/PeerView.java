@@ -569,9 +569,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	}
 
 	public void refreshTableAsync(final PeerID pid) {
-		if( pid == null ) {
-			refreshPeerIDs();
-		}
+		refreshPeerIDs();
 
 		Display disp = PlatformUI.getWorkbench().getDisplay();
 		if (!disp.isDisposed()) {
