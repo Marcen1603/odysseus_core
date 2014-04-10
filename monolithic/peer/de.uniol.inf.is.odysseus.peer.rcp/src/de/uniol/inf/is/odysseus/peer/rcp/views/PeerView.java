@@ -385,14 +385,11 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		hideSelectionIfNeeded(peersTable);
 
 		peersTable.setInput(foundPeerIDs);
-		refreshTableAsync(null);
 
 		refresher = new RepeatingJobThread(REFRESH_INTERVAL_MILLIS, "Refresher of PeerView") {
 			@Override
 			public void doJob() {
-				refreshPeerIDs();
-
-				refreshUsagesAsync();
+				refresh();
 			}
 		};
 		refresher.start();
@@ -489,13 +486,16 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		return peers;
 	}
 
-	public void refreshUsagesAsync() {
-		final IPeerResourceUsageManager usageManager = RCPP2PNewPlugIn.getPeerResourceUsageManager();
+	public void refresh() {
 		Collection<PeerID> foundPeerIDsCopy = null;
 		synchronized (foundPeerIDs) {
+			foundPeerIDs.clear();
+			foundPeerIDs.addAll(p2pDictionary.getRemotePeerIDs());
 			foundPeerIDsCopy = Lists.newArrayList(foundPeerIDs);
 		}
+		refreshTableAsync();
 
+		final IPeerResourceUsageManager usageManager = RCPP2PNewPlugIn.getPeerResourceUsageManager();
 		for (final PeerID remotePeerID : foundPeerIDsCopy) {
 
 			synchronized (refreshing) {
@@ -516,13 +516,13 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 							if (optResourceUsage.isPresent()) {
 								synchronized (usageMap) {
 									usageMap.put(remotePeerID, optResourceUsage.get());
+									refreshTableAsync();
 								}
 							}
 						} catch (InterruptedException | ExecutionException e) {
 							LOG.error("Could not get resource usage", e);
 						}
 
-						refreshTableAsync(remotePeerID);
 					} finally {
 						synchronized (refreshing) {
 							refreshing.remove(remotePeerID);
@@ -536,11 +536,16 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 			t.start();
 		}
 
+		synchronized (usageMap) {
+			for (PeerID peerID : usageMap.keySet().toArray(new PeerID[0])) {
+				if (!foundPeerIDs.contains(peerID)) {
+					usageMap.remove(peerID);
+				}
+			}
+		}
 	}
 
-	public void refreshTableAsync(final PeerID pid) {
-		refreshPeerIDs();
-
+	private void refreshTableAsync() {
 		Display disp = PlatformUI.getWorkbench().getDisplay();
 		if (!disp.isDisposed()) {
 			disp.asyncExec(new Runnable() {
@@ -549,11 +554,8 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				public void run() {
 					synchronized (peersTable) {
 						if (!peersTable.getTable().isDisposed()) {
-							if (pid != null) {
-								peersTable.refresh(pid);
-							} else {
-								peersTable.refresh();
-							}
+							peersTable.refresh();
+
 							synchronized (foundPeerIDs) {
 								setPartName("Peers (" + foundPeerIDs.size() + ")");
 							}
@@ -561,21 +563,6 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 					}
 				}
 			});
-		}
-	}
-
-	private void refreshPeerIDs() {
-		synchronized (foundPeerIDs) {
-			foundPeerIDs.clear();
-			foundPeerIDs.addAll(p2pDictionary.getRemotePeerIDs());
-		}
-
-		synchronized (usageMap) {
-			for (PeerID peerID : usageMap.keySet().toArray(new PeerID[0])) {
-				if (!foundPeerIDs.contains(peerID)) {
-					usageMap.remove(peerID);
-				}
-			}
 		}
 	}
 
