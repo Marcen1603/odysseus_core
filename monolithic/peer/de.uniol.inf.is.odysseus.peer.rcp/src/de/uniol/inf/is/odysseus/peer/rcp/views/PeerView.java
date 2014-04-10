@@ -50,7 +50,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	private static final Logger LOG = LoggerFactory.getLogger(PeerView.class);
 
 	private static final long REFRESH_INTERVAL_MILLIS = 5000;
-	
+
 	private static PeerView instance;
 	private static Image[] warnImages;
 
@@ -61,8 +61,8 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 
 	private TableViewer peersTable;
 	private RepeatingJobThread refresher;
-	private Boolean refreshing = false;
-	
+	private Collection<PeerID> refreshing = Lists.newLinkedList();
+
 	@Override
 	public void createPartControl(Composite parent) {
 		p2pDictionary = RCPP2PNewPlugIn.getP2PDictionary();
@@ -106,7 +106,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 			public void update(ViewerCell cell) {
 				PeerID pid = (PeerID) cell.getElement();
 				cell.setText(determinePeerName(pid));
-				if( isLocalID(pid)) {
+				if (isLocalID(pid)) {
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				}
 			}
@@ -126,7 +126,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		addressColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				if( isLocalID((PeerID) cell.getElement())) {
+				if (isLocalID((PeerID) cell.getElement())) {
 					try {
 						cell.setText(InetAddress.getLocalHost().getHostAddress() + ":" + RCPP2PNewPlugIn.getP2PNetworkManager().getPort());
 					} catch (UnknownHostException e) {
@@ -150,7 +150,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				return 0;
 			}
 		};
-		
+
 		/************* Version ****************/
 		TableViewerColumn versionColumn = new TableViewerColumn(peersTable, SWT.NONE);
 		versionColumn.getColumn().setText("Version");
@@ -165,8 +165,8 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				} else {
 					cell.setText("<unknown>");
 				}
-				
-				if( isLocalID(pid)) {
+
+				if (isLocalID(pid)) {
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				}
 			}
@@ -193,14 +193,14 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				if (optUsage.isPresent()) {
 					double memPerc = calcMemPercentage(optUsage.get());
 					cell.setText(String.format("%-3.1f", memPerc));
-					
+
 					Image img = getWarnImage(memPerc);
 					cell.setImage(img);
 
 				} else {
 					cell.setText("<unknown>");
 				}
-				if( isLocalID((PeerID) cell.getElement())) {
+				if (isLocalID((PeerID) cell.getElement())) {
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				}
 			}
@@ -236,16 +236,16 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				if (optUsage.isPresent()) {
 					double cpuPerc = calcCpuPercentage(optUsage.get());
 					cell.setText(String.format("%-3.1f", cpuPerc));
-					
+
 					Image img = getWarnImage(cpuPerc);
 					cell.setImage(img);
-					
+
 				} else {
 					cell.setText("<unknown>");
 					cell.setImage(null);
 				}
-				
-				if( isLocalID((PeerID) cell.getElement())) {
+
+				if (isLocalID((PeerID) cell.getElement())) {
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				}
 			}
@@ -284,8 +284,8 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				} else {
 					cell.setText("<unknown>");
 				}
-				
-				if( isLocalID((PeerID) cell.getElement())) {
+
+				if (isLocalID((PeerID) cell.getElement())) {
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				}
 			}
@@ -325,7 +325,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 					cell.setText("<unknown>");
 				}
 
-				if( isLocalID((PeerID) cell.getElement())) {
+				if (isLocalID((PeerID) cell.getElement())) {
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				}
 			}
@@ -348,14 +348,14 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				if (optPing.isPresent()) {
 					long ping = (long) (double) optPing.get();
 					cell.setText(String.valueOf(ping));
-					
-					Image img = getWarnImage( (ping / 10.0));
+
+					Image img = getWarnImage((ping / 10.0));
 					cell.setImage(img);
 				} else {
 					cell.setText("<unknown>");
 				}
 
-				if( isLocalID((PeerID) cell.getElement())) {
+				if (isLocalID((PeerID) cell.getElement())) {
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				}
 			}
@@ -388,7 +388,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 			@Override
 			public void update(ViewerCell cell) {
 				cell.setText(((PeerID) cell.getElement()).toString());
-				if( isLocalID((PeerID) cell.getElement())) {
+				if (isLocalID((PeerID) cell.getElement())) {
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				}
 			}
@@ -400,23 +400,23 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				return 0;
 			}
 		};
-		
+
 		hideSelectionIfNeeded(peersTable);
 
 		peersTable.setInput(foundPeerIDs);
-		refreshTableAsync();
+		refreshTableAsync(null);
 
 		refresher = new RepeatingJobThread(REFRESH_INTERVAL_MILLIS, "Refresher of PeerView") {
 			@Override
 			public void doJob() {
 				refreshPeerIDs();
-				
+
 				Display display = PlatformUI.getWorkbench().getDisplay();
-				if( !display.isDisposed() && !peersTable.getTable().isDisposed() ) {
+				if (!display.isDisposed() && !peersTable.getTable().isDisposed()) {
 					display.asyncExec(new Runnable() {
 						@Override
 						public void run() {
-							if(getViewSite().getPage().isPartVisible(PeerView.this)) {
+							if (getViewSite().getPage().isPartVisible(PeerView.this)) {
 								refreshUsagesAsync();
 							}
 						}
@@ -425,22 +425,22 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 			}
 		};
 		refresher.start();
-		
+
 		warnImages = createWarnImages();
 
 		instance = this;
-		
+
 	}
-	
-	private static boolean isLocalID( PeerID pid ) {
+
+	private static boolean isLocalID(PeerID pid) {
 		return RCPP2PNewPlugIn.getP2PNetworkManager().getLocalPeerID().equals(pid);
 	}
-	
+
 	private void hideSelectionIfNeeded(final TableViewer tableViewer) {
 		tableViewer.getTable().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				if( tableViewer.getTable().getItem(new Point(e.x,e.y)) == null ) {
+				if (tableViewer.getTable().getItem(new Point(e.x, e.y)) == null) {
 					tableViewer.setSelection(new StructuredSelection());
 				}
 			}
@@ -449,32 +449,32 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 
 	private static Image[] createWarnImages() {
 		Image[] images = new Image[4];
-		
+
 		images[0] = createWarnImage(SWT.COLOR_BLUE);
 		images[1] = createWarnImage(SWT.COLOR_GREEN);
 		images[2] = createWarnImage(SWT.COLOR_YELLOW);
 		images[3] = createWarnImage(SWT.COLOR_RED);
-		
+
 		return images;
 	}
 
 	private static Image createWarnImage(int color) {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		Image img = new Image(display, 10, 10);
-		
+
 		GC gc = new GC(img);
 		gc.setBackground(display.getSystemColor(color));
 		gc.fillRectangle(0, 0, 10, 10);
 		gc.dispose();
 		return img;
 	}
-	
+
 	private static Image getWarnImage(double perc) {
-		int imageIndex = Math.max(0, Math.min(3, (int)(perc / 25.0)));
-		if( warnImages == null ) {
+		int imageIndex = Math.max(0, Math.min(3, (int) (perc / 25.0)));
+		if (warnImages == null) {
 			warnImages = createWarnImages();
 		}
-		
+
 		return warnImages[imageIndex];
 	}
 
@@ -489,7 +489,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	@Override
 	public void dispose() {
 		disposeWarnImages();
-		
+
 		instance = null;
 		p2pDictionary.removeListener(this);
 
@@ -502,41 +502,44 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	}
 
 	private static void disposeWarnImages() {
-		for( Image image : warnImages ) {
+		for (Image image : warnImages) {
 			image.dispose();
 		}
 		warnImages = null;
 	}
-	
+
 	public Collection<PeerID> getSelectedPeerIDs() {
 		IStructuredSelection selection = (IStructuredSelection) peersTable.getSelection();
 		Collection<PeerID> peers = Lists.newArrayList();
-		
-		for( Object selectedObject : selection.toArray()) {
-			peers.add((PeerID)selectedObject);
+
+		for (Object selectedObject : selection.toArray()) {
+			peers.add((PeerID) selectedObject);
 		}
-		
+
 		return peers;
 	}
 
 	public void refreshUsagesAsync() {
-		synchronized( refreshing ) {
-			if( refreshing ) {
-				return;
-			}
-			refreshing = true;
+		final IPeerResourceUsageManager usageManager = RCPP2PNewPlugIn.getPeerResourceUsageManager();
+		Collection<PeerID> foundPeerIDsCopy = null;
+		synchronized (foundPeerIDs) {
+			foundPeerIDsCopy = Lists.newArrayList(foundPeerIDs);
 		}
-		
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try { 
-					IPeerResourceUsageManager usageManager = RCPP2PNewPlugIn.getPeerResourceUsageManager();
-					Collection<PeerID> foundPeerIDsCopy = null;
-					synchronized (foundPeerIDs) {
-						foundPeerIDsCopy = Lists.newArrayList(foundPeerIDs);
-					}
-					for (PeerID remotePeerID : foundPeerIDsCopy) {
+
+		for (final PeerID remotePeerID : foundPeerIDsCopy) {
+			
+			synchronized( refreshing ) {
+				if( refreshing.contains(remotePeerID)) {
+					continue;
+				}
+				
+				refreshing.add(remotePeerID);
+			}
+			
+			Thread t = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
 						Future<Optional<IResourceUsage>> futureUsage = usageManager.getRemoteResourceUsage(remotePeerID);
 						try {
 							Optional<IResourceUsage> optResourceUsage = futureUsage.get();
@@ -548,24 +551,27 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 						} catch (InterruptedException | ExecutionException e) {
 							LOG.error("Could not get resource usage", e);
 						}
-					}
-					
-					refreshTableAsync();
-				} finally {
-					synchronized( refreshing ) {
-						refreshing = false;
+
+						refreshTableAsync(remotePeerID);
+					} finally {
+						synchronized (refreshing) {
+							refreshing.remove(remotePeerID);
+						}
 					}
 				}
-			}
-		});
+			});
+			
+			t.setDaemon(true);
+			t.setName("PeerView update for peer " + p2pDictionary.getRemotePeerName(remotePeerID));
+			t.start();
+		}
 
-		t.setDaemon(true);
-		t.setName("PeerView update");
-		t.start();
 	}
 
-	public void refreshTableAsync() {
-		refreshPeerIDs();
+	public void refreshTableAsync(final PeerID pid) {
+		if( pid == null ) {
+			refreshPeerIDs();
+		}
 
 		Display disp = PlatformUI.getWorkbench().getDisplay();
 		if (!disp.isDisposed()) {
@@ -573,10 +579,12 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 
 				@Override
 				public void run() {
-					if (!peersTable.getTable().isDisposed()) {
-						peersTable.refresh();
-						synchronized (foundPeerIDs) {
-							setPartName("Peers (" + foundPeerIDs.size() + ")");
+					synchronized( peersTable) {
+						if (!peersTable.getTable().isDisposed()) {
+							peersTable.refresh(pid);
+							synchronized (foundPeerIDs) {
+								setPartName("Peers (" + foundPeerIDs.size() + ")");
+							}
 						}
 					}
 				}
@@ -609,7 +617,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	}
 
 	private String determinePeerName(PeerID id) {
-		if( isLocalID(id)) {
+		if (isLocalID(id)) {
 			return "<local>";
 		}
 		return p2pDictionary.getRemotePeerName(id);
