@@ -550,14 +550,6 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 						}
 					}
 					
-					synchronized( usageMap ) {
-						for( PeerID pid : usageMap.keySet().toArray(new PeerID[0])) {
-							if( !foundPeerIDsCopy.contains(pid)) {
-								usageMap.remove(pid);
-							}
-						}
-					}
-					
 					refreshTableAsync();
 				} finally {
 					synchronized( refreshing ) {
