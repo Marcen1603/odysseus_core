@@ -24,8 +24,11 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.AdvertisementCache;
 
 public class MultipleSourceAdvertisement extends Advertisement implements Serializable {
 
@@ -40,6 +43,7 @@ public class MultipleSourceAdvertisement extends Advertisement implements Serial
 	private static final String SOURCE_TAG = "source";
 	
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG };
+	
 
 	private ID id;
 	private PeerID peerID;
@@ -80,6 +84,15 @@ public class MultipleSourceAdvertisement extends Advertisement implements Serial
 		if (doc instanceof Attributable) {
 			((Attributable) doc).addAttribute("xmlns:jxta", "http://jxta.org");
 		}
+		
+		int hashCode = hashCode();
+		Optional<Document> optDoc = AdvertisementCache.getDocument(hashCode);
+		if( optDoc.isPresent() ) {
+			System.err.println("Get cached adv: " + hashCode);
+			return optDoc.get();
+		}
+		
+		System.err.println("GetDoc instance=" + hashCode);
 
 		appendElement(doc, ID_TAG, id.toString());
 		appendElement(doc, PEER_ID_TAG, peerID.toString());
@@ -89,6 +102,8 @@ public class MultipleSourceAdvertisement extends Advertisement implements Serial
 			Element<?> sourceElement = appendElement(sourcesElement,SOURCE_TAG);
 			sourceAdvertisement.appendTo(sourceElement);
 		}
+		
+		AdvertisementCache.add(hashCode, doc);
 		
 		return doc;
 	}
