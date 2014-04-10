@@ -7,15 +7,15 @@ import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
-public class RemoveQueryAckMessage implements IMessage {
+public class AbortQueryPartAddMessage implements IMessage {
 
 	private ID sharedQueryID;
 	
-	public RemoveQueryAckMessage(ID sharedQueryID) {
+	public AbortQueryPartAddMessage(ID sharedQueryID) {
 		this.sharedQueryID = sharedQueryID;
 	}
 	
-	public RemoveQueryAckMessage() {
+	public AbortQueryPartAddMessage() {
 		
 	}
 

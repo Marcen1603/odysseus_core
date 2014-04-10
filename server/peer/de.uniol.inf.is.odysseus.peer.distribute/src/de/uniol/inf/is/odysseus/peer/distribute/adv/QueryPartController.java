@@ -53,7 +53,7 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 
 	private final Map<Integer, ID> sharedQueryIDMap = Maps.newHashMap();
 	private final Map<ID, Collection<PeerID>> peerIDMap = Maps.newHashMap();
-	private final Map<Integer, RepeatingMessageSend> senderMap = Maps.newConcurrentMap();
+	private final Map<PeerIDSharedQueryIDPair, RepeatingMessageSend> senderMap = Maps.newConcurrentMap();
 
 	private boolean inEvent;
 
@@ -131,43 +131,6 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 		LOG.debug("Query part controller deactivated");
 	}
 
-	// @Override
-	// public void pipeMsgEvent(PipeMsgEvent event) {
-	// final Message msg = event.getMessage();
-	// final MessageElement typeElement = msg.getMessageElement(TYPE_TAG);
-	// final MessageElement sharedQueryIDElement =
-	// msg.getMessageElement(SHARED_QUERY_ID_TAG);
-	//
-	// final String type = new String(typeElement.getBytes(false));
-	// final String sharedQueryIDString = new
-	// String(sharedQueryIDElement.getBytes(false));
-	// final ID sharedQueryID = convertToID(sharedQueryIDString);
-	//
-	// final Collection<Integer> ids = determineLocalIDs(sharedQueryIDMap,
-	// sharedQueryID);
-	//
-	// if (!ids.isEmpty()) {
-	// LOG.debug("Got message for shared query id {}", sharedQueryID);
-	// LOG.debug("Local queries are {}", ids);
-	//
-	// switch (type) {
-	// case REMOVE_MSG_TYPE:
-	// LOG.debug("Remove queries {}", ids);
-	//
-	// tryRemoveQueries(executor, ids, null);
-	// for (final Integer id : ids) {
-	// sharedQueryIDMap.remove(id);
-	// }
-	// final InputPipe inputPipe = inputPipeMap.remove(sharedQueryID);
-	// inputPipe.close();
-	// break;
-	// default:
-	// LOG.error("Unknown message type {}", type);
-	// break;
-	// }
-	// }
-	// }
-
 	@Override
 	// called by executor
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
@@ -192,11 +155,11 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 				LOG.debug("Shared query id is {}", sharedQueryID);
 				Collection<PeerID> peerIDs = peerIDMap.get(sharedQueryID);
 
-				if( peerIDs != null ) {
+				if (peerIDs != null) {
 					for (PeerID peerID : peerIDs) {
 						RemoveQueryMessage msg = new RemoveQueryMessage(sharedQueryID);
 						RepeatingMessageSend sender = new RepeatingMessageSend(peerCommunicator, msg, peerID);
-						senderMap.put(msg.getId(), sender);
+						senderMap.put(new PeerIDSharedQueryIDPair(peerID, sharedQueryID), sender);
 						sender.start();
 					}
 				}
@@ -220,29 +183,34 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 		if (message instanceof RemoveQueryMessage) {
 			RemoveQueryMessage removeMessage = (RemoveQueryMessage) message;
 
-			Collection<Integer> ids = determineLocalIDs(sharedQueryIDMap, removeMessage.getSharedQueryID());
-			if( !ids.isEmpty() ) {
-				tryRemoveQueries(executor, ids, null);
-				
-				for (Integer id : ids) {
-					sharedQueryIDMap.remove(id);
-				}
-			}
-			
-			RemoveQueryAckMessage ackMessage = new RemoveQueryAckMessage(removeMessage);
+			removeSharedQuery(removeMessage.getSharedQueryID());
+
+			RemoveQueryAckMessage ackMessage = new RemoveQueryAckMessage( removeMessage.getSharedQueryID());
 			try {
-				communicator.send(senderPeer, ackMessage);
+				peerCommunicator.send(senderPeer, ackMessage);
 			} catch (PeerCommunicationException e) {
 				LOG.error("Could not send ack message", e);
 			}
-			
-		} else if( message instanceof RemoveQueryAckMessage ) {
-			RemoveQueryAckMessage ackMessage = (RemoveQueryAckMessage)message;
-			
-			RepeatingMessageSend sender = senderMap.get(ackMessage.getId());
-			if( sender != null ) {
+
+		} else if (message instanceof RemoveQueryAckMessage) {
+			RemoveQueryAckMessage ackMessage = (RemoveQueryAckMessage) message;
+
+			PeerIDSharedQueryIDPair pair = new PeerIDSharedQueryIDPair(senderPeer, ackMessage.getSharedQueryID());
+			RepeatingMessageSend sender = senderMap.get(pair);
+			if (sender != null) {
 				sender.stopRunning();
-				senderMap.remove(ackMessage.getId());
+				senderMap.remove(pair);
+			}
+		}
+	}
+
+	public void removeSharedQuery(ID sharedQueryID) {
+		Collection<Integer> ids = determineLocalIDs(sharedQueryIDMap, sharedQueryID);
+		if (!ids.isEmpty()) {
+			tryRemoveQueries(executor, ids, null);
+
+			for (Integer id : ids) {
+				sharedQueryIDMap.remove(id);
 			}
 		}
 	}
