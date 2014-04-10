@@ -30,6 +30,8 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 
 /**
@@ -44,30 +46,34 @@ public class QueryResponse extends Response {
 	
 	private String username;
 	
-	private int numberOfRoots;
+	
+	private List<String> roots;
 
 	
 	public QueryResponse() {
 		super();
 	}
 	
-	public QueryResponse(LogicalQuery value, String username, boolean isRunning, int numberOfRoots, boolean success) {
+	public QueryResponse(LogicalQuery value, String username, boolean isRunning, List<String> roots, boolean success) {
 		super(success);
 		this.query = value;
 		this.username = username;
 		this.isRunning = isRunning;
-		this.numberOfRoots = numberOfRoots;
+		this.roots = roots;
 	}
 	
 	
-	public void setNumberOfRoots(int numberOfRoots) {
-		this.numberOfRoots = numberOfRoots;
+	public void setRoots(List<String> roots) {
+		this.roots = roots;
 	}
 	
 	public int getNumberOfRoots() {
-		return this.numberOfRoots;
+		return this.roots.size();
 	}
 	
+	public List<String> getRoots() {
+		return this.roots;
+	}
 	
 	public LogicalQuery getResponseValue() {
 		return this.query;

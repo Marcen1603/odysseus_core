@@ -574,9 +574,12 @@ public class WebserviceServer {
 		if (queryById == null || logicalQuery == null) {
 			throw new QueryNotExistsException();
 		}
+		List<String> roots = new ArrayList<String>();
+		for (IPhysicalOperator operator : queryById.getRoots()) {
+			roots.add(operator.getName());
+		}
 		return new QueryResponse(logicalQuery, queryById.getSession().getUser()
-				.getName(), queryById.isOpened(), queryById.getRoots().size(),
-				true);
+				.getName(), queryById.isOpened(), roots,true);
 	}
 
 	public QueryResponse getLogicalQueryByName(
@@ -586,10 +589,14 @@ public class WebserviceServer {
 		ISession session = loginWithSecurityToken(securityToken);
 		IPhysicalQuery queryById = ExecutorServiceBinding.getExecutor()
 				.getExecutionPlan().getQueryByName(name);
+		List<String> roots = new ArrayList<String>();
+		for (IPhysicalOperator operator : queryById.getRoots()) {
+			roots.add(operator.getName());
+		}
 		return new QueryResponse((LogicalQuery) ExecutorServiceBinding
 				.getExecutor().getLogicalQueryByName(name, session), queryById
 				.getSession().getUser().getName(), queryById.isOpened(),
-				queryById.getRoots().size(), true);
+				roots, true);
 
 	}
 
@@ -606,7 +613,7 @@ public class WebserviceServer {
 			@WebParam(name = "queryId") int queryId)
 			throws InvalidUserDataException {
 
-		return getConnectionInformationWithPorts(securityToken, queryId,
+		return getConnectionInformationWithPorts(securityToken, queryId,0,
 				Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort",
 						SINK_MIN_PORT)), Integer.valueOf(OdysseusConfiguration
 						.getInt("maxSinkPort", SINK_MAX_PORT)));
@@ -615,6 +622,7 @@ public class WebserviceServer {
 	public ConnectionInformationResponse getConnectionInformationWithPorts(
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "queryId") int queryId,
+			@WebParam(name = "rootPort") int rootPort,
 			@WebParam(name = "minPort") int minPort,
 			@WebParam(name = "maxPort") int maxPort)
 			throws InvalidUserDataException {
@@ -625,7 +633,7 @@ public class WebserviceServer {
 			if (!socketPortMap.containsKey(queryId)) {
 				// no socketsink available so create one
 				port = getNextFreePort(minPort, maxPort);
-				po = addSocketSink(queryId, port);
+				po = addSocketSink(queryId,rootPort, port);
 				socketSinkMap.put(queryId, po);
 				socketPortMap.put(queryId, port);
 			} else {
@@ -664,36 +672,28 @@ public class WebserviceServer {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private SocketSinkPO addSocketSink(int queryId, int port) {
+	private SocketSinkPO addSocketSink(int queryId, int rootPort, int port) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor()
 				.getExecutionPlan();
 		IPhysicalQuery query = plan.getQueryById(queryId);
 		List<IPhysicalOperator> roots = query.getRoots();
-		if (roots.size() == 1) {
+		final IPhysicalOperator root = roots.get(rootPort);
+		final ISource<?> rootAsSource = (ISource<?>) root;
 
-			final IPhysicalOperator root = roots.get(0);
-			final ISource<?> rootAsSource = (ISource<?>) root;
+		IDataHandler<?> handler = new TupleDataHandler().getInstance(root
+				.getOutputSchema());
+		ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
+				handler);
+		SocketSinkPO sink = new SocketSinkPO(port, "",
+				new ByteBufferSinkStreamHandlerBuilder(), true, false,
+				false, objectHandler, false);
 
-			IDataHandler<?> handler = new TupleDataHandler().getInstance(root
-					.getOutputSchema());
-			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
-					handler);
-			SocketSinkPO sink = new SocketSinkPO(port, "",
-					new ByteBufferSinkStreamHandlerBuilder(), true, false,
-					false, objectHandler, false);
-
-			rootAsSource.subscribeSink((ISink) sink, 0, 0,
-					root.getOutputSchema(), true, 0);
-			// rootAsSource.connectSink((ISink) sink, 0, 0,
-			// root.getOutputSchema());
-			sink.startListening();
-			return sink;
-
-		} else {
-			// TODO solution for a plan with more roots
-			// see JIRA: ODY-595
-			return null;
-		}
+		rootAsSource.subscribeSink((ISink) sink, 0, 0,
+				root.getOutputSchema(), true, 0);
+		// rootAsSource.connectSink((ISink) sink, 0, 0,
+		// root.getOutputSchema());
+		sink.startListening();
+		return sink;
 	}
 
 	private int getNextFreePort(int min, int max) {
@@ -718,6 +718,22 @@ public class WebserviceServer {
 		try {
 			schema = ExecutorServiceBinding.getExecutor().getOutputSchema(
 					queryId, session);
+		} catch (Exception e) {
+			throw new QueryNotExistsException();
+		}
+		return createSDFSchemaInformation(schema);
+
+	}
+	
+	public SDFSchemaResponse getOutputSchemaByQueryIdAndPort(
+			@WebParam(name = "securitytoken") String securityToken,
+			@WebParam(name = "queryId") int queryId,  @WebParam(name = "port")int port)
+			throws InvalidUserDataException, QueryNotExistsException {
+		loginWithSecurityToken(securityToken);
+		SDFSchema schema;
+		try {
+			IPhysicalOperator operator = ExecutorServiceBinding.getExecutor().getExecutionPlan().getQueryById(queryId).getRoots().get(port);
+			schema = operator.getOutputSchema();			
 		} catch (Exception e) {
 			throw new QueryNotExistsException();
 		}
