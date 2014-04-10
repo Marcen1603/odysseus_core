@@ -19,6 +19,7 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webse
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -651,10 +652,12 @@ public class WebserviceServer {
 				}
 			}
 
-			ConnectionInformation connectInfo = new ConnectionInformation(port,
-					this.address.getHostAddress());
+			ConnectionInformation connectInfo = new ConnectionInformation(port,	InetAddress.getLocalHost().getHostAddress());
 			return new ConnectionInformationResponse(connectInfo, true);
 		} catch (SocketException e) {
+			e.printStackTrace();
+			return new ConnectionInformationResponse(null, false);
+		} catch (UnknownHostException e) {
 			e.printStackTrace();
 			return new ConnectionInformationResponse(null, false);
 		}
@@ -676,8 +679,8 @@ public class WebserviceServer {
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 					handler);
 			SocketSinkPO sink = new SocketSinkPO(port, "",
-					new ByteBufferSinkStreamHandlerBuilder(), true, true,
-					true, objectHandler, false);
+					new ByteBufferSinkStreamHandlerBuilder(), true, false,
+					false, objectHandler, false);
 
 			rootAsSource.subscribeSink((ISink) sink, 0, 0,
 					root.getOutputSchema(), true, 0);
