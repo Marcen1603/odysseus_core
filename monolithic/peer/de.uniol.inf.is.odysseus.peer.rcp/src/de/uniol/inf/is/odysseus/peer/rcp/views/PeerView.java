@@ -77,27 +77,6 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		peersTable.getTable().setLinesVisible(true);
 		peersTable.setContentProvider(ArrayContentProvider.getInstance());
 
-		/************* Index ****************/
-		TableViewerColumn indexColumn = new TableViewerColumn(peersTable, SWT.NONE);
-		indexColumn.getColumn().setText("#");
-		indexColumn.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				int index = foundPeerIDs.indexOf(cell.getElement());
-				cell.setText(String.valueOf(index));
-			}
-		});
-		tableColumnLayout.setColumnData(indexColumn.getColumn(), new ColumnWeightData(2, 10, true));
-		ColumnViewerSorter sorter = new ColumnViewerSorter(peersTable, indexColumn) {
-			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				int index1 = foundPeerIDs.indexOf(e1);
-				int index2 = foundPeerIDs.indexOf(e2);
-				return Integer.compare(index1, index2);
-			}
-		};
-		sorter.setSorter(sorter, ColumnViewerSorter.NONE);
-
 		/************* Name ****************/
 		TableViewerColumn nameColumn = new TableViewerColumn(peersTable, SWT.NONE);
 		nameColumn.getColumn().setText("Name");
@@ -112,7 +91,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 			}
 		});
 		tableColumnLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(10, 25, true));
-		new ColumnViewerSorter(peersTable, nameColumn) {
+		ColumnViewerSorter sorter = new ColumnViewerSorter(peersTable, nameColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				String n1 = determinePeerName((PeerID) e1);
@@ -120,6 +99,8 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				return n1.compareTo(n2);
 			}
 		};
+		sorter.setSorter(sorter, ColumnViewerSorter.NONE);
+		
 		/************* Address ****************/
 		TableViewerColumn addressColumn = new TableViewerColumn(peersTable, SWT.NONE);
 		addressColumn.getColumn().setText("Address");
