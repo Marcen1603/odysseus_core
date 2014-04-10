@@ -100,7 +100,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 			}
 		};
 		sorter.setSorter(sorter, ColumnViewerSorter.NONE);
-		
+
 		/************* Address ****************/
 		TableViewerColumn addressColumn = new TableViewerColumn(peersTable, SWT.NONE);
 		addressColumn.getColumn().setText("Address");
@@ -392,17 +392,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 			public void doJob() {
 				refreshPeerIDs();
 
-				Display display = PlatformUI.getWorkbench().getDisplay();
-				if (!display.isDisposed() && !peersTable.getTable().isDisposed()) {
-					display.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (getViewSite().getPage().isPartVisible(PeerView.this)) {
-								refreshUsagesAsync();
-							}
-						}
-					});
-				}
+				refreshUsagesAsync();
 			}
 		};
 		refresher.start();
@@ -410,7 +400,6 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		warnImages = createWarnImages();
 
 		instance = this;
-
 	}
 
 	private static boolean isLocalID(PeerID pid) {
@@ -508,15 +497,15 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		}
 
 		for (final PeerID remotePeerID : foundPeerIDsCopy) {
-			
-			synchronized( refreshing ) {
-				if( refreshing.contains(remotePeerID)) {
+
+			synchronized (refreshing) {
+				if (refreshing.contains(remotePeerID)) {
 					continue;
 				}
-				
+
 				refreshing.add(remotePeerID);
 			}
-			
+
 			Thread t = new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -541,7 +530,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 					}
 				}
 			});
-			
+
 			t.setDaemon(true);
 			t.setName("PeerView update for peer " + p2pDictionary.getRemotePeerName(remotePeerID));
 			t.start();
@@ -558,9 +547,9 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 
 				@Override
 				public void run() {
-					synchronized( peersTable) {
+					synchronized (peersTable) {
 						if (!peersTable.getTable().isDisposed()) {
-							if( pid != null ) {
+							if (pid != null) {
 								peersTable.refresh(pid);
 							} else {
 								peersTable.refresh();
