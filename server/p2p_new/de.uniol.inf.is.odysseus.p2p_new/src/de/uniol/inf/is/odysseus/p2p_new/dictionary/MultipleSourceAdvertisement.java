@@ -88,11 +88,8 @@ public class MultipleSourceAdvertisement extends Advertisement implements Serial
 		int hashCode = hashCode();
 		Optional<Document> optDoc = AdvertisementCache.getDocument(hashCode);
 		if( optDoc.isPresent() ) {
-			System.err.println("Get cached adv: " + hashCode);
 			return optDoc.get();
 		}
-		
-		System.err.println("GetDoc instance=" + hashCode);
 
 		appendElement(doc, ID_TAG, id.toString());
 		appendElement(doc, PEER_ID_TAG, peerID.toString());
