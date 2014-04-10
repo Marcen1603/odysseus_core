@@ -581,7 +581,11 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				public void run() {
 					synchronized( peersTable) {
 						if (!peersTable.getTable().isDisposed()) {
-							peersTable.refresh(pid);
+							if( pid != null ) {
+								peersTable.refresh(pid);
+							} else {
+								peersTable.refresh();
+							}
 							synchronized (foundPeerIDs) {
 								setPartName("Peers (" + foundPeerIDs.size() + ")");
 							}
