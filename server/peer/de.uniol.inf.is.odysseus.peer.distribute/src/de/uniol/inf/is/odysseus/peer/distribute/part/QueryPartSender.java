@@ -46,16 +46,16 @@ import de.uniol.inf.is.odysseus.peer.distribute.message.QueryPartAddFailMessage;
 import de.uniol.inf.is.odysseus.peer.distribute.util.IOperatorGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
-public class QueryPartTransmitter implements IPeerCommunicatorListener {
+public class QueryPartSender implements IPeerCommunicatorListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(QueryPartTransmitter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(QueryPartSender.class);
 
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IP2PDictionary p2pDictionary;
 	private static IPQLGenerator pqlGenerator;
 	private static IPeerCommunicator peerCommunicator;
 	
-	private static QueryPartTransmitter instance;
+	private static QueryPartSender instance;
 
 	private static int queryPartIDCounter = 0;
 
@@ -141,7 +141,7 @@ public class QueryPartTransmitter implements IPeerCommunicatorListener {
 		instance = null;
 	}
 	
-	public static QueryPartTransmitter getInstance() {
+	public static QueryPartSender getInstance() {
 		return instance;
 	}
 	

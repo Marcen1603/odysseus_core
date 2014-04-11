@@ -42,11 +42,11 @@ import de.uniol.inf.is.odysseus.peer.distribute.message.AddQueryPartMessage;
 import de.uniol.inf.is.odysseus.peer.distribute.message.QueryPartAddAckMessage;
 import de.uniol.inf.is.odysseus.peer.distribute.message.QueryPartAddFailMessage;
 
-public class QueryPartManager implements IPeerCommunicatorListener {
+public class QueryPartReceiver implements IPeerCommunicatorListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(QueryPartManager.class);
+	private static final Logger LOG = LoggerFactory.getLogger(QueryPartReceiver.class);
 
-	private static QueryPartManager instance;
+	private static QueryPartReceiver instance;
 
 	private static IServerExecutor executor;
 	private static ICompiler compiler;
@@ -56,7 +56,7 @@ public class QueryPartManager implements IPeerCommunicatorListener {
 	private static Collection<Integer> ackedQueryPartIDs = Lists.newLinkedList();
 	private static Map<Integer, String> failedQueryPartIDs = Maps.newConcurrentMap();
 
-	public QueryPartManager() {
+	public QueryPartReceiver() {
 		instance = this;
 	}
 
@@ -144,7 +144,7 @@ public class QueryPartManager implements IPeerCommunicatorListener {
 			}
 
 			try {
-				QueryPartManager.getInstance().addQueryPart(addQueryPartMessage);
+				QueryPartReceiver.getInstance().addQueryPart(addQueryPartMessage);
 
 				sendQueryAddAck(senderPeer, addQueryPartMessage);
 				ackedQueryPartIDs.add(addQueryPartMessage.getQueryPartID());
@@ -252,7 +252,7 @@ public class QueryPartManager implements IPeerCommunicatorListener {
 		return DataDictionaryProvider.getDataDictionary(PeerDistributePlugIn.getActiveSession().getTenant());
 	}
 
-	public static QueryPartManager getInstance() {
+	public static QueryPartReceiver getInstance() {
 		return instance;
 	}
 

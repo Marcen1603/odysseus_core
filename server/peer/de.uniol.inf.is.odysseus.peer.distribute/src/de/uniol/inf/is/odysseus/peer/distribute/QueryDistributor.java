@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionExcept
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.peer.distribute.part.QueryPartTransmitter;
+import de.uniol.inf.is.odysseus.peer.distribute.part.QueryPartSender;
 import de.uniol.inf.is.odysseus.peer.distribute.util.InterfaceParametersPair;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LoggingHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
@@ -75,8 +75,8 @@ public class QueryDistributor implements IQueryDistributor {
 
 			QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMap, config, postProcessors, query);
 
-			QueryPartTransmitter.waitFor();
-			QueryPartTransmitter.getInstance().transmit(allocationMap, serverExecutor, caller, query.getName(), config);
+			QueryPartSender.waitFor();
+			QueryPartSender.getInstance().transmit(allocationMap, serverExecutor, caller, query.getName(), config);
 		}
 	}
 
