@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.adv;
+package de.uniol.inf.is.odysseus.peer.distribute.part;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;

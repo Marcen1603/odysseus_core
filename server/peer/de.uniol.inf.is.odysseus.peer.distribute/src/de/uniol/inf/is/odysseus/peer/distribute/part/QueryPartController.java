@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.adv;
+package de.uniol.inf.is.odysseus.peer.distribute.part;
 
 import java.net.URI;
 import java.net.URISyntaxException;
