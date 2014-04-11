@@ -139,8 +139,8 @@ public class WebserviceServer {
 	 */
 
 	@XmlTransient
-	private Map<Integer, Integer> socketPortMap = new HashMap<>();
-	private Map<Integer, SocketSinkPO> socketSinkMap = new HashMap<>();
+	private Map<Integer, Map<Integer, Integer>> socketPortMap = new HashMap<>();
+	private Map<Integer, Map<Integer, SocketSinkPO>> socketSinkMap = new HashMap<>();
 	private InetAddress address;
 
 	public static void startServer() {
@@ -215,9 +215,11 @@ public class WebserviceServer {
 		ISession session = UserManagementProvider.getSessionmanagement().login(
 				securityToken);		
 		if (session != null) {
-			UserManagementProvider.getSessionmanagement().logout(session);
-			for (SocketSinkPO po : socketSinkMap.values()) {
-				po.removeAllowedSessionId(securityToken);
+			UserManagementProvider.getSessionmanagement().logout(session);			
+			for (Map<Integer, SocketSinkPO> entry : socketSinkMap.values()) {
+				for (SocketSinkPO po : entry.values()) {
+					po.removeAllowedSessionId(securityToken);
+				}
 			}
 			return new Response(true);
 		}
@@ -630,16 +632,28 @@ public class WebserviceServer {
 			loginWithSecurityToken(securityToken);
 			int port = 0;
 			SocketSinkPO po;
-			if (!socketPortMap.containsKey(queryId)) {
-				// no socketsink available so create one
+			Map<Integer, Integer> socketPortMapEntry = socketPortMap.get(queryId);
+			Map<Integer, SocketSinkPO> socketSinkMapEntry = socketSinkMap.get(queryId);
+			
+			if (socketSinkMapEntry != null) {
+				if (socketSinkMapEntry.get(rootPort) == null) {
+					port = getNextFreePort(minPort, maxPort);
+					po = addSocketSink(queryId,rootPort, port);
+					socketSinkMapEntry.put(rootPort, po);
+					socketPortMapEntry.put(rootPort, port);					
+				} else {
+					port = socketPortMapEntry.get(rootPort);
+					po = socketSinkMapEntry.get(rootPort);
+				}
+			} else {
+				socketSinkMapEntry = new HashMap<>();
+				socketPortMapEntry = new  HashMap<>();
+				socketPortMap.put(queryId, socketPortMapEntry);
+				socketSinkMap.put(queryId, socketSinkMapEntry);			
 				port = getNextFreePort(minPort, maxPort);
 				po = addSocketSink(queryId,rootPort, port);
-				socketSinkMap.put(queryId, po);
-				socketPortMap.put(queryId, port);
-			} else {
-				// there is already a socketsink so we can use the port
-				port = socketPortMap.get(queryId);
-				po = socketSinkMap.get(queryId);
+				socketSinkMapEntry.put(rootPort, po);
+				socketPortMapEntry.put(rootPort, port);
 			}
 			po.addAllowedSessionId(securityToken);
 			if (this.address == null) {
