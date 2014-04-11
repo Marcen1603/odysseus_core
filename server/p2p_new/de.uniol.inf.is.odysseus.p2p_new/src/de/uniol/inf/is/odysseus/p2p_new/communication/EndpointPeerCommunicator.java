@@ -89,7 +89,6 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 	@Override
 	public void registerMessageType(Class<? extends IMessage> messageType) {
 		Preconditions.checkNotNull(messageType, "MessageType must not be null!");
-		Preconditions.checkArgument(!messageTypeMap.containsKey(messageType), "MessageType %s already registered", messageType);
 		Preconditions.checkArgument(hasDefaultConstructor(messageType), "MessageType %s has no default constructor which is needed!", messageType);
 
 		int messageID = messageType.toString().hashCode();
