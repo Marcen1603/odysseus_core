@@ -54,7 +54,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 	private static IP2PDictionary p2pDictionary;
 	private static IPQLGenerator pqlGenerator;
 	private static IPeerCommunicator peerCommunicator;
-	
+
 	private static QueryPartSender instance;
 
 	private static int queryPartIDCounter = 0;
@@ -130,39 +130,39 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 			peerCommunicator = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public void activate() {
 		instance = this;
 	}
-	
+
 	// called by OSGi-DS
 	public void deactivate() {
 		instance = null;
 	}
-	
+
 	public static QueryPartSender getInstance() {
 		return instance;
 	}
-	
+
 	public static boolean isActivated() {
 		return instance != null;
 	}
-	
+
 	public static void waitFor() {
-		while( !isActivated() ) {
+		while (!isActivated()) {
 			waitSomeTime();
 		}
 	}
 
 	public void transmit(Map<ILogicalQueryPart, PeerID> allocationMap, IServerExecutor serverExecutor, ISession caller, String queryName, QueryBuildConfiguration config) throws QueryDistributionException {
 		ID sharedQueryID = IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
-		
+
 		insertJxtaOperators(allocationMap);
 		replaceAccessAOsOfExportedViews(allocationMap.keySet());
-		
-		Collection<ILogicalQueryPart> localQueryParts = determineLocalQueryParts( allocationMap );
-		
+
+		Collection<ILogicalQueryPart> localQueryParts = determineLocalQueryParts(allocationMap);
+
 		if (!localQueryParts.isEmpty()) {
 			LOG.debug("Building local logical query out of {} local query parts", localQueryParts.size());
 
@@ -174,7 +174,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		} else {
 			LOG.debug("No local query part of query remains.");
 		}
-		
+
 		distributeToRemotePeers(sharedQueryID, allocationMap, config);
 	}
 
@@ -189,7 +189,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 				LOG.debug("Query part {} stays local", part);
 			}
 		}
-		
+
 		return localParts;
 	}
 
@@ -198,25 +198,30 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		if (message instanceof QueryPartAddAckMessage) {
 			QueryPartAddAckMessage ackMessage = (QueryPartAddAckMessage) message;
 
-			RepeatingMessageSend sender = senderMap.get(ackMessage.getQueryPartID());
-			if (sender != null) {
-				sender.stopRunning();
-				senderMap.remove(ackMessage.getQueryPartID());
+			synchronized (senderMap) {
+				RepeatingMessageSend sender = senderMap.get(ackMessage.getQueryPartID());
+				if (sender != null) {
+					sender.stopRunning();
+					senderMap.remove(ackMessage.getQueryPartID());
+				}
 			}
 
 			sendResultMap.put(ackMessage.getQueryPartID(), "OK");
 
 		} else if (message instanceof QueryPartAddFailMessage) {
 			QueryPartAddFailMessage failMessage = (QueryPartAddFailMessage) message;
-			RepeatingMessageSend sender = senderMap.get(failMessage.getQueryPartID());
-			if (sender != null) {
-				sender.stopRunning();
-				senderMap.remove(failMessage.getQueryPartID());
+
+			synchronized (senderMap) {
+				RepeatingMessageSend sender = senderMap.get(failMessage.getQueryPartID());
+				if (sender != null) {
+					sender.stopRunning();
+					senderMap.remove(failMessage.getQueryPartID());
+				}
 			}
 
 			sendResultMap.put(failMessage.getQueryPartID(), failMessage.getMessage());
-			
-		}	else if (message instanceof AbortQueryPartAddAckMessage) {
+
+		} else if (message instanceof AbortQueryPartAddAckMessage) {
 			AbortQueryPartAddAckMessage abortAckMessage = (AbortQueryPartAddAckMessage) message;
 
 			PeerIDSharedQueryIDPair pair = new PeerIDSharedQueryIDPair(senderPeer, abortAckMessage.getSharedQueryID());
@@ -311,7 +316,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		senderMap.clear();
 		sendDestinationMap.clear();
 		sendResultMap.clear();
-		
+
 		int remoteSendCount = 0;
 		for (ILogicalQueryPart part : correctedAllocationMap.keySet()) {
 			PeerID peerID = correctedAllocationMap.get(part);
@@ -395,17 +400,19 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 	}
 
 	private boolean oneSenderIsActive() {
-		if (senderMap.isEmpty()) {
+		synchronized (senderMap) {
+			if (senderMap.isEmpty()) {
+				return false;
+			}
+
+			for (int queryPartID : senderMap.keySet()) {
+				RepeatingMessageSend sender = senderMap.get(queryPartID);
+				if (sender.isRunning()) {
+					return true;
+				}
+			}
 			return false;
 		}
-
-		for (int queryPartID : senderMap.keySet()) {
-			RepeatingMessageSend sender = senderMap.get(queryPartID);
-			if (sender.isRunning()) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	private static ILogicalQuery buildLocalQuery(Collection<ILogicalQueryPart> localQueryParts) {
