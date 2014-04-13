@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.google.common.base.Optional;
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
@@ -23,49 +25,58 @@ public class MetadataPreParserKeyword extends AbstractPreParserKeyword {
 	public static final String METADATA = "METADATA";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller, Context context) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+		if( !MetadataRegistry.getNames().contains(parameter) ) {
+			throw new OdysseusScriptException("Metadata '" + parameter + "' is not known.");
+		}
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter,
-			ISession caller, Context context) throws OdysseusScriptException {
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 
-		IMetaAttribute m = null;
-		try {
-			m = MetadataRegistry
-					.getMetadataTypeByName(parameter).newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new OdysseusScriptException("Could not create metadata of type '" + parameter + "'", e);
-		}
-		@SuppressWarnings({ "unchecked", "rawtypes" })
+		IMetaAttribute m = tryCreateMetadataInstance(parameter);
+		
 		List<Class<? extends IMetaAttribute>> classes = new ArrayList(Arrays.asList(m.getClasses()));
-		Set<String> classNames = new TreeSet<String>();
-		for (Class<?> c:classes){
-			classNames.add(c.getName());
-		}
-		List<IQueryBuildSetting<?>> addSettings = getAdditionalTransformationSettings(variables);
-		// Determine if ParameterTransformationConfiguration is already set
-		for (IQueryBuildSetting<?> s : addSettings) {
-			if (s instanceof ParameterTransformationConfiguration) {
-				((ParameterTransformationConfiguration) s)
-						.getValue().addTypes(classNames);
-				return null;
-			}
-		}
 
-		// Not found, create new
-		@SuppressWarnings("unchecked")
-		ParameterTransformationConfiguration p = new ParameterTransformationConfiguration(
-				new TransformationConfiguration(classes.toArray(new Class[1])));
-		addSettings.add(p);
+		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
+		Optional<ParameterTransformationConfiguration> optParam = getParameterTransformationConfiguration(settings);
+		if (optParam.isPresent()) {
+			optParam.get().getValue().addTypes(toClassNames(classes));
+		} else {
+			ParameterTransformationConfiguration param = new ParameterTransformationConfiguration(new TransformationConfiguration(classes.toArray(new Class[0])));
+			settings.add(param);
+		}
 
 		return null;
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword#getAllowedParameters(de.uniol.inf.is.odysseus.core.usermanagement.ISession)
-	 */
+
+	private static Set<String> toClassNames(List<Class<? extends IMetaAttribute>> classes) {
+		Set<String> classNames = new TreeSet<String>();
+		for (Class<?> c : classes) {
+			classNames.add(c.getName());
+		}
+		return classNames;
+	}
+
+	private static IMetaAttribute tryCreateMetadataInstance(String parameter) throws OdysseusScriptException {
+		try {
+			return MetadataRegistry.getMetadataTypeByName(parameter).newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new OdysseusScriptException("Could not create metadata of type '" + parameter + "'", e);
+		}
+	}
+
+	private static Optional<ParameterTransformationConfiguration> getParameterTransformationConfiguration(List<IQueryBuildSetting<?>> settings) {
+		for (IQueryBuildSetting<?> s : settings) {
+			if (s instanceof ParameterTransformationConfiguration) {
+				return Optional.of((ParameterTransformationConfiguration) s);
+			}
+		}
+
+		return Optional.absent();
+	}
+
 	@Override
 	public Collection<String> getAllowedParameters(ISession caller) {
 		return MetadataRegistry.getNames();
