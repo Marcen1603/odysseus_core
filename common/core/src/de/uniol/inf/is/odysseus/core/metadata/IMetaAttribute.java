@@ -20,9 +20,6 @@ import java.io.Serializable;
 import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.IClone;
 
-
-// Currently only a Marker for MetaAttributes
-
 public interface IMetaAttribute extends IClone, ICSVToString, Serializable {
 	
 	Class<? extends IMetaAttribute>[] getClasses();
