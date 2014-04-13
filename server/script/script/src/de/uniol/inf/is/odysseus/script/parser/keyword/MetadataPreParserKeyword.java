@@ -36,7 +36,7 @@ public class MetadataPreParserKeyword extends AbstractPreParserKeyword {
 			m = MetadataRegistry
 					.getMetadataTypeByName(parameter).newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
+			throw new OdysseusScriptException("Could not create metadata of type '" + parameter + "'", e);
 		}
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		List<Class<? extends IMetaAttribute>> classes = new ArrayList(Arrays.asList(m.getClasses()));
