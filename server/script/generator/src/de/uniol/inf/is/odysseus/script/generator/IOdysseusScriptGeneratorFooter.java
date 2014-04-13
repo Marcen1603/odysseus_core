@@ -5,8 +5,8 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 
-public interface IOdysseusScriptGenerator {
+public interface IOdysseusScriptGeneratorFooter {
 
-	public String generate( List<ILogicalQuery> queries, QueryBuildConfiguration config );
-	
+	public String getFooter( List<ILogicalQuery> queries, QueryBuildConfiguration config );
+
 }
