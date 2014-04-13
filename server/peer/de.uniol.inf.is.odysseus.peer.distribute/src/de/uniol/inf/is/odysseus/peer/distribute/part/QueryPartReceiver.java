@@ -144,7 +144,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 			}
 
 			try {
-				QueryPartReceiver.getInstance().addQueryPart(addQueryPartMessage);
+				addQueryPart(addQueryPartMessage);
 
 				sendQueryAddAck(senderPeer, addQueryPartMessage);
 				ackedQueryPartIDs.add(addQueryPartMessage.getQueryPartID());
