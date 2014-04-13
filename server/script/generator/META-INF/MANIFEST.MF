@@ -5,3 +5,6 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.script.generator
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.query
+Export-Package: de.uniol.inf.is.odysseus.script.generator
+Service-Component: OSGI-INF/OdysseusScriptGenerator.xml
