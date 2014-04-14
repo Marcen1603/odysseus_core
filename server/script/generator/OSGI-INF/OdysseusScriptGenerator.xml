@@ -5,8 +5,4 @@
       <provide interface="de.uniol.inf.is.odysseus.script.generator.IOdysseusScriptGenerator"/>
    </service>
    <reference bind="bindPQLGenerator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator" name="IPQLGenerator" policy="static" unbind="unbindPQLGenerator"/>
-   <reference bind="bindOdysseusScriptGeneratorQueryHeader" cardinality="0..n" interface="de.uniol.inf.is.odysseus.script.generator.IOdysseusScriptGeneratorQueryHeader" name="IOdysseusScriptGeneratorQueryHeader" policy="static" unbind="unbindOdysseusScriptGeneratorQueryHeader"/>
-   <reference bind="bindOdysseusScriptGeneratorFooter" cardinality="0..n" interface="de.uniol.inf.is.odysseus.script.generator.IOdysseusScriptGeneratorFooter" name="IOdysseusScriptGeneratorFooter" policy="static" unbind="unbindOdysseusScriptGeneratorFooter"/>
-   <reference bind="bindOdysseusScriptGeneratorHeader" cardinality="0..n" interface="de.uniol.inf.is.odysseus.script.generator.IOdysseusScriptGeneratorHeader" name="IOdysseusScriptGeneratorHeader" policy="static" unbind="unbindOdysseusScriptGeneratorHeader"/>
-   <reference bind="bindOdysseusScriptGeneratorQueryFooter" cardinality="0..n" interface="de.uniol.inf.is.odysseus.script.generator.IOdysseusScriptGeneratorQueryFooter" name="IOdysseusScriptGeneratorQueryFooter" policy="static" unbind="unbindOdysseusScriptGeneratorQueryFooter"/>
 </scr:component>
