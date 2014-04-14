@@ -10,8 +10,10 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -29,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
@@ -132,27 +135,28 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 			LOG.debug("Received AddQueryPartMessage");
 
 			AddQueryPartMessage addQueryPartMessage = (AddQueryPartMessage) message;
-
-			if (ackedQueryPartIDs.contains(addQueryPartMessage.getQueryPartID())) {
-				sendQueryAddAck(senderPeer, addQueryPartMessage);
-				return;
-			}
-
-			if (failedQueryPartIDs.containsKey(addQueryPartMessage.getQueryPartID())) {
-				sendQueryAddFail(senderPeer, addQueryPartMessage, failedQueryPartIDs.get(addQueryPartMessage.getQueryPartID()));
-				return;
-			}
-
-			try {
-				addQueryPart(addQueryPartMessage);
-
-				sendQueryAddAck(senderPeer, addQueryPartMessage);
-				ackedQueryPartIDs.add(addQueryPartMessage.getQueryPartID());
-
-			} catch (QueryDistributionException e) {
-
-				sendQueryAddFail(senderPeer, addQueryPartMessage, e.getMessage());
-				failedQueryPartIDs.put(addQueryPartMessage.getQueryPartID(), e.getMessage());
+			synchronized( ackedQueryPartIDs ) {
+				if (ackedQueryPartIDs.contains(addQueryPartMessage.getQueryPartID())) {
+					sendQueryAddAck(senderPeer, addQueryPartMessage);
+					return;
+				}
+	
+				if (failedQueryPartIDs.containsKey(addQueryPartMessage.getQueryPartID())) {
+					sendQueryAddFail(senderPeer, addQueryPartMessage, failedQueryPartIDs.get(addQueryPartMessage.getQueryPartID()));
+					return;
+				}
+	
+				try {
+					addQueryPart(addQueryPartMessage);
+					ackedQueryPartIDs.add(addQueryPartMessage.getQueryPartID());
+	
+					sendQueryAddAck(senderPeer, addQueryPartMessage);
+	
+				} catch (QueryDistributionException e) {
+	
+					sendQueryAddFail(senderPeer, addQueryPartMessage, e.getMessage());
+					failedQueryPartIDs.put(addQueryPartMessage.getQueryPartID(), e.getMessage());
+				}
 			}
 		} else if ( message instanceof AbortQueryPartAddMessage ) {
 			AbortQueryPartAddMessage abortMessage = (AbortQueryPartAddMessage) message;
@@ -209,7 +213,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 	private List<String> determineNeededSources(AddQueryPartMessage message) {
 		List<String> neededSources = Lists.newArrayList();
 		ISession session = PeerDistributePlugIn.getActiveSession();
-
+		
 		List<IExecutorCommand> queries = compiler.translateQuery(message.getPqlStatement(), "PQL", PeerDistributePlugIn.getActiveSession(), getDataDictionary(), Context.empty());
 		for (IExecutorCommand q : queries) {
 
@@ -243,11 +247,26 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 
 	private void callExecutor(AddQueryPartMessage message) {
 		List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, message.getTransCfgName());
+		Optional<ParameterTransformationConfiguration> params = getParameterTransformationConfiguration(configuration);
+		if( params.isPresent() ) {
+			params.get().getValue().addTypes(Sets.newHashSet(message.getMetadataTypes()));
+		}
+		
 		Collection<Integer> ids = executor.addQuery(message.getPqlStatement(), "PQL", PeerDistributePlugIn.getActiveSession(), message.getTransCfgName(), Context.empty(), configuration);
 
 		QueryPartController.getInstance().registerAsSlave(ids, message.getSharedQueryID());
 	}
+	
+	private static Optional<ParameterTransformationConfiguration> getParameterTransformationConfiguration(List<IQueryBuildSetting<?>> settings) {
+		for (IQueryBuildSetting<?> s : settings) {
+			if (s instanceof ParameterTransformationConfiguration) {
+				return Optional.of((ParameterTransformationConfiguration) s);
+			}
+		}
 
+		return Optional.absent();
+	}
+	
 	public IDataDictionary getDataDictionary() {
 		return DataDictionaryProvider.getDataDictionary(PeerDistributePlugIn.getActiveSession().getTenant());
 	}
