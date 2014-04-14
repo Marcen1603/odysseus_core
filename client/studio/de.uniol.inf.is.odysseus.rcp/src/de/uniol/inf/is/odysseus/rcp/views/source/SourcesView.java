@@ -122,10 +122,11 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 			if (isRefreshing) {
 				return;
 			}
-			isRefreshing = true;
 			if( PlatformUI.getWorkbench().getDisplay().isDisposed() ) {
 				return;
 			}
+			
+			isRefreshing = true;
 			
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
