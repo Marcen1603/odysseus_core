@@ -35,16 +35,16 @@ public class RSwitchSelectionRenameRule extends AbstractRewriteRule<RenameAO> {
 
 	@Override
 	public void execute(RenameAO rename, RewriteConfiguration config) {
-		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-			if (isValidSelect(sel, rename)) {
-				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.switchOperator(sel, rename);
-				for (ILogicalOperator o:toUpdate){
-					update(o);
-				}					
-				update(sel);
-				update(rename);
-			}
-		}
+//		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
+//			if (isValidSelect(sel, rename)) {
+//				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.switchOperator(sel, rename);
+//				for (ILogicalOperator o:toUpdate){
+//					update(o);
+//				}					
+//				update(sel);
+//				update(rename);
+//			}
+//		}
 		
 	}
 
