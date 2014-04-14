@@ -43,10 +43,12 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 		return keepInputObject;
 	}
 
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	protected void process_next(KeyValueObject<M> input, int port) {
 		SDFSchema outputSchema = getOutputSchema();
 		Tuple<M> output = new Tuple<M>(outputSchema.size(), false);
+        output.setMetadata((M) input.getMetadata().clone());
 		if (keepInputObject) {
 			output.setAdditionalContent("base",input.clone());
 		}

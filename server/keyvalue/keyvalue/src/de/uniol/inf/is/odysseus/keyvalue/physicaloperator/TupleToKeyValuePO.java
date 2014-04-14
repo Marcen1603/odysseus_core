@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 /**
  * This operator transforms a Tuple to a KeyValueObject
  * 
- * @author Jan Sören Schwarz
+ * @author Jan Sï¿½ren Schwarz
  * 
  * @param <M>
  */
@@ -44,13 +44,15 @@ public class TupleToKeyValuePO<M extends IMetaAttribute> extends AbstractPipe<Tu
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	protected void process_next(Tuple<M> input, int port) {
 		KeyValueObject<M> output = new KeyValueObject<M>();
 		int pos = 0;
 		for (SDFAttribute attr : getOutputSchema()) {
 			output.setAttribute(attr.getURI(), input.getAttribute(pos++));
 		}
+        output.setMetadata((M) input.getMetadata().clone());
 		transfer(output);
 	}
 
