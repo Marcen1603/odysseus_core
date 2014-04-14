@@ -4,15 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.util.Map;
 
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Context;
 import org.zeromq.ZMQ.Socket;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -31,8 +28,6 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 	private Socket publisher;
 	public Socket subscriber;
 	protected BufferedReader reader;
-	
-	private static final Charset charset = Charset.forName("UTF-8");
 	
 	public ZeroMQTransportHandler(){
 	}
