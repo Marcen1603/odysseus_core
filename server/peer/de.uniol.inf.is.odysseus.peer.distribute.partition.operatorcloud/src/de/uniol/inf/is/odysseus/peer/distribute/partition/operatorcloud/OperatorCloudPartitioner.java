@@ -28,11 +28,9 @@ public class OperatorCloudPartitioner implements IQueryPartitioner {
 		
 		// Handling of RenameAOs: Every RenameAO will be in the query part of the operator subscribed by the RenameAO.
 		
-		List<ILogicalOperator> processedOperators = Lists.newArrayList();
-		
 		for(ILogicalOperator operator : operators) {
 			
-			if(processedOperators.contains(operator))
+			if(operator instanceof RenameAO)
 				continue;
 			
 			List<ILogicalOperator> operatorsForPart = Lists.newArrayList(operator);
