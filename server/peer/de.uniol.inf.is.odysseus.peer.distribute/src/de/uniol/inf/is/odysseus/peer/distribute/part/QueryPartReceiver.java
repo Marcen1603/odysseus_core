@@ -154,6 +154,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 
 				} catch (QueryDistributionException e) {
 
+					LOG.error("Could not add query part", e);
 					sendQueryAddFail(senderPeer, addQueryPartMessage, e.getMessage());
 					failedQueryPartIDs.put(addQueryPartMessage.getQueryPartID(), e.getMessage());
 				}
