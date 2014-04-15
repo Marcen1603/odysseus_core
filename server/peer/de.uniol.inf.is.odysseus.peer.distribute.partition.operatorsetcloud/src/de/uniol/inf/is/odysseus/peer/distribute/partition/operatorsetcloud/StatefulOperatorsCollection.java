@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.partition.operatorset;
+package de.uniol.inf.is.odysseus.peer.distribute.partition.operatorsetcloud;
 
 import java.util.Collection;
 

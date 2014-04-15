@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Operatorset
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.distribute.partition.operatorset
+Bundle-Name: Operatorsetcloud
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.distribute.partition.operatorsetcloud
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Service-Component: OSGI-INF/operatorSetPartitioner.xml
+Service-Component: OSGI-INF/operatorSetCloudPartitioner.xml
 Require-Bundle: de.uniol.inf.is.odysseus.peer.distribute;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",

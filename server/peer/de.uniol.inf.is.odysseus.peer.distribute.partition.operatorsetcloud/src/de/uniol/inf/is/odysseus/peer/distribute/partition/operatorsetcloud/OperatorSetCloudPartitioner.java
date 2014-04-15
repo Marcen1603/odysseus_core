@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.partition.operatorset;
+package de.uniol.inf.is.odysseus.peer.distribute.partition.operatorsetcloud;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,13 +14,13 @@ import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartitioner;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartitionException;
 
-public class OperatorSetPartitioner implements IQueryPartitioner {
+public class OperatorSetCloudPartitioner implements IQueryPartitioner {
 
 	private static final StatefulOperatorsCollection STATEFUL_OPERATORS = new StatefulOperatorsCollection();
 	
 	@Override
 	public String getName() {
-		return "operatorset";
+		return "operatorsetcloud";
 	}
 
 	@Override
