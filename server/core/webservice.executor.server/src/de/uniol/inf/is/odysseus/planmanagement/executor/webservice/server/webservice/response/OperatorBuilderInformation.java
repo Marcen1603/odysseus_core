@@ -33,6 +33,18 @@ public class OperatorBuilderInformation {
 	private String name;
 	private String doc;
 	
+	private String[] categories;
+	
+	
+	
+	public String[] getCategories() {
+		return categories;
+	}
+
+	public void setCategories(String[] categories) {
+		this.categories = categories;
+	}
+
 	public Set<ParameterInfo> getParameters() {
 		return parameters;
 	}

@@ -42,9 +42,12 @@ import javax.xml.ws.Endpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -56,6 +59,8 @@ import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -68,6 +73,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
@@ -84,6 +90,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.OperatorBuilderFactoryServiceBinding;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.exception.CreateQueryException;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.exception.DetermineOutputSchemaException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.exception.InvalidUserDataException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.exception.QueryNotExistsException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.BooleanResponse;
@@ -116,6 +123,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webser
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StringMapStringListResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StringResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.ViewInformationWS;
+import de.uniol.inf.is.odysseus.relational_interval.replacement.ReplacementRegistry;
 
 /**
  * 
@@ -820,8 +828,8 @@ public class WebserviceServer {
 			info.setMinInputOperatorCount(builder.getMinInputOperatorCount());
 			info.setMaxInputOperatorCount(builder.getMaxInputOperatorCount());
 			info.setDoc(builder.getDoc());
-			info.setParameters(extractParameterInformation(builder
-					.getParameters()));
+			info.setParameters(extractParameterInformation(builder.getParameters()));
+			info.setCategories(builder.getCategories());
 			infos.add(info);
 		}
 		return infos;
@@ -843,6 +851,7 @@ public class WebserviceServer {
 				.getRequirement().name()));
 		info.setDeprecated(parameter.isDeprecated());
 		info.setMandatory(parameter.isMandatory());
+		info.setPossibleValueMethod(parameter.getPossibleValueMethod());
 		info.setDoc(parameter.getDoc());
 		String dataType = parameter.getClass().getSimpleName();
 		info.setDataType(dataType);
@@ -885,17 +894,22 @@ public class WebserviceServer {
 		return new StringListResponse(resp, true);
 	}
 
+
 	public SDFSchemaResponse determineOutputSchema(
 			@WebParam(name = "query") String query,
 			@WebParam(name = "parserID") String parserID,
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "port") int port,
 			@WebParam(name = "context") Context context)
-			throws InvalidUserDataException {
+			throws InvalidUserDataException, DetermineOutputSchemaException {
 		ISession caller = loginWithSecurityToken(securityToken);
-		SDFSchema schema = getExecutor().determineOutputSchema(query, parserID,
-				caller, port, context);
-		return createSDFSchemaInformation(schema);
+		try {
+			SDFSchema schema = getExecutor().determineOutputSchema(query, parserID, caller, port, context);
+			return createSDFSchemaInformation(schema);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			throw new DetermineOutputSchemaException(e.toString());
+		}
 	}
 
 	public SDFDatatypeListResponse getRegisteredDatatypes(
@@ -1095,4 +1109,35 @@ public class WebserviceServer {
 				.getOperatorInformation(name, user);
 		return new LogicalOperatorInformationResponse(result, true);
 	}
+	
+	public StringListResponse getProtocolValues(@WebParam(name = "securitytoken") String securityToken)throws InvalidUserDataException {
+		loginWithSecurityToken(securityToken);
+		ImmutableList<String> names = ProtocolHandlerRegistry.getHandlerNames();
+		return new StringListResponse(names, true);
+	}
+	
+	public StringListResponse getDataHandlerValues(@WebParam(name = "securitytoken") String securityToken)throws InvalidUserDataException {
+		loginWithSecurityToken(securityToken);
+		ImmutableList<String> names = DataHandlerRegistry.getHandlerNames();
+		return new StringListResponse(names, true);
+	}
+	
+	public StringListResponse getTransportValues(@WebParam(name = "securitytoken") String securityToken)throws InvalidUserDataException {
+		loginWithSecurityToken(securityToken);
+		ImmutableList<String> names = TransportHandlerRegistry.getHandlerNames();
+		return new StringListResponse(names, true);
+	}
+	
+	public StringListResponse getReplacementMethods(@WebParam(name = "securitytoken") String securityToken)throws InvalidUserDataException {
+		loginWithSecurityToken(securityToken);
+		List<String> names = ReplacementRegistry.getKeys();
+		return new StringListResponse(names, true);
+	}
+	
+	public StringListResponse getWindowTypes(@WebParam(name = "securitytoken") String securityToken)throws InvalidUserDataException {
+		loginWithSecurityToken(securityToken);
+		List<String> names = WindowType.getValues();
+		return new StringListResponse(names, true);
+	}
+
 }

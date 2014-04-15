@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response;
 
-import java.util.List;
 
 
 /**
@@ -34,7 +33,7 @@ public class ParameterInfo {
 	private REQUIREMENT requirement;
 	private boolean deprecated;
 	private boolean mandatory;
-	private List<String> possibleValues;
+	private String possibleValueMethod;
 	private String doc;
 	private String dataType;
 	private ParameterInfo listDataType;
@@ -83,12 +82,12 @@ public class ParameterInfo {
 		this.mandatory = mandatory;
 	}
 	
-	public List<String> getPossibleValues() {
-		return this.possibleValues;
+	public String getPossibleValueMethod() {
+		return this.possibleValueMethod;
 	}
 	
-	public void setPossibleValues(List<String> possibleValues) {
-		this.possibleValues = possibleValues;
+	public void setPossibleValueMethod(String possibleValueMethod) {
+		this.possibleValueMethod = possibleValueMethod;
 	}
 	
 	public String getDoc() {
