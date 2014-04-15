@@ -43,12 +43,10 @@ public class ExportAllPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
-		final String transCfgName = (String) variables.get("TRANSCFG");
-
 		List<String> sources = determineCurrentSourceNames();
 		List<String> exportableSources = determineExportableSources(sources);
 		try {
-			P2PDictionary.getInstance().exportSources(exportableSources, transCfgName);
+			P2PDictionary.getInstance().exportSources(exportableSources);
 		} catch (PeerException e) {
 			throw new OdysseusScriptException("Could not export " + exportableSources, e);
 		}

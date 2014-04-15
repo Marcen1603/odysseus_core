@@ -26,7 +26,7 @@ public class AutoExporter implements IDataDictionaryListener {
 	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
 		if( !dictionary.isExported(name) && !dictionary.isImported(name)) {
 			try {
-				dictionary.exportSource(name, "Standard");
+				dictionary.exportSource(name);
 			} catch (PeerException e) {
 				LOG.error("Could not automatically export {}", name, e);
 			}

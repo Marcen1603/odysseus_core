@@ -501,7 +501,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		}
 
 		try {
-			SourceAdvertisement adv = p2pDictionary.exportSource(sourceName, "Standard");
+			SourceAdvertisement adv = p2pDictionary.exportSource(sourceName);
 			System.out.println("Source '" + sourceName + "' exported as " + sourceTypeString(adv));
 		} catch (PeerException e) {
 			System.out.println("Export failed: " + e.getMessage());

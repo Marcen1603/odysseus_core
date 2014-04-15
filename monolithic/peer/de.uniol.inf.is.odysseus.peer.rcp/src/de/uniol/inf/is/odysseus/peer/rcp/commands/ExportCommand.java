@@ -36,7 +36,7 @@ public class ExportCommand extends AbstractHandler implements IHandler {
 			
 		// TODO: Transcfg wählen lassen
 		try {
-			RCPP2PNewPlugIn.getP2PDictionary().exportSources(sourceNames, "Standard");
+			RCPP2PNewPlugIn.getP2PDictionary().exportSources(sourceNames);
 		} catch (PeerException e) {
 			LOG.error("Could not export source {}", sourceNames, e);
 		}

@@ -27,8 +27,8 @@ public interface IP2PDictionary {
 	Optional<SourceAdvertisement> getImportedSource( String viewName );
 	ImmutableList<SourceAdvertisement> getImportedSources();
 	
-	SourceAdvertisement exportSource( String viewName, String queryBuildConfigurationName ) throws PeerException;
-	Collection<SourceAdvertisement> exportSources( Collection<String> viewNames, String queryBuildConfigurationName ) throws PeerException;
+	SourceAdvertisement exportSource( String viewName ) throws PeerException;
+	Collection<SourceAdvertisement> exportSources( Collection<String> viewNames ) throws PeerException;
 	boolean removeSourceExport( String viewName );
 	boolean removeSourcesExport( Collection<String> viewNames);
 	boolean isExported( String viewName );

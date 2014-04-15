@@ -74,7 +74,7 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 		addParameterInfo("PIPEID", "'" + pipeID + "'");
 	}
 	
-	@Parameter(name = "PEERID", doc = "Jxta Peer ID to communicate with", type = StringParameter.class, optional = false)
+	@Parameter(name = "PEERID", doc = "Jxta Peer ID to communicate with", type = StringParameter.class, optional = true)
 	public void setPeerID( String peerID ) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(peerID), "PeerID for sender ao must not be null or empty!");
 		
