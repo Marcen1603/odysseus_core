@@ -394,8 +394,11 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		}
 		
 		// Create new query part
+		Collection<ILogicalQueryPart> queryPartsOfReplicates = Lists.newArrayList(replicatesToOrigin.get(originPart));
+		ILogicalQueryPart mergerPart = new LogicalQueryPart(merger);
+		mergerPart.addAvoidingQueryParts(queryPartsOfReplicates);
 		Collection<ILogicalQueryPart> modifiedQueryParts = Lists.newArrayList();
-		modifiedQueryParts.add(new LogicalQueryPart(merger));
+		modifiedQueryParts.add(mergerPart);
 		modifiedReplicatesToOrigin.put(new LogicalQueryPart(merger), modifiedQueryParts);
 		
 		if(ReplicationQueryPartModificator.log.isDebugEnabled()) {
@@ -640,19 +643,19 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		if(!replicatedTarget.isPresent()) {
 			
 			merger.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(), 0, subscription.getSchema());
-			merger.setDestinationName(subscription.getTarget().getDestinationName());
 			
 			// Create new query part
 			Collection<ILogicalQueryPart> modifiedQueryParts = Lists.newArrayList();
-			LogicalQueryPart mergerQueryPart = new LogicalQueryPart(merger);
-			modifiedQueryParts.add(mergerQueryPart);
-			modifiedReplicatesToOrigin.put(mergerQueryPart, modifiedQueryParts);
+			Collection<ILogicalQueryPart> queryPartsOfReplicates = Lists.newArrayList(replicatesToOrigin.get(originPart));
+			ILogicalQueryPart mergerPart = new LogicalQueryPart(merger);
+			mergerPart.addAvoidingQueryParts(queryPartsOfReplicates);
+			modifiedQueryParts.add(mergerPart);
+			modifiedReplicatesToOrigin.put(mergerPart, modifiedQueryParts);
 			
 		}
 		else {
 			
 			merger.subscribeSink(replicatedTarget.get(), subscription.getSinkInPort(), 0, subscription.getSchema());
-			merger.setDestinationName(replicatedTarget.get().getDestinationName());
 			
 			// Create modified query part
 			Collection<ILogicalOperator> operatorsWithMerger = Lists.newArrayList(queryPartOfReplicatedTarget.get().getOperators());
@@ -664,7 +667,11 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 					modifiedQueryParts.add(part);
 				
 			}
-			modifiedQueryParts.add(new LogicalQueryPart(operatorsWithMerger));
+				
+			Collection<ILogicalQueryPart> queryPartsOfReplicates = Lists.newArrayList(replicatesToOrigin.get(originPart));
+			ILogicalQueryPart mergerPart = new LogicalQueryPart(operatorsWithMerger);
+			mergerPart.addAvoidingQueryParts(queryPartsOfReplicates);
+			modifiedQueryParts.add(mergerPart);
 			modifiedReplicatesToOrigin.put(originPartOfTarget.get(), modifiedQueryParts);
 			
 		}
