@@ -17,11 +17,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.logicaloperator.ReplicationMergeAO;
 
@@ -33,6 +29,9 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.logicaloperat
 public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>> 
 		extends AbstractPipe<T, T> {
 	
+	/**
+	 * The logger for this class.
+	 */
 	private static final Logger log = LoggerFactory.getLogger(ReplicationMergePO.class);
 	
 	/**
@@ -41,9 +40,9 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	private PriorityQueue<IPair<IStreamable, Integer>> inputQueue;
 	
 	/**
-	 * The {@link ITransferArea} to store elements, which shall be transfered, in order to guarantee chronological order.
+	 * The youngest start timestamp of all seen objects.
 	 */
-	protected ITransferArea<T,T> transferFunction;
+	private PointInTime youngestTS;
 	
 	/**
 	 * The comparator for pairs of {@link IStreamable} objects and ports. <br />
@@ -86,12 +85,11 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	/**
 	 * Constructs a new {@link ReplicationMergePO}.
 	 */
-	@SuppressWarnings("unchecked")
 	public ReplicationMergePO() {
 		
 		super();
-		this.transferFunction = (ITransferArea<T, T>) new TITransferArea<IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>();
 		this.inputQueue = new PriorityQueue<IPair<IStreamable, Integer>>(10, comp);
+		this.youngestTS = null;
 		
 	}
 
@@ -102,9 +100,9 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	public ReplicationMergePO(ReplicationMergePO<T> mergePO) {
 		
 		super(mergePO);
-		this.transferFunction = mergePO.transferFunction.clone();
 		this.inputQueue = new PriorityQueue<IPair<IStreamable, Integer>>(10, comp);
 		this.inputQueue.addAll(mergePO.inputQueue);
+		this.youngestTS = mergePO.youngestTS;
 		
 	}
 	
@@ -123,23 +121,10 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	}
 	
 	@Override
-	protected void newSourceSubscribed(PhysicalSubscription<ISource<? extends T>> sub) {
-		
-		this.transferFunction.addNewInput(sub.getSinkInPort());
-		
-	}
-	
-	@Override
-	protected void sourceUnsubscribed(PhysicalSubscription<ISource<? extends T>> sub) {
-		
-		this.transferFunction.removeInput(sub.getSinkInPort());
-	}
-	
-	@Override
 	protected synchronized void process_open() throws OpenFailedException {
 		
-		this.transferFunction.init(this, getSubscribedToSource().size());
 		this.inputQueue.clear();
+		this.youngestTS = null;
 		
 	}
 	
@@ -147,21 +132,26 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	protected synchronized void process_close() {
 		
 		this.inputQueue.clear();
+		this.youngestTS = null;
 		
 	}
 	
 	@Override
 	protected synchronized void process_done() {
 		
-		if(this.isOpen())
+		if(this.isOpen()) {
+			
 			this.inputQueue.clear();
+			this.youngestTS = null;
+			
+		}
 		
 	}
 	
 	@Override
 	protected synchronized boolean isDone() {
 		
-		if(!this.inputQueue.isEmpty() || this.transferFunction.size() > 0)
+		if(!this.inputQueue.isEmpty())
 			return false;
 		
 		for(int port = 0; port < this.getInputPortCount(); port++) {
@@ -178,8 +168,10 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	@Override
 	protected synchronized void process_next(T object, int port) {
 		// TODO: DO NOT SYNCHRONIZE ON THIS!
-		ReplicationMergePO.log.debug("New object {} at port {}.", object, port);
-		this.transferFunction.newElement(object, port);
+		
+		if(!this.precheck(object))
+			return;
+		
 		this.purgeElements(this.getTS(object, true));
 		this.mergeElement(object, port);
 		this.inputQueue.add(new Pair<IStreamable, Integer>(object, port));
@@ -189,7 +181,9 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	@Override
 	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
 		
-		this.transferFunction.newElement(punctuation, port);
+		if(!this.precheck(punctuation))
+			return;
+			
 		this.purgeElements(this.getTS(punctuation, true));
 		this.mergeElement(punctuation, port);
 		this.inputQueue.add(new Pair<IStreamable, Integer>(punctuation, port));
@@ -197,7 +191,28 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	}
 	
 	/**
-	 * Removes all elements from the {@link inputQueue}, which have an end timestamp before or equal to <code>deadline</code>.
+	 * Checks, if the start timestamp of the object is younger or equal to the youngest seen and updates the youngest seen if necessary.
+	 * @return True, if the object is is younger or equal. False, means that the object can be rejected.
+	 */
+	private synchronized boolean precheck(IStreamable object) {
+		
+		final PointInTime ts = this.getTS(object, true);
+		
+		if(this.youngestTS != null && ts.before(this.youngestTS))
+			return false;		
+		else if(this.youngestTS == null || ts.after(this.youngestTS)) {
+			
+			this.youngestTS = ts;
+			ReplicationMergePO.log.debug("Set youngest timestamp to {}.", this.youngestTS);
+			
+		}
+		
+		return true;
+		
+	}
+	
+	/**
+	 * Removes all elements from the {@link inputQueue}, which have an start timestamp before to <code>deadline</code>.
 	 */
 	private synchronized void purgeElements(PointInTime deadline) {
 		
@@ -206,8 +221,8 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 		while(!this.inputQueue.isEmpty() && continuePeeking) {
 			
 			IStreamable elem = this.inputQueue.peek().getE1();
-			PointInTime endTS_elem = this.getTS(elem, false);
-			if(endTS_elem.beforeOrEquals(deadline))
+			PointInTime endTS_elem = this.getTS(elem, true);
+			if(endTS_elem.before(deadline))
 				this.inputQueue.poll();
 			else continuePeeking = false;
 			
@@ -280,9 +295,11 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 			 * Else would mean, that the object appeared on a different port earlier -> drop
 			 */
 			
+			ReplicationMergePO.log.debug("Transfering object {} from port {}.", object, port);
+			
 			if(object.isPunctuation())
-				this.transferFunction.sendPunctuation((IPunctuation) object);
-			else this.transferFunction.transfer((T) object);
+				this.sendPunctuation((IPunctuation) object); 
+			else this.transfer((T) object);
 			
 		}
 		
