@@ -635,7 +635,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 							retBuff.append(curAttribute);
 						}
 					} else {
-						if (textSeperator != null
+						if (textSeperator != null 
 								&& curAttribute instanceof String) {
 							retBuff.append(textSeperator)
 									.append(curAttribute.toString())

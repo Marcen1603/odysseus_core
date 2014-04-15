@@ -81,7 +81,7 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
     
     @Override
     public void writeCSVData(StringBuilder string, Object data,
-    		char delimiter, char textSeperator, DecimalFormat floatingFormatter,
+    		char delimiter, Character textSeperator, DecimalFormat floatingFormatter,
     		DecimalFormat numberFormat, boolean writeMetadata) {
     	if (data instanceof ICSVToString){
     		string.append(((ICSVToString)data).csvToString(delimiter,textSeperator,floatingFormatter,numberFormat,writeMetadata));
