@@ -10,10 +10,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * {@link ILogicalQuery}s. <br />
  * The {@link ReplicationMergeAO} does not have any parameters but it must have at least two inputs. 
  * It can be used in PQL: <br />
- * <code>output = DISTRIBUTION_MERGE(input1,input2,...inputn)</code> 
+ * <code>output = REPLICATIONMERGE(input1,input2,...inputn)</code> 
  * @author Michael Brand
  */
-@LogicalOperator(name="DISTRIBUTION_MERGE", minInputPorts=2, maxInputPorts=Integer.MAX_VALUE, doc="Merge input from semantically equal queries.", category = {LogicalOperatorCategory.PROCESSING})
+@LogicalOperator(name="REPLICATIONMERGE", minInputPorts=2, maxInputPorts=Integer.MAX_VALUE, doc="Merge input from semantically equal queries.", category = {LogicalOperatorCategory.PROCESSING})
 public class ReplicationMergeAO extends BinaryLogicalOp {
 	
 	private static final long serialVersionUID = -4050688632559595499L;
