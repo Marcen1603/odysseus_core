@@ -184,18 +184,13 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 		// Subscribe the targets to the last operator of reunion part
 		for (ILogicalOperator target : targets)
 			lastOperatorOfReunionPart.subscribeSink(target, sinkInPort, 0, schema);
-		if (targets.size() == 1) {
-
-			operatorForReunion.setDestinationName(targets.iterator().next().getDestinationName());
-			if (optAggregation.isPresent())
-				lastOperatorOfReunionPart.setDestinationName(targets.iterator().next().getDestinationName());
-
-		}
 
 		AbstractHorizontalFragmentationQueryPartModificator.log.debug("Inserted an operator for reunion between {} and {}", copiesOfOriginSink, targets);
 
 		// Create the query part for the operator for reunion
+		Collection<ILogicalQueryPart> queryPartsOfFragments = Lists.newArrayList(copiesToOrigin.get(originPart));
 		ILogicalQueryPart reunionPart = new LogicalQueryPart(operatorsOfReunionPart);
+		reunionPart.addAvoidingQueryParts(queryPartsOfFragments);
 		Collection<ILogicalQueryPart> copiesOfReunionPart = Lists.newArrayList(reunionPart);
 		modifiedCopiesToOrigin.put(reunionPart, copiesOfReunionPart);
 

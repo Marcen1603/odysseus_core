@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -480,7 +481,6 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 			operatorForFragmentation.subscribeSink(copiedSource, subscription.getSinkInPort(), sourceNo, subscription.getSchema());
 
 		}
-		operatorForFragmentation.setDestinationName(copiesOfOriginSource.iterator().next().getDestinationName());
 
 		AbstractFragmentationQueryPartModificator.log.debug("Inserted an operator for fragmentation before {}", copiesOfOriginSource);
 
@@ -765,13 +765,13 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 		// Subscribe the targets to the operator for reunion
 		for (ILogicalOperator target : targets)
 			operatorForReunion.subscribeSink(target, sinkInPort, 0, schema);
-		if (targets.size() == 1)
-			operatorForReunion.setDestinationName(targets.iterator().next().getDestinationName());
 
 		AbstractFragmentationQueryPartModificator.log.debug("Inserted an operator for reunion between {} and {}", copiesOfOriginSink, targets);
 
 		// Create the query part for the operator for reunion
+		Collection<ILogicalQueryPart> queryPartsOfFragments = Lists.newArrayList(copiesToOrigin.get(originPart));
 		ILogicalQueryPart reunionPart = new LogicalQueryPart(operatorForReunion);
+		reunionPart.addAvoidingQueryParts(queryPartsOfFragments);
 		Collection<ILogicalQueryPart> copiesOfReunionPart = Lists.newArrayList(reunionPart);
 		modifiedCopiesToOrigin.put(reunionPart, copiesOfReunionPart);
 
@@ -1074,8 +1074,20 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 				continue;
 			else if (operator.isSinkOperator() && !operator.isSourceOperator())
 				continue;
-			else if (AbstractFragmentationQueryPartModificator.isOperatorRelevant(operator, sourceName))
+			else if(operator instanceof RenameAO)
+				continue;
+			else if (AbstractFragmentationQueryPartModificator.isOperatorRelevant(operator, sourceName)) {
+				
 				relevantOperators.add(operator);
+				
+				for(LogicalSubscription subToSink : operator.getSubscriptions()) {
+					
+					if(subToSink.getTarget() instanceof RenameAO)
+						relevantOperators.add(operator);
+						
+				}
+				
+			}
 
 		}
 
