@@ -241,7 +241,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 		for (MultipleSourceAdvertisement multiSrcAdv : multiSrcAdvs) {
 			
-			if( !multiSrcAdv.isLocal() || !JxtaServicesProvider.getInstance().isReachable(multiSrcAdv.getPeerID())) {
+			if( !multiSrcAdv.isLocal() && !JxtaServicesProvider.getInstance().isReachable(multiSrcAdv.getPeerID())) {
 				boolean canExist = false;
 				for( SourceAdvertisement srcAdv : multiSrcAdv.getSourceAdvertisements() ) {
 					if( srcAdv.isStream() ) {
