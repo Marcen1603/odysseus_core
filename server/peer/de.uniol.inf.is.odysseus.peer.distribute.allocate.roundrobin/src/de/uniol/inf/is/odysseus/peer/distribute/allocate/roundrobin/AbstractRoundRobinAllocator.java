@@ -40,10 +40,19 @@ public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator
 		Map<ILogicalQueryPart, PeerID> allocationMap = Maps.newHashMap();
 		
 		for( ILogicalQueryPart queryPart : queryParts ) {
-			LOG.debug("Allocating query part {}", queryPart);
+			if( LOG.isDebugEnabled() ) {
+				LOG.debug("Allocating query part {}", queryPart);
+				if( !queryPart.getAvoidingQueryParts().isEmpty() ) {
+					LOG.debug("Avoiding query parts");
+					for( ILogicalQueryPart avoidedQueryPart : queryPart.getAvoidingQueryParts() ) {
+						LOG.debug("\t{}", avoidedQueryPart);
+					}
+				}
+			}
+			
 			Collection<PeerID> nonAllowedPeers = determineAvoidedPeers(queryPart, allocationMap);
 			if( !nonAllowedPeers.isEmpty() ) {
-				LOG.debug("Avoiding parts for this query part:");
+				LOG.debug("Avoiding peers for this query part:");
 				logPeers(nonAllowedPeers);
 			}
 			
