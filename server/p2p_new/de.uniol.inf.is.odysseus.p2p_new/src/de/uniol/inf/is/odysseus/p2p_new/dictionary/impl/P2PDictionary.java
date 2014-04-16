@@ -967,7 +967,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 				
 				LOG.debug("Got source advertisement. Name is {} provided from {}", srcAdv.getName(), getRemotePeerName(srcAdv.getPeerID()));
 	
-				if (isAutoImport()) {
+				if (!srcAdv.isLocal() && isAutoImport()) {
 					LOG.debug("Do autoimport of it");
 					tryAutoImportSource(srcAdv);
 				}
@@ -979,7 +979,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 				
 				LOG.debug("Got multiple source advertisement. It contains {} sources provided from {}", multSrcAdv.getSourceAdvertisements().size(), getRemotePeerName(multSrcAdv.getPeerID()));
 	
-				if (isAutoImport()) {
+				if (!multSrcAdv.isLocal() && isAutoImport()) {
 					LOG.debug("Autoimporting them");
 					
 					for (SourceAdvertisement srcAdv : multSrcAdv.getSourceAdvertisements()) {
