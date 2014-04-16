@@ -10,7 +10,10 @@ Require-Bundle: com.google.guava;bundle-version="14.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.p2p_new,
  de.uniol.inf.is.odysseus.core,
- Jxta_2.6_Source;bundle-version="1.0.0"
-Service-Component: OSGI-INF/RoundRobinAllocator.xml,OSGI-INF/RoundRobinWithLocalAllocator.xml,
- OSGI-INF/RoundRobinWithUserAllocator.xml
-Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.query
+ Jxta_2.6_Source;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
+Service-Component: OSGI-INF/RoundRobinAllocator.xml,OSGI-INF/RoundRobinWithLocalAllocator.xml,OSGI-INF/RoundRobinWithUserAllocator.xml,
+ OSGI-INF/RoundRobinActivator.xml
+Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.query,
+ org.osgi.framework;version="1.6.0"
+Bundle-Activator: de.uniol.inf.is.odysseus.peer.distribute.allocate.roundrobin.RoundRobinActivator
