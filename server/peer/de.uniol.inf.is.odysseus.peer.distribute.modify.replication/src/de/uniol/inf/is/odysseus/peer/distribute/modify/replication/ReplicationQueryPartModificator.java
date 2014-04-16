@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -145,6 +146,51 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			
 			ReplicationQueryPartModificator.log.error(e.getMessage(), e);
 			throw new QueryPartModificationException(e);
+			
+		}	
+		
+		return ReplicationQueryPartModificator.setQueryPartsToAvoid(modifiedParts);
+		
+	}
+
+	// TODO javaDoc
+	private static Collection<ILogicalQueryPart> setQueryPartsToAvoid(Collection<ILogicalQueryPart> parts) throws QueryPartModificationException {
+		
+		Preconditions.checkNotNull(parts, "Collection of query parts must be not null!");
+		
+		Collection<ILogicalQueryPart> modifiedParts = Lists.newArrayList(parts);
+		
+		for(ILogicalQueryPart part : modifiedParts) {
+			
+			for(ILogicalOperator operator : part.getOperators()) {
+				
+				if(!operator.getClass().equals(ReplicationQueryPartModificator.mergerClass))
+					continue;
+				
+				final ILogicalOperator merger = operator;
+				
+				for(LogicalSubscription subToSource : merger.getSubscribedToSource()) {
+					
+					final ILogicalOperator source = subToSource.getTarget();					
+					final Optional<ILogicalQueryPart> optPartOfSource = LogicalQueryHelper.determineQueryPart(modifiedParts, source);
+					
+					if(!optPartOfSource.isPresent() || optPartOfSource.get().equals(part)) {
+						
+						final String errorMessage = "Query part of " + source + " is either not present or the same part as of the following merger!";
+						ReplicationQueryPartModificator.log.error(errorMessage);
+						throw new QueryPartModificationException(errorMessage);
+						
+					}
+					
+					final ILogicalQueryPart partOfSource = optPartOfSource.get();
+					if(!part.getAvoidingQueryParts().contains(partOfSource))
+						part.addAvoidingQueryPart(partOfSource);
+					if(!partOfSource.getAvoidingQueryParts().contains(part))
+						partOfSource.addAvoidingQueryPart(part);
+					
+				}
+				
+			}
 			
 		}
 		
@@ -394,9 +440,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		}
 		
 		// Create new query part
-		Collection<ILogicalQueryPart> queryPartsOfReplicates = Lists.newArrayList(replicatesToOrigin.get(originPart));
 		ILogicalQueryPart mergerPart = new LogicalQueryPart(merger);
-		mergerPart.addAvoidingQueryParts(queryPartsOfReplicates);
 		Collection<ILogicalQueryPart> modifiedQueryParts = Lists.newArrayList();
 		modifiedQueryParts.add(mergerPart);
 		modifiedReplicatesToOrigin.put(new LogicalQueryPart(merger), modifiedQueryParts);
@@ -646,9 +690,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			
 			// Create new query part
 			Collection<ILogicalQueryPart> modifiedQueryParts = Lists.newArrayList();
-			Collection<ILogicalQueryPart> queryPartsOfReplicates = Lists.newArrayList(replicatesToOrigin.get(originPart));
 			ILogicalQueryPart mergerPart = new LogicalQueryPart(merger);
-			mergerPart.addAvoidingQueryParts(queryPartsOfReplicates);
 			modifiedQueryParts.add(mergerPart);
 			modifiedReplicatesToOrigin.put(mergerPart, modifiedQueryParts);
 			
@@ -668,9 +710,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 				
 			}
 				
-			Collection<ILogicalQueryPart> queryPartsOfReplicates = Lists.newArrayList(replicatesToOrigin.get(originPart));
 			ILogicalQueryPart mergerPart = new LogicalQueryPart(operatorsWithMerger);
-			mergerPart.addAvoidingQueryParts(queryPartsOfReplicates);
 			modifiedQueryParts.add(mergerPart);
 			modifiedReplicatesToOrigin.put(originPartOfTarget.get(), modifiedQueryParts);
 			
