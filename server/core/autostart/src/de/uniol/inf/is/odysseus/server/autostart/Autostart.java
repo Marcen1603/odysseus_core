@@ -28,53 +28,57 @@ public class Autostart implements BundleActivator {
 	static final Logger LOG = LoggerFactory.getLogger(Autostart.class);
 	
 	private static boolean autostartRun = false;
+	
+	private static Object lock = new Object();
 
-	private void runAutostart() {
-		if (!autostartRun && context != null && executor != null) {
-			autostartRun = true;
-			try {
-				Bundle bundle = context.getBundle();
-				for (String path : AUTOSTARTFILE) {
-					LOG.debug("Trying to start " + path);
-					URL fileURL = bundle.getEntry(path);
-					InputStream inputStream = null;
-					// could be inside of bundle
-					if (fileURL != null) {
-						LOG.debug("Running autostartfile " + fileURL);
-						URLConnection con = fileURL.openConnection();
-						inputStream = con.getInputStream();
-					}
-					// or somewhere else
-					if (inputStream == null) {
-						LOG.debug("Running autostartfile "+path);
-						try {
-							inputStream = new FileInputStream(path);
-						} catch (Exception e) {
-							// Ignore
+	private static void runAutostart() {
+		synchronized( lock ) {
+			if (!autostartRun && context != null && executor != null) {
+				autostartRun = true;
+				try {
+					Bundle bundle = context.getBundle();
+					for (String path : AUTOSTARTFILE) {
+						LOG.debug("Trying to start " + path);
+						URL fileURL = bundle.getEntry(path);
+						InputStream inputStream = null;
+						// could be inside of bundle
+						if (fileURL != null) {
+							LOG.debug("Running autostartfile " + fileURL);
+							URLConnection con = fileURL.openConnection();
+							inputStream = con.getInputStream();
+						}
+						// or somewhere else
+						if (inputStream == null) {
+							LOG.debug("Running autostartfile "+path);
+							try {
+								inputStream = new FileInputStream(path);
+							} catch (Exception e) {
+								// Ignore
+							}
+						}
+	
+						if (inputStream != null) {
+							BufferedReader in = new BufferedReader(
+									new InputStreamReader(inputStream));
+							String inputLine;
+							StringBuffer query = new StringBuffer();
+	
+							while ((inputLine = in.readLine()) != null) {
+								query.append(inputLine).append("\n");
+							}
+							if (query.length() > 0) {
+								AutostartExecuteThread t = new AutostartExecuteThread(executor, query.toString());
+								t.start();
+							}
+							in.close();
+						} else {
+							LOG.debug("No autostartfile found");
 						}
 					}
-
-					if (inputStream != null) {
-						BufferedReader in = new BufferedReader(
-								new InputStreamReader(inputStream));
-						String inputLine;
-						StringBuffer query = new StringBuffer();
-
-						while ((inputLine = in.readLine()) != null) {
-							query.append(inputLine).append("\n");
-						}
-						if (query.length() > 0) {
-							AutostartExecuteThread t = new AutostartExecuteThread(executor, query.toString());
-							t.start();
-						}
-						in.close();
-					} else {
-						LOG.debug("No autostartfile found");
-					}
-				}
-			} catch (Exception e) {
-				LOG.error("Could not execute autostart", e);
-			} 
+				} catch (Exception e) {
+					LOG.error("Could not execute autostart", e);
+				} 
+			}
 		}
 	}
 
