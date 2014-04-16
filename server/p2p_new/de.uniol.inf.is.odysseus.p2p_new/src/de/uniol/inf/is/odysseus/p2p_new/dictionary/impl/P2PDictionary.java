@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
@@ -109,7 +110,14 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	public void activate() {
 		instance = this;
 
-		DataDictionaryProvider.subscribe(SessionManagementService.getTenant(), this);
+		ITenant tenant = SessionManagementService.getTenant();
+		DataDictionaryProvider.subscribe(tenant, this);
+		
+		IDataDictionary dd = DataDictionaryProvider.getDataDictionary(tenant);
+		if( dd != null ) {
+			newDatadictionary(dd);
+		}
+		
 		Thread waitingThread = new Thread(new Runnable() {
 
 			@Override
@@ -660,13 +668,14 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		Optional<SourceAdvertisement> optImportedSrcAdvertisement = getImportedSource(realSourceName);
 		if (optImportedSrcAdvertisement.isPresent()) {
 			removeSourceImport(optImportedSrcAdvertisement.get());
+			
 		}
 		removeSourceExport(realSourceName);
 
 		Optional<SourceAdvertisement> optOwnAdvertisement = find(P2PNetworkManager.getInstance().getLocalPeerID(), realSourceName);
 		if (optOwnAdvertisement.isPresent()) {
 			SourceAdvertisement ownAdvertisement = optOwnAdvertisement.get();
-
+			
 			tryFlushAdvertisement(ownAdvertisement);
 		}
 	}
