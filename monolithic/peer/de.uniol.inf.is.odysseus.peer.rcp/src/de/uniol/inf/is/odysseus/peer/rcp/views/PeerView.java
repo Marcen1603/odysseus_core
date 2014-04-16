@@ -514,10 +514,11 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 						try {
 							Optional<IResourceUsage> optResourceUsage = futureUsage.get();
 							if (optResourceUsage.isPresent()) {
+								IResourceUsage resourceUsage = optResourceUsage.get();
 								synchronized (usageMap) {
-									usageMap.put(remotePeerID, optResourceUsage.get());
-									refreshTableAsync();
+									usageMap.put(remotePeerID, resourceUsage);
 								}
+								refreshTableAsync();
 							}
 						} catch (InterruptedException | ExecutionException e) {
 							LOG.error("Could not get resource usage", e);
