@@ -52,15 +52,19 @@ public class ForceLocalPostProcessor implements IQueryDistributionPostProcessor 
 			
 			Collection<ILogicalOperator> localOperators = collectLocalOperators(part.getOperators());
 			if( !localOperators.isEmpty() ) {
-				LOG.debug("Splitting query part {} into local and non-local", part);
 				
 				if( localOperators.size() == part.getOperators().size() ) {
+					LOG.debug("Forcing query part {} to be executed locally", part);
 					allocationMap.put(part, p2pNetworkManager.getLocalPeerID());
 				} else {
+					LOG.debug("Splitting query part {} into local and non-local", part);
+					
 					part.removeOperators(localOperators);
+					LOG.debug("Query part {} as the non-local one", part);
 					
 					ILogicalQueryPart localQueryPart = new LogicalQueryPart(localOperators);
 					allocationMap.put(localQueryPart, p2pNetworkManager.getLocalPeerID());
+					LOG.debug("Query part {} as the local one", localQueryPart);
 				}
 			}
 		}
