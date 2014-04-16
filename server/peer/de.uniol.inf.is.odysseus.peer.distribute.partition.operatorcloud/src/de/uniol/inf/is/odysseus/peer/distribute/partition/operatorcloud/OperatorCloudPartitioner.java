@@ -3,10 +3,10 @@ package de.uniol.inf.is.odysseus.peer.distribute.partition.operatorcloud;
 import java.util.Collection;
 import java.util.List;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartitioner;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartitionException;
+import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
 public class OperatorCloudPartitioner implements IQueryPartitioner {
 
@@ -26,23 +27,27 @@ public class OperatorCloudPartitioner implements IQueryPartitioner {
 	public Collection<ILogicalQueryPart> partition(Collection<ILogicalOperator> operators, ILogicalQuery query, QueryBuildConfiguration config, List<String> partitionParameters) throws QueryPartitionException {
 		Collection<ILogicalQueryPart> parts = Lists.newArrayList();
 		
+		for(ILogicalOperator operator : operators)
+			parts.add(new LogicalQueryPart(operator));
+		
 		// Handling of RenameAOs: Every RenameAO will be in the query part of the operator subscribed by the RenameAO.
 		
-		for(ILogicalOperator operator : operators) {
+		for(ILogicalQueryPart part : parts.toArray(new ILogicalQueryPart[0])) {
 			
-			if(operator instanceof RenameAO)
+			// There is only one operator within the part
+			if(!(part.getOperators().iterator().next() instanceof RenameAO))
 				continue;
 			
-			List<ILogicalOperator> operatorsForPart = Lists.newArrayList(operator);
+			final ILogicalOperator renameAO = part.getOperators().iterator().next();
+			final ILogicalOperator source = renameAO.getSubscribedToSource().iterator().next().getTarget();
 			
-			for(LogicalSubscription subToSink : operator.getSubscriptions()) {
-				
-				if(subToSink.getTarget() instanceof RenameAO)
-					operatorsForPart.add(subToSink.getTarget());
-				
-			}
+			Optional<ILogicalQueryPart> partOfSource = LogicalQueryHelper.determineQueryPart(parts, source);
+			if(!partOfSource.isPresent())
+				throw new QueryPartitionException("Part of " + source + " is not present!");
 			
-			parts.add(new LogicalQueryPart(operatorsForPart));
+			partOfSource.get().addOperator(renameAO);
+			parts.remove(part);
+			
 		}
 		
 		return parts;
