@@ -940,7 +940,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 
 	private void tryAutoImportSource(SourceAdvertisement srcAdv) {
-		if (!isImported(srcAdv) && !isImported(srcAdv.getName())) {
+		if (!srcAdv.isLocal() && !isImported(srcAdv) && !isImported(srcAdv.getName())) {
 			try {
 				importSource(srcAdv, srcAdv.getName());
 				LOG.debug("Autoimporting source {}", srcAdv.getName());
