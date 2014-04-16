@@ -47,6 +47,8 @@ public class AdvertisementDiscoverer extends RepeatingJobThread implements Disco
 			JxtaServicesProvider jxta = JxtaServicesProvider.getInstance();
 			jxta.getRemoteAdvertisements(this);
 			jxta.getRemotePeerAdvertisements(this);
+			
+			fireUpdateEvent();
 		}
 	}
 
@@ -81,6 +83,18 @@ public class AdvertisementDiscoverer extends RepeatingJobThread implements Disco
 			for (IAdvertisementDiscovererListener listener : listenerMap) {
 				try {
 					listener.advertisementDiscovered(advertisement);
+				} catch (Throwable t) {
+					LOG.error("Exception in advertisement discoverer listener", t);
+				}
+			}
+		}
+	}
+
+	private void fireUpdateEvent() {
+		synchronized (listenerMap) {
+			for (IAdvertisementDiscovererListener listener : listenerMap) {
+				try {
+					listener.updateAdvertisements();
 				} catch (Throwable t) {
 					LOG.error("Exception in advertisement discoverer listener", t);
 				}

@@ -29,6 +29,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.AdvertisementCache;
+import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 
 public class MultipleSourceAdvertisement extends Advertisement implements Serializable {
 
@@ -43,7 +44,6 @@ public class MultipleSourceAdvertisement extends Advertisement implements Serial
 	private static final String SOURCE_TAG = "source";
 	
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG };
-	
 
 	private ID id;
 	private PeerID peerID;
@@ -120,6 +120,10 @@ public class MultipleSourceAdvertisement extends Advertisement implements Serial
 	
 	public void setPeerID(PeerID peerID) {
 		this.peerID = peerID;
+	}
+	
+	public boolean isLocal() {
+		return this.peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID());
 	}
 	
 	public Collection<SourceAdvertisement> getSourceAdvertisements() {

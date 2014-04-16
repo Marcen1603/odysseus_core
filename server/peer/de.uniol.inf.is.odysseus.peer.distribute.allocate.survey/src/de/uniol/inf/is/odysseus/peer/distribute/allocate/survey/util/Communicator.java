@@ -168,6 +168,11 @@ public class Communicator implements IAdvertisementDiscovererListener {
 			}
 		}
 	}
+	
+	@Override
+	public void updateAdvertisements() {
+		// do nothing
+	}
 
 	private void processActionQueryAdvertisement(AuctionQueryAdvertisement adv) {
 		if (!adv.getOwnerPeerId().equals(p2pNetworkManager.getLocalPeerID())) {

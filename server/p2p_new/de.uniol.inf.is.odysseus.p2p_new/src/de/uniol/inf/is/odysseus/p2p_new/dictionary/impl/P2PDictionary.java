@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.p2p_new.dictionary.impl;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -194,12 +195,17 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		return srcAdvs;
 	}
 
-	private static void applyRemoveSourceAdvertisements(Collection<SourceAdvertisement> srcAdvs) {
+	private void applyRemoveSourceAdvertisements(Collection<SourceAdvertisement> srcAdvs) {
 		Collection<SourceAdvertisement> srcAdvsToRemove = Lists.newLinkedList();
 		for (RemoveSourceAdvertisement remAdv : JxtaServicesProvider.getInstance().getLocalAdvertisements(RemoveSourceAdvertisement.class)) {
 			for (SourceAdvertisement srcAdv : srcAdvs) {
 				if (srcAdv.getID().equals(remAdv.getSourceAdvertisementID())) {
 					srcAdvsToRemove.add(srcAdv);
+					
+					tryFlushAdvertisement(remAdv);
+					tryFlushAdvertisement(srcAdv);
+					
+					removeSourceImport(srcAdv);
 				}
 			}
 		}
@@ -211,11 +217,26 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 				for (SourceAdvertisement srcAdv : srcAdvs) {
 					if (srcAdv.getID().equals(id)) {
 						srcAdvsToRemove.add(srcAdv);
+						
+						tryFlushAdvertisement(srcAdv);
+						tryFlushAdvertisement(remMultiSrcAdvertisement);
+
+						removeSourceImport(srcAdv);
 					}
 				}
 			}
 		}
 		srcAdvs.removeAll(srcAdvsToRemove);
+		
+		Iterator<SourceAdvertisement> it = srcAdvs.iterator();
+		while( it.hasNext() ) {
+			SourceAdvertisement srcAdv = it.next();
+			if( !srcAdv.isLocal() && !JxtaServicesProvider.getInstance().isReachable(srcAdv.getPeerID())) {
+				removeSourceImport(srcAdv);
+				tryFlushAdvertisement(srcAdv);
+				it.remove();
+			}
+		}
 	}
 
 	private static Collection<SourceAdvertisement> collectSourceAdvertisements() {
@@ -884,59 +905,76 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	@Override
 	public void advertisementDiscovered(Advertisement adv) {
-		if (processedAdvIDs.contains(adv.getID())) {
-			return;
-		}
-
-		if (adv instanceof RemoveSourceAdvertisement) {
-			RemoveSourceAdvertisement removeSourceAdvertisement = (RemoveSourceAdvertisement) adv;
-
-			LOG.debug("Got a remove source advertisement");
-
-			ImmutableList<SourceAdvertisement> importedSources = getImportedSources();
-			for (SourceAdvertisement importedSourceAdv : importedSources) {
-				if (removeSourceAdvertisement.getSourceAdvertisementID().equals(importedSourceAdv.getID())) {
-					removeSourceImport(importedSourceAdv);
-					break;
-				}
+		synchronized( processedAdvIDs ) {
+			if (processedAdvIDs.contains(adv.getID())) {
+				return;
 			}
-			processedAdvIDs.add(adv.getID());
-			sourcesChanged = true;
-
-		} else if (adv instanceof RemoveMultipleSourceAdvertisement) {
-			RemoveMultipleSourceAdvertisement removeMultipleSrcAdvertisement = (RemoveMultipleSourceAdvertisement) adv;
-			LOG.debug("Got a multiple remove source advertisement");
-
-			Collection<ID> idsToRemove = removeMultipleSrcAdvertisement.getSourceAdvertisementIDs();
-
-			ImmutableList<SourceAdvertisement> importedSources = getImportedSources();
-			for (SourceAdvertisement sourceAdv : importedSources) {
-				if (idsToRemove.contains(sourceAdv.getID())) {
-					removeSourceImport(sourceAdv);
+			
+			if (adv instanceof RemoveSourceAdvertisement) {
+				
+				RemoveSourceAdvertisement removeSourceAdvertisement = (RemoveSourceAdvertisement) adv;
+	
+				LOG.debug("Got a remove source advertisement");
+	
+				ImmutableList<SourceAdvertisement> importedSources = getImportedSources();
+				for (SourceAdvertisement importedSourceAdv : importedSources) {
+					if (removeSourceAdvertisement.getSourceAdvertisementID().equals(importedSourceAdv.getID())) {
+						removeSourceImport(importedSourceAdv);
+						break;
+					}
 				}
-			}
-
-			processedAdvIDs.add(adv.getID());
-			sourcesChanged = true;
-		}
-
-		if (adv instanceof SourceAdvertisement) {
-			if (isAutoImport()) {
-				SourceAdvertisement srcAdv = (SourceAdvertisement) adv;
-				tryAutoImportSource(srcAdv);
 				processedAdvIDs.add(adv.getID());
-			}
-			sourcesChanged = true;
-		} else if (adv instanceof MultipleSourceAdvertisement) {
-			if (isAutoImport()) {
-				MultipleSourceAdvertisement multSrcAdv = (MultipleSourceAdvertisement) adv;
-				for (SourceAdvertisement srcAdv : multSrcAdv.getSourceAdvertisements()) {
+				sourcesChanged = true;
+	
+			} else if (adv instanceof RemoveMultipleSourceAdvertisement) {
+	
+				RemoveMultipleSourceAdvertisement removeMultipleSrcAdvertisement = (RemoveMultipleSourceAdvertisement) adv;
+				LOG.debug("Got a multiple remove source advertisement");
+	
+				Collection<ID> idsToRemove = removeMultipleSrcAdvertisement.getSourceAdvertisementIDs();
+	
+				ImmutableList<SourceAdvertisement> importedSources = getImportedSources();
+				for (SourceAdvertisement sourceAdv : importedSources) {
+					if (idsToRemove.contains(sourceAdv.getID())) {
+						removeSourceImport(sourceAdv);
+					}
+				}
+	
+				processedAdvIDs.add(adv.getID());
+				sourcesChanged = true;
+			} else if (adv instanceof SourceAdvertisement) {
+				SourceAdvertisement srcAdv = (SourceAdvertisement) adv;
+				
+				LOG.debug("Got source advertisement. Name is {} provided from {}", srcAdv.getName(), getRemotePeerName(srcAdv.getPeerID()));
+	
+				if (isAutoImport()) {
+					LOG.debug("Do autoimport of it");
 					tryAutoImportSource(srcAdv);
 				}
+				
 				processedAdvIDs.add(adv.getID());
+				sourcesChanged = true;
+			} else if (adv instanceof MultipleSourceAdvertisement) {
+				MultipleSourceAdvertisement multSrcAdv = (MultipleSourceAdvertisement) adv;
+				
+				LOG.debug("Got multiple source advertisement. It contains {} sources provided from {}", multSrcAdv.getSourceAdvertisements().size(), getRemotePeerName(multSrcAdv.getPeerID()));
+	
+				if (isAutoImport()) {
+					LOG.debug("Autoimporting them");
+					
+					for (SourceAdvertisement srcAdv : multSrcAdv.getSourceAdvertisements()) {
+						tryAutoImportSource(srcAdv);
+					}
+				}
+				processedAdvIDs.add(adv.getID());
+				sourcesChanged = true;
 			}
-			sourcesChanged = true;
 		}
+	}
+	
+	@Override
+	public void updateAdvertisements() {
+		sourcesChanged = true;
 	}
 
 	private void tryAutoImportSource(SourceAdvertisement srcAdv) {
