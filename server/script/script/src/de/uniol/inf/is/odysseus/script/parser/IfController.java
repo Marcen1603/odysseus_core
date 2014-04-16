@@ -66,6 +66,11 @@ public class IfController {
 	public boolean canExecuteNextLine(ReplacementContainer replacements) throws OdysseusScriptException {
 		try {
 			
+			if(this.currentLine>text.length){
+				
+				throw new OdysseusScriptException("current line in if controller is greater than text length.\ncurrentline="+this.currentLine+", Text:\n"+text);
+			}
+			
 			String currentLine = text[this.currentLine].trim();
 			
 			if( determineEndIf(currentLine) ) {

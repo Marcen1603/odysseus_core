@@ -238,9 +238,10 @@ public class OdysseusScriptParser implements IOdysseusScriptParser,
 	}
 
 	@Override
-	public List<PreParserStatement> parseScript(String[] textToParse,
+	public synchronized List<PreParserStatement> parseScript(String[] script,
 			ISession caller, Context context) throws OdysseusScriptException {
 
+		String[] textToParse = Arrays.copyOf(script, script.length);
 		List<PreParserStatement> statements = new LinkedList<PreParserStatement>();
 		try {
 			resetDefaultReplacements();
