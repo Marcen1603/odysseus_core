@@ -186,7 +186,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	@Override
 	public Collection<SourceAdvertisement> getSources() {
 		if (sourcesChanged) {
-			srcAdvs = collectSourceAdvertisements();
+			srcAdvs = collectAllReachableSourceAdvertisements();
 			applyRemoveSourceAdvertisements(srcAdvs);
 
 			sourcesChanged = false;
@@ -201,8 +201,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			for (SourceAdvertisement srcAdv : srcAdvs) {
 				if (srcAdv.getID().equals(remAdv.getSourceAdvertisementID())) {
 					srcAdvsToRemove.add(srcAdv);
-					
-					tryFlushAdvertisement(remAdv);
 					tryFlushAdvertisement(srcAdv);
 					
 					removeSourceImport(srcAdv);
@@ -217,9 +215,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 				for (SourceAdvertisement srcAdv : srcAdvs) {
 					if (srcAdv.getID().equals(id)) {
 						srcAdvsToRemove.add(srcAdv);
-						
 						tryFlushAdvertisement(srcAdv);
-						tryFlushAdvertisement(remMultiSrcAdvertisement);
 
 						removeSourceImport(srcAdv);
 					}
@@ -227,7 +223,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			}
 		}
 		srcAdvs.removeAll(srcAdvsToRemove);
-		
+	}
+
+	private Collection<SourceAdvertisement> collectAllReachableSourceAdvertisements() {
+		Collection<SourceAdvertisement> srcAdvs = JxtaServicesProvider.getInstance().getLocalAdvertisements(SourceAdvertisement.class);
 		Iterator<SourceAdvertisement> it = srcAdvs.iterator();
 		while( it.hasNext() ) {
 			SourceAdvertisement srcAdv = it.next();
@@ -237,14 +236,35 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 				it.remove();
 			}
 		}
-	}
 
-	private static Collection<SourceAdvertisement> collectSourceAdvertisements() {
-		Collection<SourceAdvertisement> srcAdvs = JxtaServicesProvider.getInstance().getLocalAdvertisements(SourceAdvertisement.class);
 		Collection<MultipleSourceAdvertisement> multiSrcAdvs = JxtaServicesProvider.getInstance().getLocalAdvertisements(MultipleSourceAdvertisement.class);
 
 		for (MultipleSourceAdvertisement multiSrcAdv : multiSrcAdvs) {
-			srcAdvs.addAll(multiSrcAdv.getSourceAdvertisements());
+			
+			if( !multiSrcAdv.isLocal() || !JxtaServicesProvider.getInstance().isReachable(multiSrcAdv.getPeerID())) {
+				boolean canExist = false;
+				for( SourceAdvertisement srcAdv : multiSrcAdv.getSourceAdvertisements() ) {
+					if( srcAdv.isStream() ) {
+						canExist = true;
+						break;
+					}
+				}
+				
+				if( !canExist ) {
+					for(SourceAdvertisement srcAdv : multiSrcAdv.getSourceAdvertisements() ) {
+						removeSourceImport(srcAdv);
+					}
+					tryFlushAdvertisement(multiSrcAdv);
+				} else {
+					for( SourceAdvertisement srcAdv : multiSrcAdv.getSourceAdvertisements() ) {
+						if( srcAdv.isStream() ) {
+							srcAdvs.add(srcAdv);
+						}
+					}
+				}
+			} else {
+				srcAdvs.addAll(multiSrcAdv.getSourceAdvertisements());
+			}
 		}
 		return srcAdvs;
 	}
@@ -256,7 +276,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		String realSourceName = removeUserFromName(sourceName);
 
 		if (sourcesChanged) {
-			srcAdvs = collectSourceAdvertisements();
+			srcAdvs = collectAllReachableSourceAdvertisements();
 			applyRemoveSourceAdvertisements(srcAdvs);
 
 			sourcesChanged = false;
