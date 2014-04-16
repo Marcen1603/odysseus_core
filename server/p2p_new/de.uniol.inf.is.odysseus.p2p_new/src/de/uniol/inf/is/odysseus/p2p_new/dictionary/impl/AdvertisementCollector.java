@@ -38,19 +38,25 @@ public abstract class AdvertisementCollector<A extends Advertisement, R extends 
 		R resultAdvertisement = null;
 		
 		synchronized(collectedAdvertisements) {
-			if( !collectedAdvertisements.isEmpty() ) {
+			if( collectedAdvertisements.size() == 1 ) {
+				tryPublish(collectedAdvertisements.remove(0));
+			} else if( !collectedAdvertisements.isEmpty() ) {
 				resultAdvertisement = merge( Lists.newArrayList(collectedAdvertisements));
 				collectedAdvertisements.clear();
 			}
 		}
 		
 		if( resultAdvertisement != null ) {
-			try {
-				JxtaServicesProvider.getInstance().publish(resultAdvertisement);
-				JxtaServicesProvider.getInstance().remotePublish(resultAdvertisement);
-			} catch (IOException e) {
-				LOG.error("Could not publish result advertisement of collector", e);
-			}
+			tryPublish(resultAdvertisement);
+		}
+	}
+
+	private void tryPublish(Advertisement adv) {
+		try {
+			JxtaServicesProvider.getInstance().publish(adv);
+			JxtaServicesProvider.getInstance().remotePublish(adv);
+		} catch (IOException e) {
+			LOG.error("Could not publish result advertisement of collector", e);
 		}
 	}
 	
