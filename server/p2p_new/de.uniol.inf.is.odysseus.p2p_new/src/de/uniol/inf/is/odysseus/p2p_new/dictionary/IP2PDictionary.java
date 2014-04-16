@@ -15,7 +15,6 @@ public interface IP2PDictionary {
 	void addListener( IP2PDictionaryListener listener );
 	void removeListener( IP2PDictionaryListener listener );
 	
-	boolean checkSource(SourceAdvertisement srcAdvertisement);
 	Collection<SourceAdvertisement> getSources();
 	Collection<SourceAdvertisement> getSources( String viewName );
 	

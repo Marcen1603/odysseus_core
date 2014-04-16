@@ -183,17 +183,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 
 	@Override
-	public boolean checkSource(SourceAdvertisement srcAdvertisement) {
-		if (srcAdvertisement.isStream()) {
-			return true;
-		} else if (srcAdvertisement.isView()) {
-			return checkViewAdvertisement(srcAdvertisement);
-		}
-
-		throw new IllegalArgumentException("SourceAdvertisement is not a view nor a stream: " + srcAdvertisement.getName());
-	}
-
-	@Override
 	public Collection<SourceAdvertisement> getSources() {
 		if (sourcesChanged) {
 			srcAdvs = collectSourceAdvertisements();
@@ -267,11 +256,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		Preconditions.checkNotNull(srcAdvertisement, "SourceAdvertisement to import must not be null!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(sourceNameToUse), "Sourcename to use for import must be null or empty!");
 
-		if (!checkSource(srcAdvertisement)) {
-			throw new InvalidP2PSource("Source is invalid!");
-		}
-
-		final String realSrcNameToUse = removeUserFromName(sourceNameToUse);
+		String realSrcNameToUse = removeUserFromName(sourceNameToUse);
 		if (getDataDictionary().containsViewOrStream(realSrcNameToUse, SessionManagementService.getActiveSession())) {
 			throw new PeerException("SourceName '" + realSrcNameToUse + "' is locally already in use");
 		}
@@ -893,19 +878,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			return property.equalsIgnoreCase("true");
 		}
 		return false;
-	}
-
-	private static boolean checkViewAdvertisement(SourceAdvertisement srcAdvertisement) {
-		PeerID sourcePeerID = srcAdvertisement.getPeerID();
-		if (sourcePeerID.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
-			return true;
-		}
-
-		if (!JxtaServicesProvider.getInstance().isReachable(sourcePeerID)) {
-			LOG.debug("Could not reach peer with exported source {}", srcAdvertisement.getName());
-			return false;
-		}
-		return true;
 	}
 
 	private final List<ID> processedAdvIDs = Lists.newArrayList();
