@@ -47,7 +47,7 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 			@Override
 			public void run() {
 				try {
-					ServerSocket serverSocket = new ServerSocket();
+					ServerSocket serverSocket = new ServerSocket(0);
 					serverSocketMap.put(senderPeer, serverSocket);
 					
 					sendPortMessage(serverSocket.getLocalPort(), senderPeer);
@@ -65,7 +65,7 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 	}
 
 	private void sendPortMessage(int localPort, PeerID senderPeer) {
-		PortMessage msg = new PortMessage(localPort);
+		PortMessage msg = new PortMessage(localPort, getId());
 		try {
 			peerCommunicator.send(senderPeer, msg);
 		} catch (PeerCommunicationException e) {
@@ -75,6 +75,22 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 
 	@Override
 	protected void processCloseMessage(PeerID senderPeer, CloseMessage message) {
+		for( PeerID pid : serverSocketMap.keySet()) {
+			try {
+				serverSocketMap.get(pid).close();
+			} catch (IOException e) {
+			}
+		}
+		serverSocketMap.clear();
+		
+		for( PeerID pid : clientSocketMap.keySet()) {
+			try {
+				clientSocketMap.get(pid).close();
+			} catch (IOException e) {
+			}
+		}
+		clientSocketMap.clear();
+		
 		super.processCloseMessage(senderPeer, message);
 	}
 

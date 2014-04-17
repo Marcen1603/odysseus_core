@@ -39,13 +39,13 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 
 		idHash = id.hashCode();
 	}
-	
+
 	@Override
 	public void open() {
 		this.communicator.addListener(this, OpenMessage.class);
 		this.communicator.addListener(this, CloseMessage.class);
 	}
-	
+
 	@Override
 	public void close() {
 		this.communicator.removeListener(this, OpenMessage.class);
@@ -85,51 +85,53 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		if (message instanceof OpenMessage) {
-			processOpenMessage(senderPeer, (OpenMessage) message);
+			OpenMessage openMessage = (OpenMessage) message;
+			if (openMessage.getIdHash() == idHash) {
+				processOpenMessage(senderPeer, openMessage);
+			}
 		} else if (message instanceof CloseMessage) {
-			processCloseMessage(senderPeer, (CloseMessage) message);
+			CloseMessage closeMessage = (CloseMessage) message;
+			if (closeMessage.getIdHash() == idHash) {
+				processCloseMessage(senderPeer, closeMessage);
+			}
 		}
 	}
 
 	protected void processOpenMessage(PeerID senderPeer, OpenMessage message) {
-		if (message.getIdHash() == idHash) {
-			LOG.debug("Got open message from '{}'", P2PDictionary.getInstance().getRemotePeerName(senderPeer));
+		LOG.debug("Got open message from '{}'", P2PDictionary.getInstance().getRemotePeerName(senderPeer));
 
-			synchronized (pids) {
-				if( pids.size() == 1 && pids.contains(senderPeer)) {
+		synchronized (pids) {
+			if (pids.size() == 1 && pids.contains(senderPeer)) {
+				LOG.debug("Call open event");
+				fireOpenEvent();
+			} else if (!pids.contains(senderPeer)) {
+				pids.add(senderPeer);
+
+				if (pids.size() == 1) {
 					LOG.debug("Call open event");
 					fireOpenEvent();
-				} else if (!pids.contains(senderPeer)) {
-					pids.add(senderPeer);
-
-					if (pids.size() == 1) {
-						LOG.debug("Call open event");
-						fireOpenEvent();
-					}
 				}
 			}
-			
-			trySend(senderPeer, new OpenAckMessage(idHash));
 		}
+
+		trySend(senderPeer, new OpenAckMessage(idHash));
 	}
 
 	protected void processCloseMessage(PeerID senderPeer, CloseMessage message) {
-		if (message.getIdHash() == idHash) {
-			LOG.debug("Got close message from '{}'", P2PDictionary.getInstance().getRemotePeerName(senderPeer));
+		LOG.debug("Got close message from '{}'", P2PDictionary.getInstance().getRemotePeerName(senderPeer));
 
-			synchronized (pids) {
-				if (pids.contains(senderPeer)) {
-					pids.remove(senderPeer);
+		synchronized (pids) {
+			if (pids.contains(senderPeer)) {
+				pids.remove(senderPeer);
 
-					if (pids.isEmpty()) {
-						LOG.debug("Call close event");
-						fireCloseEvent();
-					}
+				if (pids.isEmpty()) {
+					LOG.debug("Call close event");
+					fireCloseEvent();
 				}
 			}
-			
-			trySend(senderPeer, new CloseAckMessage(idHash));
 		}
+
+		trySend(senderPeer, new CloseAckMessage(idHash));
 	}
 
 	protected final Collection<PeerID> getOpenedPeers() {
@@ -160,6 +162,10 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 			LOG.error("Could not set id", ex);
 			return null;
 		}
+	}
+
+	protected final int getId() {
+		return idHash;
 	}
 
 }

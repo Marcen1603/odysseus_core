@@ -121,4 +121,8 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 			return null;
 		}
 	}
+	
+	protected final int getId() {
+		return idHash;
+	}
 }
