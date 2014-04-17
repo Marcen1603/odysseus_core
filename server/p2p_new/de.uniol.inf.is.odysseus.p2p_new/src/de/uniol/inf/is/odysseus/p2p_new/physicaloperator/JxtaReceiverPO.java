@@ -35,7 +35,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		transmission.addListener(this);
 		transmission.open();
 	}
-
+	
 	public JxtaReceiverPO(JxtaReceiverPO<T> po) {
 		super(po);
 		setOutputSchema(po.getOutputSchema().clone());

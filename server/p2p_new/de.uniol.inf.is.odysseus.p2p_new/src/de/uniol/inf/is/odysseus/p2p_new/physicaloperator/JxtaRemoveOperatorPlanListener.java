@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.physicaloperator;
 
-import java.util.Set;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
@@ -15,7 +15,7 @@ public class JxtaRemoveOperatorPlanListener implements IPlanModificationListener
 		final IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
 
 		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
-			Set<IPhysicalOperator> operators = query.getAllOperators();
+			List<IPhysicalOperator> operators = query.getPhysicalChilds();
 			for( IPhysicalOperator operator : operators ) {
 				if( !operator.isOpen() ) {
 					if( operator instanceof JxtaReceiverPO ) {
