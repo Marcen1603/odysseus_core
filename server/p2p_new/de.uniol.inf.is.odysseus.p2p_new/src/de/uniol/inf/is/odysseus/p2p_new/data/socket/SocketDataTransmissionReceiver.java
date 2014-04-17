@@ -83,7 +83,7 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 							
 						} catch (IOException e) {
 							socket = null;
-							LOG.error("Could not create socket", e);
+							LOG.error("Exception while reading socket data", e);
 						}
 					}
 				});
