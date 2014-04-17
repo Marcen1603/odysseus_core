@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
@@ -188,9 +189,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 		AbstractHorizontalFragmentationQueryPartModificator.log.debug("Inserted an operator for reunion between {} and {}", copiesOfOriginSink, targets);
 
 		// Create the query part for the operator for reunion
-		Collection<ILogicalQueryPart> queryPartsOfFragments = Lists.newArrayList(copiesToOrigin.get(originPart));
 		ILogicalQueryPart reunionPart = new LogicalQueryPart(operatorsOfReunionPart);
-		reunionPart.addAvoidingQueryParts(queryPartsOfFragments);
 		Collection<ILogicalQueryPart> copiesOfReunionPart = Lists.newArrayList(reunionPart);
 		modifiedCopiesToOrigin.put(reunionPart, copiesOfReunionPart);
 
@@ -420,7 +419,8 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 				if (!optPartOfOriginTarget.isPresent())
 					targets.add(target);
 				else if ((originSink instanceof AbstractAccessAO && ((AbstractAccessAO) originSink).getAccessAOName().getResourceName().equals(sourceName))
-						|| (originSink instanceof AbstractWindowAO && !((AbstractWindowAO) originSink).getWindowType().equals(WindowType.TIME))) {
+						|| (originSink instanceof AbstractWindowAO && !((AbstractWindowAO) originSink).getWindowType().equals(WindowType.TIME))
+						|| originSink instanceof RenameAO) {
 
 					LogicalSubscription subscription = new LogicalSubscription(originSink, subToSink.getSinkInPort(), subToSink.getSourceOutPort(), subToSink.getSchema());
 

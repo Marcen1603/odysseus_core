@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -769,9 +770,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 		AbstractFragmentationQueryPartModificator.log.debug("Inserted an operator for reunion between {} and {}", copiesOfOriginSink, targets);
 
 		// Create the query part for the operator for reunion
-		Collection<ILogicalQueryPart> queryPartsOfFragments = Lists.newArrayList(copiesToOrigin.get(originPart));
 		ILogicalQueryPart reunionPart = new LogicalQueryPart(operatorForReunion);
-		reunionPart.addAvoidingQueryParts(queryPartsOfFragments);
 		Collection<ILogicalQueryPart> copiesOfReunionPart = Lists.newArrayList(reunionPart);
 		modifiedCopiesToOrigin.put(reunionPart, copiesOfReunionPart);
 
@@ -1074,20 +1073,17 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 				continue;
 			else if (operator.isSinkOperator() && !operator.isSourceOperator())
 				continue;
-			else if(operator instanceof RenameAO)
-				continue;
-			else if (AbstractFragmentationQueryPartModificator.isOperatorRelevant(operator, sourceName)) {
+			else if(operator instanceof RenameAO) {
 				
-				relevantOperators.add(operator);
+				Preconditions.checkArgument(operator.getSubscribedToSource().size() == 1, "RenameAO must have exact one subscription to source!");
+				final ILogicalOperator target = operator.getSubscribedToSource().iterator().next().getTarget();
 				
-				for(LogicalSubscription subToSink : operator.getSubscriptions()) {
-					
-					if(subToSink.getTarget() instanceof RenameAO)
-						relevantOperators.add(operator);
-						
-				}
+				if(target instanceof AbstractAccessAO && ((AbstractAccessAO) target).getAccessAOName().getResourceName().equals(sourceName))
+					continue;
 				
 			}
+			else if (AbstractFragmentationQueryPartModificator.isOperatorRelevant(operator, sourceName))
+				relevantOperators.add(operator);
 
 		}
 
