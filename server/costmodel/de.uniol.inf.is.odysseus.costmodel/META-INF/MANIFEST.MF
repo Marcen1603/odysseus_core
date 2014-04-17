@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Costmodel
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.costmodel
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.CostModelActivator
+Bundle-Vendor: Timo Michelsen
+Require-Bundle: org.eclipse.core.runtime,
+ com.google.guava;bundle-version="14.0.0",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
