@@ -152,6 +152,10 @@ public final class LogicalQueryHelper {
 				ILogicalOperator streamPlan = serverExecutor.getDataDictionary(PeerDistributePlugIn.getActiveSession().getTenant()).getStreamForTransformation(((StreamAO) operator).getStreamname(), PeerDistributePlugIn.getActiveSession());
 
 				ILogicalOperator streamPlanCopy = copyLogicalPlan(streamPlan);
+				
+				// WORKAROUND:
+				streamPlanCopy.unsubscribeFromAllSinks();
+				
 				operatorsToRemove.add(operator);
 				operatorsToAdd.addAll(getAllOperators(streamPlanCopy));
 
