@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.distribute.partition.user;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -70,19 +71,33 @@ public class UserQueryPartitioner implements IQueryPartitioner {
 	}
 
 	private static Map<ILogicalOperator, String> determineDestinationNames(Collection<ILogicalOperator> operators) throws QueryPartitionException {
-		final Map<ILogicalOperator, String> destinationNames = Maps.newHashMap();
+		Map<ILogicalOperator, String> destinationNames = Maps.newHashMap();
 
-		for (ILogicalOperator unsetOperator : operators) {
-			Optional<String> optDestinationName = getDestinationNameDown(unsetOperator);
-			if (!optDestinationName.isPresent()) {
-				optDestinationName = getDestinationNameUp(unsetOperator);
+		Collection<ILogicalOperator> unsetOperators = Lists.newArrayList(operators);
+		LOG.debug("Determining destionation names");
+		boolean changed = true;
+		while( changed ) {
+			changed = false;
+			
+			Iterator<ILogicalOperator> it = unsetOperators.iterator();
+			while( it.hasNext() ) {
+				ILogicalOperator unsetOperator = it.next();
+				Optional<String> optDestinationName = getDestinationNameDown(unsetOperator);
+				if (!optDestinationName.isPresent()) {
+					optDestinationName = getDestinationNameUp(unsetOperator);
+				}
+				
+				if (optDestinationName.isPresent()) {
+					destinationNames.put(unsetOperator, optDestinationName.get());
+					LOG.debug("\t{} --> {}", unsetOperator.getName(), optDestinationName.get());
+					changed = true;
+					it.remove();
+				} 
 			}
-
-			if (optDestinationName.isPresent()) {
-				destinationNames.put(unsetOperator, optDestinationName.get());
-			} else {
-				throw new QueryPartitionException("Could not determine destionation name of operator " + unsetOperator + "!");
-			}
+		}
+		
+		if( !unsetOperators.isEmpty() ) {
+			throw new QueryPartitionException("Could not determine destionation name for operators " + unsetOperators);
 		}
 
 		return destinationNames;
