@@ -7,6 +7,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.costmodel.DetailCost;
+
 public class Cost<T> {
 
 	private final Map<T, DetailCost> detailCostMap = Maps.newHashMap();
