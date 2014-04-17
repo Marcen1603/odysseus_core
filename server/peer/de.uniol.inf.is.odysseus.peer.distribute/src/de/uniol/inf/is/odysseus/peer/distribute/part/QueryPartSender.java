@@ -17,6 +17,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -39,6 +40,7 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
 import de.uniol.inf.is.odysseus.peer.distribute.message.AbortQueryPartAddAckMessage;
 import de.uniol.inf.is.odysseus.peer.distribute.message.AbortQueryPartAddMessage;
 import de.uniol.inf.is.odysseus.peer.distribute.message.AddQueryPartMessage;
@@ -471,9 +473,19 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 	private static void callExecutorToAddLocalQueries(ILogicalQuery query, ID sharedQueryID, IServerExecutor serverExecutor, ISession caller, QueryBuildConfiguration config, Collection<PeerID> slavePeers) throws QueryDistributionException {
 		try {
 			LOG.debug("Adding local query to serverExecutor now.");
-			int queryID = serverExecutor.addQuery(query.getLogicalPlan(), caller, config.getName());
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("#PARSER PQL\n");
+			sb.append("#METADATA IntervalLatency\n");
+			sb.append("#QNAME Exporting " + query.getName() + "\n");
+			sb.append("#ADDQUERY\n");
+			sb.append(query.getQueryText());
+			sb.append("\n");
+			String scriptText = sb.toString();
 
-			QueryPartController.getInstance().registerAsMaster(query, queryID, sharedQueryID, slavePeers);
+			Collection<Integer> queryIDs = serverExecutor.addQuery(scriptText, "OdysseusScript", PeerDistributePlugIn.getActiveSession(), "Standard", Context.empty());
+
+			QueryPartController.getInstance().registerAsMaster(query, queryIDs.iterator().next(), sharedQueryID, slavePeers);
 			LOG.debug("Local query added");
 		} catch (Throwable ex) {
 			throw new QueryDistributionException("Could not add local query to server executor", ex);
