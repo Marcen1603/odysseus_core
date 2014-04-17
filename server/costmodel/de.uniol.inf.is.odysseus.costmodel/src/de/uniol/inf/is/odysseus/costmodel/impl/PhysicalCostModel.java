@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.costmodel.PhysicalCost;
 public class PhysicalCostModel implements IPhysicalCostModel {
 
 	@Override
-	public PhysicalCost estimateCost(Collection<IPhysicalOperator> logicalOperators) {
+	public PhysicalCost estimateCost(Collection<IPhysicalOperator> physicalOperators) {
 		return null;
 	}
 
