@@ -67,6 +67,15 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 
 		// The return value
 		Collection<ILogicalQueryPart> modifiedParts = Lists.newArrayList();
+		
+		// History for origin relative sources (key), inserted operators for
+		// fragmentation (value.getE1())
+		// and the subscription to the origin relative source
+		// (value.getE2())
+		Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfFragmentationOperators = Maps.newHashMap();
+		
+		// Collection of all inserted operators for reunion
+		Collection<ILogicalOperator> historyOfReunionOperators = Lists.newArrayList();
 
 		try {
 
@@ -116,12 +125,6 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 			// of available peers
 			AbstractFragmentationQueryPartModificator.validateDegreeOfFragmentation(partsToBeFragmented.size(), degreeOfFragmentation);
 
-			// History for origin relative sources (key), inserted operators for
-			// fragmentation (value.getE1())
-			// and the subscription to the origin relative source
-			// (value.getE2())
-			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfFragmentationOperators = Maps.newHashMap();
-
 			// Modify each query part to be fragmented for insertion of
 			// operators for fragmentation
 			for (ILogicalQueryPart originPart : partsToBeFragmented)
@@ -131,7 +134,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 			// operators for reunion
 			for (ILogicalQueryPart originPart : partsToBeFragmented) {
 
-				copiesToOrigin = this.modifyPartForMerging(originPart, copiesToOrigin, partsToBeFragmented, historyOfFragmentationOperators, modificatorParameters);
+				copiesToOrigin = this.modifyPartForMerging(originPart, copiesToOrigin, partsToBeFragmented, historyOfFragmentationOperators, historyOfReunionOperators, modificatorParameters);
 
 			}
 
@@ -163,8 +166,102 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 
 		}
 
-		return modifiedParts;
+		Collection<ILogicalOperator> operatorsForFragmentation = Lists.newArrayList();
+		for(ILogicalOperator operator : historyOfFragmentationOperators.keySet()) {
+			
+			for(IPair<ILogicalOperator, LogicalSubscription> pair : historyOfFragmentationOperators.get(operator)) {
+				
+				if(!operatorsForFragmentation.contains(pair.getE1()))
+					operatorsForFragmentation.add(pair.getE1());
+				
+			}
+			
+		}
+		
+		return AbstractFragmentationQueryPartModificator.setQueryPartsToAvoid(modifiedParts, operatorsForFragmentation, historyOfReunionOperators);
 
+	}
+	
+	/**
+	 * Sets for each query part the parts to be avoided. <br />
+	 * A part being a fragment will set all other fragments, the fragmentation part and the merger part to be avoided. <br />
+	 * A part containing a fragmentation operator will set all fragments to be avoided. <br />
+	 * A part containing a merger will set all fragments to be avoided.
+	 * @param parts A collection of query parts to process.
+	 * @return The same collection as <code>parts</code> except the avoided parts being set.
+	 * @throws QueryPartModificationException if a part of an operator could not be determined.
+	 */
+	private static Collection<ILogicalQueryPart> setQueryPartsToAvoid(Collection<ILogicalQueryPart> parts, 
+			Collection<ILogicalOperator> operatorsForFragmentation, Collection<ILogicalOperator> operatorsForReunion) throws QueryPartModificationException {
+		
+		Preconditions.checkNotNull(parts, "Collection of query parts must be not null!");
+		Preconditions.checkNotNull(operatorsForFragmentation, "Collection of operators for fragmentation must be not null!");
+		Preconditions.checkNotNull(operatorsForReunion, "Collection of operators for reunion must be not null!");
+		
+		Collection<ILogicalQueryPart> modifiedParts = Lists.newArrayList(parts);
+		
+		for(ILogicalQueryPart part : modifiedParts) {
+			
+			for(ILogicalOperator operator : part.getOperators()) {
+				
+				if(operatorsForFragmentation.contains(operator)) {
+				
+					final ILogicalOperator fragmenter = operator;
+					
+					for(LogicalSubscription subToSink : fragmenter.getSubscriptions()) {
+						
+						final ILogicalOperator sink = subToSink.getTarget();					
+						final Optional<ILogicalQueryPart> optPartOfSink = LogicalQueryHelper.determineQueryPart(modifiedParts, sink);
+						
+						if(!optPartOfSink.isPresent() || optPartOfSink.get().equals(part)) {
+							
+							final String errorMessage = "Query part of " + sink + " is either not present or the same part as of the antecedent fragmenter!";
+							AbstractFragmentationQueryPartModificator.log.error(errorMessage);
+							throw new QueryPartModificationException(errorMessage);
+							
+						}
+						
+						final ILogicalQueryPart partOfSink = optPartOfSink.get();
+						if(!part.getAvoidingQueryParts().contains(partOfSink))
+							part.addAvoidingQueryPart(partOfSink);
+						if(!partOfSink.getAvoidingQueryParts().contains(part))
+							partOfSink.addAvoidingQueryPart(part);
+						
+					}
+					
+				} else if(operatorsForReunion.contains(operator)) {
+					
+					final ILogicalOperator merger = operator;
+					
+					for(LogicalSubscription subToSource : merger.getSubscribedToSource()) {
+						
+						final ILogicalOperator source = subToSource.getTarget();					
+						final Optional<ILogicalQueryPart> optPartOfSource = LogicalQueryHelper.determineQueryPart(modifiedParts, source);
+						
+						if(!optPartOfSource.isPresent() || optPartOfSource.get().equals(part)) {
+							
+							final String errorMessage = "Query part of " + source + " is either not present or the same part as of the antecedent fragmenter!";
+							AbstractFragmentationQueryPartModificator.log.error(errorMessage);
+							throw new QueryPartModificationException(errorMessage);
+							
+						}
+						
+						final ILogicalQueryPart partOfSource = optPartOfSource.get();
+						if(!part.getAvoidingQueryParts().contains(partOfSource))
+							part.addAvoidingQueryPart(partOfSource);
+						if(!partOfSource.getAvoidingQueryParts().contains(part))
+							partOfSource.addAvoidingQueryPart(part);
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		return modifiedParts;
+		
 	}
 
 	/**
@@ -531,6 +628,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 	 *            The history for origin relative sources (key), inserted
 	 *            operators for fragmentation (value.getE1()) and the
 	 *            subscription to the origin relative source (value.getE2()).
+	 * @param historyOfOperatorsForReunion
+	 *            A collection of all inserted operators for reunion
 	 * @param modificatorParameters
 	 *            The parameters for the modification given by the user without
 	 *            the parameter <code>fragmentation-strategy-name</code>.
@@ -550,7 +649,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 	 *             .
 	 */
 	private Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> modifyPartForMerging(ILogicalQueryPart originPart, Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin, Collection<ILogicalQueryPart> partsToBeFragmented,
-			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation, List<String> modificationParameters) throws NullPointerException, IllegalArgumentException,
+			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation, 
+			Collection<ILogicalOperator> historyOfOperatorsForReunion, List<String> modificationParameters) throws NullPointerException, IllegalArgumentException,
 			QueryPartModificationException {
 
 		// Preconditions
@@ -566,6 +666,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 			throw new IllegalArgumentException("Collection of relevant parts for fragmentation must contain the origin query part for modification!");
 		else if (historyOfOperatorsForFragmentation == null)
 			throw new NullPointerException("The history of inserted operator for fragmentation must be not null!");
+		else if (historyOfOperatorsForReunion == null)
+			throw new NullPointerException("The history of inserted operator for reunion must be not null!");
 		else if (modificationParameters == null)
 			throw new NullPointerException("Modification parameters must be not null!");
 
@@ -585,7 +687,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 
 				Optional<LogicalSubscription> optSubscription = Optional.absent();
 
-				modifiedCopiesToOrigin = this.insertOperatorForReunion(originPart, modifiedCopiesToOrigin, originSink, copiedSinks, optSubscription, targets, historyOfOperatorsForFragmentation, modificationParameters);
+				modifiedCopiesToOrigin = this.insertOperatorForReunion(originPart, modifiedCopiesToOrigin, originSink, copiedSinks, optSubscription, targets, historyOfOperatorsForFragmentation, historyOfOperatorsForReunion, modificationParameters);
 
 			} else {
 
@@ -631,7 +733,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 						targets.add(target);
 					}
 
-					modifiedCopiesToOrigin = this.insertOperatorForReunion(originPart, modifiedCopiesToOrigin, originSink, copiedSinks, Optional.of(subToSink), targets, historyOfOperatorsForFragmentation, modificationParameters);
+					modifiedCopiesToOrigin = this.insertOperatorForReunion(originPart, modifiedCopiesToOrigin, originSink, copiedSinks, Optional.of(subToSink), targets, historyOfOperatorsForFragmentation, historyOfOperatorsForReunion, modificationParameters);
 
 				}
 
@@ -705,6 +807,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 	 *            The history for origin relative sources (key), inserted
 	 *            operators for fragmentation (value.getE1()) and the
 	 *            subscription to the origin relative source (value.getE2()).
+	 * @param historyOfOperatorsForReunion
+	 *            A collection of all inserted operators for reunion
 	 * @param modificatorParameters
 	 *            The parameters for the modification given by the user without
 	 *            the parameter <code>fragmentation-strategy-name</code>.
@@ -718,7 +822,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 	 */
 	protected Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> insertOperatorForReunion(ILogicalQueryPart originPart, Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin, ILogicalOperator originSink,
 			Collection<ILogicalOperator> copiesOfOriginSink, Optional<LogicalSubscription> optSubscription, Collection<ILogicalOperator> targets,
-			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation, List<String> modificationParameters) throws NullPointerException, QueryPartModificationException {
+			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation, 
+			Collection<ILogicalOperator> historyOfOperatorsForReunion, List<String> modificationParameters) throws NullPointerException, QueryPartModificationException {
 
 		// Preconditions
 		if (originPart == null)
@@ -735,6 +840,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 			throw new NullPointerException("The targets must be not null!");
 		else if (historyOfOperatorsForFragmentation == null)
 			throw new NullPointerException("The history of inserted operator for fragmentation must be not null!");
+		else if (historyOfOperatorsForReunion == null)
+			throw new NullPointerException("The history of inserted operator for reunion must be not null!");
 		else if (modificationParameters == null)
 			throw new NullPointerException("Modification parameters must be not null!");
 
@@ -770,6 +877,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 		AbstractFragmentationQueryPartModificator.log.debug("Inserted an operator for reunion between {} and {}", copiesOfOriginSink, targets);
 
 		// Create the query part for the operator for reunion
+		historyOfOperatorsForReunion.add(operatorForReunion);
 		ILogicalQueryPart reunionPart = new LogicalQueryPart(operatorForReunion);
 		Collection<ILogicalQueryPart> copiesOfReunionPart = Lists.newArrayList(reunionPart);
 		modifiedCopiesToOrigin.put(reunionPart, copiesOfReunionPart);

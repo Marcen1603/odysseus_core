@@ -125,7 +125,8 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 	@Override
 	protected Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> insertOperatorForReunion(ILogicalQueryPart originPart, Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin, ILogicalOperator originSink,
 			Collection<ILogicalOperator> copiesOfOriginSink, Optional<LogicalSubscription> optSubscription, Collection<ILogicalOperator> targets,
-			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation, List<String> modificationParameters) throws NullPointerException, QueryPartModificationException {
+			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation, 
+			Collection<ILogicalOperator> historyOfOperatorsForReunion, List<String> modificationParameters) throws NullPointerException, QueryPartModificationException {
 
 		// Preconditions
 		if (originPart == null)
@@ -142,6 +143,8 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			throw new NullPointerException("The targets must be not null!");
 		else if (modificationParameters == null)
 			throw new NullPointerException("Modification parameters must be not null!");
+		else if (historyOfOperatorsForReunion == null)
+			throw new NullPointerException("The history of inserted operator for reunion must be not null!");
 
 		// The return value
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> modifiedCopiesToOrigin = Maps.newHashMap(copiesToOrigin);
@@ -189,6 +192,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 		AbstractHorizontalFragmentationQueryPartModificator.log.debug("Inserted an operator for reunion between {} and {}", copiesOfOriginSink, targets);
 
 		// Create the query part for the operator for reunion
+		historyOfOperatorsForReunion.add(operatorForReunion);
 		ILogicalQueryPart reunionPart = new LogicalQueryPart(operatorsOfReunionPart);
 		Collection<ILogicalQueryPart> copiesOfReunionPart = Lists.newArrayList(reunionPart);
 		modifiedCopiesToOrigin.put(reunionPart, copiesOfReunionPart);
