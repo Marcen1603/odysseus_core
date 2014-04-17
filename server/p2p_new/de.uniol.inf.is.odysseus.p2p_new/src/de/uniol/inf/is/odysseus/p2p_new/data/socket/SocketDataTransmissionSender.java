@@ -96,11 +96,23 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 
 	@Override
 	public final void sendData(byte[] data) throws DataTransmissionException {
+		if( clientSocketMap.isEmpty() ) {
+			// e.g. connection failed
+			super.sendData(data);
+			return;
+		}
+		
 		sendImpl(data, (byte)0);
 	}
 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation) throws DataTransmissionException {
+		if( clientSocketMap.isEmpty() ) {
+			// e.g. connection failed
+			super.sendPunctuation(punctuation);
+			return;
+		}
+		
 		 byte[] data = ObjectByteConverter.objectToBytes(punctuation);
 		 sendImpl(data, (byte)1);
 	}

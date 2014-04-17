@@ -98,6 +98,12 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 
 	@Override
 	public void sendClose() throws DataTransmissionException {
+		if( socket != null ) {
+			try {
+				socket.close();
+			} catch (IOException e) {
+			}
+		}
 		super.sendClose();
 	}
 }
