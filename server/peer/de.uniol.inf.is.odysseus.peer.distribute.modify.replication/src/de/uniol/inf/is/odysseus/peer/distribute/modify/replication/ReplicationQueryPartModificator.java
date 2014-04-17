@@ -153,7 +153,14 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		
 	}
 
-	// TODO javaDoc
+	/**
+	 * Sets for each query part the parts to be avoided. <br />
+	 * A part being a replicate will set all other replicates and the merger part to be avoided. <br />
+	 * A part containing a merger will set all replicates to be avoided.
+	 * @param parts A collection of query parts to process.
+	 * @return The same collection as <code>parts</code> except the avoided parts being set.
+	 * @throws QueryPartModificationException if a part of an operator could not be determined.
+	 */
 	private static Collection<ILogicalQueryPart> setQueryPartsToAvoid(Collection<ILogicalQueryPart> parts) throws QueryPartModificationException {
 		
 		Preconditions.checkNotNull(parts, "Collection of query parts must be not null!");
