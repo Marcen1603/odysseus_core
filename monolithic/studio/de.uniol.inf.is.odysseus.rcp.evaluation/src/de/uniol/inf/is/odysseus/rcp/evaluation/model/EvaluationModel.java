@@ -29,6 +29,9 @@ public class EvaluationModel implements Serializable {
 	private static final String WITH_LATENCY = "WITH_LATENCY";
 	private static final String NUMBER_OF_RUNS = "NUMBER_OF_RUNS";
 	private static final String QUERY_FILE = "QUERY_FILE";
+	private static final String CREATE_LATENCY_PLOTS = "CREATE_LATENCY_PLOTS";
+	private static final String CREATE_THROUGHPUT_PLOTS = "CREATE_THROUGHPUT_PLOTS";
+	private static final String MEASURE_THROUGHPUT_EACH = "MEASURE_THROUGHPUT_EACH";
 
 	private IResource queryFile;
 
@@ -37,6 +40,12 @@ public class EvaluationModel implements Serializable {
 
 	private boolean withLatency = true;
 	private boolean withThroughput = true;
+	
+	private int measureThrougputEach = 100;
+	
+	private boolean createThroughputPlots = true;
+	private boolean createLatencyPlots = true;
+	
 
 	private int numberOfRuns = 10;
 	private List<EvaluationVariable> variables = new ArrayList<>();
@@ -65,6 +74,9 @@ public class EvaluationModel implements Serializable {
 			memento.putString(PLOT_FILES_PATH, plotFilesPath);
 			memento.putBoolean(WITH_LATENCY, withLatency);
 			memento.putBoolean(WITH_THROUGHPUT, withThroughput);
+			memento.putBoolean(CREATE_LATENCY_PLOTS, createLatencyPlots);
+			memento.putBoolean(CREATE_THROUGHPUT_PLOTS, createThroughputPlots);
+			memento.putInteger(MEASURE_THROUGHPUT_EACH, measureThrougputEach);
 			memento.putInteger(NUMBER_OF_RUNS, numberOfRuns);
 			memento.putString(QUERY_FILE, queryFile.getProjectRelativePath().toPortableString());
 
@@ -100,6 +112,10 @@ public class EvaluationModel implements Serializable {
 				this.withThroughput = memento.getBoolean(WITH_THROUGHPUT);
 				this.numberOfRuns = memento.getInteger(NUMBER_OF_RUNS);
 
+				this.measureThrougputEach = checkNullAndSet(memento.getInteger(MEASURE_THROUGHPUT_EACH), this.measureThrougputEach);
+				this.createLatencyPlots = checkNullAndSet(memento.getBoolean(CREATE_LATENCY_PLOTS), this.createLatencyPlots);
+				this.createThroughputPlots = checkNullAndSet(memento.getBoolean(CREATE_THROUGHPUT_PLOTS), this.createThroughputPlots);
+				
 				String path = memento.getString(QUERY_FILE);
 				this.queryFile = (IFile) file.getProject().findMember(Path.fromPortableString(path));
 
@@ -119,6 +135,14 @@ public class EvaluationModel implements Serializable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private <T> T checkNullAndSet(T value, T defaultValue){
+		if(value==null){
+			return defaultValue;
+		}
+		return value;
+				
 	}
 
 	public String getProcessingResultsPath() {
@@ -187,6 +211,30 @@ public class EvaluationModel implements Serializable {
 
 	public void save(IFile file) {
 		saveToFile(file);
+	}
+
+	public int getMeasureThrougputEach() {
+		return measureThrougputEach;
+	}
+
+	public void setMeasureThrougputEach(int measureThrougputEach) {
+		this.measureThrougputEach = measureThrougputEach;
+	}
+
+	public boolean isCreateThroughputPlots() {
+		return createThroughputPlots;
+	}
+
+	public void setCreateThroughputPlots(boolean createThroughputPlots) {
+		this.createThroughputPlots = createThroughputPlots;
+	}
+
+	public boolean isCreateLatencyPlots() {
+		return createLatencyPlots;
+	}
+
+	public void setCreateLatencyPlots(boolean createLatencyPlots) {
+		this.createLatencyPlots = createLatencyPlots;
 	}
 
 }

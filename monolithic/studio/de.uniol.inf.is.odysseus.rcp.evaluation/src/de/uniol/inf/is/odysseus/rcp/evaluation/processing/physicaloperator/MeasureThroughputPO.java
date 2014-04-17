@@ -63,17 +63,17 @@ public class MeasureThroughputPO<M extends IMetaAttribute> extends AbstractPipe<
 	protected void process_close() {
 		try {
 
-			System.out.println("Writing throughputs to " + this.file.getAbsolutePath());
+//			System.out.println("Writing throughputs to " + this.file.getAbsolutePath());
 			BufferedWriter bw = new BufferedWriter(new FileWriter(this.file));
-			int count = 0;
+//			int count = 0;
 			for (int i = 0; i < counts.size(); i++) {
 				Integer c = counts.get(i);
 				Long time = times.get(i);
 				String line = c + ";" + time + System.lineSeparator();				
 				bw.write(line);
-				count++;
+//				count++;
 			}
-			System.out.println(count + " lines were written!");
+//			System.out.println(count + " lines were written!");
 			bw.close();
 		} catch (Exception e) {
 			e.printStackTrace();

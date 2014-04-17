@@ -35,10 +35,10 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 		Object modelObject = context.get(EvaluationRun.class.getName());
 		EvaluationRun run = (EvaluationRun) modelObject;
 		if (run != null) {
-			if (run.getModel().isWithLatency()) {
+			if (run.getContext().getModel().isWithLatency()) {
 				addLatencyOperators(query.getLogicalPlan(), caller, run);
 			}
-			if (run.getModel().isWithThroughput()) {
+			if (run.getContext().getModel().isWithThroughput()) {
 				addThroughputOperators(query.getLogicalPlan(), caller, run);
 			}
 		} else {
@@ -57,6 +57,12 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 				LatencyToPayloadAO ltp = new LatencyToPayloadAO();
 				ltp.subscribeToSource(latency, 0, 0, latency.getOutputSchema());
 				FileSinkAO fileAO = new FileSinkAO();
+				fileAO.setSinkType("CSV");
+				fileAO.setPrintMetadata(false);
+				fileAO.setLineNumbering(true);
+				fileAO.setNumbFormatter("##################################");
+				fileAO.setFloatFormatter("##################################");
+				
 				fileAO.setFilename(run.createLatencyResultPath(root));
 				fileAO.subscribeToSource(ltp, 0, 0, ltp.getOutputSchema());
 				
@@ -87,6 +93,7 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 			List<LogicalSubscription> nextSinks = new ArrayList<>(accessAO.getSubscriptions());
 			accessAO.unsubscribeFromAllSinks();	
 			MeasureThroughputAO mt = new MeasureThroughputAO();
+			mt.setEach(run.getContext().getModel().getMeasureThrougputEach());
 			mt.subscribeToSource(accessAO, 0, 0, accessAO.getOutputSchema());
 			mt.setFilename(run.createThroughputResultPath(mt.getInputAO()));			
 			for (LogicalSubscription sub : nextSinks) {				

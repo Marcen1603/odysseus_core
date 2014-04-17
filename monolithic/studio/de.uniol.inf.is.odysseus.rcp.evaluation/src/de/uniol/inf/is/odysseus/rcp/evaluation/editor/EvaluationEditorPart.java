@@ -31,6 +31,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
@@ -74,6 +75,11 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 	private Text queryFileText;
 	private Spinner numberOfTimesSpinner;
 	private Button btnStartEvaluation;
+	private Composite latencyComposite;
+	private Composite throughputComposite;
+	private Button btnCreatePlotsForThroughputs;
+	private Spinner spinnerMeasureEachElements;
+	private Button btnCreatePlotsForLatency;
 
 	public EvaluationEditorPart() {
 	}
@@ -127,7 +133,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 				if (dialog.open() == Window.OK) {
 					IResource queryResource = (IResource) dialog.getFirstResult();
 					String text = queryResource.getProjectRelativePath().toString();
-					if(!text.equals(queryFileText.getText())){
+					if (!text.equals(queryFileText.getText())) {
 						queryFileText.setText(text);
 					}
 				}
@@ -233,7 +239,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 
 		tblclmnName = new TableColumn(parameterTable, SWT.NONE);
 		tblclmnName.setWidth(100);
-		tblclmnName.setText("Name");		
+		tblclmnName.setText("Name");
 		checkboxTableViewer.setLabelProvider(new EvaluationVariableContentProvider());
 		checkboxTableViewer.setContentProvider(new EvaluationVariableContentProvider());
 		checkboxTableViewer.setInput(evaluationModel);
@@ -325,52 +331,110 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		});
 		btnRemove.setBounds(0, 0, 75, 25);
 		btnRemove.setText("Remove");
-		
+
 		Label lblNewLabel = new Label(buttonsParameters, SWT.NONE);
 		lblNewLabel.setText("How often repeat one evaluation setting?");
-		
+
 		numberOfTimesSpinner = new Spinner(buttonsParameters, SWT.BORDER);
 		numberOfTimesSpinner.setMaximum(10000000);
 		numberOfTimesSpinner.setMinimum(1);
 		numberOfTimesSpinner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		numberOfTimesSpinner.setSelection(evaluationModel.getNumberOfRuns());
 		numberOfTimesSpinner.addModifyListener(new ModifyListener() {
-			
+
 			@Override
 			public void modifyText(ModifyEvent e) {
-				setDirty(true);				
+				setDirty(true);
 			}
 		});
-		
+
 		Group grpLatency = new Group(container, SWT.NONE);
+		grpLatency.setLayout(new GridLayout(3, false));
 		grpLatency.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		grpLatency.setText("Latency");
 
 		btnActivateLatencyMeasurements = new Button(grpLatency, SWT.CHECK);
-		btnActivateLatencyMeasurements.setBounds(10, 21, 237, 16);
-		btnActivateLatencyMeasurements.setText("Activate Latency Measurements");
+		GridData gd_btnActivateLatencyMeasurements = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnActivateLatencyMeasurements.widthHint = 150;
+		btnActivateLatencyMeasurements.setLayoutData(gd_btnActivateLatencyMeasurements);
+		btnActivateLatencyMeasurements.setText("Measure Latencies");
 		btnActivateLatencyMeasurements.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setDirty(true);
+				setEnabled(latencyComposite, btnActivateLatencyMeasurements.getSelection());
 			}
 		});
 		btnActivateLatencyMeasurements.setSelection(evaluationModel.isWithLatency());
+		new Label(grpLatency, SWT.NONE);
 
-		Group grpThroughput = new Group(container, SWT.NONE);
-		grpThroughput.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		grpThroughput.setText("Throughput");
+		latencyComposite = new Composite(grpLatency, SWT.NONE);
+		latencyComposite.setLayout(new GridLayout(1, false));
+		latencyComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		btnActivateThroughputMeasurments = new Button(grpThroughput, SWT.CHECK);
-		btnActivateThroughputMeasurments.setBounds(10, 23, 206, 16);
-		btnActivateThroughputMeasurments.setText("Activate Throughput Measurments");
-		btnActivateThroughputMeasurments.addSelectionListener(new SelectionAdapter() {
+		btnCreatePlotsForLatency = new Button(latencyComposite, SWT.CHECK);
+		btnCreatePlotsForLatency.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		btnCreatePlotsForLatency.setText("Create plots for latencies");
+		btnCreatePlotsForLatency.setSelection(this.evaluationModel.isCreateLatencyPlots());
+		btnCreatePlotsForLatency.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setDirty(true);
 			}
 		});
+
+		Group grpThroughput = new Group(container, SWT.NONE);
+		grpThroughput.setLayout(new GridLayout(3, false));
+		grpThroughput.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		grpThroughput.setText("Throughput");
+
+		btnActivateThroughputMeasurments = new Button(grpThroughput, SWT.CHECK);
+		GridData gd_btnActivateThroughputMeasurments = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnActivateThroughputMeasurments.widthHint = 150;
+		btnActivateThroughputMeasurments.setLayoutData(gd_btnActivateThroughputMeasurments);
+		btnActivateThroughputMeasurments.setText("Measure Throughputs");
+		btnActivateThroughputMeasurments.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setDirty(true);
+				setEnabled(throughputComposite, btnActivateThroughputMeasurments.getSelection());
+			}
+		});
 		btnActivateThroughputMeasurments.setSelection(evaluationModel.isWithThroughput());
+		new Label(grpThroughput, SWT.NONE);
+
+		throughputComposite = new Composite(grpThroughput, SWT.NONE);
+		throughputComposite.setLayout(new GridLayout(2, true));
+		throughputComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		Label lblMeasureEachElements = new Label(throughputComposite, SWT.NONE);
+		lblMeasureEachElements.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		lblMeasureEachElements.setText("Measure each x elements");
+
+		spinnerMeasureEachElements = new Spinner(throughputComposite, SWT.BORDER);
+		spinnerMeasureEachElements.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		spinnerMeasureEachElements.setMinimum(1);
+		spinnerMeasureEachElements.setMaximum(Integer.MAX_VALUE);
+		spinnerMeasureEachElements.setSelection(this.evaluationModel.getMeasureThrougputEach());
+		spinnerMeasureEachElements.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				setDirty(true);
+			}
+		});
+
+		btnCreatePlotsForThroughputs = new Button(throughputComposite, SWT.CHECK);
+		btnCreatePlotsForThroughputs.setText("Create Plots for throughputs");
+		btnCreatePlotsForThroughputs.setSelection(evaluationModel.isCreateThroughputPlots());
+		btnCreatePlotsForThroughputs.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setDirty(true);
+			}
+		});
+
+		new Label(throughputComposite, SWT.NONE);
 
 		Composite composite = new Composite(container, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
@@ -387,6 +451,12 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 
 	}
 
+	private void setEnabled(Composite composite, boolean enable) {
+		for (Control control : composite.getChildren()) {
+			control.setEnabled(enable);
+		}
+	}
+
 	protected void startEvaluation(Shell shell) {
 		if (isDirty()) {
 			if (MessageDialog.openConfirm(shell, "Save before?", "Do you want to save before starting?")) {
@@ -394,11 +464,11 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 			} else {
 				return;
 			}
-		}		
-		
-		Job job = new EvaluationJob(evaluationModel);		
-		job.setUser(true);				
-		job.schedule();		
+		}
+
+		Job job = new EvaluationJob(evaluationModel);
+		job.setUser(true);
+		job.schedule();
 
 	}
 
@@ -470,13 +540,16 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		
+
 		evaluationModel.setQueryFile(input.getFile().getProject().findMember(queryFileText.getText()));
 		evaluationModel.setPlotFilesPath(this.plotFolder.getText());
 		evaluationModel.setProcessingResultsPath(this.processingResultFolder.getText());
 		evaluationModel.setWithLatency(btnActivateLatencyMeasurements.getSelection());
 		evaluationModel.setWithThroughput(btnActivateThroughputMeasurments.getSelection());
 		evaluationModel.setNumberOfRuns(numberOfTimesSpinner.getSelection());
+		evaluationModel.setCreateLatencyPlots(btnCreatePlotsForLatency.getSelection());
+		evaluationModel.setCreateThroughputPlots(btnCreatePlotsForThroughputs.getSelection());
+		evaluationModel.setMeasureThrougputEach(spinnerMeasureEachElements.getSelection());		
 		// variables are directly saved
 		evaluationModel.save(this.input.getFile());
 		setDirty(false);
@@ -566,5 +639,5 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 				}
 			}
 		});
-	}	
+	}
 }

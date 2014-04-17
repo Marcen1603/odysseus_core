@@ -33,12 +33,13 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.evaluation.Activator;
 import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationModel;
 import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationVariable;
+import de.uniol.inf.is.odysseus.rcp.evaluation.plot.PlotBuilder;
 import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 
 public class EvaluationJob extends Job implements IPlanModificationListener {
 
 	private EvaluationModel model;
-	private Collection<Integer> ids = new ArrayList<>();
+	private Collection<Integer> ids = new ArrayList<>();	
 
 	public EvaluationJob(EvaluationModel model) {
 		super("Running Evaluation...");
@@ -70,9 +71,21 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 				DateFormat dateFormat = new SimpleDateFormat("ddMMyy-HHmmss");
 				Calendar cal = Calendar.getInstance();
 				String identifier = dateFormat.format(cal.getTime());
-				int counter = recursiveFor(new ArrayDeque<Integer>(), ranges, ranges.size(), 0, totalEvaluations, identifier, variables, monitor, lines);
+				EvaluationRunContext evaluationRunContext = new EvaluationRunContext(model, identifier);
+				EvaluationRunContainer evaluationRunContainer = new EvaluationRunContainer(evaluationRunContext); 
+				int counter = recursiveFor(new ArrayDeque<Integer>(), ranges, ranges.size(), 0, totalEvaluations, evaluationRunContainer, variables, monitor, lines);
 				if (counter < totalEvaluations) {
 					return Status.CANCEL_STATUS;
+				}
+				
+				monitor.beginTask("Creating diagrams...", IProgressMonitor.UNKNOWN);
+				if(model.isCreateLatencyPlots()){
+					monitor.subTask("Creating latency plots...");					
+					PlotBuilder.createLatencyPlots(evaluationRunContainer, model, monitor);					
+				}
+				if(model.isCreateThroughputPlots()){
+					monitor.subTask("Creating throughput plots...");
+					PlotBuilder.createThroughputPlots(evaluationRunContainer, model, monitor);
 				}
 			}
 		} catch (InterruptedException ex) {
@@ -84,20 +97,20 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 		return Status.OK_STATUS;
 	}
 
-	private int recursiveFor(Deque<Integer> indices, List<Integer> ranges, int n, int counter, int totalEvals, String identifier, List<EvaluationVariable> values, IProgressMonitor monitor, String lines) throws Exception {
+	private int recursiveFor(Deque<Integer> indices, List<Integer> ranges, int n, int counter, int totalEvals, EvaluationRunContainer evaluationRunContainer, List<EvaluationVariable> values, IProgressMonitor monitor, String lines) throws Exception {
 		if (n != 0) {
 			for (int i = 0; i < ranges.get(n - 1); i++) {
 				indices.push(i);
-				counter = recursiveFor(indices, ranges, n - 1, counter, totalEvals, identifier, values, monitor, lines);
+				counter = recursiveFor(indices, ranges, n - 1, counter, totalEvals, evaluationRunContainer, values, monitor, lines);
 				indices.pop();
 			}
 		} else {
-			counter = runEvalStep(indices, values, counter, totalEvals, identifier, monitor, lines);
+			counter = runEvalStep(indices, values, counter, totalEvals, evaluationRunContainer, monitor, lines);
 		}
 		return counter;
 	}
 
-	private int runEvalStep(Deque<Integer> index, List<EvaluationVariable> values, int counter, int totalEvals, String identifier, IProgressMonitor monitor, String querytext) throws Exception {
+	private int runEvalStep(Deque<Integer> index, List<EvaluationVariable> values, int counter, int totalEvals, EvaluationRunContainer evaluationRunContainer, IProgressMonitor monitor, String querytext) throws Exception {
 		IServerExecutor executor = (IServerExecutor) Activator.getExecutor();
 		NumberFormat nf = NumberFormat.getInstance();
 
@@ -125,8 +138,8 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 			long timeStarted = System.currentTimeMillis();
 
 			monitor.subTask(prefix + "Adding query...");
-			EvaluationRun evaluationRun = new EvaluationRun(model, i, currentValues, identifier);
-			
+			EvaluationRun evaluationRun = new EvaluationRun(evaluationRunContainer.getContext(), i, currentValues);
+			evaluationRunContainer.getRuns().add(evaluationRun);
 			context.put(EvaluationRun.class.getName(), evaluationRun);
 			
 			ids  = executor.addQuery(querytext, "OdysseusScript", caller, "Standard", context);
