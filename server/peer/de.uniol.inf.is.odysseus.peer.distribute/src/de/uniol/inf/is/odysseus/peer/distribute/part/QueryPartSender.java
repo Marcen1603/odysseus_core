@@ -162,9 +162,10 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		insertJxtaOperators(allocationMap);
 		replaceAccessAOsOfExportedViews(allocationMap.keySet());
 
+		distributeToRemotePeers(sharedQueryID, serverExecutor, caller, allocationMap, config);
+		
 		Collection<ILogicalQueryPart> localQueryParts = determineLocalQueryParts(allocationMap);
 
-		int localQueryID = -1;
 		if (!localQueryParts.isEmpty()) {
 			LOG.debug("Building local logical query out of {} local query parts", localQueryParts.size());
 
@@ -172,12 +173,15 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 			localQuery.setName(queryName);
 			localQuery.setUser(caller);
 
-			localQueryID = callExecutorToAddLocalQueries(localQuery, sharedQueryID, serverExecutor, caller, config, determineSlavePeers(allocationMap));
+			try {
+				callExecutorToAddLocalQueries(localQuery, sharedQueryID, serverExecutor, caller, config, determineSlavePeers(allocationMap));
+			} catch( Throwable t ) {
+				LOG.error("Exception during placing local query part", t);
+				removeDistributedQueryParts(sharedQueryID);
+			}
 		} else {
 			LOG.debug("No local query part of query remains.");
 		}
-
-		distributeToRemotePeers(sharedQueryID, localQueryID, serverExecutor, caller, allocationMap, config);
 	}
 
 	private static Collection<ILogicalQueryPart> determineLocalQueryParts(Map<ILogicalQueryPart, PeerID> allocationMap) {
@@ -314,7 +318,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		}
 	}
 
-	private void distributeToRemotePeers(ID sharedQueryID, int localQueryID, IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> correctedAllocationMap, QueryBuildConfiguration parameters) throws QueryDistributionException {
+	private void distributeToRemotePeers(ID sharedQueryID, IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> correctedAllocationMap, QueryBuildConfiguration parameters) throws QueryDistributionException {
 		senderMap.clear();
 		sendDestinationMap.clear();
 		sendResultMap.clear();
@@ -349,7 +353,6 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		}
 
 		if (sendResultMap.size() != remoteSendCount) {
-			removeLocalQueryPart(serverExecutor, caller, localQueryID);
 			removeDistributedQueryParts(sharedQueryID);
 
 			throw new QueryDistributionException("Could not distribute the query parts since some peers are not reachable");
@@ -359,7 +362,6 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 			String msg = sendResultMap.get(qpid);
 			PeerID pid = sendDestinationMap.get(qpid);
 			if (msg == null || !msg.equalsIgnoreCase("OK")) {
-				removeLocalQueryPart(serverExecutor, caller, localQueryID);
 				removeDistributedQueryParts(sharedQueryID);
 				
 				throw new QueryDistributionException("Could not distribute the query since peer " + p2pDictionary.getRemotePeerName(pid) + " could not execute/add its query part: " + msg);
@@ -367,10 +369,6 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		}
 
 		LOG.debug("Remote distribution complete.");
-	}
-
-	private void removeLocalQueryPart(IServerExecutor serverExecutor, ISession caller, int localQueryID) {
-		serverExecutor.removeQuery(localQueryID, caller);
 	}
 
 	private void removeDistributedQueryParts(ID sharedQueryID) {
@@ -470,14 +468,13 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		return slavePeers;
 	}
 
-	private static int callExecutorToAddLocalQueries(ILogicalQuery query, ID sharedQueryID, IServerExecutor serverExecutor, ISession caller, QueryBuildConfiguration config, Collection<PeerID> slavePeers) throws QueryDistributionException {
+	private static void callExecutorToAddLocalQueries(ILogicalQuery query, ID sharedQueryID, IServerExecutor serverExecutor, ISession caller, QueryBuildConfiguration config, Collection<PeerID> slavePeers) throws QueryDistributionException {
 		try {
 			LOG.debug("Adding local query to serverExecutor now.");
 			int queryID = serverExecutor.addQuery(query.getLogicalPlan(), caller, config.getName());
 
 			QueryPartController.getInstance().registerAsMaster(query, queryID, sharedQueryID, slavePeers);
 			LOG.debug("Local query added");
-			return queryID;
 		} catch (Throwable ex) {
 			throw new QueryDistributionException("Could not add local query to server executor", ex);
 		}

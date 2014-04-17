@@ -80,7 +80,6 @@ public final class QueryDistributorHelper {
 		LogicalQueryHelper.removeTopAOs(operators);
 		operators = LogicalQueryHelper.replaceStreamAOs(operators);
 		
-		
 		return operators;
 	}
 	
