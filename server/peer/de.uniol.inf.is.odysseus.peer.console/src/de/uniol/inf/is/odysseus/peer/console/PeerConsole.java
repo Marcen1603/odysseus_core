@@ -175,7 +175,27 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	// called by OSGi-DS
 	public void deactivate() {
+		logoutFromRemotePeers();
+		
 		LOG.debug("Peer console deactivated");
+	}
+
+	private void logoutFromRemotePeers() {
+		LOG.debug("Sending logout to remote peers due to shutdown");
+		for( PeerID pid : loggedToPeers ) {
+			sendLogoutMessage(pid, "<remotePeer>");
+		}
+
+		waitSomeTime();
+		
+		loggedToPeers.clear();
+	}
+
+	private static void waitSomeTime() {
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+		}
 	}
 
 	@Override
