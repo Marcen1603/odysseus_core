@@ -41,7 +41,7 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 	final private boolean xmlSink;
 	final private long writeAfterElements;
 	final private boolean append;
-	private long elementsWritten;
+	private long elementsInCache;
 	private boolean printMetadata;
 	transient private StringBuffer writeCache;
 	transient BufferedWriter out;
@@ -52,6 +52,8 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 	private DecimalFormat numberFormatter;
 	private Character textSeperator = null;
 	private char delimiter = ';';
+	private boolean linenumbering = false;
+	private long linenumber = 0;
 
 	static Logger LOG = LoggerFactory.getLogger(FileSinkPO.class);
 
@@ -79,6 +81,7 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 		this.printMetadata = fileSink.printMetadata;
 		this.writeAfterElements = fileSink.writeAfterElements;
 		this.append = fileSink.append;
+		this.linenumbering = fileSink.linenumbering;
 	}
 
 	public String getFilename() {
@@ -90,7 +93,8 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 		try {
 			lock.lock();
 			writeCache = new StringBuffer();
-			elementsWritten = 0;
+			elementsInCache = 0;
+			linenumber = 0;
 			if (xmlSink) {
 				serializer = new Persister();
 			}
@@ -111,7 +115,7 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 	protected void process_next(IStreamObject<?> object, int port) {
 		if (isOpen()) {
 			try {
-
+				linenumber++;
 				if (xmlSink) {
 					serializer.write(object, out);
 					out.flush();
@@ -120,17 +124,20 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 					String toWrite = null;
 					if (csvSink) {
 						toWrite = ((ICSVToString) object).csvToString(delimiter,textSeperator,floatingFormatter, numberFormatter, printMetadata) + "\n";
+						if(linenumbering){
+							toWrite = Long.toString(linenumber)+delimiter+toWrite;
+						}
 					} else {
 						toWrite = "" + object + "\n";
 					}
-
+					
 					if (writeAfterElements > 0) {
 						writeCache.append(toWrite);// .append("\n");
-						elementsWritten++;
-						if (writeAfterElements >= elementsWritten) {
+						elementsInCache++;
+						if (writeAfterElements >= elementsInCache) {
 							writeToFile(writeCache.toString());
 							writeCache = new StringBuffer();
-							elementsWritten = 0;
+							elementsInCache = 0;
 						}
 					} else {
 						writeToFile(toWrite);
@@ -225,5 +232,9 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 	
 	public void setTextSeperator(Character textSeperator) {
 		this.textSeperator = textSeperator;
+	}
+
+	public void setLineNumbering(boolean lineNumbering) {
+		this.linenumbering  = lineNumbering;		
 	}
 }

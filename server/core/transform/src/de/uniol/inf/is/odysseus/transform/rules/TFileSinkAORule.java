@@ -35,6 +35,7 @@ public class TFileSinkAORule extends AbstractTransformationRule<FileSinkAO> {
 		FileSinkPO fileSinkPO = new FileSinkPO(operator.getFilename(), operator.getSinkType(), operator.getWriteAfterElements(), operator.getPrintMetadata(), operator.getAppend());
 		fileSinkPO.setFormatter(operator.getFloatingFormatter(), operator.getNumberFormatter());
 		fileSinkPO.setDelimiter(operator.getDelimiter());
+		fileSinkPO.setLineNumbering(operator.getLineNumbering());
 		fileSinkPO.setTextSeperator(operator.getTextSeperator());
 		defaultExecute(operator, fileSinkPO, config, true, true);
 	}

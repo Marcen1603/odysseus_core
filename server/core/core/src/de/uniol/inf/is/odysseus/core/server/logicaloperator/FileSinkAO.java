@@ -54,6 +54,7 @@ public class FileSinkAO extends AbstractLogicalOperator {
 	
 	private char delimiter = ';';
 	private Character textSeperator = null;
+	private boolean linenumbering = false;
 
 	
 	public FileSinkAO() {
@@ -77,6 +78,7 @@ public class FileSinkAO extends AbstractLogicalOperator {
 		this.numberFormatter = fileSinkAO.numberFormatter;
 		this.delimiter = fileSinkAO.delimiter;
 		this.textSeperator = fileSinkAO.textSeperator;
+		this.linenumbering = fileSinkAO.linenumbering;
 	}
 
 	@Parameter(name = "FILENAME", type = FileNameParameter.class)
@@ -102,6 +104,11 @@ public class FileSinkAO extends AbstractLogicalOperator {
 	@Parameter(name="DumpMetaData", type = BooleanParameter.class, optional = true)
 	public void setPrintMetadata(boolean printMetadata) {
 		this.printMetadata = printMetadata;
+	}
+	
+	@Parameter(name="linenumbers", type = BooleanParameter.class, optional = true)
+	public void setLineNumbering(boolean linenumbering) {
+		this.linenumbering = linenumbering;
 	}
 	
 	@Parameter(name="FloatingFormatter", type = StringParameter.class, optional = true)
@@ -159,5 +166,9 @@ public class FileSinkAO extends AbstractLogicalOperator {
 	@Override
 	public boolean isSourceOperator() {
 		return false;
+	}
+
+	public boolean getLineNumbering() {
+		return this.linenumbering;		
 	}
 }
