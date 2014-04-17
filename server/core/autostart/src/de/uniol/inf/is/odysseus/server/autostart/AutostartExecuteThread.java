@@ -35,6 +35,7 @@ public class AutostartExecuteThread extends Thread {
 		while( true ) {
 			try {
 				executor.addQuery(queryText, "OdysseusScript", user, "Standard", Context.empty());
+				LOG.debug("Autostart script executed");
 				break;
 			} catch( Throwable t ) {
 				tries++;
@@ -43,7 +44,6 @@ public class AutostartExecuteThread extends Thread {
 				}
 				
 				LOG.error("Autostart script failed in try {}. Waiting {} ms...", tries, WAIT_TIME_MILLIS);
-				LOG.debug("Exception in autostart", t);
 				
 				setName("Autostart execution thread (fails: " + tries + ")"); // to see in debug-view in eclipse
 				
