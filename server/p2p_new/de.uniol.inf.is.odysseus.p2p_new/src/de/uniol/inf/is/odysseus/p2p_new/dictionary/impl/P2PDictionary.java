@@ -82,7 +82,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private AutoExporter autoExporter;
 	private boolean sourcesChanged = true;
+	private boolean peersChanged = true;
 	private Collection<SourceAdvertisement> srcAdvs;
+
+	private Collection<PeerID> currentPeerIDs;
 
 	// called by OSGi-DS
 	public void bindListener(IP2PDictionaryListener serv) {
@@ -588,7 +591,12 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	@Override
 	public Collection<PeerID> getRemotePeerIDs() {
 		if (JxtaServicesProvider.isActivated()) {
-			return toPeerIDs(JxtaServicesProvider.getInstance().getPeerAdvertisements());
+			if( peersChanged ) {
+				currentPeerIDs = toPeerIDs(JxtaServicesProvider.getInstance().getPeerAdvertisements());
+				peersChanged = false;
+			}
+			return currentPeerIDs;
+			
 		}
 		return Lists.newArrayList();
 	}
@@ -599,26 +607,19 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		Collection<PeerID> ids = Lists.newLinkedList();
 		PeerID localPeerID = P2PNetworkManager.getInstance().getLocalPeerID();
 		
+		LOG.debug("Determining peers");
 		for (PeerAdvertisement adv : peerAdvs) {
 			if (!localPeerID.equals(adv.getPeerID())) {
 				if (JxtaServicesProvider.getInstance().isReachable(adv.getPeerID())) {
 					ids.add(adv.getPeerID());
-
+					LOG.debug("Peer " + adv.getName() + " is reachable");
 					toFlushMap.remove(adv);
 
 				} else {
+					LOG.debug("Peer " + adv.getName() + " is NOT reachable anymore");
 					remotePeerNameMap.remove(adv.getPeerID());
 
-					if (!toFlushMap.containsKey(adv)) {
-						toFlushMap.put(adv, System.currentTimeMillis());
-					} else {
-						Long ts = toFlushMap.get(adv);
-						if (System.currentTimeMillis() - ts > 5000) {
-							ResolvePeerThread t = new ResolvePeerThread(adv);
-							t.start();
-							toFlushMap.remove(adv);
-						}
-					}
+					tryFlushAdvertisement(adv);
 				}
 			}
 		}
@@ -1004,6 +1005,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	@Override
 	public void updateAdvertisements() {
 		sourcesChanged = true;
+		peersChanged = true;
 	}
 
 	private void tryAutoImportSource(SourceAdvertisement srcAdv) {
