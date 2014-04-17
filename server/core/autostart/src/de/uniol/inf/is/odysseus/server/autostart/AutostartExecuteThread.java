@@ -42,7 +42,7 @@ public class AutostartExecuteThread extends Thread {
 					throw new RuntimeException("Autostart script failed " + MAX_TRIES + " times", t);
 				}
 				
-				LOG.warn("Autostart script failed in try {}. Waiting {} ms...", tries, WAIT_TIME_MILLIS);
+				LOG.error("Autostart script failed in try {}. Waiting {} ms...", tries, WAIT_TIME_MILLIS);
 				LOG.debug("Exception in autostart", t);
 				
 				setName("Autostart execution thread (fails: " + tries + ")"); // to see in debug-view in eclipse
