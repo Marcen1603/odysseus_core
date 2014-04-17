@@ -150,10 +150,6 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 			return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
 		}
 
-		if (!p2pDictionary.getRemotePeerIDs().contains(peerID)) {
-			return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
-		}
-
 		try {
 			usageMap.remove(peerID);
 			peerCommunicator.send(peerID, new AskUsageMessage());
