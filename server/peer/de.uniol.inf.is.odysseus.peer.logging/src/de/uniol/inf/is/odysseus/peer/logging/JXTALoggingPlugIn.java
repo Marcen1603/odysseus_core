@@ -7,13 +7,14 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.peer.config.PeerConfiguration;
 import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisement;
 import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisementInstatiator;
 import de.uniol.inf.is.odysseus.peer.logging.impl.LogMessage;
@@ -131,14 +132,14 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	
 	public static boolean isLogging() {
 		try {
-			String rendevousAddress = System.getProperty(LOGACTIVE_SYS_PROPERTY);
-			if (!Strings.isNullOrEmpty(rendevousAddress)) {
-				return Boolean.valueOf(rendevousAddress);
+			String isLoggingString = System.getProperty(LOGACTIVE_SYS_PROPERTY);
+			if (!Strings.isNullOrEmpty(isLoggingString)) {
+				return Boolean.valueOf(isLoggingString);
 			}
 
-			rendevousAddress = OdysseusConfiguration.get(LOGACTIVE_SYS_PROPERTY);
-			if (!Strings.isNullOrEmpty(rendevousAddress)) {
-				return Boolean.valueOf(rendevousAddress);
+			Optional<String> optIsLogging = PeerConfiguration.get(LOGACTIVE_SYS_PROPERTY);
+			if (optIsLogging.isPresent()) {
+				return Boolean.valueOf(optIsLogging.get());
 			}
 		} catch (Throwable t) {
 			LOG.error("Could not determine if this peer is logging", t);

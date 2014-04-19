@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.SurveyBasedAllocationPlugIn
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.peer.ping,
+Import-Package: de.uniol.inf.is.odysseus.peer.config,
+ de.uniol.inf.is.odysseus.peer.ping,
  de.uniol.inf.is.odysseus.peer.resource,
  org.apache.commons.math.geometry,
  org.osgi.framework;version="1.3.0"
@@ -15,11 +16,11 @@ Service-Component: OSGI-INF/SurveyBasedAllocator.xml,OSGI-INF/Communicator.xml,O
  OSGI-INF/ForceModel.xml
 Require-Bundle: de.uniol.inf.is.odysseus.peer.distribute;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  com.google.guava;bundle-version="14.0.0",
  de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.parser.pql.generator;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.costmodel.operator;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.costmodel.operator.util;bundle-version="1.0.0",
- Jxta_2.6_Source;bundle-version="1.0.0"
+ Jxta_2.6_Source;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"

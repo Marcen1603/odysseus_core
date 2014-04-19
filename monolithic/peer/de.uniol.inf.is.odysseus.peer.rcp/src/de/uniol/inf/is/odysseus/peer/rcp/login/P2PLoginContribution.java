@@ -25,9 +25,9 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNetworkException;
+import de.uniol.inf.is.odysseus.peer.config.PeerConfiguration;
 import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
 import de.uniol.inf.is.odysseus.rcp.login.ILoginContribution;
 import de.uniol.inf.is.odysseus.rcp.login.ILoginContributionContainer;
@@ -148,12 +148,7 @@ public class P2PLoginContribution implements ILoginContribution {
 			return Optional.of(peerName);
 		}
 
-		peerName = OdysseusConfiguration.get(PEER_NAME_SYS_PROPERTY);
-		if (!Strings.isNullOrEmpty(peerName)) {
-			return Optional.of(peerName);
-		}
-
-		return Optional.absent();
+		return PeerConfiguration.get(PEER_NAME_SYS_PROPERTY);
 	}
 
 	private static Optional<String> determinePeerGroupName() {
@@ -162,12 +157,7 @@ public class P2PLoginContribution implements ILoginContribution {
 			return Optional.of(peerGroupName);
 		}
 
-		peerGroupName = OdysseusConfiguration.get(PEER_GROUP_NAME_SYS_PROPERTY);
-		if (!Strings.isNullOrEmpty(peerGroupName)) {
-			return Optional.of(peerGroupName);
-		}
-
-		return Optional.absent();
+		return PeerConfiguration.get(PEER_GROUP_NAME_SYS_PROPERTY);
 	}
 
 	private static Optional<String> determineRendevousAddress() {
@@ -176,12 +166,7 @@ public class P2PLoginContribution implements ILoginContribution {
 			return Optional.of(rendevousAddress);
 		}
 
-		rendevousAddress = OdysseusConfiguration.get(RENDEVOUS_ADDRESS_SYS_PROPERTY);
-		if (!Strings.isNullOrEmpty(rendevousAddress)) {
-			return Optional.of(rendevousAddress);
-		}
-
-		return Optional.absent();
+		return PeerConfiguration.get(RENDEVOUS_ADDRESS_SYS_PROPERTY);
 	}
 
 	private static Optional<Boolean> determineRendevousActive() {
@@ -191,9 +176,9 @@ public class P2PLoginContribution implements ILoginContribution {
 				return Optional.of(Boolean.valueOf(rendevousAddress));
 			}
 
-			rendevousAddress = OdysseusConfiguration.get(RENDEVOUS_ACTIVE_SYS_PROPERTY);
-			if (!Strings.isNullOrEmpty(rendevousAddress)) {
-				return Optional.of(Boolean.valueOf(rendevousAddress));
+			Optional<String> optAddress = PeerConfiguration.get(RENDEVOUS_ACTIVE_SYS_PROPERTY);
+			if (optAddress.isPresent()) {
+				return Optional.of(Boolean.valueOf(optAddress.get()));
 			}
 		} catch (Throwable t) {
 			LOG.error("Could not determine if this peer is a rendevous peer", t);
@@ -203,14 +188,14 @@ public class P2PLoginContribution implements ILoginContribution {
 
 	private static Optional<Integer> determinePeerPort() {
 		try {
-			String rendevousAddress = System.getProperty(PEER_PORT_SYS_PROPERTY);
-			if (!Strings.isNullOrEmpty(rendevousAddress)) {
-				return Optional.of(Integer.valueOf(rendevousAddress));
+			String portString = System.getProperty(PEER_PORT_SYS_PROPERTY);
+			if (!Strings.isNullOrEmpty(portString)) {
+				return Optional.of(Integer.valueOf(portString));
 			}
 	
-			rendevousAddress = OdysseusConfiguration.get(PEER_PORT_SYS_PROPERTY);
-			if (!Strings.isNullOrEmpty(rendevousAddress)) {
-				return Optional.of(Integer.valueOf(rendevousAddress));
+			Optional<String> optPort = PeerConfiguration.get(PEER_PORT_SYS_PROPERTY);
+			if (optPort.isPresent()) {
+				return Optional.of(Integer.valueOf(optPort.get()));
 			}
 		} catch( Throwable t ) {
 			LOG.error("Could not determine port", t);

@@ -11,11 +11,12 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNetworkException;
+import de.uniol.inf.is.odysseus.peer.config.PeerConfiguration;
 
 public class PeerServerPlugIn implements BundleActivator {
 	
@@ -99,9 +100,9 @@ public class PeerServerPlugIn implements BundleActivator {
 			return peerName;
 		}
 
-		peerName = OdysseusConfiguration.get(PEER_NAME_SYS_PROPERTY);
-		if (!Strings.isNullOrEmpty(peerName)) {
-			return peerName;
+		Optional<String> optPeer = PeerConfiguration.get(PEER_NAME_SYS_PROPERTY);
+		if (optPeer.isPresent()) {
+			return optPeer.get();
 		}
 
 		try {
@@ -117,11 +118,11 @@ public class PeerServerPlugIn implements BundleActivator {
 			return peerGroupName;
 		}
 
-		peerGroupName = OdysseusConfiguration.get(PEER_GROUP_NAME_SYS_PROPERTY);
-		if (!Strings.isNullOrEmpty(peerGroupName)) {
-			return peerGroupName;
+		Optional<String> optPeerGroupName = PeerConfiguration.get(PEER_GROUP_NAME_SYS_PROPERTY);
+		if( optPeerGroupName.isPresent() ) {
+			return optPeerGroupName.get();
 		}
-
+		
 		return "OdysseusGroup";
 	}
 
@@ -131,9 +132,9 @@ public class PeerServerPlugIn implements BundleActivator {
 			return rendevousAddress;
 		}
 
-		rendevousAddress = OdysseusConfiguration.get(RENDEVOUS_ADDRESS_SYS_PROPERTY);
-		if (!Strings.isNullOrEmpty(rendevousAddress)) {
-			return rendevousAddress;
+		Optional<String> optRendevousAddress = PeerConfiguration.get(RENDEVOUS_ADDRESS_SYS_PROPERTY);
+		if (optRendevousAddress.isPresent()) {
+			return optRendevousAddress.get();
 		}
 
 		return "";
@@ -141,14 +142,14 @@ public class PeerServerPlugIn implements BundleActivator {
 
 	private static Boolean determineRendevousActive() {
 		try {
-			String rendevousAddress = System.getProperty(RENDEVOUS_ACTIVE_SYS_PROPERTY);
-			if (!Strings.isNullOrEmpty(rendevousAddress)) {
-				return Boolean.valueOf(rendevousAddress);
+			String rendevousActive = System.getProperty(RENDEVOUS_ACTIVE_SYS_PROPERTY);
+			if (!Strings.isNullOrEmpty(rendevousActive)) {
+				return Boolean.valueOf(rendevousActive);
 			}
 
-			rendevousAddress = OdysseusConfiguration.get(RENDEVOUS_ACTIVE_SYS_PROPERTY);
-			if (!Strings.isNullOrEmpty(rendevousAddress)) {
-				return Boolean.valueOf(rendevousAddress);
+			Optional<String> optRendevousActive = PeerConfiguration.get(RENDEVOUS_ACTIVE_SYS_PROPERTY);
+			if (optRendevousActive.isPresent()) {
+				return Boolean.valueOf(optRendevousActive.get());
 			}
 		} catch (Throwable t) {
 			LOG.error("Could not determine if this peer is a rendevous peer", t);
@@ -158,14 +159,14 @@ public class PeerServerPlugIn implements BundleActivator {
 
 	private static Integer determinePeerPort() {
 		try {
-			String rendevousAddress = System.getProperty(PEER_PORT_SYS_PROPERTY);
-			if (!Strings.isNullOrEmpty(rendevousAddress)) {
-				return Integer.valueOf(rendevousAddress);
+			String portString = System.getProperty(PEER_PORT_SYS_PROPERTY);
+			if (!Strings.isNullOrEmpty(portString)) {
+				return Integer.valueOf(portString);
 			}
 	
-			rendevousAddress = OdysseusConfiguration.get(PEER_PORT_SYS_PROPERTY);
-			if (!Strings.isNullOrEmpty(rendevousAddress)) {
-				return Integer.valueOf(rendevousAddress);
+			Optional<String> optPortString = PeerConfiguration.get(PEER_PORT_SYS_PROPERTY);
+			if (optPortString.isPresent()) {
+				return Integer.valueOf(optPortString.get());
 			}
 		} catch( Throwable t ) {
 			LOG.error("Could not determine port", t);

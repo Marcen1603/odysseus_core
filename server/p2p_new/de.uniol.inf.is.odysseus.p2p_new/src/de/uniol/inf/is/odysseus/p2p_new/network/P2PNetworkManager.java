@@ -25,12 +25,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkListener;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNetworkException;
 import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.peer.config.PeerConfiguration;
 
 public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousListener {
 
@@ -148,7 +148,7 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 
 		configureLogging(P2PNewPlugIn.getBundle());
 
-		File conf = new File(OdysseusConfiguration.getHomeDir() + "peers" + File.separator + peerName);
+		File conf = new File(PeerConfiguration.ODYSSEUS_HOME_DIR + "peers" + File.separator + peerName);
 		NetworkManager.RecursiveDelete(conf);
 
 		peerID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID);
