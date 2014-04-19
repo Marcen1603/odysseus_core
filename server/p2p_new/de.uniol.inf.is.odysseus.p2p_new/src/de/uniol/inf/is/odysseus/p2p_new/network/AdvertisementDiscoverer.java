@@ -12,26 +12,42 @@ import net.jxta.protocol.PeerAdvertisement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
+import de.uniol.inf.is.odysseus.peer.config.PeerConfiguration;
 
 public class AdvertisementDiscoverer extends RepeatingJobThread implements DiscoveryListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdvertisementDiscoverer.class);
 
-	private static final long DISCOVERY_INTERVAL_MILLIS_WITHOUT_PEERS = 6 * 1000;
-	private static final long DISCOVERY_INTERVAL_MILLIS = 30 * 1000;
-
+	private static final int DEFAULT_DISCOVERY_INTERVAL_MILLIS = 6000;
+	private static final int DEFAULT_DISCOVERY_WITH_PEER_INTERVAL_MILLIS = 30000;
+	
+	private static final String DISCOVERY_INTERVAL_SYSPROPERTY = "peer.discovery.startinterval";
+	private static final String DISCOVERY_INTERVAL_WITH_PEERS_SYSPROPERTY = "peer.discovery.interval";
+	
 	private final Collection<IAdvertisementDiscovererListener> listenerMap = Lists.newLinkedList();
 
 	private boolean foundPeer = false;
 	private Object discovering = new Object();
 
 	public AdvertisementDiscoverer() {
-		super(DISCOVERY_INTERVAL_MILLIS_WITHOUT_PEERS, "Advertisement discoverer");
+		super(determineDiscoveryInterval(), "Advertisement discoverer");
+	}
+	
+	private static long determineDiscoveryInterval() {
+		Optional<String> discoverIntervalString = PeerConfiguration.get(DISCOVERY_INTERVAL_SYSPROPERTY);
+		try {
+			if( discoverIntervalString.isPresent() ) {
+				return Integer.valueOf(discoverIntervalString.get());
+			}
+		} catch( Throwable t ) {
+		}
+		return DEFAULT_DISCOVERY_INTERVAL_MILLIS;
 	}
 
 	@Override
@@ -71,11 +87,22 @@ public class AdvertisementDiscoverer extends RepeatingJobThread implements Disco
 			PeerAdvertisement peerAdv = (PeerAdvertisement) advertisement;
 			if (!peerAdv.getPeerID().equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
 				// found our first peer --> slow discovery down now
-				LOG.debug("Found our first remote peer. Slow discovery down to {} ms", DISCOVERY_INTERVAL_MILLIS);
-				setIntervalMillis(DISCOVERY_INTERVAL_MILLIS);
+				setIntervalMillis(determineSlowDiscoveryInterval());
+				LOG.debug("Found our first remote peer. Slow discovery down to {} ms", getIntervalMillis());
 				foundPeer = true;
 			}
 		}
+	}
+
+	private static long determineSlowDiscoveryInterval() {
+		Optional<String> discoverIntervalString = PeerConfiguration.get(DISCOVERY_INTERVAL_WITH_PEERS_SYSPROPERTY);
+		try {
+			if( discoverIntervalString.isPresent() ) {
+				return Integer.valueOf(discoverIntervalString.get());
+			}
+		} catch( Throwable t ) {
+		}
+		return DEFAULT_DISCOVERY_WITH_PEER_INTERVAL_MILLIS;
 	}
 
 	private void fireAdvertisementListeners(Advertisement advertisement) {
