@@ -4,9 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,18 +69,55 @@ public class PeerConfiguration {
 
 	private static void loadConfiguration() {
 		try {
-			
 			File confFile = openOrCreateFile(ODYSSEUS_RCP_CONFIGURATION_FILE);
 			
 			FileInputStream in = new FileInputStream(confFile);
 			try {
+				setDefaultValues(properties);
 				properties.loadFromXML(in);
+				save();
 			} finally {
 				in.close();
 			}
 			
 		} catch (IOException ex) {
 			LOG.error("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
+		}
+	}
+
+	private static void setDefaultValues(Hashtable<Object,Object> props) {
+		setDefaultValue("peer.discovery.startinterval", "6000");
+		setDefaultValue("peer.discovery.interval", "30000");
+		
+		setDefaultValue("peer.distribute.bidprovider", "costmodel");
+		
+		setDefaultValue("peer.log", "false");
+		
+		setDefaultValue("peer.name", determinePeerName()); //
+		setDefaultValue("peer.group.name", "OdysseusPeerGroup");
+		setDefaultValue("peer.rdv.address", "");
+		setDefaultValue("peer.rdv.active", "false");
+		setDefaultValue("peer.port", String.valueOf(determineRandomPort()));
+	}
+	
+	private static String determinePeerName() {
+		try {
+			return InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			return "OdysseusPeer";
+		}
+	}
+
+	private static int determineRandomPort() {
+		return new Random().nextInt(20000) + 10000;
+	}
+
+	private static void setDefaultValue(String key, String defaultValue) {
+		String valueFromOdysseusConfig = OdysseusConfiguration.get(key);
+		if( !Strings.isNullOrEmpty(valueFromOdysseusConfig)) {
+			properties.put(key, valueFromOdysseusConfig);
+		} else {
+			properties.put(key, defaultValue);
 		}
 	}
 

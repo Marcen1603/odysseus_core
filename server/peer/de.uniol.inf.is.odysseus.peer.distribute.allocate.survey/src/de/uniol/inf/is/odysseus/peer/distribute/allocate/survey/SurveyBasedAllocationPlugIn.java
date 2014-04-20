@@ -20,7 +20,7 @@ public class SurveyBasedAllocationPlugIn implements BundleActivator {
 
 	public static final String DEFAULT_BID_PROVIDER_NAME = "costmodel";
 	
-	private static final String BID_PROVIDER_NAME = "peer_bidprovider";
+	private static final String BID_PROVIDER_NAME = "peer.distribute.bidprovider";
 	
 	private static IBidProvider selectedBidProvider;
 	private static String selectedBidProviderName;
