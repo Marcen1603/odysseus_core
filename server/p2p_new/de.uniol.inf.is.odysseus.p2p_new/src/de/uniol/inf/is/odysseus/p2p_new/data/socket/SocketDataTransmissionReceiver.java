@@ -65,27 +65,22 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 							while( true ) {
 								int bytesRead = inputStream.read(buffer);
 								if( bytesRead == -1 ) {
+									LOG.debug("Reached end of data stream. Socket closed...");
 									break;
 								} else if( bytesRead > 0 ) {
-									byte[] msg = new byte[bytesRead - 1];
-									System.arraycopy(buffer, 1, msg, 0, msg.length);
-									
-									byte flag = buffer[0];
-									if( flag == 0 ) {
-										// data
-										fireDataEvent(msg);
-									} else {
-										IPunctuation punc = (IPunctuation)ObjectByteConverter.bytesToObject(msg);
-										firePunctuation(punc);
-									}
+									processBytes(bytesRead);
 								}
 							}
 							
 						} catch (IOException e) {
-							socket = null;
 							LOG.error("Exception while reading socket data", e);
+
+							tryCloseSocket(socket);
+							socket = null;
 						}
 					}
+
+
 				});
 				t.setName("Reading data thread");
 				t.setDaemon(true);
@@ -93,6 +88,29 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 			}
 		} else {
 			super.receivedMessage(communicator, senderPeer, message);
+		}
+	}
+	
+	private void processBytes(int bytesRead) {
+		byte[] msg = new byte[bytesRead - 1];
+		System.arraycopy(buffer, 1, msg, 0, msg.length);
+		
+		byte flag = buffer[0];
+		if( flag == 0 ) {
+			// data
+			fireDataEvent(msg);
+		} else {
+			IPunctuation punc = (IPunctuation)ObjectByteConverter.bytesToObject(msg);
+			firePunctuation(punc);
+		}
+	}
+	
+	private static void tryCloseSocket(Socket socket) {
+		try {
+			if( socket != null ) {
+				socket.close();
+			}
+		} catch (IOException e1) {
 		}
 	}
 
