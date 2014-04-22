@@ -79,6 +79,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private final RemoveSourceAdvertisementCollector removeSourceAdvCollector = new RemoveSourceAdvertisementCollector();
 	private final SourceAdvertisementCollector sourceAdvCollector = new SourceAdvertisementCollector();
 	private final Map<PeerID, String> remotePeerNameMap = Maps.newHashMap();
+	private final Map<PeerID, String> remotePeerAddressMap = Maps.newHashMap();
 
 	private AutoExporter autoExporter;
 	private boolean sourcesChanged = true;
@@ -618,6 +619,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 				} else {
 					LOG.debug("Peer " + adv.getName() + " is NOT reachable anymore");
 					remotePeerNameMap.remove(adv.getPeerID());
+					remotePeerAddressMap.remove(adv.getPeerID());
 
 					tryFlushAdvertisement(adv);
 				}
@@ -652,7 +654,16 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	public Optional<String> getRemotePeerAddress(PeerID peerID) {
 		Preconditions.checkNotNull(peerID, "PeerID to get the address from must not be null!");
 
-		return JxtaServicesProvider.getInstance().getRemotePeerAddress(peerID);
+		String address = remotePeerAddressMap.get(peerID);
+		if( Strings.isNullOrEmpty(address)) {
+			Optional<String> newAddress = JxtaServicesProvider.getInstance().getRemotePeerAddress(peerID);
+			if( newAddress.isPresent() ) {
+				remotePeerAddressMap.put(peerID, newAddress.get());
+				return newAddress;
+			}
+			return Optional.absent();
+		} 
+		return Optional.of(address);
 	}
 
 	// called by DataDictionary
