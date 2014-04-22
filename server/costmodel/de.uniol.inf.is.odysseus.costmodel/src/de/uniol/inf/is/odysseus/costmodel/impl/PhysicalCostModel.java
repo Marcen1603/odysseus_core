@@ -32,7 +32,7 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 		Preconditions.checkArgument(!physicalOperators.isEmpty(), "Collection of physical operators must not be empty!");
 
 		Collection<IPhysicalOperator> allOperators = collectAllOperators(physicalOperators);
-		Collection<IPhysicalOperator> sources = CostModelUtil.filterForSources(allOperators);
+		Collection<IPhysicalOperator> sources = CostModelUtil.filterForPhysicalSources(allOperators);
 
 		LOG.debug("Beginning cost estimation of physical operators");
 		List<IPhysicalOperator> operatorsToVisit = Lists.newLinkedList(sources);

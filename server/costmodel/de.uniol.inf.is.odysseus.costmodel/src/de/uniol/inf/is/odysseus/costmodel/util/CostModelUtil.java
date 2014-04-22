@@ -50,7 +50,7 @@ public class CostModelUtil {
 		}
 	}
 	
-	public static Collection<IPhysicalOperator> filterForSources(Collection<IPhysicalOperator> operators) {
+	public static Collection<IPhysicalOperator> filterForPhysicalSources(Collection<IPhysicalOperator> operators) {
 		return Collections2.filter(operators, new Predicate<IPhysicalOperator>() {
 			@Override
 			public boolean apply(IPhysicalOperator input) {
