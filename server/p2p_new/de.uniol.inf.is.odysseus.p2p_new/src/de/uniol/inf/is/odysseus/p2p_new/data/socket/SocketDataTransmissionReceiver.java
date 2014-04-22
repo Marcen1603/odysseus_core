@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import net.jxta.peer.PeerID;
@@ -80,6 +81,11 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 										processBytes(packet);
 									}
 								}
+							}
+						} catch( SocketException e ) {
+							tryCloseSocket(socket);
+							if( !e.getMessage().equals("socket closed")) {
+								LOG.error("Exception while reading socket data", e);
 							}
 							
 						} catch (IOException e) {
