@@ -8,6 +8,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Hashtable;
+import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -79,6 +80,8 @@ public class PeerConfiguration {
 			} finally {
 				in.close();
 			}
+		} catch( InvalidPropertiesFormatException ex ) {
+			LOG.debug("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
 		} catch (IOException ex) {
 			LOG.error("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
 		} 
