@@ -10,6 +10,8 @@ import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.Map;
 
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
@@ -146,10 +148,14 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 		StringBuilder out = new StringBuilder();
 		getDataHandler().writeCSVData(out, object, delimiter, textDelimiter,
 				floatingFormatter, numberFormatter, writeMetadata);
+		out.append(System.lineSeparator());
+		CharBuffer cb = CharBuffer.wrap(out);
+		ByteBuffer encoded = charset.encode(cb);
+		byte[] encodedBytes1 = encoded.array();
+		byte[] encodedBytes = new byte[cb.limit()]; 
+		System.arraycopy(encodedBytes1, 0, encodedBytes, 0, cb.limit());
 		getTransportHandler()
-				.send(charset.encode(CharBuffer.wrap(out)).array());
-		getTransportHandler().send(System.lineSeparator().getBytes());
-		
+				.send(encodedBytes);		
 	}
 
 }
