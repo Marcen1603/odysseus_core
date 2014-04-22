@@ -477,7 +477,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 			StringBuilder sb = new StringBuilder();
 			sb.append("#PARSER PQL\n");
 			sb.append("#METADATA IntervalLatency\n");
-			sb.append("#QNAME Exporting " + query.getName() + "\n");
+			sb.append("#QNAME " + query.getName() + "\n");
 			sb.append("#ADDQUERY\n");
 			sb.append(query.getQueryText());
 			sb.append("\n");
