@@ -28,6 +28,8 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 
 	private final byte[] buffer = new byte[P2PNewPlugIn.TRANSPORT_BUFFER_SIZE];
 	
+	private final MessageByteBuffer mb = new MessageByteBuffer();
+	
 	private Socket socket;
 	private InetAddress address;
 
@@ -68,7 +70,15 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 									LOG.debug("Reached end of data stream. Socket closed...");
 									break;
 								} else if( bytesRead > 0 ) {
-									processBytes(bytesRead);
+									byte[] msg = new byte[bytesRead];
+									System.arraycopy(buffer, 0, msg, 0, bytesRead);
+									
+									mb.put(msg);
+									
+									byte[] packet = mb.getPacket();
+									if( packet != null ) {
+										processBytes(packet);
+									}
 								}
 							}
 							
@@ -91,17 +101,19 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 		}
 	}
 	
-	private void processBytes(int bytesRead) {
-		byte[] msg = new byte[bytesRead - 1];
-		System.arraycopy(buffer, 1, msg, 0, msg.length);
+	private void processBytes(byte[] msg) {
+		byte[] realMsg = new byte[msg.length - 1];
+		System.arraycopy(msg, 1, realMsg, 0, realMsg.length);
 		
-		byte flag = buffer[0];
+		byte flag = msg[0];
 		if( flag == 0 ) {
 			// data
-			fireDataEvent(msg);
-		} else {
-			IPunctuation punc = (IPunctuation)ObjectByteConverter.bytesToObject(msg);
+			fireDataEvent(realMsg);
+		} else if (flag == 1){
+			IPunctuation punc = (IPunctuation)ObjectByteConverter.bytesToObject(realMsg);
 			firePunctuation(punc);
+		} else {
+			LOG.error("Unknown flag {}", flag);
 		}
 	}
 	
