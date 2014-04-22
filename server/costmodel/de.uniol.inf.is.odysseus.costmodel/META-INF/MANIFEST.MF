@@ -12,6 +12,13 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.logicaloperator,
- de.uniol.inf.is.odysseus.core.physicaloperator
-Service-Component: OSGI-INF/LogicalCostModel.xml,OSGI-INF/PhysicalCostModel.xml,
- OSGI-INF/OperatorEstimatorRegistry.xml
+ de.uniol.inf.is.odysseus.core.physicaloperator,
+ de.uniol.inf.is.odysseus.core.planmanagement,
+ de.uniol.inf.is.odysseus.core.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.server.event,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.query
+Service-Component: OSGI-INF/LogicalCostModel.xml,OSGI-INF/PhysicalCostModel.xml,OSGI-INF/OperatorEstimatorRegistry.xml,
+ OSGI-INF/CostModelActivator.xml

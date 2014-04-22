@@ -6,6 +6,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 public interface IPhysicalCostModel {
 
-	public PhysicalCost estimateCost( Collection<IPhysicalOperator> logicalOperators );
+	public IPhysicalCost estimateCost( Collection<IPhysicalOperator> logicalOperators );
 
 }

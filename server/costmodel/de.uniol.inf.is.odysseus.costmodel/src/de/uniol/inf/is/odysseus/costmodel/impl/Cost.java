@@ -9,7 +9,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
 
-public class Cost<T> {
+public class Cost<T> implements ICost<T> {
 
 	private final Map<T, DetailCost> detailCostMap = Maps.newHashMap();
 	
@@ -19,7 +19,7 @@ public class Cost<T> {
 	
 	public Cost(Map<T, DetailCost> detailCostMap) {
 		Preconditions.checkNotNull(detailCostMap, "Map of detail costs must not be null!");
-		Preconditions.checkArgument(detailCostMap.isEmpty(), "Map of detail costs must not be empty!");
+		Preconditions.checkArgument(!detailCostMap.isEmpty(), "Map of detail costs must not be empty!");
 		
 		this.detailCostMap.putAll(detailCostMap);
 		
@@ -88,5 +88,35 @@ public class Cost<T> {
 		}
 		
 		return detailCost.getNetCost();
+	}
+	
+	public double getDatarate( T operator ) {
+		Preconditions.checkNotNull(operator, "Operator to get the datarate must not be null!");
+		DetailCost detailCost = detailCostMap.get(operator);
+		if( detailCost == null ) {
+			throw new RuntimeException("Could not get the datarate of an unknown operator :" + operator.toString());
+		}
+		
+		return detailCost.getDatarate();
+	}
+	
+	public double getSelectivity( T operator ) {
+		Preconditions.checkNotNull(operator, "Operator to get the selectivity must not be null!");
+		DetailCost detailCost = detailCostMap.get(operator);
+		if( detailCost == null ) {
+			throw new RuntimeException("Could not get the selectivity of an unknown operator :" + operator.toString());
+		}
+		
+		return detailCost.getSelectivity();
+	}
+	
+	public double getWindowSize( T operator ) {
+		Preconditions.checkNotNull(operator, "Operator to get the window size must not be null!");
+		DetailCost detailCost = detailCostMap.get(operator);
+		if( detailCost == null ) {
+			throw new RuntimeException("Could not get the window size of an unknown operator :" + operator.toString());
+		}
+		
+		return detailCost.getWindowSize();
 	}
 }
