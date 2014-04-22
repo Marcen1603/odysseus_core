@@ -56,6 +56,10 @@ public class SigarWrapper {
 		try {
 			CpuPerc perc = sigar.getCpuPerc();
 			double cpuFree = cpuMax - (perc != null ? perc.getUser() : 0.0) * cpuMax;
+			if( cpuFree == Double.NaN) {
+				cpuFree = 0.0;
+			}
+			
 			return Math.min(cpuMax, Math.max(0, cpuFree));
 		} catch( Throwable t ) {
 			LOG.warn("Could not get cpu free from sigar", t);
