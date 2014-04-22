@@ -79,10 +79,9 @@ public class PeerConfiguration {
 			} finally {
 				in.close();
 			}
-			
 		} catch (IOException ex) {
 			LOG.error("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
-		}
+		} 
 	}
 
 	private static void setDefaultValues(Hashtable<Object,Object> props) {
