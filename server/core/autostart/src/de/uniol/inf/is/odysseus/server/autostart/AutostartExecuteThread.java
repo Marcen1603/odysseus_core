@@ -13,7 +13,7 @@ public class AutostartExecuteThread extends Thread {
 	private static final Logger LOG = LoggerFactory.getLogger(AutostartExecuteThread.class);
 	
 	private static final int MAX_TRIES = 10;
-	private static final long WAIT_TIME_MILLIS = 10 * 10000;
+	private static final long WAIT_TIME_MILLIS = 10 * 1000;
 	
 	private final IExecutor executor;
 	private final String queryText;
