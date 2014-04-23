@@ -845,9 +845,9 @@ public class StandardExecutor extends AbstractExecutor implements
 				executionPlanLock.lock();
 				getOptimizer().beforeQueryRemove(queryToRemove,
 						this.executionPlan, null, getDataDictionary(caller));
+				stopQuery(queryToRemove.getID(), caller);
 				executionPlanChanged(PlanModificationEventType.QUERY_REMOVE,
 						queryToRemove);
-				stopQuery(queryToRemove.getID(), caller);
 				LOG.info("Removing Query " + queryToRemove.getID());
 				this.executionPlan.removeQuery(queryToRemove.getID());
 				LOG.debug("Removing Ownership " + queryToRemove.getID());
