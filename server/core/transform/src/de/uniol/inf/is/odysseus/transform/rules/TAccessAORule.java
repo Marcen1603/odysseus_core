@@ -106,7 +106,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 
 				if (Constants.GENERIC_PULL.equalsIgnoreCase(operator
 						.getWrapper())) {
-					accessPO = new AccessPO(protocolHandler);
+					accessPO = new AccessPO(protocolHandler, operator.getMaxTimeToWaitForNewEventMS());
 				} else {
 					accessPO = new ReceiverPO(protocolHandler);
 				}

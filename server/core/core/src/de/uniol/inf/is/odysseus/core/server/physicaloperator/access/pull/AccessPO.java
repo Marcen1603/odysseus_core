@@ -40,11 +40,19 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 	private static final Logger LOG = LoggerFactory.getLogger(AccessPO.class);
 
 	private boolean isDone = false;
+	private final long maxTimeToWaitForNewEventMS;
+	private long lastTransfer = 0;
 
 	private IProtocolHandler<W> protocolHandler;
 
-	public AccessPO(IProtocolHandler<W> protocolHandler) {
+//	public AccessPO(IProtocolHandler<W> protocolHandler) {
+//		this.protocolHandler = protocolHandler;
+//		this.maxTimeToWaitForNewEventMS = 0;
+//	}
+	
+	public AccessPO(IProtocolHandler<W> protocolHandler,long maxTimeToWaitForNewEventMS) {
 		this.protocolHandler = protocolHandler;
+		this.maxTimeToWaitForNewEventMS = maxTimeToWaitForNewEventMS;
 	}
 
 	@Override
@@ -53,11 +61,15 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 			return false;
 		}
 
+		if (maxTimeToWaitForNewEventMS > 0) {
+			if (System.currentTimeMillis()-lastTransfer > maxTimeToWaitForNewEventMS){
+				return doDone();
+			}
+		}
+
 		try {
 			if (protocolHandler.isDone()) {
-				isDone = true;
-				propagateDone();
-				return false;
+				return doDone();
 			} else {
 				return protocolHandler.hasNext();
 			}
@@ -68,6 +80,12 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 		// TODO: We should think about propagate done ... maybe its better
 		// to send a punctuation??
 		tryPropagateDone();
+		return false;
+	}
+
+	public boolean doDone() {
+		isDone = true;
+		propagateDone();
 		return false;
 	}
 
@@ -89,6 +107,9 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 					isDone = true;
 					propagateDone();
 				} else {
+					if (maxTimeToWaitForNewEventMS > 0) {
+						lastTransfer = System.currentTimeMillis();
+					}
 					transfer(toTransfer);
 				}
 			} catch (Exception e) {

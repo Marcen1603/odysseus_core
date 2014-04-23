@@ -26,14 +26,15 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFTimeUnit;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResourceParameter;
@@ -54,6 +55,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	private String dateFormat;
 	private List<SDFAttribute> attributes;
 	private List<String> inputSchema = null;
+	private long maxTimeToWaitForNewEventMS;
 
 	public AbstractAccessAO(AbstractLogicalOperator po) {
 		super(po);
@@ -75,6 +77,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		if (po.attributes != null) {
 			this.attributes = new ArrayList<>(po.attributes);
 		}
+		this.maxTimeToWaitForNewEventMS = po.maxTimeToWaitForNewEventMS;
 	}
 
 	public AbstractAccessAO(Resource name, String wrapper,
@@ -134,6 +137,15 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		return protocolHandler;
 	}
 
+	@Parameter(type = LongParameter.class, name = "MaxTimeToWaitForNewEventMS", optional = true, isList = false, doc = "For access. Max time to wait for a new element before calling done. Typically used when the input stream has an end")
+	public void setMaxTimeToWaitForNewEventMS(long maxTimeToWaitForNewEventMS) {
+		this.maxTimeToWaitForNewEventMS = maxTimeToWaitForNewEventMS;
+	}
+	
+	public long getMaxTimeToWaitForNewEventMS() {
+		return maxTimeToWaitForNewEventMS;
+	}
+	
 	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options.")
 	public void setOptions(List<Option> value) {
 		for (Option option : value) {
