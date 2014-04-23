@@ -61,7 +61,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 			return false;
 		}
 
-		if (maxTimeToWaitForNewEventMS > 0) {
+		if (maxTimeToWaitForNewEventMS > 0 && lastTransfer > 0) {
 			if (System.currentTimeMillis()-lastTransfer > maxTimeToWaitForNewEventMS){
 				return doDone();
 			}
