@@ -563,7 +563,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		if (isOpen()) {
 			fire(this.doneEvent);
 			this.process_done();
-			for (PhysicalSubscription<ISink<? super T>> sub : sinkSubscriptions) {
+			for (PhysicalSubscription<ISink<? super T>> sub : activeSinkSubscriptions) {
 				if (!sub.isDone()) {
 					sub.getTarget().done(sub.getSinkInPort());
 				}
