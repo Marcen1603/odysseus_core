@@ -11,42 +11,46 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 public class AutostartExecuteThread extends Thread {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AutostartExecuteThread.class);
-	
+
 	private static final int MAX_TRIES = 10;
 	private static final long WAIT_TIME_MILLIS = 10 * 1000;
-	
+
 	private final IExecutor executor;
 	private final String queryText;
 	private final ISession user;
-	
+
 	public AutostartExecuteThread(IExecutor executor, String queryText) {
 		this.executor = executor;
 		this.queryText = queryText;
 		this.user = UserManagementProvider.getSessionmanagement().loginSuperUser(null);
-		
+
 		setDaemon(true);
 		setName("Autostart execution thread");
 	}
 
 	@Override
 	public void run() {
+		LOG.debug("Begin autostart execution...");
 		int tries = 0;
-		
-		while( true ) {
+
+		while (true) {
 			try {
 				executor.addQuery(queryText, "OdysseusScript", user, "Standard", Context.empty());
 				LOG.debug("Autostart script executed");
 				break;
-			} catch( Throwable t ) {
+			} catch (Throwable t) {
 				tries++;
-				if( tries == MAX_TRIES ) {
+				if (tries == MAX_TRIES) {
 					throw new RuntimeException("Autostart script failed " + MAX_TRIES + " times", t);
 				}
-				
-				LOG.error("Autostart script failed in try {}. Waiting {} ms...", tries, WAIT_TIME_MILLIS);
-				
-				setName("Autostart execution thread (fails: " + tries + ")"); // to see in debug-view in eclipse
-				
+
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Could not start autostart script (try {}, waiting {} ms)", new Object[] { tries, WAIT_TIME_MILLIS, t });
+				} else {
+					LOG.error("Autostart script failed in try {}. Waiting {} ms... (error was: {})", new Object[] { tries, WAIT_TIME_MILLIS, t.getClass().getSimpleName() });
+				}
+
+				setName("Autostart execution thread (fails: " + tries + ")");
 				tryWait();
 			}
 		}
