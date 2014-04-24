@@ -26,21 +26,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
    </license>
-   
-    <url>
+
+   <url>
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
 
    <includes
-         id="de.uniol.inf.is.odysseus.costmodel.planmigration.standard.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.plangenerator.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.ac.feature"
          version="0.0.0"/>
 
    <requires>
@@ -49,13 +41,6 @@ limitations under the License.
       <import plugin="de.uniol.inf.is.odysseus.intervalapproach"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
-      <import plugin="de.uniol.inf.is.odysseus.costmodel.planmigration" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.costmodel.operator" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.datasrc" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.relational" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.util" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.relational.logical" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.costmodel.standardmigrationcostmodel"/>
    </requires>
 
    <plugin
@@ -87,13 +72,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.costmodel.operator.relational.logical"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.optimization.planadaption.standardfitness"
          download-size="0"
          install-size="0"
@@ -102,13 +80,6 @@ limitations under the License.
 
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.optimization.planadaption.standardmigrationruleengine"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.ac.standard.status.file"
          download-size="0"
          install-size="0"
          version="0.0.0"
