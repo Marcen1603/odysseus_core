@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
@@ -45,6 +46,8 @@ public class ExportAllPreParserKeyword extends AbstractPreParserKeyword {
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		List<String> sources = determineCurrentSourceNames();
 		List<String> exportableSources = determineExportableSources(sources);
+		
+		P2PNetworkManager.waitForStart();
 		try {
 			P2PDictionary.getInstance().exportSources(exportableSources);
 		} catch (PeerException e) {

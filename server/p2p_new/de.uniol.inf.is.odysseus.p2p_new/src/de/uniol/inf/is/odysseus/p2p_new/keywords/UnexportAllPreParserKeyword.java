@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
@@ -28,6 +29,8 @@ public class UnexportAllPreParserKeyword extends AbstractPreParserKeyword {
 		for( SourceAdvertisement exportedSource : exportedSources ) {
 			srcNames.add(exportedSource.getName());
 		}
+		
+		P2PNetworkManager.waitForStart();
 		P2PDictionary.getInstance().removeSourcesExport(srcNames);
 		return null;
 	}
