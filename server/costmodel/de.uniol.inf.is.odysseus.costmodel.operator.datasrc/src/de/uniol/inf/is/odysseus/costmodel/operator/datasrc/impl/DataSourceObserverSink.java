@@ -118,7 +118,7 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 		if( optConnectingSource.isPresent() ) {
 			
 			connectingSource = optConnectingSource.get(); 
-			connectingSource.subscribeSink(this, 0, 0, connectingSource.getOutputSchema(), true, 0);
+			connectingSource.connectSink(this, 0, 0, connectingSource.getOutputSchema());
 			getLogger().debug("Source {} connected", source);					
 		} else {
 			getLogger().warn("Could not connect to {}", source);
