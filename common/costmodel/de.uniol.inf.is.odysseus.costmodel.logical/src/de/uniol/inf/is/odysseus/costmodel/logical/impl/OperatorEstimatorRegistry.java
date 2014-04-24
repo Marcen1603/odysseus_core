@@ -19,7 +19,7 @@ public class OperatorEstimatorRegistry {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OperatorEstimatorRegistry.class);
 	
-	private static final StandardLogicalOperatorEstimator LOGICAL_STANDARD_ESTIMATOR = new StandardLogicalOperatorEstimator() {
+	private static final StandardLogicalOperatorEstimator<ILogicalOperator> LOGICAL_STANDARD_ESTIMATOR = new StandardLogicalOperatorEstimator<ILogicalOperator>() {
 
 		@Override
 		public Collection<? extends Class<ILogicalOperator>> getOperatorClasses() {

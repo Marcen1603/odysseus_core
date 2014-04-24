@@ -5,7 +5,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
 
-public abstract class StandardLogicalOperatorEstimator implements ILogicalOperatorEstimator<ILogicalOperator> {
+public abstract class StandardLogicalOperatorEstimator<T extends ILogicalOperator> implements ILogicalOperatorEstimator<T> {
 
 	public static final double DEFAULT_MEMORY_COST_BYTES = 16;
 	public static final double DEFAULT_CPU_COST = 0.0005;
@@ -15,10 +15,10 @@ public abstract class StandardLogicalOperatorEstimator implements ILogicalOperat
 	public static final double DEFAULT_WINDOW_SIZE = Double.MAX_VALUE;
 	
 	private Map<ILogicalOperator, DetailCost> prevCostMap;
-	private ILogicalOperator operator;
+	private T operator;
 	
 	@Override
-	public void estimateLogical(ILogicalOperator operator, Map<ILogicalOperator, DetailCost> previousCostMap) {
+	public void estimateLogical(T operator, Map<ILogicalOperator, DetailCost> previousCostMap) {
 		this.prevCostMap = previousCostMap;
 		this.operator = operator;
 	}
