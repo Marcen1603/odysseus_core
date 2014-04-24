@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.costmodel.LogicalCostModel">
-   <implementation class="de.uniol.inf.is.odysseus.costmodel.impl.LogicalCostModel"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.costmodel.ILogicalCostModel"/>
-   </service>
-</scr:component>

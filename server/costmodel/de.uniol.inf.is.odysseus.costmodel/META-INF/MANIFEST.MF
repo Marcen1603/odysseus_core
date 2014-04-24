@@ -3,23 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Costmodel
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.costmodel
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.CostModelActivator
 Bundle-Vendor: Timo Michelsen
-Require-Bundle: org.eclipse.core.runtime,
- com.google.guava;bundle-version="14.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
+Require-Bundle: com.google.guava;bundle-version="14.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-ActivationPolicy: lazy
-Import-Package: de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.core.logicaloperator,
- de.uniol.inf.is.odysseus.core.physicaloperator,
- de.uniol.inf.is.odysseus.core.planmanagement,
- de.uniol.inf.is.odysseus.core.planmanagement.executor,
- de.uniol.inf.is.odysseus.core.planmanagement.query,
- de.uniol.inf.is.odysseus.core.server.event,
- de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
- de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification,
- de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event,
- de.uniol.inf.is.odysseus.core.server.planmanagement.query
-Service-Component: OSGI-INF/LogicalCostModel.xml,OSGI-INF/PhysicalCostModel.xml,OSGI-INF/OperatorEstimatorRegistry.xml,
- OSGI-INF/CostModelActivator.xml
+Export-Package: de.uniol.inf.is.odysseus.costmodel
