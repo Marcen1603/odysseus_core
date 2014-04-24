@@ -4,6 +4,13 @@ import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.wrapper.zeromq.ZeroMQTransportHandler;
 
+/**
+ * 
+ * This wrapper uses a Java implementation of ZeroMQ (see packages org.zeromq and zmq). ZeroMQ is licensed under LGPL (see: license/lgpl-3.0.txt) and can only be used or distributed as specified in the LGPL license.
+ * 
+ * @author Jan Benno Meyer zu Holte
+ *
+ */
 public class ZMQPublisher implements Runnable {
 	private Thread t;
 	private ZeroMQTransportHandler ZMQTH;
