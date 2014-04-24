@@ -34,11 +34,10 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 		Collection<IPhysicalOperator> allOperators = collectAllOperators(physicalOperators);
 		Collection<IPhysicalOperator> sources = CostModelUtil.filterForPhysicalSources(allOperators);
 
-		LOG.debug("Beginning cost estimation of physical operators");
 		List<IPhysicalOperator> operatorsToVisit = Lists.newLinkedList(sources);
 		Map<IPhysicalOperator, DetailCost> resultMap = Maps.newHashMap();
-
-		LOG.debug("Begin cost estimation");
+		
+		LOG.debug("Beginning cost estimation of physical operators");
 		while (!operatorsToVisit.isEmpty()) {
 			IPhysicalOperator visitingOperator = operatorsToVisit.remove(0);
 			LOG.debug("Visiting operator {}", visitingOperator);
