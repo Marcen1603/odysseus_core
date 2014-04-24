@@ -70,10 +70,22 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 	
 	public static void waitFor() {
 		while( !isActivated() ) {
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-			}
+			waitSomeTime();
+		}
+	}
+	
+	public static void waitForStart() {
+		waitFor();
+		
+		while( !instance.isStarted() ) {
+			waitSomeTime();
+		}
+	}
+
+	private static void waitSomeTime() {
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
 		}
 	}
 
