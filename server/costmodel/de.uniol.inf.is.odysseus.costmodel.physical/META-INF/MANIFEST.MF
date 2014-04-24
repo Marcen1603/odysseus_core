@@ -12,3 +12,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.costmodel;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
 Service-Component: OSGI-INF/OperatorEstimatorRegistry.xml,
  OSGI-INF/PhysicalCostModel.xml
+Export-Package: de.uniol.inf.is.odysseus.costmodel.physical
