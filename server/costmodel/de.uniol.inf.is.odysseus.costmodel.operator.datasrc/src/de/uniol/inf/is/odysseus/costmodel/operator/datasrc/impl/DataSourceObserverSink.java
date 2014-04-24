@@ -63,6 +63,7 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 	
 	public DataSourceObserverSink( ISource<? extends IStreamObject<?>> source ) {
 		super();
+		setInputPortCount(1);
 		
 		this.source = source;
 		this.sourceName = source.getOutputSchema().getAttribute(0).getSourceName();
