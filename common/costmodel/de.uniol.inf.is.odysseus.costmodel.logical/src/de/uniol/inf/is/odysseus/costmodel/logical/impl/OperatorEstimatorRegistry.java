@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -18,7 +19,14 @@ public class OperatorEstimatorRegistry {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OperatorEstimatorRegistry.class);
 	
-	private static final StandardLogicalOperatorEstimator LOGICAL_STANDARD_ESTIMATOR = new StandardLogicalOperatorEstimator();
+	private static final StandardLogicalOperatorEstimator LOGICAL_STANDARD_ESTIMATOR = new StandardLogicalOperatorEstimator() {
+
+		@Override
+		public Collection<? extends Class<ILogicalOperator>> getOperatorClasses() {
+			return Lists.newArrayList(ILogicalOperator.class);
+		}
+		
+	};
 	
 	private static final Map<Class<? extends ILogicalOperator>, Class<? extends ILogicalOperatorEstimator<?>>> LOGICAL_ESTIMATORS = Maps.newHashMap();
 

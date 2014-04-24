@@ -1,14 +1,11 @@
 package de.uniol.inf.is.odysseus.costmodel.logical;
 
-import java.util.Collection;
 import java.util.Map;
-
-import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
 
-public class StandardLogicalOperatorEstimator implements ILogicalOperatorEstimator<ILogicalOperator> {
+public abstract class StandardLogicalOperatorEstimator implements ILogicalOperatorEstimator<ILogicalOperator> {
 
 	public static final double DEFAULT_MEMORY_COST_BYTES = 16;
 	public static final double DEFAULT_CPU_COST = 0.0005;
@@ -18,16 +15,20 @@ public class StandardLogicalOperatorEstimator implements ILogicalOperatorEstimat
 	public static final double DEFAULT_WINDOW_SIZE = Double.MAX_VALUE;
 	
 	private Map<ILogicalOperator, DetailCost> prevCostMap;
+	private ILogicalOperator operator;
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public Collection<? extends Class<ILogicalOperator>> getOperatorClasses() {
-		return Lists.newArrayList(ILogicalOperator.class);
-	}
-
 	@Override
 	public void estimateLogical(ILogicalOperator operator, Map<ILogicalOperator, DetailCost> previousCostMap) {
 		this.prevCostMap = previousCostMap;
+		this.operator = operator;
+	}
+	
+	protected final ILogicalOperator getOperator() {
+		return operator;
+	}
+	
+	protected final Map<ILogicalOperator, DetailCost> getPrevCostMap() {
+		return prevCostMap;
 	}
 	
 	@Override
