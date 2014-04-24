@@ -55,9 +55,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
-import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
-import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionQuerySelector;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
@@ -99,7 +96,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.No
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.ExecutionPlan;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionEngine;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPlanReoptimizeListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -124,7 +120,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
  */
 public abstract class AbstractExecutor implements IServerExecutor,
 		ISettingChangeListener, IQueryReoptimizeListener,
-		IPlanReoptimizeListener, IAdmissionListener, IDataDictionaryListener, ISessionListener {
+		IPlanReoptimizeListener, IDataDictionaryListener, ISessionListener {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractExecutor.class);
@@ -153,9 +149,6 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 */
 	private ICompiler compiler;
 
-	private IAdmissionControl admissionControl = null;
-	private IAdmissionQuerySelector admissionQuerySelector = null;
-	
 	private static Map<String, Class<? extends IPreTransformationHandler>> preTransformationHandlerMap = Maps.newHashMap();
 	private IQueryDistributor queryDistributor;
 
@@ -167,8 +160,6 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 */
 	private Map<String, IDataFragmentation> dataFragmentationStrategies = Maps
 			.newHashMap();
-
-	private IPlanAdaptionEngine planAdaptionEngine = null;
 
 	/**
 	 * Konfiguration der Ausf�hrungsumgebung
@@ -338,39 +329,6 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		}
 	}
 
-	public void bindAdmissionControl(IAdmissionControl control) {
-		if (admissionControl != null) {
-			admissionControl.removeListener(this);
-			admissionControl.unsetExecutor(this);
-		}
-
-		admissionControl = control;
-		if (admissionControl != null) {
-			admissionControl.addListener(this);
-			admissionControl.setExecutor(this);
-		}
-	}
-
-	public void unbindAdmissionControl(IAdmissionControl control) {
-		if (admissionControl == control) {
-			if (admissionControl != null) {
-				admissionControl.removeListener(this);
-				admissionControl.unsetExecutor(this);
-			}
-
-			admissionControl = null;
-		}
-	}
-
-	public void bindAdmissionQuerySelector(IAdmissionQuerySelector selector) {
-		admissionQuerySelector = selector;
-	}
-
-	public void unbindAdmissionQuerySelector(IAdmissionQuerySelector selector) {
-		if (admissionQuerySelector == selector) {
-			admissionQuerySelector = null;
-		}
-	}
 
 	public void bindUserManagement(IUserManagement mgmt) {
 		// do nothing --> use UserManagement instead
@@ -500,18 +458,6 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	}
 
-	public void bindPlanAdaption(IPlanAdaptionEngine adaption) {
-		this.planAdaptionEngine = adaption;
-		this.planAdaptionEngine.setExecutor(this);
-	}
-
-	public void unbindPlanAdaption(IPlanAdaptionEngine adaption) {
-		if (adaption.equals(this.planAdaptionEngine)) {
-			this.planAdaptionEngine.unsetExecutor(this);
-			this.planAdaptionEngine = null;
-		}
-	}
-
 	/**
 	 * bindCompiler bindet eine Anfragebearbeitungs-Komponente ein
 	 * 
@@ -612,30 +558,6 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			return this.compiler;
 		}
 		throw new NoCompilerLoadedException();
-	}
-
-	public final IAdmissionControl getAdmissionControl() {
-		return admissionControl;
-	}
-
-	public final IAdmissionQuerySelector getAdmissionQuerySelector() {
-		return admissionQuerySelector;
-	}
-
-	public final boolean hasAdmissionControl() {
-		return admissionControl != null;
-	}
-
-	public final boolean hasAdmissionQuerySelector() {
-		return admissionQuerySelector != null;
-	}
-
-	public final IPlanAdaptionEngine getPlanAdaptionEngine() {
-		return planAdaptionEngine;
-	}
-
-	public final boolean hasPlanAdaptionEngine() {
-		return planAdaptionEngine != null;
 	}
 
 	// ----------------------------------------------------------------------------------------

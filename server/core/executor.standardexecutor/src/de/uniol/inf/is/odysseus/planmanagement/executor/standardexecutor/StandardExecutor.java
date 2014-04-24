@@ -29,10 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
@@ -48,8 +45,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
-import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
@@ -94,7 +89,6 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.core.server.util.SetOwnerVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.reloadlog.ReloadLog;
 
@@ -110,19 +104,14 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.reloadl
  *         Geesen, Timo Michelsen (AC)
  */
 public class StandardExecutor extends AbstractExecutor implements
-		IAdmissionListener, IQueryStarter {
+		IQueryStarter {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(StandardExecutor.class);
-	private static final long ADMISSION_REACTION_INTERVAL_MILLIS = 10000;
 
 	private static StandardExecutor instance;
 
 	private ReloadLog reloadLog;
-
-	private final Map<IUser, List<IPhysicalQuery>> stoppedQueriesByAC = Maps
-			.newHashMap();
-	private long lastAdmissionReaction;
 
 	private Map<ILogicalQuery, QueryBuildConfiguration> queryBuildParameter = new HashMap<ILogicalQuery, QueryBuildConfiguration>();
 
@@ -951,13 +940,6 @@ public class StandardExecutor extends AbstractExecutor implements
 				return;
 			}
 
-			if (hasAdmissionControl()) {
-				if (!getAdmissionControl().canStartQuery(queryToStart)) {
-					throw new RuntimeException(
-							"Query not started because it would exceed maximum total cost");
-				}
-			}
-
 			LOG.info("Starting query (ID: " + queryID + ")...");
 
 			try {
@@ -981,9 +963,6 @@ public class StandardExecutor extends AbstractExecutor implements
 				this.executionPlanLock.unlock();
 			}
 
-			if (hasPlanAdaptionEngine()) {
-				getPlanAdaptionEngine().setQueryAsStarted(queryToStart);
-			}
 		}
 	}
 
@@ -1066,12 +1045,6 @@ public class StandardExecutor extends AbstractExecutor implements
 		// deadlock!
 		if (!queryToStop.isMarkedAsStopping()) {
 			queryToStop.setAsStopping(true);
-			if (hasPlanAdaptionEngine()) {
-				// stop adapting this query so the plan cannot change while
-				// trying
-				// to close it.
-				getPlanAdaptionEngine().setQueryAsStopped(queryToStop);
-			}
 
 			try {
 				this.executionPlanLock.lock();
@@ -1359,85 +1332,6 @@ public class StandardExecutor extends AbstractExecutor implements
 	}
 
 	@Override
-	public void overloadOccured(IAdmissionControl sender) {
-		overloadUserOccured(sender, null);
-	}
-
-	@Override
-	public void underloadOccured(IAdmissionControl sender) {
-		underloadUserOccured(sender, null);
-	}
-
-	@Override
-	public void overloadUserOccured(IAdmissionControl sender, IUser user) {
-		if (hasAdmissionControl()
-				&& hasAdmissionQuerySelector()
-				&& System.currentTimeMillis() - lastAdmissionReaction > ADMISSION_REACTION_INTERVAL_MILLIS) {
-
-			List<IPhysicalQuery> runningQueries = determineRunningQueries(user);
-			List<IPhysicalQuery> queriesToStop = getAdmissionQuerySelector()
-					.determineQueriesToStop(getAdmissionControl(),
-							runningQueries);
-
-			if (queriesToStop != null && !queriesToStop.isEmpty()) {
-				for (IPhysicalQuery query : queriesToStop) {
-					try {
-						stopQuery(query.getID(), query.getSession());
-						lastAdmissionReaction = System.currentTimeMillis();
-
-						IUser usr = query.getSession().getUser();
-						if (stoppedQueriesByAC.containsKey(usr)) {
-							stoppedQueriesByAC.get(usr).add(query);
-						} else {
-							List<IPhysicalQuery> queries = Lists.newArrayList();
-							queries.add(query);
-							stoppedQueriesByAC.put(usr, queries);
-						}
-					} catch (RuntimeException ex) {
-						LOG.error(
-								"Could not stop query {} by admission control",
-								query.getID(), ex);
-					}
-				}
-			} else {
-				LOG.error("Could not reduce load since no query can be stopped");
-			}
-		}
-	}
-
-	@Override
-	public void underloadUserOccured(IAdmissionControl sender, IUser user) {
-		if (hasAdmissionControl()
-				&& hasAdmissionQuerySelector()
-				&& !stoppedQueriesByAC.isEmpty()
-				&& System.currentTimeMillis() - lastAdmissionReaction > ADMISSION_REACTION_INTERVAL_MILLIS) {
-			List<IPhysicalQuery> stoppedQueries = determineStoppedQueries(user,
-					stoppedQueriesByAC);
-			List<IPhysicalQuery> queriesToStart = getAdmissionQuerySelector()
-					.determineQueriesToStart(getAdmissionControl(),
-							stoppedQueries);
-
-			if (queriesToStart != null && !queriesToStart.isEmpty()) {
-				for (IPhysicalQuery stoppedQuery : queriesToStart) {
-					try {
-						startQuery(stoppedQuery.getID(),
-								stoppedQuery.getSession());
-						lastAdmissionReaction = System.currentTimeMillis();
-
-						IUser usr = stoppedQuery.getSession().getUser();
-						stoppedQueriesByAC.get(usr).remove(stoppedQuery);
-
-					} catch (RuntimeException ex) {
-						LOG.error("Could not start query again", ex);
-					}
-				}
-			} else {
-				LOG.warn("Could not increase load since no stoppped query can be started again.");
-			}
-		}
-	}
-
-	@Override
 	public QueryBuildConfiguration getBuildConfigForQuery(ILogicalQuery query) {
 		// TODO: Check access rights;
 		// ISession caller = query.getUser();
@@ -1460,38 +1354,6 @@ public class StandardExecutor extends AbstractExecutor implements
 	public SDFSchema getOutputSchema(int queryId, ISession session) {
 		return getLogicalQueryById(queryId, session).getLogicalPlan()
 				.getOutputSchema();
-	}
-
-	private List<IPhysicalQuery> determineRunningQueries(IUser user) {
-		Builder<IPhysicalQuery> builder = ImmutableList
-				.<IPhysicalQuery> builder();
-		for (IPhysicalQuery query : getExecutionPlan().getQueries()) {
-			if (user == null) {
-				if (query.isOpened()) {
-					builder.add(query);
-				}
-			} else {
-				if (query.isOpened()
-						&& query.getSession().getUser().equals(user)) {
-					builder.add(query);
-				}
-			}
-		}
-		return builder.build();
-	}
-
-	private static List<IPhysicalQuery> determineStoppedQueries(IUser user,
-			Map<IUser, List<IPhysicalQuery>> stoppedQueries) {
-		if (user != null) {
-			return stoppedQueries.containsKey(user) ? stoppedQueries.get(user)
-					: Lists.<IPhysicalQuery> newArrayList();
-		}
-
-		List<IPhysicalQuery> queries = Lists.newArrayList();
-		for (IUser usr : stoppedQueries.keySet()) {
-			queries.addAll(stoppedQueries.get(usr));
-		}
-		return queries;
 	}
 
 	@Override
