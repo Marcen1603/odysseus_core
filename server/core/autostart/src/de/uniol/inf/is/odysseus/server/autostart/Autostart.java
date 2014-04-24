@@ -29,6 +29,7 @@ public class Autostart implements BundleActivator {
 	
 	private static BundleContext context;
 	private static IExecutor executor;
+	private static boolean autostartExecuted = false;
 
 	// called by OSGi-DS
 	public void unbindExecutor(IExecutor exec) {
@@ -55,7 +56,9 @@ public class Autostart implements BundleActivator {
 
 	private static void runAutostart() {
 		synchronized (lock) {
-			if (context != null && executor != null) {
+			if (!autostartExecuted && context != null && executor != null) {
+				autostartExecuted = true;
+				
 				Bundle bundle = context.getBundle();
 				for (String path : AUTOSTARTFILE) {
 					LOG.debug("Trying to start " + path);
