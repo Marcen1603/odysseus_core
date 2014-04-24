@@ -23,7 +23,7 @@ public abstract class StandardLogicalOperatorEstimator<T extends ILogicalOperato
 		this.operator = operator;
 	}
 	
-	protected final ILogicalOperator getOperator() {
+	protected final T getOperator() {
 		return operator;
 	}
 	
