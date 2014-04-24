@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.costmodel.migrationestimator">
-   <implementation class="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardplanmigrationcostmodel.PlanMigrationEstimator"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.costmodel.planmigration.IPlanMigrationEstimator"/>
-   </service>
-   <reference bind="bindCostModel" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel" name="ICostModel" policy="dynamic" unbind="unbindCostModel"/>
-</scr:component>
