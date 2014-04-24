@@ -147,7 +147,9 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		removeSourceAdvCollector.stopRunning();
 		sourceAdvCollector.stopRunning();
 
-		removeAllExportedViews();
+		if( JxtaServicesProvider.isActivated() ) {
+			removeAllExportedViews();
+		}
 		DataDictionaryProvider.unsubscribe(this);
 	}
 
