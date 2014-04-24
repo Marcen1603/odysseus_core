@@ -38,28 +38,34 @@ public class Cost<T> implements ICost<T> {
 		this.networkSum = netSum;
 	}
 	
+	@Override
 	public double getMemorySum() {
 		return memorySum;
 	}
 	
+	@Override
 	public double getCpuSum() {
 		return cpuSum;
 	}
 	
+	@Override
 	public double getNetworkSum() {
 		return networkSum;
 	}
 	
+	@Override
 	public Collection<T> getOperators() {
 		return Lists.newArrayList(detailCostMap.keySet());
 	}
 	
+	@Override
 	public boolean containsOperator( T operator ) {
 		Preconditions.checkNotNull(operator, "Operator to check existence must not be null!");
 		
 		return detailCostMap.containsKey(operator);
 	}
 	
+	@Override
 	public double getMemory( T operator ) {
 		Preconditions.checkNotNull(operator, "Operator to get the memory cost must not be null!");
 		DetailCost detailCost = detailCostMap.get(operator);
@@ -70,6 +76,7 @@ public class Cost<T> implements ICost<T> {
 		return detailCost.getMemCost();
 	}
 	
+	@Override
 	public double getCpu( T operator ) {
 		Preconditions.checkNotNull(operator, "Operator to get the cpu cost must not be null!");
 		DetailCost detailCost = detailCostMap.get(operator);
@@ -80,6 +87,7 @@ public class Cost<T> implements ICost<T> {
 		return detailCost.getCpuCost();
 	}
 	
+	@Override
 	public double getNetwork( T operator ) {
 		Preconditions.checkNotNull(operator, "Operator to get the network cost must not be null!");
 		DetailCost detailCost = detailCostMap.get(operator);
@@ -90,6 +98,7 @@ public class Cost<T> implements ICost<T> {
 		return detailCost.getNetCost();
 	}
 	
+	@Override
 	public double getDatarate( T operator ) {
 		Preconditions.checkNotNull(operator, "Operator to get the datarate must not be null!");
 		DetailCost detailCost = detailCostMap.get(operator);
@@ -100,6 +109,7 @@ public class Cost<T> implements ICost<T> {
 		return detailCost.getDatarate();
 	}
 	
+	@Override
 	public double getSelectivity( T operator ) {
 		Preconditions.checkNotNull(operator, "Operator to get the selectivity must not be null!");
 		DetailCost detailCost = detailCostMap.get(operator);
@@ -110,6 +120,7 @@ public class Cost<T> implements ICost<T> {
 		return detailCost.getSelectivity();
 	}
 	
+	@Override
 	public double getWindowSize( T operator ) {
 		Preconditions.checkNotNull(operator, "Operator to get the window size must not be null!");
 		DetailCost detailCost = detailCostMap.get(operator);
