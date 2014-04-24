@@ -266,7 +266,6 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 				try {
 					ISession session = PeerDistributePlugIn.getActiveSession();
 					
-					executor.stopQuery(id, session);
 					executor.removeQuery(id, session);
 				} catch (final PlanManagementException ex) {
 					LOG.error("Could not remove query with id={}", id, ex);
