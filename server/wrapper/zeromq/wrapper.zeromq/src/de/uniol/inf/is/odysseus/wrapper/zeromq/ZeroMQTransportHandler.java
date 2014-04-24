@@ -82,12 +82,14 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public void processInOpen() throws IOException {
+		// Out only atm
 		// Prepare context, subscriber, publisher
-		subscriber = context.socket(ZMQ.SUB);
-		
-		if (host != null && port > 0) {
-			subscriber.bind("tcp://" + host + ":" + port);
-		}
+//		subscriber = context.socket(ZMQ.SUB);
+//		
+//		if (host != null && port > 0) {
+//			subscriber.bind("tcp://" + host + ":" + port);
+//		}
+		processOutOpen();
 	}
 
 	@Override
