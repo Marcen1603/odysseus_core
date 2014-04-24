@@ -16,8 +16,6 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.optimization.planadaption.standardmigrationruleengine;
 
-import java.util.HashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,9 +23,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionMigrationRuleEngine;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.costmodel.PlanMigration;
-import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
-import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
-import de.uniol.inf.is.odysseus.costmodel.planmigration.PlanMigrationCost;
 
 public class StandardPlanAdaptionMigrationRuleEngine implements
 		IPlanAdaptionMigrationRuleEngine {
@@ -36,8 +31,8 @@ public class StandardPlanAdaptionMigrationRuleEngine implements
 	
 	// TODO: werte finden/raten/schätzen
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	ICost<ILogicalOperator> minCostDifference = new OperatorCost(new HashMap<ILogicalOperator, OperatorEstimation>(), 0.0,0.0);
-	ICost<PlanMigration> maxMigrationCost = new PlanMigrationCost(null, null, 1000.0, 1000.0, 10001);
+	ICost<ILogicalOperator> minCostDifference = null;
+	ICost<PlanMigration> maxMigrationCost = null;
 	
 	@Override
 	public boolean evaluate(ICost<ILogicalOperator> costDifference,

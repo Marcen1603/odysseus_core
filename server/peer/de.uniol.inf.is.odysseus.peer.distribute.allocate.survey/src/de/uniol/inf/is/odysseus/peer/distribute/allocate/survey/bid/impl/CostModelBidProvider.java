@@ -6,13 +6,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
-import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
-import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCostModel;
+import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
+import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.SurveyBasedAllocationPlugIn;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.CostSummary;
@@ -24,17 +21,16 @@ public class CostModelBidProvider implements IBidProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CostModelBidProvider.class);
 
-	@SuppressWarnings("rawtypes")
-	private static OperatorCostModel costModel;
+	private static IPhysicalCostModel costModel;
 	private static IPeerResourceUsageManager resourceUsageManager;
 
 	// called by OSGi-DS
-	public static void bindCostModel(ICostModel<?> serv) {
-		costModel = (OperatorCostModel<?>) serv;
+	public static void bindPhysicalCostModel(IPhysicalCostModel serv) {
+		costModel = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindCostModel(ICostModel<?> serv) {
+	public static void unbindPhysicalCostModel(IPhysicalCostModel serv) {
 		if (costModel == serv) {
 			costModel = null;
 		}
@@ -64,22 +60,13 @@ public class CostModelBidProvider implements IBidProvider {
 		return calcBidImpl(query.getLogicalPlan(), summary.getCpuCost(), summary.getMemCost());
 	}
 
-	@SuppressWarnings("unchecked")
 	private static CostSummary calcCostsForPlan(ILogicalQuery query, String transCfgName) {
 		IPhysicalQuery p = Helper.getPhysicalQuery(query, transCfgName);
 
-		ICost<IPhysicalOperator> cost = costModel.estimateCost(p.getPhysicalChilds(), false);
-		OperatorCost<IPhysicalOperator> c = ((OperatorCost<IPhysicalOperator>) cost);
+		IPhysicalCost cost = costModel.estimateCost(p.getPhysicalChilds());
 
-		double cpuCost = c.getCpuCost();
-		double memCost = c.getMemCost();
-
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Estimated costs of query {}", query);
-			for (IPhysicalOperator operator : cost.getOperators()) {
-				LOG.debug("\tCost of {}: {}", operator, cost.getCostOfOperator(operator));
-			}
-		}
+		double cpuCost = cost.getCpuSum();
+		double memCost = cost.getMemorySum();
 
 		return new CostSummary(cpuCost, memCost, query.getLogicalPlan());
 	}

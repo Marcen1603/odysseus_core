@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
+import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.loadbalancing.ILoadBalancer;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
@@ -32,7 +32,7 @@ public abstract class AbstractLoadBalancer implements ILoadBalancer {
 	}
 
 	@Override
-	public Map<ILogicalQueryPart, PeerID> balance(Map<PeerID, IResourceUsage> currentResourceUsageMap, Map<ILogicalQueryPart, OperatorCost<?>> partCosts) {
+	public Map<ILogicalQueryPart, PeerID> balance(Map<PeerID, IResourceUsage> currentResourceUsageMap, Map<ILogicalQueryPart, IPhysicalCost> partCosts) {
 
 		Map<PeerID, Usage> estimatedUsages = LoadBalancerHelper.transform(currentResourceUsageMap);
 
@@ -40,8 +40,8 @@ public abstract class AbstractLoadBalancer implements ILoadBalancer {
 		for (ILogicalQueryPart queryPart : partCosts.keySet()) {
 			LOG.debug("Allocating query part {}", queryPart);
 			
-			long newMemCost = (long)partCosts.get(queryPart).getMemCost();
-			double newCpuCost = partCosts.get(queryPart).getCpuCost();
+			long newMemCost = (long)partCosts.get(queryPart).getMemorySum();
+			double newCpuCost = partCosts.get(queryPart).getCpuSum();
 			Collection<PeerID> avoidingPeers = determineAvoidedPeers(queryPart, result);
 			
 			PeerID minPeerID = selectPeerID(estimatedUsages, avoidingPeers, newMemCost, newCpuCost);

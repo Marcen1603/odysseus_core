@@ -11,9 +11,10 @@ Require-Bundle: de.uniol.inf.is.odysseus.peer.distribute;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.peer.resource;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.costmodel.operator;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0",
- Jxta_2.6_Source;bundle-version="1.0.0"
+ Jxta_2.6_Source;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.costmodel;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.costmodel.physical;bundle-version="1.0.0"
 Service-Component: OSGI-INF/LoadBalancingAllocator.xml,
  OSGI-INF/CostEstimationHelper.xml
 Import-Package: de.uniol.inf.is.odysseus.p2p_new.logicaloperator

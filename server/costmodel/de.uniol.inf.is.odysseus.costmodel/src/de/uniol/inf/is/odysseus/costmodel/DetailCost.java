@@ -50,4 +50,16 @@ public final class DetailCost {
 	public double getWindowSize() {
 		return windowSize;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{cpu = ").append(getCpuCost()).append(", ");
+		sb.append("mem = ").append(getMemCost()).append(", ");
+		sb.append("net = ").append(getNetCost()).append(", ");
+		sb.append("sel = ").append(getSelectivity()).append(", ");
+		sb.append("rate= ").append(getDatarate()).append(", ");
+		sb.append("rate= ").append(getWindowSize()).append("}");
+		return sb.toString();
+	}
 }

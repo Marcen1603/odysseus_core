@@ -10,12 +10,6 @@ public interface ICost<T> {
 
 	public Collection<T> getOperators();
 	public boolean containsOperator(T operator);
-
-	public double getMemory(T operator);
-	public double getCpu(T operator);
-	public double getNetwork(T operator);
-	public double getDatarate(T operator);
-	public double getWindowSize(T operator);
-	public double getSelectivity(T operator);
+	public DetailCost getDetailCost( T operator );
 
 }

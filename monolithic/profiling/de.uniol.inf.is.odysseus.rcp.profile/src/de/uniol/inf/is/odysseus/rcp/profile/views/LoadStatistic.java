@@ -21,26 +21,12 @@ public class LoadStatistic {
 	private final static double MEMORY_IN_MB_FACTOR = 1024 * 1024;
 	
 	private final double actCpuLoad;
-	private final double maxCpuLoad;
-	private final double minCpuLoad;
-	private final double totalCpuLoad;
-	
 	private final double actMemLoad;
-	private final double maxMemLoad;
-	private final double minMemLoad;
-	private final double totalMemLoad;
-	
 	private final long timestamp;
 
-	public LoadStatistic(double actCpuLoad, double maxCpuLoad, double minCpuLoad, double totalCpuLoad, double actMemLoad, double maxMemLoad, double minMemLoad, double totalMemLoad, long timestamp) {
+	public LoadStatistic(double actCpuLoad, double actMemLoad, long timestamp) {
 		this.actCpuLoad = actCpuLoad;
-		this.maxCpuLoad = maxCpuLoad;
-		this.minCpuLoad = minCpuLoad;
-		this.totalCpuLoad = totalCpuLoad;
 		this.actMemLoad = actMemLoad / MEMORY_IN_MB_FACTOR;
-		this.maxMemLoad = maxMemLoad / MEMORY_IN_MB_FACTOR;
-		this.minMemLoad = minMemLoad / MEMORY_IN_MB_FACTOR;
-		this.totalMemLoad = totalMemLoad / MEMORY_IN_MB_FACTOR;
 		this.timestamp = timestamp;
 	}
 
@@ -48,32 +34,8 @@ public class LoadStatistic {
 		return actCpuLoad;
 	}
 
-	public double getMaxCpuLoad() {
-		return maxCpuLoad;
-	}
-
-	public double getMinCpuLoad() {
-		return minCpuLoad;
-	}
-
-	public double getTotalCpuLoad() {
-		return totalCpuLoad;
-	}
-
 	public double getActMemLoad() {
 		return actMemLoad;
-	}
-
-	public double getMaxMemLoad() {
-		return maxMemLoad;
-	}
-
-	public double getMinMemLoad() {
-		return minMemLoad;
-	}
-
-	public double getTotalMemLoad() {
-		return totalMemLoad;
 	}
 
 	public long getTimestamp() {

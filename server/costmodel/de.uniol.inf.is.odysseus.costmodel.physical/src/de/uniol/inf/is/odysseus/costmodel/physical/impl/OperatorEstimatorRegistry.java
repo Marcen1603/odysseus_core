@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -18,7 +19,14 @@ public class OperatorEstimatorRegistry {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OperatorEstimatorRegistry.class);
 	
-	private static final StandardPhysicalOperatorEstimator PHYSICAL_STANDARD_ESTIMATOR = new StandardPhysicalOperatorEstimator();
+	private static final StandardPhysicalOperatorEstimator<IPhysicalOperator> PHYSICAL_STANDARD_ESTIMATOR = new StandardPhysicalOperatorEstimator<IPhysicalOperator>() {
+		@Override
+		public Collection<? extends Class<IPhysicalOperator>> getOperatorClasses() {
+			Collection<Class<IPhysicalOperator>> col = Lists.newArrayList();
+			col.add(IPhysicalOperator.class);
+			return col;
+		}
+	};
 	
 	private static final Map<Class<? extends IPhysicalOperator>, Class<? extends IPhysicalOperatorEstimator<?>>> PHYSICAL_ESTIMATORS = Maps.newHashMap();
 

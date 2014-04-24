@@ -5,11 +5,9 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.optimization.planad
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Merlin Wasmann
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.costmodel.planmigration,
+Import-Package: de.uniol.inf.is.odysseus.costmodel.planmigration;resolution:=optional,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Service-Component: OSGI-INF/PlanAdaptionRuleEngine.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.costmodel.planmigration,
- de.uniol.inf.is.odysseus.costmodel.operator;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.core.server

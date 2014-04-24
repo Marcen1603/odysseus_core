@@ -3,15 +3,6 @@
 <plugin>
    <extension
          point="org.eclipse.ui.views">
-      <view
-            allowMultiple="false"
-            category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.profile.views.OperatorProfileView"
-            icon="images/profile.jpg"
-            id="de.uniol.inf.is.odysseus.rcp.profile.OperatorProfile"
-            name="Operator Profile"
-            restorable="true">
-      </view>
        <view
             allowMultiple="false"
             category="Odysseus"

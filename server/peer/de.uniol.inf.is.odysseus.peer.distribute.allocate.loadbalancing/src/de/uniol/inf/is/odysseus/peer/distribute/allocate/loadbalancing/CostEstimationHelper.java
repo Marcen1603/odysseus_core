@@ -12,15 +12,14 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
-import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCostModel;
+import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
+import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.DummyAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.IOperatorGenerator;
@@ -30,8 +29,7 @@ public final class CostEstimationHelper {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CostEstimationHelper.class);
 	
-	@SuppressWarnings("rawtypes")
-	private static OperatorCostModel costModel;
+	private static IPhysicalCostModel costModel;
 	private static IServerExecutor serverExecutor;
 	private static ISession activeSession;
 
@@ -48,18 +46,18 @@ public final class CostEstimationHelper {
 	}
 
 	// called by OSGi-DS
-	public static void bindCostModel(ICostModel<?> serv) {
-		costModel = (OperatorCostModel<?>)serv;
+	public static void bindPhysicalCostModel(IPhysicalCostModel serv) {
+		costModel = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindCostModel(ICostModel<?> serv) {
+	public static void unbindPhysicalCostModel(IPhysicalCostModel serv) {
 		if (costModel == serv) {
 			costModel = null;
 		}
 	}
 	
-	public static Map<ILogicalQueryPart, OperatorCost<?>> determineQueryPartCosts(Collection<ILogicalQueryPart> queryParts, QueryBuildConfiguration transCfg) {
+	public static Map<ILogicalQueryPart, IPhysicalCost> determineQueryPartCosts(Collection<ILogicalQueryPart> queryParts, QueryBuildConfiguration transCfg) {
 		LOG.debug("Estimating query part costs");
 		
 		LogicalQueryHelper.disconnectQueryParts(queryParts, new IOperatorGenerator() {
@@ -85,15 +83,14 @@ public final class CostEstimationHelper {
 			}
 		});
 
-		Map<ILogicalQueryPart, OperatorCost<?>> result = Maps.newHashMap();
+		Map<ILogicalQueryPart, IPhysicalCost> result = Maps.newHashMap();
 		
 		for( ILogicalQueryPart queryPart : queryParts ) {
 			ILogicalOperator topAO = LogicalQueryHelper.appendTopAO(queryPart);
 			ILogicalQuery logicalQuery = wrapInLogicalQuery(topAO, "logical query");
 			IPhysicalQuery physicalQuery = getPhysicalQuery(logicalQuery, transCfg);
 			
-			@SuppressWarnings("unchecked")
-			OperatorCost<?> costs = (OperatorCost<?>)costModel.estimateCost(physicalQuery.getPhysicalChilds(), false);
+			IPhysicalCost costs = costModel.estimateCost(physicalQuery.getPhysicalChilds());
 			
 			result.put(queryPart, costs);
 			LOG.debug("Query part {} costs {}", queryPart, costs);

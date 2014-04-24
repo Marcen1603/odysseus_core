@@ -4,8 +4,7 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
-import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
-import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
+import de.uniol.inf.is.odysseus.costmodel.DetailCost;
 
 public final class OperatorStatistic {
 
@@ -23,7 +22,7 @@ public final class OperatorStatistic {
 
 	private final IPhysicalOperator operator;
 	
-	public OperatorStatistic(IPhysicalOperator operator, OperatorCost<IPhysicalOperator> cost, OperatorEstimation<IPhysicalOperator> est) {
+	public OperatorStatistic(IPhysicalOperator operator, DetailCost cost) {
 		Preconditions.checkNotNull(operator, "Operator for statistics must not be null!");
 		
 		this.name = operator.getName();
@@ -31,8 +30,8 @@ public final class OperatorStatistic {
 		
 		this.cpuCost = cost.getCpuCost();
 		
-		this.selectivity = est.getSelectivity();
-		this.dataRate = est.getDataStream().getDataRate();
+		this.selectivity = cost.getSelectivity();
+		this.dataRate = cost.getDatarate();
 		
 		this.hashID = operator.hashCode();
 		

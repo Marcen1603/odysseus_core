@@ -15,7 +15,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
+import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -88,7 +88,7 @@ public class LoadBalancingAllocator implements IQueryPartAllocator {
 		
 		// copy --> original
 		Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap = LogicalQueryHelper.copyQueryPartsDeep(queryParts);
-		Map<ILogicalQueryPart, OperatorCost<?>> partCosts = CostEstimationHelper.determineQueryPartCosts(queryPartsCopyMap.keySet(), config);
+		Map<ILogicalQueryPart, IPhysicalCost> partCosts = CostEstimationHelper.determineQueryPartCosts(queryPartsCopyMap.keySet(), config);
 		
 		Map<ILogicalQueryPart, PeerID> balancedParts = balancer.balance(currentResourceUsageMap, partCosts);
 		

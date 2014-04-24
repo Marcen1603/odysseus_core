@@ -22,7 +22,7 @@ import com.google.common.collect.Maps.EntryTransformer;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
+import de.uniol.inf.is.odysseus.costmodel.DetailCost;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -147,14 +147,14 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 			operators.addAll(queryPart.getOperators());
 		}
 		
-		Map<ILogicalOperator, OperatorEstimation<?>> logicalOperatorEstimationMap = Helper.determineOperatorCostEstimations(operators, transCfg.getName());
+		Map<ILogicalOperator, DetailCost> logicalOperatorEstimationMap = Helper.determineOperatorCostEstimations(operators);
 		
 		List<AuctionSummary> auctions = publishAuctionsForRemoteSubPlans(queryParts, logicalOperatorEstimationMap, transCfg);
 		Map<ILogicalQueryPart, PeerID> destinationMap = determinePeerAssignment(auctions, partGraph, ownBid, latencyWeight, bidWeight, logicalOperatorEstimationMap);
 		return destinationMap;
 	}
 
-	private static List<AuctionSummary> publishAuctionsForRemoteSubPlans(Collection<ILogicalQueryPart> queryParts, Map<ILogicalOperator, OperatorEstimation<?>> logicalOperatorEstimationMap, QueryBuildConfiguration transCfg) {
+	private static List<AuctionSummary> publishAuctionsForRemoteSubPlans(Collection<ILogicalQueryPart> queryParts, Map<ILogicalOperator, DetailCost> logicalOperatorEstimationMap, QueryBuildConfiguration transCfg) {
 		Preconditions.checkNotNull(queryParts, "Collection of query parts must not be null!");
 
 		List<AuctionSummary> auctions = Lists.newArrayList();
@@ -178,7 +178,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		return auctions;
 	}
 
-	private static Map<ILogicalQueryPart, PeerID> determinePeerAssignment(List<AuctionSummary> auctions, QueryPartGraph partGraph, boolean ownBid, int latencyWeight, int bidWeight, Map<ILogicalOperator, OperatorEstimation<?>> logicalOperatorEstimationMap) throws QueryPartAllocationException {
+	private static Map<ILogicalQueryPart, PeerID> determinePeerAssignment(List<AuctionSummary> auctions, QueryPartGraph partGraph, boolean ownBid, int latencyWeight, int bidWeight, Map<ILogicalOperator, DetailCost> logicalOperatorEstimationMap) throws QueryPartAllocationException {
 		try {
 			Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap = determineBidPlanMap(auctions, ownBid);
 
@@ -194,11 +194,11 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		}
 	}
 
-	private static Map<ILogicalOperator, Double> createDataRateMap(Map<ILogicalOperator, OperatorEstimation<?>> logicalOperatorEstimationMap) {
-		return Maps.transformEntries(logicalOperatorEstimationMap, new EntryTransformer<ILogicalOperator, OperatorEstimation<?>, Double>() {
+	private static Map<ILogicalOperator, Double> createDataRateMap(Map<ILogicalOperator, DetailCost> logicalOperatorEstimationMap) {
+		return Maps.transformEntries(logicalOperatorEstimationMap, new EntryTransformer<ILogicalOperator, DetailCost, Double>() {
 			@Override
-			public Double transformEntry(ILogicalOperator key, OperatorEstimation<?> value) {
-				return value.getDataStream().getDataRate();
+			public Double transformEntry(ILogicalOperator key, DetailCost value) {
+				return value.getDatarate();
 			}
 		});
 	}

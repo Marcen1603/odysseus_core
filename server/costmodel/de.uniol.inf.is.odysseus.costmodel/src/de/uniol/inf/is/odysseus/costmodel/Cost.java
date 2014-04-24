@@ -64,68 +64,10 @@ public class Cost<T> implements ICost<T> {
 	}
 	
 	@Override
-	public double getMemory( T operator ) {
-		Preconditions.checkNotNull(operator, "Operator to get the memory cost must not be null!");
-		DetailCost detailCost = detailCostMap.get(operator);
-		if( detailCost == null ) {
-			throw new RuntimeException("Could not get the memory cost of an unknown operator :" + operator.toString());
-		}
-		
-		return detailCost.getMemCost();
-	}
-	
-	@Override
-	public double getCpu( T operator ) {
-		Preconditions.checkNotNull(operator, "Operator to get the cpu cost must not be null!");
-		DetailCost detailCost = detailCostMap.get(operator);
-		if( detailCost == null ) {
+	public DetailCost getDetailCost(T operator) {
+		if( detailCostMap.containsKey(operator)) {
 			throw new RuntimeException("Could not get the cpu cost of an unknown operator :" + operator.toString());
 		}
-		
-		return detailCost.getCpuCost();
-	}
-	
-	@Override
-	public double getNetwork( T operator ) {
-		Preconditions.checkNotNull(operator, "Operator to get the network cost must not be null!");
-		DetailCost detailCost = detailCostMap.get(operator);
-		if( detailCost == null ) {
-			throw new RuntimeException("Could not get the network cost of an unknown operator :" + operator.toString());
-		}
-		
-		return detailCost.getNetCost();
-	}
-	
-	@Override
-	public double getDatarate( T operator ) {
-		Preconditions.checkNotNull(operator, "Operator to get the datarate must not be null!");
-		DetailCost detailCost = detailCostMap.get(operator);
-		if( detailCost == null ) {
-			throw new RuntimeException("Could not get the datarate of an unknown operator :" + operator.toString());
-		}
-		
-		return detailCost.getDatarate();
-	}
-	
-	@Override
-	public double getSelectivity( T operator ) {
-		Preconditions.checkNotNull(operator, "Operator to get the selectivity must not be null!");
-		DetailCost detailCost = detailCostMap.get(operator);
-		if( detailCost == null ) {
-			throw new RuntimeException("Could not get the selectivity of an unknown operator :" + operator.toString());
-		}
-		
-		return detailCost.getSelectivity();
-	}
-	
-	@Override
-	public double getWindowSize( T operator ) {
-		Preconditions.checkNotNull(operator, "Operator to get the window size must not be null!");
-		DetailCost detailCost = detailCostMap.get(operator);
-		if( detailCost == null ) {
-			throw new RuntimeException("Could not get the window size of an unknown operator :" + operator.toString());
-		}
-		
-		return detailCost.getWindowSize();
+		return detailCostMap.get(operator);
 	}
 }

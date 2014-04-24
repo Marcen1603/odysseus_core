@@ -6,9 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.costmodel.operator,
- de.uniol.inf.is.odysseus.costmodel.operator.datasrc,
- de.uniol.inf.is.odysseus.interval_latency;resolution:=optional,
+Import-Package: de.uniol.inf.is.odysseus.interval_latency;resolution:=optional,
  de.uniol.inf.is.odysseus.latency;resolution:=optional,
  de.uniol.inf.is.odysseus.parser.pql.generator,
  de.uniol.inf.is.odysseus.peer.config,
@@ -23,7 +21,9 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  com.google.guava;bundle-version="12.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- Jxta_2.6_Source;bundle-version="1.0.0"
+ Jxta_2.6_Source;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.costmodel.physical;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.costmodel;bundle-version="1.0.0"
 Service-Component: OSGI-INF/jxtaProtocolHandler.xml,OSGI-INF/executorService.xml,OSGI-INF/keywordProvider.xml,OSGI-INF/p2pDictionary.xml,OSGI-INF/jxtaServicesProvider.xml,OSGI-INF/peerAssignmentProvider.xml,OSGI-INF/p2pNetworkManager.xml,OSGI-INF/p2pNetworkListenerService.xml,OSGI-INF/peerCommunicator.xml,OSGI-INF/DummyReceiverPOEstimator.xml,OSGI-INF/ReceiverSenderPairPostOptimization.xml,
  OSGI-INF/DataTransmissionManager.xml
 Export-Package: de.uniol.inf.is.odysseus.p2p_new,

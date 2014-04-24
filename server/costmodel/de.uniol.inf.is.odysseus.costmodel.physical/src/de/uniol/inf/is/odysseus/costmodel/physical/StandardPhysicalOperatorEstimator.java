@@ -1,14 +1,11 @@
 package de.uniol.inf.is.odysseus.costmodel.physical;
 
-import java.util.Collection;
 import java.util.Map;
-
-import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
 
-public class StandardPhysicalOperatorEstimator implements IPhysicalOperatorEstimator<IPhysicalOperator> {
+public abstract class StandardPhysicalOperatorEstimator<T extends IPhysicalOperator> implements IPhysicalOperatorEstimator<T> {
 
 	public static final double DEFAULT_MEMORY_COST_BYTES = 16;
 	public static final double DEFAULT_CPU_COST = 0.0005;
@@ -18,16 +15,20 @@ public class StandardPhysicalOperatorEstimator implements IPhysicalOperatorEstim
 	public static final double DEFAULT_WINDOW_SIZE = Double.MAX_VALUE;
 	
 	private Map<IPhysicalOperator, DetailCost> prevCostMap;
+	private T operator;
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public Collection<? extends Class<IPhysicalOperator>> getOperatorClasses() {
-		return Lists.newArrayList(IPhysicalOperator.class);
-	}
-
-	@Override
-	public void estimatePhysical(IPhysicalOperator operator, Map<IPhysicalOperator, DetailCost> previousCostMap) {
+	public void estimatePhysical(T operator, Map<IPhysicalOperator, DetailCost> previousCostMap) {
 		this.prevCostMap = previousCostMap;
+		this.operator = operator;
+	}
+	
+	protected final T getOperator() {
+		return operator;
+	}
+	
+	protected final Map<IPhysicalOperator, DetailCost> getPrevCostMap() {
+		return prevCostMap;
 	}
 	
 	@Override
