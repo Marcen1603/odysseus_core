@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
@@ -17,6 +18,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.config.PeerConfiguration;
 import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisement;
 import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisementInstatiator;
+import de.uniol.inf.is.odysseus.peer.logging.impl.LogAdvertisementListener;
 import de.uniol.inf.is.odysseus.peer.logging.impl.LogMessage;
 import de.uniol.inf.is.odysseus.peer.logging.impl.LogMessageReceiver;
 import de.uniol.inf.is.odysseus.peer.logging.impl.P2PNetworkManagerListener;
@@ -27,6 +29,7 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	private static final P2PNetworkManagerListener P2P_NETWORKMANAGER_LISTENER = new P2PNetworkManagerListener();
 	private static final LogMessageReceiver LOGMESSAGE_RECEIVER = new LogMessageReceiver();
 	private static final String LOGACTIVE_SYS_PROPERTY = "peer.log";
+	private static final IAdvertisementDiscovererListener LOGADVERTISEMENT_DISCOVERER_LISTENER = new LogAdvertisementListener();
 
 	private static IPeerCommunicator peerCommunicator;
 	private static IP2PDictionary p2pDictionary;
@@ -89,12 +92,14 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
 		p2pNetworkManager = serv;
 		p2pNetworkManager.addListener(P2P_NETWORKMANAGER_LISTENER);
+		p2pNetworkManager.addAdvertisementListener(LOGADVERTISEMENT_DISCOVERER_LISTENER);
 		LOG.debug("Bound P2PNetworkManager {}", serv);
 	}
 
 	// called by OSGi-DS
 	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
 		if (p2pNetworkManager == serv) {
+			p2pNetworkManager.removeAdvertisementListener(LOGADVERTISEMENT_DISCOVERER_LISTENER);
 			p2pNetworkManager.removeListener(P2P_NETWORKMANAGER_LISTENER);
 			p2pNetworkManager = null;
 			LOG.debug("Unbound P2PNetworkManager {}", serv);

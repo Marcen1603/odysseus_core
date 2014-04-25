@@ -28,7 +28,11 @@ public class JxtaLoggingDestinations {
 		if( jxtaServicesProvider != null ) {
 			Collection<LoggingAdvertisement> advs = jxtaServicesProvider.getLocalAdvertisements(LoggingAdvertisement.class);
 			for( LoggingAdvertisement adv : advs ) {
-				destinationMap.put(adv.getPeerID(), adv);
+				if( !destinationMap.containsKey(adv.getPeerID()) ) {
+					destinationMap.put(adv.getPeerID(), adv);
+				} else {
+					tryFlush(jxtaServicesProvider, adv);
+				}
 			}
 			
 			Collection<PeerID> knownPeers = JXTALoggingPlugIn.getP2PDictionary().getRemotePeerIDs();
@@ -37,14 +41,18 @@ public class JxtaLoggingDestinations {
 				if( !knownPeers.contains(destination)) {
 					LoggingAdvertisement advertisement = destinationMap.remove(destination);
 					
-					try {
-						jxtaServicesProvider.flushAdvertisement(advertisement);
-					} catch (IOException e) {
-					}
+					tryFlush(jxtaServicesProvider, advertisement);
 				}
 			}
 		}
 		
 		return destinationMap.keySet();
+	}
+
+	private static void tryFlush(IJxtaServicesProvider jxtaServicesProvider, LoggingAdvertisement advertisement) {
+		try {
+			jxtaServicesProvider.flushAdvertisement(advertisement);
+		} catch (IOException e) {
+		}
 	}
 }
