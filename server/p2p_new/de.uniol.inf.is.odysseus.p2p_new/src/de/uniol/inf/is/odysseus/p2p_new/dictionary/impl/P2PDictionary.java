@@ -209,6 +209,14 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			srcAdvs.clear();
 			srcAdvs.addAll(collectAllReachableSourceAdvertisements());
 			applyRemoveSourceAdvertisements(srcAdvs);
+			
+			ImmutableList<SourceAdvertisement> importedSources = getImportedSources();
+			for( SourceAdvertisement importedSource : importedSources ) {
+				if( !srcAdvs.contains(importedSource) ) {
+					removeSourceImport(importedSource);
+					tryFlushAdvertisement(importedSource);
+				}
+			}
 		}
 		
 		peersChanged = true;
@@ -997,13 +1005,13 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		if (isImported(srcAdv)) {
 			return;
 		}
-
+		
 		if (getDataDictionary().containsViewOrStream(srcAdv.getName(), SessionManagementService.getActiveSession())) {
 			LOG.error("Could not autoimport source '{}' since it is already used locally", srcAdv.getName());
 			return;
 		}
 
-		if (!srcAdv.isLocal() && !isImported(srcAdv) && !isImported(srcAdv.getName())) {
+		if (!srcAdv.isLocal() && !isImported(srcAdv)) {
 			try {
 				importSource(srcAdv, srcAdv.getName());
 				LOG.debug("Autoimporting source {}", srcAdv.getName());
