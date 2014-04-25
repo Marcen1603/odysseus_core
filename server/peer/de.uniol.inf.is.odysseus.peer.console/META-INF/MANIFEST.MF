@@ -6,8 +6,14 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Service-Component: OSGI-INF/PeerConsole.xml
-Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.executor,
+Import-Package: de.uniol.inf.is.odysseus.core.metadata,
+ de.uniol.inf.is.odysseus.core.physicaloperator,
+ de.uniol.inf.is.odysseus.core.planmanagement.executor,
  de.uniol.inf.is.odysseus.core.server.console,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.plan,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.query,
+ de.uniol.inf.is.odysseus.core.streamconnection,
  de.uniol.inf.is.odysseus.core.usermanagement,
  de.uniol.inf.is.odysseus.peer.logging,
  de.uniol.inf.is.odysseus.peer.ping,

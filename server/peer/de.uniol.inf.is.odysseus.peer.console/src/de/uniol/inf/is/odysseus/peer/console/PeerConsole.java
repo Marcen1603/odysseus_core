@@ -23,8 +23,13 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.console.OdysseusConsole;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
@@ -53,7 +58,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IJxtaServicesProvider jxtaServicesProvider;
-	private static IExecutor executor;
+	private static IServerExecutor executor;
 
 	private final Collection<PeerID> loggedInPeers = Lists.newArrayList();
 	private final Collection<PeerID> loggedToPeers = Lists.newArrayList();
@@ -158,7 +163,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	// called by OSGi-DS
 	public static void bindExecutor(IExecutor serv) {
-		executor = serv;
+		executor = (IServerExecutor) serv;
 	}
 
 	// called by OSGi-DS
@@ -176,18 +181,18 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	// called by OSGi-DS
 	public void deactivate() {
 		logoutFromRemotePeers();
-		
+
 		LOG.debug("Peer console deactivated");
 	}
 
 	private void logoutFromRemotePeers() {
 		LOG.debug("Sending logout to remote peers due to shutdown");
-		for( PeerID pid : loggedToPeers ) {
+		for (PeerID pid : loggedToPeers) {
 			sendLogoutMessage(pid, "<remotePeer>");
 		}
 
 		waitSomeTime();
-		
+
 		loggedToPeers.clear();
 	}
 
@@ -848,12 +853,12 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		} else if (message instanceof LoginOKMessage) {
 			loggedToPeers.add(senderPeer);
 			System.out.println("Login to peer '" + p2pDictionary.getRemotePeerName(senderPeer) + "' ok");
-		} else if( message instanceof LogoutMessage ) {
+		} else if (message instanceof LogoutMessage) {
 			loggedInPeers.remove(senderPeer);
 			LOG.debug("Peer '{}' logged out", p2pDictionary.getRemotePeerName(senderPeer));
-			
-			sendLogoutOKMessage( senderPeer );
-		} else if( message instanceof LogoutOKMessage ) {
+
+			sendLogoutOKMessage(senderPeer);
+		} else if (message instanceof LogoutOKMessage) {
 			loggedToPeers.remove(senderPeer);
 			System.out.println("Logout from peer '" + p2pDictionary.getRemotePeerName(senderPeer) + "' ok");
 		}
@@ -893,10 +898,10 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		LOG.debug("Got command message: " + command);
 		try {
 			Method m = null;
-			
+
 			try {
 				m = getClass().getMethod("_" + command, CommandInterpreter.class);
-			} catch ( NoSuchMethodException e ) {
+			} catch (NoSuchMethodException e) {
 				try {
 					m = OdysseusConsole.class.getMethod("_" + command, CommandInterpreter.class);
 				} catch (NoSuchMethodException e1) {
@@ -941,46 +946,46 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public void _execCmd(CommandInterpreter ci) {
 		_executeCommand(ci);
 	}
-	
-	public void _lsLoggedInPeers( CommandInterpreter ci ) {
+
+	public void _lsLoggedInPeers(CommandInterpreter ci) {
 		List<String> output = Lists.newArrayList();
-		for( PeerID loggedInPeer : loggedInPeers ) {
-			output.add( p2pDictionary.getRemotePeerName(loggedInPeer));
+		for (PeerID loggedInPeer : loggedInPeers) {
+			output.add(p2pDictionary.getRemotePeerName(loggedInPeer));
 		}
-		
+
 		System.out.println("Following remote peers are logged in here:");
 		sortAndPrintList(output);
 	}
-	
-	public void _listLoggedInPeers( CommandInterpreter ci ) {
+
+	public void _listLoggedInPeers(CommandInterpreter ci) {
 		_lsLoggedInPeers(ci);
 	}
-	
-	public void _lsLoggedToPeers( CommandInterpreter ci ) {
+
+	public void _lsLoggedToPeers(CommandInterpreter ci) {
 		List<String> output = Lists.newArrayList();
-		for( PeerID loggedInPeer : loggedToPeers ) {
-			output.add( p2pDictionary.getRemotePeerName(loggedInPeer));
+		for (PeerID loggedInPeer : loggedToPeers) {
+			output.add(p2pDictionary.getRemotePeerName(loggedInPeer));
 		}
-		
+
 		System.out.println("Following remote peers we are logged in:");
 		sortAndPrintList(output);
 	}
-	
-	public void _listLoggedToPeers( CommandInterpreter ci ) {
+
+	public void _listLoggedToPeers(CommandInterpreter ci) {
 		_lsLoggedToPeers(ci);
 	}
-	
-	public void _revokeLogin( CommandInterpreter ci ) {
+
+	public void _revokeLogin(CommandInterpreter ci) {
 		String peername = ci.nextArgument();
-		if(Strings.isNullOrEmpty(peername)) {
+		if (Strings.isNullOrEmpty(peername)) {
 			System.out.println("usage: revokeLogin <peername>");
 			return;
 		}
-		
+
 		Optional<PeerID> optPid = determinePeerID(peername);
-		if( optPid.isPresent() ) {
+		if (optPid.isPresent()) {
 			PeerID pid = optPid.get();
-			if( loggedInPeers.contains(pid)) {
+			if (loggedInPeers.contains(pid)) {
 				loggedInPeers.remove(pid);
 				sendLogoutOKMessage(pid);
 				System.out.println("Login of peer '" + peername + "' revoked");
@@ -990,5 +995,82 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		} else {
 			System.out.println("Peer '" + peername + "' not known");
 		}
+	}
+
+	public void _dumpStream(CommandInterpreter ci) {
+		String operatorHashString = ci.nextArgument();
+		if (Strings.isNullOrEmpty(operatorHashString)) {
+			System.out.println("usage: dumpStream <hashOfPhysicalOperator> <timeInMillis>");
+			return;
+		}
+
+		int operatorHash = 0;
+		try {
+			operatorHash = Integer.valueOf(operatorHashString);
+		} catch (Throwable t) {
+			System.out.println("usage: dumpStream <hashOfPhysicalOperator> <timeInMillis>");
+			return;
+		}
+
+		String timeMillisString = ci.nextArgument();
+		if (Strings.isNullOrEmpty(timeMillisString)) {
+			System.out.println("usage: dumpStream <hashOfPhysicalOperator> <timeInMillis>");
+			return;
+		}
+
+		int timeMillis = 0;
+		try {
+			timeMillis = Integer.valueOf(timeMillisString);
+		} catch (Throwable t) {
+			System.out.println("usage: dumpStream <hashOfPhysicalOperator> <timeInMillis>");
+			return;
+		}
+
+		Optional<IPhysicalOperator> optOperator = findOperatorByHash(operatorHash);
+		if (optOperator.isPresent()) {
+			final IPhysicalOperator operator = optOperator.get();
+			System.out.println("Connecting to physical operator " + operator);
+			
+			final DefaultStreamConnection<IStreamObject<?>> conn = new DefaultStreamConnection<IStreamObject<?>>(operator) {
+				@Override
+				public void process(IStreamObject<?> element, int port) {
+					System.out.println("[" + port + "] " + element);
+				}
+			};
+			conn.connect();
+
+			final int ms = timeMillis;
+			Thread t = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(ms);
+					} catch (InterruptedException e) {
+					}
+
+					conn.disconnect();
+					System.out.println("Disconnect from physical operator " + operator);
+				}
+			});
+			t.setDaemon(true);
+			t.setName("Operatorconnection disconnect waiting");
+			t.start();
+		} else {
+			System.out.println("No physical operator with hash '" + operatorHash + "' found");
+		}
+	}
+
+	private Optional<IPhysicalOperator> findOperatorByHash(int operatorHash) {
+		Collection<IPhysicalQuery> physicalQueries = executor.getExecutionPlan().getQueries();
+		for (IPhysicalQuery physicalQuery : physicalQueries) {
+			List<IPhysicalOperator> physicalOperators = physicalQuery.getPhysicalChilds();
+			for (IPhysicalOperator physicalOperator : physicalOperators) {
+				if (physicalOperator.hashCode() == operatorHash) {
+					return Optional.of(physicalOperator);
+				}
+			}
+		}
+
+		return Optional.absent();
 	}
 }
