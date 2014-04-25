@@ -1022,6 +1022,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 
 	private void tryAutoImportSource(SourceAdvertisement srcAdv) {
+		if( isImported( srcAdv)) {
+			return;
+		}
+		
 		if( getDataDictionary().containsViewOrStream(srcAdv.getName(), SessionManagementService.getActiveSession()) ) {
 			LOG.error("Could not autoimport source '{}' since it is already used locally", srcAdv.getName());
 			return;
