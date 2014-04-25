@@ -134,6 +134,8 @@ public class JxtaServicesProvider implements IJxtaServicesProvider, IPeerCommuni
 		for (PeerAdvertisement connectedPeer : connectedPeers) {
 			PeerID pid = connectedPeer.getPeerID();
 			if( !pid.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
+				LOG.debug("Send close message to {}", connectedPeer.getName());
+				
 				RepeatingMessageSend sender = new RepeatingMessageSend(peerCommunicator, msg, pid);
 				closeSenderMap.put(pid, sender);
 				sender.start();
