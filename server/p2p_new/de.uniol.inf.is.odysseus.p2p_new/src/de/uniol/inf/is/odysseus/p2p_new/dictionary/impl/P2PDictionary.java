@@ -659,7 +659,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		String address = remotePeerAddressMap.get(peerID);
 		if( Strings.isNullOrEmpty(address)) {
 			Optional<String> newAddress = JxtaServicesProvider.getInstance().getRemotePeerAddress(peerID);
-			if( newAddress.isPresent() ) {
+			if( newAddress.isPresent() && !newAddress.get().startsWith("0.0.0.0")) {
 				remotePeerAddressMap.put(peerID, newAddress.get());
 				return newAddress;
 			}
