@@ -304,6 +304,8 @@ public class JxtaServicesProvider implements IJxtaServicesProvider, IPeerCommuni
 
 	@Override
 	public Optional<String> getRemotePeerAddress(PeerID peerID) {
+		Preconditions.checkNotNull(peerID, "PeerID to get address from must not be null!");
+		
 		try {
 			Iterator<MessageTransport> allMessageTransports = endpointService.getAllMessageTransports();
 			while (allMessageTransports.hasNext()) {
@@ -316,8 +318,11 @@ public class JxtaServicesProvider implements IJxtaServicesProvider, IPeerCommuni
 						if (peerID.equals(route.getDestPeerID())) {
 							List<EndpointAddress> destEndpointAddresses = route.getDestEndpointAddresses();
 							for (EndpointAddress destEndpointAddress : destEndpointAddresses) {
-								String address = destEndpointAddress.getProtocolAddress();
-								return Optional.of(address);
+								if( destEndpointAddress.getProtocolName().equals("tcp")) {
+									String address = destEndpointAddress.getProtocolAddress();
+									return Optional.of(address);
+								} 
+								LOG.error("Found destEndpoint not equal to tcp-format: protocol={}, address={} ", destEndpointAddress.getProtocolName(), destEndpointAddress.getProtocolAddress() );
 							}
 						}
 					}
