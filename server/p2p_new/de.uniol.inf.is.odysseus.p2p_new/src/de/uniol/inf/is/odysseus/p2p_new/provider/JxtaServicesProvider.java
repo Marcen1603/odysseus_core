@@ -318,11 +318,12 @@ public class JxtaServicesProvider implements IJxtaServicesProvider, IPeerCommuni
 						if (peerID.equals(route.getDestPeerID())) {
 							List<EndpointAddress> destEndpointAddresses = route.getDestEndpointAddresses();
 							for (EndpointAddress destEndpointAddress : destEndpointAddresses) {
-								if( destEndpointAddress.getProtocolName().equals("tcp")) {
+								String protocolName = destEndpointAddress.getProtocolName();
+								if( protocolName.equals("tcp") || protocolName.equals("http")) {
 									String address = destEndpointAddress.getProtocolAddress();
 									return Optional.of(address);
 								} 
-								LOG.error("Found destEndpoint not equal to tcp-format: protocol={}, address={} ", destEndpointAddress.getProtocolName(), destEndpointAddress.getProtocolAddress() );
+								LOG.debug("Found destEndpoint not equal to tcp-format: protocol={}, address={} ", protocolName, destEndpointAddress.getProtocolAddress() );
 							}
 						}
 					}
