@@ -35,10 +35,10 @@ public class JxtaLoggingDestinations {
 			
 			for( PeerID destination : destinationMap.keySet().toArray(new PeerID[0])) {
 				if( !knownPeers.contains(destination)) {
-					destinationMap.remove(destination);
+					LoggingAdvertisement advertisement = destinationMap.remove(destination);
 					
 					try {
-						jxtaServicesProvider.flushAdvertisement(destinationMap.get(destination));
+						jxtaServicesProvider.flushAdvertisement(advertisement);
 					} catch (IOException e) {
 					}
 				}
