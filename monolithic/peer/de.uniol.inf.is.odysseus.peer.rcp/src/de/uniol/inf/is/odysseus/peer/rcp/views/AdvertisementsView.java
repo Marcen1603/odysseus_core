@@ -20,6 +20,7 @@ import org.eclipse.ui.part.ViewPart;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
 
@@ -123,8 +124,11 @@ public class AdvertisementsView extends ViewPart {
 		}
 
 		advertisements.clear();
-		advertisements.addAll(RCPP2PNewPlugIn.getJxtaServicesProvider().getLocalAdvertisements());
-		advertisements.addAll(RCPP2PNewPlugIn.getJxtaServicesProvider().getPeerAdvertisements());
+		IJxtaServicesProvider jxtaServicesProvider = RCPP2PNewPlugIn.getJxtaServicesProvider();
+		if( jxtaServicesProvider != null ) {
+			advertisements.addAll(jxtaServicesProvider.getLocalAdvertisements());
+			advertisements.addAll(jxtaServicesProvider.getPeerAdvertisements());
+		}
 		
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
