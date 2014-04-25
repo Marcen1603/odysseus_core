@@ -80,11 +80,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private final SourceAdvertisementCollector sourceAdvCollector = new SourceAdvertisementCollector();
 	private final Map<PeerID, String> remotePeerNameMap = Maps.newHashMap();
 	private final Map<PeerID, String> remotePeerAddressMap = Maps.newHashMap();
+	private final Collection<SourceAdvertisement> srcAdvs = Lists.newArrayList();
 
 	private AutoExporter autoExporter;
-	private boolean sourcesChanged = true;
 	private boolean peersChanged = true;
-	private Collection<SourceAdvertisement> srcAdvs;
 
 	private Collection<PeerID> currentPeerIDs;
 
@@ -199,16 +198,22 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	@Override
 	public Collection<SourceAdvertisement> getSources() {
-		if (sourcesChanged) {
-			srcAdvs = collectAllReachableSourceAdvertisements();
-			applyRemoveSourceAdvertisements(srcAdvs);
-
-			sourcesChanged = false;
+		synchronized( srcAdvs ) {
+			return srcAdvs;
 		}
-
-		return srcAdvs;
 	}
 
+	@Override
+	public void updateAdvertisements() {
+		synchronized( srcAdvs ) {
+			srcAdvs.clear();
+			srcAdvs.addAll(collectAllReachableSourceAdvertisements());
+			applyRemoveSourceAdvertisements(srcAdvs);
+		}
+		
+		peersChanged = true;
+	}
+	
 	private void applyRemoveSourceAdvertisements(Collection<SourceAdvertisement> srcAdvs) {
 		Collection<SourceAdvertisement> srcAdvsToRemove = Lists.newLinkedList();
 		for (RemoveSourceAdvertisement remAdv : JxtaServicesProvider.getInstance().getLocalAdvertisements(RemoveSourceAdvertisement.class)) {
@@ -267,22 +272,14 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		}
 		return srcAdvs;
 	}
-
 	@Override
 	public Collection<SourceAdvertisement> getSources(String sourceName) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(sourceName), "Sourcename for getting advertisements must not be null or empty!");
 
 		String realSourceName = removeUserFromName(sourceName);
 
-		if (sourcesChanged) {
-			srcAdvs = collectAllReachableSourceAdvertisements();
-			applyRemoveSourceAdvertisements(srcAdvs);
-
-			sourcesChanged = false;
-		}
-
 		Collection<SourceAdvertisement> namedAdvs = Lists.newArrayList();
-		for (SourceAdvertisement srcAdv : srcAdvs) {
+		for (SourceAdvertisement srcAdv : getSources()) {
 			if (srcAdv.getName().equals(realSourceName)) {
 				namedAdvs.add(srcAdv);
 			}
@@ -952,7 +949,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 					}
 				}
 				processedAdvIDs.add(adv.getID());
-				sourcesChanged = true;
 
 			} else if (adv instanceof RemoveMultipleSourceAdvertisement) {
 
@@ -969,7 +965,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 				}
 
 				processedAdvIDs.add(adv.getID());
-				sourcesChanged = true;
 			} else if (adv instanceof SourceAdvertisement) {
 				SourceAdvertisement srcAdv = (SourceAdvertisement) adv;
 
@@ -981,7 +976,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 				}
 
 				processedAdvIDs.add(adv.getID());
-				sourcesChanged = true;
 			} else if (adv instanceof MultipleSourceAdvertisement) {
 				MultipleSourceAdvertisement multSrcAdv = (MultipleSourceAdvertisement) adv;
 
@@ -995,15 +989,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 					}
 				}
 				processedAdvIDs.add(adv.getID());
-				sourcesChanged = true;
 			}
 		}
-	}
-
-	@Override
-	public void updateAdvertisements() {
-		sourcesChanged = true;
-		peersChanged = true;
 	}
 
 	private void tryAutoImportSource(SourceAdvertisement srcAdv) {
