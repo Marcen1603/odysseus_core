@@ -121,10 +121,6 @@ public class JxtaServicesProvider implements IJxtaServicesProvider, IPeerCommuni
 
 		executor.stop();
 
-		discoveryService = null;
-		endpointService = null;
-		pipeService = null;
-
 		instance = null;
 
 		LOG.debug("Jxta services provider deactivated");
@@ -145,7 +141,7 @@ public class JxtaServicesProvider implements IJxtaServicesProvider, IPeerCommuni
 		}
 
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(4000);
 		} catch (InterruptedException e) {
 		}
 
@@ -236,6 +232,10 @@ public class JxtaServicesProvider implements IJxtaServicesProvider, IPeerCommuni
 	@Override
 	public Collection<Advertisement> getLocalAdvertisements() {
 		try {
+			if( discoveryService == null ) {
+				return Lists.newArrayList();
+			}
+			
 			return toCollection(discoveryService.getLocalAdvertisements(DiscoveryService.ADV, null, null));
 		} catch (IOException e) {
 			LOG.error("Could not get local advertisements", e);
@@ -387,6 +387,7 @@ public class JxtaServicesProvider implements IJxtaServicesProvider, IPeerCommuni
 		}
 		
 		try {
+			LOG.debug("Send peer close ack");
 			communicator.send(senderPeer, new PeerCloseAckMessage());
 		} catch (PeerCommunicationException e) {
 			LOG.error("Could not send ack message", e);
