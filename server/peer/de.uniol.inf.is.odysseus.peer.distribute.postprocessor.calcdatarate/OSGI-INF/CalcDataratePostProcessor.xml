@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.distribute.postprocessor.calcdatarate.CalcDataratePostProcessor">
-   <implementation class="de.uniol.inf.is.odysseus.peer.distribute.postprocess.calcdatarate.CalcDataratePostProcessor"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.peer.distribute.IQueryDistributionPostProcessor"/>
-   </service>
-</scr:component>
