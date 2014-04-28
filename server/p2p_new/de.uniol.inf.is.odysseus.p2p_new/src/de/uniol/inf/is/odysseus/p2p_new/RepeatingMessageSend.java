@@ -11,7 +11,7 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 	private static final Logger LOG = LoggerFactory.getLogger(RepeatingMessageSend.class);
 	private static final int WARNING_TIME_INTERVAL_MILLIS = 30 * 1000;
 	private static final int ABORT_MILLIS = 60 * 1000;
-	private static final int REPEAT_SEND_INTERVAL_MILLIS = 500;
+	private static final int REPEAT_SEND_INTERVAL_MILLIS = 1000;
 	
 	private final IPeerCommunicator communicator;
 	private final IMessage message;
