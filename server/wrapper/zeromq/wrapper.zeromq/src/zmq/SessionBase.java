@@ -24,6 +24,7 @@ package zmq;
 import java.util.HashSet;
 import java.util.Set;
 
+@SuppressWarnings("all")
 public class SessionBase extends Own implements 
                         Pipe.IPipeEvents, IPollEvents, 
                         IMsgSink, IMsgSource 

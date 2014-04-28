@@ -449,7 +449,7 @@ public class LogicalQuery implements ILogicalQuery {
 		this.notice = notice;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "all" })
 	public void setParameters(List<Pair> parameters) {
 		for (Pair<String,Object> p:parameters){
 			setParameter(p.getE1(), p.getE2());

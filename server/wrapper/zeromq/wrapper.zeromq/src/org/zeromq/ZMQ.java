@@ -33,6 +33,7 @@ import zmq.SocketBase;
 import zmq.ZError;
 import zmq.ZError.CtxTerminatedException;
 
+@SuppressWarnings("all")
 public class ZMQ {
 
     /**

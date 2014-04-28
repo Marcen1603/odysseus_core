@@ -24,6 +24,7 @@ package zmq;
 import java.nio.channels.SelectableChannel;
 
 
+@SuppressWarnings("all")
 public class IOThread extends ZObject implements IPollEvents {
 
     //  I/O thread accesses incoming commands via this mailbox.

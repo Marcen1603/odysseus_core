@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+@SuppressWarnings("all")
 public abstract class SocketBase extends Own
     implements IPollEvents, Pipe.IPipeEvents {
 

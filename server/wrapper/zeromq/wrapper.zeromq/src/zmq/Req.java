@@ -22,6 +22,7 @@
 
 package zmq;
 
+@SuppressWarnings("all")
 public class Req extends Dealer {
 
     

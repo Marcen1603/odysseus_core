@@ -33,7 +33,7 @@ import java.nio.ByteBuffer;
 //
 //  This class implements the state machine that parses the incoming buffer.
 //  Derived class should implement individual state machine actions.
-
+@SuppressWarnings("all")
 abstract public class DecoderBase implements IDecoder {
     
     //  Where to store the read data.

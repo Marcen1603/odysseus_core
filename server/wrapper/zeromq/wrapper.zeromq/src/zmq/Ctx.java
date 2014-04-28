@@ -282,8 +282,8 @@ public class Ctx {
                 }
     
                 //  In the unused part of the slot array, create a list of empty slots.
-                for (int i = (int) slot_count - 1;
-                      i >= (int) ios + 2; i--) {
+                for (int i = slot_count - 1;
+                      i >= ios + 2; i--) {
                     empty_slots.add (i);
                     slots [i] = null;
                 }

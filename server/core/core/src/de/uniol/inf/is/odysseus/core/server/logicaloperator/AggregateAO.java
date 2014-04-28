@@ -55,6 +55,7 @@ public class AggregateAO extends UnaryLogicalOp {
 	private int dumpAtValueCount = -1;
 	private boolean outputPA = false;
 	private boolean drainAtDone = true;
+	private boolean drainAtClose = false;
 	private boolean fastGrouping = false;
 	
 	public static final String AGGREGATIONS = "AGGREGATIONS";
@@ -78,6 +79,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		this.outputPA = op.outputPA;
 		this.drainAtDone = op.drainAtDone;
 		this.fastGrouping  = op.fastGrouping;
+		this.drainAtClose = op.drainAtClose;
 	}
 
 	public void addAggregation(SDFAttribute attribute,
@@ -227,13 +229,28 @@ public class AggregateAO extends UnaryLogicalOp {
 		return outputPA;
 	}
 
-	@Parameter(name = "drain", type = BooleanParameter.class, optional = true, doc = "If set to true (default), elements are not yet written will be written at done or close. ")
+	@Parameter(name = "drain", type = BooleanParameter.class, optional = true, doc = "If set to true (default), elements are not yet written will be written at done.", deprecated=true)
+	public void setDrainAtDoneOld(boolean drainAtDone) {
+		this.drainAtDone = drainAtDone;
+	}
+	
+	@Parameter(name = "drainAtDone", type = BooleanParameter.class, optional = true, doc = "If set to true (default), elements are not yet written will be written at done. ")
 	public void setDrainAtDone(boolean drainAtDone) {
 		this.drainAtDone = drainAtDone;
 	}
 
+	@Parameter(name = "drainAtClose", type = BooleanParameter.class, optional = true, doc = "If set to true (default), elements are not yet written will be written at close. ")
+	public void setDrainAtClose(boolean drainAtClose) {
+		this.drainAtClose = drainAtClose;
+	}
+
+
 	public boolean isDrainAtDone() {
 		return drainAtDone;
+	}
+	
+	public boolean isDrainAtClose() {
+		return drainAtClose;
 	}
 	
 	public boolean isFastGrouping() {

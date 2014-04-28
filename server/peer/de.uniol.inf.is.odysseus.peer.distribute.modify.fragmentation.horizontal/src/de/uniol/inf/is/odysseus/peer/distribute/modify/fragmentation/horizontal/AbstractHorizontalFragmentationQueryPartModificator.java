@@ -301,6 +301,8 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 		reunionAggregate.setGroupingAttributes(originAggregation.getGroupingAttributes());
 		reunionAggregate.setDumpAtValueCount(originAggregation.getDumpAtValueCount());
 		reunionAggregate.setDrainAtDone(originAggregation.isDrainAtDone());
+		reunionAggregate.setDrainAtClose(originAggregation.isDrainAtClose());
+		
 		List<AggregateItem> aggItems = Lists.newArrayList();
 
 		Collection<ILogicalOperator> copiedAggregations = LogicalQueryHelper.collectCopies(originPart, copiesToOrigin.get(originPart), originAggregation);

@@ -37,6 +37,7 @@ import java.util.Arrays;
  * 
  */
 
+@SuppressWarnings("all")
 public class ZFrame {
 
     public static final int MORE  =   ZMQ.SNDMORE;
