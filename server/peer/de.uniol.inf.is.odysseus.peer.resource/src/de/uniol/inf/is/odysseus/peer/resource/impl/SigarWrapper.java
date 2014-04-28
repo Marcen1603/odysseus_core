@@ -57,7 +57,7 @@ public class SigarWrapper {
 			CpuPerc perc = sigar.getCpuPerc();
 			double cpuFree = cpuMax - (perc != null ? perc.getUser() : 0.0) * cpuMax;
 			double result = Math.min(cpuMax, Math.max(0, cpuFree));
-			if( result == Double.NaN ) {
+			if( Double.isNaN(result)) {
 				result = 0.0;
 			}
 			return result;
