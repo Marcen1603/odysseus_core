@@ -54,6 +54,7 @@ import de.uniol.inf.is.odysseus.rcp.evaluation.QueryTreeSelectionDialog;
 import de.uniol.inf.is.odysseus.rcp.evaluation.execution.EvaluationJob;
 import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationModel;
 import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationVariable;
+import org.eclipse.swt.widgets.Combo;
 
 public class EvaluationEditorPart extends EditorPart implements IResourceChangeListener, IResourceDeltaVisitor {
 
@@ -80,6 +81,9 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 	private Button btnCreatePlotsForThroughputs;
 	private Spinner spinnerMeasureEachElements;
 	private Button btnCreatePlotsForLatency;
+	private Spinner spinnerWidth;
+	private Spinner spinnerHeight;
+	private Combo outputTypeCombo;
 
 	public EvaluationEditorPart() {
 	}
@@ -104,7 +108,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		Group grpGeneral = new Group(container, SWT.NONE);
 		grpGeneral.setLayout(new GridLayout(2, false));
 		GridData gd_grpGeneral = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_grpGeneral.heightHint = 132;
+		gd_grpGeneral.heightHint = 150;
 		grpGeneral.setLayoutData(gd_grpGeneral);
 		grpGeneral.setText("General");
 
@@ -435,6 +439,61 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		});
 
 		new Label(throughputComposite, SWT.NONE);
+		
+		Group grpPlotsettings = new Group(container, SWT.NONE);
+		grpPlotsettings.setLayout(new GridLayout(4, true));
+		grpPlotsettings.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		grpPlotsettings.setText("Plotsettings");
+		
+		Label lblExportType = new Label(grpPlotsettings, SWT.NONE);
+		lblExportType.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblExportType.setText("Export type:");
+		
+		outputTypeCombo = new Combo(grpPlotsettings, SWT.READ_ONLY);
+		outputTypeCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		outputTypeCombo.add("PDF");
+		outputTypeCombo.add("PNG");
+		outputTypeCombo.select(outputTypeCombo.indexOf(evaluationModel.getOutputType()));
+		outputTypeCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setDirty(true);
+			}
+		});
+		new Label(grpPlotsettings, SWT.NONE);
+		new Label(grpPlotsettings, SWT.NONE);
+		
+		Label lblWidth = new Label(grpPlotsettings, SWT.NONE);
+		lblWidth.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblWidth.setText("Plot width:");
+		
+		spinnerWidth = new Spinner(grpPlotsettings, SWT.BORDER);
+		spinnerWidth.setMinimum(1);
+		spinnerWidth.setMaximum(Integer.MAX_VALUE);
+		spinnerWidth.setSelection(evaluationModel.getOutputWidth());
+		spinnerWidth.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent e) {
+				setDirty(true);				
+			}
+		});
+		
+		Label lblHeight = new Label(grpPlotsettings, SWT.NONE);
+		lblHeight.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblHeight.setText("Plot height:");
+		
+		spinnerHeight = new Spinner(grpPlotsettings, SWT.BORDER);
+		spinnerHeight.setMinimum(1);
+		spinnerHeight.setMaximum(Integer.MAX_VALUE);
+		spinnerHeight.setSelection(evaluationModel.getOutputHeight());
+		spinnerHeight.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent e) {
+				setDirty(true);				
+			}
+		});
 
 		Composite composite = new Composite(container, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
@@ -550,6 +609,9 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		evaluationModel.setCreateLatencyPlots(btnCreatePlotsForLatency.getSelection());
 		evaluationModel.setCreateThroughputPlots(btnCreatePlotsForThroughputs.getSelection());
 		evaluationModel.setMeasureThrougputEach(spinnerMeasureEachElements.getSelection());		
+		evaluationModel.setOutputHeight(spinnerHeight.getSelection());
+		evaluationModel.setOutputWidth(spinnerWidth.getSelection());
+		evaluationModel.setOutputType(outputTypeCombo.getText());
 		// variables are directly saved
 		evaluationModel.save(this.input.getFile());
 		setDirty(false);

@@ -40,6 +40,8 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 
 	private EvaluationModel model;
 	private Collection<Integer> ids = new ArrayList<>();	
+	private static final String PRE_TRANSFORM_TOKEN = "#PRETRANSFORM EvaluationPreTransformation";
+	private static final CharSequence METADATA_LATENCY = "#METADATA Latency";
 
 	public EvaluationJob(EvaluationModel model) {
 		super("Running Evaluation...");
@@ -66,7 +68,7 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 					}
 				}
 				String lines = fileToLines(model.getQueryFile());
-
+				lines = prepareQueryFileForEvaluation(lines);
 				monitor.beginTask("Running evaluations...", totalEvaluations);				
 				DateFormat dateFormat = new SimpleDateFormat("ddMMyy-HHmmss");
 				Calendar cal = Calendar.getInstance();
@@ -95,6 +97,17 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 			return Status.CANCEL_STATUS;
 		}
 		return Status.OK_STATUS;
+	}
+
+	private String prepareQueryFileForEvaluation(String lines) {
+		if(!lines.contains(METADATA_LATENCY)){
+			lines = METADATA_LATENCY + System.lineSeparator()+lines; 
+		}
+		if(!lines.contains(PRE_TRANSFORM_TOKEN)){
+			lines = PRE_TRANSFORM_TOKEN+System.lineSeparator()+lines;
+		}
+		
+		return lines;
 	}
 
 	private int recursiveFor(Deque<Integer> indices, List<Integer> ranges, int n, int counter, int totalEvals, EvaluationRunContainer evaluationRunContainer, List<EvaluationVariable> values, IProgressMonitor monitor, String lines) throws Exception {

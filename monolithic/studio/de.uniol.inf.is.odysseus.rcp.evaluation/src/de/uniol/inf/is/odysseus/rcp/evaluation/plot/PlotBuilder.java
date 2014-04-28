@@ -62,11 +62,11 @@ public class PlotBuilder {
 	private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 28);
 	private static final Font LEGEND_FONT = new Font("Arial", Font.PLAIN, 18);
 
-	private static final int LEGEND_ITEM_SIZE = 15;
-	private static final int HEIGHT = 300;
-	private static final int WIDTH = 1000;
+	private static final int LEGEND_ITEM_SIZE = 15;	
 
-	private static final String OUTPUT_TYPE = "PNG";
+	public enum OutputType {
+		PNG, PDF
+	};
 
 	private static Color[] linecolors = createColors();
 
@@ -140,12 +140,13 @@ public class PlotBuilder {
 
 			MeasurementResult result = MeasurementFileUtil.mergeFiles(mr, destination, monitor);
 			if (result != null) {
-				buildGraphicalCharts(result, container, type);
+				OutputType out = OutputType.valueOf(model.getOutputType());
+				buildGraphicalCharts(result, container, type, out, model.getOutputHeight(), model.getOutputWidth());
 			}
 		}
 	}
 
-	private static void buildGraphicalCharts(MeasurementResult result, EvaluationRunContainer container, EvaluationType type) {
+	private static void buildGraphicalCharts(MeasurementResult result, EvaluationRunContainer container, EvaluationType type, OutputType out, int height, int width) {
 		try {
 			// this must be the merged file...
 			File file = result.getFiles().get(0);
@@ -159,19 +160,19 @@ public class PlotBuilder {
 			}
 			br.close();
 			String dir = "";
-			if(type==EvaluationType.LATENCY){
-				dir = container.getContext().getLatencyPlotsPath();				
-			}else{
-				dir = container.getContext().getThroughputPlotsPath(); 
+			if (type == EvaluationType.LATENCY) {
+				dir = container.getContext().getLatencyPlotsPath();
+			} else {
+				dir = container.getContext().getThroughputPlotsPath();
 			}
 			IPlotDescription plotdescription = PlotDescriptionFactory.createPlotDescription(type);
-			buildXYPlot(dir, values, result, plotdescription);
+			buildXYPlot(dir, values, result, plotdescription, out, height, width);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private static void buildXYPlot(String dir, List<Pair<Integer, Double>> values, MeasurementResult mr, IPlotDescription plotdescription) {
+	private static void buildXYPlot(String dir, List<Pair<Integer, Double>> values, MeasurementResult mr, IPlotDescription plotdescription, OutputType out, int height, int width) {
 
 		final XYSeries serie = new XYSeries(mr.getName());
 		for (Pair<Integer, Double> value : values) {
@@ -182,13 +183,13 @@ public class PlotBuilder {
 		JFreeChart chart = ChartFactory.createXYLineChart(plotdescription.getName(), plotdescription.getNameAxisX(), plotdescription.getNameAxisY(), dataset, PlotOrientation.VERTICAL, true, false, false);
 		applySettings(chart);
 		try {
-			writeChart(dir + mr.getVariable() + File.separator + mr.getName(), chart, WIDTH, HEIGHT);
+			writeChart(dir + mr.getVariable() + File.separator + mr.getName(), chart, width, height, out);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private static void writeChart(String destination, JFreeChart chart, int width, int height) throws IOException {
+	private static void writeChart(String destination, JFreeChart chart, int width, int height, OutputType out) throws IOException {
 		LegendItemCollection legendItems = chart.getPlot().getLegendItems();
 		chart.removeLegend();
 		chart.addLegend(getNewLegend(getSource(legendItems)));
@@ -198,7 +199,7 @@ public class PlotBuilder {
 		if (!destFile.getParentFile().exists()) {
 			destFile.getParentFile().mkdirs();
 		}
-		if (OUTPUT_TYPE.equalsIgnoreCase("PDF")) {
+		if (out.equals(OutputType.PDF)) {
 			writeAsPDF(destination, chart, width, height);
 		} else {
 			writeAsPNG(destination, chart, width, height);

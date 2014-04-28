@@ -32,6 +32,9 @@ public class EvaluationModel implements Serializable {
 	private static final String CREATE_LATENCY_PLOTS = "CREATE_LATENCY_PLOTS";
 	private static final String CREATE_THROUGHPUT_PLOTS = "CREATE_THROUGHPUT_PLOTS";
 	private static final String MEASURE_THROUGHPUT_EACH = "MEASURE_THROUGHPUT_EACH";
+	private static final String OUTPUT_TYPE = "OUTPUT_TYPE";
+	private static final String OUTPUT_HEIGHT = "OUTPUT_HEIGHT";
+	private static final String OUTPUT_WIDTH = "OUTPUT_WIDTH";
 
 	private IResource queryFile;
 
@@ -49,6 +52,13 @@ public class EvaluationModel implements Serializable {
 
 	private int numberOfRuns = 10;
 	private List<EvaluationVariable> variables = new ArrayList<>();
+
+	private int outputHeight = 300;
+	private int outputWidth = 1000;
+	
+	private String outputType = "PNG";
+
+	
 
 	private EvaluationModel() {
 		this.variables.add(new EvaluationVariable("var_1", "a", "b", "c"));
@@ -79,6 +89,9 @@ public class EvaluationModel implements Serializable {
 			memento.putInteger(MEASURE_THROUGHPUT_EACH, measureThrougputEach);
 			memento.putInteger(NUMBER_OF_RUNS, numberOfRuns);
 			memento.putString(QUERY_FILE, queryFile.getProjectRelativePath().toPortableString());
+			memento.putInteger(OUTPUT_HEIGHT, outputHeight);
+			memento.putInteger(OUTPUT_WIDTH, outputWidth);
+			memento.putString(OUTPUT_TYPE, outputType);
 
 			IMemento varMem = memento.createChild(VARIABLES);
 			for (EvaluationVariable var : this.variables) {
@@ -111,10 +124,14 @@ public class EvaluationModel implements Serializable {
 				this.withLatency = memento.getBoolean(WITH_LATENCY);
 				this.withThroughput = memento.getBoolean(WITH_THROUGHPUT);
 				this.numberOfRuns = memento.getInteger(NUMBER_OF_RUNS);
-
+				
 				this.measureThrougputEach = checkNullAndSet(memento.getInteger(MEASURE_THROUGHPUT_EACH), this.measureThrougputEach);
 				this.createLatencyPlots = checkNullAndSet(memento.getBoolean(CREATE_LATENCY_PLOTS), this.createLatencyPlots);
 				this.createThroughputPlots = checkNullAndSet(memento.getBoolean(CREATE_THROUGHPUT_PLOTS), this.createThroughputPlots);
+				
+				this.outputHeight = checkNullAndSet(memento.getInteger(OUTPUT_HEIGHT), this.outputHeight);
+				this.outputWidth = checkNullAndSet(memento.getInteger(OUTPUT_WIDTH), this.outputWidth);
+				this.outputType = checkNullAndSet(memento.getString(OUTPUT_TYPE), this.outputType);
 				
 				String path = memento.getString(QUERY_FILE);
 				this.queryFile = file.getProject().findMember(Path.fromPortableString(path));
@@ -237,4 +254,29 @@ public class EvaluationModel implements Serializable {
 		this.createLatencyPlots = createLatencyPlots;
 	}
 
+	public int getOutputHeight() {
+		return outputHeight;
+	}
+
+	public void setOutputHeight(int outputHeight) {
+		this.outputHeight = outputHeight;
+	}
+
+	public int getOutputWidth() {
+		return outputWidth;
+	}
+
+	public void setOutputWidth(int outputWidth) {
+		this.outputWidth = outputWidth;
+	}
+
+	public String getOutputType() {
+		return outputType;
+	}
+
+	public void setOutputType(String outputType) {
+		this.outputType = outputType;
+	}
+
+	
 }
