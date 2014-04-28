@@ -117,7 +117,7 @@ public class EvaluationModel implements Serializable {
 				this.createThroughputPlots = checkNullAndSet(memento.getBoolean(CREATE_THROUGHPUT_PLOTS), this.createThroughputPlots);
 				
 				String path = memento.getString(QUERY_FILE);
-				this.queryFile = file.getProject().findMember(Path.fromPortableString(path));
+				this.queryFile = (IFile) file.getProject().findMember(Path.fromPortableString(path));
 
 				this.variables.clear();
 				IMemento varMem = memento.getChild(VARIABLES);
