@@ -25,6 +25,9 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.console.OdysseusConsole;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -1000,21 +1003,21 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public void _dumpStream(CommandInterpreter ci) {
 		String operatorHashString = ci.nextArgument();
 		if (Strings.isNullOrEmpty(operatorHashString)) {
-			System.out.println("usage: dumpStream <hashOfPhysicalOperator> <timeInMillis>");
+			System.out.println("usage: dumpStream <hashOfPhysicalOperator | nameOfOperator> <timeInMillis>");
 			return;
 		}
 
 		int operatorHash = 0;
+		String operatorName = "";
 		try {
 			operatorHash = Integer.valueOf(operatorHashString);
 		} catch (Throwable t) {
-			System.out.println("usage: dumpStream <hashOfPhysicalOperator> <timeInMillis>");
-			return;
+			operatorName = operatorHashString;
 		}
 
 		String timeMillisString = ci.nextArgument();
 		if (Strings.isNullOrEmpty(timeMillisString)) {
-			System.out.println("usage: dumpStream <hashOfPhysicalOperator> <timeInMillis>");
+			System.out.println("usage: dumpStream <hashOfPhysicalOperator | nameOfOperator> <timeInMillis>");
 			return;
 		}
 
@@ -1022,15 +1025,19 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		try {
 			timeMillis = Integer.valueOf(timeMillisString);
 		} catch (Throwable t) {
-			System.out.println("usage: dumpStream <hashOfPhysicalOperator> <timeInMillis>");
+			System.out.println("usage: dumpStream <hashOfPhysicalOperator | nameOfOperator> <timeInMillis>");
 			return;
 		}
 
 		Optional<IPhysicalOperator> optOperator = findOperatorByHash(operatorHash);
+		if( !optOperator.isPresent() ) {
+			optOperator = findOperatorByName(operatorName);
+		}
+		
 		if (optOperator.isPresent()) {
 			final IPhysicalOperator operator = optOperator.get();
 			System.out.println("Connecting to physical operator " + operator);
-			
+
 			final DefaultStreamConnection<IStreamObject<?>> conn = new DefaultStreamConnection<IStreamObject<?>>(operator) {
 				@Override
 				public void process(IStreamObject<?> element, int port) {
@@ -1056,11 +1063,47 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			t.setName("Operatorconnection disconnect waiting");
 			t.start();
 		} else {
-			System.out.println("No physical operator with hash '" + operatorHash + "' found");
+			System.out.println("No physical operator with hash or name '" + operatorHash + "' found");
 		}
 	}
 
-	private Optional<IPhysicalOperator> findOperatorByHash(int operatorHash) {
+	private static Optional<IPhysicalOperator> findOperatorByName(String operatorName) {
+		int queryID = -1;
+		
+		int splitPos = operatorName.indexOf(":");
+		if( splitPos != -1 ){
+			try {
+				queryID = Integer.valueOf( operatorName.substring(0, splitPos));
+				operatorName = operatorName.substring(splitPos + 1);
+			} catch( Throwable t ) {
+			}
+		}
+		
+		Collection<IPhysicalQuery> physicalQueries = executor.getExecutionPlan().getQueries();
+		Collection<IPhysicalOperator> foundOperators = Lists.newArrayList();
+		for (IPhysicalQuery physicalQuery : physicalQueries) {
+			if( queryID == -1 || physicalQuery.getID() == queryID ) {
+				List<IPhysicalOperator> physicalOperators = physicalQuery.getPhysicalChilds();
+				for (IPhysicalOperator physicalOperator : physicalOperators) {
+					if (physicalOperator.getName().equals(operatorName)) {
+						foundOperators.add(physicalOperator);
+					}
+				}
+			}
+		}
+		
+		if( foundOperators.size() == 1 ) {
+			return Optional.of(foundOperators.iterator().next());
+		} else if ( !foundOperators.isEmpty() ) { 
+			System.out.println("Warning: Found multiple operators with name '" + operatorName + "': " + foundOperators);
+			System.out.println("Selecting first one");
+			return Optional.of(foundOperators.iterator().next());
+		} 
+		
+		return Optional.absent();
+	}
+
+	private static Optional<IPhysicalOperator> findOperatorByHash(int operatorHash) {
 		Collection<IPhysicalQuery> physicalQueries = executor.getExecutionPlan().getQueries();
 		for (IPhysicalQuery physicalQuery : physicalQueries) {
 			List<IPhysicalOperator> physicalOperators = physicalQuery.getPhysicalChilds();
@@ -1072,5 +1115,71 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		}
 
 		return Optional.absent();
+	}
+
+	public void _dumpPlan(CommandInterpreter ci) {
+		String queryIDString = ci.nextArgument();
+		if (Strings.isNullOrEmpty(queryIDString)) {
+			System.out.println("usage: dumpPlan <queryid>");
+			return;
+		}
+
+		int queryID = 0;
+		try {
+			queryID = Integer.valueOf(queryIDString);
+		} catch (Throwable t) {
+			System.out.println("usage: dumpPlan <queryid>");
+		}
+
+		IPhysicalQuery query = executor.getExecutionPlan().getQueryById(queryID);
+		if (query != null) {
+			for (int i = 0; i < query.getRoots().size(); i++) {
+				IPhysicalOperator curRoot = query.getRoots().get(i);
+
+				StringBuffer sb = new StringBuffer();
+				if (curRoot.isSink()) {
+					dumpPlan((ISink<?>) curRoot, 0, sb);
+				} else {
+					dumpPlan((ISource<?>) curRoot, 0, sb);
+				}
+				System.out.println("Physical plan of query: " + queryID);
+				System.out.println(sb.toString());
+			}
+		} else {
+			System.out.println("Query not found.");
+		}
+	}
+
+	private static void dumpPlan(ISink<?> sink, int depth, StringBuffer b) {
+		if (sink == null) {
+			return;
+		}
+		for (int i = 0; i < depth; ++i) {
+			b.append("\t");
+		}
+		
+		b.append(sink.getClass().getSimpleName());
+		b.append("(").append(sink.hashCode()).append(")");
+		b.append("[").append(sink.getName()).append("]\n");
+
+		for (PhysicalSubscription<? extends ISource<?>> source : sink.getSubscribedToSource()) {
+			dumpPlan(source.getTarget(), depth + 1, b);
+		}
+	}
+
+	private static void dumpPlan(ISource<?> source, int depth, StringBuffer b) {
+		if (source == null) {
+			return;
+		}
+		if (source.isSink()) {
+			dumpPlan((ISink<?>) source, depth, b);
+		} else {
+			for (int i = 0; i < depth; ++i) {
+				b.append("\t");
+			}
+			b.append(source.getClass().getSimpleName());
+			b.append("(").append(source.hashCode()).append(")");
+			b.append("[").append(source.getName()).append("]\n");
+		}
 	}
 }
