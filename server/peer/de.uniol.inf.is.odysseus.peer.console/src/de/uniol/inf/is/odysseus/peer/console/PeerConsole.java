@@ -1034,7 +1034,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			final DefaultStreamConnection<IStreamObject<?>> conn = new DefaultStreamConnection<IStreamObject<?>>(operator) {
 				@Override
 				public void process(IStreamObject<?> element, int port) {
-					System.out.println("[" + port + "] " + element);
+					System.out.println(element);
 				}
 			};
 			conn.connect();
