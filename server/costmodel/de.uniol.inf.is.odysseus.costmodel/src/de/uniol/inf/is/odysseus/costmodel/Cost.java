@@ -65,7 +65,7 @@ public class Cost<T> implements ICost<T> {
 	
 	@Override
 	public DetailCost getDetailCost(T operator) {
-		if( detailCostMap.containsKey(operator)) {
+		if( !detailCostMap.containsKey(operator)) {
 			throw new RuntimeException("Could not get the cpu cost of an unknown operator :" + operator.toString());
 		}
 		return detailCostMap.get(operator);
