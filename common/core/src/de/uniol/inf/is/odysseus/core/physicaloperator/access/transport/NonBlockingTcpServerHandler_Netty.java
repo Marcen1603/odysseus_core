@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.IConnection;
@@ -32,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.connection.IConnectionListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
-		implements IAccessConnectionListener<ByteBuffer>, IConnectionListener {
+		implements IAccessConnectionListener<ByteBuffer>, IConnectionListener, IHasAlias {
 
 	private int port;
 	List<ChannelHandlerContext> channels = new CopyOnWriteArrayList<>();
@@ -106,9 +107,14 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 
 	@Override
 	public String getName() {
+		return "TCPServer";
+	}
+	
+	@Override
+	public String getAliasName() {
 		return "TCPServer2";
 	}
-
+	
 	@Override
 	public void notify(final IConnection connection,
 			final ConnectionMessageReason reason) {

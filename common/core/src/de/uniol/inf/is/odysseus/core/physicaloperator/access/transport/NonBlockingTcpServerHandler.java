@@ -106,7 +106,7 @@ public class NonBlockingTcpServerHandler extends AbstractTransportHandler
 
 	@Override
 	public String getName() {
-		return "TCPServer";
+		return "TCPServer1";
 	}
 
 	@Override

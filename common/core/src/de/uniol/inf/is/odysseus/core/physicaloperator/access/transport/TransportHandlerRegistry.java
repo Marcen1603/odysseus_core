@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
+import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 public class TransportHandlerRegistry {
@@ -33,10 +34,19 @@ public class TransportHandlerRegistry {
 
 	static public void register(ITransportHandler handler) {
 		logger.debug("Register new Handler " + handler.getName());
-		if (!handlers.containsKey(handler.getName().toLowerCase())) {
-			handlers.put(handler.getName().toLowerCase(), handler);
+		String name = handler.getName().toLowerCase();
+		register(handler, name);
+		if (handler instanceof IHasAlias){
+			name = ((IHasAlias) handler).getAliasName().toLowerCase();
+			register(handler, name);
+		}
+	}
+
+	public static void register(ITransportHandler handler, String name) {
+		if (!handlers.containsKey(name)) {
+			handlers.put(name, handler);
 		} else {
-			logger.warn("Handler with name " + handler.getName()
+			logger.warn("Handler with name " + name
 					+ " already registered");
 		}
 	}
@@ -44,6 +54,9 @@ public class TransportHandlerRegistry {
 	static public void remove(ITransportHandler handler){
 		logger.debug("Remove handler "+handler.getName());
 		handlers.remove(handler.getName().toLowerCase());
+		if (handler instanceof IHasAlias){
+			handlers.remove(((IHasAlias)handler).getAliasName().toLowerCase());
+		}
 	}
 	
 	static public ITransportHandler getInstance(String name, IProtocolHandler<?> protocolHandler, Map<String, String> options){
