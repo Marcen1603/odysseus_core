@@ -8,12 +8,12 @@ public class ThroughputPlotDescriptionEnglish implements IPlotDescription {
 	}
 
 	@Override
-	public String getNameAxisX() {
+	public String getNameAxisY() {
 		return "Number of elements";
 	}
 
 	@Override
-	public String getNameAxisY() {
+	public String getNameAxisX() {
 		return "Time in ms";
 	}
 

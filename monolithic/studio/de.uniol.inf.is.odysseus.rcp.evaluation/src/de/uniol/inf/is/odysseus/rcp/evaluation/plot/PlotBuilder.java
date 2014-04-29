@@ -152,6 +152,9 @@ public class PlotBuilder {
 			File file = result.getFiles().get(0);
 			List<Pair<Integer, Double>> values = new ArrayList<>();
 			BufferedReader br = new BufferedReader(new FileReader(file));
+			//skip first, because it is the header
+			br.readLine();
+			// first line with values...
 			String line = br.readLine();
 			while (line != null) {
 				Pair<Integer, Double> value = MeasurementFileUtil.parseLine(line);

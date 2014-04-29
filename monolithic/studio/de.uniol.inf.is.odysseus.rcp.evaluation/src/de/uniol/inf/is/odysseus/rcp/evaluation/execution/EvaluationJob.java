@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.evaluation.execution;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -16,6 +17,8 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -55,8 +58,13 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 		executor.addPlanModificationListener(this);
 
 		try {
-			synchronized (this) {
-
+			synchronized (this) {			
+				
+				DateFormat dateFormat = new SimpleDateFormat("ddMMyy-HHmmss");
+				Calendar cal = Calendar.getInstance();
+				String identifier = dateFormat.format(cal.getTime());
+				EvaluationRunContext evaluationRunContext = new EvaluationRunContext(model, identifier);
+				
 				int totalEvaluations = model.getNumberOfRuns();
 				List<EvaluationVariable> variables = new ArrayList<>();
 				ArrayList<Integer> ranges = new ArrayList<>();
@@ -68,12 +76,18 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 					}
 				}
 				String lines = fileToLines(model.getQueryFile());
+				
+				// save model file for logging purposes
+				String modelFileBackup = FilenameUtils.concat(evaluationRunContext.getResultsPathIdentified(), "model.eval");
+				model.save(new File(modelFileBackup));
+				// and the current query file
+				String queryFileBackup = FilenameUtils.concat(evaluationRunContext.getResultsPathIdentified(), model.getQueryFile().getName());
+				FileUtils.write(new File(queryFileBackup), lines);
+				
+				// then, prepare lines for executing
 				lines = prepareQueryFileForEvaluation(lines);
 				monitor.beginTask("Running evaluations...", totalEvaluations);				
-				DateFormat dateFormat = new SimpleDateFormat("ddMMyy-HHmmss");
-				Calendar cal = Calendar.getInstance();
-				String identifier = dateFormat.format(cal.getTime());
-				EvaluationRunContext evaluationRunContext = new EvaluationRunContext(model, identifier);
+				
 				EvaluationRunContainer evaluationRunContainer = new EvaluationRunContainer(evaluationRunContext); 
 				int counter = recursiveFor(new ArrayDeque<Integer>(), ranges, ranges.size(), 0, totalEvaluations, evaluationRunContainer, variables, monitor, lines);
 				if (counter < totalEvaluations) {

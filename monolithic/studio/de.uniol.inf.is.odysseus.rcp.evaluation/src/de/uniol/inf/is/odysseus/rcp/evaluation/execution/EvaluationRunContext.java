@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.rcp.evaluation.execution;
 
 import java.io.File;
 
+import org.apache.commons.io.FilenameUtils;
+
 import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationModel;
 
 public class EvaluationRunContext {
@@ -30,21 +32,30 @@ public class EvaluationRunContext {
 	public void setModel(EvaluationModel model) {
 		this.model = model;
 	}
+	
+	public String getResultsPathIdentified(){
+		return FilenameUtils.concat(this.model.getProcessingResultsPath(), identifier);
+	}
+	
+	public String getPlotsPathIdentified(){
+		return FilenameUtils.concat(this.model.getPlotFilesPath(), identifier);
+	}
+
 
 	public String getLatencyResultsPath() {
-		return this.model.getProcessingResultsPath() + File.separator + identifier + File.separator + "latencies" + File.separator;
+		return  FilenameUtils.concat(getResultsPathIdentified(), "latencies") + File.separator;
 	}
 
 	public String getThroughputResultsPath() {
-		return this.model.getProcessingResultsPath() + File.separator + identifier + File.separator + "throughput" + File.separator;
+		return FilenameUtils.concat(getResultsPathIdentified(), "throughput") + File.separator;
 	}
 	
 	public String getLatencyPlotsPath() {
-		return this.model.getPlotFilesPath() + File.separator + identifier + File.separator + "latencies" + File.separator;
+		return FilenameUtils.concat(getPlotsPathIdentified(), "latencies") + File.separator;
 	}
 
 	public String getThroughputPlotsPath() {
-		return this.model.getPlotFilesPath() + File.separator + identifier + File.separator + "throughput" + File.separator;
+		return FilenameUtils.concat(getPlotsPathIdentified(), "throughput") + File.separator;
 	}
 	
 	

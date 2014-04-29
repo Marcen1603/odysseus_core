@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.evaluation.model;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringReader;
@@ -7,6 +9,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -43,22 +46,19 @@ public class EvaluationModel implements Serializable {
 
 	private boolean withLatency = true;
 	private boolean withThroughput = true;
-	
+
 	private int measureThrougputEach = 100;
-	
+
 	private boolean createThroughputPlots = true;
 	private boolean createLatencyPlots = true;
-	
 
 	private int numberOfRuns = 10;
 	private List<EvaluationVariable> variables = new ArrayList<>();
 
 	private int outputHeight = 300;
 	private int outputWidth = 1000;
-	
-	private String outputType = "PNG";
 
-	
+	private String outputType = "PNG";
 
 	private EvaluationModel() {
 		this.variables.add(new EvaluationVariable("var_1", "a", "b", "c"));
@@ -77,38 +77,57 @@ public class EvaluationModel implements Serializable {
 		return model;
 	}
 
-	private void saveToFile(IFile file) {
+	private void saveToLocalFile(File file) {
 		try {
-			XMLMemento memento = XMLMemento.createWriteRoot("evaluation");
-			memento.putString(PROCESSING_RESULTS_PATH, processingResultsPath);
-			memento.putString(PLOT_FILES_PATH, plotFilesPath);
-			memento.putBoolean(WITH_LATENCY, withLatency);
-			memento.putBoolean(WITH_THROUGHPUT, withThroughput);
-			memento.putBoolean(CREATE_LATENCY_PLOTS, createLatencyPlots);
-			memento.putBoolean(CREATE_THROUGHPUT_PLOTS, createThroughputPlots);
-			memento.putInteger(MEASURE_THROUGHPUT_EACH, measureThrougputEach);
-			memento.putInteger(NUMBER_OF_RUNS, numberOfRuns);
-			memento.putString(QUERY_FILE, queryFile.getProjectRelativePath().toPortableString());
-			memento.putInteger(OUTPUT_HEIGHT, outputHeight);
-			memento.putInteger(OUTPUT_WIDTH, outputWidth);
-			memento.putString(OUTPUT_TYPE, outputType);
+			String fileContents = createInputStreamFile();
+			FileUtils.write(file, fileContents);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-			IMemento varMem = memento.createChild(VARIABLES);
-			for (EvaluationVariable var : this.variables) {
-				IMemento varChild = varMem.createChild(VARIABLE, var.getName());
-				varChild.putBoolean(ACTIVE, var.isActive());
-				for (String value : var.getValues()) {
-					varChild.createChild(VALUE).putTextData(value);
-				}
-			}
+	}
 
-			StringWriter sw = new StringWriter();
-			memento.save(sw);
-			InputStream is = IOUtils.toInputStream(sw.toString());
+	private void saveToIFile(IFile file) {
+		try {
+			String fileContents = createInputStreamFile();
+			InputStream is = IOUtils.toInputStream(fileContents);			
 			file.setContents(is, true, true, new NullProgressMonitor());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private String createInputStreamFile() throws IOException {
+
+		XMLMemento memento = XMLMemento.createWriteRoot("evaluation");
+		memento.putString(PROCESSING_RESULTS_PATH, processingResultsPath);
+		memento.putString(PLOT_FILES_PATH, plotFilesPath);
+		memento.putBoolean(WITH_LATENCY, withLatency);
+		memento.putBoolean(WITH_THROUGHPUT, withThroughput);
+		memento.putBoolean(CREATE_LATENCY_PLOTS, createLatencyPlots);
+		memento.putBoolean(CREATE_THROUGHPUT_PLOTS, createThroughputPlots);
+		memento.putInteger(MEASURE_THROUGHPUT_EACH, measureThrougputEach);
+		memento.putInteger(NUMBER_OF_RUNS, numberOfRuns);
+		memento.putString(QUERY_FILE, queryFile.getProjectRelativePath().toPortableString());
+		memento.putInteger(OUTPUT_HEIGHT, outputHeight);
+		memento.putInteger(OUTPUT_WIDTH, outputWidth);
+		memento.putString(OUTPUT_TYPE, outputType);
+
+		IMemento varMem = memento.createChild(VARIABLES);
+		for (EvaluationVariable var : this.variables) {
+			IMemento varChild = varMem.createChild(VARIABLE, var.getName());
+			varChild.putBoolean(ACTIVE, var.isActive());
+			for (String value : var.getValues()) {
+				varChild.createChild(VALUE).putTextData(value);
+			}
+		}
+
+		StringWriter sw = new StringWriter();
+		memento.save(sw);
+		
+
+		return sw.toString();
+
 	}
 
 	private void loadFromFile(IFile file) {
@@ -124,15 +143,15 @@ public class EvaluationModel implements Serializable {
 				this.withLatency = memento.getBoolean(WITH_LATENCY);
 				this.withThroughput = memento.getBoolean(WITH_THROUGHPUT);
 				this.numberOfRuns = memento.getInteger(NUMBER_OF_RUNS);
-				
+
 				this.measureThrougputEach = checkNullAndSet(memento.getInteger(MEASURE_THROUGHPUT_EACH), this.measureThrougputEach);
 				this.createLatencyPlots = checkNullAndSet(memento.getBoolean(CREATE_LATENCY_PLOTS), this.createLatencyPlots);
 				this.createThroughputPlots = checkNullAndSet(memento.getBoolean(CREATE_THROUGHPUT_PLOTS), this.createThroughputPlots);
-				
+
 				this.outputHeight = checkNullAndSet(memento.getInteger(OUTPUT_HEIGHT), this.outputHeight);
 				this.outputWidth = checkNullAndSet(memento.getInteger(OUTPUT_WIDTH), this.outputWidth);
 				this.outputType = checkNullAndSet(memento.getString(OUTPUT_TYPE), this.outputType);
-				
+
 				String path = memento.getString(QUERY_FILE);
 				this.queryFile = file.getProject().findMember(Path.fromPortableString(path));
 
@@ -153,13 +172,13 @@ public class EvaluationModel implements Serializable {
 			e.printStackTrace();
 		}
 	}
-	
-	private <T> T checkNullAndSet(T value, T defaultValue){
-		if(value==null){
+
+	private <T> T checkNullAndSet(T value, T defaultValue) {
+		if (value == null) {
 			return defaultValue;
 		}
 		return value;
-				
+
 	}
 
 	public String getProcessingResultsPath() {
@@ -227,7 +246,11 @@ public class EvaluationModel implements Serializable {
 	}
 
 	public void save(IFile file) {
-		saveToFile(file);
+		saveToIFile(file);
+	}
+
+	public void save(File file) {
+		saveToLocalFile(file);
 	}
 
 	public int getMeasureThrougputEach() {
@@ -278,5 +301,4 @@ public class EvaluationModel implements Serializable {
 		this.outputType = outputType;
 	}
 
-	
 }
