@@ -10,6 +10,10 @@ Require-Bundle: com.google.guava;bundle-version="14.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.uniol.inf.is.odysseus.costmodel
-Service-Component: OSGI-INF/ICostModelKnowledge.xml,
- OSGI-INF/CostModelConsole.xml
-Import-Package: org.eclipse.osgi.framework.console
+Service-Component: OSGI-INF/ICostModelKnowledge.xml,OSGI-INF/CostModelConsole.xml,
+ OSGI-INF/CostModelPlugIn.xml
+Import-Package: de.uniol.inf.is.odysseus.sweeparea,
+ org.eclipse.osgi.framework.console,
+ org.osgi.framework;version="1.6.0"
+Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.CostModelActivator
+Bundle-ActivationPolicy: lazy

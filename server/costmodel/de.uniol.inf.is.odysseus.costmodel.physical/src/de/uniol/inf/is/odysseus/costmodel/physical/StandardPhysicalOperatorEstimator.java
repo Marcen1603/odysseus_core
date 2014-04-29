@@ -2,11 +2,13 @@ package de.uniol.inf.is.odysseus.costmodel.physical;
 
 import java.util.Map;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
+import de.uniol.inf.is.odysseus.costmodel.EstimatorHelper;
 import de.uniol.inf.is.odysseus.costmodel.IHistogram;
 
 public abstract class StandardPhysicalOperatorEstimator<T extends IPhysicalOperator> implements IPhysicalOperatorEstimator<T> {
@@ -52,7 +54,8 @@ public abstract class StandardPhysicalOperatorEstimator<T extends IPhysicalOpera
 
 	@Override
 	public double getCpu() {
-		return DEFAULT_CPU_COST;
+		Optional<Double> optCpu = EstimatorHelper.getCpuTimeMetadata(getOperator());
+		return optCpu.isPresent() ? optCpu.get() : DEFAULT_CPU_COST;
 	}
 
 	@Override
@@ -62,11 +65,17 @@ public abstract class StandardPhysicalOperatorEstimator<T extends IPhysicalOpera
 
 	@Override
 	public double getSelectivity() {
-		return DEFAULT_SELECTIVITY;
+		Optional<Double> optSelectivity = EstimatorHelper.getSelectivityMetadata(getOperator());
+		return optSelectivity.isPresent() ? optSelectivity.get() : DEFAULT_SELECTIVITY;
 	}
 
 	@Override
 	public double getDatarate() {
+		Optional<Double> optDatarate = EstimatorHelper.getDatarateMetadata(getOperator());
+		if( optDatarate.isPresent() ) {
+			return optDatarate.get();
+		}
+		
 		if( !prevCostMap.isEmpty() ) {
 			double datarate = 0.0;
 			for( IPhysicalOperator prevOperator : prevCostMap.keySet() ) {
