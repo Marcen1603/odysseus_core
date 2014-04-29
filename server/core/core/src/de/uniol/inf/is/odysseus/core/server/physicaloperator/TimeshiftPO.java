@@ -1,9 +1,8 @@
-package de.uniol.inf.is.odysseus.mining.physicaloperator;
+package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 public class TimeshiftPO<M extends ITimeInterval> extends AbstractPipe<AbstractStreamObject<M>, AbstractStreamObject<M>> {
 

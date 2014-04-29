@@ -1,10 +1,10 @@
-package de.uniol.inf.is.odysseus.mining.transform;
+package de.uniol.inf.is.odysseus.transform.rules;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeshiftAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.TimeshiftPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.mining.logicaloperator.TimeshiftAO;
-import de.uniol.inf.is.odysseus.mining.physicaloperator.TimeshiftPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
