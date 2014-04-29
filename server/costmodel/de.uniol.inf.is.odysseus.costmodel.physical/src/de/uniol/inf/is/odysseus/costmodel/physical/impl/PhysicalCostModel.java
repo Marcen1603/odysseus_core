@@ -7,6 +7,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -15,7 +16,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
+import de.uniol.inf.is.odysseus.costmodel.ICostModelKnowledge;
+import de.uniol.inf.is.odysseus.costmodel.IHistogram;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalOperatorEstimator;
@@ -25,7 +29,21 @@ import de.uniol.inf.is.odysseus.costmodel.physical.util.CostModelUtil;
 public class PhysicalCostModel implements IPhysicalCostModel {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PhysicalCostModel.class);
+	
+	private static ICostModelKnowledge knowledge;
 
+	// called by OSGi-DS
+	public static void bindCostModelKnowledge(ICostModelKnowledge serv) {
+		knowledge = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindCostModelKnowledge(ICostModelKnowledge serv) {
+		if (knowledge == serv) {
+			knowledge = null;
+		}
+	}
+	
 	@Override
 	public IPhysicalCost estimateCost(Collection<IPhysicalOperator> physicalOperators) {
 		Preconditions.checkNotNull(physicalOperators, "Collection of physical operators must not be null!");
@@ -36,12 +54,13 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 
 		List<IPhysicalOperator> operatorsToVisit = Lists.newLinkedList(sources);
 		Map<IPhysicalOperator, DetailCost> resultMap = Maps.newHashMap();
+		Map<SDFAttribute, IHistogram> histogramMap = createHistogramMap();
 		
 		LOG.debug("Beginning cost estimation of physical operators");
 		while (!operatorsToVisit.isEmpty()) {
 			IPhysicalOperator visitingOperator = operatorsToVisit.remove(0);
 			LOG.debug("Visiting operator {}", visitingOperator);
-			tryEstimateOperator(resultMap, visitingOperator);
+			tryEstimateOperator(resultMap, visitingOperator, histogramMap);
 
 			if (visitingOperator instanceof ISource) {
 				ISource<?> opAsSource = (ISource<?>) visitingOperator;
@@ -66,18 +85,18 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 		return totalCost;
 	}
 
-	private static void tryEstimateOperator(Map<IPhysicalOperator, DetailCost> resultMap, IPhysicalOperator visitingOperator) {
+	private static void tryEstimateOperator(Map<IPhysicalOperator, DetailCost> resultMap, IPhysicalOperator visitingOperator, Map<SDFAttribute, IHistogram> histogramMap) {
 		@SuppressWarnings("unchecked")
 		IPhysicalOperatorEstimator<IPhysicalOperator> estimator = (IPhysicalOperatorEstimator<IPhysicalOperator>) OperatorEstimatorRegistry.getPhysicalOperatorEstimator(visitingOperator.getClass());
 		LOG.debug("Using estimator {}", estimator.getClass().getName());
 		Map<IPhysicalOperator, DetailCost> prevCostMap = createPrevCostMap(visitingOperator, resultMap);
 
 		try {
-			estimator.estimatePhysical(visitingOperator, prevCostMap);
+			estimator.estimatePhysical(visitingOperator, prevCostMap, histogramMap);
 		} catch (Throwable t) {
 			LOG.error("Exception in physical operator estimator", t);
 			estimator = OperatorEstimatorRegistry.getStandardPhysicalOperatorEstimator();
-			estimator.estimatePhysical(visitingOperator, prevCostMap);
+			estimator.estimatePhysical(visitingOperator, prevCostMap, histogramMap);
 		}
 
 		double memCost = estimator.getMemory();
@@ -121,6 +140,19 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 		if (LOG.isDebugEnabled()) {
 			logEstimationResults(visitingOperator, detailCost);
 		}
+	}
+
+	private static Map<SDFAttribute, IHistogram> createHistogramMap() {
+		Map<SDFAttribute, IHistogram> histogramMap = Maps.newHashMap();
+		
+		for( SDFAttribute attribute : knowledge.getHistogramAttributes() ) {
+			Optional<IHistogram> optHistogram = knowledge.getHistogram(attribute);
+			if( optHistogram.isPresent() ) {
+				histogramMap.put(attribute, optHistogram.get());
+			}
+		}
+		
+		return histogramMap;
 	}
 
 	private static IPhysicalCost determineTotalCost(Collection<IPhysicalOperator> physicalOperators, Map<IPhysicalOperator, DetailCost> resultMap) {

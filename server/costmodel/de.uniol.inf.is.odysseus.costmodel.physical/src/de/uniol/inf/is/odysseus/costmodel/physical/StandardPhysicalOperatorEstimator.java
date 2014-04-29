@@ -2,8 +2,12 @@ package de.uniol.inf.is.odysseus.costmodel.physical;
 
 import java.util.Map;
 
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
+import de.uniol.inf.is.odysseus.costmodel.IHistogram;
 
 public abstract class StandardPhysicalOperatorEstimator<T extends IPhysicalOperator> implements IPhysicalOperatorEstimator<T> {
 
@@ -16,11 +20,17 @@ public abstract class StandardPhysicalOperatorEstimator<T extends IPhysicalOpera
 	
 	private Map<IPhysicalOperator, DetailCost> prevCostMap;
 	private T operator;
+	private Map<SDFAttribute, IHistogram> histogramMap;
 	
 	@Override
-	public void estimatePhysical(T operator, Map<IPhysicalOperator, DetailCost> previousCostMap) {
+	public void estimatePhysical(T operator, Map<IPhysicalOperator, DetailCost> previousCostMap, Map<SDFAttribute, IHistogram> histogramMap) {
+		Preconditions.checkNotNull(operator, "operator must not be null!");
+		Preconditions.checkNotNull(previousCostMap, "Map of previous costs must not be null!");
+		Preconditions.checkNotNull(histogramMap, "Map of histograms must not be null!");
+		
 		this.prevCostMap = previousCostMap;
 		this.operator = operator;
+		this.histogramMap = histogramMap;
 	}
 	
 	protected final T getOperator() {
@@ -29,6 +39,10 @@ public abstract class StandardPhysicalOperatorEstimator<T extends IPhysicalOpera
 	
 	protected final Map<IPhysicalOperator, DetailCost> getPrevCostMap() {
 		return prevCostMap;
+	}
+	
+	protected Map<SDFAttribute, IHistogram> getHistogramMap() {
+		return histogramMap;
 	}
 	
 	@Override
