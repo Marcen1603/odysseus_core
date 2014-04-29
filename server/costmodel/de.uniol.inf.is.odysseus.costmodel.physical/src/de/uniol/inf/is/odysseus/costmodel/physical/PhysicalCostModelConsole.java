@@ -74,24 +74,28 @@ public class PhysicalCostModelConsole implements CommandProvider {
 			
 			System.out.println("Estimated logical costs:");
 			for( IPhysicalOperator operator : physicalCost.getOperators() ) {
-				System.out.println(operator.getClass().getSimpleName() + " [" + operator.getName() + "]: ");
+				System.out.println(operator.getClass().getSimpleName() + " [" + operator.getName() + "]:");
 				DetailCost detailCost = physicalCost.getDetailCost(operator);
 				
-				System.out.println("\tCPU = " + detailCost.getCpuCost());
-				System.out.println("\tMEM = " + detailCost.getMemCost());
-				System.out.println("\tNET = " + detailCost.getNetCost());
-				System.out.println("\tWND = " + detailCost.getWindowSize());
-				System.out.println("\tSEL = " + detailCost.getSelectivity());
-				System.out.println("\tRAT = " + detailCost.getDatarate());
+				System.out.print("\tCPU = " + format(detailCost.getCpuCost()));
+				System.out.print(",\tMEM = " + format(detailCost.getMemCost()));
+				System.out.print(",\tNET = " + format(detailCost.getNetCost()));
+				System.out.print(",\tSEL = " + format(detailCost.getSelectivity()));
+				System.out.print(",\tRAT = " + format(detailCost.getDatarate()));
+				System.out.print(",\tWND = " + format(detailCost.getWindowSize()));
+				System.out.println();
 			}
 			
-			System.out.println();
 			System.out.println("Summary: ");
-			System.out.println("\tCPU = " + physicalCost.getCpuSum());
-			System.out.println("\tMEM = " + physicalCost.getMemorySum());
-			System.out.println("\tNET = " + physicalCost.getNetworkSum());
+			System.out.print("\tCPU = " + format(physicalCost.getCpuSum()));
+			System.out.print(",\tMEM = " + format(physicalCost.getMemorySum()));
+			System.out.print(",\tNET = " + format(physicalCost.getNetworkSum()));
 		} else {
 			System.out.println("Physical query with id " + queryID + " not found");
 		}
+	}
+	
+	private static String format(Object text ) {
+		return String.format("%-6.4f", text);
 	}
 }
