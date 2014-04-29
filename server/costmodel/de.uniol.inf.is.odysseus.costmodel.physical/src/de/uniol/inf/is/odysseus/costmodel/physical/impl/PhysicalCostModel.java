@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
+import de.uniol.inf.is.odysseus.costmodel.EstimatorHelper;
 import de.uniol.inf.is.odysseus.costmodel.ICostModelKnowledge;
 import de.uniol.inf.is.odysseus.costmodel.IHistogram;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
@@ -105,7 +106,8 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 			memCost = StandardPhysicalOperatorEstimator.DEFAULT_MEMORY_COST_BYTES;
 		}
 
-		double cpuCost = estimator.getCpu();
+		Optional<Double> optCpu = EstimatorHelper.getCpuTimeMetadata(visitingOperator);
+		double cpuCost = optCpu.isPresent() ? optCpu.get() : estimator.getCpu();
 		if (cpuCost < 0) {
 			LOG.error("Estimated cpucost for operator {} is negative. Using default value.", visitingOperator);
 			cpuCost = StandardPhysicalOperatorEstimator.DEFAULT_CPU_COST;
@@ -117,13 +119,15 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 			netCost = StandardPhysicalOperatorEstimator.DEFAULT_NETWORK_COST_BYTES;
 		}
 
-		double selectivity = estimator.getSelectivity();
+		Optional<Double> optSelectivity = EstimatorHelper.getSelectivityMetadata(visitingOperator);
+		double selectivity = optSelectivity.isPresent() ? optSelectivity.get() : estimator.getSelectivity();
 		if (selectivity < 0) {
 			LOG.error("Estimated selectivity for operator {} is negative. Using default value.", visitingOperator);
 			selectivity = StandardPhysicalOperatorEstimator.DEFAULT_SELECTIVITY;
 		}
 
-		double datarate = estimator.getDatarate();
+		Optional<Double> optDatarate = EstimatorHelper.getDatarateMetadata(visitingOperator);
+		double datarate = optDatarate.isPresent() ? optDatarate.get() : estimator.getDatarate();
 		if (datarate < 0) {
 			LOG.error("Estimated datarate for operator {} is negative. Using default value.", visitingOperator);
 			datarate = StandardPhysicalOperatorEstimator.DEFAULT_DATARATE;
