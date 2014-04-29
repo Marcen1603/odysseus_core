@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.core.physicaloperator;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.event.IEventHandler;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringDataProvider;
@@ -29,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @author Marco Grawunder, Jonas Jacobi
  */
 public interface IPhysicalOperator extends IOwnedOperator,
-		IMonitoringDataProvider, IEventHandler, IClone {
+		IMonitoringDataProvider, IEventHandler {
 
 	boolean isSource();
 
@@ -73,9 +72,6 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	public Map<Integer, SDFSchema> getOutputSchemas();
 	public void setOutputSchema(SDFSchema outputSchema);
 	public void setOutputSchema(SDFSchema outputSchema, int port);
-	
-	@Override
-	public IPhysicalOperator clone();
 	
 	public boolean isOpen();
 
