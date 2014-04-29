@@ -7,13 +7,17 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
+import de.uniol.inf.is.odysseus.costmodel.ICostModelKnowledge;
+import de.uniol.inf.is.odysseus.costmodel.IHistogram;
 import de.uniol.inf.is.odysseus.costmodel.logical.ILogicalCost;
 import de.uniol.inf.is.odysseus.costmodel.logical.ILogicalCostModel;
 import de.uniol.inf.is.odysseus.costmodel.logical.ILogicalOperatorEstimator;
@@ -23,7 +27,21 @@ import de.uniol.inf.is.odysseus.costmodel.logical.util.CostModelUtil;
 public class LogicalCostModel implements ILogicalCostModel {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LogicalCostModel.class);
+	
+	private static ICostModelKnowledge knowledge;
 
+	// called by OSGi-DS
+	public static void bindCostModelKnowledge(ICostModelKnowledge serv) {
+		knowledge = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindCostModelKnowledge(ICostModelKnowledge serv) {
+		if (knowledge == serv) {
+			knowledge = null;
+		}
+	}
+	
 	@Override
 	public ILogicalCost estimateCost(Collection<ILogicalOperator> logicalOperators) {
 		Preconditions.checkNotNull(logicalOperators, "list of logical operators for cost estimation must not be null!");
@@ -34,13 +52,14 @@ public class LogicalCostModel implements ILogicalCostModel {
 
 		List<ILogicalOperator> operatorsToVisit = Lists.newArrayList(sources);
 		Map<ILogicalOperator, DetailCost> resultMap = Maps.newHashMap();
+		Map<SDFAttribute, IHistogram> histogramMap = createHistogramMap();
 
 		LOG.debug("Beginning cost estimation of logical operators");
 		while (!operatorsToVisit.isEmpty()) {
 			ILogicalOperator operator = operatorsToVisit.remove(0);
 			LOG.debug("Visiting operator {}", operator);
 
-			tryEstimateOperator(resultMap, operator);
+			tryEstimateOperator(resultMap, operator, histogramMap);
 
 			for (LogicalSubscription logSub : operator.getSubscriptions()) {
 				ILogicalOperator target = logSub.getTarget();
@@ -61,6 +80,20 @@ public class LogicalCostModel implements ILogicalCostModel {
 		}
 		return totalCost;
 	}
+	
+	private static Map<SDFAttribute, IHistogram> createHistogramMap() {
+		Map<SDFAttribute, IHistogram> histogramMap = Maps.newHashMap();
+		
+		for( SDFAttribute attribute : knowledge.getHistogramAttributes() ) {
+			Optional<IHistogram> optHistogram = knowledge.getHistogram(attribute);
+			if( optHistogram.isPresent() ) {
+				histogramMap.put(attribute, optHistogram.get());
+			}
+		}
+		
+		return histogramMap;
+	}
+
 
 	private static Collection<ILogicalOperator> collectAllOperators(Collection<ILogicalOperator> logicalOperators) {
 		Collection<ILogicalOperator> allOperators = Lists.newArrayList();
@@ -79,18 +112,18 @@ public class LogicalCostModel implements ILogicalCostModel {
 		return allOperators;
 	}
 
-	private static void tryEstimateOperator(Map<ILogicalOperator, DetailCost> resultMap, ILogicalOperator visitingOperator) {
+	private static void tryEstimateOperator(Map<ILogicalOperator, DetailCost> resultMap, ILogicalOperator visitingOperator, Map<SDFAttribute, IHistogram> histogramMap) {
 		@SuppressWarnings("unchecked")
 		ILogicalOperatorEstimator<ILogicalOperator> estimator = (ILogicalOperatorEstimator<ILogicalOperator>) OperatorEstimatorRegistry.getLogicalOperatorEstimator(visitingOperator.getClass());
 		LOG.debug("Using estimator {}", estimator.getClass().getName());
 		Map<ILogicalOperator, DetailCost> prevCostMap = createPrevCostMap(visitingOperator, resultMap);
 
 		try {
-			estimator.estimateLogical(visitingOperator, prevCostMap);
+			estimator.estimateLogical(visitingOperator, prevCostMap, histogramMap);
 		} catch (Throwable t) {
 			LOG.error("Exception in physical operator estimator", t);
 			estimator = OperatorEstimatorRegistry.getStandardLogicalOperatorEstimator();
-			estimator.estimateLogical(visitingOperator, prevCostMap);
+			estimator.estimateLogical(visitingOperator, prevCostMap, histogramMap);
 		}
 
 		double memCost = estimator.getMemory();
