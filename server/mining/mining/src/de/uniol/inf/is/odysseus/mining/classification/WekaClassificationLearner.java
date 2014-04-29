@@ -126,7 +126,11 @@ public class WekaClassificationLearner<M extends ITimeInterval> implements IClas
 		SDFSchema recognizedSchema = inputschema.clone();
 		recognizedSchema = SDFSchema.remove(recognizedSchema, classAttribute);
 		this.recognizedSchema = recognizedSchema;
-
+	}
+	
+	@Override
+	public String getName() {
+		return "weka";
 	}
 
 }

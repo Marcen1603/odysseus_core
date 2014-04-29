@@ -17,8 +17,8 @@ package de.uniol.inf.is.odysseus.mining.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.mining.MiningAlgorithmRegistry;
 import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
-import de.uniol.inf.is.odysseus.mining.classification.WekaClassificationLearner;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.ClassificationLearnAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.ClassificationLearnPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -39,12 +39,8 @@ public class TClassificationLearnAORule extends AbstractTransformationRule<Class
 
 	@Override
 	public void execute(ClassificationLearnAO operator, TransformationConfiguration config) throws RuleException {
-		IClassificationLearner<ITimeInterval> learner = null;
-		if (operator.getLearner().equalsIgnoreCase("weka")) {
-			learner = new WekaClassificationLearner<ITimeInterval>();
-			learner.setOptions(operator.getOptions());
-		}
-		// extend with others...
+		IClassificationLearner<ITimeInterval> learner = MiningAlgorithmRegistry.getInstance().getClassificationLearner(operator.getLearner());		
+		learner.setOptions(operator.getOptions());		
 		learner.init(operator.getInputSchema(0), operator.getClassAttribute(), operator.getNominals());
 		ClassificationLearnPO<ITimeInterval> po = new ClassificationLearnPO<>(learner);
 		defaultExecute(operator, po, config, true, false);

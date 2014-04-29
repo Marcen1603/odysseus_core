@@ -101,6 +101,11 @@ public class KMeansClusterer<M extends ILatencyTimeInterval> implements ICluster
 	}
 
 	@Override
+	public String getName() {
+		return "kmeans-native";
+	}
+	
+	@Override
 	public long getMaxLatency() {
 		return maxLatency;		
 	}

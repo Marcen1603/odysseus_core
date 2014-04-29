@@ -32,13 +32,11 @@ package de.uniol.inf.is.odysseus.mining.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.metadata.ILatencyTimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.mining.MiningAlgorithmRegistry;
 import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
-import de.uniol.inf.is.odysseus.mining.clustering.WekaClusterer;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.ClusteringAO;
-import de.uniol.inf.is.odysseus.mining.physicaloperator.ClusteringKMeansPO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.ClusteringPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -52,31 +50,11 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 public class TClusteringAORule extends AbstractTransformationRule<ClusteringAO> {
 
 	@Override
-	public int getPriority() {
-		return 0;
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
 	public void execute(ClusteringAO operator, TransformationConfiguration config) throws RuleException {
-		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po;
-		String algorithm = operator.getClustererName().toUpperCase();
-
-		switch (algorithm) {
-		case "KMEANS":
-			int k = Integer.parseInt(operator.getOptions().get("k"));
-			po = new ClusteringKMeansPO<>(k, operator.getInputSchema(0), operator.getAttributePositions());
-			break;
-		case "WEKA":			
-			IClusterer<ILatencyTimeInterval> clusterer = new WekaClusterer();
-			clusterer.setOptions(operator.getOptions());
-			clusterer.init(operator.getInputSchema(0));
-			po = new ClusteringPO(clusterer);
-			break;
-		default:
-			throw new IllegalArgumentException("Unknwon clustering algorithm");			
-		}
-
+		IClusterer<ITimeInterval> clusterer = MiningAlgorithmRegistry.getInstance().getClusterer(operator.getClustererName());
+		clusterer.setOptions(operator.getOptions());
+		clusterer.init(operator.getInputSchema(0));
+		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po = new ClusteringPO<ITimeInterval>(clusterer);
 		defaultExecute(operator, po, config, true, true);
 	}
 

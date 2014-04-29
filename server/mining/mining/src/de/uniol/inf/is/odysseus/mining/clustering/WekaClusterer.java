@@ -110,6 +110,11 @@ public class WekaClusterer<M extends ILatencyTimeInterval> implements IClusterer
 			e.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public String getName() {
+		return "weka";
 	}	
 
 }

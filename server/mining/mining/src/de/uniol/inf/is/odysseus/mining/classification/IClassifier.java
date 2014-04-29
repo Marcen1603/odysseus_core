@@ -7,6 +7,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public interface IClassifier<M extends ITimeInterval>{
 	
+	
+	/**
+	 * A system wide unique name of the classifier
+	 * @return the unique name
+	 */
+	public String getName();
+	
 	/**
 	 * Can be used to initialize the classifier
 	 * @param schema The schema of the tuple that should be classified

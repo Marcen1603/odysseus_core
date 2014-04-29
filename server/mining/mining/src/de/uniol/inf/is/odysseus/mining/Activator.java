@@ -18,8 +18,13 @@ package de.uniol.inf.is.odysseus.mining;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
+import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
+import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
+import de.uniol.inf.is.odysseus.mining.frequentitem.IFrequentPatternMiner;
 import de.uniol.inf.is.odysseus.mining.predicate.RulePredicateBuilder;
 import de.uniol.inf.is.odysseus.relational.base.predicate.ForPredicate.Type;
 
@@ -54,6 +59,40 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
 	}
+	
+	
+	public void bindClassificationLearner(IClassificationLearner<ITimeInterval> learner){
+		MiningAlgorithmRegistry.getInstance().addClassificationLearner(learner);
+	}
+	
+	public void unbindClassificationLearner(IClassificationLearner<ITimeInterval> learner){
+		MiningAlgorithmRegistry.getInstance().removeClassificationLearner(learner);
+	}
+	
+	public void bindClassifier(IClassifier<ITimeInterval> learner){
+		MiningAlgorithmRegistry.getInstance().addClassifier(learner);
+	}
+	
+	public void unbindClassifier(IClassifier<ITimeInterval> learner){
+		MiningAlgorithmRegistry.getInstance().removeClassifier(learner);
+	}
+	
+	public void bindClusterer(IClusterer<ITimeInterval> learner){
+		MiningAlgorithmRegistry.getInstance().addClusterer(learner);
+	}
+	
+	public void unbindClusterer(IClusterer<ITimeInterval> learner){
+		MiningAlgorithmRegistry.getInstance().removeClusterer(learner);
+	}
+	
+	public void bindFrequentPatternMiner(IFrequentPatternMiner<ITimeInterval> learner){
+		MiningAlgorithmRegistry.getInstance().addFrequentPatternMiner(learner);
+	}
+	
+	public void unbindFrequentPatternMiner(IFrequentPatternMiner<ITimeInterval> learner){
+		MiningAlgorithmRegistry.getInstance().removeFrequentPatternMiner(learner);
+	}	
+	
 	
 	public void bindOperatorBuilderFactory(IOperatorBuilderFactory obf){
 		builderfactory = obf;

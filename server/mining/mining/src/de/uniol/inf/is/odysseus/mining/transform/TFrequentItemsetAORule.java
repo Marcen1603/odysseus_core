@@ -35,8 +35,8 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.mining.MiningAlgorithmRegistry;
 import de.uniol.inf.is.odysseus.mining.frequentitem.IFrequentPatternMiner;
-import de.uniol.inf.is.odysseus.mining.frequentitem.WekaFrequentPatternMiner;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.FrequentItemsetAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.FrequentItemsetAprioriPO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.FrequentItemsetFPGrowthPO;
@@ -63,14 +63,7 @@ public class TFrequentItemsetAORule extends AbstractTransformationRule<FrequentI
 		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po = null;
 		CombinedMergeFunction<ITimeInterval> metaDataMerge = new CombinedMergeFunction<ITimeInterval>();
 		metaDataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
-		if (operator.getLearner().equalsIgnoreCase("weka")) {
-			IFrequentPatternMiner<ITimeInterval> miner = new WekaFrequentPatternMiner<>();
-			miner.setOptions(operator.getOptions());
-			miner.init(operator.getInputSchema(0), operator.getMinSupport());
-			FrequentPatternMiningPO<ITimeInterval> fpm = new FrequentPatternMiningPO<>(miner, operator.getMaxTransactions());
-			fpm.setMetadataMerge(metaDataMerge);
-			po = fpm;
-		}
+
 		if (operator.getLearner().equalsIgnoreCase("FPGROWTH")) {
 			FrequentItemsetFPGrowthPO<ITimeInterval> fpg = new FrequentItemsetFPGrowthPO<ITimeInterval>(operator.getMinSupport(), operator.getMaxTransactions());
 			fpg.setMetadataMerge(metaDataMerge);
@@ -79,15 +72,21 @@ public class TFrequentItemsetAORule extends AbstractTransformationRule<FrequentI
 		if (operator.getLearner().equalsIgnoreCase("APRIORI")) {
 			po = new FrequentItemsetAprioriPO<ITimeInterval>(operator.getMinSupport());
 		}
+
+		if (po == null) {
+			IFrequentPatternMiner<ITimeInterval> miner = MiningAlgorithmRegistry.getInstance().getFrequentPatternMiner(operator.getLearner());
+			miner.setOptions(operator.getOptions());
+			miner.init(operator.getInputSchema(0), operator.getMinSupport());
+			FrequentPatternMiningPO<ITimeInterval> fpm = new FrequentPatternMiningPO<>(miner, operator.getMaxTransactions());
+			fpm.setMetadataMerge(metaDataMerge);
+			po = fpm;
+		}
 		if (po != null) {
 			defaultExecute(operator, po, config, false, false);
 			po.setOutputSchema(operator.getOutputSchema(0), 0);
 			po.setOutputSchema(operator.getOutputSchema(1), 1);
-//			replace(operator, po, config);
 			retract(operator);
 			insert(po);
-		} else {
-			throw new IllegalArgumentException("Algorithm for FPM unkown");
 		}
 	}
 

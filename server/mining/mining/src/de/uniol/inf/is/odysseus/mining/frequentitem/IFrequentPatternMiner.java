@@ -29,4 +29,10 @@ public interface IFrequentPatternMiner<M extends ITimeInterval> {
 		 * @param options
 		 */
 		public void setOptions(Map<String, String> options);
+		
+		/**
+		 * A system wide unique name of the classifier
+		 * @return the unique name
+		 */
+		public String getName();
 }

@@ -127,5 +127,10 @@ public class WekaFrequentPatternMiner<M extends ITimeInterval> implements IFrequ
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	public String getName() {
+		return "weka";
+	}
 
 }

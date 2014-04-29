@@ -34,15 +34,15 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.metadata.ILatencyTimeInterval;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 15.05.2012
  */
-public interface IClusterer<M extends ILatencyTimeInterval> {
+public interface IClusterer<M extends ITimeInterval> {
 
 	/**
 	 * Initializes the clusterer 
@@ -66,5 +66,11 @@ public interface IClusterer<M extends ILatencyTimeInterval> {
 	 * Gets the maximal latency, found during processing the list of tuples
 	 * @return the maximum latency or Long.MIN_VALUE if there is no one
 	 */
-	public long getMaxLatency();	
+	public long getMaxLatency();
+	
+	/**
+	 * A system wide unique name of the classifier
+	 * @return the unique name
+	 */
+	public String getName();
 }

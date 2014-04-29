@@ -55,5 +55,10 @@ public class WekaClassifier<M extends ITimeInterval> implements IClassifier<M> {
 	public String toString() {	
 		return "WekaClassifier: "+classifier.toString();
 	}
+	
+	@Override
+	public String getName() {
+		return "weka";
+	}
 
 }
