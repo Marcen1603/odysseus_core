@@ -35,19 +35,13 @@ public class MedianProcessingTime extends AbstractMonitoringData<Double> impleme
 	private long runSum = 0;
 	
 	private List<Long> runTimes = new LinkedList<Long>();
-	private long initValue;
 	private IPhysicalOperator subscribedTarget;
 
-	public MedianProcessingTime(IPhysicalOperator target, long initValue) {
+	public MedianProcessingTime(IPhysicalOperator target) {
 		super(target, MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name);
 		subscribeToTarget(target);
-		initValues(initValue);
 	}
 
-	public MedianProcessingTime(IPhysicalOperator target) {
-		this(target, 5000000);
-	}
-	
 	public MedianProcessingTime(MedianProcessingTime avgProcessingTime) {
 		super(avgProcessingTime);
 		subscribeToTarget((IPhysicalOperator)avgProcessingTime.getTarget());
@@ -55,7 +49,6 @@ public class MedianProcessingTime extends AbstractMonitoringData<Double> impleme
 		this.endTimestampNano = avgProcessingTime.endTimestampNano;
 		this.runSum = avgProcessingTime.runSum;
 		this.runTimes = new LinkedList<Long>(avgProcessingTime.runTimes);
-		this.initValue = avgProcessingTime.initValue;
 		this.counterCheck = avgProcessingTime.counterCheck;
 	}
 
@@ -116,22 +109,10 @@ public class MedianProcessingTime extends AbstractMonitoringData<Double> impleme
 		startTimestampNano = -1;
 		endTimestampNano = -1;
 		counterCheck = 0;
-		initValues(this.initValue);
 	}
 
 	@Override
 	public MedianProcessingTime clone() {
 		return new MedianProcessingTime(this);
 	}
-
-	private void initValues(long initValue) {
-		runTimes.clear();
-		for( int i = 0; i < MAX_DATA; i++ ) {
-			runTimes.add(initValue);
-		}
-		runSum = MAX_DATA * initValue;
-		
-		this.initValue = initValue;		
-	}
-
 }
