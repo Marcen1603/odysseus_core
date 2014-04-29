@@ -3,4 +3,7 @@
    <implementation class="de.uniol.inf.is.odysseus.costmodel.physical.PhysicalCostModelConsole"/>
    <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
    <reference bind="bindPhysicalCostModel" cardinality="1..1" interface="de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel" name="IPhysicalCostModel" policy="static" unbind="unbindPhysicalCostModel"/>
+   <service>
+      <provide interface="org.eclipse.osgi.framework.console.CommandProvider"/>
+   </service>
 </scr:component>
