@@ -72,29 +72,33 @@ public class LogicalCostModelConsole implements CommandProvider {
 		}
 		
 		IPhysicalQuery physicalQuery = serverExecutor.getExecutionPlan().getQueryById(queryID);
-		ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
-		
-		Collection<ILogicalOperator> logicalOperators = getAllOperators(logicalQuery);
-		ILogicalCost logicalCost = logicalCostModel.estimateCost(logicalOperators);
-		
-		System.out.println("Estimated logical costs:");
-		for( ILogicalOperator operator : logicalCost.getOperators() ) {
-			System.out.println(operator.getClass().getSimpleName() + " [" + operator.getName() + "]: ");
-			DetailCost detailCost = logicalCost.getDetailCost(operator);
+		if( physicalQuery != null ) {
+			ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
 			
-			System.out.println("\tCPU = " + detailCost.getCpuCost());
-			System.out.println("\tMEM = " + detailCost.getMemCost());
-			System.out.println("\tNET = " + detailCost.getNetCost());
-			System.out.println("\tWND = " + detailCost.getWindowSize());
-			System.out.println("\tSEL = " + detailCost.getSelectivity());
-			System.out.println("\tRAT = " + detailCost.getDatarate());
+			Collection<ILogicalOperator> logicalOperators = getAllOperators(logicalQuery);
+			ILogicalCost logicalCost = logicalCostModel.estimateCost(logicalOperators);
+			
+			System.out.println("Estimated logical costs:");
+			for( ILogicalOperator operator : logicalCost.getOperators() ) {
+				System.out.println(operator.getClass().getSimpleName() + " [" + operator.getName() + "]: ");
+				DetailCost detailCost = logicalCost.getDetailCost(operator);
+				
+				System.out.println("\tCPU = " + detailCost.getCpuCost());
+				System.out.println("\tMEM = " + detailCost.getMemCost());
+				System.out.println("\tNET = " + detailCost.getNetCost());
+				System.out.println("\tWND = " + detailCost.getWindowSize());
+				System.out.println("\tSEL = " + detailCost.getSelectivity());
+				System.out.println("\tRAT = " + detailCost.getDatarate());
+			}
+			
+			System.out.println();
+			System.out.println("Summary: ");
+			System.out.println("\tCPU = " + logicalCost.getCpuSum());
+			System.out.println("\tMEM = " + logicalCost.getMemorySum());
+			System.out.println("\tNET = " + logicalCost.getNetworkSum());
+		} else {
+			System.out.println("Logical query with id = " + queryID + " not found");
 		}
-		
-		System.out.println();
-		System.out.println("Summary: ");
-		System.out.println("\tCPU = " + logicalCost.getCpuSum());
-		System.out.println("\tMEM = " + logicalCost.getMemorySum());
-		System.out.println("\tNET = " + logicalCost.getNetworkSum());
 	}
 
 	private static Collection<ILogicalOperator> getAllOperators(ILogicalQuery plan) {
