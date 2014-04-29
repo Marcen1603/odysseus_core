@@ -15,3 +15,4 @@ Export-Package: de.uniol.inf.is.odysseus.costmodel.physical
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.osgi.framework.console;version="1.1.0",
  org.osgi.framework
+Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.physical.PhysicalCostModelPlugIn
