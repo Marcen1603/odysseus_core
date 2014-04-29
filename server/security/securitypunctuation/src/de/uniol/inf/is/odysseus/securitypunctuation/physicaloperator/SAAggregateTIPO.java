@@ -44,10 +44,6 @@ public class SAAggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>
 	private StandardSecurityEvaluator<R> evaluator = new StandardSecurityEvaluator<R>(
 			(AbstractPipe<R, R>) this);
 
-	public SAAggregateTIPO(StreamGroupingWithAggregationPO<Q, R, W> agg) {
-		super(agg);
-	}
-
 	public SAAggregateTIPO(SDFSchema inputSchema, SDFSchema outputSchemaIntern,
 			List<SDFAttribute> groupingAttributes,
 			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations, boolean fastGrouping) {

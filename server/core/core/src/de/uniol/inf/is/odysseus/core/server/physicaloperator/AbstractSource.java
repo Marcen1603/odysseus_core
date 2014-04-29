@@ -863,9 +863,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	abstract public AbstractSource<T> clone();
-
-	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo.isSource() || ipo instanceof IPipe))
 			return false;
@@ -908,4 +905,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public boolean hasInput() {
 		return false;
 	}
+	
+//	@SuppressWarnings("rawtypes")
+//	protected final AbstractSource clone(){
+//		throw new IllegalArgumentException("Clone not supported");
+//	}
 }

@@ -53,15 +53,6 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	private boolean drainAtDone = true;
 	private boolean drainAtClose = false;
 
-	// public StreamGroupingWithAggregationPO(SDFSchema inputSchema,
-	// SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
-	// Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
-	// IGroupProcessor<R, W> grProcessor) {
-	// super(inputSchema, outputSchema, groupingAttributes, aggregations);
-	// setGroupProcessor(grProcessor);
-	// transferArea = new TITransferArea<W, W>();
-	// }
-
 	public StreamGroupingWithAggregationPO(SDFSchema inputSchema,
 			SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
 			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
@@ -69,13 +60,6 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		super(inputSchema, outputSchema, groupingAttributes, aggregations,
 				fastGrouping);
 		transferArea = new TITransferArea<W, W>();
-	}
-
-	public StreamGroupingWithAggregationPO(
-			StreamGroupingWithAggregationPO<Q, R, W> agg) {
-		super(agg);
-		transferArea = agg.transferArea.clone();
-		groups.putAll(agg.groups);
 	}
 
 	@Override
@@ -288,11 +272,6 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			transferArea.transfer(out);
 		}
 
-	}
-
-	@Override
-	public StreamGroupingWithAggregationPO<Q, R, W> clone() {
-		return new StreamGroupingWithAggregationPO<Q, R, W>(this);
 	}
 
 	/**

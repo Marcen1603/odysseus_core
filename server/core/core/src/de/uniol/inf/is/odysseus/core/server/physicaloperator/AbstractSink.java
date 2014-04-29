@@ -713,9 +713,6 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	}
 
 	@Override
-	abstract public AbstractSink<R> clone();
-
-	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo.isSink() || ipo.isPipe()))
 			return false;

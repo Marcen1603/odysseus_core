@@ -81,11 +81,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		}
 
 		@Override
-		public AbstractSink<R> clone() {
-			throw new RuntimeException("Clone Not Supported");
-		}
-
-		@Override
 		public void close(List<PhysicalSubscription<ISink<?>>> callPath,
 				List<IOperatorOwner> forOwners) {
 			logger.trace("Closing "+getName()+" for "+forOwners);
@@ -406,9 +401,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	// ------------------------------------------------------------------------
 	// Other methods
 	// ------------------------------------------------------------------------
-
-	@Override
-	abstract public AbstractPipe<R, W> clone();
 
 	@Override
 	public String toString() {

@@ -25,7 +25,7 @@ import java.util.Map.Entry;
 import java.util.PriorityQueue;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
+import de.uniol.inf.is.odysseus.core.collection.FESortedPair;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -65,7 +65,7 @@ public class ChainScheduling extends AbstractExecListScheduling {
 		calculateLowerEnvelopes(pathes, progressCharts);
 		
 		// Jetzt alle Pfade nach der Steigung sortieren
-		PriorityQueue<FESortedClonablePair<OperatorPoint, IIterableSource<?>>> opPointList = new PriorityQueue<FESortedClonablePair<OperatorPoint, IIterableSource<?>>>();
+		PriorityQueue<FESortedPair<OperatorPoint, IIterableSource<?>>> opPointList = new PriorityQueue<>();
 		// Dazu zunächst sammeln
 		for (Entry<List<IIterableSource<?>>, OperatorPoint[]> e : progressCharts.entrySet()) {
 			List<IIterableSource<?>> sources = e.getKey();
@@ -75,14 +75,14 @@ public class ChainScheduling extends AbstractExecListScheduling {
 			for (int i=0;i<points.length-1; i++){
 				if (sIter.hasNext()){
 					IIterableSource<?> v = sIter.next();
-					opPointList.add(new FESortedClonablePair<OperatorPoint, IIterableSource<?>>(
+					opPointList.add(new FESortedPair<OperatorPoint, IIterableSource<?>>(
 							points[i], v));
 				}
 			}
 		}
 				
 		List<IIterableSource<?>> execList = new LinkedList<IIterableSource<?>>();
-		for (FESortedClonablePair<OperatorPoint, IIterableSource<?>> p : opPointList) {
+		for (FESortedPair<OperatorPoint, IIterableSource<?>> p : opPointList) {
 			execList.add(p.getE2());
 		}
 		return execList;
