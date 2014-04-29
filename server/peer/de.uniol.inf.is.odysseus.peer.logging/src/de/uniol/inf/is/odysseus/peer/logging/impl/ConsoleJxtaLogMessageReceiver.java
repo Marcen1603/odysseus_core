@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.logging.impl;
 import net.jxta.peer.PeerID;
 
 import org.apache.log4j.Level;
+import org.apache.log4j.Priority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,17 +39,17 @@ public class ConsoleJxtaLogMessageReceiver implements IJxtaLogMessageReceiver {
 		case Level.TRACE_INT:
 			return LOG.isTraceEnabled() ? "TRACE" : null;
 
-		case Level.DEBUG_INT:
+		case Priority.DEBUG_INT:
 			return LOG.isDebugEnabled() ? "DEBUG" : null;
 
-		case Level.ERROR_INT:
-		case Level.FATAL_INT:
+		case Priority.ERROR_INT:
+		case Priority.FATAL_INT:
 			return LOG.isErrorEnabled() ? "ERROR" : null;
 
-		case Level.INFO_INT:
+		case Priority.INFO_INT:
 			return LOG.isInfoEnabled() ? "INFO" : null;
 
-		case Level.WARN_INT:
+		case Priority.WARN_INT:
 			return LOG.isWarnEnabled() ? "WARN" : null;
 
 		default:
