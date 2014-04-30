@@ -13,6 +13,7 @@ class Config {
 	public static final String COSTMODEL_BASE_PATH = ODYSSEUS_HOME_DIR + "costmodel" + File.separator;
 	public static final String SAMPLING_FILES_PATH = COSTMODEL_BASE_PATH;
 	public static final String DATARATE_FILE_NAME = COSTMODEL_BASE_PATH + "datarates.conf";
+	public static final String CPUTIME_FILE_NAME = COSTMODEL_BASE_PATH + "cputimes.conf";
 
 	private static String determineOdysseusHome() {
 		try {

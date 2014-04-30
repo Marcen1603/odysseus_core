@@ -33,6 +33,7 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 
 	private final SamplingContainer samplingContainer = new SamplingContainer();
 	private final DatarateContainer datarateContainer = new DatarateContainer();
+	private final CpuTimeContainer cpuTimeContainer = new CpuTimeContainer();
 	private final DataSourceManager dataSourceManager = new DataSourceManager(samplingContainer, datarateContainer);
 
 	// called by OSGi-DS
@@ -40,13 +41,15 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 		executor = (IServerExecutor) serv;
 
 		executor.addPlanModificationListener(this);
+		cpuTimeContainer.setExecutor(executor);
 	}
 
 	// called by OSGi-DS
 	public void unbindExecutor(IExecutor serv) {
 		if (executor == serv) {
 			executor.removePlanModificationListener(this);
-
+			cpuTimeContainer.unsetExecutor();
+			
 			executor = null;
 		}
 	}
@@ -60,6 +63,7 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 	public void deactivate() {
 		saveAllSamplesIfNeeded();
 		datarateContainer.save();
+		cpuTimeContainer.save();
 		
 		LOG.debug("CostModelKnowledge deactivated");
 	}
@@ -200,5 +204,10 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 	@Override
 	public Optional<Double> getDatarate(String sourceName) {
 		return datarateContainer.getDatarate(sourceName);
+	}
+	
+	@Override
+	public Optional<Double> getCpuTime(Class<?> operatorClass) {
+		return cpuTimeContainer.getCpuTime(operatorClass);
 	}
 }

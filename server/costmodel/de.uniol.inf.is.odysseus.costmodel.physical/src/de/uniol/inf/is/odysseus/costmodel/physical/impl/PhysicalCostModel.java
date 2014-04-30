@@ -107,6 +107,10 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 		}
 
 		Optional<Double> optCpu = EstimatorHelper.getCpuTimeMetadata(visitingOperator);
+		if( !optCpu.isPresent() ) {
+			optCpu = knowledge.getCpuTime(visitingOperator.getClass());
+		}
+		
 		double cpuCost = optCpu.isPresent() ? optCpu.get() : estimator.getCpu();
 		if (cpuCost < 0) {
 			LOG.error("Estimated cpucost for operator {} is negative. Using default value.", visitingOperator);
