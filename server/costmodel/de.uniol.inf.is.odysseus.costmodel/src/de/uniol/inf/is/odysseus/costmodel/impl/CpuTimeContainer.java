@@ -63,8 +63,8 @@ public class CpuTimeContainer {
 						try {
 							double cpuTime = Double.valueOf(cpuTimeString);
 							resultMap.put(operatorType, cpuTime);
-//							LOG.debug("Loaded cputime for operator type{} : {}", operatorTypeName, cpuTime);
-							System.err.println("Loaded cputime for operator type " + operatorTypeName + " : " + cpuTime);
+							LOG.debug("Loaded cputime for operator type{} : {}", operatorTypeName, cpuTime);
+//							System.err.println("Loaded cputime for operator type " + operatorTypeName + " : " + cpuTime);
 						} catch (Throwable t) {
 							LOG.error("Errornous line in datarate file: {}", line, t);
 						}
