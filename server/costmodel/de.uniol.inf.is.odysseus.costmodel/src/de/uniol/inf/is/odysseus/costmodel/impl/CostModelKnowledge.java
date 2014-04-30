@@ -212,12 +212,12 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 	}
 	
 	@Override
-	public Optional<Double> getCpuTime(Class<?> operatorClass) {
+	public Optional<Double> getCpuTime(String operatorClass) {
 		return cpuTimeContainer.getCpuTime(operatorClass);
 	}
 	
 	@Override
-	public Collection<Class<?>> getCpuTimeOperatorClasses() {
+	public Collection<String> getCpuTimeOperatorClasses() {
 		return cpuTimeContainer.getCpuTimeOperatorClasses();
 	}
 }

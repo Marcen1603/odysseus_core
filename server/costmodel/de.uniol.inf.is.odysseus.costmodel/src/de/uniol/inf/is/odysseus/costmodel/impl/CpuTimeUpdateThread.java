@@ -34,7 +34,7 @@ public abstract class CpuTimeUpdateThread extends Thread {
 				for( IPhysicalOperator physicalOperator : physicalQuery.getPhysicalChilds() ) {
 					IMonitoringData<Double> cpuTime = physicalOperator.getMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name);
 					if( cpuTime != null ) {
-						updateCpuTime( physicalOperator.getClass(), cpuTime.getValue() );
+						updateCpuTime( physicalOperator.getClass().getName(), cpuTime.getValue() );
 					}
 				}
 			}
@@ -46,7 +46,7 @@ public abstract class CpuTimeUpdateThread extends Thread {
 		}
 	}
 	
-	protected abstract void updateCpuTime( Class<? extends IPhysicalOperator> operator, double cpuTime );
+	protected abstract void updateCpuTime( String operator, double cpuTime );
 	
 	public void stopRunning() {
 		isRunning = false;

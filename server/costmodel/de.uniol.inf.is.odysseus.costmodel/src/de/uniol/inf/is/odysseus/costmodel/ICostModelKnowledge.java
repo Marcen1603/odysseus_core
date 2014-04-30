@@ -13,7 +13,7 @@ public interface ICostModelKnowledge {
 	public Collection<SDFAttribute> getHistogramAttributes();
 	
 	public Optional<Double> getDatarate( String sourceName );
-	public Optional<Double> getCpuTime(Class<?> operatorClass);
-	public Collection<Class<?>> getCpuTimeOperatorClasses();
+	public Optional<Double> getCpuTime(String operatorClass);
+	public Collection<String> getCpuTimeOperatorClasses();
 	public Collection<String> getDatarateSourceNames();
 }

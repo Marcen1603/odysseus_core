@@ -85,11 +85,11 @@ public class CostModelConsole implements CommandProvider {
 	}
 
 	public void _listCpuTimes( CommandInterpreter ci ) {
-		Collection<Class<?>> cpuTimeOperatorClasses = costModelKnowledge.getCpuTimeOperatorClasses();
+		Collection<String> cpuTimeOperatorClasses = costModelKnowledge.getCpuTimeOperatorClasses();
 		List<String> output = Lists.newArrayList();
 		
-		for( Class<?> clazz : cpuTimeOperatorClasses ) {
-			output.add(clazz.getSimpleName() + ": " + format(costModelKnowledge.getCpuTime(clazz).get() / 1000000000));
+		for( String clazz : cpuTimeOperatorClasses ) {
+			output.add(clazz + ": " + format(costModelKnowledge.getCpuTime(clazz).get() / 1000000000));
 		}
 		
 		sortAndPrintList(output);

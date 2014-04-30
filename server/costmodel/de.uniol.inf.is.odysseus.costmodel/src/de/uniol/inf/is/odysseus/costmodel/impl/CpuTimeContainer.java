@@ -14,68 +14,62 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 
 public class CpuTimeContainer {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CpuTimeContainer.class);
 
-	private final Map<Class<?>, Double> cpuTimeMap = Maps.newConcurrentMap();
+	private final Map<String, Double> cpuTimeMap = Maps.newConcurrentMap();
 
 	private boolean loaded = false;
 
 	private CpuTimeUpdateThread updateCpuTimeThread;
 
-	public Optional<Double> getCpuTime(Class<?> operatorType) {
-		Preconditions.checkNotNull(operatorType, "operatorType must not be null!");
+	public Optional<Double> getCpuTime(String operatorType) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(operatorType), "operatorType must not be null or empty!");
 
 		loadFile();
 		return Optional.fromNullable(cpuTimeMap.get(operatorType));
 	}
 
-	@SuppressWarnings("unchecked")
 	private void loadFile() {
 		if (!loaded) {
 			loaded = true;
 
 			File file = new File(Config.CPUTIME_FILE_NAME);
 			if (file.exists()) {
-				Map<Class<?>, Double> loadedCpuTimeMap = readCpuTimesFromFile(file);
-				
-				for( Class<?> operatorClass : loadedCpuTimeMap.keySet() ) {
-					insertCpuTimeIfNeeded((Class<? extends IPhysicalOperator>) operatorClass, loadedCpuTimeMap.get(operatorClass));
+				Map<String, Double> loadedCpuTimeMap = readCpuTimesFromFile(file);
+
+				for (String operatorClass : loadedCpuTimeMap.keySet()) {
+					insertCpuTimeIfNeeded(operatorClass, loadedCpuTimeMap.get(operatorClass));
 				}
 			}
 		}
 	}
 
-	private static Map<Class<?>, Double> readCpuTimesFromFile(File file) {
-		Map<Class<?>, Double> resultMap = Maps.newHashMap();
+	private static Map<String, Double> readCpuTimesFromFile(File file) {
+		Map<String, Double> resultMap = Maps.newHashMap();
 
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			String line = br.readLine();
 			while (line != null) {
 				int separatorPos = line.indexOf("=");
 				if (separatorPos != -1) {
+					String operatorTypeName = line.substring(0, separatorPos);
+					String cpuTimeString = line.substring(separatorPos + 1);
 					try {
-						String operatorTypeName = line.substring(0, separatorPos);
-						Class<?> operatorType = Class.forName(operatorTypeName);
-						
-						String cpuTimeString = line.substring(separatorPos + 1);
-						try {
-							double cpuTime = Double.valueOf(cpuTimeString);
-							resultMap.put(operatorType, cpuTime);
-							LOG.debug("Loaded cputime for operator type{} : {}", operatorTypeName, cpuTime);
-//							System.err.println("Loaded cputime for operator type " + operatorTypeName + " : " + cpuTime);
-						} catch (Throwable t) {
-							LOG.error("Errornous line in datarate file: {}", line, t);
-						}
-					} catch( ClassNotFoundException ex ) {
-						LOG.error("Errornous line in cputime file: {}", line, ex);
+						double cpuTime = Double.valueOf(cpuTimeString);
+						resultMap.put(operatorTypeName, cpuTime);
+						LOG.debug("Loaded cputime for operator type{} : {}", operatorTypeName, cpuTime);
+						// System.err.println("Loaded cputime for operator type "
+						// + operatorTypeName + " : " + cpuTime);
+					} catch (Throwable t) {
+						LOG.error("Errornous line in datarate file: {}", line, t);
 					}
 				} else {
 					LOG.error("Errornous line in datarate file: {}", line);
@@ -90,8 +84,8 @@ public class CpuTimeContainer {
 		return resultMap;
 	}
 
-	public void putDatarate(Class<?> operatorType, double datarate) {
-		Preconditions.checkNotNull(operatorType, "operatorType must not be null!");
+	public void putDatarate(String operatorType, double datarate) {
+		Preconditions.checkNotNull(!Strings.isNullOrEmpty(operatorType), "operatorType must not be null or empty!");
 		Preconditions.checkArgument(datarate >= 0, "datarate must be non-negative!");
 
 		cpuTimeMap.put(operatorType, datarate);
@@ -102,7 +96,7 @@ public class CpuTimeContainer {
 		LOG.debug("Saving cputimes to file {}", file);
 
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
-			for (Class<?> operatorType : cpuTimeMap.keySet()) {
+			for (String operatorType : cpuTimeMap.keySet()) {
 				bw.write(operatorType + "=" + cpuTimeMap.get(operatorType) + "\n");
 			}
 		} catch (IOException e) {
@@ -112,24 +106,24 @@ public class CpuTimeContainer {
 
 	public void setExecutor(final IServerExecutor executor) {
 		Preconditions.checkNotNull(executor, "ServerExecutor must not be null!");
-		
+
 		updateCpuTimeThread = new CpuTimeUpdateThread(executor) {
 			@Override
-			protected void updateCpuTime(Class<? extends IPhysicalOperator> operatorType, double cpuTime) {
+			protected void updateCpuTime(String operatorType, double cpuTime) {
 				insertCpuTimeIfNeeded(operatorType, cpuTime);
 			}
 		};
 		updateCpuTimeThread.start();
 	}
-	
-	private void insertCpuTimeIfNeeded(Class<? extends IPhysicalOperator> operatorType, double cpuTime) {
-		if( Double.isNaN(cpuTime)) {
+
+	private void insertCpuTimeIfNeeded(String operatorType, double cpuTime) {
+		if (Double.isNaN(cpuTime)) {
 			return;
 		}
-		
+
 		Double cpuTimeValue = cpuTimeMap.get(operatorType);
-		
-		if( cpuTimeValue == null || (cpuTimeValue != null && cpuTimeValue < cpuTime )) {
+
+		if (cpuTimeValue == null || (cpuTimeValue != null && cpuTimeValue < cpuTime)) {
 			cpuTimeMap.put(operatorType, cpuTime);
 		}
 	}
@@ -138,9 +132,9 @@ public class CpuTimeContainer {
 		updateCpuTimeThread.stopRunning();
 	}
 
-	public Collection<Class<?>> getCpuTimeOperatorClasses() {
+	public Collection<String> getCpuTimeOperatorClasses() {
 		loadFile();
-		
+
 		return Lists.newArrayList(cpuTimeMap.keySet());
 	}
 }
