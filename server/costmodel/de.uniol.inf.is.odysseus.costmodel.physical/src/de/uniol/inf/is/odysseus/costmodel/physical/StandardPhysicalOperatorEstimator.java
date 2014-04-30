@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
 import de.uniol.inf.is.odysseus.costmodel.EstimatorHelper;
+import de.uniol.inf.is.odysseus.costmodel.ICostModelKnowledge;
 import de.uniol.inf.is.odysseus.costmodel.IHistogram;
 
 public abstract class StandardPhysicalOperatorEstimator<T extends IPhysicalOperator> implements IPhysicalOperatorEstimator<T> {
@@ -23,16 +24,19 @@ public abstract class StandardPhysicalOperatorEstimator<T extends IPhysicalOpera
 	private Map<IPhysicalOperator, DetailCost> prevCostMap;
 	private T operator;
 	private Map<SDFAttribute, IHistogram> histogramMap;
+	private ICostModelKnowledge knowledge;
 	
 	@Override
-	public void estimatePhysical(T operator, Map<IPhysicalOperator, DetailCost> previousCostMap, Map<SDFAttribute, IHistogram> histogramMap) {
+	public void estimatePhysical(T operator, Map<IPhysicalOperator, DetailCost> previousCostMap, Map<SDFAttribute, IHistogram> histogramMap, ICostModelKnowledge knowledge) {
 		Preconditions.checkNotNull(operator, "operator must not be null!");
 		Preconditions.checkNotNull(previousCostMap, "Map of previous costs must not be null!");
 		Preconditions.checkNotNull(histogramMap, "Map of histograms must not be null!");
+		Preconditions.checkNotNull(knowledge, "Knowledge must not be null!");
 		
 		this.prevCostMap = previousCostMap;
 		this.operator = operator;
 		this.histogramMap = histogramMap;
+		this.knowledge = knowledge;
 	}
 	
 	protected final T getOperator() {
@@ -43,8 +47,12 @@ public abstract class StandardPhysicalOperatorEstimator<T extends IPhysicalOpera
 		return prevCostMap;
 	}
 	
-	protected Map<SDFAttribute, IHistogram> getHistogramMap() {
+	protected final Map<SDFAttribute, IHistogram> getHistogramMap() {
 		return histogramMap;
+	}
+	
+	protected final ICostModelKnowledge getCostModelKnowledge() {
+		return knowledge;
 	}
 	
 	@Override

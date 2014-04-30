@@ -32,7 +32,8 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 	private static IServerExecutor executor;
 
 	private final SamplingContainer samplingContainer = new SamplingContainer();
-	private final DataSourceManager dataSourceManager = new DataSourceManager(samplingContainer);
+	private final DatarateContainer datarateContainer = new DatarateContainer();
+	private final DataSourceManager dataSourceManager = new DataSourceManager(samplingContainer, datarateContainer);
 
 	// called by OSGi-DS
 	public void bindExecutor(IExecutor serv) {
@@ -58,6 +59,7 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 	// called by OSGi-DS
 	public void deactivate() {
 		saveAllSamplesIfNeeded();
+		datarateContainer.save();
 		
 		LOG.debug("CostModelKnowledge deactivated");
 	}
@@ -127,12 +129,10 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 		List<Double> values = sampler.getSampledValues();
 		int intervalCount = new FreedmanDiaconisRule().estimateIntervalCount(values);
 
-		// determine intervallength
 		double min = values.get(0);
 		double max = values.get(values.size() - 1);
 		double intervalSize = (max - min) / intervalCount;
 
-		// determine counts of intervals
 		double[] counts = new double[intervalCount];
 		for (Double val : values) {
 			int index = (int) ((val - min) / intervalSize);
@@ -143,7 +143,6 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 				counts[index]++;
 			}
 		}
-		// create equal-width-histogram
 		return Optional.of((IHistogram)new EqualWidthHistogram(attribute, min, max, intervalSize, counts));
 	}
 
@@ -196,5 +195,10 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 	@Override
 	public Collection<SDFAttribute> getHistogramAttributes() {
 		return samplingContainer.getSampledAttributes();
+	}
+	
+	@Override
+	public Optional<Double> getDatarate(String sourceName) {
+		return datarateContainer.getDatarate(sourceName);
 	}
 }

@@ -12,52 +12,58 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.costmodel.impl.sampling.CombinedSampling;
 
 public class DataSourceManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DataSourceManager.class);
-	
+
 	private static final int SAMPLING_SIZE_TUPLES = 1500;
-	
+
 	private final Map<ISource<? extends IStreamObject<?>>, DefaultStreamConnection<IStreamObject<?>>> connectionMap = Maps.newHashMap();
 	private final Map<ISource<? extends IStreamObject<?>>, Integer> sourceUsageMap = Maps.newHashMap();
-	
+
 	private final SamplingContainer samplingContainer;
-	
-	public DataSourceManager(SamplingContainer samplingContainer) {
+	private final DatarateContainer datarateContainer;
+
+	public DataSourceManager(SamplingContainer samplingContainer, DatarateContainer datarateContainer) {
 		Preconditions.checkNotNull(samplingContainer, "samplingContainer must not be null!");
-		
+		Preconditions.checkNotNull(datarateContainer, "datarateContainer must not be null!");
+
 		this.samplingContainer = samplingContainer;
+		this.datarateContainer = datarateContainer;
 	}
-	
-	public void addSource( ISource<? extends IStreamObject<?>> source ) {
+
+	public void addSource(ISource<? extends IStreamObject<?>> source) {
 		Preconditions.checkNotNull(source, "Source to register must not be null!");
-		
+
 		LOG.debug("Registering source {}", source);
-		if( !connectionMap.containsKey(source)) {
+		if (!connectionMap.containsKey(source)) {
 			LOG.debug("Source {} is new", source);
-			
+
 			ISampling[] samplers = new ISampling[source.getOutputSchema().size()];
 			List<Integer> validIndicesList = Lists.newArrayList();
-			for( int index = 0; index < source.getOutputSchema().size(); index++ ) {
+			for (int index = 0; index < source.getOutputSchema().size(); index++) {
 				SDFAttribute attribute = source.getOutputSchema().get(index);
-				
-				if( isNumeric(attribute)) {
+
+				if (isNumeric(attribute)) {
 					samplers[index] = new CombinedSampling(SAMPLING_SIZE_TUPLES);
 					samplingContainer.addSampler(attribute, samplers[index]);
-					
+
 					validIndicesList.add(index);
 				}
 			}
-			
-			if( !validIndicesList.isEmpty() ) {
+
+			if (!validIndicesList.isEmpty()) {
 				Integer[] validIndices = validIndicesList.toArray(new Integer[0]);
-				
+
 				DefaultStreamConnection<IStreamObject<?>> connection = addStreamConnectionForSampling(source, samplers, validIndices);
 				connectionMap.put(source, connection);
 				sourceUsageMap.put(source, 1);
@@ -68,15 +74,31 @@ public class DataSourceManager {
 		}
 	}
 
-	private static DefaultStreamConnection<IStreamObject<?>> addStreamConnectionForSampling(ISource<? extends IStreamObject<?>> source, final ISampling[] samplers, final Integer[] validIndices) {
+	private DefaultStreamConnection<IStreamObject<?>> addStreamConnectionForSampling(final ISource<? extends IStreamObject<?>> source, final ISampling[] samplers, final Integer[] validIndices) {
 		DefaultStreamConnection<IStreamObject<?>> connection = new DefaultStreamConnection<IStreamObject<?>>(source) {
+
+			private IMonitoringData<Double> datarateData;
+			private Double lastValue;
+
 			@Override
 			public void process(IStreamObject<?> element, int port) {
-				Tuple<?> tuple = (Tuple<?>)element;
-				for( Integer validIndex : validIndices ) {
+				Tuple<?> tuple = (Tuple<?>) element;
+				for (Integer validIndex : validIndices) {
 					Double number = toNumeric(tuple.getAttribute(validIndex));
-					if( number != null ) {
+					if (number != null) {
 						samplers[validIndex].addValue(number);
+					}
+				}
+				
+				if( source instanceof ReceiverPO ) {
+					if( datarateData == null ) {
+						datarateData = source.getMonitoringData(MonitoringDataTypes.DATARATE.name);
+					}
+					
+					Double currentValue = datarateData.getValue();
+					if( currentValue != lastValue ) {
+						datarateContainer.putDatarate(source.getName(), currentValue * 1000);
+						lastValue = currentValue;
 					}
 				}
 			}
@@ -87,45 +109,44 @@ public class DataSourceManager {
 	}
 
 	private static boolean isNumeric(SDFAttribute attribute) {
-		return attribute.getDatatype().equals(SDFDatatype.LONG) || 
-				attribute.getDatatype().equals(SDFDatatype.DOUBLE) || 
-				attribute.getDatatype().equals(SDFDatatype.FLOAT) || 
-				attribute.getDatatype().equals(SDFDatatype.BYTE) || 
-				attribute.getDatatype().equals(SDFDatatype.INTEGER);
+		return attribute.getDatatype().equals(SDFDatatype.LONG) || attribute.getDatatype().equals(SDFDatatype.DOUBLE) || attribute.getDatatype().equals(SDFDatatype.FLOAT) || attribute.getDatatype().equals(SDFDatatype.BYTE)
+				|| attribute.getDatatype().equals(SDFDatatype.INTEGER);
 	}
 
 	private static Double toNumeric(Object value) {
-		if( value instanceof Double ) {
-			return ((Double)value);
+		if (value instanceof Double) {
+			return ((Double) value);
 		}
-		if( value instanceof Float ) {
-			return ((Float)value).doubleValue();
+		if (value instanceof Float) {
+			return ((Float) value).doubleValue();
 		}
-		if( value instanceof Long ) {
-			return ((Long)value).doubleValue();
+		if (value instanceof Long) {
+			return ((Long) value).doubleValue();
 		}
-		if( value instanceof Byte ) {
-			return ((Byte)value).doubleValue();
+		if (value instanceof Byte) {
+			return ((Byte) value).doubleValue();
 		}
-		if( value instanceof Integer ) {
-			return ((Integer)value).doubleValue();
+		if (value instanceof Integer) {
+			return ((Integer) value).doubleValue();
 		}
 
 		LOG.error("Could not sample value '{}'. Is it not numeric?", value);
 		return null;
 	}
-	
-	public void removeSource( ISource<? extends IStreamObject<?>> source ) {
-		if( connectionMap.containsKey(source)) {
+
+	public void removeSource(ISource<? extends IStreamObject<?>> source) {
+		if (connectionMap.containsKey(source)) {
 			Integer usages = sourceUsageMap.get(source);
-			if( usages == 1 ) {
+			if (usages == 1) {
 				DefaultStreamConnection<IStreamObject<?>> connection = connectionMap.get(source);
 				connection.disconnect();
-				
-				for( SDFAttribute attribute : source.getOutputSchema() ) {
+
+				for (SDFAttribute attribute : source.getOutputSchema()) {
 					samplingContainer.removeSampler(attribute);
 				}
 				
+				datarateContainer.save();
+
 			} else {
 				sourceUsageMap.put(source, usages - 1);
 			}

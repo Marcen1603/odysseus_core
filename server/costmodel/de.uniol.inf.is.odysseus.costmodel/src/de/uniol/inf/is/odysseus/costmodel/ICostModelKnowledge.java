@@ -12,4 +12,5 @@ public interface ICostModelKnowledge {
 	public Optional<IHistogram> getHistogram(String attributeName);
 	public Collection<SDFAttribute> getHistogramAttributes();
 	
+	public Optional<Double> getDatarate( String sourceName );
 }

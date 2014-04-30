@@ -93,11 +93,11 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 		Map<IPhysicalOperator, DetailCost> prevCostMap = createPrevCostMap(visitingOperator, resultMap);
 
 		try {
-			estimator.estimatePhysical(visitingOperator, prevCostMap, histogramMap);
+			estimator.estimatePhysical(visitingOperator, prevCostMap, histogramMap, knowledge);
 		} catch (Throwable t) {
 			LOG.error("Exception in physical operator estimator", t);
 			estimator = OperatorEstimatorRegistry.getStandardPhysicalOperatorEstimator();
-			estimator.estimatePhysical(visitingOperator, prevCostMap, histogramMap);
+			estimator.estimatePhysical(visitingOperator, prevCostMap, histogramMap, knowledge);
 		}
 
 		double memCost = estimator.getMemory();

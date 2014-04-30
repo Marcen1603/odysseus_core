@@ -119,11 +119,11 @@ public class LogicalCostModel implements ILogicalCostModel {
 		Map<ILogicalOperator, DetailCost> prevCostMap = createPrevCostMap(visitingOperator, resultMap);
 
 		try {
-			estimator.estimateLogical(visitingOperator, prevCostMap, histogramMap);
+			estimator.estimateLogical(visitingOperator, prevCostMap, histogramMap, knowledge);
 		} catch (Throwable t) {
 			LOG.error("Exception in physical operator estimator", t);
 			estimator = OperatorEstimatorRegistry.getStandardLogicalOperatorEstimator();
-			estimator.estimateLogical(visitingOperator, prevCostMap, histogramMap);
+			estimator.estimateLogical(visitingOperator, prevCostMap, histogramMap, knowledge);
 		}
 
 		double memCost = estimator.getMemory();

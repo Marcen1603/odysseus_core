@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
+import de.uniol.inf.is.odysseus.costmodel.ICostModelKnowledge;
 import de.uniol.inf.is.odysseus.costmodel.IHistogram;
 
 public abstract class StandardLogicalOperatorEstimator<T extends ILogicalOperator> implements ILogicalOperatorEstimator<T> {
@@ -21,16 +22,19 @@ public abstract class StandardLogicalOperatorEstimator<T extends ILogicalOperato
 	private Map<ILogicalOperator, DetailCost> prevCostMap;
 	private T operator;
 	private Map<SDFAttribute, IHistogram> histogramMap;
+	private ICostModelKnowledge knowledge;
 	
 	@Override
-	public void estimateLogical(T operator, Map<ILogicalOperator, DetailCost> previousCostMap, Map<SDFAttribute, IHistogram> histogramMap) {
+	public void estimateLogical(T operator, Map<ILogicalOperator, DetailCost> previousCostMap, Map<SDFAttribute, IHistogram> histogramMap, ICostModelKnowledge knowledge) {
 		Preconditions.checkNotNull(operator, "Operator must not be null!");
 		Preconditions.checkNotNull(previousCostMap, "Map of prev. costs must not be null!");
 		Preconditions.checkNotNull(histogramMap, "Map of histograms must not be null!");
+		Preconditions.checkNotNull(knowledge, "Knowledge must not be null!");
 		
 		this.prevCostMap = previousCostMap;
 		this.operator = operator;
 		this.histogramMap = histogramMap;
+		this.knowledge = knowledge;
 	}
 	
 	protected final T getOperator() {
@@ -41,8 +45,12 @@ public abstract class StandardLogicalOperatorEstimator<T extends ILogicalOperato
 		return prevCostMap;
 	}
 	
-	protected Map<SDFAttribute, IHistogram> getHistogramMap() {
+	protected final Map<SDFAttribute, IHistogram> getHistogramMap() {
 		return histogramMap;
+	}
+	
+	protected final ICostModelKnowledge getCostModelKnowledge() {
+		return knowledge;
 	}
 	
 	@Override
