@@ -15,6 +15,7 @@ Export-Package: de.uniol.inf.is.odysseus.costmodel.physical
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.mep.functions.compare,
+ de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  org.eclipse.osgi.framework.console;version="1.1.0",
  org.osgi.framework
