@@ -32,7 +32,7 @@ public class CostModelConsole implements CommandProvider {
 	@Override
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("---Costmodel commands---\n");
+		sb.append("--- Costmodel commands ---\n");
 		sb.append("    histogram <attributeName>         - Prints the sampled histogram of the given attribute.\n");
 		sb.append("    listHistrogramAttributes <filter> - Prints a list of available attribute names for histograms.\n");
 		sb.append("    listDatarates                     - Prints a list of all stored datarate measures.\n");
