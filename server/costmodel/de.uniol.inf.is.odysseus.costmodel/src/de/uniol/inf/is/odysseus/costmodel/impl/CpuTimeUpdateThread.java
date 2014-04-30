@@ -29,7 +29,6 @@ public abstract class CpuTimeUpdateThread extends Thread {
 	@Override
 	public void run() {
 		while( isRunning ) {
-			System.err.println("Update cpuTimes");
 			Collection<IPhysicalQuery> physicalQueries = Lists.newArrayList(executor.getExecutionPlan().getQueries());
 			for( IPhysicalQuery physicalQuery : physicalQueries ) {
 				for( IPhysicalOperator physicalOperator : physicalQuery.getPhysicalChilds() ) {
