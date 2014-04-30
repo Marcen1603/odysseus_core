@@ -165,7 +165,7 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 	}
 	
 	protected void addOption(String key, String value) {
-		optionsMap.put(key, value);
+		optionsMap.put(key.toLowerCase(), value);
 	}
 
 	/**
