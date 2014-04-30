@@ -2,10 +2,12 @@ package de.uniol.inf.is.odysseus.costmodel.physical.estimate;
 
 import java.util.Collection;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.costmodel.physical.StandardPhysicalOperatorEstimator;
+import de.uniol.inf.is.odysseus.costmodel.physical.util.PredicateSelectivityHelper;
 
 @SuppressWarnings("rawtypes")
 public class SelectPOEstimator extends StandardPhysicalOperatorEstimator<SelectPO> {
@@ -35,6 +37,8 @@ public class SelectPOEstimator extends StandardPhysicalOperatorEstimator<SelectP
 	
 	@Override
 	public double getSelectivity() {
-		return super.getSelectivity();
+		PredicateSelectivityHelper helper = new PredicateSelectivityHelper(getOperator().getPredicate(),getHistogramMap());
+		Optional<Double> optSelectivity = helper.getSelectivity();
+		return optSelectivity.isPresent() ? optSelectivity.get() : super.getSelectivity();
 	}
 }

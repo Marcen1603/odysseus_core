@@ -13,6 +13,9 @@ Require-Bundle: de.uniol.inf.is.odysseus.costmodel;bundle-version="1.0.0",
 Service-Component: OSGI-INF/OperatorEstimatorRegistry.xml,OSGI-INF/PhysicalCostModel.xml,OSGI-INF/PhysicalCostModelConsole.xml
 Export-Package: de.uniol.inf.is.odysseus.costmodel.physical
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.osgi.framework.console;version="1.1.0",
+Import-Package: de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.mep.functions.compare,
+ de.uniol.inf.is.odysseus.relational.base.predicate,
+ org.eclipse.osgi.framework.console;version="1.1.0",
  org.osgi.framework
 Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.physical.PhysicalCostModelPlugIn
