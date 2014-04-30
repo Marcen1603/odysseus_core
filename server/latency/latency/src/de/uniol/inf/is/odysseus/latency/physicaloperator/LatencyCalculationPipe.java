@@ -17,9 +17,9 @@ package de.uniol.inf.is.odysseus.latency.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-public class LatencyCalculationPipe<T extends IStreamObject<? extends ILatency>> extends AbstractPipe<T, T>{
+@Deprecated
+public class LatencyCalculationPipe<T extends IStreamObject<? extends ILatency>> extends CalcLatencyPO<T>{
 
 	public LatencyCalculationPipe(){}
 	
@@ -27,23 +27,5 @@ public class LatencyCalculationPipe<T extends IStreamObject<? extends ILatency>>
 			LatencyCalculationPipe<T> latencyCalculationPipe) {	
 		super(latencyCalculationPipe);
 	}
-
-	@Override
-	public OutputMode getOutputMode() {
-		return OutputMode.NEW_ELEMENT;
-	}
-	
-	
-	@Override
-	protected void process_next(T object, int port) {
-		object.getMetadata().setLatencyEnd(System.nanoTime());
-		transfer(object);
-	}
-	
-	@Override
-	public LatencyCalculationPipe<T> clone(){
-		return new LatencyCalculationPipe<T>(this);
-	}
-
 
 }
