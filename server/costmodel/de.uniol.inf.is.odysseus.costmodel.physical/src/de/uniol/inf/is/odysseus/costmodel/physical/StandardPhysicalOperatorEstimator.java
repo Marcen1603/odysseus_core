@@ -63,7 +63,7 @@ public abstract class StandardPhysicalOperatorEstimator<T extends IPhysicalOpera
 	@Override
 	public double getCpu() {
 		Optional<Double> optCpu = EstimatorHelper.getCpuTimeMetadata(getOperator());
-		return optCpu.isPresent() ? optCpu.get() : DEFAULT_CPU_COST;
+		return ( optCpu.isPresent() ? optCpu.get() : DEFAULT_CPU_COST ) * getDatarate();
 	}
 
 	@Override

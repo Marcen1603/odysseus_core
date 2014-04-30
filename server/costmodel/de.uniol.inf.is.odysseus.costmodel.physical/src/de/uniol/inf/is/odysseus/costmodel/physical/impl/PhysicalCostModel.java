@@ -106,14 +106,21 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 			memCost = StandardPhysicalOperatorEstimator.DEFAULT_MEMORY_COST_BYTES;
 		}
 
+		Optional<Double> optDatarate = EstimatorHelper.getDatarateMetadata(visitingOperator);
+		double datarate = optDatarate.isPresent() ? optDatarate.get() : estimator.getDatarate();
+		if (datarate < 0) {
+			LOG.error("Estimated datarate for operator {} is negative. Using default value.", visitingOperator);
+			datarate = StandardPhysicalOperatorEstimator.DEFAULT_DATARATE;
+		}
+
 		Optional<Double> optCpu = EstimatorHelper.getCpuTimeMetadata(visitingOperator);
 		if( !optCpu.isPresent() ) {
 			optCpu = knowledge.getCpuTime(visitingOperator.getClass().getName());
 		}
-		double cpuCost = optCpu.isPresent() ? optCpu.get() : estimator.getCpu();
+		double cpuCost = optCpu.isPresent() ? optCpu.get() * datarate : estimator.getCpu();
 		if (cpuCost < 0) {
 			LOG.error("Estimated cpucost for operator {} is negative. Using default value.", visitingOperator);
-			cpuCost = StandardPhysicalOperatorEstimator.DEFAULT_CPU_COST;
+			cpuCost = StandardPhysicalOperatorEstimator.DEFAULT_CPU_COST * datarate;
 		}
 
 		double netCost = estimator.getNetwork();
@@ -128,14 +135,6 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 			LOG.error("Estimated selectivity for operator {} is negative. Using default value.", visitingOperator);
 			selectivity = StandardPhysicalOperatorEstimator.DEFAULT_SELECTIVITY;
 		}
-
-		Optional<Double> optDatarate = EstimatorHelper.getDatarateMetadata(visitingOperator);
-		double datarate = optDatarate.isPresent() ? optDatarate.get() : estimator.getDatarate();
-		if (datarate < 0) {
-			LOG.error("Estimated datarate for operator {} is negative. Using default value.", visitingOperator);
-			datarate = StandardPhysicalOperatorEstimator.DEFAULT_DATARATE;
-		}
-
 		double windowSize = estimator.getWindowSize();
 		if (windowSize < 0) {
 			LOG.error("Estimated windowSize for operator {} is negative. Using default value.", visitingOperator);
