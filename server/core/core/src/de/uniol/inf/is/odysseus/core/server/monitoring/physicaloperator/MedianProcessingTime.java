@@ -91,8 +91,10 @@ public class MedianProcessingTime extends AbstractMonitoringData<Double> impleme
 				runTimes.add(lastRun);
 				runSum += lastRun;
 				
-				Long v = runTimes.remove(0);
-				runSum -= v;
+				if( runTimes.size() > MAX_DATA ) {
+					Long v = runTimes.remove(0);
+					runSum -= v;
+				}
 			}
 		}
 	}
@@ -100,7 +102,7 @@ public class MedianProcessingTime extends AbstractMonitoringData<Double> impleme
 	@Override
 	public Double getValue() {
 		synchronized(runTimes) {
-			return (double)runSum / MAX_DATA;
+			return (double)runSum / runTimes.size();
 		}
 	}
 
