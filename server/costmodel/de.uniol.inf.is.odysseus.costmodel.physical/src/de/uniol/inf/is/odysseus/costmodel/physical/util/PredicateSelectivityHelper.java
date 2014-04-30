@@ -30,6 +30,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
+import de.uniol.inf.is.odysseus.core.server.predicate.FalsePredicate;
+import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.costmodel.IHistogram;
 import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.EqualsOperator;
@@ -136,6 +138,13 @@ public class PredicateSelectivityHelper {
 		if (mepExpression instanceof IBinaryOperator) {
 			return evaluateBinaryOperator((IBinaryOperator<?>) mepExpression);
 		}
+		if( mepExpression instanceof TruePredicate ) {
+			return Optional.of(1.0);
+		}
+		if( mepExpression instanceof FalsePredicate ) {
+			return Optional.of(0.0);
+		}
+		
 		LOG.warn("Unsupported MEP-Expression: " + mepExpression);
 		return Optional.absent();
 	}
