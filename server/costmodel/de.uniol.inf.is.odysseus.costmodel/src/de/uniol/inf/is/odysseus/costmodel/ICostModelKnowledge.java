@@ -14,4 +14,6 @@ public interface ICostModelKnowledge {
 	
 	public Optional<Double> getDatarate( String sourceName );
 	public Optional<Double> getCpuTime(Class<?> operatorClass);
+	public Collection<Class<?>> getCpuTimeOperatorClasses();
+	public Collection<String> getDatarateSourceNames();
 }

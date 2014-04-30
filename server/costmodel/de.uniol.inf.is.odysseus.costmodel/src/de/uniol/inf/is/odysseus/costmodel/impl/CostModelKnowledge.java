@@ -207,7 +207,17 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 	}
 	
 	@Override
+	public Collection<String> getDatarateSourceNames() {
+		return datarateContainer.getDatarateSourceNames();
+	}
+	
+	@Override
 	public Optional<Double> getCpuTime(Class<?> operatorClass) {
 		return cpuTimeContainer.getCpuTime(operatorClass);
+	}
+	
+	@Override
+	public Collection<Class<?>> getCpuTimeOperatorClasses() {
+		return cpuTimeContainer.getCpuTimeOperatorClasses();
 	}
 }

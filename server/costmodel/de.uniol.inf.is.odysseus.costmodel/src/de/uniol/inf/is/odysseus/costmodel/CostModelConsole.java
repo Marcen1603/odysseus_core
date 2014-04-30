@@ -35,6 +35,8 @@ public class CostModelConsole implements CommandProvider {
 		sb.append("---Costmodel commands---\n");
 		sb.append("    histogram <attributeName>         - Prints the sampled histogram of the given attribute.\n");
 		sb.append("    listHistrogramAttributes <filter> - Prints a list of available attribute names for histograms.\n");
+		sb.append("    listDatarates                     - Prints a list of all stored datarate measures.\n");
+		sb.append("    listCpuTimes                      - Prints a list of all stored cpuTime measures.\n");
 		return sb.toString();
 	}
 
@@ -82,4 +84,37 @@ public class CostModelConsole implements CommandProvider {
 		}
 	}
 
+	public void _listCpuTimes( CommandInterpreter ci ) {
+		Collection<Class<?>> cpuTimeOperatorClasses = costModelKnowledge.getCpuTimeOperatorClasses();
+		List<String> output = Lists.newArrayList();
+		
+		for( Class<?> clazz : cpuTimeOperatorClasses ) {
+			output.add(clazz.getSimpleName() + ": " + format(costModelKnowledge.getCpuTime(clazz).get() / 1000000000));
+		}
+		
+		sortAndPrintList(output);
+	}
+	
+	public void _lsCpuTimes(CommandInterpreter ci ) {
+		_listCpuTimes(ci);
+	}
+	
+	public void _listDatarates( CommandInterpreter ci ) {
+		Collection<String> sourceNames = costModelKnowledge.getDatarateSourceNames();
+		List<String> output = Lists.newArrayList();
+		
+		for( String sourceName : sourceNames ) {
+			output.add(sourceName + ": " + format(costModelKnowledge.getDatarate(sourceName).get()));
+		}
+		
+		sortAndPrintList(output);
+	}
+	
+	public void _lsDatarates( CommandInterpreter ci ) {
+		_listDatarates(ci);
+	}
+	
+	private static String format(Object text ) {
+		return String.format("%-6.5f", text);
+	}
 }

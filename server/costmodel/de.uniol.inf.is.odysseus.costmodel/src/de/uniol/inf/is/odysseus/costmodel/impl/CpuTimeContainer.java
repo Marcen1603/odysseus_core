@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -121,6 +123,10 @@ public class CpuTimeContainer {
 	}
 	
 	private void insertCpuTimeIfNeeded(Class<? extends IPhysicalOperator> operatorType, double cpuTime) {
+		if( Double.isNaN(cpuTime)) {
+			return;
+		}
+		
 		Double cpuTimeValue = cpuTimeMap.get(operatorType);
 		
 		if( cpuTimeValue == null || (cpuTimeValue != null && cpuTimeValue < cpuTime )) {
@@ -130,5 +136,11 @@ public class CpuTimeContainer {
 
 	public void unsetExecutor() {
 		updateCpuTimeThread.stopRunning();
+	}
+
+	public Collection<Class<?>> getCpuTimeOperatorClasses() {
+		loadFile();
+		
+		return Lists.newArrayList(cpuTimeMap.keySet());
 	}
 }
