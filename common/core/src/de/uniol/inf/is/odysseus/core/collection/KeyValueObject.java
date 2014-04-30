@@ -48,6 +48,10 @@ implements Serializable{
 	public final <K> K getAttribute(String key) {
 		return (K) this.attributes.get(key);
 	}
+	
+	public final Map<String, Object> getAttributes() {
+		return this.attributes;
+	}
 
 	@SuppressWarnings("unchecked")
 	public final void addAttributeValue(String key, Object value) {

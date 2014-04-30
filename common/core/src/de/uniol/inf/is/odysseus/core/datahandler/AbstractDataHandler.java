@@ -91,6 +91,11 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
     }
 	
 	@Override
+	public void writeJSONData(StringBuilder string, Object data) {
+		throw new IllegalArgumentException("Writing JSON data is not implemented in this DataHandler!");
+	}
+	
+	@Override
 	public boolean isPrototype() {
 		return prototype;
 	}
