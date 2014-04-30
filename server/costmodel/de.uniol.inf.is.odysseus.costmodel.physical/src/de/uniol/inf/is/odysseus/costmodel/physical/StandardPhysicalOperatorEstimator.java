@@ -19,7 +19,7 @@ public abstract class StandardPhysicalOperatorEstimator<T extends IPhysicalOpera
 	public static final double DEFAULT_NETWORK_COST_BYTES = 0;
 	public static final double DEFAULT_SELECTIVITY = 1.0;
 	public static final double DEFAULT_DATARATE = 20;
-	public static final double DEFAULT_WINDOW_SIZE = Double.MAX_VALUE;
+	public static final double DEFAULT_WINDOW_SIZE = Double.POSITIVE_INFINITY;
 	
 	private Map<IPhysicalOperator, DetailCost> prevCostMap;
 	private T operator;
