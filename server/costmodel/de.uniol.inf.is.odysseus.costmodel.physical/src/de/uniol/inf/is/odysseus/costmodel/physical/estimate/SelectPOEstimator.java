@@ -22,7 +22,7 @@ public class SelectPOEstimator extends StandardPhysicalOperatorEstimator<SelectP
 
 	@Override
 	public double getCpu() {
-		return super.getCpu() * CPU_COST_FACTOR;
+		return ( super.getCpu() * CPU_COST_FACTOR ) * super.getDatarate();
 	}
 	
 	@Override
