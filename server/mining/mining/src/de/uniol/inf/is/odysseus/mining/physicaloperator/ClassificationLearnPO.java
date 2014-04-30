@@ -38,13 +38,12 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
-import de.uniol.inf.is.odysseus.sweeparea.FastLinkedList;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
 import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
+import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
+import de.uniol.inf.is.odysseus.sweeparea.FastLinkedList;
 
 /**
  * 
@@ -132,13 +131,6 @@ public class ClassificationLearnPO<M extends ITimeInterval> extends AbstractPipe
 	@Override
 	protected void process_close() {
 		sweepArea.clear();
-	}
-
-	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
-		// if(punctuation.isHeartbeat()){
-		// this.points.add(punctuation.getTime());
-		// }
 	}
 
 	@Override

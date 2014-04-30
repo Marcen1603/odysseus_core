@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -28,8 +27,11 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.mining.MiningAlgorithmRegistry;
 
 /**
  * 
@@ -40,51 +42,61 @@ public class ClusteringAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -4053248940214364499L;
 
-	private static final List<String> CLUSTERER_VALUE_LIST = new ArrayList<>();
-	
-	static{
-		CLUSTERER_VALUE_LIST.add("kmeans");
-	}
-
-	private Map<String, String> options = new HashMap<>();
-
-	private String clustererName;
+	private List<Option> options = new ArrayList<>();	
 
 	private List<SDFAttribute> attributes;
+
+	private String learner;
+	private String algorithm;
 
 	public ClusteringAO() {
 	}
 
 	public ClusteringAO(ClusteringAO clusteringAO) {		
-		this.options = new HashMap<String, String>(clusteringAO.options);
-		this.clustererName = clusteringAO.clustererName;
+		this.options = new ArrayList<Option>(clusteringAO.options);
+		this.learner = clusteringAO.learner;
 		this.attributes = clusteringAO.attributes;
+		this.algorithm = clusteringAO.algorithm;
 	}
 
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true)
 	public void setAttributes(List<SDFAttribute> readingSchema) {
 		this.attributes = readingSchema;
 	}
-
-	@Parameter(name = "clusterer", type = StringParameter.class, possibleValues = "getClustererValues")
-	public void setAlgorithmus(String clusterer) {
-		this.clustererName = clusterer;
+	
+	@Parameter(name = "algorithm", type = StringParameter.class, possibleValues = "getAlgorithmValues")
+	public void setAlgorithm(String algorithm) {
+		this.algorithm = algorithm;
 	}
 	
-	public List<String> getClustererValues(){
-		return CLUSTERER_VALUE_LIST;
+	@Parameter(name = "learner", type = StringParameter.class, possibleValues = "getLearnerValues")
+	public void setLearner(String learner) {
+		this.learner = learner;
 	}
 	
-
-	@Parameter(name = "algorithm", type = StringParameter.class, optional = true, isMap = true)
-	public void setOptions(Map<String, String> options) {
-		for (Entry<String, String> o : options.entrySet()) {
-			this.options.put(o.getKey().toLowerCase(), o.getValue());
-		}
+	public List<String> getLearnerValues(){
+		return MiningAlgorithmRegistry.getInstance().getClustererNames();		
 	}
+	
+	public List<String> getAlgorithmValues(){
+		return MiningAlgorithmRegistry.getInstance().getClustererAlgorithms();
+	}	
 
-	public Map<String, String> getOptions() {
+	@Parameter(name = "options", type = OptionParameter.class, optional = true, isList = true)
+	public void setOptions(List<Option> options) {		
+			this.options = options;	
+	}
+	
+	public List<Option> getOptions(){
 		return this.options;
+	}
+	
+	public Map<String, String> getOptionsMap() {
+		Map<String, String> optionsMap = new HashMap<>();
+		for(Option o : this.options){
+			optionsMap.put(o.getName(), o.getValue());
+		}
+		return optionsMap;
 	}
 
 	@Override
@@ -124,13 +136,15 @@ public class ClusteringAO extends AbstractLogicalOperator {
 		return ret;
 	}
 
-	public String getClustererName() {
-		return clustererName;
+	public String getLearner() {
+		return learner;
 	}
 
-	public void setClustererName(String clustererName) {
-		this.clustererName = clustererName;
+	public String getAlgorithm() {
+		return algorithm;
 	}
+
+	
 
 	
 	

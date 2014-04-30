@@ -35,4 +35,10 @@ public interface IFrequentPatternMiner<M extends ITimeInterval> {
 		 * @return the unique name
 		 */
 		public String getName();
+		
+		/**
+		 * A list of possible algorithms used by this learner
+		 * @return a list of names
+		 */
+		public List<String> getAlgorithmNames();
 }

@@ -63,10 +63,10 @@ public class FrequentPatternMiningPO<M extends ITimeInterval> extends AbstractPi
 					transactions.add(qualifies);
 
 					if (transactions.size() > 2) {
-						long tillLearn = System.nanoTime();
+//						long tillLearn = System.nanoTime();
 
 						List<Pattern<M>> frequentSets = fpm.createFrequentSets(transactions, object.getMetadata());
-						long afterLearn = System.nanoTime();
+//						long afterLearn = System.nanoTime();
 						for (Pattern<M> p : frequentSets) {
 							@SuppressWarnings("unchecked")
 							M metadata = (M) object.getMetadata().clone();
@@ -77,9 +77,9 @@ public class FrequentPatternMiningPO<M extends ITimeInterval> extends AbstractPi
 							newTuple.setMetadata(metadata);
 							newTuple.getMetadata().setStartAndEnd(startP, endP);
 							// ((ILatency)newTuple.getMetadata()).setLatencyStart(start);
-							// ((ILatency)newTuple.getMetadata()).setLatencyEnd(end);
-							newTuple.setMetadata("LATENCY_BEFORE", tillLearn);
-							newTuple.setMetadata("LATENCY_AFTER", afterLearn);
+//							 ((ILatency)newTuple.getMetadata()).setLatencyEnd(end);
+//							newTuple.setMetadata("LATENCY_BEFORE", tillLearn);
+//							newTuple.setMetadata("LATENCY_AFTER", afterLearn);
 							transfer(newTuple);
 						}
 					}

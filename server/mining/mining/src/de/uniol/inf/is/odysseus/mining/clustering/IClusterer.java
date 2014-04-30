@@ -44,11 +44,18 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  */
 public interface IClusterer<M extends ITimeInterval> {
 
+	
+	/**
+	 * Creates and initializes a new instance of the clusterer 
+	 * @param schema The schema of the incoming tuples
+	 */
+	public IClusterer<M> createInstance();
+	
 	/**
 	 * Initializes the clusterer 
 	 * @param schema The schema of the incoming tuples
 	 */
-	public void init(SDFSchema schema);
+	public void init(String algorithm, SDFSchema schema);
 	/**
 	 * clusters the given set of tuples
 	 * @param the tuples that should be clustered
@@ -63,14 +70,14 @@ public interface IClusterer<M extends ITimeInterval> {
 	public void setOptions(Map<String, String> options);
 	
 	/**
-	 * Gets the maximal latency, found during processing the list of tuples
-	 * @return the maximum latency or Long.MIN_VALUE if there is no one
-	 */
-	public long getMaxLatency();
-	
-	/**
 	 * A system wide unique name of the classifier
 	 * @return the unique name
 	 */
 	public String getName();
+	
+	/**
+	 * A list of possible algorithms used by this learner
+	 * @return a list of names
+	 */
+	public List<String> getAlgorithmNames();
 }

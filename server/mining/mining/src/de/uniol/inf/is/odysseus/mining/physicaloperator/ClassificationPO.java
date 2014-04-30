@@ -29,8 +29,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
@@ -41,9 +39,7 @@ import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
  */
 public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
-	protected static Logger logger = LoggerFactory.getLogger(ClassificationPO.class);
-	private static final int TREE_PORT = 1;
-	private SDFSchema inputTreeschema;
+	protected static Logger logger = LoggerFactory.getLogger(ClassificationPO.class);	
 	private DefaultTISweepArea<Tuple<M>> treeSA = new DefaultTISweepArea<>();
 	private DefaultTISweepArea<Tuple<M>> elementSA = new DefaultTISweepArea<Tuple<M>>();
 	@SuppressWarnings("unchecked")
@@ -52,17 +48,18 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 	protected ITransferArea<Tuple<M>, Tuple<M>> transferFunction;
 	private int classifierAttribute;
 	private boolean oneClassifier = false;
+	private int portofclassifier = 1;
 
-	public ClassificationPO(SDFSchema inputTreeschema, SDFAttribute classifier, IMetadataMergeFunction<M> metadataMerge, ITransferArea<Tuple<M>, Tuple<M>> transferFunction) {
-		this.inputTreeschema = inputTreeschema;
-		this.classifierAttribute = inputTreeschema.indexOf(classifier);
+	public ClassificationPO(int indexOfClassifier, int portOfClassifier, IMetadataMergeFunction<M> metadataMerge, ITransferArea<Tuple<M>, Tuple<M>> transferFunction) {
+		this.portofclassifier  = portOfClassifier;
+		this.classifierAttribute = indexOfClassifier;
 		this.metadataMerge = metadataMerge;
 		this.transferFunction = transferFunction;
 	}
 
 	public ClassificationPO(ClassificationPO<M> classificationTreePO) {
 		this.classifierAttribute = classificationTreePO.classifierAttribute;
-		this.inputTreeschema = classificationTreePO.inputTreeschema;
+		this.portofclassifier = classificationTreePO.portofclassifier;
 		this.metadataMerge = classificationTreePO.metadataMerge.clone();
 		this.transferFunction = classificationTreePO.transferFunction.clone();
 	}
@@ -77,8 +74,8 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		super.process_open();
 		elementSA.clear();
 		treeSA.clear();
-		areas[TREE_PORT] = treeSA;
-		areas[(TREE_PORT + 1) % 2] = elementSA;
+		areas[portofclassifier] = treeSA;
+		areas[(portofclassifier + 1) % 2] = elementSA;
 
 		this.metadataMerge.init();
 		this.transferFunction.init(this, getSubscribedToSource().size());
@@ -91,8 +88,8 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		// transferFunction.newElement(tuple, port);
 
 		synchronized (areas) {
-			if (oneClassifier && port == TREE_PORT) {
-				areas[TREE_PORT].clear();
+			if (oneClassifier && port == portofclassifier) {
+				areas[portofclassifier].clear();
 			}
 			areas[port].insert(tuple);
 			int other = (port + 1) % 2;
@@ -109,10 +106,10 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 
 	private void classify(Tuple<M> tuple, int port, List<Tuple<M>> qualifies) {
 		for (Tuple<M> qualified : qualifies) {
-			if (port == 0) {
-				classifyAndTransfer(qualified, tuple);
-			} else {
+			if (port == portofclassifier) {
 				classifyAndTransfer(tuple, qualified);
+			} else {
+				classifyAndTransfer(qualified, tuple);				
 			}
 		}
 	}

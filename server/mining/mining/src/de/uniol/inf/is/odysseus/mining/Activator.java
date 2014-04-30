@@ -22,7 +22,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
-import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
 import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
 import de.uniol.inf.is.odysseus.mining.frequentitem.IFrequentPatternMiner;
 import de.uniol.inf.is.odysseus.mining.predicate.RulePredicateBuilder;
@@ -67,15 +66,7 @@ public class Activator implements BundleActivator {
 	
 	public void unbindClassificationLearner(IClassificationLearner<ITimeInterval> learner){
 		MiningAlgorithmRegistry.getInstance().removeClassificationLearner(learner);
-	}
-	
-	public void bindClassifier(IClassifier<ITimeInterval> learner){
-		MiningAlgorithmRegistry.getInstance().addClassifier(learner);
-	}
-	
-	public void unbindClassifier(IClassifier<ITimeInterval> learner){
-		MiningAlgorithmRegistry.getInstance().removeClassifier(learner);
-	}
+	}	
 	
 	public void bindClusterer(IClusterer<ITimeInterval> learner){
 		MiningAlgorithmRegistry.getInstance().addClusterer(learner);

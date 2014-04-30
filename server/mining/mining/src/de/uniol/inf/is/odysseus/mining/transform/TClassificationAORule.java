@@ -17,9 +17,9 @@ package de.uniol.inf.is.odysseus.mining.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.ClassificationAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.ClassificationPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -44,7 +44,18 @@ public class TClassificationAORule extends AbstractTransformationRule<Classifica
 		CombinedMergeFunction<ITimeInterval> metaDataMerge = new CombinedMergeFunction<ITimeInterval>();
 		metaDataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
 		TITransferArea<Tuple<ITimeInterval>, Tuple<ITimeInterval>> transferFunction = new TITransferArea<>();
-		ClassificationPO<ITimeInterval> po = new ClassificationPO<ITimeInterval>(operator.getInputSchema(1), operator.getClassifier(), metaDataMerge, transferFunction);
+		int portofclassifier = 0;
+		int positionofclassifier = -1;
+		positionofclassifier = operator.getInputSchema(0).indexOf(operator.getClassifier());
+		if(portofclassifier==-1){
+			portofclassifier = 1;
+			positionofclassifier = operator.getInputSchema(1).indexOf(operator.getClassifier());
+		}
+		if(portofclassifier==-1){
+			portofclassifier = -1;
+			throw new IllegalArgumentException("the classifier attribute must be either one of port 0 or port 1!");
+		}
+		ClassificationPO<ITimeInterval> po = new ClassificationPO<ITimeInterval>(positionofclassifier, portofclassifier, metaDataMerge, transferFunction);
 		po.setOneClassifier(operator.isOneClassifier());
 		defaultExecute(operator, po, config, true, true);
 	}

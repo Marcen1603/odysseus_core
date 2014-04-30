@@ -16,23 +16,24 @@
 package de.uniol.inf.is.odysseus.mining.logicaloperator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.mining.MiningAlgorithmRegistry;
 import de.uniol.inf.is.odysseus.mining.MiningDatatypes;
-import de.uniol.inf.is.odysseus.mining.classification.WekaClassificationLearner;
 
 /**
  * @author Dennis Geesen
@@ -45,9 +46,11 @@ public class ClassificationLearnAO extends AbstractLogicalOperator {
 
 	private SDFAttribute classAttribute;
 
-	private Map<String, String> options = new HashMap<>();
+	private List<Option> options = new ArrayList<>();
 	private String learner;
 	private Map<String, List<String>> nominals = new HashMap<>();
+
+	private String algorithm;
 
 	public ClassificationLearnAO() {
 
@@ -57,8 +60,9 @@ public class ClassificationLearnAO extends AbstractLogicalOperator {
 		super(old);
 		this.classAttribute = old.classAttribute;
 		this.learner = old.learner;
-		this.options = new HashMap<String, String>(old.options);
+		this.options = new ArrayList<Option>(old.options);
 		this.nominals = old.nominals;
+		this.algorithm = old.algorithm;
 	}
 
 	@Override
@@ -87,11 +91,9 @@ public class ClassificationLearnAO extends AbstractLogicalOperator {
 	}
 	
 
-	@Parameter(name = "options", type = StringParameter.class, optional = true, isMap = true)
-	public void setOptions(Map<String, String> options) {
-		for (Entry<String, String> o : options.entrySet()) {
-			this.options.put(o.getKey().toLowerCase(), o.getValue());
-		}
+	@Parameter(name = "options", type = OptionParameter.class, optional = true, isList = true)
+	public void setOptions(List<Option> options) {
+		this.options = options;
 	}
 
 	@Parameter(name = "nominals", type = StringParameter.class, isList = true, optional = true, isMap = true)
@@ -109,17 +111,25 @@ public class ClassificationLearnAO extends AbstractLogicalOperator {
 		return values;
 	}
 
-	public Map<String, String> getOptions() {
+	public List<Option> getOptions() {
 		return this.options;
 	}
 
+	public Map<String, String> getOptionsMap() {
+		Map<String, String> optionsMap = new HashMap<>();
+		for(Option o : this.options){
+			optionsMap.put(o.getName(), o.getValue());
+		}
+		return optionsMap;
+	}
+	
 	public String getLearner() {
 		return learner;
 	}
 
 	@Parameter(name = "algorithm", type = StringParameter.class, possibleValues = "getAlgorithmValues")
 	public void setAlgorithm(String algorithm) {
-		this.options.put("model", algorithm);
+		this.algorithm = algorithm;
 	}
 	
 	@Parameter(name = "learner", type = StringParameter.class, possibleValues = "getLearnerValues")
@@ -128,12 +138,15 @@ public class ClassificationLearnAO extends AbstractLogicalOperator {
 	}
 	
 	public List<String> getLearnerValues(){
-		return Arrays.asList("weka");
+		return MiningAlgorithmRegistry.getInstance().getClassificationLearnerNames();		
 	}
 	
 	public List<String> getAlgorithmValues(){
-		return Arrays.asList(WekaClassificationLearner.MODELS);
-				
+		return MiningAlgorithmRegistry.getInstance().getClassificationLearnerAlgorithms();
 	}
+
+	public String getAlgorithm() {
+		return algorithm;
+	}	
 
 }

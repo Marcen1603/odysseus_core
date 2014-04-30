@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.mining;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
-import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
 import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
 import de.uniol.inf.is.odysseus.mining.frequentitem.IFrequentPatternMiner;
 
@@ -13,8 +13,7 @@ public class MiningAlgorithmRegistry<T extends ITimeInterval> {
 	
 	public static MiningAlgorithmRegistry<? extends ITimeInterval> instance = null;
 	
-	private List<IClassificationLearner<T>> classificationLearners = new ArrayList<>();
-	private List<IClassifier<T>> classifiers = new ArrayList<>();
+	private List<IClassificationLearner<T>> classificationLearners = new ArrayList<>();	
 	private List<IClusterer<T>> clusterers = new ArrayList<>();
 	private List<IFrequentPatternMiner<T>> frequentpatternminer = new ArrayList<>();
 	
@@ -36,9 +35,6 @@ public class MiningAlgorithmRegistry<T extends ITimeInterval> {
 		this.classificationLearners.add(learner);
 	}
 	
-	public void addClassifier(IClassifier<T> classifier){
-		this.classifiers.add(classifier);
-	}
 	
 	public void addClusterer(IClusterer<T> clusterer){
 		this.clusterers.add(clusterer);
@@ -51,11 +47,7 @@ public class MiningAlgorithmRegistry<T extends ITimeInterval> {
 	public void removeClassificationLearner(IClassificationLearner<T> learner){		
 		this.classificationLearners.remove(learner);
 	}
-	
-	public void removeClassifier(IClassifier<T> classifier){
-		this.classifiers.remove(classifier);
-	}
-	
+		
 	public void removeClusterer(IClusterer<T> clusterer){
 		this.clusterers.remove(clusterer);
 	}
@@ -64,31 +56,61 @@ public class MiningAlgorithmRegistry<T extends ITimeInterval> {
 		this.frequentpatternminer.remove(fpm);
 	}
 	
-	public IClassificationLearner<T> getClassificationLearner(String name){		
+	public IClassificationLearner<T> createClassificationLearner(String name){		
 		for(IClassificationLearner<T> learner : this.classificationLearners){
 			if(learner.getName().equalsIgnoreCase(name)){
-				return learner;
+				return learner.createInstance();
 			}
 		}
 		return null;
 	}
 	
-	public IClassifier<T> getClassifier(String name){		
-		for(IClassifier<T> classifier : this.classifiers){
-			if(classifier.getName().equalsIgnoreCase(name)){
-				return classifier;
-			}
+	public List<String> getClassificationLearnerNames() {
+		List<String> list = new ArrayList<>();
+		for(IClassificationLearner<T> learner : this.classificationLearners){
+			list.add(learner.getName());
 		}
-		return null;
+		Collections.sort(list);
+		return list;
 	}
+
+	public List<String> getClassificationLearnerAlgorithms() {
+		List<String> list = new ArrayList<>();
+		for(IClassificationLearner<T> learner : this.classificationLearners){
+			list.addAll(learner.getAlgorithmNames());
+		}
+		Collections.sort(list);
+		return list;
+	}
+
+
+
 	
-	public IClusterer<T> getClusterer(String name){		
+	public IClusterer<T> createClusterer(String name){		
 		for(IClusterer<T> clusterer : this.clusterers){
 			if(clusterer.getName().equalsIgnoreCase(name)){
-				return clusterer;
+				return clusterer.createInstance();								
 			}
 		}
 		return null;
+	}
+	
+	public List<String> getClustererNames() {
+		List<String> list = new ArrayList<>();
+		for(IClusterer<T> learner : this.clusterers){
+			list.add(learner.getName());
+		}
+		Collections.sort(list);
+		return list;
+	}
+
+	public List<String> getClustererAlgorithms() {
+		List<String> list = new ArrayList<>();
+		for(IClusterer<T> learner : this.clusterers){
+			list.addAll(learner.getAlgorithmNames());
+		}
+		Collections.sort(list);
+		return list;
 	}
 
 	public IFrequentPatternMiner<T> getFrequentPatternMiner(String name) {
@@ -99,5 +121,25 @@ public class MiningAlgorithmRegistry<T extends ITimeInterval> {
 		}
 		return null;
 	}
+	
+	public List<String> getFrequentPatternMinerNames() {
+		List<String> list = new ArrayList<>();
+		for(IFrequentPatternMiner<T> learner : this.frequentpatternminer){
+			list.add(learner.getName());
+		}
+		Collections.sort(list);
+		return list;
+	}
+
+	public List<String> getFrequentPatternMinerAlgorithms() {
+		List<String> list = new ArrayList<>();
+		for(IFrequentPatternMiner<T> learner : this.frequentpatternminer){
+			list.addAll(learner.getAlgorithmNames());
+		}
+		Collections.sort(list);
+		return list;
+	}
+
+	
 
 }
