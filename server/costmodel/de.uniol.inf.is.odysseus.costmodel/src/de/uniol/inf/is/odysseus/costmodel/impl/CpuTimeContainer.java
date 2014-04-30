@@ -35,14 +35,18 @@ public class CpuTimeContainer {
 		return Optional.fromNullable(cpuTimeMap.get(operatorType));
 	}
 
+	@SuppressWarnings("unchecked")
 	private void loadFile() {
 		if (!loaded) {
 			loaded = true;
 
 			File file = new File(Config.CPUTIME_FILE_NAME);
 			if (file.exists()) {
-				cpuTimeMap.clear();
-				cpuTimeMap.putAll(readCpuTimesFromFile(file));
+				Map<Class<?>, Double> loadedCpuTimeMap = readCpuTimesFromFile(file);
+				
+				for( Class<?> operatorClass : loadedCpuTimeMap.keySet() ) {
+					insertCpuTimeIfNeeded((Class<? extends IPhysicalOperator>) operatorClass, loadedCpuTimeMap.get(operatorClass));
+				}
 			}
 		}
 	}
@@ -110,15 +114,18 @@ public class CpuTimeContainer {
 		updateCpuTimeThread = new CpuTimeUpdateThread(executor) {
 			@Override
 			protected void updateCpuTime(Class<? extends IPhysicalOperator> operatorType, double cpuTime) {
-				Double cpuTimeValue = cpuTimeMap.get(operatorType);
-				
-				if( cpuTimeValue == null || (cpuTimeValue != null && cpuTimeValue < cpuTime )) {
-					cpuTimeMap.put(operatorType, cpuTime);
-				}
+				insertCpuTimeIfNeeded(operatorType, cpuTime);
 			}
-			
 		};
 		updateCpuTimeThread.start();
+	}
+	
+	private void insertCpuTimeIfNeeded(Class<? extends IPhysicalOperator> operatorType, double cpuTime) {
+		Double cpuTimeValue = cpuTimeMap.get(operatorType);
+		
+		if( cpuTimeValue == null || (cpuTimeValue != null && cpuTimeValue < cpuTime )) {
+			cpuTimeMap.put(operatorType, cpuTime);
+		}
 	}
 
 	public void unsetExecutor() {
