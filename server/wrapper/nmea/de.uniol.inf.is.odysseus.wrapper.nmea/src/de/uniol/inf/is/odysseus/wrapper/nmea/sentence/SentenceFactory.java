@@ -55,6 +55,9 @@ public class SentenceFactory {
 		registerSentenceType("TTM", TTMSentence.class);
 		registerSentenceType("VDM", AISSentence.class);
 		registerSentenceType("VDO", AISSentence.class);
+		registerSentenceType("OSD", OSDSentence.class);
+		registerSentenceType("ASHR", ASHRSentence.class);
+		registerSentenceType("EXT", EXTSentence.class);
 	}
 	
 	/**

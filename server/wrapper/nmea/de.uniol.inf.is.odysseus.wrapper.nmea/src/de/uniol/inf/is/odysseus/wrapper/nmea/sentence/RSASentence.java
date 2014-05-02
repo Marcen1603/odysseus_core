@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.wrapper.nmea.sentence;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.SignalIntegrity;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Status;
 import de.uniol.inf.is.odysseus.wrapper.nmea.util.ParseUtils;
 
@@ -36,7 +37,7 @@ public class RSASentence extends Sentence{
 	/** Sentence id. */
 	public static final String SENTENCE_ID = "RSA";
 	/** Default count of fields. */
-	public static final int FIELD_COUNT = 4;
+	public static final int FIELD_COUNT = 5;
 	
 	/** Starboard (or single) rudder sensor, "-" means Turn To Port. */
 	private Double starboard;
@@ -46,6 +47,8 @@ public class RSASentence extends Sentence{
 	private Double portboard;
 	/** Status, A means data is valid. */
 	private Status pbStatus;
+	/** Checksum */
+	private SignalIntegrity signalIntegrity;
 	
 	
 	/**
@@ -73,6 +76,7 @@ public class RSASentence extends Sentence{
 		sbStatus = ParseUtils.parseStatus(getValue(index++));
 		portboard = ParseUtils.parseDouble(getValue(index++));
 		pbStatus = ParseUtils.parseStatus(getValue(index++));
+		signalIntegrity = ParseUtils.parseSignalIntegrity(getValue(index++));
 	}
 
 	@Override
@@ -82,6 +86,7 @@ public class RSASentence extends Sentence{
 		setValue(index++, ParseUtils.toString(sbStatus));
 		setValue(index++, ParseUtils.toString(portboard));
 		setValue(index++, ParseUtils.toString(pbStatus));
+		setValue(index++, ParseUtils.toString(signalIntegrity));
 	}
 
 	@Override
@@ -90,6 +95,7 @@ public class RSASentence extends Sentence{
 		if (sbStatus != Status.NULL) res.put("sbStatus", sbStatus.name());
 		if (portboard != null) res.put("portboard", portboard);
 		if (pbStatus != Status.NULL) res.put("pbStatus", pbStatus.name());
+		if (signalIntegrity != SignalIntegrity.NULL) res.put("signalIntegrity", signalIntegrity.name());
 	}
 
 	public Double getStarboard(){
@@ -122,5 +128,13 @@ public class RSASentence extends Sentence{
 	
 	public void setPortboardStatus(Status pbStatus){
 		this.pbStatus = pbStatus;
+	}
+
+	public SignalIntegrity getSignalIntegrity() {
+		return signalIntegrity;
+	}
+
+	public void setSignalIntegrity(SignalIntegrity signalIntegrity) {
+		this.signalIntegrity = signalIntegrity;
 	}
 }

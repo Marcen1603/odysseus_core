@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.wrapper.nmea.sentence;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.SignalIntegrity;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Source;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Status;
 import de.uniol.inf.is.odysseus.wrapper.nmea.util.ParseUtils;
@@ -38,7 +39,7 @@ public class RPMSentence extends Sentence{
 	/** Sentence id. */
 	public static final String SENTENCE_ID = "RPM";
 	/** Default count of fields. */
-	public static final int FIELD_COUNT = 5;
+	public static final int FIELD_COUNT = 6;
 	
 	/** Source; S = Shaft, E = Engine. */
 	private Source source;
@@ -50,6 +51,8 @@ public class RPMSentence extends Sentence{
 	private Double pitch;
 	/** Status, A means data is valid. */
 	private Status status;
+	/** Checksum */
+	private SignalIntegrity signalIntegrity;
 	
 	/**
 	 * Default constructor for writing. Empty Sentence to fill attributes and
@@ -77,7 +80,7 @@ public class RPMSentence extends Sentence{
 		speed = ParseUtils.parseDouble(getValue(index++));
 		pitch = ParseUtils.parseDouble(getValue(index++));
 		status = ParseUtils.parseStatus(getValue(index++));
-		
+		signalIntegrity = ParseUtils.parseSignalIntegrity(getValue(index++));
 	}
 
 	@Override
@@ -88,6 +91,7 @@ public class RPMSentence extends Sentence{
 		setValue(index++, ParseUtils.toString(speed));
 		setValue(index++, ParseUtils.toString(pitch));
 		setValue(index++, ParseUtils.toString(status));
+		setValue(index++, ParseUtils.toString(signalIntegrity));
 	}
 
 	@Override
@@ -97,6 +101,7 @@ public class RPMSentence extends Sentence{
 		if (speed != null) res.put("speed", speed);
 		if (pitch != null) res.put("pitch", pitch);
 		if (status != Status.NULL) res.put("status", status.name());
+		if (signalIntegrity != SignalIntegrity.NULL) res.put("signalIntegrity", signalIntegrity.name());
 	}
 
 	public Source getSource(){
@@ -137,5 +142,13 @@ public class RPMSentence extends Sentence{
 	
 	public void setStatus(Status status){
 		this.status = status;
+	}
+
+	public SignalIntegrity getSignalIntegrity() {
+		return signalIntegrity;
+	}
+
+	public void setSignalIntegrity(SignalIntegrity signalIntegrity) {
+		this.signalIntegrity = signalIntegrity;
 	}
 }
