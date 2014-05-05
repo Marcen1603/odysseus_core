@@ -127,8 +127,15 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		}
 		this.attributeResolver.addSourceOriginal(originalName.toString(),
 				inputOp);
-		this.attributeResolver.addSource(originalName, inputOp);
-		this.attributeResolver.addSource(sourceName, inputOp);
+		try {
+			this.attributeResolver.addSource(originalName, inputOp);
+			if (!sourceName.equals(originalName.toString())) {
+				this.attributeResolver.addSource(sourceName, inputOp);
+			}
+		} catch (Exception e) {
+			// ignore
+			e.printStackTrace();
+		}
 
 	}
 
