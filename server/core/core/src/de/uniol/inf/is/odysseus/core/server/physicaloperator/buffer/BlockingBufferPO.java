@@ -64,4 +64,8 @@ public class BlockingBufferPO<T extends IStreamObject<?>> extends BufferPO<T> {
 		
 		return super.process_isSemanticallyEqual(ipo);
 	}
+	
+	public long getMaxBufferSize() {
+		return maxBufferSize;
+	}
 }
