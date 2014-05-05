@@ -96,6 +96,11 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 	}
 	
 	@Override
+	public byte[] writeBSONData(Object data) {
+		throw new IllegalArgumentException("Writing BSON data is not implemented in this DataHandler!");
+	}
+	
+	@Override
 	public boolean isPrototype() {
 		return prototype;
 	}
