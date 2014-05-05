@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -20,12 +19,12 @@ public class OperatorEstimatorRegistry {
 	private static final Logger LOG = LoggerFactory.getLogger(OperatorEstimatorRegistry.class);
 	
 	private static final StandardPhysicalOperatorEstimator<IPhysicalOperator> PHYSICAL_STANDARD_ESTIMATOR = new StandardPhysicalOperatorEstimator<IPhysicalOperator>() {
+		
 		@Override
-		public Collection<? extends Class<IPhysicalOperator>> getOperatorClasses() {
-			Collection<Class<IPhysicalOperator>> col = Lists.newArrayList();
-			col.add(IPhysicalOperator.class);
-			return col;
-		}
+		protected Class<? extends IPhysicalOperator> getOperatorClass() {
+			return IPhysicalOperator.class;
+		};
+		
 	};
 	
 	private static final Map<Class<? extends IPhysicalOperator>, Class<? extends IPhysicalOperatorEstimator<?>>> PHYSICAL_ESTIMATORS = Maps.newHashMap();
@@ -33,6 +32,10 @@ public class OperatorEstimatorRegistry {
 	// called by OSGi-DS
 	public static void bindPhysicalOperatorEstimator(IPhysicalOperatorEstimator<?> serv) {
 		Collection<? extends Class<?>> classes = serv.getOperatorClasses();
+		
+		if( classes == null || classes.isEmpty()) {
+			throw new RuntimeException("Estimator " + serv.getClass().getName() + " returns empty or null list of operator classes!");
+		}
 		
 		for( Class<?> clazz : classes ) {
 			PHYSICAL_ESTIMATORS.put((Class<? extends IPhysicalOperator>) clazz, (Class<? extends IPhysicalOperatorEstimator<?>>) serv.getClass());

@@ -5,11 +5,13 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.BlockingBufferPOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.BufferPOEstimator;
+import de.uniol.inf.is.odysseus.costmodel.physical.estimate.ElementWindowTIPOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.MetadataCreationPOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.MetadataUpdatePOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.ProjectPOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.ReceiverPOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.SelectPOEstimator;
+import de.uniol.inf.is.odysseus.costmodel.physical.estimate.TimeWindowTIPOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.UnionPOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.impl.OperatorEstimatorRegistry;
 
@@ -25,6 +27,8 @@ public class PhysicalCostModelPlugIn implements BundleActivator {
 		OperatorEstimatorRegistry.bindPhysicalOperatorEstimator(new ProjectPOEstimator());
 		OperatorEstimatorRegistry.bindPhysicalOperatorEstimator(new BufferPOEstimator());
 		OperatorEstimatorRegistry.bindPhysicalOperatorEstimator(new BlockingBufferPOEstimator());
+		OperatorEstimatorRegistry.bindPhysicalOperatorEstimator(new TimeWindowTIPOEstimator());
+		OperatorEstimatorRegistry.bindPhysicalOperatorEstimator(new ElementWindowTIPOEstimator());
 	}
 
 	@Override
@@ -37,6 +41,8 @@ public class PhysicalCostModelPlugIn implements BundleActivator {
 		OperatorEstimatorRegistry.unbindPhysicalOperatorEstimator(new ProjectPOEstimator());
 		OperatorEstimatorRegistry.unbindPhysicalOperatorEstimator(new BufferPOEstimator());
 		OperatorEstimatorRegistry.unbindPhysicalOperatorEstimator(new BlockingBufferPOEstimator());
+		OperatorEstimatorRegistry.unbindPhysicalOperatorEstimator(new TimeWindowTIPOEstimator());
+		OperatorEstimatorRegistry.unbindPhysicalOperatorEstimator(new ElementWindowTIPOEstimator());
 	}
 
 }

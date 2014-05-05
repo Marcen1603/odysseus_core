@@ -1,9 +1,5 @@
 package de.uniol.inf.is.odysseus.costmodel.physical.estimate;
 
-import java.util.Collection;
-
-import com.google.common.collect.Lists;
-
 import de.uniol.inf.is.odysseus.costmodel.physical.StandardPhysicalOperatorEstimator;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 
@@ -12,10 +8,9 @@ public class ProjectPOEstimator extends StandardPhysicalOperatorEstimator<Relati
 
 	private static final double CPU_FACTOR = 1.5;
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Collection<? extends Class<RelationalProjectPO>> getOperatorClasses() {
-		return Lists.newArrayList(RelationalProjectPO.class);
+	public Class<? extends RelationalProjectPO> getOperatorClass() {
+		return RelationalProjectPO.class;
 	}
 
 	@Override

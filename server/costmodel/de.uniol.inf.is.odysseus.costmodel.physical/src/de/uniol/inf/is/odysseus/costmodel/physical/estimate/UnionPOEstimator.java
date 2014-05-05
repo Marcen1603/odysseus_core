@@ -1,9 +1,5 @@
 package de.uniol.inf.is.odysseus.costmodel.physical.estimate;
 
-import java.util.Collection;
-
-import com.google.common.collect.Lists;
-
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.UnionPO;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
 import de.uniol.inf.is.odysseus.costmodel.EstimatorHelper;
@@ -12,10 +8,9 @@ import de.uniol.inf.is.odysseus.costmodel.physical.StandardPhysicalOperatorEstim
 @SuppressWarnings("rawtypes")
 public class UnionPOEstimator extends StandardPhysicalOperatorEstimator<UnionPO> {
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Collection<? extends Class<UnionPO>> getOperatorClasses() {
-		return Lists.newArrayList(UnionPO.class);
+	public Class<? extends UnionPO> getOperatorClass() {
+		return UnionPO.class;
 	}
 
 	@Override

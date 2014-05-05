@@ -17,6 +17,7 @@ Import-Package: de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.mep.functions.compare,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base.predicate,
+ de.uniol.inf.is.odysseus.server.intervalapproach.window,
  org.eclipse.osgi.framework.console;version="1.1.0",
  org.osgi.framework
 Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.physical.PhysicalCostModelPlugIn

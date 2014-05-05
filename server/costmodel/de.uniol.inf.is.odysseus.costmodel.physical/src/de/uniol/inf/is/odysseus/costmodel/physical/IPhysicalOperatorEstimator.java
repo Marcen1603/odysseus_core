@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.costmodel.IHistogram;
 
 public interface IPhysicalOperatorEstimator<T extends IPhysicalOperator> {
 
-	public Collection<? extends Class<T>> getOperatorClasses();
+	public Collection<Class<? extends T>> getOperatorClasses();
 	
 	public void estimatePhysical( T operator, Map<IPhysicalOperator, DetailCost> previousCostMap, Map<SDFAttribute, IHistogram> histograms, ICostModelKnowledge knowledge );
 	
