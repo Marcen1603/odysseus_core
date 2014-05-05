@@ -6,6 +6,7 @@ import org.osgi.framework.BundleContext;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.BlockingBufferPOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.BufferPOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.ElementWindowTIPOEstimator;
+import de.uniol.inf.is.odysseus.costmodel.physical.estimate.JoinTIPOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.MetadataCreationPOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.MetadataUpdatePOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.ProjectPOEstimator;
@@ -29,6 +30,7 @@ public class PhysicalCostModelPlugIn implements BundleActivator {
 		OperatorEstimatorRegistry.bindPhysicalOperatorEstimator(new BlockingBufferPOEstimator());
 		OperatorEstimatorRegistry.bindPhysicalOperatorEstimator(new TimeWindowTIPOEstimator());
 		OperatorEstimatorRegistry.bindPhysicalOperatorEstimator(new ElementWindowTIPOEstimator());
+		OperatorEstimatorRegistry.bindPhysicalOperatorEstimator(new JoinTIPOEstimator());
 	}
 
 	@Override
@@ -43,6 +45,7 @@ public class PhysicalCostModelPlugIn implements BundleActivator {
 		OperatorEstimatorRegistry.unbindPhysicalOperatorEstimator(new BlockingBufferPOEstimator());
 		OperatorEstimatorRegistry.unbindPhysicalOperatorEstimator(new TimeWindowTIPOEstimator());
 		OperatorEstimatorRegistry.unbindPhysicalOperatorEstimator(new ElementWindowTIPOEstimator());
+		OperatorEstimatorRegistry.unbindPhysicalOperatorEstimator(new JoinTIPOEstimator());
 	}
 
 }
