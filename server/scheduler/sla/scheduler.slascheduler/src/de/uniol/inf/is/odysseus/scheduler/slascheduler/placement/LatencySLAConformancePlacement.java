@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.placement;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.latency.physicaloperator.LatencyCalculationPipe;
+import de.uniol.inf.is.odysseus.latency.physicaloperator.CalcLatencyPO;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLaConformance;
@@ -42,7 +42,7 @@ public class LatencySLAConformancePlacement implements ISLAConformancePlacement 
 		// it is expected that there is only one query per partial plan!
 
 		if (root.isSource()) {
-			LatencyCalculationPipe<?> latencyCalc = new LatencyCalculationPipe();
+			CalcLatencyPO<?> latencyCalc = new CalcLatencyPO();
 			ISubscribable subscribable = latencyCalc;
 			subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
 

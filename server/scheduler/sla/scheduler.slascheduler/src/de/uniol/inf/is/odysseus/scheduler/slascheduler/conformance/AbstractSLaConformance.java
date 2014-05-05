@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.core.server.sla.ServiceLevel;
-import de.uniol.inf.is.odysseus.latency.physicaloperator.LatencyCalculationPipe;
+import de.uniol.inf.is.odysseus.latency.physicaloperator.CalcLatencyPO;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationEvent;
@@ -404,7 +404,7 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>>
 		double time = 0.0;
 
 		for (IPhysicalOperator op : path) {
-			if (!(op instanceof ISLAConformance || op instanceof LatencyCalculationPipe<?>)) {
+			if (!(op instanceof ISLAConformance || op instanceof CalcLatencyPO)) {
 				time += getMeanCPUTimeMetadataMilli(op);
 			}
 		}
