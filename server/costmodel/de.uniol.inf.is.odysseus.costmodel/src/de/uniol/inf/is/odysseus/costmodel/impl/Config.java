@@ -14,6 +14,11 @@ class Config {
 	public static final String SAMPLING_FILES_PATH = COSTMODEL_BASE_PATH;
 	public static final String DATARATE_FILE_NAME = COSTMODEL_BASE_PATH + "datarates.conf";
 	public static final String CPUTIME_FILE_NAME = COSTMODEL_BASE_PATH + "cputimes.conf";
+	
+	static {
+		File f = new File(COSTMODEL_BASE_PATH);
+		f.mkdirs();
+	}
 
 	private static String determineOdysseusHome() {
 		try {
