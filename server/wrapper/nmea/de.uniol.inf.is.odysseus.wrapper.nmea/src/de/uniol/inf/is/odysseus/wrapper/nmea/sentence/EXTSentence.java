@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.wrapper.nmea.sentence;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.SignalIntegrity;
 import de.uniol.inf.is.odysseus.wrapper.nmea.util.ParseUtils;
 
 /**
@@ -10,18 +11,19 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.util.ParseUtils;
  * 
  * <pre>
  * {@code
- * .     1   2   3 
- *       |   |   | 
- * $-EXT,x.x,x.x,x.x
+ * .     1   2   3    4
+ *       |   |   |    |   
+ * $-EXT,x.x,x.x,x.x*hh
  * }
  * </pre>
  * <ol>
  * <li>Acceleration X</li>
  * <li>Acceleration Y</li>
  * <li>Acceleration Z</li>
+ * <li>Checksum</li>
  * </ol>
  * 
- * @author jboger <juergen.boger@offis.de>
+ * @author jbmzh <jan.meyer.zu.holte@uni-oldenburg.de>
  * 
  */
 public class EXTSentence extends Sentence {
@@ -32,7 +34,7 @@ public class EXTSentence extends Sentence {
 	/** Sentence id. */
 	public static final String SENTENCE_ID = "EXT";
 	/** Default count of fields. */
-	public static final int FIELD_COUNT = 3;
+	public static final int FIELD_COUNT = 4;
 	
 	/** Acceleration X */
 	private Double accX;
@@ -40,6 +42,8 @@ public class EXTSentence extends Sentence {
 	private Double accY;
 	/** Acceleration Y */
 	private Double accZ;
+	/** Checksum */
+	private SignalIntegrity signalIntegrity;
 
 	
 	/**
@@ -65,6 +69,7 @@ public class EXTSentence extends Sentence {
 		accX = ParseUtils.parseDouble(getValue(index++));
 		accY = ParseUtils.parseDouble(getValue(index++));
 		accZ = ParseUtils.parseDouble(getValue(index++));
+		signalIntegrity = ParseUtils.parseSignalIntegrity(getValue(index++));
 	}
 
 	@Override
@@ -73,6 +78,7 @@ public class EXTSentence extends Sentence {
 		setValue(index++, ParseUtils.toString(accX));
 		setValue(index++, ParseUtils.toString(accY));
 		setValue(index++, ParseUtils.toString(accZ));
+		setValue(index++, ParseUtils.toString(signalIntegrity));
 	}
 
 	@Override
@@ -80,6 +86,7 @@ public class EXTSentence extends Sentence {
 		if (accX != null) res.put("heading", accX);
 		if (accY != null) res.put("deviation", accY);
 		if (accZ != null) res.put("variation", accZ);
+		if (signalIntegrity != SignalIntegrity.NULL) res.put("signalIntegrity", signalIntegrity.name());
 	}
 
 	public Double getHeading() {
