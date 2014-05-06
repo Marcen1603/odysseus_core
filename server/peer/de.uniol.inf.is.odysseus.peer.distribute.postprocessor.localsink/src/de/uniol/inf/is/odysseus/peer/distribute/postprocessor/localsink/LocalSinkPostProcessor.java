@@ -65,7 +65,7 @@ public class LocalSinkPostProcessor extends AbstractOperatorInsertionPostProcess
 		
 		Collection<ILogicalOperator> operators = Lists.newArrayList();
 		
-		for(ILogicalQueryPart queryPart : allocationMap.keySet()) {
+		for(ILogicalQueryPart queryPart : allocationMap.keySet().toArray(new ILogicalQueryPart[0])) {
 			
 			LocalSinkPostProcessor.log.debug("Determining real sinks from query part {} to insert operators", queryPart);
 			
@@ -89,7 +89,9 @@ public class LocalSinkPostProcessor extends AbstractOperatorInsertionPostProcess
 			}
 			
 			queryPart.removeOperators(operatorsToRemove);
-			
+			if( queryPart.getOperators().isEmpty() ) {
+				allocationMap.remove(queryPart);
+			}
 		}
 		
 		if(!operators.isEmpty()) {
