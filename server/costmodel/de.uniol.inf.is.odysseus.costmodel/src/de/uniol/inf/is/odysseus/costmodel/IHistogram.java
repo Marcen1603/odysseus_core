@@ -26,7 +26,6 @@ public interface IHistogram extends Cloneable {
 	
 	public double getOccurences(double value);
 	public double getOccurenceRange(double from, double to);
-	public void setOccurences(int intervalIndex, double occs);
 	
 	public double getValueCount();
 	public int getIntervalCount();

@@ -314,18 +314,6 @@ public class EqualDepthHistogram implements IHistogram {
 	}
 
 	@Override
-	public void setOccurences(int intervalIndex, double occs) {
-		if (occs < 0.0)
-			throw new IllegalArgumentException("number of occurences must be zero or positive, not " + occs);
-		if (intervalIndex < 0 || intervalIndex >= counts.length)
-			throw new IndexOutOfBoundsException("" + occs);
-
-		countSum -= counts[intervalIndex];
-		counts[intervalIndex] = occs;
-		countSum += occs;
-	}
-
-	@Override
 	public IHistogram normalize() {
 		EqualDepthHistogram clone = clone();
 		if (!isRelative())
