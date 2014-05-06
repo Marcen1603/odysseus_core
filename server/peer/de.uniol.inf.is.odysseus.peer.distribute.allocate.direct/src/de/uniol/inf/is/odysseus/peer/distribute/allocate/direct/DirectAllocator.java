@@ -30,7 +30,7 @@ public class DirectAllocator implements IQueryPartAllocator {
 			p2pDictionary = null;
 		}
 	}
-	
+
 	@Override
 	public String getName() {
 		return "direct";
@@ -39,27 +39,35 @@ public class DirectAllocator implements IQueryPartAllocator {
 	@Override
 	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, ILogicalQuery query, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters)
 			throws QueryPartAllocationException {
-		
-		if( allocatorParameters.size() != 1 ) {
+
+		if (allocatorParameters.size() != 1) {
 			throw new QueryPartAllocationException("Direct allocation needs exactly one parameter instead of " + allocatorParameters.size() + "!");
 		}
-		
-		String peerName = allocatorParameters.get(0);
-		Optional<PeerID> optPeerID = determinePeerID(peerName);
-		if( !optPeerID.isPresent() ) {
-			throw new QueryPartAllocationException("Peer '" + peerName + "' is not known!");
-		}
-		
+
+		PeerID peerID = determinePeerID(localPeerID, allocatorParameters.get(0));
+
 		Map<ILogicalQueryPart, PeerID> resultMap = Maps.newHashMap();
-		for( ILogicalQueryPart queryPart : queryParts ) {
-			resultMap.put(queryPart, optPeerID.get());
+		for (ILogicalQueryPart queryPart : queryParts) {
+			resultMap.put(queryPart, peerID);
 		}
 		return resultMap;
 	}
 
-	private static Optional<PeerID> determinePeerID(String peerName) {
-		for( PeerID peerID : p2pDictionary.getRemotePeerIDs() ) {
-			if( p2pDictionary.getRemotePeerName(peerID).equals(peerName)) {
+	private static PeerID determinePeerID(PeerID localPeerID, String peerName) throws QueryPartAllocationException {
+		if (peerName.equalsIgnoreCase("local")) {
+			return localPeerID;
+		}
+
+		Optional<PeerID> optPeerID = determineRemotePeerID(peerName);
+		if (!optPeerID.isPresent()) {
+			throw new QueryPartAllocationException("Peer '" + peerName + "' is not known!");
+		}
+		return optPeerID.get();
+	}
+
+	private static Optional<PeerID> determineRemotePeerID(String peerName) {
+		for (PeerID peerID : p2pDictionary.getRemotePeerIDs()) {
+			if (p2pDictionary.getRemotePeerName(peerID).equals(peerName)) {
 				return Optional.of(peerID);
 			}
 		}
