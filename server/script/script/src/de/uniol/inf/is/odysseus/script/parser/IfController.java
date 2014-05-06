@@ -110,22 +110,7 @@ public class IfController {
 			
             Optional<String> optionalPrint = determinePrint(currentLine);
             if (optionalPrint.isPresent()) {
-                String stringExpression = optionalPrint.get();
-                SDFExpression expression = new SDFExpression(stringExpression, MEP.getInstance());
-                
-                List<SDFAttribute> attributes = expression.getAllAttributes();
-                List<Object> values = Lists.newArrayList();
-                Map<String, Serializable> replacementMap = replacements.toMap();
-                for( SDFAttribute attribute : attributes ) {
-                    String name = attribute.getAttributeName().toUpperCase();
-                    if( !replacementMap.containsKey(name)) {
-                        throw new OdysseusScriptException("Replacementkey " + name + " not known in #PRINT-statement");
-                    } 
-                    
-                    values.add(replacementMap.get(name));
-                }
-                expression.bindVariables(values.toArray());
-                System.out.println(expression.getValue());
+                executePrint(replacements, optionalPrint.get());
                 return false;
             }
 	            
@@ -200,6 +185,24 @@ public class IfController {
 		} finally {
 			currentLine++;
 		}
+	}
+
+	private static void executePrint(ReplacementContainer replacements, String stringExpression) throws OdysseusScriptException {
+		SDFExpression expression = new SDFExpression(stringExpression, MEP.getInstance());
+		
+		List<SDFAttribute> attributes = expression.getAllAttributes();
+		List<Object> values = Lists.newArrayList();
+		Map<String, Serializable> replacementMap = replacements.toMap();
+		for( SDFAttribute attribute : attributes ) {
+		    String name = attribute.getAttributeName().toUpperCase();
+		    if( !replacementMap.containsKey(name)) {
+		        throw new OdysseusScriptException("Replacementkey " + name + " not known in #PRINT-statement");
+		    } 
+		    
+		    values.add(replacementMap.get(name));
+		}
+		expression.bindVariables(values.toArray());
+		System.out.println(expression.getValue());
 	}
 
 	private static boolean existsSource(String sourceName, ISession caller) {

@@ -1,19 +1,25 @@
 package de.uniol.inf.is.odysseus.script.parser;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.mep.MEP;
 
 public final class ReplacementContainer {
 
 	public static final String PARAMETER_KEY = "#";
 	public static final String REPLACEMENT_DEFINITION_KEY = "DEFINE";
 	private static final String UNDEF_KEY = "UNDEF";
+	private static final String EVAL_KEY = "EVAL";
 
 	public static final String REPLACEMENT_START_KEY = "${";
 	public static final String REPLACEMENT_END_KEY = "}";
@@ -78,7 +84,7 @@ public final class ReplacementContainer {
 		return lineToReplace.trim();
 	}
 
-	public boolean parse(String line) {
+	public boolean parse(String line) throws OdysseusScriptException {
 		Preconditions.checkNotNull(line, "Line to parse must not be null!");
 
 		currentContext = context.copy();
@@ -102,8 +108,41 @@ public final class ReplacementContainer {
 
 			return true;
 		}
+		
+		if( line.indexOf(PARAMETER_KEY + EVAL_KEY) != -1 ) {
+			String[] parts = line.trim().split(" |\t", 3);
+			String key = parts[1].toUpperCase();
+			String expressionString = parts[2].trim();
+
+			SDFExpression expression = new SDFExpression(expressionString, MEP.getInstance());
+			
+			List<SDFAttribute> attributes = expression.getAllAttributes();
+			List<Object> values = Lists.newArrayList();
+
+			for( SDFAttribute attribute : attributes ) {
+				String name = attribute.getAttributeName().toUpperCase();
+				if( !replacements.containsKey(name)) {
+					throw new OdysseusScriptException("Replacementkey " + name + " not known in #EVAL-statement");
+				} 
+				
+				Serializable value = replacements.get(name);
+				values.add(tryToDouble(value));
+			}
+			expression.bindVariables(values.toArray());
+			
+			replacements.put(key, expression.getValue().toString());
+			return true;
+		}
 
 		return false;
+	}
+
+	private static Object tryToDouble(Serializable value) {
+		try {
+			return Double.valueOf(value.toString());
+		} catch( Throwable t ) {
+			return value;
+		}
 	}
 
 	public void put(String key, String value) {
