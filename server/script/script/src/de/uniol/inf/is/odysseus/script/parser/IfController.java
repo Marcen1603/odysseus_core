@@ -75,7 +75,7 @@ public class IfController {
 			
 			if( determineEndIf(currentLine) ) {
 				if( inIfClause == null ) {
-					throw new OdysseusScriptException("ENDIF without IFDEF/IFNDEF/IFSRCDEF/IFSRCNDEF!");
+					throw new OdysseusScriptException("ENDIF without IF/IFDEF/IFNDEF/IFSRCDEF/IFSRCNDEF!");
 				}
 				
 				inIfClause = null;
@@ -84,7 +84,7 @@ public class IfController {
 			
 			if( determineElse(currentLine) ) {
 				if( inIfClause == null ) {
-					throw new OdysseusScriptException("ELSE without IFDEF/IFNDEF/IFSRCDEF/IFSRCNDEF!");
+					throw new OdysseusScriptException("ELSE without IF/IFDEF/IFNDEF/IFSRCDEF/IFSRCNDEF!");
 				}
 				
 				inIfClause = !inIfClause;
