@@ -110,9 +110,22 @@ public final class ReplacementContainer {
 		}
 		
 		if( line.indexOf(PARAMETER_KEY + EVAL_KEY) != -1 ) {
-			String[] parts = line.trim().split(" |\t", 3);
-			String key = parts[1].toUpperCase();
-			String expressionString = parts[2].trim();
+			line = line.trim();
+			
+			String key = null;
+			String expressionString = null;
+			int equalPos = line.indexOf("=");
+			
+			if( equalPos != -1 ) {
+				String left = line.substring(0, equalPos);
+				String[] parts = left.split(" |\t", 2);
+				key = parts[1].trim().toUpperCase();
+				expressionString = line.substring(equalPos + 1).trim();
+			} else {
+				String[] parts = line.split(" |\t", 3);
+				key = parts[1].toUpperCase();
+				expressionString = parts[2].trim();
+			}
 
 			SDFExpression expression = new SDFExpression(expressionString, MEP.getInstance());
 			
