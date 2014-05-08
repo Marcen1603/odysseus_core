@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.wizards;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,12 +44,16 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.GraphQueryFileProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTextProvider;
+import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.RunningQueryProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvider;
 
 public class QueryFileSelectionPage extends WizardPage {
@@ -56,9 +61,12 @@ public class QueryFileSelectionPage extends WizardPage {
 	private final ContainerSelectionPage page1;
 
 	private Button chooseSourceRadio;
+	private Button chooseQueryFileRadio;
 	private Button chooseQueryRadio;
+
 	private Combo sourceCombo;
-	
+	private Combo queryCombo;
+
 	private Button chooseFileButton;
 	private IFile selectedFile;
 
@@ -77,14 +85,15 @@ public class QueryFileSelectionPage extends WizardPage {
 		Composite rootComposite = new Composite(parent, SWT.NONE);
 		rootComposite.setLayoutData(new GridData((GridData.FILL_BOTH)));
 		rootComposite.setLayout(new GridLayout(1, true));
-		
-		createChooseQueryControls(rootComposite);
+
+		createChooseQueryFileControls(rootComposite);
 		createChooseSourceControls(rootComposite);
+		createChooseQueryControls(rootComposite);
 
 		finishCreation(rootComposite);
 	}
 
-	private void createChooseQueryControls(Composite rootComposite) {
+	private void createChooseQueryFileControls(Composite rootComposite) {
 		createChooseQueryRadioButton(rootComposite);
 		createQueryFilesTable(rootComposite);
 	}
@@ -96,27 +105,27 @@ public class QueryFileSelectionPage extends WizardPage {
 
 		Label label = new Label(tableComposite, SWT.NONE);
 		label.setText("File");
-		final Text inputFile = new Text(tableComposite, SWT.BORDER | SWT.READ_ONLY );
+		final Text inputFile = new Text(tableComposite, SWT.BORDER | SWT.READ_ONLY);
 		inputFile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		chooseFileButton = new Button(tableComposite, SWT.PUSH);
 		chooseFileButton.setToolTipText("Choose file");
 		chooseFileButton.setImage(DashboardPlugIn.getImageManager().get("chooseFile"));
 		chooseFileButton.addSelectionListener(new SelectionAdapter() {
-		
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IPath path = page1.getContainerFullPath();
 				IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 				IProject project = resource.getProject();
-				
+
 				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 				dialog.setInput(project);
 				dialog.setAllowMultiple(false);
 				if (dialog.open() == Window.OK) {
-					IResource selectedResource = (IResource) dialog.getFirstResult();					
-					if (selectedResource != null && selectedResource instanceof IFile ) {
-						selectedFile = (IFile)selectedResource;
+					IResource selectedResource = (IResource) dialog.getFirstResult();
+					if (selectedResource != null && selectedResource instanceof IFile) {
+						selectedFile = (IFile) selectedResource;
 						inputFile.setText(selectedFile.getFullPath().toString());
 						setPageComplete(true);
 					} else {
@@ -124,32 +133,32 @@ public class QueryFileSelectionPage extends WizardPage {
 						selectedFile = null;
 						inputFile.setText("");
 					}
-				}	
+				}
 			}
-			
+
 		});
 
 	}
 
 	private void createChooseQueryRadioButton(Composite rootComposite) {
-		chooseQueryRadio = DashboardPartUtil.createRadioButton(rootComposite, "Use query");
-		chooseQueryRadio.setSelection(true);
+		chooseQueryFileRadio = DashboardPartUtil.createRadioButton(rootComposite, "Use query file");
+		chooseQueryFileRadio.setSelection(true);
 
-		chooseQueryRadio.addSelectionListener(new SelectionAdapter() {
+		chooseQueryFileRadio.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				chooseFileButton.setEnabled(chooseQueryRadio.getSelection());
+				chooseFileButton.setEnabled(chooseQueryFileRadio.getSelection());
 			}
 		});
 	}
 
 	private void createChooseSourceControls(Composite rootComposite) {
 		chooseSourceRadio = DashboardPartUtil.createRadioButton(rootComposite, "Use source");
-		
+
 		String[] availableSources = determineAvailableSources();
-		if( availableSources.length > 0 ) {
+		if (availableSources.length > 0) {
 			sourceCombo = DashboardPartUtil.createCombo(rootComposite, availableSources, availableSources[0]);
-			
+
 			chooseSourceRadio.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -167,7 +176,7 @@ public class QueryFileSelectionPage extends WizardPage {
 	private static String[] determineAvailableSources() {
 		List<ViewInformation> streamsAndViews = DashboardPlugIn.getExecutor().getStreamsAndViewsInformation(OdysseusRCPPlugIn.getActiveSession());
 		List<String> names = Lists.newArrayList();
-		for( ViewInformation streamOrView : streamsAndViews ) {
+		for (ViewInformation streamOrView : streamsAndViews) {
 			// FIXME: Use Resource
 			names.add(getPlainSourceName(streamOrView.getName().toString()));
 		}
@@ -177,47 +186,105 @@ public class QueryFileSelectionPage extends WizardPage {
 
 	private static String getPlainSourceName(String fullSourcename) {
 		int pos = fullSourcename.indexOf(".");
-		if( pos != -1 ) {
-			return fullSourcename.substring(pos+1);
+		if (pos != -1) {
+			return fullSourcename.substring(pos + 1);
 		}
 		return fullSourcename;
 	}
 
-	private IFile getSelectedQueryFile() {
-		if( chooseQueryRadio.getSelection() ) {
-			return selectedFile;
-		} 
-		
-		throw new RuntimeException("Query file was not selected here");
-	}
-	
-	private String getSelectedSourceName() {
-		if( chooseSourceRadio.getSelection() ) {
-			return sourceCombo.getText();
+	private void createChooseQueryControls(Composite rootComposite) {
+		chooseQueryRadio = DashboardPartUtil.createRadioButton(rootComposite, "Use running query");
+
+		String[] availableQueries = determineAvailableQueries();
+		if (availableQueries.length > 0) {
+			queryCombo = DashboardPartUtil.createCombo(rootComposite, availableQueries, availableQueries[0]);
+
+			chooseQueryRadio.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					queryCombo.setEnabled(chooseQueryRadio.getSelection());
+					setPageComplete(chooseQueryRadio.getSelection());
+				}
+			});
+		} else {
+			queryCombo = DashboardPartUtil.createCombo(rootComposite, null);
+			chooseQueryRadio.setEnabled(false);
 		}
-		
-		throw new RuntimeException("There was no source selected here");
 	}
-	
-	private boolean isQueryFileSelected() {
-		return chooseQueryRadio.getSelection();
+
+	private static String[] determineAvailableQueries() {
+		IExecutor executor = DashboardPlugIn.getExecutor();
+		ISession session = OdysseusRCPPlugIn.getActiveSession();
+		Collection<Integer> queryIds = executor.getLogicalQueryIds(session);
+
+		List<String> queryNames = Lists.newArrayList();
+		for (Integer queryId : queryIds) {
+			ILogicalQuery query = executor.getLogicalQueryById(queryId, session);
+			queryNames.add(query.getName());
+		}
+
+		return queryNames.toArray(new String[queryNames.size()]);
 	}
-	
+
 	public IDashboardPartQueryTextProvider getQueryTextProvider() {
-		if( isQueryFileSelected() ) {
-			if( getSelectedQueryFile().getFileExtension().equalsIgnoreCase("grp")) {
+		if (isQueryFileSelected()) {
+			if (getSelectedQueryFile().getFileExtension().equalsIgnoreCase("grp")) {
 				return new GraphQueryFileProvider(getSelectedQueryFile());
-			} 
+			}
 			return new ResourceFileQueryTextProvider(getSelectedQueryFile());
 		}
 		
-		List<String> sourceSelectAllText = Lists.newArrayList();
-		sourceSelectAllText.add("#PARSER CQL");
-		sourceSelectAllText.add("#TRANSCFG Standard");
-		sourceSelectAllText.add("#RUNQUERY");
-		sourceSelectAllText.add("SELECT * FROM " + getSelectedSourceName());
+		if( isSourceSelected() ) {
+			List<String> sourceSelectAllText = Lists.newArrayList();
+			sourceSelectAllText.add("#PARSER CQL");
+			sourceSelectAllText.add("#TRANSCFG Standard");
+			sourceSelectAllText.add("#RUNQUERY");
+			sourceSelectAllText.add("SELECT * FROM " + getSelectedSourceName());
+	
+			return new SimpleQueryTextProvider(sourceSelectAllText);
+		}
 		
-		return new SimpleQueryTextProvider(sourceSelectAllText);
+		if( isQuerySelected() ) {
+			return new RunningQueryProvider(getSelectedQueryName());
+		}
+		
+		throw new RuntimeException("Could not determine query text provider!");
+	}
+
+	private boolean isQueryFileSelected() {
+		return chooseQueryFileRadio.getSelection();
+	}
+
+	private boolean isSourceSelected() {
+		return chooseSourceRadio.getSelection();
+	}
+
+	private boolean isQuerySelected() {
+		return chooseQueryRadio.getSelection();
+	}
+	
+	private IFile getSelectedQueryFile() {
+		if (chooseQueryFileRadio.getSelection()) {
+			return selectedFile;
+		}
+
+		throw new RuntimeException("Query file was not selected here");
+	}
+
+	private String getSelectedSourceName() {
+		if (chooseSourceRadio.getSelection()) {
+			return sourceCombo.getText();
+		}
+
+		throw new RuntimeException("There was no source selected here");
+	}
+	
+	private String getSelectedQueryName() {
+		if( chooseQueryRadio.getSelection() ) {
+			return queryCombo.getText();
+		}
+		
+		throw new RuntimeException("There was no query name selected here");
 	}
 
 	private void finishCreation(Composite rootComposite) {
