@@ -1,6 +1,9 @@
-package de.uniol.inf.is.odysseus.wrapper.zeromq.consumer;
+package de.uniol.inf.is.odysseus.wrapper.zeromq.communication;
 
 import java.nio.ByteBuffer;
+
+import org.zeromq.ZMQ;
+import org.zeromq.ZMQ.Socket;
 
 import de.uniol.inf.is.odysseus.wrapper.zeromq.ZeroMQTransportHandler;
 
@@ -11,18 +14,23 @@ import de.uniol.inf.is.odysseus.wrapper.zeromq.ZeroMQTransportHandler;
  * @author Jan Benno Meyer zu Holte
  *
  */
-public class ZMQPublisher implements Runnable {
+public class ZMQConsumer implements Runnable {
 	private Thread t;
 	private ZeroMQTransportHandler ZMQTH;
+	private Socket subscriber;
 
-	public ZMQPublisher(ZeroMQTransportHandler transh){
+	public ZMQConsumer(ZeroMQTransportHandler transh){
 		ZMQTH = transh;
+		subscriber = ZMQTH.getContext().socket(ZMQ.SUB);
+		if (ZMQTH.getHost() != null && ZMQTH.getReadPort() > 0) {
+			subscriber.bind("tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort());
+		}
 	}
 	
 	@Override
 	public void run() {
 		while(true){
-			byte[] data = ZMQTH.subscriber.recv(1);
+			byte[] data = subscriber.recv(1);
 			if(data != null){
 				try{
 					ByteBuffer wrapped = ByteBuffer.wrap(data);
@@ -40,5 +48,9 @@ public class ZMQPublisher implements Runnable {
 			t = new Thread(this);
 			t.start();
 		}
+	}
+	
+	public void close(){
+		t.interrupt();
 	}
 }

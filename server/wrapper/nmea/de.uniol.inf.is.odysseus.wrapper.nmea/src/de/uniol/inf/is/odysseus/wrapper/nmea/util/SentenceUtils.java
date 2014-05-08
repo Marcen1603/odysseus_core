@@ -103,7 +103,7 @@ public class SentenceUtils {
 		if (!isSentence(nmea)) {
 			throw new IllegalArgumentException("String is not a sentence");
 		}
-		System.out.println(nmea);
+		// System.out.println(nmea);
 		if (nmea.startsWith("$P")) {
 			return nmea.substring(2, nmea.indexOf(','));
 		} else {

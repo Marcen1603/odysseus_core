@@ -17,7 +17,6 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.util.ParseUtils;
  *.      1   2 3   4 5   6 7   8   9 10
  *       |   | |   | |   | |   |   | |
  *$--OSD,x.x,A,x.x,a,x.x,a,x.x,x.x,a*hh
- *$-1.8,k,-1.7e+002,x.x,k*
  * }
  * </pre>
  * <ol>
@@ -30,7 +29,7 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.util.ParseUtils;
  * <li>Vessel Set, degrees True  </li>
  * <li>Vessel drift (speed)  </li>
  * <li>Speed Units  </li>
- * <li>Speed Reference </li>
+ * <li>Checksum </li>
  * </ol>
  * 
  * @author jbmzh <jan.meyer.zu.holte@uni-oldenburg.de>
@@ -53,7 +52,7 @@ public class OSDSentence extends Sentence {
 	/** Vessel Course */
 	private Double course;
 	/** Course Reference  */
-	private Double courseReference;
+	private Reference courseReference;
 	/** Vessel Speed */
 	private Double vesselSpeed;
 	/** Speed Reference */
@@ -82,7 +81,6 @@ public class OSDSentence extends Sentence {
 	 */
 	public OSDSentence(String nmea) {
 		super(nmea);
-		System.err.println("OSD sentence successfully created");
 	}
 
 	@Override
@@ -91,7 +89,7 @@ public class OSDSentence extends Sentence {
 		setHeading(ParseUtils.parseDouble(getValue(index++)));
 		setStatus(ParseUtils.parseStatus(getValue(index++)));
 		setCourse(ParseUtils.parseDouble(getValue(index++)));
-		setCourseReference(ParseUtils.parseDouble(getValue(index++)));
+		setCourseReference(ParseUtils.parseReference(getValue(index++)));
 		setVesselSpeed(ParseUtils.parseDouble(getValue(index++)));
 		setVesselSpeedReference(ParseUtils.parseReference(getValue(index++)));
 		setVesselSet(ParseUtils.parseDouble(getValue(index++)));
@@ -145,11 +143,11 @@ public class OSDSentence extends Sentence {
 		this.course = course;
 	}
 
-	public Double getCourseReference() {
+	public Reference getCourseReference() {
 		return courseReference;
 	}
 
-	public void setCourseReference(Double courseReference) {
+	public void setCourseReference(Reference courseReference) {
 		this.courseReference = courseReference;
 	}
 

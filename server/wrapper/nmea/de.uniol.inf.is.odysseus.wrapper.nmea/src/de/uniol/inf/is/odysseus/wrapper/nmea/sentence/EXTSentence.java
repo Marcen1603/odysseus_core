@@ -83,33 +83,33 @@ public class EXTSentence extends Sentence {
 
 	@Override
 	protected void fillMap(Map<String, Object> res) {
-		if (accX != null) res.put("heading", accX);
-		if (accY != null) res.put("deviation", accY);
-		if (accZ != null) res.put("variation", accZ);
+		if (accX != null) res.put("accX", accX);
+		if (accY != null) res.put("accY", accY);
+		if (accZ != null) res.put("accZ", accZ);
 		if (signalIntegrity != SignalIntegrity.NULL) res.put("signalIntegrity", signalIntegrity.name());
 	}
 
-	public Double getHeading() {
+	public Double getAccX() {
 		return accX;
 	}
 
-	public void setHeading(Double heading) {
-		this.accX = heading;
+	public void setAccX(Double accX) {
+		this.accX = accX;
 	}
 
-	public Double getDeviation() {
+	public Double getAccY() {
 		return accY;
 	}
 
-	public void setDeviation(Double deviation) {
-		this.accY = deviation;
+	public void setAccY(Double accY) {
+		this.accY = accY;
 	}
 
-	public Double getDeviationDir() {
+	public Double getAccZ() {
 		return accZ;
 	}
 
-	public void setDeviationDir(Double deviationDir) {
-		this.accZ = deviationDir;
+	public void setAccZ(Double accZ) {
+		this.accZ = accZ;
 	}
 }

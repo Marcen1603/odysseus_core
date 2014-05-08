@@ -40,11 +40,11 @@ public class RSASentence extends Sentence{
 	public static final int FIELD_COUNT = 5;
 	
 	/** Starboard (or single) rudder sensor, "-" means Turn To Port. */
-	private Double starboard;
+	private Double starboardside;
 	/** Status, A means data is valid. */
 	private Status sbStatus;
 	/** Port rudder sensor. */
-	private Double portboard;
+	private Double portside;
 	/** Status, A means data is valid. */
 	private Status pbStatus;
 	/** Checksum */
@@ -72,9 +72,9 @@ public class RSASentence extends Sentence{
 	@Override
 	protected void decode() {
 		int index = 0;
-		starboard = ParseUtils.parseDouble(getValue(index++));
+		starboardside = ParseUtils.parseDouble(getValue(index++));
 		sbStatus = ParseUtils.parseStatus(getValue(index++));
-		portboard = ParseUtils.parseDouble(getValue(index++));
+		portside = ParseUtils.parseDouble(getValue(index++));
 		pbStatus = ParseUtils.parseStatus(getValue(index++));
 		signalIntegrity = ParseUtils.parseSignalIntegrity(getValue(index++));
 	}
@@ -82,28 +82,28 @@ public class RSASentence extends Sentence{
 	@Override
 	protected void encode() {
 		int index = 0;
-		setValue(index++, ParseUtils.toString(starboard));
+		setValue(index++, ParseUtils.toString(starboardside));
 		setValue(index++, ParseUtils.toString(sbStatus));
-		setValue(index++, ParseUtils.toString(portboard));
+		setValue(index++, ParseUtils.toString(portside));
 		setValue(index++, ParseUtils.toString(pbStatus));
 		setValue(index++, ParseUtils.toString(signalIntegrity));
 	}
 
 	@Override
 	protected void fillMap(Map<String, Object> res) {
-		if (starboard != null) res.put("starboard", starboard);
+		if (starboardside != null) res.put("starboardside", starboardside);
 		if (sbStatus != Status.NULL) res.put("sbStatus", sbStatus.name());
-		if (portboard != null) res.put("portboard", portboard);
+		if (portside != null) res.put("portside", portside);
 		if (pbStatus != Status.NULL) res.put("pbStatus", pbStatus.name());
 		if (signalIntegrity != SignalIntegrity.NULL) res.put("signalIntegrity", signalIntegrity.name());
 	}
 
 	public Double getStarboard(){
-		return starboard;
+		return starboardside;
 	}
 	
 	public void setStarboard(Double starboard){
-		this.starboard = starboard;
+		this.starboardside = starboard;
 	}
 	
 	public Status getStarboardStatus(){
@@ -115,11 +115,11 @@ public class RSASentence extends Sentence{
 	}
 	
 	public Double getPortboard(){
-		return portboard;
+		return portside;
 	}
 	
 	public void setPortboard(Double portboard){
-		this.portboard = portboard;
+		this.portside = portboard;
 	}
 	
 	public Status getPortboardStatus(){

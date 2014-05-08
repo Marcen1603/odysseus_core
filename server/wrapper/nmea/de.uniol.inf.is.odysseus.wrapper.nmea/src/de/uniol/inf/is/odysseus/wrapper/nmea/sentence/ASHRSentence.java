@@ -124,7 +124,8 @@ public class ASHRSentence extends Sentence {
 	@Override
 	protected void fillMap(Map<String, Object> res) {
 		if (time != null) res.put("time", time);
-		if (heading != null) res.put("heading", heading);
+		// Identifier is hdg because elsewise it causes conflicts with OSD sentence heading
+		if (heading != null) res.put("hdg", heading); 
 		if (trueHeading != null) res.put("trueHeading", trueHeading);
 		if (rollAngle != null) res.put("rollAngle", rollAngle);
 		if (pitchAngle != null) res.put("pitchAngle", pitchAngle);
