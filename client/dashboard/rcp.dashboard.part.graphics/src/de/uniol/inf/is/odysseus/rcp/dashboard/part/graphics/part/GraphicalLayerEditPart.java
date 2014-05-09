@@ -21,10 +21,12 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictog
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.policy.GraphXYLayoutEditPolicy;
 
-public class GraphicalLayerEditPart extends AbstractGraphicalEditPart implements Observer {
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(DashboardGraphicsPart.class);
-	
+public class GraphicalLayerEditPart extends AbstractGraphicalEditPart implements
+		Observer {
+
+	private static Logger LOGGER = LoggerFactory
+			.getLogger(DashboardGraphicsPart.class);
+
 	private String imagepath;
 	private boolean stretch;
 
@@ -36,9 +38,13 @@ public class GraphicalLayerEditPart extends AbstractGraphicalEditPart implements
 
 	@Override
 	protected IFigure createFigure() {
-		FreeformLayer layer = new FreeformLayer();		
-		IResource file = ((GraphicsLayer)getModel()).getProject().findMember(imagepath);
-		layer = new BackgroundImageLayer(file.getLocation().toOSString(), stretch);
+		FreeformLayer layer = new FreeformLayer();
+		if (imagepath != null) {
+			IResource file = ((GraphicsLayer) getModel()).getProject()
+					.findMember(imagepath);
+			layer = new BackgroundImageLayer(file.getLocation().toOSString(),
+					stretch);
+		}
 		layer.setLayoutManager(new FreeformLayout());
 		return layer;
 	}
@@ -46,7 +52,7 @@ public class GraphicalLayerEditPart extends AbstractGraphicalEditPart implements
 	@Override
 	protected List<AbstractPictogram> getModelChildren() {
 		ArrayList<AbstractPictogram> result = new ArrayList<AbstractPictogram>();
-		result.addAll(((GraphicsLayer)getModel()).getPictograms());
+		result.addAll(((GraphicsLayer) getModel()).getPictograms());
 		return result;
 	}
 
@@ -54,23 +60,23 @@ public class GraphicalLayerEditPart extends AbstractGraphicalEditPart implements
 	protected void createEditPolicies() {
 		installEditPolicy(EditPolicy.LAYOUT_ROLE, new GraphXYLayoutEditPolicy());
 	}
-	
+
 	@Override
 	public void activate() {
 		if (!isActive()) {
-			((GraphicsLayer)getModel()).addObserver(this);
+			((GraphicsLayer) getModel()).addObserver(this);
 			super.activate();
 		}
 	}
-	
+
 	@Override
 	public void deactivate() {
 		if (isActive()) {
-			((GraphicsLayer)getModel()).deleteObserver(this);
+			((GraphicsLayer) getModel()).deleteObserver(this);
 			super.deactivate();
 		}
 	}
-				
+
 	@Override
 	public void update(Observable observable, Object message) {
 		refreshChildren();
