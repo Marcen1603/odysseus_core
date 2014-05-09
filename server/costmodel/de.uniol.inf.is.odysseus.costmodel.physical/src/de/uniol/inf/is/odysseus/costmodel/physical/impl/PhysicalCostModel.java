@@ -135,6 +135,7 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 			LOG.error("Estimated selectivity for operator {} is negative. Using default value.", visitingOperator);
 			selectivity = StandardPhysicalOperatorEstimator.DEFAULT_SELECTIVITY;
 		}
+		
 		double windowSize = estimator.getWindowSize();
 		if (windowSize < 0) {
 			LOG.error("Estimated windowSize for operator {} is negative. Using default value.", visitingOperator);
