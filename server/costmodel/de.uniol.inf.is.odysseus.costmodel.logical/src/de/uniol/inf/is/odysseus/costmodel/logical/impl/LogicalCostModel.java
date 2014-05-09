@@ -132,7 +132,14 @@ public class LogicalCostModel implements ILogicalCostModel {
 			memCost = StandardLogicalOperatorEstimator.DEFAULT_MEMORY_COST_BYTES;
 		}
 
-		double cpuCost = estimator.getCpu();
+		double datarate = estimator.getDatarate();
+		if (datarate < 0) {
+			LOG.error("Estimated datarate for operator {} is negative. Using default value.", visitingOperator);
+			datarate = StandardLogicalOperatorEstimator.DEFAULT_DATARATE;
+		}
+		
+		Optional<Double> optCpuCost = knowledge.getCpuTime(visitingOperator.getClass().getSimpleName());
+		double cpuCost = optCpuCost.isPresent() ? optCpuCost.get() : estimator.getCpu();
 		if (cpuCost < 0) {
 			LOG.error("Estimated cpucost for operator {} is negative. Using default value.", visitingOperator);
 			cpuCost = StandardLogicalOperatorEstimator.DEFAULT_CPU_COST;
@@ -148,12 +155,6 @@ public class LogicalCostModel implements ILogicalCostModel {
 		if (selectivity < 0) {
 			LOG.error("Estimated selectivity for operator {} is negative. Using default value.", visitingOperator);
 			selectivity = StandardLogicalOperatorEstimator.DEFAULT_SELECTIVITY;
-		}
-
-		double datarate = estimator.getDatarate();
-		if (datarate < 0) {
-			LOG.error("Estimated datarate for operator {} is negative. Using default value.", visitingOperator);
-			datarate = StandardLogicalOperatorEstimator.DEFAULT_DATARATE;
 		}
 
 		double windowSize = estimator.getWindowSize();
