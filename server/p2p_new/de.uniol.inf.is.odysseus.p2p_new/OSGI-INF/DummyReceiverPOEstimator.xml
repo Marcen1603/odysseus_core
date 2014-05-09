@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.p2p_new.DummyReceiverPOEstimator">
    <implementation class="de.uniol.inf.is.odysseus.p2p_new.costmodel.DummyReceiverPOEstimator"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.costmodel.operator.IOperatorEstimator"/>
+      <provide interface="de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalOperatorEstimator"/>
    </service>
 </scr:component>
