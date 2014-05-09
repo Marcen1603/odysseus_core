@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.costmodel.IHistogram;
 
 public interface ILogicalOperatorEstimator<T extends ILogicalOperator> {
 
-	public Collection<? extends Class<T>> getOperatorClasses();
+	public Collection<Class<? extends T>> getOperatorClasses();
 	
 	public void estimateLogical( T operator, Map<ILogicalOperator, DetailCost> previousCostMap, Map<SDFAttribute, IHistogram> histogramMap, ICostModelKnowledge knowledge );
 	

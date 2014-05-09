@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.costmodel.logical;
 
+import java.util.Collection;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -23,6 +25,20 @@ public abstract class StandardLogicalOperatorEstimator<T extends ILogicalOperato
 	private T operator;
 	private Map<SDFAttribute, IHistogram> histogramMap;
 	private ICostModelKnowledge knowledge;
+	
+	@Override
+	public Collection<Class<? extends T>> getOperatorClasses() {
+		Collection<Class<? extends T>> clazzList = Lists.newArrayList();
+		Class<? extends T> operatorClass = getOperatorClass();
+		if( operatorClass != null ) {
+			clazzList.add(operatorClass);
+		}
+		return clazzList;
+	}
+	
+	protected Class<? extends T> getOperatorClass() {
+		return null;
+	}
 	
 	@Override
 	public void estimateLogical(T operator, Map<ILogicalOperator, DetailCost> previousCostMap, Map<SDFAttribute, IHistogram> histogramMap, ICostModelKnowledge knowledge) {
