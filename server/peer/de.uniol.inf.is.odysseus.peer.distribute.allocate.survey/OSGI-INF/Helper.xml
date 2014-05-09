@@ -2,5 +2,5 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.Helper">
    <implementation class="de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper"/>
    <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
-   <reference bind="bindCostModel" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel" name="ICostModel" policy="static" unbind="unbindCostModel"/>
+   <reference bind="bindLogicalCostModel" cardinality="1..1" interface="de.uniol.inf.is.odysseus.costmodel.logical.ILogicalCostModel" name="ILogicalCostModel" policy="static" unbind="unbindLogicalCostModel"/>
 </scr:component>
