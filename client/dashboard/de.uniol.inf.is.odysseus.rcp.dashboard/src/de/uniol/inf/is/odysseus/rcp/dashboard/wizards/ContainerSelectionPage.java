@@ -15,6 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.wizards;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
@@ -42,4 +46,9 @@ public class ContainerSelectionPage extends WizardNewFileCreationPage {
 		setFileName(defaultFileName);
 	}
 
+	public IProject getProject() {
+		IPath path = getContainerFullPath();
+		IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+		return resource.getProject();
+	}
 }

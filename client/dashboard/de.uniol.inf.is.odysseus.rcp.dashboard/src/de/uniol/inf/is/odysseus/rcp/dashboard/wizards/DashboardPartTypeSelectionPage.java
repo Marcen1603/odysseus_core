@@ -47,6 +47,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 	private final List<String> dashboardPartNames;
 	private final QueryFileSelectionPage queryFilePage;
 	private final ContextMapPage contextMapPage;
+	private final ContainerSelectionPage containerPage;
 
 	private Combo choosePartNameCombo;
 
@@ -58,7 +59,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 	private IDashboardPartConfigurer<IDashboardPart> selectedConfigurer;
 	private QueryExecutionHandler handler;
 	
-	public DashboardPartTypeSelectionPage(String pageName, QueryFileSelectionPage queryFilePage, ContextMapPage contextMapPage) {
+	public DashboardPartTypeSelectionPage(String pageName, QueryFileSelectionPage queryFilePage, ContextMapPage contextMapPage, ContainerSelectionPage containerPage) {
 		super(pageName);
 
 		setTitle("Choose type of DashboardPart");
@@ -67,6 +68,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		dashboardPartNames = determineDashboardPartNames();
 		this.queryFilePage = queryFilePage;
 		this.contextMapPage = contextMapPage;
+		this.containerPage = containerPage;
 	}
 
 	@Override

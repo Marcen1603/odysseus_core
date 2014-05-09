@@ -22,8 +22,6 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -115,9 +113,7 @@ public class QueryFileSelectionPage extends WizardPage {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				IPath path = page1.getContainerFullPath();
-				IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-				IProject project = resource.getProject();
+				IProject project = page1.getProject();
 
 				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 				dialog.setInput(project);
