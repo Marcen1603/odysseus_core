@@ -356,5 +356,14 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 
 		super.initialize();
 	}
+	
+	
+	public long getWindowSizeMillis() {
+		return TimeUnit.MILLISECONDS.convert(getWindowSize().getTime(), getBaseTimeUnit());
+	}
+	
+	public long getWindowAdvanceMillis() {
+		return TimeUnit.MILLISECONDS.convert(getWindowAdvance().getTime(), getBaseTimeUnit());
+	}
 
 }
