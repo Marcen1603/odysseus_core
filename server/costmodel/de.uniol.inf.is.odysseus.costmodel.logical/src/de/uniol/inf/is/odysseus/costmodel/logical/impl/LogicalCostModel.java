@@ -139,7 +139,7 @@ public class LogicalCostModel implements ILogicalCostModel {
 		}
 		
 		Optional<Double> optCpuCost = knowledge.getCpuTime(visitingOperator.getClass().getSimpleName());
-		double cpuCost = optCpuCost.isPresent() ? optCpuCost.get() : estimator.getCpu();
+		double cpuCost = optCpuCost.isPresent() ? ( optCpuCost.get() / 1000000000 ) : estimator.getCpu();
 		if (cpuCost < 0) {
 			LOG.error("Estimated cpucost for operator {} is negative. Using default value.", visitingOperator);
 			cpuCost = StandardLogicalOperatorEstimator.DEFAULT_CPU_COST;

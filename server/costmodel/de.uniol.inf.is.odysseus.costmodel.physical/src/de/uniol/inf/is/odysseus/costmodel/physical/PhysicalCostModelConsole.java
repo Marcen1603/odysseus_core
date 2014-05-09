@@ -72,7 +72,7 @@ public class PhysicalCostModelConsole implements CommandProvider {
 			List<IPhysicalOperator> operators = physicalQuery.getPhysicalChilds();
 			IPhysicalCost physicalCost = physicalCostModel.estimateCost(operators);
 			
-			System.out.println("Estimated logical costs:");
+			System.out.println("Estimated physical costs:");
 			for( IPhysicalOperator operator : physicalCost.getOperators() ) {
 				System.out.println(operator.getClass().getSimpleName() + " [" + operator.getName() + "]:");
 				DetailCost detailCost = physicalCost.getDetailCost(operator);

@@ -1,21 +1,20 @@
-package de.uniol.inf.is.odysseus.costmodel.physical.estimate;
+package de.uniol.inf.is.odysseus.costmodel.logical.estimate;
 
 import com.google.common.base.Optional;
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.costmodel.PredicateSelectivityHelper;
-import de.uniol.inf.is.odysseus.costmodel.physical.StandardPhysicalOperatorEstimator;
+import de.uniol.inf.is.odysseus.costmodel.logical.StandardLogicalOperatorEstimator;
 
-@SuppressWarnings("rawtypes")
-public class SelectPOEstimator extends StandardPhysicalOperatorEstimator<SelectPO> {
+public class SelectAOEstimator extends StandardLogicalOperatorEstimator<SelectAO> {
 
 	private static final double CPU_COST_FACTOR = 5.0;
-	
-	@Override
-	public Class<? extends SelectPO> getOperatorClass() {
-		return SelectPO.class;
-	}
 
+	@Override
+	protected Class<? extends SelectAO> getOperatorClass() {
+		return SelectAO.class;
+	}
+	
 	@Override
 	public double getCpu() {
 		return ( super.getCpu() * CPU_COST_FACTOR ) * super.getDatarate();

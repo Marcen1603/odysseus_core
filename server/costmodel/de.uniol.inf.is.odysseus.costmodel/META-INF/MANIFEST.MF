@@ -12,7 +12,10 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.uniol.inf.is.odysseus.costmodel
 Service-Component: OSGI-INF/ICostModelKnowledge.xml,OSGI-INF/CostModelConsole.xml,
  OSGI-INF/CostModelPlugIn.xml
-Import-Package: de.uniol.inf.is.odysseus.sweeparea,
+Import-Package: de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.mep.functions.compare,
+ de.uniol.inf.is.odysseus.relational.base.predicate,
+ de.uniol.inf.is.odysseus.sweeparea,
  org.eclipse.osgi.framework.console,
  org.osgi.framework;version="1.6.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.CostModelActivator

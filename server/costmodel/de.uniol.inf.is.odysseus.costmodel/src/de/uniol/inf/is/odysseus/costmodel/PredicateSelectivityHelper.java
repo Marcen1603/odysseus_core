@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.costmodel.physical.util;
+package de.uniol.inf.is.odysseus.costmodel;
 
 import java.util.Map;
 
@@ -32,7 +32,6 @@ import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.FalsePredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
-import de.uniol.inf.is.odysseus.costmodel.IHistogram;
 import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.EqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.GreaterEqualsOperator;

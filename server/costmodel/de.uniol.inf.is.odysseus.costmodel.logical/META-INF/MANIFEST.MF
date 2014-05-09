@@ -16,6 +16,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
  de.uniol.inf.is.odysseus.core.server.planmanagement.plan,
  de.uniol.inf.is.odysseus.core.server.planmanagement.query,
+ de.uniol.inf.is.odysseus.core.server.predicate,
  org.eclipse.osgi.framework.console,
  org.osgi.framework;version="1.6.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.logical.LogicalCostModelPlugIn

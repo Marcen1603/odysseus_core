@@ -116,6 +116,9 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 		Optional<Double> optCpu = EstimatorHelper.getCpuTimeMetadata(visitingOperator);
 		if( !optCpu.isPresent() ) {
 			optCpu = knowledge.getCpuTime(visitingOperator.getClass().getSimpleName());
+			if( optCpu.isPresent() ) {
+				optCpu = Optional.of( optCpu.get() / 1000000000 );
+			}
 		}
 		double cpuCost = optCpu.isPresent() ? optCpu.get() * datarate : estimator.getCpu();
 		if (cpuCost < 0) {

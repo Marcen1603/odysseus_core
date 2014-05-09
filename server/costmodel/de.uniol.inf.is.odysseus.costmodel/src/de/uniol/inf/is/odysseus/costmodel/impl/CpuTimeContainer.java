@@ -127,6 +127,10 @@ public class CpuTimeContainer {
 			return name.substring(0, name.length() - 2);
 		}
 		
+		if( name.endsWith("AO")) {
+			return name.substring(0, name.length() - 2);
+		}
+		
 		if( name.endsWith("TIPO")) {
 			return name.substring(0, name.length() - 4);
 		}

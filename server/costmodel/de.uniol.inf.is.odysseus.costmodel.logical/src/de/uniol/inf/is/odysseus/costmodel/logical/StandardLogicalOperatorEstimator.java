@@ -19,7 +19,7 @@ public abstract class StandardLogicalOperatorEstimator<T extends ILogicalOperato
 	public static final double DEFAULT_NETWORK_COST_BYTES = 0;
 	public static final double DEFAULT_SELECTIVITY = 1.0;
 	public static final double DEFAULT_DATARATE = 20;
-	public static final double DEFAULT_WINDOW_SIZE = Double.MAX_VALUE;
+	public static final double DEFAULT_WINDOW_SIZE = Double.POSITIVE_INFINITY;
 	
 	private Map<ILogicalOperator, DetailCost> prevCostMap;
 	private T operator;

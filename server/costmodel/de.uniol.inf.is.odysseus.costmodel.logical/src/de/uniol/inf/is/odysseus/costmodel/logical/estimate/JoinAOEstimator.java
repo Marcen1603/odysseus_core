@@ -1,28 +1,27 @@
-package de.uniol.inf.is.odysseus.costmodel.physical.estimate;
+package de.uniol.inf.is.odysseus.costmodel.logical.estimate;
 
 import java.util.Iterator;
 
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
 import de.uniol.inf.is.odysseus.costmodel.EstimatorHelper;
 import de.uniol.inf.is.odysseus.costmodel.PredicateSelectivityHelper;
-import de.uniol.inf.is.odysseus.costmodel.physical.StandardPhysicalOperatorEstimator;
-import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.costmodel.logical.StandardLogicalOperatorEstimator;
 
-@SuppressWarnings("rawtypes")
-public class JoinTIPOEstimator extends StandardPhysicalOperatorEstimator<JoinTIPO> {
+public class JoinAOEstimator extends StandardLogicalOperatorEstimator<JoinAO> {
 
 	@Override
-	protected Class<? extends JoinTIPO> getOperatorClass() {
-		return JoinTIPO.class;
+	protected Class<? extends JoinAO> getOperatorClass() {
+		return JoinAO.class;
 	}
-
+	
 	@Override
 	public double getSelectivity() {
-		IPredicate joinPredicate = getOperator().getJoinPredicate();
+		IPredicate<?> joinPredicate = getOperator().getPredicate();
 		if( joinPredicate instanceof TruePredicate ) {
 			return 1.0;
 		}
@@ -45,7 +44,7 @@ public class JoinTIPOEstimator extends StandardPhysicalOperatorEstimator<JoinTIP
 		}
 		return super.getSelectivity();
 	}
-
+	
 	@Override
 	public double getDatarate() {
 		Iterator<DetailCost> operatorIterator = getPrevCostMap().values().iterator();
