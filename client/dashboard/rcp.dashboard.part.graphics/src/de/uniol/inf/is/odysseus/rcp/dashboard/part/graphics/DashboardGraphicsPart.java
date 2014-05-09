@@ -90,7 +90,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.ImagePictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.part.GraphicalEditPartFactory;
 
-public class DashboardGraphicsPart extends AbstractDashboardPart implements CommandStackListener, ISelectionListener, Observer {
+public class DashboardGraphicsPart extends AbstractDashboardPart implements
+		CommandStackListener, ISelectionListener, Observer {
 
 	private static final String BACKGROUND_FILE = "BACKGROUND_FILE";
 	private static final String BACKGROUND_FILE_STRETCH = "BACKGROUND_FILE_STRETCH";
@@ -133,7 +134,8 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	 * java.util.Collection)
 	 */
 	@Override
-	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
+	public void onStart(Collection<IPhysicalOperator> physicalRoots)
+			throws Exception {
 		this.pictogramGroup.open(physicalRoots);
 		super.onStart(physicalRoots);
 	}
@@ -176,7 +178,8 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	}
 
 	@Override
-	public void streamElementRecieved(final IPhysicalOperator senderOperator, final IStreamObject<?> element, final int port) {
+	public void streamElementRecieved(final IPhysicalOperator senderOperator,
+			final IStreamObject<?> element, final int port) {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -185,19 +188,22 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		});
 	}
 
-	protected void processElement(IPhysicalOperator senderOperator, IStreamObject<?> element) {
+	protected void processElement(IPhysicalOperator senderOperator,
+			IStreamObject<?> element) {
 		// System.out.println(element);
 		Tuple<?> tuple = (Tuple<?>) element;
 		this.pictogramGroup.processTuple(senderOperator, tuple);
 	}
 
 	@Override
-	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation point, int port) {
+	public void punctuationElementRecieved(IPhysicalOperator senderOperator,
+			IPunctuation point, int port) {
 
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
+	public void securityPunctuationElementRecieved(
+			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 
 	}
 
@@ -205,15 +211,26 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	public void onLoad(Map<String, String> saved) {
 		super.onLoad(saved);
 		setBackgroundFile(saved.get(BACKGROUND_FILE));
-		setBackgroundFileStretch(Boolean.parseBoolean(saved.get(BACKGROUND_FILE_STRETCH)));
-		this.pictogramGroup = new GraphicsLayer(getBackgroundFile(), isBackgroundFileStretch(), getProject());
-		this.pictogramGroup.addObserver(this);
+		setBackgroundFileStretch(Boolean.parseBoolean(saved
+				.get(BACKGROUND_FILE_STRETCH)));
+		// Hint: Do not create a new GraphicsLayer because images will not be 
+		// loaded again!
+		if (this.pictogramGroup == null) {
+			this.pictogramGroup = new GraphicsLayer(getBackgroundFile(),
+					isBackgroundFileStretch(), getProject());
+			this.pictogramGroup.addObserver(this);
+		}else{
+			this.pictogramGroup.setBackgroundImagePath(getBackgroundFile());
+			this.pictogramGroup.setBackgroundImageStretch(isBackgroundFileStretch());
+			this.pictogramGroup.setProject(getProject());
+		}
 		// this part is only for downward compatibility...
 		String xmlContent = saved.get(GRAPHICS_CONTENT);
 		try {
 			if (!(xmlContent == null) && !xmlContent.isEmpty()) {
 				InputStream is = new ByteArrayInputStream(xmlContent.getBytes());
-				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilderFactory dbFactory = DocumentBuilderFactory
+						.newInstance();
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 				Document doc = dBuilder.parse(is);
 				onLoadXML(doc, doc.getDocumentElement());
@@ -229,19 +246,22 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 			NodeList pictogramList = xmlElement.getChildNodes();
 
 			if (!xmlElement.getNodeName().equals("pictogramgroup")) {
-				pictogramList = xmlElement.getChildNodes().item(0).getChildNodes();
+				pictogramList = xmlElement.getChildNodes().item(0)
+						.getChildNodes();
 			}
 
 			try {
 				for (int i = 0; i < pictogramList.getLength(); i++) {
 					Node pictogramNode = pictogramList.item(i);
 					if (pictogramNode.getNodeType() == Node.ELEMENT_NODE) {
-						String className = ((Element) pictogramNode).getAttribute("type");
+						String className = ((Element) pictogramNode)
+								.getAttribute("type");
 						if (className.isEmpty()) {
 							className = ImagePictogram.class.getName();
 						}
 
-						AbstractPart part = (AbstractPart) Class.forName(className).newInstance();
+						AbstractPart part = (AbstractPart) Class.forName(
+								className).newInstance();
 						part.loadFromXML(pictogramNode, this.pictogramGroup);
 					}
 				}
@@ -256,7 +276,8 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		Element root = doc.createElement("pictogramgroup");
 		xmlElement.appendChild(root);
 		if (viewer != null) {
-			GraphicsLayer model = (GraphicsLayer) viewer.getContents().getModel();
+			GraphicsLayer model = (GraphicsLayer) viewer.getContents()
+					.getModel();
 			List<Connection> connections = new ArrayList<>();
 			for (AbstractPictogram p : model.getPictograms()) {
 				Element picNode = doc.createElement("pictogram");
@@ -279,7 +300,8 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		Map<String, String> save = super.onSave();
 
 		save.put(BACKGROUND_FILE, this.backgroundfile);
-		save.put(BACKGROUND_FILE_STRETCH, Boolean.toString(this.backgroundFileStretch));
+		save.put(BACKGROUND_FILE_STRETCH,
+				Boolean.toString(this.backgroundFileStretch));
 
 		if (editDomain != null) {
 			editDomain.getCommandStack().markSaveLocation();
@@ -302,7 +324,8 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	private void repaintBackground() {
 		if (this.pictogramGroup != null) {
 			this.pictogramGroup.setBackgroundImagePath(backgroundfile);
-			this.pictogramGroup.setBackgroundImageStretch(backgroundFileStretch);
+			this.pictogramGroup
+					.setBackgroundImageStretch(backgroundFileStretch);
 		}
 	}
 
@@ -323,7 +346,8 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 			editDomain = new DefaultEditDomain((IEditorPart) getWorkbenchPart());
 			initActionRegistry();
 			editDomain.getCommandStack().addCommandStackListener(this);
-			getWorkbenchPart().getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
+			getWorkbenchPart().getSite().getWorkbenchWindow()
+					.getSelectionService().addSelectionListener(this);
 		}
 	}
 
@@ -345,37 +369,58 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 
 	protected void configureGraphicalViewer() {
 		// default actions
-		registerAndBindingService("org.eclipse.ui.edit.undo", new UndoAction(getWorkbenchPart()));
-		registerAndBindingService("org.eclipse.ui.edit.redo", new RedoAction(getWorkbenchPart()));
-		registerAndBindingService("org.eclipse.ui.edit.delete", new DeleteAction(getWorkbenchPart()));
-		registerAndBindingService("org.eclipse.ui.edit.copy", new CopyAction(getWorkbenchPart()));
-		registerAndBindingService("org.eclipse.ui.edit.paste", new PasteAction(getWorkbenchPart()));
+		registerAndBindingService("org.eclipse.ui.edit.undo", new UndoAction(
+				getWorkbenchPart()));
+		registerAndBindingService("org.eclipse.ui.edit.redo", new RedoAction(
+				getWorkbenchPart()));
+		registerAndBindingService("org.eclipse.ui.edit.delete",
+				new DeleteAction(getWorkbenchPart()));
+		registerAndBindingService("org.eclipse.ui.edit.copy", new CopyAction(
+				getWorkbenchPart()));
+		registerAndBindingService("org.eclipse.ui.edit.paste", new PasteAction(
+				getWorkbenchPart()));
 
 		// zooming
-		ZoomManager zoomManager = ((ScalableFreeformRootEditPart) viewer.getRootEditPart()).getZoomManager();
+		ZoomManager zoomManager = ((ScalableFreeformRootEditPart) viewer
+				.getRootEditPart()).getZoomManager();
 		registerAndBindingService(new ZoomInAction(zoomManager));
 		registerAndBindingService(new ZoomOutAction(zoomManager));
-		List<String> zoomContributions = Arrays.asList(new String[] { ZoomManager.FIT_ALL, ZoomManager.FIT_HEIGHT, ZoomManager.FIT_WIDTH });
+		List<String> zoomContributions = Arrays.asList(new String[] {
+				ZoomManager.FIT_ALL, ZoomManager.FIT_HEIGHT,
+				ZoomManager.FIT_WIDTH });
 		zoomManager.setZoomLevelContributions(zoomContributions);
-		viewer.setProperty(MouseWheelHandler.KeyGenerator.getKey(SWT.MOD1), MouseWheelZoomHandler.SINGLETON);
+		viewer.setProperty(MouseWheelHandler.KeyGenerator.getKey(SWT.MOD1),
+				MouseWheelZoomHandler.SINGLETON);
 		viewer.setKeyHandler(new GraphicalViewerKeyHandler(viewer));
 
 		// layouting
-		registerAndBindingService(GEFActionConstants.ALIGN_LEFT, new AlignmentAction(getWorkbenchPart(), PositionConstants.LEFT));
-		registerAndBindingService(GEFActionConstants.ALIGN_CENTER, new AlignmentAction(getWorkbenchPart(), PositionConstants.CENTER));
-		registerAndBindingService(GEFActionConstants.ALIGN_RIGHT, new AlignmentAction(getWorkbenchPart(), PositionConstants.RIGHT));
-		registerAndBindingService(GEFActionConstants.ALIGN_TOP, new AlignmentAction(getWorkbenchPart(), PositionConstants.TOP));
-		registerAndBindingService(GEFActionConstants.ALIGN_MIDDLE, new AlignmentAction(getWorkbenchPart(), PositionConstants.MIDDLE));
-		registerAndBindingService(GEFActionConstants.ALIGN_BOTTOM, new AlignmentAction(getWorkbenchPart(), PositionConstants.BOTTOM));
+		registerAndBindingService(GEFActionConstants.ALIGN_LEFT,
+				new AlignmentAction(getWorkbenchPart(), PositionConstants.LEFT));
+		registerAndBindingService(GEFActionConstants.ALIGN_CENTER,
+				new AlignmentAction(getWorkbenchPart(),
+						PositionConstants.CENTER));
+		registerAndBindingService(
+				GEFActionConstants.ALIGN_RIGHT,
+				new AlignmentAction(getWorkbenchPart(), PositionConstants.RIGHT));
+		registerAndBindingService(GEFActionConstants.ALIGN_TOP,
+				new AlignmentAction(getWorkbenchPart(), PositionConstants.TOP));
+		registerAndBindingService(GEFActionConstants.ALIGN_MIDDLE,
+				new AlignmentAction(getWorkbenchPart(),
+						PositionConstants.MIDDLE));
+		registerAndBindingService(GEFActionConstants.ALIGN_BOTTOM,
+				new AlignmentAction(getWorkbenchPart(),
+						PositionConstants.BOTTOM));
 	}
 
 	private void registerAndBindingService(IAction action) {
 		registerAndBindingService(action.getActionDefinitionId(), action);
 	}
 
-	private void registerAndBindingService(String actionDefinitionId, IAction action) {
+	private void registerAndBindingService(String actionDefinitionId,
+			IAction action) {
 		getActionRegistry().registerAction(action);
-		IHandlerService service = (IHandlerService) getWorkbenchPart().getSite().getService(IHandlerService.class);
+		IHandlerService service = (IHandlerService) getWorkbenchPart()
+				.getSite().getService(IHandlerService.class);
 		service.activateHandler(actionDefinitionId, new ActionHandler(action));
 	}
 
@@ -419,7 +464,8 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 			return getActionRegistry();
 		}
 		if (adapter == ZoomManager.class) {
-			return ((ScalableFreeformRootEditPart) viewer.getRootEditPart()).getZoomManager();
+			return ((ScalableFreeformRootEditPart) viewer.getRootEditPart())
+					.getZoomManager();
 		}
 		if (adapter == PalettePage.class) {
 			return createPalettePage();
@@ -453,7 +499,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		try {
-			if(part instanceof DashboardGraphicsPart){
+			if (part instanceof DashboardGraphicsPart) {
 				updateActions();
 			}
 		} catch (Exception e) {

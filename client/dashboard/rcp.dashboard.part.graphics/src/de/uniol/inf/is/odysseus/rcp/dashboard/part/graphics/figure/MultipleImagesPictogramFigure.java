@@ -35,7 +35,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.MultipleImageP
  * @author DGeesen
  * 
  */
-public class MultipleImagesPictogramFigure extends AbstractPictogramFigure<MultipleImagePictogram> {
+public class MultipleImagesPictogramFigure extends
+		AbstractPictogramFigure<MultipleImagePictogram> {
 
 	private List<Image> images = new ArrayList<>();
 	private Map<Image, ImagePictogram> imagePictograms = new HashMap<>();
@@ -47,29 +48,36 @@ public class MultipleImagesPictogramFigure extends AbstractPictogramFigure<Multi
 	private int height = 10;
 
 	@Override
-	public void paintGraphic(Graphics g) {		
+	public void paintGraphic(Graphics g) {
 		Rectangle r = getContentBounds().getCopy();
 		if (this.visibile) {
 			for (Image image : images) {
 				ImagePictogram ip = imagePictograms.get(image);
 				if (ip.isVisibile()) {
-					org.eclipse.swt.graphics.Rectangle imgBox = image.getBounds();
-					
+					org.eclipse.swt.graphics.Rectangle imgBox = image
+							.getBounds();
+
 					if (stretch) {
 						if (keepRatio) {
-							g.drawImage(image, 0, 0, imgBox.width, imgBox.height, r.x, r.y, r.width, r.height);
+							g.drawImage(image, 0, 0, imgBox.width,
+									imgBox.height, r.x, r.y, r.width, r.height);
 						} else {
-							g.drawImage(image, 0, 0, imgBox.width, imgBox.height, r.x, r.y, r.width, r.height);
+							g.drawImage(image, 0, 0, imgBox.width,
+									imgBox.height, r.x, r.y, r.width, r.height);
 						}
 					} else {
 						if (center) {
 							int left = (r.width - imgBox.width) / 2;
 							int top = (r.height - imgBox.height) / 2;
-							g.drawImage(image, 0, 0, imgBox.width, imgBox.height, r.x + left, r.y + top, imgBox.width, imgBox.height);
+							g.drawImage(image, 0, 0, imgBox.width,
+									imgBox.height, r.x + left, r.y + top,
+									imgBox.width, imgBox.height);
 						} else {
-							g.drawImage(image, 0, 0, imgBox.width, imgBox.height, r.x, r.y, imgBox.width, imgBox.height);
+							g.drawImage(image, 0, 0, imgBox.width,
+									imgBox.height, r.x, r.y, imgBox.width,
+									imgBox.height);
 						}
-					}					
+					}
 				}
 			}
 		}
@@ -78,7 +86,10 @@ public class MultipleImagesPictogramFigure extends AbstractPictogramFigure<Multi
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.AbstractPictogramFigure#updateValues(de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.
+	 * AbstractPictogramFigure
+	 * #updateValues(de.uniol.inf.is.odysseus.rcp.dashboard
+	 * .part.graphics.model.Pictogram)
 	 */
 	@Override
 	public void updateValues(MultipleImagePictogram node) {
@@ -86,33 +97,32 @@ public class MultipleImagesPictogramFigure extends AbstractPictogramFigure<Multi
 		this.stretch = node.isStretch();
 		this.center = node.isCenter();
 		this.keepRatio = node.isKeepRatio();
-		for (Image i:images){
-			i.dispose();
-		}
+		// TODO: When to dispose images?
+		// for (Image i : images) {
+		// i.dispose();
+		// }
 		images.clear();
 		imagePictograms.clear();
 		for (ImagePictogram ip : node.getImages()) {
-			try {
-				Image image = new Image(Display.getDefault(), new ImageData(ip.getFile().getLocation().toOSString()));
-				addImage(image, ip);
-			} catch (Exception e) {
-				e.printStackTrace();
-				Image image = new Image(Display.getDefault(), Activator.getImage("image.png").getImageData());
-				addImage(image, ip);
-			}
+			Image image = null;
+			String filename = ip.getFile().getLocation().toOSString();
+			image = ImageFactory.getImage(filename);
+			addImage(image, ip);
 		}
 	}
-	
-	
-	private void addImage(Image image, ImagePictogram ip){
+
+	private void addImage(Image image, ImagePictogram ip) {
 		this.images.add(image);
 		this.imagePictograms.put(image, ip);
 		this.width = Math.max(width, image.getBounds().width);
 		this.height = Math.max(height, image.getBounds().height);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.AbstractPictogramFigure#getContentSize()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.
+	 * AbstractPictogramFigure#getContentSize()
 	 */
 	@Override
 	public Dimension getContentSize() {
