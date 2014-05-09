@@ -24,8 +24,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  Jxta_2.6_Source;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.costmodel.physical;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.costmodel;bundle-version="1.0.0"
-Service-Component: OSGI-INF/jxtaProtocolHandler.xml,OSGI-INF/executorService.xml,OSGI-INF/keywordProvider.xml,OSGI-INF/p2pDictionary.xml,OSGI-INF/jxtaServicesProvider.xml,OSGI-INF/peerAssignmentProvider.xml,OSGI-INF/p2pNetworkManager.xml,OSGI-INF/p2pNetworkListenerService.xml,OSGI-INF/peerCommunicator.xml,OSGI-INF/DummyReceiverPOEstimator.xml,OSGI-INF/ReceiverSenderPairPostOptimization.xml,
- OSGI-INF/DataTransmissionManager.xml
+Service-Component: OSGI-INF/jxtaProtocolHandler.xml,OSGI-INF/executorService.xml,OSGI-INF/keywordProvider.xml,OSGI-INF/p2pDictionary.xml,OSGI-INF/jxtaServicesProvider.xml,OSGI-INF/peerAssignmentProvider.xml,OSGI-INF/p2pNetworkManager.xml,OSGI-INF/p2pNetworkListenerService.xml,OSGI-INF/peerCommunicator.xml,OSGI-INF/DummyReceiverPOEstimator.xml,OSGI-INF/ReceiverSenderPairPostOptimization.xml,OSGI-INF/DataTransmissionManager.xml,
+ OSGI-INF/DummySenderPOEstimator.xml
 Export-Package: de.uniol.inf.is.odysseus.p2p_new,
  de.uniol.inf.is.odysseus.p2p_new.dictionary,
  de.uniol.inf.is.odysseus.p2p_new.logicaloperator,
