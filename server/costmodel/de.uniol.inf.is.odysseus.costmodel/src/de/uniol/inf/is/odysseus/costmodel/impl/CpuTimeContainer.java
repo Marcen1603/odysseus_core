@@ -34,7 +34,7 @@ public class CpuTimeContainer {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(operatorType), "operatorType must not be null or empty!");
 
 		loadFile();
-		return Optional.fromNullable(cpuTimeMap.get(operatorType));
+		return Optional.fromNullable(cpuTimeMap.get(determineOperatorTypeName(operatorType)));
 	}
 
 	private void loadFile() {
@@ -84,13 +84,6 @@ public class CpuTimeContainer {
 		return resultMap;
 	}
 
-	public void putDatarate(String operatorType, double datarate) {
-		Preconditions.checkNotNull(!Strings.isNullOrEmpty(operatorType), "operatorType must not be null or empty!");
-		Preconditions.checkArgument(datarate >= 0, "datarate must be non-negative!");
-
-		cpuTimeMap.put(operatorType, datarate);
-	}
-
 	public void save() {
 		File file = new File(Config.CPUTIME_FILE_NAME);
 		LOG.debug("Saving cputimes to file {}", file);
@@ -121,11 +114,24 @@ public class CpuTimeContainer {
 			return;
 		}
 
-		Double cpuTimeValue = cpuTimeMap.get(operatorType);
+		String typeName = determineOperatorTypeName(operatorType);
+		Double cpuTimeValue = cpuTimeMap.get(typeName);
 
 		if (cpuTimeValue == null || (cpuTimeValue != null && cpuTimeValue < cpuTime)) {
-			cpuTimeMap.put(operatorType, cpuTime);
+			cpuTimeMap.put(typeName, cpuTime);
 		}
+	}
+	
+	private static String determineOperatorTypeName(String name) {
+		if( name.endsWith("PO")) {
+			return name.substring(0, name.length() - 2);
+		}
+		
+		if( name.endsWith("TIPO")) {
+			return name.substring(0, name.length() - 4);
+		}
+		
+		return name;
 	}
 
 	public void unsetExecutor() {
