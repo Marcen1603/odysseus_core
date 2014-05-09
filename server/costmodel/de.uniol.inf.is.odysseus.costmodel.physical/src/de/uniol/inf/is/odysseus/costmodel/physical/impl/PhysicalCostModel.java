@@ -209,7 +209,7 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 		LOG.debug("\tNET = {} Bytes/sec", detailCost.getNetCost());
 		LOG.debug("\tWND = {}", detailCost.getWindowSize());
 		LOG.debug("\tSEL = {}", detailCost.getSelectivity());
-		LOG.debug("\tDAT = {}", detailCost.getWindowSize());
+		LOG.debug("\tRAT = {}", detailCost.getDatarate());
 	}
 
 	private static Collection<IPhysicalOperator> collectAllOperators(Collection<IPhysicalOperator> physicalOperators) {

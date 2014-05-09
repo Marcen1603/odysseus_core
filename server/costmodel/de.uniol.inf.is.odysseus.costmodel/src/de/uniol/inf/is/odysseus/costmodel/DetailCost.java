@@ -59,7 +59,7 @@ public final class DetailCost {
 		sb.append("net = ").append(getNetCost()).append(", ");
 		sb.append("sel = ").append(getSelectivity()).append(", ");
 		sb.append("rate= ").append(getDatarate()).append(", ");
-		sb.append("rate= ").append(getWindowSize()).append("}");
+		sb.append("wnd = ").append(getWindowSize()).append("}");
 		return sb.toString();
 	}
 }

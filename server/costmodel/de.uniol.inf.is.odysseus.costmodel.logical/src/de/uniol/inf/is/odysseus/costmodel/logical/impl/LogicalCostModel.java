@@ -57,7 +57,7 @@ public class LogicalCostModel implements ILogicalCostModel {
 		LOG.debug("Beginning cost estimation of logical operators");
 		while (!operatorsToVisit.isEmpty()) {
 			ILogicalOperator operator = operatorsToVisit.remove(0);
-			LOG.debug("Visiting operator {}", operator);
+			LOG.debug("Visiting operator {} of type {}", operator, operator.getClass().getSimpleName());
 
 			tryEstimateOperator(resultMap, operator, histogramMap);
 
@@ -146,7 +146,7 @@ public class LogicalCostModel implements ILogicalCostModel {
 		}
 
 		double netCost = estimator.getNetwork();
-		if (cpuCost < 0) {
+		if (netCost < 0) {
 			LOG.error("Estimated netcost for operator {} is negative. Using default value.", visitingOperator);
 			netCost = StandardLogicalOperatorEstimator.DEFAULT_NETWORK_COST_BYTES;
 		}
@@ -190,7 +190,7 @@ public class LogicalCostModel implements ILogicalCostModel {
 		LOG.debug("\tNET = {} Bytes/sec", detailCost.getNetCost());
 		LOG.debug("\tWND = {}", detailCost.getWindowSize());
 		LOG.debug("\tSEL = {}", detailCost.getSelectivity());
-		LOG.debug("\tDAT = {}", detailCost.getWindowSize());
+		LOG.debug("\tRAT = {}", detailCost.getDatarate());
 	}
 	
 	private static boolean areAllSourcesVisited(Map<ILogicalOperator, DetailCost> resultMap, ILogicalOperator target) {
