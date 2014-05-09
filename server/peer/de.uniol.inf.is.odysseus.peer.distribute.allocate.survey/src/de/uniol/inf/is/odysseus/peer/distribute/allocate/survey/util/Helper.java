@@ -174,8 +174,14 @@ public class Helper {
 					dummyReceiver.setOutputSchema(relativeSink.getOutputSchema());
 					dummyReceiver.setSchema(relativeSink.getOutputSchema().getAttributes());
 					if (estimationMap.containsKey(relativeSink)) {
-						dummyReceiver.setDataRate(estimationMap.get(relativeSink).getDatarate());
-						dummyReceiver.setIntervalLength(estimationMap.get(relativeSink).getWindowSize());
+						double datarate = estimationMap.get(relativeSink).getDatarate();
+						if( !Double.isInfinite(datarate)) {
+							dummyReceiver.setDataRate(datarate);
+						}
+						double windowSize = estimationMap.get(relativeSink).getWindowSize();
+						if(!Double.isInfinite(windowSize)) {
+							dummyReceiver.setIntervalLength(windowSize);
+						}
 					} else {
 						LOG.error("Could not get operator estimation for operator {}", relativeSink);
 						dummyReceiver.setDataRate(1);

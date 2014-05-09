@@ -160,10 +160,13 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		List<AuctionSummary> auctions = Lists.newArrayList();
 
 		Helper.insertDummyAOs(queryParts, logicalOperatorEstimationMap);
+		LOG.debug("Generating {} auctions", queryParts.size());
 		for (ILogicalQueryPart queryPart : queryParts) {
 			AuctionQueryAdvertisement adv = (AuctionQueryAdvertisement) AdvertisementFactory.newAdvertisement(AuctionQueryAdvertisement.getAdvertisementType());
 
+			LOG.debug("Generating auction...");
 			adv.setPqlStatement(LogicalQueryHelper.generatePQLStatementFromQueryPart(queryPart));
+			LOG.debug("PQL statement is\n{}\n\n", adv.getPqlStatement());
 			adv.setTransCfgName(transCfg.getName());
 			adv.setAuctionId(IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), true));
 			adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
@@ -173,7 +176,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 			auctions.add(new AuctionSummary(adv, bidsFuture, queryPart));
 		}
 
-		LOG.info("Auctions for {} remote sub plans listed ", auctions.size());
+		LOG.debug("Auctions for {} remote sub plans listed ", auctions.size());
 
 		return auctions;
 	}
