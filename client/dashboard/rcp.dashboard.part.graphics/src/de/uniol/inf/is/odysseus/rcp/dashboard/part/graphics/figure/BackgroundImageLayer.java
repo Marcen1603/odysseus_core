@@ -15,12 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure;
 
-import java.io.FileInputStream;
-
+import org.eclipse.core.resources.IResource;
 import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * @author DGeesen
@@ -34,21 +32,19 @@ public class BackgroundImageLayer extends FreeformLayer {
 	public BackgroundImageLayer(String path, boolean stretch) {
 		super();
 		this.stretch = stretch;
-		try {
-			setImage(new Image(PlatformUI.getWorkbench().getDisplay(), new FileInputStream(path)));
-		} catch (Exception e) {
-			e.printStackTrace();
-			setImage(null);
-		}
+		setImage(ImageFactory.getBackgroundImage(path));
 	}
 
 	@Override
 	protected void paintFigure(Graphics graphics) {
 		if (getImage() != null) {
-			org.eclipse.draw2d.geometry.Rectangle targetRect = getBounds().getCopy();
+			org.eclipse.draw2d.geometry.Rectangle targetRect = getBounds()
+					.getCopy();
 			org.eclipse.swt.graphics.Rectangle imgBox = getImage().getBounds();
 			if (stretch) {
-				graphics.drawImage(getImage(), 0, 0, imgBox.width, imgBox.height, targetRect.x, targetRect.y, targetRect.width, targetRect.height);
+				graphics.drawImage(getImage(), 0, 0, imgBox.width,
+						imgBox.height, targetRect.x, targetRect.y,
+						targetRect.width, targetRect.height);
 			} else {
 				graphics.drawImage(getImage(), 0, 0);
 			}

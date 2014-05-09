@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.draw2d.IFigure;
@@ -36,14 +37,8 @@ public class GraphicalLayerEditPart extends AbstractGraphicalEditPart implements
 	@Override
 	protected IFigure createFigure() {
 		FreeformLayer layer = new FreeformLayer();		
-		if(imagepath!=null){
-			File f = new File(imagepath);
-			if(f.exists()){
-				layer = new BackgroundImageLayer(imagepath, stretch);				
-			}else{
-				LOGGER.warn("Background image \""+imagepath+"\" not found, using no background!");
-			}
-		}	
+		IResource file = ((GraphicsLayer)getModel()).getProject().findMember(imagepath);
+		layer = new BackgroundImageLayer(file.getLocation().toOSString(), stretch);
 		layer.setLayoutManager(new FreeformLayout());
 		return layer;
 	}
