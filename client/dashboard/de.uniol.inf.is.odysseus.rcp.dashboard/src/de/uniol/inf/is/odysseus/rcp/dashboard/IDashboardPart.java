@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
 public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>> {
 
 	public void init( IFile dashboardFile, IProject containingProject, IWorkbenchPart containingPart);
+	public void setProject(IProject project);
 	public void onLoad(Map<String, String> saved);
 	public void onLoadXML( Document document, Element xmlElement );
 	public void createPartControl(Composite parent, ToolBar toolbar);
@@ -75,5 +76,6 @@ public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>>
 	public Object getAdapter(Class<?> adapter);
 	
 	public IDashboardActionBarContributor getEditorActionBarContributor();
+	
 	
 }

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.part;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -24,6 +23,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.policy.GraphXYLayout
 public class GraphicalLayerEditPart extends AbstractGraphicalEditPart implements
 		Observer {
 
+	@SuppressWarnings("unused")
 	private static Logger LOGGER = LoggerFactory
 			.getLogger(DashboardGraphicsPart.class);
 

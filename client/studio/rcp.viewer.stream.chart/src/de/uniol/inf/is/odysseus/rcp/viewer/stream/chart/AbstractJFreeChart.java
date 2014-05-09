@@ -139,6 +139,11 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 	}
 
 	@Override
+	public void setProject(IProject project) {
+		this.containingProject = project;
+	}
+	
+	@Override
 	public void createPartControl(Composite parent) {
 		initComposite(parent);
 		contributeToActionBars();

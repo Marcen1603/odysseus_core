@@ -93,6 +93,11 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	}
 
 	@Override
+	public void setProject(IProject project) {
+		this.containingProject = project;
+	}
+	
+	@Override
 	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
 		isStarted = true;
 	}

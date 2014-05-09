@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.swt.graphics.Image;

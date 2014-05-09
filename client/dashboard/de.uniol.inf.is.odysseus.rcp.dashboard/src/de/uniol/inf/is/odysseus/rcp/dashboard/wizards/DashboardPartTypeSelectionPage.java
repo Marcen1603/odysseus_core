@@ -180,6 +180,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		
 		try {
 			final IDashboardPart newDashboardPart = DashboardPartRegistry.createDashboardPart(dashboardPartName);
+			newDashboardPart.setProject(containerPage.getProject());
 			newDashboardPart.setQueryTextProvider(queryFilePage.getQueryTextProvider());
 			insertInto(newDashboardPart, contextMapPage.getContextMap());
 			selectedDashboardPart = newDashboardPart;
