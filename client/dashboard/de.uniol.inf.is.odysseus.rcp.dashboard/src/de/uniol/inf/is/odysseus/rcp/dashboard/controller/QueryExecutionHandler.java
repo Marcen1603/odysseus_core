@@ -156,19 +156,22 @@ public class QueryExecutionHandler {
 	}
 
 	public void stop() {
-		queryIDs = null;
-		queryRoots = null;
 		
 		if (!Strings.isNullOrEmpty(queryName)) {
 			return;
 		}
 
-		for (final Integer id : queryIDs) {
-			try {
-				DashboardPlugIn.getExecutor().removeQuery(id, OdysseusRCPPlugIn.getActiveSession());
-			} catch (final Throwable t) {
-				LOG.error("Exception during stopping/removing query {}.", id, t);
+		if( queryIDs != null && !queryIDs.isEmpty() ) {
+			for (final Integer id : queryIDs) {
+				try {
+					DashboardPlugIn.getExecutor().removeQuery(id, OdysseusRCPPlugIn.getActiveSession());
+				} catch (final Throwable t) {
+					LOG.error("Exception during stopping/removing query {}.", id, t);
+				}
 			}
+			
+			queryIDs = null;
+			queryRoots = null;
 		}
 	}
 
