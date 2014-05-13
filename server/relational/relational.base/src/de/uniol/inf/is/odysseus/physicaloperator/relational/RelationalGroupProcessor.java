@@ -95,7 +95,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 //						System.err.println("List "+groupList);
 //				}
 				maxId++;
-			} else if (pos > 0) {
+			} else if (pos >= 0) {
 				hash = groupList.get(pos).getE2();
 			}
 			tupleMap.put(hash, gTuple);
