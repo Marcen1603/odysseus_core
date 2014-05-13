@@ -163,7 +163,9 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		// Update sweep area with new element
 		List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(
 				sa, object, outputPA);
-		// /System.err.println(sa);
+		if (debug){
+			System.err.println(sa);
+		}
 		if (results.size() > 0) {
 			produceResults(results, groupID);
 		}
@@ -181,6 +183,10 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 		// Find minimal start time stamp from elements intersecting time stamp
 		transferArea.newHeartbeat(findMinTimestamp(timestamp), 0);
+
+		if (debug){
+			transferArea.dump();
+		}
 
 		// THIS HEARTBEAT IS TO HIGH!!
 		// transferArea.newHeartbeat(timestamp, 0);
@@ -218,6 +224,9 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			// /System.err.println(entry.getValue());
 			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
 					.getValue().extractElementsBefore(timestamp);
+			if (debug){
+				System.err.println(entry.getValue());
+			}
 			produceResults(results, entry.getKey());
 		}
 	}

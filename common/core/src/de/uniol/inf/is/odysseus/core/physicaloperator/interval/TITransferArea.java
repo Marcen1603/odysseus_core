@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.interval;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.PriorityQueue;
 
@@ -343,4 +344,13 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		this.inOrder = isInOrder;
 	}
 
+	@Override
+	public void dump() {
+		System.out.println("Elements in Queue (could be out of order!)");
+		Iterator<Pair<IStreamable, Integer>> iter = outputQueue.iterator();
+		while (iter.hasNext()){
+			System.out.println(iter.next());
+		}
+	}
+	
 }

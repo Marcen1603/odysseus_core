@@ -121,6 +121,8 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	private SDFMetaAttributeList metadataAttributeSchema = new SDFMetaAttributeList();
 	private boolean metadataCalculated = false;
 
+	protected boolean debug = false;
+	
 	// ------------------------------------------------------------------------
 
 	public AbstractPipe() {

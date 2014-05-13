@@ -81,5 +81,10 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 	public void setInOrder(boolean isInOrder);
 	public boolean isInOrder();
 	
+	/**
+	 * Debug
+	 */
+	public void dump();
+	
 		
 }

@@ -184,5 +184,10 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 		this.inOrder = isInOrder;
 	}
 	
+	@Override
+	public void dump() {
+		// nothing to do, no state
+	}
+	
 	
 }
