@@ -49,6 +49,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
@@ -76,6 +77,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	private Map<String, String> infos = Maps.newTreeMap();
 
 	private String name = null;
+	private boolean debug = false;
 	private String destinationName = null;
 	private String uniqueIdentifier = null;
 
@@ -94,6 +96,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		this.uniqueIdentifier = op.uniqueIdentifier;
 		this.infos = copyParameterInfos(op.infos);
 		this.destinationName = op.destinationName;
+		this.debug = op.debug;
 	}
 
 	public AbstractLogicalOperator() {
@@ -283,7 +286,17 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	@Parameter(name = "debbug", type = BooleanParameter.class, optional = true, doc = "Flag, that this operator should be debuged.")
+	public void setDebug(Boolean debug) {
+		this.debug = debug;
+	}
 
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+	
 	@Override
 	public void addOwner(IOperatorOwner owner) {
 		ownerHandler.addOwner(owner);

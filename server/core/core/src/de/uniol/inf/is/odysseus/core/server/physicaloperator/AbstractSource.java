@@ -92,6 +92,13 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 		return _logger;
 	}
+	
+	protected boolean debug = false;
+	
+	@Override
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
 
 	// ------------------------------------------------------------------
 	// Eventhandling

@@ -598,5 +598,11 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	public boolean hasInput() {
 		return true;
 	}
+	
+	@Override
+	public void setDebug(boolean debug) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

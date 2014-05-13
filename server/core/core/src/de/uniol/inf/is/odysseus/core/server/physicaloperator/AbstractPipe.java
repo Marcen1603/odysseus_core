@@ -120,8 +120,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	final protected DelegateSink delegateSink = new DelegateSink();
 	private SDFMetaAttributeList metadataAttributeSchema = new SDFMetaAttributeList();
 	private boolean metadataCalculated = false;
-
-	protected boolean debug = false;
 	
 	// ------------------------------------------------------------------------
 

@@ -81,4 +81,8 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	
 	public boolean hasInput();
 
+	/**
+	 * debug
+	 */
+	void setDebug(boolean debug);
 }

@@ -728,6 +728,10 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	@Override
 	public void process(R buffer) throws ClassNotFoundException {
 		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void setDebug(boolean debug) {
 		
 	}
 }

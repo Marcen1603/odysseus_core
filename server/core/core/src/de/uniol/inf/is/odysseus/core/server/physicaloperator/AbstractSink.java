@@ -75,6 +75,13 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	// Logging
 	// --------------------------------------------------------------------
 	private static Logger logger = LoggerFactory.getLogger(AbstractSink.class);
+	
+	protected boolean debug = false;
+	
+	@Override
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
 
 	// ------------------------------------------------------------------
 	// Eventhandling

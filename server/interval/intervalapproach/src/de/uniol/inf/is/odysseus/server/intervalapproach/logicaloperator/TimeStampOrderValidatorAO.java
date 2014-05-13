@@ -25,30 +25,17 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 public class TimeStampOrderValidatorAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -9204585315520513917L;
-	private boolean debug = false;
 	
 	public TimeStampOrderValidatorAO(){}
 	
 	public TimeStampOrderValidatorAO(
 			TimeStampOrderValidatorAO timeStampOrderValidatorAO) {
 		super(timeStampOrderValidatorAO);
-		this.debug = timeStampOrderValidatorAO.debug;
 	}
 
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new TimeStampOrderValidatorAO(this);
-	}
-	
-	@Parameter(name="debug", optional=true, type=BooleanParameter.class, doc="Print eliminated elements to console")
-	public void setDebug(boolean debug) {
-		this.debug = debug;
-	}
-	
-	public boolean isDebug() {
-		return debug;
-	}
-
-	
+	}	
 	
 }

@@ -84,6 +84,7 @@ public abstract class AbstractTransformationRule<T> extends
 		if (rename) {
 			physical.setName(logical.getName());
 		}
+		physical.setDebug(logical.isDebug());
 		physical.getParameterInfos().putAll(logical.getParameterInfos());
 	}
 

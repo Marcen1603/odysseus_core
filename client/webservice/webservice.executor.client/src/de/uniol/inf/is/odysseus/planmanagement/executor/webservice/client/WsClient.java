@@ -87,6 +87,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.util.W
 import de.uniol.inf.is.odysseus.webservice.client.ConnectionInformation;
 import de.uniol.inf.is.odysseus.webservice.client.ConnectionInformationResponse;
 import de.uniol.inf.is.odysseus.webservice.client.CreateQueryException_Exception;
+import de.uniol.inf.is.odysseus.webservice.client.DetermineOutputSchemaException_Exception;
 import de.uniol.inf.is.odysseus.webservice.client.InvalidUserDataException_Exception;
 import de.uniol.inf.is.odysseus.webservice.client.LogicalQueryInfo;
 import de.uniol.inf.is.odysseus.webservice.client.QueryNotExistsException_Exception;
@@ -944,7 +945,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 				SDFSchema schema = toSDFSchema(si);
 				return schema;
 			} catch (InvalidUserDataException_Exception
-					| ClassNotFoundException e) {
+					| ClassNotFoundException | DetermineOutputSchemaException_Exception e) {
 				throw new PlanManagementException(e);
 			}
 		}
