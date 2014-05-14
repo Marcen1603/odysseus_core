@@ -39,14 +39,14 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 	public static final String NAME = "ZeroMQ";
 	public static final String PARAMS = "params";
 	// Pull intervall in hz
-	public static final String FREQUENCY = "frequency";
+	public static final String TIMEOUT = "timeout";
 
 	private String host;
 	private int writePort;
 	private int readPort;
 	private int delayOfMsg;
 	private int communicationThreads;
-	private int frequency;
+	private int timeout;
 	private String[] params;
 	
 	private int delayedMsgCounter = 1;
@@ -101,11 +101,15 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 			params = new String[1];
 			params[0] = "";
 		}
-		if (options.containsKey(FREQUENCY)) {
-			frequency = 1000/Integer.parseInt(options.get(FREQUENCY));
+		if (options.containsKey(TIMEOUT)) {
+			timeout = Integer.parseInt(options.get(TIMEOUT));
 		} else {
-			frequency = 500;
+			timeout = 10;
 		}
+		createContext();
+	}
+	
+	public void createContext(){
 		if(context == null){
 			context = new ZMQContextProvider(communicationThreads);
 			context.start();
@@ -150,6 +154,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public InputStream getInputStream() {
+		createContext();
 		if(consumer == null){
 			consumer = new ZMQPullConsumer(this);
 			consumer.start();
@@ -160,6 +165,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public OutputStream getOutputStream() {
+		createContext();
 		if(publisher == null){
 			publisher = new ZMQPullPublisher(this);
 			publisher.start();
@@ -174,6 +180,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public void processInOpen() throws IOException {
+		createContext();
 		if(input == null){
 			input = new ByteArrayInputStream(new byte[0]);
 		}
@@ -185,6 +192,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public void processOutOpen() throws IOException {
+		createContext();
 		if(output == null){
 			output = new ByteArrayOutputStream();
 		}
@@ -283,12 +291,12 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 		this.params = params;
 	}
 
-	public int getFrequency() {
-		return frequency;
+	public int getTimeout() {
+		return timeout;
 	}
 
-	public void setFrequency(int frequency) {
-		this.frequency = frequency;
+	public void setTimeout(int frequency) {
+		this.timeout = frequency;
 	}
 
 	public InputStream getInput() {

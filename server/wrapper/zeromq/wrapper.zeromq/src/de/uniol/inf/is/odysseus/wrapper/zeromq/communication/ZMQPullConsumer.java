@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.wrapper.zeromq.communication;
 
-import java.io.ByteArrayInputStream;
-
 import org.zeromq.ZMQ;
 
 import de.uniol.inf.is.odysseus.wrapper.zeromq.ZeroMQTransportHandler;
@@ -16,17 +14,18 @@ import de.uniol.inf.is.odysseus.wrapper.zeromq.ZeroMQTransportHandler;
 public class ZMQPullConsumer extends AZMQConnector {
 	
 	private String[] params;
-	private int frequency;
+	private int timeout;
 
 	public ZMQPullConsumer(ZeroMQTransportHandler transh){
 		ZMQTH = transh;
 		params = ZMQTH.getParams();
-		frequency = ZMQTH.getFrequency();
+		timeout = ZMQTH.getTimeout();
 		ZMQ.Socket socket = ZMQTH.getContext().getContext().socket(ZMQ.REQ);	
+		socket.setReceiveTimeOut(timeout);
 		if (ZMQTH.getHost() != null && ZMQTH.getReadPort() > 0) {
 			socket.connect("tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort());
 			LOG.debug("ZeroMQ consumer connected to tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort());
-			LOG.debug("ZeroMQ consumer requesting new input every " + frequency + "ms when started.");
+			LOG.debug("ZeroMQ consumer requesting new input with a timeout of " + timeout + " seconds.");
 		}
 	}
 	
@@ -38,15 +37,10 @@ public class ZMQPullConsumer extends AZMQConnector {
 	@Override
 	public void run() {
 		while(!t.isInterrupted()){
-			try {
-				Thread.sleep(frequency);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
 			byte[] data = getIn(params);
 			if(data != null){
 				try{
-					ZMQTH.setInput(new ByteArrayInputStream(data));
+					ZMQTH.getInput().read(data);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
