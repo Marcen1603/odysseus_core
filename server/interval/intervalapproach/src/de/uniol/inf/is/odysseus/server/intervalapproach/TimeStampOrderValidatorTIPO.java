@@ -30,7 +30,6 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 		extends AbstractPipe<T, T> {
 
 	Logger logger = LoggerFactory.getLogger(TimeStampOrderValidatorTIPO.class);
-	boolean debug = false;
 	
 	PointInTime lastTimestamp = null;
 
@@ -99,10 +98,6 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 		} else {
 			return true;
 		}
-	}
-
-	public void setDebug(boolean debug) {
-		this.debug = debug;
 	}
 
 }
