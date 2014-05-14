@@ -5,62 +5,48 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import Ice.Communicator;
-import Ice.Current;
-import Ice.Identity;
-import Ice.InitializationData;
-import Ice.ObjectAdapter;
-import Ice.ObjectPrx;
-import Ice.Properties;
-import Ice.Util;
-import TelemetriePublishSubscribe.Pose;
-import TelemetriePublishSubscribe.TelemetriePublisherPrx;
-import TelemetriePublishSubscribe.TelemetriePublisherPrxHelper;
-import TelemetriePublishSubscribe.TelemetrieSubscriberPrx;
-import TelemetriePublishSubscribe.TelemetrieSubscriberPrxHelper;
-import TelemetriePublishSubscribe._TelemetrieSubscriberDisp;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.wrapper.haggis.communication.HaggisConsumer;
 
 /**
- * Transport handler for the Haggis simulation platform.
+ * Transport handler for the Haggis simulation platform. Realized using the ICE framework (See http://www.zeroc.com/ice.html).
  * 
- * @author Christian Kuka <christian@kuka.cc>
+ * @author Christian Kuka <christian@kuka.cc> edited by jbmzh <jan.meyer.zu.holte@uni-oldenburg.de>
  * 
  */
 public class HaggisTransportHandler extends AbstractTransportHandler {
     /** Logger */
     private final Logger LOG = LoggerFactory.getLogger(HaggisTransportHandler.class);
-    // private static final Charset charset = Charset.forName("UTF-8");
-    // private static final CharsetEncoder encoder = charset.newEncoder();
-    private static final String OWN_SERVICE = "OdysseusSubscriberAdapter";
-    private static final String PROTOCOL = "default";
-    private static final String DEFAULT_SERVICE = "scm.eci.simulation.SimulationFacade";
-    private static final String DEFAULT_HOST = "127.0.0.1";
-    private static final int DEFAULT_PORT = 10001;
-    private static final String DEFAULT_AGENT = "LiftSupervisor";
-    private static final String DEFAULT_USERNAME = "Foo";
-    private static final String DEFAULT_PASSWORD = "Fara";
-    private static final String DEFAULT_LISTEN = "localhost";
+    private final String OWN_SERVICE = "OdysseusSubscriberAdapter";
+
+	private final String PROTOCOL = "default";
+    private final String DEFAULT_SERVICE = "scm.eci.simulation.SimulationFacade";
+    private final String DEFAULT_HOST = "127.0.0.1";
+    private final int DEFAULT_PORT = 10001;
+    private final String DEFAULT_AGENT = "LiftSupervisor";
+    private final String DEFAULT_USERNAME = "Foo";
+    private final String DEFAULT_PASSWORD = "Fara";
+    private final String DEFAULT_LISTEN = "localhost";
     /** Input stream for data transfer */
     private InputStream input;
-    private String listen;
+
+	private String listen;
     private String host;
     private int port;
     private String service;
     private String username;
     private String password;
     private String agent;
-    private ObjectAdapter objectAdapter;
-    private Communicator communicator;
+    
+    private HaggisConsumer consumer;
 
     /**
      * 
@@ -151,57 +137,22 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
     }
 
     @Override
-    public void processInOpen() throws UnknownHostException, IOException {
-        final Properties props = Util.createProperties();
-        final InitializationData initializationData = new InitializationData();
-        initializationData.properties = props;
-        communicator = Util.initialize(initializationData);
-        objectAdapter = communicator.createObjectAdapterWithEndpoints(OWN_SERVICE, PROTOCOL + " -h " + getListen() + " -p " + (1024 + (int) (Math.random() * 1000)));
-        LOG.debug(String.format("Connecting to ICE endpoint %s", Arrays.toString(objectAdapter.getEndpoints())));
-        String proxy = getService() + ":" + PROTOCOL + " -h " + getHost() + " -p " + getPort();
+	public void processInOpen() throws IOException {
+		if(consumer == null){
+			consumer = new HaggisConsumer(this);
+			consumer.start();
+		}
+	}
 
-        objectAdapter.activate();
-        final ObjectPrx base = communicator.stringToProxy(proxy);
-        try {
-            if (base != null) {
-                base.ice_ping();
-                LOG.debug(base.ice_id());
-                TelemetrieSubscriber telemetrieSubscriber = new TelemetrieSubscriber(this);
-                ObjectPrx subscriber = objectAdapter.add(telemetrieSubscriber, new Identity(getUsername(), getPassword()));
-                telemetrieSubscriber.open(base, subscriber);
-            }
-            else {
-                throw new IllegalArgumentException(String.format("Invalid proxy %s", proxy));
-            }
-        }
-        catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-            throw e;
-        }
-
-    }
+	@Override
+	public void processInClose() throws IOException {
+		consumer.close();
+		consumer = null;
+	}
 
     @Override
     public void processOutOpen() throws UnknownHostException, IOException {
         throw new IllegalArgumentException("In-Only transport handler");
-    }
-
-    @Override
-    public void processInClose() throws IOException {
-        try {
-            objectAdapter.deactivate();
-            objectAdapter.destroy();
-            communicator.shutdown();
-            communicator.destroy();
-        }
-        catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-            throw e;
-        }
-        finally {
-            this.input = null;
-            this.fireOnDisconnect();
-        }
     }
 
     @Override
@@ -210,7 +161,7 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
         throw new IllegalArgumentException("In-Only transport handler");
     }
 
-    void process(Object[] object) {
+    public void process(Object[] object) {
         try {
             StringBuilder sb = new StringBuilder();
             for (Object obj : object) {
@@ -227,6 +178,39 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ITransportExchangePattern getExchangePattern() {
+        return ITransportExchangePattern.InOnly;
+    }
+
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof HaggisTransportHandler)) {
+    		return false;
+    	}
+    	HaggisTransportHandler other = (HaggisTransportHandler)o;
+    	if(!this.host.equals(other.host)) {
+    		return false;
+    	} else if(!this.getUsername().equals(other.getUsername())) {
+    		return false;
+    	} else if(!this.getPassword().equals(other.getPassword())) {
+    		return false;
+    	} else if(this.port != other.port) {
+    		return false;
+    	} else if(!this.getAgent().equals(other.getAgent())) {
+    		return false;
+    	} else if(!this.getService().equals(other.getService())) {
+    		return false;
+    	} else if(!this.getListen().equals(other.getListen())) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
+    
     /**
      * @param listen
      *            the listen address to set
@@ -331,89 +315,24 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
     public String getPassword() {
         return this.password;
     }
+    
+    public InputStream getInput() {
+		return input;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ITransportExchangePattern getExchangePattern() {
-        return ITransportExchangePattern.InOnly;
-    }
+	public void setInput(InputStream input) {
+		this.input = input;
+	}
 
-    class TelemetrieSubscriber extends _TelemetrieSubscriberDisp {
-        private final HaggisTransportHandler handler;
-        private TelemetriePublisherPrx publisher;
-        /**
-		 * 
-		 */
-        private static final long serialVersionUID = -5341086082699034964L;
+	public Logger getLOG() {
+		return LOG;
+	}
 
-        /**
-         * @param handler
-         */
-        public TelemetrieSubscriber(HaggisTransportHandler handler) {
-            this.handler = handler;
-        }
+	public String getOwnService() {
+		return OWN_SERVICE;
+	}
 
-        @Override
-        public void _notify(Pose p, Current __current) {
-            // System.out.println(p.X + "; " + p.Y + "; "+ p.Z + "; " +
-            // p.orientation);
-            try {
-                handler.process(new Object[] { p.timestamp, p.X, p.Y, p.Z, p.orientation });
-            }
-            catch (Exception e) {
-                LOG.error(e.getMessage(), e);
-                throw e;
-            }
-        }
-
-        /**
-         * @param base
-         * @param subscriber
-         * 
-         */
-        public void open(ObjectPrx base, ObjectPrx subscriber) {
-            try {
-                publisher = TelemetriePublisherPrxHelper.checkedCast(base);
-                TelemetrieSubscriberPrx subscriberPrx = TelemetrieSubscriberPrxHelper.checkedCast(subscriber);
-                publisher.subscribe(subscriberPrx);
-            }
-            catch (Exception e) {
-                LOG.error(e.getMessage(), e);
-                throw e;
-            }
-        }
-
-        public void close() {
-            if (this.publisher != null) {
-                this.publisher = null;
-            }
-        }
-    }
-
-    @Override
-    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
-    	if(!(o instanceof HaggisTransportHandler)) {
-    		return false;
-    	}
-    	HaggisTransportHandler other = (HaggisTransportHandler)o;
-    	if(!this.host.equals(other.host)) {
-    		return false;
-    	} else if(!this.getUsername().equals(other.getUsername())) {
-    		return false;
-    	} else if(!this.getPassword().equals(other.getPassword())) {
-    		return false;
-    	} else if(this.port != other.port) {
-    		return false;
-    	} else if(!this.getAgent().equals(other.getAgent())) {
-    		return false;
-    	} else if(!this.getService().equals(other.getService())) {
-    		return false;
-    	} else if(!this.getListen().equals(other.getListen())) {
-    		return false;
-    	}
-    	
-    	return true;
-    }
+	public String getProtocol() {
+		return PROTOCOL;
+	}
 }

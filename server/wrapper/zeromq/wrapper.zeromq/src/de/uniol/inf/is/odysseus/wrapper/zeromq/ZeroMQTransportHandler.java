@@ -1,18 +1,24 @@
 package de.uniol.inf.is.odysseus.wrapper.zeromq;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
-import org.zeromq.ZMQ;
-import org.zeromq.ZMQ.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQConsumer;
-import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQPublisher;
+import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.AZMQConnector;
+import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQContextProvider;
+import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQPullConsumer;
+import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQPullPublisher;
+import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQPushConsumer;
+import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQPushPublisher;
 
 /**
  * 
@@ -23,19 +29,37 @@ import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQPublisher;
  */
 public class ZeroMQTransportHandler extends AbstractTransportHandler {
 
+	private final Logger LOG = LoggerFactory.getLogger(ZeroMQTransportHandler.class);
+	
 	public static final String HOST = "host";
 	public static final String WRITEPORT = "writeport";
 	public static final String READPORT = "readport";
+	public static final String DELAYOFMSG = "delayofmsg";
+	public static final String THREADS = "threads";
 	public static final String NAME = "ZeroMQ";
+	public static final String PARAMS = "params";
+	// Pull intervall in hz
+	public static final String FREQUENCY = "frequency";
 
 	private String host;
 	private int writePort;
 	private int readPort;
-
-	private ZMQPublisher publisher;
-	private ZMQConsumer consumer;
+	private int delayOfMsg;
+	private int communicationThreads;
+	private int frequency;
+	private String[] params;
 	
-	private Context context;
+	private int delayedMsgCounter = 1;
+	private String delayedMsgs = "";
+
+	private AZMQConnector publisher;
+	private AZMQConnector consumer;
+	
+	/** In and output for data transfer */
+	private InputStream input;
+	private OutputStream output;
+	
+	private ZMQContextProvider context;
 
 	public ZeroMQTransportHandler(){
 	}
@@ -60,7 +84,29 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 		} else {
 			writePort = -1;
 		}
-		context = ZMQ.context(1);
+		if (options.containsKey(DELAYOFMSG)) {
+			delayOfMsg = Integer.parseInt(options.get(DELAYOFMSG));
+		} else {
+			delayOfMsg = 0;
+		}
+		if (options.containsKey(THREADS)) {
+			communicationThreads = Integer.parseInt(options.get(THREADS));
+		} else {
+			communicationThreads = 1;
+		}
+		if (options.containsKey(PARAMS)) {
+			String paramString = options.get(PARAMS);
+			params = paramString.split(",");
+		} else {
+			params = new String[1];
+			params[0] = "";
+		}
+		if (options.containsKey(FREQUENCY)) {
+			frequency = 1000/Integer.parseInt(options.get(FREQUENCY));
+		} else {
+			frequency = 500;
+		}
+		
 	}
 
 	@Override
@@ -77,12 +123,19 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 			}
 			newTxt += " " + (i-1) + ":" + txtPart;
 		}
-		try {
-			publisher.send(newTxt.getBytes());
-			System.out.println("Following data successfully sent: " + newTxt);
-		} catch(Exception ex) {
-			System.err.println("An exception occured sending following data: " + newTxt);
-			ex.printStackTrace();
+		delayedMsgs += newTxt;
+		if(delayedMsgCounter == delayOfMsg){
+			try {
+				publisher.send(delayedMsgs.getBytes());
+				delayedMsgCounter = 1;
+				System.out.println("Following data successfully sent: \n\t" + delayedMsgs + "\n");
+				delayedMsgs = "";
+			} catch(Exception ex) {
+				LOG.error("An exception occured sending following data: \n\t" + delayedMsgs);
+				ex.printStackTrace();
+			}
+		} else {
+			delayedMsgCounter++;
 		}
 	}
 
@@ -94,13 +147,21 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public InputStream getInputStream() {
-		throw new IllegalArgumentException("Not implemented in this wrapper!");
+		if(consumer == null){
+			consumer = new ZMQPullConsumer(this);
+			consumer.start();
+		}
+		return input;
 	}
 
 
 	@Override
 	public OutputStream getOutputStream() {
-		throw new IllegalArgumentException("Not implemented in this wrapper!");
+		if(publisher == null){
+			publisher = new ZMQPullPublisher(this);
+			publisher.start();
+		}
+		return output;
 	}
 
 	@Override
@@ -110,28 +171,42 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public void processInOpen() throws IOException {
+		if(input == null){
+			input = new ByteArrayInputStream(new byte[0]);
+		}
 		if(consumer == null){
-			consumer = new ZMQConsumer(this);
+			consumer = new ZMQPushConsumer(this);
 			consumer.start();
 		}
 	}
 
 	@Override
 	public void processOutOpen() throws IOException {
+		if(output == null){
+			output = new ByteArrayOutputStream();
+		}
 		if(publisher == null){
-			publisher = new ZMQPublisher(this);
+			publisher = new ZMQPushPublisher(this);
 			publisher.start();
 		}
 	}
 
 	@Override
 	public void processInClose() throws IOException {
+		if(input == null){
+			input.close();
+		}
+		input = null;
 		consumer.close();
 		consumer = null;
 	}
 
 	@Override
 	public void processOutClose() throws IOException {
+		if(output == null){
+			output.close();
+		}
+		output = null;
 		publisher.close();
 		publisher = null;
 	}
@@ -140,7 +215,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 	private void internalClose() throws IOException {
 		processInClose();
 		processOutClose();
-		context.term();
+		context.close();
 	}
 
 	@Override
@@ -172,11 +247,59 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 		this.readPort = readPort;
 	}
 
-	public Context getContext() {
+	public ZMQContextProvider getContext() {
 		return context;
 	}
 
-	public void setContext(Context context) {
+	public void setContext(ZMQContextProvider context) {
 		this.context = context;
+	}
+
+	public int getDelayOfMsg() {
+		return delayOfMsg;
+	}
+
+	public void setDelayOfMsg(int delayTuple) {
+		this.delayOfMsg = delayTuple;
+	}
+
+	public int getThreads() {
+		return communicationThreads;
+	}
+
+	public void setThreads(int threads) {
+		this.communicationThreads = threads;
+	}
+
+	public String[] getParams() {
+		return params;
+	}
+
+	public void setParams(String[] params) {
+		this.params = params;
+	}
+
+	public int getFrequency() {
+		return frequency;
+	}
+
+	public void setFrequency(int frequency) {
+		this.frequency = frequency;
+	}
+
+	public InputStream getInput() {
+		return input;
+	}
+
+	public void setInput(InputStream input) {
+		this.input = input;
+	}
+
+	public OutputStream getOutput() {
+		return output;
+	}
+
+	public void setOutput(OutputStream output) {
+		this.output = output;
 	}
 }

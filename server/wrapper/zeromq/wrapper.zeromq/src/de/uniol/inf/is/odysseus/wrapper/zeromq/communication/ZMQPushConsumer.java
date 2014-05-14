@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.wrapper.zeromq.communication;
 import java.nio.ByteBuffer;
 
 import org.zeromq.ZMQ;
-import org.zeromq.ZMQ.Socket;
 
 import de.uniol.inf.is.odysseus.wrapper.zeromq.ZeroMQTransportHandler;
 
@@ -14,23 +13,21 @@ import de.uniol.inf.is.odysseus.wrapper.zeromq.ZeroMQTransportHandler;
  * @author Jan Benno Meyer zu Holte
  *
  */
-public class ZMQConsumer implements Runnable {
-	private Thread t;
-	private ZeroMQTransportHandler ZMQTH;
-	private Socket subscriber;
+public class ZMQPushConsumer extends AZMQConnector {
 
-	public ZMQConsumer(ZeroMQTransportHandler transh){
+	public ZMQPushConsumer(ZeroMQTransportHandler transh){
 		ZMQTH = transh;
-		subscriber = ZMQTH.getContext().socket(ZMQ.SUB);
+		socket = ZMQTH.getContext().getContext().socket(ZMQ.SUB);
 		if (ZMQTH.getHost() != null && ZMQTH.getReadPort() > 0) {
-			subscriber.bind("tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort());
+			socket.bind("tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort());
+			LOG.debug("ZeroMQ consumer created listening on tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort());
 		}
 	}
 	
 	@Override
 	public void run() {
-		while(true){
-			byte[] data = subscriber.recv(1);
+		while(!t.isInterrupted()){
+			byte[] data = socket.recv(1);
 			if(data != null){
 				try{
 					ByteBuffer wrapped = ByteBuffer.wrap(data);
@@ -43,14 +40,8 @@ public class ZMQConsumer implements Runnable {
 		}
 	}
 
-	public void start(){
-		if(t==null){
-			t = new Thread(this);
-			t.start();
-		}
-	}
-	
-	public void close(){
-		t.interrupt();
+	@Override
+	public void send(byte[] message) {
+		// no operations since is consumer
 	}
 }
