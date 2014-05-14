@@ -34,7 +34,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	private long downloadRateTimestamp;
 	private long downloadRateCurrentByteCount;
 	
-	public JxtaReceiverPO(JxtaReceiverAO ao) {
+	public JxtaReceiverPO(JxtaReceiverAO ao) throws DataTransmissionException {
 		SDFSchema schema = ao.getOutputSchema().clone();
 		setOutputSchema(schema);
 		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(schema);

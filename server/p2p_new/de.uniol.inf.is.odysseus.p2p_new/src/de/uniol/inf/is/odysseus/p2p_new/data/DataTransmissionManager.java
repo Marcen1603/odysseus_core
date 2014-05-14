@@ -1,14 +1,10 @@
 package de.uniol.inf.is.odysseus.p2p_new.data;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.CloseAckMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.CloseMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.DataMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.DoneMessage;
-import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.EndpointDataTransmissionReceiver;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.OpenAckMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.OpenMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.PunctuationMessage;
@@ -17,8 +13,6 @@ import de.uniol.inf.is.odysseus.p2p_new.data.socket.SocketDataTransmissionReceiv
 import de.uniol.inf.is.odysseus.p2p_new.data.socket.SocketDataTransmissionSender;
 
 public class DataTransmissionManager {
-	
-	private static final Logger LOG = LoggerFactory.getLogger(DataTransmissionManager.class);
 	
 	private static DataTransmissionManager instance;
 	private static IPeerCommunicator peerCommunicator;
@@ -81,18 +75,16 @@ public class DataTransmissionManager {
 	}
 	
 	// called by JxtaSenderPO
-	public ITransmissionSender registerTransmissionSender( String destination, String id ) {
-		return new SocketDataTransmissionSender(peerCommunicator, destination, id);
-//		return new EndpointDataTransmissionSender(peerCommunicator, destination, id);
+	public ITransmissionSender registerTransmissionSender( String destination, String id ) throws DataTransmissionException {
+		try {
+			return new SocketDataTransmissionSender(peerCommunicator, destination, id);
+		} catch( Throwable t) {
+			throw new DataTransmissionException(t);
+		}
 	}
 	
 	// called be JxtaReceiverPO
-	public ITransmissionReceiver registerTransmissionReceiver( String source, String id ) {
-		try {
-			return new SocketDataTransmissionReceiver(peerCommunicator, source, id);
-		} catch (DataTransmissionException e) {
-			LOG.error("Could not create socket transmission receiver", e);
-			return new EndpointDataTransmissionReceiver(peerCommunicator, source, id);
-		}
+	public ITransmissionReceiver registerTransmissionReceiver( String source, String id ) throws DataTransmissionException {
+		return new SocketDataTransmissionReceiver(peerCommunicator, source, id);
 	}
 }

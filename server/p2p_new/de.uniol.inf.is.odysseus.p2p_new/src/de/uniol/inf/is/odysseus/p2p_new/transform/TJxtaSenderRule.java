@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -18,7 +19,11 @@ public class TJxtaSenderRule extends AbstractTransformationRule<JxtaSenderAO> {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void execute(JxtaSenderAO operator, TransformationConfiguration config) throws RuleException {
-		defaultExecute(operator, new JxtaSenderPO(operator), config, true, true);
+		try {
+			defaultExecute(operator, new JxtaSenderPO(operator), config, true, true);
+		} catch (DataTransmissionException e) {
+			throw new RuleException("Could not create JxtaSenderPO", e);
+		}
 	}
 
 	@Override

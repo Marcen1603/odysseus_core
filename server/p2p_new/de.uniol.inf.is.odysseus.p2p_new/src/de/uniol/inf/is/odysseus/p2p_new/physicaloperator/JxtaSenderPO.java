@@ -40,7 +40,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	private long uploadRateTimestamp;
 	private long uploadRateCurrentByteCount;
 
-	public JxtaSenderPO(JxtaSenderAO ao) {
+	public JxtaSenderPO(JxtaSenderAO ao) throws DataTransmissionException {
 		pipeIDString = ao.getPipeID();
 		peerIDString = ao.getPeerID();
 
