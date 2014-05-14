@@ -41,7 +41,16 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 		Optional<String> optAddress = P2PDictionary.getInstance().getRemotePeerAddress(toPeerID(peerID));
 		if (optAddress.isPresent()) {
 			try {
-				address = InetAddress.getByName(optAddress.get().substring(0, optAddress.get().indexOf(":")));
+				String addressString = optAddress.get();
+				if( addressString.startsWith("[")) {
+					// IPv6
+					address = InetAddress.getByName(addressString.substring(0, addressString.indexOf("]") + 1));
+					LOG.debug("Using IPv6 for socket connection: {}", address);
+				} else {
+					// IPv4
+					address = InetAddress.getByName(addressString.substring(0, addressString.indexOf(":")));
+					LOG.debug("Using IPv4 for socket connection: {}", address);
+				}
 			} catch (UnknownHostException e) {
 				address = null;
 				throw new DataTransmissionException("Address can not be determined", e);
