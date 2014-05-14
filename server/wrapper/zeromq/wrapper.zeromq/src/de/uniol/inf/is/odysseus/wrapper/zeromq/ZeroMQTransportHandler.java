@@ -106,7 +106,10 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 		} else {
 			frequency = 500;
 		}
-		
+		if(context == null){
+			context = new ZMQContextProvider(communicationThreads);
+			context.start();
+		}
 	}
 
 	@Override
@@ -216,6 +219,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 		processInClose();
 		processOutClose();
 		context.close();
+		context = null;
 	}
 
 	@Override

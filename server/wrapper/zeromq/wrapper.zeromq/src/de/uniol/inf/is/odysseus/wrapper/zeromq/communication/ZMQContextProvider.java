@@ -37,6 +37,7 @@ private final Logger LOG = LoggerFactory.getLogger(ZMQPushPublisher.class);
 		context.close();
 		t.interrupt();
 		t = null;
+		LOG.debug("ZeroMQ context closed.");
 	}
 
 	public Context getContext() {
