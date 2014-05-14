@@ -23,15 +23,26 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaReceiverPO.class);
 
-	private NullAwareTupleDataHandler dataHandler;
-	private ITransmissionReceiver transmission;
+	private final NullAwareTupleDataHandler dataHandler;
+	private final ITransmissionReceiver transmission;
+	private final String pipeIDString;
+	private final String peerIDString;
+	
+	private long totalReceivedByteCount;
+	
+	private double downloadRateBytesPerSecond;
+	private long downloadRateTimestamp;
+	private long downloadRateCurrentByteCount;
 	
 	public JxtaReceiverPO(JxtaReceiverAO ao) {
 		SDFSchema schema = ao.getOutputSchema().clone();
 		setOutputSchema(schema);
 		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(schema);
 		
-		transmission = DataTransmissionManager.getInstance().registerTransmissionReceiver(ao.getPeerID(), ao.getPipeID());
+		pipeIDString = ao.getPipeID();
+		peerIDString = ao.getPeerID();
+		
+		transmission = DataTransmissionManager.getInstance().registerTransmissionReceiver(peerIDString, pipeIDString);
 		transmission.addListener(this);
 		transmission.open();
 	}
@@ -42,6 +53,13 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		
 		this.dataHandler = po.dataHandler;
 		this.transmission = po.transmission;
+		this.pipeIDString = po.pipeIDString;
+		this.peerIDString = po.peerIDString;
+		
+		this.totalReceivedByteCount = po.totalReceivedByteCount;
+		this.downloadRateBytesPerSecond = po.downloadRateBytesPerSecond;
+		this.downloadRateCurrentByteCount = po.downloadRateCurrentByteCount;
+		this.downloadRateTimestamp = po.downloadRateTimestamp;
 	}
 
 	@Override
@@ -60,6 +78,8 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 
 	@Override
 	protected void process_open() throws OpenFailedException {
+		downloadRateTimestamp = System.currentTimeMillis();
+		
 		try {
 			transmission.sendOpen();
 		} catch (DataTransmissionException e) {
@@ -77,6 +97,14 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 
 	@Override
 	public void onReceiveData(ITransmissionReceiver receiver, byte[] data) {
+		totalReceivedByteCount += data.length;
+		downloadRateCurrentByteCount += data.length;
+		if( System.currentTimeMillis() - downloadRateTimestamp > 10 * 1000 ) {
+			downloadRateBytesPerSecond = ( downloadRateCurrentByteCount / 10.0);
+			downloadRateCurrentByteCount = 0;
+			downloadRateTimestamp = System.currentTimeMillis();
+		}
+		
 		T streamObject = JxtaPOUtil.createStreamObject(ByteBuffer.wrap(data), dataHandler);
 		if( streamObject != null ) {
 			transfer(streamObject);
@@ -95,5 +123,21 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	
 	public final ITransmissionReceiver getTransmission() {
 		return transmission;
+	}
+	
+	public String getPipeIDString() {
+		return pipeIDString;
+	}
+	
+	public String getPeerIDString() {
+		return peerIDString;
+	}
+	
+	public long getTotalReceivedByteCount() {
+		return totalReceivedByteCount;
+	}
+	
+	public double getDownloadRateBytesPerSecond() {
+		return downloadRateBytesPerSecond;
 	}
 }

@@ -28,11 +28,23 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaSenderPO.class);
 
+	private final ITransmissionSender transmission;
+	private final String pipeIDString;
+	private final String peerIDString;
+	
 	private NullAwareTupleDataHandler dataHandler;
-	private ITransmissionSender transmission;
+
+	private long totalSendByteCount;
+	
+	private double uploadRateBytesPerSecond;
+	private long uploadRateTimestamp;
+	private long uploadRateCurrentByteCount;
 
 	public JxtaSenderPO(JxtaSenderAO ao) {
-		this.transmission = DataTransmissionManager.getInstance().registerTransmissionSender(ao.getPeerID(), ao.getPipeID());
+		pipeIDString = ao.getPipeID();
+		peerIDString = ao.getPeerID();
+
+		this.transmission = DataTransmissionManager.getInstance().registerTransmissionSender(peerIDString, pipeIDString);
 		this.transmission.addListener(this);
 		this.transmission.open();
 	}
@@ -42,6 +54,13 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 		this.dataHandler = po.dataHandler;
 		this.transmission = po.transmission;
+		this.peerIDString = po.peerIDString;
+		this.pipeIDString = po.pipeIDString;
+		
+		this.totalSendByteCount = po.totalSendByteCount;
+		this.uploadRateBytesPerSecond = po.uploadRateBytesPerSecond;
+		this.uploadRateCurrentByteCount = po.uploadRateCurrentByteCount;
+		this.uploadRateTimestamp = po.uploadRateTimestamp;
 	}
 	
 	@Override
@@ -89,6 +108,14 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		// did not apply the "real" size of the object
 		buffer.get(rawBytes, 0, messageSizeBytes);
 
+		totalSendByteCount += rawBytes.length;
+		uploadRateCurrentByteCount += rawBytes.length;
+		if( System.currentTimeMillis() - uploadRateTimestamp > 10 * 1000 ) {
+			uploadRateBytesPerSecond = ( uploadRateCurrentByteCount / 10.0);
+			uploadRateCurrentByteCount = 0;
+			uploadRateTimestamp = System.currentTimeMillis();
+		}
+		
 		try {
 			transmission.sendData(rawBytes);
 		} catch (DataTransmissionException e) {
@@ -106,6 +133,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	@Override
 	public void onReceiveOpen(ITransmissionSender sender) {
+		uploadRateTimestamp = System.currentTimeMillis();
+		
 		Optional<Integer> optQueryID = determineQueryID(getOwner());
 		if (optQueryID.isPresent()) {
 			int queryID = optQueryID.get();
@@ -142,5 +171,21 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	
 	public final ITransmissionSender getTransmission() {
 		return transmission;
+	}
+	
+	public String getPeerIDString() {
+		return peerIDString;
+	}
+	
+	public String getPipeIDString() {
+		return pipeIDString;
+	}
+	
+	public double getUploadRateBytesPerSecond() {
+		return uploadRateBytesPerSecond;
+	}
+	
+	public long getTotalSendByteCount() {
+		return totalSendByteCount;
 	}
 }
