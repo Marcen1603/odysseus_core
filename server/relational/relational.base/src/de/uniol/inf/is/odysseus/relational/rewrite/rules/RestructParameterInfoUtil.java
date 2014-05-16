@@ -11,11 +11,17 @@ public final class RestructParameterInfoUtil {
 	public static void updatePredicateParameterInfo(ILogicalOperator sel) {
 		String predicateString = sel.getParameterInfos().get("PREDICATE");
 		if( predicateString != null && predicateString.length() > 0 ) {
+			String newPredicateString;
+			// Cases where predicate type is in front
 			int pos = predicateString.indexOf("(");
-			String newPredicateString = predicateString.substring(0, pos + 1) + "'" + sel.getPredicate().toString() + "')";
+			if (pos > 0){
+				newPredicateString = predicateString.substring(0, pos + 1) + "'" + sel.getPredicate().toString() + "')";
+			}else{
+				newPredicateString = "'" + sel.getPredicate().toString() + "'";
+			}
 			sel.addParameterInfo("PREDICATE", newPredicateString);
 		} else {
-			sel.addParameterInfo("PREDICATE", "RelationalPredicate('" + sel.getPredicate().toString() + "')");
+			sel.addParameterInfo("PREDICATE", "'" + sel.getPredicate().toString() + "'");
 		}
 	}
 
