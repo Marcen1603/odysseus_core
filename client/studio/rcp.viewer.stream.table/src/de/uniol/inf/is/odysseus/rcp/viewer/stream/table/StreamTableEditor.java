@@ -74,6 +74,7 @@ public class StreamTableEditor implements IStreamEditorType {
 	private boolean isShowingMetadata = true;
 
 	private TableViewerColumn metadataColumn;
+	private TableViewerColumn metadataMapColumn;
 
 	public StreamTableEditor(int maxTuples) {
 		setMaxTuplesCount(maxTuples);
@@ -284,42 +285,6 @@ public class StreamTableEditor implements IStreamEditorType {
 		return col;
 	}
 	
-	private TableViewerColumn createMetadataColumn(TableViewer tableViewer) {
-		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
-		col.getColumn().setText("Metadata");
-		col.getColumn().setAlignment(SWT.CENTER);
-
-		col.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				try {
-					Object metadata = ((Tuple<?>) cell.getElement()).getMetadata();
-					if (metadata != null) {
-						cell.setText(metadata.toString());
-					} else {
-						cell.setText("<null>");
-					}
-					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-					
-				} catch (Throwable t) {
-					LOG.error("Could not retrieve metadata", t);
-					cell.setText("<Error>");
-				}
-			}
-		});
-		TupleColumnViewerSorter sorter = new TupleColumnViewerSorter(tableViewer, col) {
-			@Override
-			protected int doCompare(Viewer viewer, Tuple<?> e1, Tuple<?> e2) {
-				Object attr1 = e1.getMetadata();
-				Object attr2 = e2.getMetadata();
-				return Objects.compare(attr1, attr2, new ObjectComparator());
-			}
-		};
-		sorter.setSorter(sorter, TupleColumnViewerSorter.NONE);
-		
-		return col;
-	}
-	
 	protected final TableViewer getTableViewer() {
 		return viewer;
 	}
@@ -337,6 +302,7 @@ public class StreamTableEditor implements IStreamEditorType {
 			disposeColumn(tableViewer.getTable().getColumn(0));
 		}
 		metadataColumn = null;
+		metadataMapColumn = null;
 	}
 
 	private void setMaxTuplesCount(int maxTuples) {
@@ -385,6 +351,9 @@ public class StreamTableEditor implements IStreamEditorType {
 			if( isShowingMetadata ) {
 				metadataColumn = createMetadataColumn(tableViewer);
 				layout.setColumnData(metadataColumn.getColumn(), new ColumnWeightData(weight, 25, true));
+				
+				metadataMapColumn = createMetadataMapColumn(tableViewer);
+				layout.setColumnData(metadataMapColumn.getColumn(), new ColumnWeightData(weight, 25, true));
 			}
 			
 		} finally {
@@ -393,7 +362,69 @@ public class StreamTableEditor implements IStreamEditorType {
 			tableViewer.refresh();
 		}
 	}
+	
+	private TableViewerColumn createMetadataColumn(TableViewer tableViewer) {
+		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
+		col.getColumn().setText("Metadata");
+		col.getColumn().setAlignment(SWT.CENTER);
 
+		col.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				try {
+					Object metadata = ((Tuple<?>) cell.getElement()).getMetadata();
+					if (metadata != null) {
+						cell.setText(metadata.toString());
+					} else {
+						cell.setText("<null>");
+					}
+					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+					
+				} catch (Throwable t) {
+					LOG.error("Could not retrieve metadata", t);
+					cell.setText("<Error>");
+				}
+			}
+		});
+		TupleColumnViewerSorter sorter = new TupleColumnViewerSorter(tableViewer, col) {
+			@Override
+			protected int doCompare(Viewer viewer, Tuple<?> e1, Tuple<?> e2) {
+				Object attr1 = e1.getMetadata();
+				Object attr2 = e2.getMetadata();
+				return Objects.compare(attr1, attr2, new ObjectComparator());
+			}
+		};
+		sorter.setSorter(sorter, TupleColumnViewerSorter.NONE);
+		
+		return col;
+	}
+	
+	private TableViewerColumn createMetadataMapColumn(TableViewer tableViewer) {
+		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
+		col.getColumn().setText("MetadataMap");
+		col.getColumn().setAlignment(SWT.CENTER);
+
+		col.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				try {
+					Object metadataMap = ((Tuple<?>) cell.getElement()).getMetadataMap();
+					if (metadataMap != null) {
+						cell.setText(metadataMap.toString());
+					} else {
+						cell.setText("<null>");
+					}
+					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+					
+				} catch (Throwable t) {
+					LOG.error("Could not retrieve metadataMap", t);
+					cell.setText("<Error>");
+				}
+			}
+		});
+		
+		return col;
+	}
 
 	private void stopRefreshThread() {
 		if( desyncThread != null ) {
