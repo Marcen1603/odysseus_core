@@ -69,11 +69,6 @@ public class RSwitchSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 		return false;
 	}
 
-	@Override
-	public String getName() {
-		return "Switch Selection and Join";
-	}
-
 	private static boolean isValidSelect(SelectAO sel, JoinAO join) {
 		if (sel.getInputAO() !=null && sel.getInputAO().equals(join)) {
 			if (RelationalRestructHelper.subsetPredicate(sel.getPredicate(), join.getInputSchema(0))

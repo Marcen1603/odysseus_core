@@ -52,11 +52,6 @@ public class RDeleteSelectionWithoutPredicate extends AbstractRewriteRule<Select
 	}
 
 	@Override
-	public String getName() {
-		return "Delete Selection without Predicate";
-	}
-
-	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return RewriteRuleFlowGroup.DELETE;
 	}

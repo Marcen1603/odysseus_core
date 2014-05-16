@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRuleProvider;
@@ -41,6 +42,24 @@ public abstract class AbstractInventory implements IRuleFlow {
 
 	protected AbstractInventory(AbstractInventory inventory) {
 		this.ruleBase = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>>(inventory.getCopyOfRuleBase());
+		this.workFlow = new LinkedList<IRuleFlowGroup>(inventory.getCopyOfWorkFlow());
+	}
+
+	protected AbstractInventory(AbstractInventory inventory, Set<String> rulesToApply) {
+		if (rulesToApply == null){
+			this.ruleBase = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>>(inventory.getCopyOfRuleBase());
+		}else{
+			LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>> copy = inventory.getCopyOfRuleBase();
+			for (Entry<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>> e : copy.entrySet()){
+				Iterator<IRule<?, ?>> iter = e.getValue().iterator();
+				while (iter.hasNext()){
+					if (!rulesToApply.contains(iter.next().getName())){
+						iter.remove();
+					}
+				}
+			}
+			this.ruleBase = new LinkedHashMap<>(copy);
+		}
 		this.workFlow = new LinkedList<IRuleFlowGroup>(inventory.getCopyOfWorkFlow());
 	}
 

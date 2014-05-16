@@ -24,7 +24,7 @@ public class Context {
 	}
 	
 	public void put(String key, Serializable value){		
-		if (containsKey(key)){
+		if (containsKey(key.toUpperCase())){
 			throw new IllegalArgumentException("Key "+key+" already used. Delete first.");
 		}
 		putImpl(key.toUpperCase(), value);

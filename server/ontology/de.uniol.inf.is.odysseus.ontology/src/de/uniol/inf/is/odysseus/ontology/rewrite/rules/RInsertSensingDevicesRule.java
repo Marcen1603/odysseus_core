@@ -159,14 +159,6 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
      * {@inheritDoc}
      */
     @Override
-    public String getName() {
-        return "QualityAO -> QualityAO|JoinAO|ProjectAO|StreamAO";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public IRuleFlowGroup getRuleFlowGroup() {
         return RewriteRuleFlowGroup.DELETE;
     }

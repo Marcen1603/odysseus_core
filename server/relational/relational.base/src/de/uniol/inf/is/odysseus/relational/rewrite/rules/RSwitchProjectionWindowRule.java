@@ -62,11 +62,6 @@ public class RSwitchProjectionWindowRule extends AbstractRewriteRule<AbstractWin
 	}
 
 	@Override
-	public String getName() {
-		return "Switch Projection and Window";
-	}
-
-	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return RewriteRuleFlowGroup.SWITCH;
 	}

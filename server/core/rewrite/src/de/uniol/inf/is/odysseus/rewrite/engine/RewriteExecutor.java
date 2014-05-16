@@ -16,7 +16,9 @@
 package de.uniol.inf.is.odysseus.rewrite.engine;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,10 +44,20 @@ public class RewriteExecutor implements IRewrite {
 	public ILogicalOperator rewritePlan(ILogicalOperator plan,
 			RewriteConfiguration conf, ISession caller, IDataDictionary dd) {
 		LOGGER.info("Starting rewriting...");
-		RewriteInventory rewriteInventory = new RewriteInventory(
-				RewriteInventory.getInstance());
 
-		RewriteEnvironment env = new RewriteEnvironment(conf, rewriteInventory, caller, dd);
+		Set<String> rulesToApply = conf.getRulesToApply();
+
+		final RewriteInventory rewriteInventory;
+		if (rulesToApply == null) {
+			rewriteInventory = new RewriteInventory(
+					RewriteInventory.getInstance());
+		} else {
+			rewriteInventory = new RewriteInventory(
+					RewriteInventory.getInstance(),rulesToApply);
+		}
+
+		RewriteEnvironment env = new RewriteEnvironment(conf, rewriteInventory,
+				caller, dd);
 
 		TopAO top = null;
 		final boolean createdNewTopAO;
@@ -69,9 +81,9 @@ public class RewriteExecutor implements IRewrite {
 			LOGGER.trace("Processing rules...");
 		}
 		// start transformation
-		try{
+		try {
 			env.processEnvironment();
-		}catch(RuleException e){
+		} catch (RuleException e) {
 			throw new TransformationException(e);
 		}
 		LOGGER.trace("Processing rules done.");
@@ -118,6 +130,11 @@ public class RewriteExecutor implements IRewrite {
 
 	public void removeRuleProvider(IRewriteRuleProvider provider) {
 		RewriteInventory.getInstance().unbindRuleProvider(provider);
+	}
+
+	@Override
+	public Collection<String> getRewriteRules() {
+		return RewriteInventory.getInstance().getRules();
 	}
 
 }

@@ -18,9 +18,11 @@ package de.uniol.inf.is.odysseus.script.executor;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.script.keyword.ActivateRewriteRulePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.AddQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.BufferPlacementPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.CreateStoredProcedureKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.DeActivateRewriteRulePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.DropAllQueriesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.DropAllSinksPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.DropAllSourcesPreParserKeyword;
@@ -71,7 +73,9 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(RequiredFeaturePreParserKeyword.REQUIRED, RequiredFeaturePreParserKeyword.class);		
 		keywords.put(UpdateFeaturePreParserKeyword.UPDATE, UpdateFeaturePreParserKeyword.class);
 		keywords.put(PreTransformationHandlerPreParserKeyword.KEYWORD, PreTransformationHandlerPreParserKeyword.class);
-		return keywords;
+		keywords.put(ActivateRewriteRulePreParserKeyword.ACTIVATEREWRITERULE, ActivateRewriteRulePreParserKeyword.class);
+		keywords.put(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE, DeActivateRewriteRulePreParserKeyword.class);
+return keywords;
 	}
 
 }

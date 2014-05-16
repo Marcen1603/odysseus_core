@@ -58,11 +58,6 @@ public class RSwitchSelectionWindowRule extends AbstractRewriteRule<AbstractWind
 		return win.getWindowType() == WindowType.TIME;
 	}
 
-	@Override
-	public String getName() {
-		return "Switch Selection and Window";
-	}
-
 	private static boolean isValidSelect(SelectAO sel, AbstractWindowAO win) {
 		if (sel.getInputAO() != null && sel.getInputAO().equals(win)) {
 			return true;

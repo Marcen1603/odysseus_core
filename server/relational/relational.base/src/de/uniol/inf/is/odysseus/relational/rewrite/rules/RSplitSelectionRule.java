@@ -31,8 +31,6 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 @SuppressWarnings({"rawtypes"})
 public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 
-	private static final String RULE_NAME = "Split Selection with more than one Predicate";
-
 	@Override
 	public int getPriority() {
 		return 4;
@@ -81,11 +79,6 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public String getName() {
-		return RULE_NAME;
 	}
 
 	@Override

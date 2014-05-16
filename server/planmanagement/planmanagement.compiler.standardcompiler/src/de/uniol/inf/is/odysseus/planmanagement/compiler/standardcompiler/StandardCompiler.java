@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -376,6 +377,11 @@ public class StandardCompiler implements ICompiler {
 	public ILogicalOperator rewritePlan(ILogicalOperator plan,
 			RewriteConfiguration conf, ISession caller, IDataDictionary dd) {
 		return rewrite.rewritePlan(plan, conf, caller, dd);
+	}
+	
+	@Override
+	public Collection<String> getRewriteRules() {
+		return rewrite.getRewriteRules();
 	}
 
 	@Override

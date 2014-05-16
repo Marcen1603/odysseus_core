@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,6 +49,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
@@ -71,6 +73,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDistribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.ExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
@@ -103,8 +106,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.reloadl
  * @author Wolf Bauer, Jonas Jacobi, Tobias Witt, Marco Grawunder, Dennis
  *         Geesen, Timo Michelsen (AC)
  */
-public class StandardExecutor extends AbstractExecutor implements
-		IQueryStarter {
+public class StandardExecutor extends AbstractExecutor implements IQueryStarter {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(StandardExecutor.class);
@@ -592,7 +594,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		LOG.debug("Adding following query: " + query);
 		validateUserRight(user, ExecutorPermission.ADD_QUERY);
 		QueryBuildConfiguration params = buildAndValidateQueryBuildConfigurationFromSettings(
-				buildConfigurationName, overwriteSetting);
+				buildConfigurationName, overwriteSetting, context);
 		params.set(new ParameterParserID(parserID));
 		return addQuery(query, parserID, user, params, context);
 	}
@@ -647,7 +649,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		LOG.info("Start adding a logical query plan!");
 		validateUserRight(user, ExecutorPermission.ADD_QUERY);
 		QueryBuildConfiguration params = buildAndValidateQueryBuildConfigurationFromSettings(
-				buildConfigurationName, overwriteSetting);
+				buildConfigurationName, overwriteSetting, null);
 		return addQuery(logicalPlan, user, params);
 	}
 
@@ -733,7 +735,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		validateUserRight(user, ExecutorPermission.ADD_QUERY);
 		try {
 			QueryBuildConfiguration queryBuildConfiguration = buildAndValidateQueryBuildConfigurationFromSettings(
-					buildConfigurationName, overwriteSetting);
+					buildConfigurationName, overwriteSetting, null);
 			ArrayList<IPhysicalQuery> newQueries = new ArrayList<IPhysicalQuery>();
 
 			IPhysicalQuery query = new PhysicalQuery(physicalPlan);
@@ -783,7 +785,7 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	private QueryBuildConfiguration buildAndValidateQueryBuildConfigurationFromSettings(
 			String buildConfigurationName,
-			List<IQueryBuildSetting<?>> overwriteSetting)
+			List<IQueryBuildSetting<?>> overwriteSetting, Context context)
 			throws QueryAddException {
 		if (buildConfigurationName == null) {
 			buildConfigurationName = "Standard";
@@ -811,10 +813,77 @@ public class StandardExecutor extends AbstractExecutor implements
 			}
 		}
 
+		if (context != null) {
+			@SuppressWarnings("unchecked")
+			List<String> activeRules = (ArrayList<String>) context
+					.get("ACTIVATEREWRITERULE");
+			@SuppressWarnings("unchecked")
+			List<String> inactiveRules = (ArrayList<String>) context
+					.get("DEACTIVATEREWRITERULE");
+
+			Set<String> rulesToApply = new HashSet<>();
+
+			if (activeRules != null) {
+				// First check if all rules should be activated to deactivated
+				for (String s : activeRules) {
+					if (s.equalsIgnoreCase("all")) {
+						rulesToApply.addAll(getRewriteRules());
+					}
+				}
+			}
+
+			if (inactiveRules != null) {
+				for (String s : inactiveRules) {
+					if (s.equalsIgnoreCase("all")) {
+						rulesToApply.clear();
+					}
+				}
+			}
+
+			if (activeRules != null) {
+				// Now, activate or deactive single rule (must be done as
+				// second!)
+				for (String s : activeRules) {
+					if (getRewriteRules().contains(s)) {
+						rulesToApply.add(s);
+					}
+				}
+			}
+
+			if (inactiveRules != null) {
+				for (String s : inactiveRules) {
+					if (getRewriteRules().contains(s)) {
+						rulesToApply.remove(s);
+					}
+				}
+			}
+
+			RewriteConfiguration rewriteConfig;
+			// Only if one of the sets had values, the rule base should change
+			// else use default rule base
+			if (activeRules != null || inactiveRules != null) {
+				rewriteConfig = new RewriteConfiguration(rulesToApply);
+			}else{
+				rewriteConfig = new RewriteConfiguration(null);
+			}
+
+			// Remove possible contained RewriteConfigurations
+			Iterator<IQueryBuildSetting<?>> iter = newSettings.iterator();
+			while (iter.hasNext()) {
+				if (iter.next() instanceof RewriteConfiguration) {
+					iter.remove();
+				}
+			}
+
+			newSettings.add(rewriteConfig);
+
+		}
+
 		QueryBuildConfiguration config = new QueryBuildConfiguration(
 				newSettings.toArray(new IQueryBuildSetting<?>[0]),
 				buildConfigurationName);
 		config = validateBuildParameters(config);
+
 		return config;
 	}
 
@@ -1380,6 +1449,16 @@ public class StandardExecutor extends AbstractExecutor implements
 	@Override
 	public boolean containsStoredProcedures(String name, ISession caller) {
 		return getDataDictionary(caller).containsStoredProcedure(name, caller);
+	}
+
+	@Override
+	public Collection<String> getRewriteRules() {
+		ICompiler compiler = getCompiler();
+		if (compiler != null) {
+			return getCompiler().getRewriteRules();
+		} else {
+			return null;
+		}
 	}
 
 }

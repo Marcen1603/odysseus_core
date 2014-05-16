@@ -71,11 +71,6 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 	}
 
 	@Override
-	public String getName() {
-		return "Merge Selection";
-	}
-
-	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return RewriteRuleFlowGroup.CLEANUP;
 	}

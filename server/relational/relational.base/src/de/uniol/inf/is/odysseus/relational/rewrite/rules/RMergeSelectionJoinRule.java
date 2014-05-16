@@ -74,11 +74,6 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 		return false;
 	}
 
-	@Override
-	public String getName() {
-		return "Merge Selection Join";
-	}
-
 	private static boolean isValidSelectAO(SelectAO sel, JoinAO join) {
 		if (sel.getPredicate() != null) {
 			Set<?> sources = RelationalRestructHelper.sourcesOfPredicate(sel.getPredicate());

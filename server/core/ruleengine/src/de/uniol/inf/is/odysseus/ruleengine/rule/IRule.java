@@ -22,6 +22,7 @@ public interface IRule<T,U> extends Comparable<IRule<T,U>>{
 	public int getPriority();	
 	public void execute(T operator, U config) throws RuleException;
 	public boolean isExecutable(T operator, U config);
+	public boolean isActive();
 	public String getName();
 	public void setCurrentWorkingMemory(WorkingMemory wm);
 	public IRuleFlowGroup getRuleFlowGroup();

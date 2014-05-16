@@ -18,19 +18,20 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configu
 import java.util.HashSet;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 
-public class RewriteConfiguration implements IOptimizationSetting<Set<String>>{
+public class RewriteConfiguration implements IOptimizationSetting<Set<String>>, IQueryBuildSetting<Set<String>>{
 
-	private Set<String> rulesToApply = new HashSet<String>();
+	final private Set<String> rulesToApply;
 	private QueryBuildConfiguration cb;
-
-	public RewriteConfiguration(){
-		
-	}
 	
 	public RewriteConfiguration(Set<String> rulesToApply) {
-		this.rulesToApply = rulesToApply;
+		if (rulesToApply != null){
+			this.rulesToApply = new HashSet<>(rulesToApply);
+		}else{
+			this.rulesToApply = null;
+		}
 	}
 
 	public Set<String> getRulesToApply() {

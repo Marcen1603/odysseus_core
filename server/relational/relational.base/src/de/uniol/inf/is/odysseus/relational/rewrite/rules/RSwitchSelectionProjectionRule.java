@@ -63,12 +63,6 @@ public class RSwitchSelectionProjectionRule extends AbstractRewriteRule<ProjectA
 		return false;
 	}
 
-	@Override
-	public String getName() {
-		return "Switch Selection and Projection";
-	}
-	
-
 	private static boolean isValidSelect(SelectAO sel, ProjectAO proj) {
 		if(sel.getInputAO()!=null && sel.getInputAO().equals(proj)) {
 			return true;	

@@ -19,5 +19,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule;
 
 public abstract class AbstractRewriteRule<T> extends AbstractRule<T, RewriteConfiguration> {
-
+	
+	@Override
+	final public String getName() {
+		return getClass().getName();
+	}
 }

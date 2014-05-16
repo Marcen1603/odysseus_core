@@ -50,10 +50,7 @@ public class RDeleteProjectionWithoutFunctionRule extends AbstractRewriteRule<Pr
 				proj.getInputSchema().equals(proj.getOutputSchema()) ;
 	}
 
-	@Override
-	public String getName() {
-		return "Delete Projection without function";
-	}
+
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {

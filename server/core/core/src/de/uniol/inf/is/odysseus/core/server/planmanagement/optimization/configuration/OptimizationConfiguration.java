@@ -63,9 +63,6 @@ public class OptimizationConfiguration extends Configuration<IOptimizationSettin
 	}
 	
 	public RewriteConfiguration getRewriteConfiguration(){
-		if (!this.contains(RewriteConfiguration.class)) {
-			set(new RewriteConfiguration());
-		}
 		return this.get(RewriteConfiguration.class);
 	}
 	

@@ -33,10 +33,21 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
 
     private WorkingMemory currentWorkingMemory;
     private Class<? super T> condtionClass = null;
+    
+    private boolean active = true;
 
     public AbstractRule() {
 
     }
+    
+    public void setActive(boolean active) {
+		this.active = active;
+	}
+    
+    @Override
+    public boolean isActive() {
+		return active;
+	}
 
     @Override
     public void setCurrentWorkingMemory(WorkingMemory wm) {

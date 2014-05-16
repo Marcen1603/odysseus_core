@@ -240,6 +240,13 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	public ISchedulerManager getSchedulerManager();
 
 	public QueryBuildConfiguration getBuildConfigForQuery(ILogicalQuery query);
+
+	/**
+	 * Return the list of rewrite rules that are available in the system
+	 * @return
+	 */
+	public Collection<String> getRewriteRules();
+
 	
 	/**
 	 * Allows the addition of a query using all the operators of an existing query. This can be used, when it was already determined,
@@ -256,4 +263,5 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 
 	public Collection<String> getPreTransformationHandlerNames();
 	public boolean hasPreTransformationHandler(String name);
+
 }
