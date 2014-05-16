@@ -441,14 +441,14 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     jjtc000 = false;
     jjtn000.setValue(t.image.substring(1, t.image.length() - 1));
         break;
-      case FLOAT:
-        t = jj_consume_token(FLOAT);
-    jjtree.closeNodeScope(jjtn000, true);
-    jjtc000 = false;
-    jjtn000.setValue(Double.parseDouble(t.image));
-        break;
       case INTEGER:
         t = jj_consume_token(INTEGER);
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+    jjtn000.setValue(Integer.parseInt(t.image));
+        break;
+      case FLOAT:
+        t = jj_consume_token(FLOAT);
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
     jjtn000.setValue(Double.parseDouble(t.image));
@@ -682,13 +682,13 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     return false;
   }
 
-  private boolean jj_3R_26() {
-    if (jj_scan_token(18)) return true;
+  private boolean jj_3R_30() {
+    if (jj_scan_token(LRND)) return true;
     return false;
   }
 
-  private boolean jj_3R_30() {
-    if (jj_scan_token(LRND)) return true;
+  private boolean jj_3R_26() {
+    if (jj_scan_token(18)) return true;
     return false;
   }
 
@@ -725,7 +725,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
   }
 
   private boolean jj_3R_33() {
-    if (jj_scan_token(INTEGER)) return true;
+    if (jj_scan_token(FLOAT)) return true;
     return false;
   }
 
@@ -741,7 +741,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
   }
 
   private boolean jj_3R_32() {
-    if (jj_scan_token(FLOAT)) return true;
+    if (jj_scan_token(INTEGER)) return true;
     return false;
   }
 

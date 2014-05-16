@@ -81,18 +81,16 @@ private int jjMoveStringLiteralDfa0_0()
       case 62:
          jjmatchedKind = 26;
          return jjMoveStringLiteralDfa1_0(0x1000000L);
+      case 65:
+         return jjMoveStringLiteralDfa1_0(0x20L);
+      case 79:
+         return jjMoveStringLiteralDfa1_0(0x40L);
       case 91:
          return jjStopAtPos(0, 35);
       case 93:
          return jjStopAtPos(0, 37);
       case 94:
          return jjStopAtPos(0, 19);
-      case 65:
-      case 97:
-         return jjMoveStringLiteralDfa1_0(0x20L);
-      case 79:
-      case 111:
-         return jjMoveStringLiteralDfa1_0(0x40L);
       case 124:
          return jjMoveStringLiteralDfa1_0(0x200000000L);
       default :
@@ -127,10 +125,8 @@ private int jjMoveStringLiteralDfa1_0(long active0)
             return jjStopAtPos(1, 31);
          break;
       case 78:
-      case 110:
          return jjMoveStringLiteralDfa2_0(active0, 0x20L);
       case 82:
-      case 114:
          if ((active0 & 0x40L) != 0L)
             return jjStartNfaWithStates_0(1, 6, 21);
          break;
@@ -155,7 +151,6 @@ private int jjMoveStringLiteralDfa2_0(long old0, long active0)
    switch(curChar)
    {
       case 68:
-      case 100:
          if ((active0 & 0x20L) != 0L)
             return jjStartNfaWithStates_0(2, 5, 21);
          break;
@@ -327,41 +322,41 @@ private int jjMoveNfa_0(int startState, int curPos)
                         kind = 12;
                      jjCheckNAdd(21);
                   }
-                  if ((0x10000000100000L & l) != 0L)
+                  if (curChar == 116)
                      jjstateSet[jjnewStateCnt++] = 8;
-                  else if ((0x4000000040L & l) != 0L)
+                  else if (curChar == 102)
                      jjstateSet[jjnewStateCnt++] = 5;
                   break;
                case 2:
-                  if ((0x2000000020L & l) != 0L && kind > 9)
+                  if (curChar == 101 && kind > 9)
                      kind = 9;
                   break;
                case 3:
-                  if ((0x8000000080000L & l) != 0L)
+                  if (curChar == 115)
                      jjCheckNAdd(2);
                   break;
                case 4:
-                  if ((0x100000001000L & l) != 0L)
+                  if (curChar == 108)
                      jjstateSet[jjnewStateCnt++] = 3;
                   break;
                case 5:
-                  if ((0x200000002L & l) != 0L)
+                  if (curChar == 97)
                      jjstateSet[jjnewStateCnt++] = 4;
                   break;
                case 6:
-                  if ((0x4000000040L & l) != 0L)
+                  if (curChar == 102)
                      jjstateSet[jjnewStateCnt++] = 5;
                   break;
                case 7:
-                  if ((0x20000000200000L & l) != 0L)
+                  if (curChar == 117)
                      jjCheckNAdd(2);
                   break;
                case 8:
-                  if ((0x4000000040000L & l) != 0L)
+                  if (curChar == 114)
                      jjstateSet[jjnewStateCnt++] = 7;
                   break;
                case 9:
-                  if ((0x10000000100000L & l) != 0L)
+                  if (curChar == 116)
                      jjstateSet[jjnewStateCnt++] = 8;
                   break;
                case 11:
@@ -435,10 +430,10 @@ static final int[] jjnextStates = {
 
 /** Token literal values. */
 public static final String[] jjstrLiteralImages = {
-"", null, null, null, null, null, null, null, null, null, null, null, null, 
-null, null, "\51", "\50", "\55", "\41", "\136", "\52", "\57", "\45", "\53", 
-"\76\75", "\74\75", "\76", "\74", "\75\75", "\75", "\41\75", "\74\76", "\46\46", 
-"\174\174", "\54", "\133", "\73", "\135", };
+"", null, null, null, null, "\101\116\104", "\117\122", null, null, null, null, 
+null, null, null, null, "\51", "\50", "\55", "\41", "\136", "\52", "\57", "\45", 
+"\53", "\76\75", "\74\75", "\76", "\74", "\75\75", "\75", "\41\75", "\74\76", 
+"\46\46", "\174\174", "\54", "\133", "\73", "\135", };
 
 /** Lexer state names. */
 public static final String[] lexStateNames = {
