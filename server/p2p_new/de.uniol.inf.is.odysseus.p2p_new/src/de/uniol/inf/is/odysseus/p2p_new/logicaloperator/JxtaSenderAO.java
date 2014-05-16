@@ -19,6 +19,7 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 	private String peerID;
 	private boolean useUDP;
 	private boolean useMultiple;
+	private boolean writeResourceUsage;
 
 	public JxtaSenderAO() {
 		super();
@@ -31,6 +32,7 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 		this.peerID = other.peerID;
 		this.useUDP = other.useUDP;
 		this.useMultiple = other.useMultiple;
+		this.writeResourceUsage = other.writeResourceUsage;
 	}
 
 	@Override
@@ -90,4 +92,14 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 	public boolean isSourceOperator() {
 		return false;
 	}
+		
+	@Parameter(name = "WRITERESOURCEUSAGE", doc = "Should local resource usage be appended as metadata?", type = BooleanParameter.class, optional = true)
+	public void setWriteResourceUsage( boolean write ) {
+		writeResourceUsage = write;
+	}
+	
+	public boolean isWriteResourceUsage() {
+		return writeResourceUsage;
+	}
+
 }

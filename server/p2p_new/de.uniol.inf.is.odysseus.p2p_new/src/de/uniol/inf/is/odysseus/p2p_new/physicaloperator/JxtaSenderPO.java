@@ -2,6 +2,9 @@ package de.uniol.inf.is.odysseus.p2p_new.physicaloperator;
 
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Map;
+
+import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +23,7 @@ import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionManager;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSender;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSenderListener;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
+import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
@@ -31,6 +35,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	private final ITransmissionSender transmission;
 	private final String pipeIDString;
 	private final String peerIDString;
+	private final boolean writeResourceUsage;
+	private final PeerID localPeerID;
 	
 	private NullAwareTupleDataHandler dataHandler;
 
@@ -40,9 +46,13 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	private long uploadRateTimestamp;
 	private long uploadRateCurrentByteCount;
 
+
 	public JxtaSenderPO(JxtaSenderAO ao) throws DataTransmissionException {
 		pipeIDString = ao.getPipeID();
 		peerIDString = ao.getPeerID();
+		writeResourceUsage = ao.isWriteResourceUsage();
+		
+		localPeerID = P2PNetworkManager.getInstance().getLocalPeerID();
 
 		this.transmission = DataTransmissionManager.getInstance().registerTransmissionSender(peerIDString, pipeIDString);
 		this.transmission.addListener(this);
@@ -56,6 +66,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		this.transmission = po.transmission;
 		this.peerIDString = po.peerIDString;
 		this.pipeIDString = po.pipeIDString;
+		this.writeResourceUsage = po.writeResourceUsage;
+		this.localPeerID = po.localPeerID;
 		
 		this.totalSendByteCount = po.totalSendByteCount;
 		this.uploadRateBytesPerSecond = po.uploadRateBytesPerSecond;
@@ -92,16 +104,30 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	protected void process_next(T object, int port) {
 		createDataHandlerIfNeeded();
 
-		final ByteBuffer buffer = ByteBuffer.allocate(P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
+		ByteBuffer buffer = ByteBuffer.allocate(P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
 		dataHandler.writeData(buffer, object);
+		
+		if( writeResourceUsage ) {
+			// TODO: With metadata-object
+		}
+		
 		if (object.getMetadata() != null) {
-			final byte[] metadataBytes = ObjectByteConverter.objectToBytes(object.getMetadata());
+			byte[] metadataBytes = ObjectByteConverter.objectToBytes(object.getMetadata());
+			buffer.putInt(metadataBytes.length);
 			buffer.put(metadataBytes);
 		}
+		
+		Map<String, Object> metadataMap = object.getMetadataMap();
+		if( !metadataMap.isEmpty() ) {
+			byte[] metadataMapBytes = ObjectByteConverter.objectToBytes(metadataMap);
+			buffer.putInt(metadataMapBytes.length);
+			buffer.put(metadataMapBytes);
+		}
+		
 		buffer.flip();
 
-		final int messageSizeBytes = buffer.remaining();
-		final byte[] rawBytes = new byte[messageSizeBytes];
+		int messageSizeBytes = buffer.remaining();
+		byte[] rawBytes = new byte[messageSizeBytes];
 
 		// buffer.array() returns the complete array
 		// (P2PNewPlugIn.TRANSPORT_BUFFER_SIZE bytes) and

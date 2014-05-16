@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.p2p_new.physicaloperator;
 
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -28,11 +29,24 @@ final class JxtaPOUtil {
 			retval = (T) dataHandler.readData(byteBuffer);
 
 			if (byteBuffer.remaining() > 0) {
-				final byte[] metadataBytes = new byte[byteBuffer.remaining()];
+				
+				int metadataBytesLength = byteBuffer.getInt();
+				byte[] metadataBytes = new byte[metadataBytesLength];
 				byteBuffer.get(metadataBytes);
 
-				final IMetaAttribute metadata = (IMetaAttribute) ObjectByteConverter.bytesToObject(metadataBytes);
+				IMetaAttribute metadata = (IMetaAttribute) ObjectByteConverter.bytesToObject(metadataBytes);
 				retval.setMetadata(metadata);
+				
+				if( byteBuffer.remaining() > 0 ) {
+					int metadataMapBytesLength = byteBuffer.getInt();
+					byte[] metadataMapBytes = new byte[metadataMapBytesLength];
+					byteBuffer.get(metadataMapBytes);
+					
+					Map<String, Object> metadataMap = (Map<String, Object>) ObjectByteConverter.bytesToObject(metadataMapBytes);
+					System.err.println(metadataMap);
+					
+					retval.setMetadataMap(metadataMap);
+				}
 			}
 		} finally {
 			byteBuffer.clear();
