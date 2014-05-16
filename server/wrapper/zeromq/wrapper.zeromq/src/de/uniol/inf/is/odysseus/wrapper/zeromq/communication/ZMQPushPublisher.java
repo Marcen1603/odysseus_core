@@ -19,9 +19,9 @@ public class ZMQPushPublisher extends AZMQConnector {
 		if (ZMQTH.getHost() != null && ZMQTH.getWritePort() > 0) {
 			socket.bind("tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getWritePort());
 		}
-		socket.setHWM(5);
+		socket.setHWM(512);
 		socket.setBacklog(5);
-		socket.setSendTimeOut(0);
+		socket.setSendTimeOut(500);
 		LOG.debug("ZeroMQ publisher created sending on tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getWritePort());
 		LOG.debug("ZeroMQ publisher sending with delay of " + ZMQTH.getDelayOfMsg() + " message(s).");
 	}
@@ -36,6 +36,7 @@ public class ZMQPushPublisher extends AZMQConnector {
 			socket.send(message);
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

@@ -22,7 +22,6 @@ package zmq;
 import java.net.InetSocketAddress;
 
 // fake Unix domain socket
-@SuppressWarnings("all")
 public class IpcListener extends TcpListener {
 
     private final IpcAddress address;

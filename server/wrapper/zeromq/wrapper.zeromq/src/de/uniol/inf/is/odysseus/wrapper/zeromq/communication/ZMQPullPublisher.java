@@ -13,32 +13,38 @@ import de.uniol.inf.is.odysseus.wrapper.zeromq.ZeroMQTransportHandler;
  */
 public class ZMQPullPublisher extends AZMQConnector {
 	
+	byte[] curMsg = "".getBytes();
+	
 	public ZMQPullPublisher(ZeroMQTransportHandler transh){
 		ZMQTH = transh;
-		ZMQ.Socket socket = ZMQTH.getContext().getContext().socket(ZMQ.REP);	
+		socket = ZMQTH.getContext().getContext().socket(ZMQ.REP);
+//		socket.setReceiveTimeOut(1000);
 		if (ZMQTH.getHost() != null && ZMQTH.getReadPort() > 0) {
-			socket.connect("tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort());
-			LOG.debug("ZeroMQ consumer connected to tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort());
-			LOG.debug("ZeroMQ publisher waiting for request when started.");
+			socket.connect("tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getWritePort());
+			LOG.debug("ZeroMQ publisher connected as tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getWritePort());
+			LOG.debug("ZeroMQ publisher waiting for requests.");
 		}
 	}
 	
 	@Override
 	public void run() {
-	}
-	
-	@Override
-	public void send(byte[] message){
 		while(!t.isInterrupted()){
+			System.err.println("Waiting for data.");;
 			byte[] data = socket.recv(0);
 			if(data != null){
 				try {
-					socket.send(message);
-					ZMQTH.getOutputStream().write(message);
+					System.err.println("Sending " + new String(curMsg));
+					socket.send(curMsg);
+					ZMQTH.getOutputStream().write(curMsg);
 				} catch (Exception e) {
 					LOG.error(e.getMessage());
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void send(byte[] message){
+		curMsg = message;
 	}
 }

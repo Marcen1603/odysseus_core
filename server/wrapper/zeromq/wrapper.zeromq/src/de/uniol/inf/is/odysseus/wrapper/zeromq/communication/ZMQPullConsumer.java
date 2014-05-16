@@ -20,7 +20,7 @@ public class ZMQPullConsumer extends AZMQConnector {
 		ZMQTH = transh;
 		params = ZMQTH.getParams();
 		timeout = ZMQTH.getTimeout();
-		ZMQ.Socket socket = ZMQTH.getContext().getContext().socket(ZMQ.REQ);	
+		socket = ZMQTH.getContext().getContext().socket(ZMQ.REQ);	
 		socket.setReceiveTimeOut(timeout);
 		if (ZMQTH.getHost() != null && ZMQTH.getReadPort() > 0) {
 			socket.connect("tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort());

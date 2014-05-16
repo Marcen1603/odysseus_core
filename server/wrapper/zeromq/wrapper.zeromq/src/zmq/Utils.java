@@ -102,7 +102,8 @@ public class Utils {
     public static <T> void swap(List<T> items, int index1_, int index2_) {
         if (index1_ == index2_) 
             return;
-                    
+
+        System.err.println("Ich swappe");
         T item1 = items.get(index1_);
         T item2 = items.get(index2_);
         if (item1 != null)

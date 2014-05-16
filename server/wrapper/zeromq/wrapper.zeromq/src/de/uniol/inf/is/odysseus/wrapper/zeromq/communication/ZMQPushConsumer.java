@@ -18,6 +18,7 @@ public class ZMQPushConsumer extends AZMQConnector {
 	public ZMQPushConsumer(ZeroMQTransportHandler transh){
 		ZMQTH = transh;
 		socket = ZMQTH.getContext().getContext().socket(ZMQ.SUB);
+		socket.setReceiveBufferSize(500); // !!! Set higher if stops working after a few transmissions
 		if (ZMQTH.getHost() != null && ZMQTH.getReadPort() > 0) {
 			socket.bind("tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort());
 			LOG.debug("ZeroMQ consumer created listening on tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort());

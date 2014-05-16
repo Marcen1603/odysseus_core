@@ -167,9 +167,15 @@ public class Dist {
             return;
         }
         
-        for (int i = 0; i < matching; ++i)
-            if(!write (pipes.get(i), msg_))
-                --i; //  Retry last write because index will have been swapped
+        for (int i = 0; i < matching; ++i) {
+        	if(i < pipes.size()){
+                if(!write (pipes.get(i), msg_)) {
+                    --i; //  Retry last write because index will have been swapped
+                }
+        	} else {
+        		System.err.println(pipes.size() + " - index: " + i);
+            }
+        }
         return;
         
     }

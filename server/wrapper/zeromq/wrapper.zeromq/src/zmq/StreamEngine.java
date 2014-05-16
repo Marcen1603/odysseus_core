@@ -26,7 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.SocketChannel;
-@SuppressWarnings("all")
+
 public class StreamEngine implements IEngine, IPollEvents, IMsgSink {
     //  Size of the greeting message:
     //  Preamble (10 bytes) + version (1 byte) + socket type (1 byte).

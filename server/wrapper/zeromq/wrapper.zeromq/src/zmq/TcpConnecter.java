@@ -28,7 +28,6 @@ import java.nio.channels.SocketChannel;
 
 //  If 'delay' is true connecter first waits for a while, then starts
 //  connection process.
-@SuppressWarnings("all")
 public class TcpConnecter extends Own implements IPollEvents {
 
     //  ID of the timer used to delay the reconnection.

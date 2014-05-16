@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 //  Base class for objects forming a part of ownership hierarchy.
 //  It handles initialisation and destruction of such objects.
-@SuppressWarnings("all")
 abstract public class Own extends ZObject {
 
 	protected final Options options;

@@ -20,7 +20,6 @@
 */
 package zmq;
 
-@SuppressWarnings("all")
 public class YQueue<T> {
 
     //  Individual memory chunk to hold N elements.

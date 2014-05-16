@@ -225,7 +225,7 @@ public class Pipe extends ZObject {
         if (!out_active || state != State.ACTIVE)
             return false;
 
-        boolean full = hwm > 0 && msgs_written - peers_msgs_read == (hwm);
+        boolean full = hwm > 0 && msgs_written - peers_msgs_read == (long) (hwm);
 
         if (full) {
             out_active = false;

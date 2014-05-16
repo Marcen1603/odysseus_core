@@ -38,7 +38,6 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 	public static final String THREADS = "threads";
 	public static final String NAME = "ZeroMQ";
 	public static final String PARAMS = "params";
-	// Pull intervall in hz
 	public static final String TIMEOUT = "timeout";
 
 	private String host;
@@ -118,7 +117,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public void send(byte[] message) throws IOException {
-		String txt = new String(message);
+		String txt = new String(message, "UTF-8");
 		String newTxt = "";
 		String[] splittedTxt = txt.split(":");
 		for(int i = 1; i < splittedTxt.length; i++){
@@ -134,9 +133,9 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 		if(delayedMsgCounter == delayOfMsg){
 			try {
 				publisher.send(delayedMsgs.getBytes());
-				delayedMsgCounter = 1;
-				System.out.println("Following data successfully sent: \n\t" + delayedMsgs + "\n");
+				// System.out.println("Following data successfully sent: \n\t" + delayedMsgs + "\n");
 				delayedMsgs = "";
+				delayedMsgCounter = 1;
 			} catch(Exception ex) {
 				LOG.error("An exception occured sending following data: \n\t" + delayedMsgs);
 				ex.printStackTrace();
@@ -155,10 +154,16 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 	@Override
 	public InputStream getInputStream() {
 		createContext();
-		if(consumer == null){
-			consumer = new ZMQPullConsumer(this);
-			consumer.start();
+		try {
+			processInClose();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		if(input == null){
+			input = new ByteArrayInputStream(new byte[0]);
+		}
+		consumer = new ZMQPullConsumer(this);
+		consumer.start();
 		return input;
 	}
 
@@ -166,10 +171,19 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 	@Override
 	public OutputStream getOutputStream() {
 		createContext();
-		if(publisher == null){
-			publisher = new ZMQPullPublisher(this);
-			publisher.start();
+		try {
+			processOutClose();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		if(output == null){
+			output = new ByteArrayOutputStream();
+		}
+		if(publisher != null){
+			publisher.close();
+		}
+		publisher = new ZMQPullPublisher(this);
+		publisher.start();
 		return output;
 	}
 

@@ -21,7 +21,6 @@
 
 package zmq;
 
-@SuppressWarnings("all")
 public class XSub extends SocketBase {
     
     public static class XSubSession extends SessionBase {

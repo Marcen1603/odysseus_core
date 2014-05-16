@@ -23,7 +23,6 @@ import java.net.InetSocketAddress;
 import java.net.Inet6Address;
 import java.net.SocketAddress;
 
-@SuppressWarnings("all")
 public class Address {
 
     public static interface IZAddress {

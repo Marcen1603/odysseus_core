@@ -27,7 +27,9 @@ public abstract class AZMQConnector implements Runnable {
 	public void close(){
 		socket.close();
 		socket = null;
-		t.interrupt();
+		if(t != null){
+			t.interrupt();
+		}
 		t = null;
 		LOG.debug(this.getClass().toString() + " closed.");
 	}
