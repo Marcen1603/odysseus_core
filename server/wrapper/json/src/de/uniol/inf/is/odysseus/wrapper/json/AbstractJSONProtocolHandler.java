@@ -6,6 +6,9 @@ import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,6 +32,8 @@ abstract public class AbstractJSONProtocolHandler extends
 	protected ObjectMapper mapper;
 	
 	protected boolean isDone = false;
+	
+	static Logger LOG = LoggerFactory.getLogger(AbstractJSONProtocolHandler.class);
 	
 	public AbstractJSONProtocolHandler() {
 	}
@@ -65,14 +70,13 @@ abstract public class AbstractJSONProtocolHandler extends
 		} else {
 			try {
 				if (!reader.ready()) {
-					this.isDone = true;
-					return false;
+					throw new IOException("Reader not ready (could be caused by end of file)");
 				}
 				if(jsonArray == null) {
 					jsonArray = new ArrayList<String>();
 				}
+				
 				JsonNode rootNode = mapper.readValue(reader, JsonNode.class);
-
 				if(rootNode.isArray()) {
 					for(JsonNode node: rootNode) {
 						jsonArray.add(node.toString());
@@ -84,12 +88,45 @@ abstract public class AbstractJSONProtocolHandler extends
 				} else {
 					return false;
 				}
+				
+				//Something like this should be a bit faster...
+//				JsonFactory jsonFactory = mapper.getFactory();
+//				JsonParser jp = jsonFactory.createParser(getTransportHandler().getInputStream());
+//				if(jp.nextToken() == JsonToken.START_ARRAY) {
+//					while(jp.nextToken() != JsonToken.END_ARRAY) {
+//						if(jp.getCurrentToken() == JsonToken.START_OBJECT) {
+//							String string = this.parseObject(jp);
+//							logger.debug(string);
+//							jsonArray.add(string);
+//						}
+//					}
+//				} else if(jp.getCurrentToken() == JsonToken.START_OBJECT) {
+//					String string = this.parseObject(jp);
+//					logger.debug(string);
+//					jsonArray.add(string);
+//				} else {
+//					throw new IOException("Invalid JSON data - data begin neither with an array nor with an object");
+//				}
+//				jp.close();
 			} catch (IOException e) {
+				LOG.debug(e.getMessage());
 				this.isDone = true;
-				return false;
 			}
+			return false;
 		}
 	}
+
+//	private String parseObject(JsonParser jp) throws IOException {
+//		String string = "";
+//		while (jp.nextToken() != JsonToken.END_OBJECT) {
+//			if(jp.getCurrentToken() == JsonToken.END_ARRAY) {
+//				throw new IOException("Invalid JSON data - array ends before all objects ended");
+//			}
+////			string += jp.getCurrentName();
+//			string += jp.getValueAsString();
+//		}
+//		return string;
+//	}
 
 	@Override
 	public KeyValueObject<? extends IMetaAttribute> getNext()

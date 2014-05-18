@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,6 +33,8 @@ public class KeyValueObjectDataHandler extends AbstractDataHandler<KeyValueObjec
 	static protected List<String> types = new ArrayList<String>();
 	static private ObjectMapper jsonMapper = new ObjectMapper(new JsonFactory());
 	static private ObjectMapper bsonMapper = new ObjectMapper(new BsonFactory());
+
+	protected static final Logger LOG = LoggerFactory.getLogger(KeyValueObjectDataHandler.class);
 	
 	static {
 		types.add(SDFDatatype.KEYVALUEOBJECT.getURI());
@@ -45,6 +50,7 @@ public class KeyValueObjectDataHandler extends AbstractDataHandler<KeyValueObjec
 	
 	@Override
 	public KeyValueObject<?> readData(ByteBuffer buffer) {
+//		parseJSON(buffer);
 		try {
 			CharBuffer decoded = Charset.forName("UTF-8").newDecoder().decode(buffer);
 			return new KeyValueObject<>(jsonStringToMap(decoded.toString()));
@@ -83,7 +89,7 @@ public class KeyValueObjectDataHandler extends AbstractDataHandler<KeyValueObjec
 	public void writeJSONData(StringBuilder string, Object data) {
 		try {
 			if(data instanceof KeyValueObject<?>) {
-				string.append(jsonMapper.writeValueAsString(((KeyValueObject<?>) data).getAttributes()));
+				string.append(jsonMapper.writer().writeValueAsString(((KeyValueObject<?>) data).getAttributes()));
 			} 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -94,7 +100,7 @@ public class KeyValueObjectDataHandler extends AbstractDataHandler<KeyValueObjec
 	public byte[] writeBSONData(Object data) {
 		try {
 			if(data instanceof KeyValueObject<?>) {
-			    return bsonMapper.writeValueAsBytes(((KeyValueObject<?>) data).getAttributes());
+			    return bsonMapper.writer().writeValueAsBytes(((KeyValueObject<?>) data).getAttributes());
 			} 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -120,15 +126,17 @@ public class KeyValueObjectDataHandler extends AbstractDataHandler<KeyValueObjec
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> jsonStringToMap(String json) {
 		try {
-			JsonNode rootNode = jsonMapper.readValue(json, JsonNode.class);
-			if(rootNode.isObject()) {
-				return jsonMapper.treeToValue(rootNode, Map.class);
-			} else {
-				//Was hier?
-			}
+//			LOG.debug("jsonStringToMap: " + json);
+			JsonNode rootNode = jsonMapper.reader().readTree(json);		
+			if(!rootNode.isObject()) {
+				//könnte das wirklich vorkommen?
+				rootNode = rootNode.get(0);
+			} 
+			Map<String, Object> map = jsonMapper.reader().treeToValue(rootNode, Map.class);
+			return map;
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.debug(e.getMessage());
+			return null;
 		}
-		return null;
 	}
 }

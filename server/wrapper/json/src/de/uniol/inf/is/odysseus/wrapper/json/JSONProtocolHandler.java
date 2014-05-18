@@ -7,6 +7,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -18,6 +21,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
 public class JSONProtocolHandler extends AbstractJSONProtocolHandler {
+
+	protected static final Logger LOG = LoggerFactory.getLogger(JSONProtocolHandler.class);
 	
 	public JSONProtocolHandler() {
 		this.init();
@@ -39,6 +44,8 @@ public class JSONProtocolHandler extends AbstractJSONProtocolHandler {
 	public void process(ByteBuffer message) {
 		ArrayList<KeyValueObject<? extends IMetaAttribute>> objects = new ArrayList<KeyValueObject<? extends IMetaAttribute>>();
 		try {
+//			LOG.debug("process(ByteBuffer message): " + message);
+			//Was soll hier passieren falls der ByteBuffer mehrere JSON-Objekte beinhaltet???
 			objects.add(getDataHandler().readData(message));
 			super.process(objects);
 		} catch (Exception e) {
@@ -51,6 +58,7 @@ public class JSONProtocolHandler extends AbstractJSONProtocolHandler {
 			throws IOException {
 		StringBuilder string = new StringBuilder();
 		this.getDataHandler().writeJSONData(string, kvObject);
+//		LOG.debug("writeString:           " + string);
 		this.getTransportHandler().send(Charset.forName("UTF-8").encode(CharBuffer.wrap(string.toString().toCharArray())).array());
 	}
 

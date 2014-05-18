@@ -47,18 +47,30 @@ public class BSONProtocolHandler extends AbstractJSONProtocolHandler {
 	}
 	
 	@Override
-	public void process(ByteBuffer message) {
+	public void process(ByteBuffer buffer) {
 		ArrayList<KeyValueObject<? extends IMetaAttribute>> objects = new ArrayList<KeyValueObject<? extends IMetaAttribute>>();
 		try {
-			JsonNode rootNode = mapper.readValue(message.array(), JsonNode.class);
-			if(rootNode.isArray()) {
-				for(JsonNode node: rootNode) {
-					objects.add(getDataHandler().readData(node.toString()));
+			byte[] message = null;
+			if(buffer.hasArray()) {
+				message = buffer.array();
+			} else {
+				message = new byte[buffer.remaining()];
+				int i = 0;
+				while(buffer.remaining() > 0) {
+					message[i++] = buffer.get();
 				}
-			} else if(rootNode.isObject()) {
-				objects.add(getDataHandler().readData(rootNode.toString()));
 			}
-			super.process(objects);
+			if(message != null && message.length > 0) {
+				JsonNode rootNode = mapper.readValue(message, JsonNode.class);
+				if(rootNode.isArray()) {
+					for(JsonNode node: rootNode) {
+						objects.add(getDataHandler().readData(node.toString()));
+					}
+				} else if(rootNode.isObject()) {
+					objects.add(getDataHandler().readData(rootNode.toString()));
+				}
+				super.process(objects);
+		}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

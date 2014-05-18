@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -27,6 +30,8 @@ implements Serializable{
 	private static final long serialVersionUID = -94667746890198612L;
 
 	final private Map<String, Object> attributes = new HashMap<String, Object>();
+
+	protected static final Logger LOG = LoggerFactory.getLogger(KeyValueObject.class);
 	
 	public KeyValueObject(){
 	}
@@ -37,7 +42,9 @@ implements Serializable{
 	}
 	
 	public KeyValueObject(Map<String,Object> map) {
-		this.attributes.putAll(map);
+		if(map != null && map.size() > 0) {
+			this.attributes.putAll(map);
+		}
 	}
 	
 	//-----------------------------------------------
@@ -46,7 +53,23 @@ implements Serializable{
 	
 	@SuppressWarnings("unchecked")
 	public final <K> K getAttribute(String key) {
-		return (K) this.attributes.get(key);
+		try{
+			String[] path = key.split("\\.");
+			Map<String, Object> map = this.attributes;
+			for(int i = 0; i < path.length - 1; i++) {
+				map = (Map<String, Object>) map.get(path[i]);
+			}
+			K attribute = (K) map.get(path[path.length - 1]);
+			if(attribute instanceof Map) {
+				LOG.debug("Resolved attribute in KVO is map and can't be handled");
+				return null;
+			} else {
+				return attribute;
+			}
+		} catch(Exception e) {
+			LOG.debug(e.getMessage());
+			return null;
+		}
 	}
 	
 	public final Map<String, Object> getAttributes() {
