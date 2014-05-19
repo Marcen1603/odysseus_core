@@ -1711,6 +1711,11 @@ public class ZMQ {
 
             return false;
         }
+        
+        @Override
+        public int hashCode() {
+        	return socket.hashCode() + base.hashCode();
+        }
     }
 
     public enum Error {

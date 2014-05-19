@@ -23,15 +23,15 @@ package zmq;
 public class YQueue<T> {
 
     //  Individual memory chunk to hold N elements.
-    private class Chunk<T>
+    private class Chunk<S>
     {
-         final T[] values;
+         final S[] values;
          final int[] pos;
          Chunk prev;
          Chunk next;
 
          protected Chunk(int size, int memory_ptr) {
-             values = (T[]) new Object[size];
+             values = (S[]) new Object[size];
              pos = new int[size];
              for (int i=0; i != values.length; i++) {
                  pos[i] = memory_ptr;
