@@ -114,9 +114,7 @@ public class GenericProvider extends AbstractDataGenerator {
             list.add(tuple);
             return list;
         }
-        else {
-            throw new IllegalArgumentException("Empty generator list");
-        }
+        throw new IllegalArgumentException("Empty generator list");
     }
 
     @Override

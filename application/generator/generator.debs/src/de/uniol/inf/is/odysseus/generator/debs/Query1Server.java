@@ -123,11 +123,7 @@ public class Query1Server extends AbstractDataGenerator {
 	}
 	
 	private boolean toBoolean(double value) {
-		if(value==1.0){
-			return true;
-		}else{
-			return false;
-		}
+		return value==1.0;
 	}
 
 }
