@@ -111,6 +111,11 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.RefreshAdvertisementView"
             name="Refresh Advertisement View">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.rcp.commands.RestartRemotePeersCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RestartRemotePeers"
+            name="Restart remote peers">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -130,6 +135,13 @@
                label="Update Remote Peers"
                style="push"
                tooltip="Update remote peers">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RestartRemotePeers"
+               icon="icons/restart.jpg"
+               label="Restart Remote Peers"
+               style="push"
+               tooltip="Restart remote peers">
          </command>
       </menuContribution>
       <menuContribution

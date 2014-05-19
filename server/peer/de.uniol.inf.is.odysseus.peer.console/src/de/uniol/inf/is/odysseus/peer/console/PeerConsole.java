@@ -223,7 +223,8 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		sb.append("    importSource <sourceName>     		- Imports a source from the p2p network\n");
 		sb.append("    unimportSource <sourceName>    		- Undo import of a source\n");
 		sb.append("    listAvailableSources <filter>/ls...	- Lists known sources from the p2p network\n");
-		sb.append("    remoteUpdateAll                		- Sends update signals to remote peers with matching filter\n");
+		sb.append("    remoteUpdateAll                		- Sends update signals to all remote peers\n");
+		sb.append("    remoteRestartAll                		- Sends restart signals to all remote peers\n");
 		sb.append("    listAdvertisements/ls.. <filter>     - Lists all advertisements (class names)\n");
 		sb.append("    refreshAdvertisements/ls.. <filter>  - Forces to get remote advertisements again\n");
 		sb.append("\n");
@@ -621,6 +622,12 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		PeerUpdatePlugIn.sendUpdateMessageToRemotePeers();
 
 		System.out.println("Send update message to remote peers");
+	}
+	
+	public void _remoteRestartAll( CommandInterpreter ci ) {
+		PeerUpdatePlugIn.sendRestartMessageToRemotePeers();
+		
+		System.out.println("Send restart message to remote peers");
 	}
 
 	public void _lsSystemProperties(CommandInterpreter ci) {

@@ -33,14 +33,18 @@ public class PeerUpdatePlugIn implements BundleActivator, IPeerCommunicatorListe
 		peerCommunicator = serv;
 		
 		peerCommunicator.registerMessageType(DoUpdateMessage.class);
+		peerCommunicator.registerMessageType(DoRestartMessage.class);
 		peerCommunicator.addListener(this, DoUpdateMessage.class);
+		peerCommunicator.addListener(this, DoRestartMessage.class);
 	}
 
 	// called by OSGi-DS
 	public void unbindPeerCommunicator(IPeerCommunicator serv) {
 		if (peerCommunicator == serv) {
 			peerCommunicator.removeListener(this, DoUpdateMessage.class);
+			peerCommunicator.removeListener(this, DoRestartMessage.class);
 			peerCommunicator.unregisterMessageType(DoUpdateMessage.class);
+			peerCommunicator.unregisterMessageType(DoRestartMessage.class);
 
 			peerCommunicator = null;
 		}
@@ -72,36 +76,58 @@ public class PeerUpdatePlugIn implements BundleActivator, IPeerCommunicatorListe
 	
 	public static void sendUpdateMessageToRemotePeers(Collection<PeerID> remotePeers) {
 		Preconditions.checkNotNull(remotePeers, "List of remote peer ids must not be null!");
-		
 		LOG.debug("Sending update message to {} remote peers", remotePeers.size());
-		DoUpdateMessage msg = new DoUpdateMessage();
+		sendMessageToPeers(remotePeers, new DoUpdateMessage());
+	}
+	
+	public static void sendRestartMessageToRemotePeers() {
+		sendRestartMessageToRemotePeers(p2pDictionary.getRemotePeerIDs());
+	}
+
+	public static void sendRestartMessageToRemotePeers(Collection<PeerID> remotePeerIDs) {
+		Preconditions.checkNotNull(remotePeerIDs, "List of remote peer ids must not be null!");
+		LOG.debug("Sending restart message to {} remote peers", remotePeerIDs.size());
+		
+		sendMessageToPeers(remotePeerIDs, new DoRestartMessage());
+	}
+
+	private static void sendMessageToPeers(Collection<PeerID> remotePeers, IMessage msg) {
 		for( PeerID remotePeer : remotePeers ) {
 			try {
 				peerCommunicator.send(remotePeer, msg);
 			} catch (PeerCommunicationException e) {
-				LOG.error("Could not send update message", e);
+				LOG.error("Could not send message", e);
 			}
 		}
 	}
 	
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
-		DoUpdateMessage msg = (DoUpdateMessage)message;
-		LOG.debug("Got message to update: {}", msg);
-		
-		try {
-			if( FeatureUpdateUtility.checkForUpdates(getActiveSession()) ) {
-				FeatureUpdateUtility.checkForAndInstallUpdates(getActiveSession());
-			} else {
-				LOG.error("No updates available");
+		if( message instanceof DoUpdateMessage ) {
+			LOG.debug("Got message to update");
+			
+			try {
+				if( FeatureUpdateUtility.checkForUpdates(getActiveSession()) ) {
+					FeatureUpdateUtility.checkForAndInstallUpdates(getActiveSession());
+				} else {
+					LOG.error("No updates available");
+				}
+			} catch( Throwable t ) {
+				LOG.error("Cannot update", t);
 			}
-		} catch( Throwable t ) {
-			LOG.error("Cannot update", t);
+		} else if( message instanceof DoRestartMessage ) {
+			LOG.debug("Got message to restart");
+			
+			try {
+				FeatureUpdateUtility.restart(getActiveSession());
+			} catch( Throwable t ) {
+				LOG.error("Could not restart", t);
+			}
 		}
 	}
 
 	private static ISession getActiveSession() {
-		if( activeSession == null ) {
+		if( activeSession == null || !activeSession.isValid() ) {
 			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
 		}
 		return activeSession;
