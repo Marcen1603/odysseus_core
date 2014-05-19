@@ -64,9 +64,8 @@ public class CSVFileSource extends AbstractAccessAO {
 	public String getProtocolHandler() {
 		if (textDelimiterSet == false){
 			return SimpleCSVProtocolHandler.NAME;
-		}else{
-			return CSVProtocolHandler.NAME;
 		}
+		return CSVProtocolHandler.NAME;
 	}
 
 	
