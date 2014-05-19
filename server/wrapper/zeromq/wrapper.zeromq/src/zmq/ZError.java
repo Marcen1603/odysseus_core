@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 
+@SuppressWarnings("all")
 public class ZError  {
 
     public static class CtxTerminatedException extends RuntimeException {

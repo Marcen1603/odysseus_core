@@ -64,7 +64,8 @@ public class XSub extends SocketBase {
                 msg.put((byte) 1).put(data_, 0, size);
                 
                 //  Send it to the pipe.
-                boolean sent = pipe.write (msg);
+                @SuppressWarnings("unused")
+				boolean sent = pipe.write (msg);
                 //  If we reached the SNDHWM, and thus cannot send the subscription, drop
                 //  the subscription message instead. This matches the behaviour of
                 //  zmq_setsockopt(ZMQ_SUBSCRIBE, ...), which also drops subscriptions
