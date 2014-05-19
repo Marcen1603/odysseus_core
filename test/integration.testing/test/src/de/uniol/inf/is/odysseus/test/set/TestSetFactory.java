@@ -78,11 +78,10 @@ public class TestSetFactory {
 				URL outputdata = outputFile.toURI().toURL();
 				ExpectedOutputTestSet set = createExpectedOutputTestSetFromFile(queryFile, outputdata, bundleroot);
 				return set;
-			} else {
-				LOG.error("There is no corresponding outputfile for " + qf.getAbsoluteFile());
-				LOG.error("Use same name or one of: " + Arrays.toString(OUTPUT_FILE_NAMES));
-				return null;
-			}
+			} 
+			LOG.error("There is no corresponding outputfile for " + qf.getAbsoluteFile());
+			LOG.error("Use same name or one of: " + Arrays.toString(OUTPUT_FILE_NAMES));
+			return null;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

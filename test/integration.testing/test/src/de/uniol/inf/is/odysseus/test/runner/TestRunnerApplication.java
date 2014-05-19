@@ -61,11 +61,9 @@ public class TestRunnerApplication implements IApplication {
 		if (oneFailed) {
 			LOG.debug("At least one test failed!");
 			return -1;
-		} else {
-			LOG.debug("All tests finished with no errors.");
-			return IApplication.EXIT_OK;
 		}
-
+		LOG.debug("All tests finished with no errors.");
+		return IApplication.EXIT_OK;
 	}
 
 	private boolean executeComponents(IApplicationContext context) {
