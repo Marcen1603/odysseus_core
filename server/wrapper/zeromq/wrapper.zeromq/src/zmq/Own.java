@@ -106,7 +106,8 @@ abstract public class Own extends ZObject {
 	    sent_seqnum.incrementAndGet();
 	}
     
-    protected void process_seqnum ()
+    @Override
+	protected void process_seqnum ()
     {
         //  Catch up with counter of processed commands.
         processed_seqnum++;
@@ -158,6 +159,7 @@ abstract public class Own extends ZObject {
     }
 
 
+	@Override
 	protected void process_own (Own object_)
 	{
 	    //  If the object is already being shut down, new owned objects are

@@ -64,7 +64,8 @@ abstract public class DecoderBase implements IDecoder {
     
     
     //  Returns a buffer to be filled with binary data.
-    public ByteBuffer get_buffer () 
+    @Override
+	public ByteBuffer get_buffer () 
     {
         //  If we are expected to read large message, we'll opt for zero-
         //  copy, i.e. we'll ask caller to fill the data directly to the
@@ -93,7 +94,8 @@ abstract public class DecoderBase implements IDecoder {
     //  get_buffer function. size_ argument specifies nemuber of bytes
     //  actually filled into the buffer. Function returns number of
     //  bytes actually processed.
-    public int process_buffer(ByteBuffer buf_, int size_) {
+    @Override
+	public int process_buffer(ByteBuffer buf_, int size_) {
         //  Check if we had an error in previous attempt.
         if (state() < 0)
             return -1;

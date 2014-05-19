@@ -33,13 +33,15 @@ public class IpcListener extends TcpListener {
     }
 
     // Get the bound address for use with wildcards
-    public String get_address() {
+    @Override
+	public String get_address() {
         return address.toString();
     }
     
 
     //  Set address to listen on.
-    public int set_address(String addr_) {
+    @Override
+	public int set_address(String addr_) {
         
         address.resolve (addr_, false);
         

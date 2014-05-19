@@ -187,7 +187,8 @@ public class Req extends Dealer {
             throw new IllegalStateException(state.toString());
         }
         
-        public void reset ()
+        @Override
+		public void reset ()
         {
             super.reset ();
             state = State.IDENTITY;

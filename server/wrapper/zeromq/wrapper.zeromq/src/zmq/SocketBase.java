@@ -162,7 +162,8 @@ public abstract class SocketBase extends Own
         return s;
     }
 
-    public void destroy () {
+    @Override
+	public void destroy () {
         stop_monitor ();
         assert (destroyed);
     }

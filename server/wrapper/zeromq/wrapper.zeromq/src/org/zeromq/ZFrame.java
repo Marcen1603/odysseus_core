@@ -297,7 +297,8 @@ public class ZFrame {
      * @return
      *          A text string or hex-encoded string if data contains any non-printable ASCII characters
      */
-    public String toString() {
+    @Override
+	public String toString() {
         if (!hasData()) return "";
         // Dump message as text or hex-encoded string
         boolean isText = true;

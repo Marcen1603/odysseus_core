@@ -26,7 +26,8 @@ import java.net.SocketAddress;
 public class Address {
 
     public static interface IZAddress {
-        String toString();
+        @Override
+		String toString();
         void resolve(String name_, boolean ip4only_);
         SocketAddress address();
     };

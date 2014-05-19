@@ -173,7 +173,8 @@ public class SessionBase extends Own implements
         pipe.set_event_sink (this);
     }
     
-    public Msg pull_msg () 
+    @Override
+	public Msg pull_msg () 
     {
         
         //  First message to send is identity
@@ -371,7 +372,8 @@ public class SessionBase extends Own implements
             pipe.check_read ();
     }
     
-    protected void process_term (int linger_)
+    @Override
+	protected void process_term (int linger_)
     {
         assert (!pending);
 

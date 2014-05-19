@@ -119,7 +119,8 @@ public class IOThread extends ZObject implements IPollEvents {
         return poller;
     }
     
-    protected void process_stop ()
+    @Override
+	protected void process_stop ()
     {
         poller.rm_fd (mailbox_handle);
         

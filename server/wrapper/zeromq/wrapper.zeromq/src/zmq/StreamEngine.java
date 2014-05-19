@@ -195,7 +195,8 @@ public class StreamEngine implements IEngine, IPollEvents, IMsgSink {
         }
     }
 
-    public void plug (IOThread io_thread_,
+    @Override
+	public void plug (IOThread io_thread_,
             SessionBase session_)
     {
         assert (!plugged);

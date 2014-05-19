@@ -82,7 +82,8 @@ public class TcpConnecter extends Own implements IPollEvents {
         socket = session_.get_soket ();
     }
 
-    public void destroy ()
+    @Override
+	public void destroy ()
     {
         assert (!timer_started);
         assert (!handle_valid);
