@@ -114,6 +114,10 @@ public class DataSourceManager {
 	}
 
 	private static Double toNumeric(Object value) {
+		if( value == null ) {
+			return null;
+		}
+		
 		if (value instanceof Double) {
 			return ((Double) value);
 		}
