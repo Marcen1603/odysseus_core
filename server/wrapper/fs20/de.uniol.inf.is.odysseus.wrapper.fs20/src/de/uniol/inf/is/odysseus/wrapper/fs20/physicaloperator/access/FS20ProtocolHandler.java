@@ -100,9 +100,8 @@ public class FS20ProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public ITransportExchangePattern getExchangePattern() {
 		if (this.getDirection().equals(ITransportDirection.IN)) {
 			return ITransportExchangePattern.InOnly;
-		} else {
-			return ITransportExchangePattern.OutOnly;
-		}
+		} 
+		return ITransportExchangePattern.OutOnly;
 	}
 
 	@Override
@@ -149,9 +148,8 @@ public class FS20ProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> other) {
 		if(!(other instanceof FS20ProtocolHandler)) {
 			return false;
-		} else {
-			// the datahandler was already checked in the isSemanticallyEqual-Method of AbstracProtocolHandler
-			return true;
-		}
+		} 
+		// the datahandler was already checked in the isSemanticallyEqual-Method of AbstracProtocolHandler
+		return true;
 	}
 }

@@ -21,25 +21,21 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.imageresizer.ImageResizer;
 import de.uniol.inf.is.odysseus.wrapper.kinect.utils.Helper;
 
-public class FaceRecognizerPO
-		extends
-		AbstractPipe<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> {
+public class FaceRecognizerPO extends AbstractPipe<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> {
 	private SDFSchema schema;
 	private static String trainingData;
-//	private static final Logger log = LoggerFactory.getLogger(FaceRecognizerPO.class);
+	// private static final Logger log =
+	// LoggerFactory.getLogger(FaceRecognizerPO.class);
 	private FaceRecognizer faceRecognizer;
 	private static Properties nameDb;
 
 	static {
 		String resource = "trainingData_lbp.xml";
-		trainingData = Helper.getFileToResource(
-				FaceRecognizerPO.class.getResourceAsStream("/" + resource),
-				resource);
+		trainingData = Helper.getFileToResource(FaceRecognizerPO.class.getResourceAsStream("/" + resource), resource);
 
 		try {
 			nameDb = new Properties();
-			nameDb.load(FaceRecognizerPO.class
-					.getResourceAsStream("/labelToNameMap.properties"));
+			nameDb.load(FaceRecognizerPO.class.getResourceAsStream("/labelToNameMap.properties"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -74,31 +70,29 @@ public class FaceRecognizerPO
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		if (trainingData == null || trainingData.length() == 0) {
-			throw new RuntimeException(
-					"Could not load training data for face detection");
-		} else {
-//	    	faceRecognizer = createFisherFaceRecognizer();
-//	      	faceRecognizer = createEigenFaceRecognizer();
-	        faceRecognizer = createLBPHFaceRecognizer();
-			faceRecognizer.load(trainingData);
+			throw new RuntimeException("Could not load training data for face detection");
 		}
+		// faceRecognizer = createFisherFaceRecognizer();
+		// faceRecognizer = createEigenFaceRecognizer();
+		faceRecognizer = createLBPHFaceRecognizer();
+		faceRecognizer.load(trainingData);
+
 	}
-	
+
 	@Override
 	protected void process_next(Tuple<? extends ITimeInterval> object, int port) {
 		BufferedImage img = object.getAttribute(0);
 		if (img != null) {
-			try {				
+			try {
 				img = ImageResizer.getNormalizedImage(img);
 				IplImage testImage = normalizeImage(img);
-				int[] predictedLabel = new int[]{-1};
-				double[] confidence = new double[]{0.0};
+				int[] predictedLabel = new int[] { -1 };
+				double[] confidence = new double[] { 0.0 };
 				faceRecognizer.predict(testImage, predictedLabel, confidence);
 
 				Tuple<ITimeInterval> tuple = new Tuple<>(3, false);
 				tuple.setAttribute(0, predictedLabel[0]);
-				String name = (nameDb.getProperty("" + predictedLabel[0]) != null) ? nameDb
-						.getProperty("" +  predictedLabel[0]) : "unknown";
+				String name = (nameDb.getProperty("" + predictedLabel[0]) != null) ? nameDb.getProperty("" + predictedLabel[0]) : "unknown";
 				tuple.setAttribute(1, name);
 				tuple.setAttribute(2, confidence[0]);
 
@@ -116,18 +110,15 @@ public class FaceRecognizerPO
 	}
 
 	private IplImage normalizeImage(BufferedImage img) {
-		IplImage originalImage = IplImage.create(img.getWidth(),
-				img.getHeight(), IPL_DEPTH_8U, 3);
+		IplImage originalImage = IplImage.create(img.getWidth(), img.getHeight(), IPL_DEPTH_8U, 3);
 		originalImage.copyFrom(img);
-		IplImage gray = IplImage.create(img.getWidth(), img.getHeight(),
-				IPL_DEPTH_8U, 1);
+		IplImage gray = IplImage.create(img.getWidth(), img.getHeight(), IPL_DEPTH_8U, 1);
 		cvCvtColor(originalImage, gray, CV_RGB2GRAY);
 
 		if (gray.isNull())
 			return new IplImage(null);
 
-		IplImage gr_eq = IplImage.create(gray.width(), gray.height(),
-				IPL_DEPTH_8U, 1);
+		IplImage gr_eq = IplImage.create(gray.width(), gray.height(), IPL_DEPTH_8U, 1);
 		cvEqualizeHist(gray, gr_eq); // maybe not strictly nessecary, but does
 										// wonders on the quality!
 

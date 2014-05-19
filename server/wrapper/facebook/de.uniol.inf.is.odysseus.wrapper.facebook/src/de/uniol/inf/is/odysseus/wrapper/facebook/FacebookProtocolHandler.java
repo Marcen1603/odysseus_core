@@ -56,11 +56,9 @@ public class FacebookProtocolHandler extends
 	public boolean hasNext() throws IOException {
 		if (facebookMessages.size() > 0) {
 			return true;
-		} else {
-			intern_open();
-			return false;
-		}
-
+		} 
+		intern_open();
+		return false;
 	}
 
 	private void intern_open() throws UnknownHostException, IOException {
@@ -207,9 +205,8 @@ public class FacebookProtocolHandler extends
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
 		if(!(o instanceof FacebookProtocolHandler)) {
 			return false;
-		} else {
-			// the datahandler was already checked in the isSemanticallyEqual-Method of AbstracProtocolHandler
-			return true;
-		}
+		} 
+		// the datahandler was already checked in the isSemanticallyEqual-Method of AbstracProtocolHandler
+		return true;
 	}
 }

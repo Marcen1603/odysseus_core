@@ -110,9 +110,8 @@ public class FaceDetectorPO
 		if (trainingData == null || trainingData.length() == 0) {
 			throw new RuntimeException(
 					"Could not load training data for face detection");
-		} else {
-			faceDetector = new CascadeClassifier(trainingData);
-		}
+		} 
+		faceDetector = new CascadeClassifier(trainingData);
 
 		if (SEND_TEST_IMAGES) {
 			log.info("Configured to send sample images!");

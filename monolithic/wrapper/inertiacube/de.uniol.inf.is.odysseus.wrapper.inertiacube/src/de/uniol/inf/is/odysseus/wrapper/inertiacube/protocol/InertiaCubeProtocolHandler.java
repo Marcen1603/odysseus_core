@@ -53,10 +53,9 @@ public class InertiaCubeProtocolHandler<T> extends SimpleByteBufferHandler<T> {
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
 		if(!(o instanceof InertiaCubeProtocolHandler)) {
 			return false;
-		} else {
-			// the datahandler was already checked in the isSemanticallyEqual-Method of AbstracProtocolHandler
-			return true;
-		}
+		} 
+		// the datahandler was already checked in the isSemanticallyEqual-Method of AbstracProtocolHandler
+		return true;
 	}
 
 }

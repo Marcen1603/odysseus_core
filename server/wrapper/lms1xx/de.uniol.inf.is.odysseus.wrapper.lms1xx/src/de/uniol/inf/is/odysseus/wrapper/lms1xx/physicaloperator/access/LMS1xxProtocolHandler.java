@@ -629,7 +629,7 @@ public class LMS1xxProtocolHandler extends LineProtocolHandler<KeyValueObject<? 
         return new KeyValueObject<>(event);
     }
 
-    private KeyValueObject<? extends IMetaAttribute> parseLMS1xx(final String message) throws LMS1xxReadErrorException, LMS1xxLoginException, LMS1xxUnknownMessageException {
+    private KeyValueObject<? extends IMetaAttribute> parseLMS1xx(final String message) throws LMS1xxLoginException, LMS1xxUnknownMessageException {
         final String[] data = message.split(" ");
         if (message.startsWith(LMS1xxConstants.SRA)) {
             if (LMS1xxConstants.LCM_STATE.equalsIgnoreCase(data[1])) {
@@ -692,9 +692,7 @@ public class LMS1xxProtocolHandler extends LineProtocolHandler<KeyValueObject<? 
         if (!(other instanceof LMS1xxProtocolHandler)) {
             return false;
         }
-        else {
-            return true;
-        }
+        return true;
     }
 
 }

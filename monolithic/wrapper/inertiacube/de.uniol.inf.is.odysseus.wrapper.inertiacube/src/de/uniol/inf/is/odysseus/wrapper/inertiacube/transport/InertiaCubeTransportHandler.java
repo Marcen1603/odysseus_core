@@ -168,8 +168,7 @@ public class InertiaCubeTransportHandler extends AbstractPushTransportHandler  {
     public boolean isSemanticallyEqualImpl(ITransportHandler o) {
     	if(!(o instanceof InertiaCubeTransportHandler)) {
     		return false;
-    	} else {    	
-    		return true;
-    	}
+    	} 	
+    	return true;
     }
 }

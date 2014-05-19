@@ -58,9 +58,8 @@ public class KinectProtocolHandler<T> extends SimpleByteBufferHandler<T> {
     public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
     	if(!(o instanceof KinectProtocolHandler)) {
     		return false;
-    	} else {
-    		// the datahandler was already checked in the isSemanticallyEqual-Method of AbstracProtocolHandler
-    		return true;
-    	}
+    	} 
+    	// the datahandler was already checked in the isSemanticallyEqual-Method of AbstracProtocolHandler
+    	return true;
     }
 }
