@@ -1,9 +1,12 @@
 package de.uniol.inf.is.odysseus.p2p_new.physicaloperator;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
 
+import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
@@ -22,6 +25,7 @@ import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionManager;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSender;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSenderListener;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
@@ -213,5 +217,24 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	
 	public long getTotalSendByteCount() {
 		return totalSendByteCount;
+	}
+	
+	@Override
+	public String getName() {
+		return super.getName() + " [" + determineDestinationPeerName() + "]";
+	}
+	
+	private String determineDestinationPeerName() {
+		return P2PDictionary.getInstance().getRemotePeerName(toPeerID(peerIDString));
+	}
+
+	protected static PeerID toPeerID(String peerIDString) {
+		try {
+			final URI id = new URI(peerIDString);
+			return (PeerID) IDFactory.fromURI(id);
+		} catch (URISyntaxException | ClassCastException ex) {
+			LOG.error("Could not get id from peerIDString {}", peerIDString, ex);
+			return null;
+		}
 	}
 }
