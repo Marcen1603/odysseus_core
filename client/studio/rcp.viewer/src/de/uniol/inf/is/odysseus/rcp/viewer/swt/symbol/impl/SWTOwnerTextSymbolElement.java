@@ -22,8 +22,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 
-import com.google.common.base.Strings;
-
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
@@ -132,18 +130,19 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 	}
 
 	private static String getRealName(IPhysicalOperator operator) {
-		String name = operator.getName();
-		if( Strings.isNullOrEmpty(name)) {
-			return "[No name]";
-		}
-		
-		int index1 = name.indexOf("(");
-		int index2 = name.indexOf(" ");
-		if( index1 == -1 && index2 == -1 ) {
-			return name;
-		}
-		
-		int pos = index1 == -1 ? index2 : index1;
-		return name.substring(0, pos);
+		return operator.getName();
+//		String name = operator.getName();
+//		if( Strings.isNullOrEmpty(name)) {
+//			return "[No name]";
+//		}
+//		
+//		int index1 = name.indexOf("(");
+//		int index2 = name.indexOf(" ");
+//		if( index1 == -1 && index2 == -1 ) {
+//			return name;
+//		}
+//		
+//		int pos = index1 == -1 ? index2 : index1;
+//		return name.substring(0, pos);
 	}
 }
