@@ -116,7 +116,7 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		node.setPosition(position);
 		
 		if( LOG.isDebugEnabled() ) {
-			LOG.debug("Updateing position to {}, latency={} of peer {}", new Object[]{position, latency, peerID});
+			LOG.debug("Updateing position to {}, latency={} of peer {}", new Object[]{toString(position), latency, dictionary.getRemotePeerName(peerID)});
 		}
 		
 		Vector3D direction = position.subtract(localPosition);
@@ -140,7 +140,7 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		
 		firePingMapChangeEvent();
 		
-		LOG.debug("Local position is now {}", localPosition);
+		LOG.debug("Local position is now {}", toString(localPosition));
 	}
 
 	private void addLatencyData(PeerID peerID, long latency) {
@@ -239,4 +239,9 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 			listeners.remove(listener);
 		}
 	}
+	
+	private static String toString(Vector3D v) {
+		return v.getX() + "/" + v.getY() + "/" + v.getZ();
+	}
+
 }
