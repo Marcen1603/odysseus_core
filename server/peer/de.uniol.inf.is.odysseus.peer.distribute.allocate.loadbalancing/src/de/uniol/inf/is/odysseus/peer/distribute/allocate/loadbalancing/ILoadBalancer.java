@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.distribute.allocate.loadbalancing;
 
+import java.util.List;
 import java.util.Map;
 
 import net.jxta.peer.PeerID;
@@ -9,5 +10,5 @@ import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
 public interface ILoadBalancer {
 
-	public Map<ILogicalQueryPart, PeerID> balance(Map<PeerID, IResourceUsage> currentResourceUsageMap, Map<ILogicalQueryPart, IPhysicalCost> partCosts);
+	public Map<ILogicalQueryPart, List<PeerID>> balance(Map<PeerID, IResourceUsage> currentResourceUsageMap, Map<ILogicalQueryPart, IPhysicalCost> partCosts);
 }

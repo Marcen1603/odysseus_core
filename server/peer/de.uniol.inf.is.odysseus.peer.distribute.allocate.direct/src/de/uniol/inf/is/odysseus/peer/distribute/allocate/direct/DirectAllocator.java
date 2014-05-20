@@ -74,4 +74,9 @@ public class DirectAllocator implements IQueryPartAllocator {
 		return Optional.absent();
 	}
 
+	@Override
+	public Map<ILogicalQueryPart, PeerID> reallocate(Map<ILogicalQueryPart, PeerID> previousAllocationMap, Collection<PeerID> faultyPeers, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config,
+			List<String> allocatorParameters) throws QueryPartAllocationException {
+		throw new QueryPartAllocationException("Reallocation with direct allocator not supported!");
+	}
 }

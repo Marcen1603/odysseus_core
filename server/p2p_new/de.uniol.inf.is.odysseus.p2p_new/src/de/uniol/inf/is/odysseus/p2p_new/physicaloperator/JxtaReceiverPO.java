@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
+import de.uniol.inf.is.odysseus.costmodel.NoSampling;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionManager;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiver;
@@ -19,6 +20,7 @@ import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiverListener;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 
 @SuppressWarnings("rawtypes")
+@NoSampling
 public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> implements ITransmissionReceiverListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaReceiverPO.class);

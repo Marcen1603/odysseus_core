@@ -512,7 +512,7 @@ public final class LogicalQueryHelper {
 		}
 
 	}
-
+	
 	public static Map<ILogicalQueryPart, ILogicalQueryPart> copyQueryPartsDeep(Collection<ILogicalQueryPart> queryParts) {
 		Collection<ILogicalOperator> operators = Lists.newArrayList();
 		for (ILogicalQueryPart part : queryParts) {

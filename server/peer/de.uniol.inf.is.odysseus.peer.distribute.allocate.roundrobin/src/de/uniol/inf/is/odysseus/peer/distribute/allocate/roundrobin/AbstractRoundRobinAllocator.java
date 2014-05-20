@@ -35,6 +35,27 @@ public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator
 			throw new QueryPartAllocationException("There are no peers to be considered for round robin");
 		}
 		
+		return roundRobinImpl(queryParts, peerIDs);
+	}
+
+	@Override
+	public Map<ILogicalQueryPart, PeerID> reallocate(Map<ILogicalQueryPart, PeerID> previousAllocationMap, Collection<PeerID> faultyPeers, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
+		LOG.debug("Begin round robin reallocation");
+		
+		List<PeerID> peerIDs = determineConsideredPeerIDs(knownRemotePeers, localPeerID);
+		peerIDs.removeAll(faultyPeers);
+		if( LOG.isDebugEnabled() ) {
+			logPeers(peerIDs);
+		}
+		
+		if( peerIDs == null || peerIDs.isEmpty() ) {
+			throw new QueryPartAllocationException("There are no peers left to be considered for round robin in reallocation");
+		}
+		
+		return roundRobinImpl(previousAllocationMap.keySet(), peerIDs);
+	}
+	
+	private static Map<ILogicalQueryPart, PeerID> roundRobinImpl(Collection<ILogicalQueryPart> queryParts, List<PeerID> peerIDs) {
 		int peerIDIndex = 0;
 		
 		Map<ILogicalQueryPart, PeerID> allocationMap = Maps.newHashMap();

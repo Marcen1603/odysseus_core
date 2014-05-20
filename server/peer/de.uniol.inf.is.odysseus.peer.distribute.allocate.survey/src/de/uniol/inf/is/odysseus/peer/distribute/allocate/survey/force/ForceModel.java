@@ -278,9 +278,37 @@ public class ForceModel {
 		printForceNodes(forceNodes);
 	}
 
-	public Map<ILogicalQueryPart, PeerID> getResult() {
+	public Map<ILogicalQueryPart, List<PeerID>> getResult() {
 		LOG.debug("Evaluating force-results");
 
+		Map<PeerID, Vector3D> positionMap = createPositionMap();
+		Map<ILogicalQueryPart, List<PeerID>> result = Maps.newHashMap();
+
+		LOG.debug("Latency Weight = {}, Bid Weight = {}", latencyWeight, bidWeight);
+		for (ILogicalQueryPart queryPart : bids.keySet()) {
+			LOG.debug("Determine best peer for queryPart {}", queryPart);
+
+			Collection<Bid> bidsForQueryPart = bids.get(queryPart);
+			if (bidsForQueryPart.size() == 1) {
+				Bid oneAndOnlyBid = bidsForQueryPart.iterator().next();
+				result.put(queryPart, Lists.newArrayList(oneAndOnlyBid.getBidderPeerID()));
+
+				LOG.debug("Got only one bid (value={}) from peer {}", oneAndOnlyBid.getValue(), p2pDictionary.getRemotePeerName(oneAndOnlyBid.getBidderPeerID()));
+			} else {
+				LOG.debug("Got {} bids for this query part", bidsForQueryPart.size());
+
+				ForceNode forceNodeOfQueryPart = determineForceNode(queryPart, forceNodes);
+				Collection<PeerID> avoidingPeers = determineAvoidingPeers(queryPart.getAvoidingQueryParts(), result);
+				List<PeerID> bestPeers = determineNearestPeerWithBestBid(forceNodeOfQueryPart.getPosition(), positionMap, bidsForQueryPart, avoidingPeers);
+
+				result.put(queryPart, bestPeers);
+			}
+		}
+
+		return result;
+	}
+
+	private static Map<PeerID, Vector3D> createPositionMap() {
 		Map<PeerID, Vector3D> positionMap = Maps.newHashMap();
 		for (PeerID peerID : p2pDictionary.getRemotePeerIDs()) {
 			Vector3D position = pingMap.getNode(peerID).get().getPosition();
@@ -290,48 +318,27 @@ public class ForceModel {
 		LOG.debug("Current position of {}: {}", p2pNetworkManager.getLocalPeerName(), toString(pingMap.getLocalPosition()));
 
 		positionMap.put(p2pNetworkManager.getLocalPeerID(), pingMap.getLocalPosition());
-
-		Map<ILogicalQueryPart, PeerID> result = Maps.newHashMap();
-		LOG.debug("Latency Weight = {}, Bid Weight = {}", latencyWeight, bidWeight);
-		for (ILogicalQueryPart queryPart : bids.keySet()) {
-			LOG.debug("Determine best peer for queryPart {}", queryPart);
-
-			Collection<Bid> bidsForQueryPart = bids.get(queryPart);
-			if (bidsForQueryPart.size() == 1) {
-				Bid oneAndOnlyBid = bidsForQueryPart.iterator().next();
-				result.put(queryPart, oneAndOnlyBid.getBidderPeerID());
-
-				LOG.debug("Got only one bid (value={}) from peer {}", oneAndOnlyBid.getValue(), p2pDictionary.getRemotePeerName(oneAndOnlyBid.getBidderPeerID()));
-			} else {
-				LOG.debug("Got {} bids for this query part", bidsForQueryPart.size());
-
-				ForceNode forceNodeOfQueryPart = determineForceNode(queryPart, forceNodes);
-				Collection<PeerID> avoidingPeers = determineAvoidingPeers(queryPart.getAvoidingQueryParts(), result);
-				PeerID bestPeer = determineNearestPeerWithBestBid(forceNodeOfQueryPart.getPosition(), positionMap, bidsForQueryPart, avoidingPeers);
-
-				result.put(queryPart, bestPeer);
-			}
-		}
-
-		return result;
+		return positionMap;
 	}
 
-	private static Collection<PeerID> determineAvoidingPeers(ImmutableCollection<ILogicalQueryPart> avoidingQueryParts, Map<ILogicalQueryPart, PeerID> currentAllocationMap) {
+	private static Collection<PeerID> determineAvoidingPeers(ImmutableCollection<ILogicalQueryPart> avoidingQueryParts, Map<ILogicalQueryPart, List<PeerID>> currentAllocationMap) {
 		Collection<PeerID> avoidedPeers = Lists.newLinkedList();
 		for (ILogicalQueryPart queryPart : avoidingQueryParts) {
-			PeerID avoidedPeer = currentAllocationMap.get(queryPart);
-			if (avoidedPeer != null && !avoidedPeers.contains(avoidedPeer)) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("One avoiding part is {} from {}", avoidingQueryParts, p2pDictionary.getRemotePeerName(avoidedPeer));
+			List<PeerID> avoidedPeerList = currentAllocationMap.get(queryPart);
+			if (avoidedPeerList != null && !avoidedPeerList.isEmpty()) {
+				PeerID avoidedPeer = avoidedPeerList.get(0);
+				if (!avoidedPeers.contains(avoidedPeer)) {
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("One avoiding part is {} from {}", avoidingQueryParts, p2pDictionary.getRemotePeerName(avoidedPeer));
+					}
 				}
-
 				avoidedPeers.add(avoidedPeer);
 			}
 		}
 		return avoidedPeers;
 	}
 
-	private PeerID determineNearestPeerWithBestBid(Vector3D position, Map<PeerID, Vector3D> positionMap, Collection<Bid> bidsForQueryPart, Collection<PeerID> avoidedPeers) {
+	private List<PeerID> determineNearestPeerWithBestBid(Vector3D position, Map<PeerID, Vector3D> positionMap, Collection<Bid> bidsForQueryPart, Collection<PeerID> avoidedPeers) {
 		Map<PeerID, Bid> bidMap = createBidMap(bidsForQueryPart);
 
 		double maximumLatencyDistance = Double.MIN_VALUE;
@@ -361,6 +368,7 @@ public class ForceModel {
 		}
 
 		List<ValuePeerPair> peerValues = Lists.newLinkedList();
+		List<ValuePeerPair> avoidedPeerValues = Lists.newLinkedList();
 		LOG.debug("PeerValues ({} bids):", bidMap.size());
 		for (PeerID peerID : bidMap.keySet()) {
 			double latencyFactor = peerLatencyDistances.get(peerID) / maximumLatencyDistance;
@@ -370,30 +378,37 @@ public class ForceModel {
 			double peerValue = ((latencyFactor * bidWeight) + (invertedBidFactor * latencyWeight)) / (bidWeight + latencyWeight);
 			LOG.debug("\t{}:\tPeerValue={} \t(BidValue={}\tLatencyValue={} )", new Object[] { p2pDictionary.getRemotePeerName(peerID), peerValue, invertedBidFactor, latencyFactor });
 
-			peerValues.add(new ValuePeerPair(peerValue, peerID));
+			if (avoidedPeers.contains(peerID)) {
+				avoidedPeerValues.add(new ValuePeerPair(peerValue, peerID));
+			} else {
+				peerValues.add(new ValuePeerPair(peerValue, peerID));
+			}
 		}
 		if (LOG.isDebugEnabled() && !avoidedPeers.isEmpty()) {
 			printAvoidingPeerList(avoidedPeers);
 		}
 
 		Collections.sort(peerValues);
+		Collections.sort(avoidedPeerValues);
 
-		int index = 0;
-		PeerID currentChoice = peerValues.get(0).peerID;
-		while (avoidedPeers.contains(currentChoice)) {
-			index++;
+		List<PeerID> peerList = determineSortedPeers(peerValues, avoidedPeerValues);
+		LOG.debug("Best peer is {}", p2pDictionary.getRemotePeerName(peerList.get(0)));
+		return peerList;
+	}
 
-			if (index == peerValues.size()) {
-				// checked all...
-				currentChoice = peerValues.get(0).peerID;
-				break;
-			}
+	private static List<PeerID> determineSortedPeers(List<ValuePeerPair> peerValues, List<ValuePeerPair> avoidedPeerValues) {
+		List<PeerID> result = Lists.newArrayList();
 
-			currentChoice = peerValues.get(index).peerID;
+		// non-avoided peers have priority
+		for (ValuePeerPair peerValue : peerValues) {
+			result.add(peerValue.peerID);
 		}
 
-		LOG.debug("Best (non-avoided) peer is {}", p2pDictionary.getRemotePeerName(currentChoice));
-		return currentChoice;
+		for (ValuePeerPair avoidedPeerValue : avoidedPeerValues) {
+			result.add(avoidedPeerValue.peerID);
+		}
+
+		return result;
 	}
 
 	private static void printAvoidingPeerList(Collection<PeerID> avoidedPeers) {

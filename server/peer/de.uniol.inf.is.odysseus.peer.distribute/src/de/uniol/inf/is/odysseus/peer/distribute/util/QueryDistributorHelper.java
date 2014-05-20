@@ -208,4 +208,26 @@ public final class QueryDistributorHelper {
 			throw new QueryDistributionException("Could not allocate query parts", ex);
 		}
 	}
+	
+	public static Map<ILogicalQueryPart, PeerID> tryReallocate( QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryPartAllocator>> allocators, Map<ILogicalQueryPart, PeerID> previousAllocationMap, Collection<PeerID> faultyPeers ) throws QueryDistributionException {
+		LOG.debug("Begin reallocation of query parts");
+		
+		try {
+			InterfaceParametersPair<IQueryPartAllocator> firstAllocator = allocators.get(0);
+			Map<ILogicalQueryPart, PeerID> allocationMap = firstAllocator.getInterface().reallocate(previousAllocationMap, faultyPeers, p2pDictionary.getRemotePeerIDs(), p2pNetworkManager.getLocalPeerID(), config, firstAllocator.getParameters());
+			
+			if (allocationMap == null || allocationMap.isEmpty()) {
+				throw new QueryDistributionException("Query part allocation map from allocator '" + firstAllocator.getInterface().getName() + "' is null or empty!");
+			}
+
+			if (LOG.isDebugEnabled()) {
+				LoggingHelper.printAllocationMap(allocationMap, p2pDictionary);
+			}
+			
+			return allocationMap;
+		} catch (QueryPartAllocationException ex) {
+			throw new QueryDistributionException("Could not reallocate query parts", ex);
+		}
+		
+	}
 }

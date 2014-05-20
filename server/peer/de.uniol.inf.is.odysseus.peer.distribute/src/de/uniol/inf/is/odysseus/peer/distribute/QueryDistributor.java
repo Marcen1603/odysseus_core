@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -29,7 +30,8 @@ import de.uniol.inf.is.odysseus.peer.distribute.util.QueryDistributorHelper;
 public class QueryDistributor implements IQueryDistributor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryDistributor.class);
-
+	private static final int MAX_TRANSMISSION_TRIES = 5;
+	
 	@Override
 	public void distribute(final IServerExecutor serverExecutor, final ISession caller, final Collection<ILogicalQuery> queriesToDistribute, final QueryBuildConfiguration config) {
 		QueryDistributorThread thread = new QueryDistributorThread(serverExecutor, caller, queriesToDistribute, config);
@@ -72,12 +74,59 @@ public class QueryDistributor implements IQueryDistributor {
 			Collection<ILogicalQueryPart> queryParts = QueryDistributorHelper.tryPartitionQuery(config, partitioners, operators, query);
 			Collection<ILogicalQueryPart> modifiedQueryParts = QueryDistributorHelper.tryModifyQueryParts(config, modificators, queryParts, query);
 			Map<ILogicalQueryPart, PeerID> allocationMap = QueryDistributorHelper.tryAllocate(config, allocators, modifiedQueryParts, query);
-
-			QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMap, config, postProcessors, query);
+			
+			Map<ILogicalQueryPart, PeerID> allocationMapCopy = copyAllocationMap(allocationMap);
+			
+			QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMapCopy, config, postProcessors, query);
 
 			QueryPartSender.waitFor();
-			QueryPartSender.getInstance().transmit(allocationMap, serverExecutor, caller, query.getName(), config);
+			
+			List<PeerID> faultyPeers = Lists.newArrayList();
+			int tries = 0;
+			try {
+				QueryPartSender.getInstance().transmit(allocationMapCopy, serverExecutor, caller, query.getName(), config);
+			} catch( QueryPartTransmissionException ex ) {
+				tries++;
+				if( tries == MAX_TRANSMISSION_TRIES ) {
+					throw new QueryDistributionException("Could not distribute query even after " + tries + " tries. See previous errors for details.");
+				}
+				
+				for( PeerID faultyPeer : ex.getFaultyPeers() ) {
+					if( !faultyPeers.contains(faultyPeer)) {
+						faultyPeers.add(faultyPeer);
+					}
+				}
+				
+				LOG.error("Exception during transmission query parts. Trying to reallocate... try {}", tries);
+				allocationMap = QueryDistributorHelper.tryReallocate(config, allocators, allocationMap, faultyPeers);
+				allocationMapCopy = copyAllocationMap(allocationMap);
+			}
 		}
+	}
+
+	private static Map<ILogicalQueryPart, PeerID> copyAllocationMap(Map<ILogicalQueryPart, PeerID> allocationMap) {
+		Map<ILogicalQueryPart, PeerID> copy = Maps.newHashMap();
+		
+		// copy --> orginial
+		Map<ILogicalQueryPart, ILogicalQueryPart> queryPartCopyMap = LogicalQueryHelper.copyQueryPartsDeep(allocationMap.keySet());
+		// original --> copy
+		queryPartCopyMap = revertMap(queryPartCopyMap);
+		
+		for( ILogicalQueryPart queryPart : allocationMap.keySet() ) {
+			ILogicalQueryPart queryPartCopy = queryPartCopyMap.get(queryPart);
+			
+			copy.put(queryPartCopy, allocationMap.get(queryPart));
+		}
+		
+		return copy;
+	}
+
+	private static Map<ILogicalQueryPart, ILogicalQueryPart> revertMap(Map<ILogicalQueryPart, ILogicalQueryPart> queryPartCopyMap) {
+		Map<ILogicalQueryPart, ILogicalQueryPart> revertedMap = Maps.newHashMap();
+		for( ILogicalQueryPart key : queryPartCopyMap.keySet() ) {
+			revertedMap.put(queryPartCopyMap.get(key), key);
+		}
+		return revertedMap;
 	}
 
 	private static Collection<ILogicalQuery> copyAllQueries(Collection<ILogicalQuery> queriesToDistribute) {

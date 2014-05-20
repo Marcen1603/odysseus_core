@@ -59,12 +59,32 @@ public class UserAllocator implements IQueryPartAllocator {
 	@Override
 	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, ILogicalQuery query, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
 		
-		Map<ILogicalQueryPart, PeerID> allocationMap = Maps.newHashMap();
-		
 		Map<String, PeerID> peerNameMap = determinePeerNames();
 		peerNameMap.put(p2pNetworkManager.getLocalPeerName(), localPeerID);
 		peerNameMap.put("local", localPeerID);
 		
+		return userAllocationImpl(queryParts, localPeerID, peerNameMap);
+	}
+	
+	@Override
+	public Map<ILogicalQueryPart, PeerID> reallocate(Map<ILogicalQueryPart, PeerID> previousAllocationMap, Collection<PeerID> faultyPeers, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
+
+		Map<String, PeerID> peerNameMap = determinePeerNames();
+		peerNameMap.put(p2pNetworkManager.getLocalPeerName(), localPeerID);
+		peerNameMap.put("local", localPeerID);
+		
+		for( String peerName : peerNameMap.keySet().toArray(new String[0]) ) {
+			PeerID pid = peerNameMap.get(peerName);
+			if( faultyPeers.contains(pid)) {
+				peerNameMap.remove(peerName);
+			}
+		}
+
+		return userAllocationImpl(previousAllocationMap.keySet(), localPeerID, peerNameMap);
+	}
+
+	private static Map<ILogicalQueryPart, PeerID> userAllocationImpl(Collection<ILogicalQueryPart> queryParts, PeerID localPeerID, Map<String, PeerID> peerNameMap) {
+		Map<ILogicalQueryPart, PeerID> allocationMap = Maps.newHashMap();
 		for( ILogicalQueryPart part : queryParts ) {
 			String destinationName = determineMostMentionedDestinationName(part);
 			

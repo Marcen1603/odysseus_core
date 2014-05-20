@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.distribute.allocate.loadbalancing.impl;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import net.jxta.peer.PeerID;
@@ -32,11 +33,11 @@ public abstract class AbstractLoadBalancer implements ILoadBalancer {
 	}
 
 	@Override
-	public Map<ILogicalQueryPart, PeerID> balance(Map<PeerID, IResourceUsage> currentResourceUsageMap, Map<ILogicalQueryPart, IPhysicalCost> partCosts) {
+	public Map<ILogicalQueryPart, List<PeerID>> balance(Map<PeerID, IResourceUsage> currentResourceUsageMap, Map<ILogicalQueryPart, IPhysicalCost> partCosts) {
 
 		Map<PeerID, Usage> estimatedUsages = LoadBalancerHelper.transform(currentResourceUsageMap);
 
-		Map<ILogicalQueryPart, PeerID> result = Maps.newHashMap();
+		Map<ILogicalQueryPart, List<PeerID>> result = Maps.newHashMap();
 		for (ILogicalQueryPart queryPart : partCosts.keySet()) {
 			LOG.debug("Allocating query part {}", queryPart);
 			
@@ -44,38 +45,24 @@ public abstract class AbstractLoadBalancer implements ILoadBalancer {
 			double newCpuCost = partCosts.get(queryPart).getCpuSum();
 			Collection<PeerID> avoidingPeers = determineAvoidedPeers(queryPart, result);
 			
-			PeerID minPeerID = selectPeerID(estimatedUsages, avoidingPeers, newMemCost, newCpuCost);
+			List<PeerID> sortedPeerIDs = sortPeerIDs(estimatedUsages, avoidingPeers, newMemCost, newCpuCost);
 			
-			if( minPeerID == null ) {
+			if( sortedPeerIDs == null || sortedPeerIDs.isEmpty() ) {
 				// protected method --> check return value!
-				throw new RuntimeException("Selecting peerID for load balancing returned null!");
+				throw new RuntimeException("Sorted peerIDs for load balancing returned null or is empty!");
 			}
 			
-			Usage minUsage = estimatedUsages.get(minPeerID);
-			
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Allocated with mem={} and cpu={} to {}", new Object[] { minUsage.mem, minUsage.cpu, minPeerID});
-			}
-
-			result.put(queryPart, minPeerID);
-
-			minUsage.mem += newMemCost;
-			minUsage.cpu += newCpuCost;
-			minUsage.runningQueriesCount++;
-			
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Set usage to mem={} and cpu={} of peer {}", new Object[] { minUsage.mem, minUsage.cpu, minPeerID });
-			}
+			result.put(queryPart, sortedPeerIDs);
 		}
 
 		return result;
 	}
 
-	private static Collection<PeerID> determineAvoidedPeers(ILogicalQueryPart queryPart, Map<ILogicalQueryPart, PeerID> allocationMap) {
+	private static Collection<PeerID> determineAvoidedPeers(ILogicalQueryPart queryPart, Map<ILogicalQueryPart, List<PeerID>> balancedQueryParts) {
 		Collection<PeerID> avoidedPeers = Lists.newArrayList();
 		
 		for( ILogicalQueryPart avoidedPart : queryPart.getAvoidingQueryParts() ) {
-			PeerID avoidedPeerID = allocationMap.get(avoidedPart);
+			PeerID avoidedPeerID = balancedQueryParts.get(avoidedPart).get(0);
 			if( avoidedPeerID != null && !avoidedPeers.contains(avoidedPeerID)) {
 				avoidedPeers.add(avoidedPeerID);
 			}
@@ -84,5 +71,5 @@ public abstract class AbstractLoadBalancer implements ILoadBalancer {
 		return avoidedPeers;
 	}
 	
-	protected abstract PeerID selectPeerID(Map<PeerID, Usage> currentUsages, Collection<PeerID> avoidingPeers, long newMemCost, double newCpuCost);
+	protected abstract List<PeerID> sortPeerIDs(Map<PeerID, Usage> currentUsages, Collection<PeerID> avoidingPeers, long newMemCost, double newCpuCost);
 }

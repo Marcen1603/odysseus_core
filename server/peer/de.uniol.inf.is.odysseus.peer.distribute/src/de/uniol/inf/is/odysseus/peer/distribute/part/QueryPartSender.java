@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
+import de.uniol.inf.is.odysseus.peer.distribute.QueryPartTransmissionException;
 import de.uniol.inf.is.odysseus.peer.distribute.message.AbortQueryPartAddAckMessage;
 import de.uniol.inf.is.odysseus.peer.distribute.message.AbortQueryPartAddMessage;
 import de.uniol.inf.is.odysseus.peer.distribute.message.AddQueryPartMessage;
@@ -158,7 +159,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		}
 	}
 
-	public void transmit(Map<ILogicalQueryPart, PeerID> allocationMap, IServerExecutor serverExecutor, ISession caller, String queryName, QueryBuildConfiguration config) throws QueryDistributionException {
+	public void transmit(Map<ILogicalQueryPart, PeerID> allocationMap, IServerExecutor serverExecutor, ISession caller, String queryName, QueryBuildConfiguration config) throws QueryPartTransmissionException {
 		ID sharedQueryID = IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
 
 		insertJxtaOperators(allocationMap);
@@ -320,7 +321,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		}
 	}
 
-	private void distributeToRemotePeers(ID sharedQueryID, IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> correctedAllocationMap, QueryBuildConfiguration parameters) throws QueryDistributionException {
+	private void distributeToRemotePeers(ID sharedQueryID, IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> correctedAllocationMap, QueryBuildConfiguration parameters) throws QueryPartTransmissionException {
 		senderMap.clear();
 		sendDestinationMap.clear();
 		sendResultMap.clear();
@@ -356,18 +357,46 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 
 		if (sendResultMap.size() != remoteSendCount) {
 			removeDistributedQueryParts(sharedQueryID);
+			
+			List<PeerID> missingPeers = Lists.newArrayList();
+			for( Integer qpid : sendDestinationMap.keySet()) {
+				if( !sendResultMap.containsKey(qpid)) {
+					missingPeers.add(sendDestinationMap.get(qpid));
+				}
+			}
 
-			throw new QueryDistributionException("Could not distribute the query parts since some peers are not reachable");
+			if( LOG.isErrorEnabled() ) {
+				LOG.error("Could not distribute the query parts since peers are not reachable");
+				for( PeerID missingPeer : missingPeers ) {
+					LOG.error("\t{} : {}", p2pDictionary.getRemotePeerName(missingPeer), missingPeer);
+				}
+			}
+			
+			throw new QueryPartTransmissionException(missingPeers);
 		}
 
+		List<PeerID> faultyPeers = Lists.newArrayList();
+		List<String> faultMessages = Lists.newArrayList();
 		for (Integer qpid : sendResultMap.keySet()) {
 			String msg = sendResultMap.get(qpid);
 			PeerID pid = sendDestinationMap.get(qpid);
 			if (msg == null || !msg.equalsIgnoreCase("OK")) {
-				removeDistributedQueryParts(sharedQueryID);
-				
-				throw new QueryDistributionException("Could not distribute the query since peer " + p2pDictionary.getRemotePeerName(pid) + " could not execute/add its query part: " + msg);
+				faultyPeers.add(pid);
+				faultMessages.add(msg);
 			}
+		}
+		
+		if( !faultyPeers.isEmpty() ) {
+			removeDistributedQueryParts(sharedQueryID);
+			
+			if( LOG.isErrorEnabled() ) {
+				LOG.error("Could not distribute the query since peers could not execute/add its query part:");
+				for( int index = 0; index < faultyPeers.size(); index++ ) {
+					LOG.error("\t{}: {}", p2pDictionary.getRemotePeerName(faultyPeers.get(index)), faultMessages.get(index));
+				}
+			}
+			
+			throw new QueryPartTransmissionException(faultyPeers);
 		}
 
 		LOG.debug("Remote distribution complete.");
