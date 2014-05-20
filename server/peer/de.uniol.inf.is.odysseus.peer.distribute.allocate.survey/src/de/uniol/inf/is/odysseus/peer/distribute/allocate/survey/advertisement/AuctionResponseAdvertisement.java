@@ -165,11 +165,14 @@ public final class AuctionResponseAdvertisement extends Advertisement implements
 			} else if (elem.getName().equals(BID_TAG)) {
 				bidValue = Double.valueOf(elem.getTextValue());
 			} else if( elem.getName().equals(POSITION_X_ID_TAG)) {
-				pos.add(new Vector3D(Double.valueOf(elem.getTextValue()), 0, 0));
+				Double valueOf = Double.valueOf(elem.getTextValue());
+				pos = new Vector3D(valueOf, pos.getY(), pos.getZ());
 			} else if( elem.getName().equals(POSITION_Y_ID_TAG)) {
-				pos.add(new Vector3D(0, Double.valueOf(elem.getTextValue()), 0));
+				Double valueOf = Double.valueOf(elem.getTextValue());
+				pos = new Vector3D(pos.getX(), valueOf, pos.getZ());
 			} else if( elem.getName().equals(POSITION_Z_ID_TAG)) {
-				pos.add(new Vector3D(0, 0, Double.valueOf(elem.getTextValue())));
+				Double valueOf = Double.valueOf(elem.getTextValue());
+				pos = new Vector3D(pos.getX(), pos.getY(), valueOf);
 			}
 		}
 		

@@ -152,11 +152,7 @@ public class ForceModel {
 		Collection<ForceNode> forceNodes = Lists.newArrayList();
 
 		if (LOG.isDebugEnabled()) {
-			for (PeerID peerID : p2pDictionary.getRemotePeerIDs()) {
-				Vector3D position = pingMap.getNode(peerID).get().getPosition();
-				LOG.debug("Current position of {}: {}", p2pDictionary.getRemotePeerName(peerID), toString(position));
-			}
-			LOG.debug("Current position of {}: {}", p2pNetworkManager.getLocalPeerName(), toString(pingMap.getLocalPosition()));
+			debugNodePositions();
 		}
 
 		for (ILogicalQueryPart queryPart : bids.keySet()) {
@@ -167,10 +163,19 @@ public class ForceModel {
 			LOG.debug("Best bid for query part {} is from {}", queryPart, p2pDictionary.getRemotePeerName(bestBid.getBidderPeerID()));
 
 			Vector3D nodePosition = optPingMapNode.isPresent() ? optPingMapNode.get().getPosition() : createRandomVector3D();
+			LOG.debug("Position is {}", toString(nodePosition));
 			forceNodes.add(new ForceNode(nodePosition, queryPart, queryPartBids.size() == 1));
 		}
 
 		return forceNodes;
+	}
+
+	private static void debugNodePositions() {
+		for (PeerID peerID : p2pDictionary.getRemotePeerIDs()) {
+			Vector3D position = pingMap.getNode(peerID).get().getPosition();
+			LOG.debug("Current position of {}: {}", p2pDictionary.getRemotePeerName(peerID), toString(position));
+		}
+		LOG.debug("Current position of {}: {}", p2pNetworkManager.getLocalPeerName(), toString(pingMap.getLocalPosition()));
 	}
 
 	private static void createForces(Collection<ForceNode> forceNodes, ForceNode localForceNode, QueryPartGraph partGraph, Map<ILogicalOperator, Double> operatorDataRateMap) {
