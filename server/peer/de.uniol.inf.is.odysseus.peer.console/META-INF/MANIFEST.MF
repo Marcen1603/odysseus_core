@@ -21,6 +21,7 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.peer.ping,
  de.uniol.inf.is.odysseus.peer.resource,
  de.uniol.inf.is.odysseus.peer.update,
+ org.apache.commons.math.geometry,
  org.eclipse.osgi.framework.console,
  org.osgi.framework;version="1.6.0"
 Require-Bundle: de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0",

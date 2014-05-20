@@ -13,6 +13,7 @@ import java.util.List;
 import net.jxta.document.Advertisement;
 import net.jxta.peer.PeerID;
 
+import org.apache.commons.math.geometry.Vector3D;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.slf4j.Logger;
@@ -47,6 +48,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
 import de.uniol.inf.is.odysseus.peer.logging.JxtaLoggingDestinations;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
+import de.uniol.inf.is.odysseus.peer.ping.IPingMapNode;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 import de.uniol.inf.is.odysseus.peer.update.PeerUpdatePlugIn;
@@ -214,6 +216,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		sb.append("    listPeerAddresses/ls...              - Lists all peer addresses (ips)\n");
 		sb.append("    resourceStatus                 		- Current status of local MEM, CPU, NET\n");
 		sb.append("    ping                           		- Lists the current latencies to known peers\n");
+		sb.append("    listPingPositions/ls...        		- Lists the current position of known peers in the ping map\n");
 		sb.append("    peerStatus                     		- Summarizes the current peer status (peerName, ids, etc.)\n");
 		sb.append("    listEndpointConnections/ls...  		- Lists all peers which have a true endpoint connection\n");
 		sb.append("    listExportedSources/ls...      		- Lists all exported source names\n");
@@ -294,6 +297,31 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		}
 
 		sortAndPrintList(output);
+	}
+	
+	public void _lsPingPositions( CommandInterpreter ci ) {
+		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
+		System.out.println("Current known ping position(s):");
+		
+		List<String> output = Lists.newLinkedList();
+		for (PeerID remotePeerID : remotePeerIDs) {
+			Optional<IPingMapNode> optNode = pingMap.getNode(remotePeerID);
+			if( optNode.isPresent() ) {
+				output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " : " + toString(optNode.get().getPosition()));
+			} else {
+				output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " : <unknown>" );				
+			}
+		}		
+		
+		sortAndPrintList(output);
+	}
+	
+	public void _listPingPositions( CommandInterpreter ci ) {
+		_lsPingPositions(ci);
+	}
+
+	private static String toString(Vector3D v) {
+		return v.getX() + " / " + v.getY() + " / " + v.getZ();
 	}
 
 	public void _peerStatus(CommandInterpreter ci) {
