@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.distribute.postprocessor.localsink;
 
-
 import java.util.Collection;
 import java.util.Map;
 
@@ -19,14 +18,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.postprocess.AbstractOperatorInsertionPostProcessor;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
 public class LocalSinkPostProcessor extends AbstractOperatorInsertionPostProcessor {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(LocalSinkPostProcessor.class);
-	
+
 	private static IP2PNetworkManager p2pNetworkManager;
 
 	// called by OSGi-DS
@@ -40,85 +38,57 @@ public class LocalSinkPostProcessor extends AbstractOperatorInsertionPostProcess
 			p2pNetworkManager = null;
 		}
 	}
-	
+
 	@Override
 	public String getName() {
-		
+
 		return "localsink";
-		
+
 	}
-	
+
 	@Override
-	public void postProcess(IServerExecutor serverExecutor, 
-			ISession caller, 
-			Map<ILogicalQueryPart, PeerID> allocationMap, 
-			ILogicalQuery query, QueryBuildConfiguration config) {
-		
+	public void postProcess(IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> allocationMap, ILogicalQuery query, QueryBuildConfiguration config) {
+
 		LocalSinkPostProcessor.log.debug("Begin post processing");
-		
-		if(LocalSinkPostProcessor.p2pNetworkManager == null) {
-			
+
+		if (LocalSinkPostProcessor.p2pNetworkManager == null) {
+
 			LocalSinkPostProcessor.log.error("No peer network manager bound!");
 			return;
-			
+
 		}
-		
-		Collection<ILogicalOperator> operators = Lists.newArrayList();
-		
-		for(ILogicalQueryPart queryPart : allocationMap.keySet().toArray(new ILogicalQueryPart[0])) {
-			
+
+		for (ILogicalQueryPart queryPart : allocationMap.keySet().toArray(new ILogicalQueryPart[0])) {
+
 			LocalSinkPostProcessor.log.debug("Determining real sinks from query part {} to insert operators", queryPart);
-			
+
 			Collection<ILogicalOperator> relativeSinks = LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(queryPart);
-			Collection<ILogicalOperator> operatorsToRemove = Lists.newArrayList();
-			
-			for(ILogicalOperator relativeSink : relativeSinks) {
-				
-				if(AbstractOperatorInsertionPostProcessor.isRealSink(relativeSink)) {
-					
+
+			for (ILogicalOperator relativeSink : relativeSinks) {
+
+				if (AbstractOperatorInsertionPostProcessor.isRealSink(relativeSink) || relativeSink.getSubscriptions().isEmpty()) {
 					LocalSinkPostProcessor.log.debug("Found real sink {}", relativeSink);
-					operators.addAll(this.insertOperator(relativeSink));
-					operatorsToRemove.add(relativeSink);
-					
-				} else if(relativeSink.getSubscriptions().isEmpty()) {
-					
-					LocalSinkPostProcessor.log.debug("Found unreal sink {}", relativeSink);
-					operators.add(this.attachOperator(relativeSink));
-					
-				}
-			}
-			
-			queryPart.removeOperators(operatorsToRemove);
-			if( queryPart.getOperators().isEmpty() ) {
-				allocationMap.remove(queryPart);
+					allocationMap.put(queryPart, p2pNetworkManager.getLocalPeerID());
+				} 
 			}
 		}
-		
-		if(!operators.isEmpty()) {
-			
-			ILogicalQueryPart newPart = new LogicalQueryPart(operators);
-			allocationMap.put(newPart, LocalSinkPostProcessor.p2pNetworkManager.getLocalPeerID());
-			LocalSinkPostProcessor.log.debug("Created local query part {}", newPart);
-			
-		}
-		
 	}
-	
+
 	@Override
 	protected Collection<ILogicalOperator> insertOperator(ILogicalOperator relativeSink) {
-		
+
 		Collection<ILogicalOperator> operators = Lists.newArrayList(relativeSink);
 		return operators;
-		
+
 	}
-	
+
 	@Override
 	protected ILogicalOperator createOperator() {
-		
-		RenameAO renameAO = new RenameAO(); 
+
+		RenameAO renameAO = new RenameAO();
 		renameAO.setNoOp(true);
 		return renameAO;
-		
+
 	}
 
 }
