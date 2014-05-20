@@ -23,7 +23,8 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
  * #PEER_MODIFICATION fragmentation_horizontal_hash &lt;source name&gt; &lt;number of fragments&gt; 
  * where the whole tuple forms the hash key or <br />
  * #PEER_MODIFICATION fragmentation_horizontal_hash &lt;source name&gt; &lt;number of fragments&gt; &lt;attribute1&gt ... &lt;attributeN&gt 
- * where the attributes form the hash key.
+ * where the attributes form the hash key. <br />
+ * Note: source name can also be an unique identifier of an operator.
  * @author Michael Brand
  */
 public class HashHorizontalFragmentationQueryPartModificator extends
@@ -60,14 +61,13 @@ public class HashHorizontalFragmentationQueryPartModificator extends
 	 * @return The attributes to be fragmented given by the user, if there are any.
 	 * @throws NullPointerException if <code>modificatorParameters</code> is null.
 	 */
-	private Optional<List<String>> determineFullQualifiedAttributes(List<String> modificationParameters)
+	private Optional<List<String>> determineAttributes(List<String> modificationParameters)
 			throws NullPointerException {
 		
 		// Preconditions 1
 		if(modificationParameters == null)
 			throw new NullPointerException("Parameters for query part fragmentation strategy must not be null!");
 		
-		String sourceName = modificationParameters.get(0);
 		Optional<List<String>> attributes = this.determineKeyAttributes(modificationParameters);
 		
 		if(!attributes.isPresent())
@@ -76,7 +76,7 @@ public class HashHorizontalFragmentationQueryPartModificator extends
 		// The return value
 		List<String> fullQualifiedAttributes = Lists.newArrayList();
 		for(String attribute : attributes.get())
-			fullQualifiedAttributes.add(sourceName + "." + attribute);
+			fullQualifiedAttributes.add(attribute);
 		return Optional.of(fullQualifiedAttributes);
 		
 	}
@@ -97,7 +97,7 @@ public class HashHorizontalFragmentationQueryPartModificator extends
 		if(numFragments < 1)
 			throw new QueryPartModificationException("Invalid number of fragments: " + numFragments);
 		
-		Optional<List<String>> attributes = this.determineFullQualifiedAttributes(modificationParameters);
+		Optional<List<String>> attributes = this.determineAttributes(modificationParameters);
 			
 		HashFragmentAO fragmentAO = new HashFragmentAO();
 		fragmentAO.setNumberOfFragments(numFragments);

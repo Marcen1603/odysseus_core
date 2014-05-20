@@ -992,7 +992,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 				Optional<ILogicalQueryPart> optPartOfOriginTarget = LogicalQueryHelper.determineQueryPart(modifiedCopiesToOrigin.keySet(), target);
 				if (!optPartOfOriginTarget.isPresent())
 					targets.add(target);
-				else if (originSink instanceof AbstractAccessAO && ((AbstractAccessAO) originSink).getAccessAOName().getResourceName().equals(sourceName)) {
+				else if (AbstractFragmentationQueryPartModificator.isSourceOperator(originSink, sourceName)) {
 
 					LogicalSubscription subscription = new LogicalSubscription(originSink, subToSink.getSinkInPort(), subToSink.getSourceOutPort(), subToSink.getSchema());
 
@@ -1150,6 +1150,36 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 		return new Pair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>>(partsToBeFragmented, otherParts);
 
 	}
+	
+	/**
+	 * Checks if an operator delivers the data stream to be fragmented.
+	 * @param operator The operator to check.
+	 * @param sourceName The name of the source to be fragmented.
+	 * @return True, if the operator is an {@link AbstractAccessAO} with sourceName as resource name or
+	 * if the operator has sourceName as unique identifier or
+	 * if the operator is a {@link RenameAO} with an operator as source to be one of those mentioned above.
+	 */
+	protected static boolean isSourceOperator(ILogicalOperator operator, String sourceName) {
+		
+		Preconditions.checkNotNull(operator, "Operator must be not null!");
+		Preconditions.checkNotNull(sourceName, "Source name must be not null!");
+		
+		if(operator instanceof AbstractAccessAO && ((AbstractAccessAO) operator).getAccessAOName().getResourceName().equals(sourceName))
+			return true;
+		else if(operator.getUniqueIdentifier() != null && operator.getUniqueIdentifier().equals(sourceName))
+			return true;
+		else if(operator instanceof RenameAO) {
+			
+			Preconditions.checkArgument(operator.getSubscribedToSource().size() == 1, "RenameAO must have exact one subscription to source!");
+			final ILogicalOperator target = operator.getSubscribedToSource().iterator().next().getTarget();
+			
+			return AbstractFragmentationQueryPartModificator.isSourceOperator(target, sourceName);
+			
+		}
+		
+		return false;
+		
+	}
 
 	/**
 	 * Determine all relevant operators for fragmentation of a given query part.
@@ -1176,21 +1206,20 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 		Collection<ILogicalOperator> relevantOperators = Lists.newArrayList();
 
 		for (ILogicalOperator operator : queryPart.getOperators()) {
-
-			if (operator instanceof AbstractAccessAO && ((AbstractAccessAO) operator).getAccessAOName().getResourceName().equals(sourceName))
+			
+			if(AbstractFragmentationQueryPartModificator.isSourceOperator(operator, sourceName))
 				continue;
-			else if (operator.isSinkOperator() && !operator.isSourceOperator())
+			else if(operator.isSinkOperator() && !operator.isSourceOperator())
 				continue;
 			else if(operator instanceof RenameAO) {
 				
 				Preconditions.checkArgument(operator.getSubscribedToSource().size() == 1, "RenameAO must have exact one subscription to source!");
 				final ILogicalOperator target = operator.getSubscribedToSource().iterator().next().getTarget();
 				
-				if(target instanceof AbstractAccessAO && ((AbstractAccessAO) target).getAccessAOName().getResourceName().equals(sourceName))
-					continue;
+				if(AbstractFragmentationQueryPartModificator.isOperatorRelevant(target, sourceName))
+					relevantOperators.add(operator);
 				
-			}
-			else if (AbstractFragmentationQueryPartModificator.isOperatorRelevant(operator, sourceName))
+			} else if(AbstractFragmentationQueryPartModificator.isOperatorRelevant(operator, sourceName))
 				relevantOperators.add(operator);
 
 		}
@@ -1219,12 +1248,12 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 		else if (sourceName == null)
 			throw new NullPointerException("Name of the source to be fragmented must be not null!");
 
-		if (operator.getSubscribedToSource().isEmpty() && operator instanceof AbstractAccessAO && ((AbstractAccessAO) operator).getAccessAOName().getResourceName().equals(sourceName))
+		if(AbstractFragmentationQueryPartModificator.isSourceOperator(operator, sourceName))
 			return true;
 
-		for (LogicalSubscription subToSource : operator.getSubscribedToSource()) {
+		for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
 
-			if (AbstractFragmentationQueryPartModificator.isOperatorRelevant(subToSource.getTarget(), sourceName))
+			if(AbstractFragmentationQueryPartModificator.isOperatorRelevant(subToSource.getTarget(), sourceName))
 				return true;
 
 		}
@@ -1292,7 +1321,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 	 * Determines the name of the source to be fragmented given by the user
 	 * (Odysseus script). <br />
 	 * #PEER_MODIFICATION <code>fragmentation-strategy-name</code>
-	 * <code>source-name</code> <code>degree</code>
+	 * <code>source-name</code> <code>degree</code> <br />
+	 * This name may be the name of an {@link AbstractAccessAO} or the unique ID of an operator.
 	 * 
 	 * @param modificatorParameters
 	 *            The parameters for the modification given by the user without

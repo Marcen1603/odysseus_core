@@ -17,10 +17,8 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
@@ -114,7 +112,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 
 		for (SDFAttribute attribute : aggregation.getGroupingAttributes()) {
 
-			if (attributes.get().contains(attribute.getAttributeName()))
+			if (attributes.get().contains(attribute.getSourceName() + "." + attribute.getAttributeName()))
 				return false;
 
 		}
@@ -424,9 +422,9 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 				Optional<ILogicalQueryPart> optPartOfOriginTarget = LogicalQueryHelper.determineQueryPart(modifiedCopiesToOrigin.keySet(), target);
 				if (!optPartOfOriginTarget.isPresent())
 					targets.add(target);
-				else if ((originSink instanceof AbstractAccessAO && ((AbstractAccessAO) originSink).getAccessAOName().getResourceName().equals(sourceName))
-						|| (originSink instanceof AbstractWindowAO && !((AbstractWindowAO) originSink).getWindowType().equals(WindowType.TIME))
-						|| originSink instanceof RenameAO) {
+				else if(AbstractFragmentationQueryPartModificator.isSourceOperator(originSink, sourceName) || 
+						(originSink instanceof AbstractWindowAO && !((AbstractWindowAO) originSink).getWindowType().equals(WindowType.TIME))) {
+					// Assumption: RenameAO has exact one input
 
 					LogicalSubscription subscription = new LogicalSubscription(originSink, subToSink.getSinkInPort(), subToSink.getSourceOutPort(), subToSink.getSchema());
 
