@@ -70,4 +70,8 @@ public class OperatorEstimatorRegistry {
 	public static IPhysicalOperatorEstimator<IPhysicalOperator> getStandardPhysicalOperatorEstimator() {
 		return PHYSICAL_STANDARD_ESTIMATOR;
 	}
+	
+	public static Collection<Class<? extends IPhysicalOperator>> getRegisteredPhysicalOperators() {
+		return PHYSICAL_ESTIMATORS.keySet();
+	}
 }

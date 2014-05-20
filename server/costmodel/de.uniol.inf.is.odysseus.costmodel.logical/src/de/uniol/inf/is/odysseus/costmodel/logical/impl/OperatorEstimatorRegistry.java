@@ -65,4 +65,8 @@ public class OperatorEstimatorRegistry {
 	public static ILogicalOperatorEstimator<ILogicalOperator> getStandardLogicalOperatorEstimator() {
 		return LOGICAL_STANDARD_ESTIMATOR;
 	}
+	
+	public static Collection<Class<? extends ILogicalOperator>> getRegisteredLogicalOperators() {
+		return LOGICAL_ESTIMATORS.keySet();
+	}
 }

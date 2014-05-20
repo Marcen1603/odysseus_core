@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
+import de.uniol.inf.is.odysseus.costmodel.physical.impl.OperatorEstimatorRegistry;
 
 public class PhysicalCostModelConsole implements CommandProvider {
 
@@ -48,6 +49,7 @@ public class PhysicalCostModelConsole implements CommandProvider {
 		
 		sb.append("---- Physical cost model ----\n");
 		sb.append("    estimatePhysical <queryID>          - Estimates the current costs for the logical query with the given id.\n");
+		sb.append("    listRegisteredPhysicalEstimators/ls - Lists all physical operators which have physical estimators.\n");
 		
 		return sb.toString();
 	}
@@ -97,5 +99,17 @@ public class PhysicalCostModelConsole implements CommandProvider {
 	
 	private static String format(Object text ) {
 		return String.format("%-6.4f", text);
+	}
+	
+	public void _lsRegisteredPhysicalEstimators( CommandInterpreter ci ) {
+		for( Class<? extends IPhysicalOperator> clazz : OperatorEstimatorRegistry.getRegisteredPhysicalOperators() ) {
+			System.out.println("\t" + clazz);
+		}
+	}
+	
+	public void _listRegisteredPhysicalEstimators( CommandInterpreter ci ) {
+		for( Class<? extends IPhysicalOperator> clazz : OperatorEstimatorRegistry.getRegisteredPhysicalOperators() ) {
+			System.out.println("\t" + clazz);
+		}
 	}
 }

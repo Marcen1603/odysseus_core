@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.costmodel.ICostModelKnowledge;
 import de.uniol.inf.is.odysseus.costmodel.IHistogram;
+import de.uniol.inf.is.odysseus.costmodel.NoSampling;
 import de.uniol.inf.is.odysseus.costmodel.impl.histogram.EqualWidthHistogram;
 import de.uniol.inf.is.odysseus.costmodel.impl.interval.FreedmanDiaconisRule;
 
@@ -107,7 +108,7 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 		Collection<ISource<? extends IStreamObject<?>>> sources = Lists.newArrayList();
 		
 		for( IPhysicalOperator operator : operators ) {
-			if( operator instanceof ISource && !(operator instanceof ISink)) {
+			if( operator instanceof ISource && !(operator instanceof ISink) && !operator.getClass().isAnnotationPresent(NoSampling.class)) {
 				@SuppressWarnings("unchecked")
 				ISource<? extends IStreamObject<?>> source = (ISource<? extends IStreamObject<?>>)operator;
 				sources.add(source);

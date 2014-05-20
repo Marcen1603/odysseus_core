@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
+import de.uniol.inf.is.odysseus.costmodel.logical.impl.OperatorEstimatorRegistry;
 
 public class LogicalCostModelConsole implements CommandProvider {
 
@@ -52,6 +53,7 @@ public class LogicalCostModelConsole implements CommandProvider {
 		
 		sb.append("---- Logical cost model ----\n");
 		sb.append("    estimateLogical <queryID>          - Estimates the current costs for the logical query with the given id.\n");
+		sb.append("    listRegisteredLogicalEstimators/ls - Lists all logical operators which have logical estimators.\n");
 		
 		return sb.toString();
 	}
@@ -125,6 +127,18 @@ public class LogicalCostModelConsole implements CommandProvider {
 			for (final LogicalSubscription subscription : currentOperator.getSubscribedToSource()) {
 				collectOperatorsImpl(subscription.getTarget(), list);
 			}
+		}
+	}
+	
+	public void _lsRegisteredLogicalEstimators( CommandInterpreter ci ) {
+		for( Class<? extends ILogicalOperator> clazz : OperatorEstimatorRegistry.getRegisteredLogicalOperators() ) {
+			System.out.println("\t" + clazz);
+		}
+	}
+	
+	public void _listRegisteredLogicalEstimators( CommandInterpreter ci ) {
+		for( Class<? extends ILogicalOperator> clazz : OperatorEstimatorRegistry.getRegisteredLogicalOperators() ) {
+			System.out.println("\t" + clazz);
 		}
 	}
 }
