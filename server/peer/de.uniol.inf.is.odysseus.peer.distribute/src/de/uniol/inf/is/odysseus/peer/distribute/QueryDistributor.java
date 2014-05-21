@@ -100,6 +100,10 @@ public class QueryDistributor implements IQueryDistributor {
 				LOG.error("Exception during transmission query parts. Trying to reallocate... try {}", tries);
 				allocationMap = QueryDistributorHelper.tryReallocate(config, allocators, allocationMap, faultyPeers);
 				allocationMapCopy = copyAllocationMap(allocationMap);
+				
+				QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMapCopy, config, postProcessors, query);
+
+				QueryPartSender.waitFor();				
 			}
 		}
 	}
