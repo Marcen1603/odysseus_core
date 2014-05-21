@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -221,11 +222,15 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	
 	@Override
 	public String getName() {
-		return super.getName() + " [" + determineDestinationPeerName() + "]";
+		return super.getName() + determineDestinationPeerName();
 	}
 	
 	private String determineDestinationPeerName() {
-		return P2PDictionary.getInstance().getRemotePeerName(toPeerID(peerIDString));
+		if( Strings.isNullOrEmpty(peerIDString)) {
+			return "";
+		}
+		
+		return " [" + P2PDictionary.getInstance().getRemotePeerName(toPeerID(peerIDString)) + "]";
 	}
 
 	protected static PeerID toPeerID(String peerIDString) {
