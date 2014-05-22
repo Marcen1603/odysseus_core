@@ -21,6 +21,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -33,13 +34,18 @@ import de.uniol.inf.is.odysseus.core.connection.IConnectionListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
-		implements IAccessConnectionListener<ByteBuffer>, IConnectionListener, IHasAlias {
+		implements IAccessConnectionListener<ByteBuffer>, IConnectionListener,
+		IHasAlias {
 
+	private static final String PORT = "port";
+	private static final Object MAX_BUFFER_SIZE = "maxbuffersize";
 	private int port;
 	List<ChannelHandlerContext> channels = new CopyOnWriteArrayList<>();
 	private MyTCPServer tcpServer = null;
 	static private MyTCPServer tcpServerStatic = null;
 	boolean shareTCPServer = true;
+	final List<byte[]> buffer = new LinkedList<>();
+	final int maxBufferSize;
 
 	/**
 	 * @return the tcpServer
@@ -65,32 +71,50 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	}
 
 	public NonBlockingTcpServerHandler_Netty(
-			IProtocolHandler<?> protocolHandler, int port) {
+			IProtocolHandler<?> protocolHandler, int port, int maxBufferSize) {
 		super(protocolHandler);
 		this.port = port;
+		this.maxBufferSize = maxBufferSize;
 	}
 
 	public NonBlockingTcpServerHandler_Netty() {
+		this.maxBufferSize = 0;
 	}
 
 	@Override
 	public void send(byte[] message) throws IOException {
+		// Buffer messages for later connecting clients
+		if (maxBufferSize > 0) {
+			synchronized (buffer) {
+				if (buffer.size() == maxBufferSize) {
+					buffer.remove(0);
+				}
+				buffer.add(message);
+			}
+		}
 		for (ChannelHandlerContext ctx : channels) {
-//			System.err.println(this + " Sending to "
-//					+ ctx.channel().remoteAddress());
-			final ByteBuf send = ctx.alloc().buffer(message.length);
-			send.writeBytes(message);
-			ctx.writeAndFlush(send);
+			send(message, ctx);
 		}
 
+	}
+
+	public void send(byte[] message, ChannelHandlerContext ctx) {
+		// System.err.println(this + " Sending to "
+		// + ctx.channel().remoteAddress());
+		final ByteBuf send = ctx.alloc().buffer(message.length);
+		send.writeBytes(message);
+		ctx.writeAndFlush(send);
 	}
 
 	@Override
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-		int port = options.containsKey("port") ? Integer.parseInt(options
-				.get("port")) : 8080;
-		NonBlockingTcpServerHandler_Netty result = new NonBlockingTcpServerHandler_Netty(protocolHandler, port);
+		int port = options.containsKey(PORT) ? Integer.parseInt(options
+				.get(PORT)) : 8080;
+		int maxBufferSize = options.containsKey(MAX_BUFFER_SIZE) ? Integer
+				.parseInt(options.get(MAX_BUFFER_SIZE)) : 0;
+		NonBlockingTcpServerHandler_Netty result = new NonBlockingTcpServerHandler_Netty(
+				protocolHandler, port, maxBufferSize);
 		result.setOptionsMap(options);
 		return result;
 	}
@@ -109,12 +133,12 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	public String getName() {
 		return "TCPServer";
 	}
-	
+
 	@Override
 	public String getAliasName() {
 		return "TCPServer2";
 	}
-	
+
 	@Override
 	public void notify(final IConnection connection,
 			final ConnectionMessageReason reason) {
@@ -178,19 +202,22 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 			e.printStackTrace();
 		}
 	}
-	
-    @Override
-    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
-    	if(!(o instanceof NonBlockingTcpServerHandler_Netty)) {
-    		return false;
-    	}
-    	NonBlockingTcpServerHandler_Netty other = (NonBlockingTcpServerHandler_Netty)o;
-    	if(this.port != other.port) {
-    		return false;
-    	}
-    	
-    	return true;
-    }
+
+	@Override
+	public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+		if (!(o instanceof NonBlockingTcpServerHandler_Netty)) {
+			return false;
+		}
+		NonBlockingTcpServerHandler_Netty other = (NonBlockingTcpServerHandler_Netty) o;
+		if (this.port != other.port) {
+			return false;
+		}
+		if (this.maxBufferSize != other.maxBufferSize) {
+			return false;
+		}
+
+		return true;
+	}
 
 	@Override
 	public void process(ByteBuffer buffer) throws ClassNotFoundException {
@@ -301,7 +328,16 @@ class MyTCPServer extends ChannelInboundHandlerAdapter {
 	 */
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-// 		System.err.println("Channel active " + ctx.channel().localAddress());
+		// System.err.println("Channel active " + ctx.channel().localAddress());
+		// Send cache elements to new connected receiver
+		if (getHandler(ctx).maxBufferSize > 0) {
+			synchronized (getHandler(ctx).buffer) {
+				for (byte[] message : getHandler(ctx).buffer) {
+					getHandler(ctx).send(message, ctx);
+				}
+			}
+		}
+
 		getHandler(ctx).channels.add(ctx);
 	}
 
@@ -314,7 +350,8 @@ class MyTCPServer extends ChannelInboundHandlerAdapter {
 	 */
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-//		System.err.println("Channel inactive " + ctx.channel().localAddress());
+		// System.err.println("Channel inactive " +
+		// ctx.channel().localAddress());
 		getHandler(ctx).channels.remove(ctx);
 	}
 
@@ -353,7 +390,7 @@ class ServerHandler extends ChannelInboundHandlerAdapter {
 	 */
 	public ServerHandler(MyTCPServer instance) {
 		this.instance = instance;
-		//System.err.println("New Server Handler created for " + instance);
+		// System.err.println("New Server Handler created for " + instance);
 	}
 
 	@Override
