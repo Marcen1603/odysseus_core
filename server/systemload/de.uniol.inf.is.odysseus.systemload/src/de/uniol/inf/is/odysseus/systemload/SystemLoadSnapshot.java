@@ -28,7 +28,7 @@ public final class SystemLoadSnapshot implements Serializable {
 		cpuLoad = cpuMax - SIGAR_WRAPPER.getCpuFree();
 		
 		memMax = RUNTIME.totalMemory();
-		memLoad = RUNTIME.freeMemory();
+		memLoad = RUNTIME.totalMemory() - RUNTIME.freeMemory();
 		
 		netMax = SIGAR_WRAPPER.getNetMax();
 		netInLoad = SIGAR_WRAPPER.getNetInputRate();

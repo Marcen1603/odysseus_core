@@ -96,6 +96,7 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable  {
 			if( sb.length() > 0 ) {
 				sb.append(delimiter);
 			}
+			sb.append(name).append(delimiter);
 			
 			List<SystemLoadSnapshot> loads = systemLoads.get(name).getSystemLoadSnapshots();
 			double cpu = 0;
@@ -149,6 +150,7 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable  {
 			if( sb.length() > 0 ) {
 				sb.append(delimiter);
 			}
+			sb.append("name").append(delimiter);
 
 			sb.append("cpu_").append(name).append(delimiter);
 			sb.append("cpumax_").append(name).append(delimiter);
