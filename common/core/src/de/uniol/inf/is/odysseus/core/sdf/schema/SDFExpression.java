@@ -516,4 +516,14 @@ public class SDFExpression implements Serializable, IClone {
 	private void setMetaAttribute(IMetaAttribute[] metaAttribute) {
 		this.metaAttribute = metaAttribute;
 	}
+
+	public boolean isAlwaysTrue() {
+		if (getMEPExpression() instanceof Constant){
+			Object o = getMEPExpression().getValue();
+			if (o instanceof Boolean){
+				return (boolean)o;
+			}
+		}
+		return false;
+	}
 }

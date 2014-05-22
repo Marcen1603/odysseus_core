@@ -48,7 +48,7 @@ public class RDeleteSelectionWithoutPredicate extends AbstractRewriteRule<Select
 
 	@Override
 	public boolean isExecutable(SelectAO sel, RewriteConfiguration transformConfig) {
-		return sel.getPredicate()==null;
+		return sel.getPredicate()==null ||  sel.getPredicate().isAlwaysTrue();
 	}
 
 	@Override

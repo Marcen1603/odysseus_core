@@ -67,4 +67,9 @@ public abstract class AbstractPredicate<T> implements IPredicate<T>, Serializabl
 		throw new IllegalArgumentException("Sorry. Not implemented for "+this.getClass());
 	}
 	
+	@Override
+	public boolean isAlwaysTrue() {
+		return false;
+	}
+	
 }

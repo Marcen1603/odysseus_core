@@ -81,4 +81,6 @@ public interface IPredicate<T> extends IClone, Serializable {
 	 */
 	@SuppressWarnings("rawtypes")
 	public List<IPredicate> conjunctiveSplit(boolean init);
+
+	public boolean isAlwaysTrue();
 }

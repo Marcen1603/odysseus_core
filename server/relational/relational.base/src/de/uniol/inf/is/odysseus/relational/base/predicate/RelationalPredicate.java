@@ -642,6 +642,11 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
     // result.add(this);
     // return result;
     // }
+    
+    @Override
+    public boolean isAlwaysTrue() {
+    	return expression.isAlwaysTrue();
+    }
 
     public static void main(String[] args) {
         SDFAttribute a = new SDFAttribute("", "p_out", SDFDatatype.DOUBLE, null, null, null);
