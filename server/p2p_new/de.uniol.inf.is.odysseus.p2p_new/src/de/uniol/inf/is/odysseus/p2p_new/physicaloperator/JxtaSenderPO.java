@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
+import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 
 public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> implements ITransmissionSenderListener {
 
@@ -42,6 +43,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	private final String peerIDString;
 	private final boolean writeResourceUsage;
 	private final PeerID localPeerID;
+	private final String localPeerName;
 	
 	private NullAwareTupleDataHandler dataHandler;
 
@@ -58,6 +60,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		writeResourceUsage = ao.isWriteResourceUsage();
 		
 		localPeerID = P2PNetworkManager.getInstance().getLocalPeerID();
+		localPeerName = P2PNetworkManager.getInstance().getLocalPeerName();
 
 		this.transmission = DataTransmissionManager.getInstance().registerTransmissionSender(peerIDString, pipeIDString);
 		this.transmission.addListener(this);
@@ -73,6 +76,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		this.pipeIDString = po.pipeIDString;
 		this.writeResourceUsage = po.writeResourceUsage;
 		this.localPeerID = po.localPeerID;
+		this.localPeerName = po.localPeerName;
 		
 		this.totalSendByteCount = po.totalSendByteCount;
 		this.uploadRateBytesPerSecond = po.uploadRateBytesPerSecond;
@@ -112,11 +116,12 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		ByteBuffer buffer = ByteBuffer.allocate(P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
 		dataHandler.writeData(buffer, object);
 		
-		if( writeResourceUsage ) {
-			// TODO: With metadata-object
-		}
-		
-		if (object.getMetadata() != null) {
+		Object metadata = object.getMetadata();
+		if (metadata != null) {
+			if( metadata instanceof ISystemLoad ) {
+				((ISystemLoad)metadata).addSystemLoad(localPeerName);
+			}
+			
 			byte[] metadataBytes = ObjectByteConverter.objectToBytes(object.getMetadata());
 			buffer.putInt(metadataBytes.length);
 			buffer.put(metadataBytes);

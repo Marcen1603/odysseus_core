@@ -26,6 +26,8 @@ import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiver;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiverListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
+import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
+import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 
 @SuppressWarnings("rawtypes")
 @NoSampling
@@ -37,6 +39,8 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	private final ITransmissionReceiver transmission;
 	private final String pipeIDString;
 	private final String peerIDString;
+	
+	private final String localPeerName;
 	
 	private long totalReceivedByteCount;
 	
@@ -52,6 +56,8 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		pipeIDString = ao.getPipeID();
 		peerIDString = ao.getPeerID();
 		
+		localPeerName = P2PNetworkManager.getInstance().getLocalPeerName();
+		
 		transmission = DataTransmissionManager.getInstance().registerTransmissionReceiver(peerIDString, pipeIDString);
 		transmission.addListener(this);
 		transmission.open();
@@ -65,6 +71,8 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		this.transmission = po.transmission;
 		this.pipeIDString = po.pipeIDString;
 		this.peerIDString = po.peerIDString;
+		
+		this.localPeerName = po.localPeerName;
 		
 		this.totalReceivedByteCount = po.totalReceivedByteCount;
 		this.downloadRateBytesPerSecond = po.downloadRateBytesPerSecond;
@@ -116,6 +124,12 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		}
 		
 		T streamObject = JxtaPOUtil.createStreamObject(ByteBuffer.wrap(data), dataHandler);
+		
+		Object metadata = streamObject.getMetadata();
+		if( metadata instanceof ISystemLoad ) {
+			((ISystemLoad)metadata).addSystemLoad(localPeerName);
+		}
+
 		if( streamObject != null ) {
 			transfer(streamObject);
 		}
