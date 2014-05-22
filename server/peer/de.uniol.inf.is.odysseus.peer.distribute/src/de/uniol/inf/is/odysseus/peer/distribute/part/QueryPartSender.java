@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -25,7 +26,10 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -502,23 +506,51 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 	private static void callExecutorToAddLocalQueries(ILogicalQuery query, ID sharedQueryID, IServerExecutor serverExecutor, ISession caller, QueryBuildConfiguration config, Collection<PeerID> slavePeers) throws QueryDistributionException {
 		try {
 			LOG.debug("Adding local query to serverExecutor now.");
-			
+
 			StringBuilder sb = new StringBuilder();
 			sb.append("#PARSER PQL\n");
-			sb.append("#METADATA IntervalLatency\n");
 			sb.append("#QNAME " + query.getName() + "\n");
 			sb.append("#ADDQUERY\n");
 			sb.append(query.getQueryText());
 			sb.append("\n");
 			String scriptText = sb.toString();
 
-			Collection<Integer> queryIDs = serverExecutor.addQuery(scriptText, "OdysseusScript", PeerDistributePlugIn.getActiveSession(), "Standard", Context.empty());
+			List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(serverExecutor, "Standard");
+			Optional<ParameterTransformationConfiguration> params = getParameterTransformationConfiguration(configuration);
+			if (params.isPresent()) {
+				ParameterTransformationConfiguration paramConfiguration = config.get(ParameterTransformationConfiguration.class);
+				Collection<String> metaTypes = paramConfiguration.getValue().getMetaTypes();
+
+				params.get().getValue().addTypes(Sets.newHashSet(metaTypes));
+			}
+			Collection<Integer> queryIDs = serverExecutor.addQuery(scriptText, "OdysseusScript", PeerDistributePlugIn.getActiveSession(), "Standard", Context.empty(), configuration);
 
 			QueryPartController.getInstance().registerAsMaster(query, queryIDs.iterator().next(), sharedQueryID, slavePeers);
 			LOG.debug("Local query added");
 		} catch (Throwable ex) {
 			throw new QueryDistributionException("Could not add local query to server executor", ex);
 		}
+	}
+	
+
+	private static List<IQueryBuildSetting<?>> determineQueryBuildSettings(IServerExecutor executor, String cfgName) {
+		final IQueryBuildConfigurationTemplate qbc = executor.getQueryBuildConfiguration(cfgName);
+		final List<IQueryBuildSetting<?>> configuration = qbc.getConfiguration();
+
+		final List<IQueryBuildSetting<?>> settings = Lists.newArrayList();
+		settings.addAll(configuration);
+		settings.add(ParameterDoRewrite.FALSE);
+		return settings;
+	}
+	
+	private static Optional<ParameterTransformationConfiguration> getParameterTransformationConfiguration(List<IQueryBuildSetting<?>> settings) {
+		for (IQueryBuildSetting<?> s : settings) {
+			if (s instanceof ParameterTransformationConfiguration) {
+				return Optional.of((ParameterTransformationConfiguration) s);
+			}
+		}
+
+		return Optional.absent();
 	}
 
 }
