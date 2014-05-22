@@ -105,7 +105,7 @@ public class IntervalLatency extends TimeInterval implements ILatency, ILatencyT
 	
 	@Override
 	public String getCSVHeader(char delimiter) {
-		return super.getCSVHeader(delimiter)+"+delimiter+"+this.latency.getCSVHeader(delimiter);
+		return super.getCSVHeader(delimiter)+delimiter+this.latency.getCSVHeader(delimiter);
 	}
 	
 	@Override
