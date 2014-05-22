@@ -5,6 +5,21 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.systemload
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.systemload.SystemLoadPlugIn
 Bundle-Vendor: Timo Michelsen
-Require-Bundle: org.eclipse.core.runtime
+Require-Bundle: org.eclipse.core.runtime,
+ com.google.guava;bundle-version="14.0.0",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.sigar;bundle-version="1.0.0",
+ sigar;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.transform;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
+Import-Package: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.metadata,
+ de.uniol.inf.is.odysseus.core.server.metadata,
+ de.uniol.inf.is.odysseus.core.server.planmanagement,
+ de.uniol.inf.is.odysseus.latency,
+ de.uniol.inf.is.odysseus.server.intervalapproach
+Service-Component: OSGI-INF/SystemLoadMetaAttribute.xml,OSGI-INF/TimeIntervalSystemLoadMetaAttribute.xml,
+ OSGI-INF/TimeIntervalLatencySystemLoadMetaAttribute.xml
+Export-Package: de.uniol.inf.is.odysseus.systemload
