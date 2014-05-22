@@ -64,7 +64,7 @@ public class StreamTableEditor implements IStreamEditorType {
 	private Label toolbarLabel;
 	private StreamEditor editor;
 
-	private List<Tuple<?>> tuples = new ArrayList<Tuple<?>>();
+	protected List<Tuple<?>> tuples = new ArrayList<Tuple<?>>();
 	private List<Integer> shownAttributes = new ArrayList<Integer>();
 	private int maxTuplesCount;
 	private Boolean isRefreshing = false;
@@ -110,10 +110,7 @@ public class StreamTableEditor implements IStreamEditorType {
 			return;
 		}
 
-		tuples.add(0, (Tuple<?>) element);
-		if (maxTuplesCount > 0 && tuples.size() > maxTuplesCount) {
-			tuples.remove(tuples.size() - 1);
-		}
+		updateTuples((Tuple<?>)element);
 
 		synchronized( isRefreshing ) {
 			if (!isDesync && !isRefreshing && hasTableViewer() && !getTableViewer().getTable().isDisposed()) {
@@ -136,6 +133,13 @@ public class StreamTableEditor implements IStreamEditorType {
 				});
 				editor.activateIfNeeded();
 			}
+		}
+	}
+
+	public void updateTuples(Tuple<?> element) {
+		tuples.add(0, element);
+		if (maxTuplesCount > 0 && tuples.size() > maxTuplesCount) {
+			tuples.remove(tuples.size() - 1);
 		}
 	}
 

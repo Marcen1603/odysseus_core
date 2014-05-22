@@ -39,6 +39,12 @@
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.TableInf"
             label="Table - Show all last elements">
       </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTableTimeEditor"
+            icon="icons/application-table.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.TableTime"
+            label="Table - Show last elements (time)">
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
