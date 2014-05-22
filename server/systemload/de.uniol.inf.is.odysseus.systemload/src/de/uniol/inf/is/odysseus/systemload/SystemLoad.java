@@ -118,14 +118,24 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable  {
 			
 			int count = loads.size();
 			
-			sb.append(TO_STRING_FORMATTER.format(cpu / count)).append(delimiter);
-			sb.append(TO_STRING_FORMATTER.format(cpuMax / count)).append(delimiter);
-			sb.append(TO_STRING_FORMATTER.format(mem / count)).append(delimiter);
-			sb.append(TO_STRING_FORMATTER.format(memMax / count)).append(delimiter);
-			sb.append(TO_STRING_FORMATTER.format(netin / count)).append(delimiter);
-			sb.append(TO_STRING_FORMATTER.format(netout / count)).append(delimiter);
-			sb.append(TO_STRING_FORMATTER.format(netmax / count));
-			
+			if( numberFormatter != null ) {
+				sb.append(numberFormatter.format(cpu / count)).append(delimiter);
+				sb.append(numberFormatter.format(cpuMax / count)).append(delimiter);
+				sb.append(numberFormatter.format(mem / count)).append(delimiter);
+				sb.append(numberFormatter.format(memMax / count)).append(delimiter);
+				sb.append(numberFormatter.format(netin / count)).append(delimiter);
+				sb.append(numberFormatter.format(netout / count)).append(delimiter);
+				sb.append(numberFormatter.format(netmax / count));
+
+			} else {
+				sb.append(TO_STRING_FORMATTER.format(cpu / count)).append(delimiter);
+				sb.append(TO_STRING_FORMATTER.format(cpuMax / count)).append(delimiter);
+				sb.append(TO_STRING_FORMATTER.format(mem / count)).append(delimiter);
+				sb.append(TO_STRING_FORMATTER.format(memMax / count)).append(delimiter);
+				sb.append(TO_STRING_FORMATTER.format(netin / count)).append(delimiter);
+				sb.append(TO_STRING_FORMATTER.format(netout / count)).append(delimiter);
+				sb.append(TO_STRING_FORMATTER.format(netmax / count));
+			}
 		}
 		
 		return sb.toString();
