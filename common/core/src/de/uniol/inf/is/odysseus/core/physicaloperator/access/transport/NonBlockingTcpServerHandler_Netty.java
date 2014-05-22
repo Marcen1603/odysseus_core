@@ -366,8 +366,9 @@ class MyTCPServer extends ChannelInboundHandlerAdapter {
 	public void channelRead(ChannelHandlerContext ctx, Object msg)
 			throws Exception {
 		try {
-			getHandler(ctx).process(
-					((UnpooledUnsafeDirectByteBuf) msg).nioBuffer());
+			ByteBuffer buffer = ((UnpooledUnsafeDirectByteBuf) msg).nioBuffer();
+			buffer.position(buffer.limit());
+			getHandler(ctx).process(buffer);
 		} finally {
 			ReferenceCountUtil.release(msg);
 		}
