@@ -238,8 +238,10 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 				}
 			}
 			
+			int remotePeerCount = p2pDictionary.getRemotePeerIDs().size();
+			
 			synchronized( usageCollector ) {
-				usageCollector.addStatistics(freeMemory, totalMemory, SIGAR_WRAPPER.getCpuFree(), SIGAR_WRAPPER.getCpuMax(), runningQueries, stoppedQueries, SIGAR_WRAPPER.getNetMax(), SIGAR_WRAPPER.getNetOutputRate(), SIGAR_WRAPPER.getNetInputRate());
+				usageCollector.addStatistics(freeMemory, totalMemory, SIGAR_WRAPPER.getCpuFree(), SIGAR_WRAPPER.getCpuMax(), runningQueries, stoppedQueries, remotePeerCount, SIGAR_WRAPPER.getNetMax(), SIGAR_WRAPPER.getNetOutputRate(), SIGAR_WRAPPER.getNetInputRate());
 			}
 		} catch (Throwable t) {
 			LOG.error("Cannot determine own resource usage", t);

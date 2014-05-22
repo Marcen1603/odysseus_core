@@ -362,6 +362,47 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 			}
 		};
 
+		/************* RemotePeerCount ****************/
+		TableViewerColumn remotePeerCountColumn = new TableViewerColumn(peersTable, SWT.NONE);
+		remotePeerCountColumn.getColumn().setText("#Peers");
+		remotePeerCountColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				Optional<IResourceUsage> optUsage = determineResourceUsage((PeerID) cell.getElement());
+				if (optUsage.isPresent()) {
+					IResourceUsage usage = optUsage.get();
+					cell.setText(String.valueOf(usage.getRemotePeerCount()));
+				} else {
+					cell.setText("<unknown>");
+				}
+
+				if (isLocalID((PeerID) cell.getElement())) {
+					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+				}
+
+			}
+		});
+		tableColumnLayout.setColumnData(remotePeerCountColumn.getColumn(), new ColumnWeightData(3, 25, true));
+		new ColumnViewerSorter(peersTable, remotePeerCountColumn) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				Optional<IResourceUsage> optUsage1 = determineResourceUsage((PeerID) e1);
+				Optional<IResourceUsage> optUsage2 = determineResourceUsage((PeerID) e2);
+
+				if (!optUsage1.isPresent() && !optUsage2.isPresent()) {
+					return 0;
+				} else if (!optUsage1.isPresent()) {
+					return 1;
+				} else if (!optUsage2.isPresent()) {
+					return -1;
+				}
+
+				IResourceUsage usage1 = optUsage1.get();
+				IResourceUsage usage2 = optUsage2.get();
+				return Integer.compare(usage1.getRemotePeerCount(), usage2.getRemotePeerCount());
+			}
+		};
+
 		/************* PeerID ****************/
 		TableViewerColumn peerIDColumn = new TableViewerColumn(peersTable, SWT.NONE);
 		peerIDColumn.getColumn().setText("PeerID");

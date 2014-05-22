@@ -14,6 +14,7 @@ public final class ResourceUsage implements IResourceUsage {
 	
 	private final int runningQueriesCount;
 	private final int stoppedQueriesCount;
+	private final int remotePeerCount;
 	
 	private final double netBandwidthMax;
 	private final double netOutputRate;
@@ -21,7 +22,7 @@ public final class ResourceUsage implements IResourceUsage {
 	
 	private final int[] version;
 
-	ResourceUsage(long memFreeBytes, long memMaxBytes, double cpuFree, double cpuMax, int runningQueriesCount, int stoppedQueriesCount, 
+	ResourceUsage(long memFreeBytes, long memMaxBytes, double cpuFree, double cpuMax, int runningQueriesCount, int stoppedQueriesCount, int remotePeerCount,
 			double netBandwidthMax, double netOutputRate, double netInputRate, int[] version ) {
 		
 		Preconditions.checkArgument(memFreeBytes >= 0, "Memory free bytes cannot be negative: %s", memFreeBytes);
@@ -36,6 +37,8 @@ public final class ResourceUsage implements IResourceUsage {
 		Preconditions.checkArgument(netOutputRate >= 0, "Network maximum bandwidth must be zero or positive");
 		Preconditions.checkArgument(netInputRate >= 0, "Network maximum bandwidth must be zero or positive");
 		
+		Preconditions.checkArgument(remotePeerCount >= 0, "Count of remote peers must be non-negative!");
+		
 		Preconditions.checkNotNull(version, "Version must not be null!");
 
 		this.memFreeBytes = memFreeBytes;
@@ -45,6 +48,7 @@ public final class ResourceUsage implements IResourceUsage {
 		
 		this.stoppedQueriesCount = stoppedQueriesCount;
 		this.runningQueriesCount = runningQueriesCount;
+		this.remotePeerCount = remotePeerCount;
 		
 		this.netBandwidthMax = netBandwidthMax;
 		this.netOutputRate = netOutputRate;
@@ -67,6 +71,7 @@ public final class ResourceUsage implements IResourceUsage {
 		netInputRate = copy.netInputRate;
 		netOutputRate = copy.netOutputRate;
 		version = copy.version;
+		remotePeerCount = copy.remotePeerCount;
 	}
 	
 	@Override
@@ -131,5 +136,10 @@ public final class ResourceUsage implements IResourceUsage {
 	@Override
 	public int[] getVersion() {
 		return version;
+	}
+	
+	@Override
+	public int getRemotePeerCount() {
+		return remotePeerCount;
 	}
 }

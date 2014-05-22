@@ -9,19 +9,20 @@ public final class ResourceUsageBytesConverter {
 	private ResourceUsageBytesConverter() {
 	}
 	
-	public static ByteBuffer toByteBuffer(IResourceUsage localUsage) {
-		ByteBuffer bb = ByteBuffer.allocate(80);
-		bb.putLong(localUsage.getMemFreeBytes());
-		bb.putLong(localUsage.getMemMaxBytes());
-		bb.putDouble(localUsage.getCpuFree());
-		bb.putDouble(localUsage.getCpuMax());
-		bb.putInt(localUsage.getRunningQueriesCount());
-		bb.putInt(localUsage.getStoppedQueriesCount());
-		bb.putDouble(localUsage.getNetBandwidthMax());
-		bb.putDouble(localUsage.getNetOutputRate());
-		bb.putDouble(localUsage.getNetInputRate());
+	public static ByteBuffer toByteBuffer(IResourceUsage resourceUsage) {
+		ByteBuffer bb = ByteBuffer.allocate(84);
+		bb.putLong(resourceUsage.getMemFreeBytes());
+		bb.putLong(resourceUsage.getMemMaxBytes());
+		bb.putDouble(resourceUsage.getCpuFree());
+		bb.putDouble(resourceUsage.getCpuMax());
+		bb.putInt(resourceUsage.getRunningQueriesCount());
+		bb.putInt(resourceUsage.getStoppedQueriesCount());
+		bb.putInt(resourceUsage.getRemotePeerCount());
+		bb.putDouble(resourceUsage.getNetBandwidthMax());
+		bb.putDouble(resourceUsage.getNetOutputRate());
+		bb.putDouble(resourceUsage.getNetInputRate());
 		
-		int[] version = localUsage.getVersion();
+		int[] version = resourceUsage.getVersion();
 		bb.putInt(version[0]);
 		bb.putInt(version[1]);
 		bb.putInt(version[2]);
@@ -38,6 +39,7 @@ public final class ResourceUsageBytesConverter {
 		double cpuMax = bb.getDouble();
 		int runQ = bb.getInt();
 		int stopQ = bb.getInt();
+		int remotePeerCount = bb.getInt();
 		double netMax = bb.getDouble();
 		double netOut = bb.getDouble();
 		double netIn = bb.getDouble();
@@ -48,6 +50,6 @@ public final class ResourceUsageBytesConverter {
 		version[2] = bb.getInt();
 		version[3] = bb.getInt();
 
-		return new ResourceUsage(memFree, memMax, cpuFree, cpuMax, runQ, stopQ, netMax, netOut, netIn, version);
+		return new ResourceUsage(memFree, memMax, cpuFree, cpuMax, runQ, stopQ, remotePeerCount, netMax, netOut, netIn, version);
 	}
 }

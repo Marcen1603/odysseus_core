@@ -28,6 +28,7 @@ public class UsageStatisticCollector {
 	private double cpuMax;
 	private int runningQueriesCount;
 	private int stoppedQueriesCount;
+	private int remotePeerCount;
 	private double netBandwidthMax;
 	
 	private int[] version;
@@ -39,7 +40,7 @@ public class UsageStatisticCollector {
 		return currentSession;
 	}
 	
-	public synchronized void addStatistics(long memFreeBytes, long memMaxBytes, double cpuFree, double cpuMax, int runningQueriesCount, int stoppedQueriesCount, double netBandwidthMax, double netOutputRate, double netInputRate) {
+	public synchronized void addStatistics(long memFreeBytes, long memMaxBytes, double cpuFree, double cpuMax, int runningQueriesCount, int stoppedQueriesCount, int remotePeerCount, double netBandwidthMax, double netOutputRate, double netInputRate) {
 		Preconditions.checkArgument(memFreeBytes >= 0, "Memory free bytes cannot be negative: %s", memFreeBytes);
 		Preconditions.checkArgument(memMaxBytes >= 0, "Memory max bytes cannot be negative: %s", memMaxBytes);
 		Preconditions.checkArgument(cpuFree >= 0, "Cpu free cannot be negative: %s", cpuFree);
@@ -61,6 +62,7 @@ public class UsageStatisticCollector {
 		this.cpuMax = cpuMax;
 		this.stoppedQueriesCount = stoppedQueriesCount;
 		this.runningQueriesCount = runningQueriesCount;
+		this.remotePeerCount = remotePeerCount;
 		this.netBandwidthMax = netBandwidthMax;
 	}
 	
@@ -74,7 +76,16 @@ public class UsageStatisticCollector {
 			}
 		}
 		
-		return new ResourceUsage((long) memFree.getAverage(), memMaxBytes, cpuFree.getAverage(), cpuMax, runningQueriesCount, stoppedQueriesCount, netBandwidthMax, netOutputRate.getAverage(), netInputRate.getAverage(), version);
+		return new ResourceUsage((long) memFree.getAverage(), 
+				memMaxBytes, cpuFree.getAverage(), 
+				cpuMax, 
+				runningQueriesCount, 
+				stoppedQueriesCount, 
+				remotePeerCount,
+				netBandwidthMax, 
+				netOutputRate.getAverage(), 
+				netInputRate.getAverage(), 
+				version);
 	}
 
 	private static int[] toVersionDigits(String versionString) {
