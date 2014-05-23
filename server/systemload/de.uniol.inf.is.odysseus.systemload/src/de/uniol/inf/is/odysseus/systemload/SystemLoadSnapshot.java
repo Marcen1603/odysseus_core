@@ -12,27 +12,23 @@ public final class SystemLoadSnapshot implements Serializable {
 	private final long timestamp;
 	
 	private final double cpuLoad;
-	private final double cpuMax;
-	
 	private final double memLoad;
-	private final double memMax;
-	
-	private final double netInLoad;
-	private final double netOutLoad;
-	private final double netMax;
+	private final double netLoad;
 	
 	public SystemLoadSnapshot() {
 		timestamp = System.nanoTime();
 		
-		cpuMax = SIGAR_WRAPPER.getCpuMax();
-		cpuLoad = cpuMax - SIGAR_WRAPPER.getCpuFree();
+		double cpuMax = SIGAR_WRAPPER.getCpuMax();
+		cpuLoad = ( cpuMax - SIGAR_WRAPPER.getCpuFree() ) / cpuMax;
 		
-		memMax = RUNTIME.totalMemory();
-		memLoad = RUNTIME.totalMemory() - RUNTIME.freeMemory();
+		double memMax = RUNTIME.totalMemory();
+		memLoad = ( memMax - RUNTIME.freeMemory() ) / memMax;
 		
-		netMax = SIGAR_WRAPPER.getNetMax();
-		netInLoad = SIGAR_WRAPPER.getNetInputRate();
-		netOutLoad = SIGAR_WRAPPER.getNetOutputRate();
+		double netMax = SIGAR_WRAPPER.getNetMax();
+		double netInLoad = SIGAR_WRAPPER.getNetInputRate();
+		double netOutLoad = SIGAR_WRAPPER.getNetOutputRate();
+		
+		netLoad = (netMax - netInLoad - netOutLoad ) / netMax;
 	}
 
 	public static Runtime getRuntime() {
@@ -51,29 +47,12 @@ public final class SystemLoadSnapshot implements Serializable {
 		return cpuLoad;
 	}
 
-	public double getCpuMax() {
-		return cpuMax;
-	}
-
 	public double getMemLoad() {
 		return memLoad;
 	}
 
-	public double getMemMax() {
-		return memMax;
+	public double getNetLoad() {
+		return netLoad;
 	}
-
-	public double getNetInLoad() {
-		return netInLoad;
-	}
-
-	public double getNetOutLoad() {
-		return netOutLoad;
-	}
-
-	public double getNetMax() {
-		return netMax;
-	}
-	
-	
 }
+	

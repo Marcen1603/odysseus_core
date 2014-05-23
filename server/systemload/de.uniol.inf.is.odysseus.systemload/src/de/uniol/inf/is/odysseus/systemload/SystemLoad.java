@@ -100,42 +100,26 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable  {
 			
 			List<SystemLoadSnapshot> loads = systemLoads.get(name).getSystemLoadSnapshots();
 			double cpu = 0;
-			double cpuMax = 0;
 			double mem = 0;
-			double memMax = 0;
-			double netin = 0;
-			double netout = 0;
-			double netmax = 0;
+			double net = 0;
 			
 			for( SystemLoadSnapshot load : loads ) {
 				cpu += load.getCpuLoad();
-				cpuMax += load.getCpuMax();
 				mem += load.getMemLoad();
-				memMax += load.getMemMax();
-				netin += load.getNetInLoad();
-				netout += load.getNetOutLoad();
-				netmax += load.getNetMax();
+				net += load.getNetLoad();
 			}
 			
 			int count = loads.size();
 			
 			if( numberFormatter != null ) {
 				sb.append(numberFormatter.format(cpu / count)).append(delimiter);
-				sb.append(numberFormatter.format(cpuMax / count)).append(delimiter);
 				sb.append(numberFormatter.format(mem / count)).append(delimiter);
-				sb.append(numberFormatter.format(memMax / count)).append(delimiter);
-				sb.append(numberFormatter.format(netin / count)).append(delimiter);
-				sb.append(numberFormatter.format(netout / count)).append(delimiter);
-				sb.append(numberFormatter.format(netmax / count));
+				sb.append(numberFormatter.format(net / count));
 
 			} else {
 				sb.append(TO_STRING_FORMATTER.format(cpu / count)).append(delimiter);
-				sb.append(TO_STRING_FORMATTER.format(cpuMax / count)).append(delimiter);
 				sb.append(TO_STRING_FORMATTER.format(mem / count)).append(delimiter);
-				sb.append(TO_STRING_FORMATTER.format(memMax / count)).append(delimiter);
-				sb.append(TO_STRING_FORMATTER.format(netin / count)).append(delimiter);
-				sb.append(TO_STRING_FORMATTER.format(netout / count)).append(delimiter);
-				sb.append(TO_STRING_FORMATTER.format(netmax / count));
+				sb.append(TO_STRING_FORMATTER.format(net / count));
 			}
 		}
 		
@@ -153,14 +137,8 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable  {
 			sb.append("name").append(delimiter);
 
 			sb.append("cpu_").append(name).append(delimiter);
-			sb.append("cpumax_").append(name).append(delimiter);
-
 			sb.append("mem_").append(name).append(delimiter);
-			sb.append("memmax_").append(name).append(delimiter);
-
-			sb.append("netin_").append(name).append(delimiter);
-			sb.append("netout_").append(name).append(delimiter);
-			sb.append("netmax_").append(name);
+			sb.append("net_").append(name);
 		}
 		
 		return sb.toString();
@@ -176,33 +154,21 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable  {
 			List<SystemLoadSnapshot> loads = systemLoads.get(name).getSystemLoadSnapshots();
 			sb.append(name).append("-[").append(loads.size()).append("]->{");
 			double cpu = 0;
-			double cpuMax = 0;
 			double mem = 0;
-			double memMax = 0;
-			double netin = 0;
-			double netout = 0;
-			double netmax = 0;
+			double net = 0;
 			
 			for( SystemLoadSnapshot load : loads ) {
 				cpu += load.getCpuLoad();
-				cpuMax += load.getCpuMax();
 				mem += load.getMemLoad();
-				memMax += load.getMemMax();
-				netin += load.getNetInLoad();
-				netout += load.getNetOutLoad();
-				netmax += load.getNetMax();
+				net += load.getNetLoad();
 			}
 			
 			int count = loads.size();
 			String delimiter = ",";
 			
 			sb.append("cpu=").append(TO_STRING_FORMATTER.format(cpu / count)).append(delimiter);
-			sb.append("cpuMax=").append(TO_STRING_FORMATTER.format(cpuMax / count)).append(delimiter);
 			sb.append("mem=").append(TO_STRING_FORMATTER.format(mem / count)).append(delimiter);
-			sb.append("memMax=").append(TO_STRING_FORMATTER.format(memMax / count)).append(delimiter);
-			sb.append("netin=").append(TO_STRING_FORMATTER.format(netin / count)).append(delimiter);
-			sb.append("netout=").append(TO_STRING_FORMATTER.format(netout / count)).append(delimiter);
-			sb.append("netMax=").append(TO_STRING_FORMATTER.format(netmax / count));
+			sb.append("netMax=").append(TO_STRING_FORMATTER.format(net / count));
 			
 			sb.append("}");
 		}	
