@@ -168,7 +168,7 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable  {
 			
 			sb.append("cpu=").append(TO_STRING_FORMATTER.format(cpu / count)).append(delimiter);
 			sb.append("mem=").append(TO_STRING_FORMATTER.format(mem / count)).append(delimiter);
-			sb.append("netMax=").append(TO_STRING_FORMATTER.format(net / count));
+			sb.append("net=").append(TO_STRING_FORMATTER.format(net / count));
 			
 			sb.append("}");
 		}	

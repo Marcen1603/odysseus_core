@@ -2,12 +2,14 @@ package de.uniol.inf.is.odysseus.systemload;
 
 import java.io.Serializable;
 
+import de.uniol.inf.is.odysseus.systemload.impl.BufferedSigarWrapper;
+
 public final class SystemLoadSnapshot implements Serializable {
 
 	private static final long serialVersionUID = 3828970167344397179L;
 	
 	private static final Runtime RUNTIME = Runtime.getRuntime();
-	private static final SigarWrapper SIGAR_WRAPPER = new SigarWrapper();
+	private static final BufferedSigarWrapper SIGAR_WRAPPER = new BufferedSigarWrapper();
 	
 	private final long timestamp;
 	
@@ -28,15 +30,11 @@ public final class SystemLoadSnapshot implements Serializable {
 		double netInLoad = SIGAR_WRAPPER.getNetInputRate();
 		double netOutLoad = SIGAR_WRAPPER.getNetOutputRate();
 		
-		netLoad = (netMax - netInLoad - netOutLoad ) / netMax;
+		netLoad = (netInLoad + netOutLoad ) / netMax;
 	}
 
 	public static Runtime getRuntime() {
 		return RUNTIME;
-	}
-
-	public static SigarWrapper getSigarWrapper() {
-		return SIGAR_WRAPPER;
 	}
 
 	public long getTimestamp() {
