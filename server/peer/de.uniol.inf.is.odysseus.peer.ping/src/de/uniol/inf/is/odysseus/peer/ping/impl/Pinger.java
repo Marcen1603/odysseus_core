@@ -134,8 +134,13 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 					}
 				}
 			} else {
-				synchronized (waitingPongMap) {
-					LOG.debug("No peers for pinging available. Waiting for {} pong messages...", waitingPongMap.size());
+				if( LOG.isDebugEnabled() ) {
+					synchronized (waitingPongMap) {
+						LOG.debug("No peers for pinging currently available.");
+						if( !waitingPongMap.isEmpty() ) {
+							LOG.debug("Waiting for {} pong messages...", waitingPongMap.size());
+						}
+					}
 				}
 			}
 		} catch (PeerCommunicationException e) {
