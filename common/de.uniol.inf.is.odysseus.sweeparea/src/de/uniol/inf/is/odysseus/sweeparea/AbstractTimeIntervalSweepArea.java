@@ -56,6 +56,7 @@ public abstract class AbstractTimeIntervalSweepArea<T extends IStreamObject<? ex
 		while (li.hasPrevious()) {
 			if (this.comparator.compare(li.previous(), element) <= 0) {
 				li.next();
+				setLatestTimeStamp(element);
 				li.add(element);
 				return;
 			}
