@@ -349,7 +349,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		try {
 			for (IOperatorOwner o: forOwners){
 				Integer count = openFor.get(o);
-				if (o == null){
+				if (count == null){
 					throw new IllegalArgumentException("Call from not opened sink");
 				}else{
 					if (count == 1){
