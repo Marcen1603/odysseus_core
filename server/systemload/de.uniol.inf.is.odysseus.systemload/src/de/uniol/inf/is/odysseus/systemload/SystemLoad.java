@@ -30,7 +30,9 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable  {
 	}
 	
 	public SystemLoad( SystemLoad copy ) {
-		systemLoads.putAll(copy.systemLoads);
+		for( String name : copy.systemLoads.keySet() ) {
+			systemLoads.put(name, copy.systemLoads.get(name).clone());
+		}
 	}
 	
 	@Override

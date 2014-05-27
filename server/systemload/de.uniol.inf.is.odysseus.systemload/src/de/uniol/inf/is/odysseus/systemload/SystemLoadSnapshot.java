@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import de.uniol.inf.is.odysseus.systemload.impl.BufferedSigarWrapper;
 
-public final class SystemLoadSnapshot implements Serializable {
+public final class SystemLoadSnapshot implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 3828970167344397179L;
 	
@@ -33,6 +33,13 @@ public final class SystemLoadSnapshot implements Serializable {
 		netLoad = (netInLoad + netOutLoad ) / netMax;
 	}
 
+	public SystemLoadSnapshot(SystemLoadSnapshot copy) {
+		timestamp = copy.timestamp;
+		cpuLoad = copy.cpuLoad;
+		memLoad = copy.memLoad;
+		netLoad = copy.netLoad;
+	}
+
 	public static Runtime getRuntime() {
 		return RUNTIME;
 	}
@@ -51,6 +58,11 @@ public final class SystemLoadSnapshot implements Serializable {
 
 	public double getNetLoad() {
 		return netLoad;
+	}
+	
+	@Override
+	public SystemLoadSnapshot clone() {
+		return new SystemLoadSnapshot(this);
 	}
 }
 	

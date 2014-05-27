@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-public final class SystemLoadEntry implements Serializable {
+public final class SystemLoadEntry implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 7962567634409661546L;
 	
@@ -20,6 +20,13 @@ public final class SystemLoadEntry implements Serializable {
 		this.name = name;
 	}
 	
+	public SystemLoadEntry(SystemLoadEntry copy) {
+		this.name = copy.name;
+		for( SystemLoadSnapshot shot : copy.loads ) {
+			this.loads.add(shot.clone());
+		}
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -34,5 +41,10 @@ public final class SystemLoadEntry implements Serializable {
 	
 	public List<SystemLoadSnapshot> getSystemLoadSnapshots() {
 		return loads;
+	}
+	
+	@Override
+	public SystemLoadEntry clone() {
+		return new SystemLoadEntry(this);
 	}
 }
