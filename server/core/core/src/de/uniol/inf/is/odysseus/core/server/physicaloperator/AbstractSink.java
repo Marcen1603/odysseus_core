@@ -290,6 +290,11 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	public boolean isOpen() {
 		return this.sinkOpen.get();
 	}
+	
+	@Override
+	public boolean isOpenFor(IOperatorOwner owner) {
+		return openFor.containsKey(owner);
+	}
 
 	// ------------------------------------------------------------------------
 	// PROCESS

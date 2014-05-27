@@ -497,7 +497,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 			// since if an operator is already closed, the
 			// following sources will not be called any more.
 			if (curRoot.isSink()) {
-				if (curRoot.isOpen()) {
+				if (((ISink<?>)curRoot).isOpenFor(this)) {
 					((ISink<?>) curRoot).close(this);
 				}
 			} else {

@@ -205,7 +205,12 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	public boolean isOpen() {
 		return super.isOpen() || this.delegateSink.sinkIsOpen();
 	}
-
+	
+	@Override
+	public boolean isOpenFor(IOperatorOwner owner) {
+		return this.delegateSink.isOpenFor(owner);
+	}
+	
 	@Override
 	protected void process_open() throws OpenFailedException {
 	}

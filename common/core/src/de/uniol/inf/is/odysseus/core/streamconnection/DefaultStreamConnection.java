@@ -604,5 +604,10 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public boolean isOpenFor(IOperatorOwner owner) {
+		return false;
+	}
 
 }
