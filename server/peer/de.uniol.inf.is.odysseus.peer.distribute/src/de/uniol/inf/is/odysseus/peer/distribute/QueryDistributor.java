@@ -82,28 +82,30 @@ public class QueryDistributor implements IQueryDistributor {
 			QueryPartSender.waitFor();
 			
 			List<PeerID> faultyPeers = Lists.newArrayList();
-			int tries = 0;
-			try {
-				QueryPartSender.getInstance().transmit(allocationMapCopy, serverExecutor, caller, query.getName(), config);
-			} catch( QueryPartTransmissionException ex ) {
-				tries++;
-				if( tries == MAX_TRANSMISSION_TRIES ) {
-					throw new QueryDistributionException("Could not distribute query even after " + tries + " tries. See previous errors for details.");
-				}
-				
-				for( PeerID faultyPeer : ex.getFaultyPeers() ) {
-					if( !faultyPeers.contains(faultyPeer)) {
-						faultyPeers.add(faultyPeer);
+			
+			while( true ) {
+				int tries = 0;
+				try {
+					QueryPartSender.getInstance().transmit(allocationMapCopy, serverExecutor, caller, query.getName(), config);
+					break;
+				} catch( QueryPartTransmissionException ex ) {
+					tries++;
+					if( tries == MAX_TRANSMISSION_TRIES ) {
+						throw new QueryDistributionException("Could not distribute query even after " + tries + " tries. See previous errors for details.");
 					}
+					
+					for( PeerID faultyPeer : ex.getFaultyPeers() ) {
+						if( !faultyPeers.contains(faultyPeer)) {
+							faultyPeers.add(faultyPeer);
+						}
+					}
+					
+					LOG.error("Exception during transmission query parts. Trying to reallocate... try {}", tries);
+					allocationMap = QueryDistributorHelper.tryReallocate(config, allocators, allocationMap, faultyPeers);
+					allocationMapCopy = copyAllocationMap(allocationMap);
+					
+					QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMapCopy, config, postProcessors, query);
 				}
-				
-				LOG.error("Exception during transmission query parts. Trying to reallocate... try {}", tries);
-				allocationMap = QueryDistributorHelper.tryReallocate(config, allocators, allocationMap, faultyPeers);
-				allocationMapCopy = copyAllocationMap(allocationMap);
-				
-				QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMapCopy, config, postProcessors, query);
-
-				QueryPartSender.waitFor();				
 			}
 		}
 	}
