@@ -81,10 +81,10 @@ public class QueryDistributor implements IQueryDistributor {
 
 			QueryPartSender.waitFor();
 			
-			List<PeerID> faultyPeers = Lists.newArrayList();
+			List<PeerID> faultyPeers = Lists.newArrayList();		
+			int tries = 0;
 			
 			while( true ) {
-				int tries = 0;
 				try {
 					QueryPartSender.getInstance().transmit(allocationMapCopy, serverExecutor, caller, query.getName(), config);
 					break;
