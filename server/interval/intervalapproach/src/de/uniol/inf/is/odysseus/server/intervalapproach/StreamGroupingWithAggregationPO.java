@@ -296,8 +296,8 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	@Override
 	public synchronized void processPunctuation(IPunctuation punctuation,
 			int port) {
-		createOutput(punctuation.getTime());
 		transferArea.sendPunctuation(punctuation, port);
+		createOutput(punctuation.getTime());
 	}
 
 }
