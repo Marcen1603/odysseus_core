@@ -164,6 +164,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 	}
 
 	public void transmit(Map<ILogicalQueryPart, PeerID> allocationMap, IServerExecutor serverExecutor, ISession caller, String queryName, QueryBuildConfiguration config) throws QueryPartTransmissionException {
+		LOG.debug("Beginning transmission...");
 		ID sharedQueryID = IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
 
 		insertJxtaOperators(allocationMap);
@@ -189,6 +190,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		} else {
 			LOG.debug("No local query part of query remains.");
 		}
+		LOG.debug("Transmission finished");
 	}
 
 	private static Collection<ILogicalQueryPart> determineLocalQueryParts(Map<ILogicalQueryPart, PeerID> allocationMap) {

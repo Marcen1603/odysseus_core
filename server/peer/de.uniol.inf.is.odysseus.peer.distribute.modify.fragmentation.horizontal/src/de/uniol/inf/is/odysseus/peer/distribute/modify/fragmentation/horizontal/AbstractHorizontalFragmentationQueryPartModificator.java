@@ -124,7 +124,8 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 	protected Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> insertOperatorForReunion(ILogicalQueryPart originPart, Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin, ILogicalOperator originSink,
 			Collection<ILogicalOperator> copiesOfOriginSink, Optional<LogicalSubscription> optSubscription, Collection<ILogicalOperator> targets,
 			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation, 
-			Collection<ILogicalOperator> historyOfOperatorsForReunion, List<String> modificationParameters) throws NullPointerException, QueryPartModificationException {
+			Collection<ILogicalOperator> historyOfOperatorsForReunion, Optional<ILogicalQueryPart> originPartOfTarget, 
+			List<ILogicalQueryPart> queryPartsOfCopiedTargets, List<String> modificationParameters) throws NullPointerException, QueryPartModificationException {
 
 		// Preconditions
 		if (originPart == null)
@@ -171,6 +172,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 
 		Collection<ILogicalOperator> operatorsOfReunionPart = Lists.newArrayList(operatorForReunion);
 		ILogicalOperator lastOperatorOfReunionPart = operatorForReunion;
+		historyOfOperatorsForReunion.add(operatorForReunion);
 
 		// Handling of aggregations
 		Optional<AggregateAO> optAggregation = this.handleAggregation(originPart, modifiedCopiesToOrigin, modificationParameters);
@@ -188,14 +190,37 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			lastOperatorOfReunionPart.subscribeSink(target, sinkInPort, 0, schema);
 
 		AbstractHorizontalFragmentationQueryPartModificator.log.debug("Inserted an operator for reunion between {} and {}", copiesOfOriginSink, targets);
+		
+		if(targets.size() == 1 && originPartOfTarget.isPresent() && !queryPartsOfCopiedTargets.isEmpty()) {
+			
+			final ILogicalQueryPart partOfCopiedTarget = queryPartsOfCopiedTargets.get(0);
+		
+			// Create modified query part
+			Collection<ILogicalOperator> operatorsWithReunion = Lists.newArrayList(partOfCopiedTarget.getOperators());
+			operatorsWithReunion.add(operatorForReunion);
+			Collection<ILogicalQueryPart> modifiedQueryParts = Lists.newArrayList();
+			for(ILogicalQueryPart part : modifiedCopiesToOrigin.get(originPartOfTarget.get())) {
+				
+				if(!part.equals(partOfCopiedTarget))
+					modifiedQueryParts.add(part);
+				
+			}
+				
+			ILogicalQueryPart reunionPart = new LogicalQueryPart(operatorsWithReunion);
+			modifiedQueryParts.add(reunionPart);
+			modifiedCopiesToOrigin.put(originPartOfTarget.get(), modifiedQueryParts);
+			modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.unionPartOfFragmentationWithGivenPart(originPartOfTarget.get(), modifiedCopiesToOrigin, operatorForReunion, historyOfOperatorsForFragmentation);
+			
+		} else {
 
-		// Create the query part for the operator for reunion
-		historyOfOperatorsForReunion.add(operatorForReunion);
-		ILogicalQueryPart reunionPart = new LogicalQueryPart(operatorsOfReunionPart);
-		Collection<ILogicalQueryPart> copiesOfReunionPart = Lists.newArrayList(reunionPart);
-		modifiedCopiesToOrigin.put(reunionPart, copiesOfReunionPart);
-
-		modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.unionPartOfFragmentationWithGivenPart(reunionPart, modifiedCopiesToOrigin, originSink, historyOfOperatorsForFragmentation);
+			// Create the query part for the operator for reunion
+			ILogicalQueryPart reunionPart = new LogicalQueryPart(operatorsOfReunionPart);
+			Collection<ILogicalQueryPart> copiesOfReunionPart = Lists.newArrayList(reunionPart);
+			modifiedCopiesToOrigin.put(reunionPart, copiesOfReunionPart);
+			modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.unionPartOfFragmentationWithGivenPart(reunionPart, modifiedCopiesToOrigin, operatorForReunion, historyOfOperatorsForFragmentation);
+			
+		}
+		
 		return modifiedCopiesToOrigin;
 
 	}

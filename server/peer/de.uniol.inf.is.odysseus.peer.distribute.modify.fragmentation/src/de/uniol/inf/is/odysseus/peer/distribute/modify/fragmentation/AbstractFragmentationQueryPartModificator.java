@@ -682,12 +682,17 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 
 			Collection<ILogicalOperator> copiedSinks = copiedToOriginSinks.get(originSink);
 			Collection<ILogicalOperator> targets = Lists.newArrayList();
+			Optional<ILogicalQueryPart> queryPartOfOriginTarget = Optional.absent();
+			List<ILogicalQueryPart> queryPartsOfCopiedTargets = Lists.newArrayList();
 
 			if (originSink.getSubscriptions().isEmpty()) {
 
 				Optional<LogicalSubscription> optSubscription = Optional.absent();
 
-				modifiedCopiesToOrigin = this.insertOperatorForReunion(originPart, modifiedCopiesToOrigin, originSink, copiedSinks, optSubscription, targets, historyOfOperatorsForFragmentation, historyOfOperatorsForReunion, modificationParameters);
+				modifiedCopiesToOrigin = this.insertOperatorForReunion(
+						originPart, modifiedCopiesToOrigin, originSink, copiedSinks, optSubscription, targets, 
+						historyOfOperatorsForFragmentation, historyOfOperatorsForReunion, 
+						queryPartOfOriginTarget, queryPartsOfCopiedTargets, modificationParameters);
 
 			} else {
 
@@ -698,12 +703,14 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 					if (originPart.getOperators().contains(target))
 						continue;
 
-					Optional<ILogicalQueryPart> optPartOfTarget = LogicalQueryHelper.determineQueryPart(modifiedCopiesToOrigin.keySet(), target);
-					if (optPartOfTarget.isPresent()) {
+					queryPartOfOriginTarget = LogicalQueryHelper.determineQueryPart(modifiedCopiesToOrigin.keySet(), target);
+					
+					if (queryPartOfOriginTarget.isPresent()) {
 
-						targets.addAll(LogicalQueryHelper.collectCopies(optPartOfTarget.get(), modifiedCopiesToOrigin.get(optPartOfTarget.get()), target));
+						queryPartsOfCopiedTargets = (List<ILogicalQueryPart>) modifiedCopiesToOrigin.get(queryPartOfOriginTarget.get());
+						targets.addAll(LogicalQueryHelper.collectCopies(queryPartOfOriginTarget.get(), modifiedCopiesToOrigin.get(queryPartOfOriginTarget.get()), target));
 
-						if (partsToBeFragmented.contains(optPartOfTarget.get())) {
+						if (partsToBeFragmented.contains(queryPartOfOriginTarget.get())) {
 
 							LogicalSubscription subscription = new LogicalSubscription(originSink, subToSink.getSinkInPort(), subToSink.getSourceOutPort(), subToSink.getSchema());
 
@@ -733,7 +740,10 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 						targets.add(target);
 					}
 
-					modifiedCopiesToOrigin = this.insertOperatorForReunion(originPart, modifiedCopiesToOrigin, originSink, copiedSinks, Optional.of(subToSink), targets, historyOfOperatorsForFragmentation, historyOfOperatorsForReunion, modificationParameters);
+					modifiedCopiesToOrigin = this.insertOperatorForReunion(
+							originPart, modifiedCopiesToOrigin, originSink, copiedSinks, Optional.of(subToSink), targets, 
+							historyOfOperatorsForFragmentation, historyOfOperatorsForReunion, 
+							queryPartOfOriginTarget, queryPartsOfCopiedTargets, modificationParameters);
 
 				}
 
@@ -823,7 +833,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 	protected Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> insertOperatorForReunion(ILogicalQueryPart originPart, Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin, ILogicalOperator originSink,
 			Collection<ILogicalOperator> copiesOfOriginSink, Optional<LogicalSubscription> optSubscription, Collection<ILogicalOperator> targets,
 			Map<ILogicalOperator, Collection<IPair<ILogicalOperator, LogicalSubscription>>> historyOfOperatorsForFragmentation, 
-			Collection<ILogicalOperator> historyOfOperatorsForReunion, List<String> modificationParameters) throws NullPointerException, QueryPartModificationException {
+			Collection<ILogicalOperator> historyOfOperatorsForReunion, Optional<ILogicalQueryPart> originPartOfTarget, 
+			List<ILogicalQueryPart> queryPartsOfCopiedTargets, List<String> modificationParameters) throws NullPointerException, QueryPartModificationException {
 
 		// Preconditions
 		if (originPart == null)
@@ -875,14 +886,38 @@ public abstract class AbstractFragmentationQueryPartModificator implements IQuer
 			operatorForReunion.subscribeSink(target, sinkInPort, 0, schema);
 
 		AbstractFragmentationQueryPartModificator.log.debug("Inserted an operator for reunion between {} and {}", copiesOfOriginSink, targets);
-
-		// Create the query part for the operator for reunion
 		historyOfOperatorsForReunion.add(operatorForReunion);
-		ILogicalQueryPart reunionPart = new LogicalQueryPart(operatorForReunion);
-		Collection<ILogicalQueryPart> copiesOfReunionPart = Lists.newArrayList(reunionPart);
-		modifiedCopiesToOrigin.put(reunionPart, copiesOfReunionPart);
+		
+		if(targets.size() == 1 && originPartOfTarget.isPresent() && !queryPartsOfCopiedTargets.isEmpty()) {
+			
+			final ILogicalQueryPart partOfCopiedTarget = queryPartsOfCopiedTargets.get(0);
+		
+			// Create modified query part
+			Collection<ILogicalOperator> operatorsWithReunion = Lists.newArrayList(partOfCopiedTarget.getOperators());
+			operatorsWithReunion.add(operatorForReunion);
+			Collection<ILogicalQueryPart> modifiedQueryParts = Lists.newArrayList();
+			for(ILogicalQueryPart part : modifiedCopiesToOrigin.get(originPartOfTarget.get())) {
+				
+				if(!part.equals(partOfCopiedTarget))
+					modifiedQueryParts.add(part);
+				
+			}
+				
+			ILogicalQueryPart reunionPart = new LogicalQueryPart(operatorsWithReunion);
+			modifiedQueryParts.add(reunionPart);
+			modifiedCopiesToOrigin.put(originPartOfTarget.get(), modifiedQueryParts);
+			modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.unionPartOfFragmentationWithGivenPart(reunionPart, modifiedCopiesToOrigin, operatorForReunion, historyOfOperatorsForFragmentation);
+			
+		} else {
 
-		modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.unionPartOfFragmentationWithGivenPart(reunionPart, modifiedCopiesToOrigin, operatorForReunion, historyOfOperatorsForFragmentation);
+			// Create the query part for the operator for reunion
+			ILogicalQueryPart reunionPart = new LogicalQueryPart(operatorForReunion);
+			Collection<ILogicalQueryPart> copiesOfReunionPart = Lists.newArrayList(reunionPart);
+			modifiedCopiesToOrigin.put(reunionPart, copiesOfReunionPart);
+			modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.unionPartOfFragmentationWithGivenPart(reunionPart, modifiedCopiesToOrigin, operatorForReunion, historyOfOperatorsForFragmentation);
+			
+		}
+		
 		return modifiedCopiesToOrigin;
 
 	}
