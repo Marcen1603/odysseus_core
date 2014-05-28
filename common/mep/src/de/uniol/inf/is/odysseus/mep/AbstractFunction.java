@@ -64,14 +64,14 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		}
 	}
 
-	@Deprecated
-	public AbstractFunction(String symbol, int arity,
-			SDFDatatype[] acceptedTypes, SDFDatatype returnType) {
-		this(symbol, arity, null, acceptedTypes, returnType, true);
-		if (optimizeConstantParameter == true && arity == 0) {
-			LOG.warn("This function will be precompiled and creates the same value in each run.");
-		}
-	}
+//	@Deprecated
+//	public AbstractFunction(String symbol, int arity,
+//			SDFDatatype[] acceptedTypes, SDFDatatype returnType) {
+//		this(symbol, arity, null, acceptedTypes, returnType, true);
+//		if (optimizeConstantParameter == true && arity == 0) {
+//			LOG.warn("This function will be precompiled and creates the same value in each run.");
+//		}
+//	}
 
 	public AbstractFunction(String symbol, int arity,
 			SDFDatatype[][] acceptedTypes, SDFDatatype returnType,

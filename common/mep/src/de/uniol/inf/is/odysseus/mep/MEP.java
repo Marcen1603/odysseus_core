@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
 
+import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
@@ -140,6 +141,7 @@ import de.uniol.inf.is.odysseus.mep.functions.time.SecondStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.SecondsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.StreamDateFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.StreamDateFunction2;
+import de.uniol.inf.is.odysseus.mep.functions.time.StreamTimeFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.SysDateFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.TimestampFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.WeekFunction;
@@ -174,363 +176,378 @@ import de.uniol.inf.is.odysseus.mep.impl.SimpleNode;
 
 public class MEP implements IExpressionParser {
 
-    volatile protected static Logger _logger = null;
+	volatile protected static Logger _logger = null;
 
-    protected synchronized static Logger getLogger() {
-        if (_logger == null) {
-            _logger = LoggerFactory.getLogger(MEP.class);
-        }
-        return _logger;
-    }
+	protected synchronized static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(MEP.class);
+		}
+		return _logger;
+	}
 
-    static MEP instance = new MEP();
+	static MEP instance = new MEP();
 
-    public static MEP getInstance() {
-        return instance;
-    }
+	public static MEP getInstance() {
+		return instance;
+	}
 
-    @Override
-    public IExpression<?> parse(String expressionStr) throws ParseException {
-    	return parse(expressionStr, (List<SDFSchema>) null);
-    }
-    
-    @Override
-    public IExpression<?> parse(String expressionStr, List<SDFSchema> schema) throws ParseException {
-    	
-        MEPImpl impl = new MEPImpl(new StringReader(expressionStr));
-        SimpleNode expressionNode;
-        try {
-            expressionNode = impl.Expression();
-        }
-        catch (Exception e) {
-            throw new de.uniol.inf.is.odysseus.core.mep.ParseException(e);
-        }
-        ExpressionBuilderVisitor builder = new ExpressionBuilderVisitor(schema);
-        IExpression<?> expression = (IExpression<?>) expressionNode.jjtAccept(builder, null);
-        return ExpressionOptimizer.simplifyExpression(expression);
-    }
-    
-    @Override
-    public IExpression<?> parse(String expressionStr, SDFSchema schema) throws ParseException {
-    	
-        MEPImpl impl = new MEPImpl(new StringReader(expressionStr));
-        SimpleNode expressionNode;
-        try {
-            expressionNode = impl.Expression();
-        }
-        catch (Exception e) {
-            throw new de.uniol.inf.is.odysseus.core.mep.ParseException(e);
-        }
-        ExpressionBuilderVisitor builder = new ExpressionBuilderVisitor(schema);
-        IExpression<?> expression = (IExpression<?>) expressionNode.jjtAccept(builder, null);
-        return ExpressionOptimizer.simplifyExpression(expression);
-    }
+	@Override
+	public IExpression<?> parse(String expressionStr) throws ParseException {
+		return parse(expressionStr, (List<SDFSchema>) null);
+	}
 
-    private static Map<FunctionSignature, IFunction<?>> functions     = new HashMap<FunctionSignature, IFunction<?>>();
-    private static FunctionStore                        functionStore = FunctionStore.getInstance();
-    static {
-    	
-        getLogger().debug("Register Base Function");
-        /** Boolean Functions */
-        registerFunction(new AndOperator());
-        registerFunction(new OrOperator());
-        registerFunction(new XorOperator());
+	@Override
+	public IExpression<?> parse(String expressionStr, List<SDFSchema> schema)
+			throws ParseException {
 
-        registerFunction(new EqualsOperator());
-        registerFunction(new EqualsOperator2());
-        registerFunction(new NotEqualsOperator());
-        registerFunction(new NotEqualsOperator2());
-        registerFunction(new NotEqualsStringOperator());
-        registerFunction(new NotEqualsStringOperator2());
+		MEPImpl impl = new MEPImpl(new StringReader(expressionStr));
+		SimpleNode expressionNode;
+		try {
+			expressionNode = impl.Expression();
+		} catch (Exception e) {
+			throw new de.uniol.inf.is.odysseus.core.mep.ParseException(e);
+		}
+		ExpressionBuilderVisitor builder = new ExpressionBuilderVisitor(schema);
+		IExpression<?> expression = (IExpression<?>) expressionNode.jjtAccept(
+				builder, null);
+		return ExpressionOptimizer.simplifyExpression(expression);
+	}
 
-        /** Math Functions */
-        registerFunction(new GreaterThanOperator());
-        registerFunction(new SmallerThanOperator());
-        registerFunction(new GreaterEqualsOperator());
-        registerFunction(new SmallerEqualsOperator());
+	@Override
+	public IExpression<?> parse(String expressionStr, SDFSchema schema)
+			throws ParseException {
 
-        registerFunction(new PlusOperator());
-        registerFunction(new MinusOperator());
+		MEPImpl impl = new MEPImpl(new StringReader(expressionStr));
+		SimpleNode expressionNode;
+		try {
+			expressionNode = impl.Expression();
+		} catch (Exception e) {
+			throw new de.uniol.inf.is.odysseus.core.mep.ParseException(e);
+		}
+		ExpressionBuilderVisitor builder = new ExpressionBuilderVisitor(schema);
+		IExpression<?> expression = (IExpression<?>) expressionNode.jjtAccept(
+				builder, null);
+		return ExpressionOptimizer.simplifyExpression(expression);
+	}
 
-        registerFunction(new MultiplicationOperator());
-        registerFunction(new DivisionOperator());
-        registerFunction(new ModuloOperator());
+	private static Map<FunctionSignature, IFunction<?>> functions = new HashMap<FunctionSignature, IFunction<?>>();
+	private static FunctionStore functionStore = FunctionStore.getInstance();
+	static {
 
-        registerFunction(new PowerOperator());
-        registerFunction(new SqrtFunction());
+		getLogger().debug("Register Base Function");
+		/** Boolean Functions */
+		registerFunction(new AndOperator());
+		registerFunction(new OrOperator());
+		registerFunction(new XorOperator());
 
-        registerFunction(new NotOperator());
-        registerFunction(new UnaryMinusOperator());
+		registerFunction(new EqualsOperator());
+		registerFunction(new EqualsOperator2());
+		registerFunction(new NotEqualsOperator());
+		registerFunction(new NotEqualsOperator2());
+		registerFunction(new NotEqualsStringOperator());
+		registerFunction(new NotEqualsStringOperator2());
 
-        registerFunction(new AbsoluteFunction());
-        registerFunction(new CeilFunction());
-        registerFunction(new DoubleToLongFunction());
-        registerFunction(new DoubleToIntegerFunction());
-        registerFunction(new DoubleToFloatFunction());
-        registerFunction(new DoubleToShortFunction());
-        registerFunction(new DoubleToByteFunction());
-        registerFunction(new DoubleToBooleanFunction());
-        registerFunction(new FloorFunction());
-        registerFunction(new IfFunction());
-        registerFunction(new SinusFunction());
-        registerFunction(new HyperbolicSinusFunction());
-        registerFunction(new ArcSinusFunction());
-        registerFunction(new CosinusFunction());
-        registerFunction(new HyperbolicCosinusFunction());
-        registerFunction(new ArcCosinusFunction());
-        registerFunction(new TangensFunction());
-        registerFunction(new HyperbolicTangensFunction());
-        registerFunction(new ArcTangensFunction());
-        registerFunction(new ArcTangens2Function());
-        registerFunction(new ToNumberFunction());
-        registerFunction(new ToBooleanFunction());
-        registerFunction(new ToByteFunction());
-        registerFunction(new ToShortFunction());
-        registerFunction(new ToFloatFunction());
-        registerFunction(new ToDoubleFunction());
-        registerFunction(new ToLongFunction());
-        registerFunction(new ToIntegerFunction());
-        registerFunction(new ToStringFunction());
-        registerFunction(new RandomFunction());
-        registerFunction(new RandomFunction2());
-        registerFunction(new RoundFunction());
-        registerFunction(new SignFunction());
+		/** Math Functions */
+		registerFunction(new GreaterThanOperator());
+		registerFunction(new SmallerThanOperator());
+		registerFunction(new GreaterEqualsOperator());
+		registerFunction(new SmallerEqualsOperator());
 
-        registerFunction(new PIFunction());
-        registerFunction(new EFunction());
-        
-        registerFunction(new ExpFunction());
-        registerFunction(new LogFunction());
-        
-        registerFunction(new ToRadians());
-        registerFunction(new ToDegrees());
+		registerFunction(new PlusOperator());
+		registerFunction(new MinusOperator());
 
-        registerFunction(new IsNullFunction());
-        registerFunction(new IsNaNFunction());
-        registerFunction(new AssureNumber());
+		registerFunction(new MultiplicationOperator());
+		registerFunction(new DivisionOperator());
+		registerFunction(new ModuloOperator());
 
-        /** String Functions */
-        registerFunction(new LikeFunction());
-        registerFunction(new ContainsFunction());
-        registerFunction(new StringPlusOperator());
-        registerFunction(new StringMinusOperator());
-        registerFunction(new StringMultiplicationOperator());
-        registerFunction(new StringDivisionOperator());
-        registerFunction(new ConcatFunction());
-        registerFunction(new SubStringFunction());
-        registerFunction(new SubStringFunction2());
-        registerFunction(new LengthFunction());
-        registerFunction(new UpperFunction());
-        registerFunction(new LowerFunction());
-        
-        /** Date Functions */
-        registerFunction(new ToDateFromStringFunction());      
-        registerFunction(new ToDateFromNumberFunction());
-        registerFunction(new DateToStringFunction()); 
-        registerFunction(new DateToLongFunction()); 
-        
-        registerFunction(new DatePlusOperator()); 
-        registerFunction(new DatePlusNumberOperator()); 
-        registerFunction(new DateMinusOperator()); 
-        registerFunction(new DateMinusNumberOperator()); 
-        
-        registerFunction(new SecondFunction());
-        registerFunction(new MinuteFunction());
-        registerFunction(new MinuteOfDayFunction());
-        registerFunction(new HourFunction());
-        registerFunction(new DayFunction());
-        registerFunction(new DayOfMonthFunction());
-        registerFunction(new WeekdayFunction());
-        registerFunction(new WeekFunction());
-        registerFunction(new MonthFunction());
-        registerFunction(new YearFunction());
-        
-        registerFunction(new SecondStringFunction());
-        registerFunction(new MinuteStringFunction());
-        registerFunction(new HourStringFunction());
-        registerFunction(new DayStringFunction());
-        registerFunction(new DayOfMonthStringFunction());
-        registerFunction(new WeekdayStringFunction());
-        registerFunction(new WeekStringFunction());
-        registerFunction(new MonthStringFunction());
-        registerFunction(new YearStringFunction());
-        
-        registerFunction(new SecondsFunction());
-        registerFunction(new MinutesFunction());
-        registerFunction(new HoursFunction());
-        registerFunction(new DaysFunction());
-        registerFunction(new MonthsFunction());
-        registerFunction(new YearsFunction());
-        registerFunction(new BusinessDaysFunction());
-        
-        registerFunction(new MilliTimeFunction());
-        registerFunction(new CurDateFunction());
-        registerFunction(new NanoTimeFunction());
-        
-        registerFunction(new SysDateFunction());
-        registerFunction(new StreamDateFunction());
-        registerFunction(new StreamDateFunction2());
-        registerFunction(new TimestampFunction());
-        
-        registerFunction(new MD5Function());
-        registerFunction(new SHA1Function());
-        registerFunction(new SHA256Function());
-        registerFunction(new SHA244Function());
-        registerFunction(new SHA384Function());
-        registerFunction(new SHA512Function());
-        registerFunction(new DSAFunction());
-        registerFunction(new DSASignFunction());
-        registerFunction(new DSAVerifyFunction());
-        registerFunction(new RSAFunction());
-        registerFunction(new RSASignFunction());
-        registerFunction(new RSAVerifyFunction());
-        
-        registerFunction(new UUIDFunction());
-        registerFunction(new EvalFunction());
-        registerFunction(new SMinFunction());
-        registerFunction(new SMaxFunction());
-        
-        registerFunction(new SleepFunction());
-        
-        registerFunction(new StoredValueFunction());
-        registerFunction(new StoredLineFunction());
-        
-        registerFunction(new SplittFunction());
-    }
+		registerFunction(new PowerOperator());
+		registerFunction(new SqrtFunction());
 
-    /**
-     * Register a MEP function instance
-     * 
-     * @param function
-     *            The function instance
-     */
-    public static void registerFunction(IFunction<?> function) {
-    	
-        try {
-			String symbol = function.getSymbol();
-			List<SDFDatatype[]> parameters = new ArrayList<SDFDatatype[]>();
-			int arity = function.getArity();
-			for (int i = 0; i < arity; i++) {
-				if (function.getAcceptedTypes(i) != null) {
-					parameters.add(function.getAcceptedTypes(i));
-				}
+		registerFunction(new NotOperator());
+		registerFunction(new UnaryMinusOperator());
+
+		registerFunction(new AbsoluteFunction());
+		registerFunction(new CeilFunction());
+		registerFunction(new DoubleToLongFunction());
+		registerFunction(new DoubleToIntegerFunction());
+		registerFunction(new DoubleToFloatFunction());
+		registerFunction(new DoubleToShortFunction());
+		registerFunction(new DoubleToByteFunction());
+		registerFunction(new DoubleToBooleanFunction());
+		registerFunction(new FloorFunction());
+		registerFunction(new IfFunction());
+		registerFunction(new SinusFunction());
+		registerFunction(new HyperbolicSinusFunction());
+		registerFunction(new ArcSinusFunction());
+		registerFunction(new CosinusFunction());
+		registerFunction(new HyperbolicCosinusFunction());
+		registerFunction(new ArcCosinusFunction());
+		registerFunction(new TangensFunction());
+		registerFunction(new HyperbolicTangensFunction());
+		registerFunction(new ArcTangensFunction());
+		registerFunction(new ArcTangens2Function());
+		registerFunction(new ToNumberFunction());
+		registerFunction(new ToBooleanFunction());
+		registerFunction(new ToByteFunction());
+		registerFunction(new ToShortFunction());
+		registerFunction(new ToFloatFunction());
+		registerFunction(new ToDoubleFunction());
+		registerFunction(new ToLongFunction());
+		registerFunction(new ToIntegerFunction());
+		registerFunction(new ToStringFunction());
+		registerFunction(new RandomFunction());
+		registerFunction(new RandomFunction2());
+		registerFunction(new RoundFunction());
+		registerFunction(new SignFunction());
+
+		registerFunction(new PIFunction());
+		registerFunction(new EFunction());
+
+		registerFunction(new ExpFunction());
+		registerFunction(new LogFunction());
+
+		registerFunction(new ToRadians());
+		registerFunction(new ToDegrees());
+
+		registerFunction(new IsNullFunction());
+		registerFunction(new IsNaNFunction());
+		registerFunction(new AssureNumber());
+
+		/** String Functions */
+		registerFunction(new LikeFunction());
+		registerFunction(new ContainsFunction());
+		registerFunction(new StringPlusOperator());
+		registerFunction(new StringMinusOperator());
+		registerFunction(new StringMultiplicationOperator());
+		registerFunction(new StringDivisionOperator());
+		registerFunction(new ConcatFunction());
+		registerFunction(new SubStringFunction());
+		registerFunction(new SubStringFunction2());
+		registerFunction(new LengthFunction());
+		registerFunction(new UpperFunction());
+		registerFunction(new LowerFunction());
+
+		/** Date Functions */
+		registerFunction(new ToDateFromStringFunction());
+		registerFunction(new ToDateFromNumberFunction());
+		registerFunction(new DateToStringFunction());
+		registerFunction(new DateToLongFunction());
+
+		registerFunction(new DatePlusOperator());
+		registerFunction(new DatePlusNumberOperator());
+		registerFunction(new DateMinusOperator());
+		registerFunction(new DateMinusNumberOperator());
+
+		registerFunction(new SecondFunction());
+		registerFunction(new MinuteFunction());
+		registerFunction(new MinuteOfDayFunction());
+		registerFunction(new HourFunction());
+		registerFunction(new DayFunction());
+		registerFunction(new DayOfMonthFunction());
+		registerFunction(new WeekdayFunction());
+		registerFunction(new WeekFunction());
+		registerFunction(new MonthFunction());
+		registerFunction(new YearFunction());
+
+		registerFunction(new SecondStringFunction());
+		registerFunction(new MinuteStringFunction());
+		registerFunction(new HourStringFunction());
+		registerFunction(new DayStringFunction());
+		registerFunction(new DayOfMonthStringFunction());
+		registerFunction(new WeekdayStringFunction());
+		registerFunction(new WeekStringFunction());
+		registerFunction(new MonthStringFunction());
+		registerFunction(new YearStringFunction());
+
+		registerFunction(new SecondsFunction());
+		registerFunction(new MinutesFunction());
+		registerFunction(new HoursFunction());
+		registerFunction(new DaysFunction());
+		registerFunction(new MonthsFunction());
+		registerFunction(new YearsFunction());
+		registerFunction(new BusinessDaysFunction());
+
+		registerFunction(new MilliTimeFunction());
+		registerFunction(new CurDateFunction());
+		registerFunction(new NanoTimeFunction());
+
+		registerFunction(new SysDateFunction());
+		registerFunction(new StreamDateFunction());
+		registerFunction(new StreamDateFunction2());
+		registerFunction(new StreamTimeFunction());
+		registerFunction(new TimestampFunction());
+
+		registerFunction(new MD5Function());
+		registerFunction(new SHA1Function());
+		registerFunction(new SHA256Function());
+		registerFunction(new SHA244Function());
+		registerFunction(new SHA384Function());
+		registerFunction(new SHA512Function());
+		registerFunction(new DSAFunction());
+		registerFunction(new DSASignFunction());
+		registerFunction(new DSAVerifyFunction());
+		registerFunction(new RSAFunction());
+		registerFunction(new RSASignFunction());
+		registerFunction(new RSAVerifyFunction());
+
+		registerFunction(new UUIDFunction());
+		registerFunction(new EvalFunction());
+		registerFunction(new SMinFunction());
+		registerFunction(new SMaxFunction());
+
+		registerFunction(new SleepFunction());
+
+		registerFunction(new StoredValueFunction());
+		registerFunction(new StoredLineFunction());
+
+		registerFunction(new SplittFunction());
+	}
+
+	/**
+	 * Register a MEP function instance
+	 * 
+	 * @param function
+	 *            The function instance
+	 */
+	public static void registerFunction(IFunction<?> function) {
+
+		try {
+			registerFunctionWithName(function, function.getSymbol());
+			if (function instanceof IHasAlias) {
+				registerFunctionWithName(function,
+						((IHasAlias) function).getAliasName());
 			}
-			FunctionSignature signature = new FunctionSignature(symbol, parameters);
-			if (functionStore.containsSignature(signature)) {
-			    throw new IllegalArgumentException("multiple definition of function " + symbol);
-			}
-			// getLogger().debug("Register Function: " + function.getSymbol());
-			functionStore.put(signature, function);
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
-    }
+		}
+	}
 
-    /**
-     * @deprecated Use unregisterFunction with parameter {@link IFunction}
-     * @param symbol
-     */
-    @Deprecated
-    public static void unregisterFunction(String symbol) {
-        functions.remove(symbol.toUpperCase());
-    }
+	private static void registerFunctionWithName(IFunction<?> function,
+			String symbol) {
+		List<SDFDatatype[]> parameters = new ArrayList<SDFDatatype[]>();
+		int arity = function.getArity();
+		for (int i = 0; i < arity; i++) {
+			if (function.getAcceptedTypes(i) != null) {
+				parameters.add(function.getAcceptedTypes(i));
+			}
+		}
+		FunctionSignature signature = new FunctionSignature(symbol, parameters);
+		if (functionStore.containsSignature(signature)) {
+			throw new IllegalArgumentException(
+					"multiple definition of function " + symbol);
+		}
+		// getLogger().debug("Register Function: " + function.getSymbol());
+		functionStore.put(signature, function);
+	}
 
-    /**
-     * Unregister a MEP function instance
-     * 
-     * @param function
-     *            The function instance
-     */
-    public static void unregisterFunction(IFunction<?> function) {
-        String symbol = function.getSymbol();
-        List<SDFDatatype[]> parameters = new ArrayList<SDFDatatype[]>();
-        int arity = function.getArity();
-        for (int i = 0; i < arity; i++) {
+	/**
+	 * @deprecated Use unregisterFunction with parameter {@link IFunction}
+	 * @param symbol
+	 */
+	@Deprecated
+	public static void unregisterFunction(String symbol) {
+		functions.remove(symbol.toUpperCase());
+	}
+
+	/**
+	 * Unregister a MEP function instance
+	 * 
+	 * @param function
+	 *            The function instance
+	 */
+	public static void unregisterFunction(IFunction<?> function) {
+		String symbol = function.getSymbol();
+		List<SDFDatatype[]> parameters = new ArrayList<SDFDatatype[]>();
+		int arity = function.getArity();
+		for (int i = 0; i < arity; i++) {
 			if (function.getAcceptedTypes(i) != null) {
 				parameters.add(function.getAcceptedTypes(i).clone());
 			}
-        }
-        FunctionSignature signature = new FunctionSignature(symbol, parameters);
-        if (functionStore.containsSignature(signature)) {
-            functionStore.remove(signature);
-        }
-        else {
-        	getLogger().warn("Tried to unregister function {}, which was not registered before", symbol);
-        }
-    }
+		}
+		FunctionSignature signature = new FunctionSignature(symbol, parameters);
+		if (functionStore.containsSignature(signature)) {
+			functionStore.remove(signature);
+		} else {
+			getLogger()
+					.warn("Tried to unregister function {}, which was not registered before",
+							symbol);
+		}
+	}
 
-    public static boolean containsFunction(String symbol) {
-        return functionStore.containsSymbol(symbol);
-    }
+	public static boolean containsFunction(String symbol) {
+		return functionStore.containsSymbol(symbol);
+	}
 
-    /**
-     * @deprecated Use getFunction with SDFDatatype parameter
-     * @param symbol
-     * @return
-     */
-    @Deprecated
-    public static IFunction<?> getFunction(String symbol) {
-        try {
-            return functionStore.getFunctions(symbol).get(0).getClass().newInstance();
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+	/**
+	 * @deprecated Use getFunction with SDFDatatype parameter
+	 * @param symbol
+	 * @return
+	 */
+	@Deprecated
+	public static IFunction<?> getFunction(String symbol) {
+		try {
+			return functionStore.getFunctions(symbol).get(0).getClass()
+					.newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    public static IFunction<?> getFunction(FunctionSignature signature) {
-        try {
-            return functionStore.getFunction(signature).getClass().newInstance();
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+	public static IFunction<?> getFunction(FunctionSignature signature) {
+		try {
+			return functionStore.getFunction(signature).getClass()
+					.newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    public static IFunction<?> getFunction(String symbol, List<SDFDatatype> parameter) {
-        try {
-            IFunction<?> function = functionStore.getFunction(symbol, parameter);
-            if (function != null) {
-                return function.getClass().newInstance();
-            }
-            
-            getLogger().debug("No such function: " + symbol + " for parameter " + parameter);
-            return null;
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+	public static IFunction<?> getFunction(String symbol,
+			List<SDFDatatype> parameter) {
+		try {
+			IFunction<?> function = functionStore
+					.getFunction(symbol, parameter);
+			if (function != null) {
+				return function.getClass().newInstance();
+			}
 
-    public static List<IFunction<?>> getFunctions(String symbol) {
-        List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
-        try {
-            for (IFunction<?> function : functionStore.getFunctions(symbol)) {
-                functions.add(function.getClass().newInstance());
-            }
-            return functions;
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+			getLogger().debug(
+					"No such function: " + symbol + " for parameter "
+							+ parameter);
+			return null;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    public void addFunctionProvider(IFunctionProvider provider) {
-        for (IFunction<?> f : provider.getFunctions()) {
-            MEP.registerFunction(f);
-        }
-    }
+	public static List<IFunction<?>> getFunctions(String symbol) {
+		List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+		try {
+			for (IFunction<?> function : functionStore.getFunctions(symbol)) {
+				functions.add(function.getClass().newInstance());
+			}
+			return functions;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    public void removeFunctionProvider(IFunctionProvider provider) {
-        // It's not allowed to have multiple implementations
-        // of the same function (see addFunctionProvider).
-        for (IFunction<?> f : provider.getFunctions()) {
-            getLogger().debug("Remove Function Provider: " + f.getSymbol());
-            MEP.unregisterFunction(f);
-        }
-    }
+	public void addFunctionProvider(IFunctionProvider provider) {
+		for (IFunction<?> f : provider.getFunctions()) {
+			MEP.registerFunction(f);
+		}
+	}
 
-    public static ImmutableSet<FunctionSignature> getFunctions() {
-        return functionStore.getSignatures();
-    }
+	public void removeFunctionProvider(IFunctionProvider provider) {
+		// It's not allowed to have multiple implementations
+		// of the same function (see addFunctionProvider).
+		for (IFunction<?> f : provider.getFunctions()) {
+			getLogger().debug("Remove Function Provider: " + f.getSymbol());
+			MEP.unregisterFunction(f);
+		}
+	}
+
+	public static ImmutableSet<FunctionSignature> getFunctions() {
+		return functionStore.getSignatures();
+	}
 }

@@ -3,6 +3,7 @@
  */
 package de.uniol.inf.is.odysseus.mep.functions.time;
 
+import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -11,25 +12,30 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 /**
  * Returns the stream time
  * 
- * @author Christian Kuka <christian@kuka.cc>, Marco Grawunder
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TimestampFunction extends AbstractFunction<Long> {
+public class StreamTimeFunction extends AbstractFunction<Long> implements IHasAlias{
 
     private static final long serialVersionUID = -9167197876743665507L;
 
-    protected TimestampFunction(String name) {
-    	super(name,1,SDFDatatype.LONG);
+    public StreamTimeFunction() {
+        this("streamtime");
     }
-    
-    public TimestampFunction(){
-    	this("timestamp");
+
+    protected StreamTimeFunction(String name) {
+        super(name, 0, new SDFDatatype[0][0], SDFDatatype.LONG, false);
     }
-    
+
     @Override
     public Long getValue() {
-        PointInTime streamTime = ((ITimeInterval) getInputMetadata(0)).getStart();
+        PointInTime streamTime = ((ITimeInterval) getMetaAttribute()).getStart();
         return streamTime.getMainPoint();
     }
+
+	@Override
+	public String getAliasName() {
+		return "now";
+	}
 
 }
