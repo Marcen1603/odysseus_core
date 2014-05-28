@@ -228,6 +228,13 @@ public final class QueryDistributorHelper {
 		} catch (QueryPartAllocationException ex) {
 			throw new QueryDistributionException("Could not reallocate query parts", ex);
 		}
-		
+	}
+	
+	public static String toPeerNames(List<PeerID> faultyPeers) {
+		StringBuilder sb = new StringBuilder();
+		for( PeerID pid : faultyPeers ) {
+			sb.append(p2pDictionary.getRemotePeerName(pid)).append(" ");
+		}
+		return sb.toString();
 	}
 }

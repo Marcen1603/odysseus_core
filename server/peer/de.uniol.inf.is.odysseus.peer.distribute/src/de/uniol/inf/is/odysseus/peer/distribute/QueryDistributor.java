@@ -100,7 +100,10 @@ public class QueryDistributor implements IQueryDistributor {
 						}
 					}
 					
-					LOG.error("Exception during transmission query parts. Trying to reallocate... try {}", tries);
+					LOG.error("Exception during transmission query parts.");
+					LOG.error("Following peers are 'faulty' now: {}", QueryDistributorHelper.toPeerNames(faultyPeers));
+					LOG.error("Trying to reallocate. Try: {}", tries);
+					
 					allocationMap = QueryDistributorHelper.tryReallocate(config, allocators, allocationMap, faultyPeers);
 					allocationMapCopy = copyAllocationMap(allocationMap);
 					
