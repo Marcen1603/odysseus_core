@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.peer.resource.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -41,17 +40,23 @@ public class UsageStatisticCollector {
 	}
 	
 	public synchronized void addStatistics(long memFreeBytes, long memMaxBytes, double cpuFree, double cpuMax, int runningQueriesCount, int stoppedQueriesCount, int remotePeerCount, double netBandwidthMax, double netOutputRate, double netInputRate) {
-		Preconditions.checkArgument(memFreeBytes >= 0, "Memory free bytes cannot be negative: %s", memFreeBytes);
-		Preconditions.checkArgument(memMaxBytes >= 0, "Memory max bytes cannot be negative: %s", memMaxBytes);
-		Preconditions.checkArgument(cpuFree >= 0, "Cpu free cannot be negative: %s", cpuFree);
-		Preconditions.checkArgument(cpuMax >= 0, "Cpu max cannot be negative: %s", cpuMax);
-
-		Preconditions.checkArgument(memFreeBytes <= memMaxBytes, "Memory free bytes cannot be higher than maximum bytes: %s > %s", memFreeBytes, memMaxBytes);
-		Preconditions.checkArgument(cpuFree <= cpuMax, "Cpu free cannot be higher than cpu max: %s > %s", cpuFree, cpuMax);
-
-		Preconditions.checkArgument(netBandwidthMax >= 0, "Network maximum bandwidth must be zero or positive");
-		Preconditions.checkArgument(netOutputRate >= 0, "Network output rate must be zero or positive");
-		Preconditions.checkArgument(netInputRate >= 0, "Network input rate must be zero or positive");
+		memFreeBytes = assureNonNegative(memFreeBytes);
+		memMaxBytes = assureNonNegative(memMaxBytes);
+		
+		cpuFree = assureNonNegative(cpuFree);
+		cpuMax = assureNonNegative(cpuMax);
+		
+		netBandwidthMax = assureNonNegative(netBandwidthMax);
+		netOutputRate = assureNonNegative(netOutputRate);
+		netInputRate = assureNonNegative(netInputRate);
+		
+		if( memFreeBytes > memMaxBytes ) {
+			memFreeBytes = memMaxBytes;
+		}
+		
+		if( cpuFree > cpuMax ) {
+			cpuFree = cpuMax;
+		}
 
 		this.memFree.addValue(memFreeBytes);
 		this.cpuFree.addValue(cpuFree);
@@ -66,6 +71,14 @@ public class UsageStatisticCollector {
 		this.netBandwidthMax = netBandwidthMax;
 	}
 	
+	private static long assureNonNegative(long longValue) {
+		return longValue >= 0 ? longValue : 0;
+	}
+
+	private static double assureNonNegative(double doubleValue) {
+		return doubleValue >= 0.0 ? doubleValue : 0.0;
+	}
+
 	public synchronized IResourceUsage getCurrentResourceUsage() {
 		if( version == null ) {
 			try {
