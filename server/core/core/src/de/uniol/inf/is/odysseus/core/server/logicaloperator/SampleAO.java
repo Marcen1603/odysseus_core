@@ -1,9 +1,18 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="SAMPLE", doc="This operator can reduce load by throwing away tuples.",category={LogicalOperatorCategory.PROCESSING})
 public class SampleAO extends UnaryLogicalOp {
@@ -13,6 +22,9 @@ public class SampleAO extends UnaryLogicalOp {
 	 */
 	private static final long serialVersionUID = -2100883143405405327L;
 	private int sampleRate = 1;
+	private TimeValueItem timeValue;
+	private boolean sampleByTimeValue = false;
+	private TimeUnit baseTimeUnit = null;
 	
 	public SampleAO(){
 		
@@ -22,20 +34,81 @@ public class SampleAO extends UnaryLogicalOp {
 		return sampleRate;
 	}
 	
-	@Parameter(type = IntegerParameter.class, name = "samplerate", optional=false)
+	@Parameter(type = IntegerParameter.class, name = "samplerate", optional=true)
 	public void setSampleRate(int sampleRate) {
 		this.sampleRate = sampleRate;
+	}
+	
+	public TimeValueItem getTimeValue() {
+		return this.timeValue;	
+	}
+	
+	@Parameter(type = TimeParameter.class, name = "timevalue", optional = true)
+	public void setTimeValue(TimeValueItem timeValue) {
+		this.timeValue = timeValue;
+	}
+	
+	public boolean sampleByTime() {
+		return this.sampleByTimeValue;
+	}
+	
+	@Parameter(type = BooleanParameter.class, name = "sample_by_time", optional = true)
+	public void setSampleByTime(boolean sampleByTime) {
+		this.sampleByTimeValue = sampleByTime;
 	}
 	
 	public SampleAO(SampleAO sampleAO) {
 		super(sampleAO);
 		this.sampleRate = sampleAO.sampleRate;
+		this.timeValue = sampleAO.timeValue;
+		this.sampleByTimeValue = sampleAO.sampleByTimeValue;
+		this.baseTimeUnit = sampleAO.baseTimeUnit;
 		
 	}
 
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new SampleAO(this);
+	}
+	
+	public TimeUnit getBaseTimeUnit() {
+		if (baseTimeUnit == null) {
+			baseTimeUnit = TimeUnit.MILLISECONDS;
+
+			SDFConstraint c = getInputSchema().getConstraint(
+					SDFConstraint.BASE_TIME_UNIT);
+			if (c != null) {
+				baseTimeUnit = (TimeUnit) c.getValue();
+			} else {
+
+				// Find input schema attribute with type start timestamp
+				// It provides the correct base unit
+				// if not given use MILLISECONDS as default
+				Collection<SDFAttribute> attrs = getInputSchema()
+						.getSDFDatatypeAttributes(SDFDatatype.START_TIMESTAMP);
+				if (attrs.isEmpty()) {
+					attrs = getInputSchema().getSDFDatatypeAttributes(
+							SDFDatatype.START_TIMESTAMP_STRING);
+				}
+				if (attrs.size() > 0) {
+					SDFAttribute attr = attrs.iterator().next();
+					SDFConstraint constr = attr
+							.getDtConstraint(SDFConstraint.BASE_TIME_UNIT);
+					if (constr != null) {
+						baseTimeUnit = (TimeUnit) constr.getValue();
+					}
+				}
+			}
+
+		}
+		return this.baseTimeUnit;
+		
+	}
+	
+	@Override
+	public void initialize() {
+		getBaseTimeUnit();
+		super.initialize();
 	}
 
 }
