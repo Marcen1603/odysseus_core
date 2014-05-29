@@ -480,7 +480,7 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
                 final double[] values = new double[mixture.getDimension()];
                 values[dimension] = x;
                 final double density = distribution.density(values);
-                return density ;
+                return density;
             }
         };
         @SuppressWarnings("unchecked")

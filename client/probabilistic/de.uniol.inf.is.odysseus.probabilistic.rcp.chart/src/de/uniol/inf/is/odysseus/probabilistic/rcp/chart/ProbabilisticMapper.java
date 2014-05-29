@@ -14,7 +14,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.rcp.chart;
 
-import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 
 /**
@@ -26,10 +25,6 @@ public class ProbabilisticMapper implements net.ericaro.surfaceplotter.Mapper {
 
     /** The mixtures. */
     private MultivariateMixtureDistribution distribution;
-    /** The scale. */
-    private double scale = 1.0;
-    /** The interval. */
-    private Interval[] interval;
 
     /**
      * 
@@ -38,8 +33,6 @@ public class ProbabilisticMapper implements net.ericaro.surfaceplotter.Mapper {
      */
     public final void setup(final MultivariateMixtureDistribution mixture) {
         this.distribution = mixture;
-        this.scale = mixture.getScale();
-        this.interval = mixture.getSupport();
     }
 
     /*
@@ -48,11 +41,7 @@ public class ProbabilisticMapper implements net.ericaro.surfaceplotter.Mapper {
      */
     @Override
     public final float f1(final float x, final float y) {
-        if ((!this.interval[0].contains(x)) || (!this.interval[1].contains(y))) {
-            return 0.0f;
-        }
-        final double density = this.distribution.density(new double[] { x, y });
-        return (float) (density * this.scale);
+        return (float) this.distribution.density(new double[] { x, y });
     }
 
     /*

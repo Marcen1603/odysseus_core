@@ -17,13 +17,8 @@ package de.uniol.inf.is.odysseus.probabilistic.rcp.dashboard;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
-import org.apache.commons.math3.distribution.NormalDistribution;
-import org.apache.commons.math3.util.Pair;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -51,10 +46,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
-import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
@@ -398,8 +391,10 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
         if (mixture.getDimension() < 1) {
             return; // no dimension
         }
+        if (mixture.getDimension() < 1) {
+            return; // no dimension
+        }
 
-        final Map<NormalDistribution, Double> functions = new HashMap<>();
         final int dimension;
         int d = 0;
         while (d < mixture.getDimension()) {
@@ -409,29 +404,17 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
             d++;
         }
         dimension = d;
-        for (final Pair<Double, IMultivariateDistribution> entry : mixture.getComponents()) {
-            final IMultivariateDistribution normalDistribution = entry.getValue();
-            final Double weight = entry.getKey();
-            final double means = normalDistribution.getMean()[dimension];
-            final double sigma = normalDistribution.getVariance()[dimension][dimension];
-            functions.put(new NormalDistribution(means, sigma), weight);
-        }
-        final Interval[] interval = mixture.getSupport();
-        final double scale = mixture.getScale();
+
+        final MultivariateMixtureDistribution distribution = mixture;
 
         final Function2D function = new Function2D() {
 
             @Override
             public double getValue(final double x) {
-                if (!interval[dimension].contains(x)) {
-                    return 0.0;
-                }
-
-                double sum = 0;
-                for (final Entry<NormalDistribution, Double> func : functions.entrySet()) {
-                    sum += func.getKey().density(x) * func.getValue();
-                }
-                return sum * scale;
+                final double[] values = new double[mixture.getDimension()];
+                values[dimension] = x;
+                final double density = distribution.density(values);
+                return density;
             }
         };
         @SuppressWarnings("unchecked")
