@@ -41,7 +41,6 @@ import de.uniol.inf.is.odysseus.mep.functions.compare.EqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.base.predicate.ProbabilisticRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
-//import de.uniol.inf.is.odysseus.core.server.predicate.AndPredicate;
 /**
  * 
  * @author Christian Kuka <christian@kuka.cc>
@@ -64,6 +63,9 @@ public final class PredicateUtils {
         else if (predicate instanceof RelationalPredicate) {
             return ((RelationalPredicate) predicate).isAndPredicate();
         }
+        else if (predicate instanceof ProbabilisticRelationalPredicate) {
+            return ((ProbabilisticRelationalPredicate) predicate).isAndPredicate();
+        }
         return false;
     }
 
@@ -81,6 +83,9 @@ public final class PredicateUtils {
             return ComplexPredicateHelper.isOrPredicate(predicate);
         }
         else if (predicate instanceof RelationalPredicate) {
+            return ((RelationalPredicate) predicate).isOrPredicate();
+        }
+        else if (predicate instanceof ProbabilisticRelationalPredicate) {
             return ((RelationalPredicate) predicate).isOrPredicate();
         }
         return false;
@@ -102,6 +107,9 @@ public final class PredicateUtils {
         else if (predicate instanceof RelationalPredicate) {
             return ((RelationalPredicate) predicate).isNotPredicate();
         }
+        else if (predicate instanceof ProbabilisticRelationalPredicate) {
+            return ((RelationalPredicate) predicate).isNotPredicate();
+        }
         return false;
     }
 
@@ -112,7 +120,7 @@ public final class PredicateUtils {
      *            The predicate
      * @return A list of predicates
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes" })
     public static Collection<IPredicate<?>> conjunctiveSplit(final IPredicate<?> predicate) {
         final Collection<IPredicate<?>> result = new LinkedList<IPredicate<?>>();
         if (PredicateUtils.isAndPredicate(predicate)) {
@@ -133,7 +141,9 @@ public final class PredicateUtils {
                 return result;
             }
             else {
-                result.addAll((Collection<? extends IPredicate<?>>) predicate.conjunctiveSplit(false));
+                result.add(predicate);
+                // result.addAll((Collection<? extends IPredicate<?>>)
+                // predicate.conjunctiveSplit(false));
                 return result;
             }
         }
@@ -228,6 +238,9 @@ public final class PredicateUtils {
         for (final IPredicate<?> pre : predicates) {
             if (pre instanceof RelationalPredicate) {
                 expressions.add(((RelationalPredicate) pre).getExpression());
+            }
+            else if (pre instanceof ProbabilisticRelationalPredicate) {
+                expressions.add(((ProbabilisticRelationalPredicate) pre).getExpression());
             }
         }
         return expressions;

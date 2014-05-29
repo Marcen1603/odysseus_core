@@ -144,7 +144,9 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
                 // FIXME 20140319 christian@kuka.cc What to do now?
                 // setModel(null);
                 // throw e;
-                BatchEMTISweepArea.LOG.trace(e.getMessage(), e);
+                if (BatchEMTISweepArea.LOG.isTraceEnabled()) {
+                    BatchEMTISweepArea.LOG.trace(e.getMessage(), e);
+                }
 
             }
             if (this.getPredicate() != null) {

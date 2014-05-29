@@ -486,7 +486,9 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
         @SuppressWarnings("unchecked")
         final List<XYDataItem> items = DatasetUtilities.sampleFunction2DToSeries(function, this.getXMin(), this.getXMax(), this.getSamples(), series.getKey()).getItems();
         for (final XYDataItem item : items) {
-            series.add(item);
+            if (!this.getChartComposite().isDisposed()) {
+                series.add(item);
+            }
         }
     }
 

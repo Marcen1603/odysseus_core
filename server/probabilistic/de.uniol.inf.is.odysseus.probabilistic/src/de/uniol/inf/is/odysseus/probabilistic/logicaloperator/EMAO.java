@@ -122,7 +122,7 @@ public class EMAO extends UnaryLogicalOp {
      */
     @Parameter(type = IntegerParameter.class, name = "MIXTURES", optional = false, doc = "The number of mixture components.")
     public final void setMixtures(final int mixtures) {
-        Preconditions.checkArgument(mixtures > 2);
+        Preconditions.checkArgument(mixtures >= 2);
         this.mixtures = mixtures;
     }
 
@@ -247,8 +247,8 @@ public class EMAO extends UnaryLogicalOp {
         super.initialize();
         Objects.requireNonNull(this.attributes);
         Preconditions.checkArgument(!this.attributes.isEmpty());
-        Preconditions.checkArgument(this.mixtures > 2);
-        Preconditions.checkArgument(this.threshold > 0);
+        Preconditions.checkArgument(this.mixtures >= 2);
+        Preconditions.checkArgument(this.threshold >= 0);
         Preconditions.checkArgument(this.iterations > 0);
         final Collection<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
         for (final SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
