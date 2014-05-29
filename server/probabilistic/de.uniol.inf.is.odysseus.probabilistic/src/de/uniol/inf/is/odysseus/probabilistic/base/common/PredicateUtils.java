@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.EqualsOperator;
+import de.uniol.inf.is.odysseus.probabilistic.base.predicate.ProbabilisticRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 //import de.uniol.inf.is.odysseus.core.server.predicate.AndPredicate;
@@ -194,10 +195,17 @@ public final class PredicateUtils {
             if (pre instanceof RelationalPredicate) {
                 attributes.addAll(((RelationalPredicate) pre).getAttributes());
             }
+            else if (pre instanceof ProbabilisticRelationalPredicate) {
+                attributes.addAll(((ProbabilisticRelationalPredicate) pre).getAttributes());
+            }
             else {
                 if (pre instanceof OrPredicate) {
                     attributes.addAll(PredicateUtils.getAttributes(((OrPredicate) pre).getLeft()));
                     attributes.addAll(PredicateUtils.getAttributes(((OrPredicate) pre).getRight()));
+                }
+                if (pre instanceof AndPredicate) {
+                    attributes.addAll(PredicateUtils.getAttributes(((AndPredicate) pre).getLeft()));
+                    attributes.addAll(PredicateUtils.getAttributes(((AndPredicate) pre).getRight()));
                 }
                 else if (pre instanceof NotPredicate) {
                     attributes.addAll(PredicateUtils.getAttributes(((NotPredicate) pre).getChild()));
