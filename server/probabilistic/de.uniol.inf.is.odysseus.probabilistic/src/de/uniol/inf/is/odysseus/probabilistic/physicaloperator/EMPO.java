@@ -16,14 +16,9 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution;
 import org.apache.commons.math3.exception.ConvergenceException;
 import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
-import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,9 +28,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 
 /**
@@ -122,27 +115,17 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 
             // Construct the multivariate distribution
             final BatchEMTISweepArea emArea = (BatchEMTISweepArea) this.area;
-            final MixtureMultivariateNormalDistribution model = emArea.getModel();
+            final MultivariateMixtureDistribution model = emArea.getModel();
             if (model != null) {
-                final double[] weights = new double[model.getComponents().size()];
-                final List<IMultivariateDistribution> distr = new ArrayList<IMultivariateDistribution>(model.getComponents().size());
-
-                for (int i = 0; i < model.getComponents().size(); i++) {
-                    final Pair<Double, org.apache.commons.math3.distribution.MultivariateNormalDistribution> component = model.getComponents().get(i);
-                    weights[i] = component.getKey();
-                    distr.add(new MultivariateNormalDistribution(component.getValue().getMeans(), component.getValue().getCovariances().getData()));
-                }
-                final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(weights, distr);
-                mixture.setAttributes(this.attributes);
+                model.setAttributes(this.attributes);
                 final MultivariateMixtureDistribution[] outputValDistributions = new MultivariateMixtureDistribution[distributions.length + 1];
-
                 for (final int attribute : this.attributes) {
                     outputVal.setAttribute(attribute, new ProbabilisticDouble(distributions.length));
                 }
                 // Copy the old distribution to the new tuple
                 System.arraycopy(distributions, 0, outputValDistributions, 0, distributions.length);
                 // And append the new distribution to tThe end of the array
-                outputValDistributions[distributions.length] = mixture;
+                outputValDistributions[distributions.length] = model;
                 outputVal.setDistributions(outputValDistributions);
                 // KTHXBYE
                 this.transfer(outputVal);

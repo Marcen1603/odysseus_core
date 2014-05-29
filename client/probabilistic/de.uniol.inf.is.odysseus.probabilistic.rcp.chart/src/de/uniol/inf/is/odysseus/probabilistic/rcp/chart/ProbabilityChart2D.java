@@ -381,7 +381,6 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
                         }
 
                         final Object x = tuple.get(serie);
-                        currentserie.clear();
                         ProbabilityChart2D.this.updateSerie(currentserie, (MultivariateMixtureDistribution) x, index);
 
                         ProbabilityChart2D.this.count++;
@@ -477,18 +476,22 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
 
             @Override
             public double getValue(final double x) {
-                final double[] values = new double[mixture.getDimension()];
+                final double[] values = new double[distribution.getDimension()];
                 values[dimension] = x;
-                final double density = distribution.density(values);
-                return density;
+                return distribution.density(values);
             }
         };
-        @SuppressWarnings("unchecked")
-        final List<XYDataItem> items = DatasetUtilities.sampleFunction2DToSeries(function, this.getXMin(), this.getXMax(), this.getSamples(), series.getKey()).getItems();
-        for (final XYDataItem item : items) {
-            if (!this.getChartComposite().isDisposed()) {
-                series.add(item);
+        try {
+            @SuppressWarnings("unchecked")
+            final List<XYDataItem> items = DatasetUtilities.sampleFunction2DToSeries(function, this.getXMin(), this.getXMax(), this.getSamples(), series.getKey()).getItems();
+            series.clear();
+            for (final XYDataItem item : items) {
+                if (!this.getChartComposite().isDisposed()) {
+                    series.add(item);
+                }
             }
+        }
+        catch (Exception e) {
         }
     }
 

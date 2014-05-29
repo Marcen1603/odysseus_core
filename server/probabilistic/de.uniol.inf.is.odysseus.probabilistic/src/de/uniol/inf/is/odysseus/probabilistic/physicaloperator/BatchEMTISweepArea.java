@@ -2,18 +2,15 @@ package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution;
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
-import org.apache.commons.math3.distribution.fitting.MultivariateNormalMixtureExpectationMaximization;
-import org.apache.commons.math3.exception.ConvergenceException;
-import org.apache.commons.math3.exception.MathIllegalArgumentException;
-import org.apache.commons.math3.exception.MaxCountExceededException;
 import org.apache.commons.math3.exception.NotStrictlyPositiveException;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.util.Pair;
+import org.apache.commons.math3_patch.distribution.fitting.MultivariateNormalMixtureExpectationMaximization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +18,9 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 
 /**
@@ -47,7 +47,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
     /** The predicate for model fitting. */
     private IPredicate<IStreamObject<?>> predicate;
     /** The fitted model. */
-    private MixtureMultivariateNormalDistribution model;
+    private MultivariateMixtureDistribution model;
     /** Using adaptive mode and model has to be normalized. */
     private boolean normalizeModel = false;
 
@@ -119,35 +119,38 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 
         if ((this.getPredicate() == null) || (this.predicate.evaluate(s))) {
             super.insert(restricted);
+            double[][] data = this.getData();
             try {
                 if ((!this.isIncremental()) || (this.getModel() == null)) {
-                    final MixtureMultivariateNormalDistribution newModel = MultivariateNormalMixtureExpectationMaximization.estimate(this.getData(), this.mixtures);
+                    final MultivariateMixtureDistribution newModel = MultivariateNormalMixtureExpectationMaximization.estimate(data, this.mixtures);
                     if (newModel != null) {
                         this.setModel(newModel);
                     }
                 }
+            }
+            catch (Exception e) {
+                BatchEMTISweepArea.LOG.debug(e.getMessage(), e);
+            }
+            try {
                 if (this.getModel() != null) {
-                    final MultivariateNormalMixtureExpectationMaximization em = new MultivariateNormalMixtureExpectationMaximization(this.getData());
+                    final MultivariateNormalMixtureExpectationMaximization em = new MultivariateNormalMixtureExpectationMaximization(data);
                     try {
                         em.fit(this.getModel(), this.getIterations(), this.getThreshold());
                     }
-                    catch (final MathIllegalArgumentException e) {
-                        em.fit(this.getModel(), this.getIterations(), this.getThreshold());
+                    catch (final Exception e) {
+                        // BatchEMTISweepArea.LOG.debug(e.getMessage(), e);
                     }
-                    final MixtureMultivariateNormalDistribution fittedModel = em.getFittedModel();
+                    final MultivariateMixtureDistribution fittedModel = em.getFittedModel();
                     if (fittedModel != null) {
                         this.setModel(fittedModel);
                     }
                 }
             }
-            catch (MaxCountExceededException | ConvergenceException | MathIllegalArgumentException e) {
+            catch (Exception e) {
                 // FIXME 20140319 christian@kuka.cc What to do now?
                 // setModel(null);
                 // throw e;
-                if (BatchEMTISweepArea.LOG.isTraceEnabled()) {
-                    BatchEMTISweepArea.LOG.trace(e.getMessage(), e);
-                }
-
+                BatchEMTISweepArea.LOG.debug(e.getMessage(), e);
             }
             if (this.getPredicate() != null) {
                 this.normalizeModel = true;
@@ -156,36 +159,35 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
         else {
             if ((this.getPredicate() != null) && (this.normalizeModel)) {
                 final double[] avgAttributes = this.getAvg();
-                final List<Pair<Double, MultivariateNormalDistribution>> components = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-                for (final Pair<Double, MultivariateNormalDistribution> entry : this.getModel().getComponents()) {
-                    final MultivariateNormalDistribution normalDistribution = entry.getValue();
+                final List<Pair<Double, IMultivariateDistribution>> components = new ArrayList<Pair<Double, IMultivariateDistribution>>();
+                for (final Pair<Double, IMultivariateDistribution> entry : this.getModel().getComponents()) {
+                    final IMultivariateDistribution normalDistribution = entry.getValue();
                     final Double weight = entry.getKey();
-                    final RealVector means = MatrixUtils.createRealVector(normalDistribution.getMeans());
+                    final RealVector means = MatrixUtils.createRealVector(normalDistribution.getMean());
                     means.subtract(MatrixUtils.createRealVector(avgAttributes));
-                    final MultivariateNormalDistribution component = new MultivariateNormalDistribution(means.toArray(), normalDistribution.getCovariances().getData());
-                    components.add(new Pair<Double, MultivariateNormalDistribution>(weight, component));
+                    final IMultivariateDistribution component = new MultivariateNormalDistribution(means.toArray(), normalDistribution.getVariance());
+                    components.add(new Pair<Double, IMultivariateDistribution>(weight, component));
                 }
-                this.setModel(new MixtureMultivariateNormalDistribution(components));
+                this.setModel(new MultivariateMixtureDistribution(components));
                 this.normalizeModel = false;
             }
         }
         if ((this.getPredicate() != null) && (this.getModel() != null)) {
-            final List<Pair<Double, MultivariateNormalDistribution>> components = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-            for (final Pair<Double, MultivariateNormalDistribution> entry : this.getModel().getComponents()) {
-                final MultivariateNormalDistribution normalDistribution = entry.getValue();
+            final List<Pair<Double, IMultivariateDistribution>> components = new ArrayList<Pair<Double, IMultivariateDistribution>>();
+            for (final Pair<Double, IMultivariateDistribution> entry : this.getModel().getComponents()) {
+                final IMultivariateDistribution normalDistribution = entry.getValue();
                 final Double weight = entry.getKey();
-                final RealVector means = MatrixUtils.createRealVector(normalDistribution.getMeans());
+                final RealVector means = MatrixUtils.createRealVector(normalDistribution.getMean());
                 final double[] values = new double[restricted.getAttributes().length];
                 for (int i = 0; i < values.length; i++) {
                     values[i] = ((Number) restricted.getAttribute(i)).doubleValue();
                 }
                 means.add(MatrixUtils.createRealVector(values));
-                final MultivariateNormalDistribution component = new MultivariateNormalDistribution(means.toArray(), normalDistribution.getCovariances().getData());
-                components.add(new Pair<Double, MultivariateNormalDistribution>(weight, component));
+                final IMultivariateDistribution component = new MultivariateNormalDistribution(means.toArray(), normalDistribution.getVariance());
+                components.add(new Pair<Double, IMultivariateDistribution>(weight, component));
             }
-            this.setModel(new MixtureMultivariateNormalDistribution(components));
+            this.setModel(new MultivariateMixtureDistribution(components));
             this.setModel(this.estimateModel(this.getModel()));
-
         }
     }
 
@@ -205,7 +207,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
      * 
      * @return The model
      */
-    public final MixtureMultivariateNormalDistribution getModel() {
+    public final MultivariateMixtureDistribution getModel() {
         return this.model;
     }
 
@@ -215,7 +217,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
      * @param model
      *            the model to set
      */
-    private void setModel(final MixtureMultivariateNormalDistribution model) {
+    private void setModel(final MultivariateMixtureDistribution model) {
         this.model = model;
     }
 
@@ -282,7 +284,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
     public final double[] getWeights() {
         final double[] weights = new double[this.getDimension()];
         for (int c = 0; c < this.model.getComponents().size(); c++) {
-            final Pair<Double, MultivariateNormalDistribution> component = this.model.getComponents().get(c);
+            final Pair<Double, IMultivariateDistribution> component = this.model.getComponents().get(c);
             weights[c] = component.getFirst();
         }
 
@@ -312,8 +314,8 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
     public final RealMatrix[] getMeans() {
         final RealMatrix[] means = new RealMatrix[this.getDimension()];
         for (int c = 0; c < this.model.getComponents().size(); c++) {
-            final Pair<Double, MultivariateNormalDistribution> component = this.model.getComponents().get(c);
-            means[c] = MatrixUtils.createColumnRealMatrix(component.getValue().getMeans());
+            final Pair<Double, IMultivariateDistribution> component = this.model.getComponents().get(c);
+            means[c] = MatrixUtils.createColumnRealMatrix(component.getValue().getMean());
         }
         return means;
     }
@@ -331,7 +333,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
         if ((component < 0) || (component > this.getMixtures())) {
             return null;
         }
-        return MatrixUtils.createColumnRealMatrix(this.model.getComponents().get(component).getValue().getMeans());
+        return MatrixUtils.createColumnRealMatrix(this.model.getComponents().get(component).getValue().getMean());
     }
 
     /**
@@ -342,8 +344,8 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
     public final RealMatrix[] getCovarianceMatrices() {
         final RealMatrix[] covariances = new RealMatrix[this.getDimension()];
         for (int c = 0; c < this.model.getComponents().size(); c++) {
-            final Pair<Double, MultivariateNormalDistribution> component = this.model.getComponents().get(c);
-            covariances[c] = component.getValue().getCovariances();
+            final Pair<Double, IMultivariateDistribution> component = this.model.getComponents().get(c);
+            covariances[c] = new Array2DRowRealMatrix(component.getValue().getVariance(), false);
         }
         return covariances;
     }
@@ -360,7 +362,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
         if ((component < 0) || (component > this.getMixtures())) {
             return null;
         }
-        return this.model.getComponents().get(component).getValue().getCovariances();
+        return new Array2DRowRealMatrix(this.model.getComponents().get(component).getValue().getVariance(), false);
     }
 
     /**
@@ -383,10 +385,13 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
      * @return The data.
      */
     private double[][] getData() {
+        Random random = new Random();
         final double[][] data = new double[this.getElements().size()][this.getDimension()];
         for (int i = 0; i < this.getElements().size(); i++) {
             for (int d = 0; d < this.getDimension(); d++) {
-                data[i][d] = ((Number) this.getElements().get(i).getAttribute(d)).doubleValue();
+                data[i][d] = ((Number) this.getElements().get(i).getAttribute(d)).doubleValue() + (random.nextDouble() - 0.5) ;
+                // data[i][d] = ((Number)
+                // this.getElements().get(i).getAttribute(d)).doubleValue();
             }
         }
         return data;
@@ -416,7 +421,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
      *            The initial model
      * @return The estimated model
      */
-    private MixtureMultivariateNormalDistribution estimateModel(final MixtureMultivariateNormalDistribution initialMixture) {
+    private MultivariateMixtureDistribution estimateModel(final MultivariateMixtureDistribution initialMixture) {
         final double[][] data = this.getData();
         final int n = data.length;
         if (data.length < 1) {
@@ -428,7 +433,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
         final int k = initialMixture.getComponents().size();
 
         @SuppressWarnings("unused")
-        final int numMeanColumns = initialMixture.getComponents().get(0).getSecond().getMeans().length;
+        final int numMeanColumns = initialMixture.getComponents().get(0).getSecond().getMean().length;
 
         int numIterations = 0;
         double previousLogLikelihood = 0d;
@@ -436,19 +441,19 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
         double logLikelihood = Double.NEGATIVE_INFINITY;
 
         // Initialize model to fit to initial mixture.
-        MixtureMultivariateNormalDistribution fittedModel = new MixtureMultivariateNormalDistribution(initialMixture.getComponents());
+        MultivariateMixtureDistribution fittedModel = new MultivariateMixtureDistribution(initialMixture.getComponents());
 
         while ((numIterations++ <= this.getIterations()) && (Math.abs(previousLogLikelihood - logLikelihood) > this.threshold)) {
             previousLogLikelihood = logLikelihood;
             double sumLogLikelihood = 0d;
 
             // Mixture components
-            final List<Pair<Double, MultivariateNormalDistribution>> components = fittedModel.getComponents();
+            final List<Pair<Double, IMultivariateDistribution>> components = fittedModel.getComponents();
 
             // Weight and distribution of each component
             final double[] weights = new double[k];
 
-            final MultivariateNormalDistribution[] mvns = new MultivariateNormalDistribution[k];
+            final IMultivariateDistribution[] mvns = new IMultivariateDistribution[k];
 
             for (int j = 0; j < k; j++) {
                 weights[j] = components.get(j).getFirst();
@@ -498,11 +503,16 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
             // Compute new covariance matrices
             final double[][][] newCovMatArrays = new double[k][numCols][numCols];
             for (int j = 0; j < k; j++) {
-                newCovMatArrays[j] = components.get(j).getValue().getCovariances().getData();
+                newCovMatArrays[j] = components.get(j).getValue().getVariance();
             }
 
+            final List<IMultivariateDistribution> distr = new ArrayList<IMultivariateDistribution>(k);
+
+            for (int i = 0; i < k; i++) {
+                distr.add(new MultivariateNormalDistribution(newMeans[i], newCovMatArrays[i]));
+            }
             // Update current model
-            fittedModel = new MixtureMultivariateNormalDistribution(newWeights, newMeans, newCovMatArrays);
+            fittedModel = new MultivariateMixtureDistribution(weights, distr);
         }
         return fittedModel;
     }

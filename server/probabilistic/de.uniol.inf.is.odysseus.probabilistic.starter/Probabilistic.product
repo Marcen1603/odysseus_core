@@ -68,9 +68,7 @@ limitations under the License.
    <features>
       <feature id="de.uniol.inf.is.odysseus.client.platform.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.monolithic.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.spatial.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.probabilistic.feature"/>
-      <feature id="de.uniol.inf.is.odysseus.evaluation.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.ontology.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.common.feature"/>
    </features>

@@ -141,8 +141,8 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
     public double density(final double[] values) {
         if (this.covarianceInverse == null) {
             final EigenDecomposition covMatDec = new EigenDecomposition(this.covariance);
-            this.covarianceInverse = covMatDec.getSolver().getInverse();
             this.covarianceDeterminant = covMatDec.getDeterminant();
+            this.covarianceInverse = covMatDec.getSolver().getInverse();
         }
 
         final double[] centered = new double[values.length];
@@ -321,7 +321,8 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      */
     @Override
     public IMultivariateDistribution multiply(final IMultivariateDistribution other) {
-        // FIXME 20140319 christian@kuka.cc Use EM for result distribution estimation
+        // FIXME 20140319 christian@kuka.cc Use EM for result distribution
+        // estimation
         return null;
     }
 
@@ -330,7 +331,8 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      */
     @Override
     public IMultivariateDistribution divide(final IMultivariateDistribution other) {
-        // FIXME 20140319 christian@kuka.cc Use EM for result distribution estimation
+        // FIXME 20140319 christian@kuka.cc Use EM for result distribution
+        // estimation
         return null;
     }
 
