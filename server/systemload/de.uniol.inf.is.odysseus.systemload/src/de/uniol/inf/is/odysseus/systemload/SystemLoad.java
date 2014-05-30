@@ -37,14 +37,9 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 	@Override
 	public void addSystemLoad(String name) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name for system load must not be null or empty!");
-
-		SystemLoadEntry entry = systemLoads.get(name);
-		if (entry == null) {
-			entry = new SystemLoadEntry(name);
-			systemLoads.put(name, entry);
-		}
-
-		entry.addSystemLoad();
+		
+		// replaces older ones if necessary
+		systemLoads.put(name, new SystemLoadEntry(name));
 	}
 
 	@Override
@@ -64,12 +59,7 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 
 	void insert(SystemLoad other) {
 		for (String name : other.systemLoads.keySet()) {
-			if (systemLoads.containsKey(name)) {
-				systemLoads.get(name).addExistingSystemLoad(other.systemLoads.get(name));
-			} else {
-				SystemLoadEntry e = new SystemLoadEntry(other.systemLoads.get(name));
-				systemLoads.put(name, e);
-			}
+			systemLoads.put(name, other.systemLoads.get(name));
 		}
 	}
 
@@ -104,8 +94,7 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 
 			sb.append(cpuValue).append(delimiter);
 			sb.append(memValue).append(delimiter);
-			sb.append(netValue).append(delimiter);
-			sb.append(systemLoadEntry.getCount());
+			sb.append(netValue);
 		}
 
 		return sb.toString();
@@ -123,8 +112,7 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 
 			sb.append("cpu_").append(name).append(delimiter);
 			sb.append("mem_").append(name).append(delimiter);
-			sb.append("net_").append(name).append(delimiter);
-			sb.append("count_").append(name);
+			sb.append("net_").append(name);
 		}
 
 		return sb.toString();
@@ -138,7 +126,7 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 		for (String name : systemLoads.keySet()) {
 
 			SystemLoadEntry systemLoadEntry = systemLoads.get(name);
-			sb.append(name).append("-[").append(systemLoadEntry.getCount()).append("]->{");
+			sb.append(name).append("-->{");
 			String delimiter = ",";
 
 			int cpuValue = (int) (systemLoadEntry.getCpuLoad() * 100);

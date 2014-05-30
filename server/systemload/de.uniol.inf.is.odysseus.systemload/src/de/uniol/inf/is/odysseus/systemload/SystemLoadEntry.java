@@ -15,72 +15,50 @@ public final class SystemLoadEntry implements Serializable, Cloneable {
 	
 	private final String name;
 
-	private double cpuLoadSum;
-	private double memLoadSum;
-	private double netLoadSum;
+	private final double cpuLoad;
+	private final double memLoad;
+	private final double netLoad;
 	
-	private int count;
-
 	public SystemLoadEntry(String name) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name for systemload entry must not be empty or null!");
 		
 		this.name = name;
-	}
-	
-	public SystemLoadEntry(SystemLoadEntry copy) {
-		this.name = copy.name;
 		
-		this.cpuLoadSum = copy.cpuLoadSum;
-		this.memLoadSum = copy.memLoadSum;
-		this.netLoadSum = copy.netLoadSum;
-		this.count = copy.count;
-	}
-
-	public String getName() {
-		return name;
-	}
-	
-	public void addSystemLoad() {
 		double cpuMax = SIGAR_WRAPPER.getCpuMax();
-		double cpuLoad = ( cpuMax - SIGAR_WRAPPER.getCpuFree() ) / cpuMax;
-		cpuLoadSum += cpuLoad;
+		cpuLoad = ( cpuMax - SIGAR_WRAPPER.getCpuFree() ) / cpuMax;
 		
 		double memMax = RUNTIME.totalMemory();
-		double memLoad = ( memMax - RUNTIME.freeMemory() ) / memMax;
-		memLoadSum += memLoad;
+		memLoad = ( memMax - RUNTIME.freeMemory() ) / memMax;
 		
 		double netMax = SIGAR_WRAPPER.getNetMax();
 		double netInLoad = SIGAR_WRAPPER.getNetInputRate();
 		double netOutLoad = SIGAR_WRAPPER.getNetOutputRate();
 		
-		double netLoad = (netInLoad + netOutLoad ) / netMax;
-		netLoadSum += netLoad;
-		
-		count++;
-	}
-
-	public void addExistingSystemLoad(SystemLoadEntry other) {
-		cpuLoadSum += other.cpuLoadSum;
-		memLoadSum += other.memLoadSum;
-		netLoadSum += other.netLoadSum;
-		
-		count += other.count;
+		netLoad = (netInLoad + netOutLoad ) / netMax;
 	}
 	
+	public SystemLoadEntry(SystemLoadEntry copy) {
+		this.name = copy.name;
+		
+		this.cpuLoad = copy.cpuLoad;
+		this.memLoad = copy.memLoad;
+		this.netLoad = copy.netLoad;
+	}
+
+	public String getName() {
+		return name;
+	}
+
 	public double getCpuLoad() {
-		return cpuLoadSum / count;
+		return cpuLoad;
 	}
 	
 	public double getMemLoad() {
-		return memLoadSum / count;
+		return memLoad;
 	}
 	
 	public double getNetLoad() {
-		return netLoadSum / count;
-	}
-	
-	public int getCount() {
-		return count;
+		return netLoad;
 	}
 	
 	@Override
