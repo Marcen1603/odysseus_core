@@ -20,9 +20,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 public abstract class AbstractUnaryNumberInputFunction<T> extends AbstractFunction<T> {
 
 	private static final long serialVersionUID = 4163516033012192570L;
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { new SDFDatatype[] {
-			SDFDatatype.DOUBLE, SDFDatatype.BYTE, SDFDatatype.FLOAT,
-			SDFDatatype.INTEGER, SDFDatatype.LONG } };
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.NUMBERS };
 	
 	public AbstractUnaryNumberInputFunction(String symbol, SDFDatatype returnType) {
 		super(symbol,1,accTypes, returnType);
