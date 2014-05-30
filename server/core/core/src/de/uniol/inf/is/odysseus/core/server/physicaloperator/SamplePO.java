@@ -13,24 +13,25 @@ public class SamplePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 	private int current = 0;
 	private final TimeValueItem timeValue;
 	private TimeValueItem startTime;
-	private final boolean sampleByTimeValue;
 	private final TimeUnit baseTimeUnit;
 	
 	public SamplePO(SampleAO sampleAO){
 		
 		this.sampleRate = sampleAO.getSampleRate();
-		this.sampleByTimeValue = sampleAO.sampleByTime();
 		this.baseTimeUnit = sampleAO.getBaseTimeUnit();
-		this.timeValue = new TimeValueItem(
-				this.baseTimeUnit.convert(sampleAO.getTimeValue().getTime(), sampleAO.getTimeValue().getUnit()), 
-				this.baseTimeUnit);
+		if(sampleAO.getTimeValue() != null) {
+			
+			this.timeValue = new TimeValueItem(
+					this.baseTimeUnit.convert(sampleAO.getTimeValue().getTime(), sampleAO.getTimeValue().getUnit()), 
+					this.baseTimeUnit);
+			
+		} else this.timeValue = null;
 		
 	}
 	
 	public SamplePO(SamplePO<T> samplePO) {
 		super(samplePO);
 		this.sampleRate = samplePO.sampleRate;
-		this.sampleByTimeValue = samplePO.sampleByTimeValue;
 		this.timeValue = samplePO.timeValue;
 		this.baseTimeUnit = samplePO.baseTimeUnit;
 		
@@ -44,7 +45,7 @@ public class SamplePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 	@Override
 	protected void process_next(T object, int port) {
 		
-		if(this.sampleByTimeValue) {
+		if(this.timeValue != null) {
 		
 			final TimeValueItem currentTime = new TimeValueItem(
 					((ITimeInterval) object.getMetadata()).getStart().getMainPoint(), 

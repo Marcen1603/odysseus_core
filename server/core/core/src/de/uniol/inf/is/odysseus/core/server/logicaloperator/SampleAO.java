@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
@@ -21,9 +20,8 @@ public class SampleAO extends UnaryLogicalOp {
 	 * 
 	 */
 	private static final long serialVersionUID = -2100883143405405327L;
-	private int sampleRate = 1;
+	private int sampleRate = 0;
 	private TimeValueItem timeValue;
-	private boolean sampleByTimeValue = false;
 	private TimeUnit baseTimeUnit = null;
 	
 	public SampleAO(){
@@ -48,20 +46,10 @@ public class SampleAO extends UnaryLogicalOp {
 		this.timeValue = timeValue;
 	}
 	
-	public boolean sampleByTime() {
-		return this.sampleByTimeValue;
-	}
-	
-	@Parameter(type = BooleanParameter.class, name = "sample_by_time", optional = true)
-	public void setSampleByTime(boolean sampleByTime) {
-		this.sampleByTimeValue = sampleByTime;
-	}
-	
 	public SampleAO(SampleAO sampleAO) {
 		super(sampleAO);
 		this.sampleRate = sampleAO.sampleRate;
 		this.timeValue = sampleAO.timeValue;
-		this.sampleByTimeValue = sampleAO.sampleByTimeValue;
 		this.baseTimeUnit = sampleAO.baseTimeUnit;
 		
 	}
@@ -109,6 +97,16 @@ public class SampleAO extends UnaryLogicalOp {
 	public void initialize() {
 		getBaseTimeUnit();
 		super.initialize();
+	}
+	
+	@Override
+	public boolean isValid() {
+		
+		if((this.sampleRate == 0 && this.timeValue != null) || (this.sampleRate > 0 && this.timeValue == null))
+			return super.isValid();
+		
+		return false;
+		
 	}
 
 }
