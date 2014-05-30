@@ -22,11 +22,21 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
 public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>> extends AbstractPipe<T, T> {
 
 	private static final Logger log = LoggerFactory.getLogger(AbstractFragmentPO.class);
+	
+	/**
+	 * The rate heartbeats are send.
+	 */
+	private final int heartbeatRate = 10;
+	
+	/**
+	 * The current amount of heartbeats.
+	 */
+	private int[] heartbeatCounter;
 
 	/**
 	 * The number of fragments.
 	 */
-	protected long numFragments;
+	protected int numFragments;
 
 	/**
 	 * Constructs a new {@link AbstractFragmentPO}.
@@ -38,7 +48,8 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 	public AbstractFragmentPO(AbstractFragmentAO fragmentAO) {
 
 		super();
-		this.numFragments = fragmentAO.getNumberOfFragments();
+		this.numFragments = (int) fragmentAO.getNumberOfFragments();
+		this.heartbeatCounter = new int[this.numFragments];
 
 	}
 
@@ -68,7 +79,7 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 	@Override
 	@SuppressWarnings("unchecked")
 	protected synchronized void process_next(T object, int port) {
-		// TODO: DO NOT SYNCHRONIZE ON THIS!
+		// DO NOT SYNCHRONIZE ON THIS!
 		int outPort = this.route(object);
 		AbstractFragmentPO.log.debug("Routed " + object + " to output port " + outPort);
 		this.transfer(object, outPort);
@@ -84,14 +95,23 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 		this.sendPunctuation(punctuation, outPort);
 
 		sendHeartbeats(outPort, punctuation.getTime());
+		
 	}
 
-	private void sendHeartbeats(int exceptionPort, PointInTime time) {
-		Heartbeat heartbeat = Heartbeat.createNewHeartbeat(time);
-		for (int p = 0; p < this.numFragments; p++) {
-			if (p != exceptionPort) {
+	/**
+	 * Send heartbeats in order to communicate the temporal advance to all ports.
+	 * @param exceptionPort The port, where the current element is routed. There will no heartbeat send.
+	 * @param currentPoT The {@link PointInTime} of the current element.
+	 */
+	private void sendHeartbeats(int exceptionPort, PointInTime currentPoT) {
+		
+		final Heartbeat heartbeat = Heartbeat.createNewHeartbeat(currentPoT);
+		
+		for(int p = 0; p < this.numFragments; p++) {
+			
+			if(p != exceptionPort && ++this.heartbeatCounter[p] % this.heartbeatRate != 0)
 				this.sendPunctuation(heartbeat, p);
-			}
+			
 		}
 	}
 
