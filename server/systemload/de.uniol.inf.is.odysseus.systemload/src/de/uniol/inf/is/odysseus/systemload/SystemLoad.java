@@ -104,7 +104,8 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 
 			sb.append(cpuValue).append(delimiter);
 			sb.append(memValue).append(delimiter);
-			sb.append(netValue);
+			sb.append(netValue).append(delimiter);
+			sb.append(systemLoadEntry.getCount());
 		}
 
 		return sb.toString();
@@ -122,7 +123,8 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 
 			sb.append("cpu_").append(name).append(delimiter);
 			sb.append("mem_").append(name).append(delimiter);
-			sb.append("net_").append(name);
+			sb.append("net_").append(name).append(delimiter);
+			sb.append("count_").append(name);
 		}
 
 		return sb.toString();
