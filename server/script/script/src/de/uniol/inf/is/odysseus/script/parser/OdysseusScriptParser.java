@@ -404,6 +404,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser,
 						.getNowContext()));
 				keyStartedAtLine = currentLine + 1;
 			}
+			
+			ifController.checkState();
 
 			return statements;
 		} catch (OdysseusScriptException | ReplacementException ex) {
