@@ -67,11 +67,11 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 		this.transfer(object, outPort);
 		
 		// Sending heartbeats to all other ports
+		Heartbeat heartbeat = Heartbeat.createNewHeartbeat(((IStreamObject<? extends ITimeInterval>) object).getMetadata().getStart());
 		for(int p = 0; p < this.numFragments; p++) {
-			
-			if(p != outPort)
-				this.sendPunctuation(Heartbeat.createNewHeartbeat(((IStreamObject<? extends ITimeInterval>) object).getMetadata().getStart()), p);
-			
+			if(p != outPort) {
+				this.sendPunctuation(heartbeat, p);
+			}
 		}
 
 	}
