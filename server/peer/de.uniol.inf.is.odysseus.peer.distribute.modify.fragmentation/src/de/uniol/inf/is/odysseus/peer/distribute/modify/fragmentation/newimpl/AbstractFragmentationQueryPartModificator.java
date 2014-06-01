@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
@@ -21,8 +19,17 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
-import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
+/**
+ * The fragmentation uses the given query parts and informations from
+ * Odysseus-Script to fragment a data stream for each query part as follows: <br />
+ * 1. Make as many copies as the degree of fragmentation from the query parts to
+ * build fragments. <br />
+ * 2. Insert fragment operators and reunion operators for those fragments. <br />
+ * 3. Attach all query parts not to build fragments to the modified fragments.
+ * 
+ * @author Michael Brand
+ */
 public abstract class AbstractFragmentationQueryPartModificator implements
 		IQueryPartModificator {
 
@@ -32,6 +39,17 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	private static final Logger log = LoggerFactory
 			.getLogger(AbstractFragmentationQueryPartModificator.class);
 
+	/**
+	 * Determines all operators to build fragments.
+	 * 
+	 * @param operators
+	 *            The operators to check.
+	 * @param helper
+	 *            The {@link AbstractFragmentationHelper} instance.
+	 * @param bundle
+	 *            The {@link AbstractFragmentationInfoBundle} instance.
+	 * @return All operators within <code>operators</code> to build fragments.
+	 */
 	private static Collection<ILogicalOperator> determineOperatorsForFragment(
 			Collection<ILogicalOperator> operators,
 			AbstractFragmentationHelper helper,
@@ -50,7 +68,11 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 		for (ILogicalOperator operator : operators) {
 
-			if (AbstractFragmentationHelper.isOperatorAbove(operator,
+			if (operator.isSinkOperator() && !operator.isSourceOperator()) {
+
+				continue;
+
+			} else if (AbstractFragmentationHelper.isOperatorAbove(operator,
 					bundle.getOriginStartOperator())
 					&& (!bundle.getOriginEndOperator().isPresent() || AbstractFragmentationHelper
 							.isOperatorAbove(bundle.getOriginEndOperator()
@@ -67,6 +89,17 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 	}
 
+	/**
+	 * Determines all query parts to build fragments.
+	 * 
+	 * @param queryParts
+	 *            The query parts to check.
+	 * @param helper
+	 *            The {@link AbstractFragmentationHelper} instance.
+	 * @param bundle
+	 *            The {@link AbstractFragmentationInfoBundle} instance.
+	 * @return All operators within <code>operators</code> to build fragments.
+	 */
 	private static IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> determineFragments(
 			Collection<ILogicalQueryPart> queryParts,
 			AbstractFragmentationHelper helper,
@@ -122,37 +155,26 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 	}
 
-	private static Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> makeCopies(
-			Collection<ILogicalQueryPart> fragments,
-			Collection<ILogicalQueryPart> nonfragments,
-			AbstractFragmentationInfoBundle bundle) {
-
-		// Copy the query parts
-		final Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiedFragmentsToOriginals = LogicalQueryHelper
-				.copyAndCutQueryParts(fragments,
-						bundle.getDegreeOfFragmentation());
-		final Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiedNonFragmentsToOriginals = LogicalQueryHelper
-				.copyAndCutQueryParts(nonfragments, 1);
-
-		// Put the maps together
-		final Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOriginals = Maps
-				.newHashMap();
-		copiesToOriginals.putAll(copiedFragmentsToOriginals);
-		copiesToOriginals.putAll(copiedNonFragmentsToOriginals);
-
-		if (AbstractFragmentationQueryPartModificator.log.isDebugEnabled()) {
-
-			// Print working copies
-			for (ILogicalQueryPart original : copiesToOriginals.keySet())
-				AbstractFragmentationQueryPartModificator.log.debug(
-						"Created query parts {} as copies of query part {}.",
-						copiesToOriginals.get(original), original);
-
-		}
-		return copiesToOriginals;
-
-	}
-
+	/**
+	 * Makes preparations for fragmentation.
+	 * 
+	 * @param queryParts
+	 *            The given query parts.
+	 * @param helper
+	 *            The {@link AbstractFragmentationHelper} instance.
+	 * @param bundle
+	 *            The {@link AbstractFragmentationInfoBundle} instance.
+	 * @return True, if <code>queryParts</code> and the informations given by
+	 *         Odysseus-Script are valid for fragmentation.
+	 * @throws QueryPartModificationException
+	 *             If the parameters for fragmentation do not contain two
+	 *             parameters, if the second parameter is no integer or if the
+	 *             degree of fragmentation if lower than
+	 *             {@value #minDegreeOfFragmentation}. <br />
+	 *             If the parameters for fragmentation is empty or if the first
+	 *             parameter does not match any patterns within
+	 *             {@value #startAndEndPointPatterns}.
+	 */
 	private static boolean prepare(Collection<ILogicalQueryPart> queryParts,
 			AbstractFragmentationHelper helper,
 			AbstractFragmentationInfoBundle bundle)
@@ -185,12 +207,103 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			return false;
 
 		}
+		bundle.setOriginalRelevantParts(fragmentsAndNonfragments.getE1());
+		bundle.setOriginalIrrelevantParts(fragmentsAndNonfragments.getE2());
 
-		// Make loose working copies of the query parts
-		final Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOriginals = AbstractFragmentationQueryPartModificator
-				.makeCopies(fragmentsAndNonfragments.getE1(),
-						fragmentsAndNonfragments.getE2(), bundle);
-		bundle.setCopyMap(copiesToOriginals);
+		return true;
+
+	}
+
+	// private static Map<ILogicalQueryPart, Collection<ILogicalQueryPart>>
+	// makeCopies(
+	// Collection<ILogicalQueryPart> fragments,
+	// Collection<ILogicalQueryPart> nonfragments,
+	// AbstractFragmentationInfoBundle bundle) {
+	//
+	// // Copy the query parts
+	// final Map<ILogicalQueryPart, Collection<ILogicalQueryPart>>
+	// copiedFragmentsToOriginals = LogicalQueryHelper
+	// .copyAndCutQueryParts(fragments,
+	// bundle.getDegreeOfFragmentation());
+	// final Map<ILogicalQueryPart, Collection<ILogicalQueryPart>>
+	// copiedNonFragmentsToOriginals = LogicalQueryHelper
+	// .copyAndCutQueryParts(nonfragments, 1);
+	//
+	// // Put the maps together
+	// final Map<ILogicalQueryPart, Collection<ILogicalQueryPart>>
+	// copiesToOriginals = Maps
+	// .newHashMap();
+	// copiesToOriginals.putAll(copiedFragmentsToOriginals);
+	// copiesToOriginals.putAll(copiedNonFragmentsToOriginals);
+	//
+	// if (AbstractFragmentationQueryPartModificator.log.isDebugEnabled()) {
+	//
+	// // Print working copies
+	// for (ILogicalQueryPart original : copiesToOriginals.keySet())
+	// AbstractFragmentationQueryPartModificator.log.debug(
+	// "Created query parts {} as copies of query part {}.",
+	// copiesToOriginals.get(original), original);
+	//
+	// }
+	// return copiesToOriginals;
+	//
+	// }
+
+	/**
+	 * Creates the info bundle for the fragmentation.
+	 * 
+	 * @return A new instance of {@link AbstractFragmentationInfoBundle}.
+	 */
+	protected abstract AbstractFragmentationInfoBundle createFragmentationInfoBundle();
+
+	/**
+	 * Creates the helper for the fragmentation.
+	 * 
+	 * @param fragmentationParameters
+	 *            The parameters for fragmentation.
+	 * @return A new instance of {@link AbstractFragmentationHelper}.
+	 */
+	protected abstract AbstractFragmentationHelper createFragmentationHelper(
+			List<String> modificatorParameters);
+
+	@Override
+	public Collection<ILogicalQueryPart> modify(
+			Collection<ILogicalQueryPart> queryParts, ILogicalQuery query,
+			QueryBuildConfiguration config, List<String> modificatorParameters)
+			throws QueryPartModificationException {
+
+		// The helper instance
+		final AbstractFragmentationHelper helper = this
+				.createFragmentationHelper(modificatorParameters);
+
+		// The bundle of informations for the fragmentation
+		final AbstractFragmentationInfoBundle bundle = this
+				.createFragmentationInfoBundle();
+
+		// Preconditions
+		if (queryParts == null || queryParts.isEmpty()) {
+
+			AbstractFragmentationQueryPartModificator.log
+					.warn("No query parts given for fragmentation");
+			return queryParts;
+
+		} else if (!AbstractFragmentationQueryPartModificator.prepare(
+				queryParts, helper, bundle)) {
+
+			AbstractFragmentationQueryPartModificator.log
+					.warn("Preparation for fragmentation failed");
+			return queryParts;
+
+		}
+		AbstractFragmentationQueryPartModificator.log.debug(
+				"State of fragmentation after preparation:\n{}", bundle);
+
+		// TODO Make loose working copies of the query parts
+		// final Map<ILogicalQueryPart, Collection<ILogicalQueryPart>>
+		// copiesToOriginals = AbstractFragmentationQueryPartModificator
+		// .makeCopies(fragmentsAndNonfragments.getE1(),
+		// fragmentsAndNonfragments.getE2(), bundle);
+		// bundle.setCopyMap(copiesToOriginals);
 
 		// TODO Collect the copies of the start operator
 		// final List<ILogicalQuery> copiesOfStartOperator =
@@ -218,51 +331,13 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		// TODO create map for inserted fragment operators
 		// TODO create map for inserted reunion operators
 
-		return true;
-
-	}
-
-	protected abstract AbstractFragmentationInfoBundle createFragmentationInfoBundle();
-
-	protected abstract AbstractFragmentationHelper createFragmentationParametersHelper(
-			List<String> modificatorParameters);
-
-	@Override
-	public Collection<ILogicalQueryPart> modify(
-			Collection<ILogicalQueryPart> queryParts, ILogicalQuery query,
-			QueryBuildConfiguration config, List<String> modificatorParameters)
-			throws QueryPartModificationException {
-
-		// The helper instance
-		final AbstractFragmentationHelper helper = this
-				.createFragmentationParametersHelper(modificatorParameters);
-
-		// The bundle of informations for the fragmentation
-		final AbstractFragmentationInfoBundle bundle = this
-				.createFragmentationInfoBundle();
-
-		// Preconditions
-		if (queryParts == null || queryParts.isEmpty()) {
-
-			AbstractFragmentationQueryPartModificator.log
-					.warn("No query parts given for fragmentation");
-			return queryParts;
-
-		} else if (!AbstractFragmentationQueryPartModificator.prepare(
-				queryParts, helper, bundle)) {
-
-			AbstractFragmentationQueryPartModificator.log
-					.warn("Preparation for fragmentation failed");
-			return queryParts;
-
-		}
-
 		// TODO insert fragment operators
 		// TODO insert union operators
 		// TODO append other query parts
 		// TODO set query parts to avoid
 		// TODO create return value
-		return null;
+		return queryParts;
+
 	}
 
 }

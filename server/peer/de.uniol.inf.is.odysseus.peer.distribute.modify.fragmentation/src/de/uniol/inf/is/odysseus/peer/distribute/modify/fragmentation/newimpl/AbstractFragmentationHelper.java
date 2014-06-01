@@ -3,9 +3,6 @@ package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl;
 import java.util.Collection;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -19,23 +16,80 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 
+/**
+ * An fragmentation helper provides useful methods for fragmentation.
+ * 
+ * @author Michael Brand
+ */
 public abstract class AbstractFragmentationHelper {
 
 	/**
-	 * The logger for this class.
+	 * The index of the parameter identifying the start and end point of
+	 * fragmentation.
 	 */
-	private static final Logger log = LoggerFactory
-			.getLogger(AbstractFragmentationHelper.class);
-
 	private static final int parameterIndex_startAndEndPointIDs = 0;
 
+	/**
+	 * The index of the parameter identifying the degree of fragmentation.
+	 */
 	private static final int parameterIndex_degreeOfFragmentation = 1;
 
-	private static final int minDegreeOfFragmentation = 2;
+	/**
+	 * All possible patterns for a string identifying the start or end point of
+	 * fragmentation.
+	 */
+	private static final String[] startOrEndPointPatterns = { "\\w+",
+			"\\w+:\\w+" };
 
-	private static final String[] startAndEndPointPatterns = { "\\w+",
-			"\\[\\w+\\]", "\\[\\w+\\s\\w+\\]" };
+	/**
+	 * The separator for strings identifying the start or end point of
+	 * fragmentation.
+	 */
+	private static final String startOrEndPointSeparator = ",";
 
+	/**
+	 * The minimum degree of fragmentation.
+	 */
+	public static final int minDegreeOfFragmentation = 2;
+
+	/**
+	 * All possible patterns for the parameter identifying the start and end
+	 * point of fragmentation.
+	 */
+	public static final String[] startAndEndPointPatterns = {
+			AbstractFragmentationHelper.startOrEndPointPatterns[0],
+			"\\[" + AbstractFragmentationHelper.startOrEndPointPatterns[0]
+					+ "\\]",
+			AbstractFragmentationHelper.startOrEndPointPatterns[1],
+			"\\[" + AbstractFragmentationHelper.startOrEndPointPatterns[1]
+					+ "\\]",
+			"\\[" + AbstractFragmentationHelper.startOrEndPointPatterns[0]
+					+ AbstractFragmentationHelper.startOrEndPointSeparator
+					+ AbstractFragmentationHelper.startOrEndPointPatterns[0]
+					+ "\\]",
+			"\\[" + AbstractFragmentationHelper.startOrEndPointPatterns[0]
+					+ AbstractFragmentationHelper.startOrEndPointSeparator
+					+ AbstractFragmentationHelper.startOrEndPointPatterns[1]
+					+ "\\]",
+			"\\[" + AbstractFragmentationHelper.startOrEndPointPatterns[1]
+					+ AbstractFragmentationHelper.startOrEndPointSeparator
+					+ AbstractFragmentationHelper.startOrEndPointPatterns[0]
+					+ "\\]",
+			"\\[" + AbstractFragmentationHelper.startOrEndPointPatterns[1]
+					+ AbstractFragmentationHelper.startOrEndPointSeparator
+					+ AbstractFragmentationHelper.startOrEndPointPatterns[1]
+					+ "\\]" };
+
+	/**
+	 * Checks if two operators are equal or if the first is above the second.
+	 * 
+	 * @param op1
+	 *            The first operator.
+	 * @param op2
+	 *            The second operator.
+	 * @return True, if <code>op1</code> is equal to <code>op2</code> or if
+	 *         <code>op1</code> is above <code>op2</code>.
+	 */
 	private static final boolean isOperatorAboveOrEqual(ILogicalOperator op1,
 			ILogicalOperator op2) {
 
@@ -60,6 +114,14 @@ public abstract class AbstractFragmentationHelper {
 
 	}
 
+	/**
+	 * Assures not to split a {@link RenameAO} and it's source.
+	 * 
+	 * @param operator
+	 *            The operator, which may be subscribed by a {@link RenameAO}.
+	 * @return The subscribed {@link RenameAO} or <code>operator</code>, if no
+	 *         {@link RenameAO} is subscribed.
+	 */
 	protected static final ILogicalOperator handleRenameAOs(
 			ILogicalOperator operator) {
 
@@ -84,6 +146,18 @@ public abstract class AbstractFragmentationHelper {
 
 	}
 
+	/**
+	 * Finds an operator by it's unique id or by it's resource name for
+	 * {@link AbstractAccessAO}s.
+	 * 
+	 * @param queryParts
+	 *            The query parts to search within.
+	 * @param id
+	 *            The unique id or resource name.
+	 * @return The operator with <code>id</code> as unique id or as resource
+	 *         name for {@link AbstractAccessAO}s. {@link Optional#absent()}, if
+	 *         no operator could be found.
+	 */
 	protected static final Optional<ILogicalOperator> findOperatorByID(
 			Collection<ILogicalQueryPart> queryParts, String id) {
 
@@ -121,6 +195,15 @@ public abstract class AbstractFragmentationHelper {
 
 	}
 
+	/**
+	 * Checks if the first is above the second.
+	 * 
+	 * @param op1
+	 *            The first operator.
+	 * @param op2
+	 *            The second operator.
+	 * @return True, if <code>op1</code> is above <code>op2</code>.
+	 */
 	public static final boolean isOperatorAbove(ILogicalOperator op1,
 			ILogicalOperator op2) {
 
@@ -144,9 +227,18 @@ public abstract class AbstractFragmentationHelper {
 		return false;
 
 	}
-	
+
+	/**
+	 * The parameters for the fragmentation.
+	 */
 	protected final ImmutableList<String> fragmentationParameters;
 
+	/**
+	 * Creates a new fragmentation helper.
+	 * 
+	 * @param fragmentationParameters
+	 *            The parameters for fragmentation.
+	 */
 	public AbstractFragmentationHelper(List<String> fragmentationParameters) {
 
 		// Preconditions
@@ -158,6 +250,17 @@ public abstract class AbstractFragmentationHelper {
 
 	}
 
+	/**
+	 * Determines the degree of fragmentation.
+	 * 
+	 * @return The degree of fragmentation given by the parameters for
+	 *         fragmentation.
+	 * @throws QueryPartModificationException
+	 *             If the parameters for fragmentation do not contain two
+	 *             parameters, if the second parameter is no integer or if the
+	 *             degree of fragmentation if lower than
+	 *             {@value #minDegreeOfFragmentation}.
+	 */
 	public int determineDegreeOfFragmentation()
 			throws QueryPartModificationException {
 
@@ -189,13 +292,28 @@ public abstract class AbstractFragmentationHelper {
 					"The second fragmentation parameter, the degree of fragmentation must be greater than 2!");
 
 		}
-
-		AbstractFragmentationHelper.log.debug("Degree of fragmentation = "
-				+ degree);
+		
 		return degree;
 
 	}
 
+	/**
+	 * Determines the operators, where the fragmentation starts and ends given
+	 * by the parameters for fragmentation.
+	 * 
+	 * @param queryParts
+	 *            The given query parts.
+	 * @return A pair as follows: <br />
+	 *         {@link IPair#getE1()} is the operator, where the fragmentation
+	 *         starts <br />
+	 *         {@link IPair#getE2()} is the operator, where the fragmentation
+	 *         ends or {@link Optional#absent()}, if no id for an end operator
+	 *         is given.
+	 * @throws QueryPartModificationException
+	 *             If the parameters for fragmentation is empty or if the first
+	 *             parameter does not match any patterns within
+	 *             {@value #startAndEndPointPatterns}.
+	 */
 	public IPair<ILogicalOperator, Optional<ILogicalOperator>> determineStartAndEndPoints(
 			Collection<ILogicalQueryPart> queryParts)
 			throws QueryPartModificationException {
@@ -229,13 +347,13 @@ public abstract class AbstractFragmentationHelper {
 
 		}
 
-		startAndEndPointParameter = startAndEndPointParameter
-				.replace("\\[", "");
-		startAndEndPointParameter = startAndEndPointParameter
-				.replace("\\]", "");
+		startAndEndPointParameter = startAndEndPointParameter.replaceAll("\\[",
+				"");
+		startAndEndPointParameter = startAndEndPointParameter.replaceAll("\\]",
+				"");
 
 		final String[] startAndEndPointParameterArray = startAndEndPointParameter
-				.split(" ");
+				.split(AbstractFragmentationHelper.startOrEndPointSeparator);
 		final String startID = startAndEndPointParameterArray[0].trim();
 		Optional<String> endID = Optional.absent();
 		if (startAndEndPointParameterArray.length > 1) {
@@ -251,20 +369,6 @@ public abstract class AbstractFragmentationHelper {
 
 		}
 
-		AbstractFragmentationHelper.log
-				.debug("ID of start point for fragmentation = " + startID);
-		if (endID.isPresent()) {
-
-			AbstractFragmentationHelper.log
-					.debug("ID of end point for fragmentation = " + endID.get());
-
-		} else {
-
-			AbstractFragmentationHelper.log
-					.debug("ID of end point for fragmentation is not given");
-
-		}
-
 		final Optional<ILogicalOperator> startOperator = AbstractFragmentationHelper
 				.findOperatorByID(queryParts, startID);
 		if (!startOperator.isPresent()) {
@@ -273,12 +377,6 @@ public abstract class AbstractFragmentationHelper {
 					"Could not find an operator with " + startID
 							+ " as ID or resource!");
 
-		} else {
-
-			AbstractFragmentationHelper.log
-					.debug("Operator of start point for fragmentation = "
-							+ startOperator.get());
-
 		}
 
 		Optional<ILogicalOperator> endOperator = Optional.absent();
@@ -286,19 +384,6 @@ public abstract class AbstractFragmentationHelper {
 
 			endOperator = AbstractFragmentationHelper.findOperatorByID(
 					queryParts, endID.get());
-			if (!endOperator.isPresent()) {
-
-				AbstractFragmentationHelper.log
-						.debug("Operator of end point for fragmentation = "
-								+ endOperator.get());
-
-			} else {
-
-				AbstractFragmentationHelper.log
-						.debug("Operator of end point for fragmentation = "
-								+ endOperator.get());
-
-			}
 
 		}
 
@@ -306,7 +391,15 @@ public abstract class AbstractFragmentationHelper {
 				startOperator.get(), endOperator);
 
 	}
-	
+
+	/**
+	 * Checks if an operator shall not be part of a fragment.
+	 * 
+	 * @param operator
+	 *            The operator to check.
+	 * @return True, if <code>operator</code> shall not be part of a fragment;
+	 *         false else.
+	 */
 	public abstract boolean isOperatorException(ILogicalOperator operator);
 
 }
