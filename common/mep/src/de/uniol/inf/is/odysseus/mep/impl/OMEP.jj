@@ -241,7 +241,7 @@
   }
 /*@egen*/
   {
-    jjtn000.setValue(Integer.parseInt(t.image));
+    jjtn000.setValue(Long.parseLong(t.image)); 
   }
 | t = < FLOAT >/*@bgen(jjtree)*/
   {

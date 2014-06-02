@@ -445,7 +445,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
         t = jj_consume_token(INTEGER);
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
-    jjtn000.setValue(Integer.parseInt(t.image));
+    jjtn000.setValue(Long.parseLong(t.image));
         break;
       case FLOAT:
         t = jj_consume_token(FLOAT);

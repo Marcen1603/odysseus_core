@@ -2,7 +2,6 @@
 package de.uniol.inf.is.odysseus.mep.impl;
 
 /** Token Manager. */
-@SuppressWarnings("all")
 public class MEPImplTokenManager implements MEPImplConstants
 {
 
