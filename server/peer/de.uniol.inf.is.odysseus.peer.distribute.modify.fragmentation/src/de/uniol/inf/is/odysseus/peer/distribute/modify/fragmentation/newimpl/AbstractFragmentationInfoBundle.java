@@ -30,6 +30,16 @@ public abstract class AbstractFragmentationInfoBundle {
 	private ILogicalOperator originalStartOperator;
 
 	/**
+	 * The copies of {@link #originalStartOperator}.
+	 */
+	private ImmutableCollection<ILogicalOperator> copiedStartOperators;
+
+	/**
+	 * The copies of {@link #originalEndOperator}.
+	 */
+	private ImmutableCollection<ILogicalOperator> copiedEndOperators;
+
+	/**
 	 * The operator marking the end of fragmentation within the original list of
 	 * operators, if given.
 	 */
@@ -99,6 +109,30 @@ public abstract class AbstractFragmentationInfoBundle {
 	}
 
 	/**
+	 * The copies of {@link #getOriginStartOperator()}.
+	 * 
+	 * @param operators
+	 *            A list of operators being copies of the original start
+	 *            operator.
+	 */
+	public void setCopiedStartOperators(Collection<ILogicalOperator> operators) {
+
+		this.copiedStartOperators = ImmutableList.copyOf(operators);
+
+	}
+
+	/**
+	 * The copies of {@link #getOriginStartOperator()}.
+	 * 
+	 * @return A list of operators being copies of the original start operator.
+	 */
+	public ImmutableCollection<ILogicalOperator> getCopiedStartOperators() {
+
+		return this.copiedStartOperators;
+
+	}
+
+	/**
 	 * The operator marking the end of fragmentation.
 	 * 
 	 * @param operator
@@ -120,6 +154,29 @@ public abstract class AbstractFragmentationInfoBundle {
 	public Optional<ILogicalOperator> getOriginEndOperator() {
 
 		return this.originalEndOperator;
+
+	}
+
+	/**
+	 * The copies of {@link #getOriginEndOperator()}.
+	 * 
+	 * @param operators
+	 *            A list of operators being copies of the original end operator.
+	 */
+	public void setCopiedEndOperators(Collection<ILogicalOperator> operators) {
+
+		this.copiedEndOperators = ImmutableList.copyOf(operators);
+
+	}
+
+	/**
+	 * The copies of {@link #getOriginEndOperator()}.
+	 * 
+	 * @return A list of operators being copies of the original end operator.
+	 */
+	public ImmutableCollection<ILogicalOperator> getCopiedEndOperators() {
+
+		return this.copiedEndOperators;
 
 	}
 
@@ -206,8 +263,12 @@ public abstract class AbstractFragmentationInfoBundle {
 		buffer.append("Degree of fragmentation: " + this.degreeOfFragmentation);
 		buffer.append("\nOrigin operator marking the start of fragmentation: "
 				+ this.originalStartOperator);
+		buffer.append("\nCopied operators marking the start of fragmentation: "
+				+ this.copiedStartOperators);
 		buffer.append("\nOrigin operator marking the end of fragmentation: "
 				+ this.originalEndOperator);
+		buffer.append("\nCopied operators marking the end of fragmentation: "
+				+ this.copiedEndOperators);
 		buffer.append("\nQuery parts to form fragments: "
 				+ this.originalRelevantParts);
 		buffer.append("\nQuery parts not to form fragments: "

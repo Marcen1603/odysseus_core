@@ -2,10 +2,12 @@ package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
@@ -38,47 +40,61 @@ public abstract class AbstractFragmentationHelper {
 	 * All possible patterns for a string identifying the start or end point of
 	 * fragmentation.
 	 */
-	private static final String[] startOrEndPointPatterns = { "\\w+",
+	private static final String[] startOrEndPointIDPatterns = { "\\w+",
 			"\\w+:\\w+" };
 
 	/**
-	 * The separator for strings identifying the start or end point of
+	 * The separator for strings identifying the start and end point of
 	 * fragmentation.
 	 */
 	private static final String startOrEndPointSeparator = ",";
 
 	/**
+	 * The brackets for strings identifying the start and end point of
+	 * fragmentation.
+	 */
+	private static final String[] startOrEndPointBrackets = { "\\[", "\\]" };
+
+	/**
+	 * Gets all possible patterns for the parameter identifying the start and
+	 * end point of fragmentation.
+	 * 
+	 * @return All possible patterns for the parameter identifying the start and
+	 *         end point of fragmentation.
+	 */
+	public static String[] getStartAndEndPointIDPatterns() {
+
+		final String startBracket = AbstractFragmentationHelper.startOrEndPointBrackets[0];
+		final String endBracket = AbstractFragmentationHelper.startOrEndPointBrackets[1];
+		final String separator = AbstractFragmentationHelper.startOrEndPointSeparator;
+		final List<String> patterns = Lists.newArrayList();
+
+		for (int index = 0; index < AbstractFragmentationHelper.startOrEndPointIDPatterns.length; index++) {
+
+			final String pattern = AbstractFragmentationHelper.startOrEndPointIDPatterns[index];
+			patterns.add(pattern);
+			patterns.add(startBracket + pattern + endBracket);
+
+			for (int sndIndex = 0; sndIndex < AbstractFragmentationHelper.startOrEndPointIDPatterns.length; sndIndex++) {
+
+				final String sndPattern = AbstractFragmentationHelper.startOrEndPointIDPatterns[sndIndex];
+				patterns.add(startBracket + pattern + separator + sndPattern
+						+ endBracket);
+
+			}
+
+		}
+
+		String[] result = new String[patterns.size()];
+		patterns.toArray(result);
+		return result;
+
+	}
+
+	/**
 	 * The minimum degree of fragmentation.
 	 */
 	public static final int minDegreeOfFragmentation = 2;
-
-	/**
-	 * All possible patterns for the parameter identifying the start and end
-	 * point of fragmentation.
-	 */
-	public static final String[] startAndEndPointPatterns = {
-			AbstractFragmentationHelper.startOrEndPointPatterns[0],
-			"\\[" + AbstractFragmentationHelper.startOrEndPointPatterns[0]
-					+ "\\]",
-			AbstractFragmentationHelper.startOrEndPointPatterns[1],
-			"\\[" + AbstractFragmentationHelper.startOrEndPointPatterns[1]
-					+ "\\]",
-			"\\[" + AbstractFragmentationHelper.startOrEndPointPatterns[0]
-					+ AbstractFragmentationHelper.startOrEndPointSeparator
-					+ AbstractFragmentationHelper.startOrEndPointPatterns[0]
-					+ "\\]",
-			"\\[" + AbstractFragmentationHelper.startOrEndPointPatterns[0]
-					+ AbstractFragmentationHelper.startOrEndPointSeparator
-					+ AbstractFragmentationHelper.startOrEndPointPatterns[1]
-					+ "\\]",
-			"\\[" + AbstractFragmentationHelper.startOrEndPointPatterns[1]
-					+ AbstractFragmentationHelper.startOrEndPointSeparator
-					+ AbstractFragmentationHelper.startOrEndPointPatterns[0]
-					+ "\\]",
-			"\\[" + AbstractFragmentationHelper.startOrEndPointPatterns[1]
-					+ AbstractFragmentationHelper.startOrEndPointSeparator
-					+ AbstractFragmentationHelper.startOrEndPointPatterns[1]
-					+ "\\]" };
 
 	/**
 	 * Checks if two operators are equal or if the first is above the second.
@@ -229,6 +245,56 @@ public abstract class AbstractFragmentationHelper {
 	}
 
 	/**
+	 * Finds all copies of an operator.
+	 * 
+	 * @param operator
+	 *            The given operator.
+	 * @param copyMap
+	 *            The mapping of copied query parts to their originals.
+	 * @return A collection of operators found in {@link Map#values()} of
+	 *         <code>copyMap</code> having the same index as
+	 *         <code>operator</code> in the original query part (key of
+	 *         <code>copyMap</code>).
+	 */
+	public static final Collection<ILogicalOperator> findCopies(
+			ILogicalOperator operator,
+			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyMap) {
+
+		Preconditions.checkNotNull(operator,
+				"Origin operator must be not null!");
+		Preconditions.checkNotNull(copyMap,
+				"Map of copied query parts to originals must be not null!");
+
+		final Collection<ILogicalOperator> copies = Lists.newArrayList();
+
+		for (ILogicalQueryPart oringinalPart : copyMap.keySet()) {
+
+			if (!oringinalPart.contains(operator)) {
+
+				continue;
+
+			}
+
+			final int operatorIndex = ((List<ILogicalOperator>) (Collection<ILogicalOperator>) oringinalPart
+					.getOperators()).indexOf(operator);
+
+			for (ILogicalQueryPart copiedPart : copyMap.get(oringinalPart)) {
+
+				final List<ILogicalOperator> operatorsAsList = (List<ILogicalOperator>) (Collection<ILogicalOperator>) copiedPart
+						.getOperators();
+				copies.add(operatorsAsList.get(operatorIndex));
+
+			}
+
+			break;
+
+		}
+
+		return copies;
+
+	}
+
+	/**
 	 * The parameters for the fragmentation.
 	 */
 	protected final ImmutableList<String> fragmentationParameters;
@@ -292,7 +358,7 @@ public abstract class AbstractFragmentationHelper {
 					"The second fragmentation parameter, the degree of fragmentation must be greater than 2!");
 
 		}
-		
+
 		return degree;
 
 	}
@@ -312,7 +378,7 @@ public abstract class AbstractFragmentationHelper {
 	 * @throws QueryPartModificationException
 	 *             If the parameters for fragmentation is empty or if the first
 	 *             parameter does not match any patterns within
-	 *             {@value #startAndEndPointPatterns}.
+	 *             {@value #getStartAndEndPointIDPatterns()}.
 	 */
 	public IPair<ILogicalOperator, Optional<ILogicalOperator>> determineStartAndEndPoints(
 			Collection<ILogicalQueryPart> queryParts)
@@ -329,7 +395,8 @@ public abstract class AbstractFragmentationHelper {
 		String startAndEndPointParameter = this.fragmentationParameters
 				.get(AbstractFragmentationHelper.parameterIndex_startAndEndPointIDs);
 		boolean matchesPattern = false;
-		for (String pattern : AbstractFragmentationHelper.startAndEndPointPatterns) {
+		for (String pattern : AbstractFragmentationHelper
+				.getStartAndEndPointIDPatterns()) {
 
 			if (startAndEndPointParameter.matches(pattern)) {
 
