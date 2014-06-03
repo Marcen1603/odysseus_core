@@ -15,17 +15,31 @@ import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSender;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.logicaloperator.JxtaBundleSenderAO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.wrapper.JxtaSenderWrapper;
 
 public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		AbstractSink<T> {
+	
+	/**
+	 * The rate heartbeats are send.
+	 */
+	private final int heartbeatRate = 10;
+	
+	/**
+	 * The current amount of heartbeats.
+	 */
+	private int heartbeatCounter;
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(JxtaBundleSenderPO.class);
@@ -38,12 +52,14 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 			throws DataTransmissionException {
 		this.senderList = new ArrayList<JxtaSenderWrapper<T>>();
 		this.senderList.add(new JxtaSenderWrapper<T>(ao));
+		this.heartbeatCounter = 0;
 	}
 
 	public JxtaBundleSenderPO(JxtaBundleSenderPO<T> po) {
 		this.senderList = new ArrayList<JxtaSenderWrapper<T>>();
 		for (JxtaSenderWrapper<T> sender : po.senderList) {
 			this.senderList.add(sender);
+			this.heartbeatCounter = 0;
 		}
 	}
 
@@ -144,5 +160,35 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 			LOG.error("Could not get id from peerIDString {}", peerIDString, ex);
 			return null;
 		}
+	}
+	
+	public void addSender(JxtaSenderPO po) {
+		senderList.add(new JxtaSenderWrapper<T>(po));
+	}
+	
+	public boolean deleteSender(int index) {
+		if(senderList.size()<=1) {
+			return false;
+		}
+		try {
+		senderList.remove(index);
+			return true;
+		}
+		catch(IndexOutOfBoundsException e) {
+			return false;
+		}
+	}
+	
+	private void sendHeartbeats(PointInTime currentPoT) {
+		
+		final Heartbeat heartbeat = Heartbeat.createNewHeartbeat(currentPoT);
+		
+			
+			if(++this.heartbeatCounter % this.heartbeatRate != 0) {
+				for(JxtaSenderWrapper<T> sender : senderList) {
+					sender.processPunctuation(heartbeat, 0);
+				}
+			}
+			
 	}
 }
