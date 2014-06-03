@@ -63,6 +63,18 @@ public abstract class AbstractFragmentationInfoBundle {
 	private Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyMap;
 
 	/**
+	 * The history of inserted fragment operators and broken subscriptions due
+	 * to the insertion.
+	 */
+	private HistoryOfInsertedOperators historyOfFragmentOperators;
+
+	/**
+	 * The history of inserted reunion operators and broken subscriptions due to
+	 * the insertion.
+	 */
+	private HistoryOfInsertedOperators historyOfReunionOperators;
+
+	/**
 	 * Sets the degree of fragmentation.
 	 * 
 	 * @param degree
@@ -256,6 +268,56 @@ public abstract class AbstractFragmentationInfoBundle {
 
 	}
 
+	/**
+	 * The history of fragment operators.
+	 * 
+	 * @param history
+	 *            The history of inserted fragment operators and broken
+	 *            subscriptions due to the insertion.
+	 */
+	public void setHistoryOfFragmentOperators(HistoryOfInsertedOperators history) {
+
+		this.historyOfFragmentOperators = history;
+
+	}
+
+	/**
+	 * The history of fragment operators.
+	 * 
+	 * @return The history of inserted fragment operators and broken
+	 *         subscriptions due to the insertion.
+	 */
+	public HistoryOfInsertedOperators getHistoryOfFragmentOperators() {
+
+		return this.historyOfFragmentOperators;
+
+	}
+
+	/**
+	 * The history of reunion operators.
+	 * 
+	 * @param history
+	 *            The history of inserted reunion operators and broken
+	 *            subscriptions due to the insertion.
+	 */
+	public void setHistoryOfReunionOperators(HistoryOfInsertedOperators history) {
+
+		this.historyOfReunionOperators = history;
+
+	}
+
+	/**
+	 * The history of reunion operators.
+	 * 
+	 * @return The history of inserted reunion operators and broken
+	 *         subscriptions due to the insertion.
+	 */
+	public HistoryOfInsertedOperators getHistoryOfReunionOperators() {
+
+		return this.historyOfReunionOperators;
+
+	}
+
 	@Override
 	public String toString() {
 
@@ -275,6 +337,10 @@ public abstract class AbstractFragmentationInfoBundle {
 				+ this.originalIrrelevantParts);
 		buffer.append("\nMapping of copied query parts to their originals: "
 				+ this.copyMap);
+		buffer.append("\nHistory of inserted fragment operators: "
+				+ this.historyOfFragmentOperators);
+		buffer.append("\nHistory of inserted reunion operators: "
+				+ this.historyOfReunionOperators);
 		return buffer.toString();
 
 	}

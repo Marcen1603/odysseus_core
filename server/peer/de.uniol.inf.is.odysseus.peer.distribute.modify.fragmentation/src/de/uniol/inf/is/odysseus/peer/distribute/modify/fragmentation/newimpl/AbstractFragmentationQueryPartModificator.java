@@ -218,6 +218,10 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		}
 		bundle.setOriginalRelevantParts(fragmentsAndNonfragments.getE1());
 		bundle.setOriginalIrrelevantParts(fragmentsAndNonfragments.getE2());
+		
+		// Create maps for inserted fragment and reunion operators
+		bundle.setHistoryOfFragmentOperators(new HistoryOfInsertedOperators());
+		bundle.setHistoryOfReunionOperators(new HistoryOfInsertedOperators());
 
 	}
 
@@ -386,19 +390,16 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 		}
 
-		// 1. Preparation based on the query parts and parameters
+		// Preparation based on the query parts and parameters
 		AbstractFragmentationQueryPartModificator.prepare(queryParts, helper,
 				bundle);
 		AbstractFragmentationQueryPartModificator.log.debug(
 				"State of fragmentation after preparation:\n{}", bundle);
 
-		// 2. Make loose working copies of the query parts
+		// 1. Make loose working copies of the query parts
 		AbstractFragmentationQueryPartModificator.makeCopies(bundle);
 		AbstractFragmentationQueryPartModificator.log.debug(
 				"State of fragmentation after making copies:\n{}", bundle);
-
-		// TODO create map for inserted fragment operators
-		// TODO create map for inserted reunion operators
 
 		// TODO insert fragment operators
 		// TODO insert union operators
