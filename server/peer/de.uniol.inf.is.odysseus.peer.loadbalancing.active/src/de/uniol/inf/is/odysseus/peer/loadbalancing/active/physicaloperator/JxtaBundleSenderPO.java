@@ -27,6 +27,13 @@ import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.logicaloperator.JxtaBundleSenderAO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.wrapper.JxtaSenderWrapper;
 
+/***
+ * Physical Operator to allow for Multiple outgoing senders in dynamic load balancing.
+ * Works by holding a List of Wrapper Objects for {@link de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO}
+ * 
+ * @author Carsten Cordes
+ *
+ */
 public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		AbstractSink<T> {
 	
@@ -43,6 +50,9 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 	private static final Logger LOG = LoggerFactory
 			.getLogger(JxtaBundleSenderPO.class);
 
+	/***
+	 * List of Sender Wrappers
+	 */
 	private ArrayList<JxtaSenderWrapper<T>> senderList;
 
 	private NullAwareTupleDataHandler dataHandler;
@@ -76,6 +86,13 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		return false;
 	}
 
+	/**
+	 * Forwards Punctuations to all senders
+	 * @param	punctuation
+	 * 			Punctuation to send.
+	 * @param 	port
+	 * 			is ignored
+	 */
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		createDataHandlerIfNeeded();
@@ -84,6 +101,9 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		}
 	}
 
+	/**
+	 * Calls process_next in all senders.
+	 */
 	@Override
 	protected void process_next(T object, int port) {
 		for (JxtaSenderWrapper<T> sender : senderList) {
@@ -91,6 +111,7 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		}
 	}
 
+	
 	private void createDataHandlerIfNeeded() {
 		if (dataHandler == null) {
 			dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler()
@@ -99,6 +120,9 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		}
 	}
 
+	/**
+	 * Calls process_done in all senders.
+	 */
 	@Override
 	protected void process_done(int port) {
 		for (JxtaSenderWrapper<T> sender : senderList) {
@@ -106,10 +130,18 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		}
 	}
 
+	/***
+	 * Gets Transmission of first Sender in list.
+	 * @return Transmission of first Sender in list.
+	 */
 	public final ITransmissionSender getTransmission() {
 		return senderList.get(0).getTransmission();
 	}
 
+	/***
+	 * Gets List of Transmissions
+	 * @return List of all outgoing transmissions.
+	 */
 	public final ImmutableList<ITransmissionSender> getTransmissions() {
 		ArrayList<ITransmissionSender> transmissions = new ArrayList<ITransmissionSender>();
 		for (JxtaSenderWrapper<T> sender : senderList) {
@@ -118,23 +150,41 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		return ImmutableList.copyOf(transmissions);
 	}
 
+	/***
+	 * Gets peerID of first Sender in list.
+	 * @return peerID of first Sender in list.
+	 */
 	public String getPeerIDString() {
 		return senderList.get(0).getPeerIDString();
 	}
 
+	/**
+	 * Gets pipeID of first Sender in list.
+	 * @return pipeID of first Sender in list.
+	 */
 	public String getPipeIDString() {
 		return senderList.get(0).getPipeIDString();
 	}
 
-	// TODO Methods for more than 1 sender
+	/**
+	 * Gets uploadRate of first Sender in list.
+	 * @return uploadRate of first Sender in list.
+	 */
 	public double getUploadRateBytesPerSecond() {
 		return senderList.get(0).getUploadRateBytesPerSecond();
 	}
 
+	/**
+	 * Gets Number of sent Bytes of first Sender in list.
+	 * @return Number of sent bytes of first Sender in list.
+	 */
 	public long getTotalSendByteCount() {
 		return senderList.get(0).getTotalSendByteCount();
 	}
 
+	/***
+	 * Gets Number of Operator
+	 */
 	@Override
 	public String getName() {
 		return super.getName() + determineDestinationPeerName();
@@ -178,6 +228,12 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		}
 	}
 	
+	/**
+	 * Sends Heartbeats
+	 * @param currentPoT
+	 * 			Point in Time.
+	 */
+	@SuppressWarnings("unused")
 	private void sendHeartbeats(PointInTime currentPoT) {
 		
 		final Heartbeat heartbeat = Heartbeat.createNewHeartbeat(currentPoT);

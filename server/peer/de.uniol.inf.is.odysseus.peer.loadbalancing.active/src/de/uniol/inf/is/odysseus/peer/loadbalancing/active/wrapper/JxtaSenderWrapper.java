@@ -5,6 +5,11 @@ import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 
+/***
+ * Wrapper Class for JxtaSenderPO to allow calling protected Functions from the outside.
+ * @author Carsten Cordes
+ *
+ */
 public class JxtaSenderWrapper<T extends IStreamObject<?>>  extends JxtaSenderPO<T> {
 
 	
@@ -16,7 +21,7 @@ public class JxtaSenderWrapper<T extends IStreamObject<?>>  extends JxtaSenderPO
 		super(po);
 	}
 
-	/*
+	/**
 	 * Wrapper Function for process_next to be able to send streams from the outside.
 	 * @see de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO#process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
 	 */
@@ -25,7 +30,7 @@ public class JxtaSenderWrapper<T extends IStreamObject<?>>  extends JxtaSenderPO
 		super.process_next(object, port);
 	}
 
-	/*
+	/**
 	 * Wrapper Function for process_done to be able to call method from the outside.
 	 * @see de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO#process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
 	 */
