@@ -34,14 +34,14 @@ public class LoadBalancingPunctuation extends AbstractPunctuation {
 	/**
 	 * Creates a new {@link LoadBalancingPunctuation} with given information about marking start or end point of load balancing.
 	 * @param time The current time.
-	 * @param start True, if the punctuation marks the start of the load balancing process. Must differ from <code>stop</code>.
-	 * @param stop True, if the punctuation marks the stop of the load balancing process. Must differ from <code>stop</code>.
+	 * @param start True, if the punctuation marks the start of the load balancing process. If true, <code>stop</code> must be false.
+	 * @param stop True, if the punctuation marks the stop of the load balancing process. If true, <code>start</code> must be false.
 	 */
 	public LoadBalancingPunctuation(long time, boolean start, boolean stop) {
 		
 		super(time);
 		
-		Preconditions.checkArgument(start != stop, "A LoadBalancingPunctuation can not mark the start and end of a loadbalancing process at the same!");
+		Preconditions.checkArgument(!(start && stop), "A LoadBalancingPunctuation can not mark the start and end of a loadbalancing process at the same!");
 		
 		this.start = start;
 		this.stop = stop;
@@ -61,14 +61,14 @@ public class LoadBalancingPunctuation extends AbstractPunctuation {
 	/**
 	 * Creates a new {@link LoadBalancingPunctuation} with given information about marking start or end point of load balancing.
 	 * @param pit The current {@link PointInTime}.
-	 * @param start True, if the punctuation marks the start of the load balancing process. Must differ from <code>stop</code>.
-	 * @param stop True, if the punctuation marks the stop of the load balancing process. Must differ from <code>stop</code>.
+	 * @param start True, if the punctuation marks the start of the load balancing process. If true, <code>stop</code> must be false.
+	 * @param stop True, if the punctuation marks the stop of the load balancing process. If true, <code>start</code> must be false.
 	 */
 	public LoadBalancingPunctuation(PointInTime pit, boolean start, boolean stop) {
 		
 		super(pit);
 		
-		Preconditions.checkArgument(start != stop, "A LoadBalancingPunctuation can not mark the start and end of a loadbalancing process at the same!");
+		Preconditions.checkArgument(!(start && stop), "A LoadBalancingPunctuation can not mark the start and end of a loadbalancing process at the same!");
 		
 		this.start = start;
 		this.stop = stop;
