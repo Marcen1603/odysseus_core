@@ -11,12 +11,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.undercouch.bson4jackson.BsonFactory;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
-public class BSONProtocolHandler extends AbstractJSONProtocolHandler {
+public class BSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractJSONProtocolHandler<T> {
 	
 	public static final String NAME = "BSON";
 	
@@ -26,7 +25,7 @@ public class BSONProtocolHandler extends AbstractJSONProtocolHandler {
 	
 
 	public BSONProtocolHandler(
-			ITransportDirection direction, IAccessPattern access, IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
+			ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler) {
 		super(direction,access,dataHandler);
 		this.init();
 	}
@@ -37,18 +36,18 @@ public class BSONProtocolHandler extends AbstractJSONProtocolHandler {
 	}
 
 	@Override
-	public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(
+	public IProtocolHandler<T> createInstance(
 			ITransportDirection direction, IAccessPattern access,
 			Map<String, String> options,
-			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
-		BSONProtocolHandler instance = new BSONProtocolHandler(direction, access, dataHandler);
+			IDataHandler<T> dataHandler) {
+		BSONProtocolHandler<T> instance = new BSONProtocolHandler<T>(direction, access, dataHandler);
 		instance.setOptionsMap(options);
 		return instance;
 	}
 	
 	@Override
 	public void process(ByteBuffer buffer) {
-		ArrayList<KeyValueObject<? extends IMetaAttribute>> objects = new ArrayList<KeyValueObject<? extends IMetaAttribute>>();
+		ArrayList<T> objects = new ArrayList<T>();
 		try {
 			byte[] message = null;
 			if(buffer.hasArray()) {
@@ -77,7 +76,7 @@ public class BSONProtocolHandler extends AbstractJSONProtocolHandler {
 	}
 
 	@Override
-	public void write(KeyValueObject<? extends IMetaAttribute> kvObject)
+	public void write(T kvObject)
 			throws IOException {
 		this.getTransportHandler().send(this.getDataHandler().writeBSONData(kvObject));
 	}

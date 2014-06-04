@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-public class KeyValuePredicate extends AbstractPredicate<KeyValueObject<?>> {
+public class KeyValuePredicate<T extends KeyValueObject<?>> extends AbstractPredicate<T> {
 
 	private static final long serialVersionUID = 6578575151834596318L;
 
@@ -29,14 +29,14 @@ public class KeyValuePredicate extends AbstractPredicate<KeyValueObject<?>> {
 		this.neededAttributes = expression.getAllAttributes();		
 	}
 	
-	public KeyValuePredicate(KeyValuePredicate predicate) {
+	public KeyValuePredicate(KeyValuePredicate<T> predicate) {
 		this.expression = predicate.expression == null ? null : predicate.expression.clone();
 		this.replacementMap = new HashMap<SDFAttribute, SDFAttribute>(predicate.replacementMap);
 		this.neededAttributes = expression.getAllAttributes();
 	}
 	
 	@Override
-	public boolean evaluate(KeyValueObject<?> input) {
+	public boolean evaluate(T input) {
 		Object[] values = new Object[neededAttributes.size()];
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = input.getAttribute(neededAttributes.get(i).getURI());
@@ -48,7 +48,7 @@ public class KeyValuePredicate extends AbstractPredicate<KeyValueObject<?>> {
 	}
 
 	@Override
-	public boolean evaluate(KeyValueObject<?> left, KeyValueObject<?> right) {
+	public boolean evaluate(T left, T right) {
 		Object[] values = new Object[neededAttributes.size()];
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = left.getAttribute(neededAttributes.get(i).getURI());
@@ -66,8 +66,8 @@ public class KeyValuePredicate extends AbstractPredicate<KeyValueObject<?>> {
 	}
 
 	@Override
-	public AbstractPredicate<KeyValueObject<?>> clone() {
-		return new KeyValuePredicate(this);
+	public AbstractPredicate<T> clone() {
+		return new KeyValuePredicate<T>(this);
 	}
 
 }

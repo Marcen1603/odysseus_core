@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +26,13 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
  * @param <T>
  */
 
-public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObject<T>
-implements Serializable{
+public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObject<T> implements Serializable{
 	
-	private static final long serialVersionUID = -94667746890198612L;
+	final private static long serialVersionUID = -94667746890198612L;
 
-	final private Map<String, Object> attributes = new HashMap<String, Object>();
+	final protected Map<String, Object> attributes = new HashMap<String, Object>();
 
-	protected static final Logger LOG = LoggerFactory.getLogger(KeyValueObject.class);
+	final protected static Logger LOG = LoggerFactory.getLogger(KeyValueObject.class);
 	
 	public KeyValueObject(){
 	}
@@ -50,26 +51,10 @@ implements Serializable{
 	//-----------------------------------------------
 	// attribute methods
 	// ----------------------------------------------
-	
+
 	@SuppressWarnings("unchecked")
-	public final <K> K getAttribute(String key) {
-		try{
-			String[] path = key.split("\\.");
-			Map<String, Object> map = this.attributes;
-			for(int i = 0; i < path.length - 1; i++) {
-				map = (Map<String, Object>) map.get(path[i]);
-			}
-			K attribute = (K) map.get(path[path.length - 1]);
-			if(attribute instanceof Map) {
-				LOG.debug("Resolved attribute in KVO is map and can't be handled");
-				return null;
-			} else {
-				return attribute;
-			}
-		} catch(Exception e) {
-			LOG.debug(e.getMessage());
-			return null;
-		}
+	public <K> K getAttribute(String key) {
+		return (K) this.attributes.get(key);
 	}
 	
 	public final Map<String, Object> getAttributes() {
@@ -166,4 +151,25 @@ implements Serializable{
 		return new KeyValueObject<T>(this);
 	}
 
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> getAttributesAsNestedMap() {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		Map<String, Object> tmpMap;
+		Set<Entry<String, Object>> entrySet = this.attributes.entrySet();		
+		for(Entry<String, Object> entry: entrySet) {
+			String[] path = entry.getKey().split("\\.");
+			tmpMap = map;
+			for(int i = 0; i < path.length - 1; i++) {
+				if(tmpMap.get(path[i]) != null) {
+					tmpMap = (Map<String, Object>) tmpMap.get(path[i]);
+				} else {
+					Map<String, Object> newMap = new LinkedHashMap<String, Object>();
+					tmpMap.put(path[i], newMap);
+					tmpMap = newMap;
+				}
+			}
+			tmpMap.put(path[path.length - 1], entry.getValue());
+		}
+		return map;
+	}
 }

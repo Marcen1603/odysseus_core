@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.keyvalue.physicaloperator;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -43,7 +45,7 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 		return keepInputObject;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
 	protected void process_next(KeyValueObject<M> input, int port) {
 		SDFSchema outputSchema = getOutputSchema();
@@ -54,8 +56,13 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 		}
 		int pos = 0;
 		for (SDFAttribute attr : outputSchema.getAttributes()) {
-			output.setAttribute(pos++,
-					input.getAttribute(attr.getAttributeName()));
+			Object inputAttribute = input.getAttribute(attr.getAttributeName());
+			if((inputAttribute instanceof List)) {	
+				// Was soll hier passieren?
+				output.setAttribute(pos++, ((List) inputAttribute).get(0));
+			} else {
+				output.setAttribute(pos++, inputAttribute);
+			}
 		}
 		transfer(output);
 	}

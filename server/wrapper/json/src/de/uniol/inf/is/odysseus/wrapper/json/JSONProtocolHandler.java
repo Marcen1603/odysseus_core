@@ -15,12 +15,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
-public class JSONProtocolHandler extends AbstractJSONProtocolHandler {
+public class JSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractJSONProtocolHandler<T> {
 
 	protected static final Logger LOG = LoggerFactory.getLogger(JSONProtocolHandler.class);
 	
@@ -30,7 +29,7 @@ public class JSONProtocolHandler extends AbstractJSONProtocolHandler {
 	
 
 	public JSONProtocolHandler(
-			ITransportDirection direction, IAccessPattern access, IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
+			ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler) {
 		super(direction,access,dataHandler);
 		this.init();
 	}
@@ -42,7 +41,7 @@ public class JSONProtocolHandler extends AbstractJSONProtocolHandler {
 	
 	@Override
 	public void process(ByteBuffer message) {
-		ArrayList<KeyValueObject<? extends IMetaAttribute>> objects = new ArrayList<KeyValueObject<? extends IMetaAttribute>>();
+		ArrayList<T> objects = new ArrayList<T>();
 		try {
 //			LOG.debug("process(ByteBuffer message): " + message);
 			//Was soll hier passieren falls der ByteBuffer mehrere JSON-Objekte beinhaltet???
@@ -54,20 +53,18 @@ public class JSONProtocolHandler extends AbstractJSONProtocolHandler {
 	}
 
 	@Override
-	public void write(KeyValueObject<? extends IMetaAttribute> kvObject)
-			throws IOException {
+	public void write(T kvObject) throws IOException {
 		StringBuilder string = new StringBuilder();
 		this.getDataHandler().writeJSONData(string, kvObject);
-//		LOG.debug("writeString:           " + string);
 		this.getTransportHandler().send(Charset.forName("UTF-8").encode(CharBuffer.wrap(string.toString().toCharArray())).array());
 	}
 
 	@Override
-	public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(
+	public IProtocolHandler<T> createInstance(
 			ITransportDirection direction, IAccessPattern access,
 			Map<String, String> options,
-			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
-		JSONProtocolHandler instance = new JSONProtocolHandler(direction, access, dataHandler);
+			IDataHandler<T> dataHandler) {
+		JSONProtocolHandler<T> instance = new JSONProtocolHandler<T>(direction, access, dataHandler);
 		instance.setOptionsMap(options);
 		return instance;
 	}

@@ -14,14 +14,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 
-abstract public class AbstractJSONProtocolHandler extends AbstractProtocolHandler<KeyValueObject<? extends IMetaAttribute>> {
+abstract public class AbstractJSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractProtocolHandler<T> {
 
 	protected String name;
 
@@ -36,7 +35,7 @@ abstract public class AbstractJSONProtocolHandler extends AbstractProtocolHandle
 	public AbstractJSONProtocolHandler() {
 	}
 
-	public AbstractJSONProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
+	public AbstractJSONProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler) {
 		super(direction, access, dataHandler);
 	}
 
@@ -129,7 +128,7 @@ abstract public class AbstractJSONProtocolHandler extends AbstractProtocolHandle
 	// }
 
 	@Override
-	public KeyValueObject<? extends IMetaAttribute> getNext() throws IOException {
+	public T getNext() throws IOException {
 		if (jsonArray != null && jsonArray.size() > 0) {
 			return getDataHandler().readData(jsonArray.remove(0));
 		}
@@ -141,10 +140,12 @@ abstract public class AbstractJSONProtocolHandler extends AbstractProtocolHandle
 		getTransfer().transfer(getDataHandler().readData(message));
 	}
 
-	public void process(ArrayList<KeyValueObject<? extends IMetaAttribute>> objects) {
+	public void process(ArrayList<T> objects) {
 		if (objects.size() > 0) {
-			for (KeyValueObject<? extends IMetaAttribute> object : objects) {
-				getTransfer().transfer(object);
+			for (T object : objects) {
+				if(object != null) {
+					getTransfer().transfer(object);
+				}
 			}
 		}
 	}
