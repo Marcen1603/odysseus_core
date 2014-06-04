@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
-import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.logicaloperator.JxtaBundleSenderAO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.JxtaBundleSenderPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;

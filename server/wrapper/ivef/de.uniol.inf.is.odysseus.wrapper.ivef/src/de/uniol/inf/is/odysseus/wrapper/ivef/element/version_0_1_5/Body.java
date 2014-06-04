@@ -191,7 +191,7 @@ public class Body implements IIvefElement {
 
     public VesselData getVesselDataAt(int i) {
 
-        return (VesselData) m_vesselDatas.get(i);
+        return m_vesselDatas.get(i);
     }
 
     public int countOfVesselDatas() {
@@ -227,7 +227,7 @@ public class Body implements IIvefElement {
             xml +=  m_serviceRequest.toXML() ;
             }
         for(int i=0; i < m_vesselDatas.size(); i++ ) {
-           VesselData attribute = (VesselData) m_vesselDatas.get(i);
+           VesselData attribute = m_vesselDatas.get(i);
             xml += attribute.toXML();
         }
         xml += "</Body>\n";
@@ -261,7 +261,7 @@ public class Body implements IIvefElement {
             str +=  m_serviceRequest.toString(lead + "    ") ;
         }
         for(int i=0; i < m_vesselDatas.size(); i++ ) {
-           VesselData attribute = (VesselData) m_vesselDatas.get(i);
+           VesselData attribute = m_vesselDatas.get(i);
            str += attribute.toString(lead + "    ");
         }
         return str;

@@ -74,7 +74,7 @@ public class Trie {
                 Trie oldp = next[0];
                 count = (min < c ? c - min : min - c) + 1;
                 next = new Trie[count];
-                min = (byte)Math.min ((byte)min, (byte)c);
+                min = (byte)Math.min (min, c);
                 next[oldc - min] = oldp;
             }
             else if (min < c) {

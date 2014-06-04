@@ -88,7 +88,7 @@ abstract public class EncoderBase implements IEncoder {
             if (write_channel != null) {
                 buffer.flip ();
                 Transfer t = new Transfer.FileChannelTransfer (buffer, write_channel,
-                                                    (long) write_pos, (long) to_write);
+                                                    write_pos, to_write);
                 write_pos = 0;
                 to_write = 0;
 

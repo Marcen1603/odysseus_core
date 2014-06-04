@@ -105,10 +105,10 @@ public class StreamEngine implements IEngine, IPollEvents, IMsgSink {
             
             //  Set the socket buffer limits for the underlying socket.
             if (options.sndbuf != 0) {
-                handle.socket().setSendBufferSize((int)options.sndbuf);
+                handle.socket().setSendBufferSize(options.sndbuf);
             }
             if (options.rcvbuf != 0) {
-                handle.socket().setReceiveBufferSize((int)options.rcvbuf);
+                handle.socket().setReceiveBufferSize(options.rcvbuf);
             }
 
         } catch (IOException e) {

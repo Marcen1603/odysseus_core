@@ -115,7 +115,7 @@ public class PosReport implements IIvefElement {
 
     public Sensor getSensorAt(int i) {
 
-        return (Sensor) m_sensors.get(i);
+        return m_sensors.get(i);
     }
 
     public int countOfSensors() {
@@ -449,7 +449,7 @@ public class PosReport implements IIvefElement {
         if (m_pos != null)	// instead of using a flag!
         	xml +=  m_pos.toXML();
         for(int i=0; i < m_sensors.size(); i++ ) {
-           Sensor attribute = (Sensor) m_sensors.get(i);
+           Sensor attribute = m_sensors.get(i);
             xml += attribute.toXML();
         }
         xml += "</PosReport>\n";
@@ -503,7 +503,7 @@ public class PosReport implements IIvefElement {
         if(m_pos != null)	// instead of using a flag!
         	str +=  m_pos.toString(lead + "    ");
         for(int i=0; i < m_sensors.size(); i++ ) {
-           Sensor attribute = (Sensor) m_sensors.get(i);
+           Sensor attribute = m_sensors.get(i);
            str += attribute.toString(lead + "    ");
         }
         return str;

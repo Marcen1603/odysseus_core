@@ -48,7 +48,7 @@ public class ServiceRequest implements IIvefElement {
 
     public Area getAreaAt(int i) {
 
-        return (Area) m_areas.get(i);
+        return m_areas.get(i);
     }
 
     public int countOfAreas() {
@@ -73,7 +73,7 @@ public class ServiceRequest implements IIvefElement {
 
     public Item getItemAt(int i) {
 
-        return (Item) m_items.get(i);
+        return m_items.get(i);
     }
 
     public int countOfItems() {
@@ -88,7 +88,7 @@ public class ServiceRequest implements IIvefElement {
 
     public Object getObjectAt(int i) {
 
-        return (Object) m_objects.get(i);
+        return m_objects.get(i);
     }
 
     public int countOfObjects() {
@@ -103,17 +103,17 @@ public class ServiceRequest implements IIvefElement {
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
         xml += ">\n";
         for(int i=0; i < m_areas.size(); i++ ) {
-           Area attribute = (Area) m_areas.get(i);
+           Area attribute = m_areas.get(i);
             xml += attribute.toXML();
         }
         if(m_transmission != null)	// instead of using a flag!
         	xml +=  m_transmission.toXML();
         for(int i=0; i < m_items.size(); i++ ) {
-           Item attribute = (Item) m_items.get(i);
+           Item attribute = m_items.get(i);
             xml += attribute.toXML();
         }
         for(int i=0; i < m_objects.size(); i++ ) {
-           Object attribute = (Object) m_objects.get(i);
+           Object attribute = m_objects.get(i);
             xml += attribute.toXML();
         }
         xml += "</ServiceRequest>\n";
@@ -126,16 +126,16 @@ public class ServiceRequest implements IIvefElement {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
         for(int i=0; i < m_areas.size(); i++ ) {
-           Area attribute = (Area) m_areas.get(i);
+           Area attribute = m_areas.get(i);
            str += attribute.toString(lead + "    ");
         }
         str +=  m_transmission.toString(lead + "    ");
         for(int i=0; i < m_items.size(); i++ ) {
-           Item attribute = (Item) m_items.get(i);
+           Item attribute = m_items.get(i);
            str += attribute.toString(lead + "    ");
         }
         for(int i=0; i < m_objects.size(); i++ ) {
-           Object attribute = (Object) m_objects.get(i);
+           Object attribute = m_objects.get(i);
            str += attribute.toString(lead + "    ");
         }
         return str;

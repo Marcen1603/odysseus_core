@@ -256,6 +256,7 @@ public abstract class AbstractFragmentationHelper {
 	 *         <code>operator</code> in the original query part (key of
 	 *         <code>copyMap</code>).
 	 */
+	@SuppressWarnings("unchecked")
 	public static final Collection<ILogicalOperator> findCopies(
 			ILogicalOperator operator,
 			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyMap) {
@@ -275,12 +276,12 @@ public abstract class AbstractFragmentationHelper {
 
 			}
 
-			final int operatorIndex = ((List<ILogicalOperator>) (Collection<ILogicalOperator>) oringinalPart
+			final int operatorIndex = ((List<ILogicalOperator>) oringinalPart
 					.getOperators()).indexOf(operator);
 
 			for (ILogicalQueryPart copiedPart : copyMap.get(oringinalPart)) {
 
-				final List<ILogicalOperator> operatorsAsList = (List<ILogicalOperator>) (Collection<ILogicalOperator>) copiedPart
+				final List<ILogicalOperator> operatorsAsList = (List<ILogicalOperator>) copiedPart
 						.getOperators();
 				copies.add(operatorsAsList.get(operatorIndex));
 

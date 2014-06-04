@@ -43,11 +43,13 @@ public class IVEF_1_0_4_Parser extends DefaultHandler {
         }
 }
      // Character buffer routine
+    @Override
      public void characters(char[] ch, int start, int length) throws SAXException {
 
          m_characterBuffer += ch;
      };
 
+     @Override
     public void startElement(String namespaceUri,
                              String localName,
                              String qName,
@@ -1070,7 +1072,8 @@ public class IVEF_1_0_4_Parser extends DefaultHandler {
     }
 }
 
-    public void endElement(String namespaceUri,
+    @Override
+	public void endElement(String namespaceUri,
                            String localName,
                            String qName) throws SAXException {
 

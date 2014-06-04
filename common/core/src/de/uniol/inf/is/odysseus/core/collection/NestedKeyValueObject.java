@@ -21,6 +21,7 @@ public class NestedKeyValueObject<T extends IMetaAttribute> extends KeyValueObje
 		return new NestedKeyValueObject<T>(this);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <K> K getAttribute(String key) {
 		try{

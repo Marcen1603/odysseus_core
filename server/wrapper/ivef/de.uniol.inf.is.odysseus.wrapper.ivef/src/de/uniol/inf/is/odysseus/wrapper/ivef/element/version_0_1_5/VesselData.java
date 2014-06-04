@@ -58,7 +58,7 @@ public class VesselData implements IIvefElement {
 
     public StaticData getStaticDataAt(int i) {
 
-        return (StaticData) m_staticDatas.get(i);
+        return m_staticDatas.get(i);
     }
 
     public int countOfStaticDatas() {
@@ -73,7 +73,7 @@ public class VesselData implements IIvefElement {
 
     public Voyage getVoyageAt(int i) {
 
-        return (Voyage) m_voyages.get(i);
+        return m_voyages.get(i);
     }
 
     public int countOfVoyages() {
@@ -88,7 +88,7 @@ public class VesselData implements IIvefElement {
 
     public TaggedItem getTaggedItemAt(int i) {
 
-        return (TaggedItem) m_taggedItems.get(i);
+        return m_taggedItems.get(i);
     }
 
     public int countOfTaggedItems() {
@@ -105,15 +105,15 @@ public class VesselData implements IIvefElement {
         if(m_posReport != null)  // instead of using a flag!
         	xml +=  m_posReport.toXML();
         for(int i=0; i < m_staticDatas.size(); i++ ) {
-           StaticData attribute = (StaticData) m_staticDatas.get(i);
+           StaticData attribute = m_staticDatas.get(i);
             xml += attribute.toXML();
         }
         for(int i=0; i < m_voyages.size(); i++ ) {
-           Voyage attribute = (Voyage) m_voyages.get(i);
+           Voyage attribute = m_voyages.get(i);
             xml += attribute.toXML();
         }
         for(int i=0; i < m_taggedItems.size(); i++ ) {
-           TaggedItem attribute = (TaggedItem) m_taggedItems.get(i);
+           TaggedItem attribute = m_taggedItems.get(i);
             xml += attribute.toXML();
         }
         xml += "</VesselData>\n";
@@ -128,15 +128,15 @@ public class VesselData implements IIvefElement {
         if(m_posReport != null)  // instead of using a flag!
         	str +=  m_posReport.toString(lead + "    ");
         for(int i=0; i < m_staticDatas.size(); i++ ) {
-           StaticData attribute = (StaticData) m_staticDatas.get(i);
+           StaticData attribute = m_staticDatas.get(i);
            str += attribute.toString(lead + "    ");
         }
         for(int i=0; i < m_voyages.size(); i++ ) {
-           Voyage attribute = (Voyage) m_voyages.get(i);
+           Voyage attribute = m_voyages.get(i);
            str += attribute.toString(lead + "    ");
         }
         for(int i=0; i < m_taggedItems.size(); i++ ) {
-           TaggedItem attribute = (TaggedItem) m_taggedItems.get(i);
+           TaggedItem attribute = m_taggedItems.get(i);
            str += attribute.toString(lead + "    ");
         }
         return str;

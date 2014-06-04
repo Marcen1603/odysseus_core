@@ -35,7 +35,7 @@ public class Area implements IIvefElement {
 
     public Pos getPosAt(int i) {
 
-        return (Pos) m_poss.get(i);
+        return m_poss.get(i);
     }
 
     public int countOfPoss() {
@@ -50,7 +50,7 @@ public class Area implements IIvefElement {
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
         xml += ">\n";
         for(int i=0; i < m_poss.size(); i++ ) {
-           Pos attribute = (Pos) m_poss.get(i);
+           Pos attribute = m_poss.get(i);
             xml += attribute.toXML();
         }
         xml += "</Area>\n";
@@ -63,7 +63,7 @@ public class Area implements IIvefElement {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
         for(int i=0; i < m_poss.size(); i++ ) {
-           Pos attribute = (Pos) m_poss.get(i);
+           Pos attribute = m_poss.get(i);
            str += attribute.toString(lead + "    ");
         }
         return str;

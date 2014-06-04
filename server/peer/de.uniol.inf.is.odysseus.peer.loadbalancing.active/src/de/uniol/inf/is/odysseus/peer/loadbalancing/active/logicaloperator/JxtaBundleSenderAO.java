@@ -34,6 +34,7 @@ public class JxtaBundleSenderAO extends JxtaSenderAO {
 		return new JxtaBundleSenderAO(this);
 	}
 
+	@Override
 	@Parameter(name = "useUDP", doc = "Specifies if an unreliable but fast udp-connection should be used", type = BooleanParameter.class, optional = true)
 	public void setUseUDP(boolean useUDP) {
 		this.useUDP = useUDP;

@@ -102,7 +102,7 @@ public class HashFragmentPO<T extends IStreamObject<IMetaAttribute>>
 			
 		} else hashCode = Math.abs(object.hashCode());
 		
-		return (int) (hashCode % this.numFragments);
+		return hashCode % this.numFragments;
 		
 	}
 	
