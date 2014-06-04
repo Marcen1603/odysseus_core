@@ -11,7 +11,8 @@ public class BufferedSigarWrapper {
 	private static final Logger LOG = LoggerFactory.getLogger(BufferedSigarWrapper.class);
 
 	private static final long DEFAULT_NET_BANDWIDTH_KB = 1024 * 10;
-
+	private static final long BUFFER_TIME_MILLIS = 3 * 1000;
+	
 	private final Sigar sigar;
 
 	private long previousInputTotal = 0;
@@ -19,6 +20,14 @@ public class BufferedSigarWrapper {
 
 	private double cpuMax;
 	private long netMax;
+	
+	private double cpuFreeBuffer;
+	private double netInBuffer;
+	private double netOutBuffer;
+	
+	private long cpuFreeTimestamp;
+	private long netInTimestamp;
+	private long netOutTimestamp;
 
 	public BufferedSigarWrapper() {
 		sigar = new Sigar();
@@ -43,7 +52,7 @@ public class BufferedSigarWrapper {
 			long speed = net.getSpeed();
 			return speed >= 0 ? speed : DEFAULT_NET_BANDWIDTH_KB;
 		} catch (Throwable t) {
-			LOG.warn("Could not get net output rate from sigar", t);
+			LOG.warn("Could not get net maximum from sigar", t);
 			return 1024;
 		}
 	}
@@ -58,15 +67,19 @@ public class BufferedSigarWrapper {
 
 	public double getCpuFree() {
 		try {
-
-			CpuPerc perc = sigar.getCpuPerc();
-			double cpuFree = cpuMax - (perc != null ? perc.getUser() : 0.0) * cpuMax;
-			double result = Math.min(cpuMax, Math.max(0, cpuFree));
-			if (Double.isNaN(result)) {
-				result = 0.0;
+			if( System.currentTimeMillis() - cpuFreeTimestamp > BUFFER_TIME_MILLIS ) {
+				CpuPerc perc = sigar.getCpuPerc();
+				double cpuFree = cpuMax - (perc != null ? perc.getUser() : 0.0) * cpuMax;
+				double result = Math.min(cpuMax, Math.max(0, cpuFree));
+				if (Double.isNaN(result)) {
+					result = 0.0;
+				}
+				
+				cpuFreeBuffer = result;
+				cpuFreeTimestamp = System.currentTimeMillis();
 			}
-
-			return cpuFree;
+			
+			return cpuFreeBuffer;
 
 		} catch (Throwable t) {
 			LOG.warn("Could not get cpu free from sigar", t);
@@ -76,11 +89,17 @@ public class BufferedSigarWrapper {
 
 	public double getNetInputRate() {
 		try {
-			String interfaceName = sigar.getNetInterfaceConfig(null).getName();
-			NetInterfaceStat net = sigar.getNetInterfaceStat(interfaceName);
-			long inputTotal = net != null ? net.getRxBytes() : previousInputTotal;
-			previousInputTotal = inputTotal;
-			return Math.max(0, (inputTotal - previousInputTotal) / 1024);
+			if( System.currentTimeMillis() - netInTimestamp > BUFFER_TIME_MILLIS ) {
+				String interfaceName = sigar.getNetInterfaceConfig(null).getName();
+				NetInterfaceStat net = sigar.getNetInterfaceStat(interfaceName);
+				long inputTotal = net != null ? net.getRxBytes() : previousInputTotal;
+				previousInputTotal = inputTotal;
+				
+				netInBuffer = Math.max(0, (inputTotal - previousInputTotal) / 1024);
+				netInTimestamp = System.currentTimeMillis();
+			}
+			
+			return netInBuffer;
 
 		} catch (Throwable t) {
 			LOG.warn("Could not get net input rate from sigar", t);
@@ -90,13 +109,18 @@ public class BufferedSigarWrapper {
 
 	public double getNetOutputRate() {
 		try {
-			String interfaceName = sigar.getNetInterfaceConfig(null).getName();
-			NetInterfaceStat net = sigar.getNetInterfaceStat(interfaceName);
-			long outputTotal = net != null ? net.getTxBytes() : previousOutputTotal;
-			previousOutputTotal = outputTotal;
-
-			return Math.max(0, (outputTotal - previousOutputTotal) / 1024);
-
+			if( System.currentTimeMillis() - netOutTimestamp > BUFFER_TIME_MILLIS ) {
+				String interfaceName = sigar.getNetInterfaceConfig(null).getName();
+				NetInterfaceStat net = sigar.getNetInterfaceStat(interfaceName);
+				long outputTotal = net != null ? net.getTxBytes() : previousOutputTotal;
+				previousOutputTotal = outputTotal;
+	
+				netOutBuffer = Math.max(0, (outputTotal - previousOutputTotal) / 1024);
+				netOutTimestamp = System.currentTimeMillis();
+			}
+			
+			return netOutBuffer;
+			
 		} catch (Throwable t) {
 			LOG.warn("Could not get net output rate from sigar", t);
 			return 0.0;
