@@ -17,7 +17,9 @@ public class LoadBalancerFactory {
 			
 		case "maxcpu":
 			return new MaxCPULoadBalancer();
-			
+		
+		case "minquery":
+			return new MinQueryCountLoadBalancer();
 		}
 		
 		throw new LoadBalancerFactoryException("Load balancer type '" + type + "' not known");

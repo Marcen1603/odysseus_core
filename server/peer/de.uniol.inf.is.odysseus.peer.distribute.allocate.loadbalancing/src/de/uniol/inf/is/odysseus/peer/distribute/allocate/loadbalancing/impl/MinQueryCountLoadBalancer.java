@@ -8,7 +8,7 @@ import net.jxta.peer.PeerID;
 import com.google.common.base.Optional;
 
 
-public class LeastQueryCountLoadBalancer extends AbstractSelectPeerLoadBalancer {
+public class MinQueryCountLoadBalancer extends AbstractSelectPeerLoadBalancer {
 
 	@Override
 	protected Optional<PeerID> getNextPeer(Map<PeerID, Usage> remainingPeers, Collection<PeerID> avoidingPeers, long newMemCost, double newCpuCost) {
