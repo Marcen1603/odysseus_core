@@ -30,13 +30,14 @@ public class KeyValueProjectPO<T extends KeyValueObject<?>> extends AbstractPipe
 	protected void process_next(T object, int port) {
 		KeyValueObject<IMetaAttribute> newObject = new KeyValueObject<IMetaAttribute>();
 		for(SDFAttribute path: this.paths) {
-			// Sch�ner m�glich?
 			String pathURI = path.getURI();
-			String pathQualName = path.getQualName();
 			if(object.getAttribute(pathURI) != null) {
 				newObject.setAttribute(pathURI, object.getAttribute(pathURI));
-			} else if(object.getAttribute(pathQualName) != null) {
-				newObject.setAttribute(pathQualName, object.getAttribute(pathQualName));
+			} else {
+				String pathQualName = path.getQualName();
+				if(object.getAttribute(pathQualName) != null) {
+					newObject.setAttribute(pathQualName, object.getAttribute(pathQualName));
+				}
 			}
 		}
         newObject.setMetadata(object.getMetadata().clone());

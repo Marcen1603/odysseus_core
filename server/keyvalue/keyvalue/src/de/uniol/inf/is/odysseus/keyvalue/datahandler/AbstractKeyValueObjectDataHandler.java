@@ -31,14 +31,10 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 			if(buffer.remaining() > 0) {
 				CharBuffer decoded = Charset.forName("UTF-8").newDecoder().decode(buffer);
 				return jsonStringToKVO(decoded.toString());
-			} else {
-				System.out.println("ABSTRACT::: --- nothin in Buffer");
 			}
 		} catch (CharacterCodingException e) {
 			e.printStackTrace();
 		} 
-		// return null or empty KeyValueObject?
-//		return new KeyValueObject<>();
 		return null;
 	}
 
@@ -54,7 +50,6 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 
 	@Override
 	public T readData(ObjectInputStream inputStream) throws IOException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -72,7 +67,7 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 			} else if(data instanceof KeyValueObject<?>) {
 				string.append(jsonMapper.writer().writeValueAsString(((T) data).getAttributesAsNestedMap()));
 			}
-			System.out.println("writeJSONData: " + string.toString());			
+//			System.out.println("writeJSONData: " + string.toString());			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -84,7 +79,7 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 		try {
 			if(data instanceof NestedKeyValueObject) {
 				byte[] tmp = bsonMapper.writer().writeValueAsBytes(((T) data).getAttributes());
-				System.out.println("writeBSONData: " + tmp);
+//				System.out.println("writeBSONData: " + tmp);
 				return tmp;
 			} else if(data instanceof KeyValueObject<?>) {
 			    return bsonMapper.writer().writeValueAsBytes(((T) data).getAttributes());

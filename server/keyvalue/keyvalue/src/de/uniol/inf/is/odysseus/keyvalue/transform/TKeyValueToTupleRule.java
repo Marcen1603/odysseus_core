@@ -23,7 +23,8 @@ public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToT
 
 	@Override
 	public boolean isExecutable(KeyValueToTupleAO operator, TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet();
+		String type = operator.getInputSchema().getType().getSimpleName();
+		return (type.equals("KeyValueObject") || type.equals("NestedKeyValueObject")) && operator.isAllPhysicalInputSet();
 	}
 
 	@Override

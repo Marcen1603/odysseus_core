@@ -25,8 +25,8 @@ public class TKeyValueProjectRule extends AbstractTransformationRule<ProjectAO>{
 
 	@Override
 	public boolean isExecutable(ProjectAO operator, TransformationConfiguration config) {
-		return operator.getInputSchema().getType().getSimpleName().equals("KeyValueObject") && operator.isAllPhysicalInputSet();
-//		return operator.isAllPhysicalInputSet();
+		String type = operator.getInputSchema().getType().getSimpleName();
+		return (type.equals("KeyValueObject") || type.equals("NestedKeyValueObject")) && operator.isAllPhysicalInputSet();
 	}
 
 	@Override

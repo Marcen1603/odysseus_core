@@ -57,12 +57,12 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 		int pos = 0;
 		for (SDFAttribute attr : outputSchema.getAttributes()) {
 			Object inputAttribute = input.getAttribute(attr.getAttributeName());
-			if((inputAttribute instanceof List)) {	
-				// Was soll hier passieren?
-				output.setAttribute(pos++, ((List) inputAttribute).get(0));
-			} else {
+//			if((inputAttribute instanceof List)) {	
+//				// Was soll hier passieren?
+//				output.setAttribute(pos++, ((List) inputAttribute).get(0));
+//			} else {
 				output.setAttribute(pos++, inputAttribute);
-			}
+//			}
 		}
 		transfer(output);
 	}

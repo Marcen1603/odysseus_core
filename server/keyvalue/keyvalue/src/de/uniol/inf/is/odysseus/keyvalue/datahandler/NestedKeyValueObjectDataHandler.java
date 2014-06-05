@@ -46,7 +46,7 @@ public class NestedKeyValueObjectDataHandler extends AbstractKeyValueObjectDataH
 	@SuppressWarnings("unchecked")
 	protected NestedKeyValueObject<?> jsonStringToKVO(String json) {
 		try {
-			LOG.debug("JSON-String: " + json);
+//			LOG.debug("JSON-String: " + json);
 			JsonNode rootNode = jsonMapper.reader().readTree(json);		
 			if(!rootNode.isObject()) {
 				//könnte das wirklich vorkommen?
@@ -55,7 +55,7 @@ public class NestedKeyValueObjectDataHandler extends AbstractKeyValueObjectDataH
 			Map<String, Object> map = jsonMapper.reader().treeToValue(rootNode, Map.class);
 			return new NestedKeyValueObject<>(map);
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			LOG.debug(e.getMessage());
 			return null;
 		}

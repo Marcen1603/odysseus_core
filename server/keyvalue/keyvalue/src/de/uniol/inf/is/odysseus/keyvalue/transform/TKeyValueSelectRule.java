@@ -24,8 +24,8 @@ public class TKeyValueSelectRule extends AbstractTransformationRule<SelectAO>{
 
 	@Override
 	public boolean isExecutable(SelectAO operator, TransformationConfiguration config) {
-//		System.out.println("jj" + operator.getInputSchema().getType().getSimpleName());
-		return operator.getInputSchema().getType().getSimpleName().equals("KeyValueObject") && operator.isAllPhysicalInputSet();
+		String type = operator.getInputSchema().getType().getSimpleName();
+		return (type.equals("KeyValueObject") || type.equals("NestedKeyValueObject")) && operator.isAllPhysicalInputSet();
 	}
 
 	@Override

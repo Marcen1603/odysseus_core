@@ -43,7 +43,7 @@ public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler
 	
 	protected KeyValueObject<?> jsonStringToKVO(String json) {
 		try {
-			LOG.debug("JSON-String: " + json);
+//			LOG.debug("JSON-String: " + json);
 			if(json.equals("")) {
 				throw new Exception("empty JSON-String");
 			}
