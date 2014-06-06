@@ -45,7 +45,7 @@ public class Datarate implements IDatarate, Cloneable, Serializable {
 
 	@Override
 	public String getCSVHeader(char delimiter) {
-		return "datarate";
+		return "Datarate";
 	}
 
 	@Override
