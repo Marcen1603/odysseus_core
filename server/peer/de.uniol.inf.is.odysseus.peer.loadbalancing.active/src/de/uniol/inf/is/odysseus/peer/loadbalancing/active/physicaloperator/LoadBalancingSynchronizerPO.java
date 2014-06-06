@@ -304,15 +304,18 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 
 			this.transferArea.transfer(object);
 			this.transferArea.newElement(object, port);
-			
+
 		}
 
 	}
 
 	/**
 	 * Processes {@link LoadBalancingPunctuation}s.
-	 * @param punctuation The punctuation to process.
-	 * @param port The input port of <code>punctuation</code>.
+	 * 
+	 * @param punctuation
+	 *            The punctuation to process.
+	 * @param port
+	 *            The input port of <code>punctuation</code>.
 	 */
 	private void processLoadBalancingPunctuation(
 			LoadBalancingPunctuation punctuation, int port) {
@@ -369,7 +372,8 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 			final int portToRemove = this.transferPort;
 			this.transferPort = (this.transferPort + 1) % 2;
 			this.inputPortStates.clear();
-			this.inputPortStates.add(new Pair<Integer, InputPortState>(this.transferPort, InputPortState.noneReceived));
+			this.inputPortStates.add(new Pair<Integer, InputPortState>(
+					this.transferPort, InputPortState.noneReceived));
 			this.getSubscribedToSource(portToRemove).setDone(true);
 			this.fireFinishEvent(portToRemove);
 
@@ -379,7 +383,9 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 
 	/**
 	 * Checks, if all input ports have a given state.
-	 * @param state The given state.
+	 * 
+	 * @param state
+	 *            The given state.
 	 * @return True, if all input ports have a given state.
 	 */
 	private boolean areAllInputPortStates(InputPortState state) {
@@ -399,9 +405,13 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	}
 
 	/**
-	 * Gets the {@link IPair} of input port and {@link InputPortState} for a given input port.
-	 * @param port The given input port.
-	 * @return The first pair found, having <code>port</code> as input port or {@link Optional#absent()}, if no pair was found.
+	 * Gets the {@link IPair} of input port and {@link InputPortState} for a
+	 * given input port.
+	 * 
+	 * @param port
+	 *            The given input port.
+	 * @return The first pair found, having <code>port</code> as input port or
+	 *         {@link Optional#absent()}, if no pair was found.
 	 */
 	private Optional<IPair<Integer, InputPortState>> getInputPortState(int port) {
 

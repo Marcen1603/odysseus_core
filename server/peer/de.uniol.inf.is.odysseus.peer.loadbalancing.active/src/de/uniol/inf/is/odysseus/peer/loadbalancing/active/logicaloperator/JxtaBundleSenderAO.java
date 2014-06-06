@@ -9,10 +9,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 
 /***
- * Logical Operator to send data with multiple JXTA senders. 
- * Used in dynamic load balancing.
+ * Logical Operator to send data with multiple JXTA senders. Used in dynamic
+ * load balancing.
+ * 
  * @author Carsten Cordes
- *
+ * 
  */
 @LogicalOperator(name = "JXTABUNDLESENDER", doc = "Send data with multiple JXTA senders", minInputPorts = 1, maxInputPorts = 1, category = { LogicalOperatorCategory.SINK }, hidden = true)
 public class JxtaBundleSenderAO extends JxtaSenderAO {

@@ -28,20 +28,21 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.logicaloperator.JxtaBu
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.wrapper.JxtaSenderWrapper;
 
 /***
- * Physical Operator to allow for Multiple outgoing senders in dynamic load balancing.
- * Works by holding a List of Wrapper Objects for {@link de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO}
+ * Physical Operator to allow for Multiple outgoing senders in dynamic load
+ * balancing. Works by holding a List of Wrapper Objects for
+ * {@link de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO}
  * 
  * @author Carsten Cordes
- *
+ * 
  */
 public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		AbstractSink<T> {
-	
+
 	/**
 	 * The rate heartbeats are send.
 	 */
 	private final int heartbeatRate = 10;
-	
+
 	/**
 	 * The current amount of heartbeats.
 	 */
@@ -88,10 +89,11 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 
 	/**
 	 * Forwards Punctuations to all senders
-	 * @param	punctuation
-	 * 			Punctuation to send.
-	 * @param 	port
-	 * 			is ignored
+	 * 
+	 * @param punctuation
+	 *            Punctuation to send.
+	 * @param port
+	 *            is ignored
 	 */
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
@@ -111,7 +113,6 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		}
 	}
 
-	
 	private void createDataHandlerIfNeeded() {
 		if (dataHandler == null) {
 			dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler()
@@ -132,6 +133,7 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 
 	/***
 	 * Gets Transmission of first Sender in list.
+	 * 
 	 * @return Transmission of first Sender in list.
 	 */
 	public final ITransmissionSender getTransmission() {
@@ -140,6 +142,7 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 
 	/***
 	 * Gets List of Transmissions
+	 * 
 	 * @return List of all outgoing transmissions.
 	 */
 	public final ImmutableList<ITransmissionSender> getTransmissions() {
@@ -152,6 +155,7 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 
 	/***
 	 * Gets peerID of first Sender in list.
+	 * 
 	 * @return peerID of first Sender in list.
 	 */
 	public String getPeerIDString() {
@@ -160,6 +164,7 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 
 	/**
 	 * Gets pipeID of first Sender in list.
+	 * 
 	 * @return pipeID of first Sender in list.
 	 */
 	public String getPipeIDString() {
@@ -168,6 +173,7 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 
 	/**
 	 * Gets uploadRate of first Sender in list.
+	 * 
 	 * @return uploadRate of first Sender in list.
 	 */
 	public double getUploadRateBytesPerSecond() {
@@ -176,6 +182,7 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 
 	/**
 	 * Gets Number of sent Bytes of first Sender in list.
+	 * 
 	 * @return Number of sent bytes of first Sender in list.
 	 */
 	public long getTotalSendByteCount() {
@@ -210,40 +217,39 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 			return null;
 		}
 	}
-	
+
 	public void addSender(JxtaSenderPO<T> po) {
 		senderList.add(new JxtaSenderWrapper<T>(po));
 	}
-	
+
 	public boolean deleteSender(int index) {
-		if(senderList.size()<=1) {
+		if (senderList.size() <= 1) {
 			return false;
 		}
 		try {
-		senderList.remove(index);
+			senderList.remove(index);
 			return true;
-		}
-		catch(IndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException e) {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Sends Heartbeats
+	 * 
 	 * @param currentPoT
-	 * 			Point in Time.
+	 *            Point in Time.
 	 */
 	@SuppressWarnings("unused")
 	private void sendHeartbeats(PointInTime currentPoT) {
-		
+
 		final Heartbeat heartbeat = Heartbeat.createNewHeartbeat(currentPoT);
-		
-			
-			if(++this.heartbeatCounter % this.heartbeatRate != 0) {
-				for(JxtaSenderWrapper<T> sender : senderList) {
-					sender.processPunctuation(heartbeat, 0);
-				}
+
+		if (++this.heartbeatCounter % this.heartbeatRate != 0) {
+			for (JxtaSenderWrapper<T> sender : senderList) {
+				sender.processPunctuation(heartbeat, 0);
 			}
-			
+		}
+
 	}
 }
