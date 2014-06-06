@@ -6,7 +6,9 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.interval_latency;resolution:=optional,
+Import-Package: de.uniol.inf.is.odysseus.datarate,
+ de.uniol.inf.is.odysseus.datarate_systemload,
+ de.uniol.inf.is.odysseus.interval_latency;resolution:=optional,
  de.uniol.inf.is.odysseus.latency;resolution:=optional,
  de.uniol.inf.is.odysseus.parser.pql.generator,
  de.uniol.inf.is.odysseus.peer.config,
