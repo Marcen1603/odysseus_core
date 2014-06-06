@@ -231,8 +231,8 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		sb.append("    listAdvertisements/ls.. <filter>     - Lists all advertisements (class names)\n");
 		sb.append("    refreshAdvertisements/ls.. <filter>  - Forces to get remote advertisements again\n");
 		sb.append("\n");
-		sb.append("    login <peername> <username> <passw>  - Login to remote peer to execute osgi-commands there\n");
-		sb.append("    logout <peername> 			        - Logout from remote peer\n");
+		sb.append("    loginPeer <peername> <username> <passw> - Login to remote peer to execute osgi-commands there\n");
+		sb.append("    logoutPeer <peername> 			    - Logout from remote peer\n");
 		sb.append("    listLoggedInPeers/ls...              - Lists all remote peers which are logged in here\n");
 		sb.append("    listLoggedToPeers/ls...              - Lists all remote peers which we are logged in to\n");
 		sb.append("    revokeLogin <peername>               - Removes login of remote peer\n");
@@ -246,6 +246,9 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		sb.append("    listSystemProperties/ls...     		- Lists all set system properties. Filter possible\n");
 		sb.append("    setSystemProperty <name> <value>		- Sets system property.\n");
 		sb.append("    listThreads/ls... <filter>     		- Lists all currently running thread. Filter possible\n");
+		sb.append("\n");
+		sb.append("    dumpPlan <queryid>                   - Prints the physical plan of the specified query.\n");
+		sb.append("    dumpStream <hashOfPhysicalOperator | nameOfOperator> <timeInMillis> - Prints the current stream of the specified operator.\n");
 		return sb.toString();
 	}
 
