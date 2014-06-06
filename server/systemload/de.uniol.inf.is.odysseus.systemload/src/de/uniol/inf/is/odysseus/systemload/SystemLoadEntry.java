@@ -10,8 +10,9 @@ import de.uniol.inf.is.odysseus.systemload.impl.BufferedSigarWrapper;
 public final class SystemLoadEntry implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 7962567634409661546L;
-	private static final BufferedSigarWrapper SIGAR_WRAPPER = new BufferedSigarWrapper();
 	private static final Runtime RUNTIME = Runtime.getRuntime();
+	
+	public static final BufferedSigarWrapper SIGAR_WRAPPER = new BufferedSigarWrapper();
 	
 	private final String name;
 

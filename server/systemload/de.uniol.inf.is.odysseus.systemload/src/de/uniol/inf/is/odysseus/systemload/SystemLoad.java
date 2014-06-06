@@ -37,7 +37,7 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 	@Override
 	public void addSystemLoad(String name) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name for system load must not be null or empty!");
-		
+
 		// replaces older ones if necessary
 		systemLoads.put(name, new SystemLoadEntry(name));
 	}
@@ -81,13 +81,28 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 	@Override
 	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
 		StringBuilder sb = new StringBuilder();
-		for (String name : systemLoads.keySet()) {
-			if (sb.length() > 0) {
-				sb.append(delimiter);
-			}
-			sb.append(name).append(delimiter);
 
-			SystemLoadEntry systemLoadEntry = systemLoads.get(name);
+		if (!systemLoads.isEmpty()) {
+			for (String name : systemLoads.keySet()) {
+				if (sb.length() > 0) {
+					sb.append(delimiter);
+				}
+				sb.append(name).append(delimiter);
+
+				SystemLoadEntry systemLoadEntry = systemLoads.get(name);
+				int cpuValue = (int) (systemLoadEntry.getCpuLoad() * 100);
+				int memValue = (int) (systemLoadEntry.getMemLoad() * 100);
+				int netValue = (int) (systemLoadEntry.getNetLoad() * 100);
+
+				sb.append(cpuValue).append(delimiter);
+				sb.append(memValue).append(delimiter);
+				sb.append(netValue);
+			}
+		} else {
+			sb.append("local").append(delimiter);
+
+			SystemLoadEntry systemLoadEntry = new SystemLoadEntry("local");
+			
 			int cpuValue = (int) (systemLoadEntry.getCpuLoad() * 100);
 			int memValue = (int) (systemLoadEntry.getMemLoad() * 100);
 			int netValue = (int) (systemLoadEntry.getNetLoad() * 100);
@@ -95,8 +110,9 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 			sb.append(cpuValue).append(delimiter);
 			sb.append(memValue).append(delimiter);
 			sb.append(netValue);
+			
 		}
-
+		
 		return sb.toString();
 	}
 
@@ -132,7 +148,7 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 			int cpuValue = (int) (systemLoadEntry.getCpuLoad() * 100);
 			int memValue = (int) (systemLoadEntry.getMemLoad() * 100);
 			int netValue = (int) (systemLoadEntry.getNetLoad() * 100);
-			
+
 			sb.append("cpu=").append(cpuValue).append(delimiter);
 			sb.append("mem=").append(memValue).append(delimiter);
 			sb.append("net=").append(netValue);
