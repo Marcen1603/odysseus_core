@@ -1,10 +1,11 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
-import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 
 /**
  * 
@@ -12,7 +13,7 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
  *
  */
 @LogicalOperator(category = { LogicalOperatorCategory.TEST }, doc = "Sends load balancing start- and stop-puctuations in periodic distance.", maxInputPorts = 1, minInputPorts = 1, name = "LoadBalancingTestSenderAO")
-public class LoadBalancingTestSenderAO extends JxtaSenderAO {
+public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
 
 	/**
 	 * The version of this class for serialization.
@@ -60,5 +61,10 @@ public class LoadBalancingTestSenderAO extends JxtaSenderAO {
 	@Parameter(type = IntegerParameter.class, name = "pauseBetween", optional = false)
 	public void setPauseBetween(long numberOfTuples) {
 		this.pauseBetween = numberOfTuples;
+	}
+
+	@Override
+	public AbstractLogicalOperator clone() {
+		return new LoadBalancingTestSenderAO(this);
 	}
 }
