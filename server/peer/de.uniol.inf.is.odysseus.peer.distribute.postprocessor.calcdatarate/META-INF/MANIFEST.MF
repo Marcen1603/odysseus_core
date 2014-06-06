@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Calcdatarate
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.distribute.postprocessor.calcdatarate
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Timo Michelsen
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.peer.distribute;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ Jxta_2.6_Source;bundle-version="1.0.0",
+ com.google.guava;bundle-version="14.0.0",
+ de.uniol.inf.is.odysseus.datarate
+Service-Component: OSGI-INF/CalcDataratePostProcessor.xml
