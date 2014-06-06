@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.distribute.postprocessor.localsink;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import net.jxta.peer.PeerID;
@@ -18,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.QueryDistributionPostProcessorException;
 import de.uniol.inf.is.odysseus.peer.distribute.postprocess.AbstractOperatorInsertionPostProcessor;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
@@ -47,7 +49,7 @@ public class LocalSinkPostProcessor extends AbstractOperatorInsertionPostProcess
 	}
 
 	@Override
-	public void postProcess(IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> allocationMap, ILogicalQuery query, QueryBuildConfiguration config) {
+	public void postProcess(IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> allocationMap, ILogicalQuery query, QueryBuildConfiguration config, List<String> parameters) throws QueryDistributionPostProcessorException {
 
 		LocalSinkPostProcessor.log.debug("Begin post processing");
 

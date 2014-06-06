@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.distribute.postprocessor.forcelocal;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import net.jxta.peer.PeerID;
@@ -20,6 +21,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryDistributionPostProcessor;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.QueryDistributionPostProcessorException;
 
 public class ForceLocalPostProcessor implements IQueryDistributionPostProcessor {
 
@@ -45,7 +47,7 @@ public class ForceLocalPostProcessor implements IQueryDistributionPostProcessor 
 	}
 
 	@Override
-	public void postProcess(IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> allocationMap, ILogicalQuery query, QueryBuildConfiguration config) {
+	public void postProcess(IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> allocationMap, ILogicalQuery query, QueryBuildConfiguration config, List<String> parameters ) throws QueryDistributionPostProcessorException {
 		LOG.debug("Forcing operators with 'local' as destination name (if any) to be locally executed");
 
 		for( ILogicalQueryPart part : allocationMap.keySet().toArray(new ILogicalQueryPart[0]) ) {

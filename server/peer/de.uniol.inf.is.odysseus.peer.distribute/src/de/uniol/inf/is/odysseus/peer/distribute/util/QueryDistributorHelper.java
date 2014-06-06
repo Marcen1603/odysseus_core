@@ -96,7 +96,7 @@ public final class QueryDistributorHelper {
 	public static void tryPostProcess(IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> allocationMap, QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryDistributionPostProcessor>> postProcessors, ILogicalQuery query) throws QueryDistributionException {
 		try {
 			for( InterfaceParametersPair<IQueryDistributionPostProcessor> postProcessor : postProcessors ) {
-				postProcessor.getInterface().postProcess(serverExecutor, caller, allocationMap, query, config);
+				postProcessor.getInterface().postProcess(serverExecutor, caller, allocationMap, query, config, postProcessor.getParameters());
 			}
 		} catch( Throwable t ) {
 			throw new QueryDistributionException("Could not post process query distribution", t);

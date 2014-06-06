@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryDistributionPostProcessor;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.QueryDistributionPostProcessorException;
 
 public class MergeQueryPartsPostProcessor implements IQueryDistributionPostProcessor {
 
@@ -31,7 +32,7 @@ public class MergeQueryPartsPostProcessor implements IQueryDistributionPostProce
 	}
 
 	@Override
-	public void postProcess(IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> allocationMap, ILogicalQuery query, QueryBuildConfiguration config) {
+	public void postProcess(IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> allocationMap, ILogicalQuery query, QueryBuildConfiguration config, List<String> parameters) throws QueryDistributionPostProcessorException {
 		LOG.debug("Merging query parts with same peerid if possible");
 		
 		Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment = determineOperatorAssignment(allocationMap.keySet());
