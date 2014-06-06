@@ -21,6 +21,8 @@ public class LatencyDatarateSystemLoad extends DatarateSystemLoad implements ILa
 	}
 	
 	public LatencyDatarateSystemLoad( LatencyDatarateSystemLoad other ) {
+		super(other);
+		
 		latency = other.latency.clone();
 	}
 	

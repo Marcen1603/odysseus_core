@@ -22,6 +22,7 @@ public class TimeIntervalDatarateSystemLoad extends TimeIntervalSystemLoad imple
 	}
 	
 	public TimeIntervalDatarateSystemLoad( TimeIntervalDatarateSystemLoad other ) {
+		super(other);
 		datarate = new Datarate(other.datarate);
 	}
 	

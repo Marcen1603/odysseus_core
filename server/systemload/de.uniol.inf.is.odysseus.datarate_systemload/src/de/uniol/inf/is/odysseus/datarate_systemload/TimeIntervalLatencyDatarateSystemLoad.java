@@ -22,6 +22,7 @@ public class TimeIntervalLatencyDatarateSystemLoad extends TimeIntervalDatarateS
 	}
 	
 	public TimeIntervalLatencyDatarateSystemLoad( TimeIntervalLatencyDatarateSystemLoad other ) {
+		super(other);
 		latency = other.latency.clone();
 	}
 	
@@ -92,6 +93,6 @@ public class TimeIntervalLatencyDatarateSystemLoad extends TimeIntervalDatarateS
 	
 	@Override
 	public String toString() {
-		return "( (sysload,i,datarate) = " + super.toString() + " | l = " + latency.toString() + " )";
+		return "( i = " + getStart().toString() + " - " + getEnd().toString() + " | l = " + latency.toString() + " | datarate = " + getDatarate() + " | sysload = )"; 
 	}
 }

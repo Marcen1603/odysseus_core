@@ -21,6 +21,8 @@ public class DatarateSystemLoad extends SystemLoad implements IDatarateSystemLoa
 	}
 
 	public DatarateSystemLoad(DatarateSystemLoad other) {
+		super(other);
+		
 		datarate = new Datarate(other.datarate);
 	}
 

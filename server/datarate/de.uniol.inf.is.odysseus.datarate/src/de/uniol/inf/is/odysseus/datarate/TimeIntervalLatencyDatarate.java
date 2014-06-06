@@ -22,6 +22,8 @@ public class TimeIntervalLatencyDatarate extends TimeIntervalDatarate implements
 	}
 	
 	public TimeIntervalLatencyDatarate( TimeIntervalLatencyDatarate other ) {
+		super(other);
+		
 		latency = other.latency.clone();
 	}
 	

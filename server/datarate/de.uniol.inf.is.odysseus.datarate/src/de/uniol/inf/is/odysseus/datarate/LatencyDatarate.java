@@ -22,6 +22,7 @@ public class LatencyDatarate extends Latency implements ILatencyDatarate, ILaten
 	}
 	
 	public LatencyDatarate( LatencyDatarate other ) {
+		super(other);
 		datarate = new Datarate(other.datarate);
 	}
 	

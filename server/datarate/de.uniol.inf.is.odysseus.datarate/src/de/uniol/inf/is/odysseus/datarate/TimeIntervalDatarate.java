@@ -20,6 +20,7 @@ public class TimeIntervalDatarate extends TimeInterval implements ITimeInterval,
 	}
 	
 	public TimeIntervalDatarate(TimeIntervalDatarate other) {
+		super(other);
 		datarate = new Datarate(other.datarate);
 	}
 

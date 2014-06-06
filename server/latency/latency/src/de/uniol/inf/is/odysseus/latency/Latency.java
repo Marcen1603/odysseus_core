@@ -43,7 +43,7 @@ public class Latency implements ILatency{
 //		this.lstart = start;
 //	}
 	
-	private Latency(Latency copy){
+	public Latency(Latency copy){
 		this.lend = copy.lend;
 		this.minlstart = copy.minlstart;
 		this.maxlstart = copy.maxlstart;
