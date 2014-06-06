@@ -51,10 +51,7 @@ public class JxtaBundleReceiverPO<T extends IStreamObject> extends
 
 	@SuppressWarnings("unchecked")
 	private void subscribeReceiver(JxtaReceiverWrapper<T> receiver) {
-		for (PhysicalSubscription<ISink<? super T>> subscription : receiver
-				.getSubscriptions()) {
-			subscription.setDone(true);
-		}
+		receiver.unsubscribeFromAllSinks();
 		receiverList.add(receiver);
 		receiver.subscribeSink(synchronizer, transferPort, 0,
 				receiver.getOutputSchema(), true, 0);
@@ -75,7 +72,6 @@ public class JxtaBundleReceiverPO<T extends IStreamObject> extends
 					subscription.getSinkInPort(),
 					subscription.getSourceOutPort(), subscription.getSchema(),
 					true, 0);
-			subscription.setDone(true);
 		}
 		subscribeReceiver(firstReceiver);
 
@@ -163,7 +159,9 @@ public class JxtaBundleReceiverPO<T extends IStreamObject> extends
 			return false;
 		}
 		try {
+			JxtaReceiverPO<T> receiver = receiverList.get(index);
 			receiverList.remove(index);
+			receiver.unsubscribeFromAllSinks();
 			return true;
 		} catch (IndexOutOfBoundsException e) {
 			return false;
