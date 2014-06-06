@@ -31,6 +31,7 @@ public class DatarateAO extends AbstractLogicalOperator {
 	@Parameter(name = "UpdateRate", doc = "Element count after recalculating the datarate. Zero means no measurements.", type = IntegerParameter.class, optional = false)
 	public void setUpdateRate( int updateRate ) {
 		this.updateRateElements = updateRate;
+		addParameterInfo("UPDATERATE", String.valueOf(updateRate));
 	}
 	
 	public int getUpdateRate() {

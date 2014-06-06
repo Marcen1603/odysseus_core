@@ -15,4 +15,5 @@ Service-Component: OSGI-INF/DatarateMetaattribute.xml,OSGI-INF/TimeIntervalDatar
  OSGI-INF/TimeIntervalLatencyDatarateMetaattribute.xml
 Import-Package: de.uniol.inf.is.odysseus.core.server.metadata,
  de.uniol.inf.is.odysseus.latency
-Export-Package: de.uniol.inf.is.odysseus.datarate
+Export-Package: de.uniol.inf.is.odysseus.datarate,
+ de.uniol.inf.is.odysseus.datarate.logicaloperator
