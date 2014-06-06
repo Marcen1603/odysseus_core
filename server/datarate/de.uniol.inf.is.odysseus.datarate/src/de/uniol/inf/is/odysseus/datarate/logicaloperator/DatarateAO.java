@@ -18,6 +18,8 @@ public class DatarateAO extends AbstractLogicalOperator {
 	}
 	
 	public DatarateAO( DatarateAO other ) {
+		super(other);
+		
 		this.updateRateElements = other.updateRateElements;
 	}
 	
