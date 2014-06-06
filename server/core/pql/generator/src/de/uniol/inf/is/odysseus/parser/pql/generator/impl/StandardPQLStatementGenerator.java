@@ -14,16 +14,14 @@ public class StandardPQLStatementGenerator<T extends ILogicalOperator> extends A
 		Map<String, String> parameterMap = removeNullValues(determineParameterMap(operator));
 		parameterMap.put("NAME", "'" + operator.getName() + "'");
 		
-		StringBuilder sb = new StringBuilder();
-		sb.append(toPQLString(parameterMap));
-		return sb.toString();
+		return toPQLString(parameterMap);
 	}
 	
 	protected Map<String, String> determineParameterMap(T operator) {
 		return operator.getParameterInfos();
 	}
 
-	private String toPQLString(Map<String, String> parameterMap) {
+	private static String toPQLString(Map<String, String> parameterMap) {
 		StringBuilder sb = new StringBuilder();
 		if (!parameterMap.isEmpty()) {
 			String[] keys = parameterMap.keySet().toArray(new String[0]);
