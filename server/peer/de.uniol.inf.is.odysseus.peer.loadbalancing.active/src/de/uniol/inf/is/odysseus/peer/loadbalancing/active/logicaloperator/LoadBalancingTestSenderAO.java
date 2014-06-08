@@ -6,11 +6,28 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.LoadBalancingPunctuation;
 
 /**
+ * A {@link LoadBalancingTestSenderAO} sends up all incoming tuples as they come
+ * in and in addition sends {@link LoadBalancingPunctuation} in adjustable
+ * intervals. This operator is for testing purpose to test the
+ * load-balancing-synchronization.
+ * 
+ * When starting using this operator, it will wait {@value startSyncAfter}
+ * tuples until a {@link LoadBalancingPunctuation} to start the synchronization
+ * will be send. Then it will wait {@value stopSyncAfter} tuples until it will
+ * send another {@link LoadBalancingPunctuation}. Then it will wait {@value
+ * pauseBetween} tuples + {@value startSyncAfter} tuples until the next {@value
+ * LoadBalancingPunctuation} will be send.
+ * 
+ * (startSyncAfter tuples waiting) -> (send {@link LoadBalancingPunctuation} to
+ * start sync) -> (wait stopSyncAfter tuples) -> (send
+ * {@link LoadBalancingPunctuation} to stop sync) -> (wait pauseBetween tuples)
+ * -> (start from beginning)
  * 
  * @author Tobias Brandt
- *
+ * 
  */
 @LogicalOperator(category = { LogicalOperatorCategory.TEST }, doc = "Sends load balancing start- and stop-puctuations in periodic distance.", maxInputPorts = 1, minInputPorts = 1, name = "LoadBalancingTestSenderAO")
 public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
@@ -23,41 +40,83 @@ public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
 	private long startSyncAfter;
 	private long stopSyncAfter;
 	private long pauseBetween;
-	
+
+	/**
+	 * Standard-Constructor with all adjustable values set to 10
+	 */
 	public LoadBalancingTestSenderAO() {
-		
+		startSyncAfter = 10;
+		stopSyncAfter = 10;
+		pauseBetween = 10;
 	}
-	
+
+	/**
+	 * Copy-constructor to create a new {@link LoadBalancingTestSenderAO} with
+	 * the same configuration. Caution: Does not copy the internal state!
+	 * 
+	 * @param other
+	 *            The {@link LoadBalancingTestSenderAO} to be copied.
+	 */
 	public LoadBalancingTestSenderAO(LoadBalancingTestSenderAO other) {
 		super(other);
-		
+
 		startSyncAfter = other.startSyncAfter;
 		stopSyncAfter = other.stopSyncAfter;
 		pauseBetween = other.pauseBetween;
 	}
-	
+
+	/**
+	 * 
+	 * @return The value with the number of tuples after which the
+	 *         {@link LoadBalancingPunctuation} to start the sync will be send.
+	 */
 	public long getStartSyncAfter() {
 		return this.startSyncAfter;
 	}
 
+	/**
+	 * 
+	 * @return The value with the number of tuples after which the
+	 *         {@link LoadBalancingPunctuation} to stop the sync will be send.
+	 */
 	public long getStopAfter() {
 		return this.stopSyncAfter;
 	}
 
+	/**
+	 * 
+	 * @return The value with the number of tuples after which the process
+	 *         restarts (additional waiting after the sync stopped)
+	 */
 	public long getPauseBetween() {
 		return this.pauseBetween;
 	}
-	
+
+	/**
+	 * 
+	 * @param numberOfTuples The value with the number of tuples after which the
+	 *         {@link LoadBalancingPunctuation} to start the sync will be send.
+	 */
 	@Parameter(type = IntegerParameter.class, name = "startSyncAfter", optional = false)
 	public void setStartSyncAfter(long numberOfTuples) {
 		this.startSyncAfter = numberOfTuples;
 	}
-	
+
+	/**
+	 * 
+	 * @param numberOfTuples The value with the number of tuples after which the
+	 *         {@link LoadBalancingPunctuation} to stop the sync will be send.
+	 */
 	@Parameter(type = IntegerParameter.class, name = "stopSyncAfter", optional = false)
-	public void stopSyncAfter(long numberOfTuples) {
+	public void setStopSyncAfter(long numberOfTuples) {
 		this.stopSyncAfter = numberOfTuples;
 	}
-	
+
+	/**
+	 * 
+	 * @param numberOfTuples The value with the number of tuples after which the process
+	 *         restarts (additional waiting after the sync stopped)
+	 */
 	@Parameter(type = IntegerParameter.class, name = "pauseBetween", optional = false)
 	public void setPauseBetween(long numberOfTuples) {
 		this.pauseBetween = numberOfTuples;

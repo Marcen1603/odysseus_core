@@ -13,10 +13,27 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.LoadBalancingPunctuati
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.logicaloperator.LoadBalancingTestSenderAO;
 
 /**
+ * A {@link LoadBalancingTestSenderPO} sends up all incoming tuples as they come
+ * in and in addition sends {@link LoadBalancingPunctuation} in adjustable
+ * intervals. This operator is for testing purpose to test the
+ * load-balancing-synchronization.
+ * 
+ * When starting using this operator, it will wait {@value startSyncAfter}
+ * tuples until a {@link LoadBalancingPunctuation} to start the synchronization
+ * will be send. Then it will wait {@value stopSyncAfter} tuples until it will
+ * send another {@link LoadBalancingPunctuation}. Then it will wait {@value
+ * pauseBetween} tuples + {@value startSyncAfter} tuples until the next {@value
+ * LoadBalancingPunctuation} will be send.
+ * 
+ * (startSyncAfter tuples waiting) -> (send {@link LoadBalancingPunctuation} to
+ * start sync) -> (wait stopSyncAfter tuples) -> (send
+ * {@link LoadBalancingPunctuation} to stop sync) -> (wait pauseBetween tuples)
+ * -> (start from beginning)
  * 
  * @author Tobias Brandt
  * 
  * @param <T>
+ * 
  */
 public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 		extends AbstractPipe<T, T> {
@@ -38,14 +55,25 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 	private long pauseBetween;
 	private boolean firstRound;
 
+	/**
+	 * Standard-constructor with standard configuration to start with and all
+	 * adjustable values set to 10
+	 */
 	public LoadBalancingTestSenderPO() {
 		counter = 0;
-		startSyncAfter = 42;
-		stopSyncAfter = 42;
-		pauseBetween = 42;
+		startSyncAfter = 10;
+		stopSyncAfter = 10;
+		pauseBetween = 10;
 		firstRound = true;
 	}
 
+	/**
+	 * Copy-constructor to copy an existing {@link LoadBalancingTestSenderPO}.
+	 * Copies the internal state, too.
+	 * 
+	 * @param other
+	 *            {@link LoadBalancingTestSenderPO} to be copied.
+	 */
 	public LoadBalancingTestSenderPO(LoadBalancingTestSenderPO<T> other) {
 		this.counter = other.counter;
 		this.startSyncAfter = other.startSyncAfter;
@@ -54,6 +82,14 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 		this.firstRound = other.firstRound;
 	}
 
+	/**
+	 * Constructor, to create a {@link LoadBalancingTestSenderPO} from a
+	 * {@link LoadBalancingTestSenderAO}.
+	 * 
+	 * @param other
+	 *            {@link LoadBalancingTestSenderAO} to create the
+	 *            {@link LoadBalancingTestSenderPO} from.
+	 */
 	public LoadBalancingTestSenderPO(LoadBalancingTestSenderAO other) {
 		this.counter = 0;
 		this.startSyncAfter = other.getStartSyncAfter();
@@ -62,14 +98,25 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 		this.firstRound = true;
 	}
 
+	/**
+	 * Clones this {@link LoadBalancingTestSenderPO} (with internal state and
+	 * returns the clone.
+	 */
 	@Override
 	public LoadBalancingTestSenderPO<T> clone() {
 		return new LoadBalancingTestSenderPO<T>(this);
 	}
 
+	/**
+	 * Counts the incoming tuples and sends them up. Sends
+	 * {@link LoadBalancingPunctuation} in the adjusted rates to start or stop
+	 * the synchronization.
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	protected synchronized void process_next(T object, int port) {
+		this.transfer(object, port);
+
 		counter++;
 		if (firstRound) {
 			if (counter == startSyncAfter) {
@@ -107,10 +154,20 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 				counter = 0;
 			}
 		}
-		
-		this.transfer(object, port);
 	}
 
+	/**
+	 * Sends a {@link LoadBalancingPunctuation} to start or stop the sync.
+	 * 
+	 * @param time
+	 *            Time of the punctuation
+	 * @param port
+	 *            Port to send the punctuation
+	 * @param startSync
+	 *            true, if the {@link LoadBalancingPunctuation} should start the
+	 *            syncronization, false if the synchronization should be
+	 *            stopped.
+	 */
 	private void sendSyncPunctuation(PointInTime time, int port,
 			boolean startSync) {
 		LoadBalancingPunctuation startSyncPunctuation = new LoadBalancingPunctuation(
@@ -119,28 +176,13 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 	}
 
 	@Override
-	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
+	public synchronized void processPunctuation(IPunctuation punctuation,
+			int port) {
 		this.sendPunctuation(punctuation, port);
 	}
 
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
-	}
-
-	public long getCounter() {
-		return this.counter;
-	}
-
-	public boolean isFirstRound() {
-		return this.firstRound;
-	}
-
-	protected void setCounter(long counter) {
-		this.counter = counter;
-	}
-
-	protected void setIsFirstRound(boolean firstRound) {
-		this.firstRound = firstRound;
 	}
 }
