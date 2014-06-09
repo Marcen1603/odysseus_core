@@ -54,6 +54,8 @@ import de.uniol.inf.is.odysseus.rcp.evaluation.QueryTreeSelectionDialog;
 import de.uniol.inf.is.odysseus.rcp.evaluation.execution.EvaluationJob;
 import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationModel;
 import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationVariable;
+import de.uniol.inf.is.odysseus.rcp.evaluation.plot.PlotBuilder.OutputType;
+
 import org.eclipse.swt.widgets.Combo;
 
 public class EvaluationEditorPart extends EditorPart implements IResourceChangeListener, IResourceDeltaVisitor {
@@ -106,15 +108,15 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		container.setLayout(new GridLayout(1, false));
 
 		Group grpGeneral = new Group(container, SWT.NONE);
-		grpGeneral.setLayout(new GridLayout(2, false));
+		grpGeneral.setLayout(new GridLayout(4, false));
 		GridData gd_grpGeneral = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_grpGeneral.heightHint = 150;
+//		gd_grpGeneral.heightHint = 150;
 		grpGeneral.setLayoutData(gd_grpGeneral);
 		grpGeneral.setText("General");
 
 		Composite composite_1 = new Composite(grpGeneral, SWT.NONE);
 		composite_1.setLayout(new GridLayout(2, false));
-		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 
 		Label lblQueryFile = new Label(composite_1, SWT.NONE);
 		lblQueryFile.setText("Query File:");
@@ -128,26 +130,30 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 				setDirty(true);
 			}
 		});
-
-		Button btnBrowse_2 = new Button(grpGeneral, SWT.NONE);
-		btnBrowse_2.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				QueryTreeSelectionDialog dialog = new QueryTreeSelectionDialog(parent.getShell(), input.getFile());
-				if (dialog.open() == Window.OK) {
-					IResource queryResource = (IResource) dialog.getFirstResult();
-					String text = queryResource.getProjectRelativePath().toString();
-					if (!text.equals(queryFileText.getText())) {
-						queryFileText.setText(text);
+		
+				Button btnBrowse_2 = new Button(grpGeneral, SWT.NONE);
+				btnBrowse_2.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						QueryTreeSelectionDialog dialog = new QueryTreeSelectionDialog(parent.getShell(), input.getFile());
+						if (dialog.open() == Window.OK) {
+							IResource queryResource = (IResource) dialog.getFirstResult();
+							String text = queryResource.getProjectRelativePath().toString();
+							if (!text.equals(queryFileText.getText())) {
+								queryFileText.setText(text);
+							}
+						}
 					}
-				}
-			}
-		});
-		btnBrowse_2.setText("Browse...");
+				});
+				btnBrowse_2.setText("Browse...");
 
 		Label lblDiagramFolder = new Label(grpGeneral, SWT.NONE);
 		lblDiagramFolder.setText("Folder for processing results");
 		new Label(grpGeneral, SWT.NONE);
+		
+        Label lblFolderToStore = new Label(grpGeneral, SWT.NONE);
+        lblFolderToStore.setText("Folder for plots");
+        new Label(grpGeneral, SWT.NONE);
 
 		processingResultFolder = new Text(grpGeneral, SWT.BORDER);
 		processingResultFolder.setText(evaluationModel.getProcessingResultsPath());
@@ -167,36 +173,33 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 			}
 		});
 		btnBrowse.setText("Browse...");
+		
+				plotFolder = new Text(grpGeneral, SWT.BORDER);
+				plotFolder.setText(evaluationModel.getPlotFilesPath());
+				plotFolder.addModifyListener(new ModifyListener() {
 
-		Label lblFolderToStore = new Label(grpGeneral, SWT.NONE);
-		lblFolderToStore.setText("Folder for plots");
-		new Label(grpGeneral, SWT.NONE);
-
-		plotFolder = new Text(grpGeneral, SWT.BORDER);
-		plotFolder.setText(evaluationModel.getPlotFilesPath());
-		plotFolder.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(ModifyEvent e) {
-				setDirty(true);
-			}
-		});
-		plotFolder.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-		Button btnBrowse_1 = new Button(grpGeneral, SWT.NONE);
-		btnBrowse_1.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				getFolder(plotFolder);
-			}
-		});
-		btnBrowse_1.setText("Browse...");
+					@Override
+					public void modifyText(ModifyEvent e) {
+						setDirty(true);
+					}
+				});
+				plotFolder.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+				Button btnBrowse_1 = new Button(grpGeneral, SWT.NONE);
+				btnBrowse_1.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						getFolder(plotFolder);
+					}
+				});
+				btnBrowse_1.setText("Browse...");
 
 		Group grpParameters = new Group(container, SWT.NONE);
 		GridLayout gl_grpParameters = new GridLayout(1, false);
 		grpParameters.setLayout(gl_grpParameters);
 		GridData gd_grpParameters = new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1);
 		gd_grpParameters.heightHint = 101;
+        gd_grpParameters.minimumHeight = 200;
 		grpParameters.setLayoutData(gd_grpParameters);
 		grpParameters.setText("Parameters");
 
@@ -451,8 +454,11 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		
 		outputTypeCombo = new Combo(grpPlotsettings, SWT.READ_ONLY);
 		outputTypeCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		outputTypeCombo.add("PDF");
-		outputTypeCombo.add("PNG");
+		outputTypeCombo.add(OutputType.PDF.toString());
+        outputTypeCombo.add(OutputType.PNG.toString());
+        outputTypeCombo.add(OutputType.JPEG.toString());
+        outputTypeCombo.add(OutputType.GNUPLOT.toString());
+
 		outputTypeCombo.select(outputTypeCombo.indexOf(evaluationModel.getOutputType()));
 		outputTypeCombo.addSelectionListener(new SelectionAdapter() {
 			@Override

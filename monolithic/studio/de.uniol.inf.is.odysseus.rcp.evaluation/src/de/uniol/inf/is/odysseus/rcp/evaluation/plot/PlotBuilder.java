@@ -9,12 +9,15 @@ import java.awt.Stroke;
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -65,7 +68,7 @@ public class PlotBuilder {
 	private static final int LEGEND_ITEM_SIZE = 15;	
 
 	public enum OutputType {
-		PNG, PDF
+		PNG, PDF, JPEG, GNUPLOT
 	};
 
 	private static Color[] linecolors = createColors();
@@ -169,7 +172,11 @@ public class PlotBuilder {
 				dir = container.getContext().getThroughputPlotsPath();
 			}
 			IPlotDescription plotdescription = PlotDescriptionFactory.createPlotDescription(type);
-			buildXYPlot(dir, values, result, plotdescription, out, height, width);
+            if ((out == OutputType.PDF) || (out == OutputType.PNG) || (out == OutputType.JPEG)) {
+	            buildXYPlot(dir, values, result, plotdescription, out, height, width);
+			} else if (out == OutputType.GNUPLOT){
+			    buildGnuPlot(dir, values, result, plotdescription, out, height, width);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -192,6 +199,57 @@ public class PlotBuilder {
 		}
 	}
 
+    private static void buildGnuPlot(String dir, List<Pair<Integer, Double>> values, MeasurementResult mr, IPlotDescription plotdescription, OutputType out, int height, int width) {
+        Writer dataWriter = null;
+        try {
+            dataWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dir + mr.getVariable() + File.separator + mr.getName() + ".dat"), "utf-8"));
+            for (Pair<Integer, Double> value : values) {
+                dataWriter.write(value.getE1() + ", " + value.getE2());
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (dataWriter != null) {
+                try {
+                    dataWriter.close();
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        StringBuilder gnuPlotScript = new StringBuilder();
+        gnuPlotScript.append("set terminal latex\n");
+        gnuPlotScript.append("set size " + width + ", " + height + "\n");
+        gnuPlotScript.append("set output '" + mr.getName() + ".tex'\n");
+        gnuPlotScript.append("set title '" + plotdescription.getName() + "'\n");
+        gnuPlotScript.append("set ylabel '" + plotdescription.getNameAxisY() + "'\n");
+        gnuPlotScript.append("set xlabel '" + plotdescription.getNameAxisX() + "'\n");
+
+        gnuPlotScript.append("plot '" + mr.getName() + ".dat' using 1:2 with lines");
+        Writer plotWriter = null;
+        try {
+            plotWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dir + mr.getVariable() + File.separator + mr.getName() + ".gnu"), "utf-8"));
+            plotWriter.write(gnuPlotScript.toString());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (plotWriter != null) {
+                try {
+                    plotWriter.close();
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    
 	private static void writeChart(String destination, JFreeChart chart, int width, int height, OutputType out) throws IOException {
 		LegendItemCollection legendItems = chart.getPlot().getLegendItems();
 		chart.removeLegend();
@@ -202,11 +260,15 @@ public class PlotBuilder {
 		if (!destFile.getParentFile().exists()) {
 			destFile.getParentFile().mkdirs();
 		}
-		if (out.equals(OutputType.PDF)) {
-			writeAsPDF(destination, chart, width, height);
-		} else {
-			writeAsPNG(destination, chart, width, height);
-		}
+        if (out.equals(OutputType.PDF)) {
+            writeAsPDF(destination, chart, width, height);
+        }
+        else if (out.equals(OutputType.PNG)) {
+            writeAsPNG(destination, chart, width, height);
+        }
+        else if (out.equals(OutputType.JPEG)) {
+            writeAsJPG(destination, chart, width, height);
+        }
 	}
 
 	private static LegendTitle getNewLegend(LegendItemSource source) {
@@ -221,9 +283,13 @@ public class PlotBuilder {
 	private static void writeAsPNG(String destination, JFreeChart chart, int width, int height) throws IOException {
 		destination = destination + ".png";
 		ChartUtilities.saveChartAsPNG(new File(destination), chart, width, height);
-
 	}
 
+    private static void writeAsJPG(String destination, JFreeChart chart, int width, int height) throws IOException {
+        destination = destination + ".jpg";
+        ChartUtilities.saveChartAsJPEG(new File(destination), chart, width, height);
+    }	
+	
 	public static void writeAsPDF(String destination, JFreeChart chart, int width, int height) throws IOException {
 		destination = destination + ".pdf";
 		File file = new File(destination);
