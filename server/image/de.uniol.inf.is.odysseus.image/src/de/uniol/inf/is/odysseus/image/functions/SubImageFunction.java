@@ -17,10 +17,10 @@ package de.uniol.inf.is.odysseus.image.functions;
 
 import java.util.Objects;
 
+import org.opencv.core.Mat;
+import org.opencv.core.Rect;
+
 import com.google.common.base.Preconditions;
-import com.googlecode.javacv.cpp.opencv_core;
-import com.googlecode.javacv.cpp.opencv_core.CvRect;
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.image.common.datatype.Image;
@@ -59,25 +59,24 @@ public class SubImageFunction extends AbstractFunction<Image> {
 		final int width = this.getNumericalInputValue(3).intValue();
 		final int height = this.getNumericalInputValue(4).intValue();
 		Objects.requireNonNull(image);
-		Preconditions.checkArgument(x >= 0 && width > 0 && (x+width) <= image.getWidth(), "Invalid dimension");
-		Preconditions.checkArgument(y >= 0 && height > 0 && (y+height) <= image.getHeight(), "Invalid dimension");
+		Preconditions.checkArgument(
+				x >= 0 && width > 0 && (x + width) <= image.getWidth(),
+				"Invalid dimension");
+		Preconditions.checkArgument(y >= 0 && height > 0
+				&& (y + height) <= image.getHeight(), "Invalid dimension");
 
 		Image result = new Image(width, height);
 
-		final IplImage iplImage = OpenCVUtil.imageToIplImage(image);
+		final Mat iplImage = OpenCVUtil.imageToIplImage(image);
 
-		final CvRect roi = new CvRect();
-		roi.x(x);
-		roi.y(y);
-		roi.width(width);
-		roi.height(height);
+		final Rect roi = new Rect();
+		roi.x = x;
+		roi.y = y;
+		roi.width = width;
+		roi.height = height;
 
-		IplImage iplResult = IplImage.create(
-				opencv_core.cvSize(roi.width(), roi.height()),
-				iplImage.depth(), iplImage.nChannels());
-		opencv_core.cvSetImageROI(iplImage, roi);
-		opencv_core.cvCopy(iplImage, iplResult);
-		opencv_core.cvResetImageROI(iplImage);
+		Mat iplResult = iplImage.submat(roi);
+
 		iplImage.release();
 
 		return OpenCVUtil.iplImageToImage(iplResult, result);

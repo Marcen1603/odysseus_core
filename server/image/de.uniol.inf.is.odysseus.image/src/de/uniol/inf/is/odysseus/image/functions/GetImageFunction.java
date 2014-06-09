@@ -17,57 +17,40 @@ package de.uniol.inf.is.odysseus.image.functions;
 
 import java.util.Objects;
 
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.imgproc.Imgproc;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.image.common.datatype.Image;
 import de.uniol.inf.is.odysseus.image.common.sdf.schema.SDFImageDatatype;
-import de.uniol.inf.is.odysseus.image.util.OpenCVUtil;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class RotateImageFunction extends AbstractFunction<Image> {
+public class GetImageFunction extends AbstractFunction<Double> {
+
 	/**
-     * 
-     */
-	private static final long serialVersionUID = 6909756855094988348L;
+	 * 
+	 */
+	private static final long serialVersionUID = 5585298771185000276L;
 	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {
-			{ SDFImageDatatype.IMAGE }, SDFDatatype.NUMBERS };
+			{ SDFImageDatatype.IMAGE }, SDFDatatype.NUMBERS,
+			SDFDatatype.NUMBERS };
 
 	/**
  * 
  */
-	public RotateImageFunction() {
-		super("rotate", 2, RotateImageFunction.ACC_TYPES,
-				SDFImageDatatype.IMAGE, true);
+	public GetImageFunction() {
+		super("get", 3, GetImageFunction.ACC_TYPES, SDFImageDatatype.DOUBLE,
+				true);
 	}
 
-	public Image getValue() {
+	public Double getValue() {
 		final Image image = (Image) this.getInputValue(0);
-		// Angle in degrees
-		final double angle = this.getNumericalInputValue(1);
+		final int x = this.getNumericalInputValue(1).intValue();
+		final int y = this.getNumericalInputValue(2).intValue();
 
 		Objects.requireNonNull(image);
 
-		final Point center = new Point(image.getWidth() / 2,
-				image.getHeight() / 2);
-
-		final Mat mapMatrix = Imgproc.getRotationMatrix2D(center, angle, 1.0);
-		final Mat iplImage = OpenCVUtil.imageToIplImage(image);
-		final Mat iplResult = iplImage.clone();
-		try {
-			Imgproc.warpAffine(iplImage, iplResult, mapMatrix, iplImage.size());
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			mapMatrix.release();
-			iplImage.release();
-		}
-		return OpenCVUtil.iplImageToImage(iplResult, image);
+		return image.get(x, y);
 	}
 }

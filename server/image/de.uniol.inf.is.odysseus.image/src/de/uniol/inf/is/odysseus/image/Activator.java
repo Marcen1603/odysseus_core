@@ -17,6 +17,12 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+		try {
+		    System.loadLibrary("opencv_java249");
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*

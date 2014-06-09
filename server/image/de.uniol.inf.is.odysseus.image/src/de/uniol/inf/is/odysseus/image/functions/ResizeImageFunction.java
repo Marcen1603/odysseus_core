@@ -17,10 +17,10 @@ package de.uniol.inf.is.odysseus.image.functions;
 
 import java.util.Objects;
 
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+
 import com.google.common.base.Preconditions;
-import com.googlecode.javacv.cpp.opencv_core;
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
-import com.googlecode.javacv.cpp.opencv_imgproc;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.image.common.datatype.Image;
@@ -62,11 +62,12 @@ public class ResizeImageFunction extends AbstractFunction<Image> {
 		Preconditions.checkArgument(width > 0, "Invalid dimension");
 		Preconditions.checkArgument(height > 0, "Invalid dimension");
 		Image result = new Image(width, height);
-		final IplImage iplImage = OpenCVUtil.imageToIplImage(image);
+		final Mat iplImage = OpenCVUtil.imageToIplImage(image);
 
-		IplImage iplResult = IplImage.create(opencv_core.cvSize(width, height),
-				iplImage.depth(), iplImage.nChannels());
-		opencv_imgproc.cvResize(iplImage, iplResult);
+		Mat iplResult = new Mat(width, height, iplImage.depth());
+		Imgproc.resize(iplImage, iplResult, iplResult.size(), 0.0, 0.0,
+				Imgproc.INTER_CUBIC);
+
 		iplImage.release();
 
 		return OpenCVUtil.iplImageToImage(iplResult, result);

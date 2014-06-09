@@ -15,8 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.image.util;
 
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
-import com.googlecode.javacv.cpp.opencv_core;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.Size;
 
 import de.uniol.inf.is.odysseus.image.common.datatype.Image;
 
@@ -25,36 +26,20 @@ import de.uniol.inf.is.odysseus.image.common.datatype.Image;
  * 
  */
 public class OpenCVUtil {
-    private OpenCVUtil() {
-    }
+	private OpenCVUtil() {
+	}
 
-    public static IplImage imageToIplImage(final Image image) {
-        final IplImage iplImage = IplImage.create(opencv_core.cvSize(image.getWidth(), image.getHeight()), opencv_core.IPL_DEPTH_64F, 1);
-        final int widthStep = iplImage.widthStep() / 8;
-        if (widthStep > iplImage.width()) {
-            for (int h = 0; h < iplImage.height(); h++) {
-                iplImage.getDoubleBuffer(h * widthStep).put(image.getBuffer().array(), h * image.getWidth(), image.getWidth());
-            }
-        }
-        else {
-            iplImage.getDoubleBuffer().put(image.getBuffer());
-        }
-        iplImage.origin(1);
-        return iplImage;
-    }
+	public static Mat imageToIplImage(final Image image) {
+		final Mat mat = new Mat(new Size(image.getWidth(), image.getHeight()),
+				CvType.CV_64F);
+		mat.put(0, 0, image.getBuffer());
+		return mat;
+	}
 
-    public static Image iplImageToImage(IplImage iplImage, final Image image) {
-        final int widthStep = iplImage.widthStep() / 8;
-        if (widthStep > iplImage.width()) {
-            for (int h = 0; h < iplImage.height(); h++) {
-                iplImage.getDoubleBuffer(h * widthStep).get(image.getBuffer().array(), h * image.getWidth(), image.getWidth());
-            }
-        }
-        else {
-            image.setBuffer(iplImage.getDoubleBuffer());
-        }
-        iplImage.release();
-        iplImage = null;
-        return image;
-    }
+	public static Image iplImageToImage(Mat mat, final Image image) {
+		mat.get(0, 0, image.getBuffer());
+		mat.release();
+		mat = null;
+		return image;
+	}
 }

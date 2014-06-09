@@ -26,93 +26,89 @@ import de.uniol.inf.is.odysseus.core.IClone;
  */
 public class Image implements IClone, Cloneable {
 
-    private final int width;
-    private final int height;
-    private final DoubleBuffer buffer;
+	private final int width;
+	private final int height;
+	private final double[] buffer;
 
-    public Image(final int width, final int height) {
-        this.width = width;
-        this.height = height;
-        this.buffer = DoubleBuffer.allocate(this.width * this.height);
-    }
+	public Image(final int width, final int height) {
+		this.width = width;
+		this.height = height;
+		this.buffer = new double[this.width * this.height];
+	}
 
-    public Image(final int width, final int height, final DoubleBuffer buffer) {
-        this(width, height);
-        synchronized (buffer) {
-            this.buffer.put(buffer.duplicate());
-        }
-    }
+	public Image(final int width, final int height, final double[] buffer) {
+		this(width, height);
+		System.arraycopy(buffer, 0, this.buffer, 0, buffer.length);
+	}
 
-    /**
-     * @return the width
-     */
-    public int getWidth() {
-        return this.width;
-    }
+	/**
+	 * @return the width
+	 */
+	public int getWidth() {
+		return this.width;
+	}
 
-    /**
-     * @return the height
-     */
-    public int getHeight() {
-        return this.height;
-    }
+	/**
+	 * @return the height
+	 */
+	public int getHeight() {
+		return this.height;
+	}
 
-    public double get(final int x, final int y) {
-        return this.buffer.get((y * this.width) + x);
-    }
+	public double get(final int x, final int y) {
+		return this.buffer[(y * this.width) + x];
+	}
 
-    public DoubleBuffer getBuffer() {
-        this.buffer.rewind();
-        return this.buffer;
-    }
+	public double[] getBuffer() {
+		return this.buffer;
+	}
 
-    public void set(final int x, final int y, final double value) {
-        this.buffer.put((y * this.width) + x, value);
-    }
+	public void set(final int x, final int y, final double value) {
+		this.buffer[(y * this.width) + x] = value;
+	}
 
-    public double[][] get(final int x1, final int y1, final int x2, final int y2) {
-        double[][] value = new double[y2 - y1 + 1][x2 - x1 + 1];
-       
-        for (int i = 0; i < value.length; i++) {
-            try{
-            this.buffer.position((i+y1) * this.width + x1);
-            this.buffer.get(value[i]);
-        }catch (Exception e){
-            e.printStackTrace();
-            System.out.println(i+" "+((i+y1) * this.width + x1)+" "+buffer.capacity()+" "+ x1+" "+x2+" "+y1+" "+y2+" "+Arrays.toString(value)+" "+value.length+" "+value[0].length+" "+buffer.position()+" "+buffer.limit());
-        }
-    }
-        return value;
-    }
+	public double[][] get(final int x1, final int y1, final int x2, final int y2) {
+		double[][] value = new double[y2 - y1 + 1][x2 - x1 + 1];
 
-    public void set(final int x1, final int y1, final int x2, final int y2, final double value) {
-        double[] valueArray = new double[x2 - x1 + 1];
-        Arrays.fill(valueArray, value);
-        for (int i = y1; i <= y2; i++) {
-            this.buffer.position(i * this.width + x1);
-            this.buffer.put(valueArray);
-        }
-    }
+		for (int i = 0; i < value.length; i++) {
+			try {
 
-    public void setBuffer(final DoubleBuffer value) {
-        value.rewind();
-        this.buffer.clear();
-        this.buffer.put(value);
-    }
+				System.arraycopy(this.buffer, (i + y1) * this.width + x1,
+						value[i], 0, value[i].length);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return value;
+	}
 
-    public void fill(final double value) {
-        Arrays.fill(this.buffer.array(), value);
-    }
+	public void set(final int x1, final int y1, final int x2, final int y2,
+			final double value) {
+		double[] valueArray = new double[x2 - x1 + 1];
+		Arrays.fill(valueArray, value);
+		for (int i = y1; i <= y2; i++) {
+			System.arraycopy(valueArray, 0, this.buffer, i * this.width + x1,
+					valueArray.length);
+		}
+	}
 
-    @Override
-    public Image clone() {
-        final Image image = new Image(this.width, this.height, this.buffer);
-        return image;
-    }
+	public void setBuffer(final double[] value) {
+		System.arraycopy(this.buffer, 0, value, 0, value.length);
+	}
 
-    @Override
-    public String toString() {
-        return "{Width: " + this.width + " Height: " + this.height + "}";
-    }
+	public void fill(final double value) {
+		Arrays.fill(this.buffer, value);
+	}
+
+	@Override
+	public Image clone() {
+		final Image image = new Image(this.width, this.height, this.buffer);
+		return image;
+	}
+
+	@Override
+	public String toString() {
+		return "{Width: " + this.width + " Height: " + this.height + "}";
+	}
 
 }

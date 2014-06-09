@@ -17,39 +17,39 @@ package de.uniol.inf.is.odysseus.image.functions;
 
 import java.util.Objects;
 
-import org.opencv.core.Mat;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.image.common.datatype.Image;
 import de.uniol.inf.is.odysseus.image.common.sdf.schema.SDFImageDatatype;
-import de.uniol.inf.is.odysseus.image.util.OpenCVUtil;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class InverseImageFunction extends AbstractFunction<Image> {
-	/**
-     * 
-     */
-	private static final long serialVersionUID = -5532725733473509826L;
-	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFImageDatatype.IMAGE } };
+public class SetImageFunction extends AbstractFunction<Image> {
 
-	/**
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7634166024232641502L;
+	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFImageDatatype.IMAGE }, SDFDatatype.NUMBERS, SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
+
+    /**
  * 
  */
-	public InverseImageFunction() {
-		super("inverse", 1, InverseImageFunction.ACC_TYPES,
-				SDFImageDatatype.IMAGE, true);
-	}
+    public SetImageFunction() {
+        super("set", 4, SetImageFunction.ACC_TYPES, SDFImageDatatype.IMAGE, true);
+    }
 
-	public Image getValue() {
-		final Image image = (Image) this.getInputValue(0);
+    public Image getValue() {
+        final Image image = (Image) this.getInputValue(0);
+        final int x = this.getNumericalInputValue(1).intValue();
+        final int y = this.getNumericalInputValue(2).intValue();
+        final double value = this.getNumericalInputValue(3);
+
 		Objects.requireNonNull(image);
-
-		final Mat iplImage = OpenCVUtil.imageToIplImage(image);
-		iplImage.inv();
-		return OpenCVUtil.iplImageToImage(iplImage, image);
-	}
+		
+        image.set(x, y, value);
+        return image;
+    }
 }
