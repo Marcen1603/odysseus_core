@@ -18,8 +18,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -204,7 +206,7 @@ public class PlotBuilder {
         try {
             dataWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dir + mr.getVariable() + File.separator + mr.getName() + ".dat"), "utf-8"));
             for (Pair<Integer, Double> value : values) {
-                dataWriter.write(value.getE1() + ", " + value.getE2());
+                dataWriter.write(value.getE1() + ", " + value.getE2()+"\n");
             }
         }
         catch (IOException e) {
@@ -222,6 +224,8 @@ public class PlotBuilder {
         }
         
         StringBuilder gnuPlotScript = new StringBuilder();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        gnuPlotScript.append("# gnuplot file created by Odysseus on " + sdf.format(Calendar.getInstance().getTime()) + "\n");
         gnuPlotScript.append("set terminal latex\n");
         gnuPlotScript.append("set size " + width + ", " + height + "\n");
         gnuPlotScript.append("set output '" + mr.getName() + ".tex'\n");
