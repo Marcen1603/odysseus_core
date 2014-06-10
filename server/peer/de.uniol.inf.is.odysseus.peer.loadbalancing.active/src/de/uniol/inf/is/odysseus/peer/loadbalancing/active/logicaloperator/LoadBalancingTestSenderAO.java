@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.LoadBalancingPunctuation;
 
@@ -40,14 +41,17 @@ public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
 	private long startSyncAfter;
 	private long stopSyncAfter;
 	private long pauseBetween;
+	private boolean writeToLog;
 
 	/**
-	 * Standard-Constructor with all adjustable values set to 10
+	 * Standard-Constructor with all adjustable values set to 10 and logging
+	 * enabled
 	 */
 	public LoadBalancingTestSenderAO() {
 		startSyncAfter = 10;
 		stopSyncAfter = 10;
 		pauseBetween = 10;
+		writeToLog = true;
 	}
 
 	/**
@@ -63,6 +67,7 @@ public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
 		startSyncAfter = other.startSyncAfter;
 		stopSyncAfter = other.stopSyncAfter;
 		pauseBetween = other.pauseBetween;
+		writeToLog = other.writeToLog;
 	}
 
 	/**
@@ -94,8 +99,19 @@ public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
 
 	/**
 	 * 
-	 * @param numberOfTuples The value with the number of tuples after which the
-	 *         {@link LoadBalancingPunctuation} to start the sync will be send.
+	 * @return true, if operator should write to log if a
+	 *         {@link LoadBalancingPunctuation} is send
+	 */
+	public boolean getWriteToLog() {
+		return this.writeToLog;
+	}
+
+	/**
+	 * 
+	 * @param numberOfTuples
+	 *            The value with the number of tuples after which the
+	 *            {@link LoadBalancingPunctuation} to start the sync will be
+	 *            send.
 	 */
 	@Parameter(type = IntegerParameter.class, name = "startSyncAfter", optional = false)
 	public void setStartSyncAfter(long numberOfTuples) {
@@ -104,8 +120,10 @@ public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
 
 	/**
 	 * 
-	 * @param numberOfTuples The value with the number of tuples after which the
-	 *         {@link LoadBalancingPunctuation} to stop the sync will be send.
+	 * @param numberOfTuples
+	 *            The value with the number of tuples after which the
+	 *            {@link LoadBalancingPunctuation} to stop the sync will be
+	 *            send.
 	 */
 	@Parameter(type = IntegerParameter.class, name = "stopSyncAfter", optional = false)
 	public void setStopSyncAfter(long numberOfTuples) {
@@ -114,12 +132,24 @@ public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
 
 	/**
 	 * 
-	 * @param numberOfTuples The value with the number of tuples after which the process
-	 *         restarts (additional waiting after the sync stopped)
+	 * @param numberOfTuples
+	 *            The value with the number of tuples after which the process
+	 *            restarts (additional waiting after the sync stopped)
 	 */
 	@Parameter(type = IntegerParameter.class, name = "pauseBetween", optional = false)
 	public void setPauseBetween(long numberOfTuples) {
 		this.pauseBetween = numberOfTuples;
+	}
+
+	/**
+	 * 
+	 * @param writeToLog
+	 *            Set to true, if operator should write to log when a
+	 *            {@link LoadBalancingPunctuation} is send
+	 */
+	@Parameter(type = BooleanParameter.class, name = "writeToLog", optional = false)
+	public void setWriteToLog(boolean writeToLog) {
+		this.writeToLog = writeToLog;
 	}
 
 	@Override

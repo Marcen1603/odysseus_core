@@ -47,12 +47,14 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 	private static final Logger log = LoggerFactory
 			.getLogger(LoadBalancingTestSenderPO.class);
 
-	private String logMessage = "Sent LoadBalancingPunctuation to start synchronization after %d tuples.";
+	private String logMessageStart = "Sent LoadBalancingPunctuation to start synchronization after %d tuples.";
+	private String logMessageStop = "Sent LoadBalancingPunctuation to stop synchronization after %d tuples.";
 
 	private long counter;
 	private long startSyncAfter;
 	private long stopSyncAfter;
 	private long pauseBetween;
+	private boolean writeToLog;
 	private boolean firstRound;
 
 	/**
@@ -64,6 +66,7 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 		startSyncAfter = 10;
 		stopSyncAfter = 10;
 		pauseBetween = 10;
+		writeToLog = true;
 		firstRound = true;
 	}
 
@@ -79,6 +82,7 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 		this.startSyncAfter = other.startSyncAfter;
 		this.stopSyncAfter = other.stopSyncAfter;
 		this.pauseBetween = other.pauseBetween;
+		this.writeToLog = other.writeToLog;
 		this.firstRound = other.firstRound;
 	}
 
@@ -95,6 +99,7 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 		this.startSyncAfter = other.getStartSyncAfter();
 		this.stopSyncAfter = other.getStopAfter();
 		this.pauseBetween = other.getPauseBetween();
+		this.writeToLog = other.getWriteToLog();
 		this.firstRound = true;
 	}
 
@@ -124,15 +129,17 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 				sendSyncPunctuation(
 						((IStreamObject<? extends ITimeInterval>) object)
 								.getMetadata().getStart(), port, true);
-				LoadBalancingTestSenderPO.log.debug(String.format(logMessage,
-						counter));
+				if (writeToLog)
+					LoadBalancingTestSenderPO.log.debug(String.format(
+							logMessageStart, counter));
 			} else if (counter == startSyncAfter + stopSyncAfter) {
 				// Send stop sync punctuation
 				sendSyncPunctuation(
 						((IStreamObject<? extends ITimeInterval>) object)
 								.getMetadata().getStart(), port, false);
-				LoadBalancingTestSenderPO.log.debug(String.format(logMessage,
-						counter));
+				if (writeToLog)
+					LoadBalancingTestSenderPO.log.debug(String.format(
+							logMessageStop, counter - startSyncAfter));
 				counter = 0;
 				firstRound = false;
 			}
@@ -142,15 +149,18 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 				sendSyncPunctuation(
 						((IStreamObject<? extends ITimeInterval>) object)
 								.getMetadata().getStart(), port, true);
-				LoadBalancingTestSenderPO.log.debug(String.format(logMessage,
-						counter));
+				if (writeToLog)
+					LoadBalancingTestSenderPO.log.debug(String.format(
+							logMessageStart, counter - pauseBetween));
 			} else if (counter == pauseBetween + startSyncAfter + stopSyncAfter) {
 				// Send stop sync punctuation
 				sendSyncPunctuation(
 						((IStreamObject<? extends ITimeInterval>) object)
 								.getMetadata().getStart(), port, false);
-				LoadBalancingTestSenderPO.log.debug(String.format(logMessage,
-						counter));
+				if (writeToLog)
+					LoadBalancingTestSenderPO.log.debug(String.format(
+							logMessageStop, counter - startSyncAfter
+									- pauseBetween));
 				counter = 0;
 			}
 		}
