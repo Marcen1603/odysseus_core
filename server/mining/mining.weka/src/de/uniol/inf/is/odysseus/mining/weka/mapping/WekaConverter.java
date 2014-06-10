@@ -30,6 +30,9 @@ public class WekaConverter {
 			if (a.isNominal() || a.isString()) {
 				String val = tuple.getAttribute(i).toString();
 				inst.setValue(a, val);
+			} else if (tuple.getAttribute(i) instanceof Boolean) {
+				boolean val = (boolean) tuple.getAttribute(i);
+				inst.setValue(i, val ? 1.0 : 0.0);
 			} else {
 				double val = ((Number) tuple.getAttribute(i)).doubleValue();
 				inst.setValue(i, val);
