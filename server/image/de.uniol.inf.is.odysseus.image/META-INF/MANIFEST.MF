@@ -17,8 +17,12 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/opencv-249.jar
-Bundle-NativeCode: lib/libopencv_java249.so ;
+Bundle-NativeCode: lib/linux/x64/libopencv_java249.so ;
   osname=linux;  processor=x86_64,
+  lib/win/x64/opencv_java249.dll ;
+  osname=win;  processor=x86_64,
+  lib/win/x86/opencv_java249.dll ;
+  osname=win;  processor=x86,
   *
 Service-Component: OSGI-INF/ImageFunctionProvider.xml, OSGI-INF/ImageDataHandler.xml
 Export-Package: de.uniol.inf.is.odysseus.image.util

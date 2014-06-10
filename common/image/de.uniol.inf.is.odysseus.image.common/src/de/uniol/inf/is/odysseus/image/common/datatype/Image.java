@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.image.common.datatype;
 
-import java.nio.DoubleBuffer;
 import java.util.Arrays;
 
 import de.uniol.inf.is.odysseus.core.IClone;
