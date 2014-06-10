@@ -32,6 +32,7 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.MatrixDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
@@ -149,17 +150,29 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
      * lang.String)
      */
     @Override
-    public final MultivariateMixtureDistribution readData(final String string) {
-        Objects.requireNonNull(string);
-        Preconditions.checkArgument(!string.isEmpty());
-        final String[] covarianceMatrix = string.split(":");
-        final double[] entries = new double[covarianceMatrix.length];
-        for (int i = 0; i < covarianceMatrix.length; i++) {
-            entries[i] = Double.parseDouble(covarianceMatrix[i]);
-        }
+	public final MultivariateMixtureDistribution readData(final String string) {
+		Objects.requireNonNull(string);
+		Preconditions.checkArgument(!string.isEmpty());
+		MatrixDataHandler dataHandler = new MatrixDataHandler();
+		final String[] components = string.split("\\|");
+		final List<IMultivariateDistribution> distributions = new ArrayList<>();
 
-        return null;
-    }
+		double[] weights = new double[components.length];
+		for (int i = 0; i < components.length; i++) {
+			String[] parameter = components[i].split("\\:");
+			double[] means = dataHandler.readData(parameter[0])[0];
+			double[][] covariance = dataHandler.readData(parameter[1]);
+			weights[i] = Double.parseDouble(parameter[2]);
+			final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(
+					means, covariance);
+			distributions.add(distribution);
+		}
+
+		final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(
+				weights, distributions);
+		return mixture;
+	}
+
 
     /*
      * (non-Javadoc)

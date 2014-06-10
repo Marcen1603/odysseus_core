@@ -201,34 +201,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
     @Override
     public final ProbabilisticTuple<?> readData(final String[] input) {
         Objects.requireNonNull(input);
-        ProbabilisticTuple<?> r = null;
-        final Object[] attributes = new Object[this.dataHandlers.length];
-        for (int i = 0; i < attributes.length; i++) {
-            try {
-                attributes[i] = this.dataHandlers[i].readData(input[i]);
-            }
-            catch (final Exception e) {
-                ProbabilisticTupleDataHandler.LOG.warn("Error Parsing " + input[i] + " with " + this.dataHandlers[i].getClass() + " " + e.getMessage());
-                attributes[i] = null;
-            }
-        }
-        final MultivariateMixtureDistribution[] distribution = new MultivariateMixtureDistribution[this.maxDistributions];
-        int distributions = 0;
-        if (this.maxDistributions > 0) {
-            for (int i = attributes.length; i < input.length; i++) {
-                try {
-                    distribution[attributes.length - i] = this.probabilisticDistributionHandler.readData(input[i]);
-                }
-                catch (final Exception e) {
-                    ProbabilisticTupleDataHandler.LOG.warn("Error Parsing " + input[i] + " with " + this.probabilisticDistributionHandler.getClass() + " " + e.getMessage());
-                    distribution[attributes.length - i] = null;
-                }
-                distributions = i;
-            }
-        }
-        r = new ProbabilisticTuple<IMetaAttribute>(attributes, this.requiresDeepClone);
-        r.setDistributions(Arrays.copyOfRange(distribution, 0, distributions));
-        return r;
+        return readData(Arrays.asList(input));
     }
 
     /*
@@ -262,11 +235,23 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
                     ProbabilisticTupleDataHandler.LOG.warn("Error Parsing " + input.get(i) + " with " + this.probabilisticDistributionHandler.getClass() + " " + e.getMessage());
                     distribution[attributes.length - i] = null;
                 }
-                distributions = i;
+                distributions++;
+            }
+        }
+       
+        // Reverse mapping of attribute<->distribution
+        final int[] distributionsDimensions = new int[distributions];
+        for (final SDFAttribute attr : this.getSchema().getAttributes()) {
+            if (SchemaUtils.isProbabilisticAttribute(attr)) {
+                final int attributeIndex = this.getSchema().indexOf(attr);
+                final int distributionIndex = ((ProbabilisticDouble) attributes[attributeIndex]).getDistribution();
+                distribution[distributionIndex].setAttribute(distributionsDimensions[distributionIndex], attributeIndex);
+                distributionsDimensions[distributionIndex]++;
             }
         }
         r = new ProbabilisticTuple<IMetaAttribute>(attributes, this.requiresDeepClone);
         r.setDistributions(Arrays.copyOfRange(distribution, 0, distributions));
+        
         return r;
     }
 
