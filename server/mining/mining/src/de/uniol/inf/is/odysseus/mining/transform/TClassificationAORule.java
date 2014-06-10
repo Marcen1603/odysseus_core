@@ -47,11 +47,11 @@ public class TClassificationAORule extends AbstractTransformationRule<Classifica
 		int portofclassifier = 0;
 		int positionofclassifier = -1;
 		positionofclassifier = operator.getInputSchema(0).indexOf(operator.getClassifier());
-		if(portofclassifier==-1){
+		if (positionofclassifier == -1) {
 			portofclassifier = 1;
 			positionofclassifier = operator.getInputSchema(1).indexOf(operator.getClassifier());
 		}
-		if(portofclassifier==-1){
+		if (positionofclassifier == -1) {
 			portofclassifier = -1;
 			throw new IllegalArgumentException("the classifier attribute must be either one of port 0 or port 1!");
 		}
