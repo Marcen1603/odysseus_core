@@ -109,9 +109,8 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 
 		Group grpGeneral = new Group(container, SWT.NONE);
 		grpGeneral.setLayout(new GridLayout(4, false));
-		GridData gd_grpGeneral = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 //		gd_grpGeneral.heightHint = 150;
-		grpGeneral.setLayoutData(gd_grpGeneral);
+		grpGeneral.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		grpGeneral.setText("General");
 
 		Composite composite_1 = new Composite(grpGeneral, SWT.NONE);
@@ -444,7 +443,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		new Label(throughputComposite, SWT.NONE);
 		
 		Group grpPlotsettings = new Group(container, SWT.NONE);
-		grpPlotsettings.setLayout(new GridLayout(4, true));
+		grpPlotsettings.setLayout(new GridLayout(6, true));
 		grpPlotsettings.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		grpPlotsettings.setText("Plotsettings");
 		
@@ -466,8 +465,6 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 				setDirty(true);
 			}
 		});
-		new Label(grpPlotsettings, SWT.NONE);
-		new Label(grpPlotsettings, SWT.NONE);
 		
 		Label lblWidth = new Label(grpPlotsettings, SWT.NONE);
 		lblWidth.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
