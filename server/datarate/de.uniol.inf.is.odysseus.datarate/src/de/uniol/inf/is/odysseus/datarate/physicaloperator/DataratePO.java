@@ -66,7 +66,7 @@ public class DataratePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 		if( !(ipo instanceof DataratePO)) {
 			return false;
 		}
-		return ipo == this;
+		return ((DataratePO<?>)ipo).updateRate == updateRate;
 	}
 	
 	@Override
