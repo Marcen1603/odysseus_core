@@ -48,6 +48,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.StepIncreaseGene
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.TangentGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.spatial.MovingCircleGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.spatial.MovingPolynomialGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.spatial.WaypointGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.switching.AlternatingDurationSwitchGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.switching.SignGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.switching.SwitchGenerator;
@@ -105,6 +106,8 @@ public class Activator implements BundleActivator {
         generators.put("MultivariateNormalDistributionGenerator".toUpperCase(), MultivariateNormalDistributionGenerator.class);
         generators.put("MovingCircleGenerator".toUpperCase(), MovingCircleGenerator.class);
         generators.put("MovingPolynomialGenerator".toUpperCase(), MovingPolynomialGenerator.class);
+        generators.put("WaypointGenerator".toUpperCase(), WaypointGenerator.class);
+
     }
 
     static BundleContext getContext() {
