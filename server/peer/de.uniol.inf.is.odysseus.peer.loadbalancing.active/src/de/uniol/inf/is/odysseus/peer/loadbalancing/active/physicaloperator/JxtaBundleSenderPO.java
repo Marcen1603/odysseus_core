@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSender;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.logicaloperator.JxtaBundleSenderAO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.wrapper.JxtaSenderWrapper;
@@ -63,6 +64,13 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		this.senderList = new ArrayList<JxtaSenderWrapper<T>>();
 		this.senderList.add(new JxtaSenderWrapper<T>(ao));
 		this.heartbeatCounter = 0;
+	}
+	
+	public JxtaBundleSenderPO(JxtaSenderAO ao) throws DataTransmissionException {
+			this.senderList = new ArrayList<JxtaSenderWrapper<T>>();
+			this.senderList.add(new JxtaSenderWrapper<T>(ao));
+			this.heartbeatCounter = 0;
+		
 	}
 
 	public JxtaBundleSenderPO(JxtaBundleSenderPO<T> po) {
