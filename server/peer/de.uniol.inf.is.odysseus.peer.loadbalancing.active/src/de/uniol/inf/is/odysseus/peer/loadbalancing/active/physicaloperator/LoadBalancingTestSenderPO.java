@@ -47,6 +47,7 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 	private static final Logger log = LoggerFactory
 			.getLogger(LoadBalancingTestSenderPO.class);
 
+	// QA: make it static final. M.B.
 	private String logMessageStart = "Sent LoadBalancingPunctuation to start synchronization after %d tuples.";
 	private String logMessageStop = "Sent LoadBalancingPunctuation to stop synchronization after %d tuples.";
 
@@ -62,6 +63,8 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 	 * adjustable values set to 10
 	 */
 	public LoadBalancingTestSenderPO() {
+		// QA: Missing call of super constructor. M.B.
+		// QA: since all parameters are not optional, default values make no sense. M.B.
 		counter = 0;
 		startSyncAfter = 10;
 		stopSyncAfter = 10;
@@ -78,6 +81,7 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 	 *            {@link LoadBalancingTestSenderPO} to be copied.
 	 */
 	public LoadBalancingTestSenderPO(LoadBalancingTestSenderPO<T> other) {
+		// QA: Missing call of super constructor. M.B.
 		this.counter = other.counter;
 		this.startSyncAfter = other.startSyncAfter;
 		this.stopSyncAfter = other.stopSyncAfter;
@@ -121,6 +125,14 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 	@Override
 	protected synchronized void process_next(T object, int port) {
 		this.transfer(object, port);
+		
+		/* QA: make it simpler to reduce copy & paste:
+		 * benchmark = startSyncAfter
+		 * if(!firstRound)
+		 * 	benchmark += pauseBetween
+		 * ... 
+		 * also for the inner if. M.B.
+		 */
 
 		counter++;
 		if (firstRound) {

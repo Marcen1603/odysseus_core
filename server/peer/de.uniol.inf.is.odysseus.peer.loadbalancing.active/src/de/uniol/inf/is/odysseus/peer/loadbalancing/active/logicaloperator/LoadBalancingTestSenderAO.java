@@ -48,6 +48,9 @@ public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
 	 * enabled
 	 */
 	public LoadBalancingTestSenderAO() {
+		// QA: since all parameters are not optional, default values make no sense. M.B.
+		// QA: missing call of super constructor. M.B.
+		// QA: Should writeToLog be optional? Default true, since it's a test operator M.B.
 		startSyncAfter = 10;
 		stopSyncAfter = 10;
 		pauseBetween = 10;

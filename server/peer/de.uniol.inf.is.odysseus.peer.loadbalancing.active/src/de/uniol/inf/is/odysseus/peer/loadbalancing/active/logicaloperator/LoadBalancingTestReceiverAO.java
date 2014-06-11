@@ -32,6 +32,9 @@ public class LoadBalancingTestReceiverAO extends UnaryLogicalOp {
 	 * that filters the {@link LoadBalancingPunctuation}s and writes them to log
 	 */
 	public LoadBalancingTestReceiverAO() {
+		// QA: missing call of super constructor. M.B.
+		// QA: Should writeToLog be optional? Default true, since it's a test operator M.B.
+		// QA: Should filter... be optional? Default true, since it's a test operator M.B.
 		filterLoadBalancingPunctuations = true;
 		writeToLog = true;
 	}
