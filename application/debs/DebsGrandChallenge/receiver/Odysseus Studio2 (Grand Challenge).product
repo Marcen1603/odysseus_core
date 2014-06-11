@@ -81,6 +81,7 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.database.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.database.rcp.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.sparql.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.datarate.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
