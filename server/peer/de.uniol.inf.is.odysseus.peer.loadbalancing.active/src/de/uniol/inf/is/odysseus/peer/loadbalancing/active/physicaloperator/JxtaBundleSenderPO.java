@@ -52,6 +52,15 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 	private static final Logger LOG = LoggerFactory
 			.getLogger(JxtaBundleSenderPO.class);
 
+	/**
+	 * Updates relevant values in senderList.
+	 */
+	private void updateChildren() {
+		for(JxtaSenderWrapper<T> sender : senderList) {
+			sender.setParent(this);
+		}
+	}
+	
 	/***
 	 * List of Sender Wrappers
 	 */
@@ -64,28 +73,46 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		this.senderList = new ArrayList<JxtaSenderWrapper<T>>();
 		this.senderList.add(new JxtaSenderWrapper<T>(ao));
 		this.heartbeatCounter = 0;
+		updateChildren();
 	}
 	
+	/**
+	 * Constructor from JxtaSenderAO
+	 * 
+	 */
 	public JxtaBundleSenderPO(JxtaSenderAO ao) throws DataTransmissionException {
 			this.senderList = new ArrayList<JxtaSenderWrapper<T>>();
 			this.senderList.add(new JxtaSenderWrapper<T>(ao));
 			this.heartbeatCounter = 0;
-		
+			updateChildren();
 	}
 
+	/**
+	 * Constructor from JxtaSenderPO
+	 * 
+	 */
 	public JxtaBundleSenderPO(JxtaBundleSenderPO<T> po) {
 		this.senderList = new ArrayList<JxtaSenderWrapper<T>>();
 		for (JxtaSenderWrapper<T> sender : po.senderList) {
 			this.senderList.add(sender);
 			this.heartbeatCounter = 0;
+			updateChildren();
 		}
 	}
 
+	/**
+	 * Clones Operator
+	 * 
+	 */
 	@Override
 	public AbstractSink<T> clone() {
 		return new JxtaBundleSenderPO<T>(this);
 	}
 
+	/**
+	 * Determines if two Operators are equals
+	 * @param ipo other Operator
+	 */
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (ipo == this) {
@@ -116,11 +143,16 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 	 */
 	@Override
 	protected void process_next(T object, int port) {
+		createDataHandlerIfNeeded();
+		
 		for (JxtaSenderWrapper<T> sender : senderList) {
 			sender.process_next(object, port);
 		}
 	}
 
+	/**
+	 * Creates new dataHandler if none is set.
+	 */
 	private void createDataHandlerIfNeeded() {
 		if (dataHandler == null) {
 			dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler()
@@ -197,7 +229,7 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		return senderList.get(0).getTotalSendByteCount();
 	}
 
-	/***
+	/**
 	 * Gets Number of Operator
 	 */
 	@Override
@@ -205,6 +237,10 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		return super.getName() + determineDestinationPeerName();
 	}
 
+	/**
+	 * Gets Name of destination Peer (first sender in list)
+	 *
+	 */
 	private String determineDestinationPeerName() {
 		String peerIdString = getPeerIDString();
 		if (Strings.isNullOrEmpty(peerIdString)) {
@@ -216,6 +252,11 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 						toPeerID(peerIdString)) + "]";
 	}
 
+	/**
+	 * Gets peer ID from peerIDString 
+	 * @param peerIDString Peer ID String
+	 * @return peerID
+	 */
 	protected static PeerID toPeerID(String peerIDString) {
 		try {
 			final URI id = new URI(peerIDString);
@@ -226,20 +267,33 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		}
 	}
 
+	/**
+	 * Adds physical Sender Operator to List
+	 * @param po Operator to add.
+	 */
 	public void addSender(JxtaSenderPO<T> po) {
 		senderList.add(new JxtaSenderWrapper<T>(po));
+		updateChildren();
 	}
 
+	/**
+	 * Deletes Sender from list if list contains more than one sender.
+	 * @param index Listindex of parameter to remove.
+	 * @return true if deletion was successful.
+	 */
 	public boolean deleteSender(int index) {
 		if (senderList.size() <= 1) {
 			return false;
 		}
 		try {
 			senderList.remove(index);
+			updateChildren();
 			return true;
 		} catch (IndexOutOfBoundsException e) {
 			return false;
 		}
+		
+		
 	}
 
 	/**
