@@ -57,7 +57,7 @@ public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 	 */
 	private void updateChildren() {
 		for(JxtaSenderWrapper<T> sender : senderList) {
-			sender.setParent(this);
+			sender.addOwner(getOwner());
 		}
 	}
 	

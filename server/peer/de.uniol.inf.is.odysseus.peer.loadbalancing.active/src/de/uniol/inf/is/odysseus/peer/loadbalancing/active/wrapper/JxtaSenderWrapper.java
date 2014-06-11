@@ -4,7 +4,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.JxtaBundleSenderPO;
 
 /***
  * Wrapper Class for JxtaSenderPO to allow calling protected Functions from the outside.
@@ -13,7 +12,6 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.JxtaB
  */
 public class JxtaSenderWrapper<T extends IStreamObject<?>>  extends JxtaSenderPO<T> {
 
-	JxtaBundleSenderPO<T> parent;
 	
 	/**
 	 * Constructor from JxtaSenderAO
@@ -23,6 +21,7 @@ public class JxtaSenderWrapper<T extends IStreamObject<?>>  extends JxtaSenderPO
 	public JxtaSenderWrapper(JxtaSenderAO ao) throws DataTransmissionException {
 		super(ao);
 		this.setOutputSchema(ao.getOutputSchema());
+		this.addOwner(ao.getOwner());
 	}
 	
 	/**
@@ -32,12 +31,9 @@ public class JxtaSenderWrapper<T extends IStreamObject<?>>  extends JxtaSenderPO
 	public JxtaSenderWrapper(JxtaSenderPO<T> po) {
 		super(po);
 		this.setOutputSchema(po.getOutputSchema());
+		this.addOwner(po.getOwner());
 	}
 	
-	public void setParent(JxtaBundleSenderPO<T> parent) {
-		this.parent = parent;
-	}
-
 	/**
 	 * Wrapper Function for process_next to be able to send streams from the outside.
 	 * @see de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO#process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
@@ -55,5 +51,6 @@ public class JxtaSenderWrapper<T extends IStreamObject<?>>  extends JxtaSenderPO
 	public void process_done(int port) {
 		super.process_done(port);
 	}
+	
 	
 }
