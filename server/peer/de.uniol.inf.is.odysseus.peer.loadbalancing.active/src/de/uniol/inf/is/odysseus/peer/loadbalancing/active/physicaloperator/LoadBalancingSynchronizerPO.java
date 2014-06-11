@@ -37,6 +37,16 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 		extends AbstractPipe<T, T> {
 
 	/**
+	 * Maximum Number of Ports allowed.
+	 */
+	private final int MAX_NUMBER_OF_PORTS = 2;
+	
+	/**
+	 * Minimal Number of Ports allowed (used to initialize transfer area).
+	 */
+	private final int MIN_NUMBER_OF_PORTS = 1;	
+	
+	/**
 	 * The logger instance for this class.
 	 */
 	private static final Logger log = LoggerFactory
@@ -158,7 +168,7 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 
 		this.listeners = Lists.newArrayList();
 		this.transferArea = tArea;
-		this.transferArea.init(this, this.getSubscribedToSource().size());
+		this.transferArea.init(this, MIN_NUMBER_OF_PORTS);
 		this.inputPortStates = Lists.newArrayList();
 		for (int port = 0; port < this.getSubscribedToSource().size(); port++) {
 
@@ -272,8 +282,8 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	protected void newSourceSubscribed(
 			PhysicalSubscription<ISource<? extends T>> sub) {
 
-		Preconditions.checkArgument(this.getInputPortCount() < 2,
-				"The inport port count of 2 can not be extended!");
+		Preconditions.checkArgument(this.getInputPortCount() < MAX_NUMBER_OF_PORTS,
+				"The input port count of {} can not be extended!", MAX_NUMBER_OF_PORTS);
 
 		transferArea.addNewInput(sub.getSinkInPort());
 		LoadBalancingSynchronizerPO.log.debug(
@@ -370,7 +380,7 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 
 			// LB done
 			final int portToRemove = this.transferPort;
-			this.transferPort = (this.transferPort + 1) % 2;
+			this.transferPort = (this.transferPort + 1) % MAX_NUMBER_OF_PORTS;
 			this.inputPortStates.clear();
 			this.inputPortStates.add(new Pair<Integer, InputPortState>(
 					this.transferPort, InputPortState.noneReceived));
