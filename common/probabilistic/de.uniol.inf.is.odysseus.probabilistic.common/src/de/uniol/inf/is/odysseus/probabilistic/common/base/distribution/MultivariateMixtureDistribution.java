@@ -347,6 +347,10 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
 
     }
 
+    public int getSize(){
+        return distribution.length; 
+    }
+    
     @Override
     public MultivariateMixtureDistribution add(final Double number) {
         final MultivariateMixtureDistribution mixture = this.clone();
