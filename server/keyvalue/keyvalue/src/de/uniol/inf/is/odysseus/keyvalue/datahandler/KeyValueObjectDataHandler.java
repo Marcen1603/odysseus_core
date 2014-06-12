@@ -74,21 +74,45 @@ public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler
 			} else {
 				newPath = path + "." + key;				
 			}
-			if(node.size() > 0) {
-				parse(node, map, newPath);
+			if(node.isArray()) {
+				map.put(newPath, parseArray(node));
 			} else {
-				if(node.isInt()) {
-					map.put(newPath, node.asInt());
-				} else if(node.isTextual()) {
-					map.put(newPath, node.asText());
-				} else if(node.isBoolean()) {
-					map.put(newPath, node.asBoolean());
-				} else if(node.isDouble()) {
-					map.put(newPath, node.asDouble());
-				} else if(node.isLong()) {
-					map.put(newPath, node.asLong());
+				if(node.size() > 0) {
+					parse(node, map, newPath);
+				} else {
+					if(node.isInt()) {
+						map.put(newPath, node.asInt());
+					} else if(node.isTextual()) {
+						map.put(newPath, node.asText());
+					} else if(node.isBoolean()) {
+						map.put(newPath, node.asBoolean());
+					} else if(node.isDouble()) {
+						map.put(newPath, node.asDouble());
+					} else if(node.isLong()) {
+						map.put(newPath, node.asLong());
+					}
 				}
 			}
 		}
+	}
+
+	private List<Object> parseArray(JsonNode rootNode) {
+		ArrayList<Object> resultList = new ArrayList<Object>();
+		Iterator<JsonNode> elements = rootNode.elements();
+		while(elements.hasNext()) {
+			JsonNode node = elements.next();
+			if(node.isInt()) {
+				resultList.add(node.asInt());
+			} else if(node.isTextual()) {
+				resultList.add(node.asText());
+			} else if(node.isBoolean()) {
+				resultList.add(node.asBoolean());
+			} else if(node.isDouble()) {
+				resultList.add(node.asDouble());
+			} else if(node.isLong()) {
+				resultList.add(node.asLong());
+			}
+		}
+		return resultList;
 	}
 }

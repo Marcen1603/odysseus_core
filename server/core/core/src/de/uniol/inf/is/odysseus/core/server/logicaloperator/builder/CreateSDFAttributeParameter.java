@@ -26,6 +26,8 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -133,9 +135,16 @@ public class CreateSDFAttributeParameter extends
 					}
 				}
 			}
-
-			return new SDFAttribute(sourcename, attributeName,
-					getDataDictionary().getDatatype(dataTypeName), unit, dtList);
+			
+			if (dataTypeName.toLowerCase().startsWith("list(")) {
+				String subType = dataTypeName.substring(5, dataTypeName.length() - 1);
+				//TODO tranfer to DataDictionary (reuse same Datatypes)
+				SDFDatatype dataType = new SDFDatatype("List", KindOfDatatype.LIST, getDataDictionary().getDatatype(subType));
+				return new SDFAttribute(sourcename, attributeName, dataType, unit, dtList);
+			} else {
+				return new SDFAttribute(sourcename, attributeName,
+						getDataDictionary().getDatatype(dataTypeName), unit, dtList);
+			}
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e);
 		}
