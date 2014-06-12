@@ -48,7 +48,7 @@ public class RelationalExistenceToPayloadPO extends ExistenceToPayloadPO<IProbab
     @Override
     protected final void process_next(final ProbabilisticTuple<IProbabilistic> object, final int port) {
         final int inputSize = object.size();
-        Object[] attributes = new Object[object.size() + 1];
+        final Object[] attributes = new Object[object.size() + 1];
         final ProbabilisticTuple<IProbabilistic> out = new ProbabilisticTuple<IProbabilistic>(object, attributes, false);
 
         System.arraycopy(object.getAttributes(), 0, attributes, 0, inputSize);

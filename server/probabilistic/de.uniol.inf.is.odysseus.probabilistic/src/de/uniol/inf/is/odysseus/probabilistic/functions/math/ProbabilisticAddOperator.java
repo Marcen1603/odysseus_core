@@ -37,7 +37,7 @@ public class ProbabilisticAddOperator extends AbstractProbabilisticBinaryOperato
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][]{SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS,SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS};
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS, SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS };
 
     public ProbabilisticAddOperator() {
         super("+", ProbabilisticAddOperator.ACC_TYPES, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);

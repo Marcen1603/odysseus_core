@@ -53,7 +53,7 @@ public class TProbabilisticJoinAORule extends TJoinAORule {
      */
     @Override
     public final void execute(final JoinAO operator, final TransformationConfiguration config) throws RuleException {
-        IPredicate pred = operator.getPredicate();
+        final IPredicate pred = operator.getPredicate();
         if (pred == null) {
             super.execute(operator, config);
         }
@@ -65,7 +65,7 @@ public class TProbabilisticJoinAORule extends TJoinAORule {
             else {
                 joinPO = new JoinTIPO();
             }
-            boolean isCross = false;
+            final boolean isCross = false;
             joinPO.setJoinPredicate(pred);
             joinPO.setCardinalities(operator.getCard());
 
@@ -74,7 +74,7 @@ public class TProbabilisticJoinAORule extends TJoinAORule {
             joinPO.setMetadataMerge(new CombinedMergeFunction());
             joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
 
-            defaultExecute(operator, joinPO, config, true, true);
+            this.defaultExecute(operator, joinPO, config, true, true);
             if (isCross) {
                 joinPO.setName("Crossproduct");
             }

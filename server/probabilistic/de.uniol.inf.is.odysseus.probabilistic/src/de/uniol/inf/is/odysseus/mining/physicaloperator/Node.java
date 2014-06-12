@@ -100,7 +100,7 @@ public class Node {
      * @param distance
      */
     public void adjustWeights(final double[] input, final double learningRate, final double distance) {
-        // TODO  20140319 christian@kuka.cc Auto-generated method stub
+        // TODO 20140319 christian@kuka.cc Auto-generated method stub
 
     }
 

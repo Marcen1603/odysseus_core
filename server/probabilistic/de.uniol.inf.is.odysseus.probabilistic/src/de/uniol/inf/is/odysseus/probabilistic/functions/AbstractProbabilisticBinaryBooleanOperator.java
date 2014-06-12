@@ -36,7 +36,7 @@ public abstract class AbstractProbabilisticBinaryBooleanOperator<T> extends Abst
             new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_RESULT } };
 
     public AbstractProbabilisticBinaryBooleanOperator(final String symbol) {
-        super(symbol, accTypes, SDFProbabilisticDatatype.PROBABILISTIC_RESULT);
+        super(symbol, AbstractProbabilisticBinaryBooleanOperator.accTypes, SDFProbabilisticDatatype.PROBABILISTIC_RESULT);
     }
 
 }

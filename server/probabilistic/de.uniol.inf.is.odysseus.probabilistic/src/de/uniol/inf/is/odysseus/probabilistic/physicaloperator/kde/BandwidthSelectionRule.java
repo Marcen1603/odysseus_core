@@ -22,11 +22,11 @@ import org.apache.commons.math3.util.FastMath;
  * 
  */
 public class BandwidthSelectionRule {
-    public static double scott(int dataPoints, int dimension) {
+    public static double scott(final int dataPoints, final int dimension) {
         return FastMath.pow(dataPoints, -1.0 / (dimension + 4.0));
     }
 
-    public static double silverman(int dataPoints, int dimension) {
-        return FastMath.pow(dataPoints * (dimension + 2.0) / 4.0, (-1.0 / (dimension + 4.0)));
+    public static double silverman(final int dataPoints, final int dimension) {
+        return FastMath.pow((dataPoints * (dimension + 2.0)) / 4.0, (-1.0 / (dimension + 4.0)));
     }
 }

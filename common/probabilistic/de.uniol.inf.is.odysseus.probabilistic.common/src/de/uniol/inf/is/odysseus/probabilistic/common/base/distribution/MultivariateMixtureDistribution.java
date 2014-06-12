@@ -117,7 +117,7 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
         for (int i = 0; i < this.weight.length; i++) {
             p += this.weight[i] * this.distribution[i].density(a);
         }
-        return p * scale;
+        return p * this.scale;
     }
 
     /** {@inheritDoc} */
@@ -347,10 +347,10 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
 
     }
 
-    public int getSize(){
-        return distribution.length; 
+    public int getSize() {
+        return this.distribution.length;
     }
-    
+
     @Override
     public MultivariateMixtureDistribution add(final Double number) {
         final MultivariateMixtureDistribution mixture = this.clone();

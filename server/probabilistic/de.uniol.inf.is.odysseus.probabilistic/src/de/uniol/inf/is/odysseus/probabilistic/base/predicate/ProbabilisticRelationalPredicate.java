@@ -165,16 +165,16 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
                     final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) distr;
                     final int index = ((ProbabilisticDouble) input.getAttribute(distribution.getAttribute(0))).getDistribution();
 
-                    MultivariateMixtureDistribution outputDistribution = output.getDistribution(index);
+                    final MultivariateMixtureDistribution outputDistribution = output.getDistribution(index);
                     // Adjust the support in case the distribution was
                     // modified
                     for (int d = 0; d < distribution.getDimension(); d++) {
                         // New support is the resulting support of the
                         // filtering subtract by the difference of the
                         // new and the old mean
-                        Interval support = distribution.getSupport(d).subtract(distribution.getMean()[d] - input.getDistribution(index).getMean()[d]);
+                        final Interval support = distribution.getSupport(d).subtract(distribution.getMean()[d] - input.getDistribution(index).getMean()[d]);
                         if (outputDistribution.getSupport(d).intersects(support)) {
-                            Interval intersection = outputDistribution.getSupport(d).intersection(support);
+                            final Interval intersection = outputDistribution.getSupport(d).intersection(support);
                             outputDistribution.setSupport(d, intersection);
                         }
                         else {
@@ -275,7 +275,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
                     final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) distr;
                     final int index = ((ProbabilisticDouble) newAttributes[distribution.getAttribute(0)]).getDistribution();
 
-                    MultivariateMixtureDistribution outputDistribution = newDistributions[index];
+                    final MultivariateMixtureDistribution outputDistribution = newDistributions[index];
                     // Adjust the support in case the distribution was
                     // modified
                     MultivariateMixtureDistribution inputDistibution;
@@ -290,9 +290,9 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
                         // filtering subtract by the difference of the
                         // new and the old mean
 
-                        Interval support = distribution.getSupport(d).subtract(distribution.getMean()[d] - inputDistibution.getMean()[d]);
+                        final Interval support = distribution.getSupport(d).subtract(distribution.getMean()[d] - inputDistibution.getMean()[d]);
                         if (outputDistribution.getSupport(d).intersects(support)) {
-                            Interval intersection = outputDistribution.getSupport(d).intersection(support);
+                            final Interval intersection = outputDistribution.getSupport(d).intersection(support);
                             outputDistribution.setSupport(d, intersection);
                         }
                         else {

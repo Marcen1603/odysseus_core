@@ -201,7 +201,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
     @Override
     public final ProbabilisticTuple<?> readData(final String[] input) {
         Objects.requireNonNull(input);
-        return readData(Arrays.asList(input));
+        return this.readData(Arrays.asList(input));
     }
 
     /*
@@ -238,7 +238,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
                 distributions++;
             }
         }
-       
+
         // Reverse mapping of attribute<->distribution
         final int[] distributionsDimensions = new int[distributions];
         for (final SDFAttribute attr : this.getSchema().getAttributes()) {
@@ -251,7 +251,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
         }
         r = new ProbabilisticTuple<IMetaAttribute>(attributes, this.requiresDeepClone);
         r.setDistributions(Arrays.copyOfRange(distribution, 0, distributions));
-        
+
         return r;
     }
 

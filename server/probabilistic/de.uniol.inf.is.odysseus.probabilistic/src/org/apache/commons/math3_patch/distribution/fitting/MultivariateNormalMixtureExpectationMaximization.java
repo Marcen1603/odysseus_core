@@ -20,11 +20,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution;
 import org.apache.commons.math3.exception.ConvergenceException;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.NotStrictlyPositiveException;
-import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.exception.NumberIsTooLargeException;
+import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -40,17 +41,27 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.Multivari
 /**
  * Expectation-Maximization</a> algorithm for fitting the parameters of
  * multivariate normal mixture model distributions.
- *
+ * 
  * This implementation is pure original code based on <a
- * href="https://www.ee.washington.edu/techsite/papers/documents/UWEETR-2010-0002.pdf">
- * EM Demystified: An Expectation-Maximization Tutorial</a> by Yihua Chen and Maya R. Gupta,
- * Department of Electrical Engineering, University of Washington, Seattle, WA 98195.
+ * href=
+ * "https://www.ee.washington.edu/techsite/papers/documents/UWEETR-2010-0002.pdf"
+ * >
+ * EM Demystified: An Expectation-Maximization Tutorial</a> by Yihua Chen and
+ * Maya R. Gupta,
+ * Department of Electrical Engineering, University of Washington, Seattle, WA
+ * 98195.
  * It was verified using external tools like <a
- * href="http://cran.r-project.org/web/packages/mixtools/index.html">CRAN Mixtools</a>
- * (see the JUnit test cases) but it is <strong>not</strong> based on Mixtools code at all.
- * The discussion of the origin of this class can be seen in the comments of the <a
- * href="https://issues.apache.org/jira/browse/MATH-817">MATH-817</a> JIRA issue.
- * @version $Id: MultivariateNormalMixtureExpectationMaximization.java 1462508 2013-03-29 15:50:47Z luc $
+ * href="http://cran.r-project.org/web/packages/mixtools/index.html">CRAN
+ * Mixtools</a>
+ * (see the JUnit test cases) but it is <strong>not</strong> based on Mixtools
+ * code at all.
+ * The discussion of the origin of this class can be seen in the comments of the
+ * <a
+ * href="https://issues.apache.org/jira/browse/MATH-817">MATH-817</a> JIRA
+ * issue.
+ * 
+ * @version $Id: MultivariateNormalMixtureExpectationMaximization.java 1462508
+ *          2013-03-29 15:50:47Z luc $
  * @since 3.2
  */
 public class MultivariateNormalMixtureExpectationMaximization {
@@ -77,18 +88,19 @@ public class MultivariateNormalMixtureExpectationMaximization {
 
     /**
      * Creates an object to fit a multivariate normal mixture model to data.
-     *
-     * @param data Data to use in fitting procedure
-     * @throws NotStrictlyPositiveException if data has no rows
-     * @throws DimensionMismatchException if rows of data have different numbers
+     * 
+     * @param data
+     *            Data to use in fitting procedure
+     * @throws NotStrictlyPositiveException
+     *             if data has no rows
+     * @throws DimensionMismatchException
+     *             if rows of data have different numbers
      *             of columns
-     * @throws NumberIsTooSmallException if the number of columns in the data is
+     * @throws NumberIsTooSmallException
+     *             if the number of columns in the data is
      *             less than 2
      */
-    public MultivariateNormalMixtureExpectationMaximization(double[][] data)
-        throws NotStrictlyPositiveException,
-               DimensionMismatchException,
-               NumberIsTooSmallException {
+    public MultivariateNormalMixtureExpectationMaximization(final double[][] data) throws NotStrictlyPositiveException, DimensionMismatchException, NumberIsTooSmallException {
         if (data.length < 1) {
             throw new NotStrictlyPositiveException(data.length);
         }
@@ -98,12 +110,10 @@ public class MultivariateNormalMixtureExpectationMaximization {
         for (int i = 0; i < data.length; i++) {
             if (data[i].length != data[0].length) {
                 // Jagged arrays not allowed
-                throw new DimensionMismatchException(data[i].length,
-                                                     data[0].length);
+                throw new DimensionMismatchException(data[i].length, data[0].length);
             }
             if (data[i].length < 1) {
-                throw new NumberIsTooSmallException(LocalizedFormats.NUMBER_TOO_SMALL,
-                                                    data[i].length, 1, true);
+                throw new NumberIsTooSmallException(LocalizedFormats.NUMBER_TOO_SMALL, data[i].length, 1, true);
             }
             this.data[i] = MathArrays.copyOf(data[i], data[i].length);
         }
@@ -111,32 +121,34 @@ public class MultivariateNormalMixtureExpectationMaximization {
 
     /**
      * Fit a mixture model to the data supplied to the constructor.
-     *
+     * 
      * The quality of the fit depends on the concavity of the data provided to
      * the constructor and the initial mixture provided to this function. If the
      * data has many local optima, multiple runs of the fitting function with
      * different initial mixtures may be required to find the optimal solution.
      * If a SingularMatrixException is encountered, it is possible that another
      * initialization would work.
-     *
-     * @param initialMixture Model containing initial values of weights and
+     * 
+     * @param initialMixture
+     *            Model containing initial values of weights and
      *            multivariate normals
-     * @param maxIterations Maximum iterations allowed for fit
-     * @param threshold Convergence threshold computed as difference in
-     *             logLikelihoods between successive iterations
-     * @throws SingularMatrixException if any component's covariance matrix is
+     * @param maxIterations
+     *            Maximum iterations allowed for fit
+     * @param threshold
+     *            Convergence threshold computed as difference in
+     *            logLikelihoods between successive iterations
+     * @throws SingularMatrixException
+     *             if any component's covariance matrix is
      *             singular during fitting
-     * @throws NotStrictlyPositiveException if numComponents is less than one
+     * @throws NotStrictlyPositiveException
+     *             if numComponents is less than one
      *             or threshold is less than Double.MIN_VALUE
-     * @throws DimensionMismatchException if initialMixture mean vector and data
+     * @throws DimensionMismatchException
+     *             if initialMixture mean vector and data
      *             number of columns are not equal
      */
-    public void fit(final MultivariateMixtureDistribution initialMixture,
-                    final int maxIterations,
-                    final double threshold)
-            throws SingularMatrixException,
-                   NotStrictlyPositiveException,
-                   DimensionMismatchException {
+    public void fit(final MultivariateMixtureDistribution initialMixture, final int maxIterations, final double threshold) throws SingularMatrixException, NotStrictlyPositiveException,
+            DimensionMismatchException {
         if (maxIterations < 1) {
             throw new NotStrictlyPositiveException(maxIterations);
         }
@@ -145,15 +157,14 @@ public class MultivariateNormalMixtureExpectationMaximization {
             throw new NotStrictlyPositiveException(threshold);
         }
 
-        final int n = data.length;
+        final int n = this.data.length;
 
         // Number of data columns. Jagged data already rejected in constructor,
         // so we can assume the lengths of each row are equal.
-        final int numCols = data[0].length;
+        final int numCols = this.data[0].length;
         final int k = initialMixture.getComponents().size();
 
-        final int numMeanColumns
-            = initialMixture.getComponents().get(0).getSecond().getMean().length;
+        final int numMeanColumns = initialMixture.getComponents().get(0).getSecond().getMean().length;
 
         if (numMeanColumns != numCols) {
             throw new DimensionMismatchException(numMeanColumns, numCols);
@@ -162,19 +173,17 @@ public class MultivariateNormalMixtureExpectationMaximization {
         int numIterations = 0;
         double previousLogLikelihood = 0d;
 
-        logLikelihood = Double.NEGATIVE_INFINITY;
+        this.logLikelihood = Double.NEGATIVE_INFINITY;
 
         // Initialize model to fit to initial mixture.
-        fittedModel = new MultivariateMixtureDistribution(initialMixture.getComponents());
+        this.fittedModel = new MultivariateMixtureDistribution(initialMixture.getComponents());
 
-        while (numIterations++ <= maxIterations &&
-               Math.abs(previousLogLikelihood - logLikelihood) > threshold) {
-            previousLogLikelihood = logLikelihood;
+        while ((numIterations++ <= maxIterations) && (Math.abs(previousLogLikelihood - this.logLikelihood) > threshold)) {
+            previousLogLikelihood = this.logLikelihood;
             double sumLogLikelihood = 0d;
 
             // Mixture components
-            final List<Pair<Double, IMultivariateDistribution>> components
-                = fittedModel.getComponents();
+            final List<Pair<Double, IMultivariateDistribution>> components = this.fittedModel.getComponents();
 
             // Weight and distribution of each component
             final double[] weights = new double[k];
@@ -199,20 +208,20 @@ public class MultivariateNormalMixtureExpectationMaximization {
             final double[][] gammaDataProdSums = new double[k][numCols];
 
             for (int i = 0; i < n; i++) {
-                final double rowDensity = fittedModel.density(data[i]);
+                final double rowDensity = this.fittedModel.density(this.data[i]);
                 sumLogLikelihood += Math.log(rowDensity);
 
                 for (int j = 0; j < k; j++) {
-                    gamma[i][j] = weights[j] * mvns[j].density(data[i]) / rowDensity;
+                    gamma[i][j] = (weights[j] * mvns[j].density(this.data[i])) / rowDensity;
                     gammaSums[j] += gamma[i][j];
 
                     for (int col = 0; col < numCols; col++) {
-                        gammaDataProdSums[j][col] += gamma[i][j] * data[i][col];
+                        gammaDataProdSums[j][col] += gamma[i][j] * this.data[i][col];
                     }
                 }
             }
 
-            logLikelihood = sumLogLikelihood / n;
+            this.logLikelihood = sumLogLikelihood / n;
 
             // M-step: compute the new parameters based on the expectation
             // function.
@@ -233,10 +242,8 @@ public class MultivariateNormalMixtureExpectationMaximization {
             }
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < k; j++) {
-                    final RealMatrix vec
-                        = new Array2DRowRealMatrix(MathArrays.ebeSubtract(data[i], newMeans[j]));
-                    final RealMatrix dataCov
-                        = vec.multiply(vec.transpose()).scalarMultiply(gamma[i][j]);
+                    final RealMatrix vec = new Array2DRowRealMatrix(MathArrays.ebeSubtract(this.data[i], newMeans[j]));
+                    final RealMatrix dataCov = vec.multiply(vec.transpose()).scalarMultiply(gamma[i][j]);
                     newCovMats[j] = newCovMats[j].add(dataCov);
                 }
             }
@@ -248,17 +255,16 @@ public class MultivariateNormalMixtureExpectationMaximization {
                 newCovMatArrays[j] = newCovMats[j].getData();
             }
 
-
             final List<IMultivariateDistribution> distr = new ArrayList<IMultivariateDistribution>(k);
 
             for (int i = 0; i < k; i++) {
-                distr.add(new MultivariateNormalDistribution(newMeans[i],  newCovMatArrays[i]));
+                distr.add(new MultivariateNormalDistribution(newMeans[i], newCovMatArrays[i]));
             }
             // Update current model
-            fittedModel= new MultivariateMixtureDistribution(weights, distr);
+            this.fittedModel = new MultivariateMixtureDistribution(weights, distr);
         }
 
-        if (Math.abs(previousLogLikelihood - logLikelihood) > threshold) {
+        if (Math.abs(previousLogLikelihood - this.logLikelihood) > threshold) {
             // Did not converge before the maximum number of iterations
             throw new ConvergenceException();
         }
@@ -266,49 +272,53 @@ public class MultivariateNormalMixtureExpectationMaximization {
 
     /**
      * Fit a mixture model to the data supplied to the constructor.
-     *
+     * 
      * The quality of the fit depends on the concavity of the data provided to
      * the constructor and the initial mixture provided to this function. If the
      * data has many local optima, multiple runs of the fitting function with
      * different initial mixtures may be required to find the optimal solution.
      * If a SingularMatrixException is encountered, it is possible that another
      * initialization would work.
-     *
-     * @param initialMixture Model containing initial values of weights and
+     * 
+     * @param initialMixture
+     *            Model containing initial values of weights and
      *            multivariate normals
-     * @throws SingularMatrixException if any component's covariance matrix is
+     * @throws SingularMatrixException
+     *             if any component's covariance matrix is
      *             singular during fitting
-     * @throws NotStrictlyPositiveException if numComponents is less than one or
+     * @throws NotStrictlyPositiveException
+     *             if numComponents is less than one or
      *             threshold is less than Double.MIN_VALUE
      */
-    public void fit(MultivariateMixtureDistribution initialMixture)
-        throws SingularMatrixException,
-               NotStrictlyPositiveException {
-        fit(initialMixture, DEFAULT_MAX_ITERATIONS, DEFAULT_THRESHOLD);
+    public void fit(final MultivariateMixtureDistribution initialMixture) throws SingularMatrixException, NotStrictlyPositiveException {
+        this.fit(initialMixture, MultivariateNormalMixtureExpectationMaximization.DEFAULT_MAX_ITERATIONS, MultivariateNormalMixtureExpectationMaximization.DEFAULT_THRESHOLD);
     }
 
     /**
      * Helper method to create a multivariate normal mixture model which can be
      * used to initialize {@link #fit(MixtureMultivariateNormalDistribution)}.
-     *
+     * 
      * This method uses the data supplied to the constructor to try to determine
      * a good mixture model at which to start the fit, but it is not guaranteed
      * to supply a model which will find the optimal solution or even converge.
-     *
-     * @param data Data to estimate distribution
-     * @param numComponents Number of components for estimated mixture
+     * 
+     * @param data
+     *            Data to estimate distribution
+     * @param numComponents
+     *            Number of components for estimated mixture
      * @return Multivariate normal mixture model estimated from the data
-     * @throws NumberIsTooLargeException if {@code numComponents} is greater
-     * than the number of data rows.
-     * @throws NumberIsTooSmallException if {@code numComponents < 2}.
-     * @throws NotStrictlyPositiveException if data has less than 2 rows
-     * @throws DimensionMismatchException if rows of data have different numbers
+     * @throws NumberIsTooLargeException
+     *             if {@code numComponents} is greater
+     *             than the number of data rows.
+     * @throws NumberIsTooSmallException
+     *             if {@code numComponents < 2}.
+     * @throws NotStrictlyPositiveException
+     *             if data has less than 2 rows
+     * @throws DimensionMismatchException
+     *             if rows of data have different numbers
      *             of columns
      */
-    public static MultivariateMixtureDistribution estimate(final double[][] data,
-                                                                 final int numComponents)
-        throws NotStrictlyPositiveException,
-               DimensionMismatchException {
+    public static MultivariateMixtureDistribution estimate(final double[][] data, final int numComponents) throws NotStrictlyPositiveException, DimensionMismatchException {
         if (data.length < 2) {
             throw new NotStrictlyPositiveException(data.length);
         }
@@ -333,8 +343,7 @@ public class MultivariateNormalMixtureExpectationMaximization {
         final double weight = 1d / numComponents;
 
         // components of mixture model to be created
-        final List<Pair<Double, IMultivariateDistribution>> components =
-                new ArrayList<Pair<Double, IMultivariateDistribution>>();
+        final List<Pair<Double, IMultivariateDistribution>> components = new ArrayList<Pair<Double, IMultivariateDistribution>>();
 
         // create a component based on data in each bin
         for (int binIndex = 0; binIndex < numComponents; binIndex++) {
@@ -365,10 +374,8 @@ public class MultivariateNormalMixtureExpectationMaximization {
             MathArrays.scaleInPlace(1d / numBinRows, columnMeans);
 
             // covariance matrix for this bin
-            final double[][] covMat
-                = new Covariance(binData).getCovarianceMatrix().getData();
-            final IMultivariateDistribution mvn
-                = new MultivariateNormalDistribution(columnMeans, covMat);
+            final double[][] covMat = new Covariance(binData).getCovarianceMatrix().getData();
+            final IMultivariateDistribution mvn = new MultivariateNormalDistribution(columnMeans, covMat);
 
             components.add(new Pair<Double, IMultivariateDistribution>(weight, mvn));
         }
@@ -378,20 +385,20 @@ public class MultivariateNormalMixtureExpectationMaximization {
 
     /**
      * Gets the log likelihood of the data under the fitted model.
-     *
+     * 
      * @return Log likelihood of data or zero of no data has been fit
      */
     public double getLogLikelihood() {
-        return logLikelihood;
+        return this.logLikelihood;
     }
 
     /**
      * Gets the fitted model.
-     *
+     * 
      * @return fitted model or {@code null} if no fit has been performed yet.
      */
     public MultivariateMixtureDistribution getFittedModel() {
-        return new MultivariateMixtureDistribution(fittedModel.getComponents());
+        return new MultivariateMixtureDistribution(this.fittedModel.getComponents());
     }
 
     /**
@@ -405,39 +412,43 @@ public class MultivariateNormalMixtureExpectationMaximization {
 
         /**
          * Create a data row.
-         * @param data Data to use for the row
+         * 
+         * @param data
+         *            Data to use for the row
          */
         DataRow(final double[] data) {
             // Store reference.
-            row = data;
+            this.row = data;
             // Compute mean.
-            mean = 0d;
-            for (int i = 0; i < data.length; i++) {
-                mean += data[i];
+            this.mean = 0d;
+            for (final double element : data) {
+                this.mean += element;
             }
-            mean /= data.length;
+            this.mean /= data.length;
         }
 
         /**
          * Compare two data rows.
-         * @param other The other row
+         * 
+         * @param other
+         *            The other row
          * @return int for sorting
          */
         @Override
         public int compareTo(final DataRow other) {
-            return mean.compareTo(other.mean);
+            return this.mean.compareTo(other.mean);
         }
 
         /** {@inheritDoc} */
         @Override
-        public boolean equals(Object other) {
+        public boolean equals(final Object other) {
 
             if (this == other) {
                 return true;
             }
 
             if (other instanceof DataRow) {
-                return MathArrays.equals(row, ((DataRow) other).row);
+                return MathArrays.equals(this.row, ((DataRow) other).row);
             }
 
             return false;
@@ -447,16 +458,16 @@ public class MultivariateNormalMixtureExpectationMaximization {
         /** {@inheritDoc} */
         @Override
         public int hashCode() {
-            return Arrays.hashCode(row);
+            return Arrays.hashCode(this.row);
         }
+
         /**
          * Get a data row.
+         * 
          * @return data row array
          */
         public double[] getRow() {
-            return row;
+            return this.row;
         }
     }
 }
-
-

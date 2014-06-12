@@ -115,7 +115,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
      * @param instance
      * @param aggregatePattern
      */
-    public SDFProbabilisticExpression(String uri, String value, IAttributeResolver attributeResolver, IExpressionParser expressionParser, Pattern aggregatePattern) {
+    public SDFProbabilisticExpression(final String uri, final String value, final IAttributeResolver attributeResolver, final IExpressionParser expressionParser, final Pattern aggregatePattern) {
         super(uri, value, attributeResolver, expressionParser, AggregateFunctionBuilderRegistry.getAggregatePattern());
     }
 

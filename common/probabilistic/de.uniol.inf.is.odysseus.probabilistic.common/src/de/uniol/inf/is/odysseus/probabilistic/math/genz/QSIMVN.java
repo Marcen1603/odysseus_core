@@ -29,7 +29,7 @@ import org.apache.commons.math3.util.FastMath;
  * @author Christian Kuka <christian@kuka.cc>
  * @author Alexander Funk
  * 
- * FIXME 20140319 christian@kuka.cc Use apache math matrix
+ *         FIXME 20140319 christian@kuka.cc Use apache math matrix
  */
 public final class QSIMVN {
     /**

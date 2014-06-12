@@ -18,18 +18,15 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
@@ -91,7 +88,8 @@ public class TProbabilisticJoinAOSetSARule extends AbstractTransformationRule<Jo
         final int[] leftProbabilisticAttributePos = SchemaUtils.getAttributePos(leftSchema, leftAttributes);
 
         for (int port = 0; port < 2; port++) {
-            //FIXME 20140319 christian@kuka.cc Do I need the dataMerge and MetadataMerge instances in the sweep area?
+            // FIXME 20140319 christian@kuka.cc Do I need the dataMerge and
+            // MetadataMerge instances in the sweep area?
             // areas[port] = new ProbabilisticJoinTISweepArea( dataMerge,
             // metadataMerge);
             areas[port] = new ProbabilisticJoinTISweepArea();

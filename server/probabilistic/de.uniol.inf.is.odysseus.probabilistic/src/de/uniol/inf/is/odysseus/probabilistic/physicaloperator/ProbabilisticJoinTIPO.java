@@ -40,10 +40,10 @@ public class ProbabilisticJoinTIPO<K extends ITimeInterval, T extends IStreamObj
      * {@inheritDoc}
      */
     @Override
-    protected void process_next(T object, int port) {
-        transferFunction.newElement(object, port);
+    protected void process_next(final T object, final int port) {
+        this.transferFunction.newElement(object, port);
 
-        if (isDone()) {
+        if (this.isDone()) {
             // TODO bei den sources abmelden ?? MG: Warum??
             // propagateDone gemeint?
             // JJ: weil man schon fertig sein
@@ -54,26 +54,26 @@ public class ProbabilisticJoinTIPO<K extends ITimeInterval, T extends IStreamObj
             // werden muss, man also ressourcen spart
             return;
         }
-        if (LOG.isDebugEnabled()) {
-            if (!isOpen()) {
-                LOG.error("process next called on non opened operator " + this + " with " + object + " from " + port);
+        if (ProbabilisticJoinTIPO.LOG.isDebugEnabled()) {
+            if (!this.isOpen()) {
+                ProbabilisticJoinTIPO.LOG.error("process next called on non opened operator " + this + " with " + object + " from " + port);
                 return;
             }
         }
-        int otherport = port ^ 1;
-        Order order = Order.fromOrdinal(port);
+        final int otherport = port ^ 1;
+        final Order order = Order.fromOrdinal(port);
         Iterator<T> qualifies;
         // Avoid removing elements while querying for potential hits
         synchronized (this) {
 
-            if (inOrder) {
-                areas[otherport].purgeElements(object, order);
+            if (this.inOrder) {
+                this.areas[otherport].purgeElements(object, order);
             }
 
             // status could change, if the other port was done and
             // its sweeparea is now empty after purging
-            if (isDone()) {
-                propagateDone();
+            if (this.isDone()) {
+                this.propagateDone();
                 return;
             }
 
@@ -86,8 +86,8 @@ public class ProbabilisticJoinTIPO<K extends ITimeInterval, T extends IStreamObj
             // ONE side element is later than some MANY side elements, find all
             // corresponding elements and remove them
             boolean extract = false;
-            if (card != null) {
-                switch (card) {
+            if (this.card != null) {
+                switch (this.card) {
                     case ONE_ONE:
                         extract = true;
                         break;
@@ -102,74 +102,74 @@ public class ProbabilisticJoinTIPO<K extends ITimeInterval, T extends IStreamObj
                 }
             }
 
-            qualifies = areas[otherport].queryCopy(object, order, extract);
+            qualifies = this.areas[otherport].queryCopy(object, order, extract);
 
-            boolean hit = qualifies.hasNext();
+            final boolean hit = qualifies.hasNext();
             while (qualifies.hasNext()) {
-                T next = qualifies.next();
+                final T next = qualifies.next();
 
-                next.setMetadata(metadataMerge.mergeMetadata(object.getMetadata(), next.getMetadata()));
+                next.setMetadata(this.metadataMerge.mergeMetadata(object.getMetadata(), next.getMetadata()));
 
                 // TODO: Merge function in cases where key is same!!
 
                 // Use from right and overwrite with left
                 if (order == Order.LeftRight) {
 
-                    for (Entry<String, Serializable> a : object.getAdditionalContent().entrySet()) {
+                    for (final Entry<String, Serializable> a : object.getAdditionalContent().entrySet()) {
                         next.setAdditionalContent(a.getKey(), a.getValue());
                     }
-                    for (Entry<String, Object> a : object.getMetadataMap().entrySet()) {
+                    for (final Entry<String, Object> a : object.getMetadataMap().entrySet()) {
                         next.setMetadata(a.getKey(), a.getValue());
                     }
                 }
                 else if (order == Order.RightLeft) { // Use from Left and
                                                      // overwrite with right
-                    Map<String, Serializable> additionalContent = object.getAdditionalContent();
-                    for (Entry<String, Serializable> a : next.getAdditionalContent().entrySet()) {
+                    final Map<String, Serializable> additionalContent = object.getAdditionalContent();
+                    for (final Entry<String, Serializable> a : next.getAdditionalContent().entrySet()) {
                         additionalContent.put(a.getKey(), a.getValue());
                     }
                     next.setAdditionalContent(additionalContent);
-                    Map<String, Object> metadataMap = object.getMetadataMap();
+                    final Map<String, Object> metadataMap = object.getMetadataMap();
 
-                    for (Entry<String, Object> a : next.getMetadataMap().entrySet()) {
+                    for (final Entry<String, Object> a : next.getMetadataMap().entrySet()) {
                         metadataMap.put(a.getKey(), a.getValue());
                     }
                     next.setMetadataMap(metadataMap);
                 }
-                transferFunction.transfer(next);
+                this.transferFunction.transfer(next);
 
             }
             // Depending on card insert elements into sweep area
-            if (card == null || card == Cardinalities.MANY_MANY) {
-                areas[port].insert(object);
+            if ((this.card == null) || (this.card == Cardinalities.MANY_MANY)) {
+                this.areas[port].insert(object);
             }
             else {
-                switch (card) {
+                switch (this.card) {
                     case ONE_ONE:
                         // If one to one case, a hit cannot be produce another
                         // hit
                         if (!hit) {
-                            areas[port].insert(object);
+                            this.areas[port].insert(object);
                         }
                         break;
                     case ONE_MANY:
                         // If from left insert
                         // if from right and no hit, insert (corresponding left
                         // element not found now)
-                        if (port == 0 || (port == 1 && !hit)) {
-                            areas[port].insert(object);
+                        if ((port == 0) || ((port == 1) && !hit)) {
+                            this.areas[port].insert(object);
                         }
                         break;
                     case MANY_ONE:
                         // If from rightt insert
                         // if from left and no hit, insert (corresponding right
                         // element not found now)
-                        if (port == 1 || (port == 0 && !hit)) {
-                            areas[port].insert(object);
+                        if ((port == 1) || ((port == 0) && !hit)) {
+                            this.areas[port].insert(object);
                         }
                         break;
                     default:
-                        areas[port].insert(object);
+                        this.areas[port].insert(object);
                         break;
                 }
             }

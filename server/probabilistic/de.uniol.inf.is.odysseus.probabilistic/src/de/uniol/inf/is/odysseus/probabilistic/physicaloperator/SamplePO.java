@@ -105,7 +105,7 @@ public class SamplePO<T extends ITimeInterval> extends AbstractPipe<Probabilisti
         // sample = 0.0;
         // }
         // return sample;
-        // FIXME  20140319 christian@kuka.cc Implement sampling
+        // FIXME 20140319 christian@kuka.cc Implement sampling
         return 0.0;
     }
 }

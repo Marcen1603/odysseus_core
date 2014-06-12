@@ -150,29 +150,26 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
      * lang.String)
      */
     @Override
-	public final MultivariateMixtureDistribution readData(final String string) {
-		Objects.requireNonNull(string);
-		Preconditions.checkArgument(!string.isEmpty());
-		MatrixDataHandler dataHandler = new MatrixDataHandler();
-		final String[] components = string.split("\\|");
-		final List<IMultivariateDistribution> distributions = new ArrayList<>();
+    public final MultivariateMixtureDistribution readData(final String string) {
+        Objects.requireNonNull(string);
+        Preconditions.checkArgument(!string.isEmpty());
+        final MatrixDataHandler dataHandler = new MatrixDataHandler();
+        final String[] components = string.split("\\|");
+        final List<IMultivariateDistribution> distributions = new ArrayList<>();
 
-		double[] weights = new double[components.length];
-		for (int i = 0; i < components.length; i++) {
-			String[] parameter = components[i].split("\\:");
-			double[] means = dataHandler.readData(parameter[0])[0];
-			double[][] covariance = dataHandler.readData(parameter[1]);
-			weights[i] = Double.parseDouble(parameter[2]);
-			final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(
-					means, covariance);
-			distributions.add(distribution);
-		}
+        final double[] weights = new double[components.length];
+        for (int i = 0; i < components.length; i++) {
+            final String[] parameter = components[i].split("\\:");
+            final double[] means = dataHandler.readData(parameter[0])[0];
+            final double[][] covariance = dataHandler.readData(parameter[1]);
+            weights[i] = Double.parseDouble(parameter[2]);
+            final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(means, covariance);
+            distributions.add(distribution);
+        }
 
-		final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(
-				weights, distributions);
-		return mixture;
-	}
-
+        final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(weights, distributions);
+        return mixture;
+    }
 
     /*
      * (non-Javadoc)

@@ -25,7 +25,7 @@ public class ProbabilisticJoinTISweepArea<T extends ProbabilisticTuple<? extends
         super(new FastArrayList<T>());
     }
 
-    public ProbabilisticJoinTISweepArea(IFastList<T> list) {
+    public ProbabilisticJoinTISweepArea(final IFastList<T> list) {
         super(list);
     }
 
@@ -37,37 +37,37 @@ public class ProbabilisticJoinTISweepArea<T extends ProbabilisticTuple<? extends
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    public ProbabilisticJoinTISweepArea(ProbabilisticJoinTISweepArea<T> sweepArea) throws InstantiationException, IllegalAccessException {
+    public ProbabilisticJoinTISweepArea(final ProbabilisticJoinTISweepArea<T> sweepArea) throws InstantiationException, IllegalAccessException {
         super(sweepArea);
     }
 
     @Override
-    public void insert(T s) {
+    public void insert(final T s) {
         synchronized (this.getElements()) {
-            setLatestTimeStamp(s);
+            this.setLatestTimeStamp(s);
             this.getElements().add(s);
         }
     }
 
     @Override
-    public Iterator<T> queryCopy(T element, Order order, boolean extract) {
-        LinkedList<T> result = new LinkedList<T>();
+    public Iterator<T> queryCopy(final T element, final Order order, final boolean extract) {
+        final LinkedList<T> result = new LinkedList<T>();
         Iterator<T> iter;
         synchronized (this.getElements()) {
             switch (order) {
                 case LeftRight:
                     iter = this.getElements().iterator();
                     while (iter.hasNext()) {
-                        T next = iter.next();
+                        final T next = iter.next();
                         if (TimeInterval.totallyBefore(next.getMetadata(), element.getMetadata())) {
                             continue;
                         }
                         if (TimeInterval.totallyAfter(next.getMetadata(), element.getMetadata())) {
                             break;
                         }
-                        ProbabilisticRelationalPredicate probabilisticPredicate = ((ProbabilisticRelationalPredicate) getQueryPredicate());
+                        final ProbabilisticRelationalPredicate probabilisticPredicate = ((ProbabilisticRelationalPredicate) this.getQueryPredicate());
                         @SuppressWarnings("unchecked")
-                        T merge = (T) probabilisticPredicate.probabilisticEvaluate(element, next, next.getMetadata());
+                        final T merge = (T) probabilisticPredicate.probabilisticEvaluate(element, next, next.getMetadata());
                         if (merge != null) {
                             result.add(merge);
                             if (extract) {
@@ -80,16 +80,16 @@ public class ProbabilisticJoinTISweepArea<T extends ProbabilisticTuple<? extends
                 case RightLeft:
                     iter = this.getElements().iterator();
                     while (iter.hasNext()) {
-                        T next = iter.next();
+                        final T next = iter.next();
                         if (TimeInterval.totallyBefore(next.getMetadata(), element.getMetadata())) {
                             continue;
                         }
                         if (TimeInterval.totallyAfter(next.getMetadata(), element.getMetadata())) {
                             break;
                         }
-                        ProbabilisticRelationalPredicate probabilisticPredicate = ((ProbabilisticRelationalPredicate) getQueryPredicate());
+                        final ProbabilisticRelationalPredicate probabilisticPredicate = ((ProbabilisticRelationalPredicate) this.getQueryPredicate());
                         @SuppressWarnings("unchecked")
-                        T merge = (T) probabilisticPredicate.probabilisticEvaluate(next, element, next.getMetadata());
+                        final T merge = (T) probabilisticPredicate.probabilisticEvaluate(next, element, next.getMetadata());
                         if (merge != null) {
                             result.add(merge);
                             if (extract) {

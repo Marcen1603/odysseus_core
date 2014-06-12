@@ -119,7 +119,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 
         if ((this.getPredicate() == null) || (this.predicate.evaluate(s))) {
             super.insert(restricted);
-            double[][] data = this.getData();
+            final double[][] data = this.getData();
             try {
                 if ((!this.isIncremental()) || (this.getModel() == null)) {
                     final MultivariateMixtureDistribution newModel = MultivariateNormalMixtureExpectationMaximization.estimate(data, this.mixtures);
@@ -128,7 +128,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
                     }
                 }
             }
-            catch (Exception e) {
+            catch (final Exception e) {
                 BatchEMTISweepArea.LOG.debug(e.getMessage(), e);
             }
             try {
@@ -146,7 +146,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
                     }
                 }
             }
-            catch (Exception e) {
+            catch (final Exception e) {
                 // FIXME 20140319 christian@kuka.cc What to do now?
                 // setModel(null);
                 // throw e;
@@ -385,11 +385,11 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
      * @return The data.
      */
     private double[][] getData() {
-        Random random = new Random();
+        final Random random = new Random();
         final double[][] data = new double[this.getElements().size()][this.getDimension()];
         for (int i = 0; i < this.getElements().size(); i++) {
             for (int d = 0; d < this.getDimension(); d++) {
-                data[i][d] = ((Number) this.getElements().get(i).getAttribute(d)).doubleValue() + (random.nextDouble() - 0.5) ;
+                data[i][d] = ((Number) this.getElements().get(i).getAttribute(d)).doubleValue() + (random.nextDouble() - 0.5);
                 // data[i][d] = ((Number)
                 // this.getElements().get(i).getAttribute(d)).doubleValue();
             }

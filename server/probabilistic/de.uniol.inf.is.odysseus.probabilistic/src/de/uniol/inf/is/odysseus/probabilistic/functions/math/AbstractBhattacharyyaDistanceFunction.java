@@ -76,7 +76,7 @@ public abstract class AbstractBhattacharyyaDistanceFunction extends AbstractProb
                 final RealMatrix bhattacharyyaDistanceTerm1 = aMean.subtract(bMean).transpose().multiply(avgCovarianceInverse).multiply(aMean.subtract(bMean)).scalarMultiply(1.0 / 8.0);
                 final double bhattacharyyaDistanceTerm2 = 0.5 * FastMath.log(avgDeterminant / FastMath.sqrt(aDeterminant * bDeterminant));
                 final RealMatrix bhattacharyyaDistance = bhattacharyyaDistanceTerm1.scalarAdd(bhattacharyyaDistanceTerm2);
-                // FIXME  20140319 christian@kuka.cc IS this correct?
+                // FIXME 20140319 christian@kuka.cc IS this correct?
                 final double weight = aEntry.getKey() * bEntry.getKey();
                 weightedBhattacharyyaDistance += bhattacharyyaDistance.getEntry(0, 0) * weight;
 

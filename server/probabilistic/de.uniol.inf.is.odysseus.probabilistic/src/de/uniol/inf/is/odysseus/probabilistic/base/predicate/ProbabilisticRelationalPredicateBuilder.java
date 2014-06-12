@@ -29,9 +29,9 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpress
 public class ProbabilisticRelationalPredicateBuilder implements IPredicateBuilder {
 
     @Override
-    public IPredicate<?> createPredicate(IAttributeResolver resolver, String predicate) {
-        SDFProbabilisticExpression expression = new SDFProbabilisticExpression("", predicate, resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
-        ProbabilisticRelationalPredicate pred = new ProbabilisticRelationalPredicate(expression);
+    public IPredicate<?> createPredicate(final IAttributeResolver resolver, final String predicate) {
+        final SDFProbabilisticExpression expression = new SDFProbabilisticExpression("", predicate, resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
+        final ProbabilisticRelationalPredicate pred = new ProbabilisticRelationalPredicate(expression);
         return pred;
     }
 

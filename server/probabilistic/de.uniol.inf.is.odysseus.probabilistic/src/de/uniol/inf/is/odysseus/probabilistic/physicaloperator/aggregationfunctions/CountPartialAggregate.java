@@ -35,7 +35,7 @@ public class CountPartialAggregate<T> extends AbstractPartialAggregate<T> {
      *            The result datatype
      */
     public CountPartialAggregate(final String datatype) {
-        count = 0.0;
+        this.count = 0.0;
         this.datatype = datatype;
     }
 

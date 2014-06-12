@@ -37,8 +37,8 @@ import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDoubl
  * 
  */
 public class ProbabilisticGroupProcessor<T extends IMetaAttribute> extends RelationalGroupProcessor<T> {
-    public ProbabilisticGroupProcessor(SDFSchema inputSchema, SDFSchema outputSchema, List<SDFAttribute> groupingAttributes, Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations,
-            boolean fast) {
+    public ProbabilisticGroupProcessor(final SDFSchema inputSchema, final SDFSchema outputSchema, final List<SDFAttribute> groupingAttributes,
+            final Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations, final boolean fast) {
         super(inputSchema, outputSchema, groupingAttributes, aggregations, fast);
     }
 
@@ -46,14 +46,14 @@ public class ProbabilisticGroupProcessor<T extends IMetaAttribute> extends Relat
      * {@inheritDoc}
      */
     @Override
-    public Tuple<T> createOutputElement(Long groupID, PairMap<SDFSchema, AggregateFunction, Tuple<T>, ?> r) {
-        ProbabilisticTuple<T> returnTuple = new ProbabilisticTuple<T>(getOutputSchema().size(), 1, true);
-        MultivariateMixtureDistribution[] tmpDistributions = new MultivariateMixtureDistribution[getOutputSchema().size()];
+    public Tuple<T> createOutputElement(final Long groupID, final PairMap<SDFSchema, AggregateFunction, Tuple<T>, ?> r) {
+        final ProbabilisticTuple<T> returnTuple = new ProbabilisticTuple<T>(this.getOutputSchema().size(), 1, true);
+        final MultivariateMixtureDistribution[] tmpDistributions = new MultivariateMixtureDistribution[this.getOutputSchema().size()];
         int distributionIndex = 0;
-        for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, Tuple<T>> e : r.entrySet()) {
-            int pos = getOutputPos(e.getKey());
+        for (final Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, Tuple<T>> e : r.entrySet()) {
+            final int pos = this.getOutputPos(e.getKey());
             if (e.getValue().getAttribute(0).getClass() == ProbabilisticDouble.class) {
-                MultivariateMixtureDistribution distribution = ((ProbabilisticTuple<T>) e.getValue()).getDistribution(0);
+                final MultivariateMixtureDistribution distribution = ((ProbabilisticTuple<T>) e.getValue()).getDistribution(0);
                 distribution.setAttribute(0, pos);
                 tmpDistributions[distributionIndex] = distribution;
                 returnTuple.setAttribute(pos, new ProbabilisticDouble(distributionIndex));
@@ -64,23 +64,23 @@ public class ProbabilisticGroupProcessor<T extends IMetaAttribute> extends Relat
                 returnTuple.setAttribute(pos, e.getValue().getAttribute(0));
             }
         }
-        MultivariateMixtureDistribution[] distributions = new MultivariateMixtureDistribution[distributionIndex];
+        final MultivariateMixtureDistribution[] distributions = new MultivariateMixtureDistribution[distributionIndex];
         System.arraycopy(tmpDistributions, 0, distributions, 0, distributionIndex);
         returnTuple.setDistributions(distributions);
-        addGroupingAttributes(groupID, returnTuple);
+        this.addGroupingAttributes(groupID, returnTuple);
         return returnTuple;
     }
 
     @Override
-    public Tuple<T> createOutputElement2(Long groupID, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<Tuple<T>>, ?> r) {
-        ProbabilisticTuple<T> returnTuple = new ProbabilisticTuple<T>(getOutputSchema().size(), getOutputSchema().size(), true);
+    public Tuple<T> createOutputElement2(final Long groupID, final PairMap<SDFSchema, AggregateFunction, IPartialAggregate<Tuple<T>>, ?> r) {
+        final ProbabilisticTuple<T> returnTuple = new ProbabilisticTuple<T>(this.getOutputSchema().size(), this.getOutputSchema().size(), true);
 
-        for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<Tuple<T>>> e : r.entrySet()) {
-            int pos = getOutputPos(e.getKey());
+        for (final Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<Tuple<T>>> e : r.entrySet()) {
+            final int pos = this.getOutputPos(e.getKey());
             returnTuple.setAttribute(pos, e.getValue());
         }
 
-        addGroupingAttributes(groupID, returnTuple);
+        this.addGroupingAttributes(groupID, returnTuple);
         return returnTuple;
     }
 }

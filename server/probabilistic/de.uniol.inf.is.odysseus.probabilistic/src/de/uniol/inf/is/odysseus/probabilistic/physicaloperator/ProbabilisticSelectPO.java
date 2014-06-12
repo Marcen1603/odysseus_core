@@ -152,7 +152,7 @@ public class ProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPip
             for (int i = 0; i < this.expressions.length; ++i) {
                 final SDFProbabilisticExpression expression = this.expressions[i];
                 final Object[] values = new Object[this.variables[i].length];
-                IMetaAttribute[] meta = new IMetaAttribute[this.variables[i].length];
+                final IMetaAttribute[] meta = new IMetaAttribute[this.variables[i].length];
                 final int[] positions = new int[this.variables[i].length];
                 for (int j = 0; j < this.variables[i].length; ++j) {
                     Object attribute = outputVal.getAttribute(this.variables[i][j].getPos());
@@ -177,16 +177,16 @@ public class ProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPip
                         for (final IMultivariateDistribution distr : result.getDistributions()) {
                             final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) distr;
                             final int index = ((ProbabilisticDouble) object.getAttribute(distribution.getAttribute(0))).getDistribution();
-                            MultivariateMixtureDistribution outputDistribution = outputVal.getDistribution(index);
+                            final MultivariateMixtureDistribution outputDistribution = outputVal.getDistribution(index);
                             // Adjust the support in case the distribution was
                             // modified
                             for (int d = 0; d < distribution.getDimension(); d++) {
                                 // New support is the resulting support of the
                                 // filtering subtract by the difference of the
                                 // new and the old mean
-                                Interval support = distribution.getSupport(d).subtract(distribution.getMean()[d] - object.getDistribution(index).getMean()[d]);
+                                final Interval support = distribution.getSupport(d).subtract(distribution.getMean()[d] - object.getDistribution(index).getMean()[d]);
                                 if (outputDistribution.getSupport(d).intersects(support)) {
-                                    Interval intersection = outputDistribution.getSupport(d).intersection(support);
+                                    final Interval intersection = outputDistribution.getSupport(d).intersection(support);
                                     outputDistribution.setSupport(d, intersection);
                                 }
                                 else {

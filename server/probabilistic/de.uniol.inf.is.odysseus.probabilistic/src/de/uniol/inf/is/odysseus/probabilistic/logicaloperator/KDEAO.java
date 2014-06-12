@@ -46,7 +46,6 @@ import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilistic
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "KDE", category = { LogicalOperatorCategory.PROBABILISTIC }, doc = "Estimate the distribution of the given attributes using a Gaussian mixture model")
 public class KDEAO extends UnaryLogicalOp {
 
-
     /**
      * 
      */
@@ -97,7 +96,6 @@ public class KDEAO extends UnaryLogicalOp {
         }
         return this.attributes;
     }
-
 
     /**
      * Gets the positions of the attributes.

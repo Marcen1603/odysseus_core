@@ -182,7 +182,6 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
         return (child.getTarget() instanceof LinearRegressionAO);
     }
 
-
     private boolean isContinuousEquiJoin(final ILogicalOperator operator) {
         final SDFExpression expr = this.getExpression(operator);
         // if

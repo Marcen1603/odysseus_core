@@ -24,7 +24,7 @@ import java.util.Random;
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
- * FIXME 20140319 christian@kuka.cc Use apache math matrix
+ *         FIXME 20140319 christian@kuka.cc Use apache math matrix
  * 
  */
 public class Matrix {

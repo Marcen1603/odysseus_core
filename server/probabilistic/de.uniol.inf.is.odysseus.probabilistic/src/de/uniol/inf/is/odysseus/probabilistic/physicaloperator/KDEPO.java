@@ -61,7 +61,7 @@ public class KDEPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTu
     /**
      * @param po
      */
-    public KDEPO(KDEPO<T> po) {
+    public KDEPO(final KDEPO<T> po) {
         super(po);
         this.attributes = po.attributes.clone();
         this.area = po.area.clone();
@@ -80,10 +80,10 @@ public class KDEPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTu
      * {@inheritDoc}
      */
     @Override
-    protected void process_next(ProbabilisticTuple<T> object, int port) {
+    protected void process_next(final ProbabilisticTuple<T> object, final int port) {
         final MultivariateMixtureDistribution[] distributions = object.getDistributions();
         final ProbabilisticTuple<T> outputVal = object.clone();
-        Tuple<T> restrictedObject = object.restrict(attributes, true);
+        final Tuple<T> restrictedObject = object.restrict(this.attributes, true);
         synchronized (this.area) {
             this.area.purgeElements(restrictedObject, Order.LeftRight);
         }
@@ -91,26 +91,26 @@ public class KDEPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTu
         synchronized (this.area) {
             this.area.insert(restrictedObject);
         }
-        double[][] data = new double[this.area.size()][attributes.length];
+        final double[][] data = new double[this.area.size()][this.attributes.length];
         int i = 0;
-        for (Tuple<?> t : this.area) {
-            for (int j = 0; j < attributes.length; j++) {
+        for (final Tuple<?> t : this.area) {
+            for (int j = 0; j < this.attributes.length; j++) {
                 data[i][j] = ((Number) t.getAttributes()[j]).doubleValue();
             }
             i++;
         }
         // Estimate covariance matrix
-        double factor = BandwidthSelectionRule.scott(area.size(), attributes.length);
+        final double factor = BandwidthSelectionRule.scott(this.area.size(), this.attributes.length);
         final RealMatrix dataCovarianceMatrix = new Covariance(data, false).getCovarianceMatrix();
-        RealMatrix covariance = dataCovarianceMatrix.scalarMultiply(FastMath.pow(factor, 2.0));
+        final RealMatrix covariance = dataCovarianceMatrix.scalarMultiply(FastMath.pow(factor, 2.0));
 
-        List<Pair<Double, IMultivariateDistribution>> components = new ArrayList<>(data.length);
-        for (double[] d : data) {
-            IMultivariateDistribution component = new MultivariateNormalDistribution(d, covariance.getData());
+        final List<Pair<Double, IMultivariateDistribution>> components = new ArrayList<>(data.length);
+        for (final double[] d : data) {
+            final IMultivariateDistribution component = new MultivariateNormalDistribution(d, covariance.getData());
             components.add(new Pair<>(new Double(1.0 / data.length), component));
         }
 
-        MultivariateMixtureDistribution distribution = new MultivariateMixtureDistribution(components);
+        final MultivariateMixtureDistribution distribution = new MultivariateMixtureDistribution(components);
         distribution.setAttributes(this.attributes);
         final MultivariateMixtureDistribution[] outputValDistributions = new MultivariateMixtureDistribution[distributions.length + 1];
         for (final int attribute : this.attributes) {

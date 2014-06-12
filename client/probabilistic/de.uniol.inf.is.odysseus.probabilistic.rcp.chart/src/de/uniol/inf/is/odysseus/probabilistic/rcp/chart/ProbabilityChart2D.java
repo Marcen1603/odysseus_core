@@ -491,7 +491,7 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
                 }
             }
         }
-        catch (Exception e) {
+        catch (final Exception e) {
         }
     }
 
