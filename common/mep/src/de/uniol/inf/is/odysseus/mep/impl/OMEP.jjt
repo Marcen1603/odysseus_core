@@ -298,7 +298,7 @@ void Array():
 {
 	<OPEN_ARRAY> i=<INTEGER> <CLOSE_ARRAY>
 	{
-    	jjtThis.setIndex(i.image);
+    	jjtThis.setIndex(Integer.valueOf(i.image));
 	}
 }
 

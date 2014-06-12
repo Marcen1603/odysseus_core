@@ -608,7 +608,7 @@ void Array():
         }
 /*@egen*/
 	{
-    	jjtn000.setIndex(i.image);
+    	jjtn000.setIndex(Integer.valueOf(i.image));
 	}/*@bgen(jjtree)*/
         } finally {
           if (jjtc000) {

@@ -567,7 +567,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
       jj_consume_token(CLOSE_ARRAY);
           jjtree.closeNodeScope(jjtn000, true);
           jjtc000 = false;
-        jjtn000.setIndex(Integer.getInteger(i.image));
+        jjtn000.setIndex(Integer.valueOf(i.image));
     } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);

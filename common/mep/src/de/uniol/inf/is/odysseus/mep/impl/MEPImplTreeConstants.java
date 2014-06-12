@@ -8,9 +8,9 @@ public interface MEPImplTreeConstants
   public int JJTFUNCTION = 2;
   public int JJTCONSTANT = 3;
   public int JJTVARIABLE = 4;
-  public int JJTMATRIX = 5;
-  public int JJTMATRIXLINE = 6;
-  public int JJTARRAY = 7;
+  public int JJTARRAY = 5;
+  public int JJTMATRIX = 6;
+  public int JJTMATRIXLINE = 7;
 
 
   public String[] jjtNodeName = {
@@ -19,9 +19,9 @@ public interface MEPImplTreeConstants
     "Function",
     "Constant",
     "Variable",
+    "Array",
     "Matrix",
     "MatrixLine",
-    "Array",
   };
 }
-/* JavaCC - OriginalChecksum=efabcb3aa0186be4dca3764957dd4ec4 (do not edit this line) */
+/* JavaCC - OriginalChecksum=7b5c8523f4d1f5f37905dfa7cdf5f27e (do not edit this line) */
