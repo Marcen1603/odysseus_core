@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAtt
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 
+// Q.A.: Missing JavaDoc class description (T.B.)
 @LogicalOperator(name = "JXTABUNDLERECEIVER", doc = "Received data from multiple JXTA Receivers", minInputPorts = 0, maxInputPorts = 0, category = { LogicalOperatorCategory.SOURCE }, hidden = true)
 public class JxtaBundleReceiverAO extends JxtaReceiverAO {
 
