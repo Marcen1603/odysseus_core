@@ -10,6 +10,8 @@ import java.util.List;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.random.Well19937c;
 import org.apache.commons.math3.util.MathArrays;
 import org.apache.commons.math3.util.Pair;
 
@@ -26,6 +28,7 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
      * 
      */
     private static final long serialVersionUID = -7963504888038684566L;
+    private final RandomGenerator random = new Well19937c();
     /** Normalized weight of each mixture component. */
     private final double[] weight;
     /** Mixture components. */
@@ -347,7 +350,11 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
 
     }
 
-    public int getSize() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int size() {
         return this.distribution.length;
     }
 
@@ -481,6 +488,32 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
         }
         mixture.scale = this.scale * otherMixture.scale;
         return mixture;
+    }
+
+    public double[] sample() {
+        double[] point = new double[getDimension()];
+        final double randomValue = random.nextDouble();
+        double sum = 0.0;
+
+        for (int d = 0; d < distribution.length; d++) {
+            sum += weight[d];
+            if (randomValue <= sum) {
+                point = distribution[d].sample();
+                break;
+            }
+        }
+        if (point == null) {
+            point = distribution[weight.length - 1].sample();
+        }
+        return point;
+    }
+
+    public double[][] sample(int n) {
+        double[][] points = new double[n][getDimension()];
+        for (int i = 0; i < n; i++) {
+            points[i] = sample();
+        }
+        return points;
     }
 
     /**

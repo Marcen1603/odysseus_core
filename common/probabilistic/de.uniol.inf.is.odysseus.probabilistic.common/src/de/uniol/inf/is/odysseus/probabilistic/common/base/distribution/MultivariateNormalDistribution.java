@@ -14,6 +14,8 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.NonPositiveDefiniteMatrixException;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.SingularMatrixException;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.random.Well19937c;
 import org.apache.commons.math3.special.Erf;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.MathArrays;
@@ -33,10 +35,12 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
     private static final long serialVersionUID = -5482504990362339784L;
     /** &radic;(2) */
     private static final double SQRT2 = FastMath.sqrt(2.0);
+    private final RandomGenerator random = new Well19937c();
     private double[] means;
     private RealMatrix covariance;
     private double covarianceDeterminant;
     private RealMatrix covarianceInverse;
+    private RealMatrix samplingMatrix;
 
     /**
      * @param means
@@ -176,6 +180,14 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
      * {@inheritDoc}
      */
     @Override
+    public int size() {
+        return 1;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("𝒩(");
@@ -253,6 +265,42 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
     @Override
     public MultivariateNormalDistribution clone() {
         return new MultivariateNormalDistribution(this);
+    }
+
+    public double[] sample() {
+        double[] point = new double[getDimension()];
+        final double[] normalVals = new double[getDimension()];
+        for (int j = 0; j < getDimension(); j++) {
+            normalVals[j] = random.nextGaussian();
+        }
+
+        if (samplingMatrix == null) {
+            final EigenDecomposition covMatDec = new EigenDecomposition(covariance);
+            final double[] covMatEigenvalues = covMatDec.getRealEigenvalues();
+            final Array2DRowRealMatrix covMatEigenvectors = new Array2DRowRealMatrix(getDimension(), getDimension());
+            for (int v = 0; v < getDimension(); v++) {
+                final double[] evec = covMatDec.getEigenvector(v).toArray();
+                covMatEigenvectors.setColumn(v, evec);
+            }
+
+            final RealMatrix tmpMatrix = covMatEigenvectors.transpose();
+
+            // Scale each eigenvector by the square root of its
+            // eigenvalue.
+            for (int row = 0; row < getDimension(); row++) {
+                final double factor = FastMath.sqrt(covMatEigenvalues[row]);
+                for (int col = 0; col < getDimension(); col++) {
+                    tmpMatrix.multiplyEntry(row, col, factor);
+                }
+            }
+            this.samplingMatrix = covMatEigenvectors.multiply(tmpMatrix);
+        }
+        point = samplingMatrix.operate(normalVals);
+        for (int k = 0; k < getDimension(); k++) {
+            point[k] += means[k];
+        }
+        return point;
+
     }
 
     /**

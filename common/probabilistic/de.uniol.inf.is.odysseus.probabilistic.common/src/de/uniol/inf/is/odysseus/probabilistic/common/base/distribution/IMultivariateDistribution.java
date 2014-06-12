@@ -71,6 +71,20 @@ public interface IMultivariateDistribution extends Serializable, Cloneable, IClo
      */
     void restrict(RealMatrix restrict);
 
+    /**
+     * Gets the size of the distribution, 1 if it is not a mixture.
+     * 
+     * @return The size
+     */
+    int size();
+
+    /**
+     * Draw a sample from the distribution.
+     * 
+     * @return one sample vector
+     */
+    double[] sample();
+
     IMultivariateDistribution add(Double number);
 
     IMultivariateDistribution subtract(Double number);

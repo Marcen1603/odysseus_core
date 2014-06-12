@@ -15,6 +15,8 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.random.Well19937c;
 import org.apache.commons.math3.util.MathArrays;
 import org.apache.commons.math3.util.Pair;
 
@@ -28,6 +30,7 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
      * 
      */
     private static final long serialVersionUID = -7901800746273849189L;
+    private final RandomGenerator random = new Well19937c();
     private List<Pair<double[], Double>> sampleSpace;
 
     public MultivariateEnumeratedDistribution(final double[] singleton, final double probability) {
@@ -128,6 +131,31 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
     public double density(final double[] x) {
         // Call PMF of the discrete distribution
         return this.probability(x, x);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double[] sample() {
+        final double randomValue = random.nextDouble();
+        double sum = 0;
+
+        for (int i = 0; i < this.sampleSpace.size(); i++) {
+            sum += this.sampleSpace.get(i).getValue();
+            if (randomValue < sum) {
+                return this.sampleSpace.get(i).getKey();
+            }
+        }
+        return this.sampleSpace.get(this.sampleSpace.size() - 1).getKey();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int size() {
+        return 1;
     }
 
     /**
