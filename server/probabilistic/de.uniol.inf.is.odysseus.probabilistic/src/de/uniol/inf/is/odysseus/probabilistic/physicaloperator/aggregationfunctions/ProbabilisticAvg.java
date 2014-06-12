@@ -76,7 +76,7 @@ public class ProbabilisticAvg extends AbstractAggregateFunction<ProbabilisticTup
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> init(final ProbabilisticTuple<IProbabilistic> in) {
-        ProbabilisticTuple<IProbabilistic> restricted = in.restrict(pos, true);
+        final ProbabilisticTuple<IProbabilistic> restricted = in.restrict(this.pos, true);
         final MultivariateMixtureDistribution distribution = restricted.getDistribution(((ProbabilisticDouble) restricted.getAttribute(0)).getDistribution());
         final AvgPartialAggregate<ProbabilisticTuple<IProbabilistic>> pa = new AvgPartialAggregate<ProbabilisticTuple<IProbabilistic>>(distribution, this.datatype);
         return pa;
@@ -93,7 +93,7 @@ public class ProbabilisticAvg extends AbstractAggregateFunction<ProbabilisticTup
     @Override
     public final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> merge(final IPartialAggregate<ProbabilisticTuple<IProbabilistic>> p, final ProbabilisticTuple<IProbabilistic> toMerge,
             final boolean createNew) {
-        ProbabilisticTuple<IProbabilistic> restricted = toMerge.restrict(pos, true);
+        final ProbabilisticTuple<IProbabilistic> restricted = toMerge.restrict(this.pos, true);
 
         AvgPartialAggregate<ProbabilisticTuple<IProbabilistic>> pa = null;
         if (createNew) {
