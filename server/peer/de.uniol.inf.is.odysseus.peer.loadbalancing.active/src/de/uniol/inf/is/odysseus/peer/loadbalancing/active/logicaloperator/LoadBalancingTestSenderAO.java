@@ -48,12 +48,7 @@ public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
 	 * enabled
 	 */
 	public LoadBalancingTestSenderAO() {
-		// QA: since all parameters are not optional, default values make no sense. M.B.
-		// QA: missing call of super constructor. M.B.
-		// QA: Should writeToLog be optional? Default true, since it's a test operator M.B.
-		startSyncAfter = 10;
-		stopSyncAfter = 10;
-		pauseBetween = 10;
+		super();
 		writeToLog = true;
 	}
 
@@ -116,7 +111,7 @@ public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
 	 *            {@link LoadBalancingPunctuation} to start the sync will be
 	 *            send.
 	 */
-	@Parameter(type = IntegerParameter.class, name = "startSyncAfter", optional = false)
+	@Parameter(type = IntegerParameter.class, name = "startSyncAfter", optional = false, doc = "Number of tuples to wait before a LoadBalancingPunctuation to start will be send")
 	public void setStartSyncAfter(long numberOfTuples) {
 		this.startSyncAfter = numberOfTuples;
 	}
@@ -128,7 +123,7 @@ public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
 	 *            {@link LoadBalancingPunctuation} to stop the sync will be
 	 *            send.
 	 */
-	@Parameter(type = IntegerParameter.class, name = "stopSyncAfter", optional = false)
+	@Parameter(type = IntegerParameter.class, name = "stopSyncAfter", optional = false, doc = "Number of tuples to wait between start and stop LoadBalancingPunctuation")
 	public void setStopSyncAfter(long numberOfTuples) {
 		this.stopSyncAfter = numberOfTuples;
 	}
@@ -139,7 +134,7 @@ public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
 	 *            The value with the number of tuples after which the process
 	 *            restarts (additional waiting after the sync stopped)
 	 */
-	@Parameter(type = IntegerParameter.class, name = "pauseBetween", optional = false)
+	@Parameter(type = IntegerParameter.class, name = "pauseBetween", optional = false, doc = "Number of tuples to pause before a new round")
 	public void setPauseBetween(long numberOfTuples) {
 		this.pauseBetween = numberOfTuples;
 	}
@@ -150,7 +145,7 @@ public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
 	 *            Set to true, if operator should write to log when a
 	 *            {@link LoadBalancingPunctuation} is send
 	 */
-	@Parameter(type = BooleanParameter.class, name = "writeToLog", optional = false)
+	@Parameter(type = BooleanParameter.class, name = "writeToLog", optional = true, doc = "Write to log if a LoadBalancingPunctuation was send")
 	public void setWriteToLog(boolean writeToLog) {
 		this.writeToLog = writeToLog;
 	}

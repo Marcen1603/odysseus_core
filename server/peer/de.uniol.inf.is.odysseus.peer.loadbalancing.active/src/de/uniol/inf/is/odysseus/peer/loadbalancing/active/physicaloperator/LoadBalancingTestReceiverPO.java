@@ -34,7 +34,7 @@ public class LoadBalancingTestReceiverPO<T extends IStreamObject<IMetaAttribute>
 	 * that filters the {@link LoadBalancingPunctuation}s and writes them to log
 	 */
 	public LoadBalancingTestReceiverPO() {
-		// QA: Missing call of super constructor. M.B.
+		super();
 		filterLoadBalancingPuctuations = true;
 		writeToLog = true;
 	}
@@ -54,7 +54,7 @@ public class LoadBalancingTestReceiverPO<T extends IStreamObject<IMetaAttribute>
 	 */
 	public LoadBalancingTestReceiverPO(boolean filterLoadBalancingPunctuations,
 			boolean writeToLog) {
-		// QA: Missing call of super constructor. M.B.
+		super();
 		this.filterLoadBalancingPuctuations = filterLoadBalancingPunctuations;
 		this.writeToLog = writeToLog;
 	}
@@ -67,7 +67,7 @@ public class LoadBalancingTestReceiverPO<T extends IStreamObject<IMetaAttribute>
 	 *            {@link LoadBalancingTestReceiverAO} with the configuration
 	 */
 	public LoadBalancingTestReceiverPO(LoadBalancingTestReceiverAO other) {
-		// QA: Missing call of super constructor. M.B.
+		super();
 		this.filterLoadBalancingPuctuations = other
 				.getFilterLoadBalancingPuctuations();
 		this.writeToLog = other.getWriteToLog();
@@ -81,7 +81,7 @@ public class LoadBalancingTestReceiverPO<T extends IStreamObject<IMetaAttribute>
 	 *            {@link LoadBalancingTestReceiverPO} to be copied
 	 */
 	public LoadBalancingTestReceiverPO(LoadBalancingTestReceiverPO<T> other) {
-		// QA: Missing call of super constructor. M.B.
+		super();
 		this.filterLoadBalancingPuctuations = other.filterLoadBalancingPuctuations;
 		this.writeToLog = other.writeToLog;
 	}

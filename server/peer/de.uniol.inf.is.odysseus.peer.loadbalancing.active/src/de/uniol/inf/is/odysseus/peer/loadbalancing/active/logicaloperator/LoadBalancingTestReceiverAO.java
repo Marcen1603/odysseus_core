@@ -32,9 +32,7 @@ public class LoadBalancingTestReceiverAO extends UnaryLogicalOp {
 	 * that filters the {@link LoadBalancingPunctuation}s and writes them to log
 	 */
 	public LoadBalancingTestReceiverAO() {
-		// QA: missing call of super constructor. M.B.
-		// QA: Should writeToLog be optional? Default true, since it's a test operator M.B.
-		// QA: Should filter... be optional? Default true, since it's a test operator M.B.
+		super();
 		filterLoadBalancingPunctuations = true;
 		writeToLog = true;
 	}
@@ -74,8 +72,7 @@ public class LoadBalancingTestReceiverAO extends UnaryLogicalOp {
 	/**
 	 * 
 	 * @return true, if this operator writes the received
-	 *         {@link LoadBalancingPunctuation}s to the log (in debug log
-	 *         level)
+	 *         {@link LoadBalancingPunctuation}s to the log (in debug log level)
 	 */
 	public boolean getWriteToLog() {
 		return writeToLog;
@@ -89,7 +86,7 @@ public class LoadBalancingTestReceiverAO extends UnaryLogicalOp {
 	 *            operator false, if you want to send the
 	 *            {@link LoadBalancingPunctuation}s further
 	 */
-	@Parameter(type = BooleanParameter.class, name = "filterLoadBalancingPuctuations", optional = false)
+	@Parameter(type = BooleanParameter.class, name = "filterLoadBalancingPuctuations", optional = true, doc = "Filter LoadBalancingPunctuations so they won't be send further")
 	public void setFilterLoadBalancingPuctuations(
 			boolean filterLoadBalancingPuctuations) {
 		this.filterLoadBalancingPunctuations = filterLoadBalancingPuctuations;
@@ -99,10 +96,9 @@ public class LoadBalancingTestReceiverAO extends UnaryLogicalOp {
 	 * 
 	 * @param writeToLog
 	 *            Set to true if incoming {@link LoadBalancingPunctuation}s
-	 *            should be logged
-	 *            false if not
+	 *            should be logged false if not
 	 */
-	@Parameter(type = BooleanParameter.class, name = "writeToLog", optional = false)
+	@Parameter(type = BooleanParameter.class, name = "writeToLog", optional = true, doc = "Write in log if a LoadBalancingPunctuation was received")
 	public void setWriteToLog(boolean writeToLog) {
 		this.writeToLog = writeToLog;
 	}
