@@ -34,6 +34,10 @@ public interface MEPImplConstants {
   int RRND = 15;
   /** RegularExpression Id. */
   int LRND = 16;
+  /** RegularExpression Id. */
+  int OPEN_ARRAY = 17;
+  /** RegularExpression Id. */
+  int CLOSE_ARRAY = 18;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -57,6 +61,8 @@ public interface MEPImplConstants {
     "<SPECIAL_CHARS>",
     "\")\"",
     "\"(\"",
+    "\"[\"",
+    "\"]\"",
     "\"-\"",
     "\"!\"",
     "\"^\"",
@@ -75,9 +81,7 @@ public interface MEPImplConstants {
     "\"&&\"",
     "\"||\"",
     "\",\"",
-    "\"[\"",
     "\";\"",
-    "\"]\"",
   };
 
 }

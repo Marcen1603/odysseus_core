@@ -210,6 +210,11 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 		}
 		variable.setAcceptedTypes((SDFDatatype[]) data);
 		symbolTable.put(identifier, variable);
+		
+		//Check for Array
+		if(node.jjtGetNumChildren() == 1) {
+			variable.setArrayIndex((Integer) node.jjtGetChild(0).jjtAccept(this, data));
+		}
 		return variable;
 	}
 
@@ -248,6 +253,11 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 					data);
 		}
 		return new MatrixLine(values);
+	}
+
+	@Override
+	public Object visit(ASTArray node, Object data) {
+		return node.getIndex();
 	}
 
 }

@@ -59,6 +59,8 @@ public class Variable implements IExpression<Object> {
 	 * The array of types that could be used to bind a value
 	 */
 	private SDFDatatype[] acceptedTypes;
+	
+	private Integer arrayIndex;
 
 	/**
 	 * Create a new Variable of type Object
@@ -159,6 +161,14 @@ public class Variable implements IExpression<Object> {
 	public boolean isVariable() {
 		return true;
 	}
+	
+	public boolean isArray() {
+		if(arrayIndex != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	@Override
 	public boolean isFunction() {
@@ -234,5 +244,13 @@ public class Variable implements IExpression<Object> {
 		}
 		
 		this.acceptedTypes = acceptedTypesNew;
+	}
+
+	public Integer getArrayIndex() {
+		return arrayIndex;
+	}
+
+	public void setArrayIndex(Integer arrayIndex) {
+		this.arrayIndex = arrayIndex;
 	}
 }

@@ -10,5 +10,6 @@ public interface MEPImplVisitor
   public Object visit(ASTVariable node, Object data);
   public Object visit(ASTMatrix node, Object data);
   public Object visit(ASTMatrixLine node, Object data);
+  public Object visit(ASTArray node, Object data);
 }
-/* JavaCC - OriginalChecksum=709d1cd9110aa741326a57c25afcb72c (do not edit this line) */
+/* JavaCC - OriginalChecksum=f5f7545b1109ce8fb464a10f2e1f630e (do not edit this line) */

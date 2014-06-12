@@ -349,6 +349,7 @@ public class SDFExpression implements Serializable, IClone {
 		return this.expressionString;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void bindVariables(Object... values) {
 		if (expression instanceof Constant) {
 			return;
@@ -358,15 +359,21 @@ public class SDFExpression implements Serializable, IClone {
 			throw new IllegalArgumentException(
 					"illegal variable bindings in expression");
 		}
-
+		
 		for (int i = 0; i < values.length; ++i) {
-			variableArrayList.get(i).bind(values[i], null, -1);
+			Variable variable = variableArrayList.get(i);
+			if(variable.isArray()) {
+				variable.bind(((List<Object>)values[i]).get(variable.getArrayIndex()), null, -1);
+			} else {
+				variable.bind(values[i], null, -1);
+			}
 		}
 
 		setValue(expression.getValue());
 	}
 
-    public void bindVariables(IMetaAttribute[] metadata, Object... values) {
+    @SuppressWarnings("unchecked")
+	public void bindVariables(IMetaAttribute[] metadata, Object... values) {
         if (expression instanceof Constant) {
             return;
         }
@@ -376,12 +383,18 @@ public class SDFExpression implements Serializable, IClone {
         }
 
         for (int i = 0; i < values.length; ++i) {
-            variableArrayList.get(i).bind(values[i], metadata[i], -1);
+			Variable variable = variableArrayList.get(i);
+			if(variable.isArray()) {
+				variable.bind(((List<Object>)values[i]).get(variable.getArrayIndex()), metadata[i], -1);
+			} else {
+				variable.bind(values[i], metadata[i], -1);
+			}
         }
 
         setValue(expression.getValue());
     }
 	   
+	@SuppressWarnings("unchecked")
 	public void bindVariables(int[] positions, IMetaAttribute[] metadata, Object... values) {
 		if (expression instanceof Constant) {
 			return;
@@ -393,7 +406,12 @@ public class SDFExpression implements Serializable, IClone {
 		}
 
 		for (int i = 0; i < values.length; ++i) {
-			variableArrayList.get(i).bind(values[i], metadata[i], positions[i]);
+			Variable variable = variableArrayList.get(i);
+			if(variable.isArray()) {
+				variable.bind(((List<Object>)values[i]).get(variable.getArrayIndex()), metadata[i], positions[i]);
+			} else {
+				variable.bind(values[i], metadata[i], positions[i]);
+			}
 		}
 
 		setValue(expression.getValue());
