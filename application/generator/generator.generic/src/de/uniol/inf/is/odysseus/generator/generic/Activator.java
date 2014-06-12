@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.Multivaria
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.NormalDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.ParetoDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.PascalDistributionGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.RayleighDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.TDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.TriangularDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.UniformDistributionGenerator;
@@ -84,6 +85,7 @@ public class Activator implements BundleActivator {
         generators.put("NormalDistributionGenerator".toUpperCase(), NormalDistributionGenerator.class);
         generators.put("ParetoDistributionGenerator".toUpperCase(), ParetoDistributionGenerator.class);
         generators.put("PascalDistributionGenerator".toUpperCase(), PascalDistributionGenerator.class);
+        generators.put("RayleighDistributionGenerator".toUpperCase(), RayleighDistributionGenerator.class);
         generators.put("TDistributionGenerator".toUpperCase(), TDistributionGenerator.class);
         generators.put("TriangularDistributionGenerator".toUpperCase(), TriangularDistributionGenerator.class);
         generators.put("UniformDistributionGenerator".toUpperCase(), UniformDistributionGenerator.class);
@@ -107,7 +109,6 @@ public class Activator implements BundleActivator {
         generators.put("MovingCircleGenerator".toUpperCase(), MovingCircleGenerator.class);
         generators.put("MovingPolynomialGenerator".toUpperCase(), MovingPolynomialGenerator.class);
         generators.put("WaypointGenerator".toUpperCase(), WaypointGenerator.class);
-
     }
 
     static BundleContext getContext() {
