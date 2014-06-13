@@ -31,7 +31,7 @@ public class VectorGetOperator extends AbstractFunction<Double> {
     private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.VECTORS, SDFDatatype.NUMBERS };
 
     public VectorGetOperator() {
-        super("[]", 2, accTypes, SDFDatatype.DOUBLE, false);
+        super("[]", 2, accTypes, SDFDatatype.DOUBLE);
     }
 
     @Override

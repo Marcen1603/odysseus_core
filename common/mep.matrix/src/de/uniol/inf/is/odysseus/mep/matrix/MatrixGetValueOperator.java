@@ -31,7 +31,7 @@ public class MatrixGetValueOperator extends AbstractFunction<Double> {
     private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS, SDFDatatype.VECTORS };
 
     public MatrixGetValueOperator() {
-        super("[]", 2, accTypes, SDFDatatype.DOUBLE, false);
+        super("[]", 2, accTypes, SDFDatatype.DOUBLE);
     }
 
     @Override
