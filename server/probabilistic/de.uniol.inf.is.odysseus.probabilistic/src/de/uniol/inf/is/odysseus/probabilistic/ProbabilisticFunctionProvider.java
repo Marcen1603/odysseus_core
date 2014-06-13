@@ -44,6 +44,9 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.math.BhattacharyyaDistan
 import de.uniol.inf.is.odysseus.probabilistic.functions.math.BhattacharyyaDistanceFunctionVector;
 import de.uniol.inf.is.odysseus.probabilistic.functions.math.EuclideanDistanceFunction;
 import de.uniol.inf.is.odysseus.probabilistic.functions.math.EuclideanDistanceFunctionVector;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.KullbackLeiblerDivergenceFunction;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.KullbackLeiblerDivergenceFunctionVector;
+import de.uniol.inf.is.odysseus.probabilistic.functions.math.LogLikelihoodFunction;
 import de.uniol.inf.is.odysseus.probabilistic.functions.math.MahalanobisDistanceFunction;
 import de.uniol.inf.is.odysseus.probabilistic.functions.math.MahalanobisDistanceFunctionVector;
 import de.uniol.inf.is.odysseus.probabilistic.functions.math.ProbabilisticAddNumberLHSOperator;
@@ -136,6 +139,11 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
             functions.add(new BhattacharyyaDistanceFunction());
             functions.add(new MahalanobisDistanceFunctionVector());
             functions.add(new MahalanobisDistanceFunction());
+
+            functions.add(new KullbackLeiblerDivergenceFunctionVector());
+            functions.add(new KullbackLeiblerDivergenceFunction());
+
+            functions.add(new LogLikelihoodFunction());
 
             functions.add(new As2DVectorFunction());
             functions.add(new As3DVectorFunction());
