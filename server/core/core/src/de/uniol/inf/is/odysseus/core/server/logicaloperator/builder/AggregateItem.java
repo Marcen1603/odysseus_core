@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -30,4 +31,11 @@ public class AggregateItem {
 		this.inAttributes = attributes;
 		this.outAttribute = outAttr;
 	}
+	
+    public AggregateItem(String function, SDFAttribute attribute, SDFAttribute outAttr) {
+        this.aggregateFunction = new AggregateFunction(function);
+        this.inAttributes = new ArrayList<SDFAttribute>();
+        this.inAttributes.add(attribute);
+        this.outAttribute = outAttr;
+    }
 }
