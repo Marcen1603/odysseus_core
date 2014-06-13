@@ -28,6 +28,10 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivar
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 
 /**
+ * Implementation of the Kullback-Leibler divergence for multivariate normal
+ * distribution, see {@link https
+ * ://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence}
+ * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
