@@ -29,6 +29,8 @@ public class ParserClientUtil {
 		context.put("WORKSPACEPROJECT", localRootLocation + File.separator + projectName);
 		context.put("WORKSPACEPROJECT\\", localRootLocation + File.separator + projectName + File.separator);
 		context.put("WORKSPACEPROJECT/", localRootLocation + File.separator + projectName + File.separator);
+		// this is used to run tests inside of studio
+		context.put("BUNDLE-ROOT", localRootLocation + File.separator + projectName);
 		context.put("\\", File.separator);
 		context.put("/", File.separator);
 		
