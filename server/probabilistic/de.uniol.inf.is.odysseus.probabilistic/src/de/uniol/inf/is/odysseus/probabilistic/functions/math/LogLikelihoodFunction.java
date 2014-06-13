@@ -35,7 +35,7 @@ public class LogLikelihoodFunction extends AbstractFunction<Double> {
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.LIST }, { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE } };
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.MATRIXS, { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE } };
 
     public LogLikelihoodFunction() {
         super("loglikelihood", 2, ACC_TYPES, SDFDatatype.DOUBLE);
