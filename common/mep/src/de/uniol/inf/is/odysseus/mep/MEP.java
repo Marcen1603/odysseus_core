@@ -88,6 +88,7 @@ import de.uniol.inf.is.odysseus.mep.functions.math.FloorFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.HyperbolicCosinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.HyperbolicSinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.HyperbolicTangensFunction;
+import de.uniol.inf.is.odysseus.mep.functions.math.Log10Function;
 import de.uniol.inf.is.odysseus.mep.functions.math.LogFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.MinusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.ModuloOperator;
@@ -306,6 +307,8 @@ public class MEP implements IExpressionParser {
 
 		registerFunction(new ExpFunction());
 		registerFunction(new LogFunction());
+	    registerFunction(new Log10Function());
+
 
 		registerFunction(new ToRadians());
 		registerFunction(new ToDegrees());
