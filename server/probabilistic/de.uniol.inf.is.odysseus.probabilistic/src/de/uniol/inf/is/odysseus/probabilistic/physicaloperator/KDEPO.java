@@ -16,16 +16,14 @@
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.stat.correlation.Covariance;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -49,13 +47,24 @@ public class KDEPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTu
     private final DefaultTISweepArea<Tuple<? extends ITimeInterval>> area;
     /** The attribute positions. */
     private final int[] attributes;
+    /** partial parameter to estimate the covariance matrix. */
+    private final Parameter[][] covarianceParameter;
+    /** The covariance matrix. */
+    private final double[][] covariance;
 
     /**
  * 
  */
     public KDEPO(final int[] attributes) {
         this.attributes = attributes;
+        this.covariance = new double[this.attributes.length][attributes.length];
+        this.covarianceParameter = new Parameter[this.attributes.length][attributes.length];
         this.area = new DefaultTISweepArea<Tuple<? extends ITimeInterval>>();
+        for (int i = 0; i < this.attributes.length; i++) {
+            for (int j = 0; j < this.attributes.length; j++) {
+                this.covarianceParameter[i][j] = new Parameter();
+            }
+        }
     }
 
     /**
@@ -64,7 +73,14 @@ public class KDEPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTu
     public KDEPO(final KDEPO<T> po) {
         super(po);
         this.attributes = po.attributes.clone();
+        this.covariance = po.covariance.clone();
+        this.covarianceParameter = new Parameter[this.attributes.length][this.attributes.length];
         this.area = po.area.clone();
+        for (int i = 0; i < this.attributes.length; i++) {
+            for (int j = 0; j < this.attributes.length; j++) {
+                this.covarianceParameter[i][j] = new Parameter();
+            }
+        }
     }
 
     /**
@@ -85,29 +101,42 @@ public class KDEPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTu
         final ProbabilisticTuple<T> outputVal = object.clone();
         final Tuple<T> restrictedObject = object.restrict(this.attributes, true);
         synchronized (this.area) {
-            this.area.purgeElements(restrictedObject, Order.LeftRight);
+            final Iterator<Tuple<? extends ITimeInterval>> iter = this.area.extractElementsEndBefore(restrictedObject.getMetadata().getStart());
+            while (iter.hasNext()) {
+                final Tuple<? extends ITimeInterval> attr = iter.next();
+                for (int i = 0; i < this.attributes.length; i++) {
+                    for (int j = 0; j < this.attributes.length; j++) {
+                        this.covarianceParameter[i][j].subtract(((Number) attr.getAttributes()[i]).doubleValue(), ((Number) attr.getAttributes()[j]).doubleValue());
+                    }
+                }
+            }
         }
 
         synchronized (this.area) {
             this.area.insert(restrictedObject);
-        }
-        final double[][] data = new double[this.area.size()][this.attributes.length];
-        int i = 0;
-        for (final Tuple<?> t : this.area) {
-            for (int j = 0; j < this.attributes.length; j++) {
-                data[i][j] = ((Number) t.getAttributes()[j]).doubleValue();
+            for (int i = 0; i < this.attributes.length; i++) {
+                for (int j = 0; j < this.attributes.length; j++) {
+                    this.covarianceParameter[i][j].add(((Number) restrictedObject.getAttributes()[i]).doubleValue(), ((Number) restrictedObject.getAttributes()[j]).doubleValue());
+                }
             }
-            i++;
         }
         // Estimate covariance matrix
         final double factor = BandwidthSelectionRule.scott(this.area.size(), this.attributes.length);
-        final RealMatrix dataCovarianceMatrix = new Covariance(data, false).getCovarianceMatrix();
-        final RealMatrix covariance = dataCovarianceMatrix.scalarMultiply(FastMath.pow(factor, 2.0));
+        for (int i = 0; i < this.attributes.length; i++) {
+            for (int j = 0; j < this.attributes.length; j++) {
+                this.covariance[i][j] = this.covarianceParameter[i][j].covariance() * FastMath.pow(factor, 2.0);
+            }
+        }
+        // Create KDE components
+        final List<Pair<Double, IMultivariateDistribution>> components = new ArrayList<>(this.area.size());
+        for (final Tuple<?> t : this.area) {
+            final double[] data = new double[this.attributes.length];
+            for (int j = 0; j < this.attributes.length; j++) {
+                data[j] = ((Number) t.getAttributes()[j]).doubleValue();
+            }
+            final IMultivariateDistribution component = new MultivariateNormalDistribution(data, this.covariance);
 
-        final List<Pair<Double, IMultivariateDistribution>> components = new ArrayList<>(data.length);
-        for (final double[] d : data) {
-            final IMultivariateDistribution component = new MultivariateNormalDistribution(d, covariance.getData());
-            components.add(new Pair<>(new Double(1.0 / data.length), component));
+            components.add(new Pair<>(new Double(1.0 / this.area.size()), component));
         }
 
         final MultivariateMixtureDistribution distribution = new MultivariateMixtureDistribution(components);
@@ -131,6 +160,39 @@ public class KDEPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTu
     @Override
     public AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> clone() {
         return new KDEPO<T>(this);
+    }
+
+    private static class Parameter {
+
+        private double sumA;
+        private double sumB;
+        private double crossproductSum;
+        private double count;
+
+        /**
+         * 
+         */
+        public Parameter() {
+        }
+
+        public void add(final double a, final double b) {
+            this.sumA += a;
+            this.sumB += b;
+            this.crossproductSum += a * b;
+            this.count++;
+        }
+
+        public void subtract(final double a, final double b) {
+            this.sumA -= a;
+            this.sumB -= b;
+            this.crossproductSum -= a * b;
+            this.count--;
+        }
+
+        public double covariance() {
+            return (this.crossproductSum - ((this.sumA * this.sumB) / this.count)) / (this.count - 1);
+
+        }
     }
 
 }
