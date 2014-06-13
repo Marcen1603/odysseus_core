@@ -175,7 +175,10 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		synchronized (buffers) {
 			for (List<T> b : buffers.values()) {
                 if (b.size() > 0) {
-                    transferBuffer(b, b.size(), lastTs);
+                	// Transfer elements in buffers
+                	// use lastTs+1 as timestamp for the last element (else the last element
+                	// will be removed)
+                    transferBuffer(b, b.size(), lastTs.plus(1));
                     for (T t : b) {
                         transferArea.transfer(t);
                     }
