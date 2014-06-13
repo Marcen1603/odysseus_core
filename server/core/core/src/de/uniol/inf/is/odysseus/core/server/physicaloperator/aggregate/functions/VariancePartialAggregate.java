@@ -1,44 +1,44 @@
 /********************************************************************************** 
- * Copyright 2014 The Odysseus Team
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+  * Copyright 2014 The Odysseus Team
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
-public class StandardDeviationPartialAggregate<R> extends AbstractPartialAggregate<R> {
+public class VariancePartialAggregate<R> extends AbstractPartialAggregate<R> {
 
     private double diffSquareSum;
     private double mean;
     private int count;
 
-    public StandardDeviationPartialAggregate(final Double value) {
+    public VariancePartialAggregate(final Double value) {
         this.add(value);
     }
 
-    public StandardDeviationPartialAggregate(final StandardDeviationPartialAggregate<R> partialAggregate) {
+    public VariancePartialAggregate(final VariancePartialAggregate<R> partialAggregate) {
         this.mean = partialAggregate.mean;
         this.diffSquareSum = partialAggregate.diffSquareSum;
         this.count = partialAggregate.count;
     }
 
     public Double getAggValue() {
-        return Math.sqrt(this.diffSquareSum / (this.count - 1.0));
+        return this.diffSquareSum / (this.count - 1.0);
     }
 
     public void add(final Double value) {
@@ -51,24 +51,24 @@ public class StandardDeviationPartialAggregate<R> extends AbstractPartialAggrega
         this.diffSquareSum += delta * (value - this.mean);
     }
 
-    public void add(final StandardDeviationPartialAggregate<?> value) {
+    public void add(final VariancePartialAggregate<?> value) {
         this.mean += value.mean;
         this.diffSquareSum += value.diffSquareSum;
         this.count += value.count;
     }
 
     @Override
-    public StandardDeviationPartialAggregate<R> clone() {
-        return new StandardDeviationPartialAggregate<R>(this);
+    public VariancePartialAggregate<R> clone() {
+        return new VariancePartialAggregate<R>(this);
     }
 
     @Override
     public String toString() {
-        return "STDDEV= " + this.getAggValue();
+        return "VAR= " + this.getAggValue();
     }
 
     public static void main(final String[] args) {
-        final StandardDeviationPartialAggregate<?> agg = new StandardDeviationPartialAggregate<>(2.0);
+        final VariancePartialAggregate<?> agg = new VariancePartialAggregate<>(2.0);
         agg.add(4.0);
         agg.add(4.0);
         agg.add(4.0);
@@ -76,7 +76,7 @@ public class StandardDeviationPartialAggregate<R> extends AbstractPartialAggrega
         agg.add(5.0);
         agg.add(7.0);
         agg.add(9.0);
-        assert (agg.getAggValue() == 2.138089935299395);
+        assert (agg.getAggValue() == 4.571428571428571);
         System.out.println(agg);
     }
 }

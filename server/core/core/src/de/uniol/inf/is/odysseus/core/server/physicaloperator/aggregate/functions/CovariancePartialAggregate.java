@@ -21,68 +21,58 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class CorrelationPartialAggregate<R> extends AbstractPartialAggregate<R> {
+public class CovariancePartialAggregate<R> extends AbstractPartialAggregate<R> {
 
     private double sumA;
     private double sumB;
-    private double squareSumA;
-    private double squareSumB;
     private double crossproductSum;
     private int count;
 
-    public CorrelationPartialAggregate(final Double a, final Double b) {
+    public CovariancePartialAggregate(final Double a, final Double b) {
         this.add(a, b);
     }
 
-    public CorrelationPartialAggregate(final CorrelationPartialAggregate<R> partialAggregate) {
+    public CovariancePartialAggregate(final CovariancePartialAggregate<R> partialAggregate) {
         this.sumA = partialAggregate.sumA;
         this.sumB = partialAggregate.sumB;
-        this.squareSumA = partialAggregate.squareSumA;
-        this.squareSumB = partialAggregate.squareSumB;
         this.crossproductSum = partialAggregate.crossproductSum;
         this.count = partialAggregate.count;
     }
 
     public Double getAggValue() {
-        // http://en.wikipedia.org/wiki/Correlation
-        return ((this.count * this.crossproductSum) - (this.sumA * this.sumB))
-                / (Math.sqrt((this.count * this.squareSumA) - Math.pow(this.sumA, 2.0)) * Math.sqrt((this.count * this.squareSumB) - Math.pow(this.sumB, 2.0)));
+        return (this.crossproductSum - (this.sumA * this.sumB) / this.count) / (this.count - 1);
     }
 
     public void add(final Double a, final Double b) {
         this.sumA += a;
         this.sumB += b;
-        this.squareSumA += Math.pow(a, 2.0);
-        this.squareSumB += Math.pow(b, 2.0);
         this.crossproductSum += a * b;
         this.count++;
     }
 
-    public void add(final CorrelationPartialAggregate<?> value) {
+    public void add(final CovariancePartialAggregate<?> value) {
         this.sumA += value.sumA;
         this.sumB += value.sumB;
-        this.squareSumA += value.squareSumA;
-        this.squareSumB += value.squareSumB;
         this.crossproductSum += value.crossproductSum;
         this.count += value.count;
     }
 
     @Override
-    public CorrelationPartialAggregate<R> clone() {
-        return new CorrelationPartialAggregate<R>(this);
+    public CovariancePartialAggregate<R> clone() {
+        return new CovariancePartialAggregate<R>(this);
     }
 
     @Override
     public String toString() {
-        return "CORR= " + this.getAggValue();
+        return "COV= " + this.getAggValue();
     }
 
     public static void main(final String[] args) {
-        final CorrelationPartialAggregate<?> agg = new CorrelationPartialAggregate<>(2.1, 8.0);
+        final CovariancePartialAggregate<?> agg = new CovariancePartialAggregate<>(2.1, 8.0);
         agg.add(2.5, 12.0);
         agg.add(4.0, 14.0);
         agg.add(3.6, 10.0);
-        assert (agg.getAggValue() == 0.6625738822030308);
+        assert (agg.getAggValue() == 1.533333333333341);
         System.out.println(agg);
     }
 

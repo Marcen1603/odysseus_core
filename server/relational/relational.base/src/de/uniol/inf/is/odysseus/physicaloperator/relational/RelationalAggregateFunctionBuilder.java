@@ -37,6 +37,8 @@ public class RelationalAggregateFunctionBuilder implements
     private final static String NEST = "NEST";
     private final static String STDDEV = "STDDEV";
     private final static String CORR = "CORR";
+    private final static String COV = "COV";
+    private final static String VAR = "VAR";
     private final static String LAST = "LAST";
     private final static String FIRST = "FIRST";
     private final static String NTH = "NTH";
@@ -55,6 +57,8 @@ public class RelationalAggregateFunctionBuilder implements
 		names.add(NEST);
 		names.add(STDDEV);
         names.add(CORR);
+        names.add(COV);
+        names.add(VAR);
         names.add(LAST);
         names.add(FIRST);
         names.add(NTH);
@@ -80,9 +84,13 @@ public class RelationalAggregateFunctionBuilder implements
 					(key.getName().equalsIgnoreCase(MAX)) ? true : false, partialAggregateInput, datatype);
 		}else if ((key.getName().equalsIgnoreCase(STDDEV))){
 			aggFunc = RelationalStdDev.getInstance(pos[0], partialAggregateInput);
-	     }else if ((key.getName().equalsIgnoreCase(CORR))){
-	        aggFunc = RelationalCorr.getInstance(pos[0], pos[1], partialAggregateInput);
-		} else if ((key.getName().equalsIgnoreCase(NEST))) {
+        } else if ((key.getName().equalsIgnoreCase(CORR))) {
+            aggFunc = RelationalCorr.getInstance(pos[0], pos[1], partialAggregateInput);
+        } else if ((key.getName().equalsIgnoreCase(COV))) {
+            aggFunc = RelationalCov.getInstance(pos[0], pos[1], partialAggregateInput);
+        } else if ((key.getName().equalsIgnoreCase(VAR))) {
+            aggFunc = RelationalVar.getInstance(pos[0], partialAggregateInput);		
+        } else if ((key.getName().equalsIgnoreCase(NEST))) {
 			aggFunc = new RelationalNest(pos, partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase(LAST)) {
 			aggFunc = RelationalLast.getInstance(pos[0], partialAggregateInput, datatype);

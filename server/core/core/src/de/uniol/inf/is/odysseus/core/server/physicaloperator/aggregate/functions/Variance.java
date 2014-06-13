@@ -21,13 +21,14 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-abstract public class Correlation<R, W> extends AbstractAggregateFunction<R, W> {
+abstract public class Variance<R, W> extends AbstractAggregateFunction<R, W> {
+
     /**
      * 
      */
-    private static final long serialVersionUID = 5937453654939284172L;
+    private static final long serialVersionUID = 128059121145804444L;
 
-    protected Correlation(final boolean partialAggregateInput) {
-        super("CORR", partialAggregateInput);
+    protected Variance(final boolean partialAggregateInput) {
+        super("VAR", partialAggregateInput);
     }
 }

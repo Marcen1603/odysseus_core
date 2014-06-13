@@ -19,30 +19,30 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Correlation;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.CorrelationPartialAggregate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Covariance;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.CovariancePartialAggregate;
 
 /**
- * Estimates the correlation coefficient between two attributes.
+ * Estimates the covariance between two attributes.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class RelationalCorr extends Correlation<Tuple<?>, Tuple<?>> {
+public class RelationalCov extends Covariance<Tuple<?>, Tuple<?>> {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -5878264128156808625L;
+    private static final long serialVersionUID = -5675774570393031124L;
     private final int posA;
     private final int posB;
 
-    static public RelationalCorr getInstance(final int posA, final int posB, final boolean partialAggregateInput) {
-        return new RelationalCorr(posA, posB, partialAggregateInput);
+    static public RelationalCov getInstance(final int posA, final int posB, final boolean partialAggregateInput) {
+        return new RelationalCov(posA, posB, partialAggregateInput);
     }
 
-    private RelationalCorr(final int posA, final int posB, final boolean partialAggregateInput) {
+    private RelationalCov(final int posA, final int posB, final boolean partialAggregateInput) {
         super(partialAggregateInput);
         this.posA = posA;
         this.posB = posB;
@@ -55,10 +55,10 @@ public class RelationalCorr extends Correlation<Tuple<?>, Tuple<?>> {
     @Override
     public IPartialAggregate<Tuple<?>> init(final Tuple in) {
         if (this.isPartialAggregateInput()) {
-            return this.init((CorrelationPartialAggregate<Tuple<?>>) in.getAttribute(this.posA));
+            return this.init((CovariancePartialAggregate<Tuple<?>>) in.getAttribute(this.posA));
         }
         else {
-            return new CorrelationPartialAggregate<Tuple<?>>(((Number) in.getAttribute(this.posA)).doubleValue(), ((Number) in.getAttribute(this.posB)).doubleValue());
+            return new CovariancePartialAggregate<Tuple<?>>(((Number) in.getAttribute(this.posA)).doubleValue(), ((Number) in.getAttribute(this.posB)).doubleValue());
         }
     }
 
@@ -68,7 +68,7 @@ public class RelationalCorr extends Correlation<Tuple<?>, Tuple<?>> {
      */
     @Override
     public IPartialAggregate<Tuple<?>> init(final IPartialAggregate<Tuple<?>> in) {
-        return new CorrelationPartialAggregate<Tuple<?>>((CorrelationPartialAggregate<Tuple<?>>) in);
+        return new CovariancePartialAggregate<Tuple<?>>((CovariancePartialAggregate<Tuple<?>>) in);
     }
 
     /**
@@ -80,14 +80,14 @@ public class RelationalCorr extends Correlation<Tuple<?>, Tuple<?>> {
      */
     @Override
     public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate p, final Tuple toMerge, final boolean createNew) {
-        CorrelationPartialAggregate<Tuple<?>> pa = null;
+        CovariancePartialAggregate<Tuple<?>> pa = null;
         if (createNew) {
-            final CorrelationPartialAggregate<Tuple<?>> h = (CorrelationPartialAggregate<Tuple<?>>) p;
-            pa = new CorrelationPartialAggregate<Tuple<?>>(h);
+            final CovariancePartialAggregate<Tuple<?>> h = (CovariancePartialAggregate<Tuple<?>>) p;
+            pa = new CovariancePartialAggregate<Tuple<?>>(h);
 
         }
         else {
-            pa = (CorrelationPartialAggregate<Tuple<?>>) p;
+            pa = (CovariancePartialAggregate<Tuple<?>>) p;
         }
         return this.merge(pa, toMerge);
     }
@@ -99,7 +99,7 @@ public class RelationalCorr extends Correlation<Tuple<?>, Tuple<?>> {
      * @return
      */
     public IPartialAggregate<Tuple<? extends IMetaAttribute>> merge(final IPartialAggregate p, final Tuple<?> toMerge) {
-        final CorrelationPartialAggregate pa = (CorrelationPartialAggregate) p;
+        final CovariancePartialAggregate pa = (CovariancePartialAggregate) p;
         if (this.isPartialAggregateInput()) {
             return this.merge(p, (IPartialAggregate) toMerge.getAttribute(this.posA), false);
         }
@@ -115,13 +115,13 @@ public class RelationalCorr extends Correlation<Tuple<?>, Tuple<?>> {
      */
     @Override
     public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final IPartialAggregate<Tuple<?>> toMerge, final boolean createNew) {
-        CorrelationPartialAggregate<Tuple<?>> pa = null;
+        CovariancePartialAggregate<Tuple<?>> pa = null;
         if (createNew) {
-            final CorrelationPartialAggregate<Tuple<?>> h = (CorrelationPartialAggregate<Tuple<?>>) p;
-            pa = new CorrelationPartialAggregate<Tuple<?>>(h);
+            final CovariancePartialAggregate<Tuple<?>> h = (CovariancePartialAggregate<Tuple<?>>) p;
+            pa = new CovariancePartialAggregate<Tuple<?>>(h);
         }
         else {
-            pa = (CorrelationPartialAggregate<Tuple<?>>) p;
+            pa = (CovariancePartialAggregate<Tuple<?>>) p;
         }
         return this.merge(pa, toMerge);
     }
@@ -131,8 +131,8 @@ public class RelationalCorr extends Correlation<Tuple<?>, Tuple<?>> {
      * @param toMerge
      * @return
      */
-    public IPartialAggregate<Tuple<?>> merge(final CorrelationPartialAggregate<Tuple<?>> pa, final IPartialAggregate<Tuple<?>> toMerge) {
-        final CorrelationPartialAggregate paToMerge = (CorrelationPartialAggregate) toMerge;
+    public IPartialAggregate<Tuple<?>> merge(final CovariancePartialAggregate<Tuple<?>> pa, final IPartialAggregate<Tuple<?>> toMerge) {
+        final CovariancePartialAggregate paToMerge = (CovariancePartialAggregate) toMerge;
         pa.add(paToMerge);
         return pa;
     }
@@ -143,7 +143,7 @@ public class RelationalCorr extends Correlation<Tuple<?>, Tuple<?>> {
      */
     @Override
     public Tuple evaluate(final IPartialAggregate p) {
-        final CorrelationPartialAggregate pa = (CorrelationPartialAggregate) p;
+        final CovariancePartialAggregate pa = (CovariancePartialAggregate) p;
         final Tuple<? extends IMetaAttribute> r = new Tuple(1, false);
         r.setAttribute(0, new Double(pa.getAggValue().doubleValue()));
         return r;
@@ -151,7 +151,7 @@ public class RelationalCorr extends Correlation<Tuple<?>, Tuple<?>> {
 
     @Override
     public SDFDatatype getPartialAggregateType() {
-        return SDFDatatype.CORR_PARTIAL_AGGREGATE;
+        return SDFDatatype.COV_PARTIAL_AGGREGATE;
     }
 
 }

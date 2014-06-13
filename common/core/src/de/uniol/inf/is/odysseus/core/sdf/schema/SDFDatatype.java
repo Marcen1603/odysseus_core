@@ -127,6 +127,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
     public static final SDFDatatype MEDIAN_PARTIAL_AGGREGATE = new SDFDatatype("MedianPartialAggregate");
     public static final SDFDatatype STDDEV_PARTIAL_AGGREGATE = new SDFDatatype("StdDevPartialAggregate");
     public static final SDFDatatype CORR_PARTIAL_AGGREGATE = new SDFDatatype("CorrPartialAggregate");
+    public static final SDFDatatype COV_PARTIAL_AGGREGATE = new SDFDatatype("CovPartialAggregate");
+    public static final SDFDatatype VAR_PARTIAL_AGGREGATE = new SDFDatatype("VarPartialAggregate");
 
     public static final SDFDatatype[] NUMBERS = new SDFDatatype[] { BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE, START_TIMESTAMP, END_TIMESTAMP, TIMESTAMP };
 
