@@ -55,6 +55,8 @@ public abstract class AbstractKullbackLeiblerDivergenceFunction extends Abstract
      * @return The Kullback-Leibler divergence
      */
     protected final double getValueInternal(final MultivariateMixtureDistribution a, final MultivariateMixtureDistribution b) {
+        // FIXME Only for 1 component mixtures. How to do it with multiple
+        // mixture components?
         double divergence = 0.0;
         final int dimension = a.getDimension();
         for (final Pair<Double, IMultivariateDistribution> aEntry : a.getComponents()) {

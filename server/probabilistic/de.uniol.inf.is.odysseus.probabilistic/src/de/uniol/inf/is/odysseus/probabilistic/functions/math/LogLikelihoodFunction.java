@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.functions.math;
 
-import java.util.List;
-
 import org.apache.commons.math3.util.FastMath;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -48,8 +46,7 @@ public class LogLikelihoodFunction extends AbstractFunction<Double> {
      */
     @Override
     public Double getValue() {
-        @SuppressWarnings("unchecked")
-        final List<Double> a = (List<Double>) this.getInputValue(0);
+        final double[] a = ((double[][]) this.getInputValue(0))[0];
         final MultivariateMixtureDistribution b = (MultivariateMixtureDistribution) this.getInputValue(1);
         double sum = 0.0;
         for (Double point : a) {
@@ -58,6 +55,6 @@ public class LogLikelihoodFunction extends AbstractFunction<Double> {
                 sum += FastMath.log(density);
             }
         }
-        return sum / a.size();
+        return sum / a.length;
     }
 }
