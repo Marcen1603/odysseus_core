@@ -139,6 +139,8 @@ void UnaryExpression()       :
 {
   LOOKAHEAD(< IDENTIFIER > < LRND >)
   Function()
+| LOOKAHEAD(< IDENTIFIER > < OPEN_ARRAY >)
+  ArrayExpression()  
 | Variable()
 | Constant()
 | Negation()
@@ -458,6 +460,38 @@ void OrExpression()       :
 )*
 }
 
+void ArrayExpression()      :
+{}
+{
+  Variable()
+  (
+    < OPEN_ARRAY > UnaryExpression() < CLOSE_ARRAY >/*@bgen(jjtree) #Function( 2) */
+    {
+      ASTFunction jjtn001 = new ASTFunction(JJTFUNCTION);
+      boolean jjtc001 = true;
+      jjtree.openNodeScope(jjtn001);
+    }
+    try {
+/*@egen*//*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn001,  2);
+      jjtc001 = false;
+    }
+/*@egen*/
+    {
+      jjtn001.setSymbol("[]");
+    }/*@bgen(jjtree)*/
+    } finally {
+      if (jjtc001) {
+        jjtree.closeNodeScope(jjtn001,  2);
+      }
+    }
+/*@egen*/
+                
+) 
+}
+
+
 void Constant() :
 {/*@bgen(jjtree) Constant */
   ASTConstant jjtn000 = new ASTConstant(JJTCONSTANT);
@@ -563,58 +597,20 @@ void Variable() :
 {/*@bgen(jjtree) Variable */
   try {
 /*@egen*/
-  t = < IDENTIFIER >
+  t = < IDENTIFIER >/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
   {
     jjtn000.setIdentifier(t.image);
-  }
-  (Array())*/*@bgen(jjtree)*/
-  } catch (Throwable jjte000) {
-    if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte000 instanceof RuntimeException) {
-      throw (RuntimeException)jjte000;
-    }
-    if (jjte000 instanceof ParseException) {
-      throw (ParseException)jjte000;
-    }
-    throw (Error)jjte000;
+  }/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/
-}
-
-void Array():
-{/*@bgen(jjtree) Array */
-        ASTArray jjtn000 = new ASTArray(JJTARRAY);
-        boolean jjtc000 = true;
-        jjtree.openNodeScope(jjtn000);
-/*@egen*/
-	Token i;
-}
-{/*@bgen(jjtree) Array */
-        try {
-/*@egen*/
-	<OPEN_ARRAY> i=<INTEGER> <CLOSE_ARRAY>/*@bgen(jjtree)*/
-        {
-          jjtree.closeNodeScope(jjtn000, true);
-          jjtc000 = false;
-        }
-/*@egen*/
-	{
-    	jjtn000.setIndex(Integer.valueOf(i.image));
-	}/*@bgen(jjtree)*/
-        } finally {
-          if (jjtc000) {
-            jjtree.closeNodeScope(jjtn000, true);
-          }
-        }
 /*@egen*/
 }
 

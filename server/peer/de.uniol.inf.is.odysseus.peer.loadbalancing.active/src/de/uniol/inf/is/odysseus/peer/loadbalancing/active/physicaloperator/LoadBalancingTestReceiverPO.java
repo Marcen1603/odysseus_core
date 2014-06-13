@@ -89,6 +89,7 @@ public class LoadBalancingTestReceiverPO<T extends IStreamObject<IMetaAttribute>
 	/**
 	 * Clones this object and return it
 	 */
+	@Override
 	public LoadBalancingTestReceiverPO<T> clone() {
 		return new LoadBalancingTestReceiverPO<T>(this);
 	}

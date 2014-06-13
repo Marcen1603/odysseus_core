@@ -104,6 +104,8 @@ void UnaryExpression() #void :
 {
   LOOKAHEAD(< IDENTIFIER > < LRND >)
   Function()
+| LOOKAHEAD(< IDENTIFIER > < OPEN_ARRAY >)
+  ArrayExpression()  
 | Variable()
 | Constant()
 | Negation()
@@ -243,6 +245,20 @@ void OrExpression() #void :
 )*
 }
 
+void ArrayExpression() #void:
+{}
+{
+  Variable()
+  (
+    < OPEN_ARRAY > UnaryExpression() < CLOSE_ARRAY >
+    {
+      jjtThis.setSymbol("[]");
+    }
+    #Function(2)
+) 
+}
+
+
 void Constant() :
 {
   Token t;
@@ -288,18 +304,6 @@ void Variable() :
   {
     jjtThis.setIdentifier(t.image);
   }
-  (Array())*
-}
-
-void Array():
-{
-	Token i;
-}
-{
-	<OPEN_ARRAY> i=<INTEGER> <CLOSE_ARRAY>
-	{
-    	jjtThis.setIndex(Integer.valueOf(i.image));
-	}
 }
 
 void ArgumentList() #void :

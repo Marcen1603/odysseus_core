@@ -60,7 +60,7 @@ public class Variable implements IExpression<Object> {
 	 */
 	private SDFDatatype[] acceptedTypes;
 	
-	private Integer arrayIndex;
+//	private Integer arrayIndex;
 
 	/**
 	 * Create a new Variable of type Object
@@ -162,13 +162,13 @@ public class Variable implements IExpression<Object> {
 		return true;
 	}
 	
-	public boolean isArray() {
-		if(arrayIndex != null) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+//	public boolean isArray() {
+//		if(arrayIndex != null) {
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
 
 	@Override
 	public boolean isFunction() {
@@ -246,11 +246,11 @@ public class Variable implements IExpression<Object> {
 		this.acceptedTypes = acceptedTypesNew;
 	}
 
-	public Integer getArrayIndex() {
-		return arrayIndex;
-	}
-
-	public void setArrayIndex(Integer arrayIndex) {
-		this.arrayIndex = arrayIndex;
-	}
+//	public Integer getArrayIndex() {
+//		return arrayIndex;
+//	}
+//
+//	public void setArrayIndex(Integer arrayIndex) {
+//		this.arrayIndex = arrayIndex;
+//	}
 }

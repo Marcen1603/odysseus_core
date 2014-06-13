@@ -41,16 +41,19 @@ public class JxtaBundleReceiverAO extends JxtaReceiverAO {
 		super.setName(name);
 	}
 
+	@Override
 	@Parameter(name = "PIPEID", doc = "Jxta Pipe ID to communicate with", type = StringParameter.class, optional = false)
 	public void setPipeID(String pipeID) {
 		super.setPipeID(pipeID);
 	}
 
+	@Override
 	@Parameter(name = "PEERID", doc = "Jxta Peer ID to communicate with", type = StringParameter.class, optional = false)
 	public void setPeerID(String peerID) {
 		super.setPeerID(peerID);
 	}
 
+	@Override
 	@Parameter(name = "SCHEMA", type = CreateSDFAttributeParameter.class, isList = true, optional = false)
 	public void setSchema(List<SDFAttribute> outputSchema) {
 		super.setSchema(outputSchema);

@@ -490,7 +490,8 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
         return mixture;
     }
 
-    public double[] sample() {
+    @Override
+	public double[] sample() {
         double[] point = new double[getDimension()];
         final double randomValue = random.nextDouble();
         double sum = 0.0;

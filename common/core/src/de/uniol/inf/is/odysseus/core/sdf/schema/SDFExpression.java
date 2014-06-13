@@ -362,11 +362,11 @@ public class SDFExpression implements Serializable, IClone {
 		
 		for (int i = 0; i < values.length; ++i) {
 			Variable variable = variableArrayList.get(i);
-			if(variable.isArray()) {
-				variable.bind(((List<Object>)values[i]).get(variable.getArrayIndex()), null, -1);
-			} else {
+//			if(variable.isArray()) {
+//				variable.bind(((List<Object>)values[i]).get(variable.getArrayIndex()), null, -1);
+//			} else {
 				variable.bind(values[i], null, -1);
-			}
+//			}
 		}
 
 		setValue(expression.getValue());
@@ -384,11 +384,11 @@ public class SDFExpression implements Serializable, IClone {
 
         for (int i = 0; i < values.length; ++i) {
 			Variable variable = variableArrayList.get(i);
-			if(variable.isArray()) {
-				variable.bind(((List<Object>)values[i]).get(variable.getArrayIndex()), metadata[i], -1);
-			} else {
+//			if(variable.isArray()) {
+//				variable.bind(((List<Object>)values[i]).get(variable.getArrayIndex()), metadata[i], -1);
+//			} else {
 				variable.bind(values[i], metadata[i], -1);
-			}
+//			}
         }
 
         setValue(expression.getValue());
@@ -407,11 +407,11 @@ public class SDFExpression implements Serializable, IClone {
 
 		for (int i = 0; i < values.length; ++i) {
 			Variable variable = variableArrayList.get(i);
-			if(variable.isArray()) {
-				variable.bind(((List<Object>)values[i]).get(variable.getArrayIndex()), metadata[i], positions[i]);
-			} else {
+//			if(variable.isArray()) {
+//				variable.bind(((List<Object>)values[i]).get(variable.getArrayIndex()), metadata[i], positions[i]);
+//			} else {
 				variable.bind(values[i], metadata[i], positions[i]);
-			}
+//			}
 		}
 
 		setValue(expression.getValue());
