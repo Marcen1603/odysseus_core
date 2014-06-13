@@ -90,6 +90,11 @@ public class AggregateAO extends UnaryLogicalOp {
 		addAggregation(schema, function, outAttribute);
 	}
 
+    public void addAggregation(List<SDFAttribute> attributes, AggregateFunction function, SDFAttribute outAttribute) {
+        SDFSchema schema = new SDFSchema("", Tuple.class, attributes);
+        addAggregation(schema, function, outAttribute);
+    }
+	   
 	public void addAggregation(SDFSchema attributes,
 			AggregateFunction function, SDFAttribute outAttribute) {
 		for (Pair<SDFAttribute, Boolean> v : outputAttributList) {
@@ -155,7 +160,7 @@ public class AggregateAO extends UnaryLogicalOp {
 	@Parameter(name = AGGREGATIONS, type = AggregateItemParameter.class, isList = true)
 	public void setAggregationItems(List<AggregateItem> aggregations) {
 		for (AggregateItem item : aggregations) {
-			addAggregation(item.inAttribute, item.aggregateFunction,
+			addAggregation(item.inAttributes, item.aggregateFunction,
 					item.outAttribute);
 		}
 		aggregationItems = aggregations;

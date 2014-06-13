@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -42,40 +43,48 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void internalAssignment() {
-		List<String> value = (List<String>) inputValue;
-		if ((value.size() < 3) || (value.size() > 4)) {
-			throw new IllegalParameterException("illegal value for aggregation");
-		}
+    protected void internalAssignment() {
+        List<String> value = (List<String>) inputValue;
+        if ((value.size() < 3) || (value.size() > 4)) {
+            throw new IllegalParameterException("illegal value for aggregation");
+        }
 
-		String funcStr = value.get(0);
-		String attributeStr = value.get(1);
-		SDFAttribute attribute = getAttributeResolver().getAttribute(
-				attributeStr);
-		String outputName = value.get(2);
-		SDFAttribute outAttr = null;
+        String funcStr = value.get(0);
+        List<SDFAttribute> attributes = new ArrayList<>();
+        if (((Object) value.get(1)) instanceof List) {
+            List<String> attributeList = (List<String>) ((Object) value.get(1));
+            for (String attr : attributeList) {
+                attributes.add(getAttributeResolver().getAttribute(attr));
+            }
+        }
+        else {
+            String attributeStr = value.get(1);
+            attributes.add(getAttributeResolver().getAttribute(attributeStr));
+        }
+        String outputName = value.get(2);
+        SDFAttribute outAttr = null;
 
-		try {
-			if (value.size() == 4) {
-				IDataDictionary dd = getDataDictionary();
-				SDFDatatype type;
+        try {
+            if (value.size() == 4) {
+                IDataDictionary dd = getDataDictionary();
+                SDFDatatype type;
 
-				type = dd.getDatatype(value.get(3));
+                type = dd.getDatatype(value.get(3));
 
-				outAttr = new SDFAttribute(null, outputName, type, null, null,
-						null);
-			} else {
-				// Fallback to old DOUBLE value for aggregation results
-				IDataDictionary dd = getDataDictionary();
-				SDFDatatype type = dd.getDatatype("double");
-				outAttr = new SDFAttribute(null, outputName, type, null, null,
-						null);
-			}
-		} catch (DataDictionaryException e) {
-			throw new QueryParseException(e.getMessage());
-		}
-		setValue(new AggregateItem(funcStr, attribute, outAttr));
-	}
+                outAttr = new SDFAttribute(null, outputName, type, null, null, null);
+            }
+            else {
+                // Fallback to old DOUBLE value for aggregation results
+                IDataDictionary dd = getDataDictionary();
+                SDFDatatype type = dd.getDatatype("double");
+                outAttr = new SDFAttribute(null, outputName, type, null, null, null);
+            }
+        }
+        catch (DataDictionaryException e) {
+            throw new QueryParseException(e.getMessage());
+        }
+        setValue(new AggregateItem(funcStr, attributes, outAttr));
+    }
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -86,8 +95,7 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 	static public String getPQLString(List<String> value) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
-		sb.append("'").append(value.get(0)).append("','").append(value.get(1))
-				.append("','").append(value.get(2)).append("'");
+        sb.append("'").append(value.get(0)).append("','").append((Object) value.get(1)).append("','").append(value.get(2)).append("'");
 		if (value.size() == 4) {
 			sb.append(",'").append(value.get(3)).append("'");
 		}

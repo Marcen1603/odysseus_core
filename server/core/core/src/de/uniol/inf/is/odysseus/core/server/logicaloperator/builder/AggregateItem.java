@@ -15,17 +15,19 @@
   */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 
 public class AggregateItem {
 	public final SDFAttribute outAttribute;
 	public final AggregateFunction aggregateFunction;
-	public final SDFAttribute inAttribute;
+	public final List<SDFAttribute> inAttributes;
 	
-	public AggregateItem(String function, SDFAttribute attribute, SDFAttribute outAttr) {
+	public AggregateItem(String function, List<SDFAttribute> attributes, SDFAttribute outAttr) {
 		this.aggregateFunction = new AggregateFunction(function);
-		this.inAttribute = attribute;
+		this.inAttributes = attributes;
 		this.outAttribute = outAttr;
 	}
 }
