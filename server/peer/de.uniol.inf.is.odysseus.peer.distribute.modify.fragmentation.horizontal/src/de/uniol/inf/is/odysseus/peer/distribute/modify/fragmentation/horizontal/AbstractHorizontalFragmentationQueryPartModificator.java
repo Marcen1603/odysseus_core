@@ -371,6 +371,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 				value.add(attributes);
 				
 			}
+			value.add(a.outAttribute.getURI());
 			
 			pql.append(AggregateItemParameter.getPQLString(value));
 			pql.append(",");
