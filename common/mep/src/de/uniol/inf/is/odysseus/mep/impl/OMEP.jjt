@@ -114,6 +114,17 @@ void UnaryExpression() #void :
 | Matrix()
 }
 
+void UnaryExpressionList() #void :
+{}
+{
+  [    
+    UnaryExpression()
+    (
+      "," UnaryExpression()
+    )*
+  ]
+}
+
 void UnaryMinus() #void :
 {}
 {
@@ -250,7 +261,7 @@ void ArrayExpression() #void:
 {
   Variable()
   (
-    < OPEN_ARRAY > UnaryExpression() < CLOSE_ARRAY >
+    < OPEN_ARRAY > UnaryExpressionList() < CLOSE_ARRAY >
     {
       jjtThis.setSymbol("[]");
     }

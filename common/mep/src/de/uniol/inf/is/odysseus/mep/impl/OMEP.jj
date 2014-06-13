@@ -149,6 +149,17 @@ void UnaryExpression()       :
 | Matrix()
 }
 
+void UnaryExpressionList()       :
+{}
+{
+  [    
+    UnaryExpression()
+    (
+      "," UnaryExpression()
+    )*
+  ]
+}
+
 void UnaryMinus()       :
 {}
 {
@@ -463,9 +474,9 @@ void OrExpression()       :
 void ArrayExpression()      :
 {}
 {
-  Variable()
+  OrExpression()
   (
-    < OPEN_ARRAY > UnaryExpression() < CLOSE_ARRAY >/*@bgen(jjtree) #Function( 2) */
+    < OPEN_ARRAY > UnaryExpressionList() < CLOSE_ARRAY >/*@bgen(jjtree) #Function( 2) */
     {
       ASTFunction jjtn001 = new ASTFunction(JJTFUNCTION);
       boolean jjtc001 = true;

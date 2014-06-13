@@ -63,6 +63,7 @@ public interface MEPImplConstants {
     "\"(\"",
     "\"[\"",
     "\"]\"",
+    "\",\"",
     "\"-\"",
     "\"!\"",
     "\"^\"",
@@ -80,7 +81,6 @@ public interface MEPImplConstants {
     "\"<>\"",
     "\"&&\"",
     "\"||\"",
-    "\",\"",
     "\";\"",
   };
 
