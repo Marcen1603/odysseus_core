@@ -357,7 +357,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 		StringBuffer pql = new StringBuffer();
 		for (AggregateItem a : aggItems) {
 
-			List<String> value = Lists.newArrayList(a.aggregateFunction.getName(), a.inAttribute.getURI(), a.outAttribute.getURI());
+			List<String> value = Lists.newArrayList(a.aggregateFunction.getName(), a.inAttributes.get(0).getURI(), a.outAttribute.getURI());
 			pql.append(AggregateItemParameter.getPQLString(value));
 			pql.append(",");
 
