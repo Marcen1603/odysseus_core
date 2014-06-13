@@ -78,32 +78,32 @@ public class IfController {
 			String currentLine = text[this.currentLine].trim();
 
 			if (determineEndIf(currentLine)) {
-				LOG.debug("Found #ENDIF: Line {}: {}", this.currentLine, currentLine);
+				LOG.trace("Found #ENDIF: Line {}: {}", this.currentLine, currentLine);
 				
 				if (inIfClause.isEmpty()) {
 					throw new OdysseusScriptException("ENDIF without IF/IFDEF/IFNDEF/IFSRCDEF/IFSRCNDEF!");
 				}
 
 				inIfClause.pop();
-				LOG.debug("Stack: {}", inIfClause);
+				LOG.trace("Stack: {}", inIfClause);
 				return false;
 			}
 
 			if (determineElse(currentLine)) {
-				LOG.debug("Found #ELSE: Line {}: {}", this.currentLine, currentLine);
+				LOG.trace("Found #ELSE: Line {}: {}", this.currentLine, currentLine);
 				if (inIfClause.isEmpty()) {
 					throw new OdysseusScriptException("ELSE without IF/IFDEF/IFNDEF/IFSRCDEF/IFSRCNDEF!");
 				}
 
 				Boolean old = inIfClause.pop();
 				inIfClause.push(!old);
-				LOG.debug("Stack: {}", inIfClause);
+				LOG.trace("Stack: {}", inIfClause);
 				return false;
 			}
 
 			Optional<String> optionalDefined = determineDefine(currentLine);
 			if (optionalDefined.isPresent() && !defined.contains(optionalDefined.get())) {
-				LOG.debug("Found #DEFINE: Line {}: {}", this.currentLine, currentLine);
+				LOG.trace("Found #DEFINE: Line {}: {}", this.currentLine, currentLine);
 				if( canExecuteNow() ) {
 					defined.add(optionalDefined.get());
 					return true;
@@ -113,14 +113,14 @@ public class IfController {
 
 			Optional<String> optionalUndefined = determineUndefine(currentLine);
 			if (optionalUndefined.isPresent()) {
-				LOG.debug("Found #UNDEF: Line {}: {}", this.currentLine, currentLine);
+				LOG.trace("Found #UNDEF: Line {}: {}", this.currentLine, currentLine);
 				defined.remove(optionalUndefined.get());
 				return false;
 			}
 
 			Optional<String> optionalPrint = determinePrint(currentLine);
 			if (optionalPrint.isPresent()) {
-				LOG.debug("Found #PRINT: Line {}: {}", this.currentLine, currentLine);
+				LOG.trace("Found #PRINT: Line {}: {}", this.currentLine, currentLine);
 				if( canExecuteNow() ) {
 					executePrint(replacements, optionalPrint.get());
 				}
@@ -129,22 +129,22 @@ public class IfController {
 
 			Optional<String> optionalIfDef = determineIfDef(currentLine);
 			if (optionalIfDef.isPresent()) {
-				LOG.debug("Found #IFDEF: Line {}: {}", this.currentLine, currentLine);
+				LOG.trace("Found #IFDEF: Line {}: {}", this.currentLine, currentLine);
 
 				Boolean value = defined.contains(optionalIfDef.get());
 				inIfClause.push(value);
-				LOG.debug("Stack: {}", inIfClause);
+				LOG.trace("Stack: {}", inIfClause);
 
 				return false;
 			}
 
 			Optional<String> optionalIfNDef = determineIfNDef(currentLine);
 			if (optionalIfNDef.isPresent()) {
-				LOG.debug("Found #IFNDEF: Line {}: {}", this.currentLine, currentLine);
+				LOG.trace("Found #IFNDEF: Line {}: {}", this.currentLine, currentLine);
 
 				Boolean value = defined.contains(optionalIfDef.get());
 				inIfClause.push(!value);
-				LOG.debug("Stack: {}", inIfClause);
+				LOG.trace("Stack: {}", inIfClause);
 
 				return false;
 			}
@@ -153,24 +153,24 @@ public class IfController {
 			if (optionalSrcDef.isPresent()) {
 				Boolean value = existsSource(optionalSrcDef.get(), caller);
 				inIfClause.push(value);
-				LOG.debug("Stack: {}", inIfClause);
+				LOG.trace("Stack: {}", inIfClause);
 
 				return false;
 			}
 
 			Optional<String> optionalSrcNotDef = determineIfSrcNDef(currentLine);
 			if (optionalSrcNotDef.isPresent()) {
-				LOG.debug("Found #IFSRCDEF: Line {}: {}", this.currentLine, currentLine);
+				LOG.trace("Found #IFSRCDEF: Line {}: {}", this.currentLine, currentLine);
 				Boolean value = existsSource(optionalSrcDef.get(), caller);
 				inIfClause.push(!value);
-				LOG.debug("Stack: {}", inIfClause);
+				LOG.trace("Stack: {}", inIfClause);
 
 				return false;
 			}
 
 			Optional<String> optionalIf = determineIf(currentLine);
 			if (optionalIf.isPresent()) {
-				LOG.debug("Found #IF: Line {}: {}", this.currentLine, currentLine);
+				LOG.trace("Found #IF: Line {}: {}", this.currentLine, currentLine);
 				
 				String stringExpression = optionalIf.get();
 				SDFExpression expression = new SDFExpression(stringExpression, MEP.getInstance());
@@ -190,7 +190,7 @@ public class IfController {
 				expression.bindVariables(values.toArray());
 
 				inIfClause.push((Boolean) expression.getValue());
-				LOG.debug("Stack: {}", inIfClause);
+				LOG.trace("Stack: {}", inIfClause);
 				return false;
 			}
 
@@ -203,11 +203,11 @@ public class IfController {
 	private boolean canExecuteNow() {
 		for( Boolean b : inIfClause ) {
 			if( b == false ) {
-				LOG.debug("Line : false");
+				LOG.trace("Line : false");
 				return false;
 			}
 		}
-		LOG.debug("Line : true");
+		LOG.trace("Line : true");
 		return true;
 	}
 
