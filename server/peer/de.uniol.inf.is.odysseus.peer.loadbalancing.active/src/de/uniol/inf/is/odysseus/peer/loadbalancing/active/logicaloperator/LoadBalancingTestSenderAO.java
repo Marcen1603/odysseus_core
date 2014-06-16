@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.LoadBalancingPunctuation;
 
 /**
@@ -42,6 +43,16 @@ public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
 	private long stopSyncAfter;
 	private long pauseBetween;
 	private boolean writeToLog;
+	private String destinationPeerId;
+
+	public String getDestinationPeerId() {
+		return destinationPeerId;
+	}
+
+	@Parameter(type = StringParameter.class, name = "messageDestinationPeer", optional = true, doc = "If set, LoadBalancing Messages will be send to destination Peer (name)")
+	public void setDestinationPeerId(String destinationPeerId) {
+		this.destinationPeerId = destinationPeerId;
+	}
 
 	/**
 	 * Standard-Constructor with all adjustable values set to 10 and logging
@@ -66,6 +77,7 @@ public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
 		stopSyncAfter = other.stopSyncAfter;
 		pauseBetween = other.pauseBetween;
 		writeToLog = other.writeToLog;
+		destinationPeerId = other.destinationPeerId;
 	}
 
 	/**

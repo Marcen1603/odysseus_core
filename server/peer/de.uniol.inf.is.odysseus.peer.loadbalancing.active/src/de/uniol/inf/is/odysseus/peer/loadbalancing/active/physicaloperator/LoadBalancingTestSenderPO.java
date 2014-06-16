@@ -1,5 +1,11 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import net.jxta.id.IDFactory;
+import net.jxta.peer.PeerID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingProtocol;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.LoadBalancingPunctuation;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.logicaloperator.LoadBalancingTestSenderAO;
 
@@ -56,6 +63,7 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 	private long pauseBetween;
 	private boolean writeToLog;
 	private boolean firstRound;
+	private String destPeerName;
 
 	/**
 	 * Standard-constructor with standard configuration to start with and all
@@ -82,6 +90,7 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 		this.pauseBetween = other.pauseBetween;
 		this.writeToLog = other.writeToLog;
 		this.firstRound = other.firstRound;
+		this.destPeerName = other.destPeerName;
 	}
 
 	/**
@@ -100,6 +109,7 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 		this.pauseBetween = other.getPauseBetween();
 		this.writeToLog = other.getWriteToLog();
 		this.firstRound = true;
+		this.destPeerName = other.getDestinationPeerId();
 	}
 
 	/**
@@ -177,7 +187,24 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 				message = String.format(logMessageStop, tuples);
 			LoadBalancingTestSenderPO.log.debug(message);
 		}
+		
+		if(this.destPeerName!=null) {
+			//TODO get Peer by name...
+			PeerID id = toPeerID(destPeerName);
+			if(id!=null) {
+				ActiveLoadBalancingProtocol.getInstance().sendCopyMessage(id);
+			}
+		}
 
+	}
+	
+	protected static PeerID toPeerID(String peerIDString) {
+		try {
+			final URI id = new URI(peerIDString);
+			return (PeerID) IDFactory.fromURI(id);
+		} catch (URISyntaxException | ClassCastException ex) {
+			return null;
+		}
 	}
 
 	@Override
