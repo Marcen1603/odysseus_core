@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.wrapper.nmea.sentence;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.payload.decoded.DecodedAISPayload;
 import de.uniol.inf.is.odysseus.wrapper.nmea.util.ParseUtils;
 
 /**
@@ -52,6 +53,11 @@ public class AISSentence extends Sentence{
 	/** Fill bits */
 	private Integer fillBits;
 	
+	/**The decoded message, this will be set by the AISSentenceHandler:
+	 * 1- If the sentence is not fragmented, the AISSentenceHandler will set it after handling the sentence directly
+	 * 2- If the sentence is fragmented, the AISSentenceHandler will set this member only if this sentence represents the last fragment. */
+	private DecodedAISPayload decodedPayload;
+	
 	/**
 	 * Default constructor for writing. Empty Sentence to fill attributes and
 	 * call {@link #toNMEA()}.
@@ -93,12 +99,15 @@ public class AISSentence extends Sentence{
 
 	@Override
 	protected void fillMap(Map<String, Object> res) {
-		if (fragmentsCount != null) res.put("fragmentsCount", fragmentsCount);
-		if (fragmentId != null) res.put("fragmentId", fragmentId);
-		if (messageId != null) res.put("messageId", messageId);
-		if (channel != null) res.put("channel", channel);
-		if (message != null) res.put("message", message);
-		if (fillBits != null) res.put("fillBits", fillBits);
+		//We will fill the map with the decoded message parts instead of the original encoded one:
+		if (decodedPayload != null)
+			decodedPayload.fillMap(res);
+//		if (fragmentsCount != null) res.put("fragmentsCount", fragmentsCount);
+//		if (fragmentId != null) res.put("fragmentId", fragmentId);
+//		if (messageId != null) res.put("messageId", messageId);
+//		if (channel != null) res.put("channel", channel);
+//		if (message != null) res.put("message", message);
+//		if (fillBits != null) res.put("fillBits", fillBits);
 	}
 
 	public Integer getFragmentsCount() {
@@ -147,5 +156,13 @@ public class AISSentence extends Sentence{
 
 	public void setFillBits(Integer fillBits) {
 		this.fillBits = fillBits;
+	}
+
+	public DecodedAISPayload getDecodedPayload() {
+		return decodedPayload;
+	}
+
+	public void setDecodedPayload(DecodedAISPayload decodedPayload) {
+		this.decodedPayload = decodedPayload;
 	}
 }
