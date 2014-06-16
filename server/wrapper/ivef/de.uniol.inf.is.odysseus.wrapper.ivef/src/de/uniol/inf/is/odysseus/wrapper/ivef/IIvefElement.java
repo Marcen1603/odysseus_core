@@ -13,4 +13,5 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
  */
 public interface IIvefElement {
 	public void fillMap(KeyValueObject<? extends IMetaAttribute> map);
+	public String toXML();
 }
