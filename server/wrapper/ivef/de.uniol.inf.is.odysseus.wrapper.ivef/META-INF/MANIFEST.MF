@@ -11,8 +11,12 @@ Import-Package:
  de.uniol.inf.is.odysseus.core.physicaloperator,
  de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol,
  de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
+ de.uniol.inf.is.odysseus.wrapper.nmea.util,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Service-Component: OSGI-INF/IVEFProtocolHandler.xml
 Bundle-ClassPath: .
 Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.ivef.Activator
+Export-Package: de.uniol.inf.is.odysseus.wrapper.ivef,
+ de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5,
+ de.uniol.inf.is.odysseus.wrapper.ivef.element.version_1_0_4
