@@ -47,7 +47,7 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
 
     private String m_dataBuffer = new String();
 //    private ParserListener m_handler =  null;
-    private Stack<java.lang.Object> m_objStack = new Stack<java.lang.Object>();//parameterized by Mazen! // cannot use a template since it stores different Objects
+    private Stack<java.lang.Object> m_objStack = new Stack<java.lang.Object>();//parameterized! // cannot use a template since it stores different Objects
     private SAXParser parser; // init in constructor
     
     private MSG_LoginRequest m_loginRequest = null;
@@ -264,11 +264,11 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
             String value = atts.getValue(i);
 
             if (key == "Lat") {
-                double val = Double.parseDouble(value);
+            	Float val = Float.parseFloat(value);
                 obj.setLat(val);
             }
             else if (key == "Long") {
-                double val = Double.parseDouble(value);
+            	Float val = Float.parseFloat(value);
                 obj.setLong(val);
             }
         }
@@ -361,11 +361,11 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
                 obj.setUpdateTimeDR(val);
             }
             else if (key == "SOG") {
-                double val = Double.parseDouble(value);
+                Float val = Float.parseFloat(value);
                 obj.setSOG(val);
             }
             else if (key == "COG") {
-                double val = Double.parseDouble(value);
+                Float val = Float.parseFloat(value);
                 obj.setCOG(val);
             }
             else if (key == "Lost") {
@@ -377,7 +377,7 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
                 obj.setRateOfTurn(val);
             }
             else if (key == "Orientation") {
-                double val = Double.parseDouble(value);
+                Float val = Float.parseFloat(value);
                 obj.setOrientation(val);
             }
             else if (key == "Length") {
@@ -467,11 +467,11 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
                 obj.setShipType(val);
             }
             else if (key == "IMO") {
-                int val = Integer.parseInt(value);
+            	Long val = Long.parseLong(value);
                 obj.setIMO(val);
             }
             else if (key == "MMSI") {
-                int val = Integer.parseInt(value);
+            	Long  val = Long.parseLong(value);
                 obj.setMMSI(val);
             }
             else if (key == "ATONType") {
@@ -652,7 +652,7 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
                         e2.printStackTrace();
                     }
                 }
-                obj.setETA(val);
+                obj.setETA(val.toString());
             }
             else if (key == "ATA") {
                 if (value.endsWith("Z")) { 
@@ -670,7 +670,7 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
                         e2.printStackTrace();
                     }
                 }
-                obj.setATA(val);
+                obj.setATA(val.toString());
             }
             else if (key == "PersonsOnBoard") {
                 double val = Double.parseDouble(value);
