@@ -240,4 +240,11 @@ public abstract class Sentence {
 	 *            attribute values as objects.
 	 */
 	protected abstract void fillMap(Map<String, Object> result);
+	
+	/**
+	 * Get the NMEA String
+	 * */
+	public String getNmeaString(){
+		return this.nmea;
+	}
 }
