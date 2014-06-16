@@ -84,7 +84,7 @@ public class Pong implements IIvefElement {
 
         return m_timeStamp;
     }
-
+    @Override
     public String toXML() {
 
         String xml = "<Pong";

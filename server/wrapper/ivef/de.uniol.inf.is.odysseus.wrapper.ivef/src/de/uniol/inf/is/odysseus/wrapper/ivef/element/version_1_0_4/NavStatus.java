@@ -46,7 +46,7 @@ public class NavStatus implements IIvefElement {
 
         return m_value;
     }
-
+    @Override
     public String toXML() {
 
         String xml = "<NavStatus";

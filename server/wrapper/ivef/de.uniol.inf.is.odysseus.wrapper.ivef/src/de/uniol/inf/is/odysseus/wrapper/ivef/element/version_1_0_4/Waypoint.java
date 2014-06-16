@@ -171,7 +171,7 @@ public class Waypoint implements IIvefElement {
 
         return m_name;
     }
-
+    @Override
     public String toXML() {
 
         String xml = "<Waypoint";

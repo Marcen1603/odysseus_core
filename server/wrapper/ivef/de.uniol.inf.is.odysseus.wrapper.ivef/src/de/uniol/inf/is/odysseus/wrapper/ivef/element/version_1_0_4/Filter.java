@@ -46,7 +46,7 @@ public class Filter implements IIvefElement {
 
         return m_predicate;
     }
-
+    @Override
     public String toXML() {
 
         String xml = "<Filter";

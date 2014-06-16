@@ -42,7 +42,7 @@ public class Ping implements IIvefElement {
 
         return m_timeStamp;
     }
-
+    @Override
     public String toXML() {
 
         String xml = "<Ping";
