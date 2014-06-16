@@ -33,8 +33,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.AISSentence;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.Sentence;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.SentenceFactory;
+import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.AISSentenceHandler;
 import de.uniol.inf.is.odysseus.wrapper.nmea.util.SentenceUtils;
 
 /**
@@ -56,6 +58,8 @@ public class NMEAProtocolHandler extends
 	private KeyValueObject<? extends IMetaAttribute> next = null;
 	/** Delay on GenericPull. */
 	private long delay = 0;
+	/** Handler for AIS sentences. */
+	private AISSentenceHandler aishandler = new AISSentenceHandler();
 
 	public NMEAProtocolHandler() {
 	}
@@ -154,10 +158,28 @@ public class NMEAProtocolHandler extends
 			return null;
 		}
 		sentence.parse();
-		Map<String, Object> event = sentence.toMap();
-		KeyValueObject<? extends IMetaAttribute> res = new KeyValueObject<>(
-				event);
-		res.setMetadata("object", sentence);
+		Map<String, Object> event;
+		KeyValueObject<? extends IMetaAttribute> res = null;
+		//Handling AIS Sentences
+		if (sentence instanceof AISSentence) {
+			AISSentence aissentence = (AISSentence) sentence;
+			this.aishandler.handleAISSentence(aissentence);
+			if(this.aishandler.getDecodedAISMessage() != null) {
+				event = sentence.toMap();
+				res = new KeyValueObject<>(event);
+				//Important to parse the decodedAIS as a sentence in order to prepare the fields which will be used in writing.
+				this.aishandler.getDecodedAISMessage().parse();
+				res.setMetadata("object", this.aishandler.getDecodedAISMessage());
+				this.aishandler.resetDecodedAISMessage();
+			}
+			else return null;
+		}
+		//Other NMEA Sentences
+		else{
+			event = sentence.toMap();
+			res = new KeyValueObject<>(event);
+			res.setMetadata("object", sentence);
+		}
 		return res;
 	}
 
