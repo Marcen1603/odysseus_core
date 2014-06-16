@@ -33,31 +33,30 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 	protected final WindowType windowType;
 	protected final boolean partitioned;
 	final boolean usesSlideParam;
-	
+
 	private final TimeUnit baseTimeUnit;
 
 	public AbstractWindowTIPO(AbstractWindowAO ao) {
 		this.baseTimeUnit = ao.getBaseTimeUnit();
-		
+
 		if (ao.getWindowSize() != null) {
-			this.windowSize = ao.getBaseTimeUnit().convert(ao.getWindowSize()
-					.getTime(), ao.getWindowSize().getUnit());
-		}else{
+			this.windowSize = ao.getBaseTimeUnit().convert(
+					ao.getWindowSize().getTime(), ao.getWindowSize().getUnit());
+		} else {
 			this.windowSize = -1;
 		}
-		if (ao.getWindowAdvance() != null) {
-			this.windowAdvance = ao.getBaseTimeUnit().convert(ao
-					.getWindowAdvance().getTime(), ao.getWindowAdvance()
-					.getUnit());
+		if (ao.getWindowAdvance() == null && ao.getWindowSlide() == null) {
+			this.windowAdvance = 1;
+			usesSlideParam = false;
+		} else if (ao.getWindowAdvance() != null) {
+			this.windowAdvance = ao.getBaseTimeUnit().convert(
+					ao.getWindowAdvance().getTime(),
+					ao.getWindowAdvance().getUnit());
 			usesSlideParam = false;
 		} else {
-			if (ao.getWindowSlide() != null) {
-				this.windowAdvance = ao.getBaseTimeUnit().convert(ao
-						.getWindowSlide().getTime(), ao.getWindowSlide()
-						.getUnit());
-			} else {
-				this.windowAdvance = 1;
-			}
+			this.windowAdvance = ao.getBaseTimeUnit().convert(
+					ao.getWindowSlide().getTime(),
+					ao.getWindowSlide().getUnit());
 			usesSlideParam = true;
 		}
 		// this.windowAO = ao;
@@ -91,11 +90,11 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 	public long getWindowAdvance() {
 		return windowAdvance;
 	}
-	
+
 	public long getWindowSizeMillis() {
 		return TimeUnit.MILLISECONDS.convert(getWindowSize(), baseTimeUnit);
 	}
-	
+
 	public long getWindowAdvanceMillis() {
 		return TimeUnit.MILLISECONDS.convert(getWindowAdvance(), baseTimeUnit);
 	}
