@@ -305,7 +305,7 @@ public class IVEF_0_1_5_ProtocolHandler extends
 	@Override
 	public void write(KeyValueObject<? extends IMetaAttribute> object)
 			throws IOException {
-		try {
+		try { 
 			java.lang.Object obj = object.getMetadata("object");
 			//m_loginRequest
 			if (obj instanceof MSG_LoginRequest) {
