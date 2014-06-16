@@ -16,8 +16,8 @@ import de.uniol.inf.is.odysseus.wrapper.ivef.IIvefElement;
 
 public class Sensor implements IIvefElement { 
 
-    private double m_senId; // default value is uninitialized
-    private double m_trkId; // default value is uninitialized
+    private double m_senId = (float)0; // default value is uninitialized
+    private double m_trkId = (float)0; // default value is uninitialized
 
     public Sensor() {
 
@@ -56,7 +56,7 @@ public class Sensor implements IIvefElement {
 
         return m_trkId;
     }
-
+    @Override
     public String toXML() {
 
         String xml = "<Sensor";

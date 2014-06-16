@@ -16,9 +16,9 @@ import de.uniol.inf.is.odysseus.wrapper.ivef.IIvefElement;
 
 public class StaticData implements IIvefElement { 
 
-    private String m_id = "";//Initialized  instead of using a flag! // default value is uninitialized
-    private String m_sourceName = "";//Initialized  instead of using a flag! // default value is uninitialized
-    private int m_source; // default value is uninitialized
+    private String m_id = "0";//Initialized  instead of using a flag! // default value is uninitialized
+    private String m_sourceName = "0";//Initialized  instead of using a flag! // default value is uninitialized
+    private int m_source; //// default value is uninitialized
     private double m_length; // default value is uninitialized
     private boolean m_lengthPresent;
     private double m_breadth; // default value is uninitialized
@@ -31,9 +31,9 @@ public class StaticData implements IIvefElement {
     private boolean m_objectTypePresent;
     private int m_shipType; // default value is uninitialized
     private boolean m_shipTypePresent;
-    private int m_IMO; // default value is uninitialized
+    private Long m_IMO; // default value is uninitialized
     private boolean m_IMOPresent;
-    private int m_MMSI; // default value is uninitialized
+    private Long m_MMSI; // default value is uninitialized
     private boolean m_MMSIPresent;
     private int m_ATONType; // default value is uninitialized
     private boolean m_ATONTypePresent;
@@ -286,13 +286,13 @@ public class StaticData implements IIvefElement {
         return m_shipTypePresent;
     }
 
-    public void setIMO(int val) {
+    public void setIMO(Long val) {
 
         m_IMOPresent = true;
         m_IMO = val;
     }
 
-    public int getIMO() {
+    public Long getIMO() {
 
         return m_IMO;
     }
@@ -302,13 +302,13 @@ public class StaticData implements IIvefElement {
         return m_IMOPresent;
     }
 
-    public void setMMSI(int val) {
+    public void setMMSI(Long  val) {
 
         m_MMSIPresent = true;
         m_MMSI = val;
     }
 
-    public int getMMSI() {
+    public Long  getMMSI() {
 
         return m_MMSI;
     }
@@ -521,7 +521,7 @@ public class StaticData implements IIvefElement {
 
         return m_deepWaterVesselindPresent;
     }
-
+    @Override
     public String toXML() {
 
         String xml = "<StaticData";

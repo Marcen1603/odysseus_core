@@ -23,7 +23,7 @@ public class Logout implements IIvefElement {
     public Logout(Logout val) {
 
     }
-
+    @Override
     public String toXML() {
 
         String xml = "<Logout";

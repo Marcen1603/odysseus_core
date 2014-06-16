@@ -11,10 +11,13 @@ import java.text.SimpleDateFormat;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.wrapper.ivef.IIvefElement;
+import de.uniol.inf.is.odysseus.wrapper.ivef.aisencoding.SixbitEncoder;
+import de.uniol.inf.is.odysseus.wrapper.ivef.aisencoding.SixbitException;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.PosReport;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.StaticData;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.Voyage;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.TaggedItem;
+import de.uniol.inf.is.odysseus.wrapper.nmea.util.SentenceUtils;
 
 public class VesselData implements IIvefElement { 
 
@@ -95,7 +98,7 @@ public class VesselData implements IIvefElement {
 
         return m_taggedItems.size();
     }
-
+    @Override
     public String toXML() {
 
         String xml = "<VesselData";
@@ -162,5 +165,55 @@ public class VesselData implements IIvefElement {
 			taggedItem.fillMap(map);
 	}
 
+	public String encodeAISPayload() {
+		//TODO: to handle the multiFragment messages
+		String encodedAIS = "!AIVDM,1,1,,A,";
+		Pos pos = this.m_posReport.getPos();
+		Float lat = pos.getLat();
+		Float lon = pos.getLong();
+		int msgtype = 1;//position sentence
+		if(lat == 0.0 && lon == 0.0)
+			msgtype = 5;//static-and-voyage AIS message
+		long mmsi = 0;
+		if(this.countOfStaticDatas() > 0)
+			mmsi = this.getStaticDataAt(0).getMMSI();
+		int navStatus = this.m_posReport.getNavStatus();
+		int rot = (int)this.m_posReport.getRateOfTurn();
+		int sog = this.m_posReport.getSOG().intValue();
+		long encodedLongitude = Math.round(lon * 10000.0 * 60.0);
+		long encodedLatitude = Math.round(lat * 10000.0 * 60.0);
+		int cog = this.m_posReport.getCOG().intValue();
+		@SuppressWarnings("deprecation")
+		int ts = this.m_posReport.getUpdateTime().getSeconds();
+		
+		SixbitEncoder encoder = new SixbitEncoder();
+		encoder.addVal(msgtype, 6);//Message type
+		encoder.addVal(0, 2);//RepeatIndicator = 0
+		encoder.addVal(mmsi, 30);//MMSI
+		encoder.addVal(navStatus, 4);//NavStatus
+		encoder.addVal(rot, 8);// ROT 
+		encoder.addVal(sog, 10);//SOG 
+		encoder.addVal(0, 1);//PosAccuracy = 0
+		encoder.addVal(encodedLongitude, 28);//Longitude
+		encoder.addVal(encodedLatitude, 27);//Latitude
+		encoder.addVal(cog, 12);//COG
+		encoder.addVal(0, 9);//true heading = 0
+		encoder.addVal(ts, 6);//time stamp
+		encoder.addVal(0, 2);//Maneuver Indicator = 0
+		encoder.addVal(0, 3);//Spare = 0 (Maneuver Indicator, Spare and Regional Reserved are represented in these 3+2=5bits)
+		encoder.addVal(0, 1);//RAIM flag = 0
+		encoder.addVal(0, 2);//Sync State = 0
+		encoder.addVal(0, 3);//Slot Timeout = 0
+		encoder.addVal(0, 14);//Sub Message = 0
+		try {
+			encodedAIS += encoder.encode() + "," + encoder.getPadBits();
+		} catch (SixbitException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//checkSum
+		encodedAIS += "*" + SentenceUtils.calculateChecksum(encodedAIS);
+		return encodedAIS;
+	}
 
 }

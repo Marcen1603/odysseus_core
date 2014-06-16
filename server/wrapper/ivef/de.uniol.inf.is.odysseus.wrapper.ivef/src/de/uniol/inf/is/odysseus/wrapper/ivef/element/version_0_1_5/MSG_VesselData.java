@@ -49,7 +49,7 @@ public class MSG_VesselData implements IIvefElement {
 
         return m_body;
     }
-
+    @Override
     public String toXML() {
 
         String xml = "<MSG_VesselData";
@@ -95,6 +95,4 @@ public class MSG_VesselData implements IIvefElement {
     	fillMap(map);
     	return map;
 	}
-
-
 }

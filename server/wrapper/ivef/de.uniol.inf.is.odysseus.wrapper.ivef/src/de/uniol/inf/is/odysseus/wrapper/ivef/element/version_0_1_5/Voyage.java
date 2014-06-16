@@ -4,9 +4,10 @@
 
 package de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5;
 
-import java.util.*;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -15,16 +16,16 @@ import de.uniol.inf.is.odysseus.wrapper.ivef.IIvefElement;
 
 public class Voyage implements IIvefElement { 
 
-    private String m_id = "";//Initialized  instead of using a flag! // default value is uninitialized
-    private String m_sourceName = "";//Initialized  instead of using a flag! // default value is uninitialized
-    private int m_source; // default value is uninitialized
+    private String m_id = "0";//Initialized  instead of using a flag! // default value is uninitialized
+    private String m_sourceName = "OFFIS";//Initialized  instead of using a flag! // default value is uninitialized
+    private int m_source = 3;//3 expresses that it's manual set if not received // default value is uninitialized
     private int m_cargoType; // default value is uninitialized
     private boolean m_cargoTypePresent;
     private String m_destination = "";//Initialized  instead of using a flag! // default value is uninitialized
     private boolean m_destinationPresent;
-    private Date m_ETA; // default value is uninitialized
+    private String m_ETA; // default value is uninitialized
     private boolean m_ETAPresent;
-    private Date m_ATA; // default value is uninitialized
+    private String m_ATA; // default value is uninitialized
     private boolean m_ATAPresent;
     private double m_personsOnBoard; // default value is uninitialized
     private boolean m_personsOnBoardPresent;
@@ -138,13 +139,13 @@ public class Voyage implements IIvefElement {
         return m_destinationPresent;
     }
 
-    public void setETA(Date val) {
+    public void setETA(String val) {
 
         m_ETAPresent = true;
         m_ETA = val;
     }
 
-    public Date getETA() {
+    public String getETA() {
 
         return m_ETA;
     }
@@ -154,13 +155,13 @@ public class Voyage implements IIvefElement {
         return m_ETAPresent;
     }
 
-    public void setATA(Date val) {
+    public void setATA(String val) {
 
         m_ATAPresent = true;
         m_ATA = val;
     }
 
-    public Date getATA() {
+    public String getATA() {
 
         return m_ATA;
     }
@@ -223,7 +224,7 @@ public class Voyage implements IIvefElement {
 
         return m_draughtPresent;
     }
-
+    @Override
     public String toXML() {
 
         String xml = "<Voyage";
@@ -239,7 +240,14 @@ public class Voyage implements IIvefElement {
             xml += " Destination=\"" + encode( m_destination) + "\"";
         }
         if ( hasETA() ) {
-            xml += " ETA=\"" + df.format(m_ETA) + "\"";
+        	try {
+				Date etaDate = df.parse(m_ETA);
+				xml += " ETA=\"" + df.format(etaDate) + "\"";
+				///xml += " ETA=\"" + "2014-05-05T06:07:06.481Z" + "\"";
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
         }
         if ( hasATA() ) {
             xml += " ATA=\"" + df.format(m_ATA) + "\"";

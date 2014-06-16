@@ -63,7 +63,7 @@ public class LoginRequest implements IIvefElement {
 
         return m_encryption;
     }
-
+    @Override
     public String toXML() {
 
         String xml = "<LoginRequest";

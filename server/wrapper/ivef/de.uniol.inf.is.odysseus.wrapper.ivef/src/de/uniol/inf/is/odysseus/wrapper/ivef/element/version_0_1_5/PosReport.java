@@ -18,21 +18,21 @@ public class PosReport implements IIvefElement {
 
     private Pos m_pos; // default value is uninitialized
     private Vector<Sensor> m_sensors = new Vector<Sensor>();
-    private int m_id; // default value is uninitialized
-    private int m_sourceId; // default value is uninitialized
-    private Date m_updateTime; // default value is uninitialized
+    private int m_id; //// default value is uninitialized
+    private int m_sourceId; //// default value is uninitialized
+    private Date m_updateTime; //// default value is uninitialized
     private Date m_updateTimeRadar; // default value is uninitialized
     private boolean m_updateTimeRadarPresent;
     private Date m_updateTimeAIS; // default value is uninitialized
     private boolean m_updateTimeAISPresent;
     private Date m_updateTimeDR; // default value is uninitialized
     private boolean m_updateTimeDRPresent;
-    private double m_SOG; // default value is uninitialized
-    private double m_COG; // default value is uninitialized
-    private String m_lost=""; //Initialized  instead of using a flag! // default value is uninitialized
+    private Float m_SOG = (float)0; // default value is uninitialized
+    private Float m_COG = (float)0; // default value is uninitialized
+    private String m_lost="no"; //Initialized  instead of using a flag! // default value is uninitialized
     private double m_rateOfTurn; // default value is uninitialized
     private boolean m_rateOfTurnPresent;
-    private double m_orientation; // default value is uninitialized
+    private Float m_orientation; // default value is uninitialized
     private boolean m_orientationPresent;
     private double m_length; // default value is uninitialized
     private boolean m_lengthPresent;
@@ -201,19 +201,19 @@ public class PosReport implements IIvefElement {
         return m_updateTimeDRPresent;
     }
 
-    public void setSOG(double val) {
+    public void setSOG(Float val) {
 
         if (val < 0)
           return;
         m_SOG = val;
     }
 
-    public double getSOG() {
+    public Float getSOG() {
 
         return m_SOG;
     }
 
-    public void setCOG(double val) {
+    public void setCOG(Float val) {
 
         if (val < 0)
           return;
@@ -222,7 +222,7 @@ public class PosReport implements IIvefElement {
         m_COG = val;
     }
 
-    public double getCOG() {
+    public Float getCOG() {
 
         return m_COG;
     }
@@ -258,7 +258,7 @@ public class PosReport implements IIvefElement {
         return m_rateOfTurnPresent;
     }
 
-    public void setOrientation(double val) {
+    public void setOrientation(Float val) {
 
         if (val < 0)
           return;
@@ -268,7 +268,7 @@ public class PosReport implements IIvefElement {
         m_orientation = val;
     }
 
-    public double getOrientation() {
+    public Float getOrientation() {
 
         return m_orientation;
     }
@@ -400,7 +400,7 @@ public class PosReport implements IIvefElement {
 
         return m_ATONOffPosPresent;
     }
-
+    @Override
     public String toXML() {
 
         String xml = "<PosReport";
@@ -409,6 +409,7 @@ public class PosReport implements IIvefElement {
         xml += " Id=\"" + m_id + "\"";
         xml += " SourceId=\"" + m_sourceId + "\"";
         xml += " UpdateTime=\"" + df.format(m_updateTime) + "\"";
+        //xml += " UpdateTime=\"" + "2014-05-05T06:07:06.481Z" + "\"";
         if ( hasUpdateTimeRadar() ) {
             xml += " UpdateTimeRadar=\"" + df.format(m_updateTimeRadar) + "\"";
         }
