@@ -17,7 +17,7 @@ public class NexmarkTestComponent extends AbstractQueryExpectedOutputTestCompone
 		for (int i = 1; i <= 4; i++) {
 			URL query = getURL("query"+i+".qry");
 			URL result = getURL("query"+i+".csv");
-			ExpectedOutputTestSet set = TestSetFactory.createExpectedOutputTestSetFromFile(query, result, context.getDataRootPath());
+			ExpectedOutputTestSet set = TestSetFactory.createExpectedOutputTestSetFromFile(query, result, context.getDataRootPath(), "TUPLE");
 			sets.add(set);
 		}
 		// This can be used to check, if the tests fails for wrong data

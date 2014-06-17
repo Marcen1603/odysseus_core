@@ -93,7 +93,7 @@ public class ProbabilisticTimeInterval extends TimeInterval implements IProbabil
      */
     @Override
     public String toString() {
-        return "( i= " + super.toString() + " | p=" + this.probabilistic + ")";
+        return super.toString() + " | " + this.probabilistic;
     }
 
     /**

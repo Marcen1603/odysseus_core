@@ -32,8 +32,9 @@ public abstract class AbstractQueryExpectedOutputTestComponent<T extends ITestCo
 				for (IPhysicalOperator operator : physicalQuery.getRoots()) {
 					// TODO: this assumes same output for all sinks -> maybe
 					// there are multiple sinks with different outputs
-					List<Pair<String, String>> expected = set.getExpectedOutput();					
-					TICompareSink sink = new TICompareSink(expected);
+					List<Pair<String, String>> expected = set.getExpectedOutput();	
+					String dataHandler = set.getDataHandler();
+					TICompareSink sink = new TICompareSink(expected, dataHandler);
 //					if(set.getName().equalsIgnoreCase("aggregate_time.qry")){
 //						sink.setTracing(true);
 //					}

@@ -18,7 +18,7 @@ public class ProbabilisticTestComponent extends AbstractQueryExpectedOutputTestC
 
     @Override
     public List<ExpectedOutputTestSet> createTestSets(BasicTestContext context) {
-        return TestSetFactory.createExpectedOutputTestSetsFromBundleRoot(context.getDataRootPath());
+        return TestSetFactory.createExpectedOutputTestSetsFromBundleRoot(context.getDataRootPath(), "ProbabilisticTuple");
     }
 
     @Override

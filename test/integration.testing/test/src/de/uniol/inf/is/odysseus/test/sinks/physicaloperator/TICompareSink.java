@@ -53,7 +53,7 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 
 	Logger logger = LoggerFactory.getLogger(TICompareSink.class);
 	private boolean tracing = false;
-
+    private String dataHandler = "TUPLE";
 	private List<Pair<String, String>> expectedOriginals = new ArrayList<>();
 	private DefaultTISweepArea<Tuple<? extends ITimeInterval>> expected = new DefaultTISweepArea<>();
 	private List<Tuple<? extends ITimeInterval>> inputdata = new ArrayList<>();
@@ -61,13 +61,15 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 	// DefaultTISweepArea<>();
 	private List<ICompareSinkListener> listeners = new ArrayList<>();
 
-	public TICompareSink(List<Pair<String, String>> expected) {
+	public TICompareSink(List<Pair<String, String>> expected, String dataHandler) {
 		this.expectedOriginals = new ArrayList<>(expected);
+		this.dataHandler = dataHandler;
 	}
 
 	public TICompareSink(TICompareSink s) {
 		this.expectedOriginals = s.expectedOriginals;
 		this.tracing = s.tracing;
+		this.dataHandler = s.dataHandler;
 		this.listeners = new ArrayList<>(s.listeners);
 	}
 
@@ -81,7 +83,7 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 			this.expected.clear();
 			this.inputdata.clear();
 			@SuppressWarnings("unchecked")
-			IDataHandler<Tuple<ITimeInterval>> dh = (IDataHandler<Tuple<ITimeInterval>>) DataHandlerRegistry.getDataHandler("TUPLE", getOutputSchema());
+			IDataHandler<Tuple<ITimeInterval>> dh = (IDataHandler<Tuple<ITimeInterval>>) DataHandlerRegistry.getDataHandler(this.dataHandler, getOutputSchema());
 			Map<String, String> options = new HashMap<>();
 			options.put(AbstractCSVHandler.DELIMITER, "|");
 			SimpleCSVProtocolHandler<Tuple<ITimeInterval>> csvreader = new SimpleCSVProtocolHandler<Tuple<ITimeInterval>>(ITransportDirection.IN, IAccessPattern.PULL, dh);

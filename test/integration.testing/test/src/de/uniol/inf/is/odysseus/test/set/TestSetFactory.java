@@ -33,13 +33,17 @@ public class TestSetFactory {
 	}
 
 	public static List<ExpectedOutputTestSet> createExpectedOutputTestSetsFromBundleRoot(URL bundleroot) {
+		return createExpectedOutputTestSetsFromBundleRoot(bundleroot, "TUPLE");
+	}
+
+	public static List<ExpectedOutputTestSet> createExpectedOutputTestSetsFromBundleRoot(URL bundleroot, String dataHandler) {
 		List<ExpectedOutputTestSet> testsets = new ArrayList<>();
 		try {
 			File dir = new File(bundleroot.toURI());
 			List<File> queryFiles = new ArrayList<>();
 			searchQueryFilesRecursive(dir, queryFiles);
 			for (File qf : queryFiles) {
-				ExpectedOutputTestSet set = createExpectedOutputTestSetFromQuery(qf, bundleroot);
+				ExpectedOutputTestSet set = createExpectedOutputTestSetFromQuery(qf, bundleroot, dataHandler);
 				if (set != null) {
 					testsets.add(set);
 				}
@@ -49,7 +53,7 @@ public class TestSetFactory {
 		}
 		return testsets;
 	}
-
+	
 	public static List<QueryTestSet> createQueryTestSetsFromBundleRoot(URL bundleroot) {
 		List<QueryTestSet> testsets = new ArrayList<>();
 		try {
@@ -70,13 +74,13 @@ public class TestSetFactory {
 		return testsets;
 	}
 
-	private static ExpectedOutputTestSet createExpectedOutputTestSetFromQuery(File qf, URL bundleroot) {
+	private static ExpectedOutputTestSet createExpectedOutputTestSetFromQuery(File qf, URL bundleroot, String dataHandler) {
 		try {
 			URL queryFile = qf.toURI().toURL();
 			File outputFile = getOutputFile(qf);
 			if (outputFile != null) {
 				URL outputdata = outputFile.toURI().toURL();
-				ExpectedOutputTestSet set = createExpectedOutputTestSetFromFile(queryFile, outputdata, bundleroot);
+				ExpectedOutputTestSet set = createExpectedOutputTestSetFromFile(queryFile, outputdata, bundleroot, dataHandler);
 				return set;
 			} 
 			LOG.error("There is no corresponding outputfile for " + qf.getAbsoluteFile());
@@ -119,7 +123,7 @@ public class TestSetFactory {
 		}
 	}
 
-	public static ExpectedOutputTestSet createExpectedOutputTestSetFromFile(URL queryFile, URL outputdata, URL replaceRootPathInQuery) {
+	public static ExpectedOutputTestSet createExpectedOutputTestSetFromFile(URL queryFile, URL outputdata, URL replaceRootPathInQuery, String dataHandler) {
 		ExpectedOutputTestSet set = new ExpectedOutputTestSet();
 		String queryFileStr = fileToString(queryFile);
 		queryFileStr = replaceRootPathInFile(queryFileStr, replaceRootPathInQuery);
@@ -127,6 +131,7 @@ public class TestSetFactory {
 		File f = new File(queryFile.getFile());
 		set.setName(f.getName());
 		set.setExpectedOutput(fileToTupleList(outputdata));
+		set.setDataHandler(dataHandler);
 		return set;
 	}
 
