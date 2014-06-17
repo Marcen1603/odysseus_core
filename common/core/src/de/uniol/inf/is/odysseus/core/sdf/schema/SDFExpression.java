@@ -68,9 +68,8 @@ public class SDFExpression implements Serializable, IClone {
 	private List<SDFSchema> schema;
 
 	private transient IExpressionParser expressionParser;
-	
-	Pattern pattern = null;
 
+	Pattern pattern = null;
 
 	/**
 	 * @param URI
@@ -170,8 +169,8 @@ public class SDFExpression implements Serializable, IClone {
 		} else {
 			// Try to determine own attribute resolver from expression
 			try {
-				IExpression<?> tmpExpression = expressionParser.parse(
-						expressionString);
+				IExpression<?> tmpExpression = expressionParser
+						.parse(expressionString);
 				this.attributeResolver = new DirectAttributeResolver(
 						tmpExpression.getVariables());
 				this.schema = this.attributeResolver.getSchema();
@@ -224,8 +223,10 @@ public class SDFExpression implements Serializable, IClone {
 		}
 		if (this.expression instanceof IFunction) {
 			IFunction<?> function = (IFunction<?>) expression;
-	        function.propagateAdditionalContentReference(function.getAdditionalContents());
-	        function.propagateMetadataReference(function.getMetaAttributeContainer());
+			function.propagateAdditionalContentReference(function
+					.getAdditionalContents());
+			function.propagateMetadataReference(function
+					.getMetaAttributeContainer());
 			setAdditionalContent(function.getAdditionalContents());
 			setMetaAttribute(function.getMetaAttributeContainer());
 		}
@@ -234,7 +235,7 @@ public class SDFExpression implements Serializable, IClone {
 	public List<SDFSchema> getSchema() {
 		return this.schema;
 	}
-	
+
 	private String substituteAggregations(String value,
 			Map<String, String> inverseAliasMappings) {
 		String result = "";
@@ -349,7 +350,6 @@ public class SDFExpression implements Serializable, IClone {
 		return this.expressionString;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void bindVariables(Object... values) {
 		if (expression instanceof Constant) {
 			return;
@@ -359,43 +359,16 @@ public class SDFExpression implements Serializable, IClone {
 			throw new IllegalArgumentException(
 					"illegal variable bindings in expression");
 		}
-		
+
 		for (int i = 0; i < values.length; ++i) {
 			Variable variable = variableArrayList.get(i);
-//			if(variable.isArray()) {
-//				variable.bind(((List<Object>)values[i]).get(variable.getArrayIndex()), null, -1);
-//			} else {
-				variable.bind(values[i], null, -1);
-//			}
+			variable.bind(values[i], null, -1);
 		}
 
 		setValue(expression.getValue());
 	}
 
-    @SuppressWarnings("unchecked")
 	public void bindVariables(IMetaAttribute[] metadata, Object... values) {
-        if (expression instanceof Constant) {
-            return;
-        }
-
-        if (values.length != variableArrayList.size()) {
-            throw new IllegalArgumentException("illegal variable bindings in expression");
-        }
-
-        for (int i = 0; i < values.length; ++i) {
-			Variable variable = variableArrayList.get(i);
-//			if(variable.isArray()) {
-//				variable.bind(((List<Object>)values[i]).get(variable.getArrayIndex()), metadata[i], -1);
-//			} else {
-				variable.bind(values[i], metadata[i], -1);
-//			}
-        }
-
-        setValue(expression.getValue());
-    }
-	   
-	@SuppressWarnings("unchecked")
-	public void bindVariables(int[] positions, IMetaAttribute[] metadata, Object... values) {
 		if (expression instanceof Constant) {
 			return;
 		}
@@ -407,11 +380,26 @@ public class SDFExpression implements Serializable, IClone {
 
 		for (int i = 0; i < values.length; ++i) {
 			Variable variable = variableArrayList.get(i);
-//			if(variable.isArray()) {
-//				variable.bind(((List<Object>)values[i]).get(variable.getArrayIndex()), metadata[i], positions[i]);
-//			} else {
-				variable.bind(values[i], metadata[i], positions[i]);
-//			}
+			variable.bind(values[i], metadata[i], -1);
+		}
+
+		setValue(expression.getValue());
+	}
+
+	public void bindVariables(int[] positions, IMetaAttribute[] metadata,
+			Object... values) {
+		if (expression instanceof Constant) {
+			return;
+		}
+
+		if (values.length != variableArrayList.size()) {
+			throw new IllegalArgumentException(
+					"illegal variable bindings in expression");
+		}
+
+		for (int i = 0; i < values.length; ++i) {
+			Variable variable = variableArrayList.get(i);
+			variable.bind(values[i], metadata[i], positions[i]);
 		}
 
 		setValue(expression.getValue());
@@ -536,10 +524,10 @@ public class SDFExpression implements Serializable, IClone {
 	}
 
 	public boolean isAlwaysTrue() {
-		if (getMEPExpression() instanceof Constant){
+		if (getMEPExpression() instanceof Constant) {
 			Object o = getMEPExpression().getValue();
-			if (o instanceof Boolean){
-				return (boolean)o;
+			if (o instanceof Boolean) {
+				return (boolean) o;
 			}
 		}
 		return false;
