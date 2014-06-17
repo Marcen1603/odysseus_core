@@ -40,7 +40,8 @@ public class FillImageFunction extends AbstractFunction<Image> {
         super("fill", 2, FillImageFunction.ACC_TYPES, SDFImageDatatype.IMAGE, true);
     }
 
-    public Image getValue() {
+    @Override
+	public Image getValue() {
         final Image image = (Image) this.getInputValue(0);
         final double value = this.getNumericalInputValue(1);
 

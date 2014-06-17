@@ -44,6 +44,7 @@ public class GetImageFunction extends AbstractFunction<Double> {
 				true);
 	}
 
+	@Override
 	public Double getValue() {
 		final Image image = (Image) this.getInputValue(0);
 		final int x = this.getNumericalInputValue(1).intValue();

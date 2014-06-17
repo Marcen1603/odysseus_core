@@ -38,6 +38,7 @@ public abstract class DecodedAISPayload extends AISSentence implements Serializa
 	}
 	
 	//this method should be implemented by all subclasses
+	@Override
 	public abstract void fillMap(Map<String, Object> res);
 
 	@Override

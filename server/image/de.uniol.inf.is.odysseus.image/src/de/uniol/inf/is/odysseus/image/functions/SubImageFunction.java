@@ -52,6 +52,7 @@ public class SubImageFunction extends AbstractFunction<Image> {
 				true);
 	}
 
+	@Override
 	public Image getValue() {
 		final Image image = (Image) this.getInputValue(0);
 		final int x = this.getNumericalInputValue(1).intValue();

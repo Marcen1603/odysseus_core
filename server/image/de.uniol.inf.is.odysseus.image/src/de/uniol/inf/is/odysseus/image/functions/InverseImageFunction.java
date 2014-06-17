@@ -44,6 +44,7 @@ public class InverseImageFunction extends AbstractFunction<Image> {
 				SDFImageDatatype.IMAGE, true);
 	}
 
+	@Override
 	public Image getValue() {
 		final Image image = (Image) this.getInputValue(0);
 		Objects.requireNonNull(image);

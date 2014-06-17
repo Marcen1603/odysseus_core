@@ -47,6 +47,7 @@ public class RotateImageFunction extends AbstractFunction<Image> {
 				SDFImageDatatype.IMAGE, true);
 	}
 
+	@Override
 	public Image getValue() {
 		final Image image = (Image) this.getInputValue(0);
 		// Angle in degrees

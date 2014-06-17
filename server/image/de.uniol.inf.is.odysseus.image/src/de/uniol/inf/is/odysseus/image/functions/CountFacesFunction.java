@@ -51,6 +51,7 @@ public class CountFacesFunction extends AbstractFunction<Integer> {
 //				"/haarcascade_frontalface_default.xml").getPath());
 	}
 
+	@Override
 	public Integer getValue() {
 		// if (classifierCascade != null) {
 		final Image image = (Image) this.getInputValue(0);
