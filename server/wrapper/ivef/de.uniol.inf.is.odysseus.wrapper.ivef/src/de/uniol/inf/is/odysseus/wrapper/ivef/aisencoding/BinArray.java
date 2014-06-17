@@ -85,16 +85,24 @@ public class BinArray {
         switch (bits) {
         case 6:
             bitSet[length + 5] = (binVal & 1) > 0;
+            break;
         case 5:
             bitSet[length + 4] = (binVal & 2) > 0;
+            break;
         case 4:
             bitSet[length + 3] = (binVal & 4) > 0;
+            break;
         case 3:
             bitSet[length + 2] = (binVal & 8) > 0;
+            break;
         case 2:
             bitSet[length + 1] = (binVal & 16) > 0;
+            break;
         case 1:
             bitSet[length] = (binVal & 32) > 0;
+            break;
+        default:
+        	break;
         }
         this.length = length + bits;
     }
