@@ -44,9 +44,11 @@ public class GenericGeneratorApplication implements IApplication {
         args[4] = "-gS";
         args[5] = System.getenv("gS");
 
+		long number = -1l;
         int port = 54325;
         long frequency = 1000l;
         String schemaFile = "schema.txt";
+        String out = null;
         if (args[1] != null) {
             port = Integer.parseInt(args[1]);
         }
@@ -58,10 +60,18 @@ public class GenericGeneratorApplication implements IApplication {
         if (args[5] != null) {
             schemaFile = args[5];
         }
-        args[5] = schemaFile;
-        LOG.debug("Generator started " + args[0] + " " + args[1] + " " + args[2] + " " + args[3] + " " + args[4] + " " + args[5]);
+        args[5] = schemaFile + "";
+        if (args[7] != null) {
+            out = args[7];
+        }
+        args[7] = out + "";
+        if (args[9] != null) {
+            number = Long.parseLong(args[9]);
+        }
+        args[9] = number + "";
+        LOG.debug("Generator started " + args[0] + " " + args[1] + " " + args[2] + " " + args[3] + " " + args[4] + " " + args[5] + " " + args[6] + " " + args[7] + " " + args[8] + " " + args[9]);
 
-        genericServer = new StreamServer(port, new GenericProvider(schemaFile, frequency));
+        genericServer = new StreamServer(port, new GenericProvider(schemaFile, frequency, out, number));
         genericServer.start();
         return IApplicationContext.EXIT_ASYNC_RESULT;
     }
