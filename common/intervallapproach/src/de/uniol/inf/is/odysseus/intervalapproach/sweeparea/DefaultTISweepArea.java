@@ -40,7 +40,9 @@ import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicat
  * elements, until the remove predicate first returns false. The remove
  * predicate is fixed to the TotallyBeforePredicate
  */
-public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>> extends AbstractTimeIntervalSweepArea<T> implements Comparable<DefaultTISweepArea<T>>, ITimeIntervalSweepArea<T> {
+public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>>
+		extends AbstractTimeIntervalSweepArea<T> implements
+		Comparable<DefaultTISweepArea<T>>, ITimeIntervalSweepArea<T> {
 
 	Comparator<T> purgeComparator = new Comparator<T>() {
 
@@ -64,7 +66,8 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		super.setRemovePredicate(TotallyBeforePredicate.getInstance());
 	}
 
-	public DefaultTISweepArea(DefaultTISweepArea<T> defaultTISweepArea) throws InstantiationException, IllegalAccessException {
+	public DefaultTISweepArea(DefaultTISweepArea<T> defaultTISweepArea)
+			throws InstantiationException, IllegalAccessException {
 		super(defaultTISweepArea);
 	}
 
@@ -175,7 +178,8 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 				// the specified key. Note that this guarantees that the return
 				// value will be >= 0 if and only if the key is found.
 				// Remark: purgeComparator will never return equals!
-				int delTo = Collections.binarySearch(getElements(), element, purgeComparator);
+				int delTo = Collections.binarySearch(getElements(), element,
+						purgeComparator);
 				// Only remove if before
 				if (delTo < 0) {
 					// find correct position
@@ -208,7 +212,8 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 						it.remove();
 					}
 
-					if (cur.getMetadata().getStart().afterOrEquals(element.getMetadata().getStart())) {
+					if (cur.getMetadata().getStart()
+							.afterOrEquals(element.getMetadata().getStart())) {
 						return;
 					}
 
@@ -311,13 +316,16 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		return retval.iterator();
 	}
 
-	public List<T> extractEqualElementsStartingEquals(T element, double tolerance) {
+	public List<T> extractEqualElementsStartingEquals(T element,
+			double tolerance) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
 			Iterator<T> li = getElements().iterator();
 			while (li.hasNext()) {
 				T s_hat = li.next();
-				if (s_hat.getMetadata().getStart().equals(element.getMetadata().getStart())) {
+				if (s_hat.getMetadata().getStart()
+						.equals(element.getMetadata().getStart())) {
+					// if (s_hat.equalsTolerance(element, tolerance)) {
 					if (s_hat.equalsTolerance(element, tolerance)) {
 						retval.add(s_hat);
 						li.remove();
@@ -391,7 +399,8 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	@Override
 	public PointInTime getMaxTs() {
 		if (!this.getElements().isEmpty()) {
-			return this.getElements().get(getElements().size() - 1).getMetadata().getStart();
+			return this.getElements().get(getElements().size() - 1)
+					.getMetadata().getStart();
 		}
 		return null;
 	}
@@ -415,10 +424,13 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	 *         all points of time
 	 */
 	public String getSweepAreaAsString(PointInTime baseTime) {
-		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size() + " Elems \n");
+		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size()
+				+ " Elems \n");
 		for (T element : getElements()) {
 			buf.append(element).append(" ");
-			buf.append("{META ").append(element.getMetadata().toString(baseTime)).append("}\n");
+			buf.append("{META ")
+					.append(element.getMetadata().toString(baseTime))
+					.append("}\n");
 		}
 		return buf.toString();
 	}
@@ -426,12 +438,12 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	public String getSweepAreaAsString(String tab, int max, boolean tail) {
 		StringBuffer buf = new StringBuffer(tab);
 		if (!tail) {
-			for(int i=0;i<Math.min(max, getElements().size());i++){
+			for (int i = 0; i < Math.min(max, getElements().size()); i++) {
 				T element = getElements().get(i);
 				buf.append(" " + element).append(" ").append("\n" + tab);
 			}
 		} else {
-			for(int i=Math.min(max, getElements().size())-1;i>=0;i--){
+			for (int i = Math.min(max, getElements().size()) - 1; i >= 0; i--) {
 				T element = getElements().get(i);
 				buf.append(" " + element).append(" ").append("\n" + tab);
 			}
@@ -442,7 +454,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	public String getSweepAreaAsString(String tab) {
 		return getSweepAreaAsString(tab, getElements().size(), false);
 	}
-	
+
 	public String getSweepAreaAsString() {
 		return getSweepAreaAsString("");
 	}
@@ -483,7 +495,8 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	 * @param timestamp
 	 * @return
 	 */
-	public Iterator<T> peekElementsContaing(PointInTime timestamp, boolean includingEndtime) {
+	public Iterator<T> peekElementsContaing(PointInTime timestamp,
+			boolean includingEndtime) {
 		List<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
 			Iterator<T> li = getElements().iterator();
@@ -492,7 +505,8 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 				if (TimeInterval.inside(s_hat.getMetadata(), timestamp)) {
 					retval.add(s_hat);
 				}
-				if (includingEndtime && s_hat.getMetadata().getEnd().equals(timestamp)) {
+				if (includingEndtime
+						&& s_hat.getMetadata().getEnd().equals(timestamp)) {
 					retval.add(s_hat);
 				}
 			}
@@ -532,5 +546,4 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		}
 	}
 
-	
 }
