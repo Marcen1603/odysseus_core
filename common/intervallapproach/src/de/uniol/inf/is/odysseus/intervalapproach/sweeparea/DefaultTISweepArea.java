@@ -311,14 +311,14 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		return retval.iterator();
 	}
 
-	public List<T> extractEqualElementsStartingEquals(T element) {
+	public List<T> extractEqualElementsStartingEquals(T element, double tolerance) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
 			Iterator<T> li = getElements().iterator();
 			while (li.hasNext()) {
 				T s_hat = li.next();
 				if (s_hat.getMetadata().getStart().equals(element.getMetadata().getStart())) {
-					if (s_hat.equals(element)) {
+					if (s_hat.equalsTolerance(element, tolerance)) {
 						retval.add(s_hat);
 						li.remove();
 					}

@@ -105,5 +105,13 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 
 	int restrictedHashCode(int[] attributeNumbers);
 
+	/**
+	 * Method to compare to stream objects, in case of double values, allow tolerance;
+	 * @param o
+	 * @param tolerance
+	 * @return
+	 */
+	boolean equalsTolerance(Object o, double tolerance);
+
 
 }

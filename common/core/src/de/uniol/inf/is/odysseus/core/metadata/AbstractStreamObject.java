@@ -145,4 +145,10 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 		return hashCode();
 	}
 	
+	@Override
+	public boolean equalsTolerance(Object o, double tolerance) {
+		// Default with no restriction
+		return equals(o);
+	}
+	
 }

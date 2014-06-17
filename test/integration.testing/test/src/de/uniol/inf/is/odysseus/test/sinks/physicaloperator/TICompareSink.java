@@ -106,7 +106,7 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 				System.out.println("Process next: "+tuple);
 			}
 			inputdata.add(tuple);
-			List<Tuple<? extends ITimeInterval>> startSame = expected.extractEqualElementsStartingEquals(tuple);
+			List<Tuple<? extends ITimeInterval>> startSame = expected.extractEqualElementsStartingEquals(tuple,0.00001);
 			if (startSame.size() == 0) {
 				stopOperation(StatusCode.ERROR_NOT_EQUIVALENT);
 				logger.debug(StatusCode.ERROR_NOT_EQUIVALENT.name() + ": Following tuple has no counterpart in expected values: ");

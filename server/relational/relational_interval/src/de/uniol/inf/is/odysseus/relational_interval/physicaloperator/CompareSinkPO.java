@@ -49,7 +49,7 @@ public class CompareSinkPO
 						+ " has not counterpart");
 			}
 			List<Tuple<? extends ITimeInterval>> startSame = sweepArea[otherport]
-					.extractEqualElementsStartingEquals(object);
+					.extractEqualElementsStartingEquals(object,0);
 
 			if (startSame.size() == 0) {
 				sweepArea[port].insert(object);

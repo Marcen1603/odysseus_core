@@ -453,6 +453,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	 * @param o
 	 * @return
 	 */
+	@Override
 	public final boolean equalsTolerance(Object o, double tolerance) {
 		if (!(o instanceof Tuple)) {
 			return false;
