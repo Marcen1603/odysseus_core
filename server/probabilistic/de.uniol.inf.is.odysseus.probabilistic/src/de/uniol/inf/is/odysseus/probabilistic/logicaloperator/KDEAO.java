@@ -66,9 +66,9 @@ public class KDEAO extends UnaryLogicalOp {
      * @param emAO
      *            The copy
      */
-    public KDEAO(final KDEAO emAO) {
-        super(emAO);
-        this.attributes = new ArrayList<SDFAttribute>(emAO.attributes);
+    public KDEAO(final KDEAO kdeAO) {
+        super(kdeAO);
+        this.attributes = new ArrayList<SDFAttribute>(kdeAO.attributes);
     }
 
     /**
