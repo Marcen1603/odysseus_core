@@ -326,7 +326,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 				if (s_hat.getMetadata().getStart()
 						.equals(element.getMetadata().getStart())) {
 					// if (s_hat.equalsTolerance(element, tolerance)) {
-					if (s_hat.equalsTolerance(element, tolerance)) {
+					if (s_hat.equals(element)) {
 						retval.add(s_hat);
 						li.remove();
 					}
