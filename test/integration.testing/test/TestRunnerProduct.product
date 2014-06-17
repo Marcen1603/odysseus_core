@@ -3,19 +3,21 @@
 
 <product name="Test Runner Product" uid="de.uniol.inf.is.odysseus.test.runner.product" id="de.uniol.inf.is.odysseus.test.odysseustestproduct" application="de.uniol.inf.is.odysseus.test.OdysseusTestApplication" version="1.0.0" useFeatures="true" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <programArgs>-nl en -consoleLog -console -debug .options System manager C:\nexmark</programArgs>
-      <programArgsLin>-os linux -ws gtk -arch x86_64</programArgsLin>
-      <vmArgs>-Dosgi.requiredJavaVersion=1.7 -Xms1024m -Xmx1024m -Dlog4j.configuration=log4j.test.properties</vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+      <programArgs>-nl en -consoleLog -console -debug .options System manager C:\nexmark
+      </programArgs>
+      <programArgsLin>-os linux -ws gtk -arch x86_64
+      </programArgsLin>
+      <vmArgs>-Dosgi.requiredJavaVersion=1.7 -Xms1024m -Xmx1024m -Dlog4j.configuration=log4j.test.properties
+      </vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      </vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
-
 
    <launcher>
       <solaris/>
@@ -23,7 +25,6 @@
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
@@ -35,6 +36,7 @@
       <feature id="de.uniol.inf.is.odysseus.server.platform.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.server.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.test.feature" version="1.0.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.probabilistic.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
