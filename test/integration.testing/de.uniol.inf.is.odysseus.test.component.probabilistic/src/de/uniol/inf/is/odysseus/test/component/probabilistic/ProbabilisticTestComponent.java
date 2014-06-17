@@ -28,7 +28,7 @@ public class ProbabilisticTestComponent extends AbstractQueryExpectedOutputTestC
 
     @Override
     public String getName() {
-        return "Probabilistic Test";
+        return "Probabilistic Test Component";
     }
 
 }
