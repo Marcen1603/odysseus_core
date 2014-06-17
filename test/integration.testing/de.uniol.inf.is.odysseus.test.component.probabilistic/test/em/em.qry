@@ -10,7 +10,7 @@ data = ACCESS({
     protocol='SimpleCSV',
     dataHandler='ProbabilisticTuple', 
     options=[
-        ['filename', '${BUNDLE-ROOT}\test\project\input0.csv'], 
+        ['filename', '${BUNDLE-ROOT}\test\em\input0.csv'], 
 ///        ['filename', '${ROOT}/input0.csv'], 
         ['csv.delimiter', ','],
         ['csv.trim', 'true']

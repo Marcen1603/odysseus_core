@@ -10,7 +10,7 @@ data = ACCESS({
     protocol='SimpleCSV',
     dataHandler='ProbabilisticTuple', 
     options=[
-        ['filename', '${BUNDLE-ROOT}\test\project\input0.csv'], 
+        ['filename', '${BUNDLE-ROOT}\test\kalman\input0.csv'], 
 ///        ['filename', '${ROOT}/input0.csv'], 
         ['csv.delimiter', ','],
         ['csv.trim', 'true']
@@ -22,4 +22,4 @@ data = ACCESS({
 ]})
 
 
-out = KALMAN({VARIABLES = ['x','y','dx','dy'], INITIALSTATE = '[0.0, 0.0, 0.0, 0.0]', INITIALERROR = '[1.0,0.0,0.0,0.0;0.0,1.0,0.0,0.0;0.0,0.0,1.0,0.0;0.0,0.0,0.0,1.0]', MEASUREMENT = '[0.0,0.0,1.0,0.0;0.0,0.0,0.0,1.0]', TRANSITION = '[1.0,0.0,timestamp-__last_1.timestamp,0.0;0.0,1.0,0.0,1.0;0.0,0.0,1.0,0.0;0.0,0.0,0.0,1.0]', ProcessNoise = '[1/4, 1/4, 1/2, 1/2;1/4, 1/4, 1/2, 1/2; 1/2, 1/2, 1, 1; 1/2, 1/2, 1, 1]', ATTRIBUTES = ['x','y'], MEASUREMENTNOISE = '[10.0,0.0;0.0,10.0]'}, data)
+out = KALMAN({VARIABLES = ['x','y','dx','dy'], INITIALSTATE = '[0.0, 0.0, 0.0, 0.0]', INITIALERROR = '[1.0,0.0,0.0,0.0;0.0,1.0,0.0,0.0;0.0,0.0,1.0,0.0;0.0,0.0,0.0,1.0]', MEASUREMENT = '[0.0,0.0,1.0,0.0;0.0,0.0,0.0,1.0]', TRANSITION = '[1.0,0.0,timestamp-__last_1.timestamp,0.0;0.0,1.0,0.0,1.0;0.0,0.0,1.0,0.0;0.0,0.0,0.0,1.0]', ProcessNoise = '[1.0/4.0, 1.0/4.0, 1.0/2.0, 1.0/2.0;1.0/4.0, 1.0/4.0, 1.0/2.0, 1.0/2.0; 1.0/2.0, 1.0/2.0, 1.0, 1.0; 1.0/2.0, 1.0/2.0, 1.0, 1.0]', ATTRIBUTES = ['x','y'], MEASUREMENTNOISE = '[10.0,0.0;0.0,10.0]'}, data)
