@@ -3,6 +3,7 @@
 
 <product name="Test Runner Product" uid="de.uniol.inf.is.odysseus.test.runner.product" id="de.uniol.inf.is.odysseus.test.odysseustestproduct" application="de.uniol.inf.is.odysseus.test.OdysseusTestApplication" version="1.0.0" useFeatures="true" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
@@ -14,11 +15,11 @@
       <vmArgs>-Dosgi.requiredJavaVersion=1.7 -Xms1024m -Xmx1024m -Dlog4j.configuration=log4j.test.properties
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
-<<<<<<< HEAD
       </vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
+
 
    <launcher>
       <solaris/>
@@ -27,8 +28,10 @@
       </win>
    </launcher>
 
+
    <vm>
    </vm>
+
 
    <plugins>
    </plugins>
@@ -44,34 +47,3 @@
    </configurations>
 
 </product>
-=======
-      </vmArgsMac>
-   </launcherArgs>
-
-   <windowImages/>
-
-   <launcher>
-      <solaris/>
-      <win useIco="false">
-         <bmp/>
-      </win>
-   </launcher>
-
-   <vm>
-   </vm>
-
-   <plugins>
-   </plugins>
-
-   <features>
-      <feature id="de.uniol.inf.is.odysseus.server.platform.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.server.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.test.feature" version="1.0.0.0"/>
-   </features>
-
-   <configurations>
-      <plugin id="de.uniol.inf.is.odysseus.test" autoStart="true" startLevel="0" />
-   </configurations>
-
-</product>
->>>>>>> Test: Fix probabilistic unit tests

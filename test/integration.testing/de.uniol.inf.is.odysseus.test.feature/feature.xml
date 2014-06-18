@@ -23,48 +23,6 @@ Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an &quot;AS IS&quot; BASIS,  
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  See the License for the specific language governing permissions and 
-<<<<<<< HEAD
- limitations under the License.
-   </license>
-
-   <url>
-      <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
-   </url>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.test"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.test.component.nexmark"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.test.component.operator"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.test.component.compile"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-</feature>
-=======
  limitations under the License.
    </license>
 
@@ -115,4 +73,3 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
 </feature>
->>>>>>> Test: Add all prob. bundles to test feature and remove prob. feature from test product config
