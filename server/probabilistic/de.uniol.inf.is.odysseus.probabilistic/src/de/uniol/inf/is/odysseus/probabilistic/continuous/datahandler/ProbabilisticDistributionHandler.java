@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,7 +33,6 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.datahandler.MatrixDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
@@ -475,17 +473,21 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
         String discreteDistributionString1 = "1.0D([-198.0],0.81):1.0[[-oo,oo]]->[4]";
         String discreteDistributionString2 = "1.0D([-28.0, -28.0],0.9):1.0[[-oo,oo], [-oo,oo]]->[0, 1]";
         String discreteDistributionString3 = "1.0D([NaN],0.81):1.0[[0.0,0.0]]->[3]";
+        String discreteDistributionString4 = "1.0N([-99.0, -99.0],[[1.0, 0.5],[0.5, 1.0]]):1.0[[-oo,oo], [-oo,oo]]->[1, 2]";
         String continuousDistributionString1 = "1.0N([-67.0, -67.0],[[1.0, 0.5],[0.5, 1.0]]):1.0[[-oo,oo], [-oo,oo]]->[0, 1]";
         String continuousDistributionString2 = "1.0N(-99.0,1.0):1.0[[-oo,oo]]->[0]";
         String continuousDistributionString3 = "1.0N([-99.0, -99.0],[[1.0, 0.5],[0.5, 1.0]]):1.0[[-oo,0.0], [-oo,oo]]->[1, 2]";
         String continuousDistributionString4 = "1.0N([-99.0, -99.0],[[1.0, 0.5],[0.5, 1.0]]):1.0[[-oo,oo], [-oo,oo]]->[1, 2]";
+        String discreteDistributionString5 = "1.0D([3.0, 3.0],0.9):1.0[[-oo,oo], [-oo,oo]]->[1, 2]|1.1111111111111112D([3.0, 3.0],0.9):1.0[[-oo,3.0], [-oo,oo]]->[4, 5]|1.1111111111111112D([2.0, 2.0],0.9):1.0[[-oo,2.0], [-oo,oo]]->[7, 8]";
         ProbabilisticDistributionHandler dataHandler = new ProbabilisticDistributionHandler();
-        // System.out.println(dataHandler.readData(discreteDistributionString1));
-        // System.out.println(dataHandler.readData(discreteDistributionString2));
-        //System.out.println(dataHandler.readData(discreteDistributionString3));
-        // System.out.println(dataHandler.readData(continuousDistributionString1));
-//         System.out.println(dataHandler.readData(continuousDistributionString2));
-//         System.out.println(dataHandler.readData(continuousDistributionString3));
-        System.out.println(dataHandler.readData(continuousDistributionString4));
+//        System.out.println(dataHandler.readData(discreteDistributionString1));
+//        System.out.println(dataHandler.readData(discreteDistributionString2));
+//        System.out.println(dataHandler.readData(discreteDistributionString3));
+//        System.out.println(dataHandler.readData(discreteDistributionString4));
+        System.out.println(dataHandler.readData(discreteDistributionString5));
+//        System.out.println(dataHandler.readData(continuousDistributionString1));
+//        System.out.println(dataHandler.readData(continuousDistributionString2));
+//        System.out.println(dataHandler.readData(continuousDistributionString3));
+//        System.out.println(dataHandler.readData(continuousDistributionString4));
     }
 }

@@ -97,7 +97,7 @@ public class TProbabilisticJoinAORule extends TJoinAORule {
                 return true;
             }
         }
-        return super.isExecutable(operator, config);
+        return false;
     }
 
     /**

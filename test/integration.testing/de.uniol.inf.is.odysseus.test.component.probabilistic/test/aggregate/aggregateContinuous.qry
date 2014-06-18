@@ -10,7 +10,7 @@ data = ACCESS({
     protocol='SimpleCSV',
     dataHandler='ProbabilisticTuple', 
     options=[
-        ['filename', '${ROOT}\test\aggregate\input0.csv'], 
+        ['filename', '${BUNDLE-ROOT}\test\aggregate\input0.csv'], 
 ///        ['filename', '${ROOT}/input0.csv'], 
         ['csv.delimiter', ','],
         ['csv.trim', 'true']
@@ -22,4 +22,4 @@ data = ACCESS({
 ]})
 
 in = WINDOW({SIZE = 4, TYPE = 'tuple'}, Distribution({attributes = ['x', 'y'], variance = 'variance', continuous = 'true'}, Map({expressions = [['timestamp','timestamp'], ['x','x'], ['y','y'], ['[1.0, 0.5; 0.5, 1.0]','variance']]}, data)))
-out = AGGREGATE({AGGREGATIONS = [['count', 'x', 'countX'],['sum', 'x', 'sumX'],['avg', 'x', 'avgX']]}, in)
+out = AGGREGATE({AGGREGATIONS = [['count', 'x', 'countX'],['sum', 'x', 'sumX', 'ProbabilisticDouble'],['avg', 'x', 'avgX', 'ProbabilisticDouble']]}, in)
