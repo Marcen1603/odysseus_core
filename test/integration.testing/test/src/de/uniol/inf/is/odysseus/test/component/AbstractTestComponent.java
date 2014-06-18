@@ -96,6 +96,7 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 		tryStartExecutor(executor);
 		for (S set : testsets) {
 			LOG.debug("Running sub test " + i + " of " + testsets.size() + ": \"" + set.getName() + "\" ....");
+			LOG.debug(set.getQuery());
 			StatusCode code = executeTestSet(set);
 			LOG.debug("Sub test \"" + set.getName() + "\" ended with code: " + code);
 			LOG.debug("***************************************************************************************");

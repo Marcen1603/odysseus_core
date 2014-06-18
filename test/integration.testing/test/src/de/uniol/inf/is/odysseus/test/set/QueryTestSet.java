@@ -11,6 +11,7 @@ public class QueryTestSet implements ITestSet{
 		name = toString();
 	}
 	
+	@Override
 	public String getQuery() {
 		return query;
 	}

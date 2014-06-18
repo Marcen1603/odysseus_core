@@ -4,4 +4,6 @@ public interface ITestSet {
 	
 	public String getName();
 
+	String getQuery();
+
 }
