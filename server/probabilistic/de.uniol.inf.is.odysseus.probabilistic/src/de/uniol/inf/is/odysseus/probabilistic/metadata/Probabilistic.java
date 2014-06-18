@@ -122,7 +122,7 @@ public class Probabilistic implements IProbabilistic {
      */
     @Override
     public final String toString() {
-        return "[existence= " + this.existence + "]";
+        return "" + this.existence;
     }
 
     /**
