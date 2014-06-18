@@ -72,6 +72,10 @@ Unless required by applicable law or agreed to in writing, software
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.probabilistic.feature"
+         version="0.0.0"/>
+
    <plugin
          id="de.uniol.inf.is.odysseus.test"
          download-size="0"
@@ -109,41 +113,6 @@ Unless required by applicable law or agreed to in writing, software
          download-size="0"
          install-size="0"
          version="0.0.0"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.probabilistic"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.probabilistic.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.probabilistic.test"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.probabilistic.transform"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.probabilistic_latency"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
 </feature>
 >>>>>>> Test: Add all prob. bundles to test feature and remove prob. feature from test product config
