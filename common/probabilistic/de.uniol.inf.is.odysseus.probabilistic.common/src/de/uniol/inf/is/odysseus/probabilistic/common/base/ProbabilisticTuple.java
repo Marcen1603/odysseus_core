@@ -599,9 +599,19 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
      */
     @Override
     public final String toString() {
-        final StringBuffer retBuff = new StringBuffer();
-        retBuff.append(super.toString());
-        retBuff.append("|DIS|");
+		StringBuffer retBuff = new StringBuffer();
+		if (attributes.length > 0) {
+			retBuff.append(this.attributes[0] == null ? "" : this.attributes[0]);
+		} else {
+			retBuff.append("null");
+		}
+		for (int i = 1; i < this.attributes.length; ++i) {
+			Object curAttribute = this.attributes[i];
+			retBuff.append("|");
+			retBuff.append(curAttribute == null ? "<NULL>" : curAttribute
+					.toString());
+		}
+        retBuff.append("|");
         if ((this.getDistributions() != null) && (this.getDistributions().length > 0)) {
             for (int i = 0; i < this.getDistributions().length; i++) {
                 if (i > 0) {
@@ -610,9 +620,11 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
                 retBuff.append(this.getDistribution(i));
             }
         }
-        else {
-            retBuff.append("-");
-        }
+		retBuff.append(" | META | " + getMetadata());
+		if (getAdditionalContent().size() > 0) {
+			retBuff.append("|ADD|" + getAdditionalContent());
+		}
+
         return retBuff.toString();
     }
 
