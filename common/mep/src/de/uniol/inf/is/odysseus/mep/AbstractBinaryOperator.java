@@ -51,9 +51,13 @@ public abstract class AbstractBinaryOperator<T> extends AbstractFunction<T>
 	}
 	
 	@Override
-	protected String _internalToString() {
-		StringBuffer buffer = new StringBuffer(""+getArgument(0));
-		buffer.append(" ").append(getSymbol()).append(" "+getArgument(1));
-		return buffer.toString();
-	}
+    protected String _internalToString() {
+        if ((getArguments() != null) && (getArguments().length > 1)) {
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("" + getArgument(0));
+            buffer.append(" ").append(getSymbol()).append(" " + getArgument(1));
+            return buffer.toString();
+        }
+        return null;
+    }
 }

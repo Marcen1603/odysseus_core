@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -73,12 +74,14 @@ public class FunctionStore {
 
     public IFunction<?> getFunction(final String symbol, final List<SDFDatatype> parameter) {
         IFunction<?> function = null;
-        if ((symbol != null) && (!symbol.isEmpty())) {
-            final List<FunctionSignature> signatureList = this.symbols.get(symbol.toUpperCase());
-            for (final FunctionSignature signature : signatureList) {
-                if (signature.contains(parameter)) {
-                    function = this.signatures.get(signature);
-                    break;
+        synchronized (symbols) {
+            if ((symbol != null) && (!symbol.isEmpty())) {
+                final List<FunctionSignature> signatureList = this.symbols.get(symbol.toUpperCase());
+                for (final FunctionSignature signature : signatureList) {
+                    if (signature.contains(parameter)) {
+                        function = this.signatures.get(signature);
+                        break;
+                    }
                 }
             }
         }
@@ -90,6 +93,9 @@ public class FunctionStore {
     }
 
     public IFunction<?> put(final FunctionSignature signature, final IFunction<?> function) {
+        Objects.requireNonNull(signature);
+        Objects.requireNonNull(function);
+        Objects.requireNonNull(signature.getSymbol());
         synchronized (symbols) {
             if (this.symbols.containsKey(signature.getSymbol())) {
                 this.symbols.get(signature.getSymbol()).add(signature);
@@ -105,6 +111,7 @@ public class FunctionStore {
     }
 
     public synchronized IFunction<?> remove(final FunctionSignature signature) {
+        Objects.requireNonNull(signature);
         IFunction<?> function = null;
         synchronized (symbols) {
             function = this.signatures.remove(signature);
