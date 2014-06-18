@@ -68,7 +68,7 @@ public class ProbabilisticContinuousHandler extends AbstractDataHandler<Probabil
     public final ProbabilisticDouble readData(final String string) {
         Objects.requireNonNull(string);
         Preconditions.checkArgument(!string.isEmpty());
-        final int distributionIndex = Integer.parseInt(string);
+        final int distributionIndex = Integer.parseInt(string.substring(1,string.length()-1));
         return new ProbabilisticDouble(distributionIndex);
     }
 

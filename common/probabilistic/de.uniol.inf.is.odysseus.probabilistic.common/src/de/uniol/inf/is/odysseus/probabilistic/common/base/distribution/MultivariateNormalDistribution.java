@@ -190,30 +190,23 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append("𝒩(");
-        if (this.getDimension() == 1) {
-            sb.append(this.means[0]);
-            sb.append(",");
-            sb.append(this.covariance.getEntry(0, 0));
-        }
-        else {
-            sb.append(Arrays.toString(this.means));
-            sb.append(",[");
-            for (int i = 0; i < this.covariance.getRowDimension(); i++) {
-                if (i > 0) {
-                    sb.append(",");
+        sb.append("N(");
+        sb.append(Arrays.toString(this.means));
+        sb.append(",[");
+        for (int i = 0; i < this.covariance.getRowDimension(); i++) {
+            if (i > 0) {
+                sb.append(",");
+            }
+            sb.append("[");
+            for (int j = 0; j < this.covariance.getColumnDimension(); j++) {
+                if (j > 0) {
+                    sb.append(", ");
                 }
-                sb.append("[");
-                for (int j = 0; j < this.covariance.getColumnDimension(); j++) {
-                    if (j > 0) {
-                        sb.append(", ");
-                    }
-                    sb.append(this.covariance.getEntry(i, j));
-                }
-                sb.append("]");
+                sb.append(this.covariance.getEntry(i, j));
             }
             sb.append("]");
         }
+        sb.append("]");
         sb.append(")");
         return sb.toString();
     }

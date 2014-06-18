@@ -221,7 +221,8 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
             }
             catch (final Exception e) {
                 ProbabilisticTupleDataHandler.LOG.warn("Error Parsing " + input.get(i) + " with " + this.dataHandlers[i].getClass() + " " + e.getMessage());
-                attributes[i] = null;
+                System.err.println("Error Parsing " + input.get(i) + " with " + this.dataHandlers[i].getClass() + " " + e.getMessage());
+                throw e;
             }
         }
         final MultivariateMixtureDistribution[] distribution = new MultivariateMixtureDistribution[this.maxDistributions];
@@ -229,11 +230,12 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
         if (this.maxDistributions > 0) {
             for (int i = attributes.length; i < input.size(); i++) {
                 try {
-                    distribution[attributes.length - i] = this.probabilisticDistributionHandler.readData(input.get(i));
+                    distribution[i - attributes.length] = this.probabilisticDistributionHandler.readData(input.get(i));
                 }
                 catch (final Exception e) {
                     ProbabilisticTupleDataHandler.LOG.warn("Error Parsing " + input.get(i) + " with " + this.probabilisticDistributionHandler.getClass() + " " + e.getMessage());
-                    distribution[attributes.length - i] = null;
+                    System.err.println("Error Parsing " + input.get(i) + " with " + this.probabilisticDistributionHandler.getClass() + " " + e.getMessage());
+                    throw e;
                 }
                 distributions++;
             }

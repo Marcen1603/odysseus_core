@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,6 +39,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateEnumeratedDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
 
@@ -153,22 +156,231 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
     public final MultivariateMixtureDistribution readData(final String string) {
         Objects.requireNonNull(string);
         Preconditions.checkArgument(!string.isEmpty());
-        final MatrixDataHandler dataHandler = new MatrixDataHandler();
-        final String[] components = string.split("\\|");
-        final List<IMultivariateDistribution> distributions = new ArrayList<>();
+        final List<Pair<Double, IMultivariateDistribution>> distributions = new ArrayList<>();
 
-        final double[] weights = new double[components.length];
-        for (int i = 0; i < components.length; i++) {
-            final String[] parameter = components[i].split("\\:");
-            final double[] means = dataHandler.readData(parameter[0])[0];
-            final double[][] covariance = dataHandler.readData(parameter[1]);
-            weights[i] = Double.parseDouble(parameter[2]);
-            final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(means, covariance);
-            distributions.add(distribution);
+        double scale = 1.0;
+        Interval[] support = null;
+
+        boolean readScale = true;
+        boolean readWeight = false;
+        boolean readSupport = false;
+        boolean continuous = false;
+        boolean inFunction = false;
+        double weight = 0.0;
+        IMultivariateDistribution distribution = null;
+
+        int startIndex = 0;
+        int index = 0;
+        for (int i = 0; i < string.length(); i++) {
+            String token = string.substring(i, i + 1);
+            if ((token.equals("D")) || (token.equals("N"))) {
+                if (!inFunction) {
+                    inFunction = true;
+                    if (readScale) {
+                        readScale = false;
+                        scale = Double.parseDouble(string.substring(0, i));
+                    }
+                    if ((token.equalsIgnoreCase("D"))) {
+                        continuous = false;
+                    }
+                    else {
+                        continuous = true;
+                    }
+                }
+            }
+            if (token.equals("(")) {
+                startIndex = index + 1;
+            }
+            if (token.equals(")")) {
+                if (continuous) {
+                    distribution = readContinuousDistribution(string.substring(startIndex, i));
+                }
+                else {
+                    distribution = readDiscreteDistribution(string.substring(startIndex, i));
+                }
+                if (inFunction) {
+                    inFunction = false;
+                }
+                readWeight = true;
+            }
+            if (token.equals(":")) {
+                readWeight = true;
+                startIndex = index + 1;
+            }
+            if (token.equals(",")) {
+                if (readWeight) {
+                    readWeight = false;
+                    weight = Double.parseDouble(string.substring(startIndex, i));
+                    distributions.add(new Pair<>(weight, distribution));
+                }
+            }
+            if (token.equals("[")) {
+                if (readWeight) {
+                    readWeight = false;
+                    weight = Double.parseDouble(string.substring(startIndex, i));
+                    distributions.add(new Pair<>(weight, distribution));
+
+                    readSupport = true;
+                    startIndex = i + 1;
+                }
+            }
+            if (token.equals(">")) {
+                if (readSupport) {
+                    readSupport = false;
+                    support = readSupport(string.substring(startIndex, i - 2));
+                }
+            }
+            if (token.equals(">")) {
+                startIndex = i + 1;
+            }
+            index++;
+        }
+        int[] reference = readReference(string.substring(startIndex));
+
+        final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(distributions);
+        mixture.setScale(scale);
+        mixture.setAttributes(reference);
+        if (support != null) {
+            mixture.setSupport(support);
+        }
+        return mixture;
+    }
+
+    private IMultivariateDistribution readContinuousDistribution(String string) {
+        List<double[]> variance = new LinkedList<double[]>();
+        double[] mean = null;
+        boolean readMean = true;
+        boolean row = false;
+        int rows = 0;
+        int beginIndex = 0;
+        for (int i = 0; i < string.length(); i++) {
+            if (string.substring(i, i + 1).equals("[")) {
+                if (readMean) {
+                    beginIndex = i + 1;
+                }
+                else {
+                    if (row) {
+                        row = false;
+                    }
+                    else {
+                        beginIndex = i + 1;
+                    }
+                }
+            }
+            if (string.substring(i, i + 1).equals("]")) {
+                if (readMean) {
+                    String[] parameter = string.substring(beginIndex, i).split(",");
+                    mean = new double[parameter.length];
+                    for (int j = 0; j < parameter.length; j++) {
+                        mean[j] = Double.parseDouble(parameter[j]);
+                    }
+                    readMean = false;
+                    rows = mean.length;
+                    row = true;
+                }
+                else {
+                    if (!row) {
+                        String[] parameter = string.substring(beginIndex, i).split(",");
+                        double[] varianceEntry = new double[parameter.length];
+                        for (int j = 0; j < parameter.length; j++) {
+                            varianceEntry[j] = Double.parseDouble(parameter[j]);
+                        }
+                        variance.add(varianceEntry);
+                        rows--;
+                        if (rows == 0) {
+                            row = true;
+                        }
+                    }
+                }
+            }
+
         }
 
-        final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(weights, distributions);
-        return mixture;
+        final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(mean, variance.toArray(new double[variance.size()][variance.get(0).length]));
+        return distribution;
+    }
+
+    private IMultivariateDistribution readDiscreteDistribution(String string) {
+        final List<Pair<double[], Double>> samples = new ArrayList<>();
+        double[] sample = null;
+        double probability = 0.0;
+
+        boolean readSample = true;
+        boolean readProbability = false;
+        int beginIndex = 0;
+        for (int i = 0; i < string.length(); i++) {
+            if (string.substring(i, i + 1).equals("[")) {
+                beginIndex = i + 1;
+                readSample = true;
+            }
+            if (string.substring(i, i + 1).equals("]")) {
+                String[] parameter = string.substring(beginIndex, i).split(",");
+                sample = new double[parameter.length];
+                for (int j = 0; j < parameter.length; j++) {
+                    sample[j] = Double.parseDouble(parameter[j]);
+                }
+                readSample = false;
+            }
+            if (string.substring(i, i + 1).equals(",")) {
+                if (!readSample) {
+                    if (readProbability) {
+                        readProbability = false;
+                        probability = Double.parseDouble(string.substring(beginIndex, i));
+                        samples.add(new Pair<>(sample, probability));
+                    }
+                    else {
+                        readProbability = true;
+                        beginIndex = i + 1;
+                    }
+                }
+            }
+        }
+        if (readProbability) {
+            probability = Double.parseDouble(string.substring(beginIndex));
+            samples.add(new Pair<>(sample, probability));
+        }
+        final MultivariateEnumeratedDistribution distribution = new MultivariateEnumeratedDistribution(samples);
+        return distribution;
+    }
+
+    private Interval[] readSupport(String string) {
+        List<Interval> support = new LinkedList<Interval>();
+        int beginIndex = 0;
+        for (int i = 0; i < string.length(); i++) {
+            if (string.substring(i, i + 1).equals("[")) {
+                beginIndex = i + 1;
+            }
+            if (string.substring(i, i + 1).equals("]")) {
+                String[] parameter = string.substring(beginIndex, i).split(",");
+                String infString = parameter[0];
+                String supString = parameter[1];
+                double inf = 0.0;
+                double sup = 0.0;
+                if (infString.equalsIgnoreCase("-oo")) {
+                    inf = Double.NEGATIVE_INFINITY;
+                }
+                else {
+                    inf = Double.parseDouble(infString);
+                }
+                if (supString.equalsIgnoreCase("oo")) {
+                    sup = Double.POSITIVE_INFINITY;
+                }
+                else {
+                    sup = Double.parseDouble(supString);
+                }
+                support.add(new Interval(inf, sup));
+            }
+        }
+        return support.toArray(new Interval[support.size()]);
+    }
+
+    private int[] readReference(String string) {
+        String[] parameter = string.substring(1, string.length() - 1).split(",");
+        int[] ref = new int[parameter.length];
+        for (int i = 0; i < parameter.length; i++) {
+            ref[i] = Integer.parseInt(parameter[i].trim());
+        }
+        return ref;
     }
 
     /*
@@ -257,5 +469,23 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
     @Override
     public final Class<?> createsType() {
         return MultivariateMixtureDistribution.class;
+    }
+
+    public static void main(String[] args) {
+        String discreteDistributionString1 = "1.0D([-198.0],0.81):1.0[[-oo,oo]]->[4]";
+        String discreteDistributionString2 = "1.0D([-28.0, -28.0],0.9):1.0[[-oo,oo], [-oo,oo]]->[0, 1]";
+        String discreteDistributionString3 = "1.0D([NaN],0.81):1.0[[0.0,0.0]]->[3]";
+        String continuousDistributionString1 = "1.0N([-67.0, -67.0],[[1.0, 0.5],[0.5, 1.0]]):1.0[[-oo,oo], [-oo,oo]]->[0, 1]";
+        String continuousDistributionString2 = "1.0N(-99.0,1.0):1.0[[-oo,oo]]->[0]";
+        String continuousDistributionString3 = "1.0N([-99.0, -99.0],[[1.0, 0.5],[0.5, 1.0]]):1.0[[-oo,0.0], [-oo,oo]]->[1, 2]";
+        String continuousDistributionString4 = "1.0N([-99.0, -99.0],[[1.0, 0.5],[0.5, 1.0]]):1.0[[-oo,oo], [-oo,oo]]->[1, 2]";
+        ProbabilisticDistributionHandler dataHandler = new ProbabilisticDistributionHandler();
+        // System.out.println(dataHandler.readData(discreteDistributionString1));
+        // System.out.println(dataHandler.readData(discreteDistributionString2));
+        //System.out.println(dataHandler.readData(discreteDistributionString3));
+        // System.out.println(dataHandler.readData(continuousDistributionString1));
+//         System.out.println(dataHandler.readData(continuousDistributionString2));
+//         System.out.println(dataHandler.readData(continuousDistributionString3));
+        System.out.println(dataHandler.readData(continuousDistributionString4));
     }
 }

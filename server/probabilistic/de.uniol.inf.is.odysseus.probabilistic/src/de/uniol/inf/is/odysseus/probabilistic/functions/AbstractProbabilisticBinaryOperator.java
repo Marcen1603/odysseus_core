@@ -76,9 +76,13 @@ public abstract class AbstractProbabilisticBinaryOperator<T> extends AbstractPro
      */
     @Override
     protected String _internalToString() {
-        final StringBuffer buffer = new StringBuffer("" + this.getArgument(0));
-        buffer.append(" ").append(this.getSymbol()).append(" " + this.getArgument(1));
-        return buffer.toString();
+        if ((getArguments() != null) && (getArguments().length > 1)) {
+            final StringBuffer buffer = new StringBuffer();
+            buffer.append("" + this.getArgument(0));
+            buffer.append(" ").append(this.getSymbol()).append(" " + this.getArgument(1));
+            return buffer.toString();
+        }
+        return null;
     }
 
 }
