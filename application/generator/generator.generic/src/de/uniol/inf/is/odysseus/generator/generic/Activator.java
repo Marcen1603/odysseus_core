@@ -66,57 +66,57 @@ public class Activator implements BundleActivator {
 
     private static Map<String, Class<?>> generators = new HashMap<String, Class<?>>();
     static {
-        generators.put("ConstantValueGenerator".toUpperCase(), ConstantValueGenerator.class);
-        generators.put("BetaDistributionGenerator".toUpperCase(), BetaDistributionGenerator.class);
-        generators.put("BinomialDistributionGenerator".toUpperCase(), BinomialDistributionGenerator.class);
-        generators.put("CauchyDistributionGenerator".toUpperCase(), CauchyDistributionGenerator.class);
-        generators.put("ChiSquaredDistributionGenerator".toUpperCase(), ChiSquaredDistributionGenerator.class);
-        generators.put("EmpiricalDistributionGenerator".toUpperCase(), EmpiricalDistributionGenerator.class);
-        generators.put("EnumeratedIntegerDistributionGenerator".toUpperCase(), EnumeratedIntegerDistributionGenerator.class);
-        generators.put("EnumeratedRealDistributionGenerator".toUpperCase(), EnumeratedRealDistributionGenerator.class);
-        generators.put("ExponentialDistributionGenerator".toUpperCase(), ExponentialDistributionGenerator.class);
-        generators.put("FDistributionGenerator".toUpperCase(), FDistributionGenerator.class);
-        generators.put("GammaDistributionGenerator".toUpperCase(), GammaDistributionGenerator.class);
-        generators.put("GaussianRandomGenerator".toUpperCase(), GaussianRandomGenerator.class);
-        generators.put("GeometricDistributionGenerator".toUpperCase(), GeometricDistributionGenerator.class);
-        generators.put("HypergeometricDistributionGenerator".toUpperCase(), HypergeometricDistributionGenerator.class);
-        generators.put("LevyDistributionGenerator".toUpperCase(), LevyDistributionGenerator.class);
-        generators.put("LogNormalDistributionGenerator".toUpperCase(), LogNormalDistributionGenerator.class);
-        generators.put("NormalDistributionGenerator".toUpperCase(), NormalDistributionGenerator.class);
-        generators.put("ParetoDistributionGenerator".toUpperCase(), ParetoDistributionGenerator.class);
-        generators.put("PascalDistributionGenerator".toUpperCase(), PascalDistributionGenerator.class);
-        generators.put("RayleighDistributionGenerator".toUpperCase(), RayleighDistributionGenerator.class);
-        generators.put("TDistributionGenerator".toUpperCase(), TDistributionGenerator.class);
-        generators.put("TriangularDistributionGenerator".toUpperCase(), TriangularDistributionGenerator.class);
-        generators.put("UniformDistributionGenerator".toUpperCase(), UniformDistributionGenerator.class);
-        generators.put("UniformIntegerDistributionGenerator".toUpperCase(), UniformIntegerDistributionGenerator.class);
-        generators.put("UniformRealDistributionGenerator".toUpperCase(), UniformRealDistributionGenerator.class);
-        generators.put("WeibullDistributionGenerator".toUpperCase(), WeibullDistributionGenerator.class);
-        generators.put("ZipfDistributionGenerator".toUpperCase(), ZipfDistributionGenerator.class);
-        generators.put("AlternatingGenerator".toUpperCase(), AlternatingGenerator.class);
-        generators.put("IncreaseGenerator".toUpperCase(), IncreaseGenerator.class);
-        generators.put("StepIncreaseGenerator".toUpperCase(), StepIncreaseGenerator.class);
-        generators.put("SineGenerator".toUpperCase(), SineGenerator.class);
-        generators.put("CosineGenerator".toUpperCase(), CosineGenerator.class);
-        generators.put("TangentGenerator".toUpperCase(), TangentGenerator.class);
-        generators.put("PrimeGenerator".toUpperCase(), PrimeGenerator.class);
-        generators.put("DirichletEtaFunctionGenerator".toUpperCase(), DirichletEtaFunctionGenerator.class);
-        generators.put("TimeGenerator".toUpperCase(), TimeGenerator.class);
-        generators.put("AlternatingDurationSwitchGenerator".toUpperCase(), AlternatingDurationSwitchGenerator.class);
-        generators.put("SwitchGenerator".toUpperCase(), SwitchGenerator.class);
-        generators.put("SignGenerator".toUpperCase(), SignGenerator.class);
-        generators.put("MultivariateNormalDistributionGenerator".toUpperCase(), MultivariateNormalDistributionGenerator.class);
-        generators.put("MovingCircleGenerator".toUpperCase(), MovingCircleGenerator.class);
-        generators.put("MovingPolynomialGenerator".toUpperCase(), MovingPolynomialGenerator.class);
-        generators.put("WaypointGenerator".toUpperCase(), WaypointGenerator.class);
+        Activator.generators.put("ConstantValueGenerator".toUpperCase(), ConstantValueGenerator.class);
+        Activator.generators.put("BetaDistributionGenerator".toUpperCase(), BetaDistributionGenerator.class);
+        Activator.generators.put("BinomialDistributionGenerator".toUpperCase(), BinomialDistributionGenerator.class);
+        Activator.generators.put("CauchyDistributionGenerator".toUpperCase(), CauchyDistributionGenerator.class);
+        Activator.generators.put("ChiSquaredDistributionGenerator".toUpperCase(), ChiSquaredDistributionGenerator.class);
+        Activator.generators.put("EmpiricalDistributionGenerator".toUpperCase(), EmpiricalDistributionGenerator.class);
+        Activator.generators.put("EnumeratedIntegerDistributionGenerator".toUpperCase(), EnumeratedIntegerDistributionGenerator.class);
+        Activator.generators.put("EnumeratedRealDistributionGenerator".toUpperCase(), EnumeratedRealDistributionGenerator.class);
+        Activator.generators.put("ExponentialDistributionGenerator".toUpperCase(), ExponentialDistributionGenerator.class);
+        Activator.generators.put("FDistributionGenerator".toUpperCase(), FDistributionGenerator.class);
+        Activator.generators.put("GammaDistributionGenerator".toUpperCase(), GammaDistributionGenerator.class);
+        Activator.generators.put("GaussianRandomGenerator".toUpperCase(), GaussianRandomGenerator.class);
+        Activator.generators.put("GeometricDistributionGenerator".toUpperCase(), GeometricDistributionGenerator.class);
+        Activator.generators.put("HypergeometricDistributionGenerator".toUpperCase(), HypergeometricDistributionGenerator.class);
+        Activator.generators.put("LevyDistributionGenerator".toUpperCase(), LevyDistributionGenerator.class);
+        Activator.generators.put("LogNormalDistributionGenerator".toUpperCase(), LogNormalDistributionGenerator.class);
+        Activator.generators.put("NormalDistributionGenerator".toUpperCase(), NormalDistributionGenerator.class);
+        Activator.generators.put("ParetoDistributionGenerator".toUpperCase(), ParetoDistributionGenerator.class);
+        Activator.generators.put("PascalDistributionGenerator".toUpperCase(), PascalDistributionGenerator.class);
+        Activator.generators.put("RayleighDistributionGenerator".toUpperCase(), RayleighDistributionGenerator.class);
+        Activator.generators.put("TDistributionGenerator".toUpperCase(), TDistributionGenerator.class);
+        Activator.generators.put("TriangularDistributionGenerator".toUpperCase(), TriangularDistributionGenerator.class);
+        Activator.generators.put("UniformDistributionGenerator".toUpperCase(), UniformDistributionGenerator.class);
+        Activator.generators.put("UniformIntegerDistributionGenerator".toUpperCase(), UniformIntegerDistributionGenerator.class);
+        Activator.generators.put("UniformRealDistributionGenerator".toUpperCase(), UniformRealDistributionGenerator.class);
+        Activator.generators.put("WeibullDistributionGenerator".toUpperCase(), WeibullDistributionGenerator.class);
+        Activator.generators.put("ZipfDistributionGenerator".toUpperCase(), ZipfDistributionGenerator.class);
+        Activator.generators.put("AlternatingGenerator".toUpperCase(), AlternatingGenerator.class);
+        Activator.generators.put("IncreaseGenerator".toUpperCase(), IncreaseGenerator.class);
+        Activator.generators.put("StepIncreaseGenerator".toUpperCase(), StepIncreaseGenerator.class);
+        Activator.generators.put("SineGenerator".toUpperCase(), SineGenerator.class);
+        Activator.generators.put("CosineGenerator".toUpperCase(), CosineGenerator.class);
+        Activator.generators.put("TangentGenerator".toUpperCase(), TangentGenerator.class);
+        Activator.generators.put("PrimeGenerator".toUpperCase(), PrimeGenerator.class);
+        Activator.generators.put("DirichletEtaFunctionGenerator".toUpperCase(), DirichletEtaFunctionGenerator.class);
+        Activator.generators.put("TimeGenerator".toUpperCase(), TimeGenerator.class);
+        Activator.generators.put("AlternatingDurationSwitchGenerator".toUpperCase(), AlternatingDurationSwitchGenerator.class);
+        Activator.generators.put("SwitchGenerator".toUpperCase(), SwitchGenerator.class);
+        Activator.generators.put("SignGenerator".toUpperCase(), SignGenerator.class);
+        Activator.generators.put("MultivariateNormalDistributionGenerator".toUpperCase(), MultivariateNormalDistributionGenerator.class);
+        Activator.generators.put("MovingCircleGenerator".toUpperCase(), MovingCircleGenerator.class);
+        Activator.generators.put("MovingPolynomialGenerator".toUpperCase(), MovingPolynomialGenerator.class);
+        Activator.generators.put("WaypointGenerator".toUpperCase(), WaypointGenerator.class);
     }
 
     static BundleContext getContext() {
-        return context;
+        return Activator.context;
     }
 
-    static Class<?> getGeneratorClass(String name) {
-        return generators.get(name);
+    static Class<?> getGeneratorClass(final String name) {
+        return Activator.generators.get(name);
     }
 
     /*
@@ -127,15 +127,15 @@ public class Activator implements BundleActivator {
      * )
      */
     @Override
-    public void start(BundleContext bundleContext) throws Exception {
+    public void start(final BundleContext bundleContext) throws Exception {
         if (bundleContext != null) {
             Activator.context = bundleContext;
 
             bundleContext.registerService(CommandProvider.class.getName(), new ConsoleCommands(), null);
         }
-        StreamServer genericServer = new StreamServer(54325, new GenericProvider("schema.txt", 1000l));
+        final StreamServer genericServer = new StreamServer(54325, new GenericProvider("schema.txt", 1000l));
         genericServer.start();
-        server.add(genericServer);
+        Activator.server.add(genericServer);
     }
 
     /*
@@ -145,7 +145,7 @@ public class Activator implements BundleActivator {
      * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
     @Override
-    public void stop(BundleContext bundleContext) throws Exception {
+    public void stop(final BundleContext bundleContext) throws Exception {
         Activator.context = null;
     }
 
@@ -153,24 +153,24 @@ public class Activator implements BundleActivator {
      * 
      */
     public static void pause() {
-        synchronized (server) {
-            for (StreamServer s : server) {
+        synchronized (Activator.server) {
+            for (final StreamServer s : Activator.server) {
                 s.pauseClients();
             }
         }
     }
 
     public static void proceed() {
-        synchronized (server) {
-            for (StreamServer s : server) {
+        synchronized (Activator.server) {
+            for (final StreamServer s : Activator.server) {
                 s.proceedClients();
             }
         }
     }
 
     public static void stop() {
-        synchronized (server) {
-            for (StreamServer s : server) {
+        synchronized (Activator.server) {
+            for (final StreamServer s : Activator.server) {
                 s.stopClients();
             }
         }
@@ -180,8 +180,8 @@ public class Activator implements BundleActivator {
      * 
      */
     public static void printStatus() {
-        synchronized (server) {
-            for (StreamServer s : server) {
+        synchronized (Activator.server) {
+            for (final StreamServer s : Activator.server) {
                 s.printStats();
             }
         }

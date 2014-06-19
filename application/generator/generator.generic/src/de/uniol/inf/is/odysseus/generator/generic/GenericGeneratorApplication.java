@@ -34,9 +34,9 @@ public class GenericGeneratorApplication implements IApplication {
      * {@inheritDoc}
      */
     @Override
-    public Object start(IApplicationContext context) throws Exception {
+    public Object start(final IApplicationContext context) throws Exception {
         context.applicationRunning();
-        String[] args = new String[6];
+        final String[] args = new String[6];
         args[0] = "-gP";
         args[1] = System.getenv("gP");
         args[2] = "-gF";
@@ -44,7 +44,7 @@ public class GenericGeneratorApplication implements IApplication {
         args[4] = "-gS";
         args[5] = System.getenv("gS");
 
-		long number = -1l;
+        long number = -1l;
         int port = 54325;
         long frequency = 1000l;
         String schemaFile = "schema.txt";
@@ -69,10 +69,11 @@ public class GenericGeneratorApplication implements IApplication {
             number = Long.parseLong(args[9]);
         }
         args[9] = number + "";
-        LOG.debug("Generator started " + args[0] + " " + args[1] + " " + args[2] + " " + args[3] + " " + args[4] + " " + args[5] + " " + args[6] + " " + args[7] + " " + args[8] + " " + args[9]);
+        GenericGeneratorApplication.LOG.debug("Generator started " + args[0] + " " + args[1] + " " + args[2] + " " + args[3] + " " + args[4] + " " + args[5] + " " + args[6] + " " + args[7] + " "
+                + args[8] + " " + args[9]);
 
-        genericServer = new StreamServer(port, new GenericProvider(schemaFile, frequency, out, number));
-        genericServer.start();
+        this.genericServer = new StreamServer(port, new GenericProvider(schemaFile, frequency, out, number));
+        this.genericServer.start();
         return IApplicationContext.EXIT_ASYNC_RESULT;
     }
 
@@ -81,8 +82,8 @@ public class GenericGeneratorApplication implements IApplication {
      */
     @Override
     public void stop() {
-        if (genericServer != null) {
-            genericServer.stopClients();
+        if (this.genericServer != null) {
+            this.genericServer.stopClients();
         }
     }
 
