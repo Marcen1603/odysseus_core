@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,81 +30,90 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 public class Session implements ISession {
 
 	private static final long serialVersionUID = -509478572220332340L;
-	private final static long SESSION_TIMEOUT = OdysseusConfiguration.getLong("sessionTimeout", 10 * 60000);
-    private final String id = UUID.randomUUID().toString();
-    private final IUser user;
-    private final ITenant tenant;
-    private final long start;
-    private long end;
-    private String token = "";
-    
+	private final static long SESSION_TIMEOUT = OdysseusConfiguration.getLong(
+			"sessionTimeout", 10 * 60000);
+	private final String id = UUID.randomUUID().toString();
+	private final IUser user;
+	private final ITenant tenant;
+	private final long start;
+	private long end;
+	private String token = "";
 
-    public Session(final IUser user, final ITenant tenant) {
-        this.user = user;
-        this.tenant = tenant;
-        start = System.currentTimeMillis();
-        end = start + SESSION_TIMEOUT;
-    }
+	public Session(final IUser user, final ITenant tenant) {
+		this.user = user;
+		this.tenant = tenant;
+		start = System.currentTimeMillis();
+		end = start + SESSION_TIMEOUT;
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session#getId()
-     */
-    @Override
-    public String getId() {
-        return this.id;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session#getId
+	 * ()
+	 */
+	@Override
+	public String getId() {
+		return this.id;
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session#getUser()
-     */
-    @Override
-    public IUser getUser() {
-        return this.user;
-    }
-    
-    @Override
-    public ITenant getTenant() {
-    	return this.tenant;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session#getUser
+	 * ()
+	 */
+	@Override
+	public IUser getUser() {
+		return this.user;
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session#isValid()
-     */
-    @Override
-    public boolean isValid() {
-        long timestamp = System.currentTimeMillis();
-        return timestamp >= start && timestamp <= end;
-    }
+	@Override
+	public ITenant getTenant() {
+		return this.tenant;
+	}
 
-    @Override
-    public void updateSession() {
-        if (isValid()) {
-            this.end = System.currentTimeMillis() + SESSION_TIMEOUT;
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session#isValid
+	 * ()
+	 */
+	@Override
+	public boolean isValid() {
+		if (SESSION_TIMEOUT > 0) {
+			long timestamp = System.currentTimeMillis();
+			return timestamp >= start && timestamp <= end;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public void updateSession() {
+		if (isValid()) {
+			this.end = System.currentTimeMillis() + SESSION_TIMEOUT;
+		}
+	}
 
 	@Override
 	public String getToken() {
-		if(token.isEmpty()){
+		if (token.isEmpty()) {
 			token = createToken();
 		}
 		return token;
 	}
-	
-	
+
 	private static String createToken() {
 		SecureRandom random = new SecureRandom();
 		return new BigInteger(130, random).toString(32);
 	}
-	
+
 	@Override
 	public String toString() {
-		return tenant+" "+user+" "+end;
+		return tenant + " " + user + " " + end;
 	}
 }
