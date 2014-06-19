@@ -59,7 +59,7 @@ public class TProbabilisticJoinAORule extends TJoinAORule {
         }
         else {
             JoinTIPO joinPO;
-            if (!SchemaUtils.containsProbabilisticAttributes(PredicateUtils.getAttributes(pred))) {
+            if (SchemaUtils.containsProbabilisticAttributes(PredicateUtils.getAttributes(pred))) {
                 joinPO = new ProbabilisticJoinTIPO();
             }
             else {
