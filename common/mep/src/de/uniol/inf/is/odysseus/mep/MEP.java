@@ -429,7 +429,7 @@ public class MEP implements IExpressionParser {
 		}
 	}
 
-	private static void registerFunctionWithName(IFunction<?> function,
+	private synchronized static void registerFunctionWithName(IFunction<?> function,
 			String symbol) {
 		List<SDFDatatype[]> parameters = new ArrayList<SDFDatatype[]>();
 		int arity = function.getArity();
