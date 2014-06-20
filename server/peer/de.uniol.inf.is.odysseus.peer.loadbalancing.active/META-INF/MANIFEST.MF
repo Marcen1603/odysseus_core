@@ -19,5 +19,5 @@ Import-Package: de.uniol.inf.is.odysseus.peer.distribute.util,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule
-Service-Component: OSGI-INF/LoadBalancingRuleProvider.xml,
- OSGI-INF/LoadBalancingCommunicationListener.xml
+Service-Component: OSGI-INF/LoadBalancingRuleProvider.xml,OSGI-INF/LoadBalancingCommunicationListener.xml,
+ OSGI-INF/LoadBalancingConsole.xml

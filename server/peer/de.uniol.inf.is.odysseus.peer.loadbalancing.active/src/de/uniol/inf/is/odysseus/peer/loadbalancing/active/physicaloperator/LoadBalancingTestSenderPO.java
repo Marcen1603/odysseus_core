@@ -15,7 +15,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingProtocol;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.LoadBalancingPunctuation;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.logicaloperator.LoadBalancingTestSenderAO;
 
@@ -188,13 +187,6 @@ public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 			LoadBalancingTestSenderPO.log.debug(message);
 		}
 		
-		if(this.destPeerName!=null) {
-			//TODO get Peer by name...
-			PeerID id = toPeerID(destPeerName);
-			if(id!=null) {
-				ActiveLoadBalancingProtocol.getInstance().sendCopyMessage(id);
-			}
-		}
 
 	}
 	
