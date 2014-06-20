@@ -17,7 +17,6 @@ public class P2PKeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(ExportAllPreParserKeyword.KEYWORD, ExportAllPreParserKeyword.class);
 		keywords.put(UnexportAllPreParserKeyword.KEYWORD, UnexportAllPreParserKeyword.class);
 		keywords.put(DoUDPPreParserKeyword.KEYWORD, DoUDPPreParserKeyword.class);
-		keywords.put(PeerAssignmentPreParserKeyword.KEYWORD, PeerAssignmentPreParserKeyword.class);
 		return keywords;
 	}
 
