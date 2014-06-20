@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.p2p_new.QueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
@@ -100,7 +99,7 @@ public class LoadBalancingCommunicationListener implements IPeerCommunicatorList
 	}
 
 	
-	private void relinkQueryPart(QueryPart part) {
+	private void relinkQueryPart(ILogicalQueryPart part) {
 	}
 
 	@Override
@@ -117,8 +116,7 @@ public class LoadBalancingCommunicationListener implements IPeerCommunicatorList
 			int loadBalancingProcessId = ((LoadBalancingInitiateCopyMessage)message).getLoadBalancingProcessId();
 			ILogicalQueryPart part = LoadBalancingQueryCache.getInstance().getQueryPart(loadBalancingProcessId);
 			ILogicalQueryPart copy = getCopyOfQueryPart(part);
-			QueryPart newQueryPart = new QueryPart(copy.getOperators(),senderPeer.toURI().toString());
-			relinkQueryPart(newQueryPart);
+			relinkQueryPart(copy);
 			String pqlFromQueryPart = getPQLForQueryPart(copy);
 			LOG.debug(pqlFromQueryPart);
 			//TODO Send PQL to volunteering Peer.

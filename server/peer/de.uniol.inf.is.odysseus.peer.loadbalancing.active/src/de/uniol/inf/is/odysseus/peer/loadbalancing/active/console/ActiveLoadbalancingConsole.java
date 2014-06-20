@@ -96,7 +96,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("---Active Loadbalancing commands---\n");
 		sb.append("    lsParts		              		- Lists all queryParts installed on peer with ids\n");
 		sb.append("    initLB <peername> <queryPartId>	- Initiate Loadbalancing with <peername> and query Part <queryPartId>\n");
-		return null;
+		return sb.toString();
 	}
 
 	
