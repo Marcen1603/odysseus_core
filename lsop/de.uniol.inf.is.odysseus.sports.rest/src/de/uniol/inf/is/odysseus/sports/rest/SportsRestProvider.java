@@ -7,6 +7,7 @@ import org.restlet.routing.Router;
 import de.uniol.inf.is.odysseus.rest.provider.IRestProvider;
 import de.uniol.inf.is.odysseus.sports.rest.resources.GetExampleResource;
 import de.uniol.inf.is.odysseus.sports.rest.resources.PostExampleResource;
+import de.uniol.inf.is.odysseus.sports.rest.resources.UserDAOServerResource;
 
 public class SportsRestProvider extends Application implements IRestProvider{
 
@@ -20,6 +21,7 @@ public class SportsRestProvider extends Application implements IRestProvider{
 		Router router = new Router(getContext());
 		router.attach("/getexample/{name}", GetExampleResource.class);
 		router.attach("/postexample", PostExampleResource.class);
+		router.attach("/user", UserDAOServerResource.class);
 		return router;
 	}
 }
