@@ -15,12 +15,14 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.web.physicaloperator.access;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -86,13 +88,15 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
      * 
      * @param schema
      */
-    private HTMLProtocolHandler(final ITransportDirection direction, final IAccessPattern access, IDataHandler<T> dataHandler) {
+    private HTMLProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IDataHandler<T> dataHandler) {
         super(direction, access, dataHandler);
         this.parser = new DOMFragmentParser();
 
         try {
+            this.parser.setProperty("http://cyberneko.org/html/properties/names/elems", "lower");
             this.parser.setProperty("http://cyberneko.org/html/properties/default-encoding", "UTF-8");
-            this.parser.setFeature("http://cyberneko.org/html/features/balance-tags/document-fragment", true);
+            this.parser.setFeature("http://cyberneko.org/html/features/scanner/style/strip-cdata-delims", false);
+            this.parser.setFeature("http://cyberneko.org/html/features/scanner/cdata-sections", true);
         }
         catch (final SAXNotRecognizedException e) {
             this.LOG.error(e.getMessage(), e);
@@ -159,17 +163,53 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
                         }
                     }
                     catch (final XPathExpressionException e) {
-                        print(fragment);
+                        HTMLProtocolHandler.print(fragment);
                         this.LOG.error(e.getMessage(), e);
+                        throw new IOException(e);
                     }
                 }
                 return this.getDataHandler().readData(tuple);
             }
             catch (final SAXException e) {
                 this.LOG.error(e.getMessage(), e);
+                throw new IOException(e);
             }
         }
         return null;
+    }
+
+    @Override
+    public void process(ByteBuffer message) {
+        Reader in = new InputStreamReader(new ByteArrayInputStream(message.array()));
+        final HTMLDocument document = new HTMLDocumentImpl();
+        final DocumentFragment fragment = document.createDocumentFragment();
+        try {
+            this.parser.parse(new InputSource(in), fragment);
+            final XPathFactory factory = XPathFactory.newInstance();
+            final XPath xpath = factory.newXPath();
+            final SDFSchema schema = this.getDataHandler().getSchema();
+            final String[] tuple = new String[schema.size()];
+            for (int i = 0; i < this.getXPaths().size(); i++) {
+                final String path = this.getXPaths().get(i);
+                try {
+                    final XPathExpression expr = xpath.compile(path);
+                    final NodeList nodes = (NodeList) expr.evaluate(fragment, XPathConstants.NODESET);
+                    if (nodes.getLength() > 0) {
+                        final Node node = nodes.item(0);
+                        final String content = node.getTextContent();
+                        tuple[i] = content;
+                    }
+                }
+                catch (final XPathExpressionException e) {
+                    HTMLProtocolHandler.print(fragment);
+                    this.LOG.error(e.getMessage(), e);
+                }
+            }
+            getTransfer().transfer(this.getDataHandler().readData(tuple));
+        }
+        catch (final SAXException | IOException e) {
+            this.LOG.error(e.getMessage(), e);
+        }
     }
 
     @Override
@@ -222,12 +262,12 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
         return instance;
     }
 
-    protected void init(Map<String, String> options) {
+    protected void init(final Map<String, String> options) {
         if (options.get("delay") != null) {
-            setDelay(Long.parseLong(options.get("delay")));
+            this.setDelay(Long.parseLong(options.get("delay")));
         }
         if (options.get("nanodelay") != null) {
-            setNanodelay(Integer.parseInt(options.get("nanodelay")));
+            this.setNanodelay(Integer.parseInt(options.get("nanodelay")));
         }
     }
 
@@ -237,19 +277,19 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
     }
 
     public long getDelay() {
-        return delay;
+        return this.delay;
     }
 
-    public void setDelay(long delay) {
+    public void setDelay(final long delay) {
         this.delay = delay;
     }
 
-    public void setNanodelay(int nanodelay) {
+    public void setNanodelay(final int nanodelay) {
         this.nanodelay = nanodelay;
     }
 
     public int getNanodelay() {
-        return nanodelay;
+        return this.nanodelay;
     }
 
     private List<String> getXPaths() {
@@ -281,19 +321,19 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
     }
 
     @Override
-    public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
+    public boolean isSemanticallyEqualImpl(final IProtocolHandler<?> o) {
         if (!(o instanceof HTMLProtocolHandler)) {
             return false;
         }
-        HTMLProtocolHandler<?> other = (HTMLProtocolHandler<?>) o;
-        if (this.nanodelay != other.getNanodelay() || this.delay != other.getDelay()) {
+        final HTMLProtocolHandler<?> other = (HTMLProtocolHandler<?>) o;
+        if ((this.nanodelay != other.getNanodelay()) || (this.delay != other.getDelay())) {
             return false;
         }
-        List<String> otherXPaths = other.getXPaths();
+        final List<String> otherXPaths = other.getXPaths();
         if (otherXPaths.size() != this.getXPaths().size()) {
             return false;
         }
-        for (String s : this.getXPaths()) {
+        for (final String s : this.getXPaths()) {
             if (!otherXPaths.contains(s)) {
                 return false;
             }
@@ -301,16 +341,16 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
         return true;
     }
 
-    public static void print(Node node) {
-        short type = node.getNodeType();
+    public static void print(final Node node) {
+        final short type = node.getNodeType();
         switch (type) {
             case Node.ELEMENT_NODE: {
                 System.out.print('<');
                 System.out.print(node.getNodeName());
-                org.w3c.dom.NamedNodeMap attrs = node.getAttributes();
-                int attrCount = attrs != null ? attrs.getLength() : 0;
+                final org.w3c.dom.NamedNodeMap attrs = node.getAttributes();
+                final int attrCount = attrs != null ? attrs.getLength() : 0;
                 for (int i = 0; i < attrCount; i++) {
-                    Node attr = attrs.item(i);
+                    final Node attr = attrs.item(i);
                     System.out.print(' ');
                     System.out.print(attr.getNodeName());
                     System.out.print("='");
@@ -327,7 +367,7 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
         }
         Node child = node.getFirstChild();
         while (child != null) {
-            print(child);
+            HTMLProtocolHandler.print(child);
             child = child.getNextSibling();
         }
         if (type == Node.ELEMENT_NODE) {
@@ -335,7 +375,7 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
             System.out.print(node.getNodeName());
             System.out.print('>');
         }
-        else if (type == Node.DOCUMENT_NODE || type == Node.DOCUMENT_FRAGMENT_NODE) {
+        else if ((type == Node.DOCUMENT_NODE) || (type == Node.DOCUMENT_FRAGMENT_NODE)) {
             System.out.println();
         }
         System.out.flush();
