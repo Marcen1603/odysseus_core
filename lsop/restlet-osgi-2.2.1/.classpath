@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/org.restlet.ext.jackson.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.restlet.ext.json.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.restlet.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.json_2.0/org.json.jar"/>
