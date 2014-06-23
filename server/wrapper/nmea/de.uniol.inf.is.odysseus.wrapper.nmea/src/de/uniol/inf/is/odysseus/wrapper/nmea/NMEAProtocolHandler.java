@@ -128,12 +128,16 @@ public class NMEAProtocolHandler extends
 	public void process(ByteBuffer message) {
 		byte[] m = new byte[message.limit()];
 		message.get(m);
-		String nmea = (new String(m)).trim();
-		KeyValueObject<? extends IMetaAttribute> res = parseString(nmea);
-		if (res == null)
-			return;
-
-		getTransfer().transfer(res);
+		String msgStr = (new String(m));//.trim();
+		String nmeaStrings[] = msgStr.split("\r\n");
+		for(String nmea : nmeaStrings){
+			nmea = nmea.trim();
+			KeyValueObject<? extends IMetaAttribute> res = parseString(nmea);
+			if (res == null)
+				continue;//return;
+	
+			getTransfer().transfer(res);
+		}
 	}
 
 	/**
