@@ -44,7 +44,7 @@ public class IVEF_0_1_5_ProtocolHandler extends
     private MSG_Pong m_pong;
     private MSG_ServerStatus m_serverStatus;
     private MSG_ServiceRequest m_serviceRequest;
-    private MSG_VesselData m_vesselData;
+    private MSG_VesselData m_vesselData; 
 
 	
 	/** IVEF object as key-value to be returned for GenericPull. */
