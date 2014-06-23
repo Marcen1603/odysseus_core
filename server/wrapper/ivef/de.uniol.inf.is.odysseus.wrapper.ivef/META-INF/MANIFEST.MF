@@ -18,6 +18,8 @@ Import-Package:
  de.uniol.inf.is.odysseus.core.server.physicaloperator,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.transform.flow,
+ de.uniol.inf.is.odysseus.transform.rule,
  de.uniol.inf.is.odysseus.wrapper.nmea.sentence,
  de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences,
  de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.payload.decoded,
