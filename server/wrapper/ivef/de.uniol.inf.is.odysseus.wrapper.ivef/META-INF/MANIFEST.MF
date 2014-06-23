@@ -16,6 +16,8 @@ Import-Package:
  de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations,
  de.uniol.inf.is.odysseus.core.server.physicaloperator,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
+ de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.wrapper.nmea.sentence,
  de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences,
  de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.payload.decoded,
@@ -33,3 +35,5 @@ Export-Package: de.uniol.inf.is.odysseus.wrapper.ivef,
  de.uniol.inf.is.odysseus.wrapper.ivef.element.version_1_0_4
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+Bundle-Vendor: OFFIS
+
