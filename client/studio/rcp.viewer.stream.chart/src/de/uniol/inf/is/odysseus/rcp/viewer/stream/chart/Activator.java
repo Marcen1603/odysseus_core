@@ -20,6 +20,7 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.BooleanDatatypeProvider;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.DateDatatypeProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.NumberDatatypeProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.PointInTimeDatatypeProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.ViewableDatatypeRegistry;
@@ -51,9 +52,10 @@ public class Activator extends AbstractUIPlugin {
 		bundleContext= context;
 		
 		// register all allowed datatypes and convertes
-		ViewableDatatypeRegistry.getInstance().register(new NumberDatatypeProvider());		
-		ViewableDatatypeRegistry.getInstance().register(new PointInTimeDatatypeProvider());
-		ViewableDatatypeRegistry.getInstance().register(new BooleanDatatypeProvider());
+        ViewableDatatypeRegistry.getInstance().register(new NumberDatatypeProvider());
+        ViewableDatatypeRegistry.getInstance().register(new PointInTimeDatatypeProvider());
+        ViewableDatatypeRegistry.getInstance().register(new DateDatatypeProvider());
+        ViewableDatatypeRegistry.getInstance().register(new BooleanDatatypeProvider());
 	}
 
 	@Override

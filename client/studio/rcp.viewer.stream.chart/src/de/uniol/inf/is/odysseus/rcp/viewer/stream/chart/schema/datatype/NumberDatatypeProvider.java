@@ -20,26 +20,35 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 public class NumberDatatypeProvider extends AbstractViewableDatatype<Double> {	
 	
-	public NumberDatatypeProvider() {
-		super.addProvidedSDFDatatype(SDFDatatype.LONG);
-		super.addProvidedSDFDatatype(SDFDatatype.FLOAT);
-		super.addProvidedSDFDatatype(SDFDatatype.START_TIMESTAMP);
-		super.addProvidedSDFDatatype(SDFDatatype.END_TIMESTAMP);
-		super.addProvidedSDFDatatype(SDFDatatype.TIMESTAMP);
-		super.addProvidedSDFDatatype(SDFDatatype.DOUBLE);		
-		super.addProvidedSDFDatatype(SDFDatatype.INTEGER);
-		super.addProvidedClass(Integer.class);
-		super.addProvidedClass(int.class);
-		super.addProvidedClass(float.class);
-		super.addProvidedClass(Float.class);
-		super.addProvidedClass(Double.class);
-		super.addProvidedClass(double.class);		
-		super.addProvidedClass(Long.class);
-		super.addProvidedClass(long.class);
-	}
+    public NumberDatatypeProvider() {
+        super.addProvidedSDFDatatype(SDFDatatype.BYTE);
+        super.addProvidedSDFDatatype(SDFDatatype.SHORT);     
+        super.addProvidedSDFDatatype(SDFDatatype.INTEGER);
+        super.addProvidedSDFDatatype(SDFDatatype.LONG);
+        super.addProvidedSDFDatatype(SDFDatatype.START_TIMESTAMP);
+        super.addProvidedSDFDatatype(SDFDatatype.END_TIMESTAMP);
+        super.addProvidedSDFDatatype(SDFDatatype.TIMESTAMP);
+        super.addProvidedSDFDatatype(SDFDatatype.FLOAT);
+        super.addProvidedSDFDatatype(SDFDatatype.DOUBLE);
+        super.addProvidedClass(Byte.class);
+        super.addProvidedClass(byte.class);
+        super.addProvidedClass(Short.class);
+        super.addProvidedClass(short.class);
+        super.addProvidedClass(Integer.class);
+        super.addProvidedClass(int.class);
+        super.addProvidedClass(Long.class);
+        super.addProvidedClass(long.class);
+        super.addProvidedClass(Float.class);
+        super.addProvidedClass(float.class);
+        super.addProvidedClass(Double.class);
+        super.addProvidedClass(double.class);
+    }
 	
 	@Override
 	public Double convertToValue(Object value) {
+	    if (value == null) {
+	        return Double.NaN;
+	    }
 		Number num = (Number)value;
 		return new Double(num.doubleValue());
 	}
