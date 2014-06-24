@@ -95,7 +95,13 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	public Tuple<?> readData(ObjectInputStream inputStream) throws IOException {
 		Object[] attributes = new Object[dataHandlers.length];
 		for (int i = 0; i < this.dataHandlers.length; i++) {
-			attributes[i] = dataHandlers[i].readData(inputStream);
+            try {
+                attributes[i] = dataHandlers[i].readData(inputStream);
+            }
+            catch (Exception e) {
+                logger.warn("Error parsing stream with " + dataHandlers[i].getClass() + " " + e.getMessage());
+                attributes[i] = null;
+            }
 		}
 		return new Tuple<IMetaAttribute>(attributes, false);
 	}
@@ -105,12 +111,13 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		Object[] attributes = new Object[dataHandlers.length];
 		int min = Math.min(dataHandlers.length, input.length);
 		for (int i = 0; i < min; i++) {
-			try{
-			attributes[i] = dataHandlers[i].readData(input[i]);
-			}catch(Exception e){
-				logger.warn("Error Parsing "+input[i]+" with "+dataHandlers[i].getClass()+" "+e.getMessage());
-				attributes[i] = null;
-			}
+            try {
+                attributes[i] = dataHandlers[i].readData(input[i]);
+            }
+            catch (Exception e) {
+                logger.warn("Error parsing " + input[i] + " with " + dataHandlers[i].getClass() + " " + e.getMessage());
+                attributes[i] = null;
+            }
 		}
 		return new Tuple<IMetaAttribute>(attributes, false);
 	}
@@ -120,7 +127,13 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(input.size(),
 				false);
 		for (int i = 0; i < input.size(); i++) {
-			tuple.setAttribute(i, this.dataHandlers[i].readData(input.get(i)));
+            try {
+                tuple.setAttribute(i, this.dataHandlers[i].readData(input.get(i)));
+            }
+            catch (Exception e) {
+                logger.warn("Error parsing " + input.get(i) + " with " + dataHandlers[i].getClass() + " " + e.getMessage());
+                tuple.setAttribute(i, (Object) null);
+            }
 		}
 		return tuple;
 	}
