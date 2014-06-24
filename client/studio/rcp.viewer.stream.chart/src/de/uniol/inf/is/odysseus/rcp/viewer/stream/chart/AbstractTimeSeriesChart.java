@@ -306,26 +306,24 @@ public abstract class AbstractTimeSeriesChart extends
 		timeSeries.addOrUpdate(ms, value);
 	}
 
-	private void adjust(double value) {
-		if (Double.isNaN(max)) {
-			max = value;
-		}
-		if (Double.isNaN(min)) {
-			min = value;
-		}
-		if (value > max) {
-			max = value;
-		} else if (value < min) {
-			min = value;
-		}
-		if (isAutoadjust()) {
-			getChart().getXYPlot().getRangeAxis()
-					.setLowerBound(min * (1.0 - margin));
-			getChart().getXYPlot().getRangeAxis()
-					.setUpperBound(max * (1.0 + margin));
-		}
-
-	}
+    private void adjust(double value) {
+        if (Double.isNaN(max)) {
+            max = value;
+        }
+        if (Double.isNaN(min)) {
+            min = value;
+        }
+        if (isAutoadjust()) {
+            if (value > max) {
+                max = value;
+            }
+            if (value < min) {
+                min = value;
+            }
+        }
+        getChart().getXYPlot().getRangeAxis().setLowerBound(min * (1.0 - margin));
+        getChart().getXYPlot().getRangeAxis().setUpperBound(max * (1.0 + margin));
+    }
 
 	@Override
 	protected void decorateChart(JFreeChart thechart) {
