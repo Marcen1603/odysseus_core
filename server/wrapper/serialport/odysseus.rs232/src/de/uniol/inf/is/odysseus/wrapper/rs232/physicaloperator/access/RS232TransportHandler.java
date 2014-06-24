@@ -140,7 +140,6 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
 
             try {
                 if (this.input.ready()) {
-
                     if (readLines) {
                         String message = "";
                         message = this.input.readLine();
@@ -256,6 +255,7 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
         if (this.port != null) {
             try {
                 SerialPort serialPort = (SerialPort) this.port;
+                serialPort.removeEventListener();
                 serialPort.close();
             }
             catch (Exception e) {
@@ -284,6 +284,7 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
         if (this.port != null) {
             try {
                 SerialPort serialPort = (SerialPort) this.port;
+                serialPort.removeEventListener();
                 serialPort.close();
             }
             catch (Exception e) {
