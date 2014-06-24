@@ -33,10 +33,12 @@ import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.mep.functions.CPULoadFunction;
 import de.uniol.inf.is.odysseus.mep.functions.EvalFunction;
 import de.uniol.inf.is.odysseus.mep.functions.IfFunction;
 import de.uniol.inf.is.odysseus.mep.functions.IsNaNFunction;
 import de.uniol.inf.is.odysseus.mep.functions.IsNullFunction;
+import de.uniol.inf.is.odysseus.mep.functions.MemoryFunction;
 import de.uniol.inf.is.odysseus.mep.functions.RandomFunction;
 import de.uniol.inf.is.odysseus.mep.functions.RandomFunction2;
 import de.uniol.inf.is.odysseus.mep.functions.SMaxFunction;
@@ -46,6 +48,7 @@ import de.uniol.inf.is.odysseus.mep.functions.SplittFunction;
 import de.uniol.inf.is.odysseus.mep.functions.StoredLineFunction;
 import de.uniol.inf.is.odysseus.mep.functions.StoredValueFunction;
 import de.uniol.inf.is.odysseus.mep.functions.UUIDFunction;
+import de.uniol.inf.is.odysseus.mep.functions.UptimeFunction;
 import de.uniol.inf.is.odysseus.mep.functions.array.ListArrayFunction;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
@@ -394,7 +397,11 @@ public class MEP implements IExpressionParser {
 		registerFunction(new RSASignFunction());
 		registerFunction(new RSAVerifyFunction());
 
-		registerFunction(new UUIDFunction());
+        registerFunction(new UUIDFunction());
+        registerFunction(new CPULoadFunction());
+        registerFunction(new UptimeFunction());
+        registerFunction(new MemoryFunction());
+
 		registerFunction(new EvalFunction());
 		registerFunction(new SMinFunction());
 		registerFunction(new SMaxFunction());
