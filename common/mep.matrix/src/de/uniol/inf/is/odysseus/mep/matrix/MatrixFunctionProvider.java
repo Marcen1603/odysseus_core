@@ -67,7 +67,11 @@ public class MatrixFunctionProvider implements IFunctionProvider {
         // Read functions
         functions.add(new MatrixReadFunction());    
         functions.add(new VectorReadFunction());    
-        functions.add(new VectorReadRowFunction());    
+        functions.add(new VectorReadRowFunction());  
+        
+        functions.add(new MatrixToStringFunction());
+        functions.add(new VectorToStringFunction());
+
         return functions;
     }
 

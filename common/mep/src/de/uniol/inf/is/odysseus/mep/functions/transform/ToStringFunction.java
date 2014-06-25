@@ -20,14 +20,19 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 public class ToStringFunction extends AbstractFunction<String> {
 
-	private static final long serialVersionUID = -3960501264856271045L;
+    private static final long serialVersionUID = -3960501264856271045L;
 
-	public ToStringFunction() {
-		super("toString", 1, SDFDatatype.STRING);
-	}
+    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.OBJECT, SDFDatatype.DATE, SDFDatatype.DOUBLE, SDFDatatype.END_TIMESTAMP, SDFDatatype.END_TIMESTAMP_STRING,
+            SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.START_TIMESTAMP, SDFDatatype.START_TIMESTAMP_STRING, SDFDatatype.SHORT, SDFDatatype.BYTE, SDFDatatype.LIST,
+            SDFDatatype.STRING, SDFDatatype.DOCUMENT, SDFDatatype.TIMESTAMP, SDFDatatype.BOOLEAN, SDFDatatype.PARTIAL_AGGREGATE, SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE,
+            SDFDatatype.COUNT_PARTIAL_AGGREGATE, SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE, SDFDatatype.LIST_PARTIAL_AGGREGATE } };
 
-	@Override
-	public String getValue() {
-		return getInputValue(0).toString();
-	}
+    public ToStringFunction() {
+        super("toString", 1, ACC_TYPES, SDFDatatype.STRING);
+    }
+
+    @Override
+    public String getValue() {
+        return getInputValue(0).toString();
+    }
 }
