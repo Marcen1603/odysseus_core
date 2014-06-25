@@ -30,27 +30,27 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * 
  */
 public class InverseImageFunction extends AbstractFunction<Image> {
-	/**
+    /**
      * 
      */
-	private static final long serialVersionUID = -5532725733473509826L;
-	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFImageDatatype.IMAGE } };
+    private static final long serialVersionUID = -5532725733473509826L;
+    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFImageDatatype.IMAGE } };
 
-	/**
+    /**
  * 
  */
-	public InverseImageFunction() {
-		super("inverse", 1, InverseImageFunction.ACC_TYPES,
-				SDFImageDatatype.IMAGE);
-	}
+    public InverseImageFunction() {
+        super("inv", 1, InverseImageFunction.ACC_TYPES, SDFImageDatatype.IMAGE);
+    }
 
-	@Override
-	public Image getValue() {
-		final Image image = (Image) this.getInputValue(0);
-		Objects.requireNonNull(image);
+    @Override
+    public Image getValue() {
+        final Image image = (Image) this.getInputValue(0);
+        Objects.requireNonNull(image);
 
-		final Mat iplImage = OpenCVUtil.imageToIplImage(image);
-		iplImage.inv();
-		return OpenCVUtil.iplImageToImage(iplImage, image);
-	}
+        final Mat iplImage = OpenCVUtil.imageToIplImage(image);
+        final Mat result = iplImage.inv();
+        iplImage.release();
+        return OpenCVUtil.iplImageToImage(result, image);
+    }
 }
