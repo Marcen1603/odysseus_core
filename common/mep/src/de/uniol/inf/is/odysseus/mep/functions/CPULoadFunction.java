@@ -1,5 +1,5 @@
 /********************************************************************************** 
- * Copyright 2014 Christian Kuka (christian@kuka.cc)
+ * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
