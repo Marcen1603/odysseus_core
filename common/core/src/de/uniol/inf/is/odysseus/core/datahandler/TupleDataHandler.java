@@ -164,11 +164,13 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 					type = buffer.get();
 				}
 				if (!nullMode || type != 0) {
-					try{
-						attributes[i] = dataHandlers[i].readData(buffer);
-					}catch(Exception e){
-						e.printStackTrace();
-					}
+                    try {
+                        attributes[i] = dataHandlers[i].readData(buffer);
+                    }
+                    catch (Exception e) {
+                        logger.warn("Error parsing stream with " + dataHandlers[i].getClass() + " " + e.getMessage());
+                        attributes[i] = null;
+                    }
 				}
 			}
 			r = new Tuple<IMetaAttribute>(attributes, false);
