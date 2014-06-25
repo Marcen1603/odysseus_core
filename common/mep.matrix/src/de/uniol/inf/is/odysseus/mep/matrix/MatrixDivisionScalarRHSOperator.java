@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class MatrixDivisionScalarRHSOperator extends AbstractMatrixMinusScalarOperator {
+public class MatrixDivisionScalarRHSOperator extends AbstractMatrixDivisionScalarOperator {
 
     /**
      * 
