@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.TextProtoc
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.FileHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingTcpHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TcpSocketHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TimerTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 
 public class Activator implements BundleActivator {
@@ -85,6 +86,7 @@ public class Activator implements BundleActivator {
 		
 		TransportHandlerRegistry.register(new TcpSocketHandler());
 		TransportHandlerRegistry.register(new FileHandler());
+		TransportHandlerRegistry.register(new TimerTransportHandler());
 		TransportHandlerRegistry.register(new NonBlockingTcpHandler());
 		
 //		TransportHandlerRegistry.register(new NonBlockingTcpServerHandler());
