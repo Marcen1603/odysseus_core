@@ -40,8 +40,7 @@ public class GetImageFunction extends AbstractFunction<Double> {
  * 
  */
 	public GetImageFunction() {
-		super("get", 3, GetImageFunction.ACC_TYPES, SDFDatatype.DOUBLE,
-				true);
+		super("get", 3, GetImageFunction.ACC_TYPES, SDFDatatype.DOUBLE);
 	}
 
 	@Override

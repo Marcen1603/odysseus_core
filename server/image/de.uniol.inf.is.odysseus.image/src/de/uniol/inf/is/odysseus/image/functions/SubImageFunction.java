@@ -48,8 +48,7 @@ public class SubImageFunction extends AbstractFunction<Image> {
  * 
  */
 	public SubImageFunction() {
-		super("sub", 5, SubImageFunction.ACC_TYPES, SDFImageDatatype.IMAGE,
-				true);
+		super("sub", 5, SubImageFunction.ACC_TYPES, SDFImageDatatype.IMAGE);
 	}
 
 	@Override

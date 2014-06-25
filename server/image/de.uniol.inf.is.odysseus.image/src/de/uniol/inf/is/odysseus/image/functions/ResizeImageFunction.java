@@ -50,7 +50,7 @@ public class ResizeImageFunction extends AbstractFunction<Image> {
  */
 	public ResizeImageFunction() {
 		super("resize", 3, ResizeImageFunction.ACC_TYPES,
-				SDFImageDatatype.IMAGE, true);
+				SDFImageDatatype.IMAGE);
 	}
 
 	@Override

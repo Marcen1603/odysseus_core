@@ -37,7 +37,7 @@ public class FillImageFunction extends AbstractFunction<Image> {
  * 
  */
     public FillImageFunction() {
-        super("fill", 2, FillImageFunction.ACC_TYPES, SDFImageDatatype.IMAGE, true);
+        super("fill", 2, FillImageFunction.ACC_TYPES, SDFImageDatatype.IMAGE);
     }
 
     @Override

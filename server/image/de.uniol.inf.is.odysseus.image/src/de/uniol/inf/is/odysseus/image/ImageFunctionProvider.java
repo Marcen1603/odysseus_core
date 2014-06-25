@@ -31,6 +31,8 @@ import de.uniol.inf.is.odysseus.image.functions.RotateImageFunction;
 import de.uniol.inf.is.odysseus.image.functions.SetImageFunction;
 import de.uniol.inf.is.odysseus.image.functions.SubImageFunction;
 import de.uniol.inf.is.odysseus.image.functions.ToImageFunction;
+import de.uniol.inf.is.odysseus.image.functions.ToImageMatrixFunction;
+import de.uniol.inf.is.odysseus.image.functions.ToMatrixFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 /**
@@ -53,6 +55,8 @@ public class ImageFunctionProvider implements IFunctionProvider {
         functions.add(new FillImageFunction());
         functions.add(new InverseImageFunction());
         functions.add(new ToImageFunction());
+        functions.add(new ToImageMatrixFunction());
+        functions.add(new ToMatrixFunction());
         functions.add(new SetImageFunction());
         functions.add(new GetImageFunction());
         functions.add(new CountFacesFunction());

@@ -44,7 +44,7 @@ public class RotateImageFunction extends AbstractFunction<Image> {
  */
 	public RotateImageFunction() {
 		super("rotate", 2, RotateImageFunction.ACC_TYPES,
-				SDFImageDatatype.IMAGE, true);
+				SDFImageDatatype.IMAGE);
 	}
 
 	@Override

@@ -38,7 +38,7 @@ public class SetImageFunction extends AbstractFunction<Image> {
  * 
  */
     public SetImageFunction() {
-        super("set", 4, SetImageFunction.ACC_TYPES, SDFImageDatatype.IMAGE, true);
+        super("set", 4, SetImageFunction.ACC_TYPES, SDFImageDatatype.IMAGE);
     }
 
     @Override

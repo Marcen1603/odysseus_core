@@ -41,7 +41,7 @@ public class InverseImageFunction extends AbstractFunction<Image> {
  */
 	public InverseImageFunction() {
 		super("inverse", 1, InverseImageFunction.ACC_TYPES,
-				SDFImageDatatype.IMAGE, true);
+				SDFImageDatatype.IMAGE);
 	}
 
 	@Override

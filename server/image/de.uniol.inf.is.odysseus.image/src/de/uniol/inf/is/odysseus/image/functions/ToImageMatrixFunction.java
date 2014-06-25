@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.image.functions;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -26,18 +28,19 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ToImageFunction extends AbstractFunction<Image> {
+public class ToImageMatrixFunction extends AbstractFunction<Image> {
     /**
      * 
      */
-    private static final long serialVersionUID = -6078416764818576545L;
-    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
+    private static final long serialVersionUID = 8688410794703166746L;
+
+    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.MATRIXS };
 
     /**
  * 
  */
-    public ToImageFunction() {
-        super("toImage", 2, ToImageFunction.ACC_TYPES, SDFImageDatatype.IMAGE);
+    public ToImageMatrixFunction() {
+        super("toImage", 1, ToImageMatrixFunction.ACC_TYPES, SDFImageDatatype.IMAGE);
     }
 
     /**
@@ -45,10 +48,16 @@ public class ToImageFunction extends AbstractFunction<Image> {
      */
     @Override
     public Image getValue() {
-        final int width = this.getNumericalInputValue(0).intValue();
-        final int height = this.getNumericalInputValue(1).intValue();
-		Preconditions.checkArgument(width > 0, "Invalid dimension");
-		Preconditions.checkArgument(height > 0, "Invalid dimension");
-        return new Image(width, height);
+        final double data[][] = this.getInputValue(0);
+        Objects.requireNonNull(data);
+        Preconditions.checkArgument(data.length > 0, "Invalid dimension");
+        Preconditions.checkArgument(data[0].length > 0, "Invalid dimension");
+        Image image = new Image(data[0].length, data.length);
+        double[] buffer = image.getBuffer();
+        for (int i = 0; i < data.length; i++) {
+            System.arraycopy(data[i], 0, buffer, i * image.getWidth(), data[i].length);
+        }
+        image.setBuffer(buffer);
+        return image;
     }
 }
