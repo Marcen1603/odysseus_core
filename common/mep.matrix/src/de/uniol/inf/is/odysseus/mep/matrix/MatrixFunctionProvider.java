@@ -37,8 +37,14 @@ public class MatrixFunctionProvider implements IFunctionProvider {
         
         functions.add(new MatrixEqualsOperator());
         functions.add(new MatrixMinusOperator());
+        functions.add(new MatrixMinusScalarRHSOperator());
         functions.add(new MatrixMultiplicationOperator());
+        functions.add(new MatrixMultiplicationScalarRHSOperator());
+        functions.add(new MatrixMultiplicationScalarLHSOperator());
         functions.add(new MatrixPlusOperator());
+        functions.add(new MatrixPlusScalarRHSOperator());
+        functions.add(new MatrixPlusScalarLHSOperator());
+        functions.add(new MatrixDivisionScalarRHSOperator());
         functions.add(new MatrixPowerOperator());
         functions.add(new MatrixDeterminantFunction());
         functions.add(new MatrixTraceFunction());
