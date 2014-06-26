@@ -303,9 +303,10 @@ public class StaticData implements IIvefElement {
     }
 
     public void setMMSI(Long  val) {
-
-        m_MMSIPresent = true;
-        m_MMSI = val;
+    	if(val != null){
+    		m_MMSIPresent = true;
+    		m_MMSI = val;
+    	}
     }
 
     public Long  getMMSI() {
