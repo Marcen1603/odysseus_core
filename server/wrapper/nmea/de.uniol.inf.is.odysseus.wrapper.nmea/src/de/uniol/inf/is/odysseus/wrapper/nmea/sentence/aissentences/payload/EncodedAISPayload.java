@@ -20,10 +20,10 @@ public class EncodedAISPayload {
 	 * @param encodedPayload
 	 * @param paddingBits
 	 */
-	public EncodedAISPayload(String originalNmea, String encodedPayload, Integer numberOfFragments) {
+	public EncodedAISPayload(String originalNmea, String encodedPayload, Integer paddingBits) {
 		this.originalNmea = originalNmea;
 		this.encodedPaylaod = encodedPayload;
-		this.bitString = toBitString(encodedPayload, numberOfFragments);
+		this.bitString = toBitString(encodedPayload, paddingBits);
 	}
 
 	public final AISMessageType getMessageType() {
