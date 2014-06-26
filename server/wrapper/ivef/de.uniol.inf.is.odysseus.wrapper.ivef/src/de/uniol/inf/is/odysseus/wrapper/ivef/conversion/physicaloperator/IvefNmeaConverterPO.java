@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.wrapper.ivef.conversion.physicaloperator;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
@@ -55,7 +56,9 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 	private Sentence nmea;
 	/** Handler for AIS sentences. */
 	private AISSentenceHandler aishandler = new AISSentenceHandler();
-	private Map<Long, Integer> mmsiToId = new HashMap<Long, Integer>();
+	private static Map<Long, Integer> mmsiToId = new HashMap<Long, Integer>();
+	/** The maximum number of ships. */
+	private static int maxNumOfShips = 10000;
 
 	public IvefNmeaConverterPO(IIvefElement ivef) {
 		super();
@@ -105,7 +108,7 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 							sent = new KeyValueObject<>(stringObject);
 							//Important to parse the decodedAIS as NMEA sentence in order to prepare the fields which will be used in writing.
 							this.aishandler.getDecodedAISMessage().parse();
-							sent.setMetadata("object", this.aishandler.getDecodedAISMessage());
+							sent.setMetadata("decodedAIS", this.aishandler.getDecodedAISMessage());
 							this.aishandler.resetDecodedAISMessage();
 							transfer((T) sent);
 						}
@@ -113,37 +116,45 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 				}
 			}
 		}
-		else 
+		else if (received.getMetadata("decodedAIS") instanceof DecodedAISPayload)
 		{
 			this.directionIvefToNmea = false;
 			/**Convert the received NMEA AIS to IVEF*/
-			if(received.getMetadata("object") instanceof DecodedAISPayload) {
-				this.ivef = new MSG_VesselData();
-				Long mmsi = (Long)received.getAttribute("sourceMmsi");
-				//test
+			Long mmsi = null;
+//			if(received.getMetadata("decodedAIS") instanceof DecodedAISPayload) {
+			this.ivef = new MSG_VesselData();
+			mmsi = (Long)received.getAttribute("sourceMmsi");
+			//test
 //				if (mmsi == 211625860)
 //					System.out.println("211625860 received");
-				//
-				int id = getIdFromMMSIMap(mmsi);
-				//Header
-				Header header = prepareHeader();
-				((MSG_VesselData) this.ivef).setHeader(header);
-				//PosReport
-				PosReport posReport = preparePosReport(received, id);
-				//StaticData
-				StaticData staticData = prepareStaticData(received, id);
-				//Voyage
-				Voyage voyage = prepareVoyage(received, id);
-				//VesseData
-				VesselData vesseData = new VesselData();
-				vesseData.setPosReport(posReport);
-				vesseData.addStaticData(staticData);
-				vesseData.addVoyage(voyage);
-				//Body
-				Body body = new Body();
-				body.addVesselData(vesseData);
-				((MSG_VesselData) this.ivef).setBody(body);
-			}
+			//
+			int id = 0;
+			if(mmsi != null)
+				id = getIdFromMMSIMap(mmsi);
+			else
+				id = getIdRandomly();
+			//Header
+			Header header = prepareHeader();
+			((MSG_VesselData) this.ivef).setHeader(header);
+			//PosReport
+			PosReport posReport = preparePosReport(received, id);
+			//StaticData
+			StaticData staticData = prepareStaticData(received, id);
+//				////Just for Test:
+//				staticData.setShipName(String.valueOf(id));
+//				////
+			//Voyage
+			Voyage voyage = prepareVoyage(received, id);
+			//VesseData
+			VesselData vesseData = new VesselData();
+			vesseData.setPosReport(posReport);
+			vesseData.addStaticData(staticData);
+			vesseData.addVoyage(voyage);
+			//Body
+			Body body = new Body();
+			body.addVesselData(vesseData);
+			((MSG_VesselData) this.ivef).setBody(body);
+//			}
 //			else {
 //				System.out.println("Not converted AIS message:");
 //				AISSentence sentence = (AISSentence) received.getMetadata("object");
@@ -243,8 +254,9 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 		IMO imo = null;
 		if((imo = (IMO)received.getAttribute("imo")) != null)
 			staticData.setIMO(imo.getIMO());
-		Long mmsi = (Long)received.getAttribute("sourceMmsi");
-		staticData.setMMSI(mmsi);
+		Long mmsi = null;
+		if((mmsi = (Long)received.getAttribute("sourceMmsi")) != null)
+			staticData.setMMSI(mmsi);
 		//staticData.setATONName("AISTransceiver");//name of the Aids-to-Navigation
 		Integer toBow = null;
 		if((toBow = (Integer)received.getAttribute("toBow")) != null)
@@ -279,12 +291,12 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 	}
 	
 	private int getIdFromMMSIMap(Long mmsi){
-		if (this.mmsiToId.containsKey(mmsi))
-			return this.mmsiToId.get(mmsi);
+		if (mmsiToId.containsKey(mmsi))
+			return mmsiToId.get(mmsi);
 		else
 		{
-			int id = this.mmsiToId.size() + 1;
-			this.mmsiToId.put(mmsi, id);
+			int id = mmsiToId.size() + 1;
+			mmsiToId.put(mmsi, id);
 			return id;
 		}
 	}
@@ -296,6 +308,11 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 		String minute = eta.substring(eta.indexOf(":")+1);
 		String year = String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
 		return year+"-"+month+"-"+day+"T"+hour+":"+minute+":00.000-0000";
+	}
+	
+	private int getIdRandomly() {
+		Random random = new Random();
+		return random.nextInt(maxNumOfShips) + maxNumOfShips + 1;
 	}
 
 }
