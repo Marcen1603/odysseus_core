@@ -64,7 +64,7 @@ public class AISSentenceHandler {
 					System.err.println("nextFragmentNumber: " + nextFragmentNumber);
 					payloadMessageFragments.clear();
 				} 
-				else {
+				else {System.out.println("Fragmented: " + aisSentence.getNmeaString());
 					//gather the payloadMessage fragments
 					payloadMessageFragments.add(aisSentence);
 					//handle only when all the fragments are already gathered
