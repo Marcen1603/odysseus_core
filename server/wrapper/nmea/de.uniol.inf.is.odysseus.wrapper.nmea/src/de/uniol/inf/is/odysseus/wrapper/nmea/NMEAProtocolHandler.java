@@ -165,24 +165,32 @@ public class NMEAProtocolHandler extends
 		Map<String, Object> event;
 		KeyValueObject<? extends IMetaAttribute> res = null;
 		//Handling AIS Sentences
-		if (sentence instanceof AISSentence) {
+		if (sentence instanceof AISSentence) {System.out.println("sentence instanceof AISSentence: " + sentence.getNmeaString());
 			AISSentence aissentence = (AISSentence) sentence;
+			////////////////////////////////////////TEST//////////////////////////////////////////
+			
+			////////////////////////////////////////TEST//////////////////////////////////////////
 			this.aishandler.handleAISSentence(aissentence);
 			if(this.aishandler.getDecodedAISMessage() != null) {
 				event = sentence.toMap();
 				res = new KeyValueObject<>(event);
 				//Important to parse the decodedAIS as a sentence in order to prepare the fields which will be used in writing.
 				this.aishandler.getDecodedAISMessage().parse();
-				res.setMetadata("object", this.aishandler.getDecodedAISMessage());
+				res.setMetadata("decodedAIS", this.aishandler.getDecodedAISMessage());
 				this.aishandler.resetDecodedAISMessage();
 			}
-			else return null;
+			//else return null;
+			//Send original AIS sentence:
+			Map<String, Object> originalEvent = sentence.toMap();
+			KeyValueObject<? extends IMetaAttribute> originalAIS = new KeyValueObject<>(originalEvent);
+			originalAIS.setMetadata("originalNMEA", sentence);
+			getTransfer().transfer(originalAIS);
 		}
 		//Other NMEA Sentences
 		else{
 			event = sentence.toMap();
 			res = new KeyValueObject<>(event);
-			res.setMetadata("object", sentence);
+			res.setMetadata("originalNMEA", sentence);
 		}
 		return res;
 	}
@@ -191,11 +199,11 @@ public class NMEAProtocolHandler extends
 	public void write(KeyValueObject<? extends IMetaAttribute> object)
 			throws IOException {
 		try {
-			Object obj = object.getMetadata("object");
+			Object obj = object.getMetadata("originalNMEA");
 			if (!(obj instanceof Sentence)) {
 				return;
 			}
-			Sentence sentence = (Sentence) obj;
+			Sentence sentence = (Sentence) obj;System.out.println("wrtten nmea: " + sentence.getNmeaString());
 			getTransportHandler().send(sentence.toNMEA().getBytes());
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
