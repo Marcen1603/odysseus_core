@@ -4,8 +4,11 @@
 package de.uniol.inf.is.odysseus.wrapper.ivef;
 
 import java.io.BufferedReader;
+//import java.io.BufferedWriter;
+//import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+//import java.io.PrintWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -293,6 +296,21 @@ public class IVEF_0_1_5_ProtocolHandler extends
 		if (this.parser.vesselDataPresent()) {
 			this.parser.resetVesselDataPresent();
 			this.m_vesselData = this.parser.getVesselData();
+			///////Workaround: 
+			//1. set speed to 0 because of a bug in VTS
+			this.m_vesselData.getBody().getVesselDataAt(0).getPosReport().setSOG(Float.valueOf(0));
+//			//2. Set the COG as integer value for the VTS
+//			int cog = this.m_vesselData.getBody().getVesselDataAt(0).getPosReport().getCOG().intValue();
+//			this.m_vesselData.getBody().getVesselDataAt(0).getPosReport().setCOG(Float.valueOf(cog));
+			//3. Test: print the MMSI with id
+//			try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("c:\\temp\\tmp.txt", true)))) {
+//				String teststr = "MMSI: " + this.m_vesselData.getBody().getVesselDataAt(0).getStaticDataAt(0).getMMSI();
+//				teststr += " PosReport Id: " + this.m_vesselData.getBody().getVesselDataAt(0).getPosReport().getId();
+//				teststr += " StaticData Id: " + this.m_vesselData.getBody().getVesselDataAt(0).getStaticDataAt(0).getId();
+//				out.println(teststr);
+//			}catch (IOException e) {
+//			}
+			///////
 			map = this.m_vesselData.toMap(); 
 			map.setMetadata("object", this.m_vesselData);
 			found = true;
@@ -343,7 +361,7 @@ public class IVEF_0_1_5_ProtocolHandler extends
 				getTransportHandler().send(this.m_serviceRequest.toXML().getBytes());
 			}
 			//m_vesselData
-			else {
+			else if (obj instanceof MSG_VesselData) {
 				this.m_vesselData = (MSG_VesselData) obj;
 				getTransportHandler().send(this.m_vesselData.toXML().getBytes());
 			}
