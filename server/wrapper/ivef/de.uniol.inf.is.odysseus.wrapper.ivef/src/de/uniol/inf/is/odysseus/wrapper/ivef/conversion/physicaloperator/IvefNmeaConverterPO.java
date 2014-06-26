@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.wrapper.ivef.conversion.physicaloperator;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+//import java.util.Random;
 import java.util.UUID;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
@@ -58,7 +58,7 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 	private AISSentenceHandler aishandler = new AISSentenceHandler();
 	private static Map<Long, Integer> mmsiToId = new HashMap<Long, Integer>();
 	/** The maximum number of ships. */
-	private static int maxNumOfShips = 10000;
+//	private static int maxNumOfShips = 10000;
 
 	public IvefNmeaConverterPO(IIvefElement ivef) {
 		super();
@@ -132,7 +132,7 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 			if(mmsi != null)
 				id = getIdFromMMSIMap(mmsi);
 			else
-				id = getIdRandomly();
+				return;//Workaround to avoid sending null MMSI...id = getIdRandomly();
 			//Header
 			Header header = prepareHeader();
 			((MSG_VesselData) this.ivef).setHeader(header);
@@ -310,9 +310,9 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 		return year+"-"+month+"-"+day+"T"+hour+":"+minute+":00.000-0000";
 	}
 	
-	private int getIdRandomly() {
-		Random random = new Random();
-		return random.nextInt(maxNumOfShips) + maxNumOfShips + 1;
-	}
+//	private int getIdRandomly() {
+//		Random random = new Random();
+//		return random.nextInt(maxNumOfShips) + maxNumOfShips + 1;
+//	}
 
 }
