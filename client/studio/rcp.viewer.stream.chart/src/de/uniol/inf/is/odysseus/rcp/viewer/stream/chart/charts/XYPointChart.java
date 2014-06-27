@@ -1,5 +1,5 @@
 /********************************************************************************** 
- * Copyright 2011 The Odysseus Team
+ * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,31 +20,37 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractXYChart;
 
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
 public class XYPointChart extends AbstractXYChart {
 
     @Override
     protected JFreeChart createChart() {
-        JFreeChart chart = ChartFactory.createXYLineChart(getTitle(), "", "", super.getDataset(), PlotOrientation.VERTICAL, true, true, false);
-        chart.getPlot().setBackgroundPaint(DEFAULT_BACKGROUND);
+        final JFreeChart chart = ChartFactory.createXYLineChart(this.getTitle(), "", "", super.getDataset(), PlotOrientation.VERTICAL, true, true, false);
+        chart.getPlot().setBackgroundPaint(AbstractJFreeChart.DEFAULT_BACKGROUND);
         return chart;
     }
 
     @Override
-    protected void decorateChart(JFreeChart thechart) {
+    protected void decorateChart(final JFreeChart thechart) {
         super.decorateChart(thechart);
-        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(); 
+        final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
         thechart.getXYPlot().setRenderer(renderer);
         thechart.getXYPlot().getDomainAxis().setAutoRange(true);
         thechart.getXYPlot().getRangeAxis().setAutoRange(true);
-        thechart.getXYPlot().setBackgroundPaint(DEFAULT_BACKGROUND);
-        thechart.getXYPlot().setRangeGridlinePaint(DEFAULT_BACKGROUND_GRID);
+        thechart.getXYPlot().setBackgroundPaint(AbstractJFreeChart.DEFAULT_BACKGROUND);
+        thechart.getXYPlot().setRangeGridlinePaint(AbstractJFreeChart.DEFAULT_BACKGROUND_GRID);
     }
 
     @Override
     public String getViewID() {
-        return VIEW_ID_PREFIX + ".xypointchart";
+        return AbstractJFreeChart.VIEW_ID_PREFIX + ".xypointchart";
     }
 
 }

@@ -18,18 +18,18 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYPointChart;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PolarChart;
 
 /**
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ShowXYPointChartCommand extends AbstractCommand {
+public class ShowPolarChartCommand extends AbstractCommand {
 
     @Override
     public Object execute(final ExecutionEvent event) throws ExecutionException {
-        this.openView(new XYPointChart(), this.getSelectedOperators(event));
+        this.openView(new PolarChart(), this.getSelectedOperators(event));
         return null;
     }
 

@@ -71,6 +71,13 @@
                   tooltip="Shows a continuous point chart">
             </command>
             <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowPolarChartCommand"
+                  icon="icons/chart_curve.png"
+                  label="Polar Chart"
+                  style="push"
+                  tooltip="Shows a continuous polar chart">
+            </command>
+            <command
                   commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYBarChartCommand"
                   icon="icons/chart_bar.png"
                   label="XY Bar Chart"
@@ -178,6 +185,11 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYPointChartCommand"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYPointChartCommand"
             name="XY Point Command">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowPolarChartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowPolarChartCommand"
+            name="Polar Command">
       </command>
       <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowCurveChartCommand"
@@ -292,6 +304,15 @@
       <view
             allowMultiple="true"
             category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PolarChart"
+            icon="icons/chart_line.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.polarchart"
+            name="Polar Chart"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="true"
+            category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PieChart3D"
             icon="icons/chart_pie.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.piechart3d"
@@ -385,6 +406,10 @@
       </activityPatternBinding>
       <activityPatternBinding
             activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
+            pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.polarchart">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
             pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.piechart3d">
       </activityPatternBinding>
       <activityPatternBinding
@@ -443,8 +468,13 @@
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYPointChart"
             configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
-            name="XY Area Chart">
+            name="XY Point Chart">
       </dashboardPart>            
+     <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PolarChart"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
+            name="Polar Chart">
+      </dashboardPart> 
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.CurveChart"
             configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"

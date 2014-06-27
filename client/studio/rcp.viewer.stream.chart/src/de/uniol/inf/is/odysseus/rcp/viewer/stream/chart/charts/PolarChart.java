@@ -13,24 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command;
+package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts;
 
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYPointChart;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractXYChart;
 
 /**
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ShowXYPointChartCommand extends AbstractCommand {
+public class PolarChart extends AbstractXYChart {
 
     @Override
-    public Object execute(final ExecutionEvent event) throws ExecutionException {
-        this.openView(new XYPointChart(), this.getSelectedOperators(event));
-        return null;
+    protected JFreeChart createChart() {
+        final JFreeChart chart = ChartFactory.createPolarChart(this.getTitle(), super.getDataset(), true, true, false);
+        chart.getPlot().setBackgroundPaint(AbstractJFreeChart.DEFAULT_BACKGROUND);
+        return chart;
+    }
+
+    @Override
+    public String getViewID() {
+        return AbstractJFreeChart.VIEW_ID_PREFIX + ".polarchart";
     }
 
 }
