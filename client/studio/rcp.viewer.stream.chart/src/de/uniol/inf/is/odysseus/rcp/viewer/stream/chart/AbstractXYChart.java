@@ -53,11 +53,11 @@ public abstract class AbstractXYChart extends AbstractJFreeChart<Double, IMetaAt
 	// private double minX = Double.NaN;
 	// private double minY = Double.NaN;
 
-	private double maxX = 55000;
-	private double maxY = 34000;
+	private double maxX = Double.NaN;
+	private double maxY = Double.NaN;
 
-	private double minX = 0;
-	private double minY = -34000;
+	private double minX = Double.NaN;
+	private double minY = Double.NaN;
 
 	private int maxValues = Integer.MAX_VALUE;
 
@@ -87,11 +87,6 @@ public abstract class AbstractXYChart extends AbstractJFreeChart<Double, IMetaAt
 		if (Double.isNaN(minX)) {
 			minX = valueX;
 		}
-		if (valueX > maxX) {
-			maxX = valueX;
-		} else if (valueX < minX) {
-			minX = valueX;
-		}
 
 		// for Y
 		if (Double.isNaN(maxY)) {
@@ -100,19 +95,26 @@ public abstract class AbstractXYChart extends AbstractJFreeChart<Double, IMetaAt
 		if (Double.isNaN(minY)) {
 			minY = valueY;
 		}
-		if (valueY > maxY) {
-			maxY = valueY;
-		} else if (valueY < minY) {
-			minY = valueY;
-		}
 
-		if (autoadjust && getChart() != null ) {
-			getChart().getXYPlot().getRangeAxis().setLowerBound(minY * (1.0 - margin));
-			getChart().getXYPlot().getRangeAxis().setUpperBound(maxY * (1.0 + margin));
+        if (autoadjust && getChart() != null) {
+            if (valueX > maxX) {
+                maxX = valueX;
+            }
+            else if (valueX < minX) {
+                minX = valueX;
+            }
+            if (valueY > maxY) {
+                maxY = valueY;
+            }
+            else if (valueY < minY) {
+                minY = valueY;
+            }
+            getChart().getXYPlot().getRangeAxis().setLowerBound(minY * (1.0 - margin));
+            getChart().getXYPlot().getRangeAxis().setUpperBound(maxY * (1.0 + margin));
 
-			getChart().getXYPlot().getDomainAxis().setLowerBound(minX * (1.0 - margin));
-			getChart().getXYPlot().getDomainAxis().setUpperBound(maxX * (1.0 + margin));
-		}
+            getChart().getXYPlot().getDomainAxis().setLowerBound(minX * (1.0 - margin));
+            getChart().getXYPlot().getDomainAxis().setUpperBound(maxX * (1.0 + margin));
+        }
 
 	}
 
@@ -182,16 +184,19 @@ public abstract class AbstractXYChart extends AbstractJFreeChart<Double, IMetaAt
 					} else {
 						currentserie = dataset.getSeries(key);
 					}
-					double x = tuple.get(choosenXValue);
-					double y = tuple.get(choosenYValue);
-					count++;
-					if (count > redrawEach) {
-						count = 0;
-						currentserie.add(x, y, true);
-						adjust(x, y);
-					} else {
-						currentserie.add(x, y, false);
-					}
+                    if ((tuple.size() > choosenXValue) && (tuple.size() > choosenYValue)) {
+                        double x = tuple.get(choosenXValue);
+                        double y = tuple.get(choosenYValue);
+                        count++;
+                        if (count > redrawEach) {
+                            count = 0;
+                            currentserie.add(x, y, true);
+                            adjust(x, y);
+                        }
+                        else {
+                            currentserie.add(x, y, false);
+                        }
+                    }
 
 				} catch (SWTException e) {
 					dispose();

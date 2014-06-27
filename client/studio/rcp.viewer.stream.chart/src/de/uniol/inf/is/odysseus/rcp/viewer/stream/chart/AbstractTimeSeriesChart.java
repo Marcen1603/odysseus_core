@@ -99,6 +99,16 @@ public abstract class AbstractTimeSeriesChart extends
 
 	@Override
 	public void reloadChart() {
+        if (!autoadjust) {
+            if (!Double.isNaN(min)) {
+                getChart().getXYPlot().getRangeAxis().setLowerBound(min * (1.0 - margin));
+            }
+            if (!Double.isNaN(max)) {
+
+                getChart().getXYPlot().getRangeAxis().setUpperBound(max * (1.0 + margin));
+            }
+        }
+	       
 		series.clear();
 		this.dataset.removeAllSeries();
 
@@ -307,22 +317,24 @@ public abstract class AbstractTimeSeriesChart extends
 	}
 
     private void adjust(double value) {
+        // for Y
         if (Double.isNaN(max)) {
             max = value;
         }
         if (Double.isNaN(min)) {
             min = value;
         }
-        if (isAutoadjust()) {
+
+        if (autoadjust && getChart() != null) {
             if (value > max) {
                 max = value;
             }
-            if (value < min) {
+            else if (value < min) {
                 min = value;
             }
+            getChart().getXYPlot().getRangeAxis().setLowerBound(min * (1.0 - margin));
+            getChart().getXYPlot().getRangeAxis().setUpperBound(max * (1.0 + margin));
         }
-        getChart().getXYPlot().getRangeAxis().setLowerBound(min * (1.0 - margin));
-        getChart().getXYPlot().getRangeAxis().setUpperBound(max * (1.0 + margin));
     }
 
 	@Override
