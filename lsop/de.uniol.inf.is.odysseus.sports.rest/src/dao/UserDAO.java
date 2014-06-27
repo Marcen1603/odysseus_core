@@ -1,7 +1,12 @@
-package dto;
+package dao;
 
 import java.io.Serializable;
 
+/**
+ * Simple user model for testing REST
+ * @author Thomas
+ *
+ */
 public class UserDAO implements Serializable{
 
 	private static final long serialVersionUID = 3877983907166603599L;

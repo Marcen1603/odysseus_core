@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.restlet.resource.ClientResource;
 
-import dto.UserDAO;
+import dao.UserDAO;
 
 public class ClientExampleJackson {
 	
