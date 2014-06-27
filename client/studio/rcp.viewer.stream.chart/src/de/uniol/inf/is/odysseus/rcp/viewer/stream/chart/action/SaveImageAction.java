@@ -1,5 +1,5 @@
 /********************************************************************************** 
- * Copyright 2014 The Odysseus Team
+ * Copyright 2014b The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,10 @@ public class SaveImageAction extends Action {
     public void run() {
         try {
             final FileDialog dialog = new FileDialog(this.parentShell, SWT.SAVE);
+
+            dialog.setFilterNames(new String[] {"Image Files (*.png)"});
+            dialog.setFilterExtensions(new String[] {"*.png"});
+            dialog.setText("Select file..");
             final String file = dialog.open();
             if (file != null) {
                 this.chart.saveImage(new File(file));
