@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +76,9 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	}
 
 	protected abstract void reloadChart();
-
+	
+    public abstract void saveImage(File path) throws IOException;
+    
 	protected boolean validate() {
 		for (Entry<Integer, ViewSchema<T>> e : viewSchema.entrySet()) {
 			if (e.getValue().getChoosenAttributes().size() > 0) {

@@ -18,6 +18,9 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import javax.imageio.ImageIO;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -72,6 +77,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSelectedAttributesAction;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSettingsAction;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.SaveImageAction;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
@@ -102,6 +108,8 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 	private JFreeChart chart;
 	private ChangeSelectedAttributesAction<T> changeAttributesAction;
 	private ChangeSettingsAction changeSettingsAction;
+    /** Save action.*/
+    private SaveImageAction saveImageAction;
 	private final Map<Integer, List<String>> loadedChoosenAttributes = Maps
 			.newHashMap();
 	private final Map<Integer, List<String>> loadedGroupedAttributes = Maps
@@ -177,11 +185,20 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 	}
 
 	private void fillLocalMenu(IContributionManager manager) {
+	    manager.add(saveImageAction);
 		manager.add(changeAttributesAction);
 		manager.add(changeSettingsAction);
 	}
 
 	private void createActions(Shell shell) {
+        this.saveImageAction = new SaveImageAction(shell, this);
+        this.saveImageAction.setText("Save Image");
+        this.saveImageAction.setToolTipText("Save the chart as PNG image");
+        ImageDescriptor imgImage = ImageDescriptor
+                .createFromURL(Activator.getBundleContext().getBundle()
+                        .getEntry("icons/chart_curve.png"));
+        this.saveImageAction.setImageDescriptor(imgImage);
+
 		this.changeAttributesAction = new ChangeSelectedAttributesAction<T>(
 				shell, this);
 		this.changeAttributesAction.setText("Change Attributes");
@@ -302,6 +319,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
 		initComposite(parent);
+		addToToolbar(toolbar, saveImageAction);
 		addToToolbar(toolbar, changeAttributesAction);
 		addToToolbar(toolbar, changeSettingsAction);
 	}
@@ -390,6 +408,12 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 		
 	}
 
+	@Override
+	public void saveImage(File path) throws IOException {
+	    BufferedImage image = this.chart.createBufferedImage(this.chartComposite.getSize().x, this.chartComposite.getSize().y);
+	    ImageIO.write(image, "png", path);
+	}
+	
 	@Override
 	public void onLoad(Map<String, String> saved) {
 		loadedChoosenAttributes.clear();

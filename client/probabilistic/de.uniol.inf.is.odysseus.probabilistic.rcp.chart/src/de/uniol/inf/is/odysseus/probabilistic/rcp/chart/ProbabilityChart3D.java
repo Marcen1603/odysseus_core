@@ -14,6 +14,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.rcp.chart;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +47,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilistic
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSelectedAttributesAction;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSettingsAction;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.SaveImageAction;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewableSDFAttribute;
@@ -75,6 +78,8 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<MultivariateMix
     private ChangeSelectedAttributesAction<MultivariateMixtureDistribution> changeAttributesAction;
     /** The settings action. */
     private ChangeSettingsAction changeSettingsAction;
+    /** Save action.*/
+    private SaveImageAction saveImageAction;
 
     /** The monitor edit icon. */
     protected static final ImageDescriptor IMG_MONITOR_EDIT = ImageDescriptor.createFromURL(Activator.getBundleContext().getBundle().getEntry("icons/monitor_edit.png"));
@@ -225,6 +230,11 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<MultivariateMix
      * Creates the view actions.
      */
     private void createActions() {
+        this.saveImageAction = new SaveImageAction(this.getSite().getShell(), this);
+        this.saveImageAction.setText("Save Image");
+        this.saveImageAction.setToolTipText("Save the chart as PNG image");
+        this.saveImageAction.setImageDescriptor(ProbabilityChart3D.IMG_MONITOR_EDIT);
+
         this.changeAttributesAction = new ChangeSelectedAttributesAction<MultivariateMixtureDistribution>(this.getSite().getShell(), this);
         this.changeAttributesAction.setText("Change Attributes");
         this.changeAttributesAction.setToolTipText("Configure the attributes that will be shown by the chart");
@@ -569,5 +579,14 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<MultivariateMix
             this.reloadChartImpl();
             this.init();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void saveImage(File path) throws IOException {
+        // TODO Auto-generated method stub
+        
     }
 }
