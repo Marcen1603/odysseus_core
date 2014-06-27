@@ -19,18 +19,18 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractXYChart;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractPolarChart;
 
 /**
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class PolarChart extends AbstractXYChart {
+public class PolarChart extends AbstractPolarChart {
 
     @Override
     protected JFreeChart createChart() {
-        final JFreeChart chart = ChartFactory.createPolarChart(this.getTitle(), super.getDataset(), true, true, false);
+        final JFreeChart chart = ChartFactory.createPolarChart(this.getTitle(), dataset, true, true, false);
         chart.getPlot().setBackgroundPaint(AbstractJFreeChart.DEFAULT_BACKGROUND);
         return chart;
     }
