@@ -61,7 +61,14 @@
                   icon="icons/chart_line.png"
                   label="XY Line Chart"
                   style="push"
-                  tooltip="Shows a continuious line chart">
+                  tooltip="Shows a continuous line chart">
+            </command>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYPointChartCommand"
+                  icon="icons/chart_curve.png"
+                  label="XY Point Chart"
+                  style="push"
+                  tooltip="Shows a continuous point chart">
             </command>
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYBarChartCommand"
@@ -168,6 +175,11 @@
             name="XY Line Command">
       </command>
       <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYPointChartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYPointChartCommand"
+            name="XY Point Command">
+      </command>
+      <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowCurveChartCommand"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowCurveChartCommand"
             name="Curve Chart Command">
@@ -271,6 +283,15 @@
       <view
             allowMultiple="true"
             category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYPointChart"
+            icon="icons/chart_line.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.xypointchart"
+            name="XY Point Chart"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="true"
+            category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PieChart3D"
             icon="icons/chart_pie.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.piechart3d"
@@ -360,6 +381,10 @@
       </activityPatternBinding>
       <activityPatternBinding
             activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
+            pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.xypointchart">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
             pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.piechart3d">
       </activityPatternBinding>
       <activityPatternBinding
@@ -415,6 +440,11 @@
             configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
             name="XY Line Chart">
       </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYPointChart"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
+            name="XY Area Chart">
+      </dashboardPart>            
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.CurveChart"
             configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
