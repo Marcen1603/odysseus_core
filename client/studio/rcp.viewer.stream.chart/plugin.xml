@@ -86,7 +86,7 @@
             </command>
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowHistogramChartCommand"
-                  icon="icons/chart_bar.png"
+                  icon="icons/chart_histogram.png"
                   label="Histogram Chart"
                   style="push"
                   tooltip="Shows a continuous histogram chart">
@@ -278,7 +278,7 @@
             allowMultiple="true"
             category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.HistogramChart"
-            icon="icons/chart_bar.png"
+            icon="icons/chart_histogram.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.histogramchart"
             name="Histogram Chart"
             restorable="false">
