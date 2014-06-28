@@ -65,14 +65,14 @@
             </command>
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYPointChartCommand"
-                  icon="icons/chart_curve.png"
+                  icon="icons/chart_point.png"
                   label="XY Point Chart"
                   style="push"
                   tooltip="Shows a continuous point chart">
             </command>
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowPolarChartCommand"
-                  icon="icons/chart_curve.png"
+                  icon="icons/chart_polar.png"
                   label="Polar Chart"
                   style="push"
                   tooltip="Shows a continuous polar chart">
@@ -189,7 +189,7 @@
       <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowPolarChartCommand"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowPolarChartCommand"
-            name="Polar Command">
+            name="Polar Chart Command">
       </command>
       <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowCurveChartCommand"
@@ -296,7 +296,7 @@
             allowMultiple="true"
             category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYPointChart"
-            icon="icons/chart_line.png"
+            icon="icons/chart_point.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.xypointchart"
             name="XY Point Chart"
             restorable="false">
@@ -305,7 +305,7 @@
             allowMultiple="true"
             category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PolarChart"
-            icon="icons/chart_line.png"
+            icon="icons/chart_polar.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.polarchart"
             name="Polar Chart"
             restorable="false">

@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +30,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PolarPlot;
+import org.jfree.chart.renderer.DefaultPolarItemRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -71,7 +73,7 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
     private boolean setVerticalTickLabels = false;
 
     private int choosenRValue = 0;
-    private int choosenThetaValue = 0;
+    private int choosenThetaValue = 1;
 
     private Integer choosenRValuePort = 0;
     private Integer choosenThetaValuePort = 0;
@@ -230,7 +232,6 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
             else {
                 xySeries = new XYSeries(name);
             }
-
             if (this.maxItems > 0) {
                 xySeries.setMaximumItemCount(this.maxItems);
             }
@@ -271,6 +272,10 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
         plot.setBackgroundPaint(AbstractJFreeChart.DEFAULT_BACKGROUND);
         plot.setAngleGridlinePaint(Color.BLACK);
         plot.setRadiusGridlinePaint(Color.LIGHT_GRAY);
+        DefaultPolarItemRenderer r = (DefaultPolarItemRenderer) plot.getRenderer();
+        r.setFillComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+        r.setShapesVisible(false);
+        r.setDrawOutlineWhenFilled(true);
     }
 
     @ChartSetting(name = "Max Shown Items", type = Type.GET)
