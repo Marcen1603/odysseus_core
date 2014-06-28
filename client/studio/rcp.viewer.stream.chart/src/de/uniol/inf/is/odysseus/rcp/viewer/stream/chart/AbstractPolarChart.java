@@ -23,14 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PolarPlot;
-import org.jfree.data.time.FixedMillisecond;
+import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.slf4j.Logger;
@@ -55,43 +54,25 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Ty
 public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITimeInterval> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTimeSeriesChart.class);
+    private static final int DEFAULT_MAX_NUMBER_OF_ITEMS = 1000;
 
-    private Map<Integer, Map<Long, Map<String, XYSeries>>> series = new HashMap<>();
-    private Map<Long, String> groupNames = new HashMap<>();
-    private boolean useShortNames = true;
-
-    protected XYSeriesCollection dataset = new XYSeriesCollection();
-
-    private static final String TIME_PICO = "picoseconds";
-    private static final String TIME_NANO = "nanoseconds";
-    private static final String TIME_MICRO = "microseconds";
-    private static final String TIME_MILLI = "milliseconds";
-    private static final String TIME_SECONDS = "seconds";
-    private static final String TIME_MINUTES = "minutes";
-    private static final String FROM_STREAM = "from stream";
+    private final XYSeriesCollection dataset = new XYSeriesCollection();
+    private final Map<Integer, Map<Long, Map<String, XYSeries>>> series = new HashMap<>();
+    private final Map<Long, String> groupNames = new HashMap<>();
+    private final boolean useShortNames = true;
+    private final double margin = 0.05; // 5 percent
 
     private double max = Double.NaN;
     private double min = Double.NaN;
     private boolean autoadjust = true;
-    @SuppressWarnings("unused")
-    private double margin = 0.05; // 5 percent
     private String rTitle = "";
 
-    private static final int DEFAULT_MAX_NUMBER_OF_ITEMS = 1000;
-    private static final long DEFAULT_MAX_ITEM_AGE = 0;
-    private static final String DEFAULT_TIME_GRANULARITY = FROM_STREAM;
-
-    private int maxItems = DEFAULT_MAX_NUMBER_OF_ITEMS;
-    private long maxItemAge = DEFAULT_MAX_ITEM_AGE;
+    private int maxItems = AbstractPolarChart.DEFAULT_MAX_NUMBER_OF_ITEMS;
     private boolean setVerticalTickLabels = false;
 
-    // also milli
-    private String dateformat = "HH:mm:ss";
     private int choosenRValue = 0;
     private int choosenThetaValue = 0;
 
-    private Double timefactor = 1.0;
-    private String timeinputgranularity = DEFAULT_TIME_GRANULARITY;
     private Integer choosenRValuePort = 0;
     private Integer choosenThetaValuePort = 0;
 
@@ -102,53 +83,36 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
 
     @Override
     public void reloadChart() {
-        if (!autoadjust) {
-            if (!Double.isNaN(min)) {
-                // getChart().getXYPlot().getRangeAxis().setLowerBound(min *
-                // (1.0 - margin));
+        final PolarPlot plot = (PolarPlot) this.getChart().getPlot();
+
+        if (!this.autoadjust) {
+            if (!Double.isNaN(this.max)) {
+                plot.getAxis().setUpperBound(this.max * (1.0 + this.margin));
             }
-            if (!Double.isNaN(max)) {
-                // getChart().getXYPlot().getRangeAxis().setUpperBound(max *
-                // (1.0 + margin));
+            if (!Double.isNaN(this.min)) {
+                plot.getAxis().setLowerBound(this.min * (1.0 - this.margin));
             }
         }
 
-        series.clear();
+        this.series.clear();
         this.dataset.removeAllSeries();
 
-        if (setVerticalTickLabels) {
+        if (this.setVerticalTickLabels) {
+            plot.getAxis().setVerticalTickLabels(true);
             // getChart().getXYPlot().getDomainAxis().setVerticalTickLabels(true);
         }
+        plot.getAxis().setLabel(this.rTitle);
 
-        // getChart().getXYPlot().getRangeAxis().setLabel(yTitle);
+    }
 
-        if (this.timeinputgranularity.equals(TIME_MILLI)) {
-            this.timefactor = 1.0;
-        }
-        else if (this.timeinputgranularity.equals(TIME_MICRO)) {
-            this.timefactor = 1000.0;
-        }
-        else if (this.timeinputgranularity.equals(TIME_NANO)) {
-            this.timefactor = 1000000.0;
-        }
-        else if (this.timeinputgranularity.equals(TIME_PICO)) {
-            this.timefactor = 1000000000.0;
-        }
-        else if (this.timeinputgranularity.equals(TIME_SECONDS)) {
-            this.timefactor = 0.001;
-        }
-        else if (this.timeinputgranularity.equals(TIME_MINUTES)) {
-            this.timefactor = 1.67777e-5;
-        }
-        else if (this.timeinputgranularity.equals(FROM_STREAM)) {
-            this.timefactor = 0.0;
-        }
+    public XYDataset getDataset() {
+        return this.dataset;
     }
 
     @Override
-    public String isValidSelection(Map<Integer, Set<IViewableAttribute>> selectAttributes) {
+    public String isValidSelection(final Map<Integer, Set<IViewableAttribute>> selectAttributes) {
         int sum = 0;
-        for (Entry<Integer, Set<IViewableAttribute>> e : selectAttributes.entrySet()) {
+        for (final Entry<Integer, Set<IViewableAttribute>> e : selectAttributes.entrySet()) {
             if (e.getValue().size() > 0) {
                 sum += e.getValue().size();
             }
@@ -160,43 +124,42 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
     }
 
     @Override
-    protected void processElement(List<Double> tuple, ITimeInterval metadata, int port) {
+    protected void processElement(final List<Double> tuple, final ITimeInterval metadata, final int port) {
         // this is not needed, since streamElementReceived is overwritten!
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, final int port) {
+    public void streamElementRecieved(final IPhysicalOperator senderOperator, final IStreamObject<?> element, final int port) {
         if (!(element instanceof Tuple<?>)) {
-            LOG.warn("Stream visualization is only for relational tuple, not for {}!", element.getClass());
+            AbstractPolarChart.LOG.warn("Stream visualization is only for relational tuple, not for {}!", element.getClass());
             return;
         }
 
-        if (getChart() == null) {
+        if (this.getChart() == null) {
             return;
         }
 
-        Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) element;
+        final Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) element;
 
-        if (isAsyncUpdate()) {
-            addToBuffers(port, tuple);
+        if (this.isAsyncUpdate()) {
+            this.addToBuffers(port, tuple);
         }
         else {
-            processElement(port, tuple, true);
+            this.processElement(port, tuple, true);
         }
     }
 
     private boolean isAsyncUpdate() {
-        return updateIntervalMillis > 0;
+        return this.updateIntervalMillis > 0;
     }
 
     private void processElement(final int port, final Tuple<ITimeInterval> tuple, final boolean update) {
         final List<Double> viewableValues = this.viewSchema.get(port).convertToViewableFormat(tuple);
         final int[] gRestrict = this.viewSchema.get(port).getGroupRestrictList();
-        final TimeUnit timeUnit = this.viewSchema.get(port).getTimeUnit(TimeUnit.MILLISECONDS);
-        Display display = PlatformUI.getWorkbench().getDisplay();
+        final Display display = PlatformUI.getWorkbench().getDisplay();
 
-        if (getChartComposite().isDisposed()) {
+        if (this.getChartComposite().isDisposed()) {
             return;
         }
 
@@ -204,7 +167,7 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
 
             @Override
             public void run() {
-                if (getChartComposite().isDisposed()) {
+                if (AbstractPolarChart.this.getChartComposite().isDisposed()) {
                     return;
                 }
 
@@ -212,50 +175,41 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
                 String groupName = "";
                 if (gRestrict != null) {
                     groupId = (long) tuple.restrictedHashCode(gRestrict);
-                    groupName = groupNames.get(groupId);
+                    groupName = AbstractPolarChart.this.groupNames.get(groupId);
                     if (groupName == null) {
                         groupName = tuple.toString(gRestrict);
-                        groupNames.put(groupId, groupName);
+                        AbstractPolarChart.this.groupNames.put(groupId, groupName);
                     }
                 }
 
                 try {
-                    if ((choosenRValue != -1) && (choosenThetaValue != -1)) {
-                        long time = tuple.getMetadata().getStart().getMainPoint();
-                        double r = ((Number) viewableValues.get(choosenRValue)).doubleValue();
-                        double theta = ((Number) viewableValues.get(choosenThetaValue)).doubleValue();
+                    if ((AbstractPolarChart.this.choosenRValue != -1) && (AbstractPolarChart.this.choosenThetaValue != -1)) {
+                        final double r = ((Number) viewableValues.get(AbstractPolarChart.this.choosenRValue)).doubleValue();
+                        final double theta = ((Number) viewableValues.get(AbstractPolarChart.this.choosenThetaValue)).doubleValue();
 
-                        long millis;
-                        if (timefactor != 0) {
-                            millis = Math.round(time / timefactor);
-                        }
-                        else {
-                            millis = TimeUnit.MILLISECONDS.convert(time, timeUnit);
-                        }
-                        FixedMillisecond ms = new FixedMillisecond(millis);
+                        AbstractPolarChart.this.addToSeries(port, update, r, theta, groupId, groupName);
+                        AbstractPolarChart.this.adjust(r);
 
-                        addToSeries(port, update, ms, r, theta, groupId, groupName);
-                        adjust(r);
                     }
                 }
-                catch (SWTException ex) {
-                    LOG.error("Exception in adding data into chart", ex);
+                catch (final SWTException ex) {
+                    AbstractPolarChart.LOG.error("Exception in adding data into chart", ex);
 
-                    dispose();
+                    AbstractPolarChart.this.dispose();
                     return;
                 }
             }
         });
     }
 
-    private void addToSeries(int port, boolean update, FixedMillisecond ms, double r, double theta, Long groupID, String groupName) {
+    private void addToSeries(final int port, final boolean update, final double r, final double theta, final Long groupID, final String groupName) {
         XYSeries xySeries = null;
 
-        Map<Long, Map<String, XYSeries>> pgSerie = series.get(port);
+        Map<Long, Map<String, XYSeries>> pgSerie = this.series.get(port);
 
         if (pgSerie == null) {
             pgSerie = new HashMap<>();
-            series.put(port, pgSerie);
+            this.series.put(port, pgSerie);
         }
 
         Map<String, XYSeries> gSerie = pgSerie.get(groupID);
@@ -265,13 +219,13 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
             pgSerie.put(groupID, gSerie);
         }
 
-        String name = getChoosenAttributes(port).get(choosenRValue).getName() + " " + groupName + "(" + port + ")";
+        final String name = this.getChoosenAttributes(port).get(this.choosenRValue).getName() + " " + groupName + "(" + port + ")";
 
         xySeries = gSerie.get(name);
         if (xySeries == null) {
 
-            if (useShortNames) {
-                xySeries = new XYSeries(getChoosenAttributes(port).get(choosenRValue).getAttributeName() + " " + groupName + "(" + port + ")");
+            if (this.useShortNames) {
+                xySeries = new XYSeries(this.getChoosenAttributes(port).get(this.choosenRValue).getAttributeName() + " " + groupName + "(" + port + ")");
             }
             else {
                 xySeries = new XYSeries(name);
@@ -289,107 +243,60 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
         xySeries.add(theta, r);
     }
 
-    private void adjust(double value) {
-        // for Y
-        if (Double.isNaN(max)) {
-            max = value;
+    private void adjust(final double value) {
+        if (Double.isNaN(this.max)) {
+            this.max = value;
         }
-        if (Double.isNaN(min)) {
-            min = value;
+        if (Double.isNaN(this.min)) {
+            this.min = value;
         }
+        if (this.autoadjust && (this.getChart() != null)) {
+            if (value > this.max) {
+                this.max = value;
+            }
+            else if (value < this.min) {
+                this.min = value;
+            }
+            final PolarPlot plot = (PolarPlot) this.getChart().getPlot();
+            plot.getAxis().setUpperBound(this.max * (1.0 + this.margin));
+            plot.getAxis().setLowerBound(this.min * (1.0 - this.margin));
 
-        if (autoadjust && getChart() != null) {
-            if (value > max) {
-                max = value;
-            }
-            else if (value < min) {
-                min = value;
-            }
-            @SuppressWarnings("unused")
-            final PolarPlot plot = (PolarPlot) getChart().getPlot();
-            // getChart().getXYPlot().getRangeAxis().setLowerBound(min * (1.0 -
-            // margin));
-            // getChart().getXYPlot().getRangeAxis().setUpperBound(max * (1.0 +
-            // margin));
         }
     }
 
     @Override
-    protected void decorateChart(JFreeChart chart) {
-        chart.setBackgroundPaint(DEFAULT_BACKGROUND);
+    protected void decorateChart(final JFreeChart chart) {
+        chart.setBackgroundPaint(AbstractJFreeChart.DEFAULT_BACKGROUND);
         final PolarPlot plot = (PolarPlot) chart.getPlot();
-        plot.setBackgroundPaint(DEFAULT_BACKGROUND);
+        plot.setBackgroundPaint(AbstractJFreeChart.DEFAULT_BACKGROUND);
         plot.setAngleGridlinePaint(Color.BLACK);
         plot.setRadiusGridlinePaint(Color.LIGHT_GRAY);
     }
 
     @ChartSetting(name = "Max Shown Items", type = Type.GET)
     public Integer getMaxItems() {
-        return maxItems;
+        return this.maxItems;
     }
 
     @ChartSetting(name = "Max Shown Items", type = Type.SET)
-    public void setMaxItems(Integer maxItems) {
+    public void setMaxItems(final Integer maxItems) {
         this.maxItems = maxItems;
-    }
-
-    @ChartSetting(name = "Max Shown Item Age", type = Type.GET)
-    public Long getMaxItemAge() {
-        return maxItemAge;
-    }
-
-    @ChartSetting(name = "Max Shown Item Age", type = Type.SET)
-    public void setMaxItemAge(Long maxItemAge) {
-        this.maxItemAge = maxItemAge;
     }
 
     @ChartSetting(name = "Show vertical Tick Labels ", type = Type.GET)
     public boolean isSetVerticalTickLabels() {
-        return setVerticalTickLabels;
+        return this.setVerticalTickLabels;
     }
 
     @ChartSetting(name = "Show vertical Tick Labels ", type = Type.SET)
-    public void setSetVerticalTickLabels(boolean setVerticalTickLabels) {
+    public void setSetVerticalTickLabels(final boolean setVerticalTickLabels) {
         this.setVerticalTickLabels = setVerticalTickLabels;
     }
 
-    @ChartSetting(name = "Date Time Format", type = Type.GET)
-    public String getDateFormat() {
-        return this.dateformat;
-    }
-
-    @ChartSetting(name = "Date Time Format", type = Type.SET)
-    public void setDateFormat(String dateFormat) {
-        this.dateformat = dateFormat;
-    }
-
-    @ChartSetting(name = "Time Input Granularity", type = Type.OPTIONS)
-    public List<String> getTimeInputGranularityValues() {
-        List<String> values = new ArrayList<String>();
-        values.add(FROM_STREAM);
-        values.add(TIME_MINUTES);
-        values.add(TIME_SECONDS);
-        values.add(TIME_MILLI);
-        values.add(TIME_MICRO);
-        values.add(TIME_NANO);
-        values.add(TIME_PICO);
-        return values;
-    }
-
-    @ChartSetting(name = "Time Input Granularity", type = Type.GET)
-    public String getTimeInputGranularity() {
-        return timeinputgranularity;
-    }
-
-    @ChartSetting(name = "Time Input Granularity", type = Type.SET)
-    public void setTimeInputGranularity(String value) {
-        this.timeinputgranularity = value;
-    }
-
     private List<String> getValues() {
-        List<String> values = new ArrayList<String>();
-        for (Integer port : getPorts()) {
-            for (IViewableAttribute a : getViewableAttributes(port)) {
+        final List<String> values = new ArrayList<String>();
+        for (final Integer port : this.getPorts()) {
+            for (final IViewableAttribute a : this.getViewableAttributes(port)) {
                 values.add(a.getName());
             }
         }
@@ -399,19 +306,19 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
 
     @ChartSetting(name = "Value for Theta", type = Type.OPTIONS)
     public List<String> getThetaValues() {
-        return getValues();
+        return this.getValues();
     }
 
     @ChartSetting(name = "Value for Theta", type = Type.GET)
     public String getThetaValue() {
-        return getViewableAttributes(choosenThetaValuePort).get(this.choosenThetaValue).getName();
+        return this.getViewableAttributes(this.choosenThetaValuePort).get(this.choosenThetaValue).getName();
     }
 
     @ChartSetting(name = "Value for Theta", type = Type.SET)
-    public void setThetaValue(String value) {
-        for (Integer port : getPorts()) {
-            for (int i = 0; i < getViewableAttributes(port).size(); i++) {
-                if (getViewableAttributes(port).get(i).getName().equals(value)) {
+    public void setThetaValue(final String value) {
+        for (final Integer port : this.getPorts()) {
+            for (int i = 0; i < this.getViewableAttributes(port).size(); i++) {
+                if (this.getViewableAttributes(port).get(i).getName().equals(value)) {
                     this.choosenThetaValue = i;
                     this.choosenThetaValuePort = port;
                     return;
@@ -422,19 +329,19 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
 
     @ChartSetting(name = "Value for R-Axis", type = Type.OPTIONS)
     public List<String> getRValues() {
-        return getValues();
+        return this.getValues();
     }
 
     @ChartSetting(name = "Value for R-Axis", type = Type.GET)
     public String getRValue() {
-        return getViewableAttributes(choosenRValuePort).get(this.choosenRValue).getName();
+        return this.getViewableAttributes(this.choosenRValuePort).get(this.choosenRValue).getName();
     }
 
     @ChartSetting(name = "Value for R-Axis", type = Type.SET)
-    public void setRValue(String value) {
-        for (Integer port : getPorts()) {
-            for (int i = 0; i < getViewableAttributes(port).size(); i++) {
-                if (getViewableAttributes(port).get(i).getName().equals(value)) {
+    public void setRValue(final String value) {
+        for (final Integer port : this.getPorts()) {
+            for (int i = 0; i < this.getViewableAttributes(port).size(); i++) {
+                if (this.getViewableAttributes(port).get(i).getName().equals(value)) {
                     this.choosenRValue = i;
                     this.choosenRValuePort = port;
                     return;
@@ -443,9 +350,9 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
         }
     }
 
-    @ChartSetting(name = "Lower Bound for R-Axis", type = Type.SET)
-    public void setMin(Double min) {
-        this.min = min;
+    @ChartSetting(name = "Upper Bound for R-Axis", type = Type.SET)
+    public void setMax(final Double max) {
+        this.max = max;
     }
 
     @ChartSetting(name = "Lower Bound for R-Axis", type = Type.GET)
@@ -453,9 +360,9 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
         return this.min;
     }
 
-    @ChartSetting(name = "Upper Bound for R-Axis", type = Type.SET)
-    public void setMax(Double max) {
-        this.max = max;
+    @ChartSetting(name = "Lower Bound for R-Axis", type = Type.SET)
+    public void setMin(final Double min) {
+        this.min = min;
     }
 
     @ChartSetting(name = "Upper Bound for R-Axis", type = Type.GET)
@@ -465,132 +372,133 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
 
     @ChartSetting(name = "Autoadjust Bounds", type = Type.GET)
     public boolean isAutoadjust() {
-        return autoadjust;
+        return this.autoadjust;
     }
 
     @ChartSetting(name = "Autoadjust Bounds", type = Type.SET)
-    public void setAutoadjust(boolean autoadjust) {
+    public void setAutoadjust(final boolean autoadjust) {
         this.autoadjust = autoadjust;
     }
 
     @ChartSetting(name = "Update interval (ms)", type = Type.SET)
-    public void setUpdateIntervalMillis(long millis) {
+    public void setUpdateIntervalMillis(final long millis) {
         Preconditions.checkArgument(millis >= 0, "Update interval must be zero or positive!");
 
-        if (millis != updateIntervalMillis) {
-            if (millis > 0 && updateIntervalMillis == 0) {
-                startUpdater(millis);
+        if (millis != this.updateIntervalMillis) {
+            if ((millis > 0) && (this.updateIntervalMillis == 0)) {
+                this.startUpdater(millis);
             }
-            else if (millis == 0 && updateIntervalMillis > 0) {
-                stopUpdater();
+            else if ((millis == 0) && (this.updateIntervalMillis > 0)) {
+                this.stopUpdater();
             }
             else {
-                changeUpdater(millis);
+                this.changeUpdater(millis);
             }
 
             this.updateIntervalMillis = millis;
         }
     }
 
-    private void startUpdater(long millis) {
-        chartUpdater = new ChartUpdater(millis) {
+    private void startUpdater(final long millis) {
+        this.chartUpdater = new ChartUpdater(millis) {
             @Override
             protected void updateChart() {
-                cleanBuffers();
+                AbstractPolarChart.this.cleanBuffers();
             }
 
         };
 
-        chartUpdater.start();
+        this.chartUpdater.start();
     }
 
     private void stopUpdater() {
-        if (chartUpdater != null) {
-            chartUpdater.stopRunning();
-            chartUpdater = null;
+        if (this.chartUpdater != null) {
+            this.chartUpdater.stopRunning();
+            this.chartUpdater = null;
         }
 
-        cleanBuffers();
+        this.cleanBuffers();
     }
 
-    private void addToBuffers(final int port, Tuple<ITimeInterval> tuple) {
-        synchronized (bufferedTuples) {
-            bufferedTuples.add(tuple);
-            bufferedPorts.add(port);
+    private void addToBuffers(final int port, final Tuple<ITimeInterval> tuple) {
+        synchronized (this.bufferedTuples) {
+            this.bufferedTuples.add(tuple);
+            this.bufferedPorts.add(port);
         }
     }
 
     private void cleanBuffers() {
-        synchronized (bufferedTuples) {
-            if (!bufferedTuples.isEmpty()) {
+        synchronized (this.bufferedTuples) {
+            if (!this.bufferedTuples.isEmpty()) {
 
-                while (bufferedTuples.size() > 1) {
-                    Tuple<ITimeInterval> tuple = bufferedTuples.remove(0);
-                    Integer port = bufferedPorts.remove(0);
+                while (this.bufferedTuples.size() > 1) {
+                    final Tuple<ITimeInterval> tuple = this.bufferedTuples.remove(0);
+                    final Integer port = this.bufferedPorts.remove(0);
 
-                    processElement(port, tuple, false);
+                    this.processElement(port, tuple, false);
                 }
 
-                processElement(bufferedPorts.remove(0), bufferedTuples.remove(0), true);
+                this.processElement(this.bufferedPorts.remove(0), this.bufferedTuples.remove(0), true);
             }
         }
     }
 
-    private void changeUpdater(long millis) {
-        stopUpdater();
-        startUpdater(millis);
+    private void changeUpdater(final long millis) {
+        this.stopUpdater();
+        this.startUpdater(millis);
     }
 
     @ChartSetting(name = "Update interval (ms)", type = Type.GET)
     public long getUpdateIntervalMillis() {
-        return updateIntervalMillis;
+        return this.updateIntervalMillis;
     }
 
     @Override
-    public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
+    public void onStart(final Collection<IPhysicalOperator> physicalRoots) throws Exception {
         super.onStart(physicalRoots);
 
-        startUpdaterIfNeeded();
+        this.startUpdaterIfNeeded();
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        stopUpdater();
+        this.stopUpdater();
     }
 
     @Override
     public void onUnpause() {
         super.onUnpause();
 
-        startUpdaterIfNeeded();
+        this.startUpdaterIfNeeded();
     }
 
     private void startUpdaterIfNeeded() {
-        if (isAsyncUpdate()) {
-            startUpdater(updateIntervalMillis);
+        if (this.isAsyncUpdate()) {
+            this.startUpdater(this.updateIntervalMillis);
         }
     }
 
     @Override
     public void onStop() {
-        stopUpdater();
+        this.stopUpdater();
 
         super.onStop();
     }
 
     @ChartSetting(name = "R-Axis title", type = Type.SET)
-    public void setXTitle(String rTitle) {
-        if (getChart() != null) {
-            // getChart().getXYPlot().getDomainAxis().setLabel(rTitle);
+    public void setXTitle(final String rTitle) {
+        if (this.getChart() != null) {
+            final PolarPlot plot = (PolarPlot) this.getChart().getPlot();
+            plot.getAxis().setLabel(rTitle);
         }
         this.rTitle = rTitle;
     }
 
     @ChartSetting(name = "R-Axis title", type = Type.GET)
     public String getXTitle() {
-        return rTitle;
+        return this.rTitle;
     }
 
 }

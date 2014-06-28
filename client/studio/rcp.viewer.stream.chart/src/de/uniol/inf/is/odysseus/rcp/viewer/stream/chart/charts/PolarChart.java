@@ -30,7 +30,7 @@ public class PolarChart extends AbstractPolarChart {
 
     @Override
     protected JFreeChart createChart() {
-        final JFreeChart chart = ChartFactory.createPolarChart(this.getTitle(), dataset, true, true, false);
+        final JFreeChart chart = ChartFactory.createPolarChart(this.getTitle(), getDataset(), true, true, false);
         chart.getPlot().setBackgroundPaint(AbstractJFreeChart.DEFAULT_BACKGROUND);
         return chart;
     }
