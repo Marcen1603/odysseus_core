@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 public class MatrixReadFunction extends AbstractReadFunction<double[][]> {

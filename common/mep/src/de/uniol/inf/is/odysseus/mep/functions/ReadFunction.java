@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.mep.matrix;
+package de.uniol.inf.is.odysseus.mep.functions;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,27 +31,25 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-abstract public class AbstractReadFunction<T> extends AbstractFunction<T> {
+public class ReadFunction extends AbstractFunction<String> {
 
     /**
-	 * 
-	 */
-    private static final long serialVersionUID = -4388346024131508003L;
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractReadFunction.class);
-
-    /**
-     * @param symbol
-     * @param arity
-     * @param acceptedTypes
-     * @param returnType
+     * 
      */
-    public AbstractReadFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType) {
-        super(symbol, arity, acceptedTypes, returnType);
+    private static final long serialVersionUID = 4935935977218584148L;
+    private static final Logger LOG = LoggerFactory.getLogger(ReadFunction.class);
+
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.STRING } };
+
+    public ReadFunction() {
+        super("read", 1, accTypes, SDFDatatype.STRING);
     }
 
-    protected double[][] getValueInternal(String path, String delimiter, int[] elements) {
+    @Override
+    public String getValue() {
+        String path = getInputValue(0);
         File file = new File(path);
-        List<double[]> resultList = new LinkedList<>();
+        StringBuilder sb = new StringBuilder();
         if (file.canRead()) {
             BufferedReader reader = null;
             try {
@@ -63,18 +57,11 @@ abstract public class AbstractReadFunction<T> extends AbstractFunction<T> {
                 reader = new BufferedReader(new InputStreamReader(stream));
                 String line = null;
                 while ((line = reader.readLine()) != null) {
-                    String[] stringValues = line.split(Pattern.quote("" + delimiter));
-                    double[] values = new double[elements.length];
-                    for (int i = 0; i < elements.length; i++) {
-                        values[i] = Double.parseDouble(stringValues[elements[i]].trim());
-                    }
-                    resultList.add(values);
+                    sb.append(line);
                 }
-
             }
             catch (IOException e) {
                 LOG.warn(e.getMessage(), e);
-
             }
             finally {
                 if (reader != null) {
@@ -83,21 +70,12 @@ abstract public class AbstractReadFunction<T> extends AbstractFunction<T> {
                     }
                     catch (IOException e) {
                         LOG.warn(e.getMessage(), e);
-
                     }
                 }
             }
 
         }
-        double[][] result = new double[resultList.size()][elements.length];
-        Iterator<double[]> iter = resultList.iterator();
-        int i = 0;
-        while (iter.hasNext()) {
-            result[i] = iter.next();
-            i++;
-        }
-
-        return result;
+        return sb.toString();
     }
 
 }
