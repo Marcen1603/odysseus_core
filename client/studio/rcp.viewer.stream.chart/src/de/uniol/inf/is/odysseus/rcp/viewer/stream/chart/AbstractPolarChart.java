@@ -73,6 +73,7 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
     private double max = Double.NaN;
     private double min = Double.NaN;
     private boolean autoadjust = true;
+    @SuppressWarnings("unused")
     private double margin = 0.05; // 5 percent
     private String rTitle = "";
 
@@ -304,6 +305,7 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
             else if (value < min) {
                 min = value;
             }
+            @SuppressWarnings("unused")
             final PolarPlot plot = (PolarPlot) getChart().getPlot();
             // getChart().getXYPlot().getRangeAxis().setLowerBound(min * (1.0 -
             // margin));
