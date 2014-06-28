@@ -21,14 +21,14 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.LoadBalancingCommunica
 
 public class ActiveLoadbalancingConsole implements CommandProvider {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ActiveLoadbalancingConsole.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ActiveLoadbalancingConsole.class);
 
 	private static ISession activeSession;
 	private static IP2PDictionary p2pDictionary;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IServerExecutor executor;
-
 
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
@@ -41,8 +41,6 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			p2pDictionary = null;
 		}
 	}
-
-
 
 	// called by OSGi-DS
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
@@ -96,10 +94,11 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("---Active Loadbalancing commands---\n");
 		sb.append("    lsParts		              		- Lists all queryParts installed on peer with ids\n");
 		sb.append("    initLB <peername> <queryPartId>	- Initiate Loadbalancing with <peername> and query Part <queryPartId>\n");
+		sb.append("    cpJxtaSender <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Sender");
+		sb.append("    cpJxtaReceiver <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Receiver");
 		return sb.toString();
 	}
 
-	
 	public void _initLB(CommandInterpreter ci) {
 		String peerName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(peerName)) {
@@ -121,25 +120,91 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		Optional<PeerID> optPID = determinePeerID(peerName);
 		if (optPID.isPresent()) {
 			PeerID pid = optPID.get();
-			initiateLoadBalancing(pid,queryPartID);
-			System.out.println("Initiated Loadbalancing with peer '" + peerName + "'");
+			initiateLoadBalancing(pid, queryPartID);
+			System.out.println("Initiated Loadbalancing with peer '" + peerName
+					+ "'");
 		}
 	}
-	
+
 	public void _lsParts(CommandInterpreter ci) {
-		
+
 		System.out.println("Query Parts on current Peer:");
 		for (int queryID : executor.getLogicalQueryIds(getActiveSession())) {
-			System.out.println("[" + queryID + "] " + executor.getLogicalQueryById(queryID, getActiveSession()).getQueryText());
+			System.out.println("["
+					+ queryID
+					+ "] "
+					+ executor.getLogicalQueryById(queryID, getActiveSession())
+							.getQueryText());
 		}
 	}
-	
-	
-	private void initiateLoadBalancing(PeerID destinationPeer,int queryPartID) {
-		LoadBalancingCommunicationListener.getInstance().testCopy(destinationPeer, queryPartID);
+
+	public void _cpJxtaSender(CommandInterpreter ci) {
+		String oldPipeId = ci.nextArgument();
+		if (Strings.isNullOrEmpty(oldPipeId)) {
+			System.out
+					.println("usage: cpJxtaSender <oldPipeId> <newPipeId> <peername>");
+			return;
+		}
+		String newPipeId = ci.nextArgument();
+		if (Strings.isNullOrEmpty(newPipeId)) {
+			System.out
+					.println("usage: cpJxtaSender <oldPipeId> <newPipeId> <peername>");
+			return;
+		}
+		String newPeerName = ci.nextArgument();
+		if (Strings.isNullOrEmpty(newPeerName)) {
+			System.out
+					.println("usage: cpJxtaSender <oldPipeId> <newPipeId> <newPeername>");
+			return;
+		}
+
+		Optional<PeerID> optPID = determinePeerID(newPeerName);
+		if (optPID.isPresent()) {
+			PeerID pid = optPID.get();
+			LoadBalancingCommunicationListener.getInstance()
+					.findAndCopyLocalJxtaOperator(true, pid.toString(),
+							oldPipeId, newPipeId);
+			System.out.println("Trying to copy JxtaSender");
+		}
+
 	}
-	
-	
+
+	public void _cpJxtaReceiver(CommandInterpreter ci) {
+		String oldPipeId = ci.nextArgument();
+		if (Strings.isNullOrEmpty(oldPipeId)) {
+			System.out
+					.println("usage: cpJxtaReceiver <oldPipeId> <newPipeId> <peername>");
+			return;
+		}
+		String newPipeId = ci.nextArgument();
+		if (Strings.isNullOrEmpty(newPipeId)) {
+			System.out
+					.println("usage: cpJxtaReceiver <oldPipeId> <newPipeId> <peername>");
+			return;
+		}
+		String newPeerName = ci.nextArgument();
+		if (Strings.isNullOrEmpty(newPeerName)) {
+			System.out
+					.println("usage: cpJxtaReceiver <oldPipeId> <newPipeId> <newPeername>");
+			return;
+		}
+
+		Optional<PeerID> optPID = determinePeerID(newPeerName);
+		if (optPID.isPresent()) {
+			PeerID pid = optPID.get();
+			LoadBalancingCommunicationListener.getInstance()
+					.findAndCopyLocalJxtaOperator(false, pid.toString(),
+							oldPipeId, newPipeId);
+			System.out.println("Trying to copy JxtaReceiver");
+		}
+
+	}
+
+	private void initiateLoadBalancing(PeerID destinationPeer, int queryPartID) {
+		LoadBalancingCommunicationListener.getInstance().testCopy(
+				destinationPeer, queryPartID);
+	}
+
 	private static Optional<PeerID> determinePeerID(String peerName) {
 		for (PeerID pid : p2pDictionary.getRemotePeerIDs()) {
 			if (p2pDictionary.getRemotePeerName(pid).equals(peerName)) {
@@ -148,13 +213,16 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 		return Optional.absent();
 	}
-	
+
 	private static ISession getActiveSession() {
-		if(activeSession == null || !activeSession.isValid()) {	
-			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
+		if (activeSession == null || !activeSession.isValid()) {
+			activeSession = UserManagementProvider
+					.getSessionmanagement()
+					.loginSuperUser(null,
+							UserManagementProvider.getDefaultTenant().getName());
 		}
-		
+
 		return activeSession;
 	}
-	
+
 }
