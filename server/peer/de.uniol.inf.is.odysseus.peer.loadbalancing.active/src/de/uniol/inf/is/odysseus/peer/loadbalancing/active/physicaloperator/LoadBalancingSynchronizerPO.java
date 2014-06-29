@@ -40,12 +40,12 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	 * Maximum Number of Ports allowed.
 	 */
 	private final int MAX_NUMBER_OF_PORTS = 2;
-	
+
 	/**
 	 * Minimal Number of Ports allowed (used to initialize transfer area).
 	 */
-	private final int MIN_NUMBER_OF_PORTS = 1;	
-	
+	private final int MIN_NUMBER_OF_PORTS = 1;
+
 	/**
 	 * The logger instance for this class.
 	 */
@@ -282,8 +282,10 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	protected void newSourceSubscribed(
 			PhysicalSubscription<ISource<? extends T>> sub) {
 
-		Preconditions.checkArgument(this.getInputPortCount() < MAX_NUMBER_OF_PORTS,
-				"The input port count of {} can not be extended!", MAX_NUMBER_OF_PORTS);
+		Preconditions.checkArgument(
+				this.getInputPortCount() < MAX_NUMBER_OF_PORTS,
+				"The input port count of {} can not be extended!",
+				MAX_NUMBER_OF_PORTS);
 
 		transferArea.addNewInput(sub.getSinkInPort());
 		LoadBalancingSynchronizerPO.log.debug(
@@ -306,14 +308,44 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 		transferArea.init(this, getSubscribedToSource().size());
 
 	}
+	
+	// --------- testing purposes --------------
+	int syncCounter;
+	int numberOfTuplesUntilSync = 10;
+	// -----------------------------------------
 
 	@Override
 	protected void process_next(T object, int port) {
+		
+		// I guess here I have to check, if both input streams are synchronous (deliver the same results)
+		
+		// TODO: Give possibility to easily switch strategy (to say if the sync is finished) with an interface
+		// TODO: Implement one or more good strategies
+		
+		// First, very easy approach to test:
+		// Count ten tuples from the new port / sender / peer -> switch to the new one
+		
+		if(port != transferPort) {
+			// We got a tuple from the new peer
+			syncCounter++;
+			
+			if(syncCounter >= numberOfTuplesUntilSync) {
+				// We got enough tuples from the new peer, so we want to send the tuples from the new peer now
+				int oldPort = transferPort;
+				transferPort = port;
+				
+				// Remove the old port from the input ports
+				transferArea.removeInput(oldPort); // Is this correct?
+				
+				// Message everyone, that the load balancing has finished
+				fireFinishEvent(oldPort);
+			}
+		}
 
 		if (port == this.transferPort) {
 
 			this.transferArea.transfer(object);
-			this.transferArea.newElement(object, port);
+			this.transferArea.newElement(object, port); // Why this?
 
 		}
 
@@ -401,17 +433,14 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	private boolean areAllInputPortStates(InputPortState state) {
 
 		for (IPair<Integer, InputPortState> pair : this.inputPortStates) {
-
+			
 			if (!pair.getE2().equals(state)) {
-
 				return false;
-
 			}
-
+			
 		}
 
 		return true;
-
 	}
 
 	/**
