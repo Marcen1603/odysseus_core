@@ -169,8 +169,8 @@ public class VesselData implements IIvefElement {
 		//TODO: to handle the multiFragment messages
 		String encodedAIS = "!AIVDM,1,1,,A,";
 		Pos pos = this.m_posReport.getPos();
-		Float lat = pos.getLat();
-		Float lon = pos.getLong();
+		Double lat = pos.getLat();
+		Double lon = pos.getLong();
 		int msgtype = 1;//position sentence
 		if(lat == 0.0 && lon == 0.0)
 			msgtype = 5;//static-and-voyage AIS message

@@ -404,12 +404,22 @@ public class PosReport implements IIvefElement {
     public String toXML() {
 
         String xml = "<PosReport";
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
-
+        //Correcting to be 24 based and GMT based
+        //DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
+        //Hour24 based
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        //GMT based
+        TimeZone gmtTime = TimeZone.getTimeZone("GMT");
+        df.setTimeZone(gmtTime);
+        //add fixed Z (instead of the time zone), as expected by VTS:
+        String formatedUpdateTime = df.format(m_updateTime) + "Z";
+        
         xml += " Id=\"" + m_id + "\"";
         xml += " SourceId=\"" + m_sourceId + "\"";
-        xml += " UpdateTime=\"" + df.format(m_updateTime) + "\"";
-        //xml += " UpdateTime=\"" + "2014-05-05T06:07:06.481Z" + "\"";
+        //Use the formatedTimeZ instead:
+        //xml += " UpdateTime=\"" + df.format(m_updateTime) + "\"";
+        xml += " UpdateTime=\"" + formatedUpdateTime + "\"";
+        
         if ( hasUpdateTimeRadar() ) {
             xml += " UpdateTimeRadar=\"" + df.format(m_updateTimeRadar) + "\"";
         }
@@ -457,7 +467,7 @@ public class PosReport implements IIvefElement {
         return xml;
     }
 
-    public String toString(String lead) {
+	public String toString(String lead) {
 
         String str = lead + "PosReport\n";
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");

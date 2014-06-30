@@ -16,8 +16,8 @@ import de.uniol.inf.is.odysseus.wrapper.ivef.IIvefElement;
 
 public class Pos implements IIvefElement { 
 
-    private Float m_lat = (float)0; // default value is uninitialized
-    private Float m_long = (float)0; // default value is uninitialized
+    private Double m_lat = (double)0; // default value is uninitialized
+    private Double m_long = (double)0; // default value is uninitialized
 
     public Pos() {
 
@@ -29,7 +29,7 @@ public class Pos implements IIvefElement {
         m_long = val.getLong();
     }
 
-    public void setLat(Float val) {
+    public void setLat(Double val) {
 
         if (val < -90)
           return;
@@ -38,12 +38,12 @@ public class Pos implements IIvefElement {
         m_lat = val;
     }
 
-    public Float getLat() {
+    public Double getLat() {
 
         return m_lat;
     }
 
-    public void setLong(Float val) {
+    public void setLong(Double val) {
 
         if (val < -180)
           return;
@@ -52,7 +52,7 @@ public class Pos implements IIvefElement {
         m_long = val;
     }
 
-    public Float getLong() {
+    public Double getLong() {
 
         return m_long;
     }
