@@ -264,11 +264,11 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
             String value = atts.getValue(i);
 
             if (key == "Lat") {
-            	Float val = Float.parseFloat(value);
+            	Double val = Double.parseDouble(value);
                 obj.setLat(val);
             }
             else if (key == "Long") {
-            	Float val = Float.parseFloat(value);
+            	Double val = Double.parseDouble(value);
                 obj.setLong(val);
             }
         }
