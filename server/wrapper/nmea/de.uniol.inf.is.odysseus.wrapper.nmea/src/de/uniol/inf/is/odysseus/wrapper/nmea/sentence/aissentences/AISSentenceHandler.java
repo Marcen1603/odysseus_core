@@ -31,7 +31,12 @@ public class AISSentenceHandler {
      * @param aisSentence
      */
 	public void handleAISSentence(AISSentence aisSentence) {
-		
+		//Avoid handling invalid messages:
+		if(aisSentence.getFragmentsCount() == null ||
+		   aisSentence.getFragmentId() == null     ||
+		   aisSentence.getMessage() == null 	   ||
+		   aisSentence.getFillBits() == null)
+			return;
 		int numberOfFragments = aisSentence.getFragmentsCount();
 		if (numberOfFragments <= 0) {
 			System.err.println("Invalid AIS PayloadMessage: negative numberOfFragments!");
