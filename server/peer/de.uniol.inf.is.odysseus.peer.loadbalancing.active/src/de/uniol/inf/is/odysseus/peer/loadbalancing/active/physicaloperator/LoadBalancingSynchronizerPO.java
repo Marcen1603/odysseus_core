@@ -52,6 +52,7 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	private static final Logger log = LoggerFactory
 			.getLogger(LoadBalancingSynchronizerPO.class);
 
+	// TODO to be removed. M.B.
 	/**
 	 * The enumeration of states for input ports based on the retrieving of
 	 * {@link LoadBalancingPunctuation}s.
@@ -140,11 +141,13 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	 */
 	private final Collection<Observer> listeners;
 
+	// TODO to be removed. M.B.
 	/**
 	 * The {@link ITransferArea} to keep order within the output stream.
 	 */
 	private final ITransferArea<T, T> transferArea;
 
+	// TODO to be removed. M.B.
 	/**
 	 * The {@link InputPortState}s for all input ports.
 	 */
@@ -324,6 +327,24 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 		
 		// First, very easy approach to test:
 		// Count ten tuples from the new port / sender / peer -> switch to the new one
+		
+		/*
+		 * Micha:
+		 * There is no need for an interface for different strategies, because that is one big advantage of 
+		 * physical operators: one logical -> any physical.
+		 * 
+		 * First physical approach:
+		 * Remember always the last seen element at the old input port.
+		 * For any element on the new input port:
+		 * 	same element as the remembered one: synchronized
+		 *  new.ts > old.ts: new stream got ahead -> buffer new stream till both are synchronized or 
+		 *  										accept element losing by define both input streams synchronized
+		 *  new.ts <= old.ts:
+		 *  		1. buffer old elements for a certain time (should be short)
+		 *  		2. save the ts difference between old and new stream
+		 *  		3. difference should get smaller. if not: define a threshold (e.g. 10 times not getting smaller ->
+		 *  																	define as synchronized
+		 */
 		
 		if(port != transferPort) {
 			// We got a tuple from the new peer
