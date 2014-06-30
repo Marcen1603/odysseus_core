@@ -15,9 +15,13 @@
  */
 package de.uniol.inf.is.odysseus.wrapper.ivef.conversion.physicaloperator;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 //import java.util.Random;
 import java.util.UUID;
 
@@ -31,6 +35,7 @@ import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_VesselDat
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.*;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.AISSentenceHandler;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.payload.decoded.*;
+//import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.payload.types.AISMessageType;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.payload.types.IMO;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.payload.types.NavigationStatus;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.payload.types.ShipType;
@@ -57,8 +62,8 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 	/** Handler for AIS sentences. */
 	private AISSentenceHandler aishandler = new AISSentenceHandler();
 	private static Map<Long, Integer> mmsiToId = new HashMap<Long, Integer>();
-	/** The maximum number of ships. */
-//	private static int maxNumOfShips = 10000;
+	/** Storing the last position of the ship*/
+	private static Map<Long, Pos> mmsiToPos = new HashMap<Long, Pos>();
 
 	public IvefNmeaConverterPO(IIvefElement ivef) {
 		super();
@@ -121,28 +126,38 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 			this.directionIvefToNmea = false;
 			/**Convert the received NMEA AIS to IVEF*/
 			Long mmsi = null;
+//			DecodedAISPayload decodedAIS = (DecodedAISPayload) received.getMetadata("decodedAIS");
+//			AISMessageType messageType = decodedAIS.getMessageType();
 //			if(received.getMetadata("decodedAIS") instanceof DecodedAISPayload) {
 			this.ivef = new MSG_VesselData();
 			mmsi = (Long)received.getAttribute("sourceMmsi");
-			//test
-//				if (mmsi == 211625860)
-//					System.out.println("211625860 received");
-			//
 			int id = 0;
 			if(mmsi != null)
 				id = getIdFromMMSIMap(mmsi);
 			else
 				return;//Workaround to avoid sending null MMSI...id = getIdRandomly();
+			//Updating Or Getting the last position of the ship
+			Pos lastPos = new Pos();
+			Double lat = ((Double)received.getAttribute("latitude") != null) ? (Double)received.getAttribute("latitude") : null;
+			Double lon = ((Double)received.getAttribute("longitude") != null) ? (Double)received.getAttribute("longitude") : null;
+			if(lat != null && lon != null){
+				lastPos.setLat(lat);
+				lastPos.setLong(lon);
+				mmsiToPos.put(mmsi, lastPos);
+			}
+			else{
+				if(mmsiToPos.containsKey(mmsi))
+					lastPos = mmsiToPos.get(mmsi);
+				else
+					return;
+			}
 			//Header
 			Header header = prepareHeader();
 			((MSG_VesselData) this.ivef).setHeader(header);
 			//PosReport
-			PosReport posReport = preparePosReport(received, id);
+			PosReport posReport = preparePosReport(received, id, lastPos);
 			//StaticData
 			StaticData staticData = prepareStaticData(received, id);
-//				////Just for Test:
-//				staticData.setShipName(String.valueOf(id));
-//				////
 			//Voyage
 			Voyage voyage = prepareVoyage(received, id);
 			//VesseData
@@ -161,15 +176,18 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 //				System.out.println(sentence.getMessageId());
 //				System.out.println(sentence.getNmeaString());
 //			}
+			//Workaround: Exclude strange speeds > 40 M/s
+			if(posReport.getSOG() > 40.0)
+				return;
 			this.ivef.fillMap(sent);
-			sent.setMetadata("object", this.ivef);
+			sent.setMetadata("object", this.ivef); 
 			transfer((T) sent);
 		}
 	}
 
 	@Override
 	public IvefNmeaConverterPO<T> clone() {
-		return new IvefNmeaConverterPO<T>(this);
+		return new IvefNmeaConverterPO<T>(this); 
 	}
 
 	@Override
@@ -192,28 +210,28 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 		return header;
 	}
 	
-	private PosReport preparePosReport(KeyValueObject<? extends IMetaAttribute> received, int id){
-		Pos pos = new Pos();
-		Float lat = ((Float)received.getAttribute("latitude") != null) ? (Float)received.getAttribute("latitude") : null;
-		Float lon = ((Float)received.getAttribute("longitude") != null) ? (Float)received.getAttribute("longitude") : null;
-		if(lat != null)
-			pos.setLat(lat);
-		if(lon != null)
-			pos.setLong(lon);
+	private PosReport preparePosReport(KeyValueObject<? extends IMetaAttribute> received, int id, Pos lastPos){
+//		Pos pos = new Pos();
+//		Double lat = ((Double)received.getAttribute("latitude") != null) ? (Double)received.getAttribute("latitude") : null;
+//		Double lon = ((Double)received.getAttribute("longitude") != null) ? (Double)received.getAttribute("longitude") : null;
+//		if(lat != null)
+//			pos.setLat(lat);
+//		if(lon != null)
+//			pos.setLong(lon);
 		PosReport posReport = new PosReport();
 		/**Mandatory fields*/
-		posReport.setPos(pos);
+		posReport.setPos(lastPos);
 		posReport.setId(id);
 		posReport.setSourceId(0);//not encoded in AIS NMEA
 		Calendar now = Calendar.getInstance();
-		Integer second = null;
-		if((second = (Integer)received.getAttribute("second")) != null)
-			now.set(Calendar.SECOND, second);
+		//No sense of the second field, it could make problems of wrong order messages, so it should not be used:
+//		Integer second = null;
+//		if((second = (Integer)received.getAttribute("second")) != null)
+//			now.set(Calendar.SECOND, second);
 		posReport.setUpdateTime(now.getTime());
-		@SuppressWarnings("unused")
 		Float sog = null;
 		if((sog = (Float)received.getAttribute("speedOverGround")) != null)
-			posReport.setSOG(Float.valueOf(0));//Workaround! posReport.setSOG(sog);
+			posReport.setSOG(sog * Float.valueOf("0.514444444"));//Conversion from Kn/s to m/s...Workaround! posReport.setSOG(Float.valueOf(0));
 		else
 			posReport.setSOG(Float.parseFloat("0"));
 		Float cog = null;
@@ -226,7 +244,7 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 		NavigationStatus navigationStatus = null;
 		if((navigationStatus = (NavigationStatus)received.getAttribute("navigationStatus")) != null)
 			posReport.setNavStatus(navigationStatus.getStatus());
-		Integer rateOfTurn = null;
+		Integer rateOfTurn = null; 
 		if((rateOfTurn = (Integer)received.getAttribute("rateOfTurn")) != null)
 			posReport.setRateOfTurn(rateOfTurn);
 		//posReport.setOrientation(((Integer)received.getAttribute("trueHeading")).floatValue());
@@ -286,7 +304,7 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 			voyage.setDestination(destination);
 		String eta = null;
 		if((eta = (String)received.getAttribute("eta")) != null)
-			voyage.setETA(nmeaTimeToISO8601(eta));
+			voyage.setETA(nmeaTimeToUTC(eta));
 		return voyage;
 	}
 	
@@ -301,13 +319,21 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 		}
 	}
 	
-	private String nmeaTimeToISO8601(String eta) {
-		String day = eta.substring(0, eta.indexOf("-"));
-		String month = eta.substring(eta.indexOf("-")+1, eta.indexOf(" "));
-		String hour = eta.substring(eta.indexOf(" ")+1, eta.indexOf(":"));
-		String minute = eta.substring(eta.indexOf(":")+1);
-		String year = String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
-		return year+"-"+month+"-"+day+"T"+hour+":"+minute+":00.000-0000";
+	private String nmeaTimeToUTC(String eta) {
+		int day = Integer.parseInt(eta.substring(0, eta.indexOf("-")));
+		int month = Integer.parseInt(eta.substring(eta.indexOf("-")+1, eta.indexOf(" ")));
+		int hour = Integer.parseInt(eta.substring(eta.indexOf(" ")+1, eta.indexOf(":")));
+		int minute = Integer.parseInt(eta.substring(eta.indexOf(":")+1));
+		int year = Integer.parseInt(String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
+		//Hour24 based
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        //GMT based
+        TimeZone gmtTime = TimeZone.getTimeZone("GMT");
+        df.setTimeZone(gmtTime);
+        @SuppressWarnings("deprecation")
+		Date etaDate = new Date(year-1900, month-1, day, hour, minute);
+        return df.format(etaDate)+"Z";
+//		return year+"-"+month+"-"+day+"T"+hour+":"+minute+":00.000-0000";
 	}
 	
 //	private int getIdRandomly() {
