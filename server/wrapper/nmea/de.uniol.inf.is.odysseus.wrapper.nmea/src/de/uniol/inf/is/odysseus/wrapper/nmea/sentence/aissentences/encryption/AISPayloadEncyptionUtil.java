@@ -80,6 +80,10 @@ public class AISPayloadEncyptionUtil {
 		return Float.valueOf(convertToSignedInteger(bitString));
 	}
 	
+	public static Double convertToDouble(String bitString) {
+		return Double.valueOf(convertToSignedInteger(bitString));
+	}
+	
 	public static Long convertToUnsignedLong(String bitString) {
 		return Long.parseLong(bitString, 2);
 	}
@@ -165,8 +169,8 @@ public class AISPayloadEncyptionUtil {
 		Integer rateOfTurn = AISPayloadEncyptionUtil.convertToSignedInteger(encodedMessage.getBits(42, 50));
 		Float speedOverGround = AISPayloadEncyptionUtil.convertToUnsignedFloat(encodedMessage.getBits(50, 60)) / 10f;
 		Boolean positionAccurate = AISPayloadEncyptionUtil.convertToBoolean(encodedMessage.getBits(60, 61));
-		Float longitude = AISPayloadEncyptionUtil.convertToFloat(encodedMessage.getBits(61, 89)) / 600000f;
-		Float latitude = AISPayloadEncyptionUtil.convertToFloat(encodedMessage.getBits(89, 116)) / 600000f;
+		Double longitude = AISPayloadEncyptionUtil.convertToDouble(encodedMessage.getBits(61, 89)) / 600000f;
+		Double latitude = AISPayloadEncyptionUtil.convertToDouble(encodedMessage.getBits(89, 116)) / 600000f;
 		Float courseOverGround = AISPayloadEncyptionUtil.convertToUnsignedFloat(encodedMessage.getBits(116, 128)) / 10f;
 		Integer trueHeading = AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(128, 137));
 		Integer second = AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(137, 143));
@@ -195,8 +199,8 @@ public class AISPayloadEncyptionUtil {
 		Integer rateOfTurn = AISPayloadEncyptionUtil.convertToSignedInteger(encodedMessage.getBits(42, 50));
 		Float speedOverGround = AISPayloadEncyptionUtil.convertToUnsignedFloat(encodedMessage.getBits(50, 60)) / 10f;
 		Boolean positionAccurate = AISPayloadEncyptionUtil.convertToBoolean(encodedMessage.getBits(60, 61));
-		Float longitude = AISPayloadEncyptionUtil.convertToFloat(encodedMessage.getBits(61, 89)) / 600000f;
-		Float latitude = AISPayloadEncyptionUtil.convertToFloat(encodedMessage.getBits(89, 116)) / 600000f;
+		Double longitude = AISPayloadEncyptionUtil.convertToDouble(encodedMessage.getBits(61, 89)) / 600000f;
+		Double latitude = AISPayloadEncyptionUtil.convertToDouble(encodedMessage.getBits(89, 116)) / 600000f;
 		Float courseOverGround = AISPayloadEncyptionUtil.convertToUnsignedFloat(encodedMessage.getBits(116, 128)) / 10f;
 		Integer trueHeading = AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(128, 137));
 		Integer second = AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(137, 143));
@@ -225,8 +229,8 @@ public class AISPayloadEncyptionUtil {
 		Integer rateOfTurn = AISPayloadEncyptionUtil.convertToSignedInteger(encodedMessage.getBits(42, 50));
 		Float speedOverGround = AISPayloadEncyptionUtil.convertToUnsignedFloat(encodedMessage.getBits(50, 60)) / 10f;
 		Boolean positionAccurate = AISPayloadEncyptionUtil.convertToBoolean(encodedMessage.getBits(60, 61));
-		Float longitude = AISPayloadEncyptionUtil.convertToFloat(encodedMessage.getBits(61, 89)) / 600000f;
-		Float latitude = AISPayloadEncyptionUtil.convertToFloat(encodedMessage.getBits(89, 116)) / 600000f;
+		Double longitude = AISPayloadEncyptionUtil.convertToDouble(encodedMessage.getBits(61, 89)) / 600000f;
+		Double latitude = AISPayloadEncyptionUtil.convertToDouble(encodedMessage.getBits(89, 116)) / 600000f;
 		Float courseOverGround = AISPayloadEncyptionUtil.convertToUnsignedFloat(encodedMessage.getBits(116, 128)) / 10f;
 		Integer trueHeading = AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(128, 137));
 		Integer second = AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(137, 143));
