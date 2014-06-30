@@ -165,7 +165,7 @@ public class NMEAProtocolHandler extends
 		Map<String, Object> event;
 		KeyValueObject<? extends IMetaAttribute> res = null;
 		//Handling AIS Sentences
-		if (sentence instanceof AISSentence) {System.out.println("sentence instanceof AISSentence: " + sentence.getNmeaString());
+		if (sentence instanceof AISSentence) {//System.out.println("sentence instanceof AISSentence: " + sentence.getNmeaString());
 			AISSentence aissentence = (AISSentence) sentence;
 			////////////////////////////////////////TEST//////////////////////////////////////////
 			
@@ -203,7 +203,7 @@ public class NMEAProtocolHandler extends
 			if (!(obj instanceof Sentence)) {
 				return;
 			}
-			Sentence sentence = (Sentence) obj;System.out.println("wrtten nmea: " + sentence.getNmeaString());
+			Sentence sentence = (Sentence) obj;//System.out.println("wrtten nmea: " + sentence.getNmeaString());
 			getTransportHandler().send(sentence.toNMEA().getBytes());
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
