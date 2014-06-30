@@ -17,8 +17,8 @@ public class PositionReportClassAResponseToInterrogation extends PositionReport 
 	public PositionReportClassAResponseToInterrogation(String originalNmea, AISMessageType messageType,
 			Integer repeatIndicator, MMSI sourceMmsi,
 			NavigationStatus navigationStatus, Integer rateOfTurn,
-			Float speedOverGround, Boolean positionAccurate, Float latitude,
-			Float longitude, Float courseOverGround, Integer trueHeading,
+			Float speedOverGround, Boolean positionAccurate, Double latitude,
+			Double longitude, Float courseOverGround, Integer trueHeading,
 			Integer second, ManeuverIndicator maneuverIndicator,
 			Boolean raimFlag) {
 		super(originalNmea, messageType, repeatIndicator, sourceMmsi, navigationStatus, rateOfTurn,

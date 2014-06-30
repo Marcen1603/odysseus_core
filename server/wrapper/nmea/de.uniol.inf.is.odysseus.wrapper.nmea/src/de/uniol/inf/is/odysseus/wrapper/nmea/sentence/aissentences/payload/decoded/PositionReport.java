@@ -26,8 +26,8 @@ public abstract class PositionReport extends DecodedAISPayload {
 	private final Integer rateOfTurn;
 	private final Float speedOverGround;
 	private final Boolean positionAccurate;
-	private final Float latitude;
-	private final Float longitude;
+	private final Double latitude;
+	private final Double longitude;
 	private final Float courseOverGround;
 	private final Integer trueHeading;
 	private final Integer second;
@@ -37,8 +37,8 @@ public abstract class PositionReport extends DecodedAISPayload {
 	protected PositionReport(String originalNmea, AISMessageType messageType,
 			Integer repeatIndicator, MMSI sourceMmsi,
 			NavigationStatus navigationStatus, Integer rateOfTurn,
-			Float speedOverGround, Boolean positionAccurate, Float latitude,
-			Float longitude, Float courseOverGround, Integer trueHeading,
+			Float speedOverGround, Boolean positionAccurate, Double latitude,
+			Double longitude, Float courseOverGround, Integer trueHeading,
 			Integer second, ManeuverIndicator maneuverIndicator,
 			Boolean raimFlag) {
 		super(originalNmea, messageType, repeatIndicator, sourceMmsi);
@@ -71,11 +71,11 @@ public abstract class PositionReport extends DecodedAISPayload {
 		return positionAccurate;
 	}
 
-	public final Float getLatitude() {
+	public final Double getLatitude() {
 		return latitude;
 	}
 
-	public final Float getLongitude() {
+	public final Double getLongitude() {
 		return longitude;
 	}
 
