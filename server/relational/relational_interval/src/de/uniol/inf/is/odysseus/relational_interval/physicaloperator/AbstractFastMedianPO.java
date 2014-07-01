@@ -7,6 +7,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
@@ -45,7 +46,7 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 	}
 
 	public void setPercentiles(List<Double> percentiles) {
-		if (percentiles != null){
+		if (percentiles != null) {
 			this.percentiles = new LinkedList<>(percentiles);
 		}
 	}
@@ -65,7 +66,7 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 	final protected void process_next(Tuple<? extends ITimeInterval> object,
 			int port) {
 
-		transfer.newElement(object, port);
+		// transfer.newElement(object, port);
 
 		if (appendGlobalMedian) {
 			process_next(object, port, -1L);
@@ -86,11 +87,13 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 		} else {
 			Tuple<? extends ITimeInterval> last_gr = lastCreatedElement
 					.get(groupID);
-			
+
 			if (appendGlobalMedian) { // append the global median
-				gr = gr.append(globalMedian.getAttribute(globalMedian.size() - 1), true);
+				gr = gr.append(
+						globalMedian.getAttribute(globalMedian.size() - 1),
+						true);
 			}
-			
+
 			if (last_gr != null) {
 				if (last_gr.getMetadata().getStart()
 						.before(gr.getMetadata().getStart())) {
@@ -102,6 +105,18 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 				lastCreatedElement.put(groupID, gr);
 			}
 		}
+
+		if (lastCreatedElement.size() > 0) {
+			// Find min ts in groups
+			PointInTime minTs = PointInTime.getInfinityTime();
+			for (Tuple<? extends ITimeInterval> e : lastCreatedElement.values()) {
+				if (e.getMetadata().getStart().before(minTs)) {
+					minTs = e.getMetadata().getStart();
+				}
+			}
+			transfer.newHeartbeat(minTs, 0);
+		}
+
 	}
 
 	@Override
