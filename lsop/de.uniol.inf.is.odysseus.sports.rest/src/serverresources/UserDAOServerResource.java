@@ -2,6 +2,8 @@ package serverresources;
 
 import org.restlet.Response;
 import org.restlet.data.Status;
+import org.restlet.ext.jackson.JacksonRepresentation;
+import org.restlet.representation.Representation;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 
@@ -27,7 +29,9 @@ public class UserDAOServerResource extends ServerResource implements
 	public void setUser(UserDAO user) {
 		this.user = user;
 		Response r = getResponse();
-		r.setStatus(Status.SUCCESS_ACCEPTED);
+		
+		r.setEntity(new JacksonRepresentation<UserDAO>(user));
+		r.setStatus(Status.SUCCESS_OK);
 	}
 
 	@Override
