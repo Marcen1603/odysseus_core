@@ -344,6 +344,7 @@ public class LoadBalancingCommunicationListener implements
 							.getSubscriptions();
 
 					for (PhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
+
 						physicalOriginal.unsubscribeSink(subscription);
 						synchronizer.subscribeSink(subscription.getTarget(),
 								subscription.getSinkInPort(),
@@ -351,11 +352,16 @@ public class LoadBalancingCommunicationListener implements
 								subscription.getSchema(), true,
 								subscription.getOpenCalls());
 					}
+					
+					ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
 
 					physicalOriginal.subscribeSink(synchronizer, 0, 0,
 							physicalOriginal.getOutputSchema());
+					
+					physicalOriginal.open(synchronizer, 0, 0, emptyCallPath, physicalOriginal.getOwner());
 					physicalCopy.subscribeSink(synchronizer, 1, 0,
 							physicalOriginal.getOutputSchema());
+					physicalCopy.open(synchronizer, 0, 1, emptyCallPath, physicalOriginal.getOwner());
 
 					physicalOriginal.unblock();
 				} catch (DataTransmissionException e) {
