@@ -201,7 +201,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	}
 
 	private void initiateLoadBalancing(PeerID destinationPeer, int queryPartID) {
-		LoadBalancingCommunicationListener.getInstance().testCopy(
+		LoadBalancingCommunicationListener.getInstance().initiateCopyProcess(
 				destinationPeer, queryPartID);
 	}
 

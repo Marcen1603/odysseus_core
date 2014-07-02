@@ -2,19 +2,38 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
 
 import java.nio.ByteBuffer;
 
+
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
+/**
+ * Message containing a QueryPart which should be installed as a new Query.
+ * @author Carsten Cordes
+ *
+ */
 public class LoadBalancingAddQueryMessage implements IMessage {
 
-	/*
+	/**
 	 * ID to identify current load Balancing process (is reused in different stages of negotiation between clients)
 	 */
 	private int loadBalancingProcessId;
+	
+	/**
+	 * PQL Query to install.
+	 */
 	private String pqlQuery;
 	
+	/**
+	 * Constructor
+	 */
 	public LoadBalancingAddQueryMessage() {
 	}
 	
+	
+	/**
+	 * Constructor
+	 * @param loadBalancingProcessId Load Balancing process iD.
+	 * @param pqlQuery Query to install.
+	 */
 	public LoadBalancingAddQueryMessage(int loadBalancingProcessId,String pqlQuery) {
 		this.loadBalancingProcessId = loadBalancingProcessId;
 		this.pqlQuery = pqlQuery;
@@ -22,6 +41,9 @@ public class LoadBalancingAddQueryMessage implements IMessage {
 
 
 	@Override
+	/**
+	 * Returns message as byte Array.
+	 */
 	public byte[] toBytes() {
 		/*
 		 * Allocate byte Buffer:
@@ -43,6 +65,9 @@ public class LoadBalancingAddQueryMessage implements IMessage {
 	}
 
 	@Override
+	/**
+	 * Parses message from Byte Array.
+	 */
 	public void fromBytes(byte[] data) {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		loadBalancingProcessId = bb.getInt();
@@ -53,19 +78,35 @@ public class LoadBalancingAddQueryMessage implements IMessage {
 	}
 
 
+	/**
+	 * Get LoadBalancing Process id.
+	 * @return LoadBalancing Process id
+	 */
 	public int getLoadBalancingProcessId() {
 		return loadBalancingProcessId;
 	}
 
 
+	/**
+	 * Sets load balancing process id.
+	 * @param loadBalancingProcessId LoadBalancingProcess Id to set.
+	 */
 	public void setLoadBalancingProcessId(int loadBalancingProcessId) {
 		this.loadBalancingProcessId = loadBalancingProcessId;
 	}
 	
+	/**
+	 * Returns PQL Query.
+	 * @return PQL as String
+	 */
 	public String getPqlQuery() {
 		return this.pqlQuery;
 	}
 	
+	/**
+	 * Sets PQL Query 
+	 * @param pqlQuery PQL Query to set.
+	 */
 	public void setPqlQuery(String pqlQuery) {
 		this.pqlQuery = pqlQuery;
 	}

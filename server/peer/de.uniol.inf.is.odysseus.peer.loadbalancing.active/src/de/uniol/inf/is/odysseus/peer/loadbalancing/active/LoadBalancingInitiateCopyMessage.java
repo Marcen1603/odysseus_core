@@ -4,6 +4,11 @@ import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
+/**
+ * Message to initiate copying of a particular Query part. 
+ * @author Carsten Cordes.
+ *
+ */
 public class LoadBalancingInitiateCopyMessage implements IMessage {
 
 	/*
@@ -11,15 +16,25 @@ public class LoadBalancingInitiateCopyMessage implements IMessage {
 	 */
 	private int loadBalancingProcessId;
 	
+	/**
+	 * Default constructor
+	 */
 	public LoadBalancingInitiateCopyMessage() {
 	}
 	
+	/**
+	 * Constructor
+	 * @param loadBalancingProcessId LoadBalancingProcessId.
+	 */
 	public LoadBalancingInitiateCopyMessage(int loadBalancingProcessId) {
 		this.loadBalancingProcessId = loadBalancingProcessId;
 	}
 
 
 	@Override
+	/**
+	 * Returns message as bytes.
+	 */
 	public byte[] toBytes() {
 		/*
 		 * Allocate byte Buffer:
@@ -34,6 +49,9 @@ public class LoadBalancingInitiateCopyMessage implements IMessage {
 	}
 
 	@Override
+	/**
+	 * Parses messages from bytes.
+	 */
 	public void fromBytes(byte[] data) {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		loadBalancingProcessId = bb.getInt();
@@ -41,11 +59,19 @@ public class LoadBalancingInitiateCopyMessage implements IMessage {
 	}
 
 
+	/**
+	 * Gets loadBalancing process id.
+	 * @return
+	 */
 	public int getLoadBalancingProcessId() {
 		return loadBalancingProcessId;
 	}
 
 
+	/**
+	 * Sets load Balancing process id.
+	 * @param loadBalancingProcessId
+	 */
 	public void setLoadBalancingProcessId(int loadBalancingProcessId) {
 		this.loadBalancingProcessId = loadBalancingProcessId;
 	}

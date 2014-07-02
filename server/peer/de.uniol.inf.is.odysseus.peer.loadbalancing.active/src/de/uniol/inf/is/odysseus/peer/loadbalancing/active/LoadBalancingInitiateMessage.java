@@ -4,6 +4,11 @@ import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
+/**
+ * Message to initiate LaodBalancing
+ * @author Carsten Cordes
+ *
+ */
 public class LoadBalancingInitiateMessage implements IMessage {
 
 	/*

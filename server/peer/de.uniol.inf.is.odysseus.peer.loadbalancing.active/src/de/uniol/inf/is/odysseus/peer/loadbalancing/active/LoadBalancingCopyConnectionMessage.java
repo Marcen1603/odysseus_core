@@ -4,21 +4,53 @@ import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
+/**
+ * Message to which advises Peers to duplicate a particular connection.
+ * @author Carsten Cordes
+ *
+ */
 public class LoadBalancingCopyConnectionMessage implements IMessage {
 
-	/*
+	/**
 	 * ID to identify current load Balancing process (is reused in different stages of negotiation between clients)
 	 */
 	private int loadBalancingProcessId;
+	
+	/**
+	 * Determines if a sender or a receiver needs to be reproduced.
+	 */
 	private boolean isSender;
+	
+	/**
+	 * New Peer to connect to.
+	 */
 	private String newPeerId;
+	
+	/**
+	 * Old Pipe to substitute.
+	 */
 	private String oldPipeId;
+	
+	/**
+	 * New pipe, which should substitute old pipe.
+	 */
 	private String newPipeId;
 	
 	
+	/**
+	 * Default constructor.
+	 */
 	public LoadBalancingCopyConnectionMessage() {
 	}
 	
+	/**
+	 * Constructor
+	 * @param loadBalancingProcessId 
+	 * @param isSender determines if Operator to copy is sender or receiver.
+	 * @param oldPipeId Pipe ID to replace
+	 * @param newPipeId new Pipe Id
+	 * @param newPeerId new Peer Id.
+	 */
 	public LoadBalancingCopyConnectionMessage(int loadBalancingProcessId, boolean isSender, String oldPipeId, String newPipeId, String newPeerId) {
 		this.loadBalancingProcessId = loadBalancingProcessId;
 		this.isSender = isSender;
@@ -29,6 +61,9 @@ public class LoadBalancingCopyConnectionMessage implements IMessage {
 
 
 	@Override
+	/**
+	 * Returns message as byte array.
+	 */
 	public byte[] toBytes() {
 		/*
 		 * Allocate byte Buffer:
@@ -68,6 +103,9 @@ public class LoadBalancingCopyConnectionMessage implements IMessage {
 	}
 
 	@Override
+	/**
+	 * Parses message from byte array.
+	 */
 	public void fromBytes(byte[] data) {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		loadBalancingProcessId = bb.getInt();
@@ -93,43 +131,83 @@ public class LoadBalancingCopyConnectionMessage implements IMessage {
 	}
 
 
+	/**
+	 * returns Load Balancing Process Id.
+	 * @return load Balancing Process Id.
+	 */
 	public int getLoadBalancingProcessId() {
 		return loadBalancingProcessId;
 	}
 
 
+	/**
+	 * Sets load Balancing Process Id.
+	 * @param loadBalancingProcessId
+	 */
 	public void setLoadBalancingProcessId(int loadBalancingProcessId) {
 		this.loadBalancingProcessId = loadBalancingProcessId;
 	}
 
+	/**
+	 * True if we look for a sender.
+	 * @return
+	 */
 	public boolean isSender() {
 		return isSender;
 	}
 
+	/**
+	 * Set true if we look for a sender.
+	 * @param isSender
+	 */
 	public void setSender(boolean isSender) {
 		this.isSender = isSender;
 	}
 
+	/**
+	 * Returns Peer Id.
+	 * @return peer id.
+	 */
 	public String getNewPeerId() {
 		return newPeerId;
 	}
 
+	/**
+	 * Sets peer id.
+	 * @param newPeerId
+	 */
 	public void setNewPeerId(String newPeerId) {
 		this.newPeerId = newPeerId;
 	}
 
+	/**
+	 * Returns old Pipe Id
+	 * @return old Pipe ID.
+	 */
 	public String getOldPipeId() {
 		return oldPipeId;
 	}
 
+	/**
+	 * sets old pipe ID.
+	 * @param oldPipeId
+	 */
 	public void setOldPipeId(String oldPipeId) {
 		this.oldPipeId = oldPipeId;
 	}
 
+	/**
+	 * Gets new pipe Id.
+	 * @return
+	 */
 	public String getNewPipeId() {
 		return newPipeId;
 	}
 
+	/**
+	 * sets new pipe Id.
+	 * @param newPipeId
+	 */
 	public void setNewPipeId(String newPipeId) {
 		this.newPipeId = newPipeId;
 	}
