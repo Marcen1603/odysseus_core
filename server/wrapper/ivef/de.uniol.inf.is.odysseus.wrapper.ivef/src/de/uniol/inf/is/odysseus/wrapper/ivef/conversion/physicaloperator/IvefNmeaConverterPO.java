@@ -332,7 +332,7 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
         df.setTimeZone(gmtTime);
         @SuppressWarnings("deprecation")
 		Date etaDate = new Date(year-1900, month-1, day, hour, minute);
-        return df.format(etaDate)+"Z";
+        return df.format(etaDate); //+"Z";
 //		return year+"-"+month+"-"+day+"T"+hour+":"+minute+":00.000-0000";
 	}
 	
