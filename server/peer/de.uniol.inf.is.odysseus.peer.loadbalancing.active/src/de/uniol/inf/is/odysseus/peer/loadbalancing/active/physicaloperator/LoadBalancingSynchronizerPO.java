@@ -51,6 +51,17 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	 * The index of the input port reading the "new" data stream.
 	 */
 	private static final int new_port = 1;
+	
+	/**
+	 * Enumeration of possible synchronization states.
+	 * @author Michael Brand
+	 *
+	 */
+	private static enum SyncState {
+		
+		notsynchronizing, synchronizing, timeordering;
+		
+	}
 
 	/**
 	 * The default threshold for the synchronization process.
@@ -79,9 +90,9 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	private long startTime;
 
 	/**
-	 * The last seen element on input port {@link #old_port}.
+	 * The starttimestamp of the last seen element on input port {@link #old_port}.
 	 */
-	private T lastSeenElementOnOldPort;
+	private PointInTime tsOflastSeenElementOnOldPort;
 
 	/**
 	 * The last calculated time shift [ms] between elements on the different
@@ -90,9 +101,9 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	private PointInTime lastSeenTimeShift;
 
 	/**
-	 * Marks the synchronization as finished.
+	 * The current state of the synchronization process.
 	 */
-	private boolean finished = false;
+	private SyncState state = SyncState.notsynchronizing;
 
 	/**
 	 * Creates a new {@link LoadBalancingSynchronizerPO}.
@@ -137,8 +148,9 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 		this.transferPort = syncPO.transferPort;
 		this.threshold = syncPO.threshold;
 		this.startTime = syncPO.startTime;
-		this.lastSeenElementOnOldPort = syncPO.lastSeenElementOnOldPort;
+		this.tsOflastSeenElementOnOldPort = syncPO.tsOflastSeenElementOnOldPort;
 		this.lastSeenTimeShift = syncPO.lastSeenTimeShift;
+		this.state = syncPO.state;
 
 	}
 
@@ -233,7 +245,7 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 						LoadBalancingSynchronizerPO.MAX_NUMBER_OF_PORTS);
 
 		this.startTime = System.currentTimeMillis();
-		this.finished = false;
+		this.state = SyncState.synchronizing;
 
 	}
 
@@ -250,18 +262,36 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 		this.transferPort = LoadBalancingSynchronizerPO.new_port;
 		this.getSubscribedToSource(portToRemove).setDone(true);
 		this.fireFinishEvent(portToRemove);
-		this.finished = true;
+		this.state = SyncState.timeordering;
 		LoadBalancingSynchronizerPO.log.info(
 				"Synchronization done. Duration: {} milliseconds", duration);
 
 	}
+	
+	/**
+	 * Checks, if a given starttimestamp is after or equals {@link #tsOflastSeenElementOnOldPort}. <br />
+	 * If thats the case, {@link #state} will be set to {@link SyncState#notsynchronizing}.
+	 * @param newTS
+	 * @return true, if <code>newTS</code> given starttimestamp is after or equals {@link #tsOflastSeenElementOnOldPort}.
+	 */
+	private boolean checkTimeOrder(PointInTime newTS) {
+		
+		if(newTS.afterOrEquals(this.tsOflastSeenElementOnOldPort)) {
+			
+			this.state = SyncState.notsynchronizing;
+			return true;
+			
+		}
+		return false;
+		
+	}
 
-	@SuppressWarnings("unchecked")
-	// cloning of object
 	@Override
 	protected void process_next(T object, int port) {
+		
+		final PointInTime newTS = object.getMetadata().getStart();
 
-		if (port == this.transferPort) {
+		if (port == this.transferPort && (!this.state.equals(SyncState.timeordering) || this.checkTimeOrder(newTS))) {
 
 			this.transfer(object);
 			LoadBalancingSynchronizerPO.log.debug(
@@ -269,34 +299,31 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 
 		}
 
-		if (this.finished) {
+		if (!this.state.equals(SyncState.synchronizing)) {
 
 			return;
 
 		} else if (port == LoadBalancingSynchronizerPO.old_port) {
 
-			this.lastSeenElementOnOldPort = (T) object.clone();
+			this.tsOflastSeenElementOnOldPort = object.getMetadata().getStart();
 
 		} else if (port == LoadBalancingSynchronizerPO.new_port) {
 
-			if (this.lastSeenElementOnOldPort == null) {
+			if (this.tsOflastSeenElementOnOldPort == null) {
 
 				LoadBalancingSynchronizerPO.log
 						.warn("Got element on port {} without seeing any elements on port {}",
 								port, LoadBalancingSynchronizerPO.old_port);
 
-			} else if (object.equals(this.lastSeenElementOnOldPort) && object.getMetadata().equals(((T) object).getMetadata())) {
+			} else if (newTS.equals(this.tsOflastSeenElementOnOldPort)) {
 
 				// Ideal case
 				// synchronized
 				this.finishSynchroization();
 
 			} else {
-
-				final PointInTime oldTS = this.lastSeenElementOnOldPort
-						.getMetadata().getStart();
-				final PointInTime newTS = object.getMetadata().getStart();
-				final PointInTime currentTimeShift = newTS.minus(oldTS);
+				
+				final PointInTime currentTimeShift = newTS.minus(this.tsOflastSeenElementOnOldPort);
 
 				if (currentTimeShift.getMainPoint() < 0) {
 
