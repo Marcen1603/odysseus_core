@@ -285,8 +285,9 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 						.warn("Got element on port {} without seeing any elements on port {}",
 								port, LoadBalancingSynchronizerPO.old_port);
 
-			} else if (object.equals(this.lastSeenElementOnOldPort)) {
+			} else if (object.equals(this.lastSeenElementOnOldPort) && object.getMetadata().equals(((T) object).getMetadata())) {
 
+				// Ideal case
 				// synchronized
 				this.finishSynchroization();
 
