@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPunctuation;
  * @author Michael
  * 
  */
+@Deprecated
 public class LoadBalancingPunctuation extends AbstractPunctuation {
 
 	/**

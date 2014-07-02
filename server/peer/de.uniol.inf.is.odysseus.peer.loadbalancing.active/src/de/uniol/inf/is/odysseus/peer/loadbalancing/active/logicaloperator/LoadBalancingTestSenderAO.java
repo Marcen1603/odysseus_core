@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.LoadBalancingPunctuati
  * @author Tobias Brandt
  * 
  */
+@Deprecated
 @LogicalOperator(category = { LogicalOperatorCategory.TEST }, doc = "Sends load balancing start- and stop-puctuations in periodic distance.", maxInputPorts = 1, minInputPorts = 1, name = "LoadBalancingTestSenderAO")
 public class LoadBalancingTestSenderAO extends UnaryLogicalOp {
 

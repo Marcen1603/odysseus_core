@@ -4,14 +4,14 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.LoadBalancingPunctuation;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 /**
  * A {@link LoadBalancingSynchronizerAO} transfers the elements only from the
- * first (earliest) port until on both ports (first and second/earliest and
- * latest) {@link LoadBalancingPunctuation}s marking the end of a load balancing
- * process received. If that happens, only elements from the second (latest)
- * port are transferred and the earliest port will be closed.
+ * first (earliest) port until both ports retrieve same elements or a given
+ * threshold-time elapses.
  * 
  * @author Michael Brand
  */
@@ -22,6 +22,11 @@ public class LoadBalancingSynchronizerAO extends BinaryLogicalOp {
 	 * The version of this class for serialization.
 	 */
 	private static final long serialVersionUID = 7546316063206366721L;
+	
+	/**
+	 * The threshold for the synchronization process.
+	 */
+	private TimeValueItem threshold;
 
 	/**
 	 * Constructs a new {@link LoadBalancingSynchronizerAO}.
@@ -53,6 +58,26 @@ public class LoadBalancingSynchronizerAO extends BinaryLogicalOp {
 
 		return new LoadBalancingSynchronizerAO(this);
 
+	}
+	
+	/**
+	 * Gets the threshold for the synchronization process.
+	 * @return Value and unit of the time-span, the synchronization process shall last at maximum.
+	 */
+	public TimeValueItem getThreshold() {
+		
+		return this.threshold;	
+		
+	}
+	
+	/**
+	 * Sets the threshold for the synchronization process.
+	 */
+	@Parameter(type = TimeParameter.class, name = "threshold", optional = true)
+	public void setThreshold(TimeValueItem threshold) {
+		
+		this.threshold = threshold;
+		
 	}
 
 }

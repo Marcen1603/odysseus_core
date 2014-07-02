@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.logicaloperator.LoadBalancingSynchronizerAO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.LoadBalancingSynchronizerPO;
@@ -32,11 +31,9 @@ public class TLoadBalancingSynchronizerAORule extends
 	public void execute(LoadBalancingSynchronizerAO syncAO,
 			TransformationConfiguration config) throws RuleException {
 
-		defaultExecute(
-				syncAO,
+		defaultExecute(syncAO,
 				new LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>>(
-						new TITransferArea<IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>()),
-				config, true, true);
+						syncAO), config, true, true);
 
 	}
 

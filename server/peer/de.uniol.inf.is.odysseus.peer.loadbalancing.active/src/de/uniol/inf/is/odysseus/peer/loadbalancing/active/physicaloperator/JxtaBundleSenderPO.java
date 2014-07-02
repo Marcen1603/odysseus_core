@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.wrapper.JxtaSenderWrap
  * @author Carsten Cordes
  * 
  */
+@Deprecated
 public class JxtaBundleSenderPO<T extends IStreamObject<?>> extends
 		AbstractSink<T> {
 

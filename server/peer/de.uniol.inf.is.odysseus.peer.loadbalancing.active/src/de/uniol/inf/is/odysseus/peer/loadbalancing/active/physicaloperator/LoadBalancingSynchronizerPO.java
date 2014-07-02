@@ -2,34 +2,29 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator;
 
 import java.util.Collection;
 import java.util.Observer;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.collection.IPair;
-import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.UnionPO;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.LoadBalancingPunctuation;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.logicaloperator.LoadBalancingSynchronizerAO;
 
 /**
  * A {@link LoadBalancingSynchronizerPO} transfers the elements only from the
- * first (earliest) port until on both ports (first and second/earliest and
- * latest) {@link LoadBalancingPunctuation}s marking the end of a load balancing
- * process received. If that happens, only elements from the second (latest)
- * port are transferred and the earliest port will be closed.
+ * first (earliest) port until both ports retrieve same elements or a given
+ * threshold-time elapses.
  * 
  * @author Michael Brand
  */
@@ -37,121 +32,41 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 		extends AbstractPipe<T, T> {
 
 	/**
-	 * Maximum Number of Ports allowed.
-	 */
-	private final int MAX_NUMBER_OF_PORTS = 2;
-
-	/**
-	 * Minimal Number of Ports allowed (used to initialize transfer area).
-	 */
-	private final int MIN_NUMBER_OF_PORTS = 1;
-
-	/**
 	 * The logger instance for this class.
 	 */
 	private static final Logger log = LoggerFactory
 			.getLogger(LoadBalancingSynchronizerPO.class);
 
-	// TODO to be removed. M.B.
 	/**
-	 * The enumeration of states for input ports based on the retrieving of
-	 * {@link LoadBalancingPunctuation}s.
-	 * 
-	 * @author Michael Brand
-	 * 
+	 * /** Maximum number of input ports.
 	 */
-	private static enum InputPortState {
+	private static final int MAX_NUMBER_OF_PORTS = 2;
 
-		/**
-		 * Neither {@link LoadBalancingPunctuation} with
-		 * {@link LoadBalancingPunctuation#marksStart()} nor with
-		 * {@link LoadBalancingPunctuation#marksStop()} received yet.
-		 */
-		noneReceived(0) {
+	/**
+	 * The index of the input port reading the "old" data stream.
+	 */
+	private static final int old_port = 0;
 
-			@Override
-			public String toString() {
+	/**
+	 * The index of the input port reading the "new" data stream.
+	 */
+	private static final int new_port = 1;
 
-				return "no markers received";
+	/**
+	 * The default threshold for the synchronization process.
+	 */
+	private static final TimeValueItem default_threshold = new TimeValueItem(
+			10, TimeUnit.MINUTES);
 
-			}
-
-		},
-
-		/**
-		 * {@link LoadBalancingPunctuation} with
-		 * {@link LoadBalancingPunctuation#marksStart()} received.
-		 */
-		startReceived(1) {
-
-			@Override
-			public String toString() {
-
-				return "start marker received";
-
-			}
-
-		},
-
-		/**
-		 * {@link LoadBalancingPunctuation} with
-		 * {@link LoadBalancingPunctuation#marksStop()} received.
-		 */
-		stopReceived(2) {
-
-			@Override
-			public String toString() {
-
-				return "stop marker received";
-
-			}
-
-		};
-
-		/**
-		 * The index of the input port state for ordering.
-		 */
-		private final int index;
-
-		/**
-		 * Creates a new input port state.
-		 * 
-		 * @param i
-		 *            The index of the input port state for ordering.
-		 */
-		private InputPortState(int i) {
-
-			this.index = i;
-
-		}
-
-		/**
-		 * Gets the index of the input port state for ordering.
-		 */
-		public int getIndex() {
-
-			return this.index;
-
-		}
-
-	};
+	/**
+	 * The threshold for the synchronization process.
+	 */
+	private TimeValueItem threshold = LoadBalancingSynchronizerPO.default_threshold;
 
 	/**
 	 * All listeners of this operator.
 	 */
-	private final Collection<Observer> listeners;
-
-	// TODO to be removed. M.B.
-	/**
-	 * The {@link ITransferArea} to keep order within the output stream.
-	 */
-	private final ITransferArea<T, T> transferArea;
-
-	// TODO to be removed. M.B.
-	/**
-	 * The {@link InputPortState}s for all input ports.
-	 */
-	private final Collection<IPair<Integer, InputPortState>> inputPortStates;
+	private Collection<Observer> listeners;
 
 	/**
 	 * The input port, which elements shall be transferred.
@@ -159,27 +74,51 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	private int transferPort;
 
 	/**
-	 * Creates a new {@link LoadBalancingSynchronizerPO}.
-	 * 
-	 * @param tArea
-	 *            The {@link ITransferArea} to keep order within the output
-	 *            stream.
+	 * The time [ms], marking the start of the synchronization.
 	 */
-	public LoadBalancingSynchronizerPO(ITransferArea<T, T> tArea) {
+	private long startTime;
+
+	/**
+	 * The last seen element on input port {@link #old_port}.
+	 */
+	private T lastSeenElementOnOldPort;
+
+	/**
+	 * The last calculated time shift [ms] between elements on the different
+	 * input ports {@link #old_port} ans {@link #new_port}.
+	 */
+	private PointInTime lastSeenTimeShift;
+
+	/**
+	 * Marks the synchronization as finished.
+	 */
+	private boolean finished = false;
+
+	/**
+	 * Creates a new {@link LoadBalancingSynchronizerPO}.
+	 */
+	public LoadBalancingSynchronizerPO() {
 
 		super();
 
 		this.listeners = Lists.newArrayList();
-		this.transferArea = tArea;
-		this.transferArea.init(this, MIN_NUMBER_OF_PORTS);
-		this.inputPortStates = Lists.newArrayList();
-		for (int port = 0; port < this.getSubscribedToSource().size(); port++) {
+		this.transferPort = LoadBalancingSynchronizerPO.old_port;
 
-			this.inputPortStates.add(new Pair<Integer, InputPortState>(port,
-					InputPortState.noneReceived));
+	}
 
-		}
-		this.transferPort = 0;
+	/**
+	 * Creates a new {@link LoadBalancingSynchronizerPO}.
+	 * 
+	 * @param syncAO
+	 *            The corresponding {@link LoadBalancingSynchronizerAO}.
+	 */
+	public LoadBalancingSynchronizerPO(LoadBalancingSynchronizerAO syncAO) {
+
+		super();
+
+		this.listeners = Lists.newArrayList();
+		this.transferPort = LoadBalancingSynchronizerPO.old_port;
+		this.threshold = syncAO.getThreshold();
 
 	}
 
@@ -195,9 +134,11 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 		super(syncPO);
 
 		this.listeners = Lists.newArrayList(syncPO.listeners);
-		this.transferArea = syncPO.transferArea.clone();
-		this.inputPortStates = Lists.newArrayList(syncPO.inputPortStates);
 		this.transferPort = syncPO.transferPort;
+		this.threshold = syncPO.threshold;
+		this.startTime = syncPO.startTime;
+		this.lastSeenElementOnOldPort = syncPO.lastSeenElementOnOldPort;
+		this.lastSeenTimeShift = syncPO.lastSeenTimeShift;
 
 	}
 
@@ -285,255 +226,146 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	protected void newSourceSubscribed(
 			PhysicalSubscription<ISource<? extends T>> sub) {
 
-		Preconditions.checkArgument(
-				this.getInputPortCount() < MAX_NUMBER_OF_PORTS,
-				"The input port count of {} can not be extended!",
-				MAX_NUMBER_OF_PORTS);
+		Preconditions
+				.checkArgument(
+						this.getInputPortCount() > LoadBalancingSynchronizerPO.MAX_NUMBER_OF_PORTS,
+						"Invalid amount of input ports: {}",
+						LoadBalancingSynchronizerPO.MAX_NUMBER_OF_PORTS);
 
-		transferArea.addNewInput(sub.getSinkInPort());
-		LoadBalancingSynchronizerPO.log.debug(
-				"Added new input port. Current input port count : {}",
-				this.getInputPortCount());
-
-	}
-
-	@Override
-	protected void sourceUnsubscribed(
-			PhysicalSubscription<ISource<? extends T>> sub) {
-
-		transferArea.removeInput(sub.getSinkInPort());
+		this.startTime = System.currentTimeMillis();
+		this.finished = false;
 
 	}
 
-	@Override
-	protected void process_open() throws OpenFailedException {
+	/**
+	 * Finishes the synchronization by doing the following steps: <br />
+	 * - switch {@link #transferPort} - call
+	 * {@link PhysicalSubscription#setDone(boolean)} - call
+	 * {@link #fireFinishEvent(int)}
+	 */
+	private void finishSynchroization() {
 
-		transferArea.init(this, getSubscribedToSource().size());
+		final long duration = System.currentTimeMillis() - this.startTime;
+		final int portToRemove = LoadBalancingSynchronizerPO.old_port;
+		this.transferPort = LoadBalancingSynchronizerPO.new_port;
+		this.getSubscribedToSource(portToRemove).setDone(true);
+		this.fireFinishEvent(portToRemove);
+		this.finished = true;
+		LoadBalancingSynchronizerPO.log.info(
+				"Synchronization done. Duration: {} milliseconds", duration);
 
 	}
-	
-	// --------- testing purposes --------------
-	int syncCounter;
-	int numberOfTuplesUntilSync = 10;
-	// -----------------------------------------
 
+	@SuppressWarnings("unchecked")
+	// cloning of object
 	@Override
 	protected void process_next(T object, int port) {
-		
-		// I guess here I have to check, if both input streams are synchronous (deliver the same results)
-		
-		// TODO: Give possibility to easily switch strategy (to say if the sync is finished) with an interface
-		// TODO: Implement one or more good strategies
-		
-		// First, very easy approach to test:
-		// Count ten tuples from the new port / sender / peer -> switch to the new one
-		
-		/*
-		 * Micha:
-		 * There is no need for an interface for different strategies, because that is one big advantage of 
-		 * physical operators: one logical -> any physical.
-		 * 
-		 * First physical approach:
-		 * Remember always the last seen element at the old input port.
-		 * For any element on the new input port:
-		 * 	same element as the remembered one: synchronized
-		 *  new.ts > old.ts: new stream got ahead -> buffer new stream till both are synchronized or 
-		 *  										accept element losing by define both input streams synchronized
-		 *  new.ts <= old.ts:
-		 *  		1. buffer old elements for a certain time (should be short)
-		 *  		2. save the ts difference between old and new stream
-		 *  		3. difference should get smaller. if not: define a threshold (e.g. 10 times not getting smaller ->
-		 *  																	define as synchronized
-		 */
-		
-		if(port != transferPort) {
-			// We got a tuple from the new peer
-			syncCounter++;
-			
-			if(syncCounter >= numberOfTuplesUntilSync) {
-				// We got enough tuples from the new peer, so we want to send the tuples from the new peer now
-				int oldPort = transferPort;
-				transferPort = port;
-				
-				// Remove the old port from the input ports
-				transferArea.removeInput(oldPort); // Is this correct?
-				
-				// Message everyone, that the load balancing has finished
-				fireFinishEvent(oldPort);
-			}
-		}
 
 		if (port == this.transferPort) {
 
-			this.transferArea.transfer(object);
-			this.transferArea.newElement(object, port); // Why this?
+			this.transfer(object);
+			LoadBalancingSynchronizerPO.log.debug(
+					"Transfered {} from input port {}", object, port);
 
 		}
 
-	}
+		if (this.finished) {
 
-	/**
-	 * Processes {@link LoadBalancingPunctuation}s.
-	 * 
-	 * @param punctuation
-	 *            The punctuation to process.
-	 * @param port
-	 *            The input port of <code>punctuation</code>.
-	 */
-	private void processLoadBalancingPunctuation(
-			LoadBalancingPunctuation punctuation, int port) {
+			return;
 
-		Preconditions
-				.checkNotNull(punctuation, "Punctuation must be not null!");
-		Preconditions.checkArgument(
-				port >= 0 && port < this.getInputPortCount(),
-				"Invalid input port: {}", port);
+		} else if (port == LoadBalancingSynchronizerPO.old_port) {
 
-		final Optional<IPair<Integer, InputPortState>> optOldPortStatePair = this
-				.getInputPortState(port);
-		Preconditions.checkArgument(optOldPortStatePair.isPresent(),
-				"Unknown port: {}", port);
-		final IPair<Integer, InputPortState> oldPortStatePair = optOldPortStatePair
-				.get();
-		final InputPortState oldInputPortState = oldPortStatePair.getE2();
-		InputPortState newInputPortState = oldInputPortState;
+			this.lastSeenElementOnOldPort = (T) object.clone();
 
-		// Determine new state of input port
-		if (punctuation.marksStart()) {
+		} else if (port == LoadBalancingSynchronizerPO.new_port) {
 
-			newInputPortState = InputPortState.startReceived;
+			if (this.lastSeenElementOnOldPort == null) {
 
-		} else if (punctuation.marksStop()) {
+				LoadBalancingSynchronizerPO.log
+						.warn("Got element on port {} without seeing any elements on port {}",
+								port, LoadBalancingSynchronizerPO.old_port);
 
-			newInputPortState = InputPortState.stopReceived;
+			} else if (object.equals(this.lastSeenElementOnOldPort)) {
 
-		}
+				// synchronized
+				this.finishSynchroization();
 
-		// Validate the state change
-		final Object[] errorMessage = {
-				"The state change delivered by the punction is invalid: {} to {}!",
-				oldInputPortState, newInputPortState };
-		Preconditions.checkArgument(
-				newInputPortState.getIndex() >= oldInputPortState.getIndex(),
-				errorMessage);
-		Preconditions.checkArgument(newInputPortState.getIndex()
-				- oldInputPortState.getIndex() == 1, errorMessage);
+			} else {
 
-		// Save the changed state
-		final IPair<Integer, InputPortState> newPortStatePair = new Pair<Integer, InputPortState>(
-				port, newInputPortState);
-		this.inputPortStates.remove(oldPortStatePair);
-		this.inputPortStates.add(newPortStatePair);
-		LoadBalancingSynchronizerPO.log.debug(
-				"Set state of port {} from to {}", new Object[] { port,
-						oldInputPortState, newInputPortState });
+				final PointInTime oldTS = this.lastSeenElementOnOldPort
+						.getMetadata().getStart();
+				final PointInTime newTS = object.getMetadata().getStart();
+				final PointInTime currentTimeShift = newTS.minus(oldTS);
 
-		// Check load balancing state
-		if (this.areAllInputPortStates(InputPortState.stopReceived)) {
+				if (currentTimeShift.getMainPoint() < 0) {
 
-			// LB done
-			final int portToRemove = this.transferPort;
-			this.transferPort = (this.transferPort + 1) % MAX_NUMBER_OF_PORTS;
-			this.inputPortStates.clear();
-			this.inputPortStates.add(new Pair<Integer, InputPortState>(
-					this.transferPort, InputPortState.noneReceived));
-			this.getSubscribedToSource(portToRemove).setDone(true);
-			this.fireFinishEvent(portToRemove);
+					// new data stream got ahead
+					LoadBalancingSynchronizerPO.log
+							.warn("Data stream on port {} got ahead of data stream on port {}",
+									port, LoadBalancingSynchronizerPO.old_port);
+					this.finishSynchroization();
 
-		}
+				} else { // currentTimeShift.getMainPoint() >= 0
 
-	}
+					if (currentTimeShift.getMainPoint() > this.lastSeenTimeShift
+							.getMainPoint()) {
 
-	/**
-	 * Checks, if all input ports have a given state.
-	 * 
-	 * @param state
-	 *            The given state.
-	 * @return True, if all input ports have a given state.
-	 */
-	private boolean areAllInputPortStates(InputPortState state) {
+						LoadBalancingSynchronizerPO.log
+								.warn("Time shift between data streams on port {} and {} rises",
+										LoadBalancingSynchronizerPO.old_port,
+										port);
 
-		for (IPair<Integer, InputPortState> pair : this.inputPortStates) {
-			
-			if (!pair.getE2().equals(state)) {
-				return false;
-			}
-			
-		}
+						// update elapsed time
+						final long timeElapsed = this.threshold.getUnit()
+								.convert(
+										System.currentTimeMillis()
+												- this.startTime,
+										TimeUnit.MILLISECONDS);
+						if (timeElapsed >= this.threshold.getTime()) {
 
-		return true;
-	}
+							// threshold time elapsed
+							LoadBalancingSynchronizerPO.log.warn(
+									"Threshold of {} reached", this.threshold);
+							this.finishSynchroization();
 
-	/**
-	 * Gets the {@link IPair} of input port and {@link InputPortState} for a
-	 * given input port.
-	 * 
-	 * @param port
-	 *            The given input port.
-	 * @return The first pair found, having <code>port</code> as input port or
-	 *         {@link Optional#absent()}, if no pair was found.
-	 */
-	private Optional<IPair<Integer, InputPortState>> getInputPortState(int port) {
+						}
 
-		for (IPair<Integer, InputPortState> pair : this.inputPortStates) {
+					}
 
-			if (pair.getE1().intValue() == port) {
+					this.lastSeenTimeShift = currentTimeShift;
 
-				return Optional.of(pair);
+				}
 
 			}
 
-		}
+		} else {
 
-		return Optional.absent();
+			LoadBalancingSynchronizerPO.log.error("Invalid input port: {}",
+					port);
+
+		}
 
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 
-		if (punctuation instanceof LoadBalancingPunctuation) {
-
-			this.processLoadBalancingPunctuation(
-					(LoadBalancingPunctuation) punctuation, port);
-
-		}
-
-		this.transferArea.newElement(punctuation, port);
-
-	}
-
-	@Override
-	protected void process_close() {
-
-		for (int i = 0; i < getSubscribedToSource().size(); i++) {
-
-			transferArea.done(i);
-
-		}
-	}
-
-	@Override
-	protected void process_done(int port) {
-
-		transferArea.done(port);
+		this.sendPunctuation(punctuation);
 
 	}
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof UnionPO)) {
+
+		if (!(ipo instanceof LoadBalancingSynchronizerPO)) {
+
 			return false;
+
 		} else {
+
 			return true;
+
 		}
-
-	}
-
-	@Override
-	public long getElementsStored1() {
-
-		return transferArea.size();
 
 	}
 

@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
  * @author Carsten Cordes
  *
  */
+@Deprecated
 @LogicalOperator(name = "JXTABUNDLERECEIVER", doc = "Received data from multiple JXTA Receivers", minInputPorts = 0, maxInputPorts = 0, category = { LogicalOperatorCategory.SOURCE }, hidden = true)
 public class JxtaBundleReceiverAO extends JxtaReceiverAO {
 

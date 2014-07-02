@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.logicaloperator.LoadBa
  * @param <T>
  * 
  */
+@Deprecated
 public class LoadBalancingTestSenderPO<T extends IStreamObject<IMetaAttribute>>
 		extends AbstractPipe<T, T> {
 

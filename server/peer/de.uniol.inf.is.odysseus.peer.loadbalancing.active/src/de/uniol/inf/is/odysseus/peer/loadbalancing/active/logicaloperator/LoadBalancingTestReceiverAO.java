@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.LoadBalancingPunctuati
  * @author Tobias Brandt
  * 
  */
+@Deprecated
 @LogicalOperator(category = { LogicalOperatorCategory.TEST }, doc = "Receives incoming LoadBalancingPuctuations and gives options to filter them and write them to the log.", maxInputPorts = 1, minInputPorts = 1, name = "LoadBalancingTestReceiverAO")
 public class LoadBalancingTestReceiverAO extends UnaryLogicalOp {
 

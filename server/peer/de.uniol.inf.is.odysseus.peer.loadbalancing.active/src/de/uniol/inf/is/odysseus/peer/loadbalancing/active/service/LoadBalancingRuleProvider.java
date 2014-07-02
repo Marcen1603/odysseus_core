@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.transform.TLoadBalanci
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRuleProvider;
 
+@SuppressWarnings("deprecation")
 public class LoadBalancingRuleProvider implements IRuleProvider {
 	@Override
     public List<IRule<?, ?>> getRules() {

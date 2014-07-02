@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiver;
@@ -33,6 +32,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.wrapper.JxtaReceiverWr
  * @author Carsten Cordes
  *
  */
+@Deprecated
 @SuppressWarnings("rawtypes")
 public class JxtaBundleReceiverPO<T extends IStreamObject> extends
 		AbstractSource<T> implements Observer {
@@ -104,8 +104,7 @@ public class JxtaBundleReceiverPO<T extends IStreamObject> extends
 
 		receiverList = new ArrayList<JxtaReceiverWrapper<T>>();
 
-		synchronizer = new LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>>(
-				new TITransferArea<IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>());
+		synchronizer = new LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>>();
 		synchronizer.addListener(this);
 		
 		JxtaReceiverWrapper<T> firstReceiver = new JxtaReceiverWrapper<T>(ao);

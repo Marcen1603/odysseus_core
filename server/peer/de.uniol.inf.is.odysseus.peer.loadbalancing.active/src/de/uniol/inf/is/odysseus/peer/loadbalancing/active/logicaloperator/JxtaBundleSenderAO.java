@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
  * @author Carsten Cordes
  * 
  */
+@Deprecated
 @LogicalOperator(name = "JXTABUNDLESENDER", doc = "Send data with multiple JXTA senders", minInputPorts = 1, maxInputPorts = 1, category = { LogicalOperatorCategory.SINK }, hidden = true)
 public class JxtaBundleSenderAO extends JxtaSenderAO {
 	private static final long serialVersionUID = 1L;
