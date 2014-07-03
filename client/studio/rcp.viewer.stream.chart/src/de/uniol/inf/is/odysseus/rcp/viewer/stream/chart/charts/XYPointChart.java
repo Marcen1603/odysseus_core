@@ -40,7 +40,7 @@ public class XYPointChart extends AbstractXYChart {
     @Override
     protected void decorateChart(final JFreeChart thechart) {
         super.decorateChart(thechart);
-        final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(false, true);
         thechart.getXYPlot().setRenderer(renderer);
         thechart.getXYPlot().getDomainAxis().setAutoRange(true);
         thechart.getXYPlot().getRangeAxis().setAutoRange(true);
