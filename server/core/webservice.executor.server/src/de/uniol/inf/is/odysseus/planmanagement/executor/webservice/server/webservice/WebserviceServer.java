@@ -476,10 +476,8 @@ public class WebserviceServer {
 		ILogicalOperator operator = logicalQuery.getLogicalPlan();
 		Map<Integer, GraphNode> visitedOperators = new HashMap<Integer, GraphNode>();
 		SimpleGraph graph = new SimpleGraph();
-		for (LogicalSubscription subscription : operator
-				.getSubscribedToSource()) {
-			graph.addRootNode(this.createGraphNode(subscription,
-					visitedOperators));
+		for (LogicalSubscription subscription : operator.getSubscribedToSource()) {
+			graph.addRootNode(this.createGraphNode(subscription,visitedOperators));
 		}
 		return graph;
 	}
@@ -490,25 +488,26 @@ public class WebserviceServer {
 		GraphNode newNode = new GraphNode();
 		newNode.setName(operator.getName());
 		newNode.setParameterInfos(operator.getParameterInfos());
-		newNode.setOutputSchema(this.createSDFSchemaInformation(
-				operator.getOutputSchema()).getResponseValue());
+		newNode.setOutputSchema(this.createSDFSchemaInformation(operator.getOutputSchema()).getResponseValue());
 		newNode.setClassName(operator.getClass().getSimpleName());
 		newNode.setHash(operator.hashCode());
+		newNode.setSource(operator.isSourceOperator());
+		newNode.setPipe(operator.isPipeOperator());
+		newNode.setSink(operator.isSinkOperator());
 
-		// Source -> getName() -> stream
+		
 		if (operator instanceof StreamAO) {
 			newNode.setSource(true);
-			StreamAO streamAO = (StreamAO) operator;
-			newNode.setName(streamAO.getStreamname().getResourceName());
-		}
+			newNode.setPipe(false);
+			newNode.setSink(false);
+		} 
 
 		visitedOperators.put(operator.hashCode(), newNode);
 		for (LogicalSubscription subs : operator.getSubscribedToSource()) {
 			ILogicalOperator op = subs.getTarget();
 			GraphNode node = visitedOperators.get(op.hashCode());
 			if (node == null) {
-				newNode.addChild(this.createGraphNode(subs, visitedOperators),
-						subs.getSourceOutPort());
+				newNode.addChild(this.createGraphNode(subs, visitedOperators),subs.getSourceOutPort());
 			} else {
 				newNode.addChild(node, subs.getSinkInPort());
 			}
