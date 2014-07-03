@@ -22,13 +22,25 @@ public class LoadBalancingQueryCache {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(LoadBalancingQueryCache.class);
 	
+	/**
+	 * HashMap used to store the QueryParts with a particular id.
+	 */
 	private HashMap<Integer,ILogicalQueryPart> store;
 
+	/**
+	 * Instance variable
+	 */
 	private static LoadBalancingQueryCache instance;
 	
+	/** 
+	 * Current QueryPart counter.
+	 */
 	private int counter;
 
-	
+	/**
+	 * Returns Instance
+	 * @return instance of Cache
+	 */
 	public static LoadBalancingQueryCache getInstance() {
 		if(instance==null) {
 			instance = new LoadBalancingQueryCache();
@@ -44,17 +56,36 @@ public class LoadBalancingQueryCache {
 	private LoadBalancingQueryCache() {
 	}
 
+	/**
+	 * Adds QueryPart to list and generates new Id.
+	 * @param part QueryPart to add.
+	 * @return LoadBalancingProcessId.
+	 */
 	public synchronized int addQueryPartCopy(ILogicalQueryPart part) {
 		
 		
 		store.put(counter, part);
-		int queryID = counter;
+		int loadBalancingProcessId = counter;
 		counter++;
-		return queryID;
+		return loadBalancingProcessId;
 	}
 	
-	public synchronized ILogicalQueryPart getQueryPart(int queryId) {
-		return store.get(queryId);
+	/**
+	 * Gets Query Part
+	 * @param loadBalancingProcessId LoadBalancingProcessId
+	 * @return QueryPart
+	 */
+	public synchronized ILogicalQueryPart getQueryPart(int loadBalancingProcessId) {
+		return store.get(loadBalancingProcessId);
+	}
+
+	/**
+	 * Removes a queryPart for a particular Id.
+	 * @param loadBalancingProcessId
+	 */
+	public void delete(int loadBalancingProcessId) {
+		if(store.containsKey(loadBalancingProcessId))
+			store.remove(loadBalancingProcessId);
 	}
 	
 	

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages;
 
 import java.nio.ByteBuffer;
 
@@ -16,15 +16,25 @@ public class LoadBalancingInitiateMessage implements IMessage {
 	 */
 	private int loadBalancingProcessId;
 	
+	/**
+	 * Default Constructor
+	 */
 	public LoadBalancingInitiateMessage() {
 	}
 	
+	/**
+	 * Constructor
+	 * @param loadBalancingProcessId loadBalancingProcessId
+	 */
 	public LoadBalancingInitiateMessage(int loadBalancingProcessId) {
 		this.loadBalancingProcessId = loadBalancingProcessId;
 	}
 
 
 	@Override
+	/**
+	 * Returns message as bytes.
+	 */
 	public byte[] toBytes() {
 		/*
 		 * Allocate byte Buffer:
@@ -39,6 +49,9 @@ public class LoadBalancingInitiateMessage implements IMessage {
 	}
 
 	@Override
+	/**
+	 * Parses message from bytes.
+	 */
 	public void fromBytes(byte[] data) {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		loadBalancingProcessId = bb.getInt();
@@ -46,11 +59,18 @@ public class LoadBalancingInitiateMessage implements IMessage {
 	}
 
 
+	/**
+	 * Returns LoadBalancing Process Id.
+	 * @return
+	 */
 	public int getLoadBalancingProcessId() {
 		return loadBalancingProcessId;
 	}
 
-
+	/**
+	 * Sets load Balancing Process Id.
+	 * @param loadBalancingProcessId
+	 */
 	public void setLoadBalancingProcessId(int loadBalancingProcessId) {
 		this.loadBalancingProcessId = loadBalancingProcessId;
 	}

@@ -19,12 +19,26 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.LoadBalancingCommunicationListener;
 
+/**
+ * Console with debug commands for active LoadBalancing.
+ * @author Carsten Cordes
+ *
+ */
 public class ActiveLoadbalancingConsole implements CommandProvider {
 
+	/**
+	 * Logger.
+	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ActiveLoadbalancingConsole.class);
 
+	/**
+	 * Session Variable
+	 */
 	private static ISession activeSession;
+	/**
+	 * Used to store OSGi Services.
+	 */
 	private static IP2PDictionary p2pDictionary;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
@@ -89,6 +103,9 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	}
 
 	@Override
+	/**
+	 * Outputs a simple Help.
+	 */
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("---Active Loadbalancing commands---\n");
@@ -99,6 +116,10 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		return sb.toString();
 	}
 
+	/**
+	 * Initiates Load Balancing.
+	 * @param ci
+	 */
 	public void _initLB(CommandInterpreter ci) {
 		String peerName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(peerName)) {
@@ -126,6 +147,10 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 	}
 
+	/**
+	 * Lists installed QueryParts (logical)
+	 * @param ci
+	 */
 	public void _lsParts(CommandInterpreter ci) {
 
 		System.out.println("Query Parts on current Peer:");
@@ -137,7 +162,12 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 							.getQueryText());
 		}
 	}
-
+	
+	
+	/**
+	 * Copy JxtaSender with a particular PipeId.
+	 * @param ci
+	 */
 	public void _cpJxtaSender(CommandInterpreter ci) {
 		String oldPipeId = ci.nextArgument();
 		if (Strings.isNullOrEmpty(oldPipeId)) {
@@ -163,12 +193,16 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			PeerID pid = optPID.get();
 			LoadBalancingCommunicationListener.getInstance()
 					.findAndCopyLocalJxtaOperator(true, pid.toString(),
-							oldPipeId, newPipeId);
+							oldPipeId, newPipeId,0);
 			System.out.println("Trying to copy JxtaSender");
 		}
 
 	}
 
+	/**
+	 * Copy JxtaReceiver with a partiular PipeId.
+	 * @param ci
+	 */
 	public void _cpJxtaReceiver(CommandInterpreter ci) {
 		String oldPipeId = ci.nextArgument();
 		if (Strings.isNullOrEmpty(oldPipeId)) {
@@ -194,17 +228,28 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			PeerID pid = optPID.get();
 			LoadBalancingCommunicationListener.getInstance()
 					.findAndCopyLocalJxtaOperator(false, pid.toString(),
-							oldPipeId, newPipeId);
+							oldPipeId, newPipeId,0);
 			System.out.println("Trying to copy JxtaReceiver");
 		}
 
 	}
 
+	
+	/**
+	 * used by initLb command.
+	 * @param destinationPeer
+	 * @param queryPartID
+	 */
 	private void initiateLoadBalancing(PeerID destinationPeer, int queryPartID) {
-		LoadBalancingCommunicationListener.getInstance().initiateCopyProcess(
+		LoadBalancingCommunicationListener.getInstance().initiateLoadBalancing(
 				destinationPeer, queryPartID);
 	}
 
+	/**
+	 * Get PeerId from PeerName.
+	 * @param peerName
+	 * @return
+	 */
 	private static Optional<PeerID> determinePeerID(String peerName) {
 		for (PeerID pid : p2pDictionary.getRemotePeerIDs()) {
 			if (p2pDictionary.getRemotePeerName(pid).equals(peerName)) {
@@ -214,6 +259,10 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		return Optional.absent();
 	}
 
+	/**
+	 * Returns currently active Session.
+	 * @return
+	 */
 	private static ISession getActiveSession() {
 		if (activeSession == null || !activeSession.isValid()) {
 			activeSession = UserManagementProvider

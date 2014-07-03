@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages;
 
 import java.nio.ByteBuffer;
 
@@ -15,7 +15,7 @@ public class LoadBalancingDeleteQueryMessage implements IMessage {
 	public LoadBalancingDeleteQueryMessage() {
 	}
 	
-	public LoadBalancingDeleteQueryMessage(int loadBalancingProcessId, String oldPipeId) {
+	public LoadBalancingDeleteQueryMessage(int loadBalancingProcessId) {
 		this.loadBalancingProcessId = loadBalancingProcessId;
 	}
 
