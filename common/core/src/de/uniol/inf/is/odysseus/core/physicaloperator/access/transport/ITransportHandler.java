@@ -24,33 +24,109 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
+/**
+ * An Interface for all TransportHandler
+ * 
+ * @author Christian Kuka, Marco Grawunder
+ *
+ */
+
 public interface ITransportHandler {
 
+	/**
+	 * This method is used to create a new instance of the transport handler
+	 * 
+	 * @param protocolHandler The connected protocol handler 
+	 * @param options A set of key-value pairs, can be used to configure the handler
+	 * @return
+	 */
+    public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options);
+
+    /**
+     * This method is used to retrieve the name of the handler, is used for registering
+     * @return
+     */
+    String getName();
+
+	/**
+	 * Is called from the framework, when the handler should be initialized and open the connection to the source
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
+    public void open() throws UnknownHostException, IOException;
+
+    /**
+     * Is called from the framework, when the handler should close the connection to the source
+     * @throws IOException
+     */
+    public void close() throws IOException;
+
+    /**
+     * called from the framework to determine, if the transport handler will not deliver any elements (typically for
+     * a file based source)
+     * @return
+     */
+    public boolean isDone();
+
+    
+    /**
+     * This message is used, when the transport handler works as sender
+     * @param message
+     * @throws IOException
+     */
+    public void send(byte[] message) throws IOException;
+    
+    /**
+     * If the transport handler needs to know the schema, it will be called here
+     * @param schema
+     */
+    public void setSchema(SDFSchema schema);
+    
+    /**
+     * This method will be called from the protocol handler to create a pull based
+     * transport handler in a source
+     * 
+     * @return A new input stream delivering the values to the protocol handler
+     */
+    public InputStream getInputStream();
+
+    /**
+     * This method will be called from the protocol handler to create a pull based
+     * transport handler in a sink
+     * 
+     * @return A new output stream where the protocol handler writes its output to
+     */
+    
+    public OutputStream getOutputStream();
+    
+    /**
+     * What kind of exchange pattern does this transport handler provide
+     * 
+     * @return the Exchange Pattern (InOnly, RobustInOnly, InOut, InOptionalOut, OutOnly, RobustOutOnly, OutIn, OutOptionalIn)
+     */
+    public ITransportExchangePattern getExchangePattern();
+
+
+    /**
+     * For query sharing purposes. If two sources contain the same set of handlers they can be shared
+     * @param other
+     * @return
+     */
+	public boolean isSemanticallyEqual(ITransportHandler other);
+
     @SuppressWarnings("rawtypes")
+    /**
+     * Add a TransportHandlerListener
+     * @param listener
+     */
 	public void addListener(ITransportHandlerListener listener);
 
     @SuppressWarnings("rawtypes")
-	public void removeListener(ITransportHandlerListener listener);
+	/**
+	 * Remove a TransportHandlerListener
+	 * @param listener
+	 */
+    public void removeListener(ITransportHandlerListener listener);
 
-    public void open() throws UnknownHostException, IOException;
 
-    public void close() throws IOException;
-
-    public void send(byte[] message) throws IOException;
-
-    public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options);
-    
-    public void setSchema(SDFSchema schema);
-
-    public InputStream getInputStream();
-
-    public OutputStream getOutputStream();
-    
-    public ITransportExchangePattern getExchangePattern();
-
-    String getName();
-
-	public boolean isDone();
-	
-	public boolean isSemanticallyEqual(ITransportHandler other);
 }
