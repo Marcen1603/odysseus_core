@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2014 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,8 +20,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +48,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHandler<T> {
 
@@ -98,8 +101,8 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
     private PrintWriter dumpOut;
 
     /**
-* 
-*/
+     *
+     */
     public XLSProtocolHandler() {
         super();
     }
@@ -163,7 +166,12 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
                 this.input = this.getTransportHandler().getInputStream();
                 this.workBook = new WorkBookHandle(this.input);
                 try {
-                    this.sheet = this.workBook.getWorkSheet(this.getWorksheet());
+                    if ("".equals(this.getWorksheet())) {
+                        this.sheet = this.workBook.getWorkSheet(0);
+                    }
+                    else {
+                        this.sheet = this.workBook.getWorkSheet(this.getWorksheet());
+                    }
                 }
                 catch (final WorkSheetNotFoundException e) {
                     XLSProtocolHandler.LOG.error(e.getMessage(), e);
@@ -175,7 +183,23 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
             this.output = this.getTransportHandler().getOutputStream();
             this.workBook = new WorkBookHandle();
             try {
-                this.sheet = this.workBook.getWorkSheet(this.getWorksheet());
+                if ("".equals(this.getWorksheet())) {
+                    this.sheet = this.workBook.getWorkSheet(0);
+                }
+                else {
+                    boolean contains = false;
+                    for (final WorkSheetHandle ws : this.workBook.getWorkSheets()) {
+                        if (ws.getSheetName().equalsIgnoreCase(this.getWorksheet())) {
+                            contains = true;
+                        }
+                    }
+                    if (!contains) {
+                        this.sheet = this.workBook.createWorkSheet(this.getWorksheet());
+                    }
+                    else {
+                        this.sheet = this.workBook.getWorkSheet(this.getWorksheet());
+                    }
+                }
             }
             catch (final WorkSheetNotFoundException e) {
                 XLSProtocolHandler.LOG.debug(e.getMessage(), e);
@@ -267,7 +291,12 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
      */
     @Override
     public boolean hasNext() throws IOException {
-        return ((this.sheet != null) && (this.lineCounter < this.sheet.getNumRows()));
+        try {
+            return ((this.sheet != null) && (this.lineCounter < this.sheet.getNumRows()));
+        }
+        catch (final NullPointerException e) {
+            return false;
+        }
     }
 
     /**
@@ -666,9 +695,6 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
     private void init(final Map<String, String> options) {
         if (options.containsKey(XLSProtocolHandler.WORKSHEET)) {
             this.setWorksheet(options.get(XLSProtocolHandler.WORKSHEET));
-        }
-        else {
-            this.setWorksheet("Sheet1");
         }
         if (options.containsKey(XLSProtocolHandler.DELAY)) {
             this.setDelay(Long.parseLong(options.get(XLSProtocolHandler.DELAY)));
