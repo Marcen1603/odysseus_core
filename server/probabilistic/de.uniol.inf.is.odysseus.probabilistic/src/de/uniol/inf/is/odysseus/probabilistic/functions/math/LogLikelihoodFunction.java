@@ -35,7 +35,7 @@ public class LogLikelihoodFunction extends AbstractFunction<Double> {
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.MATRIXS, { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE } };
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.VECTORS, { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE } };
 
     public LogLikelihoodFunction() {
         super("loglikelihood", 2, ACC_TYPES, SDFDatatype.DOUBLE);
@@ -46,7 +46,7 @@ public class LogLikelihoodFunction extends AbstractFunction<Double> {
      */
     @Override
     public Double getValue() {
-        final double[] a = ((double[][]) this.getInputValue(0))[0];
+        final double[] a = ((double[]) this.getInputValue(0));
         final MultivariateMixtureDistribution b = (MultivariateMixtureDistribution) this.getInputValue(1);
         double sum = 0.0;
         for (Double point : a) {
