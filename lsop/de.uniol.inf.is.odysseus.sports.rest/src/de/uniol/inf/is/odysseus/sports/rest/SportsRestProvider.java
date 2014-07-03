@@ -4,10 +4,10 @@ import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
 
-import serverresources.GetExampleResource;
-import serverresources.PostExampleResource;
-import serverresources.UserDAOServerResource;
 import de.uniol.inf.is.odysseus.rest.provider.IRestProvider;
+import de.uniol.inf.is.odysseus.sports.rest.serverresources.GetExampleResource;
+import de.uniol.inf.is.odysseus.sports.rest.serverresources.PostExampleResource;
+import de.uniol.inf.is.odysseus.sports.rest.serverresources.QueryServerResource;
 
 /**
  * This class gets instantiated only one time so here are the API´s routes defined 
@@ -38,7 +38,8 @@ public class SportsRestProvider extends Application implements IRestProvider{
 		router.attach("/postexample", PostExampleResource.class);
 		
 		//Example route by Thomas
-		router.attach("/user", UserDAOServerResource.class);
+		router.attach("/query", QueryServerResource.class);
+
 	
 		return router;
 	}
