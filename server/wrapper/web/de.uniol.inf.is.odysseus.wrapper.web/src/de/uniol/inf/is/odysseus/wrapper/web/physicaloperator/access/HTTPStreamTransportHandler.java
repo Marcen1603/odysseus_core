@@ -47,8 +47,9 @@ public class HTTPStreamTransportHandler extends AbstractPullTransportHandler {
     /**
      * @param protocolHandler
      */
-    public HTTPStreamTransportHandler(final IProtocolHandler<?> protocolHandler) {
-        super(protocolHandler);
+    public HTTPStreamTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String,String> options) {
+        super(protocolHandler, options);
+        init(options);
     }
 
     @Override
@@ -58,9 +59,7 @@ public class HTTPStreamTransportHandler extends AbstractPullTransportHandler {
 
     @Override
     public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
-        final HTTPStreamTransportHandler handler = new HTTPStreamTransportHandler(protocolHandler);
-        handler.setOptionsMap(options);
-        handler.init(options);
+        final HTTPStreamTransportHandler handler = new HTTPStreamTransportHandler(protocolHandler, options);
         return handler;
     }
 

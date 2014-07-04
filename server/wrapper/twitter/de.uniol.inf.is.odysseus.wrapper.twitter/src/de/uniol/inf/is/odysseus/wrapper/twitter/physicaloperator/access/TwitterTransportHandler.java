@@ -66,8 +66,9 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	/**
 	 * @param protocolHandler
 	 */
-	public TwitterTransportHandler(final IProtocolHandler<?> protocolHandler) {
-		super(protocolHandler);
+	public TwitterTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+		super(protocolHandler, options);
+		init(options);
 	}
 
 	@Override
@@ -86,9 +87,7 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 			final IProtocolHandler<?> protocolHandler,
 			final Map<String, String> options) {
 		final TwitterTransportHandler handler = new TwitterTransportHandler(
-				protocolHandler);
-		handler.setOptionsMap(options);
-		handler.init(options);
+				protocolHandler, options);
 		return handler;
 	}
 

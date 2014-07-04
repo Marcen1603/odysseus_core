@@ -52,8 +52,18 @@ public class KinectTransportHandler extends AbstractPushTransportHandler
      * @param protocolHandler
      * Instance to copy.
      */
-    public KinectTransportHandler(IProtocolHandler<?> protocolHandler) {
-        super(protocolHandler);
+    public KinectTransportHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+        super(protocolHandler, options);
+        if (options.containsKey("color")) {
+            recordColorMap = Boolean.parseBoolean(options.get("color"));
+        }
+        if (options.containsKey("depth")) {
+            recordDepthMap = Boolean.parseBoolean(options.get("depth"));
+        }
+        if (options.containsKey("skeleton")) {
+            recordSkeletonMap = Boolean.parseBoolean(options.get("skeleton"));
+        }
+
     }
 
     @Override
@@ -64,17 +74,7 @@ public class KinectTransportHandler extends AbstractPushTransportHandler
     public ITransportHandler createInstance(
             IProtocolHandler<?> protocolHandler, Map<String, String> options) {
         KinectTransportHandler handler = new KinectTransportHandler(
-                protocolHandler);
-        handler.setOptionsMap(options);
-        if (options.containsKey("color")) {
-            handler.recordColorMap = Boolean.parseBoolean(options.get("color"));
-        }
-        if (options.containsKey("depth")) {
-            handler.recordDepthMap = Boolean.parseBoolean(options.get("depth"));
-        }
-        if (options.containsKey("skeleton")) {
-            handler.recordSkeletonMap = Boolean.parseBoolean(options.get("skeleton"));
-        }
+                protocolHandler, options);
         return handler;
     }
 

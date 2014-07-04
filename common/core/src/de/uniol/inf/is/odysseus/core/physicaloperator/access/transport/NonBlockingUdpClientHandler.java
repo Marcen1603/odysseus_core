@@ -61,8 +61,28 @@ public class NonBlockingUdpClientHandler extends AbstractTransportHandler
 		super();
 	}
 
-	public NonBlockingUdpClientHandler(final IProtocolHandler<?> protocolHandler) {
-		super(protocolHandler);
+	public NonBlockingUdpClientHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+		super(protocolHandler, options);
+		
+		readBufferSize = options.containsKey("read") ? Integer
+				.parseInt(options.get("read")) : 10240;
+		writeBufferSize = options.containsKey("write") ? Integer
+				.parseInt(options.get("write")) : 10240;
+		host = options.containsKey("host") ? options.get("host")
+				: "127.0.0.1";
+		port = options.containsKey("port") ? Integer.parseInt(options
+				.get("port")) : 8080;
+		try {
+			selector = SelectorThread.getInstance();
+			final InetSocketAddress address = new InetSocketAddress(
+					host, port);
+			connector = new UDPConnector(selector, address,
+					this);
+		} catch (final IOException e) {
+			NonBlockingUdpClientHandler.LOG.error(e.getMessage(), e);
+		}
+
+
 	}
 
 	@Override
@@ -79,26 +99,7 @@ public class NonBlockingUdpClientHandler extends AbstractTransportHandler
 			final IProtocolHandler<?> protocolHandler,
 			final Map<String, String> options) {
 		final NonBlockingUdpClientHandler handler = new NonBlockingUdpClientHandler(
-				protocolHandler);
-		handler.setOptionsMap(options);
-		handler.readBufferSize = options.containsKey("read") ? Integer
-				.parseInt(options.get("read")) : 10240;
-		handler.writeBufferSize = options.containsKey("write") ? Integer
-				.parseInt(options.get("write")) : 10240;
-		handler.host = options.containsKey("host") ? options.get("host")
-				: "127.0.0.1";
-		handler.port = options.containsKey("port") ? Integer.parseInt(options
-				.get("port")) : 8080;
-		try {
-			handler.selector = SelectorThread.getInstance();
-			final InetSocketAddress address = new InetSocketAddress(
-					handler.host, handler.port);
-			handler.connector = new UDPConnector(handler.selector, address,
-					handler);
-		} catch (final IOException e) {
-			NonBlockingUdpClientHandler.LOG.error(e.getMessage(), e);
-		}
-
+				protocolHandler, options);
 		return handler;
 	}
 

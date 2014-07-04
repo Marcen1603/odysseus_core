@@ -62,8 +62,26 @@ public class NonBlockingTcpServerHandler extends AbstractTransportHandler
 		super();
 	}
 
-	public NonBlockingTcpServerHandler(final IProtocolHandler<?> protocolHandler) {
-		super(protocolHandler);
+	public NonBlockingTcpServerHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+		super(protocolHandler, options);
+		
+		
+		readBufferSize = options.containsKey("read") ? Integer
+				.parseInt(options.get("read")) : 10240;
+		writeBufferSize = options.containsKey("write") ? Integer
+				.parseInt(options.get("write")) : 10240;
+		// handler.host = options.containsKey("host") ? options.get("host") :
+		// "127.0.0.1";
+		port = options.containsKey("port") ? Integer.parseInt(options
+				.get("port")) : 8080;
+		try {
+			selector = SelectorThread.getInstance();
+			acceptor = new TCPAcceptor(port, selector,
+					this);
+		} catch (final IOException e) {
+			NonBlockingTcpServerHandler.LOG.error(e.getMessage(), e);
+		}
+
 	}
 
 	@Override
@@ -78,24 +96,7 @@ public class NonBlockingTcpServerHandler extends AbstractTransportHandler
 			final IProtocolHandler<?> protocolHandler,
 			final Map<String, String> options) {
 		final NonBlockingTcpServerHandler handler = new NonBlockingTcpServerHandler(
-				protocolHandler);
-		handler.setOptionsMap(options);
-		handler.readBufferSize = options.containsKey("read") ? Integer
-				.parseInt(options.get("read")) : 10240;
-		handler.writeBufferSize = options.containsKey("write") ? Integer
-				.parseInt(options.get("write")) : 10240;
-		// handler.host = options.containsKey("host") ? options.get("host") :
-		// "127.0.0.1";
-		handler.port = options.containsKey("port") ? Integer.parseInt(options
-				.get("port")) : 8080;
-		try {
-			handler.selector = SelectorThread.getInstance();
-			handler.acceptor = new TCPAcceptor(handler.port, handler.selector,
-					handler);
-		} catch (final IOException e) {
-			NonBlockingTcpServerHandler.LOG.error(e.getMessage(), e);
-		}
-
+				protocolHandler, options);
 		return handler;
 	}
 

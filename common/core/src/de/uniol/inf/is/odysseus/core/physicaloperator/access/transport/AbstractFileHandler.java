@@ -21,13 +21,8 @@ abstract public class AbstractFileHandler extends AbstractTransportHandler {
 		super();
 	}
 
-	public AbstractFileHandler(IProtocolHandler<?> protocolHandler) {
-		super(protocolHandler);
-	}
-	
-	@Override
-	public void setOptionsMap(Map<String, String> options) {
-		super.setOptionsMap(options);
+	public AbstractFileHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+		super(protocolHandler, options);
 		if (options.containsKey(FILENAME)){
 			filename = options.get(FILENAME);
 			filename = convertForOS(filename);
@@ -36,9 +31,9 @@ abstract public class AbstractFileHandler extends AbstractTransportHandler {
 		}
 		
 		append = (options.containsKey(APPEND)) ? Boolean
-				.parseBoolean(options.get(APPEND)) : false;
+				.parseBoolean(options.get(APPEND)) : false;		
 	}
-
+	
 	protected String convertForOS(String filename) {
 		char thisos = File.separatorChar;
 		if(thisos=='/'){

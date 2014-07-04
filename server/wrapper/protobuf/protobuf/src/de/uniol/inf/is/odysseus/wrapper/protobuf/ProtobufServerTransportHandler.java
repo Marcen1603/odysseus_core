@@ -56,11 +56,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractT
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerListener;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerOpenCloseHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
-		SimpleChannelHandler implements ITransportHandler, ITransportHandlerOpenCloseHandler{
+		SimpleChannelHandler implements ITransportHandler{
 
 	final AbstractTransportHandlerDelegate<Tuple<IMetaAttribute>> delegate;
 	
@@ -76,7 +75,7 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 	final private R messagePrototype;
 			
 	public ProtobufServerTransportHandler() {
-		delegate = new AbstractTransportHandlerDelegate<>(null, this);
+		delegate = new AbstractTransportHandlerDelegate<>(null, this,null);
 		address = null;
 		messagePrototype = null;
 	}
@@ -90,7 +89,7 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 		if (messagePrototype == null){
 			throw new RuntimeException( new IllegalArgumentException("No valid type given: " +options.get("type")));
 		}
-		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), this); 
+		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), this, options); 
 		
 		protocolHandler.setTransportHandler(this);
 		delegate.addListener(protocolHandler);

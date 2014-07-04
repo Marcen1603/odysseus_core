@@ -60,8 +60,9 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
         super();
     }
 
-    public SMTPTransportHandler(final IProtocolHandler<?> protocolHandler) {
-        super(protocolHandler);
+    public SMTPTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+        super(protocolHandler, options);
+        init(options);
     }
 
     @Override
@@ -83,9 +84,7 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
 
     @Override
     public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
-        final SMTPTransportHandler handler = new SMTPTransportHandler(protocolHandler);
-        handler.setOptionsMap(options);
-        handler.init(options);
+        final SMTPTransportHandler handler = new SMTPTransportHandler(protocolHandler, options);
         return handler;
     }
 

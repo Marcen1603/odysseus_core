@@ -58,8 +58,9 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
     /**
      * @param protocolHandler
      */
-    public HaggisTransportHandler(final IProtocolHandler<?> protocolHandler) {
-        super(protocolHandler);
+    public HaggisTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+        super(protocolHandler, options);
+        init(options);
     }
 
     @Override
@@ -69,9 +70,7 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
 
     @Override
     public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
-        final HaggisTransportHandler handler = new HaggisTransportHandler(protocolHandler);
-        handler.setOptionsMap(options);
-        handler.init(options);
+        final HaggisTransportHandler handler = new HaggisTransportHandler(protocolHandler, options);
         return handler;
     }
 

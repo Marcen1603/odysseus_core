@@ -28,22 +28,22 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 	final AbstractTransportHandlerDelegate<?> delegate;
 	
 	public AbstractTransportHandler(){
-		delegate = new AbstractTransportHandlerDelegate<>(null, this);
+		delegate = new AbstractTransportHandlerDelegate<>(null, this,null);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public AbstractTransportHandler(IProtocolHandler protocolHandler) {
-		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), this);
+	public AbstractTransportHandler(IProtocolHandler protocolHandler, Map<String, String> optionsMap) {
+		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), this, optionsMap);
 		protocolHandler.setTransportHandler(this);
 		delegate.addListener(protocolHandler);
 	}
 
 	@Override
-	public void setSchema(SDFSchema schema) {
+	final public void setSchema(SDFSchema schema) {
 		delegate.setSchema(schema);
 	}
 	
-	public SDFSchema getSchema() {
+	final public SDFSchema getSchema() {
 		return delegate.getSchema();
 	}
 
@@ -67,23 +67,23 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void addListener(ITransportHandlerListener listener) {
+	final public void addListener(ITransportHandlerListener listener) {
 		delegate.addListener(listener);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void removeListener(ITransportHandlerListener listener) {
+	final public void removeListener(ITransportHandlerListener listener) {
 		delegate.removeListener(listener);
 	}
 
 	@Override
-	public void open() throws UnknownHostException, IOException {
+	final public void open() throws UnknownHostException, IOException {
 		delegate.open();
 	}
 
 	@Override
-	public void close() throws IOException {
+	final public void close() throws IOException {
 		delegate.close();
 	}
 
@@ -93,28 +93,23 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 		return delegate.getExchangePattern();
 	}
 	
-	public Map<String, String> getOptionsMap() {
+	final public Map<String, String> getOptionsMap() {
 		return delegate.getOptionsMap();
 	}
-	
-	public void setOptionsMap(Map<String, String> options) {
-		delegate.setOptionsMap(options);
-	}
-	
-	
-	public void fireProcess(ByteBuffer message) {
+		
+	final public void fireProcess(ByteBuffer message) {
 		delegate.fireProcess(message);
 	}
 
-	public void fireProcess(String[] message) {
+	final public void fireProcess(String[] message) {
 		delegate.fireProcess(message);
 	}
 
-	public void fireOnConnect() {
+	final public void fireOnConnect() {
 		delegate.fireOnConnect(this);
 	}
 
-	public void fireOnDisconnect() {
+	final public void fireOnDisconnect() {
 		delegate.fireOnDisconnect(this);
 	}
 	

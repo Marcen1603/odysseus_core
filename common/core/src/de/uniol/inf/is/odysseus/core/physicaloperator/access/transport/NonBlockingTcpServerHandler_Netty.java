@@ -71,10 +71,12 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	}
 
 	public NonBlockingTcpServerHandler_Netty(
-			IProtocolHandler<?> protocolHandler, int port, int maxBufferSize) {
-		super(protocolHandler);
-		this.port = port;
-		this.maxBufferSize = maxBufferSize;
+			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+		super(protocolHandler, options);
+		port = options.containsKey(PORT) ? Integer.parseInt(options
+				.get(PORT)) : 8080;
+		maxBufferSize = options.containsKey(MAX_BUFFER_SIZE) ? Integer
+				.parseInt(options.get(MAX_BUFFER_SIZE)) : 0;
 	}
 
 	public NonBlockingTcpServerHandler_Netty() {
@@ -109,13 +111,8 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	@Override
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-		int port = options.containsKey(PORT) ? Integer.parseInt(options
-				.get(PORT)) : 8080;
-		int maxBufferSize = options.containsKey(MAX_BUFFER_SIZE) ? Integer
-				.parseInt(options.get(MAX_BUFFER_SIZE)) : 0;
 		NonBlockingTcpServerHandler_Netty result = new NonBlockingTcpServerHandler_Netty(
-				protocolHandler, port, maxBufferSize);
-		result.setOptionsMap(options);
+				protocolHandler, options);
 		return result;
 	}
 

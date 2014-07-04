@@ -65,8 +65,9 @@ public class POP3TransportHandler extends AbstractPullTransportHandler {
         super();
     }
 
-    public POP3TransportHandler(final IProtocolHandler<?> protocolHandler) {
-        super(protocolHandler);
+    public POP3TransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+        super(protocolHandler, options);
+        init(options);
     }
 
     @Override
@@ -76,9 +77,7 @@ public class POP3TransportHandler extends AbstractPullTransportHandler {
 
     @Override
     public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
-        final POP3TransportHandler handler = new POP3TransportHandler(protocolHandler);
-        handler.setOptionsMap(options);
-        handler.init(options);
+        final POP3TransportHandler handler = new POP3TransportHandler(protocolHandler, options);
         return handler;
     }
 

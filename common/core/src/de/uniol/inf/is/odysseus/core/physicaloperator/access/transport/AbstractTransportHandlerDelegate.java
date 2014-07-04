@@ -20,9 +20,10 @@ public class AbstractTransportHandlerDelegate<T>{
 	private SDFSchema schema;
 
 	
-	public AbstractTransportHandlerDelegate(ITransportExchangePattern exchangePattern, ITransportHandler callOnMe) {
+	public AbstractTransportHandlerDelegate(ITransportExchangePattern exchangePattern, ITransportHandler callOnMe, Map<String, String> optionsMap) {
 		this.exchangePattern = exchangePattern;
 		this.callOnMe = callOnMe;
+		this.optionsMap = optionsMap;
 	}
 
 	public void addListener(ITransportHandlerListener<T> listener) {

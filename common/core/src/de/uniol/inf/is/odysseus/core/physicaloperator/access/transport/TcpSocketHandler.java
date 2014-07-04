@@ -33,8 +33,10 @@ public class TcpSocketHandler extends AbstractTransportHandler {
 	public TcpSocketHandler() {
         // TODO Auto-generated constructor stub
     }
-	public TcpSocketHandler(IProtocolHandler<?> protocolHandler) {
-		super(protocolHandler);
+	public TcpSocketHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+		super(protocolHandler, options);
+		hostname = options.get("host");
+		port = Integer.parseInt(options.get("port"));
 	}
 
 
@@ -46,10 +48,7 @@ public class TcpSocketHandler extends AbstractTransportHandler {
 
 	@Override
 	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-		TcpSocketHandler th = new TcpSocketHandler(protocolHandler);
-		th.setOptionsMap(options);
-		th.hostname = options.get("host");
-		th.port = Integer.parseInt(options.get("port"));
+		TcpSocketHandler th = new TcpSocketHandler(protocolHandler, options);
 		return th;
 	}
 

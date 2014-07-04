@@ -42,7 +42,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 	
 	public RabbitMQTransportHandler(IProtocolHandler<?> protocolHandler,
 			Map<String, String> options) {
-		super(protocolHandler);
+		super(protocolHandler, options);
 		init(options);
 	}
 

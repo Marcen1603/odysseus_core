@@ -43,8 +43,9 @@ public class SpeechTransportHandler extends AbstractPushTransportHandler {
 		super();
 	}
 
-	public SpeechTransportHandler(IProtocolHandler<?> protocolHandler) {
-		super(protocolHandler);
+	public SpeechTransportHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+		super(protocolHandler, options);
+		init(options);
 	}
 
 	@Override
@@ -57,9 +58,7 @@ public class SpeechTransportHandler extends AbstractPushTransportHandler {
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
 		SpeechTransportHandler handler = new SpeechTransportHandler(
-				protocolHandler);
-		handler.setOptionsMap(options);
-		handler.init(options);
+				protocolHandler, options);
 		return handler;
 	}
 

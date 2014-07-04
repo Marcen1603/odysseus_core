@@ -35,16 +35,15 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 	/**
 	 * @param protocolHandler
 	 */
-	public FacebookTransportHandler(final IProtocolHandler<?> protocolHandler) {
-		super(protocolHandler);
+	public FacebookTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String,String> options) {
+		super(protocolHandler, options);
 	}
 	
 
 	@Override
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-		final FacebookTransportHandler handler = new FacebookTransportHandler(protocolHandler);
-		handler.setOptionsMap(options);
+		final FacebookTransportHandler handler = new FacebookTransportHandler(protocolHandler, options);
 		handler.init(options);
 		return handler;
 	}

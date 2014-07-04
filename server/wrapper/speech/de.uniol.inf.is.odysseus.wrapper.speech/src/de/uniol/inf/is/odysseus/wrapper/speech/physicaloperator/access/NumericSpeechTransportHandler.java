@@ -44,8 +44,9 @@ public class NumericSpeechTransportHandler extends AbstractPushTransportHandler 
 
 	}
 
-	public NumericSpeechTransportHandler(IProtocolHandler<?> protocolHandler) {
-		super(protocolHandler);
+	public NumericSpeechTransportHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+		super(protocolHandler, options);
+		init(options);
 	}
 
 	@Override
@@ -56,9 +57,7 @@ public class NumericSpeechTransportHandler extends AbstractPushTransportHandler 
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
 		NumericSpeechTransportHandler handler = new NumericSpeechTransportHandler(
-				protocolHandler);
-		handler.setOptionsMap(options);
-		handler.init(options);
+				protocolHandler, options);
 		return handler;
 	}
 

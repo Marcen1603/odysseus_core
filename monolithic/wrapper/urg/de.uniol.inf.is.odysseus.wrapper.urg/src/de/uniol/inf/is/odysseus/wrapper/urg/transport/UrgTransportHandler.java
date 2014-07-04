@@ -30,8 +30,9 @@ public class UrgTransportHandler extends AbstractPushTransportHandler {
      * @param protocolHandler
      * Instance to copy.
      */
-    public UrgTransportHandler(IProtocolHandler<?> protocolHandler) {
-        super(protocolHandler);
+    public UrgTransportHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+        super(protocolHandler, options);
+		if (options.containsKey("port")) comPort = options.get("port");
     }
 
 	@Override
@@ -41,9 +42,7 @@ public class UrgTransportHandler extends AbstractPushTransportHandler {
 	@Override
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-		UrgTransportHandler handler = new UrgTransportHandler(protocolHandler);
-		handler.setOptionsMap(options);
-		if (options.containsKey("port")) handler.comPort = options.get("port");
+		UrgTransportHandler handler = new UrgTransportHandler(protocolHandler, options);
 		return handler;
 	}
 

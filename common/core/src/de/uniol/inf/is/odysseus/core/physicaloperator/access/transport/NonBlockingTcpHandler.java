@@ -47,8 +47,24 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
         super();
     }
 
-    public NonBlockingTcpHandler(IProtocolHandler<?> protocolHandler) {
-        super(protocolHandler);
+    public NonBlockingTcpHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+        super(protocolHandler, options);
+        try {
+            NonBlockingTcpHandler.nioConnection = NioConnection.getInstance();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        NonBlockingTcpHandler.nioConnection.addConnectionListener(this);
+        host = options.get("host");
+		if (options.get("port") == null){
+			throw new IllegalArgumentException("Port must be set");
+		}
+        port = Integer.parseInt(options.get("port"));
+        autoconnect = Boolean.parseBoolean(options.get("autoconnect"));
+        user = options.get("user");
+        password = options.get("password");
+
     }
 
     @Override
@@ -57,23 +73,7 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
 
     @Override
     public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-        NonBlockingTcpHandler handler = new NonBlockingTcpHandler(protocolHandler);
-        handler.setOptionsMap(options);
-        try {
-            NonBlockingTcpHandler.nioConnection = NioConnection.getInstance();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        NonBlockingTcpHandler.nioConnection.addConnectionListener(handler);
-        handler.host = options.get("host");
-		if (options.get("port") == null){
-			throw new IllegalArgumentException("Port must be set");
-		}
-        handler.port = Integer.parseInt(options.get("port"));
-        handler.autoconnect = Boolean.parseBoolean(options.get("autoconnect"));
-        handler.user = options.get("user");
-        handler.password = options.get("password");
+        NonBlockingTcpHandler handler = new NonBlockingTcpHandler(protocolHandler, options);
         return handler;
     }
 

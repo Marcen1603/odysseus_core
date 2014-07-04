@@ -65,8 +65,9 @@ public class IMAPTransportHandler extends AbstractPullTransportHandler {
         super();
     }
 
-    public IMAPTransportHandler(final IProtocolHandler<?> protocolHandler) {
-        super(protocolHandler);
+    public IMAPTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+        super(protocolHandler, options);
+        init(options);
     }
 
     @Override
@@ -76,9 +77,7 @@ public class IMAPTransportHandler extends AbstractPullTransportHandler {
 
     @Override
     public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
-        final IMAPTransportHandler handler = new IMAPTransportHandler(protocolHandler);
-        handler.setOptionsMap(options);
-        handler.init(options);
+        final IMAPTransportHandler handler = new IMAPTransportHandler(protocolHandler, options);
         return handler;
     }
 

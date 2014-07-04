@@ -154,7 +154,8 @@ public class ShowImageUDF extends JFrame implements IUserDefinedFunction<Tuple<?
             this.repaint();
         }
 
-        public void paint(Graphics g) {
+        @Override
+		public void paint(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
             AffineTransform tx = new AffineTransform();
             if (image != null) {

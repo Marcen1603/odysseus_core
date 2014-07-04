@@ -15,29 +15,29 @@ public class HDFSFileHandler extends AbstractFileHandler {
 	
 	private FileSystem dfs;
 
-	public HDFSFileHandler() {
-	}
+	// public HDFSFileHandler() {
+	// }
 
-	public HDFSFileHandler(IProtocolHandler<?> protocolHandler) {
-		super(protocolHandler);
+	public HDFSFileHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+		super(protocolHandler, options);
+		Configuration config = new Configuration();
+		String paramName = "fs.default.name";
+		config.set(paramName, options.get(paramName));
+
+		try {
+			dfs = FileSystem.get(config);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		filename = convertForOS(options.get("filename"));
+		append = (options.containsKey("append"))?Boolean.parseBoolean(options.get("append")):false;
+
 	}
 
 	@Override
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-		Configuration config = new Configuration();
-		String paramName = "fs.default.name";
-		config.set(paramName, options.get(paramName));
-		HDFSFileHandler fileHandler = new HDFSFileHandler(protocolHandler);
-		fileHandler.setOptionsMap(options);
-		try {
-			fileHandler.dfs = FileSystem.get(config);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		fileHandler.filename = convertForOS(options.get("filename"));
-		fileHandler.append = (options.containsKey("append"))?Boolean.parseBoolean(options.get("append")):false;
-
+		HDFSFileHandler fileHandler = new HDFSFileHandler(protocolHandler, options);
 		return fileHandler;
 	}
 

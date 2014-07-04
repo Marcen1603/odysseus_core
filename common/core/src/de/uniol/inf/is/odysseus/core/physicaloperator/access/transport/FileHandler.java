@@ -41,8 +41,7 @@ public class FileHandler extends AbstractFileHandler {
 	}
 
 	public FileHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-		super(protocolHandler);
-		setOptionsMap(options);
+		super(protocolHandler, options);
 		preload = (options.containsKey(PRELOAD)) ? Boolean
 				.parseBoolean(options.get(PRELOAD)) : false;
 	}

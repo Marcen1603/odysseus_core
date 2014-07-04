@@ -76,24 +76,18 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler implement
     }
 
     public OPCDATransportHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-        super(protocolHandler);
-        setOptionsMap(options);
-    }
-
-    @Override
-    public String getName() {
-        return "OPC";
-    }
-
-    @Override
-    public void setOptionsMap(Map<String, String> options) {
-        super.setOptionsMap(options);
+        super(protocolHandler, options);
         this.host = options.containsKey("host") ? options.get("host") : "localhost";
         this.domain = options.containsKey("domain") ? options.get("domain") : "";
         this.username = options.containsKey("username") ? options.get("username") : null;
         this.password = options.containsKey("password") ? options.get("password") : null;
         this.progId = options.containsKey("progId") ? options.get("progId") : null;
         this.clsId = options.containsKey("clsId") ? options.get("clsId") : null;
+    }
+
+    @Override
+    public String getName() {
+        return "OPC";
     }
 
     @Override

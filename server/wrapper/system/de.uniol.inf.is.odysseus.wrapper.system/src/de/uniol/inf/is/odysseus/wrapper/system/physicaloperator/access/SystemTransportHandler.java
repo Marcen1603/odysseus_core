@@ -52,8 +52,9 @@ public class SystemTransportHandler extends AbstractPullTransportHandler {
 	/**
 	 * @param protocolHandler
 	 */
-	public SystemTransportHandler(final IProtocolHandler<?> protocolHandler) {
-		super(protocolHandler);
+	public SystemTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+		super(protocolHandler, options);
+		init(options);
 	}
 
 	@Override
@@ -65,9 +66,7 @@ public class SystemTransportHandler extends AbstractPullTransportHandler {
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
 		final SystemTransportHandler handler = new SystemTransportHandler(
-				protocolHandler);
-		handler.setOptionsMap(options);
-		handler.init(options);
+				protocolHandler, options);
 		return handler;
 	}
 

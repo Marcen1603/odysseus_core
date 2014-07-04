@@ -47,13 +47,7 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 
 	public NcsaHDFTransportHandler(IProtocolHandler<?> protocolHandler,
 			Map<String, String> options) {
-		super(protocolHandler);
-		setOptionsMap(options);
-	}
-
-	@Override
-	public void setOptionsMap(Map<String, String> options) {
-		super.setOptionsMap(options);
+		super(protocolHandler, options);
 		if (options.containsKey(PATH)) {
 			path = options.get(PATH);
 		} else {

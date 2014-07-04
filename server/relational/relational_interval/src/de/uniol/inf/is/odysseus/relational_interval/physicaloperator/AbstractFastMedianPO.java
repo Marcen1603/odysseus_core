@@ -93,6 +93,7 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 						globalMedian.getAttribute(globalMedian.size() - 1),
 						true);
 			}
+			
 
 			if (last_gr != null) {
 				if (last_gr.getMetadata().getStart()

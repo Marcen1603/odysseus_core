@@ -67,7 +67,22 @@ public class NonBlockingUdpServerHandler extends AbstractTransportHandler
 	public NonBlockingUdpServerHandler(
 			final IProtocolHandler<?> protocolHandler,
 			final Map<String, String> options) {
-		super(protocolHandler);
+		super(protocolHandler, options);
+		readBufferSize = options.containsKey("read") ? Integer
+				.parseInt(options.get("read")) : 10240;
+		writeBufferSize = options.containsKey("write") ? Integer
+				.parseInt(options.get("write")) : 10240;
+		// handler.host = options.containsKey("host") ? options.get("host") :
+		// "127.0.0.1";
+		port = options.containsKey("port") ? Integer.parseInt(options
+				.get("port")) : 8080;
+		try {
+			selector = SelectorThread.getInstance();
+			acceptor = new UDPAcceptor(port, selector,
+					this);
+		} catch (final IOException e) {
+			NonBlockingUdpServerHandler.LOG.error(e.getMessage(), e);
+		}
 	}
 
 	@Override
@@ -83,22 +98,7 @@ public class NonBlockingUdpServerHandler extends AbstractTransportHandler
 			final Map<String, String> options) {
 		final NonBlockingUdpServerHandler handler = new NonBlockingUdpServerHandler(
 				protocolHandler, options);
-		handler.setOptionsMap(options);
-		handler.readBufferSize = options.containsKey("read") ? Integer
-				.parseInt(options.get("read")) : 10240;
-		handler.writeBufferSize = options.containsKey("write") ? Integer
-				.parseInt(options.get("write")) : 10240;
-		// handler.host = options.containsKey("host") ? options.get("host") :
-		// "127.0.0.1";
-		handler.port = options.containsKey("port") ? Integer.parseInt(options
-				.get("port")) : 8080;
-		try {
-			handler.selector = SelectorThread.getInstance();
-			handler.acceptor = new UDPAcceptor(handler.port, handler.selector,
-					handler);
-		} catch (final IOException e) {
-			NonBlockingUdpServerHandler.LOG.error(e.getMessage(), e);
-		}
+	
 		return handler;
 	}
 

@@ -39,8 +39,14 @@ public class TimerTransportHandler extends AbstractPushTransportHandler {
         super();
     }
 
-    public TimerTransportHandler(final IProtocolHandler<?> protocolHandler) {
-        super(protocolHandler);
+    public TimerTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+        super(protocolHandler, options);
+        if (options.containsKey(TimerTransportHandler.PERIOD)) {
+            this.period = Long.parseLong(options.get(TimerTransportHandler.PERIOD));
+        }
+        else {
+            throw new IllegalArgumentException("No period given!");
+        }
     }
 
     /**
@@ -56,23 +62,8 @@ public class TimerTransportHandler extends AbstractPushTransportHandler {
      */
     @Override
     public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
-        final TimerTransportHandler handler = new TimerTransportHandler(protocolHandler);
-        handler.setOptionsMap(options);
+        final TimerTransportHandler handler = new TimerTransportHandler(protocolHandler, options);
         return handler;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setOptionsMap(final Map<String, String> options) {
-        super.setOptionsMap(options);
-        if (options.containsKey(TimerTransportHandler.PERIOD)) {
-            this.period = Long.parseLong(options.get(TimerTransportHandler.PERIOD));
-        }
-        else {
-            throw new IllegalArgumentException("No period given!");
-        }
     }
 
     /**

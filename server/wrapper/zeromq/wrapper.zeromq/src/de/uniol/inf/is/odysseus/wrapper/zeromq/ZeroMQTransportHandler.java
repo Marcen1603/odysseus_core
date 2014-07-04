@@ -65,7 +65,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 	
 	public ZeroMQTransportHandler(IProtocolHandler<?> protocolHandler,
 			Map<String, String> options) {
-		super(protocolHandler);
+		super(protocolHandler, options);
 		init(options);
 	}
 

@@ -90,7 +90,6 @@ public class StringTransportHandler extends AbstractTransportHandler {
 
 	public static StringTransportHandler getInstance(List<String> output,  Map<String,String> options ) {
 		StringTransportHandler instance = new StringTransportHandler(output, options);
-		instance.setOptionsMap(options);
 		return instance;
 	}
 	

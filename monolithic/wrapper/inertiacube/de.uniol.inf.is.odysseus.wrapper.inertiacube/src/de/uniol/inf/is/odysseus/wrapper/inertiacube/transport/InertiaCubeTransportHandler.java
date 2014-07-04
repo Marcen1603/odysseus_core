@@ -68,8 +68,8 @@ public class InertiaCubeTransportHandler extends AbstractPushTransportHandler  {
      * @param protocolHandler
      * Instance to copy.
      */
-    public InertiaCubeTransportHandler(IProtocolHandler<?> protocolHandler) {
-        super(protocolHandler);
+    public InertiaCubeTransportHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+        super(protocolHandler, options);
     }
 
 	@Override
@@ -80,9 +80,7 @@ public class InertiaCubeTransportHandler extends AbstractPushTransportHandler  {
 	@Override
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-		InertiaCubeTransportHandler handler = new InertiaCubeTransportHandler(protocolHandler);
-		handler.setOptionsMap(options);
-		// handle options here
+		InertiaCubeTransportHandler handler = new InertiaCubeTransportHandler(protocolHandler, options);
 		return handler;
 	}
 
