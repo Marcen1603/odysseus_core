@@ -260,7 +260,8 @@ public class MultivariateNormalDistribution implements IMultivariateDistribution
         return new MultivariateNormalDistribution(this);
     }
 
-    public double[] sample() {
+    @Override
+	public double[] sample() {
         double[] point = new double[getDimension()];
         final double[] normalVals = new double[getDimension()];
         for (int j = 0; j < getDimension(); j++) {
