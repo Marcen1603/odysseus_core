@@ -14,13 +14,13 @@ public class AbstractTransportHandlerDelegate<T>{
 	private final List<ITransportHandlerListener<T>> transportHandlerListener = new ArrayList<ITransportHandlerListener<T>>();
 	private int openCounter = 0;
 	private final ITransportExchangePattern exchangePattern;
-	final private ITransportHandlerOpenCloseHandler callOnMe;
+	final private ITransportHandler callOnMe;
 	
 	private Map<String, String> optionsMap;
 	private SDFSchema schema;
 
 	
-	public AbstractTransportHandlerDelegate(ITransportExchangePattern exchangePattern, ITransportHandlerOpenCloseHandler callOnMe) {
+	public AbstractTransportHandlerDelegate(ITransportExchangePattern exchangePattern, ITransportHandler callOnMe) {
 		this.exchangePattern = exchangePattern;
 		this.callOnMe = callOnMe;
 	}

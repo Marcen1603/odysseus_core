@@ -23,7 +23,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-abstract public class AbstractTransportHandler implements ITransportHandler, ITransportHandlerOpenCloseHandler {
+abstract public class AbstractTransportHandler implements ITransportHandler{
 
 	final AbstractTransportHandlerDelegate<?> delegate;
 	
@@ -46,18 +46,6 @@ abstract public class AbstractTransportHandler implements ITransportHandler, ITr
 	public SDFSchema getSchema() {
 		return delegate.getSchema();
 	}
-	
-	@Override
-	abstract public void processInOpen() throws IOException;
-	
-	@Override
-	abstract public void processOutOpen() throws IOException;
-
-	@Override
-	abstract public void processInClose() throws IOException;
-
-	@Override
-	abstract public void processOutClose() throws IOException;
 
 	@Override
 	public boolean isDone() {

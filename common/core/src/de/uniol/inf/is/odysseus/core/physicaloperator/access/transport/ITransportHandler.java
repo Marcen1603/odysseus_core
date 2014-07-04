@@ -54,6 +54,10 @@ public interface ITransportHandler {
 	 * @throws IOException
 	 */
     public void open() throws UnknownHostException, IOException;
+    
+	public void processInOpen() throws IOException;
+	
+	public void processOutOpen() throws IOException;
 
     /**
      * Is called from the framework, when the handler should close the connection to the source
@@ -61,6 +65,10 @@ public interface ITransportHandler {
      */
     public void close() throws IOException;
 
+    public void processInClose() throws IOException;
+
+	public void processOutClose() throws IOException;
+    
     /**
      * called from the framework to determine, if the transport handler will not deliver any elements (typically for
      * a file based source)
