@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 abstract public class AbstractFileHandler extends AbstractTransportHandler {
 
 	public static final String FILENAME = "filename";
+	public static final String APPEND = "append";
 	protected String filename;
 	protected InputStream in;
 	protected OutputStream out;
@@ -33,6 +34,9 @@ abstract public class AbstractFileHandler extends AbstractTransportHandler {
 		}else{
 			throw new IllegalArgumentException("No filename given!");			
 		}
+		
+		append = (options.containsKey(APPEND)) ? Boolean
+				.parseBoolean(options.get(APPEND)) : false;
 	}
 
 	protected String convertForOS(String filename) {

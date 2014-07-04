@@ -29,7 +29,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 public class FileHandler extends AbstractFileHandler {
 
 	public static final String FILENAME = "filename";
-	public static final String APPEND = "append";
 	public static final String PRELOAD = "preload";
 	public static final String NAME = "File";
 
@@ -41,8 +40,11 @@ public class FileHandler extends AbstractFileHandler {
 		super();
 	}
 
-	public FileHandler(IProtocolHandler<?> protocolHandler) {
+	public FileHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
 		super(protocolHandler);
+		setOptionsMap(options);
+		preload = (options.containsKey(PRELOAD)) ? Boolean
+				.parseBoolean(options.get(PRELOAD)) : false;
 	}
 
 	@Override
@@ -142,14 +144,7 @@ public class FileHandler extends AbstractFileHandler {
 	@Override
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-		FileHandler fh = new FileHandler(protocolHandler);
-		fh.setOptionsMap(options);
-		fh.filename = options.get(FILENAME);
-		fh.filename = convertForOS(fh.filename);
-		fh.append = (options.containsKey(APPEND)) ? Boolean
-				.parseBoolean(options.get(APPEND)) : false;
-		fh.preload = (options.containsKey(PRELOAD)) ? Boolean
-				.parseBoolean(options.get(PRELOAD)) : false;
+		FileHandler fh = new FileHandler(protocolHandler, options);
 		return fh;
 	}
 
