@@ -1,4 +1,4 @@
-package dao;
+package de.uniol.inf.is.odysseus.sports.rest.dao;
 
 import java.io.IOException;
 import java.io.Serializable;

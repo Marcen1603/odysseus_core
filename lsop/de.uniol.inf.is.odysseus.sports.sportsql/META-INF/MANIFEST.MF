@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Sportsql
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.sports.sportsql
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.sports.sportsql.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Import-Package: org.json,
+ org.osgi.framework;version="1.6.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ com.google.guava
+Service-Component: OSGI-INF/MileageTeamSportsQLParser.xml,OSGI-INF/SportsQLParserRegistry.xml,
+ OSGI-INF/MileagePlayerSportsQLParser.xml
+Export-Package: de.uniol.inf.is.odysseus.sports.sportsql.parser,
+ de.uniol.inf.is.odysseus.sports.sportsql.registry

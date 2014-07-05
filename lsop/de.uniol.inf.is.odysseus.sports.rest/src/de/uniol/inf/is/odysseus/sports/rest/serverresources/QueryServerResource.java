@@ -7,8 +7,8 @@ import org.restlet.data.Status;
 import org.restlet.ext.jackson.JacksonRepresentation;
 import org.restlet.resource.ServerResource;
 
-import dao.DataTransferObject;
-import dao.PeerSocket;
+import de.uniol.inf.is.odysseus.sports.rest.dao.DataTransferObject;
+import de.uniol.inf.is.odysseus.sports.rest.dao.PeerSocket;
 import de.uniol.inf.is.odysseus.sports.rest.resources.IQueryResource;
 
 public class QueryServerResource extends ServerResource implements IQueryResource{
