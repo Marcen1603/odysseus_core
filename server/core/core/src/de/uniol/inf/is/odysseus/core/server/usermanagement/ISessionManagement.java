@@ -39,7 +39,7 @@ public interface ISessionManagement {
 	 * @param caller
 	 * @return
 	 */
-	boolean isValid(ISession session, ISession caller);
+	boolean isValid(ISession session);
 	
 	ISession login(String token);
 	

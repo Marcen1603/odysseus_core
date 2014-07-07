@@ -118,6 +118,7 @@ public class ObjectFactory {
     private final static QName _GetOperatorNamesResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getOperatorNamesResponse");
     private final static QName _QueryNotExistsException_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "QueryNotExistsException");
     private final static QName _GetQueryParserTokens_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getQueryParserTokens");
+    private final static QName _IsValidSession_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "isValidSession");
     private final static QName _GetOperatorBuilderList_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getOperatorBuilderList");
     private final static QName _GetRegisteredSchedulers_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getRegisteredSchedulers");
     private final static QName _GetSupportedQueryParsersResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getSupportedQueryParsersResponse");
@@ -129,6 +130,7 @@ public class ObjectFactory {
     private final static QName _StartAllClosedQueriesResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "startAllClosedQueriesResponse");
     private final static QName _GetDataHandlerValues_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getDataHandlerValues");
     private final static QName _IsRunning_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "isRunning");
+    private final static QName _IsValidSessionResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "isValidSessionResponse");
     private final static QName _GetRegisteredDatatypesResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getRegisteredDatatypesResponse");
     private final static QName _GetLogicalQueryResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getLogicalQueryResponse");
     private final static QName _GetCurrentSchedulingStrategyID_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getCurrentSchedulingStrategyID");
@@ -375,6 +377,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link IsValidSessionResponse }
+     * 
+     */
+    public IsValidSessionResponse createIsValidSessionResponse() {
+        return new IsValidSessionResponse();
+    }
+
+    /**
      * Create an instance of {@link IsRunning }
      * 
      */
@@ -508,6 +518,14 @@ public class ObjectFactory {
      */
     public StartExecutionResponse createStartExecutionResponse() {
         return new StartExecutionResponse();
+    }
+
+    /**
+     * Create an instance of {@link IsValidSession }
+     * 
+     */
+    public IsValidSession createIsValidSession() {
+        return new IsValidSession();
     }
 
     /**
@@ -2359,6 +2377,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link IsValidSession }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "isValidSession")
+    public JAXBElement<IsValidSession> createIsValidSession(IsValidSession value) {
+        return new JAXBElement<IsValidSession>(_IsValidSession_QNAME, IsValidSession.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetOperatorBuilderList }{@code >}}
      * 
      */
@@ -2455,6 +2482,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "isRunning")
     public JAXBElement<IsRunning> createIsRunning(IsRunning value) {
         return new JAXBElement<IsRunning>(_IsRunning_QNAME, IsRunning.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link IsValidSessionResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "isValidSessionResponse")
+    public JAXBElement<IsValidSessionResponse> createIsValidSessionResponse(IsValidSessionResponse value) {
+        return new JAXBElement<IsValidSessionResponse>(_IsValidSessionResponse_QNAME, IsValidSessionResponse.class, null, value);
     }
 
     /**

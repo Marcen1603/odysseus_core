@@ -234,6 +234,15 @@ public class WebserviceServer {
 		return new Response(false);
 	}
 
+	public Response isValidSession(			
+			@WebParam(name = "securitytoken") String securityToken){
+		ISession session = UserManagementProvider.getSessionmanagement().login(securityToken);
+		if (session != null){
+			return new Response(getExecutor().isValid(session));
+		}
+		return new Response(false);
+	}
+	
 	public IntegerCollectionResponse addQuery(
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "parser") String parser,

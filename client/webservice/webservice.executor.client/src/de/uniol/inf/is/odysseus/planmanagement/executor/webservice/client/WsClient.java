@@ -92,6 +92,7 @@ import de.uniol.inf.is.odysseus.webservice.client.InvalidUserDataException_Excep
 import de.uniol.inf.is.odysseus.webservice.client.LogicalQueryInfo;
 import de.uniol.inf.is.odysseus.webservice.client.QueryNotExistsException_Exception;
 import de.uniol.inf.is.odysseus.webservice.client.ResourceInformation;
+import de.uniol.inf.is.odysseus.webservice.client.Response;
 import de.uniol.inf.is.odysseus.webservice.client.SdfAttributeInformation;
 import de.uniol.inf.is.odysseus.webservice.client.SdfDatatypeInformation;
 import de.uniol.inf.is.odysseus.webservice.client.SdfSchemaInformation;
@@ -252,6 +253,12 @@ public class WsClient implements IExecutor, IClientExecutor {
 		session.setToken(securitytoken);
 		fireUpdateEvent(IUpdateEventListener.SESSION);
 		return session;
+	}
+	
+	@Override
+	public boolean isValid(ISession session) {
+		Response r = getWebserviceServer().isValidSession(session.getToken());
+		return r.isSuccessful();
 	}
 
 	@Override

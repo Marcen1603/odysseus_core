@@ -111,10 +111,10 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
-	public boolean isValid(final ISession session, final ISession caller) {
+	public boolean isValid(final ISession session) {
 		if (session.getUser() != null) {
 			final ISession realSession = this.sessionStore.get(session.getId());
-			this.sessionStore.get(caller.getId());
+			//this.sessionStore.get(caller.getId());
 			if (realSession.isValid()) {
 				return true;
 			}

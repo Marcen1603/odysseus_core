@@ -328,6 +328,13 @@ public interface IExecutor extends IClientPlanManager {
 	 *            The user to be logged out
 	 */
 	void logout(ISession caller);
+	
+	/**
+	 * Check if the given session is still valid
+	 * @param session
+	 * @return true, if session 
+	 */
+	boolean isValid(ISession session);
 
 	// Facade for DataDictionary
 	/**

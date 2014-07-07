@@ -1131,6 +1131,12 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void logout(ISession caller) {
 		UserManagementProvider.getSessionmanagement().logout(caller);
 	}
+	
+	@Override
+	public boolean isValid(ISession session) {
+		return UserManagementProvider.getSessionmanagement().isValid(session);
+	}
+	
 
 	// Compiler Facade
 	@Override
