@@ -43,7 +43,7 @@ abstract public class AbstractJSONProtocolHandler<T extends KeyValueObject<?>> e
 	public void open() throws UnknownHostException, IOException {
 		getTransportHandler().open();
 		if (this.getDirection() == ITransportDirection.IN) {
-			if (this.getAccess() == IAccessPattern.PULL) {
+			if (this.getAccessPattern() == IAccessPattern.PULL) {
 				reader = new BufferedReader(new InputStreamReader(getTransportHandler().getInputStream()));
 			} else {
 				// ?

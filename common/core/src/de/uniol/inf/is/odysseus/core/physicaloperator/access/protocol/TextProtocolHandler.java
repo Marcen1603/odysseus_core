@@ -51,12 +51,12 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
     public void open() throws UnknownHostException, IOException {
         getTransportHandler().open();
         if (getDirection().equals(ITransportDirection.IN)) {
-            if ((this.getAccess().equals(IAccessPattern.PULL)) || (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
+            if ((this.getAccessPattern().equals(IAccessPattern.PULL)) || (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL))) {
                 this.scanner = new Scanner(getTransportHandler().getInputStream(), charset);
                 scanner.useDelimiter(objectDelimiter);
             }
         } else {
-            if ((this.getAccess().equals(IAccessPattern.PULL)) || (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
+            if ((this.getAccessPattern().equals(IAccessPattern.PULL)) || (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL))) {
                 writer = new BufferedWriter(new OutputStreamWriter(getTransportHandler().getOutputStream()));
             }
         }

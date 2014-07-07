@@ -81,7 +81,7 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     }
 
     @Override
-    public IAccessPattern getAccess() {
+    public IAccessPattern getAccessPattern() {
         return this.access;
     }
     
@@ -173,7 +173,7 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     	AbstractProtocolHandler<?> other = (AbstractProtocolHandler<?>)o;
     	if(!this.direction.equals(other.getDirection())) {
     		return false;
-    	} else if(!this.access.equals(other.getAccess())) {
+    	} else if(!this.access.equals(other.getAccessPattern())) {
     		return false;
     	} else if(!this.dataHandler.isSemanticallyEqual(other.getDataHandler())) {
     		return false;

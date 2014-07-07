@@ -84,8 +84,8 @@ public class IVEF_1_0_4_ProtocolHandler extends
 	@Override
 	public void open() throws UnknownHostException, IOException {
 		getTransportHandler().open();
-		if ( (this.getAccess().equals(IAccessPattern.PULL)) || 
-			 (this.getAccess().equals(IAccessPattern.ROBUST_PULL) ) )
+		if ( (this.getAccessPattern().equals(IAccessPattern.PULL)) || 
+			 (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL) ) )
 			 this.reader = new BufferedReader(new InputStreamReader(getTransportHandler().getInputStream() ) );
 	}
 

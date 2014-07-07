@@ -159,7 +159,7 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
         this.getTransportHandler().open();
         this.lineCounter = 0;
         if (this.getDirection().equals(ITransportDirection.IN)) {
-            if ((this.getAccess().equals(IAccessPattern.PULL)) || (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
+            if ((this.getAccessPattern().equals(IAccessPattern.PULL)) || (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL))) {
                 this.input = this.getTransportHandler().getInputStream();
                 this.workBook = new WorkBookHandle(this.input);
                 try {

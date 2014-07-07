@@ -64,8 +64,8 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	private void intern_open() throws UnknownHostException, IOException {
 		getTransportHandler().open();
 		if (getDirection().equals(ITransportDirection.IN)) {
-			if ((this.getAccess().equals(IAccessPattern.PULL))
-					|| (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
+			if ((this.getAccessPattern().equals(IAccessPattern.PULL))
+					|| (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL))) {
 				reader = new BufferedReader(new InputStreamReader(
 						getTransportHandler().getInputStream()));
 			}

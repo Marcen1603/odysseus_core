@@ -20,12 +20,33 @@ import java.nio.ByteBuffer;
 
 public interface ITransportHandlerListener<T> {
 	
-	public void onConnect(ITransportHandler caller);
-	public void onDisonnect(ITransportHandler caller);
+	/**
+	 * Is called when a new connection with the transport handler is established
+	 * @param caller
+	 */
+	void onConnect(ITransportHandler caller);
 	
+	/**
+	 * Is called when an existing connection to the transport handler is interrupted
+	 * @param caller
+	 */
+	void onDisonnect(ITransportHandler caller);
+	
+	/**
+	 * Implement this method to process the message
+	 * @param message as ByteBuffer
+	 */
+	void process(ByteBuffer message);
+	
+	/**
+	 * Implement this method to process the message
+	 * @param message as String Array
+	 */
+	void process(String[] message);
 
-	public void process(ByteBuffer message);
-	public void process(String[] message);
-	public void process(T m);
-	
+	/**
+	 * Implement this method to process the message
+	 * @param message as T
+	 */
+	void process(T m);
 }

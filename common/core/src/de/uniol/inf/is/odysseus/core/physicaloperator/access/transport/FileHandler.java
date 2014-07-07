@@ -143,8 +143,7 @@ public class FileHandler extends AbstractFileHandler {
 	@Override
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-		FileHandler fh = new FileHandler(protocolHandler, options);
-		return fh;
+		return new FileHandler(protocolHandler, options);
 	}
 
 	@Override

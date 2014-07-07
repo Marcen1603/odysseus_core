@@ -30,35 +30,111 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public interface IProtocolHandler<T> extends ITransportHandlerListener<T> {
 
-    public void open() throws UnknownHostException, IOException;
-
-    public void close() throws IOException;
-
-    public boolean hasNext() throws IOException;
-
-    public T getNext() throws IOException;
-
-    public void write(T object) throws IOException;
-
-    public void writePunctuation(IPunctuation punctuation) throws IOException;
-    
+	/**
+	 * Creates a new protocol handler
+	 * @param direction is this handler used in a source (IN) or in a sink (OUT)
+	 * @param access which kind of access pattern is supported (  PUSH,  PULL,  ROBUST_PUSH,  ROBUST_PULL)
+	 * @param options set of options as key value pairs
+	 * @param dataHandler the data handler thats connected to the protocol handler
+	 * @return
+	 */
     public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access,
             Map<String, String> options, IDataHandler<T> dataHandler);
 
+    /**
+     * The unique name of the protocol handler
+     * @return
+     */
+    String getName();
+    
+    /**
+     * The exchange pattern of the underlying transport handler 
+     * @return
+     */
     public ITransportExchangePattern getExchangePattern();
 
-    void setTransportHandler(ITransportHandler transportHandler);
+	
+	/**
+	 * Is called from the framework, when the query is started
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
+    public void open() throws UnknownHostException, IOException;
+    
+    /**
+     * Is called from the framework, when the query is stopped
+     * @throws IOException
+     */
+    public void close() throws IOException;
 
+    /**
+     * in case of pull based access,
+     * @return true, if another element is available
+     * @throws IOException
+     */
+    public boolean hasNext() throws IOException;
+
+    /**
+     * in case of pull based access
+     * @return the next element
+     * @throws IOException
+     */
+    public T getNext() throws IOException;
+
+    /**
+     * in case of pull based access
+     * @return true if the source has no more elements to deliver (e.g. a file reach end of file)
+     */
+	public boolean isDone();
+
+    
+    /**
+     * in cased of OUT direction, write this object and send it to the transport handler
+     * @param object
+     * @throws IOException
+     */
+    public void write(T object) throws IOException;
+
+    /**
+     * in cased of OUT direction, send the punctuation to the transport handler
+     * @param punctuation
+     * @throws IOException
+     */
+    public void writePunctuation(IPunctuation punctuation) throws IOException;
+    
+    
+    /**
+     * Assigns the transport handler to the protocol handler
+     * @param transportHandler
+     */
+    void setTransportHandler(ITransportHandler transportHandler);
+    
+    
+    /**
+     * In push based szenarios: The the class, that should receive the data
+     * 
+     * @param transfer
+     */
     void setTransfer(ITransferHandler<T> transfer);
     
+    /**
+     * Retrieves direction IN or OUT
+     * @return
+     */
     ITransportDirection getDirection();
 
-    IAccessPattern getAccess();
+    /**
+     * Retrieves the access pattern
+     * @return
+     */
+    IAccessPattern getAccessPattern();
 
-    String getName();
-
-	public boolean isDone();
-	
+    
+    /**
+     * Needed for query sharing
+     * @param other
+     * @return
+     */
 	public boolean isSemanticallyEqual(IProtocolHandler<?> other);
 
 }

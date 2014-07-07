@@ -140,14 +140,14 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public void open() throws UnknownHostException, IOException {
 		getTransportHandler().open();
 		if (getDirection().equals(ITransportDirection.IN)) {
-			if ((this.getAccess().equals(IAccessPattern.PULL))
-					|| (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
+			if ((this.getAccessPattern().equals(IAccessPattern.PULL))
+					|| (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL))) {
 				reader = new BufferedReader(new InputStreamReader(
 						getTransportHandler().getInputStream()));
 			}
 		} else {
-			if ((this.getAccess().equals(IAccessPattern.PULL))
-					|| (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
+			if ((this.getAccessPattern().equals(IAccessPattern.PULL))
+					|| (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL))) {
 				writer = new BufferedWriter(new OutputStreamWriter(
 						getTransportHandler().getOutputStream()));
 			}
