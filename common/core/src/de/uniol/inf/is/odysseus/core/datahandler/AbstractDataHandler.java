@@ -135,5 +135,12 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 		// TODO: implement in child classes
 		return false;
 	}
-	
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }
