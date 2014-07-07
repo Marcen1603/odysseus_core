@@ -98,7 +98,7 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 
 	private void removeBundle(Bundle bundle) {
 		Enumeration<URL> entries = bundle.findEntries(
-				"de.uniol.inf.is.odysseus", "*.class", true);
+				"", "*.class", true);
 
 		while (entries.hasMoreElements()) {
 			URL curURL = entries.nextElement();
@@ -186,12 +186,12 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 
 	private void searchBundle(Bundle bundle) {
 		Enumeration<URL> entries = bundle.findEntries(
-				"/bin/de/uniol/inf/is/odysseus", "*.class", true);
+				"/bin/", "*.class", true);
 		// collect logical operators and register parameters first
 		// add logical operators afterwards, because they may need the newly
 		// registered parameters
 		if (entries == null) {
-			entries = bundle.findEntries("/de/uniol/inf/is/odysseus",
+			entries = bundle.findEntries("/",
 					"*.class", true);
 			if (entries == null) {
 				return;
