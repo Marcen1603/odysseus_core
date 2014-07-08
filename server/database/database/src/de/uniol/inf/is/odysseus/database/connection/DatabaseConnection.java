@@ -191,15 +191,21 @@ public class DatabaseConnection implements IDatabaseConnection {
 		DatabaseMetaData meta = connection.getMetaData();
 		ResultSet rs = meta.getColumns(null, null, tablename, null);
 		while (rs.next()) {
+			
 			String name = rs.getString("COLUMN_NAME");
-			SDFDatatype dt = DatatypeRegistry.getSDFDatatype(rs.getInt("DATA_TYPE"));
+			int type = rs.getInt("DATA_TYPE");			
+			SDFDatatype dt = SDFDatatype.STRING;
+			try{
+				dt = DatatypeRegistry.getSDFDatatype(type);
+			}catch(Exception e){
+				logger.warn("No Mapping for "+rs.getString("TYPE_NAME")+" defined. Using STRING instead");
+			}
 			SDFAttribute a = new SDFAttribute(null, name, dt, null, null, null);
 			attrs.add(a);
 		}
 		SDFSchema schema = new SDFSchema(tablename, Tuple.class, attrs);
 		return schema;
 	}
-
 	@Override
 	public boolean equalSchemas(String tablename, SDFSchema schema) throws SQLException {
 

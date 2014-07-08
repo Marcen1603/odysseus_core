@@ -342,10 +342,13 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
-		ILogicalOperator ao = (ILogicalOperator) invokeDatabaseVisitor(ASTCreateFromDatabase.class, node, name);
-		ao.setOutputSchema(new SDFSchema(name, Tuple.class, attributes));
+		CreateStreamCommand cmd = (CreateStreamCommand) invokeDatabaseVisitor(ASTCreateFromDatabase.class, node, name);
+		cmd.setOutputSchema(new SDFSchema(name, Tuple.class, attributes));
+
+		commands.add(cmd);
 		//return addTimestampAO((ILogicalOperator) ao);
-		return ao;
+//		return ao;
+		return null;
 	}
 
 	private Object invokeDatabaseVisitor(Class<?> nodeclass, Object node, Object data) throws QueryParseException {

@@ -116,7 +116,11 @@ public class DatatypeRegistry {
 	 * @return the dedicated SDF data type
 	 */
 	public static SDFDatatype getSDFDatatype(int sqltype) {
-		return getDataHandler(sqltype).getDefaultSDFDatatype();
+		IDataTypeMappingHandler<?> dh = getDataHandler(sqltype);
+		if (dh == null){
+			throw new IllegalArgumentException("No Datatype mapping for "+sqltype);
+		}
+		return dh.getDefaultSDFDatatype();
 	}
 	
 	/**

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
@@ -29,5 +30,9 @@ public class CreateStreamCommand extends AbstractExecutorCommand {
 	@Override
 	public String toString() {
 		return "Create STREAM "+name;
+	}
+
+	public void setOutputSchema(SDFSchema sdfSchema) {
+		rootAO.setOutputSchema(sdfSchema);
 	}
 }
