@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
@@ -24,8 +25,8 @@ public class SportsQLParserRegistry {
 		StatisticType[] types = sportsQLAnnotation.statisticTypes();
 		Preconditions.checkArgument(types.length>0, "SportsQL annotation of " + parser.getClass().getSimpleName()+" must contain at least one statistic type");
 		
-		String name = sportsQLAnnotation.name().toLowerCase();
-		Preconditions.checkArgument(name.trim().length()>0, "SportsQL annotation of  "  + parser.getClass().getSimpleName()+" must contain a statictic name");
+		String name = sportsQLAnnotation.name().trim().toUpperCase();
+		Preconditions.checkArgument(name.length()>0, "SportsQL annotation of  "  + parser.getClass().getSimpleName()+" must contain a statictic name");
 
 		for (StatisticType statisticType : types) {
 			Map<GameType, Map<String, ISportsQLParser>> statisticTypeMap = sportsQLParserMap.get(statisticType);
@@ -51,7 +52,7 @@ public class SportsQLParserRegistry {
 		SportsQL sportsQLAnnotation = parser.getClass().getAnnotation(SportsQL.class);
 		GameType[] games = sportsQLAnnotation.gameTypes();
 		StatisticType[] types = sportsQLAnnotation.statisticTypes();
-		String name = sportsQLAnnotation.name().toLowerCase();
+		String name = sportsQLAnnotation.name().toUpperCase();
 		for (GameType game : games) {
 			for (StatisticType statisticType : types) {
 				sportsQLParserMap.get(game).get(statisticType).remove(name);
@@ -60,7 +61,7 @@ public class SportsQLParserRegistry {
 	}
 
 	public static ISportsQLParser getSportsQLParser(StatisticType type, GameType game, String name) {
-		ISportsQLParser parser = sportsQLParserMap.get(type).get(game).get(name.toLowerCase());
+		ISportsQLParser parser = sportsQLParserMap.get(type).get(game).get(name.trim().toUpperCase());
 		Preconditions.checkNotNull(parser, "No SportsQLParser was found for statistic name " + name);		
 		return parser;
 	}
@@ -69,20 +70,19 @@ public class SportsQLParserRegistry {
 		StatisticType statisticType;
 		GameType gameType;
 		try {
-			statisticType = StatisticType.valueOf(type.toLowerCase());
+			statisticType = StatisticType.valueOf(type.trim().toUpperCase());
 		}catch (IllegalArgumentException ex) {  
 			throw new RuntimeException("No SportsQLParser was found for statistic type "+type);
 		}
 		try {
-			gameType = GameType.valueOf(game.toLowerCase());
+			gameType = GameType.valueOf(game.trim().toUpperCase());
 		}catch (IllegalArgumentException ex) {  
 			throw new RuntimeException("No SportsQLParser was found for game type "+type);
 		}		
 		return getSportsQLParser(statisticType, gameType, name);
 	}
 	
-	public static ISportsQLParser getSportsQLParser(String sportsQL) {	
-		return null;
+	public static ISportsQLParser getSportsQLParser(SportsQLQuery sportsQL) {
+		return getSportsQLParser(sportsQL.getStatisticType(), sportsQL.getGameType(), sportsQL.getName());
 	}
-	
 }
