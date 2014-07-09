@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.mahout.cf.taste.common.NoSuchUserException;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.Recommender;
@@ -96,6 +97,9 @@ de.uniol.inf.is.odysseus.recommendation.recommender.Recommender {
 							ObjectIdToLongId.getInstance().objectIDAsLong(
 									"user", user), n);
 			return recommendedItemsToMap(recommendedItems);
+		} catch (final NoSuchUserException noSuchUserException) {
+			// TODO: Log?
+			return null;
 		} catch (final TasteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
