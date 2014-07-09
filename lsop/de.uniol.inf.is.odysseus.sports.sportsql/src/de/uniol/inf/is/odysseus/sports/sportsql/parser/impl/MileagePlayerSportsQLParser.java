@@ -15,15 +15,16 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueIte
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.Game;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 
-@SportsQL(games = { Game.SOCCER }, types = { StatisticType.PLAYERSTATISTIC }, name = "mileageplayer")
+@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.TEAM }, name = "mileageplayer")
 public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
 	@Override
-	public ILogicalQuery parse(String sportsQL) {
+	public ILogicalQuery parse(SportsQLQuery sportsQL) {
 //		Gson gson = new GsonBuilder().create();
 //		SportsQLQuery query = gson.fromJson(sportsQL, SportsQLQuery.class);
 
