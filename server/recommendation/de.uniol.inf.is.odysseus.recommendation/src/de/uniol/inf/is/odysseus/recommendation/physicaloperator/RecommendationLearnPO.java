@@ -57,6 +57,9 @@ AbstractPipe<Tuple<M>, Tuple<M>> {
 	 *            The learner that should be used.
 	 */
 	public RecommendationLearnPO(final RecommendationLearner<M> learner) {
+		if (learner == null) {
+			throw new NullPointerException("learner needs to be not null");
+		}
 		this.learner = learner;
 	}
 
