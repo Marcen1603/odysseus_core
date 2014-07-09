@@ -386,15 +386,8 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 
 		if (!(ipo instanceof LoadBalancingSynchronizerPO)) {
-
 			return false;
-
-		} else {
-
-			return true;
-
-		}
-
+		} 
+		return true;
 	}
-
 }
