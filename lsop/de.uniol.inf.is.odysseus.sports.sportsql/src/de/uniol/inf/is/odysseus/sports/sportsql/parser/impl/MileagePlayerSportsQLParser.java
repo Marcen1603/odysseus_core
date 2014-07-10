@@ -5,10 +5,13 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -36,7 +39,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		MapAO firstMap = OperatorBuildHelper.getMapAO(
 				getExpressionsForFirstMap(), null);
 
-		// 2. Correct timewindow
+		// 2. Correct timeWindow
 		// TODO: Use correct times
 		// How can a Map be an ISource?
 		SelectAO timeSelect = OperatorBuildHelper.getTimeSelect(10, 50,
@@ -56,69 +59,61 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		EnrichAO enrichAO = OperatorBuildHelper.getEnrichAO("sensorid = sid",
 				null, null);
 
-		// 2. Statemap
+		// 2. StateMap
 		List<NamedExpressionItem> expressions = new ArrayList<NamedExpressionItem>();
 		SDFExpression stateMapExpression = new SDFExpression(
 				"(sqrt(((x-__last_1.x)^2 + (y-__last_1.y)^2))/1000)",
 				MEP.getInstance());
 		NamedExpressionItem expression = new NamedExpressionItem("mileage",
 				stateMapExpression);
-		OperatorBuildHelper.getStateMapAO(expressions, enrichAO);
-		
-		 // 4. Aggregate
+		StateMapAO statemap = OperatorBuildHelper.getStateMapAO(expressions,
+				enrichAO);
+
+		// 4. Aggregate
+		AggregateAO aggregateAO = OperatorBuildHelper.getAggregateAO("SUM",
+				"mileage", "mileage", statemap);
 
 		return null;
 	}
 
-	private List<NamedExpressionItem> getExpressionsForFirstMap() {
-		List<NamedExpressionItem> expressions = new ArrayList<NamedExpressionItem>();
+	private List<SDFExpressionParameter> getExpressionsForFirstMap() {
+		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 
-		SDFExpression mepEx1 = new SDFExpression("sid", MEP.getInstance());
-		NamedExpressionItem ex1 = new NamedExpressionItem("sid", mepEx1);
+		SDFExpressionParameter ex1 = OperatorBuildHelper
+				.getExpressionParameter("sid");
 
-		// TODO: These expressions probably wont work
-		SDFExpression mepEx2 = new SDFExpression(
-				"minutes(toDate(${gameStart_ts}/${ts_to_ms_factor}), toDate(ts/${ts_to_ms_factor}))",
-				MEP.getInstance());
-		NamedExpressionItem ex2 = new NamedExpressionItem("minute", mepEx2);
+		// TODO: These two expressions maybe won't work
+		SDFExpressionParameter ex2 = OperatorBuildHelper
+				.getExpressionParameter(
+						"minutes(toDate(${gameStart_ts}/${ts_to_ms_factor}), toDate(ts/${ts_to_ms_factor}))",
+						"minute");
+		SDFExpressionParameter ex3 = OperatorBuildHelper
+				.getExpressionParameter(
+						"seconds(toDate(${gameStart_ts}/${ts_to_ms_factor}), toDate(ts/${ts_to_ms_factor}))",
+						"second");
 
-		SDFExpression mepEx3 = new SDFExpression(
-				"seconds(toDate(${gameStart_ts}/${ts_to_ms_factor}), toDate(ts/${ts_to_ms_factor}))",
-				MEP.getInstance());
-		NamedExpressionItem ex3 = new NamedExpressionItem("second", mepEx3);
-
-		SDFExpression mepEx4 = new SDFExpression("x", MEP.getInstance());
-		NamedExpressionItem ex4 = new NamedExpressionItem("x", mepEx4);
-
-		SDFExpression mepEx5 = new SDFExpression("y", MEP.getInstance());
-		NamedExpressionItem ex5 = new NamedExpressionItem("y", mepEx5);
-
-		SDFExpression mepEx6 = new SDFExpression("z", MEP.getInstance());
-		NamedExpressionItem ex6 = new NamedExpressionItem("z", mepEx6);
-
-		SDFExpression mepEx7 = new SDFExpression("v", MEP.getInstance());
-		NamedExpressionItem ex7 = new NamedExpressionItem("v", mepEx7);
-
-		SDFExpression mepEx8 = new SDFExpression("a", MEP.getInstance());
-		NamedExpressionItem ex8 = new NamedExpressionItem("a", mepEx8);
-
-		SDFExpression mepEx9 = new SDFExpression("vx", MEP.getInstance());
-		NamedExpressionItem ex9 = new NamedExpressionItem("vx", mepEx9);
-
-		SDFExpression mepEx10 = new SDFExpression("vy", MEP.getInstance());
-		NamedExpressionItem ex10 = new NamedExpressionItem("vy", mepEx10);
-
-		SDFExpression mepEx11 = new SDFExpression("vz", MEP.getInstance());
-		NamedExpressionItem ex11 = new NamedExpressionItem("vz", mepEx11);
-
-		SDFExpression mepEx12 = new SDFExpression("ax", MEP.getInstance());
-		NamedExpressionItem ex12 = new NamedExpressionItem("ax", mepEx12);
-
-		SDFExpression mepEx13 = new SDFExpression("ay", MEP.getInstance());
-		NamedExpressionItem ex13 = new NamedExpressionItem("ay", mepEx13);
-
-		SDFExpression mepEx14 = new SDFExpression("ts", MEP.getInstance());
-		NamedExpressionItem ex14 = new NamedExpressionItem("ts", mepEx14);
+		SDFExpressionParameter ex4 = OperatorBuildHelper
+				.getExpressionParameter("x");
+		SDFExpressionParameter ex5 = OperatorBuildHelper
+				.getExpressionParameter("y");
+		SDFExpressionParameter ex6 = OperatorBuildHelper
+				.getExpressionParameter("z");
+		SDFExpressionParameter ex7 = OperatorBuildHelper
+				.getExpressionParameter("v");
+		SDFExpressionParameter ex8 = OperatorBuildHelper
+				.getExpressionParameter("a");
+		SDFExpressionParameter ex9 = OperatorBuildHelper
+				.getExpressionParameter("vx");
+		SDFExpressionParameter ex10 = OperatorBuildHelper
+				.getExpressionParameter("vy");
+		SDFExpressionParameter ex11 = OperatorBuildHelper
+				.getExpressionParameter("vz");
+		SDFExpressionParameter ex12 = OperatorBuildHelper
+				.getExpressionParameter("ax");
+		SDFExpressionParameter ex13 = OperatorBuildHelper
+				.getExpressionParameter("ay");
+		SDFExpressionParameter ex14 = OperatorBuildHelper
+				.getExpressionParameter("ts");
 
 		expressions.add(ex1);
 		expressions.add(ex2);
