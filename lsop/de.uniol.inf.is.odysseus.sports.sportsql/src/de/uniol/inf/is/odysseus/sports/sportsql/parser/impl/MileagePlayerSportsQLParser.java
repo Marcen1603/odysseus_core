@@ -3,12 +3,12 @@ package de.uniol.inf.is.odysseus.sports.sportsql.parser.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
@@ -24,16 +24,13 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL) {
-		// Gson gson = new GsonBuilder().create();
-		// SportsQLQuery query = gson.fromJson(sportsQL, SportsQLQuery.class);
 
-		// Here I expect to have a nice SportsQL Object
-		// for now, work with what's there until we know how to parse, ...
+		// TODO: Get relevant information from SportsQLQuery object
 
 		// TODO: Get Source from DataDictionary -> Create an AccessPO
 
-		// First Query
-		// -----------
+		// First Query (Select for questioned time)
+		// ----------------------------------------
 
 		// 1. MAP
 		// Question: How to get the initial input schema?
@@ -44,54 +41,27 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		// TODO: Use correct times
 		// How can a Map be an ISource?
 		SelectPO timeSelect = OperatorBuildHelper.getTimeSelect(10, 50, null);
-		
-		LogicalQuery query = new LogicalQuery();
-		List<IPhysicalOperator> plan = new ArrayList<IPhysicalOperator>();
-		
-		//PhysicalQuery physicalQuery = new PhysicalQuery()
 
-		// 3. Time Window
-//		WindowAO firstWindow = new WindowAO();
-//		firstWindow.setWindowType(WindowType.TIME);
-//		TimeValueItem windowSize = new TimeValueItem(10, TimeUnit.MINUTES);
-//		firstWindow.setWindowSize(windowSize);
-//		firstWindow.subscribeToSource(timeSelect, 0, 0,
-//				timeSelect.getOutputSchema());
-		
-		
-		// Second Query
-		// ------------
+		// Second Query (Select for questioned entity)
+		// -------------------------------------------
+		// TODO: Correct entityId
+		// TODO: Correct source
+		SelectPO entitySelect = OperatorBuildHelper.getEntitySelect(0, null);
 
-		// // 1. Select
-		// SelectAO secondSelect = new SelectAO();
-		// // TODO: Subscribe to correct source
-		//
-		// // Predicate
-		// // TODO: Correct predicate
-		// String secondSelectPredicateString = "sensorid = ${entity_id}";
-		// SDFExpression secondSelectPredicateExpression = new SDFExpression(
-		// secondSelectPredicateString, MEP.getInstance());
-		// RelationalPredicate secondSelectPredicate = new RelationalPredicate(
-		// secondSelectPredicateExpression);
-		// // EqualsPredicate<Long> equalsPredicate = new
-		// EqualsPredicate<Long>();
-		// // EqualsPredicate<Long> equalsPredicate2 =
-		// EqualsPredicate.getInstance();
-		// // secondSelect.setPredicate(secondSelectPredicate);
-		//
-		// // Third Query
-		// // -----------
-		//
-		// // 1. Enrich
-		// // EnrichAO enrichAO = new EnrichAO();
-		//
-		// // Predicate
-		// // TODO: Correct predicate
-		// String thirdSelectPredicateString = "sensorid = sid";
-		// SDFExpression thirdSelectPredicateExpression = new SDFExpression(
-		// thirdSelectPredicateString, MEP.getInstance());
-		// RelationalPredicate thirdSelectPredicate = new RelationalPredicate(
-		// thirdSelectPredicateExpression);
+		// Third Query
+		// -----------
+
+		// 1. Enrich
+		EnrichAO enrichAO = new EnrichAO();
+
+		// Predicate
+		// TODO: Correct entityId
+		String predicateString = "entity_id = " + 0;
+		PredicateParameter predicateParameter = new PredicateParameter();
+		predicateParameter.setInputValue(predicateString);
+		
+		
+		//enrichAO.setPre
 		//
 		//
 		// //EnrichPO<IStreamObject<IMetaAttribute>, IMetaAttribute> po = new
@@ -124,6 +94,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		SDFExpression mepEx1 = new SDFExpression("sid", MEP.getInstance());
 		NamedExpressionItem ex1 = new NamedExpressionItem("sid", mepEx1);
 
+		// TODO: These expressions probably wont work
 		SDFExpression mepEx2 = new SDFExpression(
 				"minutes(toDate(${gameStart_ts}/${ts_to_ms_factor}), toDate(ts/${ts_to_ms_factor}))",
 				MEP.getInstance());

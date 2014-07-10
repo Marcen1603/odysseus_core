@@ -63,5 +63,25 @@ public class OperatorBuildHelper {
 		selectPO.subscribeToSource(source, 0, 0, source.getOutputSchema());
 		return selectPO;
 	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static SelectPO getEntitySelect(int entityId, ISource source) {
+		SelectAO selectAO = new SelectAO();
+
+		// Predicate we want to produce:
+		// 'entity_id = ${entity_id}'
+
+		// 1. minute >= ${parameterTimeStart_minute}
+		String predicateString = "entity_id = " + entityId;
+		SDFExpression predicateExpression = new SDFExpression(
+				predicateString, MEP.getInstance());
+		RelationalPredicate predicate = new RelationalPredicate(
+				predicateExpression);
+		
+		selectAO.setPredicate(predicate);
+		SelectPO<?> selectPO = new SelectPO(selectAO.getPredicate());
+		selectPO.subscribeToSource(source, 0, 0, source.getOutputSchema());
+		return selectPO;
+	}
 
 }
