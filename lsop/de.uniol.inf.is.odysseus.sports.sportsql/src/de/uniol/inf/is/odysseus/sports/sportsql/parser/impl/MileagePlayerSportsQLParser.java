@@ -2,31 +2,30 @@ package de.uniol.inf.is.odysseus.sports.sportsql.parser.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 
 @SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.TEAM }, name = "mileageplayer")
 public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
+	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL) {
-//		Gson gson = new GsonBuilder().create();
-//		SportsQLQuery query = gson.fromJson(sportsQL, SportsQLQuery.class);
+		// Gson gson = new GsonBuilder().create();
+		// SportsQLQuery query = gson.fromJson(sportsQL, SportsQLQuery.class);
 
 		// Here I expect to have a nice SportsQL Object
 		// for now, work with what's there until we know how to parse, ...
@@ -38,7 +37,88 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
 		// 1. MAP
 		// Question: How to get the initial input schema?
-		MapAO firstMap = new MapAO();
+		MapAO firstMap = OperatorBuildHelper.getMapAO(
+				getExpressionsForFirstMap(), null);
+
+		// 2. Correct timewindow
+		// TODO: Use correct times
+		// How can a Map be an ISource?
+		SelectPO timeSelect = OperatorBuildHelper.getTimeSelect(10, 50, null);
+		
+		LogicalQuery query = new LogicalQuery();
+		List<IPhysicalOperator> plan = new ArrayList<IPhysicalOperator>();
+		
+		//PhysicalQuery physicalQuery = new PhysicalQuery()
+
+		// 3. Time Window
+//		WindowAO firstWindow = new WindowAO();
+//		firstWindow.setWindowType(WindowType.TIME);
+//		TimeValueItem windowSize = new TimeValueItem(10, TimeUnit.MINUTES);
+//		firstWindow.setWindowSize(windowSize);
+//		firstWindow.subscribeToSource(timeSelect, 0, 0,
+//				timeSelect.getOutputSchema());
+		
+		
+		// Second Query
+		// ------------
+
+		// // 1. Select
+		// SelectAO secondSelect = new SelectAO();
+		// // TODO: Subscribe to correct source
+		//
+		// // Predicate
+		// // TODO: Correct predicate
+		// String secondSelectPredicateString = "sensorid = ${entity_id}";
+		// SDFExpression secondSelectPredicateExpression = new SDFExpression(
+		// secondSelectPredicateString, MEP.getInstance());
+		// RelationalPredicate secondSelectPredicate = new RelationalPredicate(
+		// secondSelectPredicateExpression);
+		// // EqualsPredicate<Long> equalsPredicate = new
+		// EqualsPredicate<Long>();
+		// // EqualsPredicate<Long> equalsPredicate2 =
+		// EqualsPredicate.getInstance();
+		// // secondSelect.setPredicate(secondSelectPredicate);
+		//
+		// // Third Query
+		// // -----------
+		//
+		// // 1. Enrich
+		// // EnrichAO enrichAO = new EnrichAO();
+		//
+		// // Predicate
+		// // TODO: Correct predicate
+		// String thirdSelectPredicateString = "sensorid = sid";
+		// SDFExpression thirdSelectPredicateExpression = new SDFExpression(
+		// thirdSelectPredicateString, MEP.getInstance());
+		// RelationalPredicate thirdSelectPredicate = new RelationalPredicate(
+		// thirdSelectPredicateExpression);
+		//
+		//
+		// //EnrichPO<IStreamObject<IMetaAttribute>, IMetaAttribute> po = new
+		// EnrichPO<IStreamObject<IMetaAttribute>,
+		// IMetaAttribute>(thirdSelectPredicate);
+		//
+		// // 2. Statemap
+		// // How to use this? Where is the physical operator?
+		// StateMapAO stateMap = new StateMapAO();
+		//
+		// // 3. Window
+		// ElementWindowAO elemWindowAO = new ElementWindowAO();
+		// // How to set number of tuples?
+		// SlidingElementWindowTIPO<IStreamObject<ITimeInterval>> elemWindow =
+		// new SlidingElementWindowTIPO<IStreamObject<ITimeInterval>>(
+		// elemWindowAO);
+		//
+		// // 4. Aggregate
+		//
+		// // Set the sources
+		// // EnrichPO<IStreamObject<M>, IMetaAttribute> enrichPO = new
+		// // EnrichPO<IStreamObject<M>, IMetaAttribute>(predicate);
+
+		return null;
+	}
+
+	private List<NamedExpressionItem> getExpressionsForFirstMap() {
 		List<NamedExpressionItem> expressions = new ArrayList<NamedExpressionItem>();
 
 		SDFExpression mepEx1 = new SDFExpression("sid", MEP.getInstance());
@@ -102,85 +182,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		expressions.add(ex13);
 		expressions.add(ex14);
 
-		firstMap.setExpressions(expressions);
-
-		// 2. Select
-		SelectAO firstSelect = new SelectAO();
-		firstSelect.subscribeToSource(firstMap, 0, 0,
-				firstMap.getOutputSchema());
-
-		// Predicate
-		// TODO: Right predicate
-		// IPredicate<? super T> predicate = ComplexPredicateHelper
-		//.createAndPredicate(OverlapsPredicate.getInstance(),
-		//		EqualsPredicate.getInstance());
-		String selectPredicateString = "minute >= ${parameterTimeStart_minute} AND minute <= ${parameterTimeEnd_minute} AND second >= 0";
-		SDFExpression selectPredicateExpression = new SDFExpression(
-				selectPredicateString, MEP.getInstance());
-		RelationalPredicate selectPredicate = new RelationalPredicate(
-				selectPredicateExpression);
-		firstSelect.setPredicate(selectPredicate);
-
-		// 3. Time Window
-		WindowAO firstWindow = new WindowAO();
-		firstWindow.setWindowType(WindowType.TIME);
-		TimeValueItem windowSize = new TimeValueItem(10, TimeUnit.MINUTES);
-		firstWindow.setWindowSize(windowSize);
-		firstWindow.subscribeToSource(firstSelect, 0, 0,
-				firstSelect.getOutputSchema());
-
-		// Second Query
-		// ------------
-
-//		// 1. Select
-//		SelectAO secondSelect = new SelectAO();
-//		// TODO: Subscribe to correct source
-//
-//		// Predicate
-//		// TODO: Correct predicate
-//		String secondSelectPredicateString = "sensorid = ${entity_id}";
-//		SDFExpression secondSelectPredicateExpression = new SDFExpression(
-//				secondSelectPredicateString, MEP.getInstance());
-//		RelationalPredicate secondSelectPredicate = new RelationalPredicate(
-//				secondSelectPredicateExpression);
-////		EqualsPredicate<Long> equalsPredicate = new EqualsPredicate<Long>();
-////		EqualsPredicate<Long> equalsPredicate2 = EqualsPredicate.getInstance();
-////		secondSelect.setPredicate(secondSelectPredicate);
-//
-//		// Third Query
-//		// -----------
-//
-//		// 1. Enrich
-////		EnrichAO enrichAO = new EnrichAO();
-//
-//		// Predicate
-//		// TODO: Correct predicate
-//		String thirdSelectPredicateString = "sensorid = sid";
-//		SDFExpression thirdSelectPredicateExpression = new SDFExpression(
-//				thirdSelectPredicateString, MEP.getInstance());
-//		RelationalPredicate thirdSelectPredicate = new RelationalPredicate(
-//				thirdSelectPredicateExpression);
-//
-//		
-//		//EnrichPO<IStreamObject<IMetaAttribute>, IMetaAttribute> po = new EnrichPO<IStreamObject<IMetaAttribute>, IMetaAttribute>(thirdSelectPredicate);
-//		
-//		// 2. Statemap
-//		// How to use this? Where is the physical operator?
-//		StateMapAO stateMap = new StateMapAO();
-//
-//		// 3. Window
-//		ElementWindowAO elemWindowAO = new ElementWindowAO();
-//		// How to set number of tuples?
-//		SlidingElementWindowTIPO<IStreamObject<ITimeInterval>> elemWindow = new SlidingElementWindowTIPO<IStreamObject<ITimeInterval>>(
-//				elemWindowAO);
-//
-//		// 4. Aggregate
-//
-//		// Set the sources
-//		// EnrichPO<IStreamObject<M>, IMetaAttribute> enrichPO = new
-//		// EnrichPO<IStreamObject<M>, IMetaAttribute>(predicate);
-
-		return null;
+		return expressions;
 	}
 
 }
