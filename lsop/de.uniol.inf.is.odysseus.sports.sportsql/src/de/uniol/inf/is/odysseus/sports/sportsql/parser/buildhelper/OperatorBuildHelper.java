@@ -3,13 +3,15 @@ package de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -23,10 +25,17 @@ public class OperatorBuildHelper {
 		mapAO.subscribeToSource(source, 0, 0, source.getOutputSchema());
 		return mapAO;
 	}
+	
+	public static StateMapAO getStateMapAO(List<NamedExpressionItem> expressions, ILogicalOperator source) {
+		StateMapAO stateMapAO = new StateMapAO();
+		stateMapAO.setExpressions(expressions);
+		stateMapAO.subscribeTo(source, source.getOutputSchema());
+		return stateMapAO;
+	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static SelectPO getTimeSelect(int startMinute, int endMinute,
-			ISource source) {
+	@SuppressWarnings({ "rawtypes" })
+	public static SelectAO getTimeSelect(int startMinute, int endMinute,
+			ILogicalOperator source) {
 		SelectAO selectAO = new SelectAO();
 
 		// Predicate we want to produce:
@@ -59,13 +68,11 @@ public class OperatorBuildHelper {
 				.createAndPredicate(firstAndPrdicate, thirdPredicate);
 
 		selectAO.setPredicate(fullAndPredicate);
-		SelectPO<?> selectPO = new SelectPO(selectAO.getPredicate());
-		selectPO.subscribeToSource(source, 0, 0, source.getOutputSchema());
-		return selectPO;
+		selectAO.subscribeTo(source, source.getOutputSchema());
+		return selectAO;
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static SelectPO getEntitySelect(int entityId, ISource source) {
+	public static SelectAO getEntitySelect(int entityId, ILogicalOperator source) {
 		SelectAO selectAO = new SelectAO();
 
 		// Predicate we want to produce:
@@ -79,9 +86,33 @@ public class OperatorBuildHelper {
 				predicateExpression);
 		
 		selectAO.setPredicate(predicate);
-		SelectPO<?> selectPO = new SelectPO(selectAO.getPredicate());
-		selectPO.subscribeToSource(source, 0, 0, source.getOutputSchema());
-		return selectPO;
+		selectAO.subscribeTo(source, source.getOutputSchema());
+		return selectAO;
+	}
+
+	/**
+	 * 
+	 * @param joinPredicate The predicate to join both streams (e.g. sensorid = sid)
+	 * @param metaStram Stream with probably limited metadata to enrich the other stream
+	 * @param streamToEnrich Normal stream that should be enriched
+	 * @return
+	 */
+	public static EnrichAO getEnrichAO(String joinPredicate, ILogicalOperator metaStram, ILogicalOperator streamToEnrich) {
+		EnrichAO enrichAO = new EnrichAO();
+
+		PredicateParameter predicateParameter = new PredicateParameter();
+		predicateParameter.setInputValue(joinPredicate);		
+		enrichAO.setPredicate(predicateParameter.getValue());
+		enrichAO.subscribeToSource(streamToEnrich, 0, 0, streamToEnrich.getOutputSchema());
+		enrichAO.subscribeToSource(metaStram, 1, 1, metaStram.getOutputSchema());		
+		
+		return enrichAO;
+	}
+	
+	public static AggregateAO getAggregateAO() {
+		AggregateAO aggregateAO = new AggregateAO();
+		
+		return aggregateAO;
 	}
 
 }

@@ -7,9 +7,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -21,7 +20,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 @SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.TEAM }, name = "mileageplayer")
 public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
-	@SuppressWarnings({ "rawtypes", "unused" })
+	@SuppressWarnings({ "unused" })
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL) {
 
@@ -33,57 +32,40 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		// ----------------------------------------
 
 		// 1. MAP
-		// Question: How to get the initial input schema?
+		// Question: How to get the initial input?
 		MapAO firstMap = OperatorBuildHelper.getMapAO(
 				getExpressionsForFirstMap(), null);
 
 		// 2. Correct timewindow
 		// TODO: Use correct times
 		// How can a Map be an ISource?
-		SelectPO timeSelect = OperatorBuildHelper.getTimeSelect(10, 50, null);
+		SelectAO timeSelect = OperatorBuildHelper.getTimeSelect(10, 50,
+				firstMap);
 
 		// Second Query (Select for questioned entity)
 		// -------------------------------------------
 		// TODO: Correct entityId
 		// TODO: Correct source
-		SelectPO entitySelect = OperatorBuildHelper.getEntitySelect(0, null);
+		SelectAO entitySelect = OperatorBuildHelper.getEntitySelect(0, null);
 
 		// Third Query
 		// -----------
 
 		// 1. Enrich
-		EnrichAO enrichAO = new EnrichAO();
+		// TODO: Where to get the right streams?
+		EnrichAO enrichAO = OperatorBuildHelper.getEnrichAO("sensorid = sid",
+				null, null);
 
-		// Predicate
-		// TODO: Correct entityId
-		String predicateString = "entity_id = " + 0;
-		PredicateParameter predicateParameter = new PredicateParameter();
-		predicateParameter.setInputValue(predicateString);
+		// 2. Statemap
+		List<NamedExpressionItem> expressions = new ArrayList<NamedExpressionItem>();
+		SDFExpression stateMapExpression = new SDFExpression(
+				"(sqrt(((x-__last_1.x)^2 + (y-__last_1.y)^2))/1000)",
+				MEP.getInstance());
+		NamedExpressionItem expression = new NamedExpressionItem("mileage",
+				stateMapExpression);
+		OperatorBuildHelper.getStateMapAO(expressions, enrichAO);
 		
-		
-		//enrichAO.setPre
-		//
-		//
-		// //EnrichPO<IStreamObject<IMetaAttribute>, IMetaAttribute> po = new
-		// EnrichPO<IStreamObject<IMetaAttribute>,
-		// IMetaAttribute>(thirdSelectPredicate);
-		//
-		// // 2. Statemap
-		// // How to use this? Where is the physical operator?
-		// StateMapAO stateMap = new StateMapAO();
-		//
-		// // 3. Window
-		// ElementWindowAO elemWindowAO = new ElementWindowAO();
-		// // How to set number of tuples?
-		// SlidingElementWindowTIPO<IStreamObject<ITimeInterval>> elemWindow =
-		// new SlidingElementWindowTIPO<IStreamObject<ITimeInterval>>(
-		// elemWindowAO);
-		//
-		// // 4. Aggregate
-		//
-		// // Set the sources
-		// // EnrichPO<IStreamObject<M>, IMetaAttribute> enrichPO = new
-		// // EnrichPO<IStreamObject<M>, IMetaAttribute>(predicate);
+		 // 4. Aggregate
 
 		return null;
 	}
