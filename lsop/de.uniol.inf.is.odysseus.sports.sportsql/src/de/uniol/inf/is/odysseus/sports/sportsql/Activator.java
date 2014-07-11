@@ -6,8 +6,6 @@ import org.osgi.framework.BundleContext;
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.Activator;
 
 public class Activator implements BundleActivator {
 
