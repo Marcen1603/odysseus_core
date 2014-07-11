@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SampleAO;
@@ -232,6 +233,21 @@ public class OperatorBuildHelper {
 		aggregateAO.subscribeTo(source, source.getOutputSchema());
 
 		return aggregateAO;
+	}
+	
+	/**
+	 * Returns changeDetectAO with a list of Attributes and an absolute tolerance
+	 * @param attributes List of Attributes where changes should occur
+	 * @param tolerance (Absolute) Tolerance applied to changeDetection.
+	 * @param source Source to link to.
+	 * @return
+	 */
+	public static ChangeDetectAO createChangeDetectAO(List<SDFAttribute> attributes,double tolerance,ILogicalOperator source) {
+		ChangeDetectAO changeDetectAO = new ChangeDetectAO();
+		changeDetectAO.setAttr(attributes);
+		changeDetectAO.setTolerance(tolerance);
+		changeDetectAO.subscribeTo(source,source.getOutputSchema());
+		return changeDetectAO;
 	}
 
 	public static SDFExpressionParameter createExpressionParameter(
