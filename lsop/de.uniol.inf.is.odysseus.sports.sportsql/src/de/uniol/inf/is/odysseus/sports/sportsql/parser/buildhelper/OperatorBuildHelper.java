@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
  */
 public class OperatorBuildHelper {
 
-	public static MapAO getMapAO(List<SDFExpressionParameter> expressions,
+	public static MapAO createMapAO(List<SDFExpressionParameter> expressions,
 			ILogicalOperator source) {
 		MapAO mapAO = new MapAO();
 
@@ -45,7 +45,7 @@ public class OperatorBuildHelper {
 		return mapAO;
 	}
 
-	public static StateMapAO getStateMapAO(
+	public static StateMapAO createStateMapAO(
 			List<SDFExpressionParameter> expressions, String groupBy,
 			ILogicalOperator source) {
 		StateMapAO stateMapAO = new StateMapAO();
@@ -59,11 +59,7 @@ public class OperatorBuildHelper {
 
 		// GroupBy
 		if (groupBy != null) {
-			ResolvedSDFAttributeParameter groupParameter = new ResolvedSDFAttributeParameter();
-			groupParameter.setInputValue(groupBy);
-			List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-			attributes.add(groupParameter.getValue());
-			stateMapAO.setGroupingAttributes(attributes);
+			stateMapAO.setGroupingAttributes(createGroupAttributeList(groupBy));
 		}
 
 		stateMapAO.subscribeTo(source, source.getOutputSchema());
@@ -71,7 +67,7 @@ public class OperatorBuildHelper {
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	public static SelectAO getTimeSelect(SportsQLTimeParameter timeParameter,
+	public static SelectAO createTimeSelect(SportsQLTimeParameter timeParameter,
 			ILogicalOperator source) {
 		SelectAO selectAO = new SelectAO();
 
@@ -114,7 +110,7 @@ public class OperatorBuildHelper {
 		return selectAO;
 	}
 
-	public static SelectAO getEntitySelect(long entityId,
+	public static SelectAO createEntitySelect(long entityId,
 			ILogicalOperator source) {
 		SelectAO selectAO = new SelectAO();
 
@@ -144,7 +140,7 @@ public class OperatorBuildHelper {
 	 *            stream. This will be on port 1 (input and output)
 	 * @return
 	 */
-	public static EnrichAO getEnrichAO(String joinPredicate,
+	public static EnrichAO createEnrichAO(String joinPredicate,
 			ILogicalOperator streamToEnrich, ILogicalOperator metaStream) {
 		EnrichAO enrichAO = new EnrichAO();
 
@@ -171,10 +167,10 @@ public class OperatorBuildHelper {
 	 *            The name of the output attribute for this aggregation
 	 * @return
 	 */
-	public static AggregateAO getAggregateAO(String aggregationFunction,
+	public static AggregateAO createAggregateAO(String aggregationFunction,
 			String inputAttributeName, String outputAttributeName,
 			ILogicalOperator source) {
-		return getAggregateAO(aggregationFunction, inputAttributeName,
+		return createAggregateAO(aggregationFunction, null, inputAttributeName,
 				outputAttributeName, null, source);
 	}
 
@@ -183,6 +179,9 @@ public class OperatorBuildHelper {
 	 * 
 	 * @param aggregationFunction
 	 *            The name of the aggregate-function, e.g. "SUM" or "MAX"
+	 * @param groupBy
+	 *            The name of the attribute you want to group by (just one for
+	 *            now)
 	 * @param inputAttributeName
 	 *            The input attribute over which the aggregation should be done
 	 * @param outputAttributeName
@@ -190,11 +189,13 @@ public class OperatorBuildHelper {
 	 * @param outputType
 	 *            The optional type of output (null, if you don't want to
 	 *            specify, should then be double)
+	 * @param source The operator before this one
 	 * @return
 	 */
-	public static AggregateAO getAggregateAO(String aggregationFunction,
-			String inputAttributeName, String outputAttributeName,
-			String outputType, ILogicalOperator source) {
+	public static AggregateAO createAggregateAO(String aggregationFunction,
+			String groupBy, String inputAttributeName,
+			String outputAttributeName, String outputType,
+			ILogicalOperator source) {
 		AggregateAO aggregateAO = new AggregateAO();
 
 		AggregateItemParameter param = new AggregateItemParameter();
@@ -209,12 +210,17 @@ public class OperatorBuildHelper {
 		aggregateItems.add(param.getValue());
 		aggregateAO.setAggregationItems(aggregateItems);
 
+		// GroupBy
+		if (groupBy != null) {
+			aggregateAO.setGroupingAttributes(createGroupAttributeList(groupBy));
+		}
+
 		aggregateAO.subscribeTo(source, source.getOutputSchema());
 
 		return aggregateAO;
 	}
 
-	public static SDFExpressionParameter getExpressionParameter(
+	public static SDFExpressionParameter createExpressionParameter(
 			String expression, String name) {
 
 		SDFExpressionParameter param = new SDFExpressionParameter();
@@ -226,7 +232,7 @@ public class OperatorBuildHelper {
 		return param;
 	}
 
-	public static SDFExpressionParameter getExpressionParameter(
+	public static SDFExpressionParameter createExpressionParameter(
 			String expression) {
 		SDFExpressionParameter param = new SDFExpressionParameter();
 		param.setInputValue(expression);
@@ -237,5 +243,13 @@ public class OperatorBuildHelper {
 		for (ILogicalOperator op : operators) {
 			op.initialize();
 		}
+	}
+
+	private static List<SDFAttribute> createGroupAttributeList(String groupBy) {
+		ResolvedSDFAttributeParameter groupParameter = new ResolvedSDFAttributeParameter();
+		groupParameter.setInputValue(groupBy);
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		attributes.add(groupParameter.getValue());
+		return attributes;
 	}
 }

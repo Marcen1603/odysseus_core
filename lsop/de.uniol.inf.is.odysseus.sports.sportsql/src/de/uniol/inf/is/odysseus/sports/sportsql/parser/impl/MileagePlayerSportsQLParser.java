@@ -39,7 +39,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
 		// 1. MAP
 		// Question: How to get the initial input?
-		MapAO firstMap = OperatorBuildHelper.getMapAO(
+		MapAO firstMap = OperatorBuildHelper.createMapAO(
 				getExpressionsForFirstMap(), null);
 		allOperators.add(firstMap);
 
@@ -47,14 +47,14 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		SportsQLTimeParameter timeParam = SportsQLParameterHelper
 				.getTimeParameter(sportsQL);
 
-		SelectAO timeSelect = OperatorBuildHelper.getTimeSelect(timeParam,
+		SelectAO timeSelect = OperatorBuildHelper.createTimeSelect(timeParam,
 				firstMap);
 		allOperators.add(timeSelect);
 
 		// Second Query (Select for questioned entity)
 		// -------------------------------------------
 		// TODO: Correct source
-		SelectAO entitySelect = OperatorBuildHelper.getEntitySelect(
+		SelectAO entitySelect = OperatorBuildHelper.createEntitySelect(
 				sportsQL.getEntityId(), null);
 		allOperators.add(entitySelect);
 
@@ -62,23 +62,23 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		// -----------
 
 		// 1. Enrich
-		EnrichAO enrichAO = OperatorBuildHelper.getEnrichAO("sensorid = sid",
+		EnrichAO enrichAO = OperatorBuildHelper.createEnrichAO("sensorid = sid",
 				entitySelect, timeSelect);
 		allOperators.add(enrichAO);
 
 		// 2. StateMap
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter param = OperatorBuildHelper
-				.getExpressionParameter(
+				.createExpressionParameter(
 						"(sqrt(((x-__last_1.x)^2 + (y-__last_1.y)^2))/1000)",
 						"mileage");
 		expressions.add(param);
-		StateMapAO statemapAO = OperatorBuildHelper.getStateMapAO(expressions,
+		StateMapAO statemapAO = OperatorBuildHelper.createStateMapAO(expressions,
 				"sensorid", enrichAO);
 		allOperators.add(statemapAO);
 
 		// 3. Aggregate
-		AggregateAO aggregateAO = OperatorBuildHelper.getAggregateAO("SUM",
+		AggregateAO aggregateAO = OperatorBuildHelper.createAggregateAO("SUM",
 				"mileage", "mileage", statemapAO);
 		allOperators.add(aggregateAO);
 
@@ -96,40 +96,40 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 
 		SDFExpressionParameter ex1 = OperatorBuildHelper
-				.getExpressionParameter("sid");
+				.createExpressionParameter("sid");
 
 		// TODO: These two expressions maybe won't work
 		SDFExpressionParameter ex2 = OperatorBuildHelper
-				.getExpressionParameter(
+				.createExpressionParameter(
 						"minutes(toDate(${gameStart_ts}/${ts_to_ms_factor}), toDate(ts/${ts_to_ms_factor}))",
 						"minute");
 		SDFExpressionParameter ex3 = OperatorBuildHelper
-				.getExpressionParameter(
+				.createExpressionParameter(
 						"seconds(toDate(${gameStart_ts}/${ts_to_ms_factor}), toDate(ts/${ts_to_ms_factor}))",
 						"second");
 
 		SDFExpressionParameter ex4 = OperatorBuildHelper
-				.getExpressionParameter("x");
+				.createExpressionParameter("x");
 		SDFExpressionParameter ex5 = OperatorBuildHelper
-				.getExpressionParameter("y");
+				.createExpressionParameter("y");
 		SDFExpressionParameter ex6 = OperatorBuildHelper
-				.getExpressionParameter("z");
+				.createExpressionParameter("z");
 		SDFExpressionParameter ex7 = OperatorBuildHelper
-				.getExpressionParameter("v");
+				.createExpressionParameter("v");
 		SDFExpressionParameter ex8 = OperatorBuildHelper
-				.getExpressionParameter("a");
+				.createExpressionParameter("a");
 		SDFExpressionParameter ex9 = OperatorBuildHelper
-				.getExpressionParameter("vx");
+				.createExpressionParameter("vx");
 		SDFExpressionParameter ex10 = OperatorBuildHelper
-				.getExpressionParameter("vy");
+				.createExpressionParameter("vy");
 		SDFExpressionParameter ex11 = OperatorBuildHelper
-				.getExpressionParameter("vz");
+				.createExpressionParameter("vz");
 		SDFExpressionParameter ex12 = OperatorBuildHelper
-				.getExpressionParameter("ax");
+				.createExpressionParameter("ax");
 		SDFExpressionParameter ex13 = OperatorBuildHelper
-				.getExpressionParameter("ay");
+				.createExpressionParameter("ay");
 		SDFExpressionParameter ex14 = OperatorBuildHelper
-				.getExpressionParameter("ts");
+				.createExpressionParameter("ts");
 
 		expressions.add(ex1);
 		expressions.add(ex2);
