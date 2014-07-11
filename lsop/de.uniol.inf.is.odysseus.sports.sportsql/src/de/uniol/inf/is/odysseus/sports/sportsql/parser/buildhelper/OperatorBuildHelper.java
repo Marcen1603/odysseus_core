@@ -20,6 +20,13 @@ import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
+/**
+ * Class with static methods which help you to build the AOs easily.
+ * 
+ * @author Tobias Brandt
+ * @since 10.07.2014
+ *
+ */
 public class OperatorBuildHelper {
 
 	public static MapAO getMapAO(List<SDFExpressionParameter> expressions,
@@ -37,9 +44,14 @@ public class OperatorBuildHelper {
 	}
 
 	public static StateMapAO getStateMapAO(
-			List<NamedExpressionItem> expressions, ILogicalOperator source) {
+			List<SDFExpressionParameter> expressions, ILogicalOperator source) {
 		StateMapAO stateMapAO = new StateMapAO();
-		stateMapAO.setExpressions(expressions);
+
+		List<NamedExpressionItem> expressionItems = new ArrayList<NamedExpressionItem>();
+		for (SDFExpressionParameter param : expressions) {
+			expressionItems.add(param.getValue());
+		}
+		stateMapAO.setExpressions(expressionItems);
 		stateMapAO.subscribeTo(source, source.getOutputSchema());
 		return stateMapAO;
 	}
@@ -106,15 +118,15 @@ public class OperatorBuildHelper {
 	 * 
 	 * @param joinPredicate
 	 *            The predicate to join both streams (e.g. sensorid = sid)
-	 * @param metaStram
-	 *            Stream with probably limited metadata to enrich the other
-	 *            stream
 	 * @param streamToEnrich
 	 *            Normal stream that should be enriched
+	 * @param metaStram
+	 *            Stream with probably limited metadata to enrich the other
+	 *            stream. This will be on port 1 (input and output)
 	 * @return
 	 */
 	public static EnrichAO getEnrichAO(String joinPredicate,
-			ILogicalOperator metaStram, ILogicalOperator streamToEnrich) {
+			ILogicalOperator streamToEnrich, ILogicalOperator metaStream) {
 		EnrichAO enrichAO = new EnrichAO();
 
 		PredicateParameter predicateParameter = new PredicateParameter();
@@ -122,7 +134,8 @@ public class OperatorBuildHelper {
 		enrichAO.setPredicate(predicateParameter.getValue());
 		enrichAO.subscribeToSource(streamToEnrich, 0, 0,
 				streamToEnrich.getOutputSchema());
-		enrichAO.subscribeToSource(metaStram, 1, 1, metaStram.getOutputSchema());
+		enrichAO.subscribeToSource(metaStream, 1, 1,
+				metaStream.getOutputSchema());
 
 		return enrichAO;
 	}
@@ -193,13 +206,12 @@ public class OperatorBuildHelper {
 
 		return param;
 	}
-	
+
 	public static SDFExpressionParameter getExpressionParameter(
 			String expression) {
 		SDFExpressionParameter param = new SDFExpressionParameter();
 		param.setInputValue(expression);
 		return param;
 	}
-	
 
 }

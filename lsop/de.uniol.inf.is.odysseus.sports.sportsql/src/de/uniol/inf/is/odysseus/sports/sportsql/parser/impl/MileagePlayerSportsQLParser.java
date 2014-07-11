@@ -4,15 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
-import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
@@ -41,7 +38,6 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
 		// 2. Correct timeWindow
 		// TODO: Use correct times
-		// How can a Map be an ISource?
 		SelectAO timeSelect = OperatorBuildHelper.getTimeSelect(10, 50,
 				firstMap);
 
@@ -51,21 +47,20 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		// TODO: Correct source
 		SelectAO entitySelect = OperatorBuildHelper.getEntitySelect(0, null);
 
-		// Third Query
+		// Third Query (
 		// -----------
 
 		// 1. Enrich
-		// TODO: Where to get the right streams?
 		EnrichAO enrichAO = OperatorBuildHelper.getEnrichAO("sensorid = sid",
-				null, null);
+				entitySelect, timeSelect);
 
 		// 2. StateMap
-		List<NamedExpressionItem> expressions = new ArrayList<NamedExpressionItem>();
-		SDFExpression stateMapExpression = new SDFExpression(
-				"(sqrt(((x-__last_1.x)^2 + (y-__last_1.y)^2))/1000)",
-				MEP.getInstance());
-		NamedExpressionItem expression = new NamedExpressionItem("mileage",
-				stateMapExpression);
+		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
+		SDFExpressionParameter param = OperatorBuildHelper
+				.getExpressionParameter(
+						"(sqrt(((x-__last_1.x)^2 + (y-__last_1.y)^2))/1000)",
+						"mileage");
+		expressions.add(param);
 		StateMapAO statemap = OperatorBuildHelper.getStateMapAO(expressions,
 				enrichAO);
 
