@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SampleAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
@@ -127,6 +128,19 @@ public class OperatorBuildHelper {
 		selectAO.setPredicate(predicate);
 		selectAO.subscribeTo(source, source.getOutputSchema());
 		return selectAO;
+	}
+	
+	/**
+	 * 
+	 * @param sampleRate sampleRate determines which n'th tuples are processed.
+	 * @param source Source Operator to Link to.
+	 * @return
+	 */
+	public static SampleAO createSampleAO(int sampleRate,ILogicalOperator source) {
+		SampleAO sampleAO = new SampleAO();
+		sampleAO.setSampleRate(sampleRate);
+		sampleAO.subscribeTo(source, source.getOutputSchema());
+		return sampleAO;
 	}
 
 	/**
