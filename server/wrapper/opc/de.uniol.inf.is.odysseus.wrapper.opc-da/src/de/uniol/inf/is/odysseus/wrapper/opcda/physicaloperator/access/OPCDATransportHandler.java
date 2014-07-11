@@ -87,7 +87,7 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler implement
 
     @Override
     public String getName() {
-        return "OPC";
+        return "OPC-DA";
     }
 
     @Override
