@@ -3,7 +3,9 @@ package de.uniol.inf.is.odysseus.sports.sportsql.parser.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
@@ -14,15 +16,19 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLTimeParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 
 @SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.TEAM }, name = "mileageplayer")
 public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
-	@SuppressWarnings({ "unused" })
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL) {
+		
+		// We need this list to initialize all operators
+		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
 		// TODO: Get relevant information from SportsQLQuery object
 
@@ -35,25 +41,30 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		// Question: How to get the initial input?
 		MapAO firstMap = OperatorBuildHelper.getMapAO(
 				getExpressionsForFirstMap(), null);
-
+		allOperators.add(firstMap);
+		
 		// 2. Correct timeWindow
-		// TODO: Use correct times
-		SelectAO timeSelect = OperatorBuildHelper.getTimeSelect(10, 50,
+		SportsQLTimeParameter timeParam = SportsQLParameterHelper
+				.getTimeParameter(sportsQL);
+
+		SelectAO timeSelect = OperatorBuildHelper.getTimeSelect(timeParam,
 				firstMap);
+		allOperators.add(timeSelect);
 
 		// Second Query (Select for questioned entity)
 		// -------------------------------------------
-		// TODO: Correct entityId
 		// TODO: Correct source
-		SelectAO entitySelect = OperatorBuildHelper.getEntitySelect(0, null);
-
+		SelectAO entitySelect = OperatorBuildHelper.getEntitySelect(sportsQL.getEntityId(), null);
+		allOperators.add(entitySelect);
+		
 		// Third Query (
 		// -----------
 
 		// 1. Enrich
 		EnrichAO enrichAO = OperatorBuildHelper.getEnrichAO("sensorid = sid",
 				entitySelect, timeSelect);
-
+		allOperators.add(enrichAO);
+		
 		// 2. StateMap
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter param = OperatorBuildHelper
@@ -61,14 +72,23 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 						"(sqrt(((x-__last_1.x)^2 + (y-__last_1.y)^2))/1000)",
 						"mileage");
 		expressions.add(param);
-		StateMapAO statemap = OperatorBuildHelper.getStateMapAO(expressions,
+		StateMapAO statemapAO = OperatorBuildHelper.getStateMapAO(expressions,
 				enrichAO);
+		allOperators.add(statemapAO);
 
 		// 4. Aggregate
 		AggregateAO aggregateAO = OperatorBuildHelper.getAggregateAO("SUM",
-				"mileage", "mileage", statemap);
-
-		return null;
+				"mileage", "mileage", statemapAO);
+		allOperators.add(aggregateAO);
+		
+		// Initialize all AOs
+		OperatorBuildHelper.initializeOperators(allOperators);
+		
+		// Create plan
+		ILogicalQuery query = new LogicalQuery();
+		query.setLogicalPlan(aggregateAO, true);
+		
+		return query;
 	}
 
 	private List<SDFExpressionParameter> getExpressionsForFirstMap() {

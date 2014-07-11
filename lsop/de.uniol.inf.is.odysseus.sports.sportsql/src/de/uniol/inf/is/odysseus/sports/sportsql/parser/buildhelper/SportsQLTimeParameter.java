@@ -1,42 +1,41 @@
 package de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper;
 
 public class SportsQLTimeParameter {
-
-	private int startMinute;
-	private int endMinute;
-	private boolean hasConstant;
-	private boolean always;
-	private boolean now;
 	
-	public int getStartMinute() {
-		return startMinute;
+	public static final String TIME_PARAMETER_ALWAYS = "always";
+	public static final String TIME_PARAMETER_NOW = "now";
+
+	// TODO: time-unit (seconds, minutes, ...)
+	int start;
+	int end;
+	String time; // For "now", "always", etc.
+	
+	public SportsQLTimeParameter(int start, int end, String time) {
+		super();
+		this.start = start;
+		this.end = end;
+		this.time = time;
 	}
-	public void setStartMinute(int startMinute) {
-		this.startMinute = startMinute;
+	
+	public int getStart() {
+		return start;
 	}
-	public int getEndMinute() {
-		return endMinute;
+	public void setStart(int start) {
+		this.start = start;
 	}
-	public void setEndMinute(int endMinute) {
-		this.endMinute = endMinute;
+	public int getEnd() {
+		return end;
 	}
-	public boolean isHasConstant() {
-		return hasConstant;
+	public void setEnd(int end) {
+		this.end = end;
 	}
-	public void setHasConstant(boolean hasConstant) {
-		this.hasConstant = hasConstant;
+
+	public String getTime() {
+		return time;
 	}
-	public boolean isAlways() {
-		return always;
+
+	public void setTime(String time) {
+		this.time = time;
 	}
-	public void setAlways(boolean always) {
-		this.always = always;
-	}
-	public boolean isNow() {
-		return now;
-	}
-	public void setNow(boolean now) {
-		this.now = now;
-	}
-		
+	
 }

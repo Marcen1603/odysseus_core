@@ -57,7 +57,7 @@ public class OperatorBuildHelper {
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	public static SelectAO getTimeSelect(int startMinute, int endMinute,
+	public static SelectAO getTimeSelect(SportsQLTimeParameter timeParameter,
 			ILogicalOperator source) {
 		SelectAO selectAO = new SelectAO();
 
@@ -65,6 +65,10 @@ public class OperatorBuildHelper {
 		// minute >= ${parameterTimeStart_minute} AND minute <=
 		// ${parameterTimeEnd_minute} AND second >= 0
 
+		// TODO: Do the right thing if timeParameter says "all" or "now"
+		int startMinute = timeParameter.getStart();
+		int endMinute = timeParameter.getEnd();
+		
 		// 1. minute >= ${parameterTimeStart_minute}
 		String firstPredicateString = "minute >= " + startMinute;
 		SDFExpression firstPredicateExpression = new SDFExpression(
@@ -96,7 +100,7 @@ public class OperatorBuildHelper {
 		return selectAO;
 	}
 
-	public static SelectAO getEntitySelect(int entityId, ILogicalOperator source) {
+	public static SelectAO getEntitySelect(long entityId, ILogicalOperator source) {
 		SelectAO selectAO = new SelectAO();
 
 		// Predicate we want to produce:
@@ -214,4 +218,9 @@ public class OperatorBuildHelper {
 		return param;
 	}
 
+	public static void initializeOperators(List<ILogicalOperator> operators) {
+		for(ILogicalOperator op : operators) {
+			op.initialize();
+		}
+	}
 }
