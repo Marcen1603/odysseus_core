@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
@@ -15,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateIte
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItemParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.mep.MEP;
@@ -44,14 +46,26 @@ public class OperatorBuildHelper {
 	}
 
 	public static StateMapAO getStateMapAO(
-			List<SDFExpressionParameter> expressions, ILogicalOperator source) {
+			List<SDFExpressionParameter> expressions, String groupBy,
+			ILogicalOperator source) {
 		StateMapAO stateMapAO = new StateMapAO();
 
+		// Expressions
 		List<NamedExpressionItem> expressionItems = new ArrayList<NamedExpressionItem>();
 		for (SDFExpressionParameter param : expressions) {
 			expressionItems.add(param.getValue());
 		}
 		stateMapAO.setExpressions(expressionItems);
+
+		// GroupBy
+		if (groupBy != null) {
+			ResolvedSDFAttributeParameter groupParameter = new ResolvedSDFAttributeParameter();
+			groupParameter.setInputValue(groupBy);
+			List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+			attributes.add(groupParameter.getValue());
+			stateMapAO.setGroupingAttributes(attributes);
+		}
+
 		stateMapAO.subscribeTo(source, source.getOutputSchema());
 		return stateMapAO;
 	}
@@ -68,7 +82,7 @@ public class OperatorBuildHelper {
 		// TODO: Do the right thing if timeParameter says "all" or "now"
 		int startMinute = timeParameter.getStart();
 		int endMinute = timeParameter.getEnd();
-		
+
 		// 1. minute >= ${parameterTimeStart_minute}
 		String firstPredicateString = "minute >= " + startMinute;
 		SDFExpression firstPredicateExpression = new SDFExpression(
@@ -100,7 +114,8 @@ public class OperatorBuildHelper {
 		return selectAO;
 	}
 
-	public static SelectAO getEntitySelect(long entityId, ILogicalOperator source) {
+	public static SelectAO getEntitySelect(long entityId,
+			ILogicalOperator source) {
 		SelectAO selectAO = new SelectAO();
 
 		// Predicate we want to produce:
@@ -219,7 +234,7 @@ public class OperatorBuildHelper {
 	}
 
 	public static void initializeOperators(List<ILogicalOperator> operators) {
-		for(ILogicalOperator op : operators) {
+		for (ILogicalOperator op : operators) {
 			op.initialize();
 		}
 	}

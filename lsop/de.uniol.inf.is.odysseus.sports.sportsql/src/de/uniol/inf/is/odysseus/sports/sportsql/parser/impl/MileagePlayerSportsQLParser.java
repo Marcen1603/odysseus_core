@@ -26,7 +26,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL) {
-		
+
 		// We need this list to initialize all operators
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
@@ -42,7 +42,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		MapAO firstMap = OperatorBuildHelper.getMapAO(
 				getExpressionsForFirstMap(), null);
 		allOperators.add(firstMap);
-		
+
 		// 2. Correct timeWindow
 		SportsQLTimeParameter timeParam = SportsQLParameterHelper
 				.getTimeParameter(sportsQL);
@@ -54,9 +54,10 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		// Second Query (Select for questioned entity)
 		// -------------------------------------------
 		// TODO: Correct source
-		SelectAO entitySelect = OperatorBuildHelper.getEntitySelect(sportsQL.getEntityId(), null);
+		SelectAO entitySelect = OperatorBuildHelper.getEntitySelect(
+				sportsQL.getEntityId(), null);
 		allOperators.add(entitySelect);
-		
+
 		// Third Query (
 		// -----------
 
@@ -64,7 +65,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		EnrichAO enrichAO = OperatorBuildHelper.getEnrichAO("sensorid = sid",
 				entitySelect, timeSelect);
 		allOperators.add(enrichAO);
-		
+
 		// 2. StateMap
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter param = OperatorBuildHelper
@@ -73,21 +74,21 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 						"mileage");
 		expressions.add(param);
 		StateMapAO statemapAO = OperatorBuildHelper.getStateMapAO(expressions,
-				enrichAO);
+				"sensorid", enrichAO);
 		allOperators.add(statemapAO);
 
-		// 4. Aggregate
+		// 3. Aggregate
 		AggregateAO aggregateAO = OperatorBuildHelper.getAggregateAO("SUM",
 				"mileage", "mileage", statemapAO);
 		allOperators.add(aggregateAO);
-		
+
 		// Initialize all AOs
 		OperatorBuildHelper.initializeOperators(allOperators);
-		
+
 		// Create plan
 		ILogicalQuery query = new LogicalQuery();
 		query.setLogicalPlan(aggregateAO, true);
-		
+
 		return query;
 	}
 
