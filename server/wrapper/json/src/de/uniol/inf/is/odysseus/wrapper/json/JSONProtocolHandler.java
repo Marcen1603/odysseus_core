@@ -56,7 +56,12 @@ public class JSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractJS
 	public void write(T kvObject) throws IOException {
 		StringBuilder string = new StringBuilder();
 		this.getDataHandler().writeJSONData(string, kvObject);
-		this.getTransportHandler().send(Charset.forName("UTF-8").encode(CharBuffer.wrap(string.toString().toCharArray())).array());
+		CharBuffer charBuffer = CharBuffer.wrap(string);
+		ByteBuffer bBuffer = Charset.forName("UTF-8").encode(charBuffer);
+		byte[] encodedBytesTmp = bBuffer.array();
+		byte[] encodedBytes = new byte[charBuffer.limit()]; 
+		System.arraycopy(encodedBytesTmp, 0, encodedBytes, 0, charBuffer.limit());
+		this.getTransportHandler().send(encodedBytes);
 	}
 
 	@Override
