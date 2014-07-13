@@ -402,8 +402,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		Object[] newAttributes = mergeAttributes(
 				left != null ? left.getAttributes() : null,
 				right != null ? right.getAttributes() : null);
-		Tuple<T> r = new Tuple<T>(newAttributes, left.requiresDeepClone()
-				|| right.requiresDeepClone());
+        Tuple<T> r = new Tuple<T>(newAttributes, ((left != null) && (left.requiresDeepClone())) || ((right != null) && (right.requiresDeepClone())));
 		return r;
 	}
 
