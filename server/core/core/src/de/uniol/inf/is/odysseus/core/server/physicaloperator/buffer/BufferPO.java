@@ -219,7 +219,7 @@ public class BufferPO<T extends IStreamObject<?>> extends
 			p = buffer.peek();
 		}
 		IMetaAttribute meta = null;
-		if (p != null & !p.isPunctuation()) {
+		if (p != null && !p.isPunctuation()) {
 			meta = ((T) p).getMetadata();
 		}
 		return meta;
