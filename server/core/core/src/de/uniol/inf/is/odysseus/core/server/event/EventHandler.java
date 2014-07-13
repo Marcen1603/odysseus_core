@@ -230,7 +230,7 @@ class EventDispatcher extends Thread {
 	@Override
 	public void run() {
 		IEvent<?, ?> eventToFire = null;
-		Long timeStamp = null;
+		long timeStamp;
 		Object caller = null;
 
 		try {
