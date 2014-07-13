@@ -144,7 +144,7 @@ public class MapAO extends UnaryLogicalOp {
 				// type
 				if (isOnlyAttribute) {
 					if (!"".equals(expr.name)) {
-						if (attr.getSourceName() != null
+						if (attr != null && attr.getSourceName() != null
 								&& !attr.getSourceName().startsWith("__")) {
 							attr = new SDFAttribute(attr.getSourceName(),
 									expr.name, attr);
