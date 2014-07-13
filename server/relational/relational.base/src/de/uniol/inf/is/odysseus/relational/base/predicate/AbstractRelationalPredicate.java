@@ -124,7 +124,7 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
                 if (rightSchema == null && checkRightSchema) {
                     throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + leftSchema + " and rightSchema is null!");
                 }
-                if (checkRightSchema) {
+                if (rightSchema != null && checkRightSchema) {
                     // if you get here, there is an attribute
                     // in the predicate that does not exist
                     // in the left schema, so there must also be
