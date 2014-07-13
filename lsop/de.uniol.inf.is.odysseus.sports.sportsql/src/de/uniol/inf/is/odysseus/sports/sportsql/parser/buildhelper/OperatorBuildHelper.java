@@ -10,16 +10,21 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SampleAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItemParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -236,6 +241,62 @@ public class OperatorBuildHelper {
 	}
 	
 	/**
+	 * Returns routeAO with a list of predicates
+	 * @param listOfPredicates
+	 * @return
+	 */
+	public static RouteAO createRouteAO(ArrayList<String> listOfPredicates, ILogicalOperator source) {
+		RouteAO rAO = new RouteAO();
+
+		//Add predicates to the routeAO operator
+		for (String predicate : listOfPredicates) {
+			PredicateParameter param = new PredicateParameter();
+			param.setInputValue(predicate);
+			
+			rAO.addPredicate(param.getValue());
+		}
+		//TODO different ports for different results?
+		rAO.subscribeTo(source, source.getOutputSchema());
+		return rAO;
+	}
+	
+	/**
+	 * Returns changeDetectAO with list of Attributes, groupBy, relative tolerance and absolute tolerance
+	 * @param attributes
+	 * @param groupBy
+	 * @param relativeTolerance
+	 * @param tolerance
+	 * @param source
+	 * @return
+	 */
+	public static ChangeDetectAO createChangeDetectAO(List<SDFAttribute> attributes, List<SDFAttribute> groupBy, boolean relativeTolerance, double tolerance, ILogicalOperator source) {
+		ChangeDetectAO cAO = new ChangeDetectAO();
+		cAO.setAttr(attributes);
+		cAO.setGroupingAttributes(groupBy);
+		cAO.setRelativeTolerance(relativeTolerance);
+		cAO.setTolerance(tolerance);
+		cAO.subscribeTo(source,source.getOutputSchema());
+		return cAO;		
+	}
+	
+	/**
+	 * Returns changeDetectAO with list of Attributes, relative tolerance and absolute tolerance
+	 * @param attributes
+	 * @param relativeTolerance 
+	 * @param tolerance
+	 * @param source
+	 * @return
+	 */
+	public static ChangeDetectAO createChangeDetectAO(List<SDFAttribute> attributes, boolean relativeTolerance, double tolerance, ILogicalOperator source) {
+		ChangeDetectAO changeDetectAO = new ChangeDetectAO();
+		changeDetectAO.setAttr(attributes);
+		changeDetectAO.setRelativeTolerance(relativeTolerance);
+		changeDetectAO.setTolerance(tolerance);
+		changeDetectAO.subscribeTo(source,source.getOutputSchema());
+		return changeDetectAO;
+	}
+	
+	/**
 	 * Returns changeDetectAO with a list of Attributes and an absolute tolerance
 	 * @param attributes List of Attributes where changes should occur
 	 * @param tolerance (Absolute) Tolerance applied to changeDetection.
@@ -243,11 +304,70 @@ public class OperatorBuildHelper {
 	 * @return
 	 */
 	public static ChangeDetectAO createChangeDetectAO(List<SDFAttribute> attributes,double tolerance,ILogicalOperator source) {
-		ChangeDetectAO changeDetectAO = new ChangeDetectAO();
-		changeDetectAO.setAttr(attributes);
-		changeDetectAO.setTolerance(tolerance);
-		changeDetectAO.subscribeTo(source,source.getOutputSchema());
-		return changeDetectAO;
+		ChangeDetectAO cAO = new ChangeDetectAO();
+		cAO.setAttr(attributes);
+		cAO.setTolerance(tolerance);
+		cAO.subscribeTo(source,source.getOutputSchema());
+		return cAO;
+	}
+	
+	/**
+	 * Returns selectAO with a list of predicates
+	 * @param listOfPredicates
+	 * @param source
+	 * @return
+	 */
+	public static SelectAO createSelectAO(ArrayList<String> listOfPredicates, ILogicalOperator source) {
+		SelectAO sAO = new SelectAO();
+		for (String predicate : listOfPredicates) {
+			PredicateParameter param = new PredicateParameter();
+			param.setInputValue(predicate);
+			sAO.addPredicate(param.getValue());
+		}
+		sAO.subscribeTo(source, source.getOutputSchema());
+		return sAO;
+	}
+	
+	/**
+	 * Returns windowAO
+	 * @param windowSize
+	 * @param windowType
+	 * @param windowAdvance
+	 * @param source
+	 * @return
+	 */
+	public static WindowAO createWindowAO(TimeValueItem windowSize, WindowType windowType, TimeValueItem windowAdvance, ILogicalOperator source) {
+		WindowAO wAO = new WindowAO();
+		wAO.setWindowSize(windowSize);
+		wAO.setWindowType(windowType);
+		wAO.setWindowAdvance(windowAdvance);
+		
+		if (source != null) {
+			wAO.subscribeTo(source, source.getOutputSchema());
+		}
+		
+		return wAO;
+	}
+	
+	/**
+	 * Returns joinAO
+	 * @param listOfPredicates
+	 * @param source1
+	 * @param source2
+	 * @return
+	 */
+	public static JoinAO createJoinAO(ArrayList<String> listOfPredicates, ILogicalOperator source1, ILogicalOperator source2) {
+		JoinAO jAO = new JoinAO();
+		
+		for (String predicate : listOfPredicates) {
+			PredicateParameter param = new PredicateParameter();
+			param.setInputValue(predicate);
+			jAO.addPredicate(param.getValue());
+		}
+		jAO.subscribeToSource(source1, 0, 0, source1.getOutputSchema());
+		jAO.subscribeToSource(source2, 1, 0, source2.getOutputSchema());
+		
+		return jAO;
 	}
 
 	public static SDFExpressionParameter createExpressionParameter(
@@ -268,7 +388,7 @@ public class OperatorBuildHelper {
 		param.setInputValue(expression);
 		return param;
 	}
-
+	
 	public static void initializeOperators(List<ILogicalOperator> operators) {
 		for (ILogicalOperator op : operators) {
 			op.initialize();
