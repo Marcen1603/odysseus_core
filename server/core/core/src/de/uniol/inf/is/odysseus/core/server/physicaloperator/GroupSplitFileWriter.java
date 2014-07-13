@@ -63,12 +63,15 @@ public class GroupSplitFileWriter<R extends IStreamObject<?>> extends
 		StringBuilder handler = new StringBuilder();
 		dataHandler.writeCSVData(handler, object, ';', '\'',
 				(DecimalFormat) null, (DecimalFormat) null, false);
-		try {
-			outputStream.write(handler.toString().getBytes());
-			outputStream.write("\n".getBytes());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        if (outputStream != null) {
+            try {
+                outputStream.write(handler.toString().getBytes());
+                outputStream.write("\n".getBytes());
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
 	}
 
