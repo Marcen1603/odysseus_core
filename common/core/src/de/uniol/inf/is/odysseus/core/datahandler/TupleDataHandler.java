@@ -214,7 +214,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 */
 	@Override
 	public void writeData(StringBuilder string, Object data) {
-		super.writeData(string, data);
+	//	super.writeData(string, data);
 		Tuple<?> r = (Tuple<?>) data;
 
 		synchronized (string) {
