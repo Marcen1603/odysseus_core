@@ -62,17 +62,17 @@ public class ContextStoreFunction extends AbstractFunction<Object> {
 	@Override
 	public Object getValue() {
 		String storeName = resolveStoreName();
-
-		List<Tuple<? extends ITimeInterval>> values = ContextStoreManager
-				.getStore(storeName).getLastValues();
-		if (values == null) {
-			return "<empty>";
-		}
-		if (values.size() > 1) {
-			LOG.warn("The context store delivered more than one context state, but a function can only handle one! Use enrich instead!");
-		}
-		return values.get(0);
-
+        if (storeName != null) {
+            List<Tuple<? extends ITimeInterval>> values = ContextStoreManager.getStore(storeName).getLastValues();
+            if (values == null) {
+                return "<empty>";
+            }
+            if (values.size() > 1) {
+                LOG.warn("The context store delivered more than one context state, but a function can only handle one! Use enrich instead!");
+            }
+            return values.get(0);
+        }
+        return null;
 	}
 
 	@Override
@@ -86,13 +86,15 @@ public class ContextStoreFunction extends AbstractFunction<Object> {
 	}
 
 	private String resolveStoreName() {
-		String inputValue = getInputValue(0);
-		String[] symbols = inputValue.split("\\.");
-		if (symbols.length >= 2) {
-			return symbols[0];
-		}
-		throw new IllegalArgumentException(
-				"for context access you have to define store and attribute like \"thestore.theattribute\"");
+        String inputValue = getInputValue(0);
+        if (inputValue != null) {
+            String[] symbols = inputValue.split("\\.");
+            if (symbols.length >= 2) {
+                return symbols[0];
+            }
+            throw new IllegalArgumentException("for context access you have to define store and attribute like \"thestore.theattribute\"");
+        }
+        return null;
 	}
 
 	private String resolveAttributeName() {
