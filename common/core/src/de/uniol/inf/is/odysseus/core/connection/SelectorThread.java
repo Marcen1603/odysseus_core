@@ -188,7 +188,8 @@ public class SelectorThread implements Runnable, UncaughtExceptionHandler {
 			if (channel.isRegistered()) {
 				final SelectionKey sk = channel.keyFor(this.selector);
 				assert sk == null : "Channel is not registered with a selector";
-				sk.cancel();
+				//FIXME sk can only be null at this location (ckuka 10240713)
+				//sk.cancel();
 			}
 		} catch (final Exception e) {
 			final IOException ioe = new IOException(
