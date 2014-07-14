@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
@@ -24,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpress
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SourceParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.mep.MEP;
@@ -473,6 +475,18 @@ public class OperatorBuildHelper {
 		jAO.subscribeToSource(source2, 1, 0, source2.getOutputSchema());
 		
 		return jAO;
+	}
+	
+	/**
+	 * Function to get AccessAO
+	 * @param sourcename	Name of source
+	 * @return
+	 */
+	public static AccessAO createAccessAO(String sourcename) {
+		//TODO Does this work? Probably not.
+		SourceParameter source = new SourceParameter();
+		source.setInputValue(sourcename);
+		return source.getValue();
 	}
 
 	public static SDFExpressionParameter createExpressionParameter(
