@@ -415,6 +415,24 @@ public class OperatorBuildHelper {
 		return sAO;
 	}
 	
+	/***
+	 * Creates a Tuple Window
+	 * @param size Size of the window
+	 * @param advance Advance value of the window
+	 * @param source Source Operator.
+	 * @return
+	 */
+	public static WindowAO createTupleWindowAO(int size, int advance, ILogicalOperator source) {
+		WindowAO windowAO = new WindowAO();
+		windowAO.setWindowType(WindowType.TUPLE);
+		TimeValueItem windowSize= new TimeValueItem(size,null);
+		TimeValueItem windowAdvance = new TimeValueItem(advance,null);
+		windowAO.setWindowSize(windowSize);
+		windowAO.setWindowAdvance(windowAdvance);
+		windowAO.subscribeTo(source, source.getOutputSchema());
+		return windowAO;
+	}
+	
 	/**
 	 * Returns windowAO
 	 * @param windowSize
