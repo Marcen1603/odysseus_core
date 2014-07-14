@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
@@ -16,7 +15,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
@@ -70,7 +68,7 @@ public class BallContactSportsQLParser implements ISportsQLParser {
 		ArrayList<String> groupBy = new ArrayList<String>();
 		groupBy.add("sid");
 		
-		ChangeDetectAO ball_velocity_changes = OperatorBuildHelper.createChangeDetectAO(getAttributeList(attributes), getAttributeList(groupBy),relativeTolerance, velocityChange, split_balls);
+		ChangeDetectAO ball_velocity_changes = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(attributes), OperatorBuildHelper.createAttributeList(groupBy),relativeTolerance, velocityChange, split_balls);
 		allOperators.add(ball_velocity_changes);
 		attributes.clear();
 		
@@ -105,7 +103,7 @@ public class BallContactSportsQLParser implements ISportsQLParser {
 	
 		//Delete duplicates
 		attributes.add("sid");
-		ChangeDetectAO delete_duplicates = OperatorBuildHelper.createChangeDetectAO(getAttributeList(attributes), 0.0, proximity);
+		ChangeDetectAO delete_duplicates = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(attributes), 0.0, proximity);
 		allOperators.add(delete_duplicates);
 		attributes.clear();
 		
@@ -115,7 +113,7 @@ public class BallContactSportsQLParser implements ISportsQLParser {
 		
 		//Detect changes in entity_id if another player hits the ball
 		attributes.add("entity_id");
-		ChangeDetectAO output = OperatorBuildHelper.createChangeDetectAO(getAttributeList(attributes), 0.0, enriched_proximity);
+		ChangeDetectAO output = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(attributes), 0.0, enriched_proximity);
 		allOperators.add(output);
 		attributes.clear();
 		
@@ -126,18 +124,6 @@ public class BallContactSportsQLParser implements ISportsQLParser {
 		query.setLogicalPlan(output, true);
 
 		return query;
-	}
-	
-	private List<SDFAttribute> getAttributeList(ArrayList<String> listOfAttributes) {
-		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		
-		for (String attribute : listOfAttributes) {
-			ResolvedSDFAttributeParameter param = new ResolvedSDFAttributeParameter();
-			param.setInputValue(attribute);
-			attributes.add(param.getValue());
-		}
-		
-		return attributes;
 	}
 	
 	private List<SDFExpressionParameter> getMapExpressionForBallPosition() {

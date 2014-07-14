@@ -489,4 +489,16 @@ public class OperatorBuildHelper {
 		attributes.add(groupParameter.getValue());
 		return attributes;
 	}
+	
+	public static List<SDFAttribute> createAttributeList(ArrayList<String> listOfAttributes) {
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		
+		for (String attribute : listOfAttributes) {
+			ResolvedSDFAttributeParameter param = new ResolvedSDFAttributeParameter();
+			param.setInputValue(attribute);
+			attributes.add(param.getValue());
+		}
+		
+		return attributes;
+	}
 }
