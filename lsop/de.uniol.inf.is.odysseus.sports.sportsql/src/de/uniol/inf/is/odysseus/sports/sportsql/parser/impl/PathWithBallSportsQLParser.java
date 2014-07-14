@@ -2,11 +2,14 @@ package de.uniol.inf.is.odysseus.sports.sportsql.parser.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
@@ -20,15 +23,50 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 public class PathWithBallSportsQLParser implements ISportsQLParser {
 
 	@Override
-	public ILogicalQuery parse(SportsQLQuery sportsQL) {
+	public ILogicalQuery parse(SportsQLQuery sportsQL) throws SportsQLParseException {
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
-		// TODO Get Source.
-
-		int entityId = 7;
+		String metadataSourceName = "metadata";
+		String streamSourceName = "soccergame";
+		
+		long entityId = sportsQL.getEntityId();
+		
+		//Set defaults for parameters.
 		int ballDatarate = 100;
 		double accuracy = 300.0;
 		double proximityToBall = 1000.0;
+		
+		//Set parameters when in sportsQL
+		Map<String,String> parameters = sportsQL.getParameters();
+		if(parameters.containsKey("datarate")) {
+			try {
+				ballDatarate = Integer.parseInt(parameters.get("datarate"));
+			}
+			catch (Exception e){
+				throw new SportsQLParseException("Illegal value for datarate.");
+			}
+		}
+		
+		if(parameters.containsKey("accuracy")) {
+			try {
+				accuracy = Double.parseDouble(parameters.get("accuracy"));
+			}
+			catch (Exception e){
+				throw new SportsQLParseException("Illegal value for accuracy (needs to be double!).");
+			}
+		}
+		
+		if(parameters.containsKey("proximity")) {
+			try {
+				proximityToBall = Double.parseDouble(parameters.get("proximity"));
+			}
+			catch (Exception e){
+				throw new SportsQLParseException("Illegal value for proximity (needs to be double!).");
+			}
+		}
+		
+		
+		
 /*
 		int upperleft_x = 0;
 		int upperleft_y = 33965;
@@ -44,7 +82,10 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		int min_y = lowerleft_y;
 		int max_y = upperleft_y;
 */
-		ILogicalOperator source = null;
+		
+		
+		ILogicalOperator source = OperatorBuildHelper.createAccessAO(streamSourceName);
+		ILogicalOperator metadata =OperatorBuildHelper.createAccessAO(metadataSourceName);
 
 		SportsQLTimeParameter timeParameter = SportsQLParameterHelper
 				.getTimeParameter(sportsQL);
@@ -61,8 +102,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 				spaceParameter, selectedTime);
 		allOperators.add(selectedSpace);
 
-		//TODO get Metadata.
-		ILogicalOperator enrichedStream = OperatorBuildHelper.createEnrichAO("sid=sensorid", selectedSpace,null);
+		ILogicalOperator enrichedStream = OperatorBuildHelper.createEnrichAO("sid=sensorid", selectedSpace,metadata);
 		allOperators.add(enrichedStream);
 		
 		// /balls_filtered =
@@ -146,10 +186,15 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		ILogicalOperator result = OperatorBuildHelper.createJoinAO(joinPredicates, playerWindow, ballWindow);
 		allOperators.add(result);
 		
+		// Initialize all AOs
 		OperatorBuildHelper.initializeOperators(allOperators);
+
+		// Create plan
+		ILogicalQuery query = new LogicalQuery();
+		query.setLogicalPlan(result, true);
 		
-		
-		return null;
+		return query;
 	}
+	
 
 }

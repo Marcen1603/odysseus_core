@@ -61,5 +61,6 @@ public class SportsQLParameterHelper {
 		// There was no space parameter: We want to get the whole space
 		return new SportsQLSpaceParameter(0, 0, 0, 0, SportsQLSpaceParameter.SPACE_PARAMETER_ALL);
 	}
+	
 
 }
