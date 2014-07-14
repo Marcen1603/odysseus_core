@@ -72,6 +72,64 @@ public class OperatorBuildHelper {
 		stateMapAO.subscribeTo(source, source.getOutputSchema());
 		return stateMapAO;
 	}
+	
+	/**
+	 * Creates a Select Operator to Filter for space parameter
+	 * @param parameter according Space param.
+	 * @param source Source Operator
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public static SelectAO createSpaceSelect(SportsQLSpaceParameter parameter, ILogicalOperator source) {
+		SelectAO selectAO = new SelectAO();
+		
+		// TODO: Do the right thing if timeParameter says "all"
+		
+		int startX = parameter.getStartx();
+		int startY = parameter.getStarty();
+		int endX = parameter.getEndx();
+		int endY = parameter.getEndy();
+		
+		//Predicate we want to produce:
+		// x >= startX AND x <= endX AND y>= startY AND y<= startY
+		
+		String firstPredicateString = "x >= " + startX;
+		String secondPredicateString = "x <= " + endX;
+		String thirdPredicateString = "y >= " + startY;
+		String fourthPredicateString = "y <= " + endY;
+		
+		//Create Predicates from Strings
+		
+		SDFExpression firstPredicateExpression = new SDFExpression(
+				firstPredicateString, MEP.getInstance());
+		RelationalPredicate firstPredicate = new RelationalPredicate(
+				firstPredicateExpression);
+		
+		SDFExpression secondPredicateExpression = new SDFExpression(
+				secondPredicateString, MEP.getInstance());
+		RelationalPredicate secondPredicate = new RelationalPredicate(
+				secondPredicateExpression);
+
+		SDFExpression thirdPredicateExpression = new SDFExpression(
+				thirdPredicateString, MEP.getInstance());
+		RelationalPredicate thirdPredicate = new RelationalPredicate(
+				thirdPredicateExpression);
+		
+		SDFExpression fourthPredicateExpression = new SDFExpression(
+				fourthPredicateString, MEP.getInstance());
+		RelationalPredicate fourthPredicate = new RelationalPredicate(
+				fourthPredicateExpression);
+		
+		IPredicate firstAndPredicate = ComplexPredicateHelper
+				.createAndPredicate(firstPredicate, secondPredicate);
+		IPredicate secondAndPredicate = ComplexPredicateHelper
+				.createAndPredicate(thirdPredicate,fourthPredicate);
+		IPredicate fullAndPredicate = ComplexPredicateHelper.createAndPredicate(firstAndPredicate,secondAndPredicate);
+		
+		selectAO.setPredicate(fullAndPredicate);
+		selectAO.subscribeTo(source, source.getOutputSchema());
+		return selectAO;
+	}
 
 	@SuppressWarnings({ "rawtypes" })
 	public static SelectAO createTimeSelect(SportsQLTimeParameter timeParameter,
@@ -117,6 +175,12 @@ public class OperatorBuildHelper {
 		return selectAO;
 	}
 
+	/**
+	 * Creates a Select Operator to filter Entity by Id.
+	 * @param entityId Id to filter for.
+	 * @param source Source Operator
+	 * @return
+	 */
 	public static SelectAO createEntitySelect(long entityId,
 			ILogicalOperator source) {
 		SelectAO selectAO = new SelectAO();
@@ -126,6 +190,29 @@ public class OperatorBuildHelper {
 
 		// 1. minute >= ${parameterTimeStart_minute}
 		String predicateString = "entity_id = " + entityId;
+		SDFExpression predicateExpression = new SDFExpression(predicateString,
+				MEP.getInstance());
+		RelationalPredicate predicate = new RelationalPredicate(
+				predicateExpression);
+
+		selectAO.setPredicate(predicate);
+		selectAO.subscribeTo(source, source.getOutputSchema());
+		return selectAO;
+	}
+
+	/**
+	 * Creates Select Operator to Filter by entity name.
+	 * @param entityName Name of Entity to Filter, e.g. 'Ball'
+	 * @param source Source Op
+	 * @return
+	 */
+	public static SelectAO createEntitySelectByName(String entityName, ILogicalOperator source) {
+		SelectAO selectAO = new SelectAO();
+
+		// Predicate we want to produce:
+		// 'entity = ${entity_name}'
+
+		String predicateString = "entity = " + entityName;
 		SDFExpression predicateExpression = new SDFExpression(predicateString,
 				MEP.getInstance());
 		RelationalPredicate predicate = new RelationalPredicate(
