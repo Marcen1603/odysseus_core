@@ -50,9 +50,24 @@ public class OperatorBuildHelper {
 	/**
 	 * Conversion variables
 	 */
-	public static final long TS_TO_MS_FACTOR = 1000000000; 			//ts in picoseconds
-	public static final double TS_GAME_START = 10753295594424116.0;	// For DEBS Grand Challenge 2013 soccer data
-	
+	public static final long TS_TO_MS_FACTOR = 1000000000; // ts in picoseconds
+	public static final double TS_GAME_START = 10753295594424116.0; // For DEBS
+																	// Grand
+																	// Challenge
+																	// 2013
+																	// soccer
+																	// data
+
+	/**
+	 * Creates a MapAP with a list of expressions. To create such expressions,
+	 * see {@link createExpressionParameter}.
+	 * 
+	 * @param expressions
+	 *            List of expressions for this MAP-Operator
+	 * @param source
+	 *            Source for this operator
+	 * @return A MapAO with the given expressions
+	 */
 	public static MapAO createMapAO(List<SDFExpressionParameter> expressions,
 			ILogicalOperator source) {
 		MapAO mapAO = new MapAO();
@@ -67,6 +82,20 @@ public class OperatorBuildHelper {
 		return mapAO;
 	}
 
+	/**
+	 * Creates a StateMapAO with the list of expressions. To create such
+	 * expressions, see {@link createExpressionParameter}. Optional you can
+	 * group in this operator.
+	 * 
+	 * @param expressions
+	 *            List of expressions for this StateMap-Operator
+	 * @param groupBy
+	 *            The variable you want to group by (e.g., "sensorid"). Enter
+	 *            null if you don't want to group
+	 * @param source
+	 *            Source for this operator
+	 * @return A StateMapAO with given expressions and grouping
+	 */
 	public static StateMapAO createStateMapAO(
 			List<SDFExpressionParameter> expressions, String groupBy,
 			ILogicalOperator source) {
@@ -151,6 +180,19 @@ public class OperatorBuildHelper {
 		return selectAO;
 	}
 
+	/**
+	 * Creates a SelectAO with given timeParameter. Automatically build a
+	 * correct Select for the given timeParameter. Assumes that the given input
+	 * stream has "minute" and "second" in the tuples
+	 * 
+	 * @param timeParameter
+	 *            timeParameter with the information which time should be
+	 *            selected
+	 * @param source
+	 *            Source which should at least contain "minute" and "second"
+	 * @return SelectAO which selects just the time-range you configured in the
+	 *         timeParameter.
+	 */
 	@SuppressWarnings({ "rawtypes" })
 	public static SelectAO createTimeSelect(
 			SportsQLTimeParameter timeParameter, ILogicalOperator source) {
@@ -392,11 +434,13 @@ public class OperatorBuildHelper {
 	 * @param source
 	 * @return
 	 */
-	public static ChangeDetectAO createChangeDetectAO(
-			List<SDFAttribute> attributes, List<SDFAttribute> groupBy,
-			boolean relativeTolerance, double tolerance, ILogicalOperator source) {
+	public static ChangeDetectAO createChangeDetectAO(List<String> attributes,
+			List<SDFAttribute> groupBy, boolean relativeTolerance,
+			double tolerance, ILogicalOperator source) {
+		List<SDFAttribute> sdfAttributes = OperatorBuildHelper
+				.createAttributeList(attributes);
 		ChangeDetectAO cAO = new ChangeDetectAO();
-		cAO.setAttr(attributes);
+		cAO.setAttr(sdfAttributes);
 		cAO.setGroupingAttributes(groupBy);
 		cAO.setRelativeTolerance(relativeTolerance);
 		cAO.setTolerance(tolerance);
@@ -550,12 +594,36 @@ public class OperatorBuildHelper {
 		return source.getValue();
 	}
 
+	/**
+	 * Creates a simple TopAO which indicates the top node in the query (maybe
+	 * necessary for Odysseus: This could / should be the operator you return in
+	 * the plan.)
+	 * 
+	 * @param source
+	 *            The top logical operator in your query is the source of this
+	 *            operator. You can imagine that you just put this as a hat on
+	 *            top of your finished plan.
+	 * @return A simple TopAO.
+	 */
 	public static TopAO createTopAO(ILogicalOperator source) {
 		TopAO topAO = new TopAO();
 		topAO.subscribeToSource(source, 0, 0, source.getOutputSchema());
 		return topAO;
 	}
 
+	/**
+	 * Creates an expressionParameter with a name which you can use to create
+	 * some AOs, especially MapAOs.
+	 * 
+	 * @param expression
+	 *            Expression as a String as you would type it in PQL (e.g. just
+	 *            "x" or more complex things like "toDate(ts/100000)")
+	 * @param name
+	 *            The name the calculated value from this expression should have
+	 *            (e.g., "minutes"). This name will appear in the OutputSchema
+	 *            of the operator you put the expression in
+	 * @return An expression which can be used in various AOs, especially MapAOs
+	 */
 	public static SDFExpressionParameter createExpressionParameter(
 			String expression, String name) {
 
@@ -568,6 +636,15 @@ public class OperatorBuildHelper {
 		return param;
 	}
 
+	/**
+	 * Creates an expressionParameter without a name (the expression will be the
+	 * name) which you can use to create some AOs, especially MapAOs.
+	 * 
+	 * @param expression
+	 *            Expression as a String as you would type it in PQL (e.g. just
+	 *            "x" or more complex things like "toDate(ts/100000)")
+	 * @return An expression which can be used in various AOs, especially MapAOs
+	 */
 	public static SDFExpressionParameter createExpressionParameter(
 			String expression) {
 		SDFExpressionParameter param = new SDFExpressionParameter();
@@ -575,12 +652,27 @@ public class OperatorBuildHelper {
 		return param;
 	}
 
+	/**
+	 * Calls "initialize()" for all given AOs. Some AOs maybe need this call so
+	 * it recommended to initialize the AOs.
+	 * 
+	 * @param operators
+	 */
 	public static void initializeOperators(List<ILogicalOperator> operators) {
 		for (ILogicalOperator op : operators) {
 			op.initialize();
 		}
 	}
 
+	/**
+	 * Creates a list of attributes which can be used to group in AOs which
+	 * support grouping (e.g. StateMap and Aggregate). The lost only contains
+	 * one item but must be a list anyway.
+	 * 
+	 * @param groupBy
+	 *            The attribute you want to group by, e.g., "sensorid"
+	 * @return A list with just one element you can use to group by in an AO
+	 */
 	private static List<SDFAttribute> createGroupAttributeList(String groupBy) {
 		ResolvedSDFAttributeParameter groupParameter = new ResolvedSDFAttributeParameter();
 		groupParameter.setInputValue(groupBy);
@@ -589,8 +681,18 @@ public class OperatorBuildHelper {
 		return attributes;
 	}
 
+	/**
+	 * Creates a list of attributes from a list of strings representing
+	 * attributes. Such a string could be something easy as "x". Used to create
+	 * a ChangeDetectAO for example.
+	 * 
+	 * @param listOfAttributes
+	 *            List of Strings representing attributes (e.g., just "x")
+	 * @return A list of attributes which can be used e.g. to create a
+	 *         ChangeDetectAO.
+	 */
 	public static List<SDFAttribute> createAttributeList(
-			ArrayList<String> listOfAttributes) {
+			List<String> listOfAttributes) {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 
 		for (String attribute : listOfAttributes) {

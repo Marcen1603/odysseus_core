@@ -68,7 +68,7 @@ public class BallContactSportsQLParser implements ISportsQLParser {
 		ArrayList<String> groupBy = new ArrayList<String>();
 		groupBy.add("sid");
 		
-		ChangeDetectAO ball_velocity_changes = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(attributes), OperatorBuildHelper.createAttributeList(groupBy),relativeTolerance, velocityChange, split_balls);
+		ChangeDetectAO ball_velocity_changes = OperatorBuildHelper.createChangeDetectAO(attributes, OperatorBuildHelper.createAttributeList(groupBy),relativeTolerance, velocityChange, split_balls);
 		allOperators.add(ball_velocity_changes);
 		attributes.clear();
 		
