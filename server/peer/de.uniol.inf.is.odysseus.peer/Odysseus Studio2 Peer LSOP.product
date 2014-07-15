@@ -18,10 +18,14 @@ http://odysseus.informatik.uni-oldenburg.de/
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -debug -nl ${target.nl} -data @noDefault -clean -debug</programArgs>
-      <vmArgs>-Xms8000M -Xmx8000M -XX:+UseConcMarkSweepGC -Dorg.osgi.framework.bootdelegation=org.netbeans.lib.profiler,org.netbeans.lib.profiler.*</vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
-      <vmArgsWin>-Dorg.osgi.framework.os.name=win32</vmArgsWin>
+      <programArgs>-console -debug -nl ${target.nl} -data @noDefault -clean -debug
+      </programArgs>
+      <vmArgs>-Xms1000M -Xmx1000M -XX:+UseConcMarkSweepGC -Dorg.osgi.framework.bootdelegation=org.netbeans.lib.profiler,org.netbeans.lib.profiler.*
+      </vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      </vmArgsMac>
+      <vmArgsWin>-Dorg.osgi.framework.os.name=win32
+      </vmArgsWin>
    </launcherArgs>
 
    <windowImages i16="/de.uniol.inf.is.odysseus.client.starter/icons/16_16.gif" i32="/de.uniol.inf.is.odysseus.client.starter/icons/32_32.gif" i48="/de.uniol.inf.is.odysseus.client.starter/icons/48_48.gif" i64="/de.uniol.inf.is.odysseus.client.starter/icons/64_64.gif" i128="/de.uniol.inf.is.odysseus.client.starter/icons/128_128.gif"/>
@@ -84,6 +88,8 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.monolithic.studio.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.peer.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.peer.loadbalancing.active.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.core.server.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.sports.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
