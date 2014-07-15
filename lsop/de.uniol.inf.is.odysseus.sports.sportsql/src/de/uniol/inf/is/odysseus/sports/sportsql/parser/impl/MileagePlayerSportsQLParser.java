@@ -3,19 +3,17 @@ package de.uniol.inf.is.odysseus.sports.sportsql.parser.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.base.Optional;
-
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
-import de.uniol.inf.is.odysseus.sports.sportsql.Activator;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
@@ -34,22 +32,28 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		// We need this list to initialize all operators
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
-		// TODO: Get Source from DataDictionary -> Create an AccessPO
-		Optional<IDataDictionary> dataDictOptional = Activator.getDataDictionary(); 
-		if(dataDictOptional.isPresent()) {
-			//IDataDictionary dataDict = dataDictOptional.get();
-		}
-		
-		// First Query (Select for questioned time)
-		// ----------------------------------------
+		// TODO: Do we need the dataDictionary?
+		// Optional<IDataDictionary> dataDictOptional =
+		// Activator.getDataDictionary();
+		// IDataDictionary dataDict = null;
+		// if(dataDictOptional.isPresent()) {
+		// dataDict = dataDictOptional.get();
+		// }
+
+		String soccerGameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
+		AccessAO soccerGameAccessAO = OperatorBuildHelper
+				.createAccessAO(soccerGameSourceName);
+
+		// ----------------------------------------------------
+		// First part of the query (Select for questioned time)
+		// ----------------------------------------------------
 
 		// 1. MAP
-		// Question: How to get the initial input?
 		MapAO firstMap = OperatorBuildHelper.createMapAO(
-				getExpressionsForFirstMap(), null);
+				getExpressionsForFirstMap(), soccerGameAccessAO);
 		allOperators.add(firstMap);
 
-		// 2. Correct timeWindow
+		// 2. Correct selection for the time
 		SportsQLTimeParameter timeParam = SportsQLParameterHelper
 				.getTimeParameter(sportsQL);
 
@@ -57,15 +61,20 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 				firstMap);
 		allOperators.add(timeSelect);
 
-		// Second Query (Select for questioned entity)
-		// -------------------------------------------
-		// TODO: Correct source
+		// -------------------------------------------------------
+		// Second part of the query (Select for questioned entity)
+		// -------------------------------------------------------
+		String metadataSourceName = OperatorBuildHelper.METADATA_STREAM_NAME;
+		AccessAO metaDataAccessAO = OperatorBuildHelper
+				.createAccessAO(metadataSourceName);
+
 		SelectAO entitySelect = OperatorBuildHelper.createEntitySelect(
-				sportsQL.getEntityId(), null);
+				sportsQL.getEntityId(), metaDataAccessAO);
 		allOperators.add(entitySelect);
 
-		// Third Query
-		// -----------
+		// -----------------------
+		// Third part of the query
+		// -----------------------
 
 		// 1. Enrich
 		EnrichAO enrichAO = OperatorBuildHelper.createEnrichAO(
@@ -74,6 +83,8 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
 		// 2. StateMap
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
+		// Hint: "__last_n" is part of the StateMap to access historical data.
+		// See StateMap documentation.
 		SDFExpressionParameter param = OperatorBuildHelper
 				.createExpressionParameter(
 						"(sqrt(((x-__last_1.x)^2 + (y-__last_1.y)^2))/1000)",
@@ -84,8 +95,8 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		allOperators.add(statemapAO);
 
 		// 3. Aggregate
-		AggregateAO sumAggregateAO = OperatorBuildHelper.createAggregateAO("SUM",
-				"sensorid", "mileage", "mileage", null, statemapAO);
+		AggregateAO sumAggregateAO = OperatorBuildHelper.createAggregateAO(
+				"SUM", "sensorid", "mileage", "mileage", null, statemapAO);
 		allOperators.add(sumAggregateAO);
 
 		// 4. Aggregate
@@ -93,12 +104,15 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 				"MAX", "mileage", "mileage", sumAggregateAO);
 		allOperators.add(maxAggregateAO);
 
+		// 5. TopAO (for Odysseus - it wants to know which operator is the top)
+		TopAO topAO = OperatorBuildHelper.createTopAO(maxAggregateAO);
+
 		// Initialize all AOs
 		OperatorBuildHelper.initializeOperators(allOperators);
 
 		// Create plan
 		ILogicalQuery query = new LogicalQuery();
-		query.setLogicalPlan(sumAggregateAO, true);
+		query.setLogicalPlan(topAO, true);
 
 		return query;
 	}
@@ -109,15 +123,17 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		SDFExpressionParameter ex1 = OperatorBuildHelper
 				.createExpressionParameter("sid");
 
-		// TODO: These two expressions maybe won't work
+		// TODO Maybe we have to use the MEP-functions manually
 		SDFExpressionParameter ex2 = OperatorBuildHelper
-				.createExpressionParameter(
-						"minutes(toDate(${gameStart_ts}/${ts_to_ms_factor}), toDate(ts/${ts_to_ms_factor}))",
-						"minute");
+				.createExpressionParameter("minutes(toDate("
+						+ OperatorBuildHelper.TS_GAME_START + "/"
+						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "), toDate(ts/"
+						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "))", "minute");
 		SDFExpressionParameter ex3 = OperatorBuildHelper
-				.createExpressionParameter(
-						"seconds(toDate(${gameStart_ts}/${ts_to_ms_factor}), toDate(ts/${ts_to_ms_factor}))",
-						"second");
+				.createExpressionParameter("seconds(toDate("
+						+ OperatorBuildHelper.TS_GAME_START + "/"
+						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "), toDate(ts/"
+						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "))", "second");
 
 		SDFExpressionParameter ex4 = OperatorBuildHelper
 				.createExpressionParameter("x");
@@ -159,5 +175,4 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
 		return expressions;
 	}
-
 }

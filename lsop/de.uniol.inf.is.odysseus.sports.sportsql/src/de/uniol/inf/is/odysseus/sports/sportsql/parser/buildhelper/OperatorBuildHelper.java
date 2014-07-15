@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SampleAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
@@ -40,6 +41,18 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
  */
 public class OperatorBuildHelper {
 
+	/**
+	 * Names of streams
+	 */
+	public static final String MAIN_STREAM_NAME = "soccergame";
+	public static final String METADATA_STREAM_NAME = "metadata";
+
+	/**
+	 * Conversion variables
+	 */
+	public static final long TS_TO_MS_FACTOR = 1000000000; 			//ts in picoseconds
+	public static final double TS_GAME_START = 10753295594424116.0;	// For DEBS Grand Challenge 2013 soccer data
+	
 	public static MapAO createMapAO(List<SDFExpressionParameter> expressions,
 			ILogicalOperator source) {
 		MapAO mapAO = new MapAO();
@@ -74,39 +87,43 @@ public class OperatorBuildHelper {
 		stateMapAO.subscribeTo(source, source.getOutputSchema());
 		return stateMapAO;
 	}
-	
+
 	/**
 	 * Creates a Select Operator to Filter for space parameter
-	 * @param parameter according Space param.
-	 * @param source Source Operator
+	 * 
+	 * @param parameter
+	 *            according Space param.
+	 * @param source
+	 *            Source Operator
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	public static SelectAO createSpaceSelect(SportsQLSpaceParameter parameter, ILogicalOperator source) {
+	public static SelectAO createSpaceSelect(SportsQLSpaceParameter parameter,
+			ILogicalOperator source) {
 		SelectAO selectAO = new SelectAO();
-		
+
 		// TODO: Do the right thing if timeParameter says "all"
-		
+
 		int startX = parameter.getStartx();
 		int startY = parameter.getStarty();
 		int endX = parameter.getEndx();
 		int endY = parameter.getEndy();
-		
-		//Predicate we want to produce:
+
+		// Predicate we want to produce:
 		// x >= startX AND x <= endX AND y>= startY AND y<= startY
-		
+
 		String firstPredicateString = "x >= " + startX;
 		String secondPredicateString = "x <= " + endX;
 		String thirdPredicateString = "y >= " + startY;
 		String fourthPredicateString = "y <= " + endY;
-		
-		//Create Predicates from Strings
-		
+
+		// Create Predicates from Strings
+
 		SDFExpression firstPredicateExpression = new SDFExpression(
 				firstPredicateString, MEP.getInstance());
 		RelationalPredicate firstPredicate = new RelationalPredicate(
 				firstPredicateExpression);
-		
+
 		SDFExpression secondPredicateExpression = new SDFExpression(
 				secondPredicateString, MEP.getInstance());
 		RelationalPredicate secondPredicate = new RelationalPredicate(
@@ -116,26 +133,27 @@ public class OperatorBuildHelper {
 				thirdPredicateString, MEP.getInstance());
 		RelationalPredicate thirdPredicate = new RelationalPredicate(
 				thirdPredicateExpression);
-		
+
 		SDFExpression fourthPredicateExpression = new SDFExpression(
 				fourthPredicateString, MEP.getInstance());
 		RelationalPredicate fourthPredicate = new RelationalPredicate(
 				fourthPredicateExpression);
-		
+
 		IPredicate firstAndPredicate = ComplexPredicateHelper
 				.createAndPredicate(firstPredicate, secondPredicate);
 		IPredicate secondAndPredicate = ComplexPredicateHelper
-				.createAndPredicate(thirdPredicate,fourthPredicate);
-		IPredicate fullAndPredicate = ComplexPredicateHelper.createAndPredicate(firstAndPredicate,secondAndPredicate);
-		
+				.createAndPredicate(thirdPredicate, fourthPredicate);
+		IPredicate fullAndPredicate = ComplexPredicateHelper
+				.createAndPredicate(firstAndPredicate, secondAndPredicate);
+
 		selectAO.setPredicate(fullAndPredicate);
 		selectAO.subscribeTo(source, source.getOutputSchema());
 		return selectAO;
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	public static SelectAO createTimeSelect(SportsQLTimeParameter timeParameter,
-			ILogicalOperator source) {
+	public static SelectAO createTimeSelect(
+			SportsQLTimeParameter timeParameter, ILogicalOperator source) {
 		SelectAO selectAO = new SelectAO();
 
 		// Predicate we want to produce:
@@ -179,8 +197,11 @@ public class OperatorBuildHelper {
 
 	/**
 	 * Creates a Select Operator to filter Entity by Id.
-	 * @param entityId Id to filter for.
-	 * @param source Source Operator
+	 * 
+	 * @param entityId
+	 *            Id to filter for.
+	 * @param source
+	 *            Source Operator
 	 * @return
 	 */
 	public static SelectAO createEntitySelect(long entityId,
@@ -204,11 +225,15 @@ public class OperatorBuildHelper {
 
 	/**
 	 * Creates Select Operator to Filter by entity name.
-	 * @param entityName Name of Entity to Filter, e.g. 'Ball'
-	 * @param source Source Op
+	 * 
+	 * @param entityName
+	 *            Name of Entity to Filter, e.g. 'Ball'
+	 * @param source
+	 *            Source Operator which is the source for this operator
 	 * @return
 	 */
-	public static SelectAO createEntitySelectByName(String entityName, ILogicalOperator source) {
+	public static SelectAO createEntitySelectByName(String entityName,
+			ILogicalOperator source) {
 		SelectAO selectAO = new SelectAO();
 
 		// Predicate we want to produce:
@@ -224,14 +249,17 @@ public class OperatorBuildHelper {
 		selectAO.subscribeTo(source, source.getOutputSchema());
 		return selectAO;
 	}
-	
+
 	/**
 	 * 
-	 * @param sampleRate sampleRate determines which n'th tuples are processed.
-	 * @param source Source Operator to Link to.
+	 * @param sampleRate
+	 *            sampleRate determines which n'th tuples are processed.
+	 * @param source
+	 *            Source Operator to Link to.
 	 * @return
 	 */
-	public static SampleAO createSampleAO(int sampleRate,ILogicalOperator source) {
+	public static SampleAO createSampleAO(int sampleRate,
+			ILogicalOperator source) {
 		SampleAO sampleAO = new SampleAO();
 		sampleAO.setSampleRate(sampleRate);
 		sampleAO.subscribeTo(source, source.getOutputSchema());
@@ -298,7 +326,8 @@ public class OperatorBuildHelper {
 	 * @param outputType
 	 *            The optional type of output (null, if you don't want to
 	 *            specify, should then be double)
-	 * @param source The operator before this one
+	 * @param source
+	 *            The operator before this one
 	 * @return
 	 */
 	public static AggregateAO createAggregateAO(String aggregationFunction,
@@ -321,36 +350,41 @@ public class OperatorBuildHelper {
 
 		// GroupBy
 		if (groupBy != null) {
-			aggregateAO.setGroupingAttributes(createGroupAttributeList(groupBy));
+			aggregateAO
+					.setGroupingAttributes(createGroupAttributeList(groupBy));
 		}
 
 		aggregateAO.subscribeTo(source, source.getOutputSchema());
 
 		return aggregateAO;
 	}
-	
+
 	/**
 	 * Returns routeAO with a list of predicates
+	 * 
 	 * @param listOfPredicates
 	 * @return
 	 */
-	public static RouteAO createRouteAO(ArrayList<String> listOfPredicates, ILogicalOperator source) {
+	public static RouteAO createRouteAO(ArrayList<String> listOfPredicates,
+			ILogicalOperator source) {
 		RouteAO rAO = new RouteAO();
 
-		//Add predicates to the routeAO operator
+		// Add predicates to the routeAO operator
 		for (String predicate : listOfPredicates) {
 			PredicateParameter param = new PredicateParameter();
 			param.setInputValue(predicate);
-			
+
 			rAO.addPredicate(param.getValue());
 		}
-		//TODO different ports for different results?
+		// TODO different ports for different results?
 		rAO.subscribeTo(source, source.getOutputSchema());
 		return rAO;
 	}
-	
+
 	/**
-	 * Returns changeDetectAO with list of Attributes, groupBy, relative tolerance and absolute tolerance
+	 * Returns changeDetectAO with list of Attributes, groupBy, relative
+	 * tolerance and absolute tolerance
+	 * 
 	 * @param attributes
 	 * @param groupBy
 	 * @param relativeTolerance
@@ -358,55 +392,70 @@ public class OperatorBuildHelper {
 	 * @param source
 	 * @return
 	 */
-	public static ChangeDetectAO createChangeDetectAO(List<SDFAttribute> attributes, List<SDFAttribute> groupBy, boolean relativeTolerance, double tolerance, ILogicalOperator source) {
+	public static ChangeDetectAO createChangeDetectAO(
+			List<SDFAttribute> attributes, List<SDFAttribute> groupBy,
+			boolean relativeTolerance, double tolerance, ILogicalOperator source) {
 		ChangeDetectAO cAO = new ChangeDetectAO();
 		cAO.setAttr(attributes);
 		cAO.setGroupingAttributes(groupBy);
 		cAO.setRelativeTolerance(relativeTolerance);
 		cAO.setTolerance(tolerance);
-		cAO.subscribeTo(source,source.getOutputSchema());
-		return cAO;		
+		cAO.subscribeTo(source, source.getOutputSchema());
+		return cAO;
 	}
-	
+
 	/**
-	 * Returns changeDetectAO with list of Attributes, relative tolerance and absolute tolerance
+	 * Returns changeDetectAO with list of Attributes, relative tolerance and
+	 * absolute tolerance
+	 * 
 	 * @param attributes
-	 * @param relativeTolerance 
+	 * @param relativeTolerance
 	 * @param tolerance
 	 * @param source
 	 * @return
 	 */
-	public static ChangeDetectAO createChangeDetectAO(List<SDFAttribute> attributes, boolean relativeTolerance, double tolerance, ILogicalOperator source) {
+	public static ChangeDetectAO createChangeDetectAO(
+			List<SDFAttribute> attributes, boolean relativeTolerance,
+			double tolerance, ILogicalOperator source) {
 		ChangeDetectAO changeDetectAO = new ChangeDetectAO();
 		changeDetectAO.setAttr(attributes);
 		changeDetectAO.setRelativeTolerance(relativeTolerance);
 		changeDetectAO.setTolerance(tolerance);
-		changeDetectAO.subscribeTo(source,source.getOutputSchema());
+		changeDetectAO.subscribeTo(source, source.getOutputSchema());
 		return changeDetectAO;
 	}
-	
+
 	/**
-	 * Returns changeDetectAO with a list of Attributes and an absolute tolerance
-	 * @param attributes List of Attributes where changes should occur
-	 * @param tolerance (Absolute) Tolerance applied to changeDetection.
-	 * @param source Source to link to.
+	 * Returns changeDetectAO with a list of Attributes and an absolute
+	 * tolerance
+	 * 
+	 * @param attributes
+	 *            List of Attributes where changes should occur
+	 * @param tolerance
+	 *            (Absolute) Tolerance applied to changeDetection.
+	 * @param source
+	 *            Source to link to.
 	 * @return
 	 */
-	public static ChangeDetectAO createChangeDetectAO(List<SDFAttribute> attributes,double tolerance,ILogicalOperator source) {
+	public static ChangeDetectAO createChangeDetectAO(
+			List<SDFAttribute> attributes, double tolerance,
+			ILogicalOperator source) {
 		ChangeDetectAO cAO = new ChangeDetectAO();
 		cAO.setAttr(attributes);
 		cAO.setTolerance(tolerance);
-		cAO.subscribeTo(source,source.getOutputSchema());
+		cAO.subscribeTo(source, source.getOutputSchema());
 		return cAO;
 	}
-	
+
 	/**
 	 * Returns selectAO with a list of predicates
+	 * 
 	 * @param listOfPredicates
 	 * @param source
 	 * @return
 	 */
-	public static SelectAO createSelectAO(ArrayList<String> listOfPredicates, ILogicalOperator source) {
+	public static SelectAO createSelectAO(ArrayList<String> listOfPredicates,
+			ILogicalOperator source) {
 		SelectAO sAO = new SelectAO();
 		for (String predicate : listOfPredicates) {
 			PredicateParameter param = new PredicateParameter();
@@ -416,56 +465,66 @@ public class OperatorBuildHelper {
 		sAO.subscribeTo(source, source.getOutputSchema());
 		return sAO;
 	}
-	
+
 	/***
 	 * Creates a Tuple Window
-	 * @param size Size of the window
-	 * @param advance Advance value of the window
-	 * @param source Source Operator.
+	 * 
+	 * @param size
+	 *            Size of the window
+	 * @param advance
+	 *            Advance value of the window
+	 * @param source
+	 *            Source Operator.
 	 * @return
 	 */
-	public static WindowAO createTupleWindowAO(int size, int advance, ILogicalOperator source) {
+	public static WindowAO createTupleWindowAO(int size, int advance,
+			ILogicalOperator source) {
 		WindowAO windowAO = new WindowAO();
 		windowAO.setWindowType(WindowType.TUPLE);
-		TimeValueItem windowSize= new TimeValueItem(size,null);
-		TimeValueItem windowAdvance = new TimeValueItem(advance,null);
+		TimeValueItem windowSize = new TimeValueItem(size, null);
+		TimeValueItem windowAdvance = new TimeValueItem(advance, null);
 		windowAO.setWindowSize(windowSize);
 		windowAO.setWindowAdvance(windowAdvance);
 		windowAO.subscribeTo(source, source.getOutputSchema());
 		return windowAO;
 	}
-	
+
 	/**
 	 * Returns windowAO
+	 * 
 	 * @param windowSize
 	 * @param windowType
 	 * @param windowAdvance
 	 * @param source
 	 * @return
 	 */
-	public static WindowAO createWindowAO(TimeValueItem windowSize, WindowType windowType, TimeValueItem windowAdvance, ILogicalOperator source) {
+	public static WindowAO createWindowAO(TimeValueItem windowSize,
+			WindowType windowType, TimeValueItem windowAdvance,
+			ILogicalOperator source) {
 		WindowAO wAO = new WindowAO();
 		wAO.setWindowSize(windowSize);
 		wAO.setWindowType(windowType);
 		wAO.setWindowAdvance(windowAdvance);
-		
+
 		if (source != null) {
 			wAO.subscribeTo(source, source.getOutputSchema());
 		}
-		
+
 		return wAO;
 	}
-	
+
 	/**
 	 * Returns joinAO
+	 * 
 	 * @param listOfPredicates
 	 * @param source1
 	 * @param source2
 	 * @return
 	 */
-	public static JoinAO createJoinAO(ArrayList<String> listOfPredicates, ILogicalOperator source1, ILogicalOperator source2) {
+	public static JoinAO createJoinAO(ArrayList<String> listOfPredicates,
+			ILogicalOperator source1, ILogicalOperator source2) {
 		JoinAO jAO = new JoinAO();
-		
+
 		for (String predicate : listOfPredicates) {
 			PredicateParameter param = new PredicateParameter();
 			param.setInputValue(predicate);
@@ -473,20 +532,28 @@ public class OperatorBuildHelper {
 		}
 		jAO.subscribeToSource(source1, 0, 0, source1.getOutputSchema());
 		jAO.subscribeToSource(source2, 1, 0, source2.getOutputSchema());
-		
+
 		return jAO;
 	}
-	
+
 	/**
 	 * Function to get AccessAO
-	 * @param sourcename	Name of source
+	 * 
+	 * @param sourcename
+	 *            Name of source
 	 * @return
 	 */
 	public static AccessAO createAccessAO(String sourcename) {
-		//TODO Does this work? Probably not.
+		// TODO Does this work? Probably not.
 		SourceParameter source = new SourceParameter();
 		source.setInputValue(sourcename);
 		return source.getValue();
+	}
+
+	public static TopAO createTopAO(ILogicalOperator source) {
+		TopAO topAO = new TopAO();
+		topAO.subscribeToSource(source, 0, 0, source.getOutputSchema());
+		return topAO;
 	}
 
 	public static SDFExpressionParameter createExpressionParameter(
@@ -507,7 +574,7 @@ public class OperatorBuildHelper {
 		param.setInputValue(expression);
 		return param;
 	}
-	
+
 	public static void initializeOperators(List<ILogicalOperator> operators) {
 		for (ILogicalOperator op : operators) {
 			op.initialize();
@@ -521,16 +588,17 @@ public class OperatorBuildHelper {
 		attributes.add(groupParameter.getValue());
 		return attributes;
 	}
-	
-	public static List<SDFAttribute> createAttributeList(ArrayList<String> listOfAttributes) {
+
+	public static List<SDFAttribute> createAttributeList(
+			ArrayList<String> listOfAttributes) {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		
+
 		for (String attribute : listOfAttributes) {
 			ResolvedSDFAttributeParameter param = new ResolvedSDFAttributeParameter();
 			param.setInputValue(attribute);
 			attributes.add(param.getValue());
 		}
-		
+
 		return attributes;
 	}
 }
