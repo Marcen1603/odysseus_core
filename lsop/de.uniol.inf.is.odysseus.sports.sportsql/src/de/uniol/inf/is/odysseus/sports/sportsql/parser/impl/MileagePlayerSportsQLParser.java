@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLTimeP
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 
-@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.TEAM }, name = "mileageplayer")
+@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER }, name = "mileageplayer")
 public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
 	@Override
@@ -31,14 +31,6 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
 		// We need this list to initialize all operators
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
-
-		// TODO: Do we need the dataDictionary?
-		// Optional<IDataDictionary> dataDictOptional =
-		// Activator.getDataDictionary();
-		// IDataDictionary dataDict = null;
-		// if(dataDictOptional.isPresent()) {
-		// dataDict = dataDictOptional.get();
-		// }
 
 		String soccerGameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
 		AccessAO soccerGameAccessAO = OperatorBuildHelper
@@ -113,6 +105,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		// Create plan
 		ILogicalQuery query = new LogicalQuery();
 		query.setLogicalPlan(topAO, true);
+		query.setName("test");
 
 		return query;
 	}
