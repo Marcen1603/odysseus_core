@@ -297,8 +297,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			if (!newSet.contains(attributes2.getAttribute(i))) {
 				newSet.elements.add(attributes2.getAttribute(i));
 			}else{
-				SDFAttribute renamed = new SDFAttribute(attributes2.getAttribute(i)+"", "_$_"+attributes2.getAttribute(i), attributes2.getAttribute(i));
-				newSet.elements.add(renamed);
+				throw new AmbiguousAttributeException("Attribute "+attributes2.getAttribute(i)+" in left and right input! Rename!");
 			}
 		}
 		return newSet;
