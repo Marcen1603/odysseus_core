@@ -19,6 +19,8 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.Iterator;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -82,11 +84,10 @@ public class JoinAO extends BinaryLogicalOp {
 
 	@Override
 	public synchronized SDFSchema getOutputSchemaIntern(int pos) {
-		// The Sum of all InputSchema
-		SDFSchema outputSchema = null;
-		for (LogicalSubscription l : getSubscribedToSource()) {
-			outputSchema = SDFSchema.union(outputSchema, l.getSchema());
-		}
+		Iterator<LogicalSubscription> iter = getSubscribedToSource().iterator();
+		SDFSchema left = iter.next().getSchema();
+		SDFSchema right = iter.next().getSchema();
+		SDFSchema outputSchema = SDFSchema.join(left, right);
 		setOutputSchema(outputSchema);
 		return outputSchema;
 	}

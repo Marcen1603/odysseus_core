@@ -281,6 +281,29 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		return newSet;
 	}
 
+	/**
+	 * @param requiredAttributes
+	 * @param requiredAttributes2
+	 * @return
+	 */
+	public static SDFSchema join(SDFSchema attributes1, SDFSchema attributes2) {
+
+		String name = getNewName(attributes1, attributes2);
+		SDFSchema newSet = new SDFSchema(name, attributes1);
+
+		newSet.addBaseSourceNames(attributes2.getBaseSourceNames());
+
+		for (int i = 0; i < attributes2.size(); i++) {
+			if (!newSet.contains(attributes2.getAttribute(i))) {
+				newSet.elements.add(attributes2.getAttribute(i));
+			}else{
+				SDFAttribute renamed = new SDFAttribute(attributes2.getAttribute(i)+"", "_$_"+attributes2.getAttribute(i), attributes2.getAttribute(i));
+				newSet.elements.add(renamed);
+			}
+		}
+		return newSet;
+	}
+	
 	protected static String getNewName(SDFSchema attributes1,
 			SDFSchema attributes2) {
 		String name = attributes1.getURI().compareToIgnoreCase(
