@@ -55,7 +55,15 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
     public static final int TIMEOUTSECONDS = 30;
     private static final Map<String, Pair<CommPort, Integer>> ports = new HashMap<>();
     /** Logger */
-    private final Logger LOG = LoggerFactory.getLogger(RS232TransportHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RS232TransportHandler.class);
+
+    private final static String PORT = "port";
+    private final static String BAUD = "baud";
+    private final static String PARITY = "parity";
+    private final static String DATABITS = "databits";
+    private final static String STOPBITS = "stopbits";
+    private final static String READLINES = "readlines";
+
     /** The output stream */
     private PrintStream output;
     /** The chosen Port itself */
@@ -80,29 +88,59 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
 
     public RS232TransportHandler() {
         super();
-        initializeSerialPorts();
+        RS232TransportHandler.initializeSerialPorts();
     }
 
     public RS232TransportHandler(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
         super(protocolHandler, options);
-        initializeSerialPorts();
+        RS232TransportHandler.initializeSerialPorts();
+        this.init(options);
+    }
 
-        this.portName = options.get("port");
-        this.baud = options.containsKey("baud") ? Integer.parseInt(options.get("baud")) : 9600;
-        this.parity = options.containsKey("parity") ? Integer.parseInt(options.get("parity")) : SerialPort.PARITY_NONE;
-        this.databits = options.containsKey("databits") ? Integer.parseInt(options.get("databits")) : SerialPort.DATABITS_8;
-        this.stopbits = options.containsKey("stopbits") ? Integer.parseInt(options.get("stopbits")) : SerialPort.STOPBITS_1;
-        this.readLines = options.containsKey("readlines") ? Boolean.parseBoolean("readlines") : true;
+    protected void init(final Map<String, String> options) {
+        if (options.containsKey(RS232TransportHandler.PORT)) {
+            this.portName = options.get(RS232TransportHandler.PORT);
+        }
+        if (options.containsKey(RS232TransportHandler.BAUD)) {
+            this.baud = Integer.parseInt(options.get(RS232TransportHandler.BAUD));
+        }
+        else {
+            this.baud = 9600;
+        }
+        if (options.containsKey(RS232TransportHandler.PARITY)) {
+            this.parity = Integer.parseInt(options.get(RS232TransportHandler.PARITY));
+        }
+        else {
+            this.parity = SerialPort.PARITY_NONE;
+        }
+        if (options.containsKey(RS232TransportHandler.DATABITS)) {
+            this.databits = Integer.parseInt(options.get(RS232TransportHandler.DATABITS));
+        }
+        else {
+            this.databits = SerialPort.DATABITS_8;
+        }
+        if (options.containsKey(RS232TransportHandler.STOPBITS)) {
+            this.stopbits = Integer.parseInt(options.get(RS232TransportHandler.STOPBITS));
+        }
+        else {
+            this.stopbits = SerialPort.STOPBITS_1;
+        }
+        if (options.containsKey(RS232TransportHandler.READLINES)) {
+            this.readLines = Boolean.parseBoolean(RS232TransportHandler.READLINES);
+        }
+        else {
+            this.readLines = true;
+        }
     }
 
     @Override
     public void send(final byte[] message) throws IOException {
         if (this.output != null) {
             this.output.write(message);
-            this.LOG.trace("> {}", new String(message,"UTF-8"));
+            RS232TransportHandler.LOG.trace("> {}", new String(message, "UTF-8"));
         }
         else {
-            this.LOG.error("Trying to write to a not opened connection!");
+            RS232TransportHandler.LOG.error("Trying to write to a not opened connection!");
         }
     }
 
@@ -112,7 +150,7 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
             return this.port.getInputStream();
         }
         catch (final IOException e) {
-            this.LOG.error(e.getMessage(), e);
+            RS232TransportHandler.LOG.error(e.getMessage(), e);
         }
         return null;
     }
@@ -144,7 +182,7 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
                 }
             }
             catch (final IOException e) {
-                this.LOG.error(e.getMessage(), e);
+                RS232TransportHandler.LOG.error(e.getMessage(), e);
             }
         }
 
@@ -163,49 +201,50 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
     @Override
     public void processInOpen() throws UnknownHostException, IOException {
         try {
-            this.port = openPort(this.getPortName());
+            this.port = RS232TransportHandler.openPort(this.getPortName());
             final SerialPort serialPort = (SerialPort) this.port;
             serialPort.setSerialPortParams(this.getBaud(), this.getDatabits(), this.getStopbits(), this.getParity());
             serialPort.notifyOnDataAvailable(true);
             serialPort.addEventListener(this);
             this.input = new BufferedReader(new InputStreamReader(this.port.getInputStream()));
-            //Also open an output stream to communicate with the device via an protocol handler
+            // Also open an output stream to communicate with the device via an
+            // protocol handler
             this.output = new PrintStream(this.port.getOutputStream(), true);
         }
         catch (final NoSuchPortException e) {
-            this.LOG.error("No such port {}", this.portName);
-            this.LOG.error(e.getMessage(), e);
+            RS232TransportHandler.LOG.error("No such port {}", this.portName);
+            RS232TransportHandler.LOG.error(e.getMessage(), e);
         }
         catch (final UnsupportedCommOperationException e) {
-            this.LOG.error(e.getMessage(), e);
+            RS232TransportHandler.LOG.error(e.getMessage(), e);
         }
         catch (final PortInUseException e) {
-            this.LOG.error("Port {} in use", this.portName);
-            this.LOG.error(e.getMessage(), e);
+            RS232TransportHandler.LOG.error("Port {} in use", this.portName);
+            RS232TransportHandler.LOG.error(e.getMessage(), e);
         }
         catch (final TooManyListenersException e) {
-            this.LOG.error(e.getMessage(), e);
+            RS232TransportHandler.LOG.error(e.getMessage(), e);
         }
     }
 
     @Override
     public void processOutOpen() throws UnknownHostException, IOException {
         try {
-            this.port = openPort(this.getPortName());
+            this.port = RS232TransportHandler.openPort(this.getPortName());
             final SerialPort serialPort = (SerialPort) this.port;
             serialPort.setSerialPortParams(this.getBaud(), this.getDatabits(), this.getStopbits(), this.getParity());
             this.output = new PrintStream(this.port.getOutputStream(), true);
         }
         catch (final NoSuchPortException e) {
-            this.LOG.error("No such port {}", this.portName);
-            this.LOG.error(e.getMessage(), e);
+            RS232TransportHandler.LOG.error("No such port {}", this.portName);
+            RS232TransportHandler.LOG.error(e.getMessage(), e);
         }
         catch (final UnsupportedCommOperationException e) {
-            this.LOG.error(e.getMessage(), e);
+            RS232TransportHandler.LOG.error(e.getMessage(), e);
         }
         catch (final PortInUseException e) {
-            this.LOG.error("Port {} in use", this.portName);
-            this.LOG.error(e.getMessage(), e);
+            RS232TransportHandler.LOG.error("Port {} in use", this.portName);
+            RS232TransportHandler.LOG.error(e.getMessage(), e);
         }
 
     }
@@ -217,7 +256,7 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
                 this.input.close();
             }
             catch (final Exception e) {
-                this.LOG.error(e.getMessage(), e);
+                RS232TransportHandler.LOG.error(e.getMessage(), e);
             }
             finally {
                 this.input = null;
@@ -229,7 +268,7 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
                 this.output.close();
             }
             catch (final Exception e) {
-                this.LOG.error(e.getMessage(), e);
+                RS232TransportHandler.LOG.error(e.getMessage(), e);
             }
             finally {
                 this.output = null;
@@ -239,10 +278,10 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
             try {
                 final SerialPort serialPort = (SerialPort) this.port;
                 serialPort.removeEventListener();
-                closePort(this.portName);
+                RS232TransportHandler.closePort(this.portName);
             }
             catch (final Exception e) {
-                this.LOG.error(e.getMessage(), e);
+                RS232TransportHandler.LOG.error(e.getMessage(), e);
             }
             finally {
                 this.port = null;
@@ -258,7 +297,7 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
                 this.output.close();
             }
             catch (final Exception e) {
-                this.LOG.error(e.getMessage(), e);
+                RS232TransportHandler.LOG.error(e.getMessage(), e);
             }
             finally {
                 this.output = null;
@@ -266,10 +305,10 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
         }
         if (this.port != null) {
             try {
-                closePort(this.portName);
+                RS232TransportHandler.closePort(this.portName);
             }
             catch (final Exception e) {
-                this.LOG.error(e.getMessage(), e);
+                RS232TransportHandler.LOG.error(e.getMessage(), e);
             }
             finally {
                 this.port = null;
@@ -324,14 +363,14 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
 
     private static CommPort openPort(final String name) throws NoSuchPortException, PortInUseException {
         final CommPort commPort;
-        synchronized (ports) {
+        synchronized (RS232TransportHandler.ports) {
             if (!RS232TransportHandler.ports.containsKey(name)) {
                 final CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(name);
                 commPort = portId.open("RS232: " + UUID.randomUUID(), RS232TransportHandler.TIMEOUTSECONDS * 1000);
                 RS232TransportHandler.ports.put(name, new Pair<>(commPort, new Integer(1)));
             }
             else {
-                Pair<CommPort, Integer> entry = RS232TransportHandler.ports.get(name);
+                final Pair<CommPort, Integer> entry = RS232TransportHandler.ports.get(name);
                 commPort = entry.getE1();
                 int num = entry.getE2().intValue();
                 RS232TransportHandler.ports.put(name, new Pair<>(commPort, new Integer(num++)));
@@ -342,9 +381,9 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
 
     private static void closePort(final String name) {
         final CommPort commPort;
-        synchronized (ports) {
+        synchronized (RS232TransportHandler.ports) {
             if (RS232TransportHandler.ports.containsKey(name)) {
-                Pair<CommPort, Integer> entry = RS232TransportHandler.ports.get(name);
+                final Pair<CommPort, Integer> entry = RS232TransportHandler.ports.get(name);
                 commPort = entry.getE1();
                 int num = entry.getE2().intValue();
                 if (num == 1) {
