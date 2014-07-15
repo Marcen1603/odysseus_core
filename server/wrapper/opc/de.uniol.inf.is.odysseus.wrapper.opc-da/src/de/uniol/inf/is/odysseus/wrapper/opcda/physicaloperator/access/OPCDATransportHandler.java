@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,11 +25,11 @@ import java.util.concurrent.Executors;
 
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.JIVariant;
-import org.openscada.opc.lib.common.AlreadyConnectedException;
 import org.openscada.opc.lib.common.ConnectionInformation;
 import org.openscada.opc.lib.common.NotConnectedException;
 import org.openscada.opc.lib.da.AccessBase;
 import org.openscada.opc.lib.da.AddFailedException;
+import org.openscada.opc.lib.da.AutoReconnectController;
 import org.openscada.opc.lib.da.DataCallback;
 import org.openscada.opc.lib.da.DuplicateGroupException;
 import org.openscada.opc.lib.da.Item;
@@ -49,40 +49,71 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
 /**
  * OPC transport handler
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class OPCDATransportHandler<T> extends AbstractTransportHandler implements IIteratable<Tuple<IMetaAttribute>> {
     /** Logger */
-    private final Logger LOG = LoggerFactory.getLogger(OPCDATransportHandler.class);
+    private final static Logger LOG = LoggerFactory.getLogger(OPCDATransportHandler.class);
+
+    private final static String HOST = "host";
+    private final static String DOMAIN = "domain";
+    private final static String USERNAME = "username";
+    private final static String PASSWORD = "password";
+    private final static String PROG_ID = "progid";
+    private final static String CLS_ID = "clsid";
+    private final static String PERIOD = "period";
 
     private String host;
-
     private String domain;
-
     private String username;
-
     private String password;
-
     private String progId;
     private String clsId;
+    private int period;
 
     private Server server;
+    private AutoReconnectController controller;
     private AccessBase access;
 
-    private List<Tuple<IMetaAttribute>> read = new LinkedList<>();
+    private final List<Tuple<IMetaAttribute>> read = new LinkedList<>();
 
     public OPCDATransportHandler() {
     }
 
-    public OPCDATransportHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+    public OPCDATransportHandler(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
         super(protocolHandler, options);
-        this.host = options.containsKey("host") ? options.get("host") : "localhost";
-        this.domain = options.containsKey("domain") ? options.get("domain") : "";
-        this.username = options.containsKey("username") ? options.get("username") : null;
-        this.password = options.containsKey("password") ? options.get("password") : null;
-        this.progId = options.containsKey("progId") ? options.get("progId") : null;
-        this.clsId = options.containsKey("clsId") ? options.get("clsId") : null;
+        this.init(options);
+    }
+
+    protected void init(final Map<String, String> options) {
+        if (options.containsKey(OPCDATransportHandler.HOST)) {
+            this.host = options.get(OPCDATransportHandler.HOST);
+        }
+        else {
+            this.host = "localhost";
+        }
+        if (options.containsKey(OPCDATransportHandler.DOMAIN)) {
+            this.domain = options.get(OPCDATransportHandler.DOMAIN);
+        }
+        if (options.containsKey(OPCDATransportHandler.USERNAME)) {
+            this.username = options.get(OPCDATransportHandler.USERNAME);
+        }
+        if (options.containsKey(OPCDATransportHandler.PASSWORD)) {
+            this.password = options.get(OPCDATransportHandler.PASSWORD);
+        }
+        if (options.containsKey(OPCDATransportHandler.PROG_ID)) {
+            this.progId = options.get(OPCDATransportHandler.PROG_ID);
+        }
+        if (options.containsKey(OPCDATransportHandler.CLS_ID)) {
+            this.clsId = options.get(OPCDATransportHandler.CLS_ID);
+        }
+        if (options.containsKey(OPCDATransportHandler.PERIOD)) {
+            this.period = Integer.parseInt(options.get(OPCDATransportHandler.PERIOD));
+        }
+        else {
+            this.period = 500;
+        }
     }
 
     @Override
@@ -91,105 +122,105 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler implement
     }
 
     @Override
-    public void send(byte[] message) throws IOException {
-        throw new IllegalArgumentException("Not implemented");
+    public void send(final byte[] message) throws IOException {
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
         return new OPCDATransportHandler<T>(protocolHandler, options);
     }
 
     @Override
     public OutputStream getOutputStream() {
-        throw new IllegalArgumentException("Not implemented");
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public InputStream getInputStream() {
-        throw new IllegalArgumentException("Not implemented");
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public void processInOpen() throws IOException {
         final ConnectionInformation ci = new ConnectionInformation();
-        ci.setHost(getHost());
-        if (getDomain() != null) {
-            ci.setDomain(getDomain());
+        ci.setHost(this.host);
+        if (this.domain != null) {
+            ci.setDomain(this.domain);
         }
-        if (getUsername() != null) {
-            ci.setUser(getUsername());
+        if (this.username != null) {
+            ci.setUser(this.username);
         }
-        if (getPassword() != null) {
-            ci.setPassword(getPassword());
+        if (this.password != null) {
+            ci.setPassword(this.password);
         }
-        if (getProgId() != null) {
-            ci.setProgId(getProgId());
+        if (this.progId != null) {
+            ci.setProgId(this.progId);
         }
-        if (getClsId() != null) {
-            ci.setClsid(getClsId());
+        if (this.clsId != null) {
+            ci.setClsid(this.clsId);
         }
-        server = new Server(ci, Executors.newSingleThreadScheduledExecutor());
+        // new ScheduledThreadPoolExecutor(corePoolSize)
+        this.server = new Server(ci, Executors.newSingleThreadScheduledExecutor());
+        this.controller = new AutoReconnectController(this.server);
         try {
-            server.connect();
-            access = new SyncAccess(server, 500);
-            for (SDFAttribute attribute : this.getSchema()) {
-                final int position = getSchema().indexOf(attribute);
-                access.addItem(attribute.getAttributeName(), new DataCallback() {
+            this.controller.connect();
+            // this.server.connect();
+            this.access = new SyncAccess(this.server, this.period);
+            for (final SDFAttribute attribute : this.getSchema()) {
+                final int position = this.getSchema().indexOf(attribute);
+                this.access.addItem(attribute.getAttributeName(), new DataCallback() {
+                    private final Logger log = LoggerFactory.getLogger(DataCallback.class);
 
                     @Override
-                    public void changed(Item item, ItemState state) {
-
+                    public void changed(final Item item, final ItemState state) {
                         try {
                             if ((state.getValue().getType() == JIVariant.VT_UI1) || (state.getValue().getType() == JIVariant.VT_UI2) || (state.getValue().getType() == JIVariant.VT_UI4)
                                     || (state.getValue().getType() == JIVariant.VT_UINT)) {
-                                process(position, state.getValue().getObjectAsUnsigned().getValue().intValue());
-
+                                OPCDATransportHandler.this.process(position, new Integer(state.getValue().getObjectAsUnsigned().getValue().intValue()));
                             }
                             else if ((state.getValue().getType() == JIVariant.VT_I1) || (state.getValue().getType() == JIVariant.VT_I2) || (state.getValue().getType() == JIVariant.VT_I4)
                                     || (state.getValue().getType() == JIVariant.VT_I8) || (state.getValue().getType() == JIVariant.VT_INT)) {
-
-                                process(position, state.getValue().getObjectAsUnsigned().getValue().intValue());
+                                OPCDATransportHandler.this.process(position, new Integer(state.getValue().getObjectAsUnsigned().getValue().intValue()));
                             }
                             else {
-                                process(position, state.getValue().getObject());
+                                OPCDATransportHandler.this.process(position, state.getValue().getObject());
                             }
                         }
-                        catch (JIException e) {
-                            LOG.error(e.getMessage(), e);
+                        catch (final JIException e) {
+                            this.log.error(e.getMessage(), e);
                         }
                     }
                 });
             }
-            access.bind();
+            this.access.bind();
         }
         catch (final JIException e) {
             this.server.dispose();
-            LOG.error(String.format("%08X: %s", e.getErrorCode(), server.getErrorMessage(e.getErrorCode())));
-            throw new IOException(server.getErrorMessage(e.getErrorCode()));
+            OPCDATransportHandler.LOG.error(String.format("%08X: %s", new Integer(e.getErrorCode()), this.server.getErrorMessage(e.getErrorCode())));
+            throw new IOException(this.server.getErrorMessage(e.getErrorCode()));
         }
         catch (IllegalArgumentException | NotConnectedException | DuplicateGroupException | AddFailedException e) {
             this.server.dispose();
-            LOG.error(e.getMessage(), e);
+            OPCDATransportHandler.LOG.error(e.getMessage(), e);
             throw new IOException(e);
-        }
-        catch (AlreadyConnectedException e) {
-            LOG.warn(e.getMessage(), e);
         }
     }
 
-    private void process(int pos, Object value) {
-        LOG.debug(String.format("%d: %s", pos, value));
+    void process(final int pos, final Object value) {
+        OPCDATransportHandler.LOG.debug(String.format("%d: %s", new Integer(pos), value));
         Tuple<IMetaAttribute> curTuple = null;
-        if (read.size() > 0) {
-            curTuple = read.get(read.size() - 1);
-            if (curTuple.getAttribute(pos) != null) {
-                curTuple = null;
+        synchronized (this.read) {
+            if (this.read.size() > 0) {
+                curTuple = this.read.get(this.read.size() - 1);
+                if (curTuple.getAttribute(pos) != null) {
+                    curTuple = null;
+                }
             }
-        }
-        if (curTuple == null) {
-            curTuple = new Tuple<>(this.getSchema().size(), false);
-            read.add(curTuple);
+            if (curTuple == null) {
+                curTuple = new Tuple<>(this.getSchema().size(), false);
+                this.read.add(curTuple);
+            }
         }
         curTuple.setAttribute(pos, value);
 
@@ -198,15 +229,18 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler implement
     @Override
     public void processInClose() throws IOException {
         try {
-            if (access != null) {
-                access.unbind();
+            if (this.access != null) {
+                this.access.unbind();
             }
         }
-        catch (JIException e) {
-            LOG.error(e.getMessage(), e);
+        catch (final JIException e) {
+            OPCDATransportHandler.LOG.error(e.getMessage(), e);
             throw new IOException(e);
         }
         finally {
+            if (this.controller != null) {
+                this.controller.disconnect();
+            }
             if (this.server != null) {
                 this.server.disconnect();
                 this.server.dispose();
@@ -216,42 +250,66 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler implement
 
     @Override
     public void processOutOpen() throws IOException {
-        throw new IllegalArgumentException("Not implemented");
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public void processOutClose() throws IOException {
-        throw new IllegalArgumentException("Not implemented");
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public boolean hasNext() {
-        return read.size() > 0;
+        boolean hasNext = false;
+        synchronized (this.read) {
+            hasNext = this.read.size() > 0;
+        }
+        return hasNext;
     }
 
     @Override
     public Tuple<IMetaAttribute> getNext() {
-        return read.remove(0);
+        Tuple<IMetaAttribute> next;
+        synchronized (this.read) {
+            next = this.read.remove(0);
+        }
+        return next;
     }
 
+    /**
+     * 
+     * @return the host
+     */
     public String getHost() {
         return this.host;
     }
 
+    /**
+     * 
+     * @return the domain
+     */
     public String getDomain() {
         return this.domain;
     }
 
+    /**
+     * 
+     * @return the username
+     */
     public String getUsername() {
         return this.username;
     }
 
+    /**
+     * 
+     * @return the password
+     */
     public String getPassword() {
         return this.password;
     }
 
     /**
-     * 
+     *
      * @return the progId
      */
     public String getProgId() {
@@ -266,9 +324,31 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler implement
     }
 
     @Override
-    public boolean isSemanticallyEqualImpl(ITransportHandler other) {
-        return false;
+    public boolean isSemanticallyEqualImpl(final ITransportHandler obj) {
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OPCDATransportHandler<?> other = (OPCDATransportHandler<?>) obj;
+        if (this.domain == null) {
+            if (other.domain != null)
+                return false;
+        }
+        else if (!this.domain.equals(other.domain))
+            return false;
+        if (this.host == null) {
+            if (other.host != null)
+                return false;
+        }
+        else if (!this.host.equals(other.host))
+            return false;
+        if (this.username == null) {
+            if (other.username != null)
+                return false;
+        }
+        else if (!this.username.equals(other.username))
+            return false;
+        return true;
     }
 
-   
 }
