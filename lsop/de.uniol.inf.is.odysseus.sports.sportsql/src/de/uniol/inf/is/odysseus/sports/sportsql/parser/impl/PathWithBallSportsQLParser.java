@@ -120,7 +120,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		// /]}, sampled_ball)
 		ArrayList<SDFExpressionParameter> parameterList = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter toPointParameter = OperatorBuildHelper
-				.createExpressionParameter("ToPoint(x,y,z)", "ball_pos");
+				.createExpressionParameter("ToPoint(x,y,z)", "ball_pos", sampledBall);
 		parameterList.add(toPointParameter);
 		ILogicalOperator ballpos = OperatorBuildHelper.createMapAO(
 				parameterList, sampledBall, 0, 0);
@@ -142,20 +142,20 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		// ['entity_id','sid','team_id','entity','x','y',['ToPoint(x,y,z)','player_pos']]},player_stream_changes)
 
 		SDFExpressionParameter entIdParameter = OperatorBuildHelper
-				.createExpressionParameter("entity_id", "entity_id");
+				.createExpressionParameter("entity_id", "entity_id", playerStreamChanges);
 		//Only needed to show entity on Map.
 		SDFExpressionParameter sidParameter = OperatorBuildHelper
-				.createExpressionParameter("sid", "sid");
+				.createExpressionParameter("sid", "sid", playerStreamChanges);
 		SDFExpressionParameter teamIdParameter = OperatorBuildHelper
-				.createExpressionParameter("team_id", "team_id");
+				.createExpressionParameter("team_id", "team_id", playerStreamChanges);
 		SDFExpressionParameter entityParamter = OperatorBuildHelper
-				.createExpressionParameter("entity", "entity");
+				.createExpressionParameter("entity", "entity", playerStreamChanges);
 		SDFExpressionParameter xParameter = OperatorBuildHelper
-				.createExpressionParameter("x", "x");
+				.createExpressionParameter("x", "x", playerStreamChanges);
 		SDFExpressionParameter yParameter = OperatorBuildHelper
-				.createExpressionParameter("y", "y");
+				.createExpressionParameter("y", "y", playerStreamChanges);
 		SDFExpressionParameter playerPosParameter = OperatorBuildHelper
-				.createExpressionParameter("ToPoint(x,y,z)", "player_pos");
+				.createExpressionParameter("ToPoint(x,y,z)", "player_pos", playerStreamChanges);
 		ArrayList<SDFExpressionParameter> positionParameterList = new ArrayList<SDFExpressionParameter>();
 		
 		positionParameterList.add(entIdParameter);

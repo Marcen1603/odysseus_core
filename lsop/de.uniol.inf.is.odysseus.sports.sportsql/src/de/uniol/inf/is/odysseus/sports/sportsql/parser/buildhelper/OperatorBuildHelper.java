@@ -1,12 +1,16 @@
 package de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
@@ -59,7 +63,7 @@ public class OperatorBuildHelper {
 	 */
 	public static final long TS_TO_MS_FACTOR = 1000000000;
 	// ts in picoseconds for DEBS Grand Challenge 2013 soccer data
-	public static final double TS_GAME_START = 10753295594424116.0;
+	public static final String TS_GAME_START = "10753295594424116.0";
 	
 	
 	/**
@@ -84,9 +88,9 @@ public class OperatorBuildHelper {
 	 * @param source
 	 *            Source for this operator
 	 * @param sinkInPort
-	 * 			  Port of sink to which the result will be send
+	 *            Port of sink to which the result will be send
 	 * @param sourceOutPort
-	 * 			  Port of source from which the data will be received
+	 *            Port of source from which the data will be received
 	 * @return A MapAO with the given expressions
 	 */
 	public static MapAO createMapAO(List<SDFExpressionParameter> expressions,
@@ -99,7 +103,8 @@ public class OperatorBuildHelper {
 		}
 
 		mapAO.setExpressions(expressionItems);
-		mapAO.subscribeToSource(source, sinkInPort, sourceOutPort, source.getOutputSchema());
+		mapAO.subscribeToSource(source, sinkInPort, sourceOutPort,
+				source.getOutputSchema());
 		return mapAO;
 	}
 
@@ -458,8 +463,7 @@ public class OperatorBuildHelper {
 	public static ChangeDetectAO createChangeDetectAO(List<String> attributes,
 			List<SDFAttribute> groupBy, boolean relativeTolerance,
 			double tolerance, ILogicalOperator source) {
-		
-		
+
 		List<SDFAttribute> sdfAttributes = OperatorBuildHelper
 				.createAttributeList(attributes);
 		ChangeDetectAO cAO = new ChangeDetectAO();
@@ -467,8 +471,8 @@ public class OperatorBuildHelper {
 		cAO.setGroupingAttributes(groupBy);
 		cAO.setRelativeTolerance(relativeTolerance);
 		cAO.setTolerance(tolerance);
-		
-		//cAO.subscribeToSource(source, 0, 1, inputSchema);
+
+		// cAO.subscribeToSource(source, 0, 1, inputSchema);
 		cAO.subscribeTo(source, source.getOutputSchema());
 		return cAO;
 	}
@@ -659,13 +663,17 @@ public class OperatorBuildHelper {
 	 * @return An expression which can be used in various AOs, especially MapAOs
 	 */
 	public static SDFExpressionParameter createExpressionParameter(
-			String expression, String name) {
+			String expression, String name, ILogicalOperator source) {
+
+		IAttributeResolver attributeResolver = OperatorBuildHelper
+				.createAttributeResolver(source);
 
 		SDFExpressionParameter param = new SDFExpressionParameter();
 		List<String> paramValue = new ArrayList<String>();
 		paramValue.add(expression);
 		paramValue.add(name);
 		param.setInputValue(paramValue);
+		param.setAttributeResolver(attributeResolver);
 
 		return param;
 	}
@@ -680,9 +688,12 @@ public class OperatorBuildHelper {
 	 * @return An expression which can be used in various AOs, especially MapAOs
 	 */
 	public static SDFExpressionParameter createExpressionParameter(
-			String expression) {
+			String expression, ILogicalOperator source) {
+		IAttributeResolver attributeResolver = OperatorBuildHelper
+				.createAttributeResolver(source);
 		SDFExpressionParameter param = new SDFExpressionParameter();
 		param.setInputValue(expression);
+		param.setAttributeResolver(attributeResolver);
 		return param;
 	}
 
@@ -758,5 +769,15 @@ public class OperatorBuildHelper {
 	 */
 	public static ISession getActiveSession() {
 		return OdysseusRCPPlugIn.getActiveSession();
+	}
+
+	public static IAttributeResolver createAttributeResolver(
+			ILogicalOperator source) {
+		List<SDFSchema> inputSchema = new LinkedList<>();
+		inputSchema.add(source.getOutputSchema());
+
+		IAttributeResolver attributeResolver = new DirectAttributeResolver(
+				inputSchema);
+		return attributeResolver;
 	}
 }

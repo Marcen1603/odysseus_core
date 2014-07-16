@@ -80,7 +80,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		predicates.clear();
 		
 		//Get position of active ball in game
-		MapAO ball_position = OperatorBuildHelper.createMapAO(getMapExpressionForBallPosition(), ball_in_game, 0, 0);
+		MapAO ball_position = OperatorBuildHelper.createMapAO(getMapExpressionForBallPosition(ball_in_game), ball_in_game, 0, 0);
 		allOperators.add(ball_position);
 		
 		TimeValueItem windowSize = new TimeValueItem(1, null);
@@ -90,7 +90,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		allOperators.add(ball_window);
 		
 		//Get position of players in game
-		MapAO players_position = OperatorBuildHelper.createMapAO(getMapExpressionForPlayerPosition(), split_balls, 0, 1);
+		MapAO players_position = OperatorBuildHelper.createMapAO(getMapExpressionForPlayerPosition(split_balls), split_balls, 0, 1);
 		allOperators.add(players_position);
 		
 		WindowAO players_window = OperatorBuildHelper.createWindowAO(windowSize, WindowType.TUPLE, windowAdvance, players_position);
@@ -127,18 +127,18 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		return query;
 	}
 	
-	private List<SDFExpressionParameter> getMapExpressionForBallPosition() {
+	private List<SDFExpressionParameter> getMapExpressionForBallPosition(ILogicalOperator source) {
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
-		SDFExpressionParameter ex = OperatorBuildHelper.createExpressionParameter("ToPoint(x,y,z)", "ball_pos");	
+		SDFExpressionParameter ex = OperatorBuildHelper.createExpressionParameter("ToPoint(x,y,z)", "ball_pos", source);	
 		
 		expressions.add(ex);
 		return expressions;
 	}
 	
-	private List<SDFExpressionParameter> getMapExpressionForPlayerPosition() {
+	private List<SDFExpressionParameter> getMapExpressionForPlayerPosition(ILogicalOperator source) {
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
-		SDFExpressionParameter ex1 = OperatorBuildHelper.createExpressionParameter("ToPoint(x,y,z)", "player_pos");
-		SDFExpressionParameter ex2 = OperatorBuildHelper.createExpressionParameter("sid","sid");
+		SDFExpressionParameter ex1 = OperatorBuildHelper.createExpressionParameter("ToPoint(x,y,z)", "player_pos", source);
+		SDFExpressionParameter ex2 = OperatorBuildHelper.createExpressionParameter("sid","sid", source);
 		
 		expressions.add(ex1);
 		expressions.add(ex2);
