@@ -3,12 +3,11 @@ package de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.base.Optional;
-
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
@@ -34,9 +33,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueIte
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sports.sportsql.Activator;
 
 /**
  * Class with static methods which help you to build the AOs easily.
@@ -59,11 +59,6 @@ public class OperatorBuildHelper {
 	public static final long TS_TO_MS_FACTOR = 1000000000;
 	// ts in picoseconds for DEBS Grand Challenge 2013 soccer data
 	public static final double TS_GAME_START = 10753295594424116.0;
-
-	/**
-	 * The current Session
-	 */
-	private static ISession currentSession;
 
 	/**
 	 * Creates a MapAP with a list of expressions. To create such expressions,
@@ -610,11 +605,11 @@ public class OperatorBuildHelper {
 		SourceParameter source = new SourceParameter();
 		source.setInputValue(sourcename);
 		source.setDataDictionary(dataDict);
-		
+
 		// TODO We need to set the caller
 		ISession session = OperatorBuildHelper.getActiveSession();
 		source.setCaller(session);
-		
+
 		return source.getValue();
 	}
 
@@ -736,15 +731,9 @@ public class OperatorBuildHelper {
 	 * @return The DataDictionary
 	 */
 	public static IDataDictionary getDataDictionary() {
-		// TODO: DataDictionary does not have the right views?
-		Optional<IDataDictionary> dataDictOptional = Activator
-				.getDataDictionary();
-		IDataDictionary dataDict = null;
-		if (dataDictOptional.isPresent()) {
-			dataDict = dataDictOptional.get();
-			return dataDict;
-		}
-		return null;
+		ITenant tenant = UserManagementProvider.getDefaultTenant();
+		IDataDictionary dd = DataDictionaryProvider.getDataDictionary(tenant);
+		return dd;
 	}
 
 	/**
@@ -755,15 +744,6 @@ public class OperatorBuildHelper {
 	 * @return The current session
 	 */
 	public static ISession getActiveSession() {
-		// What maybe also works
-		// OdysseusRCPPlugIn.getActiveSession();
-		
-		if (currentSession == null || !currentSession.isValid()) {
-			currentSession = UserManagementProvider
-					.getSessionmanagement()
-					.loginSuperUser(null,
-							UserManagementProvider.getDefaultTenant().getName());
-		}
-		return currentSession;
+		return OdysseusRCPPlugIn.getActiveSession();
 	}
 }
