@@ -49,8 +49,10 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		SportsQLTimeParameter timeParam = SportsQLParameterHelper
 				.getTimeParameter(sportsQL);
 
+		// TODO SelectAO does not have an output schema - why?
 		SelectAO timeSelect = OperatorBuildHelper.createTimeSelect(timeParam,
 				firstMap);
+		//timeSelect.updateSchemaInfos();
 		allOperators.add(timeSelect);
 
 		// -------------------------------------------------------
