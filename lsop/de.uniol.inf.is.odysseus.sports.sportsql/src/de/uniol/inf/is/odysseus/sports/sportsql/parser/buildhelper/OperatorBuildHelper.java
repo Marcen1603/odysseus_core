@@ -73,10 +73,14 @@ public class OperatorBuildHelper {
 	 *            List of expressions for this MAP-Operator
 	 * @param source
 	 *            Source for this operator
+	 * @param sinkInPort
+	 * 			  Port of sink to which the result will be send
+	 * @param sourceOutPort
+	 * 			  Port of source from which the data will be received
 	 * @return A MapAO with the given expressions
 	 */
 	public static MapAO createMapAO(List<SDFExpressionParameter> expressions,
-			ILogicalOperator source) {
+			ILogicalOperator source, int sinkInPort, int sourceOutPort) {
 		MapAO mapAO = new MapAO();
 
 		List<NamedExpressionItem> expressionItems = new ArrayList<NamedExpressionItem>();
@@ -85,7 +89,7 @@ public class OperatorBuildHelper {
 		}
 
 		mapAO.setExpressions(expressionItems);
-		mapAO.subscribeToSource(source, 0, 0, source.getOutputSchema());
+		mapAO.subscribeToSource(source, sinkInPort, sourceOutPort, source.getOutputSchema());
 		return mapAO;
 	}
 
@@ -444,6 +448,8 @@ public class OperatorBuildHelper {
 	public static ChangeDetectAO createChangeDetectAO(List<String> attributes,
 			List<SDFAttribute> groupBy, boolean relativeTolerance,
 			double tolerance, ILogicalOperator source) {
+		
+		
 		List<SDFAttribute> sdfAttributes = OperatorBuildHelper
 				.createAttributeList(attributes);
 		ChangeDetectAO cAO = new ChangeDetectAO();
@@ -451,6 +457,8 @@ public class OperatorBuildHelper {
 		cAO.setGroupingAttributes(groupBy);
 		cAO.setRelativeTolerance(relativeTolerance);
 		cAO.setTolerance(tolerance);
+		
+		//cAO.subscribeToSource(source, 0, 1, inputSchema);
 		cAO.subscribeTo(source, source.getOutputSchema());
 		return cAO;
 	}

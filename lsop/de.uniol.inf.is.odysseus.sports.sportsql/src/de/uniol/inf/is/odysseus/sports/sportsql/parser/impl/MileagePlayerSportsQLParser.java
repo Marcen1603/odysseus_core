@@ -42,7 +42,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
 		// 1. MAP
 		MapAO firstMap = OperatorBuildHelper.createMapAO(
-				getExpressionsForFirstMap(), soccerGameAccessAO);
+				getExpressionsForFirstMap(), soccerGameAccessAO, 0, 0);
 		allOperators.add(firstMap);
 
 		// 2. Correct selection for the time

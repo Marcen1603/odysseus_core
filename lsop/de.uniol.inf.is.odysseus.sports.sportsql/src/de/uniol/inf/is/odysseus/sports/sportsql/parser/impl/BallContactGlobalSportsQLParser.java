@@ -2,11 +2,11 @@ package de.uniol.inf.is.odysseus.sports.sportsql.parser.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
@@ -25,12 +25,11 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 
 @SportsQL(gameTypes = GameType.SOCCER, statisticTypes = { StatisticType.GLOBAL }, name = "ball_contact")
-public class BallContactSportsQLParser implements ISportsQLParser {
+public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 
 	private final double velocityChange = 0.15;
 	private final boolean relativeTolerance = true;
 	private final String game_start = "10753295594424116";
-	private final String[] ball_sids = {"4","8","10","12"};
 	private final String radius = "400";
 	private final String minX = "-50";
 	private final String minY = "-33960";
@@ -45,17 +44,19 @@ public class BallContactSportsQLParser implements ISportsQLParser {
 		ArrayList<String> predicates = new ArrayList<String>();
 		ArrayList<String> attributes = new ArrayList<String>();
 		
+		String soccerGameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
+		AccessAO soccerGameAccessAO = OperatorBuildHelper
+				.createAccessAO(soccerGameSourceName);
+		
+		
 		//count ball contacts with the beginning of the game
 		predicates.add("ts>="+ game_start);
-		SelectAO game_after_start = OperatorBuildHelper.createSelectAO(predicates, null); //TODO Where can I get the source? current value = null
+		SelectAO game_after_start = OperatorBuildHelper.createSelectAO(predicates, soccerGameAccessAO);
 		allOperators.add(game_after_start);
 		predicates.clear();
 		
-		//Split between ball ids and other ids
-		for (String ball_sid : ball_sids) {
-			predicates.add(ball_sid);
-		}
 
+		predicates.add("sid=12 OR sid=8 OR sid=10 OR sid=4");
 		RouteAO split_balls = OperatorBuildHelper.createRouteAO(predicates, game_after_start);
 		allOperators.add(split_balls);
 		predicates.clear();
@@ -79,17 +80,17 @@ public class BallContactSportsQLParser implements ISportsQLParser {
 		predicates.clear();
 		
 		//Get position of active ball in game
-		MapAO ball_position = OperatorBuildHelper.createMapAO(getMapExpressionForBallPosition(), ball_in_game);
+		MapAO ball_position = OperatorBuildHelper.createMapAO(getMapExpressionForBallPosition(), ball_in_game, 0, 0);
 		allOperators.add(ball_position);
 		
-		TimeValueItem windowSize = new TimeValueItem(1, TimeUnit.SECONDS);
-		TimeValueItem windowAdvance = new TimeValueItem(1, TimeUnit.SECONDS);
+		TimeValueItem windowSize = new TimeValueItem(1, null);
+		TimeValueItem windowAdvance = new TimeValueItem(1, null);
 	
 		WindowAO ball_window = OperatorBuildHelper.createWindowAO(windowSize, WindowType.TUPLE, windowAdvance, ball_position);
 		allOperators.add(ball_window);
 		
 		//Get position of players in game
-		MapAO players_position = OperatorBuildHelper.createMapAO(getMapExpressionForPlayerPosition(), split_balls);
+		MapAO players_position = OperatorBuildHelper.createMapAO(getMapExpressionForPlayerPosition(), split_balls, 0, 1);
 		allOperators.add(players_position);
 		
 		WindowAO players_window = OperatorBuildHelper.createWindowAO(windowSize, WindowType.TUPLE, windowAdvance, players_position);
