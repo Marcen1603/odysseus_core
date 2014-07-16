@@ -738,8 +738,6 @@ public class OperatorBuildHelper {
 
 	/**
 	 * Creates a session if no exists, uses session if there is already one.
-	 * Copies from Timo (SessionManagementService in p2p_new) cause I didn't
-	 * want to change p2p_new (a new export would be needed)
 	 * 
 	 * @return The current session
 	 */
