@@ -52,6 +52,7 @@ public class OperatorBuildHelper {
 	 */
 	public static final String MAIN_STREAM_NAME = "soccergame";
 	public static final String METADATA_STREAM_NAME = "metadata";
+	
 
 	/**
 	 * Conversion variables
@@ -59,6 +60,20 @@ public class OperatorBuildHelper {
 	public static final long TS_TO_MS_FACTOR = 1000000000;
 	// ts in picoseconds for DEBS Grand Challenge 2013 soccer data
 	public static final double TS_GAME_START = 10753295594424116.0;
+	
+	
+	/**
+	 * Game field borders
+	 */
+	public static final int UPPERLEFT_X = 0;
+	public static final int UPPERLEFT_Y = 33965;
+	public static final int LOWERLEFT_X = -50;
+	public static final int LOWERLEFT_Y = -33960;
+	public static final int UPPERRIGHT_X = 52477;
+	public static final int UPPERRIGHT_Y = 33941;
+	public static final int LOWERRIGHT_X = 52489;
+	public static final int LOWERRIGHT_Y = -33939;
+	
 
 	/**
 	 * Creates a MapAP with a list of expressions. To create such expressions,
