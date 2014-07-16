@@ -98,7 +98,7 @@ final class ForceNode {
 
 	public double tick(double frame) {
 		if (!isFixed()) {
-			Vector3D direction = new Vector3D();
+			Vector3D direction = new Vector3D(0,0,0);
 			for (Force force : attachedForces) {
 				ForceNode otherNode = null;
 				if( force.getNodeA().equals(this)) {

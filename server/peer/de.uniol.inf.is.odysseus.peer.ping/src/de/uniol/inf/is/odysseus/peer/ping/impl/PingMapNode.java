@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.peer.ping.IPingMapNode;
 public final class PingMapNode implements IPingMapNode {
 
 	private final PeerID peerID;
-	private Vector3D position = Vector3D.zero;
+	private Vector3D position = new Vector3D(0,0,0);
 
 	PingMapNode(PeerID peerID) {
 		Preconditions.checkNotNull(peerID, "PeerID for being a pingmapnode must not be null!");

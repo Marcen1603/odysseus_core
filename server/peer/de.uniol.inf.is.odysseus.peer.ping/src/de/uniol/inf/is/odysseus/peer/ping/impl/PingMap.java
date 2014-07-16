@@ -36,7 +36,7 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	private final Map<PeerID, NumberAverager> ownPings = Maps.newConcurrentMap();
 	private final Collection<IPingMapListener> listeners = Lists.newArrayList();
 	
-	private Vector3D localPosition = new Vector3D();
+	private Vector3D localPosition = new Vector3D(0,0,0);
 	private double timestep = 1.0;
 	
 	// called by OSGi-DS
