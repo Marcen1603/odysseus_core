@@ -52,10 +52,10 @@ public class SportsQLParserRegistry {
 		SportsQL sportsQLAnnotation = parser.getClass().getAnnotation(SportsQL.class);
 		GameType[] games = sportsQLAnnotation.gameTypes();
 		StatisticType[] types = sportsQLAnnotation.statisticTypes();
-		String name = sportsQLAnnotation.name().toUpperCase();
-		for (GameType game : games) {
-			for (StatisticType statisticType : types) {
-				sportsQLParserMap.get(game).get(statisticType).remove(name);
+		String name = sportsQLAnnotation.name().trim().toUpperCase();
+		for (StatisticType statisticType : types) {
+			for (GameType game : games) {
+				sportsQLParserMap.get(statisticType).get(game).remove(name);
 			}
 		}
 	}
