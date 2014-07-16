@@ -57,6 +57,7 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 	private String tablename;
 	private long waitMillis = 0;
 	private boolean fetchAttributes = true;
+	private boolean escapeNames = false;
 	private List<SDFAttribute> givenSchema;	
 
 	public DatabaseSourceAO() {
@@ -67,6 +68,7 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 		super(ds);		
 		this.tablename = ds.tablename;
 		this.waitMillis = ds.waitMillis;
+		this.escapeNames = ds.escapeNames;
 	}
 
 	@Parameter(type = StringParameter.class, name = "table")
@@ -85,6 +87,15 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 		this.givenSchema  = outputSchema;
 		this.fetchAttributes = false;
 		setOutputSchema(new SDFSchema("", Tuple.class, outputSchema));
+	}
+	
+	@Parameter(type = BooleanParameter.class, name="escape_names", optional = true)
+	public void setEscapeNames(boolean escapeNames){
+		this.escapeNames = escapeNames;
+	}
+	
+	public boolean isEscapeNames() {
+		return escapeNames;
 	}
 	
 	public List<SDFAttribute> getOutputSchemaWithList() {

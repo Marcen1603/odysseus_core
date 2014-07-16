@@ -52,7 +52,8 @@ public class TDatabaseSourceAORule extends AbstractTransformationRule<DatabaseSo
 
 	@Override
 	public void execute(DatabaseSourceAO accessAO, TransformationConfiguration config) throws RuleException {
-		ISource<?> accessPO = new DatabaseSourcePO(accessAO.getTableName(), accessAO.getConnection(), accessAO.getWaitMillis());
+		DatabaseSourcePO accessPO = new DatabaseSourcePO(accessAO.getTableName(), accessAO.getConnection(), accessAO.getWaitMillis());
+		accessPO.setEscapeNames(accessAO.isEscapeNames());
 		defaultExecute(accessAO, accessPO, config, true, true);		
 	}
 

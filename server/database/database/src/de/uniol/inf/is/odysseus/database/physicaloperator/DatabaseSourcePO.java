@@ -56,6 +56,7 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 	private PreparedStatement preparedStatement;
 	private TransferThread thread;
 	private long waitTimeMillis;
+	private boolean escapeNames;
 
 	public DatabaseSourcePO(String tableName, IDatabaseConnection connection, long waitTimeMillis) {
 		super();
@@ -69,6 +70,10 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 		this.connection = databaseSourcePO.connection;
 		this.tablename = databaseSourcePO.tablename;		
 		this.waitTimeMillis = databaseSourcePO.waitTimeMillis;
+	}
+	
+	public void setEscapeNames(boolean escapeNames) {
+		this.escapeNames = escapeNames;
 	}
 
 	@Override
@@ -91,12 +96,14 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 	private String createPreparedStatement() {
 		String s = "SELECT ";
 		String sep = "";
+		String escape = escapeNames?"\"":"";
 		for (SDFAttribute a : this.getOutputSchema()) {
-			String name = "\""+a.getAttributeName()+"\"";
+			
+			String name = escape+a.getAttributeName()+escape;
 			s = s + sep + name;
 			sep = ", ";
 		}
-		s = s + " FROM \"" + tablename + "\"";
+		s = s + " FROM "+escape + tablename + escape;
 		return s;
 	}
 
@@ -142,5 +149,6 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 			}
 		}
 	}
+
 
 }
