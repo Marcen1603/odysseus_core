@@ -101,7 +101,8 @@ public class TransformationActivator implements BundleActivator, BundleListener 
 	}
 
 	private void searchBundle(Bundle bundle, Mode mode) {
-		String[] pathes = new String[] { "/de/uniol/inf/is/odysseus" };
+//		String[] pathes = new String[] { "/de/uniol/inf/is/odysseus" };
+		String[] pathes = new String[] { "" };
 		String[] prefixes = new String[] { "", "/bin" };
 		for (String path : pathes) {
 			for (String prefix : prefixes) {
