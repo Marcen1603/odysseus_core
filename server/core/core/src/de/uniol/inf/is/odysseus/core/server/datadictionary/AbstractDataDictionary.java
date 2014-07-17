@@ -765,7 +765,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	
 	@Override
 	public SDFDatatype getDatatype(KindOfDatatype type, String subType) {
-		String key = type+"."+subType;
+		String key = type+"_"+subType;
 		SDFDatatype datatype = this.datatypes.get(key);
 		if (datatype == null){
 			datatype = new SDFDatatype("List", KindOfDatatype.LIST, getDatatype(subType));
