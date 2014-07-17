@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
@@ -99,6 +100,8 @@ public interface IDataDictionary {
 	// Datatype Management
 	// -------------------------------------------------------------------------
 	SDFDatatype getDatatype(String name) throws DataDictionaryException;
+
+	SDFDatatype getDatatype(KindOfDatatype list, String subType);
 
 	Set<String> getDatatypeNames();
 	
@@ -175,6 +178,7 @@ public interface IDataDictionary {
 	// -------------------------------------------------------------------------
 
 	IDataDictionary createInstance(ITenant t);
+
 
 
 

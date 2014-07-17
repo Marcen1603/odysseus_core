@@ -42,6 +42,7 @@ import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPermission;
@@ -760,6 +761,17 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		}
 
 		throw new DataDictionaryException("No such datatype: " + dtName);
+	}
+	
+	@Override
+	public SDFDatatype getDatatype(KindOfDatatype type, String subType) {
+		String key = type+"."+subType;
+		SDFDatatype datatype = this.datatypes.get(key);
+		if (datatype == null){
+			datatype = new SDFDatatype("List", KindOfDatatype.LIST, getDatatype(subType));
+			datatypes.put(key, datatype);
+		}
+		return datatype;
 	}
 
 	@Override

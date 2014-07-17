@@ -138,8 +138,7 @@ public class CreateSDFAttributeParameter extends
 			
 			if (dataTypeName.toLowerCase().startsWith("list(")) {
 				String subType = dataTypeName.substring(5, dataTypeName.length() - 1);
-				//TODO tranfer to DataDictionary (reuse same Datatypes)
-				SDFDatatype dataType = new SDFDatatype("List", KindOfDatatype.LIST, getDataDictionary().getDatatype(subType));
+				SDFDatatype dataType = getDataDictionary().getDatatype(KindOfDatatype.LIST, subType);
 				return new SDFAttribute(sourcename, attributeName, dataType, unit, dtList);
 			} else {
 				return new SDFAttribute(sourcename, attributeName,
