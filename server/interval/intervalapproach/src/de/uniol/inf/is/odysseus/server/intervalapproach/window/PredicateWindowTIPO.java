@@ -55,14 +55,16 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	private boolean openedWindow;
 
 	public PredicateWindowTIPO(IPredicate<? super T> start,
-			IPredicate<? super T> end, TimeValueItem maxWindowTime, boolean sameStarttime, TimeUnit baseTimeUnit) {
+			IPredicate<? super T> end, TimeValueItem maxWindowTime,
+			boolean sameStarttime, TimeUnit baseTimeUnit) {
 		this.start = start.clone();
 		if (end != null) {
 			this.end = end.clone();
 		} else {
 			this.end = null;
 		}
-		this.maxWindowTime = baseTimeUnit.convert(maxWindowTime.getTime(), maxWindowTime.getUnit());
+		this.maxWindowTime = baseTimeUnit.convert(maxWindowTime.getTime(),
+				maxWindowTime.getUnit());
 		this.sameStarttime = sameStarttime;
 	}
 
@@ -123,8 +125,11 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 			if (start != null) {
 				toTransfer.getMetadata().setStart(start);
 			}
-			toTransfer.getMetadata().setEnd(endTimestamp);
-			transfer(toTransfer);
+			// We can produce tuple with no validity --> Do not send them
+			if (endTimestamp.after(toTransfer.getMetadata().getStart())) {
+				toTransfer.getMetadata().setEnd(endTimestamp);
+				transfer(toTransfer);
+			}
 		}
 		openedWindow = false;
 	}
