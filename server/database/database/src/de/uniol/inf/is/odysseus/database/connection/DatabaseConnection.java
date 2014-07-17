@@ -108,6 +108,9 @@ public class DatabaseConnection implements IDatabaseConnection {
 		ResultSet r = dmd.getTypeInfo();
 		while (r.next()) {
 			int type = r.getInt("DATA_TYPE");
+			if (type != jdbcType){
+				continue;
+			}
 			String dbmsSpecificName = r.getString("TYPE_NAME");
 
 			String params = r.getString("CREATE_PARAMS");
@@ -120,6 +123,12 @@ public class DatabaseConnection implements IDatabaseConnection {
 					}
 				}
 			}
+			// Hack: Oracle delivers null for params for varchar2 :-/
+			if (connString.toLowerCase().contains("oracle") &&  fullName.equalsIgnoreCase("VARCHAR2")){
+				fullName = fullName+"(2000)";
+			}
+			
+			
 //			 System.out.println(r.getString("TYPE_NAME") + " | " +
 //			 r.getString("CREATE_PARAMS")+" --> "+fullName);
 			if (type == jdbcType) {
