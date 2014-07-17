@@ -69,7 +69,8 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		ArrayList<String> groupBy = new ArrayList<String>();
 		groupBy.add("sid");
 		
-		ChangeDetectAO ball_velocity_changes = OperatorBuildHelper.createChangeDetectAO(attributes, OperatorBuildHelper.createAttributeList(groupBy),relativeTolerance, velocityChange, split_balls);
+		
+		ChangeDetectAO ball_velocity_changes = OperatorBuildHelper.createChangeDetectAO(attributes, OperatorBuildHelper.createAttributeList(groupBy,split_balls),relativeTolerance, velocityChange, split_balls);
 		allOperators.add(ball_velocity_changes);
 		attributes.clear();
 		
@@ -104,7 +105,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 	
 		//Delete duplicates
 		attributes.add("sid");
-		ChangeDetectAO delete_duplicates = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(attributes), 0.0, proximity);
+		ChangeDetectAO delete_duplicates = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(attributes,proximity), 0.0, proximity);
 		allOperators.add(delete_duplicates);
 		attributes.clear();
 		
@@ -114,7 +115,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		
 		//Detect changes in entity_id if another player hits the ball
 		attributes.add("entity_id");
-		ChangeDetectAO output = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(attributes), 0.0, enriched_proximity);
+		ChangeDetectAO output = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(attributes,enriched_proximity), 0.0, enriched_proximity);
 		allOperators.add(output);
 		attributes.clear();
 		

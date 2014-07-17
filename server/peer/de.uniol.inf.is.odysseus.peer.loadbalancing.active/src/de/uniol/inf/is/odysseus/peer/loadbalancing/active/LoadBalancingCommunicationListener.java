@@ -270,7 +270,6 @@ public class LoadBalancingCommunicationListener implements
 					.unregisterMessageType(LoadBalancingInitiateCopyMessage.class);
 			peerCommunicator
 					.unregisterMessageType(LoadBalancingInitiateMessage.class);
-			peerCommunicator = null;
 			peerCommunicator
 					.unregisterMessageType(LoadBalancingCopyConnectionMessage.class);
 			peerCommunicator
@@ -280,6 +279,7 @@ public class LoadBalancingCommunicationListener implements
 			peerCommunicator
 					.unregisterMessageType(LoadBalancingDeleteQueryMessage.class);
 
+			peerCommunicator = null;
 		}
 	}
 

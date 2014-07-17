@@ -135,7 +135,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		ArrayList<String> attributes = new ArrayList<String>();
 		attributes.add("x");
 		attributes.add("y");
-		ILogicalOperator playerStreamChanges = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(attributes), accuracy, playerStream);
+		ILogicalOperator playerStreamChanges = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(attributes,playerStream), accuracy, playerStream);
 		allOperators.add(playerStreamChanges);
 		
 		// /player_pos = MAP({EXPRESSIONS =
@@ -191,6 +191,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 
 		// Create plan
 		ILogicalQuery query = new LogicalQuery();
+		
 		query.setLogicalPlan(result, true);
 		
 		return query;

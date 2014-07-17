@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateIte
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItemParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SourceParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
@@ -136,7 +135,7 @@ public class OperatorBuildHelper {
 
 		// GroupBy
 		if (groupBy != null) {
-			stateMapAO.setGroupingAttributes(createGroupAttributeList(groupBy));
+			stateMapAO.setGroupingAttributes(createAttributeList(groupBy,source));
 		}
 
 		stateMapAO.subscribeTo(source, source.getOutputSchema());
@@ -428,7 +427,7 @@ public class OperatorBuildHelper {
 		// GroupBy
 		if (groupBy != null) {
 			aggregateAO
-					.setGroupingAttributes(createGroupAttributeList(groupBy));
+					.setGroupingAttributes(createAttributeList(groupBy,source));
 		}
 
 		aggregateAO.subscribeTo(source, source.getOutputSchema());
@@ -473,8 +472,11 @@ public class OperatorBuildHelper {
 			List<SDFAttribute> groupBy, boolean relativeTolerance,
 			double tolerance, ILogicalOperator source) {
 
+		ArrayList<ILogicalOperator> sources = new ArrayList<ILogicalOperator>();
+		sources.add(source);
+		
 		List<SDFAttribute> sdfAttributes = OperatorBuildHelper
-				.createAttributeList(attributes);
+				.createAttributeList(attributes,sources);
 		ChangeDetectAO cAO = new ChangeDetectAO();
 		cAO.setAttr(sdfAttributes);
 		cAO.setGroupingAttributes(groupBy);
@@ -523,6 +525,7 @@ public class OperatorBuildHelper {
 			List<SDFAttribute> attributes, double tolerance,
 			ILogicalOperator source) {
 		ChangeDetectAO cAO = new ChangeDetectAO();
+		
 		cAO.setAttr(attributes);
 		cAO.setTolerance(tolerance);
 		cAO.subscribeTo(source, source.getOutputSchema());
@@ -606,9 +609,14 @@ public class OperatorBuildHelper {
 	public static JoinAO createJoinAO(ArrayList<String> listOfPredicates,
 			ILogicalOperator source1, ILogicalOperator source2) {
 		JoinAO jAO = new JoinAO();
+		ArrayList<ILogicalOperator> sources = new ArrayList<ILogicalOperator>();
+		sources.add(source1);
+		sources.add(source2);
 
+		IAttributeResolver resolver = OperatorBuildHelper.createAttributeResolver(sources);
 		for (String predicate : listOfPredicates) {
 			PredicateParameter param = new PredicateParameter();
+			param.setAttributeResolver(resolver);
 			param.setInputValue(predicate);
 			jAO.addPredicate(param.getValue());
 		}
@@ -719,23 +727,6 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Creates a list of attributes which can be used to group in AOs which
-	 * support grouping (e.g. StateMap and Aggregate). The lost only contains
-	 * one item but must be a list anyway.
-	 * 
-	 * @param groupBy
-	 *            The attribute you want to group by, e.g., "sensorid"
-	 * @return A list with just one element you can use to group by in an AO
-	 */
-	private static List<SDFAttribute> createGroupAttributeList(String groupBy) {
-		ResolvedSDFAttributeParameter groupParameter = new ResolvedSDFAttributeParameter();
-		groupParameter.setInputValue(groupBy);
-		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		attributes.add(groupParameter.getValue());
-		return attributes;
-	}
-
-	/**
 	 * Creates a list of attributes from a list of strings representing
 	 * attributes. Such a string could be something easy as "x". Used to create
 	 * a ChangeDetectAO for example.
@@ -746,13 +737,13 @@ public class OperatorBuildHelper {
 	 *         ChangeDetectAO.
 	 */
 	public static List<SDFAttribute> createAttributeList(
-			List<String> listOfAttributes) {
+			List<String> listOfAttributes, List<ILogicalOperator> sources) {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 
+		IAttributeResolver resolver = createAttributeResolver(sources);
+		
 		for (String attribute : listOfAttributes) {
-			ResolvedSDFAttributeParameter param = new ResolvedSDFAttributeParameter();
-			param.setInputValue(attribute);
-			attributes.add(param.getValue());
+			attributes.add(resolver.getAttribute(attribute));
 		}
 
 		return attributes;
@@ -797,5 +788,21 @@ public class OperatorBuildHelper {
 		IAttributeResolver attributeResolver = new DirectAttributeResolver(
 				inputSchema);
 		return attributeResolver;
+	}
+
+	public static List<SDFAttribute> createAttributeList(
+			String groupBy, ILogicalOperator source) {
+		ArrayList<String> attributes = new ArrayList<String>();
+		ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
+		attributes.add(groupBy);
+		operators.add(source);
+		return createAttributeList(attributes,operators);
+		
+	}
+	
+	public static List<SDFAttribute> createAttributeList(List<String> groupBy, ILogicalOperator source) {
+		ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
+		operators.add(source);
+		return createAttributeList(groupBy,operators);
 	}
 }
