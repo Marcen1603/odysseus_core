@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.relational_interval.physicaloperator;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -16,6 +18,7 @@ public class RelationalTupleAggregatePO extends AbstractPipe<Tuple<? extends ITi
 	
 	final IRelationalTupleAggregateMethod method;
 	final int pos;
+	final List<Tuple<? extends ITimeInterval>> retList = new LinkedList<>();
 	
 	public RelationalTupleAggregatePO(IRelationalTupleAggregateMethod method, int pos){
 		this.method = method;
@@ -36,10 +39,9 @@ public class RelationalTupleAggregatePO extends AbstractPipe<Tuple<? extends ITi
 	protected void process_next(Tuple<? extends ITimeInterval> object, int port) {
 		// find in sweep area all elements before object.start
 		Iterator<Tuple<? extends ITimeInterval>> elems = sa.extractElementsBefore(object.getMetadata().getStart());
-		Tuple<? extends ITimeInterval> r = method.process(elems, pos);
-		if (r != null){
-			transfer(r);
-		}
+		retList.clear();
+		method.process(elems, pos, retList);
+		transfer(retList);
 		sa.insert(object);
 	}
 	
