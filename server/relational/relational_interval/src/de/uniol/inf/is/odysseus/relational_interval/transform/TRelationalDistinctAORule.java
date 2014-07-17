@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.relational_interval.RelationalDistinctPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TRelationalDistinctAORule extends AbstractRelationalIntervalTransformationRule<DistinctAO> {
 
