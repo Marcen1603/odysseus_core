@@ -10,11 +10,6 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TSetTransferAreaConvolutionFilterPO extends AbstractTransformationRule<ConvolutionFilterPO<?>>{
 
-	@Override
-	public int getPriority() {
-		return 0;
-	}
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void execute(ConvolutionFilterPO<?> operator,
@@ -26,11 +21,6 @@ public class TSetTransferAreaConvolutionFilterPO extends AbstractTransformationR
 	public boolean isExecutable(ConvolutionFilterPO<?> operator,
 			TransformationConfiguration config) {
 		return operator.getTransferArea() == null;
-	}
-
-	@Override
-	public String getName() {
-		return "Set TransferArea in ConvolutionFilterPO";
 	}
 
 	@Override

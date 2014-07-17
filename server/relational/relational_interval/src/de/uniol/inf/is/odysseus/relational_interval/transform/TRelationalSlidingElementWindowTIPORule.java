@@ -25,22 +25,18 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingElementWindowTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TRelationalSlidingElementWindowTIPORule extends
-		AbstractTransformationRule<AbstractWindowAO> {
-
-	@Override
-	public int getPriority() {
-		return 0;
-	}
+		AbstractRelationalIntervalTransformationRule<AbstractWindowAO> {
 
 	@Override
 	public void execute(AbstractWindowAO windowAO,
 			TransformationConfiguration transformConfig) throws RuleException {
 		SlidingElementWindowTIPO<Tuple<ITimeInterval>> windowPO = new SlidingElementWindowTIPO<>(
 				windowAO);
-		RelationalGroupProcessor<ITimeInterval> r = new RelationalGroupProcessor<>(windowAO.getInputSchema(), windowAO.getOutputSchema(), windowAO.getPartitionBy(), null, false);
+		RelationalGroupProcessor<ITimeInterval> r = new RelationalGroupProcessor<>(
+				windowAO.getInputSchema(), windowAO.getOutputSchema(),
+				windowAO.getPartitionBy(), null, false);
 		windowPO.setGroupProcessor(r);
 		defaultExecute(windowAO, windowPO, transformConfig, true, true);
 		insert(windowPO);
@@ -49,23 +45,11 @@ public class TRelationalSlidingElementWindowTIPORule extends
 	@Override
 	public boolean isExecutable(AbstractWindowAO operator,
 			TransformationConfiguration transformConfig) {
-		if (operator.isAllPhysicalInputSet())
-			if (operator.getWindowType() == WindowType.TUPLE) {
-				if (operator.isPartitioned()) {
-					if (operator.getOutputSchema().getType() == Tuple.class
-							&& transformConfig.getMetaTypes().contains(
-									ITimeInterval.class.getCanonicalName())) {
-
-						return true;
-					}
-				}
-			}
+		if (super.isExecutable(operator, transformConfig)) {
+			return operator.getWindowType() == WindowType.TUPLE
+					&& operator.isPartitioned();
+		}
 		return false;
-	}
-
-	@Override
-	public String getName() {
-		return "WindowAO -> RelationalSlidingElementWindowTIPO";
 	}
 
 	@Override

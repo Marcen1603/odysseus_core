@@ -27,10 +27,9 @@ import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttribute
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TApplicationTimestampRule extends
-		AbstractTransformationRule<TimestampAO> {
+		AbstractRelationalIntervalTransformationRule<TimestampAO> {
 
 	@Override
 	public int getPriority() {
@@ -46,14 +45,16 @@ public class TApplicationTimestampRule extends
 
 		@SuppressWarnings("rawtypes")
 		IMetadataUpdater mUpdater;
-		if (Tuple.class.isAssignableFrom(timestampAO.getInputSchema().getType())) {
+		if (Tuple.class
+				.isAssignableFrom(timestampAO.getInputSchema().getType())) {
 			if (pos >= 0) {
 				int posEnd = timestampAO.hasEndTimestamp() ? timestampAO
 						.getInputSchema()
 						.indexOf(timestampAO.getEndTimestamp()) : -1;
 				mUpdater = new RelationalTimestampAttributeTimeIntervalMFactory(
 						pos, posEnd, clearEnd, timestampAO.getDateFormat(),
-						timestampAO.getTimezone(), timestampAO.getLocale(), timestampAO.getFactor(),timestampAO.getOffset());
+						timestampAO.getTimezone(), timestampAO.getLocale(),
+						timestampAO.getFactor(), timestampAO.getOffset());
 			} else {
 
 				int year = schema.indexOf(timestampAO.getStartTimestampYear());
@@ -72,8 +73,9 @@ public class TApplicationTimestampRule extends
 						year, month, day, hour, minute, second, millisecond,
 						factor, clearEnd, timestampAO.getTimezone());
 			}
-		}else{
-		    throw new TransformationException("Cannot set Time with "+timestampAO.getInputSchema().getType());
+		} else {
+			throw new TransformationException("Cannot set Time with "
+					+ timestampAO.getInputSchema().getType());
 		}
 
 		@SuppressWarnings("unchecked")
@@ -85,20 +87,12 @@ public class TApplicationTimestampRule extends
 	@Override
 	public boolean isExecutable(TimestampAO operator,
 			TransformationConfiguration transformConfig) {
-		if (transformConfig.getMetaTypes().contains(
-				ITimeInterval.class.getCanonicalName())) {
-			if (operator.isAllPhysicalInputSet()) {
-				if (!operator.isUsingSystemTime()) {
-					return true;
-				}
+		if (super.isExecutable(operator, transformConfig)) {
+			if (!operator.isUsingSystemTime()) {
+				return true;
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public String getName() {
-		return "TimestampAO -> MetadataUpdatePO(application timestamp/relational)";
 	}
 
 	@Override

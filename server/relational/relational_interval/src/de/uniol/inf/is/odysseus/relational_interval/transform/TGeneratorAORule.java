@@ -6,7 +6,6 @@ package de.uniol.inf.is.odysseus.relational_interval.transform;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
@@ -20,13 +19,12 @@ import de.uniol.inf.is.odysseus.relational_interval.physicaloperator.GeneratorPO
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TGeneratorAORule extends AbstractTransformationRule<GeneratorAO> {
+public class TGeneratorAORule extends AbstractRelationalIntervalTransformationRule<GeneratorAO> {
 
     @Override
     public int getPriority() {
@@ -52,20 +50,6 @@ public class TGeneratorAORule extends AbstractTransformationRule<GeneratorAO> {
             po.setBasetimeUnit((TimeUnit) c.getValue());
         }
         this.defaultExecute(ao, po, transformConfig, true, true);
-    }
-
-    @Override
-    public boolean isExecutable(final GeneratorAO ao, final TransformationConfiguration transformConfig) {
-        if (ao.getInputSchema().getType() == Tuple.class) {
-            return ao.isAllPhysicalInputSet();
-        }
-        return false;
-
-    }
-
-    @Override
-    public String getName() {
-        return "GeneratorAO -> GeneratorPO";
     }
 
     @Override

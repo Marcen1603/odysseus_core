@@ -10,29 +10,12 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TRelationalDistinctAORule extends AbstractTransformationRule<DistinctAO> {
-
-	@Override
-	public int getPriority() {
-		return 0;
-	}
+public class TRelationalDistinctAORule extends AbstractRelationalIntervalTransformationRule<DistinctAO> {
 
 	@Override
 	public void execute(DistinctAO operator, TransformationConfiguration config) throws RuleException {
 		RelationalDistinctPO<Tuple<? extends ITimeInterval>> po = new RelationalDistinctPO<>();
 		defaultExecute(operator, po, config, true, true);
-	}
-
-	@Override
-	public boolean isExecutable(DistinctAO operator,
-			TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet() && config.getMetaTypes().contains(
-				ITimeInterval.class.getCanonicalName());
-	}
-
-	@Override
-	public String getName() {
-		return "DistinctAO --> RelationalDistinctAO";
 	}
 
 	@Override

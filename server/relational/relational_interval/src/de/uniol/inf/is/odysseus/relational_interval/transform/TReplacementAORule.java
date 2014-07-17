@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational_interval.logicaloperator.ReplacementAO;
@@ -11,9 +9,8 @@ import de.uniol.inf.is.odysseus.relational_interval.replacement.ReplacementRegis
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TReplacementAORule extends AbstractTransformationRule<ReplacementAO> {
+public class TReplacementAORule extends AbstractRelationalIntervalTransformationRule<ReplacementAO> {
 
 	@Override
 	public void execute(ReplacementAO operator,
@@ -26,29 +23,13 @@ public class TReplacementAORule extends AbstractTransformationRule<ReplacementAO
 		IReplacement replacement = ReplacementRegistry.getReplacement(operator.getReplacementMethod());
 		if (replacement == null){
 			// TODO: better exception
-			throw new RuntimeException("Replacement method "+operator.getReplacementMethod()+" not found!");
+			throw new RuleException("Replacement method "+operator.getReplacementMethod()+" not found!");
 		}
 		
 		@SuppressWarnings("unchecked")
 		RelationalReplacementPO po = new RelationalReplacementPO(operator.getInterval(), timestampAttributePos, valueAttributePos, qualityAttributePos, replacement);
 		
 		defaultExecute(operator, po, config, true, true);
-	}
-
-	@Override
-	public boolean isExecutable(ReplacementAO operator,
-			TransformationConfiguration config) {
-		if(operator.getInputSchema(0).getType() == Tuple.class && config.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
-			if(operator.isAllPhysicalInputSet()){
-					return true;				
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public String getName() {
-		return "ReplacementAO --> ReplacementPO";
 	}
 
 	@Override

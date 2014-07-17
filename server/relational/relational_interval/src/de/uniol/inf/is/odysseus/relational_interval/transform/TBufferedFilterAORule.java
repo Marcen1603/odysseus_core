@@ -27,9 +27,9 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.BufferedFilterPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TBufferedFilterAORule extends AbstractTransformationRule<BufferedFilterAO> {
+public class TBufferedFilterAORule extends
+		AbstractRelationalIntervalTransformationRule<BufferedFilterAO> {
 
 	@Override
 	public int getPriority() {
@@ -38,24 +38,19 @@ public class TBufferedFilterAORule extends AbstractTransformationRule<BufferedFi
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void execute(BufferedFilterAO operator, TransformationConfiguration config) throws RuleException {
-		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMerge = new RelationalLeftMergeFunction<ITimeInterval>(operator.getInputSchema(0), operator.getInputSchema(1), operator.getOutputSchema());
+	public void execute(BufferedFilterAO operator,
+			TransformationConfiguration config) throws RuleException {
+		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMerge = new RelationalLeftMergeFunction<ITimeInterval>(
+				operator.getInputSchema(0), operator.getInputSchema(1),
+				operator.getOutputSchema());
 		// IMetadataMergeFunction<?> metaDataMerge = new UseLeftInputMetadata();
 		CombinedMergeFunction metaDataMerge = new CombinedMergeFunction();
 		metaDataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
 
-		BufferedFilterPO po = new BufferedFilterPO(operator.getPredicate(), operator.getBufferTime(), operator.getDeliverTime(), dataMerge, metaDataMerge);
-		defaultExecute(operator, po, config, true, true);		
-	}
-
-	@Override
-	public boolean isExecutable(BufferedFilterAO operator, TransformationConfiguration config) {
-		return operator.getInputSchema(0).getType() == Tuple.class && operator.isAllPhysicalInputSet();
-	}
-
-	@Override
-	public String getName() {
-		return "BufferedFilterAO --> BufferedFilterPO";
+		BufferedFilterPO po = new BufferedFilterPO(operator.getPredicate(),
+				operator.getBufferTime(), operator.getDeliverTime(), dataMerge,
+				metaDataMerge);
+		defaultExecute(operator, po, config, true, true);
 	}
 
 	@Override

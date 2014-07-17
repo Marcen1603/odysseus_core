@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
@@ -12,10 +11,9 @@ import de.uniol.inf.is.odysseus.relational_interval.physicaloperator.RelationalF
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TRelationalFastMedianAORule extends
-		AbstractTransformationRule<RelationalFastMedianAO> {
+		AbstractRelationalIntervalTransformationRule<RelationalFastMedianAO> {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
@@ -47,13 +45,6 @@ public class TRelationalFastMedianAORule extends
 			po.setGroupProcessor(new RelationalNoGroupProcessor<>());
 		}
 		defaultExecute(operator, po, config, true, true);
-	}
-
-	@Override
-	public boolean isExecutable(RelationalFastMedianAO operator,
-			TransformationConfiguration config) {
-		return operator.getInputSchema(0).getType() == Tuple.class
-				&& operator.isAllPhysicalInputSet();
 	}
 
 	@Override

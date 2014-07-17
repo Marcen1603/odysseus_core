@@ -15,45 +15,21 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampToPayloadPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.TimestampToPayloadAO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 
-public class TRelationalTimestampToPayloadRule extends AbstractTransformationRule<TimestampToPayloadAO>{
+public class TRelationalTimestampToPayloadRule extends AbstractRelationalIntervalTransformationRule<TimestampToPayloadAO>{
 
-	@Override
-	public int getPriority() {
-		return 0;
-	}
 
 	@Override
 	public void execute(TimestampToPayloadAO operator,
 			TransformationConfiguration config) throws RuleException {
 		defaultExecute(operator, new RelationalTimestampToPayloadPO(), config, true, true);		
-	}
-
-	@Override
-	public boolean isExecutable(TimestampToPayloadAO operator,
-			TransformationConfiguration config) {
-		if(operator.getInputSchema(0).getType() == Tuple.class && config.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
-			if(operator.isAllPhysicalInputSet()){
-					return true;				
-			}
-		}
-		return false;
-	}
-	
-
-	@Override
-	public String getName() {
-		return "TimestampToPayloadAO --> RelationalTimestampToPayloadPO";
 	}
 
 	@Override

@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -27,15 +26,9 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TRelationalChangeDetectAORule extends
-		AbstractTransformationRule<ChangeDetectAO> {
-
-	@Override
-	public int getPriority() {
-		return 0;
-	}
+		AbstractRelationalIntervalTransformationRule<ChangeDetectAO> {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
@@ -68,18 +61,6 @@ public class TRelationalChangeDetectAORule extends
 			po.setSuppressAttribute(operator.getOutputSchema().indexOf(suppressAttribute));
 		}
 		defaultExecute(operator, po, config, true, true);
-	}
-
-	@Override
-	public boolean isExecutable(ChangeDetectAO operator,
-			TransformationConfiguration config) {
-		return operator.getInputSchema().getType() == Tuple.class
-				&& operator.isAllPhysicalInputSet() && operator.hasAttributes();
-	}
-
-	@Override
-	public String getName() {
-		return "ChangeDetectAO -> ChangeDetectPO";
 	}
 
 	@Override
