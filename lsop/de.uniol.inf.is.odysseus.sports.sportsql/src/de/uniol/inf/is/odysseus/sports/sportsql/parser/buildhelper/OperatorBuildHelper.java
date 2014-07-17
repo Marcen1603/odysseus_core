@@ -351,14 +351,14 @@ public class OperatorBuildHelper {
 
 		// We need this to get the AttributeResolver
 		List<ILogicalOperator> sources = new ArrayList<ILogicalOperator>();
-		sources.add(enrichAO);
+		sources.add(streamToEnrich);
 		sources.add(metaStream);
 		
-		// TODO Why do the AOs don't have Schemas? Do they have?
 		
 		// Create parameter
 		PredicateParameter predicateParameter = new PredicateParameter();
 		predicateParameter.setAttributeResolver(OperatorBuildHelper.createAttributeResolver(sources));
+
 		predicateParameter.setInputValue(joinPredicate);
 		enrichAO.setPredicate(predicateParameter.getValue());
 		enrichAO.subscribeToSource(streamToEnrich, 0, 0,
