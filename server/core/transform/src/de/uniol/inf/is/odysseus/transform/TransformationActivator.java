@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.transform;
 
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.Enumeration;
 
@@ -31,7 +32,6 @@ import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.engine.TransformationInventory;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 import de.uniol.inf.is.odysseus.transform.rule.ITransformationRule;
 
 public class TransformationActivator implements BundleActivator, BundleListener {
@@ -101,40 +101,47 @@ public class TransformationActivator implements BundleActivator, BundleListener 
 	}
 
 	private void searchBundle(Bundle bundle, Mode mode) {
-		Enumeration<URL> entries;
-		entries = bundle.findEntries("/bin/de/uniol/inf/is/odysseus",
-				"*.class", true);
-		if (entries == null) {
-			entries = bundle.findEntries("/de/uniol/inf/is/odysseus",
-					"*.class", true);
+		String[] pathes = new String[] { "/de/uniol/inf/is/odysseus" };
+		String[] prefixes = new String[] { "", "/bin" };
+		for (String path : pathes) {
+			for (String prefix : prefixes) {
 
-			if (entries == null) {
-				return;
-			}
-		}
+				Enumeration<URL> entries;
+				entries = bundle.findEntries(prefix + path, "*.class", true);
 
-		while (entries.hasMoreElements()) {
-			URL curURL = entries.nextElement();
-			if (curURL.toString().contains("/rule") || curURL
-					.toString().contains("/transform")) {
-				Class<? extends ITransformationRule> classObject = loadRuleClass(
-						bundle, curURL);
-				if (classObject != null
-						&& classObject != ITransformationRule.class
-						&& classObject != AbstractTransformationRule.class)
-					try {
-						logger.trace("Found Rule " + classObject);
-						@SuppressWarnings("rawtypes")
-						IRule rule = (IRule) classObject.newInstance();
-						if (mode == Mode.ADD) {
-							TransformationInventory.getInstance().addRule(rule);
-						} else {
-							TransformationInventory.getInstance().removeRule(
-									rule);
-						}
-					} catch (Exception e) {
-						logger.error("Error loading rule " + classObject, e);
+				if (entries == null) {
+					continue;
+				}
+
+				while (entries.hasMoreElements()) {
+					URL curURL = entries.nextElement();
+					if (curURL.toString().contains("/rule")
+							|| curURL.toString().contains("/transform")) {
+						Class<? extends ITransformationRule> classObject = loadRuleClass(
+								bundle, curURL);
+						if (classObject != null
+								&& !Modifier.isInterface(classObject
+										.getModifiers())
+								&& !Modifier.isAbstract(classObject
+										.getModifiers()))
+							try {
+								logger.trace("Found Rule " + classObject);
+								@SuppressWarnings("rawtypes")
+								IRule rule = (IRule) classObject.newInstance();
+								if (mode == Mode.ADD) {
+									TransformationInventory.getInstance()
+											.addRule(rule);
+								} else {
+									TransformationInventory.getInstance()
+											.removeRule(rule);
+								}
+							} catch (Exception e) {
+								logger.error("Error loading rule "
+										+ classObject, e);
+							}
 					}
+				}
+
 			}
 		}
 	}
