@@ -19,24 +19,86 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLTimeP
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 
+/**
+ * Parser for SportsQL:
+ * Query: Path with Ball.
+ * 
+ * SportsQL:
+ * 
+ * Example Query:
+ * 
+ * {
+ * "statisticType": "player",
+ *   "gameType": "soccer",
+ *   "entityId": 16,
+ *   "name": "pathwithball",
+ *   "parameters": {
+ *       "time": {
+ *           "start": 10753295594424116,
+ *           "end" : 9999999999999999,   
+ *       }
+ *    "space": {
+ *      	"startx":-50,
+ *          "starty":-33960
+ *      	"endx":52489
+ *     		"endy":33965
+ *   }
+ *  }
+ *}
+ * 
+ * @author Carsten Cordes
+ *
+ */
 @SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER }, name = "pathwithball")
 public class PathWithBallSportsQLParser implements ISportsQLParser {
 
 	@Override
+	
+	/**
+	 * Parses SportsQL 
+	 * @Parameter sportsQL Query to parse.
+	 * @throws SportsQLParseException
+	 */
 	public ILogicalQuery parse(SportsQLQuery sportsQL) throws SportsQLParseException {
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
+		//TODO remove hardcoded information.
+		
+		/**
+		 * Source name of Metadata Stream.
+		 */
 		String metadataSourceName = "metadata";
+		/**
+		 * Source name of Game Stream.
+		 */
 		String streamSourceName = "soccergame";
 		
+		/**
+		 * Entity id we look for.
+		 */
 		long entityId = sportsQL.getEntityId();
 		
-		//Set defaults for parameters.
+		
+		/**
+		 * Datarate to reduce ball load (only ever n'th tuple is regarded)
+		 * Default: 100 (Can be set with optional parameter 'datarate')
+		 */
 		int ballDatarate = 100;
+		
+		/**
+		 * Accuracy (in mm): To reduce load. Movements with distance < accuracy are not processed further.
+		 * Default: 300 (Can be set with optional parameter 'accuracy')
+		 */
 		double accuracy = 300.0;
+		
+		/**
+		 * Proximity to ball (in mm): Which distance counts as ball possession?
+		 * Default: 1000 (Can be set with optional parameter 'proximity')
+		 */
 		double proximityToBall = 1000.0;
 		
 		//Set parameters when in sportsQL
+		
 		Map<String,String> parameters = sportsQL.getParameters();
 		if(parameters.containsKey("datarate")) {
 			try {
@@ -65,32 +127,18 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 			}
 		}
 		
-		
-		
-/*
-		int upperleft_x = 0;
-		int upperleft_y = 33965;
-		int lowerleft_x = -50;
-		int lowerleft_y = -33960;
-		int upperright_x = 52477;
-		int upperright_y = 33941;
-		int lowerright_x = 52489;
-		int lowerright_y = -33939;
-
-		int min_x = lowerleft_x;
-		int max_x = lowerright_x;
-		int min_y = lowerleft_y;
-		int max_y = upperleft_y;
-*/
-		
-		
-		ILogicalOperator source = OperatorBuildHelper.createAccessAO(streamSourceName);
-		ILogicalOperator metadata =OperatorBuildHelper.createAccessAO(metadataSourceName);
-
+		//Fetch time and Space parameters from Query.
 		SportsQLTimeParameter timeParameter = SportsQLParameterHelper
 				.getTimeParameter(sportsQL);
 		SportsQLSpaceParameter spaceParameter = SportsQLParameterHelper
 				.getSpaceParameter(sportsQL);
+
+		
+		///Beginning of QueryPlan.
+		
+		//Create AccessAOs for sources.
+		ILogicalOperator source = OperatorBuildHelper.createAccessAO(streamSourceName);
+		ILogicalOperator metadata =OperatorBuildHelper.createAccessAO(metadataSourceName);
 
 		//Filter by Time
 		ILogicalOperator selectedTime = OperatorBuildHelper.createTimeSelect(
@@ -102,6 +150,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 				spaceParameter, selectedTime);
 		allOperators.add(selectedSpace);
 
+		//Enrich game Stream with metadata.
 		ILogicalOperator enrichedStream = OperatorBuildHelper.createEnrichAO("sid=sensorid", selectedSpace,metadata);
 		allOperators.add(enrichedStream);
 		
@@ -191,6 +240,8 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 
 		// Create plan
 		ILogicalQuery query = new LogicalQuery();
+		
+		//TODO TopAO?
 		
 		query.setLogicalPlan(result, true);
 		

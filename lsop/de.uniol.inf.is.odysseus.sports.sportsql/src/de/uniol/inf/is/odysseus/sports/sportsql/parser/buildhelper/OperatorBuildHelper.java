@@ -771,6 +771,11 @@ public class OperatorBuildHelper {
 		return OdysseusRCPPlugIn.getActiveSession();
 	}
 
+	/**
+	 * Creates Attribute Resolver to find Attributes by String
+	 * @param source incoming Operator
+	 * @return Attribute Resolver.
+	 */
 	public static IAttributeResolver createAttributeResolver(
 			ILogicalOperator source) {
 		List<ILogicalOperator> sources = new ArrayList<ILogicalOperator>();
@@ -778,6 +783,11 @@ public class OperatorBuildHelper {
 		return OperatorBuildHelper.createAttributeResolver(sources);
 	}
 	
+	/**
+	 * Creates Attribute Resolver to find Attributes by String
+	 * @param sources incoming Operators
+	 * @return Attribute Resolver.
+	 */
 	public static IAttributeResolver createAttributeResolver(
 			List<ILogicalOperator> sources) {
 		List<SDFSchema> inputSchema = new LinkedList<>();
@@ -790,6 +800,12 @@ public class OperatorBuildHelper {
 		return attributeResolver;
 	}
 
+	/**
+	 * Creates SDFAttributes from a single String, e.g. to use as groupBy attribute.
+	 * @param groupBy String to group By
+	 * @param source Source Operator.
+	 * @return List of SDFAttribtues
+	 */
 	public static List<SDFAttribute> createAttributeList(
 			String groupBy, ILogicalOperator source) {
 		ArrayList<String> attributes = new ArrayList<String>();
@@ -800,6 +816,12 @@ public class OperatorBuildHelper {
 		
 	}
 	
+	/**
+	 * Creates SDFAttributes from Strings, e.g. to use as groupBy attributes.
+	 * @param groupBy List of Strings
+	 * @param source Source Operator.
+	 * @return List of SDFAttribtues
+	 */
 	public static List<SDFAttribute> createAttributeList(List<String> groupBy, ILogicalOperator source) {
 		ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
 		operators.add(source);
