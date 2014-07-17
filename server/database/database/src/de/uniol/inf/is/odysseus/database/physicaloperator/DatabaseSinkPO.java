@@ -180,9 +180,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 			this.preparedStatement.addBatch();
 			counter++;
 			if ((counter % batchSize) == 0) {
-				int count = this.preparedStatement.executeBatch().length;
-				this.jdbcConnection.commit();
-				logger.debug("Inserted " + count + " rows in database");
+				writeToDB();
 			}
 			//calcLatency(tuple);
 			// logger.debug("Inserted "+count+" rows in database");
@@ -190,6 +188,21 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 			e.printStackTrace();
 		}
 
+	}
+
+	public void writeToDB() throws SQLException {
+		int count = this.preparedStatement.executeBatch().length;
+		this.jdbcConnection.commit();
+		logger.debug("Inserted " + count + " rows in database");
+	}
+	
+	@Override
+	protected void process_close() {
+		try {
+			writeToDB();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
