@@ -676,8 +676,26 @@ public class OperatorBuildHelper {
 	 * @return A simple TopAO.
 	 */
 	public static TopAO createTopAO(ILogicalOperator source) {
+		List<ILogicalOperator> sources = new ArrayList<ILogicalOperator>();
+		sources.add(source);
+		return OperatorBuildHelper.createTopAO(sources);
+	}
+
+	/**
+	 * If you have more than one Operator at the end of your query you can use
+	 * this. It will put the TopAO on top of all the operators, with the input-
+	 * and output-port beginning with 0 and increasing up to the number of the
+	 * operators -1.
+	 * 
+	 * @param sources List of sources you want to be under the TopAO.
+	 * @return A TopAO which has all the given operators under it.
+	 */
+	public static TopAO createTopAO(List<ILogicalOperator> sources) {
 		TopAO topAO = new TopAO();
-		topAO.subscribeToSource(source, 0, 0, source.getOutputSchema());
+		for (int i = 0; i < sources.size(); i++) {
+			topAO.subscribeToSource(sources.get(i), i, i, sources.get(i)
+					.getOutputSchema());
+		}
 		return topAO;
 	}
 
@@ -859,15 +877,39 @@ public class OperatorBuildHelper {
 	 * Creates an ILogicalQuery with an TopAO on top of the query. Initialized
 	 * all operators and gives the query a name
 	 * 
-	 * @param topSource Top source of your query
-	 * @param allOperators List of all operators which should be initialized
-	 * @param queryName The name this query shall get
+	 * @param topSource
+	 *            Top source of your query
+	 * @param allOperators
+	 *            List of all operators which should be initialized
+	 * @param queryName
+	 *            The name this query shall get
 	 * @return A finished logical query.
 	 */
 	public static ILogicalQuery finishQuery(ILogicalOperator topSource,
 			List<ILogicalOperator> allOperators, String queryName) {
 		// TopAO (for Odysseus - it wants to know which operator is the top)
-		TopAO topAO = OperatorBuildHelper.createTopAO(topSource);
+		List<ILogicalOperator> sources = new ArrayList<ILogicalOperator>();
+		sources.add(topSource);
+
+		return finishQuery(sources, allOperators, queryName);
+	}
+	
+	/**
+	 * Creates an ILogicalQuery with an TopAO on top of the query. Initialized
+	 * all operators and gives the query a name
+	 * 
+	 * @param topSources
+	 *            Top sources of your query
+	 * @param allOperators
+	 *            List of all operators which should be initialized
+	 * @param queryName
+	 *            The name this query shall get
+	 * @return A finished logical query.
+	 */
+	public static ILogicalQuery finishQuery(List<ILogicalOperator> topSources,
+			List<ILogicalOperator> allOperators, String queryName) {
+		// TopAO (for Odysseus - it wants to know which operator is the top)
+		TopAO topAO = OperatorBuildHelper.createTopAO(topSources);
 
 		// Initialize all AOs
 		OperatorBuildHelper.initializeOperators(allOperators);
