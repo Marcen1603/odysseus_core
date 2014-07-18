@@ -6,7 +6,6 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
@@ -235,17 +234,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		ILogicalOperator result = OperatorBuildHelper.createJoinAO(joinPredicates, playerWindow, ballWindow);
 		allOperators.add(result);
 		
-		// Initialize all AOs
-		OperatorBuildHelper.initializeOperators(allOperators);
-
-		// Create plan
-		ILogicalQuery query = new LogicalQuery();
-		
-		//TODO TopAO?
-		
-		query.setLogicalPlan(result, true);
-		
-		return query;
+		return OperatorBuildHelper.finishQuery(result, allOperators, sportsQL.getName());
 	}
 	
 

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
@@ -49,13 +48,7 @@ public class BallContactPlayerSportsQLParser implements ISportsQLParser {
 		SelectAO single_player = OperatorBuildHelper.createSelectAO(predicates, source);	
 		allOperators.add(single_player);
 		
-		OperatorBuildHelper.initializeOperators(allOperators);
-
-		// Create plan
-		ILogicalQuery query = new LogicalQuery();
-		query.setLogicalPlan(single_player, true);
-
-		return query;
+		return OperatorBuildHelper.finishQuery(single_player, allOperators, sportsQL.getName());
 	}
 
 }

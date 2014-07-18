@@ -101,7 +101,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		allOperators.add(maxAggregateAO);
 
 		return OperatorBuildHelper.finishQuery(maxAggregateAO, allOperators,
-				"mileageplayer");
+				sportsQL.getName());
 	}
 
 	private List<SDFExpressionParameter> getExpressionsForFirstMap(

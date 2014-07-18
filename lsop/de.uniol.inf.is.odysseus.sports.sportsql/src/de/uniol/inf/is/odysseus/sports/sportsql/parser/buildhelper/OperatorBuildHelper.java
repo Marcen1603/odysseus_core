@@ -753,7 +753,7 @@ public class OperatorBuildHelper {
 	 * 
 	 * @param operators
 	 */
-	public static void initializeOperators(List<ILogicalOperator> operators) {
+	private static void initializeOperators(List<ILogicalOperator> operators) {
 		for (ILogicalOperator op : operators) {
 			op.initialize();
 		}
