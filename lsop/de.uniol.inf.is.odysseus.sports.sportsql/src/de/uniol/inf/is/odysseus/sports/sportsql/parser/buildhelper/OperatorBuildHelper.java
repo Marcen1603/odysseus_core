@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
@@ -55,7 +57,6 @@ public class OperatorBuildHelper {
 	 */
 	public static final String MAIN_STREAM_NAME = "soccergame";
 	public static final String METADATA_STREAM_NAME = "metadata";
-	
 
 	/**
 	 * Conversion variables
@@ -63,8 +64,7 @@ public class OperatorBuildHelper {
 	public static final long TS_TO_MS_FACTOR = 1000000000;
 	// ts in picoseconds for DEBS Grand Challenge 2013 soccer data
 	public static final String TS_GAME_START = "10753295594424116.0";
-	
-	
+
 	/**
 	 * Game field borders
 	 */
@@ -76,7 +76,6 @@ public class OperatorBuildHelper {
 	public static final int UPPERRIGHT_Y = 33941;
 	public static final int LOWERRIGHT_X = 52489;
 	public static final int LOWERRIGHT_Y = -33939;
-	
 
 	/**
 	 * Creates a MapAP with a list of expressions. To create such expressions,
@@ -135,7 +134,8 @@ public class OperatorBuildHelper {
 
 		// GroupBy
 		if (groupBy != null) {
-			stateMapAO.setGroupingAttributes(createAttributeList(groupBy,source));
+			stateMapAO.setGroupingAttributes(createAttributeList(groupBy,
+					source));
 		}
 
 		stateMapAO.subscribeTo(source, source.getOutputSchema());
@@ -352,11 +352,11 @@ public class OperatorBuildHelper {
 		List<ILogicalOperator> sources = new ArrayList<ILogicalOperator>();
 		sources.add(streamToEnrich);
 		sources.add(metaStream);
-		
-		
+
 		// Create parameter
 		PredicateParameter predicateParameter = new PredicateParameter();
-		predicateParameter.setAttributeResolver(OperatorBuildHelper.createAttributeResolver(sources));
+		predicateParameter.setAttributeResolver(OperatorBuildHelper
+				.createAttributeResolver(sources));
 
 		predicateParameter.setInputValue(joinPredicate);
 		enrichAO.setPredicate(predicateParameter.getValue());
@@ -421,13 +421,14 @@ public class OperatorBuildHelper {
 		if (outputType != null)
 			aggregateOptions.add(outputType);
 		param.setInputValue(aggregateOptions);
-		
+
 		// Attribute resolver and datadictionary for parameter
-		IAttributeResolver resolver = OperatorBuildHelper.createAttributeResolver(source);
+		IAttributeResolver resolver = OperatorBuildHelper
+				.createAttributeResolver(source);
 		param.setAttributeResolver(resolver);
 		IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
-		param.setDataDictionary(dataDict);		
-		
+		param.setDataDictionary(dataDict);
+
 		// Use parameter to get information for AO
 		List<AggregateItem> aggregateItems = new ArrayList<AggregateItem>();
 		aggregateItems.add(param.getValue());
@@ -435,8 +436,8 @@ public class OperatorBuildHelper {
 
 		// GroupBy
 		if (groupBy != null) {
-			aggregateAO
-					.setGroupingAttributes(createAttributeList(groupBy,source));
+			aggregateAO.setGroupingAttributes(createAttributeList(groupBy,
+					source));
 		}
 
 		aggregateAO.subscribeTo(source, source.getOutputSchema());
@@ -483,9 +484,9 @@ public class OperatorBuildHelper {
 
 		ArrayList<ILogicalOperator> sources = new ArrayList<ILogicalOperator>();
 		sources.add(source);
-		
+
 		List<SDFAttribute> sdfAttributes = OperatorBuildHelper
-				.createAttributeList(attributes,sources);
+				.createAttributeList(attributes, sources);
 		ChangeDetectAO cAO = new ChangeDetectAO();
 		cAO.setAttr(sdfAttributes);
 		cAO.setGroupingAttributes(groupBy);
@@ -534,7 +535,7 @@ public class OperatorBuildHelper {
 			List<SDFAttribute> attributes, double tolerance,
 			ILogicalOperator source) {
 		ChangeDetectAO cAO = new ChangeDetectAO();
-		
+
 		cAO.setAttr(attributes);
 		cAO.setTolerance(tolerance);
 		cAO.subscribeTo(source, source.getOutputSchema());
@@ -622,7 +623,8 @@ public class OperatorBuildHelper {
 		sources.add(source1);
 		sources.add(source2);
 
-		IAttributeResolver resolver = OperatorBuildHelper.createAttributeResolver(sources);
+		IAttributeResolver resolver = OperatorBuildHelper
+				.createAttributeResolver(sources);
 		for (String predicate : listOfPredicates) {
 			PredicateParameter param = new PredicateParameter();
 			param.setAttributeResolver(resolver);
@@ -750,7 +752,7 @@ public class OperatorBuildHelper {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 
 		IAttributeResolver resolver = createAttributeResolver(sources);
-		
+
 		for (String attribute : listOfAttributes) {
 			attributes.add(resolver.getAttribute(attribute));
 		}
@@ -782,7 +784,9 @@ public class OperatorBuildHelper {
 
 	/**
 	 * Creates Attribute Resolver to find Attributes by String
-	 * @param source incoming Operator
+	 * 
+	 * @param source
+	 *            incoming Operator
 	 * @return Attribute Resolver.
 	 */
 	public static IAttributeResolver createAttributeResolver(
@@ -791,16 +795,18 @@ public class OperatorBuildHelper {
 		sources.add(source);
 		return OperatorBuildHelper.createAttributeResolver(sources);
 	}
-	
+
 	/**
 	 * Creates Attribute Resolver to find Attributes by String
-	 * @param sources incoming Operators
+	 * 
+	 * @param sources
+	 *            incoming Operators
 	 * @return Attribute Resolver.
 	 */
 	public static IAttributeResolver createAttributeResolver(
 			List<ILogicalOperator> sources) {
 		List<SDFSchema> inputSchema = new LinkedList<>();
-		for(ILogicalOperator source : sources) {			
+		for (ILogicalOperator source : sources) {
 			inputSchema.add(source.getOutputSchema());
 		}
 
@@ -810,30 +816,63 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Creates SDFAttributes from a single String, e.g. to use as groupBy attribute.
-	 * @param groupBy String to group By
-	 * @param source Source Operator.
+	 * Creates SDFAttributes from a single String, e.g. to use as groupBy
+	 * attribute.
+	 * 
+	 * @param groupBy
+	 *            String to group By
+	 * @param source
+	 *            Source Operator.
 	 * @return List of SDFAttribtues
 	 */
-	public static List<SDFAttribute> createAttributeList(
-			String groupBy, ILogicalOperator source) {
+	public static List<SDFAttribute> createAttributeList(String groupBy,
+			ILogicalOperator source) {
 		ArrayList<String> attributes = new ArrayList<String>();
 		ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
 		attributes.add(groupBy);
 		operators.add(source);
-		return createAttributeList(attributes,operators);
-		
+		return createAttributeList(attributes, operators);
+
 	}
-	
+
 	/**
 	 * Creates SDFAttributes from Strings, e.g. to use as groupBy attributes.
-	 * @param groupBy List of Strings
-	 * @param source Source Operator.
+	 * 
+	 * @param groupBy
+	 *            List of Strings
+	 * @param source
+	 *            Source Operator.
 	 * @return List of SDFAttribtues
 	 */
-	public static List<SDFAttribute> createAttributeList(List<String> groupBy, ILogicalOperator source) {
+	public static List<SDFAttribute> createAttributeList(List<String> groupBy,
+			ILogicalOperator source) {
 		ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
 		operators.add(source);
-		return createAttributeList(groupBy,operators);
+		return createAttributeList(groupBy, operators);
+	}
+
+	/**
+	 * Creates an ILogicalQuery with an TopAO on top of the query. Initialized
+	 * all operators and gives the query a name
+	 * 
+	 * @param topSource Top source of your query
+	 * @param allOperators List of all operators which should be initialized
+	 * @param queryName The name this query shall get
+	 * @return A finished logical query.
+	 */
+	public static ILogicalQuery finishQuery(ILogicalOperator topSource,
+			List<ILogicalOperator> allOperators, String queryName) {
+		// TopAO (for Odysseus - it wants to know which operator is the top)
+		TopAO topAO = OperatorBuildHelper.createTopAO(topSource);
+
+		// Initialize all AOs
+		OperatorBuildHelper.initializeOperators(allOperators);
+
+		// Create plan
+		ILogicalQuery query = new LogicalQuery();
+		query.setLogicalPlan(topAO, true);
+		query.setName(queryName);
+
+		return query;
 	}
 }

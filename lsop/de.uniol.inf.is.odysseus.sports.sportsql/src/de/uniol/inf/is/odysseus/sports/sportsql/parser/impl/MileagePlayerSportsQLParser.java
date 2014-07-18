@@ -5,14 +5,12 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -102,18 +100,8 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 				"MAX", "mileage", "mileage", sumAggregateAO);
 		allOperators.add(maxAggregateAO);
 
-		// 5. TopAO (for Odysseus - it wants to know which operator is the top)
-		TopAO topAO = OperatorBuildHelper.createTopAO(maxAggregateAO);
-
-		// Initialize all AOs
-		OperatorBuildHelper.initializeOperators(allOperators);
-
-		// Create plan
-		ILogicalQuery query = new LogicalQuery();
-		query.setLogicalPlan(topAO, true);
-		query.setName("test");
-
-		return query;
+		return OperatorBuildHelper.finishQuery(maxAggregateAO, allOperators,
+				"mileageplayer");
 	}
 
 	private List<SDFExpressionParameter> getExpressionsForFirstMap(
