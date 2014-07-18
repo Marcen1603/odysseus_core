@@ -14,6 +14,11 @@ public class TimestampDataTypeMappingHandler extends
 
 	public TimestampDataTypeMappingHandler() {
 		super(SDFDatatype.TIMESTAMP, Types.TIMESTAMP);	
+		
+		addAdditionalSDFDatatype(SDFDatatype.POINT_IN_TIME);
+		addAdditionalSDFDatatype(SDFDatatype.START_TIMESTAMP);
+		addAdditionalSDFDatatype(SDFDatatype.END_TIMESTAMP);
+		addAdditionalSDFDatatype(SDFDatatype.DATE);
 	}
 
 	@Override

@@ -45,30 +45,34 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAtt
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 
 /**
  * 
  * @author Dennis Geesen Created at: 28.10.2011
  */
-@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "DATABASESOURCE", doc="This operator can read data from a relational database.",category={LogicalOperatorCategory.SOURCE, LogicalOperatorCategory.DATABASE})
+@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "DATABASESOURCE", doc = "This operator can read data from a relational database.", category = {
+		LogicalOperatorCategory.SOURCE, LogicalOperatorCategory.DATABASE })
 public class DatabaseSourceAO extends AbstractDatabaseOperator {
-	
+
 	private static final long serialVersionUID = -5800479007184861697L;
 	private String tablename;
 	private long waitMillis = 0;
 	private boolean fetchAttributes = true;
 	private boolean escapeNames = false;
-	private List<SDFAttribute> givenSchema;	
+	private List<SDFAttribute> givenSchema;
+	private boolean useDatatypeMappings = true;
 
 	public DatabaseSourceAO() {
 
 	}
 
 	public DatabaseSourceAO(DatabaseSourceAO ds) {
-		super(ds);		
+		super(ds);
 		this.tablename = ds.tablename;
 		this.waitMillis = ds.waitMillis;
 		this.escapeNames = ds.escapeNames;
+		this.useDatatypeMappings = ds.useDatatypeMappings;
 	}
 
 	@Parameter(type = StringParameter.class, name = "table")
@@ -76,40 +80,48 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 		this.tablename = tableName;
 	}
 
-	
-	@Parameter(type = LongParameter.class, name ="waiteach", optional = true)
-	public void setWaitInMillis(long waitMillis){
+	@Parameter(type = LongParameter.class, name = "waiteach", optional = true)
+	public void setWaitInMillis(long waitMillis) {
 		this.waitMillis = waitMillis;
-	}		
-	
+	}
+
 	@Parameter(type = CreateSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = true)
 	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
-		this.givenSchema  = outputSchema;
+		this.givenSchema = outputSchema;
 		this.fetchAttributes = false;
 		setOutputSchema(new SDFSchema("", Tuple.class, outputSchema));
 	}
-	
-	@Parameter(type = BooleanParameter.class, name="escape_names", optional = true)
-	public void setEscapeNames(boolean escapeNames){
+
+	@Parameter(type = BooleanParameter.class, name = "escape_names", optional = true)
+	public void setEscapeNames(boolean escapeNames) {
 		this.escapeNames = escapeNames;
 	}
-	
+
 	public boolean isEscapeNames() {
 		return escapeNames;
 	}
 	
+	@Parameter(type = BooleanParameter.class, name = "Use_Datatype_Mappings", optional = true)
+	public void setUseDatatypeMappings(boolean useDatatypeMappings) {
+		this.useDatatypeMappings = useDatatypeMappings;
+	}
+	
+	public boolean isUseDatatypeMappings() {
+		return useDatatypeMappings;
+	}
+
 	public List<SDFAttribute> getOutputSchemaWithList() {
 		return this.givenSchema;
 	}
-	
-	@Parameter(type = BooleanParameter.class, name="FETCH_ATTRIBUTES", optional = true)
-	public void setFetchAttributes(boolean fetch){
-		this.fetchAttributes  = fetch;
+
+	@Parameter(type = BooleanParameter.class, name = "FETCH_ATTRIBUTES", optional = true)
+	public void setFetchAttributes(boolean fetch) {
+		this.fetchAttributes = fetch;
 	}
 
 	public String getTableName() {
 		return tablename;
-	}	
+	}
 
 	public long getWaitMillis() {
 		return this.waitMillis;
@@ -119,24 +131,36 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 	public AbstractLogicalOperator clone() {
 		return new DatabaseSourceAO(this);
 	}
-	
+
 	@Override
-	public boolean isValid() {	
+	public boolean isValid() {
 		boolean valid = super.isValid();
-		if(this.givenSchema == null && this.fetchAttributes == false){
-			addError(new IllegalParameterException("You have to either use ATTRIBUTES to define a schema or to use FETCH_ATTRIBUTES to invoke fetching the schema from the database"));
+		if (this.givenSchema == null && this.fetchAttributes == false) {
+			addError(new IllegalParameterException(
+					"You have to either use ATTRIBUTES to define a schema or to use FETCH_ATTRIBUTES to invoke fetching the schema from the database"));
 			valid = false;
-		}		
+		}
 		return valid;
 	}
-	
+
 	@Override
-	public void initialize() {	
+	public void initialize() {
 		super.initialize();
-		if(this.fetchAttributes){
+		if (this.fetchAttributes) {
 			try {
-				SDFSchema schema = getConnection().getSchema(tablename);
-				this.setOutputSchema(schema);
+				IDatabaseConnection conn = getConnection();
+				if (conn != null) {
+					SDFSchema schema = getConnection().getSchema(tablename);
+					if (schema != null) {
+						this.setOutputSchema(schema);
+					} else {
+						throw new SQLException(
+								"Error reading schema. Does table " + tablename
+										+ " exist?");
+					}
+				}else{
+					throw new SQLException("No connection to "+getConnectionName()+"!");
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

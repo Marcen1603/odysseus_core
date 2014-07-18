@@ -37,12 +37,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
+import de.uniol.inf.is.odysseus.database.connection.DatatypeRegistry;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappingHandler;
 
 /**
  * 
@@ -50,38 +53,55 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
  */
 public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 
-	private IDatabaseConnection connection;
-	private String tablename;	
+	final private IDatabaseConnection connection;
+	final private String tablename;
 	private Connection jdbcConnection;
 	private PreparedStatement preparedStatement;
 	private TransferThread thread;
-	private long waitTimeMillis;
-	private boolean escapeNames;
+	final private long waitTimeMillis;
+	final private boolean escapeNames;
+	private IDataTypeMappingHandler<?>[] dtMappings;
+	final boolean useDtMapper;
 
-	public DatabaseSourcePO(String tableName, IDatabaseConnection connection, long waitTimeMillis) {
+	public DatabaseSourcePO(String tableName, IDatabaseConnection connection,
+			long waitTimeMillis, boolean escapeNames, boolean useDtMapper) {
 		super();
 		this.tablename = tableName;
-		this.connection = connection;		
-		this.waitTimeMillis  = waitTimeMillis;
+		this.connection = connection;
+		this.waitTimeMillis = waitTimeMillis;
+		this.useDtMapper = useDtMapper;
+		this.escapeNames = escapeNames;
 	}
 
 	public DatabaseSourcePO(DatabaseSourcePO databaseSourcePO) {
 		super(databaseSourcePO);
 		this.connection = databaseSourcePO.connection;
-		this.tablename = databaseSourcePO.tablename;		
+		this.tablename = databaseSourcePO.tablename;
 		this.waitTimeMillis = databaseSourcePO.waitTimeMillis;
+		this.escapeNames = databaseSourcePO.escapeNames;
+		this.useDtMapper = databaseSourcePO.useDtMapper;
 	}
-	
-	public void setEscapeNames(boolean escapeNames) {
-		this.escapeNames = escapeNames;
+
+	private void initDTMappings() {
+		if (useDtMapper) {
+			SDFSchema outputSchema = getOutputSchema();
+			dtMappings = new IDataTypeMappingHandler<?>[outputSchema.size()+1];
+			for (int i = 0; i < outputSchema.size(); i++) {
+				dtMappings[i+1] = DatatypeRegistry.getDataHandler(outputSchema
+						.get(i).getDatatype());
+			}
+		}
 	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
 		try {
-
+			if (useDtMapper && dtMappings == null) {
+				initDTMappings();
+			}
 			this.jdbcConnection = this.connection.getConnection();
-			this.preparedStatement = this.jdbcConnection.prepareStatement(createPreparedStatement());
+			this.preparedStatement = this.jdbcConnection
+					.prepareStatement(createPreparedStatement());
 			this.preparedStatement.setFetchSize(100);
 			this.jdbcConnection.setAutoCommit(false);
 			this.thread = new TransferThread();
@@ -96,14 +116,14 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 	private String createPreparedStatement() {
 		String s = "SELECT ";
 		String sep = "";
-		String escape = escapeNames?"\"":"";
+		String escape = escapeNames ? "\"" : "";
 		for (SDFAttribute a : this.getOutputSchema()) {
-			
-			String name = escape+a.getAttributeName()+escape;
+
+			String name = escape + a.getAttributeName() + escape;
 			s = s + sep + name;
 			sep = ", ";
 		}
-		s = s + " FROM "+escape + tablename + escape;
+		s = s + " FROM " + escape + tablename + escape;
 		return s;
 	}
 
@@ -122,22 +142,26 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 
 		@Override
 		public void run() {
-			super.run();					
-			if(waitTimeMillis==0){
-				waitTimeMillis = 10;
-			}
+			// TODO: why the min waiting time of 10 ms?
+			//long waitTime = waitTimeMillis == 0?10:waitTimeMillis;
+			long waitTime = waitTimeMillis;
 			try {
 				ResultSet rs = preparedStatement.executeQuery();
 				int count = rs.getMetaData().getColumnCount();
-				List<Object> attributes = new ArrayList<Object>();
+				
 				while (rs.next() && !interrupted()) {
+					List<Object> attributes = new ArrayList<Object>();
 					for (int i = 1; i <= count; i++) {
-						attributes.add(rs.getObject(i));
+						if (useDtMapper) {
+							attributes.add(dtMappings[i].getValue(rs, i));
+						} else {
+							attributes.add(rs.getObject(i));
+						}
 					}
-					Tuple<?> t = new Tuple<IMetaAttribute>(attributes.toArray(), false);
+					Tuple<?> t = new Tuple<IMetaAttribute>(
+							attributes.toArray(), false);
 					transfer(t);
-					attributes.clear();
-					sleep(waitTimeMillis);
+					sleep(waitTime);
 				}
 				propagateDone();
 			} catch (SQLException e) {
@@ -149,6 +173,5 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 			}
 		}
 	}
-
 
 }

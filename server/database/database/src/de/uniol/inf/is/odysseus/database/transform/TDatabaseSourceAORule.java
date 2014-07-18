@@ -30,7 +30,6 @@
 
 package de.uniol.inf.is.odysseus.database.transform;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSourceAO;
 import de.uniol.inf.is.odysseus.database.physicaloperator.DatabaseSourcePO;
@@ -42,6 +41,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 /**
  * 
  * @author Dennis Geesen Created at: 22.08.2011
+ * @author Marco Grawunder (new params)
  */
 public class TDatabaseSourceAORule extends AbstractTransformationRule<DatabaseSourceAO> {
 
@@ -52,8 +52,7 @@ public class TDatabaseSourceAORule extends AbstractTransformationRule<DatabaseSo
 
 	@Override
 	public void execute(DatabaseSourceAO accessAO, TransformationConfiguration config) throws RuleException {
-		DatabaseSourcePO accessPO = new DatabaseSourcePO(accessAO.getTableName(), accessAO.getConnection(), accessAO.getWaitMillis());
-		accessPO.setEscapeNames(accessAO.isEscapeNames());
+		DatabaseSourcePO accessPO = new DatabaseSourcePO(accessAO.getTableName(), accessAO.getConnection(), accessAO.getWaitMillis(), accessAO.isEscapeNames(), accessAO.isUseDatatypeMappings());
 		defaultExecute(accessAO, accessPO, config, true, true);		
 	}
 

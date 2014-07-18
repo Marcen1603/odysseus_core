@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.database.connection.DatatypeRegistry;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
@@ -54,15 +55,14 @@ import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappin
  */
 public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 
-	private static Logger logger = LoggerFactory.getLogger(DatabaseSinkPO.class);
-	
+	private static Logger logger = LoggerFactory
+			.getLogger(DatabaseSinkPO.class);
+
 	private Connection jdbcConnection;
 	private PreparedStatement preparedStatement;
-
-	
+	private IDataTypeMappingHandler<?>[] dtMappings;
 
 	private int counter = 1;
-//	private long summe = 0L;
 	final private IDatabaseConnection connection;
 	final private String tablename;
 	final private boolean truncate;
@@ -70,27 +70,38 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 	private volatile boolean opened = false;
 	final private long batchSize;
 
-	public DatabaseSinkPO(IDatabaseConnection connection ,String tablename, boolean drop, boolean truncate, long batchSize) {		
+	public DatabaseSinkPO(IDatabaseConnection connection, String tablename,
+			boolean drop, boolean truncate, long batchSize) {
 		this.connection = connection;
-		this.tablename = tablename;	
+		this.tablename = tablename;
 		this.truncate = truncate;
 		this.drop = drop;
 		this.batchSize = batchSize;
 	}
 
-	public DatabaseSinkPO(DatabaseSinkPO databaseSinkPO) {		
+	public DatabaseSinkPO(DatabaseSinkPO databaseSinkPO) {
 		this.connection = databaseSinkPO.connection;
-		this.tablename = databaseSinkPO.tablename;		
+		this.tablename = databaseSinkPO.tablename;
 		this.drop = databaseSinkPO.drop;
 		this.truncate = databaseSinkPO.truncate;
 		this.batchSize = databaseSinkPO.batchSize;
 	}
 
-	
+	private void initDTMappings() {
+		SDFSchema outputSchema = getOutputSchema();
+		dtMappings = new IDataTypeMappingHandler<?>[outputSchema.size() + 1];
+		for (int i = 0; i < outputSchema.size(); i++) {
+			dtMappings[i + 1] = DatatypeRegistry.getDataHandler(outputSchema
+					.get(i).getDatatype());
+		}
+
+	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		super.process_open();
+		if (dtMappings == null){
+			initDTMappings();
+		}
 		try {						
 			if (!this.connection.tableExists(tablename)) {
 				this.connection.createTable(tablename, getOutputSchema());
@@ -120,20 +131,20 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 	private void dropTable() {
 		try {
 			this.connection.dropTable(this.tablename);
-		} catch (SQLException e) {			
-			e.printStackTrace();
-		}
-	}
-	
-	private void truncateTable() {
-		try {
-			this.connection.truncateTable(this.tablename);
-		} catch (SQLException e) {		
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private String createPreparedStatement() { 
+	private void truncateTable() {
+		try {
+			this.connection.truncateTable(this.tablename);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private String createPreparedStatement() {
 		String s = "INSERT INTO " + this.tablename + " VALUES(";
 		int count = super.getOutputSchema().size();
 		String sep = "";
@@ -149,40 +160,44 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 	public void processPunctuation(IPunctuation punctuation, int port) {
 	}
 
-//	private void calcLatency(Tuple<ITimeInterval> tuple) {
-//		long start = tuple.getAttribute(0);
-//		long diff = System.currentTimeMillis() - start;
-//		summe = summe + diff;
-//		if ((counter % 1000) == 0) {
-//			System.out.println("Bei " + counter + " Elementen:");
-//			System.out.println(" - Total: " + summe);
-//			System.out.println(" - Avg: " + ((double) summe / (double) counter));
-//		}
-//
-//	}
+	// private void calcLatency(Tuple<ITimeInterval> tuple) {
+	// long start = tuple.getAttribute(0);
+	// long diff = System.currentTimeMillis() - start;
+	// summe = summe + diff;
+	// if ((counter % 1000) == 0) {
+	// System.out.println("Bei " + counter + " Elementen:");
+	// System.out.println(" - Total: " + summe);
+	// System.out.println(" - Avg: " + ((double) summe / (double) counter));
+	// }
+	//
+	// }
 
 	@Override
 	protected void process_next(Tuple<ITimeInterval> tuple, int port) {
-		if(!opened){
+		if (!opened) {
 			System.err.println("Error: not connected to database");
 			return;
 		}
 		try {
-			int i = 0;
 
-			for (SDFAttribute attribute : this.getOutputSchema()) {
-				SDFDatatype datatype = attribute.getDatatype();
+			for (int i=0;i<this.getOutputSchema().size();i++){
 				Object attributeValue = tuple.getAttribute(i);
-				IDataTypeMappingHandler<?> handler = DatatypeRegistry.getDataHandler(datatype);
-				handler.setValue(this.preparedStatement, i + 1, attributeValue);
-				i++;
+				dtMappings[i].setValue(this.preparedStatement, i + 1, attributeValue);
 			}
+//			for (SDFAttribute attribute : this.getOutputSchema()) {
+//				SDFDatatype datatype = attribute.getDatatype();
+//				Object attributeValue = tuple.getAttribute(i);
+//				IDataTypeMappingHandler<?> handler = DatatypeRegistry
+//						.getDataHandler(datatype);
+//				handler.setValue(this.preparedStatement, i + 1, attributeValue);
+//				i++;
+//			}
 			this.preparedStatement.addBatch();
 			counter++;
 			if ((counter % batchSize) == 0) {
 				writeToDB();
 			}
-			//calcLatency(tuple);
+			// calcLatency(tuple);
 			// logger.debug("Inserted "+count+" rows in database");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -195,7 +210,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 		this.jdbcConnection.commit();
 		logger.debug("Inserted " + count + " rows in database");
 	}
-	
+
 	@Override
 	protected void process_close() {
 		try {

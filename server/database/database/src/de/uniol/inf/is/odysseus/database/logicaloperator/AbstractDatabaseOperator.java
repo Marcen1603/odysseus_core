@@ -106,6 +106,10 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 	public void setConnectionName(String connection) {
 		this.connectionName = connection;
 	}
+	
+	protected String getConnectionName() {
+		return connectionName;
+	}
 
 	@Parameter(type = IntegerParameter.class, name = "port", optional = true)
 	public void setPort(int port) {
@@ -169,7 +173,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 				if (!this.host.isEmpty()) {
 					logger.warn("Host is ignored when existing connection is used!");
 				}
-				if (this.port == -1) {
+				if (this.port != -1) {
 					logger.warn("Port is ignored when existing connection is used!");
 				}
 				if (!this.type.isEmpty()) {

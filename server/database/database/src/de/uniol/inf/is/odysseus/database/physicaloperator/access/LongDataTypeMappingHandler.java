@@ -29,11 +29,12 @@ public class LongDataTypeMappingHandler extends AbstractDatatypeMappingHandler<L
 	public LongDataTypeMappingHandler(){
 		super(SDFDatatype.LONG, Types.BIGINT);
 		
-		addAdditionalSDFDatatype(SDFDatatype.TIMESTAMP);
-		addAdditionalSDFDatatype(SDFDatatype.POINT_IN_TIME);
-		addAdditionalSDFDatatype(SDFDatatype.START_TIMESTAMP);
-		addAdditionalSDFDatatype(SDFDatatype.END_TIMESTAMP);
-		addAdditionalSDFDatatype(SDFDatatype.DATE);
+		// Moved to Timestamp ...
+		//addAdditionalSDFDatatype(SDFDatatype.TIMESTAMP);
+		//addAdditionalSDFDatatype(SDFDatatype.POINT_IN_TIME);
+		//addAdditionalSDFDatatype(SDFDatatype.START_TIMESTAMP);
+		//addAdditionalSDFDatatype(SDFDatatype.END_TIMESTAMP);
+		//addAdditionalSDFDatatype(SDFDatatype.DATE);
 		
 			
 	}		 	
