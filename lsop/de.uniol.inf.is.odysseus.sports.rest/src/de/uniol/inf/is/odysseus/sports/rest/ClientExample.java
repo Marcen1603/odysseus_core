@@ -10,13 +10,24 @@ import org.restlet.resource.ResourceException;
 public class ClientExample {
 
 	public static void main(String[] args) throws ResourceException, IOException {
+		// Mileage for player
 		String query = "{\"parameters\" : {"
 				+ "\"start\" : 0 , \"end\" : 999999999999999,"
 				+ "\"startx\" : 10753295594424116, \"starty\" : -33960, \"endx\" : 52489, \"endy\" : 33965},"
 				+ "\"statisticType\": \" player \", "
 				+ "\"entityId\": 16, "
 				+ "\"gameType\": \" soccer \", "
-				+ "\"name\": \"pathwithball\"}";
+				+ "\"name\": \"mileageplayer\"}";
+		
+//		String query = "{\"parameters\" : {"
+//				+ "\"start\" : 0 , \"end\" : 999999999999999,"
+//				+ "\"startx\" : 10753295594424116, \"starty\" : -33960, \"endx\" : 52489, \"endy\" : 33965},"
+//				+ "\"statisticType\": \" player \", "
+//				+ "\"entityId\": 16, "
+//				+ "\"gameType\": \" soccer \", "
+//				+ "\"name\": \"pathwithball\"}";
+		
+		
 		/*
 		query = "{"
 		 +"\"statisticType\": \"player\","

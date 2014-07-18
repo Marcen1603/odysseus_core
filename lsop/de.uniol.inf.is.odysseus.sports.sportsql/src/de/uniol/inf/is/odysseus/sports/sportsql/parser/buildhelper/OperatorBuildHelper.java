@@ -412,6 +412,7 @@ public class OperatorBuildHelper {
 			ILogicalOperator source) {
 		AggregateAO aggregateAO = new AggregateAO();
 
+		// Fill parameter
 		AggregateItemParameter param = new AggregateItemParameter();
 		List<String> aggregateOptions = new ArrayList<String>();
 		aggregateOptions.add(aggregationFunction);
@@ -420,6 +421,14 @@ public class OperatorBuildHelper {
 		if (outputType != null)
 			aggregateOptions.add(outputType);
 		param.setInputValue(aggregateOptions);
+		
+		// Attribute resolver and datadictionary for parameter
+		IAttributeResolver resolver = OperatorBuildHelper.createAttributeResolver(source);
+		param.setAttributeResolver(resolver);
+		IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
+		param.setDataDictionary(dataDict);		
+		
+		// Use parameter to get information for AO
 		List<AggregateItem> aggregateItems = new ArrayList<AggregateItem>();
 		aggregateItems.add(param.getValue());
 		aggregateAO.setAggregationItems(aggregateItems);

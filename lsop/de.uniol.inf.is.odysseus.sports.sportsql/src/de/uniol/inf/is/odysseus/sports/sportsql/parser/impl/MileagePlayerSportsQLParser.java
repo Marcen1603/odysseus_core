@@ -42,7 +42,8 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
 		// 1. MAP
 		MapAO firstMap = OperatorBuildHelper.createMapAO(
-				getExpressionsForFirstMap(soccerGameAccessAO), soccerGameAccessAO, 0, 0);
+				getExpressionsForFirstMap(soccerGameAccessAO),
+				soccerGameAccessAO, 0, 0);
 		allOperators.add(firstMap);
 
 		// 2. Correct selection for the time
@@ -52,7 +53,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		// TODO SelectAO does not have an output schema - why?
 		SelectAO timeSelect = OperatorBuildHelper.createTimeSelect(timeParam,
 				firstMap);
-		//timeSelect.updateSchemaInfos();
+		// timeSelect.updateSchemaInfos();
 		allOperators.add(timeSelect);
 
 		// -------------------------------------------------------
@@ -83,7 +84,10 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 				.createExpressionParameter(
 						"(sqrt(((x-__last_1.x)^2 + (y-__last_1.y)^2))/1000)",
 						"mileage", enrichAO);
+		SDFExpressionParameter param2 = OperatorBuildHelper
+				.createExpressionParameter("sensorid", enrichAO);
 		expressions.add(param);
+		expressions.add(param2);
 		StateMapAO statemapAO = OperatorBuildHelper.createStateMapAO(
 				expressions, "sensorid", enrichAO);
 		allOperators.add(statemapAO);
@@ -112,7 +116,8 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		return query;
 	}
 
-	private List<SDFExpressionParameter> getExpressionsForFirstMap(ILogicalOperator source) {
+	private List<SDFExpressionParameter> getExpressionsForFirstMap(
+			ILogicalOperator source) {
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 
 		SDFExpressionParameter ex1 = OperatorBuildHelper
@@ -123,12 +128,14 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 				.createExpressionParameter("minutes(toDate("
 						+ OperatorBuildHelper.TS_GAME_START + "/"
 						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "), toDate(ts/"
-						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "))", "minute", source);
+						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "))", "minute",
+						source);
 		SDFExpressionParameter ex3 = OperatorBuildHelper
 				.createExpressionParameter("seconds(toDate("
 						+ OperatorBuildHelper.TS_GAME_START + "/"
 						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "), toDate(ts/"
-						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "))", "second", source);
+						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "))", "second",
+						source);
 
 		SDFExpressionParameter ex4 = OperatorBuildHelper
 				.createExpressionParameter("x", source);
