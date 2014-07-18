@@ -796,7 +796,7 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Creates a session if no exists, uses session if there is already one.
+	 * You maybe need the current session
 	 * 
 	 * @return The current session
 	 */

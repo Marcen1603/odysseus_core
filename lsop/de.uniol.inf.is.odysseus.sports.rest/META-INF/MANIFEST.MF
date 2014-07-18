@@ -6,9 +6,12 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.sports.rest.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Import-Package: org.osgi.framework;version="1.6.0"
+Import-Package: de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor,
+ de.uniol.inf.is.odysseus.rcp,
+ org.osgi.framework;version="1.6.0"
 Require-Bundle: restlet-osgi-2.2.1;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.rest;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.sports.sportsql;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Service-Component: OSGI-INF/SportsRestProvider.xml
