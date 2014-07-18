@@ -41,8 +41,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.database.connection.DatatypeRegistry;
@@ -52,6 +50,7 @@ import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappin
 /**
  * 
  * @author Dennis Geesen Created at: 22.08.2011
+ * @author Marco Grawunder
  */
 public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 
