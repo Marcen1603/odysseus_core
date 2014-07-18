@@ -182,7 +182,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 
 			for (int i=0;i<this.getOutputSchema().size();i++){
 				Object attributeValue = tuple.getAttribute(i);
-				dtMappings[i].setValue(this.preparedStatement, i + 1, attributeValue);
+				dtMappings[i+1].setValue(this.preparedStatement, i + 1, attributeValue);
 			}
 //			for (SDFAttribute attribute : this.getOutputSchema()) {
 //				SDFDatatype datatype = attribute.getDatatype();

@@ -24,7 +24,7 @@ public class TimestampDataTypeMappingHandler extends
 	@Override
 	public void setValue(PreparedStatement preparedStatement, int position,
 			Object value) throws SQLException {
-		preparedStatement.setTimestamp(position, (Timestamp) new Date((long) value));		
+		preparedStatement.setTimestamp(position,  new Timestamp(new Date((long) value).getTime()));		
 	}
 
 	@Override
