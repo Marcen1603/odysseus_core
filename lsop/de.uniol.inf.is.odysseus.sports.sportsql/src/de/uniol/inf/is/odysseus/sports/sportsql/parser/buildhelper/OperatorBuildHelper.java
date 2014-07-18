@@ -457,10 +457,12 @@ public class OperatorBuildHelper {
 
 		// Add predicates to the routeAO operator
 		for (String predicate : listOfPredicates) {
-			PredicateParameter param = new PredicateParameter();
-			param.setInputValue(predicate);
+			SDFExpression predicateExpression = new SDFExpression(predicate,
+					MEP.getInstance());
+			RelationalPredicate p = new RelationalPredicate(
+					predicateExpression);
 
-			rAO.addPredicate(param.getValue());
+			rAO.addPredicate(p);
 		}
 		// TODO different ports for different results?
 		rAO.subscribeTo(source, source.getOutputSchema());
@@ -552,10 +554,12 @@ public class OperatorBuildHelper {
 	public static SelectAO createSelectAO(ArrayList<String> listOfPredicates,
 			ILogicalOperator source) {
 		SelectAO sAO = new SelectAO();
-		for (String predicate : listOfPredicates) {
-			PredicateParameter param = new PredicateParameter();
-			param.setInputValue(predicate);
-			sAO.addPredicate(param.getValue());
+		for (String predicateString : listOfPredicates) {
+			SDFExpression predicateExpression = new SDFExpression(predicateString,
+					MEP.getInstance());
+			RelationalPredicate predicate = new RelationalPredicate(
+					predicateExpression);
+			sAO.addPredicate(predicate);
 		}
 		sAO.subscribeTo(source, source.getOutputSchema());
 		return sAO;

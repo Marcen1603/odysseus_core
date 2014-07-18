@@ -14,20 +14,10 @@ public class ClientExample {
 		String query = "{\"parameters\" : {"
 				+ "\"start\" : 0 , \"end\" : 999999999999999,"
 				+ "\"startx\" : 10753295594424116, \"starty\" : -33960, \"endx\" : 52489, \"endy\" : 33965},"
-				+ "\"statisticType\": \" player \", "
+				+ "\"statisticType\": \" global \", "
 				+ "\"entityId\": 16, "
 				+ "\"gameType\": \" soccer \", "
-				+ "\"name\": \"mileageplayer\"}";
-		
-//		String query = "{\"parameters\" : {"
-//				+ "\"start\" : 0 , \"end\" : 999999999999999,"
-//				+ "\"startx\" : 10753295594424116, \"starty\" : -33960, \"endx\" : 52489, \"endy\" : 33965},"
-//				+ "\"statisticType\": \" player \", "
-//				+ "\"entityId\": 16, "
-//				+ "\"gameType\": \" soccer \", "
-//				+ "\"name\": \"pathwithball\"}";
-		
-		
+				+ "\"name\": \"ball_contact\"}";
 		/*
 		query = "{"
 		 +"\"statisticType\": \"player\","

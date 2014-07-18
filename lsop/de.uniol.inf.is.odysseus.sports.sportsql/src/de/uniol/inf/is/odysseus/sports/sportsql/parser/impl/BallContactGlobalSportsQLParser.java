@@ -21,6 +21,9 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLSpaceParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLTimeParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 
@@ -29,7 +32,6 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 
 	private final double velocityChange = 0.15;
 	private final boolean relativeTolerance = true;
-	private final String game_start = "10753295594424116";
 	private final String radius = "400";
 	private final String minX = "-50";
 	private final String minY = "-33960";
@@ -44,20 +46,30 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		ArrayList<String> predicates = new ArrayList<String>();
 		ArrayList<String> attributes = new ArrayList<String>();
 		
+		SportsQLTimeParameter timeParameter = SportsQLParameterHelper
+				.getTimeParameter(sportsQL);
+		SportsQLSpaceParameter spaceParameter = SportsQLParameterHelper
+				.getSpaceParameter(sportsQL);
+
+		
 		String soccerGameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
+		String metadataSourceName = OperatorBuildHelper.METADATA_STREAM_NAME;
+		
 		AccessAO soccerGameAccessAO = OperatorBuildHelper
 				.createAccessAO(soccerGameSourceName);
 		
+		AccessAO metadataAccessAO = OperatorBuildHelper.createAccessAO(metadataSourceName);
+		
 		
 		//count ball contacts with the beginning of the game
-		predicates.add("ts>="+ game_start);
-		SelectAO game_after_start = OperatorBuildHelper.createSelectAO(predicates, soccerGameAccessAO);
+		SelectAO game_after_start = OperatorBuildHelper.createTimeSelect(timeParameter, soccerGameAccessAO);
 		allOperators.add(game_after_start);
-		predicates.clear();
 		
+		SelectAO game_space = OperatorBuildHelper.createSpaceSelect(spaceParameter, game_after_start);
+		allOperators.add(game_space);
 
-		predicates.add("sid=12 OR sid=8 OR sid=10 OR sid=4");
-		RouteAO split_balls = OperatorBuildHelper.createRouteAO(predicates, game_after_start);
+		predicates.add("sid=4 OR sid=8 OR sid=10 OR sid=12");
+		RouteAO split_balls = OperatorBuildHelper.createRouteAO(predicates, game_space);
 		allOperators.add(split_balls);
 		predicates.clear();
 		
@@ -110,7 +122,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		attributes.clear();
 		
 		//enrich data
-		EnrichAO enriched_proximity = OperatorBuildHelper.createEnrichAO("sid=sensorid", delete_duplicates, null);
+		EnrichAO enriched_proximity = OperatorBuildHelper.createEnrichAO("sid=sensorid", delete_duplicates, metadataAccessAO);
 		allOperators.add(enriched_proximity);
 		
 		//Detect changes in entity_id if another player hits the ball
