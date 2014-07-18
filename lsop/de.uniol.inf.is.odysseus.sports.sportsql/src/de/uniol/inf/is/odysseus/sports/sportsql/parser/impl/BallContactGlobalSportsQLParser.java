@@ -130,14 +130,8 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		ChangeDetectAO output = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(attributes,enriched_proximity), 0.0, enriched_proximity);
 		allOperators.add(output);
 		attributes.clear();
-		
-		OperatorBuildHelper.initializeOperators(allOperators);
 
-		// Create plan
-		ILogicalQuery query = new LogicalQuery();
-		query.setLogicalPlan(output, true);
-
-		return query;
+		return OperatorBuildHelper.finishQuery(output, allOperators, sportsQL.getName());
 	}
 	
 	private List<SDFExpressionParameter> getMapExpressionForBallPosition(ILogicalOperator source) {
