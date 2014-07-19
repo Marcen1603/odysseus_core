@@ -14,4 +14,5 @@ Require-Bundle: restlet-osgi-2.2.1;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.sports.sportsql;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
-Service-Component: OSGI-INF/SportsRestProvider.xml
+Service-Component: OSGI-INF/SportsRestProvider.xml,
+ OSGI-INF/ExecutorServiceBinding.xml
