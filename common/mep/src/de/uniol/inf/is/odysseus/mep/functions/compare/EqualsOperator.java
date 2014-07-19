@@ -60,7 +60,7 @@ public class EqualsOperator extends AbstractBinaryOperator<Boolean> {
 
 	@Override
 	public Boolean getValue() {
-		return isNumeric ? getNumericalInputValue(0).equals(getNumericalInputValue(1)) : getInputValue(0).equals(getInputValue(1));
+		return isNumeric ? getNumericalInputValue(0).equals(getNumericalInputValue(1)) : getInputValue(0) != null && getInputValue(0).equals(getInputValue(1));
 	}
 
 

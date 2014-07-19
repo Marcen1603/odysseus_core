@@ -43,7 +43,7 @@ public class NotEqualsStringOperator extends AbstractBinaryOperator<Boolean> {
 
 	@Override
 	public Boolean getValue() {
-		return !getInputValue(0).equals(getInputValue(1));
+		return getInputValue(0) != null && !getInputValue(0).equals(getInputValue(1));
 	}
 
 
