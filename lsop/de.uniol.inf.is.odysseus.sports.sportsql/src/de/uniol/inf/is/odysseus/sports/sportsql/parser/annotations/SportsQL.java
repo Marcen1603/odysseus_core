@@ -8,6 +8,13 @@ import java.lang.annotation.Target;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 
+/**
+ * 
+ * Annotation has to be set in an implementation of @link ISportsQLParser
+ * @author Thore Stratmann
+ *
+ */
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface SportsQL {

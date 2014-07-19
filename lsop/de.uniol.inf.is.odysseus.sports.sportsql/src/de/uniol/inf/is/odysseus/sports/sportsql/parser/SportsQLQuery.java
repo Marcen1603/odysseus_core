@@ -3,6 +3,15 @@ package de.uniol.inf.is.odysseus.sports.sportsql.parser;
 import java.io.Serializable;
 import java.util.Map;
 
+
+/**
+ * This Class represents a simple SportsQL query.
+ * 
+ * Attributes {@link SportsQLQuery#entityId} and {@link SportsQLQuery#parameters} are optional. 
+ * 
+ * @author Thore Stratmann
+ *
+ */
 public class SportsQLQuery implements Serializable {
 
 	private static final long serialVersionUID = 3381915483410973297L;

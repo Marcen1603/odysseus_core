@@ -11,6 +11,12 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 
+/**
+ * This class represents a registry for @link ISportsQLParser. SportsQL parsers are registered and unregistered by OSGI service binding mechanism.
+ * 
+ * @author Thore Stratmann
+ *
+ */
 public class SportsQLParserRegistry {
 
 	private static Map<StatisticType, Map<GameType, Map<String, ISportsQLParser>>> sportsQLParserMap = Maps.newHashMap();

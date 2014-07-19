@@ -8,6 +8,16 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rest.provider.IRestProvider;
 
+
+/**
+ * 
+ * Service binding for @link IRestProvider.  
+ * 
+ * For this service binding, each implementation of @link IRestProvider must extend from @link org.restlet.Restlet.
+ * 
+ * @author Thore Stratmann
+ *
+ */
 public class RestProviderServiceBinding {
 	
 	public static Component component = new Component();
