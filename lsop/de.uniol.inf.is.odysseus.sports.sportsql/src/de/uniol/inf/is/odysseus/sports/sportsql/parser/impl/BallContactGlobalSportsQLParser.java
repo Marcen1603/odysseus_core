@@ -26,27 +26,68 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLTimeP
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 
+/**
+ * Query plan for ball contacts of every player. <br>
+ *  
+ * @author Thomas
+ *
+ */
 @SportsQL(gameTypes = GameType.SOCCER, statisticTypes = { StatisticType.GLOBAL }, name = "ball_contact")
 public class BallContactGlobalSportsQLParser implements ISportsQLParser {
-
+	
+	/**
+	 * Percentage change of velocity
+	 */
 	private final double velocityChange = 0.15;
+	
+	/**
+	 * Boolean which describes the relative tolerance
+	 */
 	private final boolean relativeTolerance = true;
+	
+	/**
+	 * Radius constant to describe the maximal distance between a player and the ball
+	 */
 	private final String radius = "400";
+	
+	/**
+	 * Min x of the game field
+	 */
 	private final String minX = "-50";
+	
+	/**
+	 * Min y of the game field
+	 */
 	private final String minY = "-33960";
+	
+	/**
+	 * Max x of the game field
+	 */
 	private final String maxX = "52489";
+
+	/**
+	 * Max y of the game field
+	 */
 	private final String maxY = "33965";
 	
 
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL) {
 		
+		// List for all operators, which will be used in this query plan
 		ArrayList<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
+
+		//List of predicates to use in single operators
 		ArrayList<String> predicates = new ArrayList<String>();
+		
+		//List of attributes to use in single operators
 		ArrayList<String> attributes = new ArrayList<String>();
 		
+		//get the time parameter 
 		SportsQLTimeParameter timeParameter = SportsQLParameterHelper
 				.getTimeParameter(sportsQL);
+		
+		//get the space parameter
 		SportsQLSpaceParameter spaceParameter = SportsQLParameterHelper
 				.getSpaceParameter(sportsQL);
 
@@ -54,9 +95,11 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		String soccerGameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
 		String metadataSourceName = OperatorBuildHelper.METADATA_STREAM_NAME;
 		
+		//game source
 		AccessAO soccerGameAccessAO = OperatorBuildHelper
 				.createAccessAO(soccerGameSourceName);
 		
+		// metadata source
 		AccessAO metadataAccessAO = OperatorBuildHelper.createAccessAO(metadataSourceName);
 		
 		
@@ -133,6 +176,11 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		return OperatorBuildHelper.finishQuery(output, allOperators, sportsQL.getName());
 	}
 	
+	/**
+	 * Return list of expressions for the ball
+	 * @param source
+	 * @return
+	 */
 	private List<SDFExpressionParameter> getMapExpressionForBallPosition(ILogicalOperator source) {
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter ex = OperatorBuildHelper.createExpressionParameter("ToPoint(x,y,z)", "ball_pos", source);	
@@ -141,6 +189,11 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		return expressions;
 	}
 	
+	/**
+	 * Return list of expressions for the position of the players
+	 * @param source
+	 * @return
+	 */
 	private List<SDFExpressionParameter> getMapExpressionForPlayerPosition(ILogicalOperator source) {
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter ex1 = OperatorBuildHelper.createExpressionParameter("ToPoint(x,y,z)", "player_pos", source);
