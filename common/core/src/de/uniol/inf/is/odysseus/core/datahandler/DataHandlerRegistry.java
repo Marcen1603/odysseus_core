@@ -131,6 +131,7 @@ public class DataHandlerRegistry {
 	public static void initDefaultHandler(){
 		registerDataHandler(new BooleanHandler());
 		registerDataHandler(new ByteDataHandler());
+		registerDataHandler(new CharDataHandler());
 		registerDataHandler(new ShortDataHandler());
 		registerDataHandler(new DateHandler());
 		registerDataHandler(new FloatDataHandler());

@@ -59,6 +59,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype LONG = new SDFDatatype("Long");
 	public static final SDFDatatype INTEGER = new SDFDatatype("Integer");
 	public static final SDFDatatype BYTE = new SDFDatatype("Byte");
+	public static final SDFDatatype CHAR = new SDFDatatype("Char");
 	public static final SDFDatatype FLOAT = new SDFDatatype("Float");
 	public static final SDFDatatype DOUBLE = new SDFDatatype("Double");
 	public static final SDFDatatype DATE = new SDFDatatype("Date");
@@ -233,6 +234,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		types.add(SDFDatatype.START_TIMESTAMP);
 		types.add(SDFDatatype.START_TIMESTAMP_STRING);
 		types.add(SDFDatatype.SHORT);
+		types.add(SDFDatatype.CHAR);
 		types.add(SDFDatatype.BYTE);
 		
 		types.add(SDFDatatype.LIST);
