@@ -131,6 +131,7 @@ AbstractPipe<Tuple<M>, Tuple<M>> {
 
 						final long afterLearn = System.nanoTime();
 
+						@SuppressWarnings("unchecked")
 						final M metadata = (M) object.getMetadata().clone();
 						final Tuple<M> newTuple = new Tuple<M>(1, false);
 						newTuple.setAttribute(0, recommender);

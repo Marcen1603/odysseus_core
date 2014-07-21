@@ -151,7 +151,7 @@ public class ObjectIdToLongId {
 	 * <p>
 	 * TODO: move to a test class
 	 */
-	@SuppressWarnings("unused")
+	// @SuppressWarnings("unused")
 	private void testObjectIDAsLong() {
 		if (objectIdMap != null || lastNumericObjectId != null) {
 			throw new IllegalStateException();
