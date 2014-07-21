@@ -403,10 +403,16 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 
                     // gleiches Attribut auf der linken Seite, Konstante auf der
                     // rechten
-                    if (firstArgument1.isVariable() && secondArgument1.isConstant() && firstArgument2.isVariable() && secondArgument2.isConstant()
+                	if (firstArgument1.isVariable() && secondArgument1.isConstant() && firstArgument2.isVariable() && secondArgument2.isConstant()
                             && firstArgument1.toVariable().equals(firstArgument2.toVariable())) {
-                        Double c1 = Double.parseDouble(secondArgument1.toString());
-                        Double c2 = Double.parseDouble(secondArgument2.toString());
+                        Double c1;
+                        Double c2;
+						try {
+							c1 = Double.parseDouble(secondArgument1.toString());
+							c2 = Double.parseDouble(secondArgument2.toString());
+						} catch (Exception e) {
+							return false;
+						}
 
                         // Funktion kleiner-als
                         if (symbol1.equals("<") && (symbol2.equals("<") || symbol2.equals("<=")) && c1 <= c2) {
@@ -434,8 +440,14 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
                     else if (secondArgument1.isVariable() && firstArgument1.isConstant() && secondArgument2.isVariable() && firstArgument2.isConstant()
                             && secondArgument1.toVariable().equals(secondArgument2.toVariable())) {
 
-                        Double c1 = Double.parseDouble(firstArgument1.toString());
-                        Double c2 = Double.parseDouble(firstArgument2.toString());
+                        Double c1;
+                        Double c2;
+						try {
+							c1 = Double.parseDouble(firstArgument1.toString());
+							c2 = Double.parseDouble(firstArgument2.toString());
+						} catch (Exception e) {
+							return false;
+						}
 
                         // Funktion kleiner-als
                         if (symbol1.equals("<") && (symbol2.equals("<") || symbol2.equals("<=")) && c1 >= c2) {
@@ -461,8 +473,14 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
                     }
                     else if (firstArgument1.isVariable() && secondArgument1.isConstant() && secondArgument2.isVariable() && firstArgument2.isConstant()
                             && firstArgument1.toVariable().equals(secondArgument2.toVariable())) {
-                        Double c1 = Double.parseDouble(secondArgument1.toString());
-                        Double c2 = Double.parseDouble(firstArgument2.toString());
+                        Double c1;
+                        Double c2;
+						try {
+							c1 = Double.parseDouble(secondArgument1.toString());
+							c2 = Double.parseDouble(firstArgument2.toString());
+						} catch (Exception e) {
+							return false;
+						}
 
                         // F1 kleiner-als, F2 gr������er-als oder
                         // gr������er-gleich-als
@@ -494,8 +512,14 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
                     else if (secondArgument1.isVariable() && firstArgument1.isConstant() && firstArgument2.isVariable() && secondArgument2.isConstant()
                             && secondArgument1.toVariable().equals(firstArgument2.toVariable())) {
 
-                        Double c1 = Double.parseDouble(firstArgument1.toString());
-                        Double c2 = Double.parseDouble(secondArgument2.toString());
+                        Double c1;
+                        Double c2;
+						try {
+							c1 = Double.parseDouble(firstArgument1.toString());
+							c2 = Double.parseDouble(secondArgument2.toString());
+						} catch (Exception e) {
+							return false;
+						}
 
                         // F1 kleiner-als, F2 gr������er-als oder
                         // gr������er-gleich-als
@@ -555,7 +579,7 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 
         }
         catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Query Sharing Error: "+e.getMessage());
         }
         return false;
     }
