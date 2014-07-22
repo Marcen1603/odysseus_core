@@ -50,7 +50,7 @@ public class TupleToKeyValuePO<M extends IMetaAttribute> extends AbstractPipe<Tu
 		KeyValueObject<M> output = new KeyValueObject<M>();
 		int pos = 0;
 		for (SDFAttribute attr : getOutputSchema()) {
-			output.setAttribute(attr.getURI(), input.getAttribute(pos++));
+			output.setAttribute(attr.getQualName(), input.getAttribute(pos++));
 		}
         output.setMetadata((M) input.getMetadata().clone());
 		transfer(output);
