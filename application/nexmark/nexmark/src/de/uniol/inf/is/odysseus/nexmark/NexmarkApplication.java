@@ -46,7 +46,7 @@ public class NexmarkApplication implements IApplication {
 		logger.debug("NexMark started ");
 
 		// Right now, just a simple set of parameters
-		if (args != null) {
+		if (args == null || args.length == 0 ) {
 
 			String elementLimit = System.getenv("el");
 			args = new String[elementLimit == null ? 5 : 7];
