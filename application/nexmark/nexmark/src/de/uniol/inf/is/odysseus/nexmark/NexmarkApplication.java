@@ -30,7 +30,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.nexmark.simulation.NexmarkServer;
 
 public class NexmarkApplication implements IApplication {
-	private static final Logger logger = LoggerFactory.getLogger(BundleActivator.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(BundleActivator.class);
 
 	static private String categories;
 	private static final String categoriesFile = "/config/categories.txt";
@@ -38,41 +39,49 @@ public class NexmarkApplication implements IApplication {
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		context.applicationRunning();
+
+		String[] args = (String[]) context.getArguments().get(
+				"application.args");
+
 		logger.debug("NexMark started ");
+
 		// Right now, just a simple set of parameters
+		if (args != null) {
 
-		String elementLimit = System.getenv("el");
-		String[] args = new String[elementLimit == null ? 5 : 7];
-		args[0] = "-pr";
-		args[1] = System.getenv("pr");
-		if (args[1] == null)
-			args[1] = "65440";
-		args[2] = "-useNIO";
-		String uN = System.getenv("useNIO");
-		if (uN != null) {
-			boolean useNIO = Boolean.parseBoolean(uN);
-			if (!useNIO)
-				args[2] = "";
-		} else {
-			uN = "true";
+			String elementLimit = System.getenv("el");
+			args = new String[elementLimit == null ? 5 : 7];
+			args[0] = "-pr";
+			args[1] = System.getenv("pr");
+			if (args[1] == null)
+				args[1] = "65440";
+			args[2] = "-useNIO";
+			String uN = System.getenv("useNIO");
+			if (uN != null) {
+				boolean useNIO = Boolean.parseBoolean(uN);
+				if (!useNIO)
+					args[2] = "";
+			} else {
+				uN = "true";
+			}
+			// Read from GeneratorConfigfile?
+			args[3] = "-gcf";
+			args[4] = System.getenv("gcf");
+			if (args[4] == null) {
+				args[4] = "/config/NEXMarkGeneratorConfiguration.properties";
+			}
+			if (args[4] == null || args[4] == "") {
+				args[3] = "";
+			}
+			if (elementLimit != null) {
+				args[5] = "-el";
+				args[6] = elementLimit;
+			}
 		}
-		// Read from GeneratorConfigfile?
-		args[3] = "-gcf";
-		args[4] = System.getenv("gcf");
-		if (args[4] == null) {
-			args[4] = "/config/NEXMarkGeneratorConfiguration_SLOW.properties";
-		}
-		if (args[4] == null || args[4] == "") {
-			args[3] = "";
-		}
-		if (elementLimit != null) {
-			args[5] = "-el";
-			args[6] = elementLimit;
-		}
-
 		URL catURL = context.getBrandingBundle().getEntry(categoriesFile);
-		logger.debug("NexMark started " + args[0] + " " + args[1] + " " + args[2] + " " + args[3] + " " + args[4]);
-		logger.debug("Read Categories from " + categoriesFile + " --> " + catURL);
+		logger.debug("NexMark started " + args[0] + " " + args[1] + " "
+				+ args[2] + " " + args[3] + " " + args[4]);
+		logger.debug("Read Categories from " + categoriesFile + " --> "
+				+ catURL);
 		categories = readCategoryFile(catURL);
 		logger.debug("done ");
 		if (args[1] != null) {
@@ -86,11 +95,11 @@ public class NexmarkApplication implements IApplication {
 		// TODO Auto-generated method stub
 
 	}
-	
-	static public String getCategoryFile(){
+
+	static public String getCategoryFile() {
 		return categories;
 	}
-	
+
 	static private String readCategoryFile(URL input) {
 		BufferedReader br = null;
 		String text = "";
