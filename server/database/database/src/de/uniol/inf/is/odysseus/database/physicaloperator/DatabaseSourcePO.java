@@ -37,6 +37,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -52,6 +55,8 @@ import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappin
  * @author Dennis Geesen Created at: 02.11.2011
  */
 public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
+	
+	Logger LOG = LoggerFactory.getLogger(DatabaseSourcePO.class);
 
 	final private IDatabaseConnection connection;
 	final private String tablename;
@@ -85,10 +90,10 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 	private void initDTMappings() {
 		if (useDtMapper) {
 			SDFSchema outputSchema = getOutputSchema();
-			dtMappings = new IDataTypeMappingHandler<?>[outputSchema.size()+1];
+			dtMappings = new IDataTypeMappingHandler<?>[outputSchema.size() + 1];
 			for (int i = 0; i < outputSchema.size(); i++) {
-				dtMappings[i+1] = DatatypeRegistry.getDataHandler(outputSchema
-						.get(i).getDatatype());
+				dtMappings[i + 1] = DatatypeRegistry
+						.getDataHandler(outputSchema.get(i).getDatatype());
 			}
 		}
 	}
@@ -143,17 +148,22 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 		@Override
 		public void run() {
 			// TODO: why the min waiting time of 10 ms?
-			//long waitTime = waitTimeMillis == 0?10:waitTimeMillis;
+			// long waitTime = waitTimeMillis == 0?10:waitTimeMillis;
 			long waitTime = waitTimeMillis;
 			try {
 				ResultSet rs = preparedStatement.executeQuery();
 				int count = rs.getMetaData().getColumnCount();
-				
+
 				while (rs.next() && !interrupted()) {
 					List<Object> attributes = new ArrayList<Object>();
 					for (int i = 1; i <= count; i++) {
 						if (useDtMapper) {
-							attributes.add(dtMappings[i].getValue(rs, i));
+							try {
+								attributes.add(dtMappings[i].getValue(rs, i));
+							} catch (Exception e) {
+								LOG.error("Error translating element"+e.getMessage());
+								attributes.add(null);
+							}
 						} else {
 							attributes.add(rs.getObject(i));
 						}
