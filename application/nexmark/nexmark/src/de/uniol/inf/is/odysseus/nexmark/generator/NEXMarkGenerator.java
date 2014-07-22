@@ -31,13 +31,10 @@
 package de.uniol.inf.is.odysseus.nexmark.generator;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.nexmark.simulation.ITupleContainerListener;
 
 /**
  * The NEXMarkGenerator creates a simulation of the streams person, auction
@@ -54,9 +51,6 @@ public class NEXMarkGenerator extends Thread {
 
 	private SimpleCalendar calender;
 
-	private ObjectInputStream inputStream;
-	private ObjectOutputStream outputStream;
-
 	private Tuple<ITimeInterval> personTuple;
 	private Tuple<ITimeInterval> auctionTuple;
 	private Tuple<ITimeInterval> bidTuple;
@@ -65,6 +59,8 @@ public class NEXMarkGenerator extends Thread {
 	private boolean burst = false;
 
 	private NEXMarkBurstGenerator burstGenerator;
+
+	private ITupleContainerListener listener;
 
 	/**
 	 * Creates a {@link NEXMarkGenerator}. 
@@ -78,18 +74,13 @@ public class NEXMarkGenerator extends Thread {
 	 *             
 	 */
 	public NEXMarkGenerator(NEXMarkGeneratorConfiguration configuration,
-			boolean deterministic) throws IOException {
+			boolean deterministic, ITupleContainerListener listener) throws IOException {
 		this.configuration = configuration;
 		calender = new SimpleCalendar();
 		generator = new TupleStreamGenerator(configuration, calender,
 				deterministic);
 
-		PipedInputStream pIn = new PipedInputStream();
-		PipedOutputStream pOut = new PipedOutputStream();
-		pIn.connect(pOut);
-
-		outputStream = new ObjectOutputStream(pOut);
-		inputStream = new ObjectInputStream(pIn);
+		this.listener = listener;
 
 		burstGenerator = new NEXMarkBurstGenerator(configuration.burstConfig,
 				this, deterministic);
@@ -263,8 +254,7 @@ public class NEXMarkGenerator extends Thread {
 					}
 
 					// send tuple
-					outputStream.writeObject(container);
-					outputStream.flush();
+					listener.newObject(container);
 
 					// determine next tuple
 					setCurrentTuple();
@@ -275,21 +265,12 @@ public class NEXMarkGenerator extends Thread {
 			if (burstGenerator != null) {
 				burstGenerator.interrupt();
 			}
-
-			try {
-				outputStream.close();
-			} catch (IOException e) {
-			}
-			try {
-				inputStream.close();
-			} catch (IOException e) {
-			}
 		}
 	}
 
-	public ObjectInputStream getInputStream() {
-		return inputStream;
-	}
+//	public ObjectInputStream getInputStream() {
+//		return inputStream;
+//	}
 
 	/**
 	 * Call to tell the generator that a burst happens
