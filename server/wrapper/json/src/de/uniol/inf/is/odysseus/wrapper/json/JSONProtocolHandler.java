@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -25,8 +26,7 @@ public class JSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractJS
 	
 	public JSONProtocolHandler() {
 		this.init();
-	}
-	
+	}	
 
 	public JSONProtocolHandler(
 			ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler) {
@@ -36,6 +36,7 @@ public class JSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractJS
 	
 	private void init() {
 		this.mapper = new ObjectMapper(new JsonFactory());
+		mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
 		this.name = "JSON";
 	}
 	
@@ -56,6 +57,7 @@ public class JSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractJS
 	public void write(T kvObject) throws IOException {
 		StringBuilder string = new StringBuilder();
 		this.getDataHandler().writeJSONData(string, kvObject);
+		string.append(System.getProperty("line.separator"));
 		CharBuffer charBuffer = CharBuffer.wrap(string);
 		ByteBuffer bBuffer = Charset.forName("UTF-8").encode(charBuffer);
 		byte[] encodedBytesTmp = bBuffer.array();

@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.undercouch.bson4jackson.BsonFactory;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
@@ -19,6 +20,10 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 
 	static protected ObjectMapper jsonMapper = new ObjectMapper(new JsonFactory());
 	static protected ObjectMapper bsonMapper = new ObjectMapper(new BsonFactory());
+	static{
+		jsonMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+		bsonMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+	}
 
 	@Override
 	public int memSize(Object attribute) {

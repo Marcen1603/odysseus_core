@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.undercouch.bson4jackson.BsonFactory;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
@@ -32,6 +33,7 @@ public class BSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractJS
 	
 	private void init() {
 		mapper = new ObjectMapper(new BsonFactory());
+		mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
 		this.name = "BSON";
 	}
 
