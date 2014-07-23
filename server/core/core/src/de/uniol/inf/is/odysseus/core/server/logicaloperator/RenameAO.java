@@ -60,22 +60,22 @@ public class RenameAO extends UnaryLogicalOp {
 		isNoOp = ao.isNoOp;
 	}
 
-	@Parameter(type = StringParameter.class, isList = true, optional = true)
+	@Parameter(type = StringParameter.class, isList = true, optional = true, doc = "The new list of attributes. Must be exactly the same length as in the input schema.")
 	public void setAliases(List<String> aliases) {
 		this.aliases = aliases;
 	}
 
-	@Parameter(name = "Type", type = StringParameter.class, optional = true)
+	@Parameter(name = "Type", type = StringParameter.class, optional = true, doc = "The new type name of the output schema.")
 	public void setType(String typeName) {
 		this.typeName = typeName;
 	}
 
-	@Parameter(name = "Pairs", type = BooleanParameter.class, optional = true)
+	@Parameter(name = "Pairs", type = BooleanParameter.class, optional = true, doc = "If set to true, aliases will be interpreted as pairs oldAttribute, new Attribute.")
 	public void setPairs(boolean aliasesAsPairs) {
 		this.aliasesAsPairs = aliasesAsPairs;
 	}
 	
-	@Parameter(name = "isNoOp", type = BooleanParameter.class, optional = true)
+	@Parameter(name = "isNoOp", type = BooleanParameter.class, optional = true, doc = "A flag to avoid removing this operator even if nothing in the schema is changed.")
 	public void setNoOp( boolean isNoOp ) {
 		this.isNoOp = isNoOp;
 	}
