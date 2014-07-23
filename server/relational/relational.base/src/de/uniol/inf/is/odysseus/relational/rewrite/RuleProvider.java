@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.relational.rewrite.rules.RDeleteSelectionWithout
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RMergeSelectionJoinRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RMergeSelectionRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSplitSelectionRule;
-import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSwitchProjectionRenameRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSwitchProjectionWindowRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSwitchSelectionJoinRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSwitchSelectionProjectionRule;

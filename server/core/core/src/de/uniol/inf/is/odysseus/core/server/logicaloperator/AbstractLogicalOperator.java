@@ -30,7 +30,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.google.common.collect.Maps;
