@@ -161,7 +161,7 @@ public class IfController {
 			Optional<String> optionalSrcNotDef = determineIfSrcNDef(currentLine);
 			if (optionalSrcNotDef.isPresent()) {
 				LOG.trace("Found #IFSRCDEF: Line {}: {}", this.currentLine, currentLine);
-				Boolean value = existsSource(optionalSrcDef.get(), caller);
+				Boolean value = existsSource(optionalSrcNotDef.get(), caller);
 				inIfClause.push(!value);
 				LOG.trace("Stack: {}", inIfClause);
 
