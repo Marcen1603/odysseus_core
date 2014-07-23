@@ -42,7 +42,7 @@ public class RuleProvider implements IRewriteRuleProvider {
 		rules.add(new RMergeSelectionJoinRule());
 		rules.add(new RMergeSelectionRule());
 		rules.add(new RSplitSelectionRule());
-		rules.add(new RSwitchProjectionRenameRule());
+		//rules.add(new RSwitchProjectionRenameRule());
 		rules.add(new RSwitchProjectionWindowRule());
 		rules.add(new RSwitchSelectionJoinRule());
 		rules.add(new RSwitchSelectionProjectionRule());
