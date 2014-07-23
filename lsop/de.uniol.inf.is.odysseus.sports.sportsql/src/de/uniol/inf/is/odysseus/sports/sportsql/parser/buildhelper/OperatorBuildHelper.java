@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SampleAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
@@ -563,6 +564,24 @@ public class OperatorBuildHelper {
 		}
 		sAO.subscribeTo(source, source.getOutputSchema());
 		return sAO;
+	}
+	
+	/**
+	 * Creates and returns a Project AO
+	 * @param attributes
+	 * @param source
+	 * @return
+	 */
+	public static ProjectAO createProjectAO(List<String> attributes, ILogicalOperator source) {
+		ProjectAO projectAo = new ProjectAO();
+		
+		List<SDFAttribute> sdfAttributes = OperatorBuildHelper
+				.createAttributeList(attributes, source);
+		
+		projectAo.subscribeTo(source, source.getOutputSchema());
+		projectAo.setOutputSchemaWithList(sdfAttributes);
+		
+		return projectAo;
 	}
 
 	/***
