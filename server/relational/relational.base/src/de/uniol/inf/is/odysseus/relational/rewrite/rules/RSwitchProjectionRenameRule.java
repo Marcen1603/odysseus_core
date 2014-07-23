@@ -15,13 +15,9 @@
   */
 package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
-import java.util.Collection;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -35,16 +31,16 @@ public class RSwitchProjectionRenameRule extends AbstractRewriteRule<RenameAO> {
 
 	@Override
 	public void execute(RenameAO rename, RewriteConfiguration config) {
-		for (ProjectAO proj : this.getAllOfSameTyp(new ProjectAO())) {
-			if (proj.getInputAO().equals(rename)) {
-				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.switchOperator(proj, rename);
-				for (ILogicalOperator o : toUpdate) {
-					update(o);
-				}
-				update(rename);
-				update(proj);
-			}
-		}
+//		for (ProjectAO proj : this.getAllOfSameTyp(new ProjectAO())) {
+//			if (proj.getInputAO().equals(rename)) {
+//				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.switchOperator(proj, rename);
+//				for (ILogicalOperator o : toUpdate) {
+//					update(o);
+//				}
+//				update(rename);
+//				update(proj);
+//			}
+//		}
 	}
 
 	@Override

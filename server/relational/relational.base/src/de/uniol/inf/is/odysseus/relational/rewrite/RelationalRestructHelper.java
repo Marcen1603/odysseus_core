@@ -18,15 +18,16 @@ package de.uniol.inf.is.odysseus.relational.rewrite;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
@@ -36,11 +37,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.IUnaryFunctor;
 import de.uniol.inf.is.odysseus.core.server.util.LoggerHelper;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 
 /**
@@ -129,52 +128,53 @@ public class RelationalRestructHelper {
 		return RestructHelper.simpleOperatorSwitch(father, son);
 	}
 
-	public static Collection<ILogicalOperator> switchOperator(ProjectAO father, RenameAO son) {
-		SDFSchema inputSchema = son.getInputSchema();
-		SDFSchema renameOutputSchema = son.getOutputSchema();
-		SDFSchema oldOutputSchema = father.getOutputSchema();
-		LogicalSubscription toDown = son.getSubscribedToSource(0);
-		// TODO: Can there be more than one father??
-		LogicalSubscription toUp = father.getSubscriptions().iterator().next();
-
-		son.unsubscribeFromSource(toDown);
-		father.unsubscribeFromSource(son, 0, 0, son.getOutputSchema());
-		father.unsubscribeSink(toUp);
-
-		father.subscribeTo(toDown.getTarget(), toDown.getSchema());
-
-		// change attribute names for projection
-		List<SDFAttribute> newOutputAttributes = new ArrayList<SDFAttribute>();
-		for (SDFAttribute a : oldOutputSchema) {
-			int pos = son.getOutputSchema().indexOf(a);
-			newOutputAttributes.add(inputSchema.get(pos));
-		}
-		SDFSchema newOutputSchema = new SDFSchema(oldOutputSchema, newOutputAttributes);
-		father.setOutputSchema(newOutputSchema);
-
-		father.subscribeSink(son, 0, 0, father.getOutputSchema());
-
-		// remove attributes from rename operator that get projected away
-		Iterator<SDFAttribute> inIt = inputSchema.iterator();
-		Iterator<SDFAttribute> outIt = renameOutputSchema.iterator();
-		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
-		while (inIt.hasNext()) {
-			SDFAttribute nextIn = inIt.next();
-			SDFAttribute nextOut = outIt.next();
-			if (newOutputSchema.contains(nextIn)) {
-				attrs.add(nextOut);
-			}
-		}
-		SDFSchema newRenameSchema = new SDFSchema(inputSchema.getURI(), inputSchema.getType(), attrs);
-		son.setOutputSchema(newRenameSchema);
-
-		son.subscribeSink(toUp.getTarget(), toUp.getSinkInPort(), 0, son.getOutputSchema());
-
-		Collection<ILogicalOperator> toUpdate = new ArrayList<ILogicalOperator>(2);
-		toUpdate.add(toDown.getTarget());
-		toUpdate.add(toUp.getTarget());
-		return toUpdate;
-	}
+//	public static Collection<ILogicalOperator> switchOperator(ProjectAO father, RenameAO son) {
+//		
+//		SDFSchema inputSchema = son.getInputSchema();
+//		SDFSchema renameOutputSchema = son.getOutputSchema();
+//		SDFSchema oldOutputSchema = father.getOutputSchema();
+//		LogicalSubscription toDown = son.getSubscribedToSource(0);
+//		// TODO: Can there be more than one father??
+//		LogicalSubscription toUp = father.getSubscriptions().iterator().next();
+//
+//		son.unsubscribeFromSource(toDown);
+//		father.unsubscribeFromSource(son, 0, 0, son.getOutputSchema());
+//		father.unsubscribeSink(toUp);
+//
+//		father.subscribeTo(toDown.getTarget(), toDown.getSchema());
+//
+//		// change attribute names for projection
+//		List<SDFAttribute> newOutputAttributes = new ArrayList<SDFAttribute>();
+//		for (SDFAttribute a : oldOutputSchema) {
+//			int pos = son.getOutputSchema().indexOf(a);
+//			newOutputAttributes.add(inputSchema.get(pos));
+//		}
+//		SDFSchema newOutputSchema = new SDFSchema(oldOutputSchema, newOutputAttributes);
+//		father.setOutputSchema(newOutputSchema);
+//
+//		father.subscribeSink(son, 0, 0, father.getOutputSchema());
+//
+//		// remove attributes from rename operator that get projected away
+//		Iterator<SDFAttribute> inIt = inputSchema.iterator();
+//		Iterator<SDFAttribute> outIt = renameOutputSchema.iterator();
+//		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+//		while (inIt.hasNext()) {
+//			SDFAttribute nextIn = inIt.next();
+//			SDFAttribute nextOut = outIt.next();
+//			if (newOutputSchema.contains(nextIn)) {
+//				attrs.add(nextOut);
+//			}
+//		}
+//		SDFSchema newRenameSchema = new SDFSchema(inputSchema.getURI(), inputSchema.getType(), attrs);
+//		son.setOutputSchema(newRenameSchema);
+//
+//		son.subscribeSink(toUp.getTarget(), toUp.getSinkInPort(), 0, son.getOutputSchema());
+//
+//		Collection<ILogicalOperator> toUpdate = new ArrayList<ILogicalOperator>(2);
+//		toUpdate.add(toDown.getTarget());
+//		toUpdate.add(toUp.getTarget());
+//		return toUpdate;
+//	}
 
 	public static Collection<ILogicalOperator> switchOperator(ProjectAO father, AbstractWindowAO son) {
 		return RestructHelper.simpleOperatorSwitch(father, son);
