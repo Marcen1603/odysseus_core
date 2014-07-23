@@ -150,7 +150,6 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 		return this.partitionedBy != null;
 	}
 
-	@Parameter(name = "PARTITION", type = ResolvedSDFAttributeParameter.class, optional = true, isList = true)
 	public void setPartitionBy(List<SDFAttribute> partitionedBy) {
 		this.partitionedBy = partitionedBy;
 	}
