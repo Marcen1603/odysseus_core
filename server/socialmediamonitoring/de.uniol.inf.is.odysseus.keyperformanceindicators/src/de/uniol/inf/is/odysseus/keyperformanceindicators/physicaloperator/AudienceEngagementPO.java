@@ -1,0 +1,105 @@
+package de.uniol.inf.is.odysseus.keyperformanceindicators.physicaloperator;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation.IKeyPerformanceIndicators;
+import de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation.KPIRegistry;
+
+public class AudienceEngagementPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
+	
+	DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
+	private IKeyPerformanceIndicators kpiType;
+	
+	private List<String> concreteTopics;
+	private List<String> allTopics;
+	private double thresholdValue;
+	private int countOfAllTopics = 0;
+	private SDFAttribute incomingText;
+	
+	private int positionOfInputText = -1;
+	
+	public AudienceEngagementPO(List<String> concreteTopics, List<String> allTopics, SDFAttribute incomingText, double thresholdValue, int countOfAllTopics)
+	{
+		super();
+		this.concreteTopics = concreteTopics;
+		this.allTopics = allTopics;
+		this.incomingText = incomingText;
+		this.thresholdValue = thresholdValue;
+		this.countOfAllTopics = countOfAllTopics;
+	}
+	
+	public AudienceEngagementPO(AudienceEngagementPO<M> audienceEngagementPO)
+	{
+		super(audienceEngagementPO);
+		this.concreteTopics = audienceEngagementPO.concreteTopics;
+		this.allTopics = audienceEngagementPO.allTopics;
+		this.incomingText = audienceEngagementPO.incomingText;
+		this.thresholdValue = audienceEngagementPO.thresholdValue;
+		this.countOfAllTopics = audienceEngagementPO.countOfAllTopics;
+	}
+	
+	
+	@Override
+	public OutputMode getOutputMode() {
+		return OutputMode.MODIFIED_INPUT;
+	}
+	
+	@Override
+	public void process_open() throws OpenFailedException
+	{
+		super.process_open();
+		//Get schema of source which is connected on Port 0
+		SDFSchema dataSchema = getSubscribedToSource(0).getSchema();
+		//Get position of the attribute "incomingText" from input
+		this.positionOfInputText =  dataSchema.indexOf(this.incomingText);
+		//Create the required KPI
+		this.kpiType = KPIRegistry.getKPIByName("audienceengagement");
+	}
+
+	@Override
+	protected void process_next(Tuple<M> object, int port) 
+	{
+		//In
+		sweepArea.insert(object);
+		
+		//Aufräumen
+		Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsEndBefore(object.getMetadata().getStart());
+					
+		synchronized(this.sweepArea)
+		{
+			//Verbinden
+			List<Tuple<M>> list = this.sweepArea.queryOverlapsAsList(object.getMetadata());
+		
+			//Verarbeiten
+			calculateAE(list, object, port);
+		}
+	}
+	
+	private void calculateAE(List<Tuple<M>> tuple, Tuple<M> currentTuple, int port)
+	{	
+		double audienceEngagementResult = 0;
+		
+		Tuple outputTuple = new Tuple(1, false);
+		
+		this.kpiType.setCountOfAllTopics(3);
+	
+		audienceEngagementResult = this.kpiType.manageKPICalculation(tuple, this.concreteTopics, this.allTopics, this.positionOfInputText);
+		
+		this.kpiType.monitorThresholdValue(this.thresholdValue, audienceEngagementResult);
+				
+		outputTuple.setAttribute(0, audienceEngagementResult);
+		
+		outputTuple.setMetadata(currentTuple.getMetadata());
+		outputTuple.setRequiresDeepClone(currentTuple.requiresDeepClone());
+		transfer(outputTuple, 0);
+	}
+}

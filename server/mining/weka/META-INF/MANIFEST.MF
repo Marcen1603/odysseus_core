@@ -7,8 +7,11 @@ Bundle-ClassPath: weka-3-7-6-source-jar.jar,
  java-cup.jar,
  JFlex.jar,
  junit.jar,
- packageManager.jar
-Export-Package: weka,
+ packageManager.jar,
+ snowball-stemmers-1.0.0.jar
+Export-Package: org.tartarus.snowball,
+ org.tartarus.snowball.ext,
+ weka,
  weka.associations,
  weka.attributeSelection,
  weka.classifiers,
