@@ -63,8 +63,12 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		} else {
 			this.end = null;
 		}
-		this.maxWindowTime = baseTimeUnit.convert(maxWindowTime.getTime(),
-				maxWindowTime.getUnit());
+		if (maxWindowTime != null) {
+			this.maxWindowTime = baseTimeUnit.convert(maxWindowTime.getTime(),
+					maxWindowTime.getUnit());
+		} else {
+			this.maxWindowTime = 0;
+		}
 		this.sameStarttime = sameStarttime;
 	}
 
