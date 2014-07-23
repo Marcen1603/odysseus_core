@@ -86,6 +86,30 @@ public class SDFDatatype extends SDFElement implements Serializable {
     public static final SDFDatatype LIST = new SDFDatatype("List",
             SDFDatatype.KindOfDatatype.BASE, SDFDatatype.OBJECT);
     
+    public static final SDFDatatype LIST_STRING = new SDFDatatype("List_String",
+            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.STRING);
+    public static final SDFDatatype LIST_LONG = new SDFDatatype("List_Long",
+            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.LONG);
+    public static final SDFDatatype LIST_INTEGER = new SDFDatatype("List_Integer",
+            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.INTEGER);
+    public static final SDFDatatype LIST_BYTE = new SDFDatatype("List_Byte",
+            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.BYTE);
+    public static final SDFDatatype LIST_CHAR = new SDFDatatype("List_Char",
+            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.CHAR);
+    public static final SDFDatatype LIST_FLOAT = new SDFDatatype("List_Float",
+            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.FLOAT);
+    public static final SDFDatatype LIST_DOUBLE = new SDFDatatype("List_Double",
+            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.DOUBLE);
+    public static final SDFDatatype LIST_DATE = new SDFDatatype("List_Date",
+            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.DATE);
+    public static final SDFDatatype LIST_BOOLEAN = new SDFDatatype("List_Boolean",
+            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.BOOLEAN);
+    public static final SDFDatatype LIST_SHORT = new SDFDatatype("List_Short",
+            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.SHORT);
+    
+    
+    
+    
 	public static final SDFDatatype MATRIX_DOUBLE = new SDFDatatype("Matrix",
 			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.DOUBLE);
 	public static final SDFDatatype MATRIX_FLOAT = new SDFDatatype(
@@ -238,7 +262,18 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		types.add(SDFDatatype.BYTE);
 		
 		types.add(SDFDatatype.LIST);
+		types.add(SDFDatatype.LIST_STRING);
 
+		types.add(SDFDatatype.LIST_LONG);
+		types.add(SDFDatatype.LIST_INTEGER);
+		types.add(SDFDatatype.LIST_BYTE);
+		types.add(SDFDatatype.LIST_CHAR);
+		types.add(SDFDatatype.LIST_FLOAT);
+		types.add(SDFDatatype.LIST_DOUBLE);
+		types.add(SDFDatatype.LIST_DATE);
+		types.add(SDFDatatype.LIST_BOOLEAN);
+		types.add(SDFDatatype.LIST_SHORT);
+		
 		types.add(SDFDatatype.STRING);
 		types.add(SDFDatatype.DOCUMENT);
 		types.add(SDFDatatype.MV);
