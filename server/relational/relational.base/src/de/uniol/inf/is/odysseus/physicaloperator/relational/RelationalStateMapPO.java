@@ -7,6 +7,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -86,6 +87,14 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends RelationalMa
 			return false;
 		}
 		return super.isSemanticallyEqual(ipo);
+	}
+	
+	@Override
+	protected void process_open() throws OpenFailedException {
+		IGroupProcessor<Tuple<T>, Tuple<T>> g = this.groupProcessor;
+		synchronized (g) {
+			g.init();
+		}
 	}
 	
 }
