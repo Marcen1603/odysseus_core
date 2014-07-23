@@ -282,11 +282,11 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	@Override
 	public ILogicalOperator clone();
 
-	/**
-	 * This method can be used to reinit the schema infos all currently not set
-	 * schemata are calced new
-	 */
-	void updateSchemaInfos();
+//	/**
+//	 * This method can be used to reinit the schema infos all currently not set
+//	 * schemata are calced new
+//	 */
+//	void updateSchemaInfos();
 
 	/**
 	 * Each operator can have a unique id
