@@ -88,6 +88,10 @@ public class SDFAttribute extends SDFElement implements
 		this(sourceName, attributeName, datatype, null, (Collection<SDFConstraint>) null);
 		this.subSchema = subschema;
 	}
+	
+	public SDFAttribute(SDFAttribute toCopyFrom, SDFDatatype newDatatype){
+		this(toCopyFrom.getSourceName(), toCopyFrom.getAttributeName(), newDatatype,toCopyFrom.getUnit(), new LinkedList<>(toCopyFrom.dtConstraints.values()));
+	}
 
 	/**
 	 * Creates a new SDFAttribute
@@ -332,8 +336,7 @@ public class SDFAttribute extends SDFElement implements
 	 * keeping all other information
 	 */
 	public SDFAttribute clone(SDFDatatype dt) {
-		return new SDFAttribute(this.getSourceName(), this.getAttributeName(),
-				dt,this.getUnit(), new LinkedList<>(this.dtConstraints.values()));
+		return new SDFAttribute(this, dt);
 	}
 
 	private SDFAttribute(SDFAttribute attr, int number){
