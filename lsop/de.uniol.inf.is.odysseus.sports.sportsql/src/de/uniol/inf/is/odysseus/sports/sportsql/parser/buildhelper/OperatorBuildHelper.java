@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SampleAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
@@ -35,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpress
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SourceParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -462,12 +464,10 @@ public class OperatorBuildHelper {
 		for (String predicate : listOfPredicates) {
 			SDFExpression predicateExpression = new SDFExpression(predicate,
 					MEP.getInstance());
-			RelationalPredicate p = new RelationalPredicate(
-					predicateExpression);
+			RelationalPredicate p = new RelationalPredicate(predicateExpression);
 
 			rAO.addPredicate(p);
 		}
-		// TODO different ports for different results?
 		rAO.subscribeTo(source, source.getOutputSchema());
 		return rAO;
 	}
@@ -558,8 +558,8 @@ public class OperatorBuildHelper {
 			ILogicalOperator source) {
 		SelectAO sAO = new SelectAO();
 		for (String predicateString : listOfPredicates) {
-			SDFExpression predicateExpression = new SDFExpression(predicateString,
-					MEP.getInstance());
+			SDFExpression predicateExpression = new SDFExpression(
+					predicateString, MEP.getInstance());
 			RelationalPredicate predicate = new RelationalPredicate(
 					predicateExpression);
 			sAO.addPredicate(predicate);
@@ -567,26 +567,28 @@ public class OperatorBuildHelper {
 		sAO.subscribeTo(source, source.getOutputSchema());
 		return sAO;
 	}
-	
+
 	/**
 	 * Creates and returns a Project AO
+	 * 
 	 * @param attributes
 	 * @param source
 	 * @return
 	 */
-	public static ProjectAO createProjectAO(List<String> attributes, ILogicalOperator source) {
+	public static ProjectAO createProjectAO(List<String> attributes,
+			ILogicalOperator source) {
 		ProjectAO projectAo = new ProjectAO();
-		
+
 		List<SDFAttribute> sdfAttributes = OperatorBuildHelper
 				.createAttributeList(attributes, source);
-		
+
 		projectAo.subscribeTo(source, source.getOutputSchema());
 		projectAo.setOutputSchemaWithList(sdfAttributes);
-		
+
 		return projectAo;
 	}
 
-	/***
+	/**
 	 * Creates a Tuple Window
 	 * 
 	 * @param size
@@ -599,6 +601,7 @@ public class OperatorBuildHelper {
 	 */
 	public static WindowAO createTupleWindowAO(int size, int advance,
 			ILogicalOperator source) {
+		// TODO Use ElementWindow instead
 		WindowAO windowAO = new WindowAO();
 		windowAO.setWindowType(WindowType.TUPLE);
 		TimeValueItem windowSize = new TimeValueItem(size, null);
@@ -610,7 +613,36 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Returns windowAO
+	 * Creates a TimeWindow.
+	 * 
+	 * @param size
+	 *            How big the window is. Number of seconds, minutes, etc.
+	 *            (depends on the timeUnit) in this Window
+	 * @param timeUnit
+	 *            e.g. "second" or "minute"
+	 * @param source
+	 *            Source operator
+	 * @return
+	 */
+	public static TimeWindowAO createTimeWindowAO(int size, String timeUnit,
+			ILogicalOperator source) {
+		// TODO timeUnit with static finals
+		TimeWindowAO timeWindowAO = new TimeWindowAO();
+		TimeParameter timeParamenter = new TimeParameter();
+		List<String> parameterInputValue = new ArrayList<String>();
+		parameterInputValue.add(new Integer(size).toString());
+		parameterInputValue.add(timeUnit);
+		timeParamenter.setInputValue(parameterInputValue);
+		timeWindowAO.setWindowSize(timeParamenter.getValue());
+
+		timeWindowAO.subscribeTo(source, source.getOutputSchema());
+
+		return timeWindowAO;
+	}
+
+	/**
+	 * Deprecated. Use method for TimeWindowAO, ...
+	 * Returns windowAO.
 	 * 
 	 * @param windowSize
 	 * @param windowType
@@ -618,6 +650,7 @@ public class OperatorBuildHelper {
 	 * @param source
 	 * @return
 	 */
+	@Deprecated
 	public static WindowAO createWindowAO(TimeValueItem windowSize,
 			WindowType windowType, TimeValueItem windowAdvance,
 			ILogicalOperator source) {
@@ -708,7 +741,8 @@ public class OperatorBuildHelper {
 	 * and output-port beginning with 0 and increasing up to the number of the
 	 * operators -1.
 	 * 
-	 * @param sources List of sources you want to be under the TopAO.
+	 * @param sources
+	 *            List of sources you want to be under the TopAO.
 	 * @return A TopAO which has all the given operators under it.
 	 */
 	public static TopAO createTopAO(List<ILogicalOperator> sources) {
@@ -913,7 +947,7 @@ public class OperatorBuildHelper {
 
 		return finishQuery(sources, allOperators, queryName);
 	}
-	
+
 	/**
 	 * Creates an ILogicalQuery with an TopAO on top of the query. Initialized
 	 * all operators and gives the query a name

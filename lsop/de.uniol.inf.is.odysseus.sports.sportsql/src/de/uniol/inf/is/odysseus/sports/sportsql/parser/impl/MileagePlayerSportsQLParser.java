@@ -40,6 +40,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		String soccerGameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
 		AccessAO soccerGameAccessAO = OperatorBuildHelper
 				.createAccessAO(soccerGameSourceName);
+		allOperators.add(soccerGameAccessAO);
 
 		// ----------------------------------------------------
 		// First part of the query (Select for questioned time)
