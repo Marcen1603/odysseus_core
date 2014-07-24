@@ -152,14 +152,16 @@ public class OperatorBuildHelper {
 	 * 
 	 * @param parameter
 	 *            according Space param.
+	 * @param inMeters
+	 *            if you want to use meters instead of the original value TODO
+	 *            Put this into the spaceParameter?
 	 * @param source
 	 *            Source Operator
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
 	public static SelectAO createSpaceSelect(SportsQLSpaceParameter parameter,
-			ILogicalOperator source) {
-		SelectAO selectAO = new SelectAO();
+			boolean inMeters, ILogicalOperator source) {
 
 		// TODO: Do the right thing if timeParameter says "all"
 
@@ -175,6 +177,33 @@ public class OperatorBuildHelper {
 		String secondPredicateString = "x <= " + endX;
 		String thirdPredicateString = "y >= " + startY;
 		String fourthPredicateString = "y <= " + endY;
+
+		SelectAO selectAO = new SelectAO();
+
+		if (inMeters) {
+			// Calculate meters from input stream
+			List<SDFExpressionParameter> meterExpressions = new ArrayList<SDFExpressionParameter>();
+			SDFExpressionParameter param1 = OperatorBuildHelper
+					.createExpressionParameter("sid", "sensor_id", source);
+			SDFExpressionParameter param2 = OperatorBuildHelper
+					.createExpressionParameter("x / 1000 - ${x_min}/1000",
+							"x_meter", source);
+			SDFExpressionParameter param3 = OperatorBuildHelper
+					.createExpressionParameter("y / 1000 - ${y_min}/1000",
+							"y_meter", source);
+			meterExpressions.add(param1);
+			meterExpressions.add(param2);
+			meterExpressions.add(param3);
+			MapAO metersMap = OperatorBuildHelper.createMapAO(meterExpressions,
+					source, 0, 0);
+
+			firstPredicateString = "x_meter >= " + startX;
+			secondPredicateString = "x_meter <= " + endX;
+			thirdPredicateString = "y_meter >= " + startY;
+			fourthPredicateString = "y_meter <= " + endY;
+
+			selectAO.subscribeTo(metersMap, metersMap.getOutputSchema());
+		}
 
 		// Create Predicates from Strings
 
@@ -206,10 +235,36 @@ public class OperatorBuildHelper {
 				.createAndPredicate(firstAndPredicate, secondAndPredicate);
 
 		selectAO.setPredicate(fullAndPredicate);
-		selectAO.subscribeTo(source, source.getOutputSchema());
+		if (!inMeters) {
+			// Subscribe to the original source (not the MapAO for meters)
+			selectAO.subscribeTo(source, source.getOutputSchema());
+		}
+
 		return selectAO;
 	}
 
+	/**
+	 * Creates a SelectAO which selects for the given teamId
+	 * @param teamId Of the team you want to get
+	 * @param source source with team_id
+	 * @return SelectAO which filters for the given teamId
+	 */
+	public static SelectAO createTeamSelectAO(int teamId, ILogicalOperator source) {
+		SelectAO teamSelectAO = new SelectAO();
+		
+		String predicateString = "team_id = " + teamId;
+		SDFExpression predicateExpression = new SDFExpression(predicateString,
+				MEP.getInstance());
+		
+		RelationalPredicate predicate = new RelationalPredicate(
+				predicateExpression);
+		teamSelectAO.setPredicate(predicate);
+		
+		teamSelectAO.subscribeTo(source, source.getOutputSchema());
+		
+		return teamSelectAO;
+	}
+	
 	/**
 	 * Creates a SelectAO with given timeParameter. Automatically build a
 	 * correct Select for the given timeParameter. Assumes that the given input
@@ -641,8 +696,7 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Deprecated. Use method for TimeWindowAO, ...
-	 * Returns windowAO.
+	 * Deprecated. Use method for TimeWindowAO, ... Returns windowAO.
 	 * 
 	 * @param windowSize
 	 * @param windowType
@@ -674,7 +728,7 @@ public class OperatorBuildHelper {
 	 * @param source2
 	 * @return
 	 */
-	public static JoinAO createJoinAO(ArrayList<String> listOfPredicates,
+	public static JoinAO createJoinAO(List<String> listOfPredicates,
 			ILogicalOperator source1, ILogicalOperator source2) {
 		JoinAO jAO = new JoinAO();
 		ArrayList<ILogicalOperator> sources = new ArrayList<ILogicalOperator>();

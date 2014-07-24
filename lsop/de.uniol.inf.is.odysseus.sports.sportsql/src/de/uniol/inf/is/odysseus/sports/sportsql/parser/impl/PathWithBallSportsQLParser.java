@@ -160,7 +160,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 
 		//Filter by Space
 		ILogicalOperator selectedSpace = OperatorBuildHelper.createSpaceSelect(
-				spaceParameter, selectedTime);
+				spaceParameter, false, selectedTime);
 		allOperators.add(selectedSpace);
 
 		//Enrich game Stream with metadata.

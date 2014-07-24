@@ -107,7 +107,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		ILogicalOperator game_after_start = OperatorBuildHelper.createTimeSelect(timeParameter, soccerGameAccessAO);
 		allOperators.add(game_after_start);
 		
-		ILogicalOperator game_space = OperatorBuildHelper.createSpaceSelect(spaceParameter, game_after_start);
+		ILogicalOperator game_space = OperatorBuildHelper.createSpaceSelect(spaceParameter, false, game_after_start);
 		allOperators.add(game_space);
 
 		predicates.add("sid=4 OR sid=8 OR sid=10 OR sid=12");

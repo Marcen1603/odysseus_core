@@ -61,7 +61,7 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 
 		// 1. TimeWindow
 		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(1,
-				"MINUTES", soccerGameAccessAO);
+				"MILLISECONDS", soccerGameAccessAO);
 		allOperators.add(timeWindow);
 
 		// --------------------------------
