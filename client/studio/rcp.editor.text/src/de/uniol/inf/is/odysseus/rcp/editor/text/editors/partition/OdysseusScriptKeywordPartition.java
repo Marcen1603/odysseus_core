@@ -60,28 +60,27 @@ public class OdysseusScriptKeywordPartition extends AbstractOdysseusScriptPariti
 	@Override
 	public List<IRule> getColoringRules() {
 		List<IRule> rules = new ArrayList<>();
-		
+
 		rules.add(new MultiLineRule("'", "'", createToken(SWT.COLOR_BLUE)));
 		rules.add(new EndOfLineRule(OdysseusScriptStructureProvider.SINGLE_LINE_COMMENT_KEY, createToken(SWT.COLOR_DARK_GREEN, false)));
-		
+
 		// if a keyword is found, color it red
-		IToken parameter = createToken(SWT.COLOR_RED, false);
-		IToken deprecatedParameter = createToken(SWT.COLOR_RED, false, true);
-		
+		IToken keywordToken = createToken(SWT.COLOR_RED, false);
+		IToken deprecatedKeywordToken = createToken(SWT.COLOR_RED, false, true);
+
 		// everything else should be undefined (this gets the default color)
 		WordRule wr = new WordRule(getWordDetector(), Token.UNDEFINED, true);
 		for (String key : OdysseusScriptStructureProvider.getKeywords()) {
-			if(!OdysseusScriptStructureProvider.isDeprecated(key)) {
-				wr.addWord(OdysseusScriptStructureProvider.PARAMETER_KEY + key, parameter);
+			if (!OdysseusScriptStructureProvider.isDeprecated(key)) {
+				wr.addWord(OdysseusScriptStructureProvider.PARAMETER_KEY + key, keywordToken);
 			} else {
-				wr.addWord(OdysseusScriptStructureProvider.PARAMETER_KEY + key, deprecatedParameter);
+				wr.addWord(OdysseusScriptStructureProvider.PARAMETER_KEY + key, deprecatedKeywordToken);
 			}
 		}
 		rules.add(wr);
 
 		IToken variable = createToken(SWT.COLOR_DARK_MAGENTA);
-		rules.add(new SingleLineRule(OdysseusScriptStructureProvider.REPLACEMENT_START_KEY, OdysseusScriptStructureProvider.REPLACEMENT_END_KEY,
-				variable));
+		rules.add(new SingleLineRule(OdysseusScriptStructureProvider.REPLACEMENT_START_KEY, OdysseusScriptStructureProvider.REPLACEMENT_END_KEY, variable));
 		IToken staticKeywords = createToken(SWT.COLOR_DARK_GRAY);
 
 		for (String s : OdysseusScriptStructureProvider.getStaticWords()) {
@@ -115,7 +114,7 @@ public class OdysseusScriptKeywordPartition extends AbstractOdysseusScriptPariti
 		List<IPredicateRule> rules = new ArrayList<>();
 
 		List<String> end = new ArrayList<>();
-		end.add(OdysseusScriptStructureProvider.PARAMETER_KEY);		
+		end.add(OdysseusScriptStructureProvider.PARAMETER_KEY);
 		List<String> ignore = new ArrayList<>();
 		ignore.add("#IFDEF");
 		ignore.add("#ELSE");
@@ -127,7 +126,7 @@ public class OdysseusScriptKeywordPartition extends AbstractOdysseusScriptPariti
 	}
 
 	@Override
-	public IFormattingStrategy getFormattingStrategy() {		
+	public IFormattingStrategy getFormattingStrategy() {
 		return new KeyWordFormattingStrategy();
 	}
 

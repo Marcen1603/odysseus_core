@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Display;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusScriptStructureProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorLanguagePropertiesProvider;
+import de.uniol.inf.is.odysseus.rcp.editor.text.completion.Terminal;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.formatting.IOdysseusScriptFormattingStrategy;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.formatting.QueryFormattingStrategy;
 
@@ -63,13 +64,22 @@ public class OdysseusScriptQueryKeywordPartition extends OdysseusScriptKeywordPa
 		// additionally, we add rules for the current language
 		ParserDependentWordRule pd = new ParserDependentWordRule(getWordDetector(), getColoringToken(), true);
 		IToken wordToken = createToken(SWT.COLOR_DARK_BLUE, true);
+		IToken deprecatedWordToken = createToken(SWT.COLOR_DARK_BLUE, false, true);
 		for(IEditorLanguagePropertiesProvider ecp : OdysseusRCPEditorTextPlugIn.getEditorCompletionProviders()){
-			for (String word : ecp.getTerminals()) {
-				if(this.onlyForParser.equalsIgnoreCase("")){			
-					pd.addWord(word, wordToken, ecp.getSupportedParser());
+			for (Terminal terminal : ecp.getTerminals()) {
+				if(this.onlyForParser.equalsIgnoreCase("")){
+					if( !terminal.isDeprecated() ) {
+						pd.addWord(terminal.getName(), wordToken, ecp.getSupportedParser());
+					} else {
+						pd.addWord(terminal.getName(), deprecatedWordToken, ecp.getSupportedParser());
+					}
 				}else{
 					if(ecp.getSupportedParser().equalsIgnoreCase(onlyForParser)){
-						pd.addWord(word, wordToken, ecp.getSupportedParser());
+						if( !terminal.isDeprecated() ) {
+							pd.addWord(terminal.getName(), wordToken, ecp.getSupportedParser());
+						} else {
+							pd.addWord(terminal.getName(), deprecatedWordToken, ecp.getSupportedParser());
+						}
 					}
 				}
 			}

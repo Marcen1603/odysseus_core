@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorLanguagePropertiesProvider;
+import de.uniol.inf.is.odysseus.rcp.editor.text.completion.Terminal;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.formatting.IOdysseusScriptFormattingStrategy;
 
 /**
@@ -52,11 +53,11 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 	}
 
 	@Override
-	public List<String> getTerminals() {
+	public List<Terminal> getTerminals() {
 		ISession caller = OdysseusRCPPlugIn.getActiveSession();
 		// add all parser tokens
-		List<String> liste = new ArrayList<String>();
-		Map<String, List<String>> values = OdysseusRCPEditorTextPlugIn.getExecutor().getQueryParserTokens(getSupportedParser(), caller);		
+		List<Terminal> liste = new ArrayList<Terminal>();
+		Map<String, List<String>> values = OdysseusRCPEditorTextPlugIn.getExecutor().getQueryParserTokens(getSupportedParser(), caller);
 		for (String token : values.get("TOKEN")) {
 			if (!token.startsWith("<")) {
 				if (token.startsWith("\"")) {
@@ -66,13 +67,15 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 					token = token.substring(0, token.length() - 1);
 				}
 				if (token.length() > 1 && !token.startsWith("\\")) {
-					liste.add(token);
+					liste.add(new Terminal(token, false));
 				}
 			}
 		}
 		// then, add also all datatypes
+		for (String dataType : OdysseusRCPEditorTextPlugIn.getDatatypeNames()) {
+			liste.add(new Terminal(dataType, false));
+		}
 		
-		liste.addAll(OdysseusRCPEditorTextPlugIn.getDatatypeNames());
 		return liste;
 	}
 
@@ -85,6 +88,5 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 	public IOdysseusScriptFormattingStrategy getFormattingStrategy() {
 		return new CQLFormattingStrategy();
 	}
-	
 
 }

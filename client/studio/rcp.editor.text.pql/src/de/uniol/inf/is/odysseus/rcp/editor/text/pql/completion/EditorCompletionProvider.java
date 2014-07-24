@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorLanguagePropertiesProvider;
+import de.uniol.inf.is.odysseus.rcp.editor.text.completion.Terminal;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.formatting.IOdysseusScriptFormattingStrategy;
 import de.uniol.inf.is.odysseus.rcp.editor.text.pql.PQLEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.pql.completion.part.OperatorCompletionPart;
@@ -454,10 +455,10 @@ public class EditorCompletionProvider implements IEditorLanguagePropertiesProvid
 	}
 
 	@Override
-	public List<String> getTerminals() {
-		List<String> names = new ArrayList<>();
+	public List<Terminal> getTerminals() {
+		List<Terminal> names = new ArrayList<>();
 		for (LogicalOperatorInformation loi : PQLEditorTextPlugIn.getOperatorInformations()) {
-			names.add(loi.getOperatorName());
+			names.add(new Terminal(loi.getOperatorName(), loi.isDeprecated()));
 		}
 		return names;
 	}

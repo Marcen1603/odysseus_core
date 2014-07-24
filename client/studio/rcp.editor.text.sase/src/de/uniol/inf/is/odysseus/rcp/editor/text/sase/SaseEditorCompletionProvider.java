@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorLanguagePropertiesProvider;
+import de.uniol.inf.is.odysseus.rcp.editor.text.completion.Terminal;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.formatting.IOdysseusScriptFormattingStrategy;
 
 /**
@@ -52,10 +53,10 @@ public class SaseEditorCompletionProvider implements IEditorLanguagePropertiesPr
 	}
 
 	@Override
-	public List<String> getTerminals() {
+	public List<Terminal> getTerminals() {
 		ISession caller = OdysseusRCPPlugIn.getActiveSession();
 		// add all parser tokens
-		List<String> liste = new ArrayList<String>();
+		List<Terminal> liste = new ArrayList<Terminal>();
 		Map<String, List<String>> values = OdysseusRCPEditorTextPlugIn.getExecutor().getQueryParserTokens(getSupportedParser(), caller);
 		if (values.containsKey("TOKEN")) {
 			for (String token : values.get("TOKEN")) {
@@ -67,14 +68,15 @@ public class SaseEditorCompletionProvider implements IEditorLanguagePropertiesPr
 						token = token.substring(0, token.length() - 1);
 					}
 					if (token.length() > 1 && !token.startsWith("\\")) {
-						liste.add(token);
+						liste.add(new Terminal(token, true));
 					}
 				}
 			}
 		}
 		// then, add also all datatypes
-
-		liste.addAll(OdysseusRCPEditorTextPlugIn.getDatatypeNames());
+		for (String dataType : OdysseusRCPEditorTextPlugIn.getDatatypeNames()) {
+			liste.add(new Terminal(dataType, false));
+		}
 		return liste;
 	}
 
