@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name = "SOCKETSINK", minInputPorts = 1, maxInputPorts = 1, doc="This operator can be used to send/provide data from Odysseus via a tcp socket connection. (Remark: This operator will potentially change in future)",category={LogicalOperatorCategory.SINK}, deprecation=true)
+@LogicalOperator(name = "SOCKETSINK", minInputPorts = 1, maxInputPorts = 1, doc="This operator can be used to send/provide data from Odysseus via a tcp socket connection. (Remark: This operator will potentially change in future)",category={LogicalOperatorCategory.SINK}, hidden =true, deprecation=true)
 public class SocketSinkAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 4250341797170265988L;
