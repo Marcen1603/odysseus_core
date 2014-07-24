@@ -14,19 +14,24 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuild
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLDoubleParameter;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLIntegerParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
+
+/***
+ * SportsQL Parser for Corner Kicks.
+ * PQL by Pascal Schmedt
+ * @author Carsten Cordes
+ *
+ */
 @SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.GLOBAL }, name = "cornerkicks", parameters = {
-		@SportsQLParameter(name = "datarate", parameterClass = SportsQLIntegerParameter.class, mandatory = false),
-		@SportsQLParameter(name = "accuracy", parameterClass = SportsQLDoubleParameter.class, mandatory = false),
-		@SportsQLParameter(name = "proximity", parameterClass = SportsQLDoubleParameter.class, mandatory = false),
 		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = true),
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = true) })
 public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 
+	/**
+	 * Parses sportsQL
+	 */
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
 			throws SportsQLParseException {
