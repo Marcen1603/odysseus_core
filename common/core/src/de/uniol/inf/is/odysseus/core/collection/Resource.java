@@ -7,15 +7,20 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 public class Resource implements Serializable, Comparable<Resource> {
 
 	private static final long serialVersionUID = -9162627611692098365L;
-	private String user;
-	private String resourceName;
-
+	final private String user;
+	final private String resourceName;
+	final private boolean marked;
+	
 	public Resource(IUser user, String resourceName) {
 		this.user = user.getName();
 		this.resourceName = resourceName;
+		marked = false;
 	}
-
-	public Resource() {
+	
+	public Resource(IUser user, String resourceName, boolean marked) {
+		this.user = user.getName();
+		this.resourceName = resourceName;
+		this.marked = marked;
 	}
 	
 	public Resource(String resourcename) {
@@ -26,11 +31,19 @@ public class Resource implements Serializable, Comparable<Resource> {
 		} else {
 			throw new IllegalArgumentException("Parameter " + resourcename + " does not contain a '.'");
 		}
+		marked = false;
 	}
 
 	public Resource(String username, String resourceName) {
 		this.user = username;
 		this.resourceName = resourceName;
+		marked = false;
+	}
+	
+	public Resource(String username, String resourceName, boolean marked) {
+		this.user = username;
+		this.resourceName = resourceName;
+		this.marked = marked;
 	}
 
 	public String getUser() {
@@ -39,6 +52,10 @@ public class Resource implements Serializable, Comparable<Resource> {
 
 	public String getResourceName() {
 		return resourceName;
+	}
+	
+	public boolean isMarked() {
+		return marked;
 	}
 
 	public String getShortString(String caller) {

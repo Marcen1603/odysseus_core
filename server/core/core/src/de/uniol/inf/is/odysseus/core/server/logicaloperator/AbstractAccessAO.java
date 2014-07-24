@@ -32,12 +32,12 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFTimeUnit;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AccessAOSourceParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResourceParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 
@@ -45,7 +45,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -5423444612698319659L;
 
-	private Resource accessAOName;
+	private Resource accessAOResource;
 	private String wrapper;
 	private String dataHandler;
 	private String protocolHandler;
@@ -73,7 +73,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		dataHandler = po.dataHandler;
 		protocolHandler = po.protocolHandler;
 		transportHandler = po.transportHandler;
-		accessAOName = po.accessAOName;
+		accessAOResource = po.accessAOResource;
 		if (po.attributes != null) {
 			this.attributes = new ArrayList<>(po.attributes);
 		}
@@ -91,14 +91,14 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		this.optionsMap.putAll(optionsMap);
 	}
 
-	@Parameter(type = ResourceParameter.class, name = "source", optional = false, doc = "The name of the sourcetype to create.")
+	@Parameter(type = AccessAOSourceParameter.class, name = "source", optional = false, doc = "The name of the sourcetype to create.")
 	public void setAccessAOName(Resource name) {
 		super.setName(name.getResourceName());
-		this.accessAOName = name;
+		this.accessAOResource = name;
 	}
 
 	public Resource getAccessAOName() {
-		return accessAOName;
+		return accessAOResource;
 	}
 
 	public void setWrapper(String wrapper) {
@@ -255,6 +255,11 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	@Override
 	public boolean isValid() {
 
+		if (accessAOResource.isMarked() && this.attributes != null){
+			addError(new IllegalArgumentException("Source "+accessAOResource+" already defined!"));
+			return false;
+		}
+		
 		if (this.inputSchema != null) {
 			if (this.attributes.size() != this.inputSchema.size()) {
 				addError(new IllegalArgumentException(
