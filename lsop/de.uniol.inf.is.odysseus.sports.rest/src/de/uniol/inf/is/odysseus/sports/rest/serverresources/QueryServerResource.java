@@ -6,8 +6,6 @@ import org.restlet.ext.jackson.JacksonRepresentation;
 import org.restlet.resource.ServerResource;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.StandardExecutor;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.sports.rest.dao.DataTransferObject;
 import de.uniol.inf.is.odysseus.sports.rest.dao.PeerSocket;
 import de.uniol.inf.is.odysseus.sports.rest.resources.IQueryResource;
