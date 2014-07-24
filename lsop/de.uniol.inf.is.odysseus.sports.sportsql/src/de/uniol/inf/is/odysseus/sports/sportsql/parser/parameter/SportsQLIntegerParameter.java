@@ -7,6 +7,10 @@ public class SportsQLIntegerParameter implements ISportsQLParameter{
 	public SportsQLIntegerParameter(int value) {
 		this.value = value;
 	}
+	
+	public SportsQLIntegerParameter() {
+
+	}
 
 	public int getValue() {
 		return value;

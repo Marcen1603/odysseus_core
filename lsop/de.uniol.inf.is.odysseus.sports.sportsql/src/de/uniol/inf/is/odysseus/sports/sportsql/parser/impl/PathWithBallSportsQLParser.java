@@ -60,7 +60,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 				@SportsQLParameter(name = "accuracy", parameterClass = SportsQLDoubleParameter.class, mandatory = false),
 				@SportsQLParameter(name = "proximity", parameterClass = SportsQLDoubleParameter.class, mandatory = false),
 				@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
-				@SportsQLParameter(name = "space", parameterClass = SportsQLTimeParameter.class, mandatory = false)
+				@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false)
 				}				
 		)
 

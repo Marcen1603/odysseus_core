@@ -7,6 +7,9 @@ public class SportsQLDoubleParameter implements ISportsQLParameter{
 	public SportsQLDoubleParameter(double value) {
 		this.value = value;
 	}
+	
+	public SportsQLDoubleParameter( ) {
+	}
 
 	public double getValue() {
 		return value;

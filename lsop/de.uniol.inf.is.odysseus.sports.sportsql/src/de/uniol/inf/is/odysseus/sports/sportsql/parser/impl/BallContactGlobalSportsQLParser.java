@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 		name = "ball_contact",
 		parameters = { 
 				@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
-				@SportsQLParameter(name = "space", parameterClass = SportsQLTimeParameter.class, mandatory = false)
+				@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false)
 			}
 		)
 public class BallContactGlobalSportsQLParser implements ISportsQLParser {

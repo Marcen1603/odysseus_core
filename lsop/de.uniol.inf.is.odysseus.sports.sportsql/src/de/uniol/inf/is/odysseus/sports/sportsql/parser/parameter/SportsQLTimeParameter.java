@@ -17,6 +17,10 @@ public class SportsQLTimeParameter implements ISportsQLParameter{
 		this.time = time;
 	}
 	
+	public SportsQLTimeParameter() {
+
+	}
+	
 	public int getStart() {
 		return start;
 	}

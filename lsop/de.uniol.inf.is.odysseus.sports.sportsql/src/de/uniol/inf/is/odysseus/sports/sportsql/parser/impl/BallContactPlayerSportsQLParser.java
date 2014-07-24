@@ -44,7 +44,7 @@ public class BallContactPlayerSportsQLParser implements ISportsQLParser {
 		
 		sql.setGameType(sportsQL.getGameType());
 		sql.setName(sportsQL.getName());
-		sql.setStatisticType("global"); //to use global stats
+		sql.setStatisticType(StatisticType.GLOBAL); //to use global stats
 			
 		ILogicalQuery global_query = ballcontacts_global.parse(sql);
 		

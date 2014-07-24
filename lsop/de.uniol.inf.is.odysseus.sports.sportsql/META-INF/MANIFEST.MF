@@ -6,7 +6,11 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.sports.sportsql.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Import-Package: com.fasterxml.jackson.databind,
+Import-Package: com.fasterxml.jackson.core,
+ com.fasterxml.jackson.databind,
+ com.fasterxml.jackson.databind.deser.std,
+ com.fasterxml.jackson.databind.module,
+ com.fasterxml.jackson.databind.node,
  de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.rcp,
  de.uniol.inf.is.odysseus.relational.base.predicate,

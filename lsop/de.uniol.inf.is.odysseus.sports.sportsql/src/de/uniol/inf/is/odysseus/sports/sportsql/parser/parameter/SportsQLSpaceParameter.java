@@ -19,6 +19,9 @@ public class SportsQLSpaceParameter implements ISportsQLParameter {
 		this.endy = endy;
 		this.space = space;
 	}
+	
+	public SportsQLSpaceParameter() {
+	}
 
 	public int getStartx() {
 		return startx;

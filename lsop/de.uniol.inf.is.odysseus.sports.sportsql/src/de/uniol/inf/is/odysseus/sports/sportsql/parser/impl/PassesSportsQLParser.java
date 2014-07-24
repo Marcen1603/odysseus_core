@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuild
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 
 
 /**
@@ -62,9 +63,9 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 		statisticTypes = { StatisticType.PLAYER, StatisticType.TEAM, StatisticType.GLOBAL}, 
 		name = "passes",
 		parameters = { 
-				@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
-				@SportsQLParameter(name = "space", parameterClass = SportsQLTimeParameter.class, mandatory = false)
-				}
+				@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = true),
+				@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = true)
+			}
 		)
 public class PassesSportsQLParser implements ISportsQLParser {
 	

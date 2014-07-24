@@ -17,13 +17,13 @@ public class QueryServerResource extends ServerResource implements
 		IQueryResource {
 
 	@Override
-	public void receiveQuery(SportsQLQuery sportsQL) {
+	public void receiveQuery(String sportsQL) {
 
 		Response r = getResponse();
 		try {
-			ISportsQLParser parser = SportsQLParserRegistry
-					.getSportsQLParser(sportsQL);
-			ILogicalQuery logicalQuery = parser.parse(sportsQL);
+			SportsQLQuery query = SportsQLParserRegistry.createSportsQLQuery(sportsQL);
+			ISportsQLParser parser = SportsQLParserRegistry.getSportsQLParser(query);
+			ILogicalQuery logicalQuery = parser.parse(query);
 			System.out.println(logicalQuery.getName());
 
 			// TODO Install query

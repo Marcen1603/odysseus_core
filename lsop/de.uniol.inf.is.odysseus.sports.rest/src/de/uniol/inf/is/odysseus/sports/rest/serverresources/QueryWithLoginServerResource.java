@@ -24,7 +24,7 @@ public class QueryWithLoginServerResource extends ServerResource implements
 	public static String sToken;
 
 	@Override
-	public void receiveQuery(SportsQLQuery sportsQL) {
+	public void receiveQuery(String sportsQL) {
 		Response response = getResponse();
 		try {
 			// is always null :(
@@ -34,9 +34,10 @@ public class QueryWithLoginServerResource extends ServerResource implements
 			if (securityToken  == null || session == null) {
 		       throw new ResourceException(Status.SERVER_ERROR_INTERNAL, "Please log in");
 			} else {
-				ISportsQLParser parser = SportsQLParserRegistry.getSportsQLParser(sportsQL);
+				SportsQLQuery query = SportsQLParserRegistry.createSportsQLQuery(sportsQL);
+				ISportsQLParser parser = SportsQLParserRegistry.getSportsQLParser(query);
 
-				ILogicalQuery logicalQuery = parser.parse(sportsQL);			
+				ILogicalQuery logicalQuery = parser.parse(query);			
 				IServerExecutor executor = ExecutorServiceBinding.getExecutor();
 				executor.addQuery(logicalQuery.getLogicalPlan(), session, "Standard");
 			
