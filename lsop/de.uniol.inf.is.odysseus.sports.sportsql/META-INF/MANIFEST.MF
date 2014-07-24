@@ -20,8 +20,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  com.google.guava,
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.server.intervalapproach;bundle-version="1.0.0"
-Service-Component: OSGI-INF/MileageTeamSportsQLParser.xml,OSGI-INF/SportsQLParserRegistry.xml,OSGI-INF/MileagePlayerSportsQLParser.xml,OSGI-INF/IDataDictionary.xml,OSGI-INF/PathWithBallSportsQLParser.xml,OSGI-INF/BallContactGlobalSportsQLParser.xml,OSGI-INF/PassesSportsQLParser.xml,OSGI-INF/GoalsSportsQLParser.xml,
- OSGI-INF/GlobalGameSportsQLParser.xml
+Service-Component: OSGI-INF/MileageTeamSportsQLParser.xml,OSGI-INF/SportsQLParserRegistry.xml,OSGI-INF/MileagePlayerSportsQLParser.xml,OSGI-INF/IDataDictionary.xml,OSGI-INF/PathWithBallSportsQLParser.xml,OSGI-INF/BallContactGlobalSportsQLParser.xml,OSGI-INF/PassesSportsQLParser.xml,OSGI-INF/GoalsSportsQLParser.xml,OSGI-INF/GlobalGameSportsQLParser.xml,
+ OSGI-INF/CornerKicksGlobalSportsQLParser.xml
 Export-Package: de.uniol.inf.is.odysseus.sports.sportsql.parser,
  de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper,
  de.uniol.inf.is.odysseus.sports.sportsql.registry
