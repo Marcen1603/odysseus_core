@@ -33,7 +33,7 @@ public class AddQueryCommand extends AbstractExecutorCommand {
 	}
 
 	@Override
-	public Collection<Integer> execute(IDataDictionaryWritable dd,
+	public void execute(IDataDictionaryWritable dd,
 			IUserManagementWritable um, IServerExecutor executor) {
 		Collection<Integer> queries = executor.addQuery(queryText, parserID,
 				getCaller(), transCfgName, context, addSettings);
@@ -42,7 +42,7 @@ public class AddQueryCommand extends AbstractExecutorCommand {
 				executor.startQuery(q, getCaller());
 			}
 		}
-		return queries;
+		addCreatedQueryIds(queries);
 	}
 
 }

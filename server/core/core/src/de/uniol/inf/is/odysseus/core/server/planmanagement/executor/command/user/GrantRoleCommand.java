@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user;
 
-import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
@@ -24,7 +23,7 @@ public class GrantRoleCommand extends AbstractExecutorCommand {
 	}
 
 	@Override
-	public Collection<Integer> execute(IDataDictionaryWritable dd,
+	public void execute(IDataDictionaryWritable dd,
 			IUserManagementWritable um, IServerExecutor executor) {
 		IUser user = um.findUser(userName, getCaller());
 		if (user != null) {
@@ -40,7 +39,6 @@ public class GrantRoleCommand extends AbstractExecutorCommand {
 		} else {
 			throw new QueryParseException("User " + userName + " not found");
 		}
-		return getEmptyCollection();
 	}
 
 }

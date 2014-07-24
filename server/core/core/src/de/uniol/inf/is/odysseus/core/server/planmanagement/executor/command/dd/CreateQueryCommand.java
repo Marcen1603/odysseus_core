@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd;
 
-import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
@@ -19,7 +18,7 @@ public class CreateQueryCommand extends AbstractExecutorCommand {
 	}
 	
 	@Override
-	public Collection<Integer> execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
+	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
 		throw new RuntimeException("This method cannot be called! Use Executor to execute instead!");
 		//return null;
 	}

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd;
 
-import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -23,9 +22,8 @@ public class CreateStreamCommand extends AbstractExecutorCommand {
 	}
 	
 	@Override
-	public Collection<Integer> execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
+	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
 		dd.setStream(name, rootAO, getCaller());		
-		return getEmptyCollection();
 	}
 	
 	@Override

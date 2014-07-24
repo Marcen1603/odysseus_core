@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user;
 
-import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -19,13 +18,12 @@ public class DropRoleCommand extends AbstractExecutorCommand {
 	}
 
 	@Override
-	public Collection<Integer> execute(IDataDictionaryWritable dd,
+	public void execute(IDataDictionaryWritable dd,
 			IUserManagementWritable um, IServerExecutor executor) {
 		IRole role = um.findRole(rolename, getCaller());
 		if (role != null) {
 			um.deleteRole(role, getCaller());
 		}
-		return getEmptyCollection();
 	}
 
 }

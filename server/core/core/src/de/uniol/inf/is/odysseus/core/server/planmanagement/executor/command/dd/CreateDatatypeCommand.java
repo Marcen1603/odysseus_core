@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd;
 
-import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
@@ -19,10 +18,9 @@ public class CreateDatatypeCommand extends AbstractExecutorCommand {
 	}
 
 	@Override
-	public Collection<Integer> execute(IDataDictionaryWritable dd,
+	public void execute(IDataDictionaryWritable dd,
 			IUserManagementWritable um, IServerExecutor executor) {
 		dd.addDatatype(newType);
-		return getEmptyCollection();
 	}
 
 }

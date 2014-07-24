@@ -58,7 +58,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPerm
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPreTransformationHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.GetQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.IExecutionSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEvent;
@@ -402,18 +401,16 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			// extract query and go the standard way
 			if (cmd instanceof CreateQueryCommand) {
 				newQueries.add(((CreateQueryCommand) cmd).getQuery());
-			} else if (cmd instanceof GetQueryCommand) {
-				optimizedQueries.add(executionPlan
-						.getQueryById(((GetQueryCommand) cmd).getQueryID()));
 			} else {
 				// execute command
 				LOG.debug("Executing " + cmd);
 				// Remark: AddQueryCommand returns a set of query ids, that were added
 				// These ids must be returned to the first caller (i.e. calling odysseus script)
-				Collection<Integer> result = cmd.execute(getDataDictionary(cmd
+				cmd.execute(getDataDictionary(cmd
 						.getCaller()),
 						(IUserManagementWritable) UserManagementProvider
 								.getUsermanagement(true), this);
+				Collection<Integer> result = cmd.getCreatedQueryIds();
 				if (result != null) {
 					for (Integer qId : result) {
 						optimizedQueries.add(executionPlan.getQueryById(qId));

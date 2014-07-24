@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user;
 
-import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
@@ -28,7 +27,7 @@ public class RevokePermissionCommand extends AbstractExecutorCommand {
 	}
 	
 	@Override
-	public Collection<Integer> execute(IDataDictionaryWritable dd,
+	public void execute(IDataDictionaryWritable dd,
 			IUserManagementWritable um, IServerExecutor executor) {
 		IUser user = um.findUser(userName, getCaller());
 		if (user != null) {
@@ -58,7 +57,6 @@ public class RevokePermissionCommand extends AbstractExecutorCommand {
 
 			}
 		}
-		return getEmptyCollection();
 	
 	}
 

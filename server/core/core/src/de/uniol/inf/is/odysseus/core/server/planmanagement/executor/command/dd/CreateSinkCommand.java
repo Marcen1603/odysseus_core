@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd;
 
-import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
@@ -21,9 +20,8 @@ public class CreateSinkCommand extends AbstractExecutorCommand {
 	}
 	
 	@Override
-	public Collection<Integer> execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
+	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
 		dd.addSink(name, sinkAO, getCaller());
-		return getEmptyCollection();
 	}
 
 

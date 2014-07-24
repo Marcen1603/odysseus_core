@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
@@ -30,7 +29,7 @@ public class GrantPermissionCommand extends AbstractExecutorCommand {
 	}
 
 	@Override
-	public Collection<Integer> execute(IDataDictionaryWritable dd,
+	public void execute(IDataDictionaryWritable dd,
 			IUserManagementWritable um, IServerExecutor executor) {
 		
 		List<Resource> resources = new ArrayList<>();
@@ -71,7 +70,6 @@ public class GrantPermissionCommand extends AbstractExecutorCommand {
 
 			}
 		}
-		return getEmptyCollection();
 	}
 
 }

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user;
 
-import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
@@ -24,14 +23,13 @@ public class RevokeRoleCommand extends AbstractExecutorCommand {
 	}
 
 	@Override
-	public Collection<Integer> execute(IDataDictionaryWritable dd,
+	public void execute(IDataDictionaryWritable dd,
 			IUserManagementWritable um, IServerExecutor executor) {
 		IUser user = um.findUser(userName, getCaller());
 		for (String rolename : roles) {
 			IRole role = um.getRole(rolename, getCaller());
 			um.revokeRole(user, role, getCaller());
 		}
-		return null;
 	}
 
 }

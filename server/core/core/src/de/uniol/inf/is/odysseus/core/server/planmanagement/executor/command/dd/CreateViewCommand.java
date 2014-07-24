@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -27,7 +26,7 @@ public class CreateViewCommand extends AbstractExecutorCommand {
 	}
 
 	@Override
-	public Collection<Integer> execute(IDataDictionaryWritable dd,
+	public void execute(IDataDictionaryWritable dd,
 			IUserManagementWritable um, IServerExecutor executor) {
 		RenameAO rename = new RenameAO();
 		rename.subscribeTo(rootAO, rootAO.getOutputSchema());
@@ -44,7 +43,6 @@ public class CreateViewCommand extends AbstractExecutorCommand {
 		rename.setOutputSchema(new SDFSchema(rootAO.getOutputSchema().getURI(), rootAO.getOutputSchema(),
 				attributes));
 		dd.setView(name, rename, getCaller());
-		return getEmptyCollection();
 	}
 
 	@Override

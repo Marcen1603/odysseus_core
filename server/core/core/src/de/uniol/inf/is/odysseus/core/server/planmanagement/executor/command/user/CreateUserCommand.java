@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user;
 
-import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -22,13 +21,12 @@ public class CreateUserCommand extends AbstractExecutorCommand {
 	}
 
 	@Override
-	public Collection<Integer> execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
+	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
 		IUser user = um.createUser(username, getCaller());
 		if (user == null)
 			throw new QueryParseException("User cannot be created.");
 		um.changePassword(user, password.getBytes(), getCaller());
 		um.activateUser(user, getCaller());
-		return getEmptyCollection();
 	}
 
 }
