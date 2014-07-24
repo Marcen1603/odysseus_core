@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
@@ -82,10 +83,10 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		ArrayList<String> attributes = new ArrayList<String>();
 		
 		//get the time parameter 
-		SportsQLTimeParameter timeParameter = (SportsQLTimeParameter) sportsQL.getParameters().get("time");
+		SportsQLTimeParameter timeParameter = SportsQLParameterHelper.getTimeParameter(sportsQL);;
 		
 		//get the space parameter
-		SportsQLSpaceParameter spaceParameter = (SportsQLSpaceParameter) sportsQL.getParameters().get("space");
+		SportsQLSpaceParameter spaceParameter = SportsQLParameterHelper.getSpaceParameter(sportsQL);;
 
 		
 		String soccerGameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;

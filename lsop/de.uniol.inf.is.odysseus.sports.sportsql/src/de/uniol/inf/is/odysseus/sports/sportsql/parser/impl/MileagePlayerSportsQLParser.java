@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
@@ -51,7 +52,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		allOperators.add(firstMap);
 
 		// 2. Correct selection for the time
-		SportsQLTimeParameter timeParam = (SportsQLTimeParameter) sportsQL.getParameters().get("time");
+		SportsQLTimeParameter timeParam = SportsQLParameterHelper.getTimeParameter(sportsQL);;
 
 		// TODO SelectAO does not have an output schema - why?
 		SelectAO timeSelect = OperatorBuildHelper.createTimeSelect(timeParam,

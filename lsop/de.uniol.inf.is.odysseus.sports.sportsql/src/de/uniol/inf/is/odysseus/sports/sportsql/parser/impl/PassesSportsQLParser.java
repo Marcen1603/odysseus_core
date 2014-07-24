@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.MetadataAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
@@ -121,7 +122,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 
 		
 		// 1. Time Parameter
-		SportsQLTimeParameter timeParameter = (SportsQLTimeParameter) sportsQL.getParameters().get("time");
+		SportsQLTimeParameter timeParameter = SportsQLParameterHelper.getTimeParameter(sportsQL);
 		SelectAO gameTimeSelect = OperatorBuildHelper.createTimeSelect(timeParameter, soccerGameAccessAO);
 		allOperators.add(gameTimeSelect);
 		

@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
@@ -142,8 +143,8 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		}
 		
 		//Fetch time and Space parameters from Query.
-		SportsQLTimeParameter timeParameter = (SportsQLTimeParameter) sportsQL.getParameters().get("time");
-		SportsQLSpaceParameter spaceParameter = (SportsQLSpaceParameter) sportsQL.getParameters().get("space");
+		SportsQLTimeParameter timeParameter = SportsQLParameterHelper.getTimeParameter(sportsQL);;
+		SportsQLSpaceParameter spaceParameter = SportsQLParameterHelper.getSpaceParameter(sportsQL);;
 
 		
 		///Beginning of QueryPlan.
