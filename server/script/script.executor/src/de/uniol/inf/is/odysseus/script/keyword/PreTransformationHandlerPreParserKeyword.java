@@ -10,6 +10,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -35,7 +36,7 @@ public class PreTransformationHandlerPreParserKeyword extends AbstractPreParserE
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
 		

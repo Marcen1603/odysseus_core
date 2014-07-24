@@ -15,16 +15,18 @@
   */
 package de.uniol.inf.is.odysseus.script.parser;
 
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 
@@ -54,14 +56,14 @@ public final class PreParserStatement {
 		keyword.validate(variables, parameter, caller, context.copy());
 	}
 	
-	Optional<?> execute( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser) throws OdysseusScriptException {
+	List<IExecutorCommand> execute( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser) throws OdysseusScriptException {
 		if( keyword.isDeprecated() ) {
 			logDeprecation();
 		}
 		
 		keyword.setParser(parser);
-		Object result = keyword.execute(variables, parameter, caller, context.copy());
-		return result == null ? Optional.absent() : Optional.of(result);
+		List<IExecutorCommand> commands = keyword.execute(variables, parameter, caller, context.copy());
+		return commands == null ? Lists.<IExecutorCommand>newArrayList() : commands;
 	}
 
 	private void logDeprecation() {

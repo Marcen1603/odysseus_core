@@ -7,6 +7,7 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.DoMergeParameter;
@@ -23,7 +24,7 @@ public class DoMergePreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		List<IQueryBuildSetting<?>> addSettings = getAdditionalTransformationSettings(variables);
 		if ("FALSE".equals(parameter.toUpperCase())) {
 			addSettings.add(DoMergeParameter.FALSE);

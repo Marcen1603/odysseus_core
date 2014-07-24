@@ -8,6 +8,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
@@ -24,7 +25,7 @@ public class CreateStoredProcedureKeyword extends AbstractPreParserExecutorKeywo
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {	
+	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {	
 		int start = parameter.indexOf(KEY_BEGIN) + KEY_BEGIN.length();
 		int end = parameter.indexOf(KEY_END);
 		String[] lines = parameter.split(System.lineSeparator());

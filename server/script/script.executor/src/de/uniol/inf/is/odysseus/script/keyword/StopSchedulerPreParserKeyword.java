@@ -16,10 +16,12 @@
 
 package de.uniol.inf.is.odysseus.script.keyword;
 
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -43,11 +45,11 @@ public class StopSchedulerPreParserKeyword extends AbstractPreParserExecutorKeyw
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		try {
 			ISchedulerManager manager = getServerExecutor().getSchedulerManager();
 			manager.stopScheduling();
-			return true;
+			return null;
 		} catch (NoSchedulerLoadedException ex) {
 			throw new OdysseusScriptException("Could not stop scheduler", ex);
 		} 

@@ -15,10 +15,12 @@
  */
 package de.uniol.inf.is.odysseus.script.keyword;
 
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
@@ -36,7 +38,7 @@ AbstractPreParserExecutorKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context)
+	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context)
 			throws OdysseusScriptException {
 		IExecutor executor = getServerExecutor();
 		if (executor == null)

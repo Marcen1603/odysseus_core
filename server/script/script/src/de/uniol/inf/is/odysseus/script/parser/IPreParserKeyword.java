@@ -16,9 +16,11 @@
 package de.uniol.inf.is.odysseus.script.parser;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 
@@ -33,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 public interface IPreParserKeyword {
 
 	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException;
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException;
+	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException;
 	
 	void setParser(IOdysseusScriptParser parser);
 	IOdysseusScriptParser getParser();	

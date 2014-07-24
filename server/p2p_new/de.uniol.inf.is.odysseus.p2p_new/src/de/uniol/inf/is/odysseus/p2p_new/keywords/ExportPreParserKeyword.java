@@ -1,10 +1,12 @@
 package de.uniol.inf.is.odysseus.p2p_new.keywords;
 
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
@@ -35,7 +37,7 @@ public class ExportPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		String sourceToPublish = parameter.trim();
 
 		P2PNetworkManager.waitForStart();
