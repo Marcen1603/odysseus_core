@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.script.executor;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.misc.SleepCommand;
 import de.uniol.inf.is.odysseus.script.keyword.ActivateRewriteRulePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.AddQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.BufferPlacementPreParserKeyword;
@@ -36,6 +37,7 @@ import de.uniol.inf.is.odysseus.script.keyword.PlanGenerationMethodPreParserKeyw
 import de.uniol.inf.is.odysseus.script.keyword.PreTransformationHandlerPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.RequiredFeaturePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.SchedulerPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.SleepPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.StartAllClosedQueriesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.StartSchedulerPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.StopSchedulerPreParserKeyword;
@@ -75,6 +77,7 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(PreTransformationHandlerPreParserKeyword.KEYWORD, PreTransformationHandlerPreParserKeyword.class);
 		keywords.put(ActivateRewriteRulePreParserKeyword.ACTIVATEREWRITERULE, ActivateRewriteRulePreParserKeyword.class);
 		keywords.put(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE, DeActivateRewriteRulePreParserKeyword.class);
+		keywords.put(SleepPreParserKeyword.NAME, SleepPreParserKeyword.class);
 return keywords;
 	}
 

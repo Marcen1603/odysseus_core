@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user;
+package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.misc;
 
 import java.util.Collection;
 
@@ -6,26 +6,26 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritab
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
-import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public class DropRoleCommand extends AbstractExecutorCommand {
+public class SleepCommand extends AbstractExecutorCommand {
 
-	private String rolename;
+	private long millis;
 
-	public DropRoleCommand(String rolename, ISession caller) {
+	public SleepCommand(long millis, ISession caller) {
 		super(caller);
-		this.rolename = rolename;
+		this.millis = millis;
 	}
 
 	@Override
 	public Collection<Integer> execute(IDataDictionaryWritable dd,
 			IUserManagementWritable um, IServerExecutor executor) {
-		IRole role = um.findRole(rolename, getCaller());
-		if (role != null) {
-			um.deleteRole(role, getCaller());
+		try {
+			Thread.sleep(millis, 0);
+		} catch (InterruptedException e) {
 		}
-		return getEmptyCollection();
+		return null;
 	}
+
 
 }

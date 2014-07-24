@@ -6,6 +6,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.PermissionFactory;
@@ -30,7 +31,7 @@ public class GrantPermissionCommand extends AbstractExecutorCommand {
 
 	@Override
 	public Collection<Integer> execute(IDataDictionaryWritable dd,
-			IUserManagementWritable um) {
+			IUserManagementWritable um, IServerExecutor executor) {
 		
 		List<Resource> resources = new ArrayList<>();
 		// Validate object names

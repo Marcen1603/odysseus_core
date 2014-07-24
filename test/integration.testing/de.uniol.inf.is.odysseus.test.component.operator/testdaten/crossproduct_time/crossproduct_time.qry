@@ -1,6 +1,6 @@
 ///OdysseusScript
 #PARSER PQL
-#RUNQUERY
+#ADDQUERY
 wind = ACCESS({
 	source='wind', 
 	wrapper='GenericPull',

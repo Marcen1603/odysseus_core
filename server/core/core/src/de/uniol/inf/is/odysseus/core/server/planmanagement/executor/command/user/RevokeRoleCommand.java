@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
 import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
@@ -24,7 +25,7 @@ public class RevokeRoleCommand extends AbstractExecutorCommand {
 
 	@Override
 	public Collection<Integer> execute(IDataDictionaryWritable dd,
-			IUserManagementWritable um) {
+			IUserManagementWritable um, IServerExecutor executor) {
 		IUser user = um.findUser(userName, getCaller());
 		for (String rolename : roles) {
 			IRole role = um.getRole(rolename, getCaller());

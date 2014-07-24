@@ -1,13 +1,13 @@
 ///OdysseusScript
 #PARSER CQL
-#RUNQUERY
+#ADDQUERY
 DROP STREAM nexmark:auction2;
-#RUNQUERY
+#ADDQUERY
 DROP STREAM nexmark:person2;
-#RUNQUERY
+#ADDQUERY
 ATTACH STREAM nexmark:auction2 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) FILE '${BUNDLE-ROOT}/testdaten/daten/nexmark_auction2.csv' AS SimpleCSV;
-#RUNQUERY
+#ADDQUERY
 ATTACH STREAM nexmark:person2 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) FILE '${BUNDLE-ROOT}/testdaten/daten/nexmark_person2.csv' AS SimpleCSV;
 
-#RUNQUERY
+#ADDQUERY
 SELECT p.name, p.city, p.state, a.id FROM nexmark:auction2 [UNBOUNDED] AS a, nexmark:person2 [UNBOUNDED] AS p WHERE a.seller=p.id AND a.category < 150 AND (p.state='Oregon' OR p.state='Idaho' OR p.state='California');	

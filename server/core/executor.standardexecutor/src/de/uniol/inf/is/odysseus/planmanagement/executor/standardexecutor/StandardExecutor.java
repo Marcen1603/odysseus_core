@@ -408,9 +408,17 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			} else {
 				// execute command
 				LOG.debug("Executing " + cmd);
-				cmd.execute(getDataDictionary(cmd.getCaller()),
+				// Remark: AddQueryCommand returns a set of query ids, that were added
+				// These ids must be returned to the first caller (i.e. calling odysseus script)
+				Collection<Integer> result = cmd.execute(getDataDictionary(cmd
+						.getCaller()),
 						(IUserManagementWritable) UserManagementProvider
-								.getUsermanagement(true));
+								.getUsermanagement(true), this);
+				if (result != null) {
+					for (Integer qId : result) {
+						optimizedQueries.add(executionPlan.getQueryById(qId));
+					}
+				}
 			}
 		}
 
@@ -863,7 +871,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			// else use default rule base
 			if (activeRules != null || inactiveRules != null) {
 				rewriteConfig = new RewriteConfiguration(rulesToApply);
-			}else{
+			} else {
 				rewriteConfig = new RewriteConfiguration(null);
 			}
 

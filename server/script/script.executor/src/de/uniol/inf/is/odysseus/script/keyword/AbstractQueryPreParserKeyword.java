@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.script.keyword;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPlanManager;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.GetQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
@@ -103,7 +103,7 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 
 			IExecutor executor = getServerExecutor();
 
-			Collection<Integer> queriesToStart = null;
+			List<IExecutorCommand> commands = new LinkedList<>();
 
 			// Add rules to use to context
 			if (variables.containsKey(ActivateRewriteRulePreParserKeyword.ACTIVATEREWRITERULE)) {
@@ -111,38 +111,23 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 			}
 			if (variables.containsKey(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE)) {
 				context.put(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE, new ArrayList<String>((ArrayList<String>) variables.get(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE)));
-			}
-
+			}			
+			
 			if (addSettings != null) {
 				if (!(executor instanceof IServerExecutor)) {
 					throw new QueryParseException("Additional transformation parameter currently not supported on clients");
 				}
-				queriesToStart = ((IServerExecutor) executor).addQuery(queryText, parserID, queryCaller, transCfgName, context, addSettings);
-
-			} else {
-				queriesToStart = executor.addQuery(queryText, parserID, queryCaller, transCfgName, context);
-			}
+			}	
+			AddQueryCommand cmd = new AddQueryCommand(queryText, parserID, queryCaller, transCfgName, context, addSettings, startQuery());
+			commands.add(cmd);
 
 			ISink defaultSink = variables.containsKey("_defaultSink") ? (ISink) variables.get("_defaultSink") : null;
-			if (defaultSink != null && executor instanceof IPlanManager) {
-				appendSinkToQueries(defaultSink, queriesToStart, (IPlanManager) executor);
-			}
-
-			if (startQuery()) {
-				for (Integer q : queriesToStart) {
-					try {
-						executor.startQuery(q, queryCaller);
-					} catch (Throwable t) {
-						throw new OdysseusScriptException("Query could not be started!", t);
-					}
-				}
-			}
 			
-			List<IExecutorCommand> commands = Lists.newArrayList();
-			for (Integer q : queriesToStart) {
-				GetQueryCommand queryCommand = new GetQueryCommand(q, caller);
-				commands.add(queryCommand);
-			}
+			if (defaultSink != null && executor instanceof IPlanManager) {
+				throw new IllegalArgumentException("_Default Sink currently not supported!");
+				//appendSinkToQueries(defaultSink, queriesToStart, (IPlanManager) executor);
+			}		
+	
 			return commands;
 			
 		} catch (QueryParseException ex) {
