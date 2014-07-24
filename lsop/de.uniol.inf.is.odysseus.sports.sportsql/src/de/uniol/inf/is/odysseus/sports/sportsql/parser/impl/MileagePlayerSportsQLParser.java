@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 @SportsQL(
 		gameTypes = { GameType.SOCCER },
 		statisticTypes = { StatisticType.PLAYER },
-		name = "mileageplayer",
+		name = "mileage",
 		parameters = { 
 				@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false)				}
 		)

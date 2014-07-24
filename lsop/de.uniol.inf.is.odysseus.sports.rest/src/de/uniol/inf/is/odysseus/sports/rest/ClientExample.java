@@ -10,29 +10,39 @@ import org.restlet.resource.ResourceException;
 public class ClientExample {
 
 	public static void main(String[] args) throws ResourceException, IOException {
-		String query = "{"
-				 +	"\"statisticType\": \"team\","
-				 + 	"\"gameType\": \"soccer\","
-				 +  "\"entityId\": 16,"
-				 +  "\"name\": \"passes\","
-				 +  "\"parameters\": {"
-				 +  	"\"time\": { "
-				 +  		"\"start\": 100," 
-				 +  	 	"\"end\": 10000" 
-				 + 		"}, "
-				 +  	"\"space\": { "
-				 +  		"\"startx\": 100," 
-				 +  	 	"\"starty\": 10000," 
-				 +  		"\"endx\": 1001," 
-				 +  	 	"\"endy\": 1221"
-				 + 		"}, "
-				 +  	"\"distance\": { "
-				 +  		"\"minDistance\": 100," 
-				 +  	 	"\"maxDistance\": 10000" 
-				 + 		"}, "
-				 +  	"\"entityIdIsPassReceiver\": true " 
-				 +   "}"
-				 + "}";
+		// Passes for team
+				String statisticsType = "team";
+				String gameType = "soccer";
+				String name = "passes";
+				
+				// Mileage for player
+				statisticsType = "player";
+				gameType = "soccer";
+				name = "mileage";
+				
+				String query = "{"
+						 +	"\"statisticType\": \"" + statisticsType + "\","
+						 + 	"\"gameType\": \"" + gameType + "\","
+						 +  "\"entityId\": 16,"
+						 +  "\"name\": \"" + name + "\","
+						 +  "\"parameters\": {"
+						 +  	"\"time\": { "
+						 +  		"\"start\": 100," 
+						 +  	 	"\"end\": 10000" 
+						 + 		"}, "
+						 +  	"\"space\": { "
+						 +  		"\"startx\": 100," 
+						 +  	 	"\"starty\": 10000," 
+						 +  		"\"endx\": 1001," 
+						 +  	 	"\"endy\": 1221"
+						 + 		"}, "
+						 +  	"\"distance\": { "
+						 +  		"\"minDistance\": 100," 
+						 +  	 	"\"maxDistance\": 10000" 
+						 + 		"}, "
+						 +  	"\"entityIdIsPassReceiver\": true " 
+						 +   "}"
+						 + "}";
 		StringRepresentation stringRep = new StringRepresentation(query);
 		stringRep.setMediaType(MediaType.APPLICATION_JSON);
 		

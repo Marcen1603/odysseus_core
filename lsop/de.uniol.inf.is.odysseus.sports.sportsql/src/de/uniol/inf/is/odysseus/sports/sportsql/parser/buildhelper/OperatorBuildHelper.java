@@ -908,7 +908,6 @@ public class OperatorBuildHelper {
 	 */
 	public static ILogicalQuery finishQuery(ILogicalOperator topSource,
 			List<ILogicalOperator> allOperators, String queryName) {
-		// TopAO (for Odysseus - it wants to know which operator is the top)
 		List<ILogicalOperator> sources = new ArrayList<ILogicalOperator>();
 		sources.add(topSource);
 
