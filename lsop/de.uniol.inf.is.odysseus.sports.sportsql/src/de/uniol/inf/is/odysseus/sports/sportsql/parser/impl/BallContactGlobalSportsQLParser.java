@@ -73,7 +73,6 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 	 */
 	private final String radius = "400";
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL) {
 		
