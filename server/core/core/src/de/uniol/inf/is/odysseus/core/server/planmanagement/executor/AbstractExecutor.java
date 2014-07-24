@@ -1269,8 +1269,10 @@ public abstract class AbstractExecutor implements IServerExecutor,
 				LogicalOperator.class);
 		if (annotation != null) {
 			loi.setHidden(annotation.hidden());
+			loi.setDeprecated(annotation.deprecation());
 		} else {
 			loi.setHidden(false);
+			loi.setDeprecated(false);
 		}
 		loi.setMaxPorts(builder.getMaxInputOperatorCount());
 		loi.setMinPorts(builder.getMinInputOperatorCount());

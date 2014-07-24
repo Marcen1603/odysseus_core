@@ -34,6 +34,7 @@ public class LogicalOperatorInformation {
 	private int minPorts;
 	private String[] categories;
 	private boolean hidden;
+	private boolean deprecated;
 
 	public String getOperatorName() {
 		return operatorName;
@@ -100,5 +101,13 @@ public class LogicalOperatorInformation {
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
 	}	
+	
+	public boolean isDeprecated() {
+		return deprecated;
+	}
+	
+	public void setDeprecated(boolean deprecated) {
+		this.deprecated = deprecated;
+	}
 
 }
