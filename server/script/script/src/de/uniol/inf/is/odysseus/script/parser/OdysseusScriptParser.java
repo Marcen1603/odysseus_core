@@ -53,7 +53,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusScriptParser.class);
 	private static final PreParserKeywordRegistry KEYWORD_REGISTRY = new PreParserKeywordRegistry();
-	private static final String PARSER_NAME = "OdysseusScript";
+	public static final String PARSER_NAME = "OdysseusScript";
 
 	public static final String PARAMETER_KEY = "#";
 

@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
 /**
  * Auswahl des Parsers
@@ -35,30 +38,36 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 public class ParserPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	public static final String PARSER = "PARSER";
-	
+
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
 			ISession caller, Context context) throws OdysseusScriptException {
 		if (parameter.length() == 0)
-			throw new OdysseusScriptException(
-					"Parameter needed for #PARSER");
+			throw new OdysseusScriptException("Parameter needed for #PARSER");
+		if (parameter.equalsIgnoreCase(OdysseusScriptParser.PARSER_NAME))
+			throw new OdysseusScriptException(OdysseusScriptParser.PARSER_NAME+" cannot be used as #PARSER");
+
 		variables.put(PARSER, parameter);
 	}
 
 	@Override
-	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter,
-			ISession caller, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand> execute(Map<String, Object> variables,
+			String parameter, ISession caller, Context context)
+			throws OdysseusScriptException {
 		variables.put(PARSER, parameter);
 		return null;
 	}
-	
+
 	@Override
 	public Collection<String> getAllowedParameters(ISession caller) {
 		try {
-			return getServerExecutor().getSupportedQueryParsers(caller);
-		} catch (PlanManagementException e) {			
+			Set<String> r = new TreeSet<>(getServerExecutor()
+					.getSupportedQueryParsers(caller));
+			r.remove(OdysseusScriptParser.PARSER_NAME);
+			return r;
+		} catch (PlanManagementException e) {
 			e.printStackTrace();
-		} catch (OdysseusScriptException e) {		
+		} catch (OdysseusScriptException e) {
 			e.printStackTrace();
 		}
 		return new ArrayList<>();
