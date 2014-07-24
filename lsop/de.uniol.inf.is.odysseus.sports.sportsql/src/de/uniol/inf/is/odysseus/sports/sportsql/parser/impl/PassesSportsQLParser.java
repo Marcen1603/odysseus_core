@@ -17,9 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -45,29 +43,29 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpacePa
  * 
  * Example Query:
  * 
- * {
- * "statisticType": "player",
- * "gameType": "soccer",
- * "entityId": 16,
- * "name": "passes",
- * "parameters": {
- *  	"time": {
- *      	"start": 10753295594424116,
- *          "end" : 9999999999999999,   
- * 		}
- *    	"space": {
- *      	"startx":-50,
- *         	"starty":-33960,
- *      	"endx":52489,
- *     		"endy":33965
- *   	}
- *    	"distance": {
- *      	"min":1000,
- *         	"max":2000
- *   	}
- *    	"entityIdIsPassReceiver": true
- * }
- * }
+{
+    "statisticType": "team",
+    "gameType": "soccer",
+    "entityId": 16,
+    "name": "passes",
+    "parameters": {
+        "time": {
+            "start": 100,
+            "end": 10000 
+        },
+        "space": {
+            "startx": 100,
+            "starty": 10000,
+            "endx": 1001,
+            "endy": 1221
+        },
+        "distance": {
+            "minDistance": 100,
+            "maxDistance": 10000
+        },
+        "entityIdIsPassReceiver": true
+    }
+};
  * 
  * @author Thore Stratmann
  *
@@ -152,7 +150,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		allOperators.add(ballPosMap);
 
 		// 5. Window with tuple size 1 for the ball data stream
-		WindowAO ballWindow = OperatorBuildHelper.createWindowAO(new TimeValueItem(1, null),WindowType.TUPLE,  new TimeValueItem(1, null), ballPosMap);
+		WindowAO ballWindow = OperatorBuildHelper.createTupleWindowAO(1, 1, ballPosMap);
 		allOperators.add(ballWindow);
 
 		// 6. Attributes x, y, z of the player data stream as one player position attribute
@@ -164,7 +162,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		allOperators.add(playerPosMap);
 
 		// 7. Window with tuple size 1 for the player data stream
-		WindowAO playerWindow = OperatorBuildHelper.createWindowAO( new TimeValueItem(1, null),WindowType.TUPLE,  new TimeValueItem(1, null), playerPosMap);
+		WindowAO playerWindow = OperatorBuildHelper.createTupleWindowAO(1,1, playerPosMap);
 		allOperators.add(playerWindow);
 		
 
