@@ -5,17 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
@@ -102,22 +92,22 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		String metadataSourceName = OperatorBuildHelper.METADATA_STREAM_NAME;
 		
 		//game source
-		AccessAO soccerGameAccessAO = OperatorBuildHelper
+		ILogicalOperator soccerGameAccessAO = OperatorBuildHelper
 				.createAccessAO(soccerGameSourceName);
 		
 		// metadata source
-		AccessAO metadataAccessAO = OperatorBuildHelper.createAccessAO(metadataSourceName);
+		ILogicalOperator metadataAccessAO = OperatorBuildHelper.createAccessAO(metadataSourceName);
 		
 		
 		//count ball contacts with the beginning of the game
-		SelectAO game_after_start = OperatorBuildHelper.createTimeSelect(timeParameter, soccerGameAccessAO);
+		ILogicalOperator game_after_start = OperatorBuildHelper.createTimeSelect(timeParameter, soccerGameAccessAO);
 		allOperators.add(game_after_start);
 		
-		SelectAO game_space = OperatorBuildHelper.createSpaceSelect(spaceParameter, game_after_start);
+		ILogicalOperator game_space = OperatorBuildHelper.createSpaceSelect(spaceParameter, game_after_start);
 		allOperators.add(game_space);
 
 		predicates.add("sid=4 OR sid=8 OR sid=10 OR sid=12");
-		RouteAO split_balls = OperatorBuildHelper.createRouteAO(predicates, game_space);
+		ILogicalOperator split_balls = OperatorBuildHelper.createRouteAO(predicates, game_space);
 		allOperators.add(split_balls);
 		predicates.clear();
 		
@@ -130,52 +120,51 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		groupBy.add("sid");
 		
 		
-		ChangeDetectAO ball_velocity_changes = OperatorBuildHelper.createChangeDetectAO(attributes, OperatorBuildHelper.createAttributeList(groupBy,split_balls),relativeTolerance, velocityChange, split_balls);
+		ILogicalOperator ball_velocity_changes = OperatorBuildHelper.createChangeDetectAO(attributes, OperatorBuildHelper.createAttributeList(groupBy,split_balls),relativeTolerance, velocityChange, split_balls);
 		allOperators.add(ball_velocity_changes);
 		attributes.clear();
 		
 		//Get the current ball in the game
 		predicates.add("x>"+minX+" AND x<"+maxX+" AND y>"+minY+" AND y<"+maxY);
-		SelectAO ball_in_game = OperatorBuildHelper.createSelectAO(predicates, ball_velocity_changes);
-		allOperators.add(ball_in_game);
+		ILogicalOperator ball_in_game_select = OperatorBuildHelper.createSelectAO(predicates, ball_velocity_changes);
+		allOperators.add(ball_in_game_select);
 		predicates.clear();
 		
 		//Get position of active ball in game
-		MapAO ball_position = OperatorBuildHelper.createMapAO(getMapExpressionForBallPosition(ball_in_game), ball_in_game, 0, 0);
-		allOperators.add(ball_position);
+		ILogicalOperator ball_position_map = OperatorBuildHelper.createMapAO(getMapExpressionForBallPosition(ball_in_game_select), ball_in_game_select, 0, 0);
+		allOperators.add(ball_position_map);
 		
-		TimeValueItem windowSize = new TimeValueItem(1, null);
-		TimeValueItem windowAdvance = new TimeValueItem(1, null);
-	
-		WindowAO ball_window = OperatorBuildHelper.createWindowAO(windowSize, WindowType.TUPLE, windowAdvance, ball_position);
+			//window size = 1, advance = 1
+		ILogicalOperator ball_window = OperatorBuildHelper.createTupleWindowAO(1, 1, ball_position_map);
 		allOperators.add(ball_window);
 		
 		//Get position of players in game
-		MapAO players_position = OperatorBuildHelper.createMapAO(getMapExpressionForPlayerPosition(split_balls), split_balls, 0, 1);
-		allOperators.add(players_position);
+		ILogicalOperator players_position_map = OperatorBuildHelper.createMapAO(getMapExpressionForPlayerPosition(split_balls), split_balls, 0, 1);
+		allOperators.add(players_position_map);
 		
-		WindowAO players_window = OperatorBuildHelper.createWindowAO(windowSize, WindowType.TUPLE, windowAdvance, players_position);
-		allOperators.add(players_position);
+			//window size = 1, advance = 1
+		ILogicalOperator players_window = OperatorBuildHelper.createTupleWindowAO(1, 1, players_position_map);
+		allOperators.add(players_window);
 		
 		//Join the sources and show only values if ball is near to a player
 		predicates.add("SpatialDistance(ball_pos,player_pos)<"+ radius);
-		JoinAO proximity = OperatorBuildHelper.createJoinAO(predicates, players_window, ball_window);
-		allOperators.add(proximity);
+		ILogicalOperator proximity_join = OperatorBuildHelper.createJoinAO(predicates, players_window, ball_window);
+		allOperators.add(proximity_join);
 		predicates.clear();
 	
 		//Delete duplicates
 		attributes.add("sid");
-		ChangeDetectAO delete_duplicates = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(attributes,proximity), 0.0, proximity);
+		ILogicalOperator delete_duplicates = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(attributes,proximity_join), 0.0, proximity_join);
 		allOperators.add(delete_duplicates);
 		attributes.clear();
 		
 		//enrich data
-		EnrichAO enriched_proximity = OperatorBuildHelper.createEnrichAO("sid=sensorid", delete_duplicates, metadataAccessAO);
+		ILogicalOperator enriched_proximity = OperatorBuildHelper.createEnrichAO("sid=sensorid", delete_duplicates, metadataAccessAO);
 		allOperators.add(enriched_proximity);
 		
 		//Detect changes in entity_id if another player hits the ball
 		attributes.add("entity_id");
-		ChangeDetectAO output = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(attributes,enriched_proximity), 0.0, enriched_proximity);
+		ILogicalOperator output = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(attributes,enriched_proximity), 0.0, enriched_proximity);
 		allOperators.add(output);
 		attributes.clear();
 
