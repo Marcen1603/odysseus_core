@@ -18,9 +18,33 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpacePa
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 /**
- * Query plan for ball contacts of every player. <br>
- *  
- * @author Thomas
+ * Parser for SportsQL:
+ * Query: Ball contacts of all player.
+ * 
+ * SportsQL:
+ * 
+ * Example Query:
+ * 
+ * {
+ * "statisticType": "global",
+ *   "gameType": "soccer",
+ *   "entityId": 0, 
+ *   "name": "ball_contact",
+ *   "parameters": {
+ *       "time": {
+ *           "start": 10753295594424116,
+ *           "end" : 9999999999999999,   
+ *       }
+ *    "space": {
+ *      	"startx":-50,
+ *          "starty":-33960
+ *      	"endx":52489
+ *     		"endy":33965
+ *   }
+ *  }
+ *}
+ * 
+ * @author Thomas Prünie
  *
  */
 @SportsQL(
@@ -49,27 +73,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 	 */
 	private final String radius = "400";
 	
-	/**
-	 * Min x of the game field
-	 */
-	private final String minX = "-50";
-	
-	/**
-	 * Min y of the game field
-	 */
-	private final String minY = "-33960";
-	
-	/**
-	 * Max x of the game field
-	 */
-	private final String maxX = "52489";
-
-	/**
-	 * Max y of the game field
-	 */
-	private final String maxY = "33965";
-	
-
+	@SuppressWarnings("deprecation")
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL) {
 		
@@ -126,7 +130,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		attributes.clear();
 		
 		//Get the current ball in the game
-		predicates.add("x>"+minX+" AND x<"+maxX+" AND y>"+minY+" AND y<"+maxY);
+		predicates.add("x>"+spaceParameter.getStartx()+" AND x<"+spaceParameter.getEndx()+" AND y>"+spaceParameter.getStarty()+" AND y<"+spaceParameter.getEndy());
 		ILogicalOperator ball_in_game_select = OperatorBuildHelper.createSelectAO(predicates, ball_velocity_changes);
 		allOperators.add(ball_in_game_select);
 		predicates.clear();
