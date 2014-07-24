@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -16,21 +17,50 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
-public class JSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractJSONProtocolHandler<T> {
+public class JSONProtocolHandler<T extends KeyValueObject<? extends IMetaAttribute>> extends AbstractJSONProtocolHandler<T> {
 
+	private static final String WRITE_METADATA = "json.write.metadata";
+	
+	private boolean writemetadata = false;
+	
+	private static final String WRITE_STARTTIMESTAMP_AS = "json.write.starttimestamp";
+	private static final String WRITE_ENDTIMESTAMP_AS = "json.write.endtimestamp";
+	
+	private String startTimestampKey = null;
+	private String endTimestampKey = null;
+	
 	protected static final Logger LOG = LoggerFactory.getLogger(JSONProtocolHandler.class);
 	
 	public JSONProtocolHandler() {
+		super();
 		this.init();
 	}	
 
 	public JSONProtocolHandler(
 			ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler) {
 		super(direction,access,dataHandler);
+		this.init();
+	}
+
+	public JSONProtocolHandler(
+			ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler, Map<String, String> options) {
+		super(direction,access,dataHandler);
+		setOptionsMap(options);
+		if(options.containsKey(WRITE_METADATA)) {
+			writemetadata = Boolean.parseBoolean(options.get(WRITE_METADATA));
+		}
+		if(options.containsKey(WRITE_STARTTIMESTAMP_AS)) {
+			startTimestampKey = options.get(WRITE_STARTTIMESTAMP_AS);
+		}
+		if(options.containsKey(WRITE_ENDTIMESTAMP_AS)) {
+			endTimestampKey = options.get(WRITE_ENDTIMESTAMP_AS);
+		}
 		this.init();
 	}
 	
@@ -49,14 +79,34 @@ public class JSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractJS
 			objects.add(getDataHandler().readData(message));
 			super.process(objects);
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
+			LOG.debug(e.getMessage());
 		}
 	}
 
 	@Override
 	public void write(T kvObject) throws IOException {
 		StringBuilder string = new StringBuilder();
+		if(startTimestampKey != null) {
+			if(!kvObject.getAttributes().containsKey(startTimestampKey)) {
+				kvObject.setAttribute(startTimestampKey, ((ITimeInterval)kvObject.getMetadata()).getStart().getMainPoint());
+			} else {
+				LOG.debug("The key " + startTimestampKey + " is already in use and so the starttimestamp can not be stored.");
+			}
+		}
+		if(endTimestampKey != null) {
+			if(!kvObject.getAttributes().containsKey(endTimestampKey)) {
+				kvObject.setAttribute(endTimestampKey, ((ITimeInterval)kvObject.getMetadata()).getEnd().getMainPoint());
+			} else {
+				LOG.debug("The key " + endTimestampKey + " is already in use and so the endtimestamp can not be stored.");
+			}
+		}
+		
 		this.getDataHandler().writeJSONData(string, kvObject);
+		
+		if(writemetadata) {
+			string.append(" | META | " + kvObject.getMetadata().csvToString(';', ' ', new DecimalFormat(), new DecimalFormat(), false));
+		}
 		string.append(System.getProperty("line.separator"));
 		CharBuffer charBuffer = CharBuffer.wrap(string);
 		ByteBuffer bBuffer = Charset.forName("UTF-8").encode(charBuffer);
@@ -71,8 +121,6 @@ public class JSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractJS
 			ITransportDirection direction, IAccessPattern access,
 			Map<String, String> options,
 			IDataHandler<T> dataHandler) {
-		JSONProtocolHandler<T> instance = new JSONProtocolHandler<T>(direction, access, dataHandler);
-		instance.setOptionsMap(options);
-		return instance;
+		return new JSONProtocolHandler<T>(direction, access, dataHandler, options);
 	}
 }
