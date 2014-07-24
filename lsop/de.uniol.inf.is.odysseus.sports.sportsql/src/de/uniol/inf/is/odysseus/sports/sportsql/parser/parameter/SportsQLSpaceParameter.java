@@ -1,6 +1,6 @@
-package de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper;
+package de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter;
 
-public class SportsQLSpaceParameter {
+public class SportsQLSpaceParameter implements ISportsQLParameter {
 
 	public static final String SPACE_PARAMETER_ALL = "all";
 

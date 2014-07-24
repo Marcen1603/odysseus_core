@@ -11,12 +11,15 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLSpaceParameter;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLTimeParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLIntegerParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLDoubleParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 /**
  * Parser for SportsQL:
@@ -48,7 +51,19 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
  * @author Carsten Cordes
  *
  */
-@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER }, name = "pathwithball")
+@SportsQL(
+		gameTypes = { GameType.SOCCER }, 
+		statisticTypes = { StatisticType.PLAYER },
+		name = "pathwithball",
+		parameters = { 
+				@SportsQLParameter(name = "datarate", parameterClass = SportsQLIntegerParameter.class, mandatory = false),
+				@SportsQLParameter(name = "accuracy", parameterClass = SportsQLDoubleParameter.class, mandatory = false),
+				@SportsQLParameter(name = "proximity", parameterClass = SportsQLDoubleParameter.class, mandatory = false),
+				@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
+				@SportsQLParameter(name = "space", parameterClass = SportsQLTimeParameter.class, mandatory = false)
+				}				
+		)
+
 public class PathWithBallSportsQLParser implements ISportsQLParser {
 
 	@Override
@@ -98,10 +113,10 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		
 		//Set parameters when in sportsQL
 		
-		Map<String,String> parameters = sportsQL.getParameters();
+		Map<String,ISportsQLParameter> parameters = sportsQL.getParameters();
 		if(parameters.containsKey("datarate")) {
 			try {
-				ballDatarate = Integer.parseInt(parameters.get("datarate"));
+				ballDatarate = ((SportsQLIntegerParameter)parameters.get("datarate")).getValue();
 			}
 			catch (Exception e){
 				throw new SportsQLParseException("Illegal value for datarate.");
@@ -110,7 +125,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		
 		if(parameters.containsKey("accuracy")) {
 			try {
-				accuracy = Double.parseDouble(parameters.get("accuracy"));
+				accuracy = ((SportsQLDoubleParameter)parameters.get("accuracy")).getValue();
 			}
 			catch (Exception e){
 				throw new SportsQLParseException("Illegal value for accuracy (needs to be double!).");
@@ -119,7 +134,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		
 		if(parameters.containsKey("proximity")) {
 			try {
-				proximityToBall = Double.parseDouble(parameters.get("proximity"));
+				proximityToBall = ((SportsQLDoubleParameter)parameters.get("proximity")).getValue();
 			}
 			catch (Exception e){
 				throw new SportsQLParseException("Illegal value for proximity (needs to be double!).");
@@ -127,10 +142,8 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		}
 		
 		//Fetch time and Space parameters from Query.
-		SportsQLTimeParameter timeParameter = SportsQLParameterHelper
-				.getTimeParameter(sportsQL);
-		SportsQLSpaceParameter spaceParameter = SportsQLParameterHelper
-				.getSpaceParameter(sportsQL);
+		SportsQLTimeParameter timeParameter = (SportsQLTimeParameter) sportsQL.getParameters().get("time");
+		SportsQLSpaceParameter spaceParameter = (SportsQLSpaceParameter) sportsQL.getParameters().get("space");
 
 		
 		///Beginning of QueryPlan.

@@ -21,4 +21,6 @@ public @interface SportsQL {
 	 public GameType[] gameTypes();
 	 public StatisticType[] statisticTypes();
 	 public String name();
+	 public SportsQLParameter[] parameters();
+
 }

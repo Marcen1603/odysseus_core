@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper;
 
-import java.io.IOException;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 /**
  * Class with static methods which help you to get the parameters from the
@@ -15,25 +15,21 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
  * @since 11.07.2014
  *
  */
+
+
 public class SportsQLParameterHelper {
 
 	public static final String TIME_PARAMTER = "time";
 	public static final String SPACE_PARAMTER = "space";
 
+	@Deprecated
 	public static SportsQLTimeParameter getTimeParameter(SportsQLQuery query) {
 
-		for (Map.Entry<String, String> param : query.getParameters().entrySet()) {
+		for (Map.Entry<String, ISportsQLParameter> param : query.getParameters().entrySet()) {
 			if (param.getKey().equals(TIME_PARAMTER)) {
 				// has time parameter
-				String timeValueJson = param.getValue();
-				ObjectMapper mapper = new ObjectMapper();
-				try {
-					SportsQLTimeParameter timeParameter = mapper.readValue(
-							timeValueJson, SportsQLTimeParameter.class);
-					return timeParameter;
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				
+				return (SportsQLTimeParameter) param.getValue();
 			}
 		}
 
@@ -41,20 +37,14 @@ public class SportsQLParameterHelper {
 		return new SportsQLTimeParameter(0, 0, SportsQLTimeParameter.TIME_PARAMETER_ALWAYS);
 	}
 
+	@Deprecated
 	public static SportsQLSpaceParameter getSpaceParameter(SportsQLQuery query) {
 
-		for (Map.Entry<String, String> param : query.getParameters().entrySet()) {
+		for (Map.Entry<String, ISportsQLParameter> param : query.getParameters().entrySet()) {
 			if (param.getKey().equals(SPACE_PARAMTER)) {
 				// has space parameter
-				String spaceValueJson = param.getValue();
-				ObjectMapper mapper = new ObjectMapper();
-				try {
-					SportsQLSpaceParameter spaceParameter = mapper.readValue(
-							spaceValueJson, SportsQLSpaceParameter.class);
-					return spaceParameter;
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				
+				return (SportsQLSpaceParameter) param.getValue();
 			}
 		}
 		

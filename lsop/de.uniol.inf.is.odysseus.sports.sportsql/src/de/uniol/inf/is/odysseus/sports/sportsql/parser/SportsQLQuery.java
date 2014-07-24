@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.sports.sportsql.parser;
 import java.io.Serializable;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
+
 
 /**
  * This Class represents a simple SportsQL query.
@@ -20,18 +22,18 @@ public class SportsQLQuery implements Serializable {
 	private String statisticType;
 	private String gameType;
 	private long entityId;
-	private Map<String, String> parameters;
+	private Map<String, ISportsQLParameter> parameters;
 	
 	
 	
 
 	
 
-	public Map<String, String> getParameters() {
+	public Map<String, ISportsQLParameter> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(Map<String, String> parameters) {
+	public void setParameters(Map<String, ISportsQLParameter> parameters) {
 		this.parameters = parameters;
 	}
 

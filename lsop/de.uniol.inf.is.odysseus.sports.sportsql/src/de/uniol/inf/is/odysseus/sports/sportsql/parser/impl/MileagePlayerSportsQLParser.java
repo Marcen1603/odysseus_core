@@ -15,13 +15,19 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressio
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLTimeParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
-@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER }, name = "mileageplayer")
+@SportsQL(
+		gameTypes = { GameType.SOCCER },
+		statisticTypes = { StatisticType.PLAYER },
+		name = "mileageplayer",
+		parameters = { 
+				@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false)				}
+		)
 public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
 	@Override
@@ -45,8 +51,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		allOperators.add(firstMap);
 
 		// 2. Correct selection for the time
-		SportsQLTimeParameter timeParam = SportsQLParameterHelper
-				.getTimeParameter(sportsQL);
+		SportsQLTimeParameter timeParam = (SportsQLTimeParameter) sportsQL.getParameters().get("time");
 
 		// TODO SelectAO does not have an output schema - why?
 		SelectAO timeSelect = OperatorBuildHelper.createTimeSelect(timeParam,

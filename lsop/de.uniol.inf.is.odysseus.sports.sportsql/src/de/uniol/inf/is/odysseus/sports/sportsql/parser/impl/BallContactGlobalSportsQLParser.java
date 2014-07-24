@@ -19,12 +19,12 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueIte
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLSpaceParameter;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLTimeParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 /**
  * Query plan for ball contacts of every player. <br>
@@ -32,7 +32,15 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
  * @author Thomas
  *
  */
-@SportsQL(gameTypes = GameType.SOCCER, statisticTypes = { StatisticType.GLOBAL }, name = "ball_contact")
+@SportsQL(
+		gameTypes = GameType.SOCCER, 
+		statisticTypes = { StatisticType.GLOBAL },
+		name = "ball_contact",
+		parameters = { 
+				@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
+				@SportsQLParameter(name = "space", parameterClass = SportsQLTimeParameter.class, mandatory = false)
+			}
+		)
 public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 	
 	/**
@@ -84,12 +92,10 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		ArrayList<String> attributes = new ArrayList<String>();
 		
 		//get the time parameter 
-		SportsQLTimeParameter timeParameter = SportsQLParameterHelper
-				.getTimeParameter(sportsQL);
+		SportsQLTimeParameter timeParameter = (SportsQLTimeParameter) sportsQL.getParameters().get("time");
 		
 		//get the space parameter
-		SportsQLSpaceParameter spaceParameter = SportsQLParameterHelper
-				.getSpaceParameter(sportsQL);
+		SportsQLSpaceParameter spaceParameter = (SportsQLSpaceParameter) sportsQL.getParameters().get("space");
 
 		
 		String soccerGameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;

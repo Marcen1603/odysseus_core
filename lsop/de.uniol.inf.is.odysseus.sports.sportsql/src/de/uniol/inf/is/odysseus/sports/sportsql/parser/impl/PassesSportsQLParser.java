@@ -20,9 +20,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueIte
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 
 /**
@@ -55,7 +57,15 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
  * @author Thore Stratmann
  *
  */
-@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER, StatisticType.TEAM, StatisticType.GLOBAL}, name = "passes")
+@SportsQL(
+		gameTypes = { GameType.SOCCER }, 
+		statisticTypes = { StatisticType.PLAYER, StatisticType.TEAM, StatisticType.GLOBAL}, 
+		name = "passes",
+		parameters = { 
+				@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
+				@SportsQLParameter(name = "space", parameterClass = SportsQLTimeParameter.class, mandatory = false)
+				}
+		)
 public class PassesSportsQLParser implements ISportsQLParser {
 	
 	
