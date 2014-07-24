@@ -649,7 +649,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		LOG.info("Start adding a logical query plan!");
 		validateUserRight(user, ExecutorPermission.ADD_QUERY);
 		QueryBuildConfiguration params = buildAndValidateQueryBuildConfigurationFromSettings(
-				buildConfigurationName, overwriteSetting, null);
+				buildConfigurationName, overwriteSetting, Context.empty());
 		return addQuery(logicalPlan, user, params);
 	}
 
