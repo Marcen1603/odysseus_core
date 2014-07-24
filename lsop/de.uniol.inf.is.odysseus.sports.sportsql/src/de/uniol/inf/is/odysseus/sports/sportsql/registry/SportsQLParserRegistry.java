@@ -210,7 +210,9 @@ public class SportsQLParserRegistry {
 		query.setStatisticType(StatisticType.valueOf(type.trim().toUpperCase()));
 		query.setGameType(GameType.valueOf(game.trim().toUpperCase()));
 		query.setName(name.trim().toUpperCase());
-		query.setEntityId(entityId);
+		if (entityId != null) {
+			query.setEntityId(entityId);
+		}
 		query.setParameters(parametersMap);
 		return query;
 	}
