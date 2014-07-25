@@ -158,16 +158,22 @@ public class DatabaseConnection implements IDatabaseConnection {
 	}
 
 	@Override
-	public void createTable(String tablename, SDFSchema schema) throws SQLException {
+	public void createTable(String tablename, SDFSchema schema, List<String> tableSchema) throws SQLException {
 		assertConnection();
 		Statement st = connection.createStatement();
 		String table = "CREATE TABLE " + tablename + "(";
 		String sep = "";
+		int i = 0;
 		for (SDFAttribute attribute : schema) {
 			table = table + sep + attribute.getAttributeName() + " ";
-			table = table + getDBMSSpecificType(DatatypeRegistry.getSQLDatatype(attribute.getDatatype()));
+			if (tableSchema == null || tableSchema.size() == 0){
+				table = table + getDBMSSpecificType(DatatypeRegistry.getSQLDatatype(attribute.getDatatype()));
+			}else{
+				table = table + tableSchema.get(i++);				
+			}
 			sep = ", ";
 		}
+		
 		table = table + ")";
 		System.out.println("-------------------");
 		System.out.println(table);

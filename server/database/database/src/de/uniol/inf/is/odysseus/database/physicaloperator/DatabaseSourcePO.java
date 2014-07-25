@@ -148,8 +148,7 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 		@Override
 		public void run() {
 			// TODO: why the min waiting time of 10 ms?
-			// long waitTime = waitTimeMillis == 0?10:waitTimeMillis;
-			long waitTime = waitTimeMillis;
+			long waitTime = waitTimeMillis == 0?10:waitTimeMillis;
 			try {
 				ResultSet rs = preparedStatement.executeQuery();
 				int count = rs.getMetaData().getColumnCount();

@@ -30,6 +30,9 @@
 
 package de.uniol.inf.is.odysseus.database.logicaloperator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -52,6 +55,8 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator{
 	private boolean truncate;
 	private boolean drop;
 	private long batchSize = 10;
+
+	private List<String> tableSchema;
 	
 	public DatabaseSinkAO(){
 		super();
@@ -63,6 +68,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator{
 		this.drop = old.drop;
 		this.truncate = old.truncate;
 		this.batchSize = old.batchSize;
+		this.tableSchema = new ArrayList<>(old.tableSchema);
 	}
 
 	@Override
@@ -102,6 +108,15 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator{
 	@Parameter(name = "BatchSize", type = LongParameter.class, optional = true, doc="How many elements should be buffered before storing to database.")
 	public void setBatchSize(long batchSize) {
 		this.batchSize = batchSize;
+	}
+	
+	@Parameter(name = "Tableschema", type=StringParameter.class, optional = true, isList = true, doc ="The types of the target database that should be used to create the target table. Order must be the same as the output schema.")
+	public void setTableSchema(List<String> tableSchema){
+		this.tableSchema = tableSchema;
+	}
+	
+	public List<String> getTableSchema() {
+		return tableSchema;
 	}
 	
 	public long getBatchSize() {

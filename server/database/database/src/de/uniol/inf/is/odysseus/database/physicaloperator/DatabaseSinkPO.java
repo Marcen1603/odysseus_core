@@ -33,6 +33,7 @@ package de.uniol.inf.is.odysseus.database.physicaloperator;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,13 +70,16 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 	private volatile boolean opened = false;
 	final private long batchSize;
 
+	final private List<String> tableSchema;
+
 	public DatabaseSinkPO(IDatabaseConnection connection, String tablename,
-			boolean drop, boolean truncate, long batchSize) {
+			boolean drop, boolean truncate, long batchSize, List<String> tableSchema) {
 		this.connection = connection;
 		this.tablename = tablename;
 		this.truncate = truncate;
 		this.drop = drop;
 		this.batchSize = batchSize;
+		this.tableSchema = tableSchema;
 	}
 
 	public DatabaseSinkPO(DatabaseSinkPO databaseSinkPO) {
@@ -84,6 +88,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 		this.drop = databaseSinkPO.drop;
 		this.truncate = databaseSinkPO.truncate;
 		this.batchSize = databaseSinkPO.batchSize;
+		this.tableSchema = databaseSinkPO.tableSchema;
 	}
 
 	private void initDTMappings() {
@@ -103,11 +108,11 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 		}
 		try {						
 			if (!this.connection.tableExists(tablename)) {
-				this.connection.createTable(tablename, getOutputSchema());
+				this.connection.createTable(tablename, getOutputSchema(), tableSchema);
 			} else {
 				if (this.drop) {
 					dropTable();
-					this.connection.createTable(tablename, getOutputSchema());
+					this.connection.createTable(tablename, getOutputSchema(), tableSchema);
 				}else{
 					if(this.truncate){
 						truncateTable();
