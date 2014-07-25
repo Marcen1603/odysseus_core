@@ -15,13 +15,24 @@
  */
 package de.uniol.inf.is.odysseus.keyvalue.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="TupleToKeyValue", doc="Converts a tuple to a key-value/JSON object", category={LogicalOperatorCategory.TRANSFORM})
 public class TupleToKeyValueAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 3215936185841514847L;
+	
+	@SuppressWarnings("rawtypes")
+	private Class<? extends IStreamObject> type = KeyValueObject.class;
 
 	public TupleToKeyValueAO() {
 	}
@@ -33,5 +44,37 @@ public class TupleToKeyValueAO extends UnaryLogicalOp {
 	@Override
 	public TupleToKeyValueAO clone() {
 		return new TupleToKeyValueAO(this);
+	}
+
+	@Parameter(type = StringParameter.class, name = "TYPE", optional = true, isList = false, doc = "type of key value object the tuples will be transformed to")
+	public void setPaths(String type) {
+		if(type.equalsIgnoreCase("KEYVALUEOBJECT")) {
+			this.type = KeyValueObject.class;
+		} else if(type.equalsIgnoreCase("NESTEDKEYVALUEOBJECT")) {
+			this.type = NestedKeyValueObject.class;
+		} else {
+			this.type = null;
+		}
+	}
+
+	@GetParameter(name = "TYPE")
+	public String getPaths() {
+		return this.type.getSimpleName();
+	}
+	
+	@Override
+	public boolean isValid() {
+		if(this.type != null &&	KeyValueObject.class.isAssignableFrom(this.type)) {
+			return true;
+		}
+		addError(new IllegalParameterException("TupleToKeyValue operator has a wrong type."));
+		return false;
+	}
+
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		SDFSchema newOutputSchema = new SDFSchema(getInputSchema(0).getURI(), this.type, getInputSchema(0).getAttributes());
+		setOutputSchema(newOutputSchema);
+		return newOutputSchema;
 	}
 }
