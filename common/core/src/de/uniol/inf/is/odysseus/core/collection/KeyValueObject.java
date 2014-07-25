@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 /**
  * This class is used to represent objects as simple key value pairs
  * 
- * @author Marco Grawunder
+ * @author Marco Grawunder, Jan Soeren Schwarz
  *
  * @param <T>
  */
@@ -171,5 +172,78 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 			tmpMap.put(path[path.length - 1], entry.getValue());
 		}
 		return map;
+	}
+	
+	@Override
+	public final boolean equals(Object o) {
+		if (!(o instanceof KeyValueObject)) {
+			return false;
+		}
+		KeyValueObject<?> t = (KeyValueObject<?>) o;
+		if (this.attributes.size() != t.attributes.size()) {
+			return false;
+		}
+		Iterator<String> it = this.attributes.keySet().iterator();
+		while(it.hasNext()) {
+			String key = it.next();
+			// test if attributes are not null and equal
+			// or both null (order is imporantant!)
+			if (this.attributes.get(key) != null) {
+				if (!this.attributes.get(key).equals(t.attributes.get(key))) {
+					return false;
+				}
+			} else {
+				if (t.attributes.get(key) != null) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Like normal equals-method but has a tolerance for double and float
+	 * comparisons.
+	 * 
+	 * @param o
+	 * @return
+	 */
+	@Override
+	public final boolean equalsTolerance(Object o, double tolerance) {
+		if (!(o instanceof KeyValueObject)) {
+			return false;
+		}
+		KeyValueObject<?> t = (KeyValueObject<?>) o;
+		if (this.attributes.size() != t.attributes.size()) {
+			return false;
+		}
+		Iterator<String> it = this.attributes.keySet().iterator();
+		while(it.hasNext()) {
+			String key = it.next();
+			Object attr = this.attributes.get(key);
+			Object theirAttr = t.attributes.get(key);
+			// test if attributes are not null and equal
+			// or both null (order is imporantant!)
+			if (attr != null) {
+				if (attr instanceof Double && theirAttr instanceof Double) {
+					if (Math.abs((Double) attr - (Double) theirAttr) > tolerance) {
+						return false;
+					}
+				} else if (attr instanceof Float && theirAttr instanceof Float) {
+					if (Math.abs((Float) attr - (Float) theirAttr) > tolerance) {
+						return false;
+					}
+				} else {
+					if (!attr.equals(theirAttr)) {
+						return false;
+					}
+				}
+			} else {
+				if (theirAttr != null) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }
