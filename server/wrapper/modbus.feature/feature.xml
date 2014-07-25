@@ -17,6 +17,14 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.wrapper.rs232" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
+   </requires>
+
    <plugin
          id="de.uniol.inf.is.odysseus.modbus"
          download-size="0"
