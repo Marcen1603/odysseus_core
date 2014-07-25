@@ -132,10 +132,15 @@ public class ModbusTCPTransportHandler extends AbstractTransportHandler
 		}
 		ReadInputDiscretesResponse res = (ReadInputDiscretesResponse) trans
 				.getResponse();
+		Tuple<IMetaAttribute> t = new Tuple<>(1, false);
 		System.out.println("Digital Inputs Status="
 				+ res.getDiscretes().toString());
 
-		return null;
+		t.setAttribute(0, res.getDiscretes());
+		
+		// TODO: Datentyp BitVector definieren
+
+		return t;
 	}
 
 }

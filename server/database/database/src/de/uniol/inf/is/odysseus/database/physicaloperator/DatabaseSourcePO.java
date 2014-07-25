@@ -148,6 +148,7 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 		@Override
 		public void run() {
 			// TODO: why the min waiting time of 10 ms?
+			// Else the thread will block every communication
 			long waitTime = waitTimeMillis == 0?10:waitTimeMillis;
 			try {
 				ResultSet rs = preparedStatement.executeQuery();
