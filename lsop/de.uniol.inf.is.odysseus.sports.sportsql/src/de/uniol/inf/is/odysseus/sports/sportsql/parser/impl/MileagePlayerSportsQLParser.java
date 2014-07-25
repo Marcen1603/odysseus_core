@@ -68,7 +68,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		AccessAO metaDataAccessAO = OperatorBuildHelper
 				.createAccessAO(metadataSourceName);
 
-		SelectAO entitySelect = OperatorBuildHelper.createEntitySelect(
+		SelectAO entitySelect = OperatorBuildHelper.createEntityIDSelect(
 				sportsQL.getEntityId(), metaDataAccessAO);
 		allOperators.add(entitySelect);
 

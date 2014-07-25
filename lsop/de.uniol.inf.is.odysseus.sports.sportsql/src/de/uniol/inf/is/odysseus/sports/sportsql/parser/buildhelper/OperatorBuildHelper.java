@@ -81,6 +81,11 @@ public class OperatorBuildHelper {
 	public static final int UPPERRIGHT_Y = 33941;
 	public static final int LOWERRIGHT_X = 52489;
 	public static final int LOWERRIGHT_Y = -33939;
+	
+	/**
+	 * Entity names
+	 */
+	public static final String BALL_ENTITY = "Ball";
 
 	/**
 	 * Creates a MapAP with a list of expressions. To create such expressions,
@@ -331,7 +336,7 @@ public class OperatorBuildHelper {
 	 *            Source Operator
 	 * @return
 	 */
-	public static SelectAO createEntitySelect(long entityId,
+	public static SelectAO createEntityIDSelect(long entityId,
 			ILogicalOperator source) {
 		SelectAO selectAO = new SelectAO();
 
@@ -772,6 +777,28 @@ public class OperatorBuildHelper {
 		return source.getValue();
 	}
 
+	/**
+	 * 
+	 * @return An AccessAO for the main-game-stream
+	 */
+	public static AccessAO createGameStreamAccessAO() {
+		String gameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
+		AccessAO gameAccessAO = OperatorBuildHelper
+				.createAccessAO(gameSourceName);
+		return gameAccessAO;
+	}
+	
+	/**
+	 * 
+	 * @return An AccessAO for the metadata-stream
+	 */
+	public static AccessAO createMetaStreamAccessAO() {
+		String metaSourceName = OperatorBuildHelper.METADATA_STREAM_NAME;
+		AccessAO metaAccessAO = OperatorBuildHelper
+				.createAccessAO(metaSourceName);
+		return metaAccessAO;
+	}
+	
 	/**
 	 * Creates a simple TopAO which indicates the top node in the query (maybe
 	 * necessary for Odysseus: This could / should be the operator you return in

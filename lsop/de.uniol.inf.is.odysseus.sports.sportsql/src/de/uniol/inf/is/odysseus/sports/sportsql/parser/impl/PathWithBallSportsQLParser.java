@@ -189,7 +189,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		allOperators.add(ballpos);
 		
 		// player_stream = SELECT({predicate='entity_id = ${entity_id}'}, enriched_stream)
-		ILogicalOperator playerStream = OperatorBuildHelper.createEntitySelect(entityId, enrichedStream);
+		ILogicalOperator playerStream = OperatorBuildHelper.createEntityIDSelect(entityId, enrichedStream);
 		allOperators.add(playerStream);
 		
 		// /player_stream_changes = CHANGEDETECT({ATTR = ['x','y'],TOLERANCE =

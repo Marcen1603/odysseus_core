@@ -20,10 +20,17 @@ public class ClientExample {
 				gameType = "soccer";
 				name = "mileage";
 				
-				// Global game
-				statisticsType = "global";
+				// Mileage for team
+				statisticsType = "team";
 				gameType = "soccer";
-				name = "game";
+				name = "mileage";
+				
+				// Global game
+//				statisticsType = "global";
+//				gameType = "soccer";
+//				name = "game";
+				
+				
 				
 				String query = "{"
 						 +	"\"statisticType\": \"" + statisticsType + "\","

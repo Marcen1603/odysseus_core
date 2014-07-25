@@ -86,7 +86,7 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		// -----------------------------------------
 
 		// 1. Select for team
-		SelectAO teamSelect = OperatorBuildHelper.createEntitySelect(
+		SelectAO teamSelect = OperatorBuildHelper.createEntityIDSelect(
 				sportsQL.getEntityId(), metaDataAccessAO);
 		allOperators.add(teamSelect);
 
