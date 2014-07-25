@@ -20,8 +20,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-
 public class StringDataTypeMappingHandler extends AbstractDatatypeMappingHandler<String> {
 
 	@Override
@@ -33,9 +31,7 @@ public class StringDataTypeMappingHandler extends AbstractDatatypeMappingHandler
 	public String getValue(ResultSet result, int position) throws SQLException {
 		switch (result.getMetaData().getColumnType(position)) {
 		case Types.LONGNVARCHAR:
-			return result.getNString(position);
 		case Types.NVARCHAR:
-			return result.getNString(position);
 		case Types.NCHAR:
 			return result.getNString(position);
 		default:

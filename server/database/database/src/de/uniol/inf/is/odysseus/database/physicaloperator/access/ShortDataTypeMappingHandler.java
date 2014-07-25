@@ -30,7 +30,8 @@ public class ShortDataTypeMappingHandler extends AbstractDatatypeMappingHandler<
 
 	@Override
 	public Short getValue(ResultSet result, int position) throws SQLException {
-		return result.getShort(position);
+		Short v = result.getShort(position);
+		return v;
 	}
 	
 

@@ -58,8 +58,7 @@ public class DatatypeRegistry {
 	private static HashMap<Integer, Pair<SDFDatatype, IDataTypeMappingHandler>> sqldataHandlers = new HashMap<>();
 
 	private static HashMap<Class<?>, IDataTypeMappingHandler<?>> handlers = new HashMap<>();
-	// TODO: Define for each driver
-	{
+	static {
 		addMapping(SDFDatatype.BOOLEAN, Types.BOOLEAN,
 				BooleanDataTypeMappingHandler.class, true);
 		addMapping(Types.BIT, SDFDatatype.BOOLEAN,
@@ -172,7 +171,7 @@ public class DatatypeRegistry {
 		return ret;
 	}
 
-	private void addMapping(int b, SDFDatatype c, Class<?> handlerClass) {
+	static private void addMapping(int b, SDFDatatype c, Class<?> handlerClass) {
 		IDataTypeMappingHandler handler = getHandler(handlerClass);
 		if (sqldataHandlers.containsKey(b)) {
 			throw new IllegalArgumentException("Ambigious mapping definition! "
@@ -182,7 +181,7 @@ public class DatatypeRegistry {
 		sqldataHandlers.put(new Integer(b), new Pair<>(c, handler));
 	}
 
-	private void addMapping(SDFDatatype b, int c, Class<?> handlerClass,
+	static private void addMapping(SDFDatatype b, int c, Class<?> handlerClass,
 			boolean isSymetric) {
 		IDataTypeMappingHandler handler = getHandler(handlerClass);
 		if (sdfdataHandlers.containsKey(b)) {
@@ -196,7 +195,7 @@ public class DatatypeRegistry {
 		}
 	}
 
-	private IDataTypeMappingHandler<?> getHandler(Class<?> handlerClass) {
+	static private IDataTypeMappingHandler<?> getHandler(Class<?> handlerClass) {
 		IDataTypeMappingHandler<?> handler = handlers.get(handlerClass);
 		if (handler == null) {
 			try {
