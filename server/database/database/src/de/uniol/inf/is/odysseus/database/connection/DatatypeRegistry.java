@@ -30,116 +30,202 @@
 
 package de.uniol.inf.is.odysseus.database.connection;
 
+import java.sql.Types;
 import java.util.HashMap;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.database.physicaloperator.access.BooleanDataTypeMappingHandler;
+import de.uniol.inf.is.odysseus.database.physicaloperator.access.ByteDataTypeMappingHandler;
+import de.uniol.inf.is.odysseus.database.physicaloperator.access.CharDataTypeMappingHandler;
+import de.uniol.inf.is.odysseus.database.physicaloperator.access.DoubleDataTypeMappingHandler;
+import de.uniol.inf.is.odysseus.database.physicaloperator.access.FloatDataTypeMappingHandler;
 import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappingHandler;
+import de.uniol.inf.is.odysseus.database.physicaloperator.access.IntegerDataTypeMappingHandler;
+import de.uniol.inf.is.odysseus.database.physicaloperator.access.LongDataTypeMappingHandler;
+import de.uniol.inf.is.odysseus.database.physicaloperator.access.ShortDataTypeMappingHandler;
+import de.uniol.inf.is.odysseus.database.physicaloperator.access.StringDataTypeMappingHandler;
+import de.uniol.inf.is.odysseus.database.physicaloperator.access.TimestampDataTypeMappingHandler;
 
 /**
  * @author Dennis Geesen Created at: 08.11.2011
+ * @author Marco Grawunder
  */
+@SuppressWarnings("rawtypes")
 public class DatatypeRegistry {
 
-	private static HashMap<SDFDatatype, IDataTypeMappingHandler<?>> sdfdataHandlers = new HashMap<SDFDatatype, IDataTypeMappingHandler<?>>();
-	private static HashMap<Integer, IDataTypeMappingHandler<?>> sqldataHandlers = new HashMap<Integer, IDataTypeMappingHandler<?>>();
+	private static HashMap<SDFDatatype, Pair<Integer, IDataTypeMappingHandler>> sdfdataHandlers = new HashMap<>();
+	private static HashMap<Integer, Pair<SDFDatatype, IDataTypeMappingHandler>> sqldataHandlers = new HashMap<>();
 
-	/**
-	 * Registers the handler for all supported SQL and SDF data types
-	 * @param handler the handler to register
-	 */
-	public static void registerDataHandler(IDataTypeMappingHandler<?> handler) {		
-		String errMsg = "";
-		// first, check all sdf types
-		for (SDFDatatype type : handler.getSupportedSDFDataTypes()) {
-			if (sdfdataHandlers.containsKey(type)) {
-				errMsg += "Data Mapping handler for SDF-DataType " + type + " already registered.\n";
-			}
-
-		}
-		// then check sql types
-		for (int type : handler.getSupportedSQLDataTypes()) {
-			if (sqldataHandlers.containsKey(type)) {				
-				errMsg += "Data Mapping handler for SQL-DataType " + type + " already registered.\n";
-			}
-		}
-
-		// something already exists...
-		if (errMsg != "") {
-			errMsg = "Adding of handler: "+handler.getClass().getCanonicalName()+" failed\n"+errMsg;
-			throw new IllegalArgumentException(errMsg);
-		}
-		// all ok, put new handler
-		for (SDFDatatype type : handler.getSupportedSDFDataTypes()) {
-			sdfdataHandlers.put(type, handler);
-		}
-
-		for (int type : handler.getSupportedSQLDataTypes()) {
-			sqldataHandlers.put(type, handler);
-		}
-	}
-
-	/**
-	 * Removes the handler and all supported data types 
-	 * @param handler the handler to remove
-	 */
-	public static void removeDataHandler(IDataTypeMappingHandler<?> handler) {
-		for (SDFDatatype type : handler.getSupportedSDFDataTypes()) {
-			sdfdataHandlers.remove(type);
-		}
-
-		for (int type : handler.getSupportedSQLDataTypes()) {
-			sqldataHandlers.remove(type);
-		}
+	private static HashMap<Class<?>, IDataTypeMappingHandler<?>> handlers = new HashMap<>();
+	// TODO: Define for each driver
+	{
+		addMapping(SDFDatatype.BOOLEAN, Types.BOOLEAN,
+				BooleanDataTypeMappingHandler.class, true);
+		addMapping(Types.BIT, SDFDatatype.BOOLEAN,
+				BooleanDataTypeMappingHandler.class);
+		addMapping(SDFDatatype.BYTE, Types.TINYINT,
+				ByteDataTypeMappingHandler.class, true);
+		addMapping(SDFDatatype.DOUBLE, Types.DOUBLE,
+				DoubleDataTypeMappingHandler.class, true);
+		addMapping(SDFDatatype.CHAR, Types.CHAR,
+				CharDataTypeMappingHandler.class, true);
+		addMapping(SDFDatatype.FLOAT, Types.REAL,
+				FloatDataTypeMappingHandler.class, true);
+		addMapping(Types.FLOAT, SDFDatatype.FLOAT,
+				FloatDataTypeMappingHandler.class);
+		addMapping(SDFDatatype.INTEGER, Types.INTEGER,
+				IntegerDataTypeMappingHandler.class, true);
+		addMapping(Types.SMALLINT, SDFDatatype.INTEGER,
+				IntegerDataTypeMappingHandler.class);
+		addMapping(SDFDatatype.LONG, Types.BIGINT,
+				LongDataTypeMappingHandler.class, true);
+		addMapping(SDFDatatype.SHORT, Types.SMALLINT,
+				ShortDataTypeMappingHandler.class, false);
+		addMapping(SDFDatatype.STRING, Types.VARCHAR,
+				StringDataTypeMappingHandler.class, true);
+		addMapping(SDFDatatype.START_TIMESTAMP_STRING, Types.VARCHAR,
+				StringDataTypeMappingHandler.class, false);
+		addMapping(SDFDatatype.END_TIMESTAMP_STRING, Types.VARCHAR,
+				StringDataTypeMappingHandler.class, false);
+		addMapping(Types.LONGVARCHAR, SDFDatatype.STRING,
+				StringDataTypeMappingHandler.class);
+		addMapping(Types.LONGNVARCHAR, SDFDatatype.STRING,
+				StringDataTypeMappingHandler.class);
+		addMapping(Types.NCHAR, SDFDatatype.STRING,
+				StringDataTypeMappingHandler.class);
+		addMapping(Types.NVARCHAR, SDFDatatype.STRING,
+				StringDataTypeMappingHandler.class);
+		addMapping(SDFDatatype.TIMESTAMP, Types.TIMESTAMP,
+				TimestampDataTypeMappingHandler.class, true);
+		addMapping(SDFDatatype.POINT_IN_TIME, Types.TIMESTAMP,
+				TimestampDataTypeMappingHandler.class, false);
+		addMapping(SDFDatatype.START_TIMESTAMP, Types.TIMESTAMP,
+				TimestampDataTypeMappingHandler.class, false);
+		addMapping(SDFDatatype.END_TIMESTAMP, Types.TIMESTAMP,
+				TimestampDataTypeMappingHandler.class, false);
+		addMapping(SDFDatatype.DATE, Types.TIMESTAMP,
+				TimestampDataTypeMappingHandler.class, false);
 	}
 
 	/**
 	 * Gets the handler for a certain SDF data type
-	 * @param dataType a SDF data type
+	 * 
+	 * @param dataType
+	 *            a SDF data type
 	 * @return the handler for dataType
 	 */
-	public static IDataTypeMappingHandler<?> getDataHandler(SDFDatatype dataType) {
-		return sdfdataHandlers.get(dataType);
+	public static IDataTypeMappingHandler getDataHandler(SDFDatatype dataType) {
+		IDataTypeMappingHandler ret = sdfdataHandlers.get(dataType).getE2();
+		if (ret == null) {
+			throw new IllegalArgumentException("No mapping for Odysseus type "
+					+ dataType + " defined!");
+		}
+		return ret;
+	}
+
+	/**
+	 * Gets the SQL data type for a SDF data type
+	 * 
+	 * @param sdfdatatype
+	 *            the SDF data type to look for
+	 * @return the dedicated SQL type from {@link java.sql.Types}
+	 */
+	public static int getSQLDatatype(SDFDatatype dataType) {
+		Integer ret = sdfdataHandlers.get(dataType).getE1();
+		if (ret == null) {
+			throw new IllegalArgumentException("No mapping for Odysseus type "
+					+ dataType + " defined!");
+		}
+		return ret;
 	}
 
 	/**
 	 * Gets the handler for a certain SQL data type
-	 * @param sqltype a SQL data type from {@link java.sql.Types}
+	 * 
+	 * @param sqltype
+	 *            a SQL data type from {@link java.sql.Types}
 	 * @return a data handler for sqltype
 	 */
 	public static IDataTypeMappingHandler<?> getDataHandler(int sqltype) {
-		return sqldataHandlers.get(sqltype);
+		IDataTypeMappingHandler ret = sqldataHandlers.get(sqltype).getE2();
+		if (ret == null) {
+			throw new IllegalArgumentException("No mapping for SQL type "
+					+ sqltype + " defined!");
+		}
+		return ret;
 	}
-	
+
 	/**
-	 * Gets the default SDF data type for a SQL data type
-	 * @param sqltype the SQL type to look for
+	 * Gets the SDF data type for a SQL data type
+	 * 
+	 * @param sqltype
+	 *            the SQL type to look for
 	 * @return the dedicated SDF data type
 	 */
 	public static SDFDatatype getSDFDatatype(int sqltype) {
-		IDataTypeMappingHandler<?> dh = getDataHandler(sqltype);
-		if (dh == null){
-			throw new IllegalArgumentException("No Datatype mapping for "+sqltype);
+		SDFDatatype ret = sqldataHandlers.get(sqltype).getE1();
+		if (ret == null) {
+			throw new IllegalArgumentException("No mapping for SQL type "
+					+ sqltype + " defined!");
 		}
-		return dh.getDefaultSDFDatatype();
+		return ret;
 	}
-	
-	/**
-	 * Gets the default SQL data type for a SDF data type
-	 * @param sdfdatatype the SDF data type to look for
-	 * @return the dedicated SQL type from {@link java.sql.Types}
-	 */
-	public static int getSQLDatatype(SDFDatatype sdfdatatype){
-		return getDataHandler(sdfdatatype).getDefaultSQLDatatype();
+
+	private void addMapping(int b, SDFDatatype c, Class<?> handlerClass) {
+		IDataTypeMappingHandler handler = getHandler(handlerClass);
+		if (sqldataHandlers.containsKey(b)) {
+			throw new IllegalArgumentException("Ambigious mapping definition! "
+					+ b + " ist already mapped to "
+					+ sqldataHandlers.get(b).getE1());
+		}
+		sqldataHandlers.put(new Integer(b), new Pair<>(c, handler));
+	}
+
+	private void addMapping(SDFDatatype b, int c, Class<?> handlerClass,
+			boolean isSymetric) {
+		IDataTypeMappingHandler handler = getHandler(handlerClass);
+		if (sdfdataHandlers.containsKey(b)) {
+			throw new IllegalArgumentException("Ambigious mapping definition! "
+					+ b + " ist already mapped to "
+					+ sdfdataHandlers.get(b).getE1());
+		}
+		sdfdataHandlers.put(b, new Pair<>(c, handler));
+		if (isSymetric) {
+			addMapping(c, b, handlerClass);
+		}
+	}
+
+	private IDataTypeMappingHandler<?> getHandler(Class<?> handlerClass) {
+		IDataTypeMappingHandler<?> handler = handlers.get(handlerClass);
+		if (handler == null) {
+			try {
+				handler = (IDataTypeMappingHandler<?>) handlerClass
+						.newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			handlers.put(handlerClass, handler);
+		}
+		return handler;
 	}
 
 	/**
 	 * Checks whether the mapping between a SDF and SQL data type exists
-	 * @param dt the SDF data type
-	 * @param dbType the SQL data type from {@link java.sql.Types}
+	 * 
+	 * @param dt
+	 *            the SDF data type
+	 * @param dbType
+	 *            the SQL data type from {@link java.sql.Types}
 	 * @return
 	 */
 	public static boolean mappingExists(SDFDatatype dt, int dbType) {
-		return getDataHandler(dbType).getSupportedSDFDataTypes().contains(dt);		
+		Pair<Integer, IDataTypeMappingHandler> p = sdfdataHandlers.get(dt);
+		return (p != null && p.getE1().equals(dbType));
 	}
 
+	public static void main(String[] args) {
+		@SuppressWarnings("unused")
+		DatatypeRegistry reg = new DatatypeRegistry();
+	}
 }

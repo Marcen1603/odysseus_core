@@ -165,7 +165,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 		String sep = "";
 		for (SDFAttribute attribute : schema) {
 			table = table + sep + attribute.getAttributeName() + " ";
-			table = table + getDBMSSpecificType(DatatypeRegistry.getDataHandler(attribute.getDatatype()).getDefaultSQLDatatype());
+			table = table + getDBMSSpecificType(DatatypeRegistry.getSQLDatatype(attribute.getDatatype()));
 			sep = ", ";
 		}
 		table = table + ")";

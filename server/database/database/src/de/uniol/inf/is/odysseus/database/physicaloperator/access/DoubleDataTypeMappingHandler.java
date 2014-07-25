@@ -18,20 +18,12 @@ package de.uniol.inf.is.odysseus.database.physicaloperator.access;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
-
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
  * @author Stephan Jansen
  *
  */
 public class DoubleDataTypeMappingHandler extends AbstractDatatypeMappingHandler<Double> {
-	
-	
-	public DoubleDataTypeMappingHandler(){
-		super(SDFDatatype.DOUBLE, Types.DOUBLE);		
-	}		
 	
 	@Override
 	public void setValue(PreparedStatement preparedStatement, int position, Object value) throws SQLException {

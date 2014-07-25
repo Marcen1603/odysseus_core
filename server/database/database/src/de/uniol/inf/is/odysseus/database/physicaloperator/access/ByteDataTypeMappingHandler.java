@@ -18,20 +18,13 @@ package de.uniol.inf.is.odysseus.database.physicaloperator.access;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
-
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
  * @author Dennis Geesen
  *
  */
 public class ByteDataTypeMappingHandler extends AbstractDatatypeMappingHandler<Byte>{
-
-	public ByteDataTypeMappingHandler(){
-		super(SDFDatatype.BYTE, Types.TINYINT);		
-	}		
-		
+	
 	@Override
 	public void setValue(PreparedStatement preparedStatement, int position, Object value) throws SQLException {
 		preparedStatement.setByte(position, (Byte)value);

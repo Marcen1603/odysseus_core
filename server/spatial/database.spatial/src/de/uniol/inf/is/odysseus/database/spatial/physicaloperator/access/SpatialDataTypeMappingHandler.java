@@ -31,19 +31,19 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
 public class SpatialDataTypeMappingHandler extends AbstractDatatypeMappingHandler<Geometry>{
 	
 
-	public SpatialDataTypeMappingHandler(){
-		
-		super(SDFSpatialDatatype.SPATIAL_GEOMETRY, Types.VARBINARY);
-		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION);
-
-		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_POINT);
-		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_LINE_STRING);
-		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_POLYGON);
-		
-		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_MULTI_POINT);
-		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_MULTI_LINE_STRING);
-		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_MULTI_POLYGON);
-	}
+//	public SpatialDataTypeMappingHandler(){
+//		
+//		super(SDFSpatialDatatype.SPATIAL_GEOMETRY, Types.VARBINARY);
+//		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION);
+//
+//		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_POINT);
+//		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_LINE_STRING);
+//		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_POLYGON);
+//		
+//		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_MULTI_POINT);
+//		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_MULTI_LINE_STRING);
+//		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_MULTI_POLYGON);
+//	}
 	private WKBWriter wkbwriter = new WKBWriter();
 	private WKBReader wkbreader = new WKBReader();
 	

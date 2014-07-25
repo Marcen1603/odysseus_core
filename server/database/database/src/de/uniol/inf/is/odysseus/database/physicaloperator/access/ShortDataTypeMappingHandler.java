@@ -18,18 +18,9 @@ package de.uniol.inf.is.odysseus.database.physicaloperator.access;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
-
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 
 public class ShortDataTypeMappingHandler extends AbstractDatatypeMappingHandler<Short> {
-	
-	
-	public ShortDataTypeMappingHandler(){
-		super(SDFDatatype.SHORT, Types.SMALLINT);		
-	}
-	
 	
 	@Override
 	public void setValue(PreparedStatement preparedStatement, int position, Object value) throws SQLException {

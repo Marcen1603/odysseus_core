@@ -15,60 +15,14 @@
  */
 package de.uniol.inf.is.odysseus.database.physicaloperator.access;
 
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
-
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
  * @author Dennis Geesen
+ * @author Marco Grawunder
  *
  */
 public abstract class AbstractDatatypeMappingHandler<T> implements IDataTypeMappingHandler<T> {
 
-	private List<SDFDatatype> dsmstypes = new ArrayList<SDFDatatype>(1);
-	private List<Integer> dbmstypes = new ArrayList<Integer>(1);
-	private int defaultDBMSType = Types.OTHER;
-	private SDFDatatype defaultSDFDatatype = SDFDatatype.OBJECT;
-	
-	public AbstractDatatypeMappingHandler(SDFDatatype defaultSDFDatatype, int defaultSQLDatatype){
-		this.defaultDBMSType = defaultSQLDatatype;
-		this.defaultSDFDatatype = defaultSDFDatatype;
-		addAdditionalSDFDatatype(defaultSDFDatatype);
-		addAdditionalSQLDatatype(defaultSQLDatatype);
-	}
-	
-	
-	protected void addAdditionalSDFDatatype(SDFDatatype type){
-		dsmstypes.add(type);
-	}
-	
-
-	protected void addAdditionalSQLDatatype(int type){
-		dbmstypes.add(type);
-	}
-		
-	
-	@Override
-	public SDFDatatype getDefaultSDFDatatype(){
-		return defaultSDFDatatype;
-	}
-	@Override
-	public int getDefaultSQLDatatype(){
-		return defaultDBMSType;
-	}
-	
-	
-	@Override
-	public List<SDFDatatype> getSupportedSDFDataTypes() {	
-		return dsmstypes;
-	}
-
-	@Override
-	public List<Integer> getSupportedSQLDataTypes() {
-		return dbmstypes;
-	}
 	
 	@Override
 	public String toString() {	

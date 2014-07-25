@@ -12,15 +12,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 public class TimestampDataTypeMappingHandler extends
 		AbstractDatatypeMappingHandler<Long> {
 
-	public TimestampDataTypeMappingHandler() {
-		super(SDFDatatype.TIMESTAMP, Types.TIMESTAMP);	
-		
-		addAdditionalSDFDatatype(SDFDatatype.POINT_IN_TIME);
-		addAdditionalSDFDatatype(SDFDatatype.START_TIMESTAMP);
-		addAdditionalSDFDatatype(SDFDatatype.END_TIMESTAMP);
-		addAdditionalSDFDatatype(SDFDatatype.DATE);
-	}
-
 	@Override
 	public void setValue(PreparedStatement preparedStatement, int position,
 			Object value) throws SQLException {

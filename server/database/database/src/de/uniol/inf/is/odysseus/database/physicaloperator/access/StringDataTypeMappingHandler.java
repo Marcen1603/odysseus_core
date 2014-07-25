@@ -24,23 +24,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 public class StringDataTypeMappingHandler extends AbstractDatatypeMappingHandler<String> {
 
-	public StringDataTypeMappingHandler() {
-		super(SDFDatatype.STRING, Types.VARCHAR);
-		
-		
-		addAdditionalSDFDatatype(SDFDatatype.START_TIMESTAMP_STRING);
-		addAdditionalSDFDatatype(SDFDatatype.END_TIMESTAMP_STRING);
-
-		
-		addAdditionalSQLDatatype(Types.CHAR);
-		addAdditionalSQLDatatype(Types.LONGVARCHAR);
-
-		addAdditionalSQLDatatype(Types.LONGNVARCHAR);
-		addAdditionalSQLDatatype(Types.NCHAR);
-		addAdditionalSQLDatatype(Types.NVARCHAR);
-
-	}
-
 	@Override
 	public void setValue(PreparedStatement preparedStatement, int position, Object value) throws SQLException {
 		preparedStatement.setString(position, (String) value);

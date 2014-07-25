@@ -18,17 +18,9 @@ package de.uniol.inf.is.odysseus.database.physicaloperator.access;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
-
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 
-public class IntegerDataTypeMappingHandler extends AbstractDatatypeMappingHandler<Integer> {
-	
-	
-	public IntegerDataTypeMappingHandler(){
-		super(SDFDatatype.INTEGER, Types.INTEGER);		
-	}		
+public class IntegerDataTypeMappingHandler extends AbstractDatatypeMappingHandler<Integer> {	
 	
 	@Override
 	public void setValue(PreparedStatement preparedStatement, int position, Object value) throws SQLException {

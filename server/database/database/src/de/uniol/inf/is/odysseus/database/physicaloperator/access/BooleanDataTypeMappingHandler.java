@@ -18,22 +18,12 @@ package de.uniol.inf.is.odysseus.database.physicaloperator.access;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
-
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
  * @author Stephan Jansen
  *
  */
 public class BooleanDataTypeMappingHandler extends AbstractDatatypeMappingHandler<Boolean> {
-	
-	
-	public BooleanDataTypeMappingHandler(){
-		super(SDFDatatype.BOOLEAN, Types.BOOLEAN);
-		
-		addAdditionalSQLDatatype(Types.BIT);		
-	}		
 	
 	@Override
 	public void setValue(PreparedStatement preparedStatement, int position, Object value) throws SQLException {
