@@ -186,10 +186,10 @@ public class OperatorBuildHelper {
 			SDFExpressionParameter param1 = OperatorBuildHelper
 					.createExpressionParameter("sid", "sensor_id", source);
 			SDFExpressionParameter param2 = OperatorBuildHelper
-					.createExpressionParameter("x / 1000 - ${x_min}/1000",
+					.createExpressionParameter("x / 1000 - " + UPPERRIGHT_X + "/1000",
 							"x_meter", source);
 			SDFExpressionParameter param3 = OperatorBuildHelper
-					.createExpressionParameter("y / 1000 - ${y_min}/1000",
+					.createExpressionParameter("y / 1000 - " + UPPERRIGHT_Y + "/1000",
 							"y_meter", source);
 			meterExpressions.add(param1);
 			meterExpressions.add(param2);
