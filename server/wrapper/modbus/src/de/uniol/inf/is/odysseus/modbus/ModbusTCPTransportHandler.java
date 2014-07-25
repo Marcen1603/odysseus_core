@@ -25,6 +25,12 @@ public class ModbusTCPTransportHandler extends AbstractTransportHandler
 
 	private static final int DEFAULT_PORT = 0;
 	public static final String NAME = "ModbusTCP";
+	
+	public static final String PORT = "port";
+	public static final String SLAVE = "slave";
+	public static final String REF = "ref";
+	public static final String COUNT = "count";
+	
 	private int port;
 	private InetAddress slave;
 	private int ref;
@@ -34,6 +40,9 @@ public class ModbusTCPTransportHandler extends AbstractTransportHandler
 	private ModbusTCPTransaction trans;
 	private ReadInputDiscretesRequest req;
 
+	public ModbusTCPTransportHandler(){
+	}
+	
 	public ModbusTCPTransportHandler(IProtocolHandler<?> protocolHandler,
 			Map<String, String> options) {
 		super(protocolHandler, options);
@@ -42,13 +51,30 @@ public class ModbusTCPTransportHandler extends AbstractTransportHandler
 
 	private void init(Map<String, String> options) {
 		port = DEFAULT_PORT;
+		String slaveStr;
+		if (options.containsKey(PORT)){
+			port = Integer.parseInt(options.get(PORT));
+		}
+		if (options.containsKey(SLAVE)){
+			slaveStr = options.get(SLAVE);
+		}else{
+			throw new IllegalArgumentException(SLAVE+" option must be set");
+		}
 		try {
-			slave = InetAddress.getByName("");
+			slave = InetAddress.getByName(slaveStr);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		ref = 0;
-		count = 0;
+		if (options.containsKey(REF)){
+			ref = Integer.parseInt(options.get(REF));
+		}else{
+			throw new IllegalArgumentException(REF+" option must be set");
+		}
+		if (options.containsKey(COUNT)){
+			count = Integer.parseInt(options.get(COUNT));
+		}else{
+			throw new IllegalArgumentException(COUNT+" option must be set");
+		}
 	}
 
 	@Override

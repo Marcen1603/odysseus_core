@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.keyperformanceindicators.transform;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.keyperformanceindicators.logicaloperator.AudienceEngagementAO;
 import de.uniol.inf.is.odysseus.keyperformanceindicators.physicaloperator.AudienceEngagementPO;
-import de.uniol.inf.is.odysseus.keyperformanceindicators.physicaloperator.ShareOfVoicePO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;

@@ -54,7 +54,6 @@ import com.ghgande.j2mod.modbus.procimg.SimpleRegister;
  * @version 1.2rc1 (09/11/2004)
  */
 public class TCPSlaveTest {
-	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
 
 		ModbusTCPListener listener = null;

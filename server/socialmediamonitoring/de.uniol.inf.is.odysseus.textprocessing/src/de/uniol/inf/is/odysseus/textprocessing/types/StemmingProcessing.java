@@ -3,10 +3,6 @@ package de.uniol.inf.is.odysseus.textprocessing.types;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.tartarus.snowball.SnowballStemmer;
-
-import weka.core.tokenizers.NGramTokenizer;
-
 public class StemmingProcessing implements ITextProcessing {
 
 	String kpiType = "stemmingprocessing";

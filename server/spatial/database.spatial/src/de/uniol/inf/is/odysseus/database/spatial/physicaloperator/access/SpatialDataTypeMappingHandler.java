@@ -18,15 +18,12 @@ package de.uniol.inf.is.odysseus.database.spatial.physicaloperator.access;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
-
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
 
 import de.uniol.inf.is.odysseus.database.physicaloperator.access.AbstractDatatypeMappingHandler;
-import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 public class SpatialDataTypeMappingHandler extends AbstractDatatypeMappingHandler<Geometry>{
 	

@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.script.executor;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.misc.SleepCommand;
 import de.uniol.inf.is.odysseus.script.keyword.ActivateRewriteRulePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.AddQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.BufferPlacementPreParserKeyword;

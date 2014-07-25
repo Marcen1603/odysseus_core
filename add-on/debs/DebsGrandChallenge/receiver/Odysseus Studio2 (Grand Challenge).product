@@ -87,6 +87,7 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.common.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.core.server.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.sentimentanalysis.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.modbus.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>

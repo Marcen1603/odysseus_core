@@ -2,14 +2,9 @@ package de.uniol.inf.is.odysseus.keyperformanceindicators.physicaloperator;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;

@@ -3,31 +3,17 @@ package de.uniol.inf.is.odysseus.textprocessing.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.text.html.HTMLDocument.Iterator;
-
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryAdapter;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryPermission;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(name="TEXTPROCESSING", minInputPorts=1, maxInputPorts=1, category={LogicalOperatorCategory.BASE}, doc="Allows preprocessing of incoming text.")
 public class TextProcessingAO extends UnaryLogicalOp  {

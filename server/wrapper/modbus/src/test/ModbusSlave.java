@@ -42,6 +42,7 @@ public class ModbusSlave {
 			// 4. Create a listener with 3 threads in pool
 			listener = new ModbusTCPListener(3);
 			listener.setPort(port);
+			System.err.println("Starting new Slave on port "+port);
 			listener.listen();
 
 		} catch (Exception ex) {

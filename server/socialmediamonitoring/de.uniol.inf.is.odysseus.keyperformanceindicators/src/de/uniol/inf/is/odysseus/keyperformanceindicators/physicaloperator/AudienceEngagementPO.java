@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.keyperformanceindicators.physicaloperator;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
