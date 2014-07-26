@@ -24,7 +24,9 @@ import java.io.Reader;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +56,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
@@ -65,13 +66,19 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  */
 public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHandler<T> {
 
-    Logger LOG = LoggerFactory.getLogger(HTMLProtocolHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HTMLProtocolHandler.class);
+    private static final String MULTI = "multi";
+    private static final String DELAY = "delay";
+    private static final String NANODELAY = "nanodelay";
+
     private DOMFragmentParser parser;
     private InputStream input;
     private OutputStream output;
     private long delay;
     private int nanodelay;
-    private final List<String> xpaths = new ArrayList<String>();
+    private boolean multi = false;
+    private final List<String> xpaths = new ArrayList<>();
+    private final Collection<Object[]> columns = new LinkedList<>();
 
     /**
  * 
@@ -99,10 +106,10 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
             this.parser.setFeature("http://cyberneko.org/html/features/scanner/cdata-sections", true);
         }
         catch (final SAXNotRecognizedException e) {
-            this.LOG.error(e.getMessage(), e);
+            HTMLProtocolHandler.LOG.error(e.getMessage(), e);
         }
         catch (final SAXNotSupportedException e) {
-            this.LOG.error(e.getMessage(), e);
+            HTMLProtocolHandler.LOG.error(e.getMessage(), e);
         }
 
     }
@@ -128,6 +135,34 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
             }
         }
         else {
+            if (this.isMulti()) {
+                final StringBuilder sb = new StringBuilder();
+                sb.append("<html>");
+                sb.append("<head>");
+                sb.append("</head>");
+                sb.append("<body>");
+                sb.append("<table>");
+                sb.append("<tr>");
+                final SDFSchema schema = this.getDataHandler().getSchema();
+                for (int i = 0; i < schema.size(); i++) {
+                    final String attr = schema.get(i).getAttributeName();
+                    sb.append("<td>").append(attr).append("</td>");
+                }
+                sb.append("</tr>");
+                for (Object[] column : this.columns) {
+                    sb.append("<tr>");
+                    for (int i = 0; i < schema.size(); i++) {
+                        sb.append("<td>").append(column[i]).append("</td>");
+                    }
+                    sb.append("</tr>");
+                }
+
+                sb.append("</table>");
+                sb.append("</body>");
+                sb.append("</html>");
+                this.output.write(sb.toString().getBytes());
+                this.columns.clear();
+            }
             this.output.close();
         }
         this.getTransportHandler().close();
@@ -142,15 +177,14 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
     public T getNext() throws IOException {
         this.delay();
         if (this.input.available() > 0) {
-            try {
-                final Reader in = new InputStreamReader(this.input);
+            final SDFSchema schema = this.getDataHandler().getSchema();
+            final String[] tuple = new String[schema.size()];
+            try (Reader in = new InputStreamReader(this.input)) {
                 final HTMLDocument document = new HTMLDocumentImpl();
                 final DocumentFragment fragment = document.createDocumentFragment();
                 this.parser.parse(new InputSource(in), fragment);
                 final XPathFactory factory = XPathFactory.newInstance();
                 final XPath xpath = factory.newXPath();
-                final SDFSchema schema = this.getDataHandler().getSchema();
-                final String[] tuple = new String[schema.size()];
                 for (int i = 0; i < this.getXPaths().size(); i++) {
                     final String path = this.getXPaths().get(i);
                     try {
@@ -161,19 +195,25 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
                             final String content = node.getTextContent();
                             tuple[i] = content;
                         }
+                        else {
+                            tuple[i] = null;
+                        }
                     }
                     catch (final XPathExpressionException e) {
-                        HTMLProtocolHandler.print(fragment);
-                        this.LOG.error(e.getMessage(), e);
-                        throw new IOException(e);
+                        tuple[i] = null;
+                        HTMLProtocolHandler.LOG.error(e.getMessage(), e);
+                        if (LOG.isTraceEnabled()) {
+                            HTMLProtocolHandler.print(fragment);
+                        }
+
                     }
                 }
-                return this.getDataHandler().readData(tuple);
             }
             catch (final SAXException e) {
-                this.LOG.error(e.getMessage(), e);
-                throw new IOException(e);
+                HTMLProtocolHandler.LOG.error(e.getMessage(), e);
+                throw new IOException(e.getMessage(), e);
             }
+            return this.getDataHandler().readData(tuple);
         }
         return null;
     }
@@ -199,38 +239,49 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
                         final String content = node.getTextContent();
                         tuple[i] = content;
                     }
+                    else {
+                        tuple[i] = null;
+                    }
                 }
                 catch (final XPathExpressionException e) {
-                    HTMLProtocolHandler.print(fragment);
-                    this.LOG.error(e.getMessage(), e);
+                    tuple[i] = null;
+                    HTMLProtocolHandler.LOG.error(e.getMessage(), e);
+                    if (HTMLProtocolHandler.LOG.isTraceEnabled()) {
+                        HTMLProtocolHandler.print(fragment);
+                    }
                 }
             }
             getTransfer().transfer(this.getDataHandler().readData(tuple));
         }
         catch (final SAXException | IOException e) {
-            this.LOG.error(e.getMessage(), e);
+            HTMLProtocolHandler.LOG.error(e.getMessage(), e);
         }
     }
 
     @Override
     public void write(final T object) throws IOException {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append("<head>");
-        sb.append("</head>");
-        sb.append("<body>");
-        sb.append("<table>");
-        final SDFSchema schema = this.getDataHandler().getSchema();
-        for (int i = 0; i < schema.size(); i++) {
-            final String attr = schema.get(i).getAttributeName();
-            sb.append("<tr><td>").append(attr).append("</td>");
-            sb.append("<td>").append(object.getAttribute(i).toString());
-            sb.append("</td></tr>");
+        this.columns.add(object.getAttributes());
+        if (!this.isMulti()) {
+            final StringBuilder sb = new StringBuilder();
+            sb.append("<html>");
+            sb.append("<head>");
+            sb.append("</head>");
+            sb.append("<body>");
+            sb.append("<table>");
+            final SDFSchema schema = this.getDataHandler().getSchema();
+            for (int i = 0; i < schema.size(); i++) {
+                final String attr = schema.get(i).getAttributeName();
+                sb.append("<tr><td>").append(attr).append("</td>");
+                sb.append("<td>").append(object.getAttribute(i).toString());
+                sb.append("</td></tr>");
+            }
+            sb.append("</table>");
+            sb.append("</body>");
+            sb.append("</html>");
+            this.output.write(sb.toString().getBytes());
+            this.columns.clear();
         }
-        sb.append("</table>");
-        sb.append("</body>");
-        sb.append("</html>");
-        this.output.write(object.toString().getBytes());
+
     }
 
     protected void delay() {
@@ -239,36 +290,49 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
                 Thread.sleep(this.delay);
             }
             catch (final InterruptedException e) {
-                this.LOG.error(e.getMessage(), e);
+                HTMLProtocolHandler.LOG.trace(e.getMessage(), e);
+            }
+        }
+        else {
+            if (this.getNanodelay() > 0) {
+                try {
+                    Thread.sleep(0L, this.getNanodelay());
+                }
+                catch (final InterruptedException e) {
+                    HTMLProtocolHandler.LOG.trace(e.getMessage(), e);
+                }
             }
         }
     }
 
     @Override
     public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final Map<String, String> options, final IDataHandler<T> dataHandler) {
-        final HTMLProtocolHandler<T> instance = new HTMLProtocolHandler<T>(direction, access, dataHandler);
-        instance.init(options);
+        final HTMLProtocolHandler<T> instance = new HTMLProtocolHandler<>(direction, access, dataHandler);
         instance.setOptionsMap(options);
+        instance.init(options);
 
-        final SDFSchema schema = dataHandler.getSchema();
-        final List<String> xpaths = new ArrayList<String>();
-        for (int i = 0; i < schema.size(); i++) {
-            final String attr = schema.get(i).getAttributeName();
-            if (options.containsKey(attr)) {
-                xpaths.add(options.get(attr));
-            }
-        }
-        instance.setXPaths(xpaths);
         return instance;
     }
 
     protected void init(final Map<String, String> options) {
-        if (options.get("delay") != null) {
-            this.setDelay(Long.parseLong(options.get("delay")));
+        if (options.containsKey(DELAY)) {
+            this.setDelay(Long.parseLong(options.get(DELAY)));
         }
-        if (options.get("nanodelay") != null) {
-            this.setNanodelay(Integer.parseInt(options.get("nanodelay")));
+        if (options.containsKey(NANODELAY)) {
+            this.setNanodelay(Integer.parseInt(options.get(NANODELAY)));
         }
+        if (options.containsKey(MULTI)) {
+            this.setMulti(Boolean.parseBoolean(options.get(MULTI)));
+        }
+        final SDFSchema schema = getDataHandler().getSchema();
+        final List<String> attributeXPaths = new ArrayList<>();
+        for (int i = 0; i < schema.size(); i++) {
+            final String attr = schema.get(i).getAttributeName();
+            if (options.containsKey(attr)) {
+                attributeXPaths.add(options.get(attr));
+            }
+        }
+        setXPaths(attributeXPaths);
     }
 
     @Override
@@ -292,11 +356,26 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
         return this.nanodelay;
     }
 
-    private List<String> getXPaths() {
+    /**
+     * @return the multi
+     */
+    public boolean isMulti() {
+        return this.multi;
+    }
+
+    /**
+     * @param multi
+     *            the multi to set
+     */
+    public void setMulti(boolean multi) {
+        this.multi = multi;
+    }
+
+    public List<String> getXPaths() {
         return Collections.unmodifiableList(this.xpaths);
     }
 
-    private void setXPaths(final List<String> xpaths) {
+    public void setXPaths(final List<String> xpaths) {
         this.xpaths.clear();
         this.xpaths.addAll(xpaths);
     }
@@ -306,18 +385,7 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
         if (this.getDirection().equals(ITransportDirection.IN)) {
             return ITransportExchangePattern.InOnly;
         }
-        else {
-            return ITransportExchangePattern.OutOnly;
-        }
-    }
-
-    @Override
-    public void onConnect(final ITransportHandler caller) {
-
-    }
-
-    @Override
-    public void onDisonnect(final ITransportHandler caller) {
+        return ITransportExchangePattern.OutOnly;
     }
 
     @Override
@@ -348,14 +416,15 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
                 System.out.print('<');
                 System.out.print(node.getNodeName());
                 final org.w3c.dom.NamedNodeMap attrs = node.getAttributes();
-                final int attrCount = attrs != null ? attrs.getLength() : 0;
-                for (int i = 0; i < attrCount; i++) {
-                    final Node attr = attrs.item(i);
-                    System.out.print(' ');
-                    System.out.print(attr.getNodeName());
-                    System.out.print("='");
-                    System.out.print(attr.getNodeValue());
-                    System.out.print('\'');
+                if (attrs != null) {
+                    for (int i = 0; i < attrs.getLength(); i++) {
+                        final Node attr = attrs.item(i);
+                        System.out.print(' ');
+                        System.out.print(attr.getNodeName());
+                        System.out.print("='");
+                        System.out.print(attr.getNodeValue());
+                        System.out.print('\'');
+                    }
                 }
                 System.out.print('>');
                 break;
@@ -364,6 +433,8 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
                 System.out.print(node.getNodeValue());
                 break;
             }
+            default:
+                break;
         }
         Node child = node.getFirstChild();
         while (child != null) {
