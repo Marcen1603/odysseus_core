@@ -40,7 +40,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolMo
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
@@ -122,7 +121,7 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
      */
     @Override
     public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final Map<String, String> options, final IDataHandler<T> dataHandler) {
-        final XLSProtocolHandler<T> instance = new XLSProtocolHandler<T>(direction, access, dataHandler);
+        final XLSProtocolHandler<T> instance = new XLSProtocolHandler<>(direction, access, dataHandler);
         instance.setOptionsMap(options);
         instance.init(options);
         return instance;
@@ -145,9 +144,7 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
         if (this.getDirection().equals(ITransportDirection.IN)) {
             return ITransportExchangePattern.InOnly;
         }
-        else {
-            return ITransportExchangePattern.OutOnly;
-        }
+        return ITransportExchangePattern.OutOnly;
     }
 
     /**
@@ -262,24 +259,6 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
                 this.dumpOut.close();
             }
         }
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public void onConnect(final ITransportHandler caller) {
-
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public void onDisonnect(final ITransportHandler caller) {
-
     }
 
     /**
@@ -591,7 +570,7 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
         this.addLineNumber = addLineNumber;
     }
 
-    protected T getNextLine() throws IOException {
+    protected T getNextLine() {
         if (!this.firstLineSkipped && !this.isReadFirstLine()) {
             this.lineCounter++;
             this.firstLineSkipped = true;
@@ -613,7 +592,8 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
                 tuple[i] = valueString;
             }
             catch (final CellNotFoundException e) {
-                XLSProtocolHandler.LOG.error(e.getMessage(), e);
+                tuple[i] = null;
+                XLSProtocolHandler.LOG.debug(e.getMessage(), e);
             }
         }
         if (this.isDebug()) {
