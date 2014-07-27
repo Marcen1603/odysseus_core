@@ -9,8 +9,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManag
 import de.uniol.inf.is.odysseus.test.StatusCode;
 import de.uniol.inf.is.odysseus.test.context.ITestContext;
 import de.uniol.inf.is.odysseus.test.set.QueryTestSet;
+import de.uniol.inf.is.odysseus.test.sinks.physicaloperator.AbstractCompareSink;
 import de.uniol.inf.is.odysseus.test.sinks.physicaloperator.ICompareSinkListener;
-import de.uniol.inf.is.odysseus.test.sinks.physicaloperator.TICompareSink;
 
 public abstract class AbstractQueryTestComponent<T extends ITestContext, S extends QueryTestSet> extends AbstractTestComponent<T, S> implements ICompareSinkListener {
 
@@ -92,7 +92,7 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 	}
 
 	@Override
-	public void compareSinkProcessingDone(TICompareSink sink, boolean done, StatusCode result) {
+	public void compareSinkProcessingDone(AbstractCompareSink<?> sink, boolean done, StatusCode result) {
 		synchronized (this) {
 			if(this.processingResult==null){
 				this.processingResult = result;

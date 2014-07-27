@@ -77,7 +77,12 @@ public class TestSetFactory {
 	private static ExpectedOutputTestSet createExpectedOutputTestSetFromQuery(File qf, URL bundleroot, String dataHandler) {
 		try {
 			URL queryFile = qf.toURI().toURL();
-			File outputFile = getOutputFile(qf);
+			File outputFile;
+			if(dataHandler.equalsIgnoreCase("KEYVALUEOBJECT")) {
+				outputFile = getOutputFile(qf, "json");
+			} else {
+				outputFile = getOutputFile(qf, "csv");
+			}
 			if (outputFile != null) {
 				URL outputdata = outputFile.toURI().toURL();
 				ExpectedOutputTestSet set = createExpectedOutputTestSetFromFile(queryFile, outputdata, bundleroot, dataHandler);
@@ -92,15 +97,15 @@ public class TestSetFactory {
 		return null;
 	}
 
-	private static File getOutputFile(File qf) {
+	private static File getOutputFile(File qf, String ending) {
 		File dir = qf.getParentFile();
 		String name = qf.getName().substring(0, qf.getName().length() - 4);
-		File f = new File(dir + File.separator + name + ".csv");
+		File f = new File(dir + File.separator + name + "." + ending);
 		if (f.exists()) {
 			return f;
 		}
 		for (String filename : OUTPUT_FILE_NAMES) {
-			f = new File(dir + File.separator +filename + ".csv");
+			f = new File(dir + File.separator +filename + "." + ending);
 			if (f.exists()) {
 				return f;
 			}
@@ -138,7 +143,7 @@ public class TestSetFactory {
 	private static String replaceRootPathInFile(String queryFileStr, URL rootPath) {
 		return queryFileStr.replace("${BUNDLE-ROOT}", rootPath.getFile());
 	}
-
+	
 	private static List<Pair<String, String>> fileToTupleList(URL path) {
 		List<Pair<String, String>> tuples = new ArrayList<>();
 		try {
