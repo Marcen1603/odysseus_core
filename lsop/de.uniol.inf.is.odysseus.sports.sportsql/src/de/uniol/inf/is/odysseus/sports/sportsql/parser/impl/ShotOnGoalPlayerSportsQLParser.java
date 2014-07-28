@@ -13,9 +13,12 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.CoalesceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.PredicateWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TupleAggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
@@ -30,12 +33,22 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 	/**
 	 * The maximal timeshift to detect shooters [ps]
 	 */
-	public final static String maxTimeShiftShooter = "5000000000.0";
+	public final static String MAX_TIMESHIFT_SHOOTER = "5000000000.0";
 
 	/**
 	 * The maximal distance of players to be shooters [mm]
 	 */
-	public final static String maxDistanceShooter = "1000.0";
+	public final static String MAX_DISTANCE_SHOOTER = "1000.0";
+
+	/**
+	 * The maximal shot duration [ps]
+	 */
+	public static final String MAX_SHOT_DURATION = "1500000000000.0";
+
+	/**
+	 * The minimal length of a shot [mm]
+	 */
+	public static final String MIN_SHOT_LENGTH = "1000.0";
 
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
@@ -190,13 +203,13 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		// 1. Join
 		RelationalPredicate firstPlayerBallJoinPredicate = OperatorBuildHelper
 				.createRelationalPredicate("ts >= shot_ts - "
-						+ ShotOnGoalPlayerSportsQLParser.maxTimeShiftShooter);
+						+ ShotOnGoalPlayerSportsQLParser.MAX_TIMESHIFT_SHOOTER);
 		RelationalPredicate secondPlayerBallJoinPredicate = OperatorBuildHelper
 				.createRelationalPredicate("ts >= shot_ts + "
-						+ ShotOnGoalPlayerSportsQLParser.maxTimeShiftShooter);
+						+ ShotOnGoalPlayerSportsQLParser.MAX_TIMESHIFT_SHOOTER);
 		RelationalPredicate thirdPlayerBallJoinPredicate = OperatorBuildHelper
 				.createRelationalPredicate("sqrt((x - shot_x)^2 + (y - shot_y)^2) < "
-						+ ShotOnGoalPlayerSportsQLParser.maxDistanceShooter);
+						+ ShotOnGoalPlayerSportsQLParser.MAX_DISTANCE_SHOOTER);
 
 		List<IPredicate> playerBallJoinPredicates = new ArrayList<IPredicate>();
 		playerBallJoinPredicates.add(firstPlayerBallJoinPredicate);
@@ -273,6 +286,95 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		clostestPlayerProjectAttributes.add("team_id");
 		ProjectAO clostestPlayer = OperatorBuildHelper.createProjectAO(
 				clostestPlayerProjectAttributes, clostedPlayerJoin);
+
+		// -------------------------------------------------------------------
+		// Seventh part
+		// Shots have a maximal duration and a minimal length
+		// -------------------------------------------------------------------
+
+		// 1. Join
+		RelationalPredicate joinPredicate1 = OperatorBuildHelper
+				.createRelationalPredicate("ts >= shot_ts");
+		RelationalPredicate joinPredicate2 = OperatorBuildHelper
+				.createRelationalPredicate("ts < shot_ts + "
+						+ MAX_SHOT_DURATION);
+		RelationalPredicate joinPredicate3 = OperatorBuildHelper
+				.createRelationalPredicate("sqrt((x - shot_x)^2 + (y - shot_y)^2) >= "
+						+ MIN_SHOT_LENGTH);
+
+		List<IPredicate> joinPredicates = new ArrayList<IPredicate>();
+		joinPredicates.add(joinPredicate1);
+		joinPredicates.add(joinPredicate2);
+		joinPredicates.add(joinPredicate3);
+
+		IPredicate joinAndPredicate = OperatorBuildHelper
+				.createAndPredicate(joinPredicates);
+		JoinAO closestBallActivePlayerJoin = OperatorBuildHelper.createJoinAO(
+				joinAndPredicate, "ONE_MANY", clostestPlayer, activeBall);
+
+		// 2. StateMap
+		List<SDFExpressionParameter> durationLengthStatemapParams = new ArrayList<SDFExpressionParameter>();
+		SDFExpressionParameter sdfParam1 = OperatorBuildHelper
+				.createExpressionParameter("shot_ts",
+						closestBallActivePlayerJoin);
+		SDFExpressionParameter sdfParam2 = OperatorBuildHelper
+				.createExpressionParameter("shot_x",
+						closestBallActivePlayerJoin);
+		SDFExpressionParameter sdfParam3 = OperatorBuildHelper
+				.createExpressionParameter("shot_y",
+						closestBallActivePlayerJoin);
+		SDFExpressionParameter sdfParam4 = OperatorBuildHelper
+				.createExpressionParameter("shot_z",
+						closestBallActivePlayerJoin);
+		SDFExpressionParameter sdfParam5 = OperatorBuildHelper
+				.createExpressionParameter("ts", closestBallActivePlayerJoin);
+		SDFExpressionParameter sdfParam6 = OperatorBuildHelper
+				.createExpressionParameter("x", closestBallActivePlayerJoin);
+		SDFExpressionParameter sdfParam7 = OperatorBuildHelper
+				.createExpressionParameter("y", closestBallActivePlayerJoin);
+		SDFExpressionParameter sdfParam8 = OperatorBuildHelper
+				.createExpressionParameter("z", closestBallActivePlayerJoin);
+		SDFExpressionParameter sdfParam9 = OperatorBuildHelper
+				.createExpressionParameter("entity_id",
+						closestBallActivePlayerJoin);
+		SDFExpressionParameter sdfParam10 = OperatorBuildHelper
+				.createExpressionParameter("team_id",
+						closestBallActivePlayerJoin);
+		SDFExpressionParameter sdfParam11 = OperatorBuildHelper
+				.createExpressionParameter(
+						"eif(shot_ts = __last_1.shot_ts, 1, 0)", "sameShotTS",
+						closestBallActivePlayerJoin);
+
+		durationLengthStatemapParams.add(sdfParam1);
+		durationLengthStatemapParams.add(sdfParam2);
+		durationLengthStatemapParams.add(sdfParam3);
+		durationLengthStatemapParams.add(sdfParam4);
+		durationLengthStatemapParams.add(sdfParam5);
+		durationLengthStatemapParams.add(sdfParam6);
+		durationLengthStatemapParams.add(sdfParam7);
+		durationLengthStatemapParams.add(sdfParam8);
+		durationLengthStatemapParams.add(sdfParam9);
+		durationLengthStatemapParams.add(sdfParam10);
+		durationLengthStatemapParams.add(sdfParam11);
+		StateMapAO durantionLengthStatemapAO = OperatorBuildHelper
+				.createStateMapAO(durationLengthStatemapParams, null,
+						closestBallActivePlayerJoin);
+
+		// 3. PredicateWindow
+		String endCondition = null;
+		PredicateWindowAO durationLengthPredicateAO = OperatorBuildHelper
+				.createPredicateWindowAO("sameShotTS = 1", null, true, 1500L,
+						"Milliseconds", durantionLengthStatemapAO);
+
+		// 4. TupleAggregate
+		TupleAggregateAO durationAndLengthCriteria = OperatorBuildHelper
+				.createTupleAggregateAO("first", "shot_ts",
+						durationLengthPredicateAO);
+
+		// -------------------------------------------------------------------
+		// Eighth part
+		// The sign of vx determines the desired goal area
+		// -------------------------------------------------------------------
 
 		return null;
 	}

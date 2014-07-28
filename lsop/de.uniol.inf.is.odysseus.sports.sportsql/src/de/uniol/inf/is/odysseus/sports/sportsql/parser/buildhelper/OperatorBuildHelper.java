@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.CoalesceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.PredicateWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
@@ -31,16 +32,19 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TupleAggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItemParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SourceParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
@@ -568,6 +572,33 @@ public class OperatorBuildHelper {
 
 		return coalesceAO;
 	}
+	
+	/**
+	 * 
+	 * @param method Method to use (MIN, MAX, LAST, FIRST)
+	 * @param attribute Attribute on which the method is evaluated
+	 * @param source
+	 * @return
+	 */
+	public static TupleAggregateAO createTupleAggregateAO(String method, String attribute, ILogicalOperator source) {
+		TupleAggregateAO tupleAggregateAO = new TupleAggregateAO();
+		
+		// Method
+		StringParameter stringParam = new StringParameter();
+		stringParam.setInputValue(method);
+		tupleAggregateAO.setMethod(stringParam.getValue());
+		
+		// Attribute
+		ResolvedSDFAttributeParameter attributeParam = new ResolvedSDFAttributeParameter();
+		attributeParam.setAttributeResolver(OperatorBuildHelper.createAttributeResolver(source));
+		attributeParam.setInputValue(attribute);
+		tupleAggregateAO.setAttribute(attributeParam.getValue());
+		
+		// Source
+		tupleAggregateAO.subscribeToSource(source, 0, 0, source.getOutputSchema());
+		
+		return tupleAggregateAO;
+	}
 
 	/**
 	 * Returns routeAO with a list of predicates
@@ -806,6 +837,70 @@ public class OperatorBuildHelper {
 	}
 
 	/**
+	 * Creates a PredicateWindowAO
+	 * 
+	 * @param startCondition
+	 *            When to start, e.g. "sameShotTS = 1"
+	 * @param endCondition
+	 *            When to stop, e.g. "sameShotTS = 100"
+	 * @param sameStartTime
+	 *            For predicate windows: If set to true, all produced elements
+	 *            get the same start timestamp
+	 * @param size
+	 *            The size of your window, e.g. 1000; Type -1 if you don't want
+	 *            to set this
+	 * @param sizeUnit
+	 *            The unit you want to measure your size in, e.g.
+	 *            "Milliseconds". default time is the base time of the stream
+	 *            (typically milliseconds)
+	 * @return
+	 */
+	public static PredicateWindowAO createPredicateWindowAO(
+			String startCondition, String endCondition, boolean sameStartTime,
+			long size, String sizeUnit, ILogicalOperator source) {
+		PredicateWindowAO predicateWindowAO = new PredicateWindowAO();
+
+		// Start
+		if (startCondition != null) {
+			PredicateParameter startParam = new PredicateParameter();
+			startParam.setInputValue(startCondition);
+			predicateWindowAO.setStartCondition(startParam.getValue());
+		}
+
+		// Stop
+		if (endCondition != null) {
+			PredicateParameter endParam = new PredicateParameter();
+			endParam.setInputValue(endCondition);
+			predicateWindowAO.setEndCondition(endParam.getValue());
+		}
+
+		// Same start time
+			BooleanParameter sameParam = new BooleanParameter();
+			sameParam.setInputValue(sameStartTime);
+			predicateWindowAO.setSameStarttime(sameParam.getValue());
+
+		// Size
+		if (size > -1) {
+			TimeParameter timeParam = new TimeParameter();
+			if (sizeUnit != null) {
+				// Use time unit -> we need to use a List
+				List<String> timeUnitList = new ArrayList<String>();
+				timeUnitList.add(Long.toString(size));
+				timeUnitList.add(sizeUnit);
+				timeParam.setInputValue(timeUnitList);
+			} else {
+				// Don't use time unit -> use single long
+				timeParam.setInputValue(size);
+			}
+			predicateWindowAO.setWindowSize(timeParam.getValue());
+		}
+		
+		predicateWindowAO.subscribeTo(source, source.getOutputSchema());
+
+		return predicateWindowAO;
+	}
+
+	/**
 	 * Deprecated. Use method for TimeWindowAO, ... Returns windowAO.
 	 * 
 	 * @param windowSize
@@ -846,8 +941,11 @@ public class OperatorBuildHelper {
 
 	/**
 	 * Creates a JoinAO
-	 * @param predicate The predicates, e.g. "x = y"
-	 * @param card Cardinality, e.g. ONE_ONE or ONE_MANY
+	 * 
+	 * @param predicate
+	 *            The predicates, e.g. "x = y"
+	 * @param card
+	 *            Cardinality, e.g. ONE_ONE or ONE_MANY
 	 * @param source1
 	 * @param source2
 	 * @return
@@ -862,8 +960,11 @@ public class OperatorBuildHelper {
 
 	/**
 	 * Creates a JoinAO
-	 * @param predicates The predicates, e.g. "x = y"
-	 * @param card Cardinality, e.g. ONE_ONE or ONE_MANY
+	 * 
+	 * @param predicates
+	 *            The predicates, e.g. "x = y"
+	 * @param card
+	 *            Cardinality, e.g. ONE_ONE or ONE_MANY
 	 * @param source1
 	 * @param source2
 	 * @return
