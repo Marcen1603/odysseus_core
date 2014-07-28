@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -237,6 +238,18 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		MapAO playerBallJoin = OperatorBuildHelper.createMapAO(
 				playerBallJoinExpressions, playerBallJoinAO, 0, 0);
 
+		// -------------------------------------------------------------------
+		// Sixth part
+		// Determine the player closest to the ball
+		// -------------------------------------------------------------------
+		List<String> renameAliases = new ArrayList<String>();
+		renameAliases.add("shot_ts");
+		renameAliases.add("shot_ts2");
+		RenameAO renameAO = OperatorBuildHelper.createRenameAO(renameAliases, true, playerBallJoin);
+		
+		
+		
+		
 		return null;
 	}
 }

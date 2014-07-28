@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SampleAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
@@ -810,9 +811,14 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * You can use this, if you want to create a JoinAO with a predicate made by yourself
-	 * @param predicate If you build a predicate by yourself, e.g. with createRelationalPredicate
-	 * @param card e.g. ONE_MANY, ONE_ONE, ...
+	 * You can use this, if you want to create a JoinAO with a predicate made by
+	 * yourself
+	 * 
+	 * @param predicate
+	 *            If you build a predicate by yourself, e.g. with
+	 *            createRelationalPredicate
+	 * @param card
+	 *            e.g. ONE_MANY, ONE_ONE, ...
 	 * @param source1
 	 * @param source2
 	 * @return
@@ -827,11 +833,29 @@ public class OperatorBuildHelper {
 		cardParam.setInputValue(card);
 		// TODO Does this cast work?
 		joinAO.setCard((Cardinalities) cardParam.getValue());
-		
+
 		joinAO.subscribeToSource(source1, 0, 0, source1.getOutputSchema());
 		joinAO.subscribeToSource(source2, 1, 0, source2.getOutputSchema());
-		
+
 		return joinAO;
+	}
+
+	/**
+	 * Creates a renameAO with which you can rename attributes
+	 * @param aliases The list new attribute names to use from now on
+	 * @param pairs If the flag pairs is set, aliases will be interpreted as pairs of (old_name, new_name)
+	 * @param source
+	 * @return
+	 */
+	public static RenameAO createRenameAO(List<String> aliases, boolean pairs,
+			ILogicalOperator source) {
+		RenameAO renameAO = new RenameAO();
+		
+		renameAO.setAliases(aliases);
+		renameAO.setPairs(pairs);
+		renameAO.subscribeTo(source, source.getOutputSchema());
+		
+		return renameAO;
 	}
 
 	/**
