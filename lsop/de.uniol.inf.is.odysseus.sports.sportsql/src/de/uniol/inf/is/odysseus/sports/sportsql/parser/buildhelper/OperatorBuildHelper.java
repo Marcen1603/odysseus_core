@@ -81,11 +81,14 @@ public class OperatorBuildHelper {
 	public static final int UPPERRIGHT_Y = 33941;
 	public static final int LOWERRIGHT_X = 52489;
 	public static final int LOWERRIGHT_Y = -33939;
-	
+
 	/**
 	 * Entity names
 	 */
 	public static final String BALL_ENTITY = "Ball";
+	public static final String REFEREE_ENTITY = "Referee";
+	public static final String LEFT_LEG_REMARK = "Left Leg";
+	public static final String RIGHT_LEG_REMARK = "Right Leg";
 
 	/**
 	 * Creates a MapAP with a list of expressions. To create such expressions,
@@ -191,11 +194,11 @@ public class OperatorBuildHelper {
 			SDFExpressionParameter param1 = OperatorBuildHelper
 					.createExpressionParameter("sid", "sensor_id", source);
 			SDFExpressionParameter param2 = OperatorBuildHelper
-					.createExpressionParameter("x / 1000 - " + UPPERRIGHT_X + "/1000",
-							"x_meter", source);
+					.createExpressionParameter("x / 1000 - " + UPPERRIGHT_X
+							+ "/1000", "x_meter", source);
 			SDFExpressionParameter param3 = OperatorBuildHelper
-					.createExpressionParameter("y / 1000 - " + UPPERRIGHT_Y + "/1000",
-							"y_meter", source);
+					.createExpressionParameter("y / 1000 - " + UPPERRIGHT_Y
+							+ "/1000", "y_meter", source);
 			meterExpressions.add(param1);
 			meterExpressions.add(param2);
 			meterExpressions.add(param3);
@@ -250,26 +253,30 @@ public class OperatorBuildHelper {
 
 	/**
 	 * Creates a SelectAO which selects for the given teamId
-	 * @param teamId Of the team you want to get
-	 * @param source source with team_id
+	 * 
+	 * @param teamId
+	 *            Of the team you want to get
+	 * @param source
+	 *            source with team_id
 	 * @return SelectAO which filters for the given teamId
 	 */
-	public static SelectAO createTeamSelectAO(int teamId, ILogicalOperator source) {
+	public static SelectAO createTeamSelectAO(int teamId,
+			ILogicalOperator source) {
 		SelectAO teamSelectAO = new SelectAO();
-		
+
 		String predicateString = "team_id = " + teamId;
 		SDFExpression predicateExpression = new SDFExpression(predicateString,
 				MEP.getInstance());
-		
+
 		RelationalPredicate predicate = new RelationalPredicate(
 				predicateExpression);
 		teamSelectAO.setPredicate(predicate);
-		
+
 		teamSelectAO.subscribeTo(source, source.getOutputSchema());
-		
+
 		return teamSelectAO;
 	}
-	
+
 	/**
 	 * Creates a SelectAO with given timeParameter. Automatically build a
 	 * correct Select for the given timeParameter. Assumes that the given input
@@ -586,7 +593,7 @@ public class OperatorBuildHelper {
 
 	/**
 	 * Returns changeDetectAO with a list of Attributes and an absolute
-	 * tolerance
+	 * tolerance with deliverFirstElement set to false
 	 * 
 	 * @param attributes
 	 *            List of Attributes where changes should occur
@@ -599,12 +606,40 @@ public class OperatorBuildHelper {
 	public static ChangeDetectAO createChangeDetectAO(
 			List<SDFAttribute> attributes, double tolerance,
 			ILogicalOperator source) {
+		return createChangeDetectAO(attributes, tolerance, false, source);
+	}
+
+	/**
+	 * Returns changeDetectAO with a list of Attributes and an absolute
+	 * tolerance
+	 * 
+	 * @param attributes
+	 *            List of Attributes where changes should occur
+	 * @param tolerance
+	 *            (Absolute) Tolerance applied to changeDetection.
+	 * @param deliverFirstElement
+	 *            If you want to deliver the first element
+	 * @param source
+	 *            Source to link to.
+	 * @return
+	 */
+	public static ChangeDetectAO createChangeDetectAO(
+			List<SDFAttribute> attributes, double tolerance,
+			boolean deliverFirstElement, ILogicalOperator source) {
 		ChangeDetectAO cAO = new ChangeDetectAO();
 
 		cAO.setAttr(attributes);
 		cAO.setTolerance(tolerance);
+		cAO.setDeliverFirstElement(deliverFirstElement);
 		cAO.subscribeTo(source, source.getOutputSchema());
 		return cAO;
+	}
+
+	public static SelectAO createSelectAO(String predicate,
+			ILogicalOperator source) {
+		List<String> predicates = new ArrayList<String>();
+		predicates.add(predicate);
+		return createSelectAO(predicates, source);
 	}
 
 	/**
@@ -614,7 +649,7 @@ public class OperatorBuildHelper {
 	 * @param source
 	 * @return
 	 */
-	public static SelectAO createSelectAO(ArrayList<String> listOfPredicates,
+	public static SelectAO createSelectAO(List<String> listOfPredicates,
 			ILogicalOperator source) {
 		SelectAO sAO = new SelectAO();
 		for (String predicateString : listOfPredicates) {
@@ -626,6 +661,23 @@ public class OperatorBuildHelper {
 		}
 		sAO.subscribeTo(source, source.getOutputSchema());
 		return sAO;
+	}
+
+	/**
+	 * If you create a IPredictate by yourself, e.g. cause it's very special,
+	 * you can use this method to create a SelectAO with this predicate
+	 * 
+	 * @param predicate e.g. made with createAndPredicate
+	 * @param source
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public static SelectAO createSelectAO(IPredicate predicate,
+			ILogicalOperator source) {
+		SelectAO selectAO = new SelectAO();
+		selectAO.setPredicate(predicate);
+		selectAO.subscribeTo(source, source.getOutputSchema());
+		return selectAO;
 	}
 
 	/**
@@ -787,7 +839,7 @@ public class OperatorBuildHelper {
 				.createAccessAO(gameSourceName);
 		return gameAccessAO;
 	}
-	
+
 	/**
 	 * 
 	 * @return An AccessAO for the metadata-stream
@@ -798,7 +850,7 @@ public class OperatorBuildHelper {
 				.createAccessAO(metaSourceName);
 		return metaAccessAO;
 	}
-	
+
 	/**
 	 * Creates a simple TopAO which indicates the top node in the query (maybe
 	 * necessary for Odysseus: This could / should be the operator you return in
@@ -1055,5 +1107,66 @@ public class OperatorBuildHelper {
 		query.setName(queryName);
 
 		return query;
+	}
+
+	/**
+	 * If you need a connected list of AND predicates
+	 * 
+	 * @param predicatesToConnect
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public static IPredicate createAndPredicate(
+			List<IPredicate> predicatesToConnect) {
+		if (predicatesToConnect.size() >= 2) {
+			IPredicate lastAndPredicate = predicatesToConnect.get(0);
+			for (int i = 1; i < predicatesToConnect.size(); i++) {
+				IPredicate predicate = predicatesToConnect.get(i);
+				lastAndPredicate = ComplexPredicateHelper.createAndPredicate(
+						predicate, lastAndPredicate);
+			}
+			return lastAndPredicate;
+		} else if (predicatesToConnect.size() > 0) {
+			return predicatesToConnect.get(0);
+		}
+		return null;
+	}
+
+	/**
+	 * If you need a connected list of OR predicates
+	 * 
+	 * @param predicatesToConnect
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public static IPredicate createOrPredicate(
+			List<IPredicate> predicatesToConnect) {
+		if (predicatesToConnect.size() >= 2) {
+			IPredicate lastOrPredicate = predicatesToConnect.get(0);
+			for (int i = 1; i < predicatesToConnect.size(); i++) {
+				IPredicate predicate = predicatesToConnect.get(i);
+				lastOrPredicate = ComplexPredicateHelper.createOrPredicate(
+						predicate, lastOrPredicate);
+			}
+			return lastOrPredicate;
+		} else if (predicatesToConnect.size() > 0) {
+			return predicatesToConnect.get(0);
+		}
+		return null;
+	}
+
+	/**
+	 * If you need a predicate like x = y; x != y; x < y; ...
+	 * 
+	 * @param predicate
+	 *            What you type in PQL
+	 * @return
+	 */
+	public static RelationalPredicate createRelationalPredicate(String predicate) {
+		SDFExpression predicateExpression = new SDFExpression(predicate,
+				MEP.getInstance());
+		RelationalPredicate finishedPredicate = new RelationalPredicate(
+				predicateExpression);
+		return finishedPredicate;
 	}
 }
