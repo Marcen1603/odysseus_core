@@ -445,6 +445,10 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 				source.subscribeSink(getInstance(), sinkInPort, sourceOutPort, inputSchema);
 				recalcOutputSchemata = true;
 				this.recalcAllPhyInputSet = true;
+			} else {
+				if( source != subscribedToSource.get(sinkInPort).getTarget()) {
+					throw new IllegalArgumentException("SinkInPort " + sinkInPort + " already bound to logical operator '" + subscribedToSource.get(sinkInPort).getTarget() + "'. Cannot bind '" + source + "'");
+				}
 			}
 		}
 	}
