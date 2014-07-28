@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SourceParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(name = "Stream", maxInputPorts = 0, minInputPorts = 0, category = { LogicalOperatorCategory.SOURCE }, doc = "Integrate a view.")
 public class StreamAO extends AbstractLogicalOperator {
@@ -28,7 +29,14 @@ public class StreamAO extends AbstractLogicalOperator {
 		super(streamAO);
 		this.streamname = streamAO.streamname;
 		this.schema = streamAO.schema;
-
+		setName(streamname.getResourceName());
+	}
+	
+	@Override
+	@Parameter(name = "Name", type = StringParameter.class, optional = true, doc = "Name of the operator (e.g. for visulization).")
+	public void setName(String name) {
+		super.setName(name);
+		addParameterInfo("SOURCE", "'"+name+"'");
 	}
 
 	@Override
