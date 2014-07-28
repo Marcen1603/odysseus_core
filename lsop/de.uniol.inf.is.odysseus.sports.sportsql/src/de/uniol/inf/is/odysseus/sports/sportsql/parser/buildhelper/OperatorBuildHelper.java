@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvide
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
@@ -32,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItemParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
@@ -667,7 +669,8 @@ public class OperatorBuildHelper {
 	 * If you create a IPredictate by yourself, e.g. cause it's very special,
 	 * you can use this method to create a SelectAO with this predicate
 	 * 
-	 * @param predicate e.g. made with createAndPredicate
+	 * @param predicate
+	 *            e.g. made with createAndPredicate
 	 * @param source
 	 * @return
 	 */
@@ -804,6 +807,31 @@ public class OperatorBuildHelper {
 		jAO.subscribeToSource(source2, 1, 0, source2.getOutputSchema());
 
 		return jAO;
+	}
+
+	/**
+	 * You can use this, if you want to create a JoinAO with a predicate made by yourself
+	 * @param predicate If you build a predicate by yourself, e.g. with createRelationalPredicate
+	 * @param card e.g. ONE_MANY, ONE_ONE, ...
+	 * @param source1
+	 * @param source2
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public static JoinAO createJoinAO(IPredicate predicate, String card,
+			ILogicalOperator source1, ILogicalOperator source2) {
+		JoinAO joinAO = new JoinAO();
+		joinAO.setPredicate(predicate);
+		EnumParameter cardParam = new EnumParameter();
+		cardParam.setEnum(Cardinalities.class);
+		cardParam.setInputValue(card);
+		// TODO Does this cast work?
+		joinAO.setCard((Cardinalities) cardParam.getValue());
+		
+		joinAO.subscribeToSource(source1, 0, 0, source1.getOutputSchema());
+		joinAO.subscribeToSource(source2, 1, 0, source2.getOutputSchema());
+		
+		return joinAO;
 	}
 
 	/**
