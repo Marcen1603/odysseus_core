@@ -267,6 +267,11 @@ public class ForceModel {
 	public void run() {
 		double factor = 0.001;
 		double waitTime = 0;
+		if( allNodesFixed() ) {
+			LOG.debug("All nodes are fixed nodes. No model-running needed.");
+			return;
+		}
+		
 		do {
 			long Starttimestamp = System.nanoTime();
 
@@ -281,6 +286,15 @@ public class ForceModel {
 
 		LOG.debug("Finished model-Running");
 		printForceNodes(forceNodes);
+	}
+
+	private boolean allNodesFixed() {
+		for( ForceNode node : forceNodes ) {
+			if( !node.isFixed() ) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public Map<ILogicalQueryPart, List<PeerID>> getResult() {
