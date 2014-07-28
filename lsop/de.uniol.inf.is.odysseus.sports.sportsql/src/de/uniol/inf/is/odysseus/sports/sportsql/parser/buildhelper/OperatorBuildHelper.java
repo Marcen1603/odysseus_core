@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.CoalesceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
@@ -37,6 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateIte
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SourceParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
@@ -521,6 +523,52 @@ public class OperatorBuildHelper {
 		return aggregateAO;
 	}
 
+	public static CoalesceAO createCoalesceAO(List<String> attributes,
+			String aggregationFunction, String inputAttributeName,
+			String outputAttributeName, ILogicalOperator source) {
+		CoalesceAO coalesceAO = new CoalesceAO();
+
+		// Grouping attributes
+		List<ResolvedSDFAttributeParameter> params = new ArrayList<ResolvedSDFAttributeParameter>();
+		for (String attribute : attributes) {
+			ResolvedSDFAttributeParameter param = new ResolvedSDFAttributeParameter();
+			param.setAttributeResolver(OperatorBuildHelper
+					.createAttributeResolver(source));
+			param.setInputValue(attribute);
+			params.add(param);
+		}
+
+		List<SDFAttribute> finishedParams = new ArrayList<SDFAttribute>();
+		for (ResolvedSDFAttributeParameter resAttrParam : params) {
+			finishedParams.add(resAttrParam.getValue());
+		}
+		coalesceAO.setGroupingAttributes(finishedParams);
+
+		// Aggregations
+		
+		// 1. Fill parameter
+		AggregateItemParameter param = new AggregateItemParameter();
+		List<String> aggregateOptions = new ArrayList<String>();
+		aggregateOptions.add(aggregationFunction);
+		aggregateOptions.add(inputAttributeName);
+		aggregateOptions.add(outputAttributeName);
+		param.setInputValue(aggregateOptions);
+
+		// 2. Attribute resolver and datadictionary for parameter
+		IAttributeResolver resolver = OperatorBuildHelper
+				.createAttributeResolver(source);
+		param.setAttributeResolver(resolver);
+		IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
+		param.setDataDictionary(dataDict);
+
+		// 3. Use parameter to get information for AO
+		List<AggregateItem> aggregateItems = new ArrayList<AggregateItem>();
+		aggregateItems.add(param.getValue());
+		coalesceAO.setAggregationItems(aggregateItems);
+
+		return coalesceAO;
+	}
+
 	/**
 	 * Returns routeAO with a list of predicates
 	 * 
@@ -843,19 +891,23 @@ public class OperatorBuildHelper {
 
 	/**
 	 * Creates a renameAO with which you can rename attributes
-	 * @param aliases The list new attribute names to use from now on
-	 * @param pairs If the flag pairs is set, aliases will be interpreted as pairs of (old_name, new_name)
+	 * 
+	 * @param aliases
+	 *            The list new attribute names to use from now on
+	 * @param pairs
+	 *            If the flag pairs is set, aliases will be interpreted as pairs
+	 *            of (old_name, new_name)
 	 * @param source
 	 * @return
 	 */
 	public static RenameAO createRenameAO(List<String> aliases, boolean pairs,
 			ILogicalOperator source) {
 		RenameAO renameAO = new RenameAO();
-		
+
 		renameAO.setAliases(aliases);
 		renameAO.setPairs(pairs);
 		renameAO.subscribeTo(source, source.getOutputSchema());
-		
+
 		return renameAO;
 	}
 

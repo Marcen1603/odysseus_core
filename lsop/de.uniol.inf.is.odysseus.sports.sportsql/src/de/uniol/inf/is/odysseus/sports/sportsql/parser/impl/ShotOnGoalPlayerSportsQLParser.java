@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.CoalesceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
@@ -247,7 +248,9 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		renameAliases.add("shot_ts2");
 		RenameAO renameAO = OperatorBuildHelper.createRenameAO(renameAliases, true, playerBallJoin);
 		
-		
+		List<String> coalesceAttributes = new ArrayList<String>();
+		coalesceAttributes.add("shot_ts");
+		CoalesceAO clostestPlayerCoalesce = OperatorBuildHelper.createCoalesceAO(coalesceAttributes, "min", "distance", "minDistance", renameAO); 
 		
 		
 		return null;
