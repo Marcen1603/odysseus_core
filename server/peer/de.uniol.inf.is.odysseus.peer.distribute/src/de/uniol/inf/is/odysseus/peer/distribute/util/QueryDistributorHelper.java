@@ -75,11 +75,9 @@ public final class QueryDistributorHelper {
 		}
 	}
 	
-	public static Collection<ILogicalOperator> collectRelevantOperators(ILogicalQuery query) {
+	public static Collection<ILogicalOperator> prepareLogicalQuery(ILogicalQuery query) {
 		Collection<ILogicalOperator> operators = LogicalQueryHelper.getAllOperators(query);
 		LogicalQueryHelper.removeTopAOs(operators);
-		operators = LogicalQueryHelper.replaceStreamAOs(operators);
-		
 		return operators;
 	}
 	

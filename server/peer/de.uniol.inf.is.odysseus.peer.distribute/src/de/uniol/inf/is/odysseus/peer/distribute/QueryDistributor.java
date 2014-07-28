@@ -67,7 +67,7 @@ public class QueryDistributor implements IQueryDistributor {
 
 			QueryDistributorHelper.tryPreProcess(serverExecutor, caller, config, preProcessors, query);
 
-			Collection<ILogicalOperator> operators = QueryDistributorHelper.collectRelevantOperators(query);
+			Collection<ILogicalOperator> operators = QueryDistributorHelper.prepareLogicalQuery(query);
 			LOG.debug("Following operators are condidered during distribution: {}", operators);
 
 			QueryDistributorHelper.tryCheckDistribution(config, query, operators);
