@@ -72,6 +72,7 @@ public class OperatorBuildHelper {
 	public static final long TS_TO_MS_FACTOR = 1000000000;
 	// ts in picoseconds for DEBS Grand Challenge 2013 soccer data
 	public static final String TS_GAME_START = "10753295594424116.0";
+	public static final String TS_GAME_END = "14879639146403495.0";
 
 	/**
 	 * Game field borders
