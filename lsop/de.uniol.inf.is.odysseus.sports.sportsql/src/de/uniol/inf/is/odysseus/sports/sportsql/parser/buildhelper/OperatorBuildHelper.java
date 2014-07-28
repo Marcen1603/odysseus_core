@@ -545,7 +545,7 @@ public class OperatorBuildHelper {
 		coalesceAO.setGroupingAttributes(finishedParams);
 
 		// Aggregations
-		
+
 		// 1. Fill parameter
 		AggregateItemParameter param = new AggregateItemParameter();
 		List<String> aggregateOptions = new ArrayList<String>();
@@ -840,23 +840,66 @@ public class OperatorBuildHelper {
 	 */
 	public static JoinAO createJoinAO(List<String> listOfPredicates,
 			ILogicalOperator source1, ILogicalOperator source2) {
-		JoinAO jAO = new JoinAO();
+		return OperatorBuildHelper.createJoinAO(listOfPredicates, null,
+				source1, source2);
+	}
+
+	/**
+	 * Creates a JoinAO
+	 * @param predicate The predicates, e.g. "x = y"
+	 * @param card Cardinality, e.g. ONE_ONE or ONE_MANY
+	 * @param source1
+	 * @param source2
+	 * @return
+	 */
+	public static JoinAO createJoinAO(String predicate, String card,
+			ILogicalOperator source1, ILogicalOperator source2) {
+		List<String> predicates = new ArrayList<String>();
+		predicates.add(predicate);
+		return OperatorBuildHelper.createJoinAO(predicates, card, source1,
+				source2);
+	}
+
+	/**
+	 * Creates a JoinAO
+	 * @param predicates The predicates, e.g. "x = y"
+	 * @param card Cardinality, e.g. ONE_ONE or ONE_MANY
+	 * @param source1
+	 * @param source2
+	 * @return
+	 */
+	public static JoinAO createJoinAO(List<String> predicates, String card,
+			ILogicalOperator source1, ILogicalOperator source2) {
+		JoinAO joinAO = new JoinAO();
 		ArrayList<ILogicalOperator> sources = new ArrayList<ILogicalOperator>();
 		sources.add(source1);
 		sources.add(source2);
 
+		// Predicates
 		IAttributeResolver resolver = OperatorBuildHelper
 				.createAttributeResolver(sources);
-		for (String predicate : listOfPredicates) {
+		for (String predicate : predicates) {
 			PredicateParameter param = new PredicateParameter();
 			param.setAttributeResolver(resolver);
 			param.setInputValue(predicate);
-			jAO.addPredicate(param.getValue());
+			joinAO.addPredicate(param.getValue());
 		}
-		jAO.subscribeToSource(source1, 0, 0, source1.getOutputSchema());
-		jAO.subscribeToSource(source2, 1, 0, source2.getOutputSchema());
+		joinAO.subscribeToSource(source1, 0, 0, source1.getOutputSchema());
+		joinAO.subscribeToSource(source2, 1, 0, source2.getOutputSchema());
 
-		return jAO;
+		// Cardinality
+		if (card != null) {
+			EnumParameter cardParam = new EnumParameter();
+			cardParam.setEnum(Cardinalities.class);
+			cardParam.setInputValue(card);
+			// TODO Does this cast work?
+			joinAO.setCard((Cardinalities) cardParam.getValue());
+		}
+
+		joinAO.subscribeToSource(source1, 0, 0, source1.getOutputSchema());
+		joinAO.subscribeToSource(source2, 1, 0, source2.getOutputSchema());
+
+		return joinAO;
 	}
 
 	/**
@@ -877,6 +920,8 @@ public class OperatorBuildHelper {
 			ILogicalOperator source1, ILogicalOperator source2) {
 		JoinAO joinAO = new JoinAO();
 		joinAO.setPredicate(predicate);
+
+		// Cardinality
 		EnumParameter cardParam = new EnumParameter();
 		cardParam.setEnum(Cardinalities.class);
 		cardParam.setInputValue(card);

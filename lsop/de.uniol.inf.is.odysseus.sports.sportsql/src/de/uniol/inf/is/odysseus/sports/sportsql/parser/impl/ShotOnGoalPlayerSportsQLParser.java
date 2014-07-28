@@ -243,16 +243,37 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		// Sixth part
 		// Determine the player closest to the ball
 		// -------------------------------------------------------------------
+
+		// 1. Rename
 		List<String> renameAliases = new ArrayList<String>();
 		renameAliases.add("shot_ts");
 		renameAliases.add("shot_ts2");
-		RenameAO renameAO = OperatorBuildHelper.createRenameAO(renameAliases, true, playerBallJoin);
-		
+		RenameAO renameAO = OperatorBuildHelper.createRenameAO(renameAliases,
+				true, playerBallJoin);
+
+		// 2. Coalesce
 		List<String> coalesceAttributes = new ArrayList<String>();
 		coalesceAttributes.add("shot_ts");
-		CoalesceAO clostestPlayerCoalesce = OperatorBuildHelper.createCoalesceAO(coalesceAttributes, "min", "distance", "minDistance", renameAO); 
-		
-		
+		CoalesceAO clostestPlayerCoalesce = OperatorBuildHelper
+				.createCoalesceAO(coalesceAttributes, "min", "distance",
+						"minDistance", playerBallJoin);
+
+		// 3. Join
+		JoinAO clostedPlayerJoin = OperatorBuildHelper.createJoinAO(
+				"distance = minDistance", "ONE_ONE", clostestPlayerCoalesce,
+				renameAO);
+
+		// 4. Project
+		List<String> clostestPlayerProjectAttributes = new ArrayList<String>();
+		clostestPlayerProjectAttributes.add("shot_ts");
+		clostestPlayerProjectAttributes.add("shot_x");
+		clostestPlayerProjectAttributes.add("shot_y");
+		clostestPlayerProjectAttributes.add("shot_z");
+		clostestPlayerProjectAttributes.add("entity_id");
+		clostestPlayerProjectAttributes.add("team_id");
+		ProjectAO clostestPlayer = OperatorBuildHelper.createProjectAO(
+				clostestPlayerProjectAttributes, clostedPlayerJoin);
+
 		return null;
 	}
 }
