@@ -25,6 +25,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -167,6 +169,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		LOG.debug("Beginning transmission...");
 		ID sharedQueryID = IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
 
+		replaceAccessAOWithStreamAO(allocationMap.keySet());
 		insertJxtaOperators(allocationMap);
 		replaceAccessAOsOfExportedViews(allocationMap.keySet());
 
@@ -483,7 +486,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 			topAO.subscribeToSource(sink, inputPort++, 0, sink.getOutputSchema());
 		}
 		LOG.debug("Created TopAO-Operator with {} sinks", sinks.size());
-
+		
 		ILogicalQuery logicalQuery = new LogicalQuery();
 		logicalQuery.setLogicalPlan(topAO, true);
 		logicalQuery.setParserId("PQL");
@@ -492,6 +495,29 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		LOG.debug("Created logical query with queryText = {}", logicalQuery.getQueryText());
 
 		return logicalQuery;
+	}
+
+	private static void replaceAccessAOWithStreamAO(Collection<ILogicalQueryPart> localQueryParts) {
+		for( ILogicalQueryPart queryPart : localQueryParts ) {
+			for( ILogicalOperator logicalOperator : queryPart.getOperators()) {
+				if( logicalOperator instanceof AccessAO ) {
+					AccessAO localAccessOperator = (AccessAO)logicalOperator;
+					StreamAO streamAO = new StreamAO();
+					streamAO.setSource(localAccessOperator);
+					streamAO.setOutputSchema(localAccessOperator.getOutputSchema());
+					
+					for( LogicalSubscription logicalSub : localAccessOperator.getSubscriptions() ) {
+						localAccessOperator.unsubscribeSink(logicalSub);
+						streamAO.subscribeSink(logicalSub.getTarget(), logicalSub.getSinkInPort(), 0, logicalSub.getSchema());
+					}
+					queryPart.addOperator(streamAO);
+					queryPart.removeOperator(localAccessOperator);
+					
+					LOG.debug("Replaced AccessAO {} with StreamAO {}", localAccessOperator, streamAO);
+					
+				}
+			}
+		}
 	}
 
 	private static Collection<PeerID> determineSlavePeers(Map<ILogicalQueryPart, PeerID> allocationMap) {
