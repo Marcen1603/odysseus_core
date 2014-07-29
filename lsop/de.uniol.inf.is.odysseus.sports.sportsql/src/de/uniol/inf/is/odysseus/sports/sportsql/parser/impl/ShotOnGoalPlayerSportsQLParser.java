@@ -70,6 +70,11 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 	 */
 	public static final String MIN_SHOT_LENGTH = "1000.0";
 
+	/**
+	 * The minimal acceleration of balls, being shot [m/s²] and [micro m / s²]
+	 */
+	public static final String MIN_ACCELERATION = "55000000.0";
+	
 	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
@@ -154,7 +159,7 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 				.createExpressionParameter("z", "shot_z", activeBall);
 		SDFExpressionParameter mapParam5 = OperatorBuildHelper
 				.createExpressionParameter(
-						"eif(a >= ${minAcceleration}, 1, 0)", "accelerated",
+						"eif(a >= " + MIN_ACCELERATION +", 1, 0)", "accelerated",
 						activeBall);
 		mapExpressions.add(mapParam1);
 		mapExpressions.add(mapParam2);
@@ -225,12 +230,12 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 
 		// 2. Project
 		List<String> feetProjectList = new ArrayList<String>();
-		ballProjectList.add("ts");
-		ballProjectList.add("x");
-		ballProjectList.add("y");
-		ballProjectList.add("z");
-		ballProjectList.add("entity_id");
-		ballProjectList.add("team_id");
+		feetProjectList.add("ts");
+		feetProjectList.add("x");
+		feetProjectList.add("y");
+		feetProjectList.add("z");
+		feetProjectList.add("entity_id");
+		feetProjectList.add("team_id");
 		ProjectAO players = OperatorBuildHelper.createProjectAO(
 				feetProjectList, playerLegSelect);
 
@@ -246,13 +251,13 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		// 1. Join
 		RelationalPredicate firstPlayerBallJoinPredicate = OperatorBuildHelper
 				.createRelationalPredicate("ts >= shot_ts - "
-						+ ShotOnGoalPlayerSportsQLParser.MAX_TIMESHIFT_SHOOTER);
+						+ MAX_TIMESHIFT_SHOOTER);
 		RelationalPredicate secondPlayerBallJoinPredicate = OperatorBuildHelper
 				.createRelationalPredicate("ts >= shot_ts + "
-						+ ShotOnGoalPlayerSportsQLParser.MAX_TIMESHIFT_SHOOTER);
+						+ MAX_TIMESHIFT_SHOOTER);
 		RelationalPredicate thirdPlayerBallJoinPredicate = OperatorBuildHelper
 				.createRelationalPredicate("sqrt((x - shot_x)^2 + (y - shot_y)^2) < "
-						+ ShotOnGoalPlayerSportsQLParser.MAX_DISTANCE_SHOOTER);
+						+ MAX_DISTANCE_SHOOTER);
 
 		List<IPredicate> playerBallJoinPredicates = new ArrayList<IPredicate>();
 		playerBallJoinPredicates.add(firstPlayerBallJoinPredicate);
@@ -264,6 +269,7 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		JoinAO playerBallJoinAO = OperatorBuildHelper.createJoinAO(
 				playerBallJoinAndPredicate, "ONE_MANY", accelerationCriteria,
 				players);
+		// TODO Why does the join loses some attributes, e.g. "entity_id"?
 
 		// 2. Map
 		SDFExpressionParameter playerBallJoinExp1 = OperatorBuildHelper
@@ -703,12 +709,12 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 	/**
 	 * Calculates the time until the ball reaches the goal line
 	 * 
-	 * @param inputPort
+	 * @param sourceOutputPort
 	 * @param source
 	 * @param timeToGoalLineExpression
 	 * @return
 	 */
-	private MapAO createGoalAreaMapAO(int inputPort, ILogicalOperator source,
+	private MapAO createGoalAreaMapAO(int sourceOutputPort, ILogicalOperator source,
 			String timeToGoalLineExpression) {
 
 		List<SDFExpressionParameter> mapParams = new ArrayList<SDFExpressionParameter>();
@@ -752,6 +758,6 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		mapParams.add(goalAreaMapParam11);
 		mapParams.add(goalAreaMapParam12);
 
-		return OperatorBuildHelper.createMapAO(mapParams, source, inputPort, 0);
+		return OperatorBuildHelper.createMapAO(mapParams, source, 0, sourceOutputPort);
 	}
 }

@@ -202,14 +202,18 @@ public class OperatorBuildHelper {
 
 		return mergeAO;
 	}
-	
+
 	/**
 	 * Operator to merge multiple streams
-	 * @param source1 First source to merge (more important)
-	 * @param source2 Second source to merge (less important)
+	 * 
+	 * @param source1
+	 *            First source to merge (more important)
+	 * @param source2
+	 *            Second source to merge (less important)
 	 * @return
 	 */
-	public static MergeAO createMergeAO(ILogicalOperator source1, ILogicalOperator source2) {
+	public static MergeAO createMergeAO(ILogicalOperator source1,
+			ILogicalOperator source2) {
 		List<ILogicalOperator> sources = new ArrayList<ILogicalOperator>();
 		sources.add(source1);
 		sources.add(source2);
@@ -919,6 +923,7 @@ public class OperatorBuildHelper {
 		// Start
 		if (startCondition != null) {
 			PredicateParameter startParam = new PredicateParameter();
+			startParam.setAttributeResolver(createAttributeResolver(source));
 			startParam.setInputValue(startCondition);
 			predicateWindowAO.setStartCondition(startParam.getValue());
 		}
@@ -926,12 +931,14 @@ public class OperatorBuildHelper {
 		// Stop
 		if (endCondition != null) {
 			PredicateParameter endParam = new PredicateParameter();
+			endParam.setAttributeResolver(createAttributeResolver(source));
 			endParam.setInputValue(endCondition);
 			predicateWindowAO.setEndCondition(endParam.getValue());
 		}
 
 		// Same start time
 		BooleanParameter sameParam = new BooleanParameter();
+		sameParam.setAttributeResolver(createAttributeResolver(source));
 		sameParam.setInputValue(sameStartTime);
 		predicateWindowAO.setSameStarttime(sameParam.getValue());
 
@@ -1109,6 +1116,10 @@ public class OperatorBuildHelper {
 		renameAO.setAliases(aliases);
 		renameAO.setPairs(pairs);
 		renameAO.subscribeTo(source, source.getOutputSchema());
+
+		// We have to initialize this cause if we don't do it, we will get
+		// endless recursion when we want to get the outputSchema
+		renameAO.initialize();
 
 		return renameAO;
 	}

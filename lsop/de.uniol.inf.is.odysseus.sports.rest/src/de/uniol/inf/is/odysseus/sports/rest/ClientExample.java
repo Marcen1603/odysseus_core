@@ -30,6 +30,11 @@ public class ClientExample {
 //				gameType = "soccer";
 //				name = "game";
 				
+				// Shots on goal for player
+				statisticsType = "player";
+				gameType = "soccer";
+				name = "shotongoal";
+				
 				
 				
 				String query = "{"
@@ -40,7 +45,8 @@ public class ClientExample {
 						 +  "\"parameters\": {"
 						 +  	"\"time\": { "
 						 +  		"\"start\": 100," 
-						 +  	 	"\"end\": 10000" 
+						 +  	 	"\"end\": 10000,"
+						 + 			"\"time\": 90"
 						 + 		"}, "
 						 +  	"\"space\": { "
 						 +  		"\"startx\": 100," 
