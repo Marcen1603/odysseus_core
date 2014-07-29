@@ -37,6 +37,7 @@ public interface IP2PDictionary {
 	
 	Collection<PeerID> getRemotePeerIDs();
 	String getRemotePeerName( PeerID peerID );
+	String getRemotePeerName( String peerIDString );
 	Optional<String> getRemotePeerAddress( PeerID peerID );
 
 }

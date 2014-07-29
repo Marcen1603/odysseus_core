@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary.impl;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -641,7 +643,24 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 		return UNKNOWN_PEER_NAME;
 	}
-
+	
+	@Override
+	public String getRemotePeerName(String peerIDString) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(peerIDString), "PeerIDString must not be null or empty!");
+		
+		return getRemotePeerName(toPeerID(peerIDString));
+	}
+	
+	private static PeerID toPeerID(String text) {
+		try {
+			final URI id = new URI(text);
+			return (PeerID)IDFactory.fromURI(id);
+		} catch (URISyntaxException | ClassCastException ex) {
+			LOG.error("Could not set id", ex);
+			return null;
+		}
+	}
+	
 	@Override
 	public Optional<String> getRemotePeerAddress(PeerID peerID) {
 		Preconditions.checkNotNull(peerID, "PeerID to get the address from must not be null!");
