@@ -16,14 +16,15 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -38,6 +39,8 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
 import de.uniol.inf.is.odysseus.peer.distribute.message.AbortQueryPartAddAckMessage;
 import de.uniol.inf.is.odysseus.peer.distribute.message.AbortQueryPartAddMessage;
@@ -55,6 +58,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 	private static ICompiler compiler;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
+	private static IP2PDictionary p2pDictionary;
 
 	private static Collection<Integer> ackedQueryPartIDs = Lists.newLinkedList();
 	private static Map<Integer, String> failedQueryPartIDs = Maps.newConcurrentMap();
@@ -129,6 +133,18 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 		}
 	}
 
+	// called by OSGi-DS
+	public static void bindP2PDictionary(IP2PDictionary serv) {
+		p2pDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PDictionary(IP2PDictionary serv) {
+		if (p2pDictionary == serv) {
+			p2pDictionary = null;
+		}
+	}
+
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		if (message instanceof AddQueryPartMessage) {
@@ -199,23 +215,17 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 		LOG.debug("PQL statement to be executed: {}", message.getPqlStatement());
 
 		try {
-			List<String> neededSources = determineNeededSources(message);
-			if (neededSources.isEmpty()) {
-				LOG.debug("All source available. Calling executor.");
-				callExecutor(message);
-			} else {
-				throw new QueryDistributionException("Not all sources are available: " + neededSources);
-			}
+			determineNeededSources(message);
+			callExecutor(message);
 		} catch (Throwable t) {
-			throw new QueryDistributionException("Could not execute query: " + t.getMessage());
+			throw new QueryDistributionException("Could not execute query: " + t.getMessage(), t);
 		}
 	}
 
-	private List<String> determineNeededSources(AddQueryPartMessage message) {
-		List<String> neededSources = Lists.newArrayList();
+	private void determineNeededSources(AddQueryPartMessage message) throws QueryDistributionException {
 		ISession session = PeerDistributePlugIn.getActiveSession();
-
-		List<IExecutorCommand> queries = compiler.translateQuery(message.getPqlStatement(), "PQL", PeerDistributePlugIn.getActiveSession(), getDataDictionary(), Context.empty());
+		List<IExecutorCommand> queries = compiler.translateQuery(message.getPqlStatement(), "PQL", session, getDataDictionary(), Context.empty());
+		
 		for (IExecutorCommand q : queries) {
 
 			if (q instanceof CreateQueryCommand) {
@@ -225,25 +235,44 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 				RestructHelper.collectOperators(query.getLogicalPlan(), operators);
 
 				for (ILogicalOperator operator : operators) {
-
-					if (!(operator instanceof AbstractAccessAO)) {
-						continue;
+					if( operator instanceof StreamAO ) {
+						StreamAO streamAO = (StreamAO)operator;
+						
+						String peerIDString = streamAO.getNode();
+						String sourceName = streamAO.getStreamname().getResourceName();
+						
+						Optional<SourceAdvertisement> optSrcAdv = findSourceAdvertisement(sourceName, peerIDString);
+						if( optSrcAdv.isPresent() ) {
+							if( p2pDictionary.isImported(optSrcAdv.get())) {
+								String importedName = p2pDictionary.getImportedSourceName(optSrcAdv.get()).get();
+								Resource resource = new Resource(session.getUser(), importedName);
+								
+								if (getDataDictionary().containsViewOrStream(resource, session)) {
+									streamAO.setSourceName(resource);
+									
+								} else {
+									throw new QueryDistributionException("Source " + sourceName + " of peer " + p2pDictionary.getRemotePeerName(peerIDString) + " (locally known as " + importedName + ") is not known in local data dictionary!");
+								}
+							} else {
+								throw new QueryDistributionException("Source " + sourceName + " of peer " + p2pDictionary.getRemotePeerName(peerIDString) + " is not imported!");
+							}
+						} else {
+							throw new QueryDistributionException("Source " + sourceName + " of peer " + p2pDictionary.getRemotePeerName(peerIDString) + " is not known!");
+						}
 					}
-					String source = ((AbstractAccessAO) operator).getName();
-
-					// TODO not a good solution to concatenate user name and
-					// source name
-					if (getDataDictionary().containsViewOrStream(session.getUser().getName() + "." + source, session)) {
-						break;
-					}
-
-					neededSources.add(source);
-					LOG.debug("Source {} needed for query {}", source, message.getPqlStatement());
 				}
 			}
-
 		}
-		return neededSources;
+	}
+
+	private static Optional<SourceAdvertisement> findSourceAdvertisement(String sourceName, String peerIDString) {
+		Collection<SourceAdvertisement> srcAdvs = p2pDictionary.getSources(sourceName);
+		for( SourceAdvertisement srcAdv : srcAdvs ) {
+			if( srcAdv.getPeerID().toString().equals(peerIDString)) {
+				return Optional.of(srcAdv);
+			}
+		}
+		return Optional.absent();
 	}
 
 	private void callExecutor(AddQueryPartMessage message) {

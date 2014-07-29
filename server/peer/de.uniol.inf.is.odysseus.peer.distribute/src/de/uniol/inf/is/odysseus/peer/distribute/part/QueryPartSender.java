@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -163,15 +164,16 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		}
 	}
 
-	public void transmit(Map<ILogicalQueryPart, PeerID> allocationMap, IServerExecutor serverExecutor, ISession caller, String queryName, QueryBuildConfiguration config) throws QueryPartTransmissionException {
+	public void transmit(Map<ILogicalQueryPart, PeerID> allocationMap, IServerExecutor serverExecutor, ISession caller, String queryName, QueryBuildConfiguration config) throws QueryPartTransmissionException, QueryDistributionException {
 		LOG.debug("Beginning transmission...");
 		ID sharedQueryID = IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
 
+		appendPeerIDToStreamAO(allocationMap);
 		insertJxtaOperators(allocationMap);
 		replaceAccessAOsOfExportedViews(allocationMap.keySet());
 
 		distributeToRemotePeers(sharedQueryID, serverExecutor, caller, allocationMap, config);
-		
+
 		Collection<ILogicalQueryPart> localQueryParts = determineLocalQueryParts(allocationMap);
 
 		if (!localQueryParts.isEmpty()) {
@@ -183,7 +185,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 
 			try {
 				callExecutorToAddLocalQueries(localQuery, sharedQueryID, serverExecutor, caller, config, determineSlavePeers(allocationMap));
-			} catch( Throwable t ) {
+			} catch (Throwable t) {
 				LOG.error("Exception during placing local query part", t);
 				removeDistributedQueryParts(sharedQueryID);
 			}
@@ -191,6 +193,33 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 			LOG.debug("No local query part of query remains.");
 		}
 		LOG.debug("Transmission finished");
+	}
+
+	private static void appendPeerIDToStreamAO(Map<ILogicalQueryPart, PeerID> allocationMap ) throws QueryDistributionException {
+		for( ILogicalQueryPart queryPart : allocationMap.keySet() ) {
+			
+			if( !allocationMap.get(queryPart).equals(p2pNetworkManager.getLocalPeerID())) {
+				// QueryPart wird verteilt
+				for( ILogicalOperator operator : queryPart.getOperators() ) {
+					if( operator instanceof StreamAO ) {
+						StreamAO streamAO = (StreamAO)operator;
+						String sourceName = streamAO.getStreamname().getResourceName();
+						
+						if( p2pDictionary.isExported(sourceName) ) {
+							SourceAdvertisement srcAdv = p2pDictionary.getExportedSource(sourceName).get();
+							streamAO.setNode(srcAdv.getPeerID().toString());
+						} else if( p2pDictionary.isImported(sourceName)) {
+							SourceAdvertisement srcAdv = p2pDictionary.getImportedSource(sourceName).get();
+							streamAO.setNode(srcAdv.getPeerID().toString());
+						} else {
+							throw new QueryDistributionException("Could not distribute since the StreamAO uses a non-exported source '" + sourceName + "'");
+						}
+					}
+				}
+			} else {
+				// queryPart bleibt lokal
+			}
+		}
 	}
 
 	private static Collection<ILogicalQueryPart> determineLocalQueryParts(Map<ILogicalQueryPart, PeerID> allocationMap) {
@@ -363,21 +392,21 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 
 		if (sendResultMap.size() != remoteSendCount) {
 			removeDistributedQueryParts(sharedQueryID);
-			
+
 			List<PeerID> missingPeers = Lists.newArrayList();
-			for( Integer qpid : sendDestinationMap.keySet()) {
-				if( !sendResultMap.containsKey(qpid)) {
+			for (Integer qpid : sendDestinationMap.keySet()) {
+				if (!sendResultMap.containsKey(qpid)) {
 					missingPeers.add(sendDestinationMap.get(qpid));
 				}
 			}
 
-			if( LOG.isErrorEnabled() ) {
+			if (LOG.isErrorEnabled()) {
 				LOG.error("Could not distribute the query parts since peers are not reachable");
-				for( PeerID missingPeer : missingPeers ) {
+				for (PeerID missingPeer : missingPeers) {
 					LOG.error("\t{} : {}", p2pDictionary.getRemotePeerName(missingPeer), missingPeer);
 				}
 			}
-			
+
 			throw new QueryPartTransmissionException(missingPeers);
 		}
 
@@ -391,17 +420,17 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 				faultMessages.add(msg);
 			}
 		}
-		
-		if( !faultyPeers.isEmpty() ) {
+
+		if (!faultyPeers.isEmpty()) {
 			removeDistributedQueryParts(sharedQueryID);
-			
-			if( LOG.isErrorEnabled() ) {
+
+			if (LOG.isErrorEnabled()) {
 				LOG.error("Could not distribute the query since peers could not execute/add its query part:");
-				for( int index = 0; index < faultyPeers.size(); index++ ) {
+				for (int index = 0; index < faultyPeers.size(); index++) {
 					LOG.error("\t{}: {}", p2pDictionary.getRemotePeerName(faultyPeers.get(index)), faultMessages.get(index));
 				}
 			}
-			
+
 			throw new QueryPartTransmissionException(faultyPeers);
 		}
 
@@ -483,7 +512,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 			topAO.subscribeToSource(sink, inputPort++, 0, sink.getOutputSchema());
 		}
 		LOG.debug("Created TopAO-Operator with {} sinks", sinks.size());
-		
+
 		ILogicalQuery logicalQuery = new LogicalQuery();
 		logicalQuery.setLogicalPlan(topAO, true);
 		logicalQuery.setParserId("PQL");
@@ -494,28 +523,33 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		return logicalQuery;
 	}
 
-//	private static void replaceAccessAOWithStreamAO(Collection<ILogicalQueryPart> localQueryParts) {
-//		for( ILogicalQueryPart queryPart : localQueryParts ) {
-//			for( ILogicalOperator logicalOperator : queryPart.getOperators()) {
-//				if( logicalOperator instanceof AccessAO ) {
-//					AccessAO localAccessOperator = (AccessAO)logicalOperator;
-//					StreamAO streamAO = new StreamAO();
-//					streamAO.setSource(localAccessOperator);
-//					streamAO.setOutputSchema(localAccessOperator.getOutputSchema());
-//					
-//					for( LogicalSubscription logicalSub : localAccessOperator.getSubscriptions() ) {
-//						localAccessOperator.unsubscribeSink(logicalSub);
-//						streamAO.subscribeSink(logicalSub.getTarget(), logicalSub.getSinkInPort(), 0, logicalSub.getSchema());
-//					}
-//					queryPart.addOperator(streamAO);
-//					queryPart.removeOperator(localAccessOperator);
-//					
-//					LOG.debug("Replaced AccessAO {} with StreamAO {}", localAccessOperator, streamAO);
-//					
-//				}
-//			}
-//		}
-//	}
+	// private static void
+	// replaceAccessAOWithStreamAO(Collection<ILogicalQueryPart>
+	// localQueryParts) {
+	// for( ILogicalQueryPart queryPart : localQueryParts ) {
+	// for( ILogicalOperator logicalOperator : queryPart.getOperators()) {
+	// if( logicalOperator instanceof AccessAO ) {
+	// AccessAO localAccessOperator = (AccessAO)logicalOperator;
+	// StreamAO streamAO = new StreamAO();
+	// streamAO.setSource(localAccessOperator);
+	// streamAO.setOutputSchema(localAccessOperator.getOutputSchema());
+	//
+	// for( LogicalSubscription logicalSub :
+	// localAccessOperator.getSubscriptions() ) {
+	// localAccessOperator.unsubscribeSink(logicalSub);
+	// streamAO.subscribeSink(logicalSub.getTarget(),
+	// logicalSub.getSinkInPort(), 0, logicalSub.getSchema());
+	// }
+	// queryPart.addOperator(streamAO);
+	// queryPart.removeOperator(localAccessOperator);
+	//
+	// LOG.debug("Replaced AccessAO {} with StreamAO {}", localAccessOperator,
+	// streamAO);
+	//
+	// }
+	// }
+	// }
+	// }
 
 	private static Collection<PeerID> determineSlavePeers(Map<ILogicalQueryPart, PeerID> allocationMap) {
 		Collection<PeerID> slavePeers = Lists.newArrayList();
@@ -556,7 +590,6 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 			throw new QueryDistributionException("Could not add local query to server executor", ex);
 		}
 	}
-	
 
 	private static List<IQueryBuildSetting<?>> determineQueryBuildSettings(IServerExecutor executor, String cfgName) {
 		final IQueryBuildConfigurationTemplate qbc = executor.getQueryBuildConfiguration(cfgName);
@@ -567,7 +600,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		settings.add(ParameterDoRewrite.FALSE);
 		return settings;
 	}
-	
+
 	private static Optional<ParameterTransformationConfiguration> getParameterTransformationConfiguration(List<IQueryBuildSetting<?>> settings) {
 		for (IQueryBuildSetting<?> s : settings) {
 			if (s instanceof ParameterTransformationConfiguration) {
