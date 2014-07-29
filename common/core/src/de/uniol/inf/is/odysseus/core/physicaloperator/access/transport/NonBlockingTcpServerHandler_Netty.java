@@ -366,7 +366,10 @@ class MyTCPServer extends ChannelInboundHandlerAdapter {
 			ByteBuffer buffer = ((UnpooledUnsafeDirectByteBuf) msg).nioBuffer();
 			buffer.position(buffer.limit());
 			getHandler(ctx).process(buffer);
-		} finally {
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		finally {
 			ReferenceCountUtil.release(msg);
 		}
 	}
