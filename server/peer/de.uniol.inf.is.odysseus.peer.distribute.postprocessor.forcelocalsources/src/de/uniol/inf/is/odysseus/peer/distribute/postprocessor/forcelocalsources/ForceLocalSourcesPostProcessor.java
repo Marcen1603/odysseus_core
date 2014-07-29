@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -80,25 +81,25 @@ public class ForceLocalSourcesPostProcessor implements
 
 		for(ILogicalQueryPart part : allocationMap.keySet().toArray(new ILogicalQueryPart[0])) {
 			
-			Collection<ILogicalOperator> sources = ForceLocalSourcesPostProcessor.collectSourceAccesses(part.getOperators());
+			Collection<ILogicalOperator> sources = ForceLocalSourcesPostProcessor.collectSources(part.getOperators());
 			
 			if(!sources.isEmpty() ) {
 				
 				if(sources.size() == part.getOperators().size() ) {
 					
-					ForceLocalSourcesPostProcessor.LOG.debug("Forcing query part {} to be executed locally", part);
+					LOG.debug("Forcing query part {} to be executed locally", part);
 					allocationMap.put(part, p2pNetworkManager.getLocalPeerID());
 					
 				} else {
 					
-					ForceLocalSourcesPostProcessor.LOG.debug("Splitting query part {} into local and non-local", part);
+					LOG.debug("Splitting query part {} into local and non-local", part);
 					
 					part.removeOperators(sources);
-					ForceLocalSourcesPostProcessor.LOG.debug("Query part {} as the non-local one", part);
+					LOG.debug("Query part {} as the non-local one", part);
 					
 					ILogicalQueryPart localQueryPart = new LogicalQueryPart(sources);
 					allocationMap.put(localQueryPart, p2pNetworkManager.getLocalPeerID());
-					ForceLocalSourcesPostProcessor.LOG.debug("Query part {} as the local one", localQueryPart);
+					LOG.debug("Query part {} as the local one", localQueryPart);
 					
 				}
 				
@@ -108,33 +109,22 @@ public class ForceLocalSourcesPostProcessor implements
 		
 	}
 
-	/**
-	 * Collects all instances of {@link AbstractAccessAO}. <br />
-	 * Note: Following {@link RenameAO}s will be collected too.
-	 * @param operators A collection of operators to collect from.
-	 * @return A collection containing all instances of {@link AbstractAccessAO}.
-	 */
-	private static Collection<ILogicalOperator> collectSourceAccesses(Collection<ILogicalOperator> operators) {
-		
+	private static Collection<ILogicalOperator> collectSources(Collection<ILogicalOperator> operators) {
 		Preconditions.checkNotNull(operators, "Collection of operators must be not null!");
 		
 		Collection<ILogicalOperator> sources = Lists.newArrayList();
-		
 		for(ILogicalOperator operator : operators) {
 			
-			if(operator instanceof AbstractAccessAO) {
+			if(operator instanceof AbstractAccessAO || operator instanceof StreamAO ) {
 				
 				sources.add(operator);
-				
 				for(LogicalSubscription subToSink : operator.getSubscriptions()) {
-					
-					if(subToSink.getTarget() instanceof RenameAO)
+					if(subToSink.getTarget() instanceof RenameAO) {
 						sources.add(subToSink.getTarget());
-					
+					}
 				}
 				
 			}
-			
 		}
 		
 		return sources;
