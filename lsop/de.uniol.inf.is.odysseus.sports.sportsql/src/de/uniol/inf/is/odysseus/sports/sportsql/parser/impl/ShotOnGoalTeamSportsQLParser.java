@@ -6,7 +6,6 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.MergeAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
@@ -20,6 +19,16 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
+/**
+ * Counts the number of shots on the goal from a whole team
+ * 
+ * SportsQL could be { "statisticType": "team", "gameType": "soccer",
+ * "entityId" : 8, "name": "shotongoal" }
+ * 
+ * @author Michael (all the heavy PQL stuff), Tobias (only the translation into
+ *         logical query)
+ *
+ */
 @SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.TEAM }, name = "shotongoal", parameters = { @SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false) })
 public class ShotOnGoalTeamSportsQLParser implements ISportsQLParser {
 
@@ -29,8 +38,10 @@ public class ShotOnGoalTeamSportsQLParser implements ISportsQLParser {
 
 		// Do all the steps one till nine
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
-		MergeAO forecastCriteria = ShotOnGoalPlayerSportsQLParser
-				.createForecastCritera(allOperators, sportsQL);
+
+		ShotOnGoalGlobalSportsQLParser globalParser = new ShotOnGoalGlobalSportsQLParser();
+		ILogicalQuery forecastCriteraQuery = globalParser.parse(sportsQL);
+		ILogicalOperator forecastCriteria = forecastCriteraQuery.getLogicalPlan();
 
 		// -------------------------------------------------------------------
 		// Tenth part
