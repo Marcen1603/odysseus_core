@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.CoalesceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.MergeAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.PredicateWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
@@ -93,12 +94,31 @@ public class OperatorBuildHelper {
 	public static final int LOWERRIGHT_Y = -33939;
 
 	/**
+	 * Goals
+	 */
+	public static final String GOAL_AREA_1_X_MIN = "22578.5";
+	public static final String GOAL_AREA_1_X_MAX = "29898.5";
+	public static final String GOAL_AREA_1_Y = "33941.0";
+	public static final String GOAL_AREA_1_Z_MAX = "2440.0";
+
+	public static final String GOAL_AREA_2_X_MIN = "22560.0";
+	public static final String GOAL_AREA_2_X_MAX = "29880.0";
+	public static final String GOAL_AREA_2_Y = "-33968.0";
+	public static final String GOAL_AREA_2_Z_MAX = "2440.0";
+
+	/**
 	 * Entity names
 	 */
 	public static final String BALL_ENTITY = "Ball";
 	public static final String REFEREE_ENTITY = "Referee";
 	public static final String LEFT_LEG_REMARK = "Left Leg";
 	public static final String RIGHT_LEG_REMARK = "Right Leg";
+
+	/**
+	 * Team Ids
+	 */
+	public static final int TEAM_ID_RIGHT_GOAL_SHOOTERS = 1;
+	public static final int TEAM_ID_LEFT_GOAL_SHOOTERS = 2;
 
 	/**
 	 * Creates a MapAP with a list of expressions. To create such expressions,
@@ -166,6 +186,37 @@ public class OperatorBuildHelper {
 	}
 
 	/**
+	 * Operator to merge multiple streams
+	 * 
+	 * @param sourcesToMerge
+	 *            All sources to be merged. First come first serve.
+	 * @return
+	 */
+	public static MergeAO createMergeAO(List<ILogicalOperator> sourcesToMerge) {
+		MergeAO mergeAO = new MergeAO();
+
+		for (int i = 0; i < sourcesToMerge.size(); i++) {
+			ILogicalOperator source = sourcesToMerge.get(i);
+			mergeAO.subscribeToSource(source, i, 0, source.getOutputSchema());
+		}
+
+		return mergeAO;
+	}
+	
+	/**
+	 * Operator to merge multiple streams
+	 * @param source1 First source to merge (more important)
+	 * @param source2 Second source to merge (less important)
+	 * @return
+	 */
+	public static MergeAO createMergeAO(ILogicalOperator source1, ILogicalOperator source2) {
+		List<ILogicalOperator> sources = new ArrayList<ILogicalOperator>();
+		sources.add(source1);
+		sources.add(source2);
+		return createMergeAO(sources);
+	}
+
+	/**
 	 * Creates a Select Operator to Filter for space parameter
 	 * 
 	 * @param parameter
@@ -181,7 +232,7 @@ public class OperatorBuildHelper {
 	public static SelectAO createSpaceSelect(SportsQLSpaceParameter parameter,
 			boolean inMeters, ILogicalOperator source) {
 
-		// TODO: Do the right thing if timeParameter says "all"
+		// TODO: Do the right thing if spaceParameter says "all"
 
 		int startX = parameter.getStartx();
 		int startY = parameter.getStarty();
@@ -572,31 +623,36 @@ public class OperatorBuildHelper {
 
 		return coalesceAO;
 	}
-	
+
 	/**
 	 * 
-	 * @param method Method to use (MIN, MAX, LAST, FIRST)
-	 * @param attribute Attribute on which the method is evaluated
+	 * @param method
+	 *            Method to use (MIN, MAX, LAST, FIRST)
+	 * @param attribute
+	 *            Attribute on which the method is evaluated
 	 * @param source
 	 * @return
 	 */
-	public static TupleAggregateAO createTupleAggregateAO(String method, String attribute, ILogicalOperator source) {
+	public static TupleAggregateAO createTupleAggregateAO(String method,
+			String attribute, ILogicalOperator source) {
 		TupleAggregateAO tupleAggregateAO = new TupleAggregateAO();
-		
+
 		// Method
 		StringParameter stringParam = new StringParameter();
 		stringParam.setInputValue(method);
 		tupleAggregateAO.setMethod(stringParam.getValue());
-		
+
 		// Attribute
 		ResolvedSDFAttributeParameter attributeParam = new ResolvedSDFAttributeParameter();
-		attributeParam.setAttributeResolver(OperatorBuildHelper.createAttributeResolver(source));
+		attributeParam.setAttributeResolver(OperatorBuildHelper
+				.createAttributeResolver(source));
 		attributeParam.setInputValue(attribute);
 		tupleAggregateAO.setAttribute(attributeParam.getValue());
-		
+
 		// Source
-		tupleAggregateAO.subscribeToSource(source, 0, 0, source.getOutputSchema());
-		
+		tupleAggregateAO.subscribeToSource(source, 0, 0,
+				source.getOutputSchema());
+
 		return tupleAggregateAO;
 	}
 
@@ -606,7 +662,7 @@ public class OperatorBuildHelper {
 	 * @param listOfPredicates
 	 * @return
 	 */
-	public static RouteAO createRouteAO(ArrayList<String> listOfPredicates,
+	public static RouteAO createRouteAO(List<String> listOfPredicates,
 			ILogicalOperator source) {
 		RouteAO rAO = new RouteAO();
 
@@ -875,9 +931,9 @@ public class OperatorBuildHelper {
 		}
 
 		// Same start time
-			BooleanParameter sameParam = new BooleanParameter();
-			sameParam.setInputValue(sameStartTime);
-			predicateWindowAO.setSameStarttime(sameParam.getValue());
+		BooleanParameter sameParam = new BooleanParameter();
+		sameParam.setInputValue(sameStartTime);
+		predicateWindowAO.setSameStarttime(sameParam.getValue());
 
 		// Size
 		if (size > -1) {
@@ -894,7 +950,7 @@ public class OperatorBuildHelper {
 			}
 			predicateWindowAO.setWindowSize(timeParam.getValue());
 		}
-		
+
 		predicateWindowAO.subscribeTo(source, source.getOutputSchema());
 
 		return predicateWindowAO;

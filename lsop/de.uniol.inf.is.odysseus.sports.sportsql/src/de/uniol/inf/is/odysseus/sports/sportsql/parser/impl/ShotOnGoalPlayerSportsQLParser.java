@@ -8,26 +8,46 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CoalesceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.MergeAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.PredicateWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TupleAggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
+/**
+ * Counts the number of shots on the goal from a player
+ * 
+ * SportsQL could be { "statisticType": "player", "gameType": "soccer",
+ * "entityId" : 8, "name": "shotongoal" }
+ * 
+ * @author Michael (all the heavy PQL stuff), Tobias (just the translation into
+ *         logical query)
+ *
+ */
+@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER }, name = "shotongoal", parameters = { @SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false) })
 public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 
 	/**
@@ -50,14 +70,16 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 	 */
 	public static final String MIN_SHOT_LENGTH = "1000.0";
 
-	@SuppressWarnings({ "rawtypes", "unused" })
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
 			throws SportsQLParseException {
-		// TODO Include what Michael said about this task on Jira
+		// TODO Include what Michael said about this task on Jira:
+		// Filter for time and space where it's usefull
+		// "global" query without team-or-player selection -> use this for other
+		// queries with player or team
 
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
-		// TODO Add all operators to this list
 
 		// ---------------------
 		// Access to the Streams
@@ -67,6 +89,10 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		AccessAO gameAccess = OperatorBuildHelper.createGameStreamAccessAO();
 		AccessAO metaDataAccess = OperatorBuildHelper
 				.createMetaStreamAccessAO();
+
+		// Add to list
+		allOperators.add(gameAccess);
+		allOperators.add(metaDataAccess);
 
 		// -------------------------------------------------------------------
 		// First part
@@ -83,6 +109,10 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		// 2. Enrich with the metastream
 		EnrichAO enrichedStream = OperatorBuildHelper.createEnrichAO(
 				"sensorid = sid", spaceSelect, metaDataAccess);
+
+		// Add to the list
+		allOperators.add(spaceSelect);
+		allOperators.add(enrichedStream);
 
 		// -------------------------------------------------------------------
 		// Second part
@@ -102,6 +132,10 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		ballProjectList.add("a");
 		ProjectAO activeBall = OperatorBuildHelper.createProjectAO(
 				ballProjectList, ballSelect);
+
+		// Add to list
+		allOperators.add(ballSelect);
+		allOperators.add(activeBall);
 
 		// -------------------------------------------------------------------
 		// Third part
@@ -130,7 +164,7 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		MapAO accelerationMap = OperatorBuildHelper.createMapAO(mapExpressions,
 				activeBall, 0, 0);
 
-		// 2. Changedetect
+		// 2. ChangeDetect
 		List<String> attr = new ArrayList<String>();
 		attr.add("accelerated");
 
@@ -146,6 +180,11 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		// 3. Select for accelerated tuples
 		SelectAO accelerationCriteria = OperatorBuildHelper.createSelectAO(
 				"accelerated = 1", accelerationChanged);
+
+		// Add to list
+		allOperators.add(accelerationMap);
+		allOperators.add(accelerationChanged);
+		allOperators.add(accelerationCriteria);
 
 		// -------------------------------------------------------------------
 		// Fourth part
@@ -194,6 +233,10 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		ballProjectList.add("team_id");
 		ProjectAO players = OperatorBuildHelper.createProjectAO(
 				feetProjectList, playerLegSelect);
+
+		// Add to list
+		allOperators.add(playerLegSelect);
+		allOperators.add(players);
 
 		// -------------------------------------------------------------------
 		// Fifth part
@@ -252,6 +295,10 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		MapAO playerBallJoin = OperatorBuildHelper.createMapAO(
 				playerBallJoinExpressions, playerBallJoinAO, 0, 0);
 
+		// Add to list
+		allOperators.add(playerBallJoinAO);
+		allOperators.add(playerBallJoin);
+
 		// -------------------------------------------------------------------
 		// Sixth part
 		// Determine the player closest to the ball
@@ -286,6 +333,12 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		clostestPlayerProjectAttributes.add("team_id");
 		ProjectAO clostestPlayer = OperatorBuildHelper.createProjectAO(
 				clostestPlayerProjectAttributes, clostedPlayerJoin);
+
+		// Add to list
+		allOperators.add(renameAO);
+		allOperators.add(clostestPlayerCoalesce);
+		allOperators.add(clostedPlayerJoin);
+		allOperators.add(clostestPlayer);
 
 		// -------------------------------------------------------------------
 		// Seventh part
@@ -361,7 +414,6 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 						closestBallActivePlayerJoin);
 
 		// 3. PredicateWindow
-		String endCondition = null;
 		PredicateWindowAO durationLengthPredicateAO = OperatorBuildHelper
 				.createPredicateWindowAO("sameShotTS = 1", null, true, 1500L,
 						"Milliseconds", durantionLengthStatemapAO);
@@ -371,11 +423,335 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 				.createTupleAggregateAO("first", "shot_ts",
 						durationLengthPredicateAO);
 
+		// Add to list
+		allOperators.add(closestBallActivePlayerJoin);
+		allOperators.add(durantionLengthStatemapAO);
+		allOperators.add(durationLengthPredicateAO);
+		allOperators.add(durationAndLengthCriteria);
+
 		// -------------------------------------------------------------------
 		// Eighth part
 		// The sign of vx determines the desired goal area
 		// -------------------------------------------------------------------
 
-		return null;
+		// 1. Map
+		List<SDFExpressionParameter> goalAreaMapParams = new ArrayList<SDFExpressionParameter>();
+
+		SDFExpressionParameter goalAreaMapParam1 = OperatorBuildHelper
+				.createExpressionParameter("shot_ts", durationAndLengthCriteria);
+		SDFExpressionParameter goalAreaMapParam2 = OperatorBuildHelper
+				.createExpressionParameter("shot_x", durationAndLengthCriteria);
+		SDFExpressionParameter goalAreaMapParam3 = OperatorBuildHelper
+				.createExpressionParameter("shot_y", durationAndLengthCriteria);
+		SDFExpressionParameter goalAreaMapParam4 = OperatorBuildHelper
+				.createExpressionParameter("shot_z", durationAndLengthCriteria);
+		SDFExpressionParameter goalAreaMapParam5 = OperatorBuildHelper
+				.createExpressionParameter("x", durationAndLengthCriteria);
+		SDFExpressionParameter goalAreaMapParam6 = OperatorBuildHelper
+				.createExpressionParameter("y", durationAndLengthCriteria);
+		SDFExpressionParameter goalAreaMapParam7 = OperatorBuildHelper
+				.createExpressionParameter("z", durationAndLengthCriteria);
+		SDFExpressionParameter goalAreaMapParam8 = OperatorBuildHelper
+				.createExpressionParameter("entity_id",
+						durationAndLengthCriteria);
+		SDFExpressionParameter goalAreaMapParam9 = OperatorBuildHelper
+				.createExpressionParameter("team_id", durationAndLengthCriteria);
+		SDFExpressionParameter goalAreaMapParam10 = OperatorBuildHelper
+				.createExpressionParameter("(x - shot_x) / (ts - shot_ts)",
+						"vx", durationAndLengthCriteria);
+		SDFExpressionParameter goalAreaMapParam11 = OperatorBuildHelper
+				.createExpressionParameter("(y - shot_y) / (ts - shot_ts)",
+						"vy", durationAndLengthCriteria);
+		SDFExpressionParameter goalAreaMapParam12 = OperatorBuildHelper
+				.createExpressionParameter("(z - shot_z) / (ts - shot_ts)",
+						"vz", durationAndLengthCriteria);
+
+		goalAreaMapParams.add(goalAreaMapParam1);
+		goalAreaMapParams.add(goalAreaMapParam2);
+		goalAreaMapParams.add(goalAreaMapParam3);
+		goalAreaMapParams.add(goalAreaMapParam4);
+		goalAreaMapParams.add(goalAreaMapParam5);
+		goalAreaMapParams.add(goalAreaMapParam6);
+		goalAreaMapParams.add(goalAreaMapParam7);
+		goalAreaMapParams.add(goalAreaMapParam8);
+		goalAreaMapParams.add(goalAreaMapParam9);
+		goalAreaMapParams.add(goalAreaMapParam10);
+		goalAreaMapParams.add(goalAreaMapParam11);
+		goalAreaMapParams.add(goalAreaMapParam12);
+
+		MapAO goalAreaMap = OperatorBuildHelper.createMapAO(goalAreaMapParams,
+				durationAndLengthCriteria, 0, 0);
+
+		// 2. Route
+		List<String> goalDetectionPredicates = new ArrayList<String>();
+		goalDetectionPredicates.add("vy >= 0");
+		RouteAO goalAreaDetection = OperatorBuildHelper.createRouteAO(
+				goalDetectionPredicates, goalAreaMap);
+
+		// Add to list
+		allOperators.add(goalAreaMap);
+		allOperators.add(goalAreaDetection);
+
+		// -------------------------------------------------------------------
+		// Ninth part
+		// Shots have to be forcasted, if they would reach the goalline
+		// -------------------------------------------------------------------
+
+		// LOWER PART (in PQL): GOAL AREA 2
+		// --------------------------------
+
+		// 1. Map
+		MapAO timeToGoalLine2MapAO = createGoalAreaMapAO(1, goalAreaDetection,
+				"(y + " + OperatorBuildHelper.GOAL_AREA_2_Y + " ) / vy");
+
+		// 2. Select
+		SelectAO timeToGoal2SelectAO = createTimeToGoalSelectAO(
+				OperatorBuildHelper.TEAM_ID_LEFT_GOAL_SHOOTERS,
+				timeToGoalLine2MapAO);
+
+		// 3. Map
+		MapAO forecastMapGoal2 = createForecastMapAO(timeToGoal2SelectAO);
+
+		// 4. Select
+		SelectAO foreCastSelectGoal2 = createForecastSelectAO(
+				OperatorBuildHelper.GOAL_AREA_2_X_MIN,
+				OperatorBuildHelper.GOAL_AREA_2_X_MAX,
+				OperatorBuildHelper.GOAL_AREA_2_Z_MAX, forecastMapGoal2);
+
+		// UPPER PART (in PQL): GOAL AREA 1
+		// --------------------------------
+
+		// 1. Map
+		MapAO timeToGoalLine1MapAO = createGoalAreaMapAO(0, goalAreaDetection,
+				"(" + OperatorBuildHelper.GOAL_AREA_1_Y + " - y) / vy");
+
+		// 2. Select
+		SelectAO timeToGoal1SelectAO = createTimeToGoalSelectAO(
+				OperatorBuildHelper.TEAM_ID_RIGHT_GOAL_SHOOTERS,
+				timeToGoalLine1MapAO);
+
+		// 3. Map
+		MapAO forecastMapGoal1 = createForecastMapAO(timeToGoal1SelectAO);
+
+		// 4. Select
+		SelectAO foreCastSelectGoal1 = createForecastSelectAO(
+				OperatorBuildHelper.GOAL_AREA_1_X_MIN,
+				OperatorBuildHelper.GOAL_AREA_1_X_MAX,
+				OperatorBuildHelper.GOAL_AREA_1_Z_MAX, forecastMapGoal1);
+
+		// MERGE BOTH PARTS
+		// ----------------
+		MergeAO forecastCriteria = OperatorBuildHelper.createMergeAO(
+				foreCastSelectGoal1, foreCastSelectGoal2);
+
+		// Add to list
+		allOperators.add(timeToGoalLine2MapAO);
+		allOperators.add(timeToGoal2SelectAO);
+		allOperators.add(forecastMapGoal2);
+		allOperators.add(foreCastSelectGoal2);
+
+		allOperators.add(timeToGoalLine1MapAO);
+		allOperators.add(timeToGoal1SelectAO);
+		allOperators.add(forecastMapGoal1);
+		allOperators.add(foreCastSelectGoal1);
+
+		allOperators.add(forecastCriteria);
+
+		// -------------------------------------------------------------------
+		// Tenth part
+		// count the shots
+		// output schema: shots [Integer]
+		// -------------------------------------------------------------------
+
+		// 1. Time window
+		SportsQLTimeParameter timeParam = SportsQLParameterHelper
+				.getTimeParameter(sportsQL);
+		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(
+				Integer.parseInt(timeParam.getTime()), "Minutes",
+				forecastCriteria);
+
+		// 2. Select for correct entity
+		SelectAO entitySelect = OperatorBuildHelper.createEntityIDSelect(
+				sportsQL.getEntityId(), timeWindow);
+
+		// 3. Aggregate (sum the shots for this player)
+		AggregateAO out = OperatorBuildHelper.createAggregateAO("sum", "shot",
+				"shots", entitySelect);
+
+		// Add to list
+		allOperators.add(timeWindow);
+		allOperators.add(entitySelect);
+		allOperators.add(out);
+
+		return OperatorBuildHelper.finishQuery(out, allOperators,
+				sportsQL.getName());
+	}
+
+	/**
+	 * Calculates the x and z coordinates of the forecast
+	 * 
+	 * @param source
+	 * @return
+	 */
+	private MapAO createForecastMapAO(ILogicalOperator source) {
+		List<SDFExpressionParameter> mapParams = new ArrayList<SDFExpressionParameter>();
+
+		SDFExpressionParameter mapParam1 = OperatorBuildHelper
+				.createExpressionParameter("shot_ts", source);
+		SDFExpressionParameter mapParam2 = OperatorBuildHelper
+				.createExpressionParameter("shot_x", source);
+		SDFExpressionParameter mapParam3 = OperatorBuildHelper
+				.createExpressionParameter("shot_y", source);
+		SDFExpressionParameter mapParam4 = OperatorBuildHelper
+				.createExpressionParameter("shot_z", source);
+		SDFExpressionParameter mapParam5 = OperatorBuildHelper
+				.createExpressionParameter("x", source);
+		SDFExpressionParameter mapParam6 = OperatorBuildHelper
+				.createExpressionParameter("y", source);
+		SDFExpressionParameter mapParam7 = OperatorBuildHelper
+				.createExpressionParameter("z", source);
+		SDFExpressionParameter mapParam8 = OperatorBuildHelper
+				.createExpressionParameter("vx", source);
+		SDFExpressionParameter mapParam9 = OperatorBuildHelper
+				.createExpressionParameter("vz", source);
+		SDFExpressionParameter mapParam10 = OperatorBuildHelper
+				.createExpressionParameter("entity_id", source);
+		SDFExpressionParameter mapParam11 = OperatorBuildHelper
+				.createExpressionParameter("team_id", source);
+		SDFExpressionParameter mapParam12 = OperatorBuildHelper
+				.createExpressionParameter("x + vx * timeToGoalline",
+						"forecast_x", source);
+		SDFExpressionParameter mapParam13 = OperatorBuildHelper
+				.createExpressionParameter("z + vz * timeToGoalline",
+						"forecast_z", source);
+		SDFExpressionParameter mapParam14 = OperatorBuildHelper
+				.createExpressionParameter("1", "shot", source);
+
+		mapParams.add(mapParam1);
+		mapParams.add(mapParam2);
+		mapParams.add(mapParam3);
+		mapParams.add(mapParam4);
+		mapParams.add(mapParam5);
+		mapParams.add(mapParam6);
+		mapParams.add(mapParam7);
+		mapParams.add(mapParam8);
+		mapParams.add(mapParam9);
+		mapParams.add(mapParam10);
+		mapParams.add(mapParam11);
+		mapParams.add(mapParam12);
+		mapParams.add(mapParam13);
+		mapParams.add(mapParam14);
+
+		return OperatorBuildHelper.createMapAO(mapParams, source, 0, 0);
+	}
+
+	/**
+	 * Checks, if the time to the goal line is ok and if the right team is
+	 * shooting
+	 * 
+	 * @param teamId
+	 * @param source
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	private SelectAO createTimeToGoalSelectAO(int teamId,
+			ILogicalOperator source) {
+		IPredicate predicate1 = OperatorBuildHelper
+				.createRelationalPredicate("team_id = " + teamId);
+		IPredicate predicate2 = OperatorBuildHelper
+				.createRelationalPredicate("timeToGoalLine >= 0");
+		IPredicate predicate3 = OperatorBuildHelper
+				.createRelationalPredicate("timeToGoalLine <= "
+						+ ShotOnGoalPlayerSportsQLParser.MAX_SHOT_DURATION
+						+ " - ts + shot_ts");
+		List<IPredicate> predicates = new ArrayList<IPredicate>();
+		predicates.add(predicate1);
+		predicates.add(predicate2);
+		predicates.add(predicate3);
+		IPredicate andPredicate = OperatorBuildHelper
+				.createAndPredicate(predicates);
+		return OperatorBuildHelper.createSelectAO(andPredicate, source);
+	}
+
+	/**
+	 * Calculates, if the ball would reach the goal
+	 * 
+	 * @param xMin
+	 * @param xMax
+	 * @param zMax
+	 * @param source
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	private SelectAO createForecastSelectAO(String xMin, String xMax,
+			String zMax, ILogicalOperator source) {
+		IPredicate predicate1 = OperatorBuildHelper
+				.createRelationalPredicate("forecast_x > " + xMin);
+		IPredicate predicate2 = OperatorBuildHelper
+				.createRelationalPredicate("forecast_x < " + xMax);
+		IPredicate predicate3 = OperatorBuildHelper
+				.createRelationalPredicate("forecast_z < " + zMax);
+		List<IPredicate> predicates = new ArrayList<IPredicate>();
+		predicates.add(predicate1);
+		predicates.add(predicate2);
+		predicates.add(predicate3);
+		IPredicate andPredicate = OperatorBuildHelper
+				.createAndPredicate(predicates);
+		return OperatorBuildHelper.createSelectAO(andPredicate, source);
+	}
+
+	/**
+	 * Calculates the time until the ball reaches the goal line
+	 * 
+	 * @param inputPort
+	 * @param source
+	 * @param timeToGoalLineExpression
+	 * @return
+	 */
+	private MapAO createGoalAreaMapAO(int inputPort, ILogicalOperator source,
+			String timeToGoalLineExpression) {
+
+		List<SDFExpressionParameter> mapParams = new ArrayList<SDFExpressionParameter>();
+
+		SDFExpressionParameter goalAreaMapParam1 = OperatorBuildHelper
+				.createExpressionParameter("shot_ts", source);
+		SDFExpressionParameter goalAreaMapParam2 = OperatorBuildHelper
+				.createExpressionParameter("shot_x", source);
+		SDFExpressionParameter goalAreaMapParam3 = OperatorBuildHelper
+				.createExpressionParameter("shot_y", source);
+		SDFExpressionParameter goalAreaMapParam4 = OperatorBuildHelper
+				.createExpressionParameter("shot_z", source);
+		SDFExpressionParameter goalAreaMapParam5 = OperatorBuildHelper
+				.createExpressionParameter("x", source);
+		SDFExpressionParameter goalAreaMapParam6 = OperatorBuildHelper
+				.createExpressionParameter("y", source);
+		SDFExpressionParameter goalAreaMapParam7 = OperatorBuildHelper
+				.createExpressionParameter("z", source);
+		SDFExpressionParameter goalAreaMapParam8 = OperatorBuildHelper
+				.createExpressionParameter("vx", source);
+		SDFExpressionParameter goalAreaMapParam9 = OperatorBuildHelper
+				.createExpressionParameter("vz", source);
+		SDFExpressionParameter goalAreaMapParam10 = OperatorBuildHelper
+				.createExpressionParameter("entity_id", source);
+		SDFExpressionParameter goalAreaMapParam11 = OperatorBuildHelper
+				.createExpressionParameter("team_id", source);
+		SDFExpressionParameter goalAreaMapParam12 = OperatorBuildHelper
+				.createExpressionParameter(timeToGoalLineExpression,
+						"timeToGoalLine", source);
+
+		mapParams.add(goalAreaMapParam1);
+		mapParams.add(goalAreaMapParam2);
+		mapParams.add(goalAreaMapParam3);
+		mapParams.add(goalAreaMapParam4);
+		mapParams.add(goalAreaMapParam5);
+		mapParams.add(goalAreaMapParam6);
+		mapParams.add(goalAreaMapParam7);
+		mapParams.add(goalAreaMapParam8);
+		mapParams.add(goalAreaMapParam9);
+		mapParams.add(goalAreaMapParam10);
+		mapParams.add(goalAreaMapParam11);
+		mapParams.add(goalAreaMapParam12);
+
+		return OperatorBuildHelper.createMapAO(mapParams, source, inputPort, 0);
 	}
 }
