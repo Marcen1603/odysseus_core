@@ -36,7 +36,7 @@ public class WekaClassificationLearner<M extends ITimeInterval> implements IClas
 	private SDFSchema recognizedSchema;
 
 	public static String[] MODELS = { "J48", "NAIVEBAYES", "DECISIONTABLE", "LINEAR-REGRESSION", "LOGISTIC", "GAUSSIAN-PROCESSES", "SMO", "MULTILAYER-PERCEPTRON", "SIMPLE-LOGISTIC", "SIMPLE_LINEAR-REGRESSION", "SMO-REGRESSION", "NAIVE-BAYES-TEXT" };
-
+	
 	@Override
 	public void setOptions(Map<String, String> options) {
 		try {
@@ -59,7 +59,7 @@ public class WekaClassificationLearner<M extends ITimeInterval> implements IClas
 			if (instances.size() <= 0) {
 				return null;
 			}
-			instances.setClassIndex(this.classIndex);
+			instances.setClassIndex(this.classIndex);		
 			wekaLearner.buildClassifier(instances);
 			WekaClassifier<M> classifier = new WekaClassifier<>(war.getNominals(), AbstractClassifier.makeCopy(wekaLearner));
 			classifier.init(this.recognizedSchema, classAttribute);

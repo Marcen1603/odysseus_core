@@ -14,7 +14,7 @@ public class TConversationReach extends AbstractTransformationRule<ConversationR
 	public void execute(ConversationReachAO operator, TransformationConfiguration config) throws RuleException {
 		defaultExecute(
 				operator,
-				new ConversationReachPO(	operator.getConcreteTopic(),
+				new ConversationReachPO<>(	operator.getConcreteTopic(),
 											operator.getAllTopics(),
 											operator.getIncomingText(),
 											operator.getUserIDs(),

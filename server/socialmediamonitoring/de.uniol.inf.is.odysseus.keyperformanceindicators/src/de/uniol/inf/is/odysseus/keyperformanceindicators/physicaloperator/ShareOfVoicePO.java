@@ -13,11 +13,10 @@ import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation.IKeyPerformanceIndicators;
 import de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation.KPIRegistry;
 
-@SuppressWarnings("rawtypes")
 public class ShareOfVoicePO <M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
-	private IKeyPerformanceIndicators kpiType;
+	private IKeyPerformanceIndicators<M> kpiType;
 	
 	private List<String> ownCompany;
 	private List<String> allCompanies;
@@ -51,6 +50,7 @@ public class ShareOfVoicePO <M extends ITimeInterval> extends AbstractPipe<Tuple
 		return OutputMode.MODIFIED_INPUT;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void process_open() throws OpenFailedException
 	{
@@ -69,6 +69,7 @@ public class ShareOfVoicePO <M extends ITimeInterval> extends AbstractPipe<Tuple
 		sweepArea.insert(object);
 		
 		//Aufräumen
+		@SuppressWarnings("unused")
 		Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsEndBefore(object.getMetadata().getStart());
 					
 		synchronized(this.sweepArea)
@@ -82,13 +83,10 @@ public class ShareOfVoicePO <M extends ITimeInterval> extends AbstractPipe<Tuple
 	}
 	
 	private void calculateSoV(List<Tuple<M>> tuple, Tuple<M> currentTuple, int port)
-	{
-		
-		Iterator it = this.allCompanies.iterator();
-				
+	{		
 		double shareOfVoiceResult = 0;
 		
-		Tuple outputTuple = new Tuple(1, false);
+		Tuple<M> outputTuple = new Tuple<>(1, false);
 		
 		shareOfVoiceResult = this.kpiType.manageKPICalculation(tuple, this.ownCompany, this.allCompanies, this.positionOfInputText);
 		

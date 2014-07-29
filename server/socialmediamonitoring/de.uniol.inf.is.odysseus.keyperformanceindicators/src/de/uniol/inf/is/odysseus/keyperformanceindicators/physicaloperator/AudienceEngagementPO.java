@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation.KPIRegis
 public class AudienceEngagementPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 	
 	DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
-	private IKeyPerformanceIndicators kpiType;
+	private IKeyPerformanceIndicators<M> kpiType;
 	
 	private List<String> concreteTopics;
 	private List<String> allTopics;
@@ -52,6 +52,7 @@ public class AudienceEngagementPO<M extends ITimeInterval> extends AbstractPipe<
 		return OutputMode.MODIFIED_INPUT;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void process_open() throws OpenFailedException
 	{
@@ -71,6 +72,7 @@ public class AudienceEngagementPO<M extends ITimeInterval> extends AbstractPipe<
 		sweepArea.insert(object);
 		
 		//Aufräumen
+		@SuppressWarnings("unused")
 		Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsEndBefore(object.getMetadata().getStart());
 					
 		synchronized(this.sweepArea)
@@ -87,7 +89,7 @@ public class AudienceEngagementPO<M extends ITimeInterval> extends AbstractPipe<
 	{	
 		double audienceEngagementResult = 0;
 		
-		Tuple outputTuple = new Tuple(1, false);
+		Tuple<M> outputTuple = new Tuple<>(1, false);
 		
 		this.kpiType.setCountOfAllTopics(3);
 	

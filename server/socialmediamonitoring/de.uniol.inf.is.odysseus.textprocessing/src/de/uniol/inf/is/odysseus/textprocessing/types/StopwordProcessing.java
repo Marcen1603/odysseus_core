@@ -35,6 +35,7 @@ public class StopwordProcessing implements ITextProcessing {
 		this.kpiType = processType;
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public Vector<String> startTextProcessing(Vector<String> incomingText) {
 		

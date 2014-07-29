@@ -22,28 +22,22 @@ public class TextProcessingPO<M extends ITimeInterval, R extends Tuple<M>> exten
 	
 	private int ngramSize;
 	private SDFAttribute inputText;
-	//private SDFAttribute textNotToProcess;
 	private int outputPort;
 	
 	private boolean doNgram = true;
 	private boolean doStemming = true;
 	private boolean doRemoveStopwords = true;
-	//private boolean isThereTextNotToProcess = false;
-	
 	private int positionInputText = -1;
-	//private int positionTextNotToProcess = -1;
 		
-	public TextProcessingPO(int outputPort, SDFAttribute inputText, int ngramSize, /*boolean doNgram,*/ boolean doStemming, boolean doRemoveStopwords/*, SDFAttribute textNotToProcess, boolean isThereTextNotToProcess*/)
+	public TextProcessingPO(int outputPort, SDFAttribute inputText, int ngramSize, boolean doNgram, boolean doStemming, boolean doRemoveStopwords)
 	{
 		super();
 		this.outputPort = outputPort;
 		this.inputText = inputText;
 		this.ngramSize = ngramSize;
-	//	this.doNgram = doNgram;
+		this.doNgram = doNgram;
 		this.doStemming = doStemming;
 		this.doRemoveStopwords = doRemoveStopwords;
-	//	this.textNotToProcess = textNotToProcess;
-	//	this.isThereTextNotToProcess = isThereTextNotToProcess;
 	}
 	
 	public TextProcessingPO(TextProcessingPO<M,R> textProcessingPO)
@@ -52,11 +46,9 @@ public class TextProcessingPO<M extends ITimeInterval, R extends Tuple<M>> exten
 		this.outputPort = textProcessingPO.outputPort;
 		this.inputText = textProcessingPO.inputText;
 		this.ngramSize = textProcessingPO.ngramSize;
-	//	this.doNgram = textProcessingPO.doNgram;
+		this.doNgram = textProcessingPO.doNgram;
 		this.doStemming = textProcessingPO.doStemming;
 		this.doRemoveStopwords = textProcessingPO.doRemoveStopwords;
-		//	this.textNotToProcess = textProcessingPO.textNotToProcess;
-		//	this.isThereTextNotToProcess = textProcessingPO.isThereTextNotToProcess;
 	}
 		
 	@Override
@@ -77,21 +69,8 @@ public class TextProcessingPO<M extends ITimeInterval, R extends Tuple<M>> exten
 		manageTextProcessing(object);		
 	}
 
-	private void manageTextProcessing(R object) {
-
-	/*	Date date = new Date();
-		long tim = date.getTime();
-		double me = (double)tim;
-		
-		System.out.println("----------START---------");
-		System.out.println("LONG: " + tim);
-		System.out.println("DOUBLE: " + tim);
-		System.out.println("----------ENDE---------");
-		
-		DateFormat df = new SimpleDateFormat("HH:mm");
-		Date d = new Date((long) (me));
-		System.out.println("Uhrzeit: " + df.format(d));
-	*/	
+	private void manageTextProcessing(R object) 
+	{
 		synchronized (object) 
 		{
 			Vector<String> res = new Vector<String>();
@@ -130,25 +109,8 @@ public class TextProcessingPO<M extends ITimeInterval, R extends Tuple<M>> exten
 	    return options;
 	}
 
-	private void moveResultToOuputPort(R object, Vector<String> res) {
-		
-		/*Tuple outputTuple;
-		
-		
-		if(this.isThereTextNotToProcess)
-		{
-			outputTuple = new Tuple(2, false);
-			outputTuple.setAttribute(1, object.getAttribute(this.positionTextNotToProcess).toString());
-		}
-		else
-		{
-			outputTuple = new Tuple(1, false);
-		}
-		
-		outputTuple.setMetadata(object.getMetadata());
-		outputTuple.setRequiresDeepClone(object.requiresDeepClone());
-		*/		
-						
+	private void moveResultToOuputPort(R object, Vector<String> res) 
+	{
 		Iterator<String> iter = res.iterator();		
 		List<String> li = new ArrayList<String>();
 		
@@ -159,7 +121,7 @@ public class TextProcessingPO<M extends ITimeInterval, R extends Tuple<M>> exten
 		
 		object.setAttribute(this.positionInputText, li);
 		transfer(object, 0);
-		//outputTuple.setAttribute(0, li);
+		
 		
 		/***Alternativ durch StringBuilder***/
 		/*StringBuilder sb = new StringBuilder();		

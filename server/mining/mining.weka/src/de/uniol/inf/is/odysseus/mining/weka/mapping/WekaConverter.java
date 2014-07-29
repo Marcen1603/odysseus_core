@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.mining.weka.mapping;
 
 import java.util.List;
-
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -26,7 +25,7 @@ public class WekaConverter {
 		Instances instances = new Instances(war.getSchema().getURI(), war.getWekaSchema(), 1);		
 		Instance inst = new DenseInstance(war.getWekaSchema().size());		
 		for (int i = 0; i < tuple.size(); i++) {
-			Attribute a = war.getWekaSchema().get(i);
+			Attribute a = war.getWekaSchema().get(i);			
 			if (a.isNominal() || a.isString()) {
 				String val = tuple.getAttribute(i).toString();
 				inst.setValue(a, val);
@@ -38,7 +37,7 @@ public class WekaConverter {
 				inst.setValue(i, val);
 			}
 		}
-		inst.setDataset(instances);		
+		inst.setDataset(instances);	
 		return inst;
 	}
 	

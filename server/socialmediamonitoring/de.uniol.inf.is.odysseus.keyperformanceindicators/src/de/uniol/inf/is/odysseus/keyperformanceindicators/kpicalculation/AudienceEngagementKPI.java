@@ -17,41 +17,22 @@ public class AudienceEngagementKPI<M extends ITimeInterval> extends AbstractKeyP
 		
 	public AudienceEngagementKPI(){}
 	
-	public AudienceEngagementKPI(String kpiName){
+	public AudienceEngagementKPI(String kpiName)
+	{
 		this.kpiType = kpiName;
 	}
 
 	@Override
-	public void setKPIName(String kpiName) {
+	public void setKPIName(String kpiName) 
+	{
 		this.kpiType = kpiName;
 	}
-	
-	
-/*	@Override
-	public double manageKPICalculation(List<String> incomingTuple, List<String> concreteTopics, List<String>allTopics)
-	{
-		this.concreteTopics = concreteTopics;
-		this.allTopics = allTopics;		
-		this.countOfConcreteTopic = 0;
-		String currentInputText = null;
-			
-		for(String tuple : incomingTuple)
-		{
-			findAndCountGivenWordsInLists(currentInputText);
-			calculateAudienceEngagement();
-		}
-		return this.audienceEngagementResult;
-	}
-	
-*/	
-	
-	
-	
+		
 	@Override
 	public double manageKPICalculation(List<Tuple<M>> incomingTuple, List<String> concreteTopics, List<String>allTopics, int positionOfInputText)
 	{
 		this.concreteTopics = concreteTopics;
-		this.allTopics = allTopics;		
+		this.setAllTopics(allTopics);		
 		this.countOfConcreteTopic = 0;
 	
 		for(Tuple<M> tuple : incomingTuple)
@@ -63,7 +44,8 @@ public class AudienceEngagementKPI<M extends ITimeInterval> extends AbstractKeyP
 		return this.audienceEngagementResult;
 	}
 		
-	private void findAndCountGivenWordsInLists(String currentInputText) {
+	private void findAndCountGivenWordsInLists(String currentInputText) 
+	{
 		for(int i=0; i<this.concreteTopics.size(); i++)
 		{			
 			if(currentInputText.contains(this.concreteTopics.get(i).toString().toLowerCase()))
@@ -74,8 +56,8 @@ public class AudienceEngagementKPI<M extends ITimeInterval> extends AbstractKeyP
 		}
 	}
 	
-	private void findAndCountLinksToTheConcreteTopic(String text){
-		
+	private void findAndCountLinksToTheConcreteTopic(String text)
+	{		
 		for(String urlValidator : this.urlsToValidate)
 		{
 			if(text.contains(urlValidator))
@@ -88,12 +70,23 @@ public class AudienceEngagementKPI<M extends ITimeInterval> extends AbstractKeyP
 	}
 
 	@Override
-	public IKeyPerformanceIndicators getInstance(String kpi) {
-		return new AudienceEngagementKPI(this.kpiType);
+	public IKeyPerformanceIndicators<M> getInstance(String kpi) {
+		return new AudienceEngagementKPI<>(this.kpiType);
 	}
 
 	@Override
-	public String getType() {
+	public String getType() 
+	{
 		return this.kpiType;
+	}
+
+	public List<String> getAllTopics() 
+	{
+		return allTopics;
+	}
+
+	public void setAllTopics(List<String> allTopics) 
+	{
+		this.allTopics = allTopics;
 	}
 }

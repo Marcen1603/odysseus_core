@@ -23,7 +23,8 @@ public class ShareOfVoiceKPI<M extends ITimeInterval> extends AbstractKeyPerform
 	}
 	
 	@Override
-	public void setKPIName(String kpiName) {
+	public void setKPIName(String kpiName) 
+	{
 		this.kpiType = kpiName;
 	}
 	
@@ -55,7 +56,8 @@ public class ShareOfVoiceKPI<M extends ITimeInterval> extends AbstractKeyPerform
 			this.shareOfVoiceResult = 0;
 	}
 
-	private void findAndCountGivenWordsInLists(String currentInputText) {
+	private void findAndCountGivenWordsInLists(String currentInputText) 
+	{
 		for(int i=0; i<this.ownBrands.size(); i++)
 		{
 			if(currentInputText.contains(this.ownBrands.get(i).toString().toLowerCase()))
@@ -70,12 +72,14 @@ public class ShareOfVoiceKPI<M extends ITimeInterval> extends AbstractKeyPerform
 	}
 
 	@Override
-	public String getType() {
+	public String getType() 
+	{
 		return this.kpiType;
 	}
 	
 	@Override
-	public IKeyPerformanceIndicators getInstance(String kpiName) {
-		return new ShareOfVoiceKPI(kpiName);
+	public IKeyPerformanceIndicators<M> getInstance(String kpiName) 
+	{
+		return new ShareOfVoiceKPI<>(kpiName);
 	}
 }

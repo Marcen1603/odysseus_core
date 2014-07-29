@@ -4,6 +4,7 @@ package de.uniol.inf.is.odysseus.keyperformanceindicators.physicaloperator;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
@@ -25,7 +26,7 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 	protected ITransferArea<Tuple<M>, Tuple<M>> tranferFunction;
 	protected IMetadataMergeFunction<M> metaDataMerge;
 	
-	private IKeyPerformanceIndicators algo;
+	private IKeyPerformanceIndicators<M> algo;
 	
 	private String kpiName;
 	private String domain;
@@ -114,10 +115,9 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 	{
 		//In
 		sweepArea.insert(object);
-		
-		System.out.println("Tupel: " + object.getAttribute(positionOfIncomingText));
-	
+
 		//Aufräumen
+		@SuppressWarnings("unused")
 		Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsEndBefore(object.getMetadata().getStart());
 					
 		synchronized(this.sweepArea)
@@ -149,7 +149,7 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 	}
 
 	private Tuple<M> prepareTupelForOutput(Tuple<M> currentTuple, double kpiResult) {
-		Tuple<M> outputTuple = new Tuple(1, false);
+		Tuple<M> outputTuple = new Tuple<>(1, false);
 		outputTuple.setAttribute(0, kpiResult);
 
 		outputTuple.setMetadata(currentTuple.getMetadata());
@@ -159,7 +159,6 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		//TODO
 	}
 
 	@Override

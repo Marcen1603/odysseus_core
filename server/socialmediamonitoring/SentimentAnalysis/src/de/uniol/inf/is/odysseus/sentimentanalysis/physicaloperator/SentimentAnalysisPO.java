@@ -4,9 +4,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
+import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.bayes.NaiveBayesMultinomialText;
+import weka.classifiers.functions.MultilayerPerceptron;
+import weka.classifiers.functions.SMO;
+import weka.classifiers.functions.SimpleLogistic;
+import weka.classifiers.meta.FilteredClassifier;
+import weka.classifiers.rules.DecisionTable;
+import weka.classifiers.trees.J48;
+import weka.core.Attribute;
+import weka.core.DenseInstance;
+import weka.core.FastVector;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.filters.unsupervised.attribute.StringToNominal;
+import weka.filters.unsupervised.attribute.StringToWordVector;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -15,26 +34,39 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.mining.MiningAlgorithmRegistry;
 import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
+import de.uniol.inf.is.odysseus.mining.weka.mapping.WekaAttributeResolver;
+import de.uniol.inf.is.odysseus.mining.weka.mapping.WekaConverter;
 
 /**
- * physical Sentiment Detection Operator
  * 
- * @author Marc Preuschaft
+ * @author Christopher Licht
  * 
- * @param <T>
  */
-@SuppressWarnings({ "rawtypes", "deprecation" })
+@SuppressWarnings({ "deprecation" })
 public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 	
-	IClassificationLearner learner;
-	de.uniol.inf.is.odysseus.mining.classification.IClassifier myClassifier;
-	int safe = 0;
+	IClassificationLearner<ITimeInterval> learner;
+	WekaAttributeResolver resolver;
+		
+	Instances trainData;
+	StringToWordVector filter;
+	StringToNominal nomFilter;
+	FilteredClassifier classifier;
+	Classifier userDefinedClassifier;
+	String classification;
 	
-	// operator parameter
+	Instance instance;
+	Instances instances;
+		
+	SDFSchema dataSchema;
+	SDFSchema trainSchema;
+	Map<SDFAttribute, List<String>> nominals;
+	List<String>userNominals = new ArrayList<>();
+
 	private String userClassifier;
 	//private String domain;
 	private boolean debugClassifier = false;
-	private int maxBufferSize;
+	private int maxTrainSize;
 	private int totalInputports = 2;
 
 	private int attributeTextToBeClassifiedPos = -1;
@@ -48,16 +80,17 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 
 	static Logger logger = LoggerFactory.getLogger(SentimentAnalysisPO.class);
 
-	public SentimentAnalysisPO(String userClassifier, /*String domain,*/ int maxBufferSize, SDFAttribute attributeTextToBeClassified, int totalInputports, SDFAttribute attributeTrainSetText, SDFAttribute attributeTrainSetTrueDecision) {
+	public SentimentAnalysisPO(String userClassifier, /*String domain,*/ SDFAttribute attributeTextToBeClassified, int totalInputports, SDFAttribute attributeTrainSetText, SDFAttribute attributeTrainSetTrueDecision, List<String>userNominals, int maxTrainSize) {
 		super();
 
 		this.attributeTextToBeClassified = attributeTextToBeClassified;
 		this.userClassifier = userClassifier;
 		//this.domain = domain;
-		this.totalInputports = totalInputports;
-		this.maxBufferSize = maxBufferSize;
+		this.setTotalInputports(totalInputports);
+		this.maxTrainSize = maxTrainSize;
 		this.attributeTrainSetText = attributeTrainSetText;
 		this.attributeTrainSetTrueDecision = attributeTrainSetTrueDecision;
+		this.userNominals = userNominals;
 	}
 
 	public SentimentAnalysisPO(SentimentAnalysisPO<M> senti) {
@@ -65,10 +98,11 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 		this.userClassifier = senti.userClassifier;
 		//this.domain = senti.domain;
 		this.debugClassifier = senti.debugClassifier;
-		this.maxBufferSize = senti.maxBufferSize;
+		this.maxTrainSize = senti.maxTrainSize;
 		this.attributeTextToBeClassified = senti.attributeTextToBeClassified;
 		this.attributeTrainSetText = senti.attributeTrainSetText;
 		this.attributeTrainSetTrueDecision = senti.attributeTrainSetTrueDecision;
+		this.userNominals = senti.userNominals;
 	}
 
 	@Override
@@ -83,49 +117,218 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		SDFSchema dataSchema = getSubscribedToSource(0).getSchema();
-		SDFSchema trainSchema = getSubscribedToSource(1).getSchema();
+		this.dataSchema = getSubscribedToSource(0).getSchema();
+		this.trainSchema = getSubscribedToSource(1).getSchema();
 		
-		this.attributeTrainSetTextPosition = trainSchema.indexOf(this.attributeTrainSetText);
-		this.attributeTrainSetTrueDecisionPosition = trainSchema.indexOf(this.attributeTrainSetTrueDecision);
+		this.setAttributeTrainSetTextPosition(this.trainSchema.indexOf(this.attributeTrainSetText));
+		this.attributeTrainSetTrueDecisionPosition = this.trainSchema.indexOf(this.attributeTrainSetTrueDecision);
 		
-		this.attributeTextToBeClassifiedPos = dataSchema.indexOf(attributeTextToBeClassified);
+		this.attributeTextToBeClassifiedPos = this.dataSchema.indexOf(attributeTextToBeClassified);
 		
-		Map<String,String> map = new HashMap<String,String>();
-		map.put("argument", "-W");
+		this.nominals = new HashMap<SDFAttribute, List<String>>();
+		this.nominals.put(this.attributeTrainSetTrueDecision, this.userNominals);
 		
-		//Erzeuge learner
 		this.learner = MiningAlgorithmRegistry.getInstance().createClassificationLearner("weka");	
-		this.learner.setOptions(map);
-		this.learner.init(this.userClassifier, trainSchema, this.attributeTrainSetTrueDecision, null);	
+		this.learner.init(this.userClassifier, this.trainSchema, this.attributeTrainSetTrueDecision, this.nominals);
+		setAlgorithm(this.userClassifier);
+		this.resolver = new WekaAttributeResolver(this.trainSchema, this.nominals);
+		
+		try {
+			instances = new Instances(this.resolver.getSchema().getURI(), this.resolver.getWekaSchema(), 10);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
+	
+	private void classify(Instances instances) throws Exception {
+		double pred = this.classifier.classifyInstance(instances.instance(0));
+		System.out.println("===== Instance classified =====");
+		System.out.println("Class: " + instances.classAttribute().value((int) pred));
+		this.classification =  instances.classAttribute().value((int) pred);
+	}
+	
+	/*private void getTrainData(Instances instances)
+	{
+		for(Instance instance : instances)
+			this.trainData = instance.dataset();
+	}*/
+	
+	private void evaluateClassifier()throws Exception
+	{
+		this.trainData.setClassIndex(attributeTrainSetTrueDecisionPosition);
+
+		this.filter = new StringToWordVector();
+		this.filter.setAttributeIndices("first");
+		
+		this.classifier = new FilteredClassifier();
+		this.classifier.setFilter(this.filter);
+		
+		this.classifier.setClassifier(this.userDefinedClassifier);
+		
+		Evaluation evaluation = new Evaluation(this.trainData);		
+		evaluation.crossValidateModel(this.classifier, this.trainData, this.maxTrainSize, new Random(1));
+		
+		System.out.println("===========EVALUATION:\n " + evaluation.toSummaryString());
+		System.out.println("===========EVALUATION-DETAILS:\n " + evaluation.toClassDetailsString());
+	}
+
+	private void learnClassifier()
+	{
+		try {
+				this.trainData.setClassIndex(this.attributeTrainSetTrueDecisionPosition);
+				this.filter = new StringToWordVector();
+				this.filter.setAttributeIndices("first");
+				this.classifier = new FilteredClassifier();
+				this.classifier.setFilter(this.filter);
+				this.classifier.setClassifier(this.userDefinedClassifier);
+				this.classifier.buildClassifier(this.trainData);
+				
+				System.out.println("=========== Training data successfully ===========");
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	@SuppressWarnings({"unchecked","rawtypes"})
+	private Instances createInstancesForClassifying(String textToClassify) 
+	{
+		List<String> list = this.nominals.get(this.attributeTrainSetTrueDecision);
+		//FastVector fvNominalVal = new FastVector(list.size());
+		List nominalValues = new ArrayList<>();
+		
+		for(int i=0; i < list.size(); i++){
+			nominalValues.add(list.get(i));
+		}
+		
+		/*for(int i=0; i < list.size(); i++){
+			fvNominalVal.addElement(list.get(i));
+		}*/
+		
+		Attribute textToClassifyAttribute = new Attribute(this.trainSchema.getAttribute(0).getAttributeName(), (FastVector)null);
+		Attribute classifyAttribute = new Attribute(this.trainSchema.getAttribute(1).getAttributeName(), nominalValues);
+		
+		ArrayList<Attribute> wekaAttributes = new ArrayList<Attribute>();
+		wekaAttributes.add(textToClassifyAttribute);
+		wekaAttributes.add(classifyAttribute);
+		//FastVector fvWekaAttributes = new FastVector(list.size());
+		//fvWekaAttributes.addElement(textToClassifyAttribute);
+		//fvWekaAttributes.addElement(classifyAttribute);
+		
+		Instances instances = new Instances("Test relation", wekaAttributes, 1);
+		instances.setClassIndex(this.attributeTrainSetTrueDecisionPosition);
+				
+		DenseInstance instance = new DenseInstance(list.size());
+		instance.setValue(textToClassifyAttribute, textToClassify);
+						
+		instances.add(instance);
+		
+		System.out.println("===== Instance created =====");
+		return instances;
+	}
+
 	@Override
-	protected void process_next(Tuple<M> object, int port) {
-		
-		Object classy = null;
-		
+	protected void process_next(Tuple<M> object, int port) 
+	{
 		if(port == 1)
 		{
-			List<Tuple<M>> list = new ArrayList<Tuple<M>>();
-			list.add(object);
-			this.myClassifier = learner.createClassifier(list);
-			
-			safe++;
+			try {
+					this.instance = WekaConverter.convertToNominalInstance(object, this.resolver);
+					instances.add(this.instance);
+					
+					if(!(this.instances.size() < this.maxTrainSize)) 
+					{
+						this.trainData = this.instances;
+					}
+					
+					if(this.trainData != null && !(this.trainData.size() < this.maxTrainSize))
+					{
+						evaluateClassifier();
+						learnClassifier();
+					}
+				} 
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+				}
 		}
-		else if(port == 0 && safe > 0)
+		else if(port == 0 && !(this.trainData.size() < this.maxTrainSize))
 		{
-			classy = this.myClassifier.classify(object);
-			System.out.println("Klasse: " + classy.toString());
+			try 
+			{
+				Instances instances = createInstancesForClassifying(object.getAttribute(this.attributeTextToBeClassifiedPos).toString());
+				classify(instances);
+			} 
+			catch (Exception e) 
+			{
+				e.printStackTrace();
+			}
 		}
 		
-		Tuple outputTuple = new Tuple(object.size()+1, false);
+		Tuple<M> outputTuple = new Tuple<>(object.size()+1, false);
 		System.arraycopy(object.getAttributes(), 0, outputTuple.getAttributes(), 0, object.size());
 		
-		outputTuple.setAttribute(object.size(), classy.toString());
+		outputTuple.setAttribute(object.size(), this.classification);
 		outputTuple.setMetadata(object.getMetadata());
 		outputTuple.setRequiresDeepClone(object.requiresDeepClone());
 		
 		transfer(outputTuple, 0);
+	}
+	
+	/**
+	 * Entnommen und angepasst von \de.uniol.inf.is.odysseus.mining.weka.classification.WekaClassificationLearner.java
+	 * */
+	public void setAlgorithm(String algorithm) 
+	{
+		algorithm = algorithm.toUpperCase();
+		
+		if (algorithm != null) 
+		{
+			switch (algorithm) 
+			{
+				case "J48":
+					this.userDefinedClassifier = new J48();
+					break;
+				case "NAIVEBAYES":
+					this.userDefinedClassifier = new NaiveBayes();
+					break;
+				case "DECISIONTABLE":
+					this.userDefinedClassifier = new DecisionTable();
+					break;
+				case "SMO":
+					this.userDefinedClassifier = new SMO();
+					break;
+				case "MULTILAYER-PERCEPTRON":
+					this.userDefinedClassifier = new MultilayerPerceptron();
+					break;
+				case "SIMPLE-LOGISTIC":
+					this.userDefinedClassifier = new SimpleLogistic();
+					break;
+				case "NAIVE-BAYES-TEXT":
+					this.userDefinedClassifier = new NaiveBayesMultinomialText();
+					break;
+				default:
+					throw new IllegalArgumentException(algorithm + "is not available. Choose another one!");
+			}
+		}	
+	}
+
+	public int getAttributeTrainSetTextPosition() {
+		return attributeTrainSetTextPosition;
+	}
+
+	public void setAttributeTrainSetTextPosition(
+			int attributeTrainSetTextPosition) {
+		this.attributeTrainSetTextPosition = attributeTrainSetTextPosition;
+	}
+
+	public int getTotalInputports() {
+		return totalInputports;
+	}
+
+	public void setTotalInputports(int totalInputports) {
+		this.totalInputports = totalInputports;
 	}
 }

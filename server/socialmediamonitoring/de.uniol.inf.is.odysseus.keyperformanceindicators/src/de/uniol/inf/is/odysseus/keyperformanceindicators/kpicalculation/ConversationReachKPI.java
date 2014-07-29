@@ -18,10 +18,11 @@ public class ConversationReachKPI<M extends ITimeInterval> extends AbstractKeyPe
 	private Map<Integer, String> uniqueUserIDs = new HashMap<Integer, String>();
 	private Map<Integer, String> allUserIDs = new HashMap<Integer, String>();
 	
-	public ConversationReachKPI() {
-	}
+	public ConversationReachKPI() 
+	{}
 
-	public ConversationReachKPI(String kpiName) {
+	public ConversationReachKPI(String kpiName) 
+	{
 		this.kpiType = kpiName;
 	}
 
@@ -49,12 +50,13 @@ public class ConversationReachKPI<M extends ITimeInterval> extends AbstractKeyPe
 		//return this.conversationReachResult = (((double)this.values.size()) / this.counterAllTopics * 100);
 	
 		if(((double)this.uniqueUserIDs.size()) + ((double)this.allUserIDs.size()) > 0)
-			return this.conversationReachResult = (((double)this.uniqueUserIDs.size()) / ((double)this.allUserIDs.size()) * 100);
+			return this.setConversationReachResult((((double)this.uniqueUserIDs.size()) / ((double)this.allUserIDs.size()) * 100));
 		else
-			return this.conversationReachResult = 0;
+			return this.setConversationReachResult(0);
 	}
 
-	private void findAllTopicsAndSaveAllUserIDs(String currentInputText, String currentUserID) {
+	private void findAllTopicsAndSaveAllUserIDs(String currentInputText, String currentUserID) 
+	{
 		for(int i=0; i<this.allTopics.size(); i++)
 			if(currentInputText.contains(this.allTopics.get(i).toLowerCase().toString()))
 			{
@@ -64,7 +66,8 @@ public class ConversationReachKPI<M extends ITimeInterval> extends AbstractKeyPe
 			}
 	}
 
-	private void findConcreteWordsAndSaveUserIDs(String currentInputText, String currentUserID) {
+	private void findConcreteWordsAndSaveUserIDs(String currentInputText, String currentUserID) 
+	{
 		for(int i=0; i<this.concreteTopics.size(); i++)
 			if(currentInputText.contains(this.concreteTopics.get(i).toString().toLowerCase()))
 				if(!this.uniqueUserIDs.containsValue(currentUserID))
@@ -77,12 +80,21 @@ public class ConversationReachKPI<M extends ITimeInterval> extends AbstractKeyPe
 	}
 
 	@Override
-	public IKeyPerformanceIndicators getInstance(String kpi) {
-		return new ConversationReachKPI(this.kpiType);
+	public IKeyPerformanceIndicators<M> getInstance(String kpi) {
+		return new ConversationReachKPI<>(this.kpiType);
 	}
 
 	@Override
 	public String getType() {
 		return this.kpiType;
+	}
+
+	public double getConversationReachResult() {
+		return conversationReachResult;
+	}
+
+	public double setConversationReachResult(double conversationReachResult) {
+		this.conversationReachResult = conversationReachResult;
+		return conversationReachResult;
 	}
 }

@@ -14,7 +14,7 @@ public class TAudienceEngagement extends AbstractTransformationRule<AudienceEnga
 	public void execute(AudienceEngagementAO operator, TransformationConfiguration config) throws RuleException {
 		defaultExecute(
 				operator,
-				new AudienceEngagementPO(operator.getConcreteTopics(),
+				new AudienceEngagementPO<>(operator.getConcreteTopics(),
 										 operator.getAllTopics(),
 										 operator.getIncomingText(),
 										 operator.getThresholdValue(),

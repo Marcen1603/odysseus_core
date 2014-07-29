@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
 public interface IKeyPerformanceIndicators<M extends ITimeInterval> {
 
-	IKeyPerformanceIndicators getInstance(String kpi);
+	IKeyPerformanceIndicators<M> getInstance(String kpi);
 	
 	void setKPIName(String kpiName);
 		

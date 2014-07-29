@@ -14,3 +14,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.mining;bundle-version="1.0.0",
 Service-Component: OSGI-INF/clusterer.xml,
  OSGI-INF/classificationlearner.xml,
  OSGI-INF/frequentpatternminer.xml
+Export-Package: de.uniol.inf.is.odysseus.mining.weka.classification,
+ de.uniol.inf.is.odysseus.mining.weka.mapping

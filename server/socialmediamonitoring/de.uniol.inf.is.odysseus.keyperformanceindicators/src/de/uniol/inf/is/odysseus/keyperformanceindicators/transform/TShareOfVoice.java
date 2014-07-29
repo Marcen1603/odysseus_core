@@ -15,7 +15,7 @@ public class TShareOfVoice extends AbstractTransformationRule<ShareOfVoiceAO> {
 		
 		defaultExecute(
 				operator,
-				new ShareOfVoicePO(	operator.getOwnCompany(),
+				new ShareOfVoicePO<>(	operator.getOwnCompany(),
 									operator.getAllCompanies(),
 									operator.getIncomingText(),
 									operator.getThresholdValue()),

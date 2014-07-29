@@ -3,12 +3,6 @@ package de.uniol.inf.is.odysseus.sentimentanalysis.logicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
-
-
-
-
-
-
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -28,7 +22,7 @@ public class SentimentAnalysisAO extends BinaryLogicalOp{
 	private static final long serialVersionUID = -3965539158401817684L;
 	private String classifier;
 	//private String domain;
-	private int maxBufferSize = 60000;
+	private int maxTrainSize = 5;
 
 	private int totalInputports = 2;
 	
@@ -37,6 +31,8 @@ public class SentimentAnalysisAO extends BinaryLogicalOp{
 	private SDFAttribute attributeTrainSetTrueDecision;
 	
 	private String enrichAttribut = "classification";
+	private List<String> nominals = new ArrayList<String>();
+	
 		
 	public SentimentAnalysisAO(){
 		super();	
@@ -45,12 +41,13 @@ public class SentimentAnalysisAO extends BinaryLogicalOp{
 	public SentimentAnalysisAO(SentimentAnalysisAO sentimentAnalysisAO){
         super(sentimentAnalysisAO);
         this.classifier = sentimentAnalysisAO.classifier;
-        //this.domain = sentimentDetectionAO.domain;    
-        this.maxBufferSize = sentimentAnalysisAO.maxBufferSize; 
+        //this.domain = sentimentDetectionAO.domain;
         this.attributeTextToBeClassified = sentimentAnalysisAO.attributeTextToBeClassified; 
         this.totalInputports = sentimentAnalysisAO.totalInputports;
         this.attributeTrainSetText =  sentimentAnalysisAO.attributeTrainSetText;	
     	this.attributeTrainSetTrueDecision = sentimentAnalysisAO.attributeTrainSetTrueDecision;
+    	this.nominals = sentimentAnalysisAO.nominals;
+    	this.maxTrainSize = sentimentAnalysisAO.maxTrainSize;
     }
 	
 
@@ -77,7 +74,19 @@ public class SentimentAnalysisAO extends BinaryLogicalOp{
 	public void setDomain(String domain) {
 		this.domain   = domain;
 	}
-*/		
+*/	
+	
+	@Parameter(name = "maxTrainSize", type=IntegerParameter.class,  doc="")
+	public void setMaxTrainSize(int maxTrainSize) {
+		this.maxTrainSize = maxTrainSize;
+	}
+	
+	@Parameter(name = "nominals", type=StringParameter.class, isList = true,  doc="")
+	public void setNominals(List<String> nominals) {
+		this.nominals   = nominals;
+	}
+	
+	
 	@Parameter(name="classifier", type=StringParameter.class, optional=true, doc="")
 	public void setClassifier(String classifier){
 		if(classifier == null)
@@ -104,11 +113,6 @@ public class SentimentAnalysisAO extends BinaryLogicalOp{
 	public void setToClassifierText(SDFAttribute textToBeClassified) {
 		this.attributeTextToBeClassified   = textToBeClassified;
 	}
-		
-	@Parameter(name = "maxBufferSize", type=IntegerParameter.class, optional= true, doc="")
-	public void setMaxBufferSize(int maxBufferSize) {
-		this.maxBufferSize   = maxBufferSize;
-	}
 	
 	@Parameter(name = "enrichAttribut", type=StringParameter.class, optional= true, doc="")
 	public void setEnrichAttribut(String enrichAttribut) {
@@ -122,10 +126,6 @@ public class SentimentAnalysisAO extends BinaryLogicalOp{
 	public SDFAttribute getAttributeTrainSetTrueDecision() {
 		return attributeTrainSetTrueDecision;
 	}
-	
-	public int getMaxBufferSize(){
-		return maxBufferSize;
-	}
 
 	public SDFAttribute getAttributeTextToBeClassified() {
 		return attributeTextToBeClassified;
@@ -133,6 +133,10 @@ public class SentimentAnalysisAO extends BinaryLogicalOp{
 	
 	public String getClassifier(){
 		return classifier;
+	}
+	
+	public List<String> getNominals(){
+		return this.nominals;
 	}
 	
 /*	public String getDomain(){
@@ -145,6 +149,10 @@ public class SentimentAnalysisAO extends BinaryLogicalOp{
 	
 	public int getTotalInputports(){
 		return totalInputports;
+	}
+	
+	public int getMaxTrainSize(){
+		return this.maxTrainSize;
 	}
 	
 	@Override

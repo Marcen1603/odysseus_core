@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-@SuppressWarnings({ "rawtypes" })
 public class KeyPerformanceIndicatorsRule extends AbstractTransformationRule<KeyPerformanceIndicatorsAO> {
 
 	@Override
@@ -24,7 +23,7 @@ public class KeyPerformanceIndicatorsRule extends AbstractTransformationRule<Key
 		
 		defaultExecute(
 				operator,
-				new KeyPerformanceIndicatorsPO(operator.getOutputPorts(),
+				new KeyPerformanceIndicatorsPO<>(operator.getOutputPorts(),
 											   operator.getDomain(),
 											   operator.getKpiName(),
 											   operator.getSubsetOfTerms(),

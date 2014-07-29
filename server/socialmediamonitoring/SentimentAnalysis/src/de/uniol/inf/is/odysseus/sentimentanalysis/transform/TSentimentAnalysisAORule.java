@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.sentimentanalysis.transform;
 
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -8,7 +9,6 @@ import de.uniol.inf.is.odysseus.sentimentanalysis.physicaloperator.SentimentAnal
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-@SuppressWarnings({ "rawtypes" })
 public class TSentimentAnalysisAORule extends
 		AbstractTransformationRule<SentimentAnalysisAO> {
 
@@ -24,13 +24,14 @@ public class TSentimentAnalysisAORule extends
 		
 		defaultExecute(
 				sentimentAnalysisAO,
-				new SentimentAnalysisPO(sentimentAnalysisAO.getClassifier(),
+				new SentimentAnalysisPO<ITimeInterval>(sentimentAnalysisAO.getClassifier(),
 						/*sentimentDetectionAO.getDomain(),*/
-						sentimentAnalysisAO.getMaxBufferSize(),
 						sentimentAnalysisAO.getAttributeTextToBeClassified(),
 						sentimentAnalysisAO.getTotalInputports(),
 						sentimentAnalysisAO.getAttributeTrainSetText(),
-						sentimentAnalysisAO.getAttributeTrainSetTrueDecision()),
+						sentimentAnalysisAO.getAttributeTrainSetTrueDecision(),
+						sentimentAnalysisAO.getNominals(),
+						sentimentAnalysisAO.getMaxTrainSize()),
 						config, true, true);
 	}
 

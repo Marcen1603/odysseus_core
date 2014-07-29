@@ -46,7 +46,6 @@ public class ConversationReachAO extends BinaryLogicalOp
 	
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos){
-		SDFSchema inSchema = getInputSchema(0);
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		SDFAttribute output = new SDFAttribute(null, this.nameOfThisKpi, SDFDatatype.DOUBLE, null, null, null);
 		outputAttributes.add(output);

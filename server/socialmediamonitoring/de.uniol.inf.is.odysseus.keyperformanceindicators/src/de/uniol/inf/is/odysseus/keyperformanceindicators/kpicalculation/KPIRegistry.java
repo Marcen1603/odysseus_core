@@ -6,11 +6,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+@SuppressWarnings("rawtypes")
 public class KPIRegistry {
 	
 	static Logger logger = LoggerFactory.getLogger(KPIRegistry.class);
-
 	static Map<String, IKeyPerformanceIndicators> classifierAlgoTypes = new HashMap<String, IKeyPerformanceIndicators>();
 	
 	public static IKeyPerformanceIndicators getKPIByName(String kpiType) 
@@ -33,7 +32,6 @@ public class KPIRegistry {
 			return newKPI;
 		}
 	}
-	
 	
 	public static void registerKPIType(IKeyPerformanceIndicators kpiType) {
 

@@ -19,13 +19,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 @LogicalOperator(name="KEYPERFORMANCEINDICATORS", minInputPorts=1, maxInputPorts=1, category={LogicalOperatorCategory.BASE}, doc="Allows KeyPerformanceIndicators for social media on input streams.")
 public class KeyPerformanceIndicatorsAO extends BinaryLogicalOp 
 {
-
 	private static final long serialVersionUID = -4196540875708298361L;
-	
-	private int setTrainSet = 0;
-	private int outputSchemaPort = 0;
 	private int totalInputPorts = 1;
-	
 	private String kpiName;
 	private String domain;
 	private double thresholdValue = 0;
@@ -56,13 +51,11 @@ public class KeyPerformanceIndicatorsAO extends BinaryLogicalOp
 	
 	@Override 
 	public SDFSchema getOutputSchemaIntern(int pos){	
-		//SDFSchema inSchema = getInputSchema(outputSchemaPort);
 		
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		SDFAttribute output = new SDFAttribute(null, this.kpiName, SDFDatatype.DOUBLE, null, null, null);
 		outputAttributes.add(output);
 		setOutputSchema(new SDFSchema("OutputSchema", Tuple.class, outputAttributes));
-		
 			
 		return getOutputSchema();
 	}
@@ -153,19 +146,4 @@ public class KeyPerformanceIndicatorsAO extends BinaryLogicalOp
 		}
 		return true;
 	}
-
-	
-
-
-	
-
-
-	
-
-
-	
-	
-	
-	
-
 }

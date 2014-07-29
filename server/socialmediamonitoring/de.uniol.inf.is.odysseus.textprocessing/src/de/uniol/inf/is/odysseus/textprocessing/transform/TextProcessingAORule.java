@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TextProcessingAORule extends AbstractTransformationRule<TextProcessingAO> {
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void execute(TextProcessingAO textProcessingAO, TransformationConfiguration config) throws RuleException {
 		
@@ -17,13 +18,11 @@ public class TextProcessingAORule extends AbstractTransformationRule<TextProcess
 				textProcessingAO,
 				new TextProcessingPO(	textProcessingAO.getOutputPort(),
 										textProcessingAO.getInputText(),
-										textProcessingAO.getngramSize(),
-										//textProcessingAO.isDoNgram(),
+										textProcessingAO.getNGramSize(),
+										textProcessingAO.isDoNgram(),
 										textProcessingAO.isDoStemming(),
 										textProcessingAO.isDoRemoveStopwords()
-										/*,
-										textProcessingAO.getTextNotToProcess(),
-										textProcessingAO.isThereTextNotToProcess()*/),
+									),
 						config, true, true );
 	}
 

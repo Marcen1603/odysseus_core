@@ -51,6 +51,5 @@ public class StemmingProcessing implements ITextProcessing {
 
 	@Override
 	public void setOptions(String[] options) {
-		// TODO Auto-generated method stub
 	}
 }
