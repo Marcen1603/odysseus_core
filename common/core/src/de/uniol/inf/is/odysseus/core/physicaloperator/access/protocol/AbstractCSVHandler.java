@@ -4,11 +4,13 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -25,6 +27,8 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 	protected boolean trim = false;
 	protected boolean addLineNumber = false;
 	protected String delimiterString;
+
+	private String lastRunRemaining = "";
 
 	public static final String DELIMITER = "delimiter";
 	public static final String CSV_DELIMITER = "csv.delimiter";
@@ -112,30 +116,47 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 		return null;
 	}
 
+	private static String bb_to_str(ByteBuffer buffer) {
+		String data = "";
+		try {
+			data = charset.decode(buffer).toString();
+			// reset buffer's position to its original so it is not altered:
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+		return data;
+	}
+
 	@Override
 	public void process(ByteBuffer message) {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				new ByteArrayInputStream(message.array())));
-		if (!firstLineSkipped && !readFirstLine) {
-			try {
-				reader.readLine();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			firstLineSkipped = true;
-		}
-		String line;
-		try {
-			line = reader.readLine();
-			if (line != null) {
-				T retValue = readLine(line);
-				// System.out.println(retValue);
+		// TODO: There may be some string from former run
+		String strMsg = bb_to_str(message);
+		String data = lastRunRemaining + strMsg;
+		StringTokenizer t = new StringTokenizer(data, "\n\r");
+		boolean process = true;
+		while (process) {
+			String token = t.nextToken();
+			// The last token could be incomplete --> process next time
+			if (t.hasMoreTokens()) {
+				if (!firstLineSkipped && !readFirstLine) {
+					firstLineSkipped = true;
+					continue;
+				}
+				T retValue = readLine(token);
 				getTransfer().transfer(retValue);
+			} else {
+				// There are some cases, where the last token contains the
+				// whole line
+				if (data.endsWith("\n") || data.endsWith("\r")){
+					T retValue = readLine(token);
+					getTransfer().transfer(retValue);					
+					lastRunRemaining = "";
+				}else{
+					lastRunRemaining = token;
+				}
+				process = false;
 			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
@@ -150,10 +171,9 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 		CharBuffer cb = CharBuffer.wrap(out);
 		ByteBuffer encoded = charset.encode(cb);
 		byte[] encodedBytes1 = encoded.array();
-		byte[] encodedBytes = new byte[cb.limit()]; 
+		byte[] encodedBytes = new byte[cb.limit()];
 		System.arraycopy(encodedBytes1, 0, encodedBytes, 0, cb.limit());
-		getTransportHandler()
-				.send(encodedBytes);		
+		getTransportHandler().send(encodedBytes);
 	}
 
 }
