@@ -87,10 +87,8 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.core.server.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.sentimentanalysis.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.modbus.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.linearRegression.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.mining.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.probabilistic.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.trendanalysis.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.mail.feature" version="1.0.0.qualifier"/>
    </features>
 

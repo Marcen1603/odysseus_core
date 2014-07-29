@@ -143,8 +143,8 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 	
 	private void classify(Instances instances) throws Exception {
 		double pred = this.classifier.classifyInstance(instances.instance(0));
-		System.out.println("===== Instance classified =====");
-		System.out.println("Class: " + instances.classAttribute().value((int) pred));
+		//System.out.println("===== Instance classified =====");
+		//System.out.println("Class: " + instances.classAttribute().value((int) pred));
 		this.classification =  instances.classAttribute().value((int) pred);
 	}
 	
@@ -169,8 +169,8 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 		Evaluation evaluation = new Evaluation(this.trainData);		
 		evaluation.crossValidateModel(this.classifier, this.trainData, this.maxTrainSize, new Random(1));
 		
-		System.out.println("===========EVALUATION:\n " + evaluation.toSummaryString());
-		System.out.println("===========EVALUATION-DETAILS:\n " + evaluation.toClassDetailsString());
+		//System.out.println("===========EVALUATION:\n " + evaluation.toSummaryString());
+		//System.out.println("===========EVALUATION-DETAILS:\n " + evaluation.toClassDetailsString());
 	}
 
 	private void learnClassifier()
@@ -184,7 +184,7 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 				this.classifier.setClassifier(this.userDefinedClassifier);
 				this.classifier.buildClassifier(this.trainData);
 				
-				System.out.println("=========== Training data successfully ===========");
+				//System.out.println("=========== Training data successfully ===========");
 		} 
 		catch (Exception e) 
 		{
@@ -225,7 +225,7 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 						
 		instances.add(instance);
 		
-		System.out.println("===== Instance created =====");
+		//System.out.println("===== Instance created =====");
 		return instances;
 	}
 
