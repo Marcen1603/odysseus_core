@@ -74,8 +74,7 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 	 * The minimal acceleration of balls, being shot [m/s²] and [micro m / s²]
 	 */
 	public static final String MIN_ACCELERATION = "55000000.0";
-	
-	@SuppressWarnings({ "rawtypes" })
+
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
 			throws SportsQLParseException {
@@ -83,8 +82,44 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		// Filter for time and space where it's usefull
 		// "global" query without team-or-player selection -> use this for other
 		// queries with player or team
-
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
+
+		// Do all the steps one to nine
+		MergeAO forecastCriteria = createForecastCritera(allOperators, sportsQL);
+
+		// -------------------------------------------------------------------
+		// Tenth part
+		// count the shots
+		// output schema: shots [Integer]
+		// -------------------------------------------------------------------
+
+		// 1. Time window
+		SportsQLTimeParameter timeParam = SportsQLParameterHelper
+				.getTimeParameter(sportsQL);
+		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(
+				Integer.parseInt(timeParam.getTime()), "Minutes",
+				forecastCriteria);
+
+		// 2. Select for correct entity
+		SelectAO entitySelect = OperatorBuildHelper.createEntityIDSelect(
+				sportsQL.getEntityId(), timeWindow);
+
+		// 3. Aggregate (sum the shots for this player)
+		AggregateAO out = OperatorBuildHelper.createAggregateAO("sum", "shot",
+				"shots", entitySelect);
+
+		// Add to list
+		allOperators.add(timeWindow);
+		allOperators.add(entitySelect);
+		allOperators.add(out);
+
+		return OperatorBuildHelper.finishQuery(out, allOperators,
+				sportsQL.getName());
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static MergeAO createForecastCritera(
+			List<ILogicalOperator> allOperators, SportsQLQuery sportsQL) {
 
 		// ---------------------
 		// Access to the Streams
@@ -158,9 +193,8 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		SDFExpressionParameter mapParam4 = OperatorBuildHelper
 				.createExpressionParameter("z", "shot_z", activeBall);
 		SDFExpressionParameter mapParam5 = OperatorBuildHelper
-				.createExpressionParameter(
-						"eif(a >= " + MIN_ACCELERATION +", 1, 0)", "accelerated",
-						activeBall);
+				.createExpressionParameter("eif(a >= " + MIN_ACCELERATION
+						+ ", 1, 0)", "accelerated", activeBall);
 		mapExpressions.add(mapParam1);
 		mapExpressions.add(mapParam2);
 		mapExpressions.add(mapParam3);
@@ -269,7 +303,6 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		JoinAO playerBallJoinAO = OperatorBuildHelper.createJoinAO(
 				playerBallJoinAndPredicate, "ONE_MANY", accelerationCriteria,
 				players);
-		// TODO Why does the join loses some attributes, e.g. "entity_id"?
 
 		// 2. Map
 		SDFExpressionParameter playerBallJoinExp1 = OperatorBuildHelper
@@ -562,35 +595,8 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		allOperators.add(foreCastSelectGoal1);
 
 		allOperators.add(forecastCriteria);
-
-		// -------------------------------------------------------------------
-		// Tenth part
-		// count the shots
-		// output schema: shots [Integer]
-		// -------------------------------------------------------------------
-
-		// 1. Time window
-		SportsQLTimeParameter timeParam = SportsQLParameterHelper
-				.getTimeParameter(sportsQL);
-		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(
-				Integer.parseInt(timeParam.getTime()), "Minutes",
-				forecastCriteria);
-
-		// 2. Select for correct entity
-		SelectAO entitySelect = OperatorBuildHelper.createEntityIDSelect(
-				sportsQL.getEntityId(), timeWindow);
-
-		// 3. Aggregate (sum the shots for this player)
-		AggregateAO out = OperatorBuildHelper.createAggregateAO("sum", "shot",
-				"shots", entitySelect);
-
-		// Add to list
-		allOperators.add(timeWindow);
-		allOperators.add(entitySelect);
-		allOperators.add(out);
-
-		return OperatorBuildHelper.finishQuery(out, allOperators,
-				sportsQL.getName());
+		
+		return forecastCriteria;
 	}
 
 	/**
@@ -599,7 +605,7 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 	 * @param source
 	 * @return
 	 */
-	private MapAO createForecastMapAO(ILogicalOperator source) {
+	private static MapAO createForecastMapAO(ILogicalOperator source) {
 		List<SDFExpressionParameter> mapParams = new ArrayList<SDFExpressionParameter>();
 
 		SDFExpressionParameter mapParam1 = OperatorBuildHelper
@@ -660,7 +666,7 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	private SelectAO createTimeToGoalSelectAO(int teamId,
+	private static SelectAO createTimeToGoalSelectAO(int teamId,
 			ILogicalOperator source) {
 		IPredicate predicate1 = OperatorBuildHelper
 				.createRelationalPredicate("team_id = " + teamId);
@@ -689,7 +695,7 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	private SelectAO createForecastSelectAO(String xMin, String xMax,
+	private static SelectAO createForecastSelectAO(String xMin, String xMax,
 			String zMax, ILogicalOperator source) {
 		IPredicate predicate1 = OperatorBuildHelper
 				.createRelationalPredicate("forecast_x > " + xMin);
@@ -714,8 +720,8 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 	 * @param timeToGoalLineExpression
 	 * @return
 	 */
-	private MapAO createGoalAreaMapAO(int sourceOutputPort, ILogicalOperator source,
-			String timeToGoalLineExpression) {
+	private static MapAO createGoalAreaMapAO(int sourceOutputPort,
+			ILogicalOperator source, String timeToGoalLineExpression) {
 
 		List<SDFExpressionParameter> mapParams = new ArrayList<SDFExpressionParameter>();
 
@@ -758,6 +764,7 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		mapParams.add(goalAreaMapParam11);
 		mapParams.add(goalAreaMapParam12);
 
-		return OperatorBuildHelper.createMapAO(mapParams, source, 0, sourceOutputPort);
+		return OperatorBuildHelper.createMapAO(mapParams, source, 0,
+				sourceOutputPort);
 	}
 }

@@ -31,7 +31,7 @@ public class ClientExample {
 //				name = "game";
 				
 				// Shots on goal for player
-				statisticsType = "player";
+				statisticsType = "team";
 				gameType = "soccer";
 				name = "shotongoal";
 				

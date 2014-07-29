@@ -325,7 +325,7 @@ public class OperatorBuildHelper {
 	 *            source with team_id
 	 * @return SelectAO which filters for the given teamId
 	 */
-	public static SelectAO createTeamSelectAO(int teamId,
+	public static SelectAO createTeamSelectAO(long teamId,
 			ILogicalOperator source) {
 		SelectAO teamSelectAO = new SelectAO();
 
