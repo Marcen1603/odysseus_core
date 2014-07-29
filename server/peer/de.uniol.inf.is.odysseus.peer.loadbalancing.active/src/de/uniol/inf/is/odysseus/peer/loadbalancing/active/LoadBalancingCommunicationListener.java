@@ -46,17 +46,20 @@ import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages.LoadBalancingAbortMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages.LoadBalancingAddQueryMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages.LoadBalancingCopyConnectionMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages.LoadBalancingDeleteConnectionMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages.LoadBalancingDeleteQueryMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages.LoadBalancingFailureMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages.LoadBalancingInitiateCopyMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages.LoadBalancingInitiateMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages.LoadBalancingInstallingSuccessfulMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.LoadBalancingSynchronizerPO;
 
 public class LoadBalancingCommunicationListener implements
 		IPeerCommunicatorListener, ILoadBalancingCommunicator {
-
+	
 	/**
 	 * 
 	 * @author Carsten Cordes Class to encapsulate a Connection to an operator
@@ -105,7 +108,7 @@ public class LoadBalancingCommunicationListener implements
 	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(LoadBalancingCommunicationListener.class);
-	
+
 	/**
 	 * List of registered Listeners.
 	 */
@@ -229,6 +232,8 @@ public class LoadBalancingCommunicationListener implements
 				.registerMessageType(LoadBalancingDeleteConnectionMessage.class);
 		peerCommunicator
 				.registerMessageType(LoadBalancingDeleteQueryMessage.class);
+		peerCommunicator.registerMessageType(LoadBalancingFailureMessage.class);
+		peerCommunicator.registerMessageType(LoadBalancingAbortMessage.class);
 
 		peerCommunicator.addListener(this,
 				LoadBalancingInitiateCopyMessage.class);
@@ -240,6 +245,8 @@ public class LoadBalancingCommunicationListener implements
 				LoadBalancingDeleteConnectionMessage.class);
 		peerCommunicator.addListener(this,
 				LoadBalancingDeleteQueryMessage.class);
+		peerCommunicator.addListener(this, LoadBalancingAbortMessage.class);
+		peerCommunicator.addListener(this, LoadBalancingFailureMessage.class);
 	}
 
 	/**
@@ -265,6 +272,10 @@ public class LoadBalancingCommunicationListener implements
 					LoadBalancingDeleteConnectionMessage.class);
 			peerCommunicator.removeListener(this,
 					LoadBalancingDeleteQueryMessage.class);
+			peerCommunicator.removeListener(this,
+					LoadBalancingFailureMessage.class);
+			peerCommunicator.removeListener(this,
+					LoadBalancingAbortMessage.class);
 
 			peerCommunicator
 					.unregisterMessageType(LoadBalancingInitiateCopyMessage.class);
@@ -278,6 +289,10 @@ public class LoadBalancingCommunicationListener implements
 					.unregisterMessageType(LoadBalancingDeleteConnectionMessage.class);
 			peerCommunicator
 					.unregisterMessageType(LoadBalancingDeleteQueryMessage.class);
+			peerCommunicator
+					.unregisterMessageType(LoadBalancingFailureMessage.class);
+			peerCommunicator
+					.unregisterMessageType(LoadBalancingAbortMessage.class);
 
 			peerCommunicator = null;
 		}
@@ -285,11 +300,14 @@ public class LoadBalancingCommunicationListener implements
 
 	/**
 	 * Removes a query from current Peer.
+	 * 
 	 * @param queryId
 	 */
 	public void deleteQuery(int queryId) {
 		executor.removeQuery(queryId, getActiveSession());
 	}
+	
+	
 
 	@Override
 	/**
@@ -301,51 +319,108 @@ public class LoadBalancingCommunicationListener implements
 	 */
 	public void receivedMessage(IPeerCommunicator communicator,
 			PeerID senderPeer, IMessage message) {
-		
-		// TODO Order of Messages
+
 		// TODO Correct Error Handling
 		// TODO Improve protocol.
 
-		//If Peer is asked -> answer (Ack)
+		/*
+		 * 1. Step: Initiating Peer send LoadBalancingInitiateMessage to chosen Peer.
+		 * (Happens in Allocator)
+		 */
+		
+		/*
+		 * 2. Step: Chosen Peer answers with LoadBalancingInitiateCopyMessage to signalize it's ready.
+		 */
 		if (message instanceof LoadBalancingInitiateMessage) {
-			// TODO Check if loadBalancing ok.
 			sendCopyMessage(senderPeer,
 					((LoadBalancingInitiateMessage) message)
 							.getLoadBalancingProcessId());
 		}
 
-		//When Peer gets this message it starts copying a queryPart.
+		//TODO Timeout between Step 2 and 3?
+		
+		/*
+		 * 3. Step: Initiating receives LoadBalancingInitiateCopyMessage and copies and relinks the QueryPart.
+		 * Send modified QueryPart to volunteering Peer.
+		 */
 		if (message instanceof LoadBalancingInitiateCopyMessage) {
+			
 			int loadBalancingProcessId = ((LoadBalancingInitiateCopyMessage) message)
 					.getLoadBalancingProcessId();
-			ILogicalQueryPart part = LoadBalancingQueryCache.getInstance()
-					.getQueryPart(loadBalancingProcessId);
-			ILogicalQueryPart copy = getCopyOfQueryPart(part);
-			relinkQueryPart(loadBalancingProcessId, copy, senderPeer.toString());
+			
+			LoadBalancingStatus status = LoadBalancingStatusCache.getInstance().getStatus(loadBalancingProcessId);
+			
+			
+			
+			ILogicalQueryPart modifiedQueryPart = copyQueryPart(loadBalancingProcessId);
+			HashMap<String,String> replacedPipes = relinkQueryPart(modifiedQueryPart,senderPeer);
+			
+			status.setReplacedPipes(replacedPipes);
+			status.setPhase(LoadBalancingStatus.LB_PHASES.copying);
+			status.setModifiedPart(modifiedQueryPart);
+			
 			String pqlFromQueryPart = LogicalQueryHelper
-					.generatePQLStatementFromQueryPart(copy);
-			LOG.debug("Created PQL from Query Part: " + pqlFromQueryPart);
+					.generatePQLStatementFromQueryPart(modifiedQueryPart);
 			sendAddQueryPartMessage(loadBalancingProcessId, senderPeer,
 					pqlFromQueryPart);
 			
 		}
+		
 
-		//Peer should install Query Now.
+		/*
+		 * 4. Step: Vounteering peer receives new QueryPart and try to install
+		 * Send Ack if ok, send Failure if not ok.
+		 */
 		if (message instanceof LoadBalancingAddQueryMessage) {
-			LoadBalancingAddQueryMessage queryMessage = (LoadBalancingAddQueryMessage) message;
-			installAndRunQueryPartFromPql(queryMessage.getPqlQuery());
-			// TODO Send Ack Or Failure Message.
+			try {
+				LoadBalancingAddQueryMessage queryMessage = (LoadBalancingAddQueryMessage) message;
+				installAndRunQueryPartFromPql(queryMessage.getPqlQuery());
+				//TODO Send success
+			}
+			catch(Exception e) {
+				//TODO Send failure
+			}
 		}
+		
+		/*
+		 * 5. Step: Initiating Peer receives InstallingQueryPartSuccessful or LoadBalancingFailedMessage
+		 * 6. Step: Initiating Peer send CopyConnectionMessages to all incoming and outgoing peers in QueryPart.
+		 */
+		if(message instanceof LoadBalancingInstallingSuccessfulMessage) {
+			int lbProcessId = ((LoadBalancingInstallingSuccessfulMessage) message).getLoadBalancingProcessId();
+			
+			LoadBalancingStatus status = LoadBalancingStatusCache.getInstance().getStatus(lbProcessId);
+			
+			LoadBalancingStatusCache.getInstance().setPhase(lbProcessId, LoadBalancingStatus.LB_PHASES.relinking);
+			notifyOutgoingAndIncomingPeers(status);
+		}
+		
+		
+		
+		/*
+		 * 7. Step Incoming and outgoing Peers receive CopyConnectionMessage and act accordingly.
+		 * They send an Ack or a Failure Message.
+		 */
 
-		//Peer should now copy an existing JxtaSender or Receiver.
+		// Peer should now copy an existing JxtaSender or Receiver.
 		if (message instanceof LoadBalancingCopyConnectionMessage) {
 			LoadBalancingCopyConnectionMessage copyMessage = (LoadBalancingCopyConnectionMessage) message;
 			findAndCopyLocalJxtaOperator(copyMessage.isSender(),
 					copyMessage.getNewPeerId(), copyMessage.getOldPipeId(),
-					copyMessage.getNewPipeId(),copyMessage.getLoadBalancingProcessId());
+					copyMessage.getNewPipeId(),
+					copyMessage.getLoadBalancingProcessId());
 		}
+		
+		/*
+		 * Step 8. Initiating Peer received all Ack Messages? -> Ok
+		 * If not... Try again and if that fails Abort. (Can probably not do anything here)
+		 */
 
-		//Peer can now delete old Connection.
+		
+		/*
+		 * Step 9. Receiving SyncComlete Message -> Delete old Connection.
+		 */
+		// Peer can now delete old Connection.
 		if (message instanceof LoadBalancingDeleteConnectionMessage) {
 			LoadBalancingDeleteConnectionMessage deleteConnectionMessage = (LoadBalancingDeleteConnectionMessage) message;
 			if (deleteConnectionMessage.isSender()) {
@@ -355,46 +430,63 @@ public class LoadBalancingCommunicationListener implements
 			}
 		}
 
-		//Peer can now delete deprecated Query.
+		// Peer can now delete deprecated Query.
 		if (message instanceof LoadBalancingDeleteQueryMessage) {
 			LoadBalancingDeleteQueryMessage deleteQueryMessage = (LoadBalancingDeleteQueryMessage) message;
 			int loadBalancingProcessId = deleteQueryMessage
 					.getLoadBalancingProcessId();
-			LoadBalancingQueryCache queryCache = LoadBalancingQueryCache
+			LoadBalancingStatusCache queryCache = LoadBalancingStatusCache
 					.getInstance();
 			ILogicalQueryPart queryPart = queryCache
-					.getQueryPart(loadBalancingProcessId);
+					.getOriginalQueryPart(loadBalancingProcessId);
 			if (!queryPart.getOperators().asList().isEmpty()) {
-				
-				//Tell Receivers and Senders to delete duplicate Connections.
-				for(ILogicalOperator operator : queryPart.getOperators()) {
-					if(operator instanceof JxtaReceiverAO) {
-						JxtaReceiverAO receiver = (JxtaReceiverAO)operator;
-						sendDeleteJxtaOperatorMessage(false,receiver.getPeerID(), receiver.getPipeID(),deleteQueryMessage.getLoadBalancingProcessId());
+
+				// Tell Receivers and Senders to delete duplicate Connections.
+				for (ILogicalOperator operator : queryPart.getOperators()) {
+					if (operator instanceof JxtaReceiverAO) {
+						JxtaReceiverAO receiver = (JxtaReceiverAO) operator;
+						sendDeleteJxtaOperatorMessage(false,
+								receiver.getPeerID(), receiver.getPipeID(),
+								deleteQueryMessage.getLoadBalancingProcessId());
 					}
-					if(operator instanceof JxtaSenderAO) {
-						JxtaSenderAO sender = (JxtaSenderAO)operator;
-						sendDeleteJxtaOperatorMessage(false,sender.getPeerID(), sender.getPipeID(),deleteQueryMessage.getLoadBalancingProcessId());
+					if (operator instanceof JxtaSenderAO) {
+						JxtaSenderAO sender = (JxtaSenderAO) operator;
+						sendDeleteJxtaOperatorMessage(false,
+								sender.getPeerID(), sender.getPipeID(),
+								deleteQueryMessage.getLoadBalancingProcessId());
 					}
 				}
-				
-				
-				int queryId = getQueryWithOperator(queryPart.getOperators()
-						.asList().get(0));
-				if (queryId != LOOK_FOR_QUERY_FAILED) {
-					deleteQuery(queryId);
-				} else {
-					// TODO Log fail
-				}
-			} else {
-				// TODO Log fail
 			}
+			
+			int queryId = LoadBalancingStatusCache.getInstance().getStatus(loadBalancingProcessId).getLogicalQuery();
+			deleteQuery(queryId);
 		}
 
 	}
-	
+
+	private void notifyOutgoingAndIncomingPeers(LoadBalancingStatus status) {
+		
+		HashMap<String, String> replacedPipes = status.getReplacedPipes();
+		int lbProcessId = status.getProcessId();
+		ILogicalQueryPart modifiedQueryPart = status.getModifiedPart();
+		String volunteeringPeer = status.getVolunteeringPeer().toString();
+		
+		for (ILogicalOperator operator : modifiedQueryPart.getOperators()) {
+			if(operator instanceof JxtaSenderAO) {
+				JxtaSenderAO sender = (JxtaSenderAO) operator;
+				sendCopyConnectionMessage(true,lbProcessId,toPeerID(sender.getPeerID()),replacedPipes.get(sender.getPipeID()),sender.getPipeID(),volunteeringPeer);
+			}
+			if(operator instanceof JxtaReceiverAO) {
+				JxtaReceiverAO receiver = (JxtaReceiverAO)operator;
+				sendCopyConnectionMessage(true,lbProcessId,toPeerID(receiver.getPeerID()),replacedPipes.get(receiver.getPipeID()),receiver.getPipeID(),volunteeringPeer);
+			}
+		}
+		
+	}
+
 	/**
 	 * Deletes deprecated JxtaSenderPO.
+	 * 
 	 * @param oldPipeId
 	 */
 	private void deleteDeprecatedSender(String oldPipeId) {
@@ -406,9 +498,78 @@ public class LoadBalancingCommunicationListener implements
 			physicalJxtaOperator.unsubscribeFromAllSources();
 		}
 	}
+	
+	
+	private ILogicalQueryPart copyQueryPart(int lbProcessId) {
+		ILogicalQueryPart part = LoadBalancingStatusCache.getInstance()
+				.getOriginalQueryPart(lbProcessId);
+		ILogicalQueryPart copy = getCopyOfQueryPart(part);
+		return copy;
+	}
+	
+	private HashMap<String,String> relinkQueryPart(ILogicalQueryPart part, PeerID newPeer) {
+		removeTopAOs(part);
+		Map<ILogicalOperator, Collection<ConnectionToOperator>> incomingConnections = stripJxtaReceivers(part);
+		Map<ILogicalOperator, Collection<ConnectionToOperator>> outgoingConnections = stripJxtaSenders(part);
+		Collection<ILogicalOperator> relativeSources = LogicalQueryHelper
+				.getRelativeSinksOfLogicalQueryPart(part);
+		Collection<ILogicalOperator> relativeSinks = LogicalQueryHelper
+				.getRelativeSourcesOfLogicalQueryPart(part);
+
+		HashMap<String,String> replacedPipes = new HashMap<String,String>();
+		
+		for (ILogicalOperator relativeSource : relativeSources) {
+			if (incomingConnections.containsKey(relativeSource)) {
+				Collection<ConnectionToOperator> connections = incomingConnections
+						.get(relativeSource);
+				for (ConnectionToOperator connection : connections) {
+
+					String newPipeID = IDFactory.newPipeID(
+							p2pNetworkManager.getLocalPeerGroupID()).toString();
+					JxtaReceiverAO receiver = new JxtaReceiverAO();
+					
+					replacedPipes.put(newPipeID,connection.oldPipeID);
+					
+					receiver.setPipeID(newPipeID);
+					receiver.setPeerID(connection.remotePeerID);
+					receiver.setSchema(connection.schema.getAttributes());
+					receiver.connectSink(relativeSource, connection.port, 0,
+							relativeSource.getInputSchema(0));
+					
+					
+				}
+			}
+		}
+
+		for (ILogicalOperator relativeSink : relativeSinks) {
+			if (outgoingConnections.containsKey(relativeSink)) {
+				Collection<ConnectionToOperator> connections = outgoingConnections
+						.get(relativeSink);
+				for (ConnectionToOperator connection : connections) {
+					String newPipeID = IDFactory.newPipeID(
+							p2pNetworkManager.getLocalPeerGroupID()).toString();
+					
+					replacedPipes.put(newPipeID,connection.oldPipeID);
+
+					JxtaSenderAO sender = new JxtaSenderAO();
+					sender.setPeerID(connection.remotePeerID);
+					sender.setPipeID(newPipeID);
+					sender.setOutputSchema(connection.schema);
+					connection.localOperator.connectSink(sender, 0,
+							connection.port,
+							connection.localOperator.getOutputSchema());
+				}
+			}
+		}
+		return replacedPipes;
+	}
+	
+	
+	
 
 	/**
 	 * Deletes Deprecated jxtaReceiverPO.
+	 * 
 	 * @param oldPipeId
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -424,8 +585,7 @@ public class LoadBalancingCommunicationListener implements
 			if (receiverSubscription.getTarget() instanceof LoadBalancingSynchronizerPO) {
 				LoadBalancingSynchronizerPO syncPO = (LoadBalancingSynchronizerPO<?>) receiverSubscription
 						.getTarget();
-				
-				
+
 				// Sync Operator has max 2 sources. so if there is another
 				// receiver the size of the list need to
 				// be 1, because the old receiver has already been removed
@@ -500,12 +660,12 @@ public class LoadBalancingCommunicationListener implements
 	 *            Pipe Id of old Operator
 	 * @param newPipeId
 	 *            Pipe Id of new Operator.
-	 * @Param lbProcessId
-	 * 			  LoadBalancingProcessId.
+	 * @Param lbProcessId LoadBalancingProcessId.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void findAndCopyLocalJxtaOperator(boolean isSender,
-			String newPeerId, String oldPipeId, String newPipeId, int lbProcessId) {
+			String newPeerId, String oldPipeId, String newPipeId,
+			int lbProcessId) {
 		ILogicalOperator operator = getLogicalJxtaOperator(isSender, oldPipeId);
 		if (operator != null) {
 			if (isSender) {
@@ -554,11 +714,12 @@ public class LoadBalancingCommunicationListener implements
 							.getOutputSchema());
 
 					LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>> synchronizer = new LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>>();
-					
-					
-					LoadBalancingFinishedListener listener = new LoadBalancingFinishedListener(toPeerID(physicalOriginal.getPeerIDString()),lbProcessId);
+
+					LoadBalancingFinishedListener listener = new LoadBalancingFinishedListener(
+							toPeerID(physicalOriginal.getPeerIDString()),
+							lbProcessId);
 					synchronizer.addListener(listener);
-					
+
 					physicalOriginal.block();
 
 					List<PhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = physicalOriginal
@@ -602,16 +763,15 @@ public class LoadBalancingCommunicationListener implements
 	 *            PQL to execute.
 	 */
 	private boolean installAndRunQueryPartFromPql(String pql) {
-		//TODO better Error Handling.
+		// TODO better Error Handling.
 		try {
-			Collection<Integer> installedQueries = executor.addQuery(pql, "PQL",
-					getActiveSession(), "Standard", Context.empty());
+			Collection<Integer> installedQueries = executor.addQuery(pql,
+					"PQL", getActiveSession(), "Standard", Context.empty());
 			for (int query : installedQueries) {
 				executor.startQuery(query, getActiveSession());
 			}
 			return true;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return false;
 		}
 	}
@@ -657,18 +817,33 @@ public class LoadBalancingCommunicationListener implements
 		}
 		return parts;
 	}
+	
+	private ILogicalQueryPart getInstalledQueryPart(int queryId)  {
+		ILogicalQuery query = executor.getLogicalQueryById(queryId,getActiveSession());
+		ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
+		RestructHelper.collectOperators(query.getLogicalPlan(), operators);
+		return new LogicalQueryPart(operators);
+	}
 
 	/**
-	 * Sends a delete ConnectionMessage to another Peer. (Removes duplicate JxtaOperators)
-	 * @param isSender is JxtaOperator Sender?
-	 * @param peerId Peer which holds Operator
-	 * @param pipeId old Pipe ID (to delete)
-	 * @param lbProcessId Load Balancing Process Id
+	 * JxtaOperators)
+	 * Sends a delete ConnectionMessage to another Peer. (Removes duplicate
+	 * 
+	 * @param isSender
+	 *            is JxtaOperator Sender?
+	 * @param peerId
+	 *            Peer which holds Operator
+	 * @param pipeId
+	 *            old Pipe ID (to delete)
+	 * @param lbProcessId
+	 *            Load Balancing Process Id
 	 */
-	private void sendDeleteJxtaOperatorMessage(boolean isSender, String peerId, String pipeId, int lbProcessId) {
-		LoadBalancingDeleteConnectionMessage message = new LoadBalancingDeleteConnectionMessage(lbProcessId, pipeId, isSender);
-		
-		if(peerCommunicator != null) {
+	private void sendDeleteJxtaOperatorMessage(boolean isSender, String peerId,
+			String pipeId, int lbProcessId) {
+		LoadBalancingDeleteConnectionMessage message = new LoadBalancingDeleteConnectionMessage(
+				lbProcessId, pipeId, isSender);
+
+		if (peerCommunicator != null) {
 			try {
 				peerCommunicator.send(toPeerID(peerId), message);
 			} catch (PeerCommunicationException e) {
@@ -677,7 +852,7 @@ public class LoadBalancingCommunicationListener implements
 			}
 		}
 	}
-	
+
 	/**
 	 * Initiates the copy Process between a Peer and another Peer (after
 	 * Allocation)
@@ -688,13 +863,10 @@ public class LoadBalancingCommunicationListener implements
 	 *            queryId of QueryPart to copy.
 	 */
 	@Override
-	public void initiateLoadBalancing(PeerID otherPeer, int queryPartID) {
-		ILogicalQueryPart partToCopy = null;
-		for (ILogicalQueryPart part : getInstalledQueryParts()) {
-			partToCopy = part;
-		}
-		int lbProcessIdentifier = LoadBalancingQueryCache.getInstance()
-				.addQueryPartCopy(partToCopy);
+	public void initiateLoadBalancing(PeerID otherPeer, int queryId) {
+		ILogicalQueryPart partToCopy = getInstalledQueryPart(queryId);
+		int lbProcessIdentifier = LoadBalancingStatusCache.getInstance().createNewProcess(partToCopy);
+		LoadBalancingStatusCache.getInstance().getStatus(lbProcessIdentifier).setLogicalQuery(queryId);
 		sendInitiateLoadBalancingMessage(otherPeer, lbProcessIdentifier);
 	}
 
@@ -947,25 +1119,6 @@ public class LoadBalancingCommunicationListener implements
 		return null;
 	}
 
-	
-	/**
-	 * Get Number of Query from executor which contains a particular Operator.
-	 * @param operator Operator to look for
-	 * @return Number of Query if found, LOOK_FOR_QUERY_FAILED else.
-	 */
-	private int getQueryWithOperator(ILogicalOperator operator) {
-		for (int queryId : executor.getLogicalQueryIds(getActiveSession())) {
-			ILogicalQuery query = executor.getLogicalQueryById(queryId,
-					getActiveSession());
-			ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
-			RestructHelper.collectOperators(query.getLogicalPlan(), operators);
-			if (operators.contains(operator)) {
-				return queryId;
-			}
-		}
-		return LOOK_FOR_QUERY_FAILED;
-	}
-
 	/**
 	 * Gets currently active Session.
 	 * 
@@ -999,80 +1152,12 @@ public class LoadBalancingCommunicationListener implements
 	}
 
 	/**
-	 * Relinks a Query part to new Pipes and Peers.
-	 * 
-	 * @param lbProcessId
-	 *            loadBalancing process Id.
-	 * @param part
-	 *            Part to relink.
-	 * @param newPeerID
-	 *            new Peer Id which should contain the Part.
-	 */
-	private void relinkQueryPart(int lbProcessId, ILogicalQueryPart part,
-			String newPeerID) {
-		removeTopAOs(part);
-		Map<ILogicalOperator, Collection<ConnectionToOperator>> incomingConnections = stripJxtaReceivers(part);
-		Map<ILogicalOperator, Collection<ConnectionToOperator>> outgoingConnections = stripJxtaSenders(part);
-		Collection<ILogicalOperator> relativeSources = LogicalQueryHelper
-				.getRelativeSinksOfLogicalQueryPart(part);
-		Collection<ILogicalOperator> relativeSinks = LogicalQueryHelper
-				.getRelativeSourcesOfLogicalQueryPart(part);
-
-		for (ILogicalOperator relativeSource : relativeSources) {
-			if (incomingConnections.containsKey(relativeSource)) {
-				Collection<ConnectionToOperator> connections = incomingConnections
-						.get(relativeSource);
-				for (ConnectionToOperator connection : connections) {
-
-					String newPipeID = IDFactory.newPipeID(
-							p2pNetworkManager.getLocalPeerGroupID()).toString();
-					JxtaReceiverAO receiver = new JxtaReceiverAO();
-
-					receiver.setPipeID(newPipeID);
-					receiver.setPeerID(connection.remotePeerID);
-					receiver.setSchema(connection.schema.getAttributes());
-					receiver.connectSink(relativeSource, connection.port, 0,
-							relativeSource.getInputSchema(0));
-					sendCopyConnectionMessage(true, lbProcessId,
-							toPeerID(connection.remotePeerID),
-							connection.oldPipeID.toString(), newPipeID,
-							newPeerID);
-				}
-			}
-		}
-
-		for (ILogicalOperator relativeSink : relativeSinks) {
-			if (outgoingConnections.containsKey(relativeSink)) {
-				Collection<ConnectionToOperator> connections = outgoingConnections
-						.get(relativeSink);
-				for (ConnectionToOperator connection : connections) {
-					String newPipeID = IDFactory.newPipeID(
-							p2pNetworkManager.getLocalPeerGroupID()).toString();
-
-					JxtaSenderAO sender = new JxtaSenderAO();
-					sender.setPeerID(connection.remotePeerID);
-					sender.setPipeID(newPipeID);
-					sender.setOutputSchema(connection.schema);
-					connection.localOperator.connectSink(sender, 0,
-							connection.port,
-							connection.localOperator.getOutputSchema());
-					sendCopyConnectionMessage(false, lbProcessId,
-							toPeerID(connection.remotePeerID),
-							connection.oldPipeID.toString(), newPipeID,
-							newPeerID);
-				}
-			}
-		}
-
-	}
-
-	/**
 	 * Adds a LoadBalancing Listener
 	 */
 	@Override
 	public void registerLoadBalancingListener(ILoadBalancingListener listener) {
 		listeners.add(listener);
-		
+
 	}
 
 	/**
@@ -1080,19 +1165,24 @@ public class LoadBalancingCommunicationListener implements
 	 */
 	@Override
 	public void removeLoadBalancingListener(ILoadBalancingListener listener) {
-		if(listeners.contains(listener))
+		if (listeners.contains(listener))
 			listeners.remove(listener);
 	}
 
 	/**
 	 * Sends finished Mesage
-	 * @param initiatingPeer Peer which should receive the message. (The one which initiated the Load Balancing)
-	 * @param lbProcessId Load Balancing Process Id.
+	 * 
+	 * @param initiatingPeer
+	 *            Peer which should receive the message. (The one which
+	 *            initiated the Load Balancing)
+	 * @param lbProcessId
+	 *            Load Balancing Process Id.
 	 */
 	public void sendLoadBalancingFinishedMessage(PeerID initiatingPeer,
 			int lbProcessId) {
-		LoadBalancingDeleteQueryMessage message = new LoadBalancingDeleteQueryMessage(lbProcessId);
-		if(peerCommunicator != null) {
+		LoadBalancingDeleteQueryMessage message = new LoadBalancingDeleteQueryMessage(
+				lbProcessId);
+		if (peerCommunicator != null) {
 			try {
 				peerCommunicator.send(initiatingPeer, message);
 			} catch (PeerCommunicationException e) {
@@ -1101,6 +1191,7 @@ public class LoadBalancingCommunicationListener implements
 			}
 		}
 	}
-
+	
+	
 
 }
