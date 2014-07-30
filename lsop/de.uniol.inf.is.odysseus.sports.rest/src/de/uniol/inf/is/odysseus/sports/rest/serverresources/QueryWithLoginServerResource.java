@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.sports.rest.dao.DataTransferObject;
 import de.uniol.inf.is.odysseus.sports.rest.dao.PeerSocket;
 import de.uniol.inf.is.odysseus.sports.rest.resources.IQueryResource;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
+//import de.uniol.inf.is.odysseus.sports.
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.registry.SportsQLParserRegistry;
 

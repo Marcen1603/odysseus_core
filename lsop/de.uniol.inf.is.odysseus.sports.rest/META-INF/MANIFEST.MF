@@ -8,6 +8,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor,
  de.uniol.inf.is.odysseus.rcp,
+ de.uniol.inf.is.odysseus.sports.sportsql.parser,
+ de.uniol.inf.is.odysseus.sports.sportsql.registry,
  org.osgi.framework;version="1.6.0"
 Require-Bundle: restlet-osgi-2.2.1;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.rest;bundle-version="1.0.0",

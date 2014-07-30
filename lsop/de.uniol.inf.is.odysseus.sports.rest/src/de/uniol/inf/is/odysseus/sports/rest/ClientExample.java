@@ -31,10 +31,14 @@ public class ClientExample {
 //				name = "game";
 				
 				// Shots on goal for player
-				statisticsType = "player";
-				gameType = "soccer";
-				name = "shotongoal";
+//				statisticsType = "player";
+//				gameType = "soccer";
+//				name = "shotongoal";
 				
+				// Game time
+//				statisticsType = "global";
+//				gameType = "soccer";
+//				name = "gameTime";
 				
 				
 				String query = "{"
