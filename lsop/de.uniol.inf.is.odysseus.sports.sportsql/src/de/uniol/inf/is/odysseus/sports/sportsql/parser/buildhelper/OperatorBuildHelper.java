@@ -159,13 +159,48 @@ public class OperatorBuildHelper {
 	 *            List of expressions for this StateMap-Operator
 	 * @param groupBy
 	 *            The variable you want to group by (e.g., "sensorid"). Enter
-	 *            null if you don't want to group
+	 *            empty String if you don't want to group
 	 * @param source
 	 *            Source for this operator
 	 * @return A StateMapAO with given expressions and grouping
 	 */
 	public static StateMapAO createStateMapAO(
 			List<SDFExpressionParameter> expressions, String groupBy,
+			ILogicalOperator source) {
+		List<String> groupingAttributes = new ArrayList<String>();
+		groupingAttributes.add(groupBy);
+		return createStateMapAO(expressions, groupingAttributes, source);
+
+	}
+
+	/**
+	 *  Creates a StateMapAO with the list of expressions. To create such
+	 * expressions, see {@link createExpressionParameter}. 
+	 * @param expressions List of expressions for this StateMap-Operator
+	 * @param source
+	 * @return
+	 */
+	public static StateMapAO createStateMapAO(
+			List<SDFExpressionParameter> expressions, ILogicalOperator source) {
+		return createStateMapAO(expressions, "", source);
+
+	}
+
+	/**
+	 * Creates a StateMapAO with the list of expressions. To create such
+	 * expressions, see {@link createExpressionParameter}. Optional you can
+	 * group in this operator.
+	 * 
+	 * @param expressions
+	 *            List of expressions for this StateMap-Operator
+	 * @param groupBy
+	 *            List of variables you want to group by
+	 * @param source
+	 *            Source for this operator
+	 * @return A StateMapAO with given expressions and grouping
+	 */
+	public static StateMapAO createStateMapAO(
+			List<SDFExpressionParameter> expressions, List<String> groupBy,
 			ILogicalOperator source) {
 		StateMapAO stateMapAO = new StateMapAO();
 
@@ -177,7 +212,7 @@ public class OperatorBuildHelper {
 		stateMapAO.setExpressions(expressionItems);
 
 		// GroupBy
-		if (groupBy != null) {
+		if (groupBy != null && !groupBy.isEmpty()) {
 			stateMapAO.setGroupingAttributes(createAttributeList(groupBy,
 					source));
 		}
@@ -481,7 +516,7 @@ public class OperatorBuildHelper {
 				0, 0);
 
 		return createTimeSelect(timeParameter, firstMap);
-		
+
 	}
 
 	/**
@@ -1270,9 +1305,11 @@ public class OperatorBuildHelper {
 
 	/**
 	 * If you have more than one Operator at the end of your query you can use
-	 * this. It will put the TopAO on top of all the operators, with the input-
-	 * and output-port beginning with 0 and increasing up to the number of the
+	 * this. It will put the TopAO on top of all the operators, with the
+	 * input-port beginning with 0 and increasing up to the number of the
 	 * operators -1.
+	 * 
+	 * Assumes that all output-ports of the sources are 0.
 	 * 
 	 * @param sources
 	 *            List of sources you want to be under the TopAO.
@@ -1281,7 +1318,7 @@ public class OperatorBuildHelper {
 	public static TopAO createTopAO(List<ILogicalOperator> sources) {
 		TopAO topAO = new TopAO();
 		for (int i = 0; i < sources.size(); i++) {
-			topAO.subscribeToSource(sources.get(i), i, i, sources.get(i)
+			topAO.subscribeToSource(sources.get(i), i, 0, sources.get(i)
 					.getOutputSchema());
 		}
 		return topAO;

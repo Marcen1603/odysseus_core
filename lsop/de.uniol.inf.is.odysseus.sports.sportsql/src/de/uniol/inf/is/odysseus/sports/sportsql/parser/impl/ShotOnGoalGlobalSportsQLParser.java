@@ -408,7 +408,7 @@ public class ShotOnGoalGlobalSportsQLParser implements ISportsQLParser {
 		durationLengthStatemapParams.add(sdfParam10);
 		durationLengthStatemapParams.add(sdfParam11);
 		StateMapAO durantionLengthStatemapAO = OperatorBuildHelper
-				.createStateMapAO(durationLengthStatemapParams, null,
+				.createStateMapAO(durationLengthStatemapParams,
 						closestBallActivePlayerJoin);
 
 		// 3. PredicateWindow

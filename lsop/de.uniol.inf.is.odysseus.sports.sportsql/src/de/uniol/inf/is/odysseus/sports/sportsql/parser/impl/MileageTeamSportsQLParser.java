@@ -124,7 +124,7 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		expressions.add(param3);
 		
 		StateMapAO mileageStateMap = OperatorBuildHelper.createStateMapAO(
-				expressions, "", sensorEnrich);
+				expressions, sensorEnrich);
 		allOperators.add(mileageStateMap);
 		
 		// 3. Aggregate for the sum
@@ -152,7 +152,6 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		SDFExpressionParameter ex1 = OperatorBuildHelper
 				.createExpressionParameter("sid", source);
 
-		// TODO Maybe we have to use the MEP-functions manually
 		SDFExpressionParameter ex2 = OperatorBuildHelper
 				.createExpressionParameter("minutes(toDate("
 						+ OperatorBuildHelper.TS_GAME_START + "/"
