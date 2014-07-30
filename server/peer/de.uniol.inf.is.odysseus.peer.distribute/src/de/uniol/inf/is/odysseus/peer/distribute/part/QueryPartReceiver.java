@@ -215,15 +215,16 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 		LOG.debug("PQL statement to be executed: {}", message.getPqlStatement());
 
 		try {
-			determineNeededSources(message);
+			checkNeededSources(message);
 			callExecutor(message);
 		} catch (Throwable t) {
 			throw new QueryDistributionException("Could not execute query: " + t.getMessage(), t);
 		}
 	}
 
-	private void determineNeededSources(AddQueryPartMessage message) throws QueryDistributionException {
+	private void checkNeededSources(AddQueryPartMessage message) throws QueryDistributionException {
 		ISession session = PeerDistributePlugIn.getActiveSession();
+		System.err.println(message.getPqlStatement());
 		List<IExecutorCommand> queries = compiler.translateQuery(message.getPqlStatement(), "PQL", session, getDataDictionary(), Context.empty());
 		
 		for (IExecutorCommand q : queries) {

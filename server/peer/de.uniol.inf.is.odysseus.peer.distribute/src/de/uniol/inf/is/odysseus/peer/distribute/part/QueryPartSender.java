@@ -203,8 +203,11 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 				for( ILogicalOperator operator : queryPart.getOperators() ) {
 					if( operator instanceof StreamAO ) {
 						StreamAO streamAO = (StreamAO)operator;
-						String sourceName = streamAO.getStreamname().getResourceName();
+						streamAO.setAttributes(streamAO.getOutputSchema().getAttributes());
+						streamAO.setDataHandler("tuple");
+						streamAO.setSource(null);
 						
+						String sourceName = streamAO.getStreamname().getResourceName();
 						if( p2pDictionary.isExported(sourceName) ) {
 							SourceAdvertisement srcAdv = p2pDictionary.getExportedSource(sourceName).get();
 							streamAO.setNode(srcAdv.getPeerID().toString());
