@@ -38,10 +38,6 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
 			throws SportsQLParseException {
-		// TODO Include what Michael said about this task on Jira:
-		// Filter for time and space where it's usefull
-		// "global" query without team-or-player selection -> use this for other
-		// queries with player or team
 
 		// Do all the steps one till nine
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
