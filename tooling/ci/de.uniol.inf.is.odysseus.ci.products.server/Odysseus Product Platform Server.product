@@ -7,7 +7,7 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -data @noDefault</programArgs>
+      <programArgs>-console -clean -data @noDefault</programArgs>
       <vmArgs>-Xms1000M -Xmx1000M -Declipse.p2.mirrors=false</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
