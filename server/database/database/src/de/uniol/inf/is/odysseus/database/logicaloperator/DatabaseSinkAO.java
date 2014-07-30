@@ -132,7 +132,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator{
 	@Override
 	public boolean isValid() {
 		boolean isValid = super.isValid();
-		if (tableSchema.size() != getOutputSchema().size()){
+		if (tableSchema != null &&  tableSchema.size() != getOutputSchema().size()){
 			addError(new IllegalParameterException("TableSchema must have the same size as the output schema!"));
 			isValid = false;
 
