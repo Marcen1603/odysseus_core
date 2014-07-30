@@ -27,8 +27,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  * 
  * {
  * "statisticType": "global",
- *   "gameType": "soccer",
- *   "entityId": 0, 
+ *   "gameType": "soccer", 
  *   "name": "ball_contact",
  *   "parameters": {
  *       "time": {

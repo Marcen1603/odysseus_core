@@ -14,7 +14,36 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuild
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
-
+/**
+ * Parser for SportsQL:
+ * Query: Ball contacts of specific player.
+ * 
+ * SportsQL:
+ * 
+ * Example Query:
+ * 
+ * {
+ * "statisticType": "player",
+ *   "gameType": "soccer", 
+ *   "name": "ball_contact",
+ *   "entity_id": "4"
+ *   "parameters": {
+ *       "time": {
+ *           "start": 10753295594424116,
+ *           "end" : 9999999999999999,   
+ *       }
+ *    "space": {
+ *      	"startx":-50,
+ *          "starty":-33960
+ *      	"endx":52489
+ *     		"endy":33965
+ *   }
+ *  }
+ *}
+ * 
+ * @author Thomas Prünie
+ *
+ */
 @SportsQL(
 		gameTypes = GameType.SOCCER, 
 		statisticTypes = { StatisticType.PLAYER },
@@ -40,13 +69,7 @@ public class BallContactPlayerSportsQLParser implements ISportsQLParser {
 		
 		//Get all ball contacts of every player by using the global parser
 		BallContactGlobalSportsQLParser ballcontacts_global = new BallContactGlobalSportsQLParser();	
-		SportsQLQuery sql = new SportsQLQuery();
-		
-		sql.setGameType(sportsQL.getGameType());
-		sql.setName(sportsQL.getName());
-		sql.setStatisticType(StatisticType.GLOBAL); //to use global stats
-			
-		ILogicalQuery global_query = ballcontacts_global.parse(sql);
+		ILogicalQuery global_query = ballcontacts_global.parse(sportsQL);
 		
 		//new source 
 		ILogicalOperator source = global_query.getLogicalPlan();
