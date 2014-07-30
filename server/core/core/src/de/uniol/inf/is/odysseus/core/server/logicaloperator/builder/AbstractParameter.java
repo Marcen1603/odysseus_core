@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
@@ -41,6 +42,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	private IAttributeResolver resolver;
 	private IDataDictionary dd;
 	private ISession caller;
+	private Context context;
 	private final List<Exception> errors;
 	private final List<Exception> warnings;
 	protected Object inputValue;
@@ -221,6 +223,16 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	@Override
 	public ISession getCaller() {
 		return caller;
+	}
+	
+	@Override
+	public void setContext(Context context) {
+		this.context = context;
+	}
+	
+	@Override
+	public Context getContext() {
+		return context;
 	}
 	
 	@Override

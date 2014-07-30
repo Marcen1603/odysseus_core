@@ -1262,7 +1262,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public LogicalOperatorInformation getOperatorInformation(String name,
 			ISession caller) {
 		IOperatorBuilder builder = OperatorBuilderFactory
-				.createOperatorBuilder(name, caller, getDataDictionary(caller));
+				.createOperatorBuilder(name, caller, getDataDictionary(caller), Context.empty());
 		LogicalOperatorInformation loi = new LogicalOperatorInformation();
 		loi.setOperatorName(builder.getName());
 		LogicalOperator annotation = builder.getOperatorClass().getAnnotation(

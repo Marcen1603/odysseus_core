@@ -26,12 +26,13 @@ import java.util.TreeMap;
 
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
-import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -57,6 +58,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	}
 
 	private IDataDictionary dataDictionary;
+	private Context context;
 
 	private String name;
 	private String doc;
@@ -151,6 +153,15 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	public IDataDictionary getDataDictionary() {
 		return dataDictionary;
 	}
+	
+	@Override
+	public void setContext(Context context) {
+		this.context = context;
+	}
+	
+	public Context getContext() {
+		return context;
+	}
 
 	@Override
 	public boolean validate() {
@@ -180,6 +191,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 			parameter.setAttributeResolver(attributeResolver);
 			parameter.setDataDictionary(getDataDictionary());
+			parameter.setContext(getContext());
 			parameter.setCaller(getCaller());
 			if (!parameter.validate()) {
 				isValid = false;

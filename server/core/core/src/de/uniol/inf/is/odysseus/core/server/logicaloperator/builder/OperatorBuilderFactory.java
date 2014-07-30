@@ -24,6 +24,7 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -34,7 +35,7 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 	private static Map<String, Object> udfs = new HashMap<String, Object>();
 
 	public static IOperatorBuilder createOperatorBuilder(String name,
-			ISession caller, IDataDictionary dataDictionary) {
+			ISession caller, IDataDictionary dataDictionary, Context context) {
 		name = name.toUpperCase();
 		if (!operatorBuilders.containsKey(name)) {
 			throw new IllegalArgumentException("no such operator builder: "
@@ -44,6 +45,7 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 			IOperatorBuilder builder = operatorBuilders.get(name).cleanCopy();
 			builder.setCaller(caller);
 			builder.setDataDictionary(dataDictionary);
+			builder.setContext(context);
 			return builder;
 		} catch (Exception e) {
 			throw new RuntimeException(e);

@@ -11,10 +11,19 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateStreamCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateViewCommand;
+import de.uniol.inf.is.odysseus.core.collection.Context;
 
-@SuppressWarnings("all")public class PQLParserImpl{  static private ILogicalOperator createOperator(String identifier, Map < String, Object > parameters, List < InputOperatorItem > inputOps)  {    IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(identifier.toUpperCase(), getUser(), getDataDictionary());    List < ILogicalOperator > inputOperators = new ArrayList < ILogicalOperator > ();    for (int i = 0; i < inputOps.size(); ++i)    {      builder.setInputOperator(i, inputOps.get(i).operator, inputOps.get(i).outputPort);    }    PQLParser.initParameters(identifier.toUpperCase(), builder.getParameters(), parameters);    if (!builder.validate())    {      throw new ValidationException(identifier, builder.getErrors());    }    for (Exception e : builder.getWarnings())    {      // TODO: How to transport this to the gui?
+@SuppressWarnings("all")public class PQLParserImpl{  static private ILogicalOperator createOperator(String identifier, Map < String, Object > parameters, List < InputOperatorItem > inputOps)  {    IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(identifier.toUpperCase(), getUser(), getDataDictionary(), getContext());    List < ILogicalOperator > inputOperators = new ArrayList < ILogicalOperator > ();    for (int i = 0; i < inputOps.size(); ++i)    {      builder.setInputOperator(i, inputOps.get(i).operator, inputOps.get(i).outputPort);    }    PQLParser.initParameters(identifier.toUpperCase(), builder.getParameters(), parameters);    if (!builder.validate())    {      throw new ValidationException(identifier, builder.getErrors());    }    for (Exception e : builder.getWarnings())    {      // TODO: How to transport this to the gui?
       System.err.println("WARNING " + e.getMessage());    }    ILogicalOperator operator = builder.createOperator();    return operator;  }  static private Set < ILogicalOperator > findRoots(ILogicalOperator op)  {    return findRoots(op, new ArrayList < ILogicalOperator > ());  }  static private Set < ILogicalOperator > findRoots(ILogicalOperator op, List < ILogicalOperator > visited)  {    Set < ILogicalOperator > result = new HashSet < ILogicalOperator > ();    if (!visited.contains(op))    {      visited.add(op);      Collection < LogicalSubscription > subscriptions = op.getSubscriptions();      if (subscriptions.isEmpty())      {        return Collections.singleton(op);      }      for (LogicalSubscription sub : subscriptions)      {        result.addAll(findRoots(sub.getTarget(), visited));      }    }    return result;  }  static ISession user;  static public ISession getUser()  {    return user;  }  static public void setUser(ISession newUser)  {    user = newUser;  }  static IDataDictionary dd;  static public void setDataDictionary(IDataDictionary dataDictionary)  {    dd = dataDictionary;  }  static public IDataDictionary getDataDictionary()  {    return dd;  }
   
+  static Context ctx;
+  static public void setContext(Context context){
+    ctx = context;
+  }
+  
+  static public Context getContext(){
+  	return ctx;
+  }
   static public boolean _updateQueryId = true;
   static public void setUpdateQueryID(boolean updateQueryId){
     _updateQueryId = updateQueryId;

@@ -72,7 +72,7 @@ public class TICompareSink<T extends IStreamObject<? extends ITimeInterval>> ext
 			SimpleCSVProtocolHandler<T> csvreader = new SimpleCSVProtocolHandler<T>(ITransportDirection.IN, IAccessPattern.PULL, dh);
 			csvreader = (SimpleCSVProtocolHandler<T>) csvreader.createInstance(ITransportDirection.IN, IAccessPattern.PULL, options, dh);
 			for (Pair<String, String> csv : expectedOriginals) {
-				T tuple = (T) csvreader.convertLine(csv.getE1());
+				T tuple = csvreader.convertLine(csv.getE1());
 				TimeInterval ti = TimeInterval.parseTimeInterval(csv.getE2());
 				((Tuple)tuple).setMetadata(ti);
 				this.expected.insert(tuple);

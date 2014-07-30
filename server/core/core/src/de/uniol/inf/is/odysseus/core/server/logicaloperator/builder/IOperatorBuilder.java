@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
@@ -49,6 +50,8 @@ public interface IOperatorBuilder extends Serializable {
 	public void setCaller(ISession caller);
 
 	void setDataDictionary(IDataDictionary dataDictionary);
+	
+	void setContext(Context context);
 
 	public IOperatorBuilder cleanCopy();
 	

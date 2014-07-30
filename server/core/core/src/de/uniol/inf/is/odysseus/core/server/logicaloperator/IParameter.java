@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 /**
  * 
  */
@@ -21,6 +21,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import java.io.Serializable;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -29,32 +30,67 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author Jonas Jacobi
  */
 public interface IParameter<T> extends Serializable {
-	public static enum REQUIREMENT { MANDATORY, OPTIONAL }
-	public static enum USAGE {RECENT, DEPRECATED}
-	public void setName(String name);
-	public String getName();
-	public void setDoc(String doc);
-	public String getDoc();
-	public IParameter.REQUIREMENT getRequirement();
-	public void setRequirement(REQUIREMENT requirement);
-	public void setUsage(USAGE usage);
-	public boolean isDeprecated();
-	public void setInputValue(Object object);
-	public boolean validate();
-	public List<Exception> getErrors();
-	public T getValue();
-	public boolean hasValue();
-	public boolean isMandatory();
-	public void setAttributeResolver(IAttributeResolver resolver);
-	public IAttributeResolver getAttributeResolver();
-	public void setDataDictionary(IDataDictionary dd);
-	public IDataDictionary getDataDictionary();
-	public void setCaller(ISession caller); 
-	public ISession getCaller();
-	public void clear();
-	public String getPQLString();
-	public String getPossibleValueMethod();
-	public void setPossibleValueMethod(String possibleValueMethod);
-	public boolean arePossibleValuesDynamic();
-	public void setPossibleValuesAreDynamic(boolean possibleValuesAreDynamic);
+	static enum REQUIREMENT {
+		MANDATORY, OPTIONAL
+	}
+
+	static enum USAGE {
+		RECENT, DEPRECATED
+	}
+
+	void setName(String name);
+
+	String getName();
+
+	void setDoc(String doc);
+
+	String getDoc();
+
+	IParameter.REQUIREMENT getRequirement();
+
+	void setRequirement(REQUIREMENT requirement);
+
+	void setUsage(USAGE usage);
+
+	boolean isDeprecated();
+
+	void setInputValue(Object object);
+
+	boolean validate();
+
+	List<Exception> getErrors();
+
+	T getValue();
+
+	boolean hasValue();
+
+	boolean isMandatory();
+
+	void setAttributeResolver(IAttributeResolver resolver);
+
+	IAttributeResolver getAttributeResolver();
+
+	void setDataDictionary(IDataDictionary dd);
+
+	IDataDictionary getDataDictionary();
+
+	void setContext(Context context);
+
+	Context getContext();
+
+	void setCaller(ISession caller);
+
+	ISession getCaller();
+
+	void clear();
+
+	String getPQLString();
+
+	String getPossibleValueMethod();
+
+	void setPossibleValueMethod(String possibleValueMethod);
+
+	boolean arePossibleValuesDynamic();
+
+	void setPossibleValuesAreDynamic(boolean possibleValuesAreDynamic);
 }

@@ -20,12 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
-
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -34,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
@@ -139,18 +134,18 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static void appendSinkToQueries(ISink<?> defaultSink, Iterable<Integer> queriesToStart, IPlanManager planManager) throws PlanManagementException {
-		List<IPhysicalOperator> roots = Lists.<IPhysicalOperator> newArrayList(defaultSink);
-
-		for (Integer queryId : queriesToStart) {
-			IPhysicalQuery physicalQuery = planManager.getExecutionPlan().getQueryById(queryId);
-			for (IPhysicalOperator operator : physicalQuery.getRoots()) {
-				((ISource) operator).subscribeSink(defaultSink, 0, 0, operator.getOutputSchema());
-			}
-			physicalQuery.setRoots(roots);
-		}
-	}
+//	@SuppressWarnings({ "rawtypes", "unchecked" })
+//	private static void appendSinkToQueries(ISink<?> defaultSink, Iterable<Integer> queriesToStart, IPlanManager planManager) throws PlanManagementException {
+//		List<IPhysicalOperator> roots = Lists.<IPhysicalOperator> newArrayList(defaultSink);
+//
+//		for (Integer queryId : queriesToStart) {
+//			IPhysicalQuery physicalQuery = planManager.getExecutionPlan().getQueryById(queryId);
+//			for (IPhysicalOperator operator : physicalQuery.getRoots()) {
+//				((ISource) operator).subscribeSink(defaultSink, 0, 0, operator.getOutputSchema());
+//			}
+//			physicalQuery.setRoots(roots);
+//		}
+//	}
 
 	protected abstract boolean startQuery();
 
