@@ -1568,6 +1568,7 @@ public class OperatorBuildHelper {
 			List<ILogicalOperator> allOperators, String queryName) {
 		// TopAO (for Odysseus - it wants to know which operator is the top)
 		TopAO topAO = OperatorBuildHelper.createTopAO(topSources);
+		allOperators.add(topAO);
 
 		// Initialize all AOs
 		OperatorBuildHelper.initializeOperators(allOperators);
