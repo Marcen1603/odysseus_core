@@ -108,7 +108,8 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		} else {
 			if (!(inputOp instanceof AccessAO)
 					&& !(inputOp instanceof ReceiveAO)
-					&& !(inputOp instanceof StreamAO)) {
+					&& !(inputOp instanceof StreamAO) 
+					&& !(inputOp instanceof RenameAO)) {
 				for (String n : inputOp.getOutputSchema().getBaseSourceNames()) {
 
 					try {
