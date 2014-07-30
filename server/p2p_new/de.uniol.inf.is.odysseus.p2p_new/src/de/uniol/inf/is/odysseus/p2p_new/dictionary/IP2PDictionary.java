@@ -19,6 +19,7 @@ public interface IP2PDictionary {
 	Collection<SourceAdvertisement> getSources( String viewName );
 	
 	void importSource( SourceAdvertisement advertisement, String viewNameToUse ) throws PeerException, InvalidP2PSource;
+	boolean isSourceNameAlreadyInUse(String sourceName);
 	boolean removeSourceImport( SourceAdvertisement advertisement );
 	boolean isImported( SourceAdvertisement advertisement );
 	boolean isImported( String sourceName );

@@ -297,6 +297,15 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 		return namedAdvs;
 	}
+	
+	@Override
+	public boolean isSourceNameAlreadyInUse( String sourceName ) {
+		String realSrcNameToUse = removeUserFromName(sourceName);
+		if (getDataDictionary().containsViewOrStream(realSrcNameToUse, SessionManagementService.getActiveSession())) {
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	public void importSource(SourceAdvertisement srcAdvertisement, String sourceNameToUse) throws PeerException, InvalidP2PSource {
@@ -304,7 +313,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(sourceNameToUse), "Sourcename to use for import must be null or empty!");
 
 		String realSrcNameToUse = removeUserFromName(sourceNameToUse);
-		if (getDataDictionary().containsViewOrStream(realSrcNameToUse, SessionManagementService.getActiveSession())) {
+		if( isSourceNameAlreadyInUse(sourceNameToUse)) {
 			throw new PeerException("SourceName '" + realSrcNameToUse + "' is locally already in use");
 		}
 
@@ -328,7 +337,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		if (advertisement.isStream()) {
 			final AbstractAccessAO accessAO = advertisement.getAccessAO();
 
-			getDataDictionary().setStream(advertisement.getName(), accessAO, SessionManagementService.getActiveSession());
+			getDataDictionary().setStream(realSrcNameToUse, accessAO, SessionManagementService.getActiveSession());
 
 		} else {
 			final JxtaReceiverAO receiverOperator = new JxtaReceiverAO();
