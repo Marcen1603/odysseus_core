@@ -250,18 +250,15 @@ public class LoadBalancingHelper {
 	 * @param pql
 	 *            PQL to execute.
 	 */
-	public static boolean installAndRunQueryPartFromPql(IServerExecutor executor, ISession session, Context context, String pql) {
+	public static Collection<Integer> installAndRunQueryPartFromPql(IServerExecutor executor, ISession session, Context context, String pql) {
 		// TODO better Error Handling.
-		try {
 			Collection<Integer> installedQueries = executor.addQuery(pql,
 					"PQL", session, "Standard", context);
 			for (int query : installedQueries) {
 				executor.startQuery(query, session);
 			}
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+			return installedQueries;
+			
 	}
 	
 	

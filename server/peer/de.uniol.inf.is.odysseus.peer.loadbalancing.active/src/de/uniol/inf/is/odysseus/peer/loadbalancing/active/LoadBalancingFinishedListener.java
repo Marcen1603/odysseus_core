@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
 import java.util.Observable;
 import java.util.Observer;
 
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import net.jxta.peer.PeerID;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 
 /**
  * Listener that is informed when LoadBalancing is finished and sends according message.
@@ -32,7 +32,7 @@ public class LoadBalancingFinishedListener implements Observer {
 	 * Called when update is finished. Sends message.
 	 */
 	public void update(Observable o, Object arg) {
-		LoadBalancingMessageDispatcher.sendLoadBalancingFinishedMessage(peerCommunicator, initiatingPeer,lbProcessId);
+		LoadBalancingMessageDispatcher.sendDeleteQuery(peerCommunicator, initiatingPeer,lbProcessId);
 	}
 	
 	

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import net.jxta.peer.PeerID;
@@ -7,7 +8,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 
 /**
  * Preserves a loadBalancing Status in the initiating Peer to control LoadBalancing.
- * @author badagent
+ * @author Carsten Cordes
  *
  */
 public class LoadBalancingStatus {
@@ -22,10 +23,41 @@ public class LoadBalancingStatus {
 	private int logicalQuery;
 	private ILogicalQueryPart originalPart;
 	private ILogicalQueryPart modifiedPart;
-	
 	private HashMap<String,String> replacedPipes;
 	
+	Integer[] foreignQueryIDs;
+	
+	private ArrayList<String> pipesInstalled;
+	public Integer[] getForeignQueryIDs() {
+		return foreignQueryIDs;
+	}
+	public void setForeignQueryIDs(Integer[] foreignQueryIDs) {
+		this.foreignQueryIDs = foreignQueryIDs;
+	}
+	public ArrayList<String> getPipesInstalled() {
+		return pipesInstalled;
+	}
+	public void setPipesInstalled(ArrayList<String> pipesInstalled) {
+		this.pipesInstalled = pipesInstalled;
+	}
+	public ArrayList<String> getPipesToInstall() {
+		return pipesToInstall;
+	}
+	public void setPipesToInstall(ArrayList<String> pipesToInstall) {
+		this.pipesToInstall = pipesToInstall;
+	}
+	public HashMap<String, PeerID> getPeersForPipe() {
+		return peersForPipe;
+	}
+	public void setPeersForPipe(HashMap<String, PeerID> peersForPipe) {
+		this.peersForPipe = peersForPipe;
+	}
+	private ArrayList<String> pipesToInstall;
+	private HashMap <String,PeerID> peersForPipe;
+	
 	private PeerID volunteeringPeer;
+	
+	
 
 	public LB_PHASES getPhase() {
 		return phase;
@@ -69,6 +101,18 @@ public class LoadBalancingStatus {
 	public void setReplacedPipes(HashMap<String, String> replacedPipes) {
 		this.replacedPipes = replacedPipes;
 	}
+	public synchronized void markPipeInstalled(String pipeID) {
+		if(pipesToInstall.contains(pipeID)) {
+			pipesToInstall.remove(pipeID);
+			pipesInstalled.add(pipeID);
+		}
+		
+	}
+	
+	public int pipesLeft() {
+		return pipesToInstall.size();
+	}
+	
 	
 	
 }
