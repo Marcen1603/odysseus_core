@@ -236,12 +236,17 @@ public class OperatorBuildHelper {
 	public static SelectAO createSpaceSelect(SportsQLSpaceParameter parameter,
 			boolean inMeters, ILogicalOperator source) {
 
-		// TODO: Do the right thing if spaceParameter says "all"
-
 		int startX = parameter.getStartx();
 		int startY = parameter.getStarty();
 		int endX = parameter.getEndx();
 		int endY = parameter.getEndy();
+
+		if (parameter.getSpace() != null && parameter.getSpace().equals("all")) {
+			startX = LOWERLEFT_X;
+			startY = LOWERLEFT_Y;
+			endX = LOWERRIGHT_X;
+			endY = LOWERRIGHT_Y;
+		}
 
 		// Predicate we want to produce:
 		// x >= startX AND x <= endX AND y>= startY AND y<= startY
@@ -397,6 +402,85 @@ public class OperatorBuildHelper {
 		selectAO.setPredicate(fullAndPredicate);
 		selectAO.subscribeTo(source, source.getOutputSchema());
 		return selectAO;
+	}
+
+	/**
+	 * Creates a SelectAO with given timeParameter. Automatically build a
+	 * correct Select for the given timeParameter. Creates a map with minutes
+	 * and seconds.
+	 * 
+	 * @param timeParameter
+	 *            timeParameter with the information which time should be
+	 *            selected
+	 * @param source
+	 *            Source which should at least contain "minute" and "second"
+	 * @return SelectAO which selects just the time-range you configured in the
+	 *         timeParameter.
+	 */
+	public static SelectAO createTimeMapAndSelect(
+			SportsQLTimeParameter timeParameter, ILogicalOperator source) {
+
+		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
+
+		SDFExpressionParameter ex1 = OperatorBuildHelper
+				.createExpressionParameter("sid", source);
+
+		SDFExpressionParameter ex2 = OperatorBuildHelper
+				.createExpressionParameter("minutes(toDate("
+						+ OperatorBuildHelper.TS_GAME_START + "/"
+						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "), toDate(ts/"
+						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "))", "minute",
+						source);
+		SDFExpressionParameter ex3 = OperatorBuildHelper
+				.createExpressionParameter("seconds(toDate("
+						+ OperatorBuildHelper.TS_GAME_START + "/"
+						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "), toDate(ts/"
+						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "))", "second",
+						source);
+
+		SDFExpressionParameter ex4 = OperatorBuildHelper
+				.createExpressionParameter("x", source);
+		SDFExpressionParameter ex5 = OperatorBuildHelper
+				.createExpressionParameter("y", source);
+		SDFExpressionParameter ex6 = OperatorBuildHelper
+				.createExpressionParameter("z", source);
+		SDFExpressionParameter ex7 = OperatorBuildHelper
+				.createExpressionParameter("v", source);
+		SDFExpressionParameter ex8 = OperatorBuildHelper
+				.createExpressionParameter("a", source);
+		SDFExpressionParameter ex9 = OperatorBuildHelper
+				.createExpressionParameter("vx", source);
+		SDFExpressionParameter ex10 = OperatorBuildHelper
+				.createExpressionParameter("vy", source);
+		SDFExpressionParameter ex11 = OperatorBuildHelper
+				.createExpressionParameter("vz", source);
+		SDFExpressionParameter ex12 = OperatorBuildHelper
+				.createExpressionParameter("ax", source);
+		SDFExpressionParameter ex13 = OperatorBuildHelper
+				.createExpressionParameter("ay", source);
+		SDFExpressionParameter ex14 = OperatorBuildHelper
+				.createExpressionParameter("ts", source);
+
+		expressions.add(ex1);
+		expressions.add(ex2);
+		expressions.add(ex3);
+		expressions.add(ex4);
+		expressions.add(ex5);
+		expressions.add(ex6);
+		expressions.add(ex7);
+		expressions.add(ex8);
+		expressions.add(ex9);
+		expressions.add(ex10);
+		expressions.add(ex11);
+		expressions.add(ex12);
+		expressions.add(ex13);
+		expressions.add(ex14);
+
+		MapAO firstMap = OperatorBuildHelper.createMapAO(expressions, source,
+				0, 0);
+
+		return createTimeSelect(timeParameter, firstMap);
+		
 	}
 
 	/**

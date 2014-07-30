@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuild
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 /**
@@ -25,11 +26,13 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  * SportsQL could be { "statisticType": "player", "gameType": "soccer",
  * "entityId" : 8, "name": "shotongoal" }
  * 
- * @author Michael (all the heavy PQL stuff), Tobias (only the translation into
+ * @author Michael (all the hard PQL stuff), Tobias (only the translation into
  *         logical query)
  *
  */
-@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER }, name = "shotongoal", parameters = { @SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false) })
+@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER }, name = "shotongoal", parameters = {
+		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
+		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
 public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 
 	@Override
@@ -57,6 +60,7 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		// 1. Time window
 		SportsQLTimeParameter timeParam = SportsQLParameterHelper
 				.getTimeParameter(sportsQL);
+		// TODO Why "time = 90 minutes". I guess that was not the purpose of this field.
 		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(
 				Integer.parseInt(timeParam.getTime()), "Minutes",
 				forecastCriteria);

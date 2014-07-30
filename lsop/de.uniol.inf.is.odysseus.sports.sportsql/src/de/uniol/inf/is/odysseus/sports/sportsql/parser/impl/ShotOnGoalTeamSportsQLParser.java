@@ -17,19 +17,22 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuild
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 /**
  * Counts the number of shots on the goal from a whole team
  * 
- * SportsQL could be { "statisticType": "team", "gameType": "soccer",
- * "entityId" : 8, "name": "shotongoal" }
+ * SportsQL could be { "statisticType": "team", "gameType": "soccer", "entityId"
+ * : 8, "name": "shotongoal" }
  * 
- * @author Michael (all the heavy PQL stuff), Tobias (only the translation into
+ * @author Michael (all the hard PQL stuff), Tobias (only the translation into
  *         logical query)
  *
  */
-@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.TEAM }, name = "shotongoal", parameters = { @SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false) })
+@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.TEAM }, name = "shotongoal", parameters = {
+		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
+		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
 public class ShotOnGoalTeamSportsQLParser implements ISportsQLParser {
 
 	@Override
@@ -41,7 +44,8 @@ public class ShotOnGoalTeamSportsQLParser implements ISportsQLParser {
 
 		ShotOnGoalGlobalSportsQLParser globalParser = new ShotOnGoalGlobalSportsQLParser();
 		ILogicalQuery forecastCriteraQuery = globalParser.parse(sportsQL);
-		ILogicalOperator forecastCriteria = forecastCriteraQuery.getLogicalPlan();
+		ILogicalOperator forecastCriteria = forecastCriteraQuery
+				.getLogicalPlan();
 
 		// -------------------------------------------------------------------
 		// Tenth part

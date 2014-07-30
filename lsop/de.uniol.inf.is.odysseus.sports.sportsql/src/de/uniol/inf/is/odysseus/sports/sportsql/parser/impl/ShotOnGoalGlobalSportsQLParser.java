@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 /**
  * Creates all the calculations to forecast shots on the goal. This is not meant
@@ -37,7 +38,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpacePa
  * {@link ShotOnGoalTeamSportsQLParser} instead.
  * 
  * 
- * @author Michael (all the heavy PQL stuff), Tobias (only the translation into
+ * @author Michael (all the hard PQL stuff), Tobias (only the translation into
  *         logical query)
  *
  */
@@ -94,13 +95,17 @@ public class ShotOnGoalGlobalSportsQLParser implements ISportsQLParser {
 		// with the metadata stream
 		// -------------------------------------------------------------------
 
-		// 1. Select for space
+		// 1. Select for time
+		SportsQLTimeParameter timeParam = SportsQLParameterHelper.getTimeParameter(sportsQL);
+		SelectAO timeSelect = OperatorBuildHelper.createTimeMapAndSelect(timeParam, gameAccess);
+		
+		// 2. Select for space
 		SportsQLSpaceParameter spaceParam = SportsQLParameterHelper
 				.getSpaceParameter(sportsQL);
 		SelectAO spaceSelect = OperatorBuildHelper.createSpaceSelect(
-				spaceParam, false, gameAccess);
+				spaceParam, false, timeSelect);
 
-		// 2. Enrich with the metastream
+		// 3. Enrich with the metastream
 		EnrichAO enrichedStream = OperatorBuildHelper.createEnrichAO(
 				"sensorid = sid", spaceSelect, metaDataAccess);
 

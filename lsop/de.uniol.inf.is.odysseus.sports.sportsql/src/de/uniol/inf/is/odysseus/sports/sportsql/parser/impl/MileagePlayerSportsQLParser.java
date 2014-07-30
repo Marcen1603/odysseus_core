@@ -37,9 +37,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		// We need this list to initialize all operators
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
-		String soccerGameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
-		AccessAO soccerGameAccessAO = OperatorBuildHelper
-				.createAccessAO(soccerGameSourceName);
+		AccessAO soccerGameAccessAO = OperatorBuildHelper.createGameStreamAccessAO();
 		allOperators.add(soccerGameAccessAO);
 
 		// ----------------------------------------------------
