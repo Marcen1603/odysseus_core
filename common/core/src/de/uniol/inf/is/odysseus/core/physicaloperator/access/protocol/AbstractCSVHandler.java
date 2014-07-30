@@ -1,16 +1,10 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -18,7 +12,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
-	private static final Charset charset = Charset.forName("UTF-8");
 	protected char delimiter;
 	protected Character textDelimiter = null;
 	protected DecimalFormat floatingFormatter;
@@ -27,8 +20,6 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 	protected boolean trim = false;
 	protected boolean addLineNumber = false;
 	protected String delimiterString;
-
-	private String lastRunRemaining = "";
 
 	public static final String DELIMITER = "delimiter";
 	public static final String CSV_DELIMITER = "csv.delimiter";
@@ -116,50 +107,6 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 		return null;
 	}
 
-	private static String bb_to_str(ByteBuffer buffer) {
-		String data = "";
-		try {
-			data = charset.decode(buffer).toString();
-			// reset buffer's position to its original so it is not altered:
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "";
-		}
-		return data;
-	}
-
-	@Override
-	public void process(ByteBuffer message) {
-		// TODO: There may be some string from former run
-		String strMsg = bb_to_str(message);
-		String data = lastRunRemaining + strMsg;
-		StringTokenizer t = new StringTokenizer(data, "\n\r");
-		boolean process = true;
-		while (process) {
-			String token = t.nextToken();
-			// The last token could be incomplete --> process next time
-			if (t.hasMoreTokens()) {
-				if (!firstLineSkipped && !readFirstLine) {
-					firstLineSkipped = true;
-					continue;
-				}
-				T retValue = readLine(token);
-				getTransfer().transfer(retValue);
-			} else {
-				// There are some cases, where the last token contains the
-				// whole line
-				if (data.endsWith("\n") || data.endsWith("\r")){
-					T retValue = readLine(token);
-					getTransfer().transfer(retValue);					
-					lastRunRemaining = "";
-				}else{
-					lastRunRemaining = token;
-				}
-				process = false;
-			}
-		}
-	}
-
 	protected abstract T readLine(String line);
 
 	@Override
@@ -175,5 +122,12 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 		System.arraycopy(encodedBytes1, 0, encodedBytes, 0, cb.limit());
 		getTransportHandler().send(encodedBytes);
 	}
+	
+	@Override
+	protected void process(String token) {
+		T retValue = readLine(token);
+		getTransfer().transfer(retValue);
+	}
+
 
 }

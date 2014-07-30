@@ -22,7 +22,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +37,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
+
+	protected static final Charset charset = Charset.forName("UTF-8");
 
 	public static final String NAME = "Line";
 	static final Runtime RUNTIME = Runtime.getRuntime();
@@ -64,6 +69,9 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	private PrintWriter dumpOut;
 	private boolean dumpMemory;
 
+	private String lastRunRemaining = "";
+
+	
 	private Map<String, String> optionsMap;
 
 	public static final String DELAY = "delay";
@@ -290,6 +298,52 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public void write(T object) throws IOException {
 		writer.write(object.toString());
+	}
+	
+	private static String bb_to_str(ByteBuffer buffer) {
+		String data = "";
+		try {
+			data = charset.decode(buffer).toString();
+			// reset buffer's position to its original so it is not altered:
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+		return data;
+	}
+	
+	@Override
+	public void process(ByteBuffer message) {
+		String strMsg = bb_to_str(message);
+		String data = lastRunRemaining + strMsg;
+		StringTokenizer t = new StringTokenizer(data, "\n\r");
+		boolean process = true;
+		while (process) {
+			String token = t.nextToken();
+			// The last token could be incomplete --> process next time
+			if (t.hasMoreTokens()) {
+				if (!firstLineSkipped && !readFirstLine) {
+					firstLineSkipped = true;
+					continue;
+				}
+				
+			} else {
+				// There are some cases, where the last token contains the
+				// whole line
+				if (data.endsWith("\n") || data.endsWith("\r")){
+					process(token);
+					lastRunRemaining = "";
+				}else{
+					lastRunRemaining = token;
+				}
+				process = false;
+			}
+		}
+	}
+
+	protected void process(String token) {
+		T retValue =  getDataHandler().readData(token);
+		getTransfer().transfer(retValue);
 	}
 
 	protected void delay() {
