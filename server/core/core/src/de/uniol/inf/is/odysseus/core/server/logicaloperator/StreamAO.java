@@ -38,7 +38,7 @@ public class StreamAO extends AbstractLogicalOperator {
 		super();
 		this.streamname = name;
 		setName(this.streamname.getResourceName());
-		addParameterInfo("SOURCE", "'" + streamname.getResourceName() + "'");
+		addParameterInfo("SOURCENAME", "'" + streamname.getResourceName() + "'");
 	}
 
 	public StreamAO(StreamAO streamAO) {
@@ -51,7 +51,7 @@ public class StreamAO extends AbstractLogicalOperator {
 		this.nodeName = streamAO.nodeName;
 
 		setName(streamname.getResourceName());
-		addParameterInfo("SOURCE", "'" + streamname.getResourceName() + "'");
+		addParameterInfo("SOURCENAME", "'" + streamname.getResourceName() + "'");
 
 		if (!Strings.isNullOrEmpty(this.nodeName)) {
 			addParameterInfo("NODE", "'" + this.nodeName + "'");
@@ -85,24 +85,41 @@ public class StreamAO extends AbstractLogicalOperator {
 
 	@Parameter(name = "Source", type = SourceParameter.class, optional = true, possibleValues = "__DD_SOURCES", possibleValuesAreDynamic = true)
 	public void setSource(AccessAO inputStream) {
-		this.schema = inputStream.getOutputSchema();
-		setSourceName(inputStream.getAccessAOName());
+		if( inputStream == null ) {
+			this.schema = null;
+		} else {
+			this.schema = inputStream.getOutputSchema();
+			setSourceName(inputStream.getAccessAOName());
+		}
 	}
 
 	@Parameter(name = "SourceName", type = ResourceParameter.class, optional = true, possibleValues = "__DD_SOURCES", possibleValuesAreDynamic = true)
 	public void setSourceName(Resource resource) {
 		this.streamname = resource;
 		setName(streamname.getResourceName());
+		
+		addParameterInfo("SOURCENAME", "'" + streamname.getResourceName() + "'");
 	}
 
 	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema", isList = true, optional = true, doc = "The output schema.")
 	public void setAttributes(List<SDFAttribute> attributes) {
 		this.attributes = attributes;
+		
+		if( attributes == null || attributes.isEmpty() ) {
+			removeParameterInfo("SCHEMA");
+		} else {
+			addParameterInfo("SCHEMA", schemaToString(attributes));
+		}
 	}
 
 	@Parameter(type = StringParameter.class, name = "DataHandler", optional = false, possibleValues = "getDataHandlerValues", doc = "The name of the datahandler to use, e.g. Tuple or Document.")
 	public void setDataHandler(String dataHandler) {
 		type = DataHandlerRegistry.getCreatedType(dataHandler);
+		if( !Strings.isNullOrEmpty(dataHandler)) {
+			addParameterInfo("DATAHANDLER", "'" + dataHandler + "'");
+		} else {
+			removeParameterInfo("DATAHANDLER");
+		}
 	}
 
 	public List<SDFAttribute> getAttributes() {
@@ -141,7 +158,7 @@ public class StreamAO extends AbstractLogicalOperator {
 			if (attributes != null) {
 				isValid = false;
 				addError(new IllegalParameterException(
-						"Stream cannot be combined with attributes"));
+						"Stream cannot be combined with schema"));
 			}
 		}
 		if (schema == null) {
@@ -164,4 +181,31 @@ public class StreamAO extends AbstractLogicalOperator {
 
 		return isValid;
 	}
+	
+	private static String schemaToString(List<SDFAttribute> outputSchema) {
+		if (outputSchema.isEmpty()) {
+			return "[]";
+		}
+
+		final StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		final SDFAttribute[] attributes = outputSchema.toArray(new SDFAttribute[0]);
+		for (int i = 0; i < attributes.length; i++) {
+			final SDFAttribute attribute = attributes[i];
+			sb.append("[");
+			if( !Strings.isNullOrEmpty(attribute.getSourceName())) {
+				sb.append("'").append(attribute.getSourceName()).append("',");
+			}
+			sb.append("'").append(attribute.getAttributeName());
+			sb.append("', '");
+			sb.append(attribute.getDatatype().getURI());
+			sb.append("']");
+			if (i < attributes.length - 1) {
+				sb.append(",");
+			}
+		}
+		sb.append("]");
+		return sb.toString();
+	}
+
 }
