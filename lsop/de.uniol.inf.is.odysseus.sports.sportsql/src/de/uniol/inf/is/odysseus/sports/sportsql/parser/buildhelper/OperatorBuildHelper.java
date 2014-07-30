@@ -174,9 +174,11 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 *  Creates a StateMapAO with the list of expressions. To create such
-	 * expressions, see {@link createExpressionParameter}. 
-	 * @param expressions List of expressions for this StateMap-Operator
+	 * Creates a StateMapAO with the list of expressions. To create such
+	 * expressions, see {@link createExpressionParameter}.
+	 * 
+	 * @param expressions
+	 *            List of expressions for this StateMap-Operator
 	 * @param source
 	 * @return
 	 */
@@ -640,7 +642,7 @@ public class OperatorBuildHelper {
 	public static AggregateAO createAggregateAO(String aggregationFunction,
 			String inputAttributeName, String outputAttributeName,
 			ILogicalOperator source) {
-		return createAggregateAO(aggregationFunction, null, inputAttributeName,
+		return createAggregateAO(aggregationFunction, "", inputAttributeName,
 				outputAttributeName, null, source);
 	}
 
@@ -650,8 +652,7 @@ public class OperatorBuildHelper {
 	 * @param aggregationFunction
 	 *            The name of the aggregate-function, e.g. "SUM" or "MAX"
 	 * @param groupBy
-	 *            The name of the attribute you want to group by (just one for
-	 *            now)
+	 *            The list of names of the attributes you want to group by
 	 * @param inputAttributeName
 	 *            The input attribute over which the aggregation should be done
 	 * @param outputAttributeName
@@ -664,7 +665,7 @@ public class OperatorBuildHelper {
 	 * @return
 	 */
 	public static AggregateAO createAggregateAO(String aggregationFunction,
-			String groupBy, String inputAttributeName,
+			List<String> groupBy, String inputAttributeName,
 			String outputAttributeName, String outputType,
 			ILogicalOperator source) {
 		AggregateAO aggregateAO = new AggregateAO();
@@ -693,13 +694,46 @@ public class OperatorBuildHelper {
 
 		// GroupBy
 		if (groupBy != null) {
-			aggregateAO.setGroupingAttributes(createAttributeList(groupBy,
-					source));
+			if (!(groupBy.size() == 1 && groupBy.get(0).isEmpty())) {
+				// If the inly grouping-attribute is empty, the user does not
+				// want to group
+				aggregateAO.setGroupingAttributes(createAttributeList(groupBy,
+						source));
+			}
+
 		}
 
 		aggregateAO.subscribeTo(source, source.getOutputSchema());
 
 		return aggregateAO;
+	}
+
+	/**
+	 * Creates an AggregateAO with the specified output type
+	 * 
+	 * @param aggregationFunction
+	 *            The name of the aggregate-function, e.g. "SUM" or "MAX"
+	 * @param groupBy
+	 *            The name of the attribute you want to group by
+	 * @param inputAttributeName
+	 *            The input attribute over which the aggregation should be done
+	 * @param outputAttributeName
+	 *            The name of the output attribute for this aggregation
+	 * @param outputType
+	 *            The optional type of output (null, if you don't want to
+	 *            specify, should then be double)
+	 * @param source
+	 *            The operator before this one
+	 * @return
+	 */
+	public static AggregateAO createAggregateAO(String aggregationFunction,
+			String groupBy, String inputAttributeName,
+			String outputAttributeName, String outputType,
+			ILogicalOperator source) {
+		List<String> groupingAttributes = new ArrayList<String>();
+		groupingAttributes.add(groupBy);
+		return createAggregateAO(aggregationFunction, groupingAttributes,
+				inputAttributeName, outputAttributeName, outputType, source);
 	}
 
 	public static CoalesceAO createCoalesceAO(List<String> attributes,

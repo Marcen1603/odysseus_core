@@ -42,19 +42,13 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		// We need this list to initialize all operators
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
-		String soccerGameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
-		AccessAO soccerGameAccessAO = OperatorBuildHelper
-				.createAccessAO(soccerGameSourceName);
-
-		String metadataSourceName = OperatorBuildHelper.METADATA_STREAM_NAME;
-		AccessAO metaDataAccessAO = OperatorBuildHelper
-				.createAccessAO(metadataSourceName);
+		AccessAO soccerGameAccessAO = OperatorBuildHelper.createGameStreamAccessAO();
+		AccessAO metaDataAccessAO = OperatorBuildHelper.createMetaStreamAccessAO();
 
 		// ---------------------------------------
 		// First part (Select for questioned time)
 		// ---------------------------------------
 
-		// TODO Copied code: here and in MileagePlayer ...
 		// 1. MAP
 		MapAO firstMap = OperatorBuildHelper.createMapAO(
 				getExpressionsForFirstMap(soccerGameAccessAO),
@@ -65,7 +59,6 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		SportsQLTimeParameter timeParam = SportsQLParameterHelper
 				.getTimeParameter(sportsQL);
 
-		// TODO SelectAO does not have an output schema - why?
 		SelectAO timeSelect = OperatorBuildHelper.createTimeSelect(timeParam,
 				firstMap);
 		allOperators.add(timeSelect);
@@ -95,10 +88,9 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		// -----------------------------------------
 
 		// 1. Join
-		// TODO add card to join
 		List<String> predicates = new ArrayList<String>();
 		predicates.add("sid = sensor_id");
-		JoinAO sensorJoinAO = OperatorBuildHelper.createJoinAO(predicates,
+		JoinAO sensorJoinAO = OperatorBuildHelper.createJoinAO(predicates, "ONE_ONE",
 				timeSelect, spaceSelectAO);
 		allOperators.add(sensorJoinAO);
 
@@ -108,7 +100,6 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		allOperators.add(sensorEnrich);
 
 		// 3. StateMapAO for mileage calculation
-		// TODO group by list
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter param1 = OperatorBuildHelper
 				.createExpressionParameter("sensorid", sensorEnrich);
@@ -123,19 +114,22 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		expressions.add(param2);
 		expressions.add(param3);
 		
+		List<String> groupBy = new ArrayList<String>();
+		groupBy.add("sensor_id");
+		groupBy.add("entity_id");
 		StateMapAO mileageStateMap = OperatorBuildHelper.createStateMapAO(
-				expressions, sensorEnrich);
+				expressions, groupBy, sensorEnrich);
 		allOperators.add(mileageStateMap);
 		
 		// 3. Aggregate for the sum
-		// TODO list for group
-		// TODO is null possible there?
-		AggregateAO sumAggregate = OperatorBuildHelper.createAggregateAO("SUM", "", "mileage", "mileage", null, mileageStateMap);
+		groupBy.clear();
+		groupBy.add("sensorid");
+		groupBy.add("entity_id");
+		AggregateAO sumAggregate = OperatorBuildHelper.createAggregateAO("SUM", groupBy, "mileage", "mileage", null, mileageStateMap);
 		allOperators.add(sumAggregate);
 		
 		// 4. Aggregate for max
-		// TODO list for group
-		AggregateAO maxAggregate = OperatorBuildHelper.createAggregateAO("MAX", "", "mileage", "mileage", null, sumAggregate);
+		AggregateAO maxAggregate = OperatorBuildHelper.createAggregateAO("MAX", "entity_id", "mileage", "mileage", null, sumAggregate);
 		allOperators.add(maxAggregate);
 		
 		// 5. Aggregate for sum again
