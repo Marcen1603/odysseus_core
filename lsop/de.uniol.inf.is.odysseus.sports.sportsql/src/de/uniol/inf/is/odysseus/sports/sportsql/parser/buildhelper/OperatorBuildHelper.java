@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CoalesceAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
@@ -939,11 +940,10 @@ public class OperatorBuildHelper {
 	 *            Source Operator.
 	 * @return
 	 */
-	public static WindowAO createTupleWindowAO(int size, int advance,
+	public static ElementWindowAO createTupleWindowAO(int size, int advance,
 			ILogicalOperator source) {
 		// TODO Use ElementWindow instead
-		WindowAO windowAO = new WindowAO();
-		windowAO.setWindowType(WindowType.TUPLE);
+		ElementWindowAO windowAO = new ElementWindowAO();
 		TimeValueItem windowSize = new TimeValueItem(size, null);
 		TimeValueItem windowAdvance = new TimeValueItem(advance, null);
 		windowAO.setWindowSize(windowSize);
@@ -1140,7 +1140,6 @@ public class OperatorBuildHelper {
 			EnumParameter cardParam = new EnumParameter();
 			cardParam.setEnum(Cardinalities.class);
 			cardParam.setInputValue(card);
-			// TODO Does this cast work?
 			joinAO.setCard((Cardinalities) cardParam.getValue());
 		}
 
@@ -1216,7 +1215,6 @@ public class OperatorBuildHelper {
 	 * @return
 	 */
 	public static AccessAO createAccessAO(String sourcename) {
-		// TODO Does this work? Probably not.
 		// We need the dataDictionary for this parameter
 		IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
 
