@@ -322,9 +322,12 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 			String token = t.nextToken();
 			// The last token could be incomplete --> process next time
 			if (t.hasMoreTokens()) {
+				
 				if (!firstLineSkipped && !readFirstLine) {
 					firstLineSkipped = true;
 					continue;
+				}else{
+					process(token);
 				}
 				
 			} else {
