@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
 import java.util.Observable;
 import java.util.Observer;
 
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import net.jxta.peer.PeerID;
 
 /**
@@ -13,15 +14,17 @@ import net.jxta.peer.PeerID;
 public class LoadBalancingFinishedListener implements Observer {
 	private final int lbProcessId;
 	private final PeerID initiatingPeer;
+	private final IPeerCommunicator peerCommunicator;
 	
 	/**
 	 * Constructor
 	 * @param peerId Peer to inform (initiating Peer)
 	 * @param lbProcessId Load Balancing Process Id.
 	 */
-	LoadBalancingFinishedListener(PeerID peerId,int lbProcessId) {
+	LoadBalancingFinishedListener(IPeerCommunicator peerCommunicator, PeerID peerId,int lbProcessId) {
 		this.lbProcessId = lbProcessId;
 		this.initiatingPeer = peerId;
+		this.peerCommunicator = peerCommunicator;
 	}
 
 	@Override
@@ -29,7 +32,7 @@ public class LoadBalancingFinishedListener implements Observer {
 	 * Called when update is finished. Sends message.
 	 */
 	public void update(Observable o, Object arg) {
-		LoadBalancingCommunicationListener.getInstance().sendLoadBalancingFinishedMessage(initiatingPeer,lbProcessId);
+		LoadBalancingMessageDispatcher.sendLoadBalancingFinishedMessage(peerCommunicator, initiatingPeer,lbProcessId);
 	}
 	
 	
