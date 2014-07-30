@@ -4,24 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.MetadataAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
@@ -31,9 +31,8 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLBooleanParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLDistanceParameter;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 
 /**
@@ -151,7 +150,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		allOperators.add(ballPosMap);
 
 		// 5. Window with tuple size 1 for the ball data stream
-		WindowAO ballWindow = OperatorBuildHelper.createTupleWindowAO(1, 1, ballPosMap);
+		ElementWindowAO ballWindow = OperatorBuildHelper.createTupleWindowAO(1, 1, ballPosMap);
 		allOperators.add(ballWindow);
 
 		// 6. Attributes x, y, z of the player data stream as one player position attribute
@@ -163,7 +162,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		allOperators.add(playerPosMap);
 
 		// 7. Window with tuple size 1 for the player data stream
-		WindowAO playerWindow = OperatorBuildHelper.createTupleWindowAO(1,1, playerPosMap);
+		ElementWindowAO playerWindow = OperatorBuildHelper.createTupleWindowAO(1,1, playerPosMap);
 		allOperators.add(playerWindow);
 		
 
