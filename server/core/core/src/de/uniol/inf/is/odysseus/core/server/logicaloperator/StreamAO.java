@@ -121,6 +121,10 @@ public class StreamAO extends AbstractLogicalOperator {
 			removeParameterInfo("DATAHANDLER");
 		}
 	}
+	
+	public List<String> getDataHandlerValues() {
+		return DataHandlerRegistry.getStreamableDataHandlerNames();
+	}
 
 	public List<SDFAttribute> getAttributes() {
 		return attributes;
