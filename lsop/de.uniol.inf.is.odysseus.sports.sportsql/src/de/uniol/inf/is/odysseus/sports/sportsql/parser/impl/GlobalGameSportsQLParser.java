@@ -5,9 +5,9 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
@@ -44,16 +44,12 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 		// ---------------------------
 
 		// 1. Game-Stream
-		String soccerGameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
-		AccessAO soccerGameAccessAO = OperatorBuildHelper
-				.createAccessAO(soccerGameSourceName);
+		StreamAO soccerGameAccessAO = OperatorBuildHelper.createGameStreamAO();
 		allOperators.add(soccerGameAccessAO);
 
 		// 2. Metadata-Stream
-		String metadataSourceName = OperatorBuildHelper.METADATA_STREAM_NAME;
-		AccessAO metadataAccessAO = OperatorBuildHelper
-				.createAccessAO(metadataSourceName);
-		allOperators.add(metadataAccessAO);
+		StreamAO metadataStreamAO = OperatorBuildHelper.createGameStreamAO();
+		allOperators.add(metadataStreamAO);
 		
 		// -----------------------
 		// First part (TimeWindow)
@@ -70,7 +66,7 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 
 		// 1. Enrich
 		EnrichAO enrichAO = OperatorBuildHelper.createEnrichAO(
-				"sensorid = sid", timeWindow, metadataAccessAO);
+				"sensorid = sid", timeWindow, metadataStreamAO);
 		allOperators.add(enrichAO);
 		
 		// 2. Project

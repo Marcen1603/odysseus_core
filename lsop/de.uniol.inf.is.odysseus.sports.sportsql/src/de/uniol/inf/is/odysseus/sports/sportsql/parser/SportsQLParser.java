@@ -17,6 +17,12 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.registry.SportsQLParserRegistry;
 
+/**
+ * This parser can parse SportsQL. 
+ * E.g. { "statisticType": "global", "gameType": "soccer", "name": "gameTime" }
+ * @author Tobias
+ *
+ */
 public class SportsQLParser implements IQueryParser {
 
 	@Override
@@ -49,7 +55,6 @@ public class SportsQLParser implements IQueryParser {
 	public List<IExecutorCommand> parse(Reader reader, ISession user,
 			IDataDictionary dd, Context context) throws QueryParseException {
 		// TODO Auto-generated method stub
-		System.out.println("nothing here");
 		return null;
 	}
 

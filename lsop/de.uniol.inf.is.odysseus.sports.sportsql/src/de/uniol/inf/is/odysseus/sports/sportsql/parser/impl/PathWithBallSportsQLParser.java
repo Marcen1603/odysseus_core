@@ -6,6 +6,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
@@ -79,14 +80,6 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 
 		//TODO remove hardcoded information.
 		
-		/**
-		 * Source name of Metadata Stream.
-		 */
-		String metadataSourceName = "metadata";
-		/**
-		 * Source name of Game Stream.
-		 */
-		String streamSourceName = "soccergame";
 		
 		/**
 		 * Entity id we look for.
@@ -150,8 +143,8 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		///Beginning of QueryPlan.
 		
 		//Create AccessAOs for sources.
-		ILogicalOperator source = OperatorBuildHelper.createAccessAO(streamSourceName);
-		ILogicalOperator metadata =OperatorBuildHelper.createAccessAO(metadataSourceName);
+		StreamAO source = OperatorBuildHelper.createGameStreamAO();
+		StreamAO metadata =OperatorBuildHelper.createMetadataStreamAO();
 
 		//Filter by Time
 		ILogicalOperator selectedTime = OperatorBuildHelper.createTimeSelect(

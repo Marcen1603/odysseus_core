@@ -5,13 +5,13 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -42,8 +42,8 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		// We need this list to initialize all operators
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
-		AccessAO soccerGameAccessAO = OperatorBuildHelper.createGameStreamAccessAO();
-		AccessAO metaDataAccessAO = OperatorBuildHelper.createMetaStreamAccessAO();
+		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
+		StreamAO metaDataStreamAO = OperatorBuildHelper.createMetadataStreamAO();
 
 		// ---------------------------------------
 		// First part (Select for questioned time)
@@ -51,8 +51,8 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 
 		// 1. MAP
 		MapAO firstMap = OperatorBuildHelper.createMapAO(
-				getExpressionsForFirstMap(soccerGameAccessAO),
-				soccerGameAccessAO, 0, 0);
+				getExpressionsForFirstMap(soccerGameStreamAO),
+				soccerGameStreamAO, 0, 0);
 		allOperators.add(firstMap);
 
 		// 2. Correct selection for the time
@@ -71,7 +71,7 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		SportsQLSpaceParameter spaceParam = SportsQLParameterHelper
 				.getSpaceParameter(sportsQL);
 		SelectAO spaceSelectAO = OperatorBuildHelper.createSpaceSelect(
-				spaceParam, true, soccerGameAccessAO);
+				spaceParam, true, soccerGameStreamAO);
 		allOperators.add(spaceSelectAO);
 
 		// -----------------------------------------
@@ -80,7 +80,7 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 
 		// 1. Select for team
 		SelectAO teamSelect = OperatorBuildHelper.createEntityIDSelect(
-				sportsQL.getEntityId(), metaDataAccessAO);
+				sportsQL.getEntityId(), metaDataStreamAO);
 		allOperators.add(teamSelect);
 
 		// -----------------------------------------

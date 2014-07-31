@@ -5,10 +5,10 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
@@ -64,8 +64,7 @@ public class GameTimeSportsQLParser implements ISportsQLParser {
 		
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		
-		AccessAO soccerGameAccessAO = OperatorBuildHelper.createAccessAO(OperatorBuildHelper.MAIN_STREAM_NAME);
-
+		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
 		
 		// Default starttimestamp and endtimestamp are used if no parameters were set
 		String startts = getStartTimestamp(sportsQL);
@@ -77,7 +76,7 @@ public class GameTimeSportsQLParser implements ISportsQLParser {
 		gameTimeSelectPredicates.add(SoccerGameAttributes.TS +">= "+ startts);
 		gameTimeSelectPredicates.add(SoccerGameAttributes.TS +"<= "+ endts);
 
-		SelectAO gameTimeSelect = OperatorBuildHelper.createSelectAO(gameTimeSelectPredicates, soccerGameAccessAO);
+		SelectAO gameTimeSelect = OperatorBuildHelper.createSelectAO(gameTimeSelectPredicates, soccerGameStreamAO);
 		allOperators.add(gameTimeSelect);
 		
 		

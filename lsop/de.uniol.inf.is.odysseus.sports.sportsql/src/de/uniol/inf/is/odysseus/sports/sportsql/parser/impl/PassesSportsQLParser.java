@@ -7,7 +7,6 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
@@ -16,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
@@ -116,13 +116,12 @@ public class PassesSportsQLParser implements ISportsQLParser {
 			
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		
-		AccessAO soccerGameAccessAO = OperatorBuildHelper.createAccessAO(OperatorBuildHelper.MAIN_STREAM_NAME);
-		AccessAO metadataAccessAO = OperatorBuildHelper.createAccessAO(OperatorBuildHelper.METADATA_STREAM_NAME);
-
+		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
+		StreamAO metadataStreamAO = OperatorBuildHelper.createMetadataStreamAO();
 		
 		// 1. Time Parameter
 		SportsQLTimeParameter timeParameter = SportsQLParameterHelper.getTimeParameter(sportsQL);
-		SelectAO gameTimeSelect = OperatorBuildHelper.createTimeSelect(timeParameter, soccerGameAccessAO);
+		SelectAO gameTimeSelect = OperatorBuildHelper.createTimeSelect(timeParameter, soccerGameStreamAO);
 		allOperators.add(gameTimeSelect);
 		
 		
@@ -182,7 +181,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		allOperators.add(deleteDuplicateSidsChangesDetectAO);
 		
 		// 10. Get meta data for the player sids
-		EnrichAO playerDataEnrichAO = OperatorBuildHelper.createEnrichAO(ATTRIBUTE_PLAYER_SID+"="+MetadataAttributes.SENSOR_ID, deleteDuplicateSidsChangesDetectAO, metadataAccessAO);
+		EnrichAO playerDataEnrichAO = OperatorBuildHelper.createEnrichAO(ATTRIBUTE_PLAYER_SID+"="+MetadataAttributes.SENSOR_ID, deleteDuplicateSidsChangesDetectAO, metadataStreamAO);
 		allOperators.add(playerDataEnrichAO);
 
 		// 11. Delete duplicate entity ids						

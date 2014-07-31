@@ -1278,7 +1278,8 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Method to get AccessAO. You'll need this to access sources.
+	 * Method to get AccessAO. DO NOT USE THIS DO ACCESS SOURCES DIRECTLY. Use
+	 * StreamAO instead.
 	 * 
 	 * @param sourcename
 	 *            Name of source
@@ -1299,51 +1300,38 @@ public class OperatorBuildHelper {
 		return source.getValue();
 	}
 
+	/**
+	 * Creates a StreamAO. You'll need this to access sources.
+	 * @param sourceName
+	 * @return
+	 */
 	public static StreamAO createStreamAO(String sourceName) {
 		StreamAO streamAO = new StreamAO();
 
-		// We need the dataDictionary for this parameter
-		IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
+		AccessAO access = createAccessAO(sourceName);
+		streamAO.setSource(access);
 
-		SourceParameter source = new SourceParameter();
-		source.setInputValue(sourceName);
-		source.setDataDictionary(dataDict);
-		
-		ISession session = OperatorBuildHelper.getActiveSession();
-		source.setCaller(session);
-
-		streamAO.setSource(source.getValue());
-		
 		streamAO.setName(sourceName);
 
 		return streamAO;
 	}
-	
+
+	/**
+	 * Creates a StreamAO for the game stream
+	 * @return
+	 */
 	public static StreamAO createGameStreamAO() {
 		String gameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
 		return createStreamAO(gameSourceName);
 	}
-
+	
 	/**
-	 * 
-	 * @return An AccessAO for the main-game-stream
+	 * Creates a StreamAO for the metadata stream
+	 * @return
 	 */
-	public static AccessAO createGameStreamAccessAO() {
-		String gameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
-		AccessAO gameAccessAO = OperatorBuildHelper
-				.createAccessAO(gameSourceName);
-		return gameAccessAO;
-	}
-
-	/**
-	 * 
-	 * @return An AccessAO for the metadata-stream
-	 */
-	public static AccessAO createMetaStreamAccessAO() {
-		String metaSourceName = OperatorBuildHelper.METADATA_STREAM_NAME;
-		AccessAO metaAccessAO = OperatorBuildHelper
-				.createAccessAO(metaSourceName);
-		return metaAccessAO;
+	public static StreamAO createMetadataStreamAO() {
+		String gameSourceName = OperatorBuildHelper.METADATA_STREAM_NAME;
+		return createStreamAO(gameSourceName);
 	}
 
 	/**

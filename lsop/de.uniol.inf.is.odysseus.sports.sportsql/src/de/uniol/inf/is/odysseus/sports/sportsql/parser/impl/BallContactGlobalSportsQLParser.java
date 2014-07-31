@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -89,21 +90,16 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		
 		//get the space parameter
 		SportsQLSpaceParameter spaceParameter = SportsQLParameterHelper.getSpaceParameter(sportsQL);;
-
-		
-		String soccerGameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
-		String metadataSourceName = OperatorBuildHelper.METADATA_STREAM_NAME;
 		
 		//game source
-		ILogicalOperator soccerGameAccessAO = OperatorBuildHelper
-				.createAccessAO(soccerGameSourceName);
+		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
 		
 		// metadata source
-		ILogicalOperator metadataAccessAO = OperatorBuildHelper.createAccessAO(metadataSourceName);
+		StreamAO metadataStreamAO = OperatorBuildHelper.createMetadataStreamAO();
 		
 		
 		//count ball contacts with the beginning of the game
-		ILogicalOperator game_after_start = OperatorBuildHelper.createTimeSelect(timeParameter, soccerGameAccessAO);
+		ILogicalOperator game_after_start = OperatorBuildHelper.createTimeSelect(timeParameter, soccerGameStreamAO);
 		allOperators.add(game_after_start);
 		
 		ILogicalOperator game_space = OperatorBuildHelper.createSpaceSelect(spaceParameter, false, game_after_start);
@@ -162,7 +158,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		attributes.clear();
 		
 		//enrich data
-		ILogicalOperator enriched_proximity = OperatorBuildHelper.createEnrichAO("sid=sensorid", delete_duplicates, metadataAccessAO);
+		ILogicalOperator enriched_proximity = OperatorBuildHelper.createEnrichAO("sid=sensorid", delete_duplicates, metadataStreamAO);
 		allOperators.add(enriched_proximity);
 		
 		//Detect changes in entity_id if another player hits the ball

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
@@ -49,13 +50,11 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		int goalLineLeft = -33968;
 		int goalLineRight = 33941;
 
-		String sourcename = "soccergame";
 		long startTS = timeParameter.getStart();
 
 		ArrayList<ILogicalOperator> operatorList = new ArrayList<ILogicalOperator>();
 		
-		ILogicalOperator source = OperatorBuildHelper
-				.createAccessAO(sourcename);
+		StreamAO source = OperatorBuildHelper.createGameStreamAO();
 
 		operatorList.add(source);
 		

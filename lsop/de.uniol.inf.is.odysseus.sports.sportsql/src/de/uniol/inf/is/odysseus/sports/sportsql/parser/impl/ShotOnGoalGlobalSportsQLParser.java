@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CoalesceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
@@ -20,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TupleAggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -81,13 +81,12 @@ public class ShotOnGoalGlobalSportsQLParser implements ISportsQLParser {
 		// ---------------------
 
 		// GameStream and MetaDataStream
-		AccessAO gameAccess = OperatorBuildHelper.createGameStreamAccessAO();
-		AccessAO metaDataAccess = OperatorBuildHelper
-				.createMetaStreamAccessAO();
+		StreamAO gameStream = OperatorBuildHelper.createGameStreamAO();
+		StreamAO metaDataStream = OperatorBuildHelper.createMetadataStreamAO();
 
 		// Add to list
-		allOperators.add(gameAccess);
-		allOperators.add(metaDataAccess);
+		allOperators.add(gameStream);
+		allOperators.add(metaDataStream);
 
 		// -------------------------------------------------------------------
 		// First part
@@ -97,7 +96,7 @@ public class ShotOnGoalGlobalSportsQLParser implements ISportsQLParser {
 
 		// 1. Select for time
 		SportsQLTimeParameter timeParam = SportsQLParameterHelper.getTimeParameter(sportsQL);
-		SelectAO timeSelect = OperatorBuildHelper.createTimeMapAndSelect(timeParam, gameAccess);
+		SelectAO timeSelect = OperatorBuildHelper.createTimeMapAndSelect(timeParam, gameStream);
 		
 		// 2. Select for space
 		SportsQLSpaceParameter spaceParam = SportsQLParameterHelper
@@ -107,7 +106,7 @@ public class ShotOnGoalGlobalSportsQLParser implements ISportsQLParser {
 
 		// 3. Enrich with the metastream
 		EnrichAO enrichedStream = OperatorBuildHelper.createEnrichAO(
-				"sensorid = sid", spaceSelect, metaDataAccess);
+				"sensorid = sid", spaceSelect, metaDataStream);
 
 		// Add to the list
 		allOperators.add(spaceSelect);

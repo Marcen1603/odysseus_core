@@ -15,13 +15,18 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuild
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 
+/**
+ * This is a very easy plan to test if the translation works. Always selects for entity-id 8.
+ * @author Tobias
+ *
+ */
 @SportsQL(
 		gameTypes = { GameType.SOCCER }, 
 		statisticTypes = {StatisticType.GLOBAL}, 
-		name = "select",
+		name = "testSelect",
 		parameters = { }
 		)
-public class SelectSportsQLParser implements ISportsQLParser {
+public class TestSelectSportsQLParser implements ISportsQLParser {
 
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)

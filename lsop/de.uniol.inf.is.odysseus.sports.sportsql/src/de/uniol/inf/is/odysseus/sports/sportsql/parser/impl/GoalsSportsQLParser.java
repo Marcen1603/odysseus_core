@@ -5,13 +5,13 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
@@ -67,13 +67,12 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		ArrayList<String> predicates = new ArrayList<String>();
 		ArrayList<String> attributes = new ArrayList<String>();
 		
-		String soccerGameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
-		AccessAO soccerGameAccessAO = OperatorBuildHelper.createAccessAO(soccerGameSourceName);
+		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
 		
 		// count goals with the beginning of the game
 		predicates.add("ts >= "+ OperatorBuildHelper.TS_GAME_START);
 		SelectAO soccergame_after_start = OperatorBuildHelper.createSelectAO(
-				predicates, soccerGameAccessAO);
+				predicates, soccerGameStreamAO);
 		allOperators.add(soccergame_after_start);
 		predicates.clear();
 		

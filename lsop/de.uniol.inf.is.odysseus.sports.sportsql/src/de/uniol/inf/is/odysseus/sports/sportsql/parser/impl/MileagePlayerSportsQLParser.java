@@ -5,12 +5,12 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -37,8 +37,8 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		// We need this list to initialize all operators
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
-		AccessAO soccerGameAccessAO = OperatorBuildHelper.createGameStreamAccessAO();
-		allOperators.add(soccerGameAccessAO);
+		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
+		allOperators.add(soccerGameStreamAO);
 
 		// ----------------------------------------------------
 		// First part of the query (Select for questioned time)
@@ -46,8 +46,8 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
 		// 1. MAP
 		MapAO firstMap = OperatorBuildHelper.createMapAO(
-				getExpressionsForFirstMap(soccerGameAccessAO),
-				soccerGameAccessAO, 0, 0);
+				getExpressionsForFirstMap(soccerGameStreamAO),
+				soccerGameStreamAO, 0, 0);
 		allOperators.add(firstMap);
 
 		// 2. Correct selection for the time
@@ -62,12 +62,10 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		// -------------------------------------------------------
 		// Second part of the query (Select for questioned entity)
 		// -------------------------------------------------------
-		String metadataSourceName = OperatorBuildHelper.METADATA_STREAM_NAME;
-		AccessAO metaDataAccessAO = OperatorBuildHelper
-				.createAccessAO(metadataSourceName);
+		StreamAO metaDataStreamAO = OperatorBuildHelper.createMetadataStreamAO();
 
 		SelectAO entitySelect = OperatorBuildHelper.createEntityIDSelect(
-				sportsQL.getEntityId(), metaDataAccessAO);
+				sportsQL.getEntityId(), metaDataStreamAO);
 		allOperators.add(entitySelect);
 
 		// -----------------------
