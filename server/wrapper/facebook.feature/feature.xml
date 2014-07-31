@@ -4,6 +4,9 @@
       label="Facebook Feature"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
+<decription>
+This feature allows to access facebook.
+</description>
 
     <copyright>
       Copyright by the Odysseus Team (odysseus.informatik.uni-oldenburg.de)
