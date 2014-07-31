@@ -209,7 +209,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 
 	}
 
-	public void writeToDB() throws SQLException {
+	public synchronized void writeToDB() throws SQLException {
 		int count = this.preparedStatement.executeBatch().length;
 		this.jdbcConnection.commit();
 		logger.debug("Inserted " + count + " rows in database");
