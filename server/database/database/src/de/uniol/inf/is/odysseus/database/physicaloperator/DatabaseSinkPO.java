@@ -30,10 +30,14 @@
 
 package de.uniol.inf.is.odysseus.database.physicaloperator;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+
+import javax.swing.Timer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +57,8 @@ import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappin
  * @author Dennis Geesen Created at: 22.08.2011
  * @author Marco Grawunder
  */
-public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
+public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
+		implements ActionListener {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(DatabaseSinkPO.class);
@@ -69,17 +74,20 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 	final private boolean drop;
 	private volatile boolean opened = false;
 	final private long batchSize;
+	final private int batchTimeout;
+	private Timer timer = null;
 
 	final private List<String> tableSchema;
 
 	public DatabaseSinkPO(IDatabaseConnection connection, String tablename,
-			boolean drop, boolean truncate, long batchSize,
+			boolean drop, boolean truncate, long batchSize, int batchTimeout,
 			List<String> tableSchema) {
 		this.connection = connection;
 		this.tablename = tablename;
 		this.truncate = truncate;
 		this.drop = drop;
 		this.batchSize = batchSize;
+		this.batchTimeout = batchTimeout;
 		this.tableSchema = tableSchema;
 	}
 
@@ -89,6 +97,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 		this.drop = databaseSinkPO.drop;
 		this.truncate = databaseSinkPO.truncate;
 		this.batchSize = databaseSinkPO.batchSize;
+		this.batchTimeout = databaseSinkPO.batchTimeout;
 		this.tableSchema = databaseSinkPO.tableSchema;
 	}
 
@@ -99,7 +108,10 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 			dtMappings[i + 1] = DatatypeRegistry.getDataHandler(outputSchema
 					.get(i).getDatatype());
 		}
-
+		if (batchTimeout > 0) {
+			timer = new Timer(batchTimeout, this);
+			timer.start();
+		}
 	}
 
 	@Override
@@ -217,6 +229,9 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 	}
 
 	public synchronized void writeToDB() throws SQLException {
+		if (timer != null) {
+			timer.restart();
+		}
 		int count = this.preparedStatement.executeBatch().length;
 		this.jdbcConnection.commit();
 		logger.debug("Inserted " + count + " rows in database");
@@ -226,6 +241,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 	protected void process_close() {
 		try {
 			writeToDB();
+			timer.stop();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -234,6 +250,15 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 	@Override
 	public DatabaseSinkPO clone() {
 		return new DatabaseSinkPO(this);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		try {
+			writeToDB();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 }

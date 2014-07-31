@@ -52,7 +52,7 @@ public class TDatabaseDatabaseSinkAORule extends AbstractTransformationRule<Data
 
 	@Override
 	public void execute(DatabaseSinkAO operator, TransformationConfiguration config) throws RuleException {
-		ISink<?> sinkPO = new DatabaseSinkPO(operator.getConnection(), operator.getTablename(), operator.isDrop(), operator.isTruncate(), operator.getBatchSize(), operator.getTableSchema());			
+		ISink<?> sinkPO = new DatabaseSinkPO(operator.getConnection(), operator.getTablename(), operator.isDrop(), operator.isTruncate(), operator.getBatchSize(), operator.getBatchTimeout(), operator.getTableSchema());			
 		defaultExecute(operator, sinkPO, config, true, true);		
 	}
 

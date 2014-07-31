@@ -39,12 +39,14 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
  * 
  * @author Dennis Geesen
+ * @author Marco Grawunder 
  * Created at: 20.10.2011
  */
 @LogicalOperator(name = "DATABASESINK", minInputPorts = 1, maxInputPorts = 1, doc="This operator can write data to a relational database.",category={LogicalOperatorCategory.SINK, LogicalOperatorCategory.DATABASE})
@@ -56,6 +58,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator{
 	private boolean truncate;
 	private boolean drop;
 	private long batchSize = 10;
+	private int batchTimeout = 0;
 
 	private List<String> tableSchema;
 	
@@ -70,6 +73,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator{
 		this.truncate = old.truncate;
 		this.batchSize = old.batchSize;
 		this.tableSchema = new ArrayList<>(old.tableSchema);
+		this.batchTimeout = old.batchTimeout;
 	}
 
 	@Override
@@ -111,6 +115,14 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator{
 		this.batchSize = batchSize;
 	}
 	
+	@Parameter(name= "BatchTimeout", type = IntegerParameter.class, optional = true, doc = "If batchsize is set, write tuple after some time (in ms) after last write even if batch is not full.")
+	public void setTimeout(int timeout) {
+		this.batchTimeout = timeout;
+	}
+	
+	public int getBatchTimeout() {
+		return batchTimeout;
+	}	
 	@Parameter(name = "Tableschema", type=StringParameter.class, optional = true, isList = true, doc ="The types of the target database that should be used to create the target table. Order must be the same as the output schema.")
 	public void setTableSchema(List<String> tableSchema){
 		this.tableSchema = tableSchema;
