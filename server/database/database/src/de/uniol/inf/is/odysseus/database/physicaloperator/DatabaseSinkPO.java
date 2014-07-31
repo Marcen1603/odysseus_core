@@ -73,7 +73,8 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 	final private List<String> tableSchema;
 
 	public DatabaseSinkPO(IDatabaseConnection connection, String tablename,
-			boolean drop, boolean truncate, long batchSize, List<String> tableSchema) {
+			boolean drop, boolean truncate, long batchSize,
+			List<String> tableSchema) {
 		this.connection = connection;
 		this.tablename = tablename;
 		this.truncate = truncate;
@@ -103,24 +104,27 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		if (dtMappings == null){
+		if (dtMappings == null) {
 			initDTMappings();
 		}
-		try {						
+		try {
 			if (!this.connection.tableExists(tablename)) {
-				this.connection.createTable(tablename, getOutputSchema(), tableSchema);
+				this.connection.createTable(tablename, getOutputSchema(),
+						tableSchema);
 			} else {
 				if (this.drop) {
 					dropTable();
-					this.connection.createTable(tablename, getOutputSchema(), tableSchema);
-				}else{
-					if(this.truncate){
+					this.connection.createTable(tablename, getOutputSchema(),
+							tableSchema);
+				} else {
+					if (this.truncate) {
 						truncateTable();
 					}
 				}
 			}
 			this.jdbcConnection = this.connection.getConnection();
-			this.preparedStatement = this.jdbcConnection.prepareStatement(createPreparedStatement());
+			this.preparedStatement = this.jdbcConnection
+					.prepareStatement(createPreparedStatement());
 			this.jdbcConnection.setAutoCommit(false);
 			this.counter = 0;
 			opened = true;
@@ -129,7 +133,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 			opened = false;
 			throw new OpenFailedException(e);
 		}
-		
+
 	}
 
 	private void dropTable() {
@@ -182,31 +186,34 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 			System.err.println("Error: not connected to database");
 			return;
 		}
-		try {
+		if (isOpen()) {
+			try {
 
-			for (int i=0;i<this.getOutputSchema().size();i++){
-				Object attributeValue = tuple.getAttribute(i);
-				dtMappings[i+1].setValue(this.preparedStatement, i + 1, attributeValue);
+				for (int i = 0; i < this.getOutputSchema().size(); i++) {
+					Object attributeValue = tuple.getAttribute(i);
+					dtMappings[i + 1].setValue(this.preparedStatement, i + 1,
+							attributeValue);
+				}
+				// for (SDFAttribute attribute : this.getOutputSchema()) {
+				// SDFDatatype datatype = attribute.getDatatype();
+				// Object attributeValue = tuple.getAttribute(i);
+				// IDataTypeMappingHandler<?> handler = DatatypeRegistry
+				// .getDataHandler(datatype);
+				// handler.setValue(this.preparedStatement, i + 1,
+				// attributeValue);
+				// i++;
+				// }
+				this.preparedStatement.addBatch();
+				counter++;
+				if ((counter % batchSize) == 0) {
+					writeToDB();
+				}
+				// calcLatency(tuple);
+				// logger.debug("Inserted "+count+" rows in database");
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-//			for (SDFAttribute attribute : this.getOutputSchema()) {
-//				SDFDatatype datatype = attribute.getDatatype();
-//				Object attributeValue = tuple.getAttribute(i);
-//				IDataTypeMappingHandler<?> handler = DatatypeRegistry
-//						.getDataHandler(datatype);
-//				handler.setValue(this.preparedStatement, i + 1, attributeValue);
-//				i++;
-//			}
-			this.preparedStatement.addBatch();
-			counter++;
-			if ((counter % batchSize) == 0) {
-				writeToDB();
-			}
-			// calcLatency(tuple);
-			// logger.debug("Inserted "+count+" rows in database");
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
-
 	}
 
 	public synchronized void writeToDB() throws SQLException {
