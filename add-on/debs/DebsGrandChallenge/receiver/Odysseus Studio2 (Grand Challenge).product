@@ -69,7 +69,6 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.monolithic.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.latency.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.cep.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.protobuf.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.debs2013.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.spatial.client.feature" version="1.0.0.qualifier"/>
@@ -90,6 +89,16 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.mining.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.probabilistic.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.mail.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.facebook.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.ivef.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.ncsa_hdf.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.opcda.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.rabbitmq.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.rs232.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.sunspot.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.twitter.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.web.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.zeromq.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
