@@ -241,7 +241,9 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 	protected void process_close() {
 		try {
 			writeToDB();
-			timer.stop();
+			if (timer != null) {
+				timer.stop();
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
