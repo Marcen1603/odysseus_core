@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.datarate_systemload.feature"
-      label="Feature"
+      label="Datarate Systemload Feature"
       version="1.0.0.qualifier"
       provider-name="Timo Michelsen">
 
