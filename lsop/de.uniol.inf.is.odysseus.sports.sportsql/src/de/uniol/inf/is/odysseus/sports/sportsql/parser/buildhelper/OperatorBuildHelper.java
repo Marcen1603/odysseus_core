@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SampleAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TupleAggregateAO;
@@ -538,7 +539,7 @@ public class OperatorBuildHelper {
 		// 'entity_id = ${entity_id}'
 
 		// 1. minute >= ${parameterTimeStart_minute}
-		String predicateString = "entity_id = " + entityId;
+		String predicateString = "sid = " + entityId;
 		SDFExpression predicateExpression = new SDFExpression(predicateString,
 				MEP.getInstance());
 		RelationalPredicate predicate = new RelationalPredicate(
@@ -1296,6 +1297,31 @@ public class OperatorBuildHelper {
 		source.setCaller(session);
 
 		return source.getValue();
+	}
+
+	public static StreamAO createStreamAO(String sourceName) {
+		StreamAO streamAO = new StreamAO();
+
+		// We need the dataDictionary for this parameter
+		IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
+
+		SourceParameter source = new SourceParameter();
+		source.setInputValue(sourceName);
+		source.setDataDictionary(dataDict);
+		
+		ISession session = OperatorBuildHelper.getActiveSession();
+		source.setCaller(session);
+
+		streamAO.setSource(source.getValue());
+		
+		streamAO.setName(sourceName);
+
+		return streamAO;
+	}
+	
+	public static StreamAO createGameStreamAO() {
+		String gameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
+		return createStreamAO(gameSourceName);
 	}
 
 	/**
