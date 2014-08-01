@@ -24,6 +24,26 @@ public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractRoundRobinAllocator.class);
 	
 	@Override
+	public Map<ILogicalQueryPart, PeerID> allocate(
+			Collection<ILogicalQueryPart> queryParts, ILogicalQuery query,
+			Collection<PeerID> knownRemotePeers, PeerID localPeerID)
+			throws QueryPartAllocationException {
+		
+		return this.allocate(queryParts, query, knownRemotePeers, localPeerID, null, null);
+		
+	}
+	
+	@Override
+	public Map<ILogicalQueryPart, PeerID> reallocate(
+			Map<ILogicalQueryPart, PeerID> previousAllocationMap,
+			Collection<PeerID> faultPeers, Collection<PeerID> knownRemotePeers,
+			PeerID localPeerID) throws QueryPartAllocationException {
+		
+		return this.reallocate(previousAllocationMap, faultPeers, knownRemotePeers, localPeerID, null, null);
+		
+	}
+	
+	@Override
 	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, ILogicalQuery query, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
 		LOG.debug("Begin round robin allocation");
 		
