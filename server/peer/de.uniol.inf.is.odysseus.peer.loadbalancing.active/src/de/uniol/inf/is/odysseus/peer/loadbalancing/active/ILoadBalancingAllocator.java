@@ -27,17 +27,13 @@ public interface ILoadBalancingAllocator extends INamedInterface {
 	 * @param query The complete {@link ILogicalQuery} of <code>queryParts</code>, so all {@link ILogicalQueryPart}s must belong to the same {@link ILogicalQuery}.
 	 * @param knownRemotePeers A collection of all known peers identified by their {@link PeerID}s. This collection does not contain the local peer.
 	 * @param localPeerID The {@link PeerID} identifying the local peer.
-	 * @param config The {@link QueryBuildConfiguration} containing Odysseus-Script parameters.
-	 * @param allocatorParameters A list of all parameters for the allocator.
 	 * @return A mapping of {@link PeerID}s (each identifying a peer) to {@link ILogicalQueryPart}s, indicating which {@link ILogicalQueryPart} has been allocated to which peer.
 	 * @throws QueryPartAllocationException if any error occurs.
 	 */
 	public Map<ILogicalQueryPart, PeerID> allocate(
 			Collection<ILogicalQueryPart> queryParts, 
 			ILogicalQuery query, Collection<PeerID> knownRemotePeers, 
-			PeerID localPeerID, 
-			QueryBuildConfiguration config, 
-			List<String> allocatorParameters) throws QueryPartAllocationException;
+			PeerID localPeerID) throws QueryPartAllocationException;
 	
 	/**
 	 * Reallocates a given mapping of {@link PeerID}s (each identifying a peer) to {@link ILogicalQueryPart}s. <br />
@@ -46,8 +42,6 @@ public interface ILoadBalancingAllocator extends INamedInterface {
 	 * @param faultPeers A collection of peers identified by their {@link PeerID}s, where the first allocation failed.
 	 * @param knownRemotePeers A collection of all known peers identified by their {@link PeerID}s. This collection does not contain the local peer.
 	 * @param localPeerID The {@link PeerID} identifying the local peer.
-	 * @param config The {@link QueryBuildConfiguration} containing Odysseus-Script parameters.
-	 * @param allocatorParameters A list of all parameters for the allocator.
 	 * @return A mapping of {@link PeerID}s (each identifying a peer) to {@link ILogicalQueryPart}s, indicating which {@link ILogicalQueryPart} has been allocated to which peer.
 	 * @throws QueryPartAllocationException if any error occurs.
 	 */
@@ -55,8 +49,6 @@ public interface ILoadBalancingAllocator extends INamedInterface {
 			Map<ILogicalQueryPart, PeerID> previousAllocationMap, 
 			Collection<PeerID> faultPeers, 
 			Collection<PeerID> knownRemotePeers, 
-			PeerID localPeerID, 
-			QueryBuildConfiguration config, 
-			List<String> allocatorParameters ) throws QueryPartAllocationException;
+			PeerID localPeerID) throws QueryPartAllocationException;
 
 }
