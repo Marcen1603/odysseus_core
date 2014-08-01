@@ -280,6 +280,7 @@ public class OperatorBuildHelper {
 		int endX = parameter.getEndx();
 		int endY = parameter.getEndy();
 
+		// TODO Parameters don't fit to the numbers
 		if (parameter.getSpace() != null && parameter.getSpace().equals("all")) {
 			startX = LOWERLEFT_X;
 			startY = LOWERLEFT_Y;
@@ -412,7 +413,7 @@ public class OperatorBuildHelper {
 		int startMinute = timeParameter.getStart();
 		int endMinute = timeParameter.getEnd();
 
-		if (timeParameter.getTime().equals("all")) {
+		if (timeParameter.getTime().equals("always")) {
 			startMinute = Integer.MIN_VALUE;
 			endMinute = Integer.MAX_VALUE;
 		}

@@ -63,21 +63,17 @@ public class BallContactPlayerSportsQLParser implements ISportsQLParser {
 		 * In this case we select the specific player from the query plan of the BallContactGlobalSportsQlParser
 		 */
 		
-		
-		ArrayList<String> predicates = new ArrayList<String>();
 		ArrayList<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		
 		//Get all ball contacts of every player by using the global parser
-		BallContactGlobalSportsQLParser ballcontacts_global = new BallContactGlobalSportsQLParser();	
-		ILogicalQuery global_query = ballcontacts_global.parse(sportsQL);
+		BallContactGlobalSportsQLParser ballcontactsGlobal = new BallContactGlobalSportsQLParser();	
+		ILogicalQuery globalQuery = ballcontactsGlobal.parse(sportsQL);
 		
 		//new source 
-		ILogicalOperator source = global_query.getLogicalPlan();
+		ILogicalOperator source = globalQuery.getLogicalPlan();
 		
 		//Select player
-		predicates.add("entity_id = "+ sportsQL.getEntityId());
-		
-		SelectAO single_player = OperatorBuildHelper.createSelectAO(predicates, source);	
+		SelectAO single_player = OperatorBuildHelper.createEntityIDSelect(sportsQL.getEntityId(), source);
 		allOperators.add(single_player);
 		
 		return OperatorBuildHelper.finishQuery(single_player, allOperators, sportsQL.getName());

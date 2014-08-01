@@ -86,13 +86,13 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 				.createTimeMapAndSelect(timeParameter, soccerGameStreamAO);
 		allOperators.add(game_after_start);
 
-//		ILogicalOperator game_space = OperatorBuildHelper.createSpaceSelect(
-//				spaceParameter, false, game_after_start);
-//		allOperators.add(game_space);
+		ILogicalOperator game_space = OperatorBuildHelper.createSpaceSelect(
+				spaceParameter, false, game_after_start);
+		allOperators.add(game_space);
 
 		predicates.add("sid=4 OR sid=8 OR sid=10 OR sid=12");
 		ILogicalOperator split_balls = OperatorBuildHelper.createRouteAO(
-				predicates, game_after_start);
+				predicates, game_space);
 		allOperators.add(split_balls);
 		predicates.clear();
 
