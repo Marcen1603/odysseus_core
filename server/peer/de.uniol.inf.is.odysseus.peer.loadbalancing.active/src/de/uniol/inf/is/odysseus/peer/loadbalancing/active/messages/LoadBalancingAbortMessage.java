@@ -22,6 +22,30 @@ public class LoadBalancingAbortMessage implements IMessage {
 	private int msgType;
 	
 	
+	public int getMsgType() {
+		return msgType;
+	}
+
+	public void setMsgType(int msgType) {
+		this.msgType = msgType;
+	}
+
+	public Integer[] getQueriesToRemove() {
+		return queriesToRemove;
+	}
+
+	public void setQueriesToRemove(Integer[] queriesToRemove) {
+		this.queriesToRemove = queriesToRemove;
+	}
+
+	public String getPipeToRemove() {
+		return pipeToRemove;
+	}
+
+	public void setPipeToRemove(String pipeToRemove) {
+		this.pipeToRemove = pipeToRemove;
+	}
+
 	private Integer[] queriesToRemove;
 	private String pipeToRemove;
 	

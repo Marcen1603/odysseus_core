@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
 
 import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.jxta.peer.PeerID;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages.LoadBalancingAbortMessage;
@@ -11,9 +13,21 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages.LoadBalancing
 
 public class LoadBalancingMessageDispatcher {
 	
+	IPeerCommunicator peerCommunicator;
+	ISession session;
+	int lbProcessId;
+	
+	
+	ConcurrentHashMap<String,RepeatingMessageSend> currentJobs;
+	
+	LoadBalancingMessageDispatcher(IPeerCommunicator peerCommunicator, ISession session, int lbProcessId) {
+		this.peerCommunicator = peerCommunicator;
+		this.session = session;
+		this.lbProcessId = lbProcessId;
+	}
 	
 
-	public static void sendInstallSuccess(IPeerCommunicator peerCommunicator, PeerID destination, int lbProcessId, Collection<Integer> queryIDs) {
+	public void sendInstallSuccess(PeerID destination,Collection<Integer> queryIDs) {
 		if(peerCommunicator!=null) {
 			LoadBalancingResponseMessage message = new LoadBalancingResponseMessage(lbProcessId,queryIDs);
 			try {
@@ -25,7 +39,7 @@ public class LoadBalancingMessageDispatcher {
 	}
 	
 	
-	public static void sendDuplicateSuccess(IPeerCommunicator peerCommunicator, PeerID destination, int lbProcessId, String pipeID) {
+	public void sendDuplicateSuccess(PeerID destination, String pipeID) {
 		if(peerCommunicator!=null) {
 			LoadBalancingResponseMessage message = new LoadBalancingResponseMessage(lbProcessId,pipeID);
 			try {
@@ -37,27 +51,12 @@ public class LoadBalancingMessageDispatcher {
 	}
 	
 
-
-	/**
-	 * Sends a copy Message to initiating Peer, this message initiates a copy
-	 * process for given LoadBalancing Process. This should be an answer to the
-	 * initiating peer, after being accepted as loadbalancing partner. (Ack
-	 * Message)
-	 * 
-	 * @param destinationPeerId
-	 *            initiating Peer
-	 * @param loadBalancingProcessId
-	 *            Peer-unique ID which identifies the referenced LoadBalancing
-	 *            Process.
-	 * 
-	 */
-	public static void sendAckInit(IPeerCommunicator peerCommunicator, PeerID destinationPeerId,
-			int loadBalancingProcessId) {
+	public void sendAckInit(PeerID destinationPeerId) {
 		try {
 			if (peerCommunicator != null) {
 				peerCommunicator.send(destinationPeerId,
 						new LoadBalancingResponseMessage(
-								loadBalancingProcessId,LoadBalancingResponseMessage.ACK_LOADBALANCING));
+								lbProcessId,LoadBalancingResponseMessage.ACK_LOADBALANCING));
 			}
 		} catch (PeerCommunicationException e) {
 			//TODO
@@ -65,8 +64,8 @@ public class LoadBalancingMessageDispatcher {
 	}
 
 	
-	public static void sendDeleteOperator(IPeerCommunicator peerCommunicator, boolean isSender, String peerId,
-			String pipeId, int lbProcessId) {
+	public void sendDeleteOperator(boolean isSender, String peerId,
+			String pipeId) {
 		LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createDeleteOperatorMsg(isSender, lbProcessId, pipeId);
 		if (peerCommunicator != null) {
 			try {
@@ -77,9 +76,8 @@ public class LoadBalancingMessageDispatcher {
 		}
 	}
 	
-	public static void sendAddQuery(IPeerCommunicator peerCommunicator, int loadBalancingProcessID,
-			PeerID destinationPeer, String queryPartPql) {
-		LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createAddQueryMsg(loadBalancingProcessID, queryPartPql);
+	public void sendAddQuery(PeerID destinationPeer, String queryPartPql) {
+		LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createAddQueryMsg(lbProcessId, queryPartPql);
 		try {
 			peerCommunicator.send(destinationPeer, message);
 		} catch (PeerCommunicationException e) {
@@ -89,12 +87,7 @@ public class LoadBalancingMessageDispatcher {
 	
 
 	
-	/**
-	 * Send Failure Message (used when OTHER Peer than the initiating Peer has an error!)
-	 * @param initiatingPeer Peer that initiated LoadBalancing (controlling Peer)
-	 * @param lbProcessId loadBalancing Process Id
-	 */
-	public static void sendInstallFailure(IPeerCommunicator peerCommunicator, PeerID initiatingPeer, int lbProcessId) {
+	public void sendInstallFailure(PeerID initiatingPeer) {
 		if(peerCommunicator!=null) {
 			LoadBalancingResponseMessage message = new LoadBalancingResponseMessage(lbProcessId,LoadBalancingResponseMessage.FAILURE_INSTALL_QUERY);
 			try {
@@ -106,12 +99,7 @@ public class LoadBalancingMessageDispatcher {
 	}
 	
 
-	/**
-	 * Send Failure Message (used when OTHER Peer than the initiating Peer has an error!)
-	 * @param initiatingPeer Peer that initiated LoadBalancing (controlling Peer)
-	 * @param lbProcessId loadBalancing Process Id
-	 */
-	public static void sendDuplicateFailure(IPeerCommunicator peerCommunicator, PeerID initiatingPeer, int lbProcessId) {
+	public void sendDuplicateFailure(PeerID initiatingPeer) {
 		if(peerCommunicator!=null) {
 			LoadBalancingResponseMessage message = new LoadBalancingResponseMessage(lbProcessId,LoadBalancingResponseMessage.FAILURE_DUPLICATE_RECEIVER);
 			try {
@@ -122,12 +110,7 @@ public class LoadBalancingMessageDispatcher {
 		}
 	}
 	
-	/**
-	 * Asks Peer to abort loadBalancing (because an Error happened somewhere)
-	 * @param peerToNotify Peer which should receive the message
-	 * @param lbProcessId loadBalancing process Id.
-	 */
-	public static void sendAbort(IPeerCommunicator peerCommunicator, PeerID peerToNotify, int lbProcessId, Integer[] queriesToRemove) {
+	public void sendAbort(PeerID peerToNotify, Integer[] queriesToRemove) {
 		if(peerCommunicator!=null) {
 			LoadBalancingAbortMessage message = new LoadBalancingAbortMessage(lbProcessId, queriesToRemove);
 			try {
@@ -138,7 +121,7 @@ public class LoadBalancingMessageDispatcher {
 		}
 	}
 	
-	public static void sendAbort(IPeerCommunicator peerCommunicator, PeerID peerToNotify, int lbProcessId) {
+	public void sendAbort(PeerID peerToNotify) {
 		if(peerCommunicator!=null) {
 			LoadBalancingAbortMessage message = new LoadBalancingAbortMessage(lbProcessId);
 			try {
@@ -149,8 +132,7 @@ public class LoadBalancingMessageDispatcher {
 		}
 	}
 
-	public static void sendCopyOperator(IPeerCommunicator peerCommunicator, boolean isSender,
-			int loadBalancingProcessID, PeerID destinationPeer,
+	public void sendCopyOperator(boolean isSender, PeerID destinationPeer,
 			String oldPipeId, String newPipeId, String newPeerId) {
 		LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createCopyOperatorMsg(isSender, newPeerId, oldPipeId, newPipeId);
 		try {
@@ -160,32 +142,19 @@ public class LoadBalancingMessageDispatcher {
 		}
 	}
 
-	public static void sendInitiate(IPeerCommunicator peerCommunicator, PeerID volunteeringPeer,
-			int loadBalancingProcessId) {
+	public void sendInitiate(PeerID volunteeringPeer) {
 		try {
 			if (peerCommunicator != null) {
 				peerCommunicator
 						.send(volunteeringPeer,
-								LoadBalancingInstructionMessage.createInitiateMsg(loadBalancingProcessId));
+								LoadBalancingInstructionMessage.createInitiateMsg(lbProcessId));
 			}
 		} catch (PeerCommunicationException e) {
 			//TODO
 		}
 	}
-	
 
-
-	/**
-	 * Sends finished Message
-	 * 
-	 * @param initiatingPeer
-	 *            Peer which should receive the message. (The one which
-	 *            initiated the Load Balancing)
-	 * @param lbProcessId
-	 *            Load Balancing Process Id.
-	 */
-	public static void sendDeleteQuery(IPeerCommunicator peerCommunicator, PeerID initiatingPeer,
-			int lbProcessId) {
+	public void sendDeleteQuery(PeerID initiatingPeer) {
 		LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createDeleteQueryMsg(lbProcessId);
 		if (peerCommunicator != null) {
 			try {
@@ -197,8 +166,7 @@ public class LoadBalancingMessageDispatcher {
 	}
 
 
-	public static void sendAbortToDuplicatingPeer(
-			IPeerCommunicator peerCommunicator,int lbProcessId, PeerID peerID, String pipeID) {
+	public void sendAbortToDuplicatingPeer(PeerID peerID, String pipeID) {
 		LoadBalancingAbortMessage message = new LoadBalancingAbortMessage(lbProcessId,pipeID);
 		if (peerCommunicator != null) {
 			try {

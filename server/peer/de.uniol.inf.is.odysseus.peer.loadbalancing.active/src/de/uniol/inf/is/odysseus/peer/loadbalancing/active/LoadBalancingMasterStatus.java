@@ -11,12 +11,23 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
  * @author Carsten Cordes
  *
  */
-public class LoadBalancingStatus {
+public class LoadBalancingMasterStatus {
 	
 	public enum LB_PHASES {
 		initiating,copying,relinking,synchronizing,failure
 	}
 	
+	private LoadBalancingMessageDispatcher messageDispatcher;
+	
+	public LoadBalancingMessageDispatcher getMessageDispatcher() {
+		return messageDispatcher;
+	}
+	public void setMessageDispatcher(
+			LoadBalancingMessageDispatcher messageDispatcher) {
+		this.messageDispatcher = messageDispatcher;
+	}
+
+
 	private LB_PHASES phase = LB_PHASES.initiating;
 	
 	private int processId;
@@ -25,21 +36,11 @@ public class LoadBalancingStatus {
 	private ILogicalQueryPart modifiedPart;
 	private HashMap<String,String> replacedPipes;
 	
-	Integer[] foreignQueryIDs;
+	private ArrayList<String> pipesToInstall;
+	private HashMap <String,PeerID> peersForPipe;
 	
-	private ArrayList<String> pipesInstalled;
-	public Integer[] getForeignQueryIDs() {
-		return foreignQueryIDs;
-	}
-	public void setForeignQueryIDs(Integer[] foreignQueryIDs) {
-		this.foreignQueryIDs = foreignQueryIDs;
-	}
-	public ArrayList<String> getPipesInstalled() {
-		return pipesInstalled;
-	}
-	public void setPipesInstalled(ArrayList<String> pipesInstalled) {
-		this.pipesInstalled = pipesInstalled;
-	}
+	private PeerID volunteeringPeer;
+	
 	public ArrayList<String> getPipesToInstall() {
 		return pipesToInstall;
 	}
@@ -52,13 +53,7 @@ public class LoadBalancingStatus {
 	public void setPeersForPipe(HashMap<String, PeerID> peersForPipe) {
 		this.peersForPipe = peersForPipe;
 	}
-	private ArrayList<String> pipesToInstall;
-	private HashMap <String,PeerID> peersForPipe;
 	
-	private PeerID volunteeringPeer;
-	
-	
-
 	public LB_PHASES getPhase() {
 		return phase;
 	}
@@ -101,17 +96,18 @@ public class LoadBalancingStatus {
 	public void setReplacedPipes(HashMap<String, String> replacedPipes) {
 		this.replacedPipes = replacedPipes;
 	}
-	public synchronized void markPipeInstalled(String pipeID) {
-		if(pipesToInstall.contains(pipeID)) {
-			pipesToInstall.remove(pipeID);
-			pipesInstalled.add(pipeID);
-		}
-		
-	}
 	
 	public int pipesLeft() {
 		return pipesToInstall.size();
 	}
+	
+
+	public synchronized void markPipeInstalled(String pipeID) {
+		if(pipesToInstall.contains(pipeID)) {
+			pipesToInstall.remove(pipeID);
+		}
+	}
+	
 	
 	
 	

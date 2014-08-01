@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
@@ -27,7 +28,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
@@ -56,6 +56,15 @@ public class LoadBalancingHelper {
 		} catch (URISyntaxException | ClassCastException ex) {
 			return null;
 		}
+	}
+	
+	/**
+	 * Removes a query from current Peer.
+	 * 
+	 * @param queryId
+	 */
+	public static void deleteQuery(IExecutor executor, ISession session, int queryId) {
+		executor.removeQuery(queryId, session);
 	}
 	
 
@@ -440,7 +449,7 @@ public class LoadBalancingHelper {
 	 * @Param lbProcessId LoadBalancingProcessId.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void findAndCopyLocalJxtaOperator(IServerExecutor executor,IPeerCommunicator peerCommunicator, ISession session, boolean isSender,
+	public static void findAndCopyLocalJxtaOperator(IServerExecutor executor,LoadBalancingMessageDispatcher dispatcher, ISession session, boolean isSender,
 			String newPeerId, String oldPipeId, String newPipeId,
 			int lbProcessId) {
 		ILogicalOperator operator = getLogicalJxtaOperator(executor,session,isSender, oldPipeId);
@@ -492,9 +501,8 @@ public class LoadBalancingHelper {
 
 					LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>> synchronizer = new LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>>();
 
-					LoadBalancingFinishedListener listener = new LoadBalancingFinishedListener(peerCommunicator,
-							toPeerID(physicalOriginal.getPeerIDString()),
-							lbProcessId);
+					LoadBalancingFinishedListener listener = new LoadBalancingFinishedListener(dispatcher,
+							toPeerID(physicalOriginal.getPeerIDString()));
 					synchronizer.addListener(listener);
 
 					physicalOriginal.block();
