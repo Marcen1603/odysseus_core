@@ -1,12 +1,10 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
@@ -37,7 +35,7 @@ public interface ILoadBalancingAllocator extends INamedInterface {
 	
 	/**
 	 * Reallocates a given mapping of {@link PeerID}s (each identifying a peer) to {@link ILogicalQueryPart}s. <br />
-	 * This method may be used, if a first allocation ({@link #allocate(Collection, ILogicalQuery, Collection, PeerID, QueryBuildConfiguration, List)}) fails.
+	 * This method may be used, if a first allocation ({@link #allocate(Collection, ILogicalQuery, Collection, PeerID)}) fails.
 	 * @param previousAllocationMap A previous mapping of {@link PeerID}s (each identifying a peer) to {@link ILogicalQueryPart}s, indicating which {@link ILogicalQueryPart} has been allocated to which peer.
 	 * @param faultPeers A collection of peers identified by their {@link PeerID}s, where the first allocation failed.
 	 * @param knownRemotePeers A collection of all known peers identified by their {@link PeerID}s. This collection does not contain the local peer.
