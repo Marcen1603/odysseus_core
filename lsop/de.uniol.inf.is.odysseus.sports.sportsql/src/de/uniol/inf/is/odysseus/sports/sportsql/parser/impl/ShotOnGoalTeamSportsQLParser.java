@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
@@ -35,6 +34,11 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
 public class ShotOnGoalTeamSportsQLParser implements ISportsQLParser {
 
+	/**
+	 * Length of game in minutes
+	 */
+	private static final int GAME_LENGTH = 90;
+	
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
 			throws SportsQLParseException {
@@ -54,10 +58,8 @@ public class ShotOnGoalTeamSportsQLParser implements ISportsQLParser {
 		// -------------------------------------------------------------------
 
 		// 1. Time window
-		SportsQLTimeParameter timeParam = SportsQLParameterHelper
-				.getTimeParameter(sportsQL);
 		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(
-				Integer.parseInt(timeParam.getTime()), "Minutes",
+				GAME_LENGTH, "Minutes",
 				forecastCriteria);
 
 		// 2. Select for correct entity

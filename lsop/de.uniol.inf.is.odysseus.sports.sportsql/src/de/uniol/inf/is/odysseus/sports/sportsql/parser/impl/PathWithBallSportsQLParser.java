@@ -144,7 +144,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		
 		//Create AccessAOs for sources.
 		StreamAO source = OperatorBuildHelper.createGameStreamAO();
-		StreamAO metadata =OperatorBuildHelper.createMetadataStreamAO();
+		StreamAO metadata = OperatorBuildHelper.createMetadataStreamAO();
 
 		//Filter by Time
 		ILogicalOperator selectedTime = OperatorBuildHelper.createTimeSelect(
@@ -157,7 +157,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		allOperators.add(selectedSpace);
 
 		//Enrich game Stream with metadata.
-		ILogicalOperator enrichedStream = OperatorBuildHelper.createEnrichAO("sid=sensorid", selectedSpace,metadata);
+		ILogicalOperator enrichedStream = OperatorBuildHelper.createEnrichAO("sid = sensorid", selectedSpace,metadata);
 		allOperators.add(enrichedStream);
 		
 		// /balls_filtered =
