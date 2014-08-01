@@ -33,7 +33,7 @@ public class TestSelectSportsQLParser implements ISportsQLParser {
 			throws SportsQLParseException {
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		StreamAO access = OperatorBuildHelper.createGameStreamAO();
-		SelectAO testSelect = OperatorBuildHelper.createEntityIDSelect(8, access);
+		SelectAO testSelect = OperatorBuildHelper.createSelectAO("sid = 8", access);
 		allOperators.add(access);
 		allOperators.add(testSelect);
 		return OperatorBuildHelper.finishQuery(testSelect, allOperators, sportsQL.getName());

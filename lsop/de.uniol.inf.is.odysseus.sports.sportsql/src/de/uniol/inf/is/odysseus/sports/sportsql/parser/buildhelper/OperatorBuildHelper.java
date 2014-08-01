@@ -522,6 +522,8 @@ public class OperatorBuildHelper {
 
 		MapAO firstMap = OperatorBuildHelper.createMapAO(expressions, source,
 				0, 0);
+		
+		firstMap.initialize();
 
 		return createTimeSelect(timeParameter, firstMap);
 
@@ -544,7 +546,7 @@ public class OperatorBuildHelper {
 		// 'entity_id = ${entity_id}'
 
 		// 1. minute >= ${parameterTimeStart_minute}
-		String predicateString = "sid = " + entityId;
+		String predicateString = "entity_id = " + entityId;
 		SDFExpression predicateExpression = new SDFExpression(predicateString,
 				MEP.getInstance());
 		RelationalPredicate predicate = new RelationalPredicate(
