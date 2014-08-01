@@ -1,12 +1,30 @@
 package de.uniol.inf.is.odysseus.sports.rest.dao;
 
+import java.util.ArrayList;
+
+
+
 public class PeerSocket {
 	String ip;
-	String port;
+	int port;
+	ArrayList<AttributeInformation> attributeList;
 	
-	public PeerSocket(String ip, String port) {
+	public PeerSocket(){
+		
+	}
+	
+	public PeerSocket(String ip, int port, ArrayList<AttributeInformation> attributeList) {
 		this.ip = ip;
 		this.port = port;
+		this.attributeList = attributeList;
+	}
+
+	public ArrayList<AttributeInformation> getAttributeList() {
+		return attributeList;
+	}
+
+	public void setAttributeList(ArrayList<AttributeInformation> attributeList) {
+		this.attributeList = attributeList;
 	}
 
 	public String getIp() {
@@ -17,11 +35,11 @@ public class PeerSocket {
 		this.ip = ip;
 	}
 
-	public String getPort() {
+	public int getPort() {
 		return port;
 	}
 
-	public void setPort(String port) {
+	public void setPort(int port) {
 		this.port = port;
 	}
 }

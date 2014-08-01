@@ -14,8 +14,8 @@ import de.uniol.inf.is.odysseus.sports.rest.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.sports.rest.dao.DataTransferObject;
 import de.uniol.inf.is.odysseus.sports.rest.dao.PeerSocket;
 import de.uniol.inf.is.odysseus.sports.rest.resources.IQueryResource;
+import de.uniol.inf.is.odysseus.sports.rest.socket.SocketService;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
-//import de.uniol.inf.is.odysseus.sports.
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.registry.SportsQLParserRegistry;
 
@@ -23,6 +23,7 @@ public class QueryWithLoginServerResource extends ServerResource implements
 		IQueryResource {
 	
 	public static String sToken;
+
 
 	@Override
 	public void receiveQuery(String sportsQL) {
@@ -40,13 +41,20 @@ public class QueryWithLoginServerResource extends ServerResource implements
 
 				ILogicalQuery logicalQuery = parser.parse(query);			
 				IServerExecutor executor = ExecutorServiceBinding.getExecutor();
-				executor.addQuery(logicalQuery.getLogicalPlan(), session, "Standard");
+				int queryId = executor.addQuery(logicalQuery.getLogicalPlan(), session, "Standard");
 			
-				PeerSocket s = new PeerSocket("127.0.1", "8080");
+				//get SocketInformation
+				PeerSocket peerSocket = SocketService.getInstance().getConnectionInformation(securityToken, queryId);
 
-				DataTransferObject dto = new DataTransferObject("SocketInfo", s);
-				response.setEntity(new JacksonRepresentation<DataTransferObject>(dto));
-				response.setStatus(Status.SUCCESS_OK);
+				//add to dto
+				if(peerSocket != null){
+					DataTransferObject dto = new DataTransferObject("SocketInfo", peerSocket);
+					response.setEntity(new JacksonRepresentation<DataTransferObject>(dto));
+					response.setStatus(Status.SUCCESS_OK);
+				}else{
+					response.setStatus(Status.SERVER_ERROR_INTERNAL);
+				}
+				
 			}
 			
 		} catch (Exception e) {

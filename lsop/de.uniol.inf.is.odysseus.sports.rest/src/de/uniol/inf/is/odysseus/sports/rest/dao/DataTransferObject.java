@@ -1,13 +1,12 @@
 package de.uniol.inf.is.odysseus.sports.rest.dao;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DataTransferObject implements Serializable{
-	
-	private static final long serialVersionUID = -3042714386806400699L;
+
+public class DataTransferObject{
+
 	private String datatype;
 	private String payload;
 	
@@ -34,9 +33,11 @@ public class DataTransferObject implements Serializable{
 	
 	public static String getJSONString(Object object) {
 		ObjectMapper mapper = new ObjectMapper();
+	
 		String json = "";
 		try {
 			json = mapper.writeValueAsString(object);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
