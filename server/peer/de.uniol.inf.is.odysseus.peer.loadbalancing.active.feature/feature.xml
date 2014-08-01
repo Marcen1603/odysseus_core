@@ -28,8 +28,16 @@ Unless required by applicable law or agreed to in writing, software
    <url>
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
+
    <plugin
          id="de.uniol.inf.is.odysseus.peer.loadbalancing.active"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.active.simple"
          download-size="0"
          install-size="0"
          version="0.0.0"
