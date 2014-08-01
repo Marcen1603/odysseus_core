@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.loadbalancing.active.simple.ResourceManager">
+   <implementation class="de.uniol.inf.is.odysseus.peer.loadbalancing.active.simple.Activator"/>
+   <reference bind="bindResourceManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager" name="IPeerResourceUsageManager" policy="static" unbind="unbindResourceManager"/>
+</scr:component>
