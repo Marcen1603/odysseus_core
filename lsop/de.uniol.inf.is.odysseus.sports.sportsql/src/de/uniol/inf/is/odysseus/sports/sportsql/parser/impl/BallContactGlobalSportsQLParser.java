@@ -86,10 +86,10 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		ArrayList<String> attributes = new ArrayList<String>();
 		
 		//get the time parameter 
-		SportsQLTimeParameter timeParameter = SportsQLParameterHelper.getTimeParameter(sportsQL);;
+		SportsQLTimeParameter timeParameter = SportsQLParameterHelper.getTimeParameter(sportsQL);
 		
 		//get the space parameter
-		SportsQLSpaceParameter spaceParameter = SportsQLParameterHelper.getSpaceParameter(sportsQL);;
+		SportsQLSpaceParameter spaceParameter = SportsQLParameterHelper.getSpaceParameter(sportsQL);
 		
 		//game source
 		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
@@ -99,7 +99,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		
 		
 		//count ball contacts with the beginning of the game
-		ILogicalOperator game_after_start = OperatorBuildHelper.createTimeSelect(timeParameter, soccerGameStreamAO);
+		ILogicalOperator game_after_start = OperatorBuildHelper.createTimeMapAndSelect(timeParameter, soccerGameStreamAO);
 		allOperators.add(game_after_start);
 		
 		ILogicalOperator game_space = OperatorBuildHelper.createSpaceSelect(spaceParameter, false, game_after_start);

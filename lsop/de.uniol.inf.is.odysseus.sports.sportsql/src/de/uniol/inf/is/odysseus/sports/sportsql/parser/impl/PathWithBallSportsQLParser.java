@@ -147,7 +147,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		StreamAO metadata = OperatorBuildHelper.createMetadataStreamAO();
 
 		//Filter by Time
-		ILogicalOperator selectedTime = OperatorBuildHelper.createTimeSelect(
+		ILogicalOperator selectedTime = OperatorBuildHelper.createTimeMapAndSelect(
 				timeParameter, source);
 		allOperators.add(selectedTime);
 

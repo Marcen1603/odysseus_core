@@ -121,7 +121,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		
 		// 1. Time Parameter
 		SportsQLTimeParameter timeParameter = SportsQLParameterHelper.getTimeParameter(sportsQL);
-		SelectAO gameTimeSelect = OperatorBuildHelper.createTimeSelect(timeParameter, soccerGameStreamAO);
+		SelectAO gameTimeSelect = OperatorBuildHelper.createTimeMapAndSelect(timeParameter, soccerGameStreamAO);
 		allOperators.add(gameTimeSelect);
 		
 		

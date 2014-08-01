@@ -408,9 +408,14 @@ public class OperatorBuildHelper {
 		// minute >= ${parameterTimeStart_minute} AND minute <=
 		// ${parameterTimeEnd_minute} AND second >= 0
 
-		// TODO: Do the right thing if timeParameter says "all" or "now"
+		// TODO: Do the right thing if timeParameter says "now"
 		int startMinute = timeParameter.getStart();
 		int endMinute = timeParameter.getEnd();
+
+		if (timeParameter.getTime().equals("all")) {
+			startMinute = Integer.MIN_VALUE;
+			endMinute = Integer.MAX_VALUE;
+		}
 
 		// 1. minute >= ${parameterTimeStart_minute}
 		String firstPredicateString = "minute >= " + startMinute;
@@ -624,7 +629,6 @@ public class OperatorBuildHelper {
 				metaStream.getOutputSchema());
 		enrichAO.subscribeToSource(streamToEnrich, 1, 0,
 				streamToEnrich.getOutputSchema());
-		
 
 		return enrichAO;
 	}
@@ -1303,6 +1307,7 @@ public class OperatorBuildHelper {
 
 	/**
 	 * Creates a StreamAO. You'll need this to access sources.
+	 * 
 	 * @param sourceName
 	 * @return
 	 */
@@ -1319,15 +1324,17 @@ public class OperatorBuildHelper {
 
 	/**
 	 * Creates a StreamAO for the game stream
+	 * 
 	 * @return
 	 */
 	public static StreamAO createGameStreamAO() {
 		String gameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
 		return createStreamAO(gameSourceName);
 	}
-	
+
 	/**
 	 * Creates a StreamAO for the metadata stream
+	 * 
 	 * @return
 	 */
 	public static StreamAO createMetadataStreamAO() {
