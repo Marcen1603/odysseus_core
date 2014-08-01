@@ -620,10 +620,11 @@ public class OperatorBuildHelper {
 
 		predicateParameter.setInputValue(joinPredicate);
 		enrichAO.setPredicate(predicateParameter.getValue());
-		enrichAO.subscribeToSource(streamToEnrich, 0, 0,
-				streamToEnrich.getOutputSchema());
-		enrichAO.subscribeToSource(metaStream, 1, 1,
+		enrichAO.subscribeToSource(metaStream, 0, 0,
 				metaStream.getOutputSchema());
+		enrichAO.subscribeToSource(streamToEnrich, 1, 0,
+				streamToEnrich.getOutputSchema());
+		
 
 		return enrichAO;
 	}

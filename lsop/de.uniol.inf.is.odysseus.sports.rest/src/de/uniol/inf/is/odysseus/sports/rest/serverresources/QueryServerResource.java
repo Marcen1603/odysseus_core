@@ -20,18 +20,6 @@ public class QueryServerResource extends ServerResource implements
 
 		Response r = getResponse();
 		try {
-			// SportsQLQuery query = SportsQLParserRegistry
-			// .createSportsQLQuery(sportsQL);
-			// ISportsQLParser parser = SportsQLParserRegistry
-			// .getSportsQLParser(query);
-			// ILogicalQuery logicalQuery = parser.parse(query);
-			// System.out.println(logicalQuery.getName());
-
-			// TODO Install query
-			// TODO Talk with Marco about StandardExecutor
-			// TODO Do it different with IQueryParser
-
-			// null for Standard
 			StandardExecutor.getInstance().addQuery(sportsQL, "SportsQL",
 					OdysseusRCPPlugIn.getActiveSession(), "Standard", Context.empty());
 
