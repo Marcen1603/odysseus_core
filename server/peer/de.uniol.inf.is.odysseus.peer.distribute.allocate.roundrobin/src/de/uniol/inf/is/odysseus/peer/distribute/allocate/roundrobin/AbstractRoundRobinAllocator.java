@@ -17,8 +17,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 
-public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator {
+public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator, ILoadBalancingAllocator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractRoundRobinAllocator.class);
 	
