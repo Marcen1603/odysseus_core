@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
@@ -36,7 +37,7 @@ import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
  * allocates it using the allocator set by {@link #setAllocator(ILoadBalancingAllocator)}.
  * @author Michael Brand
  */
-public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy {
+public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoadBalancingListener {
 	
 	/**
 	 * The logger for this class.
@@ -98,6 +99,11 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy {
 		 * The current resource usage.
 		 */
 		protected IResourceUsage mUsage;
+		
+		/**
+		 * True, if a load balancing process is currently running.
+		 */
+		protected volatile boolean mCurrentlyBalancing = false;
 		
 		/**
 		 * Compares the current with the last usage.
@@ -249,6 +255,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy {
 				
 				// Initialize the load balancing
 				this.mCommunicator.initiateLoadBalancing(peerID, queryAndID.getE2());
+				this.mCurrentlyBalancing = true;
 				
 			}
 			
@@ -272,23 +279,27 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy {
 			
 			while(this.isAlive() && !this.isInterrupted()) {
 			
-				try {
+				if(!this.mCurrentlyBalancing) {
 				
-					final Optional<IResourceUsage> lastUsage = Optional.fromNullable(this.mUsage);
-					final IResourceUsage usage = resourceManager.getLocalResourceUsage();
+					try {
 					
-					if(!lastUsage.isPresent() || this.hasUsageChanged(usage, lastUsage.get())) {
+						final Optional<IResourceUsage> lastUsage = Optional.fromNullable(this.mUsage);
+						final IResourceUsage usage = resourceManager.getLocalResourceUsage();
 						
-						this.updateUsage(usage);
+						if(!lastUsage.isPresent() || this.hasUsageChanged(usage, lastUsage.get())) {
+							
+							this.updateUsage(usage);
+							
+						}
+						
+						Thread.sleep(this.mResourceLookupTime);
+						
+					} catch(InterruptedException e) {
+						
+						LOG.error(e.getMessage());
+						break;
 						
 					}
-					
-					Thread.sleep(this.mResourceLookupTime);
-					
-				} catch(InterruptedException e) {
-					
-					LOG.error(e.getMessage());
-					break;
 					
 				}
 				
@@ -423,6 +434,14 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy {
 		
 		this.mLookupThread.interrupt();
 		LOG.debug("Stopped monitoring local resources");
+		
+	}
+
+	@Override
+	public void notifyLoadBalancingFinished() {
+		
+		this.mLookupThread.mCurrentlyBalancing = false;
+		LOG.debug("Load balancing process finished. Continue monitoring");
 		
 	}
 
