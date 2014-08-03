@@ -4,7 +4,6 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -18,8 +17,6 @@ import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
@@ -29,8 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.StandardExecutor;
-import de.uniol.inf.is.odysseus.sports.rest.dao.AttributeInformation;
-import de.uniol.inf.is.odysseus.sports.rest.dao.PeerSocket;
+import de.uniol.inf.is.odysseus.sports.rest.dao.SocketInfo;
 import de.uniol.inf.is.odysseus.sports.rest.exception.InvalidUserDataException;
 
 public class SocketService {
@@ -54,7 +50,7 @@ public class SocketService {
 	  }
 	
 	
-	public PeerSocket getConnectionInformation(String securityToken, int queryId)
+	public SocketInfo getConnectionInformation(String securityToken, int queryId)
 			throws InvalidUserDataException {
 
 		return getConnectionInformationWithPorts(securityToken, queryId,0,
@@ -63,7 +59,7 @@ public class SocketService {
 						.getInt("maxSinkPort", SINK_MAX_PORT)));
 	}
 	
-	public PeerSocket getConnectionInformationWithPorts(
+	public SocketInfo getConnectionInformationWithPorts(
 			String securityToken,
 			 int queryId,
 			 int rootPort,
@@ -116,7 +112,7 @@ public class SocketService {
 				}
 			}
 			
-			PeerSocket socketInfo = new PeerSocket(InetAddress.getLocalHost().getHostAddress(), port, getAttributeInformationList(po));
+			SocketInfo socketInfo = new SocketInfo(InetAddress.getLocalHost().getHostAddress(), port);
 			
 			return socketInfo;
 			
@@ -129,18 +125,7 @@ public class SocketService {
 		}
 	}
 	
-	private ArrayList<AttributeInformation> getAttributeInformationList(SocketSinkPO po){
-		SDFSchema outputSchema = po.getOutputSchema();
-		
-		List<SDFAttribute> attibuteList = outputSchema.getAttributes();
-		
-		ArrayList<AttributeInformation> attributeInformationList = new ArrayList<AttributeInformation>();
-		for (SDFAttribute sdfAttribute : attibuteList) {
-			attributeInformationList.add(new AttributeInformation(sdfAttribute.getAttributeName(),sdfAttribute.getDatatype().getQualName()));
-		}
-		
-		return attributeInformationList;
-	}
+	
 	
 	private int getNextFreePort(int min, int max) {
 		int port = 0;

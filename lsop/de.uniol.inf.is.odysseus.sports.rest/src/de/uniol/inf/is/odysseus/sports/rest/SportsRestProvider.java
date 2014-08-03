@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.rest.provider.IRestProvider;
 import de.uniol.inf.is.odysseus.sports.rest.serverresources.LoginServerResource;
 import de.uniol.inf.is.odysseus.sports.rest.serverresources.QueryServerResource;
 import de.uniol.inf.is.odysseus.sports.rest.serverresources.QueryWithLoginServerResource;
+import de.uniol.inf.is.odysseus.sports.rest.serverresources.SocketInfoServerResource;
 
 /**
  * This class gets instantiated only one time so here are the API´s routes defined 
@@ -33,7 +34,8 @@ public class SportsRestProvider extends Application implements IRestProvider{
 
 		router.attach("/query", QueryServerResource.class);
 
-		
+		router.attach("/socket_info", SocketInfoServerResource.class);
+
 		router.attach("/login", LoginServerResource.class);
 
 		router.attach("/querywithlogin", QueryWithLoginServerResource.class);
