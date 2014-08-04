@@ -20,6 +20,8 @@ public class LoadBalancingResponseMessage implements IMessage {
 	public static final int SUCCESS_DUPLICATE = 3;
 	public static final int FAILURE_DUPLICATE_RECEIVER = 4;
 	
+	public static final int SYNC_FINISHED = 5;
+	
 	
 	
 	
@@ -58,6 +60,13 @@ public class LoadBalancingResponseMessage implements IMessage {
 		this.loadBalancingProcessId = loadBalancingProcessId;
 	}
 
+	public static LoadBalancingResponseMessage createSyncFinishedMsg(int lbProcessId, String pipeID) {
+		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+		message.setMsgType(SYNC_FINISHED);
+		message.setLoadBalancingProcessId(lbProcessId);
+		message.setPipeID(pipeID);
+		return message;
+	}
 
 	@Override
 	/**
@@ -109,6 +118,7 @@ public class LoadBalancingResponseMessage implements IMessage {
 				
 				break;
 			case SUCCESS_DUPLICATE:
+			case SYNC_FINISHED:
 				
 				/*
 				 * Allocate byte Buffer:

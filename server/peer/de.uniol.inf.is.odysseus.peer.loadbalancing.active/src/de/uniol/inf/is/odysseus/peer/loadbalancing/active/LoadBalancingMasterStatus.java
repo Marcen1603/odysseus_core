@@ -36,6 +36,23 @@ public class LoadBalancingMasterStatus {
 	private ILogicalQueryPart modifiedPart;
 	private HashMap<String,String> replacedPipes;
 	
+	private ArrayList<String> pipesToSync;
+	
+	public void setPipesToSync(ArrayList<String> pipesToSync) {
+		this.pipesToSync = pipesToSync;
+	}
+	
+	public synchronized void removePipeToSync(String pipeId) {
+		if(this.pipesToSync.contains(pipeId)) {
+				this.pipesToSync.remove(pipeId);
+		}
+	}
+	
+	public synchronized int getNumberOfPipesToSync() {
+		return pipesToSync.size();
+	}
+
+
 	private ArrayList<String> pipesToInstall;
 	private HashMap <String,PeerID> peersForPipe;
 	

@@ -12,6 +12,12 @@ public class LoadBalancingSlaveStatus {
 		VOLUNTEERING_PEER,PEER_WITH_SENDER_OR_RECEIVER
 	}
 	
+	public enum LB_PHASES {
+		WAITING_FOR_ADD, WAITING_FOR_MSG_RECEIVED,WAITING_FOR_SYNC,ABORT
+	}
+	
+	private LB_PHASES phase;
+	
 	private final INVOLVEMENT_TYPES involvementType;
 
 	private final int lbProcessId;
@@ -21,6 +27,11 @@ public class LoadBalancingSlaveStatus {
 	
 	private ConcurrentHashMap<String,String> replacedPipes;
 	
+
+	private final LoadBalancingMessageDispatcher messageDispatcher;
+	
+	
+	
 	public Integer[] getInstalledQueries() {
 		return installedQueries;
 	}
@@ -29,25 +40,39 @@ public class LoadBalancingSlaveStatus {
 	public void setInstalledQueries(Integer[] installedQueries) {
 		this.installedQueries = installedQueries;
 	}
+	
+	public boolean isPipeKnown(String pipeId) {
+		return replacedPipes.contains(pipeId);
+	}
+	
+	public void addReplacedPipe(String newPipeId, String oldPipeId) {
+		if(!replacedPipes.contains(newPipeId)) {
+			replacedPipes.put(newPipeId,oldPipeId);
+		}
+	}
 
 
 	public ConcurrentHashMap<String, String> getReplacedPipes() {
 		return replacedPipes;
 	}
 
-
-	public void setReplacedPipes(ConcurrentHashMap<String, String> replacedPipes) {
-		this.replacedPipes = replacedPipes;
-	}
-
-	private final LoadBalancingMessageDispatcher messageDispatcher;
-	
-	
-	public LoadBalancingSlaveStatus(INVOLVEMENT_TYPES involvementType, PeerID initiatingPeer, int lbProcessId, LoadBalancingMessageDispatcher messageDispatcher) {
+	public LoadBalancingSlaveStatus(INVOLVEMENT_TYPES involvementType, LB_PHASES phase, PeerID initiatingPeer, int lbProcessId, LoadBalancingMessageDispatcher messageDispatcher) {
+		this.phase = phase;
 		this.involvementType = involvementType;
 		this.initiatingPeer = initiatingPeer;
 		this.lbProcessId = lbProcessId;
 		this.messageDispatcher = messageDispatcher;
+		this.replacedPipes = new ConcurrentHashMap<String,String>();
+	}
+
+
+	public LB_PHASES getPhase() {
+		return phase;
+	}
+
+
+	public void setPhase(LB_PHASES phase) {
+		this.phase = phase;
 	}
 
 

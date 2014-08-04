@@ -17,7 +17,6 @@ public class LoadBalancingInstructionMessage implements IMessage {
 	public static final int COPY_SENDER = 3;
 	public static final int DELETE_SENDER = 4;
 	public static final int DELETE_RECEIVER = 5;
-	public static final int DELETE_QUERY = 6;
 	
 	private int loadBalancingProcessId;
 	private int msgType;
@@ -63,7 +62,7 @@ public class LoadBalancingInstructionMessage implements IMessage {
 		}
 		return message;
 	}
-	
+
 	public static LoadBalancingInstructionMessage createDeleteOperatorMsg(boolean isSender, int lbProcessId, String pipeId) {
 		LoadBalancingInstructionMessage message = new LoadBalancingInstructionMessage();
 		message.oldPipeId = pipeId;
@@ -75,13 +74,6 @@ public class LoadBalancingInstructionMessage implements IMessage {
 		return message;
 	}
 	
-	public static LoadBalancingInstructionMessage createDeleteQueryMsg(int loadBalancingProcessId) {
-		LoadBalancingInstructionMessage message = new LoadBalancingInstructionMessage();
-		message.loadBalancingProcessId = loadBalancingProcessId;
-		message.msgType = DELETE_QUERY;
-		return message;
-	}
-
 	@Override
 	/**
 	 * Returns message as byte array.
@@ -94,7 +86,6 @@ public class LoadBalancingInstructionMessage implements IMessage {
 		switch(msgType) {
 		
 		case INITIATE_LOADBALANCING:
-		case DELETE_QUERY:
 			/*
 			 * Allocate byte Buffer:
 			 * 	4 Bytes for integer msgType

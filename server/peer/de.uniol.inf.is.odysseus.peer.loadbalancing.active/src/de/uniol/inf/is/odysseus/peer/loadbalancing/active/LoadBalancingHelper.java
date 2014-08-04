@@ -68,7 +68,7 @@ public class LoadBalancingHelper {
 	}
 	
 
-	public static HashMap<String,String> relinkQueryPart(IP2PNetworkManager p2pNetworkManager, ILogicalQueryPart part, PeerID newPeer) {
+	public static HashMap<String,String> relinkQueryPart(IP2PNetworkManager p2pNetworkManager, ILogicalQueryPart part, PeerID newPeer, LoadBalancingMasterStatus status) {
 		LoadBalancingHelper.removeTopAOs(part);
 		Map<ILogicalOperator, Collection<ConnectionToOperator>> incomingConnections = LoadBalancingHelper.stripJxtaReceivers(part);
 		Map<ILogicalOperator, Collection<ConnectionToOperator>> outgoingConnections = LoadBalancingHelper.stripJxtaSenders(part);
@@ -78,6 +78,7 @@ public class LoadBalancingHelper {
 				.getRelativeSourcesOfLogicalQueryPart(part);
 
 		HashMap<String,String> replacedPipes = new HashMap<String,String>();
+		ArrayList<String> receiverPipes = new ArrayList<String>();
 		
 		for (ILogicalOperator relativeSource : relativeSources) {
 			if (incomingConnections.containsKey(relativeSource)) {
@@ -96,6 +97,7 @@ public class LoadBalancingHelper {
 					receiver.setSchema(connection.schema.getAttributes());
 					receiver.connectSink(relativeSource, connection.port, 0,
 							relativeSource.getInputSchema(0));
+					receiverPipes.add(connection.oldPipeID);
 					
 					
 				}
@@ -122,6 +124,7 @@ public class LoadBalancingHelper {
 				}
 			}
 		}
+		status.setPipesToSync(receiverPipes);
 		return replacedPipes;
 	}
 	
@@ -500,9 +503,9 @@ public class LoadBalancingHelper {
 							.getOutputSchema());
 
 					LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>> synchronizer = new LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>>();
-
+					
 					LoadBalancingFinishedListener listener = new LoadBalancingFinishedListener(dispatcher,
-							toPeerID(physicalOriginal.getPeerIDString()));
+							toPeerID(physicalOriginal.getPeerIDString()),oldPipeId);
 					synchronizer.addListener(listener);
 
 					physicalOriginal.block();

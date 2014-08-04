@@ -17,6 +17,14 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 	private final IMessage message;
 	private final PeerID peerID;
 	
+	public IMessage getMessage() {
+		return message;
+	}
+
+	public PeerID getPeerID() {
+		return peerID;
+	}
+
 	private int sendingTime;
 	private boolean warned;
 	
