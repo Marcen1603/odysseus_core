@@ -143,7 +143,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 
 		predicates.add("sid=4 OR sid=8 OR sid=10 OR sid=12");
 		ILogicalOperator split_balls = OperatorBuildHelper.createRouteAO(
-				predicates, game_after_start);
+				predicates, game_space);
 		allOperators.add(split_balls);
 		predicates.clear();
 
@@ -163,19 +163,20 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		attributes.clear();
 
 		// Get the current ball in the game
-		predicates.add("x>" + spaceParameter.getStartx() + " AND x<"
-				+ spaceParameter.getEndx() + " AND y>"
-				+ spaceParameter.getStarty() + " AND y<"
-				+ spaceParameter.getEndy());
-		ILogicalOperator ball_in_game_select = OperatorBuildHelper
-				.createSelectAO(predicates, ball_velocity_changes);
-		allOperators.add(ball_in_game_select);
-		predicates.clear();
+		// There is already a space select which does exactly this
+//		predicates.add("x>" + spaceParameter.getStartx() + " AND x<"
+//				+ spaceParameter.getEndx() + " AND y>"
+//				+ spaceParameter.getStarty() + " AND y<"
+//				+ spaceParameter.getEndy());
+//		ILogicalOperator ball_in_game_select = OperatorBuildHelper
+//				.createSelectAO(predicates, ball_velocity_changes);
+//		allOperators.add(ball_in_game_select);
+//		predicates.clear();
 
 		// Get position of active ball in game
 		ILogicalOperator ball_position_map = OperatorBuildHelper.createMapAO(
-				getMapExpressionForBallPosition(ball_in_game_select),
-				ball_in_game_select, 0, 0);
+				getMapExpressionForBallPosition(ball_velocity_changes),
+				ball_velocity_changes, 0, 0);
 		allOperators.add(ball_position_map);
 
 		// window size = 1, advance = 1

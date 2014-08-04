@@ -286,7 +286,6 @@ public class OperatorBuildHelper {
 		int endX = parameter.getEndx();
 		int endY = parameter.getEndy();
 
-		// TODO Parameters don't fit to the numbers
 		if (parameter.getSpace() != null && parameter.getSpace().equals(SportsQLSpaceParameter.SPACE_PARAMETER_ALL)) {
 			// Don't filter anything away
 			startX = Integer.MIN_VALUE;
@@ -897,6 +896,7 @@ public class OperatorBuildHelper {
 
 		// cAO.subscribeToSource(source, 0, 1, inputSchema);
 		cAO.subscribeTo(source, source.getOutputSchema());
+		
 		return cAO;
 	}
 
@@ -1044,7 +1044,6 @@ public class OperatorBuildHelper {
 	 */
 	public static ElementWindowAO createTupleWindowAO(int size, int advance,
 			ILogicalOperator source) {
-		// TODO Use ElementWindow instead
 		ElementWindowAO windowAO = new ElementWindowAO();
 		TimeValueItem windowSize = new TimeValueItem(size, null);
 		TimeValueItem windowAdvance = new TimeValueItem(advance, null);
@@ -1274,7 +1273,6 @@ public class OperatorBuildHelper {
 		EnumParameter cardParam = new EnumParameter();
 		cardParam.setEnum(Cardinalities.class);
 		cardParam.setInputValue(card);
-		// TODO Does this cast work?
 		joinAO.setCard((Cardinalities) cardParam.getValue());
 
 		joinAO.subscribeToSource(source1, 0, 0, source1.getOutputSchema());
@@ -1325,7 +1323,6 @@ public class OperatorBuildHelper {
 		source.setInputValue(sourcename);
 		source.setDataDictionary(dataDict);
 
-		// TODO We need to set the caller
 		ISession session = OperatorBuildHelper.getActiveSession();
 		source.setCaller(session);
 
