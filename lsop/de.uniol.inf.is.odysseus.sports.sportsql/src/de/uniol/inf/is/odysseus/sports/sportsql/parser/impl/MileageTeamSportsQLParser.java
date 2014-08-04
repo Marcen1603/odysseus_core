@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
@@ -71,7 +70,7 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		SportsQLSpaceParameter spaceParam = SportsQLParameterHelper
 				.getSpaceParameter(sportsQL);
 		SelectAO spaceSelectAO = OperatorBuildHelper.createSpaceSelect(
-				spaceParam, true, soccerGameStreamAO);
+				spaceParam, true, timeSelect);
 		allOperators.add(spaceSelectAO);
 
 		// -----------------------------------------
@@ -79,7 +78,7 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		// -----------------------------------------
 
 		// 1. Select for team
-		SelectAO teamSelect = OperatorBuildHelper.createEntityIDSelect(
+		SelectAO teamSelect = OperatorBuildHelper.createTeamSelectAO(
 				sportsQL.getEntityId(), metaDataStreamAO);
 		allOperators.add(teamSelect);
 
@@ -87,16 +86,9 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		// Fourth part (Calculate distance)
 		// -----------------------------------------
 
-		// 1. Join
-		List<String> predicates = new ArrayList<String>();
-		predicates.add("sid = sensor_id");
-		JoinAO sensorJoinAO = OperatorBuildHelper.createJoinAO(predicates, "ONE_ONE",
-				timeSelect, spaceSelectAO);
-		allOperators.add(sensorJoinAO);
-
-		// 2. Enrich MainStream with MetaData
+		// 1. Enrich MainStream with MetaData
 		EnrichAO sensorEnrich = OperatorBuildHelper.createEnrichAO(
-				"sensorid = sid", teamSelect, sensorJoinAO);
+				"sensorid = sid", spaceSelectAO, teamSelect);
 		allOperators.add(sensorEnrich);
 
 		// 3. StateMapAO for mileage calculation
@@ -115,7 +107,7 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		expressions.add(param3);
 		
 		List<String> groupBy = new ArrayList<String>();
-		groupBy.add("sensor_id");
+		groupBy.add("sensorid");
 		groupBy.add("entity_id");
 		StateMapAO mileageStateMap = OperatorBuildHelper.createStateMapAO(
 				expressions, groupBy, sensorEnrich);

@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuild
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 @SportsQL(
@@ -26,7 +27,8 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 		statisticTypes = { StatisticType.PLAYER },
 		name = "mileage",
 		parameters = { 
-				@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false)				}
+				@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
+				@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) 				}
 		)
 public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
@@ -48,8 +50,14 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
 		SelectAO timeSelect = OperatorBuildHelper.createTimeMapAndSelect(timeParam,
 				soccerGameStreamAO);
-		// timeSelect.updateSchemaInfos();
 		allOperators.add(timeSelect);
+		
+		// Selection for space
+		SportsQLSpaceParameter spaceParam = SportsQLParameterHelper
+				.getSpaceParameter(sportsQL);
+		SelectAO spaceSelectAO = OperatorBuildHelper.createSpaceSelect(
+				spaceParam, true, timeSelect);
+		allOperators.add(spaceSelectAO);
 
 		// -------------------------------------------------------
 		// Second part of the query (Select for questioned entity)
@@ -66,7 +74,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 
 		// 1. Enrich
 		EnrichAO enrichAO = OperatorBuildHelper.createEnrichAO(
-				"sensorid = sid", entitySelect, timeSelect);
+				"sensorid = sid", spaceSelectAO, entitySelect);
 		allOperators.add(enrichAO);
 
 		// 2. StateMap
