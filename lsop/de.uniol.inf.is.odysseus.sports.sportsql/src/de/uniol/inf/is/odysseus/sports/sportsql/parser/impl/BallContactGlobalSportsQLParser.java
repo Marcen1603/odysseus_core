@@ -25,8 +25,8 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  * Example Query:
  * 
  * { "statisticType": "global", "gameType": "soccer", "name": "ball_contact",
- * "parameters": { "time": { "start": 10753295594424116, "end" :
- * 9999999999999999, } "space": { "startx":-50, "starty":-33960 "endx":52489
+ * "parameters": { "time": { "start": 0, "end" :
+ * 90, } "space": { "startx":-50, "starty":-33960 "endx":52489
  * "endy":33965 } } }
  * 
  * @author Thomas Prünie
@@ -140,7 +140,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		allOperators.add(game_after_start);
 
 		ILogicalOperator game_space = OperatorBuildHelper.createSpaceSelect(
-				spaceParameter, false, game_after_start);
+				spaceParameter, true, game_after_start);
 		allOperators.add(game_space);
 
 		predicates.add("sid= " + OperatorBuildHelper.BALL_1 + " OR sid= "
