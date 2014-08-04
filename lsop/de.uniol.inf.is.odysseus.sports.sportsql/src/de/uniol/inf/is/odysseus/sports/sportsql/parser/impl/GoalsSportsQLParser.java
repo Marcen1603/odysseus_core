@@ -53,6 +53,8 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 	private static final int MIN_Y = GOALLINE1;
 	private static final int MAX_Y = GOALLINE2;
 
+	private static final String ONE_SECOND = "1000000000000";
+
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
 			throws SportsQLParseException {
@@ -71,30 +73,40 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		predicates.clear();
 
 		// get only ball
-		predicates.add("sid=12 OR sid=8 OR sid=10 OR sid=4");
-		RouteAO ball = OperatorBuildHelper.createRouteAO(predicates,
+		String predicate = "sid= " + OperatorBuildHelper.BALL_1 + " OR sid= "
+				+ OperatorBuildHelper.BALL_2 + " OR sid= "
+				+ OperatorBuildHelper.BALL_3 + " OR sid= "
+				+ OperatorBuildHelper.BALL_4;
+		SelectAO ball = OperatorBuildHelper.createSelectAO(predicate,
 				soccergame_after_start);
 		allOperators.add(ball);
 		predicates.clear();
 
 		// ball in game field
-		predicates.add(" x > " + MIN_X + " AND x < " + MAX_X + " AND y > "
-				+ MIN_Y + " AND y < " + MAX_Y + " ");
-		RouteAO ball_in_game_field = OperatorBuildHelper.createRouteAO(
-				predicates, ball);
+		predicate = " x > " + MIN_X + " AND x < " + MAX_X + " AND y > " + MIN_Y
+				+ " AND y < " + MAX_Y + " ";
+		SelectAO ball_in_game_field = OperatorBuildHelper.createSelectAO(
+				predicate, ball);
 		allOperators.add(ball_in_game_field);
 		predicates.clear();
 
-		// ball in goal or field stream
-		predicates.add(" (x > " + MIN_X + " AND x < " + MAX_X + " AND y > "
-				+ MIN_Y + " AND y < " + MAX_Y + ") OR (y < " + GOALLINE1
+
+		// ball in goal or field stream	
+		predicate = "(x > " + MIN_X + " AND x < " + MAX_X + " AND y > "
+				+ MIN_Y + " AND y < " + MAX_Y + ")";
+		
+		predicate +=  " OR (y < " + GOALLINE1
 				+ " AND y > ((" + GOALLINE1 + ")-(" + GOAL_DEPTH
 				+ ")) AND x > " + GOALPOST1_RIGHT + " AND x < "
-				+ GOALPOST1_LEFT + ") OR (y > " + GOALLINE2 + " AND y < (("
+				+ GOALPOST1_LEFT + ")";
+		
+		predicate += " OR (y > " + GOALLINE2 + " AND y < (("
 				+ GOALLINE2 + ")+(" + GOAL_DEPTH + ")) AND x < "
-				+ GOALPOST2_RIGHT + " AND x > " + GOALPOST2_LEFT + ")");
-		RouteAO ball_in_goal_or_field = OperatorBuildHelper.createRouteAO(
-				predicates, soccergame_after_start);
+				+ GOALPOST2_RIGHT + " AND x > " + GOALPOST2_LEFT + ")";
+		
+		
+		SelectAO ball_in_goal_or_field = OperatorBuildHelper.createSelectAO(
+				predicate, soccergame_after_start);
 		allOperators.add(ball_in_goal_or_field);
 		predicates.clear();
 
@@ -128,8 +140,8 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		attributes.clear();
 
 		// join goals of last x seconds with centre spot stream
-		predicates.add(" goal_ts > (spot_ball_ts - (" + T_GOAL_KICKOFF
-				+ " * 1000000000000)) AND (inGoal1 = 1 OR inGoal2 = 1) ");
+		predicates.add(" goal_ts > (spot_ball_ts - (" + T_GOAL_KICKOFF + " * "
+				+ ONE_SECOND + ")) AND (inGoal1 = 1 OR inGoal2 = 1) ");
 		JoinAO goals_join = OperatorBuildHelper.createJoinAO(predicates,
 				inGoal_filter, onCentreSpot_filter);
 		allOperators.add(goals_join);
