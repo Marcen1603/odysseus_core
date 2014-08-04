@@ -31,8 +31,8 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  * Example Query:
  * 
  * { "statisticType": "player", "gameType": "soccer", "entityId": 16, "name":
- * "pathwithball", "parameters": { "time": { "start": 10753295594424116, "end" :
- * 9999999999999999, } "space": { "startx":-50, "starty":-33960 "endx":52489
+ * "pathwithball", "parameters": { "time": { "start": 0, "end" :
+ * 90, } "space": { "startx":-50, "starty":-33960 "endx":52489
  * "endy":33965 } } }
  * 
  * @author Carsten Cordes
@@ -134,7 +134,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 
 		// Filter by Space
 		ILogicalOperator selectedSpace = OperatorBuildHelper.createSpaceSelect(
-				spaceParameter, false, selectedTime);
+				spaceParameter, true, selectedTime);
 		allOperators.add(selectedSpace);
 
 		// Enrich game Stream with metadata.
@@ -145,7 +145,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		// /balls_filtered =
 		// SELECT({predicate='entity = "ball"'},soccergame_after_start)
 		ILogicalOperator ballsFiltered = OperatorBuildHelper
-				.createEntitySelectByName("ball", enrichedStream);
+				.createEntitySelectByName(OperatorBuildHelper.BALL_ENTITY, enrichedStream);
 		allOperators.add(ballsFiltered);
 
 		// / ball_sample = SAMPLE({datarate=${datarate}},balls_filtered)
