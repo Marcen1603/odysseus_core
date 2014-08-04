@@ -48,7 +48,7 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 		allOperators.add(soccerGameAccessAO);
 
 		// 2. Metadata-Stream
-		StreamAO metadataStreamAO = OperatorBuildHelper.createGameStreamAO();
+		StreamAO metadataStreamAO = OperatorBuildHelper.createMetadataStreamAO();
 		allOperators.add(metadataStreamAO);
 		
 		// -----------------------

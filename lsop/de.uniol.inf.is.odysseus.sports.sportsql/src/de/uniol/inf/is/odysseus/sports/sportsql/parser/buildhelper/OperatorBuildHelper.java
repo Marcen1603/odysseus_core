@@ -414,7 +414,7 @@ public class OperatorBuildHelper {
 		int endMinute = timeParameter.getEnd();
 
 		if (timeParameter.getTime().equals("always")) {
-			startMinute = Integer.MIN_VALUE;
+			startMinute = 0;
 			endMinute = Integer.MAX_VALUE;
 		}
 
@@ -443,6 +443,10 @@ public class OperatorBuildHelper {
 				.createAndPredicate(firstPredicate, secondPredicate);
 		IPredicate fullAndPredicate = ComplexPredicateHelper
 				.createAndPredicate(firstAndPrdicate, thirdPredicate);
+		
+//		String fullPredicateString = firstPredicateString; // + " AND " + secondPredicateString + " AND " + thirdPredicateString;
+//		SDFExpression fullExpression = new SDFExpression(fullPredicateString, MEP.getInstance());
+//		IPredicate fullPredicate = new RelationalPredicate(fullExpression);
 
 		selectAO.setPredicate(fullAndPredicate);
 		selectAO.subscribeTo(source, source.getOutputSchema());
@@ -574,7 +578,7 @@ public class OperatorBuildHelper {
 		// Predicate we want to produce:
 		// 'entity = ${entity_name}'
 
-		String predicateString = "entity = " + entityName;
+		String predicateString = "entity = " + "\"" + entityName + "\"";
 		SDFExpression predicateExpression = new SDFExpression(predicateString,
 				MEP.getInstance());
 		RelationalPredicate predicate = new RelationalPredicate(
@@ -787,6 +791,9 @@ public class OperatorBuildHelper {
 		List<AggregateItem> aggregateItems = new ArrayList<AggregateItem>();
 		aggregateItems.add(param.getValue());
 		coalesceAO.setAggregationItems(aggregateItems);
+		
+		// Subscribe to source
+		coalesceAO.subscribeTo(source, source.getOutputSchema());
 
 		return coalesceAO;
 	}

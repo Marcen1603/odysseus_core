@@ -38,7 +38,7 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 	 * Length of game in minutes
 	 */
 	private static final int GAME_LENGTH = 90;
-	
+
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
 			throws SportsQLParseException {
@@ -46,10 +46,9 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		// Do all the steps one till nine
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
-		ShotOnGoalGlobalSportsQLParser globalParser = new ShotOnGoalGlobalSportsQLParser();
-		ILogicalQuery forecastCriteraQuery = globalParser.parse(sportsQL);
-		ILogicalOperator forecastCriteria = forecastCriteraQuery
-				.getLogicalPlan();
+		ShotOnGoalGlobalOutput globalParser = new ShotOnGoalGlobalOutput();
+		ILogicalOperator forecastCriteria = globalParser.createGlobalOutput(
+				sportsQL, allOperators);
 
 		// -------------------------------------------------------------------
 		// Tenth part
@@ -59,8 +58,7 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 
 		// 1. Time window
 		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(
-				GAME_LENGTH, "Minutes",
-				forecastCriteria);
+				GAME_LENGTH, "Minutes", forecastCriteria);
 
 		// 2. Select for correct entity
 		SelectAO entitySelect = OperatorBuildHelper.createEntityIDSelect(

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
@@ -23,7 +22,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TupleAggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
@@ -42,7 +40,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  *         logical query)
  *
  */
-public class ShotOnGoalGlobalSportsQLParser implements ISportsQLParser {
+public class ShotOnGoalGlobalOutput {
 
 	/**
 	 * The maximal timeshift to detect shooters [ps]
@@ -70,11 +68,8 @@ public class ShotOnGoalGlobalSportsQLParser implements ISportsQLParser {
 	public static final String MIN_ACCELERATION = "55000000.0";
 
 	@SuppressWarnings({ "rawtypes" })
-	@Override
-	public ILogicalQuery parse(SportsQLQuery sportsQL)
+	public ILogicalOperator createGlobalOutput(SportsQLQuery sportsQL, List<ILogicalOperator> allOperators)
 			throws SportsQLParseException {
-
-		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
 		// ---------------------
 		// Access to the Streams
@@ -193,18 +188,18 @@ public class ShotOnGoalGlobalSportsQLParser implements ISportsQLParser {
 		List<IPredicate> playerSelectOrPredicates = new ArrayList<IPredicate>();
 
 		RelationalPredicate firstAndPredicate = OperatorBuildHelper
-				.createRelationalPredicate("entity != "
-						+ OperatorBuildHelper.BALL_ENTITY);
+				.createRelationalPredicate("entity != \""
+						+ OperatorBuildHelper.BALL_ENTITY + "\"");
 		RelationalPredicate secondAndPredicate = OperatorBuildHelper
-				.createRelationalPredicate("entity != "
-						+ OperatorBuildHelper.REFEREE_ENTITY);
+				.createRelationalPredicate("entity != \""
+						+ OperatorBuildHelper.REFEREE_ENTITY + "\"");
 
 		RelationalPredicate leftLegOrPredicate = OperatorBuildHelper
-				.createRelationalPredicate("remark = "
-						+ OperatorBuildHelper.LEFT_LEG_REMARK);
+				.createRelationalPredicate("remark = \""
+						+ OperatorBuildHelper.LEFT_LEG_REMARK + "\"");
 		RelationalPredicate rightLegOrPredicate = OperatorBuildHelper
-				.createRelationalPredicate("remark = "
-						+ OperatorBuildHelper.RIGHT_LEG_REMARK);
+				.createRelationalPredicate("remark = \""
+						+ OperatorBuildHelper.RIGHT_LEG_REMARK + "\"");
 		playerSelectOrPredicates.add(leftLegOrPredicate);
 		playerSelectOrPredicates.add(rightLegOrPredicate);
 
@@ -443,23 +438,25 @@ public class ShotOnGoalGlobalSportsQLParser implements ISportsQLParser {
 		SDFExpressionParameter goalAreaMapParam4 = OperatorBuildHelper
 				.createExpressionParameter("shot_z", durationAndLengthCriteria);
 		SDFExpressionParameter goalAreaMapParam5 = OperatorBuildHelper
-				.createExpressionParameter("x", durationAndLengthCriteria);
+				.createExpressionParameter("ts", durationAndLengthCriteria);
 		SDFExpressionParameter goalAreaMapParam6 = OperatorBuildHelper
-				.createExpressionParameter("y", durationAndLengthCriteria);
+				.createExpressionParameter("x", durationAndLengthCriteria);
 		SDFExpressionParameter goalAreaMapParam7 = OperatorBuildHelper
-				.createExpressionParameter("z", durationAndLengthCriteria);
+				.createExpressionParameter("y", durationAndLengthCriteria);
 		SDFExpressionParameter goalAreaMapParam8 = OperatorBuildHelper
+				.createExpressionParameter("z", durationAndLengthCriteria);
+		SDFExpressionParameter goalAreaMapParam9 = OperatorBuildHelper
 				.createExpressionParameter("entity_id",
 						durationAndLengthCriteria);
-		SDFExpressionParameter goalAreaMapParam9 = OperatorBuildHelper
-				.createExpressionParameter("team_id", durationAndLengthCriteria);
 		SDFExpressionParameter goalAreaMapParam10 = OperatorBuildHelper
+				.createExpressionParameter("team_id", durationAndLengthCriteria);
+		SDFExpressionParameter goalAreaMapParam11 = OperatorBuildHelper
 				.createExpressionParameter("(x - shot_x) / (ts - shot_ts)",
 						"vx", durationAndLengthCriteria);
-		SDFExpressionParameter goalAreaMapParam11 = OperatorBuildHelper
+		SDFExpressionParameter goalAreaMapParam12 = OperatorBuildHelper
 				.createExpressionParameter("(y - shot_y) / (ts - shot_ts)",
 						"vy", durationAndLengthCriteria);
-		SDFExpressionParameter goalAreaMapParam12 = OperatorBuildHelper
+		SDFExpressionParameter goalAreaMapParam13 = OperatorBuildHelper
 				.createExpressionParameter("(z - shot_z) / (ts - shot_ts)",
 						"vz", durationAndLengthCriteria);
 
@@ -475,6 +472,7 @@ public class ShotOnGoalGlobalSportsQLParser implements ISportsQLParser {
 		goalAreaMapParams.add(goalAreaMapParam10);
 		goalAreaMapParams.add(goalAreaMapParam11);
 		goalAreaMapParams.add(goalAreaMapParam12);
+		goalAreaMapParams.add(goalAreaMapParam13);
 
 		MapAO goalAreaMap = OperatorBuildHelper.createMapAO(goalAreaMapParams,
 				durationAndLengthCriteria, 0, 0);
@@ -554,8 +552,7 @@ public class ShotOnGoalGlobalSportsQLParser implements ISportsQLParser {
 
 		allOperators.add(forecastCriteria);
 
-		return OperatorBuildHelper.finishQuery(forecastCriteria, allOperators,
-				sportsQL.getName());
+		return forecastCriteria;
 	}
 
 	/**
@@ -576,26 +573,18 @@ public class ShotOnGoalGlobalSportsQLParser implements ISportsQLParser {
 		SDFExpressionParameter mapParam4 = OperatorBuildHelper
 				.createExpressionParameter("shot_z", source);
 		SDFExpressionParameter mapParam5 = OperatorBuildHelper
-				.createExpressionParameter("x", source);
+				.createExpressionParameter("ts", source);
 		SDFExpressionParameter mapParam6 = OperatorBuildHelper
-				.createExpressionParameter("y", source);
-		SDFExpressionParameter mapParam7 = OperatorBuildHelper
-				.createExpressionParameter("z", source);
-		SDFExpressionParameter mapParam8 = OperatorBuildHelper
-				.createExpressionParameter("vx", source);
-		SDFExpressionParameter mapParam9 = OperatorBuildHelper
-				.createExpressionParameter("vz", source);
-		SDFExpressionParameter mapParam10 = OperatorBuildHelper
 				.createExpressionParameter("entity_id", source);
-		SDFExpressionParameter mapParam11 = OperatorBuildHelper
+		SDFExpressionParameter mapParam7 = OperatorBuildHelper
 				.createExpressionParameter("team_id", source);
-		SDFExpressionParameter mapParam12 = OperatorBuildHelper
+		SDFExpressionParameter mapParam8 = OperatorBuildHelper
 				.createExpressionParameter("x + vx * timeToGoalline",
 						"forecast_x", source);
-		SDFExpressionParameter mapParam13 = OperatorBuildHelper
+		SDFExpressionParameter mapParam9 = OperatorBuildHelper
 				.createExpressionParameter("z + vz * timeToGoalline",
 						"forecast_z", source);
-		SDFExpressionParameter mapParam14 = OperatorBuildHelper
+		SDFExpressionParameter mapParam10 = OperatorBuildHelper
 				.createExpressionParameter("1", "shot", source);
 
 		mapParams.add(mapParam1);
@@ -608,10 +597,6 @@ public class ShotOnGoalGlobalSportsQLParser implements ISportsQLParser {
 		mapParams.add(mapParam8);
 		mapParams.add(mapParam9);
 		mapParams.add(mapParam10);
-		mapParams.add(mapParam11);
-		mapParams.add(mapParam12);
-		mapParams.add(mapParam13);
-		mapParams.add(mapParam14);
 
 		return OperatorBuildHelper.createMapAO(mapParams, source, 0, 0);
 	}
@@ -692,20 +677,22 @@ public class ShotOnGoalGlobalSportsQLParser implements ISportsQLParser {
 		SDFExpressionParameter goalAreaMapParam4 = OperatorBuildHelper
 				.createExpressionParameter("shot_z", source);
 		SDFExpressionParameter goalAreaMapParam5 = OperatorBuildHelper
-				.createExpressionParameter("x", source);
+				.createExpressionParameter("ts", source);
 		SDFExpressionParameter goalAreaMapParam6 = OperatorBuildHelper
-				.createExpressionParameter("y", source);
+				.createExpressionParameter("x", source);
 		SDFExpressionParameter goalAreaMapParam7 = OperatorBuildHelper
-				.createExpressionParameter("z", source);
+				.createExpressionParameter("y", source);
 		SDFExpressionParameter goalAreaMapParam8 = OperatorBuildHelper
-				.createExpressionParameter("vx", source);
+				.createExpressionParameter("z", source);
 		SDFExpressionParameter goalAreaMapParam9 = OperatorBuildHelper
-				.createExpressionParameter("vz", source);
+				.createExpressionParameter("vx", source);
 		SDFExpressionParameter goalAreaMapParam10 = OperatorBuildHelper
-				.createExpressionParameter("entity_id", source);
+				.createExpressionParameter("vz", source);
 		SDFExpressionParameter goalAreaMapParam11 = OperatorBuildHelper
-				.createExpressionParameter("team_id", source);
+				.createExpressionParameter("entity_id", source);
 		SDFExpressionParameter goalAreaMapParam12 = OperatorBuildHelper
+				.createExpressionParameter("team_id", source);
+		SDFExpressionParameter goalAreaMapParam13 = OperatorBuildHelper
 				.createExpressionParameter(timeToGoalLineExpression,
 						"timeToGoalLine", source);
 
@@ -721,6 +708,7 @@ public class ShotOnGoalGlobalSportsQLParser implements ISportsQLParser {
 		mapParams.add(goalAreaMapParam10);
 		mapParams.add(goalAreaMapParam11);
 		mapParams.add(goalAreaMapParam12);
+		mapParams.add(goalAreaMapParam13);
 
 		return OperatorBuildHelper.createMapAO(mapParams, source, 0,
 				sourceOutputPort);

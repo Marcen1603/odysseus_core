@@ -46,10 +46,9 @@ public class ShotOnGoalTeamSportsQLParser implements ISportsQLParser {
 		// Do all the steps one till nine
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
-		ShotOnGoalGlobalSportsQLParser globalParser = new ShotOnGoalGlobalSportsQLParser();
-		ILogicalQuery forecastCriteraQuery = globalParser.parse(sportsQL);
-		ILogicalOperator forecastCriteria = forecastCriteraQuery
-				.getLogicalPlan();
+		ShotOnGoalGlobalOutput globalParser = new ShotOnGoalGlobalOutput();
+		ILogicalOperator forecastCriteria = globalParser.createGlobalOutput(
+				sportsQL, allOperators);
 
 		// -------------------------------------------------------------------
 		// Tenth part
