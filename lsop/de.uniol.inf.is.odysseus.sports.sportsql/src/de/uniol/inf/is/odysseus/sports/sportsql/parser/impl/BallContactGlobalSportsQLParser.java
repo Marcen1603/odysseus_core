@@ -5,7 +5,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -60,7 +59,10 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		// List for all operators, which will be used in this query plan
 		ArrayList<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
-		ILogicalOperator output = getOutputOperator(sportsQL, allOperators);
+		ILogicalOperator output = getOutputOperator(
+				OperatorBuildHelper.createGameStreamAO(),
+				OperatorBuildHelper.createMetadataStreamAO(), sportsQL,
+				allOperators);
 
 		return OperatorBuildHelper.finishQuery(output, allOperators,
 				sportsQL.getName());
@@ -104,11 +106,18 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 
 	/**
 	 * If you want the unfinished global query for ball contacts
+	 * 
+	 * @param soccerGameStreamAO
+	 *            Stream of the game
+	 * @param metadataStreamAO
+	 *            Stream of the metadata
 	 * @param sportsQL
 	 * @param allOperators
 	 * @return
 	 */
-	public ILogicalOperator getOutputOperator(SportsQLQuery sportsQL,
+	public ILogicalOperator getOutputOperator(
+			ILogicalOperator soccerGameStreamAO,
+			ILogicalOperator metadataStreamAO, SportsQLQuery sportsQL,
 			List<ILogicalOperator> allOperators) {
 
 		// List of predicates to use in single operators
@@ -124,13 +133,6 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		// get the space parameter
 		SportsQLSpaceParameter spaceParameter = SportsQLParameterHelper
 				.getSpaceParameter(sportsQL);
-
-		// game source
-		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
-
-		// metadata source
-		StreamAO metadataStreamAO = OperatorBuildHelper
-				.createMetadataStreamAO();
 
 		// count ball contacts with the beginning of the game
 		ILogicalOperator game_after_start = OperatorBuildHelper
@@ -164,14 +166,14 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 
 		// Get the current ball in the game
 		// There is already a space select which does exactly this
-//		predicates.add("x>" + spaceParameter.getStartx() + " AND x<"
-//				+ spaceParameter.getEndx() + " AND y>"
-//				+ spaceParameter.getStarty() + " AND y<"
-//				+ spaceParameter.getEndy());
-//		ILogicalOperator ball_in_game_select = OperatorBuildHelper
-//				.createSelectAO(predicates, ball_velocity_changes);
-//		allOperators.add(ball_in_game_select);
-//		predicates.clear();
+		// predicates.add("x>" + spaceParameter.getStartx() + " AND x<"
+		// + spaceParameter.getEndx() + " AND y>"
+		// + spaceParameter.getStarty() + " AND y<"
+		// + spaceParameter.getEndy());
+		// ILogicalOperator ball_in_game_select = OperatorBuildHelper
+		// .createSelectAO(predicates, ball_velocity_changes);
+		// allOperators.add(ball_in_game_select);
+		// predicates.clear();
 
 		// Get position of active ball in game
 		ILogicalOperator ball_position_map = OperatorBuildHelper.createMapAO(

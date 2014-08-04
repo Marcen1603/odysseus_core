@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 
@@ -34,7 +33,7 @@ public class TestSelectSportsQLParser implements ISportsQLParser {
 			throws SportsQLParseException {
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		StreamAO access = OperatorBuildHelper.createGameStreamAO();
-		SelectAO testSelect = OperatorBuildHelper.createSpaceSelect(SportsQLParameterHelper.getSpaceParameter(sportsQL), false, access);
+		SelectAO testSelect = OperatorBuildHelper.createEntityIDSelect(8, access);
 		allOperators.add(access);
 		allOperators.add(testSelect);
 		return OperatorBuildHelper.finishQuery(testSelect, allOperators, sportsQL.getName());

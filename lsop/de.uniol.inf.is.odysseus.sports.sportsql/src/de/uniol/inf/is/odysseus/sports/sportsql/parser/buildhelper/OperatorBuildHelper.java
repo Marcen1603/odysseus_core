@@ -127,6 +127,14 @@ public class OperatorBuildHelper {
 	 */
 	public static final int START_MINUTE = 0;
 	public static final int END_MINUTE = 90;
+	
+	/**
+	 * Entity ids of the balls
+	 */
+	public static final int BALL_1 = 4;
+	public static final int BALL_2 = 8;
+	public static final int BALL_3 = 10;
+	public static final int BALL_4 = 12;
 
 	/**
 	 * Creates a MapAP with a list of expressions. To create such expressions,
