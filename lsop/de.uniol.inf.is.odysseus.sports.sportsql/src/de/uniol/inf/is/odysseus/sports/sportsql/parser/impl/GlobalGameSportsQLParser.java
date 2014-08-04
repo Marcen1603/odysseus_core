@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
@@ -15,6 +16,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
@@ -48,16 +50,27 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 		allOperators.add(soccerGameAccessAO);
 
 		// 2. Metadata-Stream
-		StreamAO metadataStreamAO = OperatorBuildHelper.createMetadataStreamAO();
+		StreamAO metadataStreamAO = OperatorBuildHelper
+				.createMetadataStreamAO();
 		allOperators.add(metadataStreamAO);
-		
+
+		// Time parameter
+		SelectAO timeSelect = OperatorBuildHelper.createTimeMapAndSelect(
+				SportsQLParameterHelper.getTimeParameter(sportsQL),
+				soccerGameAccessAO);
+
+		// Space parameter
+		SelectAO spaceSelect = OperatorBuildHelper.createSpaceSelect(
+				SportsQLParameterHelper.getSpaceParameter(sportsQL), true,
+				timeSelect);
+
 		// -----------------------
 		// First part (TimeWindow)
 		// -----------------------
 
 		// 1. TimeWindow
 		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(1,
-				"MILLISECONDS", soccerGameAccessAO);
+				"MILLISECONDS", spaceSelect);
 		allOperators.add(timeWindow);
 
 		// --------------------------------
@@ -68,7 +81,7 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 		EnrichAO enrichAO = OperatorBuildHelper.createEnrichAO(
 				"sensorid = sid", timeWindow, metadataStreamAO);
 		allOperators.add(enrichAO);
-		
+
 		// 2. Project
 		List<String> attributes = new ArrayList<String>();
 		attributes.add("x");
@@ -77,11 +90,13 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 		attributes.add("entity");
 		attributes.add("remark");
 		attributes.add("team_id");
-		
-		ProjectAO projectAO = OperatorBuildHelper.createProjectAO(attributes, enrichAO); 
+
+		ProjectAO projectAO = OperatorBuildHelper.createProjectAO(attributes,
+				enrichAO);
 		allOperators.add(projectAO);
-		
-		return OperatorBuildHelper.finishQuery(projectAO, allOperators, sportsQL.getName());
+
+		return OperatorBuildHelper.finishQuery(projectAO, allOperators,
+				sportsQL.getName());
 	}
 
 }

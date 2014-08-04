@@ -322,16 +322,49 @@ public class OperatorBuildHelper {
 			// Calculate meters from input stream
 			List<SDFExpressionParameter> meterExpressions = new ArrayList<SDFExpressionParameter>();
 			SDFExpressionParameter param1 = OperatorBuildHelper
-					.createExpressionParameter("sid", "sensor_id", source);
+					.createExpressionParameter("sid", source);
 			SDFExpressionParameter param2 = OperatorBuildHelper
 					.createExpressionParameter("x / 1000 - " + UPPERRIGHT_X
 							+ "/1000", "x_meter", source);
 			SDFExpressionParameter param3 = OperatorBuildHelper
 					.createExpressionParameter("y / 1000 - " + UPPERRIGHT_Y
 							+ "/1000", "y_meter", source);
+			SDFExpressionParameter param4 = OperatorBuildHelper
+					.createExpressionParameter("x", source);
+			SDFExpressionParameter param5 = OperatorBuildHelper
+					.createExpressionParameter("y", source);
+			SDFExpressionParameter param6 = OperatorBuildHelper
+					.createExpressionParameter("z", source);
+			SDFExpressionParameter param7 = OperatorBuildHelper
+					.createExpressionParameter("v", source);
+			SDFExpressionParameter param8 = OperatorBuildHelper
+					.createExpressionParameter("a", source);
+			SDFExpressionParameter param9 = OperatorBuildHelper
+					.createExpressionParameter("vx", source);
+			SDFExpressionParameter param10 = OperatorBuildHelper
+					.createExpressionParameter("vy", source);
+			SDFExpressionParameter param11 = OperatorBuildHelper
+					.createExpressionParameter("vz", source);
+			SDFExpressionParameter param12 = OperatorBuildHelper
+					.createExpressionParameter("ax", source);
+			SDFExpressionParameter param13 = OperatorBuildHelper
+					.createExpressionParameter("ay", source);
+			SDFExpressionParameter param14 = OperatorBuildHelper
+					.createExpressionParameter("ts", source);
 			meterExpressions.add(param1);
 			meterExpressions.add(param2);
 			meterExpressions.add(param3);
+			meterExpressions.add(param4);
+			meterExpressions.add(param5);
+			meterExpressions.add(param6);
+			meterExpressions.add(param7);
+			meterExpressions.add(param8);
+			meterExpressions.add(param9);
+			meterExpressions.add(param10);
+			meterExpressions.add(param11);
+			meterExpressions.add(param12);
+			meterExpressions.add(param13);
+			meterExpressions.add(param14);
 			MapAO metersMap = OperatorBuildHelper.createMapAO(meterExpressions,
 					source, 0, 0);
 
@@ -433,10 +466,10 @@ public class OperatorBuildHelper {
 		int startMinute = timeParameter.getStart();
 		int endMinute = timeParameter.getEnd();
 
-		if (timeParameter.getTime().equals(SportsQLTimeParameter.TIME_PARAMETER_ALWAYS)) {
+		if (timeParameter.getTime() != null && timeParameter.getTime().equals(SportsQLTimeParameter.TIME_PARAMETER_ALWAYS)) {
 			startMinute = Integer.MIN_VALUE;
 			endMinute = Integer.MAX_VALUE;
-		} else if (timeParameter.getTime().equals(SportsQLTimeParameter.TIME_PARAMTER_GAME)) {
+		} else if (timeParameter.getTime() != null && timeParameter.getTime().equals(SportsQLTimeParameter.TIME_PARAMTER_GAME)) {
 			// Just the time in the game
 			startMinute = START_MINUTE;
 			endMinute = END_MINUTE;
