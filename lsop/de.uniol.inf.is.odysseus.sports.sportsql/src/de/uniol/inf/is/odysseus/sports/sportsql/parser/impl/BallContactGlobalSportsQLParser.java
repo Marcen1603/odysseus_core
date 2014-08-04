@@ -60,6 +60,57 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		// List for all operators, which will be used in this query plan
 		ArrayList<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
+		ILogicalOperator output = getOutputOperator(sportsQL, allOperators);
+
+		return OperatorBuildHelper.finishQuery(output, allOperators,
+				sportsQL.getName());
+	}
+
+	/**
+	 * Return list of expressions for the ball
+	 * 
+	 * @param source
+	 * @return
+	 */
+	private List<SDFExpressionParameter> getMapExpressionForBallPosition(
+			ILogicalOperator source) {
+		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
+		SDFExpressionParameter ex = OperatorBuildHelper
+				.createExpressionParameter("ToPoint(x,y,z)", "ball_pos", source);
+
+		expressions.add(ex);
+		return expressions;
+	}
+
+	/**
+	 * Return list of expressions for the position of the players
+	 * 
+	 * @param source
+	 * @return
+	 */
+	private List<SDFExpressionParameter> getMapExpressionForPlayerPosition(
+			ILogicalOperator source) {
+		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
+		SDFExpressionParameter ex1 = OperatorBuildHelper
+				.createExpressionParameter("ToPoint(x,y,z)", "player_pos",
+						source);
+		SDFExpressionParameter ex2 = OperatorBuildHelper
+				.createExpressionParameter("sid", "sid", source);
+
+		expressions.add(ex1);
+		expressions.add(ex2);
+		return expressions;
+	}
+
+	/**
+	 * If you want the unfinished global query for ball contacts
+	 * @param sportsQL
+	 * @param allOperators
+	 * @return
+	 */
+	public ILogicalOperator getOutputOperator(SportsQLQuery sportsQL,
+			List<ILogicalOperator> allOperators) {
+
 		// List of predicates to use in single operators
 		ArrayList<String> predicates = new ArrayList<String>();
 
@@ -172,43 +223,6 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		allOperators.add(output);
 		attributes.clear();
 
-		return OperatorBuildHelper.finishQuery(output, allOperators,
-				sportsQL.getName());
-	}
-
-	/**
-	 * Return list of expressions for the ball
-	 * 
-	 * @param source
-	 * @return
-	 */
-	private List<SDFExpressionParameter> getMapExpressionForBallPosition(
-			ILogicalOperator source) {
-		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
-		SDFExpressionParameter ex = OperatorBuildHelper
-				.createExpressionParameter("ToPoint(x,y,z)", "ball_pos", source);
-
-		expressions.add(ex);
-		return expressions;
-	}
-
-	/**
-	 * Return list of expressions for the position of the players
-	 * 
-	 * @param source
-	 * @return
-	 */
-	private List<SDFExpressionParameter> getMapExpressionForPlayerPosition(
-			ILogicalOperator source) {
-		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
-		SDFExpressionParameter ex1 = OperatorBuildHelper
-				.createExpressionParameter("ToPoint(x,y,z)", "player_pos",
-						source);
-		SDFExpressionParameter ex2 = OperatorBuildHelper
-				.createExpressionParameter("sid", "sid", source);
-
-		expressions.add(ex1);
-		expressions.add(ex2);
-		return expressions;
+		return output;
 	}
 }

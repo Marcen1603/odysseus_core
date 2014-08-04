@@ -59,7 +59,7 @@ public class BallContactPlayerSportsQLParser implements ISportsQLParser {
 			throws SportsQLParseException {
 		
 		/* 
-		 * Perhaps set the select at the bottom of the query plan for performance issues.
+		 * TODO Perhaps set the select at the bottom of the query plan for performance issues.
 		 * In this case we select the specific player from the query plan of the BallContactGlobalSportsQlParser
 		 */
 		
@@ -67,13 +67,10 @@ public class BallContactPlayerSportsQLParser implements ISportsQLParser {
 		
 		//Get all ball contacts of every player by using the global parser
 		BallContactGlobalSportsQLParser ballcontactsGlobal = new BallContactGlobalSportsQLParser();	
-		ILogicalQuery globalQuery = ballcontactsGlobal.parse(sportsQL);
-		
-		//new source 
-		ILogicalOperator source = globalQuery.getLogicalPlan();
+		ILogicalOperator globalOutput = ballcontactsGlobal.getOutputOperator(sportsQL, allOperators);
 		
 		//Select player
-		SelectAO single_player = OperatorBuildHelper.createEntityIDSelect(sportsQL.getEntityId(), source);
+		SelectAO single_player = OperatorBuildHelper.createEntityIDSelect(sportsQL.getEntityId(), globalOutput);
 		allOperators.add(single_player);
 		
 		return OperatorBuildHelper.finishQuery(single_player, allOperators, sportsQL.getName());

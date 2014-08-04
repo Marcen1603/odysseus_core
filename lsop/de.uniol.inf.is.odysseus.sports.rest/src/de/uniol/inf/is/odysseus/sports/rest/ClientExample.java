@@ -36,9 +36,9 @@ public class ClientExample {
 //				name = "shotongoal";
 				
 				// Game time
-//				statisticsType = "global";
-//				gameType = "soccer";
-//				name = "gameTime";
+				statisticsType = "global";
+				gameType = "soccer";
+				name = "gameTime";
 				
 				// Test select
 				statisticsType = "global";
