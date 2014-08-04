@@ -149,7 +149,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		allOperators.add(ballPosMap);
 
 		// 5. Window with tuple size 1 for the ball data stream
-		ElementWindowAO ballWindow = OperatorBuildHelper.createTupleWindowAO(1, 1, ballPosMap);
+		ElementWindowAO ballWindow = OperatorBuildHelper.createElementWindowAO(1, 1, ballPosMap);
 		allOperators.add(ballWindow);
 
 		// 6. Attributes x, y, z of the player data stream as one player position attribute
@@ -161,7 +161,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		allOperators.add(playerPosMap);
 
 		// 7. Window with tuple size 1 for the player data stream
-		ElementWindowAO playerWindow = OperatorBuildHelper.createTupleWindowAO(1,1, playerPosMap);
+		ElementWindowAO playerWindow = OperatorBuildHelper.createElementWindowAO(1,1, playerPosMap);
 		allOperators.add(playerWindow);
 		
 

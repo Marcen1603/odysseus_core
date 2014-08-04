@@ -174,7 +174,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		allOperators.add(ball_position_map);
 
 		// window size = 1, advance = 1
-		ILogicalOperator ball_window = OperatorBuildHelper.createTupleWindowAO(
+		ILogicalOperator ball_window = OperatorBuildHelper.createElementWindowAO(
 				1, 1, ball_position_map);
 		allOperators.add(ball_window);
 
@@ -186,7 +186,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 
 		// window size = 1, advance = 1
 		ILogicalOperator players_window = OperatorBuildHelper
-				.createTupleWindowAO(1, 1, players_position_map);
+				.createElementWindowAO(1, 1, players_position_map);
 		allOperators.add(players_window);
 
 		// Join the sources and show only values if ball is near to a player

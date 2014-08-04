@@ -1083,9 +1083,10 @@ public class OperatorBuildHelper {
 	 *            Source Operator.
 	 * @return
 	 */
-	public static ElementWindowAO createTupleWindowAO(int size, int advance,
+	public static ElementWindowAO createElementWindowAO(int size, int advance,
 			ILogicalOperator source) {
 		ElementWindowAO windowAO = new ElementWindowAO();
+		//null cause timeUnit is deprecated
 		TimeValueItem windowSize = new TimeValueItem(size, null);
 		TimeValueItem windowAdvance = new TimeValueItem(advance, null);
 		windowAO.setWindowSize(windowSize);
