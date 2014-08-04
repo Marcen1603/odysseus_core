@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter;
 public class SportsQLSpaceParameter implements ISportsQLParameter {
 
 	public static final String SPACE_PARAMETER_ALL = "all";
+	public static final String SPACE_PARAMETER_FIELD = "field";
 
 	int startx;
 	int endx;

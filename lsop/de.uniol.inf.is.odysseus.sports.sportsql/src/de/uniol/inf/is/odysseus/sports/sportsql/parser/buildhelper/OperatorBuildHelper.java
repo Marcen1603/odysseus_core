@@ -121,6 +121,12 @@ public class OperatorBuildHelper {
 	 */
 	public static final int TEAM_ID_RIGHT_GOAL_SHOOTERS = 1;
 	public static final int TEAM_ID_LEFT_GOAL_SHOOTERS = 2;
+	
+	/**
+	 * Times
+	 */
+	public static final int START_MINUTE = 0;
+	public static final int END_MINUTE = 90;
 
 	/**
 	 * Creates a MapAP with a list of expressions. To create such expressions,
@@ -281,11 +287,18 @@ public class OperatorBuildHelper {
 		int endY = parameter.getEndy();
 
 		// TODO Parameters don't fit to the numbers
-		if (parameter.getSpace() != null && parameter.getSpace().equals("all")) {
+		if (parameter.getSpace() != null && parameter.getSpace().equals(SportsQLSpaceParameter.SPACE_PARAMETER_ALL)) {
+			// Don't filter anything away
+			startX = Integer.MIN_VALUE;
+			startY = Integer.MIN_VALUE;
+			endX = Integer.MAX_VALUE;
+			endY = Integer.MAX_VALUE;
+		} else if(parameter.getSpace() != null && parameter.getSpace().equals(SportsQLSpaceParameter.SPACE_PARAMETER_FIELD)) {
+			// Filter for game field
 			startX = LOWERLEFT_X;
 			startY = LOWERLEFT_Y;
 			endX = LOWERRIGHT_X;
-			endY = LOWERRIGHT_Y;
+			endY = UPPERLEFT_Y;
 		}
 
 		// Predicate we want to produce:
@@ -413,9 +426,13 @@ public class OperatorBuildHelper {
 		int startMinute = timeParameter.getStart();
 		int endMinute = timeParameter.getEnd();
 
-		if (timeParameter.getTime().equals("always")) {
-			startMinute = 0;
+		if (timeParameter.getTime().equals(SportsQLTimeParameter.TIME_PARAMETER_ALWAYS)) {
+			startMinute = Integer.MIN_VALUE;
 			endMinute = Integer.MAX_VALUE;
+		} else if (timeParameter.getTime().equals(SportsQLTimeParameter.TIME_PARAMTER_GAME)) {
+			// Just the time in the game
+			startMinute = START_MINUTE;
+			endMinute = END_MINUTE;
 		}
 
 		// 1. minute >= ${parameterTimeStart_minute}

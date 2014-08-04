@@ -4,6 +4,7 @@ public class SportsQLTimeParameter implements ISportsQLParameter{
 	
 	public static final String TIME_PARAMETER_ALWAYS = "always";
 	public static final String TIME_PARAMETER_NOW = "now";
+	public static final String TIME_PARAMTER_GAME = "game";
 
 	// TODO: time-unit (seconds, minutes, ...)
 	int start;

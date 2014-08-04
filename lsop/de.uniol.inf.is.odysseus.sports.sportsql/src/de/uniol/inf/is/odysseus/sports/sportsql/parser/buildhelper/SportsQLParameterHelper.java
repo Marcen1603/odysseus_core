@@ -31,7 +31,7 @@ public class SportsQLParameterHelper {
 		}
 
 		// There was no time parameter: We want to get the whole time
-		return new SportsQLTimeParameter(0, 0, SportsQLTimeParameter.TIME_PARAMETER_ALWAYS);
+		return new SportsQLTimeParameter(0, 0, SportsQLTimeParameter.TIME_PARAMTER_GAME);
 	}
 
 	public static SportsQLSpaceParameter getSpaceParameter(SportsQLQuery query) {
@@ -43,7 +43,7 @@ public class SportsQLParameterHelper {
 		}
 		
 		// There was no space parameter: We want to get the whole space
-		return new SportsQLSpaceParameter(0, 0, 0, 0, SportsQLSpaceParameter.SPACE_PARAMETER_ALL);
+		return new SportsQLSpaceParameter(0, 0, 0, 0, SportsQLSpaceParameter.SPACE_PARAMETER_FIELD);
 	}
 	
 
