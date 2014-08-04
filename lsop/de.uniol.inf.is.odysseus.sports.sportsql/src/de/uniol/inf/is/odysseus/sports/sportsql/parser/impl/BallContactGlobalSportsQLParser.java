@@ -164,17 +164,6 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		allOperators.add(ball_velocity_changes);
 		attributes.clear();
 
-		// Get the current ball in the game
-		// There is already a space select which does exactly this
-		// predicates.add("x>" + spaceParameter.getStartx() + " AND x<"
-		// + spaceParameter.getEndx() + " AND y>"
-		// + spaceParameter.getStarty() + " AND y<"
-		// + spaceParameter.getEndy());
-		// ILogicalOperator ball_in_game_select = OperatorBuildHelper
-		// .createSelectAO(predicates, ball_velocity_changes);
-		// allOperators.add(ball_in_game_select);
-		// predicates.clear();
-
 		// Get position of active ball in game
 		ILogicalOperator ball_position_map = OperatorBuildHelper.createMapAO(
 				getMapExpressionForBallPosition(ball_velocity_changes),

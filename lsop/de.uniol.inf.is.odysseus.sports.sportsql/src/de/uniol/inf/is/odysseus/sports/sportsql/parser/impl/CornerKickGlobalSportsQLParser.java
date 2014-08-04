@@ -46,10 +46,6 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		int yMin = spaceParameter.getStarty();
 		int yMax = spaceParameter.getEndy();
 
-		//TODO Remove hardcoded information (Data Dictionary?)
-		int goalLineLeft = -33968;
-		int goalLineRight = 33941;
-
 		long startTS = timeParameter.getStart();
 
 		ArrayList<ILogicalOperator> operatorList = new ArrayList<ILogicalOperator>();
@@ -104,8 +100,8 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		expressions.add(OperatorBuildHelper.createExpressionParameter("ts", activeBall));
 		expressions.add(OperatorBuildHelper.createExpressionParameter("x", activeBall));
 		expressions.add(OperatorBuildHelper.createExpressionParameter("y", activeBall));
-		expressions.add(OperatorBuildHelper.createExpressionParameter("eif(y < " + goalLineLeft + ", 1, 0)", "BallBehindGoalline1_left", activeBall));
-		expressions.add(OperatorBuildHelper.createExpressionParameter("eif(y > " + goalLineRight + ", 1, 0)", "BallBehindGoalline2_right", activeBall));
+		expressions.add(OperatorBuildHelper.createExpressionParameter("eif(y < " + OperatorBuildHelper.GOAL_AREA_2_Y + ", 1, 0)", "BallBehindGoalline1_left", activeBall));
+		expressions.add(OperatorBuildHelper.createExpressionParameter("eif(y > " + OperatorBuildHelper.GOAL_AREA_1_Y + ", 1, 0)", "BallBehindGoalline2_right", activeBall));
 		
 		ILogicalOperator activeBallBehindGoalline = OperatorBuildHelper.createMapAO(expressions, activeBall, 0, 0);
 		operatorList.add(activeBallBehindGoalline);

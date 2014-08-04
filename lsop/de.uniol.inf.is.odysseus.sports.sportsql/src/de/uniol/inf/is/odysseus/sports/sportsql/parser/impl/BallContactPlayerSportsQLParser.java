@@ -15,53 +15,67 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuild
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
-
 /**
- * Parser for SportsQL: Query: Ball contacts of specific player.
+ * Parser for SportsQL:
+ * Query: Ball contacts of specific player.
  * 
  * SportsQL:
  * 
  * Example Query:
  * 
- * { "statisticType": "player", "gameType": "soccer", "name": "ball_contact",
- * "entity_id": "4" "parameters": { "time": { "start": 10753295594424116, "end"
- * : 9999999999999999, } "space": { "startx":-50, "starty":-33960 "endx":52489
- * "endy":33965 } } }
+ * {
+ * "statisticType": "player",
+ *   "gameType": "soccer", 
+ *   "name": "ball_contact",
+ *   "entity_id": "4"
+ *   "parameters": {
+ *       "time": {
+ *           "start": 10753295594424116,
+ *           "end" : 9999999999999999,   
+ *       }
+ *    "space": {
+ *      	"startx":-50,
+ *          "starty":-33960
+ *      	"endx":52489
+ *     		"endy":33965
+ *   }
+ *  }
+ *}
  * 
  * @author Thomas Prünie
  *
  */
-@SportsQL(gameTypes = GameType.SOCCER, statisticTypes = { StatisticType.PLAYER }, name = "ball_contact", parameters = { @SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false) })
+@SportsQL(
+		gameTypes = GameType.SOCCER, 
+		statisticTypes = { StatisticType.PLAYER },
+		name = "ball_contact",
+		parameters = { 
+				@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false)			
+				}
+		)
 public class BallContactPlayerSportsQLParser implements ISportsQLParser {
 
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
 			throws SportsQLParseException {
-
+		
 		ArrayList<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
-
+		
 		StreamAO gameStream = OperatorBuildHelper.createGameStreamAO();
 		allOperators.add(gameStream);
-
+		
 		StreamAO metaStream = OperatorBuildHelper.createMetadataStreamAO();
 		allOperators.add(metaStream);
-
-		// Filter for player and all the balls
-		SelectAO singlePlayer = OperatorBuildHelper.createSelectAO("sid = "
-				+ sportsQL.getEntityId() + " OR sid = "
-				+ OperatorBuildHelper.BALL_1 + " OR sid = "
-				+ OperatorBuildHelper.BALL_2 + " OR sid = "
-				+ OperatorBuildHelper.BALL_3 + " OR sid = "
-				+ OperatorBuildHelper.BALL_4, gameStream);
+		
+		//Get all ball contacts of every player by using the global parser
+		BallContactGlobalSportsQLParser ballcontactsGlobal = new BallContactGlobalSportsQLParser();	
+		ILogicalOperator globalOutput = ballcontactsGlobal.getOutputOperator(gameStream, metaStream, sportsQL, allOperators);
+		
+		//Select player
+		SelectAO singlePlayer = OperatorBuildHelper.createEntityIDSelect(sportsQL.getEntityId(), globalOutput);
 		allOperators.add(singlePlayer);
-
-		// Get all ball contacts of every player by using the global parser
-		BallContactGlobalSportsQLParser ballcontactsGlobal = new BallContactGlobalSportsQLParser();
-		ILogicalOperator globalOutput = ballcontactsGlobal.getOutputOperator(
-				singlePlayer, metaStream, sportsQL, allOperators);
-
-		return OperatorBuildHelper.finishQuery(globalOutput, allOperators,
-				sportsQL.getName());
+		
+		return OperatorBuildHelper.finishQuery(singlePlayer, allOperators, sportsQL.getName());
 	}
 
 }
