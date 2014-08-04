@@ -143,7 +143,10 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 				spaceParameter, false, game_after_start);
 		allOperators.add(game_space);
 
-		predicates.add("sid=4 OR sid=8 OR sid=10 OR sid=12");
+		predicates.add("sid= " + OperatorBuildHelper.BALL_1 + " OR sid= "
+				+ OperatorBuildHelper.BALL_2 + " OR sid= "
+				+ OperatorBuildHelper.BALL_3 + " OR sid= "
+				+ OperatorBuildHelper.BALL_4);
 		ILogicalOperator split_balls = OperatorBuildHelper.createRouteAO(
 				predicates, game_space);
 		allOperators.add(split_balls);
