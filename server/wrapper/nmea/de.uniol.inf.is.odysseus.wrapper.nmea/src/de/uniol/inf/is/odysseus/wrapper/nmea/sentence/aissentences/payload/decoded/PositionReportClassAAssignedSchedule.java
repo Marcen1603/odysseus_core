@@ -17,8 +17,8 @@ public class PositionReportClassAAssignedSchedule extends PositionReport {
 	public PositionReportClassAAssignedSchedule(String originalNmea, AISMessageType messageType,
 			Integer repeatIndicator, MMSI mmsi,
 			NavigationStatus navigationStatus, Integer rateOfTurn,
-			Float speedOverGround, Boolean positionAccurate, Double latitude,
-			Double longitude, Float courseOverGround, Integer trueHeading,
+			Double speedOverGround, Boolean positionAccurate, Double latitude,
+			Double longitude, Double courseOverGround, Integer trueHeading,
 			Integer second, ManeuverIndicator maneuverIndicator,
 			Boolean raimFlag) {
 		super(originalNmea, messageType, repeatIndicator, mmsi, navigationStatus, rateOfTurn,
