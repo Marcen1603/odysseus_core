@@ -1,7 +1,8 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.status;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.LoadBalancingMessageDispatcher;
 import net.jxta.peer.PeerID;
 
 public class LoadBalancingSlaveStatus {

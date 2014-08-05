@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages;
 
 import java.nio.ByteBuffer;
 import java.util.Collection;

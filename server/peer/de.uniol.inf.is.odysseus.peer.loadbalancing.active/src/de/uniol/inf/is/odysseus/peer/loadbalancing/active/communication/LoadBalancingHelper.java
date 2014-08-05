@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.LoadBalancingSynchronizerPO;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.status.LoadBalancingMasterStatus;
 
 public class LoadBalancingHelper {
 	
@@ -55,6 +56,21 @@ public class LoadBalancingHelper {
 			return (PeerID) IDFactory.fromURI(id);
 		} catch (URISyntaxException | ClassCastException ex) {
 			return null;
+		}
+	}
+	
+
+	/**
+	 * Deletes deprecated JxtaSenderPO.
+	 * @param oldPipeId
+	 */
+	public static void deleteDeprecatedSender(IServerExecutor executor, String oldPipeId) {
+		JxtaSenderPO<?> physicalJxtaOperator = (JxtaSenderPO<?>) LoadBalancingHelper
+				.getPhysicalJxtaOperator(executor, true, oldPipeId);
+		if (physicalJxtaOperator != null) {
+			// Sender always have one input port
+			physicalJxtaOperator.done(0);
+			physicalJxtaOperator.unsubscribeFromAllSources();
 		}
 	}
 	
@@ -128,7 +144,49 @@ public class LoadBalancingHelper {
 		return replacedPipes;
 	}
 	
-	
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void removeDuplicateJxtaOperator(IServerExecutor executor, String pipeID) {
+		 IPhysicalOperator operator = getPhysicalJxtaOperator(executor,
+					false, pipeID);
+		 
+		 if(operator instanceof JxtaSenderPO) {
+			 JxtaSenderPO sender = (JxtaSenderPO) operator;
+			 sender.unsubscribeFromAllSources();
+		 }
+		 
+		 if(operator instanceof JxtaReceiverPO) {
+			 JxtaReceiverPO receiver = (JxtaReceiverPO) operator;
+			 PhysicalSubscription<?> receiverSubscription = (PhysicalSubscription)receiver
+						.getSubscriptions().get(0);
+			 
+			 if(receiverSubscription.getTarget() instanceof LoadBalancingSynchronizerPO) {
+				 LoadBalancingSynchronizerPO sync = (LoadBalancingSynchronizerPO) receiverSubscription.getTarget();
+				 int port = receiverSubscription.getSinkInPort();
+				 int otherPort = (port+1)%2;
+				 
+				 JxtaReceiverPO otherReceiver=(JxtaReceiverPO) sync.getSubscribedToSource(otherPort).getTarget();
+				 otherReceiver.unsubscribeFromAllSinks();
+				 receiver.unsubscribeFromAllSinks();
+				 
+				 List<PhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = sync.getSubscriptions();
+
+					for (PhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
+
+						sync.unsubscribeSink(subscription);
+
+						otherReceiver.subscribeSink(subscription.getTarget(),
+								subscription.getSinkInPort(),
+								subscription.getSourceOutPort(),
+								subscription.getSchema(), true,
+								subscription.getOpenCalls());
+					}
+				 
+			 }
+		 }
+		 
+		 
+	}
 	
 
 	/**
@@ -272,7 +330,6 @@ public class LoadBalancingHelper {
 			return installedQueries;
 			
 	}
-	
 	
 
 	/**

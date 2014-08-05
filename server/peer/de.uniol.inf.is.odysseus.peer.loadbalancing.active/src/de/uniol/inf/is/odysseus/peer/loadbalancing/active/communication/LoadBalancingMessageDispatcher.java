@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
@@ -6,9 +6,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages.LoadBalancingAbortMessage;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages.LoadBalancingInstructionMessage;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.messages.LoadBalancingResponseMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages.LoadBalancingAbortMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages.LoadBalancingInstructionMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages.LoadBalancingResponseMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages.RepeatingMessageSend;
 
 public class LoadBalancingMessageDispatcher {
 	
@@ -150,8 +151,8 @@ public class LoadBalancingMessageDispatcher {
 	}
 
 
-	public void sendAbort(PeerID peerID) {
-		LoadBalancingAbortMessage message = new LoadBalancingAbortMessage(lbProcessId);
+	public void sendAbortInstruction(PeerID peerID) {
+		LoadBalancingAbortMessage message = LoadBalancingAbortMessage.createAbortInstructionMsg(lbProcessId);
 		if(this.currentJobs==null) {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
 		}
@@ -161,6 +162,12 @@ public class LoadBalancingMessageDispatcher {
 			job.start();
 		}
 		
+	}
+	
+	public void sendAbortResponse(PeerID peerID) {
+		LoadBalancingAbortMessage message = LoadBalancingAbortMessage.createAbortResponseMsg(lbProcessId);
+		this.currentJob = new RepeatingMessageSend(peerCommunicator,message,peerID);
+		currentJob.start();
 	}
 	
 
