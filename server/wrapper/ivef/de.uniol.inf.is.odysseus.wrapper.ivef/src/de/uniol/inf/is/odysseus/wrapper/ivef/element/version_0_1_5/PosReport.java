@@ -27,8 +27,8 @@ public class PosReport implements IIvefElement {
     private boolean m_updateTimeAISPresent;
     private Date m_updateTimeDR; // default value is uninitialized
     private boolean m_updateTimeDRPresent;
-    private Float m_SOG = (float)0; // default value is uninitialized
-    private Float m_COG = (float)0; // default value is uninitialized
+    private Double m_SOG = (double)0; // default value is uninitialized
+    private Double m_COG = (double)0; // default value is uninitialized
     private String m_lost="no"; //Initialized  instead of using a flag! // default value is uninitialized
     private double m_rateOfTurn; // default value is uninitialized
     private boolean m_rateOfTurnPresent;
@@ -201,19 +201,19 @@ public class PosReport implements IIvefElement {
         return m_updateTimeDRPresent;
     }
 
-    public void setSOG(Float val) {
+    public void setSOG(Double val) {
 
         if (val < 0)
           return;
         m_SOG = val;
     }
 
-    public Float getSOG() {
+    public Double getSOG() {
 
         return m_SOG;
     }
 
-    public void setCOG(Float val) {
+    public void setCOG(Double val) {
 
         if (val < 0)
           return;
@@ -222,7 +222,7 @@ public class PosReport implements IIvefElement {
         m_COG = val;
     }
 
-    public Float getCOG() {
+    public Double getCOG() {
 
         return m_COG;
     }
