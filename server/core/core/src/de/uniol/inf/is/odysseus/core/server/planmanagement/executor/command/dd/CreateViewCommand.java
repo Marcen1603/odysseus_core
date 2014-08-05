@@ -31,17 +31,16 @@ public class CreateViewCommand extends AbstractExecutorCommand {
 		RenameAO rename = new RenameAO();
 		rename.subscribeTo(rootAO, rootAO.getOutputSchema());
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		// TODO: used old names again. It this correct?
-//		for (SDFAttribute old : rootAO.getOutputSchema()) {
-//			attributes.add(new SDFAttribute(name, old.getAttributeName(), old));
-//		}
-//		rename.setOutputSchema(new SDFSchema(name, rootAO.getOutputSchema(),
-//				attributes));
 		for (SDFAttribute old : rootAO.getOutputSchema()) {
-			attributes.add(new SDFAttribute(old.getSourceName(), old.getAttributeName(), old));
+			attributes.add(new SDFAttribute(name, old.getAttributeName(), old));
 		}
-		rename.setOutputSchema(new SDFSchema(rootAO.getOutputSchema().getURI(), rootAO.getOutputSchema(),
+		rename.setOutputSchema(new SDFSchema(name, rootAO.getOutputSchema(),
 				attributes));
+//		for (SDFAttribute old : rootAO.getOutputSchema()) {
+//			attributes.add(new SDFAttribute(old.getSourceName(), old.getAttributeName(), old));
+//		}
+//		rename.setOutputSchema(new SDFSchema(rootAO.getOutputSchema().getURI(), rootAO.getOutputSchema(),
+//				attributes));
 		dd.setView(name, rename, getCaller());
 	}
 
