@@ -141,6 +141,11 @@ public class DatabaseConnectionDictionary {
 		this.fireChangeEvent();
 	}
 	
+	public void removeAllConnections(){
+		this.connections.clear();
+		this.fireChangeEvent();
+	}
+	
 	public boolean isConnectionExisting(String name){
 		name = name.toUpperCase();
 		return this.connections.containsKey(name);
