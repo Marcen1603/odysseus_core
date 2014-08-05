@@ -76,6 +76,10 @@ public class AISPayloadEncyptionUtil {
 		return Float.valueOf(convertToUnsignedInteger(bitString));
 	}
 	
+	public static Double convertToUnsignedDouble(String bitString) {
+		return Double.valueOf(convertToUnsignedInteger(bitString));
+	}
+	
 	public static Float convertToFloat(String bitString) {
 		return Float.valueOf(convertToSignedInteger(bitString));
 	}
@@ -167,11 +171,11 @@ public class AISPayloadEncyptionUtil {
 
 		NavigationStatus navigationStatus = NavigationStatus.fromInteger(AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(38, 42)));
 		Integer rateOfTurn = AISPayloadEncyptionUtil.convertToSignedInteger(encodedMessage.getBits(42, 50));
-		Float speedOverGround = AISPayloadEncyptionUtil.convertToUnsignedFloat(encodedMessage.getBits(50, 60)) / 10f;
+		Double speedOverGround = AISPayloadEncyptionUtil.convertToUnsignedDouble(encodedMessage.getBits(50, 60)) / 10f;
 		Boolean positionAccurate = AISPayloadEncyptionUtil.convertToBoolean(encodedMessage.getBits(60, 61));
 		Double longitude = AISPayloadEncyptionUtil.convertToDouble(encodedMessage.getBits(61, 89)) / 600000f;
 		Double latitude = AISPayloadEncyptionUtil.convertToDouble(encodedMessage.getBits(89, 116)) / 600000f;
-		Float courseOverGround = AISPayloadEncyptionUtil.convertToUnsignedFloat(encodedMessage.getBits(116, 128)) / 10f;
+		Double courseOverGround = AISPayloadEncyptionUtil.convertToUnsignedDouble(encodedMessage.getBits(116, 128)) / 10f;
 		Integer trueHeading = AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(128, 137));
 		Integer second = AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(137, 143));
 		ManeuverIndicator maneuverIndicator = ManeuverIndicator.fromInteger(AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(143, 145)));
@@ -197,11 +201,11 @@ public class AISPayloadEncyptionUtil {
 
 		NavigationStatus navigationStatus = NavigationStatus.fromInteger(AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(38, 42)));
 		Integer rateOfTurn = AISPayloadEncyptionUtil.convertToSignedInteger(encodedMessage.getBits(42, 50));
-		Float speedOverGround = AISPayloadEncyptionUtil.convertToUnsignedFloat(encodedMessage.getBits(50, 60)) / 10f;
+		Double speedOverGround = AISPayloadEncyptionUtil.convertToUnsignedDouble(encodedMessage.getBits(50, 60)) / 10f;
 		Boolean positionAccurate = AISPayloadEncyptionUtil.convertToBoolean(encodedMessage.getBits(60, 61));
 		Double longitude = AISPayloadEncyptionUtil.convertToDouble(encodedMessage.getBits(61, 89)) / 600000f;
 		Double latitude = AISPayloadEncyptionUtil.convertToDouble(encodedMessage.getBits(89, 116)) / 600000f;
-		Float courseOverGround = AISPayloadEncyptionUtil.convertToUnsignedFloat(encodedMessage.getBits(116, 128)) / 10f;
+		Double courseOverGround = AISPayloadEncyptionUtil.convertToUnsignedDouble(encodedMessage.getBits(116, 128)) / 10f;
 		Integer trueHeading = AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(128, 137));
 		Integer second = AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(137, 143));
 		ManeuverIndicator maneuverIndicator = ManeuverIndicator.fromInteger(AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(143, 145)));
@@ -227,11 +231,11 @@ public class AISPayloadEncyptionUtil {
 
 		NavigationStatus navigationStatus = NavigationStatus.fromInteger(AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(38, 42)));
 		Integer rateOfTurn = AISPayloadEncyptionUtil.convertToSignedInteger(encodedMessage.getBits(42, 50));
-		Float speedOverGround = AISPayloadEncyptionUtil.convertToUnsignedFloat(encodedMessage.getBits(50, 60)) / 10f;
+		Double speedOverGround = AISPayloadEncyptionUtil.convertToUnsignedDouble(encodedMessage.getBits(50, 60)) / 10f;
 		Boolean positionAccurate = AISPayloadEncyptionUtil.convertToBoolean(encodedMessage.getBits(60, 61));
 		Double longitude = AISPayloadEncyptionUtil.convertToDouble(encodedMessage.getBits(61, 89)) / 600000f;
 		Double latitude = AISPayloadEncyptionUtil.convertToDouble(encodedMessage.getBits(89, 116)) / 600000f;
-		Float courseOverGround = AISPayloadEncyptionUtil.convertToUnsignedFloat(encodedMessage.getBits(116, 128)) / 10f;
+		Double courseOverGround = AISPayloadEncyptionUtil.convertToUnsignedDouble(encodedMessage.getBits(116, 128)) / 10f;
 		Integer trueHeading = AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(128, 137));
 		Integer second = AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(137, 143));
 		ManeuverIndicator maneuverIndicator = ManeuverIndicator.fromInteger(AISPayloadEncyptionUtil.convertToUnsignedInteger(encodedMessage.getBits(143, 145)));
