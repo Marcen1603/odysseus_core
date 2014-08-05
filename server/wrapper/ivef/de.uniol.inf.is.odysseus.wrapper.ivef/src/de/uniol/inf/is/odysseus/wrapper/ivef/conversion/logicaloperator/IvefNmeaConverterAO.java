@@ -22,10 +22,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
-//import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
-//import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IvefMsgParameter;
-//import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NmeaMsgParameter;
-//import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.wrapper.ivef.IIvefElement;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.Sentence;
 
@@ -39,7 +37,7 @@ public class IvefNmeaConverterAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = -8015847502104587689L; 
 	
 	private IIvefElement ivef;
-	private boolean directionIvefToNmea;
+	private ConversionType conversionType;
 	private Sentence nmea;
 		
 	public IvefNmeaConverterAO(){
@@ -60,20 +58,10 @@ public class IvefNmeaConverterAO extends UnaryLogicalOp {
 		return super.getOutputSchemaIntern(0);
 	}
 	
-//	@Parameter(name="ivef", type=IvefMsgParameter.class, isList=false, optional=true, doc="The Ivef message to be converted into nmea")
-//	public void setIvef(IIvefElement ivef) {
-//		this.ivef = ivef;
-//	}
-//	
-//	@Parameter(name="nmea", type=NmeaMsgParameter.class, isList=false, optional=true, doc="The nmea message to be converted into ivef")
-//	public void setNmea(Sentence nmea) {
-//		this.nmea = nmea;
-//	}
-//	
-//	@Parameter(name="ivefToNmea", type=BooleanParameter.class, isList=false, optional=false, doc="this parameter determines the direction of the cenvesion, from ivef to nmea or from nmea to ivef")
-//	public void setIvefToNmea(boolean ivefToNmea) { 
-//		this.ivefToNmea = ivefToNmea;
-//	}
+	@Parameter(name="conversionType", type=EnumParameter.class, isList=false, optional=false, doc="The conversion type between Maritime messages: AIS_To_IVEF, IVEF_To_AIS, TTM_To_IVEF, IVEF_To_TTM")
+	public void setConversionType(ConversionType conversionType) {
+		this.conversionType = conversionType; 
+	}  
 	
 	public IIvefElement getIvef() {
 		return this.ivef;
@@ -83,7 +71,7 @@ public class IvefNmeaConverterAO extends UnaryLogicalOp {
 		return this.nmea;
 	}
 	
-	public boolean isDirectionIvefToNmea() {
-		return this.directionIvefToNmea;
+	public ConversionType getConversionType(){
+		return this.conversionType;
 	}
 }
