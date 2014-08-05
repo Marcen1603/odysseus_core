@@ -298,7 +298,7 @@ public class IVEF_0_1_5_ProtocolHandler extends
 			this.m_vesselData = this.parser.getVesselData();
 			///////Workaround: 
 			//1. set speed to 0 because of a bug in VTS
-			this.m_vesselData.getBody().getVesselDataAt(0).getPosReport().setSOG(Float.valueOf(0));
+//			this.m_vesselData.getBody().getVesselDataAt(0).getPosReport().setSOG(Double.valueOf(0));
 //			//2. Set the COG as integer value for the VTS
 //			int cog = this.m_vesselData.getBody().getVesselDataAt(0).getPosReport().getCOG().intValue();
 //			this.m_vesselData.getBody().getVesselDataAt(0).getPosReport().setCOG(Float.valueOf(cog));
