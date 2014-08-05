@@ -4,7 +4,7 @@
       label="Mail Feature"
       version="1.0.0.qualifier">
 
-    <copyright>
+   <copyright>
       Copyright by the Odysseus Team (odysseus.informatik.uni-oldenburg.de)
    </copyright>
 
@@ -34,6 +34,13 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="javax.mail"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="javax.activation"
          download-size="0"
          install-size="0"
          version="0.0.0"
