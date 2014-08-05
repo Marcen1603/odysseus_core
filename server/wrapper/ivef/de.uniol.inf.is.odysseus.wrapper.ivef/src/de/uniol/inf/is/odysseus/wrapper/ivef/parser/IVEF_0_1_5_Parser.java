@@ -361,11 +361,11 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
                 obj.setUpdateTimeDR(val);
             }
             else if (key == "SOG") {
-                Float val = Float.parseFloat(value);
+            	Double val = Double.parseDouble(value);
                 obj.setSOG(val);
             }
             else if (key == "COG") {
-                Float val = Float.parseFloat(value);
+            	Double val = Double.parseDouble(value);
                 obj.setCOG(val);
             }
             else if (key == "Lost") {
