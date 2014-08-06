@@ -1,18 +1,12 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -21,20 +15,20 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
-import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
-import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages.IMessageDeliveryFailedListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages.LoadBalancingAbortMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages.LoadBalancingInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages.LoadBalancingResponseMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.protocol.AbortHandler;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.protocol.InstructionHandler;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.protocol.ResponseHandler;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.status.LoadBalancingMasterStatus;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.status.LoadBalancingSlaveStatus;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.status.LoadBalancingStatusCache;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.status.LoadBalancingMasterStatus.LB_PHASES;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.status.LoadBalancingStatusCache;
 
 public class LoadBalancingCommunicationListener implements
-		IPeerCommunicatorListener, ILoadBalancingCommunicator {
+		IPeerCommunicatorListener, ILoadBalancingCommunicator, IMessageDeliveryFailedListener{
 
 	/**
 	 * 
@@ -87,6 +81,32 @@ public class LoadBalancingCommunicationListener implements
 	public static LoadBalancingCommunicationListener getInstance() {
 		return instance;
 	}
+	
+	/**
+	 * Getter for Executor
+	 * @return
+	 */
+	public static IServerExecutor getExecutor() {
+		return executor;
+	}
+
+	/**
+	 * Getter for PeerCommunicator
+	 * @return
+	 */
+	public static IPeerCommunicator getPeerCommunicator() {
+		return peerCommunicator;
+	}
+
+	/**
+	 * Getter for NetworkManager
+	 * @return
+	 */
+	public static IP2PNetworkManager getP2pNetworkManager() {
+		return p2pNetworkManager;
+	}
+
+	
 
 	/**
 	 * Called by OSGi on Bundle activation.
@@ -151,6 +171,21 @@ public class LoadBalancingCommunicationListener implements
 	}
 
 	/**
+	 * Gets currently active Session.
+	 * 
+	 * @return active Session
+	 */
+	public static ISession getActiveSession() {
+		if (activeSession == null || !activeSession.isValid()) {
+			activeSession = UserManagementProvider
+					.getSessionmanagement()
+					.loginSuperUser(null,
+							UserManagementProvider.getDefaultTenant().getName());
+		}
+		return activeSession;
+	}
+
+	/**
 	 * called by OSGi-DS to bind Peer Communicator (registers all Messages and
 	 * adds Listeners)
 	 * 
@@ -206,7 +241,7 @@ public class LoadBalancingCommunicationListener implements
 	@Override
 	/**
 	 * called when a registered Message is received.
-	 * Implements basic LoadBalancing Protokoll.
+	 * Delegates Message to according message handler.
 	 * @param communicator Peer Communicator
 	 * @param senderPeer Peer sending the Message
 	 * @param message Received Message.
@@ -216,162 +251,22 @@ public class LoadBalancingCommunicationListener implements
 
 		if (message instanceof LoadBalancingResponseMessage) {
 			LoadBalancingResponseMessage response = (LoadBalancingResponseMessage) message;
-			handlePeerResonse(response, senderPeer);
+			ResponseHandler.handlePeerResonse(response, senderPeer);
 		}
 
 		if (message instanceof LoadBalancingInstructionMessage) {
 			LoadBalancingInstructionMessage instruction = (LoadBalancingInstructionMessage) message;
-			handleInstruction(instruction, senderPeer);
+			InstructionHandler.handleInstruction(instruction, senderPeer);
 		}
 
 		if (message instanceof LoadBalancingAbortMessage) {
 			LoadBalancingAbortMessage abortMessage = (LoadBalancingAbortMessage) message;
-			handleAbort(abortMessage, senderPeer);
+			AbortHandler.handleAbort(abortMessage, senderPeer);
 		}
 
 	}
 
-	/**
-	 * Handles Instruction messages, sent from initiation Master Peer to Slave Peers.
-	 * @param instruction Instruction received by Peer.
-	 * @param senderPeer Peer that sent Message (in this case: Master Peer).
-	 */
-	private void handleInstruction(LoadBalancingInstructionMessage instruction,
-			PeerID senderPeer) {
-
-		int lbProcessId = instruction.getLoadBalancingProcessId();
-		LoadBalancingMessageDispatcher dispatcher = null;
-		LoadBalancingSlaveStatus status = LoadBalancingStatusCache
-				.getInstance().getSlaveStatus(senderPeer, lbProcessId);
-
-		
-		boolean isSender = true;
-
-		
-		//Decide which message we received.
-		switch (instruction.getMsgType()) {
-
-		case LoadBalancingInstructionMessage.INITIATE_LOADBALANCING:
-			// Only react to first INITIATE_LOADBALANCING Message, even if sent
-			// more often.
-
-			if (status == null) {
-				status = new LoadBalancingSlaveStatus(
-						LoadBalancingSlaveStatus.INVOLVEMENT_TYPES.VOLUNTEERING_PEER,
-						LoadBalancingSlaveStatus.LB_PHASES.WAITING_FOR_ADD,
-						senderPeer, lbProcessId,
-						new LoadBalancingMessageDispatcher(peerCommunicator,
-								getActiveSession(), lbProcessId));
-				LoadBalancingStatusCache.getInstance().storeSlaveStatus(
-						senderPeer, lbProcessId, status);
-				status.getMessageDispatcher().sendAckInit(senderPeer);
-			}
-			break;
-
-		case LoadBalancingInstructionMessage.ADD_QUERY:
-			// Only react if status is not set yet.
-			if (status.getPhase().equals(
-					LoadBalancingSlaveStatus.LB_PHASES.WAITING_FOR_ADD)) {
-				status.setPhase(LoadBalancingSlaveStatus.LB_PHASES.WAITING_FOR_SYNC);
-				dispatcher = status.getMessageDispatcher();
-				dispatcher.stopRunningJob();
-				try {
-					Collection<Integer> queryIDs = LoadBalancingHelper
-							.installAndRunQueryPartFromPql(executor,
-									getActiveSession(), Context.empty(),
-									instruction.getPQLQuery());
-					dispatcher.sendInstallSuccess(senderPeer, queryIDs);
-				} catch (Exception e) {
-					status.setPhase(LoadBalancingSlaveStatus.LB_PHASES.ABORT);
-					dispatcher.sendInstallFailure(senderPeer);
-				}
-			}
-			break;
-
-		case LoadBalancingInstructionMessage.COPY_RECEIVER:
-			isSender = false;
-		case LoadBalancingInstructionMessage.COPY_SENDER:
-			// Create Status if none exist
-			if (status == null) {
-				status = new LoadBalancingSlaveStatus(
-						LoadBalancingSlaveStatus.INVOLVEMENT_TYPES.PEER_WITH_SENDER_OR_RECEIVER,
-						LoadBalancingSlaveStatus.LB_PHASES.WAITING_FOR_SYNC,
-						senderPeer, lbProcessId,
-						new LoadBalancingMessageDispatcher(peerCommunicator,
-								getActiveSession(), lbProcessId));
-				LoadBalancingStatusCache.getInstance().storeSlaveStatus(
-						senderPeer, lbProcessId, status);
-			}
-			// Process Pipe only if not already processed:
-			if (status.getPhase().equals(
-					LoadBalancingSlaveStatus.LB_PHASES.WAITING_FOR_SYNC)
-					&& !status.isPipeKnown(instruction.getNewPipeId())) {
-				status.addReplacedPipe(instruction.getOldPipeId(),
-						instruction.getOldPipeId());
-				dispatcher = status.getMessageDispatcher();
-				try {
-					LoadBalancingHelper.findAndCopyLocalJxtaOperator(executor,
-							dispatcher, getActiveSession(), isSender,
-							instruction.getNewPeerId(),
-							instruction.getOldPipeId(),
-							instruction.getNewPipeId(), lbProcessId);
-					dispatcher.sendDuplicateSuccess(senderPeer,
-							instruction.getNewPipeId());
-				} catch (Exception e) {
-					dispatcher.sendDuplicateFailure(senderPeer);
-				}
-			}
-			break;
-
-		case LoadBalancingInstructionMessage.DELETE_RECEIVER:
-			LoadBalancingHelper.deleteDeprecatedReceiver(executor,
-					instruction.getOldPipeId());
-			break;
-		case LoadBalancingInstructionMessage.DELETE_SENDER:
-			LoadBalancingHelper.deleteDeprecatedSender(executor,instruction.getOldPipeId());
-			break;
-
-		}
-
-	}
-
-	/**
-	 * Send Message to all incoming and outing Peers to add a duplicate connection 
-	 * @param status Status
-	 */
-	private void notifyOutgoingAndIncomingPeers(LoadBalancingMasterStatus status) {
-
-		String volunteeringPeer = status.getVolunteeringPeer().toString();
-		ILogicalQueryPart modifiedQueryPart = status.getModifiedPart();
-		HashMap<String, String> replacedPipes = status.getReplacedPipes();
-		LoadBalancingMessageDispatcher dispatcher = status
-				.getMessageDispatcher();
-
-		ArrayList<String> pipesToInstall = new ArrayList<String>();
-
-		for (ILogicalOperator operator : modifiedQueryPart.getOperators()) {
-			if (operator instanceof JxtaSenderAO) {
-				JxtaSenderAO sender = (JxtaSenderAO) operator;
-				dispatcher.sendCopyOperator(true,
-						LoadBalancingHelper.toPeerID(sender.getPeerID()),
-						replacedPipes.get(sender.getPipeID()),
-						sender.getPipeID(), volunteeringPeer);
-				pipesToInstall.add(sender.getPipeID());
-			}
-			if (operator instanceof JxtaReceiverAO) {
-				JxtaReceiverAO receiver = (JxtaReceiverAO) operator;
-				dispatcher.sendCopyOperator(true,
-						LoadBalancingHelper.toPeerID(receiver.getPeerID()),
-						replacedPipes.get(receiver.getPipeID()),
-						receiver.getPipeID(), volunteeringPeer);
-				pipesToInstall.add(receiver.getPipeID());
-			}
-		}
-		status.setPipesToInstall(pipesToInstall);
-
-	}
-
-
+	
 	/**
 	 * Initiates the copy Process between a Peer and another Peer (after
 	 * Allocation)
@@ -384,7 +279,7 @@ public class LoadBalancingCommunicationListener implements
 	@Override
 	public void initiateLoadBalancing(PeerID otherPeer, int queryId) {
 		ILogicalQueryPart partToCopy = LoadBalancingHelper
-				.getInstalledQueryPart(executor, getActiveSession(), queryId);
+				.getInstalledQueryPart(queryId);
 		int lbProcessIdentifier = LoadBalancingStatusCache.getInstance()
 				.createNewLocalProcess(partToCopy);
 		LoadBalancingMasterStatus status = LoadBalancingStatusCache
@@ -392,255 +287,9 @@ public class LoadBalancingCommunicationListener implements
 		status.setLogicalQuery(queryId);
 		status.setMessageDispatcher(new LoadBalancingMessageDispatcher(
 				peerCommunicator, getActiveSession(), lbProcessIdentifier));
-		status.getMessageDispatcher().sendInitiate(otherPeer);
+		status.getMessageDispatcher().sendInitiate(otherPeer,this);
 	}
 
-
-	/**
-	 * Handles Responses sent by Peers when they finish or fail instructions.
-	 * @param response
-	 * @param senderPeer
-	 */
-	private void handlePeerResonse(LoadBalancingResponseMessage response,
-			PeerID senderPeer) {
-
-		int loadBalancingProcessId = response.getLoadBalancingProcessId();
-		LoadBalancingMasterStatus status = LoadBalancingStatusCache
-				.getInstance().getStatusForLocalProcess(loadBalancingProcessId);
-
-		// LoadBalancing Process is no longer active -> ignore!
-		if (status == null) {
-			return;
-		}
-
-		LoadBalancingMessageDispatcher dispatcher = status
-				.getMessageDispatcher();
-
-		switch (response.getMsgType()) {
-		case LoadBalancingResponseMessage.ACK_LOADBALANCING:
-			if (status.getPhase().equals(
-					LoadBalancingMasterStatus.LB_PHASES.initiating)) {
-				status.setPhase(LoadBalancingMasterStatus.LB_PHASES.copying);
-				dispatcher.stopRunningJob();
-
-				ILogicalQueryPart modifiedQueryPart = LoadBalancingHelper
-						.getCopyOfQueryPart(status.getOriginalPart());
-				HashMap<String, String> replacedPipes = LoadBalancingHelper
-						.relinkQueryPart(p2pNetworkManager, modifiedQueryPart,
-								senderPeer, status);
-
-				status.setReplacedPipes(replacedPipes);
-				status.setModifiedPart(modifiedQueryPart);
-
-				String pqlFromQueryPart = LogicalQueryHelper
-						.generatePQLStatementFromQueryPart(modifiedQueryPart);
-				dispatcher.sendAddQuery(status.getVolunteeringPeer(),
-						pqlFromQueryPart);
-			}
-			break;
-
-		case LoadBalancingResponseMessage.SUCCESS_INSTALL_QUERY:
-
-			// When in Phase copying, the success Message says that Installing
-			// the Query Part on the other Peer was successful.
-			if (status.getPhase().equals(
-					LoadBalancingMasterStatus.LB_PHASES.copying)) {
-				dispatcher.stopRunningJob();
-				status.setPhase(LoadBalancingMasterStatus.LB_PHASES.relinking);
-				notifyOutgoingAndIncomingPeers(status);
-			}
-			break;
-
-		case LoadBalancingResponseMessage.SUCCESS_DUPLICATE:
-
-			if (status.getPhase().equals(
-					LoadBalancingMasterStatus.LB_PHASES.relinking)) {
-				dispatcher.stopRunningJob(response.getPipeID());
-				if (dispatcher.getNumberOfRunningJobs() == 0) {
-					// All success messages received. Yay!
-					status.setPhase(LB_PHASES.synchronizing);
-				}
-			}
-			break;
-
-		case LoadBalancingResponseMessage.SYNC_FINISHED:
-			if (status.getPhase().equals(LB_PHASES.synchronizing)) {
-				status.removePipeToSync(response.getPipeID());
-				if (status.getNumberOfPipesToSync() == 0) {
-					ILogicalQueryPart queryPart = status.getOriginalPart();
-					if (!queryPart.getOperators().asList().isEmpty()) {
-
-						// Tell Receivers and Senders to delete duplicate
-						// Connections.
-						for (ILogicalOperator operator : queryPart
-								.getOperators()) {
-							if (operator instanceof JxtaReceiverAO) {
-								JxtaReceiverAO receiver = (JxtaReceiverAO) operator;
-								dispatcher.sendDeleteOperator(false,
-										receiver.getPeerID(),
-										receiver.getPipeID());
-							}
-							if (operator instanceof JxtaSenderAO) {
-								JxtaSenderAO sender = (JxtaSenderAO) operator;
-								dispatcher.sendDeleteOperator(false,
-										sender.getPeerID(), sender.getPipeID());
-							}
-						}
-					}
-					int queryId = status.getLogicalQuery();
-					LoadBalancingHelper.deleteQuery(executor,
-							getActiveSession(), queryId);
-				}
-			}
-			break;
-
-		case LoadBalancingResponseMessage.FAILURE_INSTALL_QUERY:
-			LOG.debug("Failure in installing Query");
-			handleError(status);
-			break;
-
-		case LoadBalancingResponseMessage.FAILURE_DUPLICATE_RECEIVER:
-			LOG.debug("Failure in duplicating Connections");
-			handleError(status);
-			break;
-
-		}
-
-	}
-
-	/**
-	 * Message Handler for Abort Messages. If AbortInstruction -> SlavePeer handles it, if AbortResponse -> Master Peer stops sending Messages to according slave Peer.
-	 * @param abortMessage
-	 * @param senderPeer
-	 */
-	public void handleAbort(LoadBalancingAbortMessage abortMessage,
-			PeerID senderPeer) {
-		
-		switch (abortMessage.getMsgType()) {
-		case LoadBalancingAbortMessage.ABORT_INSTRUCTION:
-			
-			undoLoadBalancing(abortMessage, senderPeer);
-			
-		case LoadBalancingAbortMessage.ABORT_RESPONSE:
-			
-			LoadBalancingMessageDispatcher dispatcher = LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(abortMessage.getLoadBalancingProcessId()).getMessageDispatcher();
-			dispatcher.stopRunningJob(senderPeer.toString());
-			if(dispatcher.getNumberOfRunningJobs()==0) {
-				finishAbort(abortMessage.getLoadBalancingProcessId());
-			}
-		}
-		
-	}
-	
-	/**
-	 * Re-Allocates and cleans up status after Abort has been completed.
-	 * @param lbProcessId
-	 */
-	private void finishAbort(int lbProcessId) {
-		LoadBalancingMasterStatus status = LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
-		if(status!=null) {
-			@SuppressWarnings("unused")
-			int queryId = status.getLogicalQuery();
-			//TODO ReAllocate.
-			LoadBalancingStatusCache.getInstance().deleteLocalStatus(lbProcessId);
-		}
-	}
-
-	/**
-	 * When Abort Message is received by slave Peer, this Method decides what to do.
-	 * @param abortMessage
-	 * @param senderPeer
-	 */
-	private void undoLoadBalancing(LoadBalancingAbortMessage abortMessage,
-			PeerID senderPeer) {
-		int lbProcessId = abortMessage.getLoadBalancingProcessId();
-		LoadBalancingSlaveStatus status = LoadBalancingStatusCache
-				.getInstance().getSlaveStatus(senderPeer, lbProcessId);
-		
-		//Ignore if status no longer active.
-		if(status==null) {
-			return;
-		}
-		
-		LoadBalancingMessageDispatcher dispatcher = status.getMessageDispatcher();
-		
-		
-		
-		//Ignore Message if already aborting.
-		if(!(status.getPhase()==LoadBalancingSlaveStatus.LB_PHASES.ABORT)) {
-			dispatcher.stopAllMessages();
-			status.setPhase(LoadBalancingSlaveStatus.LB_PHASES.ABORT);
-			switch (status.getInvolvementType()) {
-	
-			case PEER_WITH_SENDER_OR_RECEIVER:
-	
-				ArrayList<String> installedPipes = Collections.list(status
-						.getReplacedPipes().keys());
-				for (String pipe : installedPipes) {
-					LoadBalancingHelper.removeDuplicateJxtaOperator(executor, pipe);
-				}
-				// NO break, since Peer could in theory also be the volunteering
-				// peer
-	
-			case VOLUNTEERING_PEER:
-				Integer[] queriesToRemove = status.getInstalledQueries();
-				if (queriesToRemove != null) {
-					for (int query : queriesToRemove) {
-						LoadBalancingHelper.deleteQuery(executor,
-								getActiveSession(), query);
-					}
-				}
-				break;
-	
-			}
-			dispatcher.sendAbortResponse(senderPeer);
-		}
-	}
-
-	/**
-	 * Decides what to do when error occurs.
-	 * @param status
-	 */
-	public void handleError(LoadBalancingMasterStatus status) {
-		LoadBalancingMessageDispatcher dispatcher = status.getMessageDispatcher();
-		
-		// Handle error depending on current LoadBalancing phase.
-		switch (status.getPhase()) {
-		case initiating:
-		case copying:
-			// Send abort only to volunteering Peer
-			dispatcher.stopAllMessages();
-			dispatcher.sendAbortInstruction(status.getVolunteeringPeer());
-			break;
-		case relinking:
-			// Send Abort to all Peers involved
-			dispatcher.stopAllMessages();
-			notifyInvolvedPeers(status);
-			break;
-		case synchronizing:
-			// New query is already running. Do not abort.
-			break;
-		default:
-			break;
-
-		}
-
-	}
-
-	/**
-	 * Sends abort Message to all Peers involved in LoadBalancing Process
-	 * @param status
-	 */
-	public void notifyInvolvedPeers(LoadBalancingMasterStatus status) {
-		status.setPhase(LoadBalancingMasterStatus.LB_PHASES.failure);
-		// Get Distinct List of involved Peers:
-		ArrayList<PeerID> involvedPeers = new ArrayList<PeerID>(
-				new HashSet<PeerID>(status.getPeersForPipe().values()));
-		involvedPeers.add(status.getVolunteeringPeer());
-		for (PeerID peer : involvedPeers) {
-			status.getMessageDispatcher().sendAbortInstruction(peer);
-		}
-	}
 
 	/**
 	 * Adds a LoadBalancing Listener
@@ -660,19 +309,69 @@ public class LoadBalancingCommunicationListener implements
 	}
 	
 
+
 	/**
-	 * Gets currently active Session.
-	 * 
-	 * @return active Session
+	 * Called when Message delivery on Master Peer failed. Decides whether to abort or not.
 	 */
-	public static ISession getActiveSession() {
-		if (activeSession == null || !activeSession.isValid()) {
-			activeSession = UserManagementProvider
-					.getSessionmanagement()
-					.loginSuperUser(null,
-							UserManagementProvider.getDefaultTenant().getName());
+	@Override
+	public void update(IMessage message, PeerID peerId) {
+		if(message instanceof LoadBalancingInstructionMessage) {
+			LoadBalancingInstructionMessage instruction = (LoadBalancingInstructionMessage)message;
+			handleTimeoutOnMasterPeer(instruction);
 		}
-		return activeSession;
+		
+		if(message instanceof LoadBalancingAbortMessage) {
+			LoadBalancingAbortMessage abortMsg = (LoadBalancingAbortMessage) message;
+			//If Abort Instruction could not be delivered... Bad luck. Stop Sending it and try finishing up.
+			if(abortMsg.getMsgType()==LoadBalancingAbortMessage.ABORT_INSTRUCTION) {
+				AbortHandler.stopSendingAbort(abortMsg, peerId);
+			}
+		}
+		
+		//No need to process Messages from slave Peers, as the master Peer will notice that they don't answer and initiate Abort.
+		
 	}
 
+
+	/**
+	 * When Timeout happens and peer is in corresponding Phase -> Handle Error.
+	 * @param instruction
+	 */
+	private void handleTimeoutOnMasterPeer(
+			LoadBalancingInstructionMessage instruction) {
+		int lbProcessId = instruction.getLoadBalancingProcessId();
+		LoadBalancingMasterStatus status = LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
+		
+		if(status==null) {
+			return;
+		}
+		
+		switch(instruction.getMsgType()){
+			case LoadBalancingInstructionMessage.INITIATE_LOADBALANCING:
+				if(status.getPhase().equals(LB_PHASES.INITIATING)) {
+					ResponseHandler.handleError(status,this);
+				}
+				break;
+			case LoadBalancingInstructionMessage.ADD_QUERY:
+				if(status.getPhase().equals(LB_PHASES.COPYING)) {
+					ResponseHandler.handleError(status,this);
+				}
+				break;
+			case LoadBalancingInstructionMessage.COPY_RECEIVER:
+			case LoadBalancingInstructionMessage.COPY_SENDER:
+				if(status.getPhase().equals(LB_PHASES.RELINKING)) {
+					ResponseHandler.handleError(status,this);
+				}
+				break;
+			case LoadBalancingInstructionMessage.DELETE_RECEIVER:
+			case LoadBalancingInstructionMessage.DELETE_SENDER:
+				if(status.getPhase().equals(LB_PHASES.INITIATING)) {
+					ResponseHandler.handleError(status,this);
+				}
+				break;
+		}
+		
+	}
+	
+	
 }

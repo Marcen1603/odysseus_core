@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.LoadBala
 public class LoadBalancingMasterStatus {
 	
 	public enum LB_PHASES {
-		initiating,copying,relinking,synchronizing,failure
+		INITIATING,COPYING,RELINKING,SYNCHRONIZING,FAILURE
 	}
 	
 	private LoadBalancingMessageDispatcher messageDispatcher;
@@ -29,7 +29,7 @@ public class LoadBalancingMasterStatus {
 	}
 
 
-	private LB_PHASES phase = LB_PHASES.initiating;
+	private LB_PHASES phase = LB_PHASES.INITIATING;
 	
 	private int processId;
 	private int logicalQuery;
@@ -53,18 +53,10 @@ public class LoadBalancingMasterStatus {
 		return pipesToSync.size();
 	}
 
-
-	private ArrayList<String> pipesToInstall;
 	private HashMap <String,PeerID> peersForPipe;
 	
 	private PeerID volunteeringPeer;
 	
-	public ArrayList<String> getPipesToInstall() {
-		return pipesToInstall;
-	}
-	public void setPipesToInstall(ArrayList<String> pipesToInstall) {
-		this.pipesToInstall = pipesToInstall;
-	}
 	public HashMap<String, PeerID> getPeersForPipe() {
 		return peersForPipe;
 	}
@@ -115,16 +107,9 @@ public class LoadBalancingMasterStatus {
 		this.replacedPipes = replacedPipes;
 	}
 	
-	public int pipesLeft() {
-		return pipesToInstall.size();
-	}
 	
 
-	public synchronized void markPipeInstalled(String pipeID) {
-		if(pipesToInstall.contains(pipeID)) {
-			pipesToInstall.remove(pipeID);
-		}
-	}
+	
 	
 	
 	

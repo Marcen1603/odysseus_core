@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages.IMessageDeliveryFailedListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages.LoadBalancingAbortMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages.LoadBalancingInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages.LoadBalancingResponseMessage;
@@ -21,7 +22,8 @@ public class LoadBalancingMessageDispatcher {
 	RepeatingMessageSend currentJob;
 	ConcurrentHashMap<String,RepeatingMessageSend> currentJobs;
 	
-	LoadBalancingMessageDispatcher(IPeerCommunicator peerCommunicator, ISession session, int lbProcessId) {
+	
+	public LoadBalancingMessageDispatcher(IPeerCommunicator peerCommunicator, ISession session, int lbProcessId) {
 		this.peerCommunicator = peerCommunicator;
 		this.session = session;
 		this.lbProcessId = lbProcessId;
@@ -56,7 +58,7 @@ public class LoadBalancingMessageDispatcher {
 
 	
 	public void sendDeleteOperator(boolean isSender, String peerId,
-			String pipeId) {
+			String pipeId,IMessageDeliveryFailedListener listener) {
 		LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createDeleteOperatorMsg(isSender, lbProcessId, pipeId);
 		if(this.currentJobs==null) {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
@@ -64,13 +66,15 @@ public class LoadBalancingMessageDispatcher {
 		if(!this.currentJobs.contains(pipeId)) {
 			RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator,message,LoadBalancingHelper.toPeerID(peerId));
 			this.currentJobs.put(pipeId, job);
+			job.addListener(listener);
 			job.start();
 		}
 	}
 	
-	public void sendAddQuery(PeerID destinationPeer, String queryPartPql) {
+	public void sendAddQuery(PeerID destinationPeer, String queryPartPql,IMessageDeliveryFailedListener listener) {
 		LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createAddQueryMsg(lbProcessId, queryPartPql);
 		this.currentJob = new RepeatingMessageSend(peerCommunicator,message,destinationPeer);
+		currentJob.addListener(listener);
 		currentJob.start();
 	}
 	
@@ -90,7 +94,7 @@ public class LoadBalancingMessageDispatcher {
 	}
 	
 	public void sendCopyOperator(boolean isSender, PeerID destinationPeer,
-			String oldPipeId, String newPipeId, String newPeerId) {
+			String oldPipeId, String newPipeId, String newPeerId, IMessageDeliveryFailedListener listener) {
 		
 		if(this.currentJobs==null) {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
@@ -99,6 +103,7 @@ public class LoadBalancingMessageDispatcher {
 			LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createCopyOperatorMsg(isSender, newPeerId, oldPipeId, newPipeId);
 			RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator,message,destinationPeer);
 			this.currentJobs.put(newPipeId, job);
+			job.addListener(listener);
 			job.start();
 		}
 		
@@ -108,8 +113,9 @@ public class LoadBalancingMessageDispatcher {
 		return currentJobs.size();
 	}
 	
-	public void sendInitiate(PeerID volunteeringPeer) {
+	public void sendInitiate(PeerID volunteeringPeer,IMessageDeliveryFailedListener listener) {
 			this.currentJob = new RepeatingMessageSend(peerCommunicator,LoadBalancingInstructionMessage.createInitiateMsg(lbProcessId),volunteeringPeer);
+			currentJob.addListener(listener);
 			currentJob.start();
 	}
 	
@@ -117,12 +123,14 @@ public class LoadBalancingMessageDispatcher {
 		if(this.currentJob!=null) {
 			currentJob.stopRunning();
 			currentJob = null;
+			currentJob.clearListeners();
 		}
 	}
 	
 	public void stopRunningJob(String job) {
 		if(this.currentJobs.contains(job)) {
 			currentJobs.get(job).stopRunning();
+			currentJobs.get(job).clearListeners();
 			currentJobs.remove(job);
 		}
 	}
@@ -132,9 +140,16 @@ public class LoadBalancingMessageDispatcher {
 		if(this.currentJobs!=null) {
 			for(RepeatingMessageSend job : currentJobs.values()) {
 				job.stopRunning();
+				job.clearListeners();
 			}
 			currentJobs.clear();
 			currentJobs=null;
+		}
+		
+		if(this.currentJob!=null) {
+			this.currentJob.stopRunning();
+			this.currentJob.clearListeners();
+			this.currentJob=null;
 		}
 	}
 
@@ -151,7 +166,7 @@ public class LoadBalancingMessageDispatcher {
 	}
 
 
-	public void sendAbortInstruction(PeerID peerID) {
+	public void sendAbortInstruction(PeerID peerID,IMessageDeliveryFailedListener listener) {
 		LoadBalancingAbortMessage message = LoadBalancingAbortMessage.createAbortInstructionMsg(lbProcessId);
 		if(this.currentJobs==null) {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
@@ -159,6 +174,7 @@ public class LoadBalancingMessageDispatcher {
 		if(!this.currentJobs.contains(peerID.toString())) {
 			RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator,message,peerID);
 			this.currentJobs.put(peerID.toString(), job);
+			job.addListener(listener);
 			job.start();
 		}
 		
