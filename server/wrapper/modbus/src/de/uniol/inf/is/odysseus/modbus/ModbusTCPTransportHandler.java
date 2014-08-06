@@ -15,13 +15,11 @@ import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IIteratable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class ModbusTCPTransportHandler extends AbstractTransportHandler
-		implements IIteratable<Tuple<IMetaAttribute>> {
+public class ModbusTCPTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> {
 
 	private static final int DEFAULT_PORT = 0;
 	public static final String NAME = "ModbusTCP";
