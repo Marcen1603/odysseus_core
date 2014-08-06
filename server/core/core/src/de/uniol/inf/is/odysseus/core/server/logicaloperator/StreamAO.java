@@ -85,7 +85,7 @@ public class StreamAO extends AbstractLogicalOperator {
 
 	@Parameter(name = "Source", type = SourceParameter.class, optional = true, possibleValues = "__DD_SOURCES", possibleValuesAreDynamic = true)
 	public void setSource(AccessAO inputStream) {
-		if( inputStream == null ) {
+		if (inputStream == null) {
 			this.schema = null;
 		} else {
 			this.schema = inputStream.getOutputSchema();
@@ -97,32 +97,34 @@ public class StreamAO extends AbstractLogicalOperator {
 	public void setSourceName(Resource resource) {
 		this.streamname = resource;
 		setName(streamname.getResourceName());
-		
+
 		addParameterInfo("SOURCENAME", "'" + streamname.getResourceName() + "'");
 	}
 
 	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema", isList = true, optional = true, doc = "The output schema.")
 	public void setAttributes(List<SDFAttribute> attributes) {
 		this.attributes = attributes;
-		
-		if( attributes == null || attributes.isEmpty() ) {
+
+		if (attributes == null || attributes.isEmpty()) {
 			removeParameterInfo("SCHEMA");
 		} else {
 			addParameterInfo("SCHEMA", schemaToString(attributes));
 		}
 	}
 
-//	@Parameter(type = StringParameter.class, name = "DataHandler", optional = false, possibleValues = "getDataHandlerValues", doc = "The name of the datahandler to use, e.g. Tuple or Document.")
-	@Parameter(type = StringParameter.class, name = "DataHandler", optional = false, doc = "The name of the datahandler to use, e.g. Tuple or Document.")
+	// @Parameter(type = StringParameter.class, name = "DataHandler", optional =
+	// false, possibleValues = "getDataHandlerValues", doc =
+	// "The name of the datahandler to use, e.g. Tuple or Document.")
+	@Parameter(type = StringParameter.class, name = "DataHandler", optional = true, doc = "The name of the datahandler to use, e.g. Tuple or Document.")
 	public void setDataHandler(String dataHandler) {
 		type = DataHandlerRegistry.getCreatedType(dataHandler);
-		if( !Strings.isNullOrEmpty(dataHandler)) {
+		if (!Strings.isNullOrEmpty(dataHandler)) {
 			addParameterInfo("DATAHANDLER", "'" + dataHandler + "'");
 		} else {
 			removeParameterInfo("DATAHANDLER");
 		}
 	}
-	
+
 	public List<String> getDataHandlerValues() {
 		return DataHandlerRegistry.getStreamableDataHandlerNames();
 	}
@@ -186,7 +188,7 @@ public class StreamAO extends AbstractLogicalOperator {
 
 		return isValid;
 	}
-	
+
 	private static String schemaToString(List<SDFAttribute> outputSchema) {
 		if (outputSchema.isEmpty()) {
 			return "[]";
@@ -194,11 +196,12 @@ public class StreamAO extends AbstractLogicalOperator {
 
 		final StringBuilder sb = new StringBuilder();
 		sb.append("[");
-		final SDFAttribute[] attributes = outputSchema.toArray(new SDFAttribute[0]);
+		final SDFAttribute[] attributes = outputSchema
+				.toArray(new SDFAttribute[0]);
 		for (int i = 0; i < attributes.length; i++) {
 			final SDFAttribute attribute = attributes[i];
 			sb.append("[");
-			if( !Strings.isNullOrEmpty(attribute.getSourceName())) {
+			if (!Strings.isNullOrEmpty(attribute.getSourceName())) {
 				sb.append("'").append(attribute.getSourceName()).append("',");
 			}
 			sb.append("'").append(attribute.getAttributeName());
