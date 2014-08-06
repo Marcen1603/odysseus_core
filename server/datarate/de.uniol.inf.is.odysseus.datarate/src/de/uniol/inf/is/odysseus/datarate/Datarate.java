@@ -29,7 +29,7 @@ public class Datarate implements IDatarate, Cloneable, Serializable {
 
 	@Override
 	public String getName() {
-		return "datarate";
+		return "Datarate";
 	}
 
 	@Override
