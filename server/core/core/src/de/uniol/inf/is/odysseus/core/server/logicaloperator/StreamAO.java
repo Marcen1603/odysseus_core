@@ -160,7 +160,7 @@ public class StreamAO extends AbstractLogicalOperator {
 			if (type != null) {
 				isValid = false;
 				addError(new IllegalParameterException(
-						"Stream cannot be combined with type"));
+						"Stream cannot be combined with DataHandler"));
 			}
 			if (attributes != null) {
 				isValid = false;
@@ -172,17 +172,17 @@ public class StreamAO extends AbstractLogicalOperator {
 			if (type == null) {
 				isValid = false;
 				addError(new IllegalParameterException(
-						"Type or stream must be given"));
+						"DataHandler _or_ stream must be given"));
 			}
 			if (attributes == null) {
 				isValid = false;
 				addError(new IllegalParameterException(
-						"Schema or stream must be given"));
+						"Schema _or_ stream must be given"));
 			}
 			if (streamname == null) {
 				isValid = false;
 				addError(new IllegalParameterException(
-						"Streamname or stream must be given"));
+						"Streamname _or_ stream must be given"));
 			}
 		}
 
