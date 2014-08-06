@@ -11,12 +11,9 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 
 /***
  * SportsQL Parser for Corner Kicks. PQL by Pascal Schmedt
@@ -24,8 +21,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpacePa
  * @author Carsten Cordes
  *
  */
-@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.GLOBAL }, name = "cornerkicks", parameters = {
-		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = true) })
+@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.GLOBAL }, name = "cornerkicks", parameters = { })
 public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 
 	public static final String TIME_BETWEEN_GOALLINE_AND_CORNER =  "30000000000000.0";
@@ -37,16 +33,11 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
 			throws SportsQLParseException {
-
-		// Fetch time and Space parameters from Query.
 		
-		SportsQLSpaceParameter spaceParameter = SportsQLParameterHelper
-				.getSpaceParameter(sportsQL);
-		
-		int xMin = spaceParameter.getStartx();
-		int xMax = spaceParameter.getEndx();
-		int yMin = spaceParameter.getStarty();
-		int yMax = spaceParameter.getEndy();
+		int xMin = OperatorBuildHelper.LOWERLEFT_X;
+		int xMax = OperatorBuildHelper.LOWERRIGHT_X;
+		int yMin = OperatorBuildHelper.LOWERLEFT_Y;
+		int yMax = OperatorBuildHelper.UPPERLEFT_Y;
 
 		String startTS = OperatorBuildHelper.TS_GAME_START;
 
