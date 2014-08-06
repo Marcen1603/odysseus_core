@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -1087,8 +1088,8 @@ public class OperatorBuildHelper {
 			ILogicalOperator source) {
 		ElementWindowAO windowAO = new ElementWindowAO();
 		//null cause timeUnit is deprecated
-		TimeValueItem windowSize = new TimeValueItem(size, null);
-		TimeValueItem windowAdvance = new TimeValueItem(advance, null);
+		TimeValueItem windowSize = new TimeValueItem(size, TimeUnit.MILLISECONDS);
+		TimeValueItem windowAdvance = new TimeValueItem(advance, TimeUnit.MILLISECONDS);
 		windowAO.setWindowSize(windowSize);
 		windowAO.setWindowAdvance(windowAdvance);
 		windowAO.subscribeTo(source, source.getOutputSchema());

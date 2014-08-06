@@ -6,6 +6,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
@@ -92,21 +93,20 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 
 
 		// ball in goal or field stream	
-		predicate = "(x > " + MIN_X + " AND x < " + MAX_X + " AND y > "
+		String predicateGoalAndField = "(x > " + MIN_X + " AND x < " + MAX_X + " AND y > "
 				+ MIN_Y + " AND y < " + MAX_Y + ")";
 		
-		predicate +=  " OR (y < " + GOALLINE1
-				+ " AND y > ((" + GOALLINE1 + ")-(" + GOAL_DEPTH
+		predicateGoalAndField +=  " OR (y < " + GOALLINE1
+				+ " AND y > ((" + (GOALLINE1 - GOAL_DEPTH)
 				+ ")) AND x > " + GOALPOST1_RIGHT + " AND x < "
 				+ GOALPOST1_LEFT + ")";
 		
-		predicate += " OR (y > " + GOALLINE2 + " AND y < (("
-				+ GOALLINE2 + ")+(" + GOAL_DEPTH + ")) AND x < "
+		predicateGoalAndField += " OR (y > " + GOALLINE2 + " AND y < (("
+				+ (GOALLINE2 + GOAL_DEPTH) + ")) AND x < "
 				+ GOALPOST2_RIGHT + " AND x > " + GOALPOST2_LEFT + ")";
 		
-		
 		SelectAO ball_in_goal_or_field = OperatorBuildHelper.createSelectAO(
-				predicate, soccergame_after_start);
+				predicateGoalAndField, ball);
 		allOperators.add(ball_in_goal_or_field);
 		predicates.clear();
 
@@ -139,10 +139,14 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		allOperators.add(onCentreSpot_filter);
 		attributes.clear();
 
+		// Windows for join
+		// ElementWindowAO inGoalWindow = OperatorBuildHelper.createElementWindowAO(2, 1, inGoal_filter);
+		// ElementWindowAO onCentreSpotWindow = OperatorBuildHelper.createElementWindowAO(1, 1, onCentreSpot_filter);
+		
 		// join goals of last x seconds with centre spot stream
-		predicates.add(" goal_ts > (spot_ball_ts - (" + T_GOAL_KICKOFF + " * "
-				+ ONE_SECOND + ")) AND (inGoal1 = 1 OR inGoal2 = 1) ");
-		JoinAO goals_join = OperatorBuildHelper.createJoinAO(predicates,
+		String joinPredicate = "goal_ts > (spot_ball_ts - (" + T_GOAL_KICKOFF + " * "
+				+ ONE_SECOND + ")) AND (inGoal1 = 1 OR inGoal2 = 1)";
+		JoinAO goals_join = OperatorBuildHelper.createJoinAO(joinPredicate, "MANY_MANY",
 				inGoal_filter, onCentreSpot_filter);
 		allOperators.add(goals_join);
 		predicates.clear();
@@ -181,13 +185,13 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 				.createExpressionParameter("z", "goal_z", source);
 		SDFExpressionParameter ex5 = OperatorBuildHelper
 				.createExpressionParameter("eif( y < " + GOALLINE1
-						+ " AND y > (" + GOALLINE1 + ")-(" + GOAL_DEPTH
-						+ ") AND x > " + GOALPOST1_RIGHT + " AND x < "
+						+ " AND y > " + (GOALLINE1 - GOAL_DEPTH)
+						+ " AND x > " + GOALPOST1_RIGHT + " AND x < "
 						+ GOALPOST1_LEFT + " , 1, 0)", "inGoal1", source);
 		SDFExpressionParameter ex6 = OperatorBuildHelper
 				.createExpressionParameter("eif( y > " + GOALLINE2
-						+ " AND y < (" + GOALLINE2 + ")+(" + GOAL_DEPTH
-						+ ") AND x < " + GOALPOST2_RIGHT + " AND x > "
+						+ " AND y < " + (GOALLINE2 + GOAL_DEPTH)
+						+ " AND x < " + GOALPOST2_RIGHT + " AND x > "
 						+ GOALPOST2_LEFT + " , 1, 0)", "inGoal2", source);
 		expressions.add(ex1);
 		expressions.add(ex2);
