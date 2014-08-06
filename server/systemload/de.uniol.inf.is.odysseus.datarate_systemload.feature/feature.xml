@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.datarate_systemload.feature"
-      label="Datarate Systemload Feature"
+      label="Datarate+Systemload Metadata Feature"
       version="1.0.0.qualifier"
       provider-name="Timo Michelsen">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
-   </description>   <copyright>
+   </description>
+
+   <copyright>
       Copyright by the Odysseus Team (odysseus.informatik.uni-oldenburg.de)
    </copyright>
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.systemload.feature"
-      label="Feature"
+      label="Systemload Metadata Feature"
       version="1.0.0.qualifier"
       provider-name="Timo Michelsen">
 
@@ -29,6 +29,7 @@ Unless required by applicable law or agreed to in writing, software
    <url>
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
+
    <plugin
          id="de.uniol.inf.is.odysseus.systemload"
          download-size="0"
