@@ -1,9 +1,9 @@
-package de.uniol.inf.is.odysseus.latency.transform;
+package de.uniol.inf.is.odysseus.latency_relational.transform;
 
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.latency.physicaloperator.LatencyToPayloadPO;
+import de.uniol.inf.is.odysseus.latency_relational.LatencyToPayloadPO;
 import de.uniol.inf.is.odysseus.logicaloperator.latency.LatencyToPayloadAO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -19,7 +19,7 @@ public class TLatencyToPayloadAORule extends AbstractTransformationRule<LatencyT
 
 	@Override
 	public void execute(LatencyToPayloadAO operator, TransformationConfiguration config) throws RuleException {
-		LatencyToPayloadPO<ILatency, IStreamObject<ILatency>> po = new LatencyToPayloadPO<>();
+		LatencyToPayloadPO<ILatency, Tuple<ILatency>> po = new LatencyToPayloadPO<>(operator);
 		defaultExecute(operator, po, config, true, false);	
 	}
 
@@ -28,10 +28,6 @@ public class TLatencyToPayloadAORule extends AbstractTransformationRule<LatencyT
 		return operator.isAllPhysicalInputSet();
 	}
 
-	@Override
-	public String getName() {
-		return "LatencyToPayloadAO -> LatencyToPayloadPO";
-	}
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {

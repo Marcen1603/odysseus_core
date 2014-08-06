@@ -54,7 +54,7 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 				ILogicalOperator root = subscription.getTarget();
 				CalcLatencyAO latency = new CalcLatencyAO();
 				latency.subscribeToSource(root, 0, 0, root.getOutputSchema());								
-				LatencyToPayloadAO ltp = new LatencyToPayloadAO();
+				LatencyToPayloadAO ltp = new LatencyToPayloadAO(false, true);
 				ltp.subscribeToSource(latency, 0, 0, latency.getOutputSchema());
 				FileSinkAO fileAO = new FileSinkAO();
 				fileAO.setSinkType("CSV");
