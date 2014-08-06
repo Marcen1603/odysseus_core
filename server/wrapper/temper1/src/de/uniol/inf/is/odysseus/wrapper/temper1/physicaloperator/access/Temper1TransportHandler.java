@@ -1,21 +1,17 @@
 package de.uniol.inf.is.odysseus.wrapper.temper1.physicaloperator.access;
 
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Map;
 import java.util.Random;
 
 import com.codeminders.hidapi.ClassPathLibraryLoader;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IIteratable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class Temper1TransportHandler extends AbstractTransportHandler implements IIteratable<Tuple<?>>{
+public class Temper1TransportHandler extends AbstractSimplePullTransportHandler<Tuple<?>>{
 
 	private static final String NAME = "Temper1";
 	private static final Random RAND = new Random();
@@ -55,36 +51,6 @@ public class Temper1TransportHandler extends AbstractTransportHandler implements
 		return tuple;
 	}
 	
-	@Override
-	public void processInOpen() throws IOException {
-	}
-
-	@Override
-	public void processOutOpen() throws IOException {
-	}
-
-	@Override
-	public void processInClose() throws IOException {
-	}
-
-	@Override
-	public void processOutClose() throws IOException {
-	}
-
-	@Override
-	public void send(byte[] message) throws IOException {
-	}
-
-	@Override
-	public InputStream getInputStream() {
-		return null;
-	}
-
-	@Override
-	public OutputStream getOutputStream() {
-		return null;
-	}
-
 	@Override
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
 		return false;
