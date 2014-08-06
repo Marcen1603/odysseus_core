@@ -4,7 +4,12 @@ import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
@@ -21,19 +26,26 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
  * @author Carsten Cordes
  *
  */
-@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.GLOBAL }, name = "cornerkicks", parameters = { })
+@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.GLOBAL }, name = "cornerkicks", parameters = {})
 public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 
-	public static final String TIME_BETWEEN_GOALLINE_AND_CORNER =  "30000000000000.0";
+	public static final String TIME_BETWEEN_GOALLINE_AND_CORNER = "30000000000000.0";
 	public static final String FACTOR_TS_GAMETIME = "60000000000000.0";
-	
+
+	// Tolerance in which we say that the ball is active (makes the field a bit
+	// bigger)
+	private static final int FIELD_TOLERANCE = 500;
+
+	// Corner spot tolerance (square around the corner spot)
+	private static final int CORNER_SPOT_TOLERANCE = 2000;
+
 	/**
 	 * Parses sportsQL
 	 */
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
 			throws SportsQLParseException {
-		
+
 		int xMin = OperatorBuildHelper.LOWERLEFT_X;
 		int xMax = OperatorBuildHelper.LOWERRIGHT_X;
 		int yMin = OperatorBuildHelper.LOWERLEFT_Y;
@@ -55,7 +67,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 
 		// projected = PROJECT({attributes = ['sid', 'ts', 'x',
 		// 'y']},soccergame)
-		ILogicalOperator projected = OperatorBuildHelper.createProjectAO(
+		ProjectAO projected = OperatorBuildHelper.createProjectAO(
 				projectionAttributes, source);
 		operatorList.add(projected);
 
@@ -69,17 +81,16 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		// renamed
 		// )
 		//
-		ArrayList<String> predicates = new ArrayList<String>();
-		predicates.add("sid= " + OperatorBuildHelper.BALL_1 + " OR sid= "
+		String predicate = "( sid= " + OperatorBuildHelper.BALL_1 + " OR sid= "
 				+ OperatorBuildHelper.BALL_2 + " OR sid= "
 				+ OperatorBuildHelper.BALL_3 + " OR sid= "
-				+ OperatorBuildHelper.BALL_4);
-		predicates.add("x >= " + (xMin - 500));
-		predicates.add("x <= " + (xMax + 500));
-		predicates.add("y >= " + (yMin - 500));
-		predicates.add("y <= " + (yMax + 500));
-		ILogicalOperator activeBall = OperatorBuildHelper.createSelectAO(
-				predicates, projected);
+				+ OperatorBuildHelper.BALL_4 + ")";
+		predicate += " AND (x >= " + (xMin - FIELD_TOLERANCE) + ")";
+		predicate += " AND (x <= " + (xMax + FIELD_TOLERANCE) + ")";
+		predicate += "AND (y >= " + (yMin - FIELD_TOLERANCE) + ")";
+		predicate += "AND (y <= " + (yMax + FIELD_TOLERANCE) + ")";
+		SelectAO activeBall = OperatorBuildHelper.createSelectAO(
+				predicate, projected);
 		operatorList.add(activeBall);
 
 		//
@@ -108,7 +119,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 				"eif(y > " + OperatorBuildHelper.GOAL_AREA_1_Y + ", 1, 0)",
 				"BallBehindGoalline2_right", activeBall));
 
-		ILogicalOperator activeBallBehindGoalline = OperatorBuildHelper
+		MapAO activeBallBehindGoalline = OperatorBuildHelper
 				.createMapAO(expressions, activeBall, 0, 0);
 		operatorList.add(activeBallBehindGoalline);
 
@@ -121,7 +132,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		changeDetectBallAttributes.add("BallBehindGoalline1_left");
 		changeDetectBallAttributes.add("BallBehindGoalline2_right");
 
-		ILogicalOperator activeBallBehindGoallineChange = OperatorBuildHelper
+		ChangeDetectAO activeBallBehindGoallineChange = OperatorBuildHelper
 				.createChangeDetectAO(OperatorBuildHelper.createAttributeList(
 						changeDetectBallAttributes, activeBallBehindGoalline),
 						0, activeBallBehindGoalline);
@@ -139,17 +150,19 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		ballExpressions.add(OperatorBuildHelper.createExpressionParameter("ts",
 				"spot_ball_ts", activeBall));
 		ballExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif((x <= (" + xMin + " + 2000) OR x >= (" + xMax
-						+ " - 2000)) AND y >= (" + yMax + " - 2000) , 1, 0)",
+				"eif((x <= (" + (xMin + CORNER_SPOT_TOLERANCE) + ") OR x >= ("
+						+ (xMax - CORNER_SPOT_TOLERANCE) + ")) AND y >= ("
+						+ (yMax - CORNER_SPOT_TOLERANCE) + ") , 1, 0)",
 				"BallOnCornerSpot1_bottom", activeBall));
 		ballExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif((x <= (" + xMin + " + 2000) OR x >= (" + xMax
-						+ " - 2000)) AND y <= (" + yMin + " + 2000) , 1, 0)",
+				"eif((x <= (" + (xMin + CORNER_SPOT_TOLERANCE) + ") OR x >= ("
+						+ (xMax - CORNER_SPOT_TOLERANCE) + ")) AND y <= ("
+						+ (yMin + CORNER_SPOT_TOLERANCE) + ") , 1, 0)",
 				"BallOnCornerSpot2_top", activeBall));
-		ILogicalOperator ballOnCornerSpot = OperatorBuildHelper.createMapAO(
+		MapAO ballOnCornerSpot = OperatorBuildHelper.createMapAO(
 				ballExpressions, activeBall, 0, 0);
 		operatorList.add(ballOnCornerSpot);
-//
+		//
 		// BallOnCornerSpot_change = CHANGEDETECT({
 		// attr = ['BallOnCornerSpot1_bottom', 'BallOnCornerSpot2_top']
 		// }, BallOnCornerSpot)
@@ -157,7 +170,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		changeDetectCornerAttributes.add("BallOnCornerSpot1_bottom");
 		changeDetectCornerAttributes.add("BallOnCornerSpot2_top");
 
-		ILogicalOperator ballOnCornerSpotChange = OperatorBuildHelper
+		ChangeDetectAO ballOnCornerSpotChange = OperatorBuildHelper
 				.createChangeDetectAO(OperatorBuildHelper.createAttributeList(
 						changeDetectCornerAttributes, ballOnCornerSpot), 0,
 						ballOnCornerSpot);
@@ -165,13 +178,13 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 
 		// activeBallBehindGoalline_wnd = ELEMENTWINDOW({SIZE = 1, ADVANCE=1},
 		// activeBallBehindGoalline_change)
-		ILogicalOperator activeBallBehindGoallineWindow = OperatorBuildHelper
+		ElementWindowAO activeBallBehindGoallineWindow = OperatorBuildHelper
 				.createElementWindowAO(1, 1, activeBallBehindGoallineChange);
 		operatorList.add(activeBallBehindGoallineWindow);
 
 		// BallOnCornerSpot_wnd = ELEMENTWINDOW({SIZE = 1, ADVANCE=1},
 		// BallOnCornerSpot_change)
-		ILogicalOperator ballOnCornerSpotWindow = OperatorBuildHelper
+		ElementWindowAO ballOnCornerSpotWindow = OperatorBuildHelper
 				.createElementWindowAO(1, 1, ballOnCornerSpotChange);
 		operatorList.add(ballOnCornerSpotWindow);
 
@@ -186,12 +199,13 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		ArrayList<String> joinPredicates = new ArrayList<String>();
 		joinPredicates
 				.add("BallBehindGoalline1_left = 1 OR BallBehindGoalline2_right = 1");
-		joinPredicates.add("ts > (spot_ball_ts - " + TIME_BETWEEN_GOALLINE_AND_CORNER + ")");
+		joinPredicates.add("ts > (spot_ball_ts - "
+				+ TIME_BETWEEN_GOALLINE_AND_CORNER + ")");
 		joinPredicates.add("ts < spot_ball_ts");
 		joinPredicates
 				.add("BallOnCornerSpot1_bottom = 1 OR BallOnCornerSpot2_top = 1");
 
-		ILogicalOperator cornerJoin = OperatorBuildHelper.createJoinAO(
+		JoinAO cornerJoin = OperatorBuildHelper.createJoinAO(
 				joinPredicates, activeBallBehindGoallineWindow,
 				ballOnCornerSpotWindow);
 		operatorList.add(cornerJoin);
@@ -200,9 +214,10 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		// attr = ['ts'],
 		// }, corner_join)
 		ArrayList<String> changeDetectCorners = new ArrayList<String>();
-		changeDetectCorners.add("ts");		
-		ILogicalOperator corners = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(changeDetectCorners,
-				cornerJoin), 0, true, cornerJoin);
+		changeDetectCorners.add("ts");
+		ChangeDetectAO corners = OperatorBuildHelper.createChangeDetectAO(
+				OperatorBuildHelper.createAttributeList(changeDetectCorners,
+						cornerJoin), 0, true, cornerJoin);
 		operatorList.add(corners);
 
 		// corners_time = MAP({
@@ -224,7 +239,8 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 						"BallBehindGoalline2_right", corners));
 		cornersTimeExpressions.add(OperatorBuildHelper
 				.createExpressionParameter("((spot_ball_ts - " + startTS
-						+ ") / " + FACTOR_TS_GAMETIME + ")", "timeInMinutes", corners));
+						+ ") / " + FACTOR_TS_GAMETIME + ")", "timeInMinutes",
+						corners));
 		cornersTimeExpressions
 				.add(OperatorBuildHelper.createExpressionParameter(
 						"BallOnCornerSpot1_bottom", corners));
