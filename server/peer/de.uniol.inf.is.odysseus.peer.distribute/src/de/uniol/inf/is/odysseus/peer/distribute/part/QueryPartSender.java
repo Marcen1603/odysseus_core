@@ -185,8 +185,9 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 
 			try {
 				callExecutorToAddLocalQueries(localQuery, sharedQueryID, serverExecutor, caller, config, determineSlavePeers(allocationMap));
-			} catch (Throwable t) {
-				LOG.error("Exception during placing local query part", t);
+			} catch (Throwable t) {			
+				LOG.error("Exception during placing local query part. Query is {}", localQuery.getQueryText());
+				LOG.error("Exception is ", t);
 				removeDistributedQueryParts(sharedQueryID);
 			}
 		} else {
@@ -203,9 +204,6 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 				for( ILogicalOperator operator : queryPart.getOperators() ) {
 					if( operator instanceof StreamAO ) {
 						StreamAO streamAO = (StreamAO)operator;
-						streamAO.setAttributes(streamAO.getOutputSchema().getAttributes());
-						streamAO.setDataHandler("tuple");
-						streamAO.setSource(null);
 						
 						String sourceName = streamAO.getStreamname().getResourceName();
 						if( p2pDictionary.isExported(sourceName) ) {
@@ -219,9 +217,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 						}
 					}
 				}
-			} else {
-				// queryPart bleibt lokal
-			}
+			} 
 		}
 	}
 
@@ -525,34 +521,6 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 
 		return logicalQuery;
 	}
-
-	// private static void
-	// replaceAccessAOWithStreamAO(Collection<ILogicalQueryPart>
-	// localQueryParts) {
-	// for( ILogicalQueryPart queryPart : localQueryParts ) {
-	// for( ILogicalOperator logicalOperator : queryPart.getOperators()) {
-	// if( logicalOperator instanceof AccessAO ) {
-	// AccessAO localAccessOperator = (AccessAO)logicalOperator;
-	// StreamAO streamAO = new StreamAO();
-	// streamAO.setSource(localAccessOperator);
-	// streamAO.setOutputSchema(localAccessOperator.getOutputSchema());
-	//
-	// for( LogicalSubscription logicalSub :
-	// localAccessOperator.getSubscriptions() ) {
-	// localAccessOperator.unsubscribeSink(logicalSub);
-	// streamAO.subscribeSink(logicalSub.getTarget(),
-	// logicalSub.getSinkInPort(), 0, logicalSub.getSchema());
-	// }
-	// queryPart.addOperator(streamAO);
-	// queryPart.removeOperator(localAccessOperator);
-	//
-	// LOG.debug("Replaced AccessAO {} with StreamAO {}", localAccessOperator,
-	// streamAO);
-	//
-	// }
-	// }
-	// }
-	// }
 
 	private static Collection<PeerID> determineSlavePeers(Map<ILogicalQueryPart, PeerID> allocationMap) {
 		Collection<PeerID> slavePeers = Lists.newArrayList();
