@@ -4,8 +4,8 @@
       label="ActiveLoadbalancingFeature"
       version="1.0.0.qualifier">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      Contains load balancing of Odysseus in Peer-to-Peer networks.
    </description>
 
    <copyright>

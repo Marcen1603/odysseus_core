@@ -5,8 +5,10 @@
       version="1.0.0.qualifier"
       provider-name="Timo Michelsen">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      This feature makes it possible to use multiple Odysseus instances
+in a Peer-to-Peer Network while additions to a graphical user interface
+are excluded (server-version).
    </description>
 
    <copyright>
