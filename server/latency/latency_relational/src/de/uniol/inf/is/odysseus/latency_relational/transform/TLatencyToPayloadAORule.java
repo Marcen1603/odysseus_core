@@ -13,11 +13,6 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 public class TLatencyToPayloadAORule extends AbstractTransformationRule<LatencyToPayloadAO>{
 
 	@Override
-	public int getPriority() {
-		return 0;
-	}
-
-	@Override
 	public void execute(LatencyToPayloadAO operator, TransformationConfiguration config) throws RuleException {
 		LatencyToPayloadPO<ILatency, Tuple<ILatency>> po = new LatencyToPayloadPO<>(operator);
 		defaultExecute(operator, po, config, true, false);	
@@ -25,8 +20,14 @@ public class TLatencyToPayloadAORule extends AbstractTransformationRule<LatencyT
 
 	@Override
 	public boolean isExecutable(LatencyToPayloadAO operator, TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet();
-	}
+		if (operator.getInputSchema(0).getType() == Tuple.class
+				&& config.getMetaTypes().contains(
+						ILatency.class.getCanonicalName())) {
+			if (operator.isAllPhysicalInputSet()) {
+				return true;
+			}
+		}
+		return false;	}
 
 
 	@Override
