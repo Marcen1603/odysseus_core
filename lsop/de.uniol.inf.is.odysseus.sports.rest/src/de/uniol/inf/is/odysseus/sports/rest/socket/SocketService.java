@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
@@ -26,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.StandardExecutor;
+import de.uniol.inf.is.odysseus.relational_interval.RelationalChangeDetectPO;
 import de.uniol.inf.is.odysseus.sports.rest.dao.SocketInfo;
 import de.uniol.inf.is.odysseus.sports.rest.exception.InvalidUserDataException;
 
@@ -140,21 +142,41 @@ public class SocketService {
 		IExecutionPlan plan = StandardExecutor.getInstance().getExecutionPlan();
 		IPhysicalQuery query = plan.getQueryById(queryId);
 		List<IPhysicalOperator> roots = query.getRoots();
-		final IPhysicalOperator root = roots.get(rootPort);
-		final ISource<?> rootAsSource = (ISource<?>) root;
+		IPhysicalOperator root = null;
+		
+		/*
+		 * Workaround 
+		 * query.getRoots gibt mehr roots zurück auch vom anderen Query. vllt. ein Bug im Odysseus
+		 */
+		for (IPhysicalOperator iPhysicalOperator : roots) {
+			if(iPhysicalOperator instanceof RelationalChangeDetectPO){
+				List<IOperatorOwner> ownerList = iPhysicalOperator.getOwner();
+						for (IOperatorOwner iOperatorOwner : ownerList) {
+							if(iOperatorOwner.getID() == queryId){
+								root = iPhysicalOperator;
+							}
+						}
+			}
+		}
+	
+		if(root != null){
+			final ISource<?> rootAsSource = (ISource<?>) root;
 
-		IDataHandler<?> handler = new TupleDataHandler().getInstance(root
-				.getOutputSchema());
-		ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
-				handler);
-		SocketSinkPO sink = new SocketSinkPO(port, "",
-				new ByteBufferSinkStreamHandlerBuilder(), true, false,
-				false, objectHandler, false);
-
-		rootAsSource.subscribeSink((ISink) sink, 0, 0,
-				root.getOutputSchema(), true, 0);
-		sink.startListening();
-		return sink;
+			IDataHandler<?> handler = new TupleDataHandler().getInstance(root
+					.getOutputSchema());
+			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
+					handler);
+			SocketSinkPO sink = new SocketSinkPO(port, "",
+					new ByteBufferSinkStreamHandlerBuilder(), true, false,
+					false, objectHandler, false);
+			
+			rootAsSource.subscribeSink((ISink) sink, 0, 0,
+					root.getOutputSchema(), true, 0);
+			sink.startListening();
+			return sink;
+		}
+		return null;
+		
 	}
 	
 	protected ISession loginWithSecurityToken(String securityToken)
