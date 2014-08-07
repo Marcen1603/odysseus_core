@@ -68,6 +68,7 @@ public class AbortHandler {
 		
 		//Only send Ack. if status no longer active.
 		if(status==null) {
+			LOG.debug("Status already null. Sending ABORT_RESPONSE on improvised Message Dispatcher.");
 			IPeerCommunicator peerCommunicator = LoadBalancingCommunicationListener.getPeerCommunicator();
 			ISession session = LoadBalancingCommunicationListener.getActiveSession();
 			LoadBalancingMessageDispatcher improvisedDispatcher = new LoadBalancingMessageDispatcher(peerCommunicator,session,abortMessage.getLoadBalancingProcessId());

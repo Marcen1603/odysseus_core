@@ -101,7 +101,6 @@ public class InstructionHandler {
 					LOG.debug("Sending INSTALL_SUCCESS to "  + senderPeer);
 					dispatcher.sendInstallSuccess(senderPeer);
 				} catch (Exception e) {
-					status.setPhase(LoadBalancingSlaveStatus.LB_PHASES.ABORT);
 					LOG.error("Error occured. Sending INSTALL_FAILURE to "  + senderPeer);
 					dispatcher.sendInstallFailure(senderPeer);
 				}
