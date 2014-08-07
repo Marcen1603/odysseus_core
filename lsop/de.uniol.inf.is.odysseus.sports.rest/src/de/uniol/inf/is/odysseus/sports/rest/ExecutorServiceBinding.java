@@ -42,11 +42,13 @@ public class ExecutorServiceBinding {
 		return executor;
 	}
 
-	public void bindExecutor(IServerExecutor ex) {
-		executor =  ex;
+	public void bindExecutor(IExecutor ex) {
+		executor = (IServerExecutor)ex;
 	}
 
 	public void unbindExecutor(IExecutor ex) {
-		executor = null;
+		if( ex == executor ) {
+			executor = null;
+		}
 	}
 }
