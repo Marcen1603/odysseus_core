@@ -720,6 +720,7 @@ public class WebserviceServer {
 
 		rootAsSource.subscribeSink((ISink) sink, 0, 0,
 				root.getOutputSchema(), true, 0);
+		sink.addOwner(query);
 		// rootAsSource.connectSink((ISink) sink, 0, 0,
 		// root.getOutputSchema());
 		sink.startListening();
