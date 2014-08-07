@@ -6,8 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.sports.rest.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Import-Package: de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor,
- de.uniol.inf.is.odysseus.rcp,
+Import-Package: de.uniol.inf.is.odysseus.rcp,
  de.uniol.inf.is.odysseus.relational_interval,
  de.uniol.inf.is.odysseus.sports.sportsql.parser,
  de.uniol.inf.is.odysseus.sports.sportsql.registry,

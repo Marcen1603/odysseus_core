@@ -26,8 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
-import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.StandardExecutor;
-import de.uniol.inf.is.odysseus.relational_interval.RelationalChangeDetectPO;
+import de.uniol.inf.is.odysseus.sports.rest.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.sports.rest.dao.SocketInfo;
 import de.uniol.inf.is.odysseus.sports.rest.exception.InvalidUserDataException;
 
@@ -139,7 +138,7 @@ public class SocketService {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private SocketSinkPO addSocketSink(int queryId, int rootPort, int port) {
-		IExecutionPlan plan = StandardExecutor.getInstance().getExecutionPlan();
+		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
 		IPhysicalQuery query = plan.getQueryById(queryId);
 		List<IPhysicalOperator> roots = query.getRoots();
 		IPhysicalOperator root = null;
