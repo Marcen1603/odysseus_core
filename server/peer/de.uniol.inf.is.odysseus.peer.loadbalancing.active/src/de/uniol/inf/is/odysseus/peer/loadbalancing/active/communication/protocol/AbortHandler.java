@@ -9,6 +9,9 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.LoadBalancingCommunicationListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.LoadBalancingMessageDispatcher;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages.LoadBalancingAbortMessage;
@@ -63,8 +66,12 @@ public class AbortHandler {
 		LoadBalancingSlaveStatus status = LoadBalancingStatusCache
 				.getInstance().getSlaveStatus(senderPeer, lbProcessId);
 		
-		//Ignore if status no longer active.
+		//Only send Ack. if status no longer active.
 		if(status==null) {
+			IPeerCommunicator peerCommunicator = LoadBalancingCommunicationListener.getPeerCommunicator();
+			ISession session = LoadBalancingCommunicationListener.getActiveSession();
+			LoadBalancingMessageDispatcher improvisedDispatcher = new LoadBalancingMessageDispatcher(peerCommunicator,session,abortMessage.getLoadBalancingProcessId());
+			improvisedDispatcher.sendAbortResponse(senderPeer);
 			return;
 		}
 		
