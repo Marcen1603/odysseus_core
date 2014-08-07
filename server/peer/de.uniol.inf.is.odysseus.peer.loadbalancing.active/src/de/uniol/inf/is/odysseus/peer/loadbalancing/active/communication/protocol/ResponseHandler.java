@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.protocol;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
@@ -14,7 +17,20 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.status.LoadBalancingMa
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.status.LoadBalancingMasterStatus.LB_PHASES;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.status.LoadBalancingStatusCache;
 
+/**
+ * Handles Responses sent by Peers when they finish or fail instructions.
+ */
 public class ResponseHandler {
+	
+
+	/**
+	 * The logger instance for this class.
+	 */
+	
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ResponseHandler.class);
+	
+	
 	
 	/**
 	 * Handles Responses sent by Peers when they finish or fail instructions.
@@ -23,7 +39,7 @@ public class ResponseHandler {
 	 */
 	public static void handlePeerResonse(LoadBalancingResponseMessage response,
 			PeerID senderPeer) {
-
+		
 		int loadBalancingProcessId = response.getLoadBalancingProcessId();
 		LoadBalancingMasterStatus status = LoadBalancingStatusCache
 				.getInstance().getStatusForLocalProcess(loadBalancingProcessId);
@@ -40,8 +56,11 @@ public class ResponseHandler {
 
 		switch (response.getMsgType()) {
 		case LoadBalancingResponseMessage.ACK_LOADBALANCING:
+			
 			if (status.getPhase().equals(
 					LoadBalancingMasterStatus.LB_PHASES.INITIATING)) {
+				LOG.debug("Got ACK_LOADBALANCING");
+				status.setVolunteeringPeer(senderPeer);
 				status.setPhase(LoadBalancingMasterStatus.LB_PHASES.COPYING);
 				dispatcher.stopRunningJob();
 
@@ -58,32 +77,61 @@ public class ResponseHandler {
 			break;
 
 		case LoadBalancingResponseMessage.SUCCESS_INSTALL_QUERY:
-
+			
 			// When in Phase copying, the success Message says that Installing
 			// the Query Part on the other Peer was successful.
 			if (status.getPhase().equals(
 					LoadBalancingMasterStatus.LB_PHASES.COPYING)) {
+				LOG.debug("Got SUCCESS_INSTALL_QUERY");
+				dispatcher.sendMsgReceived(senderPeer);
 				dispatcher.stopRunningJob();
-				status.setPhase(LoadBalancingMasterStatus.LB_PHASES.RELINKING);
-				LoadBalancingHelper.notifyOutgoingAndIncomingPeers(status);
+				status.setPhase(LoadBalancingMasterStatus.LB_PHASES.RELINKING_SENDERS);
+				LOG.debug("Relinking Senders.");
+				LoadBalancingHelper.notifyIncomingPeers(status);
 			}
 			break;
 
 		case LoadBalancingResponseMessage.SUCCESS_DUPLICATE:
-
+			
 			if (status.getPhase().equals(
-					LoadBalancingMasterStatus.LB_PHASES.RELINKING)) {
+					LoadBalancingMasterStatus.LB_PHASES.RELINKING_SENDERS)) {
+				LOG.debug("Got SUCCESS_DUPLICATE for SENDER");
+				dispatcher.sendPipeSuccessReceivedMsg(senderPeer, response.getPipeID());
 				dispatcher.stopRunningJob(response.getPipeID());
+				LOG.debug("Stopped JOB " + response.getPipeID());
+				LOG.debug("Jobs left:" + dispatcher.getNumberOfRunningJobs());
+				
+				if (dispatcher.getNumberOfRunningJobs() == 0) {
+					// All success messages received. Yay!
+					status.setPhase(LB_PHASES.RELINKING_RECEIVERS);
+					LoadBalancingHelper.notifyOutgoingPeers(status);
+					LOG.debug("Relinking Receivers.");
+				}
+			}
+			
+			if (status.getPhase().equals(
+					LoadBalancingMasterStatus.LB_PHASES.RELINKING_RECEIVERS)) {
+				LOG.debug("Got SUCCESS_DUPLICATE for RECEIVER");
+				dispatcher.sendPipeSuccessReceivedMsg(senderPeer, response.getPipeID());
+				dispatcher.stopRunningJob(response.getPipeID());
+				LOG.debug("Stopped JOB " + response.getPipeID());
+				LOG.debug("Jobs left:" + dispatcher.getNumberOfRunningJobs());
+				
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
 					// All success messages received. Yay!
 					status.setPhase(LB_PHASES.SYNCHRONIZING);
+					LOG.debug("WAITING FOR SYNC");
 				}
 			}
+			
 			break;
 
 		case LoadBalancingResponseMessage.SYNC_FINISHED:
+			
 			if (status.getPhase().equals(LB_PHASES.SYNCHRONIZING)) {
+				LOG.debug("Got SYNC_FINISHED");
 				status.removePipeToSync(response.getPipeID());
+				dispatcher.sendPipeSuccessReceivedMsg(senderPeer, response.getPipeID());
 				if (status.getNumberOfPipesToSync() == 0) {
 					ILogicalQueryPart queryPart = status.getOriginalPart();
 					if (!queryPart.getOperators().asList().isEmpty()) {
@@ -112,11 +160,20 @@ public class ResponseHandler {
 			break;
 
 		case LoadBalancingResponseMessage.FAILURE_INSTALL_QUERY:
-			handleError(status,communicationListener);
+			if(status.getPhase().equals(LB_PHASES.COPYING)) {
+				dispatcher.sendMsgReceived(senderPeer);
+				LOG.debug("Installing Query on remote Peer failed. Aborting.");
+				handleError(status,communicationListener);
+			}
 			break;
+			
 
 		case LoadBalancingResponseMessage.FAILURE_DUPLICATE_RECEIVER:
-			handleError(status,communicationListener);
+			if(status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS) || status.getPhase().equals(LB_PHASES.RELINKING_SENDERS) ) {
+				dispatcher.sendMsgReceived(senderPeer);
+				LOG.debug("Duplicating connections failed. Aborting.");
+				handleError(status,communicationListener);
+			}
 			break;
 
 		}
@@ -133,12 +190,14 @@ public class ResponseHandler {
 		// Handle error depending on current LoadBalancing phase.
 		switch (status.getPhase()) {
 		case INITIATING:
+			
 		case COPYING:
 			// Send abort only to volunteering Peer
 			dispatcher.stopAllMessages();
 			dispatcher.sendAbortInstruction(status.getVolunteeringPeer(),communicationListener);
 			break;
-		case RELINKING:
+		case RELINKING_RECEIVERS:
+		case RELINKING_SENDERS:
 			// Send Abort to all Peers involved
 			dispatcher.stopAllMessages();
 			LoadBalancingHelper.notifyInvolvedPeers(status);

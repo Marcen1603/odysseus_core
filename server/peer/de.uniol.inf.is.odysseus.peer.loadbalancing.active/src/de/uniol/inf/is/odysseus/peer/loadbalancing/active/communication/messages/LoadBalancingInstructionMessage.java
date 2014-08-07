@@ -18,6 +18,9 @@ public class LoadBalancingInstructionMessage implements IMessage {
 	public static final int DELETE_SENDER = 4;
 	public static final int DELETE_RECEIVER = 5;
 	
+	public static final int MESSAGE_RECEIVED = 6;
+	public static final int PIPE_SUCCCESS_RECEIVED = 7;
+	
 	private int loadBalancingProcessId;
 	private int msgType;
 	
@@ -41,6 +44,14 @@ public class LoadBalancingInstructionMessage implements IMessage {
 		return message;
 	}
 	
+
+	public static LoadBalancingInstructionMessage createMessageReceivedMsg(
+			int lbProcessId) {
+		LoadBalancingInstructionMessage message = new LoadBalancingInstructionMessage();
+		message.loadBalancingProcessId = lbProcessId;
+		message.msgType = MESSAGE_RECEIVED;
+		return message;
+	}
 	
 	public static LoadBalancingInstructionMessage createAddQueryMsg(int lbProcessId,String PQLQuery) {
 		LoadBalancingInstructionMessage message = new LoadBalancingInstructionMessage();
@@ -49,6 +60,17 @@ public class LoadBalancingInstructionMessage implements IMessage {
 		message.msgType = ADD_QUERY;
 		return message;
 	}
+	
+
+	public static LoadBalancingInstructionMessage createPipeReceivedMsg(
+			int lbProcessId, String pipeID) {
+		LoadBalancingInstructionMessage message = new LoadBalancingInstructionMessage();
+		message.loadBalancingProcessId = lbProcessId;
+		message.setOldPipeId(pipeID);
+		message.msgType = PIPE_SUCCCESS_RECEIVED;
+		return message;
+	}
+
 	
 	public static LoadBalancingInstructionMessage createCopyOperatorMsg(boolean isSender, String newPeerId, String oldPipeId, String newPipeId) {
 		LoadBalancingInstructionMessage message = new LoadBalancingInstructionMessage();
@@ -86,6 +108,7 @@ public class LoadBalancingInstructionMessage implements IMessage {
 		switch(msgType) {
 		
 		case INITIATE_LOADBALANCING:
+		case MESSAGE_RECEIVED:
 			/*
 			 * Allocate byte Buffer:
 			 * 	4 Bytes for integer msgType
@@ -151,6 +174,7 @@ public class LoadBalancingInstructionMessage implements IMessage {
 			
 		case DELETE_RECEIVER:
 		case DELETE_SENDER:
+		case PIPE_SUCCCESS_RECEIVED:
 			
 			/*
 			 * Allocate byte Buffer:
@@ -216,6 +240,7 @@ public class LoadBalancingInstructionMessage implements IMessage {
 			break;
 		case DELETE_RECEIVER:
 		case DELETE_SENDER:
+		case PIPE_SUCCCESS_RECEIVED:
 			int sizeOfPipeId = bb.getInt();
 			byte[] pipeIdAsBytes = new byte[sizeOfPipeId];
 			bb.get(pipeIdAsBytes);
@@ -274,5 +299,6 @@ public class LoadBalancingInstructionMessage implements IMessage {
 	public void setNewPipeId(String newPipeId) {
 		this.newPipeId = newPipeId;
 	}
+
 
 }

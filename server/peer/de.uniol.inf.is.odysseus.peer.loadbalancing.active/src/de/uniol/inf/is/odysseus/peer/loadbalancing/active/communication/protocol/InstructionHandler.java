@@ -3,6 +3,10 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.protoco
 import java.util.Collection;
 
 import net.jxta.peer.PeerID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
@@ -13,8 +17,15 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.status.LoadBalancingSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.status.LoadBalancingStatusCache;
 
+/**
+ * Handles Instruction messages, sent from initiation Master Peer to Slave Peers.
+ */
 public class InstructionHandler {
 
+	private static final Logger LOG = LoggerFactory
+			.getLogger(InstructionHandler.class);
+	
+	
 	/**
 	 * Handles Instruction messages, sent from initiation Master Peer to Slave Peers.
 	 * @param instruction Instruction received by Peer.
@@ -25,6 +36,9 @@ public class InstructionHandler {
 
 		int lbProcessId = instruction.getLoadBalancingProcessId();
 		LoadBalancingMessageDispatcher dispatcher = null;
+		
+		LOG.debug("Got Instruction from " + senderPeer + " LoadBalancing ID:" + lbProcessId);
+		
 		LoadBalancingSlaveStatus status = LoadBalancingStatusCache
 				.getInstance().getSlaveStatus(senderPeer, lbProcessId);
 		
@@ -51,16 +65,31 @@ public class InstructionHandler {
 						senderPeer, lbProcessId,
 						new LoadBalancingMessageDispatcher(peerCommunicator,
 								session, lbProcessId));
-				LoadBalancingStatusCache.getInstance().storeSlaveStatus(
-						senderPeer, lbProcessId, status);
+				LOG.debug("Got INITIATE_LOADBALANCING");
+				
+				
+				if(!LoadBalancingStatusCache.getInstance().storeSlaveStatus(
+						senderPeer, lbProcessId, status)) {
+					LOG.error("Adding Status to Cache failed.");
+				}
 				status.getMessageDispatcher().sendAckInit(senderPeer);
+				
 			}
 			break;
 
 		case LoadBalancingInstructionMessage.ADD_QUERY:
 			// Only react if status is not set yet.
+			
+			if(status==null) {
+				LOG.error("Status on Slave Peer is null.");
+				return;
+			}
+			
 			if (status.getPhase().equals(
 					LoadBalancingSlaveStatus.LB_PHASES.WAITING_FOR_ADD)) {
+				
+				LOG.debug("Got ADD_QUERY");
+				
 				status.setPhase(LoadBalancingSlaveStatus.LB_PHASES.WAITING_FOR_SYNC);
 				dispatcher = status.getMessageDispatcher();
 				dispatcher.stopRunningJob();
@@ -68,15 +97,19 @@ public class InstructionHandler {
 					Collection<Integer> queryIDs = LoadBalancingHelper
 							.installAndRunQueryPartFromPql(Context.empty(),
 									instruction.getPQLQuery());
-					dispatcher.sendInstallSuccess(senderPeer, queryIDs);
+					status.setInstalledQueries(queryIDs);
+					LOG.debug("Sending INSTALL_SUCCESS to "  + senderPeer);
+					dispatcher.sendInstallSuccess(senderPeer);
 				} catch (Exception e) {
 					status.setPhase(LoadBalancingSlaveStatus.LB_PHASES.ABORT);
+					LOG.error("Error occured. Sending INSTALL_FAILURE to "  + senderPeer);
 					dispatcher.sendInstallFailure(senderPeer);
 				}
 			}
 			break;
 
 		case LoadBalancingInstructionMessage.COPY_RECEIVER:
+			isSender=false;
 		case LoadBalancingInstructionMessage.COPY_SENDER:
 			// Create Status if none exist
 			if (status == null) {
@@ -93,6 +126,10 @@ public class InstructionHandler {
 			if (status.getPhase().equals(
 					LoadBalancingSlaveStatus.LB_PHASES.WAITING_FOR_SYNC)
 					&& !status.isPipeKnown(instruction.getNewPipeId())) {
+				LOG.debug("Got COPY_RECEIVER or COPY_SENDER");
+				
+				LOG.debug("Installing pipe " + instruction.getNewPipeId());
+				
 				status.addReplacedPipe(instruction.getOldPipeId(),
 						instruction.getOldPipeId());
 				dispatcher = status.getMessageDispatcher();
@@ -109,12 +146,38 @@ public class InstructionHandler {
 			}
 			break;
 
+		case LoadBalancingInstructionMessage.PIPE_SUCCCESS_RECEIVED:
+			if(status==null) {
+				return;
+			}
+			status.getMessageDispatcher().stopRunningJob(instruction.getOldPipeId());
+			break;
+			
 		case LoadBalancingInstructionMessage.DELETE_RECEIVER:
 		case LoadBalancingInstructionMessage.DELETE_SENDER:
-			LoadBalancingHelper.removeDuplicateJxtaOperator(instruction.getOldPipeId());
-			break;
+			
+			if(status==null) {
+				return;
+			}
+			
+			//TODO Multiple Messages?
+				LOG.debug("Got DELETE_RECEIVER/DELETE_SENDER");
+				LoadBalancingHelper.removeDuplicateJxtaOperator(instruction.getOldPipeId());
+				break;
 
+				
+		case LoadBalancingInstructionMessage.MESSAGE_RECEIVED:
+			if(status==null) {
+				return;
+			}
+			status.getMessageDispatcher().stopAllMessages();
+			break;
 		}
+		
+		
+		
+		
+		
 
 	}
 }

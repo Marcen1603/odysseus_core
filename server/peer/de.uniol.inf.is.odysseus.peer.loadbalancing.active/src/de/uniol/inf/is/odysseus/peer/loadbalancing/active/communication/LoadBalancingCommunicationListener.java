@@ -339,12 +339,17 @@ public class LoadBalancingCommunicationListener implements
 	 */
 	private void handleTimeoutOnMasterPeer(
 			LoadBalancingInstructionMessage instruction) {
+		;
+		
 		int lbProcessId = instruction.getLoadBalancingProcessId();
 		LoadBalancingMasterStatus status = LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
 		
 		if(status==null) {
 			return;
 		}
+		
+
+		LOG.debug("Timeout or Failure occured. Current status: " + status.getPhase());
 		
 		switch(instruction.getMsgType()){
 			case LoadBalancingInstructionMessage.INITIATE_LOADBALANCING:
@@ -358,8 +363,12 @@ public class LoadBalancingCommunicationListener implements
 				}
 				break;
 			case LoadBalancingInstructionMessage.COPY_RECEIVER:
+				if(status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS)) {
+					ResponseHandler.handleError(status,this);
+				}
+				break;
 			case LoadBalancingInstructionMessage.COPY_SENDER:
-				if(status.getPhase().equals(LB_PHASES.RELINKING)) {
+				if(status.getPhase().equals(LB_PHASES.RELINKING_SENDERS)) {
 					ResponseHandler.handleError(status,this);
 				}
 				break;

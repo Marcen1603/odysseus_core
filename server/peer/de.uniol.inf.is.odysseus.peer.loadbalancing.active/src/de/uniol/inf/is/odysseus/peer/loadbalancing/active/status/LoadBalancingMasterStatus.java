@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.LoadBala
 public class LoadBalancingMasterStatus {
 	
 	public enum LB_PHASES {
-		INITIATING,COPYING,RELINKING,SYNCHRONIZING,FAILURE
+		INITIATING,COPYING,RELINKING_SENDERS,RELINKING_RECEIVERS,SYNCHRONIZING,FAILURE
 	}
 	
 	private LoadBalancingMessageDispatcher messageDispatcher;

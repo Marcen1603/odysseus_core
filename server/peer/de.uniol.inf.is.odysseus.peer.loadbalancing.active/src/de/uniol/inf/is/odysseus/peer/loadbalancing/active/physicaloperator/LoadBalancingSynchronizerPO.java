@@ -289,6 +289,9 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	@Override
 	protected void process_next(T object, int port) {
 		
+		LoadBalancingSynchronizerPO.log.debug(
+				"Input: {} from input port {}", object, port);
+		
 		final PointInTime newTS = object.getMetadata().getStart();
 
 		if (port == this.transferPort && (!this.state.equals(SyncState.timeordering) || this.checkTimeOrder(newTS))) {
@@ -297,7 +300,8 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 			LoadBalancingSynchronizerPO.log.debug(
 					"Transfered {} from input port {}", object, port);
 
-		}
+		} 
+		
 
 		if (!this.state.equals(SyncState.synchronizing)) {
 

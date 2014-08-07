@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages;
 
 import java.nio.ByteBuffer;
-import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
@@ -42,22 +41,41 @@ public class LoadBalancingResponseMessage implements IMessage {
 	public LoadBalancingResponseMessage() {
 	}
 	
-	
-	public LoadBalancingResponseMessage(int loadBalancingProcessId, String pipeID) {
-		this.loadBalancingProcessId = loadBalancingProcessId;
-		this.pipeID = pipeID;
-		msgType = SUCCESS_DUPLICATE;
+	public static LoadBalancingResponseMessage createAckLoadbalancingMessage(int loadBalancingProcessId) {
+		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+		message.setLoadBalancingProcessId(loadBalancingProcessId);
+		message.setMsgType(ACK_LOADBALANCING);
+		return message;
 	}
 	
-	public LoadBalancingResponseMessage(int loadBalancingProcessId, Collection<Integer> installedQueries) {
-		this.loadBalancingProcessId = loadBalancingProcessId;
-		this.installedQueries = installedQueries.toArray(new Integer[installedQueries.size()]);
-		msgType = SUCCESS_DUPLICATE;
+	public static LoadBalancingResponseMessage createInstallSuccessMessage(int loadBalancingProcessId) {
+		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+		message.setLoadBalancingProcessId(loadBalancingProcessId);
+		message.setMsgType(SUCCESS_INSTALL_QUERY);
+		return message;
 	}
 	
-	public LoadBalancingResponseMessage(int loadBalancingProcessId, int msgType) {
-		this.msgType = msgType;
-		this.loadBalancingProcessId = loadBalancingProcessId;
+	public static LoadBalancingResponseMessage createDuplicateSuccessMessage(int loadBalancingProcessId, String pipeID) {
+		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+		message.setLoadBalancingProcessId(loadBalancingProcessId);
+		message.setPipeID(pipeID);
+		message.setMsgType(SUCCESS_DUPLICATE);
+		return message;
+	}
+	
+	public static LoadBalancingResponseMessage createDuplicateFailureMessage(int loadBalancingProcessId) {
+		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+		message.setLoadBalancingProcessId(loadBalancingProcessId);
+		message.setMsgType(FAILURE_DUPLICATE_RECEIVER);
+		return message;
+	}
+	
+	
+	public static LoadBalancingResponseMessage createInstallFailureMessage(int loadBalancingProcessId) {
+		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+		message.setLoadBalancingProcessId(loadBalancingProcessId);
+		message.setMsgType(FAILURE_INSTALL_QUERY);
+		return message;
 	}
 
 	public static LoadBalancingResponseMessage createSyncFinishedMsg(int lbProcessId, String pipeID) {
@@ -81,6 +99,7 @@ public class LoadBalancingResponseMessage implements IMessage {
 			case ACK_LOADBALANCING:
 			case FAILURE_INSTALL_QUERY:
 			case FAILURE_DUPLICATE_RECEIVER:
+			case SUCCESS_INSTALL_QUERY:
 				
 				/*
 				 * Allocate byte Buffer:
@@ -93,30 +112,7 @@ public class LoadBalancingResponseMessage implements IMessage {
 				bb.putInt(loadBalancingProcessId);
 				
 				break;
-			case SUCCESS_INSTALL_QUERY:
 				
-				/*
-				 * Allocate byte Buffer:
-				 *  4 Bytes for integer msgType
-				 * 	4 Bytes for integer loadBalancingProcessId
-				 *  4 Bytes for size of Integer Collection
-				 *  sizeOfIntegerCollection bytes for IntegerCollection
-				 */
-				
-				int sizeOfIntegerCollection = (installedQueries.length * 4);
-				
-				bbsize = 4 + 4 + 4 + sizeOfIntegerCollection;
-				
-				bb = ByteBuffer.allocate(bbsize);
-				
-				bb.putInt(msgType);
-				bb.putInt(loadBalancingProcessId);
-				bb.putInt(installedQueries.length);
-				for(int query : installedQueries) {
-					bb.putInt(query);
-				}
-				
-				break;
 			case SUCCESS_DUPLICATE:
 			case SYNC_FINISHED:
 				
@@ -157,23 +153,6 @@ public class LoadBalancingResponseMessage implements IMessage {
 		loadBalancingProcessId = bb.getInt();
 		
 		switch(msgType) {
-		
-		case SUCCESS_INSTALL_QUERY:
-			
-			/*
-			 * Allocate byte Buffer:
-			 *  4 Bytes for integer msgType
-			 * 	4 Bytes for integer loadBalancingProcessId
-			 *  4 Bytes for size of Integer Collection
-			 *  sizeOfIntegerCollection bytes for IntegerCollection
-			 */
-			
-			int lengthOfIntArray = bb.getInt();
-			this.installedQueries = new Integer[lengthOfIntArray];
-			for(int i=0;i<lengthOfIntArray;i++) {
-				installedQueries[i] = bb.getInt();
-			}
-			break;
 			
 		case SUCCESS_DUPLICATE:
 			

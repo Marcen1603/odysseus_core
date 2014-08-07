@@ -11,6 +11,10 @@ import java.util.Map;
 
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -41,8 +45,16 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.LoadB
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.status.LoadBalancingMasterStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.status.LoadBalancingSlaveStatus;
 
+/**
+ * Encapsulates Methods needed for processing the active LoadBalancing.
+ * @author Carsten
+ *
+ */
 public class LoadBalancingHelper {
 
+	private static final Logger LOG = LoggerFactory
+			.getLogger(LoadBalancingHelper.class);
+	
 	/**
 	 * Converts a String to a peer ID.
 	 * 
@@ -79,15 +91,15 @@ public class LoadBalancingHelper {
 					deliveryFailedListener);
 		}
 	}
-
+	
 	/**
-	 * Send Message to all incoming and outing Peers to add a duplicate
+	 * Send Message to all incoming Peers to add a duplicate
 	 * connection
 	 * 
 	 * @param status
 	 *            Status
 	 */
-	public static void notifyOutgoingAndIncomingPeers(LoadBalancingMasterStatus status) {
+	public static void notifyIncomingPeers(LoadBalancingMasterStatus status) {
 
 		IMessageDeliveryFailedListener deliveryFailedListener = LoadBalancingCommunicationListener.getInstance();
 		
@@ -108,10 +120,35 @@ public class LoadBalancingHelper {
 				PeerID destinationPeer = toPeerID(sender.getPeerID());
 				peersForPipe.put(newPipe,destinationPeer);
 				
-				dispatcher.sendCopyOperator(true,
+				dispatcher.sendCopyOperator(false,
 						destinationPeer,
 						oldPipe,newPipe, volunteeringPeer,deliveryFailedListener);
 			}
+		}
+		status.setPeersForPipe(peersForPipe);
+
+	}
+	
+	/**
+	 * Send Message to all outing Peers to add a duplicate
+	 * connection
+	 * 
+	 * @param status
+	 *            Status
+	 */
+	public static void notifyOutgoingPeers(LoadBalancingMasterStatus status) {
+
+		IMessageDeliveryFailedListener deliveryFailedListener = LoadBalancingCommunicationListener.getInstance();
+		
+		String volunteeringPeer = status.getVolunteeringPeer().toString();
+		ILogicalQueryPart modifiedQueryPart = status.getModifiedPart();
+		HashMap<String, String> replacedPipes = status.getReplacedPipes();
+		LoadBalancingMessageDispatcher dispatcher = status
+				.getMessageDispatcher();
+
+		HashMap<String,PeerID> peersForPipe = status.getPeersForPipe();
+
+		for (ILogicalOperator operator : modifiedQueryPart.getOperators()) {
 			if (operator instanceof JxtaReceiverAO) {
 				
 				
@@ -122,7 +159,7 @@ public class LoadBalancingHelper {
 				PeerID destinationPeer = toPeerID(receiver.getPeerID());
 				peersForPipe.put(newPipe,destinationPeer);
 				
-				dispatcher.sendCopyOperator(false,destinationPeer,
+				dispatcher.sendCopyOperator(true,destinationPeer,
 						oldPipe,
 						newPipe, volunteeringPeer,deliveryFailedListener);
 			}
@@ -130,6 +167,8 @@ public class LoadBalancingHelper {
 		status.setPeersForPipe(peersForPipe);
 
 	}
+	
+	
 
 	/**
 	 * Removes a query from current Peer.
@@ -144,21 +183,27 @@ public class LoadBalancingHelper {
 		executor.removeQuery(queryId, session);
 	}
 
-	public static HashMap<String, String> relinkQueryPart(ILogicalQueryPart part,LoadBalancingMasterStatus status) {
+	/**
+	 * Relinks a logical Query Part to a new peer.
+	 * @param modifiedPart
+	 * @param status
+	 * @return
+	 */
+	public static HashMap<String, String> relinkQueryPart(ILogicalQueryPart modifiedPart,LoadBalancingMasterStatus status) {
 		
 		IP2PNetworkManager p2pNetworkManager = LoadBalancingCommunicationListener.getP2pNetworkManager();
 		
-		LoadBalancingHelper.removeTopAOs(part);
+		LoadBalancingHelper.removeTopAOs(modifiedPart);
 		
 		Map<ILogicalOperator, Collection<ConnectionToOperator>> incomingConnections = LoadBalancingHelper
-				.stripJxtaReceivers(part);
+				.stripJxtaReceivers(modifiedPart);
 		Map<ILogicalOperator, Collection<ConnectionToOperator>> outgoingConnections = LoadBalancingHelper
-				.stripJxtaSenders(part);
+				.stripJxtaSenders(modifiedPart);
 		
 		Collection<ILogicalOperator> relativeSources = LogicalQueryHelper
-				.getRelativeSinksOfLogicalQueryPart(part);
+				.getRelativeSinksOfLogicalQueryPart(modifiedPart);
 		Collection<ILogicalOperator> relativeSinks = LogicalQueryHelper
-				.getRelativeSourcesOfLogicalQueryPart(part);
+				.getRelativeSourcesOfLogicalQueryPart(modifiedPart);
 
 		HashMap<String, String> replacedPipes = new HashMap<String, String>();
 		ArrayList<String> receiverPipes = new ArrayList<String>();
@@ -180,7 +225,9 @@ public class LoadBalancingHelper {
 					receiver.setSchema(connection.schema.getAttributes());
 					receiver.connectSink(relativeSource, connection.port, 0,
 							relativeSource.getInputSchema(0));
+					modifiedPart.addOperator(receiver);
 					receiverPipes.add(connection.oldPipeID);
+					
 
 				}
 			}
@@ -203,15 +250,22 @@ public class LoadBalancingHelper {
 					connection.localOperator.connectSink(sender, 0,
 							connection.port,
 							connection.localOperator.getOutputSchema());
+					modifiedPart.addOperator(sender);
 				}
 			}
 		}
 		status.setPipesToSync(receiverPipes);
-		status.setModifiedPart(part);
+		status.setModifiedPart(modifiedPart);
 		status.setReplacedPipes(replacedPipes);
 		return replacedPipes;
 	}
+	
 
+	/**
+	 * Removes a duplicate Jxta Receiver or sender used in LoadBalancing.
+	 * Called during abort and after sync.
+	 * @param pipeID
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void removeDuplicateJxtaOperator(String pipeID) {
 		
@@ -543,12 +597,20 @@ public class LoadBalancingHelper {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void findAndCopyLocalJxtaOperator(LoadBalancingSlaveStatus status,
 			boolean isSender, String newPeerId, String oldPipeId,
-			String newPipeId) throws DataTransmissionException {
+			String newPipeId) throws DataTransmissionException, LoadBalancingException{
 		
 		LoadBalancingMessageDispatcher dispatcher = status.getMessageDispatcher();
 		
 		ILogicalOperator operator = getLogicalJxtaOperator(isSender, oldPipeId);
+		
+		if(operator==null) {
+			LOG.error("No operator with pipe ID " + oldPipeId + " found.");
+			throw new LoadBalancingException("No operator with pipe ID " + oldPipeId + " found.");
+		}
+		
 		if (operator != null) {
+			
+			
 			if (isSender) {
 				JxtaSenderAO logicalSender = (JxtaSenderAO) operator;
 				JxtaSenderAO copy = (JxtaSenderAO) logicalSender.clone();
@@ -563,7 +625,7 @@ public class LoadBalancingHelper {
 
 				PhysicalSubscription subscription = physicalOriginal
 						.getSubscribedToSource(0);
-
+				
 				if (subscription.getTarget() instanceof AbstractPipe) {
 					((AbstractPipe) subscription.getTarget()).subscribeSink(
 							physicalCopy, 0, subscription.getSourceOutPort(),
@@ -575,6 +637,8 @@ public class LoadBalancingHelper {
 							subscription.getSchema(), true,
 							subscription.getOpenCalls());
 				}
+				
+				LOG.debug("Installed additional Sender with PeerID " + physicalCopy.getPeerIDString() + " and PipeID " + physicalCopy.getPipeIDString());
 
 			} else {
 				JxtaReceiverAO logicalReceiver = (JxtaReceiverAO) operator;
@@ -624,7 +688,9 @@ public class LoadBalancingHelper {
 						physicalOriginal.getOwner());
 
 				physicalOriginal.unblock();
+				LOG.debug("Installed additional Receiver with PeerID " + physicalCopy.getPeerIDString() + " and PipeID " + physicalCopy.getPipeIDString());
 			}
+			
 		}
 
 	}

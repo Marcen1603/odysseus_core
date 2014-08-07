@@ -1,9 +1,14 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.protocol;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 import net.jxta.peer.PeerID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.LoadBalancingMessageDispatcher;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages.LoadBalancingAbortMessage;
@@ -11,8 +16,15 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.status.LoadBalancingMa
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.status.LoadBalancingSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.status.LoadBalancingStatusCache;
 
+/**
+ * Message Handler for Abort Messages. If AbortInstruction -> SlavePeer handles it, if AbortResponse -> Master Peer stops sending Messages to according slave Peer.
+ */
 public class AbortHandler {
 
+	private static final Logger LOG = LoggerFactory
+			.getLogger(AbortHandler.class);
+
+	
 	/**
 	 * Message Handler for Abort Messages. If AbortInstruction -> SlavePeer handles it, if AbortResponse -> Master Peer stops sending Messages to according slave Peer.
 	 * @param abortMessage
@@ -21,14 +33,17 @@ public class AbortHandler {
 	public static void handleAbort(LoadBalancingAbortMessage abortMessage,
 			PeerID senderPeer) {
 		
+		
+		
 		switch (abortMessage.getMsgType()) {
 		case LoadBalancingAbortMessage.ABORT_INSTRUCTION:
-			
+			LOG.debug("Received ABORT_INSTRUCTION");
 			undoLoadBalancing(abortMessage, senderPeer);
-			
+			break;
 		case LoadBalancingAbortMessage.ABORT_RESPONSE:
-			
+			LOG.debug("Received ABORT_RESPONSE");
 			stopSendingAbort(abortMessage, senderPeer);
+			break;
 		}
 		
 	}
@@ -41,6 +56,9 @@ public class AbortHandler {
 	 */
 	private static void undoLoadBalancing(LoadBalancingAbortMessage abortMessage,
 			PeerID senderPeer) {
+		
+		
+		
 		int lbProcessId = abortMessage.getLoadBalancingProcessId();
 		LoadBalancingSlaveStatus status = LoadBalancingStatusCache
 				.getInstance().getSlaveStatus(senderPeer, lbProcessId);
@@ -54,31 +72,37 @@ public class AbortHandler {
 		
 		//Ignore Message if already aborting.
 		if(!(status.getPhase()==LoadBalancingSlaveStatus.LB_PHASES.ABORT)) {
+			LOG.error("Received Abort.");
 			dispatcher.stopAllMessages();
 			status.setPhase(LoadBalancingSlaveStatus.LB_PHASES.ABORT);
+			dispatcher.sendAbortResponse(senderPeer);
 			switch (status.getInvolvementType()) {
 	
 			case PEER_WITH_SENDER_OR_RECEIVER:
 	
-				ArrayList<String> installedPipes = Collections.list(status
-						.getReplacedPipes().keys());
-				for (String pipe : installedPipes) {
-					LoadBalancingHelper.removeDuplicateJxtaOperator(pipe);
+				if(status.getReplacedPipes()!=null) {
+					ArrayList<String> installedPipes = Collections.list(status
+							.getReplacedPipes().keys());
+					for (String pipe : installedPipes) {
+						LOG.error("Removing Operator with Pipe ID " + pipe);
+						LoadBalancingHelper.removeDuplicateJxtaOperator(pipe);
+					}
 				}
 				// NO break, since Peer could in theory also be the volunteering
 				// peer
 	
 			case VOLUNTEERING_PEER:
-				Integer[] queriesToRemove = status.getInstalledQueries();
+				Collection<Integer> queriesToRemove = status.getInstalledQueries();
 				if (queriesToRemove != null) {
+					
 					for (int query : queriesToRemove) {
+						LOG.error("Removing Query with ID " + query);
 						LoadBalancingHelper.deleteQuery(query);
 					}
 				}
 				break;
 	
 			}
-			dispatcher.sendAbortResponse(senderPeer);
 		}
 	}
 	
@@ -88,6 +112,7 @@ public class AbortHandler {
 	 * @param lbProcessId
 	 */
 	private static void finishAbort(int lbProcessId) {
+		
 		LoadBalancingMasterStatus status = LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
 		if(status!=null) {
 			@SuppressWarnings("unused")
@@ -100,10 +125,20 @@ public class AbortHandler {
 
 	public static void stopSendingAbort(LoadBalancingAbortMessage abortMessage,
 			PeerID senderPeer) {
-		LoadBalancingMessageDispatcher dispatcher = LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(abortMessage.getLoadBalancingProcessId()).getMessageDispatcher();
-		dispatcher.stopRunningJob(senderPeer.toString());
-		if(dispatcher.getNumberOfRunningJobs()==0) {
-			finishAbort(abortMessage.getLoadBalancingProcessId());
+		LoadBalancingMasterStatus status = LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(abortMessage.getLoadBalancingProcessId());
+		
+		LOG.debug("Stop Sending Abort called.");
+		
+		
+		if(status!=null) {
+			LOG.debug("Stop Sending Abort to " + senderPeer);
+			LoadBalancingMessageDispatcher dispatcher = status.getMessageDispatcher();
+			dispatcher.stopRunningJob(senderPeer.toString());
+			
+			if(dispatcher.getNumberOfRunningJobs()==0) {
+				LOG.debug("No more Peers to notify. Finishing Abort.");
+				finishAbort(abortMessage.getLoadBalancingProcessId());
+			}
 		}
 	}
 	

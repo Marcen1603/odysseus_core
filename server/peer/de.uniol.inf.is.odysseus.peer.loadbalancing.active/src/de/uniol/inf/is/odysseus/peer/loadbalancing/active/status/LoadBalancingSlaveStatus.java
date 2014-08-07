@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.status;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.LoadBalancingMessageDispatcher;
@@ -24,7 +25,7 @@ public class LoadBalancingSlaveStatus {
 	private final int lbProcessId;
 	private final PeerID initiatingPeer;
 	
-	private Integer[] installedQueries;
+	private Collection<Integer> installedQueries;
 	
 	private ConcurrentHashMap<String,String> replacedPipes;
 	
@@ -33,21 +34,21 @@ public class LoadBalancingSlaveStatus {
 	
 	
 	
-	public Integer[] getInstalledQueries() {
+	public Collection<Integer> getInstalledQueries() {
 		return installedQueries;
 	}
 
 
-	public void setInstalledQueries(Integer[] installedQueries) {
+	public void setInstalledQueries(Collection<Integer> installedQueries) {
 		this.installedQueries = installedQueries;
 	}
 	
 	public boolean isPipeKnown(String pipeId) {
-		return replacedPipes.contains(pipeId);
+		return replacedPipes.containsKey(pipeId);
 	}
 	
 	public void addReplacedPipe(String newPipeId, String oldPipeId) {
-		if(!replacedPipes.contains(newPipeId)) {
+		if(!replacedPipes.containsKey(newPipeId)) {
 			replacedPipes.put(newPipeId,oldPipeId);
 		}
 	}
