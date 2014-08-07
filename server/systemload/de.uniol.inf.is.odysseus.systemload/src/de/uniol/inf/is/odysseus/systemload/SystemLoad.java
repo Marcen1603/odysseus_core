@@ -13,14 +13,16 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 
+	private static final String LOCAL_NAME = "local";
 	private transient static final long serialVersionUID = 1L;
+	
 	@SuppressWarnings("unchecked")
 	public transient static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] { ISystemLoad.class };
 
 	private final Map<String, SystemLoadEntry> systemLoads = Maps.newHashMap();
 
 	public SystemLoad() {
-
+		addSystemLoad(LOCAL_NAME);
 	}
 
 	public SystemLoad(SystemLoad copy) {
@@ -41,20 +43,31 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 		// replaces older ones if necessary
 		systemLoads.put(name, new SystemLoadEntry(name));
 	}
+	
+	@Override
+	public void removeSystemLoad(String name) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name for system load must not be null or empty!");
+		
+		systemLoads.remove(name);
+	}
 
 	@Override
 	public int getCpuLoad(String name) {
-		return (int) (systemLoads.get(name).getCpuLoad() * 100);
+		return (int) (systemLoads.get( checkName(name) ).getCpuLoad() * 100);
 	}
 
 	@Override
 	public int getMemLoad(String name) {
-		return (int) (systemLoads.get(name).getMemLoad() * 100);
+		return (int) (systemLoads.get(checkName(name) ).getMemLoad() * 100);
 	}
 
 	@Override
 	public int getNetLoad(String name) {
-		return (int) (systemLoads.get(name).getNetLoad() * 100);
+		return (int) (systemLoads.get(checkName(name) ).getNetLoad() * 100);
+	}
+	
+	private static String checkName( String name ) {
+		return Strings.isNullOrEmpty(name) ? LOCAL_NAME : name;
 	}
 
 	void insert(SystemLoad other) {
@@ -99,9 +112,9 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 				sb.append(netValue);
 			}
 		} else {
-			sb.append("local").append(delimiter);
+			sb.append(LOCAL_NAME).append(delimiter);
 
-			SystemLoadEntry systemLoadEntry = new SystemLoadEntry("local");
+			SystemLoadEntry systemLoadEntry = new SystemLoadEntry(LOCAL_NAME);
 			
 			int cpuValue = (int) (systemLoadEntry.getCpuLoad() * 100);
 			int memValue = (int) (systemLoadEntry.getMemLoad() * 100);
