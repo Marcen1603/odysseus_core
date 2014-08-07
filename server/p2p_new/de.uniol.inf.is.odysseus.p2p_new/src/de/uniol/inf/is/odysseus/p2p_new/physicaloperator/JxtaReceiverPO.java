@@ -127,7 +127,8 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		
 		Object metadata = streamObject.getMetadata();
 		if( metadata instanceof ISystemLoad ) {
-			((ISystemLoad)metadata).addSystemLoad(localPeerName);
+			ISystemLoad systemLoad = (ISystemLoad)metadata;
+			systemLoad.addSystemLoad(localPeerName);
 		}
 
 		if( streamObject != null ) {
