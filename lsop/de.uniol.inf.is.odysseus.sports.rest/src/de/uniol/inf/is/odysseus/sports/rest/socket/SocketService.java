@@ -172,6 +172,7 @@ public class SocketService {
 			rootAsSource.subscribeSink((ISink) sink, 0, 0,
 					root.getOutputSchema(), true, 0);
 			sink.startListening();
+			sink.addOwner(query);
 			return sink;
 		}
 		return null;
