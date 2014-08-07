@@ -149,13 +149,13 @@ public class SocketService {
 		 * query.getRoots gibt mehr roots zurück auch vom anderen Query. vllt. ein Bug im Odysseus
 		 */
 		for (IPhysicalOperator iPhysicalOperator : roots) {
-			if(iPhysicalOperator instanceof RelationalChangeDetectPO){
+			if (!(iPhysicalOperator instanceof SocketSinkPO)) {
 				List<IOperatorOwner> ownerList = iPhysicalOperator.getOwner();
-						for (IOperatorOwner iOperatorOwner : ownerList) {
-							if(iOperatorOwner.getID() == queryId){
-								root = iPhysicalOperator;
-							}
-						}
+				for (IOperatorOwner iOperatorOwner : ownerList) {
+					if (iOperatorOwner.getID() == queryId) {
+						root = iPhysicalOperator;
+					}
+				}
 			}
 		}
 	
