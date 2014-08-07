@@ -59,9 +59,10 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 		IWorkbenchPage page = window.getActivePage();
 
 		ISelection selection = window.getActivePage().getSelection();
-		if (selection == null)
+		if (selection == null) {
 			return null;
-
+		}
+		
 		Collection<IPhysicalOperator> optionalOpForStream = null;
 		if (selection instanceof IStructuredSelection) {
 			List<Object> selections = SelectionProvider.getSelection(event);
@@ -75,7 +76,11 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 
 				if (selectedObject instanceof IOdysseusNodeView) {
 					IOdysseusNodeView nodeView = (IOdysseusNodeView) selectedObject;
-
+					
+					if( nodeView.getModelNode() == null || nodeView.getModelNode().getContent() == null ) {
+						return null;
+					}
+					
 					// Auswahl holen
 					optionalOpForStream = Lists.newArrayList(nodeView.getModelNode().getContent());
 				}
