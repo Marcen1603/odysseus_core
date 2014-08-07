@@ -24,9 +24,6 @@ public class WebCrawlerSourceAO extends AbstractAccessAO
 	
 	public WebCrawlerSourceAO()
 	{
-		//setTransportHandler(WebCrawlerTransportHandler.NAME);
-		//setProtocolHandler(LineProtocolHandler.NAME);
-		//setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 		setWrapper(Constants.GENERIC_PULL);
 		
 		List<SDFAttribute> schema = new LinkedList<>();

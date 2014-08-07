@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.wrapper.webcrawler.util;
 
+//import java.io.File;
 import java.util.ArrayList;
+//import java.util.List;
 import java.util.regex.Pattern;
 
 import edu.uci.ics.crawler4j.crawler.Page;
@@ -16,7 +18,20 @@ public class WebCrawler extends edu.uci.ics.crawler4j.crawler.WebCrawler {
 
 	int counter = 0;
 	private static ArrayList<String> liste = new ArrayList<>();
-	HtmlParseData htmlParseData;
+	HtmlParseData htmlParseData;	
+	//private static List<String> crawlDomains = new ArrayList<>();
+//	private static File storageFolder;
+	
+	/*
+	public static void configure(List<String> domain, String storageFolderName) {
+        WebCrawler.crawlDomains = domain;
+
+        storageFolder = new File(storageFolderName);
+        if (!storageFolder.exists()) {
+                storageFolder.mkdirs();
+        }
+	}*/
+	
 	
 	@Override
 	public boolean shouldVisit(WebURL url) {
@@ -25,9 +40,8 @@ public class WebCrawler extends edu.uci.ics.crawler4j.crawler.WebCrawler {
 	/*	System.out.println("URL:" + url.getURL());
 		System.out.println("Depth:" + url.getDepth());
 		System.out.println("Domain:" + url.getDomain());
-		System.out.println("ParentURL:" + url.getParentUrl());*/
-		
-		
+		System.out.println("ParentURL:" + url.getParentUrl());
+		*/
 		return !FILTERS.matcher(href).matches() && href.startsWith(url.getURL());
 	}
 	
@@ -45,8 +59,9 @@ public class WebCrawler extends edu.uci.ics.crawler4j.crawler.WebCrawler {
 			liste.add(text);
 			String html = htmlParseData.getHtml();
 			java.util.List<WebURL> links = htmlParseData.getOutgoingUrls();
-					
-		/*	System.out.println("Text length: " + text.length());
+			
+		/*	System.out.println("Text: " + text);
+			System.out.println("Text length: " + text.length());
 			System.out.println("Html length: " + html.length());
 			System.out.println("Number of outgoing links: " + links.size());*/
 		}

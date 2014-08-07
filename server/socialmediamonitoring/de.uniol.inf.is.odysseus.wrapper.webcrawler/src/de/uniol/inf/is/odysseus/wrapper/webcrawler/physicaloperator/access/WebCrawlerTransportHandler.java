@@ -28,8 +28,9 @@ public class WebCrawlerTransportHandler extends AbstractSimplePullTransportHandl
 		public String sites;
 		public String fetch;
 		
+		ArrayList<String> urls = new ArrayList<>();
 		ArrayList<String> crawledText = new ArrayList<>();
-		ArrayList<String> liste = new ArrayList<>();
+		ArrayList<String> resultText = new ArrayList<>();
 		
 		public WebCrawlerTransportHandler() {
 			super();
@@ -47,6 +48,11 @@ public class WebCrawlerTransportHandler extends AbstractSimplePullTransportHandl
 			
 			if (options.containsKey(WEBSITES)) {
 				sites = options.get(WEBSITES);
+				
+				String[] delimit = sites.split("§");
+				
+				for(int i=0; i<delimit.length; i++)
+					urls.add(delimit[i]);
 			}
 				
 			if (options.containsKey(FETCH)) {
@@ -74,9 +80,9 @@ public class WebCrawlerTransportHandler extends AbstractSimplePullTransportHandl
 	@Override
 	public boolean hasNext() {
 		
-		liste = initializeCrawler();
+		resultText = initializeCrawler();
 		
-		if(liste != null)
+		if(resultText != null)
 			return true;
 		
 		return false;
@@ -89,7 +95,7 @@ public class WebCrawlerTransportHandler extends AbstractSimplePullTransportHandl
 		Tuple<?> tuple = new Tuple(2, false);
 	
 		tuple.setAttribute(0, sites);
-		tuple.setAttribute(1,liste.toString());
+		tuple.setAttribute(1,resultText.toString());
 		
 		return tuple;
 	}
@@ -97,7 +103,7 @@ public class WebCrawlerTransportHandler extends AbstractSimplePullTransportHandl
 	public ArrayList<String> initializeCrawler()
 	{
 		String crawlStorageFolder = System.getProperty("user.home");
-        int numberOfCrawlers = 1;
+        int numberOfCrawlers = 2;
 
      //   this.text.clear();       
         CrawlConfig config = new CrawlConfig();
@@ -115,8 +121,12 @@ public class WebCrawlerTransportHandler extends AbstractSimplePullTransportHandl
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		controller.addSeed(this.sites);
+		
+		for(String str : this.urls)
+			controller.addSeed(str);
+		
 		WebCrawler crawler = new WebCrawler();
+		//WebCrawler.configure(this.urls, crawlStorageFolder);
 		controller.start(WebCrawler.class, numberOfCrawlers);
 								
 		this.crawledText = crawler.getText();
@@ -125,10 +135,11 @@ public class WebCrawlerTransportHandler extends AbstractSimplePullTransportHandl
 			str.trim().equals("");
 			str.trim().equals("\t");
 			str.trim();
-			System.out.println("TEXT: " + str);
+			//System.out.println("TEXT: " + str);
 		}
 		
 		controller.shutdown();
+		controller.waitUntilFinish();
 		
 		return this.crawledText;
 	}
