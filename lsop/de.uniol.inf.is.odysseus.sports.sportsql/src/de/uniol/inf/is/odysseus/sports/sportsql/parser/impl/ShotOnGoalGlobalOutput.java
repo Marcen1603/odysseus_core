@@ -68,8 +68,8 @@ public class ShotOnGoalGlobalOutput {
 	public static final String MIN_ACCELERATION = "55000000.0";
 
 	@SuppressWarnings({ "rawtypes" })
-	public ILogicalOperator createGlobalOutput(SportsQLQuery sportsQL, List<ILogicalOperator> allOperators)
-			throws SportsQLParseException {
+	public ILogicalOperator createGlobalOutput(SportsQLQuery sportsQL,
+			List<ILogicalOperator> allOperators) throws SportsQLParseException {
 
 		// ---------------------
 		// Access to the Streams
@@ -90,9 +90,11 @@ public class ShotOnGoalGlobalOutput {
 		// -------------------------------------------------------------------
 
 		// 1. Select for time
-		SportsQLTimeParameter timeParam = SportsQLParameterHelper.getTimeParameter(sportsQL);
-		SelectAO timeSelect = OperatorBuildHelper.createTimeMapAndSelect(timeParam, gameStream);
-		
+		SportsQLTimeParameter timeParam = SportsQLParameterHelper
+				.getTimeParameter(sportsQL);
+		SelectAO timeSelect = OperatorBuildHelper.createTimeMapAndSelect(
+				timeParam, gameStream);
+
 		// 2. Select for space
 		SportsQLSpaceParameter spaceParam = SportsQLParameterHelper
 				.getSpaceParameter(sportsQL);
@@ -184,36 +186,16 @@ public class ShotOnGoalGlobalOutput {
 		// -------------------------------------------------------------------
 
 		// 1. Select for the feet
-		List<IPredicate> playerSelectAndPredicates = new ArrayList<IPredicate>();
-		List<IPredicate> playerSelectOrPredicates = new ArrayList<IPredicate>();
-
-		RelationalPredicate firstAndPredicate = OperatorBuildHelper
-				.createRelationalPredicate("entity != \""
-						+ OperatorBuildHelper.BALL_ENTITY + "\"");
-		RelationalPredicate secondAndPredicate = OperatorBuildHelper
-				.createRelationalPredicate("entity != \""
-						+ OperatorBuildHelper.REFEREE_ENTITY + "\"");
-
-		RelationalPredicate leftLegOrPredicate = OperatorBuildHelper
-				.createRelationalPredicate("remark = \""
-						+ OperatorBuildHelper.LEFT_LEG_REMARK + "\"");
-		RelationalPredicate rightLegOrPredicate = OperatorBuildHelper
-				.createRelationalPredicate("remark = \""
-						+ OperatorBuildHelper.RIGHT_LEG_REMARK + "\"");
-		playerSelectOrPredicates.add(leftLegOrPredicate);
-		playerSelectOrPredicates.add(rightLegOrPredicate);
-
-		IPredicate legOrPredicate = OperatorBuildHelper
-				.createOrPredicate(playerSelectOrPredicates);
-		playerSelectAndPredicates.add(firstAndPredicate);
-		playerSelectAndPredicates.add(secondAndPredicate);
-		playerSelectAndPredicates.add(legOrPredicate);
-
-		IPredicate legAndPredicate = OperatorBuildHelper
-				.createAndPredicate(playerSelectAndPredicates);
+		String feetSelectPredicate = "entity != \""
+				+ OperatorBuildHelper.REFEREE_ENTITY + "\"";
+		feetSelectPredicate += " AND entity != \""
+				+ OperatorBuildHelper.REFEREE_ENTITY + "\"";
+		feetSelectPredicate += " AND (remark = \""
+				+ OperatorBuildHelper.LEFT_LEG_REMARK + "\" OR remark = \""
+				+ OperatorBuildHelper.RIGHT_LEG_REMARK + "\")";
 
 		SelectAO playerLegSelect = OperatorBuildHelper.createSelectAO(
-				legAndPredicate, enrichedStream);
+				feetSelectPredicate, enrichedStream);
 
 		// 2. Project
 		List<String> feetProjectList = new ArrayList<String>();

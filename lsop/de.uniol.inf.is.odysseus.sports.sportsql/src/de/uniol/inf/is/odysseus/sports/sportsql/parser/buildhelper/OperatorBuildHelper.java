@@ -1025,11 +1025,10 @@ public class OperatorBuildHelper {
 			ILogicalOperator source) {
 		SelectAO sAO = new SelectAO();
 		for (String predicateString : listOfPredicates) {
-			SDFExpression predicateExpression = new SDFExpression(
-					predicateString, MEP.getInstance());
-			RelationalPredicate predicate = new RelationalPredicate(
-					predicateExpression);
-			sAO.addPredicate(predicate);
+			PredicateParameter param = new PredicateParameter();
+			param.setAttributeResolver(createAttributeResolver(source));
+			param.setInputValue(predicateString);
+			sAO.addPredicate(param.getValue());
 		}
 		sAO.subscribeTo(source, source.getOutputSchema());
 		return sAO;
