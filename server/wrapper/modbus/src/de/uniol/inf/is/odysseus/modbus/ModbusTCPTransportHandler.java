@@ -137,13 +137,12 @@ public class ModbusTCPTransportHandler extends AbstractSimplePullTransportHandle
 
 	@Override
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean hasNext() {
-		return true; // ?
+		return true; 
 	}
 
 	@Override
@@ -151,7 +150,6 @@ public class ModbusTCPTransportHandler extends AbstractSimplePullTransportHandle
 		try {
 			trans.execute();
 		} catch (ModbusException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		ReadInputDiscretesResponse res = (ReadInputDiscretesResponse) trans
@@ -162,8 +160,6 @@ public class ModbusTCPTransportHandler extends AbstractSimplePullTransportHandle
 
 		t.setAttribute(0, res.getDiscretes());
 		
-		// TODO: Datentyp BitVector definieren
-
 		return t;
 	}
 

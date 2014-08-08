@@ -138,7 +138,8 @@ public class GlobalCoordinates implements Comparable<GlobalCoordinates>, Seriali
     * @param other instance to compare to
     * @return -1, 0, or +1 as per Comparable contract
     */
-   public int compareTo(GlobalCoordinates other)
+   @Override
+public int compareTo(GlobalCoordinates other)
    {
       int retval;
 
