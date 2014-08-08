@@ -150,6 +150,8 @@ public class ModbusTCPTransportHandler extends AbstractSimplePullTransportHandle
 	public Tuple<IMetaAttribute> getNext() {
 		try {
 			trans.execute();
+		} catch (NullPointerException np){
+			System.err.println("got nullpointer from modbus");
 		} catch (ModbusException e) {
 			e.printStackTrace();
 		}

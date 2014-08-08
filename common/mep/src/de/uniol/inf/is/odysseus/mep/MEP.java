@@ -52,6 +52,8 @@ import de.uniol.inf.is.odysseus.mep.functions.UUIDFunction;
 import de.uniol.inf.is.odysseus.mep.functions.UptimeFunction;
 import de.uniol.inf.is.odysseus.mep.functions.array.ListArrayFunction;
 import de.uniol.inf.is.odysseus.mep.functions.bitvector.BitAccessFunction;
+import de.uniol.inf.is.odysseus.mep.functions.bitvector.BitSubsetFunction;
+import de.uniol.inf.is.odysseus.mep.functions.bitvector.BitVectorToLong;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
@@ -246,6 +248,8 @@ public class MEP implements IExpressionParser {
 		getLogger().debug("Register Base Function");
 		/** BitVector Functions */
 		registerFunction(new BitAccessFunction());
+		registerFunction(new BitVectorToLong());
+		registerFunction(new BitSubsetFunction());
 		
 		/** Boolean Functions */
 		registerFunction(new AndOperator());
