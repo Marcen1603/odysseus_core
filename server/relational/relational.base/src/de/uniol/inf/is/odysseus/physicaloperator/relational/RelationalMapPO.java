@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +93,11 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 
 		Tuple<T> outputVal = new Tuple<T>(this.getOutputSchema().size(), false);
 		outputVal.setMetadata((T) object.getMetadata().clone());
+		if(object.getMetadataMap() != null) {
+			for (Entry<String, Object> entry : object.getMetadataMap().entrySet()) {
+				outputVal.setMetadata(entry.getKey(), entry.getValue());
+			}
+		}
 
 		synchronized (this.expressions) {
 			int outAttrPos = 0;
