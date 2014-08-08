@@ -13,6 +13,7 @@ import com.ghgande.j2mod.modbus.msg.ReadInputDiscretesRequest;
 import com.ghgande.j2mod.modbus.msg.ReadInputDiscretesResponse;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 
+import de.uniol.inf.is.odysseus.core.collection.BitVector;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -158,7 +159,9 @@ public class ModbusTCPTransportHandler extends AbstractSimplePullTransportHandle
 		System.out.println("Digital Inputs Status="
 				+ res.getDiscretes().toString());
 
-		t.setAttribute(0, res.getDiscretes());
+		BitVector out = res.getDiscretes().createOdysseusBitVector();
+		
+		t.setAttribute(0, out);
 		
 		return t;
 	}

@@ -19,7 +19,7 @@ public class ListArrayFunction extends AbstractFunction<Object> {
 	public Object getValue() {
 		List<Object> l = getInputValue(0);
 		int pos = getNumericalInputValue(1).intValue();
-		
+				
 		return l.get(pos);
 	}
 
