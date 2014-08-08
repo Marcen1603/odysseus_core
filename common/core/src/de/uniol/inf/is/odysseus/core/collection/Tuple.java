@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.rits.cloning.Cloner;
 
@@ -654,6 +655,26 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			retBuff.append(delimiter).append(
 					getMetadata().csvToString(delimiter, textSeperator,
 							floatingFormatter, numberFormatter, withMetadata));
+			if(getMetadataMap() != null && getMetadataMap().size() > 0) {
+				for(Entry<String, Object> e : getMetadataMap().entrySet()) {
+					if(e.getValue() == null) {
+						// add empty value
+						retBuff.append(delimiter);
+					} else if(e.getValue() instanceof IMetaAttribute) {
+						IMetaAttribute m = (IMetaAttribute) e.getValue();
+						retBuff.append(delimiter).append(
+							m.csvToString(delimiter, textSeperator,
+									floatingFormatter, numberFormatter, withMetadata));
+					} else {
+						String value = e.getValue().toString();
+						if(value.indexOf(delimiter) != -1) {
+							retBuff.append(delimiter).append(textSeperator).append(e.getValue()).append(textSeperator);
+						} else {
+							retBuff.append(delimiter).append(e.getValue());
+						}
+					}
+				}
+			}
 		}
 		return retBuff.toString();
 	}
