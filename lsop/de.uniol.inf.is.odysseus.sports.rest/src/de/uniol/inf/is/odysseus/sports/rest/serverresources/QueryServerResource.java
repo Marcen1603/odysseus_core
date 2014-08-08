@@ -18,22 +18,18 @@ import de.uniol.inf.is.odysseus.sports.rest.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.sports.rest.dao.AttributeInformation;
 import de.uniol.inf.is.odysseus.sports.rest.dao.DataTransferObject;
 import de.uniol.inf.is.odysseus.sports.rest.dao.QueryInfo;
+import de.uniol.inf.is.odysseus.sports.rest.dao.QueryInfoRequest;
 import de.uniol.inf.is.odysseus.sports.rest.resources.IQueryResource;
 
 public class QueryServerResource extends ServerResource implements
 		IQueryResource {
 
 	@Override
-	public void receiveQuery(String sportsQL) {
-
+	public void getQueryInfo(QueryInfoRequest request) {
 		Response r = getResponse();
-		try {
-			//sportsQL = "SELECT sid, ts FROM soccergame";
-			//Collection<Integer> queryIDs = StandardExecutor.getInstance().addQuery(sportsQL, "CQL",
-			//		OdysseusRCPPlugIn.getActiveSession(), "Standard", Context.empty());
-			
-			Collection<Integer> queryIDs = ExecutorServiceBinding.getExecutor().addQuery(sportsQL, "SportsQL",
-					OdysseusRCPPlugIn.getActiveSession(), "Standard", Context.empty());
+		try {			
+			Collection<Integer> queryIDs = ExecutorServiceBinding.getExecutor().addQuery(request.getQuery(), request.getParser(),
+					OdysseusRCPPlugIn.getActiveSession(), request.getQueryBuildConfigurationName(), Context.empty());
 			
 			int queryId = queryIDs.iterator().next();	
 			ExecutorServiceBinding.getExecutor().startQuery(queryId, OdysseusRCPPlugIn.getActiveSession());
@@ -45,9 +41,9 @@ public class QueryServerResource extends ServerResource implements
 		} catch (Exception e) {
 			e.printStackTrace();
 			r.setStatus(Status.SERVER_ERROR_INTERNAL);
-		}
+		}		
 	}
-	
+
 	private ArrayList<AttributeInformation> getAttributeInformationList(ILogicalQuery query){
 		SDFSchema outputSchema = query.getLogicalPlan().getOutputSchema();
 		
@@ -60,4 +56,6 @@ public class QueryServerResource extends ServerResource implements
 		
 		return attributeInformationList;
 	}
+
+
 }

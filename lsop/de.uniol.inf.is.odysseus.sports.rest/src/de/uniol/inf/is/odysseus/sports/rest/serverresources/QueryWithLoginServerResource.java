@@ -21,41 +21,12 @@ import de.uniol.inf.is.odysseus.sports.rest.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.sports.rest.dao.AttributeInformation;
 import de.uniol.inf.is.odysseus.sports.rest.dao.DataTransferObject;
 import de.uniol.inf.is.odysseus.sports.rest.dao.QueryInfo;
+import de.uniol.inf.is.odysseus.sports.rest.dao.QueryInfoRequest;
 import de.uniol.inf.is.odysseus.sports.rest.resources.IQueryResource;
 
 
 public class QueryWithLoginServerResource extends ServerResource implements
 		IQueryResource {
-	
-	public static String sToken;
-
-
-	@Override
-	public void receiveQuery(String sportsQL) {
-		Response response = getResponse();
-		try {
-			// is always null :(
-			String securityToken = response.getCookieSettings().getValues("securityToken");
-			
-			ISession session = UserManagementProvider.getSessionmanagement().login(securityToken);
-			if (securityToken  == null || session == null) {
-		       throw new ResourceException(Status.SERVER_ERROR_INTERNAL, "Please log in");
-			} 
-			Collection<Integer> queryIDs = ExecutorServiceBinding.getExecutor().addQuery(sportsQL, "SportsQL", OdysseusRCPPlugIn.getActiveSession(), "Standard", Context.empty());
-
-			int queryId = queryIDs.iterator().next();
-			ExecutorServiceBinding.getExecutor().startQuery(queryId, OdysseusRCPPlugIn.getActiveSession());
-			ILogicalQuery query = ExecutorServiceBinding.getExecutor().getLogicalQueryById(queryId, OdysseusRCPPlugIn.getActiveSession());
-			String name = query.getName();
-			DataTransferObject dto = new DataTransferObject("QueryInfo", new QueryInfo(queryId, name, getAttributeInformationList(query)));
-			response.setEntity(new JacksonRepresentation<DataTransferObject>(dto));
-			response.setStatus(Status.SUCCESS_OK);				
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			response.setStatus(Status.SERVER_ERROR_INTERNAL);
-		}		
-	}
 	
 
 	private ArrayList<AttributeInformation> getAttributeInformationList(ILogicalQuery query){
@@ -69,5 +40,32 @@ public class QueryWithLoginServerResource extends ServerResource implements
 		}
 		
 		return attributeInformationList;
+	}
+
+
+	@Override
+	public void getQueryInfo(QueryInfoRequest request) {
+		Response response = getResponse();
+		try {
+			String securityToken = response.getCookieSettings().getValues("securityToken");
+			
+			ISession session = UserManagementProvider.getSessionmanagement().login(securityToken);
+			if (securityToken  == null || session == null) {
+		       throw new ResourceException(Status.SERVER_ERROR_INTERNAL, "Please log in");
+			} 
+			Collection<Integer> queryIDs = ExecutorServiceBinding.getExecutor().addQuery(request.getQuery(), request.getParser(), OdysseusRCPPlugIn.getActiveSession(), request.getQueryBuildConfigurationName(), Context.empty());
+
+			int queryId = queryIDs.iterator().next();
+			ExecutorServiceBinding.getExecutor().startQuery(queryId, OdysseusRCPPlugIn.getActiveSession());
+			ILogicalQuery query = ExecutorServiceBinding.getExecutor().getLogicalQueryById(queryId, OdysseusRCPPlugIn.getActiveSession());
+			String name = query.getName();
+			DataTransferObject dto = new DataTransferObject("QueryInfo", new QueryInfo(queryId, name, getAttributeInformationList(query)));
+			response.setEntity(new JacksonRepresentation<DataTransferObject>(dto));
+			response.setStatus(Status.SUCCESS_OK);				
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setStatus(Status.SERVER_ERROR_INTERNAL);
+		}			
 	}
 }
