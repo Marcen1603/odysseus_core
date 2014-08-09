@@ -31,66 +31,64 @@ import de.uniol.inf.is.odysseus.sports.rest.dao.SocketInfo;
 import de.uniol.inf.is.odysseus.sports.rest.exception.InvalidUserDataException;
 
 public class SocketService {
-	
+
 	private Map<Integer, Map<Integer, Integer>> socketPortMap = new HashMap<>();
 	private Map<Integer, Map<Integer, SocketSinkPO>> socketSinkMap = new HashMap<>();
 	private InetAddress address;
-	
+
 	private static final int SINK_MIN_PORT = 10000;
 	private static final int SINK_MAX_PORT = 20000;
-	
+
 	private static SocketService instance;
-	
-	private SocketService () {}
-	
-	  public static SocketService getInstance () {
-	    if (SocketService.instance == null) {
-	    	SocketService.instance = new SocketService ();
-	    }
-	    return SocketService.instance;
-	  }
-	
-	
+
+	private SocketService() {
+	}
+
+	public static SocketService getInstance() {
+		if (SocketService.instance == null) {
+			SocketService.instance = new SocketService();
+		}
+		return SocketService.instance;
+	}
+
 	public SocketInfo getConnectionInformation(String securityToken, int queryId)
 			throws InvalidUserDataException {
 
-		return getConnectionInformationWithPorts(securityToken, queryId,0,
+		return getConnectionInformationWithPorts(securityToken, queryId, 0,
 				Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort",
 						SINK_MIN_PORT)), Integer.valueOf(OdysseusConfiguration
 						.getInt("maxSinkPort", SINK_MAX_PORT)));
 	}
-	
-	public SocketInfo getConnectionInformationWithPorts(
-			String securityToken,
-			 int queryId,
-			 int rootPort,
-			 int minPort,
-			 int maxPort)
+
+	public SocketInfo getConnectionInformationWithPorts(String securityToken,
+			int queryId, int rootPort, int minPort, int maxPort)
 			throws InvalidUserDataException {
 		try {
 			loginWithSecurityToken(securityToken);
 			int port = 0;
 			SocketSinkPO po;
-			Map<Integer, Integer> socketPortMapEntry = socketPortMap.get(queryId);
-			Map<Integer, SocketSinkPO> socketSinkMapEntry = socketSinkMap.get(queryId);
-			
+			Map<Integer, Integer> socketPortMapEntry = socketPortMap
+					.get(queryId);
+			Map<Integer, SocketSinkPO> socketSinkMapEntry = socketSinkMap
+					.get(queryId);
+
 			if (socketSinkMapEntry != null) {
 				if (socketSinkMapEntry.get(rootPort) == null) {
 					port = getNextFreePort(minPort, maxPort);
-					po = addSocketSink(queryId,rootPort, port);
+					po = addSocketSink(queryId, rootPort, port);
 					socketSinkMapEntry.put(rootPort, po);
-					socketPortMapEntry.put(rootPort, port);					
+					socketPortMapEntry.put(rootPort, port);
 				} else {
 					port = socketPortMapEntry.get(rootPort);
 					po = socketSinkMapEntry.get(rootPort);
 				}
 			} else {
 				socketSinkMapEntry = new HashMap<>();
-				socketPortMapEntry = new  HashMap<>();
+				socketPortMapEntry = new HashMap<>();
 				socketPortMap.put(queryId, socketPortMapEntry);
-				socketSinkMap.put(queryId, socketSinkMapEntry);			
+				socketSinkMap.put(queryId, socketSinkMapEntry);
 				port = getNextFreePort(minPort, maxPort);
-				po = addSocketSink(queryId,rootPort, port);
+				po = addSocketSink(queryId, rootPort, port);
 				socketSinkMapEntry.put(rootPort, po);
 				socketPortMapEntry.put(rootPort, port);
 			}
@@ -112,11 +110,12 @@ public class SocketService {
 					}
 				}
 			}
-			
-			SocketInfo socketInfo = new SocketInfo(InetAddress.getLocalHost().getHostAddress(), port);
-			
+
+			SocketInfo socketInfo = new SocketInfo(InetAddress.getLocalHost()
+					.getHostAddress(), port);
+
 			return socketInfo;
-			
+
 		} catch (SocketException e) {
 			e.printStackTrace();
 			return null;
@@ -125,9 +124,7 @@ public class SocketService {
 			return null;
 		}
 	}
-	
-	
-	
+
 	private int getNextFreePort(int min, int max) {
 		int port = 0;
 		do {
@@ -135,50 +132,33 @@ public class SocketService {
 		} while (socketPortMap.containsKey(port));
 		return port;
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private SocketSinkPO addSocketSink(int queryId, int rootPort, int port) {
-		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
+		IExecutionPlan plan = ExecutorServiceBinding.getExecutor()
+				.getExecutionPlan();
 		IPhysicalQuery query = plan.getQueryById(queryId);
 		List<IPhysicalOperator> roots = query.getRoots();
-		IPhysicalOperator root = null;
-		
-		/*
-		 * Workaround 
-		 * query.getRoots gibt mehr roots zurück auch vom anderen Query. vllt. ein Bug im Odysseus
-		 */
-		for (IPhysicalOperator iPhysicalOperator : roots) {
-			if (!(iPhysicalOperator instanceof SocketSinkPO)) {
-				List<IOperatorOwner> ownerList = iPhysicalOperator.getOwner();
-				for (IOperatorOwner iOperatorOwner : ownerList) {
-					if (iOperatorOwner.getID() == queryId) {
-						root = iPhysicalOperator;
-					}
-				}
-			}
-		}
-	
-		if(root != null){
-			final ISource<?> rootAsSource = (ISource<?>) root;
+		IPhysicalOperator root = roots.get(rootPort);
 
-			IDataHandler<?> handler = new TupleDataHandler().getInstance(root
-					.getOutputSchema());
-			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
-					handler);
-			SocketSinkPO sink = new SocketSinkPO(port, "",
-					new ByteBufferSinkStreamHandlerBuilder(), true, false,
-					false, objectHandler, false);
-			
-			rootAsSource.subscribeSink((ISink) sink, 0, 0,
-					root.getOutputSchema(), true, 0);
-			sink.startListening();
-			sink.addOwner(query);
-			return sink;
-		}
-		return null;
-		
+		final ISource<?> rootAsSource = (ISource<?>) root;
+
+		IDataHandler<?> handler = new TupleDataHandler().getInstance(root
+				.getOutputSchema());
+		ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
+				handler);
+		SocketSinkPO sink = new SocketSinkPO(port, "",
+				new ByteBufferSinkStreamHandlerBuilder(), true, false, false,
+				objectHandler, false);
+
+		rootAsSource.subscribeSink((ISink) sink, 0, 0, root.getOutputSchema(),
+				true, 0);
+		sink.startListening();
+		sink.addOwner(query);
+		return sink;
+
 	}
-	
+
 	protected ISession loginWithSecurityToken(String securityToken)
 			throws InvalidUserDataException {
 		ISession session = UserManagementProvider.getSessionmanagement().login(
@@ -189,13 +169,14 @@ public class SocketService {
 		throw new InvalidUserDataException(
 				"Security token unknown! You have to login first to obtain a security token!");
 	}
-	
-	public ISession login(){
+
+	public ISession login() {
 		String passwordText = "manager";
 		byte[] password = passwordText.getBytes();
 		ITenant tenant = UserManagementProvider.getTenant("");
-		ISession session = UserManagementProvider.getSessionmanagement().login("System", password, tenant);
-		
+		ISession session = UserManagementProvider.getSessionmanagement().login(
+				"System", password, tenant);
+
 		return session;
 	}
 
