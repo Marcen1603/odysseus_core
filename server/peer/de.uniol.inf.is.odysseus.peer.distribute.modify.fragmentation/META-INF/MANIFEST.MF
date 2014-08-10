@@ -15,4 +15,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
 Import-Package: org.osgi.framework;version="1.6.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.Activator
 Service-Component: OSGI-INF/IP2PDictionary.xml
-Export-Package: de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation
+Export-Package: de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation,
+ de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl

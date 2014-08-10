@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation;
 
 import java.util.Collection;
 import java.util.List;
@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 
@@ -29,31 +30,37 @@ public abstract class AbstractFragmentationHelper {
 	 * The index of the parameter identifying the start and end point of
 	 * fragmentation.
 	 */
-	private static final int parameterIndex_startAndEndPointIDs = 0;
+	public static final int PARAMETER_INDEX_START_AND_END_POINT_IDS = 0;
 
 	/**
 	 * The index of the parameter identifying the degree of fragmentation.
 	 */
-	private static final int parameterIndex_degreeOfFragmentation = 1;
+	public static final int PARAMETER_INDEX_DEGREE_OF_FRAGMENTATION = 1;
 
 	/**
 	 * All possible patterns for a string identifying the start or end point of
 	 * fragmentation.
 	 */
-	private static final String[] startOrEndPointIDPatterns = { "\\w+",
-			"\\w+:\\w+" };
+	public static final String[] PATTERN_START_OR_END_POINT_ID = { "\\w+",
+			"\\w+:\\w+", "\\w+.\\w+", "\\w+:\\w+.\\w+" };
 
 	/**
 	 * The separator for strings identifying the start and end point of
 	 * fragmentation.
 	 */
-	private static final String startOrEndPointSeparator = ",";
+	public static final String PATTERN_START_OR_END_POINT_SEPARATOR = ",";
 
 	/**
 	 * The brackets for strings identifying the start and end point of
 	 * fragmentation.
 	 */
-	private static final String[] startOrEndPointBrackets = { "\\[", "\\]" };
+	public static final String[] PATTERN_START_OR_END_POINT_BRACKETS = { "\\[",
+			"\\]" };
+
+	/**
+	 * The minimum degree of fragmentation.
+	 */
+	public static final int MIN_DEGREE_OF_FRAGMENTATION = 2;
 
 	/**
 	 * Gets all possible patterns for the parameter identifying the start and
@@ -62,22 +69,22 @@ public abstract class AbstractFragmentationHelper {
 	 * @return All possible patterns for the parameter identifying the start and
 	 *         end point of fragmentation.
 	 */
-	public static String[] getStartAndEndPointIDPatterns() {
+	private static String[] getStartAndEndPointIDPatterns() {
 
-		final String startBracket = AbstractFragmentationHelper.startOrEndPointBrackets[0];
-		final String endBracket = AbstractFragmentationHelper.startOrEndPointBrackets[1];
-		final String separator = AbstractFragmentationHelper.startOrEndPointSeparator;
-		final List<String> patterns = Lists.newArrayList();
+		final String startBracket = AbstractFragmentationHelper.PATTERN_START_OR_END_POINT_BRACKETS[0];
+		final String endBracket = AbstractFragmentationHelper.PATTERN_START_OR_END_POINT_BRACKETS[1];
+		final String separator = AbstractFragmentationHelper.PATTERN_START_OR_END_POINT_SEPARATOR;
+		List<String> patterns = Lists.newArrayList();
 
-		for (int index = 0; index < AbstractFragmentationHelper.startOrEndPointIDPatterns.length; index++) {
+		for (int index = 0; index < AbstractFragmentationHelper.PATTERN_START_OR_END_POINT_ID.length; index++) {
 
-			final String pattern = AbstractFragmentationHelper.startOrEndPointIDPatterns[index];
+			final String pattern = AbstractFragmentationHelper.PATTERN_START_OR_END_POINT_ID[index];
 			patterns.add(pattern);
 			patterns.add(startBracket + pattern + endBracket);
 
-			for (int sndIndex = 0; sndIndex < AbstractFragmentationHelper.startOrEndPointIDPatterns.length; sndIndex++) {
+			for (int sndIndex = 0; sndIndex < AbstractFragmentationHelper.PATTERN_START_OR_END_POINT_ID.length; sndIndex++) {
 
-				final String sndPattern = AbstractFragmentationHelper.startOrEndPointIDPatterns[sndIndex];
+				final String sndPattern = AbstractFragmentationHelper.PATTERN_START_OR_END_POINT_ID[sndIndex];
 				patterns.add(startBracket + pattern + separator + sndPattern
 						+ endBracket);
 
@@ -92,11 +99,6 @@ public abstract class AbstractFragmentationHelper {
 	}
 
 	/**
-	 * The minimum degree of fragmentation.
-	 */
-	public static final int minDegreeOfFragmentation = 2;
-
-	/**
 	 * Checks if two operators are equal or if the first is above the second.
 	 * 
 	 * @param op1
@@ -106,7 +108,7 @@ public abstract class AbstractFragmentationHelper {
 	 * @return True, if <code>op1</code> is equal to <code>op2</code> or if
 	 *         <code>op1</code> is above <code>op2</code>.
 	 */
-	private static final boolean isOperatorAboveOrEqual(ILogicalOperator op1,
+	private static boolean isOperatorAboveOrEqual(ILogicalOperator op1,
 			ILogicalOperator op2) {
 
 		Preconditions.checkNotNull(op1, "Operator must be not null!");
@@ -138,8 +140,7 @@ public abstract class AbstractFragmentationHelper {
 	 * @return The subscribed {@link RenameAO} or <code>operator</code>, if no
 	 *         {@link RenameAO} is subscribed.
 	 */
-	protected static final ILogicalOperator handleRenameAOs(
-			ILogicalOperator operator) {
+	private static ILogicalOperator handleRenameAOs(ILogicalOperator operator) {
 
 		// Preconditions
 		Preconditions.checkNotNull(operator, "Operator must be not null!");
@@ -150,8 +151,8 @@ public abstract class AbstractFragmentationHelper {
 
 		}
 
-		final ILogicalOperator target = operator.getSubscriptions().iterator()
-				.next().getTarget();
+		ILogicalOperator target = operator.getSubscriptions().iterator().next()
+				.getTarget();
 		if (target instanceof RenameAO) {
 
 			return target;
@@ -164,17 +165,17 @@ public abstract class AbstractFragmentationHelper {
 
 	/**
 	 * Finds an operator by it's unique id or by it's resource name for
-	 * {@link AbstractAccessAO}s.
+	 * {@link AbstractAccessAO}s and {@link StreamAO}s
 	 * 
 	 * @param queryParts
 	 *            The query parts to search within.
 	 * @param id
 	 *            The unique id or resource name.
 	 * @return The operator with <code>id</code> as unique id or as resource
-	 *         name for {@link AbstractAccessAO}s. {@link Optional#absent()}, if
-	 *         no operator could be found.
+	 *         name for {@link AbstractAccessAO}s and {@link StreamAO}s.
+	 *         {@link Optional#absent()}, if no operator could be found.
 	 */
-	protected static final Optional<ILogicalOperator> findOperatorByID(
+	private static Optional<ILogicalOperator> findOperatorByID(
 			Collection<ILogicalQueryPart> queryParts, String id) {
 
 		// Preconditions
@@ -188,15 +189,12 @@ public abstract class AbstractFragmentationHelper {
 
 			for (ILogicalOperator operator : queryPart.getOperators()) {
 
-				if (operator instanceof AbstractAccessAO
-						&& ((AbstractAccessAO) operator).getAccessAOName()
-								.getResourceName().equals(id)) {
-
-					return Optional.of(AbstractFragmentationHelper
-							.handleRenameAOs(operator));
-
-				} else if (operator.getUniqueIdentifier() != null
-						&& operator.getUniqueIdentifier().equals(id)) {
+				if ((operator instanceof AbstractAccessAO && ((AbstractAccessAO) operator)
+						.getAccessAOName().getResourceName().equals(id))
+						|| (operator instanceof StreamAO && ((StreamAO) operator)
+								.getStreamname().getResourceName().equals(id))
+						|| (operator.getUniqueIdentifier() != null && operator
+								.getUniqueIdentifier().equals(id))) {
 
 					return Optional.of(AbstractFragmentationHelper
 							.handleRenameAOs(operator));
@@ -220,7 +218,7 @@ public abstract class AbstractFragmentationHelper {
 	 *            The second operator.
 	 * @return True, if <code>op1</code> is above <code>op2</code>.
 	 */
-	public static final boolean isOperatorAbove(ILogicalOperator op1,
+	public static boolean isOperatorAbove(ILogicalOperator op1,
 			ILogicalOperator op2) {
 
 		Preconditions.checkNotNull(op1, "Operator must be not null!");
@@ -257,7 +255,7 @@ public abstract class AbstractFragmentationHelper {
 	 *         <code>copyMap</code>).
 	 */
 	@SuppressWarnings("unchecked")
-	public static final Collection<ILogicalOperator> findCopies(
+	public static Collection<ILogicalOperator> findCopies(
 			ILogicalOperator operator,
 			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyMap) {
 
@@ -266,7 +264,7 @@ public abstract class AbstractFragmentationHelper {
 		Preconditions.checkNotNull(copyMap,
 				"Map of copied query parts to originals must be not null!");
 
-		final Collection<ILogicalOperator> copies = Lists.newArrayList();
+		Collection<ILogicalOperator> copies = Lists.newArrayList();
 
 		for (ILogicalQueryPart oringinalPart : copyMap.keySet()) {
 
@@ -281,7 +279,7 @@ public abstract class AbstractFragmentationHelper {
 
 			for (ILogicalQueryPart copiedPart : copyMap.get(oringinalPart)) {
 
-				final List<ILogicalOperator> operatorsAsList = (List<ILogicalOperator>) copiedPart
+				List<ILogicalOperator> operatorsAsList = (List<ILogicalOperator>) copiedPart
 						.getOperators();
 				copies.add(operatorsAsList.get(operatorIndex));
 
@@ -296,9 +294,67 @@ public abstract class AbstractFragmentationHelper {
 	}
 
 	/**
+	 * Connects sets of operators.
+	 * 
+	 * @param sources
+	 *            The operators to be connected each with each operator within
+	 *            <code>targets</code>.
+	 * @param targets
+	 *            The operators to be connected each with each operator within
+	 *            <code>sources</code>.
+	 * @param originSubscription
+	 *            The original subscription to be used.
+	 */
+	public static void connectOperators(Collection<ILogicalOperator> sources,
+			Collection<ILogicalOperator> targets,
+			LogicalSubscription originSubscription) {
+
+		Preconditions.checkNotNull(originSubscription,
+				"Logical subscription must be not null!");
+		Preconditions
+				.checkNotNull(sources, "Logical sources must be not null!");
+		Preconditions
+				.checkNotNull(targets, "Logical targtes must be not null!");
+
+		for (ILogicalOperator source : sources) {
+
+			for (ILogicalOperator target : targets)
+				source.subscribeSink(target,
+						originSubscription.getSinkInPort(),
+						originSubscription.getSourceOutPort(),
+						originSubscription.getSchema());
+
+		}
+
+	}
+
+	/**
+	 * Collects all copied query parts.
+	 * 
+	 * @param copyMap
+	 *            The mapping of copied query parts to original ones.
+	 * @return A single collection containing all copied query parts.
+	 */
+	public static Collection<ILogicalQueryPart> collectCopies(
+			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyMap) {
+
+		Preconditions.checkNotNull(copyMap, "Copy map must be not null!");
+
+		Collection<ILogicalQueryPart> copies = Lists.newArrayList();
+		for (ILogicalQueryPart originalPart : copyMap.keySet()) {
+
+			copies.addAll(copyMap.get(originalPart));
+
+		}
+
+		return copies;
+
+	}
+
+	/**
 	 * The parameters for the fragmentation.
 	 */
-	protected final ImmutableList<String> fragmentationParameters;
+	protected ImmutableList<String> mFragmentationParameters;
 
 	/**
 	 * Creates a new fragmentation helper.
@@ -308,11 +364,10 @@ public abstract class AbstractFragmentationHelper {
 	 */
 	public AbstractFragmentationHelper(List<String> fragmentationParameters) {
 
-		// Preconditions
 		Preconditions.checkNotNull(fragmentationParameters,
 				"Fragmentation parameters must be not null!");
 
-		this.fragmentationParameters = ImmutableList
+		this.mFragmentationParameters = ImmutableList
 				.copyOf(fragmentationParameters);
 
 	}
@@ -326,13 +381,13 @@ public abstract class AbstractFragmentationHelper {
 	 *             If the parameters for fragmentation do not contain two
 	 *             parameters, if the second parameter is no integer or if the
 	 *             degree of fragmentation if lower than
-	 *             {@value #minDegreeOfFragmentation}.
+	 *             {@value #MIN_DEGREE_OF_FRAGMENTATION}.
 	 */
 	public int determineDegreeOfFragmentation()
 			throws QueryPartModificationException {
 
 		// Preconditions
-		if (this.fragmentationParameters.size() < AbstractFragmentationHelper.parameterIndex_degreeOfFragmentation + 1) {
+		if (this.mFragmentationParameters.size() < AbstractFragmentationHelper.PARAMETER_INDEX_DEGREE_OF_FRAGMENTATION + 1) {
 
 			throw new QueryPartModificationException(
 					"Fragmentation parameters must at least contain two values!");
@@ -343,8 +398,8 @@ public abstract class AbstractFragmentationHelper {
 		try {
 
 			degree = Integer
-					.parseInt(this.fragmentationParameters
-							.get(AbstractFragmentationHelper.parameterIndex_degreeOfFragmentation));
+					.parseInt(this.mFragmentationParameters
+							.get(AbstractFragmentationHelper.PARAMETER_INDEX_DEGREE_OF_FRAGMENTATION));
 
 		} catch (Exception e) {
 
@@ -353,7 +408,7 @@ public abstract class AbstractFragmentationHelper {
 
 		}
 
-		if (degree < AbstractFragmentationHelper.minDegreeOfFragmentation) {
+		if (degree < AbstractFragmentationHelper.MIN_DEGREE_OF_FRAGMENTATION) {
 
 			throw new QueryPartModificationException(
 					"The second fragmentation parameter, the degree of fragmentation must be greater than 2!");
@@ -386,15 +441,15 @@ public abstract class AbstractFragmentationHelper {
 			throws QueryPartModificationException {
 
 		// Preconditions
-		if (this.fragmentationParameters.size() < AbstractFragmentationHelper.parameterIndex_startAndEndPointIDs + 1) {
+		if (this.mFragmentationParameters.size() < AbstractFragmentationHelper.PARAMETER_INDEX_START_AND_END_POINT_IDS + 1) {
 
 			throw new QueryPartModificationException(
 					"Fragmentation parameters must at least contain one value!");
 
 		}
 
-		String startAndEndPointParameter = this.fragmentationParameters
-				.get(AbstractFragmentationHelper.parameterIndex_startAndEndPointIDs);
+		String startAndEndPointParameter = this.mFragmentationParameters
+				.get(AbstractFragmentationHelper.PARAMETER_INDEX_START_AND_END_POINT_IDS);
 		boolean matchesPattern = false;
 		for (String pattern : AbstractFragmentationHelper
 				.getStartAndEndPointIDPatterns()) {
@@ -415,14 +470,16 @@ public abstract class AbstractFragmentationHelper {
 
 		}
 
-		startAndEndPointParameter = startAndEndPointParameter.replaceAll("\\[",
-				"");
-		startAndEndPointParameter = startAndEndPointParameter.replaceAll("\\]",
-				"");
+		for (String pattern : AbstractFragmentationHelper.PATTERN_START_OR_END_POINT_BRACKETS) {
 
-		final String[] startAndEndPointParameterArray = startAndEndPointParameter
-				.split(AbstractFragmentationHelper.startOrEndPointSeparator);
-		final String startID = startAndEndPointParameterArray[0].trim();
+			startAndEndPointParameter = startAndEndPointParameter.replaceAll(
+					pattern, "");
+
+		}
+
+		String[] startAndEndPointParameterArray = startAndEndPointParameter
+				.split(AbstractFragmentationHelper.PATTERN_START_OR_END_POINT_SEPARATOR);
+		String startID = startAndEndPointParameterArray[0].trim().split("\\.")[0];
 		Optional<String> endID = Optional.absent();
 		if (startAndEndPointParameterArray.length > 1) {
 
@@ -437,7 +494,7 @@ public abstract class AbstractFragmentationHelper {
 
 		}
 
-		final Optional<ILogicalOperator> startOperator = AbstractFragmentationHelper
+		Optional<ILogicalOperator> startOperator = AbstractFragmentationHelper
 				.findOperatorByID(queryParts, startID);
 		if (!startOperator.isPresent()) {
 
@@ -469,5 +526,23 @@ public abstract class AbstractFragmentationHelper {
 	 *         false else.
 	 */
 	public abstract boolean isOperatorException(ILogicalOperator operator);
+	
+	/**
+	 * Checks if a query part needs a special handling. <br />
+	 * This may be the usage of partial aggregates.
+	 * 
+	 * @param part
+	 *            The query part.
+	 * @param bundle
+	 *            The {@link FragmentationInfoBundle} instance.
+	 * @return True, if <code>part</code> needs a special handling. This makes
+	 *         direct connection without fragmentation and/or reunion operators
+	 *         impossible.
+	 * @throws QueryPartModificationException
+	 *             if any error occurs.
+	 */
+	public abstract boolean needSpecialHandlingForQueryPart(
+			ILogicalQueryPart part, FragmentationInfoBundle bundle)
+			throws QueryPartModificationException;
 
 }
