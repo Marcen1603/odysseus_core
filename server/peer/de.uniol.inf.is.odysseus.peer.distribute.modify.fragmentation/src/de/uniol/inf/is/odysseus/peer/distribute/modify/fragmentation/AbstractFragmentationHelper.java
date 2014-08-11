@@ -517,6 +517,7 @@ public abstract class AbstractFragmentationHelper {
 
 	}
 
+	// TODO Make it extendible by using an adequate interface.
 	/**
 	 * Checks if an operator shall not be part of a fragment.
 	 * 
