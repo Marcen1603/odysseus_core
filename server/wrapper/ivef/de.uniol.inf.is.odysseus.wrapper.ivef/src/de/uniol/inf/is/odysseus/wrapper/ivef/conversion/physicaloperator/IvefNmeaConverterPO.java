@@ -80,6 +80,7 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 
 	private IIvefElement ivef;
 	private ConversionType conversionType;
+	private int PositionToStaticRatio;
 	private Sentence nmea;
 	/** Handler for AIS sentences. */
 	private AISSentenceHandler aishandler = new AISSentenceHandler();
@@ -99,6 +100,11 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 	private PositionReport ownShipPosition = null;
 	@SuppressWarnings("unused")
 	private StaticAndVoyageData ownShipStaticData = null;
+	
+	/**Map between the ship MMSI and its frequency.
+	 * It'll be used to ensure generating Static&Voyage messages from time to time*/
+	private static Map<Long, Integer> mmsiToCount = new HashMap<Long, Integer>();
+	
 
 	public IvefNmeaConverterPO(IvefNmeaConverterPO<T> anotherPO) { 
 		super();
@@ -107,10 +113,11 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 		this.nmea = anotherPO.nmea;
 	}
 	
-	public IvefNmeaConverterPO(ConversionType conversionType) { 
+	public IvefNmeaConverterPO(ConversionType conversionType, int PositionToStaticRatio) { 
 		super();
 		this.ivef = null;
 		this.conversionType = conversionType;
+		this.PositionToStaticRatio = PositionToStaticRatio;
 		this.nmea = null;
 	}
 
@@ -123,15 +130,14 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 	@Override
 	protected void process_next(T object, int port) {
 		KeyValueObject<? extends IMetaAttribute> received = (KeyValueObject<? extends IMetaAttribute>) object;
-		KeyValueObject<? extends IMetaAttribute> sent = new KeyValueObject<>(); 
 		if(this.conversionType == ConversionType.TTM_IVEF)
-			convertTTMtoIVEF(received, sent);
+			convertTTMtoIVEF(received);
 		else if(this.conversionType == ConversionType.IVEF_TTM)
-			convertIVEFtoTTM(received, sent);
+			convertIVEFtoTTM(received);
 		else if(this.conversionType == ConversionType.AIS_IVEF)
-			convertAIStoIVEF(received, sent);
+			convertAIStoIVEF(received);
 		else if(this.conversionType == ConversionType.IVEF_AIS)
-			convertIVEFtoAIS(received, sent);
+			convertIVEFtoAIS(received);
 	}
 
 	@Override
@@ -145,7 +151,8 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 			return false;
 		}
 		IvefNmeaConverterPO ivefpo = (IvefNmeaConverterPO) ipo;
-		return this.conversionType == ivefpo.conversionType;
+		return this.conversionType == ivefpo.conversionType &&
+			   this.PositionToStaticRatio == ivefpo.PositionToStaticRatio;
 	}
 	
 	/****************************************
@@ -396,10 +403,11 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 	 */
 	
 	@SuppressWarnings("unchecked")
-	private void convertTTMtoIVEF(KeyValueObject<? extends IMetaAttribute> received, KeyValueObject<? extends IMetaAttribute> sent) {
+	private void convertTTMtoIVEF(KeyValueObject<? extends IMetaAttribute> received) {
 		/***************************************
 		 * Set the own ship (Ship ODYSSEUS)
 		 * *************************************/
+		KeyValueObject<? extends IMetaAttribute> sent = new KeyValueObject<>();
 		if (received.getMetadata("originalNMEA") != null) {
 			if(received.getMetadata("originalNMEA") instanceof AISSentence){
 				AISSentence ais = (AISSentence) received.getMetadata("originalNMEA");
@@ -463,7 +471,8 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 	}
 
 	@SuppressWarnings("unchecked")
-	private void convertIVEFtoTTM(KeyValueObject<? extends IMetaAttribute> received, KeyValueObject<? extends IMetaAttribute> sent) {
+	private void convertIVEFtoTTM(KeyValueObject<? extends IMetaAttribute> received) {
+		KeyValueObject<? extends IMetaAttribute> sent = new KeyValueObject<>();
 		if(received.getMetadata("object") instanceof MSG_VesselData){
 			MSG_VesselData vesselMsg = (MSG_VesselData)received.getMetadata("object");
 			Double ownShipLat = null;
@@ -543,7 +552,8 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 	}
 
 	@SuppressWarnings("unchecked")
-	private void convertAIStoIVEF(KeyValueObject<? extends IMetaAttribute> received, KeyValueObject<? extends IMetaAttribute> sent) {
+	private void convertAIStoIVEF(KeyValueObject<? extends IMetaAttribute> received) {
+		KeyValueObject<? extends IMetaAttribute> sent = new KeyValueObject<>();
 		if (received.getMetadata("decodedAIS") instanceof DecodedAISPayload)
 			{
 				/**********************************************************
@@ -609,36 +619,60 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 			}
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void convertIVEFtoAIS(KeyValueObject<? extends IMetaAttribute> received, KeyValueObject<? extends IMetaAttribute> sent) {
+	private void convertIVEFtoAIS(KeyValueObject<? extends IMetaAttribute> received) {
 		if(received.getMetadata("object") instanceof MSG_VesselData){
 			MSG_VesselData vesselMsg = (MSG_VesselData)received.getMetadata("object");
 			for(int i=0; i<vesselMsg.getBody().countOfVesselDatas(); i++){
 				/**********************************************************
 				 * Convert the IVEF to AIS NMEA messages (Coastal ODYSSEUS)
 				 * ********************************************************/
-				//TODO: handle multiFragment sentences to send static-And-Voyage messages.
-				String encodedNmeaStr = vesselMsg.getBody().getVesselDataAt(i).encodeAISPayload();
-				this.nmea = SentenceFactory.getInstance().createSentence(encodedNmeaStr);
-				this.nmea.parse();
-				//18.07 Send the original NMEA message
-				KeyValueObject<? extends IMetaAttribute> originalNmea = new KeyValueObject<>();
-				originalNmea.setMetadata("originalNMEA", this.nmea);
-				transfer((T) originalNmea);
-				//Handling AIS Sentences
-				if (this.nmea instanceof AISSentence) {
-					AISSentence aissentence = (AISSentence) this.nmea;
-					this.aishandler.handleAISSentence(aissentence);
-					if(this.aishandler.getDecodedAISMessage() != null) {
-						Map<String, Object> stringObject = this.nmea.toMap();
-						sent = new KeyValueObject<>(stringObject);
-						//Important to parse the decodedAIS as NMEA sentence in order to prepare the fields which will be used in writing.
-						this.aishandler.getDecodedAISMessage().parse();
-						sent.setMetadata("decodedAIS", this.aishandler.getDecodedAISMessage());
-						this.aishandler.resetDecodedAISMessage();
-						transfer((T) sent);
-					}
+				String encodedPositionMsg = vesselMsg.getBody().getVesselDataAt(i).encodeAISPositionPayload();
+				transportNMEA(encodedPositionMsg);
+				//Handle multiFragment sentences to send static-And-Voyage messages.
+				long mmsi = vesselMsg.getBody().getVesselDataAt(i).getStaticDataAt(0).getMMSI();
+				boolean sendStaticVoyage = false;
+				if(!mmsiToCount.containsKey(mmsi)){
+					mmsiToCount.put(mmsi, 1);
+					sendStaticVoyage = true;
 				}
+				else{
+					int count = mmsiToCount.get(mmsi) + 1;
+					if (count % this.PositionToStaticRatio == 0){
+						sendStaticVoyage = true;
+						count = 1;
+					}
+					mmsiToCount.put(mmsi, count);
+				}
+				if (sendStaticVoyage){
+					String encodedStaticVoyageFragments[] = vesselMsg.getBody().getVesselDataAt(i).encodeAISStaticVoyagePayload();
+					transportNMEA(encodedStaticVoyageFragments[0]);
+					transportNMEA(encodedStaticVoyageFragments[1]);
+				}
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void transportNMEA(String nmeaString){
+		KeyValueObject<? extends IMetaAttribute> sent = new KeyValueObject<>();
+		this.nmea = SentenceFactory.getInstance().createSentence(nmeaString);
+		this.nmea.parse();
+		//18.07 Send the original NMEA message
+		KeyValueObject<? extends IMetaAttribute> originalNmea = new KeyValueObject<>();
+		originalNmea.setMetadata("originalNMEA", this.nmea);
+		transfer((T) originalNmea);
+		//Handling AIS Sentences
+		if (this.nmea instanceof AISSentence) {
+			AISSentence aissentence = (AISSentence) this.nmea;
+			this.aishandler.handleAISSentence(aissentence);
+			if(this.aishandler.getDecodedAISMessage() != null) {
+				Map<String, Object> stringObject = this.nmea.toMap();
+				sent = new KeyValueObject<>(stringObject);
+				//Important to parse the decodedAIS as NMEA sentence in order to prepare the fields which will be used in writing.
+				this.aishandler.getDecodedAISMessage().parse();
+				sent.setMetadata("decodedAIS", this.aishandler.getDecodedAISMessage());
+				this.aishandler.resetDecodedAISMessage();
+				transfer((T) sent);
 			}
 		}
 	}

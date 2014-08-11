@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.wrapper.ivef.IIvefElement;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.Sentence;
 
@@ -38,6 +39,7 @@ public class IvefNmeaConverterAO extends UnaryLogicalOp {
 	
 	private IIvefElement ivef;
 	private ConversionType conversionType;
+	private int PositionToStaticRatio = 100;
 	private Sentence nmea;
 		
 	public IvefNmeaConverterAO(){
@@ -58,10 +60,15 @@ public class IvefNmeaConverterAO extends UnaryLogicalOp {
 		return super.getOutputSchemaIntern(0);
 	}
 	
+	@Parameter(name="PositionToStaticRatio", type=IntegerParameter.class, isList=false, optional=true, doc="The number of position messages the operator should wait iteratively before generating a new Static&Voyage message.")
+	public void setPositionToStaticRatio(int PositionToStaticRatio) {
+		this.PositionToStaticRatio = PositionToStaticRatio; 
+	} 
+	
 	@Parameter(name="conversionType", type=EnumParameter.class, isList=false, optional=false, doc="The conversion type between Maritime messages: AIS_To_IVEF, IVEF_To_AIS, TTM_To_IVEF, IVEF_To_TTM")
 	public void setConversionType(ConversionType conversionType) {
 		this.conversionType = conversionType; 
-	}  
+	} 
 	
 	public IIvefElement getIvef() {
 		return this.ivef;
@@ -73,5 +80,9 @@ public class IvefNmeaConverterAO extends UnaryLogicalOp {
 	
 	public ConversionType getConversionType(){
 		return this.conversionType;
+	}
+	
+	public int getPositionToStaticRatio(){
+		return this.PositionToStaticRatio;
 	}
 }

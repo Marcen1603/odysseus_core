@@ -32,7 +32,7 @@ public class TIvefNmeaConverterAORule extends AbstractTransformationRule<IvefNme
 	
 	@Override
 	public void execute(IvefNmeaConverterAO converterAO, TransformationConfiguration config) throws RuleException {		
-		defaultExecute(converterAO, new IvefNmeaConverterPO<>(converterAO.getConversionType()), config, true, true);
+		defaultExecute(converterAO, new IvefNmeaConverterPO<>(converterAO.getConversionType(), converterAO.getPositionToStaticRatio()), config, true, true);
 	}
 
 	@Override
