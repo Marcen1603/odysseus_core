@@ -82,11 +82,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 		for (ILogicalOperator operator : operators) {
 
-			if (operator.isSinkOperator() && !operator.isSourceOperator()) {
-
-				continue;
-
-			} else if (AbstractFragmentationHelper.isOperatorAbove(operator,
+			if (AbstractFragmentationHelper.isOperatorAbove(operator,
 					bundle.getOriginStartOperator())
 					&& (!bundle.getOriginEndOperator().isPresent() || AbstractFragmentationHelper
 							.isOperatorAbove(bundle.getOriginEndOperator()
@@ -367,15 +363,13 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 				if (fragmentOperator
 						&& AbstractFragmentationHelper.isOperatorAbove(
-								operator,
-								fragmentOrReunionOperator)) {
+								operator, fragmentOrReunionOperator)) {
 
 					avoidedParts.addAll(bundle.getCopyMap().get(part));
 
 				} else if (!fragmentOperator
 						&& AbstractFragmentationHelper.isOperatorAbove(
-								fragmentOrReunionOperator,
-								operator)) {
+								fragmentOrReunionOperator, operator)) {
 
 					avoidedParts.addAll(bundle.getCopyMap().get(part));
 

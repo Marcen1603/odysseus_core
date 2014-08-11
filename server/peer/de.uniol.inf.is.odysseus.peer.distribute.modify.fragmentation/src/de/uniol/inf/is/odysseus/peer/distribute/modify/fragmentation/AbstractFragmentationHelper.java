@@ -525,8 +525,14 @@ public abstract class AbstractFragmentationHelper {
 	 * @return True, if <code>operator</code> shall not be part of a fragment;
 	 *         false else.
 	 */
-	public abstract boolean isOperatorException(ILogicalOperator operator);
-	
+	public boolean isOperatorException(ILogicalOperator operator) {
+
+		return (operator.isSinkOperator() && !operator.isSourceOperator())
+				|| operator instanceof AbstractAccessAO
+				|| operator instanceof StreamAO;
+
+	}
+
 	/**
 	 * Checks if a query part needs a special handling. <br />
 	 * This may be the usage of partial aggregates.

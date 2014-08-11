@@ -213,7 +213,7 @@ public class HorizontalFragmentationHelper extends AbstractFragmentationHelper {
 
 		}
 
-		return false;
+		return super.isOperatorException(operator);
 
 	}
 
