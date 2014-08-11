@@ -18,15 +18,22 @@
  */
 package de.uniol.inf.is.odysseus.core.physicaloperator;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.Subscription;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class PhysicalSubscription<K> extends Subscription<K> {
 
 	private static final long serialVersionUID = -6266008340674321020L;
 	private boolean done;
+	private boolean suspended = false;
 	private int openCalls = 0;
-	
+	@SuppressWarnings("rawtypes")
+	final private List<IStreamObject> suspendBuffer = new LinkedList<>();
+
 	public PhysicalSubscription(K target, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		super(target, sinkInPort, sourceOutPort, schema);
 		done = false;
@@ -38,6 +45,14 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 	
 	public boolean isDone() {
 		return done;
+	}
+	
+	public void setSuspended(boolean suspended) {
+		this.suspended = suspended;
+	}
+	
+	public boolean isSuspended() {
+		return suspended;
 	}
 	
 	public synchronized void incOpenCalls(){
@@ -60,6 +75,27 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 	public void setOpenCalls(int openCalls) {
 		this.openCalls = openCalls;
 	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void process(IStreamObject o){
+		if (suspended){
+			suspendBuffer.add(o);
+		}else{
+			clearSuspendBuffer();
+			((ISink)getTarget()).process(o, getSinkInPort());
+		}
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void clearSuspendBuffer() {
+		if (suspendBuffer.isEmpty()) return;
+		
+		for (IStreamObject o:suspendBuffer ){
+			((ISink)getTarget()).process(o, getSinkInPort());			
+		}
+		suspendBuffer.clear();
+	}
+	
 	
 	
 }

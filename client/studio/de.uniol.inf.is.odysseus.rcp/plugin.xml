@@ -138,6 +138,24 @@
          </commandParameter>
       </command>
       <command
+            id="de.uniol.inf.is.odysseus.rcp.commands.SuspendQueryCommand"
+            name="Suspend Query">
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.parameters.QueryIDParameter"
+               name="QueryID Parameter"
+               optional="false">
+         </commandParameter>
+      </command>
+      <command
+            id="de.uniol.inf.is.odysseus.rcp.commands.ResumeQueryCommand"
+            name="Resume Query">
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.parameters.QueryIDParameter"
+               name="QueryID Parameter"
+               optional="false">
+         </commandParameter>
+      </command>
+      <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.RefreshQueryViewCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.RefreshQueryViewCommand"
             name="Refresh Query View">
@@ -196,6 +214,16 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.RestartAllQueriesCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.RestartAllQueriesCommand"
             name="Restart all queries">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.SuspendAllQueriesCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.SuspendAllQueriesCommand"
+            name="Suspend all queries">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.ResumeAllQueriesCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ResumeAllQueriesCommand"
+            name="Resume all queries">
       </command>
       <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.RemoveAllQueriesCommand"
@@ -304,6 +332,18 @@
                label="Stop Query"
                style="push">
          </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.SuspendQueryCommand"
+               icon="icons/one-query-suspend.png"
+               label="Suspend Query"
+               style="push">
+         </command>         
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeQueryCommand"
+               icon="icons/one-query-resume.png"
+               label="Resume Query"
+               style="push">
+         </command>         
          <separator
                name="de.uniol.inf.is.odysseus.rcp.base.separator2"
                visible="true">
@@ -327,6 +367,19 @@
                label="Stop All Queries"
                style="push">
          </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.SuspendAllQueriesCommand"
+               icon="icons/all-queries-suspend.png"
+               label="Suspend All Queries"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeAllQueriesCommand"
+               icon="icons/all-queries-resume.png"
+               label="Resume All Queries"
+               style="push">
+         </command>
+
          <separator
                name="de.uniol.inf.is.odysseus.rcp.base.separator4"
                visible="true">
@@ -365,6 +418,18 @@
                label="Stop Query"
                style="push">
          </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.SuspendQueryCommand"
+               icon="icons/one-query-suspend.png"
+               label="Suspend Query"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeQueryCommand"
+               icon="icons/one-query-resume.png"
+               label="Resume Query"
+               style="push">
+         </command>
          <separator
                name="Separator1"
                visible="true">
@@ -386,6 +451,18 @@
                commandId="de.uniol.inf.is.odysseus.rcp.commands.StopAllQueriesCommand"
                icon="icons/all-queries-stop.png"
                label="Stop All Queries"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.SuspendAllQueriesCommand"
+               icon="icons/all-queries-suspend.png"
+               label="Suspend All Queries"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeAllQueriesCommand"
+               icon="icons/all-queries-resume.png"
+               label="Resume All Queries"
                style="push">
          </command>
          <separator
@@ -912,6 +989,24 @@
       <handler
             class="de.uniol.inf.is.odysseus.rcp.commands.StopQueryCommand"
             commandId="de.uniol.inf.is.odysseus.rcp.commands.StopQueryCommand">
+         <enabledWhen>
+            <reference
+                  definitionId="oneOrMoreQueryIsSelected">
+            </reference>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.rcp.commands.SuspendQueryCommand"
+            commandId="de.uniol.inf.is.odysseus.rcp.commands.SuspendQueryCommand">
+         <enabledWhen>
+            <reference
+                  definitionId="oneOrMoreQueryIsSelected">
+            </reference>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.rcp.commands.ResumeQueryCommand"
+            commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeQueryCommand">
          <enabledWhen>
             <reference
                   definitionId="oneOrMoreQueryIsSelected">

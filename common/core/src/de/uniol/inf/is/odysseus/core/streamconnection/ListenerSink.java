@@ -168,12 +168,12 @@ public abstract class ListenerSink<In extends IStreamObject<?>> extends OwnerHan
 		return null;
 	}
 	
-	@Override
-	public void process(Collection<? extends In> object, int port) {
-		for (In obj : object) {
-			process(obj, port);
-		}
-	}
+//	@Override
+//	public void process(Collection<? extends In> object, int port) {
+//		for (In obj : object) {
+//			process(obj, port);
+//		}
+//	}
 
 	@Override
 	public void done(int port) {

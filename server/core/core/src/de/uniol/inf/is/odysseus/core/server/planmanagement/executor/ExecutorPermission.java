@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.executor;
 import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
 
 public enum ExecutorPermission implements IPermission {
-	ADD_QUERY, START_QUERY, STOP_QUERY, REMOVE_QUERY,
+	ADD_QUERY, START_QUERY, STOP_QUERY, REMOVE_QUERY, SUSPEND_QUERY, RESUME_QUERY,
 	START_ALL_QUERIES, STOP_ALL_QUERIES, REMOVE_ALL_QUERIES, GET_ALL_QUERIES;
 	
 	public final static String objectURI = "queryexecutor";

@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.fastflowerdelivery.io;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -131,18 +130,6 @@ public class EventReceiver extends Thread implements ITransferHandler {
 
 	@Override
 	public void transfer(Object object, int sourceOutPort) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void transfer(Collection object, int sourceOutPort) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void transfer(Collection object) {
 		// TODO Auto-generated method stub
 		
 	}

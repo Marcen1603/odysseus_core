@@ -610,6 +610,10 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			getSchedulerManager().stoppedQuery(affectedQuery);
 			fireGenericEvent(IUpdateEventListener.QUERY);
 			break;
+		case QUERY_SUSPEND:
+		case QUERY_RESUME:
+			// Nothing to do for scheduler
+			break;
 		}
 	}
 

@@ -89,10 +89,12 @@ public class PhysicalQuery implements IPhysicalQuery {
 	private static int idCounter = 0;
 
 	/**
-	 * Unique id of an ID. Used for identification of an query.
-	 * Not final anymore, because there might arise the need to change it in rare cases.
-	 * (i.e. creating a physical query based on a logical one and then later trying to construct one via a physical plan
-	 * First one would take the logical query's ID, while the next constructor would start at the idCounter's current value)
+	 * Unique id of an ID. Used for identification of an query. Not final
+	 * anymore, because there might arise the need to change it in rare cases.
+	 * (i.e. creating a physical query based on a logical one and then later
+	 * trying to construct one via a physical plan First one would take the
+	 * logical query's ID, while the next constructor would start at the
+	 * idCounter's current value)
 	 */
 	private int id;
 
@@ -176,7 +178,9 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * Notice can be used to annotade a query
 	 */
 	private String notice;
-	
+
+	private boolean suspended;
+
 	/**
 	 * Creates a query based on a physical plan and
 	 * {@link QueryBuildConfiguration}
@@ -482,12 +486,43 @@ public class PhysicalQuery implements IPhysicalQuery {
 			if (curRoot.isSink()) {
 				((ISink<?>) curRoot).open(this);
 			} else {
-				//throw new IllegalArgumentException(
-				//		"Open cannot be called on a source");
+				// throw new IllegalArgumentException(
+				// "Open cannot be called on a source");
 			}
 		}
 		opened = true;
 		this.isStarting = false;
+	}
+
+	@Override
+	public void suspend() {
+		for (IPhysicalOperator curRoot : getRoots()) {
+			// this also works for cyclic plans,
+			// since if an operator is already open, the
+			// following sources will not be called any more.
+			if (curRoot.isSink()) {
+				((ISink<?>) curRoot).suspend(this);
+			}
+		}
+		this.suspended = true;
+	}
+
+	@Override
+	public void resume() {
+		for (IPhysicalOperator curRoot : getRoots()) {
+			// this also works for cyclic plans,
+			// since if an operator is already open, the
+			// following sources will not be called any more.
+			if (curRoot.isSink()) {
+				((ISink<?>) curRoot).resume(this);
+			}
+		}
+		this.suspended = false;
+	}
+		
+	@Override
+	public boolean isSuspended() {
+		return suspended;
 	}
 
 	@Override
@@ -497,12 +532,12 @@ public class PhysicalQuery implements IPhysicalQuery {
 			// since if an operator is already closed, the
 			// following sources will not be called any more.
 			if (curRoot.isSink()) {
-				if (((ISink<?>)curRoot).isOpenFor(this)) {
+				if (((ISink<?>) curRoot).isOpenFor(this)) {
 					((ISink<?>) curRoot).close(this);
 				}
 			} else {
-				//throw new IllegalArgumentException(
-				//		"Close cannot be called on a a source");
+				// throw new IllegalArgumentException(
+				// "Close cannot be called on a a source");
 			}
 		}
 		opened = false;
@@ -523,9 +558,9 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public boolean isOpened() {
 		return opened;
 	}
-	
+
 	@Override
-	public boolean isStarting(){
+	public boolean isStarting() {
 		return isStarting;
 	}
 
@@ -735,18 +770,18 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public ILogicalQuery getLogicalQuery() {
 		return query;
 	}
-	
+
 	@Override
 	public String getQueryText() {
-		if (query != null){
+		if (query != null) {
 			return query.getQueryText();
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String getParserId() {
-		if (query != null){
+		if (query != null) {
 			return query.getParserId();
 		}
 		return null;
@@ -821,12 +856,12 @@ public class PhysicalQuery implements IPhysicalQuery {
 		}
 		return 0;
 	}
-	
+
 	@Override
 	public void setLogicalQuery(ILogicalQuery q) {
 		this.query = q;
 	}
-	
+
 	@Override
 	public void setLogicalQueryAndAdoptItsID(ILogicalQuery q) {
 		this.query = q;
@@ -837,23 +872,24 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public synchronized boolean isMarkedAsStopping() {
 		return markedToStopped;
 	}
-	
+
 	@Override
 	public synchronized void setAsStopping(boolean isStopping) {
 		this.markedToStopped = isStopping;
 	}
-	
+
 	@Override
 	public String getNotice() {
-		return query!=null?query.getNotice():notice;
+		return query != null ? query.getNotice() : notice;
 	}
-	
+
 	@Override
 	public void setNotice(String notice) {
-		if (query!=null){
+		if (query != null) {
 			query.setNotice(notice);
-		}else{
-			this.notice=notice;		
+		} else {
+			this.notice = notice;
 		}
 	}
+
 }

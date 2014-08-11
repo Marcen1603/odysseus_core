@@ -52,5 +52,22 @@ public interface IClientPlanManager{
 	 * @throws PlanManagementException
 	 */
 	public void stopQuery(int queryID, ISession caller) throws PlanManagementException;
+	
+	/**
+	 * suspend query (i.e. query execution is paused and can be resumed. element will be buffered!)
+	 * @param queryID
+	 * @param caller
+	 * @throws PlanManagementException
+	 */
+	public void suspendQuery(int queryID, ISession caller) throws PlanManagementException;
+	
+	/**
+	 * resume a suspended query (first all buffered elements are send)
+	 * @param queryID
+	 * @param caller
+	 * @throws PlanManagementException
+	 */
+	
+	public void resumeQuery(int queryID, ISession caller) throws PlanManagementException;
 
 }

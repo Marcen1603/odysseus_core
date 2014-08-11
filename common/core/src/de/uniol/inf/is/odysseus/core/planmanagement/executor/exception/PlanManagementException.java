@@ -43,7 +43,7 @@ public class PlanManagementException extends RuntimeException {
 	 * 
 	 * @param details detailed exception message.
 	 */
-	protected PlanManagementException(String details) {
+	public PlanManagementException(String details) {
 		super(details);
 	}
 

@@ -20,7 +20,6 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.metadata.IHasMetaAttribute;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * Interface for data sources in a query graph.
@@ -53,47 +52,47 @@ public interface ISource<T> extends IPhysicalOperator,
 	 */
 	public void close(ISink<? super T> caller, int sourcePort, int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners);
 
-	/**
-	 * Removes several subscriptions in remove list to this source and
-	 * subscribes a sink in one 'atomic' step, so that no transfer() can be
-	 * executed between these steps.
-	 * 
-	 * @param remove
-	 *            {@link List} of {@link PhysicalSubscription}s to remove.
-	 * @param sink
-	 *            new {@link ISink} to subscribe.
-	 * @param sinkInPort
-	 *            sinkInPort.
-	 * @param sourceOutPort
-	 *            sourceOutPort.
-	 * @param schema
-	 *            Output schema of source.
-	 */
-	public void atomicReplaceSink(
-			List<PhysicalSubscription<ISink<? super T>>> remove,
-			ISink<? super T> sink, int sinkInPort, int sourceOutPort,
-			SDFSchema schema);
+//	/**
+//	 * Removes several subscriptions in remove list to this source and
+//	 * subscribes a sink in one 'atomic' step, so that no transfer() can be
+//	 * executed between these steps.
+//	 * 
+//	 * @param remove
+//	 *            {@link List} of {@link PhysicalSubscription}s to remove.
+//	 * @param sink
+//	 *            new {@link ISink} to subscribe.
+//	 * @param sinkInPort
+//	 *            sinkInPort.
+//	 * @param sourceOutPort
+//	 *            sourceOutPort.
+//	 * @param schema
+//	 *            Output schema of source.
+//	 */
+//	public void atomicReplaceSink(
+//			List<PhysicalSubscription<ISink<? super T>>> remove,
+//			ISink<? super T> sink, int sinkInPort, int sourceOutPort,
+//			SDFSchema schema);
 
-	/**
-	 * Removes a subscription to this source and subscribes several sinks in the
-	 * sinks list in one 'atomic' step, so that no transfer() can be executed
-	 * between these steps.
-	 * 
-	 * @param remove
-	 *            {@link PhysicalSubscription} to remove.
-	 * @param sink
-	 *            {@link List} of new {@link ISink}s to subscribe.
-	 * @param sinkInPort
-	 *            sinkInPort.
-	 * @param sourceOutPort
-	 *            sourceOutPort.
-	 * @param schema
-	 *            Output schema of source.
-	 */
-	public void atomicReplaceSink(
-			PhysicalSubscription<ISink<? super T>> remove,
-			List<ISink<? super T>> sinks, int sinkInPort, int sourceOutPort,
-			SDFSchema schema);
+//	/**
+//	 * Removes a subscription to this source and subscribes several sinks in the
+//	 * sinks list in one 'atomic' step, so that no transfer() can be executed
+//	 * between these steps.
+//	 * 
+//	 * @param remove
+//	 *            {@link PhysicalSubscription} to remove.
+//	 * @param sink
+//	 *            {@link List} of new {@link ISink}s to subscribe.
+//	 * @param sinkInPort
+//	 *            sinkInPort.
+//	 * @param sourceOutPort
+//	 *            sourceOutPort.
+//	 * @param schema
+//	 *            Output schema of source.
+//	 */
+//	public void atomicReplaceSink(
+//			PhysicalSubscription<ISink<? super T>> remove,
+//			List<ISink<? super T>> sinks, int sinkInPort, int sourceOutPort,
+//			SDFSchema schema);
 
 	/**
 	 * Methods to mark (!) Operator as blocked. Can be used by scheduler
@@ -101,6 +100,23 @@ public interface ISource<T> extends IPhysicalOperator,
 	void unblock();
 	void block();
 	boolean isBlocked();
+	
+	/**
+	 * Suspending a source, when called from all owners the operator will be suspended
+	 * @param owner
+	 */
+
+	void suspend(ISink<? super T> caller, int sourcePort, int sinkPort,
+			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<IOperatorOwner> forOwners);
+
+	/**
+	 * Resuming a source for this owner
+	 * @param owner
+	 */
+	void resume(ISink<? super T> caller, int sourcePort, int sinkPort,
+			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<IOperatorOwner> forOwners);
 
 
 }

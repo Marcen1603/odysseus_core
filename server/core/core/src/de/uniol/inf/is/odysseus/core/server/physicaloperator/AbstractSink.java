@@ -196,10 +196,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	// ------------------------------------------------------------------------
 	// OPEN
 	// ------------------------------------------------------------------------
-	// @Override
-	// public void open() throws OpenFailedException {
-	// open(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
-	// }
+
 
 	@Override
 	public void open(IOperatorOwner owner) throws OpenFailedException {
@@ -307,12 +304,12 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		fire(processDoneEvent[port]);
 	}
 
-	@Override
-	public void process(Collection<? extends R> object, int port) {
-		for (R cur : object) {
-			process(cur, port);
-		}
-	}
+//	@Override
+//	public void process(Collection<? extends R> object, int port) {
+//		for (R cur : object) {
+//			process(cur, port);
+//		}
+//	}
 
 	protected abstract void process_next(R object, int port);
 
@@ -322,11 +319,6 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	// ------------------------------------------------------------------------
 	// CLOSE and DONE
 	// ------------------------------------------------------------------------
-
-	// @Override
-	// public void close() {
-	// close(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
-	// }
 
 	@Override
 	public void close(IOperatorOwner id) {
@@ -453,7 +445,93 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		return done;
 
 	}
+	
+	// ------------------------------------------------------------------------
+	// Suspend and Resume
+	// ------------------------------------------------------------------------
+	
+	@Override
+	public void suspend(IOperatorOwner id) {
+		List<IOperatorOwner> forOwners = null;
+		if (id != null) {
+			forOwners = new ArrayList<>();
+			forOwners.add(id);
+		} else {
+			forOwners = getOwner();
+		}
+		suspend(new ArrayList<PhysicalSubscription<ISink<?>>>(), forOwners);		
+	}
+	
+	final private void suspend(List<PhysicalSubscription<ISink<?>>> callPath,
+			List<IOperatorOwner> forOwners) {
 
+		openCloseLock.lock();
+		try {
+
+			// Call open on all registered sources0
+			for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
+				// Check if callPath contains this call already to avoid cycles
+				if (!containsSubscription(callPath, getInstance(),
+						sub.getSourceOutPort(), sub.getSinkInPort())) {
+					sub.setSuspended(true);
+					callPath.add(new PhysicalSubscription<ISink<?>>(
+							getInstance(), sub.getSinkInPort(), sub
+									.getSourceOutPort(), null));
+					if (sub.getTarget().isOwnedByAny(forOwners)) {
+						sub.getTarget().suspend(getInstance(),
+								sub.getSourceOutPort(), sub.getSinkInPort(),
+								callPath, forOwners);
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			openCloseLock.unlock();
+		}
+	}
+	
+	@Override
+	public void resume(IOperatorOwner id) {
+		List<IOperatorOwner> forOwners = null;
+		if (id != null) {
+			forOwners = new ArrayList<>();
+			forOwners.add(id);
+		} else {
+			forOwners = getOwner();
+		}
+		resume(new ArrayList<PhysicalSubscription<ISink<?>>>(), forOwners);				
+	}
+	
+	final private void resume(List<PhysicalSubscription<ISink<?>>> callPath,
+			List<IOperatorOwner> forOwners) {
+
+		openCloseLock.lock();
+		try {
+
+			// Call open on all registered sources0
+			for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
+				// Check if callPath contains this call already to avoid cycles
+				if (!containsSubscription(callPath, getInstance(),
+						sub.getSourceOutPort(), sub.getSinkInPort())) {
+					sub.setSuspended(false);
+					callPath.add(new PhysicalSubscription<ISink<?>>(
+							getInstance(), sub.getSinkInPort(), sub
+									.getSourceOutPort(), null));
+					if (sub.getTarget().isOwnedByAny(forOwners)) {
+						sub.getTarget().resume(getInstance(),
+								sub.getSourceOutPort(), sub.getSinkInPort(),
+								callPath, forOwners);
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			openCloseLock.unlock();
+		}
+	}
+	
 	// ------------------------------------------------------------------------
 	// Getter and Setter
 	// ------------------------------------------------------------------------

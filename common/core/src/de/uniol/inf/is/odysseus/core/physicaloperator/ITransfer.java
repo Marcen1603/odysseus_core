@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator;
 
-import java.util.Collection;
 
 public interface ITransfer<T> {
 	
@@ -14,12 +13,12 @@ public interface ITransfer<T> {
 
 	public void transfer(T object);
 
-	/**
-	 * Same as above, but for transfering a batch of elements.
-	 */
-	public void transfer(Collection<T> object, int sourceOutPort);
-
-	public void transfer(Collection<T> object);
+//	/**
+//	 * Same as above, but for transfering a batch of elements.
+//	 */
+//	public void transfer(Collection<T> object, int sourceOutPort);
+//
+//	public void transfer(Collection<T> object);
 	
 	public void sendPunctuation(IPunctuation punctuation);
 

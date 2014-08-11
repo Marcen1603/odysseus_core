@@ -125,23 +125,23 @@ public class PhysicalRestructHelper {
 				newChild.getOutputSchema());
 	}
 	
-	public static void atomicReplaceSink(ISource<?> source, List<PhysicalSubscription<?>> remove, ISink<?> sink) {
-		((ISource)source).atomicReplaceSink(remove, sink, 0, 0, source.getOutputSchema());
-	}
-	
-	public static void atomicReplaceSink(ISource<?> source, PhysicalSubscription<?> remove, List<ISink<?>> sinks) {
-		((ISource)source).atomicReplaceSink(remove, sinks, 0, 0, source.getOutputSchema());
-	}
-	
-	public static void atomicReplaceSink(ISource<?> source, IPhysicalOperator remove, List<ISink<?>> sinks) {
-		PhysicalSubscription<?> removeSub = null;
-		for (PhysicalSubscription<?> sub : source.getSubscriptions()) {
-			if (sub.getTarget() == remove) {
-				removeSub = sub;
-				break;
-			}
-		}
-		atomicReplaceSink(source, removeSub, sinks);
-	}
+//	public static void atomicReplaceSink(ISource<?> source, List<PhysicalSubscription<?>> remove, ISink<?> sink) {
+//		((ISource)source).atomicReplaceSink(remove, sink, 0, 0, source.getOutputSchema());
+//	}
+//	
+//	public static void atomicReplaceSink(ISource<?> source, PhysicalSubscription<?> remove, List<ISink<?>> sinks) {
+//		((ISource)source).atomicReplaceSink(remove, sinks, 0, 0, source.getOutputSchema());
+//	}
+//	
+//	public static void atomicReplaceSink(ISource<?> source, IPhysicalOperator remove, List<ISink<?>> sinks) {
+//		PhysicalSubscription<?> removeSub = null;
+//		for (PhysicalSubscription<?> sub : source.getSubscriptions()) {
+//			if (sub.getTarget() == remove) {
+//				removeSub = sub;
+//				break;
+//			}
+//		}
+//		atomicReplaceSink(source, removeSub, sinks);
+//	}
 	
 }

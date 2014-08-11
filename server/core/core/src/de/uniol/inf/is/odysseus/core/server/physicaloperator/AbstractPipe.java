@@ -142,24 +142,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 
 	abstract public OutputMode getOutputMode();
 
-	// @Override
-	// public boolean isTransferExclusive() {
-	// // Zun�chst Testen ob das Datum an mehrere Empf�nger
-	// // versendet wird --> dann niemals exclusiv
-	// boolean ret = super.isTransferExclusive();
-	// OutputMode out = getOutputMode();
-	// switch (out) {
-	// case NEW_ELEMENT:
-	// return ret;
-	// default: // MODIFIED_INPUT und INPUT
-	// // Wenn einer der Eing�nge nicht exclusive ist
-	// // das Ergebnis auch nicht exclusive
-	// // for (int i = 0; i < inputExclusive.length && ret; i++) {
-	// // ret = ret && inputExclusive[i];
-	// // }
-	// return false;
-	// }
-	// }
 
 	@Override
 	protected boolean needsClone(int port) {
@@ -171,12 +153,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	// OPEN
 	// ------------------------------------------------------------------------
 
-	// @Override
-	// final public void open() throws OpenFailedException {
-	// reconnectSinks();
-	// this.delegateSink.open(new ArrayList<PhysicalSubscription<ISink<?>>>(),
-	// getOwner());
-	// }
 
 	@Override
 	final synchronized public void open(IOperatorOwner owner) throws OpenFailedException {
@@ -230,11 +206,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 
 	private void delegatedProcessPunctuation(IPunctuation punctuation, int port) {
 		processPunctuation(punctuation, port);
-	}
-
-	@Override
-	public void process(Collection<? extends R> object, int port) {
-		delegateSink.process(object, port);
 	}
 
 	abstract protected void process_next(R object, int port);
@@ -320,6 +291,20 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		return this.delegateSink.isDone();
 	}
 
+	// ------------------------------------------------------------------------
+	// suspend and resume
+	// ------------------------------------------------------------------------
+
+	@Override
+	public void suspend(IOperatorOwner id) {
+		this.delegateSink.suspend(id);
+	}
+	
+	@Override
+	public void resume(IOperatorOwner id) {
+		this.delegateSink.resume(id);
+	}
+	
 	// ------------------------------------------------------------------------
 	// Subscription management
 	// ------------------------------------------------------------------------

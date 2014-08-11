@@ -404,10 +404,11 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			} else {
 				// execute command
 				LOG.debug("Executing " + cmd);
-				// Remark: AddQueryCommand returns a set of query ids, that were added
-				// These ids must be returned to the first caller (i.e. calling odysseus script)
-				cmd.execute(getDataDictionary(cmd
-						.getCaller()),
+				// Remark: AddQueryCommand returns a set of query ids, that were
+				// added
+				// These ids must be returned to the first caller (i.e. calling
+				// odysseus script)
+				cmd.execute(getDataDictionary(cmd.getCaller()),
 						(IUserManagementWritable) UserManagementProvider
 								.getUsermanagement(true), this);
 				Collection<Integer> result = cmd.getCreatedQueryIds();
@@ -1146,6 +1147,61 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	@Override
 	public void done(PhysicalQuery physicalQuery) {
 		stopQuery(physicalQuery);
+	}
+
+	@Override
+	public void suspendQuery(int queryID, ISession caller)
+			throws PlanManagementException {
+		LOG.info("Suspending query (ID: " + queryID + ")....");
+
+		IPhysicalQuery queryToSuspend = this.executionPlan
+				.getQueryById(queryID);
+		try {
+			validateUserRight(queryToSuspend, caller,
+					ExecutorPermission.SUSPEND_QUERY);
+			executionPlanChanged(PlanModificationEventType.QUERY_SUSPEND,
+					queryToSuspend);
+
+			if (isRunning()) {
+				queryToSuspend.suspend();
+			}
+			firePlanModificationEvent(new QueryPlanModificationEvent(this,
+					PlanModificationEventType.QUERY_SUSPEND, queryToSuspend));
+
+		} catch (Exception e) {
+			LOG.warn("Query not suspended. An Error while optimizing occurd (ID: "
+					+ queryToSuspend.getID() + ")." + e.getMessage());
+			throw new RuntimeException(e);
+			// return;
+		}
+	}
+
+	@Override
+	public void resumeQuery(int queryID, ISession caller)
+			throws PlanManagementException {
+		LOG.info("Resuming query (ID: " + queryID + ")....");
+
+		IPhysicalQuery queryToResume = this.executionPlan.getQueryById(queryID);
+		try {
+			if (queryToResume.isSuspended()) {
+				validateUserRight(queryToResume, caller,
+						ExecutorPermission.RESUME_QUERY);
+				executionPlanChanged(PlanModificationEventType.QUERY_RESUME,
+						queryToResume);
+
+				if (isRunning()) {
+					queryToResume.resume();
+				}
+				firePlanModificationEvent(new QueryPlanModificationEvent(this,
+						PlanModificationEventType.QUERY_RESUME, queryToResume));
+			}
+
+		} catch (Exception e) {
+			LOG.warn("Query not suspended. An Error while optimizing occurd (ID: "
+					+ queryToResume.getID() + ")." + e.getMessage());
+			throw new RuntimeException(e);
+			// return;
+		}
 	}
 
 	/*

@@ -304,6 +304,18 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
+	public void suspendQuery(int queryID, ISession caller)
+			throws PlanManagementException {
+		throw new PlanManagementException("Currently not implemented for Client/Server");
+	}
+	
+	@Override
+	public void resumeQuery(int queryID, ISession caller)
+			throws PlanManagementException {
+		throw new PlanManagementException("Currently not implemented for Client/Server");
+	}
+	
+	@Override
 	public Collection<String> getQueryBuildConfigurationNames(ISession caller) {
 		if (getWebserviceServer() != null) {
 			try {

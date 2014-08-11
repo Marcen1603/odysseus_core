@@ -15,8 +15,6 @@
   */
 package de.uniol.inf.is.odysseus.core.physicaloperator;
 
-import java.util.Collection;
-
 import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
@@ -31,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
  * Setup and cleanup work is done in {@link #open()} and {@link #close()}
  * respectively.
  * 
- * @author Jonas Jacobi
+ * @author Jonas Jacobi, Marco Grawunder
  */
 public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, ISubscriber<ISource<? extends T>, PhysicalSubscription<ISource<? extends T>>> {
 	
@@ -43,12 +41,7 @@ public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, IS
 	 * @param port
 	 *            the input port, the element came from
 	 */
-	public void process(T object, int port);
-
-	/**
-	 * Same as above, but for processing of a batch of elements.
-	 */
-	public void process(Collection<? extends T> object, int port);
+	void process(T object, int port);
 
 	/**
 	 * Indicates that a source wont call process again.
@@ -56,20 +49,21 @@ public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, IS
 	 * @param port
 	 *            the input port the source is connected to.
 	 */
-	public void done(int port);
+	void done(int port);
 
-	public void processPunctuation(IPunctuation punctuation, int port);
-	
-//	/**
-//	 * Call open on a Sink. 	
-//	 *  
-//	*/
-//	public void open() throws OpenFailedException;
 	
 	/**
-	 * Call close for a distinct owner 
+	 * Process a punctuation
+	 * @param punctuation
+	 * @param port
 	 */
-	public void open(IOperatorOwner id);
+	void processPunctuation(IPunctuation punctuation, int port);
+	
+	
+	/**
+	 * Call open for a distinct owner 
+	 */
+	void open(IOperatorOwner id);
 	
 	/**
 	 * Shared Sink can be opened for different owners (queries)
@@ -78,15 +72,23 @@ public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, IS
 	 */
 	boolean isOpenFor(IOperatorOwner owner);
 
-//	/**
-//	 * Close called on a sink has no parameter 
-//	 */
-//	public void close();
 
 	/**
 	 * Call close for a distinct owner 
 	 */
-	public void close(IOperatorOwner id);
+	void close(IOperatorOwner id);
 
-
+	/**
+	 * Call suspend for a specific owner
+	 * @param id
+	 */
+	void suspend(IOperatorOwner id);
+	
+	/**
+	 * Call resume for a suspended owner 
+	 * @param id
+	 */
+	void resume(IOperatorOwner id);
+	
+	
 }

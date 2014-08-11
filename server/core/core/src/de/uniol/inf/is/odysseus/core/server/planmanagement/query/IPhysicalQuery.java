@@ -186,4 +186,10 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQ
 	
 	void setNotice(String notice);
 	String getNotice();
+
+	void suspend();
+
+	void resume();
+
+	boolean isSuspended();
 }

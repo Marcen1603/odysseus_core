@@ -43,6 +43,7 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 
 	private static final String INACTIVE_TEXT = "Inactive";
 	private static final String RUNNING_TEXT = "Running";
+	private static final String SUSPENDED_TEXT = "Suspended";
 	private static final String QUERY_NAME_SEPARATOR = ", ";
 	private static final Logger LOG = LoggerFactory.getLogger(PhysicalQueryViewDataProvider.class);
 	private QueryView view;
@@ -92,7 +93,21 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 				data.setStatus(INACTIVE_TEXT);
 				view.refreshData(queryID);
 			}			
-		}
+		} else if (PlanModificationEventType.QUERY_SUSPEND.equals(eventArgs.getEventType())) {
+			Optional<IQueryViewData> optData = view.getData(queryID);
+			if( optData.isPresent() ) {
+				PhysicalQueryViewData data = (PhysicalQueryViewData)optData.get();
+				data.setStatus(SUSPENDED_TEXT);
+				view.refreshData(queryID);
+			}
+		} else if (PlanModificationEventType.QUERY_RESUME.equals(eventArgs.getEventType())) {
+				Optional<IQueryViewData> optData = view.getData(queryID);
+				if( optData.isPresent() ) {
+					PhysicalQueryViewData data = (PhysicalQueryViewData)optData.get();
+					data.setStatus(RUNNING_TEXT);
+					view.refreshData(queryID);
+				}
+			}
 	}
 
 	@Override

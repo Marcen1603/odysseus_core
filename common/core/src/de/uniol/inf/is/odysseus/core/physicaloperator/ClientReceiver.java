@@ -325,19 +325,19 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	// TRANSFER
 	// ------------------------------------------------------------------------
 	
-	@Override
-	public void transfer(Collection<W> object, int sourceOutPort) {
-		for (PhysicalSubscription<ISink<? super W>> sink : this.activeSinkSubscriptions) {
-			if (sink.getSourceOutPort() == sourceOutPort) {
-				sink.getTarget().process(object, sink.getSinkInPort());
-			}
-		}
-	}
-
-	@Override
-	public void transfer(Collection<W> object) {
-		transfer(object, 0);
-	}
+//	@Override
+//	public void transfer(Collection<W> object, int sourceOutPort) {
+//		for (PhysicalSubscription<ISink<? super W>> sink : this.activeSinkSubscriptions) {
+//			if (sink.getSourceOutPort() == sourceOutPort) {
+//				sink.getTarget().process(object, sink.getSinkInPort());
+//			}
+//		}
+//	}
+//
+//	@Override
+//	public void transfer(Collection<W> object) {
+//		transfer(object, 0);
+//	}
 
 	@Override
 	public void transfer(W object, int sourceOutPort) {
@@ -477,28 +477,28 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		this.activeSinkSubscriptions.remove(sub);
 	}
 
-	@Override
-	public void atomicReplaceSink(
-			List<PhysicalSubscription<ISink<? super W>>> remove,
-			ISink<? super W> sink, int sinkInPort, int sourceOutPort,
-			SDFSchema schema) {
-		for (PhysicalSubscription<ISink<? super W>> sub : remove) {
-			unsubscribeSink(sub);
-		}
-		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-	}
-
-	@Override
-	public void atomicReplaceSink(
-			PhysicalSubscription<ISink<? super W>> remove,
-			List<ISink<? super W>> sinks, int sinkInPort, int sourceOutPort,
-			SDFSchema schema) {
-		// synchronized (this.sinkSubscriptions) {
-		unsubscribeSink(remove);
-		for (ISink<? super W> sink : sinks) {
-			subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-		}
-	}
+//	@Override
+//	public void atomicReplaceSink(
+//			List<PhysicalSubscription<ISink<? super W>>> remove,
+//			ISink<? super W> sink, int sinkInPort, int sourceOutPort,
+//			SDFSchema schema) {
+//		for (PhysicalSubscription<ISink<? super W>> sub : remove) {
+//			unsubscribeSink(sub);
+//		}
+//		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+//	}
+//
+//	@Override
+//	public void atomicReplaceSink(
+//			PhysicalSubscription<ISink<? super W>> remove,
+//			List<ISink<? super W>> sinks, int sinkInPort, int sourceOutPort,
+//			SDFSchema schema) {
+//		// synchronized (this.sinkSubscriptions) {
+//		unsubscribeSink(remove);
+//		for (ISink<? super W> sink : sinks) {
+//			subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+//		}
+//	}
 	
 	@Override
 	public String toString() {
@@ -732,6 +732,22 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	
 	@Override
 	public void setDebug(boolean debug) {
+		
+	}
+
+	@Override
+	public void suspend(ISink<? super W> caller, int sourcePort, int sinkPort,
+			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<IOperatorOwner> forOwners) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resume(ISink<? super W> caller, int sourcePort, int sinkPort,
+			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<IOperatorOwner> forOwners) {
+		// TODO Auto-generated method stub
 		
 	}
 }

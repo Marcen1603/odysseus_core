@@ -186,17 +186,6 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	
 	
 	@Override
-	public void transfer(Collection<In> object) {
-		// Will never be called
-	}
-	
-	@Override
-	public void transfer(Collection<In> object, int sourceOutPort) {
-		// Will never be called
-		
-	}
-	
-	@Override
 	public void transfer(In object) {
 		// Will never be called
 		
@@ -608,6 +597,18 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	@Override
 	public boolean isOpenFor(IOperatorOwner owner) {
 		return false;
+	}
+	
+	@Override
+	public void suspend(IOperatorOwner id) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void resume(IOperatorOwner id) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
