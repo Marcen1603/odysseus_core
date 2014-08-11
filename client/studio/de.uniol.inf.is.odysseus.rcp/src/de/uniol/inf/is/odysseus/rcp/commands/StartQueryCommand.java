@@ -28,7 +28,7 @@ public class StartQueryCommand extends AbstractStartQueryCommand{
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		List<Integer> selectedObj = SelectionProvider.getSelection(event);
-		return start(selectedObj);
+		return execute(selectedObj,"Starting ");
 	}
-
+	
 }

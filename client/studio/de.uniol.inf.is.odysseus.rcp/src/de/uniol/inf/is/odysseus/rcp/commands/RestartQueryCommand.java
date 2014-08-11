@@ -47,7 +47,7 @@ public class RestartQueryCommand extends AbstractRestartQueryCommand{
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		List<Integer> selectedObj = SelectionProvider.getSelection(event);
-		return restart(selectedObj);		
+		return execute(selectedObj, "Restarting");		
 	}
 
 }

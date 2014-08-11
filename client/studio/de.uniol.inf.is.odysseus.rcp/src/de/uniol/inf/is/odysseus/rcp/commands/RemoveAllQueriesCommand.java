@@ -31,7 +31,7 @@ public class RemoveAllQueriesCommand extends AbstractRemoveQueryCommand {
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		if (executor != null) {
-			remove(executor.getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession()));
+			execute(executor.getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession()), "Removing");
 		} else {
 			logger.error(OdysseusNLS.NoExecutorFound);
 			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);

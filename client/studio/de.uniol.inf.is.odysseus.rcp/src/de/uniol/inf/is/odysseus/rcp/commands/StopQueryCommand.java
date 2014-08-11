@@ -28,7 +28,7 @@ public class StopQueryCommand extends AbstractStopQueryCommand{
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		List<Integer> selectedObj = SelectionProvider.getSelection(event);
-		return stop(selectedObj);	
+		return execute(selectedObj,"Stopping");	
 	}
 
 }

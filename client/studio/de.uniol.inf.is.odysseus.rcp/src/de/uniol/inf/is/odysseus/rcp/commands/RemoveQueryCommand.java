@@ -27,7 +27,7 @@ public class RemoveQueryCommand extends AbstractRemoveQueryCommand {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		List<Integer> selectedObj = SelectionProvider.getSelection(event);
-		return remove(selectedObj);
+		return execute(selectedObj, "Removing");
 	}
 
 }
