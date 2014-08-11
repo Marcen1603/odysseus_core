@@ -6,6 +6,7 @@ package de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5;
 
 import java.util.*;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
@@ -25,6 +26,11 @@ public class VesselData implements IIvefElement {
     private Vector<StaticData> m_staticDatas = new Vector<StaticData>();
     private Vector<Voyage> m_voyages = new Vector<Voyage>();
     private Vector<TaggedItem> m_taggedItems = new Vector<TaggedItem>();
+    
+    /**Message Serial Number: 
+     * Used for encoding multiFragments messages
+     * Takes values from 0 to 9*/
+    private int m_msgSerial = 0; 
 
     public VesselData() {
 
@@ -165,9 +171,8 @@ public class VesselData implements IIvefElement {
 			taggedItem.fillMap(map);
 	}
 
-	public String encodeAISPayload() {
-		//TODO: to handle the multiFragment messages
-		String encodedAIS = "!AIVDM,1,1,,A,";
+	public String encodeAISPositionPayload() {
+		String encodedAIS = "!AIVDO,1,1,,A,";
 		Pos pos = this.m_posReport.getPos();
 		Double lat = pos.getLat();
 		Double lon = pos.getLong();
@@ -214,6 +219,76 @@ public class VesselData implements IIvefElement {
 		//checkSum
 		encodedAIS += "*" + SentenceUtils.calculateChecksum(encodedAIS);
 		return encodedAIS;
+	}
+	
+	@SuppressWarnings("deprecation")
+	public String[] encodeAISStaticVoyagePayload() {
+		if(this.countOfStaticDatas() == 0)
+			return null;
+		if (this.m_msgSerial == 10)
+			this.m_msgSerial = 0;
+		String[] encodedFragments = new String[2];
+		String encodedFragment1 = "!AIVDO,2,1," + this.m_msgSerial + ",A,";
+		String encodedFragment2 = "!AIVDO,2,2," + this.m_msgSerial + ",A,";
+		String encodedFragment2Payload;
+		int msgtype = 5;//Static&Voyage Sentence
+		long mmsi = this.getStaticDataAt(0).getMMSI();
+		long imo = this.getStaticDataAt(0).getIMO();
+		String callSign = this.getStaticDataAt(0).getCallsign();
+		String vesselName = this.getStaticDataAt(0).getShipName();
+		String etaStr = this.getVoyageAt(0).getETA();
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		Date etaDate = null;
+		try {
+			etaDate = df.parse(etaStr);
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		int etaMonth = etaDate != null ? etaDate.getMonth() : 0; 
+		int etaDay = etaDate != null ? etaDate.getDate() : 0; 
+		int etaHour = etaDate != null ? etaDate.getHours() : 0; 
+		int etaMinute = etaDate != null ? etaDate.getMinutes() : 0; 
+		int draught = (int)this.getVoyageAt(0).getDraught();
+		String destination = this.getVoyageAt(0).getDestination();
+		
+		SixbitEncoder encoder = new SixbitEncoder();
+		encoder.addVal(msgtype, 6);//Message type
+		encoder.addVal(0, 2);//RepeatIndicator = 0
+		encoder.addVal(mmsi, 30);//MMSI
+		encoder.addVal(0, 2);//AIS Version: Not existed in IVEF
+		encoder.addVal(imo, 30);//IMO 
+		encoder.addString(callSign, 42);//CallSign 
+		encoder.addString(vesselName, 120);//VesselName
+		encoder.addVal(0, 8);//ShipType: undefined in IVEF.
+		encoder.addVal(0, 9);//Dimension to Bow: undefined in IVEF.
+		encoder.addVal(0, 9);//Dimension to Stern: undefined in IVEF.
+		encoder.addVal(0, 6);//Dimension to Port: undefined in IVEF.
+		encoder.addVal(0, 6);//Dimension to Starboard: undefined in IVEF.
+		encoder.addVal(0, 4);//Position Fix Type: undefined in IVEF.
+		encoder.addVal(etaMonth, 4);//ETA Month
+		encoder.addVal(etaDay, 5);//ETA Month
+		encoder.addVal(etaHour, 5);//ETA Month
+		encoder.addVal(etaMinute, 6);//ETA Month
+		encoder.addVal(draught, 8);//Draught
+		encoder.addString(destination, 120);//Destination
+		encoder.addVal(0, 1);//DTE: 0 Data Terminal Ready
+		encoder.addVal(0, 1);//Spare: Not used
+		
+		try {
+			encodedFragment1 += encoder.encode();
+		} catch (SixbitException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		encodedFragment2Payload = encodedFragment1.substring(71);
+		encodedFragment1 = encodedFragment1.substring(0, 71);
+		//checkSum
+		encodedFragment1 += ",0*" + SentenceUtils.calculateChecksum(encodedFragment1);
+		encodedFragment2 += encodedFragment2Payload + ",2*" + SentenceUtils.calculateChecksum(encodedFragment2);
+		encodedFragments[0] = encodedFragment1;
+		encodedFragments[1] = encodedFragment2;
+		return encodedFragments;
 	}
 
 }
