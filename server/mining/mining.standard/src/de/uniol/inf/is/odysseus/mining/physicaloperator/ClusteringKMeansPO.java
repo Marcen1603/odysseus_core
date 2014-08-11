@@ -173,11 +173,6 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 
 	}
 	
-	@Override
-	public void transfer(Tuple<M> object, int sourceOutPort) {	
-		super.transfer(object, sourceOutPort);
-	//	System.out.println("TRANSFER: "+object);
-	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {

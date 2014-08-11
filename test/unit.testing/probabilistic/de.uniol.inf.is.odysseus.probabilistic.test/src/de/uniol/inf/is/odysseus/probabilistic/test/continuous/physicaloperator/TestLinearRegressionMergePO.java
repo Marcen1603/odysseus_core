@@ -20,13 +20,11 @@ import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.LinearRegressionMergePO;
 
@@ -37,7 +35,8 @@ import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.LinearRegressionM
  */
 public class TestLinearRegressionMergePO extends LinearRegressionMergePO<IProbabilisticTimeInterval> {
     /** The logger for debug purpose. */
-    private static final Logger LOG = LoggerFactory.getLogger(TestLinearRegressionMergePO.class);
+    @SuppressWarnings("unused")
+	private static final Logger LOG = LoggerFactory.getLogger(TestLinearRegressionMergePO.class);
 
     /**
      * Test constructor of the LinearRegressionMerge PO.
@@ -46,17 +45,17 @@ public class TestLinearRegressionMergePO extends LinearRegressionMergePO<IProbab
         super(TestLinearRegressionMergePO.getSchema(), new int[] {}, new int[] {}, 1, 2);
     }
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
-     * transfer(java.lang.Object)
-     */
-    @Override
-    public final void transfer(final ProbabilisticTuple<IProbabilisticTimeInterval> object) {
-        TestLinearRegressionMergePO.LOG.debug(object.toString());
-        Assert.assertTrue(((IProbabilistic) object.getMetadata()).getExistence() <= 1.0);
-    }
+//    /*
+//     * 
+//     * @see
+//     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
+//     * transfer(java.lang.Object)
+//     */
+//    @Override
+//    public final void transfer(final ProbabilisticTuple<IProbabilisticTimeInterval> object) {
+//        TestLinearRegressionMergePO.LOG.debug(object.toString());
+//        Assert.assertTrue(((IProbabilistic) object.getMetadata()).getExistence() <= 1.0);
+//    }
 
     /**
      * Test the process method of the LinearRegressionMergePO.

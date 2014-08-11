@@ -20,7 +20,6 @@ import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -51,7 +50,8 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
  */
 public class TestSelectPO extends ProbabilisticSelectPO<IProbabilistic> {
     /** The logger for debug purpose. */
-    private static final Logger LOG = LoggerFactory.getLogger(TestSelectPO.class);
+    @SuppressWarnings("unused")
+	private static final Logger LOG = LoggerFactory.getLogger(TestSelectPO.class);
 
     /**
      * Test constructor of the Select PO.
@@ -62,17 +62,17 @@ public class TestSelectPO extends ProbabilisticSelectPO<IProbabilistic> {
         super(TestSelectPO.getSchema(), TestSelectPO.getTestPredicate());
     }
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
-     * transfer(java.lang.Object)
-     */
-    @Override
-    public final void transfer(final ProbabilisticTuple<IProbabilistic> object) {
-        TestSelectPO.LOG.debug(object.toString());
-        Assert.assertTrue(object.getMetadata().getExistence() <= 1.0);
-    }
+//    /*
+//     * 
+//     * @see
+//     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
+//     * transfer(java.lang.Object)
+//     */
+//    @Override
+//    public final void transfer(final ProbabilisticTuple<IProbabilistic> object) {
+//        TestSelectPO.LOG.debug(object.toString());
+//        Assert.assertTrue(object.getMetadata().getExistence() <= 1.0);
+//    }
 
     /**
      * Test the process method of the SelectPO.

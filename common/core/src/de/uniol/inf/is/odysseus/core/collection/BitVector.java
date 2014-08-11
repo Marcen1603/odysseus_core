@@ -33,7 +33,6 @@
  ***/
 package de.uniol.inf.is.odysseus.core.collection;
 
-import java.math.BigInteger;
 
 /**
  * Class that implements a collection for bits, storing them packed into bytes.

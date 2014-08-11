@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
@@ -47,16 +46,16 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
         super(new int[] { 1 });
     }
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
-     * transfer(java.lang.Object)
-     */
-    @Override
-    public final void transfer(final Tuple<IMetaAttribute> object) {
-        TestProjectPO.LOG.debug(object.toString());
-    }
+//    /*
+//     * 
+//     * @see
+//     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
+//     * transfer(java.lang.Object)
+//     */
+//    @Override
+//    public final void transfer(final Tuple<IMetaAttribute> object) {
+//        TestProjectPO.LOG.debug(object.toString());
+//    }
 
     /**
      * Test the process method of the ProjectPO.

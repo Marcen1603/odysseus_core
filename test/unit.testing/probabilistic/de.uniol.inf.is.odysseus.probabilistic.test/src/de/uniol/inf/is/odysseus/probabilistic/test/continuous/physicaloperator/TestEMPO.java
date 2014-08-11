@@ -51,16 +51,16 @@ public class TestEMPO extends EMPO<IProbabilisticTimeInterval> {
         super(new int[] { 0, 2 }, 2, 100, 1E-5, false, null);
     }
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
-     * transfer(java.lang.Object)
-     */
-    @Override
-    public final void transfer(final ProbabilisticTuple<IProbabilisticTimeInterval> object) {
-        TestEMPO.LOG.debug(object.toString());
-    }
+//    /*
+//     * 
+//     * @see
+//     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
+//     * transfer(java.lang.Object)
+//     */
+//    @Override
+//    public final void transfer(final ProbabilisticTuple<IProbabilisticTimeInterval> object) {
+//        TestEMPO.LOG.debug(object.toString());
+//    }
 
     /**
      * Test the process method of the ProjectPO.

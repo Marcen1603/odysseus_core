@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
@@ -72,6 +74,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	final private Map<Integer, Integer> consumerCount = new HashMap<>();
 
 	protected AtomicBoolean open = new AtomicBoolean(false);
+	private AtomicBoolean suspended = new AtomicBoolean(false);
+	final private List<Pair<Object, Integer>> suspendBuffer = new LinkedList<>();
 	private String name = null;
 	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
 	private Map<IOperatorOwner, Resource> uniqueIds = new TreeMap<>();
@@ -92,9 +96,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 		return _logger;
 	}
-	
+
 	protected boolean debug = false;
-	
+
 	@Override
 	public void setDebug(boolean debug) {
 		this.debug = debug;
@@ -425,19 +429,43 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void transfer(T object, int sourceOutPort) {
+	final public void transfer(T object, int sourceOutPort) {
+		if (suspended.get()) {
+			Pair<Object, Integer> p = new Pair<Object, Integer>(object, sourceOutPort);
+			suspendBuffer.add(p);
+		} else {
+			clearSuspendBuffer();
+			transferToSubscriptions(object, sourceOutPort);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void clearSuspendBuffer() {
+		if (suspendBuffer.isEmpty()) return;
+		
+		for (Pair<Object, Integer> p : suspendBuffer) {
+			Object o = p.getE1();
+			if (o instanceof Collection) {
+				transferToSubscriptions((Collection<T>) p.getE1(), p.getE2());
+			} else {
+				transferToSubscriptions((T) p.getE1(), p.getE2());
+			}
+		}
+
+	}
+
+	private void transferToSubscriptions(T object, int sourceOutPort) {
 		fire(this.pushInitEvent);
 		// necessary to not lose tuples in a plan migration
 		locker.lock();
 		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			transfer(object, sourceOutPort, sink);
 		}
-
 		locker.unlock();
 		fire(this.pushDoneEvent);
 	}
 
-	protected void transfer(T object, int sourceOutPort,
+	final protected void transfer(T object, int sourceOutPort,
 			PhysicalSubscription<ISink<? super T>> sink) {
 		if (sink.getSourceOutPort() == sourceOutPort) {
 			try {
@@ -453,12 +481,22 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void transfer(T object) {
+	final public void transfer(T object) {
 		transfer(object, 0);
 	}
 
 	@Override
-	public void transfer(Collection<T> object, int sourceOutPort) {
+	final public void transfer(Collection<T> object, int sourceOutPort) {
+		if (suspended.get()) {
+			Pair<Object, Integer> p = new Pair<Object, Integer>(object, sourceOutPort);
+			suspendBuffer.add(p);
+		} else {
+			clearSuspendBuffer();
+			transferToSubscriptions(object, sourceOutPort);
+		}
+	}
+	
+	private void transferToSubscriptions(Collection<T> object, int sourceOutPort) {
 		fire(this.pushListInitEvent);
 		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
@@ -469,7 +507,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void transfer(Collection<T> object) {
+	final public void transfer(Collection<T> object) {
 		transfer(object, 0);
 	}
 
@@ -618,6 +656,17 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		this.locker = locker;
 	}
 
+	// ------------------------------------------------------------------------
+	// SUSPEND
+	// ------------------------------------------------------------------------
+	public void suspend(){
+		this.suspended.set(true);
+	}
+	
+	public void resume(){
+		this.suspended.set(false);
+	}
+	
 	// ------------------------------------------------------------------------
 	// Subscription management
 	// ------------------------------------------------------------------------
@@ -911,9 +960,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public boolean hasInput() {
 		return false;
 	}
-	
-//	@SuppressWarnings("rawtypes")
-//	protected final AbstractSource clone(){
-//		throw new IllegalArgumentException("Clone not supported");
-//	}
+
+	// @SuppressWarnings("rawtypes")
+	// protected final AbstractSource clone(){
+	// throw new IllegalArgumentException("Clone not supported");
+	// }
 }
