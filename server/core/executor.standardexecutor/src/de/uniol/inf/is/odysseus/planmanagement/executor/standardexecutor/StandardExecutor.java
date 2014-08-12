@@ -911,7 +911,11 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				executionPlanLock.lock();
 				getOptimizer().beforeQueryRemove(queryToRemove,
 						this.executionPlan, null, getDataDictionary(caller));
-				stopQuery(queryToRemove.getID(), caller);
+
+				if (!(queryToRemove.getState() == QueryState.INACTIVE)) {
+					stopQuery(queryToRemove.getID(), caller);
+				}
+
 				executionPlanChanged(PlanModificationEventType.QUERY_REMOVE,
 						queryToRemove);
 				LOG.info("Removing Query " + queryToRemove.getID());
@@ -1129,7 +1133,9 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				executionPlanChanged(PlanModificationEventType.QUERY_STOP,
 						queryToStop);
 				if (isRunning()) {
-					queryToStop.stop();
+					if (queryToStop.getState() != QueryState.INACTIVE) {
+						queryToStop.stop();
+					}
 					LOG.info("Query " + queryToStop.getID() + " stopped.");
 					firePlanModificationEvent(new QueryPlanModificationEvent(
 							this, PlanModificationEventType.QUERY_STOP,
