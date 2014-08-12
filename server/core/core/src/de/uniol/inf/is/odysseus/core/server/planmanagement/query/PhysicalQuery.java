@@ -541,7 +541,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	}
 
 	@Override
-	public void close() {
+	public void stop() {
 		try {
 			QueryState nextState = QueryState.next(queryState,
 					QueryFunction.STOP);

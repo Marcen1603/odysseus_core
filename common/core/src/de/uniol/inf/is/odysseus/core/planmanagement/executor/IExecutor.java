@@ -169,6 +169,11 @@ public interface IExecutor extends IClientPlanManager {
 	 */
 	public Collection<Integer> getLogicalQueryIds(ISession session);
 
+	/**
+	 * Returns the current state of the query with the given queryID
+	 * @param queryID The of the query 
+	 * @return the current state of the query
+	 */
 	public QueryState getQueryState(int queryID);
 	
 	/**

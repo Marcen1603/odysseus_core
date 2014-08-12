@@ -113,7 +113,7 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQ
 
 	void start(IQueryStarter queryListener) throws OpenFailedException;
 
-	void close();
+	void stop();
 
 	/**
 	 * Set Monitor for plans
