@@ -180,6 +180,14 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		this.delegateSink.suspend(callPath, forOwners);
 	}
 
+	@Override
+	final public void resume(ISink<? super W> caller, int sourcePort, int sinkPort,
+			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<IOperatorOwner> forOwners) {
+		super.resume(caller, sourcePort, sinkPort, callPath, forOwners);
+		this.delegateSink.resume(callPath, forOwners);
+	}
+	
 	public void delegatedProcessOpen() throws OpenFailedException {
 		process_open();
 	}

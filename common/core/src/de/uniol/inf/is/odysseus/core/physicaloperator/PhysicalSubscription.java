@@ -33,7 +33,9 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 	private int openCalls = 0;
 	@SuppressWarnings("rawtypes")
 	final private List<IStreamObject> suspendBuffer = new LinkedList<>();
-
+	private int sheddingFactor = 0;
+	private int readObjects;
+	
 	public PhysicalSubscription(K target, int sinkInPort, int sourceOutPort,
 			SDFSchema schema) {
 		super(target, sinkInPort, sourceOutPort, schema);
@@ -73,9 +75,28 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 	public void setOpenCalls(int openCalls) {
 		this.openCalls = openCalls;
 	}
+	
+	public void setSheddingFactor(int sheddingFactor) {
+		this.sheddingFactor = sheddingFactor;
+	}
 
+	public int getSheddingFactor() {
+		return sheddingFactor;
+	}
+	
+	public boolean isShedding(){
+		return sheddingFactor > 0;
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void process(IStreamObject o) {
+		if (sheddingFactor > 0){
+			readObjects++;
+			if (readObjects == sheddingFactor){
+				readObjects = 0;
+				return;
+			}
+		}
 		if (openCalls > 0 && openCalls == suspendCalls) {
 			suspendBuffer.add(o);
 		} else {

@@ -502,7 +502,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		resume(new ArrayList<PhysicalSubscription<ISink<?>>>(), forOwners);				
 	}
 	
-	final private void resume(List<PhysicalSubscription<ISink<?>>> callPath,
+	final void resume(List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 
 		openCloseLock.lock();
