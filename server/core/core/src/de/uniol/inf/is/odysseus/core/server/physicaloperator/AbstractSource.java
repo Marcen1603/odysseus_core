@@ -152,10 +152,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			POEventType.PushInit);
 	final private POEvent pushDoneEvent = new POEvent(this,
 			POEventType.PushDone);
-//	final private POEvent pushListInitEvent = new POEvent(this,
-//			POEventType.PushListInit);
-//	final private POEvent pushListDoneEvent = new POEvent(this,
-//			POEventType.PushListDone);
+	// final private POEvent pushListInitEvent = new POEvent(this,
+	// POEventType.PushListInit);
+	// final private POEvent pushListDoneEvent = new POEvent(this,
+	// POEventType.PushListDone);
 	final private POEvent closeInitEvent = new POEvent(this,
 			POEventType.CloseInit);
 	final private POEvent closeDoneEvent = new POEvent(this,
@@ -443,8 +443,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			PhysicalSubscription<ISink<? super T>> sink) {
 		if (sink.getSourceOutPort() == sourceOutPort) {
 			try {
-				sink.process(
-						(IStreamObject) cloneIfNessessary(object, sourceOutPort));
+				sink.process((IStreamObject) cloneIfNessessary(object,
+						sourceOutPort));
 			} catch (Throwable e) {
 				// Send object that could not be processed to the error port
 				e.printStackTrace();
@@ -457,35 +457,35 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	final public void transfer(T object) {
 		transfer(object, 0);
 	}
-	
-	final public void transfer(Collection<T> list, int sourceOutPort){
-		for (T o:list){
-			transfer(o,sourceOutPort);
-		}
-	}
-	
-	final public void transfer(Collection<T> list){
-		for (T o:list){
-			transfer(o,0);
-		}
-	}
-	
 
-//	@Override
-//	final public void transfer(Collection<T> object, int sourceOutPort) {
-//		fire(this.pushListInitEvent);
-//		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
-//			if (sink.getSourceOutPort() == sourceOutPort) {
-//				sink.process(object);
-//			}
-//		}
-//		fire(this.pushListDoneEvent);
-//	}
-//
-//	@Override
-//	final public void transfer(Collection<T> object) {
-//		transfer(object, 0);
-//	}
+	final public void transfer(Collection<T> list, int sourceOutPort) {
+		for (T o : list) {
+			transfer(o, sourceOutPort);
+		}
+	}
+
+	final public void transfer(Collection<T> list) {
+		for (T o : list) {
+			transfer(o, 0);
+		}
+	}
+
+	// @Override
+	// final public void transfer(Collection<T> object, int sourceOutPort) {
+	// fire(this.pushListInitEvent);
+	// for (PhysicalSubscription<ISink<? super T>> sink :
+	// this.activeSinkSubscriptions) {
+	// if (sink.getSourceOutPort() == sourceOutPort) {
+	// sink.process(object);
+	// }
+	// }
+	// fire(this.pushListDoneEvent);
+	// }
+	//
+	// @Override
+	// final public void transfer(Collection<T> object) {
+	// transfer(object, 0);
+	// }
 
 	protected boolean needsClone(int port) {
 		return !hasSingleConsumer(port);
@@ -501,7 +501,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 		return object;
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// CLOSE
 	// ------------------------------------------------------------------------
@@ -641,7 +641,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			List<IOperatorOwner> forOwners) {
 		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
 				caller, sourcePort, sinkPort);
-		sub.setSuspended(true);
+		sub.suspend();
 	}
 
 	@Override
@@ -650,7 +650,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			List<IOperatorOwner> forOwners) {
 		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
 				caller, sourcePort, sinkPort);
-		sub.setSuspended(false);
+		sub.resume();
 	}
 
 	// ------------------------------------------------------------------------
@@ -748,35 +748,35 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-//	// Das folgende macht eigentlich keinen Sinn mehr mit CopyOnWrite
-//	// Arrays (MG)
-//	@Override
-//	public void atomicReplaceSink(
-//			List<PhysicalSubscription<ISink<? super T>>> remove,
-//			ISink<? super T> sink, int sinkInPort, int sourceOutPort,
-//			SDFSchema schema) {
-//		// synchronized (this.sinkSubscriptions) {
-//		for (PhysicalSubscription<ISink<? super T>> sub : remove) {
-//			unsubscribeSink(sub);
-//		}
-//		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-//		// }
-//	}
-//
-//	// Das folgende macht eigentlich keinen Sinn mehr mit CopyOnWrite
-//	// Arrays (MG)
-//	@Override
-//	public void atomicReplaceSink(
-//			PhysicalSubscription<ISink<? super T>> remove,
-//			List<ISink<? super T>> sinks, int sinkInPort, int sourceOutPort,
-//			SDFSchema schema) {
-//		// synchronized (this.sinkSubscriptions) {
-//		unsubscribeSink(remove);
-//		for (ISink<? super T> sink : sinks) {
-//			subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-//		}
-//		// }
-//	}
+	// // Das folgende macht eigentlich keinen Sinn mehr mit CopyOnWrite
+	// // Arrays (MG)
+	// @Override
+	// public void atomicReplaceSink(
+	// List<PhysicalSubscription<ISink<? super T>>> remove,
+	// ISink<? super T> sink, int sinkInPort, int sourceOutPort,
+	// SDFSchema schema) {
+	// // synchronized (this.sinkSubscriptions) {
+	// for (PhysicalSubscription<ISink<? super T>> sub : remove) {
+	// unsubscribeSink(sub);
+	// }
+	// subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+	// // }
+	// }
+	//
+	// // Das folgende macht eigentlich keinen Sinn mehr mit CopyOnWrite
+	// // Arrays (MG)
+	// @Override
+	// public void atomicReplaceSink(
+	// PhysicalSubscription<ISink<? super T>> remove,
+	// List<ISink<? super T>> sinks, int sinkInPort, int sourceOutPort,
+	// SDFSchema schema) {
+	// // synchronized (this.sinkSubscriptions) {
+	// unsubscribeSink(remove);
+	// for (ISink<? super T> sink : sinks) {
+	// subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+	// }
+	// // }
+	// }
 
 	@Override
 	final public List<PhysicalSubscription<ISink<? super T>>> getSubscriptions() {

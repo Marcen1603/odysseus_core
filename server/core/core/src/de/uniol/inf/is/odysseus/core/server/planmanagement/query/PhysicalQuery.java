@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sun.awt.util.IdentityArrayList;
-
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -496,12 +495,14 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	@Override
 	public void suspend() {
-		for (IPhysicalOperator curRoot : getRoots()) {
-			// this also works for cyclic plans,
-			// since if an operator is already open, the
-			// following sources will not be called any more.
-			if (curRoot.isSink()) {
-				((ISink<?>) curRoot).suspend(this);
+		if (!suspended) {
+			for (IPhysicalOperator curRoot : getRoots()) {
+				// this also works for cyclic plans,
+				// since if an operator is already open, the
+				// following sources will not be called any more.
+				if (curRoot.isSink()) {
+					((ISink<?>) curRoot).suspend(this);
+				}
 			}
 		}
 		this.suspended = true;
@@ -509,17 +510,19 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	@Override
 	public void resume() {
-		for (IPhysicalOperator curRoot : getRoots()) {
-			// this also works for cyclic plans,
-			// since if an operator is already open, the
-			// following sources will not be called any more.
-			if (curRoot.isSink()) {
-				((ISink<?>) curRoot).resume(this);
+		if (suspended) {
+			for (IPhysicalOperator curRoot : getRoots()) {
+				// this also works for cyclic plans,
+				// since if an operator is already open, the
+				// following sources will not be called any more.
+				if (curRoot.isSink()) {
+					((ISink<?>) curRoot).resume(this);
+				}
 			}
 		}
 		this.suspended = false;
 	}
-		
+
 	@Override
 	public boolean isSuspended() {
 		return suspended;
