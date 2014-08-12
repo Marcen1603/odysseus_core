@@ -39,16 +39,27 @@ public class OperatorDropListener extends AbstractTransferDropTargetListener {
 	@Override
 	protected Request createTargetRequest() {
 
-		TreeSelection selection = (TreeSelection) OperatorDragTransfer.getTransfer().getSelection();
+		TreeSelection selection = (TreeSelection) OperatorDragTransfer
+				.getTransfer().getSelection();
 		if (selection != null) {
 			CreateRequest request = new CreateRequest();
-			ViewInformation entry = (ViewInformation) selection.getFirstElement();
-			String resourceName = entry.getName().toString();
-			String operatorName = OperatorDragTransfer.getTransfer().getOperatorName();
-			LogicalOperatorInformation loi = Activator.getDefault().getExecutor().getOperatorInformation(operatorName, Activator.getDefault().getCaller());
-			request.setFactory(new DropOperatorNodeFactory(loi, resourceName));
+			Object fe = selection.getFirstElement();
+			if (fe instanceof ViewInformation) {
+				ViewInformation entry = (ViewInformation) selection
+						.getFirstElement();
+				String resourceName = entry.getName().toString();
+				String operatorName = OperatorDragTransfer.getTransfer()
+						.getOperatorName();
+				LogicalOperatorInformation loi = Activator
+						.getDefault()
+						.getExecutor()
+						.getOperatorInformation(operatorName,
+								Activator.getDefault().getCaller());
+				request.setFactory(new DropOperatorNodeFactory(loi,
+						resourceName));
+			}
 			return request;
-		} 
+		}
 		return super.createTargetRequest();
 	}
 
