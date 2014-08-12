@@ -229,7 +229,7 @@ public class VesselData implements IIvefElement {
 			this.m_msgSerial = 0;
 		String[] encodedFragments = new String[2];
 		String encodedFragment1 = "!AIVDO,2,1," + this.m_msgSerial + ",A,";
-		String encodedFragment2 = "!AIVDO,2,2," + this.m_msgSerial + ",A,";
+		String encodedFragment2 = "!AIVDO,2,2," + this.m_msgSerial++ + ",A,";
 		String encodedFragment2Payload;
 		int msgtype = 5;//Static&Voyage Sentence
 		long mmsi = this.getStaticDataAt(0).getMMSI();
