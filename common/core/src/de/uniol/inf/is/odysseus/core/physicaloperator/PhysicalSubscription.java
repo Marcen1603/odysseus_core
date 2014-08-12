@@ -53,6 +53,10 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 	public boolean isSuspended() {
 		return openCalls == suspendCalls;
 	}
+	
+	public int getBufferSize(){
+		return suspendBuffer.size();
+	}
 
 	public synchronized void incOpenCalls() {
 		openCalls++;

@@ -49,7 +49,7 @@ public abstract class SWTConnectionSymbolElement<C> extends
 		return gc;
 	}
 
-	protected void setColor(GC actualGC) {
+	protected void setContextColor(GC actualGC) {
 		if (actualGC == null) {
 			return;
 		}
@@ -68,7 +68,14 @@ public abstract class SWTConnectionSymbolElement<C> extends
 		}
 	}
 
-	protected void setBackgroundColor(GC actualGC) {
+	protected void setContextLineSize(GC actualGC){
+		if (isSuspended() || isShedding()){
+			int e = (int) Math.min(getBufferedElements()/10000,10); 
+			actualGC.setLineWidth(e+2);
+		}
+	}
+	
+	protected void setContextBackgroundColor(GC actualGC) {
 		if (actualGC == null) {
 			return;
 		}
@@ -105,6 +112,16 @@ public abstract class SWTConnectionSymbolElement<C> extends
 			return odyCon.getSubscriptionToSink().isSuspended();
 		}
 		return false;
+	}
+	
+	private long getBufferedElements(){
+		IConnectionModel<C> modelConnection = getConnectionView()
+				.getModelConnection();
+		if (modelConnection instanceof OdysseusConnectionModel) {
+			OdysseusConnectionModel odyCon = (OdysseusConnectionModel) modelConnection;
+			return odyCon.getSubscriptionToSink().getBufferSize();
+		}
+		return 0;		
 	}
 
 	private boolean isShedding() {

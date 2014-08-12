@@ -41,9 +41,9 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 	public void draw(Vector start, Vector end, Vector screenShift, float zoomFactor) {
 		GC actualGC = getActualGC();
 	
-		setColor(actualGC);
+		setContextColor(actualGC);
 	
-		actualGC.setLineWidth(2);
+		setContextLineSize(actualGC);
 		actualGC.drawLine((int) start.getX(), (int) start.getY(), (int) end.getX(), (int) end.getY());
 		actualGC.setLineWidth(1);
 
@@ -98,7 +98,7 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 			int[] poly = new int[] { cross.x - 1, cross.y, px, py, qx, qy };
 
 			
-			setBackgroundColor(actualGC);
+			setContextBackgroundColor(actualGC);
 			actualGC.fillPolygon(poly);
 
 			// // DEBUG

@@ -32,9 +32,9 @@ public class SWTLineConnectionSymbolElement<C> extends SWTConnectionSymbolElemen
 	public void draw(Vector start, Vector end, Vector screenShift, float zoomFactor ) {
 		
 		GC actualGC = getActualGC();
-		setColor(actualGC);
+		setContextColor(actualGC);
 	
-		actualGC.setLineWidth(2);
+		setContextLineSize(actualGC);
 		getActualGC().drawLine( (int)start.getX(), (int)start.getY(), (int)end.getX(), (int)end.getY() );
 		actualGC.setLineWidth(1);
 	}
