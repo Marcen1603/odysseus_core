@@ -76,7 +76,7 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void process(IStreamObject o) {
-		if (openCalls == suspendCalls) {
+		if (openCalls > 0 && openCalls == suspendCalls) {
 			suspendBuffer.add(o);
 		} else {
 			clearSuspendBuffer();
