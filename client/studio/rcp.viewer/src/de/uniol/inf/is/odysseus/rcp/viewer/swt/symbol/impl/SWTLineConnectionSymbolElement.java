@@ -41,8 +41,10 @@ public class SWTLineConnectionSymbolElement<C> extends SWTConnectionSymbolElemen
 		if( actualGC == null ) {
 			return;
 		}
-		
-		if( isConnectionOpened() ) {
+		if (isSuspended()){
+			actualGC.setLineStyle(SWT.LINE_DOT);
+			actualGC.setForeground( activeLineColor );			
+		}else if( isConnectionOpened() ) {
 			actualGC.setLineStyle(SWT.LINE_SOLID);
 			actualGC.setForeground( activeLineColor );
 		} else {
@@ -60,6 +62,15 @@ public class SWTLineConnectionSymbolElement<C> extends SWTConnectionSymbolElemen
 		if( modelConnection instanceof OdysseusConnectionModel ) {
 			OdysseusConnectionModel odyCon = (OdysseusConnectionModel)modelConnection;
 			return odyCon.getSubscriptionToSink().getOpenCalls() > 0;
+		}
+		return false;
+	}
+	
+	private boolean isSuspended(){
+		IConnectionModel<C> modelConnection = getConnectionView().getModelConnection();
+		if( modelConnection instanceof OdysseusConnectionModel ) {
+			OdysseusConnectionModel odyCon = (OdysseusConnectionModel)modelConnection;
+			return odyCon.getSubscriptionToSink().isSuspended();
 		}
 		return false;
 	}

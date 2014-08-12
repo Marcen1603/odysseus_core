@@ -532,7 +532,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			// if this subscription has no more callers, remove it from
 			// the set of activeSubscriptions
 			if (sub.getOpenCalls() == 0) {
-
+				
 				// The are some sink, that are not connected by open (because
 				// they
 				// will never
@@ -639,9 +639,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void suspend(ISink<? super T> caller, int sourcePort, int sinkPort,
 			List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
-		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
-				caller, sourcePort, sinkPort);
-		sub.suspend();
+		if (isOpen()) {
+			PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
+					caller, sourcePort, sinkPort);
+			sub.suspend();
+		}
 	}
 
 	@Override
@@ -650,7 +652,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			List<IOperatorOwner> forOwners) {
 		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
 				caller, sourcePort, sinkPort);
-		sub.resume();
+		if (sub.isSuspended()) {
+			sub.resume();
+		}
 	}
 
 	// ------------------------------------------------------------------------

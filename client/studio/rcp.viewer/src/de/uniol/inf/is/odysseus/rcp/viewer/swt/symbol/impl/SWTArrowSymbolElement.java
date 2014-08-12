@@ -46,8 +46,11 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 	@Override
 	public void draw(Vector start, Vector end, Vector screenShift, float zoomFactor) {
 		GC actualGC = getActualGC();
-
-		if (isConnectionOpened()) {
+		
+		if (isSuspended()){
+			actualGC.setLineStyle(SWT.LINE_DOT);
+			actualGC.setForeground( activeLineColor );			
+		}else if (isConnectionOpened()) {
 			actualGC.setLineStyle(SWT.LINE_SOLID);
 			actualGC.setForeground(activeLineColor);
 		} else {
@@ -149,6 +152,15 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 		return false;
 	}
 
+	private boolean isSuspended(){
+		IConnectionModel<C> modelConnection = getConnectionView().getModelConnection();
+		if( modelConnection instanceof OdysseusConnectionModel ) {
+			OdysseusConnectionModel odyCon = (OdysseusConnectionModel)modelConnection;
+			return odyCon.getSubscriptionToSink().isSuspended();
+		}
+		return false;
+	}
+	
 	@Override
 	public void update() {
 	}
