@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IHasRoots;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.IPlanMonitor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeHandler;
@@ -110,7 +111,7 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQ
 	
 	 Set<IPhysicalOperator> getAllOperators();
 
-	void open(IQueryStarter queryListener) throws OpenFailedException;
+	void start(IQueryStarter queryListener) throws OpenFailedException;
 
 	void close();
 
@@ -191,5 +192,5 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQ
 
 	void resume();
 
-	boolean isSuspended();
+	QueryState getState();
 }

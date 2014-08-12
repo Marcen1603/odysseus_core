@@ -4,19 +4,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum QueryState {
-	INACTIVE, PARTIAL, ACTIVE, PARTIAL_SUSPENDED, SUSPENDED;
+	INACTIVE, PARTIAL, RUNNING, PARTIAL_SUSPENDED, SUSPENDED;
 
 	static Map<QueryState, QueryState[]> reachable = new HashMap<>();
 	static {
-		reachable.put(INACTIVE, new QueryState[] { PARTIAL, ACTIVE });
+		reachable.put(INACTIVE, new QueryState[] { PARTIAL, RUNNING });
 		reachable
-				.put(ACTIVE, new QueryState[] { PARTIAL, INACTIVE, SUSPENDED });
-		reachable.put(PARTIAL, new QueryState[] { INACTIVE, ACTIVE,
+				.put(RUNNING, new QueryState[] { PARTIAL, INACTIVE, SUSPENDED });
+		reachable.put(PARTIAL, new QueryState[] { INACTIVE, RUNNING,
 				PARTIAL_SUSPENDED });
 		reachable.put(PARTIAL_SUSPENDED,
 				new QueryState[] { SUSPENDED, PARTIAL });
 		reachable
-				.put(SUSPENDED, new QueryState[] { ACTIVE, PARTIAL_SUSPENDED });
+				.put(SUSPENDED, new QueryState[] { RUNNING, PARTIAL_SUSPENDED });
 	}
 
 	static public QueryState[] reachable(QueryState current) {
@@ -27,13 +27,13 @@ public enum QueryState {
 		switch (current) {
 		case INACTIVE:
 			if (function == QueryFunction.START) {
-				return ACTIVE;
+				return RUNNING;
 			}
 			if (function == QueryFunction.PARTIAL) {
 				return PARTIAL;
 			}
 			break;
-		case ACTIVE:
+		case RUNNING:
 			if (function == QueryFunction.STOP) {
 				return INACTIVE;
 			}
@@ -56,7 +56,7 @@ public enum QueryState {
 			}
 			break;
 		case PARTIAL_SUSPENDED:
-			if (function == QueryFunction.RESTART) {
+			if (function == QueryFunction.RESUME) {
 				return PARTIAL;
 			}
 			if (function == QueryFunction.FULL) {
@@ -64,8 +64,8 @@ public enum QueryState {
 			}
 			break;
 		case SUSPENDED:
-			if (function == QueryFunction.RESTART) {
-				return ACTIVE;
+			if (function == QueryFunction.RESUME) {
+				return RUNNING;
 			}
 			if (function == QueryFunction.PARTIAL) {
 				return PARTIAL_SUSPENDED;

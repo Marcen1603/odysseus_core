@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -168,6 +169,8 @@ public interface IExecutor extends IClientPlanManager {
 	 */
 	public Collection<Integer> getLogicalQueryIds(ISession session);
 
+	public QueryState getQueryState(int queryID);
+	
 	/**
 	 * Returns all root operators of the physical query that has the given
 	 * queryID

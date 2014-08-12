@@ -39,15 +39,14 @@ import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewData;
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewDataProvider;
 import de.uniol.inf.is.odysseus.rcp.views.query.QueryView;
 
-public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IPlanModificationListener, IDoubleClickListener, KeyListener {
+public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider,
+		IPlanModificationListener, IDoubleClickListener, KeyListener {
 
-	private static final String INACTIVE_TEXT = "Inactive";
-	private static final String RUNNING_TEXT = "Running";
-	private static final String SUSPENDED_TEXT = "Suspended";
 	private static final String QUERY_NAME_SEPARATOR = ", ";
-	private static final Logger LOG = LoggerFactory.getLogger(PhysicalQueryViewDataProvider.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(PhysicalQueryViewDataProvider.class);
 	private QueryView view;
-	
+
 	@Override
 	public void init(QueryView view) {
 		this.view = view;
@@ -55,7 +54,7 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 		view.getTableViewer().addDoubleClickListener(this);
 		view.getTableViewer().getTable().addKeyListener(this);
 		listenToExecutor();
-		
+
 		onRefresh(view);
 	}
 
@@ -73,41 +72,30 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 		final int queryID = query.getID();
 
 		LOG.debug("EVENT for Query {}: {}", queryID, eventArgs.getEventType());
-		if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
+		if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs
+				.getEventType())) {
 			view.addData(create(query));
 			view.refreshTable();
-		} else if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
+		} else if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs
+				.getEventType())) {
 			view.removeData(queryID);
 			view.refreshTable();
-		} else if (PlanModificationEventType.QUERY_START.equals(eventArgs.getEventType())) {
+		} else if (PlanModificationEventType.QUERY_START.equals(eventArgs
+				.getEventType())
+				|| PlanModificationEventType.QUERY_STOP.equals(eventArgs
+						.getEventType())
+				|| PlanModificationEventType.QUERY_SUSPEND.equals(eventArgs
+						.getEventType())
+				|| PlanModificationEventType.QUERY_RESUME.equals(eventArgs
+						.getEventType())) {
 			Optional<IQueryViewData> optData = view.getData(queryID);
-			if( optData.isPresent() ) {
-				PhysicalQueryViewData data = (PhysicalQueryViewData)optData.get();
-				data.setStatus(RUNNING_TEXT);
-				view.refreshData(queryID);
-			}			
-		} else if (PlanModificationEventType.QUERY_STOP.equals(eventArgs.getEventType())) {
-			Optional<IQueryViewData> optData = view.getData(queryID);
-			if( optData.isPresent() ) {
-				PhysicalQueryViewData data = (PhysicalQueryViewData)optData.get();
-				data.setStatus(INACTIVE_TEXT);
-				view.refreshData(queryID);
-			}			
-		} else if (PlanModificationEventType.QUERY_SUSPEND.equals(eventArgs.getEventType())) {
-			Optional<IQueryViewData> optData = view.getData(queryID);
-			if( optData.isPresent() ) {
-				PhysicalQueryViewData data = (PhysicalQueryViewData)optData.get();
-				data.setStatus(SUSPENDED_TEXT);
+			if (optData.isPresent()) {
+				PhysicalQueryViewData data = (PhysicalQueryViewData) optData
+						.get();
+				data.setStatus(query.getState().name());
 				view.refreshData(queryID);
 			}
-		} else if (PlanModificationEventType.QUERY_RESUME.equals(eventArgs.getEventType())) {
-				Optional<IQueryViewData> optData = view.getData(queryID);
-				if( optData.isPresent() ) {
-					PhysicalQueryViewData data = (PhysicalQueryViewData)optData.get();
-					data.setStatus(RUNNING_TEXT);
-					view.refreshData(queryID);
-				}
-			}
+		}
 	}
 
 	@Override
@@ -129,37 +117,43 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 	@Override
 	public void onRefresh(QueryView sender) {
 		view.clear();
-		
-		IServerExecutor executor = PhysicalQueryViewDataProviderPlugIn.getServerExecutor();
-		Collection<IPhysicalQuery> queries = executor.getExecutionPlan().getQueries();
-		for( IPhysicalQuery query : queries ) {
+
+		IServerExecutor executor = PhysicalQueryViewDataProviderPlugIn
+				.getServerExecutor();
+		Collection<IPhysicalQuery> queries = executor.getExecutionPlan()
+				.getQueries();
+		for (IPhysicalQuery query : queries) {
 			view.addData(create(query));
 		}
 		view.refreshTable();
 	}
-	
-	private void executeCommand( String cmdID ) {
-		IHandlerService handlerService = (IHandlerService) view.getSite().getService(IHandlerService.class);
+
+	private void executeCommand(String cmdID) {
+		IHandlerService handlerService = (IHandlerService) view.getSite()
+				.getService(IHandlerService.class);
 		try {
 			handlerService.executeCommand(cmdID, null);
 		} catch (Exception ex) {
 			LOG.error("Exception during executing command {}.", cmdID, ex);
-		}		
+		}
 	}
 
 	private void unlistenToExecutor() {
-		IServerExecutor executor = PhysicalQueryViewDataProviderPlugIn.getServerExecutor();
+		IServerExecutor executor = PhysicalQueryViewDataProviderPlugIn
+				.getServerExecutor();
 		executor.removePlanModificationListener(this);
-		
-		Collection<IPhysicalQuery> queries = executor.getExecutionPlan().getQueries();
-		for( IPhysicalQuery query : queries ) {
+
+		Collection<IPhysicalQuery> queries = executor.getExecutionPlan()
+				.getQueries();
+		for (IPhysicalQuery query : queries) {
 			view.addData(create(query));
 		}
 		view.refreshTable();
 	}
 
 	private void listenToExecutor() {
-		IServerExecutor executor = PhysicalQueryViewDataProviderPlugIn.getServerExecutor();
+		IServerExecutor executor = PhysicalQueryViewDataProviderPlugIn
+				.getServerExecutor();
 		executor.addPlanModificationListener(this);
 	}
 
@@ -167,12 +161,12 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 	private static String getQueryName(IPhysicalQuery query) {
 		List<IPhysicalOperator> roots = query.getRoots();
 		StringBuilder sb = new StringBuilder();
-		
-		for( int i = 0; i < roots.size(); i++ ) {
+
+		for (int i = 0; i < roots.size(); i++) {
 			String name = roots.get(i).getName();
-			if( !Strings.isNullOrEmpty(name)) {
+			if (!Strings.isNullOrEmpty(name)) {
 				sb.append(name);
-				if( i < roots.size() - 1) {
+				if (i < roots.size() - 1) {
 					sb.append(QUERY_NAME_SEPARATOR);
 				}
 			}
@@ -180,27 +174,19 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 		return sb.toString();
 	}
 
-	private static String getQueryStatus(IPhysicalQuery q) {
-		return q.isOpened() ? RUNNING_TEXT : INACTIVE_TEXT;
-	}
-
 	private static String getQueryUser(IPhysicalQuery query) {
-		if (query.getLogicalQuery()!= null){
-			if (query.getLogicalQuery().getUser() != null){
+		if (query.getLogicalQuery() != null) {
+			if (query.getLogicalQuery().getUser() != null) {
 				return query.getLogicalQuery().getUser().getUser().getName();
 			}
 		}
 		return "[No user]";
 	}
-	
-	private static PhysicalQueryViewData create( IPhysicalQuery query ) {
-		return new PhysicalQueryViewData(
-				query.getID(), 
-				getQueryStatus(query), 
-				query.getPriority(), 
-				query.getLogicalQuery().getParserId(), 
-				getQueryUser(query), 
-				query.getLogicalQuery().getQueryText(),
-				query.getName());
+
+	private static PhysicalQueryViewData create(IPhysicalQuery query) {
+		return new PhysicalQueryViewData(query.getID(),
+				query.getState().name(), query.getPriority(), query
+						.getLogicalQuery().getParserId(), getQueryUser(query),
+				query.getLogicalQuery().getQueryText(), query.getName());
 	}
 }

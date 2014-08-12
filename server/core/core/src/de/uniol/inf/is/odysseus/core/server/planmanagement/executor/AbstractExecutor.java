@@ -54,6 +54,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
@@ -774,7 +775,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			ILogicalQuery lq = null;
 			if (pq != null) {
 				lq = pq.getLogicalQuery();
-				lq.setParameter("ISRUNNING", pq.isOpened());
+				lq.setParameter("STATE", pq.getState());
 			}
 			return lq;
 		}
@@ -791,6 +792,12 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			lq = pq.getLogicalQuery();
 		}
 		return lq;
+	}
+	
+	@Override
+	public QueryState getQueryState(int queryID) {
+		IPhysicalQuery pq = executionPlan.getQueryById(queryID);
+		return pq.getState();
 	}
 
 	/*

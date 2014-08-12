@@ -76,6 +76,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListene
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -303,6 +304,11 @@ public class WsClient implements IExecutor, IClientExecutor {
 		fireUpdateEvent(IUpdateEventListener.QUERY);
 	}
 
+	@Override
+	public QueryState getQueryState(int queryID) {
+		throw new PlanManagementException("Currently not implemented for Client/Server");
+	}
+	
 	@Override
 	public void suspendQuery(int queryID, ISession caller)
 			throws PlanManagementException {

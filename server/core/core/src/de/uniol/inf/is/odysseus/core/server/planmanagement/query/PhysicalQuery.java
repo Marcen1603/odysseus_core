@@ -40,6 +40,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryFunction;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.IPlanMonitor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
@@ -152,10 +154,11 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 */
 	transient public Map<String, IPlanMonitor<?>> planmonitors = new HashMap<String, IPlanMonitor<?>>();
 
-	/**
-	 * Is the query running (open is called already)
-	 */
-	private boolean opened = false;
+	// /**
+	// * Is the query running (open is called already)
+	// */
+	// private boolean opened = false;
+	private QueryState queryState = QueryState.INACTIVE;
 
 	/**
 	 * Who has send the query
@@ -177,8 +180,6 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * Notice can be used to annotade a query
 	 */
 	private String notice;
-
-	private boolean suspended;
 
 	/**
 	 * Creates a query based on a physical plan and
@@ -473,29 +474,38 @@ public class PhysicalQuery implements IPhysicalQuery {
 	}
 
 	@Override
-	public void open(IQueryStarter queryListener) throws OpenFailedException {
-		this.markedToStopped = false;
-		this.isStarting = true;
-		doneRoots.clear();
-		this.queryListener = queryListener;
-		for (IPhysicalOperator curRoot : getRoots()) {
-			// this also works for cyclic plans,
-			// since if an operator is already open, the
-			// following sources will not be called any more.
-			if (curRoot.isSink()) {
-				((ISink<?>) curRoot).open(this);
-			} else {
-				// throw new IllegalArgumentException(
-				// "Open cannot be called on a source");
+	public void start(IQueryStarter queryListener) throws OpenFailedException {
+		try {
+			QueryState nextState = QueryState.next(queryState,
+					QueryFunction.START);
+
+			this.markedToStopped = false;
+			this.isStarting = true;
+			doneRoots.clear();
+			this.queryListener = queryListener;
+			for (IPhysicalOperator curRoot : getRoots()) {
+				// this also works for cyclic plans,
+				// since if an operator is already open, the
+				// following sources will not be called any more.
+				if (curRoot.isSink()) {
+					((ISink<?>) curRoot).open(this);
+				} else {
+					// throw new IllegalArgumentException(
+					// "Open cannot be called on a source");
+				}
 			}
+			queryState = nextState;
+			this.isStarting = false;
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
 		}
-		opened = true;
-		this.isStarting = false;
 	}
 
 	@Override
 	public void suspend() {
-		if (!suspended) {
+		try {
+			QueryState nextState = QueryState.next(queryState,
+					QueryFunction.SUSPEND);
 			for (IPhysicalOperator curRoot : getRoots()) {
 				// this also works for cyclic plans,
 				// since if an operator is already open, the
@@ -503,14 +513,19 @@ public class PhysicalQuery implements IPhysicalQuery {
 				if (curRoot.isSink()) {
 					((ISink<?>) curRoot).suspend(this);
 				}
+
 			}
+			queryState = nextState;
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
 		}
-		this.suspended = true;
 	}
 
 	@Override
 	public void resume() {
-		if (suspended) {
+		try {
+			QueryState nextState = QueryState.next(queryState,
+					QueryFunction.RESUME);
 			for (IPhysicalOperator curRoot : getRoots()) {
 				// this also works for cyclic plans,
 				// since if an operator is already open, the
@@ -519,31 +534,34 @@ public class PhysicalQuery implements IPhysicalQuery {
 					((ISink<?>) curRoot).resume(this);
 				}
 			}
+			queryState = nextState;
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
 		}
-		this.suspended = false;
-	}
-
-	@Override
-	public boolean isSuspended() {
-		return suspended;
 	}
 
 	@Override
 	public void close() {
-		for (IPhysicalOperator curRoot : getRoots()) {
-			// this also works for cyclic plans,
-			// since if an operator is already closed, the
-			// following sources will not be called any more.
-			if (curRoot.isSink()) {
-				if (((ISink<?>) curRoot).isOpenFor(this)) {
-					((ISink<?>) curRoot).close(this);
+		try {
+			QueryState nextState = QueryState.next(queryState,
+					QueryFunction.STOP);
+			for (IPhysicalOperator curRoot : getRoots()) {
+				// this also works for cyclic plans,
+				// since if an operator is already closed, the
+				// following sources will not be called any more.
+				if (curRoot.isSink()) {
+					if (((ISink<?>) curRoot).isOpenFor(this)) {
+						((ISink<?>) curRoot).close(this);
+					}
+				} else {
+					// throw new IllegalArgumentException(
+					// "Close cannot be called on a a source");
 				}
-			} else {
-				// throw new IllegalArgumentException(
-				// "Close cannot be called on a a source");
 			}
+			queryState = nextState;
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
 		}
-		opened = false;
 	}
 
 	@Override
@@ -559,12 +577,17 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	@Override
 	public boolean isOpened() {
-		return opened;
+		return this.queryState != QueryState.INACTIVE;
 	}
 
 	@Override
 	public boolean isStarting() {
 		return isStarting;
+	}
+
+	@Override
+	public QueryState getState() {
+		return queryState;
 	}
 
 	/*
