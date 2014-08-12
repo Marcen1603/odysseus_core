@@ -119,9 +119,10 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		// inGoal filter: remove duplicates
 		attributes.add("inGoal1");
 		attributes.add("inGoal2");
+		// Create ChangeDetectAO with HEARTBEATRATE = 100
 		ChangeDetectAO inGoal_filter = OperatorBuildHelper
 				.createChangeDetectAO(OperatorBuildHelper.createAttributeList(
-						attributes, inGoal), 0.0, inGoal);
+						attributes, inGoal), 0.0, 100, inGoal);
 		allOperators.add(inGoal_filter);
 		attributes.clear();
 
@@ -133,15 +134,12 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 
 		// onCentreSpot_filter: filter duplicates
 		attributes.add("onCentreSpot");
+		// Create ChangeDetectAO with HEARTBEATRATE = 100
 		ChangeDetectAO onCentreSpot_filter = OperatorBuildHelper
 				.createChangeDetectAO(OperatorBuildHelper.createAttributeList(
-						attributes, onCentreSpot), 0.0, onCentreSpot);
+						attributes, onCentreSpot), 0.0, 100, onCentreSpot);
 		allOperators.add(onCentreSpot_filter);
 		attributes.clear();
-
-		// Windows for join
-		// ElementWindowAO inGoalWindow = OperatorBuildHelper.createElementWindowAO(2, 1, inGoal_filter);
-		// ElementWindowAO onCentreSpotWindow = OperatorBuildHelper.createElementWindowAO(1, 1, onCentreSpot_filter);
 		
 		// join goals of last x seconds with centre spot stream
 		String joinPredicate = "goal_ts > (spot_ball_ts - (" + T_GOAL_KICKOFF + " * "

@@ -978,7 +978,27 @@ public class OperatorBuildHelper {
 	public static ChangeDetectAO createChangeDetectAO(
 			List<SDFAttribute> attributes, double tolerance,
 			ILogicalOperator source) {
-		return createChangeDetectAO(attributes, tolerance, false, source);
+		return createChangeDetectAO(attributes, tolerance, false, 0,  source);
+	}
+	
+	/**
+	 * Returns changeDetectAO with a list of Attributes and an absolute
+	 * tolerance with deliverFirstElement set to false
+	 * 
+	 * @param attributes
+	 * 			List of Attributes where changes should occur
+	 * @param tolerance
+	 * 			(Absolute) Tolerance applied to changeDetection.
+	 * @param heartbeatRate
+	 * 			Heartbeatrate every x tupel send a heartbeat
+	 * @param source
+	 * 			 Source to link to.
+	 * @return
+	 */
+	public static ChangeDetectAO createChangeDetectAO(
+			List<SDFAttribute> attributes, double tolerance, int heartbeatRate,
+			ILogicalOperator source) {
+		return createChangeDetectAO(attributes, tolerance, false, heartbeatRate, source);
 	}
 
 	/**
@@ -1006,13 +1026,37 @@ public class OperatorBuildHelper {
 		cAO.subscribeTo(source, source.getOutputSchema());
 		return cAO;
 	}
+	
+	/**
+	 * 
+	 * @param attributes
+	 * @param tolerance
+	 * @param deliverFirstElement
+	 * @param heartbeatRate
+	 * @param source
+	 * @return
+	 */
+	public static ChangeDetectAO createChangeDetectAO(
+			List<SDFAttribute> attributes, double tolerance,
+			boolean deliverFirstElement, int heartbeatRate, ILogicalOperator source) {
+		ChangeDetectAO cAO = new ChangeDetectAO();
 
+		cAO.setAttr(attributes);
+		cAO.setTolerance(tolerance);
+		cAO.setDeliverFirstElement(deliverFirstElement);
+		cAO.setHeartbeatRate(heartbeatRate);
+		cAO.subscribeTo(source, source.getOutputSchema());
+		return cAO;
+	}
+	
+	
 	public static SelectAO createSelectAO(String predicate,
 			ILogicalOperator source) {
 		List<String> predicates = new ArrayList<String>();
 		predicates.add(predicate);
 		return createSelectAO(predicates, source);
 	}
+	
 
 	/**
 	 * Returns selectAO with a list of predicates
