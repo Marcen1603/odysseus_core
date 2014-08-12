@@ -462,7 +462,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		suspend(new ArrayList<PhysicalSubscription<ISink<?>>>(), forOwners);		
 	}
 	
-	final private void suspend(List<PhysicalSubscription<ISink<?>>> callPath,
+	final protected void suspend(List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 
 		openCloseLock.lock();
@@ -473,7 +473,6 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 				// Check if callPath contains this call already to avoid cycles
 				if (!containsSubscription(callPath, getInstance(),
 						sub.getSourceOutPort(), sub.getSinkInPort())) {
-					sub.setSuspended(true);
 					callPath.add(new PhysicalSubscription<ISink<?>>(
 							getInstance(), sub.getSinkInPort(), sub
 									.getSourceOutPort(), null));
@@ -514,7 +513,6 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 				// Check if callPath contains this call already to avoid cycles
 				if (!containsSubscription(callPath, getInstance(),
 						sub.getSourceOutPort(), sub.getSinkInPort())) {
-					sub.setSuspended(false);
 					callPath.add(new PhysicalSubscription<ISink<?>>(
 							getInstance(), sub.getSinkInPort(), sub
 									.getSourceOutPort(), null));

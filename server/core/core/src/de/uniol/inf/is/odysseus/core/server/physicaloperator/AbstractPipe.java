@@ -170,7 +170,14 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		// Second: Call open for the sink part. Call open on connected sources
 		// and do not call process_open
 		this.delegateSink.open(callPath, forOwners);
-
+	}
+	
+	@Override
+	final public void suspend(ISink<? super W> caller, int sourcePort, int sinkPort,
+			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<IOperatorOwner> forOwners) {
+		super.suspend(caller, sourcePort, sinkPort, callPath, forOwners);
+		this.delegateSink.suspend(callPath, forOwners);
 	}
 
 	public void delegatedProcessOpen() throws OpenFailedException {
