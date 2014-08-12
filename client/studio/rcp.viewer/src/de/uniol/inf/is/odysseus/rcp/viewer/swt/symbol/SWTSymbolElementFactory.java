@@ -144,10 +144,16 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 
 	@Override
 	public IConnectionSymbolElement<C> createForConnection( String type ) {
+		Color activeColor = OwnerColorManager.getColor(X11Col.gray10);
+		Color inactiveColor = OwnerColorManager.getColor(X11Col.gray70);
+		Color suspendColor = OwnerColorManager.getColor(X11Col.orange);
+		Color partialColor = OwnerColorManager.getColor(X11Col.red);
+		
+		
 		if( "Arrow".equals(type)) {
-			return new SWTArrowSymbolElement< C >( OwnerColorManager.getColor(X11Col.gray10) , OwnerColorManager.getColor(X11Col.gray70));
+			return new SWTArrowSymbolElement< C >( activeColor , inactiveColor, suspendColor, partialColor );
 		}
 		
-		return new SWTLineConnectionSymbolElement<C>( OwnerColorManager.getColor(X11Col.gray10) , OwnerColorManager.getColor(X11Col.gray70) );
+		return new SWTLineConnectionSymbolElement<C>( activeColor , inactiveColor, suspendColor, partialColor);
 	}
 }

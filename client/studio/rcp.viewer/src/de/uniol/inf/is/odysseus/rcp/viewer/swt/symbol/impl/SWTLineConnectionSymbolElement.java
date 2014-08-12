@@ -15,66 +15,30 @@
   */
 package de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IConnectionModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.OdysseusConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.SWTConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 
 public class SWTLineConnectionSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 
-	private final Color activeLineColor;
-	private final Color inactiveLineColor;
 	
-	public SWTLineConnectionSymbolElement( Color activeLineColor, Color inactiveLineColor ) {
-		this.activeLineColor = activeLineColor;
-		this.inactiveLineColor = inactiveLineColor;
+	public SWTLineConnectionSymbolElement( Color activeLineColor, Color inactiveLineColor, Color suspendColor, Color partialColor ) {
+		super(activeLineColor, inactiveLineColor, suspendColor, partialColor);
 	}
 
 	@Override
 	public void draw(Vector start, Vector end, Vector screenShift, float zoomFactor ) {
 		
 		GC actualGC = getActualGC();
-		if( actualGC == null ) {
-			return;
-		}
-		if (isSuspended()){
-			actualGC.setLineStyle(SWT.LINE_DOT);
-			actualGC.setForeground( activeLineColor );			
-		}else if( isConnectionOpened() ) {
-			actualGC.setLineStyle(SWT.LINE_SOLID);
-			actualGC.setForeground( activeLineColor );
-		} else {
-			actualGC.setLineStyle(SWT.LINE_DOT);
-			actualGC.setForeground( inactiveLineColor );
-		}
+		setColor(actualGC);
 	
 		actualGC.setLineWidth(2);
 		getActualGC().drawLine( (int)start.getX(), (int)start.getY(), (int)end.getX(), (int)end.getY() );
 		actualGC.setLineWidth(1);
 	}
 	
-	private boolean isConnectionOpened() {
-		IConnectionModel<C> modelConnection = getConnectionView().getModelConnection();
-		if( modelConnection instanceof OdysseusConnectionModel ) {
-			OdysseusConnectionModel odyCon = (OdysseusConnectionModel)modelConnection;
-			return odyCon.getSubscriptionToSink().getOpenCalls() > 0;
-		}
-		return false;
-	}
-	
-	private boolean isSuspended(){
-		IConnectionModel<C> modelConnection = getConnectionView().getModelConnection();
-		if( modelConnection instanceof OdysseusConnectionModel ) {
-			OdysseusConnectionModel odyCon = (OdysseusConnectionModel)modelConnection;
-			return odyCon.getSubscriptionToSink().isSuspended();
-		}
-		return false;
-	}
-
 	@Override
 	public void update(  ) {}
 }

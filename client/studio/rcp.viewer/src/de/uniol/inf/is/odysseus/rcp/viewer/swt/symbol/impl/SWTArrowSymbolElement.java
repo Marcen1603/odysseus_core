@@ -24,8 +24,6 @@ import org.eclipse.swt.widgets.Display;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IConnectionModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.OdysseusConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.SWTConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
@@ -34,29 +32,17 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 
 	private static final int ARROW_SIZE = 20;
-
-	private final Color activeLineColor;
-	private final Color inactiveLineColor;
-
-	public SWTArrowSymbolElement(Color activeLineColor, Color inactiveLineColor) {
-		this.activeLineColor = activeLineColor;
-		this.inactiveLineColor = inactiveLineColor;
-	}
+	
+	public SWTArrowSymbolElement(Color activeLineColor, Color inactiveLineColor, Color suspendColor, Color partialColor ) {
+		super(activeLineColor, inactiveLineColor, suspendColor, partialColor);
+	}	
 
 	@Override
 	public void draw(Vector start, Vector end, Vector screenShift, float zoomFactor) {
 		GC actualGC = getActualGC();
-		
-		if (isSuspended()){
-			actualGC.setLineStyle(SWT.LINE_DOT);
-			actualGC.setForeground( activeLineColor );			
-		}else if (isConnectionOpened()) {
-			actualGC.setLineStyle(SWT.LINE_SOLID);
-			actualGC.setForeground(activeLineColor);
-		} else {
-			actualGC.setLineStyle(SWT.LINE_DOT);
-			actualGC.setForeground(inactiveLineColor);
-		}
+	
+		setColor(actualGC);
+	
 		actualGC.setLineWidth(2);
 		actualGC.drawLine((int) start.getX(), (int) start.getY(), (int) end.getX(), (int) end.getY());
 		actualGC.setLineWidth(1);
@@ -111,13 +97,8 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 
 			int[] poly = new int[] { cross.x - 1, cross.y, px, py, qx, qy };
 
-			if (isConnectionOpened()) {
-				actualGC.setBackground(activeLineColor);
-				actualGC.setForeground(inactiveLineColor);
-			} else {
-				actualGC.setBackground(inactiveLineColor);
-				actualGC.setForeground(inactiveLineColor);
-			}
+			
+			setBackgroundColor(actualGC);
 			actualGC.fillPolygon(poly);
 
 			// // DEBUG
@@ -141,24 +122,6 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 			actualGC.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			actualGC.drawString("" + port, (int) (start.getX() + (distX / 1.2)), (int) (start.getY() + (distY / 1.2)), true);
 		}
-	}
-
-	private boolean isConnectionOpened() {
-		IConnectionModel<C> modelConnection = getConnectionView().getModelConnection();
-		if (modelConnection instanceof OdysseusConnectionModel) {
-			OdysseusConnectionModel odyCon = (OdysseusConnectionModel) modelConnection;
-			return odyCon.getSubscriptionToSink().getOpenCalls() > 0;
-		}
-		return false;
-	}
-
-	private boolean isSuspended(){
-		IConnectionModel<C> modelConnection = getConnectionView().getModelConnection();
-		if( modelConnection instanceof OdysseusConnectionModel ) {
-			OdysseusConnectionModel odyCon = (OdysseusConnectionModel)modelConnection;
-			return odyCon.getSubscriptionToSink().isSuspended();
-		}
-		return false;
 	}
 	
 	@Override
