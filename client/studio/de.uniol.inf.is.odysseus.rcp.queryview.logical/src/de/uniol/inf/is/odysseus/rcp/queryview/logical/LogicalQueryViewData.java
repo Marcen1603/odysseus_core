@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.queryview.logical;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewData;
 
 public class LogicalQueryViewData implements IQueryViewData {
@@ -38,8 +39,8 @@ public class LogicalQueryViewData implements IQueryViewData {
 				"LogicalQuery must not be null");
 
 		id = logicalQuery.getID();
-		if (logicalQuery.getParameter("ISRUNNING")!=null){
-			status = ((Boolean)logicalQuery.getParameter("ISRUNNING"))?"Running":"Stopped";
+		if (logicalQuery.getParameter("STATE")!=null){
+			status = ((QueryState)logicalQuery.getParameter("STATE")).name();
 		}else{
 			status = LOGICAL_QUERY_STATUS;
 		}
