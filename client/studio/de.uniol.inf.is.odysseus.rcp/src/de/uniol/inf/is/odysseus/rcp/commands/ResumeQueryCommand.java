@@ -7,12 +7,14 @@ import org.eclipse.core.commands.ExecutionException;
 
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
-public class ResumeQueryCommand extends AbstractResumeQueryCommand {
+public class ResumeQueryCommand extends AbstractQueryCommand {
 
+	static final IQueryCommandAction resume = new ResumeQueryCommandAction();
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		List<Integer> selectedObj = SelectionProvider.getSelection(event);
-		return execute(selectedObj,"Resuming");
+		return execute(selectedObj,resume);
 	}
 
 }

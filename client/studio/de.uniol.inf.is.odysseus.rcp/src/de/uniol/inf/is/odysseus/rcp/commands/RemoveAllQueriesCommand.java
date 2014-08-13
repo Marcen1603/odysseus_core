@@ -25,13 +25,15 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
-public class RemoveAllQueriesCommand extends AbstractRemoveQueryCommand {
+public class RemoveAllQueriesCommand extends AbstractQueryCommand {
 
+	static final IQueryCommandAction remove = new RemoveQueryCommandAction();
+	
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		if (executor != null) {
-			execute(executor.getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession()), "Removing");
+			execute(executor.getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession()), remove);
 		} else {
 			logger.error(OdysseusNLS.NoExecutorFound);
 			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);

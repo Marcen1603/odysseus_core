@@ -23,12 +23,15 @@ import org.eclipse.core.commands.ExecutionException;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
 
-public class StopQueryCommand extends AbstractStopQueryCommand{
+public class StopQueryCommand extends AbstractQueryCommand{
 
+	static final IQueryCommandAction stop = new StopQueryCommandAction();
+
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		List<Integer> selectedObj = SelectionProvider.getSelection(event);
-		return execute(selectedObj,"Stopping");	
+		return execute(selectedObj,stop);	
 	}
 
 }

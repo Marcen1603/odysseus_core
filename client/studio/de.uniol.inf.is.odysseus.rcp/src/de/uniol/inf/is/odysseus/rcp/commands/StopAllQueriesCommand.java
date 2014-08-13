@@ -18,10 +18,12 @@ package de.uniol.inf.is.odysseus.rcp.commands;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
-public class StopAllQueriesCommand extends AbstractStopQueryCommand {
+public class StopAllQueriesCommand extends AbstractQueryCommand {
+
+	static final IQueryCommandAction start = new StartQueryCommandAction();
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		return execute(getAllQueries(), "Stopping");
+		return execute(getAllQueries(), start);
 	}
 }

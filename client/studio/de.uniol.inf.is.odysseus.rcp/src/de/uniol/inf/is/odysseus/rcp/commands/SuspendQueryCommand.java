@@ -7,12 +7,14 @@ import org.eclipse.core.commands.ExecutionException;
 
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
-public class SuspendQueryCommand extends AbstractSuspendQueryCommand {
+public class SuspendQueryCommand extends AbstractQueryCommand {
 
+	static final IQueryCommandAction suspend = new SuspendQueryCommandAction();
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		List<Integer> selectedObj = SelectionProvider.getSelection(event);
-		return execute(selectedObj,"Suspending");
+		return execute(selectedObj,suspend);
 	}
 
 }

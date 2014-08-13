@@ -42,12 +42,14 @@ import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
  * 
  * @author Dennis Geesen Created at: 03.11.2011
  */
-public class RestartQueryCommand extends AbstractRestartQueryCommand{
+public class RestartQueryCommand extends AbstractQueryCommand{
 
+	static final IQueryCommandAction restart = new RestartQueryCommandAction();
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		List<Integer> selectedObj = SelectionProvider.getSelection(event);
-		return execute(selectedObj, "Restarting");		
+		return execute(selectedObj, restart);		
 	}
 
 }

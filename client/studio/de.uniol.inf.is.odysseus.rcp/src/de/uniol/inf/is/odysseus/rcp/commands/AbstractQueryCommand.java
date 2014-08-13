@@ -40,7 +40,8 @@ abstract public class AbstractQueryCommand extends AbstractHandler implements IH
 		return null;
 	}
 
-	public Object execute(final Collection<Integer> queryIds, final String actionText) {
+	public Object execute(final Collection<Integer> queryIds, final IQueryCommandAction action) {
+		final String actionText = action.getActionText();
 		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		if (executor != null) {
 
@@ -55,7 +56,7 @@ abstract public class AbstractQueryCommand extends AbstractHandler implements IH
 					for (final Integer qID : queryIds) {
 						try {
 							monitor.subTask(actionText + " query " + (executed + 1) + "of " + queryCount + ": QID=" + qID);
-							execute(executor, qID);
+							action.execute(executor, qID);
 							executed++;
 							monitor.worked(1);
 
@@ -88,7 +89,5 @@ abstract public class AbstractQueryCommand extends AbstractHandler implements IH
 		}
 		return null;
 	}
-
-	abstract void execute(IExecutor executor, Integer qID);
 
 }

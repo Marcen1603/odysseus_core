@@ -22,12 +22,14 @@ import org.eclipse.core.commands.ExecutionException;
 
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
-public class RemoveQueryCommand extends AbstractRemoveQueryCommand {
+public class RemoveQueryCommand extends AbstractQueryCommand {
 
+	static final IQueryCommandAction remove = new RemoveQueryCommandAction();
+	
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		List<Integer> selectedObj = SelectionProvider.getSelection(event);
-		return execute(selectedObj, "Removing");
+		return execute(selectedObj, remove);
 	}
 
 }

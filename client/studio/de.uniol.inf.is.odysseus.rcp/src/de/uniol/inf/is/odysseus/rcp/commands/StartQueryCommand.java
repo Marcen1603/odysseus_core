@@ -23,12 +23,14 @@ import org.eclipse.core.commands.ExecutionException;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
 
-public class StartQueryCommand extends AbstractStartQueryCommand{
+public class StartQueryCommand extends AbstractQueryCommand{
+
+	static final IQueryCommandAction start = new StartQueryCommandAction();
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		List<Integer> selectedObj = SelectionProvider.getSelection(event);
-		return execute(selectedObj,"Starting ");
+		return execute(selectedObj,start);
 	}
 	
 }

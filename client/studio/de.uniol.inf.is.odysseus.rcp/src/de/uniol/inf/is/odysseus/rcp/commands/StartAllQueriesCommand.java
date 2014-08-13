@@ -19,11 +19,13 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
 
-public class StartAllQueriesCommand extends AbstractStartQueryCommand{
+public class StartAllQueriesCommand extends AbstractQueryCommand{
+
+	static final IQueryCommandAction start = new StartQueryCommandAction();
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		return execute(getAllQueries(),"Starting");
+		return execute(getAllQueries(),start);
 	}
 
 }
