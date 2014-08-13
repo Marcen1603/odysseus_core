@@ -305,25 +305,40 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public QueryState getQueryState(int queryID) {
-		throw new PlanManagementException("Currently not implemented for Client/Server");
-	}
-	
-	@Override
-	public List<QueryState> getQueryStates(List<Integer> queryID) {
-		throw new PlanManagementException("Currently not implemented for Client/Server");
-	}
-	
-	@Override
 	public void suspendQuery(int queryID, ISession caller)
 			throws PlanManagementException {
-		throw new PlanManagementException("Currently not implemented for Client/Server");
+		if (getWebserviceServer() != null) {
+			try {
+				getWebserviceServer().suspendQuery(caller.getToken(), queryID);
+			} catch (QueryNotExistsException_Exception
+					| InvalidUserDataException_Exception e) {
+				throw new PlanManagementException(e);
+			}
+		}
+		fireUpdateEvent(IUpdateEventListener.QUERY);
 	}
 	
 	@Override
 	public void resumeQuery(int queryID, ISession caller)
 			throws PlanManagementException {
-		throw new PlanManagementException("Currently not implemented for Client/Server");
+		if (getWebserviceServer() != null) {
+			try {
+				getWebserviceServer().resumeQuery(caller.getToken(), queryID);
+			} catch (QueryNotExistsException_Exception
+					| InvalidUserDataException_Exception e) {
+				throw new PlanManagementException(e);
+			}
+		}
+		fireUpdateEvent(IUpdateEventListener.QUERY);	}
+	
+	@Override
+	public QueryState getQueryState(int queryID) {
+		return getWebserviceServer().getQueryState(queryID);
+	}
+	
+	@Override
+	public List<QueryState> getQueryStates(List<Integer> queryID) {
+		return getWebserviceServer().getQueryStates(queryID);
 	}
 	
 	@Override

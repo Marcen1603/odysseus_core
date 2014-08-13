@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.rcp.queryview.physical;
 
 import com.google.common.base.Strings;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewData;
 
 public class PhysicalQueryViewData implements IQueryViewData {

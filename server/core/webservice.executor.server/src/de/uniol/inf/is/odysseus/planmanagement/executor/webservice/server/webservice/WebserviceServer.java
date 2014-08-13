@@ -66,6 +66,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -290,6 +291,15 @@ public class WebserviceServer {
 		return response;
 
 	}
+	
+	public QueryState getQueryState(int queryID){
+		return ExecutorServiceBinding.getExecutor().getQueryState(queryID);
+	}
+
+	public ArrayList<QueryState> getQueryStates(ArrayList<Integer> queryIDs){
+		return new ArrayList<>(ExecutorServiceBinding.getExecutor().getQueryStates(queryIDs));
+	}
+
 
 	protected ISession loginWithSecurityToken(String securityToken)
 			throws InvalidUserDataException {
@@ -339,6 +349,35 @@ public class WebserviceServer {
 		ISession user = loginWithSecurityToken(securityToken);
 		try {
 			ExecutorServiceBinding.getExecutor().stopQuery(queryID, user);
+		} catch (Exception e) {
+			throw new QueryNotExistsException();
+		}
+		return new Response(true);
+
+	}
+
+	
+	public Response suspendQuery(
+			@WebParam(name = "securitytoken") String securityToken,
+			@WebParam(name = "queryID") int queryID)
+			throws InvalidUserDataException, QueryNotExistsException {
+		ISession user = loginWithSecurityToken(securityToken);
+		try {
+			ExecutorServiceBinding.getExecutor().suspendQuery(queryID, user);
+		} catch (Exception e) {
+			throw new QueryNotExistsException();
+		}
+		return new Response(true);
+
+	}
+	
+	public Response resumeQuery(
+			@WebParam(name = "securitytoken") String securityToken,
+			@WebParam(name = "queryID") int queryID)
+			throws InvalidUserDataException, QueryNotExistsException {
+		ISession user = loginWithSecurityToken(securityToken);
+		try {
+			ExecutorServiceBinding.getExecutor().resumeQuery(queryID, user);
 		} catch (Exception e) {
 			throw new QueryNotExistsException();
 		}
