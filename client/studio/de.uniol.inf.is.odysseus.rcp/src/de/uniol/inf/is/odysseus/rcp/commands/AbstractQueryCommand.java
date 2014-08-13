@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.commands;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.IHandler;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
@@ -25,10 +27,10 @@ abstract public class AbstractQueryCommand extends AbstractHandler implements IH
 
 	protected Logger logger = LoggerFactory.getLogger(AbstractQueryCommand.class);
 
-	protected Collection<Integer> getAllQueries() {
+	IExecutor getExecutor(){
 		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		if (executor != null) {
-			return executor.getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession());
+			return executor;
 		}
 
 		logger.error(OdysseusNLS.NoExecutorFound);
@@ -38,7 +40,18 @@ abstract public class AbstractQueryCommand extends AbstractHandler implements IH
 		box.open();
 
 		return null;
+		
 	}
+	
+	protected Collection<Integer> getAllQueries() {
+		return getExecutor().getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession());
+	}
+	
+	protected List<QueryState> getQueryStates(List<Integer> selectedObj) {
+		return getExecutor().getQueryStates(selectedObj);
+	}
+	
+	
 
 	public Object execute(final Collection<Integer> queryIds, final IQueryCommandAction action) {
 		final String actionText = action.getActionText();
