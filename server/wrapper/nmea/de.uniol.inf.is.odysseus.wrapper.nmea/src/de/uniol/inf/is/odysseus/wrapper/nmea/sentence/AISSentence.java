@@ -99,15 +99,24 @@ public class AISSentence extends Sentence{
 
 	@Override
 	protected void fillMap(Map<String, Object> res) {
-		//We will fill the map with the decoded message parts instead of the original encoded one:
+//		//Fill the map with the decoded message parts
+//		if (decodedPayload != null)
+//			decodedPayload.fillMap(res);
+//		//Fill the map with the original message parts
+//		else{
+			if (fragmentsCount != null) res.put("fragmentsCount", fragmentsCount);
+			if (fragmentId != null) res.put("fragmentId", fragmentId);
+			if (messageId != null) res.put("messageId", messageId);
+			if (channel != null) res.put("channel", channel);
+			if (message != null) res.put("message", message);
+			if (fillBits != null) res.put("fillBits", fillBits);
+//		}
+	}
+	
+	public void toDecodedPayloadMap(Map<String, Object> res) {
+		//Fill the map with the decoded message parts
 		if (decodedPayload != null)
 			decodedPayload.fillMap(res);
-//		if (fragmentsCount != null) res.put("fragmentsCount", fragmentsCount);
-//		if (fragmentId != null) res.put("fragmentId", fragmentId);
-//		if (messageId != null) res.put("messageId", messageId);
-//		if (channel != null) res.put("channel", channel);
-//		if (message != null) res.put("message", message);
-//		if (fillBits != null) res.put("fillBits", fillBits);
 	}
 
 	public Integer getFragmentsCount() {

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -162,7 +163,7 @@ public class NMEAProtocolHandler extends
 			return null;
 		}
 		sentence.parse();
-		Map<String, Object> event;
+		Map<String, Object> event = new HashMap<>();
 		KeyValueObject<? extends IMetaAttribute> res = null;
 		//Handling AIS Sentences
 		if (sentence instanceof AISSentence) {//System.out.println("sentence instanceof AISSentence: " + sentence.getNmeaString());
@@ -172,7 +173,10 @@ public class NMEAProtocolHandler extends
 			////////////////////////////////////////TEST//////////////////////////////////////////
 			this.aishandler.handleAISSentence(aissentence);
 			if(this.aishandler.getDecodedAISMessage() != null) {
-				event = sentence.toMap();
+				//13.08 We separate the map creation of the decoded message into another method rather than the toMap which will be only for original parts of the message.
+				//Here we are quite sure that there is a non-null decodedAISMessage inside the aisSentence because the AIShandler has already set it.  
+				//event = sentence.toMap();
+				aissentence.toDecodedPayloadMap(event);
 				res = new KeyValueObject<>(event);
 				//Important to parse the decodedAIS as a sentence in order to prepare the fields which will be used in writing.
 				this.aishandler.getDecodedAISMessage().parse();
