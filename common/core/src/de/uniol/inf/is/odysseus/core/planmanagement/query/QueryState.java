@@ -4,26 +4,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum QueryState {
-	INACTIVE, PARTIAL, RUNNING, PARTIAL_SUSPENDED, SUSPENDED;
+	INACTIVE, PARTIAL, RUNNING, PARTIAL_SUSPENDED, SUSPENDED, UNDEF;
 
 	static Map<QueryState, QueryState[]> reachable = new HashMap<>();
 	static {
 		reachable.put(INACTIVE, new QueryState[] { PARTIAL, RUNNING });
-		reachable
-				.put(RUNNING, new QueryState[] { PARTIAL, INACTIVE, SUSPENDED });
+		reachable.put(RUNNING,
+				new QueryState[] { PARTIAL, INACTIVE, SUSPENDED });
 		reachable.put(PARTIAL, new QueryState[] { INACTIVE, RUNNING,
 				PARTIAL_SUSPENDED });
 		reachable.put(PARTIAL_SUSPENDED,
 				new QueryState[] { SUSPENDED, PARTIAL });
-		reachable
-				.put(SUSPENDED, new QueryState[] { RUNNING, PARTIAL_SUSPENDED });
+		reachable.put(SUSPENDED,
+				new QueryState[] { RUNNING, PARTIAL_SUSPENDED });
+		reachable.put(UNDEF, new QueryState[] {UNDEF});
 	}
 
 	static public QueryState[] reachable(QueryState current) {
 		return reachable.get(current);
 	}
 
-	static public QueryState next(QueryState current, QueryFunction function) {
+	private static QueryState getNext(QueryState current, QueryFunction function) {
 		switch (current) {
 		case INACTIVE:
 			if (function == QueryFunction.START) {
@@ -71,9 +72,31 @@ public enum QueryState {
 				return PARTIAL_SUSPENDED;
 			}
 			break;
+		case UNDEF:
+			// there can be called nothing in undef
+			break;
+		}
+		return UNDEF;
+	}
+
+	static public boolean isAllowed(QueryState current, QueryFunction function) {
+		return getNext(current, function) != UNDEF;
+	}
+
+	static public QueryState next(QueryState current, QueryFunction function) {
+		QueryState next = getNext(current, function);
+		if (next != UNDEF) {
+			return next;
 		}
 		throw new IllegalStateException("Cannot call " + function.name()
 				+ " in " + current.name());
+	}
+	
+	private static void print(QueryState[] reachable) {
+		for (QueryState s : reachable) {
+			System.out.print(s.name() + " ");
+		}
+		System.out.println();
 	}
 
 	public static void main(String[] args) {
@@ -85,8 +108,8 @@ public enum QueryState {
 		for (QueryState s : QueryState.values()) {
 			for (QueryFunction f : QueryFunction.values()) {
 				try {
-					System.out.print("Move from " + s.name() + " with " + f.name()
-							+ " to " + next(s, f));
+					System.out.print("Move from " + s.name() + " with "
+							+ f.name() + " to " + next(s, f));
 				} catch (IllegalStateException e) {
 					System.out.print("INVALID! " + e.getMessage());
 				}
@@ -96,11 +119,5 @@ public enum QueryState {
 
 	}
 
-	private static void print(QueryState[] reachable) {
-		for (QueryState s : reachable) {
-			System.out.print(s.name() + " ");
-		}
-		System.out.println();
-	}
 
 }

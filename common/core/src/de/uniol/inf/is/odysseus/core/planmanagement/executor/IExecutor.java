@@ -177,6 +177,13 @@ public interface IExecutor extends IClientPlanManager {
 	public QueryState getQueryState(int queryID);
 	
 	/**
+	 * Returns the current state of queries
+	 * @param id a list of query ids for which the state should be delivered
+	 * @return a list of query states where the order is the same as in the input list
+	 */
+	public List<QueryState> getQueryStates(List<Integer> id);
+	
+	/**
 	 * Returns all root operators of the physical query that has the given
 	 * queryID
 	 * 

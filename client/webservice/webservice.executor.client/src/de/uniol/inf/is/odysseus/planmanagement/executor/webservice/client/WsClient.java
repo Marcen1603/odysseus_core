@@ -310,6 +310,11 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 	
 	@Override
+	public List<QueryState> getQueryStates(List<Integer> queryID) {
+		throw new PlanManagementException("Currently not implemented for Client/Server");
+	}
+	
+	@Override
 	public void suspendQuery(int queryID, ISession caller)
 			throws PlanManagementException {
 		throw new PlanManagementException("Currently not implemented for Client/Server");
