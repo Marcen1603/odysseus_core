@@ -22,6 +22,7 @@ import java.util.List;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 public final class SelectionProvider {
@@ -30,6 +31,27 @@ public final class SelectionProvider {
 	
 	public static <T> List<T> getSelection(ExecutionEvent event) {
 		ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
+		if( selection == null ){ 
+			return new ArrayList<T>();
+		}
+		
+		if( selection instanceof IStructuredSelection ) {
+			List<T> items = new ArrayList<T>();
+			IStructuredSelection structSelection = (IStructuredSelection)selection;
+			Iterator<?> iter = structSelection.iterator();
+			while(iter.hasNext()){
+				@SuppressWarnings("unchecked")				
+				T item = (T)iter.next();
+				items.add(item);
+			}
+			return items;
+			
+		}
+		return new ArrayList<T>();
+	}
+	
+	public static <T> List<T> getSelection() {
+		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getSelection();
 		if( selection == null ){ 
 			return new ArrayList<T>();
 		}
