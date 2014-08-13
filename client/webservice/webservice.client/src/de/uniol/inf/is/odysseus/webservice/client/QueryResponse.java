@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;extension base="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}response">
  *       &lt;sequence>
+ *         &lt;element name="queryState" type="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}queryState" minOccurs="0"/>
  *         &lt;element name="responseValue" type="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}logicalQueryInfo" minOccurs="0"/>
  *         &lt;element name="roots" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="running" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="username" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/extension>
@@ -39,9 +39,9 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "queryResponse", propOrder = {
+    "queryState",
     "responseValue",
     "roots",
-    "running",
     "username"
 })
 @SuppressWarnings(value = { "all" })
@@ -49,11 +49,35 @@ public class QueryResponse
     extends Response
 {
 
+    protected QueryState queryState;
     protected LogicalQueryInfo responseValue;
     @XmlElement(nillable = true)
     protected List<String> roots;
-    protected boolean running;
     protected String username;
+
+    /**
+     * Gets the value of the queryState property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link QueryState }
+     *     
+     */
+    public QueryState getQueryState() {
+        return queryState;
+    }
+
+    /**
+     * Sets the value of the queryState property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link QueryState }
+     *     
+     */
+    public void setQueryState(QueryState value) {
+        this.queryState = value;
+    }
 
     /**
      * Gets the value of the responseValue property.
@@ -106,22 +130,6 @@ public class QueryResponse
             roots = new ArrayList<String>();
         }
         return this.roots;
-    }
-
-    /**
-     * Gets the value of the running property.
-     * 
-     */
-    public boolean isRunning() {
-        return running;
-    }
-
-    /**
-     * Sets the value of the running property.
-     * 
-     */
-    public void setRunning(boolean value) {
-        this.running = value;
     }
 
     /**

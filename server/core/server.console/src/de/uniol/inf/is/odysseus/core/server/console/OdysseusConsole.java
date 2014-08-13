@@ -917,10 +917,10 @@ public class OdysseusConsole implements CommandProvider,
 	public void _lsqueries(CommandInterpreter ci) {
 		addCommand();
 		try {
-			System.out.println("Current registered queries (ID | STARTED):");
+			System.out.println("Current registered queries (ID | STATE):");
 			for (IPhysicalQuery query : this.executor.getExecutionPlan()
 					.getQueries()) {
-				ci.println(query.getID() + " | " + query.isOpened());
+				ci.println(query.getID() + " | " + query.getState().name());
 			}
 		} catch (PlanManagementException e) {
 			e.printStackTrace();

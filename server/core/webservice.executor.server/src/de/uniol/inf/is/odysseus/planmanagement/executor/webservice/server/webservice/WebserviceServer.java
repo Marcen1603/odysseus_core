@@ -636,7 +636,7 @@ public class WebserviceServer {
 			roots.add(operator.getName());
 		}
 		return new QueryResponse(logicalQuery, queryById.getSession().getUser()
-				.getName(), queryById.isOpened(), roots,true);
+				.getName(), queryById.getState(), roots,true);
 	}
 
 	public QueryResponse getLogicalQueryByName(
@@ -652,7 +652,7 @@ public class WebserviceServer {
 		}
 		return new QueryResponse((LogicalQuery) ExecutorServiceBinding
 				.getExecutor().getLogicalQueryByName(name, session), queryById
-				.getSession().getUser().getName(), queryById.isOpened(),
+				.getSession().getUser().getName(), queryById.getState(),
 				roots, true);
 
 	}

@@ -33,68 +33,67 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webse
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 
 /**
- * @author Merlin Wasmann, Thore Stratmann
+ * @author Merlin Wasmann, Thore Stratmann, Marco Grawunder
  *
  */
 public class QueryResponse extends Response {
-	
+
 	private LogicalQuery query;
-	
-	private boolean isRunning;
-	
+
+	private QueryState queryState;
+
 	private String username;
-	
-	
+
 	private List<String> roots;
 
-	
 	public QueryResponse() {
 		super();
 	}
-	
-	public QueryResponse(LogicalQuery value, String username, boolean isRunning, List<String> roots, boolean success) {
+
+	public QueryResponse(LogicalQuery value, String username,
+			QueryState queryState, List<String> roots, boolean success) {
 		super(success);
 		this.query = value;
 		this.username = username;
-		this.isRunning = isRunning;
+		this.queryState = queryState;
 		this.roots = roots;
 	}
-	
-	
+
 	public void setRoots(List<String> roots) {
 		this.roots = roots;
 	}
-	
+
 	public int getNumberOfRoots() {
 		return this.roots.size();
 	}
-	
+
 	public List<String> getRoots() {
 		return this.roots;
 	}
-	
+
 	public LogicalQuery getResponseValue() {
 		return this.query;
 	}
-	
+
 	public void setResponseValue(LogicalQuery value) {
 		this.query = value;
 	}
-	
-	public boolean isRunning() {
-		return isRunning;
+
+	public QueryState getQueryState() {
+		return queryState;
 	}
 	
-	public void setRunning(boolean isRunning) {
-		this.isRunning = isRunning;
+	public void setQueryState(QueryState queryState) {
+		this.queryState = queryState;
 	}
-	
+
 	public String getUsername() {
 		return this.username;
 	}
-	
+
 	public void setUsername(String username) {
 		this.username = username;
 	}

@@ -92,6 +92,7 @@ import de.uniol.inf.is.odysseus.webservice.client.DetermineOutputSchemaException
 import de.uniol.inf.is.odysseus.webservice.client.InvalidUserDataException_Exception;
 import de.uniol.inf.is.odysseus.webservice.client.LogicalQueryInfo;
 import de.uniol.inf.is.odysseus.webservice.client.QueryNotExistsException_Exception;
+import de.uniol.inf.is.odysseus.webservice.client.QueryResponse;
 import de.uniol.inf.is.odysseus.webservice.client.ResourceInformation;
 import de.uniol.inf.is.odysseus.webservice.client.Response;
 import de.uniol.inf.is.odysseus.webservice.client.SdfAttributeInformation;
@@ -255,7 +256,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 		fireUpdateEvent(IUpdateEventListener.SESSION);
 		return session;
 	}
-	
+
 	@Override
 	public boolean isValid(ISession session) {
 		Response r = getWebserviceServer().isValidSession(session.getToken());
@@ -317,7 +318,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 		}
 		fireUpdateEvent(IUpdateEventListener.QUERY);
 	}
-	
+
 	@Override
 	public void resumeQuery(int queryID, ISession caller)
 			throws PlanManagementException {
@@ -329,18 +330,19 @@ public class WsClient implements IExecutor, IClientExecutor {
 				throw new PlanManagementException(e);
 			}
 		}
-		fireUpdateEvent(IUpdateEventListener.QUERY);	}
-	
+		fireUpdateEvent(IUpdateEventListener.QUERY);
+	}
+
 	@Override
 	public QueryState getQueryState(int queryID) {
 		return getWebserviceServer().getQueryState(queryID);
 	}
-	
+
 	@Override
 	public List<QueryState> getQueryStates(List<Integer> queryID) {
 		return getWebserviceServer().getQueryStates(queryID);
 	}
-	
+
 	@Override
 	public Collection<String> getQueryBuildConfigurationNames(ISession caller) {
 		if (getWebserviceServer() != null) {
@@ -518,10 +520,10 @@ public class WsClient implements IExecutor, IClientExecutor {
 	@Override
 	public ILogicalQuery getLogicalQueryById(int id, ISession caller) {
 		try {
-			return createLogicalQueryFromInfo(
-					getWebserviceServer().getLogicalQueryById(
-							caller.getToken(), Integer.toString(id))
-							.getResponseValue(), caller);
+			QueryResponse resp = getWebserviceServer().getLogicalQueryById(
+					caller.getToken(), Integer.toString(id));
+			return createLogicalQueryFromInfo(resp.getResponseValue(),
+					resp.getQueryState(), caller);
 		} catch (InvalidUserDataException_Exception
 				| QueryNotExistsException_Exception e) {
 			throw new PlanManagementException(e);
@@ -531,9 +533,9 @@ public class WsClient implements IExecutor, IClientExecutor {
 	@Override
 	public ILogicalQuery getLogicalQueryByName(String name, ISession caller) {
 		try {
-			return createLogicalQueryFromInfo(getWebserviceServer()
-					.getLogicalQueryByName(caller.getToken(), name)
-					.getResponseValue(), caller);
+			QueryResponse resp = getWebserviceServer()
+					.getLogicalQueryByName(caller.getToken(), name);
+			return createLogicalQueryFromInfo(resp.getResponseValue(), resp.getQueryState(), caller);
 		} catch (InvalidUserDataException_Exception e) {
 			throw new PlanManagementException(e);
 		}
@@ -544,17 +546,20 @@ public class WsClient implements IExecutor, IClientExecutor {
 	 * LogicalQueryInfo
 	 * 
 	 * @param info
+	 * @param queryState
 	 * @return LogicalQuery
 	 */
 	public LogicalQuery createLogicalQueryFromInfo(LogicalQueryInfo info,
-			ISession caller) {
+			QueryState queryState, ISession caller) {
 		LogicalQuery query = new LogicalQuery(info.getId(), info.getParserID(),
 				null, info.getPriority());
 		query.setParameters(info.getParameters());
+		query.setParameter("STATE", queryState);
 		query.setContainsCycles(info.isContainsCycles());
 		query.setQueryText(info.getQueryText());
 		query.setUser(caller);
 		query.setName(info.getName());
+
 		return query;
 	}
 
@@ -990,7 +995,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 				SDFSchema schema = toSDFSchema(si);
 				return schema;
 			} catch (InvalidUserDataException_Exception
-					| ClassNotFoundException | DetermineOutputSchemaException_Exception e) {
+					| ClassNotFoundException
+					| DetermineOutputSchemaException_Exception e) {
 				throw new PlanManagementException(e);
 			}
 		}
