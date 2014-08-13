@@ -21,32 +21,26 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
-abstract public class AbstractQueryCommand extends AbstractHandler implements
-		IHandler {
+abstract public class AbstractQueryCommand extends AbstractHandler implements IHandler {
 
-	protected Logger logger = LoggerFactory
-			.getLogger(AbstractQueryCommand.class);
+	protected Logger logger = LoggerFactory.getLogger(AbstractQueryCommand.class);
 
 	protected Collection<Integer> getAllQueries() {
 		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		if (executor != null) {
-			return executor.getLogicalQueryIds(OdysseusRCPPlugIn
-					.getActiveSession());
-		} else {
-			logger.error(OdysseusNLS.NoExecutorFound);
-			MessageBox box = new MessageBox(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR
-					| SWT.OK);
-			box.setMessage(OdysseusNLS.NoExecutorFound);
-			box.setText("Error");
-			box.open();
-
-			return null;
+			return executor.getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession());
 		}
+
+		logger.error(OdysseusNLS.NoExecutorFound);
+		MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
+		box.setMessage(OdysseusNLS.NoExecutorFound);
+		box.setText("Error");
+		box.open();
+
+		return null;
 	}
 
-	public Object execute(final Collection<Integer> queryIds,
-			final String actionText) {
+	public Object execute(final Collection<Integer> queryIds, final String actionText) {
 		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		if (executor != null) {
 
@@ -56,14 +50,11 @@ abstract public class AbstractQueryCommand extends AbstractHandler implements
 
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					monitor.beginTask(actionText + " " + queryCount
-							+ " queries", queryCount);
+					monitor.beginTask(actionText + " " + queryCount + " queries", queryCount);
 					int executed = 0;
 					for (final Integer qID : queryIds) {
 						try {
-							monitor.subTask(actionText + " query "
-									+ (executed + 1) + "of " + queryCount
-									+ ": QID=" + qID);
+							monitor.subTask(actionText + " query " + (executed + 1) + "of " + queryCount + ": QID=" + qID);
 							execute(executor, qID);
 							executed++;
 							monitor.worked(1);
@@ -73,26 +64,12 @@ abstract public class AbstractQueryCommand extends AbstractHandler implements
 							}
 
 						} catch (PlanManagementException e) {
-							return new Status(
-									IStatus.ERROR,
-									OdysseusRCPPlugIn.PLUGIN_ID,
-									"Error "
-											+ actionText
-											+ " query:\n See error log for details",
-									e);
+							return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Error " + actionText + " query:\n See error log for details", e);
 						} catch (PermissionException e) {
-							return new Status(
-									IStatus.ERROR,
-									OdysseusRCPPlugIn.PLUGIN_ID,
-									"Error "
-											+ actionText
-											+ " query:\n See error log for details",
-									e);
+							return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Error " + actionText + " query:\n See error log for details", e);
 						}
 					}
-					StatusBarManager.getInstance().setMessage(
-							actionText + " " + executed
-									+ " queries successfully");
+					StatusBarManager.getInstance().setMessage(actionText + " " + executed + " queries successfully");
 					return Status.OK_STATUS;
 				}
 
@@ -102,9 +79,7 @@ abstract public class AbstractQueryCommand extends AbstractHandler implements
 
 		} else {
 			logger.error(OdysseusNLS.NoExecutorFound);
-			MessageBox box = new MessageBox(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR
-					| SWT.OK);
+			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
 			box.setMessage(OdysseusNLS.NoExecutorFound);
 			box.setText("Error");
 			box.open();
