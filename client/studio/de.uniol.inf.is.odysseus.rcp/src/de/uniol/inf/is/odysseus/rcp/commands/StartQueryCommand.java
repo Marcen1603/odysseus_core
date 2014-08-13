@@ -15,40 +15,15 @@
  */
 package de.uniol.inf.is.odysseus.rcp.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
-import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
-
-public class StartQueryCommand extends AbstractQueryCommand{
-
-	static final IQueryCommandAction start = new StartQueryCommandAction();
-	
-	static final IQueryCommandAction resume = new ResumeQueryCommandAction();
-
+public class StartQueryCommand extends AbstractStartQueriesCommand{
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		List<Integer> selectedObj = SelectionProvider.getSelection(event);
-		// Split to queries that should be started and that should be resumed
-		List<QueryState> states = getQueryStates(selectedObj);
-		List<Integer> toStart = new ArrayList<>();
-		List<Integer> toResume = new ArrayList<>();
-		for (int i=0;i<selectedObj.size();i++){
-			if (states.get(i) == QueryState.SUSPENDED){
-				toResume.add(selectedObj.get(i));
-			}else{
-				toStart.add(selectedObj.get(i));
-			}
-		}
-		execute(toStart,start);
-		execute(toResume,resume);
-		return null;
+		return execute(getSelecteddQueries(event));
 	}
 
 	

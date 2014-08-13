@@ -1,9 +1,11 @@
 package de.uniol.inf.is.odysseus.rcp.commands;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -22,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
+import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
 abstract public class AbstractQueryCommand extends AbstractHandler implements IHandler {
 
@@ -43,8 +46,13 @@ abstract public class AbstractQueryCommand extends AbstractHandler implements IH
 		
 	}
 	
-	protected Collection<Integer> getAllQueries() {
-		return getExecutor().getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession());
+	protected List<Integer> getAllQueries() {
+		return new ArrayList<Integer>(getExecutor().getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession()));
+	}
+	
+	protected List<Integer> getSelecteddQueries(final ExecutionEvent event) {
+		List<Integer> elems = SelectionProvider.getSelection(event);
+		return elems;
 	}
 	
 	protected List<QueryState> getQueryStates(List<Integer> selectedObj) {
