@@ -232,25 +232,29 @@ public class VesselData implements IIvefElement {
 		String encodedFragment2 = "!AIVDO,2,2," + this.m_msgSerial++ + ",A,";
 		String encodedFragment2Payload;
 		int msgtype = 5;//Static&Voyage Sentence
-		long mmsi = this.getStaticDataAt(0).getMMSI();
-		long imo = this.getStaticDataAt(0).getIMO();
-		String callSign = this.getStaticDataAt(0).getCallsign();
-		String vesselName = this.getStaticDataAt(0).getShipName();
-		String etaStr = this.getVoyageAt(0).getETA();
+		boolean staticDataPresent = this.countOfStaticDatas() > 0;
+		boolean voyageDataPresent = this.countOfVoyages() > 0;
+		long mmsi = staticDataPresent && this.getStaticDataAt(0).getMMSI() != null ? this.getStaticDataAt(0).getMMSI() : 0;
+		long imo = staticDataPresent && this.getStaticDataAt(0).getIMO() != null ? this.getStaticDataAt(0).getIMO() : 0;
+		String callSign = staticDataPresent && this.getStaticDataAt(0).getCallsign() != null ? this.getStaticDataAt(0).getCallsign() : "";
+		String vesselName = staticDataPresent && this.getStaticDataAt(0).getShipName() != null ? this.getStaticDataAt(0).getShipName() : "";
+		String etaStr = voyageDataPresent && this.countOfVoyages() > 0 && this.getVoyageAt(0).getETA() != null ? this.getVoyageAt(0).getETA() : "";
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		Date etaDate = null;
-		try {
-			etaDate = df.parse(etaStr);
-		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		if(!etaStr.equals("")){
+			try {
+				etaDate = df.parse(etaStr);
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 		int etaMonth = etaDate != null ? etaDate.getMonth() : 0; 
 		int etaDay = etaDate != null ? etaDate.getDate() : 0; 
 		int etaHour = etaDate != null ? etaDate.getHours() : 0; 
 		int etaMinute = etaDate != null ? etaDate.getMinutes() : 0; 
-		int draught = (int)this.getVoyageAt(0).getDraught();
-		String destination = this.getVoyageAt(0).getDestination();
+		int draught = voyageDataPresent && this.getVoyageAt(0).hasDraught() ? (int)this.getVoyageAt(0).getDraught() : 0;
+		String destination = voyageDataPresent && this.getVoyageAt(0).hasDestination() ? this.getVoyageAt(0).getDestination() : "";
 		
 		SixbitEncoder encoder = new SixbitEncoder();
 		encoder.addVal(msgtype, 6);//Message type

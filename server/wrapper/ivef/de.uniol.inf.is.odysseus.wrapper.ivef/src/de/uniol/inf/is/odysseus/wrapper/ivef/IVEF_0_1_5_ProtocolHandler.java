@@ -223,101 +223,103 @@ public class IVEF_0_1_5_ProtocolHandler extends
 	public void process(ByteBuffer message) {
 		byte[] m = new byte[message.limit()];
 		message.get(m);
-		String ivefStr = (new String(m));//.trim();
-		KeyValueObject<? extends IMetaAttribute> map = new KeyValueObject<>();
-		if (!(this.parser.parseXMLString(ivefStr, true) ) )
-			return;
-		boolean found = false;
-		//m_loginRequest
-		if(this.parser.loginRequestPresent()){
-			this.parser.resetLoginRequestPresent();
-			this.m_loginRequest = this.parser.getLoginRequest();
-			map = this.m_loginRequest.toMap();
-			map.setMetadata("object", this.m_loginRequest);
-			found = true;
-//			getTransfer().transfer(map);
+		String ivefPacket = (new String(m));//.trim();
+		for(String ivef : ivefPacket.split("(?=<MSG_VesselData>)|(?<=</MSG_VesselData>)")){
+			KeyValueObject<? extends IMetaAttribute> map = new KeyValueObject<>();
+			if (!(this.parser.parseXMLString(ivef, true) ) )
+				continue;//return;
+			boolean found = false;
+			//m_loginRequest
+			if(this.parser.loginRequestPresent()){
+				this.parser.resetLoginRequestPresent();
+				this.m_loginRequest = this.parser.getLoginRequest();
+				map = this.m_loginRequest.toMap();
+				map.setMetadata("object", this.m_loginRequest);
+				found = true;
+	//			getTransfer().transfer(map);
+			}
+			//m_loginResponse
+			if (this.parser.loginResponsePresent()) {
+				this.parser.resetLoginResponsePresent();
+				this.m_loginResponse = this.parser.getLoginResponse();
+				map = this.m_loginResponse.toMap(); 
+				map.setMetadata("object", this.m_loginResponse);
+				found = true;
+	//			getTransfer().transfer(map);
+			}
+			//m_logout
+			if (this.parser.logoutPresent()) {
+				this.parser.resetLogoutPresent();
+				this.m_logout = this.parser.getLogout();
+				map = this.m_logout.toMap(); 
+				map.setMetadata("object", this.m_logout);
+				found = true;
+	//			getTransfer().transfer(map);
+			}
+			//m_ping
+			if (this.parser.pingPresent()) {
+				this.parser.resetPingPresent();
+				this.m_ping = this.parser.getPing();
+				map = this.m_ping.toMap(); 
+				map.setMetadata("object", this.m_ping);
+				found = true;
+	//			getTransfer().transfer(map);
+			}
+			
+			//m_pong
+			if (this.parser.pongPresent()) {
+				this.parser.resetPongPresent();
+				this.m_pong = this.parser.getPong();
+				map = this.m_pong.toMap(); 
+				map.setMetadata("object", this.m_pong);
+				found = true;
+	//			getTransfer().transfer(map);
+			}
+			//m_serverStatus
+			if (this.parser.serverStatusPresent()) {
+				this.parser.resetServerStatusPresent();
+				this.m_serverStatus = this.parser.getServerStatus();
+				map = this.m_serverStatus.toMap(); 
+				map.setMetadata("object", this.m_serverStatus);
+				found = true;
+	//			getTransfer().transfer(map);
+			}
+			//m_serviceRequest
+			if (this.parser.serviceRequestPresent()) {
+				this.parser.resetServiceRequestPresent();
+				this.m_serviceRequest = this.parser.getServiceRequest();
+				map = this.m_serviceRequest.toMap(); 
+				map.setMetadata("object", this.m_serviceRequest);
+				found = true;
+	//			getTransfer().transfer(map);
+			}
+			//m_vesselData
+			if (this.parser.vesselDataPresent()) {
+				this.parser.resetVesselDataPresent();
+				this.m_vesselData = this.parser.getVesselData();
+				///////Workaround: 
+				//1. set speed to 0 because of a bug in VTS
+	//			this.m_vesselData.getBody().getVesselDataAt(0).getPosReport().setSOG(Double.valueOf(0));
+	//			//2. Set the COG as integer value for the VTS
+	//			int cog = this.m_vesselData.getBody().getVesselDataAt(0).getPosReport().getCOG().intValue();
+	//			this.m_vesselData.getBody().getVesselDataAt(0).getPosReport().setCOG(Float.valueOf(cog));
+				//3. Test: print the MMSI with id
+	//			try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("c:\\temp\\tmp.txt", true)))) {
+	//				String teststr = "MMSI: " + this.m_vesselData.getBody().getVesselDataAt(0).getStaticDataAt(0).getMMSI();
+	//				teststr += " PosReport Id: " + this.m_vesselData.getBody().getVesselDataAt(0).getPosReport().getId();
+	//				teststr += " StaticData Id: " + this.m_vesselData.getBody().getVesselDataAt(0).getStaticDataAt(0).getId();
+	//				out.println(teststr);
+	//			}catch (IOException e) {
+	//			}
+				///////
+				map = this.m_vesselData.toMap(); 
+				map.setMetadata("object", this.m_vesselData);
+				found = true;
+	//			getTransfer().transfer(map);
+			}
+			if(found)
+				getTransfer().transfer(map);
 		}
-		//m_loginResponse
-		if (this.parser.loginResponsePresent()) {
-			this.parser.resetLoginResponsePresent();
-			this.m_loginResponse = this.parser.getLoginResponse();
-			map = this.m_loginResponse.toMap(); 
-			map.setMetadata("object", this.m_loginResponse);
-			found = true;
-//			getTransfer().transfer(map);
-		}
-		//m_logout
-		if (this.parser.logoutPresent()) {
-			this.parser.resetLogoutPresent();
-			this.m_logout = this.parser.getLogout();
-			map = this.m_logout.toMap(); 
-			map.setMetadata("object", this.m_logout);
-			found = true;
-//			getTransfer().transfer(map);
-		}
-		//m_ping
-		if (this.parser.pingPresent()) {
-			this.parser.resetPingPresent();
-			this.m_ping = this.parser.getPing();
-			map = this.m_ping.toMap(); 
-			map.setMetadata("object", this.m_ping);
-			found = true;
-//			getTransfer().transfer(map);
-		}
-		
-		//m_pong
-		if (this.parser.pongPresent()) {
-			this.parser.resetPongPresent();
-			this.m_pong = this.parser.getPong();
-			map = this.m_pong.toMap(); 
-			map.setMetadata("object", this.m_pong);
-			found = true;
-//			getTransfer().transfer(map);
-		}
-		//m_serverStatus
-		if (this.parser.serverStatusPresent()) {
-			this.parser.resetServerStatusPresent();
-			this.m_serverStatus = this.parser.getServerStatus();
-			map = this.m_serverStatus.toMap(); 
-			map.setMetadata("object", this.m_serverStatus);
-			found = true;
-//			getTransfer().transfer(map);
-		}
-		//m_serviceRequest
-		if (this.parser.serviceRequestPresent()) {
-			this.parser.resetServiceRequestPresent();
-			this.m_serviceRequest = this.parser.getServiceRequest();
-			map = this.m_serviceRequest.toMap(); 
-			map.setMetadata("object", this.m_serviceRequest);
-			found = true;
-//			getTransfer().transfer(map);
-		}
-		//m_vesselData
-		if (this.parser.vesselDataPresent()) {
-			this.parser.resetVesselDataPresent();
-			this.m_vesselData = this.parser.getVesselData();
-			///////Workaround: 
-			//1. set speed to 0 because of a bug in VTS
-//			this.m_vesselData.getBody().getVesselDataAt(0).getPosReport().setSOG(Double.valueOf(0));
-//			//2. Set the COG as integer value for the VTS
-//			int cog = this.m_vesselData.getBody().getVesselDataAt(0).getPosReport().getCOG().intValue();
-//			this.m_vesselData.getBody().getVesselDataAt(0).getPosReport().setCOG(Float.valueOf(cog));
-			//3. Test: print the MMSI with id
-//			try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("c:\\temp\\tmp.txt", true)))) {
-//				String teststr = "MMSI: " + this.m_vesselData.getBody().getVesselDataAt(0).getStaticDataAt(0).getMMSI();
-//				teststr += " PosReport Id: " + this.m_vesselData.getBody().getVesselDataAt(0).getPosReport().getId();
-//				teststr += " StaticData Id: " + this.m_vesselData.getBody().getVesselDataAt(0).getStaticDataAt(0).getId();
-//				out.println(teststr);
-//			}catch (IOException e) {
-//			}
-			///////
-			map = this.m_vesselData.toMap(); 
-			map.setMetadata("object", this.m_vesselData);
-			found = true;
-//			getTransfer().transfer(map);
-		}
-		if(found)
-			getTransfer().transfer(map);
 	}
 	
 	@Override

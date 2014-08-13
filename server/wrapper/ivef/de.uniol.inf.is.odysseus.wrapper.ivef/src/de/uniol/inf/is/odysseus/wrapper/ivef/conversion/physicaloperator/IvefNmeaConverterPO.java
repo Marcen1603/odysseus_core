@@ -630,24 +630,26 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 				transportNMEA(encodedPositionMsg);
 				//Handle multiFragment sentences to send static-And-Voyage messages.
 				long mmsi = vesselMsg.getBody().getVesselDataAt(i).getStaticDataAt(0).getMMSI();
-				boolean sendStaticVoyage = false;
+//				boolean sendStaticVoyage = false;
 				if(!mmsiToCount.containsKey(mmsi)){
 					mmsiToCount.put(mmsi, 1);
-					sendStaticVoyage = true;
+//					sendStaticVoyage = true;
 				}
 				else{
 					int count = mmsiToCount.get(mmsi) + 1;
 					if (count % this.PositionToStaticRatio == 0){
-						sendStaticVoyage = true;
+//						sendStaticVoyage = true;
 						count = 1;
 					}
 					mmsiToCount.put(mmsi, count);
 				}
-				if (sendStaticVoyage){
-					String encodedStaticVoyageFragments[] = vesselMsg.getBody().getVesselDataAt(i).encodeAISStaticVoyagePayload();
-					transportNMEA(encodedStaticVoyageFragments[0]);
-					transportNMEA(encodedStaticVoyageFragments[1]);
-				}
+//				if (sendStaticVoyage){
+//					String encodedStaticVoyageFragments[] = vesselMsg.getBody().getVesselDataAt(i).encodeAISStaticVoyagePayload();
+//					if(encodedStaticVoyageFragments != null){
+//						transportNMEA(encodedStaticVoyageFragments[0]);
+//						transportNMEA(encodedStaticVoyageFragments[1]);
+//					}
+//				}
 			}
 		}
 	}
@@ -658,7 +660,8 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 		this.nmea = SentenceFactory.getInstance().createSentence(nmeaString);
 		this.nmea.parse();
 		//18.07 Send the original NMEA message
-		KeyValueObject<? extends IMetaAttribute> originalNmea = new KeyValueObject<>();
+		Map<String, Object> originalEvent = this.nmea.toMap();
+		KeyValueObject<? extends IMetaAttribute> originalNmea = new KeyValueObject<>(originalEvent);
 		originalNmea.setMetadata("originalNMEA", this.nmea);
 		transfer((T) originalNmea);
 		//Handling AIS Sentences
@@ -666,7 +669,11 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 			AISSentence aissentence = (AISSentence) this.nmea;
 			this.aishandler.handleAISSentence(aissentence);
 			if(this.aishandler.getDecodedAISMessage() != null) {
-				Map<String, Object> stringObject = this.nmea.toMap();
+				//13.08 We separate the map creation of the decoded message into another method rather than the toMap which will be only for original parts of the message.
+				//Here we are quite sure that there is a non-null decodedAISMessage inside the aisSentence because the AIShandler has already set it.
+				//Map<String, Object> stringObject = this.nmea.toMap();
+				Map<String, Object> stringObject = new HashMap<>();
+				aissentence.toDecodedPayloadMap(stringObject);
 				sent = new KeyValueObject<>(stringObject);
 				//Important to parse the decodedAIS as NMEA sentence in order to prepare the fields which will be used in writing.
 				this.aishandler.getDecodedAISMessage().parse();

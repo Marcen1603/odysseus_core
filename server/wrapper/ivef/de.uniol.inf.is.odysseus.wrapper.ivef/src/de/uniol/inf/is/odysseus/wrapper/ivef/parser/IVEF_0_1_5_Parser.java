@@ -294,12 +294,28 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
                 } 
                 Date val = new Date(); // starts since the epoch
                 try { 
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+                	//Correcting to be 24 based and GMT based
+                	//DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+                    //val = df.parse( value );
+                	//Hour24 based
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+                    //GMT based
+                    TimeZone gmtTime = TimeZone.getTimeZone("GMT");
+                    df.setTimeZone(gmtTime);
+                    //val date: 24 and GMT based
                     val = df.parse( value );
                 } catch(Exception e) {
-                    try { // if there are no miliseconds they will not be sent
-                       DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-                       val = df.parse( value );
+                    try { // if there are no milliseconds they will not be sent
+                    	//Correcting to be 24 based and GMT based
+                    	//DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+                        //val = df.parse( value );
+                    	//Hour24 based
+                    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    	//GMT based
+                        TimeZone gmtTime = TimeZone.getTimeZone("GMT");
+                        df.setTimeZone(gmtTime);
+                        //val date: 24 and GMT based
+                        val = df.parse( value );
                     } catch(Exception e2) {
                         e2.printStackTrace();
                     }
@@ -312,12 +328,28 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
                 } 
                 Date val = new Date(); // starts since the epoch
                 try { 
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+                	//Correcting to be 24 based and GMT based
+                	//DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+                    //val = df.parse( value );
+                	//Hour24 based
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+                    //GMT based
+                    TimeZone gmtTime = TimeZone.getTimeZone("GMT");
+                    df.setTimeZone(gmtTime);
+                    //val date: 24 and GMT based
                     val = df.parse( value );
                 } catch(Exception e) {
-                    try { // if there are no miliseconds they will not be sent
-                       DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-                       val = df.parse( value );
+                    try { // if there are no milliseconds they will not be sent
+                    	//Correcting to be 24 based and GMT based
+                    	//DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+                        //val = df.parse( value );
+                    	//Hour24 based
+                    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    	//GMT based
+                        TimeZone gmtTime = TimeZone.getTimeZone("GMT");
+                        df.setTimeZone(gmtTime);
+                        //val date: 24 and GMT based
+                        val = df.parse( value );
                     } catch(Exception e2) {
                         e2.printStackTrace();
                     }
@@ -330,12 +362,28 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
                 } 
                 Date val = new Date(); // starts since the epoch
                 try { 
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+                	//Correcting to be 24 based and GMT based
+                	//DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+                    //val = df.parse( value );
+                	//Hour24 based
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+                    //GMT based
+                    TimeZone gmtTime = TimeZone.getTimeZone("GMT");
+                    df.setTimeZone(gmtTime);
+                    //val date: 24 and GMT based
                     val = df.parse( value );
                 } catch(Exception e) {
-                    try { // if there are no miliseconds they will not be sent
-                       DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-                       val = df.parse( value );
+                    try { // if there are no milliseconds they will not be sent
+                    	//Correcting to be 24 based and GMT based
+                    	//DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+                        //val = df.parse( value );
+                    	//Hour24 based
+                    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    	//GMT based
+                        TimeZone gmtTime = TimeZone.getTimeZone("GMT");
+                        df.setTimeZone(gmtTime);
+                        //val date: 24 and GMT based
+                        val = df.parse( value );
                     } catch(Exception e2) {
                         e2.printStackTrace();
                     }
@@ -348,12 +396,28 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
                 } 
                 Date val = new Date(); // starts since the epoch
                 try { 
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+                	//Correcting to be 24 based and GMT based
+                	//DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+                    //val = df.parse( value );
+                	//Hour24 based
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+                    //GMT based
+                    TimeZone gmtTime = TimeZone.getTimeZone("GMT");
+                    df.setTimeZone(gmtTime);
+                    //val date: 24 and GMT based
                     val = df.parse( value );
                 } catch(Exception e) {
-                    try { // if there are no miliseconds they will not be sent
-                       DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-                       val = df.parse( value );
+                    try { // if there are no milliseconds they will not be sent
+                    	//Correcting to be 24 based and GMT based
+                    	//DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+                        //val = df.parse( value );
+                    	//Hour24 based
+                    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    	//GMT based
+                        TimeZone gmtTime = TimeZone.getTimeZone("GMT");
+                        df.setTimeZone(gmtTime);
+                        //val date: 24 and GMT based
+                        val = df.parse( value );
                     } catch(Exception e2) {
                         e2.printStackTrace();
                     }
@@ -642,12 +706,28 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
                 } 
                 Date val = new Date(); // starts since the epoch
                 try { 
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+                	//Correcting to be 24 based and GMT based
+                	//DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+                    //val = df.parse( value );
+                	//Hour24 based
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+                    //GMT based
+                    TimeZone gmtTime = TimeZone.getTimeZone("GMT");
+                    df.setTimeZone(gmtTime);
+                    //val date: 24 and GMT based
                     val = df.parse( value );
                 } catch(Exception e) {
-                    try { // if there are no miliseconds they will not be sent
-                       DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-                       val = df.parse( value );
+                    try { // if there are no milliseconds they will not be sent
+                    	//Correcting to be 24 based and GMT based
+                    	//DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+                        //val = df.parse( value );
+                    	//Hour24 based
+                    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    	//GMT based
+                        TimeZone gmtTime = TimeZone.getTimeZone("GMT");
+                        df.setTimeZone(gmtTime);
+                        //val date: 24 and GMT based
+                        val = df.parse( value );
                     } catch(Exception e2) {
                         e2.printStackTrace();
                     }
@@ -660,12 +740,28 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
                 } 
                 Date val = new Date(); // starts since the epoch
                 try { 
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+                	//Correcting to be 24 based and GMT based
+                	//DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+                    //val = df.parse( value );
+                	//Hour24 based
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+                    //GMT based
+                    TimeZone gmtTime = TimeZone.getTimeZone("GMT");
+                    df.setTimeZone(gmtTime);
+                    //val date: 24 and GMT based
                     val = df.parse( value );
                 } catch(Exception e) {
-                    try { // if there are no miliseconds they will not be sent
-                       DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-                       val = df.parse( value );
+                    try { // if there are no milliseconds they will not be sent
+                    	//Correcting to be 24 based and GMT based
+                    	//DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+                        //val = df.parse( value );
+                    	//Hour24 based
+                    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    	//GMT based
+                        TimeZone gmtTime = TimeZone.getTimeZone("GMT");
+                        df.setTimeZone(gmtTime);
+                        //val date: 24 and GMT based
+                        val = df.parse( value );
                     } catch(Exception e2) {
                         e2.printStackTrace();
                     }
