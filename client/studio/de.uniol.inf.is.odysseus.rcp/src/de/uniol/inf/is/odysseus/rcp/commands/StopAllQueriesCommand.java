@@ -20,10 +20,10 @@ import org.eclipse.core.commands.ExecutionException;
 
 public class StopAllQueriesCommand extends AbstractQueryCommand {
 
-	static final IQueryCommandAction start = new StartQueryCommandAction();
+	static final IQueryCommandAction stop = new StopQueryCommandAction();
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		return execute(getAllQueries(), start);
+		return execute(getAllQueries(), stop);
 	}
 }
