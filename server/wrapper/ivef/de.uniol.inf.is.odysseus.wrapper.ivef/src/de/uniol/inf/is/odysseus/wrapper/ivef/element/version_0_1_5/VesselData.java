@@ -30,7 +30,7 @@ public class VesselData implements IIvefElement {
     /**Message Serial Number: 
      * Used for encoding multiFragments messages
      * Takes values from 0 to 9*/
-    private int m_msgSerial = 0; 
+    private static int m_msgSerial = 0; 
 
     public VesselData() {
 
@@ -172,7 +172,7 @@ public class VesselData implements IIvefElement {
 	}
 
 	public String encodeAISPositionPayload() {
-		String encodedAIS = "!AIVDO,1,1,,A,";
+		String encodedAIS = "!AIVDM,1,1,,A,";
 		Pos pos = this.m_posReport.getPos();
 		Double lat = pos.getLat();
 		Double lon = pos.getLong();
@@ -225,20 +225,20 @@ public class VesselData implements IIvefElement {
 	public String[] encodeAISStaticVoyagePayload() {
 		if(this.countOfStaticDatas() == 0)
 			return null;
-		if (this.m_msgSerial == 10)
-			this.m_msgSerial = 0;
+		if (m_msgSerial == 10)
+			m_msgSerial = 0;
 		String[] encodedFragments = new String[2];
-		String encodedFragment1 = "!AIVDO,2,1," + this.m_msgSerial + ",A,";
-		String encodedFragment2 = "!AIVDO,2,2," + this.m_msgSerial++ + ",A,";
+		String encodedFragment1 = "!AIVDM,2,1," + m_msgSerial + ",A,";
+		String encodedFragment2 = "!AIVDM,2,2," + m_msgSerial++ + ",A,";
 		String encodedFragment2Payload;
-		int msgtype = 5;//Static&Voyage Sentence
+		int msgtype = 5;//Static&Voyage Sentence 
 		boolean staticDataPresent = this.countOfStaticDatas() > 0;
 		boolean voyageDataPresent = this.countOfVoyages() > 0;
 		long mmsi = staticDataPresent && this.getStaticDataAt(0).getMMSI() != null ? this.getStaticDataAt(0).getMMSI() : 0;
 		long imo = staticDataPresent && this.getStaticDataAt(0).getIMO() != null ? this.getStaticDataAt(0).getIMO() : 0;
 		String callSign = staticDataPresent && this.getStaticDataAt(0).getCallsign() != null ? this.getStaticDataAt(0).getCallsign() : "";
 		String vesselName = staticDataPresent && this.getStaticDataAt(0).getShipName() != null ? this.getStaticDataAt(0).getShipName() : "";
-		String etaStr = voyageDataPresent && this.countOfVoyages() > 0 && this.getVoyageAt(0).getETA() != null ? this.getVoyageAt(0).getETA() : "";
+		String etaStr = voyageDataPresent && this.getVoyageAt(0).getETA() != null ? this.getVoyageAt(0).getETA() : "";
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		Date etaDate = null;
 		if(!etaStr.equals("")){
@@ -262,8 +262,8 @@ public class VesselData implements IIvefElement {
 		encoder.addVal(mmsi, 30);//MMSI
 		encoder.addVal(0, 2);//AIS Version: Not existed in IVEF
 		encoder.addVal(imo, 30);//IMO 
-		encoder.addString(callSign, 42);//CallSign 
-		encoder.addString(vesselName, 120);//VesselName
+		encoder.addString(callSign, 7/*42/6*/);//CallSign 
+		encoder.addString(vesselName, 20/*120/6*/);//VesselName
 		encoder.addVal(0, 8);//ShipType: undefined in IVEF.
 		encoder.addVal(0, 9);//Dimension to Bow: undefined in IVEF.
 		encoder.addVal(0, 9);//Dimension to Stern: undefined in IVEF.
@@ -275,7 +275,7 @@ public class VesselData implements IIvefElement {
 		encoder.addVal(etaHour, 5);//ETA Month
 		encoder.addVal(etaMinute, 6);//ETA Month
 		encoder.addVal(draught, 8);//Draught
-		encoder.addString(destination, 120);//Destination
+		encoder.addString(destination, 20/*120/6*/);//Destination
 		encoder.addVal(0, 1);//DTE: 0 Data Terminal Ready
 		encoder.addVal(0, 1);//Spare: Not used
 		
@@ -289,7 +289,8 @@ public class VesselData implements IIvefElement {
 		encodedFragment1 = encodedFragment1.substring(0, 71);
 		//checkSum
 		encodedFragment1 += ",0*" + SentenceUtils.calculateChecksum(encodedFragment1);
-		encodedFragment2 += encodedFragment2Payload + ",2*" + SentenceUtils.calculateChecksum(encodedFragment2);
+		encodedFragment2 += encodedFragment2Payload;
+		encodedFragment2 += "," + encoder.getPadBits() + "*" + SentenceUtils.calculateChecksum(encodedFragment2);
 		encodedFragments[0] = encodedFragment1;
 		encodedFragments[1] = encodedFragment2;
 		return encodedFragments;

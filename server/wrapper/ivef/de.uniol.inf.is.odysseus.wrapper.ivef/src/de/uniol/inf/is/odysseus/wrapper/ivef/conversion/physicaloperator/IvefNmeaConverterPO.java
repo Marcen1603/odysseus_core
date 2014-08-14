@@ -630,26 +630,26 @@ public class IvefNmeaConverterPO<T extends IStreamObject<IMetaAttribute>> extend
 				transportNMEA(encodedPositionMsg);
 				//Handle multiFragment sentences to send static-And-Voyage messages.
 				long mmsi = vesselMsg.getBody().getVesselDataAt(i).getStaticDataAt(0).getMMSI();
-//				boolean sendStaticVoyage = false;
+				boolean sendStaticVoyage = false;
 				if(!mmsiToCount.containsKey(mmsi)){
 					mmsiToCount.put(mmsi, 1);
-//					sendStaticVoyage = true;
+					sendStaticVoyage = true;
 				}
 				else{
 					int count = mmsiToCount.get(mmsi) + 1;
 					if (count % this.PositionToStaticRatio == 0){
-//						sendStaticVoyage = true;
+						sendStaticVoyage = true;
 						count = 1;
 					}
 					mmsiToCount.put(mmsi, count);
 				}
-//				if (sendStaticVoyage){
-//					String encodedStaticVoyageFragments[] = vesselMsg.getBody().getVesselDataAt(i).encodeAISStaticVoyagePayload();
-//					if(encodedStaticVoyageFragments != null){
-//						transportNMEA(encodedStaticVoyageFragments[0]);
-//						transportNMEA(encodedStaticVoyageFragments[1]);
-//					}
-//				}
+				if (sendStaticVoyage){
+					String encodedStaticVoyageFragments[] = vesselMsg.getBody().getVesselDataAt(i).encodeAISStaticVoyagePayload();
+					if(encodedStaticVoyageFragments != null){
+						transportNMEA(encodedStaticVoyageFragments[0]);
+						transportNMEA(encodedStaticVoyageFragments[1]);
+					}
+				}
 			}
 		}
 	}
