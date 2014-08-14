@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.console;
 
-import net.jxta.peer.PeerID;
+import java.util.Collection;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -17,7 +19,10 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.LoadBalancingCommunicationListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy.LoadBalancingException;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.ILoadBalancingCommunicator;
 
 /**
  * Console with debug commands for active LoadBalancing.
@@ -43,6 +48,9 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IServerExecutor executor;
+	private static Collection<ILoadBalancingStrategy> loadBalancingStrategies = Lists.newArrayList();
+	private static Collection<ILoadBalancingAllocator> loadBalancingAllocators = Lists.newArrayList();
+	private static Optional<ILoadBalancingCommunicator> loadBalancingCommunicator;
 
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
@@ -91,6 +99,60 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			executor = null;
 		}
 	}
+	
+	// called by OSGi-DS
+	public static void bindLoadBalancingStrategy(ILoadBalancingStrategy strategy) {
+		
+		ActiveLoadbalancingConsole.loadBalancingStrategies.add(strategy);
+		
+	}
+
+	// called by OSGi-DS
+	public static void unbindLoadBalancingStrategy(ILoadBalancingStrategy strategy) {
+		
+		if(strategy != null) {
+		
+			ActiveLoadbalancingConsole.loadBalancingStrategies.remove(strategy);
+			
+		}
+		
+	}
+	
+	// called by OSGi-DS
+	public static void bindLoadBalancingAllocator(ILoadBalancingAllocator allocator) {
+		
+		ActiveLoadbalancingConsole.loadBalancingAllocators.add(allocator);
+		
+	}
+
+	// called by OSGi-DS
+	public static void unbindLoadBalancingAllocator(ILoadBalancingAllocator allocator) {
+		
+		if(allocator != null) {
+		
+			ActiveLoadbalancingConsole.loadBalancingAllocators.remove(allocator);
+			
+		}
+		
+	}
+	
+	// called by OSGi-DS
+	public static void bindLoadBalancingCommunicator(ILoadBalancingCommunicator communicator) {
+		
+		ActiveLoadbalancingConsole.loadBalancingCommunicator = Optional.of(communicator);
+		
+	}
+
+	// called by OSGi-DS
+	public static void unbindLoadBalancingCommunicator(ILoadBalancingCommunicator communicator) {
+		
+		if(communicator != null && communicator.equals(ActiveLoadbalancingConsole.loadBalancingCommunicator)) {
+		
+			ActiveLoadbalancingConsole.loadBalancingCommunicator = Optional.absent();
+			
+		}
+		
+	}
 
 	// called by OSGi-DS
 	public void activate() {
@@ -110,41 +172,83 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		StringBuilder sb = new StringBuilder();
 		sb.append("---Active Loadbalancing commands---\n");
 		sb.append("    lsParts		              		- Lists all queryParts installed on peer with ids\n");
-		sb.append("    initLB <peername> <queryPartId>	- Initiate Loadbalancing with <peername> and query Part <queryPartId>\n");
+		sb.append("    lsLBStrategies	              		- Lists all available load balancing strategies\n");
+		sb.append("    lsLBAllocators	              		- Lists all available load balancing allocators\n");
+		sb.append("    initLB <strategyname> <allocatorname>	- Initiate Loadbalancing with load balancing strategy <strategyname> and load balancing allocator <allocatorname>\n");
 		sb.append("    cpJxtaSender <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Sender");
 		sb.append("    cpJxtaReceiver <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Receiver");
 		return sb.toString();
 	}
-
+	
 	/**
-	 * Initiates Load Balancing.
-	 * @param ci
+	 * Initializes the load balancing process for the peer by calling a given {@link ILoadBalancingStrategy} 
+	 * with a given {@link ILoadBalancingAllocator}.
+	 * @param ci The {@link CommandInterpreter} instance.
 	 */
 	public void _initLB(CommandInterpreter ci) {
-		String peerName = ci.nextArgument();
-		if (Strings.isNullOrEmpty(peerName)) {
-			System.out.println("usage: initLB <peername> <queryPartId>");
+		
+		Preconditions.checkNotNull(ci, "Command interpreter must be not null!");
+		
+		final String ERROR_USAGE = "usage: initLB <peername> <strategyname> <allocatorname>";
+		final String ERROR_STRATEGY = "No load balancing strategy found with the name ";
+		final String ERROR_ALLOCATOR = "No load balancing allocator found with the name ";
+		final String ERROR_COMMUNICATOR = "No load balancing communicator available";
+		
+		String strategyName = ci.nextArgument();
+		if(Strings.isNullOrEmpty(strategyName)) {
+			
+			System.out.println(ERROR_USAGE);
 			return;
+			
 		}
-		String queryPartIDString = ci.nextArgument();
-		if (Strings.isNullOrEmpty(queryPartIDString)) {
-			System.out.println("usage: initLB <peername> <queryPartId>");
+		
+		Optional<ILoadBalancingStrategy> optStrategy = ActiveLoadbalancingConsole.determineStrategy(strategyName);
+		if(!optStrategy.isPresent()) {
+			
+			System.out.println(ERROR_STRATEGY + strategyName);
 			return;
+			
 		}
-		int queryPartID = 0;
+		ILoadBalancingStrategy strategy = optStrategy.get();
+		
+		String allocatorName = ci.nextArgument();
+		if(Strings.isNullOrEmpty(allocatorName)) {
+			
+			System.out.println(ERROR_USAGE);
+			return;
+			
+		}
+		
+		Optional<ILoadBalancingAllocator> optAllocator = ActiveLoadbalancingConsole.determineAllocator(allocatorName);
+		if(!optAllocator.isPresent()) {
+			
+			System.out.println(ERROR_ALLOCATOR + allocatorName);
+			return;
+			
+		}
+		ILoadBalancingAllocator allocator = optAllocator.get();
+		
+		if(!ActiveLoadbalancingConsole.loadBalancingCommunicator.isPresent()) {
+			
+			System.out.println(ERROR_COMMUNICATOR);
+			return;
+			
+		}
+		ILoadBalancingCommunicator communicator = ActiveLoadbalancingConsole.loadBalancingCommunicator.get();
+		
+		strategy.setAllocator(allocator);
+		strategy.setCommunicator(communicator);
+		
 		try {
-			queryPartID = Integer.valueOf(queryPartIDString);
-		} catch (Throwable t) {
-			System.out.println("usage: initLB <peername> <queryPartId>");
-			return;
+			
+			strategy.startMonitoring();
+			
+		} catch(LoadBalancingException e) {
+			
+			System.out.println("An error occured: " + e.getMessage());
+			
 		}
-		Optional<PeerID> optPID = determinePeerID(peerName);
-		if (optPID.isPresent()) {
-			PeerID pid = optPID.get();
-			initiateLoadBalancing(pid, queryPartID);
-			System.out.println("Initiated Loadbalancing with peer '" + peerName
-					+ "'");
-		}
+		
 	}
 
 	/**
@@ -163,29 +267,82 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 	}
 	
+	/**
+	 * Lists all available {@link ILoadBalancingStrategy}s bound via OSGI-DS.
+	 * @param ci The {@link CommandInterpreter} instance.
+	 */
+	public void _lsLBStrategies(CommandInterpreter ci) {
+
+		System.out.println("Available load balancing strategies:");
+		for(ILoadBalancingStrategy strategy : ActiveLoadbalancingConsole.loadBalancingStrategies) {
+			
+			System.out.println(strategy.getName());
+			
+		}
+		
+	}
 	
 	/**
-	 * used by initLb command.
-	 * @param destinationPeer
-	 * @param queryPartID
+	 * Lists all available {@link ILoadBalancingAllocator}s bound via OSGI-DS.
+	 * @param ci The {@link CommandInterpreter} instance.
 	 */
-	private void initiateLoadBalancing(PeerID destinationPeer, int queryPartID) {
-		LoadBalancingCommunicationListener.getInstance().initiateLoadBalancing(
-				destinationPeer, queryPartID);
-	}
+	public void _lsLBAllocators(CommandInterpreter ci) {
 
-	/**
-	 * Get PeerId from PeerName.
-	 * @param peerName
-	 * @return
-	 */
-	private static Optional<PeerID> determinePeerID(String peerName) {
-		for (PeerID pid : p2pDictionary.getRemotePeerIDs()) {
-			if (p2pDictionary.getRemotePeerName(pid).equals(peerName)) {
-				return Optional.of(pid);
-			}
+		System.out.println("Available load balancing allocators:");
+		for(ILoadBalancingAllocator allocator : ActiveLoadbalancingConsole.loadBalancingAllocators) {
+			
+			System.out.println(allocator.getName());
+			
 		}
-		return Optional.absent();
+		
+	}
+	
+	/**
+	 * Determines the {@link ILoadBalancingStrategy} by name.
+	 * @param strategyName The name of the strategy.
+	 * @return An {@link ILoadBalancingStrategy}, if there is one bound with <code>strategyName</code> as name.
+	 */
+	private static Optional<ILoadBalancingStrategy> determineStrategy(
+			String strategyName) {
+		
+		Preconditions.checkNotNull(strategyName, "The name of the load balancing strategy must be not null!");
+		
+		for(ILoadBalancingStrategy strategy : ActiveLoadbalancingConsole.loadBalancingStrategies) {
+			
+			if(strategy.getName().equals(strategyName)) {
+				
+				return Optional.of(strategy);
+				
+			}
+			
+		}
+		
+		return Optional.absent();		
+		
+	}
+	
+	/**
+	 * Determines the {@link ILoadBalancingAllocator} by name.
+	 * @param allocatorName The name of the allocator.
+	 * @return An {@link ILoadBalancingAllocator}, if there is one bound with <code>allocatorName</code> as name.
+	 */
+	private static Optional<ILoadBalancingAllocator> determineAllocator(
+			String allocatorName) {
+		
+		Preconditions.checkNotNull(allocatorName, "The name of the load balancing allocator must be not null!");
+		
+		for(ILoadBalancingAllocator allocator : ActiveLoadbalancingConsole.loadBalancingAllocators) {
+			
+			if(allocator.getName().equals(allocatorName)) {
+				
+				return Optional.of(allocator);
+				
+			}
+			
+		}
+		
+		return Optional.absent();		
+		
 	}
 
 	/**
