@@ -300,7 +300,8 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 				throw new AmbiguousAttributeException("Same attribute '"+attributes2.getAttribute(i)+"' in left and right input! Use Rename for one.");
 			}
 		}
-		return SDFSchema.changeSourceName(newSet, name);
+//		return SDFSchema.changeSourceName(newSet, name);
+		return newSet;
 	}
 	
 	protected static String getNewName(SDFSchema attributes1,
