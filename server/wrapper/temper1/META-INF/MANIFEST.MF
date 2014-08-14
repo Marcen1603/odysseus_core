@@ -11,8 +11,20 @@ Import-Package: com.google.common.collect,
  de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
  org.osgi.framework;version="1.3.0",
  org.slf4j
+Bundle-NativeCode: lib/native/linux/libhidapi-jni-64.so ;
+  osname=linux;  processor=x86_64,
+  lib/native/linux/libhidapi-jni-32.so ;
+  osname=linux;  processor=x86,
+  lib/native/win/hidapi-jni-32.dll ; 
+  osname=win32; processor=x86;osname=Windows8;osname=Windows 8;osname=Win8,
+  lib/native/win/hidapi-jni-64.dll ; 
+  osname=win32; processor=x86_64;osname=Windows8;osname=Windows 8;osname=Win8,
+  lib/native/mac/libhidapi-jni-64.jnilib;
+  osname=macosx; processor=x86,
+  lib/native/mac/libhidapi-jni-32.jnilib;
+  osname=macosx; processor=x86_64,
+  *
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Service-Component: OSGI-INF/Temper1TransportHandler.xml
-Bundle-ClassPath: lib/hidapi-1.1.jar,
- .
+Bundle-ClassPath: .
