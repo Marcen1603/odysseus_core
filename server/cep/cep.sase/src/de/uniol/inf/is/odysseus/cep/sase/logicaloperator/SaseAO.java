@@ -82,7 +82,7 @@ public class SaseAO extends AbstractLogicalOperator {
 		if (getInputSchema(0) == null) {
 			schema = new SDFSchema(typeName, Tuple.class, attributes);
 		} else {
-			schema = SDFSchema.changeSourceName(getInputSchema(0), typeName);
+			schema = SDFSchema.changeSourceName(getInputSchema(0), typeName,true);
 			schema = SDFSchema.changeType(schema, Tuple.class);
 			schema = new SDFSchema(schema, attributes);
 		}

@@ -147,7 +147,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	}
 
 	public SDFConstraint getConstraint(String name) {
-		if (this.constraints == null){
+		if (this.constraints == null) {
 			return null;
 		}
 		return this.constraints.get(name);
@@ -200,12 +200,14 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		String[] attributeToFindParts = splitIfNeeded(attributeNameToFind);
 
 		// Special Handling of __ Attributes (e.g. for Map)
-		if (attributeNameToFind.startsWith("__last_")){
-			SDFAttribute attr = findAttribute(attributeNameToFind.substring(attributeNameToFind.indexOf('.')+1));
-			int pos = Integer.parseInt(attributeNameToFind.substring("__last_".length(), attributeNameToFind.indexOf('.')));
+		if (attributeNameToFind.startsWith("__last_")) {
+			SDFAttribute attr = findAttribute(attributeNameToFind
+					.substring(attributeNameToFind.indexOf('.') + 1));
+			int pos = Integer.parseInt(attributeNameToFind.substring(
+					"__last_".length(), attributeNameToFind.indexOf('.')));
 			return attr.clone(pos);
 		}
-		
+
 		for (SDFAttribute attribute : this.elements) {
 
 			String[] attributeParts = splitIfNeeded(attribute.getSourceName()
@@ -296,14 +298,16 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		for (int i = 0; i < attributes2.size(); i++) {
 			if (!newSet.contains(attributes2.getAttribute(i))) {
 				newSet.elements.add(attributes2.getAttribute(i));
-			}else{
-				throw new AmbiguousAttributeException("Same attribute '"+attributes2.getAttribute(i)+"' in left and right input! Use Rename for one.");
+			} else {
+				throw new AmbiguousAttributeException("Same attribute '"
+						+ attributes2.getAttribute(i)
+						+ "' in left and right input! Use Rename for one.");
 			}
 		}
-//		return SDFSchema.changeSourceName(newSet, name);
+		// return SDFSchema.changeSourceName(newSet, name);
 		return newSet;
 	}
-	
+
 	protected static String getNewName(SDFSchema attributes1,
 			SDFSchema attributes2) {
 		String name = attributes1.getURI().compareToIgnoreCase(
@@ -434,11 +438,16 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		return schema;
 	}
 
-	public static SDFSchema changeSourceName(SDFSchema schema, String newName) {
+	public static SDFSchema changeSourceName(SDFSchema schema, String newName,
+			boolean overwriteExisting) {
 		List<SDFAttribute> newattributeList = new ArrayList<SDFAttribute>();
 		for (SDFAttribute a : schema.getAttributes()) {
-			newattributeList.add(new SDFAttribute(newName,
-					a.getAttributeName(), a));
+			if (a.getSourceName() == null || a.getSourceName().equals("")) {
+				newattributeList.add(new SDFAttribute(newName, a
+						.getAttributeName(), a));
+			} else {
+				newattributeList.add(a);
+			}
 		}
 		SDFSchema newSchema = new SDFSchema(newName, schema, newattributeList);
 		return newSchema;

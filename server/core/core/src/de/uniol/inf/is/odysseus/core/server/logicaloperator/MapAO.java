@@ -179,7 +179,7 @@ public class MapAO extends UnaryLogicalOp {
 
 			}
 			SDFSchema s = SDFSchema.changeSourceName(new SDFSchema(
-					getInputSchema(), attrs), getInputSchema().getURI());
+					getInputSchema(), attrs), getInputSchema().getURI(), false);
 			setOutputSchema(s);
 		}
 	}

@@ -526,7 +526,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 						.getAttributeName(), old));
 			}
 			SDFSchema schema = SDFSchema.changeSourceName(outSchema,
-					streamname.getShortString(caller.getUser().getName()));
+					streamname.getShortString(caller.getUser().getName()),true);
 			ao.setOutputSchema(schema);
 		}
 		return ao;
