@@ -69,7 +69,7 @@ public class EnrichAO extends BinaryLogicalOp {
 		// The Sum of all InputSchema
 		SDFSchema outputSchema = null;
 		for (LogicalSubscription l : getSubscribedToSource()) {
-			outputSchema = SDFSchema.union(outputSchema, l.getSchema());
+			outputSchema = SDFSchema.join(outputSchema, l.getSchema());
 		}
 		setOutputSchema(outputSchema);
 		return outputSchema;
