@@ -1,0 +1,226 @@
+/*******************************************************************************
+ * Copyright (C) 2014  Christian Kuka <christian@kuka.cc>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
+package de.uniol.inf.is.odysseus.wrapper.tika.physicaloperator.access;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.language.LanguageIdentifier;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
+import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.Parser;
+import org.apache.tika.sax.BodyContentHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+
+import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.LineProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+
+/**
+ * @author Christian Kuka <christian@kuka.cc>
+ *
+ */
+public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<? extends IMetaAttribute>> {
+    /** The logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(TikaProtocolHandler.class);
+    /** The name of the protocol handler. */
+    @SuppressWarnings("hiding")
+    public static final String NAME = "Tika";
+    /** The parser. */
+    private final AutoDetectParser parser;
+
+    /**
+     * 
+     */
+    public TikaProtocolHandler() {
+        super();
+        this.parser = new AutoDetectParser();
+    }
+
+    /**
+     * 
+     * @param direction
+     * @param access
+     * @param dataHandler
+     */
+    public TikaProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
+        super(direction, access, dataHandler);
+        this.parser = new AutoDetectParser();
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() {
+        return TikaProtocolHandler.NAME;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(final ITransportDirection direction, final IAccessPattern access, final Map<String, String> options,
+            final IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
+        final TikaProtocolHandler instance = new TikaProtocolHandler(direction, access, dataHandler);
+        instance.init(options);
+        return instance;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void onConnect(final ITransportHandler caller) {
+        // empty function
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public KeyValueObject<? extends IMetaAttribute> getNext() throws IOException {
+        final String line = super.getNextLine();
+
+        KeyValueObject<? extends IMetaAttribute> object = null;
+        final Map<String, Object> event = new HashMap<>();
+        final Metadata metadata = new Metadata();
+        ParseContext context = new ParseContext();
+        StringWriter stringWriter = new StringWriter();
+
+        // Wrap message into an InputStream
+        ByteArrayInputStream stream = new ByteArrayInputStream(line.getBytes());
+        try {
+            this.parser.parse(stream, new BodyContentHandler(stringWriter), metadata, context);
+            String content = stringWriter.toString();
+            if (metadata.get(Metadata.CONTENT_LANGUAGE) == null) {
+                LanguageIdentifier identifier = new LanguageIdentifier(content);
+                String language = identifier.getLanguage();
+                metadata.add(Metadata.CONTENT_LANGUAGE, language);
+            }
+            for (final String key : metadata.names()) {
+                event.put(key.toLowerCase(Locale.US), metadata.get(key));
+            }
+            event.put("content", content);
+
+            object = new KeyValueObject<>(event);
+        }
+        catch (IOException | SAXException | TikaException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+        return object;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void process(final ByteBuffer message) {
+        KeyValueObject<? extends IMetaAttribute> object = null;
+        final Map<String, Object> event = new HashMap<>();
+        final Metadata metadata = new Metadata();
+        ParseContext context = new ParseContext();
+        StringWriter stringWriter = new StringWriter();
+        // Wrap message into an InputStream
+        ByteArrayInputStream stream = new ByteArrayInputStream(message.array());
+        try {
+            this.parser.parse(stream, new BodyContentHandler(stringWriter), metadata, context);
+            String content = stringWriter.toString();
+            if (metadata.get(Metadata.CONTENT_LANGUAGE) == null) {
+                LanguageIdentifier identifier = new LanguageIdentifier(content);
+                String language = identifier.getLanguage();
+                metadata.add(Metadata.CONTENT_LANGUAGE, language);
+            }
+            for (final String key : metadata.names()) {
+                event.put(key.toLowerCase(Locale.US), metadata.get(key));
+            }
+            event.put("content", content);
+
+            object = new KeyValueObject<>(event);
+            this.getTransfer().transfer(object);
+        }
+        catch (IOException | SAXException | TikaException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void onDisonnect(final ITransportHandler caller) {
+        // empty function
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final KeyValueObject<? extends IMetaAttribute> object) throws IOException {
+        throw new IllegalArgumentException("write not supported");
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public ITransportExchangePattern getExchangePattern() {
+        return ITransportExchangePattern.InOnly;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    protected void init(final Map<String, String> options) {
+        super.init(options);
+        Map<MediaType, Parser> parsers = this.parser.getParsers();
+        LOG.debug("Available parsers int Tika:");
+        for (Entry<MediaType, Parser> p : parsers.entrySet()) {
+            LOG.debug(p.getKey() + ": " + p.getValue());
+        }
+
+    }
+}
