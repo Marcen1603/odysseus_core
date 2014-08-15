@@ -5,17 +5,23 @@ public class SportsQLTimeParameter implements ISportsQLParameter{
 	public static final String TIME_PARAMETER_ALWAYS = "always";
 	public static final String TIME_PARAMETER_NOW = "now";
 	public static final String TIME_PARAMTER_GAME = "game";
+	
+	public static final String TIME_UNIT_MINUTES 		= "minutes";
+	public static final String TIME_UNIT_SECONDS 		= "seconds";
+	public static final String TIME_UNIT_MILLISECONDS 	= "milliseconds";
+	public static final String TIME_UNIT_PICOSECONDS 	= "picoseconds";
 
-	// TODO: time-unit (seconds, minutes, ...)
 	int start;
 	int end;
 	String time; // For "now", "always", etc.
+	String unit; // for minutes, seconds etc.
 	
-	public SportsQLTimeParameter(int start, int end, String time) {
+	public SportsQLTimeParameter(int start, int end, String time, String timeUnit) {
 		super();
 		this.start = start;
 		this.end = end;
 		this.time = time;
+		this.unit = timeUnit;
 	}
 	
 	public SportsQLTimeParameter() {
@@ -41,6 +47,14 @@ public class SportsQLTimeParameter implements ISportsQLParameter{
 
 	public void setTime(String time) {
 		this.time = time;
+	}
+
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
 	}
 	
 }
