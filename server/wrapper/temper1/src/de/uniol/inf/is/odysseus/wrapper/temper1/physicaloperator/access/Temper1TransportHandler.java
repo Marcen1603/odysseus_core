@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.wrapper.temper1.physicaloperator.access;
 
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 
 import com.codeminders.hidapi.ClassPathLibraryLoader;
@@ -57,10 +59,14 @@ public class Temper1TransportHandler extends AbstractSimplePullTransportHandler<
             (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00
         };
         
-        int res = dev.write(temp);
+        
         
         try
         {
+        	int res = dev.write(temp);
+        	
+        	
+        	
             byte[] buf = new byte[BUFSIZE];
             int n = dev.read(buf);
                 
@@ -120,10 +126,25 @@ public class Temper1TransportHandler extends AbstractSimplePullTransportHandler<
 		try {
 			tuple.setAttribute(0, readDevice());
 		} catch (IOException e) {
-			e.printStackTrace();
+			tuple.setAttribute(0, getSimulatedTemperature());
 		}
 		return tuple;
 	}
+	
+	private static float getSimulatedTemperature(){
+    	Calendar calendar = Calendar.getInstance();
+    	calendar.setTime(new Date(System.currentTimeMillis()));
+    	float seconds = calendar.get(Calendar.SECOND);
+    	
+    	float y=0;
+		if(seconds>=30){
+			y = ((seconds*-1)+60)/60 ; // 30...0
+		}else{
+			y = seconds/60 ;//0...30
+		}
+		
+    	return 10 + y*30; //10..15..20..25..20..15..10
+    }
 	
 	@Override
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
