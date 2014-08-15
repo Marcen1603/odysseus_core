@@ -73,6 +73,9 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 
 	@Override
 	public void send(final byte[] message) throws IOException {
+		
+		System.out.println("SEND SEND TWITTER");
+		
 		try {
 			twitter.updateStatus(ByteBuffer.wrap(message).asCharBuffer()
 					.toString());
@@ -168,6 +171,8 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 		twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
 		twitterStream.addListener(this);
 		
+		System.out.println("PROCESS IN OPEN TWITTER");
+		
 		/*
 		 * for twitter statuses/filter one predicate 
 		 * parameter (follow, locations, or track) 
@@ -201,6 +206,8 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 				.setOAuthAccessTokenSecret(this.accessTokenSecret);
 
 		twitter = new TwitterFactory().getInstance();
+		
+		System.out.println("PROCESS-OUT OPEN TWITTER");
 
 	}
 	
@@ -219,6 +226,9 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	@Override
 	public void onStatus(final Status status) {
 		GeoLocation statusLocation = status.getGeoLocation();
+		
+		System.out.println("ON STATUS TWITTER");
+		
 		
 		String geoData;
 		if(statusLocation == null){

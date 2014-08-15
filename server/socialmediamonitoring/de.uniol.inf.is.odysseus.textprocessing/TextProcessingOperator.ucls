@@ -1,124 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.6" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true">  
-  <class id="1" language="java" name="de.uniol.inf.is.odysseus.textprocessing.physicaloperator.TextProcessingPO" 
-    project="de.uniol.inf.is.odysseus.textprocessing" 
-    file="/de.uniol.inf.is.odysseus.textprocessing/src/de/uniol/inf/is/odysseus/textprocessing/physicaloperator/TextProcessingPO.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="516" y="25"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
-      <operations public="false" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="2" language="java" name="de.uniol.inf.is.odysseus.textprocessing.transform.TextProcessingAORule" 
+  <class id="1" language="java" name="de.uniol.inf.is.odysseus.textprocessing.transform.TextProcessingAORule" 
     project="de.uniol.inf.is.odysseus.textprocessing" 
     file="/de.uniol.inf.is.odysseus.textprocessing/src/de/uniol/inf/is/odysseus/textprocessing/transform/TextProcessingAORule.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="53" width="291" x="642" y="110"/>    
+    <position height="53" width="291" x="627" y="222"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="de.uniol.inf.is.odysseus.textprocessing.logicaloperator.TextProcessingAO" 
+  <class id="2" language="java" name="de.uniol.inf.is.odysseus.textprocessing.logicaloperator.TextProcessingAO" 
     project="de.uniol.inf.is.odysseus.textprocessing" 
     file="/de.uniol.inf.is.odysseus.textprocessing/src/de/uniol/inf/is/odysseus/textprocessing/logicaloperator/TextProcessingAO.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="53" width="285" x="645" y="-2"/>    
+    <position height="53" width="285" x="630" y="110"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <interface id="4" language="java" name="de.uniol.inf.is.odysseus.textprocessing.types.ITextProcessing" 
+  <interface id="3" language="java" name="de.uniol.inf.is.odysseus.textprocessing.types.ITextProcessing" 
     project="de.uniol.inf.is.odysseus.textprocessing" 
     file="/de.uniol.inf.is.odysseus.textprocessing/src/de/uniol/inf/is/odysseus/textprocessing/types/ITextProcessing.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="53" width="242" x="394" y="109"/>    
+    <position height="53" width="242" x="379" y="221"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </interface>  
-  <class id="5" language="java" name="de.uniol.inf.is.odysseus.textprocessing.types.NGramProcessing" 
+  <class id="4" language="java" name="de.uniol.inf.is.odysseus.textprocessing.types.NGramProcessing" 
     project="de.uniol.inf.is.odysseus.textprocessing" 
     file="/de.uniol.inf.is.odysseus.textprocessing/src/de/uniol/inf/is/odysseus/textprocessing/types/NGramProcessing.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="690" y="274"/>    
+    <position height="-1" width="-1" x="675" y="386"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="de.uniol.inf.is.odysseus.textprocessing.types.StemmingProcessing" 
+  <class id="5" language="java" name="de.uniol.inf.is.odysseus.textprocessing.types.StemmingProcessing" 
     project="de.uniol.inf.is.odysseus.textprocessing" 
     file="/de.uniol.inf.is.odysseus.textprocessing/src/de/uniol/inf/is/odysseus/textprocessing/types/StemmingProcessing.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="479" y="275"/>    
+    <position height="-1" width="-1" x="464" y="387"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="de.uniol.inf.is.odysseus.textprocessing.types.StopwordProcessing" 
+  <class id="6" language="java" name="de.uniol.inf.is.odysseus.textprocessing.types.StopwordProcessing" 
     project="de.uniol.inf.is.odysseus.textprocessing" 
     file="/de.uniol.inf.is.odysseus.textprocessing/src/de/uniol/inf/is/odysseus/textprocessing/types/StopwordProcessing.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="271" y="276"/>    
+    <position height="-1" width="-1" x="256" y="388"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="de.uniol.inf.is.odysseus.textprocessing.types.TPRegistry" 
+  <class id="7" language="java" name="de.uniol.inf.is.odysseus.textprocessing.types.TPRegistry" 
     project="de.uniol.inf.is.odysseus.textprocessing" 
     file="/de.uniol.inf.is.odysseus.textprocessing/src/de/uniol/inf/is/odysseus/textprocessing/types/TPRegistry.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="912" y="273"/>    
+    <position height="-1" width="-1" x="897" y="385"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <association id="9">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="10" name="processingTypes">        
-        <position height="18" width="93" x="747" y="201"/>      
-      </attribute>      
-      <multiplicity id="11" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <realization id="12">    
+  <class id="8" language="java" name="de.uniol.inf.is.odysseus.textprocessing.physicaloperator.TextProcessingPO" 
+    project="de.uniol.inf.is.odysseus.textprocessing" 
+    file="/de.uniol.inf.is.odysseus.textprocessing/src/de/uniol/inf/is/odysseus/textprocessing/physicaloperator/TextProcessingPO.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="504" y="136"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <realization id="9">    
     <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="4"/>  
+    <end type="TARGET" refId="3"/>  
   </realization>  
-  <realization id="13">    
+  <realization id="10">    
     <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="4"/>  
+    <end type="TARGET" refId="3"/>  
   </realization>  
-  <association id="14">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="15" name="algo"/>      
-      <multiplicity id="16" minimum="0" maximum="1"/>    
+  <realization id="11">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="3"/>  
+  </realization>  
+  <association id="12">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="13" name="processingTypes">        
+        <position height="18" width="93" x="732" y="313"/>      
+      </attribute>      
+      <multiplicity id="14" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
+    <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="17">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="4"/>  
-  </realization>  
+  <association id="15">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="16" name="algo"/>      
+      <multiplicity id="17" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    

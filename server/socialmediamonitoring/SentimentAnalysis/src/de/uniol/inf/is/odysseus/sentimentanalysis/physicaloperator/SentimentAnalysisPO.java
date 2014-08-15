@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.sentimentanalysis.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -32,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.MiningAlgorithmRegistry;
 import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
 import de.uniol.inf.is.odysseus.mining.weka.mapping.WekaAttributeResolver;
@@ -44,6 +46,8 @@ import de.uniol.inf.is.odysseus.mining.weka.mapping.WekaConverter;
  */
 @SuppressWarnings({ "deprecation" })
 public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
+	
+	DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
 	
 	IClassificationLearner<ITimeInterval> learner;
 	WekaAttributeResolver resolver;
@@ -234,9 +238,25 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 	{
 		if(port == 1)
 		{
+			this.sweepArea.insert(object);
+			
+			@SuppressWarnings("unused")
+			Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsEndBefore(object.getMetadata().getStart());
+			
+			List<Tuple<M>> list = this.sweepArea.queryOverlapsAsList(object.getMetadata());
+			
 			try {
-					this.instance = WekaConverter.convertToNominalInstance(object, this.resolver);
-					instances.add(this.instance);
+				
+				    instances.clear();
+				
+					for(Tuple<M> obj : list)
+					{
+						this.instance = WekaConverter.convertToNominalInstance(obj, this.resolver);
+						instances.add(this.instance);
+					}
+				
+					//this.instance = WekaConverter.convertToNominalInstance(object, this.resolver);
+					//instances.add(this.instance);
 					
 					if(!(this.instances.size() < this.maxTrainSize)) 
 					{

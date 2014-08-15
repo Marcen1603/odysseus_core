@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * manage the classifier 
- * @author Marc Preuschaft
- *
  */
 public class ClassifierRegistry{
 
@@ -30,8 +28,7 @@ public class ClassifierRegistry{
 	 * @param domain
 	 * @return
 	 */
-	public static IClassifier getClassifierByTypeAndDomain(
-			String classifierType, String domain) {
+	public static IClassifier getClassifierByTypeAndDomain(String classifierType, String domain) {
 
 		if (!classifierAlgoTypes.containsKey(classifierType.toLowerCase())) {
 			logger.info("Classifier: " + classifierType + " is not valid.");

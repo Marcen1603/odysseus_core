@@ -65,6 +65,7 @@ public class StopwordProcessing implements ITextProcessing {
 		BufferedReader br = null;
         try 
         {
+        	//Pfad noch anders setzen
             br = new BufferedReader(new FileReader(new File("C:\\Users\\Rick\\workspace\\de.uniol.inf.is.odysseus.textprocessing\\OSGI-INF\\stopwords.txt")));
             String line = null;
             while((line = br.readLine()) != null) {            
