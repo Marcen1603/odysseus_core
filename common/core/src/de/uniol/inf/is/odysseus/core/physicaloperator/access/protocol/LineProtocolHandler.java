@@ -318,7 +318,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		String data = lastRunRemaining + strMsg;
 		StringTokenizer t = new StringTokenizer(data, "\n\r");
 		boolean process = true;
-		while (process) {
+		while (process && t.hasMoreTokens()) {
 			String token = t.nextToken();
 			// The last token could be incomplete --> process next time
 			if (t.hasMoreTokens()) {
