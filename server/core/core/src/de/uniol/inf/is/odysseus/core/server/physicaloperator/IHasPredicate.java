@@ -19,5 +19,6 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 
 @SuppressWarnings({"rawtypes"})
 public interface IHasPredicate {
-	public IPredicate getPredicate();
+	
+	IPredicate getPredicate();
 }

@@ -21,8 +21,6 @@ package de.uniol.inf.is.odysseus.core.physicaloperator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.processing.ProcessingEnvironment;
-
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -37,8 +35,7 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 	final private List<IStreamObject> suspendBuffer = new LinkedList<>();
 	private int sheddingFactor = 0;
 	private int currentSheddingValue = 0;
-	private int sheddedObjects;
-
+	
 	public PhysicalSubscription(K target, int sinkInPort, int sourceOutPort,
 			SDFSchema schema) {
 		super(target, sinkInPort, sourceOutPort, schema);

@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParame
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
@@ -49,7 +50,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilistic
  * 
  */
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "EM", category = { LogicalOperatorCategory.PROBABILISTIC }, doc = "Estimate the distribution of the given attributes using a Gaussian mixture model")
-public class EMAO extends UnaryLogicalOp {
+public class EMAO extends UnaryLogicalOp implements IHasPredicate {
 
     /**
 	 * 
@@ -65,6 +66,9 @@ public class EMAO extends UnaryLogicalOp {
     private int iterations = 1000;
     /** Incremental fitting. */
     private boolean incremental = false;
+    
+	private IPredicate<?> predicate;
+
 
     /**
      * Crates a new EM logical operator.
@@ -86,6 +90,9 @@ public class EMAO extends UnaryLogicalOp {
         this.iterations = emAO.iterations;
         this.threshold = emAO.threshold;
         this.incremental = emAO.incremental;
+        if (emAO.predicate != null){
+        	this.predicate = emAO.predicate.clone();
+        }
     }
 
     /**
@@ -207,12 +214,16 @@ public class EMAO extends UnaryLogicalOp {
      * @param predicate
      *            The predicate for model fitting.
      */
-    @Override
     @Parameter(type = PredicateParameter.class, name = "PREDICATE", optional = true, doc = "The predicate to run a new fitting process.")
     public final void setPredicate(@SuppressWarnings("rawtypes") final IPredicate predicate) {
         Objects.requireNonNull(predicate);
-        super.setPredicate(predicate);
+        this.predicate = predicate;
     }
+    
+    @Override
+    public IPredicate<?> getPredicate() {
+		return predicate;
+	}
 
     /**
      * Gets the positions of the attributes.

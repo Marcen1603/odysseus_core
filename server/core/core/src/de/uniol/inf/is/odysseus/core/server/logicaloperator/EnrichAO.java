@@ -25,16 +25,18 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 
 /**
  * @author Dennis Geesen
  *
  */
 @LogicalOperator(name = "ENRICH", minInputPorts = 2, maxInputPorts = 2, doc ="This operator enriches tuples with data that is cached, e.g. to enrich a stream with a list of categories. The first input stream, therefore, should be only stream limited data to avoid buffer overflows. The second input is the data stream that should be enriched.", category={LogicalOperatorCategory.ENRICH})
-public class EnrichAO extends BinaryLogicalOp {
+public class EnrichAO extends BinaryLogicalOp implements IHasPredicate {
 	
 	private static final long serialVersionUID = -4221371391163499952L;
 	private int minimumSize = 0;
+	private IPredicate<?> predicate;
 
 	public EnrichAO(){
 		
@@ -43,6 +45,9 @@ public class EnrichAO extends BinaryLogicalOp {
 	public EnrichAO(EnrichAO enrichAO) {
 		super(enrichAO);
 		this.minimumSize = enrichAO.minimumSize;
+		if (enrichAO.predicate != null){
+			this.predicate = enrichAO.predicate;
+		}
 	}
 
 	@Override
@@ -60,10 +65,14 @@ public class EnrichAO extends BinaryLogicalOp {
 		return this.minimumSize;
 	}
 	
-	@Override
 	@Parameter(name = "predicate", type = PredicateParameter.class, doc = "Predicate to filter combinations")
 	public synchronized void setPredicate(IPredicate<?> joinPredicate) {
-		super.setPredicate(joinPredicate);
+		this.predicate = joinPredicate;
+	}
+	
+	@Override
+	public IPredicate<?> getPredicate() {
+		return predicate;
 	}
 	
 	@Override

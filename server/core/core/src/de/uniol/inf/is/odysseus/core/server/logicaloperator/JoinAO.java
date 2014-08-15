@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,17 +29,20 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 
 /**
  * @author Marco Grawunder
  * 
  */
-@LogicalOperator(minInputPorts = 2, maxInputPorts = 2, name = "JOIN", doc = "Operator to combine two datastreams based on the predicate", category={LogicalOperatorCategory.BASE})
-public class JoinAO extends BinaryLogicalOp {
+@LogicalOperator(minInputPorts = 2, maxInputPorts = 2, name = "JOIN", doc = "Operator to combine two datastreams based on the predicate", category = { LogicalOperatorCategory.BASE })
+public class JoinAO extends BinaryLogicalOp implements IHasPredicate {
 
 	private static final long serialVersionUID = 3710951139395164614L;
-	
+
 	Cardinalities card = null;
+
+	private IPredicate<?> predicate;
 
 	public JoinAO() {
 		super();
@@ -50,28 +53,34 @@ public class JoinAO extends BinaryLogicalOp {
 		this.setPredicate(joinPredicate);
 	}
 
-	public JoinAO(JoinAO joinPO) {
-		super(joinPO);
-		this.card = joinPO.card;
+	public JoinAO(JoinAO joinAO) {
+		super(joinAO);
+		this.card = joinAO.card;
+		if (joinAO.predicate != null){
+			this.predicate = joinAO.predicate;
+		}
 	}
-	
+
 	@Parameter(type = EnumParameter.class, optional = true, doc = "Type of input streams. For optimization purposes: ONE_ONE, ONE_MANY, MANY_ONE, MANY_MANY")
 	public void setCard(Cardinalities card) {
 		this.card = card;
 	}
-	
+
 	public Cardinalities getCard() {
 		return card;
 	}
 
-	@Override
 	@Parameter(type = PredicateParameter.class, optional = true, doc = "Predicate to filter combinations")
 	public synchronized void setPredicate(IPredicate<?> joinPredicate) {
-		super.setPredicate(joinPredicate);
+		this.predicate = joinPredicate;
 	}
 
-	public @Override
-	JoinAO clone() {
+	@Override
+	public IPredicate<?> getPredicate() {
+		return predicate;
+	}
+
+	public @Override JoinAO clone() {
 		return new JoinAO(this);
 	}
 

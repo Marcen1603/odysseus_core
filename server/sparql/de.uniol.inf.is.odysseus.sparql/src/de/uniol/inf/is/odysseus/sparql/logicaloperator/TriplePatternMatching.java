@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
@@ -40,8 +41,8 @@ import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
  * 
  * @author Andre Bolles <andre.bolles@informatik.uni-oldenburg.de>
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
-public class TriplePatternMatching extends AbstractLogicalOperator {
+@SuppressWarnings({ "rawtypes"})
+public class TriplePatternMatching extends AbstractLogicalOperator implements IHasPredicate{
 
 	/**
 	 * 
@@ -52,7 +53,9 @@ public class TriplePatternMatching extends AbstractLogicalOperator {
 
 	private Triple triple;
 	private HashMap<String, String> prefixes;
+	private IPredicate<?> predicate;
 
+	
 	/**
 	 * The variable to set in every sparql solution.
 	 */
@@ -109,6 +112,9 @@ public class TriplePatternMatching extends AbstractLogicalOperator {
 		// don't replace prefixes here
 		// this must have been done in
 		// original triple pattern matching
+		if (tpm.predicate != null){
+			this.predicate = tpm.predicate.clone();
+		}
 	}
 
 	public TriplePatternMatching(Triple t, Variable n, String stream_name,

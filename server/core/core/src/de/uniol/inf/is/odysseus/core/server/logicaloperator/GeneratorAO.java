@@ -20,13 +20,14 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpress
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "GENERATOR", doc = "Generates missing values in a stream", category = { LogicalOperatorCategory.ADVANCED })
-public class GeneratorAO extends UnaryLogicalOp {
+public class GeneratorAO extends UnaryLogicalOp implements IHasPredicate{
 
     /**
      * 
@@ -38,6 +39,7 @@ public class GeneratorAO extends UnaryLogicalOp {
     private List<SDFAttribute> groupingAttributes;
     private int frequency;
     private boolean multi = false;
+	private IPredicate<?> predicate;
 
     public GeneratorAO() {
         super();
@@ -50,13 +52,20 @@ public class GeneratorAO extends UnaryLogicalOp {
         this.groupingAttributes = ao.groupingAttributes;
         this.frequency = ao.frequency;
         this.multi = ao.multi;
+        if (ao.predicate != null){
+        	predicate = ao.predicate.clone();
+        }
     }
 
     @SuppressWarnings("rawtypes")
-    @Override
     @Parameter(type = PredicateParameter.class)
     public void setPredicate(final IPredicate predicate) {
-        super.setPredicate(predicate);
+        this.predicate = predicate;
+    }
+    
+    @Override
+    public IPredicate<?> getPredicate() {
+    	return predicate;
     }
 
     @Parameter(type = BooleanParameter.class, optional = true)

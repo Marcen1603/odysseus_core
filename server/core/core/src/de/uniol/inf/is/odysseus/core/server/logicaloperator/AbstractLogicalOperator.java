@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -44,7 +43,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializeProperty
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.OwnerHandler;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -80,14 +78,14 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	private String destinationName = null;
 	private String uniqueIdentifier = null;
 
-	private List<IPredicate<?>> predicates = new LinkedList<IPredicate<?>>();
+//	private List<IPredicate<?>> predicates = new LinkedList<IPredicate<?>>();
 
 	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
 
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
-		for (IPredicate<?> pred : op.predicates) {
-			this.predicates.add(pred.clone());
-		}
+//		for (IPredicate<?> pred : op.predicates) {
+//			this.predicates.add(pred.clone());
+//		}
 		setName(op.getName());
 		this.ownerHandler = new OwnerHandler(op.ownerHandler);
 		this.outputSchema = new HashMap<>(op.outputSchema);
@@ -125,58 +123,58 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		return physInputOperators;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
-	 * #getPredicate ()
-	 */
-	@Override
-	public IPredicate<?> getPredicate() {
-		if (predicates.size() > 0) {
-			return predicates.get(0);
-		} else {
-			return null;
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
-	 * #setPredicate (de.uniol.inf.is.odysseus.core.server.predicate.IPredicate)
-	 */
-	@Override
-	public void setPredicate(IPredicate<?> predicate) {
-		if (predicates.size() > 0) {
-			predicates.set(0, predicate);
-		} else {
-			predicates.add(predicate);
-		}
-	}
-
-	@Override
-	public void setPredicates(List<IPredicate<?>> predi) {
-		predicates.clear();
-		predicates.addAll(predi);
-	}
-
-	@Override
-	public void addPredicate(IPredicate<?> predicate) {
-		predicates.add(predicate);
-	}
-
-	@Override
-	public List<IPredicate<?>> getPredicates() {
-		return predicates;
-	}
-
-	@Override
-	public boolean providesPredicates() {
-		return !predicates.isEmpty();
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see
+//	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
+//	 * #getPredicate ()
+//	 */
+//	@Override
+//	public IPredicate<?> getPredicate() {
+//		if (predicates.size() > 0) {
+//			return predicates.get(0);
+//		} else {
+//			return null;
+//		}
+//	}
+//
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see
+//	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
+//	 * #setPredicate (de.uniol.inf.is.odysseus.core.server.predicate.IPredicate)
+//	 */
+//	@Override
+//	public void setPredicate(IPredicate<?> predicate) {
+//		if (predicates.size() > 0) {
+//			predicates.set(0, predicate);
+//		} else {
+//			predicates.add(predicate);
+//		}
+//	}
+//
+//	@Override
+//	public void setPredicates(List<IPredicate<?>> predi) {
+//		predicates.clear();
+//		predicates.addAll(predi);
+//	}
+//
+//	@Override
+//	public void addPredicate(IPredicate<?> predicate) {
+//		predicates.add(predicate);
+//	}
+//
+//	@Override
+//	public List<IPredicate<?>> getPredicates() {
+//		return predicates;
+//	}
+//
+//	@Override
+//	public boolean providesPredicates() {
+//		return !predicates.isEmpty();
+//	}
 
 	/*
 	 * (non-Javadoc)

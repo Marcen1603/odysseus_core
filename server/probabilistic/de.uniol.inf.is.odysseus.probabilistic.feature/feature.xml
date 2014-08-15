@@ -29,6 +29,31 @@ Unless required by applicable law or agreed to in writing, software
    <url>
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
+
+   <requires>
+      <import plugin="de.uniol.inf.is.odysseus.core.server"/>
+      <import plugin="de.uniol.inf.is.odysseus.core"/>
+      <import plugin="com.google.guava"/>
+      <import plugin="de.uniol.inf.is.odysseus.intervalapproach"/>
+      <import plugin="de.uniol.inf.is.odysseus.mep"/>
+      <import plugin="de.uniol.inf.is.odysseus.relational.base"/>
+      <import plugin="de.uniol.inf.is.odysseus.server.intervalapproach"/>
+      <import plugin="de.uniol.inf.is.odysseus.sweeparea"/>
+      <import plugin="org.apache.commons.lang3"/>
+      <import plugin="Commons.Math"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
+      <import plugin="de.uniol.inf.is.odysseus.probabilistic" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.relational_interval"/>
+      <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
+      <import plugin="de.uniol.inf.is.odysseus.transform"/>
+      <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="com.rits.cloning" version="1.8.5" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.probabilistic.common" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.latency" version="1.0.0" match="greaterOrEqual"/>
+   </requires>
+
    <plugin
          id="de.uniol.inf.is.odysseus.probabilistic"
          download-size="0"
@@ -59,6 +84,13 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="de.uniol.inf.is.odysseus.probabilistic_latency"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.latency"
          download-size="0"
          install-size="0"
          version="0.0.0"

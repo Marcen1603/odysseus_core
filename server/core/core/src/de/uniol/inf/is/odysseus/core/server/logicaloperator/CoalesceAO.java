@@ -13,14 +13,16 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 
 @LogicalOperator(name = "COALESCE", minInputPorts = 1, maxInputPorts = 1, doc="This Operator can be used to combine sequent elements, e.g. by a set of grouping attributes or with a predicates. In the attributes case, the elements are merged with also given aggregations functions, as long as the grouping attributes (e.g. a sensorid) are the same. When a new group is opened (e.g. a measurement from a new sensor) the old aggregates values and the grouping attributes are created as a result. In the predicate case, the elements are merged as long as the predicates evaluates to false, i.e. a new tuple is created when the predicates evaluates to true.", category={LogicalOperatorCategory.ADVANCED})
-public class CoalesceAO extends AggregateAO {
+public class CoalesceAO extends AggregateAO implements IHasPredicate{
 
 	private static final long serialVersionUID = 6314887685476173038L;
 	private int maxElementsPerGroup = -1;
 	private boolean createOnHeartbeat = false;
 	private long heartbeatrate = -1;
+	private IPredicate<?> predicate;
 
 	public CoalesceAO() {
 	}
@@ -41,10 +43,14 @@ public class CoalesceAO extends AggregateAO {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	@Override
 	@Parameter(type=PredicateParameter.class, optional = true)
 	public void setPredicate(IPredicate predicate) {
-			super.setPredicate(predicate);
+			this.predicate = predicate;
+	}
+	
+	@Override
+	public IPredicate<?> getPredicate() {
+		return predicate;
 	}
 	
 	@Override

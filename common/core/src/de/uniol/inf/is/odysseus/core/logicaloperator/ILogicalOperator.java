@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.core.logicaloperator;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -31,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
@@ -153,48 +151,48 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 */
 	public SDFSchema getInputSchema(int pos);
 
-	/**
-	 * If this logical operator provides a predicate (e.g. a join or a
-	 * selection) this is delivered with this method
-	 * 
-	 * @return the predicate, could be null
-	 */
-	public IPredicate<?> getPredicate();
-
-	/**
-	 * Set the predicate for this logical operator
-	 * 
-	 * @param predicate
-	 */
-	public void setPredicate(IPredicate<?> predicate);
-
-	/**
-	 * Set predicates if operator has more than one predicate
-	 * 
-	 * @param predicates
-	 */
-	void setPredicates(List<IPredicate<?>> predicates);
-
-	/**
-	 * Adds a new predicate to the list of existing predicates
-	 * 
-	 * @param predicate
-	 */
-	void addPredicate(IPredicate<?> predicate);
-
-	/**
-	 * Get list of all predicates
-	 * 
-	 * @return
-	 */
-	List<IPredicate<?>> getPredicates();
-
-	/**
-	 * Return true if this operator provides predicates
-	 * 
-	 * @return
-	 */
-	boolean providesPredicates();
+//	/**
+//	 * If this logical operator provides a predicate (e.g. a join or a
+//	 * selection) this is delivered with this method
+//	 * 
+//	 * @return the predicate, could be null
+//	 */
+//	public IPredicate<?> getPredicate();
+//
+//	/**
+//	 * Set the predicate for this logical operator
+//	 * 
+//	 * @param predicate
+//	 */
+//	public void setPredicate(IPredicate<?> predicate);
+//
+//	/**
+//	 * Set predicates if operator has more than one predicate
+//	 * 
+//	 * @param predicates
+//	 */
+//	void setPredicates(List<IPredicate<?>> predicates);
+//
+//	/**
+//	 * Adds a new predicate to the list of existing predicates
+//	 * 
+//	 * @param predicate
+//	 */
+//	void addPredicate(IPredicate<?> predicate);
+//
+//	/**
+//	 * Get list of all predicates
+//	 * 
+//	 * @return
+//	 */
+//	List<IPredicate<?>> getPredicates();
+//
+//	/**
+//	 * Return true if this operator provides predicates
+//	 * 
+//	 * @return
+//	 */
+//	boolean providesPredicates();
 
 	/**
 	 * Find the subscription where the logical operator is the source

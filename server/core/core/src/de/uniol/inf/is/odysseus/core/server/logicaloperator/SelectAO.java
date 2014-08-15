@@ -25,16 +25,19 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 
 /**
  * @author Marco Grawunder
  * 
  */
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SELECT", doc="The select operator filters the incoming data stream according to the given predicate.", category={LogicalOperatorCategory.BASE})
-public class SelectAO extends UnaryLogicalOp {
+public class SelectAO extends UnaryLogicalOp implements IHasPredicate {
 	private static final long serialVersionUID = 3215936185841514846L;
 	private int rate;
 
+	private IPredicate<?> predicate;
+	
 	public SelectAO() {
 		super();
 	}
@@ -42,6 +45,7 @@ public class SelectAO extends UnaryLogicalOp {
 	public SelectAO(SelectAO po) {
 		super(po);
 		this.rate = po.rate;
+		this.predicate = po.predicate.clone();
 	}
 
 	public SelectAO(IPredicate<?> predicate) {
@@ -58,12 +62,15 @@ public class SelectAO extends UnaryLogicalOp {
 	}
 
 	@SuppressWarnings("rawtypes")
-	@Override
 	@Parameter(type = PredicateParameter.class)
 	public void setPredicate(IPredicate predicate) {
-		super.setPredicate(predicate);
+		this.predicate = predicate;
 	}
 
+	public IPredicate<?> getPredicate() {
+		return predicate;
+	}
+	
 	@Override
 	public SelectAO clone() {
 		return new SelectAO(this);
@@ -71,7 +78,7 @@ public class SelectAO extends UnaryLogicalOp {
 
 	@Override
 	public String toString() {
-		return super.toString() + getPredicates();
+		return super.toString() + getPredicate();
 	}
 
 }

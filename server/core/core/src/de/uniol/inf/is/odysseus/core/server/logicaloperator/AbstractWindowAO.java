@@ -31,8 +31,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicates;
 
-abstract public class AbstractWindowAO extends UnaryLogicalOp {
+abstract public class AbstractWindowAO extends UnaryLogicalOp implements
+		IHasPredicates {
 
 	private static final long serialVersionUID = 349442832133715634L;
 
@@ -66,8 +68,12 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 		this.windowSlide = windowPO.windowSlide;
 		this.partitionedBy = windowPO.partitionedBy;
 		this.windowType = windowPO.windowType;
-		this.startCondition = windowPO.startCondition;
-		this.endCondition = windowPO.endCondition;
+		if (windowPO.startCondition != null) {
+			this.startCondition = windowPO.startCondition.clone();
+		}
+		if (windowPO.endCondition != null) {
+			this.endCondition = windowPO.endCondition.clone();
+		}
 		this.sameStarttime = windowPO.sameStarttime;
 		this.baseTimeUnit = windowPO.baseTimeUnit;
 	}
@@ -223,7 +229,6 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 			pred.add(endCondition);
 		}
 		return pred;
-
 	}
 
 	/*
@@ -233,7 +238,6 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
 	 * #providesPredicates()
 	 */
-	@Override
 	public boolean providesPredicates() {
 		return true;
 	}
@@ -330,7 +334,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 	@Override
 	public void initialize() {
 		TimeUnit useTime = getBaseTimeUnit();
-		
+
 		// overwrite values, if only unit parameter is used (old version)
 		// TODO: remove this, when deprecated "timeUnit" value is removed!
 		if (this.timeUnit != null) {
@@ -354,14 +358,15 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 
 		super.initialize();
 	}
-	
-	
+
 	public long getWindowSizeMillis() {
-		return TimeUnit.MILLISECONDS.convert(getWindowSize().getTime(), getBaseTimeUnit());
+		return TimeUnit.MILLISECONDS.convert(getWindowSize().getTime(),
+				getBaseTimeUnit());
 	}
-	
+
 	public long getWindowAdvanceMillis() {
-		return TimeUnit.MILLISECONDS.convert(getWindowAdvance().getTime(), getBaseTimeUnit());
+		return TimeUnit.MILLISECONDS.convert(getWindowAdvance().getTime(),
+				getBaseTimeUnit());
 	}
 
 }

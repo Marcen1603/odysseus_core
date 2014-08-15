@@ -196,7 +196,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			if (ComplexPredicateHelper.isAndPredicate(pred)) {
 				if (left instanceof SelectAO) {
 					if (right instanceof SelectAO) {
-						((SelectAO) left).setPredicate(ComplexPredicateHelper.createAndPredicate(left.getPredicate(), right.getPredicate()));
+						((SelectAO) left).setPredicate(ComplexPredicateHelper.createAndPredicate(((SelectAO)left).getPredicate(), ((SelectAO)right).getPredicate()));
 						return left;
 					} else {
 						replaceBottomOps(right, left, curInputAO);
@@ -210,7 +210,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			if (ComplexPredicateHelper.isOrPredicate(pred)) {
 				if (left instanceof SelectAO) {
 					if (right instanceof SelectAO) {
-						((SelectAO) left).setPredicate(ComplexPredicateHelper.createOrPredicate(left.getPredicate(), right.getPredicate()));
+						((SelectAO) left).setPredicate(ComplexPredicateHelper.createOrPredicate(((SelectAO)left).getPredicate(),((SelectAO) right).getPredicate()));
 						return left;
 					}
 				}

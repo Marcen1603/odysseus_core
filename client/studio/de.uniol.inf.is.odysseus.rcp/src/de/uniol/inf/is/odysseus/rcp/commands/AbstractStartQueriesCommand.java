@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.commands;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;

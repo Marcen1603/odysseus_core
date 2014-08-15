@@ -897,15 +897,15 @@ public class OperatorBuildHelper {
 	public static RouteAO createRouteAO(List<String> listOfPredicates,
 			ILogicalOperator source) {
 		RouteAO rAO = new RouteAO();
-
+		List<IPredicate<?>> predicates = new LinkedList<IPredicate<?>>();
 		// Add predicates to the routeAO operator
 		for (String predicate : listOfPredicates) {
 			SDFExpression predicateExpression = new SDFExpression(predicate,
 					MEP.getInstance());
 			RelationalPredicate p = new RelationalPredicate(predicateExpression);
-
-			rAO.addPredicate(p);
+			predicates.add(p);
 		}
+		rAO.setPredicates(predicates);
 		rAO.subscribeTo(source, source.getOutputSchema());
 		return rAO;
 	}
@@ -1072,7 +1072,7 @@ public class OperatorBuildHelper {
 			PredicateParameter param = new PredicateParameter();
 			param.setAttributeResolver(createAttributeResolver(source));
 			param.setInputValue(predicateString);
-			sAO.addPredicate(param.getValue());
+			sAO.setPredicate(param.getValue());
 		}
 		sAO.subscribeTo(source, source.getOutputSchema());
 		return sAO;
@@ -1317,7 +1317,7 @@ public class OperatorBuildHelper {
 			PredicateParameter param = new PredicateParameter();
 			param.setAttributeResolver(resolver);
 			param.setInputValue(predicate);
-			joinAO.addPredicate(param.getValue());
+			joinAO.setPredicate(param.getValue());
 		}
 		joinAO.subscribeToSource(source1, 0, 0, source1.getOutputSchema());
 		joinAO.subscribeToSource(source2, 1, 0, source2.getOutputSchema());
