@@ -5,7 +5,7 @@
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
-      Wrapper to use the Apache Tika library for parsing of arbitrary file types.
+      Protocol handler to use the Apache Tika framework to parse arbitrary document types
    </description>
 
    <copyright>
