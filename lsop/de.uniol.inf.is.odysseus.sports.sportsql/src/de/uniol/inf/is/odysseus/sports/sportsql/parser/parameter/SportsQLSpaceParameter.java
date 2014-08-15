@@ -2,23 +2,38 @@ package de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter;
 
 public class SportsQLSpaceParameter implements ISportsQLParameter {
 
-	public static final String SPACE_PARAMETER_ALL = "all";
-	public static final String SPACE_PARAMETER_FIELD = "field";
+	public enum SpaceType {
+		all,
+		field,
+		left_half,
+		right_half,
+		left_third,
+		middle_third,
+		right_third
+	}
+	
+	public enum SpaceUnit {
+        meters,
+        centimeters,
+        millimeters
+    }
 
 	int startx;
 	int endx;
 	int starty;
 	int endy;
-	String space; // For "all", ...
+	SpaceType space; // For "all", ...
+	SpaceUnit unit;
 
 	public SportsQLSpaceParameter(int startx, int endx, int starty, int endy,
-			String space) {
+			SpaceType space, SpaceUnit unit) {
 		super();
 		this.startx = startx;
 		this.endx = endx;
 		this.starty = starty;
 		this.endy = endy;
 		this.space = space;
+		this.unit = unit;
 	}
 	
 	public SportsQLSpaceParameter() {
@@ -56,11 +71,20 @@ public class SportsQLSpaceParameter implements ISportsQLParameter {
 		this.endy = endy;
 	}
 
-	public String getSpace() {
+	public SpaceType getSpace() {
 		return space;
 	}
 
-	public void setSpace(String space) {
+	public void setSpace(SpaceType space) {
 		this.space = space;
 	}
+
+	public SpaceUnit getUnit() {
+		return unit;
+	}
+
+	public void setUnit(SpaceUnit unit) {
+		this.unit = unit;
+	}
+	
 }

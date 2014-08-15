@@ -1,22 +1,26 @@
 package de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter;
 
+import java.math.BigInteger;
+
 public class SportsQLTimeParameter implements ISportsQLParameter{
 	
 	public static final String TIME_PARAMETER_ALWAYS = "always";
 	public static final String TIME_PARAMETER_NOW = "now";
 	public static final String TIME_PARAMTER_GAME = "game";
-	
-	public static final String TIME_UNIT_MINUTES 		= "minutes";
-	public static final String TIME_UNIT_SECONDS 		= "seconds";
-	public static final String TIME_UNIT_MILLISECONDS 	= "milliseconds";
-	public static final String TIME_UNIT_PICOSECONDS 	= "picoseconds";
 
-	int start;
-	int end;
-	String time; // For "now", "always", etc.
-	String unit; // for minutes, seconds etc.
+	public enum TimeUnit {
+		minutes,
+		seconds,
+		milliseconds,
+		picoseconds
+	}
 	
-	public SportsQLTimeParameter(int start, int end, String time, String timeUnit) {
+	BigInteger start;
+	BigInteger end;
+	String time; // For "now", "always", etc.
+	TimeUnit unit; // for minutes, seconds etc.
+	
+	public SportsQLTimeParameter(BigInteger start, BigInteger end, String time, TimeUnit timeUnit) {
 		super();
 		this.start = start;
 		this.end = end;
@@ -28,16 +32,16 @@ public class SportsQLTimeParameter implements ISportsQLParameter{
 
 	}
 	
-	public int getStart() {
+	public BigInteger getStart() {
 		return start;
 	}
-	public void setStart(int start) {
+	public void setStart(BigInteger start) {
 		this.start = start;
 	}
-	public int getEnd() {
+	public BigInteger getEnd() {
 		return end;
 	}
-	public void setEnd(int end) {
+	public void setEnd(BigInteger end) {
 		this.end = end;
 	}
 
@@ -49,11 +53,11 @@ public class SportsQLTimeParameter implements ISportsQLParameter{
 		this.time = time;
 	}
 
-	public String getUnit() {
+	public TimeUnit getUnit() {
 		return unit;
 	}
 
-	public void setUnit(String unit) {
+	public void setUnit(TimeUnit unit) {
 		this.unit = unit;
 	}
 	

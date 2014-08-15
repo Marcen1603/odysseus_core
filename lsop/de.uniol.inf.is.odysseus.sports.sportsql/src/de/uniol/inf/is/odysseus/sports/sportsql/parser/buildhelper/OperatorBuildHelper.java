@@ -58,7 +58,12 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceUnitHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.TimeUnitHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.model.Space;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceUnit;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 /**
@@ -95,7 +100,14 @@ public class OperatorBuildHelper {
 	public static final int UPPERRIGHT_Y = 33941;
 	public static final int LOWERRIGHT_X = 52489;
 	public static final int LOWERRIGHT_Y = -33939;
-
+	
+	/**
+	 * Game field thirds
+	 */
+	public static final int THIRD_LEFT_RIGHT_Y = LOWERLEFT_Y + 22626;
+	public static final int THIRD_MIDDLE_RIGHT_Y = THIRD_LEFT_RIGHT_Y + 22626;
+	public static final int THIRD_RIGHT_RIGHT_Y = UPPERLEFT_Y;
+	
 	/**
 	 * Goals
 	 */
@@ -289,24 +301,23 @@ public class OperatorBuildHelper {
 	@SuppressWarnings("rawtypes")
 	public static SelectAO createSpaceSelect(SportsQLSpaceParameter parameter,
 			boolean inMeters, ILogicalOperator source) {
+		
+		SpaceUnit unit = parameter.getUnit();
+		if(unit == null) {
+			unit = SpaceUnit.millimeters;
+		}
+		
+		int startX = SpaceUnitHelper.getMillimeters(parameter.getStartx(), unit);
+		int startY = SpaceUnitHelper.getMillimeters(parameter.getStarty(), unit);
+		int endX = SpaceUnitHelper.getMillimeters(parameter.getEndx(), unit);
+		int endY = SpaceUnitHelper.getMillimeters(parameter.getEndy(), unit);
 
-		int startX = parameter.getStartx();
-		int startY = parameter.getStarty();
-		int endX = parameter.getEndx();
-		int endY = parameter.getEndy();
-
-		if (parameter.getSpace() != null && parameter.getSpace().equals(SportsQLSpaceParameter.SPACE_PARAMETER_ALL)) {
-			// Don't filter anything away
-			startX = Integer.MIN_VALUE;
-			startY = Integer.MIN_VALUE;
-			endX = Integer.MAX_VALUE;
-			endY = Integer.MAX_VALUE;
-		} else if(parameter.getSpace() != null && parameter.getSpace().equals(SportsQLSpaceParameter.SPACE_PARAMETER_FIELD)) {
-			// Filter for game field
-			startX = LOWERLEFT_X;
-			startY = LOWERLEFT_Y;
-			endX = LOWERRIGHT_X;
-			endY = UPPERLEFT_Y;
+		if(parameter.getSpace() != null) {
+			Space space = SpaceHelper.getSpace(parameter.getSpace());
+			startX = space.getStart().x;
+			startY = space.getStart().y;
+			endX = space.getEnd().x;
+			endY = space.getEnd().y;
 		}
 
 		// Predicate we want to produce:
@@ -464,8 +475,8 @@ public class OperatorBuildHelper {
 		// ${parameterTimeEnd_minute} AND second >= 0
 
 		// TODO: Do the right thing if timeParameter says "now"
-		int startMinute = timeParameter.getStart();
-		int endMinute = timeParameter.getEnd();
+		int startMinute = TimeUnitHelper.getMinutes(timeParameter.getStart(), timeParameter.getUnit());
+		int endMinute = TimeUnitHelper.getMinutes(timeParameter.getEnd(), timeParameter.getUnit());
 
 		if (timeParameter.getTime() != null && timeParameter.getTime().equals(SportsQLTimeParameter.TIME_PARAMETER_ALWAYS)) {
 			startMinute = Integer.MIN_VALUE;

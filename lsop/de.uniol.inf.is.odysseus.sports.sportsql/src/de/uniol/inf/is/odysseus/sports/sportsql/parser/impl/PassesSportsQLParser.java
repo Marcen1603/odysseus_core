@@ -28,11 +28,16 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAtt
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceUnitHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.model.Space;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLBooleanParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLDistanceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceUnit;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceType;
 
 
 /**
@@ -284,16 +289,18 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		int starty = 0;
 		int endx = 0;
 		int endy = 0;
-		if (spaceParameter == null || (spaceParameter.getSpace()!= null &&  spaceParameter.getSpace().equals(SportsQLSpaceParameter.SPACE_PARAMETER_ALL))) {
-			startx = OperatorBuildHelper.LOWERLEFT_X;
-			starty = OperatorBuildHelper.LOWERLEFT_Y;
-			endx = OperatorBuildHelper.LOWERRIGHT_X;
-			endy = OperatorBuildHelper.UPPERLEFT_Y;
+		
+		if(spaceParameter == null || spaceParameter.getSpace() == null) {
+			Space space = SpaceHelper.getSpace(SpaceType.field);
+			startx = space.getStart().x;
+			starty = space.getStart().y;
+			endx = space.getEnd().x;
+			endy = space.getEnd().y;
 		} else if (spaceParameter != null) {
-			startx = spaceParameter.getStartx();
-			starty = spaceParameter.getStarty();
-			endx = spaceParameter.getEndx();
-			endy = spaceParameter.getEndy();
+			startx = SpaceUnitHelper.getMillimeters(spaceParameter.getStartx(), SpaceUnit.millimeters);
+			starty = SpaceUnitHelper.getMillimeters(spaceParameter.getStarty(), SpaceUnit.millimeters);
+			endx = SpaceUnitHelper.getMillimeters(spaceParameter.getEndx(), SpaceUnit.millimeters);
+			endy = SpaceUnitHelper.getMillimeters(spaceParameter.getEndy(), SpaceUnit.millimeters);
 		}
 		ArrayList<String> spaceSelectPredicates = new ArrayList<String>();
 		spaceSelectPredicates.add("p1_"+ ATTRIBUTE_BALL_POS + ">=  ToPoint("+startx+","+starty+",0) AND p1_"+ ATTRIBUTE_BALL_POS + "<=  ToPoint("+endx+","+endy+",0) AND p2_"+ ATTRIBUTE_BALL_POS + ">=  ToPoint("+startx+","+starty+",0) AND p2_"+ ATTRIBUTE_BALL_POS + "<=  ToPoint("+endx+","+endy+",0)");
