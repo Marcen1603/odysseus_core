@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SimpleCSVP
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SizeByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.StringArrayProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.TextProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.DirectoryWatcherTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.FileHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingTcpHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TcpSocketHandler;
@@ -87,6 +88,7 @@ public class Activator implements BundleActivator {
 		TransportHandlerRegistry.register(new TcpSocketHandler());
 		TransportHandlerRegistry.register(new FileHandler());
 		TransportHandlerRegistry.register(new TimerTransportHandler());
+        TransportHandlerRegistry.register(new DirectoryWatcherTransportHandler());
 		TransportHandlerRegistry.register(new NonBlockingTcpHandler());
 		
 //		TransportHandlerRegistry.register(new NonBlockingTcpServerHandler());
