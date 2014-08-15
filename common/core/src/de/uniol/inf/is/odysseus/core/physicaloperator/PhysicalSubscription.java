@@ -21,6 +21,8 @@ package de.uniol.inf.is.odysseus.core.physicaloperator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.processing.ProcessingEnvironment;
+
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -34,8 +36,9 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 	@SuppressWarnings("rawtypes")
 	final private List<IStreamObject> suspendBuffer = new LinkedList<>();
 	private int sheddingFactor = 0;
-	private int readObjects;
-	
+	private int currentSheddingValue = 0;
+	private int sheddedObjects;
+
 	public PhysicalSubscription(K target, int sinkInPort, int sourceOutPort,
 			SDFSchema schema) {
 		super(target, sinkInPort, sourceOutPort, schema);
@@ -53,8 +56,8 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 	public boolean isSuspended() {
 		return openCalls == suspendCalls;
 	}
-	
-	public int getBufferSize(){
+
+	public int getBufferSize() {
 		return suspendBuffer.size();
 	}
 
@@ -79,28 +82,46 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 	public void setOpenCalls(int openCalls) {
 		this.openCalls = openCalls;
 	}
-	
+
+	/**
+	 * This is the value the resulting stream should be smaller (e.g. 25 mean,
+	 * the result stream should have 75 percent of the objects)
+	 * 
+	 * @param sheddingFactor
+	 */
 	public void setSheddingFactor(int sheddingFactor) {
+		assert sheddingFactor >= 0 && sheddingFactor <= 100 : "sheddingFactor must be betweeen 0 and 100";
 		this.sheddingFactor = sheddingFactor;
 	}
 
 	public int getSheddingFactor() {
 		return sheddingFactor;
 	}
-	
-	public boolean isShedding(){
+
+	public boolean isShedding() {
 		return sheddingFactor > 0;
 	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+
+	@SuppressWarnings({ "rawtypes" })
 	public void process(IStreamObject o) {
-		if (sheddingFactor > 0){
-			readObjects++;
-			if (readObjects == sheddingFactor){
-				readObjects = 0;
-				return;
+		// is load shedding active?
+		if (sheddingFactor > 0) {
+			// add sheddingFactor and if value higher 100 is read, 
+			// remove object
+			// e.g. 25: 25, 50, 75, 100 --> write 3 Object (at 25,50 and 75), and remove 1
+			currentSheddingValue = +sheddingFactor;
+			if (currentSheddingValue < 100) {
+				process_internal(o);
+			} else {
+				currentSheddingValue = -100;
 			}
+		} else {
+			process_internal(o);
 		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void process_internal(IStreamObject o) {
 		if (openCalls > 0 && openCalls == suspendCalls) {
 			suspendBuffer.add(o);
 		} else {
