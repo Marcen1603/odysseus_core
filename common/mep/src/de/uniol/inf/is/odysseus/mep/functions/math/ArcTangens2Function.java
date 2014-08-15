@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.mep.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractBinaryNumberInputFunction;
 
 /**
  * Returns the angle theta from the conversion of rectangular coordinates (x, y)
@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class ArcTangens2Function extends
-		AbstractUnaryNumberInputFunction<Double> {
+		AbstractBinaryNumberInputFunction<Double> {
 
 	private static final long serialVersionUID = 1824826421970268927L;
 
