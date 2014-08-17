@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.Activator">
+   <implementation class="de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.impl.Activator"/>
+   <reference bind="bindP2PDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary" name="IP2PDictionary" policy="static" unbind="unbindP2PDictionary"/>
+   <reference bind="bindFragmentationRule" cardinality="0..n" interface="de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.IFragmentationRule" name="IFragmentationRule" policy="dynamic" unbind="unbindFragmentationRule"/>
+</scr:component>

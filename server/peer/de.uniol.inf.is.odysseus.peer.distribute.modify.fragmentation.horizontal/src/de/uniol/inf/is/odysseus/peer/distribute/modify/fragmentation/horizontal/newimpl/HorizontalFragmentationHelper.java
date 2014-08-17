@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.newimpl;
 
 import java.util.Collection;
 import java.util.List;
@@ -9,20 +9,14 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TupleAggregateAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItemParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationHelper;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.AbstractFragmentationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.FragmentationInfoBundle;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
-import de.uniol.inf.is.odysseus.relational_interval.logicaloperator.RelationalFastMedianAO;
 
 /**
  * An fragmentation helper provides useful methods for fragmentation.
@@ -131,54 +125,6 @@ public class HorizontalFragmentationHelper extends AbstractFragmentationHelper {
 	}
 
 	/**
-	 * Checks if a special handling of an {@link AggregateAO} is needed.
-	 * 
-	 * @param part
-	 *            The {@link ILogicalQueryPart} to check.
-	 * @param bundle
-	 *            The {@link FragmentationInfoBundle} instance.
-	 * @return True, if <code>part</code> contains an {@link AggregateAO}, where
-	 *         partial aggregates are needed.
-	 * @throws QueryPartModificationException
-	 *             if <code>part</code> contains more than one
-	 *             {@link AggregateAO}, where partial aggregates are needed.
-	 */
-	private boolean needSpecialHandlingForAggregation(ILogicalQueryPart part,
-			FragmentationInfoBundle bundle)
-			throws QueryPartModificationException {
-
-		Preconditions.checkNotNull(part, "Query part must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Fragmentation info bundle must be not null!");
-
-		boolean foundAggregation = false;
-
-		for (ILogicalOperator operator : part.getOperators()) {
-
-			boolean needsPartialAggregates = this
-					.needPartialAggregates(operator);
-
-			if (!needsPartialAggregates) {
-
-				continue;
-
-			} else if (operator instanceof AggregateAO && !foundAggregation) {
-				foundAggregation = true;
-
-			} else {
-
-				throw new QueryPartModificationException(
-						"Can not fragment a query part containing more than one aggregation!");
-
-			}
-
-		}
-
-		return foundAggregation;
-
-	}
-
-	/**
 	 * Creates a new fragmentation helper.
 	 * 
 	 * @param fragmentationParameters
@@ -187,62 +133,6 @@ public class HorizontalFragmentationHelper extends AbstractFragmentationHelper {
 	public HorizontalFragmentationHelper(List<String> fragmentationParameters) {
 
 		super(fragmentationParameters);
-
-	}
-
-	@Override
-	public boolean isOperatorException(ILogicalOperator operator) {
-
-		if ((operator instanceof AbstractWindowAO)
-				&& !((AbstractWindowAO) operator).getWindowType().equals(
-						WindowType.TIME)) {
-
-			return true;
-
-		} else if (operator instanceof TupleAggregateAO) {
-
-			return true;
-
-		} else if (operator instanceof RelationalFastMedianAO) {
-
-			return true;
-
-		} else if (operator instanceof StateMapAO) {
-
-			return true;
-
-		}
-
-		return super.isOperatorException(operator);
-
-	}
-
-	@Override
-	public boolean needSpecialHandlingForQueryPart(ILogicalQueryPart part,
-			FragmentationInfoBundle bundle)
-			throws QueryPartModificationException {
-
-		Preconditions.checkNotNull(part, "Query part must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Fragmentation info bundle must be not null!");
-
-		return this.needSpecialHandlingForAggregation(part, bundle);
-
-	}
-
-	/**
-	 * Checks, if the usage of partial aggregates is needed.
-	 * 
-	 * @param operator
-	 *            The operatorto check.
-	 * @return True, if partial aggregates are needed.
-	 */
-	public boolean needPartialAggregates(ILogicalOperator operator) {
-
-		return operator instanceof AggregateAO
-				|| operator instanceof TupleAggregateAO
-				|| operator instanceof RelationalFastMedianAO
-				|| operator instanceof StateMapAO;
 
 	}
 

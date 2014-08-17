@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl;
 
 import java.util.Collection;
 import java.util.Map;

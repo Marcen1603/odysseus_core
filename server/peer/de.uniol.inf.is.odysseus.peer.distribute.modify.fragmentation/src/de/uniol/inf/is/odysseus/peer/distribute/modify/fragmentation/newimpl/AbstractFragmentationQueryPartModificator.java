@@ -24,9 +24,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationHelper;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.Activator;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.impl.Activator;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
 /**
@@ -47,118 +45,6 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractFragmentationQueryPartModificator.class);
-
-	/**
-	 * Determines all operators to build fragments.
-	 * 
-	 * @param operators
-	 *            The operators to check.
-	 * @param helper
-	 *            The {@link AbstractFragmentationHelper} instance.
-	 * @param bundle
-	 *            The {@link FragmentationInfoBundle} instance.
-	 * @return All operators within <code>operators</code> to build fragments.
-	 */
-	private static Collection<ILogicalOperator> determineOperatorsForFragment(
-			Collection<ILogicalOperator> operators,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle) {
-
-		// Preconditions
-		Preconditions.checkNotNull(operators,
-				"List of operators must be not null!");
-		Preconditions.checkNotNull(helper,
-				"Fragmentation helper must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Fragmentation info bundle must be not null!");
-		Preconditions
-				.checkNotNull(bundle.getOriginStartOperator(),
-						"The operator marking the start of fragmentation must be not null!");
-		Preconditions
-				.checkNotNull(bundle.getOriginEndOperator(),
-						"The operator marking the end of fragmentation must be not null!");
-
-		Collection<ILogicalOperator> operatorsForFragment = Lists
-				.newArrayList();
-
-		for (ILogicalOperator operator : operators) {
-
-			if (AbstractFragmentationHelper.isOperatorAbove(operator,
-					bundle.getOriginStartOperator())
-					&& (!bundle.getOriginEndOperator().isPresent() || AbstractFragmentationHelper
-							.isOperatorAbove(bundle.getOriginEndOperator()
-									.get(), operator))
-					&& !helper.isOperatorException(operator)) {
-
-				operatorsForFragment.add(operator);
-
-			}
-
-		}
-
-		return operatorsForFragment;
-
-	}
-
-	/**
-	 * Determines all query parts to build fragments.
-	 * 
-	 * @param queryParts
-	 *            The query parts to check.
-	 * @param helper
-	 *            The {@link AbstractFragmentationHelper} instance.
-	 * @param bundle
-	 *            The {@link FragmentationInfoBundle} instance.
-	 * @return All operators within <code>operators</code> to build fragments.
-	 */
-	private static IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> determineFragments(
-			Collection<ILogicalQueryPart> queryParts,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle) {
-
-		// Preconditions
-		Preconditions.checkNotNull(queryParts,
-				"List of query parts must be not null!");
-		Preconditions.checkNotNull(!queryParts.isEmpty(),
-				"List of query parts must be not empty!");
-
-		Collection<ILogicalQueryPart> fragments = Lists.newArrayList();
-		Collection<ILogicalQueryPart> nonfragments = Lists.newArrayList();
-
-		for (ILogicalQueryPart queryPart : queryParts) {
-
-			Collection<ILogicalOperator> operatorsForFragment = AbstractFragmentationQueryPartModificator
-					.determineOperatorsForFragment(queryPart.getOperators(),
-							helper, bundle);
-			if (!operatorsForFragment.isEmpty()) {
-
-				final ILogicalQueryPart fragment = new LogicalQueryPart(
-						operatorsForFragment, queryPart.getAvoidingQueryParts());
-				fragments.add(fragment);
-
-			}
-
-			if (operatorsForFragment.size() < queryPart.getOperators().size()) {
-
-				Collection<ILogicalOperator> operatorsForNonfragment = Lists
-						.newArrayList(queryPart.getOperators());
-				operatorsForNonfragment.removeAll(operatorsForFragment);
-
-				if (!operatorsForNonfragment.isEmpty()) {
-
-					ILogicalQueryPart nonfragment = new LogicalQueryPart(
-							operatorsForNonfragment,
-							queryPart.getAvoidingQueryParts());
-					nonfragments.add(nonfragment);
-
-				}
-
-			}
-
-		}
-
-		return new Pair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>>(
-				fragments, nonfragments);
-
-	}
 
 	/**
 	 * Checks, if there are enough peers available (
@@ -208,63 +94,6 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		}
 
 		return true;
-
-	}
-
-	/**
-	 * Makes preparations for fragmentation. <br />
-	 * The degree of fragmentation, the operators marking start and end of
-	 * fragmentation and the fragments are stored within<code>bundle</code>.
-	 * 
-	 * @param queryParts
-	 *            The given query parts.
-	 * @param helper
-	 *            The {@link AbstractFragmentationHelper} instance.
-	 * @param bundle
-	 *            The {@link FragmentationInfoBundle} instance.
-	 * @return True, if <code>queryParts</code> and the informations given by
-	 *         Odysseus-Script are valid for fragmentation.
-	 * @throws QueryPartModificationException
-	 *             If the parameters for fragmentation do not contain two
-	 *             parameters, if the second parameter is no integer or if the
-	 *             degree of fragmentation if lower than
-	 *             {@value #MIN_DEGREE_OF_FRAGMENTATION}. <br />
-	 *             If the parameters for fragmentation is empty or if the first
-	 *             parameter does not match any patterns within
-	 *             {@value #startAndEndPointPatterns}.<br />
-	 *             If no query parts remain to build fragments.
-	 */
-	private static void prepare(Collection<ILogicalQueryPart> queryParts,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle)
-			throws QueryPartModificationException {
-
-		// Preconditions
-		Preconditions.checkNotNull(helper,
-				"Fragmentation helper must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Fragmentation info bundle must be not null!");
-
-		// Determine degree of fragmentation
-		bundle.setDegreeOfFragmentation(helper.determineDegreeOfFragmentation());
-
-		// Determine identifiers for start point and end point for fragmentation
-		final IPair<ILogicalOperator, Optional<ILogicalOperator>> startAndendPointOfFragmentation = helper
-				.determineStartAndEndPoints(queryParts);
-		bundle.setOriginStartOperator(startAndendPointOfFragmentation.getE1());
-		bundle.setOriginEndOperator(startAndendPointOfFragmentation.getE2());
-
-		// Determine query parts to be fragments and those to be outside of
-		// fragments
-		final IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> fragmentsAndNonfragments = AbstractFragmentationQueryPartModificator
-				.determineFragments(queryParts, helper, bundle);
-		if (fragmentsAndNonfragments.getE1().isEmpty()) {
-
-			throw new QueryPartModificationException(
-					"No query parts given to build fragments!");
-
-		}
-		bundle.setOriginalRelevantParts(fragmentsAndNonfragments.getE1());
-		bundle.setOriginalIrrelevantParts(fragmentsAndNonfragments.getE2());
 
 	}
 
@@ -458,6 +287,175 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	}
 
 	/**
+	 * Determines all operators to build fragments.
+	 * 
+	 * @param operators
+	 *            The operators to check.
+	 * @param helper
+	 *            The {@link AbstractFragmentationHelper} instance.
+	 * @param bundle
+	 *            The {@link FragmentationInfoBundle} instance.
+	 * @return All operators within <code>operators</code> to build fragments.
+	 */
+	private Collection<ILogicalOperator> determineOperatorsForFragment(
+			Collection<ILogicalOperator> operators,
+			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle) {
+
+		// Preconditions
+		Preconditions.checkNotNull(operators,
+				"List of operators must be not null!");
+		Preconditions.checkNotNull(helper,
+				"Fragmentation helper must be not null!");
+		Preconditions.checkNotNull(bundle,
+				"Fragmentation info bundle must be not null!");
+		Preconditions
+				.checkNotNull(bundle.getOriginStartOperator(),
+						"The operator marking the start of fragmentation must be not null!");
+		Preconditions
+				.checkNotNull(bundle.getOriginEndOperator(),
+						"The operator marking the end of fragmentation must be not null!");
+
+		Collection<ILogicalOperator> operatorsForFragment = Lists
+				.newArrayList();
+
+		for (ILogicalOperator operator : operators) {
+
+			if (AbstractFragmentationHelper.isOperatorAbove(operator,
+					bundle.getOriginStartOperator())
+					&& (!bundle.getOriginEndOperator().isPresent() || AbstractFragmentationHelper
+							.isOperatorAbove(bundle.getOriginEndOperator()
+									.get(), operator))
+					&& helper.canOperatorBePartOfFragment(this, operator)) {
+
+				operatorsForFragment.add(operator);
+
+			}
+
+		}
+
+		return operatorsForFragment;
+
+	}
+
+	/**
+	 * Determines all query parts to build fragments.
+	 * 
+	 * @param queryParts
+	 *            The query parts to check.
+	 * @param helper
+	 *            The {@link AbstractFragmentationHelper} instance.
+	 * @param bundle
+	 *            The {@link FragmentationInfoBundle} instance.
+	 * @return All operators within <code>operators</code> to build fragments.
+	 */
+	private IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> determineFragments(
+			Collection<ILogicalQueryPart> queryParts,
+			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle) {
+
+		// Preconditions
+		Preconditions.checkNotNull(queryParts,
+				"List of query parts must be not null!");
+		Preconditions.checkNotNull(!queryParts.isEmpty(),
+				"List of query parts must be not empty!");
+
+		Collection<ILogicalQueryPart> fragments = Lists.newArrayList();
+		Collection<ILogicalQueryPart> nonfragments = Lists.newArrayList();
+
+		for (ILogicalQueryPart queryPart : queryParts) {
+
+			Collection<ILogicalOperator> operatorsForFragment = this
+					.determineOperatorsForFragment(queryPart.getOperators(),
+							helper, bundle);
+			if (!operatorsForFragment.isEmpty()) {
+
+				final ILogicalQueryPart fragment = new LogicalQueryPart(
+						operatorsForFragment, queryPart.getAvoidingQueryParts());
+				fragments.add(fragment);
+
+			}
+
+			if (operatorsForFragment.size() < queryPart.getOperators().size()) {
+
+				Collection<ILogicalOperator> operatorsForNonfragment = Lists
+						.newArrayList(queryPart.getOperators());
+				operatorsForNonfragment.removeAll(operatorsForFragment);
+
+				if (!operatorsForNonfragment.isEmpty()) {
+
+					ILogicalQueryPart nonfragment = new LogicalQueryPart(
+							operatorsForNonfragment,
+							queryPart.getAvoidingQueryParts());
+					nonfragments.add(nonfragment);
+
+				}
+
+			}
+
+		}
+
+		return new Pair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>>(
+				fragments, nonfragments);
+
+	}
+
+	/**
+	 * Makes preparations for fragmentation. <br />
+	 * The degree of fragmentation, the operators marking start and end of
+	 * fragmentation and the fragments are stored within<code>bundle</code>.
+	 * 
+	 * @param queryParts
+	 *            The given query parts.
+	 * @param helper
+	 *            The {@link AbstractFragmentationHelper} instance.
+	 * @param bundle
+	 *            The {@link FragmentationInfoBundle} instance.
+	 * @return True, if <code>queryParts</code> and the informations given by
+	 *         Odysseus-Script are valid for fragmentation.
+	 * @throws QueryPartModificationException
+	 *             If the parameters for fragmentation do not contain two
+	 *             parameters, if the second parameter is no integer or if the
+	 *             degree of fragmentation if lower than
+	 *             {@value #MIN_DEGREE_OF_FRAGMENTATION}. <br />
+	 *             If the parameters for fragmentation is empty or if the first
+	 *             parameter does not match any patterns within
+	 *             {@value #startAndEndPointPatterns}.<br />
+	 *             If no query parts remain to build fragments.
+	 */
+	private void prepare(Collection<ILogicalQueryPart> queryParts,
+			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle)
+			throws QueryPartModificationException {
+
+		// Preconditions
+		Preconditions.checkNotNull(helper,
+				"Fragmentation helper must be not null!");
+		Preconditions.checkNotNull(bundle,
+				"Fragmentation info bundle must be not null!");
+
+		// Determine degree of fragmentation
+		bundle.setDegreeOfFragmentation(helper.determineDegreeOfFragmentation());
+
+		// Determine identifiers for start point and end point for fragmentation
+		final IPair<ILogicalOperator, Optional<ILogicalOperator>> startAndendPointOfFragmentation = helper
+				.determineStartAndEndPoints(queryParts);
+		bundle.setOriginStartOperator(startAndendPointOfFragmentation.getE1());
+		bundle.setOriginEndOperator(startAndendPointOfFragmentation.getE2());
+
+		// Determine query parts to be fragments and those to be outside of
+		// fragments
+		final IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> fragmentsAndNonfragments = this
+				.determineFragments(queryParts, helper, bundle);
+		if (fragmentsAndNonfragments.getE1().isEmpty()) {
+
+			throw new QueryPartModificationException(
+					"No query parts given to build fragments!");
+
+		}
+		bundle.setOriginalRelevantParts(fragmentsAndNonfragments.getE1());
+		bundle.setOriginalIrrelevantParts(fragmentsAndNonfragments.getE2());
+
+	}
+
+	/**
 	 * Processes a single subscription between query parts.
 	 * 
 	 * @param subscription
@@ -561,7 +559,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 				// N:1 relationship
 				if (helper.needSpecialHandlingForQueryPart(
-						partOfOriginalTarget, bundle)) {
+						partOfOriginalTarget, this, helper)) {
 
 					// Need special handling
 					this.processSpecialHandling(copiedSources, copiedTargets,
@@ -604,7 +602,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 				// N:N relationship
 				if (helper.needSpecialHandlingForQueryPart(
-						partOfOriginalTarget, bundle)) {
+						partOfOriginalTarget, this, helper)) {
 
 					// Need special handling
 					this.processSpecialHandling(copiedSources, copiedTargets,
@@ -718,7 +716,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				.get(originalPart);
 		Optional<LogicalSubscription> subscription = Optional.absent();
 
-		if (helper.needSpecialHandlingForQueryPart(originalPart, bundle)) {
+		if (helper.needSpecialHandlingForQueryPart(originalPart, this, helper)) {
 
 			this.processSpecialHandling(copiedSources, copiedSinks,
 					subscription, partOfSource, partsOfCopiedSources,
@@ -1075,8 +1073,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		}
 
 		// Preparation based on the query parts and parameters
-		AbstractFragmentationQueryPartModificator.prepare(queryParts, helper,
-				bundle);
+		this.prepare(queryParts, helper, bundle);
 		AbstractFragmentationQueryPartModificator.LOG.debug(
 				"State of fragmentation after preparation:\n{}", bundle);
 

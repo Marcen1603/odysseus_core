@@ -1,11 +1,11 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range.newimpl;
 
 import java.util.List;
 
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.HorizontalFragmentationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.newimpl.HorizontalFragmentationHelper;
 
 /**
  * An fragmentation helper provides useful methods for fragmentation.

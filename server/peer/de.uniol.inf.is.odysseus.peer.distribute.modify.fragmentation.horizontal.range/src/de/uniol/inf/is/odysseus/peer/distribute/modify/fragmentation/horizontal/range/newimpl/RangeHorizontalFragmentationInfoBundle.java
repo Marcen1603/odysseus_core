@@ -1,8 +1,8 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range.newimpl;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.FragmentationInfoBundle;
 
 /**
  * An fragmentation info bundle is an ADT for objects and informations relevant

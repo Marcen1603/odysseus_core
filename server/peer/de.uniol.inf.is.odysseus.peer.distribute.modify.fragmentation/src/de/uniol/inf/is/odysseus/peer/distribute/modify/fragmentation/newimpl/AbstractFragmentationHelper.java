@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.impl.Activator;
 
 /**
  * An fragmentation helper provides useful methods for fragmentation.
@@ -200,6 +201,68 @@ public abstract class AbstractFragmentationHelper {
 							.handleRenameAOs(operator));
 
 				}
+
+			}
+
+		}
+
+		return Optional.absent();
+
+	}
+	
+	/**
+	 * Checks if a class is the same or a sub class of another class.
+	 * @param lowerClass The class, which should be the same as or a subclass of <code>upperClass</code>.
+	 * @param upperClass The class, which should be the same as or a superclass of <code>lowerClass</code>.
+	 * @return True, if <code>lowerClass</code> is the same as or a subclass of <code>upperClass</code>.
+	 */
+	private static boolean isSubsclassOf(Class<?> lowerClass, Class<?> upperClass) {
+
+		if (lowerClass.equals(upperClass)) {
+
+			return true;
+
+		} else if (lowerClass.getSuperclass() != null) {
+
+			return AbstractFragmentationHelper.isSubsclassOf(
+					lowerClass.getSuperclass(), upperClass);
+
+		}
+
+		return false;
+
+	}
+
+	/**
+	 * Searches for a fragmentation rule for a given combination of a
+	 * fragmentation strategy and an operator.
+	 * 
+	 * @param strategy
+	 *            The given fragmentation strategy.
+	 * @param operator
+	 *            The given operator.
+	 * @return An optional of the rule or {@link Optional#absent()}, if there is
+	 *         no rule.
+	 */
+	public static Optional<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> getFragmentationRule(
+			AbstractFragmentationQueryPartModificator strategy,
+			ILogicalOperator operator) {
+
+		Preconditions.checkNotNull(strategy,
+				"Fragmentation strategy must be not null!");
+		Preconditions.checkNotNull(operator, "Operator must be not null!");
+
+		for (IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator> rule : Activator
+				.getFragmentationRules()) {
+
+			if (AbstractFragmentationHelper.isSubsclassOf(strategy.getClass(),
+					rule.getClass().getTypeParameters()[0]
+							.getGenericDeclaration())
+					&& AbstractFragmentationHelper.isSubsclassOf(operator
+							.getClass(), rule.getClass().getTypeParameters()[1]
+							.getGenericDeclaration())) {
+
+				return Optional.of(rule);
 
 			}
 
@@ -517,20 +580,29 @@ public abstract class AbstractFragmentationHelper {
 
 	}
 
-	// TODO Make it extendible by using an adequate interface.
 	/**
-	 * Checks if an operator shall not be part of a fragment.
+	 * Checks, if a given operator can be part of a fragment.
 	 * 
 	 * @param operator
-	 *            The operator to check.
-	 * @return True, if <code>operator</code> shall not be part of a fragment;
-	 *         false else.
+	 *            The given operator.
+	 * @return True, if <code>operator</code> can be executed in
+	 *         intra-operational parallelism and therefore be part of a
+	 *         fragment.
 	 */
-	public boolean isOperatorException(ILogicalOperator operator) {
+	public boolean canOperatorBePartOfFragment(
+			AbstractFragmentationQueryPartModificator strategy,
+			ILogicalOperator operator) {
 
-		return (operator.isSinkOperator() && !operator.isSourceOperator())
-				|| operator instanceof AbstractAccessAO
-				|| operator instanceof StreamAO;
+		Optional<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> optRule = AbstractFragmentationHelper
+				.getFragmentationRule(strategy, operator);
+		if (optRule.isPresent()) {
+
+			return optRule.get().canOperatorBePartOfFragments(strategy,
+					operator);
+
+		}
+
+		return true;
 
 	}
 
@@ -540,16 +612,33 @@ public abstract class AbstractFragmentationHelper {
 	 * 
 	 * @param part
 	 *            The query part.
-	 * @param bundle
-	 *            The {@link FragmentationInfoBundle} instance.
+	 * @param strategy
+	 *            The given strategy.
+	 * @param helper
+	 *            The current fragmentation helper.
 	 * @return True, if <code>part</code> needs a special handling. This makes
 	 *         direct connection without fragmentation and/or reunion operators
 	 *         impossible.
-	 * @throws QueryPartModificationException
-	 *             if any error occurs.
 	 */
-	public abstract boolean needSpecialHandlingForQueryPart(
-			ILogicalQueryPart part, FragmentationInfoBundle bundle)
-			throws QueryPartModificationException;
+	public boolean needSpecialHandlingForQueryPart(ILogicalQueryPart part,
+			AbstractFragmentationQueryPartModificator strategy,
+			AbstractFragmentationHelper helper) {
+
+		for (ILogicalOperator operator : part.getOperators()) {
+
+			Optional<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> optRule = AbstractFragmentationHelper
+					.getFragmentationRule(strategy, operator);
+			if (optRule.isPresent()) {
+
+				return optRule.get().needSpecialHandlingForQueryPart(part,
+						operator, helper);
+
+			}
+
+		}
+
+		return false;
+
+	}
 
 }

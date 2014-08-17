@@ -1,6 +1,5 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.newimpl;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -9,12 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TupleAggregateAO;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.HorizontalFragmentationHelper;
-import de.uniol.inf.is.odysseus.relational_interval.logicaloperator.RelationalFastMedianAO;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.newimpl.HorizontalFragmentationHelper;
 
 /**
  * An fragmentation helper provides useful methods for fragmentation.
@@ -50,7 +44,7 @@ public class HashHorizontalFragmentationHelper extends
 		super(fragmentationParameters);
 
 	}
-
+	
 	/**
 	 * Determines the attributes to build a hash key, if given.
 	 * 
@@ -75,62 +69,6 @@ public class HashHorizontalFragmentationHelper extends
 		HashHorizontalFragmentationHelper.LOG.debug("Found '" + attributes
 				+ "' as attributes to form a key.");
 		return Optional.of(attributes);
-
-	}
-
-	@Override
-	public boolean isOperatorException(ILogicalOperator operator) {
-
-		return this.needPartialAggregates(operator)
-				|| super.isOperatorException(operator);
-
-	}
-
-	@Override
-	public boolean needPartialAggregates(ILogicalOperator operator) {
-
-		Optional<List<String>> attributes = this.determineKeyAttributes();
-		if (!attributes.isPresent()) {
-
-			return super.needPartialAggregates(operator);
-
-		}
-
-		Collection<SDFAttribute> aggregationAttributes = Lists.newArrayList();
-
-		if (operator instanceof TupleAggregateAO) {
-
-			aggregationAttributes.add(((TupleAggregateAO) operator)
-					.getAttribute());
-
-		} else if (operator instanceof RelationalFastMedianAO) {
-
-			aggregationAttributes.addAll(((RelationalFastMedianAO) operator)
-					.getGroupingAttributes());
-
-		} else if (operator instanceof StateMapAO) {
-
-			aggregationAttributes.addAll(((StateMapAO) operator)
-					.getGroupingAttributes());
-
-		} else
-			return false;
-
-		boolean foundAttribute = false;
-		for (SDFAttribute attribute : aggregationAttributes) {
-
-			if (attributes.get().contains(
-					attribute.getSourceName() + "."
-							+ attribute.getAttributeName())) {
-
-				foundAttribute = true;
-				break;
-
-			}
-
-		}
-
-		return !foundAttribute;
 
 	}
 
