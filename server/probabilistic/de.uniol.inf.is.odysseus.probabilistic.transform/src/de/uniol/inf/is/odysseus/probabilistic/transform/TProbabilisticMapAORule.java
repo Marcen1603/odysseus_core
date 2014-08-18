@@ -49,13 +49,13 @@ public class TProbabilisticMapAORule extends TMapAORule {
     public final void execute(final MapAO operator, final TransformationConfiguration config) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getInputSchema());
-        Objects.requireNonNull(operator.getExpressions());
+        Objects.requireNonNull(operator.getExpressionList());
         Objects.requireNonNull(config);
         IPhysicalOperator mapPO;
 
-        final SDFProbabilisticExpression[] expressions = new SDFProbabilisticExpression[operator.getExpressions().size()];
+        final SDFProbabilisticExpression[] expressions = new SDFProbabilisticExpression[operator.getExpressionList().size()];
         for (int i = 0; i < expressions.length; i++) {
-            expressions[i] = new SDFProbabilisticExpression(operator.getExpressions().get(i));
+            expressions[i] = new SDFProbabilisticExpression(operator.getExpressionList().get(i));
         }
         mapPO = new ProbabilisticMapPO<IProbabilistic>(operator.getInputSchema(), expressions, false);
 
@@ -70,7 +70,7 @@ public class TProbabilisticMapAORule extends TMapAORule {
     public final boolean isExecutable(final MapAO operator, final TransformationConfiguration config) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getInputSchema());
-        Objects.requireNonNull(operator.getExpressions());
+        Objects.requireNonNull(operator.getExpressionList());
         Objects.requireNonNull(config);
         if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
             if (operator.getPhysSubscriptionTo() != null) {
