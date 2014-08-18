@@ -222,15 +222,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		private void updateUsage(IResourceUsage usage) throws InterruptedException {
 			
 			// Preconditions
-			if(this.mAllocator == null) {
-				
-				throw new InterruptedException("No allocator set");
-				
-			} else if(this.mCommunicator == null) {
-				
-				throw new InterruptedException("No communicator set");
-				
-			} else if(!Activator.getExecutor().isPresent()) {
+			if(!Activator.getExecutor().isPresent()) {
 				
 				throw new InterruptedException("No executor bound");
 				
@@ -264,10 +256,18 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		
 		/**
 		 * Creates a new {@link SimpleLBThread}.
+		 * @param allocator An implementation of {@link ILoadBalancingAllocator}.
+		 * @param communicator An implementation of {@link ILoadBalancingCommunicator}.
 		 */
-		public SimpleLBThread() {
+		public SimpleLBThread(ILoadBalancingAllocator allocator, ILoadBalancingCommunicator communicator) {
 			
 			super("Simple Load Balancing Thread");
+			
+			Preconditions.checkNotNull(allocator, "The load balancing allocator to be used must be not null!");
+			Preconditions.checkNotNull(communicator, "The load balancing communicator to be used must be not null!");
+			
+			this.mAllocator = allocator;
+			this.mCommunicator = communicator;
 			
 		}
 		
@@ -277,12 +277,13 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 			Preconditions.checkArgument(Activator.getResourceManager().isPresent(), "No resource manager bound");
 			
 			final IPeerResourceUsageManager resourceManager = Activator.getResourceManager().get();
+			LOG.debug("Started monitoring local resources");
 			
 			while(this.isAlive() && !this.isInterrupted() && this.mRunning) {
-			
-				if(!this.mCurrentlyBalancing) {
 				
-					try {
+				try {
+			
+					if(!this.mCurrentlyBalancing) {
 					
 						final Optional<IResourceUsage> lastUsage = Optional.fromNullable(this.mUsage);
 						final IResourceUsage usage = resourceManager.getLocalResourceUsage();
@@ -293,18 +294,20 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 							
 						}
 						
-						Thread.sleep(this.mResourceLookupTime);
-						
-					} catch(InterruptedException e) {
-						
-						LOG.error(e.getMessage());
-						break;
-						
 					}
+				
+					Thread.sleep(this.mResourceLookupTime);
+				
+				} catch(InterruptedException e) {
+					
+					LOG.error(e.getMessage());
+					break;
 					
 				}
 				
 			}
+			
+			LOG.debug("Stopped monitoring local resources");
 			
 		}
 		
@@ -314,7 +317,17 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	 * The {@link SimpleLBThread} to look up the current resource usage. <br />
 	 * It will call {@link ILoadBalancingCommunicator#initiateLoadBalancing(PeerID, int)} if load balancing has to be done.
 	 */
-	private SimpleLBThread mLookupThread = new SimpleLBThread();
+	private SimpleLBThread mLookupThread;
+	
+	/**
+	 * The allocator to use.
+	 */
+	private ILoadBalancingAllocator mAllocator;
+	
+	/**
+	 * The communicator to use.
+	 */
+	private ILoadBalancingCommunicator mCommunicator;
 
 	@Override
 	public String getName() {
@@ -328,20 +341,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		
 		Preconditions.checkNotNull(allocator, "The load balancing allocator to be used must be not null!");
 		
-		if(this.mLookupThread.mAllocator == null) {
-			
-			this.mLookupThread.mAllocator = allocator;
-			
-		} else {
-		
-			synchronized (this.mLookupThread.mAllocator) {
-				
-				this.mLookupThread.mAllocator = allocator;
-				
-			}
-		
-		}
-		
+		this.mAllocator = allocator;		
 		LOG.debug("Set {} as implementation of {}", allocator.getClass().getSimpleName(), ILoadBalancingAllocator.class.getSimpleName());
 		
 	}
@@ -351,20 +351,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		
 		Preconditions.checkNotNull(communicator, "The load balancing communicator to be used must be not null!");
 		
-		if(this.mLookupThread.mCommunicator == null) {
-			
-			this.mLookupThread.mCommunicator = communicator;
-			
-		} else {
-		
-			synchronized (this.mLookupThread.mCommunicator) {
-	
-				this.mLookupThread.mCommunicator = communicator;
-				
-			}
-		
-		}
-		
+		this.mCommunicator = communicator;
 		LOG.debug("Set {} as implementation of {}", communicator.getClass().getSimpleName(), ILoadBalancingCommunicator.class.getSimpleName());
 		
 	}
@@ -441,17 +428,16 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	@Override
 	public void startMonitoring() throws LoadBalancingException {
 		
-		try {
-		
-			this.mLookupThread.mRunning = true;
-			this.mLookupThread.start();
-			LOG.debug("Started monitoring local resources");
-			
-		} catch(IllegalStateException e) {
+		if(this.mLookupThread != null && this.mLookupThread.isAlive()) {
 			
 			LOG.error("Load balancing strategy is already running!");
+			return;
 			
 		}
+		
+		this.mLookupThread = new SimpleLBThread(mAllocator, mCommunicator);
+		this.mLookupThread.mRunning = true;
+		this.mLookupThread.start();
 		
 	}
 
@@ -459,7 +445,6 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	public void stopMonitoring() {
 		
 		this.mLookupThread.mRunning = false;
-		LOG.debug("Stopped monitoring local resources");
 		
 	}
 
