@@ -442,7 +442,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			boolean overwriteExisting) {
 		List<SDFAttribute> newattributeList = new ArrayList<SDFAttribute>();
 		for (SDFAttribute a : schema.getAttributes()) {
-			if (a.getSourceName() == null || a.getSourceName().equals("")) {
+			if (overwriteExisting || a.getSourceName() == null || a.getSourceName().equals("")) {
 				newattributeList.add(new SDFAttribute(newName, a
 						.getAttributeName(), a));
 			} else {
