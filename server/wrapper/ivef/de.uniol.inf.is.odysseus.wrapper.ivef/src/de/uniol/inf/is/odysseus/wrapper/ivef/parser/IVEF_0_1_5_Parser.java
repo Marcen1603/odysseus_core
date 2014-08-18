@@ -1053,46 +1053,63 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
     public boolean parseXMLString(String data, boolean cont) { 
 
      m_dataBuffer += data;
-
-     int index[] = new int[8], indexMax = -1;
-
-     // note that if a message does not exist the index will be equal to strlen(name\n) - 1 so indexMax is always > 0
-     index[0] = m_dataBuffer.lastIndexOf("</MSG_LoginRequest>") + ("</MSG_LoginRequest>").length();
-     index[1] = m_dataBuffer.lastIndexOf("</MSG_LoginResponse>") + ("</MSG_LoginResponse>").length();
-     index[2] = m_dataBuffer.lastIndexOf("</MSG_Logout>") + ("</MSG_Logout>").length();
-     index[3] = m_dataBuffer.lastIndexOf("</MSG_Ping>") + ("</MSG_Ping>").length();
-     index[4] = m_dataBuffer.lastIndexOf("</MSG_Pong>") + ("</MSG_Pong>").length();
-     index[5] = m_dataBuffer.lastIndexOf("</MSG_ServerStatus>") + ("</MSG_ServerStatus>").length();
-     index[6] = m_dataBuffer.lastIndexOf("</MSG_ServiceRequest>") + ("</MSG_ServiceRequest>").length();
-     index[7] = m_dataBuffer.lastIndexOf("</MSG_VesselData>") + ("</MSG_VesselData>").length();
-     for (int i=0; i<8; i++) {
-         if (index[i] > indexMax) {
-             indexMax = index[i];
-         }
+ 
+     ////Extract complete messages from the buffer and parse them
+     ArrayList<String> ivefMessages = new ArrayList<>();
+     if(extractIvefMessages(ivefMessages)){
+	     for(String ivefMsg : ivefMessages){
+	    	 try { 
+	             parser.parse(new InputSource(new StringReader(ivefMsg)), this);
+	         } catch(Exception e) {
+	             String errorMessage =
+	                 "Error parsing " + ivefMsg + ": " + e;
+	             System.err.println(errorMessage);
+	             e.printStackTrace();
+	         }
+	     }
      }
-
-     if (indexMax > 30) {
-         String messages = m_dataBuffer.substring(0, indexMax);
-         m_dataBuffer = m_dataBuffer.substring(indexMax);// remove up to indexMax
-         try { 
-             parser.parse(new InputSource(new StringReader(messages)), this);
-         } catch(Exception e) {
-             String errorMessage =
-                 "Error parsing " + messages + ": " + e;
-             System.err.println(errorMessage);
-             e.printStackTrace();
-         }
-     }  
-     else {
-         return false; // not enough data in string
-     } 
+     ////
+   
+     //18.08 Using extraction the parser is more robust
+//     int index[] = new int[8], indexMax = -1;
+//
+//     // note that if a message does not exist the index will be equal to strlen(name\n) - 1 so indexMax is always > 0
+//     index[0] = m_dataBuffer.lastIndexOf("</MSG_LoginRequest>") + ("</MSG_LoginRequest>").length();
+//     index[1] = m_dataBuffer.lastIndexOf("</MSG_LoginResponse>") + ("</MSG_LoginResponse>").length();
+//     index[2] = m_dataBuffer.lastIndexOf("</MSG_Logout>") + ("</MSG_Logout>").length();
+//     index[3] = m_dataBuffer.lastIndexOf("</MSG_Ping>") + ("</MSG_Ping>").length();
+//     index[4] = m_dataBuffer.lastIndexOf("</MSG_Pong>") + ("</MSG_Pong>").length();
+//     index[5] = m_dataBuffer.lastIndexOf("</MSG_ServerStatus>") + ("</MSG_ServerStatus>").length();
+//     index[6] = m_dataBuffer.lastIndexOf("</MSG_ServiceRequest>") + ("</MSG_ServiceRequest>").length();
+//     index[7] = m_dataBuffer.lastIndexOf("</MSG_VesselData>") + ("</MSG_VesselData>").length();
+//     for (int i=0; i<8; i++) {
+//         if (index[i] > indexMax) {
+//             indexMax = index[i];
+//         }
+//     }
+//
+//     if (indexMax > 30) {
+//         String messages = m_dataBuffer.substring(0, indexMax);
+//         m_dataBuffer = m_dataBuffer.substring(indexMax);// remove up to indexMax
+//         try { 
+//             parser.parse(new InputSource(new StringReader(messages)), this);
+//         } catch(Exception e) {
+//             String errorMessage =
+//                 "Error parsing " + messages + ": " + e;
+//             System.err.println(errorMessage);
+//             e.printStackTrace();
+//         }
+//     }  
+//     else {
+//         return false; // not enough data in string
+//     } 
      if (!cont) {
          m_dataBuffer = "";
      }
      return true;
 }
     
-  //Parsing results: all messages which could be resulted from parsing
+	//Parsing results: all messages which could be resulted from parsing
     //MSG_LoginRequest
     public MSG_LoginRequest getLoginRequest(){
     	return m_loginRequest;
@@ -1180,6 +1197,35 @@ public class IVEF_0_1_5_Parser extends DefaultHandler {
     public void resetVesselDataPresent(){
     	m_vesselDataPresent = false;
     }
-
-
+    
+    //Extract the ready ivefMessages from the buffer:
+    private boolean extractIvefMessages(ArrayList<String> ivefMessages) {
+    	if (m_dataBuffer.equals(""))
+			return false;
+		//Indexes of the closer closing tags:
+		int index[] = new int[8];	
+	    index[0] = m_dataBuffer.contains("</MSG_LoginRequest>") ? m_dataBuffer.indexOf("</MSG_LoginRequest>") + ("</MSG_LoginRequest>").length() : -1;
+	    index[1] = m_dataBuffer.contains("</MSG_LoginResponse>") ? m_dataBuffer.indexOf("</MSG_LoginResponse>") + ("</MSG_LoginResponse>").length() : -1;
+	    index[2] = m_dataBuffer.contains("</MSG_Logout>") ? m_dataBuffer.indexOf("</MSG_Logout>") + ("</MSG_Logout>").length() : -1;
+	    index[3] = m_dataBuffer.contains("</MSG_Ping>") ? m_dataBuffer.indexOf("</MSG_Ping>") + ("</MSG_Ping>").length() : -1;
+	    index[4] = m_dataBuffer.contains("</MSG_Pong>") ? m_dataBuffer.indexOf("</MSG_Pong>") + ("</MSG_Pong>").length() : -1;
+	    index[5] = m_dataBuffer.contains("</MSG_ServerStatus>") ? m_dataBuffer.indexOf("</MSG_ServerStatus>") + ("</MSG_ServerStatus>").length() : -1;
+	    index[6] = m_dataBuffer.contains("</MSG_ServiceRequest>") ? m_dataBuffer.indexOf("</MSG_ServiceRequest>") + ("</MSG_ServiceRequest>").length() : -1;
+	    index[7] = m_dataBuffer.contains("</MSG_VesselData>") ? m_dataBuffer.indexOf("</MSG_VesselData>") + ("</MSG_VesselData>").length() : -1;
+	    //The closest:
+	    Integer indexMin = null;
+	    for(int iterator : index)
+	    	if(iterator != -1 && (indexMin == null || iterator < indexMin))
+	    		indexMin = iterator;
+	    //No complete message:
+	    if(indexMin == null)
+	    	return false;
+	    //Add to the list:
+	    ivefMessages.add(m_dataBuffer.substring(0, indexMin));
+	    //Remove up to indexMin
+	    m_dataBuffer = m_dataBuffer.substring(indexMin);
+	    //Recursive call
+        extractIvefMessages(ivefMessages);
+	    return true;
+	}
 }
