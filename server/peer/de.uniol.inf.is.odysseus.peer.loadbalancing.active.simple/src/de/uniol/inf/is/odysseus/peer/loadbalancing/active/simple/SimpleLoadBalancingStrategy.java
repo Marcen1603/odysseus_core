@@ -103,6 +103,11 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		/**
 		 * True, if a load balancing process is currently running.
 		 */
+		protected volatile boolean mRunning = false;
+		
+		/**
+		 * True, if {@link ILoadBalancingCommunicator#initiateLoadBalancing(PeerID, int)} has been called.
+		 */
 		protected volatile boolean mCurrentlyBalancing = false;
 		
 		/**
@@ -273,7 +278,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 			
 			final IPeerResourceUsageManager resourceManager = Activator.getResourceManager().get();
 			
-			while(this.isAlive() && !this.isInterrupted()) {
+			while(this.isAlive() && !this.isInterrupted() && this.mRunning) {
 			
 				if(!this.mCurrentlyBalancing) {
 				
@@ -438,6 +443,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		
 		try {
 		
+			this.mLookupThread.mRunning = true;
 			this.mLookupThread.start();
 			LOG.debug("Started monitoring local resources");
 			
@@ -452,7 +458,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	@Override
 	public void stopMonitoring() {
 		
-		this.mLookupThread.interrupt();
+		this.mLookupThread.mRunning = false;
 		LOG.debug("Stopped monitoring local resources");
 		
 	}

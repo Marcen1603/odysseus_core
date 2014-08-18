@@ -278,6 +278,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 		
 		this.mRunningStrategy.get().stopMonitoring();
+		this.mRunningStrategy = Optional.absent();
 		
 	}
 
