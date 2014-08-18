@@ -48,7 +48,12 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 					LOG.debug("Using IPv6 for socket connection: {}", address);
 				} else {
 					// IPv4
-					address = InetAddress.getByName(addressString.substring(0, addressString.indexOf(":")));
+					int portIndex = addressString.indexOf(":");
+					if( portIndex >= 0 ) {
+						address = InetAddress.getByName(addressString.substring(0, portIndex));
+					} else {
+						address = InetAddress.getByName(addressString);
+					}
 					LOG.debug("Using IPv4 for socket connection: {}", address);
 				}
 			} catch (UnknownHostException e) {
