@@ -56,7 +56,7 @@ public class TConverterAORule extends AbstractTransformationRule<ConverterAO> {
 		IProtocolHandler<?> protocolHandler = ProtocolHandlerRegistry
 				.getInstance(operator.getProtocolHandler(),
 						ITransportDirection.IN, IAccessPattern.PULL,
-						operator.getOptions(), outputDataHandler);
+						operator.getOptionMap(), outputDataHandler);
 
 		if (protocolHandler == null) {
 			LOG.error("No protocol handler {} found.",
@@ -67,7 +67,7 @@ public class TConverterAORule extends AbstractTransformationRule<ConverterAO> {
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		ConverterPO converter = new ConverterPO(inputDataHandler,
-				outputDataHandler, protocolHandler, operator.getOptions());
+				outputDataHandler, protocolHandler, operator.getOptionMap());
 		defaultExecute(operator, converter, config, true, true);
 	}
 
