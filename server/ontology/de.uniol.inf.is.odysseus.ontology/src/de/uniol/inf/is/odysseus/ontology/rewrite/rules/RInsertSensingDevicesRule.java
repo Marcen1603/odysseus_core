@@ -255,8 +255,8 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
         mapAO.setExpressions(namedExpressions);
         if (RInsertSensingDevicesRule.LOG.isDebugEnabled()) {
             RInsertSensingDevicesRule.LOG.debug("Insert map operator: {}", mapAO.toString());
-            for (int i = 0; i < mapAO.getExpressions().size(); i++) {
-                RInsertSensingDevicesRule.LOG.debug("{}. {} ", i, mapAO.getExpressions().get(i));
+            for (int i = 0; i < mapAO.getExpressionList().size(); i++) {
+                RInsertSensingDevicesRule.LOG.debug("{}. {} ", i, mapAO.getExpressionList().get(i));
             }
         }
 
