@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,29 +25,33 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  * 
  * @author Jonas Jacobi
  * 
- * @param <T> Java type of this value, should be compatible to the SDFDatatype
- * used 
+ * @param <T>
+ *            Java type of this value, should be compatible to the SDFDatatype
+ *            used
  */
 
 public class Constant<T> implements IExpression<T> {
 
 	private static final long serialVersionUID = 504053838249636471L;
 	/**
-	 * The value of this 
+	 * The value of this
 	 */
 	private final T value;
 	private SDFDatatype type;
 
 	/**
 	 * Create a new constant
-	 * @param value The value
-	 * @param type The SDFDatatype
+	 * 
+	 * @param value
+	 *            The value
+	 * @param type
+	 *            The SDFDatatype
 	 */
 	public Constant(T value, SDFDatatype type) {
 		this.value = value;
 		this.type = type;
 	}
-	
+
 	@Override
 	public T getValue() {
 		return value;
@@ -60,11 +64,15 @@ public class Constant<T> implements IExpression<T> {
 
 	@Override
 	public String toString() {
-//		if( type.isNumeric() ){
-//			NumberFormat f = new DecimalFormat("#");
-//			return f.format(value);
-//		}
-		return value.toString();
+		// if( type.isNumeric() ){
+		// NumberFormat f = new DecimalFormat("#");
+		// return f.format(value);
+		// }
+		if (type == SDFDatatype.STRING || type == SDFDatatype.START_TIMESTAMP_STRING) {
+			return "\""+value.toString()+"\"";
+		} else {
+			return value.toString();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -77,12 +85,12 @@ public class Constant<T> implements IExpression<T> {
 	public SDFDatatype getReturnType() {
 		return type;
 	}
-	
+
 	@Override
 	public int getReturnTypeCard() {
 		return 1;
 	}
-	
+
 	@Override
 	public SDFDatatype getReturnType(int pos) {
 		return getReturnType();
