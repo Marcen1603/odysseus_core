@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunctio
 public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 
 	Logger logger = LoggerFactory.getLogger(LogicalOperatorBuilder.class);
-	
+
 	private List<Class<?>> loadedOperatorClasses = new ArrayList<>();
+	private static int missingGetterMethodCount = 0;
 
 	// private static final Map<String, GenericOperatorBuilder> operatorBuilders
 	// = new HashMap<String, GenericOperatorBuilder>();
@@ -97,31 +98,25 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 	}
 
 	private void removeBundle(Bundle bundle) {
-		Enumeration<URL> entries = bundle.findEntries(
-				"", "*.class", true);
+		Enumeration<URL> entries = bundle.findEntries("", "*.class", true);
 
 		while (entries.hasMoreElements()) {
 			URL curURL = entries.nextElement();
 			if (curURL.toString().contains(".logicaloperator")) {
-				Class<? extends ILogicalOperator> classObject = loadLogicalOperatorClass(
-						bundle, curURL);
+				Class<? extends ILogicalOperator> classObject = loadLogicalOperatorClass(bundle, curURL);
 				if (classObject == null) {
 					continue;
 				}
-				String operatorName = classObject.getAnnotation(
-						LogicalOperator.class).name();
+				String operatorName = classObject.getAnnotation(LogicalOperator.class).name();
 				OperatorBuilderFactory.removeOperatorBuilderByName(operatorName);
-			}else if (curURL.toString().contains("/udf")) {
+			} else if (curURL.toString().contains("/udf")) {
 				@SuppressWarnings("rawtypes")
-				Class<? extends IUserDefinedFunction> classObject = loadUDFClass(
-						bundle, curURL);
+				Class<? extends IUserDefinedFunction> classObject = loadUDFClass(bundle, curURL);
 				if (classObject != null) {
 					String nameToRemove = classObject.getName();
 
-					if (classObject
-							.isAnnotationPresent(UserDefinedFunction.class)) {
-						UserDefinedFunction annotation = classObject
-								.getAnnotation(UserDefinedFunction.class);
+					if (classObject.isAnnotationPresent(UserDefinedFunction.class)) {
+						UserDefinedFunction annotation = classObject.getAnnotation(UserDefinedFunction.class);
 						nameToRemove = annotation.name();
 					}
 					OperatorBuilderFactory.removeUdf(nameToRemove);
@@ -132,8 +127,7 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Class<? extends ILogicalOperator> loadLogicalOperatorClass(
-			Bundle bundle, URL curURL) {
+	private Class<? extends ILogicalOperator> loadLogicalOperatorClass(Bundle bundle, URL curURL) {
 		String file = curURL.getFile();
 		int start = 1;
 		String className = "";
@@ -143,24 +137,20 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 			}
 			// remove potential '/bin' and 'class' and change path to package
 			// name
-			className = file.substring(start, file.length() - 6).replace('/',
-					'.');
+			className = file.substring(start, file.length() - 6).replace('/', '.');
 			logger.trace("Trying to load class " + className);
 			Class<?> classObject = bundle.loadClass(className);
-			if (classObject.isAnnotationPresent(LogicalOperator.class)
-					&& ILogicalOperator.class.isAssignableFrom(classObject)) {
+			if (classObject.isAnnotationPresent(LogicalOperator.class) && ILogicalOperator.class.isAssignableFrom(classObject)) {
 				return (Class<? extends ILogicalOperator>) classObject;
 			}
 		} catch (Exception e) {
-			logger.error("Failed to load Class " + className + " Reason: "
-					+ e.getMessage());
+			logger.error("Failed to load Class " + className + " Reason: " + e.getMessage());
 		}
 		return null;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private Class<? extends IUserDefinedFunction> loadUDFClass(Bundle bundle,
-			URL curURL) {
+	private Class<? extends IUserDefinedFunction> loadUDFClass(Bundle bundle, URL curURL) {
 		String file = curURL.getFile();
 		int start = 1;
 		try {
@@ -169,8 +159,7 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 			}
 			// remove potential '/bin' and 'class' and change path to package
 			// name
-			String className = file.substring(start, file.length() - 6)
-					.replace('/', '.');
+			String className = file.substring(start, file.length() - 6).replace('/', '.');
 			Class<?> classObject = bundle.loadClass(className);
 			logger.debug("Loading UDF " + className);
 
@@ -185,14 +174,12 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 	}
 
 	private void searchBundle(Bundle bundle) {
-		Enumeration<URL> entries = bundle.findEntries(
-				"/bin/", "*.class", true);
+		Enumeration<URL> entries = bundle.findEntries("/bin/", "*.class", true);
 		// collect logical operators and register parameters first
 		// add logical operators afterwards, because they may need the newly
 		// registered parameters
 		if (entries == null) {
-			entries = bundle.findEntries("/",
-					"*.class", true);
+			entries = bundle.findEntries("/", "*.class", true);
 			if (entries == null) {
 				return;
 			}
@@ -200,22 +187,18 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 		while (entries.hasMoreElements()) {
 			URL curURL = entries.nextElement();
 			if (curURL.toString().contains("/logicaloperator")) {
-				Class<? extends ILogicalOperator> classObject = loadLogicalOperatorClass(
-						bundle, curURL);
+				Class<? extends ILogicalOperator> classObject = loadLogicalOperatorClass(bundle, curURL);
 				if (classObject != null) {
 					addLogicalOperator(classObject);
 				}
 			} else if (curURL.toString().contains("/udf")) {
 				@SuppressWarnings("rawtypes")
-				Class<? extends IUserDefinedFunction> classObject = loadUDFClass(
-						bundle, curURL);
+				Class<? extends IUserDefinedFunction> classObject = loadUDFClass(bundle, curURL);
 				if (classObject != null) {
 					String nameToRegister = classObject.getName();
 
-					if (classObject
-							.isAnnotationPresent(UserDefinedFunction.class)) {
-						UserDefinedFunction annotation = classObject
-								.getAnnotation(UserDefinedFunction.class);
+					if (classObject.isAnnotationPresent(UserDefinedFunction.class)) {
+						UserDefinedFunction annotation = classObject.getAnnotation(UserDefinedFunction.class);
 						nameToRegister = annotation.name();
 					}
 					OperatorBuilderFactory.putUdf(nameToRegister, classObject);
@@ -228,39 +211,38 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 
 	private void addLogicalOperator(Class<? extends ILogicalOperator> curOp) {
 		// avoid double loading of the same operator
-		if(loadedOperatorClasses.contains(curOp)){
+		if (loadedOperatorClasses.contains(curOp)) {
 			return;
 		}
 		loadedOperatorClasses.add(curOp);
 		Map<Parameter, Method> parameters = new HashMap<Parameter, Method>();
 
-		LogicalOperator logicalOperatorAnnotation = curOp
-				.getAnnotation(LogicalOperator.class);
+		LogicalOperator logicalOperatorAnnotation = curOp.getAnnotation(LogicalOperator.class);
 
 		try {
 			BeanInfo beanInfo = Introspector.getBeanInfo(curOp, Object.class);
-			for (PropertyDescriptor curProperty : beanInfo
-					.getPropertyDescriptors()) {
+			for (PropertyDescriptor curProperty : beanInfo.getPropertyDescriptors()) {
 				Method writeMethod = curProperty.getWriteMethod();
-				if (writeMethod != null
-						&& writeMethod.isAnnotationPresent(Parameter.class)) {
-					Parameter parameterAnnotation = writeMethod
-							.getAnnotation(Parameter.class);
+				if (writeMethod != null && writeMethod.isAnnotationPresent(Parameter.class)) {
+					Parameter parameterAnnotation = writeMethod.getAnnotation(Parameter.class);
 					parameters.put(parameterAnnotation, writeMethod);
+					
+					// security check
+					if( curProperty.getReadMethod() == null ) {
+						logger.error("[Missing Get #{}] There is not getter-method for parameter '{}' of operator {}", new Object[]{++missingGetterMethodCount, parameterAnnotation.name(), curOp.getName()});
+					}
 				}
 			}
-			logger.debug("Create GenericOperatorBuilder Builder for " + curOp
-					+ " with parameters " + parameters);
+			logger.debug("Create GenericOperatorBuilder Builder for " + curOp + " with parameters " + parameters);
 			String doc = logicalOperatorAnnotation.doc();
-			if( doc == null || doc.isEmpty() ) {
+			if (doc == null || doc.isEmpty()) {
 				logger.warn("Documentation for {} not available!", logicalOperatorAnnotation.name());
 			}
-			GenericOperatorBuilder builder = new GenericOperatorBuilder(curOp, logicalOperatorAnnotation.name(), parameters, logicalOperatorAnnotation.minInputPorts(),
-					logicalOperatorAnnotation.maxInputPorts(), doc, logicalOperatorAnnotation.category());
+			GenericOperatorBuilder builder = new GenericOperatorBuilder(curOp, logicalOperatorAnnotation.name(), parameters, logicalOperatorAnnotation.minInputPorts(), logicalOperatorAnnotation.maxInputPorts(), doc, logicalOperatorAnnotation.category());
 			OperatorBuilderFactory.addOperatorBuilder(builder);
-		}catch(NoClassDefFoundError e){			
+		} catch (NoClassDefFoundError e) {
 			e.printStackTrace();
-			logger.error("LogicalOperator "+curOp.getCanonicalName()+" not found. Check if core and core-server plugins were added as dependencies in its bundle");
+			logger.error("LogicalOperator " + curOp.getCanonicalName() + " not found. Check if core and core-server plugins were added as dependencies in its bundle");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
