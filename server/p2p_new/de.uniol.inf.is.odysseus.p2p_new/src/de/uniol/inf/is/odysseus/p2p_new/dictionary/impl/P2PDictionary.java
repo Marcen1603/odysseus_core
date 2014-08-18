@@ -674,6 +674,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	public Optional<String> getRemotePeerAddress(PeerID peerID) {
 		Preconditions.checkNotNull(peerID, "PeerID to get the address from must not be null!");
 
+		if( peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
+			return Optional.of("127.0.0.1");
+		}
+		
 		String address = remotePeerAddressMap.get(peerID);
 		if (Strings.isNullOrEmpty(address)) {
 			Optional<String> newAddress = JxtaServicesProvider.getInstance().getRemotePeerAddress(peerID);
