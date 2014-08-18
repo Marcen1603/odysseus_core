@@ -53,10 +53,10 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 				}
 			} catch (UnknownHostException e) {
 				address = null;
-				throw new DataTransmissionException("Address can not be determined", e);
+				throw new DataTransmissionException("Address of peerid '" + peerID + "' can not be determined", e);
 			}
 		} else {
-			throw new DataTransmissionException("Direct address can not be determined");
+			throw new DataTransmissionException("Direct address peerid '" + peerID + "' can not be determined");
 		}
 	}
 
