@@ -303,6 +303,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 				JxtaReceiverAO access = new JxtaReceiverAO();
 				access.setPipeID(pipeID.toString());
 				access.setSchema(sourceOp.getOutputSchema().getAttributes());
+				access.setSchemaName(sourceOp.getOutputSchema().getURI());
 				access.setPeerID(allocationMap.get(sourceQueryPart).toString());
 				return access;
 			}
@@ -337,6 +338,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 						receiverOperator.setPipeID(advertisement.getPipeID().toString());
 						receiverOperator.setOutputSchema(advertisement.getOutputSchema());
 						receiverOperator.setSchema(advertisement.getOutputSchema().getAttributes());
+						receiverOperator.setSchemaName(advertisement.getOutputSchema().getURI());
 						receiverOperator.setName(accessAO.getAccessAOName().getResourceName() + "_Receive");
 						receiverOperator.setImportedSourceAdvertisement(advertisement);
 						receiverOperator.setPeerID(advertisement.getPeerID().toString());

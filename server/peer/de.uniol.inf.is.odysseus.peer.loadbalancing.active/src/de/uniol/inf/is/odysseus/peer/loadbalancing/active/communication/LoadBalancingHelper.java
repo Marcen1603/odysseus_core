@@ -223,6 +223,7 @@ public class LoadBalancingHelper {
 					receiver.setPipeID(newPipeID);
 					receiver.setPeerID(connection.remotePeerID);
 					receiver.setSchema(connection.schema.getAttributes());
+					receiver.setSchemaName(connection.schema.getURI());
 					receiver.connectSink(relativeSource, connection.port, 0,
 							relativeSource.getInputSchema(0));
 					modifiedPart.addOperator(receiver);

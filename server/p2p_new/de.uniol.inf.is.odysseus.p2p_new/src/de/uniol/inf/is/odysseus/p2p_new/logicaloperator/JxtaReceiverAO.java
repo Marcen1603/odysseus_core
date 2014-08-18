@@ -26,6 +26,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 	private String peerID;
 	
 	private SDFSchema assignedSchema;
+	private String schemaName;
 	private SourceAdvertisement importedSrcAdvertisement;
 
 	public JxtaReceiverAO() {
@@ -100,12 +101,30 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 
 	@Parameter(name="SCHEMA", type = CreateSDFAttributeParameter.class, isList=true,optional=false)
 	public void setSchema(List<SDFAttribute> outputSchema) {
-		assignedSchema = new SDFSchema("", Tuple.class,outputSchema);
+		if( !Strings.isNullOrEmpty(schemaName)) {
+			assignedSchema = new SDFSchema(schemaName, Tuple.class,outputSchema);
+		} else {
+			assignedSchema = new SDFSchema("", Tuple.class,outputSchema);
+		}
 		addParameterInfo("SCHEMA", schemaToString(outputSchema));
 	}
 	
 	public List<SDFAttribute> getSchema() {
 		return assignedSchema.getAttributes();
+	}
+	
+	
+	@Parameter(name = "SCHEMANAME",type = StringParameter.class, optional=false)
+	public void setSchemaName( String schemaName ) {
+		this.schemaName = schemaName;
+		
+		if( assignedSchema != null ) {
+			assignedSchema = new SDFSchema(schemaName, Tuple.class, assignedSchema.getAttributes());
+		}
+	}
+	
+	public String getSchemaName() {
+		return schemaName;
 	}
 	
 	@Override

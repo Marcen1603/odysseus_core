@@ -344,6 +344,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			receiverOperator.setPipeID(advertisement.getPipeID().toString());
 			receiverOperator.setOutputSchema(advertisement.getOutputSchema());
 			receiverOperator.setSchema(advertisement.getOutputSchema().getAttributes());
+			receiverOperator.setSchemaName(advertisement.getOutputSchema().getURI());
 			receiverOperator.setName(realSrcNameToUse + "_Receive");
 			receiverOperator.setImportedSourceAdvertisement(advertisement);
 			receiverOperator.setPeerID(advertisement.getPeerID().toString());
