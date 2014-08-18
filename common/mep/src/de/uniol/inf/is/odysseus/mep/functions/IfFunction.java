@@ -15,12 +15,15 @@
   */
 package de.uniol.inf.is.odysseus.mep.functions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 public class IfFunction extends AbstractFunction<Object> {
 
-//	private static final Logger LOG = LoggerFactory.getLogger(IfFunction.class);
+	private static final Logger LOG = LoggerFactory.getLogger(IfFunction.class);
 	private static final long serialVersionUID = 7330905069703118113L;
 
 	public static SDFDatatype[][] accTypes = new SDFDatatype[][]{
@@ -40,25 +43,25 @@ public class IfFunction extends AbstractFunction<Object> {
 	}
 
 	
-//	@Override
-//	protected SDFDatatype determineReturnType() {
-//		// if then and else arguments have the same type, we are sure to return
-//		// a value of that type
-//		SDFDatatype type1 = getArguments()[1].getReturnType();
-//		SDFDatatype type2 = getArguments()[2].getReturnType();
-//		if (type1 == type2) {
-//			return getArguments()[1].getReturnType();
-//		}
-//		
-//		if( type1.compatibleTo(type2)) {
-//			return type2;
-//		} else if( type2.compatibleTo(type1)) {
-//			return type1;
-//		} else {
-//			LOG.warn("Incompatible return types in if-Function");
-//			return SDFDatatype.OBJECT;
-//		}
-//	}
+	@Override
+	protected SDFDatatype determineReturnType() {
+		// if then and else arguments have the same type, we are sure to return
+		// a value of that type
+		SDFDatatype type1 = getArguments()[1].getReturnType();
+		SDFDatatype type2 = getArguments()[2].getReturnType();
+		if (type1 == type2) {
+			return getArguments()[1].getReturnType();
+		}
+		
+		if( type1.compatibleTo(type2)) {
+			return type2;
+		} else if( type2.compatibleTo(type1)) {
+			return type1;
+		} else {
+			LOG.warn("Incompatible return types in if-Function");
+			return SDFDatatype.OBJECT;
+		}
+	}
 	
 
 }
