@@ -55,6 +55,10 @@ public class AssociativeStorageAO extends AbstractLogicalOperator {
     public void setHierarchy(List<SDFAttribute> attributes) {
         this.hierarchyAttributes = attributes;
     }
+    
+    public List<SDFAttribute> getHierarchy() {
+    	return hierarchyAttributes;
+    }
 
     /**
      * @return the hierarchy attributes
@@ -68,6 +72,10 @@ public class AssociativeStorageAO extends AbstractLogicalOperator {
         this.indexAttributes = attributes;
     }
 
+    public List<SDFAttribute> getIndex() {
+    	return indexAttributes;
+    }
+    
     /**
      * @return the index attributes
      */
@@ -80,6 +88,10 @@ public class AssociativeStorageAO extends AbstractLogicalOperator {
         this.valueAttribute = attribute;
     }
 
+    public SDFAttribute getValue() {
+    	return valueAttribute;
+    }
+    
     /**
      * @return the value attribute
      */

@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
@@ -27,6 +29,7 @@ public class ConverterAO extends UnaryLogicalOp {
 	private String dateFormat;
 	private String source;
 	final private Map<String, String> options;
+	private final List<Option> optionMap = Lists.newArrayList();
 	private List<SDFAttribute> outputAttributes;
 
 	public ConverterAO() {
@@ -76,9 +79,14 @@ public class ConverterAO extends UnaryLogicalOp {
 		for (Option option : ops) {
 			options.put(option.getName().toLowerCase(), option.getValue());
 		}
+		optionMap.addAll(ops);
+	}
+	
+	public List<Option> getOptions() {
+		return optionMap;
 	}
 
-	public Map<String, String> getOptions() {
+	public Map<String, String> getOptionMap() {
 		return options;
 	}
 

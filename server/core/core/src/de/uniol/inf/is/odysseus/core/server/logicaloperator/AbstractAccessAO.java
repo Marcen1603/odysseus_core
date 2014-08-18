@@ -163,6 +163,10 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	protected void addOption(String key, String value) {
 		optionsMap.put(key, value);
 	}
+	
+	protected String getOption( String key ) {
+		return optionsMap.get(key);
+	}
 
 	public void setOptionMap(Map<String, String> options) {
 		this.optionsMap.clear();

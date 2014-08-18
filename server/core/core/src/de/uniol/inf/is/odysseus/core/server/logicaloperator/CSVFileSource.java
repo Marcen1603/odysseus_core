@@ -38,10 +38,18 @@ public class CSVFileSource extends AbstractAccessAO {
 	public void setFilename(String filename) {
 		addOption(FileHandler.FILENAME,filename);
 	}
+	
+	public String getFilename() {
+		return getOption(FileHandler.FILENAME);
+	}
 
 	@Parameter(type = StringParameter.class, name = "delimiter", optional = true, doc = "Default delimiter is ','")
 	public void setDelimiter(String delimiter) {
 		addOption(AbstractCSVHandler.CSV_DELIMITER, delimiter);
+	}
+	
+	public String getDelimiter() {
+		return getOption(AbstractCSVHandler.CSV_DELIMITER);
 	}
 
 	@Parameter(type = StringParameter.class, name = "textdelimiter", optional = true, doc = "Delimiter for Strings. No default.")
@@ -49,15 +57,27 @@ public class CSVFileSource extends AbstractAccessAO {
 		addOption(AbstractCSVHandler.CSV_TEXT_DELIMITER, textDelimiter);
 		textDelimiterSet = true;
 	}
+	
+	public String getTextDelimiter() {
+		return getOption(AbstractCSVHandler.CSV_TEXT_DELIMITER);
+	}
 
 	@Parameter(type = BooleanParameter.class, name = "trim", optional = true, doc = "If set to true, for each element leading and trailing whitespaces are removed. Default false.")
 	public void setTrim(boolean trim) {
 		addOption(AbstractCSVHandler.CSV_TRIM, Boolean.toString(trim));
 	}
+	
+	public boolean isTrim() {
+		return Boolean.valueOf(getOption(AbstractCSVHandler.CSV_TRIM));
+	}
 
 	@Parameter(type = BooleanParameter.class, name = "readFirstLine", optional = true, doc = "If fist line contains header information, set to false. Default true.")
 	public void setReadFirstLine(boolean readFirstLine) {
 		addOption(LineProtocolHandler.READFIRSTLINE, Boolean.toString(readFirstLine));
+	}
+	
+	public boolean isReadFirstLine() {
+		return Boolean.valueOf(getOption(LineProtocolHandler.READFIRSTLINE));
 	}
 
 	@Override

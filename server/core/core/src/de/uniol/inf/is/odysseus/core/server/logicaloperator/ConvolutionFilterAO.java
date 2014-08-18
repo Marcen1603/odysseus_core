@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -46,6 +48,7 @@ public class ConvolutionFilterAO extends AbstractLogicalOperator {
 	private int size = 10;
 	private String function;
 	private Map<String, Double> options = new HashMap<>();
+	private final List<Option> optionList = Lists.newArrayList();
 	private List<SDFAttribute> groupingAttributes = new ArrayList<>();
 
 	public ConvolutionFilterAO() {
@@ -106,6 +109,10 @@ public class ConvolutionFilterAO extends AbstractLogicalOperator {
 	public void setFunction(String function) {
 		this.function = function.trim();
 	}
+	
+	public String getFunction() {
+		return function;
+	}
 
 	private SDFExpression getGaussianFunction(double mean, double deviation) {
 		// String function = "(1/(" + sigma +
@@ -139,6 +146,11 @@ public class ConvolutionFilterAO extends AbstractLogicalOperator {
 		for (Option option : ops) {
 			options.put(option.getName().toLowerCase(), Double.parseDouble(option.getValue()));
 		}
+		optionList.addAll(ops);
+	}
+	
+	public List<Option> getOptions() {
+		return optionList;
 	}
 
 	@Override
