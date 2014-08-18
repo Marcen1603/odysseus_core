@@ -81,9 +81,9 @@ public class PeerConfiguration {
 				in.close();
 			}
 		} catch( InvalidPropertiesFormatException ex ) {
-			LOG.debug("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
+			LOG.warn("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
 		} catch (IOException ex) {
-			LOG.error("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
+			LOG.warn("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
 		} 
 	}
 
