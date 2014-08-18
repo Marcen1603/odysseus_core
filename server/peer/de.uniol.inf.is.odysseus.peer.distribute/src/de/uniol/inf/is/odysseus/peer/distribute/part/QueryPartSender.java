@@ -581,5 +581,4 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 
 		return Optional.absent();
 	}
-
 }
