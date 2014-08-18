@@ -128,6 +128,10 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 	public void setSink(Resource sink) {
 		this.sink = sink;
 	}
+	
+	public Resource getSink() {
+		return sink;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -168,6 +172,10 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 		optionsMap.put(key.toLowerCase(), value);
 	}
 
+	protected String getOption( String key ) {
+		return optionsMap.get(key);
+	}
+	
 	/**
 	 * @return The options
 	 */

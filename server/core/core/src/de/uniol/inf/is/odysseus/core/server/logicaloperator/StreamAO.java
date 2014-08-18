@@ -26,6 +26,7 @@ public class StreamAO extends AbstractLogicalOperator {
 	private String nodeName;
 	private List<SDFAttribute> attributes;
 	private SDFSchema schema;
+	private AccessAO inputStream;
 	
 	@SuppressWarnings("rawtypes")
 	private Class<? extends IStreamObject> type;
@@ -44,6 +45,7 @@ public class StreamAO extends AbstractLogicalOperator {
 	public StreamAO(StreamAO streamAO) {
 		super(streamAO);
 
+		this.inputStream = streamAO.inputStream;
 		this.streamname = streamAO.streamname;
 		if (streamAO.attributes != null) {
 			this.attributes = new ArrayList<>(streamAO.attributes);
@@ -84,16 +86,26 @@ public class StreamAO extends AbstractLogicalOperator {
 		if (inputStream == null) {
 			this.schema = null;
 			this.streamname = null;
+			this.inputStream = null;
 		} else {
 			this.schema = inputStream.getOutputSchema();
 			this.streamname = inputStream.getAccessAOName();
+			this.inputStream = inputStream;
 		}
+	}
+	
+	public AccessAO getSource() {
+		return inputStream;
 	}
 
 	@Parameter(name = "SourceName", type = ResourceParameter.class, optional = true, possibleValues = "__DD_SOURCES", possibleValuesAreDynamic = true)
 	public void setSourceName(Resource resource) {
 		this.streamname = resource;
 		setName(streamname.getResourceName());
+	}
+	
+	public Resource getSourceName() {
+		return streamname;
 	}
 
 	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema", isList = true, optional = true, doc = "The output schema.")
@@ -107,6 +119,10 @@ public class StreamAO extends AbstractLogicalOperator {
 	@Parameter(type = StringParameter.class, name = "DataHandler", optional = true, doc = "The name of the datahandler to use, e.g. Tuple or Document.")
 	public void setDataHandler(String dataHandler) {
 		type = DataHandlerRegistry.getCreatedType(dataHandler);
+	}
+	
+	public String getDataHandler() {
+		return type != null ? type.getName() : null;
 	}
 
 	public List<String> getDataHandlerValues() {

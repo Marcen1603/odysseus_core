@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractCSVHandler;
@@ -22,6 +24,7 @@ public class CSVFileSink extends AbstractSenderAO {
 
 	private static final long serialVersionUID = -1229693373253532412L;
 	private boolean textDelimiterSet = false;
+	private final List<Option> optionList = Lists.newArrayList();
 
 	public CSVFileSink(){
 		super();
@@ -45,16 +48,29 @@ public class CSVFileSink extends AbstractSenderAO {
 		for (Option o:value){
 			addOption(o.getName(), o.getValue());
 		}
+		optionList.addAll(value);
+	}
+	
+	public List<Option> getOptions() {
+		return optionList;
 	}
 	
 	@Parameter(type = FileNameParameter.class, name = "filename", optional = false)
 	public void setFilename(String filename) {
 		addOption(FileHandler.FILENAME,filename);
 	}
+	
+	public String getFilename() {
+		return getOption(FileHandler.FILENAME);
+	}
 
 	@Parameter(type = StringParameter.class, name = "delimiter", optional = true, doc = "Default delimiter is ';'")
 	public void setDelimiter(String delimiter) {
 		addOption(AbstractCSVHandler.CSV_DELIMITER, delimiter);
+	}
+	
+	public String getDelimiter() {
+		return getOption(AbstractCSVHandler.CSV_DELIMITER);
 	}
 
 	@Parameter(type = StringParameter.class, name = "textdelimiter", optional = true, doc = "Delimiter for Strings. No default.")
@@ -63,14 +79,26 @@ public class CSVFileSink extends AbstractSenderAO {
 		textDelimiterSet  = true;
 	}
 	
+	public String getTextDelimiter() {
+		return getOption(AbstractCSVHandler.CSV_TEXT_DELIMITER);
+	}
+	
 	@Parameter(type = StringParameter.class, name = AbstractCSVHandler.CSV_FLOATING_FORMATTER, optional = true, doc = "Formatter for floating numbers.")
 	public void setFloatingFormatter(String value) {
 		addOption(AbstractCSVHandler.CSV_FLOATING_FORMATTER, value);
 	}
 	
+	public String getFloatingFormatter() {
+		return getOption(AbstractCSVHandler.CSV_FLOATING_FORMATTER);
+	}
+	
 	@Parameter(type = StringParameter.class, name = AbstractCSVHandler.CSV_NUMBER_FORMATTER, optional = true, doc = "Formatter for integer numbers.")
 	public void setNumberFormatter(String value) {
 		addOption(AbstractCSVHandler.CSV_NUMBER_FORMATTER, value);
+	}
+	
+	public String getNumberFormatter() {
+		return getOption(AbstractCSVHandler.CSV_NUMBER_FORMATTER);
 	}
 	
 	@Parameter(type = BooleanParameter.class, name = AbstractCSVHandler.CSV_WRITE_METADATA, optional = true, doc = "Write metadata.")

@@ -32,12 +32,17 @@ public class EnumParameter extends AbstractParameter<Enum> {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void internalAssignment() {
+		if( inputValue instanceof Enum ) {
+			setValue ((Enum)inputValue);
+			return;
+		}
+		
 		setValue(Enum.valueOf(enumeration, ((String) this.inputValue).toUpperCase()));
 	}
 	
 	@Override
 	protected String getPQLStringInternal() {
-		return "'" + ((String) this.inputValue).toUpperCase() + "'";
+		return "'" + this.inputValue.toString().toUpperCase() + "'";
 	}
 
 }

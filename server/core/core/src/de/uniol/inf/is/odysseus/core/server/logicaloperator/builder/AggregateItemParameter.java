@@ -44,6 +44,11 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 	@SuppressWarnings({ "unchecked", "cast" })
 	@Override
     protected void internalAssignment() {
+		if( inputValue instanceof AggregateItem ) {
+			setValue((AggregateItem)inputValue);
+			return;
+		}
+		
         List<String> value = (List<String>) inputValue;
         if ((value.size() < 3) || (value.size() > 4)) {
             throw new IllegalParameterException("illegal value for aggregation");

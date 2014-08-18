@@ -288,6 +288,10 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	public void setDebug2(Boolean debug) {
 		this.debug = debug;
 	}
+	
+	public boolean getDebug2() {
+		return this.debug;
+	}
 
 	@Override
 	public boolean isDebug() {
@@ -783,12 +787,12 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	@Override
 	public void addParameterInfo(String key, Object value) {
-		this.infos.put(key, value != null ? value.toString() : null);
+		this.infos.put(key.toUpperCase(), value != null ? value.toString() : null);
 	}
 
 	@Override
 	public void removeParameterInfo(String key) {
-		this.infos.remove(key);
+		this.infos.remove(key.toUpperCase());
 	}
 
 	@Override

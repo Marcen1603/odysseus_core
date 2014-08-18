@@ -14,7 +14,7 @@ abstract public class AbstractWindowWithWidthAO extends AbstractWindowAO {
 	public void setWindowSize(TimeValueItem windowSize) {
 		super.setWindowSize(windowSize);
 	}
-
+	
 	@Override
 	@Parameter(type = TimeParameter.class, name = "SLIDE", optional = true)
 	public void setWindowSlide(TimeValueItem slide) {

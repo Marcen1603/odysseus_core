@@ -46,6 +46,9 @@ public class PredicateParameter extends AbstractParameter<IPredicate<?>> {
 						.getType().getName();
 			}
 			predicate = (String) inputValue;
+		} else if( inputValue instanceof IPredicate ) {
+			setValue((IPredicate<?>)inputValue);
+			return;
 		}
 		IPredicateBuilder pBuilder = OperatorBuilderFactory
 				.getPredicateBuilder(predicateType);
@@ -66,6 +69,8 @@ public class PredicateParameter extends AbstractParameter<IPredicate<?>> {
 			sb.append("('").append(getValue().toString()).append("')");
 		} else if (inputValue instanceof String) {
 			sb.append("'").append(inputValue).append("'");
+		} else if( inputValue instanceof IPredicate ) {
+			sb.append("'").append( ((IPredicate<?>)inputValue).toString()).append("'");
 		}
 		return sb.toString();
 	}

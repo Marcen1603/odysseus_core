@@ -90,7 +90,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	public void setWindowSize(TimeValueItem windowSize) {
 		this.windowSize = windowSize;
 	}
-
+	
 	public void setWindowSizeString(TimeValueItem size) {
 		this.windowSize = size;
 	}
@@ -191,6 +191,10 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	@Parameter(type = StringParameter.class, name = "Unit", optional = true, possibleValues = "__JAVA_TIMEUNITS", deprecated = true)
 	public void setUnit(String unit) {
 		this.timeUnit = TimeUnit.valueOf(unit);
+	}
+	
+	public String getUnit() {
+		return timeUnit != null ? timeUnit.toString() : null;
 	}
 
 	public IPredicate<?> getEndCondition() {

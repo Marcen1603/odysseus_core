@@ -9,7 +9,9 @@ public class AccessAOSourceParameter extends AbstractParameter<Resource> {
 
 	@Override
 	protected void internalAssignment() {
-		if (inputValue instanceof String){
+		if( inputValue instanceof Resource ) {
+			setValue( (Resource)inputValue );
+		} else if (inputValue instanceof String){
 			boolean marker = getDataDictionary().containsViewOrStream((String) inputValue, getCaller());
 			Resource r = new Resource(getCaller().getUser(),(String) inputValue, marker);
 			setValue(r);

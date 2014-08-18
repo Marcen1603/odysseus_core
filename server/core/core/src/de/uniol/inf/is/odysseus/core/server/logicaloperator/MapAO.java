@@ -54,7 +54,7 @@ public class MapAO extends UnaryLogicalOp {
 		this.threads = ao.threads;
 	}
 
-	public List<SDFExpression> getExpressions() {
+	public List<SDFExpression> getExpressionList() {
 		return Collections.unmodifiableList(expressions);
 	}
 
@@ -192,6 +192,10 @@ public class MapAO extends UnaryLogicalOp {
 			expressions.add(e.expression);
 		}
 		setOutputSchema(null);
+	}
+	
+	public List<NamedExpressionItem> getExpressions() {
+		return this.namedExpressions;
 	}
 
 	/**

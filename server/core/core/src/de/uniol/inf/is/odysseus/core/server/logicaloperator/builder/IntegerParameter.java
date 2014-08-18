@@ -33,8 +33,12 @@ public class IntegerParameter extends AbstractParameter<Integer> {
 	
 	@Override
 	protected void internalAssignment() {
-		int value = ((Long) inputValue).intValue();
-		setValue(value);
+		if( inputValue instanceof Long ) {
+			setValue( ((Long)inputValue).intValue() );
+		} else {
+			int value = ((Integer) inputValue).intValue();
+			setValue(value);
+		}
 	}
 	
 	@Override

@@ -10,6 +10,11 @@ public class SourceParameter extends AbstractParameter<AccessAO> {
 
 	@Override
 	protected void internalAssignment() {
+		if( inputValue instanceof AccessAO ) {
+			setValue((AccessAO)inputValue);
+			return;
+		}
+		
 		ILogicalOperator source = getDataDictionary().getViewOrStream((String) this.inputValue, getCaller());
 		AccessAO accessAO = new AccessAO();
 		if (Resource.containsUser(getCaller().getUser(), (String) this.inputValue)) {

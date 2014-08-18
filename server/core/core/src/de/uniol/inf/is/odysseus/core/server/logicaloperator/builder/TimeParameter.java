@@ -25,6 +25,11 @@ public class TimeParameter extends
 
 	@Override
 	protected void internalAssignment() {
+		if( inputValue instanceof TimeValueItem ) {
+			setValue((TimeValueItem)inputValue);
+			return;
+		}
+		
 		long value;
 		TimeUnit unit;
 		if (inputValue instanceof List) {
@@ -52,18 +57,17 @@ public class TimeParameter extends
 
 	@Override
 	protected String getPQLStringInternal() {
-		if (inputValue instanceof List) {
+		if( inputValue instanceof TimeValueItem) {
+			TimeValueItem item = (TimeValueItem)inputValue;
+			return "[" + item.getTime() + ", '" + item.getUnit().toString() + "']";
+		} else if (inputValue instanceof List) {
 			@SuppressWarnings("unchecked")
 			List<Object> in = ((List<Object>) inputValue);
 			if (in.size() == 2) {
 				return "[" + in.get(0) + ", '" + in.get(1) + "']";
-			} else {
-				throw new RuntimeException(
-						" Could not determine value/unit pair!");
-			}
-		} else {
-			return "" + inputValue;
-		}
-
+			} 
+			throw new RuntimeException(" Could not determine value/unit pair!");
+		} 
+		return "" + inputValue;
 	}
 }

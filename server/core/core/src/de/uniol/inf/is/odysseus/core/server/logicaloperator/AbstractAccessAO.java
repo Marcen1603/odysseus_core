@@ -50,7 +50,9 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	private String dataHandler;
 	private String protocolHandler;
 	private String transportHandler;
-	final private Map<String, String> optionsMap = new HashMap<>();
+	
+	private final Map<String, String> optionsMap = new HashMap<>();
+	private List<Option> optionsList;
 
 	private String dateFormat;
 	private List<SDFAttribute> attributes;
@@ -151,6 +153,11 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		for (Option option : value) {
 			optionsMap.put(option.getName().toLowerCase(), option.getValue());
 		}
+		optionsList = value;
+	}
+	
+	public List<Option> getOptions() {
+		return optionsList;
 	}
 
 	protected void addOption(String key, String value) {

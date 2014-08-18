@@ -22,6 +22,11 @@ public class OptionParameter extends AbstractParameter<Option> {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void internalAssignment() {
+		if( inputValue instanceof Option ) {
+			setValue( (Option)inputValue );
+			return;
+		}
+		
 		List<String> list = (List<String>) inputValue;
 		if (list.size() != 2) {
 			throw new IllegalArgumentException("Wrong number of inputs for Option. Expecting name and value.");

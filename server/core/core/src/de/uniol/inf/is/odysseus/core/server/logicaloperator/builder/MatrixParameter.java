@@ -40,6 +40,11 @@ public class MatrixParameter extends AbstractParameter<double[][]> {
 
     @Override
     protected void internalAssignment() {
+    	if( inputValue instanceof double[][] ) {
+    		setValue( (double[][]) inputValue);
+    		return;
+    	}
+    	
         String representation = (String) this.inputValue;
         String[] rowsData = representation.split(";");
         int rows = rowsData.length;

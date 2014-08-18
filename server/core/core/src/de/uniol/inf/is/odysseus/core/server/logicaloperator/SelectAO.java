@@ -67,6 +67,7 @@ public class SelectAO extends UnaryLogicalOp implements IHasPredicate {
 		this.predicate = predicate;
 	}
 
+	@Override
 	public IPredicate<?> getPredicate() {
 		return predicate;
 	}

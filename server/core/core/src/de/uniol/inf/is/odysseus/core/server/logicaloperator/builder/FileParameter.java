@@ -24,6 +24,11 @@ public class FileParameter extends AbstractParameter<File> {
 
 	@Override
 	protected void internalAssignment() {
+		if( inputValue instanceof File ) {
+			setValue((File)inputValue);
+			return;
+		}
+		
 		String path = inputValue.toString();
 		File file = new File(path);
 		setValue(file);		

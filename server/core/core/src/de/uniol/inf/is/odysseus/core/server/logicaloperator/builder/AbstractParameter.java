@@ -106,9 +106,8 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	public String getDoc() {
 		if (this.doc == null || this.doc.isEmpty()) {
 			return DEFAULT_DOC_TEXT;
-		} else {
-			return this.doc;
-		}
+		} 
+		return this.doc;
 	}
 
 	@Override

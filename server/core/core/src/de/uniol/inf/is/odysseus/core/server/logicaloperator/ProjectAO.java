@@ -65,12 +65,15 @@ public class ProjectAO extends UnaryLogicalOp {
 	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
 		attributes = outputSchema;
 	}
+	
+	public List<SDFAttribute> getAttributes() {
+		return attributes;
+	}
 
 	public List<SDFAttribute> getOutputSchemaWithList() {
 		return attributes;
 	}
 
-	@GetParameter(name = "ATTRIBUTES")
 	public SDFSchema getOutputSchemaIntern() {
 		return new SDFSchema(getInputSchema(), attributes);
 	}

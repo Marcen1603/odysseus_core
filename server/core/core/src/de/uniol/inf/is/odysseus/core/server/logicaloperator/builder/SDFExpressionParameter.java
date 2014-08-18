@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import java.util.List;
 
+import com.google.common.base.Strings;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
@@ -40,6 +42,10 @@ public class SDFExpressionParameter extends
 				throw new RuntimeException(
 						" Could not determine name/expression pair!");
 			}
+		} else if( inputValue instanceof NamedExpressionItem) {
+			setValue((NamedExpressionItem)inputValue);
+			return;
+			
 		} else {
 			name = "";
 			expression = (String) inputValue;
@@ -61,10 +67,16 @@ public class SDFExpressionParameter extends
 			List<String> in = ((List<String>) inputValue);
 			if (in.size() == 2) {
 				return "['" + in.get(0) + "', '" + in.get(1) + "']";
-			} else {
-				throw new RuntimeException(
-						" Could not determine name/expression pair!");
+			} 
+			throw new RuntimeException("Could not determine name/expression pair!");
+			
+		} else if( inputValue instanceof NamedExpressionItem) {
+			NamedExpressionItem namedExpressionItem = (NamedExpressionItem)inputValue;
+			if( !Strings.isNullOrEmpty(namedExpressionItem.name)) {
+				return namedExpressionItem.toString();
 			}
+			
+			return "'" + namedExpressionItem.expression.toString() + "'";
 		} else {
 			return "'" + inputValue + "'";
 		}

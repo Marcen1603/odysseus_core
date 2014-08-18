@@ -37,6 +37,12 @@ public class ResolvedSDFAttributeParameter extends
 
 	@Override
 	protected void internalAssignment() {
+		
+		if( inputValue instanceof SDFAttribute ) {
+			setValue((SDFAttribute)inputValue);
+			return;
+		}
+		
 		if (getAttributeResolver() == null) {
 			throw new RuntimeException("missing attribute resolver");
 		}

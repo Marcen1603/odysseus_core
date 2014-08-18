@@ -239,16 +239,20 @@ public class AggregateAO extends UnaryLogicalOp {
 		this.drainAtDone = drainAtDone;
 	}
 	
+	public boolean isDrainAtDoneOld() {
+		return this.drainAtDone;
+	}
+	
 	@Parameter(name = "drainAtDone", type = BooleanParameter.class, optional = true, doc = "If set to true (default), elements are not yet written will be written at done. ")
 	public void setDrainAtDone(boolean drainAtDone) {
 		this.drainAtDone = drainAtDone;
 	}
+	
 
 	@Parameter(name = "drainAtClose", type = BooleanParameter.class, optional = true, doc = "If set to true (default), elements are not yet written will be written at close. ")
 	public void setDrainAtClose(boolean drainAtClose) {
 		this.drainAtClose = drainAtClose;
 	}
-
 
 	public boolean isDrainAtDone() {
 		return drainAtDone;

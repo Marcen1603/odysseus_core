@@ -10,6 +10,8 @@ public class ResourceParameter extends AbstractParameter<Resource> {
 	protected void internalAssignment() {
 		if (inputValue instanceof String){
 			setValue( new Resource(getCaller().getUser(),(String) inputValue));
+		} else if( inputValue instanceof Resource ) {
+			setValue ((Resource)inputValue);
 		}
 	}
 

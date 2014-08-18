@@ -117,11 +117,15 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	}
 	
 	@Parameter(type = StringParameter.class, name = "suppressCountAttribute", optional = true)
-	public void setSuppressCountAttribute_(String name){
+	public void setSuppressCountAttribute(String name){
 		this.suppressCountAttribute = new SDFAttribute(null,name,SDFDatatype.INTEGER, null, null, null);
 	}
 	
-	public SDFAttribute getSuppressCountAttribute() {
+	public String getSuppressCountAttribute() {
+		return suppressCountAttribute != null ? suppressCountAttribute.getAttributeName() : null;
+	}
+	
+	public SDFAttribute getSuppressCountAttributeValue() {
 		return suppressCountAttribute;
 	}
 	
@@ -143,9 +147,8 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 				ret[i++] = inputSchema.indexOf(a);
 			}
 			return ret;
-		} else {
-			return null;
-		}
+		} 
+		return null;
 	}
 
 	@Override
