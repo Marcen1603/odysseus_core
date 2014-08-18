@@ -52,12 +52,12 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	/**
 	 * The default threshold for the CPU load as percentage.
 	 */
-	public static final double DEFAULT_CPU_THRESHOLD = 0.8;
+	public static final double DEFAULT_CPU_THRESHOLD = 0.1;
 	
 	/**
 	 * The default threshold for the memory load as percentage.
 	 */
-	public static final double DEFAULT_MEM_THRESHOLD = 0.8;
+	public static final double DEFAULT_MEM_THRESHOLD = 0.1;
 	
 	/**
 	 * The default time between look ups of the local resources [ms].
@@ -145,7 +145,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 			}
 			
 			final double cpuUsedPercentage = (cpuMax - cpuFree) / cpuMax;
-			final double memUsedPercentage = (memMax - memFree) / cpuMax;
+			final double memUsedPercentage = (memMax - memFree) / memMax;
 			return cpuUsedPercentage > this.mCPUThreshold || memUsedPercentage > this.mMemThreshold;
 			
 		}
@@ -158,7 +158,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		private IPair<ILogicalQuery, Integer> getQueryToRemove() throws InterruptedException {
 			
 			final IExecutor executor = Activator.getExecutor().get();
-			final ISession session = Activator.getSession().get();
+			final ISession session = Activator.getSession();
 			final ImmutableCollection<Integer> queryIDs = ImmutableList.copyOf(executor.getLogicalQueryIds(session));
 			if(queryIDs.isEmpty()) {
 				
@@ -228,10 +228,6 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 			} else if(!Activator.getExecutor().isPresent()) {
 				
 				throw new InterruptedException("No executor bound");
-				
-			} else if(!Activator.getSession().isPresent()) {
-				
-				throw new InterruptedException("No session management bound");
 				
 			} else if(!Activator.getPeerDictionary().isPresent()) {
 				
@@ -327,10 +323,18 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		
 		Preconditions.checkNotNull(allocator, "The load balancing allocator to be used must be not null!");
 		
-		synchronized (this.mLookupThread.mAllocator) {
+		if(this.mLookupThread.mAllocator == null) {
 			
 			this.mLookupThread.mAllocator = allocator;
 			
+		} else {
+		
+			synchronized (this.mLookupThread.mAllocator) {
+				
+				this.mLookupThread.mAllocator = allocator;
+				
+			}
+		
 		}
 		
 		LOG.debug("Set {} as implementation of {}", allocator.getClass().getSimpleName(), ILoadBalancingAllocator.class.getSimpleName());
@@ -342,10 +346,18 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		
 		Preconditions.checkNotNull(communicator, "The load balancing communicator to be used must be not null!");
 		
-		synchronized (this.mLookupThread.mCommunicator) {
-
+		if(this.mLookupThread.mCommunicator == null) {
+			
 			this.mLookupThread.mCommunicator = communicator;
 			
+		} else {
+		
+			synchronized (this.mLookupThread.mCommunicator) {
+	
+				this.mLookupThread.mCommunicator = communicator;
+				
+			}
+		
 		}
 		
 		LOG.debug("Set {} as implementation of {}", communicator.getClass().getSimpleName(), ILoadBalancingCommunicator.class.getSimpleName());

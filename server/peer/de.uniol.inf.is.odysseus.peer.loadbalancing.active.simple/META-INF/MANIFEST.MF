@@ -16,5 +16,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.peer.loadbalancing.active;bundle-versio
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  Jxta_2.6_Source;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0"
-Service-Component: OSGI-INF/Executor.xml,OSGI-INF/SimpleLoadBalancingStrategy.xml,OSGI-INF/ResourceManager.xml,OSGI-INF/SessionManagement.xml,OSGI-INF/PeerDictionary.xml,
+Service-Component: OSGI-INF/Executor.xml,OSGI-INF/SimpleLoadBalancingStrategy.xml,OSGI-INF/ResourceManager.xml,OSGI-INF/PeerDictionary.xml,
  OSGI-INF/NetworkManager.xml
