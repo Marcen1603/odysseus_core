@@ -153,6 +153,11 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 		
 	}
+	
+	/**
+	 * The currently running load balancing strategy, if there is one.
+	 */
+	private Optional<ILoadBalancingStrategy> mRunningStrategy = Optional.absent();
 
 	// called by OSGi-DS
 	public void activate() {
@@ -175,6 +180,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    lsLBStrategies	              		- Lists all available load balancing strategies\n");
 		sb.append("    lsLBAllocators	              		- Lists all available load balancing allocators\n");
 		sb.append("    initLB <strategyname> <allocatorname>	- Initiate Loadbalancing with load balancing strategy <strategyname> and load balancing allocator <allocatorname>\n");
+		sb.append("    stopLB                            - Stops the Load Balancing\n");
 		sb.append("    cpJxtaSender <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Sender");
 		sb.append("    cpJxtaReceiver <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Receiver");
 		return sb.toString();
@@ -189,10 +195,18 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		
 		Preconditions.checkNotNull(ci, "Command interpreter must be not null!");
 		
+		final String ERROR_ALREADY_RUNNING = "A load balancing is already running!";
 		final String ERROR_USAGE = "usage: initLB <peername> <strategyname> <allocatorname>";
 		final String ERROR_STRATEGY = "No load balancing strategy found with the name ";
 		final String ERROR_ALLOCATOR = "No load balancing allocator found with the name ";
 		final String ERROR_COMMUNICATOR = "No load balancing communicator available";
+		
+		if(this.mRunningStrategy.isPresent()) {
+			
+			System.out.println(ERROR_ALREADY_RUNNING);
+			return;
+			
+		}
 		
 		String strategyName = ci.nextArgument();
 		if(Strings.isNullOrEmpty(strategyName)) {
@@ -242,12 +256,28 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		try {
 			
 			strategy.startMonitoring();
+			this.mRunningStrategy = Optional.of(strategy);
 			
 		} catch(LoadBalancingException e) {
 			
 			System.out.println("An error occured: " + e.getMessage());
 			
 		}
+		
+	}
+	
+	public void _stopLB(CommandInterpreter ci) {
+		
+		final String ERROR_NOT_RUNNING = "No load balancing running!";
+		
+		if(!this.mRunningStrategy.isPresent()) {
+			
+			System.out.println(ERROR_NOT_RUNNING);
+			return;
+			
+		}
+		
+		this.mRunningStrategy.get().stopMonitoring();
 		
 	}
 

@@ -436,8 +436,16 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	@Override
 	public void startMonitoring() throws LoadBalancingException {
 		
-		this.mLookupThread.start();
-		LOG.debug("Started monitoring local resources");
+		try {
+		
+			this.mLookupThread.start();
+			LOG.debug("Started monitoring local resources");
+			
+		} catch(IllegalStateException e) {
+			
+			LOG.error("Load balancing strategy is already running!");
+			
+		}
 		
 	}
 
