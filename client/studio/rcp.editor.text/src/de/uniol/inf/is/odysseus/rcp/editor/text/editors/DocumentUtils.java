@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.editors;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Dennis Geesen
@@ -24,6 +26,8 @@ import org.eclipse.jface.text.IDocument;
  */
 public class DocumentUtils {
 
+	private static final Logger LOG = LoggerFactory.getLogger(DocumentUtils.class);
+	
 	/**
 	 * Searches backwards from offset for a parser definition (#PARSER xyz) and
 	 * returns the first one If there is no parser found, an empty string is
@@ -63,7 +67,7 @@ public class DocumentUtils {
 			String parser = document.get(start, end - start).trim();
 			return parser;
 		} catch (BadLocationException e) {
-			e.printStackTrace();
+			LOG.error("Could not determine valid parsers for auto completion", e);
 		}
 		return getParserFromDocumentType(document);
 	}
