@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Admission
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.admission
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Timo Michelsen
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
