@@ -26,7 +26,7 @@ public class IECProtocolHandler extends
 	private final Logger LOG = LoggerFactory
 			.getLogger(IECProtocolHandler.class);
 	private static final String PROTOCOL_HANDLER_NAME = "IEC";
-	private static final CharSequence ROUTE_START_TAG = "<route";
+	private static final CharSequence ROUTE_START_TAG = "<route ";
 	private static final CharSequence ROUTE_END_TAG = "</route>";
 
 	private KeyValueObject<? extends IMetaAttribute> next = null;
@@ -153,17 +153,17 @@ public class IECProtocolHandler extends
 		message.get(destinationArray);
 		String iecPacket = (new String(destinationArray)).trim();
 
-		if (!iecPacket.contains(ROUTE_START_TAG)
+		if (!containsRouteStartTag(iecPacket)
 				&& !iecPacket.contains(ROUTE_END_TAG)) {
 			// if iecPacket has no start or ending tag append it to buffer if
 			// start tag exists
-			if (iecMessageBuffer.contains(ROUTE_START_TAG)) {
+			if (containsRouteStartTag(iecMessageBuffer)) {
 				iecMessageBuffer += iecPacket;
 			}
 		} else {
 			for (String iecMessage : iecPacket.split("(?=" + ROUTE_START_TAG
 					+ ")|(?<=" + ROUTE_END_TAG + ")")) {
-				if (iecMessage.contains(ROUTE_START_TAG)
+				if (containsRouteStartTag(iecMessage)
 						&& iecMessage.contains(ROUTE_END_TAG)) {
 					// Start and end tag exists, so message can be parsed
 					this.parser.parse(iecMessage);
@@ -182,7 +182,7 @@ public class IECProtocolHandler extends
 						getTransfer().transfer(map);
 					}
 				} else {
-					if (iecMessage.contains(ROUTE_START_TAG)) {
+					if (containsRouteStartTag(iecMessage)) {
 						// iec message only contains start_tag so we need to
 						// buffer this
 						iecMessageBuffer = iecMessage;
@@ -213,6 +213,16 @@ public class IECProtocolHandler extends
 				}
 			}
 		}
+	}
+
+	private boolean containsRouteStartTag(String iecMessage) {
+		// we need to check it a little bit different, because there exists also
+		// an <routeInfo> Tag. So we need to check if its really an route-Tag inside
+		int routeIndex = iecMessage.indexOf(ROUTE_START_TAG.toString());
+		if (routeIndex == -1){
+			return false;
+		}
+		return (iecMessage.contains(ROUTE_START_TAG) && iecMessage.indexOf(' ', routeIndex) == routeIndex+6);
 	}
 
 	@Override
