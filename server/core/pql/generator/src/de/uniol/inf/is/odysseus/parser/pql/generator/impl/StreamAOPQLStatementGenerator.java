@@ -20,15 +20,15 @@ public class StreamAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 		StringBuilder sb = new StringBuilder();
 		if (Strings.isNullOrEmpty(streamAO.getNode())) {
 			// locally executed
-			sb.append("name='").append(streamAO.getName()).append("',");
-			sb.append("source='").append(streamAO.getStreamname().getResourceName()).append("'");
+			sb.append("NAME='").append(streamAO.getName()).append("',");
+			sb.append("SOURCE='").append(streamAO.getStreamname().getResourceName()).append("'");
 		} else {
 			// distributed to another maschine
-			sb.append("name='").append(streamAO.getName()).append("',");
-			sb.append("sourcename='").append(streamAO.getStreamname().getResourceName()).append("',");
-			sb.append("schema=").append(schemaToString(streamAO.getOutputSchema())).append(",");
-			sb.append("datahandler='tuple',");
-			sb.append("node='").append(streamAO.getNode()).append("'");
+			sb.append("NAME='").append(streamAO.getName()).append("',");
+			sb.append("SOURCENAME='").append(streamAO.getStreamname().getResourceName()).append("',");
+			sb.append("SCHEMA=").append(schemaToString(streamAO.getOutputSchema())).append(",");
+			sb.append("DATAHANDLER='tuple',");
+			sb.append("NODE='").append(streamAO.getNode()).append("'");
 		}
 
 		return sb.toString();

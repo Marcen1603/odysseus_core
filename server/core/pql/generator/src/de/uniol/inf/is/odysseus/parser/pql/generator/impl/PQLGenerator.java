@@ -22,52 +22,52 @@ import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLStatementGenerator;
 public class PQLGenerator implements IPQLGenerator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PQLGenerator.class);
-	
+
 	private static final String NAME_SEPARATOR = "_";
 	private static int operatorCounter = 0;
-	
+
 	private final List<IPQLGeneratorPostProcessor> postProcessors = Lists.newArrayList();
 	private final List<IPQLGeneratorPreProcessor> preProcessors = Lists.newArrayList();
 
 	// called by OSGi-DS
-	public void bindPostProcessor( IPQLGeneratorPostProcessor processor ) {
+	public void bindPostProcessor(IPQLGeneratorPostProcessor processor) {
 		postProcessors.add(processor);
-		
+
 		LOG.debug("PQLGenerator post processor bound {}", processor);
 	}
-	
+
 	// called by OSGi-DS
-	public void unbindPostProcessor( IPQLGeneratorPostProcessor processor ) {
-		if( postProcessors.contains(processor)) {
+	public void unbindPostProcessor(IPQLGeneratorPostProcessor processor) {
+		if (postProcessors.contains(processor)) {
 			postProcessors.remove(processor);
 			LOG.debug("PQLGenerator post processor unbound {}", processor);
 		}
 	}
-	
+
 	// called by OSGi-DS
-	public void bindPreProcessor( IPQLGeneratorPreProcessor processor ) {
+	public void bindPreProcessor(IPQLGeneratorPreProcessor processor) {
 		preProcessors.add(processor);
-		
+
 		LOG.debug("PQLGenerator pre processor bound {}", processor);
 	}
-	
+
 	// called by OSGi-DS
-	public void unbindPreProcessor( IPQLGeneratorPreProcessor processor ) {
-		if( preProcessors.contains(processor)) {
+	public void unbindPreProcessor(IPQLGeneratorPreProcessor processor) {
+		if (preProcessors.contains(processor)) {
 			preProcessors.remove(processor);
 			LOG.debug("PQLGenerator pre processor unbound {}", processor);
 		}
 	}
-	
+
 	@Override
 	public String generatePQLStatement(ILogicalOperator startOperator) {
 		Preconditions.checkNotNull(startOperator, "Operator for generating pql-statement must not be null!");
-//		ILogicalOperator startOperatorCopy = copy(startOperator); // TODO: does not work now!!!
-		
-		preprocess( startOperator );
-		
+
 		List<ILogicalOperator> operators = Lists.newArrayList();
 		collectOperators(startOperator, operators);
+
+		ParameterInfoHelper.prepareParameterInfos(operators);
+		preprocess(startOperator);
 
 		Map<ILogicalOperator, String> names = generateOperatorNames(operators);
 		List<ILogicalOperator> sourceOperators = determineSourceOperators(operators);
@@ -76,16 +76,16 @@ public class PQLGenerator implements IPQLGenerator {
 		String statement = concatStatements(pqlStatements);
 		return postprocess(statement);
 	}
-	
+
 	private String postprocess(String statement) {
-		for( IPQLGeneratorPostProcessor processor : postProcessors ) {
+		for (IPQLGeneratorPostProcessor processor : postProcessors) {
 			statement = processor.postProcess(statement);
 		}
 		return statement;
 	}
 
 	private void preprocess(ILogicalOperator startOperatorCopy) {
-		for( IPQLGeneratorPreProcessor processor : preProcessors ) {
+		for (IPQLGeneratorPreProcessor processor : preProcessors) {
 			processor.preprocess(startOperatorCopy);
 		}
 	}
@@ -100,16 +100,16 @@ public class PQLGenerator implements IPQLGenerator {
 		while (!operatorsToVisit.isEmpty()) {
 			ILogicalOperator operator = operatorsToVisit.remove(0);
 
-			if( !(operator instanceof TopAO ) ) {
+			if (!(operator instanceof TopAO)) {
 				IPQLStatementGenerator<ILogicalOperator> generator = PQLStatementGeneratorManager.getInstance().getPQLStatementGenerator(operator);
 				String statement = generator.generateStatement(operator, names);
-				if( statement == null ) {
+				if (statement == null) {
 					LOG.error("Returned PQL-Statement for {} is null!", operator);
-				} else if( !statement.isEmpty() ) {
+				} else if (!statement.isEmpty()) {
 					statements.add(statement);
 				}
 			}
-			
+
 			visitedOperators.add(operator);
 			for (LogicalSubscription subscription : operator.getSubscriptions()) {
 				ILogicalOperator target = subscription.getTarget();
@@ -121,7 +121,6 @@ public class PQLGenerator implements IPQLGenerator {
 
 		return statements;
 	}
-
 
 	private static boolean areAllSourceSubscriptionsVisited(ILogicalOperator operator, List<ILogicalOperator> visitedOperators) {
 		for (LogicalSubscription subscription : operator.getSubscribedToSource()) {
@@ -146,11 +145,11 @@ public class PQLGenerator implements IPQLGenerator {
 	}
 
 	private static void collectOperators(ILogicalOperator currentOperator, Collection<ILogicalOperator> list) {
-		if (!list.contains(currentOperator) ) {
-			if( !(currentOperator instanceof TopAO )) {
+		if (!list.contains(currentOperator)) {
+			if (!(currentOperator instanceof TopAO)) {
 				list.add(currentOperator);
 			}
-			
+
 			for (LogicalSubscription subscription : currentOperator.getSubscriptions()) {
 				collectOperators(subscription.getTarget(), list);
 			}
