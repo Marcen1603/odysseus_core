@@ -56,7 +56,7 @@ public class TRelationalChangeDetectAORule extends
 					null, false);
 			po.setGroupProcessor(r);
 		}
-		SDFAttribute suppressAttribute = operator.getSuppressCountAttribute();
+		SDFAttribute suppressAttribute = operator.getSuppressCountAttributeValue();
 		if (suppressAttribute != null){
 			po.setSuppressAttribute(operator.getOutputSchema().indexOf(suppressAttribute));
 		}
