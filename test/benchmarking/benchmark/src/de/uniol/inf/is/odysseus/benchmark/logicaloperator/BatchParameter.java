@@ -43,6 +43,11 @@ public class BatchParameter extends AbstractParameter<BatchItem> {
 
 	@Override
 	protected void internalAssignment() {
+		if( inputValue instanceof BatchItem) {
+			setValue((BatchItem)inputValue);
+			return;
+		}
+		
 		List<?> list = (List<?>) this.inputValue;
 		if (list.size() != 2) {
 			throw new IllegalArgumentException(
