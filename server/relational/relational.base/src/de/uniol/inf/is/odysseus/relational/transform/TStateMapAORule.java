@@ -52,7 +52,7 @@ public class TStateMapAORule extends AbstractTransformationRule<StateMapAO> {
 			gp = RelationalNoGroupProcessor.getInstance();
 		}
 		@SuppressWarnings("unchecked")
-		RelationalMapPO<?> mapPO = new RelationalStateMapPO<IMetaAttribute>(mapAO.getInputSchema(), mapAO.getExpressions().toArray(new SDFExpression[0]), mapAO.isAllowNullInOutput(), gp);
+		RelationalMapPO<?> mapPO = new RelationalStateMapPO<IMetaAttribute>(mapAO.getInputSchema(), mapAO.getExpressionList().toArray(new SDFExpression[0]), mapAO.isAllowNullInOutput(), gp);
 		defaultExecute(mapAO, mapPO, transformConfig, true, true);
 	}
 
