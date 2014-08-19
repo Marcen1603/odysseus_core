@@ -512,7 +512,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 		} else {
 
-			copiedTargets.add(originalTarget);
+			copiedTargets.addAll(AbstractFragmentationHelper.findCopies(originalTarget, bundle.getCopyMap()));
 
 		}
 

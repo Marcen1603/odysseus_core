@@ -626,8 +626,6 @@ public final class LogicalQueryHelper {
 
 				if (copyTarget != null) {
 					copyOperator.subscribeSink(copyTarget, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
-				} else {
-					copyOperator.subscribeSink(originalTarget, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
 				}
 			}
 
