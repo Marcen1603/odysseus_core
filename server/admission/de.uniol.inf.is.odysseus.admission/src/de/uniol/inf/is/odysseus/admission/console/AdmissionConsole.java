@@ -7,9 +7,11 @@ import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 
 import de.uniol.inf.is.odysseus.admission.AdmissionRuleGroup;
+import de.uniol.inf.is.odysseus.admission.IAdmissionActionComponent;
 import de.uniol.inf.is.odysseus.admission.IAdmissionEvent;
 import de.uniol.inf.is.odysseus.admission.IAdmissionRule;
 import de.uniol.inf.is.odysseus.admission.IAdmissionStatusComponent;
+import de.uniol.inf.is.odysseus.admission.action.AdmissionActionComponentRegistry;
 import de.uniol.inf.is.odysseus.admission.activator.AdmissionPlugIn;
 import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusComponentRegistry;
 
@@ -21,7 +23,8 @@ public class AdmissionConsole implements CommandProvider {
 		
 		sb.append("--- Admission commands---\n");
 		sb.append("    lsAdmissionRules/listAdmissionRules         					- Lists all registered admission rules\n");
-		sb.append("    lsAdmissionStatusComponents/listAdmissionStatusComponents    - Lists all registered admission rules\n");
+		sb.append("    lsAdmissionStatusComponents/listAdmissionStatusComponents    - Lists all registered admission status components\n");
+		sb.append("    lsAdmissionActionComponents/listAdmissionActionComponents    - Lists all registered admission action components\n");
 		
 		return sb.toString();
 	}
@@ -68,5 +71,22 @@ public class AdmissionConsole implements CommandProvider {
 	
 	public void _listAdmissionStatusComponents( CommandInterpreter ci ) {
 		_lsAdmissionStatusComponents(ci);
+	}
+	
+	public void _lsAdmissionActionComponents( CommandInterpreter ci ) {
+		AdmissionActionComponentRegistry registry = AdmissionPlugIn.getAdmissionActionComponentRegistry();
+		
+		Collection<Class<? extends IAdmissionActionComponent>> components = registry.getAllAdmissionActionComponentClasses();
+		if( !components.isEmpty() ) {
+			for( Class<? extends IAdmissionActionComponent> component : components ) {
+				System.out.println("\t" + component.getName());
+			}
+		} else {
+			System.out.println("\t<none>");
+		}
+	}
+	
+	public void _listAdmissionActionComponents( CommandInterpreter ci ) {
+		_lsAdmissionActionComponents(ci);
 	}
 }

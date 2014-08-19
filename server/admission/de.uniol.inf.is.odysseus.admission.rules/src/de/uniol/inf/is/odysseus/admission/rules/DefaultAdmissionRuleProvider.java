@@ -13,7 +13,6 @@ public class DefaultAdmissionRuleProvider implements IAdmissionRuleProvider {
 	public Collection<IAdmissionRule<?>> getRules() {
 		Collection<IAdmissionRule<?>> rules = Lists.newArrayList();
 		
-//		rules.add(new AlwaysStopStartedQueriesAdmissionRule());
 		rules.add(new MaxQueryCountAdmissionRule());
 		
 		return rules;
