@@ -100,6 +100,10 @@ public class FileSinkAO extends AbstractLogicalOperator {
 	public void setCacheSize(long value) {
 		this.writeAfterElements = value;
 	}
+	
+	public long getCacheSize() {
+		return this.writeAfterElements;
+	}
 
 	@Parameter(name="DumpMetaData", type = BooleanParameter.class, optional = true)
 	public void setPrintMetadata(boolean printMetadata) {
