@@ -202,7 +202,11 @@ public class OperatorBuildHelper {
 			List<SDFExpressionParameter> expressions, String groupBy,
 			ILogicalOperator source) {
 		List<String> groupingAttributes = new ArrayList<String>();
-		groupingAttributes.add(groupBy);
+		if(groupBy.length() > 0){
+			groupingAttributes.add(groupBy);
+		}
+	
+		
 		return createStateMapAO(expressions, groupingAttributes, source);
 
 	}
