@@ -226,6 +226,7 @@ public class ScheduleElement implements IIecElement {
 		return false;
 	}
 
+	@Override
 	public void addExtension(Extension extension) {
 		if (extensions == null)
 			extensions = new ArrayList<Extension>();

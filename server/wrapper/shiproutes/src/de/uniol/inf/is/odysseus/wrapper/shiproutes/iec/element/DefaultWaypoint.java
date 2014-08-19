@@ -80,6 +80,7 @@ public class DefaultWaypoint implements IIecElement {
 		return true;
 	}
 
+	@Override
 	public void addExtension(Extension extension) {
 		if (extensions == null)
 			extensions = new ArrayList<Extension>();

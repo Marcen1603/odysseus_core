@@ -91,6 +91,7 @@ public class Waypoints implements IIecElement {
 		waypoints.add(waypoint);
 	}
 	
+	@Override
 	public void addExtension(Extension extension) {
 		if (extensions == null)
 			extensions = new ArrayList<Extension>();

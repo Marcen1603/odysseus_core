@@ -27,7 +27,8 @@ public class HIDDevice
      * Calls the close() native method.
      * @throws Throwable
      */
-    protected void finalize() throws Throwable
+    @Override
+	protected void finalize() throws Throwable
     {
         // It is important to call close() if user forgot to do so,
         // since it frees pointer to internal data structure.
@@ -46,7 +47,8 @@ public class HIDDevice
      * @param  obj <code>HIDDevice<code> object reference 
      * @return <code>true</code> if the <code>HIDDevice</code> object represent the same value; <code>false</code> otherwise
      */
-    public boolean equals(Object obj) 
+    @Override
+	public boolean equals(Object obj) 
     {
         if(!(obj instanceof HIDDevice))
             return false;
@@ -57,7 +59,8 @@ public class HIDDevice
      * Returns a hash code for this <code>HIDDevice</code> object.
      * @return a hash code value for this object
      */
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
        // Same hash code calculation as in Long
         return  (int)(peer^(peer>>>32));

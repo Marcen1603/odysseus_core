@@ -77,7 +77,8 @@ public class HidApplet extends JApplet
         }
         
     }
-    public void destroy() {
+    @Override
+	public void destroy() {
         if(null!=hid_mgr)
             hid_mgr.release();
     }

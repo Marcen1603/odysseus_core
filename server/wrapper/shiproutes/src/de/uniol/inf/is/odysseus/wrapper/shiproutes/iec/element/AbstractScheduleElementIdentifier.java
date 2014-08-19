@@ -100,6 +100,7 @@ public abstract class AbstractScheduleElementIdentifier implements IIecElement {
 		scheduleElements.add(scheduleElement);
 	}
 
+	@Override
 	public void addExtension(Extension extension) {
 		if (extensions == null)
 			extensions = new ArrayList<Extension>();

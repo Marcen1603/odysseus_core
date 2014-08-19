@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.image.datahandler;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;

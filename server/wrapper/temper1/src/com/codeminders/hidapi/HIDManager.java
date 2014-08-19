@@ -59,7 +59,8 @@ public class HIDManager
      *
      * @throws Throwable
      */
-    protected void finalize() throws Throwable
+    @Override
+	protected void finalize() throws Throwable
     {
         // It is important to call release() if user forgot to do so,
         // since it frees pointer internal data structures and stops

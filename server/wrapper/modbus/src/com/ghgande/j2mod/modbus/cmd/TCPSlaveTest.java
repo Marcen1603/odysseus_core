@@ -33,7 +33,7 @@
  ***/
 package com.ghgande.j2mod.modbus.cmd;
 
-import java.net.Inet4Address;
+import java.net.InetAddress;
 
 import com.ghgande.j2mod.modbus.Modbus;
 import com.ghgande.j2mod.modbus.ModbusCoupler;
@@ -134,7 +134,7 @@ public class TCPSlaveTest {
 				System.out.println("Listening...");
 
 			listener = new ModbusTCPListener(3,
-					Inet4Address.getByName("0.0.0.0"));
+					InetAddress.getByName("0.0.0.0"));
 			listener.setPort(port);
 			listener.setUnit(unit);
 			listener.listen();

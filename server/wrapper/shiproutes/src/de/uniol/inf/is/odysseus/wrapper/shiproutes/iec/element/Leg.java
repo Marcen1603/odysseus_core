@@ -175,6 +175,7 @@ public class Leg implements IIecElement {
 		return true;
 	}
 
+	@Override
 	public void addExtension(Extension extension) {
 		if (extensions == null)
 			extensions = new ArrayList<Extension>();

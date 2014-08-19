@@ -6,9 +6,9 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +64,7 @@ public class ImportCommand extends AbstractHandler implements IHandler {
 		String sourceName = selectedAdvertisement.getName();
 		while( dictionary.isSourceNameAlreadyInUse(sourceName)) {
 			InputDialog inputDialog = new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Import P2P source", "Please select another name for the imported P2P source", sourceName + "_2", null );
-			if( inputDialog.open() == Dialog.CANCEL) {
+			if( inputDialog.open() == Window.CANCEL) {
 				return null;
 			} 
 			sourceName = inputDialog.getValue();

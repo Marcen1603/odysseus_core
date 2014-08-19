@@ -171,12 +171,12 @@ public class IECParser extends DefaultHandler {
 			break;
 		case extension:
 			Extension extension = (Extension) (elementStack.pop());
-			if (elementStack.peek() instanceof IIecElement) {
-				((IIecElement) elementStack.peek()).addExtension(extension);
-			} else {
-				// Stack only contains IIecElement's, so elementStack.peek()
-				// needs to be an instance of it
-			}
+	//		if (elementStack.peek() instanceof IIecElement) {
+				elementStack.peek().addExtension(extension);
+//			} else {
+//				// Stack only contains IIecElement's, so elementStack.peek()
+//				// needs to be an instance of it
+//			}
 			break;
 		case leg:
 			Leg leg = (Leg) (elementStack.pop());

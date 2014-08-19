@@ -78,6 +78,7 @@ public class Schedules implements IIecElement {
 		schedules.add(schedule);
 	}
 
+	@Override
 	public void addExtension(Extension extension) {
 		if (extensions == null)
 			extensions = new ArrayList<Extension>();
