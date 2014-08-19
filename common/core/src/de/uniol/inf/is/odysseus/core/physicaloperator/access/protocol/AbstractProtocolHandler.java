@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -116,6 +117,15 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
 	@Override
 	public void process(T m) {
 		getTransfer().transfer(getDataHandler().readData(m));		
+	}
+	
+	@Override
+	public void process(InputStream message) {
+		try {
+			getTransfer().transfer(getDataHandler().readData(message));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
 	}
 		
     @Override

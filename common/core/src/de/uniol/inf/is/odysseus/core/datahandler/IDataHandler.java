@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
@@ -25,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public interface IDataHandler<T> {
 	public T readData(ByteBuffer buffer);
+	public T readData(InputStream inputStream) throws IOException;
 	public T readData(ObjectInputStream inputStream) throws IOException;
 	public T readData(String[] input);
 	public T readData(T input);

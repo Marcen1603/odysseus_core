@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -45,6 +46,11 @@ public class AbstractTransportHandlerDelegate<T>{
 		}
 	}
 	
+	public void fireProcess(InputStream message){
+		for (ITransportHandlerListener<T> l : transportHandlerListener) {
+			l.process(message);
+		}
+	}
 
 	public void fireProcess(T m) {
 		for (ITransportHandlerListener<T> l : transportHandlerListener) {

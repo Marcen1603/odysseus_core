@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 
@@ -37,6 +38,11 @@ public interface ITransportHandlerListener<T> {
 	 * @param message as ByteBuffer
 	 */
 	void process(ByteBuffer message);
+	
+	/**
+	 * Implement this method to process the message as InputStream
+	 */
+	void process(InputStream message);
 	
 	/**
 	 * Implement this method to process the message

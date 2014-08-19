@@ -64,8 +64,8 @@ public class ImageDataHandler extends AbstractDataHandler<Image> {
     }
 
     @Override
-    public Image readData(final ByteBuffer buffer) {
-        int width = buffer.getInt();
+    public Image readData(final ByteBuffer buffer) {    	 	
+    	int width = buffer.getInt();
         int height = buffer.getInt();
         Image image = new Image(width, height);
         for (int x = 0; x < width; x++) {

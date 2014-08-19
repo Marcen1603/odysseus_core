@@ -15,6 +15,8 @@
   */
 package de.uniol.inf.is.odysseus.core.datahandler;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -56,6 +58,11 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 	public T readData(String[] input) {
 		if (input.length != 1) throw new IllegalArgumentException("Input-size must be one!");
 		return readData(input[0]);
+	}
+	
+	@Override
+	public T readData(InputStream inputStream) throws IOException {
+		throw new UnsupportedOperationException("Sorry. Reading from input stream is currently not supported by this data handler");
 	}
 	
 	@Override
