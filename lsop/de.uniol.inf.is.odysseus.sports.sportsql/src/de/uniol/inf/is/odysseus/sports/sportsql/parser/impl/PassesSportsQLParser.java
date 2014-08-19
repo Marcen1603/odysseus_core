@@ -246,7 +246,9 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		ArrayList<String> successfulPassesPredicates = new ArrayList<String>();
 		successfulPassesPredicates.add(ATTRIBUTE_P1_TEAM_ID+" = "+ATTRIBUTE_P2_TEAM_ID);
 	
-		RouteAO successfulPasses = OperatorBuildHelper.createRouteAO(successfulPassesPredicates, statisticTypeSelect);
+		ILogicalOperator successfulPasses =  OperatorBuildHelper.createSelectAO(successfulPassesPredicates, statisticTypeSelect);
+		
+		//RouteAO successfulPasses = OperatorBuildHelper.createRouteAO(successfulPassesPredicates, statisticTypeSelect);
 		allOperators.add(successfulPasses);	
 		
 		// 16. Finish		
