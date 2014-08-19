@@ -22,6 +22,18 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 public interface IFragmentationRule<Strategy extends AbstractFragmentationQueryPartModificator, Operator extends ILogicalOperator> {
 
 	/**
+	 * The class of the fragmentation strategy.
+	 * @return The class of the generic parameter <code>Strategy</code>.
+	 */
+	public Class<Strategy> getStrategyClass();
+	
+	/**
+	 * The class of the logical operator.
+	 * @return The class of the generic parameter <code>Operator</code>.
+	 */
+	public Class<Operator> getOperatorClass();
+	
+	/**
 	 * Checks, if a given operator can be part of a fragment.
 	 * 
 	 * @param operator

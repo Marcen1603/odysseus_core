@@ -132,5 +132,19 @@ public class AggregateHashHorizontalFragmentationRule
 		return aggregation;
 
 	}
+	
+	@Override
+	public Class<HashHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+		
+		return HashHorizontalFragmentationQueryPartModificator.class;
+		
+	}
+
+	@Override
+	public Class<AggregateAO> getOperatorClass() {
+		
+		return AggregateAO.class;
+		
+	}
 
 }

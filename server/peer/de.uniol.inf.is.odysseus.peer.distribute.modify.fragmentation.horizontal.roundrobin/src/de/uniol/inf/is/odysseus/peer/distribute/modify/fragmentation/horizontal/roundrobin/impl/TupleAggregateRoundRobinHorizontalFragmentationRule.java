@@ -45,5 +45,19 @@ public class TupleAggregateRoundRobinHorizontalFragmentationRule
 		return null;
 		
 	}
+	
+	@Override
+	public Class<RoundRobinHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+		
+		return RoundRobinHorizontalFragmentationQueryPartModificator.class;
+		
+	}
+
+	@Override
+	public Class<TupleAggregateAO> getOperatorClass() {
+		
+		return TupleAggregateAO.class;
+		
+	}
 
 }

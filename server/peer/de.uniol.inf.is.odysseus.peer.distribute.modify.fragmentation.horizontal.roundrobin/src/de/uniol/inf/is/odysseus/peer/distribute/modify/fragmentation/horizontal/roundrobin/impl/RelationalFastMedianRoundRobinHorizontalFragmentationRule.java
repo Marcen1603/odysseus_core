@@ -45,5 +45,19 @@ public class RelationalFastMedianRoundRobinHorizontalFragmentationRule
 		return null;
 
 	}
+	
+	@Override
+	public Class<RoundRobinHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+		
+		return RoundRobinHorizontalFragmentationQueryPartModificator.class;
+		
+	}
+
+	@Override
+	public Class<RelationalFastMedianAO> getOperatorClass() {
+		
+		return RelationalFastMedianAO.class;
+		
+	}
 
 }

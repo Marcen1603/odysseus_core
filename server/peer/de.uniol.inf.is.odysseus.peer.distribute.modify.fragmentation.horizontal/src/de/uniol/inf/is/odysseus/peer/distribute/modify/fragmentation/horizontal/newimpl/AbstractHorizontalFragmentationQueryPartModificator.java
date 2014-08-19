@@ -109,12 +109,21 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator
 		// Handling of aggregations
 		for (ILogicalOperator operator : partOfOriginalTarget.getOperators()) {
 
-			Optional<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> optRule = AbstractFragmentationHelper
-					.getFragmentationRule(this, operator);
-			if (optRule.isPresent()) {
+			Collection<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> rules = AbstractFragmentationHelper
+					.getFragmentationRules(this, operator);
 
-				ILogicalOperator specialOperator = optRule.get()
-						.specialHandling(partOfOriginalTarget, helper, bundle);
+			for (IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator> rule : rules) {
+				// XXX Assuming exact one rule: the rule for aggregations
+				
+				if (!rule.needSpecialHandlingForQueryPart(partOfOriginalTarget,
+						operator, helper)) {
+
+					continue;
+
+				}
+
+				ILogicalOperator specialOperator = rule.specialHandling(
+						partOfOriginalTarget, helper, bundle);
 
 				// Subscribe the new aggregation
 				reunionOperator.subscribeSink(specialOperator, 0, 0,
@@ -134,6 +143,8 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator
 					copiedPart.addOperator(specialOperator);
 
 				}
+				
+				break;
 
 			}
 

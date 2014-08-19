@@ -44,5 +44,19 @@ public class StreamFragmentationRule implements
 		return null;
 		
 	}
+	
+	@Override
+	public Class<AbstractFragmentationQueryPartModificator> getStrategyClass() {
+		
+		return AbstractFragmentationQueryPartModificator.class;
+		
+	}
+
+	@Override
+	public Class<StreamAO> getOperatorClass() {
+		
+		return StreamAO.class;
+		
+	}
 
 }

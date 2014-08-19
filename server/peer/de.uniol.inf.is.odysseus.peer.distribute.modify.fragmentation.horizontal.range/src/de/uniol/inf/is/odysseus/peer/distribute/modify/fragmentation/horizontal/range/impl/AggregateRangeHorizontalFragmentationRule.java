@@ -100,5 +100,19 @@ public class AggregateRangeHorizontalFragmentationRule
 		return aggregation;
 
 	}
+	
+	@Override
+	public Class<RangeHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+		
+		return RangeHorizontalFragmentationQueryPartModificator.class;
+		
+	}
+
+	@Override
+	public Class<AggregateAO> getOperatorClass() {
+		
+		return AggregateAO.class;
+		
+	}
 
 }

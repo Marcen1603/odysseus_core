@@ -45,5 +45,19 @@ public class StateMapRangeHorizontalFragmentationRule
 		return null;
 
 	}
+	
+	@Override
+	public Class<RangeHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+		
+		return RangeHorizontalFragmentationQueryPartModificator.class;
+		
+	}
+
+	@Override
+	public Class<StateMapAO> getOperatorClass() {
+		
+		return StateMapAO.class;
+		
+	}
 
 }

@@ -46,4 +46,18 @@ public class TupleAggregateRangeHorizontalFragmentationRule
 		
 	}
 	
+	@Override
+	public Class<RangeHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+		
+		return RangeHorizontalFragmentationQueryPartModificator.class;
+		
+	}
+
+	@Override
+	public Class<TupleAggregateAO> getOperatorClass() {
+		
+		return TupleAggregateAO.class;
+		
+	}
+	
 }

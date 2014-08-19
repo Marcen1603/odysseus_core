@@ -25,8 +25,7 @@ public class WindowHorizontalFragmentationRule
 			AbstractHorizontalFragmentationQueryPartModificator strategy,
 			AbstractWindowAO operator) {
 
-		return operator.getWindowType().equals(
-						WindowType.TIME);
+		return operator.getWindowType().equals(WindowType.TIME);
 
 	}
 
@@ -45,6 +44,20 @@ public class WindowHorizontalFragmentationRule
 
 		// Nothing to do
 		return null;
+
+	}
+
+	@Override
+	public Class<AbstractHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+
+		return AbstractHorizontalFragmentationQueryPartModificator.class;
+
+	}
+
+	@Override
+	public Class<AbstractWindowAO> getOperatorClass() {
+
+		return AbstractWindowAO.class;
 
 	}
 

@@ -45,5 +45,19 @@ public class SinkFragmentationRule
 		return null;
 
 	}
+	
+	@Override
+	public Class<AbstractFragmentationQueryPartModificator> getStrategyClass() {
+		
+		return AbstractFragmentationQueryPartModificator.class;
+		
+	}
+
+	@Override
+	public Class<ILogicalOperator> getOperatorClass() {
+		
+		return ILogicalOperator.class;
+		
+	}
 
 }

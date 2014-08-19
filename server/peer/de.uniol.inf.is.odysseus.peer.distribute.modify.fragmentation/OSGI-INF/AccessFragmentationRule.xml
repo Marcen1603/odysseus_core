@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractAccessFragmentationRule">
-   <implementation class="de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.impl.AbstractAccessFragmentationRule"/>
+   <implementation class="de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.impl.AccessFragmentationRule"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.IFragmentationRule"/>
    </service>

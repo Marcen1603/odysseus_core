@@ -209,42 +209,18 @@ public abstract class AbstractFragmentationHelper {
 		return Optional.absent();
 
 	}
-	
-	/**
-	 * Checks if a class is the same or a sub class of another class.
-	 * @param lowerClass The class, which should be the same as or a subclass of <code>upperClass</code>.
-	 * @param upperClass The class, which should be the same as or a superclass of <code>lowerClass</code>.
-	 * @return True, if <code>lowerClass</code> is the same as or a subclass of <code>upperClass</code>.
-	 */
-	private static boolean isSubsclassOf(Class<?> lowerClass, Class<?> upperClass) {
-
-		if (lowerClass.equals(upperClass)) {
-
-			return true;
-
-		} else if (lowerClass.getSuperclass() != null) {
-
-			return AbstractFragmentationHelper.isSubsclassOf(
-					lowerClass.getSuperclass(), upperClass);
-
-		}
-
-		return false;
-
-	}
 
 	/**
-	 * Searches for a fragmentation rule for a given combination of a
+	 * Searches for fragmentation rules for a given combination of a
 	 * fragmentation strategy and an operator.
 	 * 
 	 * @param strategy
 	 *            The given fragmentation strategy.
 	 * @param operator
 	 *            The given operator.
-	 * @return An optional of the rule or {@link Optional#absent()}, if there is
-	 *         no rule.
+	 * @return All available rules.
 	 */
-	public static Optional<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> getFragmentationRule(
+	public static Collection<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> getFragmentationRules(
 			AbstractFragmentationQueryPartModificator strategy,
 			ILogicalOperator operator) {
 
@@ -252,23 +228,23 @@ public abstract class AbstractFragmentationHelper {
 				"Fragmentation strategy must be not null!");
 		Preconditions.checkNotNull(operator, "Operator must be not null!");
 
+		Collection<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> rules = Lists
+				.newArrayList();
+
 		for (IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator> rule : Activator
 				.getFragmentationRules()) {
 
-			if (AbstractFragmentationHelper.isSubsclassOf(strategy.getClass(),
-					rule.getClass().getTypeParameters()[0]
-							.getGenericDeclaration())
-					&& AbstractFragmentationHelper.isSubsclassOf(operator
-							.getClass(), rule.getClass().getTypeParameters()[1]
-							.getGenericDeclaration())) {
+			if (rule.getStrategyClass().isAssignableFrom(strategy.getClass())
+					&& rule.getOperatorClass().isAssignableFrom(
+							operator.getClass())) {
 
-				return Optional.of(rule);
+				rules.add(rule);
 
 			}
 
 		}
 
-		return Optional.absent();
+		return rules;
 
 	}
 
@@ -593,12 +569,16 @@ public abstract class AbstractFragmentationHelper {
 			AbstractFragmentationQueryPartModificator strategy,
 			ILogicalOperator operator) {
 
-		Optional<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> optRule = AbstractFragmentationHelper
-				.getFragmentationRule(strategy, operator);
-		if (optRule.isPresent()) {
+		Collection<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> rules = AbstractFragmentationHelper
+				.getFragmentationRules(strategy, operator);
 
-			return optRule.get().canOperatorBePartOfFragments(strategy,
-					operator);
+		for (IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator> rule : rules) {
+
+			if (!rule.canOperatorBePartOfFragments(strategy, operator)) {
+
+				return false;
+
+			}
 
 		}
 
@@ -626,12 +606,16 @@ public abstract class AbstractFragmentationHelper {
 
 		for (ILogicalOperator operator : part.getOperators()) {
 
-			Optional<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> optRule = AbstractFragmentationHelper
-					.getFragmentationRule(strategy, operator);
-			if (optRule.isPresent()) {
+			Collection<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> rules = AbstractFragmentationHelper
+					.getFragmentationRules(strategy, operator);
 
-				return optRule.get().needSpecialHandlingForQueryPart(part,
-						operator, helper);
+			for (IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator> rule : rules) {
+
+				if (rule.needSpecialHandlingForQueryPart(part, operator, helper)) {
+
+					return true;
+
+				}
 
 			}
 

@@ -79,5 +79,19 @@ public class StateMapHashHorizontalFragmentationRule
 		return null;
 
 	}
+	
+	@Override
+	public Class<HashHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+		
+		return HashHorizontalFragmentationQueryPartModificator.class;
+		
+	}
+
+	@Override
+	public Class<StateMapAO> getOperatorClass() {
+		
+		return StateMapAO.class;
+		
+	}
 
 }

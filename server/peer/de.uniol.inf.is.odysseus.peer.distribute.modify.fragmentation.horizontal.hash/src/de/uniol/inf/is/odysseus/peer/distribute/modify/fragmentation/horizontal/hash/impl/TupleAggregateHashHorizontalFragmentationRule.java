@@ -67,5 +67,19 @@ public class TupleAggregateHashHorizontalFragmentationRule
 		return null;
 		
 	}
+	
+	@Override
+	public Class<HashHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+		
+		return HashHorizontalFragmentationQueryPartModificator.class;
+		
+	}
+
+	@Override
+	public Class<TupleAggregateAO> getOperatorClass() {
+		
+		return TupleAggregateAO.class;
+		
+	}
 
 }

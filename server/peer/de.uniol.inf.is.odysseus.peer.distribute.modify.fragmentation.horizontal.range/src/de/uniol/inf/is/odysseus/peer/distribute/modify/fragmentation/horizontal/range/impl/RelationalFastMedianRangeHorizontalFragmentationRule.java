@@ -45,5 +45,19 @@ public class RelationalFastMedianRangeHorizontalFragmentationRule
 		return null;
 
 	}
+	
+	@Override
+	public Class<RangeHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+		
+		return RangeHorizontalFragmentationQueryPartModificator.class;
+		
+	}
+
+	@Override
+	public Class<RelationalFastMedianAO> getOperatorClass() {
+		
+		return RelationalFastMedianAO.class;
+		
+	}
 
 }

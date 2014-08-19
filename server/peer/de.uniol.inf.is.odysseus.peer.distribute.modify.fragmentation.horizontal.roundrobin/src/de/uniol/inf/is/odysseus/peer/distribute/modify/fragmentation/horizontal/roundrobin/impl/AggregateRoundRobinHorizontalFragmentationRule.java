@@ -100,5 +100,19 @@ public class AggregateRoundRobinHorizontalFragmentationRule
 		return aggregation;
 
 	}
+	
+	@Override
+	public Class<RoundRobinHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+		
+		return RoundRobinHorizontalFragmentationQueryPartModificator.class;
+		
+	}
+
+	@Override
+	public Class<AggregateAO> getOperatorClass() {
+		
+		return AggregateAO.class;
+		
+	}
 
 }

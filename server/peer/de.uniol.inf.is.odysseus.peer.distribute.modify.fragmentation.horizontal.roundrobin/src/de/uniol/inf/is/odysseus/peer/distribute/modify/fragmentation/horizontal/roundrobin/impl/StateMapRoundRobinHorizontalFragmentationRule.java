@@ -45,5 +45,19 @@ public class StateMapRoundRobinHorizontalFragmentationRule
 		return null;
 
 	}
+	
+	@Override
+	public Class<RoundRobinHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+		
+		return RoundRobinHorizontalFragmentationQueryPartModificator.class;
+		
+	}
+
+	@Override
+	public Class<StateMapAO> getOperatorClass() {
+		
+		return StateMapAO.class;
+		
+	}
 
 }

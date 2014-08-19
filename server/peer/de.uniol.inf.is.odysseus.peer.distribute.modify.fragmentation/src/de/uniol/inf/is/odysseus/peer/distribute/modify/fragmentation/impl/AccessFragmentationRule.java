@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.IFr
  * @author Michael Brand
  *
  */
-public class AbstractAccessFragmentationRule
+public class AccessFragmentationRule
 		implements
 		IFragmentationRule<AbstractFragmentationQueryPartModificator, AbstractAccessAO> {
 
@@ -44,6 +44,20 @@ public class AbstractAccessFragmentationRule
 		// Nothing to do
 		return null;
 
+	}
+
+	@Override
+	public Class<AbstractFragmentationQueryPartModificator> getStrategyClass() {
+		
+		return AbstractFragmentationQueryPartModificator.class;
+		
+	}
+
+	@Override
+	public Class<AbstractAccessAO> getOperatorClass() {
+		
+		return AbstractAccessAO.class;
+		
 	}
 
 }
