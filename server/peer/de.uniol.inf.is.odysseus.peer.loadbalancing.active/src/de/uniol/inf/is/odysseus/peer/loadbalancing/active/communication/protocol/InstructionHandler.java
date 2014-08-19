@@ -109,6 +109,7 @@ public class InstructionHandler {
 
 		case LoadBalancingInstructionMessage.COPY_RECEIVER:
 			isSender=false;
+			break;
 		case LoadBalancingInstructionMessage.COPY_SENDER:
 			// Create Status if none exist
 			if (status == null) {
