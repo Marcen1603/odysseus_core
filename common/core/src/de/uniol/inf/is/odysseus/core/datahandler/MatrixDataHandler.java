@@ -124,7 +124,7 @@ public class MatrixDataHandler extends AbstractDataHandler<double[][]> {
      */
     @Override
     public int memSize(Object data) {
-        int size = 0;
+        int size = Integer.SIZE / 8;
         double[][] value = (double[][]) data;
         for (double[] v : value) {
             size += this.handler.memSize(v);
