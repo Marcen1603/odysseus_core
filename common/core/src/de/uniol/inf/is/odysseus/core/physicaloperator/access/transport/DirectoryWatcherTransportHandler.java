@@ -19,7 +19,11 @@ import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.file.DirectoryIteratorException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
@@ -29,6 +33,9 @@ import java.nio.file.WatchService;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 /**
@@ -36,6 +43,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
  *
  */
 public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandler {
+    /** Logger. */
+    static final Logger LOG = LoggerFactory.getLogger(DirectoryWatcherTransportHandler.class);
     private static final String DIRECTORY = "directory";
     private static final String FILTER = "filter";
     Path directory;
@@ -108,12 +117,22 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
             @Override
             public void run() {
                 try {
+                    try (DirectoryStream<Path> stream = Files.newDirectoryStream(DirectoryWatcherTransportHandler.this.directory)) {
+                        for (Path child : stream) {
+                            if ((DirectoryWatcherTransportHandler.this.filter == null) || (DirectoryWatcherTransportHandler.this.filter.matcher(child.toString()).find())) {
+                                fireProcess(new FileInputStream(child.toFile()));
+                            }
+                        }
+                    }
+                    catch (IOException | DirectoryIteratorException e) {
+                        LOG.error(e.getMessage(), e);
+                    }
                     while (DirectoryWatcherTransportHandler.this.watcher != null) {
                         WatchKey key;
                         try {
                             key = DirectoryWatcherTransportHandler.this.watcher.take();
                         }
-                        catch (InterruptedException x) {
+                        catch (InterruptedException e) {
                             return;
                         }
 
@@ -133,9 +152,10 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
                                     fireProcess(new FileInputStream(child.toFile()));
                                 }
                             }
-                            catch (IOException x) {
-                            	x.printStackTrace();
-                            	continue;
+                            catch (IOException e) {
+                                LOG.error(e.getMessage(), e);
+
+                                continue;
                             }
                         }
                         boolean valid = key.reset();
@@ -145,7 +165,6 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
                     }
                 }
                 catch (Exception x) {
-                	x.printStackTrace();
                     return;
                 }
             }
