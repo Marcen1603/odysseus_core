@@ -8,9 +8,12 @@ Require-Bundle: de.uniol.inf.is.odysseus.admission;bundle-version="1.0.0",
  com.google.guava;bundle-version="14.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
-Service-Component: OSGI-INF/ExecutorAdmissionStatusComponent.xml,
- OSGI-INF/AdmissionStatusPlugIn.xml
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.costmodel;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.costmodel.logical;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.costmodel.physical;bundle-version="1.0.0"
+Service-Component: OSGI-INF/ExecutorAdmissionStatusComponent.xml,OSGI-INF/AdmissionStatusPlugIn.xml,
+ OSGI-INF/costModelAdmissionStatusComponent.xml
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn
 Import-Package: org.osgi.framework

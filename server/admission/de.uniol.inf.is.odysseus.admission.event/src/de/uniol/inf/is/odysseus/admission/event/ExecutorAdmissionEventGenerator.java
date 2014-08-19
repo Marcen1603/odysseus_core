@@ -23,27 +23,27 @@ public class ExecutorAdmissionEventGenerator implements IPlanModificationListene
 		int queryID = query.getID();
 		if( PlanModificationEventType.QUERY_ADDED.equals(eventType)) {
 			LOG.debug("Got query add event for query id {}", queryID);
-			ac.processEventAsync(new QueryAddAdmissionEvent(queryID));
+			ac.processEventAsync(new QueryAddAdmissionEvent(query));
 			
 		} else if( PlanModificationEventType.QUERY_REMOVE.equals(eventType)) {
 			LOG.debug("Got query remove event for query id {}", queryID);
-			ac.processEventAsync(new QueryRemoveAdmissionEvent(queryID));
+			ac.processEventAsync(new QueryRemoveAdmissionEvent(query));
 			
 		} else if( PlanModificationEventType.QUERY_START.equals(eventType)) {
 			LOG.debug("Got query start event for query id {}", queryID);
-			ac.processEventAsync(new QueryStartAdmissionEvent(queryID));
+			ac.processEventAsync(new QueryStartAdmissionEvent(query));
 			
 		} else if( PlanModificationEventType.QUERY_STOP.equals(eventType)) {
 			LOG.debug("Got query stop event for query id {}", queryID);
-			ac.processEventAsync(new QueryStopAdmissionEvent(queryID));
+			ac.processEventAsync(new QueryStopAdmissionEvent(query));
 			
 		} else if( PlanModificationEventType.QUERY_SUSPEND.equals(eventType)) {
 			LOG.debug("Got query suspend event for query id {}", queryID);
-			ac.processEventAsync(new QuerySuspendAdmissionEvent(queryID));
+			ac.processEventAsync(new QuerySuspendAdmissionEvent(query));
 			
 		} else if( PlanModificationEventType.QUERY_RESUME.equals(eventType)) {
 			LOG.debug("Got query resume event for query id {}", queryID);
-			ac.processEventAsync(new QueryResumeAdmissionEvent(queryID));
+			ac.processEventAsync(new QueryResumeAdmissionEvent(query));
 			
 		} 
 		
