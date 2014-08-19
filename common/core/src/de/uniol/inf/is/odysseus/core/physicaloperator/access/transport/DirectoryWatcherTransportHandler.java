@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.FileSystems;
@@ -29,6 +30,8 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import javax.imageio.stream.FileImageInputStream;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
@@ -131,7 +134,7 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
                             try {
                                 Path child = DirectoryWatcherTransportHandler.this.directory.resolve(filename);
                                 if ((DirectoryWatcherTransportHandler.this.filter == null) || (DirectoryWatcherTransportHandler.this.filter.matcher(child.toString()).find())) {
-                                    fireProcess(ByteBuffer.wrap(Files.readAllBytes(child)));
+                                    fireProcess(new FileInputStream(child.toFile()));
                                 }
                             }
                             catch (IOException x) {
