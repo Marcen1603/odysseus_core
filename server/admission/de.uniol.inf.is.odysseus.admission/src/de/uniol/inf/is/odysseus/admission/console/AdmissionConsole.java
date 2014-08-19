@@ -9,7 +9,9 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import de.uniol.inf.is.odysseus.admission.AdmissionRuleGroup;
 import de.uniol.inf.is.odysseus.admission.IAdmissionEvent;
 import de.uniol.inf.is.odysseus.admission.IAdmissionRule;
+import de.uniol.inf.is.odysseus.admission.IAdmissionStatusComponent;
 import de.uniol.inf.is.odysseus.admission.activator.AdmissionPlugIn;
+import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusComponentRegistry;
 
 public class AdmissionConsole implements CommandProvider {
 
@@ -18,7 +20,8 @@ public class AdmissionConsole implements CommandProvider {
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append("--- Admission commands---\n");
-		sb.append("    lsAdmissionRules/listAdmissionRules         		- Lists all registered admission rules\n");
+		sb.append("    lsAdmissionRules/listAdmissionRules         					- Lists all registered admission rules\n");
+		sb.append("    lsAdmissionStatusComponents/listAdmissionStatusComponents    - Lists all registered admission rules\n");
 		
 		return sb.toString();
 	}
@@ -48,5 +51,22 @@ public class AdmissionConsole implements CommandProvider {
 	
 	public void _listAdmissionRules(CommandInterpreter ci ) {
 		_lsAdmissionRules(ci);
+	}
+	
+	public void _lsAdmissionStatusComponents( CommandInterpreter ci ) {
+		AdmissionStatusComponentRegistry registry = AdmissionPlugIn.getAdmissionStatusComponentRegistry();
+		Collection<Class<? extends IAdmissionStatusComponent>> components = registry.getAllAdmissionStatusComponentClasses();
+		
+		if( !components.isEmpty() ) {
+			for( Class<? extends IAdmissionStatusComponent> component : components ) {
+				System.out.println("\t" + component.getName());
+			}
+		} else {
+			System.out.println("\t<none>");
+		}
+	}
+	
+	public void _listAdmissionStatusComponents( CommandInterpreter ci ) {
+		_lsAdmissionStatusComponents(ci);
 	}
 }

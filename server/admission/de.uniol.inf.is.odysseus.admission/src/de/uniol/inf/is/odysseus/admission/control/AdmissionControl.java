@@ -14,13 +14,17 @@ import de.uniol.inf.is.odysseus.admission.IAdmissionAction;
 import de.uniol.inf.is.odysseus.admission.IAdmissionControl;
 import de.uniol.inf.is.odysseus.admission.IAdmissionEvent;
 import de.uniol.inf.is.odysseus.admission.IAdmissionRule;
+import de.uniol.inf.is.odysseus.admission.IAdmissionStatus;
 import de.uniol.inf.is.odysseus.admission.activator.AdmissionPlugIn;
+import de.uniol.inf.is.odysseus.admission.status.AdmissionStatus;
 
 public class AdmissionControl implements IAdmissionControl {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdmissionControl.class);
 	
-	private ConcurrentLinkedDeque<IAdmissionEvent> collectedEvents = new ConcurrentLinkedDeque<IAdmissionEvent>();
+	private final ConcurrentLinkedDeque<IAdmissionEvent> collectedEvents = new ConcurrentLinkedDeque<IAdmissionEvent>();
+	private final IAdmissionStatus admissionStatus = new AdmissionStatus();
+	
 	private Thread execThread;
 	private Boolean inProcessing = false;
 	
@@ -55,11 +59,11 @@ public class AdmissionControl implements IAdmissionControl {
 							List<? extends IAdmissionRule> rules = AdmissionPlugIn.getAdmissionRuleRegistry().getAdmissionRules(group, event.getClass());
 							
 							for( IAdmissionRule rule : rules ) {
-								if( rule.isExecutable(event, null) ) {
+								if( rule.isExecutable(event, admissionStatus) ) {
 									LOG.debug("Executing rule {}", rule.getClass().getName());
-									List<IAdmissionAction> actions = rule.execute(event, null);
+									List<IAdmissionAction> actions = rule.execute(event, admissionStatus);
 									
-									executeActions(actions, event);
+									executeActions(actions, event, admissionStatus);
 									continue;
 								}
 							}
@@ -80,25 +84,25 @@ public class AdmissionControl implements IAdmissionControl {
 		execThread.start();
 	}
 
-	private static void executeActions( List<IAdmissionAction> actions, IAdmissionEvent event ) {
+	private static void executeActions( List<IAdmissionAction> actions, IAdmissionEvent event, IAdmissionStatus status ) {
 		Preconditions.checkNotNull(actions, "List of admission actions must not be null!");
 		
 		List<IAdmissionAction> executedActions = Lists.newArrayList();
 		try {
 			for( IAdmissionAction action : actions ) {
-				action.execute(event);
+				action.execute(event, status);
 				
 				executedActions.add(action);
 			}
 		} catch( Throwable t ) {
-			revertAllActions(executedActions, event);
+			revertAllActions(executedActions, event, status);
 		}
 	}
 
-	private static void revertAllActions(List<IAdmissionAction> executedActions, IAdmissionEvent event) {
+	private static void revertAllActions(List<IAdmissionAction> executedActions, IAdmissionEvent event, IAdmissionStatus status) {
 		for( IAdmissionAction executedAction : executedActions ) {
 			try {
-				executedAction.revert(event);
+				executedAction.revert(event, status);
 			} catch( Throwable t ) {
 				LOG.error("Could not revert admission action", t);
 			}
