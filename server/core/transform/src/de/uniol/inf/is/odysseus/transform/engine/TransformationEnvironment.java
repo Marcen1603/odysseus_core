@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlow;
 import de.uniol.inf.is.odysseus.ruleengine.system.AbstractWorkingEnvironment;
+import de.uniol.inf.is.odysseus.ruleengine.system.WorkingMemory;
 
 /**
  * Handles the local state: current loaded configuration for each transformation instance etc.
@@ -31,8 +32,17 @@ import de.uniol.inf.is.odysseus.ruleengine.system.AbstractWorkingEnvironment;
 public class TransformationEnvironment extends AbstractWorkingEnvironment<TransformationConfiguration>{
 		
 		
+	private TransformationWorkingMemory workingMemory;
+
 	public TransformationEnvironment(TransformationConfiguration transformConfig, IRuleFlow ruleFlow, ISession caller, IDataDictionary dd){
-		super(transformConfig, ruleFlow, caller, dd);		
+		super(transformConfig, ruleFlow);		
+		this.workingMemory = new TransformationWorkingMemory(this, caller, dd);
 	}				
+	
+	@Override
+	public WorkingMemory getWorkingMemory() {
+		return this.workingMemory;
+	}
+	
 	
 }

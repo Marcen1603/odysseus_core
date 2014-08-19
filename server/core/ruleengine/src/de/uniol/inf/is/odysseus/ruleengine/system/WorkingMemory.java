@@ -29,8 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -50,13 +48,8 @@ public class WorkingMemory {
 	
 	private Map<Class<?>, Collection<Object>> objectMap = new HashMap<Class<?>, Collection<Object>>();
 
-	final private ISession caller;
-	final private IDataDictionary dd;
-
-	public WorkingMemory(IWorkingEnvironment<?> env, ISession caller, IDataDictionary dd) {
+	public WorkingMemory(IWorkingEnvironment<?> env) {
 		this.env = env;
-		this.caller = caller;
-		this.dd = dd;				
 	}
 
 	public void removeObject(Object o) {
@@ -203,13 +196,13 @@ public class WorkingMemory {
 
 		return out;
 	}
-
-	public ISession getCaller() {
-		return caller;
-	}
-
-	public IDataDictionary getDataDictionary() {
-		return dd;
-	}
+//
+//	public ISession getCaller() {
+//		return caller;
+//	}
+//
+//	public IDataDictionary getDataDictionary() {
+//		return dd;
+//	}
 
 }

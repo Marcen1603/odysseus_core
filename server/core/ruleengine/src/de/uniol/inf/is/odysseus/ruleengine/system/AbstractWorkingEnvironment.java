@@ -15,21 +15,17 @@
   */
 package de.uniol.inf.is.odysseus.ruleengine.system;
 
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlow;
 
 public abstract class AbstractWorkingEnvironment<T> implements IWorkingEnvironment<T> {
 	
 	private T configuration = null;
-	private WorkingMemory workingMemory;
 	private IRuleFlow ruleFlow;
 	
-	public AbstractWorkingEnvironment(T config, IRuleFlow ruleflow, ISession caller, IDataDictionary dd){
+	public AbstractWorkingEnvironment(T config, IRuleFlow ruleflow){
 		this.configuration = config;
 		this.ruleFlow = ruleflow;
-		this.workingMemory = new WorkingMemory(this, caller, dd);
 	}
 	
 	@Override
@@ -39,17 +35,12 @@ public abstract class AbstractWorkingEnvironment<T> implements IWorkingEnvironme
 
 	public void processEnvironment() throws RuleException{		
 		long currentmillis = System.currentTimeMillis();
-		int ruleCounter = this.workingMemory.process();		
+		int ruleCounter = getWorkingMemory().process();		
 		long diffMillis = System.currentTimeMillis() - currentmillis;
 		WorkingMemory.LOGGER.debug("Ruleengine needed " + diffMillis + " millis !");
 		WorkingMemory.LOGGER.debug(ruleCounter+" rules were successfully executed!");
 	}
 
-	@Override
-	public WorkingMemory getWorkingMemory() {
-		return this.workingMemory;
-	}
-	
 	@Override
 	public IRuleFlow getRuleFlow() {
 		return this.ruleFlow;

@@ -71,7 +71,7 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
         return liste;
     }
 
-    private WorkingMemory getCurrentWorkingMemory() {
+    protected WorkingMemory getCurrentWorkingMemory() {
         return this.currentWorkingMemory;
     }
 
@@ -104,14 +104,6 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
         } 
         
         return 0;
-    }
-
-    protected ISession getCaller() {
-        return this.getCurrentWorkingMemory().getCaller();
-    }
-
-    protected IDataDictionaryWritable getDataDictionary() {
-        return (IDataDictionaryWritable)this.getCurrentWorkingMemory().getDataDictionary();
     }
 
     @Override

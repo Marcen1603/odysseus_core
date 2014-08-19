@@ -30,18 +30,30 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule;
+import de.uniol.inf.is.odysseus.transform.engine.TransformationWorkingMemory;
 
 public abstract class AbstractTransformationRule<T> extends
 		AbstractRule<T, TransformationConfiguration> implements
 		ITransformationRule {
 
+	protected ISession getCaller() {
+		return ((TransformationWorkingMemory)this.getCurrentWorkingMemory()).getCaller();
+	}
+
+	protected IDataDictionaryWritable getDataDictionary() {
+		return (IDataDictionaryWritable) ((TransformationWorkingMemory)this.getCurrentWorkingMemory())
+				.getDataDictionary();
+	}
+	
 	static Logger logger = LoggerFactory
 			.getLogger(AbstractTransformationRule.class);
 
