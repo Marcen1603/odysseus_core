@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Status
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.admission.status
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: de.uniol.inf.is.odysseus.admission;bundle-version="1.0.0",
+ com.google.guava;bundle-version="14.0.0",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+Service-Component: OSGI-INF/ExecutorAdmissionStatusComponent.xml,
+ OSGI-INF/AdmissionStatusPlugIn.xml
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn
+Import-Package: org.osgi.framework
+Export-Package: de.uniol.inf.is.odysseus.admission.status
