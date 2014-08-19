@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Rules
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.admission.rules
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: de.uniol.inf.is.odysseus.admission;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.admission.event;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.admission.action;bundle-version="1.0.0",
+ com.google.guava;bundle-version="14.0.0"
+Service-Component: OSGI-INF/defaultAdmissionRuleProvider.xml
