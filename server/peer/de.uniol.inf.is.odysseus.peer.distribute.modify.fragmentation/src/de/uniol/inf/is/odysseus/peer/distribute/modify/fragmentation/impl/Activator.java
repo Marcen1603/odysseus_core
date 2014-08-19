@@ -74,7 +74,7 @@ public class Activator implements BundleActivator {
 	 */
 	public static Collection<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> getFragmentationRules() {
 
-		return Activator.getFragmentationRules();
+		return Activator.rules;
 
 	}
 
