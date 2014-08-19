@@ -12,6 +12,8 @@ public class SportsQLTimeParameter implements ISportsQLParameter{
 		minutes,
 		seconds,
 		milliseconds,
+		microseconds,
+		nanoseconds,
 		picoseconds
 	}
 	
