@@ -97,7 +97,7 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 
 	@Override
 	public T getNext() throws IOException {
-		String line = super.getNextLine();
+		String line = super.getNextLine(reader);
 		if (line != null) {
 			if (addLineNumber) {
 				line = super.lineCounter + delimiterString + line;

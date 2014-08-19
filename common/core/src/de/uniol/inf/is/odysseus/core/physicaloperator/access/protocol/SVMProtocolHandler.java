@@ -126,7 +126,7 @@ public class SVMProtocolHandler<T extends Tuple<?>> extends LineProtocolHandler<
      */
     @Override
     public T getNext() throws IOException {
-        String line = super.getNextLine();
+        String line = super.getNextLine(reader);
         if (line != null) {
             return readLine(line);
         }

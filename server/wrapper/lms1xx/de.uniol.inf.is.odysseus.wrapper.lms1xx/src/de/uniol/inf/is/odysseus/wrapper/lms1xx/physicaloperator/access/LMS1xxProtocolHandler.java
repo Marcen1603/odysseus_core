@@ -192,7 +192,7 @@ public class LMS1xxProtocolHandler extends LineProtocolHandler<KeyValueObject<? 
      */
     @Override
     public KeyValueObject<? extends IMetaAttribute> getNext() throws IOException {
-        final String line = super.getNextLine();
+        final String line = super.getNextLine(reader);
         final CharsetEncoder encoder = this.charset.newEncoder();
         // Check if the first value is STX or just STX as a char (50)
         if (line.startsWith("2")) {

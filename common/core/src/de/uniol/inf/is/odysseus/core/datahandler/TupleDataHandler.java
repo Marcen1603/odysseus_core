@@ -92,7 +92,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		}
 	}
 
-	@Override
+	@Override	
 	public Tuple<?> readData(ObjectInputStream inputStream) throws IOException {
 		Object[] attributes = new Object[dataHandlers.length];
 		for (int i = 0; i < this.dataHandlers.length; i++) {

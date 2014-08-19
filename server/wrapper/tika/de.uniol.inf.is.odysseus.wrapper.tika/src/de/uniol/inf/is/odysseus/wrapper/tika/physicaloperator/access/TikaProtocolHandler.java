@@ -115,7 +115,7 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<? ex
      */
     @Override
     public KeyValueObject<? extends IMetaAttribute> getNext() throws IOException {
-        final String line = super.getNextLine();
+        final String line = super.getNextLine(reader);
 
         KeyValueObject<? extends IMetaAttribute> object = null;
         final Map<String, Object> event = new HashMap<>();

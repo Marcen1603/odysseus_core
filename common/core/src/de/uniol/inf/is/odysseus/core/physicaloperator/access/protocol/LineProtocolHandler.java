@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -71,7 +72,6 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	private String lastRunRemaining = "";
 
-	
 	private Map<String, String> optionsMap;
 
 	public static final String DELAY = "delay";
@@ -149,13 +149,15 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		getTransportHandler().open();
 		if (getDirection().equals(ITransportDirection.IN)) {
 			if ((this.getAccessPattern().equals(IAccessPattern.PULL))
-					|| (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL))) {
+					|| (this.getAccessPattern()
+							.equals(IAccessPattern.ROBUST_PULL))) {
 				reader = new BufferedReader(new InputStreamReader(
 						getTransportHandler().getInputStream()));
 			}
 		} else {
 			if ((this.getAccessPattern().equals(IAccessPattern.PULL))
-					|| (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL))) {
+					|| (this.getAccessPattern()
+							.equals(IAccessPattern.ROBUST_PULL))) {
 				writer = new BufferedWriter(new OutputStreamWriter(
 						getTransportHandler().getOutputStream()));
 			}
@@ -207,15 +209,15 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		return true;
 	}
 
-	protected String getNextLine() throws IOException {
+	protected String getNextLine(BufferedReader toReadFrom) throws IOException {
 		if (!firstLineSkipped && !readFirstLine) {
-			reader.readLine();
+			toReadFrom.readLine();
 			firstLineSkipped = true;
 		}
 		delay();
 		String line = null;
 		if (hasNext()) {
-			line = reader.readLine();
+			line = toReadFrom.readLine();
 		} else {
 			long time = System.currentTimeMillis();
 			LOG.debug("Read last line. " + lineCounter + " " + time + " "
@@ -287,7 +289,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public T getNext() throws IOException {
-		String line = getNextLine();
+		String line = getNextLine(reader);
 		if (line != null) {
 			return getDataHandler().readData(line);
 		} else {
@@ -299,7 +301,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public void write(T object) throws IOException {
 		writer.write(object.toString());
 	}
-	
+
 	private static String bb_to_str(ByteBuffer buffer) {
 		String data = "";
 		try {
@@ -311,32 +313,33 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		}
 		return data;
 	}
-	
+
 	@Override
 	public void process(ByteBuffer message) {
 		String strMsg = bb_to_str(message);
 		String data = lastRunRemaining + strMsg;
 		StringTokenizer t = new StringTokenizer(data, "\n\r");
 		boolean process = true;
+
 		while (process && t.hasMoreTokens()) {
 			String token = t.nextToken();
 			// The last token could be incomplete --> process next time
 			if (t.hasMoreTokens()) {
-				
+
 				if (!firstLineSkipped && !readFirstLine) {
 					firstLineSkipped = true;
 					continue;
-				}else{
+				} else {
 					process(token);
 				}
-				
+
 			} else {
 				// There are some cases, where the last token contains the
 				// whole line
-				if (data.endsWith("\n") || data.endsWith("\r")){
+				if (data.endsWith("\n") || data.endsWith("\r")) {
 					process(token);
 					lastRunRemaining = "";
-				}else{
+				} else {
 					lastRunRemaining = token;
 				}
 				process = false;
@@ -345,8 +348,27 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	protected void process(String token) {
-		T retValue =  getDataHandler().readData(token);
+		T retValue = getDataHandler().readData(token);
 		getTransfer().transfer(retValue);
+	}
+
+	@Override
+	public void process(InputStream message) {
+		boolean firstLineSkippedLocal = false;
+		BufferedReader r = new BufferedReader(new InputStreamReader(message));
+		String line;
+		try {
+			while ((line = getNextLine(r)) != null) {
+				if (!firstLineSkippedLocal && !readFirstLine) {
+					firstLineSkippedLocal = true;
+					continue;
+				} else {
+					process(line);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	protected void delay() {
