@@ -38,6 +38,10 @@ public class SystemLoadToPayloadAO extends AbstractLogicalOperator {
 	public void setAppend2(boolean append) {
 		this.append = append;
 	}
+	
+	public boolean isAppend2() {
+		return append;
+	}
 
 	public String getLoadname() {
 		return loadname;
