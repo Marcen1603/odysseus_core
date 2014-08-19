@@ -9,7 +9,9 @@ public class SportsQLSpaceParameter implements ISportsQLParameter {
 		right_half,
 		left_third,
 		middle_third,
-		right_third
+		right_third,
+		top_half,
+		bottom_half
 	}
 	
 	public enum SpaceUnit {

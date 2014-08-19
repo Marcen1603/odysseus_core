@@ -32,6 +32,12 @@ public class SpaceHelper {
 		case right_third:
 			return new Space(new Point(OperatorBuildHelper.LOWERLEFT_X, OperatorBuildHelper.THIRD_MIDDLE_RIGHT_Y), 
 					new Point(OperatorBuildHelper.LOWERRIGHT_X, OperatorBuildHelper.THIRD_RIGHT_RIGHT_Y));
+		case top_half:
+			return new Space(new Point(OperatorBuildHelper.LOWERLEFT_X, OperatorBuildHelper.LOWERLEFT_Y), 
+					new Point(OperatorBuildHelper.VERTICAL_TOP_HALF_X, OperatorBuildHelper.UPPERLEFT_Y));
+		case bottom_half:
+			return new Space(new Point(OperatorBuildHelper.VERTICAL_TOP_HALF_X, OperatorBuildHelper.LOWERLEFT_Y), 
+					new Point(OperatorBuildHelper.VERTICAL_BOTTOM_HALF_X, OperatorBuildHelper.UPPERLEFT_Y));
 		default:
 			break;
 		}

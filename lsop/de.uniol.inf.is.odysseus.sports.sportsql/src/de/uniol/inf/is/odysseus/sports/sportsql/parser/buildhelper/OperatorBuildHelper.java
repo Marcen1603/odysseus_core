@@ -109,6 +109,12 @@ public class OperatorBuildHelper {
 	public static final int THIRD_RIGHT_RIGHT_Y = UPPERLEFT_Y;
 	
 	/**
+	 * Game field vertical halfs
+	 */
+	public static final int VERTICAL_TOP_HALF_X = (UPPERLEFT_X + UPPERRIGHT_X) / 2; 
+	public static final int VERTICAL_BOTTOM_HALF_X = UPPERRIGHT_X;
+	
+	/**
 	 * Goals
 	 */
 	public static final String GOAL_AREA_1_X_MIN = "22578.5";
