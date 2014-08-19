@@ -1,9 +1,10 @@
-package de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element;
+package de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.manoeuvre;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.IShipRouteRootElement;
 
-public class MPlanDataItem implements IShipRouteRootElement {
+public class ManoeuvrePlanDataItem implements IShipRouteRootElement {
 	// Constants
 	public static final String DATA_ITEM_ID = "data_item_id";
 

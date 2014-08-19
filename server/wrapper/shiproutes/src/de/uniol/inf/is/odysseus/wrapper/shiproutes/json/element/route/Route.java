@@ -1,9 +1,10 @@
-package de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element;
+package de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route;
 
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.IShipRouteElement;
 
 public class Route implements IShipRouteElement {
 

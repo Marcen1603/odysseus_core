@@ -1,21 +1,23 @@
-package de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element;
+package de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.IShipRouteRootElement;
 
-public class PredictionDataItem implements IShipRouteRootElement {
+public class RouteDataItem implements IShipRouteRootElement {
 	// Constants
 	public static final String DATA_ITEM_ID = "data_item_id";
 
 	private String data_item_id;
+	private Route route;
 
 	@Override
 	public void fillMap(KeyValueObject<? extends IMetaAttribute> map,
 			String prefix) {
 		if (data_item_id != null)
 			map.addAttributeValue(prefix + DATA_ITEM_ID, data_item_id);
-		// if (route != null)
-		// route.fillMap(map, prefix);
+		if (route != null)
+			route.fillMap(map, prefix);
 	}
 
 	@Override
@@ -24,4 +26,21 @@ public class PredictionDataItem implements IShipRouteRootElement {
 		fillMap(map, "");
 		return map;
 	}
+
+	public String getData_item_id() {
+		return data_item_id;
+	}
+
+	public void setData_item_id(String data_item_id) {
+		this.data_item_id = data_item_id;
+	}
+
+	public Route getRoute() {
+		return route;
+	}
+
+	public void setRoute(Route route) {
+		this.route = route;
+	}
+
 }

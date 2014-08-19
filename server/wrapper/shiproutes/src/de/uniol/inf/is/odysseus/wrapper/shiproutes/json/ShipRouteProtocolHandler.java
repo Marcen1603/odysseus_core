@@ -24,9 +24,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.IShipRouteRootElement;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.MPlanDataItem;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.PredictionDataItem;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.RouteDataItem;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.manoeuvre.ManoeuvrePlanDataItem;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.prediction.PredictionDataItem;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.RouteDataItem;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.enums.DataItemTypes;
 
 public class ShipRouteProtocolHandler extends
@@ -124,14 +124,14 @@ public class ShipRouteProtocolHandler extends
 	private boolean parseRouteElement(String jsonString) {
 		StringTokenizer tokenizer = new StringTokenizer(jsonString, "{}", true);
 		while (tokenizer.hasMoreElements()) {
-			String token = (String) tokenizer.nextElement();
-			if (token.contains("{")) {
+			String element = (String) tokenizer.nextElement();
+			if (element.contains("{")) {
 				counter++;
-			} else if (token.contains("}")) {
+			} else if (element.contains("}")) {
 				counter--;
 			}
 
-			iecMessageBuffer += token;
+			iecMessageBuffer += element;
 
 			if (counter == 0) {
 				// if json message is complete
@@ -151,7 +151,7 @@ public class ShipRouteProtocolHandler extends
 						break;
 					case Manoeuvre:
 						shipRouteRootElement = gson.fromJson(iecMessageBuffer,
-								MPlanDataItem.class);
+								ManoeuvrePlanDataItem.class);
 						break;
 					case Prediction:
 						shipRouteRootElement = gson.fromJson(iecMessageBuffer,
