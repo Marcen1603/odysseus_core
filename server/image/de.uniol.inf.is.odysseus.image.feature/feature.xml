@@ -29,6 +29,16 @@ Unless required by applicable law or agreed to in writing, software
    <url>
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
+
+   <requires>
+      <import plugin="de.uniol.inf.is.odysseus.core"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
+      <import plugin="de.uniol.inf.is.odysseus.core.server"/>
+      <import plugin="com.google.guava"/>
+      <import plugin="de.uniol.inf.is.odysseus.mep"/>
+   </requires>
+
    <plugin
          id="de.uniol.inf.is.odysseus.image.common"
          download-size="0"

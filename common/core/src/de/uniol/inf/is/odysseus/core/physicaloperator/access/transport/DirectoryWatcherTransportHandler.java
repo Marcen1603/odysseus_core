@@ -134,7 +134,8 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
                                 }
                             }
                             catch (IOException x) {
-                                continue;
+                            	x.printStackTrace();
+                            	continue;
                             }
                         }
                         boolean valid = key.reset();
@@ -144,6 +145,7 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
                     }
                 }
                 catch (Exception x) {
+                	x.printStackTrace();
                     return;
                 }
             }

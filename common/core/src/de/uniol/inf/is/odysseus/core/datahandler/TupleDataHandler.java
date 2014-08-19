@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -93,6 +94,21 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 	@Override
 	public Tuple<?> readData(ObjectInputStream inputStream) throws IOException {
+		Object[] attributes = new Object[dataHandlers.length];
+		for (int i = 0; i < this.dataHandlers.length; i++) {
+            try {
+                attributes[i] = dataHandlers[i].readData(inputStream);
+            }
+            catch (Exception e) {
+                logger.warn("Error parsing stream with " + dataHandlers[i].getClass() + " " + e.getMessage());
+                attributes[i] = null;
+            }
+		}
+		return new Tuple<IMetaAttribute>(attributes, false);
+	}
+	
+	@Override
+	public Tuple<?> readData(InputStream inputStream) throws IOException {
 		Object[] attributes = new Object[dataHandlers.length];
 		for (int i = 0; i < this.dataHandlers.length; i++) {
             try {
