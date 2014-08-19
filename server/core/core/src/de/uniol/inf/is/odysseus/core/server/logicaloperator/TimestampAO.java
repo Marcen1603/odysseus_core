@@ -144,6 +144,10 @@ public class TimestampAO extends UnaryLogicalOp {
 	public void setIsUsingSystemTime(boolean value) {
 		this.isUsingSystemTime = value;
 	}
+	
+	public boolean getIsUsingSystemTime() {
+		return this.isUsingSystemTime;
+	}
 
 	public void setUsingNoTime(boolean b) {
 		this.isUsingNoTime = b;
@@ -266,7 +270,11 @@ public class TimestampAO extends UnaryLogicalOp {
 
 	@Parameter(type = StringParameter.class, name = "locale", optional = true, doc ="Interprete the date string with this locale")
 	public void setLocaleStr(String localeStr) {
-		this.locale = Locale.forLanguageTag(localeStr);;
+		this.locale = Locale.forLanguageTag(localeStr);
+	}
+	
+	public String getLocaleStr() {
+		return this.locale.toString();
 	}
 	
 	public List<String> getLocales(){
