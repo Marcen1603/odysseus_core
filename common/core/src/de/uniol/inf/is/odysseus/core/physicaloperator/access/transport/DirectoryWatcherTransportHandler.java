@@ -28,6 +28,7 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
@@ -37,8 +38,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
  */
 public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandler {
     private static final String DIRECTORY = "directory";
-    private Path directory;
-    private WatchService watcher;
+    private static final String FILTER = "filter";
+    Path directory;
+    Pattern filter;
+    WatchService watcher;
 
     /**
      * 
@@ -63,6 +66,9 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
         }
         else {
             throw new IllegalArgumentException("No directory given!");
+        }
+        if (options.containsKey(DirectoryWatcherTransportHandler.FILTER)) {
+            this.filter = Pattern.compile(options.get(DirectoryWatcherTransportHandler.FILTER));
         }
     }
 
@@ -102,37 +108,44 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (DirectoryWatcherTransportHandler.this.watcher != null) {
-                    WatchKey key;
-                    try {
-                        key = DirectoryWatcherTransportHandler.this.watcher.take();
-                    }
-                    catch (InterruptedException x) {
-                        return;
-                    }
-
-                    for (WatchEvent<?> event : key.pollEvents()) {
-                        WatchEvent.Kind<?> kind = event.kind();
-
-                        if (kind == OVERFLOW) {
-                            continue;
-                        }
-                        @SuppressWarnings("unchecked")
-                        WatchEvent<Path> ev = (WatchEvent<Path>) event;
-                        Path filename = ev.context();
-
+                try {
+                    while (DirectoryWatcherTransportHandler.this.watcher != null) {
+                        WatchKey key;
                         try {
-                            Path child = DirectoryWatcherTransportHandler.this.directory.resolve(filename);
-                            fireProcess(ByteBuffer.wrap(Files.readAllBytes(child)));
+                            key = DirectoryWatcherTransportHandler.this.watcher.take();
                         }
-                        catch (IOException x) {
-                            continue;
+                        catch (InterruptedException x) {
+                            return;
+                        }
+
+                        for (WatchEvent<?> event : key.pollEvents()) {
+                            WatchEvent.Kind<?> kind = event.kind();
+
+                            if (kind == OVERFLOW) {
+                                continue;
+                            }
+                            @SuppressWarnings("unchecked")
+                            WatchEvent<Path> ev = (WatchEvent<Path>) event;
+                            Path filename = ev.context();
+
+                            try {
+                                Path child = DirectoryWatcherTransportHandler.this.directory.resolve(filename);
+                                if ((DirectoryWatcherTransportHandler.this.filter == null) || (DirectoryWatcherTransportHandler.this.filter.matcher(child.toString()).find())) {
+                                    fireProcess(ByteBuffer.wrap(Files.readAllBytes(child)));
+                                }
+                            }
+                            catch (IOException x) {
+                                continue;
+                            }
+                        }
+                        boolean valid = key.reset();
+                        if (!valid) {
+                            break;
                         }
                     }
-                    boolean valid = key.reset();
-                    if (!valid) {
-                        break;
-                    }
+                }
+                catch (Exception x) {
+                    return;
                 }
             }
         }).start();
