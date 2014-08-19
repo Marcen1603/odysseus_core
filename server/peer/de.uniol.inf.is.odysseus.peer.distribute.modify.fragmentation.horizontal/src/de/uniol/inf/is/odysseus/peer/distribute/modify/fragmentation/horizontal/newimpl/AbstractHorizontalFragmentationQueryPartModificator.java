@@ -137,13 +137,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator
 
 				// Add the aggregation to the reunion query part
 				copyMap.remove(partOfReunionOperator);
-				partOfReunionOperator.addOperator(specialOperator);
-				for (ILogicalQueryPart copiedPart : copiedPartsOfReunionOperator) {
-
-					copiedPart.addOperator(specialOperator);
-
-				}
-				
+				partOfReunionOperator.addOperator(specialOperator);				
 				break;
 
 			}

@@ -77,7 +77,7 @@ public class AggregateRoundRobinHorizontalFragmentationRule
 				} else if (aggregation == null) {
 
 					aggregation = HorizontalFragmentationHelper
-							.changeAggregation(part, aggregation, bundle);
+							.changeAggregation(part, (AggregateAO) operator, bundle);
 					AggregateRoundRobinHorizontalFragmentationRule.LOG
 							.debug("Found {} as an aggregation, which needs to be changed in {}",
 									operator, part);
