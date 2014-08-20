@@ -47,7 +47,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	/**
 	 * The name of this strategy.
 	 */
-	public static final String NAME = "Simple";
+	public static final String NAME = "simple";
 	
 	/**
 	 * The default threshold for the CPU load as percentage.
