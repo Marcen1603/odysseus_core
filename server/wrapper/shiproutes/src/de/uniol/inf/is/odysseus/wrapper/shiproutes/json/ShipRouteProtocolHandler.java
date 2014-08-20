@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -40,7 +42,7 @@ public class ShipRouteProtocolHandler extends
 
 	private BufferedReader reader;
 	private int delay;
-	private IShipRouteRootElement shipRouteRootElement;
+	private List<IShipRouteRootElement> shipRouteRootElements;
 	private int counter;
 	private String iecMessageBuffer = "";
 
@@ -52,6 +54,7 @@ public class ShipRouteProtocolHandler extends
 			IAccessPattern access,
 			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
 		super(direction, access, dataHandler);
+		shipRouteRootElements = new ArrayList<IShipRouteRootElement>();
 	}
 
 	@Override
@@ -111,9 +114,10 @@ public class ShipRouteProtocolHandler extends
 		String currentString = this.reader.readLine().trim();
 
 		if (parseRouteElement(currentString)){
-			if (shipRouteRootElement != null) {
-				this.next = this.shipRouteRootElement.toMap();
-				this.next.setMetadata("object", shipRouteRootElement);
+			if (!shipRouteRootElements.isEmpty()) {
+				this.next = this.shipRouteRootElements.get(0).toMap();
+				this.next.setMetadata("object", shipRouteRootElements);
+				shipRouteRootElements.clear();
 				return true;
 			}			
 		}
@@ -146,16 +150,16 @@ public class ShipRouteProtocolHandler extends
 
 					switch (itemType) {
 					case Route:
-						shipRouteRootElement = gson.fromJson(iecMessageBuffer,
-								RouteDataItem.class);
+						shipRouteRootElements.add(gson.fromJson(iecMessageBuffer,
+								RouteDataItem.class));
 						break;
-					case Manoeuvre:
-						shipRouteRootElement = gson.fromJson(iecMessageBuffer,
-								ManoeuvrePlanDataItem.class);
+					case MPlan:
+						shipRouteRootElements.add(gson.fromJson(iecMessageBuffer,
+								ManoeuvrePlanDataItem.class));
 						break;
 					case Prediction:
-						shipRouteRootElement = gson.fromJson(iecMessageBuffer,
-								PredictionDataItem.class);
+						shipRouteRootElements.add(gson.fromJson(iecMessageBuffer,
+								PredictionDataItem.class));
 						break;
 					default:
 						break;
@@ -163,10 +167,9 @@ public class ShipRouteProtocolHandler extends
 				}
 
 				iecMessageBuffer = "";
-				return true;
 			}
 		}
-		return false;
+		return !shipRouteRootElements.isEmpty();
 	}
 
 	@Override
@@ -188,10 +191,13 @@ public class ShipRouteProtocolHandler extends
 		String shipRoutePacket = (new String(destinationArray)).trim();
 
 		if (parseRouteElement(shipRoutePacket)){
-			if (shipRouteRootElement != null) {
-				KeyValueObject<? extends IMetaAttribute> map = this.shipRouteRootElement.toMap();
-				map.setMetadata("object", shipRouteRootElement);
-				getTransfer().transfer(map);
+			if (!shipRouteRootElements.isEmpty()) {
+				for (IShipRouteRootElement element : shipRouteRootElements) {
+					KeyValueObject<? extends IMetaAttribute> map = element.toMap();
+					map.setMetadata("object", shipRouteRootElements);
+					getTransfer().transfer(map);					
+				}
+				shipRouteRootElements.clear();
 			}			
 		}
 
@@ -205,9 +211,9 @@ public class ShipRouteProtocolHandler extends
 			if (!(obj instanceof IShipRouteRootElement)) {
 				return;
 			}
-			this.shipRouteRootElement = (IShipRouteRootElement) obj;
+			IShipRouteRootElement element = (IShipRouteRootElement) obj;
 			Gson gson = new Gson();
-			String jsonString = gson.toJson(shipRouteRootElement);
+			String jsonString = gson.toJson(element);
 
 			getTransportHandler().send(jsonString.getBytes());
 		} catch (Exception e) {

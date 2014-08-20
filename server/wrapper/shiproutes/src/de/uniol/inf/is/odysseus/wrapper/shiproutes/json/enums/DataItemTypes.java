@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.wrapper.shiproutes.json.enums;
 
 public enum DataItemTypes {
 	Route,
-	Manoeuvre,
+	MPlan,
 	Prediction;
 	
 	public static DataItemTypes parse(String value) {
