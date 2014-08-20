@@ -40,24 +40,30 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		List<ViewInformation> selectedSourceEntries = getSelection();
+		try {
+			List<ViewInformation> selectedSourceEntries = getSelection();
 
-		ISession activeUser = OdysseusRCPPlugIn.getActiveSession();
+			ISession activeUser = OdysseusRCPPlugIn.getActiveSession();
 
-		if (!selectedSourceEntries.isEmpty()) {
-			if (selectedSourceEntries.get(0) instanceof ViewInformation) {
-				for (ViewInformation sourceEntry : selectedSourceEntries) {
-					Resource sourceName = sourceEntry.getName();
+			if (!selectedSourceEntries.isEmpty()) {
+				if (selectedSourceEntries.get(0) instanceof ViewInformation) {
+					for (ViewInformation sourceEntry : selectedSourceEntries) {
+						Resource sourceName = sourceEntry.getName();
 
-					Collection<Integer> queryIDs = createQueryToSelectAllDataFromSource(
-							sourceName, activeUser);
-					startQueries(queryIDs, activeUser);
-					openEditor(queryIDs, event);
+						Collection<Integer> queryIDs = createQueryToSelectAllDataFromSource(
+								sourceName, activeUser);
+						startQueries(queryIDs, activeUser);
+						openEditor(queryIDs, event);
+					}
+				} else {
+					throw new IllegalArgumentException(
+							"Called Select all data with "
+									+ selectedSourceEntries);
 				}
-			} else {
-				throw new IllegalArgumentException(
-						"Called Select all data with " + selectedSourceEntries);
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
 		}
 
 		return null;
