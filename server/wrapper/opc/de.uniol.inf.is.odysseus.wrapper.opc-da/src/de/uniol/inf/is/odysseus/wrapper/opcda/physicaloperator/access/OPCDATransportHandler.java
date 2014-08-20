@@ -18,8 +18,7 @@ package de.uniol.inf.is.odysseus.wrapper.opcda.physicaloperator.access;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.LinkedList;
-import java.util.List;
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
@@ -40,8 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IIteratable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -52,7 +51,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
  *
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class OPCDATransportHandler<T> extends AbstractTransportHandler implements IIteratable<Tuple<IMetaAttribute>> {
+public class OPCDATransportHandler<T> extends AbstractTransportHandler {
     /** Logger */
     private final static Logger LOG = LoggerFactory.getLogger(OPCDATransportHandler.class);
 
@@ -76,7 +75,8 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler implement
     private AutoReconnectController controller;
     private AccessBase access;
 
-    private final List<Tuple<IMetaAttribute>> read = new LinkedList<>();
+    private Tuple<IMetaAttribute> read;
+    private TupleDataHandler dataHandler;
 
     public OPCDATransportHandler() {
     }
@@ -167,6 +167,9 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler implement
             this.controller.connect();
             // this.server.connect();
             this.access = new SyncAccess(this.server, this.period);
+            this.read = new Tuple<>(this.getSchema().size(), false);
+            this.dataHandler = new TupleDataHandler();
+            this.dataHandler.init(this.getSchema());
             for (final SDFAttribute attribute : this.getSchema()) {
                 final int position = this.getSchema().indexOf(attribute);
                 this.access.addItem(attribute.getAttributeName(), new DataCallback() {
@@ -209,21 +212,12 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler implement
 
     void process(final int pos, final Object value) {
         OPCDATransportHandler.LOG.debug(String.format("%d: %s", new Integer(pos), value));
-        Tuple<IMetaAttribute> curTuple = null;
         synchronized (this.read) {
-            if (this.read.size() > 0) {
-                curTuple = this.read.get(this.read.size() - 1);
-                if (curTuple.getAttribute(pos) != null) {
-                    curTuple = null;
-                }
-            }
-            if (curTuple == null) {
-                curTuple = new Tuple<>(this.getSchema().size(), false);
-                this.read.add(curTuple);
-            }
+            this.read.setAttribute(pos, value);
+            ByteBuffer buffer = ByteBuffer.allocate(this.dataHandler.memSize(this.read));
+            this.dataHandler.writeData(buffer, this.read);
+            fireProcess(buffer);
         }
-        curTuple.setAttribute(pos, value);
-
     }
 
     @Override
@@ -256,24 +250,6 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler implement
     @Override
     public void processOutClose() throws IOException {
         throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public boolean hasNext() {
-        boolean hasNext = false;
-        synchronized (this.read) {
-            hasNext = this.read.size() > 0;
-        }
-        return hasNext;
-    }
-
-    @Override
-    public Tuple<IMetaAttribute> getNext() {
-        Tuple<IMetaAttribute> next;
-        synchronized (this.read) {
-            next = this.read.remove(0);
-        }
-        return next;
     }
 
     /**
