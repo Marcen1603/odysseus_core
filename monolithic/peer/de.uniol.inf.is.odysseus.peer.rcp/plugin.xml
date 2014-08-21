@@ -245,6 +245,12 @@
                icon="icons/export.png"
                label="Export"
                style="push">
+            <visibleWhen
+                  checkEnabled="true">
+               <reference
+                     definitionId="sourceIsSelected">
+               </reference>
+            </visibleWhen>
          </command>
          <separator
                name="de.uniol.inf.is.odysseus.rcp.p2p_new.separator4"
@@ -256,6 +262,12 @@
                label="Remove export"
                style="push"
                tooltip="Remove export">
+            <visibleWhen
+                  checkEnabled="true">
+               <reference
+                     definitionId="sourceIsSelected">
+               </reference>
+            </visibleWhen>
          </command>
       </menuContribution>
       <menuContribution
