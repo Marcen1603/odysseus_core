@@ -33,11 +33,11 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTable50Editor;
 
 public class SelectAllFromSource extends AbstractHandler implements IHandler {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(SelectAllFromSource.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SelectAllFromSource.class);
 
 	private static final String STREAM_EDITOR_TYPE = "de.uniol.inf.is.odysseus.rcp.viewer.stream.Table20";
 
+	@SuppressWarnings("cast")
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
@@ -50,15 +50,12 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 					for (ViewInformation sourceEntry : selectedSourceEntries) {
 						Resource sourceName = sourceEntry.getName();
 
-						Collection<Integer> queryIDs = createQueryToSelectAllDataFromSource(
-								sourceName, activeUser);
+						Collection<Integer> queryIDs = createQueryToSelectAllDataFromSource(sourceName, activeUser);
 						startQueries(queryIDs, activeUser);
 						openEditor(queryIDs, event);
 					}
 				} else {
-					throw new IllegalArgumentException(
-							"Called Select all data with "
-									+ selectedSourceEntries);
+					throw new IllegalArgumentException("Called Select all data with " + selectedSourceEntries);
 				}
 			}
 		} catch (Exception e) {
@@ -69,15 +66,11 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 		return null;
 	}
 
-	private static Collection<Integer> createQueryToSelectAllDataFromSource(
-			Resource sourceName, ISession caller) {
-		return OdysseusRCPPlugIn.getExecutor().addQuery(
-				"SELECT * FROM " + sourceName + ";", "CQL", caller, "Standard",
-				Context.empty());
+	private static Collection<Integer> createQueryToSelectAllDataFromSource(Resource sourceName, ISession caller) {
+		return OdysseusRCPPlugIn.getExecutor().addQuery(sourceName + "_out = " + sourceName, "PQL", caller, "Standard", Context.empty());
 	}
 
-	private static void startQueries(Collection<Integer> queryIDs,
-			ISession caller) {
+	private static void startQueries(Collection<Integer> queryIDs, ISession caller) {
 		for (Integer queryID : queryIDs) {
 			try {
 				OdysseusRCPPlugIn.getExecutor().startQuery(queryID, caller);
@@ -87,8 +80,7 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 		}
 	}
 
-	private static void openEditor(Collection<Integer> queryIDs,
-			ExecutionEvent event) {
+	private static void openEditor(Collection<Integer> queryIDs, ExecutionEvent event) {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		IWorkbenchPage page = window.getActivePage();
 
@@ -98,13 +90,10 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 			if (!activateEditorIfNeeded(page, physicalOperator)) {
 
 				IStreamEditorType editor = new StreamTable50Editor();
-				StreamEditorInput input = new StreamEditorInput(
-						physicalOperator, editor, STREAM_EDITOR_TYPE, "Table",
-						queryID);
+				StreamEditorInput input = new StreamEditorInput(physicalOperator, editor, STREAM_EDITOR_TYPE, "Table", queryID);
 
 				try {
-					page.openEditor(input,
-							"de.uniol.inf.is.odysseus.rcp.editors.StreamEditor");
+					page.openEditor(input, "de.uniol.inf.is.odysseus.rcp.editors.StreamEditor");
 				} catch (PartInitException ex) {
 					LOG.error("Could not open editor", ex);
 				}
@@ -112,24 +101,19 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 		}
 	}
 
-	private static boolean activateEditorIfNeeded(IWorkbenchPage page,
-			IPhysicalOperator physicalOperator) {
+	private static boolean activateEditorIfNeeded(IWorkbenchPage page, IPhysicalOperator physicalOperator) {
 		for (IEditorReference editorRef : page.getEditorReferences()) {
 			try {
 				IEditorInput i = editorRef.getEditorInput();
 				if (i instanceof StreamEditorInput) {
 					StreamEditorInput gInput = (StreamEditorInput) i;
-					if (gInput.getPhysicalOperator() == physicalOperator
-							&& gInput.getEditorTypeID().equals(
-									STREAM_EDITOR_TYPE)) {
+					if (gInput.getPhysicalOperator() == physicalOperator && gInput.getEditorTypeID().equals(STREAM_EDITOR_TYPE)) {
 						page.activate(editorRef.getPart(false));
 						return true;
 					}
 				}
 			} catch (PartInitException ex) {
-				LOG.error(
-						"Could not see, if an editor for stream data is open",
-						ex);
+				LOG.error("Could not see, if an editor for stream data is open", ex);
 			}
 		}
 
@@ -137,10 +121,7 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 	}
 
 	private static IPhysicalOperator getFirstPhysialRoot(Integer queryID) {
-		return OdysseusRCPPlugIn
-				.getExecutor()
-				.getPhysicalRoots(queryID, OdysseusRCPPlugIn.getActiveSession())
-				.iterator().next();
+		return OdysseusRCPPlugIn.getExecutor().getPhysicalRoots(queryID, OdysseusRCPPlugIn.getActiveSession()).iterator().next();
 	}
 
 	// private static String getRealSourcename(Resource sourceName) {
@@ -153,8 +134,7 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 	// }
 
 	private static <T> List<T> getSelection() {
-		ISelection selection = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage().getSelection();
+		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getSelection();
 		try {
 			if (selection instanceof IStructuredSelection) {
 				List<T> items = new ArrayList<T>();
