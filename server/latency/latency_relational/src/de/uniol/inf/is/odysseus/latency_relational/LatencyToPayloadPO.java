@@ -18,9 +18,9 @@ public class LatencyToPayloadPO<M extends ILatency, T extends Tuple<M>> extends
 
 	@Override
 	public OutputMode getOutputMode() {
-		if (append){
+		if (append) {
 			return OutputMode.MODIFIED_INPUT;
-		}else{
+		} else {
 			return OutputMode.NEW_ELEMENT;
 		}
 	}
@@ -30,9 +30,9 @@ public class LatencyToPayloadPO<M extends ILatency, T extends Tuple<M>> extends
 	protected void process_next(T object, int port) {
 
 		final int inputSize;
-		if (append){
+		if (append) {
 			inputSize = object.size();
-		}else{
+		} else {
 			inputSize = 0;
 		}
 		final Tuple<ILatency> out;
@@ -41,18 +41,19 @@ public class LatencyToPayloadPO<M extends ILatency, T extends Tuple<M>> extends
 		} else {
 			out = new Tuple<ILatency>(inputSize + 5, false);
 		}
-		
+
 		if (append) {
 			System.arraycopy(object.getAttributes(), 0, out.getAttributes(), 0,
 					inputSize);
 		}
 
-		out.setAttribute(inputSize, object.getMetadata().getLatencyStart());
-		
+		out.setAttribute(inputSize, object.getMetadata().getLatency());
+
 		if (!small) {
 			out.setAttribute(inputSize + 1, object.getMetadata()
+					.getLatencyStart());
+			out.setAttribute(inputSize + 2, object.getMetadata()
 					.getLatencyEnd());
-			out.setAttribute(inputSize + 2, object.getMetadata().getLatency());
 			out.setAttribute(inputSize + 3, object.getMetadata()
 					.getMaxLatencyStart());
 			out.setAttribute(inputSize + 4, object.getMetadata()
