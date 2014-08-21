@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper;
 
-import java.math.BigInteger;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -33,7 +32,7 @@ public class SportsQLParameterHelper {
 		}
 
 		// There was no time parameter: We want to get the whole time
-		return new SportsQLTimeParameter(new BigInteger("0"), new BigInteger("0"), SportsQLTimeParameter.TIME_PARAMTER_GAME, null);
+		return new SportsQLTimeParameter(null, null, SportsQLTimeParameter.TIME_PARAMTER_GAME, null);
 	}
 
 	public static SportsQLSpaceParameter getSpaceParameter(SportsQLQuery query) {

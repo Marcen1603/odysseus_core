@@ -484,9 +484,8 @@ public class OperatorBuildHelper {
 		// minute >= ${parameterTimeStart_minute} AND minute <=
 		// ${parameterTimeEnd_minute} AND second >= 0
 
-		// TODO: Do the right thing if timeParameter says "now"
-		int startMinute = TimeUnitHelper.getMinutes(timeParameter.getStart(), timeParameter.getUnit());
-		int endMinute = TimeUnitHelper.getMinutes(timeParameter.getEnd(), timeParameter.getUnit());
+		int startMinute = Integer.MIN_VALUE;
+		int endMinute = Integer.MAX_VALUE;
 
 		if (timeParameter.getTime() != null && timeParameter.getTime().equals(SportsQLTimeParameter.TIME_PARAMETER_ALWAYS)) {
 			startMinute = Integer.MIN_VALUE;
@@ -495,7 +494,13 @@ public class OperatorBuildHelper {
 			// Just the time in the game
 			startMinute = START_MINUTE;
 			endMinute = END_MINUTE;
-		}
+		} else if (timeParameter.getTime() != null && timeParameter.getTime().equals(SportsQLTimeParameter.TIME_PARAMETER_NOW)) {
+			// TODO: Do the right thing if timeParameter says "now"
+
+		} else if (timeParameter.getStart() != null && timeParameter.getEnd() != null && timeParameter.getUnit() != null) {
+			startMinute = TimeUnitHelper.getMinutes(timeParameter.getStart(), timeParameter.getUnit());
+			endMinute = TimeUnitHelper.getMinutes(timeParameter.getEnd(), timeParameter.getUnit());
+		} 
 
 		// 1. minute >= ${parameterTimeStart_minute}
 		String firstPredicateString = "minute >= " + startMinute;
