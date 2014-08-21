@@ -6,7 +6,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
-public class Schedules implements IIecElement {
+public class IECSchedules implements IIecElement {
 	// map constants
 	private static final String ELEMENT_PREFIX = "_scheds";
 
@@ -15,8 +15,8 @@ public class Schedules implements IIecElement {
 	private static final String OPEN_EXTENSIONS_TAG = "<extensions>";
 	private static final String CLOSE_EXTENSIONS_TAG = "</extensions>";
 
-	private List<Schedule> schedules;
-	private List<Extension> extensions;
+	private List<IECSchedule> schedules;
+	private List<IECExtension> extensions;
 
 	@Override
 	public void fillMap(KeyValueObject<? extends IMetaAttribute> map,
@@ -24,13 +24,13 @@ public class Schedules implements IIecElement {
 		prefix += ELEMENT_PREFIX;
 		
 		if (schedules != null) {
-			for (Schedule schedule : schedules) {
+			for (IECSchedule schedule : schedules) {
 				schedule.fillMap(map, prefix);
 			}
 		}
 
 		if (extensions != null) {
-			for (Extension extension : extensions) {
+			for (IECExtension extension : extensions) {
 				extension.fillMap(map, prefix);
 			}
 		}
@@ -41,14 +41,14 @@ public class Schedules implements IIecElement {
 		StringBuilder builder = new StringBuilder(OPEN_TAG);
 
 		if (schedules != null) {
-			for (Schedule schedule : schedules) {
+			for (IECSchedule schedule : schedules) {
 				builder.append(schedule.toXML());
 			}
 		}
 
 		if (extensions != null) {
 			builder.append(OPEN_EXTENSIONS_TAG);
-			for (Extension extension : extensions) {
+			for (IECExtension extension : extensions) {
 				builder.append(extension.toXML());
 			}
 			builder.append(CLOSE_EXTENSIONS_TAG);
@@ -72,32 +72,32 @@ public class Schedules implements IIecElement {
 		return true;
 	}
 
-	public void addSchedule(Schedule schedule) {
+	public void addSchedule(IECSchedule schedule) {
 		if (schedules == null)
-			schedules = new ArrayList<Schedule>();
+			schedules = new ArrayList<IECSchedule>();
 		schedules.add(schedule);
 	}
 
 	@Override
-	public void addExtension(Extension extension) {
+	public void addExtension(IECExtension extension) {
 		if (extensions == null)
-			extensions = new ArrayList<Extension>();
+			extensions = new ArrayList<IECExtension>();
 		extensions.add(extension);
 	}
 
-	public List<Extension> getExtensions() {
+	public List<IECExtension> getExtensions() {
 		return extensions;
 	}
 
-	public void setExtensions(List<Extension> extensions) {
+	public void setExtensions(List<IECExtension> extensions) {
 		this.extensions = extensions;
 	}
 
-	public List<Schedule> getSchedules() {
+	public List<IECSchedule> getSchedules() {
 		return schedules;
 	}
 
-	public void setSchedules(List<Schedule> schedules) {
+	public void setSchedules(List<IECSchedule> schedules) {
 		this.schedules = schedules;
 	}
 

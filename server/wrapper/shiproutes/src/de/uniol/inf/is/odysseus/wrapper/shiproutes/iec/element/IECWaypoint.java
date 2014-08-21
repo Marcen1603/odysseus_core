@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.helper.IECStringHelper;
 
-public class Waypoint implements IIecElement {
+public class IECWaypoint implements IIecElement {
 	// map constants
 	private static final String ELEMENT_PREFIX = "_wayP";
 
@@ -25,9 +25,9 @@ public class Waypoint implements IIecElement {
 	private Integer revision;
 	private String name;
 	private Double radius;
-	private Position position;
-	private Leg leg;
-	private List<Extension> extensions;
+	private IECPosition position;
+	private IECLeg leg;
+	private List<IECExtension> extensions;
 
 	@Override
 	public void fillMap(KeyValueObject<? extends IMetaAttribute> map, String prefix) {
@@ -48,7 +48,7 @@ public class Waypoint implements IIecElement {
 			leg.fillMap(map, prefix);
 
 		if (extensions != null && !extensions.isEmpty()) {
-			for (Extension extension : extensions) {
+			for (IECExtension extension : extensions) {
 				extension.fillMap(map, prefix);
 			}
 		}
@@ -77,7 +77,7 @@ public class Waypoint implements IIecElement {
 
 			if (extensions != null) {
 				builder.append(OPEN_EXTENSIONS_TAG);
-				for (Extension extension : extensions) {
+				for (IECExtension extension : extensions) {
 					builder.append(extension.toXML());
 				}
 				builder.append(CLOSE_EXTENSIONS_TAG);
@@ -106,17 +106,17 @@ public class Waypoint implements IIecElement {
 	}
 	
 	@Override
-	public void addExtension(Extension extension) {
+	public void addExtension(IECExtension extension) {
 		if (extensions == null)
-			extensions = new ArrayList<Extension>();
+			extensions = new ArrayList<IECExtension>();
 		extensions.add(extension);
 	}
 
-	public Leg getLeg() {
+	public IECLeg getLeg() {
 		return leg;
 	}
 
-	public void setLeg(Leg leg) {
+	public void setLeg(IECLeg leg) {
 		this.leg = leg;
 	}
 
@@ -152,19 +152,19 @@ public class Waypoint implements IIecElement {
 		this.radius = radius;
 	}
 
-	public Position getPosition() {
+	public IECPosition getPosition() {
 		return position;
 	}
 
-	public void setPosition(Position position) {
+	public void setPosition(IECPosition position) {
 		this.position = position;
 	}
 
-	public List<Extension> getExtensions() {
+	public List<IECExtension> getExtensions() {
 		return extensions;
 	}
 
-	public void setExtensions(List<Extension> extensions) {
+	public void setExtensions(List<IECExtension> extensions) {
 		this.extensions = extensions;
 	}
 

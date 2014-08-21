@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.helper.IECStringHelper;
 
-public class Extension implements IIecElement {
+public class IECExtension implements IIecElement {
 	// map constants
 	private static final String ELEMENT_PREFIX = "_ext";
 
@@ -95,7 +95,7 @@ public class Extension implements IIecElement {
 	}
 
 	@Override
-	public void addExtension(Extension extension) {
+	public void addExtension(IECExtension extension) {
 		// noOp because extension can not have extensions
 	}
 

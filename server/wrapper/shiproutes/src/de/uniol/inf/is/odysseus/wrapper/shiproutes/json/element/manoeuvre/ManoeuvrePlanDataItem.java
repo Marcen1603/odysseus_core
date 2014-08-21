@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.IShipRouteRootEl
 public class ManoeuvrePlanDataItem implements IShipRouteRootElement {
 	// Constants
 	public static final String DATA_ITEM_ID = "data_item_id";
-
+	
 	private String data_item_id;
 	private ManoeuvrePlan mplan;
 

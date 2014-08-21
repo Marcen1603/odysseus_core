@@ -13,6 +13,6 @@ public interface IIecElement {
 
 	public boolean isValid();
 	
-	public void addExtension(Extension extension);
+	public void addExtension(IECExtension extension);
 
 }

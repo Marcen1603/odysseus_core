@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.enums.GeometryType;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.helper.IECStringHelper;
 
-public class Leg implements IIecElement {
+public class IECLeg implements IIecElement {
 	// Constants
 	public static final String STARBOARD_XTD = "starboardXTD";
 	public static final String PORTSIDE_XTD = "portsideXTD";
@@ -55,7 +55,7 @@ public class Leg implements IIecElement {
 	private String legInfo;
 	private String legNote1;
 	private String legNote2;
-	private List<Extension> extensions;
+	private List<IECExtension> extensions;
 
 	@Override
 	public void fillMap(KeyValueObject<? extends IMetaAttribute> map,
@@ -151,7 +151,7 @@ public class Leg implements IIecElement {
 			builder.append(">");
 			if (extensions != null) {
 				builder.append(OPEN_EXTENSIONS_TAG);
-				for (Extension extension : extensions) {
+				for (IECExtension extension : extensions) {
 					builder.append(extension.toXML());
 				}
 				builder.append(CLOSE_EXTENSIONS_TAG);
@@ -176,9 +176,9 @@ public class Leg implements IIecElement {
 	}
 
 	@Override
-	public void addExtension(Extension extension) {
+	public void addExtension(IECExtension extension) {
 		if (extensions == null)
-			extensions = new ArrayList<Extension>();
+			extensions = new ArrayList<IECExtension>();
 		extensions.add(extension);
 	}
 
@@ -318,11 +318,11 @@ public class Leg implements IIecElement {
 		this.legNote2 = legNote2;
 	}
 
-	public List<Extension> getExtensions() {
+	public List<IECExtension> getExtensions() {
 		return extensions;
 	}
 
-	public void setExtensions(List<Extension> extensions) {
+	public void setExtensions(List<IECExtension> extensions) {
 		this.extensions = extensions;
 	}
 

@@ -116,7 +116,7 @@ public class ShipRouteProtocolHandler extends
 		if (parseRouteElement(currentString)){
 			if (!shipRouteRootElements.isEmpty()) {
 				this.next = this.shipRouteRootElements.get(0).toMap();
-				this.next.setMetadata("object", shipRouteRootElements);
+				this.next.setMetadata("object", this.shipRouteRootElements.get(0));
 				shipRouteRootElements.clear();
 				return true;
 			}			
@@ -194,7 +194,7 @@ public class ShipRouteProtocolHandler extends
 			if (!shipRouteRootElements.isEmpty()) {
 				for (IShipRouteRootElement element : shipRouteRootElements) {
 					KeyValueObject<? extends IMetaAttribute> map = element.toMap();
-					map.setMetadata("object", shipRouteRootElements);
+					map.setMetadata("object", element);
 					getTransfer().transfer(map);					
 				}
 				shipRouteRootElements.clear();

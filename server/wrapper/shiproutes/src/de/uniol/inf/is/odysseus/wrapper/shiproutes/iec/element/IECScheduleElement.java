@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.helper.IECStringHelper;
 
-public class ScheduleElement implements IIecElement {
+public class IECScheduleElement implements IIecElement {
 	// Constants
 	public static final String WAYPOINT_ID = "waypointId";
 	public static final String ETD = "etd";
@@ -67,7 +67,7 @@ public class ScheduleElement implements IIecElement {
 	private Double relFuelSave;
 	private Double absFuelSave;
 	private String note;
-	private List<Extension> extensions;
+	private List<IECExtension> extensions;
 
 	@Override
 	public void fillMap(KeyValueObject<? extends IMetaAttribute> map,
@@ -123,7 +123,7 @@ public class ScheduleElement implements IIecElement {
 			map.addAttributeValue(elementPrefix+NOTE, note);
 
 		if (extensions != null) {
-			for (Extension extension : extensions) {
+			for (IECExtension extension : extensions) {
 				extension.fillMap(map, prefix);
 			}
 		}
@@ -198,7 +198,7 @@ public class ScheduleElement implements IIecElement {
 
 			if (extensions != null && !extensions.isEmpty()) {
 				builder.append(OPEN_EXTENSIONS_TAG);
-				for (Extension extension : extensions) {
+				for (IECExtension extension : extensions) {
 					builder.append(extension.toXML());
 				}
 				builder.append(CLOSE_EXTENSIONS_TAG);
@@ -227,9 +227,9 @@ public class ScheduleElement implements IIecElement {
 	}
 
 	@Override
-	public void addExtension(Extension extension) {
+	public void addExtension(IECExtension extension) {
 		if (extensions == null)
-			extensions = new ArrayList<Extension>();
+			extensions = new ArrayList<IECExtension>();
 		extensions.add(extension);
 	}
 
@@ -417,11 +417,11 @@ public class ScheduleElement implements IIecElement {
 		this.note = note;
 	}
 
-	public List<Extension> getExtensions() {
+	public List<IECExtension> getExtensions() {
 		return extensions;
 	}
 
-	public void setExtensions(List<Extension> extensions) {
+	public void setExtensions(List<IECExtension> extensions) {
 		this.extensions = extensions;
 	}
 }

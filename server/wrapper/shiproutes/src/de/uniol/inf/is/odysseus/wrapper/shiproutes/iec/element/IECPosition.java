@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.helper.IECStringHelper;
 
-public class Position implements IIecElement {
+public class IECPosition implements IIecElement {
 	public static final String LAT = "lat";
 	public static final String LON = "lon";
 
@@ -69,7 +69,7 @@ public class Position implements IIecElement {
 	}
 
 	@Override
-	public void addExtension(Extension extension) {
+	public void addExtension(IECExtension extension) {
 		// noOp because position has no extension
 	}
 

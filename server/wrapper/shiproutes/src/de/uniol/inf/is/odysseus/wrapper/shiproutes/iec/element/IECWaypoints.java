@@ -6,7 +6,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
-public class Waypoints implements IIecElement {
+public class IECWaypoints implements IIecElement {
 	// map constants
 	private static final String ELEMENT_PREFIX = "_wayPs";
 	
@@ -16,9 +16,9 @@ public class Waypoints implements IIecElement {
 	private static final String OPEN_EXTENSIONS_TAG = "<extensions>";
 	private static final String CLOSE_EXTENSIONS_TAG = "</extensions>";
 
-	private DefaultWaypoint defaultWaypoint;
-	private List<Waypoint> waypoints;
-	private List<Extension> extensions;
+	private IECDefaultWaypoint defaultWaypoint;
+	private List<IECWaypoint> waypoints;
+	private List<IECExtension> extensions;
 
 	@Override
 	public void fillMap(KeyValueObject<? extends IMetaAttribute> map, String prefix) {
@@ -28,13 +28,13 @@ public class Waypoints implements IIecElement {
 			defaultWaypoint.fillMap(map, prefix);
 
 		if (waypoints != null) {
-			for (Waypoint waypoint : waypoints) {
+			for (IECWaypoint waypoint : waypoints) {
 				waypoint.fillMap(map, prefix);
 			}
 		}
 
 		if (extensions != null) {
-			for (Extension extension : extensions) {
+			for (IECExtension extension : extensions) {
 				extension.fillMap(map, prefix);
 			}
 		}
@@ -52,14 +52,14 @@ public class Waypoints implements IIecElement {
 				builder.append(defaultWaypoint.toXML());
 
 			if (waypoints != null) {
-				for (Waypoint waypoint : waypoints) {
+				for (IECWaypoint waypoint : waypoints) {
 					builder.append(waypoint.toXML());
 				}
 			}
 
 			if (extensions != null && !extensions.isEmpty()) {
 				builder.append(OPEN_EXTENSIONS_TAG);
-				for (Extension extension : extensions) {
+				for (IECExtension extension : extensions) {
 					builder.append(extension.toXML());
 				}
 				builder.append(CLOSE_EXTENSIONS_TAG);
@@ -85,40 +85,40 @@ public class Waypoints implements IIecElement {
 		return true;
 	}
 	
-	public void addwaypoint(Waypoint waypoint) {
+	public void addwaypoint(IECWaypoint waypoint) {
 		if (waypoints == null)
-			waypoints = new ArrayList<Waypoint>();
+			waypoints = new ArrayList<IECWaypoint>();
 		waypoints.add(waypoint);
 	}
 	
 	@Override
-	public void addExtension(Extension extension) {
+	public void addExtension(IECExtension extension) {
 		if (extensions == null)
-			extensions = new ArrayList<Extension>();
+			extensions = new ArrayList<IECExtension>();
 		extensions.add(extension);
 	}
 
-	public List<Extension> getExtensions() {
+	public List<IECExtension> getExtensions() {
 		return extensions;
 	}
 
-	public void setExtensions(List<Extension> extensions) {
+	public void setExtensions(List<IECExtension> extensions) {
 		this.extensions = extensions;
 	}
 
-	public DefaultWaypoint getDefaultWaypoint() {
+	public IECDefaultWaypoint getDefaultWaypoint() {
 		return defaultWaypoint;
 	}
 
-	public void setDefaultWaypoint(DefaultWaypoint defaultWaypoint) {
+	public void setDefaultWaypoint(IECDefaultWaypoint defaultWaypoint) {
 		this.defaultWaypoint = defaultWaypoint;
 	}
 
-	public List<Waypoint> getWaypoints() {
+	public List<IECWaypoint> getWaypoints() {
 		return waypoints;
 	}
 
-	public void setWaypoints(List<Waypoint> waypoints) {
+	public void setWaypoints(List<IECWaypoint> waypoints) {
 		this.waypoints = waypoints;
 	}
 

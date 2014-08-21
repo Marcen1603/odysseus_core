@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.helper.IECStringHelper;
 
-public class RouteInfo implements IIecElement {
+public class IECRouteInfo implements IIecElement {
 	// Constants
 	public static final String ROUTE_NAME = "routeName";
 	public static final String ROUTE_AUTHOR = "routeAuthor";
@@ -61,7 +61,7 @@ public class RouteInfo implements IIecElement {
 	private Double vesselServiceMin;
 	private Double vesselServiceMax;
 	private String routeChangesHistory;
-	private List<Extension> extensions;
+	private List<IECExtension> extensions;
 
 	@Override
 	public void fillMap(KeyValueObject<? extends IMetaAttribute> map,
@@ -111,7 +111,7 @@ public class RouteInfo implements IIecElement {
 			map.addAttributeValue(elementPrefix+ROUTE_CHANGES_HISTORY, routeChangesHistory);
 
 		if (extensions != null) {
-			for (Extension extension : extensions) {
+			for (IECExtension extension : extensions) {
 				extension.fillMap(map, prefix);
 			}
 		}
@@ -184,7 +184,7 @@ public class RouteInfo implements IIecElement {
 			builder.append(">");
 			if (extensions != null && !extensions.isEmpty()) {
 				builder.append(OPEN_EXTENSIONS_TAG);
-				for (Extension extension : extensions) {
+				for (IECExtension extension : extensions) {
 					builder.append(extension.toXML());
 				}
 				builder.append(CLOSE_EXTENSIONS_TAG);
@@ -211,9 +211,9 @@ public class RouteInfo implements IIecElement {
 	}
 
 	@Override
-	public void addExtension(Extension extension) {
+	public void addExtension(IECExtension extension) {
 		if (extensions == null)
-			extensions = new ArrayList<Extension>();
+			extensions = new ArrayList<IECExtension>();
 		extensions.add(extension);
 	}
 
@@ -377,11 +377,11 @@ public class RouteInfo implements IIecElement {
 		this.routeChangesHistory = routeChangesHistory;
 	}
 
-	public List<Extension> getExtensions() {
+	public List<IECExtension> getExtensions() {
 		return extensions;
 	}
 
-	public void setExtensions(List<Extension> extensions) {
+	public void setExtensions(List<IECExtension> extensions) {
 		this.extensions = extensions;
 	}
 }

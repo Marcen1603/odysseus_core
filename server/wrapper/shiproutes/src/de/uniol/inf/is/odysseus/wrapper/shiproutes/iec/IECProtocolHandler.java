@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractPr
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Route;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECRoute;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.parser.IECParser;
 
 public class IECProtocolHandler extends
@@ -35,7 +35,7 @@ public class IECProtocolHandler extends
 
 	private BufferedReader reader;
 	private int delay;
-	private Route iec;
+	private IECRoute iec;
 	private String iecMessageBuffer = "";
 	private boolean waitingForEndTag = false;
 
@@ -230,10 +230,10 @@ public class IECProtocolHandler extends
 			throws IOException {
 		try {
 			Object obj = object.getMetadata("object");
-			if (!(obj instanceof Route)) {
+			if (!(obj instanceof IECRoute)) {
 				return;
 			}
-			this.iec = (Route) obj;
+			this.iec = (IECRoute) obj;
 			getTransportHandler().send(this.iec.toXML().getBytes());
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);

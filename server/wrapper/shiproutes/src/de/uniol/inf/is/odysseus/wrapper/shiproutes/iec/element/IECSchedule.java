@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.helper.IECStringHelper;
 
-public class Schedule implements IIecElement {
+public class IECSchedule implements IIecElement {
 
 	public static final String ID = "id";
 	public static final String NAME = "name";
@@ -23,9 +23,9 @@ public class Schedule implements IIecElement {
 	private Integer id;
 	private String name;
 
-	private Manual manual;
-	private Calculated calculated;
-	private List<Extension> extensions;
+	private IECManual manual;
+	private IECCalculated calculated;
+	private List<IECExtension> extensions;
 
 	@Override
 	public void fillMap(KeyValueObject<? extends IMetaAttribute> map,
@@ -42,7 +42,7 @@ public class Schedule implements IIecElement {
 		if (getManual() != null)
 			getManual().fillMap(map, prefix);
 		if (extensions != null) {
-			for (Extension extension : extensions) {
+			for (IECExtension extension : extensions) {
 				extension.fillMap(map, prefix);
 			}
 		}
@@ -71,7 +71,7 @@ public class Schedule implements IIecElement {
 				builder.append(calculated.toXML());
 			if (extensions != null && !extensions.isEmpty()) {
 				builder.append(OPEN_EXTENSIONS_TAG);
-				for (Extension extension : extensions) {
+				for (IECExtension extension : extensions) {
 					builder.append(extension.toXML());
 				}
 				builder.append(CLOSE_EXTENSIONS_TAG);
@@ -101,9 +101,9 @@ public class Schedule implements IIecElement {
 	}
 
 	@Override
-	public void addExtension(Extension extension) {
+	public void addExtension(IECExtension extension) {
 		if (extensions == null)
-			extensions = new ArrayList<Extension>();
+			extensions = new ArrayList<IECExtension>();
 		extensions.add(extension);
 	}
 
@@ -123,27 +123,27 @@ public class Schedule implements IIecElement {
 		this.name = name;
 	}
 
-	public Calculated getCalculated() {
+	public IECCalculated getCalculated() {
 		return calculated;
 	}
 
-	public void setCalculated(Calculated calculated) {
+	public void setCalculated(IECCalculated calculated) {
 		this.calculated = calculated;
 	}
 
-	public List<Extension> getExtensions() {
+	public List<IECExtension> getExtensions() {
 		return extensions;
 	}
 
-	public void setExtensions(List<Extension> extensions) {
+	public void setExtensions(List<IECExtension> extensions) {
 		this.extensions = extensions;
 	}
 
-	public Manual getManual() {
+	public IECManual getManual() {
 		return manual;
 	}
 
-	public void setManual(Manual manual) {
+	public void setManual(IECManual manual) {
 		this.manual = manual;
 	}
 

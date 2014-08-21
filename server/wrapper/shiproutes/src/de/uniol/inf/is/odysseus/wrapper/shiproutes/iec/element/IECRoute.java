@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.helper.IECStringHelper;
 
-public class Route implements IIecElement {
+public class IECRoute implements IIecElement {
 	public static final String VERSION = "version";
 
 	// map constants
@@ -19,10 +19,10 @@ public class Route implements IIecElement {
 	private static final String CLOSE_EXTENSIONS_TAG = "</extensions>";
 
 	private String version;
-	private RouteInfo routeInfo;
-	private Schedules schedules;
-	private Waypoints waypoints;
-	private List<Extension> extensions;
+	private IECRouteInfo routeInfo;
+	private IECSchedules schedules;
+	private IECWaypoints waypoints;
+	private List<IECExtension> extensions;
 
 	public KeyValueObject<? extends IMetaAttribute> toMap() {
 		KeyValueObject<? extends IMetaAttribute> map = new KeyValueObject<>();
@@ -47,7 +47,7 @@ public class Route implements IIecElement {
 		if (waypoints != null)
 			waypoints.fillMap(map, prefix);
 		if (extensions != null) {
-			for (Extension extension : extensions) {
+			for (IECExtension extension : extensions) {
 				extension.fillMap(map, prefix);
 			}
 		}
@@ -84,7 +84,7 @@ public class Route implements IIecElement {
 
 		if (extensions != null && !extensions.isEmpty()) {
 			builder.append(OPEN_EXTENSIONS_TAG);
-			for (Extension extension : extensions) {
+			for (IECExtension extension : extensions) {
 				builder.append(extension.toXML());
 			}
 			builder.append(CLOSE_EXTENSIONS_TAG);
@@ -108,9 +108,9 @@ public class Route implements IIecElement {
 	}
 
 	@Override
-	public void addExtension(Extension extension) {
+	public void addExtension(IECExtension extension) {
 		if (extensions == null)
-			extensions = new ArrayList<Extension>();
+			extensions = new ArrayList<IECExtension>();
 		extensions.add(extension);
 	}
 
@@ -122,35 +122,35 @@ public class Route implements IIecElement {
 		this.version = version;
 	}
 
-	public RouteInfo getRouteInfo() {
+	public IECRouteInfo getRouteInfo() {
 		return routeInfo;
 	}
 
-	public void setRouteInfo(RouteInfo routeInfo) {
+	public void setRouteInfo(IECRouteInfo routeInfo) {
 		this.routeInfo = routeInfo;
 	}
 
-	public List<Extension> getExtension() {
+	public List<IECExtension> getExtension() {
 		return extensions;
 	}
 
-	public void setExtension(List<Extension> extensions) {
+	public void setExtension(List<IECExtension> extensions) {
 		this.extensions = extensions;
 	}
 
-	public Schedules getSchedules() {
+	public IECSchedules getSchedules() {
 		return schedules;
 	}
 
-	public void setSchedules(Schedules schedules) {
+	public void setSchedules(IECSchedules schedules) {
 		this.schedules = schedules;
 	}
 
-	public Waypoints getWaypoints() {
+	public IECWaypoints getWaypoints() {
 		return waypoints;
 	}
 
-	public void setWaypoints(Waypoints waypoints) {
+	public void setWaypoints(IECWaypoints waypoints) {
 		this.waypoints = waypoints;
 	}
 

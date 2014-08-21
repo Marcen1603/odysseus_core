@@ -9,15 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.DefaultWaypoint;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Extension;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Leg;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Position;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Route;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.RouteInfo;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Schedule;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.ScheduleElement;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Waypoint;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECDefaultWaypoint;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECExtension;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECLeg;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECPosition;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECRoute;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECRouteInfo;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECSchedule;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECScheduleElement;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECWaypoint;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.enums.GeometryType;
 
 public class IECParserHelper {
@@ -25,13 +25,13 @@ public class IECParserHelper {
 	private static final Logger LOG = LoggerFactory.getLogger(IECParserHelper.class);
 	
 	public static void setDefaultWaypointAttributes(Attributes atts,
-			DefaultWaypoint defaultWaypoint) {
+			IECDefaultWaypoint defaultWaypoint) {
 		for (int i = 0; i < atts.getLength(); i++) {
 			String key = atts.getLocalName(i);
 			String value = atts.getValue(i);
 
 			switch (key) {
-			case DefaultWaypoint.RADIUS:
+			case IECDefaultWaypoint.RADIUS:
 				defaultWaypoint.setRadius(Double.parseDouble(value));
 				break;
 			default:
@@ -42,19 +42,19 @@ public class IECParserHelper {
 	}
 
 	public static void setExtensionAttributes(Attributes atts,
-			Extension extension) {
+			IECExtension extension) {
 		for (int i = 0; i < atts.getLength(); i++) {
 			String key = atts.getLocalName(i);
 			String value = atts.getValue(i);
 
 			switch (key) {
-			case Extension.MANUFACTURER:
+			case IECExtension.MANUFACTURER:
 				extension.setManufacturer(value);
 				break;
-			case Extension.NAME:
+			case IECExtension.NAME:
 				extension.setName(value);
 				break;
-			case Extension.VERSION:
+			case IECExtension.VERSION:
 				extension.setVersion(value);
 				break;
 			default:
@@ -64,63 +64,63 @@ public class IECParserHelper {
 		}
 	}
 
-	public static void setLegAttributes(Attributes atts, Leg leg) {
+	public static void setLegAttributes(Attributes atts, IECLeg leg) {
 		for (int i = 0; i < atts.getLength(); i++) {
 			String key = atts.getLocalName(i);
 			String value = atts.getValue(i);
 
 			switch (key) {
-			case Leg.DRAUGHT:
+			case IECLeg.DRAUGHT:
 				leg.setDraught(Double.parseDouble(value));
 				break;
-			case Leg.DRAUGHT_AFT:
+			case IECLeg.DRAUGHT_AFT:
 				leg.setDraughtAft(Double.parseDouble(value));
 				break;
-			case Leg.DRAUGHT_FORWARD:
+			case IECLeg.DRAUGHT_FORWARD:
 				leg.setDraughtForward(Double.parseDouble(value));
 				break;
-			case Leg.DYNAMIC_UKC:
+			case IECLeg.DYNAMIC_UKC:
 				leg.setDynamicUKC(Double.parseDouble(value));
 				break;
-			case Leg.GEOMETRY_TYPE:
+			case IECLeg.GEOMETRY_TYPE:
 				GeometryType type = GeometryType.parse(value);
 				if (type != null)
 					leg.setGeometryType(type);
 				break;
-			case Leg.LEG_INFO:
+			case IECLeg.LEG_INFO:
 				leg.setLegInfo(value);
 				break;
-			case Leg.LEG_NOTE1:
+			case IECLeg.LEG_NOTE1:
 				leg.setLegNote1(value);
 				break;
-			case Leg.LEG_NOTE2:
+			case IECLeg.LEG_NOTE2:
 				leg.setLegNote2(value);
 				break;
-			case Leg.LEG_REPORT:
+			case IECLeg.LEG_REPORT:
 				leg.setLegReport(value);
 				break;
-			case Leg.MASTHEAD:
+			case IECLeg.MASTHEAD:
 				leg.setMasthead(Double.parseDouble(value));
 				break;
-			case Leg.PORTSIDE_XTD:
+			case IECLeg.PORTSIDE_XTD:
 				leg.setPortsideXTD(Double.parseDouble(value));
 				break;
-			case Leg.SAFETY_CONTOUR:
+			case IECLeg.SAFETY_CONTOUR:
 				leg.setSafetyContour(Double.parseDouble(value));
 				break;
-			case Leg.SAFETY_DEPTH:
+			case IECLeg.SAFETY_DEPTH:
 				leg.setSafetyDepth(Double.parseDouble(value));
 				break;
-			case Leg.SPEED_MAX:
+			case IECLeg.SPEED_MAX:
 				leg.setSpeedMax(Double.parseDouble(value));
 				break;
-			case Leg.SPEED_MIN:
+			case IECLeg.SPEED_MIN:
 				leg.setSpeedMin(Double.parseDouble(value));
 				break;
-			case Leg.STARBOARD_XTD:
+			case IECLeg.STARBOARD_XTD:
 				leg.setStarboardXTD(Double.parseDouble(value));
 				break;
-			case Leg.STATIC_UKC:
+			case IECLeg.STATIC_UKC:
 				leg.setStaticUKC(Double.parseDouble(value));
 				break;
 			default:
@@ -130,16 +130,16 @@ public class IECParserHelper {
 		}
 	}
 
-	public static void setPositionAttributes(Attributes atts, Position position) {
+	public static void setPositionAttributes(Attributes atts, IECPosition position) {
 		for (int i = 0; i < atts.getLength(); i++) {
 			String key = atts.getLocalName(i);
 			String value = atts.getValue(i);
 
 			switch (key) {
-			case Position.LAT:
+			case IECPosition.LAT:
 				position.setLatitude(Double.parseDouble(value));
 				break;
-			case Position.LON:
+			case IECPosition.LON:
 				position.setLongitude(Double.parseDouble(value));
 				break;
 			default:
@@ -149,13 +149,13 @@ public class IECParserHelper {
 		}
 	}
 
-	public static void setRouteAttributes(Attributes atts, Route route) {
+	public static void setRouteAttributes(Attributes atts, IECRoute route) {
 		for (int i = 0; i < atts.getLength(); i++) {
 			String key = atts.getLocalName(i);
 			String value = atts.getValue(i);
 
 			switch (key.toLowerCase()) {
-			case Route.VERSION:
+			case IECRoute.VERSION:
 				route.setVersion(value);
 				break;
 			default:
@@ -166,74 +166,74 @@ public class IECParserHelper {
 	}
 
 	public static void setRouteInfoAttributes(Attributes atts,
-			RouteInfo routeInfo) {
+			IECRouteInfo routeInfo) {
 		for (int i = 0; i < atts.getLength(); i++) {
 			String key = atts.getLocalName(i);
 			String value = atts.getValue(i);
 
 			switch (key) {
-			case RouteInfo.OPTIMIZATION_METHOD:
+			case IECRouteInfo.OPTIMIZATION_METHOD:
 				routeInfo.setOptimizationMethod(value);
 				break;
-			case RouteInfo.ROUTE_AUTHOR:
+			case IECRouteInfo.ROUTE_AUTHOR:
 				routeInfo.setRouteAuthor(value);
 				break;
-			case RouteInfo.ROUTE_CHANGES_HISTORY:
+			case IECRouteInfo.ROUTE_CHANGES_HISTORY:
 				routeInfo.setRouteChangesHistory(value);
 				break;
-			case RouteInfo.ROUTE_NAME:
+			case IECRouteInfo.ROUTE_NAME:
 				routeInfo.setRouteName(value);
 				break;
-			case RouteInfo.ROUTE_STATUS:
+			case IECRouteInfo.ROUTE_STATUS:
 				routeInfo.setRouteStatus(value);
 				break;
-			case RouteInfo.VALIDITY_PERIOD_START:
+			case IECRouteInfo.VALIDITY_PERIOD_START:
 				Date validityPeriodStart = parseDateTime(value);
 				if (validityPeriodStart != null)
 					routeInfo.setValidityPeriodStart(validityPeriodStart);
 				break;
-			case RouteInfo.VALIDITY_PERIOD_STOP:
+			case IECRouteInfo.VALIDITY_PERIOD_STOP:
 				Date validityPeriodStop = parseDateTime(value);
 				if (validityPeriodStop != null)
 					routeInfo.setValidityPeriodStop(validityPeriodStop);
 				break;
-			case RouteInfo.VESSEL_CARGO:
+			case IECRouteInfo.VESSEL_CARGO:
 				routeInfo.setVesselCargo(Integer.parseInt(value));
 				break;
-			case RouteInfo.VESSEL_DISPLACEMENT:
+			case IECRouteInfo.VESSEL_DISPLACEMENT:
 				routeInfo.setVesselDisplacement(Integer.parseInt(value));
 				break;
-			case RouteInfo.VESSEL_GM:
+			case IECRouteInfo.VESSEL_GM:
 				routeInfo.setVesselGM(Double.parseDouble(value));
 				break;
-			case RouteInfo.VESSEL_IMO:
+			case IECRouteInfo.VESSEL_IMO:
 				routeInfo.setVesselIMO(Integer.parseInt(value));
 				break;
-			case RouteInfo.VESSEL_MAX_ROLL:
+			case IECRouteInfo.VESSEL_MAX_ROLL:
 				routeInfo.setVesselMaxRoll(Integer.parseInt(value));
 				break;
-			case RouteInfo.VESSEL_MAX_WAVE:
+			case IECRouteInfo.VESSEL_MAX_WAVE:
 				routeInfo.setVesselMaxWave(Double.parseDouble(value));
 				break;
-			case RouteInfo.VESSEL_MAX_WIND:
+			case IECRouteInfo.VESSEL_MAX_WIND:
 				routeInfo.setVesselMaxWind(Double.parseDouble(value));
 				break;
-			case RouteInfo.VESSEL_MMSI:
+			case IECRouteInfo.VESSEL_MMSI:
 				routeInfo.setVesselMMSI(Integer.parseInt(value));
 				break;
-			case RouteInfo.VESSEL_NAME:
+			case IECRouteInfo.VESSEL_NAME:
 				routeInfo.setVesselName(value);
 				break;
-			case RouteInfo.VESSEL_SERVICE_MAX:
+			case IECRouteInfo.VESSEL_SERVICE_MAX:
 				routeInfo.setVesselServiceMax(Double.parseDouble(value));
 				break;
-			case RouteInfo.VESSEL_SERVICE_MIN:
+			case IECRouteInfo.VESSEL_SERVICE_MIN:
 				routeInfo.setVesselServiceMin(Double.parseDouble(value));
 				break;
-			case RouteInfo.VESSEL_SPEED_MAX:
+			case IECRouteInfo.VESSEL_SPEED_MAX:
 				routeInfo.setVesselSpeedMax(Double.parseDouble(value));
 				break;
-			case RouteInfo.VESSEL_VOYAGE:
+			case IECRouteInfo.VESSEL_VOYAGE:
 				routeInfo.setVesselVoyage(Integer.parseInt(value));
 				break;
 			default:
@@ -243,16 +243,16 @@ public class IECParserHelper {
 		}
 	}
 
-	public static void setScheduleAttributes(Attributes atts, Schedule schedule) {
+	public static void setScheduleAttributes(Attributes atts, IECSchedule schedule) {
 		for (int i = 0; i < atts.getLength(); i++) {
 			String key = atts.getLocalName(i);
 			String value = atts.getValue(i);
 
 			switch (key) {
-			case Schedule.ID:
+			case IECSchedule.ID:
 				schedule.setId(Integer.parseInt(value));
 				break;
-			case Schedule.NAME:
+			case IECSchedule.NAME:
 				schedule.setName(value);
 				break;
 			default:
@@ -263,81 +263,81 @@ public class IECParserHelper {
 	}
 
 	public static void setScheduleElementAttributes(Attributes atts,
-			ScheduleElement scheduleElement) {
+			IECScheduleElement scheduleElement) {
 		for (int i = 0; i < atts.getLength(); i++) {
 			String key = atts.getLocalName(i);
 			String value = atts.getValue(i);
 
 			switch (key) {
-			case ScheduleElement.ABS_FUEL_SAVE:
+			case IECScheduleElement.ABS_FUEL_SAVE:
 				scheduleElement.setAbsFuelSave(Double.parseDouble(value));
 				break;
-			case ScheduleElement.CURRENT_DIRECTION:
+			case IECScheduleElement.CURRENT_DIRECTION:
 				scheduleElement.setCurrentDirection(Double.parseDouble(value));
 				break;
-			case ScheduleElement.CURRENT_SPEED:
+			case IECScheduleElement.CURRENT_SPEED:
 				scheduleElement.setCurrentSpeed(Double.parseDouble(value));
 				break;
-			case ScheduleElement.ETA:
+			case IECScheduleElement.ETA:
 				Date eta = parseDateTime(value);
 				if (eta != null) scheduleElement.setEta(eta);
 				break;
-			case ScheduleElement.ETA_WINDOW_AFTER:
+			case IECScheduleElement.ETA_WINDOW_AFTER:
 				scheduleElement.setEtaWindowAfter(Double.parseDouble(value));
 				break;
-			case ScheduleElement.ETA_WINDOW_BEFORE:
+			case IECScheduleElement.ETA_WINDOW_BEFORE:
 				scheduleElement.setEtaWindowBefore(Double.parseDouble(value));
 				break;
-			case ScheduleElement.ETD:
+			case IECScheduleElement.ETD:
 				Date etd = parseDateTime(value);
 				if (etd != null) scheduleElement.setEtd(etd);
 				break;
-			case ScheduleElement.ETD_WINDOW_AFTER:
+			case IECScheduleElement.ETD_WINDOW_AFTER:
 				scheduleElement.setEtdWindowAfter(Double.parseDouble(value));
 				break;
-			case ScheduleElement.ETD_WINDOW_BEFORE:
+			case IECScheduleElement.ETD_WINDOW_BEFORE:
 				scheduleElement.setEtdWindowBefore(Double.parseDouble(value));
 				break;
-			case ScheduleElement.FUEL:
+			case IECScheduleElement.FUEL:
 				scheduleElement.setFuel(Double.parseDouble(value));
 				break;
-			case ScheduleElement.NOTE:
+			case IECScheduleElement.NOTE:
 				scheduleElement.setNote(value);
 				break;
-			case ScheduleElement.PITCH:
+			case IECScheduleElement.PITCH:
 				scheduleElement.setPitch(Integer.parseInt(value));
 				break;
-			case ScheduleElement.REL_FUEL_SAVE:
+			case IECScheduleElement.REL_FUEL_SAVE:
 				scheduleElement.setRelFuelSave(Double.parseDouble(value));
 				break;
-			case ScheduleElement.RPM:
+			case IECScheduleElement.RPM:
 				scheduleElement.setRpm(Double.parseDouble(value));
 				break;
-			case ScheduleElement.SPEED:
+			case IECScheduleElement.SPEED:
 				scheduleElement.setSpeed(Double.parseDouble(value));
 				break;
-			case ScheduleElement.SPEED_WINDOW:
+			case IECScheduleElement.SPEED_WINDOW:
 				scheduleElement.setSpeedWindow(Double.parseDouble(value));
 				break;
-			case ScheduleElement.STAY:
+			case IECScheduleElement.STAY:
 				scheduleElement.setStay(Double.parseDouble(value));
 				break;
-			case ScheduleElement.TOTAL_LOSS:
+			case IECScheduleElement.TOTAL_LOSS:
 				scheduleElement.setTotalLoss(Double.parseDouble(value));
 				break;
-			case ScheduleElement.WAVE_LOSS:
+			case IECScheduleElement.WAVE_LOSS:
 				scheduleElement.setWaveLoss(Double.parseDouble(value));
 				break;
-			case ScheduleElement.WAYPOINT_ID:
+			case IECScheduleElement.WAYPOINT_ID:
 				scheduleElement.setWaypointID(Integer.parseInt(value));
 				break;
-			case ScheduleElement.WIND_DIRECTION:
+			case IECScheduleElement.WIND_DIRECTION:
 				scheduleElement.setWindDirection(Double.parseDouble(value));
 				break;
-			case ScheduleElement.WIND_LOSS:
+			case IECScheduleElement.WIND_LOSS:
 				scheduleElement.setWindLoss(Double.parseDouble(value));
 				break;
-			case ScheduleElement.WIND_SPEED:
+			case IECScheduleElement.WIND_SPEED:
 				scheduleElement.setWindSpeed(Double.parseDouble(value));
 				break;
 			default:
@@ -347,22 +347,22 @@ public class IECParserHelper {
 		}
 	}
 
-	public static void setWaypointAttributes(Attributes atts, Waypoint waypoint) {
+	public static void setWaypointAttributes(Attributes atts, IECWaypoint waypoint) {
 		for (int i = 0; i < atts.getLength(); i++) {
 			String key = atts.getLocalName(i);
 			String value = atts.getValue(i);
 
 			switch (key) {
-			case Waypoint.ID:
+			case IECWaypoint.ID:
 				waypoint.setId(Integer.parseInt(value));
 				break;
-			case Waypoint.NAME:
+			case IECWaypoint.NAME:
 				waypoint.setName(value);
 				break;
-			case Waypoint.RADIUS:
+			case IECWaypoint.RADIUS:
 				waypoint.setRadius(Double.parseDouble(value));
 				break;
-			case Waypoint.REVISION:
+			case IECWaypoint.REVISION:
 				waypoint.setRevision(Integer.parseInt(value));
 				break;
 			default:

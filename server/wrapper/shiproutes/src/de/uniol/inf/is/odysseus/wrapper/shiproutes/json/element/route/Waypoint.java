@@ -109,11 +109,11 @@ public class Waypoint implements IShipRouteElement {
 			map.addAttributeValue(elementPrefix + AUX_RESERVED, aux_reserved);
 	}
 
-	public int getID() {
+	public Integer getID() {
 		return ID;
 	}
 
-	public void setID(int iD) {
+	public void setID(Integer iD) {
 		ID = iD;
 	}
 
@@ -125,115 +125,115 @@ public class Waypoint implements IShipRouteElement {
 		this.label = label;
 	}
 
-	public double getLat_rad() {
+	public Double getLat_rad() {
 		return lat_rad;
 	}
 
-	public void setLat_rad(double lat_rad) {
+	public void setLat_rad(Double lat_rad) {
 		this.lat_rad = lat_rad;
 	}
 
-	public double getLon_rad() {
+	public Double getLon_rad() {
 		return lon_rad;
 	}
 
-	public void setLon_rad(double lon_rad) {
+	public void setLon_rad(Double lon_rad) {
 		this.lon_rad = lon_rad;
 	}
 
-	public double getZ_position_m() {
+	public Double getZ_position_m() {
 		return z_position_m;
 	}
 
-	public void setZ_position_m(double z_position_m) {
+	public void setZ_position_m(Double z_position_m) {
 		this.z_position_m = z_position_m;
 	}
 
-	public double getTurnradius_nm() {
+	public Double getTurnradius_nm() {
 		return turnradius_nm;
 	}
 
-	public void setTurnradius_nm(double turnradius_nm) {
+	public void setTurnradius_nm(Double turnradius_nm) {
 		this.turnradius_nm = turnradius_nm;
 	}
 
-	public int getCrosstracklimit_stbd_m() {
+	public Integer getCrosstracklimit_stbd_m() {
 		return crosstracklimit_stbd_m;
 	}
 
-	public void setCrosstracklimit_stbd_m(int crosstracklimit_stbd_m) {
+	public void setCrosstracklimit_stbd_m(Integer crosstracklimit_stbd_m) {
 		this.crosstracklimit_stbd_m = crosstracklimit_stbd_m;
 	}
 
-	public int getCrosstracklimit_port_m() {
+	public Integer getCrosstracklimit_port_m() {
 		return crosstracklimit_port_m;
 	}
 
-	public void setCrosstracklimit_port_m(int crosstracklimit_port_m) {
+	public void setCrosstracklimit_port_m(Integer crosstracklimit_port_m) {
 		this.crosstracklimit_port_m = crosstracklimit_port_m;
 	}
 
-	public double getSpeed_kts() {
+	public Double getSpeed_kts() {
 		return speed_kts;
 	}
 
-	public void setSpeed_kts(double speed_kts) {
+	public void setSpeed_kts(Double speed_kts) {
 		this.speed_kts = speed_kts;
 	}
 
-	public int getETA() {
+	public Integer getETA() {
 		return ETA;
 	}
 
-	public void setETA(int eTA) {
+	public void setETA(Integer eTA) {
 		ETA = eTA;
 	}
 
-	public double getSpeedlimit_upper_kts() {
+	public Double getSpeedlimit_upper_kts() {
 		return speedlimit_upper_kts;
 	}
 
-	public void setSpeedlimit_upper_kts(double speedlimit_upper_kts) {
+	public void setSpeedlimit_upper_kts(Double speedlimit_upper_kts) {
 		this.speedlimit_upper_kts = speedlimit_upper_kts;
 	}
 
-	public double getSpeedlimit_lower_kts() {
+	public Double getSpeedlimit_lower_kts() {
 		return speedlimit_lower_kts;
 	}
 
-	public void setSpeedlimit_lower_kts(double speedlimit_lower_kts) {
+	public void setSpeedlimit_lower_kts(Double speedlimit_lower_kts) {
 		this.speedlimit_lower_kts = speedlimit_lower_kts;
 	}
 
-	public double getDistance_to_wp_nm() {
+	public Double getDistance_to_wp_nm() {
 		return distance_to_wp_nm;
 	}
 
-	public void setDistance_to_wp_nm(double distance_to_wp_nm) {
+	public void setDistance_to_wp_nm(Double distance_to_wp_nm) {
 		this.distance_to_wp_nm = distance_to_wp_nm;
 	}
 
-	public double getBearing_to_wp_rad() {
+	public Double getBearing_to_wp_rad() {
 		return bearing_to_wp_rad;
 	}
 
-	public void setBearing_to_wp_rad(double bearing_to_wp_rad) {
+	public void setBearing_to_wp_rad(Double bearing_to_wp_rad) {
 		this.bearing_to_wp_rad = bearing_to_wp_rad;
 	}
 
-	public int getAux_symbol_type() {
+	public Integer getAux_symbol_type() {
 		return aux_symbol_type;
 	}
 
-	public void setAux_symbol_type(int aux_symbol_type) {
+	public void setAux_symbol_type(Integer aux_symbol_type) {
 		this.aux_symbol_type = aux_symbol_type;
 	}
 
-	public int getAux_color_code() {
+	public Integer getAux_color_code() {
 		return aux_color_code;
 	}
 
-	public void setAux_color_code(int aux_color_code) {
+	public void setAux_color_code(Integer aux_color_code) {
 		this.aux_color_code = aux_color_code;
 	}
 
@@ -245,28 +245,29 @@ public class Waypoint implements IShipRouteElement {
 		this.aux_extended_label = aux_extended_label;
 	}
 
-	public int getAux_restricted() {
+	public Integer getAux_restricted() {
 		return aux_restricted;
 	}
 
-	public void setAux_restricted(int aux_restricted) {
+	public void setAux_restricted(Integer aux_restricted) {
 		this.aux_restricted = aux_restricted;
 	}
 
-	public int getAux_font_type() {
+	public Integer getAux_font_type() {
 		return aux_font_type;
 	}
 
-	public void setAux_font_type(int aux_font_type) {
+	public void setAux_font_type(Integer aux_font_type) {
 		this.aux_font_type = aux_font_type;
 	}
 
-	public int getAux_reserved() {
+	public Integer getAux_reserved() {
 		return aux_reserved;
 	}
 
-	public void setAux_reserved(int aux_reserved) {
+	public void setAux_reserved(Integer aux_reserved) {
 		this.aux_reserved = aux_reserved;
 	}
+
 
 }

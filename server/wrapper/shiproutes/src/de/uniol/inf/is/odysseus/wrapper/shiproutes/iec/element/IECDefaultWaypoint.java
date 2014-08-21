@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.helper.IECStringHelper;
 
-public class DefaultWaypoint implements IIecElement {
+public class IECDefaultWaypoint implements IIecElement {
 	public static final String RADIUS = "radius";
 
 	// map constants
@@ -19,8 +19,8 @@ public class DefaultWaypoint implements IIecElement {
 	private static final String CLOSE_EXTENSIONS_TAG = "</extensions>";
 
 	private Double radius;
-	private Leg leg;
-	private List<Extension> extensions;
+	private IECLeg leg;
+	private List<IECExtension> extensions;
 
 	@Override
 	public void fillMap(KeyValueObject<? extends IMetaAttribute> map,
@@ -35,7 +35,7 @@ public class DefaultWaypoint implements IIecElement {
 			leg.fillMap(map, prefix);
 
 		if (extensions != null) {
-			for (Extension extension : extensions) {
+			for (IECExtension extension : extensions) {
 				extension.fillMap(map, prefix);
 			}
 		}
@@ -57,7 +57,7 @@ public class DefaultWaypoint implements IIecElement {
 
 			if (extensions != null && !extensions.isEmpty()) {
 				builder.append(OPEN_EXTENSIONS_TAG);
-				for (Extension extension : extensions) {
+				for (IECExtension extension : extensions) {
 					builder.append(extension.toXML());
 				}
 				builder.append(CLOSE_EXTENSIONS_TAG);
@@ -81,9 +81,9 @@ public class DefaultWaypoint implements IIecElement {
 	}
 
 	@Override
-	public void addExtension(Extension extension) {
+	public void addExtension(IECExtension extension) {
 		if (extensions == null)
-			extensions = new ArrayList<Extension>();
+			extensions = new ArrayList<IECExtension>();
 		extensions.add(extension);
 	}
 
@@ -95,19 +95,19 @@ public class DefaultWaypoint implements IIecElement {
 		this.radius = radius;
 	}
 
-	public Leg getLeg() {
+	public IECLeg getLeg() {
 		return leg;
 	}
 
-	public void setLeg(Leg leg) {
+	public void setLeg(IECLeg leg) {
 		this.leg = leg;
 	}
 
-	public List<Extension> getExtensions() {
+	public List<IECExtension> getExtensions() {
 		return extensions;
 	}
 
-	public void setExtensions(List<Extension> extensions) {
+	public void setExtensions(List<IECExtension> extensions) {
 		this.extensions = extensions;
 	}
 

@@ -79,11 +79,11 @@ public class Route implements IShipRouteElement {
 		}
 	}
 
-	public int getSignature() {
+	public Integer getSignature() {
 		return signature;
 	}
 
-	public void setSignature(int signature) {
+	public void setSignature(Integer signature) {
 		this.signature = signature;
 	}
 
@@ -95,11 +95,11 @@ public class Route implements IShipRouteElement {
 		this.baseSignature = baseSignature;
 	}
 
-	public int getRoute_ID() {
+	public Integer getRoute_ID() {
 		return route_ID;
 	}
 
-	public void setRoute_ID(int route_ID) {
+	public void setRoute_ID(Integer route_ID) {
 		this.route_ID = route_ID;
 	}
 
@@ -111,62 +111,70 @@ public class Route implements IShipRouteElement {
 		this.route_label = route_label;
 	}
 
-	public int getCrosstracklimit_global_stbd_m() {
+	public Integer getCrosstracklimit_global_stbd_m() {
 		return crosstracklimit_global_stbd_m;
 	}
 
 	public void setCrosstracklimit_global_stbd_m(
-			int crosstracklimit_global_stbd_m) {
+			Integer crosstracklimit_global_stbd_m) {
 		this.crosstracklimit_global_stbd_m = crosstracklimit_global_stbd_m;
 	}
 
-	public int getCrosstracklimit_global_port_m() {
+	public Integer getCrosstracklimit_global_port_m() {
 		return crosstracklimit_global_port_m;
 	}
 
 	public void setCrosstracklimit_global_port_m(
-			int crosstracklimit_global_port_m) {
+			Integer crosstracklimit_global_port_m) {
 		this.crosstracklimit_global_port_m = crosstracklimit_global_port_m;
 	}
 
-	public int getTarget_ID() {
+	public Integer getTarget_ID() {
 		return target_ID;
 	}
 
-	public void setTarget_ID(int target_ID) {
+	public void setTarget_ID(Integer target_ID) {
 		this.target_ID = target_ID;
 	}
 
-	public int getETA_global() {
+	public Integer getETA_global() {
 		return ETA_global;
 	}
 
-	public void setETA_global(int eTA_global) {
+	public void setETA_global(Integer eTA_global) {
 		ETA_global = eTA_global;
 	}
 
-	public int getAux_flags() {
+	public Integer getAux_flags() {
 		return aux_flags;
 	}
 
-	public void setAux_flags(int aux_flags) {
+	public void setAux_flags(Integer aux_flags) {
 		this.aux_flags = aux_flags;
 	}
 
-	public int getAux_reserved() {
+	public Integer getAux_reserved() {
 		return aux_reserved;
 	}
 
-	public void setAux_reserved(int aux_reserved) {
+	public void setAux_reserved(Integer aux_reserved) {
 		this.aux_reserved = aux_reserved;
 	}
 
-	public int getNumber_of_wp() {
+	public Integer getNumber_of_wp() {
 		return number_of_wp;
 	}
 
-	public void setNumber_of_wp(int number_of_wp) {
+	public void setNumber_of_wp(Integer number_of_wp) {
 		this.number_of_wp = number_of_wp;
+	}
+
+	public RouteState getRoute_state() {
+		return route_state;
+	}
+
+	public void setRoute_state(RouteState route_state) {
+		this.route_state = route_state;
 	}
 
 	public List<Waypoint> getWaypoints() {
@@ -177,11 +185,5 @@ public class Route implements IShipRouteElement {
 		this.waypoints = waypoints;
 	}
 
-	public RouteState getRoute_state() {
-		return route_state;
-	}
-
-	public void setRoute_state(RouteState route_state) {
-		this.route_state = route_state;
-	}
+	
 }

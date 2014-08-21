@@ -13,20 +13,20 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Calculated;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.DefaultWaypoint;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Extension;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECCalculated;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECDefaultWaypoint;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECExtension;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IIecElement;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Leg;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Manual;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Position;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Route;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.RouteInfo;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Schedule;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.ScheduleElement;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Schedules;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Waypoint;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.Waypoints;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECLeg;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECManual;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECPosition;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECRoute;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECRouteInfo;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECSchedule;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECScheduleElement;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECSchedules;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECWaypoint;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECWaypoints;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.enums.IECElementType;
 
 public class IECParser extends DefaultHandler {
@@ -34,7 +34,7 @@ public class IECParser extends DefaultHandler {
 	private final Logger LOG = LoggerFactory.getLogger(IECParser.class);
 
 	private SAXParser parser;
-	private Route iec;
+	private IECRoute iec;
 	private Stack<IIecElement> elementStack = new Stack<IIecElement>();
 
 	public IECParser() {
@@ -60,67 +60,67 @@ public class IECParser extends DefaultHandler {
 
 		switch (elementType) {
 		case calculated:
-			Calculated calculated = new Calculated();
+			IECCalculated calculated = new IECCalculated();
 			// no attributes need to be set
 			newElement = calculated;
 			break;
 		case defaultWaypoint:
-			DefaultWaypoint defaultWaypoint = new DefaultWaypoint();
+			IECDefaultWaypoint defaultWaypoint = new IECDefaultWaypoint();
 			IECParserHelper.setDefaultWaypointAttributes(atts, defaultWaypoint);
 			newElement = defaultWaypoint;
 			break;
 		case extension:
-			Extension extension = new Extension();
+			IECExtension extension = new IECExtension();
 			IECParserHelper.setExtensionAttributes(atts, extension);
 			newElement = extension;
 			break;
 		case leg:
-			Leg leg = new Leg();
+			IECLeg leg = new IECLeg();
 			IECParserHelper.setLegAttributes(atts, leg);
 			newElement = leg;
 			break;
 		case manual:
-			Manual manual = new Manual();
+			IECManual manual = new IECManual();
 			// no attributes need to be set
 			newElement = manual;
 			break;
 		case position:
-			Position position = new Position();
+			IECPosition position = new IECPosition();
 			IECParserHelper.setPositionAttributes(atts, position);
 			newElement = position;
 			break;
 		case route:
-			Route route = new Route();
+			IECRoute route = new IECRoute();
 			IECParserHelper.setRouteAttributes(atts, route);
 			newElement = route;
 			break;
 		case routeInfo:
-			RouteInfo routeInfo = new RouteInfo();
+			IECRouteInfo routeInfo = new IECRouteInfo();
 			IECParserHelper.setRouteInfoAttributes(atts, routeInfo);
 			newElement = routeInfo;
 			break;
 		case schedule:
-			Schedule schedule = new Schedule();
+			IECSchedule schedule = new IECSchedule();
 			IECParserHelper.setScheduleAttributes(atts, schedule);
 			newElement = schedule;
 			break;
 		case scheduleElement:
-			ScheduleElement scheduleElement = new ScheduleElement();
+			IECScheduleElement scheduleElement = new IECScheduleElement();
 			IECParserHelper.setScheduleElementAttributes(atts, scheduleElement);
 			newElement = scheduleElement;
 			break;
 		case schedules:
-			Schedules schedules = new Schedules();
+			IECSchedules schedules = new IECSchedules();
 			// no attributes need to be set
 			newElement = schedules;
 			break;
 		case waypoint:
-			Waypoint waypoint = new Waypoint();
+			IECWaypoint waypoint = new IECWaypoint();
 			IECParserHelper.setWaypointAttributes(atts, waypoint);
 			newElement = waypoint;
 			break;
 		case waypoints:
-			Waypoints waypoints = new Waypoints();
+			IECWaypoints waypoints = new IECWaypoints();
 			// no attributes need to be set
 			newElement = waypoints;
 			break;
@@ -148,9 +148,9 @@ public class IECParser extends DefaultHandler {
 
 		switch (element) {
 		case calculated:
-			Calculated calculated = (Calculated) (elementStack.pop());
-			if (elementStack.peek() instanceof Schedule) {
-				((Schedule) elementStack.peek()).setCalculated(calculated);
+			IECCalculated calculated = (IECCalculated) (elementStack.pop());
+			if (elementStack.peek() instanceof IECSchedule) {
+				((IECSchedule) elementStack.peek()).setCalculated(calculated);
 			} else {
 				LOG.debug("Parent element " + elementStack.peek().getClass()
 						+ " is not valid for " + IECElementType.calculated
@@ -158,10 +158,10 @@ public class IECParser extends DefaultHandler {
 			}
 			break;
 		case defaultWaypoint:
-			DefaultWaypoint defaultWaypoint = (DefaultWaypoint) (elementStack
+			IECDefaultWaypoint defaultWaypoint = (IECDefaultWaypoint) (elementStack
 					.pop());
-			if (elementStack.peek() instanceof Waypoints) {
-				((Waypoints) elementStack.peek())
+			if (elementStack.peek() instanceof IECWaypoints) {
+				((IECWaypoints) elementStack.peek())
 						.setDefaultWaypoint(defaultWaypoint);
 			} else {
 				LOG.debug("Parent element " + elementStack.peek().getClass()
@@ -170,7 +170,7 @@ public class IECParser extends DefaultHandler {
 			}
 			break;
 		case extension:
-			Extension extension = (Extension) (elementStack.pop());
+			IECExtension extension = (IECExtension) (elementStack.pop());
 	//		if (elementStack.peek() instanceof IIecElement) {
 				elementStack.peek().addExtension(extension);
 //			} else {
@@ -179,11 +179,11 @@ public class IECParser extends DefaultHandler {
 //			}
 			break;
 		case leg:
-			Leg leg = (Leg) (elementStack.pop());
-			if (elementStack.peek() instanceof DefaultWaypoint) {
-				((DefaultWaypoint) elementStack.peek()).setLeg(leg);
-			} else if (elementStack.peek() instanceof Waypoint) {
-				((Waypoint) elementStack.peek()).setLeg(leg);
+			IECLeg leg = (IECLeg) (elementStack.pop());
+			if (elementStack.peek() instanceof IECDefaultWaypoint) {
+				((IECDefaultWaypoint) elementStack.peek()).setLeg(leg);
+			} else if (elementStack.peek() instanceof IECWaypoint) {
+				((IECWaypoint) elementStack.peek()).setLeg(leg);
 			} else {
 				LOG.debug("Parent element " + elementStack.peek().getClass()
 						+ " is not valid for " + IECElementType.leg
@@ -191,9 +191,9 @@ public class IECParser extends DefaultHandler {
 			}
 			break;
 		case manual:
-			Manual manual = (Manual) (elementStack.pop());
-			if (elementStack.peek() instanceof Schedule) {
-				((Schedule) elementStack.peek()).setManual(manual);
+			IECManual manual = (IECManual) (elementStack.pop());
+			if (elementStack.peek() instanceof IECSchedule) {
+				((IECSchedule) elementStack.peek()).setManual(manual);
 			} else {
 				LOG.debug("Parent element " + elementStack.peek().getClass()
 						+ " is not valid for " + IECElementType.manual
@@ -201,9 +201,9 @@ public class IECParser extends DefaultHandler {
 			}
 			break;
 		case position:
-			Position position = (Position) (elementStack.pop());
-			if (elementStack.peek() instanceof Waypoint) {
-				((Waypoint) elementStack.peek()).setPosition(position);
+			IECPosition position = (IECPosition) (elementStack.pop());
+			if (elementStack.peek() instanceof IECWaypoint) {
+				((IECWaypoint) elementStack.peek()).setPosition(position);
 			} else {
 				LOG.debug("Parent element " + elementStack.peek().getClass()
 						+ " is not valid for " + IECElementType.position
@@ -212,12 +212,12 @@ public class IECParser extends DefaultHandler {
 			break;
 		case route:
 			// Route is top-level element
-			iec = (Route) (elementStack.pop());
+			iec = (IECRoute) (elementStack.pop());
 			break;
 		case routeInfo:
-			RouteInfo routeInfo = (RouteInfo) (elementStack.pop());
-			if (elementStack.peek() instanceof Route) {
-				((Route) elementStack.peek()).setRouteInfo(routeInfo);
+			IECRouteInfo routeInfo = (IECRouteInfo) (elementStack.pop());
+			if (elementStack.peek() instanceof IECRoute) {
+				((IECRoute) elementStack.peek()).setRouteInfo(routeInfo);
 			} else {
 				LOG.debug("Parent element " + elementStack.peek().getClass()
 						+ " is not valid for " + IECElementType.routeInfo
@@ -225,9 +225,9 @@ public class IECParser extends DefaultHandler {
 			}
 			break;
 		case schedule:
-			Schedule schedule = (Schedule) (elementStack.pop());
-			if (elementStack.peek() instanceof Schedules) {
-				((Schedules) elementStack.peek()).addSchedule(schedule);
+			IECSchedule schedule = (IECSchedule) (elementStack.pop());
+			if (elementStack.peek() instanceof IECSchedules) {
+				((IECSchedules) elementStack.peek()).addSchedule(schedule);
 			} else {
 				LOG.debug("Parent element " + elementStack.peek().getClass()
 						+ " is not valid for " + IECElementType.schedule
@@ -235,13 +235,13 @@ public class IECParser extends DefaultHandler {
 			}
 			break;
 		case scheduleElement:
-			ScheduleElement scheduleElement = (ScheduleElement) (elementStack
+			IECScheduleElement scheduleElement = (IECScheduleElement) (elementStack
 					.pop());
-			if (elementStack.peek() instanceof Manual) {
-				((Manual) elementStack.peek())
+			if (elementStack.peek() instanceof IECManual) {
+				((IECManual) elementStack.peek())
 						.addScheduleElement(scheduleElement);
-			} else if (elementStack.peek() instanceof Calculated) {
-				((Calculated) elementStack.peek())
+			} else if (elementStack.peek() instanceof IECCalculated) {
+				((IECCalculated) elementStack.peek())
 						.addScheduleElement(scheduleElement);
 			} else {
 				LOG.debug("Parent element " + elementStack.peek().getClass()
@@ -250,9 +250,9 @@ public class IECParser extends DefaultHandler {
 			}
 			break;
 		case schedules:
-			Schedules schedules = (Schedules) (elementStack.pop());
-			if (elementStack.peek() instanceof Route) {
-				((Route) elementStack.peek()).setSchedules(schedules);
+			IECSchedules schedules = (IECSchedules) (elementStack.pop());
+			if (elementStack.peek() instanceof IECRoute) {
+				((IECRoute) elementStack.peek()).setSchedules(schedules);
 			} else {
 				LOG.debug("Parent element " + elementStack.peek().getClass()
 						+ " is not valid for " + IECElementType.schedules
@@ -260,9 +260,9 @@ public class IECParser extends DefaultHandler {
 			}
 			break;
 		case waypoint:
-			Waypoint waypoint = (Waypoint) (elementStack.pop());
-			if (elementStack.peek() instanceof Waypoints) {
-				((Waypoints) elementStack.peek()).addwaypoint(waypoint);
+			IECWaypoint waypoint = (IECWaypoint) (elementStack.pop());
+			if (elementStack.peek() instanceof IECWaypoints) {
+				((IECWaypoints) elementStack.peek()).addwaypoint(waypoint);
 			} else {
 				LOG.debug("Parent element " + elementStack.peek().getClass()
 						+ " is not valid for " + IECElementType.waypoint
@@ -270,9 +270,9 @@ public class IECParser extends DefaultHandler {
 			}
 			break;
 		case waypoints:
-			Waypoints waypoints = (Waypoints) (elementStack.pop());
-			if (elementStack.peek() instanceof Route) {
-				((Route) elementStack.peek()).setWaypoints(waypoints);
+			IECWaypoints waypoints = (IECWaypoints) (elementStack.pop());
+			if (elementStack.peek() instanceof IECRoute) {
+				((IECRoute) elementStack.peek()).setWaypoints(waypoints);
 			} else {
 				LOG.debug("Parent element " + elementStack.peek().getClass()
 						+ " is not valid for " + IECElementType.waypoints
@@ -294,7 +294,7 @@ public class IECParser extends DefaultHandler {
 		return false;
 	}
 
-	public Route getIEC() {
+	public IECRoute getIEC() {
 		return iec;
 	}
 

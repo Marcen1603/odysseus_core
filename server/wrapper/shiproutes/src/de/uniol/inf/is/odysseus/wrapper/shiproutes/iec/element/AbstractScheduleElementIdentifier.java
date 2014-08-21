@@ -15,26 +15,26 @@ public abstract class AbstractScheduleElementIdentifier implements IIecElement {
 	private static final String OPEN_EXTENSIONS_TAG = "<extensions>";
 	private static final String CLOSE_EXTENSIONS_TAG = "</extensions>";
 
-	private List<ScheduleElement> scheduleElements;
-	private List<Extension> extensions;
+	private List<IECScheduleElement> scheduleElements;
+	private List<IECExtension> extensions;
 
 	@Override
 	public void fillMap(KeyValueObject<? extends IMetaAttribute> map, String prefix) {
-		if (this instanceof Calculated) {
+		if (this instanceof IECCalculated) {
 			prefix += ELEMENT_PREFIX_CALC;			
-		} else if (this instanceof Manual) {
+		} else if (this instanceof IECManual) {
 			prefix += ELEMENT_PREFIX_MAN;
 		} else {
 			return;
 		}
 		
 		if (scheduleElements != null) {
-			for (ScheduleElement scheduleElement : scheduleElements) {
+			for (IECScheduleElement scheduleElement : scheduleElements) {
 				scheduleElement.fillMap(map, prefix);
 			}
 		}
 		if (extensions != null) {
-			for (Extension extension : extensions) {
+			for (IECExtension extension : extensions) {
 				extension.fillMap(map, prefix);
 			}
 		}
@@ -45,10 +45,10 @@ public abstract class AbstractScheduleElementIdentifier implements IIecElement {
 		String startTag;
 		String endTag;
 
-		if (this instanceof Calculated) {
+		if (this instanceof IECCalculated) {
 			startTag = "<calculated";
 			endTag = "</calculated>";
-		} else if (this instanceof Manual) {
+		} else if (this instanceof IECManual) {
 			startTag = "<manual";
 			endTag = "</manual>";
 		} else {
@@ -62,14 +62,14 @@ public abstract class AbstractScheduleElementIdentifier implements IIecElement {
 			builder.append(">");
 
 			if (scheduleElements != null) {
-				for (ScheduleElement scheduleElement : scheduleElements) {
+				for (IECScheduleElement scheduleElement : scheduleElements) {
 					builder.append(scheduleElement.toXML());
 				}
 			}
 
 			if (extensions != null) {
 				builder.append(OPEN_EXTENSIONS_TAG);
-				for (Extension extension : extensions) {
+				for (IECExtension extension : extensions) {
 					builder.append(extension.toXML());
 				}
 				builder.append(CLOSE_EXTENSIONS_TAG);
@@ -94,32 +94,32 @@ public abstract class AbstractScheduleElementIdentifier implements IIecElement {
 		return true;
 	}
 	
-	public void addScheduleElement(ScheduleElement scheduleElement) {
+	public void addScheduleElement(IECScheduleElement scheduleElement) {
 		if (scheduleElements == null)
-			scheduleElements = new ArrayList<ScheduleElement>();
+			scheduleElements = new ArrayList<IECScheduleElement>();
 		scheduleElements.add(scheduleElement);
 	}
 
 	@Override
-	public void addExtension(Extension extension) {
+	public void addExtension(IECExtension extension) {
 		if (extensions == null)
-			extensions = new ArrayList<Extension>();
+			extensions = new ArrayList<IECExtension>();
 		extensions.add(extension);
 	}
 
-	public List<Extension> getExtensions() {
+	public List<IECExtension> getExtensions() {
 		return extensions;
 	}
 
-	public void setExtensions(List<Extension> extensions) {
+	public void setExtensions(List<IECExtension> extensions) {
 		this.extensions = extensions;
 	}
 
-	public List<ScheduleElement> getScheduleElements() {
+	public List<IECScheduleElement> getScheduleElements() {
 		return scheduleElements;
 	}
 
-	public void setScheduleElements(List<ScheduleElement> scheduleElements) {
+	public void setScheduleElements(List<IECScheduleElement> scheduleElements) {
 		this.scheduleElements = scheduleElements;
 	}
 }
