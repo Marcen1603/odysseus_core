@@ -81,6 +81,10 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 	public void setIsNumericalMedian(boolean numericalMedian) {
 		this.numericalMedian = numericalMedian;
 	}
+	
+	public boolean getIsNumericalMedian() {
+		return numericalMedian;
+	}
 
 	public boolean isNumericalMedian() {
 		return numericalMedian;
@@ -107,6 +111,11 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 	@Parameter(name = "roundingFactor", optional = true, type = LongParameter.class)
 	public void setRoundingFactor2(long roundingFactor) {
 		this.roundingFactor = roundingFactor;
+	}
+	
+	// needed by PQL-Generator
+	public long getRoundingFactor2() {
+		return this.roundingFactor;
 	}
 
 	public long getRoundingFactor() {
