@@ -49,7 +49,7 @@ public class LatencyToPayloadAO extends AbstractLogicalOperator {
 		if (small) {
 			names = new String[]{"latency"};			
 		} else {
-			names = new String[] { "latency_start", "latency_end", "latency",
+			names = new String[] {"latency", "latency_start", "latency_end", 
 					"latency_max_start", "latency_max" };
 		}
 		for (String n : names) {
