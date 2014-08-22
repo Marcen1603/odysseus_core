@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.helper.IECStringHelper;
@@ -18,11 +21,20 @@ public class IECExtension implements IIecElement {
 	private String manufacturer;
 	private String name;
 	private String version;
-
+	private Map<String, Object> extensionValues;
+	
 	@Override
 	public void fillMap(KeyValueObject<? extends IMetaAttribute> map,
 			String prefix) {
-		prefix += ELEMENT_PREFIX;
+		if (name != null && !name.isEmpty()){
+			if (!name.startsWith("_")){
+				prefix += "_"+name;
+			} else{
+				prefix += name;				
+			}
+		} else {
+			prefix += ELEMENT_PREFIX;			
+		}
 		String elementPrefix = prefix + "_";
 		
 		if (manufacturer != null)
@@ -31,6 +43,12 @@ public class IECExtension implements IIecElement {
 			map.addAttributeValue(elementPrefix+NAME, name);
 		if (version != null)
 			map.addAttributeValue(elementPrefix+VERSION, version);
+		
+		if (extensionValues != null && !extensionValues.isEmpty()){
+			for (String key : extensionValues.keySet()) {
+				map.addAttributeValue(key, extensionValues.get(key).toString());
+			}
+		}
 	}
 
 	@Override
@@ -45,21 +63,19 @@ public class IECExtension implements IIecElement {
 			IECStringHelper.appendStringElement(builder, VERSION, version);
 		builder.append(">");
 
-		// add here custom elements
+		if (extensionValues != null && !extensionValues.isEmpty()){
+			for (String key : extensionValues.keySet()) {
+				builder.append("<"+key+" value=\""+extensionValues.get(key)+"\"/>");
+			}
+		}
 
 		builder.append(CLOSE_TAG);
 		return builder.toString();
 	}
 
 	@Override
-	public String toString() {
-		return null;
-	}
-
-	@Override
 	public boolean hasSubelements() {
-		// change if custom elements exists
-		return false;
+		return !extensionValues.isEmpty();
 	}
 
 	@Override
@@ -97,6 +113,21 @@ public class IECExtension implements IIecElement {
 	@Override
 	public void addExtension(IECExtension extension) {
 		// noOp because extension can not have extensions
+	}
+
+	public Map<String, Object> getExtensionValues() {
+		return extensionValues;
+	}
+
+	public void setExtensionValues(Map<String, Object> extensionValues) {
+		this.extensionValues = extensionValues;
+	}
+	
+	public void addExtensionValue(String key, Object value){
+		if (extensionValues == null){
+			extensionValues = new HashMap<String, Object>();
+		}
+		extensionValues.put(key, value);
 	}
 
 }

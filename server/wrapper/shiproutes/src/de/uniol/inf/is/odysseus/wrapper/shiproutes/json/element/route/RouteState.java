@@ -37,36 +37,37 @@ public class RouteState implements IShipRouteElement {
 
 	}
 
-	public boolean isHas_geometric_problems() {
+	public Boolean getHas_geometric_problems() {
 		return has_geometric_problems;
 	}
 
-	public void setHas_geometric_problems(boolean has_geometric_problems) {
+	public void setHas_geometric_problems(Boolean has_geometric_problems) {
 		this.has_geometric_problems = has_geometric_problems;
 	}
 
-	public boolean isHas_alarms() {
+	public Boolean getHas_alarms() {
 		return has_alarms;
 	}
 
-	public void setHas_alarms(boolean has_alarms) {
+	public void setHas_alarms(Boolean has_alarms) {
 		this.has_alarms = has_alarms;
 	}
 
-	public boolean isHas_warnings() {
+	public Boolean getHas_warnings() {
 		return has_warnings;
 	}
 
-	public void setHas_warnings(boolean has_warnings) {
+	public void setHas_warnings(Boolean has_warnings) {
 		this.has_warnings = has_warnings;
 	}
 
-	public boolean isHas_cautions() {
+	public Boolean getHas_cautions() {
 		return has_cautions;
 	}
 
-	public void setHas_cautions(boolean has_cautions) {
+	public void setHas_cautions(Boolean has_cautions) {
 		this.has_cautions = has_cautions;
 	}
-
+	
+	
 }
