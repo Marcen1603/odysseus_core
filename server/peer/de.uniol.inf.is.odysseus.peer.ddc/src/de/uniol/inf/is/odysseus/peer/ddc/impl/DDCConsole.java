@@ -394,7 +394,7 @@ public class DDCConsole implements CommandProvider {
 	@Override
 	public String getHelp() {
 
-		final String TABS = "		";
+		final String TABS = "	";
 		StringBuilder output = new StringBuilder();
 		output.append("---DDC commands---" + DDCConsole.LINEBREAK);
 
