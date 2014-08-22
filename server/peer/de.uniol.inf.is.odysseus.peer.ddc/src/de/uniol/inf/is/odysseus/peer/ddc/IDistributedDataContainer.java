@@ -115,7 +115,7 @@ public interface IDistributedDataContainer {
 	 * @param key
 	 *            The given multidimensional key.
 	 * @return True, if there is an DDC entry for the given key. If this is the
-	 *         case, the entry has been removed sucessfully. False, if there is
+	 *         case, the entry has been removed successfully. False, if there is
 	 *         no DDC entry for the given key.
 	 */
 	public boolean remove(String[] key);
@@ -126,7 +126,7 @@ public interface IDistributedDataContainer {
 	 * @param key
 	 *            The given 1-dimensional key.
 	 * @return True, if there is an DDC entry for the given key. If this is the
-	 *         case, the entry has been removed sucessfully. False, if there is
+	 *         case, the entry has been removed successfully. False, if there is
 	 *         no DDC entry for the given key.
 	 */
 	public boolean remove(String key);
