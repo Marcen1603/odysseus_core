@@ -45,6 +45,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.wrapper.opcda.datatype.OPCValue;
 
 /**
  * OPC transport handler
@@ -191,14 +192,16 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
                         try {
                             if ((state.getValue().getType() == JIVariant.VT_UI1) || (state.getValue().getType() == JIVariant.VT_UI2) || (state.getValue().getType() == JIVariant.VT_UI4)
                                     || (state.getValue().getType() == JIVariant.VT_UINT)) {
-                                OPCDATransportHandler.this.process(position, new Integer(state.getValue().getObjectAsUnsigned().getValue().intValue()));
+                                OPCDATransportHandler.this.process(position, state.getTimestamp().getTimeInMillis(), new Integer(state.getValue().getObjectAsUnsigned().getValue().intValue()),
+                                        state.getQuality(), state.getErrorCode());
                             }
                             else if ((state.getValue().getType() == JIVariant.VT_I1) || (state.getValue().getType() == JIVariant.VT_I2) || (state.getValue().getType() == JIVariant.VT_I4)
                                     || (state.getValue().getType() == JIVariant.VT_I8) || (state.getValue().getType() == JIVariant.VT_INT)) {
-                                OPCDATransportHandler.this.process(position, new Integer(state.getValue().getObjectAsUnsigned().getValue().intValue()));
+                                OPCDATransportHandler.this.process(position, state.getTimestamp().getTimeInMillis(), new Integer(state.getValue().getObjectAsUnsigned().getValue().intValue()),
+                                        state.getQuality(), state.getErrorCode());
                             }
                             else {
-                                OPCDATransportHandler.this.process(position, state.getValue().getObject());
+                                OPCDATransportHandler.this.process(position, state.getTimestamp().getTimeInMillis(), state.getValue().getObject(), state.getQuality(), state.getErrorCode());
                             }
                         }
                         catch (final JIException e) {
@@ -221,10 +224,11 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
         }
     }
 
-    void process(final int pos, final Object value) {
+    void process(final int pos, final long timestamp, final Object value, final short quality, final int error) {
         OPCDATransportHandler.LOG.debug(String.format("%d: %s", new Integer(pos), value));
         synchronized (this.read) {
-            this.read.setAttribute(pos, value);
+            OPCValue data = new OPCValue(timestamp, ((Number) value).doubleValue(), quality, error);
+            this.read.setAttribute(pos, data);
             ByteBuffer buffer = ByteBuffer.allocate(this.dataHandler.memSize(this.read));
             this.dataHandler.writeData(buffer, this.read);
             fireProcess(buffer);
