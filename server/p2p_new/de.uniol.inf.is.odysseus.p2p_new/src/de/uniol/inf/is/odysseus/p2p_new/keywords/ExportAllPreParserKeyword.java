@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
+@Deprecated
 public class ExportAllPreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String KEYWORD = "EXPORTALL";

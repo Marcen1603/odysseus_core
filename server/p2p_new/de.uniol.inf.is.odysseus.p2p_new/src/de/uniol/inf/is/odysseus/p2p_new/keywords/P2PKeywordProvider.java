@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
 public class P2PKeywordProvider implements IPreParserKeywordProvider {
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public Map<String, Class<? extends IPreParserKeyword>> getKeywords() {
 		Map<String, Class<? extends IPreParserKeyword>> keywords = Maps.newHashMap();
