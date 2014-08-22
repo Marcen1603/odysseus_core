@@ -37,11 +37,12 @@ public class OPCDASource extends AbstractAccessAO {
 	private static final long serialVersionUID = 1366670017348220400L;
 	private List<String> paths;
 
-	public OPCDASource(AbstractLogicalOperator po) {
-		super(po);
+	public OPCDASource(OPCDASource ao) {
+		super(ao);
 	}
 
 	public OPCDASource() {
+		super();
 		setTransportHandler(OPCDATransportHandler.NAME);
 		setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 		setWrapper(Constants.GENERIC_PUSH);
