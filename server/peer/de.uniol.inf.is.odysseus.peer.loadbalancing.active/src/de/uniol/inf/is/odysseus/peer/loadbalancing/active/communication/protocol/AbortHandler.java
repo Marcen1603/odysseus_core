@@ -95,10 +95,10 @@ public class AbortHandler {
 						LOG.error("Removing Operator with Pipe ID " + pipe);
 						LoadBalancingHelper.removeDuplicateJxtaOperator(pipe);
 					}
-				} //$FALL-THROUGH$ 
+				} 
 				// NO break, since Peer could in theory also be the volunteering
 				// peer
-	
+				//$FALL-THROUGH$ 
 			case VOLUNTEERING_PEER:
 				Collection<Integer> queriesToRemove = status.getInstalledQueries();
 				if (queriesToRemove != null) {
