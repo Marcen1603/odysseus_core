@@ -61,9 +61,9 @@ public class EMAO extends UnaryLogicalOp implements IHasPredicate {
     /** The number of Gaussian mixtures. */
     private int mixtures;
     /** The convergence threshold for fitting. */
-    private double threshold = 1E-5;
+    private double threshold = 1E-3;
     /** The maximum number of iterations allowed per fitting process. */
-    private int iterations = 1000;
+    private int iterations = 30;
     /** Incremental fitting. */
     private boolean incremental = false;
     
