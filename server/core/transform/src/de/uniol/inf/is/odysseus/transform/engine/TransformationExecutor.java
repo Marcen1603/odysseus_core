@@ -86,8 +86,12 @@ public class TransformationExecutor implements ITransformation {
 			LOGGER.error("PhysicalInput of TopAO is null!");
 			LOGGER.error("Current working memory:");
 			LOGGER.error(env.getWorkingMemory().getCurrentContent().toString());
-			LOGGER.error("Further information: \n" + env.getWorkingMemory().getDebugTrace());
-			throw new TransformationException("Error during transformation of " + logicalOp);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Further information: \n" + env.getWorkingMemory().getDebugTrace());
+                SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<>();
+                LOGGER.debug("Current plan: \n" + planPrinter.createString(top));
+            }
+            throw new TransformationException("Error during transformation of " + logicalOp);
 		}
 
 		// FIX: Now done by an explicit RenanePO

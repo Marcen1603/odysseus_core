@@ -35,174 +35,188 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
 public class WorkingMemory {
 
-	public static Logger LOGGER = LoggerFactory.getLogger("ruleengine");
-	
-	private List<Pair<Object, IRule<?, ?>>> notexecuted = new ArrayList<>();
-	private List<Pair<Object, IRule<?, ?>>> executed = new ArrayList<>();
-	
+    public static Logger LOGGER = LoggerFactory.getLogger("ruleengine");
 
-	final private IWorkingEnvironment<?> env;
-	private Collection<Object> objects = new HashSet<Object>();
-	private volatile boolean hasChanged = false;
-	private int executedRules = 0;
-	
-	private Map<Class<?>, Collection<Object>> objectMap = new HashMap<Class<?>, Collection<Object>>();
+    private List<Pair<Object, IRule<?, ?>>> notexecuted = new ArrayList<>();
+    private List<Pair<Object, IRule<?, ?>>> executed = new ArrayList<>();
 
-	public WorkingMemory(IWorkingEnvironment<?> env) {
-		this.env = env;
-	}
+    final private IWorkingEnvironment<?> env;
+    private Collection<Object> objects = new HashSet<Object>();
+    private volatile boolean hasChanged = false;
+    private int executedRules = 0;
 
-	public void removeObject(Object o) {
-		this.removeObject(o, false);
-	}
-	
-	public void clear(){
-		objectMap.clear();
-	}
+    private Map<Class<?>, Collection<Object>> objectMap = new HashMap<Class<?>, Collection<Object>>();
 
-	public void insertObject(Object o) {
-		this.insertObject(o, false);
-	}
+    public WorkingMemory(IWorkingEnvironment<?> env) {
+        this.env = env;
+    }
 
-	private void insertObject(Object o, boolean isupdate) {
-		if (!isupdate) {
-			LOGGER.trace("Inserted into memory: \t" + o);
-		}
-		this.objects.add(o);
-		insertIntoTree(o);
-		this.hasChanged = true;
-	}
-	
-	private void insertIntoTree(Object o){
-		for(Class<?> sc :  getAllInterfacesAndSuperclasses(o)){
-			if(!objectMap.containsKey(sc)){
-				objectMap.put(sc, new HashSet<>());
-			}
-			objectMap.get(sc).add(o);			
-		}
-	}
-	
-	private void removeFromTree(Object o){
-		for(Class<?> sc : getAllInterfacesAndSuperclasses(o)){
-			objectMap.get(sc).remove(o);
-			if(objectMap.get(sc).isEmpty()){
-				objectMap.remove(sc);
-			}					
-		}
-	}
-	
-	
-	private List<Class<?>> getAllInterfacesAndSuperclasses(Object o){
-		List<Class<?>> allClasses = new ArrayList<Class<?>>();
-		allClasses.add(o.getClass());
-		List<Class<?>> supercs = ClassUtils.getAllSuperclasses(o.getClass());		
-		if(supercs!=null){
-			allClasses.addAll(supercs);
-		}
-		List<Class<?>> intercs = ClassUtils.getAllInterfaces(o.getClass());		
-		if(intercs!=null){
-			allClasses.addAll(intercs);
-		}
-		return allClasses;
-		
-	}
+    public void removeObject(Object o) {
+        this.removeObject(o, false);
+    }
 
-	public void removeObject(Object o, boolean isupdate) {
-		if (!isupdate) {
-			LOGGER.trace("Removed from memory: \t" + o);
-		}
-		boolean removed = this.objects.remove(o);
-		if (!removed) {
-			throw new RuntimeException("Could not remove object " + o + " from working memory");
-		}
-		removeFromTree(o);
-		this.hasChanged = true;
-	}
+    public void clear() {
+        objectMap.clear();
+    }
 
-	public void updateObject(Object o) {
-		LOGGER.trace("Update memory: \t" + o);
-	}
+    public void insertObject(Object o) {
+        this.insertObject(o, false);
+    }
 
-	public int process() throws RuleException {
-		LOGGER.trace("Rule engine started and now looking for matches...");
-		for (IRuleFlowGroup group : this.env.getRuleFlow()) {					
-			runGroup(group);
-			while(hasChanged){
-				runGroup(group);
-			}
-			LOGGER.trace("Group finished: " + group);			
-		}
-		return executedRules;
-	}
+    private void insertObject(Object o, boolean isupdate) {
+        if (!isupdate) {
+            LOGGER.trace("Inserted into memory: \t" + o);
+        }
+        this.objects.add(o);
+        insertIntoTree(o);
+        this.hasChanged = true;
+    }
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void runGroup(IRuleFlowGroup group) throws RuleException{
-		hasChanged = false;
-		Set<Class<?>> clazzes = new HashSet(objectMap.keySet());
-		Iterator<IRule<?, ?>> iterator = this.env.getRuleFlow().iteratorRules(group, clazzes);
+    private void insertIntoTree(Object o) {
+        for (Class<?> sc : getAllInterfacesAndSuperclasses(o)) {
+            if (!objectMap.containsKey(sc)) {
+                objectMap.put(sc, new HashSet<>());
+            }
+            objectMap.get(sc).add(o);
+        }
+    }
 
-		while (iterator.hasNext()) {
-			IRule rule = iterator.next();
-			Collection<Object> matchingObjects = objectMap.get(rule.getConditionClass());
-			LOGGER.trace("Trying to run rule "+rule+" on "+matchingObjects);
-			if(matchingObjects==null){
-				// no objects for this condition clazz
-				continue;
-			}
-			rule.setCurrentWorkingMemory(this);
-			for(Object matchingObject : matchingObjects){		
-				if(rule.isExecutable(matchingObject, this.env.getConfiguration())){
-					LOGGER.trace("Running rule "+rule+" on "+matchingObject);
-					rule.execute(matchingObject, this.env.getConfiguration());
-					if(LOGGER.isDebugEnabled()){
-						Pair<Object, IRule<?,?>> pair = new Pair(matchingObject, rule); 
-						executed.add(pair);
-						if(this.notexecuted.contains(pair)){
-							this.notexecuted.remove(pair);
-						}
-					}
-					if(this.hasChanged){
-						// if wm was changed: stop...
-						return;
-					}
-				}else{
-					if(LOGGER.isDebugEnabled()){
-						notexecuted.add(new Pair(matchingObject, rule));
-					}
-				}
-			}
-		}
-	}
+    private void removeFromTree(Object o) {
+        for (Class<?> sc : getAllInterfacesAndSuperclasses(o)) {
+            objectMap.get(sc).remove(o);
+            if (objectMap.get(sc).isEmpty()) {
+                objectMap.remove(sc);
+            }
+        }
+    }
 
-	public Collection<Object> getCurrentContent() {
-		return this.objects;
-	}
+    private List<Class<?>> getAllInterfacesAndSuperclasses(Object o) {
+        List<Class<?>> allClasses = new ArrayList<Class<?>>();
+        allClasses.add(o.getClass());
+        List<Class<?>> supercs = ClassUtils.getAllSuperclasses(o.getClass());
+        if (supercs != null) {
+            allClasses.addAll(supercs);
+        }
+        List<Class<?>> intercs = ClassUtils.getAllInterfaces(o.getClass());
+        if (intercs != null) {
+            allClasses.addAll(intercs);
+        }
+        return allClasses;
 
+    }
 
-	public String getDebugTrace() {
-		String out = "Following rules were executed, because there was a successful matching to an object:\n";
-		for (Pair<Object, IRule<?, ?>> entry : this.executed) {
-			out = out + "Object: " + entry.getE1();
-			out = out + " --- Rule: " + entry.getE2();
-			out = out + "\n";
-		}
-		out = out + "\n";
-		out = out+"Following rules were NOT executed although there was a successful matching to an object:\n";
-		for (Pair<Object, IRule<?, ?>> entry : this.executed) {
-			out = out + "Object: " + entry.getE1();
-			out = out + " --- Rule: " + entry.getE2();
-			out = out + "\n";
-		}
+    public void removeObject(Object o, boolean isupdate) {
+        if (!isupdate) {
+            LOGGER.trace("Removed from memory: \t" + o);
+        }
+        boolean removed = this.objects.remove(o);
+        if (!removed) {
+            throw new RuntimeException("Could not remove object " + o + " from working memory");
+        }
+        removeFromTree(o);
+        this.hasChanged = true;
+    }
 
-		return out;
-	}
-//
-//	public ISession getCaller() {
-//		return caller;
-//	}
-//
-//	public IDataDictionary getDataDictionary() {
-//		return dd;
-//	}
+    public void updateObject(Object o) {
+        LOGGER.trace("Update memory: \t" + o);
+    }
+
+    public int process() throws RuleException {
+        LOGGER.trace("Rule engine started and now looking for matches...");
+        for (IRuleFlowGroup group : this.env.getRuleFlow()) {
+            runGroup(group);
+            while (hasChanged) {
+                runGroup(group);
+            }
+            LOGGER.trace("Group finished: " + group);
+        }
+        return executedRules;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private void runGroup(IRuleFlowGroup group) throws RuleException {
+        hasChanged = false;
+        Set<Class<?>> clazzes = new HashSet(objectMap.keySet());
+        Iterator<IRule<?, ?>> iterator = this.env.getRuleFlow().iteratorRules(group, clazzes);
+
+        while (iterator.hasNext()) {
+            IRule rule = iterator.next();
+            Collection<Object> matchingObjects = objectMap.get(rule.getConditionClass());
+            LOGGER.trace("Trying to run rule " + rule + " on " + matchingObjects);
+            if (matchingObjects == null) {
+                // no objects for this condition clazz
+                continue;
+            }
+            rule.setCurrentWorkingMemory(this);
+            for (Object matchingObject : matchingObjects) {
+                if (rule.isExecutable(matchingObject, this.env.getConfiguration())) {
+                    LOGGER.debug("Running rule " + rule + " on " + matchingObject);
+                    rule.execute(matchingObject, this.env.getConfiguration());
+                    if (LOGGER.isDebugEnabled()) {
+                        Pair<Object, IRule<?, ?>> pair = new Pair(matchingObject, rule);
+                        executed.add(pair);
+                        if (this.notexecuted.contains(pair)) {
+                            this.notexecuted.remove(pair);
+                        }
+                    }
+                    if (this.hasChanged) {
+                        // if wm was changed: stop...
+                        return;
+                    }
+                }
+                else {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Not running rule " + rule + " on " + matchingObject);
+                        notexecuted.add(new Pair(matchingObject, rule));
+                    }
+                }
+            }
+        }
+    }
+
+    public Collection<Object> getCurrentContent() {
+        return this.objects;
+    }
+
+    public String getDebugTrace() {
+        if (LOGGER.isDebugEnabled()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Following rules were executed, because there was a successful matching to an object:\n");
+            if (this.executed.size() > 0) {
+                for (Pair<Object, IRule<?, ?>> entry : this.executed) {
+                    sb.append("Object: ").append(entry.getE1().getClass().getSimpleName()).append("(").append(entry.getE1().getClass().getCanonicalName()).append(")");
+                    sb.append("\t\tRule: ").append(entry.getE2().getName()).append("(").append(entry.getE2().getClass().getCanonicalName()).append(")");
+                    sb.append("\n");
+                }
+            }
+            else {
+                sb.append("None\n");
+            }
+            sb.append("\n");
+            sb.append("Following rules were NOT executed although there was a successful matching to an object:\n");
+            if (this.executed.size() > 0) {
+                for (Pair<Object, IRule<?, ?>> entry : this.notexecuted) {
+                    sb.append("Object: ").append(entry.getE1().getClass().getSimpleName()).append("(").append(entry.getE1().getClass().getCanonicalName()).append(")");
+                    sb.append("\t\tRule: ").append(entry.getE2().getName()).append("(").append(entry.getE2().getClass().getCanonicalName()).append(")");
+                    sb.append("\n");
+                }
+            }
+            else {
+                sb.append("None\n");
+            }
+            sb.append("\n");
+
+            return sb.toString();
+        }
+        return "Please enable debug level";
+    }
+    //
+    // public ISession getCaller() {
+    // return caller;
+    // }
+    //
+    // public IDataDictionary getDataDictionary() {
+    // return dd;
+    // }
 
 }
