@@ -52,16 +52,19 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class OPCDATransportHandler<T> extends AbstractTransportHandler {
-    /** Logger */
+
+	/** Logger */
     private final static Logger LOG = LoggerFactory.getLogger(OPCDATransportHandler.class);
 
-    private final static String HOST = "host";
-    private final static String DOMAIN = "domain";
-    private final static String USERNAME = "username";
-    private final static String PASSWORD = "password";
-    private final static String PROG_ID = "progid";
-    private final static String CLS_ID = "clsid";
-    private final static String PERIOD = "period";
+    public static final String NAME = "OPC-DA";
+    public final static String HOST = "host";
+    public final static String DOMAIN = "domain";
+    public final static String USERNAME = "username";
+    public final static String PASSWORD = "password";
+    public final static String PROG_ID = "progid";
+    public final static String CLS_ID = "clsid";
+    public final static String PERIOD = "period";
+	public static final String PATH = "path";
 
     private String host;
     private String domain;
@@ -70,6 +73,8 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
     private String progId;
     private String clsId;
     private int period;
+	String[] pathes;
+
 
     private Server server;
     private AutoReconnectController controller;
@@ -114,11 +119,17 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
         else {
             this.period = 500;
         }
+		if (options.containsKey(PATH)) {
+			String path = options.get(PATH);
+			pathes = path.split(";");
+		} else {
+			throw new IllegalArgumentException("No path given!");
+		}
     }
 
     @Override
     public String getName() {
-        return "OPC-DA";
+        return NAME;
     }
 
     @Override
@@ -170,9 +181,9 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
             this.read = new Tuple<>(this.getSchema().size(), false);
             this.dataHandler = new TupleDataHandler();
             this.dataHandler.init(this.getSchema());
-            for (final SDFAttribute attribute : this.getSchema()) {
-                final int position = this.getSchema().indexOf(attribute);
-                this.access.addItem(attribute.getAttributeName(), new DataCallback() {
+            for (int pos=0;pos<pathes.length;pos++){
+                final int position = pos;
+            	this.access.addItem(pathes[pos], new DataCallback() {
                     private final Logger log = LoggerFactory.getLogger(DataCallback.class);
 
                     @Override
