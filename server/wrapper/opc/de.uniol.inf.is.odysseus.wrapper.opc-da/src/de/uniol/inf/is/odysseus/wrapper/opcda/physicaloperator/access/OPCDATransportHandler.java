@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 The Odysseus Team
+ * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.wrapper.opcda.datatype.OPCValue;
 
 /**
