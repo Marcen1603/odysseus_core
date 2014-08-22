@@ -75,7 +75,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpacePa
 public class PassesSportsQLParser implements ISportsQLParser {
 		
 	
-	// Distances for short passes (in millimeters)
+	// Distances for short pass (in millimeters)
 	private static final int MIN_DISTANCE_SHORT_PASS = 1000;
 	private static final int MAX_DISTANCE_SHORT_PASS = 10000;	
 	
@@ -165,12 +165,15 @@ public class PassesSportsQLParser implements ISportsQLParser {
 
 		
 		// 3. Check if velocity of the balls has changed
-		ArrayList<String> ballVelocityChangeDetectAttributes = new ArrayList<String>();
+		List<String> ballVelocityChangeDetectAttributes = new ArrayList<String>();
 		ballVelocityChangeDetectAttributes.add(SoccerGameAttributes.VX);
 		ballVelocityChangeDetectAttributes.add(SoccerGameAttributes.VY);
-		ballVelocityChangeDetectAttributes.add(SoccerGameAttributes.VZ);		
+		ballVelocityChangeDetectAttributes.add(SoccerGameAttributes.VZ);			
 		
-		ChangeDetectAO ballVelocityChangeDetect = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(ballVelocityChangeDetectAttributes, splitSoccerDataRoute), true, BALL_VELOCITY_CHANGE_IN_PERCENT, splitSoccerDataRoute);
+		List<String> ballVelocityChangeDetectGroupByAttributes = new ArrayList<String>();
+		ballVelocityChangeDetectGroupByAttributes.add(SoccerGameAttributes.SID);	
+		
+		ChangeDetectAO ballVelocityChangeDetect = OperatorBuildHelper.createChangeDetectAO(ballVelocityChangeDetectAttributes, OperatorBuildHelper.createAttributeList(ballVelocityChangeDetectGroupByAttributes, splitSoccerDataRoute), true, BALL_VELOCITY_CHANGE_IN_PERCENT, splitSoccerDataRoute);
 		allOperators.add(ballVelocityChangeDetect);		
 
 		
@@ -230,14 +233,14 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_POS_Y, ATTRIBUTE_P2_BALL_POS_Y, playerDataEnrichAO));
 		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+ATTRIBUTE_BALL_POS_Z, ATTRIBUTE_P1_BALL_POS_Z, playerDataEnrichAO));
 		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_POS_Z, ATTRIBUTE_P2_BALL_POS_Z, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("ToLong(__last_1."+SoccerGameAttributes.TS+")", ATTRIBUTE_PASS_START_TS, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("ToLong("+SoccerGameAttributes.TS+")", ATTRIBUTE_PASS_END_TS, playerDataEnrichAO));
+		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+SoccerGameAttributes.TS, ATTRIBUTE_PASS_START_TS, playerDataEnrichAO));
+		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.TS, ATTRIBUTE_PASS_END_TS, playerDataEnrichAO));
 		
 		StateMapAO ballContactsStateMapAO = OperatorBuildHelper.createStateMapAO(ballContactsStateMapAOExpressions, "", playerDataEnrichAO);
 		allOperators.add(ballContactsStateMapAO);	
 		
 		
-		// 11. Select tuples with different players
+		// 11. Select tuples with different players (=> pass)
 		ArrayList<String> passesSelectPredicates = new ArrayList<String>();
 		passesSelectPredicates.add(ATTRIBUTE_P1_ENTITY_ID+" != "+ATTRIBUTE_P2_ENTITY_ID);
 		SelectAO passesSelect = OperatorBuildHelper.createSelectAO(passesSelectPredicates, ballContactsStateMapAO);
@@ -301,7 +304,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		passesResultStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_PASS_DISTANCE, ATTRIBUTE_PASS_DISTANCE, passesWithMinDistanceSelect));
 		
 		
-		// Specifies in which direction the teams plays (is dependent on first half or second half)
+		// Specifies in which direction the teams play
 		// TODO Find a better way to determine this (e.g. with the metadata stream)
 		int teamIdLeftGoal = 1;
 		
