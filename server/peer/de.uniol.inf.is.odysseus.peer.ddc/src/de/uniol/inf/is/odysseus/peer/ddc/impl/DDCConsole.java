@@ -28,7 +28,7 @@ public class DDCConsole implements CommandProvider {
 	private static final Logger LOG = LoggerFactory.getLogger(DDCConsole.class);
 
 	/**
-	 * The seperator for multidimensional DDC entry keys.
+	 * The separator for multidimensional DDC entry keys.
 	 */
 	private static final String KEY_SEPERATOR = ",";
 
@@ -104,11 +104,11 @@ public class DDCConsole implements CommandProvider {
 	}
 
 	/**
-	 * Unbinds a DDC instance, if it's the bound one. <br />
+	 * Removes the binding of a DDC instance, if it's the bound one. <br />
 	 * Called by OSGI-DS.
 	 * 
 	 * @param ddc
-	 *            The DDC instance to unbind.
+	 *            The DDC instance, for which the binding shall be removed.
 	 */
 	public static void unbindDDC(IDistributedDataContainer ddc) {
 
@@ -125,8 +125,8 @@ public class DDCConsole implements CommandProvider {
 	/**
 	 * Interprets a command to add an entry to the DDC. <br />
 	 * The following commands are allowed: <br />
-	 * DDCadd key value ts <br />
-	 * DDCadd key1,key2,... value ts <br />
+	 * DDCadd key value TS <br />
+	 * DDCadd key1,key2,... value TS <br />
 	 * DDCadd key value <br />
 	 * DDCadd key1,key2,... value
 	 * 
