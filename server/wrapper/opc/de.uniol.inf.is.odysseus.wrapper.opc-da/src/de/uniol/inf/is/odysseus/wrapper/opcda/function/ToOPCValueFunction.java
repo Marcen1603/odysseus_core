@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.wrapper.opcda.sdf.schema.SDFOPCDADatatype;
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ToOPCValueFunction extends AbstractFunction<OPCValue> {
+public class ToOPCValueFunction extends AbstractFunction<OPCValue<Double>> {
 
     /**
      * 
@@ -37,11 +37,11 @@ public class ToOPCValueFunction extends AbstractFunction<OPCValue> {
     }
 
     @Override
-    public OPCValue getValue() {
+    public OPCValue<Double> getValue() {
         long timestamp = getNumericalInputValue(0).longValue();
         double value = getNumericalInputValue(1).doubleValue();
         short quality = getNumericalInputValue(2).shortValue();
         int error = getNumericalInputValue(3).intValue();
-        return new OPCValue(timestamp, value, quality, error);
+        return new OPCValue<Double>(timestamp, value, quality, error);
     }
 }

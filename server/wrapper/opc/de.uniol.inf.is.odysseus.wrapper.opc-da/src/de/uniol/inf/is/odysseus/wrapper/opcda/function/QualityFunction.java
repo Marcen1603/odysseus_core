@@ -38,7 +38,7 @@ public class QualityFunction extends AbstractFunction<Short> {
 
     @Override
     public Short getValue() {
-        OPCValue value = getInputValue(0);
+        OPCValue<?> value = getInputValue(0);
         return value.getQuality();
     }
 

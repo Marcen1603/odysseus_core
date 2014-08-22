@@ -38,7 +38,7 @@ public class ErrorFunction extends AbstractFunction<Integer> {
 
     @Override
     public Integer getValue() {
-        OPCValue value = getInputValue(0);
+        OPCValue<?> value = getInputValue(0);
         return value.getError();
     }
 }

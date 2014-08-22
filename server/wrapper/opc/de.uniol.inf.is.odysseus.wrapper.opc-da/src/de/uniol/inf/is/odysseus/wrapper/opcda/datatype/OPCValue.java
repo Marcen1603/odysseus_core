@@ -19,9 +19,9 @@ package de.uniol.inf.is.odysseus.wrapper.opcda.datatype;
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class OPCValue {
+public class OPCValue<T> {
     private long timestamp;
-    private double value;
+    private T value;
     private short quality;
     private int error;
 
@@ -33,7 +33,7 @@ public class OPCValue {
      * @param quality
      * @param error
      */
-    public OPCValue(long timestamp, double value, short quality, int error) {
+    public OPCValue(long timestamp, T value, short quality, int error) {
         super();
         this.timestamp = timestamp;
         this.value = value;
@@ -59,7 +59,7 @@ public class OPCValue {
     /**
      * @return the value
      */
-    public double getValue() {
+    public T getValue() {
         return this.value;
     }
 
@@ -67,7 +67,7 @@ public class OPCValue {
      * @param value
      *            the value to set
      */
-    public void setValue(double value) {
+    public void setValue(T value) {
         this.value = value;
     }
 

@@ -38,7 +38,7 @@ public class ValueFunction extends AbstractFunction<Double> {
 
     @Override
     public Double getValue() {
-        OPCValue value = getInputValue(0);
+        OPCValue<Double> value = getInputValue(0);
         return value.getValue();
     }
 

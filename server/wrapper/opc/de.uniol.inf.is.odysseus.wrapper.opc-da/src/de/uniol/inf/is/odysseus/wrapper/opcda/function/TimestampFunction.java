@@ -38,7 +38,7 @@ public class TimestampFunction extends AbstractFunction<Long> {
 
     @Override
     public Long getValue() {
-        OPCValue value = getInputValue(0);
+        OPCValue<?> value = getInputValue(0);
         return value.getTimestamp();
     }
 

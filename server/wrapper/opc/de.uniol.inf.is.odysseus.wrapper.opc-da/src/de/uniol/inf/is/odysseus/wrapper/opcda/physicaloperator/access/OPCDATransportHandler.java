@@ -226,7 +226,7 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
     void process(final int pos, final long timestamp, final Object value, final short quality, final int error) {
         OPCDATransportHandler.LOG.debug(String.format("%d: %s", new Integer(pos), value));
         synchronized (this.read) {
-            OPCValue data = new OPCValue(timestamp, ((Number) value).doubleValue(), quality, error);
+            OPCValue<Double> data = new OPCValue<Double>(timestamp, ((Number) value).doubleValue(), quality, error);
             this.read.setAttribute(pos, data);
             ByteBuffer buffer = ByteBuffer.allocate(this.dataHandler.memSize(this.read));
             this.dataHandler.writeData(buffer, this.read);

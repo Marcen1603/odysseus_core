@@ -20,6 +20,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.NoProtocolHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -28,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.wrapper.opcda.physicaloperator.access.OPCDATransportHandler;
+import de.uniol.inf.is.odysseus.wrapper.opcda.sdf.schema.SDFOPCDADatatype;
 
 @LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "OPCDASource", category={LogicalOperatorCategory.SOURCE}, doc = "Allows to read input from a OPC-DA connections.")
 public class OPCDASource extends AbstractAccessAO {
@@ -94,7 +96,12 @@ public class OPCDASource extends AbstractAccessAO {
 			valid = false;
 			addError(new IllegalParameterException("number of elements in path must be the same as in output schema"));
 		}
-		
+		for (SDFAttribute a: getOutputSchema()){
+			if (a.getDatatype() != SDFOPCDADatatype.OPCVALUE){
+				valid = false;
+				addError(new IllegalParameterException("Attribute "+a.getURI()+" must have type OPCValue"));
+			}
+		}
 		return valid;
 	}
 	
