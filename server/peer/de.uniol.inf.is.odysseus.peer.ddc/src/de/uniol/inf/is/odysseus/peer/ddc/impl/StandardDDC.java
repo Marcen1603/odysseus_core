@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.ddc.impl;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -8,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
@@ -32,7 +33,8 @@ public class StandardDDC implements IDistributedDataContainer {
 	/**
 	 * The internal data structure: DDC entries mapped to their keys.
 	 */
-	private Map<String[], DDCEntry> mEntries = Maps.newHashMap();
+	private Map<String[], DDCEntry> mEntries = Collections
+			.synchronizedMap(new HashMap<String[], DDCEntry>());
 
 	/**
 	 * Empty default constructor. <br />
@@ -49,43 +51,33 @@ public class StandardDDC implements IDistributedDataContainer {
 
 		DDCEntry entry = new DDCEntry(key, value, ts);
 
-		if (this.containsKey(entry.getKey())) {
+		if (this.containsKey(entry.getKey())
+				&& entry.compareTimeStamps(this.mEntries.get(entry.getKey())) <= 0) {
 
-			// if there is already an entry with that key, check the timestamps
-			// for the newer one
-			DDCEntry storedEntry = this.mEntries.get(entry.getKey());
-
-			if (entry.compareTimeStamps(storedEntry) <= 0) {
-
-				// the timestamp of the entry is add is equal or older than the
-				// already stored one.
-				StandardDDC.LOG.debug(
-						"Discarded {} due to an older timestamp!", entry);
-				return false;
-
-			} else {
-
-				// newer entry
-				this.mEntries.put(entry.getKey(), entry);
-				return true;
-
-			}
-
-		} else {
-
-			// complete new entry
-			this.mEntries.put(entry.getKey(), entry);
-			StandardDDC.LOG.debug("Added {} to the DDC.", entry);
-			return true;
+			// there is already an entry with that key and the already stored
+			// entry is newer
+			StandardDDC.LOG.debug("Discarded {} due to an older timestamp!",
+					entry);
+			return false;
 
 		}
 
+		// complete new or newer entry (ts)
+		synchronized (this.mEntries) {
+
+			this.mEntries.put(entry.getKey(), entry);
+
+		}
+
+		StandardDDC.LOG.debug("Added {} to the DDC.", entry);
+		return true;
+
 	}
-	
+
 	@Override
 	public boolean add(String key, String value, long ts) {
 
-		return this.add(new String[] {key}, value, ts);
+		return this.add(new String[] { key }, value, ts);
 
 	}
 
@@ -168,28 +160,34 @@ public class StandardDDC implements IDistributedDataContainer {
 
 	@Override
 	public boolean remove(String[] key) {
-		
-		Optional<DDCEntry> optEntry = Optional.fromNullable(this.mEntries.remove(key));
-		
-		if(optEntry.isPresent()) {
-			
-			StandardDDC.LOG.debug("Removed {} from DDC.",optEntry.get());
-			
-		} else {
-			
-			StandardDDC.LOG.debug("No DDC entry found for {}", key);
-			
+
+		Optional<DDCEntry> optEntry = Optional.absent();
+
+		synchronized (this.mEntries) {
+
+			optEntry = Optional.fromNullable(this.mEntries.remove(key));
+
 		}
-		
+
+		if (optEntry.isPresent()) {
+
+			StandardDDC.LOG.debug("Removed {} from DDC.", optEntry.get());
+
+		} else {
+
+			StandardDDC.LOG.debug("No DDC entry found for {}", key);
+
+		}
+
 		return optEntry.isPresent();
-		
+
 	}
-	
+
 	@Override
 	public boolean remove(String key) {
-		
-		return this.remove(new String[] {key});
-		
+
+		return this.remove(new String[] { key });
+
 	}
 
 }
