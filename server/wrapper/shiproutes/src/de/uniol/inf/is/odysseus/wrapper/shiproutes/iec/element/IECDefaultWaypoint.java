@@ -77,7 +77,7 @@ public class IECDefaultWaypoint implements IIecElement {
 
 	@Override
 	public boolean isValid() {
-		return true;
+		return leg.isValid();
 	}
 
 	@Override
@@ -103,6 +103,7 @@ public class IECDefaultWaypoint implements IIecElement {
 		this.leg = leg;
 	}
 
+	@Override
 	public List<IECExtension> getExtensions() {
 		return extensions;
 	}

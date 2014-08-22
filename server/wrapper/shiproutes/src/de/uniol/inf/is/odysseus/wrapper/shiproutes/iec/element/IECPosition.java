@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.helper.IECStringHelper;
@@ -71,6 +73,11 @@ public class IECPosition implements IIecElement {
 	@Override
 	public void addExtension(IECExtension extension) {
 		// noOp because position has no extension
+	}
+
+	@Override
+	public List<IECExtension> getExtensions() {
+		return null;
 	}
 
 }

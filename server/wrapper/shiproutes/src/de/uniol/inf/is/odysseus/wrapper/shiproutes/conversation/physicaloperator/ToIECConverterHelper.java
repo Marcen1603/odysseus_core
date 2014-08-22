@@ -15,6 +15,9 @@ import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECSchedules;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECWaypoint;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECWaypoints;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.enums.GeometryType;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.enums.IECExtensionTypes.PitchExtension;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.enums.IECExtensionTypes.RouteInfoExtension;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.enums.IECExtensionTypes.RpmExtension;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.Waypoint;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.manoeuvre.ManoeuvrePlan;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.manoeuvre.ManoeuvrePlanDataItem;
@@ -22,6 +25,8 @@ import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.manoeuvre.Manoeu
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.manoeuvre.Pitch;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.manoeuvre.Rpm;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.prediction.PredictionDataItem;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.prediction.PredictionPlan;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.prediction.PredictionPoint;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.Route;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.RouteDataItem;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.RouteState;
@@ -41,8 +46,7 @@ public class ToIECConverterHelper {
 		if (receivedRoute.getRoute_label() != null)
 			routeInfo.setRouteName(receivedRoute.getRoute_label());
 		if (receivedRoute.getSignature() != null)
-			routeInfo.setRouteAuthor(String.valueOf(receivedRoute
-					.getSignature()));
+			routeInfo.setRouteAuthor(receivedRoute.getBaseSignature());
 		if (receivedRoute.getRoute_ID() != null)
 			routeInfo.setVesselVoyage(receivedRoute.getRoute_ID());
 		// put route state into extension, because IEC do not provide more
@@ -54,20 +58,27 @@ public class ToIECConverterHelper {
 					|| routeState.getHas_geometric_problems() != null
 					|| routeState.getHas_warnings() != null) {
 				IECExtension routeInfoExtension = new IECExtension();
-				routeInfoExtension.setManufacturer("OFFIS");
-				routeInfoExtension.setName("EXT_AdditionalValues");
+				routeInfoExtension.setManufacturer(RouteInfoExtension
+						.getManufacturer());
+				routeInfoExtension.setName(RouteInfoExtension
+						.getExtensionName());
 
 				if (routeState.getHas_alarms() != null)
-					routeInfoExtension.addExtensionValue("hasAlarms",
+					routeInfoExtension.addExtensionValue(
+							RouteInfoExtension.has_alarms.toString(),
 							routeState.getHas_alarms());
 				if (routeState.getHas_cautions() != null)
-					routeInfoExtension.addExtensionValue("hasCautions",
+					routeInfoExtension.addExtensionValue(
+							RouteInfoExtension.has_cautions.toString(),
 							routeState.getHas_cautions());
 				if (routeState.getHas_geometric_problems() != null)
-					routeInfoExtension.addExtensionValue("hasGeoProblems",
-							routeState.getHas_geometric_problems());
+					routeInfoExtension.addExtensionValue(
+							RouteInfoExtension.has_geometric_problems
+									.toString(), routeState
+									.getHas_geometric_problems());
 				if (routeState.getHas_warnings() != null)
-					routeInfoExtension.addExtensionValue("hasWarnings",
+					routeInfoExtension.addExtensionValue(
+							RouteInfoExtension.has_warnings.toString(),
 							routeState.getHas_warnings());
 
 				routeInfo.addExtension(routeInfoExtension);
@@ -132,15 +143,73 @@ public class ToIECConverterHelper {
 		iecSchedules.addSchedule(iecSchedule);
 		iec.setSchedules(iecSchedules);
 		iec.setWaypoints(iecWaypoints);
-	
-		return iec;
+		if (iec.isValid()) {
+			return iec;
+		} else {
+			throw new IllegalArgumentException("IEC Element is not valid");
+		}
+
 	}
 
 	public static IECRoute convertPredictionToIEC(
 			PredictionDataItem predictionDataItem) {
-		IECRoute route = new IECRoute();
+		PredictionPlan receivedPredictionPlan = predictionDataItem.getMplan();
+		List<PredictionPoint> receivedPredictionPoints = receivedPredictionPlan
+				.getPred_points();
 
-		return route;
+		IECRoute iec = new IECRoute();
+		iec.setVersion("1.0"); // version is mandatory
+
+		// add route Info because it is also mandatory
+		IECRouteInfo iecRouteInfo = new IECRouteInfo();
+		iecRouteInfo.setRouteName("Prediction");
+
+		// waypoints
+		IECWaypoints iecWaypoints = new IECWaypoints();
+		IECSchedules iecSchedules = new IECSchedules();
+		IECSchedule iecSchedule = new IECSchedule();
+		iecSchedule.setId(-1); // Id is mandatory
+		IECManual iecManual = new IECManual();
+		iecSchedule.setManual(iecManual);
+
+		for (PredictionPoint receivedPPoint : receivedPredictionPoints) {
+			// IEC waypoint and leg
+			IECWaypoint iecWaypoint = new IECWaypoint();
+			if (receivedPPoint.getID() != null)
+				iecWaypoint.setId(receivedPPoint.getID());
+			if (receivedPPoint.getHeading_rad() != null)
+				iecWaypoint.setRadius(receivedPPoint.getHeading_rad());
+			if (receivedPPoint.getLat_rad() != null
+					&& receivedPPoint.getLon_rad() != null) {
+				IECPosition iecPosition = new IECPosition();
+				iecPosition.setLatitude(Math.toDegrees(receivedPPoint
+						.getLat_rad()));
+				iecPosition.setLongitude(Math.toDegrees(receivedPPoint
+						.getLon_rad()));
+				iecWaypoint.setPosition(iecPosition);
+			}
+
+			IECLeg iecLeg = new IECLeg();
+			iecLeg.setGeometryType(GeometryType.Orthodrome);
+
+			iecWaypoint.setLeg(iecLeg);
+			iecWaypoints.addwaypoint(iecWaypoint);
+
+			// IEC Schedule
+			IECScheduleElement iecScheduleElement = new IECScheduleElement();
+
+			iecManual.addScheduleElement(iecScheduleElement);
+		}
+
+		iecSchedules.addSchedule(iecSchedule);
+		iec.setSchedules(iecSchedules);
+		iec.setWaypoints(iecWaypoints);
+
+		if (iec.isValid()) {
+			return iec;
+		} else {
+			throw new IllegalArgumentException("IEC Element is not valid");
+		}
 	}
 
 	public static IECRoute convertManoeuvreToIEC(
@@ -151,7 +220,7 @@ public class ToIECConverterHelper {
 
 		IECRoute iec = new IECRoute();
 		iec.setVersion("1.0"); // version is mandatory
-		
+
 		// Create route info
 		IECRouteInfo routeInfo = new IECRouteInfo();
 		if (receivedMPlan.getMplan_label() != null)
@@ -220,19 +289,23 @@ public class ToIECConverterHelper {
 						|| rpm_command.getRpm3_cmd_rpm() != null
 						|| rpm_command.getRpm4_cmd_rpm() != null) {
 					IECExtension rpmExtension = new IECExtension();
-					rpmExtension.setManufacturer("OFFIS");
-					rpmExtension.setName("EXT_RPM_MultipleEngines");
+					rpmExtension
+							.setManufacturer(RpmExtension.getManufacturer());
+					rpmExtension.setName(RpmExtension.getExtensionName());
 					if (rpm_command.getRpm1_cmd_rpm() != null)
-						rpmExtension.addExtensionValue("rpm1_cmd",
-								rpm_command.getRpm1_cmd_rpm());
+						iecScheduleElement
+								.setRpm(rpm_command.getRpm1_cmd_rpm());
 					if (rpm_command.getRpm2_cmd_rpm() != null)
-						rpmExtension.addExtensionValue("rpm2_cmd",
+						rpmExtension.addExtensionValue(
+								RpmExtension.rpm2_cmd.toString(),
 								rpm_command.getRpm2_cmd_rpm());
 					if (rpm_command.getRpm3_cmd_rpm() != null)
-						rpmExtension.addExtensionValue("rpm3_cmd",
+						rpmExtension.addExtensionValue(
+								RpmExtension.rpm3_cmd.toString(),
 								rpm_command.getRpm3_cmd_rpm());
 					if (rpm_command.getRpm4_cmd_rpm() != null)
-						rpmExtension.addExtensionValue("rpm4_cmd",
+						rpmExtension.addExtensionValue(
+								RpmExtension.rpm4_cmd.toString(),
 								rpm_command.getRpm4_cmd_rpm());
 					iecScheduleElement.addExtension(rpmExtension);
 				}
@@ -248,19 +321,25 @@ public class ToIECConverterHelper {
 						|| pitch_command.getPitch3_cmd_perc() != null
 						|| pitch_command.getPitch4_cmd_perc() != null) {
 					IECExtension rpmExtension = new IECExtension();
-					rpmExtension.setManufacturer("OFFIS");
-					rpmExtension.setName("EXT_PITCH_MultipleValues");
-					if (pitch_command.getPitch1_cmd_perc() != null)
-						rpmExtension.addExtensionValue("pitch1_cmd",
-								pitch_command.getPitch1_cmd_perc());
+					rpmExtension.setManufacturer(PitchExtension
+							.getManufacturer());
+					rpmExtension.setName(PitchExtension.getExtensionName());
+					if (pitch_command.getPitch1_cmd_perc() != null) {
+
+					}
+					iecScheduleElement.setPitch(pitch_command
+							.getPitch1_cmd_perc().intValue());
 					if (pitch_command.getPitch2_cmd_perc() != null)
-						rpmExtension.addExtensionValue("pitch2_cmd",
+						rpmExtension.addExtensionValue(
+								PitchExtension.pitch2_cmd.toString(),
 								pitch_command.getPitch2_cmd_perc());
 					if (pitch_command.getPitch3_cmd_perc() != null)
-						rpmExtension.addExtensionValue("pitch3_cmd",
+						rpmExtension.addExtensionValue(
+								PitchExtension.pitch3_cmd.toString(),
 								pitch_command.getPitch3_cmd_perc());
 					if (pitch_command.getPitch4_cmd_perc() != null)
-						rpmExtension.addExtensionValue("pitch4_cmd",
+						rpmExtension.addExtensionValue(
+								PitchExtension.pitch4_cmd.toString(),
 								pitch_command.getPitch4_cmd_perc());
 					iecScheduleElement.addExtension(rpmExtension);
 				}
@@ -273,6 +352,10 @@ public class ToIECConverterHelper {
 		iec.setSchedules(iecSchedules);
 		iec.setWaypoints(iecWaypoints);
 
-		return iec;
+		if (iec.isValid()) {
+			return iec;
+		} else {
+			throw new IllegalArgumentException("IEC Element is not valid");
+		}
 	}
 }

@@ -100,7 +100,7 @@ public class IECWaypoint implements IIecElement {
 	@Override
 	public boolean isValid(){
 		if (id != null){
-			return true;			
+			return leg.isValid();			
 		}
 		return false;
 	}
@@ -160,6 +160,7 @@ public class IECWaypoint implements IIecElement {
 		this.position = position;
 	}
 
+	@Override
 	public List<IECExtension> getExtensions() {
 		return extensions;
 	}

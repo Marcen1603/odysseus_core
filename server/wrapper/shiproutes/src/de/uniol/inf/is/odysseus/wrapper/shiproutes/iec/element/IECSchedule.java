@@ -32,11 +32,11 @@ public class IECSchedule implements IIecElement {
 			String prefix) {
 		prefix += ELEMENT_PREFIX;
 		String elementPrefix = prefix + "_";
-		
+
 		if (id != null)
-			map.addAttributeValue(elementPrefix+ID, id);
+			map.addAttributeValue(elementPrefix + ID, id);
 		if (name != null)
-			map.addAttributeValue(elementPrefix+NAME, name);
+			map.addAttributeValue(elementPrefix + NAME, name);
 		if (calculated != null)
 			calculated.fillMap(map, prefix);
 		if (getManual() != null)
@@ -94,10 +94,26 @@ public class IECSchedule implements IIecElement {
 
 	@Override
 	public boolean isValid() {
-		if (id != null) {
-			return true;
+		boolean allChildsValid = true;
+		if (id == null) {
+			return false;
+		} else {
+			if (calculated != null) {
+				for (IECScheduleElement scheduleElement : calculated
+						.getScheduleElements()) {
+					if (!scheduleElement.isValid())
+						allChildsValid = false;
+				}
+			}
+			if (manual != null) {
+				for (IECScheduleElement scheduleElement : manual
+						.getScheduleElements()) {
+					if (!scheduleElement.isValid())
+						allChildsValid = false;
+				}
+			}
 		}
-		return false;
+		return allChildsValid;
 	}
 
 	@Override
@@ -131,6 +147,7 @@ public class IECSchedule implements IIecElement {
 		this.calculated = calculated;
 	}
 
+	@Override
 	public List<IECExtension> getExtensions() {
 		return extensions;
 	}

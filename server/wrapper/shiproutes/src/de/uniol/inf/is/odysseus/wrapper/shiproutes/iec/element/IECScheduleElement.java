@@ -417,6 +417,7 @@ public class IECScheduleElement implements IIecElement {
 		this.note = note;
 	}
 
+	@Override
 	public List<IECExtension> getExtensions() {
 		return extensions;
 	}

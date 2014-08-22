@@ -101,7 +101,10 @@ public class IECRoute implements IIecElement {
 
 	@Override
 	public boolean isValid() {
-		if (version == null || version.isEmpty()) {
+		if (version == null || version.isEmpty() 
+				|| routeInfo == null || !routeInfo.isValid()
+				|| waypoints == null || !waypoints.isValid()
+				|| schedules == null || !schedules.isValid()) {
 			return false;
 		}
 		return true;
@@ -130,7 +133,8 @@ public class IECRoute implements IIecElement {
 		this.routeInfo = routeInfo;
 	}
 
-	public List<IECExtension> getExtension() {
+	@Override
+	public List<IECExtension> getExtensions() {
 		return extensions;
 	}
 

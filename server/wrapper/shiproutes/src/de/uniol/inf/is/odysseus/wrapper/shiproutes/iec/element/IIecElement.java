@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
@@ -14,5 +16,7 @@ public interface IIecElement {
 	public boolean isValid();
 	
 	public void addExtension(IECExtension extension);
+	
+	public List<IECExtension> getExtensions();
 
 }

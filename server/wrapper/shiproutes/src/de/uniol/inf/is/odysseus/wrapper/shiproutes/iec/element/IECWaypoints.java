@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 public class IECWaypoints implements IIecElement {
 	// map constants
 	private static final String ELEMENT_PREFIX = "_wayPs";
-	
+
 	// XML Constants
 	private static final String OPEN_TAG = "<waypoints";
 	private static final String CLOSE_TAG = "</waypoints>";
@@ -21,9 +21,10 @@ public class IECWaypoints implements IIecElement {
 	private List<IECExtension> extensions;
 
 	@Override
-	public void fillMap(KeyValueObject<? extends IMetaAttribute> map, String prefix) {
+	public void fillMap(KeyValueObject<? extends IMetaAttribute> map,
+			String prefix) {
 		prefix += ELEMENT_PREFIX;
-		
+
 		if (defaultWaypoint != null)
 			defaultWaypoint.fillMap(map, prefix);
 
@@ -79,25 +80,42 @@ public class IECWaypoints implements IIecElement {
 		}
 		return true;
 	}
-	
+
 	@Override
-	public boolean isValid(){
+	public boolean isValid() {
+		if (defaultWaypoint != null) {
+			if (!defaultWaypoint.isValid())
+				return false;
+		}
+		if (waypoints != null) {
+			if (waypoints.size() < 2) {
+				return false;
+			} else {
+				for (IECWaypoint waypoint : waypoints) {
+					if (!waypoint.isValid())
+						return false;
+				}
+			}
+		} else {
+			return false;
+		}
 		return true;
 	}
-	
+
 	public void addwaypoint(IECWaypoint waypoint) {
 		if (waypoints == null)
 			waypoints = new ArrayList<IECWaypoint>();
 		waypoints.add(waypoint);
 	}
-	
+
 	@Override
 	public void addExtension(IECExtension extension) {
 		if (extensions == null)
 			extensions = new ArrayList<IECExtension>();
 		extensions.add(extension);
 	}
-
+	
+	@Override
 	public List<IECExtension> getExtensions() {
 		return extensions;
 	}

@@ -107,6 +107,7 @@ public abstract class AbstractScheduleElementIdentifier implements IIecElement {
 		extensions.add(extension);
 	}
 
+	@Override
 	public List<IECExtension> getExtensions() {
 		return extensions;
 	}

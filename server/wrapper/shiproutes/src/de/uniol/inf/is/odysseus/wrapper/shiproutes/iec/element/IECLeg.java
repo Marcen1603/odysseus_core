@@ -318,6 +318,7 @@ public class IECLeg implements IIecElement {
 		this.legNote2 = legNote2;
 	}
 
+	@Override
 	public List<IECExtension> getExtensions() {
 		return extensions;
 	}

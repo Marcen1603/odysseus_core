@@ -129,11 +129,7 @@ public class IECParser extends DefaultHandler {
 		}
 
 		if (newElement != null) {
-			if (newElement.isValid()) {
-				elementStack.push(newElement);
-			} else {
-				throw new SAXException("Validation Error");
-			}
+			elementStack.push(newElement);
 		}
 	}
 
@@ -171,12 +167,12 @@ public class IECParser extends DefaultHandler {
 			break;
 		case extension:
 			IECExtension extension = (IECExtension) (elementStack.pop());
-	//		if (elementStack.peek() instanceof IIecElement) {
-				elementStack.peek().addExtension(extension);
-//			} else {
-//				// Stack only contains IIecElement's, so elementStack.peek()
-//				// needs to be an instance of it
-//			}
+			// if (elementStack.peek() instanceof IIecElement) {
+			elementStack.peek().addExtension(extension);
+			// } else {
+			// // Stack only contains IIecElement's, so elementStack.peek()
+			// // needs to be an instance of it
+			// }
 			break;
 		case leg:
 			IECLeg leg = (IECLeg) (elementStack.pop());
@@ -295,7 +291,10 @@ public class IECParser extends DefaultHandler {
 	}
 
 	public IECRoute getIEC() {
-		return iec;
+		if (iec.isValid()) {
+			return iec;
+		}
+		return null;
 	}
 
 	public void resetParser() {

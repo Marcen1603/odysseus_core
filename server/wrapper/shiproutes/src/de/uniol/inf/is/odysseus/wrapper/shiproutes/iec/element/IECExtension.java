@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
@@ -128,6 +129,11 @@ public class IECExtension implements IIecElement {
 			extensionValues = new HashMap<String, Object>();
 		}
 		extensionValues.put(key, value);
+	}
+
+	@Override
+	public List<IECExtension> getExtensions() {
+		return null;
 	}
 
 }

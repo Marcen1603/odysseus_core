@@ -22,7 +22,7 @@ public class IECSchedules implements IIecElement {
 	public void fillMap(KeyValueObject<? extends IMetaAttribute> map,
 			String prefix) {
 		prefix += ELEMENT_PREFIX;
-		
+
 		if (schedules != null) {
 			for (IECSchedule schedule : schedules) {
 				schedule.fillMap(map, prefix);
@@ -69,7 +69,14 @@ public class IECSchedules implements IIecElement {
 
 	@Override
 	public boolean isValid() {
-		return true;
+		boolean allChildsValid = true;
+		if (schedules != null) {
+			for (IECSchedule schedule : schedules) {
+				if (!schedule.isValid())
+					allChildsValid = false;
+			}
+		}
+		return allChildsValid;
 	}
 
 	public void addSchedule(IECSchedule schedule) {
@@ -85,6 +92,7 @@ public class IECSchedules implements IIecElement {
 		extensions.add(extension);
 	}
 
+	@Override
 	public List<IECExtension> getExtensions() {
 		return extensions;
 	}
