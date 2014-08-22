@@ -97,13 +97,14 @@ public class SecurityStore {
 		String dir = OdysseusConfiguration.get("security.dir");
 		pfxFile = new File(dir + File.separator + OdysseusConfiguration.get("security.default.pfx"));
 		derFile = new File(dir + File.separator + OdysseusConfiguration.get("security.default.der"));
-		password = OdysseusConfiguration.get("security.default.privatekey.password");
+		password = OdysseusConfiguration.get("security.default.password");
 		alias = OdysseusConfiguration.get("security.default.pfx.alias");
 
 		keystore = KeyStore.getInstance("PKCS12", SECURITY_PROVIDER);
 		if (!pfxFile.exists()) {
 			logger.debug("There is no personal information exchange (pfx) at " + pfxFile.getAbsolutePath());
 			createKeystore(password, alias);
+			pfxFile.getParentFile().mkdir();
 			logger.debug("Saving keystore to: " + pfxFile.getAbsolutePath());
 			FileOutputStream os = new FileOutputStream(pfxFile);
 			keystore.store(os, password.toCharArray());
