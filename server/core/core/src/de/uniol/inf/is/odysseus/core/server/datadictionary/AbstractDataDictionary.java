@@ -16,9 +16,11 @@
 package de.uniol.inf.is.odysseus.core.server.datadictionary;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,6 +34,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -40,9 +43,11 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPermission;
@@ -765,16 +770,30 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	}
 
 	@Override
-	public SDFDatatype getDatatype(SDFDatatype type, String subType) {
-		String key = type + "_" + subType;
+	public SDFDatatype getDatatype(SDFDatatype type, List<SDFDatatype> subTypes) {
+		String key = type + "_" + subTypes;
 		SDFDatatype datatype = this.datatypes.get(key);
 		if (datatype == null) {
 			if (type == SDFDatatype.LIST) {
-				datatype = new SDFDatatype("List", KindOfDatatype.LIST,
-						getDatatype(subType));
+				if (subTypes.size() != 1) {
+					throw new IllegalArgumentException("List must have a type");
+				}
+				SDFDatatype subType = subTypes.get(0);
+				datatype = new SDFDatatype("List", KindOfDatatype.LIST, subType);
 				datatypes.put(key, datatype);
-			}else{
-				datatype = new SDFDatatype(type.getURI(), KindOfDatatype.GENERIC,getDatatype(subType));
+			} else {
+				if (subTypes.size() != 1) {
+					// Create schema from list of types
+					List<SDFAttribute> attributes = new LinkedList<SDFAttribute>();
+					for (int i=0;i<subTypes.size();i++){
+						attributes.add(new SDFAttribute("", "_"+i, subTypes.get(0),(SDFUnit)null,(Collection<SDFConstraint>)null));
+					}
+					datatype = new SDFDatatype(type.getURI(),
+							KindOfDatatype.GENERIC,new SDFSchema("", Tuple.class, attributes));
+				} else {
+					datatype = new SDFDatatype(type.getURI(),
+							KindOfDatatype.GENERIC, subTypes.get(0));
+				}
 			}
 		}
 		return datatype;
