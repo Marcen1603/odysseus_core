@@ -140,8 +140,8 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 								getTreeViewer().setInput(streamsAndViews);
 								if (!streamsAndViews.isEmpty()) {
 									stackLayout.topControl = getTreeViewer().getTree();
-									setPartName("Sources (" + streamsAndViews.size() + ")");
 								}
+								setPartName("Sources (" + streamsAndViews.size() + ")");
 							} else {
 								stackLayout.topControl = label;
 								setPartName("Sources (0)");
