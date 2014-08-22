@@ -30,6 +30,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -55,8 +56,6 @@ import de.uniol.inf.is.odysseus.rcp.evaluation.execution.EvaluationJob;
 import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationModel;
 import de.uniol.inf.is.odysseus.rcp.evaluation.model.EvaluationVariable;
 import de.uniol.inf.is.odysseus.rcp.evaluation.plot.PlotBuilder.OutputType;
-
-import org.eclipse.swt.widgets.Combo;
 
 public class EvaluationEditorPart extends EditorPart implements IResourceChangeListener, IResourceDeltaVisitor {
 
@@ -122,7 +121,9 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 
 		queryFileText = new Text(composite_1, SWT.BORDER);
 		queryFileText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		queryFileText.setText(evaluationModel.getQueryFile().getProjectRelativePath().toOSString());
+        if (evaluationModel.getQueryFile() != null) {
+            queryFileText.setText(evaluationModel.getQueryFile().getProjectRelativePath().toOSString());
+        }
 		queryFileText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
