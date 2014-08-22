@@ -101,7 +101,7 @@ public interface IDataDictionary {
 	// -------------------------------------------------------------------------
 	SDFDatatype getDatatype(String name) throws DataDictionaryException;
 
-	SDFDatatype getDatatype(KindOfDatatype list, String subType);
+	SDFDatatype getDatatype(SDFDatatype upperType, String subType);
 
 	Set<String> getDatatypeNames();
 	

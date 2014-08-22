@@ -525,8 +525,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 				attributes.add(new SDFAttribute(streamname.toString(), old
 						.getAttributeName(), old));
 			}
-			SDFSchema schema = SDFSchema.changeSourceName(outSchema,
-					streamname.getShortString(caller.getUser().getName()),true);
+			SDFSchema schema = SDFSchema
+					.changeSourceName(outSchema, streamname
+							.getShortString(caller.getUser().getName()), true);
 			ao.setOutputSchema(schema);
 		}
 		return ao;
@@ -762,14 +763,19 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 
 		throw new DataDictionaryException("No such datatype: " + dtName);
 	}
-	
+
 	@Override
-	public SDFDatatype getDatatype(KindOfDatatype type, String subType) {
-		String key = type+"_"+subType;
+	public SDFDatatype getDatatype(SDFDatatype type, String subType) {
+		String key = type + "_" + subType;
 		SDFDatatype datatype = this.datatypes.get(key);
-		if (datatype == null){
-			datatype = new SDFDatatype("List", KindOfDatatype.LIST, getDatatype(subType));
-			datatypes.put(key, datatype);
+		if (datatype == null) {
+			if (type == SDFDatatype.LIST) {
+				datatype = new SDFDatatype("List", KindOfDatatype.LIST,
+						getDatatype(subType));
+				datatypes.put(key, datatype);
+			}else{
+				datatype = new SDFDatatype(type.getURI(), KindOfDatatype.GENERIC,getDatatype(subType));
+			}
 		}
 		return datatype;
 	}

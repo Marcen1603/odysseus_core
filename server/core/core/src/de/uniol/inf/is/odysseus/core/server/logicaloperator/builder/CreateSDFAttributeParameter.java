@@ -128,9 +128,12 @@ public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute>
 				}
 			}
 
-			if (dataTypeName.toLowerCase().startsWith("list(")) {
-				String subType = dataTypeName.substring(5, dataTypeName.length() - 1);
-				SDFDatatype dataType = getDataDictionary().getDatatype(KindOfDatatype.LIST, subType);
+			int pos = dataTypeName.indexOf('(');
+			if (pos > 0) {
+				String upperTypeStr = dataTypeName.substring(0, pos);
+				SDFDatatype upperType = getDataDictionary().getDatatype(upperTypeStr);				
+				String subType = dataTypeName.substring(pos+1, dataTypeName.length() - 1);
+				SDFDatatype dataType = getDataDictionary().getDatatype(upperType, subType);
 				return new SDFAttribute(sourcename, attributeName, dataType, unit, dtList);
 			}
 			return new SDFAttribute(sourcename, attributeName, getDataDictionary().getDatatype(dataTypeName), unit, dtList);

@@ -34,7 +34,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	 * This enumerations contains the available type constructors.
 	 */
 	public static enum KindOfDatatype {
-		BASE, TUPLE, MULTI_VALUE, BEAN, LIST;
+		BASE, TUPLE, MULTI_VALUE, BEAN, LIST, GENERIC;
 	}
 
 	/**
