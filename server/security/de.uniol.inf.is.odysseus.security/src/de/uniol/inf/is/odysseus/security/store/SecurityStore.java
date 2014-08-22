@@ -25,6 +25,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
@@ -58,6 +63,8 @@ public class SecurityStore {
 	private static final String ALIAS_CERT_EXTENSION = "_CERTIFICATE";
 
 	private KeyStore keystore;
+	
+	private KeyStore truststore;
 
 	private String alias;
 
@@ -66,6 +73,8 @@ public class SecurityStore {
 	private File pfxFile;
 
 	private File derFile;
+	
+	private File tstFile;
 
 	private SecurityStore() {
 		try {
@@ -97,10 +106,13 @@ public class SecurityStore {
 		String dir = OdysseusConfiguration.get("security.dir");
 		pfxFile = new File(dir + File.separator + OdysseusConfiguration.get("security.default.pfx"));
 		derFile = new File(dir + File.separator + OdysseusConfiguration.get("security.default.der"));
+		tstFile = new File(dir + File.separator + OdysseusConfiguration.get("security.default.tst"));
+
 		password = OdysseusConfiguration.get("security.default.password");
 		alias = OdysseusConfiguration.get("security.default.pfx.alias");
 
 		keystore = KeyStore.getInstance("PKCS12", SECURITY_PROVIDER);
+		truststore = KeyStore.getInstance(KeyStore.getDefaultType());
 		if (!pfxFile.exists()) {
 			logger.debug("There is no personal information exchange (pfx) at " + pfxFile.getAbsolutePath());
 			createKeystore(password, alias);
@@ -110,8 +122,20 @@ public class SecurityStore {
 			keystore.store(os, password.toCharArray());
 			os.close();
 		}
+		if (!tstFile.exists()) {
+			truststore.load(null, password.toCharArray());
+			tstFile.getParentFile().mkdir();
+			logger.debug("Saving truststore to: " + tstFile.getAbsolutePath());
+			FileOutputStream os = new FileOutputStream(tstFile);
+			truststore.store(os, password.toCharArray());
+			os.close();
+		}
 		logger.debug("Loading keystore from " + pfxFile.getAbsolutePath());
 		keystore.load(new FileInputStream(pfxFile), password.toCharArray());
+		
+		logger.debug("Loading truststore from " + tstFile.getAbsolutePath());
+		truststore.load(new FileInputStream(tstFile), password.toCharArray());
+		
 		logger.debug("Exporting the certificate to: " + derFile.getAbsolutePath());
 		if (derFile.exists()) {
 			logger.debug("Overwritting old certificate file at " + derFile.getAbsolutePath());
@@ -124,6 +148,7 @@ public class SecurityStore {
 		os.close();
 
 	}
+
 
 	private void createKeystore(String password, String alias) throws Exception {
 		keystore.load(null, password.toCharArray());
@@ -262,6 +287,26 @@ public class SecurityStore {
 		keyPairGenerator.initialize(keysize);
 		KeyPair keyPair = keyPairGenerator.generateKeyPair();
 		return keyPair;
+	}
+	
+	public KeyManager[] getKeyManagers() {
+		try {
+		    KeyManagerFactory kmf  =  KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+		    kmf.init(keystore, password.toCharArray());
+		    return kmf.getKeyManagers();
+		} catch (Exception e) {
+			throw new RuntimeException("Error while creating key managers", e);
+		}
+	}
+
+	public TrustManager[] getTrustManagers() {
+		try {
+		    TrustManagerFactory kmf  =  TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+		    kmf.init(truststore);
+		    return kmf.getTrustManagers();
+		} catch (Exception e) {
+			throw new RuntimeException("Error while creating trust managers", e);
+		}
 	}
 
 }

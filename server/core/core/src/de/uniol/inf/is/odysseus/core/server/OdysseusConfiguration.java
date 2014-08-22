@@ -199,6 +199,9 @@ public class OdysseusConfiguration {
 		props.setProperty("security.default.pfx.alias", "odysseus.default");
 		// destination for the X.509 certificate that will be automatically exported from the pfx file 
 		props.setProperty("security.default.der", "odysseus.default.der");
+		// truststore
+		props.setProperty("security.default.tst", "odysseus.default.tst");
+
 		// TODO: find a way to hide this?!
 		props.setProperty("security.default.password", "ithaka");
 		props.setProperty("systemLoadInterval", "3000");
