@@ -152,37 +152,38 @@ public class PlotBuilder {
 	}
 
 	private static void buildGraphicalCharts(MeasurementResult result, EvaluationRunContainer container, EvaluationType type, OutputType out, int height, int width) {
-		try {
-			// this must be the merged file...
-			File file = result.getFiles().get(0);
-			List<Pair<Integer, Double>> values = new ArrayList<>();
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			//skip first, because it is the header
-			br.readLine();
-			// first line with values...
-			String line = br.readLine();
-			while (line != null) {
-				Pair<Integer, Double> value = MeasurementFileUtil.parseLine(line);
-				values.add(value);
-				line = br.readLine();
-			}
-			br.close();
-			String dir = "";
-			if (type == EvaluationType.LATENCY) {
-				dir = container.getContext().getLatencyPlotsPath();
-			} else {
-				dir = container.getContext().getThroughputPlotsPath();
-			}
-			IPlotDescription plotdescription = PlotDescriptionFactory.createPlotDescription(type);
+        // this must be the merged file...
+        File file = result.getFiles().get(0);
+        List<Pair<Integer, Double>> values = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            // skip first, because it is the header
+            br.readLine();
+            // first line with values...
+            String line = br.readLine();
+            while (line != null) {
+                Pair<Integer, Double> value = MeasurementFileUtil.parseLine(line, 4);
+                values.add(value);
+                line = br.readLine();
+            }
+            String dir = "";
+            if (type == EvaluationType.LATENCY) {
+                dir = container.getContext().getLatencyPlotsPath();
+            }
+            else {
+                dir = container.getContext().getThroughputPlotsPath();
+            }
+            IPlotDescription plotdescription = PlotDescriptionFactory.createPlotDescription(type);
             if ((out == OutputType.PDF) || (out == OutputType.PNG) || (out == OutputType.JPEG)) {
-	            buildXYPlot(dir, values, result, plotdescription, out, height, width);
-			} else if (out == OutputType.GNUPLOT){
-			    buildGnuPlot(dir, values, result, plotdescription, out, height, width);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+                buildXYPlot(dir, values, result, plotdescription, out, height, width);
+            }
+            else if (out == OutputType.GNUPLOT) {
+                buildGnuPlot(dir, values, result, plotdescription, out, height, width);
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 	private static void buildXYPlot(String dir, List<Pair<Integer, Double>> values, MeasurementResult mr, IPlotDescription plotdescription, OutputType out, int height, int width) {
 

@@ -157,12 +157,17 @@ public class MeasurementFileUtil {
 		return sb.toString();
 	}
 	
-	public static Pair<Integer, Double> parseLine(String line){
-		String[] parts = line.split(DELIMITER);
-		int c = Integer.parseInt(parts[0]);
-		double v = Double.parseDouble(parts[1]);
-		return new Pair<Integer, Double>(c, v);
-		
-	}
+    public static Pair<Integer, Double> parseLine(String line) {
+        return parseLine(line, 1);
+
+    }
+
+    public static Pair<Integer, Double> parseLine(String line, int index) {
+        String[] parts = line.split(DELIMITER);
+        int c = Integer.parseInt(parts[0]);
+        double v = Double.parseDouble(parts[index]);
+        return new Pair<>(c, v);
+
+    }
 
 }
