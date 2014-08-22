@@ -150,7 +150,7 @@ public class WorkingMemory {
             rule.setCurrentWorkingMemory(this);
             for (Object matchingObject : matchingObjects) {
                 if (rule.isExecutable(matchingObject, this.env.getConfiguration())) {
-                    LOGGER.debug("Running rule " + rule + " on " + matchingObject);
+                    LOGGER.trace("Running rule " + rule + " on " + matchingObject);
                     rule.execute(matchingObject, this.env.getConfiguration());
                     if (LOGGER.isDebugEnabled()) {
                         Pair<Object, IRule<?, ?>> pair = new Pair(matchingObject, rule);
@@ -166,7 +166,6 @@ public class WorkingMemory {
                 }
                 else {
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Not running rule " + rule + " on " + matchingObject);
                         notexecuted.add(new Pair(matchingObject, rule));
                     }
                 }
