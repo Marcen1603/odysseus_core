@@ -55,7 +55,6 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<? ex
     /** The logger. */
     private static final Logger LOG = LoggerFactory.getLogger(TikaProtocolHandler.class);
     /** The name of the protocol handler. */
-    @SuppressWarnings("hiding")
     public static final String NAME = "Tika";
     /** The parser. */
     private final AutoDetectParser parser;

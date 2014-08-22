@@ -19,7 +19,6 @@ import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
