@@ -12,8 +12,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
-import de.uniol.inf.is.odysseus.peer.ddc.impl.DDCEntry;
-
 /**
  * A distributed data container (DDC) is a container for String key value pairs. <br />
  * The keys can be multidimensional to represent table entries. Additionally
@@ -69,6 +67,41 @@ public class DDC {
 		// Empty default constructor
 
 	}
+	
+	/**
+	 * Adds an entry to the DDC.
+	 * 
+	 * @param entry The entry to add.
+	 * @return True, if the entry could be added. False, if the key already
+	 *         exists and the value has the same timestamp or an older one than
+	 *         the stored one.
+	 */
+	public boolean add(DDCEntry entry) {
+		
+		Preconditions.checkNotNull(entry, "The DDC entry to add must be not null!");
+		
+		if (this.containsKey(entry.getKey())
+				&& entry.compareTimeStamps(this.mEntries.get(entry.getKey())) <= 0) {
+
+			// there is already an entry with that key and the already stored
+			// entry is newer
+			DDC.LOG.debug("Discarded {} due to an older timestamp!", entry);
+			return false;
+
+		}
+
+		// complete new or newer entry (ts)
+		synchronized (this.mEntries) {
+
+			this.mEntries.put(entry.getKey(), entry);
+
+		}
+
+		DDC.LOG.debug("Added {} to the DDC.", entry);
+		return true;
+		
+	}
+
 
 	/**
 	 * Adds an entry to the DDC.
@@ -89,28 +122,8 @@ public class DDC {
 	 *         the stored one.
 	 */
 	public boolean add(String[] key, String value, long ts) {
-
-		DDCEntry entry = new DDCEntry(key, value, ts);
-
-		if (this.containsKey(entry.getKey())
-				&& entry.compareTimeStamps(this.mEntries.get(entry.getKey())) <= 0) {
-
-			// there is already an entry with that key and the already stored
-			// entry is newer
-			DDC.LOG.debug("Discarded {} due to an older timestamp!", entry);
-			return false;
-
-		}
-
-		// complete new or newer entry (ts)
-		synchronized (this.mEntries) {
-
-			this.mEntries.put(entry.getKey(), entry);
-
-		}
-
-		DDC.LOG.debug("Added {} to the DDC.", entry);
-		return true;
+		
+		return this.add(new DDCEntry(key, value, ts));
 
 	}
 
@@ -136,17 +149,17 @@ public class DDC {
 		return this.add(new String[] { key }, value, ts);
 
 	}
-
+	
 	/**
 	 * Gets an entry of the DDC.
 	 * 
 	 * @param key
 	 *            The multidimensional key for the searched entry.
-	 * @return The value for <code>key</code>.
+	 * @return The entry for <code>key</code>.
 	 * @throws MissingDDCEntryException
 	 *             if there is no entry with <code>key</code> as key.
 	 */
-	public String get(String[] key) throws MissingDDCEntryException {
+	public DDCEntry get(String[] key) throws MissingDDCEntryException {
 
 		Preconditions.checkNotNull(key,
 				"The key for a DDC entry must be not null!");
@@ -160,7 +173,22 @@ public class DDC {
 
 		}
 
-		return this.mEntries.get(key).getValue();
+		return this.mEntries.get(key);
+
+	}
+
+	/**
+	 * Gets the value of a DDC entry.
+	 * 
+	 * @param key
+	 *            The multidimensional key for the searched entry.
+	 * @return The value for <code>key</code>.
+	 * @throws MissingDDCEntryException
+	 *             if there is no entry with <code>key</code> as key.
+	 */
+	public String getValue(String[] key) throws MissingDDCEntryException {
+
+		return this.get(key).getValue();
 
 	}
 
@@ -175,7 +203,7 @@ public class DDC {
 	 */
 	public String get(String key) throws MissingDDCEntryException {
 
-		return this.get(new String[] { key });
+		return this.get(new String[] { key }).getValue();
 
 	}
 
