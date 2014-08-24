@@ -4,13 +4,11 @@ import java.util.Set;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
+import de.uniol.inf.is.odysseus.peer.ddc.DDC;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 
 /**
@@ -21,11 +19,6 @@ import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
  *
  */
 public class DDCConsole implements CommandProvider {
-
-	/**
-	 * The logger instance for this class.
-	 */
-	private static final Logger LOG = LoggerFactory.getLogger(DDCConsole.class);
 
 	/**
 	 * The separator for multidimensional DDC entry keys.
@@ -84,45 +77,6 @@ public class DDCConsole implements CommandProvider {
 	private static final String USAGE_GET_VALUES = "DDCgetValues - Returns the values of all entries from the DDC";
 
 	/**
-	 * The single DDC instance.
-	 */
-	private static IDistributedDataContainer cDDC;
-
-	/**
-	 * Binds a DDC instance. <br />
-	 * Called by OSGI-DS.
-	 * 
-	 * @param ddc
-	 *            The DDC instance to bind.
-	 */
-	public static void bindDDC(IDistributedDataContainer ddc) {
-
-		DDCConsole.cDDC = ddc;
-		DDCConsole.LOG.debug("Bound {} as a DDC implementation", ddc.getClass()
-				.getSimpleName());
-
-	}
-
-	/**
-	 * Removes the binding of a DDC instance, if it's the bound one. <br />
-	 * Called by OSGI-DS.
-	 * 
-	 * @param ddc
-	 *            The DDC instance, for which the binding shall be removed.
-	 */
-	public static void unbindDDC(IDistributedDataContainer ddc) {
-
-		if (ddc != null && DDCConsole.cDDC != null && DDCConsole.cDDC == ddc) {
-
-			DDCConsole.cDDC = null;
-			DDCConsole.LOG.debug("Unbound {} as a DDC implementation", ddc
-					.getClass().getSimpleName());
-
-		}
-
-	}
-
-	/**
 	 * Interprets a command to add an entry to the DDC. <br />
 	 * The following commands are allowed: <br />
 	 * DDCadd key value TS <br />
@@ -130,7 +84,8 @@ public class DDCConsole implements CommandProvider {
 	 * DDCadd key value <br />
 	 * DDCadd key1,key2,... value
 	 * 
-	 * @param ci The {@link CommandInterpreter} containing the arguments.
+	 * @param ci
+	 *            The {@link CommandInterpreter} containing the arguments.
 	 */
 	public void _DDCadd(CommandInterpreter ci) {
 
@@ -190,7 +145,7 @@ public class DDCConsole implements CommandProvider {
 		}
 
 		// Add to DDC
-		DDCConsole.cDDC.add(key, value, ts);
+		DDC.getInstance().add(key, value, ts);
 
 	}
 
@@ -200,7 +155,8 @@ public class DDCConsole implements CommandProvider {
 	 * DDCget key <br />
 	 * DDCget key1,key2,...
 	 * 
-	 * @param ci The {@link CommandInterpreter} containing the arguments.
+	 * @param ci
+	 *            The {@link CommandInterpreter} containing the arguments.
 	 */
 	public void _DDCget(CommandInterpreter ci) {
 
@@ -227,7 +183,7 @@ public class DDCConsole implements CommandProvider {
 
 		try {
 
-			System.out.println(DDCConsole.cDDC.get(key));
+			System.out.println(DDC.getInstance().get(key));
 
 		} catch (MissingDDCEntryException e) {
 
@@ -243,7 +199,8 @@ public class DDCConsole implements CommandProvider {
 	 * DDCremove key <br />
 	 * DDCremove key1,key2,...
 	 * 
-	 * @param ci The {@link CommandInterpreter} containing the arguments.
+	 * @param ci
+	 *            The {@link CommandInterpreter} containing the arguments.
 	 */
 	public void _DDCremove(CommandInterpreter ci) {
 
@@ -268,7 +225,7 @@ public class DDCConsole implements CommandProvider {
 
 		}
 
-		if (DDCConsole.cDDC.remove(key)) {
+		if (DDC.getInstance().remove(key)) {
 
 			System.out.println("Removed entry from DDC");
 
@@ -284,7 +241,8 @@ public class DDCConsole implements CommandProvider {
 	 * Interprets a command to get all keys from the DDC. <br />
 	 * This command allows no arguments.
 	 * 
-	 * @param ci The {@link CommandInterpreter} containing the arguments.
+	 * @param ci
+	 *            The {@link CommandInterpreter} containing the arguments.
 	 */
 	public void _DDCgetKeys(CommandInterpreter ci) {
 
@@ -299,7 +257,7 @@ public class DDCConsole implements CommandProvider {
 
 		}
 
-		Set<String[]> keys = DDCConsole.cDDC.getKeys();
+		Set<String[]> keys = DDC.getInstance().getKeys();
 		if (keys.isEmpty()) {
 
 			System.out.println(DDCConsole.EMPTY_DDC);
@@ -325,7 +283,8 @@ public class DDCConsole implements CommandProvider {
 	 * Interprets a command to get all values from the DDC. <br />
 	 * This command allows no arguments.
 	 * 
-	 * @param ci The {@link CommandInterpreter} containing the arguments.
+	 * @param ci
+	 *            The {@link CommandInterpreter} containing the arguments.
 	 */
 	public void _DDCgetValues(CommandInterpreter ci) {
 
@@ -340,7 +299,7 @@ public class DDCConsole implements CommandProvider {
 
 		}
 
-		Set<String> values = DDCConsole.cDDC.getValues();
+		Set<String> values = DDC.getInstance().getValues();
 		if (values.isEmpty()) {
 
 			System.out.println(DDCConsole.EMPTY_DDC);
@@ -362,7 +321,8 @@ public class DDCConsole implements CommandProvider {
 	 * DDCcontainsKey key <br />
 	 * DDCcontainsKey key1,key2,...
 	 * 
-	 * @param ci The {@link CommandInterpreter} containing the arguments.
+	 * @param ci
+	 *            The {@link CommandInterpreter} containing the arguments.
 	 */
 	public void _DDCcontainsKey(CommandInterpreter ci) {
 
@@ -387,7 +347,7 @@ public class DDCConsole implements CommandProvider {
 
 		}
 
-		System.out.println(String.valueOf(DDCConsole.cDDC.containsKey(key)));
+		System.out.println(String.valueOf(DDC.getInstance().containsKey(key)));
 
 	}
 
