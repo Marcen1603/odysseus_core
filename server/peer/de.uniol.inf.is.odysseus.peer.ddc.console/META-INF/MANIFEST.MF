@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: DDC Console
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.ddc.console
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Michael Brand
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.eclipse.osgi,
+ com.google.guava;bundle-version="14.0.0",
+ de.uniol.inf.is.odysseus.peer.ddc;bundle-version="1.0.0"
+Service-Component: OSGI-INF/DDCConsole.xml

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.ddc.impl;
+package de.uniol.inf.is.odysseus.peer.ddc.console;
 
 import java.util.Set;
 
