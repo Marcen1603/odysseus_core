@@ -77,7 +77,10 @@ public class IECDefaultWaypoint implements IIecElement {
 
 	@Override
 	public boolean isValid() {
-		return leg.isValid();
+		if (leg != null){
+			return leg.isValid();			
+		}
+		return true;
 	}
 
 	@Override

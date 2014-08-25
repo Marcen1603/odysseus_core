@@ -39,7 +39,7 @@ public class Waypoint implements IShipRouteElement {
 	private Integer crosstracklimit_stbd_m;
 	private Integer crosstracklimit_port_m;
 	private Double speed_kts;
-	private Integer ETA;
+	private Long ETA;
 	private Double speedlimit_upper_kts;
 	private Double speedlimit_lower_kts;
 	private Double distance_to_wp_nm;
@@ -181,11 +181,11 @@ public class Waypoint implements IShipRouteElement {
 		this.speed_kts = speed_kts;
 	}
 
-	public Integer getETA() {
+	public Long getETA() {
 		return ETA;
 	}
 
-	public void setETA(Integer eTA) {
+	public void setETA(Long eTA) {
 		ETA = eTA;
 	}
 

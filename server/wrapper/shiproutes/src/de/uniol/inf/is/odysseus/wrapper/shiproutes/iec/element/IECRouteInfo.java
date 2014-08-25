@@ -265,51 +265,51 @@ public class IECRouteInfo implements IIecElement {
 		this.vesselName = vesselName;
 	}
 
-	public int getVesselMMSI() {
+	public Integer getVesselMMSI() {
 		return vesselMMSI;
 	}
 
-	public void setVesselMMSI(int vesselMMSI) {
+	public void setVesselMMSI(Integer vesselMMSI) {
 		this.vesselMMSI = vesselMMSI;
 	}
 
-	public int getVesselIMO() {
+	public Integer getVesselIMO() {
 		return vesselIMO;
 	}
 
-	public void setVesselIMO(int vesselIMO) {
+	public void setVesselIMO(Integer vesselIMO) {
 		this.vesselIMO = vesselIMO;
 	}
 
-	public int getVesselVoyage() {
+	public Integer getVesselVoyage() {
 		return vesselVoyage;
 	}
 
-	public void setVesselVoyage(int vesselVoyage) {
+	public void setVesselVoyage(Integer vesselVoyage) {
 		this.vesselVoyage = vesselVoyage;
 	}
 
-	public int getVesselDisplacement() {
+	public Integer getVesselDisplacement() {
 		return vesselDisplacement;
 	}
 
-	public void setVesselDisplacement(int vesselDisplacement) {
+	public void setVesselDisplacement(Integer vesselDisplacement) {
 		this.vesselDisplacement = vesselDisplacement;
 	}
 
-	public int getVesselCargo() {
+	public Integer getVesselCargo() {
 		return vesselCargo;
 	}
 
-	public void setVesselCargo(int vesselCargo) {
+	public void setVesselCargo(Integer vesselCargo) {
 		this.vesselCargo = vesselCargo;
 	}
 
-	public double getVesselGM() {
+	public Double getVesselGM() {
 		return vesselGM;
 	}
 
-	public void setVesselGM(double vesselGM) {
+	public void setVesselGM(Double vesselGM) {
 		this.vesselGM = vesselGM;
 	}
 
@@ -321,51 +321,51 @@ public class IECRouteInfo implements IIecElement {
 		this.optimizationMethod = optimizationMethod;
 	}
 
-	public int getVesselMaxRoll() {
+	public Integer getVesselMaxRoll() {
 		return vesselMaxRoll;
 	}
 
-	public void setVesselMaxRoll(int vesselMaxRoll) {
+	public void setVesselMaxRoll(Integer vesselMaxRoll) {
 		this.vesselMaxRoll = vesselMaxRoll;
 	}
 
-	public double getVesselMaxWave() {
+	public Double getVesselMaxWave() {
 		return vesselMaxWave;
 	}
 
-	public void setVesselMaxWave(double vesselMaxWave) {
+	public void setVesselMaxWave(Double vesselMaxWave) {
 		this.vesselMaxWave = vesselMaxWave;
 	}
 
-	public double getVesselMaxWind() {
+	public Double getVesselMaxWind() {
 		return vesselMaxWind;
 	}
 
-	public void setVesselMaxWind(double vesselMaxWind) {
+	public void setVesselMaxWind(Double vesselMaxWind) {
 		this.vesselMaxWind = vesselMaxWind;
 	}
 
-	public double getVesselSpeedMax() {
+	public Double getVesselSpeedMax() {
 		return vesselSpeedMax;
 	}
 
-	public void setVesselSpeedMax(double vesselSpeedMax) {
+	public void setVesselSpeedMax(Double vesselSpeedMax) {
 		this.vesselSpeedMax = vesselSpeedMax;
 	}
 
-	public double getVesselServiceMin() {
+	public Double getVesselServiceMin() {
 		return vesselServiceMin;
 	}
 
-	public void setVesselServiceMin(double vesselServiceMin) {
+	public void setVesselServiceMin(Double vesselServiceMin) {
 		this.vesselServiceMin = vesselServiceMin;
 	}
 
-	public double getVesselServiceMax() {
+	public Double getVesselServiceMax() {
 		return vesselServiceMax;
 	}
 
-	public void setVesselServiceMax(double vesselServiceMax) {
+	public void setVesselServiceMax(Double vesselServiceMax) {
 		this.vesselServiceMax = vesselServiceMax;
 	}
 

@@ -133,8 +133,8 @@ public class ToIECConverterHelper {
 			if (receivedWaypoint.getID() != null)
 				iecScheduleElement.setWaypointID(receivedWaypoint.getID());
 			if (receivedWaypoint.getETA() != null)
-				iecScheduleElement.setEta(new Date((long) receivedWaypoint
-						.getETA() * 1000));
+				iecScheduleElement.setEta(new Date(
+						receivedWaypoint.getETA() * 1000));
 			if (receivedWaypoint.getSpeed_kts() != null)
 				iecScheduleElement.setSpeed(receivedWaypoint.getSpeed_kts());
 			iecManual.addScheduleElement(iecScheduleElement);
@@ -163,6 +163,7 @@ public class ToIECConverterHelper {
 		// add route Info because it is also mandatory
 		IECRouteInfo iecRouteInfo = new IECRouteInfo();
 		iecRouteInfo.setRouteName("Prediction");
+		iec.setRouteInfo(iecRouteInfo);
 
 		// waypoints
 		IECWaypoints iecWaypoints = new IECWaypoints();
@@ -197,7 +198,8 @@ public class ToIECConverterHelper {
 
 			// IEC Schedule
 			IECScheduleElement iecScheduleElement = new IECScheduleElement();
-
+			if (receivedPPoint.getID() != null)
+				iecScheduleElement.setWaypointID(receivedPPoint.getID());
 			iecManual.addScheduleElement(iecScheduleElement);
 		}
 
@@ -270,14 +272,14 @@ public class ToIECConverterHelper {
 				iecScheduleElement.setWindSpeed(receivedMPoint
 						.getWind_speed_kts());
 			if (receivedMPoint.getWind_dir_rad() != null)
-				iecScheduleElement.setWindDirection(receivedMPoint
-						.getWind_dir_rad());
+				iecScheduleElement.setWindDirection(Math
+						.toDegrees(receivedMPoint.getWind_dir_rad()));
 			if (receivedMPoint.getCurrent_speed_kts() != null)
 				iecScheduleElement.setCurrentSpeed(receivedMPoint
 						.getCurrent_speed_kts());
 			if (receivedMPoint.getCurrent_dir_rad() != null)
-				iecScheduleElement.setCurrentDirection(receivedMPoint
-						.getCurrent_dir_rad());
+				iecScheduleElement.setCurrentDirection(Math
+						.toDegrees(receivedMPoint.getCurrent_dir_rad()));
 
 			// put rpm command into extension, because IEC do not provide more
 			// than one value

@@ -11,7 +11,7 @@ public abstract class AbstractScheduleElementIdentifier implements IIecElement {
 	// map constants
 	private static final String ELEMENT_PREFIX_CALC = "_calc";
 	private static final String ELEMENT_PREFIX_MAN = "_man";
-	
+
 	private static final String OPEN_EXTENSIONS_TAG = "<extensions>";
 	private static final String CLOSE_EXTENSIONS_TAG = "</extensions>";
 
@@ -19,15 +19,16 @@ public abstract class AbstractScheduleElementIdentifier implements IIecElement {
 	private List<IECExtension> extensions;
 
 	@Override
-	public void fillMap(KeyValueObject<? extends IMetaAttribute> map, String prefix) {
+	public void fillMap(KeyValueObject<? extends IMetaAttribute> map,
+			String prefix) {
 		if (this instanceof IECCalculated) {
-			prefix += ELEMENT_PREFIX_CALC;			
+			prefix += ELEMENT_PREFIX_CALC;
 		} else if (this instanceof IECManual) {
 			prefix += ELEMENT_PREFIX_MAN;
 		} else {
 			return;
 		}
-		
+
 		if (scheduleElements != null) {
 			for (IECScheduleElement scheduleElement : scheduleElements) {
 				scheduleElement.fillMap(map, prefix);
@@ -91,9 +92,13 @@ public abstract class AbstractScheduleElementIdentifier implements IIecElement {
 
 	@Override
 	public boolean isValid() {
+		for (IECScheduleElement element : scheduleElements) {
+			if (!element.isValid())
+				return false;
+		}
 		return true;
 	}
-	
+
 	public void addScheduleElement(IECScheduleElement scheduleElement) {
 		if (scheduleElements == null)
 			scheduleElements = new ArrayList<IECScheduleElement>();

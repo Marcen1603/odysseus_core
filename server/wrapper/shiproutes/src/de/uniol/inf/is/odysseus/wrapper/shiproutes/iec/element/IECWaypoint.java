@@ -99,10 +99,13 @@ public class IECWaypoint implements IIecElement {
 	
 	@Override
 	public boolean isValid(){
-		if (id != null){
-			return leg.isValid();			
+		if (id == null){
+			return false;
 		}
-		return false;
+		if (leg != null){
+			return leg.isValid();				
+		}
+		return true;
 	}
 	
 	@Override
