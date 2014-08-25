@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSinkStreamHandlerBuilder;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.NioByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -147,7 +147,7 @@ public class SocketService {
 		ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 				handler);
 		SocketSinkPO sink = new SocketSinkPO(port, "",
-				new ByteBufferSinkStreamHandlerBuilder(), true, false, false,
+				new NioByteBufferSinkStreamHandlerBuilder(), true, false, false,
 				objectHandler, false);
 
 		rootAsSource.subscribeSink((ISink) sink, 0, 0, root.getOutputSchema(),

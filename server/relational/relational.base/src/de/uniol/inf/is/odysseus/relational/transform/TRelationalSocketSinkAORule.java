@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SocketSinkAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSinkStreamHandlerBuilder;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.NioByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ISinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -87,7 +87,7 @@ public class TRelationalSocketSinkAORule extends
 
 	public ISinkStreamHandlerBuilder getStreamHandler(SocketSinkAO operator) {
 		if (operator.getSinkType().equalsIgnoreCase("bytebuffer")) {
-			return new ByteBufferSinkStreamHandlerBuilder();
+			return new NioByteBufferSinkStreamHandlerBuilder();
 		}
 		return null;
 	}

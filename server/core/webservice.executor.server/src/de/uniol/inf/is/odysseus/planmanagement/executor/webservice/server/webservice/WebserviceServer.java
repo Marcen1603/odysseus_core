@@ -75,7 +75,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBui
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MapParameter;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSinkStreamHandlerBuilder;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.NioByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
@@ -721,7 +721,7 @@ public class WebserviceServer {
 		ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 				handler);
 		SocketSinkPO sink = new SocketSinkPO(port, "",
-				new ByteBufferSinkStreamHandlerBuilder(), true, false,
+				new NioByteBufferSinkStreamHandlerBuilder(), true, false,
 				false, objectHandler, false);
 
 		rootAsSource.subscribeSink((ISink) sink, 0, 0,

@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferStreamHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.NioByteBufferStreamHandler;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
@@ -60,7 +60,7 @@ public class NEXMarkClient {
 	boolean useNIO = false;
 	private Socket connection;
 	// private ByteBuffer gbuffer = ByteBuffer.allocate(1024);
-	private ByteBufferStreamHandler nioStreamHandler;
+	private NioByteBufferStreamHandler nioStreamHandler;
 	private ByteBufferHandler<Tuple<ITimeInterval>> objectHandler;
 
 	// /**
@@ -109,7 +109,7 @@ public class NEXMarkClient {
 				NEXMarkStreamType.getSchema(streamType));
 		objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 				handler);
-		nioStreamHandler = new ByteBufferStreamHandler(connection);
+		nioStreamHandler = new NioByteBufferStreamHandler(connection);
 	}
 
 	@Override
