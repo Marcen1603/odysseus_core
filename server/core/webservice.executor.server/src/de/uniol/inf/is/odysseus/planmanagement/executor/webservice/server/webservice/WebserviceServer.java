@@ -37,10 +37,6 @@ import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.ws.Endpoint;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
@@ -140,8 +136,7 @@ public class WebserviceServer {
 	private static final int SINK_MIN_PORT = 10000;
 	private static final int SINK_MAX_PORT = 20000;
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(WebserviceServer.class);
+
 
 	/**
 	 * Socket Management
@@ -152,35 +147,7 @@ public class WebserviceServer {
 	private Map<Integer, Map<Integer, SocketSinkPO>> socketSinkMap = new HashMap<>();
 	private InetAddress address;
 
-	public static void startServer() {
-		WebserviceServer server = new WebserviceServer();
-		long port = Integer.parseInt(OdysseusConfiguration
-				.get("WebService.Port"));
-		long maxPort = Integer.parseInt(OdysseusConfiguration
-				.get("WebService.MaxPort"));
-		Endpoint endpoint = null;
-		String webServiceEndpoint = "";
-		Exception ex = null;
-		while (port <= maxPort ){
-			webServiceEndpoint = OdysseusConfiguration
-					.get("WebService.Endpoint1")+":"+port+OdysseusConfiguration
-					.get("WebService.Endpoint2");
-			try {
-				endpoint = Endpoint.publish(webServiceEndpoint, server);
-				// if no exception if thrown, service endpoint could be established
-				// break while
-				break;
-			} catch (Exception e) {
-				ex = e;
-			}
-			port++;
-		}
-		if (endpoint != null && endpoint.isPublished()) {
-			LOGGER.info("Webservice published at " + webServiceEndpoint);
-		}else{
-			LOGGER.error("Webservice could not be published", ex);
-		}
-	}
+
 
 	protected IExecutor getExecutor() {
 		return ExecutorServiceBinding.getExecutor();
