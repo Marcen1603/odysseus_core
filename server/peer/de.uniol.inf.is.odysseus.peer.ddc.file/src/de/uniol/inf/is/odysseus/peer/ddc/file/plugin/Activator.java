@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.peer.ddc.file.DDCFileHandler;
  * {@link DDCFileHandler#DDC_FILE_NAME} while stopping.
  * 
  * @author Michael Brand
- *
+ * 
  */
 public class Activator implements BundleActivator {
 
@@ -32,11 +32,16 @@ public class Activator implements BundleActivator {
 		} catch (IOException e) {
 			Activator.LOG.error("Could not load DDC file!", e);
 		}
-		
+
 		// distribute data
 		DDC ddc = DDC.getInstance();
-		if (ddc != null){ 
-			//DDCAdvertisement advertisement = DDCAdvertisementGenerator.generate(ddc);
+		if (ddc != null) {
+			// TODO Cannot send advertisements on startup, because P2P
+			// network does not already exists
+			// DDCAdvertisement advertisement = DDCAdvertisementGenerator
+			// .getInstance().generate(ddc);
+			// DDCAdvertisementSender.getInstance().publishDDCAdvertisement(
+			// advertisement);
 		}
 	}
 

@@ -10,13 +10,16 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.peer.ddc.DDC;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DDCAdvertisement;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DDCAdvertisementGenerator;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DDCAdvertisementSender;
 
 /**
  * The DDC console provides console commands for each method of
  * {@link IDistributedDataContainer}.
  * 
  * @author Michael Brand
- *
+ * 
  */
 public class DDCConsole implements CommandProvider {
 
@@ -76,6 +79,10 @@ public class DDCConsole implements CommandProvider {
 	 */
 	private static final String USAGE_GET_VALUES = "DDCgetValues - Returns the values of all entries from the DDC";
 
+	
+	private static final String[] USAGE_DISTRIBUTE = {
+			"DDCdistribute - Distributes all DDC entries to other peers", 
+			"DDCdistributeChanges - Distributes DDC changes to other peers"};
 	/**
 	 * Interprets a command to add an entry to the DDC. <br />
 	 * The following commands are allowed: <br />
@@ -390,7 +397,48 @@ public class DDCConsole implements CommandProvider {
 		output.append(TABS + DDCConsole.USAGE_GET_KEYS + DDCConsole.LINEBREAK);
 		output.append(TABS + DDCConsole.USAGE_GET_VALUES + DDCConsole.LINEBREAK);
 
+		
+		// the distribution commands 
+		for (String distributeUsage : DDCConsole.USAGE_DISTRIBUTE) {
+			output.append(TABS + distributeUsage + DDCConsole.LINEBREAK);
+		}
+		
 		return output.toString();
 
+	}
+
+	/**
+	 * Interprets a command to distribute values from distributed data container
+	 * to other peers
+	 * @param ci
+	 */
+	public void _DDCdistribute(CommandInterpreter ci) {
+		DDC ddcInstance = DDC.getInstance();
+
+		if (ddcInstance != null) {
+			DDCAdvertisement ddcAdvertisement = DDCAdvertisementGenerator.getInstance().generate(ddcInstance);
+			if (ddcAdvertisement != null){
+				DDCAdvertisementSender.getInstance().publishDDCAdvertisement(ddcAdvertisement);
+				System.out.println("Initial distribution started");				
+			}
+		}
+	}
+
+
+	/**
+	 * Interprets a command to distribute value changes from distributed data
+	 * container to other peers
+	 * @param ci
+	 */
+	public void _DDCdistributeChanges(CommandInterpreter ci) {
+		DDC ddcInstance = DDC.getInstance();
+
+		if (ddcInstance != null) {
+			DDCAdvertisement ddcAdvertisement = DDCAdvertisementGenerator.getInstance().generateChanges(ddcInstance);
+			if (ddcAdvertisement != null){
+				DDCAdvertisementSender.getInstance().publishDDCAdvertisement(ddcAdvertisement);
+				System.out.println("Change distribution started");				
+			}
+		}
 	}
 }
