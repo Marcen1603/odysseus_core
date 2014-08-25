@@ -42,13 +42,15 @@ class SinkConnectionListener extends Thread implements ISinkConnection {
 	final private ISinkStreamHandlerBuilder sinkStreamHandlerBuilder;
 	final List<ISinkStreamHandler> subscribe;
 
-	final private boolean useNIO;
+	private boolean useNIO;
 
 	final private boolean loginNeeded;
 
 	final private boolean loginWithSessionId;
 
 	final Set<String> allowedSessionIds = new TreeSet<>();
+	
+	private IServerSocketProvider serverSocketProvider;
 	
 	public SinkConnectionListener(int port,
 			ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, /* OUT!! */
@@ -60,6 +62,21 @@ class SinkConnectionListener extends Thread implements ISinkConnection {
 		this.useNIO = useNIO;
 		this.loginNeeded = loginNeeded;
 		this.loginWithSessionId = loginWithSessionId;
+	}
+	
+	public SinkConnectionListener(IServerSocketProvider serverSocketProvider,
+			ISinkStreamHandlerBuilder sinkStreamHandlerBuilder,
+			List<ISinkStreamHandler> subscribe2,
+			boolean loginNeeded, boolean loginWithSessionId) {
+		if (serverSocketProvider == null) {
+			throw new IllegalArgumentException("ServerSocketProvider cannot be null!");
+		}
+		this.port = serverSocketProvider.getServerSocket().getLocalPort();
+		this.sinkStreamHandlerBuilder = sinkStreamHandlerBuilder;
+		this.subscribe = subscribe2;
+		this.loginNeeded = loginNeeded;
+		this.loginWithSessionId = loginWithSessionId;
+		this.serverSocketProvider = serverSocketProvider;
 	}
 
 	@Override
@@ -76,7 +93,9 @@ class SinkConnectionListener extends Thread implements ISinkConnection {
 	public void run() {
 		ServerSocket server = null;
 		try {
-			if (useNIO) {
+			if (serverSocketProvider != null) {
+				server = serverSocketProvider.getServerSocket();
+			}else if (useNIO) {
 				ServerSocketChannel serverChannel = ServerSocketChannel.open();
 				server = serverChannel.socket();
 				server.bind(new InetSocketAddress(port));

@@ -48,6 +48,14 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 		}
 		this.objectHandler = objectHandler;
 	}
+	
+	public SocketSinkPO(IServerSocketProvider serverSocketProvider,ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean loginNeeded, boolean loginWithSessionId, IObjectHandler objectHandler) {
+		if (objectHandler == null) {
+			throw new IllegalArgumentException("ObjectHandler cannot be null!");
+		}
+		listener = new SinkConnectionListener(serverSocketProvider, sinkStreamHandlerBuilder, subscribe, loginNeeded,loginWithSessionId);
+		this.objectHandler = objectHandler;
+	}
 
 	public SocketSinkPO(SocketSinkPO socketSinkPO) {
 		throw new RuntimeException("Clone not supported");
