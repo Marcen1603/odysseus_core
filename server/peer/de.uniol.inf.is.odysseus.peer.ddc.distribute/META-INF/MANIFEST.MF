@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Distributed Data Container (Distribution)
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.ddc.distribute
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Chris Tönjes-Deye
+Bundle-Activator: de.uniol.inf.is.odysseus.peer.ddc.distribute.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: org.osgi.framework;version="1.3.0"
+Require-Bundle: de.uniol.inf.is.odysseus.p2p_new,
+ de.uniol.inf.is.odysseus.peer.ddc,
+ Jxta_2.6_Source
+Export-Package: de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement,
+ de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.generator,
+ de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.listener

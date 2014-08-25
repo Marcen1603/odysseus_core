@@ -7,6 +7,7 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.peer.ddc.DDC;
 import de.uniol.inf.is.odysseus.peer.ddc.file.DDCFileHandler;
 
 /**
@@ -26,17 +27,17 @@ public class Activator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-
 		try {
-
 			DDCFileHandler.load();
-
 		} catch (IOException e) {
-
 			Activator.LOG.error("Could not load DDC file!", e);
-
 		}
-
+		
+		// distribute data
+		DDC ddc = DDC.getInstance();
+		if (ddc != null){ 
+			//DDCAdvertisement advertisement = DDCAdvertisementGenerator.generate(ddc);
+		}
 	}
 
 	@Override
