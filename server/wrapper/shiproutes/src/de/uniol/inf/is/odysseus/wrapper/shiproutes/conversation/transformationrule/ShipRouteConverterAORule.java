@@ -5,20 +5,20 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.conversation.logicaloperator.ShipRouteIECConverterAO;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.conversation.physicaloperator.ShipRouteIECConverterPO;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.conversation.logicaloperator.ShipRouteConverterAO;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.conversation.physicaloperator.ShipRouteConverterPO;
 
-public class ShipRouteIECConverterAORule extends
-		AbstractTransformationRule<ShipRouteIECConverterAO> {
+public class ShipRouteConverterAORule extends
+		AbstractTransformationRule<ShipRouteConverterAO> {
 	
 	@Override
-	public void execute(ShipRouteIECConverterAO converterAO,
+	public void execute(ShipRouteConverterAO converterAO,
 			TransformationConfiguration config) throws RuleException {
-		defaultExecute(converterAO, new ShipRouteIECConverterPO<>(converterAO.getConversionType()), config, true, true);
+		defaultExecute(converterAO, new ShipRouteConverterPO<>(converterAO.getConversionType()), config, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(ShipRouteIECConverterAO operator,
+	public boolean isExecutable(ShipRouteConverterAO operator,
 			TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet(); 
 	}
@@ -30,12 +30,12 @@ public class ShipRouteIECConverterAORule extends
 	
 	@Override
 	public String getName() {
-		return "ShipRouteIECConverterAO -> ShipRouteIECConverterPO";
+		return "ShipRouteConverterAO -> ShipRouteConverterPO";
 	}
 	
 	@Override
-	public Class<? super ShipRouteIECConverterAO> getConditionClass() {	
-		return ShipRouteIECConverterAO.class;
+	public Class<? super ShipRouteConverterAO> getConditionClass() {	
+		return ShipRouteConverterAO.class;
 	}
 
 }

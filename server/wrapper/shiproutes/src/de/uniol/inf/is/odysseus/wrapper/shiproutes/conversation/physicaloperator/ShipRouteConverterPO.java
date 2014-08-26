@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_VesselData;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.conversation.logicaloperator.ConversionType;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECRoute;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.IShipRouteRootElement;
@@ -15,18 +16,18 @@ import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.manoeuvre.Manoeu
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.prediction.PredictionDataItem;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.RouteDataItem;
 
-public class ShipRouteIECConverterPO<T extends IStreamObject<IMetaAttribute>>
+public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 		extends AbstractPipe<T, T> {
 	private final Logger LOG = LoggerFactory
-			.getLogger(ShipRouteIECConverterPO.class);
+			.getLogger(ShipRouteConverterPO.class);
 	private ConversionType conversionType;
 
-	public ShipRouteIECConverterPO(ShipRouteIECConverterPO<T> anotherPO) {
+	public ShipRouteConverterPO(ShipRouteConverterPO<T> anotherPO) {
 		super();
 		this.conversionType = anotherPO.conversionType;
 	}
 
-	public ShipRouteIECConverterPO(ConversionType conversionType) {
+	public ShipRouteConverterPO(ConversionType conversionType) {
 		super();
 		this.conversionType = conversionType;
 	}
@@ -37,17 +38,17 @@ public class ShipRouteIECConverterPO<T extends IStreamObject<IMetaAttribute>>
 	}
 
 	@Override
-	public ShipRouteIECConverterPO<T> clone() {
-		return new ShipRouteIECConverterPO<T>(this);
+	public ShipRouteConverterPO<T> clone() {
+		return new ShipRouteConverterPO<T>(this);
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof ShipRouteIECConverterPO)) {
+		if (!(ipo instanceof ShipRouteConverterPO)) {
 			return false;
 		}
-		ShipRouteIECConverterPO converterPO = (ShipRouteIECConverterPO) ipo;
+		ShipRouteConverterPO converterPO = (ShipRouteConverterPO) ipo;
 		return this.conversionType == converterPO.conversionType;
 	}
 
@@ -57,10 +58,11 @@ public class ShipRouteIECConverterPO<T extends IStreamObject<IMetaAttribute>>
 		KeyValueObject<? extends IMetaAttribute> received = (KeyValueObject<? extends IMetaAttribute>) object;
 
 		IECRoute iec = null;
+		MSG_VesselData ivef = null;
 		IShipRouteRootElement shipRouteElement = null;
 
 		switch (conversionType) {
-		case SHIPROUTETOIEC:
+		case SHIPROUTE_TO_IEC:
 			if (received.getMetadata("object") instanceof RouteDataItem) {
 				RouteDataItem dataItem = (RouteDataItem) received
 						.getMetadata("object");
@@ -81,7 +83,22 @@ public class ShipRouteIECConverterPO<T extends IStreamObject<IMetaAttribute>>
 						+ "no ShipRoutes, Predictions or ManoeuvrePlans");
 			}
 			break;
-		case IECTOROUTE:
+		case SHIPROUTE_TO_IVEF: 
+			if (received.getMetadata("object") instanceof RouteDataItem) {
+				RouteDataItem dataItem = (RouteDataItem) received
+						.getMetadata("object");
+				ivef = ToIVEFConverterHelper.convertShipRouteToIVEF(dataItem);
+			} else if (received.getMetadata("object") instanceof ManoeuvrePlanDataItem) {
+				ManoeuvrePlanDataItem dataItem = (ManoeuvrePlanDataItem) received
+						.getMetadata("object");
+				ivef = ToIVEFConverterHelper.convertManoeuvreToIVEF(dataItem);
+			} else {
+				LOG.error("Cannot convert ShipRoute to IVEF, because Datastream contains "
+						+ "no ShipRoutes or ManoeuvrePlans");
+			}
+			
+			break;
+		case IEC_TO_ROUTE:
 			if (received.getMetadata("object") instanceof IECRoute) {
 				IECRoute route = (IECRoute) received.getMetadata("object");
 				shipRouteElement = ToShipRouteConverter
@@ -91,7 +108,7 @@ public class ShipRouteIECConverterPO<T extends IStreamObject<IMetaAttribute>>
 						+ "no IEC Elements");
 			}
 			break;
-		case IECTOPREDICTION:
+		case IEC_TO_PREDICTION:
 			if (received.getMetadata("object") instanceof IECRoute) {
 				IECRoute route = (IECRoute) received.getMetadata("object");
 				shipRouteElement = ToShipRouteConverter
@@ -101,7 +118,7 @@ public class ShipRouteIECConverterPO<T extends IStreamObject<IMetaAttribute>>
 						+ "no IEC Elements");
 			}
 			break;
-		case IECTOMANOEUVRE:
+		case IEC_TO_MANOEUVRE:
 			if (received.getMetadata("object") instanceof IECRoute) {
 				IECRoute route = (IECRoute) received.getMetadata("object");
 				shipRouteElement = ToShipRouteConverter
@@ -118,6 +135,10 @@ public class ShipRouteIECConverterPO<T extends IStreamObject<IMetaAttribute>>
 		if (iec != null) {
 			KeyValueObject<? extends IMetaAttribute> next = iec.toMap();
 			next.setMetadata("object", iec);
+			transfer((T) next);
+		} else if (ivef != null){
+			KeyValueObject<? extends IMetaAttribute> next = ivef.toMap();
+			next.setMetadata("object", ivef);
 			transfer((T) next);
 		} else if (shipRouteElement != null) {
 			KeyValueObject<? extends IMetaAttribute> next = shipRouteElement

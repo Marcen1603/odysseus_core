@@ -24,7 +24,7 @@ public class IECExtensionTypes {
 		has_geometric_problems;
 		
 		public static String getExtensionName(){
-			return "EXT_AdditionalValues";
+			return ExtensionTypes.RouteInfoExtension.toString();
 		}
 		
 		public static String getManufacturer(){
@@ -38,7 +38,7 @@ public class IECExtensionTypes {
 		rpm4_cmd;
 		
 		public static String getExtensionName(){
-			return "EXT_RPM_MultipleEngines";
+			return ExtensionTypes.RpmExtension.toString();
 		}
 		
 		public static String getManufacturer(){
@@ -52,7 +52,7 @@ public class IECExtensionTypes {
 		pitch4_cmd;
 		
 		public static String getExtensionName(){
-			return "EXT_PITCH_MultipleValues";
+			return ExtensionTypes.PitchExtension.toString();
 		}
 		
 		public static String getManufacturer(){

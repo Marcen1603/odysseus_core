@@ -5,7 +5,7 @@
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
-    <copyright>
+   <copyright>
       Copyright by the Odysseus Team (odysseus.informatik.uni-oldenburg.de)
    </copyright>
 
@@ -38,6 +38,26 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="de.uniol.inf.is.odysseus.wrapper.ivef"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.wrapper.nmea"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.osgeo.proj4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="com.vividsolutions.jts"
          download-size="0"
          install-size="0"
          version="0.0.0"
