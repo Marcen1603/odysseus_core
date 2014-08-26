@@ -53,7 +53,7 @@ import de.uniol.inf.is.odysseus.wrapper.opcda.datatype.OPCValue;
  */
 public class OPCDATransportHandler<T> extends AbstractTransportHandler {
 
-	/** Logger */
+    /** Logger */
     private final static Logger LOG = LoggerFactory.getLogger(OPCDATransportHandler.class);
 
     public static final String NAME = "OPC-DA";
@@ -64,7 +64,7 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
     public final static String PROG_ID = "progid";
     public final static String CLS_ID = "clsid";
     public final static String PERIOD = "period";
-	public static final String PATH = "path";
+    public static final String PATH = "path";
 
     private String host;
     private String domain;
@@ -73,8 +73,7 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
     private String progId;
     private String clsId;
     private int period;
-	String[] pathes;
-
+    String[] pathes;
 
     private Server server;
     private AutoReconnectController controller;
@@ -119,12 +118,13 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
         else {
             this.period = 500;
         }
-		if (options.containsKey(PATH)) {
-			String path = options.get(PATH);
-			pathes = path.split(";");
-		} else {
-			throw new IllegalArgumentException("No path given!");
-		}
+        if (options.containsKey(PATH)) {
+            String path = options.get(PATH);
+            this.pathes = path.split(";");
+        }
+        else {
+            throw new IllegalArgumentException("No path given!");
+        }
     }
 
     @Override
@@ -181,9 +181,9 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
             this.read = new Tuple<>(this.getSchema().size(), false);
             this.dataHandler = new TupleDataHandler();
             this.dataHandler.init(this.getSchema());
-            for (int pos=0;pos<pathes.length;pos++){
+            for (int pos = 0; pos < this.pathes.length; pos++) {
                 final int position = pos;
-            	this.access.addItem(pathes[pos], new DataCallback() {
+                this.access.addItem(this.pathes[pos], new DataCallback() {
                     private final Logger log = LoggerFactory.getLogger(DataCallback.class);
 
                     @Override
@@ -192,15 +192,18 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
                             if ((state.getValue().getType() == JIVariant.VT_UI1) || (state.getValue().getType() == JIVariant.VT_UI2) || (state.getValue().getType() == JIVariant.VT_UI4)
                                     || (state.getValue().getType() == JIVariant.VT_UINT)) {
                                 OPCDATransportHandler.this.process(position, state.getTimestamp().getTimeInMillis(), new Integer(state.getValue().getObjectAsUnsigned().getValue().intValue()),
-                                        state.getQuality(), state.getErrorCode());
+ state
+                                        .getQuality().shortValue(), state.getErrorCode());
                             }
                             else if ((state.getValue().getType() == JIVariant.VT_I1) || (state.getValue().getType() == JIVariant.VT_I2) || (state.getValue().getType() == JIVariant.VT_I4)
                                     || (state.getValue().getType() == JIVariant.VT_I8) || (state.getValue().getType() == JIVariant.VT_INT)) {
                                 OPCDATransportHandler.this.process(position, state.getTimestamp().getTimeInMillis(), new Integer(state.getValue().getObjectAsUnsigned().getValue().intValue()),
-                                        state.getQuality(), state.getErrorCode());
+ state
+                                        .getQuality().shortValue(), state.getErrorCode());
                             }
                             else {
-                                OPCDATransportHandler.this.process(position, state.getTimestamp().getTimeInMillis(), state.getValue().getObject(), state.getQuality(), state.getErrorCode());
+                                OPCDATransportHandler.this.process(position, state.getTimestamp().getTimeInMillis(), state.getValue().getObject(), state.getQuality().shortValue(),
+                                        state.getErrorCode());
                             }
                         }
                         catch (final JIException e) {
@@ -226,7 +229,7 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
     void process(final int pos, final long timestamp, final Object value, final short quality, final int error) {
         OPCDATransportHandler.LOG.debug(String.format("%d: %s", new Integer(pos), value));
         synchronized (this.read) {
-            OPCValue<Double> data = new OPCValue<Double>(timestamp, ((Number) value).doubleValue(), quality, error);
+            OPCValue<Double> data = new OPCValue<>(timestamp, ((Double) value), quality, error);
             this.read.setAttribute(pos, data);
             ByteBuffer buffer = ByteBuffer.allocate(this.dataHandler.memSize(this.read));
             this.dataHandler.writeData(buffer, this.read);
