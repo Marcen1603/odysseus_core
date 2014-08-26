@@ -45,8 +45,6 @@ public class DDCAdvertisementSender {
 			jxtaServicesProvider.publish(adv, WAIT_TIME_MILLIS,
 					WAIT_TIME_MILLIS);
 			jxtaServicesProvider.remotePublish(adv, WAIT_TIME_MILLIS);
-//			Collection<DDCAdvertisement> localAdvertisements = jxtaServicesProvider.getLocalAdvertisements(DDCAdvertisement.class);
-//			localAdvertisements.size();
 		} catch (IOException e) {
 			LOG.error("Could not publish ddc advertisement", e);
 		}

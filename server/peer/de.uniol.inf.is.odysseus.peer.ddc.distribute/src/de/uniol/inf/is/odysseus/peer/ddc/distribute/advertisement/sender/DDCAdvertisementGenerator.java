@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender;
 
+import java.util.Date;
+import java.util.UUID;
+
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
@@ -8,7 +11,9 @@ import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DDCAdvertiseme
 
 public class DDCAdvertisementGenerator {
 
+	private static final int TIMEOUT_SECONDS = 300;
 	private IP2PNetworkManager p2pNetworkManager;
+	private Date lastDDCDistribution;
 	private static DDCAdvertisementGenerator instance;
 
 	// called by OSGi-DS
@@ -22,7 +27,7 @@ public class DDCAdvertisementGenerator {
 			p2pNetworkManager = null;
 		}
 	}
-	
+
 	public final void activate() {
 		instance = this;
 	}
@@ -35,26 +40,59 @@ public class DDCAdvertisementGenerator {
 	public static DDCAdvertisementGenerator getInstance() {
 		return instance;
 	}
-	
 
 	public DDCAdvertisement generate(DDC ddc) {
+		lastDDCDistribution = new Date();
 		DDCAdvertisement ddcAdvertisement = (DDCAdvertisement) AdvertisementFactory
 				.newAdvertisement(DDCAdvertisement.getAdvertisementType());
-		ddcAdvertisement.setID(IDFactory.newPipeID(p2pNetworkManager
-				.getLocalPeerGroupID()));
-		ddcAdvertisement.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
+		if (p2pNetworkAvailable()) {
+			ddcAdvertisement.setID(IDFactory.newPipeID(p2pNetworkManager
+					.getLocalPeerGroupID()));
+			ddcAdvertisement.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
+			UUID advertisementUid = UUID.randomUUID();
+			ddcAdvertisement.setDDCAdvertisementUid(advertisementUid);
 
-		return ddcAdvertisement;
+			return ddcAdvertisement;
+		}
+		return null;
+	}
+
+	private boolean p2pNetworkAvailable() {
+		long startTime = System.currentTimeMillis();
+
+		while (!p2pNetworkManager.isStarted()) {
+			waitSomeTime(2000);
+
+			if ((System.currentTimeMillis() - startTime) > TIMEOUT_SECONDS * 1000) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private void waitSomeTime(int milliSeconds) {
+		try {
+			Thread.sleep(milliSeconds);
+		} catch (InterruptedException e) {
+		}
 	}
 
 	public DDCAdvertisement generateChanges(DDC ddc) {
-		DDCAdvertisement ddcAdvertisement = (DDCAdvertisement) AdvertisementFactory
-				.newAdvertisement(DDCAdvertisement.getAdvertisementType());
-		ddcAdvertisement.setID(IDFactory.newPipeID(p2pNetworkManager
-				.getLocalPeerGroupID()));
-		ddcAdvertisement.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
+		if (lastDDCDistribution == null) {
+			return generate(ddc);
+		} else {
+			DDCAdvertisement ddcAdvertisement = (DDCAdvertisement) AdvertisementFactory
+					.newAdvertisement(DDCAdvertisement.getAdvertisementType());
+			ddcAdvertisement.setID(IDFactory.newPipeID(p2pNetworkManager
+					.getLocalPeerGroupID()));
+			ddcAdvertisement.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
+			UUID advertisementUid = UUID.randomUUID();
+			ddcAdvertisement.setDDCAdvertisementUid(advertisementUid);
 
-		return ddcAdvertisement;
+			// detect ddc changes and put them into advertisement
+
+			return ddcAdvertisement;
+		}
 	}
 
 }

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.peer.ddc.DDC;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DDCDistributeThread;
 import de.uniol.inf.is.odysseus.peer.ddc.file.DDCFileHandler;
 
 /**
@@ -36,12 +37,10 @@ public class Activator implements BundleActivator {
 		// distribute data
 		DDC ddc = DDC.getInstance();
 		if (ddc != null) {
-			// TODO Cannot send advertisements on startup, because P2P
-			// network does not already exists
-			// DDCAdvertisement advertisement = DDCAdvertisementGenerator
-			// .getInstance().generate(ddc);
-			// DDCAdvertisementSender.getInstance().publishDDCAdvertisement(
-			// advertisement);
+			// start new thread to distribute ddc, because otherwise startup of odysseus 
+			// is blocked by waiting for p2p network
+			DDCDistributeThread ddcDistributeThread = new DDCDistributeThread(ddc);
+			ddcDistributeThread.start();
 		}
 	}
 

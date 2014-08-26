@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +31,12 @@ public class DDCAdvertisement extends Advertisement {
 	private PeerID ownerPeerId;
 	private static final String ID_TAG = "id";
 	private static final String OWNER_PEER_ID_TAG = "ownerPeerId";
+	private static final String ADVERTISEMENT_UID = "advertisementUid";
+	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DDCAdvertisement.class);
-	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, OWNER_PEER_ID_TAG };;
+	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, OWNER_PEER_ID_TAG, ADVERTISEMENT_UID };
+	private UUID advertisementUid;;
 
 	public static String getAdvertisementType() {
 		return ADVERTISEMENT_TYPE;
@@ -61,6 +65,7 @@ public class DDCAdvertisement extends Advertisement {
 
 		this.id = adv.id;
 		this.ownerPeerId = adv.ownerPeerId;
+		this.advertisementUid = adv.advertisementUid;
 	}
 
 	@Override
@@ -72,6 +77,7 @@ public class DDCAdvertisement extends Advertisement {
 		}
 		appendElement(doc, ID_TAG, id.toString());
 		appendElement(doc, OWNER_PEER_ID_TAG, ownerPeerId.toString());
+		appendElement(doc, ADVERTISEMENT_UID, advertisementUid.toString());
 
 		return doc;
 	}
@@ -93,6 +99,8 @@ public class DDCAdvertisement extends Advertisement {
 				setID(convertToID(elem.getTextValue()));
 			} else if (elem.getName().equals(OWNER_PEER_ID_TAG)) {
 				setOwnerPeerId(convertToPeerID(elem.getTextValue()));
+			} else if (elem.getName().equals(ADVERTISEMENT_UID)){
+				setDDCAdvertisementUid(UUID.fromString(elem.getTextValue()));
 			}
 		}
 	}
@@ -159,6 +167,14 @@ public class DDCAdvertisement extends Advertisement {
 
 		final DDCAdvertisement other = (DDCAdvertisement) obj;
 		return id.equals(other.id);
+	}
+
+	public void setDDCAdvertisementUid(UUID advertisementUid) {
+		this.advertisementUid = advertisementUid;
+	}
+
+	public UUID getAdvertisementUid() {
+		return advertisementUid;
 	}
 
 }

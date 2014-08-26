@@ -1,5 +1,9 @@
 package de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.listener;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DDCAdvertisement;
 import net.jxta.document.Advertisement;
@@ -7,6 +11,7 @@ import net.jxta.document.Advertisement;
 public class DDCAdvertisementListener implements IDDCAdvertisementListener {
 
 	private IP2PNetworkManager p2pNetworkManager;
+	private List<UUID> receivedDDCAdvertisements = new ArrayList<UUID>();
 
 	// called by OSGi-DS
 	public void bindP2PNetworkManager(IP2PNetworkManager serv) {
@@ -25,16 +30,22 @@ public class DDCAdvertisementListener implements IDDCAdvertisementListener {
 	@Override
 	public void advertisementDiscovered(Advertisement advertisement) {
 		if (advertisement instanceof DDCAdvertisement) {
-			// DDCAdvertisement ddcAdvertisement = (DDCAdvertisement)
-			// advertisement;
-
+			DDCAdvertisement ddcAdvertisement = (DDCAdvertisement) advertisement; 
+			
+			// check if listener already received this ddc advertisement
+			if (!receivedDDCAdvertisements.contains(ddcAdvertisement.getAdvertisementUid())){
+				receivedDDCAdvertisements.add(ddcAdvertisement.getAdvertisementUid());
+				
+				// detect if initial or changes 
+				
+				
+			}
 		}
 	}
 
 	@Override
 	public void updateAdvertisements() {
-		// TODO Auto-generated method stub
-
+		// no operation
 	}
 
 }
