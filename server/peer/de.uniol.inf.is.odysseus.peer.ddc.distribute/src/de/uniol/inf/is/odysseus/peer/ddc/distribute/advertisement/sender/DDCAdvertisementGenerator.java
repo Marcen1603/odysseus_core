@@ -8,10 +8,12 @@ import net.jxta.id.IDFactory;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.ddc.DDC;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DDCAdvertisement;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DDCAdvertisementType;
 
 public class DDCAdvertisementGenerator {
 
 	private static final int TIMEOUT_SECONDS = 300;
+	private static final int WAITING_TIME_SECONDS = 1;
 	private IP2PNetworkManager p2pNetworkManager;
 	private Date lastDDCDistribution;
 	private static DDCAdvertisementGenerator instance;
@@ -51,30 +53,13 @@ public class DDCAdvertisementGenerator {
 			ddcAdvertisement.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
 			UUID advertisementUid = UUID.randomUUID();
 			ddcAdvertisement.setDDCAdvertisementUid(advertisementUid);
-
+			ddcAdvertisement.setType(DDCAdvertisementType.ddcCreated);
+			
+			// TODO put all DDC Entries into Advertisement
+			
 			return ddcAdvertisement;
 		}
 		return null;
-	}
-
-	private boolean p2pNetworkAvailable() {
-		long startTime = System.currentTimeMillis();
-
-		while (!p2pNetworkManager.isStarted()) {
-			waitSomeTime(2000);
-
-			if ((System.currentTimeMillis() - startTime) > TIMEOUT_SECONDS * 1000) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private void waitSomeTime(int milliSeconds) {
-		try {
-			Thread.sleep(milliSeconds);
-		} catch (InterruptedException e) {
-		}
 	}
 
 	public DDCAdvertisement generateChanges(DDC ddc) {
@@ -88,10 +73,31 @@ public class DDCAdvertisementGenerator {
 			ddcAdvertisement.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
 			UUID advertisementUid = UUID.randomUUID();
 			ddcAdvertisement.setDDCAdvertisementUid(advertisementUid);
+			ddcAdvertisement.setType(DDCAdvertisementType.ddcUpdated);
 
-			// detect ddc changes and put them into advertisement
+			// TODO put all DDC changes into Advertisement
 
 			return ddcAdvertisement;
+		}
+	}
+	
+	private boolean p2pNetworkAvailable() {
+		long startTime = System.currentTimeMillis();
+
+		while (!p2pNetworkManager.isStarted()) {
+			waitSomeTime(WAITING_TIME_SECONDS * 1000);
+			
+			if ((System.currentTimeMillis() - startTime) > TIMEOUT_SECONDS * 1000) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private void waitSomeTime(int milliSeconds) {
+		try {
+			Thread.sleep(milliSeconds);
+		} catch (InterruptedException e) {
 		}
 	}
 
