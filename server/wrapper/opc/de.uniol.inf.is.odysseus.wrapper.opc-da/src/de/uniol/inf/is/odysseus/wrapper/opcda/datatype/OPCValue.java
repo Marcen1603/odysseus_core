@@ -101,4 +101,12 @@ public class OPCValue<T> {
         this.error = error;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return this.value + "[timestamp=" + this.timestamp + ", quality=" + this.quality + ", error=" + this.error + "]";
+    }
+
 }
