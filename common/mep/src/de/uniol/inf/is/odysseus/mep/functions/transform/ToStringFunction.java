@@ -18,6 +18,11 @@ package de.uniol.inf.is.odysseus.mep.functions.transform;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ *
+ */
 public class ToStringFunction extends AbstractFunction<String> {
 
     private static final long serialVersionUID = -3960501264856271045L;

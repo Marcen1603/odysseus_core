@@ -18,24 +18,30 @@ package de.uniol.inf.is.odysseus.mep.functions.transform;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
+/**
+ * Converts a given value to an long value.
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ *
+ */
 public class ToLongFunction extends AbstractFunction<Long> {
 
-	private static final long serialVersionUID = -6921898506120412818L;
+    private static final long serialVersionUID = -6921898506120412818L;
 
-	public ToLongFunction() {
-		super("toLong", 1, SDFDatatype.LONG);
-	}
+    public ToLongFunction() {
+        super("toLong", 1, SDFDatatype.LONG);
+    }
 
-	@Override
-	public Long getValue() {
-		String s = getInputValue(0).toString();
-		if (s.equalsIgnoreCase("true")) {
-			return 1L;
-		} else if (s.equalsIgnoreCase("false")) {
-			return 0L;
-		}
-		Double val = Double.parseDouble(getInputValue(0).toString());
-		return val.longValue();
-	}
+    @Override
+    public Long getValue() {
+        String s = getInputValue(0).toString();
+        if (s.equalsIgnoreCase("true")) {
+            return new Long(1L);
+        }
+        else if (s.equalsIgnoreCase("false")) {
+            return new Long(0L);
+        }
+        return new Long((new Double(Double.parseDouble(s))).longValue());
+    }
 
 }

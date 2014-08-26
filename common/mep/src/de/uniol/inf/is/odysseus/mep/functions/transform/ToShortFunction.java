@@ -19,27 +19,27 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * Converts a given value to short
+ * Converts a given value to short value.
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class ToShortFunction extends AbstractFunction<Short> {
 
-	private static final long serialVersionUID = 2336013385553930997L;
+    private static final long serialVersionUID = 2336013385553930997L;
 
-	public ToShortFunction() {
-		super("toShort", 1, SDFDatatype.SHORT);
-	}
+    public ToShortFunction() {
+        super("toShort", 1, SDFDatatype.SHORT);
+    }
 
-	@Override
-	public Short getValue() {
-		String s = getInputValue(0).toString();
-		if (s.equalsIgnoreCase("true")) {
-			return 1;
-		} else if (s.equalsIgnoreCase("false")) {
-			return 0;
-		}
-		Double val = Double.parseDouble(getInputValue(0).toString());
-		return val.shortValue();
-	}
+    @Override
+    public Short getValue() {
+        String s = getInputValue(0).toString();
+        if (s.equalsIgnoreCase("true")) {
+            return new Short((short) 1);
+        }
+        else if (s.equalsIgnoreCase("false")) {
+            return new Short((short) 0);
+        }
+        return new Short((new Double(Double.parseDouble(s))).shortValue());
+    }
 }

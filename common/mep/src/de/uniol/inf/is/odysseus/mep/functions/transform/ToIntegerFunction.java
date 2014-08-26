@@ -19,28 +19,27 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * Converts a given value to integer
+ * Converts a given value to an integer value.
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class ToIntegerFunction extends AbstractFunction<Integer> {
 
-	private static final long serialVersionUID = 2799997996073155068L;
+    private static final long serialVersionUID = 2799997996073155068L;
 
-	public ToIntegerFunction() {
-		super("toInteger",1,SDFDatatype.INTEGER);
-	}	
+    public ToIntegerFunction() {
+        super("toInteger", 1, SDFDatatype.INTEGER);
+    }
 
     @Override
     public Integer getValue() {
         String s = getInputValue(0).toString();
         if (s.equalsIgnoreCase("true")) {
-            return 1;
+            return new Integer(1);
         }
         else if (s.equalsIgnoreCase("false")) {
-            return 0;
+            return new Integer(0);
         }
-        Double val = Double.parseDouble(getInputValue(0).toString());
-        return val.intValue();
+        return new Integer((new Double(Double.parseDouble(s))).intValue());
     }
 }

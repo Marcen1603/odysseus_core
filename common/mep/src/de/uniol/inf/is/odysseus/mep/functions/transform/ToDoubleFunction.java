@@ -19,6 +19,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
+ * Converts a given value to a double value.
+ * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
@@ -27,19 +29,18 @@ public class ToDoubleFunction extends AbstractFunction<Double> {
     private static final long serialVersionUID = -8540214231248350115L;
 
     public ToDoubleFunction() {
-    	super("toDouble",1,SDFDatatype.DOUBLE);
+        super("toDouble", 1, SDFDatatype.DOUBLE);
     }
-    
+
     @Override
     public Double getValue() {
         String s = getInputValue(0).toString();
         if (s.equalsIgnoreCase("true")) {
-            return 1.0;
+            return new Double(1.0);
         }
         else if (s.equalsIgnoreCase("false")) {
-            return 0.0;
+            return new Double(0.0);
         }
-        Double val = Double.parseDouble(getInputValue(0).toString());
-        return val.doubleValue();
+        return new Double(Double.parseDouble(s));
     }
 }

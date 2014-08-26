@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * Converts a given value to a char
+ * Converts a given value to a char value.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  *

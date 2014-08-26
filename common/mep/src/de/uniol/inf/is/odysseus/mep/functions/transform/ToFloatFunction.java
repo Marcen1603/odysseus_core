@@ -19,28 +19,28 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * Converts a given value to float
+ * Converts a given value to a float value.
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class ToFloatFunction extends AbstractFunction<Float> {
 
-	private static final long serialVersionUID = 1201584883722391034L;
+    private static final long serialVersionUID = 1201584883722391034L;
 
-	public ToFloatFunction() {
-		super("toFloat", 1, SDFDatatype.FLOAT);
-	}
+    public ToFloatFunction() {
+        super("toFloat", 1, SDFDatatype.FLOAT);
+    }
 
-	@Override
-	public Float getValue() {
-		String s = getInputValue(0).toString();
-		if (s.equalsIgnoreCase("true")) {
-			return 1f;
-		} else if (s.equalsIgnoreCase("false")) {
-			return 0f;
-		}
-		Double val = Double.parseDouble(getInputValue(0).toString());
-		return val.floatValue();
-	}
+    @Override
+    public Float getValue() {
+        String s = getInputValue(0).toString();
+        if (s.equalsIgnoreCase("true")) {
+            return new Float(1f);
+        }
+        else if (s.equalsIgnoreCase("false")) {
+            return new Float(0f);
+        }
+        return new Float((new Double(Double.parseDouble(s))).floatValue());
+    }
 
 }

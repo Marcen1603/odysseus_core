@@ -19,9 +19,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * Converts a given value to byte
+ * Converts a given value to a byte value.
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class ToByteFunction extends AbstractFunction<Byte> {
 
@@ -35,11 +35,10 @@ public class ToByteFunction extends AbstractFunction<Byte> {
 	public Byte getValue() {
 		String s = getInputValue(0).toString();
 		if (s.equalsIgnoreCase("true")) {
-			return (byte) 0x1;
+            return new Byte((byte) 0x1);
 		} else if (s.equalsIgnoreCase("false")) {
-			return (byte) 0x0;
+            return new Byte((byte) 0x0);
 		}
-		Double val = Double.parseDouble(getInputValue(0).toString());
-		return val.byteValue();
+        return new Byte((new Double(Double.parseDouble(s))).byteValue());
 	}
 }
