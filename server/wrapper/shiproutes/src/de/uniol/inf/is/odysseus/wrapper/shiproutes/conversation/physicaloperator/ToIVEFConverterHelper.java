@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.Waypoint;
 
 public class ToIVEFConverterHelper {
 
-	private static final double KtsToMs = 0.51444444444;
+	private static final double KTS_TO_MS = 0.51444444444;
 
 	public static MSG_VesselData convertShipRouteToIVEF(
 			RouteDataItem routeDataItem) {
@@ -52,7 +52,7 @@ public class ToIVEFConverterHelper {
 				posReport.setSourceId(receivedRoute.getRoute_ID());
 			posReport.setUpdateTime(new Date());
 			if (waypoint.getSpeed_kts() != null)
-				posReport.setSOG(waypoint.getSpeed_kts() * KtsToMs);
+				posReport.setSOG(waypoint.getSpeed_kts() * KTS_TO_MS);
 			posReport.setCOG(0.0);
 			posReport.setLost("no");
 			if (waypoint.getTurnradius_nm() != null)
@@ -121,21 +121,13 @@ public class ToIVEFConverterHelper {
 			if (receivedMPlan.getMplan_ID() != null)
 				posReport.setSourceId(receivedMPlan.getMplan_ID());
 			posReport.setUpdateTime(new Date());
+
 			if (manoeuvrePoint.getSog_long_kts() != null
-					|| manoeuvrePoint.getSog_trans_kts() != null) {
-				if (manoeuvrePoint.getSog_long_kts() != null
-						&& !manoeuvrePoint.getSog_long_kts().equals(
-								new Double(0.0))) {
-					posReport
-							.setSOG(manoeuvrePoint.getSog_long_kts() * KtsToMs);
-				}
-				if (manoeuvrePoint.getSog_trans_kts() != null
-						&& !manoeuvrePoint.getSog_trans_kts().equals(
-								new Double(0.0))) {
-					posReport.setSOG(manoeuvrePoint.getSog_trans_kts()
-							* KtsToMs);
-				}
+					&& !manoeuvrePoint.getSog_long_kts()
+							.equals(new Double(0.0))) {
+				posReport.setSOG(manoeuvrePoint.getSog_long_kts() * KTS_TO_MS);
 			}
+
 			if (manoeuvrePoint.getCourse_over_ground_rad() != null)
 				posReport.setCOG(Math.toDegrees(manoeuvrePoint
 						.getCourse_over_ground_rad()));
