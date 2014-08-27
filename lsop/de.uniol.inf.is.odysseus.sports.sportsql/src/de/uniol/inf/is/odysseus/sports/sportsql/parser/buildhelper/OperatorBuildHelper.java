@@ -804,6 +804,72 @@ public class OperatorBuildHelper {
 
 		return aggregateAO;
 	}
+	
+	/**
+	 * Creates an AggregateAO with the specified output type
+	 * 
+	 * @param aggregationFunction
+	 *            The name of the aggregate-function, e.g. "SUM" or "MAX"
+	 * @param groupBy
+	 *            The list of names of the attributes you want to group by
+	 * @param inputAttributeName
+	 *            The input attribute over which the aggregation should be done
+	 * @param outputAttributeName
+	 *            The name of the output attribute for this aggregation
+	 * @param outputType
+	 *            The optional type of output (null, if you don't want to
+	 *            specify, should then be double)
+	 * @param source
+	 *            The operator before this one
+	 * @return
+	 */
+	public static AggregateAO createAggregateAO(List<String> aggregationFunctions,
+			List<String> groupBys, List<String> inputAttributeNames,
+			List<String> outputAttributeNames, List<String> outputTypes,
+			ILogicalOperator source) {
+		AggregateAO aggregateAO = new AggregateAO();
+		
+		
+		List<AggregateItem> aggregateItems = new ArrayList<AggregateItem>();
+
+		for (int i = 0; i<aggregationFunctions.size(); i++) {
+			// Fill parameter
+			AggregateItemParameter param = new AggregateItemParameter();
+			List<String> aggregateOptions = new ArrayList<String>();
+			aggregateOptions.add(aggregationFunctions.get(i));
+			aggregateOptions.add(inputAttributeNames.get(i));
+			aggregateOptions.add(outputAttributeNames.get(i));
+			if (outputTypes != null && outputTypes.get(i) != null)
+				aggregateOptions.add(outputTypes.get(i));
+			param.setInputValue(aggregateOptions);
+
+			// Attribute resolver and datadictionary for parameter
+			IAttributeResolver resolver = OperatorBuildHelper
+					.createAttributeResolver(source);
+			param.setAttributeResolver(resolver);
+			IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
+			param.setDataDictionary(dataDict);
+
+			aggregateItems.add(param.getValue());
+		}
+
+		aggregateAO.setAggregationItems(aggregateItems);
+
+		// GroupBy
+		if (groupBys != null) {
+			if (!(groupBys.size() == 1 && groupBys.get(0).isEmpty())) {
+				// If the inly grouping-attribute is empty, the user does not
+				// want to group
+				aggregateAO.setGroupingAttributes(createAttributeList(groupBys,
+						source));
+			}
+
+		}
+
+		aggregateAO.subscribeTo(source, source.getOutputSchema());
+
+		return aggregateAO;
+	}
 
 	/**
 	 * Creates an AggregateAO with the specified output type
