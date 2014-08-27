@@ -30,7 +30,8 @@ public class ToHexFromNumberFunction extends AbstractFunction<String> {
      * 
      */
     private static final long serialVersionUID = -5267841297277120825L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.NUMBERS };
+    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.START_TIMESTAMP,
+            SDFDatatype.END_TIMESTAMP, SDFDatatype.TIMESTAMP } };
 
     public ToHexFromNumberFunction() {
         super("toHex", 1, accTypes, SDFDatatype.STRING);
@@ -39,7 +40,7 @@ public class ToHexFromNumberFunction extends AbstractFunction<String> {
     @Override
     public String getValue() {
         Number s = getNumericalInputValue(0);
-        return Double.toHexString(s.doubleValue());
+        return Long.toHexString(s.longValue());
 
     }
 

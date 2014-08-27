@@ -169,6 +169,7 @@ import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToFloatFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToIntegerFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToLongFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToShortFunction;
+import de.uniol.inf.is.odysseus.mep.functions.transform.ToBinaryFromFloatingNumberFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToBinaryFromNumberFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToBinaryFromStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToBooleanFunction;
@@ -178,6 +179,7 @@ import de.uniol.inf.is.odysseus.mep.functions.transform.ToDateFromNumberFunction
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToDateFromStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToDoubleFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToFloatFunction;
+import de.uniol.inf.is.odysseus.mep.functions.transform.ToHexFromFloatingNumberFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToHexFromNumberFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToHexFromStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToIntegerFunction;
@@ -319,8 +321,10 @@ public class MEP implements IExpressionParser {
 		registerFunction(new ToStringFunction());
         registerFunction(new ToHexFromStringFunction());
         registerFunction(new ToHexFromNumberFunction());
+        registerFunction(new ToHexFromFloatingNumberFunction());
         registerFunction(new ToBinaryFromStringFunction());
         registerFunction(new ToBinaryFromNumberFunction());
+        registerFunction(new ToBinaryFromFloatingNumberFunction());
 		registerFunction(new RandomFunction());
 		registerFunction(new RandomFunction2());
 		registerFunction(new RoundFunction());

@@ -24,22 +24,21 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ToBinaryFromNumberFunction extends AbstractFunction<String> {
+public class ToBinaryFromFloatingNumberFunction extends AbstractFunction<String> {
     /**
      * 
      */
-    private static final long serialVersionUID = 9108818182686191083L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.START_TIMESTAMP,
-            SDFDatatype.END_TIMESTAMP, SDFDatatype.TIMESTAMP } };
+    private static final long serialVersionUID = -6367175693609340243L;
+    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.DOUBLE, SDFDatatype.FLOAT } };
 
-    public ToBinaryFromNumberFunction() {
+    public ToBinaryFromFloatingNumberFunction() {
         super("toBinary", 1, accTypes, SDFDatatype.STRING);
     }
 
     @Override
     public String getValue() {
         Number s = getNumericalInputValue(0);
-        return Long.toBinaryString(s.longValue());
+        return Long.toBinaryString(Double.doubleToRawLongBits(s.doubleValue()));
     }
 
 }
