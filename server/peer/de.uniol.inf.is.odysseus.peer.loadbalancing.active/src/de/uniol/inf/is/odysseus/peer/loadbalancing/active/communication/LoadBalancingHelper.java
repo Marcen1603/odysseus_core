@@ -647,10 +647,15 @@ public class LoadBalancingHelper {
 				copy.setPipeID(newPipeId);
 				copy.setPeerID(newPeerId);
 				copy.setSchema(logicalReceiver.getSchema());
-
-				JxtaReceiverPO physicalCopy = new JxtaReceiverPO(copy);
+				
+				
 				JxtaReceiverPO physicalOriginal = (JxtaReceiverPO) LoadBalancingHelper
 						.getPhysicalJxtaOperator(isSender, oldPipeId);
+				
+				copy.setSchemaName(physicalOriginal.getOutputSchema().getURI());
+				
+				JxtaReceiverPO physicalCopy = new JxtaReceiverPO(copy);
+				
 				physicalCopy
 						.setOutputSchema(physicalOriginal.getOutputSchema());
 
@@ -683,12 +688,14 @@ public class LoadBalancingHelper {
 
 				physicalOriginal.open(synchronizer, 0, 0, emptyCallPath,
 						physicalOriginal.getOwner());
+				
 				physicalCopy.subscribeSink(synchronizer, 1, 0,
-						physicalOriginal.getOutputSchema());
+						physicalCopy.getOutputSchema());
 				physicalCopy.open(synchronizer, 0, 1, emptyCallPath,
-						physicalOriginal.getOwner());
+						physicalCopy.getOwner());
 
 				physicalOriginal.unblock();
+				
 				LOG.debug("Installed additional Receiver with PeerID " + physicalCopy.getPeerIDString() + " and PipeID " + physicalCopy.getPipeIDString());
 			}
 			

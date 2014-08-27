@@ -212,6 +212,8 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	 */
 	private final void fireFinishEvent(int inputPortToRemove) {
 
+		log.debug("Firing finish Event");
+		
 		Preconditions.checkArgument(inputPortToRemove >= 0
 				&& inputPortToRemove < this.getInputPortCount(),
 				inputPortToRemove + " is not a valid input port!");
@@ -277,7 +279,7 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	private boolean checkTimeOrder(PointInTime newTS) {
 		
 		if(newTS.afterOrEquals(this.tsOflastSeenElementOnOldPort)) {
-			
+			log.debug("New TS >= Old TS");
 			this.state = SyncState.notsynchronizing;
 			return true;
 			
@@ -301,6 +303,7 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 					"Transfered {} from input port {}", object, port);
 
 		} 
+		
 		
 
 		if (!this.state.equals(SyncState.synchronizing)) {

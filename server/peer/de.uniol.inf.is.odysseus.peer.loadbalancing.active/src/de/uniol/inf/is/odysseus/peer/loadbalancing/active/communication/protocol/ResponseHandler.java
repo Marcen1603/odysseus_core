@@ -56,10 +56,10 @@ public class ResponseHandler {
 
 		switch (response.getMsgType()) {
 		case LoadBalancingResponseMessage.ACK_LOADBALANCING:
-			
+			LOG.debug("Got ACK_LOADBALANCING");
 			if (status.getPhase().equals(
 					LoadBalancingMasterStatus.LB_PHASES.INITIATING)) {
-				LOG.debug("Got ACK_LOADBALANCING");
+				
 				status.setVolunteeringPeer(senderPeer);
 				status.setPhase(LoadBalancingMasterStatus.LB_PHASES.COPYING);
 				dispatcher.stopRunningJob();
@@ -71,18 +71,18 @@ public class ResponseHandler {
 
 				String pqlFromQueryPart = LogicalQueryHelper
 						.generatePQLStatementFromQueryPart(modifiedQueryPart);
+				LOG.debug("Generated PQL Statement:" + pqlFromQueryPart);
 				dispatcher.sendAddQuery(status.getVolunteeringPeer(),
 						pqlFromQueryPart,communicationListener);
 			}
 			break;
 
 		case LoadBalancingResponseMessage.SUCCESS_INSTALL_QUERY:
-			
+			LOG.debug("Got SUCCESS_INSTALL_QUERY");
 			// When in Phase copying, the success Message says that Installing
 			// the Query Part on the other Peer was successful.
 			if (status.getPhase().equals(
 					LoadBalancingMasterStatus.LB_PHASES.COPYING)) {
-				LOG.debug("Got SUCCESS_INSTALL_QUERY");
 				dispatcher.sendMsgReceived(senderPeer);
 				dispatcher.stopRunningJob();
 				status.setPhase(LoadBalancingMasterStatus.LB_PHASES.RELINKING_SENDERS);
@@ -92,6 +92,8 @@ public class ResponseHandler {
 			break;
 
 		case LoadBalancingResponseMessage.SUCCESS_DUPLICATE:
+			
+			
 			
 			if (status.getPhase().equals(
 					LoadBalancingMasterStatus.LB_PHASES.RELINKING_SENDERS)) {
@@ -127,9 +129,9 @@ public class ResponseHandler {
 			break;
 
 		case LoadBalancingResponseMessage.SYNC_FINISHED:
-			
+			LOG.debug("Got SYNC_FINISHED");
 			if (status.getPhase().equals(LB_PHASES.SYNCHRONIZING)) {
-				LOG.debug("Got SYNC_FINISHED");
+				
 				status.removePipeToSync(response.getPipeID());
 				dispatcher.sendPipeSuccessReceivedMsg(senderPeer, response.getPipeID());
 				if (status.getNumberOfPipesToSync() == 0) {
@@ -162,7 +164,7 @@ public class ResponseHandler {
 		case LoadBalancingResponseMessage.FAILURE_INSTALL_QUERY:
 			if(status.getPhase().equals(LB_PHASES.COPYING)) {
 				dispatcher.sendMsgReceived(senderPeer);
-				LOG.debug("Installing Query on remote Peer failed. Aborting.");
+				LOG.error("Installing Query on remote Peer failed. Aborting.");
 				handleError(status,communicationListener);
 			}
 			break;
@@ -171,7 +173,7 @@ public class ResponseHandler {
 		case LoadBalancingResponseMessage.FAILURE_DUPLICATE_RECEIVER:
 			if(status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS) || status.getPhase().equals(LB_PHASES.RELINKING_SENDERS) ) {
 				dispatcher.sendMsgReceived(senderPeer);
-				LOG.debug("Duplicating connections failed. Aborting.");
+				LOG.error("Duplicating connections failed. Aborting.");
 				handleError(status,communicationListener);
 			}
 			break;

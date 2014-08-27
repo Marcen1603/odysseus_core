@@ -3,6 +3,10 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.jxta.peer.PeerID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
@@ -18,6 +22,10 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages
  *
  */
 public class LoadBalancingMessageDispatcher {
+	
+	private static final Logger LOG = LoggerFactory
+			.getLogger(LoadBalancingMessageDispatcher.class);
+	
 	/**
 	 * Peer Communicator
 	 */
@@ -64,9 +72,11 @@ public class LoadBalancingMessageDispatcher {
 	public void sendMsgReceived(PeerID destination) {
 		LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createMessageReceivedMsg(lbProcessId);
 		try {
+			LOG.debug("Send MessageReceived");
 			peerCommunicator.send(destination, message);
 		} catch (PeerCommunicationException e) {
-			//Do nothing. If not send message on other side will timeout.
+			LOG.error("Error while sending Message:");
+			LOG.error(e.getMessage());
 		}
 	}
 
@@ -75,6 +85,7 @@ public class LoadBalancingMessageDispatcher {
 	 * @param destination
 	 */
 	public void sendInstallSuccess(PeerID destination) {
+			LOG.debug("Send Install Success");
 			LoadBalancingResponseMessage message = LoadBalancingResponseMessage.createInstallSuccessMessage(lbProcessId);
 			this.currentJob = new RepeatingMessageSend(peerCommunicator,message,destination);
 			currentJob.start();
@@ -92,6 +103,7 @@ public class LoadBalancingMessageDispatcher {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
 		}
 		if(!this.currentJobs.containsKey(pipeID)) {
+			LOG.debug("Send DuplicateSuccess");
 			LoadBalancingResponseMessage message = LoadBalancingResponseMessage.createDuplicateSuccessMessage(lbProcessId,pipeID);
 			RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator,message,destination);
 			this.currentJobs.put(pipeID, job);
@@ -107,9 +119,11 @@ public class LoadBalancingMessageDispatcher {
 	public void sendPipeSuccessReceivedMsg(PeerID destination, String pipeID) {
 		LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createPipeReceivedMsg(lbProcessId, pipeID);
 		try {
+			LOG.debug("Send SuccessReceived");
 			peerCommunicator.send(destination, message);
 		} catch (PeerCommunicationException e) {
-			//Do nothing. Will timeout.
+			LOG.error("Error while sending Message:");
+			LOG.error(e.getMessage());
 		}
 	}
 	
@@ -121,6 +135,8 @@ public class LoadBalancingMessageDispatcher {
 	 * @param destinationPeerId
 	 */
 	public void sendAckInit(PeerID destinationPeerId) {
+
+		LOG.debug("Send AckInit");
 		this.currentJob = new RepeatingMessageSend(peerCommunicator,LoadBalancingResponseMessage.createAckLoadbalancingMessage(lbProcessId),destinationPeerId);
 		currentJob.start();
 	}
@@ -139,6 +155,8 @@ public class LoadBalancingMessageDispatcher {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
 		}
 		if(!this.currentJobs.containsKey(pipeId)) {
+
+			LOG.debug("Send DeleteOperator");
 			RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator,message,LoadBalancingHelper.toPeerID(peerId));
 			this.currentJobs.put(pipeId, job);
 			job.addListener(listener);
@@ -153,6 +171,8 @@ public class LoadBalancingMessageDispatcher {
 	 * @param listener
 	 */
 	public void sendAddQuery(PeerID destinationPeer, String queryPartPql,IMessageDeliveryFailedListener listener) {
+
+		LOG.debug("Send AddQuery");
 		LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createAddQueryMsg(lbProcessId, queryPartPql);
 		this.currentJob = new RepeatingMessageSend(peerCommunicator,message,destinationPeer);
 		currentJob.addListener(listener);
@@ -165,6 +185,8 @@ public class LoadBalancingMessageDispatcher {
 	 * @param initiatingPeer
 	 */
 	public void sendInstallFailure(PeerID initiatingPeer) {
+
+			LOG.debug("Send InstallFailure");
 			LoadBalancingResponseMessage message = LoadBalancingResponseMessage.createInstallFailureMessage(lbProcessId);
 			this.currentJob = new RepeatingMessageSend(peerCommunicator,message,initiatingPeer);
 			currentJob.start();
@@ -176,6 +198,8 @@ public class LoadBalancingMessageDispatcher {
 	 * @param initiatingPeer
 	 */
 	public void sendDuplicateFailure(PeerID initiatingPeer) {
+
+		LOG.debug("Send DuplicateFailure");
 		LoadBalancingResponseMessage message = LoadBalancingResponseMessage.createDuplicateFailureMessage(lbProcessId);
 		this.currentJob = new RepeatingMessageSend(peerCommunicator,message,initiatingPeer);
 		currentJob.start();
@@ -197,6 +221,8 @@ public class LoadBalancingMessageDispatcher {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
 		}
 		if(!this.currentJobs.containsKey(newPipeId)) {
+
+			LOG.debug("Send CopyOperator");
 			LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createCopyOperatorMsg(isSender, newPeerId, oldPipeId, newPipeId);
 			RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator,message,destinationPeer);
 			this.currentJobs.put(newPipeId, job);
@@ -220,6 +246,8 @@ public class LoadBalancingMessageDispatcher {
 	 * @param listener
 	 */
 	public void sendInitiate(PeerID volunteeringPeer,IMessageDeliveryFailedListener listener) {
+		
+			LOG.debug("Send InitiateLB");
 			this.currentJob = new RepeatingMessageSend(peerCommunicator,LoadBalancingInstructionMessage.createInitiateMsg(lbProcessId),volunteeringPeer);
 			currentJob.addListener(listener);
 			currentJob.start();
@@ -276,6 +304,8 @@ public class LoadBalancingMessageDispatcher {
 	 * @param pipeId
 	 */
 	public void sendSyncFinished(PeerID initiatingPeer, String pipeId) {
+
+		LOG.debug("Send SyncFinished");
 		LoadBalancingResponseMessage message = LoadBalancingResponseMessage.createSyncFinishedMsg(lbProcessId, pipeId);
 		if(this.currentJobs==null) {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
@@ -294,11 +324,14 @@ public class LoadBalancingMessageDispatcher {
 	 * @param listener
 	 */
 	public void sendAbortInstruction(PeerID peerID,IMessageDeliveryFailedListener listener) {
+
+		
 		LoadBalancingAbortMessage message = LoadBalancingAbortMessage.createAbortInstructionMsg(lbProcessId);
 		if(this.currentJobs==null) {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
 		}
 		if(!this.currentJobs.containsKey(peerID.toString())) {
+			LOG.debug("Send AbortInstruction");
 			RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator,message,peerID);
 			this.currentJobs.put(peerID.toString(), job);
 			job.addListener(listener);
@@ -314,9 +347,11 @@ public class LoadBalancingMessageDispatcher {
 	public void sendAbortResponse(PeerID peerID) {
 		LoadBalancingAbortMessage message = LoadBalancingAbortMessage.createAbortResponseMsg(lbProcessId);
 		try {
+			LOG.debug("Send AbortResponse");
 			peerCommunicator.send(peerID, message);
 		} catch (PeerCommunicationException e) {
-			//Only send once. Will timeout on Master Peer.
+			LOG.error("Error while sending Message:");
+			LOG.error(e.getMessage());
 		}
 	}
 	

@@ -34,10 +34,10 @@ public class InstructionHandler {
 	public static void handleInstruction(LoadBalancingInstructionMessage instruction,
 			PeerID senderPeer) {
 
+		LOG.debug("Got Instruction Message from Peer " + senderPeer);
+		
 		int lbProcessId = instruction.getLoadBalancingProcessId();
 		LoadBalancingMessageDispatcher dispatcher = null;
-		
-		LOG.debug("Got Instruction from " + senderPeer + " LoadBalancing ID:" + lbProcessId);
 		
 		LoadBalancingSlaveStatus status = LoadBalancingStatusCache
 				.getInstance().getSlaveStatus(senderPeer, lbProcessId);
@@ -58,6 +58,8 @@ public class InstructionHandler {
 			// Only react to first INITIATE_LOADBALANCING Message, even if sent
 			// more often.
 			
+			LOG.debug("Got INITIATE_LOADBALANCING");
+			
 			if (status == null) {
 				status = new LoadBalancingSlaveStatus(
 						LoadBalancingSlaveStatus.INVOLVEMENT_TYPES.VOLUNTEERING_PEER,
@@ -65,7 +67,7 @@ public class InstructionHandler {
 						senderPeer, lbProcessId,
 						new LoadBalancingMessageDispatcher(peerCommunicator,
 								session, lbProcessId));
-				LOG.debug("Got INITIATE_LOADBALANCING");
+				
 				
 				
 				if(!LoadBalancingStatusCache.getInstance().storeSlaveStatus(
@@ -80,6 +82,8 @@ public class InstructionHandler {
 		case LoadBalancingInstructionMessage.ADD_QUERY:
 			// Only react if status is not set yet.
 			
+			LOG.debug("Got ADD_QUERY");
+			
 			if(status==null) {
 				LOG.error("Status on Slave Peer is null.");
 				return;
@@ -88,7 +92,8 @@ public class InstructionHandler {
 			if (status.getPhase().equals(
 					LoadBalancingSlaveStatus.LB_PHASES.WAITING_FOR_ADD)) {
 				
-				LOG.debug("Got ADD_QUERY");
+				LOG.debug("PQL received:");
+				LOG.debug(instruction.getPQLQuery());
 				
 				status.setPhase(LoadBalancingSlaveStatus.LB_PHASES.WAITING_FOR_SYNC);
 				dispatcher = status.getMessageDispatcher();
@@ -98,19 +103,19 @@ public class InstructionHandler {
 							.installAndRunQueryPartFromPql(Context.empty(),
 									instruction.getPQLQuery());
 					status.setInstalledQueries(queryIDs);
-					LOG.debug("Sending INSTALL_SUCCESS to "  + senderPeer);
 					dispatcher.sendInstallSuccess(senderPeer);
 				} catch (Exception e) {
-					LOG.error("Error occured. Sending INSTALL_FAILURE to "  + senderPeer);
 					dispatcher.sendInstallFailure(senderPeer);
 				}
 			}
 			break;
 
 		case LoadBalancingInstructionMessage.COPY_RECEIVER:
+			
 			isSender=false;
-			break;
+			//NO BREAK!
 		case LoadBalancingInstructionMessage.COPY_SENDER:
+			LOG.debug("Got COPY_RECEIVER or COPY_SENDER");
 			// Create Status if none exist
 			if (status == null) {
 				status = new LoadBalancingSlaveStatus(
@@ -126,7 +131,7 @@ public class InstructionHandler {
 			if (status.getPhase().equals(
 					LoadBalancingSlaveStatus.LB_PHASES.WAITING_FOR_SYNC)
 					&& !status.isPipeKnown(instruction.getNewPipeId())) {
-				LOG.debug("Got COPY_RECEIVER or COPY_SENDER");
+				
 				
 				LOG.debug("Installing pipe " + instruction.getNewPipeId());
 				
@@ -141,12 +146,15 @@ public class InstructionHandler {
 					dispatcher.sendDuplicateSuccess(senderPeer,
 							instruction.getNewPipeId());
 				} catch (Exception e) {
+					LOG.error("Error while copying JxtaOperator:");
+					LOG.error(e.getMessage());
 					dispatcher.sendDuplicateFailure(senderPeer);
 				}
 			}
 			break;
 
 		case LoadBalancingInstructionMessage.PIPE_SUCCCESS_RECEIVED:
+			LOG.debug("Got PIPE_SUCCESS");
 			if(status==null) {
 				return;
 			}
@@ -155,7 +163,7 @@ public class InstructionHandler {
 			
 		case LoadBalancingInstructionMessage.DELETE_RECEIVER:
 		case LoadBalancingInstructionMessage.DELETE_SENDER:
-			
+			LOG.debug("Got DELETE_SENDER or DELETE_RECEIVER");
 			if(status==null) {
 				return;
 			}
@@ -167,6 +175,7 @@ public class InstructionHandler {
 
 				
 		case LoadBalancingInstructionMessage.MESSAGE_RECEIVED:
+			LOG.debug("Got MESSAGE_RECEIVED");
 			if(status==null) {
 				return;
 			}

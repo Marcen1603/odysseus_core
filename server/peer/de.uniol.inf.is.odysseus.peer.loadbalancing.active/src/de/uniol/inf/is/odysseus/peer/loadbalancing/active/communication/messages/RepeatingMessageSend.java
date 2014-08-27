@@ -45,6 +45,7 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 	}
 	
 	public void notifyListeners() {
+		LOG.error("Notifying listeners");
 		for(IMessageDeliveryFailedListener listener : listeners) {
 			listener.update(message,peerID);
 		}
@@ -63,14 +64,16 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 				warned = true;
 			} else if( sendingTime > ABORT_MILLIS ) {
 				LOG.error("RepeatingMessageThread runs now more than " + ABORT_MILLIS + " ms now. Abort sending message {}", message.getClass().getName());
-				stopRunning();
 				notifyListeners();
+				stopRunning();
+				
 			}
 			
 		} catch (PeerCommunicationException e) {
 			LOG.error("Could not repeatedly send message of type {}", message.getClass().getName(), e);
-			stopRunning();
 			notifyListeners();
+			stopRunning();
+			
 		}
 	}
 	

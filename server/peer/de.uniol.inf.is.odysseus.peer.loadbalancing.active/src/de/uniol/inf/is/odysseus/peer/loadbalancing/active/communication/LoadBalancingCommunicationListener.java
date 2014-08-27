@@ -345,11 +345,12 @@ public class LoadBalancingCommunicationListener implements
 		LoadBalancingMasterStatus status = LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
 		
 		if(status==null) {
+			LOG.debug("Timeout or Failure occured. Current status: null");
 			return;
 		}
 		
-
 		LOG.debug("Timeout or Failure occured. Current status: " + status.getPhase());
+		
 		
 		switch(instruction.getMsgType()){
 			case LoadBalancingInstructionMessage.INITIATE_LOADBALANCING:
