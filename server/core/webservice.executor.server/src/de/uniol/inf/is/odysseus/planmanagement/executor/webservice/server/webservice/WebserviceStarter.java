@@ -51,7 +51,6 @@ public class WebserviceStarter {
 	}
 	
 	
-	@SuppressWarnings("restriction")
 	public static void start(boolean sslClientAuthentification, boolean sslServerAuthentification) {
 		try {
 			Endpoint endpoint = Endpoint.create(new WebserviceServer());
