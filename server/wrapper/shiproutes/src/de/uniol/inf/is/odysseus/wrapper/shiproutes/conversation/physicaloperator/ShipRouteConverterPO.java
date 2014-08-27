@@ -83,7 +83,7 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 						+ "no ShipRoutes, Predictions or ManoeuvrePlans");
 			}
 			break;
-		case SHIPROUTE_TO_IVEF: 
+		case SHIPROUTE_TO_IVEF:
 			if (received.getMetadata("object") instanceof RouteDataItem) {
 				RouteDataItem dataItem = (RouteDataItem) received
 						.getMetadata("object");
@@ -96,7 +96,7 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 				LOG.error("Cannot convert ShipRoute to IVEF, because Datastream contains "
 						+ "no ShipRoutes or ManoeuvrePlans");
 			}
-			
+
 			break;
 		case IEC_TO_ROUTE:
 			if (received.getMetadata("object") instanceof IECRoute) {
@@ -128,6 +128,16 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 						+ "no IEC Elements");
 			}
 			break;
+		case IEC_TO_IVEF:
+			if (received.getMetadata("object") instanceof IECRoute) {
+				IECRoute route = (IECRoute) received.getMetadata("object");
+				ivef = ToIVEFConverterHelper
+						.convertIECToIVEF(route);
+			} else {
+				LOG.error("Cannot convert IEC to IVEF, because Datastream contains "
+						+ "no IEC Elements");
+			}
+			break;
 		default:
 			break;
 		}
@@ -136,7 +146,7 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 			KeyValueObject<? extends IMetaAttribute> next = iec.toMap();
 			next.setMetadata("object", iec);
 			transfer((T) next);
-		} else if (ivef != null){
+		} else if (ivef != null) {
 			KeyValueObject<? extends IMetaAttribute> next = ivef.toMap();
 			next.setMetadata("object", ivef);
 			transfer((T) next);

@@ -14,6 +14,9 @@ import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.PosReport;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.StaticData;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.VesselData;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.Voyage;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECRoute;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECRouteInfo;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECWaypoint;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.manoeuvre.ManoeuvrePlan;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.manoeuvre.ManoeuvrePlanDataItem;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.manoeuvre.ManoeuvrePoint;
@@ -83,7 +86,7 @@ public class ToIVEFConverterHelper {
 			if (receivedRoute.getRoute_ID() != null)
 				voyage.setSource(receivedRoute.getRoute_ID());
 
-			Date eta = new Date(waypoint.getETA());
+			Date eta = new Date(waypoint.getETA() * 1000);
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 			df.setTimeZone(TimeZone.getTimeZone("UTC"));
 			voyage.setETA(df.format(eta));
@@ -159,6 +162,40 @@ public class ToIVEFConverterHelper {
 				voyage.setSourceName(receivedMPlan.getMplan_label());
 			if (receivedMPlan.getMplan_ID() != null)
 				voyage.setSource(receivedMPlan.getMplan_ID());
+			vesselData.addVoyage(voyage);
+
+			body.addVesselData(vesselData);
+		}
+
+		msg_vesselData.setBody(body);
+		return msg_vesselData;
+	}
+
+	@SuppressWarnings("unused")
+	public static MSG_VesselData convertIECToIVEF(IECRoute iecRoute) {
+
+		// Create IVEF Elements
+		MSG_VesselData msg_vesselData = new MSG_VesselData();
+
+		Header header = new Header();
+		msg_vesselData.setHeader(header);
+
+		Body body = new Body();
+
+		// Route Info
+		IECRouteInfo iecRouteInfo = iecRoute.getRouteInfo();
+		
+		// Waypoints
+		for (IECWaypoint iecWaypoint : iecRoute.getWaypoints().getWaypoints()) {
+			VesselData vesselData = new VesselData();
+
+			PosReport posReport = new PosReport();
+			vesselData.setPosReport(posReport);
+
+			StaticData staticData = new StaticData();
+			vesselData.addStaticData(staticData);
+
+			Voyage voyage = new Voyage();
 			vesselData.addVoyage(voyage);
 
 			body.addVesselData(vesselData);

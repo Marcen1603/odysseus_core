@@ -13,26 +13,26 @@ public class ShipRouteConverterAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 1L;
 	private ConversionType conversionType;
 
-	public ShipRouteConverterAO(){
+	public ShipRouteConverterAO() {
 		super();
 	}
 
-	public ShipRouteConverterAO(ShipRouteConverterAO converterAO){ 
+	public ShipRouteConverterAO(ShipRouteConverterAO converterAO) {
 		super(converterAO);
 		this.conversionType = converterAO.getConversionType();
 	}
-	
+
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new ShipRouteConverterAO(this);
 	}
-	
-	@Parameter(name="conversionType", type=EnumParameter.class, isList=false, optional=false, doc="The conversion type between shipRoute messages: ShipRouteToIEC, ManoeuvreToIEC, PredictionToIEC" )
+
+	@Parameter(name = "conversionType", type = EnumParameter.class, isList = false, optional = false, doc = "The conversion type between shipRoute messages: SHIPROUTE_TO_IEC, SHIPROUTE_TO_IVEF, IEC_TO_ROUTE, IEC_TO_MANOEUVRE, IEC_TO_PREDICTION, IEC_TO_IVEF")
 	public void setConversionType(ConversionType conversionType) {
-		this.conversionType = conversionType; 
+		this.conversionType = conversionType;
 	}
 	
-	public ConversionType getConversionType(){
+	public ConversionType getConversionType() {
 		return this.conversionType;
 	}
 
