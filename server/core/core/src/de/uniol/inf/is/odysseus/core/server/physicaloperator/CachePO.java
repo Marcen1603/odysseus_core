@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 
 public class CachePO<R extends IStreamObject<IMetaAttribute>> extends AbstractPipe<R, R> {
@@ -49,6 +50,24 @@ public class CachePO<R extends IStreamObject<IMetaAttribute>> extends AbstractPi
 			}
 			// deliver to all connected;
 			transfer(object);
+		}
+	}
+	
+	@Override
+	protected void process_close() {
+		super.process_close();
+		clearCache();
+	}
+	
+	@Override
+	protected void process_open() throws OpenFailedException {
+		super.process_open();
+		clearCache();
+	}
+
+	private void clearCache() {
+		synchronized( cache ) {
+			cache.clear();
 		}
 	}
 
