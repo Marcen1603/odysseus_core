@@ -40,6 +40,8 @@ public class Activator implements BundleActivator {
 			// start new thread to distribute ddc, because otherwise startup of odysseus 
 			// is blocked by waiting for p2p network
 			DDCDistributeThread ddcDistributeThread = new DDCDistributeThread(ddc);
+			ddcDistributeThread.setName("DDCDistributeThread");
+			ddcDistributeThread.setDaemon(true);
 			ddcDistributeThread.start();
 		}
 	}

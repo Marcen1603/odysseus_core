@@ -9,6 +9,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,12 +38,10 @@ public class DDCAdvertisement extends Advertisement {
 	private static final String OWNER_PEER_ID_TAG = "ownerPeerId";
 	private static final String ADVERTISEMENT_UID = "advertisementUid";
 	private static final String TYPE = "type";
-	private static final String CREATED_DDC_ENTRIES = "createdDDCEntries";
-	private static final String UPDATED_DDC_ENTRIES = "updatedDDCEntries";
-	private static final String DELETED_DDC_ENTRIES = "deletedDDCEntries";
-	private static final String CREATED_DDC_ENTRY = "createdDDCEntry";
-	private static final String UPDATED_DDC_ENTRY = "updatedDDCEntry";
-	private static final String DELETED_DDC_ENTRY = "deletedDDCEntry";
+	private static final String ADDED_DDC_ENTRIES = "addedDDCEntries";
+	private static final String REMOVED_DDC_ENTRIES = "removedDDCEntries";
+	private static final String ADDED_DDC_ENTRY = "addedDDCEntry";
+	private static final String REMOVED_DDC_ENTRY = "removedDDCEntry";
 
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG,
 			OWNER_PEER_ID_TAG, ADVERTISEMENT_UID };
@@ -51,9 +50,8 @@ public class DDCAdvertisement extends Advertisement {
 	private PeerID ownerPeerId;
 	private UUID advertisementUid;
 	private DDCAdvertisementType type;
-	private List<DDCEntry> createdDDCEntires;
-	private List<DDCEntry> updatedDDCEntires;
-	private List<String> deletedDDCEntires;
+	private List<DDCEntry> addedDDCEntires;
+	private List<String[]> removedDDCEntires;
 
 	public DDCAdvertisement() {
 
@@ -97,28 +95,19 @@ public class DDCAdvertisement extends Advertisement {
 		appendElement(doc, ADVERTISEMENT_UID, advertisementUid.toString());
 		appendElement(doc, TYPE, type.toString());
 
-		if (type.equals(DDCAdvertisementType.ddcCreated)
-				|| type.equals(DDCAdvertisementType.ddcUpdated)) {
-			// add created ddc entires
-			if (createdDDCEntires != null && !createdDDCEntires.isEmpty()) {
-				appendListElement(doc, CREATED_DDC_ENTRIES);
-				for (DDCEntry ddcEntry : createdDDCEntires) {
-					appendDDCEntry(doc, CREATED_DDC_ENTRY, ddcEntry);
-				}
+		// add created ddc entires
+		if (addedDDCEntires != null && !addedDDCEntires.isEmpty()) {
+			appendListElement(doc, ADDED_DDC_ENTRIES);
+			for (DDCEntry ddcEntry : addedDDCEntires) {
+				appendDDCEntry(doc, ADDED_DDC_ENTRY, ddcEntry);
 			}
 		}
-		if (type.equals(DDCAdvertisementType.ddcUpdated)) {
-			// add updated and deleted enties
-			if (updatedDDCEntires != null && !updatedDDCEntires.isEmpty()) {
-				appendListElement(doc, UPDATED_DDC_ENTRIES);
-				for (DDCEntry ddcEntry : updatedDDCEntires) {
-					appendDDCEntry(doc, UPDATED_DDC_ENTRY, ddcEntry);
-				}
-			}
-			if (deletedDDCEntires != null && !deletedDDCEntires.isEmpty()) {
-				appendListElement(doc, DELETED_DDC_ENTRIES);
-				for (String ddcEntryKey : deletedDDCEntires) {
-					appendDeletedDDCEntry(doc, DELETED_DDC_ENTRY, ddcEntryKey);
+
+		if (type.equals(DDCAdvertisementType.changeDistribution)) {
+			if (removedDDCEntires != null && !removedDDCEntires.isEmpty()) {
+				appendListElement(doc, REMOVED_DDC_ENTRIES);
+				for (String[] ddcEntryKey : removedDDCEntires) {
+					appendDeletedDDCEntry(doc, REMOVED_DDC_ENTRY, ddcEntryKey);
 				}
 			}
 		}
@@ -140,7 +129,7 @@ public class DDCAdvertisement extends Advertisement {
 		final Element baseDDCElement = appendTo.createElement(tag);
 
 		final Element keyDDCElement = appendTo.createElement("multiKey",
-				ddcEntry.getKey());
+				StringUtils.join(ddcEntry.getKey(), ","));
 		baseDDCElement.appendChild(keyDDCElement);
 		final Element valueDDCElement = appendTo.createElement("value",
 				ddcEntry.getValue());
@@ -155,11 +144,11 @@ public class DDCAdvertisement extends Advertisement {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Element appendDeletedDDCEntry(StructuredDocument appendTo,
-			String tag, String ddcEntryKey) {
+			String tag, String[] ddcEntryKey) {
 		final Element baseDDCElement = appendTo.createElement(tag);
 
 		final Element keyDDCElement = appendTo.createElement("multiKey",
-				ddcEntryKey);
+				StringUtils.join(ddcEntryKey, ","));
 		baseDDCElement.appendChild(keyDDCElement);
 
 		appendTo.appendChild(baseDDCElement);
@@ -187,31 +176,49 @@ public class DDCAdvertisement extends Advertisement {
 				setDDCAdvertisementUid(UUID.fromString(elem.getTextValue()));
 			} else if (elem.getName().equals(TYPE)) {
 				setType(DDCAdvertisementType.parse(elem.getTextValue()));
-			} else if (elem.getName().equals(CREATED_DDC_ENTRIES)) {
+			} else if (elem.getName().equals(ADDED_DDC_ENTRIES)) {
 				Enumeration<?> children = elem.getChildren();
 				while (children.hasMoreElements()) {
 					final TextElement<?> child = (TextElement<?>) children
 							.nextElement();
-					if (child.getName().equals(CREATED_DDC_ENTRY)) {
-						// TODO Create DDC
+					if (child.getName().equals(ADDED_DDC_ENTRY)) {
+						Enumeration<?> ddcChildren = child.getChildren();
+						String[] key = null;
+						String value = "";
+						long ts = 0;
+
+						while (ddcChildren.hasMoreElements()) {
+							final TextElement<?> ddcChild = (TextElement<?>) ddcChildren
+									.nextElement();
+							if (ddcChild.getName().equals("multiKey")) {
+								key = ddcChild.getValue().split(",");
+							} else if (ddcChild.getName().equals("value")) {
+								value = ddcChild.getValue();
+							} else if (ddcChild.getName().equals("ts")) {
+								ts = Long.parseLong(ddcChild.getValue());
+							}
+						}
+
+						DDCEntry entry = new DDCEntry(key, value, ts);
+						addedDDCEntires.add(entry);
 					}
 				}
-			} else if (elem.getName().equals(UPDATED_DDC_ENTRIES)) {
+			} else if (elem.getName().equals(REMOVED_DDC_ENTRIES)) {
 				Enumeration<?> children = elem.getChildren();
 				while (children.hasMoreElements()) {
 					final TextElement<?> child = (TextElement<?>) children
 							.nextElement();
-					if (child.getName().equals(UPDATED_DDC_ENTRY)) {
-						// TODO Create DDC
-					}
-				}
-			} else if (elem.getName().equals(DELETED_DDC_ENTRIES)) {
-				Enumeration<?> children = elem.getChildren();
-				while (children.hasMoreElements()) {
-					final TextElement<?> child = (TextElement<?>) children
-							.nextElement();
-					if (child.getName().equals(DELETED_DDC_ENTRY)) {
-						// TODO Create String
+					if (child.getName().equals(REMOVED_DDC_ENTRY)) {
+						Enumeration<?> ddcChildren = child.getChildren();
+
+						while (ddcChildren.hasMoreElements()) {
+							final TextElement<?> ddcChild = (TextElement<?>) ddcChildren
+									.nextElement();
+							if (ddcChild.getName().equals("multiKey")) {
+								removedDDCEntires.add(ddcChild.getValue()
+										.split(","));
+							}
+						}
 					}
 				}
 			}
@@ -298,34 +305,24 @@ public class DDCAdvertisement extends Advertisement {
 		this.type = type;
 	}
 
-	public List<DDCEntry> getCreatedDDCEntires() {
-		return createdDDCEntires;
+	public List<DDCEntry> getAddedDDCEntires() {
+		return addedDDCEntires;
 	}
 
-	public void addCreatedEntry(DDCEntry ddcEntry) {
-		if (createdDDCEntires == null)
-			createdDDCEntires = new ArrayList<DDCEntry>();
-		createdDDCEntires.add(ddcEntry);
+	public void addAddedEntry(DDCEntry ddcEntry) {
+		if (addedDDCEntires == null)
+			addedDDCEntires = new ArrayList<DDCEntry>();
+		addedDDCEntires.add(ddcEntry);
 	}
 
-	public List<DDCEntry> getUpdatedDDCEntires() {
-		return updatedDDCEntires;
+	public List<String[]> getRemovedDDCEntires() {
+		return removedDDCEntires;
 	}
 
-	public void addUpdatedEntry(DDCEntry ddcEntry) {
-		if (updatedDDCEntires == null)
-			updatedDDCEntires = new ArrayList<DDCEntry>();
-		updatedDDCEntires.add(ddcEntry);
-	}
-
-	public List<String> getDeletedDDCEntires() {
-		return deletedDDCEntires;
-	}
-
-	public void addUpdatedEntry(String ddcEntryKey) {
-		if (deletedDDCEntires == null)
-			deletedDDCEntires = new ArrayList<String>();
-		deletedDDCEntires.add(ddcEntryKey);
+	public void addRemovedEntry(String[] ddcEntryKey) {
+		if (removedDDCEntires == null)
+			removedDDCEntires = new ArrayList<String[]>();
+		removedDDCEntires.add(ddcEntryKey);
 	}
 
 }

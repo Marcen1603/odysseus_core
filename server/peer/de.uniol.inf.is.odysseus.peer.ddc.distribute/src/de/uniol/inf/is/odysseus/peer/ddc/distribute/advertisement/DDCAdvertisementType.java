@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement;
 
 
 public enum DDCAdvertisementType {
-	ddcCreated,
-	ddcUpdated;
+	initialDistribution,
+	changeDistribution;
 
 	public static DDCAdvertisementType parse(String textValue) {
 		for (DDCAdvertisementType ddcAdvertisementType : DDCAdvertisementType.class.getEnumConstants()) {

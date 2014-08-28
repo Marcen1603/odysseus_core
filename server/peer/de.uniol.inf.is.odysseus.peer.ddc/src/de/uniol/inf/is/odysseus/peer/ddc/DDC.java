@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.peer.ddc;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,6 +60,11 @@ public class DDC {
 	 */
 	private Map<String[], DDCEntry> mEntries = Collections
 			.synchronizedMap(new HashMap<String[], DDCEntry>());
+	
+	/**
+	 * List of DDC listeners
+	 */
+	private List<IDDCListener> listeners = new ArrayList<IDDCListener>();
 
 	/**
 	 * Empty default constructor.
@@ -92,9 +99,12 @@ public class DDC {
 
 		// complete new or newer entry (ts)
 		synchronized (this.mEntries) {
-
+			
 			this.mEntries.put(entry.getKey(), entry);
 
+			for (IDDCListener listener : listeners) {
+				listener.ddcEntryAdded(entry);
+			}
 		}
 
 		DDC.LOG.debug("Added {} to the DDC.", entry);
@@ -300,6 +310,10 @@ public class DDC {
 		if (optEntry.isPresent()) {
 
 			DDC.LOG.debug("Removed {} from DDC.", optEntry.get());
+			
+			for (IDDCListener listener : listeners) {
+				listener.ddcEntryRemoved(optEntry.get());
+			}
 
 		} else {
 
@@ -326,4 +340,13 @@ public class DDC {
 
 	}
 
+	
+	public void addListener(IDDCListener listener){
+		listeners.add(listener);
+	}
+	
+	public void removeListener(IDDCListener listener){
+		listeners.remove(listener);
+	}
+	
 }
