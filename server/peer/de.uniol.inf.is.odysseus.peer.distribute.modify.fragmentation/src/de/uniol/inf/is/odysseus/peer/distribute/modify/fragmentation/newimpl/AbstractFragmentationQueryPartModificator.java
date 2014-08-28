@@ -195,12 +195,14 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 								operator, fragmentOrReunionOperator)) {
 
 					avoidedParts.addAll(bundle.getCopyMap().get(part));
+					break;
 
 				} else if (!fragmentOperator
 						&& AbstractFragmentationHelper.isOperatorAbove(
 								fragmentOrReunionOperator, operator)) {
 
 					avoidedParts.addAll(bundle.getCopyMap().get(part));
+					break;
 
 				}
 
@@ -234,15 +236,21 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		Preconditions.checkNotNull(bundle.getCopyMap(),
 				"Copy map must be not null!");
 
-		Collection<ILogicalQueryPart> resultingParts = Lists.newArrayList();
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> avoidedMap = Maps.newHashMap();
 
-		for (ILogicalQueryPart originalPart : bundle.getCopyMap().keySet()) {
+		for (ILogicalQueryPart originalPart : bundle
+				.getCopyMap()
+				.keySet()
+				.toArray(
+						new ILogicalQueryPart[bundle.getCopyMap().keySet()
+								.size()])) {
 
 			for (ILogicalQueryPart copiedPart : bundle.getCopyMap().get(
 					originalPart)) {
 
-				Collection<ILogicalQueryPart> avoidedParts = bundle
-						.getCopyMap().get(originalPart);
+				Collection<ILogicalQueryPart> avoidedParts = Lists
+						.newArrayList();
+				avoidedParts.addAll(bundle.getCopyMap().get(originalPart));
 				avoidedParts.remove(copiedPart);
 
 				for (ILogicalOperator fragmentOperator : bundle
@@ -250,10 +258,19 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 					if (copiedPart.contains(fragmentOperator)) {
 
-						avoidedParts
-								.addAll(AbstractFragmentationQueryPartModificator
-										.setFragmentsToAvoid(originalPart,
-												fragmentOperator, bundle, true));
+						Collection<ILogicalQueryPart> parts = AbstractFragmentationQueryPartModificator
+								.setFragmentsToAvoid(originalPart,
+										fragmentOperator, bundle, true);
+
+						for (ILogicalQueryPart part : parts) {
+
+							if (!avoidedParts.contains(part)) {
+
+								avoidedParts.add(part);
+
+							}
+
+						}
 
 					}
 
@@ -264,16 +281,25 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 					if (copiedPart.contains(reunionOperator)) {
 
-						avoidedParts
-								.addAll(AbstractFragmentationQueryPartModificator
-										.setFragmentsToAvoid(originalPart,
-												reunionOperator, bundle, false));
+						Collection<ILogicalQueryPart> parts = AbstractFragmentationQueryPartModificator
+								.setFragmentsToAvoid(originalPart,
+										reunionOperator, bundle, false);
+
+						for (ILogicalQueryPart part : parts) {
+
+							if (!avoidedParts.contains(part)) {
+
+								avoidedParts.add(part);
+
+							}
+
+						}
 
 					}
 
 				}
 
-				resultingParts.add(copiedPart);
+				avoidedMap.put(copiedPart, avoidedParts);
 				AbstractFragmentationQueryPartModificator.LOG.debug(
 						"Set avoided parts for {}: {}", copiedPart,
 						avoidedParts);
@@ -282,7 +308,12 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 		}
 
-		return resultingParts;
+		for(ILogicalQueryPart part : avoidedMap.keySet().toArray(new ILogicalQueryPart[avoidedMap.keySet().size()])) {
+			
+			part.addAvoidingQueryParts(avoidedMap.get(part));
+			
+		}
+		return avoidedMap.keySet();
 
 	}
 
@@ -512,7 +543,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 		} else {
 
-			copiedTargets.addAll(AbstractFragmentationHelper.findCopies(originalTarget, bundle.getCopyMap()));
+			copiedTargets.addAll(AbstractFragmentationHelper.findCopies(
+					originalTarget, bundle.getCopyMap()));
 
 		}
 
@@ -592,6 +624,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				// Need to fragment
 				ILogicalOperator fragmentOperator = this
 						.insertFragmentOperator(copiedSources, copiedTargets
+								.iterator().next(), partOfOriginalTarget, partsOfCopiedTarget
 								.iterator().next(), subscription, bundle);
 				bundle.addFragmentOperator(fragmentOperator);
 				AbstractFragmentationQueryPartModificator.LOG
@@ -716,6 +749,13 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				.get(originalPart);
 		Optional<LogicalSubscription> subscription = Optional.absent();
 
+		if (copiedSinks.size() == 1) {
+
+			// Nothing to do
+			return;
+
+		}
+
 		if (helper.needSpecialHandlingForQueryPart(originalPart, this, helper)) {
 
 			this.processSpecialHandling(copiedSources, copiedSinks,
@@ -799,6 +839,9 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *            The given copies of a relative source.
 	 * @param copiedTarget
 	 *            The given target.
+	 *            @param partOfOriginalTarget The query part of the original target.
+	 * @param partOfCopiedTarget
+	 *            The query part of the given target
 	 * @param subscription
 	 *            The original subscription between the original target and the
 	 *            original relative source.
@@ -812,8 +855,10 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 */
 	protected ILogicalOperator insertFragmentOperator(
 			Collection<ILogicalOperator> copiedSources,
-			ILogicalOperator copiedTarget, LogicalSubscription subscription,
-			FragmentationInfoBundle bundle)
+			ILogicalOperator copiedTarget,
+			ILogicalQueryPart partOfOriginalTarget,
+			ILogicalQueryPart partOfCopiedTarget,
+			LogicalSubscription subscription, FragmentationInfoBundle bundle)
 			throws QueryPartModificationException {
 
 		Preconditions.checkNotNull(subscription,
@@ -822,6 +867,10 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				"Copied logical sources must be not null!");
 		Preconditions.checkNotNull(copiedTarget,
 				"Copied logical target must be not null!");
+		Preconditions.checkNotNull(partOfOriginalTarget,
+				"Part of original logical target must be not null!");
+		Preconditions.checkNotNull(partOfCopiedTarget,
+				"Part of copied logical target must be not null!");
 		Preconditions.checkNotNull(bundle,
 				"Fragmentation info bundle must be not null!");
 		Preconditions.checkNotNull(bundle.getCopyMap(),
@@ -842,14 +891,21 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 		}
 
-		// Create the query part for the operator for fragmentation
-		ILogicalQueryPart fragmentationPart = new LogicalQueryPart(
-				fragmentOperator);
-		Collection<ILogicalQueryPart> copiesOfFragmentationPart = Lists
-				.newArrayList(fragmentationPart);
+		// Subscribe the fragment operator for fragmentation to the target
+		fragmentOperator.subscribeToSource(copiedTarget, 0,
+				subscription.getSourceOutPort(), subscription.getSchema());
+
+		// Change the query part for the operator for fragmentation
+		Collection<ILogicalOperator> operatorsWithFragment = Lists
+				.newArrayList(partOfCopiedTarget.getOperators());
+		operatorsWithFragment.add(fragmentOperator);
+		Collection<ILogicalQueryPart> modifiedQueryParts = Lists.newArrayList();
+		ILogicalQueryPart fragmentPart = new LogicalQueryPart(
+				operatorsWithFragment);
+		modifiedQueryParts.add(fragmentPart);
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyMap = bundle
 				.getCopyMap();
-		copyMap.put(fragmentationPart, copiesOfFragmentationPart);
+		copyMap.put(partOfOriginalTarget, modifiedQueryParts);
 		bundle.setCopyMap(copyMap);
 
 		return fragmentOperator;
@@ -931,7 +987,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyMap = bundle
 				.getCopyMap();
 
-		if (copiedTargets.size() == 1 && partOfOriginalSource.isPresent()
+		if (copiedSource.isPresent() && partOfOriginalSource.isPresent()
 				&& partOfCopiedSource.isPresent()) {
 
 			// Create modified query part
@@ -1083,9 +1139,18 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				"State of fragmentation after making copies:\n{}", bundle);
 
 		// Process each query part
-		for (ILogicalQueryPart part : bundle.getCopyMap().keySet()) {
+		// Need of an array to iterate over due to possible changes of the copy
+		// map
+		for (ILogicalQueryPart part : bundle
+				.getCopyMap()
+				.keySet()
+				.toArray(
+						new ILogicalQueryPart[bundle.getCopyMap().keySet()
+								.size()])) {
 
 			this.modify(part, helper, bundle);
+			AbstractFragmentationQueryPartModificator.LOG.debug(
+					"State of fragmentation after processing {}:\n{}", part, bundle);
 
 		}
 

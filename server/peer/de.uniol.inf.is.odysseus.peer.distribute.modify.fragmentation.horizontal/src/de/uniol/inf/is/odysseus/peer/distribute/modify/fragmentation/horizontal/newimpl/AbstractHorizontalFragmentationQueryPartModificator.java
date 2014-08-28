@@ -75,8 +75,9 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator
 		if (copiedSources.size() > 1 && subscription.isPresent()) {
 
 			ILogicalOperator fragmentOperator = this.insertFragmentOperator(
-					copiedTargets, copiedSources.iterator().next(),
-					subscription.get(), bundle);
+					copiedSources, copiedTargets.iterator().next(), partOfOriginalTarget,
+					partsOfCopiedTargets.iterator().next(), subscription.get(),
+					bundle);
 			fragmentOperator.unsubscribeFromAllSources();
 			optFragmentOperator = Optional.of(fragmentOperator);
 
@@ -90,16 +91,31 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator
 					.next());
 
 		}
-		ILogicalOperator reunionOperator = this.insertReunionOperator(
-				optFragmentOperator, copiedTargets, subscription,
-				partOfOriginalSource, optPartOfCopiedSource, bundle);
+		Optional<ILogicalOperator> source = Optional.of(copiedSources
+				.iterator().next());
+		if (optFragmentOperator.isPresent()) {
+
+			source = optFragmentOperator;
+
+		}
+		ILogicalOperator reunionOperator = this.insertReunionOperator(source,
+				copiedTargets, subscription, partOfOriginalSource,
+				optPartOfCopiedSource, bundle);
 		reunionOperator.unsubscribeFromAllSinks();
 
 		// Determine query part of the reunion operator (and fragment operator,
 		// if given)
-		ILogicalQueryPart partOfReunionOperator = LogicalQueryHelper
-				.determineQueryPart(bundle.getCopyMap().keySet(),
-						reunionOperator).get();
+		ILogicalQueryPart partOfReunionOperator;
+		if (partOfOriginalSource.isPresent()) {
+
+			partOfReunionOperator = partOfOriginalSource.get();
+
+		} else {
+
+			partOfReunionOperator = LogicalQueryHelper.determineQueryPart(
+					bundle.getCopyMap().keySet(), reunionOperator).get();
+
+		}
 		Collection<ILogicalQueryPart> copiedPartsOfReunionOperator = bundle
 				.getCopyMap().get(partOfReunionOperator);
 
@@ -114,7 +130,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator
 
 			for (IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator> rule : rules) {
 				// XXX Assuming exact one rule: the rule for aggregations
-				
+
 				if (!rule.needSpecialHandlingForQueryPart(partOfOriginalTarget,
 						operator, helper)) {
 
@@ -133,11 +149,20 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator
 					specialOperator.subscribeSink(optFragmentOperator.get(), 0,
 							0, reunionOperator.getOutputSchema());
 
+				} else {
+					
+					int sinkInPort = 0;
+					if(subscription.isPresent()) {
+						
+						sinkInPort = subscription.get().getSourceOutPort();
+						
+					}
+					specialOperator.subscribeSink(copiedSources.iterator().next(), 0, sinkInPort, reunionOperator.getOutputSchema());
+					
 				}
 
 				// Add the aggregation to the reunion query part
-				copyMap.remove(partOfReunionOperator);
-				partOfReunionOperator.addOperator(specialOperator);				
+				copiedPartsOfReunionOperator.iterator().next().addOperator(specialOperator);
 				break;
 
 			}

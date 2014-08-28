@@ -357,11 +357,14 @@ public abstract class AbstractFragmentationHelper {
 
 		for (ILogicalOperator source : sources) {
 
-			for (ILogicalOperator target : targets)
-				source.subscribeSink(target,
+			for (ILogicalOperator target : targets) {
+
+				source.subscribeToSource(target,
 						originSubscription.getSinkInPort(),
 						originSubscription.getSourceOutPort(),
 						originSubscription.getSchema());
+
+			}
 
 		}
 
