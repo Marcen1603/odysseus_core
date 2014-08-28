@@ -119,7 +119,7 @@ public class Variable implements IExpression<Object> {
 
 	@Override
 	public String toString() {
-		return value==null?identifier: identifier + "[ " + value + " ]";
+		return identifier;
 	}
 
 	@Override
