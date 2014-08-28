@@ -19,6 +19,10 @@ public class PublishJob implements IJxtaJob {
 	
 	@Override
 	public void execute() throws Exception {
-		service.publish(adv, lifetime, expiration);
+		try {
+			service.publish(adv, lifetime, expiration);
+		} catch( Throwable t ) {
+			throw new Exception("Could not publish advertisement " + adv.getClass().getSimpleName(), t);
+		}
 	}
 }
