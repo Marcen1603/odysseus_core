@@ -177,8 +177,10 @@ public class InstructionHandler {
 		case LoadBalancingInstructionMessage.MESSAGE_RECEIVED:
 			LOG.debug("Got MESSAGE_RECEIVED");
 			if(status==null) {
+				
 				return;
 			}
+			
 			status.getMessageDispatcher().stopAllMessages();
 			break;
 		}

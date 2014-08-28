@@ -155,6 +155,7 @@ public class LoadBalancingResponseMessage implements IMessage {
 		switch(msgType) {
 			
 		case SUCCESS_DUPLICATE:
+		case SYNC_FINISHED:
 			
 			int pipeIdSize = bb.getInt();
 			byte[] pipeIdBytes = new byte[pipeIdSize];

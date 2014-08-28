@@ -305,7 +305,7 @@ public class LoadBalancingMessageDispatcher {
 	 */
 	public void sendSyncFinished(PeerID initiatingPeer, String pipeId) {
 
-		LOG.debug("Send SyncFinished");
+		LOG.debug("Send SyncFinished for pipeID " + pipeId);
 		LoadBalancingResponseMessage message = LoadBalancingResponseMessage.createSyncFinishedMsg(lbProcessId, pipeId);
 		if(this.currentJobs==null) {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
@@ -330,7 +330,7 @@ public class LoadBalancingMessageDispatcher {
 		if(this.currentJobs==null) {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
 		}
-		if(!this.currentJobs.containsKey(peerID.toString())) {
+		if((this.currentJobs!=null) && !this.currentJobs.containsKey(peerID.toString())) {
 			LOG.debug("Send AbortInstruction");
 			RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator,message,peerID);
 			this.currentJobs.put(peerID.toString(), job);

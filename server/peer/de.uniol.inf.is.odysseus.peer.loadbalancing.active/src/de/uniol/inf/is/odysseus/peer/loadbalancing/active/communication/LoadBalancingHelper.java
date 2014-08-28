@@ -695,7 +695,7 @@ public class LoadBalancingHelper {
 						physicalCopy.getOwner());
 
 				physicalOriginal.unblock();
-				
+				synchronizer.startSynchronizing();
 				LOG.debug("Installed additional Receiver with PeerID " + physicalCopy.getPeerIDString() + " and PipeID " + physicalCopy.getPipeIDString());
 			}
 			

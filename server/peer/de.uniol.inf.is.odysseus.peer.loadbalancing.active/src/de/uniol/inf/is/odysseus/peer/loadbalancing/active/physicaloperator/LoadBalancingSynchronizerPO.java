@@ -15,7 +15,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -36,11 +35,6 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	 */
 	private static final Logger log = LoggerFactory
 			.getLogger(LoadBalancingSynchronizerPO.class);
-
-	/**
-	 * /** Maximum number of input ports.
-	 */
-	private static final int MAX_NUMBER_OF_PORTS = 2;
 
 	/**
 	 * The index of the input port reading the "old" data stream.
@@ -236,21 +230,6 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 
 	}
 
-	@Override
-	protected void newSourceSubscribed(
-			PhysicalSubscription<ISource<? extends T>> sub) {
-
-		Preconditions
-				.checkArgument(
-						this.getInputPortCount() > LoadBalancingSynchronizerPO.MAX_NUMBER_OF_PORTS,
-						"Invalid amount of input ports: {}",
-						LoadBalancingSynchronizerPO.MAX_NUMBER_OF_PORTS);
-
-		this.startTime = System.currentTimeMillis();
-		this.state = SyncState.synchronizing;
-
-	}
-
 	/**
 	 * Finishes the synchronization by doing the following steps: <br />
 	 * - switch {@link #transferPort} - call
@@ -291,16 +270,16 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	@Override
 	protected void process_next(T object, int port) {
 		
-		LoadBalancingSynchronizerPO.log.debug(
-				"Input: {} from input port {}", object, port);
+		//LoadBalancingSynchronizerPO.log.debug(
+		// 	"Input: {} from input port {}", object, port);
 		
 		final PointInTime newTS = object.getMetadata().getStart();
 
 		if (port == this.transferPort && (!this.state.equals(SyncState.timeordering) || this.checkTimeOrder(newTS))) {
 
 			this.transfer(object);
-			LoadBalancingSynchronizerPO.log.debug(
-					"Transfered {} from input port {}", object, port);
+			//LoadBalancingSynchronizerPO.log.debug(
+				///	"Transfered {} from input port {}", object, port);
 
 		} 
 		
@@ -387,6 +366,15 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 
 		this.sendPunctuation(punctuation);
 
+	}
+	
+	public void startSynchronizing() {
+		this.startTime = System.currentTimeMillis();
+		this.state = SyncState.synchronizing;
+	}
+	
+	public void stopSynchronizing() {
+		this.state = SyncState.notsynchronizing;
 	}
 
 	@Override

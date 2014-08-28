@@ -14,6 +14,11 @@ import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 public class RepeatingMessageSend extends RepeatingJobThread {
 	
 	ArrayList<IMessageDeliveryFailedListener> listeners;
+	
+	/**
+	 * Only used for Debug purpose. No Message is sent. Timeout is called instantly.
+	 */
+	public boolean TEST_TIMEOUT = false;
 
 	private static final Logger LOG = LoggerFactory.getLogger(RepeatingMessageSend.class);
 	private static final int WARNING_TIME_INTERVAL_MILLIS = 30 * 1000;
@@ -54,6 +59,12 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 	@Override
 	public void doJob() {
 		try {
+			if(TEST_TIMEOUT) {
+				LOG.error("TEST_TIMEOUT activated.");
+				notifyListeners();
+				stopRunning();
+				return;
+			}
 			LOG.debug("Retrying sending message of type '{}'", message.getClass().getName());
 			
 			communicator.send(peerID, message);
