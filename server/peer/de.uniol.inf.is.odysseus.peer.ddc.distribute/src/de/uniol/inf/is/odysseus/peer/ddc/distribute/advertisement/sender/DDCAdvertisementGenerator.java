@@ -71,7 +71,7 @@ public class DDCAdvertisementGenerator implements IDDCListener {
 					// do nothing
 				}
 			}
-			
+			ddcChanges.clear();
 			return ddcAdvertisement;
 		}
 		return null;

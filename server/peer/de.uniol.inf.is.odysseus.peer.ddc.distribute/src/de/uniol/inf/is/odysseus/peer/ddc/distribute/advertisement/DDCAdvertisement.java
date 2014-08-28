@@ -38,10 +38,11 @@ public class DDCAdvertisement extends Advertisement {
 	private static final String OWNER_PEER_ID_TAG = "ownerPeerId";
 	private static final String ADVERTISEMENT_UID = "advertisementUid";
 	private static final String TYPE = "type";
-	private static final String ADDED_DDC_ENTRIES = "addedDDCEntries";
-	private static final String REMOVED_DDC_ENTRIES = "removedDDCEntries";
 	private static final String ADDED_DDC_ENTRY = "addedDDCEntry";
 	private static final String REMOVED_DDC_ENTRY = "removedDDCEntry";
+	private static final String TS = "ts";
+	private static final String VALUE = "value";
+	private static final String MULTI_KEY = "multiKey";
 
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG,
 			OWNER_PEER_ID_TAG, ADVERTISEMENT_UID };
@@ -97,7 +98,6 @@ public class DDCAdvertisement extends Advertisement {
 
 		// add created ddc entires
 		if (addedDDCEntires != null && !addedDDCEntires.isEmpty()) {
-			appendListElement(doc, ADDED_DDC_ENTRIES);
 			for (DDCEntry ddcEntry : addedDDCEntires) {
 				appendDDCEntry(doc, ADDED_DDC_ENTRY, ddcEntry);
 			}
@@ -105,7 +105,6 @@ public class DDCAdvertisement extends Advertisement {
 
 		if (type.equals(DDCAdvertisementType.changeDistribution)) {
 			if (removedDDCEntires != null && !removedDDCEntires.isEmpty()) {
-				appendListElement(doc, REMOVED_DDC_ENTRIES);
 				for (String[] ddcEntryKey : removedDDCEntires) {
 					appendDeletedDDCEntry(doc, REMOVED_DDC_ENTRY, ddcEntryKey);
 				}
@@ -118,7 +117,7 @@ public class DDCAdvertisement extends Advertisement {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Element appendElement(StructuredDocument appendTo,
 			String tag, String value) {
-		final Element createElement = appendTo.createElement(tag, value);
+		Element createElement = appendTo.createElement(tag, value);
 		appendTo.appendChild(createElement);
 		return createElement;
 	}
@@ -126,41 +125,33 @@ public class DDCAdvertisement extends Advertisement {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Element appendDDCEntry(StructuredDocument appendTo,
 			String tag, DDCEntry ddcEntry) {
-		final Element baseDDCElement = appendTo.createElement(tag);
+		Element baseDDCElement = appendTo.createElement(tag);
+		appendTo.appendChild(baseDDCElement);
 
-		final Element keyDDCElement = appendTo.createElement("multiKey",
+		Element keyDDCElement = appendTo.createElement(MULTI_KEY,
 				StringUtils.join(ddcEntry.getKey(), ","));
 		baseDDCElement.appendChild(keyDDCElement);
-		final Element valueDDCElement = appendTo.createElement("value",
+		Element valueDDCElement = appendTo.createElement(VALUE,
 				ddcEntry.getValue());
 		baseDDCElement.appendChild(valueDDCElement);
-		final Element tsDDCElement = appendTo.createElement("ts",
-				ddcEntry.getTimeStamp());
+		Element tsDDCElement = appendTo.createElement(TS,
+				String.valueOf(ddcEntry.getTimeStamp()));
 		baseDDCElement.appendChild(tsDDCElement);
 
-		appendTo.appendChild(baseDDCElement);
 		return baseDDCElement;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Element appendDeletedDDCEntry(StructuredDocument appendTo,
 			String tag, String[] ddcEntryKey) {
-		final Element baseDDCElement = appendTo.createElement(tag);
+		Element baseDDCElement = appendTo.createElement(tag);
+		appendTo.appendChild(baseDDCElement);
 
-		final Element keyDDCElement = appendTo.createElement("multiKey",
+		Element keyDDCElement = appendTo.createElement(MULTI_KEY,
 				StringUtils.join(ddcEntryKey, ","));
 		baseDDCElement.appendChild(keyDDCElement);
 
-		appendTo.appendChild(baseDDCElement);
 		return baseDDCElement;
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static Element appendListElement(StructuredDocument appendTo,
-			String tag) {
-		final Element createElement = appendTo.createElement(tag);
-		appendTo.appendChild(createElement);
-		return createElement;
 	}
 
 	private void determineFields(TextElement<?> root) {
@@ -176,49 +167,33 @@ public class DDCAdvertisement extends Advertisement {
 				setDDCAdvertisementUid(UUID.fromString(elem.getTextValue()));
 			} else if (elem.getName().equals(TYPE)) {
 				setType(DDCAdvertisementType.parse(elem.getTextValue()));
-			} else if (elem.getName().equals(ADDED_DDC_ENTRIES)) {
+			} else if (elem.getName().equals(ADDED_DDC_ENTRY)) {
 				Enumeration<?> children = elem.getChildren();
+				String[] key = null;
+				String value = "";
+				long ts = 0;
+
 				while (children.hasMoreElements()) {
 					final TextElement<?> child = (TextElement<?>) children
 							.nextElement();
-					if (child.getName().equals(ADDED_DDC_ENTRY)) {
-						Enumeration<?> ddcChildren = child.getChildren();
-						String[] key = null;
-						String value = "";
-						long ts = 0;
 
-						while (ddcChildren.hasMoreElements()) {
-							final TextElement<?> ddcChild = (TextElement<?>) ddcChildren
-									.nextElement();
-							if (ddcChild.getName().equals("multiKey")) {
-								key = ddcChild.getValue().split(",");
-							} else if (ddcChild.getName().equals("value")) {
-								value = ddcChild.getValue();
-							} else if (ddcChild.getName().equals("ts")) {
-								ts = Long.parseLong(ddcChild.getValue());
-							}
-						}
-
-						DDCEntry entry = new DDCEntry(key, value, ts);
-						addedDDCEntires.add(entry);
+					if (child.getName().equals(MULTI_KEY)) {
+						key = child.getValue().split(",");
+					} else if (child.getName().equals(VALUE)) {
+						value = child.getValue();
+					} else if (child.getName().equals(TS)) {
+						ts = Long.parseLong(child.getValue());
 					}
 				}
-			} else if (elem.getName().equals(REMOVED_DDC_ENTRIES)) {
+				DDCEntry entry = new DDCEntry(key, value, ts);
+				addAddedEntry(entry);
+			} else if (elem.getName().equals(REMOVED_DDC_ENTRY)) {
 				Enumeration<?> children = elem.getChildren();
 				while (children.hasMoreElements()) {
 					final TextElement<?> child = (TextElement<?>) children
 							.nextElement();
-					if (child.getName().equals(REMOVED_DDC_ENTRY)) {
-						Enumeration<?> ddcChildren = child.getChildren();
-
-						while (ddcChildren.hasMoreElements()) {
-							final TextElement<?> ddcChild = (TextElement<?>) ddcChildren
-									.nextElement();
-							if (ddcChild.getName().equals("multiKey")) {
-								removedDDCEntires.add(ddcChild.getValue()
-										.split(","));
-							}
-						}
+					if (child.getName().equals(MULTI_KEY)) {
+						addRemovedEntry(child.getValue().split(","));
 					}
 				}
 			}
