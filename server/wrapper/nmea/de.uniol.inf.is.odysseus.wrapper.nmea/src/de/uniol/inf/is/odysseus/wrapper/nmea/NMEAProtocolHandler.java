@@ -184,11 +184,15 @@ public class NMEAProtocolHandler extends
 				this.aishandler.resetDecodedAISMessage();
 			}
 			//else return null;
-			//Send original AIS sentence:
-			Map<String, Object> originalEvent = sentence.toMap();
-			KeyValueObject<? extends IMetaAttribute> originalAIS = new KeyValueObject<>(originalEvent);
-			originalAIS.setMetadata("originalNMEA", sentence);
-			getTransfer().transfer(originalAIS);
+			//Send original AIS sentence, right now we can send it only if we work with GenericPush wrapper because the transfer will be set,
+			//Otherwise (GenericPull: File), the original AIS sentence will not be sent  
+			//because the transformation is done via setting the "next" and then the "getNext" will be invoked   
+			if(getTransfer() != null){
+				Map<String, Object> originalEvent = sentence.toMap();
+				KeyValueObject<? extends IMetaAttribute> originalAIS = new KeyValueObject<>(originalEvent);
+				originalAIS.setMetadata("originalNMEA", sentence);
+				getTransfer().transfer(originalAIS);
+			}
 		}
 		//Other NMEA Sentences
 		else{
