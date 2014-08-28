@@ -23,6 +23,8 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 		listener = new BroadcastListener();
 		Thread t = new Thread(listener);
+		t.setName("Peer Broadcast listener");
+		t.setDaemon(true);
 		t.start();
 	}
 
