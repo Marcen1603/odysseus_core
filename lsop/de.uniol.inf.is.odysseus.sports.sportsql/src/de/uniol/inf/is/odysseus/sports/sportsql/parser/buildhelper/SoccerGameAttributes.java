@@ -7,6 +7,7 @@ public class SoccerGameAttributes {
 	public static String X = "x";
 	public static String Y = "y";
 	public static String Z = "z";
+	public static String V = "v";
 	public static String A = "a";
 	public static String VX = "vx";
 	public static String VY = "vy";

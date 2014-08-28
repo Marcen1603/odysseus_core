@@ -742,6 +742,34 @@ public class OperatorBuildHelper {
 		return createAggregateAO(aggregationFunction, "", inputAttributeName,
 				outputAttributeName, null, source);
 	}
+	
+	/**
+	 * Creates an AggregateAO with the specified output type
+	 * 
+	 * @param aggregationFunction
+	 *            The name of the aggregate-function, e.g. "SUM" or "MAX"
+	 * @param groupBy
+	 *            The name of the attribute you want to group by
+	 * @param inputAttributeName
+	 *            The input attribute over which the aggregation should be done
+	 * @param outputAttributeName
+	 *            The name of the output attribute for this aggregation
+	 * @param outputType
+	 *            The optional type of output (null, if you don't want to
+	 *            specify, should then be double)
+	 * @param source
+	 *            The operator before this one
+	 * @return
+	 */
+	public static AggregateAO createAggregateAO(String aggregationFunction,
+			String groupBy, String inputAttributeName,
+			String outputAttributeName, String outputType,
+			ILogicalOperator source) {
+		List<String> groupingAttributes = new ArrayList<String>();
+		groupingAttributes.add(groupBy);
+		return createAggregateAO(aggregationFunction, groupingAttributes,
+				inputAttributeName, outputAttributeName, outputType, source);
+	}
 
 	/**
 	 * Creates an AggregateAO with the specified output type
@@ -765,59 +793,32 @@ public class OperatorBuildHelper {
 			List<String> groupBy, String inputAttributeName,
 			String outputAttributeName, String outputType,
 			ILogicalOperator source) {
-		AggregateAO aggregateAO = new AggregateAO();
-
-		// Fill parameter
-		AggregateItemParameter param = new AggregateItemParameter();
-		List<String> aggregateOptions = new ArrayList<String>();
-		aggregateOptions.add(aggregationFunction);
-		aggregateOptions.add(inputAttributeName);
-		aggregateOptions.add(outputAttributeName);
-		if (outputType != null)
-			aggregateOptions.add(outputType);
-		param.setInputValue(aggregateOptions);
-
-		// Attribute resolver and datadictionary for parameter
-		IAttributeResolver resolver = OperatorBuildHelper
-				.createAttributeResolver(source);
-		param.setAttributeResolver(resolver);
-		IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
-		param.setDataDictionary(dataDict);
-
-		// Use parameter to get information for AO
-		List<AggregateItem> aggregateItems = new ArrayList<AggregateItem>();
-		aggregateItems.add(param.getValue());
-		aggregateAO.setAggregationItems(aggregateItems);
-
-		// GroupBy
-		if (groupBy != null) {
-			if (!(groupBy.size() == 1 && groupBy.get(0).isEmpty())) {
-				// If the inly grouping-attribute is empty, the user does not
-				// want to group
-				aggregateAO.setGroupingAttributes(createAttributeList(groupBy,
-						source));
-			}
-
-		}
-
-		aggregateAO.subscribeTo(source, source.getOutputSchema());
-
-		return aggregateAO;
+		
+		List<String> aggregationFunctions = new ArrayList<String>();
+		aggregationFunctions.add(aggregationFunction);
+		List<String> inputAttributeNames = new ArrayList<String>();
+		inputAttributeNames.add(inputAttributeName);
+		List<String> outputAttributeNames = new ArrayList<String>();
+		outputAttributeNames.add(outputAttributeName);
+		List<String> outputTypes = new ArrayList<String>();
+		outputTypes.add(outputType);
+		return createAggregateAO(aggregationFunctions, groupBy,
+				inputAttributeNames, outputAttributeNames, outputTypes, source);
 	}
 	
 	/**
 	 * Creates an AggregateAO with the specified output type
 	 * 
-	 * @param aggregationFunction
-	 *            The name of the aggregate-function, e.g. "SUM" or "MAX"
+	 * @param aggregationFunctions
+	 *            List of aggregate-functions, e.g. "SUM" or "MAX"
 	 * @param groupBy
 	 *            The list of names of the attributes you want to group by
 	 * @param inputAttributeName
-	 *            The input attribute over which the aggregation should be done
+	 *            The list of input attributes over which the aggregation should be done
 	 * @param outputAttributeName
-	 *            The name of the output attribute for this aggregation
+	 *            The list of names of the output attribute for this aggregation
 	 * @param outputType
-	 *            The optional type of output (null, if you don't want to
+	 *            List of optional types of output (null, if you don't want to
 	 *            specify, should then be double)
 	 * @param source
 	 *            The operator before this one
@@ -871,33 +872,6 @@ public class OperatorBuildHelper {
 		return aggregateAO;
 	}
 
-	/**
-	 * Creates an AggregateAO with the specified output type
-	 * 
-	 * @param aggregationFunction
-	 *            The name of the aggregate-function, e.g. "SUM" or "MAX"
-	 * @param groupBy
-	 *            The name of the attribute you want to group by
-	 * @param inputAttributeName
-	 *            The input attribute over which the aggregation should be done
-	 * @param outputAttributeName
-	 *            The name of the output attribute for this aggregation
-	 * @param outputType
-	 *            The optional type of output (null, if you don't want to
-	 *            specify, should then be double)
-	 * @param source
-	 *            The operator before this one
-	 * @return
-	 */
-	public static AggregateAO createAggregateAO(String aggregationFunction,
-			String groupBy, String inputAttributeName,
-			String outputAttributeName, String outputType,
-			ILogicalOperator source) {
-		List<String> groupingAttributes = new ArrayList<String>();
-		groupingAttributes.add(groupBy);
-		return createAggregateAO(aggregationFunction, groupingAttributes,
-				inputAttributeName, outputAttributeName, outputType, source);
-	}
 
 	public static CoalesceAO createCoalesceAO(List<String> attributes,
 			String aggregationFunction, String inputAttributeName,
@@ -1243,16 +1217,53 @@ public class OperatorBuildHelper {
 	 *            Source operator
 	 * @return
 	 */
-	public static TimeWindowAO createTimeWindowAO(int size, String timeUnit,
+	public static TimeWindowAO createTimeWindowAO(long size, String timeUnit,
 			ILogicalOperator source) {
 		// TODO timeUnit with static finals
 		TimeWindowAO timeWindowAO = new TimeWindowAO();
 		TimeParameter timeParamenter = new TimeParameter();
 		List<String> parameterInputValue = new ArrayList<String>();
-		parameterInputValue.add(new Integer(size).toString());
+		parameterInputValue.add(String.valueOf(size));
 		parameterInputValue.add(timeUnit);
 		timeParamenter.setInputValue(parameterInputValue);
 		timeWindowAO.setWindowSize(timeParamenter.getValue());
+
+		timeWindowAO.subscribeTo(source, source.getOutputSchema());
+
+		return timeWindowAO;
+	}
+	
+	/**
+	 * Creates a TimeWindow.
+	 * 
+	 * @param size
+	 *            How big the window is. Number of seconds, minutes, etc.
+	 *            (depends on the timeUnit) in this Window
+	 * @param slide
+	 * 			  slide of the Window
+	 * @param timeUnit
+	 *            e.g. "second" or "minute"
+	 * @param source
+	 *            Source operator
+	 * @return
+	 */
+	public static TimeWindowAO createTimeWindowAO(long size, long slide, String timeUnit,
+			ILogicalOperator source) {
+		// TODO timeUnit with static finals
+		TimeWindowAO timeWindowAO = new TimeWindowAO();
+		TimeParameter timeParamenter = new TimeParameter();
+		List<String> parameterInputValue = new ArrayList<String>();
+		parameterInputValue.add(String.valueOf(size));
+		parameterInputValue.add(timeUnit);
+		timeParamenter.setInputValue(parameterInputValue);
+		timeWindowAO.setWindowSize(timeParamenter.getValue());
+		
+		TimeParameter timeParamenter2 = new TimeParameter();
+		List<String> parameterInputValue2 = new ArrayList<String>();
+		parameterInputValue2.add(String.valueOf(slide));
+		parameterInputValue2.add(timeUnit);
+		timeParamenter2.setInputValue(parameterInputValue2);
+		timeWindowAO.setWindowSlide(timeParamenter2.getValue());
 
 		timeWindowAO.subscribeTo(source, source.getOutputSchema());
 
