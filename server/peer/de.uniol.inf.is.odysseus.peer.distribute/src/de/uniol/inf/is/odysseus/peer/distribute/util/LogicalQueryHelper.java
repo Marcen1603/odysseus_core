@@ -506,7 +506,7 @@ public final class LogicalQueryHelper {
 			}
 
 			for (LogicalSubscription sub : subsToRemove) {
-				operator.unsubscribeSink(sub);
+				operator.unsubscribeFromSource(sub);
 			}
 
 		}
