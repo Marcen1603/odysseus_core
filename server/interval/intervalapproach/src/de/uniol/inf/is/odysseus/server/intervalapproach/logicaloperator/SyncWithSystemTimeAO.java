@@ -37,6 +37,14 @@ public class SyncWithSystemTimeAO extends UnaryLogicalOp {
 		this.factor = factor;
 	}
 	
+	public String getApplicationTimeUnit() {
+		return timeUnit.name();
+	}
+	
+	public double getApplicationTimeFactor() {
+		return factor;
+	}
+	
 	public double getFactor() {
 		return factor;
 	}
