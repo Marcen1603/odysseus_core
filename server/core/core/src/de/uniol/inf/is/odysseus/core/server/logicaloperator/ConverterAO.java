@@ -94,6 +94,10 @@ public class ConverterAO extends UnaryLogicalOp {
 	public void setOutputAttributes(List<SDFAttribute> outputSchema) {
 		this.outputAttributes = outputSchema;
 	}
+	
+	public List<SDFAttribute> getOutputAttributes() {
+		return outputAttributes;
+	}
 
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
