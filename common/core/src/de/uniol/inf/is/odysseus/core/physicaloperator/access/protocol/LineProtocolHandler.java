@@ -197,12 +197,17 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public boolean hasNext() throws IOException {
+		return hasNext(reader);
+	}
+	
+	private boolean hasNext( BufferedReader reader ) {
 		try {
 			if (reader.ready() == false) {
 				isDone = true;
 				return false;
 			}
 		} catch (Exception e) {
+			LOG.error("Could not determine hasNext()", e);
 			isDone = true;
 			return false;
 		}
@@ -216,7 +221,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		}
 		delay();
 		String line = null;
-		if (hasNext()) {
+		if (hasNext(toReadFrom)) {
 			line = toReadFrom.readLine();
 		} else {
 			long time = System.currentTimeMillis();
