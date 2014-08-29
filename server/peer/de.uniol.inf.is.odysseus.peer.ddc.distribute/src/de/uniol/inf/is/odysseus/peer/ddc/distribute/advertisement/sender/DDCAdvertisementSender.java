@@ -42,11 +42,21 @@ public class DDCAdvertisementSender {
 
 	public void publishDDCAdvertisement(final DDCAdvertisement adv) {
 		try {
+			waitForJxtaServicesProvider();
 			jxtaServicesProvider.publish(adv, WAIT_TIME_MILLIS,
 					WAIT_TIME_MILLIS);
 			jxtaServicesProvider.remotePublish(adv, WAIT_TIME_MILLIS);
 		} catch (IOException e) {
 			LOG.error("Could not publish ddc advertisement", e);
+		}
+	}
+
+	private static void waitForJxtaServicesProvider() {
+		while( !jxtaServicesProvider.isActive() ) {
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+			}
 		}
 	}
 }
