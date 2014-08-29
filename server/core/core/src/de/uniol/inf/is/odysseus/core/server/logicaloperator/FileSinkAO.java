@@ -124,9 +124,17 @@ public class FileSinkAO extends AbstractLogicalOperator {
 		return floatingFormatter;
 	}
 	
+	public String getFloatFormatter() {
+		return floatingFormatter != null ? floatingFormatter.toPattern() : null;
+	}
+	
 	@Parameter(name="NumberFormatter",type = StringParameter.class, optional = true)
 	public void setNumbFormatter(String value){
 		this.numberFormatter = new DecimalFormat(value);
+	}
+	
+	public String getNumbFormatter() {
+		return numberFormatter != null ? numberFormatter.toPattern() : null;
 	}
 	
 	public DecimalFormat getNumberFormatter() {
