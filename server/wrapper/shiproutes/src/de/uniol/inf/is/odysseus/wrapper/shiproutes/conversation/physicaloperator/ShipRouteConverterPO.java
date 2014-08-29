@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.wrapper.shiproutes.conversation.physicaloperator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +12,9 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_VesselData;
+import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.AISSentence;
+import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.AISSentenceHandler;
+import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.payload.decoded.StaticAndVoyageData;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.conversation.logicaloperator.ConversionType;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECRoute;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.IShipRouteRootElement;
@@ -21,6 +27,10 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 	private final Logger LOG = LoggerFactory
 			.getLogger(ShipRouteConverterPO.class);
 	private ConversionType conversionType;
+	private AISSentenceHandler aishandler = new AISSentenceHandler();
+	private List<IShipRouteRootElement> cachedJSONElements = new ArrayList<IShipRouteRootElement>();
+
+	private StaticAndVoyageData staticAndVoyageData = null;
 
 	public ShipRouteConverterPO(ShipRouteConverterPO<T> anotherPO) {
 		super();
@@ -84,17 +94,53 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 			}
 			break;
 		case SHIPROUTE_TO_IVEF:
-			if (received.getMetadata("object") instanceof RouteDataItem) {
+			if (received.getMetadata("originalNMEA") != null) {
+				// Get MMSI of vessel from NMEA once
+				if (staticAndVoyageData == null) {
+					staticAndVoyageData = getMMSIFromNMEA(received);
+					// process cached elements
+					if (staticAndVoyageData != null) {
+						for (IShipRouteRootElement element : cachedJSONElements) {
+							if (element instanceof RouteDataItem) {
+								ivef = ToIVEFConverterHelper
+										.convertShipRouteToIVEF(
+												(RouteDataItem) element, staticAndVoyageData);
+							} else if (element instanceof ManoeuvrePlanDataItem) {
+								ivef = ToIVEFConverterHelper
+										.convertManoeuvreToIVEF(
+												(ManoeuvrePlanDataItem) element,
+												staticAndVoyageData);
+							}
+							if (ivef != null) {
+								KeyValueObject<? extends IMetaAttribute> next = ivef
+										.toMap();
+								next.setMetadata("object", ivef);
+								transfer((T) next);
+							}
+						}
+						cachedJSONElements.clear();
+					}
+				}
+			} else if (received.getMetadata("object") instanceof RouteDataItem) {
 				RouteDataItem dataItem = (RouteDataItem) received
 						.getMetadata("object");
-				ivef = ToIVEFConverterHelper.convertShipRouteToIVEF(dataItem);
+				if (staticAndVoyageData != null) {
+					ivef = ToIVEFConverterHelper.convertShipRouteToIVEF(
+							dataItem, staticAndVoyageData);
+				} else {
+					cachedJSONElements.add(dataItem);
+				}
 			} else if (received.getMetadata("object") instanceof ManoeuvrePlanDataItem) {
 				ManoeuvrePlanDataItem dataItem = (ManoeuvrePlanDataItem) received
 						.getMetadata("object");
-				ivef = ToIVEFConverterHelper.convertManoeuvreToIVEF(dataItem);
+				if (staticAndVoyageData != null) {
+					ivef = ToIVEFConverterHelper.convertManoeuvreToIVEF(
+							dataItem, staticAndVoyageData);
+				} else {
+					cachedJSONElements.add(dataItem);
+				}
 			} else {
-				LOG.error("Cannot convert ShipRoute to IVEF, because Datastream contains "
-						+ "no ShipRoutes or ManoeuvrePlans");
+				LOG.debug("Element contains no Route or ManoeuvrePlan");
 			}
 
 			break;
@@ -131,8 +177,7 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 		case IEC_TO_IVEF:
 			if (received.getMetadata("object") instanceof IECRoute) {
 				IECRoute route = (IECRoute) received.getMetadata("object");
-				ivef = ToIVEFConverterHelper
-						.convertIECToIVEF(route);
+				ivef = ToIVEFConverterHelper.convertIECToIVEF(route);
 			} else {
 				LOG.error("Cannot convert IEC to IVEF, because Datastream contains "
 						+ "no IEC Elements");
@@ -156,6 +201,28 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 			next.setMetadata("object", shipRouteElement);
 			transfer((T) next);
 		}
+	}
+
+	private StaticAndVoyageData getMMSIFromNMEA(
+			KeyValueObject<? extends IMetaAttribute> received) {
+		if (received.getMetadata("originalNMEA") instanceof AISSentence) {
+			AISSentence ais = (AISSentence) received
+					.getMetadata("originalNMEA");
+			if (ais.getSentenceId().toUpperCase().equals("VDO")
+					|| ais.getSentenceId().toUpperCase().equals("VDM")) {
+				this.aishandler.handleAISSentence(ais);
+				if (this.aishandler.getDecodedAISMessage() != null) {
+					if (this.aishandler.getDecodedAISMessage() instanceof StaticAndVoyageData) {
+						StaticAndVoyageData ownShipStaticData = (StaticAndVoyageData) this.aishandler
+								.getDecodedAISMessage();
+						return ownShipStaticData;
+					}
+					this.aishandler.resetDecodedAISMessage();
+				}
+			}
+		}
+
+		return null;
 	}
 
 }

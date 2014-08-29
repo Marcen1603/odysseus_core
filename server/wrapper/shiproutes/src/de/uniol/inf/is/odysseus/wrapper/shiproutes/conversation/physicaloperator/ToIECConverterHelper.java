@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.wrapper.shiproutes.conversation.physicaloperato
 import java.util.List;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECExtension;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECLeg;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECManual;
@@ -32,6 +35,9 @@ import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.RouteDataI
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.RouteState;
 
 public class ToIECConverterHelper {
+
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ToIECConverterHelper.class);
 
 	public static IECRoute convertShipRouteToIEC(RouteDataItem routeDataItem) {
 		// get received objects
@@ -146,7 +152,8 @@ public class ToIECConverterHelper {
 		if (iec.isValid()) {
 			return iec;
 		} else {
-			throw new IllegalArgumentException("IEC Element is not valid");
+			LOG.debug("IEC Element is invalid");
+			return null;
 		}
 
 	}
@@ -210,7 +217,8 @@ public class ToIECConverterHelper {
 		if (iec.isValid()) {
 			return iec;
 		} else {
-			throw new IllegalArgumentException("IEC Element is not valid");
+			LOG.debug("IEC Element is invalid");
+			return null;
 		}
 	}
 
@@ -357,7 +365,8 @@ public class ToIECConverterHelper {
 		if (iec.isValid()) {
 			return iec;
 		} else {
-			throw new IllegalArgumentException("IEC Element is not valid");
+			LOG.debug("IEC Element is invalid");
+			return null;
 		}
 	}
 }

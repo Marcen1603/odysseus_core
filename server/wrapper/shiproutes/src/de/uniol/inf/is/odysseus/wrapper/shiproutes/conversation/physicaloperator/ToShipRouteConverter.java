@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.wrapper.shiproutes.conversation.physicaloperato
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECExtension;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECLeg;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECManual;
@@ -34,9 +37,13 @@ import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.enums.DataItemTypes;
 
 public class ToShipRouteConverter {
 
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ToShipRouteConverter.class);
+
 	public static IShipRouteRootElement convertIECToShipRoute(IECRoute iecRoute) {
 		if (!iecRoute.isValid()) {
-			throw new IllegalArgumentException("IEC Element is not valid");
+			LOG.debug("IEC Element is invalid");
+			return null;
 		}
 
 		RouteDataItem routeDataItem = new RouteDataItem();
@@ -126,7 +133,8 @@ public class ToShipRouteConverter {
 
 	public static IShipRouteRootElement convertIECToPrediction(IECRoute iecRoute) {
 		if (!iecRoute.isValid()) {
-			throw new IllegalArgumentException("IEC Element is not valid");
+			LOG.debug("IEC Element is invalid");
+			return null;
 		}
 
 		PredictionDataItem predictionDataItem = new PredictionDataItem();
@@ -157,7 +165,8 @@ public class ToShipRouteConverter {
 
 	public static IShipRouteRootElement convertIECToManoeuvre(IECRoute iecRoute) {
 		if (!iecRoute.isValid()) {
-			throw new IllegalArgumentException("IEC Element is not valid");
+			LOG.debug("IEC Element is invalid");
+			return null;
 		}
 
 		ManoeuvrePlanDataItem manoeuvrePlanDataItem = new ManoeuvrePlanDataItem();
