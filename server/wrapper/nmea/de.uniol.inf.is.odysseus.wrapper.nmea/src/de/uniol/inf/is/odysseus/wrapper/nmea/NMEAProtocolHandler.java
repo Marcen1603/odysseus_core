@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -55,8 +57,9 @@ public class NMEAProtocolHandler extends
 			.getLogger(NMEAProtocolHandler.class);
 	/** Input stream as BufferedReader (Only in GenericPull). */
 	protected BufferedReader reader;
-	/** Found next object to be returned for GenericPull. */
-	private KeyValueObject<? extends IMetaAttribute> next = null;
+	/** Find next object to be returned for GenericPull. */
+//	private KeyValueObject<? extends IMetaAttribute> next = null;
+	private List<KeyValueObject<? extends IMetaAttribute>> nextList = new ArrayList<>();
 	/** Delay on GenericPull. */
 	private long delay = 0;
 	/** Handler for AIS sentences. */
@@ -100,17 +103,12 @@ public class NMEAProtocolHandler extends
 
 	@Override
 	public boolean hasNext() throws IOException {
-		if (!reader.ready()) {
-			return false;
+		if (reader.ready()) {
+			String nmea = reader.readLine();
+			//maintain the nextList by parsing the NMEA
+			parseString(nmea);
 		}
-		String nmea = reader.readLine();
-		KeyValueObject<? extends IMetaAttribute> res = parseString(nmea);
-		if (res != null) {
-			next = res;
-			return true;
-		} else {
-			return false;
-		}
+		return this.nextList.size() != 0;
 	}
 
 	@Override
@@ -122,9 +120,10 @@ public class NMEAProtocolHandler extends
 			} catch (InterruptedException e) {
 			}
 		}
+		KeyValueObject<? extends IMetaAttribute> next = this.nextList.size() != 0 ? this.nextList.remove(0) : null;
 		return next;
 	}
-
+	
 	@Override
 	public void process(ByteBuffer message) {
 		byte[] m = new byte[message.limit()];
@@ -133,11 +132,13 @@ public class NMEAProtocolHandler extends
 		String nmeaStrings[] = msgStr.split("\r\n");
 		for(String nmea : nmeaStrings){
 			nmea = nmea.trim();
-			KeyValueObject<? extends IMetaAttribute> res = parseString(nmea);
-			if (res == null)
+			//maintain the nextList by parsing the NMEA
+			parseString(nmea);
+			if (this.nextList.size() == 0)
 				continue;//return;
 	
-			getTransfer().transfer(res);
+			while(this.nextList.size() != 0)
+				getTransfer().transfer(this.nextList.remove(0));
 		}
 	}
 
@@ -146,11 +147,11 @@ public class NMEAProtocolHandler extends
 	 * 
 	 * @param nmea
 	 *            String to be parsed.
-	 * @return KeyValueObject or null, if the String could not be parsed.
+	 * @return List of KeyValueObjects (original parsed and decoded parsed sentences) or null, if the String could not be parsed.
 	 */
-	private KeyValueObject<? extends IMetaAttribute> parseString(String nmea) {
+	private void parseString(String nmea) {
 		if (!SentenceUtils.validateSentence(nmea)) {
-			return null;
+			return;
 		}
 
 		Sentence sentence = null;
@@ -160,47 +161,43 @@ public class NMEAProtocolHandler extends
 			LOG.error(e.getMessage());
 		}
 		if (sentence == null) {
-			return null;
+			return;
 		}
 		sentence.parse();
 		Map<String, Object> event = new HashMap<>();
-		KeyValueObject<? extends IMetaAttribute> res = null;
-		//Handling AIS Sentences
-		if (sentence instanceof AISSentence) {//System.out.println("sentence instanceof AISSentence: " + sentence.getNmeaString());
+		List<KeyValueObject<? extends IMetaAttribute>> res = new ArrayList<>();
+		//Handling AIS Sentences, encoded sentences to be decoded
+		if (sentence instanceof AISSentence) {
 			AISSentence aissentence = (AISSentence) sentence;
-			////////////////////////////////////////TEST//////////////////////////////////////////
-			
-			////////////////////////////////////////TEST//////////////////////////////////////////
 			this.aishandler.handleAISSentence(aissentence);
 			if(this.aishandler.getDecodedAISMessage() != null) {
-				//13.08 We separate the map creation of the decoded message into another method rather than the toMap which will be only for original parts of the message.
-				//Here we are quite sure that there is a non-null decodedAISMessage inside the aisSentence because the AIShandler has already set it.  
-				//event = sentence.toMap();
 				aissentence.toDecodedPayloadMap(event);
-				res = new KeyValueObject<>(event);
+				KeyValueObject<? extends IMetaAttribute> decodedAIS = new KeyValueObject<>(event); 
 				//Important to parse the decodedAIS as a sentence in order to prepare the fields which will be used in writing.
 				this.aishandler.getDecodedAISMessage().parse();
-				res.setMetadata("decodedAIS", this.aishandler.getDecodedAISMessage());
+				decodedAIS.setMetadata("decodedAIS", this.aishandler.getDecodedAISMessage());
 				this.aishandler.resetDecodedAISMessage();
+				//The decoded message
+				res.add(decodedAIS);
 			}
-			//else return null;
-			//Send original AIS sentence, right now we can send it only if we work with GenericPush wrapper because the transfer will be set,
-			//Otherwise (GenericPull: File), the original AIS sentence will not be sent  
-			//because the transformation is done via setting the "next" and then the "getNext" will be invoked   
-			if(getTransfer() != null){
+			//The Original message:
 				Map<String, Object> originalEvent = sentence.toMap();
 				KeyValueObject<? extends IMetaAttribute> originalAIS = new KeyValueObject<>(originalEvent);
 				originalAIS.setMetadata("originalNMEA", sentence);
-				getTransfer().transfer(originalAIS);
-			}
+				//ensure the order, original fragment (if it's the second fragment, then it should follow the first original fragment) then the decoded message 
+				if(res.size() != 0)
+					res.add(0, originalAIS);
+				else
+					res.add(originalAIS);
 		}
-		//Other NMEA Sentences
+		//Handling other NMEA Sentences
 		else{
 			event = sentence.toMap();
-			res = new KeyValueObject<>(event);
-			res.setMetadata("originalNMEA", sentence);
+			KeyValueObject<? extends IMetaAttribute> undecodedNMEA = new KeyValueObject<>(event);
+			undecodedNMEA.setMetadata("originalNMEA", sentence);
+			res.add(undecodedNMEA);
 		}
-		return res;
+		this.nextList.addAll(res);
 	}
 
 	@Override
