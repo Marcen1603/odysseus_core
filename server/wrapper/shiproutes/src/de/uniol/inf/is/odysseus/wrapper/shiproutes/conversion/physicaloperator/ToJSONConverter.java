@@ -1,11 +1,15 @@
 package de.uniol.inf.is.odysseus.wrapper.shiproutes.conversion.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_VesselData;
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.VesselData;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECExtension;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECLeg;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECManual;
@@ -360,4 +364,55 @@ public class ToJSONConverter {
 			}
 		}
 	}
+
+	public static List<IShipRouteRootElement> convertIVEFToRoute(
+			MSG_VesselData msg_VesselData) {
+
+
+		return null;
+	}
+
+	public static List<IShipRouteRootElement> convertIVEFToPrediction(
+			MSG_VesselData msg_VesselData) {
+		Map<Integer, PredictionDataItem> predictionDatas = new HashMap<Integer, PredictionDataItem>();
+		int countOfVesselDatas = msg_VesselData.getBody().countOfVesselDatas();
+		
+		int idCounter = 0;
+		
+		for (int i = 0; i < countOfVesselDatas; i++) {
+			VesselData vesselData = msg_VesselData.getBody().getVesselDataAt(i);
+			if (vesselData.getPosReport() != null){
+				PredictionPlan predictionPlan = null;
+				if (predictionDatas.containsKey(vesselData.getPosReport().getId())){
+					predictionPlan = predictionDatas.get(vesselData.getPosReport().getId()).getMplan();
+				} else {
+					PredictionDataItem predictionDataItem = new PredictionDataItem();
+					predictionDataItem.setData_item_id("Prediction");
+					predictionPlan = new PredictionPlan();
+					predictionDataItem.setMplan(predictionPlan);
+					predictionDatas.put(vesselData.getPosReport().getId(), predictionDataItem);
+				}
+				
+				PredictionPoint predictionPoint = new PredictionPoint();
+				predictionPoint.setID(idCounter);
+				predictionPoint.setLat_rad(vesselData.getPosReport().getPos().getLat());
+				predictionPoint.setLon_rad(vesselData.getPosReport().getPos().getLong());
+				predictionPoint.setCourse_over_ground_rad(vesselData.getPosReport().getCOG()); // Units?
+				predictionPoint.setRate_of_turn(vesselData.getPosReport().getRateOfTurn());
+				
+				predictionPlan.getPred_points().add(predictionPoint);
+				predictionPlan.setNumber_of_Prediction_points(predictionPlan
+						.getPred_points().size());
+				idCounter++;
+			}		
+		}
+		return new ArrayList<IShipRouteRootElement>(predictionDatas.values());
+	}
+
+	public static List<IShipRouteRootElement> convertIVEFToManoeuvre(
+			MSG_VesselData msg_VesselData) {
+
+		return null;
+	}
+
 }

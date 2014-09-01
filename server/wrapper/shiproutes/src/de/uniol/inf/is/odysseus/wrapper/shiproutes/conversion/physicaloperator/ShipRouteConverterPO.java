@@ -90,6 +90,18 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 		case IEC_NMEA_TO_IVEF:
 			ivef = convertIECToIVEF(received);
 			break;
+		case IVEF_TO_JSON_ROUTE:
+			convertIVEFToJSONRoute(received);
+			break;
+		case IVEF_TO_JSON_PREDICTION:
+			convertIVEFToJSONPrediction(received);
+			break;
+		case IVEF_TO_JSON_MANOEUVRE:
+			convertIVEFToJSONManoeuvre(received);
+			break;
+		case IVEF_TO_IEC:
+			iec = convertIVEFToIEC(received);
+			break;
 		default:
 			break;
 		}
@@ -110,6 +122,84 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 		}
 	}
 
+	private IECRoute convertIVEFToIEC(
+			KeyValueObject<? extends IMetaAttribute> received) {
+		IECRoute iec = null;
+
+		if (received.getMetadata("object") instanceof MSG_VesselData) {
+			MSG_VesselData msg_VesselData = (MSG_VesselData) received
+					.getMetadata("object");
+			iec = ToIECConverterHelper.convertIVEFToIEC(msg_VesselData);
+		} else {
+			LOG.error("Cannot convert IVEF to IEC, because Datastream contains "
+					+ "no IVEF Elements");
+		}
+		return iec;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void convertIVEFToJSONRoute(
+			KeyValueObject<? extends IMetaAttribute> received) {
+		if (received.getMetadata("object") instanceof MSG_VesselData) {
+			MSG_VesselData msg_VesselData = (MSG_VesselData) received
+					.getMetadata("object");
+			List<IShipRouteRootElement> shipRouteElement = ToJSONConverter
+					.convertIVEFToRoute(msg_VesselData);
+			for (IShipRouteRootElement iShipRouteRootElement : shipRouteElement) {
+				KeyValueObject<? extends IMetaAttribute> next = iShipRouteRootElement
+						.toMap();
+				next.setMetadata("object", iShipRouteRootElement);
+				transfer((T) next);
+			}
+		} else {
+			LOG.error("Cannot convert IVEF to Route, because Datastream contains "
+					+ "no IVEF Elements");
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void convertIVEFToJSONPrediction(
+			KeyValueObject<? extends IMetaAttribute> received) {
+
+		if (received.getMetadata("object") instanceof MSG_VesselData) {
+			MSG_VesselData msg_VesselData = (MSG_VesselData) received
+					.getMetadata("object");
+			List<IShipRouteRootElement> shipRouteElement = ToJSONConverter
+					.convertIVEFToPrediction(msg_VesselData);
+			for (IShipRouteRootElement iShipRouteRootElement : shipRouteElement) {
+				KeyValueObject<? extends IMetaAttribute> next = iShipRouteRootElement
+						.toMap();
+				next.setMetadata("object", iShipRouteRootElement);
+				transfer((T) next);
+			}
+		} else {
+			LOG.error("Cannot convert IVEF to Prediction, because Datastream contains "
+					+ "no IVEF Elements");
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void convertIVEFToJSONManoeuvre(
+			KeyValueObject<? extends IMetaAttribute> received) {
+
+		if (received.getMetadata("object") instanceof MSG_VesselData) {
+			MSG_VesselData msg_VesselData = (MSG_VesselData) received
+					.getMetadata("object");
+			List<IShipRouteRootElement> shipRouteElement = ToJSONConverter
+					.convertIVEFToManoeuvre(msg_VesselData);
+			for (IShipRouteRootElement iShipRouteRootElement : shipRouteElement) {
+				KeyValueObject<? extends IMetaAttribute> next = iShipRouteRootElement
+						.toMap();
+				next.setMetadata("object", iShipRouteRootElement);
+				transfer((T) next);
+			}
+		} else {
+			LOG.error("Cannot convert IVEF to ManoeuvrePlan, because Datastream contains "
+					+ "no IVEF Elements");
+		}
+
+	}
+
 	@SuppressWarnings("unchecked")
 	private MSG_VesselData convertJSONToIVEF(
 			KeyValueObject<? extends IMetaAttribute> received) {
@@ -123,7 +213,8 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 						if (element instanceof RouteDataItem) {
 							ivef = ToIVEFConverterHelper
 									.convertShipRouteToIVEF(
-											(RouteDataItem) element, staticAndVoyageData);
+											(RouteDataItem) element,
+											staticAndVoyageData);
 						} else if (element instanceof ManoeuvrePlanDataItem) {
 							ivef = ToIVEFConverterHelper
 									.convertManoeuvreToIVEF(
@@ -144,8 +235,8 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 			RouteDataItem dataItem = (RouteDataItem) received
 					.getMetadata("object");
 			if (staticAndVoyageData != null) {
-				ivef = ToIVEFConverterHelper.convertShipRouteToIVEF(
-						dataItem, staticAndVoyageData);
+				ivef = ToIVEFConverterHelper.convertShipRouteToIVEF(dataItem,
+						staticAndVoyageData);
 			} else {
 				cachedJSONElements.add(dataItem);
 			}
@@ -153,8 +244,8 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 			ManoeuvrePlanDataItem dataItem = (ManoeuvrePlanDataItem) received
 					.getMetadata("object");
 			if (staticAndVoyageData != null) {
-				ivef = ToIVEFConverterHelper.convertManoeuvreToIVEF(
-						dataItem, staticAndVoyageData);
+				ivef = ToIVEFConverterHelper.convertManoeuvreToIVEF(dataItem,
+						staticAndVoyageData);
 			} else {
 				cachedJSONElements.add(dataItem);
 			}
@@ -174,8 +265,10 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 				// process cached elements
 				if (staticAndVoyageData != null) {
 					for (IECRoute cachedIECRoute : cachedIECElements) {
-						ivef = ToIVEFConverterHelper.convertIECToIVEF(cachedIECRoute, staticAndVoyageData);
-						KeyValueObject<? extends IMetaAttribute> next = ivef.toMap();
+						ivef = ToIVEFConverterHelper.convertIECToIVEF(
+								cachedIECRoute, staticAndVoyageData);
+						KeyValueObject<? extends IMetaAttribute> next = ivef
+								.toMap();
 						next.setMetadata("object", ivef);
 						transfer((T) next);
 					}
@@ -185,7 +278,8 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 		} else if (received.getMetadata("object") instanceof IECRoute) {
 			IECRoute route = (IECRoute) received.getMetadata("object");
 			if (staticAndVoyageData != null) {
-				ivef = ToIVEFConverterHelper.convertIECToIVEF(route, staticAndVoyageData);					
+				ivef = ToIVEFConverterHelper.convertIECToIVEF(route,
+						staticAndVoyageData);
 			} else {
 				cachedIECElements.add(route);
 			}
@@ -201,8 +295,7 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 		IShipRouteRootElement shipRouteElement = null;
 		if (received.getMetadata("object") instanceof IECRoute) {
 			IECRoute route = (IECRoute) received.getMetadata("object");
-			shipRouteElement = ToJSONConverter
-					.convertIECToManoeuvre(route);
+			shipRouteElement = ToJSONConverter.convertIECToManoeuvre(route);
 		} else {
 			LOG.error("Cannot convert IEC to ManoeuvrePlan, because Datastream contains "
 					+ "no IEC Elements");
@@ -215,8 +308,7 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 		IShipRouteRootElement shipRouteElement = null;
 		if (received.getMetadata("object") instanceof IECRoute) {
 			IECRoute route = (IECRoute) received.getMetadata("object");
-			shipRouteElement = ToJSONConverter
-					.convertIECToPrediction(route);
+			shipRouteElement = ToJSONConverter.convertIECToPrediction(route);
 		} else {
 			LOG.error("Cannot convert IEC to Prediction, because Datastream contains "
 					+ "no IEC Elements");
@@ -229,8 +321,7 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 		IShipRouteRootElement shipRouteElement = null;
 		if (received.getMetadata("object") instanceof IECRoute) {
 			IECRoute route = (IECRoute) received.getMetadata("object");
-			shipRouteElement = ToJSONConverter
-					.convertIECToJSON(route);
+			shipRouteElement = ToJSONConverter.convertIECToJSON(route);
 		} else {
 			LOG.error("Cannot convert IEC to Route, because Datastream contains "
 					+ "no IEC Elements");
@@ -241,7 +332,7 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 	private IECRoute convertJSONToIEC(
 			KeyValueObject<? extends IMetaAttribute> received) {
 		IECRoute iec = null;
-		
+
 		if (received.getMetadata("object") instanceof RouteDataItem) {
 			RouteDataItem dataItem = (RouteDataItem) received
 					.getMetadata("object");

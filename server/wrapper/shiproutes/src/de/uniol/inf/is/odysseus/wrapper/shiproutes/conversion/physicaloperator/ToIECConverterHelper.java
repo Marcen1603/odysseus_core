@@ -6,6 +6,7 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_VesselData;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECExtension;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECLeg;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECManual;
@@ -155,7 +156,6 @@ public class ToIECConverterHelper {
 			LOG.debug("IEC Element is invalid => not processed");
 			return null;
 		}
-
 	}
 
 	public static IECRoute convertJSONPredictionToIEC(
@@ -362,6 +362,24 @@ public class ToIECConverterHelper {
 		iec.setSchedules(iecSchedules);
 		iec.setWaypoints(iecWaypoints);
 
+		if (iec.isValid()) {
+			return iec;
+		} else {
+			LOG.debug("IEC Element is invalid => not processed");
+			return null;
+		}
+	}
+
+	public static IECRoute convertIVEFToIEC(MSG_VesselData msg_VesselData) {
+		IECRoute iec = new IECRoute();
+		iec.setVersion("1.0"); // version is mandatory
+
+		// Create route info
+		IECRouteInfo routeInfo = new IECRouteInfo();
+		
+		iec.setRouteInfo(routeInfo);
+		// TODO set values
+		
 		if (iec.isValid()) {
 			return iec;
 		} else {

@@ -27,7 +27,8 @@ public class ShipRouteConverterAO extends UnaryLogicalOp {
 		return new ShipRouteConverterAO(this);
 	}
 
-	@Parameter(name = "conversionType", type = EnumParameter.class, isList = false, optional = false, doc = "The conversion type between shipRoute messages: JSON_TO_IEC, JSON_NMEA_TO_IVEF, IEC_TO_JSON_ROUTE, IEC_TO_JSON_MANOEUVRE, IEC_TO_JSON_PREDICTION, IEC_NMEA_TO_IVEF")
+	@Parameter(name = "conversionType", type = EnumParameter.class, isList = false, optional = false, doc = "The conversion type between shipRoute messages: JSON_TO_IEC, "
+			+ "JSON_NMEA_TO_IVEF, IEC_TO_JSON_ROUTE, IEC_TO_JSON_MANOEUVRE, IEC_TO_JSON_PREDICTION, IEC_NMEA_TO_IVEF, IVEF_TO_JSON_ROUTE, IVEF_TO_JSON_MANOEUVRE, IVEF_TO_JSON_PREDICTION")
 	public void setConversionType(ConversionType conversionType) {
 		this.conversionType = conversionType;
 	}
