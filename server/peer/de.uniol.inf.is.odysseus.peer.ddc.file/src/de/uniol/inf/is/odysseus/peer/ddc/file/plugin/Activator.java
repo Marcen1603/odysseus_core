@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.peer.ddc.DDC;
-import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DDCDistributeThread;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerDistributeThread;
 import de.uniol.inf.is.odysseus.peer.ddc.file.DDCFileHandler;
 
 /**
@@ -39,9 +39,9 @@ public class Activator implements BundleActivator {
 		if (ddc != null) {
 			// start new thread to distribute ddc, because otherwise startup of odysseus 
 			// is blocked by waiting for p2p network
-			DDCDistributeThread ddcDistributeThread = new DDCDistributeThread(ddc);
+			DistributedDataContainerDistributeThread ddcDistributeThread = new DistributedDataContainerDistributeThread();
 			ddcDistributeThread.setName("DDCDistributeThread");
-			ddcDistributeThread.setDaemon(true);
+			ddcDistributeThread.setDaemon(true); // set is as deamon
 			ddcDistributeThread.start();
 		}
 	}

@@ -17,5 +17,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.p2p_new,
 Export-Package: de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement,
  de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.listener,
  de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender
-Service-Component: OSGI-INF/DDCAdvertisementListener.xml,OSGI-INF/DDCAdvertisementSender.xml,
- OSGI-INF/DDCAdvertisementGenerator.xml
+Service-Component: OSGI-INF/DistributedDataContainerAdvertisementListener.xml,OSGI-INF/DistributedDataContainerAdvertisementSender.xml,
+ OSGI-INF/DistributedDataContainerAdvertisementGenerator.xml

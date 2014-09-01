@@ -10,9 +10,9 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.peer.ddc.DDC;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
-import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DDCAdvertisement;
-import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DDCAdvertisementGenerator;
-import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DDCAdvertisementSender;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerAdvertisement;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DistributedDataContainerAdvertisementGenerator;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DistributedDataContainerAdvertisementSender;
 
 /**
  * The DDC console provides console commands for each method of
@@ -413,17 +413,13 @@ public class DDCConsole implements CommandProvider {
 	 * @param ci
 	 */
 	public void _DDCdistribute(CommandInterpreter ci) {
-		DDC ddcInstance = DDC.getInstance();
 
-		if (ddcInstance != null) {
-			DDCAdvertisement ddcAdvertisement = DDCAdvertisementGenerator
-					.getInstance().generate(ddcInstance);
-			if (ddcAdvertisement != null) {
-				DDCAdvertisementSender.getInstance().publishDDCAdvertisement(
-						ddcAdvertisement);
-				System.out.println("Initial distribution started");
-			}
-		}
+		DistributedDataContainerAdvertisement ddcAdvertisement = DistributedDataContainerAdvertisementGenerator
+				.getInstance().generate();
+		DistributedDataContainerAdvertisementSender.getInstance()
+				.publishDDCAdvertisement(ddcAdvertisement);
+		System.out.println("Initial distribution started");
+
 	}
 
 	/**
@@ -433,13 +429,10 @@ public class DDCConsole implements CommandProvider {
 	 * @param ci
 	 */
 	public void _DDCdistributeChanges(CommandInterpreter ci) {
-		DDCAdvertisement ddcAdvertisement = DDCAdvertisementGenerator
+		DistributedDataContainerAdvertisement ddcAdvertisement = DistributedDataContainerAdvertisementGenerator
 				.getInstance().generateChanges();
-		if (ddcAdvertisement != null) {
-			DDCAdvertisementSender.getInstance().publishDDCAdvertisement(
-					ddcAdvertisement);
-			System.out.println("Change distribution started");
-		}
-
+		DistributedDataContainerAdvertisementSender.getInstance()
+				.publishDDCAdvertisement(ddcAdvertisement);
+		System.out.println("Change distribution started");
 	}
 }

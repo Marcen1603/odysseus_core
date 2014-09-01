@@ -28,12 +28,19 @@ import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 
-public class DDCAdvertisement extends Advertisement {
+/**
+ * The JXTA Advertisement for DistributedDataContainer to distribute keys and
+ * corresponding values to other peers
+ * 
+ * @author ChrisToenjesDeye
+ * 
+ */
+public class DistributedDataContainerAdvertisement extends Advertisement {
 	private static final Logger LOG = LoggerFactory
-			.getLogger(DDCAdvertisement.class);
+			.getLogger(DistributedDataContainerAdvertisement.class);
 
+	// Tag constants for document
 	private static final String ADVERTISEMENT_TYPE = "jxta:DDCAdvertisement";
-
 	private static final String ID_TAG = "id";
 	private static final String OWNER_PEER_ID_TAG = "ownerPeerId";
 	private static final String ADVERTISEMENT_UID = "advertisementUid";
@@ -47,43 +54,71 @@ public class DDCAdvertisement extends Advertisement {
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG,
 			OWNER_PEER_ID_TAG, ADVERTISEMENT_UID };
 
+	// advertisement attributes
 	private ID id;
 	private PeerID ownerPeerId;
 	private UUID advertisementUid;
-	private DDCAdvertisementType type;
+	private DistributedDataContainerAdvertisementType type;
 	private List<DDCEntry> addedDDCEntires;
 	private List<String[]> removedDDCEntires;
-
-	public DDCAdvertisement() {
-
-	}
-
-	public DDCAdvertisement(Element<?> root) {
-		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(
-				root, "Root element must not be null!");
-
-		determineFields(doc);
-	}
-
-	public DDCAdvertisement(InputStream stream) throws IOException {
-		this(StructuredDocumentFactory.newStructuredDocument(
-				MimeMediaType.XMLUTF8,
-				Preconditions.checkNotNull(stream, "Stream must not be null!")));
-	}
-
-	public DDCAdvertisement(DDCAdvertisement adv) {
-		Preconditions.checkNotNull(adv,
-				"Advertisement to copy must not be null!");
-
-		this.id = adv.id;
-		this.ownerPeerId = adv.ownerPeerId;
-		this.advertisementUid = adv.advertisementUid;
-	}
 
 	public static String getAdvertisementType() {
 		return ADVERTISEMENT_TYPE;
 	}
 
+	/**
+	 * Default Constructor for @DDCAdvertisementInstantiator
+	 */
+	public DistributedDataContainerAdvertisement() {
+
+	}
+
+	/**
+	 * JXTA Constructor, initialized with advertisement document
+	 * 
+	 * @param root
+	 *            - the xml-Root-Element
+	 */
+	public DistributedDataContainerAdvertisement(Element<?> root) {
+		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(
+				root, "Root element must not be null!");
+		determineFields(doc);
+	}
+
+	public DistributedDataContainerAdvertisement(InputStream stream)
+			throws IOException {
+		this(StructuredDocumentFactory.newStructuredDocument(
+				MimeMediaType.XMLUTF8,
+				Preconditions.checkNotNull(stream, "Stream must not be null!")));
+	}
+
+	/**
+	 * Copy Constructor
+	 * 
+	 * @param adv
+	 *            - The @DDCAdvertisement to copy from
+	 */
+	public DistributedDataContainerAdvertisement(
+			DistributedDataContainerAdvertisement adv) {
+		Preconditions.checkNotNull(adv,
+				"Advertisement to copy must not be null!");
+		this.id = adv.id;
+		this.ownerPeerId = adv.ownerPeerId;
+		this.advertisementUid = adv.advertisementUid;
+		this.addedDDCEntires = new ArrayList<DDCEntry>();
+		for (DDCEntry ddcEntry : adv.addedDDCEntires) {
+			this.addedDDCEntires.add(ddcEntry.clone());
+		}
+		this.removedDDCEntires = new ArrayList<String[]>(adv.removedDDCEntires);
+	}
+
+	/**
+	 * Creates the content document for the advertisement based on existing
+	 * values
+	 * 
+	 * @param asMimeType
+	 * @return Document with advertisement content
+	 */
 	@Override
 	public Document getDocument(MimeMediaType asMimeType) {
 		final StructuredDocument<?> doc = StructuredDocumentFactory
@@ -99,11 +134,12 @@ public class DDCAdvertisement extends Advertisement {
 		// add created ddc entires
 		if (addedDDCEntires != null && !addedDDCEntires.isEmpty()) {
 			for (DDCEntry ddcEntry : addedDDCEntires) {
-				appendDDCEntry(doc, ADDED_DDC_ENTRY, ddcEntry);
+				appendAddedDDCEntry(doc, ADDED_DDC_ENTRY, ddcEntry);
 			}
 		}
 
-		if (type.equals(DDCAdvertisementType.changeDistribution)) {
+		// add deleted ddc entries, if change distribution
+		if (type.equals(DistributedDataContainerAdvertisementType.changeDistribution)) {
 			if (removedDDCEntires != null && !removedDDCEntires.isEmpty()) {
 				for (String[] ddcEntryKey : removedDDCEntires) {
 					appendDeletedDDCEntry(doc, REMOVED_DDC_ENTRY, ddcEntryKey);
@@ -114,6 +150,17 @@ public class DDCAdvertisement extends Advertisement {
 		return doc;
 	}
 
+	/**
+	 * Appends an element to given @StructuredDocuement
+	 * 
+	 * @param appendTo
+	 *            - @StructuredDocument to append
+	 * @param tag
+	 *            - Name of the tag
+	 * @param value
+	 *            - value of the tag
+	 * @return created element
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Element appendElement(StructuredDocument appendTo,
 			String tag, String value) {
@@ -122,8 +169,19 @@ public class DDCAdvertisement extends Advertisement {
 		return createElement;
 	}
 
+	/**
+	 * Appends an @DDCEntry to given @StructuredDocuement
+	 * 
+	 * @param appendTo
+	 *            - @StructuredDocument to append
+	 * @param tag
+	 *            - Name of the tag
+	 * @param ddcEntry
+	 *            - DDCEntry to add
+	 * @return created element
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static Element appendDDCEntry(StructuredDocument appendTo,
+	private static Element appendAddedDDCEntry(StructuredDocument appendTo,
 			String tag, DDCEntry ddcEntry) {
 		Element baseDDCElement = appendTo.createElement(tag);
 		appendTo.appendChild(baseDDCElement);
@@ -141,6 +199,17 @@ public class DDCAdvertisement extends Advertisement {
 		return baseDDCElement;
 	}
 
+	/**
+	 * Appends an DDC key to given StructuredDocuement
+	 * 
+	 * @param appendTo
+	 *            - Structured Docuement to append
+	 * @param tag
+	 *            - Name of the tag
+	 * @param ddcEntryKey
+	 *            -
+	 * @return created element
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Element appendDeletedDDCEntry(StructuredDocument appendTo,
 			String tag, String[] ddcEntryKey) {
@@ -154,6 +223,12 @@ public class DDCAdvertisement extends Advertisement {
 		return baseDDCElement;
 	}
 
+	/**
+	 * Getting values from @StructuredDocument and set them to @DDCAdvertisement
+	 * 
+	 * @param root
+	 *            - the xml-Root-Element
+	 */
 	private void determineFields(TextElement<?> root) {
 		final Enumeration<?> elements = root.getChildren();
 
@@ -166,8 +241,10 @@ public class DDCAdvertisement extends Advertisement {
 			} else if (elem.getName().equals(ADVERTISEMENT_UID)) {
 				setDDCAdvertisementUid(UUID.fromString(elem.getTextValue()));
 			} else if (elem.getName().equals(TYPE)) {
-				setType(DDCAdvertisementType.parse(elem.getTextValue()));
+				setType(DistributedDataContainerAdvertisementType.parse(elem
+						.getTextValue()));
 			} else if (elem.getName().equals(ADDED_DDC_ENTRY)) {
+				// Getting added DDCEntries
 				Enumeration<?> children = elem.getChildren();
 				String[] key = null;
 				String value = "";
@@ -176,7 +253,6 @@ public class DDCAdvertisement extends Advertisement {
 				while (children.hasMoreElements()) {
 					final TextElement<?> child = (TextElement<?>) children
 							.nextElement();
-
 					if (child.getName().equals(MULTI_KEY)) {
 						key = child.getValue().split(",");
 					} else if (child.getName().equals(VALUE)) {
@@ -188,6 +264,7 @@ public class DDCAdvertisement extends Advertisement {
 				DDCEntry entry = new DDCEntry(key, value, ts);
 				addAddedEntry(entry);
 			} else if (elem.getName().equals(REMOVED_DDC_ENTRY)) {
+				// Getting deleted DDC keys
 				Enumeration<?> children = elem.getChildren();
 				while (children.hasMoreElements()) {
 					final TextElement<?> child = (TextElement<?>) children
@@ -200,6 +277,13 @@ public class DDCAdvertisement extends Advertisement {
 		}
 	}
 
+	/**
+	 * Converts a given @String to @ID
+	 * 
+	 * @param elem
+	 *            - String containing a Id
+	 * @return the ID if exists
+	 */
 	private static ID convertToID(String elem) {
 		try {
 			final URI id = new URI(elem);
@@ -210,6 +294,13 @@ public class DDCAdvertisement extends Advertisement {
 		}
 	}
 
+	/**
+	 * Converts a given @String to @PeerID
+	 * 
+	 * @param text
+	 *            - String containing a peerId
+	 * @return the peerID if exists
+	 */
 	private static PeerID convertToPeerID(String text) {
 		try {
 			final URI id = new URI(text);
@@ -256,11 +347,11 @@ public class DDCAdvertisement extends Advertisement {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof DDCAdvertisement)) {
+		if (!(obj instanceof DistributedDataContainerAdvertisement)) {
 			return false;
 		}
 
-		final DDCAdvertisement other = (DDCAdvertisement) obj;
+		final DistributedDataContainerAdvertisement other = (DistributedDataContainerAdvertisement) obj;
 		return id.equals(other.id);
 	}
 
@@ -272,11 +363,11 @@ public class DDCAdvertisement extends Advertisement {
 		return advertisementUid;
 	}
 
-	public DDCAdvertisementType getType() {
+	public DistributedDataContainerAdvertisementType getType() {
 		return type;
 	}
 
-	public void setType(DDCAdvertisementType type) {
+	public void setType(DistributedDataContainerAdvertisementType type) {
 		this.type = type;
 	}
 

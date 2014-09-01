@@ -12,12 +12,20 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.ddc.DDC;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
-import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DDCAdvertisement;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerAdvertisement;
 
-public class DDCAdvertisementListener implements IDDCAdvertisementListener {
+/**
+ * Listener for DDCAdvertisements. The Changes from Advertisements will be
+ * written to DDC
+ * 
+ * @author ChrisToenjesDeye
+ * 
+ */
+public class DistributedDataContainerAdvertisementListener implements
+		IDistributedDataContainerAdvertisementListener {
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(DDCAdvertisementListener.class);
+			.getLogger(DistributedDataContainerAdvertisementListener.class);
 
 	private IP2PNetworkManager p2pNetworkManager;
 	private List<UUID> receivedDDCAdvertisements = new ArrayList<UUID>();
@@ -36,18 +44,25 @@ public class DDCAdvertisementListener implements IDDCAdvertisementListener {
 		}
 	}
 
+	/**
+	 * Processes DDCAdvertisements and writes changes to DDC. If
+	 * DDCAdvertisement is already processed it will be ignored
+	 */
 	@Override
 	public void advertisementDiscovered(Advertisement advertisement) {
-		if (advertisement instanceof DDCAdvertisement) {
-			DDCAdvertisement ddcAdvertisement = (DDCAdvertisement) advertisement;
+		if (advertisement instanceof DistributedDataContainerAdvertisement) {
+			DistributedDataContainerAdvertisement ddcAdvertisement = (DistributedDataContainerAdvertisement) advertisement;
 			// check if listener already received this ddc advertisement
 			if (!receivedDDCAdvertisements.contains(ddcAdvertisement
 					.getAdvertisementUid())) {
 				receivedDDCAdvertisements.add(ddcAdvertisement
 						.getAdvertisementUid());
+
 				DDC ddc = DDC.getInstance();
 				switch (ddcAdvertisement.getType()) {
 				case initialDistribution:
+					// write only added DDC entries to DDC on initial
+					// distribution
 					if (ddcAdvertisement.getAddedDDCEntires() != null) {
 						for (DDCEntry addedDdcEntry : ddcAdvertisement
 								.getAddedDDCEntires()) {
@@ -56,12 +71,14 @@ public class DDCAdvertisementListener implements IDDCAdvertisementListener {
 					}
 					break;
 				case changeDistribution:
+					// write added entries in DDC
 					if (ddcAdvertisement.getAddedDDCEntires() != null) {
 						for (DDCEntry addedDdcEntry : ddcAdvertisement
 								.getAddedDDCEntires()) {
 							ddc.add(addedDdcEntry);
 						}
 					}
+					// remove entries from DDC
 					if (ddcAdvertisement.getRemovedDDCEntires() != null) {
 						for (String[] deletedDdcEntryKey : ddcAdvertisement
 								.getRemovedDDCEntires()) {
