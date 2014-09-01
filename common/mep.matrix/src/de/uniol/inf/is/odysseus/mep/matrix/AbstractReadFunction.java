@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.mep.matrix;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Iterator;
@@ -53,43 +54,42 @@ abstract public class AbstractReadFunction<T> extends AbstractFunction<T> {
         super(symbol, arity, acceptedTypes, returnType);
     }
 
-    protected double[][] getValueInternal(String path, String delimiter, int[] elements) {
+    protected static double[][] getValueInternal(String path, String delimiter, int[] elements) {
         File file = new File(path);
         List<double[]> resultList = new LinkedList<>();
         if (file.canRead()) {
-            BufferedReader reader = null;
+            FileInputStream stream;
             try {
-                FileInputStream stream = new FileInputStream(file);
-                reader = new BufferedReader(new InputStreamReader(stream));
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    String[] stringValues = line.split(Pattern.quote("" + delimiter));
-                    double[] values = new double[elements.length];
-                    for (int i = 0; i < elements.length; i++) {
-                        values[i] = Double.parseDouble(stringValues[elements[i]].trim());
+                stream = new FileInputStream(file);
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        String[] stringValues = line.split(Pattern.quote("" + delimiter));
+                        if (elements != null) {
+                            double[] values = new double[elements.length];
+                            for (int i = 0; i < elements.length; i++) {
+                                values[i] = Double.parseDouble(stringValues[elements[i]].trim());
+                            }
+                            resultList.add(values);
+                        }
+                        else {
+                            double[] values = new double[stringValues.length];
+                            for (int i = 0; i < stringValues.length; i++) {
+                                values[i] = Double.parseDouble(stringValues[i].trim());
+                            }
+                            resultList.add(values);
+                        }
                     }
-                    resultList.add(values);
                 }
-
+                catch (IOException e) {
+                    LOG.warn(e.getMessage(), e);
+                }
             }
-            catch (IOException e) {
+            catch (FileNotFoundException e) {
                 LOG.warn(e.getMessage(), e);
-
             }
-            finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    }
-                    catch (IOException e) {
-                        LOG.warn(e.getMessage(), e);
-
-                    }
-                }
-            }
-
         }
-        double[][] result = new double[resultList.size()][elements.length];
+        double[][] result = new double[resultList.size()][resultList.get(0).length];
         Iterator<double[]> iter = resultList.iterator();
         int i = 0;
         while (iter.hasNext()) {

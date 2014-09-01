@@ -38,7 +38,7 @@ public class MatrixReadFunction extends AbstractReadFunction<double[][]> {
 	@Override
 	public double[][] getValue() {
 		String path = getInputValue(0);
-		return getValueInternal(path, DELIMITER, new int[] { 0 });
+        return getValueInternal(path, DELIMITER, null);
 	}
 
 }
