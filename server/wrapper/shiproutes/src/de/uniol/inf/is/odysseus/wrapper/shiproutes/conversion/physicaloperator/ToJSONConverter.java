@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.shiproutes.conversation.physicaloperator;
+package de.uniol.inf.is.odysseus.wrapper.shiproutes.conversion.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +35,12 @@ import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.RouteState
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.Waypoint;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.enums.DataItemTypes;
 
-public class ToShipRouteConverter {
+public class ToJSONConverter {
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(ToShipRouteConverter.class);
+			.getLogger(ToJSONConverter.class);
 
-	public static IShipRouteRootElement convertIECToShipRoute(IECRoute iecRoute) {
+	public static IShipRouteRootElement convertIECToJSON(IECRoute iecRoute) {
 		if (!iecRoute.isValid()) {
 			LOG.debug("IEC Element is invalid");
 			return null;

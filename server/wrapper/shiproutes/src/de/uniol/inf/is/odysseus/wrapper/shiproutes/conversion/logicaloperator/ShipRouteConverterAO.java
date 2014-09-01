@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.shiproutes.conversation.logicaloperator;
+package de.uniol.inf.is.odysseus.wrapper.shiproutes.conversion.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -27,7 +27,7 @@ public class ShipRouteConverterAO extends UnaryLogicalOp {
 		return new ShipRouteConverterAO(this);
 	}
 
-	@Parameter(name = "conversionType", type = EnumParameter.class, isList = false, optional = false, doc = "The conversion type between shipRoute messages: SHIPROUTE_TO_IEC, SHIPROUTE_TO_IVEF, IEC_TO_ROUTE, IEC_TO_MANOEUVRE, IEC_TO_PREDICTION, IEC_TO_IVEF")
+	@Parameter(name = "conversionType", type = EnumParameter.class, isList = false, optional = false, doc = "The conversion type between shipRoute messages: JSON_TO_IEC, JSON_NMEA_TO_IVEF, IEC_TO_JSON_ROUTE, IEC_TO_JSON_MANOEUVRE, IEC_TO_JSON_PREDICTION, IEC_NMEA_TO_IVEF")
 	public void setConversionType(ConversionType conversionType) {
 		this.conversionType = conversionType;
 	}

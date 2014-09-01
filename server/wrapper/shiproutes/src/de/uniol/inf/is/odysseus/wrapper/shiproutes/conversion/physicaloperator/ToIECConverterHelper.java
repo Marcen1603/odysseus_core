@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.shiproutes.conversation.physicaloperator;
+package de.uniol.inf.is.odysseus.wrapper.shiproutes.conversion.physicaloperator;
 
 import java.util.List;
 import java.util.Date;
@@ -39,7 +39,7 @@ public class ToIECConverterHelper {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ToIECConverterHelper.class);
 
-	public static IECRoute convertShipRouteToIEC(RouteDataItem routeDataItem) {
+	public static IECRoute convertJSONShipRouteToIEC(RouteDataItem routeDataItem) {
 		// get received objects
 		Route receivedRoute = routeDataItem.getRoute();
 		List<Waypoint> receivedWaypoints = routeDataItem.getRoute()
@@ -152,13 +152,13 @@ public class ToIECConverterHelper {
 		if (iec.isValid()) {
 			return iec;
 		} else {
-			LOG.debug("IEC Element is invalid");
+			LOG.debug("IEC Element is invalid => not processed");
 			return null;
 		}
 
 	}
 
-	public static IECRoute convertPredictionToIEC(
+	public static IECRoute convertJSONPredictionToIEC(
 			PredictionDataItem predictionDataItem) {
 		PredictionPlan receivedPredictionPlan = predictionDataItem.getMplan();
 		List<PredictionPoint> receivedPredictionPoints = receivedPredictionPlan
@@ -217,12 +217,12 @@ public class ToIECConverterHelper {
 		if (iec.isValid()) {
 			return iec;
 		} else {
-			LOG.debug("IEC Element is invalid");
+			LOG.debug("IEC Element is invalid => not processed");
 			return null;
 		}
 	}
 
-	public static IECRoute convertManoeuvreToIEC(
+	public static IECRoute convertJSONManoeuvreToIEC(
 			ManoeuvrePlanDataItem manoeuvrePlanDataItem) {
 		ManoeuvrePlan receivedMPlan = manoeuvrePlanDataItem.getMplan();
 		List<ManoeuvrePoint> receivedManoeuvrePoints = receivedMPlan
@@ -365,7 +365,7 @@ public class ToIECConverterHelper {
 		if (iec.isValid()) {
 			return iec;
 		} else {
-			LOG.debug("IEC Element is invalid");
+			LOG.debug("IEC Element is invalid => not processed");
 			return null;
 		}
 	}

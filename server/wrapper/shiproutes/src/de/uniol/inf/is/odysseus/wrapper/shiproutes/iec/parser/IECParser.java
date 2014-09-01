@@ -293,8 +293,10 @@ public class IECParser extends DefaultHandler {
 	public IECRoute getIEC() {
 		if (iec.isValid()) {
 			return iec;
-		}
-		return null;
+		} else {
+			LOG.debug("IEC Element is invalid => not processed");
+			return null;
+		}		
 	}
 
 	public void resetParser() {

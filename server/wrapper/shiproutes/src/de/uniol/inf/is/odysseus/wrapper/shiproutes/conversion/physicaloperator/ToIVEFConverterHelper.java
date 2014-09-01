@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.shiproutes.conversation.physicaloperator;
+package de.uniol.inf.is.odysseus.wrapper.shiproutes.conversion.physicaloperator;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -55,9 +55,11 @@ public class ToIVEFConverterHelper {
 
 		Body body = new Body();
 
+		// iterate over waypoints
 		for (Waypoint waypoint : receivedWaypoints) {
 			VesselData vesselData = new VesselData();
 
+			// Pos Report
 			PosReport posReport = new PosReport();
 			if (waypoint.getID() != null)
 				posReport.setId(waypoint.getID());
@@ -78,6 +80,7 @@ public class ToIVEFConverterHelper {
 			}
 			vesselData.setPosReport(posReport);
 
+			// Static Data
 			StaticData staticData = new StaticData();
 			if (waypoint.getID() != null)
 				staticData.setId(String.valueOf(waypoint.getID()));
@@ -97,6 +100,7 @@ public class ToIVEFConverterHelper {
 			staticData.setShipType(70);
 			vesselData.addStaticData(staticData);
 
+			// Voyage
 			Voyage voyage = new Voyage();
 			if (waypoint.getID() != null)
 				voyage.setId(String.valueOf(waypoint.getID()));
@@ -134,11 +138,13 @@ public class ToIVEFConverterHelper {
 
 		Body body = new Body();
 
+		// Iterate over manoeuvre points
 		for (ManoeuvrePoint manoeuvrePoint : receivedManoeuvrePoints) {
 			int randomNumber = (int) (Math.random() * 99999999);
 
 			VesselData vesselData = new VesselData();
 
+			// Pos Report
 			PosReport posReport = new PosReport();
 			if (receivedMPlan.getMplan_ID() != null) {
 				posReport.setId(randomNumber);
@@ -167,6 +173,7 @@ public class ToIVEFConverterHelper {
 			}
 			vesselData.setPosReport(posReport);
 
+			// Static Data
 			StaticData staticData = new StaticData();
 			if (receivedMPlan.getMplan_label() != null)
 				staticData.setSourceName(receivedMPlan.getMplan_label());
@@ -187,6 +194,7 @@ public class ToIVEFConverterHelper {
 			staticData.setShipType(70);
 			vesselData.addStaticData(staticData);
 
+			// Voyage
 			Voyage voyage = new Voyage();
 			if (receivedMPlan.getMplan_label() != null)
 				voyage.setSourceName(receivedMPlan.getMplan_label());
@@ -205,7 +213,8 @@ public class ToIVEFConverterHelper {
 		return msg_vesselData;
 	}
 
-	public static MSG_VesselData convertIECToIVEF(IECRoute iecRoute) {
+	public static MSG_VesselData convertIECToIVEF(IECRoute iecRoute,
+			StaticAndVoyageData staticAndVoyageData) {
 		if (!iecRoute.isValid()) {
 			LOG.debug("IEC Element is invalid");
 			return null;
@@ -222,10 +231,11 @@ public class ToIVEFConverterHelper {
 		// Route Info
 		IECRouteInfo iecRouteInfo = iecRoute.getRouteInfo();
 
-		// Waypoints
+		// Iterate over Waypoints
 		for (IECWaypoint iecWaypoint : iecRoute.getWaypoints().getWaypoints()) {
 			VesselData vesselData = new VesselData();
 
+			// Pos Report
 			PosReport posReport = new PosReport();
 			posReport.setId(iecWaypoint.getId());
 			posReport.setSourceId(iecWaypoint.getId());
@@ -240,25 +250,45 @@ public class ToIVEFConverterHelper {
 			}
 			vesselData.setPosReport(posReport);
 
+			// Static Data
 			StaticData staticData = new StaticData();
 			staticData.setId(String.valueOf(iecWaypoint.getId()));
 			staticData.setSource(iecWaypoint.getId());
 			if (iecRouteInfo.getRouteName() != null)
 				staticData.setSourceName(iecRouteInfo.getRouteName());
-			if (iecRouteInfo.getVesselName() != null)
+
+			if (iecRouteInfo.getVesselName() != null) {
 				staticData.setShipName(iecRouteInfo.getVesselName());
-			if (iecRouteInfo.getVesselIMO() != null)
+			} else if (staticAndVoyageData.getShipName() != null) {
+				staticData.setShipName(staticAndVoyageData.getShipName());
+			}
+
+			if (iecRouteInfo.getVesselIMO() != null) {
 				staticData.setIMO(iecRouteInfo.getVesselIMO().longValue());
-			if (iecRouteInfo.getVesselMMSI() != null)
+			} else if (staticAndVoyageData.getImo() != null) {
+				staticData.setIMO(staticAndVoyageData.getImo().getIMO());
+			}
+
+			if (iecRouteInfo.getVesselMMSI() != null) {
 				staticData.setMMSI(iecRouteInfo.getVesselMMSI().longValue());
+			} else if (staticAndVoyageData.getSourceMmsi() != null) {
+				staticData.setMMSI(staticAndVoyageData.getSourceMmsi()
+						.getMMSI());
+			}
 			staticData.setShipType(70); // cargo vessel
+
+			if (staticAndVoyageData.getCallsign() != null)
+				staticData.setCallsign(staticAndVoyageData.getCallsign());
 			vesselData.addStaticData(staticData);
 
+			// Voyage
 			Voyage voyage = new Voyage();
 			voyage.setId(String.valueOf(iecWaypoint.getId()));
 			voyage.setSource(iecWaypoint.getId());
 			if (iecRouteInfo.getRouteName() != null)
 				voyage.setSourceName(iecRouteInfo.getRouteName());
+			if (staticAndVoyageData.getDraught() != null)
+				voyage.setDraught(staticAndVoyageData.getDraught());
 			vesselData.addVoyage(voyage);
 
 			body.addVesselData(vesselData);
