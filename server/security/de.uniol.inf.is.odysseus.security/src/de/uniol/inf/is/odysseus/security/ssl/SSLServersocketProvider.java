@@ -14,14 +14,19 @@ public class SSLServerSocketProvider implements IServerSocketProvider {
 	
 	private ServerSocket socket;
 	private int port;
+	private boolean clientAuthentication;
 	
-	public SSLServerSocketProvider(int port) {
+	public SSLServerSocketProvider(int port, boolean clientAuthentication) {
 		this.port = port;
+		this.clientAuthentication = clientAuthentication;
 	}
 	
 	private void createSocket() {
-	    TrustManager[] tms= SecurityStore.getInstance().getTrustManagers(); 
 		KeyManager[] kms = SecurityStore.getInstance().getKeyManagers();   
+	    TrustManager[] tms = null;
+	    if (clientAuthentication) {
+		   tms= SecurityStore.getInstance().getTrustManagers();
+	    } 
         try {
             SSLContext context=SSLContext.getInstance("TLS");
             context.init(kms, tms, new java.security.SecureRandom());        

@@ -37,7 +37,7 @@ public class Activator implements BundleActivator {
     public void start(BundleContext bundleContext) throws Exception {
 		LoggingConfiguration.load();
 		Activator.context = bundleContext;
-		WebserviceStarter.start();
+		WebserviceStarter.startSSL(true);
 	}
 
 	/*
