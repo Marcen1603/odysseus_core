@@ -143,9 +143,9 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 		if (received.getMetadata("object") instanceof MSG_VesselData) {
 			MSG_VesselData msg_VesselData = (MSG_VesselData) received
 					.getMetadata("object");
-			List<IShipRouteRootElement> shipRouteElement = ToJSONConverter
+			List<IShipRouteRootElement> shipRouteElements = ToJSONConverter
 					.convertIVEFToRoute(msg_VesselData);
-			for (IShipRouteRootElement iShipRouteRootElement : shipRouteElement) {
+			for (IShipRouteRootElement iShipRouteRootElement : shipRouteElements) {
 				KeyValueObject<? extends IMetaAttribute> next = iShipRouteRootElement
 						.toMap();
 				next.setMetadata("object", iShipRouteRootElement);
@@ -164,9 +164,9 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 		if (received.getMetadata("object") instanceof MSG_VesselData) {
 			MSG_VesselData msg_VesselData = (MSG_VesselData) received
 					.getMetadata("object");
-			List<IShipRouteRootElement> shipRouteElement = ToJSONConverter
+			List<IShipRouteRootElement> shipRouteElements = ToJSONConverter
 					.convertIVEFToPrediction(msg_VesselData);
-			for (IShipRouteRootElement iShipRouteRootElement : shipRouteElement) {
+			for (IShipRouteRootElement iShipRouteRootElement : shipRouteElements) {
 				KeyValueObject<? extends IMetaAttribute> next = iShipRouteRootElement
 						.toMap();
 				next.setMetadata("object", iShipRouteRootElement);
@@ -185,9 +185,9 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 		if (received.getMetadata("object") instanceof MSG_VesselData) {
 			MSG_VesselData msg_VesselData = (MSG_VesselData) received
 					.getMetadata("object");
-			List<IShipRouteRootElement> shipRouteElement = ToJSONConverter
+			List<IShipRouteRootElement> shipRouteElements = ToJSONConverter
 					.convertIVEFToManoeuvre(msg_VesselData);
-			for (IShipRouteRootElement iShipRouteRootElement : shipRouteElement) {
+			for (IShipRouteRootElement iShipRouteRootElement : shipRouteElements) {
 				KeyValueObject<? extends IMetaAttribute> next = iShipRouteRootElement
 						.toMap();
 				next.setMetadata("object", iShipRouteRootElement);
