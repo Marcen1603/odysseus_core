@@ -10,12 +10,12 @@ import javax.net.ssl.TrustManager;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.IServerSocketProvider;
 import de.uniol.inf.is.odysseus.security.store.SecurityStore;
 
-public class SSLServersocketProvider implements IServerSocketProvider {
+public class SSLServerSocketProvider implements IServerSocketProvider {
 	
 	private ServerSocket socket;
 	private int port;
 	
-	public SSLServersocketProvider(int port) {
+	public SSLServerSocketProvider(int port) {
 		this.port = port;
 	}
 	
