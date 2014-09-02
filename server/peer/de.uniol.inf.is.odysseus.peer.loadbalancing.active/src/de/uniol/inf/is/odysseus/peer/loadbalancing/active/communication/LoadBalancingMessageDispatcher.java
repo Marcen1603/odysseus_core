@@ -222,7 +222,7 @@ public class LoadBalancingMessageDispatcher {
 		}
 		if(!this.currentJobs.containsKey(newPipeId)) {
 
-			LOG.debug("Send CopyOperator");
+			LOG.debug("Send CopyOperator (isSender:" + isSender + ")");
 			LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createCopyOperatorMsg(isSender, newPeerId, oldPipeId, newPipeId);
 			RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator,message,destinationPeer);
 			this.currentJobs.put(newPipeId, job);
@@ -350,6 +350,18 @@ public class LoadBalancingMessageDispatcher {
 			LOG.debug("Send AbortResponse");
 			peerCommunicator.send(peerID, message);
 		} catch (PeerCommunicationException e) {
+			LOG.error("Error while sending Message:");
+			LOG.error(e.getMessage());
+		}
+	}
+
+	public void sendDeleteFinished(PeerID peerID, String oldPipeId) {
+		LoadBalancingResponseMessage response = LoadBalancingResponseMessage.createDeleteFinishedMessage(lbProcessId, oldPipeId);
+		try {
+			LOG.debug("Send DELETE_FINISHED Response");
+			peerCommunicator.send(peerID, response);
+		}
+		catch (PeerCommunicationException e) {
 			LOG.error("Error while sending Message:");
 			LOG.error(e.getMessage());
 		}

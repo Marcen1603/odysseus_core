@@ -167,20 +167,18 @@ public class InstructionHandler {
 			if(status==null) {
 				return;
 			}
-			
-			//TODO Multiple Messages?
-				LOG.debug("Got DELETE_RECEIVER/DELETE_SENDER");
-				LoadBalancingHelper.removeDuplicateJxtaOperator(instruction.getOldPipeId());
-				break;
+			//Sync is finished (or we would not be here). So we can stop spamming SYNC_FINISHED Messages now.
+			status.getMessageDispatcher().stopAllMessages();
+			status.getMessageDispatcher().sendDeleteFinished(senderPeer,instruction.getOldPipeId());
+			LoadBalancingHelper.removeDuplicateJxtaOperator(instruction.getOldPipeId());
+			break;
 
 				
 		case LoadBalancingInstructionMessage.MESSAGE_RECEIVED:
 			LOG.debug("Got MESSAGE_RECEIVED");
 			if(status==null) {
-				
 				return;
 			}
-			
 			status.getMessageDispatcher().stopAllMessages();
 			break;
 		}

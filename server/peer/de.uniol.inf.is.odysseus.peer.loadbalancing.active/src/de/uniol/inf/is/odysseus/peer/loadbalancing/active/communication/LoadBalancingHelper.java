@@ -99,7 +99,7 @@ public class LoadBalancingHelper {
 	 * @param status
 	 *            Status
 	 */
-	public static void notifyIncomingPeers(LoadBalancingMasterStatus status) {
+	public static void notifyOutgoingPeers(LoadBalancingMasterStatus status) {
 
 		IMessageDeliveryFailedListener deliveryFailedListener = LoadBalancingCommunicationListener.getInstance();
 		
@@ -136,7 +136,7 @@ public class LoadBalancingHelper {
 	 * @param status
 	 *            Status
 	 */
-	public static void notifyOutgoingPeers(LoadBalancingMasterStatus status) {
+	public static void notifyIncomingPeers(LoadBalancingMasterStatus status) {
 
 		IMessageDeliveryFailedListener deliveryFailedListener = LoadBalancingCommunicationListener.getInstance();
 		
@@ -150,8 +150,6 @@ public class LoadBalancingHelper {
 
 		for (ILogicalOperator operator : modifiedQueryPart.getOperators()) {
 			if (operator instanceof JxtaReceiverAO) {
-				
-				
 				JxtaReceiverAO receiver = (JxtaReceiverAO) operator;
 				
 				String newPipe = receiver.getPipeID();
@@ -179,7 +177,6 @@ public class LoadBalancingHelper {
 		
 		ISession session = LoadBalancingCommunicationListener.getActiveSession();
 		IServerExecutor executor = LoadBalancingCommunicationListener.getExecutor();
-		
 		executor.removeQuery(queryId, session);
 	}
 
@@ -206,7 +203,7 @@ public class LoadBalancingHelper {
 				.getRelativeSourcesOfLogicalQueryPart(modifiedPart);
 
 		HashMap<String, String> replacedPipes = new HashMap<String, String>();
-		ArrayList<String> receiverPipes = new ArrayList<String>();
+		ArrayList<String> senderPipes = new ArrayList<String>();
 
 		for (ILogicalOperator relativeSource : relativeSources) {
 			if (incomingConnections.containsKey(relativeSource)) {
@@ -227,9 +224,7 @@ public class LoadBalancingHelper {
 					receiver.connectSink(relativeSource, connection.port, 0,
 							relativeSource.getInputSchema(0));
 					modifiedPart.addOperator(receiver);
-					receiverPipes.add(connection.oldPipeID);
 					
-
 				}
 			}
 		}
@@ -252,10 +247,15 @@ public class LoadBalancingHelper {
 							connection.port,
 							connection.localOperator.getOutputSchema());
 					modifiedPart.addOperator(sender);
+					senderPipes.add(connection.oldPipeID);
 				}
 			}
 		}
-		status.setPipesToSync(receiverPipes);
+		status.setPipesToSync(senderPipes);
+		LOG.debug("Pipes to Sync (later):" );
+		for(String pipe : senderPipes) {
+			LOG.debug(pipe);
+		}
 		status.setModifiedPart(modifiedPart);
 		status.setReplacedPipes(replacedPipes);
 		return replacedPipes;
@@ -269,7 +269,7 @@ public class LoadBalancingHelper {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void removeDuplicateJxtaOperator(String pipeID) {
-		
+		LOG.debug("Removing Operator with pipe ID " + pipeID);
 		
 		IPhysicalOperator operator = getPhysicalJxtaOperator(false,
 				pipeID);

@@ -21,6 +21,8 @@ public class LoadBalancingResponseMessage implements IMessage {
 	
 	public static final int SYNC_FINISHED = 5;
 	
+	public static final int DELETE_FINISHED = 6;
+	
 	
 	
 	
@@ -52,6 +54,14 @@ public class LoadBalancingResponseMessage implements IMessage {
 		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(SUCCESS_INSTALL_QUERY);
+		return message;
+	}
+	
+	public static LoadBalancingResponseMessage createDeleteFinishedMessage(int loadBalancingProcessId, String pipeID) {
+		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+		message.setLoadBalancingProcessId(loadBalancingProcessId);
+		message.setPipeID(pipeID);
+		message.setMsgType(DELETE_FINISHED);
 		return message;
 	}
 	
@@ -115,6 +125,7 @@ public class LoadBalancingResponseMessage implements IMessage {
 				
 			case SUCCESS_DUPLICATE:
 			case SYNC_FINISHED:
+			case DELETE_FINISHED:
 				
 				/*
 				 * Allocate byte Buffer:
@@ -156,6 +167,7 @@ public class LoadBalancingResponseMessage implements IMessage {
 			
 		case SUCCESS_DUPLICATE:
 		case SYNC_FINISHED:
+		case DELETE_FINISHED:
 			
 			int pipeIdSize = bb.getInt();
 			byte[] pipeIdBytes = new byte[pipeIdSize];

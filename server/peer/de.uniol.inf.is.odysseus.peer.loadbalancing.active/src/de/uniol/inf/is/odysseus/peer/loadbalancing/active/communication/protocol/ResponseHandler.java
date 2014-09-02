@@ -87,7 +87,7 @@ public class ResponseHandler {
 				dispatcher.stopRunningJob();
 				status.setPhase(LoadBalancingMasterStatus.LB_PHASES.RELINKING_SENDERS);
 				LOG.debug("Relinking Senders.");
-				LoadBalancingHelper.notifyIncomingPeers(status);
+				LoadBalancingHelper.notifyOutgoingPeers(status);
 			}
 			break;
 
@@ -97,7 +97,7 @@ public class ResponseHandler {
 			
 			if (status.getPhase().equals(
 					LoadBalancingMasterStatus.LB_PHASES.RELINKING_SENDERS)) {
-				LOG.debug("Got SUCCESS_DUPLICATE for SENDER");
+				LOG.debug("Got SUCCESS_DUPLICATE for RECEIVER");
 				dispatcher.sendPipeSuccessReceivedMsg(senderPeer, response.getPipeID());
 				dispatcher.stopRunningJob(response.getPipeID());
 				LOG.debug("Stopped JOB " + response.getPipeID());
@@ -106,14 +106,14 @@ public class ResponseHandler {
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
 					// All success messages received. Yay!
 					status.setPhase(LB_PHASES.RELINKING_RECEIVERS);
-					LoadBalancingHelper.notifyOutgoingPeers(status);
-					LOG.debug("Relinking Receivers.");
+					LoadBalancingHelper.notifyIncomingPeers(status);
+					LOG.debug("Status: Relinking Receivers.");
 				}
 			}
 			
 			if (status.getPhase().equals(
 					LoadBalancingMasterStatus.LB_PHASES.RELINKING_RECEIVERS)) {
-				LOG.debug("Got SUCCESS_DUPLICATE for RECEIVER");
+				LOG.debug("Got SUCCESS_DUPLICATE for SENDER");
 				dispatcher.sendPipeSuccessReceivedMsg(senderPeer, response.getPipeID());
 				dispatcher.stopRunningJob(response.getPipeID());
 				LOG.debug("Stopped JOB " + response.getPipeID());
@@ -133,8 +133,11 @@ public class ResponseHandler {
 			if (status.getPhase().equals(LB_PHASES.SYNCHRONIZING)) {
 				
 				status.removePipeToSync(response.getPipeID());
+				LOG.debug("Pipes left:" + status.getNumberOfPipesToSync());
 				dispatcher.sendPipeSuccessReceivedMsg(senderPeer, response.getPipeID());
 				if (status.getNumberOfPipesToSync() == 0) {
+					LOG.debug("All outgoing pipes synced.");
+					status.setPhase(LB_PHASES.DELETING);
 					ILogicalQueryPart queryPart = status.getOriginalPart();
 					if (!queryPart.getOperators().asList().isEmpty()) {
 
@@ -177,7 +180,13 @@ public class ResponseHandler {
 				handleError(status,communicationListener);
 			}
 			break;
-
+		
+		case LoadBalancingResponseMessage.DELETE_FINISHED:
+			if(status.getPhase().equals(LB_PHASES.DELETING)) {
+				LOG.debug("Deleting finished for pipe " + response.getPipeID());
+				dispatcher.stopRunningJob(response.getPipeID());
+			}
+			break;
 		}
 
 	}
@@ -205,6 +214,7 @@ public class ResponseHandler {
 			LoadBalancingHelper.notifyInvolvedPeers(status);
 			break;
 		case SYNCHRONIZING:
+		case DELETING:
 			// New query is already running. Do not abort.
 			break;
 		default:
