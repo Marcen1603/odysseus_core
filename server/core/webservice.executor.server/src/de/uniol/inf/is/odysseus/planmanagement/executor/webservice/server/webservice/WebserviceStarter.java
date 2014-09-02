@@ -51,7 +51,7 @@ public class WebserviceStarter {
 	}
 	
 	
-	public static void startSSL(final boolean sslClientAuthentification) {
+	public static void startSSL(final boolean sslClientAuthentication) {
 		// wait for bundle activation
 		Thread t = new Thread(new Runnable() {
 
@@ -63,14 +63,14 @@ public class WebserviceStarter {
 					} catch (InterruptedException e) {
 					}
 				}
-				startWithSSL(sslClientAuthentification);
+				startWithSSL(sslClientAuthentication);
 			}			
 		});	
 		t.setDaemon(true);
 		t.start();
 	}
 	
-	private static void startWithSSL(boolean sslClientAuthentification) {
+	private static void startWithSSL(boolean sslClientAuthentication) {
 		try {
 			Endpoint endpoint = Endpoint.create(new WebserviceServer());
 			SSLContext ssl = SSLContext.getInstance("TLS");
@@ -82,7 +82,7 @@ public class WebserviceStarter {
 			keyManagers = SecurityProviderServiceBinding.getSecurityProvider().getKeyManagers();
 
 			
-			if (sslClientAuthentification) {
+			if (sslClientAuthentication) {
 				trustManagers = SecurityProviderServiceBinding.getSecurityProvider().getTrustManagers();
 				configurator = new HttpsConfigurator(ssl) {
 				     @Override
