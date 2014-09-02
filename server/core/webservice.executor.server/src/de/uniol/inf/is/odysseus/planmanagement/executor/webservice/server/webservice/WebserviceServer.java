@@ -75,7 +75,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBui
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MapParameter;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.NioByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -122,7 +121,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webser
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StringResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.ViewInformationWS;
 import de.uniol.inf.is.odysseus.relational_interval.replacement.ReplacementRegistry;
-import de.uniol.inf.is.odysseus.security.ssl.SSLServerSocketProvider;
 
 /**
  * 
@@ -743,7 +741,7 @@ public class WebserviceServer {
 		SocketSinkPO sink = null;		
 
 		if (ssl) {
-			sink = new SocketSinkPO(new SSLServerSocketProvider(port,sslClientAuthentication),new ByteBufferSinkStreamHandlerBuilder(), false,false, objectHandler);
+			//sink = new SocketSinkPO(new SSLServerSocketProvider(port,sslClientAuthentication),new ByteBufferSinkStreamHandlerBuilder(), false,false, objectHandler);
 		} else {
 			sink = new SocketSinkPO(port, "",
 					new NioByteBufferSinkStreamHandlerBuilder(), true, false,
