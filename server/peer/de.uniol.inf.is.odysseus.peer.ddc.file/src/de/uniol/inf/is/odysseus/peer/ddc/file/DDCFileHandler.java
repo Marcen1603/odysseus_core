@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.peer.ddc.file;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Properties;
@@ -35,7 +35,7 @@ public class DDCFileHandler {
 	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DDCFileHandler.class);
-	
+
 	/**
 	 * The name of the DDC file.
 	 */
@@ -56,17 +56,11 @@ public class DDCFileHandler {
 	 * The brackets including timestamps in the DDC file.
 	 */
 	private static final String[] TS_BRACKETS = { "[", "]" };
-	
+
 	/**
 	 * The prefix for timestamps in the DDC file.
 	 */
 	private static final String TS_PREFIX = "ts: ";
-
-	/**
-	 * The pattern for timestamp values in the DDC file.
-	 */
-	private static final String TS_PATTERN = "\\" + DDCFileHandler.TS_BRACKETS[0]
-			+ "\\d+" + "\\" + DDCFileHandler.TS_BRACKETS[1];
 
 	/**
 	 * The DDC.
@@ -88,19 +82,20 @@ public class DDCFileHandler {
 		DDCFileHandler.LOG.debug("Bound {} as a DDC", ddc.getClass()
 				.getSimpleName());
 
-		// TODO workaround to ensure that the DDC distributor is already listening
-		if(!DDCFileHandler.cListeners.isEmpty()) {
-		
+		// TODO workaround to ensure that the DDC distributor is already
+		// listening
+		if (!DDCFileHandler.cListeners.isEmpty()) {
+
 			try {
 
 				DDCFileHandler.load();
-	
+
 			} catch (IOException e) {
-	
+
 				DDCFileHandler.LOG.error("Could not load DDC file!", e);
-	
+
 			}
-			
+
 		}
 
 	}
@@ -117,7 +112,7 @@ public class DDCFileHandler {
 
 		Preconditions.checkNotNull(ddc, "The DDC to bind must be not null!");
 		if (DDCFileHandler.ddc == ddc) {
-			
+
 			try {
 
 				DDCFileHandler.save();
@@ -126,7 +121,7 @@ public class DDCFileHandler {
 
 				DDCFileHandler.LOG.error("Could not save DDC file!", e);
 
-			}			
+			}
 
 			DDCFileHandler.ddc = null;
 			DDCFileHandler.LOG.debug("Unbound {} as a DDC", ddc.getClass()
@@ -135,11 +130,12 @@ public class DDCFileHandler {
 		}
 
 	}
-	
+
 	/**
 	 * List of all bound DDC listeners.
 	 */
-	private static Collection<IDDCFileHandlerListener> cListeners = Lists.newArrayList();
+	private static Collection<IDDCFileHandlerListener> cListeners = Lists
+			.newArrayList();
 
 	/**
 	 * Binds a listener. <br />
@@ -153,25 +149,25 @@ public class DDCFileHandler {
 
 		Preconditions.checkNotNull(listener,
 				"The DDC listener to bind must be not null!");
-		DDCFileHandler.LOG.debug("Bound {} as a listener",
-				listener.getClass().getSimpleName());
+		DDCFileHandler.LOG.debug("Bound {} as a listener", listener.getClass()
+				.getSimpleName());
 		DDCFileHandler.cListeners.add(listener);
-		
-		// TODO workaround to ensure that the DDC distributor is already listening
-		if(DDCFileHandler.ddc != null) {
-		
+
+		// TODO workaround to ensure that the DDC distributor is already
+		// listening
+		if (DDCFileHandler.ddc != null) {
+
 			try {
 
 				DDCFileHandler.load();
-	
+
 			} catch (IOException e) {
-	
+
 				DDCFileHandler.LOG.error("Could not load DDC file!", e);
-	
+
 			}
-			
+
 		}
-		
 
 	}
 
@@ -188,8 +184,8 @@ public class DDCFileHandler {
 		Preconditions.checkNotNull(listener,
 				"The DDC listener to unbind must be not null!");
 		DDCFileHandler.cListeners.remove(listener);
-		DDCFileHandler.LOG.debug("Unbound {} as a listener",
-				listener.getClass().getSimpleName());
+		DDCFileHandler.LOG.debug("Unbound {} as a listener", listener
+				.getClass().getSimpleName());
 
 	}
 
@@ -205,11 +201,6 @@ public class DDCFileHandler {
 		}
 
 	}
-
-	/**
-	 * The properties loaded from the DDC file.
-	 */
-	private static Properties cProperties = new Properties();
 
 	/**
 	 * Checks, if the DDC file exists.
@@ -244,25 +235,30 @@ public class DDCFileHandler {
 
 		}
 
-		DDCFileHandler.loadFromFile();
-		DDCFileHandler.writeIntoDDC();
+		Properties properties = DDCFileHandler.loadFromFile();
+		DDCFileHandler.writeIntoDDC(properties);
 		DDCFileHandler.setChanged();
 
 	}
 
 	/**
-	 * Adds values from {@link #cProperties} to the DDC.
+	 * Adds entries to the DDC.
+	 * 
+	 * @param properties
+	 *            The properties containing the entries. <br />
+	 *            Must be not null.
 	 */
-	private static void writeIntoDDC() {
+	private static void writeIntoDDC(Properties properties) {
 
+		Preconditions.checkNotNull(properties,
+				"The properties must be not null!");
 		Preconditions.checkNotNull(DDCFileHandler.ddc, "A DDC must be bound!");
 
-		for (String key : DDCFileHandler.cProperties.stringPropertyNames()) {
+		for (String key : properties.stringPropertyNames()) {
 
 			String[] partialKeys = key.split(DDCFileHandler.KEY_SEPERATOR);
 			IPair<String, Long> valueAndTS = DDCFileHandler
-					.determineValueAndTS(DDCFileHandler.cProperties
-							.getProperty(key));
+					.determineValueAndTS(properties.getProperty(key));
 
 			DDCFileHandler.ddc.add(new DDCEntry(new DDCKey(partialKeys),
 					valueAndTS.getE1(), valueAndTS.getE2()));
@@ -287,22 +283,33 @@ public class DDCFileHandler {
 		String value = property;
 		long ts = DDCFileHandler.DDC_FILE.lastModified();
 
-		if (property.endsWith(DDCFileHandler.TS_PATTERN)) {
+		if (property.endsWith(DDCFileHandler.TS_BRACKETS[1])) {
 
-			value = property.substring(0,
-					property.lastIndexOf(DDCFileHandler.TS_BRACKETS[1]));
-			String ts_string = property.substring(
-					property.lastIndexOf(DDCFileHandler.TS_BRACKETS[0] + 1),
-					property.lastIndexOf(DDCFileHandler.TS_BRACKETS[1]));
+			int beginIndex = property.lastIndexOf(DDCFileHandler.TS_PREFIX);
 
-			try {
+			if (beginIndex >= 0) {
 
-				ts = Long.valueOf(ts_string);
+				String ts_string = property.substring(beginIndex
+						+ DDCFileHandler.TS_PREFIX.length(),
+						property.length() - 1);
+				if (ts_string.matches("\\d+")) {
 
-			} catch (NumberFormatException e) {
+					value = property
+							.substring(0, property
+									.lastIndexOf(DDCFileHandler.TS_BRACKETS[0]));
 
-				DDCFileHandler.LOG.error("Can not convert {} to long!",
-						ts_string);
+					try {
+
+						ts = Long.valueOf(ts_string);
+
+					} catch (NumberFormatException e) {
+
+						DDCFileHandler.LOG.error("Can not convert {} to long!",
+								ts_string);
+
+					}
+
+				}
 
 			}
 
@@ -313,19 +320,22 @@ public class DDCFileHandler {
 	}
 
 	/**
-	 * Loads the DDC file into {@link #cProperties}.
+	 * Loads the DDC file into properties.
 	 * 
+	 * @return Properties containing all entries.
 	 * @throws IOException
 	 *             if any error occurs.
 	 */
-	private static void loadFromFile() throws IOException {
+	private static Properties loadFromFile() throws IOException {
 
 		try (FileInputStream stream = new FileInputStream(
 				DDCFileHandler.DDC_FILE)) {
 
-			DDCFileHandler.cProperties.load(stream);
+			Properties properties = new Properties();
+			properties.load(stream);
 			DDCFileHandler.LOG.debug("Loaded DDC entries from {}",
 					DDCFileHandler.DDC_FILE_NAME);
+			return properties;
 
 		}
 
@@ -350,63 +360,7 @@ public class DDCFileHandler {
 
 		}
 
-		boolean changed = false;
-
-		for (DDCKey key : DDCFileHandler.ddc.getKeys()) {
-
-			try {
-
-				String fullKey = DDCFileHandler.determineFullKey(key);
-				DDCEntry entryFromDDC = DDCFileHandler.ddc.get(key);
-
-				if (DDCFileHandler.cProperties.containsKey(fullKey)) {
-
-					IPair<String, Long> valueAndTS = DDCFileHandler
-							.determineValueAndTS(DDCFileHandler.cProperties
-									.getProperty(fullKey));
-					DDCEntry entryFromProperties = new DDCEntry(key,
-							valueAndTS.getE1(), valueAndTS.getE2());
-					if (!entryFromProperties.getValue().equals(
-							entryFromDDC.getValue())
-							&& entryFromProperties
-									.compareTimeStamps(entryFromDDC) < 0) {
-
-						// Not the same values and the DDC entry is newer
-						DDCFileHandler.cProperties.put(fullKey, DDCFileHandler
-								.determineFullValue(valueAndTS.getE1(),
-										valueAndTS.getE2().longValue()));
-						changed = true;
-
-					}
-
-				} else {
-
-					// Complete new entry
-					DDCFileHandler.cProperties.put(
-							fullKey,
-							DDCFileHandler.determineFullValue(
-									entryFromDDC.getValue(),
-									entryFromDDC.getTimeStamp()));
-					changed = true;
-
-				}
-
-			} catch (MissingDDCEntryException e) {
-
-				// Can not happen, because of DDCKey key :
-				// DDC.getInstance().getKeys()
-				DDCFileHandler.LOG.error("Internal error!", e);
-				continue;
-
-			}
-
-		}
-
-		if (changed) {
-
-			DDCFileHandler.writeIntoFile();
-
-		}
+		DDCFileHandler.writeIntoFile();
 
 	}
 
@@ -460,38 +414,56 @@ public class DDCFileHandler {
 	 * Puts a DDC value and its timestamp to a single value together. Those full
 	 * values are for writing into the DDC file.
 	 * 
-	 * @param value
-	 *            The value from a DDC entry.
-	 * @param ts
-	 *            The timestamp from a DDC entry.
+	 * @param entry
+	 *            The DDC entry. <br />
+	 *            Must be not null.
 	 * @return A String containing <code>value</code> and <code>ts</code>
 	 *         separated by a blank and <code>ts</code> within brackets (
 	 *         {@link #TS_BRACKETS}).
 	 */
-	private static Object determineFullValue(String value, long ts) {
+	private static String determineFullValue(DDCEntry entry) {
 
-		String fullValue = value;
+		String fullValue = entry.getValue();
 		fullValue += DDCFileHandler.TS_BRACKETS[0];
 		fullValue += DDCFileHandler.TS_PREFIX;
-		fullValue += String.valueOf(ts);
+		fullValue += String.valueOf(entry.getTimeStamp());
 		fullValue += DDCFileHandler.TS_BRACKETS[1];
 		return fullValue;
 
 	}
 
 	/**
-	 * Saves the {@link #cProperties} into the DDC file.
+	 * Writes the DDC into the DDC file.
 	 * 
 	 * @throws IOException
 	 *             if any error occurs.
 	 */
 	private static void writeIntoFile() throws IOException {
 
-		try (FileOutputStream out = new FileOutputStream(
-				DDCFileHandler.DDC_FILE)) {
+		StringBuffer content = new StringBuffer();
 
-			DDCFileHandler.cProperties.store(out,
-					"Changed due to new or changed DDC entries");
+		for (DDCKey key : DDCFileHandler.ddc.getSortedKeys()) {
+
+			try {
+
+				content.append(DDCFileHandler.determineFullKey(key));
+				content.append(" = ");
+				content.append(DDCFileHandler
+						.determineFullValue(DDCFileHandler.ddc.get(key)));
+				content.append("\n");
+
+			} catch (MissingDDCEntryException e) {
+
+				// should not happen
+				DDCFileHandler.LOG.error(e.getMessage());
+
+			}
+
+		}
+
+		try (FileWriter out = new FileWriter(DDCFileHandler.DDC_FILE)) {
+
+			out.write(content.toString());
 
 		}
 

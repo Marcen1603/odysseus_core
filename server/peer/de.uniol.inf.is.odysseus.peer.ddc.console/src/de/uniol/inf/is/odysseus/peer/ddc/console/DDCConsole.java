@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.ddc.console;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -482,7 +483,7 @@ public class DDCConsole implements CommandProvider {
 		}
 
 		// Get the keys from DDC
-		Set<DDCKey> keys = DDCConsole.ddc.getKeys();
+		List<DDCKey> keys = DDCConsole.ddc.getSortedKeys();
 		if (keys.isEmpty()) {
 
 			System.out.println(DDCConsole.EMPTY_DDC);

@@ -8,7 +8,7 @@ import com.google.common.base.Preconditions;
  * @author Michael Brand
  *
  */
-public class DDCKey {
+public class DDCKey implements Comparable<DDCKey> {
 
 	/**
 	 * The key as a String array.
@@ -134,6 +134,30 @@ public class DDCKey {
 
 		return this.mKey;
 
+	}
+
+	@Override
+	public int compareTo(DDCKey key) {
+		
+		Preconditions.checkNotNull(key, "The DDC key must be not null!");
+		
+		final int lengthThisKey = this.mKey.length;
+		final int lengthOtherKey = key.mKey.length;
+		
+		for(int index = 0; index < lengthThisKey && index < lengthOtherKey; index++) {
+			
+			int partialComp = this.mKey[index].compareToIgnoreCase(key.mKey[index]);
+			
+			if(partialComp != 0) {
+				
+				return partialComp;
+				
+			}
+			
+		}
+		
+		return lengthThisKey - lengthOtherKey;
+		
 	}
 
 }

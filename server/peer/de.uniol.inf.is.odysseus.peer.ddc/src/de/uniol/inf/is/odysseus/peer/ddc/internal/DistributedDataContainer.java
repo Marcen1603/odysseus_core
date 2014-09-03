@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.ddc.internal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -74,7 +75,6 @@ public class DistributedDataContainer implements IDistributedDataContainer {
 		DistributedDataContainer.LOG.debug("Bound {} as a DDC listener",
 				listener.getClass().getSimpleName());
 		DistributedDataContainer.cListeners.add(listener);
-		
 
 	}
 
@@ -207,11 +207,26 @@ public class DistributedDataContainer implements IDistributedDataContainer {
 		return this.get(key).getTimeStamp();
 
 	}
-
+	
 	@Override
 	public Set<DDCKey> getKeys() {
-
+		
 		return this.mEntries.keySet();
+		
+	}
+
+	@Override
+	public List<DDCKey> getSortedKeys() {
+
+		List<DDCKey> keysList = Lists.newArrayList();
+		for (DDCKey key : this.mEntries.keySet()) {
+
+			keysList.add(key);
+
+		}
+		Collections.sort(keysList);
+
+		return keysList;
 
 	}
 
@@ -242,7 +257,7 @@ public class DistributedDataContainer implements IDistributedDataContainer {
 
 		String ddcString = "Current DDC:\n";
 
-		for (DDCKey key : this.mEntries.keySet()) {
+		for (DDCKey key : this.getSortedKeys()) {
 
 			ddcString += this.mEntries.get(key) + "\n";
 

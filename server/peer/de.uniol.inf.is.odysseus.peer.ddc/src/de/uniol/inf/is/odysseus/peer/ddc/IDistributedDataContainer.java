@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.ddc;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -70,6 +71,13 @@ public interface IDistributedDataContainer {
 	 * @return A set containing all multidimensional keys.
 	 */
 	public Set<DDCKey> getKeys();
+	
+	/**
+	 * Gets the keys of all entries of the DDC.
+	 * 
+	 * @return A sorted list containing all multidimensional keys.
+	 */
+	public List<DDCKey> getSortedKeys();
 
 	/**
 	 * Gets the values of all entries of the DDC.
