@@ -163,7 +163,7 @@ public class DDCEntry {
 	@Override
 	public String toString() {
 
-		return this.mKey.toString() + " = " + this.mValue + " ["
+		return this.mKey.toString() + " = " + this.mValue + " [ts: "
 				+ String.valueOf(this.mTS) + "]";
 
 	}

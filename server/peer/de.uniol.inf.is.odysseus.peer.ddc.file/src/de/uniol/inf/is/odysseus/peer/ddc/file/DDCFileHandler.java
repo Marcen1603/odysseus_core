@@ -55,13 +55,18 @@ public class DDCFileHandler {
 	/**
 	 * The brackets including timestamps in the DDC file.
 	 */
-	private static final String[] TS_BRACKETS = { "\\[", "\\]" };
+	private static final String[] TS_BRACKETS = { "[", "]" };
+	
+	/**
+	 * The prefix for timestamps in the DDC file.
+	 */
+	private static final String TS_PREFIX = "ts: ";
 
 	/**
 	 * The pattern for timestamp values in the DDC file.
 	 */
-	private static final String TS_PATTERN = DDCFileHandler.TS_BRACKETS[0]
-			+ "\\d+" + DDCFileHandler.TS_BRACKETS[1];
+	private static final String TS_PATTERN = "\\" + DDCFileHandler.TS_BRACKETS[0]
+			+ "\\d+" + "\\" + DDCFileHandler.TS_BRACKETS[1];
 
 	/**
 	 * The DDC.
@@ -112,6 +117,16 @@ public class DDCFileHandler {
 
 		Preconditions.checkNotNull(ddc, "The DDC to bind must be not null!");
 		if (DDCFileHandler.ddc == ddc) {
+			
+			try {
+
+				DDCFileHandler.save();
+
+			} catch (IOException e) {
+
+				DDCFileHandler.LOG.error("Could not save DDC file!", e);
+
+			}			
 
 			DDCFileHandler.ddc = null;
 			DDCFileHandler.LOG.debug("Unbound {} as a DDC", ddc.getClass()
@@ -457,6 +472,7 @@ public class DDCFileHandler {
 
 		String fullValue = value;
 		fullValue += DDCFileHandler.TS_BRACKETS[0];
+		fullValue += DDCFileHandler.TS_PREFIX;
 		fullValue += String.valueOf(ts);
 		fullValue += DDCFileHandler.TS_BRACKETS[1];
 		return fullValue;
