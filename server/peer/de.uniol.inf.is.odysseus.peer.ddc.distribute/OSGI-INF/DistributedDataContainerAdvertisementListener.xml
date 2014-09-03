@@ -2,4 +2,5 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.listener.DistributedDataContainerAdvertisementListener">
    <implementation class="de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.listener.DistributedDataContainerAdvertisementListener"/>
    <reference bind="bindP2PNetworkManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager" name="IP2PNetworkManager" policy="static" unbind="unbindP2PNetworkManager"/>
+   <reference bind="bindDDC" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer" name="IDistributedDataContainer" policy="static" unbind="unbndDDC"/>
 </scr:component>

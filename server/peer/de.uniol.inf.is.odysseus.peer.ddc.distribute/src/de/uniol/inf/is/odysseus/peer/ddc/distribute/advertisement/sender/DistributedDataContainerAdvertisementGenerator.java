@@ -10,10 +10,13 @@ import net.jxta.id.IDFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.peer.ddc.DDC;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
+import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
 import de.uniol.inf.is.odysseus.peer.ddc.IDDCListener;
+import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerAdvertisement;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerAdvertisementType;
@@ -30,6 +33,49 @@ public class DistributedDataContainerAdvertisementGenerator implements
 		IDDCListener {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DistributedDataContainerAdvertisementGenerator.class);
+	
+	/**
+	 * The DDC.
+	 */
+	private static IDistributedDataContainer ddc;
+
+	/**
+	 * Binds a DDC. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param ddc
+	 *            The DDC to bind. <br />
+	 *            Must be not null.
+	 */
+	public static void bindDDC(IDistributedDataContainer ddc) {
+
+		Preconditions.checkNotNull(ddc, "The DDC to bind must be not null!");
+		DistributedDataContainerAdvertisementGenerator.ddc = ddc;
+		DistributedDataContainerAdvertisementGenerator.LOG.debug("Bound {} as a DDC", ddc.getClass()
+				.getSimpleName());
+
+	}
+
+	/**
+	 * Removes the binding for a DDC. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param ddc
+	 *            The DDC to unbind. <br />
+	 *            Must be not null.
+	 */
+	public static void unbindDDC(IDistributedDataContainer ddc) {
+
+		Preconditions.checkNotNull(ddc, "The DDC to bind must be not null!");
+		if (DistributedDataContainerAdvertisementGenerator.ddc == ddc) {
+
+			DistributedDataContainerAdvertisementGenerator.ddc = null;
+			DistributedDataContainerAdvertisementGenerator.LOG.debug("Unbound {} as a DDC", ddc.getClass()
+					.getSimpleName());
+
+		}
+
+	}
 
 	private static DistributedDataContainerAdvertisementGenerator instance;
 
@@ -54,14 +100,10 @@ public class DistributedDataContainerAdvertisementGenerator implements
 	// called by OSGi-DS
 	public final void activate() {
 		instance = this;
-		// listen for DDC changes
-		DDC.getInstance().addListener(this);
 	}
 
 	// called by OSGi-DS
 	public final void deactivate() {
-		// stop listening for DDC changes
-		DDC.getInstance().removeListener(this);
 		instance = null;
 	}
 
@@ -78,7 +120,6 @@ public class DistributedDataContainerAdvertisementGenerator implements
 		// P2P Network need to be available, before local PeerID can be detected
 		// and DDCAdvertisement created
 		if (p2pNetworkAvailable()) {
-			DDC ddc = DDC.getInstance();
 			DistributedDataContainerAdvertisement ddcAdvertisement = (DistributedDataContainerAdvertisement) AdvertisementFactory
 					.newAdvertisement(DistributedDataContainerAdvertisement
 							.getAdvertisementType());
@@ -97,7 +138,7 @@ public class DistributedDataContainerAdvertisementGenerator implements
 			}
 
 			// get all entries from DDC and add them to DDCAdvertisement
-			for (String[] key : ddc.getKeys()) {
+			for (DDCKey key : DistributedDataContainerAdvertisementGenerator.ddc.getKeys()) {
 				try {
 					ddcAdvertisement.addAddedEntry(ddc.get(key));
 				} catch (MissingDDCEntryException e) {
@@ -146,7 +187,7 @@ public class DistributedDataContainerAdvertisementGenerator implements
 					break;
 				case ddcEntryRemoved:
 					ddcAdvertisement.addRemovedEntry(ddcChange.getDdcEntry()
-							.getKey());
+							.getKey().get());
 					break;
 				}
 			}

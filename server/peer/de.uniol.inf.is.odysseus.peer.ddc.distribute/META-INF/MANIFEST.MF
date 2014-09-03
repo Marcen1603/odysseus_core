@@ -13,9 +13,10 @@ Import-Package: com.google.common.base,
  org.slf4j
 Require-Bundle: de.uniol.inf.is.odysseus.p2p_new,
  de.uniol.inf.is.odysseus.peer.ddc,
- Jxta_2.6_Source
+ Jxta_2.6_Source,
+ de.uniol.inf.is.odysseus.peer.ddc.file;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement,
  de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.listener,
  de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender
-Service-Component: OSGI-INF/DistributedDataContainerAdvertisementListener.xml,OSGI-INF/DistributedDataContainerAdvertisementSender.xml,
- OSGI-INF/DistributedDataContainerAdvertisementGenerator.xml
+Service-Component: OSGI-INF/DistributedDataContainerAdvertisementListener.xml,OSGI-INF/DistributedDataContainerAdvertisementSender.xml,OSGI-INF/DistributedDataContainerAdvertisementGenerator.xml,
+ OSGI-INF/DDCFileHandlerListener.xml

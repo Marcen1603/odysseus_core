@@ -7,8 +7,6 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.peer.ddc.DDC;
-import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerDistributeThread;
 import de.uniol.inf.is.odysseus.peer.ddc.file.DDCFileHandler;
 
 /**
@@ -28,22 +26,9 @@ public class Activator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		try {
-			DDCFileHandler.load();
-		} catch (IOException e) {
-			Activator.LOG.error("Could not load DDC file!", e);
-		}
 
-		// distribute data
-		DDC ddc = DDC.getInstance();
-		if (ddc != null) {
-			// start new thread to distribute ddc, because otherwise startup of odysseus 
-			// is blocked by waiting for p2p network
-			DistributedDataContainerDistributeThread ddcDistributeThread = new DistributedDataContainerDistributeThread();
-			ddcDistributeThread.setName("DDCDistributeThread");
-			ddcDistributeThread.setDaemon(true); // set is as deamon
-			ddcDistributeThread.start();
-		}
+		// Nothing to do.
+
 	}
 
 	@Override

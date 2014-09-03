@@ -4,4 +4,5 @@
    <service>
       <provide interface="org.eclipse.osgi.framework.console.CommandProvider"/>
    </service>
+   <reference bind="bindDDC" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer" name="IDistributedDataContainer" policy="static" unbind="unbindDDC"/>
 </scr:component>

@@ -4,16 +4,21 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.peer.config.PeerConfiguration;
-import de.uniol.inf.is.odysseus.peer.ddc.DDC;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
+import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
+import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 
 /**
@@ -30,7 +35,7 @@ public class DDCFileHandler {
 	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DDCFileHandler.class);
-
+	
 	/**
 	 * The name of the DDC file.
 	 */
@@ -59,6 +64,134 @@ public class DDCFileHandler {
 			+ "\\d+" + DDCFileHandler.TS_BRACKETS[1];
 
 	/**
+	 * The DDC.
+	 */
+	private static IDistributedDataContainer ddc;
+
+	/**
+	 * Binds a DDC. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param ddc
+	 *            The DDC to bind. <br />
+	 *            Must be not null.
+	 */
+	public static void bindDDC(IDistributedDataContainer ddc) {
+
+		Preconditions.checkNotNull(ddc, "The DDC to bind must be not null!");
+		DDCFileHandler.ddc = ddc;
+		DDCFileHandler.LOG.debug("Bound {} as a DDC", ddc.getClass()
+				.getSimpleName());
+
+		// TODO workaround to ensure that the DDC distributor is already listening
+		if(!DDCFileHandler.cListeners.isEmpty()) {
+		
+			try {
+
+				DDCFileHandler.load();
+	
+			} catch (IOException e) {
+	
+				DDCFileHandler.LOG.error("Could not load DDC file!", e);
+	
+			}
+			
+		}
+
+	}
+
+	/**
+	 * Removes the binding for a DDC. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param ddc
+	 *            The DDC to unbind. <br />
+	 *            Must be not null.
+	 */
+	public static void unbindDDC(IDistributedDataContainer ddc) {
+
+		Preconditions.checkNotNull(ddc, "The DDC to bind must be not null!");
+		if (DDCFileHandler.ddc == ddc) {
+
+			DDCFileHandler.ddc = null;
+			DDCFileHandler.LOG.debug("Unbound {} as a DDC", ddc.getClass()
+					.getSimpleName());
+
+		}
+
+	}
+	
+	/**
+	 * List of all bound DDC listeners.
+	 */
+	private static Collection<IDDCFileHandlerListener> cListeners = Lists.newArrayList();
+
+	/**
+	 * Binds a listener. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param listener
+	 *            The listener to bind. <br />
+	 *            Must be not null.
+	 */
+	public static void bindListener(IDDCFileHandlerListener listener) {
+
+		Preconditions.checkNotNull(listener,
+				"The DDC listener to bind must be not null!");
+		DDCFileHandler.LOG.debug("Bound {} as a listener",
+				listener.getClass().getSimpleName());
+		DDCFileHandler.cListeners.add(listener);
+		
+		// TODO workaround to ensure that the DDC distributor is already listening
+		if(DDCFileHandler.ddc != null) {
+		
+			try {
+
+				DDCFileHandler.load();
+	
+			} catch (IOException e) {
+	
+				DDCFileHandler.LOG.error("Could not load DDC file!", e);
+	
+			}
+			
+		}
+		
+
+	}
+
+	/**
+	 * Removes the binding of a listener. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param listener
+	 *            The listener to remove. <br />
+	 *            Must be not null.
+	 */
+	public static void unbindListener(IDDCFileHandlerListener listener) {
+
+		Preconditions.checkNotNull(listener,
+				"The DDC listener to unbind must be not null!");
+		DDCFileHandler.cListeners.remove(listener);
+		DDCFileHandler.LOG.debug("Unbound {} as a listener",
+				listener.getClass().getSimpleName());
+
+	}
+
+	/**
+	 * Notifies the listeners.
+	 */
+	private static void setChanged() {
+
+		for (IDDCFileHandlerListener listener : DDCFileHandler.cListeners) {
+
+			listener.ddcFileLoaded();
+
+		}
+
+	}
+
+	/**
 	 * The properties loaded from the DDC file.
 	 */
 	private static Properties cProperties = new Properties();
@@ -69,7 +202,7 @@ public class DDCFileHandler {
 	 * @return True, if the file defined by {@link #getFileName()} exists;
 	 *         false, else.
 	 */
-	public static boolean fileExists() {
+	private static boolean fileExists() {
 
 		return DDC_FILE.exists();
 
@@ -98,6 +231,7 @@ public class DDCFileHandler {
 
 		DDCFileHandler.loadFromFile();
 		DDCFileHandler.writeIntoDDC();
+		DDCFileHandler.setChanged();
 
 	}
 
@@ -106,6 +240,8 @@ public class DDCFileHandler {
 	 */
 	private static void writeIntoDDC() {
 
+		Preconditions.checkNotNull(DDCFileHandler.ddc, "A DDC must be bound!");
+
 		for (String key : DDCFileHandler.cProperties.stringPropertyNames()) {
 
 			String[] partialKeys = key.split(DDCFileHandler.KEY_SEPERATOR);
@@ -113,8 +249,8 @@ public class DDCFileHandler {
 					.determineValueAndTS(DDCFileHandler.cProperties
 							.getProperty(key));
 
-			DDC.getInstance().add(partialKeys, valueAndTS.getE1(),
-					valueAndTS.getE2());
+			DDCFileHandler.ddc.add(new DDCEntry(new DDCKey(partialKeys),
+					valueAndTS.getE1(), valueAndTS.getE2()));
 
 		}
 
@@ -190,6 +326,8 @@ public class DDCFileHandler {
 	 */
 	public static void save() throws IOException {
 
+		Preconditions.checkNotNull(DDCFileHandler.ddc, "A DDC must be bound!");
+
 		if (!DDCFileHandler.fileExists() && DDCFileHandler.createFile()) {
 
 			DDCFileHandler.LOG.error("Could not create file {}",
@@ -199,12 +337,12 @@ public class DDCFileHandler {
 
 		boolean changed = false;
 
-		for (String[] key : DDC.getInstance().getKeys()) {
+		for (DDCKey key : DDCFileHandler.ddc.getKeys()) {
 
 			try {
 
 				String fullKey = DDCFileHandler.determineFullKey(key);
-				DDCEntry entryFromDDC = DDC.getInstance().get(key);
+				DDCEntry entryFromDDC = DDCFileHandler.ddc.get(key);
 
 				if (DDCFileHandler.cProperties.containsKey(fullKey)) {
 
@@ -240,7 +378,7 @@ public class DDCFileHandler {
 
 			} catch (MissingDDCEntryException e) {
 
-				// Can not happen, because of String[] key :
+				// Can not happen, because of DDCKey key :
 				// DDC.getInstance().getKeys()
 				DDCFileHandler.LOG.error("Internal error!", e);
 				continue;
@@ -291,10 +429,10 @@ public class DDCFileHandler {
 	 * @return A String containing all partial keys divided by
 	 *         {@link #KEY_SEPERATOR}.
 	 */
-	private static String determineFullKey(String[] key) {
+	private static String determineFullKey(DDCKey key) {
 
 		String fullKey = "";
-		for (String partialKey : key) {
+		for (String partialKey : key.get()) {
 
 			fullKey += partialKey + DDCFileHandler.KEY_SEPERATOR;
 

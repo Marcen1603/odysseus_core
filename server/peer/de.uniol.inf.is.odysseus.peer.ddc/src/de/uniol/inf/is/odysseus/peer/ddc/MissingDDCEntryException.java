@@ -20,7 +20,7 @@ public class MissingDDCEntryException extends Exception {
 	 * @param key
 	 *            The given key.
 	 */
-	public MissingDDCEntryException(String[] key) {
+	public MissingDDCEntryException(DDCKey key) {
 
 		super("Missing DDC entry for key '" + key + "'!");
 

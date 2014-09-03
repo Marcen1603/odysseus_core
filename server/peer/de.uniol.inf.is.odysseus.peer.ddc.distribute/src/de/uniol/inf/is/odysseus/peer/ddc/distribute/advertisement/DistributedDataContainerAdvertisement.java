@@ -9,13 +9,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
-
-import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
 import net.jxta.document.Advertisement;
 import net.jxta.document.Attributable;
 import net.jxta.document.Document;
@@ -27,6 +20,15 @@ import net.jxta.document.TextElement;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
+
+import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
+import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
 
 /**
  * The JXTA Advertisement for DistributedDataContainer to distribute keys and
@@ -261,7 +263,7 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 						ts = Long.parseLong(child.getValue());
 					}
 				}
-				DDCEntry entry = new DDCEntry(key, value, ts);
+				DDCEntry entry = new DDCEntry(new DDCKey(key), value, ts);
 				addAddedEntry(entry);
 			} else if (elem.getName().equals(REMOVED_DDC_ENTRY)) {
 				// Getting deleted DDC keys

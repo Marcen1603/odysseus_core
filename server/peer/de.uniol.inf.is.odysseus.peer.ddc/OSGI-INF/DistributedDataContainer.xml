@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.ddc.DistributedDataContainer">
+   <implementation class="de.uniol.inf.is.odysseus.peer.ddc.internal.DistributedDataContainer"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer"/>
+   </service>
+   <reference bind="bindDDCListener" cardinality="0..n" interface="de.uniol.inf.is.odysseus.peer.ddc.IDDCListener" name="IDDCListener" policy="dynamic" unbind="unbindDDCListener"/>
+</scr:component>
