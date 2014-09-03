@@ -76,7 +76,7 @@ public class BroadcastListener implements IBroadcastListener {
 			port++;
 			run();
 		} catch (IOException ex) {
-			LOG.error("Could not wait for broadcasts", ex);
+			LOG.debug("Could not wait for broadcasts", ex);
 		} finally {
 			LOG.debug("Waiting for broadcast messages ends here now");
 		}
