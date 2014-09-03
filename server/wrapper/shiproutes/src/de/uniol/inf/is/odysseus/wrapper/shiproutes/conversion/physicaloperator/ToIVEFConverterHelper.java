@@ -64,10 +64,10 @@ public class ToIVEFConverterHelper {
 
 			// Pos Report
 			PosReport posReport = new PosReport();
-			if (waypoint.getID() != null)
+			if (waypoint.getID() != null){
 				posReport.setId(waypoint.getID());
-			if (receivedRoute.getRoute_ID() != null)
-				posReport.setSourceId(receivedRoute.getRoute_ID());
+				posReport.setSourceId(waypoint.getID());				
+			}
 			posReport.setUpdateTime(new Date());
 			if (waypoint.getSpeed_kts() != null)
 				posReport.setSOG(waypoint.getSpeed_kts() * KTS_TO_MS);
@@ -85,12 +85,12 @@ public class ToIVEFConverterHelper {
 
 			// Static Data
 			StaticData staticData = new StaticData();
-			if (waypoint.getID() != null)
+			if (waypoint.getID() != null){
 				staticData.setId(String.valueOf(waypoint.getID()));
+				staticData.setSource(waypoint.getID());				
+			}
 			if (receivedRoute.getRoute_label() != null)
 				staticData.setSourceName(receivedRoute.getRoute_label());
-			if (receivedRoute.getRoute_ID() != null)
-				staticData.setSource(receivedRoute.getRoute_ID());
 			if (staticAndVoyageData.getSourceMmsi() != null)
 				staticData.setMMSI(staticAndVoyageData.getSourceMmsi()
 						.getMMSI());
@@ -105,12 +105,12 @@ public class ToIVEFConverterHelper {
 
 			// Voyage
 			Voyage voyage = new Voyage();
-			if (waypoint.getID() != null)
+			if (waypoint.getID() != null){
 				voyage.setId(String.valueOf(waypoint.getID()));
+				voyage.setSource(waypoint.getID());				
+			}
 			if (receivedRoute.getRoute_label() != null)
 				voyage.setSourceName(receivedRoute.getRoute_label());
-			if (receivedRoute.getRoute_ID() != null)
-				voyage.setSource(receivedRoute.getRoute_ID());
 			if (staticAndVoyageData.getDraught() != null)
 				voyage.setDraught(staticAndVoyageData.getDraught());
 
@@ -141,7 +141,6 @@ public class ToIVEFConverterHelper {
 
 		Body body = new Body();
 
-		int counter = 1;
 		// Iterate over manoeuvre points
 		for (ManoeuvrePoint manoeuvrePoint : receivedManoeuvrePoints) {
 
@@ -149,9 +148,9 @@ public class ToIVEFConverterHelper {
 
 			// Pos Report
 			PosReport posReport = new PosReport();
-			posReport.setId(counter);
-			if (receivedMPlan.getMplan_ID() != null) {
-				posReport.setSourceId(receivedMPlan.getMplan_ID());
+			if (manoeuvrePoint.getID() != null){
+				posReport.setId(manoeuvrePoint.getID());
+				posReport.setSourceId(manoeuvrePoint.getID());				
 			}
 			posReport.setUpdateTime(new Date());
 
@@ -176,12 +175,12 @@ public class ToIVEFConverterHelper {
 
 			// Static Data
 			StaticData staticData = new StaticData();
-			staticData.setId(String.valueOf(counter));
+			if (manoeuvrePoint.getID() != null){
+				staticData.setId(String.valueOf(manoeuvrePoint.getID()));
+				staticData.setSource(manoeuvrePoint.getID());				
+			}
 			if (receivedMPlan.getMplan_label() != null)
 				staticData.setSourceName(receivedMPlan.getMplan_label());
-			if (receivedMPlan.getMplan_ID() != null) {
-				staticData.setSource(receivedMPlan.getMplan_ID());
-			}
 			if (staticAndVoyageData.getSourceMmsi() != null)
 				staticData.setMMSI(staticAndVoyageData.getSourceMmsi()
 						.getMMSI());
@@ -197,19 +196,17 @@ public class ToIVEFConverterHelper {
 
 			// Voyage
 			Voyage voyage = new Voyage();
-			voyage.setId(String.valueOf(counter));
+			if (manoeuvrePoint.getID() != null){
+				voyage.setId(String.valueOf(manoeuvrePoint.getID()));
+				voyage.setSource(manoeuvrePoint.getID());				
+			}
 			if (receivedMPlan.getMplan_label() != null)
 				voyage.setSourceName(receivedMPlan.getMplan_label());
-			if (receivedMPlan.getMplan_ID() != null) {
-				voyage.setSource(receivedMPlan.getMplan_ID());
-			}
 			if (staticAndVoyageData.getDraught() != null)
 				voyage.setDraught(staticAndVoyageData.getDraught());
 			vesselData.addVoyage(voyage);
 
 			body.addVesselData(vesselData);
-
-			counter++;
 		}
 
 		msg_vesselData.setBody(body);
@@ -231,15 +228,15 @@ public class ToIVEFConverterHelper {
 
 		Body body = new Body();
 
-		int counter = 1;
-
 		for (PredictionPoint predictionPoint : predictionPoints) {
 			VesselData vesselData = new VesselData();
 
 			// Pos Report
 			PosReport posReport = new PosReport();
-			posReport.setId(counter);
-			posReport.setSourceId(counter);
+			if (predictionPoint.getID() != null){
+				posReport.setId(predictionPoint.getID());
+				posReport.setSourceId(predictionPoint.getID());				
+			}
 			posReport.setUpdateTime(new Date());
 			posReport.setSOG(0.0);
 			if (predictionPoint.getCourse_over_ground_rad() != null)
@@ -259,9 +256,11 @@ public class ToIVEFConverterHelper {
 
 			// Static Data
 			StaticData staticData = new StaticData();
-			staticData.setId(String.valueOf(counter));
+			if (predictionPoint.getID() != null){
+				staticData.setId(String.valueOf(predictionPoint.getID()));
+				staticData.setSource(predictionPoint.getID());				
+			}
 			staticData.setSourceName("Prediction");
-			staticData.setSource(counter);
 			if (staticAndVoyageData.getSourceMmsi() != null)
 				staticData.setMMSI(staticAndVoyageData.getSourceMmsi()
 						.getMMSI());
@@ -276,15 +275,16 @@ public class ToIVEFConverterHelper {
 
 			// Voyage
 			Voyage voyage = new Voyage();
-			voyage.setId(String.valueOf(counter));
+			if (predictionPoint.getID() != null){
+				voyage.setId(String.valueOf(predictionPoint.getID()));
+				voyage.setSource(predictionPoint.getID());				
+			}
 			voyage.setSourceName("Prediction");
-			voyage.setSource(counter);
 			if (staticAndVoyageData.getDraught() != null)
 				voyage.setDraught(staticAndVoyageData.getDraught());
 			vesselData.addVoyage(voyage);
 
 			body.addVesselData(vesselData);
-			counter++;
 		}
 
 		msg_vesselData.setBody(body);
