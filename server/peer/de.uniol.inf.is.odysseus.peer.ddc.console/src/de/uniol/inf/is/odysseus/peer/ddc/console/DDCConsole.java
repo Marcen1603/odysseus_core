@@ -298,7 +298,15 @@ public class DDCConsole implements CommandProvider {
 		}
 
 		// Add to DDC
-		DDCConsole.ddc.add(new DDCEntry(key, value, ts));
+		if(DDCConsole.ddc.add(new DDCEntry(key, value, ts))) {
+			
+			System.out.println("Added entry to DDC");
+
+		} else {
+
+			System.out.println("No entry found");
+
+		}
 
 	}
 
