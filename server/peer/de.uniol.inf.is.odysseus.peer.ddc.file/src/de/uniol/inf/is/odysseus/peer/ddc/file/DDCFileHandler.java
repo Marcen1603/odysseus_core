@@ -66,6 +66,11 @@ public class DDCFileHandler {
 	 * The DDC.
 	 */
 	private static IDistributedDataContainer ddc;
+	
+	/**
+	 * True, if the DDC entries has already been loaded from file.
+	 */
+	private static boolean loaded = false;
 
 	/**
 	 * Binds a DDC. <br />
@@ -82,19 +87,13 @@ public class DDCFileHandler {
 		DDCFileHandler.LOG.debug("Bound {} as a DDC", ddc.getClass()
 				.getSimpleName());
 
-		// TODO workaround to ensure that the DDC distributor is already
-		// listening
-		if (!DDCFileHandler.cListeners.isEmpty()) {
+		try {
 
-			try {
+			DDCFileHandler.load();
 
-				DDCFileHandler.load();
+		} catch (IOException e) {
 
-			} catch (IOException e) {
-
-				DDCFileHandler.LOG.error("Could not load DDC file!", e);
-
-			}
+			DDCFileHandler.LOG.error("Could not load DDC file!", e);
 
 		}
 
@@ -153,19 +152,9 @@ public class DDCFileHandler {
 				.getSimpleName());
 		DDCFileHandler.cListeners.add(listener);
 
-		// TODO workaround to ensure that the DDC distributor is already
-		// listening
-		if (DDCFileHandler.ddc != null) {
+		if (DDCFileHandler.loaded) {
 
-			try {
-
-				DDCFileHandler.load();
-
-			} catch (IOException e) {
-
-				DDCFileHandler.LOG.error("Could not load DDC file!", e);
-
-			}
+			listener.ddcFileLoaded();
 
 		}
 
@@ -238,6 +227,7 @@ public class DDCFileHandler {
 		Properties properties = DDCFileHandler.loadFromFile();
 		DDCFileHandler.writeIntoDDC(properties);
 		DDCFileHandler.setChanged();
+		DDCFileHandler.loaded = true;
 
 	}
 
