@@ -230,6 +230,22 @@ public class DDCConsole implements CommandProvider {
 	}
 
 	/**
+	 * Prints out a String array (one line per entry).
+	 * 
+	 * @param array
+	 *            The given String array.
+	 */
+	private static void printStringArray(String[] array) {
+
+		for (String str : array) {
+
+			System.out.println(str);
+
+		}
+
+	}
+
+	/**
 	 * Interprets a command to add an entry to the DDC. <br />
 	 * The following commands are allowed: <br />
 	 * DDCadd key value TS <br />
@@ -249,7 +265,7 @@ public class DDCConsole implements CommandProvider {
 		Optional<String> optKey = Optional.fromNullable(ci.nextArgument());
 		if (!optKey.isPresent()) {
 
-			System.err.println(DDCConsole.USAGE_ADD);
+			DDCConsole.printStringArray(DDCConsole.USAGE_ADD);
 			return;
 
 		}
@@ -259,7 +275,7 @@ public class DDCConsole implements CommandProvider {
 		Optional<String> optValue = Optional.fromNullable(ci.nextArgument());
 		if (!optValue.isPresent()) {
 
-			System.err.println(DDCConsole.USAGE_ADD);
+			DDCConsole.printStringArray(DDCConsole.USAGE_ADD);
 			return;
 
 		}
@@ -292,19 +308,19 @@ public class DDCConsole implements CommandProvider {
 		// No more arguments allowed
 		if (ci.nextArgument() != null) {
 
-			System.err.println(DDCConsole.USAGE_ADD);
+			DDCConsole.printStringArray(DDCConsole.USAGE_ADD);
 			return;
 
 		}
 
 		// Add to DDC
-		if(DDCConsole.ddc.add(new DDCEntry(key, value, ts))) {
-			
+		if (DDCConsole.ddc.add(new DDCEntry(key, value, ts))) {
+
 			System.out.println("Added entry to DDC");
 
 		} else {
 
-			System.out.println("No entry found");
+			System.out.println("Could not add entry");
 
 		}
 
@@ -328,7 +344,7 @@ public class DDCConsole implements CommandProvider {
 		Optional<String> optKey = Optional.fromNullable(ci.nextArgument());
 		if (!optKey.isPresent()) {
 
-			System.err.println(DDCConsole.USAGE_GET_ENTRY);
+			DDCConsole.printStringArray(DDCConsole.USAGE_GET_ENTRY);
 			return;
 
 		}
@@ -337,7 +353,7 @@ public class DDCConsole implements CommandProvider {
 		// No more arguments allowed
 		if (ci.nextArgument() != null) {
 
-			System.err.println(DDCConsole.USAGE_GET_ENTRY);
+			DDCConsole.printStringArray(DDCConsole.USAGE_GET_ENTRY);
 			return;
 
 		}
@@ -373,7 +389,7 @@ public class DDCConsole implements CommandProvider {
 		Optional<String> optKey = Optional.fromNullable(ci.nextArgument());
 		if (!optKey.isPresent()) {
 
-			System.err.println(DDCConsole.USAGE_GET_VALUE);
+			DDCConsole.printStringArray(DDCConsole.USAGE_GET_VALUE);
 			return;
 
 		}
@@ -382,7 +398,7 @@ public class DDCConsole implements CommandProvider {
 		// No more arguments allowed
 		if (ci.nextArgument() != null) {
 
-			System.err.println(DDCConsole.USAGE_GET_VALUE);
+			DDCConsole.printStringArray(DDCConsole.USAGE_GET_VALUE);
 			return;
 
 		}
@@ -418,7 +434,7 @@ public class DDCConsole implements CommandProvider {
 		Optional<String> optKey = Optional.fromNullable(ci.nextArgument());
 		if (!optKey.isPresent()) {
 
-			System.err.println(DDCConsole.USAGE_GET_TIMESTAMP);
+			DDCConsole.printStringArray(DDCConsole.USAGE_GET_TIMESTAMP);
 			return;
 
 		}
@@ -427,7 +443,7 @@ public class DDCConsole implements CommandProvider {
 		// No more arguments allowed
 		if (ci.nextArgument() != null) {
 
-			System.err.println(DDCConsole.USAGE_GET_TIMESTAMP);
+			DDCConsole.printStringArray(DDCConsole.USAGE_GET_TIMESTAMP);
 			return;
 
 		}
@@ -537,7 +553,7 @@ public class DDCConsole implements CommandProvider {
 		Optional<String> optKey = Optional.fromNullable(ci.nextArgument());
 		if (!optKey.isPresent()) {
 
-			System.err.println(DDCConsole.USAGE_CONTAINS_KEY);
+			DDCConsole.printStringArray(DDCConsole.USAGE_CONTAINS_KEY);
 			return;
 
 		}
@@ -546,7 +562,7 @@ public class DDCConsole implements CommandProvider {
 		// No more arguments allowed
 		if (ci.nextArgument() != null) {
 
-			System.err.println(DDCConsole.USAGE_CONTAINS_KEY);
+			DDCConsole.printStringArray(DDCConsole.USAGE_CONTAINS_KEY);
 			return;
 
 		}
@@ -573,7 +589,7 @@ public class DDCConsole implements CommandProvider {
 		Optional<String> optKey = Optional.fromNullable(ci.nextArgument());
 		if (!optKey.isPresent()) {
 
-			System.err.println(DDCConsole.USAGE_REMOVE);
+			DDCConsole.printStringArray(DDCConsole.USAGE_REMOVE);
 			return;
 
 		}
@@ -582,7 +598,7 @@ public class DDCConsole implements CommandProvider {
 		// No more arguments allowed
 		if (ci.nextArgument() != null) {
 
-			System.err.println(DDCConsole.USAGE_REMOVE);
+			DDCConsole.printStringArray(DDCConsole.USAGE_REMOVE);
 			return;
 
 		}
