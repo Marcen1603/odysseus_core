@@ -48,6 +48,7 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 		// 1. Game-Stream
 		StreamAO soccerGameAccessAO = OperatorBuildHelper.createGameStreamAO();
 		allOperators.add(soccerGameAccessAO);
+	
 
 		// 2. Metadata-Stream
 		StreamAO metadataStreamAO = OperatorBuildHelper
@@ -94,8 +95,13 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 		ProjectAO projectAO = OperatorBuildHelper.createProjectAO(attributes,
 				enrichAO);
 		allOperators.add(projectAO);
-
-		return OperatorBuildHelper.finishQuery(projectAO, allOperators,
+		
+		
+		String filterPredicate = "entity=\"Ball\" OR remark = \"Right Leg\"";
+		SelectAO filterSelect = OperatorBuildHelper.createSelectAO(filterPredicate, projectAO);
+		allOperators.add(filterSelect);	
+		
+		return OperatorBuildHelper.finishQuery(filterSelect, allOperators,
 				sportsQL.getName());
 	}
 
