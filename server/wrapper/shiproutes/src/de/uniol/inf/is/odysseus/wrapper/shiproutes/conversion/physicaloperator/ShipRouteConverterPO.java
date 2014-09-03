@@ -100,7 +100,7 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 			convertIVEFToJSONManoeuvre(received);
 			break;
 		case IVEF_TO_IEC:
-			iec = convertIVEFToIEC(received);
+			convertIVEFToIEC(received);
 			break;
 		default:
 			break;
@@ -122,19 +122,29 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 		}
 	}
 
-	private IECRoute convertIVEFToIEC(
+	@SuppressWarnings("unchecked")
+	private void convertIVEFToIEC(
 			KeyValueObject<? extends IMetaAttribute> received) {
-		IECRoute iec = null;
 
 		if (received.getMetadata("object") instanceof MSG_VesselData) {
 			MSG_VesselData msg_VesselData = (MSG_VesselData) received
 					.getMetadata("object");
-			iec = ToIECConverterHelper.convertIVEFToIEC(msg_VesselData);
+			List<IECRoute> iecs = ToIECConverterHelper
+					.convertIVEFToIEC(msg_VesselData);
+			for (IECRoute iecRoute : iecs) {
+				if (iecRoute.isValid()) {
+					KeyValueObject<? extends IMetaAttribute> next = iecRoute
+							.toMap();
+					next.setMetadata("object", iecRoute);
+					transfer((T) next);
+				} else {
+					LOG.warn("IEC Element is invalid => not processed");
+				}
+			}
 		} else {
 			LOG.error("Cannot convert IVEF to IEC, because Datastream contains "
 					+ "no IVEF Elements");
 		}
-		return iec;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -220,6 +230,11 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 									.convertManoeuvreToIVEF(
 											(ManoeuvrePlanDataItem) element,
 											staticAndVoyageData);
+						} else if (element instanceof PredictionDataItem) {
+							ivef = ToIVEFConverterHelper
+									.convertPredictionToIVEF(
+											(PredictionDataItem) element,
+											staticAndVoyageData);
 						}
 						if (ivef != null) {
 							KeyValueObject<? extends IMetaAttribute> next = ivef
@@ -228,6 +243,7 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 							transfer((T) next);
 						}
 					}
+					ivef = null;
 					cachedJSONElements.clear();
 				}
 			}
@@ -249,7 +265,18 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 			} else {
 				cachedJSONElements.add(dataItem);
 			}
-		} else {
+		} else if (received.getMetadata("object") instanceof PredictionDataItem){
+			PredictionDataItem dataItem = (PredictionDataItem) received.getMetadata("object");
+			if (staticAndVoyageData != null){
+				ivef = ToIVEFConverterHelper
+						.convertPredictionToIVEF(dataItem,
+								staticAndVoyageData);
+			} else {
+				cachedJSONElements.add(dataItem);
+			}
+		}
+		
+		else {
 			LOG.debug("Element contains no Route or ManoeuvrePlan");
 		}
 		return ivef;
@@ -272,6 +299,7 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 						next.setMetadata("object", ivef);
 						transfer((T) next);
 					}
+					ivef = null;
 					cachedIECElements.clear();
 				}
 			}

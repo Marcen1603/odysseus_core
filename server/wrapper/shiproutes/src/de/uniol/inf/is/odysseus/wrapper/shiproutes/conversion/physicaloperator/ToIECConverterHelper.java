@@ -1,12 +1,19 @@
 package de.uniol.inf.is.odysseus.wrapper.shiproutes.conversion.physicaloperator;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_VesselData;
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.Pos;
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.StaticData;
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.VesselData;
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.Voyage;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECExtension;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECLeg;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECManual;
@@ -22,7 +29,6 @@ import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.enums.GeometryType;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.enums.IECExtensionTypes.PitchExtension;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.enums.IECExtensionTypes.RouteInfoExtension;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.enums.IECExtensionTypes.RpmExtension;
-import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.Waypoint;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.manoeuvre.ManoeuvrePlan;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.manoeuvre.ManoeuvrePlanDataItem;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.manoeuvre.ManoeuvrePoint;
@@ -34,6 +40,7 @@ import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.prediction.Predi
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.Route;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.RouteDataItem;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.RouteState;
+import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.Waypoint;
 
 public class ToIECConverterHelper {
 
@@ -282,9 +289,9 @@ public class ToIECConverterHelper {
 			if (receivedMPoint.getWind_dir_rad() != null)
 				iecScheduleElement.setWindDirection(Math
 						.toDegrees(receivedMPoint.getWind_dir_rad()));
-			if (receivedMPoint.getCurrent_speed_kts() != null)
-				iecScheduleElement.setCurrentSpeed(receivedMPoint
-						.getCurrent_speed_kts());
+			if (receivedMPoint.getSog_long_kts() != null)
+				iecScheduleElement.setSpeed(receivedMPoint
+						.getSog_long_kts());
 			if (receivedMPoint.getCurrent_dir_rad() != null)
 				iecScheduleElement.setCurrentDirection(Math
 						.toDegrees(receivedMPoint.getCurrent_dir_rad()));
@@ -370,21 +377,78 @@ public class ToIECConverterHelper {
 		}
 	}
 
-	public static IECRoute convertIVEFToIEC(MSG_VesselData msg_VesselData) {
-		IECRoute iec = new IECRoute();
-		iec.setVersion("1.0"); // version is mandatory
+	public static List<IECRoute> convertIVEFToIEC(MSG_VesselData msg_VesselData) {
+		Map<Integer, IECRoute> iecRoutes = new HashMap<Integer, IECRoute>();
+		int countOfVesselDatas = msg_VesselData.getBody().countOfVesselDatas();
 
-		// Create route info
-		IECRouteInfo routeInfo = new IECRouteInfo();
-		
-		iec.setRouteInfo(routeInfo);
-		// TODO set values
-		
-		if (iec.isValid()) {
-			return iec;
-		} else {
-			LOG.debug("IEC Element is invalid => not processed");
-			return null;
+		int idCounter = 0;
+
+		for (int i = 0; i < countOfVesselDatas; i++) {
+			VesselData vesselData = msg_VesselData.getBody().getVesselDataAt(i);
+			if (vesselData.getPosReport() != null) {
+				IECRoute iecRoute = null;
+				if (iecRoutes.containsKey(vesselData.getPosReport().getId())) {
+					iecRoute = iecRoutes.get(vesselData.getPosReport().getId());
+				} else {
+					iecRoute = new IECRoute();
+					iecRoute.setVersion("1.0");
+					IECRouteInfo iecRouteInfo = new IECRouteInfo();
+					if (vesselData.countOfStaticDatas() > 0) {
+						StaticData staticData = vesselData.getStaticDataAt(0);
+						iecRouteInfo.setRouteName(staticData.getShipName()
+								+ "_route");
+						iecRouteInfo.setVesselName(staticData.getShipName());
+						iecRouteInfo.setVesselMMSI(staticData.getMMSI()
+								.intValue()); // Long?
+						iecRouteInfo.setVesselIMO(staticData.getIMO()
+								.intValue()); // Long?
+					}
+					iecRoute.setRouteInfo(iecRouteInfo);
+
+					IECWaypoints iecWaypoints = new IECWaypoints();
+					IECSchedules iecSchedules = new IECSchedules();
+					IECSchedule iecSchedule = new IECSchedule();
+					iecSchedule.setId(-1); // Id is mandatory
+					IECManual iecManual = new IECManual();
+					iecSchedule.setManual(iecManual);
+					iecSchedules.addSchedule(iecSchedule);
+					iecRoute.setSchedules(iecSchedules);
+					iecRoute.setWaypoints(iecWaypoints);
+
+					iecRoutes.put(vesselData.getPosReport().getId(), iecRoute);
+				}
+
+				IECWaypoint iecWaypoint = new IECWaypoint();
+				iecWaypoint.setId(idCounter);
+				if (vesselData.getPosReport().getPos() != null) {
+					Pos pos = vesselData.getPosReport().getPos();
+					IECPosition iecPosition = new IECPosition();
+					iecPosition.setLatitude(pos.getLat());
+					iecPosition.setLongitude(pos.getLong());
+					iecWaypoint.setPosition(iecPosition);
+				}
+
+				IECLeg iecLeg = new IECLeg();
+				iecLeg.setGeometryType(GeometryType.Orthodrome);
+				if (vesselData.countOfVoyages() > 0) {
+					Voyage voyage = vesselData.getVoyageAt(0);
+					iecLeg.setDraughtForward(voyage.getDraught());
+					iecLeg.setDraughtAft(voyage.getDraught());
+				}
+				iecWaypoint.setLeg(iecLeg);
+				iecRoute.getWaypoints().addwaypoint(iecWaypoint);
+
+				IECScheduleElement iecScheduleElement = new IECScheduleElement();
+				iecScheduleElement.setWaypointID(idCounter);
+				iecScheduleElement.setSpeed(vesselData.getPosReport().getSOG());
+				iecScheduleElement.setCurrentDirection(vesselData
+						.getPosReport().getCOG());
+				iecRoute.getSchedules().getSchedules().get(0).getManual()
+						.addScheduleElement(iecScheduleElement);
+				idCounter++;
+			}
 		}
+
+		return new ArrayList<IECRoute>(iecRoutes.values());
 	}
 }

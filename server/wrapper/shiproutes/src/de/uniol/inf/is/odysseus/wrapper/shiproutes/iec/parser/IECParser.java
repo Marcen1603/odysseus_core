@@ -294,7 +294,7 @@ public class IECParser extends DefaultHandler {
 		if (iec.isValid()) {
 			return iec;
 		} else {
-			LOG.debug("IEC Element is invalid => not processed");
+			LOG.warn("IEC Element is invalid => not processed");
 			return null;
 		}		
 	}
