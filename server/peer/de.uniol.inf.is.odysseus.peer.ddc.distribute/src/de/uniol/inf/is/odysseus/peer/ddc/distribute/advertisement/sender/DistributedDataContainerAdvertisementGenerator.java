@@ -33,7 +33,16 @@ public class DistributedDataContainerAdvertisementGenerator implements
 		IDDCListener {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DistributedDataContainerAdvertisementGenerator.class);
-	
+	private static DistributedDataContainerAdvertisementGenerator instance;
+
+	private static final int TIMEOUT_SECONDS = 300;
+	private static final int WAITING_TIME_SECONDS = 1;
+	private IP2PNetworkManager p2pNetworkManager;
+
+	private List<DistributedDataContainerChange> ddcChanges = new ArrayList<DistributedDataContainerChange>();
+
+	private boolean listeningForChanges = true;
+
 	/**
 	 * The DDC.
 	 */
@@ -51,8 +60,8 @@ public class DistributedDataContainerAdvertisementGenerator implements
 
 		Preconditions.checkNotNull(ddc, "The DDC to bind must be not null!");
 		DistributedDataContainerAdvertisementGenerator.ddc = ddc;
-		DistributedDataContainerAdvertisementGenerator.LOG.debug("Bound {} as a DDC", ddc.getClass()
-				.getSimpleName());
+		DistributedDataContainerAdvertisementGenerator.LOG.debug(
+				"Bound {} as a DDC", ddc.getClass().getSimpleName());
 
 	}
 
@@ -70,20 +79,12 @@ public class DistributedDataContainerAdvertisementGenerator implements
 		if (DistributedDataContainerAdvertisementGenerator.ddc == ddc) {
 
 			DistributedDataContainerAdvertisementGenerator.ddc = null;
-			DistributedDataContainerAdvertisementGenerator.LOG.debug("Unbound {} as a DDC", ddc.getClass()
-					.getSimpleName());
+			DistributedDataContainerAdvertisementGenerator.LOG.debug(
+					"Unbound {} as a DDC", ddc.getClass().getSimpleName());
 
 		}
 
 	}
-
-	private static DistributedDataContainerAdvertisementGenerator instance;
-
-	private static final int TIMEOUT_SECONDS = 300;
-	private static final int WAITING_TIME_SECONDS = 1;
-	private IP2PNetworkManager p2pNetworkManager;
-
-	private List<DistributedDataContainerChange> ddcChanges = new ArrayList<DistributedDataContainerChange>();
 
 	// called by OSGi-DS
 	public void bindP2PNetworkManager(IP2PNetworkManager serv) {
@@ -138,7 +139,8 @@ public class DistributedDataContainerAdvertisementGenerator implements
 			}
 
 			// get all entries from DDC and add them to DDCAdvertisement
-			for (DDCKey key : DistributedDataContainerAdvertisementGenerator.ddc.getKeys()) {
+			for (DDCKey key : DistributedDataContainerAdvertisementGenerator.ddc
+					.getKeys()) {
 				try {
 					ddcAdvertisement.addAddedEntry(ddc.get(key));
 				} catch (MissingDDCEntryException e) {
@@ -218,14 +220,18 @@ public class DistributedDataContainerAdvertisementGenerator implements
 
 	@Override
 	public void ddcEntryAdded(DDCEntry ddcEntry) {
-		ddcChanges.add(new DistributedDataContainerChange(ddcEntry,
-				DistributedDataContainerChangeType.ddcEntryAdded));
+		if (listeningForChanges) {
+			ddcChanges.add(new DistributedDataContainerChange(ddcEntry,
+					DistributedDataContainerChangeType.ddcEntryAdded));
+		}
 	}
 
 	@Override
 	public void ddcEntryRemoved(DDCEntry ddcEntry) {
-		ddcChanges.add(new DistributedDataContainerChange(ddcEntry,
-				DistributedDataContainerChangeType.ddcEntryRemoved));
+		if (listeningForChanges) {
+			ddcChanges.add(new DistributedDataContainerChange(ddcEntry,
+					DistributedDataContainerChangeType.ddcEntryRemoved));
+		}
 	}
 
 	public List<DistributedDataContainerChange> getDDCChanges() {
@@ -237,5 +243,13 @@ public class DistributedDataContainerAdvertisementGenerator implements
 			Thread.sleep(milliSeconds);
 		} catch (InterruptedException e) {
 		}
+	}
+
+	public void disableListeningForChanges() {
+		listeningForChanges = false;
+	}
+
+	public void enableListeningForChanges() {
+		listeningForChanges = true;
 	}
 }

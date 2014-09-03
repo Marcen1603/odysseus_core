@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
 import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerAdvertisement;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DistributedDataContainerAdvertisementGenerator;
 
 /**
  * Listener for DDCAdvertisements. The Changes from Advertisements will be
@@ -29,7 +30,7 @@ public class DistributedDataContainerAdvertisementListener implements
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DistributedDataContainerAdvertisementListener.class);
-	
+
 	/**
 	 * The DDC.
 	 */
@@ -44,11 +45,10 @@ public class DistributedDataContainerAdvertisementListener implements
 	 *            Must be not null.
 	 */
 	public static void bindDDC(IDistributedDataContainer ddc) {
-
 		Preconditions.checkNotNull(ddc, "The DDC to bind must be not null!");
 		DistributedDataContainerAdvertisementListener.ddc = ddc;
-		DistributedDataContainerAdvertisementListener.LOG.debug("Bound {} as a DDC", ddc.getClass()
-				.getSimpleName());
+		DistributedDataContainerAdvertisementListener.LOG.debug(
+				"Bound {} as a DDC", ddc.getClass().getSimpleName());
 
 	}
 
@@ -66,8 +66,8 @@ public class DistributedDataContainerAdvertisementListener implements
 		if (DistributedDataContainerAdvertisementListener.ddc == ddc) {
 
 			DistributedDataContainerAdvertisementListener.ddc = null;
-			DistributedDataContainerAdvertisementListener.LOG.debug("Unbound {} as a DDC", ddc.getClass()
-					.getSimpleName());
+			DistributedDataContainerAdvertisementListener.LOG.debug(
+					"Unbound {} as a DDC", ddc.getClass().getSimpleName());
 
 		}
 
@@ -104,6 +104,11 @@ public class DistributedDataContainerAdvertisementListener implements
 				receivedDDCAdvertisements.add(ddcAdvertisement
 						.getAdvertisementUid());
 
+				// disable listening in AdvertisementGenerator. Otherwise same
+				// changes will detected multiple times on multiple peers.
+				DistributedDataContainerAdvertisementGenerator.getInstance()
+						.disableListeningForChanges();
+
 				switch (ddcAdvertisement.getType()) {
 				case initialDistribution:
 					// write only added DDC entries to DDC on initial
@@ -111,7 +116,8 @@ public class DistributedDataContainerAdvertisementListener implements
 					if (ddcAdvertisement.getAddedDDCEntires() != null) {
 						for (DDCEntry addedDdcEntry : ddcAdvertisement
 								.getAddedDDCEntires()) {
-							DistributedDataContainerAdvertisementListener.ddc.add(addedDdcEntry);
+							DistributedDataContainerAdvertisementListener.ddc
+									.add(addedDdcEntry);
 						}
 					}
 					break;
@@ -120,14 +126,16 @@ public class DistributedDataContainerAdvertisementListener implements
 					if (ddcAdvertisement.getAddedDDCEntires() != null) {
 						for (DDCEntry addedDdcEntry : ddcAdvertisement
 								.getAddedDDCEntires()) {
-							DistributedDataContainerAdvertisementListener.ddc.add(addedDdcEntry);
+							DistributedDataContainerAdvertisementListener.ddc
+									.add(addedDdcEntry);
 						}
 					}
 					// remove entries from DDC
 					if (ddcAdvertisement.getRemovedDDCEntires() != null) {
 						for (String[] deletedDdcEntryKey : ddcAdvertisement
 								.getRemovedDDCEntires()) {
-							DistributedDataContainerAdvertisementListener.ddc.remove(new DDCKey(deletedDdcEntryKey));
+							DistributedDataContainerAdvertisementListener.ddc
+									.remove(new DDCKey(deletedDdcEntryKey));
 						}
 					}
 					break;
@@ -135,7 +143,9 @@ public class DistributedDataContainerAdvertisementListener implements
 					LOG.debug("Could not detect DDCAdvertisement type. Changes not processed to DDC");
 					break;
 				}
-
+				// enable listening for changes after changes are written to ddc
+				DistributedDataContainerAdvertisementGenerator.getInstance()
+						.enableListeningForChanges();
 			}
 		}
 	}
