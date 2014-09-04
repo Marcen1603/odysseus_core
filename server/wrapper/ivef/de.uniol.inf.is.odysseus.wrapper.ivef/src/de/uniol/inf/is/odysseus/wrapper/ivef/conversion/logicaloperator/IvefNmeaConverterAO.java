@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.wrapper.ivef.IIvefElement;
+import de.uniol.inf.is.odysseus.wrapper.ivef.IVEFVersion;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.Sentence;
 
 /**
@@ -41,6 +42,8 @@ public class IvefNmeaConverterAO extends UnaryLogicalOp {
 	private ConversionType conversionType;
 	private int PositionToStaticRatio = 100;
 	private Sentence nmea;
+
+	private IVEFVersion ivefVersion = IVEFVersion.v015;
 		
 	public IvefNmeaConverterAO(){
 		super();
@@ -70,6 +73,11 @@ public class IvefNmeaConverterAO extends UnaryLogicalOp {
 		this.conversionType = conversionType; 
 	} 
 	
+	@Parameter(name="ivefVersion", type=EnumParameter.class, isList=false, optional=true, doc="The version of IVEF elements: v015 (0.1.5), v104 (1.0.4)")
+	public void setIVEFVersion(IVEFVersion ivefVersion) {
+		this.ivefVersion= ivefVersion; 
+	} 
+	
 	public IIvefElement getIvef() {
 		return this.ivef;
 	}
@@ -84,5 +92,9 @@ public class IvefNmeaConverterAO extends UnaryLogicalOp {
 	
 	public int getPositionToStaticRatio(){
 		return this.PositionToStaticRatio;
+	}
+
+	public IVEFVersion getIvefVersion() {
+		return ivefVersion;
 	}
 }
