@@ -14,28 +14,32 @@ import javax.tools.JavaFileObject.Kind;
 /**
  * UDF for Java source code based on the work of Sergey Malenkov
  * (https://weblogs.java.net/blog/malenkov)
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 @SuppressWarnings("rawtypes")
 public class MemoryFileManager extends ForwardingJavaFileManager {
-    private final Map<String, UDFOutput> map = new HashMap<String, UDFOutput>();
+    private final Map<String, UDFOutput> map = new HashMap<>();
 
     @SuppressWarnings("unchecked")
-    MemoryFileManager(JavaCompiler compiler) {
+    MemoryFileManager(final JavaCompiler compiler) {
         super(compiler.getStandardFileManager(null, null, null));
-   }
+    }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
-    public JavaFileObject getJavaFileForOutput(Location location, String className, Kind kind, FileObject sibling) throws IOException {
+    public JavaFileObject getJavaFileForOutput(final Location location, final String className, final Kind kind, final FileObject sibling) throws IOException {
         Objects.requireNonNull(className);
-        UDFOutput output = new UDFOutput(className, kind);
+        final UDFOutput output = new UDFOutput(className, kind);
         this.map.put(className, output);
         return output;
     }
 
-    public UDFOutput remove(String className) {
+    public UDFOutput remove(final String className) {
         Objects.requireNonNull(className);
         return this.map.remove(className);
     }

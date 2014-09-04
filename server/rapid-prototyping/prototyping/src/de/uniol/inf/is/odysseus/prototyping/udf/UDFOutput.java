@@ -8,15 +8,15 @@ import javax.tools.SimpleJavaFileObject;
 /**
  * UDF for Java source code based on the work of Sergey Malenkov
  * (https://weblogs.java.net/blog/malenkov)
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 public class UDFOutput extends SimpleJavaFileObject {
 
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-    UDFOutput(String className, Kind kind) {
+    UDFOutput(final String className, final Kind kind) {
         super(URI.create("memo:///" + className.replace('.', '/') + kind.extension), kind);
     }
 
@@ -24,6 +24,10 @@ public class UDFOutput extends SimpleJavaFileObject {
         return this.baos.toByteArray();
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
     public ByteArrayOutputStream openOutputStream() {
         return this.baos;

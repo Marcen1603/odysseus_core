@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,15 +40,15 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions
 
 /**
  * Aggregation function to use arbitrary script languages for aggregation
- * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ * @author Christian Kuka <christian@kuka.cc>
  * @version 1.0
- * 
+ *
  */
 public class JSR223Aggregation extends AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
     /**
-	 * 
-	 */
+     *
+     */
     private static final long serialVersionUID = -8769334296558938027L;
 
     private static final String KEY_ATTRIBUTE = "attr";
@@ -56,159 +56,151 @@ public class JSR223Aggregation extends AbstractAggregateFunction<Tuple<?>, Tuple
     private static final String KEY_META = "meta";
     private static final String KEY_PARTIAL = "partial";
     private static final String KEY_PARTIALS = "partials";
-    private final Logger LOG = LoggerFactory.getLogger(JSR223Aggregation.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JSR223Aggregation.class);
 
     /** The script engine */
-    private ScriptEngine engine;
+    private final ScriptEngine engine;
     /** The compiled script if supported */
     private CompiledScript compiledScript;
     /** The script reader **/
     private InputStreamReader script;
     /** The path to the script file */
-    private String fileName;
+    private final String fileName;
     /** Position array to support multiple attributes for aggregation */
-    private int[] positions;
+    private final int[] positions;
 
     final private String datatype;
 
     /**
-     * 
+     *
      * @param pos
      * @param fileName
      */
-    public JSR223Aggregation(int pos, String fileName, boolean partialAggregateInput, String datatype) {
+    public JSR223Aggregation(final int pos, final String fileName, final boolean partialAggregateInput, final String datatype) {
         this(new int[] { pos }, fileName, partialAggregateInput, datatype);
     }
 
     /**
-     * 
+     *
      * @param pos
      * @param fileName
      */
-    public JSR223Aggregation(int[] pos, String fileName, boolean partialAggregateInput, String datatype) {
+    public JSR223Aggregation(final int[] pos, final String fileName, final boolean partialAggregateInput, final String datatype) {
         super("JSR223Aggregation", partialAggregateInput);
         this.positions = pos;
         this.datatype = datatype;
         this.fileName = fileName;
-        String extension = this.fileName.substring(this.fileName.lastIndexOf(".") + 1);
-        ScriptEngineManager manager = new ScriptEngineManager();
+        final String extension = this.fileName.substring(this.fileName.lastIndexOf(".") + 1);
+        final ScriptEngineManager manager = new ScriptEngineManager();
         this.engine = manager.getEngineByExtension(extension);
         if (this.engine == null) {
-            LOG.error("No scripting engine was found");
+            JSR223Aggregation.LOG.error("No scripting engine was found");
         }
-        if (LOG.isDebugEnabled()) {
-            List<ScriptEngineFactory> engines = manager.getEngineFactories();
-            LOG.debug("The following " + engines.size() + " scripting engines were found");
-            for (ScriptEngineFactory engine : engines) {
-                LOG.debug("Engine name: {}", engine.getEngineName());
-                LOG.debug("\tVersion: {}", engine.getEngineVersion());
-                LOG.debug("\tLanguage: {}", engine.getLanguageName());
-                List<String> extensions = engine.getExtensions();
+        if (JSR223Aggregation.LOG.isDebugEnabled()) {
+            final List<ScriptEngineFactory> engines = manager.getEngineFactories();
+            JSR223Aggregation.LOG.debug("The following " + engines.size() + " scripting engines were found");
+            for (final ScriptEngineFactory engineFactory : engines) {
+                JSR223Aggregation.LOG.debug("Engine name: {}", engineFactory.getEngineName());
+                JSR223Aggregation.LOG.debug("\tVersion: {}", engineFactory.getEngineVersion());
+                JSR223Aggregation.LOG.debug("\tLanguage: {}", engineFactory.getLanguageName());
+                final List<String> extensions = engineFactory.getExtensions();
                 if (extensions.size() > 0) {
-                    LOG.debug("\tEngine supports the following extensions:");
-                    for (String e : extensions) {
-                        LOG.debug("\t\t{}", e);
+                    JSR223Aggregation.LOG.debug("\tEngine supports the following extensions:");
+                    for (final String e : extensions) {
+                        JSR223Aggregation.LOG.debug("\t\t{}", e);
                     }
                 }
-                List<String> shortNames = engine.getNames();
+                final List<String> shortNames = engineFactory.getNames();
                 if (shortNames.size() > 0) {
-                    LOG.debug("\tEngine has the following short names:");
-                    for (String n : engine.getNames()) {
-                        LOG.debug("\t\t{}", n);
+                    JSR223Aggregation.LOG.debug("\tEngine has the following short names:");
+                    for (final String n : engineFactory.getNames()) {
+                        JSR223Aggregation.LOG.debug("\t\t{}", n);
                     }
                 }
-                LOG.debug("=========================");
+                JSR223Aggregation.LOG.debug("=========================");
             }
         }
-        File scriptFile = new File(this.fileName);
+        final File scriptFile = new File(this.fileName);
         try {
             this.script = new InputStreamReader(new FileInputStream(scriptFile));
-            if ((this.compiledScript == null) && (engine instanceof Compilable)) {
-                this.compiledScript = ((Compilable) engine).compile(this.script);
+            if ((this.compiledScript == null) && (this.engine instanceof Compilable)) {
+                this.compiledScript = ((Compilable) this.engine).compile(this.script);
             }
         }
         catch (FileNotFoundException | ScriptException e) {
-            LOG.error(e.getMessage(), e);
+            JSR223Aggregation.LOG.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-     * .IInitializer#init(java.lang.Object)
+    /**
+     *
+     * {@inheritDoc}
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public IPartialAggregate<Tuple<?>> init(Tuple<?> in) {
+    public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
         Tuple<?> ret = null;
-        Bindings bindings = this.engine.createBindings();
-        Object[] attributes = getAttributes(in, positions);
-        bindings.put(KEY_ATTRIBUTES, attributes.length);
+        final Bindings bindings = this.engine.createBindings();
+        final Object[] attributes = JSR223Aggregation.getAttributes(in, this.positions);
+        bindings.put(JSR223Aggregation.KEY_ATTRIBUTES, new Integer(attributes.length));
         for (int i = 0; i < attributes.length; ++i) {
-            bindings.put(KEY_ATTRIBUTE + i, attributes[i]);
-            bindings.put(KEY_PARTIAL + i, attributes[i]);
+            bindings.put(JSR223Aggregation.KEY_ATTRIBUTE + i, attributes[i]);
+            bindings.put(JSR223Aggregation.KEY_PARTIAL + i, attributes[i]);
         }
-        bindings.put(KEY_META, in.getMetadata());
-        bindings.put(KEY_PARTIALS, 0);
+        bindings.put(JSR223Aggregation.KEY_META, in.getMetadata());
+        bindings.put(JSR223Aggregation.KEY_PARTIALS, new Integer(0));
         try {
             if (this.compiledScript != null) {
                 this.compiledScript.eval(bindings);
             }
             else {
-                if (script != null) {
-                    engine.eval(this.script, bindings);
+                if (this.script != null) {
+                    this.engine.eval(this.script, bindings);
                 }
             }
         }
-        catch (ScriptException e) {
-            LOG.error(e.getMessage(), e);
+        catch (final ScriptException e) {
+            JSR223Aggregation.LOG.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
 
-        Object[] retObj = new Object[attributes.length];
+        final Object[] retObj = new Object[attributes.length];
         for (int i = 0; i < attributes.length; ++i) {
-            retObj[i] = bindings.get(KEY_PARTIAL + i);
+            retObj[i] = bindings.get(JSR223Aggregation.KEY_PARTIAL + i);
         }
         ret = new Tuple(retObj, false);
-        IPartialAggregate<Tuple<?>> pa = new ElementPartialAggregate<Tuple<?>>(ret, datatype);
+        final IPartialAggregate<Tuple<?>> pa = new ElementPartialAggregate<Tuple<?>>(ret, this.datatype);
         return pa;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-     * .IMerger
-     * #merge(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate
-     * .basefunctions .IPartialAggregate, java.lang.Object, boolean)
+    /**
+     *
+     * {@inheritDoc}
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p, Tuple<?> toMerge, boolean createNew) {
+    public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge, final boolean createNew) {
         ElementPartialAggregate<Tuple<?>> pa = null;
         if (createNew) {
-            pa = new ElementPartialAggregate<Tuple<?>>(((ElementPartialAggregate<Tuple<?>>) p).getElem(), datatype);
+            pa = new ElementPartialAggregate<Tuple<?>>(((ElementPartialAggregate<Tuple<?>>) p).getElem(), this.datatype);
         }
         else {
             pa = (ElementPartialAggregate<Tuple<?>>) p;
         }
         Tuple<?> ret = null;
-        Bindings bindings = this.engine.createBindings();
-        Object[] attributes = getAttributes(toMerge, positions);
-        bindings.put(KEY_ATTRIBUTES, attributes.length);
+        final Bindings bindings = this.engine.createBindings();
+        final Object[] attributes = JSR223Aggregation.getAttributes(toMerge, this.positions);
+        bindings.put(JSR223Aggregation.KEY_ATTRIBUTES, new Integer(attributes.length));
         for (int i = 0; i < attributes.length; ++i) {
-            bindings.put(KEY_ATTRIBUTE + i, attributes[i]);
+            bindings.put(JSR223Aggregation.KEY_ATTRIBUTE + i, attributes[i]);
         }
-        bindings.put(KEY_META, toMerge.getMetadata());
+        bindings.put(JSR223Aggregation.KEY_META, toMerge.getMetadata());
 
-        Object[] partials = pa.getElem().getAttributes();
-        bindings.put(KEY_PARTIALS, partials.length);
+        final Object[] partials = pa.getElem().getAttributes();
+        bindings.put(JSR223Aggregation.KEY_PARTIALS, new Integer(partials.length));
         for (int i = 0; i < partials.length; ++i) {
-            bindings.put(KEY_PARTIAL + i, partials[i]);
+            bindings.put(JSR223Aggregation.KEY_PARTIAL + i, partials[i]);
         }
 
         try {
@@ -216,18 +208,18 @@ public class JSR223Aggregation extends AbstractAggregateFunction<Tuple<?>, Tuple
                 this.compiledScript.eval(bindings);
             }
             else {
-                if (script != null) {
-                    engine.eval(this.script, bindings);
+                if (this.script != null) {
+                    this.engine.eval(this.script, bindings);
                 }
             }
         }
-        catch (ScriptException e) {
-            LOG.error(e.getMessage(), e);
+        catch (final ScriptException e) {
+            JSR223Aggregation.LOG.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
-        Object[] retObj = new Object[partials.length];
+        final Object[] retObj = new Object[partials.length];
         for (int i = 0; i < partials.length; ++i) {
-            retObj[i] = bindings.get(KEY_PARTIAL + i);
+            retObj[i] = bindings.get(JSR223Aggregation.KEY_PARTIAL + i);
         }
         ret = new Tuple(retObj, false);
 
@@ -235,30 +227,25 @@ public class JSR223Aggregation extends AbstractAggregateFunction<Tuple<?>, Tuple
         return pa;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-     * .IEvaluator
-     * #evaluate(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate
-     * .basefunctions.IPartialAggregate)
+    /**
+     *
+     * {@inheritDoc}
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
-        ElementPartialAggregate<Tuple<?>> pa = new ElementPartialAggregate<Tuple<?>>(((ElementPartialAggregate<Tuple<?>>) p).getElem(), datatype);
+    public Tuple<?> evaluate(final IPartialAggregate<Tuple<?>> p) {
+        final ElementPartialAggregate<Tuple<?>> pa = new ElementPartialAggregate<Tuple<?>>(((ElementPartialAggregate<Tuple<?>>) p).getElem(), this.datatype);
 
         Tuple<?> ret = null;
-        Bindings bindings = this.engine.createBindings();
-        bindings.put(KEY_ATTRIBUTES, 0);
+        final Bindings bindings = this.engine.createBindings();
+        bindings.put(JSR223Aggregation.KEY_ATTRIBUTES, new Integer(0));
 
-        bindings.put(KEY_META, pa.getElem().getMetadata());
+        bindings.put(JSR223Aggregation.KEY_META, pa.getElem().getMetadata());
 
-        Object[] partials = pa.getElem().getAttributes();
-        bindings.put(KEY_PARTIALS, partials.length);
+        final Object[] partials = pa.getElem().getAttributes();
+        bindings.put(JSR223Aggregation.KEY_PARTIALS, new Integer(partials.length));
         for (int i = 0; i < partials.length; ++i) {
-            bindings.put(KEY_PARTIAL + i, partials[i]);
+            bindings.put(JSR223Aggregation.KEY_PARTIAL + i, partials[i]);
         }
 
         try {
@@ -266,18 +253,18 @@ public class JSR223Aggregation extends AbstractAggregateFunction<Tuple<?>, Tuple
                 this.compiledScript.eval(bindings);
             }
             else {
-                if (script != null) {
-                    engine.eval(this.script, bindings);
+                if (this.script != null) {
+                    this.engine.eval(this.script, bindings);
                 }
             }
         }
-        catch (ScriptException e) {
-            LOG.error(e.getMessage(), e);
+        catch (final ScriptException e) {
+            JSR223Aggregation.LOG.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
-        Object[] retObj = new Object[partials.length];
+        final Object[] retObj = new Object[partials.length];
         for (int i = 0; i < partials.length; ++i) {
-            retObj[i] = bindings.get(KEY_PARTIAL + i);
+            retObj[i] = bindings.get(JSR223Aggregation.KEY_PARTIAL + i);
         }
         ret = new Tuple(retObj, false);
         return ret;
@@ -285,15 +272,15 @@ public class JSR223Aggregation extends AbstractAggregateFunction<Tuple<?>, Tuple
 
     /**
      * Return the attributes from the tuple
-     * 
+     *
      * @param in
      * @param positions
      * @return
      */
-    private static Object[] getAttributes(Tuple<?> in, int[] positions) {
+    private static Object[] getAttributes(final Tuple<?> in, final int[] positions) {
         Objects.requireNonNull(in);
         Objects.requireNonNull(positions);
-        Object[] attributes = new Object[positions.length];
+        final Object[] attributes = new Object[positions.length];
         for (int i = 0; i < positions.length; ++i) {
             attributes[i] = in.getAttribute(positions[i]);
         }

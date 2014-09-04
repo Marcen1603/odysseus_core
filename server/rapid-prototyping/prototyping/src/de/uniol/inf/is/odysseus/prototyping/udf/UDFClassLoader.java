@@ -13,40 +13,39 @@ import javax.tools.ToolProvider;
 /**
  * UDF for Java source code based on the work of Sergey Malenkov
  * (https://weblogs.java.net/blog/malenkov)
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 public class UDFClassLoader extends ClassLoader {
     private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
     private final MemoryFileManager manager = new MemoryFileManager(this.compiler);
 
-    public UDFClassLoader(String classname, String filecontent) {
+    public UDFClassLoader(final String classname, final String filecontent) {
         this(Collections.singletonMap(classname, filecontent));
     }
 
-    public UDFClassLoader(Map<String, String> map) {
+    public UDFClassLoader(final Map<String, String> map) {
         Objects.requireNonNull(map);
-        List<UDFSource> list = new ArrayList<UDFSource>();
-        for (Map.Entry<String, String> entry : map.entrySet()) {
+        final List<UDFSource> list = new ArrayList<>();
+        for (final Map.Entry<String, String> entry : map.entrySet()) {
             list.add(new UDFSource(entry.getKey(), Kind.SOURCE, entry.getValue()));
         }
         this.compiler.getTask(null, this.manager, null, null, null, list).call();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.ClassLoader#findClass(java.lang.String)
+    /**
+     *
+     * {@inheritDoc}
      */
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
+    protected Class<?> findClass(final String name) throws ClassNotFoundException {
         Objects.requireNonNull(name);
         synchronized (this.manager) {
-            UDFOutput output = this.manager.remove(name);
+            final UDFOutput output = this.manager.remove(name);
             if (output != null) {
-                byte[] array = output.toByteArray();
-                return defineClass(name, array, 0, array.length);
+                final byte[] array = output.toByteArray();
+                return this.defineClass(name, array, 0, array.length);
             }
         }
         return super.findClass(name);

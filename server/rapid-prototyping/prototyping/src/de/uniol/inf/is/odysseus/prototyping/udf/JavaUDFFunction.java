@@ -22,79 +22,82 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunctio
 /**
  * UDF for Java source code based on the work of Sergey Malenkov
  * (https://weblogs.java.net/blog/malenkov)
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 @UserDefinedFunction(name = "Java")
-public class JavaUDFFunction
-		implements
-		IUserDefinedFunction<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
+public class JavaUDFFunction implements IUserDefinedFunction<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
 
-	private final Logger LOG = LoggerFactory.getLogger(JavaUDFFunction.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JavaUDFFunction.class);
 
-	/** The process method. */
-	private Method udfMethod;
+    /** The process method. */
+    private Method udfMethod;
 
-	private Class<?> udfClass;
+    private Class<?> udfClass;
 
-	private Object udfInstance;
+    private Object udfInstance;
 
-	@Override
-	public void init(String initString) {
-	    Objects.requireNonNull(initString);
-		String path = initString;
-		File javaFile = new File(path);
-		String fileName = javaFile.getName();
-		String className = fileName.substring(0, fileName.indexOf("."));
+    /**
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public void init(final String initString) {
+        Objects.requireNonNull(initString);
+        final String path = initString;
+        final File javaFile = new File(path);
+        final String fileName = javaFile.getName();
+        final String className = fileName.substring(0, fileName.indexOf("."));
 
-		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					new FileInputStream(javaFile)));
-			StringBuilder content = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				content.append(line).append("\n");
-			}
-			reader.close();
-			if (LOG.isDebugEnabled()) {
-				LOG.debug(content.toString());
-			}
-			UDFClassLoader udfClassLoader = new UDFClassLoader(className,
-					content.toString());
-			this.udfClass = udfClassLoader.loadClass(className);
-			this.udfMethod = this.udfClass.getMethod("process", new Class[] {
-					Object[].class, Map.class });
-			this.udfInstance = this.udfClass.newInstance();
-		} catch (IOException | NoSuchMethodException | SecurityException
-				| ClassNotFoundException | InstantiationException
-				| IllegalAccessException e) {
-			LOG.error(e.getMessage(), e);
-			throw new RuntimeException(e);
-		}
-	}
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(javaFile)))) {
+            final StringBuilder content = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+            reader.close();
+            if (JavaUDFFunction.LOG.isDebugEnabled()) {
+                JavaUDFFunction.LOG.debug(content.toString());
+            }
+            final UDFClassLoader udfClassLoader = new UDFClassLoader(className, content.toString());
+            this.udfClass = udfClassLoader.loadClass(className);
+            this.udfMethod = this.udfClass.getMethod("process", new Class[] { Object[].class, Map.class });
+            this.udfInstance = this.udfClass.newInstance();
+        }
+        catch (IOException | NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            JavaUDFFunction.LOG.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+    }
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Tuple<? extends IMetaAttribute> process(
-			Tuple<? extends IMetaAttribute> in, int port) {
-		Tuple<?> ret = null;
-		Object[] retObj = new Object[] {};
-		try {
-			retObj = (Object[]) this.udfMethod.invoke(this.udfInstance,
-					in.getAttributes(), in.getMetadataMap());
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
-			LOG.error(e.getMessage(), e);
-			throw new RuntimeException(e);
-		}
-		ret = new Tuple(retObj, false);
-		return ret;
-	}
+    /**
+     *
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Tuple<? extends IMetaAttribute> process(final Tuple<? extends IMetaAttribute> in, final int port) {
+        Tuple<?> ret = null;
+        Object[] retObj = new Object[] {};
+        try {
+            retObj = (Object[]) this.udfMethod.invoke(this.udfInstance, in.getAttributes(), in.getMetadataMap());
+        }
+        catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            JavaUDFFunction.LOG.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+        ret = new Tuple(retObj, false);
+        return ret;
+    }
 
-	@Override
-	public OutputMode getOutputMode() {
-		return OutputMode.MODIFIED_INPUT;
-	}
+    /**
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public OutputMode getOutputMode() {
+        return OutputMode.MODIFIED_INPUT;
+    }
 
 }

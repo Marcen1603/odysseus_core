@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunctio
 
 /**
  * User Defined Function for rapid prototyping using scripts
- * 
+ *
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 @UserDefinedFunction(name = "Script")
@@ -48,7 +48,7 @@ public class JSR223UDFunction implements IUserDefinedFunction<Tuple<? extends IM
     private static final String KEY_ATTRIBUTE = "attr";
     private static final String KEY_ATTRIBUTES = "attrs";
     private static final String KEY_META = "meta";
-    private final Logger LOG = LoggerFactory.getLogger(JSR223UDFunction.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JSR223UDFunction.class);
 
     /** The script engine */
     private ScriptEngine engine;
@@ -59,84 +59,92 @@ public class JSR223UDFunction implements IUserDefinedFunction<Tuple<? extends IM
     /** The path to the script file */
     private String fileName;
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
-    public void init(String initString) {
+    public void init(final String initString) {
         this.fileName = initString;
-        String extension = this.fileName.substring(this.fileName.lastIndexOf(".") + 1);
-        ScriptEngineManager manager = new ScriptEngineManager();
+        final String extension = this.fileName.substring(this.fileName.lastIndexOf(".") + 1);
+        final ScriptEngineManager manager = new ScriptEngineManager();
         this.engine = manager.getEngineByExtension(extension);
         if (this.engine == null) {
-            LOG.error("No scripting engine was found");
+            JSR223UDFunction.LOG.error("No scripting engine was found");
         }
-        if (LOG.isDebugEnabled()) {
-            List<ScriptEngineFactory> engines = manager.getEngineFactories();
-            LOG.debug("The following " + engines.size() + " scripting engines were found");
-            for (ScriptEngineFactory engine : engines) {
-                LOG.debug("Engine name: {}", engine.getEngineName());
-                LOG.debug("\tVersion: {}", engine.getEngineVersion());
-                LOG.debug("\tLanguage: {}", engine.getLanguageName());
-                List<String> extensions = engine.getExtensions();
+        if (JSR223UDFunction.LOG.isDebugEnabled()) {
+            final List<ScriptEngineFactory> engines = manager.getEngineFactories();
+            JSR223UDFunction.LOG.debug("The following " + engines.size() + " scripting engines were found");
+            for (final ScriptEngineFactory engineFactory : engines) {
+                JSR223UDFunction.LOG.debug("Engine name: {}", engineFactory.getEngineName());
+                JSR223UDFunction.LOG.debug("\tVersion: {}", engineFactory.getEngineVersion());
+                JSR223UDFunction.LOG.debug("\tLanguage: {}", engineFactory.getLanguageName());
+                final List<String> extensions = engineFactory.getExtensions();
                 if (extensions.size() > 0) {
-                    LOG.debug("\tEngine supports the following extensions:");
-                    for (String e : extensions) {
-                        LOG.debug("\t\t{}", e);
+                    JSR223UDFunction.LOG.debug("\tEngine supports the following extensions:");
+                    for (final String e : extensions) {
+                        JSR223UDFunction.LOG.debug("\t\t{}", e);
                     }
                 }
-                List<String> shortNames = engine.getNames();
+                final List<String> shortNames = engineFactory.getNames();
                 if (shortNames.size() > 0) {
-                    LOG.debug("\tEngine has the following short names:");
-                    for (String n : engine.getNames()) {
-                        LOG.debug("\t\t{}", n);
+                    JSR223UDFunction.LOG.debug("\tEngine has the following short names:");
+                    for (final String n : engineFactory.getNames()) {
+                        JSR223UDFunction.LOG.debug("\t\t{}", n);
                     }
                 }
-                LOG.debug("=========================");
+                JSR223UDFunction.LOG.debug("=========================");
             }
         }
-        File scriptFile = new File(this.fileName);
+        final File scriptFile = new File(this.fileName);
         try {
             this.script = new InputStreamReader(new FileInputStream(scriptFile));
-            if ((this.compiledScript == null) && (engine instanceof Compilable)) {
-                this.compiledScript = ((Compilable) engine).compile(this.script);
+            if ((this.compiledScript == null) && (this.engine instanceof Compilable)) {
+                this.compiledScript = ((Compilable) this.engine).compile(this.script);
             }
         }
         catch (FileNotFoundException | ScriptException e) {
-            LOG.error(e.getMessage(), e);
+            JSR223UDFunction.LOG.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
-    public Tuple<? extends IMetaAttribute> process(Tuple<? extends IMetaAttribute> in, int port) {
+    public Tuple<? extends IMetaAttribute> process(final Tuple<? extends IMetaAttribute> in, final int port) {
         Tuple<IMetaAttribute> ret = null;
-        Bindings bindings = this.engine.createBindings();
+        final Bindings bindings = this.engine.createBindings();
 
-        Object[] attributes = in.getAttributes();
-        bindings.put(KEY_ATTRIBUTES, attributes.length);
+        final Object[] attributes = in.getAttributes();
+        bindings.put(JSR223UDFunction.KEY_ATTRIBUTES, new Integer(attributes.length));
         for (int i = 0; i < attributes.length; ++i) {
-            bindings.put(KEY_ATTRIBUTE + i, attributes[i]);
+            bindings.put(JSR223UDFunction.KEY_ATTRIBUTE + i, attributes[i]);
         }
-        bindings.put(KEY_META, in.getMetadata());
+        bindings.put(JSR223UDFunction.KEY_META, in.getMetadata());
         try {
             if (this.compiledScript != null) {
                 this.compiledScript.eval(bindings);
             }
             else {
-                if (script != null) {
-                    engine.eval(this.script, bindings);
+                if (this.script != null) {
+                    this.engine.eval(this.script, bindings);
                 }
             }
         }
-        catch (ScriptException e) {
-            LOG.error(e.getMessage(), e);
+        catch (final ScriptException e) {
+            JSR223UDFunction.LOG.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
-        Object[] retObj = new Object[attributes.length];
+        final Object[] retObj = new Object[attributes.length];
         for (int i = 0; i < attributes.length; ++i) {
-            retObj[i] = bindings.get(KEY_ATTRIBUTE + i);
+            retObj[i] = bindings.get(JSR223UDFunction.KEY_ATTRIBUTE + i);
         }
-        ret = new Tuple<IMetaAttribute>(retObj, false);
-        if (bindings.get(KEY_META) != null) {
-            ret.setMetadata((IMetaAttribute) bindings.get(KEY_META));
+        ret = new Tuple<>(retObj, false);
+        if (bindings.get(JSR223UDFunction.KEY_META) != null) {
+            ret.setMetadata((IMetaAttribute) bindings.get(JSR223UDFunction.KEY_META));
         }
         else {
             ret.setMetadata(in.getMetadata().clone());
@@ -144,6 +152,10 @@ public class JSR223UDFunction implements IUserDefinedFunction<Tuple<? extends IM
         return ret;
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
     public OutputMode getOutputMode() {
         return OutputMode.MODIFIED_INPUT;
