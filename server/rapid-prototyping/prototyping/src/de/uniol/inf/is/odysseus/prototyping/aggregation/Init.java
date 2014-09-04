@@ -1,5 +1,5 @@
-/********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+/**********************************************************************************
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,10 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-/**
- * 
- */
+ ******************************************************************************/
 package de.uniol.inf.is.odysseus.prototyping.aggregation;
 
 import java.lang.annotation.ElementType;
@@ -24,13 +21,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * @version 1.0
- * 
+ *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
 public @interface Init {
-	boolean meta() default false;
+    boolean meta() default false;
 
 }

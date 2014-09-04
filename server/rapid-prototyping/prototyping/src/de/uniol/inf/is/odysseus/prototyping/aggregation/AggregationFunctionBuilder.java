@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,37 +26,54 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
+/**
+ *
+ * @author Christian Kuka <christian@kuka.cc>
+ *
+ */
 public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
     private final static String SCRIPT = "SCRIPT";
     private final static String BEAN = "BEAN";
-    private static Collection<String> names = new LinkedList<String>();
+    private static Collection<String> names = new LinkedList<>();
     {
-        names.add(SCRIPT);
-        names.add(BEAN);
+        AggregationFunctionBuilder.names.add(AggregationFunctionBuilder.SCRIPT);
+        AggregationFunctionBuilder.names.add(AggregationFunctionBuilder.BEAN);
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @SuppressWarnings("rawtypes")
     @Override
     public Class<? extends IStreamObject> getDatamodel() {
         return Tuple.class;
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
     public Collection<String> getFunctionNames() {
-        return names;
+        return AggregationFunctionBuilder.names;
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
-    public IAggregateFunction<?, ?> createAggFunction(AggregateFunction key, SDFSchema schema, int[] pos, boolean partialAggregateInput, String datatype) {
+    public IAggregateFunction<?, ?> createAggFunction(final AggregateFunction key, final SDFSchema schema, final int[] pos, final boolean partialAggregateInput, final String datatype) {
         IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
         Objects.requireNonNull(key);
         Objects.requireNonNull(key.getName());
         Objects.requireNonNull(key.getProperty("resource"));
 
-        if (key.getName().equalsIgnoreCase(SCRIPT)) {
+        if (key.getName().equalsIgnoreCase(AggregationFunctionBuilder.SCRIPT)) {
             aggFunc = new JSR223Aggregation(pos, key.getProperty("resource"), partialAggregateInput, datatype);
         }
-        else if (key.getName().equalsIgnoreCase(BEAN)) {
+        else if (key.getName().equalsIgnoreCase(AggregationFunctionBuilder.BEAN)) {
             aggFunc = new BeanAggregation(pos, key.getProperty("resource"), partialAggregateInput, datatype);
         }
         else {
