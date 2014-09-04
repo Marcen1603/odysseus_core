@@ -117,11 +117,11 @@ public class DDCKey implements Comparable<DDCKey> {
 
 		for (String partialKey : this.mKey) {
 
-			keyString += partialKey + ", ";
+			keyString += partialKey + ",";
 
 		}
 
-		return keyString.substring(0, keyString.length() - 2);
+		return keyString.substring(0, keyString.length() - 1);
 
 	}
 
