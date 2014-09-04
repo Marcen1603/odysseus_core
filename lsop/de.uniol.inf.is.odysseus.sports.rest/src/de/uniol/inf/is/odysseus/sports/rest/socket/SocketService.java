@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -142,10 +141,13 @@ public class SocketService {
 
 		final ISource<?> rootAsSource = (ISource<?>) root;
 
-		IDataHandler<?> handler = new TupleDataHandler().getInstance(root
-				.getOutputSchema());
-		ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
-				handler);
+		//IDataHandler<?> handler = new TupleDataHandler().getInstance(root.getOutputSchema());
+		NullAwareTupleDataHandler handler = new NullAwareTupleDataHandler(root.getOutputSchema());
+
+		ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(handler);
+		
+
+		
 		SocketSinkPO sink = new SocketSinkPO(port, "",
 				new NioByteBufferSinkStreamHandlerBuilder(), true, false, false,
 				objectHandler, false);
