@@ -103,14 +103,14 @@ public class MEPFunctionsView extends ViewPart {
             functionInfos = determineFunctionInfos(functionSymbols);
         }
         else {
-        	String regexFilter = wildcardToRegexPattern(filter);
-            HashSet<FunctionSignature> filteredSymbols = new HashSet<FunctionSignature>();
+            String regexFilter = wildcardToRegexPattern(filter.toLowerCase());
+            HashSet<FunctionSignature> filteredSymbols = new HashSet<>();
             Iterator<FunctionSignature> functionsIter = functionSymbols.iterator();
             while (functionsIter.hasNext()) {
                 FunctionSignature function = functionsIter.next();
                 MEPFunctionInfo funtionInfo = MEPFunctionInfo.fromMEPFunction(MEP.getFunction(function));
                 try {
-                    if (funtionInfo.getSymbol().matches(regexFilter)) {
+                    if (funtionInfo.getSymbol().toLowerCase().matches(regexFilter)) {
                         filteredSymbols.add(function);
                     }
                 }
@@ -211,6 +211,6 @@ public class MEPFunctionsView extends ViewPart {
 		regex = regex.replace("*", ".*");
 		regex = regex.replace("?", ".");
 		regex = regex.replace("!", "^");
-		return regex;
+        return regex + ".*";
 	}
 }
