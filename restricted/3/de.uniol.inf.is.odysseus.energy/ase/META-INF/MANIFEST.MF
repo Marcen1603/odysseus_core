@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ase
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.energy.ase
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: de.uniol.inf.is.odysseus.core.collection,
+ de.uniol.inf.is.odysseus.core.logicaloperator,
+ de.uniol.inf.is.odysseus.core.metadata,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator,
+ org.slf4j
