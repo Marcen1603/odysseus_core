@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.uniol.inf.is.odysseus.generator.generic;
 
@@ -15,6 +15,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,10 +32,10 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 public class GenericProvider extends AbstractDataGenerator {
-    private final Map<String, IValueGenerator> generators = new LinkedHashMap<String, IValueGenerator>();
+    private final Map<String, IValueGenerator> generators = new LinkedHashMap<>();
     private final String schemaFile;
     private final String out;
     private final long frequency;
@@ -42,7 +44,11 @@ public class GenericProvider extends AbstractDataGenerator {
     private long count;
 
     /**
-     * 
+     *
+     * Class constructor.
+     *
+     * @param schemaFile
+     * @param frequency
      */
     public GenericProvider(final String schemaFile, final long frequency) {
         this.schemaFile = schemaFile;
@@ -53,15 +59,28 @@ public class GenericProvider extends AbstractDataGenerator {
     }
 
     /**
-     * @param schemaFile2
-     * @param frequency2
-     * @param outFile
+     *
+     * Class constructor.
+     *
+     * @param schemaFile
+     * @param frequency
+     * @param out
      * @throws IOException
      */
     public GenericProvider(final String schemaFile, final long frequency, final String out) throws IOException {
         this(schemaFile, frequency, out, -1l);
     }
 
+    /**
+     *
+     * Class constructor.
+     *
+     * @param schemaFile
+     * @param frequency
+     * @param out
+     * @param number
+     * @throws IOException
+     */
     public GenericProvider(final String schemaFile, final long frequency, final String out, final long number) throws IOException {
         this.schemaFile = schemaFile;
         this.frequency = frequency;
@@ -82,7 +101,7 @@ public class GenericProvider extends AbstractDataGenerator {
     public synchronized List<DataTuple> next() {
         final DataTuple tuple = new DataTuple();
         if (this.generators.size() > 0) {
-            final List<DataTuple> list = new ArrayList<DataTuple>();
+            final List<DataTuple> list = new ArrayList<>();
             if ((this.number < 0) || (this.count < this.number)) {
                 for (final String attribute : this.generators.keySet()) {
                     if (this.generators.get(attribute) instanceof IMultiValueGenerator) {
@@ -115,7 +134,7 @@ public class GenericProvider extends AbstractDataGenerator {
                 this.count++;
             }
             else {
-                return new ArrayList<DataTuple>();
+                return new ArrayList<>();
             }
             try {
                 Thread.sleep(1000 / this.frequency, (int) ((1000000000 / this.frequency) - ((1000 / this.frequency) * 1000000)));
@@ -129,9 +148,12 @@ public class GenericProvider extends AbstractDataGenerator {
         throw new IllegalArgumentException("Empty generator list");
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
     public void process_init() {
-        // String entry = "Time;WeibullDistribution;1;1";
         URL file;
         if (Activator.getContext() != null) {
             file = Activator.getContext().getBundle().getEntry(this.schemaFile);
@@ -152,9 +174,8 @@ public class GenericProvider extends AbstractDataGenerator {
             }
         }
         if (file != null) {
-            try {
-                final StringBuilder config = new StringBuilder();
-                final BufferedReader reader = new BufferedReader(new InputStreamReader(file.openConnection().getInputStream()));
+            final StringBuilder config = new StringBuilder();
+            try (final BufferedReader reader = new BufferedReader(new InputStreamReader(file.openConnection().getInputStream()))) {
                 String entry;
                 while ((entry = reader.readLine()) != null) {
                     final String[] attributeParameter = entry.split(" ");
@@ -165,7 +186,7 @@ public class GenericProvider extends AbstractDataGenerator {
                             // Class<?> generatorClass =
                             // Class.forName(attributeParameter[1]
                             // + "Generator");
-                            final Class<?> generatorClass = Activator.getGeneratorClass((attributeParameter[1] + "Generator").toUpperCase());
+                            final Class<?> generatorClass = Activator.getGeneratorClass((attributeParameter[1].trim() + "Generator").toUpperCase());
 
                             if (generatorClass != null) {
                                 final Constructor<?>[] constructors = generatorClass.getDeclaredConstructors();
@@ -178,29 +199,30 @@ public class GenericProvider extends AbstractDataGenerator {
                                         final Object[] args = new Object[params.length];
                                         args[0] = new NoError();
                                         for (int i = 2; i < attributeParameter.length; i++) {
+                                            final String attributeParameterValue = attributeParameter[i].trim();
                                             if (params[i - 1] == boolean.class) {
-                                                args[i - 1] = Boolean.parseBoolean(attributeParameter[i]);
+                                                args[i - 1] = new Boolean(Boolean.parseBoolean(attributeParameterValue));
                                             }
                                             else if (params[i - 1] == byte.class) {
-                                                args[i - 1] = Byte.parseByte(attributeParameter[i]);
+                                                args[i - 1] = new Byte(Byte.parseByte(attributeParameterValue));
                                             }
                                             else if (params[i - 1] == short.class) {
-                                                args[i - 1] = Short.parseShort(attributeParameter[i]);
+                                                args[i - 1] = new Short(Short.parseShort(attributeParameterValue));
                                             }
                                             else if (params[i - 1] == int.class) {
-                                                args[i - 1] = Integer.parseInt(attributeParameter[i]);
+                                                args[i - 1] = new Integer(Integer.parseInt(attributeParameterValue));
                                             }
                                             else if (params[i - 1] == float.class) {
-                                                args[i - 1] = Float.parseFloat(attributeParameter[i]);
+                                                args[i - 1] = new Float(Float.parseFloat(attributeParameterValue));
                                             }
                                             else if (params[i - 1] == double.class) {
-                                                args[i - 1] = Double.parseDouble(attributeParameter[i]);
+                                                args[i - 1] = new Double(Double.parseDouble(attributeParameterValue));
                                             }
                                             else if (params[i - 1] == Double[].class) {
                                                 final String[] column = attributeParameter[i].split(",");
                                                 final Double[] value = new Double[column.length];
                                                 for (int c = 0; c < column.length; c++) {
-                                                    value[c] = Double.parseDouble(column[c]);
+                                                    value[c] = new Double(Double.parseDouble(column[c].trim()));
                                                 }
                                                 args[i - 1] = value;
                                             }
@@ -212,7 +234,7 @@ public class GenericProvider extends AbstractDataGenerator {
                                                     for (int r = 0; r < row.length; r++) {
                                                         column = row[r].split(",");
                                                         for (int c = 0; c < column.length; c++) {
-                                                            value[r][c] = Double.parseDouble(column[c]);
+                                                            value[r][c] = new Double(Double.parseDouble(column[c].trim()));
                                                         }
                                                     }
                                                     args[i - 1] = value;
@@ -237,7 +259,6 @@ public class GenericProvider extends AbstractDataGenerator {
                             }
                         }
                         catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                     }
@@ -273,6 +294,10 @@ public class GenericProvider extends AbstractDataGenerator {
         }
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
     public void close() {
         this.count = 0l;
@@ -287,6 +312,10 @@ public class GenericProvider extends AbstractDataGenerator {
         }
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
     public GenericProvider newCleanInstance() {
         try {
@@ -306,6 +335,7 @@ public class GenericProvider extends AbstractDataGenerator {
         options.put("o", "out");
         options.put("g", "generate");
         options.put("n", "number");
+        options.put("h", "help");
         long number = -1l;
         int port = 54325;
         long frequency = 1000l;
@@ -341,6 +371,10 @@ public class GenericProvider extends AbstractDataGenerator {
                         }
                         else if (argstring.equalsIgnoreCase("number")) {
                             number = Long.parseLong(args[i + 1]);
+                        }
+                        else if (argstring.equalsIgnoreCase("help")) {
+                            GenericProvider.help();
+                            System.exit(1);
                         }
                         else {
                             System.err.println("Unknown parameter " + argstring);
@@ -383,6 +417,31 @@ public class GenericProvider extends AbstractDataGenerator {
 
     public static void help() {
         System.out.println("Usage: generator OPTION... \n" + "Runs the generator server.\n" + "\n" + "Possible arguments.\n" + "  -p, --port\t\tthe port to listen on\n"
-                + "  -f, --freq\t\tthe data frequency in milliseconds\n" + "  -s, --schema\t\tthe path to the schema file\n" + "  -o, --out\t\tthe path to the output file\n" + " ");
+                + "  -f, --freq\t\tthe data frequency in milliseconds\n" + "  -s, --schema\t\tthe path to the schema file\n" + "  -o, --out\t\tthe path to the output file\n"
+                + "  -h, --help\t\tprints this help\n" + "\nAvailable generators:\n");
+
+        for (String generator : Activator.getGenerators()) {
+            List<List<String>> parameters = Activator.getGeneratorParameters(generator);
+            Collections.sort(parameters, new Comparator<List<String>>() {
+                /**
+                 * 
+                 * {@inheritDoc}
+                 */
+                @Override
+                public int compare(List<String> o1, List<String> o2) {
+                    return Integer.compare(o1.size(), o2.size());
+                }
+
+            });
+            StringBuilder sb = new StringBuilder();
+            for (List<String> parameter : parameters) {
+                if (sb.length() > 0) {
+                    sb.append(" | ");
+                }
+                sb.append(parameter.toString());
+            }
+            System.out.println("- " + generator.substring(0, generator.length() - "Generator".length()) + " " + sb.toString());
+
+        }
     }
 }

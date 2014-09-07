@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.generator.generic;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,16 +57,16 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.switching.SignGenerator
 import de.uniol.inf.is.odysseus.generator.valuegenerator.switching.SwitchGenerator;
 
 /**
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 public class Activator implements BundleActivator {
 
     private static BundleContext context;
-    private static List<StreamServer> server = new ArrayList<StreamServer>();
+    private static List<StreamServer> server = new ArrayList<>();
 
-    private static Map<String, Class<?>> generators = new HashMap<String, Class<?>>();
+    private static Map<String, Class<?>> generators = new HashMap<>();
     static {
         Activator.generators.put("ConstantValueGenerator".toUpperCase(), ConstantValueGenerator.class);
         Activator.generators.put("BetaDistributionGenerator".toUpperCase(), BetaDistributionGenerator.class);
@@ -119,12 +121,31 @@ public class Activator implements BundleActivator {
         return Activator.generators.get(name);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
-     * )
+    static List<String> getGenerators() {
+        List<String> generatorList = new ArrayList<>(Activator.generators.keySet());
+        Collections.sort(generatorList);
+        return generatorList;
+    }
+
+    static List<List<String>> getGeneratorParameters(final String name) {
+        List<List<String>> parameters = new ArrayList<>();
+        Class<?> generatorClass = Activator.generators.get(name);
+        final Constructor<?>[] constructors = generatorClass.getDeclaredConstructors();
+
+        for (final Constructor<?> constructor : constructors) {
+            List<String> parameter = new ArrayList<>();
+            final Class<?>[] params = constructor.getParameterTypes();
+            for (int i = 1; i < params.length; i++) {
+                parameter.add(params[i].getSimpleName());
+            }
+            parameters.add(parameter);
+        }
+        return parameters;
+    }
+
+    /**
+     *
+     * {@inheritDoc}
      */
     @Override
     public void start(final BundleContext bundleContext) throws Exception {
@@ -138,11 +159,9 @@ public class Activator implements BundleActivator {
         Activator.server.add(genericServer);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+    /**
+     *
+     * {@inheritDoc}
      */
     @Override
     public void stop(final BundleContext bundleContext) throws Exception {
@@ -150,7 +169,7 @@ public class Activator implements BundleActivator {
     }
 
     /**
-     * 
+     *
      */
     public static void pause() {
         synchronized (Activator.server) {
@@ -177,7 +196,7 @@ public class Activator implements BundleActivator {
     }
 
     /**
-     * 
+     *
      */
     public static void printStatus() {
         synchronized (Activator.server) {

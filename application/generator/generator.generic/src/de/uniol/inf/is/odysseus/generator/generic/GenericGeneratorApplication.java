@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.generator.StreamServer;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 public class GenericGeneratorApplication implements IApplication {
     private static final Logger LOG = LoggerFactory.getLogger(GenericGeneratorApplication.class);
