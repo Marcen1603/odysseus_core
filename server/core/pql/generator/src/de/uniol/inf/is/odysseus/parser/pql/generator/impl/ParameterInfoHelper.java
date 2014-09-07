@@ -48,6 +48,11 @@ public class ParameterInfoHelper {
 
 			if (writeMethod != null && writeMethod.isAnnotationPresent(Parameter.class)) {
 				Parameter parameterAnnotation = writeMethod.getAnnotation(Parameter.class);
+				// TODO Make the skipping of deprecated parameters adjustable. M.B.
+				if (parameterAnnotation.deprecated()) {
+					continue;
+				}
+				
 				String parameterName = parameterAnnotation.name();
 				if (Strings.isNullOrEmpty(parameterName)) {
 					parameterName = curProperty.getName();
