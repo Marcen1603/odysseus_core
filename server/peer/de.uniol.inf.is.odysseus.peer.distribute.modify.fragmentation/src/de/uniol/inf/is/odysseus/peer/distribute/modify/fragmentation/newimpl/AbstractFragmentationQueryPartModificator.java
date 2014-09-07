@@ -1189,6 +1189,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		// Create the return value and avoid parts
 		Collection<ILogicalQueryPart> resultingParts = AbstractFragmentationQueryPartModificator
 				.setQueryPartsToAvoid(bundle);
+		LogicalQueryHelper.initializeOperators(resultingParts);
 		AbstractFragmentationQueryPartModificator.LOG.debug(
 				"Resulting query parts: {}", resultingParts);
 		return resultingParts;

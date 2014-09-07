@@ -704,4 +704,39 @@ public final class LogicalQueryHelper {
 		return Optional.absent();
 
 	}
+
+	/**
+	 * Initializes all operators of a collection of query parts.
+	 * @param queryParts The given collection of query parts. <br />
+	 * Must be not null.
+	 */
+	public static void initializeOperators(
+			Collection<ILogicalQueryPart> queryParts) {
+		
+		Preconditions.checkNotNull(queryParts, "Parts, which operators shall be initialized, must be not null!");
+		
+		for(ILogicalQueryPart queryPart : queryParts) {
+			
+			LogicalQueryHelper.initializeOperators(queryPart);
+			
+		}
+		
+	}
+
+	/**
+	 * Initializes all operators of a query part.
+	 * @param queryPart The given query part. <br />
+	 * Must be not null.
+	 */
+	public static void initializeOperators(ILogicalQueryPart queryPart) {
+		
+		Preconditions.checkNotNull(queryPart, "Part, which operators shall be initialized, must be not null!");
+		
+		for(ILogicalOperator operator : queryPart.getOperators()) {
+			
+			operator.initialize();
+			
+		}
+		
+	}
 }
