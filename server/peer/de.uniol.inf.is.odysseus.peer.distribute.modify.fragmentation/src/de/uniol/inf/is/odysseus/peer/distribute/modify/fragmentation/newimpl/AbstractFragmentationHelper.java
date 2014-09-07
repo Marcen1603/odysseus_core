@@ -355,16 +355,17 @@ public abstract class AbstractFragmentationHelper {
 		Preconditions
 				.checkNotNull(targets, "Logical targtes must be not null!");
 
-		for (ILogicalOperator source : sources) {
+		for (int copyNo = 0; copyNo < sources.size(); copyNo++) {
 
-			for (ILogicalOperator target : targets) {
+			ILogicalOperator source = ((List<ILogicalOperator>) sources)
+					.get(copyNo);
+			ILogicalOperator target = ((List<ILogicalOperator>) targets)
+					.get(copyNo % targets.size());
 
-				source.subscribeToSource(target,
-						originSubscription.getSinkInPort(),
-						originSubscription.getSourceOutPort(),
-						originSubscription.getSchema());
-
-			}
+			source.subscribeToSource(target,
+					originSubscription.getSinkInPort(),
+					originSubscription.getSourceOutPort(),
+					originSubscription.getSchema());
 
 		}
 
