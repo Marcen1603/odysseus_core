@@ -21,5 +21,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  org.slf4j
 Service-Component: OSGI-INF/LMS1xxProtocolHandler.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- com.vividsolutions.jts;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
