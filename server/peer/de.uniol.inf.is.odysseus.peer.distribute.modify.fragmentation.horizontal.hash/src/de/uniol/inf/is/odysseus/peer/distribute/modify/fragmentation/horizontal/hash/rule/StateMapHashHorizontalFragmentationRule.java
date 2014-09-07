@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.impl;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.rule;
 
 import java.util.Collection;
 import java.util.List;
@@ -7,38 +7,36 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.newimpl.HashHorizontalFragmentationHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.newimpl.HashHorizontalFragmentationQueryPartModificator;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.AbstractStateMapHorizontalFragmentationRule;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.AbstractFragmentationHelper;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.FragmentationInfoBundle;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.IFragmentationRule;
-import de.uniol.inf.is.odysseus.relational_interval.logicaloperator.RelationalFastMedianAO;
 
 /**
- * A relational fast median can not be part of a fragment for range horizontal
- * fragmentation strategies.
+ * A state map can only be part of a fragment for hash horizontal fragmentation
+ * strategies, if the grouping aggregates match the hash key.
  * 
  * @author Michael Brand
- *
+ * 
  */
-public class RelationalFastMedianHashHorizontalFragmentationRule
-		implements
-		IFragmentationRule<HashHorizontalFragmentationQueryPartModificator, RelationalFastMedianAO> {
+public class StateMapHashHorizontalFragmentationRule
+		extends
+		AbstractStateMapHorizontalFragmentationRule<HashHorizontalFragmentationQueryPartModificator> {
 
 	@Override
 	public boolean canOperatorBePartOfFragments(
 			HashHorizontalFragmentationQueryPartModificator strategy,
-			RelationalFastMedianAO operator) {
+			StateMapAO operator, AbstractFragmentationHelper helper) {
 
-		return false;
+		return !this.needSpecialHandlingForQueryPart(null, operator, helper);
 
 	}
 
 	@Override
 	public boolean needSpecialHandlingForQueryPart(ILogicalQueryPart part,
-			RelationalFastMedianAO operator, AbstractFragmentationHelper helper) {
+			StateMapAO operator, AbstractFragmentationHelper helper) {
 
 		Preconditions.checkArgument(
 				helper instanceof HashHorizontalFragmentationHelper,
@@ -71,27 +69,10 @@ public class RelationalFastMedianHashHorizontalFragmentationRule
 	}
 
 	@Override
-	public RelationalFastMedianAO specialHandling(ILogicalQueryPart part,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle)
-			throws QueryPartModificationException {
-
-		// Nothing to do
-		return null;
-
-	}
-	
-	@Override
 	public Class<HashHorizontalFragmentationQueryPartModificator> getStrategyClass() {
-		
-		return HashHorizontalFragmentationQueryPartModificator.class;
-		
-	}
 
-	@Override
-	public Class<RelationalFastMedianAO> getOperatorClass() {
-		
-		return RelationalFastMedianAO.class;
-		
+		return HashHorizontalFragmentationQueryPartModificator.class;
+
 	}
 
 }

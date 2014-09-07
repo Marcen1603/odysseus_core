@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.impl;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,28 +14,27 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.newimpl.AbstractHorizontalFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.newimpl.HorizontalFragmentationHelper;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.newimpl.RoundRobinHorizontalFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.AbstractFragmentationHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.FragmentationInfoBundle;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.IFragmentationRule;
 
 /**
- * An aggregation can be part of a fragment for round robin horizontal
- * fragmentation strategies.
+ * An aggregation can be part of a fragment for horizontal fragmentation
+ * strategies, if the aggregation function is AVG COUNT or SUM.
  * 
  * @author Michael Brand
  *
  */
-public class AggregateRoundRobinHorizontalFragmentationRule
-		implements
-		IFragmentationRule<RoundRobinHorizontalFragmentationQueryPartModificator, AggregateAO> {
+public abstract class AbstractAggregateHorizontalFragmentationRule<Strategy extends AbstractHorizontalFragmentationQueryPartModificator>
+		implements IFragmentationRule<Strategy, AggregateAO> {
 
 	/**
 	 * The logger for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(AggregateRoundRobinHorizontalFragmentationRule.class);
+			.getLogger(AbstractAggregateHorizontalFragmentationRule.class);
 
 	/**
 	 * All possible aggregation functions for the usage of partial aggregates.
@@ -44,9 +43,8 @@ public class AggregateRoundRobinHorizontalFragmentationRule
 			"COUNT", "SUM" };
 
 	@Override
-	public boolean canOperatorBePartOfFragments(
-			RoundRobinHorizontalFragmentationQueryPartModificator strategy,
-			AggregateAO operator) {
+	public boolean canOperatorBePartOfFragments(Strategy strategy,
+			AggregateAO operator, AbstractFragmentationHelper helper) {
 
 		List<String> possibleAggFunctions = Arrays
 				.asList(POSSIBLE_AGGREGATE_FUNCTIONS);
@@ -65,14 +63,6 @@ public class AggregateRoundRobinHorizontalFragmentationRule
 			}
 
 		}
-
-		return true;
-
-	}
-
-	@Override
-	public boolean needSpecialHandlingForQueryPart(ILogicalQueryPart part,
-			AggregateAO operator, AbstractFragmentationHelper helper) {
 
 		return true;
 
@@ -98,7 +88,7 @@ public class AggregateRoundRobinHorizontalFragmentationRule
 
 			if (operator instanceof AggregateAO) {
 
-				if (!this.needSpecialHandlingForQueryPart(part, aggregation,
+				if (!this.needSpecialHandlingForQueryPart(part, (AggregateAO) operator,
 						helper)) {
 
 					continue;
@@ -108,7 +98,7 @@ public class AggregateRoundRobinHorizontalFragmentationRule
 					aggregation = HorizontalFragmentationHelper
 							.changeAggregation(part, (AggregateAO) operator,
 									bundle);
-					AggregateRoundRobinHorizontalFragmentationRule.LOG
+					AbstractAggregateHorizontalFragmentationRule.LOG
 							.debug("Found {} as an aggregation, which needs to be changed in {}",
 									operator, part);
 
@@ -132,12 +122,13 @@ public class AggregateRoundRobinHorizontalFragmentationRule
 	}
 
 	@Override
-	public Class<RoundRobinHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+	public boolean needSpecialHandlingForQueryPart(ILogicalQueryPart part,
+			AggregateAO operator, AbstractFragmentationHelper helper) {
 
-		return RoundRobinHorizontalFragmentationQueryPartModificator.class;
+		return this.canOperatorBePartOfFragments(null, operator, helper);
 
 	}
-
+	
 	@Override
 	public Class<AggregateAO> getOperatorClass() {
 

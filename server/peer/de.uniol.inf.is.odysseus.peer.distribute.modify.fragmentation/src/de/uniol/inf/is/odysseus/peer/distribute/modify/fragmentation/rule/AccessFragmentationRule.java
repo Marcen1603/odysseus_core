@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.impl;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -22,7 +22,7 @@ public class AccessFragmentationRule
 	@Override
 	public boolean canOperatorBePartOfFragments(
 			AbstractFragmentationQueryPartModificator strategy,
-			AbstractAccessAO operator) {
+			AbstractAccessAO operator, AbstractFragmentationHelper helper) {
 
 		return false;
 

@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.impl.Activator;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.Activator;
 
 /**
  * An fragmentation helper provides useful methods for fragmentation.
@@ -563,6 +563,8 @@ public abstract class AbstractFragmentationHelper {
 	/**
 	 * Checks, if a given operator can be part of a fragment.
 	 * 
+	 * @param strategy
+	 *            The given strategy.
 	 * @param operator
 	 *            The given operator.
 	 * @return True, if <code>operator</code> can be executed in
@@ -578,7 +580,7 @@ public abstract class AbstractFragmentationHelper {
 
 		for (IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator> rule : rules) {
 
-			if (!rule.canOperatorBePartOfFragments(strategy, operator)) {
+			if (!rule.canOperatorBePartOfFragments(strategy, operator, this)) {
 
 				return false;
 

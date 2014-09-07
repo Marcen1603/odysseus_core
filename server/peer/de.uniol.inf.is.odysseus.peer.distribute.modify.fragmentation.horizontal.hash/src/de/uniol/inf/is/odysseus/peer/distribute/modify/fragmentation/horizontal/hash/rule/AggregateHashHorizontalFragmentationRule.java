@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.impl;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.rule;
 
 import java.util.Collection;
 import java.util.List;
@@ -7,38 +7,43 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.newimpl.HashHorizontalFragmentationHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.newimpl.HashHorizontalFragmentationQueryPartModificator;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.AbstractAggregateHorizontalFragmentationRule;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.AbstractFragmentationHelper;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.FragmentationInfoBundle;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.IFragmentationRule;
 
 /**
- * A state map can not be part of a fragment for range horizontal fragmentation
- * strategies.
+ * An aggregation can be part of a fragment for range horizontal fragmentation
+ * strategies, if the grouping aggregates match the hash key or if the
+ * aggregation function is AVG COUNT or SUM.
  * 
  * @author Michael Brand
  *
  */
-public class StateMapHashHorizontalFragmentationRule
-		implements
-		IFragmentationRule<HashHorizontalFragmentationQueryPartModificator, StateMapAO> {
+public class AggregateHashHorizontalFragmentationRule
+		extends
+		AbstractAggregateHorizontalFragmentationRule<HashHorizontalFragmentationQueryPartModificator> {
 
 	@Override
 	public boolean canOperatorBePartOfFragments(
 			HashHorizontalFragmentationQueryPartModificator strategy,
-			StateMapAO operator) {
+			AggregateAO operator, AbstractFragmentationHelper helper) {
 
-		return false;
+		if (!this.needSpecialHandlingForQueryPart(null, operator, helper)) {
+
+			return true;
+
+		}
+
+		return super.canOperatorBePartOfFragments(strategy, operator, helper);
 
 	}
 
 	@Override
 	public boolean needSpecialHandlingForQueryPart(ILogicalQueryPart part,
-			StateMapAO operator, AbstractFragmentationHelper helper) {
+			AggregateAO operator, AbstractFragmentationHelper helper) {
 
 		Preconditions.checkArgument(
 				helper instanceof HashHorizontalFragmentationHelper,
@@ -71,27 +76,10 @@ public class StateMapHashHorizontalFragmentationRule
 	}
 
 	@Override
-	public StateMapAO specialHandling(ILogicalQueryPart part,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle)
-			throws QueryPartModificationException {
-
-		// Nothing to do
-		return null;
-
-	}
-	
-	@Override
 	public Class<HashHorizontalFragmentationQueryPartModificator> getStrategyClass() {
-		
-		return HashHorizontalFragmentationQueryPartModificator.class;
-		
-	}
 
-	@Override
-	public Class<StateMapAO> getOperatorClass() {
-		
-		return StateMapAO.class;
-		
+		return HashHorizontalFragmentationQueryPartModificator.class;
+
 	}
 
 }

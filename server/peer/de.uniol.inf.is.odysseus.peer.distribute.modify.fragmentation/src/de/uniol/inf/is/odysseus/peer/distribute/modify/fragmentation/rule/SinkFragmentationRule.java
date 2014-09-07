@@ -1,6 +1,6 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.impl;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.AbstractFragmentationHelper;
@@ -9,40 +9,41 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.Fra
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.IFragmentationRule;
 
 /**
- * Stream operators can not be part of a fragment for any fragmentation
- * strategies.
+ * A sink without being a source at the same time can not be part of a fragment
+ * for any fragmentation strategies.
  * 
  * @author Michael Brand
  *
  */
-public class StreamFragmentationRule implements
-		IFragmentationRule<AbstractFragmentationQueryPartModificator, StreamAO> {
+public class SinkFragmentationRule
+		implements
+		IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator> {
 
 	@Override
 	public boolean canOperatorBePartOfFragments(
 			AbstractFragmentationQueryPartModificator strategy,
-			StreamAO operator) {
+			ILogicalOperator operator, AbstractFragmentationHelper helper) {
 
-		return false;
+		return !operator.isSinkOperator() || operator.isSourceOperator();
 
 	}
 
 	@Override
 	public boolean needSpecialHandlingForQueryPart(ILogicalQueryPart part,
-			StreamAO operator, AbstractFragmentationHelper helper) {
+			ILogicalOperator operator, AbstractFragmentationHelper helper) {
 
 		return false;
 
 	}
 
 	@Override
-	public StreamAO specialHandling(ILogicalQueryPart part,
+	public ILogicalOperator specialHandling(ILogicalQueryPart part,
 			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle)
 			throws QueryPartModificationException {
-		
+
 		// Nothing to do
 		return null;
-		
+
 	}
 	
 	@Override
@@ -53,9 +54,9 @@ public class StreamFragmentationRule implements
 	}
 
 	@Override
-	public Class<StreamAO> getOperatorClass() {
+	public Class<ILogicalOperator> getOperatorClass() {
 		
-		return StreamAO.class;
+		return ILogicalOperator.class;
 		
 	}
 

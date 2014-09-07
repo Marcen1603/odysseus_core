@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.impl;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
@@ -23,7 +23,7 @@ public class WindowHorizontalFragmentationRule
 	@Override
 	public boolean canOperatorBePartOfFragments(
 			AbstractHorizontalFragmentationQueryPartModificator strategy,
-			AbstractWindowAO operator) {
+			AbstractWindowAO operator, AbstractFragmentationHelper helper) {
 
 		return operator.getWindowType().equals(WindowType.TIME);
 

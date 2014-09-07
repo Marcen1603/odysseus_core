@@ -44,7 +44,7 @@ public class HashHorizontalFragmentationHelper extends
 		super(fragmentationParameters);
 
 	}
-	
+
 	/**
 	 * Determines the attributes to build a hash key, if given.
 	 * 

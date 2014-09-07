@@ -23,16 +23,18 @@ public interface IFragmentationRule<Strategy extends AbstractFragmentationQueryP
 
 	/**
 	 * The class of the fragmentation strategy.
+	 * 
 	 * @return The class of the generic parameter <code>Strategy</code>.
 	 */
 	public Class<Strategy> getStrategyClass();
-	
+
 	/**
 	 * The class of the logical operator.
+	 * 
 	 * @return The class of the generic parameter <code>Operator</code>.
 	 */
 	public Class<Operator> getOperatorClass();
-	
+
 	/**
 	 * Checks, if a given operator can be part of a fragment.
 	 * 
@@ -40,12 +42,14 @@ public interface IFragmentationRule<Strategy extends AbstractFragmentationQueryP
 	 *            The given operator.
 	 * @param strategy
 	 *            The given strategy.
+	 * @param helper
+	 *            The current fragmentation helper.
 	 * @return True, if <code>operator</code> can be executed in
 	 *         intra-operational parallelism and therefore be part of a
 	 *         fragment.
 	 */
 	public boolean canOperatorBePartOfFragments(Strategy strategy,
-			Operator operator);
+			Operator operator, AbstractFragmentationHelper helper);
 
 	/**
 	 * Checks if a query part needs a special handling. <br />

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.impl;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.rule;
 
 import java.util.List;
 
@@ -8,30 +8,28 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TupleAggregateAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.newimpl.HashHorizontalFragmentationHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.newimpl.HashHorizontalFragmentationQueryPartModificator;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.AbstractTupleAggregateHorizontalFragmentationRule;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.AbstractFragmentationHelper;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.FragmentationInfoBundle;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl.IFragmentationRule;
 
 /**
- * A tuple aggregation can not be part of a fragment for range horizontal
- * fragmentation strategies.
+ * A tuple aggregation can only be part of a fragment for hash horizontal
+ * fragmentation strategies, if the grouping aggregates match the hash key.
  * 
  * @author Michael Brand
  *
  */
 public class TupleAggregateHashHorizontalFragmentationRule
-		implements
-		IFragmentationRule<HashHorizontalFragmentationQueryPartModificator, TupleAggregateAO> {
+		extends
+		AbstractTupleAggregateHorizontalFragmentationRule<HashHorizontalFragmentationQueryPartModificator> {
 
 	@Override
 	public boolean canOperatorBePartOfFragments(
 			HashHorizontalFragmentationQueryPartModificator strategy,
-			TupleAggregateAO operator) {
+			TupleAggregateAO operator, AbstractFragmentationHelper helper) {
 
-		return false;
+		return !this.needSpecialHandlingForQueryPart(null, operator, helper);
 
 	}
 
@@ -59,27 +57,17 @@ public class TupleAggregateHashHorizontalFragmentationRule
 	}
 
 	@Override
-	public TupleAggregateAO specialHandling(ILogicalQueryPart part,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle)
-			throws QueryPartModificationException {
-		
-		// Nothing to do
-		return null;
-		
-	}
-	
-	@Override
 	public Class<HashHorizontalFragmentationQueryPartModificator> getStrategyClass() {
-		
+
 		return HashHorizontalFragmentationQueryPartModificator.class;
-		
+
 	}
 
 	@Override
 	public Class<TupleAggregateAO> getOperatorClass() {
-		
+
 		return TupleAggregateAO.class;
-		
+
 	}
 
 }

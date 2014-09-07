@@ -10,9 +10,11 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.peer.distribute;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  com.google.guava;bundle-version="14.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.relational_interval
 Export-Package: de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal,
  de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.logicaloperator,
  de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.newimpl,
- de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.physicaloperator
+ de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.physicaloperator,
+ de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule
 Service-Component: OSGI-INF/WindowHorizontalFragmentationRule.xml
