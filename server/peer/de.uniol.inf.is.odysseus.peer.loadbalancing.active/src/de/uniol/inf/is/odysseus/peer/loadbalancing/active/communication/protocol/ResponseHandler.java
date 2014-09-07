@@ -1,9 +1,10 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.protocol;
 
+import net.jxta.peer.PeerID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
@@ -39,6 +40,8 @@ public class ResponseHandler {
 	 */
 	public static void handlePeerResonse(LoadBalancingResponseMessage response,
 			PeerID senderPeer) {
+		
+		LOG.debug("Got response for lbProcess Id " + response.getLoadBalancingProcessId());
 		
 		int loadBalancingProcessId = response.getLoadBalancingProcessId();
 		LoadBalancingMasterStatus status = LoadBalancingStatusCache
@@ -159,12 +162,14 @@ public class ResponseHandler {
 						}
 					}
 					int queryId = status.getLogicalQuery();
+					LoadBalancingHelper.cutQuery(queryId);
 					LoadBalancingHelper.deleteQuery(queryId);
 				}
 			}
 			break;
 
 		case LoadBalancingResponseMessage.FAILURE_INSTALL_QUERY:
+			LOG.debug("Got FAILURE_INSTALL_QUERY");
 			if(status.getPhase().equals(LB_PHASES.COPYING)) {
 				dispatcher.sendMsgReceived(senderPeer);
 				LOG.error("Installing Query on remote Peer failed. Aborting.");
@@ -174,6 +179,7 @@ public class ResponseHandler {
 			
 
 		case LoadBalancingResponseMessage.FAILURE_DUPLICATE_RECEIVER:
+			LOG.debug("Got FAILURE_DUPLICATE_RECEIVER");
 			if(status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS) || status.getPhase().equals(LB_PHASES.RELINKING_SENDERS) ) {
 				dispatcher.sendMsgReceived(senderPeer);
 				LOG.error("Duplicating connections failed. Aborting.");
@@ -185,6 +191,9 @@ public class ResponseHandler {
 			if(status.getPhase().equals(LB_PHASES.DELETING)) {
 				LOG.debug("Deleting finished for pipe " + response.getPipeID());
 				dispatcher.stopRunningJob(response.getPipeID());
+				if(dispatcher.getNumberOfRunningJobs()==0) {
+					loadBalancingSuccessfullyFinished(status);
+				}
 			}
 			break;
 		}
@@ -201,7 +210,6 @@ public class ResponseHandler {
 		// Handle error depending on current LoadBalancing phase.
 		switch (status.getPhase()) {
 		case INITIATING:
-			
 		case COPYING:
 			// Send abort only to volunteering Peer
 			dispatcher.stopAllMessages();
@@ -215,7 +223,8 @@ public class ResponseHandler {
 			break;
 		case SYNCHRONIZING:
 		case DELETING:
-			// New query is already running. Do not abort.
+			// New query is already running. 
+			//TODO Go on as if nothing happened?
 			break;
 		default:
 			break;
@@ -223,5 +232,17 @@ public class ResponseHandler {
 		}
 
 	}
+	
+	/**
+	 * Called after LoadBalancing was finished successfully.
+	 * @param status LoadBalancing Status
+	 */
+	public static void loadBalancingSuccessfullyFinished(LoadBalancingMasterStatus status) {
+		LOG.info("LoadBalancing successfully finished.");
+		LoadBalancingStatusCache.getInstance().deleteLocalStatus(status.getProcessId());
+		LoadBalancingCommunicationListener.getInstance().notifyFinished();
+		
+	}
+	
 
 }

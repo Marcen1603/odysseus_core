@@ -199,7 +199,7 @@ public class LoadBalancingMessageDispatcher {
 	 */
 	public void sendDuplicateFailure(PeerID initiatingPeer) {
 
-		LOG.debug("Send DuplicateFailure");
+		LOG.debug("Send DuplicateFailure to initiating Peer " + initiatingPeer + " for lbProcessId " + lbProcessId);
 		LoadBalancingResponseMessage message = LoadBalancingResponseMessage.createDuplicateFailureMessage(lbProcessId);
 		this.currentJob = new RepeatingMessageSend(peerCommunicator,message,initiatingPeer);
 		currentJob.start();
@@ -223,7 +223,7 @@ public class LoadBalancingMessageDispatcher {
 		if(!this.currentJobs.containsKey(newPipeId)) {
 
 			LOG.debug("Send CopyOperator (isSender:" + isSender + ")");
-			LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createCopyOperatorMsg(isSender, newPeerId, oldPipeId, newPipeId);
+			LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createCopyOperatorMsg(lbProcessId,isSender, newPeerId, oldPipeId, newPipeId);
 			RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator,message,destinationPeer);
 			this.currentJobs.put(newPipeId, job);
 			job.addListener(listener);
@@ -281,8 +281,8 @@ public class LoadBalancingMessageDispatcher {
 	 * Stops all Messages.
 	 */
 	public void stopAllMessages() {
-		
 		if(this.currentJobs!=null) {
+			LOG.debug("Stopping repeating Message Jobs.");
 			for(RepeatingMessageSend job : currentJobs.values()) {
 				job.stopRunning();
 				job.clearListeners();
@@ -292,6 +292,7 @@ public class LoadBalancingMessageDispatcher {
 		}
 		
 		if(this.currentJob!=null) {
+			LOG.debug("Stopping repeating Message Job.");
 			this.currentJob.stopRunning();
 			this.currentJob.clearListeners();
 			this.currentJob=null;

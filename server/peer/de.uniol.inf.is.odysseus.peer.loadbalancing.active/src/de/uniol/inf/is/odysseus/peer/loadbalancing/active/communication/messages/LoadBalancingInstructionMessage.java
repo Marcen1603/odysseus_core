@@ -72,8 +72,9 @@ public class LoadBalancingInstructionMessage implements IMessage {
 	}
 
 	
-	public static LoadBalancingInstructionMessage createCopyOperatorMsg(boolean isSender, String newPeerId, String oldPipeId, String newPipeId) {
+	public static LoadBalancingInstructionMessage createCopyOperatorMsg(int lbProcessId, boolean isSender, String newPeerId, String oldPipeId, String newPipeId) {
 		LoadBalancingInstructionMessage message = new LoadBalancingInstructionMessage();
+		message.loadBalancingProcessId = lbProcessId;
 		message.oldPipeId = oldPipeId;
 		message.newPipeId = newPipeId;
 		message.newPeerId = newPeerId;

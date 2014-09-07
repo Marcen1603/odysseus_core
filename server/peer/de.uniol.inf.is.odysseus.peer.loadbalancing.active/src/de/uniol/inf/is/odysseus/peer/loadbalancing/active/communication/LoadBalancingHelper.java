@@ -181,6 +181,28 @@ public class LoadBalancingHelper {
 	}
 
 	/**
+	 * Takes a QueryPut and cut's all receivers from it.
+	 * Used so that, when deleting a Query the other Parts won't be influenced (e.g. stopped) by the executor.
+	 * @param queryID
+	 */
+	@SuppressWarnings({ "rawtypes"})
+	public static void cutQuery(int queryID) {
+		
+		IServerExecutor executor = LoadBalancingCommunicationListener.getExecutor();
+		IPhysicalQuery query = executor.getExecutionPlan().getQueryById(queryID);
+		
+		for(IPhysicalOperator operator : query.getAllOperators()) {
+			
+			if(operator instanceof JxtaReceiverPO) {
+				JxtaReceiverPO receiver = (JxtaReceiverPO) operator;
+				receiver.unsubscribeFromAllSinks();
+			}
+		}
+		
+	}
+	
+	
+	/**
 	 * Relinks a logical Query Part to a new peer.
 	 * @param modifiedPart
 	 * @param status
@@ -307,6 +329,8 @@ public class LoadBalancingHelper {
 							subscription.getSourceOutPort(),
 							subscription.getSchema(), true,
 							subscription.getOpenCalls());
+					
+					subscription.getTarget().subscribeToSource(otherReceiver, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 				}
 
 			}
@@ -632,14 +656,17 @@ public class LoadBalancingHelper {
 							physicalCopy, 0, subscription.getSourceOutPort(),
 							subscription.getSchema(), true,
 							subscription.getOpenCalls());
+					physicalCopy.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 				} else if (subscription.getTarget() instanceof AbstractSource) {
 					((AbstractSource) subscription.getTarget()).subscribeSink(
 							physicalCopy, 0, subscription.getSourceOutPort(),
 							subscription.getSchema(), true,
 							subscription.getOpenCalls());
+					physicalCopy.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 				}
 				
 				LOG.debug("Installed additional Sender with PeerID " + physicalCopy.getPeerIDString() + " and PipeID " + physicalCopy.getPipeIDString());
+				
 
 			} else {
 				JxtaReceiverAO logicalReceiver = (JxtaReceiverAO) operator;
@@ -697,6 +724,7 @@ public class LoadBalancingHelper {
 				physicalOriginal.unblock();
 				synchronizer.startSynchronizing();
 				LOG.debug("Installed additional Receiver with PeerID " + physicalCopy.getPeerIDString() + " and PipeID " + physicalCopy.getPipeIDString());
+				
 			}
 			
 		}

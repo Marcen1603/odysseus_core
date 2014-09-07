@@ -34,7 +34,7 @@ public class InstructionHandler {
 	public static void handleInstruction(LoadBalancingInstructionMessage instruction,
 			PeerID senderPeer) {
 
-		LOG.debug("Got Instruction Message from Peer " + senderPeer);
+		LOG.debug("Got Instruction for Process:" + instruction.getLoadBalancingProcessId());
 		
 		int lbProcessId = instruction.getLoadBalancingProcessId();
 		LoadBalancingMessageDispatcher dispatcher = null;
@@ -156,6 +156,7 @@ public class InstructionHandler {
 		case LoadBalancingInstructionMessage.PIPE_SUCCCESS_RECEIVED:
 			LOG.debug("Got PIPE_SUCCESS");
 			if(status==null) {
+				LOG.error("Status on Slave Peer is null.");
 				return;
 			}
 			status.getMessageDispatcher().stopRunningJob(instruction.getOldPipeId());
@@ -171,17 +172,21 @@ public class InstructionHandler {
 			status.getMessageDispatcher().stopAllMessages();
 			status.getMessageDispatcher().sendDeleteFinished(senderPeer,instruction.getOldPipeId());
 			LoadBalancingHelper.removeDuplicateJxtaOperator(instruction.getOldPipeId());
+			status.getReplacedPipes().remove(instruction.getOldPipeId());
+			
 			break;
 
 				
 		case LoadBalancingInstructionMessage.MESSAGE_RECEIVED:
 			LOG.debug("Got MESSAGE_RECEIVED");
 			if(status==null) {
+				LOG.error("Status on Slave Peer is null.");
 				return;
 			}
 			status.getMessageDispatcher().stopAllMessages();
 			break;
 		}
+		
 		
 		
 		

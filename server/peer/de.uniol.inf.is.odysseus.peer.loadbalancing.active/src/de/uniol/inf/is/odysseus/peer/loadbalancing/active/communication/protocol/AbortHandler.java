@@ -123,10 +123,9 @@ public class AbortHandler {
 		
 		LoadBalancingMasterStatus status = LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
 		if(status!=null) {
-			@SuppressWarnings("unused")
-			int queryId = status.getLogicalQuery();
-			//TODO ReAllocate.
-			LoadBalancingStatusCache.getInstance().deleteLocalStatus(lbProcessId);
+			LOG.info("LoadBalancing failed.");
+			LoadBalancingStatusCache.getInstance().deleteLocalStatus(status.getProcessId());
+			LoadBalancingCommunicationListener.getInstance().notifyFinished();
 		}
 	}
 	

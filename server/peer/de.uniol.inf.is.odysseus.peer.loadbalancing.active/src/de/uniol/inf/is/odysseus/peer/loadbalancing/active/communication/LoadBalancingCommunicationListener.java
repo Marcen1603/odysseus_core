@@ -284,6 +284,7 @@ public class LoadBalancingCommunicationListener implements
 				.createNewLocalProcess(partToCopy);
 		LoadBalancingMasterStatus status = LoadBalancingStatusCache
 				.getInstance().getStatusForLocalProcess(lbProcessIdentifier);
+		LOG.debug("New LoadBalancing Status created. LoadBalancing Process Id " + lbProcessIdentifier);
 		status.setLogicalQuery(queryId);
 		status.setMessageDispatcher(new LoadBalancingMessageDispatcher(
 				peerCommunicator, getActiveSession(), lbProcessIdentifier));
@@ -309,6 +310,12 @@ public class LoadBalancingCommunicationListener implements
 	}
 	
 
+	public void notifyFinished() {
+		for(ILoadBalancingListener listener : listeners) {
+			listener.notifyLoadBalancingFinished();
+		}
+		
+	}
 
 	/**
 	 * Called when Message delivery on Master Peer failed. Decides whether to abort or not.
