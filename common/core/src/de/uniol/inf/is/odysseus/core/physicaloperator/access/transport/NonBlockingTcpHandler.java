@@ -39,6 +39,7 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
     private int          port;
     private String       user;
     private String       password;
+    private String logininfo;
     private boolean      autoconnect;
     @SuppressWarnings("unused")
 	private boolean      open;
@@ -64,6 +65,7 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
         autoconnect = Boolean.parseBoolean(options.get("autoconnect"));
         user = options.get("user");
         password = options.get("password");
+        logininfo = options.get("logininfo");
 
     }
 
@@ -90,7 +92,7 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
     @Override
     public void processInOpen() throws OpenFailedException {
         try {
-            nioConnection.connectToServer(this, host, port, user, password);
+            nioConnection.connectToServer(this, host, port, user, password, logininfo);
         }
         catch (Exception e) {
             throw new OpenFailedException(e);

@@ -103,8 +103,8 @@ public class NioConnection extends Thread implements IConnection {
 		while (doRouting) {
 			try {
 				int n = selector.select();
-				// Selector blockiert. Neue Elemente können nur nach oder
-				// vor select erfolgen. Deswegen die nachträgliche Registrierung
+				// Selector blockiert. Neue Elemente kï¿½nnen nur nach oder
+				// vor select erfolgen. Deswegen die nachtrï¿½gliche Registrierung
 				if (registerAction) {
 					processRegister();
 				}
@@ -178,7 +178,7 @@ public class NioConnection extends Thread implements IConnection {
 		getLogger().debug("Nio Connection Handler terminated ...");
 	}
 
-	public void connectToServer(IAccessConnectionListener<ByteBuffer> sink, String host, int port, String username, String password) throws Exception {
+    public void connectToServer(IAccessConnectionListener<ByteBuffer> sink, String host, int port, String username, String password, String logininfo) throws Exception {
 		getLogger().debug(sink + " connect to server " + host + " " + port);
 		SocketChannel sc = SocketChannel.open();
 		sc.configureBlocking(false);
@@ -197,7 +197,9 @@ public class NioConnection extends Thread implements IConnection {
 			buffer.reset();
 			sc.write(buffer);
 		}
-
+        if (logininfo != null) {
+            sc.write(ByteBuffer.wrap(logininfo.replace("\\n", "\n").getBytes()));
+        }
 		deferedRegister(sc, sink);
 		selector.wakeup();
 		notifyConnectionListeners(ConnectionMessageReason.ConnectionOpened);
