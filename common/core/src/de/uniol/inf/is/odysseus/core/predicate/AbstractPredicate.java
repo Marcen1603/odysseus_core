@@ -16,9 +16,9 @@
 package de.uniol.inf.is.odysseus.core.predicate;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
 /**
@@ -45,9 +45,10 @@ public abstract class AbstractPredicate<T> implements IPredicate<T>, Serializabl
 	@Override
 	abstract public AbstractPredicate<T> clone();
 		
-	@Override
+    @SuppressWarnings("unchecked")
+    @Override
 	public List<SDFAttribute> getAttributes() {
-		return null;
+        return Collections.EMPTY_LIST;
 	}
 	
 	// TODO: IMplement in Child Classes... 
