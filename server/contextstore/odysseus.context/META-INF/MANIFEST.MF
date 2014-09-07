@@ -27,6 +27,7 @@ Import-Package: de.uniol.inf.is.odysseus.core,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.uniol.inf.is.odysseus.context,
  de.uniol.inf.is.odysseus.context.logicaloperator,
+ de.uniol.inf.is.odysseus.context.physicaloperator,
  de.uniol.inf.is.odysseus.context.store,
  de.uniol.inf.is.odysseus.context.store.types
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
