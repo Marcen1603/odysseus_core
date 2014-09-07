@@ -47,6 +47,8 @@ public class HorizontalFragmentationHelper extends AbstractFragmentationHelper {
 				"Fragmentation info bundle must be not null!");
 		Preconditions.checkNotNull(bundle.getCopyMap(),
 				"Copy map must be not null!");
+		
+		// Note cloning of original aggregation won't work. The aggregation attributes are not the same
 
 		AggregateAO reunionAggregate = new AggregateAO();
 		reunionAggregate.setGroupingAttributes(originalAggregation
@@ -62,33 +64,22 @@ public class HorizontalFragmentationHelper extends AbstractFragmentationHelper {
 				.collectCopies(originalPart,
 						bundle.getCopyMap().get(originalPart),
 						originalAggregation);
+		
+		for (SDFSchema inSchema : originalAggregation.getAggregations()
+				.keySet()) {
 
-		for (int copyNo = 0; copyNo < copiedAggregations.size(); copyNo++) {
-
-			((AggregateAO) ((List<ILogicalOperator>) copiedAggregations)
-					.get(copyNo)).setOutputPA(true);
-
-			if (copyNo == 0) {
-
-				for (SDFSchema inSchema : originalAggregation.getAggregations()
-						.keySet()) {
-
-					for (AggregateFunction function : originalAggregation
-							.getAggregations().get(inSchema).keySet()) {
-
-						SDFAttribute attr = originalAggregation
-								.getAggregations().get(inSchema).get(function);
-						aggItems.add(new AggregateItem(function.getName(),
-								attr, attr));
-
-					}
-
-				}
-
+			for (AggregateFunction function : originalAggregation
+					.getAggregations().get(inSchema).keySet()) {
+	
+				SDFAttribute attr = originalAggregation
+						.getAggregations().get(inSchema).get(function);
+				aggItems.add(new AggregateItem(function.getName(),
+						attr, attr));
+	
 			}
-
-		}
-
+	
+		}	
+		
 		reunionAggregate.setAggregationItems(aggItems);
 
 		// Creating PQL string of aggregation items
@@ -119,6 +110,16 @@ public class HorizontalFragmentationHelper extends AbstractFragmentationHelper {
 		String pqlString = "[" + pql.substring(0, pql.length() - 1) + "]";
 
 		reunionAggregate.addParameterInfo(AggregateAO.AGGREGATIONS, pqlString);
+
+		for (int copyNo = 0; copyNo < copiedAggregations.size(); copyNo++) {
+
+			AggregateAO copy = ((AggregateAO) ((List<ILogicalOperator>) copiedAggregations)
+					.get(copyNo));
+			copy.setOutputPA(true);
+			copy.addParameterInfo("OUTPUTPA", "'true'");
+			System.out.println(copy);
+
+		}
 
 		return reunionAggregate;
 

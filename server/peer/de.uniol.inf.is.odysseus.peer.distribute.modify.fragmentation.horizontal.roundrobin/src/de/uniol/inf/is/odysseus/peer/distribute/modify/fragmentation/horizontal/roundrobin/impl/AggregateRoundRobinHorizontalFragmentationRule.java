@@ -1,12 +1,17 @@
 package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.impl;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.newimpl.HorizontalFragmentationHelper;
@@ -32,10 +37,34 @@ public class AggregateRoundRobinHorizontalFragmentationRule
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AggregateRoundRobinHorizontalFragmentationRule.class);
 
+	/**
+	 * All possible aggregation functions for the usage of partial aggregates.
+	 */
+	private static final String[] POSSIBLE_AGGREGATE_FUNCTIONS = { "AVG",
+			"COUNT", "SUM" };
+
 	@Override
 	public boolean canOperatorBePartOfFragments(
 			RoundRobinHorizontalFragmentationQueryPartModificator strategy,
 			AggregateAO operator) {
+
+		List<String> possibleAggFunctions = Arrays
+				.asList(POSSIBLE_AGGREGATE_FUNCTIONS);
+
+		for (SDFSchema aggSchema : operator.getAggregations().keySet()) {
+
+			for (AggregateFunction aggFunction : operator.getAggregations()
+					.get(aggSchema).keySet()) {
+
+				if (!possibleAggFunctions.contains(aggFunction.getName())) {
+
+					return false;
+
+				}
+
+			}
+
+		}
 
 		return true;
 
@@ -77,7 +106,8 @@ public class AggregateRoundRobinHorizontalFragmentationRule
 				} else if (aggregation == null) {
 
 					aggregation = HorizontalFragmentationHelper
-							.changeAggregation(part, (AggregateAO) operator, bundle);
+							.changeAggregation(part, (AggregateAO) operator,
+									bundle);
 					AggregateRoundRobinHorizontalFragmentationRule.LOG
 							.debug("Found {} as an aggregation, which needs to be changed in {}",
 									operator, part);
@@ -100,19 +130,19 @@ public class AggregateRoundRobinHorizontalFragmentationRule
 		return aggregation;
 
 	}
-	
+
 	@Override
 	public Class<RoundRobinHorizontalFragmentationQueryPartModificator> getStrategyClass() {
-		
+
 		return RoundRobinHorizontalFragmentationQueryPartModificator.class;
-		
+
 	}
 
 	@Override
 	public Class<AggregateAO> getOperatorClass() {
-		
+
 		return AggregateAO.class;
-		
+
 	}
 
 }

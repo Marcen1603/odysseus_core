@@ -144,6 +144,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator
 				// Subscribe the new aggregation
 				reunionOperator.subscribeSink(specialOperator, 0, 0,
 						reunionOperator.getOutputSchema());
+				specialOperator.setOutputSchema(specialOperator.getOutputSchema(0));
 				if (optFragmentOperator.isPresent()) {
 
 					specialOperator.subscribeSink(optFragmentOperator.get(), 0,
