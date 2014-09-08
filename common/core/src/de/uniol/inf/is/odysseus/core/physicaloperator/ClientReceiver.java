@@ -317,7 +317,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	@Override
 	public SDFMetaAttributeList getMetaAttributeSchema() {
 		// TODO Auto-generated method stub
-		return null;
+		return new SDFMetaAttributeList();
 	}
 
 
