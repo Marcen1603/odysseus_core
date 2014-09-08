@@ -36,6 +36,8 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 	private ISinkConnection listener;
 	private boolean isStarted;
 	private IObjectHandler objectHandler = null;
+	// TODO: Move to constructor
+	private boolean withMetadata = true;
 
 	public SocketSinkPO(int serverPort, String host, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO, boolean loginNeeded, boolean loginWithSessionId, IObjectHandler objectHandler, boolean push) {
 		if (push) {
@@ -83,7 +85,7 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 		synchronized (subscribe) {
 			Object toTransfer = object;
 			if (objectHandler != null) {
-				objectHandler.put(object);
+				objectHandler.put(object,withMetadata);
 				toTransfer = objectHandler.getByteBuffer();
 			}
 

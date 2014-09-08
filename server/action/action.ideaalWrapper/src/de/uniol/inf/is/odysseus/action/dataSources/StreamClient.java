@@ -47,7 +47,7 @@ public class StreamClient {
 	
 	public void writeObject(Tuple<IMetaAttribute> tuple) throws IOException {
 		if (tuple != null){
-			objectHandler.put(tuple);
+			objectHandler.put(tuple,false);
 			ByteBuffer buffer = objectHandler.getByteBuffer();
 
 			synchronized(gbuffer){

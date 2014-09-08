@@ -60,7 +60,7 @@ public class ByteBufferUtil {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T extends IStreamObject> void toBuffer(ByteBuffer buffer,
-			T object, IDataHandler<T> dataHandler, boolean withMetadata) {
+			T object, IDataHandler dataHandler, boolean withMetadata) {
 		dataHandler.writeData(buffer, object);
 
 		if (withMetadata) {

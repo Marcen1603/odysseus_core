@@ -121,7 +121,7 @@ public class NEXMarkClient {
 			throws IOException {
 		if (tuple != null) {
 			if (useNIO) {
-				objectHandler.put(tuple);
+				objectHandler.put(tuple,false);
 				nioStreamHandler.transfer(objectHandler.getByteBuffer());
 			} else {
 				objectOutputStream.writeObject(tuple);

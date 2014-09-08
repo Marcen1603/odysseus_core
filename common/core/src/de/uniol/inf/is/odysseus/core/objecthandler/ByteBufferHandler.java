@@ -20,6 +20,7 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 public class ByteBufferHandler<T> implements
 		IObjectHandler<T> {
@@ -112,14 +113,15 @@ public class ByteBufferHandler<T> implements
 		
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
-	public void put(T value) {
+	public void put(T value, boolean withMetadata) {
 
 		synchronized(byteBuffer){
 			
 			byteBuffer.clear();
-			
-			this.dataHandler.writeData(byteBuffer, value);
+			ByteBufferUtil.toBuffer(byteBuffer, (IStreamObject) value, dataHandler, withMetadata);
+			//this.dataHandler.writeData(byteBuffer, value);
 			
 
 			byteBuffer.flip();
