@@ -15,13 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.wrapper.ivef.conversion.physicaloperator;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 //import java.util.Random;
 import java.util.UUID;
 
@@ -159,7 +155,7 @@ public class Ivef015NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 	/** IVEF Utilities */
 	private Header prepareHeader() {
 		Header header = new Header();
-		header.setVersion("0.5.1");
+		header.setVersion("0.1.5");
 		header.setMsgRefId("{" + UUID.randomUUID().toString() + "}");
 		return header;
 	}
@@ -316,7 +312,7 @@ public class Ivef015NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 			voyage.setDestination(destination);
 		String eta = null;
 		if ((eta = (String) received.getAttribute("eta")) != null)
-			voyage.setETA(nmeaTimeToUTC(eta));
+			voyage.setETA(IvefConversionUtilities.toUTC(IvefConversionUtilities.nmeaTimeToUTC(eta)));
 		return voyage;
 	}
 
@@ -340,25 +336,7 @@ public class Ivef015NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 		}
 	}
 
-	private String nmeaTimeToUTC(String eta) {
-		int day = Integer.parseInt(eta.substring(0, eta.indexOf("-")));
-		int month = Integer.parseInt(eta.substring(eta.indexOf("-") + 1,
-				eta.indexOf(" ")));
-		int hour = Integer.parseInt(eta.substring(eta.indexOf(" ") + 1,
-				eta.indexOf(":")));
-		int minute = Integer.parseInt(eta.substring(eta.indexOf(":") + 1));
-		int year = Integer.parseInt(String.valueOf(Calendar.getInstance().get(
-				Calendar.YEAR)));
-		// Hour24 based
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-		// GMT based
-		TimeZone gmtTime = TimeZone.getTimeZone("GMT");
-		df.setTimeZone(gmtTime);
-		@SuppressWarnings("deprecation")
-		Date etaDate = new Date(year - 1900, month - 1, day, hour, minute);
-		return df.format(etaDate); // +"Z";
-		// return year+"-"+month+"-"+day+"T"+hour+":"+minute+":00.000-0000";
-	}
+	
 
 	// private int getIdRandomly() {
 	// Random random = new Random();

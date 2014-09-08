@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.wrapper.ivef.conversion.transformationrule;
 
 import de.uniol.inf.is.odysseus.wrapper.ivef.conversion.logicaloperator.IvefNmeaConverterAO;
 import de.uniol.inf.is.odysseus.wrapper.ivef.conversion.physicaloperator.Ivef015NmeaConverterPO;
-import de.uniol.inf.is.odysseus.wrapper.ivef.conversion.physicaloperator.Ivef104NmeaConverterPO;
+import de.uniol.inf.is.odysseus.wrapper.ivef.conversion.physicaloperator.Ivef025NmeaConverterPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -34,11 +34,11 @@ public class TIvefNmeaConverterAORule extends AbstractTransformationRule<IvefNme
 	@Override
 	public void execute(IvefNmeaConverterAO converterAO, TransformationConfiguration config) throws RuleException {		
 		switch (converterAO.getIvefVersion()) {
-		case v015:
+		case V015:
 			defaultExecute(converterAO, new Ivef015NmeaConverterPO<>(converterAO.getConversionType(), converterAO.getPositionToStaticRatio()), config, true, true);			
 			break;
-		case v104:
-			defaultExecute(converterAO, new Ivef104NmeaConverterPO<>(converterAO.getConversionType(), converterAO.getPositionToStaticRatio()), config, true, true);			
+		case V025:
+			defaultExecute(converterAO, new Ivef025NmeaConverterPO<>(converterAO.getConversionType(), converterAO.getPositionToStaticRatio()), config, true, true);			
 			break;
 		default:
 			break;

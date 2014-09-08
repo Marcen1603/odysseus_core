@@ -28,14 +28,15 @@ Import-Package:
  de.uniol.inf.is.odysseus.wrapper.nmea.data,
  org.osgi.framework;version="1.3.0",
  org.slf4j
-Service-Component: OSGI-INF/IVEFProtocolHandler.xml
+Service-Component: OSGI-INF/IVEF_0_1_5_ProtocolHandler.xml,
+ OSGI-INF/IVEF_0_2_5_ProtocolHandler.xml
 Bundle-ClassPath: .
 Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.ivef.Activator
 Export-Package: de.uniol.inf.is.odysseus.wrapper.ivef,
  de.uniol.inf.is.odysseus.wrapper.ivef.conversion.logicaloperator,
  de.uniol.inf.is.odysseus.wrapper.ivef.conversion.physicaloperator,
  de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5,
- de.uniol.inf.is.odysseus.wrapper.ivef.element.version_1_0_4
+ de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  org.osgeo.proj4j;bundle-version="1.0.0",

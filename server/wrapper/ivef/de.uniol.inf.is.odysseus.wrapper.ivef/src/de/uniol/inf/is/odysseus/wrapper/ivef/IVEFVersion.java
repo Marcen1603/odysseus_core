@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.ivef;
 
 public enum IVEFVersion {
-	v015,
-	v104;
+	V015,
+	V025;
 }

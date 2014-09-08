@@ -25,9 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
-import de.uniol.inf.is.odysseus.wrapper.ivef.IIvefElement;
 import de.uniol.inf.is.odysseus.wrapper.ivef.IVEFVersion;
-import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.Sentence;
 
 /**
  * @author msalous
@@ -38,12 +36,10 @@ public class IvefNmeaConverterAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -8015847502104587689L; 
 	
-	private IIvefElement ivef;
 	private ConversionType conversionType;
-	private int PositionToStaticRatio = 100;
-	private Sentence nmea;
+	private int positionToStaticRatio = 100;
 
-	private IVEFVersion ivefVersion = IVEFVersion.v015;
+	private IVEFVersion ivefVersion = IVEFVersion.V015;
 		
 	public IvefNmeaConverterAO(){
 		super();
@@ -51,6 +47,10 @@ public class IvefNmeaConverterAO extends UnaryLogicalOp {
 
 	public IvefNmeaConverterAO(IvefNmeaConverterAO converterAO){ 
 		super(converterAO);
+		this.conversionType = converterAO.getConversionType();
+		this.ivefVersion = converterAO.getIvefVersion();
+		this.positionToStaticRatio = converterAO.getPositionToStaticRatio();
+		
 	}
 	
 	@Override
@@ -65,7 +65,7 @@ public class IvefNmeaConverterAO extends UnaryLogicalOp {
 	
 	@Parameter(name="PositionToStaticRatio", type=IntegerParameter.class, isList=false, optional=true, doc="The number of position messages the operator should wait iteratively before generating a new Static&Voyage message.")
 	public void setPositionToStaticRatio(int PositionToStaticRatio) {
-		this.PositionToStaticRatio = PositionToStaticRatio; 
+		this.positionToStaticRatio = PositionToStaticRatio; 
 	} 
 	
 	@Parameter(name="conversionType", type=EnumParameter.class, isList=false, optional=false, doc="The conversion type between Maritime messages: AIS_To_IVEF, IVEF_To_AIS, TTM_To_IVEF, IVEF_To_TTM")
@@ -73,25 +73,17 @@ public class IvefNmeaConverterAO extends UnaryLogicalOp {
 		this.conversionType = conversionType; 
 	} 
 	
-	@Parameter(name="ivefVersion", type=EnumParameter.class, isList=false, optional=true, doc="The version of IVEF elements: v015 (0.1.5), v104 (1.0.4)")
+	@Parameter(name="ivefVersion", type=EnumParameter.class, isList=false, optional=true, doc="The version of IVEF elements: v015 (0.1.5), v025 (0.2.5)")
 	public void setIVEFVersion(IVEFVersion ivefVersion) {
 		this.ivefVersion= ivefVersion; 
 	} 
-	
-	public IIvefElement getIvef() {
-		return this.ivef;
-	}
-	
-	public Sentence getNmea() {
-		return this.nmea;
-	}
 	
 	public ConversionType getConversionType(){
 		return this.conversionType;
 	}
 	
 	public int getPositionToStaticRatio(){
-		return this.PositionToStaticRatio;
+		return this.positionToStaticRatio;
 	}
 
 	public IVEFVersion getIvefVersion() {

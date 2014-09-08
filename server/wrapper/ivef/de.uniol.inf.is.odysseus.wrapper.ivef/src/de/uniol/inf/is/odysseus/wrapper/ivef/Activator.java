@@ -18,8 +18,6 @@ package de.uniol.inf.is.odysseus.wrapper.ivef;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
-
 /**
  * @author msalous
  *
@@ -40,8 +38,6 @@ public class Activator implements BundleActivator {
 	@Override
     public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		//ProtocolHandlerRegistry.register(new IVEF_1_0_4_ProtocolHandler());
-		ProtocolHandlerRegistry.register(new IVEF_0_1_5_ProtocolHandler());
 	}
 
 	/*
