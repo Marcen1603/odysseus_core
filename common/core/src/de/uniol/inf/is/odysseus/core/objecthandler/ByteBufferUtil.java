@@ -54,4 +54,23 @@ public class ByteBufferUtil {
 
 		return retval;
 	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <T extends IStreamObject> void toBuffer(ByteBuffer buffer, T object, IDataHandler<T> dataHandler){
+		dataHandler.writeData(buffer, object);
+		
+		Object metadata = object.getMetadata();
+		if (metadata != null) {
+			byte[] metadataBytes = ObjectByteConverter.objectToBytes(object.getMetadata());
+			buffer.putInt(metadataBytes.length);
+			buffer.put(metadataBytes);
+		}
+		
+		Map<String, Object> metadataMap = object.getMetadataMap();
+		if( !metadataMap.isEmpty() ) {
+			byte[] metadataMapBytes = ObjectByteConverter.objectToBytes(metadataMap);
+			buffer.putInt(metadataMapBytes.length);
+			buffer.put(metadataMapBytes);
+		}
+	}
 }
