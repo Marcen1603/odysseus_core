@@ -54,14 +54,15 @@ public abstract class AbstractAggregateHorizontalFragmentationRule<Strategy exte
 
 		List<String> possibleAggFunctions = Arrays
 				.asList(POSSIBLE_AGGREGATE_FUNCTIONS_PA);
-		possibleAggFunctions.addAll(Arrays.asList(POSSIBLE_AGGREGATE_FUNCTIONS));
+		List<String> possibleAggFunctions2 = Arrays
+				.asList(POSSIBLE_AGGREGATE_FUNCTIONS);
 		
 		for (SDFSchema aggSchema : operator.getAggregations().keySet()) {
 
 			for (AggregateFunction aggFunction : operator.getAggregations()
 					.get(aggSchema).keySet()) {
 
-				if (!possibleAggFunctions.contains(aggFunction.getName())) {
+				if (!possibleAggFunctions.contains(aggFunction.getName()) && !possibleAggFunctions2.contains(aggFunction.getName())) {
 
 					return false;
 
