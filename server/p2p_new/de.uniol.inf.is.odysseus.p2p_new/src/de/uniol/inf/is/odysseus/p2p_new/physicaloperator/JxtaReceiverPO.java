@@ -14,6 +14,7 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferUtil;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -123,7 +124,8 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 			downloadRateTimestamp = System.currentTimeMillis();
 		}
 		
-		T streamObject = JxtaPOUtil.createStreamObject(ByteBuffer.wrap(data), dataHandler);
+		@SuppressWarnings("unchecked")
+		T streamObject = (T) ByteBufferUtil.createStreamObject(ByteBuffer.wrap(data), dataHandler);
 		
 		Object metadata = streamObject.getMetadata();
 		if( metadata instanceof ISystemLoad ) {

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.util;
+package de.uniol.inf.is.odysseus.core.objecthandler;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

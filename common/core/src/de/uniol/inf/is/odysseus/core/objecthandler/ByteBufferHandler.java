@@ -56,13 +56,14 @@ public class ByteBufferHandler<T> implements
 		return byteBuffer;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public synchronized T create() throws IOException, ClassNotFoundException, BufferUnderflowException {
 		T retval = null;
 		synchronized(byteBuffer){		
 			byteBuffer.flip();
-			retval = (T)this.dataHandler.readData(byteBuffer);
+			retval = (T) ByteBufferUtil.createStreamObject(byteBuffer, (IDataHandler) dataHandler);
+			//retval = (T)this.dataHandler.readData(byteBuffer);
 			byteBuffer.clear();
 		}
 		return retval;

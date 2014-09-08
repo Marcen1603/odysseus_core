@@ -17,6 +17,7 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.objecthandler.ObjectByteConverter;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
@@ -31,7 +32,6 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
-import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
 import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 
 public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> implements ITransmissionSenderListener {
