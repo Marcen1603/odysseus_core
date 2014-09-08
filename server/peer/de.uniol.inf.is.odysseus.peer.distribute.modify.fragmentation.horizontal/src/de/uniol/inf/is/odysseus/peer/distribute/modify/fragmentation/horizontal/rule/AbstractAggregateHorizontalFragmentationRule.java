@@ -37,9 +37,15 @@ public abstract class AbstractAggregateHorizontalFragmentationRule<Strategy exte
 			.getLogger(AbstractAggregateHorizontalFragmentationRule.class);
 
 	/**
+	 * All possible aggregation functions for the usage without partial
+	 * aggregates.
+	 */
+	private static final String[] POSSIBLE_AGGREGATE_FUNCTIONS = { "MIN", "MAX" };
+
+	/**
 	 * All possible aggregation functions for the usage of partial aggregates.
 	 */
-	private static final String[] POSSIBLE_AGGREGATE_FUNCTIONS = { "AVG",
+	private static final String[] POSSIBLE_AGGREGATE_FUNCTIONS_PA = { "AVG",
 			"COUNT", "SUM" };
 
 	@Override
@@ -47,8 +53,9 @@ public abstract class AbstractAggregateHorizontalFragmentationRule<Strategy exte
 			AggregateAO operator, AbstractFragmentationHelper helper) {
 
 		List<String> possibleAggFunctions = Arrays
-				.asList(POSSIBLE_AGGREGATE_FUNCTIONS);
-
+				.asList(POSSIBLE_AGGREGATE_FUNCTIONS_PA);
+		possibleAggFunctions.addAll(Arrays.asList(POSSIBLE_AGGREGATE_FUNCTIONS));
+		
 		for (SDFSchema aggSchema : operator.getAggregations().keySet()) {
 
 			for (AggregateFunction aggFunction : operator.getAggregations()
@@ -63,7 +70,7 @@ public abstract class AbstractAggregateHorizontalFragmentationRule<Strategy exte
 			}
 
 		}
-
+		
 		return true;
 
 	}
@@ -88,8 +95,8 @@ public abstract class AbstractAggregateHorizontalFragmentationRule<Strategy exte
 
 			if (operator instanceof AggregateAO) {
 
-				if (!this.needSpecialHandlingForQueryPart(part, (AggregateAO) operator,
-						helper)) {
+				if (!this.needSpecialHandlingForQueryPart(part,
+						(AggregateAO) operator, helper)) {
 
 					continue;
 
@@ -125,10 +132,28 @@ public abstract class AbstractAggregateHorizontalFragmentationRule<Strategy exte
 	public boolean needSpecialHandlingForQueryPart(ILogicalQueryPart part,
 			AggregateAO operator, AbstractFragmentationHelper helper) {
 
-		return this.canOperatorBePartOfFragments(null, operator, helper);
+		List<String> possibleAggFunctions = Arrays
+				.asList(POSSIBLE_AGGREGATE_FUNCTIONS_PA);
+
+		for (SDFSchema aggSchema : operator.getAggregations().keySet()) {
+
+			for (AggregateFunction aggFunction : operator.getAggregations()
+					.get(aggSchema).keySet()) {
+
+				if (!possibleAggFunctions.contains(aggFunction.getName())) {
+
+					return false;
+
+				}
+
+			}
+
+		}
+
+		return true;
 
 	}
-	
+
 	@Override
 	public Class<AggregateAO> getOperatorClass() {
 
