@@ -49,7 +49,7 @@ public class RangeHorizontalFragmentationHelper extends
 
 		Preconditions
 				.checkArgument(
-						this.mFragmentationParameters.size() <= RangeHorizontalFragmentationHelper.PARAMETER_INDEX_ATTRIBUTE,
+						this.mFragmentationParameters.size() >= RangeHorizontalFragmentationHelper.PARAMETER_INDEX_ATTRIBUTE,
 						"Attribute to build ranges must be given!");
 
 		return this.mFragmentationParameters
@@ -66,8 +66,8 @@ public class RangeHorizontalFragmentationHelper extends
 
 		Preconditions
 				.checkArgument(
-						this.mFragmentationParameters.size() <= RangeHorizontalFragmentationHelper.PARAMETER_INDEX_FIRST_RANGE,
-						"Lower limits for the ranges must be giben!");
+						this.mFragmentationParameters.size() >= RangeHorizontalFragmentationHelper.PARAMETER_INDEX_FIRST_RANGE,
+						"Lower limits for the ranges must be given!");
 
 		List<String> ranges = this.mFragmentationParameters.subList(
 				RangeHorizontalFragmentationHelper.PARAMETER_INDEX_FIRST_RANGE,
@@ -81,7 +81,7 @@ public class RangeHorizontalFragmentationHelper extends
 			throws QueryPartModificationException {
 
 		// Preconditions
-		if (!this.mFragmentationParameters.isEmpty()) {
+		if (this.mFragmentationParameters.isEmpty()) {
 
 			throw new QueryPartModificationException(
 					"Fragmentation parameters must at least contain one value!");
