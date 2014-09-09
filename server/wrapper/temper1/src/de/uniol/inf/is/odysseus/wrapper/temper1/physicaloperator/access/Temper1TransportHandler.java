@@ -4,12 +4,12 @@ package de.uniol.inf.is.odysseus.wrapper.temper1.physicaloperator.access;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
 import com.codeminders.hidapi.ClassPathLibraryLoader;
 import com.codeminders.hidapi.HIDDevice;
 import com.codeminders.hidapi.HIDManager;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
@@ -27,7 +27,7 @@ public class Temper1TransportHandler extends AbstractSimplePullTransportHandler<
 	}
 
 	@Override
-	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		Temper1TransportHandler tHandler = new Temper1TransportHandler();
 		
 		protocolHandler.setTransportHandler(tHandler);
