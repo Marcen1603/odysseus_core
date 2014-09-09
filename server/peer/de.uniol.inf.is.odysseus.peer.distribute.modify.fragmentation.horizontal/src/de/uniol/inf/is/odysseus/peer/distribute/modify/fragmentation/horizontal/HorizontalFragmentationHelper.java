@@ -117,7 +117,6 @@ public class HorizontalFragmentationHelper extends AbstractFragmentationHelper {
 					.get(copyNo));
 			copy.setOutputPA(true);
 			copy.addParameterInfo("OUTPUTPA", "'true'");
-			System.out.println(copy);
 
 		}
 

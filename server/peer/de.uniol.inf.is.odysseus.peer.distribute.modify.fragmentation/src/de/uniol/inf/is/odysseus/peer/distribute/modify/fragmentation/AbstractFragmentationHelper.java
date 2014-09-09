@@ -530,7 +530,7 @@ public abstract class AbstractFragmentationHelper {
 
 		}
 
-		if (startID.equals(endID)) {
+		if (endID.isPresent() && startID.equals(endID.get())) {
 
 			throw new QueryPartModificationException(
 					"IDs for start and end point of a fragmentation must be different!");

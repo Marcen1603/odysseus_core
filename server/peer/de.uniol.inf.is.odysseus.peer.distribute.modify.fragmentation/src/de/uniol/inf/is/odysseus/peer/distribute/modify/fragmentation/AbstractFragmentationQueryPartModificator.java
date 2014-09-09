@@ -168,8 +168,6 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 		}
 
-		bundle.setCopyMap(copiesToOriginals);
-
 	}
 
 	/**
@@ -581,8 +579,9 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			// Target and source are within the same query part
 			return;
 
-		} else if (!AbstractFragmentationHelper.isOperatorAbove(originalTarget,
-				bundle.getOriginStartOperator())) {
+		} else if (!originalTarget.equals(bundle.getOriginStartOperator())
+				&& !AbstractFragmentationHelper.isOperatorAbove(originalTarget,
+						bundle.getOriginStartOperator())) {
 
 			// Target is not connected (via other operators) to source for
 			// fragmentation
