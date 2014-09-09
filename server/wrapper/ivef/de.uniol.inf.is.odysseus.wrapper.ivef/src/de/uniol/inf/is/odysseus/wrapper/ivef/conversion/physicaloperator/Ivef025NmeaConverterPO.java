@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.wrapper.ivef.conversion.physicaloperator;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -215,11 +216,16 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 		VoyageData voyageData = new VoyageData();
 		voyageData.setId(ttm.getTargetNumber().getNumber());
 
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		DateFormat df = new SimpleDateFormat("MM-dd HH:mm");
 		Date parsedDate;
 		try {
 			parsedDate = df.parse(ownShipStaticData.getEta());
-			voyageData.setETA(parsedDate);
+			Calendar parsedCalendar = Calendar.getInstance();
+			parsedCalendar.setTime(parsedDate);
+			parsedCalendar.set(Calendar.YEAR,
+					Calendar.getInstance().get(Calendar.YEAR));
+
+			voyageData.setETA(parsedCalendar.getTime());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -241,8 +247,10 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 		vesselData.setConstruction(construction);
 
 		Identifier identifier = new Identifier();
-		identifier.setMMSI(ttm.getTargetNumber().getNumber());
-		identifier.setName(ttm.getTargetLabel());
+		if (ttm.getTargetNumber() != null)
+			identifier.setMMSI(ttm.getTargetNumber().getNumber());
+		if (ttm.getTargetLabel() != null)
+			identifier.setName(ttm.getTargetLabel());
 		vesselData.setIdentifier(identifier);
 		return vesselData;
 	}
@@ -250,11 +258,14 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 	private TrackData prepareTargetTrackData(TTMSentence ttm,
 			GlobalCoordinates targetCoordinates) {
 		TrackData trackData = new TrackData();
-		trackData.setId(ttm.getTargetNumber().getNumber());
+		if (ttm.getTargetNumber() != null)
+			trackData.setId(ttm.getTargetNumber().getNumber());
 		trackData.setSourceName("ODYSSEUS");
 		trackData.setSourceId("0");
-		trackData.setCOG(ttm.getTargetCourse());
-		trackData.setSOG(ttm.getTargetSpeed() * KTS_TO_MS);
+		if (ttm.getTargetCourse() != null)
+			trackData.setCOG(ttm.getTargetCourse());
+		if (ttm.getTargetSpeed() != null)
+			trackData.setSOG(ttm.getTargetSpeed() * KTS_TO_MS);
 		trackData.setUpdateTime(new Date());
 		if (targetCoordinates != null) {
 			Pos pos = new Pos();
