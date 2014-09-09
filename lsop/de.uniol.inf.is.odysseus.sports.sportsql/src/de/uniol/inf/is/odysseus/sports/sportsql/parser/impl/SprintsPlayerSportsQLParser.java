@@ -2,9 +2,12 @@ package de.uniol.inf.is.odysseus.sports.sportsql.parser.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
@@ -15,6 +18,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
+import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -26,30 +32,36 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAtt
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceUnitHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.model.Space;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLOutputParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceUnit;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpeedParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 /**
- * Parser for SportsQL: Query: game time.
+ * Parser for SportsQL: Query: sprints.
  * 
  * SportsQL:
  * 
  * Example Query:
  * 
- * { "statisticType": "player", 
- * "gameType": "soccer", 
- * "name": "sprints", 
- * "entity_ID": "16",
- * "parameters": { 
- * 		"time": { 
- * 			"time": "game" 
- * 		} 
- * } 
- * };
+ * { "statisticType": "player", "gameType": "soccer", "entityId": 16, "name":
+ * "sprints", "parameters": { "time": { "time": "game" }, "space": { "space":
+ * "right_half" }, "output": { "output": "path" }, "speed": { "speed": "trot" }
+ * } }
  * 
  * @author Simon Küspert, Pascal Schmedt
  * 
  */
-@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER }, name = "sprints", parameters = { @SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false) })
+@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER }, name = "sprints", parameters = {
+		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
+		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false),
+		@SportsQLParameter(name = "speed", parameterClass = SportsQLSpeedParameter.class, mandatory = false),
+		@SportsQLParameter(name = "output", parameterClass = SportsQLOutputParameter.class, mandatory = false), })
 public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 	private static final String MICROMS_TO_KMH_FACTOR = "(1000000 / 3.6)";
@@ -62,25 +74,26 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 	// Attributes
 	private static String ATTRIBUTE_second = "second";
+	private List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
 			throws SportsQLParseException {
 
-		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
-
 		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
 		StreamAO metadataStreamAO = OperatorBuildHelper
 				.createMetadataStreamAO();
+		SportsQLSpaceParameter spaceParameter = SportsQLParameterHelper
+				.getSpaceParameter(sportsQL);
 
-		// 1. Time Parameter
+		// 1. GameStream: Time Parameter
 		SportsQLTimeParameter timeParameter = SportsQLParameterHelper
 				.getTimeParameter(sportsQL);
 		SelectAO gameTimeSelect = OperatorBuildHelper.createTimeMapAndSelect(
 				timeParameter, soccerGameStreamAO);
 		allOperators.add(gameTimeSelect);
 
-		// 2. Project
+		// 2. GameStream: Project
 		List<String> streamAttributes = new ArrayList<String>();
 		streamAttributes.add(SoccerGameAttributes.SID);
 		streamAttributes.add(ATTRIBUTE_second);
@@ -92,7 +105,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				streamAttributes, gameTimeSelect);
 		allOperators.add(streamProject);
 
-		// 3. Select Metadata
+		// 3. MetadataStream: Select
 		SelectAO metadataSelect = OperatorBuildHelper.createEntityIDSelect(
 				sportsQL.getEntityId(), metadataStreamAO);
 		allOperators.add(metadataSelect);
@@ -103,7 +116,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				streamProject, metadataSelect);
 		allOperators.add(dataStreamEnrichAO);
 
-		// 4.1 Project
+		// 5. Project
 		List<String> streamAttributes2 = new ArrayList<String>();
 		streamAttributes2.add(ATTRIBUTE_second);
 		streamAttributes2.add(SoccerGameAttributes.X);
@@ -114,12 +127,13 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				streamAttributes2, dataStreamEnrichAO);
 		allOperators.add(streamProject2);
 
-		// 4.2 TimeWindow
-		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(1*MILLISECONDS_TO_PICOSECONDS, 1*MILLISECONDS_TO_PICOSECONDS,
-				"SECONDS", streamProject2);
+		// 6. TimeWindow
+		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(
+				1 * MILLISECONDS_TO_PICOSECONDS,
+				1 * MILLISECONDS_TO_PICOSECONDS, "SECONDS", streamProject2);
 		allOperators.add(timeWindow);
 
-		// 4.3 Aggregate
+		// 7. Aggregate
 		List<String> functions = new ArrayList<String>();
 		functions.add("AVG");
 		functions.add("MAX");
@@ -143,7 +157,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				null, timeWindow);
 		allOperators.add(aggregate);
 
-		// 4.4 MAP
+		// 8. MAP
 		ArrayList<SDFExpressionParameter> mapExpressions = new ArrayList<SDFExpressionParameter>();
 		mapExpressions.add(OperatorBuildHelper.createExpressionParameter(
 				ATTRIBUTE_second, aggregate));
@@ -158,7 +172,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				aggregate, 0, 0);
 		allOperators.add(toKmhMap);
 
-		// 4.5 Statemap
+		// 9. Statemap
 		List<SDFExpressionParameter> statemapExpressions = new ArrayList<SDFExpressionParameter>();
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
 				ATTRIBUTE_second, toKmhMap));
@@ -240,13 +254,308 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				.createStateMapAO(statemapExpressions, "", toKmhMap);
 		allOperators.add(divideSpeedStateMapAO);
 
-		// 4.6 TimeWindow
+		// 10. Output
+		Map<String, ISportsQLParameter> parameters = sportsQL.getParameters();
+		SportsQLOutputParameter outputParameter = (SportsQLOutputParameter) parameters
+				.get("output");
+		SportsQLSpeedParameter speedParameter = (SportsQLSpeedParameter) parameters
+				.get("speed");
+
+		ILogicalOperator topSource;
+		if (outputParameter != null) {
+			if (outputParameter.getOutput().equals("path")) {
+				// Output: Path
+				topSource = createPathOutputAO(divideSpeedStateMapAO,
+						spaceParameter);
+				topSource = createSpeedPathSelectAO(speedParameter, topSource);
+			} else if (outputParameter.getOutput().equals("detail")) {
+				// Output: Detail
+				topSource = createDetailOutputAO(divideSpeedStateMapAO,
+						spaceParameter);
+				topSource = createSpeedDetailProjectAO(speedParameter,
+						topSource);
+			} else {
+				// Output: Overview
+				topSource = createOverviewOutputAO(divideSpeedStateMapAO,
+						spaceParameter);
+				topSource = createSpeedOverviewProjectAO(speedParameter,
+						topSource);
+			}
+		} else {
+			// Output: Overview
+			topSource = createOverviewOutputAO(divideSpeedStateMapAO,
+					spaceParameter);
+			topSource = createSpeedOverviewProjectAO(speedParameter, topSource);
+		}
+
+		// 11. Finish
+		return OperatorBuildHelper.finishQuery(topSource, allOperators,
+				sportsQL.getName());
+	}
+
+	// Overview: SpeedParameter Project
+	private ILogicalOperator createSpeedOverviewProjectAO(
+			SportsQLSpeedParameter speedParameter, ILogicalOperator topSource) {
+		if (speedParameter != null) {
+			ProjectAO overviewProject = null;
+			List<String> overviewAttributes = new ArrayList<String>();
+			List<String> overviewChangeDetectAttributes = new ArrayList<String>();
+
+			if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_STANDING)) {
+
+				overviewAttributes.add(ATTRIBUTE_second);
+				overviewAttributes.add("Standing_Time");
+				overviewAttributes.add("Standing_Distance");
+
+				overviewProject = OperatorBuildHelper.createProjectAO(
+						overviewAttributes, topSource);
+
+				overviewChangeDetectAttributes.add("Standing_Time");
+
+			} else if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_TROT)) {
+
+				overviewAttributes.add(ATTRIBUTE_second);
+				overviewAttributes.add("Trot_Time");
+				overviewAttributes.add("Trot_Distance");
+
+				overviewProject = OperatorBuildHelper.createProjectAO(
+						overviewAttributes, topSource);
+
+				overviewChangeDetectAttributes.add("Trot_Time");
+
+			} else if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_LOW)) {
+
+				overviewAttributes.add(ATTRIBUTE_second);
+				overviewAttributes.add("Low_Time");
+				overviewAttributes.add("Low_Distance");
+
+				overviewProject = OperatorBuildHelper.createProjectAO(
+						overviewAttributes, topSource);
+
+				overviewChangeDetectAttributes.add("Low_Time");
+
+			} else if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_MEDIUM)) {
+
+				overviewAttributes.add(ATTRIBUTE_second);
+				overviewAttributes.add("Medium_Time");
+				overviewAttributes.add("Medium_Distance");
+
+				overviewProject = OperatorBuildHelper.createProjectAO(
+						overviewAttributes, topSource);
+
+				overviewChangeDetectAttributes.add("Medium_Time");
+
+			} else if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_HIGH)) {
+
+				overviewAttributes.add(ATTRIBUTE_second);
+				overviewAttributes.add("High_Time");
+				overviewAttributes.add("High_Distance");
+
+				overviewProject = OperatorBuildHelper.createProjectAO(
+						overviewAttributes, topSource);
+
+				overviewChangeDetectAttributes.add("High_Time");
+
+			} else if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_SPRINT)) {
+
+				overviewAttributes.add(ATTRIBUTE_second);
+				overviewAttributes.add("Sprint_Time");
+				overviewAttributes.add("Sprint_Distance");
+
+				overviewProject = OperatorBuildHelper.createProjectAO(
+						overviewAttributes, topSource);
+
+				overviewChangeDetectAttributes.add("Sprint_Time");
+
+			}
+			allOperators.add(overviewProject);
+
+			ChangeDetectAO overviewChangeDetect = OperatorBuildHelper
+					.createChangeDetectAO(OperatorBuildHelper
+							.createAttributeList(
+									overviewChangeDetectAttributes,
+									overviewProject), 0, overviewProject);
+
+			allOperators.add(overviewChangeDetect);
+
+			return overviewChangeDetect;
+		}
+		return topSource;
+
+	}
+
+	// Detail: SpeedParameter Project
+	private ILogicalOperator createSpeedDetailProjectAO(
+			SportsQLSpeedParameter speedParameter, ILogicalOperator topSource) {
+		if (speedParameter != null) {
+			ProjectAO detailProject = null;
+			List<String> detailAttributes = new ArrayList<String>();
+			List<String> detailChangeDetectAttributes = new ArrayList<String>();
+
+			if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_STANDING)) {
+
+				detailAttributes.add(ATTRIBUTE_second);
+				detailAttributes.add("Standing_Count");
+
+				detailProject = OperatorBuildHelper.createProjectAO(
+						detailAttributes, topSource);
+
+				detailChangeDetectAttributes.add("Standing_Count");
+
+			} else if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_TROT)) {
+
+				detailAttributes.add(ATTRIBUTE_second);
+				detailAttributes.add("Trot_Count");
+
+				detailProject = OperatorBuildHelper.createProjectAO(
+						detailAttributes, topSource);
+
+				detailChangeDetectAttributes.add("Trot_Count");
+
+			} else if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_LOW)) {
+
+				detailAttributes.add(ATTRIBUTE_second);
+				detailAttributes.add("Low_Count");
+
+				detailProject = OperatorBuildHelper.createProjectAO(
+						detailAttributes, topSource);
+
+				detailChangeDetectAttributes.add("Low_Count");
+
+			} else if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_MEDIUM)) {
+
+				detailAttributes.add(ATTRIBUTE_second);
+				detailAttributes.add("Medium_Count");
+
+				detailProject = OperatorBuildHelper.createProjectAO(
+						detailAttributes, topSource);
+
+				detailChangeDetectAttributes.add("Medium_Count");
+
+			} else if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_HIGH)) {
+
+				detailAttributes.add(ATTRIBUTE_second);
+				detailAttributes.add("High_Count");
+
+				detailProject = OperatorBuildHelper.createProjectAO(
+						detailAttributes, topSource);
+
+				detailChangeDetectAttributes.add("High_Count");
+
+			} else if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_SPRINT)) {
+
+				detailAttributes.add(ATTRIBUTE_second);
+				detailAttributes.add("Sprint_Count");
+
+				detailProject = OperatorBuildHelper.createProjectAO(
+						detailAttributes, topSource);
+
+				detailChangeDetectAttributes.add("Sprint_Count");
+
+			}
+
+			allOperators.add(detailProject);
+
+			ChangeDetectAO detailChangeDetect = OperatorBuildHelper
+					.createChangeDetectAO(OperatorBuildHelper
+							.createAttributeList(detailChangeDetectAttributes,
+									detailProject), 0, detailProject);
+
+			allOperators.add(detailChangeDetect);
+
+			return detailChangeDetect;
+		}
+
+		return topSource;
+	}
+
+	// Path: SpeedParameter Select
+	private ILogicalOperator createSpeedPathSelectAO(
+			SportsQLSpeedParameter speedParameter, ILogicalOperator topSource) {
+		if (speedParameter != null) {
+			SelectAO pathSelect;
+			ArrayList<String> pathSelectPredicates = new ArrayList<String>();
+
+			if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_STANDING)) {
+
+				pathSelectPredicates.add("Classification = 'Standing'");
+				pathSelect = OperatorBuildHelper.createSelectAO(
+						pathSelectPredicates, topSource);
+
+			} else if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_TROT)) {
+
+				pathSelectPredicates.add("Classification = 'Trot'");
+				pathSelect = OperatorBuildHelper.createSelectAO(
+						pathSelectPredicates, topSource);
+
+			} else if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_LOW)) {
+
+				pathSelectPredicates.add("Classification = 'Low'");
+				pathSelect = OperatorBuildHelper.createSelectAO(
+						pathSelectPredicates, topSource);
+
+			} else if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_MEDIUM)) {
+
+				pathSelectPredicates.add("Classification = 'Medium'");
+				pathSelect = OperatorBuildHelper.createSelectAO(
+						pathSelectPredicates, topSource);
+
+			} else if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_HIGH)) {
+
+				pathSelectPredicates.add("Classification = 'High'");
+				pathSelect = OperatorBuildHelper.createSelectAO(
+						pathSelectPredicates, topSource);
+
+			} else if (speedParameter.getSpeed().equals(
+					SportsQLSpeedParameter.SPEED_PARAMETER_SPRINT)) {
+
+				pathSelectPredicates.add("Classification = 'Sprint'");
+				pathSelect = OperatorBuildHelper.createSelectAO(
+						pathSelectPredicates, topSource);
+
+			} else {
+				return topSource;
+			}
+			allOperators.add(pathSelect);
+
+			return pathSelect;
+		}
+		return topSource;
+	}
+
+	// create Overview Output
+	private ILogicalOperator createOverviewOutputAO(ILogicalOperator source,
+			SportsQLSpaceParameter spaceParameter) {
+
+		SelectAO spaceSelect = OperatorBuildHelper.createSpaceSelect(
+				spaceParameter, false, source);
+		allOperators.add(spaceSelect);
+
+		// Overview: TimeWindow
 		// TODO: size anpassen (aus dem ddc)
-		TimeWindowAO timeWindow2 = OperatorBuildHelper.createTimeWindowAO(120*MILLISECONDS_TO_PICOSECONDS,
-				"MINUTES", divideSpeedStateMapAO);
+		TimeWindowAO timeWindow2 = OperatorBuildHelper.createTimeWindowAO(
+				120 * MILLISECONDS_TO_PICOSECONDS, "MINUTES", spaceSelect);
+
 		allOperators.add(timeWindow2);
 
-		// 4.7 Aggregate
+		// Overview: Aggregate
 		List<String> functions2 = new ArrayList<String>();
 		functions2.add("LAST");
 		functions2.add("LAST");
@@ -298,9 +607,20 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 		AggregateAO aggregate2 = OperatorBuildHelper.createAggregateAO(
 				functions2, null, inputAttributeNames2, outputAttributeNames2,
 				null, timeWindow2);
+
 		allOperators.add(aggregate2);
 
-		// 4.6.1 ChangeDetect
+		return aggregate2;
+	}
+
+	// create Detail Output
+	private ILogicalOperator createDetailOutputAO(ILogicalOperator source,
+			SportsQLSpaceParameter spaceParameter) {
+
+		SelectAO spaceSelect = OperatorBuildHelper.createSpaceSelect(
+				spaceParameter, false, source);
+		allOperators.add(spaceSelect);
+		// Detail: ChangeDetect
 		List<String> speedClassificationChangeDetectAttributes = new ArrayList<String>();
 		speedClassificationChangeDetectAttributes.add("Standing_Time");
 		speedClassificationChangeDetectAttributes.add("Trot_Time");
@@ -313,12 +633,14 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 		ballVelocityChangeDetectGroupByAttributes.add(SoccerGameAttributes.SID);
 
 		ChangeDetectAO speedClassificationChangeDetect = OperatorBuildHelper
-				.createChangeDetectAO(OperatorBuildHelper.createAttributeList(
-						speedClassificationChangeDetectAttributes,
-						divideSpeedStateMapAO), 0, divideSpeedStateMapAO);
+				.createChangeDetectAO(
+						OperatorBuildHelper.createAttributeList(
+								speedClassificationChangeDetectAttributes,
+								spaceSelect), 0, spaceSelect);
+
 		allOperators.add(speedClassificationChangeDetect);
 
-		// 4.6.2 Statemap
+		// Detail: Statemap
 		List<SDFExpressionParameter> statemapExpressions2 = new ArrayList<SDFExpressionParameter>();
 		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
 				ATTRIBUTE_second, speedClassificationChangeDetect));
@@ -358,15 +680,17 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 		StateMapAO countStateMapAO = OperatorBuildHelper.createStateMapAO(
 				statemapExpressions2, "", speedClassificationChangeDetect);
+
 		allOperators.add(countStateMapAO);
 
-		// 4.6.3 TimeWindow
+		// Detail: TimeWindow
 		// TODO: size anpassen (aus dem ddc)
-		TimeWindowAO timeWindow3 = OperatorBuildHelper.createTimeWindowAO(120*MILLISECONDS_TO_PICOSECONDS,
-				"MINUTES", countStateMapAO);
+		TimeWindowAO timeWindow3 = OperatorBuildHelper.createTimeWindowAO(
+				120 * MILLISECONDS_TO_PICOSECONDS, "MINUTES", countStateMapAO);
+
 		allOperators.add(timeWindow3);
 
-		// 4.6.4 Aggregate
+		// Detail: Aggregate
 		List<String> functions3 = new ArrayList<String>();
 		functions3.add("LAST");
 		functions3.add("LAST");
@@ -400,36 +724,165 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 		AggregateAO aggregate3 = OperatorBuildHelper.createAggregateAO(
 				functions3, null, inputAttributeNames3, outputAttributeNames3,
 				null, timeWindow3);
+
 		allOperators.add(aggregate3);
 
-		// 4.6.2 Statemap
-		List<SDFExpressionParameter> statemapExpressions3 = new ArrayList<SDFExpressionParameter>();
-		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
-				ATTRIBUTE_second, divideSpeedStateMapAO));
-		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
-				"eif("+ SoccerGameAttributes.V + "<= "+ STANDING_SPEED_UPPERBORDER + ", \"Standing\", eif("+ SoccerGameAttributes.V + " > "+ STANDING_SPEED_UPPERBORDER + " AND "+ SoccerGameAttributes.V + " <= "+ TROT_SPEED_UPPERBORDER + ", \"Trot\", eif("+ SoccerGameAttributes.V + " > "+ TROT_SPEED_UPPERBORDER + " AND "+ SoccerGameAttributes.V + " <= "+ LOW_SPEED_UPPERBORDER + ", \"Low\", eif("+ SoccerGameAttributes.V + " > "+ LOW_SPEED_UPPERBORDER + " AND "+ SoccerGameAttributes.V + " <= "+ MEDIUM_SPEED_UPPERBORDER + ", \"Medium\", eif("+ SoccerGameAttributes.V + " > "+ MEDIUM_SPEED_UPPERBORDER + " AND "+ SoccerGameAttributes.V + " <="+ HIGH_SPEED_UPPERBORDER + ", \"High\", \"Sprint\")))))", 
-				"Classification",
-						divideSpeedStateMapAO));
-		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
-				"__last_1." + SoccerGameAttributes.X,
-				"Start_x", divideSpeedStateMapAO));
-		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
-				"__last_1." + SoccerGameAttributes.Y,
-				"Start_y", divideSpeedStateMapAO));
-		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
-				"__last_1." + SoccerGameAttributes.X,
-				"End_x", divideSpeedStateMapAO));
-		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
-				"__last_1." + SoccerGameAttributes.Y,
-				"End_y", divideSpeedStateMapAO));
+		return aggregate3;
 
-		StateMapAO pathStateMapAO = OperatorBuildHelper.createStateMapAO(
-				statemapExpressions3, "", divideSpeedStateMapAO);
-		allOperators.add(pathStateMapAO);
-		
-		// 5. Finish
-		return OperatorBuildHelper.finishQuery(pathStateMapAO,
-				allOperators, sportsQL.getName());
 	}
 
+	// create Path Output
+	private ILogicalOperator createPathOutputAO(ILogicalOperator source,
+			SportsQLSpaceParameter spaceParameter) {
+		// path: Statemap
+		List<SDFExpressionParameter> statemapExpressions3 = new ArrayList<SDFExpressionParameter>();
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				ATTRIBUTE_second, source));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + SoccerGameAttributes.V + "<= "
+						+ STANDING_SPEED_UPPERBORDER + ", \"Standing\", eif("
+						+ SoccerGameAttributes.V + " > "
+						+ STANDING_SPEED_UPPERBORDER + " AND "
+						+ SoccerGameAttributes.V + " <= "
+						+ TROT_SPEED_UPPERBORDER + ", \"Trot\", eif("
+						+ SoccerGameAttributes.V + " > "
+						+ TROT_SPEED_UPPERBORDER + " AND "
+						+ SoccerGameAttributes.V + " <= "
+						+ LOW_SPEED_UPPERBORDER + ", \"Low\", eif("
+						+ SoccerGameAttributes.V + " > "
+						+ LOW_SPEED_UPPERBORDER + " AND "
+						+ SoccerGameAttributes.V + " <= "
+						+ MEDIUM_SPEED_UPPERBORDER + ", \"Medium\", eif("
+						+ SoccerGameAttributes.V + " > "
+						+ MEDIUM_SPEED_UPPERBORDER + " AND "
+						+ SoccerGameAttributes.V + " <="
+						+ HIGH_SPEED_UPPERBORDER
+						+ ", \"High\", \"Sprint\")))))", "Classification",
+				source));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"__last_1." + SoccerGameAttributes.X, "Start_x", source));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"__last_1." + SoccerGameAttributes.Y, "Start_y", source));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.X, "End_x", source));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.Y, "End_y", source));
+
+		StateMapAO pathStateMapAO = OperatorBuildHelper.createStateMapAO(
+				statemapExpressions3, "", source);
+
+		allOperators.add(pathStateMapAO);
+
+		// Space Select
+		ILogicalOperator spaceSelect = createSpaceSelectAO(pathStateMapAO,
+				spaceParameter);
+		allOperators.add(spaceSelect);
+
+		return spaceSelect;
+
+	}
+
+	// create Space Select
+	@SuppressWarnings("rawtypes")
+	private ILogicalOperator createSpaceSelectAO(ILogicalOperator source,
+			SportsQLSpaceParameter spaceParameter) {
+
+		SpaceUnit unit = spaceParameter.getUnit();
+		if (unit == null) {
+			unit = SpaceUnit.millimeters;
+		}
+
+		int startX = SpaceUnitHelper.getMillimeters(spaceParameter.getStartx(),
+				unit);
+		int startY = SpaceUnitHelper.getMillimeters(spaceParameter.getStarty(),
+				unit);
+		int endX = SpaceUnitHelper.getMillimeters(spaceParameter.getEndx(),
+				unit);
+		int endY = SpaceUnitHelper.getMillimeters(spaceParameter.getEndy(),
+				unit);
+
+		if (spaceParameter.getSpace() != null) {
+			Space space = SpaceHelper.getSpace(spaceParameter.getSpace());
+			startX = space.getStart().x;
+			startY = space.getStart().y;
+			endX = space.getEnd().x;
+			endY = space.getEnd().y;
+		}
+
+		String firstPredicateString = "Start_x >= " + startX;
+		String secondPredicateString = "Start_x <= " + endX;
+		String thirdPredicateString = "Start_y >= " + startY;
+		String fourthPredicateString = "Start_y <= " + endY;
+
+		String fifthPredicateString = "End_x >= " + startX;
+		String sixthPredicateString = "End_x <= " + endX;
+		String seventhPredicateString = "End_y >= " + startY;
+		String eighthPredicateString = "End_y <= " + endY;
+
+		SelectAO spaceSelect = new SelectAO();
+
+		// Create Predicates from Strings
+
+		SDFExpression firstPredicateExpression = new SDFExpression(
+				firstPredicateString, MEP.getInstance());
+		RelationalPredicate firstPredicate = new RelationalPredicate(
+				firstPredicateExpression);
+
+		SDFExpression secondPredicateExpression = new SDFExpression(
+				secondPredicateString, MEP.getInstance());
+		RelationalPredicate secondPredicate = new RelationalPredicate(
+				secondPredicateExpression);
+
+		SDFExpression thirdPredicateExpression = new SDFExpression(
+				thirdPredicateString, MEP.getInstance());
+		RelationalPredicate thirdPredicate = new RelationalPredicate(
+				thirdPredicateExpression);
+
+		SDFExpression fourthPredicateExpression = new SDFExpression(
+				fourthPredicateString, MEP.getInstance());
+		RelationalPredicate fourthPredicate = new RelationalPredicate(
+				fourthPredicateExpression);
+
+		SDFExpression fifthPredicateExpression = new SDFExpression(
+				fifthPredicateString, MEP.getInstance());
+		RelationalPredicate fifthPredicate = new RelationalPredicate(
+				fifthPredicateExpression);
+
+		SDFExpression sixthPredicateExpression = new SDFExpression(
+				sixthPredicateString, MEP.getInstance());
+		RelationalPredicate sixthPredicate = new RelationalPredicate(
+				sixthPredicateExpression);
+
+		SDFExpression seventhPredicateExpression = new SDFExpression(
+				seventhPredicateString, MEP.getInstance());
+		RelationalPredicate seventhPredicate = new RelationalPredicate(
+				seventhPredicateExpression);
+
+		SDFExpression eighthPredicateExpression = new SDFExpression(
+				eighthPredicateString, MEP.getInstance());
+		RelationalPredicate eighthPredicate = new RelationalPredicate(
+				eighthPredicateExpression);
+
+		IPredicate firstAndPredicate = ComplexPredicateHelper
+				.createAndPredicate(firstPredicate, secondPredicate);
+		IPredicate secondAndPredicate = ComplexPredicateHelper
+				.createAndPredicate(thirdPredicate, fourthPredicate);
+		IPredicate thirdAndPredicate = ComplexPredicateHelper
+				.createAndPredicate(fifthPredicate, sixthPredicate);
+		IPredicate fourthAndPredicate = ComplexPredicateHelper
+				.createAndPredicate(seventhPredicate, eighthPredicate);
+		IPredicate firstHalfAndPredicate = ComplexPredicateHelper
+				.createAndPredicate(firstAndPredicate, secondAndPredicate);
+		IPredicate secondHalfAndPredicate = ComplexPredicateHelper
+				.createAndPredicate(thirdAndPredicate, fourthAndPredicate);
+		IPredicate fullAndPredicate = ComplexPredicateHelper
+				.createAndPredicate(firstHalfAndPredicate,
+						secondHalfAndPredicate);
+
+		spaceSelect.setPredicate(fullAndPredicate);
+
+		spaceSelect.subscribeTo(source, source.getOutputSchema());
+
+		return spaceSelect;
+	}
 }
