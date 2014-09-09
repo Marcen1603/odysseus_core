@@ -17,4 +17,4 @@ Bundle-Activator: de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.
 Service-Component: OSGI-INF/Activator.xml,OSGI-INF/SinkFragmentationRule.xml,OSGI-INF/AccessFragmentationRule.xml,
  OSGI-INF/StreamFragmentationRule.xml
 Export-Package: de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation,
- de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.newimpl
+ de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule

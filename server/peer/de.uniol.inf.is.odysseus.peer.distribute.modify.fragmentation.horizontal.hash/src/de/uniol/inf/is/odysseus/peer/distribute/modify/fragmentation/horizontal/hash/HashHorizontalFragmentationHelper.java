@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.newimpl;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.newimpl.HorizontalFragmentationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.HorizontalFragmentationHelper;
 
 /**
  * An fragmentation helper provides useful methods for fragmentation.
