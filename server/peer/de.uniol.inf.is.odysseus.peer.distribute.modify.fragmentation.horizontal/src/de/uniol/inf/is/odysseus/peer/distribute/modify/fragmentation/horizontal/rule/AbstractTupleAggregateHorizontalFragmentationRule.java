@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TupleAggregateAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.AbstractHorizontalFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.IFragmentationRule;
@@ -27,7 +27,7 @@ public abstract class AbstractTupleAggregateHorizontalFragmentationRule<Strategy
 
 	@Override
 	public boolean canOperatorBePartOfFragments(Strategy strategy,
-			TupleAggregateAO operator, AbstractFragmentationHelper helper) {
+			TupleAggregateAO operator, AbstractFragmentationParameterHelper helper) {
 
 		return false;
 
@@ -35,7 +35,7 @@ public abstract class AbstractTupleAggregateHorizontalFragmentationRule<Strategy
 
 	@Override
 	public boolean needSpecialHandlingForQueryPart(ILogicalQueryPart part,
-			TupleAggregateAO operator, AbstractFragmentationHelper helper) {
+			TupleAggregateAO operator, AbstractFragmentationParameterHelper helper) {
 
 		return false;
 
@@ -43,7 +43,7 @@ public abstract class AbstractTupleAggregateHorizontalFragmentationRule<Strategy
 
 	@Override
 	public TupleAggregateAO specialHandling(ILogicalQueryPart part,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle)
+			AbstractFragmentationParameterHelper helper, FragmentationInfoBundle bundle)
 			throws QueryPartModificationException {
 
 		// Nothing to do

@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
 
@@ -52,7 +52,7 @@ public interface IFragmentationRule<Strategy extends AbstractFragmentationQueryP
 	 *         fragment.
 	 */
 	public boolean canOperatorBePartOfFragments(Strategy strategy,
-			Operator operator, AbstractFragmentationHelper helper);
+			Operator operator, AbstractFragmentationParameterHelper helper);
 
 	/**
 	 * Checks if a query part needs a special handling. <br />
@@ -69,7 +69,7 @@ public interface IFragmentationRule<Strategy extends AbstractFragmentationQueryP
 	 *         impossible.
 	 */
 	public boolean needSpecialHandlingForQueryPart(ILogicalQueryPart part,
-			Operator operator, AbstractFragmentationHelper helper);
+			Operator operator, AbstractFragmentationParameterHelper helper);
 
 	/**
 	 * Does a special handling for a given query part.
@@ -77,7 +77,7 @@ public interface IFragmentationRule<Strategy extends AbstractFragmentationQueryP
 	 * @param part
 	 *            The query part to modify.
 	 * @param helper
-	 *            The {@link AbstractFragmentationHelper} instance.
+	 *            The {@link AbstractFragmentationParameterHelper} instance.
 	 * @param bundle
 	 *            The {@link FragmentationInfoBundle} instance.
 	 * @return The modified operator.
@@ -88,7 +88,7 @@ public interface IFragmentationRule<Strategy extends AbstractFragmentationQueryP
 	 *             if there is none or more than one aggregation.
 	 */
 	public Operator specialHandling(ILogicalQueryPart part,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle)
+			AbstractFragmentationParameterHelper helper, FragmentationInfoBundle bundle)
 			throws QueryPartModificationException;
 
 }

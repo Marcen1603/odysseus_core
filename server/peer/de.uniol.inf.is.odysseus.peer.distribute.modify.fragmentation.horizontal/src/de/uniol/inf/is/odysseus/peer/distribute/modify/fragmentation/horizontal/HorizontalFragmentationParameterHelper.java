@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateIte
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItemParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
  * 
  * @author Michael Brand
  */
-public class HorizontalFragmentationHelper extends AbstractFragmentationHelper {
+public class HorizontalFragmentationParameterHelper extends AbstractFragmentationParameterHelper {
 
 	/**
 	 * Changes the copies of a given aggregation to send partial aggregates.
@@ -130,7 +130,7 @@ public class HorizontalFragmentationHelper extends AbstractFragmentationHelper {
 	 * @param fragmentationParameters
 	 *            The parameters for fragmentation.
 	 */
-	public HorizontalFragmentationHelper(List<String> fragmentationParameters) {
+	public HorizontalFragmentationParameterHelper(List<String> fragmentationParameters) {
 
 		super(fragmentationParameters);
 

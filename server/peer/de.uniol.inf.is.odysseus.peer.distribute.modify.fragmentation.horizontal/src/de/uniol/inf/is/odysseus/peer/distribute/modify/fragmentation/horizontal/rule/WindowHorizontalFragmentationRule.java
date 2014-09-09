@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.AbstractHorizontalFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.IFragmentationRule;
@@ -23,7 +23,7 @@ public class WindowHorizontalFragmentationRule
 	@Override
 	public boolean canOperatorBePartOfFragments(
 			AbstractHorizontalFragmentationQueryPartModificator strategy,
-			AbstractWindowAO operator, AbstractFragmentationHelper helper) {
+			AbstractWindowAO operator, AbstractFragmentationParameterHelper helper) {
 
 		return operator.getWindowType().equals(WindowType.TIME);
 
@@ -31,7 +31,7 @@ public class WindowHorizontalFragmentationRule
 
 	@Override
 	public boolean needSpecialHandlingForQueryPart(ILogicalQueryPart part,
-			AbstractWindowAO operator, AbstractFragmentationHelper helper) {
+			AbstractWindowAO operator, AbstractFragmentationParameterHelper helper) {
 
 		return false;
 
@@ -39,7 +39,7 @@ public class WindowHorizontalFragmentationRule
 
 	@Override
 	public AbstractWindowAO specialHandling(ILogicalQueryPart part,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle)
+			AbstractFragmentationParameterHelper helper, FragmentationInfoBundle bundle)
 			throws QueryPartModificationException {
 
 		// Nothing to do

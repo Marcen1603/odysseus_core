@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal
 
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.AbstractHorizontalFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.IFragmentationRule;
@@ -27,7 +27,7 @@ public abstract class AbstractRelationalFastMedianHorizontalFragmentationRule<St
 
 	@Override
 	public boolean canOperatorBePartOfFragments(Strategy strategy,
-			RelationalFastMedianAO operator, AbstractFragmentationHelper helper) {
+			RelationalFastMedianAO operator, AbstractFragmentationParameterHelper helper) {
 
 		return false;
 
@@ -35,7 +35,7 @@ public abstract class AbstractRelationalFastMedianHorizontalFragmentationRule<St
 
 	@Override
 	public boolean needSpecialHandlingForQueryPart(ILogicalQueryPart part,
-			RelationalFastMedianAO operator, AbstractFragmentationHelper helper) {
+			RelationalFastMedianAO operator, AbstractFragmentationParameterHelper helper) {
 
 		return false;
 
@@ -43,7 +43,7 @@ public abstract class AbstractRelationalFastMedianHorizontalFragmentationRule<St
 
 	@Override
 	public RelationalFastMedianAO specialHandling(ILogicalQueryPart part,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle)
+			AbstractFragmentationParameterHelper helper, FragmentationInfoBundle bundle)
 			throws QueryPartModificationException {
 
 		// Nothing to do

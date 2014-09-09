@@ -14,10 +14,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.AbstractHorizontalFragmentationQueryPartModificator;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.HorizontalFragmentationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.HorizontalFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.IFragmentationRule;
 
 /**
@@ -50,7 +50,7 @@ public abstract class AbstractAggregateHorizontalFragmentationRule<Strategy exte
 
 	@Override
 	public boolean canOperatorBePartOfFragments(Strategy strategy,
-			AggregateAO operator, AbstractFragmentationHelper helper) {
+			AggregateAO operator, AbstractFragmentationParameterHelper helper) {
 
 		List<String> possibleAggFunctions = Arrays
 				.asList(POSSIBLE_AGGREGATE_FUNCTIONS_PA);
@@ -78,14 +78,14 @@ public abstract class AbstractAggregateHorizontalFragmentationRule<Strategy exte
 
 	@Override
 	public AggregateAO specialHandling(ILogicalQueryPart part,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle)
+			AbstractFragmentationParameterHelper helper, FragmentationInfoBundle bundle)
 			throws QueryPartModificationException {
 
 		Preconditions.checkNotNull(part, "Query part must be not null!");
 		Preconditions.checkNotNull(helper,
 				"Fragmentation helper must be not null!");
 		Preconditions
-				.checkArgument(helper instanceof HorizontalFragmentationHelper,
+				.checkArgument(helper instanceof HorizontalFragmentationParameterHelper,
 						"Fragmentation helper must be a HorizontalFragmentationHelper!");
 		Preconditions.checkNotNull(bundle,
 				"Fragmentation info bundle must be not null!");
@@ -103,7 +103,7 @@ public abstract class AbstractAggregateHorizontalFragmentationRule<Strategy exte
 
 				} else if (aggregation == null) {
 
-					aggregation = HorizontalFragmentationHelper
+					aggregation = HorizontalFragmentationParameterHelper
 							.changeAggregation(part, (AggregateAO) operator,
 									bundle);
 					AbstractAggregateHorizontalFragmentationRule.LOG
@@ -131,7 +131,7 @@ public abstract class AbstractAggregateHorizontalFragmentationRule<Strategy exte
 
 	@Override
 	public boolean needSpecialHandlingForQueryPart(ILogicalQueryPart part,
-			AggregateAO operator, AbstractFragmentationHelper helper) {
+			AggregateAO operator, AbstractFragmentationParameterHelper helper) {
 
 		List<String> possibleAggFunctions = Arrays
 				.asList(POSSIBLE_AGGREGATE_FUNCTIONS_PA);

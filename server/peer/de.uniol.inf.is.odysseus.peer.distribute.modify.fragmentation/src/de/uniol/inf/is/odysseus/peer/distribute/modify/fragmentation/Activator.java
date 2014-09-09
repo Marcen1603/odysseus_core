@@ -1,16 +1,11 @@
 package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation;
 
-import java.util.Collection;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.IFragmentationRule;
 
 /**
  * The activator for the bundle
@@ -58,50 +53,6 @@ public class Activator implements BundleActivator {
 		if (Activator.p2pDict != null || Activator.p2pDict.equals(dict)) {
 
 			Activator.p2pDict = null;
-
-		}
-
-	}
-
-	/**
-	 * All bound {@link IFragmentationRule}s.
-	 */
-	private static Collection<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> rules = Lists.newArrayList();
-
-	/**
-	 * Returns all bound {@link IFragmentationRule}s.
-	 */
-	public static Collection<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> getFragmentationRules() {
-
-		return Activator.rules;
-
-	}
-
-	/**
-	 * Binds an {@link IFragmentationRule}.
-	 * 
-	 * @param rule
-	 *            The {@link IFragmentationRule} to bind.
-	 */
-	@SuppressWarnings("unchecked")
-	public static void bindFragmentationRule(IFragmentationRule<?, ?> rule) {
-
-		Activator.rules.add((IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>) rule);
-
-	}
-
-	/**
-	 * Unbinds an {@link IFragmentationRule} if <code>rule</code> is a bound
-	 * one.
-	 * 
-	 * @param rule
-	 *            The {@link IFragmentationRule} to unbind.
-	 */
-	public static void unbindFragmentationRule(IFragmentationRule<?, ?> rule) {
-
-		if (rule != null) {
-
-			Activator.rules.remove(rule);
 
 		}
 

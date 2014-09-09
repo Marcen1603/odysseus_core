@@ -24,6 +24,8 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
+import de.uniol.inf.is.odysseus.peer.distribute.modification.ModificationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.FragmentationRuleHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
 /**
@@ -215,14 +217,14 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			for (ILogicalOperator operator : copiedPart.getOperators()) {
 
 				if (fragmentOperator
-						&& AbstractFragmentationHelper.isOperatorAbove(
-								operator, fragmentOrReunionOperator)) {
+						&& ModificationHelper.isOperatorAbove(operator,
+								fragmentOrReunionOperator)) {
 
 					avoidedParts.addAll(bundle.getCopyMap().get(part));
 					break;
 
 				} else if (!fragmentOperator
-						&& AbstractFragmentationHelper.isOperatorAbove(
+						&& ModificationHelper.isOperatorAbove(
 								fragmentOrReunionOperator, operator)) {
 
 					avoidedParts.addAll(bundle.getCopyMap().get(part));
@@ -349,14 +351,15 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @param operators
 	 *            The operators to check.
 	 * @param helper
-	 *            The {@link AbstractFragmentationHelper} instance.
+	 *            The {@link AbstractFragmentationParameterHelper} instance.
 	 * @param bundle
 	 *            The {@link FragmentationInfoBundle} instance.
 	 * @return All operators within <code>operators</code> to build fragments.
 	 */
 	private Collection<ILogicalOperator> determineOperatorsForFragment(
 			Collection<ILogicalOperator> operators,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle) {
+			AbstractFragmentationParameterHelper helper,
+			FragmentationInfoBundle bundle) {
 
 		// Preconditions
 		Preconditions.checkNotNull(operators,
@@ -377,12 +380,13 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 		for (ILogicalOperator operator : operators) {
 
-			if (AbstractFragmentationHelper.isOperatorAbove(operator,
+			if (ModificationHelper.isOperatorAbove(operator,
 					bundle.getOriginStartOperator())
-					&& (!bundle.getOriginEndOperator().isPresent() || AbstractFragmentationHelper
+					&& (!bundle.getOriginEndOperator().isPresent() || ModificationHelper
 							.isOperatorAbove(bundle.getOriginEndOperator()
 									.get(), operator))
-					&& helper.canOperatorBePartOfFragment(this, operator)) {
+					&& FragmentationRuleHelper.canOperatorBePartOfFragment(
+							this, operator, helper)) {
 
 				operatorsForFragment.add(operator);
 
@@ -400,14 +404,15 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @param queryParts
 	 *            The query parts to check.
 	 * @param helper
-	 *            The {@link AbstractFragmentationHelper} instance.
+	 *            The {@link AbstractFragmentationParameterHelper} instance.
 	 * @param bundle
 	 *            The {@link FragmentationInfoBundle} instance.
 	 * @return All operators within <code>operators</code> to build fragments.
 	 */
 	private IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> determineFragments(
 			Collection<ILogicalQueryPart> queryParts,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle) {
+			AbstractFragmentationParameterHelper helper,
+			FragmentationInfoBundle bundle) {
 
 		// Preconditions
 		Preconditions.checkNotNull(queryParts,
@@ -463,7 +468,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @param queryParts
 	 *            The given query parts.
 	 * @param helper
-	 *            The {@link AbstractFragmentationHelper} instance.
+	 *            The {@link AbstractFragmentationParameterHelper} instance.
 	 * @param bundle
 	 *            The {@link FragmentationInfoBundle} instance.
 	 * @return True, if <code>queryParts</code> and the informations given by
@@ -472,14 +477,15 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *             If the parameters for fragmentation do not contain two
 	 *             parameters, if the second parameter is no integer or if the
 	 *             degree of fragmentation if lower than
-	 *             {@value #MIN_DEGREE_OF_FRAGMENTATION}. <br />
+	 *             {@link AbstractFragmentationParameterHelper#MIN_DEGREE_OF_FRAGMENTATION}
+	 *             . <br />
 	 *             If the parameters for fragmentation is empty or if the first
-	 *             parameter does not match any patterns within
-	 *             {@value #startAndEndPointPatterns}.<br />
+	 *             parameter does not match any patterns.<br />
 	 *             If no query parts remain to build fragments.
 	 */
 	private void prepare(Collection<ILogicalQueryPart> queryParts,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle)
+			AbstractFragmentationParameterHelper helper,
+			FragmentationInfoBundle bundle)
 			throws QueryPartModificationException {
 
 		// Preconditions
@@ -489,7 +495,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				"Fragmentation info bundle must be not null!");
 
 		// Determine degree of fragmentation
-		bundle.setDegreeOfFragmentation(helper.determineDegreeOfFragmentation());
+		bundle.setDegreeOfFragmentation(helper.determineDegreeOfModification());
 
 		// Determine identifiers for start point and end point for fragmentation
 		final IPair<ILogicalOperator, Optional<ILogicalOperator>> startAndendPointOfFragmentation = helper
@@ -522,7 +528,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @param originalPart
 	 *            The query part containing <code>originalSource</code>.
 	 * @param helper
-	 *            The {@link AbstractFragmentationHelper} instance.
+	 *            The {@link AbstractFragmentationParameterHelper} instance.
 	 * @param bundle
 	 *            The {@link FragmentationInfoBundle} instance.
 	 * @throws QueryPartModificationException
@@ -536,7 +542,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 */
 	private void processSubscriptionFromRelativeSource(
 			LogicalSubscription subscription, ILogicalOperator originalSource,
-			ILogicalQueryPart originalPart, AbstractFragmentationHelper helper,
+			ILogicalQueryPart originalPart,
+			AbstractFragmentationParameterHelper helper,
 			FragmentationInfoBundle bundle)
 			throws QueryPartModificationException {
 
@@ -557,7 +564,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 		ILogicalOperator originalTarget = subscription.getTarget();
 		Collection<ILogicalOperator> copiedTargets = Lists.newArrayList();
-		Collection<ILogicalOperator> copiedSources = AbstractFragmentationHelper
+		Collection<ILogicalOperator> copiedSources = ModificationHelper
 				.findCopies(originalSource, bundle.getCopyMap());
 		Optional<ILogicalQueryPart> optPartOfOriginalTarget = LogicalQueryHelper
 				.determineQueryPart(bundle.getCopyMap().keySet(),
@@ -569,8 +576,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 		} else {
 
-			copiedTargets.addAll(AbstractFragmentationHelper.findCopies(
-					originalTarget, bundle.getCopyMap()));
+			copiedTargets.addAll(ModificationHelper.findCopies(originalTarget,
+					bundle.getCopyMap()));
 
 		}
 
@@ -579,15 +586,14 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			// Target and source are within the same query part
 			return;
 
-		} else if (!originalTarget.equals(bundle.getOriginStartOperator())
-				&& !AbstractFragmentationHelper.isOperatorAbove(originalTarget,
-						bundle.getOriginStartOperator())) {
+		} else if (!ModificationHelper.isOperatorAboveOrEqual(originalTarget,
+				bundle.getOriginStartOperator())) {
 
 			// Target is not connected (via other operators) to source for
 			// fragmentation
 			// Copies will be connected directly
-			AbstractFragmentationHelper.connectOperators(copiedSources,
-					copiedTargets, subscription);
+			ModificationHelper.connectOperators(copiedSources, copiedTargets,
+					subscription);
 			AbstractFragmentationQueryPartModificator.LOG.debug(
 					"Connected {} and {}", originalSource, originalTarget);
 
@@ -608,7 +614,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 				// 1:1 relationship
 				// No need to fragment
-				AbstractFragmentationHelper.connectOperators(copiedSources,
+				ModificationHelper.connectOperators(copiedSources,
 						copiedTargets, subscription);
 				AbstractFragmentationQueryPartModificator.LOG.debug(
 						"Connected {} and {}", originalSource, originalTarget);
@@ -617,7 +623,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 					&& partsOfCopiedTarget.size() > 1) {
 
 				// N:1 relationship
-				if (helper.needSpecialHandlingForQueryPart(
+				if (FragmentationRuleHelper.needSpecialHandlingForQueryPart(
 						partOfOriginalTarget, this, helper)) {
 
 					// Need special handling
@@ -662,7 +668,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			} else {
 
 				// N:N relationship
-				if (helper.needSpecialHandlingForQueryPart(
+				if (FragmentationRuleHelper.needSpecialHandlingForQueryPart(
 						partOfOriginalTarget, this, helper)) {
 
 					// Need special handling
@@ -675,7 +681,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				} else {
 
 					// No need to fragment
-					AbstractFragmentationHelper.connectOperators(copiedSources,
+					ModificationHelper.connectOperators(copiedSources,
 							copiedTargets, subscription);
 					AbstractFragmentationQueryPartModificator.LOG.debug(
 							"Connected {} and {}", originalSource,
@@ -697,7 +703,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @param originalPart
 	 *            The query part containing <code>originalSource</code>.
 	 * @param helper
-	 *            The {@link AbstractFragmentationHelper} instance.
+	 *            The {@link AbstractFragmentationParameterHelper} instance.
 	 * @param bundle
 	 *            The {@link FragmentationInfoBundle} instance.
 	 * @throws QueryPartModificationException
@@ -708,7 +714,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *             .
 	 */
 	private void processRelativeSource(ILogicalOperator originalSource,
-			ILogicalQueryPart originalPart, AbstractFragmentationHelper helper,
+			ILogicalQueryPart originalPart,
+			AbstractFragmentationParameterHelper helper,
 			FragmentationInfoBundle bundle)
 			throws QueryPartModificationException {
 
@@ -743,7 +750,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @param originalPart
 	 *            The query part containing <code>originalSink</code>.
 	 * @param helper
-	 *            The {@link AbstractFragmentationHelper} instance.
+	 *            The {@link AbstractFragmentationParameterHelper} instance.
 	 * @param bundle
 	 *            The {@link FragmentationInfoBundle} instance.
 	 * @throws QueryPartModificationException
@@ -751,7 +758,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *             {@link #createReunionOperator(int, FragmentationInfoBundle)}.
 	 */
 	private void processRealSink(ILogicalOperator originalSink,
-			ILogicalQueryPart originalPart, AbstractFragmentationHelper helper,
+			ILogicalQueryPart originalPart,
+			AbstractFragmentationParameterHelper helper,
 			FragmentationInfoBundle bundle)
 			throws QueryPartModificationException {
 
@@ -768,7 +776,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 		Optional<ILogicalOperator> source = Optional.absent();
 		Collection<ILogicalOperator> copiedSources = Lists.newArrayList();
-		Collection<ILogicalOperator> copiedSinks = AbstractFragmentationHelper
+		Collection<ILogicalOperator> copiedSinks = ModificationHelper
 				.findCopies(originalSink, bundle.getCopyMap());
 		Optional<ILogicalQueryPart> partOfSource = Optional.absent();
 		Collection<ILogicalQueryPart> partsOfCopiedSources = Lists
@@ -784,7 +792,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 		}
 
-		if (helper.needSpecialHandlingForQueryPart(originalPart, this, helper)) {
+		if (FragmentationRuleHelper.needSpecialHandlingForQueryPart(
+				originalPart, this, helper)) {
 
 			this.processSpecialHandling(copiedSources, copiedSinks,
 					subscription, partOfSource, partsOfCopiedSources,
@@ -795,7 +804,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			// Need to reunion
 			ILogicalOperator reunionOperator = this.insertReunionOperator(
 					source,
-					AbstractFragmentationHelper.findCopies(originalSink,
+					ModificationHelper.findCopies(originalSink,
 							bundle.getCopyMap()), subscription, partOfSource,
 					Optional.of(originalPart), bundle);
 			bundle.addReunionOperator(reunionOperator);
@@ -813,7 +822,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @param part
 	 *            The given query part.
 	 * @param helper
-	 *            The {@link AbstractFragmentationHelper} instance.
+	 *            The {@link AbstractFragmentationParameterHelper} instance.
 	 * @param bundle
 	 *            The {@link FragmentationInfoBundle} instance.
 	 * @throws QueryPartModificationException
@@ -824,7 +833,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *             .
 	 */
 	private void modify(ILogicalQueryPart part,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle)
+			AbstractFragmentationParameterHelper helper,
+			FragmentationInfoBundle bundle)
 			throws QueryPartModificationException {
 
 		Preconditions.checkNotNull(part, "Query part must be not null!");
@@ -1051,20 +1061,20 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * 
 	 * @param fragmentationParameters
 	 *            The parameters for fragmentation.
-	 * @return A new instance of {@link AbstractFragmentationHelper}.
+	 * @return A new instance of {@link AbstractFragmentationParameterHelper}.
 	 */
-	protected abstract AbstractFragmentationHelper createFragmentationHelper(
+	protected abstract AbstractFragmentationParameterHelper createFragmentationHelper(
 			List<String> fragmentationParameters);
 
 	/**
 	 * Creates the information bundle for the fragmentation.
 	 * 
 	 * @param helper
-	 *            The {@link AbstractFragmentationHelper} instance.
+	 *            The {@link AbstractFragmentationParameterHelper} instance.
 	 * @return A new instance of {@link FragmentationInfoBundle}.
 	 */
 	protected abstract FragmentationInfoBundle createFragmentationInfoBundle(
-			AbstractFragmentationHelper helper);
+			AbstractFragmentationParameterHelper helper);
 
 	/**
 	 * Special handling for a query part (e.g., the usage of partial
@@ -1086,7 +1096,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @param partsOfOCopiedTarget
 	 *            The query parts containing the copied targets.
 	 * @param helper
-	 *            The {@link AbstractFragmentationHelper} instance.
+	 *            The {@link AbstractFragmentationParameterHelper} instance.
 	 * @param bundle
 	 *            The {@link FragmentationInfoBundle} instance.
 	 * @throws QueryPartModificationException
@@ -1101,7 +1111,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			Collection<ILogicalQueryPart> partsOfCopiedSource,
 			ILogicalQueryPart partOfOriginalTarget,
 			Collection<ILogicalQueryPart> partsOfCopiedTargets,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle)
+			AbstractFragmentationParameterHelper helper,
+			FragmentationInfoBundle bundle)
 			throws QueryPartModificationException;
 
 	/**
@@ -1141,7 +1152,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			throws QueryPartModificationException {
 
 		// The helper instance
-		AbstractFragmentationHelper helper = this
+		AbstractFragmentationParameterHelper helper = this
 				.createFragmentationHelper(modificatorParameters);
 
 		// The bundle of informations for the fragmentation

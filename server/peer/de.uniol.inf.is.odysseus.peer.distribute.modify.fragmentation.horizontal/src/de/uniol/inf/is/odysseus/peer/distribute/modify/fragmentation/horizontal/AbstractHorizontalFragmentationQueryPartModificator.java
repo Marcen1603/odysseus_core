@@ -11,9 +11,10 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.FragmentationRuleHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.IFragmentationRule;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
@@ -34,16 +35,17 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator
 		extends AbstractFragmentationQueryPartModificator {
 
 	@Override
-	protected AbstractFragmentationHelper createFragmentationHelper(
+	protected AbstractFragmentationParameterHelper createFragmentationHelper(
 			List<String> fragmentationParameters) {
 
-		return new HorizontalFragmentationHelper(fragmentationParameters);
+		return new HorizontalFragmentationParameterHelper(
+				fragmentationParameters);
 
 	}
 
 	@Override
 	protected FragmentationInfoBundle createFragmentationInfoBundle(
-			AbstractFragmentationHelper helper) {
+			AbstractFragmentationParameterHelper helper) {
 
 		return new FragmentationInfoBundle();
 
@@ -67,7 +69,8 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator
 			Collection<ILogicalQueryPart> partsOfCopiedSource,
 			ILogicalQueryPart partOfOriginalTarget,
 			Collection<ILogicalQueryPart> partsOfCopiedTargets,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle)
+			AbstractFragmentationParameterHelper helper,
+			FragmentationInfoBundle bundle)
 			throws QueryPartModificationException {
 
 		// Creation of a fragment operator if needed
@@ -75,9 +78,9 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator
 		if (copiedSources.size() > 1 && subscription.isPresent()) {
 
 			ILogicalOperator fragmentOperator = this.insertFragmentOperator(
-					copiedSources, copiedTargets.iterator().next(), partOfOriginalTarget,
-					partsOfCopiedTargets.iterator().next(), subscription.get(),
-					bundle);
+					copiedSources, copiedTargets.iterator().next(),
+					partOfOriginalTarget, partsOfCopiedTargets.iterator()
+							.next(), subscription.get(), bundle);
 			fragmentOperator.unsubscribeFromAllSources();
 			optFragmentOperator = Optional.of(fragmentOperator);
 
@@ -125,7 +128,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator
 		// Handling of aggregations
 		for (ILogicalOperator operator : partOfOriginalTarget.getOperators()) {
 
-			Collection<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> rules = AbstractFragmentationHelper
+			Collection<IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator>> rules = FragmentationRuleHelper
 					.getFragmentationRules(this, operator);
 
 			for (IFragmentationRule<AbstractFragmentationQueryPartModificator, ILogicalOperator> rule : rules) {
@@ -144,26 +147,30 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator
 				// Subscribe the new aggregation
 				reunionOperator.subscribeSink(specialOperator, 0, 0,
 						reunionOperator.getOutputSchema());
-				specialOperator.setOutputSchema(specialOperator.getOutputSchema(0));
+				specialOperator.setOutputSchema(specialOperator
+						.getOutputSchema(0));
 				if (optFragmentOperator.isPresent()) {
 
 					specialOperator.subscribeSink(optFragmentOperator.get(), 0,
 							0, reunionOperator.getOutputSchema());
 
 				} else {
-					
+
 					int sinkInPort = 0;
-					if(subscription.isPresent()) {
-						
+					if (subscription.isPresent()) {
+
 						sinkInPort = subscription.get().getSourceOutPort();
-						
+
 					}
-					specialOperator.subscribeSink(copiedSources.iterator().next(), 0, sinkInPort, reunionOperator.getOutputSchema());
-					
+					specialOperator.subscribeSink(copiedSources.iterator()
+							.next(), 0, sinkInPort, reunionOperator
+							.getOutputSchema());
+
 				}
 
 				// Add the aggregation to the reunion query part
-				copiedPartsOfReunionOperator.iterator().next().addOperator(specialOperator);
+				copiedPartsOfReunionOperator.iterator().next()
+						.addOperator(specialOperator);
 				break;
 
 			}

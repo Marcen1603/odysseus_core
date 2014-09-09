@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.AbstractHorizontalFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range.logicaloperator.RangeFragmentAO;
@@ -38,27 +38,27 @@ public class RangeHorizontalFragmentationQueryPartModificator extends
 	}
 	
 	@Override
-	protected AbstractFragmentationHelper createFragmentationHelper(
+	protected AbstractFragmentationParameterHelper createFragmentationHelper(
 			List<String> fragmentationParameters) {
 
-		return new RangeHorizontalFragmentationHelper(fragmentationParameters);
+		return new RangeHorizontalFragmentationParameterHelper(fragmentationParameters);
 
 	}
 
 	@Override
 	protected FragmentationInfoBundle createFragmentationInfoBundle(
-			AbstractFragmentationHelper helper) {
+			AbstractFragmentationParameterHelper helper) {
 
 		Preconditions.checkNotNull(helper,
 				"Fragmentation helper must be not null!");
 		Preconditions.checkArgument(
-				helper instanceof RangeHorizontalFragmentationHelper,
+				helper instanceof RangeHorizontalFragmentationParameterHelper,
 				"The fragmentation helper must be a RangeFragmentationHelper!");
 
 		RangeHorizontalFragmentationInfoBundle bundle = new RangeHorizontalFragmentationInfoBundle();
-		bundle.setAttributeForRanges(((RangeHorizontalFragmentationHelper) helper)
+		bundle.setAttributeForRanges(((RangeHorizontalFragmentationParameterHelper) helper)
 				.determineFullQualifiedAttribute());
-		bundle.setRanges(((RangeHorizontalFragmentationHelper) helper)
+		bundle.setRanges(((RangeHorizontalFragmentationParameterHelper) helper)
 				.determineRanges());
 		return bundle;
 

@@ -5,15 +5,15 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.HorizontalFragmentationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.HorizontalFragmentationParameterHelper;
 
 /**
  * An fragmentation helper provides useful methods for fragmentation.
  * 
  * @author Michael Brand
  */
-public class RangeHorizontalFragmentationHelper extends
-		HorizontalFragmentationHelper {
+public class RangeHorizontalFragmentationParameterHelper extends
+		HorizontalFragmentationParameterHelper {
 
 	/**
 	 * The index of the parameter identifying the attribute to build ranges.
@@ -33,7 +33,7 @@ public class RangeHorizontalFragmentationHelper extends
 	 * @param strategy
 	 *            The fragmentation strategy.
 	 */
-	public RangeHorizontalFragmentationHelper(
+	public RangeHorizontalFragmentationParameterHelper(
 			List<String> fragmentationParameters) {
 
 		super(fragmentationParameters);
@@ -49,11 +49,11 @@ public class RangeHorizontalFragmentationHelper extends
 
 		Preconditions
 				.checkArgument(
-						this.mFragmentationParameters.size() >= RangeHorizontalFragmentationHelper.PARAMETER_INDEX_ATTRIBUTE,
+						this.mFragmentationParameters.size() >= RangeHorizontalFragmentationParameterHelper.PARAMETER_INDEX_ATTRIBUTE,
 						"Attribute to build ranges must be given!");
 
 		return this.mFragmentationParameters
-				.get(RangeHorizontalFragmentationHelper.PARAMETER_INDEX_ATTRIBUTE);
+				.get(RangeHorizontalFragmentationParameterHelper.PARAMETER_INDEX_ATTRIBUTE);
 
 	}
 
@@ -66,18 +66,19 @@ public class RangeHorizontalFragmentationHelper extends
 
 		Preconditions
 				.checkArgument(
-						this.mFragmentationParameters.size() >= RangeHorizontalFragmentationHelper.PARAMETER_INDEX_FIRST_RANGE,
+						this.mFragmentationParameters.size() >= RangeHorizontalFragmentationParameterHelper.PARAMETER_INDEX_FIRST_RANGE,
 						"Lower limits for the ranges must be given!");
 
-		List<String> ranges = this.mFragmentationParameters.subList(
-				RangeHorizontalFragmentationHelper.PARAMETER_INDEX_FIRST_RANGE,
-				this.mFragmentationParameters.size());
+		List<String> ranges = this.mFragmentationParameters
+				.subList(
+						RangeHorizontalFragmentationParameterHelper.PARAMETER_INDEX_FIRST_RANGE,
+						this.mFragmentationParameters.size());
 		return ranges;
 
 	}
 
 	@Override
-	public int determineDegreeOfFragmentation()
+	public int determineDegreeOfModification()
 			throws QueryPartModificationException {
 
 		// Preconditions

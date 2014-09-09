@@ -9,8 +9,8 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationHelper;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.HashHorizontalFragmentationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.HashHorizontalFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.HashHorizontalFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.AbstractStateMapHorizontalFragmentationRule;
 
@@ -28,7 +28,7 @@ public class StateMapHashHorizontalFragmentationRule
 	@Override
 	public boolean canOperatorBePartOfFragments(
 			HashHorizontalFragmentationQueryPartModificator strategy,
-			StateMapAO operator, AbstractFragmentationHelper helper) {
+			StateMapAO operator, AbstractFragmentationParameterHelper helper) {
 
 		return !this.needSpecialHandlingForQueryPart(null, operator, helper);
 
@@ -36,13 +36,13 @@ public class StateMapHashHorizontalFragmentationRule
 
 	@Override
 	public boolean needSpecialHandlingForQueryPart(ILogicalQueryPart part,
-			StateMapAO operator, AbstractFragmentationHelper helper) {
+			StateMapAO operator, AbstractFragmentationParameterHelper helper) {
 
 		Preconditions.checkArgument(
-				helper instanceof HashHorizontalFragmentationHelper,
+				helper instanceof HashHorizontalFragmentationParameterHelper,
 				"Fragmentation helper must be a HashFragmentationHelper");
 
-		Optional<List<String>> attributes = ((HashHorizontalFragmentationHelper) helper)
+		Optional<List<String>> attributes = ((HashHorizontalFragmentationParameterHelper) helper)
 				.determineKeyAttributes();
 		if (!attributes.isPresent()) {
 

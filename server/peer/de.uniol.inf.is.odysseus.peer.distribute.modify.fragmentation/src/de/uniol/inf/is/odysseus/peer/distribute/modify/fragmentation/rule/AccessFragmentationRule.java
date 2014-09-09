@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
 
@@ -21,7 +21,7 @@ public class AccessFragmentationRule
 	@Override
 	public boolean canOperatorBePartOfFragments(
 			AbstractFragmentationQueryPartModificator strategy,
-			AbstractAccessAO operator, AbstractFragmentationHelper helper) {
+			AbstractAccessAO operator, AbstractFragmentationParameterHelper helper) {
 
 		return false;
 
@@ -29,7 +29,7 @@ public class AccessFragmentationRule
 
 	@Override
 	public boolean needSpecialHandlingForQueryPart(ILogicalQueryPart part,
-			AbstractAccessAO operator, AbstractFragmentationHelper helper) {
+			AbstractAccessAO operator, AbstractFragmentationParameterHelper helper) {
 
 		return false;
 
@@ -37,7 +37,7 @@ public class AccessFragmentationRule
 
 	@Override
 	public AbstractAccessAO specialHandling(ILogicalQueryPart part,
-			AbstractFragmentationHelper helper, FragmentationInfoBundle bundle)
+			AbstractFragmentationParameterHelper helper, FragmentationInfoBundle bundle)
 			throws QueryPartModificationException {
 
 		// Nothing to do

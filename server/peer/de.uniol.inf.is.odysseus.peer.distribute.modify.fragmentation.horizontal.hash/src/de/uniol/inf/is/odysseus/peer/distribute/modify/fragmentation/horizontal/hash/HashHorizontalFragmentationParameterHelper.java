@@ -8,21 +8,21 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.HorizontalFragmentationHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.HorizontalFragmentationParameterHelper;
 
 /**
  * An fragmentation helper provides useful methods for fragmentation.
  * 
  * @author Michael Brand
  */
-public class HashHorizontalFragmentationHelper extends
-		HorizontalFragmentationHelper {
+public class HashHorizontalFragmentationParameterHelper extends
+		HorizontalFragmentationParameterHelper {
 
 	/**
 	 * The logger for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(HashHorizontalFragmentationHelper.class);
+			.getLogger(HashHorizontalFragmentationParameterHelper.class);
 
 	/**
 	 * The index of the parameter identifying the first attribute to build a
@@ -38,7 +38,7 @@ public class HashHorizontalFragmentationHelper extends
 	 * @param strategy
 	 *            The fragmentation strategy.
 	 */
-	public HashHorizontalFragmentationHelper(
+	public HashHorizontalFragmentationParameterHelper(
 			List<String> fragmentationParameters) {
 
 		super(fragmentationParameters);
@@ -53,9 +53,9 @@ public class HashHorizontalFragmentationHelper extends
 	 */
 	public Optional<List<String>> determineKeyAttributes() {
 
-		if (this.mFragmentationParameters.size() <= HashHorizontalFragmentationHelper.PARAMETER_INDEX_FIRST_HASHKEY_ATTRIBUTE) {
+		if (this.mFragmentationParameters.size() <= HashHorizontalFragmentationParameterHelper.PARAMETER_INDEX_FIRST_HASHKEY_ATTRIBUTE) {
 
-			HashHorizontalFragmentationHelper.LOG
+			HashHorizontalFragmentationParameterHelper.LOG
 					.debug("Found no attributes to form a key.");
 			return Optional.absent();
 
@@ -64,9 +64,9 @@ public class HashHorizontalFragmentationHelper extends
 		List<String> attributes = Lists
 				.newArrayList(this.mFragmentationParameters
 						.subList(
-								HashHorizontalFragmentationHelper.PARAMETER_INDEX_FIRST_HASHKEY_ATTRIBUTE,
+								HashHorizontalFragmentationParameterHelper.PARAMETER_INDEX_FIRST_HASHKEY_ATTRIBUTE,
 								this.mFragmentationParameters.size()));
-		HashHorizontalFragmentationHelper.LOG.debug("Found '" + attributes
+		HashHorizontalFragmentationParameterHelper.LOG.debug("Found '" + attributes
 				+ "' as attributes to form a key.");
 		return Optional.of(attributes);
 
