@@ -89,4 +89,13 @@ public class OptionMap {
 		return unread;
 	}
 
+	public List<String> checkRequired(String... keys){
+		List<String> missing = new LinkedList<String>();
+		for (String k:keys){
+			if (!containsKey(k)){
+				missing.add(k);
+			}
+		}
+		return missing;
+	}
 }
