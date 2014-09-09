@@ -46,6 +46,7 @@ abstract public class AbstractByteBufferHandler<T> extends AbstractProtocolHandl
         else {
             byteOrder = ByteOrder.BIG_ENDIAN;
         }
+        exportMetadata = optionsMap.getBoolean(EXPORT_METADATA, Boolean.FALSE);
     }
 
 	public ByteOrder getByteOrder() {
