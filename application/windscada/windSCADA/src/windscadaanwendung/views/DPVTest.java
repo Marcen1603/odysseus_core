@@ -22,7 +22,6 @@ public class DPVTest extends DashboardPartView {
 		super.createPartControl(parent);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot workspaceRoot = workspace.getRoot();
-		workspace.newProjectDescription("GUI");
 		IProject project = workspaceRoot.getProject("GUI");
 		try {
 			if(!project.exists()) {
@@ -30,7 +29,6 @@ public class DPVTest extends DashboardPartView {
 			}
 			project.open(null);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		dashboardPartFile = project.getFile("BidAgg.prt");

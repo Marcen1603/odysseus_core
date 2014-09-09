@@ -1,8 +1,0 @@
-#PARSER PQL
-#RUNQUERY
-///Your first pql-query here
-preis = PROJECT({ATTRIBUTES=['price']},nexmark:bid)
-fenster = TIMEWINDOW({size = 10000,
-					 slide=10000}, preis)
-out = AGGREGATE({aggregations=[['AVG','price','AVG_price', 'Double']]},fenster)
-///result = DATABASESINK({connection='con1',table='frrrt'},out)
