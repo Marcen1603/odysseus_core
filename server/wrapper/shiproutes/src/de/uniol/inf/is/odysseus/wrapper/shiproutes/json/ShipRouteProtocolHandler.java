@@ -7,7 +7,6 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.slf4j.Logger;
@@ -19,6 +18,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
@@ -52,21 +52,22 @@ public class ShipRouteProtocolHandler extends
 
 	public ShipRouteProtocolHandler(ITransportDirection direction,
 			IAccessPattern access,
-			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
-		super(direction, access, dataHandler);
+			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler,
+			OptionMap optionsMap) {
+		super(direction, access, dataHandler, optionsMap);
 		shipRouteRootElements = new ArrayList<IShipRouteRootElement>();
+		if (optionsMap.containsKey("delay")) {
+			delay = Integer.parseInt(optionsMap.get("delay"));
+		}
 	}
 
 	@Override
 	public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(
 			ITransportDirection direction, IAccessPattern access,
-			Map<String, String> options,
+			OptionMap options,
 			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
 		ShipRouteProtocolHandler instance = new ShipRouteProtocolHandler(
-				direction, access, dataHandler);
-		instance.setOptionsMap(options);
-		if (options.containsKey("delay"))
-			instance.delay = Integer.parseInt(options.get("delay"));
+				direction, access, dataHandler, options);
 		return instance;
 	}
 
@@ -113,13 +114,14 @@ public class ShipRouteProtocolHandler extends
 
 		String currentString = this.reader.readLine().trim();
 
-		if (parseRouteElement(currentString)){
+		if (parseRouteElement(currentString)) {
 			if (!shipRouteRootElements.isEmpty()) {
 				this.next = this.shipRouteRootElements.get(0).toMap();
-				this.next.setMetadata("object", this.shipRouteRootElements.get(0));
+				this.next.setMetadata("object",
+						this.shipRouteRootElements.get(0));
 				shipRouteRootElements.clear();
 				return true;
-			}			
+			}
 		}
 
 		return false;
@@ -150,16 +152,16 @@ public class ShipRouteProtocolHandler extends
 
 					switch (itemType) {
 					case Route:
-						shipRouteRootElements.add(gson.fromJson(iecMessageBuffer,
-								RouteDataItem.class));
+						shipRouteRootElements.add(gson.fromJson(
+								iecMessageBuffer, RouteDataItem.class));
 						break;
 					case MPlan:
-						shipRouteRootElements.add(gson.fromJson(iecMessageBuffer,
-								ManoeuvrePlanDataItem.class));
+						shipRouteRootElements.add(gson.fromJson(
+								iecMessageBuffer, ManoeuvrePlanDataItem.class));
 						break;
 					case Prediction:
-						shipRouteRootElements.add(gson.fromJson(iecMessageBuffer,
-								PredictionDataItem.class));
+						shipRouteRootElements.add(gson.fromJson(
+								iecMessageBuffer, PredictionDataItem.class));
 						break;
 					default:
 						break;
@@ -190,15 +192,16 @@ public class ShipRouteProtocolHandler extends
 		message.get(destinationArray);
 		String shipRoutePacket = (new String(destinationArray)).trim();
 
-		if (parseRouteElement(shipRoutePacket)){
+		if (parseRouteElement(shipRoutePacket)) {
 			if (!shipRouteRootElements.isEmpty()) {
 				for (IShipRouteRootElement element : shipRouteRootElements) {
-					KeyValueObject<? extends IMetaAttribute> map = element.toMap();
+					KeyValueObject<? extends IMetaAttribute> map = element
+							.toMap();
 					map.setMetadata("object", element);
-					getTransfer().transfer(map);					
+					getTransfer().transfer(map);
 				}
 				shipRouteRootElements.clear();
-			}			
+			}
 		}
 
 	}

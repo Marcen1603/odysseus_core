@@ -3,8 +3,7 @@ package de.uniol.inf.is.odysseus.wrapper.plugwise;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -25,12 +24,20 @@ public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	public PlugwiseProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, Map<String, String> options,
+			IAccessPattern access, OptionMap options,
 			IDataHandler<T> dataHandler) {
-		super(direction, access, dataHandler);
-		init(options);
+		super(direction, access, dataHandler, options);
+		init_internal();
 	}
-
+	
+	private void init_internal() {
+		if (optionsMap.containsKey(CIRCLE_MAC)) {
+			circleMac = optionsMap.get(CIRCLE_MAC);
+		} else {
+			throw new IllegalArgumentException("No Circle Mac defined!");
+		}
+	}
+	
 	@Override
 	public ITransportExchangePattern getExchangePattern() {
 		if (this.getDirection().equals(ITransportDirection.IN)) {
@@ -39,13 +46,7 @@ public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		return ITransportExchangePattern.OutOnly;
 	}
 
-	private void init(Map<String, String> options) {
-		if (options.containsKey(CIRCLE_MAC)) {
-			circleMac = options.get(CIRCLE_MAC);
-		} else {
-			throw new IllegalArgumentException("No Circle Mac defined!");
-		}
-	}
+
 
 	@SuppressWarnings("unused")
 	private byte[] getMessage(byte[] id, byte[] mac, byte[] args){
@@ -113,7 +114,7 @@ public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
-			IAccessPattern access, Map<String, String> options,
+			IAccessPattern access, OptionMap options,
 			IDataHandler<T> dataHandler) {
 		return new PlugwiseProtocolHandler<>(direction, access, options,
 				dataHandler);

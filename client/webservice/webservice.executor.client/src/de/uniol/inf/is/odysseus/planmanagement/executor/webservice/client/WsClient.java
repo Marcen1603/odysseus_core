@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
@@ -607,11 +608,11 @@ public class WsClient implements IExecutor, IClientExecutor {
 				outputSchema);
 		InetSocketAddress adr = (InetSocketAddress) ((IClientExecutor) exec)
 				.getSocketConnectionInformation(queryId, caller);
-		Map<String, String> options = new HashMap<>();
-		options.put("port", "" + adr.getPort());
-		options.put("host", adr.getHostName());
+		OptionMap options = new OptionMap();
+		options.setOption("port", "" + adr.getPort());
+		options.setOption("host", adr.getHostName());
 		// TODO: Send logininfo to server
-		options.put("logininfo", caller.getToken() + "\n");
+		options.setOption("logininfo", caller.getToken() + "\n");
 		// TODO username and password get from anywhere
 		IProtocolHandler h = ProtocolHandlerRegistry.getInstance(
 				"SizeByteBuffer", ITransportDirection.IN, IAccessPattern.PUSH,

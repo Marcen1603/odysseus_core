@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Map;
-
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
 import com.ghgande.j2mod.modbus.msg.ReadInputDiscretesRequest;
@@ -14,6 +12,7 @@ import com.ghgande.j2mod.modbus.msg.ReadInputDiscretesResponse;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 
 import de.uniol.inf.is.odysseus.core.collection.BitVector;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -43,12 +42,12 @@ public class ModbusTCPTransportHandler extends AbstractSimplePullTransportHandle
 	}
 	
 	public ModbusTCPTransportHandler(IProtocolHandler<?> protocolHandler,
-			Map<String, String> options) {
+			OptionMap options) {
 		super(protocolHandler, options);
 		init(options);
 	}
 
-	private void init(Map<String, String> options) {
+	private void init(OptionMap options) {
 		port = DEFAULT_PORT;
 		String slaveStr;
 		if (options.containsKey(PORT)){
@@ -78,7 +77,7 @@ public class ModbusTCPTransportHandler extends AbstractSimplePullTransportHandle
 
 	@Override
 	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		return new ModbusTCPTransportHandler(protocolHandler, options);
 	}
 

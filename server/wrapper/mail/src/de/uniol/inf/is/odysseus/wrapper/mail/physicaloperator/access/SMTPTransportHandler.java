@@ -6,7 +6,6 @@ package de.uniol.inf.is.odysseus.wrapper.mail.physicaloperator.access;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -20,6 +19,7 @@ import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -60,7 +60,7 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
         super();
     }
 
-    public SMTPTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+    public SMTPTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
         super(protocolHandler, options);
         init(options);
     }
@@ -83,12 +83,12 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
     }
 
     @Override
-    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
+    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
         final SMTPTransportHandler handler = new SMTPTransportHandler(protocolHandler, options);
         return handler;
     }
 
-    private void init(final Map<String, String> options) {
+    private void init(final OptionMap options) {
         if (options.containsKey(SMTPTransportHandler.HOST)) {
             this.setHost(options.get(SMTPTransportHandler.HOST));
         }

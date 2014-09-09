@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
-import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -40,7 +40,7 @@ public interface ITransportHandler {
 	 * @param options A set of key-value pairs, can be used to configure the handler
 	 * @return
 	 */
-    public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options);
+    public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options);
 
     /**
      * This method is used to retrieve the name of the handler, is used for registering

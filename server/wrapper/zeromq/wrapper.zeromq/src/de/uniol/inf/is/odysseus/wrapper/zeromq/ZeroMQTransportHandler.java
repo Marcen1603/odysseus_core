@@ -5,11 +5,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -64,12 +63,12 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 	}
 	
 	public ZeroMQTransportHandler(IProtocolHandler<?> protocolHandler,
-			Map<String, String> options) {
+			OptionMap options) {
 		super(protocolHandler, options);
 		init(options);
 	}
 
-	private void init(Map<String, String> options) {
+	private void init(OptionMap options) {
 		if (options.containsKey(HOST)) {
 			host = options.get(HOST);
 		}
@@ -147,7 +146,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		return new ZeroMQTransportHandler(protocolHandler, options);
 	}
 

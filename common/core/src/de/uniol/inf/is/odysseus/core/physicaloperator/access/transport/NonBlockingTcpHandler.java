@@ -20,8 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.IConnection;
@@ -48,7 +47,7 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
         super();
     }
 
-    public NonBlockingTcpHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+    public NonBlockingTcpHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
         super(protocolHandler, options);
         try {
             NonBlockingTcpHandler.nioConnection = NioConnection.getInstance();
@@ -74,7 +73,7 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
     }
 
     @Override
-    public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+    public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) {
         NonBlockingTcpHandler handler = new NonBlockingTcpHandler(protocolHandler, options);
         return handler;
     }

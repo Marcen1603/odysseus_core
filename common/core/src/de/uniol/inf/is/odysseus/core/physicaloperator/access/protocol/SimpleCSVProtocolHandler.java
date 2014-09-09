@@ -15,11 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -35,8 +34,8 @@ public class SimpleCSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 	}
 
 	public SimpleCSVProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler) {
-		super(direction, access, dataHandler);
+			IAccessPattern access, IDataHandler<T> dataHandler, OptionMap optionsMap) {
+		super(direction, access, dataHandler, optionsMap);
 	}
 
 	@Override
@@ -56,11 +55,10 @@ public class SimpleCSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
-			IAccessPattern access, Map<String, String> options,
+			IAccessPattern access, OptionMap options,
 			IDataHandler<T> dataHandler) {
 		SimpleCSVProtocolHandler<T> instance = new SimpleCSVProtocolHandler<T>(
-				direction, access, dataHandler);
-		instance.init(options);
+				direction, access, dataHandler, options);
 		return instance;
 	}
 

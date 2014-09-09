@@ -1,8 +1,7 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
@@ -12,10 +11,9 @@ public class NoProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public static final String NAME = "None";
 
 	public NoProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, Map<String, String> options,
+			IAccessPattern access, OptionMap options,
 			IDataHandler<T> dataHandler) {
-		super(direction, access, dataHandler);
-		setOptionsMap(options);
+		super(direction, access, dataHandler, options);
 	}
 	
 	public NoProtocolHandler() {
@@ -23,7 +21,7 @@ public class NoProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
-			IAccessPattern access, Map<String, String> options,
+			IAccessPattern access, OptionMap options,
 			IDataHandler<T> dataHandler) {
 		return new NoProtocolHandler<>(direction, access, options, dataHandler);
 	}

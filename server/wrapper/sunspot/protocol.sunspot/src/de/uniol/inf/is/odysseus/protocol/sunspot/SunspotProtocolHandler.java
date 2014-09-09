@@ -19,8 +19,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -42,8 +41,8 @@ public class SunspotProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	public SunspotProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler) {
-		super(direction, access, dataHandler);
+			IAccessPattern access, IDataHandler<T> dataHandler, OptionMap optionsMap) {
+		super(direction, access, dataHandler, optionsMap);
 	}
 
 	/*
@@ -104,13 +103,10 @@ public class SunspotProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	 */
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
-			IAccessPattern access, Map<String, String> options,
+			IAccessPattern access, OptionMap options,
 			IDataHandler<T> dataHandler) {
 		SunspotProtocolHandler<T> instance = new SunspotProtocolHandler<T>(
-				direction, access, dataHandler);
-
-		instance.setOptionsMap(options);
-
+				direction, access, dataHandler, options);
 		return instance;
 	}
 

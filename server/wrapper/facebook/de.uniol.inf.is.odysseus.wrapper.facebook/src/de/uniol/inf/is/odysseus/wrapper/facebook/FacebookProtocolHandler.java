@@ -12,13 +12,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
@@ -47,9 +47,8 @@ public class FacebookProtocolHandler extends
 	}
 	
 	public FacebookProtocolHandler(
-			ITransportDirection direction, IAccessPattern access, IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
-		super(direction, access,dataHandler);
-		
+			ITransportDirection direction, IAccessPattern access, IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler,OptionMap optionsMap) {
+		super(direction, access,dataHandler,optionsMap);
 	}
 
 	@Override
@@ -136,11 +135,10 @@ public class FacebookProtocolHandler extends
 	@Override
 	public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(
 			ITransportDirection direction, IAccessPattern access,
-			Map<String, String> options,
+			OptionMap options,
 			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
 
-		FacebookProtocolHandler instance = new FacebookProtocolHandler(direction, access, dataHandler);
-		instance.setOptionsMap(options);
+		FacebookProtocolHandler instance = new FacebookProtocolHandler(direction, access, dataHandler,options);
 		return instance;
 	}
 

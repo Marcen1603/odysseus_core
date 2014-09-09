@@ -19,11 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -52,7 +51,7 @@ public class SystemTransportHandler extends AbstractPullTransportHandler {
 	/**
 	 * @param protocolHandler
 	 */
-	public SystemTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+	public SystemTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 		init(options);
 	}
@@ -64,13 +63,13 @@ public class SystemTransportHandler extends AbstractPullTransportHandler {
 
 	@Override
 	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		final SystemTransportHandler handler = new SystemTransportHandler(
 				protocolHandler, options);
 		return handler;
 	}
 
-	protected void init(Map<String, String> options) {
+	protected void init(OptionMap options) {
 		if (options.get("command") != null) {
 			setCommand(options.get("command"));
 		}

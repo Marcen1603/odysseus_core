@@ -21,8 +21,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.Map;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
@@ -39,6 +37,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -83,7 +82,7 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
     /**
      * @param protocolHandler
      */
-    public HTTPTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+    public HTTPTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
         super(protocolHandler, options);
         init(options);
     }
@@ -128,12 +127,12 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
     }
 
     @Override
-    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
+    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
         final HTTPTransportHandler handler = new HTTPTransportHandler(protocolHandler, options);
         return handler;
     }
 
-    protected void init(Map<String, String> options) {
+    protected void init(OptionMap options) {
         if (options.get("uri") != null) {
             setURI(options.get("uri"));
         }

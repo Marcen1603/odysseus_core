@@ -5,11 +5,10 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 public class SimpleUDPReceiveTransportHandler extends AbstractPushTransportHandler {
@@ -65,12 +64,12 @@ public class SimpleUDPReceiveTransportHandler extends AbstractPushTransportHandl
 		super();
 	}
 	
-	public SimpleUDPReceiveTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+	public SimpleUDPReceiveTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 	}
 	
 	@Override
-	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		
 		SimpleUDPReceiveTransportHandler handler = new SimpleUDPReceiveTransportHandler(protocolHandler, options);
 		if( options.containsKey("port")) {

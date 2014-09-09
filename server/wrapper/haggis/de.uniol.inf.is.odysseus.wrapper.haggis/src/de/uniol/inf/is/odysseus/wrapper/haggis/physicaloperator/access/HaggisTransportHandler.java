@@ -5,11 +5,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
@@ -58,7 +57,7 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
     /**
      * @param protocolHandler
      */
-    public HaggisTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+    public HaggisTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
         super(protocolHandler, options);
         init(options);
     }
@@ -69,12 +68,12 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
     }
 
     @Override
-    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
+    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
         final HaggisTransportHandler handler = new HaggisTransportHandler(protocolHandler, options);
         return handler;
     }
 
-    protected void init(Map<String, String> options) {
+    protected void init(OptionMap options) {
         if (options.get("listen") != null) {
             setListen(options.get("listen"));
         }

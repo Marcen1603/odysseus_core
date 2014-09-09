@@ -15,13 +15,12 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.test.sinks.physicaloperator;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
@@ -67,9 +66,9 @@ public class TICompareSink<T extends IStreamObject<? extends ITimeInterval>> ext
 			this.expected.clear();
 			this.inputdata.clear();
 			IDataHandler<T> dh = (IDataHandler<T>) DataHandlerRegistry.getDataHandler(this.dataHandler, getOutputSchema());
-			Map<String, String> options = new HashMap<>();
-			options.put(AbstractCSVHandler.DELIMITER, "|");
-			SimpleCSVProtocolHandler<T> csvreader = new SimpleCSVProtocolHandler<T>(ITransportDirection.IN, IAccessPattern.PULL, dh);
+			OptionMap options = new OptionMap();
+			options.setOption(AbstractCSVHandler.DELIMITER, "|");
+			SimpleCSVProtocolHandler<T> csvreader = new SimpleCSVProtocolHandler<T>(ITransportDirection.IN, IAccessPattern.PULL, dh, options);
 			csvreader = (SimpleCSVProtocolHandler<T>) csvreader.createInstance(ITransportDirection.IN, IAccessPattern.PULL, options, dh);
 			for (Pair<String, String> csv : expectedOriginals) {
 				T tuple = csvreader.convertLine(csv.getE1());

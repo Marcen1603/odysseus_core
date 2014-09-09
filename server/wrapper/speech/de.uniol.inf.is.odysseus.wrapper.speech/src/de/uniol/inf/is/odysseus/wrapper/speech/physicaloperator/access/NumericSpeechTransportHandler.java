@@ -18,11 +18,10 @@ package de.uniol.inf.is.odysseus.wrapper.speech.physicaloperator.access;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
@@ -44,7 +43,7 @@ public class NumericSpeechTransportHandler extends AbstractPushTransportHandler 
 
 	}
 
-	public NumericSpeechTransportHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+	public NumericSpeechTransportHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 		init(options);
 	}
@@ -55,13 +54,13 @@ public class NumericSpeechTransportHandler extends AbstractPushTransportHandler 
 
 	@Override
 	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		NumericSpeechTransportHandler handler = new NumericSpeechTransportHandler(
 				protocolHandler, options);
 		return handler;
 	}
 
-	private void init(Map<String, String> options) {
+	private void init(OptionMap options) {
 		URL configuration = SpeechTransportHandler.class
 				.getResource("numeric.config.xml");
 		if (options.containsKey("config")) {

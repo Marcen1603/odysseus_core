@@ -1,8 +1,7 @@
 package de.uniol.inf.is.odysseus.wrapper.webcrawler.physicaloperator.access;
 
 import java.util.ArrayList;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
@@ -36,12 +35,12 @@ public class WebCrawlerTransportHandler extends AbstractSimplePullTransportHandl
 			super();
 		}
 		
-		public WebCrawlerTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+		public WebCrawlerTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
 			super(protocolHandler, options);
 			init(options);
 		}
 
-		public void init(Map<String, String> options) {
+		public void init(OptionMap options) {
 			if (options.containsKey(DEPTH)) {
 				depth = options.get(DEPTH);
 			}
@@ -61,7 +60,7 @@ public class WebCrawlerTransportHandler extends AbstractSimplePullTransportHandl
 		}
 
 	@Override
-	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options)
+	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options)
 	{
 		final WebCrawlerTransportHandler handler = new WebCrawlerTransportHandler(protocolHandler, options);
 		return handler;

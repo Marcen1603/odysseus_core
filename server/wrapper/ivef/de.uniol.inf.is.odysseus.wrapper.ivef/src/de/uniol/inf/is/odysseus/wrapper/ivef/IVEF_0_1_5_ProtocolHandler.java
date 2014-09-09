@@ -11,19 +11,26 @@ import java.io.InputStreamReader;
 //import java.io.PrintWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.*;
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_LoginRequest;
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_LoginResponse;
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_Logout;
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_Ping;
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_Pong;
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_ServerStatus;
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_ServiceRequest;
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_VesselData;
 import de.uniol.inf.is.odysseus.wrapper.ivef.parser.IVEF_0_1_5_Parser;
 
 /**
@@ -70,8 +77,8 @@ public class IVEF_0_1_5_ProtocolHandler extends
 
 	public IVEF_0_1_5_ProtocolHandler(ITransportDirection direction,
 			IAccessPattern access,
-			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
-		super(direction, access, dataHandler);
+			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler, OptionMap options) {
+		super(direction, access, dataHandler, options);
 		this.parser = new IVEF_0_1_5_Parser();
 		this.m_loginRequest = new MSG_LoginRequest();
 		this.m_loginResponse = new MSG_LoginResponse();
@@ -81,17 +88,17 @@ public class IVEF_0_1_5_ProtocolHandler extends
 		this.m_serverStatus = new MSG_ServerStatus();
 		this.m_serviceRequest = new MSG_ServiceRequest();
 		this.m_vesselData = new MSG_VesselData();
+		if (options.containsKey("delay")) {
+			delay = options.getInt("delay",0);
+		}
 	}
 
 	@Override
 	public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(
 			ITransportDirection direction, IAccessPattern access,
-			Map<String, String> options,
+			OptionMap options,
 			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
-		IVEF_0_1_5_ProtocolHandler instance = new IVEF_0_1_5_ProtocolHandler(direction, access, dataHandler);
-		instance.setOptionsMap(options);
-		if (options.containsKey("delay")) 
-			instance.delay = Integer.parseInt(options.get("delay"));
+		IVEF_0_1_5_ProtocolHandler instance = new IVEF_0_1_5_ProtocolHandler(direction, access, dataHandler, options);
 		return instance;
 	}
 

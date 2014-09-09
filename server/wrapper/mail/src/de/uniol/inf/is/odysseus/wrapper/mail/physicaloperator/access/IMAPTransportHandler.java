@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.activation.CommandMap;
@@ -27,6 +26,7 @@ import javax.mail.search.SubjectTerm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -65,7 +65,7 @@ public class IMAPTransportHandler extends AbstractPullTransportHandler {
         super();
     }
 
-    public IMAPTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+    public IMAPTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
         super(protocolHandler, options);
         init(options);
     }
@@ -76,12 +76,12 @@ public class IMAPTransportHandler extends AbstractPullTransportHandler {
     }
 
     @Override
-    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
+    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
         final IMAPTransportHandler handler = new IMAPTransportHandler(protocolHandler, options);
         return handler;
     }
 
-    private void init(final Map<String, String> options) {
+    private void init(final OptionMap options) {
         if (options.containsKey(IMAPTransportHandler.HOST)) {
             this.setHost(options.get(IMAPTransportHandler.HOST));
         }

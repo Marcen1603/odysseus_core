@@ -6,11 +6,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
@@ -50,9 +49,49 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	public DocumentProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler) {
-		super(direction, access, dataHandler);
+			IAccessPattern access, IDataHandler<T> dataHandler, OptionMap optionsMap) {
+		super(direction, access, dataHandler, optionsMap);
+		init_internal();
 	}
+	
+	private void init_internal() {
+		OptionMap options = optionsMap;
+		if (options.containsKey("delay")) {
+			setDelay(Long.parseLong(options.get("delay")));
+		}
+		if (options.containsKey("nanodelay")) {
+			setNanodelay(Integer.parseInt(options.get("nanodelay")));
+		}
+		if (options.containsKey("delayeach")) {
+			setDelayeach(Integer.parseInt(options.get("delayeach")));
+		}
+
+		if (options.containsKey("dumpeachdocument")) {
+			dumpEachDocument = Integer
+					.parseInt(options.get("dumpeachdocument"));
+		}
+
+		if (options.containsKey("measureeachdocument")) {
+			measureEachDocument = Integer.parseInt(options
+					.get("measureeachdocument"));
+			measurements.setLength(0);
+		}
+
+		if (options.containsKey("lastdocument")) {
+			lastDocument = Integer.parseInt(options.get("lastdocument"));
+		}
+		if (options.containsKey("maxdocuments")) {
+			lastDocument = Integer.parseInt(options.get("maxdocuments"));
+		}
+		if (options.containsKey("debug")) {
+			debug = Boolean.parseBoolean(options.get("debug"));
+		}
+		if (options.containsKey("onedocpercall")){
+			oneDocPerCall = Boolean.parseBoolean(options.get("onedocpercall"));
+		}
+		lastDumpTime = System.currentTimeMillis();
+	}
+	
 
 	@Override
 	public void open() throws UnknownHostException, IOException {
@@ -184,13 +223,10 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
-			IAccessPattern access, Map<String, String> options,
+			IAccessPattern access, OptionMap options,
 			IDataHandler<T> dataHandler) {
 		DocumentProtocolHandler<T> instance = new DocumentProtocolHandler<T>(
-				direction, access, dataHandler);
-		instance.setOptionsMap(options);
-		instance.init(options);
-
+				direction, access, dataHandler, options);
 		return instance;
 	}
 
@@ -244,42 +280,7 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	}
 	
-	protected void init(Map<String, String> options) {
-		if (options.containsKey("delay")) {
-			setDelay(Long.parseLong(options.get("delay")));
-		}
-		if (options.containsKey("nanodelay")) {
-			setNanodelay(Integer.parseInt(options.get("nanodelay")));
-		}
-		if (options.containsKey("delayeach")) {
-			setDelayeach(Integer.parseInt(options.get("delayeach")));
-		}
 
-		if (options.containsKey("dumpeachdocument")) {
-			dumpEachDocument = Integer
-					.parseInt(options.get("dumpeachdocument"));
-		}
-
-		if (options.containsKey("measureeachdocument")) {
-			measureEachDocument = Integer.parseInt(options
-					.get("measureeachdocument"));
-			measurements.setLength(0);
-		}
-
-		if (options.containsKey("lastdocument")) {
-			lastDocument = Integer.parseInt(options.get("lastdocument"));
-		}
-		if (options.containsKey("maxdocuments")) {
-			lastDocument = Integer.parseInt(options.get("maxdocuments"));
-		}
-		if (options.containsKey("debug")) {
-			debug = Boolean.parseBoolean(options.get("debug"));
-		}
-		if (options.containsKey("onedocpercall")){
-			oneDocPerCall = Boolean.parseBoolean(options.get("onedocpercall"));
-		}
-		lastDumpTime = System.currentTimeMillis();
-	}
 
 	protected void delay() {
 		if (delayeach > 0) {

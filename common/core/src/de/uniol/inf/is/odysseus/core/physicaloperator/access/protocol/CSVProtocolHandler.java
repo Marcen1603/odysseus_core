@@ -16,8 +16,7 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.util.List;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -32,17 +31,16 @@ public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 	}
 
 	public CSVProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler) {
-		super(direction, access, dataHandler);
+			IAccessPattern access, IDataHandler<T> dataHandler,OptionMap optionsMap) {
+		super(direction, access, dataHandler, optionsMap);
+		init_internal();
 	}
 	
-	@Override
-	protected void init(Map<String, String> options) {
-		super.init(options);
-        if (options.containsKey(TEXT_DELIMITER)) {
-            textDelimiter = options.get(TEXT_DELIMITER).toCharArray()[0];
+	private void init_internal() {
+        if (optionsMap.containsKey(TEXT_DELIMITER)) {
+            textDelimiter = optionsMap.get(TEXT_DELIMITER).toCharArray()[0];
         } else {
-            textDelimiter = options.containsKey(CSV_TEXT_DELIMITER) ? options.get(CSV_TEXT_DELIMITER).toCharArray()[0] : "'".toCharArray()[0];
+            textDelimiter = optionsMap.containsKey(CSV_TEXT_DELIMITER) ? optionsMap.get(CSV_TEXT_DELIMITER).toCharArray()[0] : "'".toCharArray()[0];
         }
 	}
 
@@ -60,11 +58,10 @@ public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 	
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
-			IAccessPattern access, Map<String, String> options,
+			IAccessPattern access, OptionMap options,
 			IDataHandler<T> dataHandler) {
 		CSVProtocolHandler<T> instance = new CSVProtocolHandler<T>(direction,
-				access, dataHandler);
-		instance.init(options);
+				access, dataHandler, options);
 		return instance;
 	}
 

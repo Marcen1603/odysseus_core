@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.Map;
-
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DefaultConsumer;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -41,12 +40,12 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 	}
 	
 	public RabbitMQTransportHandler(IProtocolHandler<?> protocolHandler,
-			Map<String, String> options) {
+			OptionMap options) {
 		super(protocolHandler, options);
 		init(options);
 	}
 
-	private void init(Map<String, String> options) {
+	private void init(OptionMap options) {
 		// TODO: Check which options are optional and which one are required
 		if (options.containsKey(QUEUE_NAME)) {
 			queueName = options.get(QUEUE_NAME);
@@ -80,7 +79,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		return new RabbitMQTransportHandler(protocolHandler, options);
 	}
 

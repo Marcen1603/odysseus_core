@@ -4,11 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -35,21 +34,20 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 	/**
 	 * @param protocolHandler
 	 */
-	public FacebookTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String,String> options) {
+	public FacebookTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
+		init(options);
 	}
 	
 
 	@Override
 	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		final FacebookTransportHandler handler = new FacebookTransportHandler(protocolHandler, options);
-		handler.init(options);
 		return handler;
 	}
 
-	private void init(final Map<String, String> options) {
-		
+	private void init(OptionMap options) {
 		if (options.containsKey("accesstoken")) {
 			setAccessToken(options.get("accesstoken"));
 		}

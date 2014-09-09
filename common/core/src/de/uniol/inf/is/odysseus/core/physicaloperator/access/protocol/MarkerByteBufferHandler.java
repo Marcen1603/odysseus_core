@@ -19,46 +19,56 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferUtil;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 
-    private static final Logger    LOG = LoggerFactory.getLogger(MarkerByteBufferHandler.class);
-    protected ByteBufferHandler<T> objectHandler;
-    protected byte                 start;
-    protected byte                 end;
+	private static final Logger LOG = LoggerFactory
+			.getLogger(MarkerByteBufferHandler.class);
+	protected ByteBufferHandler<T> objectHandler;
+	protected byte start;
+	protected byte end;
 
-    public MarkerByteBufferHandler() {
-        super();
-    }
+	public MarkerByteBufferHandler() {
+		super();
+	}
 
-    public MarkerByteBufferHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler) {
-        super(direction, access, dataHandler);
-    }
+	public MarkerByteBufferHandler(ITransportDirection direction,
+			IAccessPattern access, IDataHandler<T> dataHandler,
+			OptionMap optionsMap) {
+		super(direction, access, dataHandler, optionsMap);
+		objectHandler = new ByteBufferHandler<T>(dataHandler);
+		start = Byte.parseByte(optionsMap.get("start"));
+		end = Byte.parseByte(optionsMap.get("end"));
+	}
 
-    @Override
-    public void open() throws UnknownHostException, IOException {
-        getTransportHandler().open();
-    }
+	@Override
+	public void open() throws UnknownHostException, IOException {
+		getTransportHandler().open();
+	}
 
-    @Override
-    public void close() throws IOException {
-        getTransportHandler().close();
-    }
+	@Override
+	public void close() throws IOException {
+		getTransportHandler().close();
+	}
 
-    @Override
-    public void write(T object) throws IOException {
+	@SuppressWarnings("rawtypes")
+	@Override
+	public void write(T object) throws IOException {
 		ByteBuffer buffer = ByteBuffer.allocate(1024);
-		getDataHandler().writeData(buffer, object);
+		ByteBufferUtil.toBuffer(buffer, (IStreamObject) object,
+				getDataHandler(), exportMetadata);
+		// getDataHandler().writeData(buffer, object);
 		buffer.flip();
 
 		int messageSizeBytes = buffer.remaining();
@@ -69,85 +79,78 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 		buffer.get(rawBytes, 4, messageSizeBytes);
 		insertInt(rawBytes, messageSizeBytes + 4, end);
 		getTransportHandler().send(rawBytes);
-    }
+	}
 
-    @Override
-    public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access,
-            Map<String, String> options, IDataHandler<T> dataHandler) {
-        MarkerByteBufferHandler<T> instance = new MarkerByteBufferHandler<T>(direction, access, dataHandler);
-        instance.setOptionsMap(options);
-        instance.objectHandler = new ByteBufferHandler<T>(dataHandler);
-        instance.start = Byte.parseByte(options.get("start"));
-        instance.end = Byte.parseByte(options.get("end"));
-        instance.setByteOrder(options.get("byteorder"));
-        return instance;
-    }
+	@Override
+	public IProtocolHandler<T> createInstance(ITransportDirection direction,
+			IAccessPattern access, OptionMap options,
+			IDataHandler<T> dataHandler) {
+		MarkerByteBufferHandler<T> instance = new MarkerByteBufferHandler<T>(
+				direction, access, dataHandler, options);
 
-    @Override
-    public String getName() {
-        return "MarkerByteBuffer";
-    }
+		return instance;
+	}
 
-    @Override
-    public void onConnect(ITransportHandler caller) {
-    }
+	@Override
+	public String getName() {
+		return "MarkerByteBuffer";
+	}
 
-    @Override
-    public void onDisonnect(ITransportHandler caller) {
-    }
+	@Override
+	public void onConnect(ITransportHandler caller) {
+	}
 
-    @Override
-    public void process(ByteBuffer message) {
-           int startPosition = 0;
-           while (message.remaining() > 0) {
-               byte value = message.get();
-               if (value == end) {
-                   int endPosition = message.position() - 2;
-                   message.position(startPosition);
-                   try {
-                       objectHandler.put(message, endPosition - message.position() + 1);
-                   }
-                   catch (IOException e) {
-                       LOG.error(e.getMessage(), e);
-                   }
-                   message.position(endPosition + 2);
-                   startPosition = message.position() + 1;
-                   T object = null;
-                   try {
-                       object = objectHandler.create();
-                   }
-                   catch (BufferUnderflowException e) {
-                       LOG.error(e.getMessage(), e);
-                   }
-                   catch (IOException e) {
-                       LOG.error(e.getMessage(), e);
-                   }
-                   catch (ClassNotFoundException e) {
-                       LOG.error(e.getMessage(), e);
-                   }
-                   if (object != null) {
-                       getTransfer().transfer(object);
-                   }
-                   else {
-                       LOG.error("Empty object");
-                   }
-               }
-               if (value == start) {
-                   objectHandler.clear();
-                   startPosition = message.position();
-               }
-           }
-           if (startPosition < message.limit()) {
-               message.position(startPosition);
-               try {
-                   objectHandler.put(message);
-               }
-               catch (IOException e) {
-                   LOG.error(e.getMessage(), e);
-               }
-           }
-    }
-    
+	@Override
+	public void onDisonnect(ITransportHandler caller) {
+	}
+
+	@Override
+	public void process(ByteBuffer message) {
+		int startPosition = 0;
+		while (message.remaining() > 0) {
+			byte value = message.get();
+			if (value == end) {
+				int endPosition = message.position() - 2;
+				message.position(startPosition);
+				try {
+					objectHandler.put(message, endPosition - message.position()
+							+ 1);
+				} catch (IOException e) {
+					LOG.error(e.getMessage(), e);
+				}
+				message.position(endPosition + 2);
+				startPosition = message.position() + 1;
+				T object = null;
+				try {
+					object = objectHandler.create();
+				} catch (BufferUnderflowException e) {
+					LOG.error(e.getMessage(), e);
+				} catch (IOException e) {
+					LOG.error(e.getMessage(), e);
+				} catch (ClassNotFoundException e) {
+					LOG.error(e.getMessage(), e);
+				}
+				if (object != null) {
+					getTransfer().transfer(object);
+				} else {
+					LOG.error("Empty object");
+				}
+			}
+			if (value == start) {
+				objectHandler.clear();
+				startPosition = message.position();
+			}
+		}
+		if (startPosition < message.limit()) {
+			message.position(startPosition);
+			try {
+				objectHandler.put(message);
+			} catch (IOException e) {
+				LOG.error(e.getMessage(), e);
+			}
+		}
+	}
+
 	private static void insertInt(byte[] destArray, int offset, int value) {
 		destArray[offset] = (byte) (value >>> 24);
 		destArray[offset + 1] = (byte) (value >>> 16);
@@ -157,13 +160,14 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
-		if(!(o instanceof MarkerByteBufferHandler)) {
+		if (!(o instanceof MarkerByteBufferHandler)) {
 			return false;
 		}
-		MarkerByteBufferHandler<?> other = (MarkerByteBufferHandler<?>)o;
-		if(this.start != other.getStart() ||
-				this.end != other.getEnd() ||
-				!this.byteOrder.toString().equals(other.getByteOrder().toString())) {
+		MarkerByteBufferHandler<?> other = (MarkerByteBufferHandler<?>) o;
+		if (this.start != other.getStart()
+				|| this.end != other.getEnd()
+				|| !this.byteOrder.toString().equals(
+						other.getByteOrder().toString())) {
 			return false;
 		}
 		return true;

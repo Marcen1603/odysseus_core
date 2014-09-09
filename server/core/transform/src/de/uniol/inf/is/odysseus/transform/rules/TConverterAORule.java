@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -35,6 +36,8 @@ public class TConverterAORule extends AbstractTransformationRule<ConverterAO> {
 			insertTimestampAO(operator, operator.getDateFormat());
 		}
 		
+		OptionMap options = new OptionMap(operator.getOptionMap());
+		
 		IDataHandler<?> outputDataHandler = DataHandlerRegistry.getDataHandler(
 				operator.getOutputDataHandler(), operator.getOutputSchema());
 		if (outputDataHandler == null) {
@@ -56,7 +59,7 @@ public class TConverterAORule extends AbstractTransformationRule<ConverterAO> {
 		IProtocolHandler<?> protocolHandler = ProtocolHandlerRegistry
 				.getInstance(operator.getProtocolHandler(),
 						ITransportDirection.IN, IAccessPattern.PULL,
-						operator.getOptionMap(), outputDataHandler);
+						options, outputDataHandler);
 
 		if (protocolHandler == null) {
 			LOG.error("No protocol handler {} found.",

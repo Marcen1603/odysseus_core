@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.wrapper.inertiacube.transport;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -11,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sun.jna.Pointer;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -68,7 +68,7 @@ public class InertiaCubeTransportHandler extends AbstractPushTransportHandler  {
      * @param protocolHandler
      * Instance to copy.
      */
-    public InertiaCubeTransportHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+    public InertiaCubeTransportHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
         super(protocolHandler, options);
     }
 
@@ -79,7 +79,7 @@ public class InertiaCubeTransportHandler extends AbstractPushTransportHandler  {
 
 	@Override
 	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		InertiaCubeTransportHandler handler = new InertiaCubeTransportHandler(protocolHandler, options);
 		return handler;
 	}

@@ -6,8 +6,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class AbstractTransportHandlerDelegate<T>{
@@ -17,11 +16,11 @@ public class AbstractTransportHandlerDelegate<T>{
 	private final ITransportExchangePattern exchangePattern;
 	final private ITransportHandler callOnMe;
 	
-	private Map<String, String> optionsMap;
+	final private OptionMap optionsMap;
 	private SDFSchema schema;
 
 	
-	public AbstractTransportHandlerDelegate(ITransportExchangePattern exchangePattern, ITransportHandler callOnMe, Map<String, String> optionsMap) {
+	public AbstractTransportHandlerDelegate(ITransportExchangePattern exchangePattern, ITransportHandler callOnMe, OptionMap optionsMap) {
 		this.exchangePattern = exchangePattern;
 		this.callOnMe = callOnMe;
 		this.optionsMap = optionsMap;
@@ -131,13 +130,13 @@ public class AbstractTransportHandlerDelegate<T>{
      * based on the current configuration. This is useful for comparing and serialising different TransportHandler-instances.
      * @return
      */
-	public Map<String, String> getOptionsMap() {
+	public OptionMap getOptionsMap() {
 		return optionsMap;
 	}
 	
-	public void setOptionsMap(Map<String, String> options) {
-		this.optionsMap = options;
-	}
+//	public void setOptionsMap(Map<String, String> options) {
+//		this.optionsMap = options;
+//	}
 	
 	public void setSchema(SDFSchema schema) {
 		this.schema = schema;

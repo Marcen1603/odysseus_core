@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.wrapper.json;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +10,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.undercouch.bson4jackson.BsonFactory;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -21,17 +21,17 @@ public class BSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractJS
 	public static final String NAME = "BSON";
 	
 	public BSONProtocolHandler() {
-		this.init();
+		this.init_internal();
 	}
 	
 
 	public BSONProtocolHandler(
-			ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler) {
-		super(direction,access,dataHandler);
-		this.init();
+			ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler,OptionMap optionsMap) {
+		super(direction,access,dataHandler,optionsMap);
+		this.init_internal();
 	}
 	
-	private void init() {
+	private void init_internal() {
 		mapper = new ObjectMapper(new BsonFactory());
 		mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
 		this.name = "BSON";
@@ -40,10 +40,9 @@ public class BSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractJS
 	@Override
 	public IProtocolHandler<T> createInstance(
 			ITransportDirection direction, IAccessPattern access,
-			Map<String, String> options,
+			OptionMap options,
 			IDataHandler<T> dataHandler) {
-		BSONProtocolHandler<T> instance = new BSONProtocolHandler<T>(direction, access, dataHandler);
-		instance.setOptionsMap(options);
+		BSONProtocolHandler<T> instance = new BSONProtocolHandler<T>(direction, access, dataHandler, options);
 		return instance;
 	}
 	

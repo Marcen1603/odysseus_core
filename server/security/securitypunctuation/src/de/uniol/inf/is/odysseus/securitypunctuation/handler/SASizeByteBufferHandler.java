@@ -19,8 +19,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SizeByteBufferHandler;
@@ -51,8 +50,8 @@ public class SASizeByteBufferHandler<T extends ByteBuffer> extends SizeByteBuffe
         super();
     }
 
-    public SASizeByteBufferHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler) {
-        super(direction, access, dataHandler);
+    public SASizeByteBufferHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler, OptionMap optionsMap) {
+        super(direction, access, dataHandler, optionsMap);
 		objectHandler = new SAByteBufferHandler<T>(dataHandler);
     }
 
@@ -182,9 +181,8 @@ public class SASizeByteBufferHandler<T extends ByteBuffer> extends SizeByteBuffe
 	
 	@Override
 	   public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access,
-	            Map<String, String> options, IDataHandler<T> dataHandler) {
-		SASizeByteBufferHandler<T> instance = new SASizeByteBufferHandler<T>(direction,access, dataHandler);
-		instance.setByteOrder(options.get("byteorder"));
+	            OptionMap options, IDataHandler<T> dataHandler) {
+		SASizeByteBufferHandler<T> instance = new SASizeByteBufferHandler<T>(direction,access, dataHandler, options);
 		return instance;
 	}
 	

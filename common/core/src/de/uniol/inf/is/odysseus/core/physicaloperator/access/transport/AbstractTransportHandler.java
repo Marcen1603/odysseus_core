@@ -19,8 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -33,7 +32,7 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public AbstractTransportHandler(IProtocolHandler protocolHandler, Map<String, String> optionsMap) {
+	public AbstractTransportHandler(IProtocolHandler protocolHandler, OptionMap optionsMap) {
 		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), this, optionsMap);
 		protocolHandler.setTransportHandler(this);
 		delegate.addListener(protocolHandler);
@@ -94,7 +93,7 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 		return delegate.getExchangePattern();
 	}
 	
-	final public Map<String, String> getOptionsMap() {
+	final public OptionMap getOptionsMap() {
 		return delegate.getOptionsMap();
 	}
 		

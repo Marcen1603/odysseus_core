@@ -15,9 +15,12 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.transform.rules;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -69,6 +72,8 @@ public class TSenderAOGenericRule extends
 			TransformationConfiguration config) throws RuleException {
 		Resource senderPOName = operator.getSinkname();
 
+		OptionMap options = new OptionMap(operator.getOptionsMap());
+		
 		IDataHandler<?> dataHandler = getDataHandler(operator);
 		if (dataHandler == null) {
 			LOG.error("No data handler {} found.", operator.getDataHandler());
@@ -77,7 +82,7 @@ public class TSenderAOGenericRule extends
 		}
 
 		IProtocolHandler<?> protocolHandler = getProtocolHandler(operator,
-				dataHandler);
+				dataHandler, options);
 		if (protocolHandler == null) {
 			LOG.error("No protocol handler {} found.",
 					operator.getProtocolHandler());
@@ -86,7 +91,7 @@ public class TSenderAOGenericRule extends
 		}
 
 		ITransportHandler transportHandler = getTransportHandler(operator,
-				protocolHandler);
+				protocolHandler, options);
 		if (transportHandler == null) {
 			LOG.error("No transport handler {} found.",
 					operator.getTransportHandler());
@@ -102,6 +107,10 @@ public class TSenderAOGenericRule extends
 						.addSink(senderPOName, operator, getCaller());
 			}
 		}
+		
+		List<String> unusedOptions = options.getUnreadOptions();
+		LOG.warn("The following options where not used in translation "+unusedOptions);
+		
 		defaultExecute(operator, senderPO, config, true, true);
 	}
 
@@ -173,12 +182,12 @@ public class TSenderAOGenericRule extends
 	 * @return The transport handler
 	 */
 	private ITransportHandler getTransportHandler(AbstractSenderAO operator,
-			IProtocolHandler<?> protocolHandler) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		ITransportHandler transportHandler = null;
 		if (operator.getTransportHandler() != null) {
 			transportHandler = TransportHandlerRegistry.getInstance(
 					operator.getTransportHandler(), protocolHandler,
-					operator.getOptionsMap());
+					options);
 		}
 		return transportHandler;
 	}
@@ -193,18 +202,18 @@ public class TSenderAOGenericRule extends
 	 * @return The protocol handler
 	 */
 	private IProtocolHandler<?> getProtocolHandler(AbstractSenderAO operator,
-			IDataHandler<?> dataHandler) {
+			IDataHandler<?> dataHandler, OptionMap options) {
 		IProtocolHandler<?> protocolHandler = null;
 		if (operator.getProtocolHandler() != null) {
 			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
 				protocolHandler = ProtocolHandlerRegistry.getInstance(
 						operator.getProtocolHandler(), ITransportDirection.OUT,
-						IAccessPattern.PULL, operator.getOptionsMap(),
+						IAccessPattern.PULL, options,
 						dataHandler);
 			} else {
 				protocolHandler = ProtocolHandlerRegistry.getInstance(
 						operator.getProtocolHandler(), ITransportDirection.OUT,
-						IAccessPattern.PUSH, operator.getOptionsMap(),
+						IAccessPattern.PUSH, options,
 						dataHandler);
 			}
 		}

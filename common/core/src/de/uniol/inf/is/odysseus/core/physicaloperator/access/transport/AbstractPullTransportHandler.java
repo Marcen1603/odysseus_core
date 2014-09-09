@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 /**
@@ -16,7 +15,7 @@ abstract public class AbstractPullTransportHandler extends
 		super();
 	}
 
-	public AbstractPullTransportHandler(IProtocolHandler<?> protocolHandler, Map<String,String> options) {
+	public AbstractPullTransportHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 	}
 

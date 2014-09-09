@@ -8,12 +8,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
@@ -51,21 +51,21 @@ public class IVEF_0_2_5_ProtocolHandler extends
 
 	public IVEF_0_2_5_ProtocolHandler(ITransportDirection direction,
 			IAccessPattern access,
-			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
-		super(direction, access, dataHandler);
+			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler, OptionMap options) {
+		super(direction, access, dataHandler,options);
 		this.parser = new IVEF_0_2_5_Parser();
 		this.ivef = new MSG_IVEF();
+		if (options.containsKey("delay")){ 
+			delay = options.getInt("delay",0);
+		}
 	}
 
 	@Override
 	public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(
 			ITransportDirection direction, IAccessPattern access,
-			Map<String, String> options,
+			OptionMap options,
 			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
-		IVEF_0_2_5_ProtocolHandler instance = new IVEF_0_2_5_ProtocolHandler(direction, access, dataHandler);
-		instance.setOptionsMap(options);
-		if (options.containsKey("delay")) 
-			instance.delay = Integer.parseInt(options.get("delay"));
+		IVEF_0_2_5_ProtocolHandler instance = new IVEF_0_2_5_ProtocolHandler(direction, access, dataHandler, options);
 		return instance;
 	}
 

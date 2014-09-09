@@ -5,12 +5,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
@@ -45,21 +45,22 @@ public class IECProtocolHandler extends
 
 	public IECProtocolHandler(ITransportDirection direction,
 			IAccessPattern access,
-			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
-		super(direction, access, dataHandler);
+			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler, OptionMap optionsMap) {
+		super(direction, access, dataHandler, optionsMap);
 		parser = new IECParser();
+		if (optionsMap.containsKey("delay")){
+			delay = Integer.parseInt(optionsMap.get("delay"));
+		}
+
 	}
 
 	@Override
 	public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(
 			ITransportDirection direction, IAccessPattern access,
-			Map<String, String> options,
+			OptionMap options,
 			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
 		IECProtocolHandler instance = new IECProtocolHandler(direction, access,
-				dataHandler);
-		instance.setOptionsMap(options);
-		if (options.containsKey("delay"))
-			instance.delay = Integer.parseInt(options.get("delay"));
+				dataHandler, options);
 		return instance;
 	}
 

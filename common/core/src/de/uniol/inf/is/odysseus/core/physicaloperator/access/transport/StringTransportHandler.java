@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 /**
@@ -42,7 +43,7 @@ public class StringTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		// TODO Auto-generated method stub
 		return null;
 	}

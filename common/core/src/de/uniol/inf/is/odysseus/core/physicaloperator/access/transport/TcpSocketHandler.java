@@ -20,8 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 public class TcpSocketHandler extends AbstractTransportHandler {
@@ -33,7 +32,7 @@ public class TcpSocketHandler extends AbstractTransportHandler {
 	public TcpSocketHandler() {
         // TODO Auto-generated constructor stub
     }
-	public TcpSocketHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+	public TcpSocketHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 		hostname = options.get("host");
 		port = Integer.parseInt(options.get("port"));
@@ -47,7 +46,7 @@ public class TcpSocketHandler extends AbstractTransportHandler {
 	}
 
 	@Override
-	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		TcpSocketHandler th = new TcpSocketHandler(protocolHandler, options);
 		return th;
 	}

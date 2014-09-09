@@ -2,8 +2,7 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -18,10 +17,9 @@ public class StringArrayProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	public StringArrayProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, Map<String, String> options,
+			IAccessPattern access, OptionMap options,
 			IDataHandler<T> dataHandler) {
-		super(direction, access, dataHandler);
-		setOptionsMap(options);
+		super(direction, access, dataHandler, options);
 	}
 
 	@Override
@@ -36,12 +34,6 @@ public class StringArrayProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	@Override
-	public void setOptionsMap(Map<String, String> options) {
-		super.setOptionsMap(options);
-		// Read any further options
-	}
-
-	@Override
 	public void open() throws UnknownHostException, IOException {
 		getTransportHandler().open();
 	}
@@ -53,7 +45,7 @@ public class StringArrayProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
-			IAccessPattern access, Map<String, String> options,
+			IAccessPattern access, OptionMap options,
 			IDataHandler<T> dataHandler) {
 		return new StringArrayProtocolHandler<T>(direction, access, options,
 				dataHandler);

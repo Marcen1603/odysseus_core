@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.inertiacube.protocol;
 
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SimpleByteBufferHandler;
@@ -26,7 +25,7 @@ public class InertiaCubeProtocolHandler<T> extends SimpleByteBufferHandler<T> {
      * Access pattern.
      */
 	public InertiaCubeProtocolHandler(ITransportDirection direction, IAccessPattern access,
-            Map<String, String> options, IDataHandler<T> dataHandler) {
+			OptionMap options, IDataHandler<T> dataHandler) {
         super(direction, access, options, dataHandler);
 	}
 
@@ -34,7 +33,7 @@ public class InertiaCubeProtocolHandler<T> extends SimpleByteBufferHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(
 			ITransportDirection direction, IAccessPattern access,
-			Map<String, String> options, IDataHandler<T> dataHandler) {
+			OptionMap options, IDataHandler<T> dataHandler) {
 		return new InertiaCubeProtocolHandler<>(direction,
                 access, options, dataHandler);
 	}

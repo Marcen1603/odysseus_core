@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -73,11 +74,20 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<? ex
      * @param access
      * @param dataHandler
      */
-    public TikaProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
-        super(direction, access, dataHandler);
+    public TikaProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler, OptionMap optionsMap ) {
+        super(direction, access, dataHandler, optionsMap);
         this.parser = new AutoDetectParser();
+        init_internal();
     }
 
+    private void init_internal() {
+        Map<MediaType, Parser> parsers = this.parser.getParsers();
+        LOG.debug("Available parsers int Tika:");
+        for (Entry<MediaType, Parser> p : parsers.entrySet()) {
+            LOG.debug(p.getKey() + ": " + p.getValue());
+        }
+    }
+    
     /**
      * 
      * {@inheritDoc}
@@ -92,10 +102,9 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<? ex
      * {@inheritDoc}
      */
     @Override
-    public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(final ITransportDirection direction, final IAccessPattern access, final Map<String, String> options,
+    public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(final ITransportDirection direction, final IAccessPattern access, final OptionMap options,
             final IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
-        final TikaProtocolHandler instance = new TikaProtocolHandler(direction, access, dataHandler);
-        instance.init(options);
+        final TikaProtocolHandler instance = new TikaProtocolHandler(direction, access, dataHandler, options);
         return instance;
     }
 
@@ -208,18 +217,5 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<? ex
         return ITransportExchangePattern.InOnly;
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    protected void init(final Map<String, String> options) {
-        super.init(options);
-        Map<MediaType, Parser> parsers = this.parser.getParsers();
-        LOG.debug("Available parsers int Tika:");
-        for (Entry<MediaType, Parser> p : parsers.entrySet()) {
-            LOG.debug(p.getKey() + ": " + p.getValue());
-        }
 
-    }
 }

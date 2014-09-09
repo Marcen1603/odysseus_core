@@ -22,11 +22,10 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
 import de.uniol.inf.is.odysseus.core.connection.ConnectorSelectorHandler;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
@@ -66,7 +65,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 		super();
 	}
 
-	public NonBlockingTcpClientHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+	public NonBlockingTcpClientHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 		
 		readBufferSize = options.containsKey("read") ? Integer
@@ -105,7 +104,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 	@Override
 	public ITransportHandler createInstance(
 			final IProtocolHandler<?> protocolHandler,
-			final Map<String, String> options) {
+			final OptionMap options) {
 		final NonBlockingTcpClientHandler handler = new NonBlockingTcpClientHandler(
 				protocolHandler, options);
 		return handler;

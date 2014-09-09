@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
@@ -36,18 +36,20 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     private final IDataHandler<T>           dataHandler;
     private ITransferHandler<T>       transfer;
     
-    private Map<String, String> optionsMap;
+    protected final OptionMap optionsMap;
 
     public AbstractProtocolHandler() {
         direction = null;
         access = null;
         dataHandler = null;
+        optionsMap = null;
     }
 
-    public AbstractProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> datahandler) {
+    public AbstractProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> datahandler, OptionMap optionsMap) {
         this.direction = direction;
         this.access = access;
         this.dataHandler = datahandler;
+        this.optionsMap = optionsMap;
     }
 
     final public ITransportHandler getTransportHandler() {
@@ -160,17 +162,17 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     
     /**
      * This method is supposed to retrieve the options for an instance,
-     * which were used during the call of {@link IProtocolHandler#createInstance(ITransportDirection, IAccessPattern, Map, IDataHandler)}
+     * which were used during the call of {@link IProtocolHandler#createInstance(ITransportDirection, IAccessPattern, OptionMap, IDataHandler)}
      * based on the current configuration. This is useful serialising different ProtocolHandler-instances.
      * CANNOT be used for comparisons to check if two AbstractProtocolHandler-instances are semantically equivalent.
      */
-    public Map<String, String> getOptionsMap() {
+    public OptionMap getOptionsMap() {
     	return optionsMap;
     }
     
-	public void setOptionsMap(Map<String, String> options) {
-		this.optionsMap = options;
-	}
+//	public void setOptionsMap(Map<String, String> options) {
+//		this.optionsMap = options;
+//	}
     
     /**
      * checks if another IProtocolHandler-instance is semantically equivalent to this one

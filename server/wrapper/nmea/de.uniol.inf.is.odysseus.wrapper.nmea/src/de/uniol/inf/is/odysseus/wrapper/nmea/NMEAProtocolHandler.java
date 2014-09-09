@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
@@ -58,7 +59,7 @@ public class NMEAProtocolHandler extends
 	/** Input stream as BufferedReader (Only in GenericPull). */
 	protected BufferedReader reader;
 	/** Find next object to be returned for GenericPull. */
-//	private KeyValueObject<? extends IMetaAttribute> next = null;
+	// private KeyValueObject<? extends IMetaAttribute> next = null;
 	private List<KeyValueObject<? extends IMetaAttribute>> nextList = new ArrayList<>();
 	/** Delay on GenericPull. */
 	private long delay = 0;
@@ -70,8 +71,12 @@ public class NMEAProtocolHandler extends
 
 	public NMEAProtocolHandler(ITransportDirection direction,
 			IAccessPattern access,
-			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
-		super(direction, access, dataHandler);
+			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler,
+			OptionMap optionsMap) {
+		super(direction, access, dataHandler, optionsMap);
+		if (optionsMap.containsKey("delay")) {
+			delay = Integer.parseInt(optionsMap.get("delay"));
+		}
 	}
 
 	@Override
@@ -79,7 +84,8 @@ public class NMEAProtocolHandler extends
 		getTransportHandler().open();
 		if (this.getDirection().equals(ITransportDirection.IN)) {
 			if ((this.getAccessPattern().equals(IAccessPattern.PULL))
-					|| (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL))) {
+					|| (this.getAccessPattern()
+							.equals(IAccessPattern.ROBUST_PULL))) {
 				this.reader = new BufferedReader(new InputStreamReader(
 						getTransportHandler().getInputStream()));
 			}
@@ -105,7 +111,7 @@ public class NMEAProtocolHandler extends
 	public boolean hasNext() throws IOException {
 		if (reader.ready()) {
 			String nmea = reader.readLine();
-			//maintain the nextList by parsing the NMEA
+			// maintain the nextList by parsing the NMEA
 			parseString(nmea);
 		}
 		return this.nextList.size() != 0;
@@ -120,24 +126,25 @@ public class NMEAProtocolHandler extends
 			} catch (InterruptedException e) {
 			}
 		}
-		KeyValueObject<? extends IMetaAttribute> next = this.nextList.size() != 0 ? this.nextList.remove(0) : null;
+		KeyValueObject<? extends IMetaAttribute> next = this.nextList.size() != 0 ? this.nextList
+				.remove(0) : null;
 		return next;
 	}
-	
+
 	@Override
 	public void process(ByteBuffer message) {
 		byte[] m = new byte[message.limit()];
 		message.get(m);
-		String msgStr = (new String(m));//.trim();
+		String msgStr = (new String(m));// .trim();
 		String nmeaStrings[] = msgStr.split("\r\n");
-		for(String nmea : nmeaStrings){
+		for (String nmea : nmeaStrings) {
 			nmea = nmea.trim();
-			//maintain the nextList by parsing the NMEA
+			// maintain the nextList by parsing the NMEA
 			parseString(nmea);
 			if (this.nextList.size() == 0)
-				continue;//return;
-	
-			while(this.nextList.size() != 0)
+				continue;// return;
+
+			while (this.nextList.size() != 0)
 				getTransfer().transfer(this.nextList.remove(0));
 		}
 	}
@@ -147,7 +154,8 @@ public class NMEAProtocolHandler extends
 	 * 
 	 * @param nmea
 	 *            String to be parsed.
-	 * @return List of KeyValueObjects (original parsed and decoded parsed sentences) or null, if the String could not be parsed.
+	 * @return List of KeyValueObjects (original parsed and decoded parsed
+	 *         sentences) or null, if the String could not be parsed.
 	 */
 	private void parseString(String nmea) {
 		if (!SentenceUtils.validateSentence(nmea)) {
@@ -166,34 +174,41 @@ public class NMEAProtocolHandler extends
 		sentence.parse();
 		Map<String, Object> event = new HashMap<>();
 		List<KeyValueObject<? extends IMetaAttribute>> res = new ArrayList<>();
-		//Handling AIS Sentences, encoded sentences to be decoded
+		// Handling AIS Sentences, encoded sentences to be decoded
 		if (sentence instanceof AISSentence) {
 			AISSentence aissentence = (AISSentence) sentence;
 			this.aishandler.handleAISSentence(aissentence);
-			if(this.aishandler.getDecodedAISMessage() != null) {
+			if (this.aishandler.getDecodedAISMessage() != null) {
 				aissentence.toDecodedPayloadMap(event);
-				KeyValueObject<? extends IMetaAttribute> decodedAIS = new KeyValueObject<>(event); 
-				//Important to parse the decodedAIS as a sentence in order to prepare the fields which will be used in writing.
+				KeyValueObject<? extends IMetaAttribute> decodedAIS = new KeyValueObject<>(
+						event);
+				// Important to parse the decodedAIS as a sentence in order to
+				// prepare the fields which will be used in writing.
 				this.aishandler.getDecodedAISMessage().parse();
-				decodedAIS.setMetadata("decodedAIS", this.aishandler.getDecodedAISMessage());
+				decodedAIS.setMetadata("decodedAIS",
+						this.aishandler.getDecodedAISMessage());
 				this.aishandler.resetDecodedAISMessage();
-				//The decoded message
+				// The decoded message
 				res.add(decodedAIS);
 			}
-			//The Original message:
-				Map<String, Object> originalEvent = sentence.toMap();
-				KeyValueObject<? extends IMetaAttribute> originalAIS = new KeyValueObject<>(originalEvent);
-				originalAIS.setMetadata("originalNMEA", sentence);
-				//ensure the order, original fragment (if it's the second fragment, then it should follow the first original fragment) then the decoded message 
-				if(res.size() != 0)
-					res.add(0, originalAIS);
-				else
-					res.add(originalAIS);
+			// The Original message:
+			Map<String, Object> originalEvent = sentence.toMap();
+			KeyValueObject<? extends IMetaAttribute> originalAIS = new KeyValueObject<>(
+					originalEvent);
+			originalAIS.setMetadata("originalNMEA", sentence);
+			// ensure the order, original fragment (if it's the second fragment,
+			// then it should follow the first original fragment) then the
+			// decoded message
+			if (res.size() != 0)
+				res.add(0, originalAIS);
+			else
+				res.add(originalAIS);
 		}
-		//Handling other NMEA Sentences
-		else{
+		// Handling other NMEA Sentences
+		else {
 			event = sentence.toMap();
-			KeyValueObject<? extends IMetaAttribute> undecodedNMEA = new KeyValueObject<>(event);
+			KeyValueObject<? extends IMetaAttribute> undecodedNMEA = new KeyValueObject<>(
+					event);
 			undecodedNMEA.setMetadata("originalNMEA", sentence);
 			res.add(undecodedNMEA);
 		}
@@ -208,7 +223,8 @@ public class NMEAProtocolHandler extends
 			if (!(obj instanceof Sentence)) {
 				return;
 			}
-			Sentence sentence = (Sentence) obj;//System.out.println("wrtten nmea: " + sentence.getNmeaString());
+			Sentence sentence = (Sentence) obj;// System.out.println("wrtten nmea: "
+												// + sentence.getNmeaString());
 			getTransportHandler().send(sentence.toNMEA().getBytes());
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
@@ -218,12 +234,10 @@ public class NMEAProtocolHandler extends
 	@Override
 	public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(
 			ITransportDirection direction, IAccessPattern access,
-			Map<String, String> options,
+			OptionMap options,
 			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
 		NMEAProtocolHandler instance = new NMEAProtocolHandler(direction,
-				access, dataHandler);
-		instance.setOptionsMap(options);
-		if (options.containsKey("delay")) instance.delay = Integer.parseInt(options.get("delay"));
+				access, dataHandler, options);
 		return instance;
 	}
 

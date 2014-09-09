@@ -24,11 +24,10 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.connection.AcceptorSelectorHandler;
 import de.uniol.inf.is.odysseus.core.connection.CallbackErrorHandler;
 import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
@@ -66,7 +65,7 @@ public class NonBlockingUdpServerHandler extends AbstractTransportHandler
 
 	public NonBlockingUdpServerHandler(
 			final IProtocolHandler<?> protocolHandler,
-			final Map<String, String> options) {
+			final OptionMap options) {
 		super(protocolHandler, options);
 		readBufferSize = options.containsKey("read") ? Integer
 				.parseInt(options.get("read")) : 10240;
@@ -95,7 +94,7 @@ public class NonBlockingUdpServerHandler extends AbstractTransportHandler
 	@Override
 	public ITransportHandler createInstance(
 			final IProtocolHandler<?> protocolHandler,
-			final Map<String, String> options) {
+			final OptionMap options) {
 		final NonBlockingUdpServerHandler handler = new NonBlockingUdpServerHandler(
 				protocolHandler, options);
 	

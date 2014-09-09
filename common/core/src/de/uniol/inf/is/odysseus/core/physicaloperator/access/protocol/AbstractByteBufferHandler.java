@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.nio.ByteOrder;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
@@ -24,21 +25,21 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 abstract public class AbstractByteBufferHandler<T> extends AbstractProtocolHandler<T> {
 
-    protected ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
-
+    public static final String EXPORT_METADATA = "exportmetadata";
+	protected ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
+    protected boolean exportMetadata = false;
+    
     public AbstractByteBufferHandler() {
         super();
     }
 
-    public AbstractByteBufferHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> datahandler) {
-        super(direction, access, datahandler);
+    public AbstractByteBufferHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> datahandler, OptionMap optionsMap) {
+        super(direction, access, datahandler, optionsMap);
+        init_internal();
     }
 
-    public void setByteOrder(ByteOrder byteOrder) {
-        this.byteOrder = byteOrder;
-    }
-
-    protected void setByteOrder(String byteOrderTxt) {
+    private void init_internal() {
+    	String byteOrderTxt = optionsMap.get("byteorder");    		
         if ("LITTLE_ENDIAN".equalsIgnoreCase(byteOrderTxt)) {
             byteOrder = ByteOrder.LITTLE_ENDIAN;
         }

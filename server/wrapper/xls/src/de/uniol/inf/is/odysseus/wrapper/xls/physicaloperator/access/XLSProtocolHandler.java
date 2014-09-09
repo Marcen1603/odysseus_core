@@ -21,8 +21,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +30,7 @@ import com.extentech.ExtenXLS.WorkSheetHandle;
 import com.extentech.formats.XLS.CellNotFoundException;
 import com.extentech.formats.XLS.WorkSheetNotFoundException;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
@@ -111,19 +110,76 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
      * 
      * @param schema
      */
-    private XLSProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IDataHandler<T> dataHandler) {
-        super(direction, access, dataHandler);
-
+    private XLSProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IDataHandler<T> dataHandler, OptionMap optionsMap) {
+        super(direction, access, dataHandler, optionsMap);
+        init_internal();
     }
 
+    private void init_internal() {
+    	OptionMap options = optionsMap;
+        if (options.containsKey(XLSProtocolHandler.WORKSHEET)) {
+            this.setWorksheet(options.get(XLSProtocolHandler.WORKSHEET));
+        }
+        if (options.containsKey(XLSProtocolHandler.DELAY)) {
+            this.setDelay(Long.parseLong(options.get(XLSProtocolHandler.DELAY)));
+        }
+        if (options.containsKey(XLSProtocolHandler.NANODELAY)) {
+            this.setNanodelay(Integer.parseInt(options.get(XLSProtocolHandler.NANODELAY)));
+        }
+        if (options.containsKey(XLSProtocolHandler.DELAYEACH)) {
+            this.setDelayEach(Integer.parseInt(options.get(XLSProtocolHandler.DELAYEACH)));
+        }
+        if (options.containsKey(XLSProtocolHandler.XLS_FLOATING_FORMATTER)) {
+            this.setFloatingFormatter(new DecimalFormat(options.get(XLSProtocolHandler.XLS_FLOATING_FORMATTER)));
+        }
+        if (options.containsKey(XLSProtocolHandler.XLS_NUMBER_FORMATTER)) {
+            this.setNumberFormatter(new DecimalFormat(options.get(XLSProtocolHandler.XLS_NUMBER_FORMATTER)));
+        }
+
+        if (options.containsKey(XLSProtocolHandler.XLS_WRITE_METADATA)) {
+            this.setWriteMetadata(Boolean.parseBoolean(options.get(XLSProtocolHandler.XLS_WRITE_METADATA)));
+        }
+        if (options.containsKey(XLSProtocolHandler.XLS_TRIM)) {
+            this.setTrim(Boolean.parseBoolean(options.get(XLSProtocolHandler.XLS_TRIM)));
+        }
+        if (options.containsKey(XLSProtocolHandler.ADDLINENUMBERS)) {
+            this.setAddLineNumber(Boolean.parseBoolean(options.get(XLSProtocolHandler.ADDLINENUMBERS)));
+        }
+        if (options.containsKey(XLSProtocolHandler.READFIRSTLINE)) {
+            this.setReadFirstLine(Boolean.parseBoolean(options.get(XLSProtocolHandler.READFIRSTLINE)));
+        }
+        else {
+            this.setReadFirstLine(true);
+        }
+        if (options.containsKey(XLSProtocolHandler.DUMP_EACH_LINE)) {
+            this.setDumpEachLine(Integer.parseInt(options.get(XLSProtocolHandler.DUMP_EACH_LINE)));
+        }
+
+        if (options.containsKey(XLSProtocolHandler.MEASURE_EACH_LINE)) {
+            this.setMeasureEachLine(Integer.parseInt(options.get(XLSProtocolHandler.MEASURE_EACH_LINE)));
+        }
+
+        if (options.containsKey(XLSProtocolHandler.LAST_LINE)) {
+            this.setLastLine(Integer.parseInt(options.get(XLSProtocolHandler.LAST_LINE)));
+        }
+        if (options.containsKey(XLSProtocolHandler.MAX_LINES)) {
+            this.setLastLine(Integer.parseInt(options.get(XLSProtocolHandler.MAX_LINES)));
+        }
+        if (options.containsKey(XLSProtocolHandler.DEBUG)) {
+            this.setDebug(Boolean.parseBoolean(options.get(XLSProtocolHandler.DEBUG)));
+        }
+        if (options.containsKey(XLSProtocolHandler.DUMPFILE)) {
+            this.setDumpFile(options.get(XLSProtocolHandler.DUMPFILE));
+        }
+        this.lastDumpTime = System.currentTimeMillis();
+    }
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final Map<String, String> options, final IDataHandler<T> dataHandler) {
-        final XLSProtocolHandler<T> instance = new XLSProtocolHandler<>(direction, access, dataHandler);
-        instance.setOptionsMap(options);
-        instance.init(options);
+    public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final OptionMap options, final IDataHandler<T> dataHandler) {
+        final XLSProtocolHandler<T> instance = new XLSProtocolHandler<>(direction, access, dataHandler, options);
         return instance;
     }
 
@@ -669,62 +725,6 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
         }
     }
 
-    private void init(final Map<String, String> options) {
-        if (options.containsKey(XLSProtocolHandler.WORKSHEET)) {
-            this.setWorksheet(options.get(XLSProtocolHandler.WORKSHEET));
-        }
-        if (options.containsKey(XLSProtocolHandler.DELAY)) {
-            this.setDelay(Long.parseLong(options.get(XLSProtocolHandler.DELAY)));
-        }
-        if (options.containsKey(XLSProtocolHandler.NANODELAY)) {
-            this.setNanodelay(Integer.parseInt(options.get(XLSProtocolHandler.NANODELAY)));
-        }
-        if (options.containsKey(XLSProtocolHandler.DELAYEACH)) {
-            this.setDelayEach(Integer.parseInt(options.get(XLSProtocolHandler.DELAYEACH)));
-        }
-        if (options.containsKey(XLSProtocolHandler.XLS_FLOATING_FORMATTER)) {
-            this.setFloatingFormatter(new DecimalFormat(options.get(XLSProtocolHandler.XLS_FLOATING_FORMATTER)));
-        }
-        if (options.containsKey(XLSProtocolHandler.XLS_NUMBER_FORMATTER)) {
-            this.setNumberFormatter(new DecimalFormat(options.get(XLSProtocolHandler.XLS_NUMBER_FORMATTER)));
-        }
-
-        if (options.containsKey(XLSProtocolHandler.XLS_WRITE_METADATA)) {
-            this.setWriteMetadata(Boolean.parseBoolean(options.get(XLSProtocolHandler.XLS_WRITE_METADATA)));
-        }
-        if (options.containsKey(XLSProtocolHandler.XLS_TRIM)) {
-            this.setTrim(Boolean.parseBoolean(options.get(XLSProtocolHandler.XLS_TRIM)));
-        }
-        if (options.containsKey(XLSProtocolHandler.ADDLINENUMBERS)) {
-            this.setAddLineNumber(Boolean.parseBoolean(options.get(XLSProtocolHandler.ADDLINENUMBERS)));
-        }
-        if (options.containsKey(XLSProtocolHandler.READFIRSTLINE)) {
-            this.setReadFirstLine(Boolean.parseBoolean(options.get(XLSProtocolHandler.READFIRSTLINE)));
-        }
-        else {
-            this.setReadFirstLine(true);
-        }
-        if (options.containsKey(XLSProtocolHandler.DUMP_EACH_LINE)) {
-            this.setDumpEachLine(Integer.parseInt(options.get(XLSProtocolHandler.DUMP_EACH_LINE)));
-        }
-
-        if (options.containsKey(XLSProtocolHandler.MEASURE_EACH_LINE)) {
-            this.setMeasureEachLine(Integer.parseInt(options.get(XLSProtocolHandler.MEASURE_EACH_LINE)));
-        }
-
-        if (options.containsKey(XLSProtocolHandler.LAST_LINE)) {
-            this.setLastLine(Integer.parseInt(options.get(XLSProtocolHandler.LAST_LINE)));
-        }
-        if (options.containsKey(XLSProtocolHandler.MAX_LINES)) {
-            this.setLastLine(Integer.parseInt(options.get(XLSProtocolHandler.MAX_LINES)));
-        }
-        if (options.containsKey(XLSProtocolHandler.DEBUG)) {
-            this.setDebug(Boolean.parseBoolean(options.get(XLSProtocolHandler.DEBUG)));
-        }
-        if (options.containsKey(XLSProtocolHandler.DUMPFILE)) {
-            this.setDumpFile(options.get(XLSProtocolHandler.DUMPFILE));
-        }
-        this.lastDumpTime = System.currentTimeMillis();
-    }
+ 
 
 }

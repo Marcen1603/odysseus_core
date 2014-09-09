@@ -22,8 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 public class FileHandler extends AbstractFileHandler {
@@ -40,7 +39,7 @@ public class FileHandler extends AbstractFileHandler {
 		super();
 	}
 
-	public FileHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+	public FileHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 		preload = (options.containsKey(PRELOAD)) ? Boolean
 				.parseBoolean(options.get(PRELOAD)) : false;
@@ -142,7 +141,7 @@ public class FileHandler extends AbstractFileHandler {
 
 	@Override
 	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		return new FileHandler(protocolHandler, options);
 	}
 

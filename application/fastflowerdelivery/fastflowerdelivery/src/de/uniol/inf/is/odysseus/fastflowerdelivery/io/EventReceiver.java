@@ -1,9 +1,8 @@
 package de.uniol.inf.is.odysseus.fastflowerdelivery.io;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -80,10 +79,10 @@ public class EventReceiver extends Thread implements ITransferHandler {
 	 */
 	@SuppressWarnings("unchecked")
 	private void openConnection() {		
-		Map<String, String> options = new HashMap<String, String>();
-		options.put("host", host);
-		options.put("port", "" + port);
-		options.put("autoconnect", "false");
+		OptionMap options = new OptionMap();
+		options.setOption("host", host);
+		options.setOption("port", "" + port);
+		options.setOption("autoconnect", "false");
 		
 		IDataHandler dataHandler = DataHandlerRegistry.getDataHandler(
 						"tuple", getSchema());

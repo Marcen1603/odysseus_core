@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.core.IHasAlias;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.IConnection;
@@ -38,7 +39,7 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 		IHasAlias {
 
 	private static final String PORT = "port";
-	private static final Object MAX_BUFFER_SIZE = "maxbuffersize";
+	private static final String MAX_BUFFER_SIZE = "maxbuffersize";
 	private int port;
 	List<ChannelHandlerContext> channels = new CopyOnWriteArrayList<>();
 	private MyTCPServer tcpServer = null;
@@ -71,7 +72,7 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	}
 
 	public NonBlockingTcpServerHandler_Netty(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 		port = options.containsKey(PORT) ? Integer.parseInt(options
 				.get(PORT)) : 8080;
@@ -110,7 +111,7 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 
 	@Override
 	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		NonBlockingTcpServerHandler_Netty result = new NonBlockingTcpServerHandler_Netty(
 				protocolHandler, options);
 		return result;

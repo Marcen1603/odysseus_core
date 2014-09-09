@@ -17,10 +17,10 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 /**
@@ -39,7 +39,7 @@ public class TimerTransportHandler extends AbstractPushTransportHandler {
         super();
     }
 
-    public TimerTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+    public TimerTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
         super(protocolHandler, options);
         if (options.containsKey(TimerTransportHandler.PERIOD)) {
             this.period = Long.parseLong(options.get(TimerTransportHandler.PERIOD));
@@ -61,7 +61,7 @@ public class TimerTransportHandler extends AbstractPushTransportHandler {
      * {@inheritDoc}
      */
     @Override
-    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
+    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
         final TimerTransportHandler handler = new TimerTransportHandler(protocolHandler, options);
         return handler;
     }

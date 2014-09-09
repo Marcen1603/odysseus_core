@@ -43,6 +43,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
@@ -100,9 +101,40 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 	 */
 	public XMLProtocolHandler(final ITransportDirection direction,
 			final IAccessPattern access, IDataHandler<T> dataHandler,
-			Map<String, String> options) {
-		super(direction, access, dataHandler);
-		setOptionsMap(options);
+			OptionMap options) {
+		super(direction, access, dataHandler, options);
+		init_internal();
+	}
+	
+	private void init_internal() {
+		OptionMap options = optionsMap;
+		if (options.get(DELAY) != null) {
+			setDelay(Long.parseLong(options.get(DELAY)));
+		}
+		if (options.get(NANODELAY) != null) {
+			setNanodelay(Integer.parseInt(options.get(NANODELAY)));
+		}
+		final List<String> xpaths;
+		if (options.get(XPATHS) != null) {
+			String[] paths = options.get(XPATHS).split(";");
+			xpaths = Arrays.asList(paths);
+		} else {
+			xpaths = new ArrayList<>();
+			final SDFSchema schema = getDataHandler().getSchema();
+			for (int i = 0; i < schema.size(); i++) {
+				final String attr = schema.get(i).getAttributeName();
+				if (options.containsKey(attr)) {
+					xpaths.add(options.get(attr));
+				}
+			}
+		}
+		setXPaths(xpaths);
+		if (options.get(REVERSE) != null){
+			reverse = Boolean.parseBoolean(options.get(REVERSE));
+		}else{
+			reverse = false;
+		}
+
 	}
 
 	@Override
@@ -231,43 +263,11 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 	@Override
 	public IProtocolHandler<T> createInstance(
 			final ITransportDirection direction, final IAccessPattern access,
-			final Map<String, String> options,
+			final OptionMap options,
 			final IDataHandler<T> dataHandler) {
 		final XMLProtocolHandler<T> instance = new XMLProtocolHandler<T>(
 				direction, access, dataHandler, options);
 		return instance;
-	}
-
-	@Override
-	public void setOptionsMap(Map<String, String> options) {
-		super.setOptionsMap(options);
-		if (options.get(DELAY) != null) {
-			setDelay(Long.parseLong(options.get(DELAY)));
-		}
-		if (options.get(NANODELAY) != null) {
-			setNanodelay(Integer.parseInt(options.get(NANODELAY)));
-		}
-		final List<String> xpaths;
-		if (options.get(XPATHS) != null) {
-			String[] paths = options.get(XPATHS).split(";");
-			xpaths = Arrays.asList(paths);
-		} else {
-			xpaths = new ArrayList<>();
-			final SDFSchema schema = getDataHandler().getSchema();
-			for (int i = 0; i < schema.size(); i++) {
-				final String attr = schema.get(i).getAttributeName();
-				if (options.containsKey(attr)) {
-					xpaths.add(options.get(attr));
-				}
-			}
-		}
-		setXPaths(xpaths);
-		if (options.get(REVERSE) != null){
-			reverse = Boolean.parseBoolean(options.get(REVERSE));
-		}else{
-			reverse = false;
-		}
-
 	}
 
 	@Override

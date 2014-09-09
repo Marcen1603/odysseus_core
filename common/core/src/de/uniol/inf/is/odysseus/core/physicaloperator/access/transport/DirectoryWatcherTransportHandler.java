@@ -29,12 +29,12 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 /**
@@ -66,7 +66,7 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
      * @param protocolHandler
      * @param options
      */
-    public DirectoryWatcherTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+    public DirectoryWatcherTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
         super(protocolHandler, options);
         if (options.containsKey(DirectoryWatcherTransportHandler.DIRECTORY)) {
             this.directory = Paths.get(options.get(DirectoryWatcherTransportHandler.DIRECTORY));
@@ -91,7 +91,7 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
      * {@inheritDoc}
      */
     @Override
-    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
+    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
         final DirectoryWatcherTransportHandler handler = new DirectoryWatcherTransportHandler(protocolHandler, options);
         return handler;
     }

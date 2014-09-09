@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IIteratable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
@@ -16,7 +16,7 @@ abstract public class AbstractSimplePullTransportHandler<T> extends
 	}
 
 	public AbstractSimplePullTransportHandler(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 	}
 

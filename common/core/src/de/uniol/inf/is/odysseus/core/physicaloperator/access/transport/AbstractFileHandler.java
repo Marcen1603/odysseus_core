@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 abstract public class AbstractFileHandler extends AbstractTransportHandler {
@@ -21,7 +21,7 @@ abstract public class AbstractFileHandler extends AbstractTransportHandler {
 		super();
 	}
 
-	public AbstractFileHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+	public AbstractFileHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 		if (options.containsKey(FILENAME)){
 			filename = options.get(FILENAME);

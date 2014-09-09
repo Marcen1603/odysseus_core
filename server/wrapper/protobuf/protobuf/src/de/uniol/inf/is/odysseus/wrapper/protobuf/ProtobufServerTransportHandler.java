@@ -49,6 +49,7 @@ import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.MessageLite;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -81,7 +82,7 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public ProtobufServerTransportHandler(IProtocolHandler protocolHandler, Map<String, String> options) {
+	public ProtobufServerTransportHandler(IProtocolHandler protocolHandler, OptionMap options) {
 		int port = Integer.parseInt(options.get("port"));
 		
 		this.address = new InetSocketAddress("0.0.0.0",port);
@@ -281,7 +282,7 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 
 	@Override
 	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		return new ProtobufServerTransportHandler<>( protocolHandler, options);
 	}
 

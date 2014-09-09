@@ -20,30 +20,35 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferUtil;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
-	private static final Logger LOG = LoggerFactory.getLogger(SizeByteBufferHandler.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SizeByteBufferHandler.class);
 	private int size = -1;
 	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
 	private int currentSize = 0;
 	private ByteBufferHandler<T> objectHandler;
-	
+
 	public SizeByteBufferHandler() {
 		super();
 	}
 
-	public SizeByteBufferHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler) {
-		super(direction, access, dataHandler);
+	public SizeByteBufferHandler(ITransportDirection direction,
+			IAccessPattern access, IDataHandler<T> dataHandler,
+			OptionMap optionsMap) {
+		super(direction, access, dataHandler, optionsMap);
+		objectHandler = new ByteBufferHandler<T>(dataHandler);
 	}
 
 	@Override
@@ -51,9 +56,9 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 		sizeBuffer.clear();
 		size = -1;
 		currentSize = 0;
-		if (getTransportHandler() != null){
+		if (getTransportHandler() != null) {
 			getTransportHandler().open();
-		}else{
+		} else {
 			throw new RuntimeException("No Transport handler set!");
 		}
 	}
@@ -76,10 +81,13 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void write(T object) throws IOException {
 		ByteBuffer buffer = ByteBuffer.allocate(1024);
-		getDataHandler().writeData(buffer, object);
+		ByteBufferUtil.toBuffer(buffer, (IStreamObject) object,
+				getDataHandler(), exportMetadata);
+		// getDataHandler().writeData(buffer, object);
 		buffer.flip();
 
 		int messageSizeBytes = buffer.remaining();
@@ -166,13 +174,14 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 			LOG.error(e.getMessage(), e);
 		}
 	}
-	
+
 	@Override
-	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, Map<String, String> options, IDataHandler<T> dataHandler) {
-		SizeByteBufferHandler<T> instance = new SizeByteBufferHandler<T>(direction, access, dataHandler);
-		instance.setOptionsMap(options);
-		instance.objectHandler = new ByteBufferHandler<T>(dataHandler);
-		instance.setByteOrder(options.get("byteorder"));
+	public IProtocolHandler<T> createInstance(ITransportDirection direction,
+			IAccessPattern access, OptionMap options,
+			IDataHandler<T> dataHandler) {
+		SizeByteBufferHandler<T> instance = new SizeByteBufferHandler<T>(
+				direction, access, dataHandler, options);
+
 		return instance;
 	}
 
@@ -190,11 +199,11 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
-		if(!(o instanceof SizeByteBufferHandler)) {
+		if (!(o instanceof SizeByteBufferHandler)) {
 			return false;
 		}
-		SizeByteBufferHandler<?> other = (SizeByteBufferHandler<?>)o;
-		if(!this.byteOrder.toString().equals(other.getByteOrder().toString())) {
+		SizeByteBufferHandler<?> other = (SizeByteBufferHandler<?>) o;
+		if (!this.byteOrder.toString().equals(other.getByteOrder().toString())) {
 			return false;
 		}
 		return true;

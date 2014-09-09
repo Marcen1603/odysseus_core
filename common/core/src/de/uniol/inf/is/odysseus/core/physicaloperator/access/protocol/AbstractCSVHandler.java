@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.text.DecimalFormat;
-import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
@@ -31,18 +31,18 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 	public static final String CSV_TRIM = "csv.trim";
 	public static final String ADDLINENUMBERS = "addlinenumber";
 
-	public AbstractCSVHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler) {
-		super(direction, access, dataHandler);
-	}
-
 	public AbstractCSVHandler() {
 		super();
+	}	
+	
+	public AbstractCSVHandler(ITransportDirection direction,
+			IAccessPattern access, IDataHandler<T> dataHandler,OptionMap optionsMap) {
+		super(direction, access, dataHandler,optionsMap);
+		init_internal();
 	}
 
-	@Override
-	protected void init(Map<String, String> options) {
-		super.init(options);
+	private void init_internal() {
+		OptionMap options = optionsMap;
 		if (options.containsKey(DELIMITER)) {
 			delimiter = determineDelimiter(options.get(DELIMITER));
 		} else if (options.containsKey(CSV_DELIMITER)) {

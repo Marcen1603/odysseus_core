@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.IHasAlias;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 public class TransportHandlerRegistry {
@@ -59,7 +60,7 @@ public class TransportHandlerRegistry {
 		}
 	}
 	
-	static public ITransportHandler getInstance(String name, IProtocolHandler<?> protocolHandler, Map<String, String> options){
+	static public ITransportHandler getInstance(String name, IProtocolHandler<?> protocolHandler, OptionMap options){
 		ITransportHandler ret = handlers.get(name.toLowerCase());
 		if (ret != null){
 			return ret.createInstance(protocolHandler, options);

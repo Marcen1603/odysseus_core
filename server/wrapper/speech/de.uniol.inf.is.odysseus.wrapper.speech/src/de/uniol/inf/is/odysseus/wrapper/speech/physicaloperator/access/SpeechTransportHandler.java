@@ -18,11 +18,10 @@ package de.uniol.inf.is.odysseus.wrapper.speech.physicaloperator.access;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
@@ -43,7 +42,7 @@ public class SpeechTransportHandler extends AbstractPushTransportHandler {
 		super();
 	}
 
-	public SpeechTransportHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+	public SpeechTransportHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 		init(options);
 	}
@@ -56,13 +55,13 @@ public class SpeechTransportHandler extends AbstractPushTransportHandler {
 
 	@Override
 	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		SpeechTransportHandler handler = new SpeechTransportHandler(
 				protocolHandler, options);
 		return handler;
 	}
 
-	private void init(Map<String, String> options) {
+	private void init(OptionMap options) {
 		URL configuration = SpeechTransportHandler.class
 				.getResource("default.config.xml");
 		if (options.containsKey("config")) {

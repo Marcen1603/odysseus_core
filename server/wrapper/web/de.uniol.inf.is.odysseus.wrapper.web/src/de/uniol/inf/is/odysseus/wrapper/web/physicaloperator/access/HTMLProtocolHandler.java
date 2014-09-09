@@ -28,8 +28,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -49,6 +47,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
@@ -95,8 +94,8 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
      * 
      * @param schema
      */
-    private HTMLProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IDataHandler<T> dataHandler) {
-        super(direction, access, dataHandler);
+    private HTMLProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IDataHandler<T> dataHandler, OptionMap optionsMap) {
+        super(direction, access, dataHandler, optionsMap);
         this.parser = new DOMFragmentParser();
 
         try {
@@ -111,7 +110,28 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
         catch (final SAXNotSupportedException e) {
             HTMLProtocolHandler.LOG.error(e.getMessage(), e);
         }
-
+        init_internal();
+    }
+    
+    private void init_internal() {
+        if (optionsMap.containsKey(DELAY)) {
+            this.setDelay(Long.parseLong(optionsMap.get(DELAY)));
+        }
+        if (optionsMap.containsKey(NANODELAY)) {
+            this.setNanodelay(Integer.parseInt(optionsMap.get(NANODELAY)));
+        }
+        if (optionsMap.containsKey(MULTI)) {
+            this.setMulti(Boolean.parseBoolean(optionsMap.get(MULTI)));
+        }
+        final SDFSchema schema = getDataHandler().getSchema();
+        final List<String> attributeXPaths = new ArrayList<>();
+        for (int i = 0; i < schema.size(); i++) {
+            final String attr = schema.get(i).getAttributeName();
+            if (optionsMap.containsKey(attr)) {
+                attributeXPaths.add(optionsMap.get(attr));
+            }
+        }
+        setXPaths(attributeXPaths);
     }
 
     @Override
@@ -306,34 +326,13 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
     }
 
     @Override
-    public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final Map<String, String> options, final IDataHandler<T> dataHandler) {
-        final HTMLProtocolHandler<T> instance = new HTMLProtocolHandler<>(direction, access, dataHandler);
-        instance.setOptionsMap(options);
-        instance.init(options);
+    public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final OptionMap options, final IDataHandler<T> dataHandler) {
+        final HTMLProtocolHandler<T> instance = new HTMLProtocolHandler<>(direction, access, dataHandler, options);
 
         return instance;
     }
 
-    protected void init(final Map<String, String> options) {
-        if (options.containsKey(DELAY)) {
-            this.setDelay(Long.parseLong(options.get(DELAY)));
-        }
-        if (options.containsKey(NANODELAY)) {
-            this.setNanodelay(Integer.parseInt(options.get(NANODELAY)));
-        }
-        if (options.containsKey(MULTI)) {
-            this.setMulti(Boolean.parseBoolean(options.get(MULTI)));
-        }
-        final SDFSchema schema = getDataHandler().getSchema();
-        final List<String> attributeXPaths = new ArrayList<>();
-        for (int i = 0; i < schema.size(); i++) {
-            final String attr = schema.get(i).getAttributeName();
-            if (options.containsKey(attr)) {
-                attributeXPaths.add(options.get(attr));
-            }
-        }
-        setXPaths(attributeXPaths);
-    }
+
 
     @Override
     public String getName() {

@@ -20,8 +20,8 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
+
 
 
 import org.slf4j.Logger;
@@ -29,8 +29,10 @@ import org.slf4j.LoggerFactory;
 
 
 
+
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -66,7 +68,7 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	/**
 	 * @param protocolHandler
 	 */
-	public TwitterTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+	public TwitterTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 		init(options);
 	}
@@ -88,13 +90,13 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	@Override
 	public ITransportHandler createInstance(
 			final IProtocolHandler<?> protocolHandler,
-			final Map<String, String> options) {
+			final OptionMap options) {
 		final TwitterTransportHandler handler = new TwitterTransportHandler(
 				protocolHandler, options);
 		return handler;
 	}
 
-	private void init(final Map<String, String> options) {
+	private void init(final OptionMap options) {
 		if (options.containsKey(CONSUMERKEY)) {
 			setConsumerKey(options.get(CONSUMERKEY));
 		}

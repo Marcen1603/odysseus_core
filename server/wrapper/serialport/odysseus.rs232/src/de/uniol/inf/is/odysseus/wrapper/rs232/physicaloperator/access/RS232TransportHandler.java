@@ -40,6 +40,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
@@ -91,13 +92,13 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
         RS232TransportHandler.initializeSerialPorts();
     }
 
-    public RS232TransportHandler(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
+    public RS232TransportHandler(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
         super(protocolHandler, options);
         RS232TransportHandler.initializeSerialPorts();
         this.init(options);
     }
 
-    protected void init(final Map<String, String> options) {
+    protected void init(final OptionMap options) {
         if (options.containsKey(RS232TransportHandler.PORT)) {
             this.portName = options.get(RS232TransportHandler.PORT);
         }
@@ -189,7 +190,7 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
     }
 
     @Override
-    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
+    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
         return new RS232TransportHandler(protocolHandler, options);
     }
 

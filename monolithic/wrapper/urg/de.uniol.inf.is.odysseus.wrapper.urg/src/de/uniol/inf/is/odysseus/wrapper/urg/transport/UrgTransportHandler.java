@@ -3,8 +3,7 @@ package de.uniol.inf.is.odysseus.wrapper.urg.transport;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -30,7 +29,7 @@ public class UrgTransportHandler extends AbstractPushTransportHandler {
      * @param protocolHandler
      * Instance to copy.
      */
-    public UrgTransportHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+    public UrgTransportHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
         super(protocolHandler, options);
 		if (options.containsKey("port")) comPort = options.get("port");
     }
@@ -41,7 +40,7 @@ public class UrgTransportHandler extends AbstractPushTransportHandler {
 
 	@Override
 	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		UrgTransportHandler handler = new UrgTransportHandler(protocolHandler, options);
 		return handler;
 	}

@@ -11,14 +11,13 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.HashMap;
-import java.util.Map;
-
 import org.openni.DepthMap;
 import org.openni.GeneralException;
 import org.openni.ImageMap;
 import org.openni.SkeletonJoint;
 import org.openni.SkeletonJointPosition;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
@@ -52,7 +51,7 @@ public class KinectTransportHandler extends AbstractPushTransportHandler
      * @param protocolHandler
      * Instance to copy.
      */
-    public KinectTransportHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+    public KinectTransportHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
         super(protocolHandler, options);
         if (options.containsKey("color")) {
             recordColorMap = Boolean.parseBoolean(options.get("color"));
@@ -72,7 +71,7 @@ public class KinectTransportHandler extends AbstractPushTransportHandler
 
     @Override
     public ITransportHandler createInstance(
-            IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+            IProtocolHandler<?> protocolHandler, OptionMap options) {
         KinectTransportHandler handler = new KinectTransportHandler(
                 protocolHandler, options);
         return handler;

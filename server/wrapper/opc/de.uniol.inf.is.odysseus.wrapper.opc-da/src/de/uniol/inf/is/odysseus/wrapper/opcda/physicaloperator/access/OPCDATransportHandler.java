@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.Map;
 import java.util.concurrent.Executors;
 
 import org.jinterop.dcom.common.JIException;
@@ -38,6 +37,7 @@ import org.openscada.opc.lib.da.SyncAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -85,12 +85,12 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
     public OPCDATransportHandler() {
     }
 
-    public OPCDATransportHandler(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
+    public OPCDATransportHandler(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
         super(protocolHandler, options);
         this.init(options);
     }
 
-    protected void init(final Map<String, String> options) {
+    protected void init(final OptionMap options) {
         if (options.containsKey(OPCDATransportHandler.HOST)) {
             this.host = options.get(OPCDATransportHandler.HOST);
         }
@@ -138,7 +138,7 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
     }
 
     @Override
-    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
+    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
         return new OPCDATransportHandler<T>(protocolHandler, options);
     }
 

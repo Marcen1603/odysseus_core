@@ -3,11 +3,10 @@ package de.uniol.inf.is.odysseus.p2p_new.handler;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.objecthandler.ObjectByteConverter;
@@ -40,8 +39,9 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 		super();
 	}
 
-	public JxtaProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler) {
-		super(direction, access, dataHandler);
+	public JxtaProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler, OptionMap optionsMap) {
+		super(direction, access, dataHandler,optionsMap);
+		jxtaBufferHandler = new JxtaByteBufferHandler<T>(dataHandler);
 	}
 
 	@Override
@@ -188,11 +188,8 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 	}
 
 	@Override
-	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, Map<String, String> options, IDataHandler<T> dataHandler) {
-		JxtaProtocolHandler<T> instance = new JxtaProtocolHandler<T>(direction, access,dataHandler);
-		instance.setOptionsMap(options);
-		instance.jxtaBufferHandler = new JxtaByteBufferHandler<T>(dataHandler);
-		instance.setByteOrder(options.get("byteorder"));
+	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options, IDataHandler<T> dataHandler) {
+		JxtaProtocolHandler<T> instance = new JxtaProtocolHandler<T>(direction, access,dataHandler, options);
 		return instance;
 	}
 

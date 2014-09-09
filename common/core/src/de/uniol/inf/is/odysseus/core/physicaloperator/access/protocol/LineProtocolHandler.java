@@ -25,12 +25,12 @@ import java.io.PrintWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
@@ -72,7 +72,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	private String lastRunRemaining = "";
 
-	private Map<String, String> optionsMap;
+	//private Map<String, String> optionsMap;
 
 	public static final String DELAY = "delay";
 	public static final String NANODELAY = "delay";
@@ -92,11 +92,13 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	public LineProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler) {
-		super(direction, access, dataHandler);
+			IAccessPattern access, IDataHandler<T> dataHandler, OptionMap optionsMap) {
+		super(direction, access, dataHandler, optionsMap);
+		init_internal();
 	}
 
-	protected void init(Map<String, String> options) {
+	private void init_internal() {
+		OptionMap options = optionsMap; 
 		if (options.get(DELAY) != null) {
 			setDelay(Long.parseLong(options.get(DELAY)));
 		}
@@ -405,12 +407,10 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
-			IAccessPattern access, Map<String, String> options,
+			IAccessPattern access, OptionMap options,
 			IDataHandler<T> dataHandler) {
 		LineProtocolHandler<T> instance = new LineProtocolHandler<T>(direction,
-				access, dataHandler);
-		instance.setOptionsMap(options);
-		instance.init(options);
+				access, dataHandler, options);
 		return instance;
 	}
 
@@ -490,16 +490,6 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 			return false;
 		}
 		return true;
-	}
-
-	@Override
-	public Map<String, String> getOptionsMap() {
-		return optionsMap;
-	}
-
-	@Override
-	public void setOptionsMap(Map<String, String> optionsMap) {
-		this.optionsMap = optionsMap;
 	}
 
 	public boolean isReadFirstLine() {

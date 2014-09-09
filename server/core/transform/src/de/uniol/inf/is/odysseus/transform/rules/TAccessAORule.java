@@ -15,9 +15,12 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.transform.rules;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -71,6 +74,8 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 
 		if (accessPO == null) {
 
+			OptionMap options = new OptionMap(operator.getOptionsMap());
+			
 			if (operator.getTransportHandler() != null) {
 				IDataHandler<?> dataHandler = getDataHandler(operator);
 				if (dataHandler == null) {
@@ -81,7 +86,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 				}
 
 				IProtocolHandler<?> protocolHandler = getProtocolHandler(
-						operator, dataHandler);
+						operator, dataHandler, options);
 				if (protocolHandler == null) {
 					LOG.error("No protocol handler {} found.",
 							operator.getProtocolHandler());
@@ -90,7 +95,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 				}
 
 				ITransportHandler transportHandler = getTransportHandler(
-						operator, protocolHandler);
+						operator, protocolHandler, options);
 				if (transportHandler == null) {
 					LOG.error("No transport handler {} found.",
 							operator.getTransportHandler());
@@ -115,21 +120,21 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 				throw new IllegalArgumentException(
 						"This kind of access operator is no longer supported!");
 			}
-			if (operator.getOptionsMap().containsKey("scheduler.delay")) {
+			if (options.containsKey("scheduler.delay")) {
 				if (accessPO instanceof IIterableSource) {
 					((IIterableSource) accessPO).setDelay(Long
 							.parseLong(operator.getOptionsMap().get(
 									"scheduler.delay")));
 				}
 			}
-			if (operator.getOptionsMap().containsKey("scheduler.yieldrate")) {
+			if (options.containsKey("scheduler.yieldrate")) {
 				if (accessPO instanceof IIterableSource) {
 					((IIterableSource) accessPO).setYieldRate(Integer
 							.parseInt(operator.getOptionsMap().get(
 									"scheduler.yieldrate")));
 				}
 			}
-			if (operator.getOptionsMap().containsKey("scheduler.yieldnanos")) {
+			if (options.containsKey("scheduler.yieldnanos")) {
 				if (accessPO instanceof IIterableSource) {
 					((IIterableSource) accessPO).setYieldDurationNanos(Integer
 							.parseInt(operator.getOptionsMap().get(
@@ -140,6 +145,8 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 				getDataDictionary().putAccessAO(operator.getAccessAOName(),
 						accessPO);
 			}
+			List<String> unusedOptions = options.getUnreadOptions();
+			LOG.warn("The following options where not used in translation "+unusedOptions);
 
 		}
 		defaultExecute(operator, accessPO, config, true, true);
@@ -175,29 +182,29 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 	}
 
 	private ITransportHandler getTransportHandler(AbstractAccessAO operator,
-			IProtocolHandler<?> protocolHandler) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		ITransportHandler transportHandler = null;
 		if (operator.getTransportHandler() != null) {
 			transportHandler = TransportHandlerRegistry.getInstance(
 					operator.getTransportHandler(), protocolHandler,
-					operator.getOptionsMap());
+					options);
 		}
 		return transportHandler;
 	}
 
 	private IProtocolHandler<?> getProtocolHandler(AbstractAccessAO operator,
-			IDataHandler<?> dataHandler) {
+			IDataHandler<?> dataHandler, OptionMap options) {
 		IProtocolHandler<?> protocolHandler = null;
 		if (operator.getProtocolHandler() != null) {
 			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
 				protocolHandler = ProtocolHandlerRegistry.getInstance(
 						operator.getProtocolHandler(), ITransportDirection.IN,
-						IAccessPattern.PULL, operator.getOptionsMap(),
+						IAccessPattern.PULL, options,
 						dataHandler);
 			} else {
 				protocolHandler = ProtocolHandlerRegistry.getInstance(
 						operator.getProtocolHandler(), ITransportDirection.IN,
-						IAccessPattern.PUSH, operator.getOptionsMap(),
+						IAccessPattern.PUSH, options,
 						dataHandler);
 			}
 		}

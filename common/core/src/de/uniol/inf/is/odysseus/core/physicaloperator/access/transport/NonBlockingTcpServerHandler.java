@@ -23,11 +23,10 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.connection.AcceptorSelectorHandler;
 import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
@@ -62,7 +61,7 @@ public class NonBlockingTcpServerHandler extends AbstractTransportHandler
 		super();
 	}
 
-	public NonBlockingTcpServerHandler(final IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+	public NonBlockingTcpServerHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 		
 		
@@ -94,7 +93,7 @@ public class NonBlockingTcpServerHandler extends AbstractTransportHandler
 	@Override
 	public ITransportHandler createInstance(
 			final IProtocolHandler<?> protocolHandler,
-			final Map<String, String> options) {
+			final OptionMap options) {
 		final NonBlockingTcpServerHandler handler = new NonBlockingTcpServerHandler(
 				protocolHandler, options);
 		return handler;

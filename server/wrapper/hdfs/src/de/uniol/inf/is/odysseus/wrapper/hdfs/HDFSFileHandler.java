@@ -1,11 +1,10 @@
 package de.uniol.inf.is.odysseus.wrapper.hdfs;
 import java.io.IOException;
-import java.util.Map;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractFileHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -18,7 +17,7 @@ public class HDFSFileHandler extends AbstractFileHandler {
 	// public HDFSFileHandler() {
 	// }
 
-	public HDFSFileHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+	public HDFSFileHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 		Configuration config = new Configuration();
 		String paramName = "fs.default.name";
@@ -36,7 +35,7 @@ public class HDFSFileHandler extends AbstractFileHandler {
 
 	@Override
 	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		HDFSFileHandler fileHandler = new HDFSFileHandler(protocolHandler, options);
 		return fileHandler;
 	}

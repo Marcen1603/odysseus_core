@@ -17,8 +17,8 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
@@ -39,7 +39,7 @@ public interface IProtocolHandler<T> extends ITransportHandlerListener<T> {
 	 * @return
 	 */
     public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access,
-            Map<String, String> options, IDataHandler<T> dataHandler);
+            OptionMap options, IDataHandler<T> dataHandler);
 
     /**
      * The unique name of the protocol handler

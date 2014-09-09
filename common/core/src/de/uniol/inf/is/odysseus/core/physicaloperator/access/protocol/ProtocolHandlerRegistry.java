@@ -23,42 +23,49 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
 public class ProtocolHandlerRegistry implements IProtocolHandlerRegistry {
 
-	static Logger logger = LoggerFactory.getLogger(ProtocolHandlerRegistry.class);
+	static Logger logger = LoggerFactory
+			.getLogger(ProtocolHandlerRegistry.class);
 
 	static private Map<String, IProtocolHandler<?>> handlers = new HashMap<String, IProtocolHandler<?>>();
 
 	static public void register(IProtocolHandler<?> handler) {
-		logger.debug("Register new Handler " + handler.getName());
-		if (!handlers.containsKey(handler.getName().toLowerCase())) {
-			handlers.put(handler.getName().toLowerCase(), handler);
-		} else {
-			logger.error("Handler with name " + handler.getName()
-					+ " already registered");
+		try {
+			logger.debug("Register new Handler " + handler.getName());
+			if (!handlers.containsKey(handler.getName().toLowerCase())) {
+				handlers.put(handler.getName().toLowerCase(), handler);
+			} else {
+				logger.error("Handler with name " + handler.getName()
+						+ " already registered");
+			}
+		} catch (Exception e) {
+			logger.error("Cannot register handler " + handler);
 		}
 	}
-	
-	static public void remove(IProtocolHandler<?> handler){
-		logger.debug("Remove handler "+handler.getName());
+
+	static public void remove(IProtocolHandler<?> handler) {
+		logger.debug("Remove handler " + handler.getName());
 		handlers.remove(handler.getName().toLowerCase());
 	}
-	
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    static public IProtocolHandler<?> getInstance(String name, ITransportDirection direction, IAccessPattern access,
-            Map<String, String> options, IDataHandler dataHandler) {
-        IProtocolHandler<?> ret = handlers.get(name.toLowerCase());
-        if (ret != null) {
-            return ret.createInstance(direction, access, options, dataHandler);
-        }
-        logger.error("No handler with name " + name + " found!");
-        return null;
-    }
-	
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	static public IProtocolHandler<?> getInstance(String name,
+			ITransportDirection direction, IAccessPattern access,
+			OptionMap options, IDataHandler dataHandler) {
+		IProtocolHandler<?> ret = handlers.get(name.toLowerCase());
+		if (ret != null) {
+			return ret.createInstance(direction, access, options, dataHandler);
+		}
+		logger.error("No handler with name " + name + " found!");
+		return null;
+	}
+
 	public static ImmutableList<String> getHandlerNames() {
 		return ImmutableList.copyOf(handlers.keySet());
 	}

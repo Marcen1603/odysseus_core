@@ -21,8 +21,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -47,7 +46,7 @@ public class HTTPStreamTransportHandler extends AbstractPullTransportHandler {
     /**
      * @param protocolHandler
      */
-    public HTTPStreamTransportHandler(final IProtocolHandler<?> protocolHandler, Map<String,String> options) {
+    public HTTPStreamTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
         super(protocolHandler, options);
         init(options);
     }
@@ -58,12 +57,12 @@ public class HTTPStreamTransportHandler extends AbstractPullTransportHandler {
     }
 
     @Override
-    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
+    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
         final HTTPStreamTransportHandler handler = new HTTPStreamTransportHandler(protocolHandler, options);
         return handler;
     }
 
-    protected void init(Map<String, String> options) {
+    protected void init(OptionMap options) {
         if (options.get(URI) != null) {
             setURI(options.get(URI));
         }       

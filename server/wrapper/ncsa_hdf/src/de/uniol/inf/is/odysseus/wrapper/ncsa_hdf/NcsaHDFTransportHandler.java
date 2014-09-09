@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 import ncsa.hdf.object.Datatype;
@@ -17,6 +16,7 @@ import ncsa.hdf.object.h5.H5File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IIteratable;
@@ -46,7 +46,7 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 	}
 
 	public NcsaHDFTransportHandler(IProtocolHandler<?> protocolHandler,
-			Map<String, String> options) {
+			OptionMap options) {
 		super(protocolHandler, options);
 		if (options.containsKey(PATH)) {
 			path = options.get(PATH);
@@ -63,7 +63,7 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 
 	@Override
 	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		return new NcsaHDFTransportHandler(protocolHandler, options);
 	}
 
