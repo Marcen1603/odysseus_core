@@ -98,4 +98,11 @@ public class OptionMap {
 		}
 		return missing;
 	}
+	
+	public void checkRequiredException(String... keys){
+		List<String> missing = checkRequired(keys);
+		if (!missing.isEmpty()){
+			throw new IllegalArgumentException("The following required options are not set: "+missing);
+		}
+	}
 }

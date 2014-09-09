@@ -23,6 +23,7 @@ abstract public class AbstractFileHandler extends AbstractTransportHandler {
 
 	public AbstractFileHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
+		options.checkRequiredException(FILENAME);
 		if (options.containsKey(FILENAME)){
 			filename = options.get(FILENAME);
 			filename = convertForOS(filename);
