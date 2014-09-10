@@ -70,7 +70,20 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 	private static final String LOW_SPEED_UPPERBORDER = "14";
 	private static final String MEDIUM_SPEED_UPPERBORDER = "17";
 	private static final String HIGH_SPEED_UPPERBORDER = "24";
+	
+	// Output
+	public static final String OUTPUT_PARAMETER_OVERVIEW = "overview";
+	public static final String OUTPUT_PARAMETER_DETAIL = "detail";
+	public static final String OUTPUT_PARAMETER_PATH = "path";
 
+	// Speed
+	public static final String SPEED_PARAMETER_STANDING = "standing";
+	public static final String SPEED_PARAMETER_TROT = "trot";
+	public static final String SPEED_PARAMETER_LOW = "low";
+	public static final String SPEED_PARAMETER_MEDIUM = "medium";
+	public static final String SPEED_PARAMETER_HIGH = "high";
+	public static final String SPEED_PARAMETER_SPRINT = "sprint";
+	
 	// Attributes
 	private static String ATTRIBUTE_second = "second";
 	private List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
@@ -301,7 +314,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 			List<String> overviewChangeDetectAttributes = new ArrayList<String>();
 
 			if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_STANDING)) {
+					SPEED_PARAMETER_STANDING)) {
 
 				overviewAttributes.add(ATTRIBUTE_second);
 				overviewAttributes.add("Standing_Time");
@@ -313,7 +326,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				overviewChangeDetectAttributes.add("Standing_Time");
 
 			} else if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_TROT)) {
+					SPEED_PARAMETER_TROT)) {
 
 				overviewAttributes.add(ATTRIBUTE_second);
 				overviewAttributes.add("Trot_Time");
@@ -325,7 +338,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				overviewChangeDetectAttributes.add("Trot_Time");
 
 			} else if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_LOW)) {
+					SPEED_PARAMETER_LOW)) {
 
 				overviewAttributes.add(ATTRIBUTE_second);
 				overviewAttributes.add("Low_Time");
@@ -337,7 +350,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				overviewChangeDetectAttributes.add("Low_Time");
 
 			} else if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_MEDIUM)) {
+					SPEED_PARAMETER_MEDIUM)) {
 
 				overviewAttributes.add(ATTRIBUTE_second);
 				overviewAttributes.add("Medium_Time");
@@ -349,7 +362,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				overviewChangeDetectAttributes.add("Medium_Time");
 
 			} else if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_HIGH)) {
+					SPEED_PARAMETER_HIGH)) {
 
 				overviewAttributes.add(ATTRIBUTE_second);
 				overviewAttributes.add("High_Time");
@@ -361,7 +374,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				overviewChangeDetectAttributes.add("High_Time");
 
 			} else if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_SPRINT)) {
+					SPEED_PARAMETER_SPRINT)) {
 
 				overviewAttributes.add(ATTRIBUTE_second);
 				overviewAttributes.add("Sprint_Time");
@@ -398,7 +411,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 			List<String> detailChangeDetectAttributes = new ArrayList<String>();
 
 			if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_STANDING)) {
+					SPEED_PARAMETER_STANDING)) {
 
 				detailAttributes.add(ATTRIBUTE_second);
 				detailAttributes.add("Standing_Count");
@@ -409,7 +422,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				detailChangeDetectAttributes.add("Standing_Count");
 
 			} else if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_TROT)) {
+					SPEED_PARAMETER_TROT)) {
 
 				detailAttributes.add(ATTRIBUTE_second);
 				detailAttributes.add("Trot_Count");
@@ -420,7 +433,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				detailChangeDetectAttributes.add("Trot_Count");
 
 			} else if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_LOW)) {
+					SPEED_PARAMETER_LOW)) {
 
 				detailAttributes.add(ATTRIBUTE_second);
 				detailAttributes.add("Low_Count");
@@ -431,7 +444,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				detailChangeDetectAttributes.add("Low_Count");
 
 			} else if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_MEDIUM)) {
+					SPEED_PARAMETER_MEDIUM)) {
 
 				detailAttributes.add(ATTRIBUTE_second);
 				detailAttributes.add("Medium_Count");
@@ -442,7 +455,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				detailChangeDetectAttributes.add("Medium_Count");
 
 			} else if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_HIGH)) {
+					SPEED_PARAMETER_HIGH)) {
 
 				detailAttributes.add(ATTRIBUTE_second);
 				detailAttributes.add("High_Count");
@@ -453,7 +466,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				detailChangeDetectAttributes.add("High_Count");
 
 			} else if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_SPRINT)) {
+					SPEED_PARAMETER_SPRINT)) {
 
 				detailAttributes.add(ATTRIBUTE_second);
 				detailAttributes.add("Sprint_Count");
@@ -488,42 +501,42 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 			ArrayList<String> pathSelectPredicates = new ArrayList<String>();
 
 			if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_STANDING)) {
+					SPEED_PARAMETER_STANDING)) {
 
 				pathSelectPredicates.add("Classification = 'Standing'");
 				pathSelect = OperatorBuildHelper.createSelectAO(
 						pathSelectPredicates, topSource);
 
 			} else if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_TROT)) {
+					SPEED_PARAMETER_TROT)) {
 
 				pathSelectPredicates.add("Classification = 'Trot'");
 				pathSelect = OperatorBuildHelper.createSelectAO(
 						pathSelectPredicates, topSource);
 
 			} else if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_LOW)) {
+					SPEED_PARAMETER_LOW)) {
 
 				pathSelectPredicates.add("Classification = 'Low'");
 				pathSelect = OperatorBuildHelper.createSelectAO(
 						pathSelectPredicates, topSource);
 
 			} else if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_MEDIUM)) {
+					SPEED_PARAMETER_MEDIUM)) {
 
 				pathSelectPredicates.add("Classification = 'Medium'");
 				pathSelect = OperatorBuildHelper.createSelectAO(
 						pathSelectPredicates, topSource);
 
 			} else if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_HIGH)) {
+					SPEED_PARAMETER_HIGH)) {
 
 				pathSelectPredicates.add("Classification = 'High'");
 				pathSelect = OperatorBuildHelper.createSelectAO(
 						pathSelectPredicates, topSource);
 
 			} else if (speedParameter.getValue().equals(
-					SportsQLStringParameter.SPEED_PARAMETER_SPRINT)) {
+					SPEED_PARAMETER_SPRINT)) {
 
 				pathSelectPredicates.add("Classification = 'Sprint'");
 				pathSelect = OperatorBuildHelper.createSelectAO(
