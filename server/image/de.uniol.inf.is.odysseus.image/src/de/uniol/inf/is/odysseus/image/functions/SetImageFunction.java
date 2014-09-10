@@ -50,7 +50,7 @@ public class SetImageFunction extends AbstractFunction<Image> {
 
 		Objects.requireNonNull(image);
 		
-        image.set(x, y, value);
+        image.set(x, y, (int)value);
         return image;
     }
 }

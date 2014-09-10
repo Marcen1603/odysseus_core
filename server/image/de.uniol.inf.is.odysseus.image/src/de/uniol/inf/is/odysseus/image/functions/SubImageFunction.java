@@ -65,7 +65,7 @@ public class SubImageFunction extends AbstractFunction<Image> {
 		Preconditions.checkArgument(y >= 0 && height > 0
 				&& (y + height) <= image.getHeight(), "Invalid dimension");
 
-		Image result = new Image(width, height);
+		Image result = new Image();
 
 		final Mat iplImage = OpenCVUtil.imageToIplImage(image);
 

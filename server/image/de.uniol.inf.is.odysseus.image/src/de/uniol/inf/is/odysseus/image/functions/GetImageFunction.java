@@ -51,6 +51,6 @@ public class GetImageFunction extends AbstractFunction<Double> {
 
 		Objects.requireNonNull(image);
 
-		return image.get(x, y);
+		return (double)image.get(x, y);
 	}
 }

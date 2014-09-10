@@ -15,99 +15,121 @@
  */
 package de.uniol.inf.is.odysseus.image.common.datatype;
 
-import java.util.Arrays;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.Raster;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
+import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.objecthandler.ObjectByteConverter;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
+ * @author Marco Grawunder
  * 
  */
 public class Image implements IClone, Cloneable {
 
-	private final int width;
-	private final int height;
-	private final double[] buffer;
+	private BufferedImage image;
 
-	public Image(final int width, final int height) {
-		this.width = width;
-		this.height = height;
-		this.buffer = new double[this.width * this.height];
+	public Image() {
+	}
+	
+	public Image(BufferedImage image) {
+		this.image = image;
+	}
+	
+	public Image(ByteBuffer buffer){
+		this.image = (BufferedImage) ObjectByteConverter.bytesToObject(buffer.array());
+	}
+	
+	public Image(Image other) {
+		this.image = deepCopy(other.image);
 	}
 
-	public Image(final int width, final int height, final double[] buffer) {
-		this(width, height);
-		System.arraycopy(buffer, 0, this.buffer, 0, buffer.length);
+	public Image(int width, int height){
+		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);		
+	}
+	
+	public Image(double[][] data) {
+		image = new BufferedImage(data[0].length, data.length, BufferedImage.TYPE_INT_RGB);
+		WritableRaster raster = image.getRaster();
+		for (int i = 0; i < data.length; i++) {
+            raster.setPixels(i, 0, data[i].length, 1, data[i]);
+		}
+	}
+	
+	public double[][] getMatrix() {
+		throw new UnsupportedOperationException("Currenlty not implemented");
+		
+//		WritableRaster raster = image.getRaster();
+//		raster.getPixels(x, y, w, h, iArray);
+//		return null;
+	}
+	
+	static BufferedImage deepCopy(BufferedImage bi) {
+		ColorModel cm = bi.getColorModel();
+		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+		WritableRaster raster = bi.copyData(null);
+		return new BufferedImage(cm, raster, isAlphaPremultiplied, null)
+				.getSubimage(0, 0, bi.getWidth(), bi.getHeight());
+	}
+	
+	public BufferedImage getImage() {
+		return image;
+	}
+
+	public void setImage(BufferedImage image) {
+		this.image = image;
 	}
 
 	/**
 	 * @return the width
 	 */
 	public int getWidth() {
-		return this.width;
+		return this.image.getWidth();
 	}
 
 	/**
 	 * @return the height
 	 */
 	public int getHeight() {
-		return this.height;
+		return this.image.getHeight();
 	}
 
-	public double get(final int x, final int y) {
-		return this.buffer[(y * this.width) + x];
+	public int get(final int x, final int y) {
+		return this.image.getRGB(x, y);
 	}
 
-	public double[] getBuffer() {
-		return this.buffer;
+	public void set(int x, int y, int value) {
+		this.image.setRGB(x, y, value);
 	}
 
-	public void set(final int x, final int y, final double value) {
-		this.buffer[(y * this.width) + x] = value;
-	}
-
-	public double[][] get(final int x1, final int y1, final int x2, final int y2) {
-		double[][] value = new double[y2 - y1 + 1][x2 - x1 + 1];
-
-		for (int i = 0; i < value.length; i++) {
-			try {
-
-				System.arraycopy(this.buffer, (i + y1) * this.width + x1,
-						value[i], 0, value[i].length);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return value;
-	}
-
-	public void set(final int x1, final int y1, final int x2, final int y2,
-			final double value) {
-		double[] valueArray = new double[x2 - x1 + 1];
-		Arrays.fill(valueArray, value);
-		for (int i = y1; i <= y2; i++) {
-			System.arraycopy(valueArray, 0, this.buffer, i * this.width + x1,
-					valueArray.length);
-		}
-	}
-
-	public void setBuffer(final double[] value) {
-		System.arraycopy(this.buffer, 0, value, 0, value.length);
-	}
-
-	public void fill(final double value) {
-		Arrays.fill(this.buffer, value);
-	}
-
+	public void writeData(ByteBuffer buffer){
+		byte[] bytes = ObjectByteConverter.objectToBytes(this.image);
+		buffer.put(bytes);
+	}	
+	
 	@Override
 	public Image clone() {
-		final Image image = new Image(this.width, this.height, this.buffer);
+		final Image image = new Image(this);
 		return image;
 	}
 
 	@Override
 	public String toString() {
-		return "{Width: " + this.width + " Height: " + this.height + "}";
+		return "{Width: " + this.getWidth() + " Height: " + this.getHeight() + "}";
 	}
+
+	public void fill(int value) {
+		throw new UnsupportedOperationException("Currently not implemented");
+	}
+
+
+
+
+
 
 }

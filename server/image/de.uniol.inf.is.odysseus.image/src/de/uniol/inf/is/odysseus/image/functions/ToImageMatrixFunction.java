@@ -52,12 +52,7 @@ public class ToImageMatrixFunction extends AbstractFunction<Image> {
         Objects.requireNonNull(data);
         Preconditions.checkArgument(data.length > 0, "Invalid dimension");
         Preconditions.checkArgument(data[0].length > 0, "Invalid dimension");
-        Image image = new Image(data[0].length, data.length);
-        double[] buffer = image.getBuffer();
-        for (int i = 0; i < data.length; i++) {
-            System.arraycopy(data[i], 0, buffer, i * image.getWidth(), data[i].length);
-        }
-        image.setBuffer(buffer);
+        Image image = new Image(data);
         return image;
     }
 }

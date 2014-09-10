@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 abstract public class AbstractByteBufferHandler<T> extends AbstractProtocolHandler<T> {
 
-    public static final String EXPORT_METADATA = "exportmetadata";
+    public static final String WRITE_METADATA = "writemetadata";
 	protected ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
     protected boolean exportMetadata = false;
     
@@ -46,7 +46,7 @@ abstract public class AbstractByteBufferHandler<T> extends AbstractProtocolHandl
         else {
             byteOrder = ByteOrder.BIG_ENDIAN;
         }
-        exportMetadata = optionsMap.getBoolean(EXPORT_METADATA, Boolean.FALSE);
+        exportMetadata = optionsMap.getBoolean(WRITE_METADATA, Boolean.FALSE);
     }
 
 	public ByteOrder getByteOrder() {

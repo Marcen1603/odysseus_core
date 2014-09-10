@@ -47,7 +47,7 @@ public class FillImageFunction extends AbstractFunction<Image> {
 
 		Objects.requireNonNull(image);
 		
-        image.fill(value);
+        image.fill((int)value);
         return image;
     }
 }

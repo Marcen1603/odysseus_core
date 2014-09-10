@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.image.datahandler;
+package de.uniol.inf.is.odysseus.image.common.datahandler;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.image.common.datatype.Image;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
+ * @author Marco Grawunder
  * 
  */
 public class ImageDataHandler extends AbstractDataHandler<Image> {
@@ -52,15 +53,18 @@ public class ImageDataHandler extends AbstractDataHandler<Image> {
 	@Override
 	public Image readData(final ObjectInputStream inputStream)
 			throws IOException {
-		int width = inputStream.readInt();
-		int height = inputStream.readInt();
-		Image image = new Image(width, height);
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				image.set(x, y, inputStream.readDouble());
-			}
+		BufferedImage bimage = null;
+		try {
+			bimage = (BufferedImage) inputStream.readObject();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
-		return image;
+		if (bimage != null) {
+			return new Image(bimage);
+		} else {
+			return null;
+		}
+
 	}
 
 	@Override
@@ -71,41 +75,19 @@ public class ImageDataHandler extends AbstractDataHandler<Image> {
 	@Override
 	public Image readData(InputStream inputStream) throws IOException {
 		BufferedImage bImage = ImageIO.read(inputStream);
-		int width = bImage.getWidth();
-		int height = bImage.getHeight();
-		Image image = new Image(width, height);
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				image.set(x, y, bImage.getRGB(x, y));
-			}
-		}
-		return image;
+		return new Image(bImage);
 
 	}
 
 	@Override
 	public Image readData(final ByteBuffer buffer) {
-		int width = buffer.getInt();
-		int height = buffer.getInt();
-		Image image = new Image(width, height);
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				image.set(x, y, buffer.getDouble());
-			}
-		}
-		return image;
+		return new Image(buffer);
 	}
 
 	@Override
 	public void writeData(final ByteBuffer buffer, final Object data) {
-		final Image value = (Image) data;
-		buffer.putInt(value.getWidth());
-		buffer.putInt(value.getHeight());
-		for (int x = 0; x < value.getWidth(); x++) {
-			for (int y = 0; y < value.getHeight(); y++) {
-				buffer.putDouble(value.get(x, y));
-			}
-		}
+		Image image = (Image) data;
+		image.writeData(buffer);
 	}
 
 	@Override

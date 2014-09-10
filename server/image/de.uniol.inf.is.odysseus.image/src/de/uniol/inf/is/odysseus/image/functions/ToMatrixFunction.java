@@ -48,11 +48,7 @@ public class ToMatrixFunction extends AbstractFunction<double[][]> {
     public double[][] getValue() {
         final Image image = this.getInputValue(0);
         Objects.requireNonNull(image);
-        double[][] matrix = new double[image.getWidth()][image.getHeight()];
-        double[] buffer = image.getBuffer();
-        for (int i = 0; i < image.getHeight(); i++) {
-            System.arraycopy(buffer, i * image.getWidth(), matrix[i], 0, image.getWidth());
-        }
+        double[][] matrix = image.getMatrix();
         return matrix;
     }
 

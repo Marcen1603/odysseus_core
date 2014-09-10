@@ -13,5 +13,5 @@ Export-Package: de.uniol.inf.is.odysseus.image.common,
  de.uniol.inf.is.odysseus.image.common.datatype
 Require-Bundle: de.uniol.inf.is.odysseus.core
 Bundle-ClassPath: .
-Service-Component: OSGI-INF/ImageDatatypeProvider.xml
+Service-Component: OSGI-INF/*
 

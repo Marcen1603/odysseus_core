@@ -99,17 +99,18 @@ public class ShowImageUDF extends JFrame implements IUserDefinedFunction<Tuple<?
         final Image image = (Image) in.getAttribute(this.pos);
         if ((this.canvas != null) && (this.canvas.isVisible()) && (!this.pause.get())) {
             synchronized (this.canvas) {
-                final Mat iplImage = OpenCVUtil.imageToIplImage(image);
-                BufferedImage bufferedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-                bufferedImage.getRaster().setDataElements(0, 0, iplImage.cols(), iplImage.rows(), doubleToByteBuffer(image.getBuffer()));
-                this.canvas.update(bufferedImage);
+            	
+//                final Mat iplImage = OpenCVUtil.imageToIplImage(image);
+//                BufferedImage bufferedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+//                bufferedImage.getRaster().setDataElements(0, 0, iplImage.cols(), iplImage.rows(), doubleToByteBuffer(image.getBuffer()));
+                this.canvas.update(image.getImage());
                 try {
                 }
                 catch (final Exception e) {
                     e.printStackTrace();
                 }
                 finally {
-                    iplImage.release();
+//                    iplImage.release();
                 }
             }
         }

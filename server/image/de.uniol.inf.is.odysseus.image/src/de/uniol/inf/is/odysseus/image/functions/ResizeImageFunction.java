@@ -62,7 +62,7 @@ public class ResizeImageFunction extends AbstractFunction<Image> {
 		Objects.requireNonNull(image);
 		Preconditions.checkArgument(width > 0, "Invalid dimension");
 		Preconditions.checkArgument(height > 0, "Invalid dimension");
-		Image result = new Image(width, height);
+		Image result = new Image();
 		final Mat iplImage = OpenCVUtil.imageToIplImage(image);
 
 		Mat iplResult = new Mat(width, height, iplImage.depth());
