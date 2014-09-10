@@ -189,13 +189,15 @@ public class SportsQLParserRegistry {
 			} else if (valueObj == null) {
 				continue;
 			}
+			Class<? extends ISportsQLParameter> parameterClass = sportsQLParameters[i].parameterClass();
 			String value = null;
 			if (valueObj instanceof JSONObject) {
 				value = valueObj.toString();
+			} else if(valueObj instanceof String){
+				value = "{ \"value\" : \"" + valueObj.toString() + "\" }";
 			} else {
 				value = "{ \"value\" : " + valueObj.toString() + " }";
 			}
-			Class<? extends ISportsQLParameter> parameterClass = sportsQLParameters[i].parameterClass();
 			ISportsQLParameter parameter = null;
 			try {
 				parameter = mapper.readValue(value, parameterClass);

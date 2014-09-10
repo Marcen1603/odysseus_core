@@ -36,10 +36,9 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceUnitHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.model.Space;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLOutputParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceUnit;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpeedParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLStringParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 /**
@@ -60,8 +59,8 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 @SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER }, name = "sprints", parameters = {
 		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false),
-		@SportsQLParameter(name = "speed", parameterClass = SportsQLSpeedParameter.class, mandatory = false),
-		@SportsQLParameter(name = "output", parameterClass = SportsQLOutputParameter.class, mandatory = false), })
+		@SportsQLParameter(name = "speed", parameterClass = SportsQLStringParameter.class, mandatory = false),
+		@SportsQLParameter(name = "output", parameterClass = SportsQLStringParameter.class, mandatory = false), })
 public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 	private static final String MICROMS_TO_KMH_FACTOR = "(1000000 / 3.6)";
@@ -256,19 +255,19 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 		// 10. Output
 		Map<String, ISportsQLParameter> parameters = sportsQL.getParameters();
-		SportsQLOutputParameter outputParameter = (SportsQLOutputParameter) parameters
+		SportsQLStringParameter outputParameter = (SportsQLStringParameter) parameters
 				.get("output");
-		SportsQLSpeedParameter speedParameter = (SportsQLSpeedParameter) parameters
+		SportsQLStringParameter speedParameter = (SportsQLStringParameter) parameters
 				.get("speed");
 
 		ILogicalOperator topSource;
 		if (outputParameter != null) {
-			if (outputParameter.getOutput().equals("path")) {
+			if (outputParameter.getValue().equals("path")) {
 				// Output: Path
 				topSource = createPathOutputAO(divideSpeedStateMapAO,
 						spaceParameter);
 				topSource = createSpeedPathSelectAO(speedParameter, topSource);
-			} else if (outputParameter.getOutput().equals("detail")) {
+			} else if (outputParameter.getValue().equals("detail")) {
 				// Output: Detail
 				topSource = createDetailOutputAO(divideSpeedStateMapAO,
 						spaceParameter);
@@ -295,14 +294,14 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 	// Overview: SpeedParameter Project
 	private ILogicalOperator createSpeedOverviewProjectAO(
-			SportsQLSpeedParameter speedParameter, ILogicalOperator topSource) {
+			SportsQLStringParameter speedParameter, ILogicalOperator topSource) {
 		if (speedParameter != null) {
 			ProjectAO overviewProject = null;
 			List<String> overviewAttributes = new ArrayList<String>();
 			List<String> overviewChangeDetectAttributes = new ArrayList<String>();
 
-			if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_STANDING)) {
+			if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_STANDING)) {
 
 				overviewAttributes.add(ATTRIBUTE_second);
 				overviewAttributes.add("Standing_Time");
@@ -313,8 +312,8 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 				overviewChangeDetectAttributes.add("Standing_Time");
 
-			} else if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_TROT)) {
+			} else if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_TROT)) {
 
 				overviewAttributes.add(ATTRIBUTE_second);
 				overviewAttributes.add("Trot_Time");
@@ -325,8 +324,8 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 				overviewChangeDetectAttributes.add("Trot_Time");
 
-			} else if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_LOW)) {
+			} else if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_LOW)) {
 
 				overviewAttributes.add(ATTRIBUTE_second);
 				overviewAttributes.add("Low_Time");
@@ -337,8 +336,8 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 				overviewChangeDetectAttributes.add("Low_Time");
 
-			} else if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_MEDIUM)) {
+			} else if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_MEDIUM)) {
 
 				overviewAttributes.add(ATTRIBUTE_second);
 				overviewAttributes.add("Medium_Time");
@@ -349,8 +348,8 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 				overviewChangeDetectAttributes.add("Medium_Time");
 
-			} else if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_HIGH)) {
+			} else if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_HIGH)) {
 
 				overviewAttributes.add(ATTRIBUTE_second);
 				overviewAttributes.add("High_Time");
@@ -361,8 +360,8 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 				overviewChangeDetectAttributes.add("High_Time");
 
-			} else if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_SPRINT)) {
+			} else if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_SPRINT)) {
 
 				overviewAttributes.add(ATTRIBUTE_second);
 				overviewAttributes.add("Sprint_Time");
@@ -392,14 +391,14 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 	// Detail: SpeedParameter Project
 	private ILogicalOperator createSpeedDetailProjectAO(
-			SportsQLSpeedParameter speedParameter, ILogicalOperator topSource) {
+			SportsQLStringParameter speedParameter, ILogicalOperator topSource) {
 		if (speedParameter != null) {
 			ProjectAO detailProject = null;
 			List<String> detailAttributes = new ArrayList<String>();
 			List<String> detailChangeDetectAttributes = new ArrayList<String>();
 
-			if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_STANDING)) {
+			if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_STANDING)) {
 
 				detailAttributes.add(ATTRIBUTE_second);
 				detailAttributes.add("Standing_Count");
@@ -409,8 +408,8 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 				detailChangeDetectAttributes.add("Standing_Count");
 
-			} else if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_TROT)) {
+			} else if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_TROT)) {
 
 				detailAttributes.add(ATTRIBUTE_second);
 				detailAttributes.add("Trot_Count");
@@ -420,8 +419,8 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 				detailChangeDetectAttributes.add("Trot_Count");
 
-			} else if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_LOW)) {
+			} else if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_LOW)) {
 
 				detailAttributes.add(ATTRIBUTE_second);
 				detailAttributes.add("Low_Count");
@@ -431,8 +430,8 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 				detailChangeDetectAttributes.add("Low_Count");
 
-			} else if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_MEDIUM)) {
+			} else if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_MEDIUM)) {
 
 				detailAttributes.add(ATTRIBUTE_second);
 				detailAttributes.add("Medium_Count");
@@ -442,8 +441,8 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 				detailChangeDetectAttributes.add("Medium_Count");
 
-			} else if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_HIGH)) {
+			} else if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_HIGH)) {
 
 				detailAttributes.add(ATTRIBUTE_second);
 				detailAttributes.add("High_Count");
@@ -453,8 +452,8 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 				detailChangeDetectAttributes.add("High_Count");
 
-			} else if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_SPRINT)) {
+			} else if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_SPRINT)) {
 
 				detailAttributes.add(ATTRIBUTE_second);
 				detailAttributes.add("Sprint_Count");
@@ -483,48 +482,48 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 	// Path: SpeedParameter Select
 	private ILogicalOperator createSpeedPathSelectAO(
-			SportsQLSpeedParameter speedParameter, ILogicalOperator topSource) {
+			SportsQLStringParameter speedParameter, ILogicalOperator topSource) {
 		if (speedParameter != null) {
 			SelectAO pathSelect;
 			ArrayList<String> pathSelectPredicates = new ArrayList<String>();
 
-			if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_STANDING)) {
+			if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_STANDING)) {
 
 				pathSelectPredicates.add("Classification = 'Standing'");
 				pathSelect = OperatorBuildHelper.createSelectAO(
 						pathSelectPredicates, topSource);
 
-			} else if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_TROT)) {
+			} else if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_TROT)) {
 
 				pathSelectPredicates.add("Classification = 'Trot'");
 				pathSelect = OperatorBuildHelper.createSelectAO(
 						pathSelectPredicates, topSource);
 
-			} else if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_LOW)) {
+			} else if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_LOW)) {
 
 				pathSelectPredicates.add("Classification = 'Low'");
 				pathSelect = OperatorBuildHelper.createSelectAO(
 						pathSelectPredicates, topSource);
 
-			} else if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_MEDIUM)) {
+			} else if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_MEDIUM)) {
 
 				pathSelectPredicates.add("Classification = 'Medium'");
 				pathSelect = OperatorBuildHelper.createSelectAO(
 						pathSelectPredicates, topSource);
 
-			} else if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_HIGH)) {
+			} else if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_HIGH)) {
 
 				pathSelectPredicates.add("Classification = 'High'");
 				pathSelect = OperatorBuildHelper.createSelectAO(
 						pathSelectPredicates, topSource);
 
-			} else if (speedParameter.getSpeed().equals(
-					SportsQLSpeedParameter.SPEED_PARAMETER_SPRINT)) {
+			} else if (speedParameter.getValue().equals(
+					SportsQLStringParameter.SPEED_PARAMETER_SPRINT)) {
 
 				pathSelectPredicates.add("Classification = 'Sprint'");
 				pathSelect = OperatorBuildHelper.createSelectAO(
