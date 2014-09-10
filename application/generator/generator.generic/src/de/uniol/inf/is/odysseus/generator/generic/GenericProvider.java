@@ -284,7 +284,7 @@ public class GenericProvider extends AbstractDataGenerator {
                     }
                 }
                 schema.insert(0, "Use the following statement to access the stream\nATTACH STREAM generator (");
-                schema.append(")\nWRAPPER 'GenericPush'\nPROTOCOL 'SizeByteBuffer'\nTRANSPORT 'NonBlockingTcp'\nDATAHANDLER 'Tuple'\nOPTIONS ( 'port' '54325', 'host' 'localhost', 'ByteOrder' 'Little_Endian')");
+                schema.append(")\nWRAPPER 'GenericPush'\nPROTOCOL 'SizeByteBuffer'\nTRANSPORT 'TCPClient'\nDATAHANDLER 'Tuple'\nOPTIONS ( 'port' '54325', 'host' 'localhost', 'ByteOrder' 'Little_Endian')");
                 System.out.println(config);
                 System.out.println(schema.toString());
             }
