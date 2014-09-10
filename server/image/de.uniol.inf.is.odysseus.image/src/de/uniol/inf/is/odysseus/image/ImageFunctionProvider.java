@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.image.functions.SubImageFunction;
 import de.uniol.inf.is.odysseus.image.functions.ToImageFunction;
 import de.uniol.inf.is.odysseus.image.functions.ToImageMatrixFunction;
 import de.uniol.inf.is.odysseus.image.functions.ToMatrixFunction;
+import de.uniol.inf.is.odysseus.image.functions.FungiFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 /**
@@ -60,6 +61,7 @@ public class ImageFunctionProvider implements IFunctionProvider {
         functions.add(new SetImageFunction());
         functions.add(new GetImageFunction());
         functions.add(new CountFacesFunction());
+        functions.add(new FungiFunction());
         ImageFunctionProvider.LOG.info(String.format("Register functions: %s", functions));
         return functions;
     }
