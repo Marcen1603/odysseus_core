@@ -39,244 +39,244 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 
 public class NioConnection extends Thread implements IConnection {
 
-	static private Logger _logger = null;
+    static private Logger _logger = null;
 
-	static private Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(NioConnection.class);
-		}
-		return _logger;
-	}
-
-	private ByteBuffer buffer = ByteBuffer.allocate(1024);
-	Selector selector = null;
-	static NioConnection instance = null;
-	private Map<IAccessConnectionListener<ByteBuffer>, SocketChannel> receiverMap = new HashMap<IAccessConnectionListener<ByteBuffer>, SocketChannel>();
-	private LinkedList<IPair<SocketChannel, IAccessConnectionListener<ByteBuffer>>> deferredList = new LinkedList<IPair<SocketChannel, IAccessConnectionListener<ByteBuffer>>>();
-	boolean registerAction = false;
-	boolean doRouting = true;
-	private List<IConnectionListener> connectionlistener = new ArrayList<IConnectionListener>();
-
-	public static synchronized NioConnection getInstance() throws IOException {
-		if (instance == null) {
-			instance = new NioConnection();
-			instance.start();
-		}
-		return instance;
-	}
-
-	public Set<IAccessConnectionListener<ByteBuffer>> getReceiver() {
-		return receiverMap.keySet();
-	}
-
-	public static synchronized boolean hasInstance() {
-		return instance != null;
-	}
-
-	public void addConnectionListener(IConnectionListener listener) {
-		this.connectionlistener.add(listener);
-	}
-
-	public void removeConnectionListener(IConnectionListener listener) {
-		this.connectionlistener.remove(listener);
-	}
-
-	public void notifyConnectionListeners(ConnectionMessageReason reason) {
-		for (IConnectionListener listener : this.connectionlistener) {
-			listener.notify(this, reason);
-		}
-	}
-
-	private NioConnection() throws IOException {
-		selector = Selector.open();
-	}
-
-	public void stopRouting() {
-		doRouting = false;
-		// instance = null;
-		selector.wakeup();
-	}
-
-	@Override
-	public void run() {
-		getLogger().debug("Nio Connection Handler started ...");
-		while (doRouting) {
-			try {
-				int n = selector.select();
-				// Selector blockiert. Neue Elemente k�nnen nur nach oder
-				// vor select erfolgen. Deswegen die nachtr�gliche Registrierung
-				if (registerAction) {
-					processRegister();
-				}
-				if (n == 0) {
-					// System.out.println("Selector continue...");
-					continue;
-				}
-
-				Iterator<SelectionKey> it = selector.selectedKeys().iterator();
-				while (it.hasNext()) {
-					SelectionKey key = it.next();
-					it.remove();
-					@SuppressWarnings("unchecked")
-					IAccessConnectionListener<ByteBuffer> op = (IAccessConnectionListener<ByteBuffer>) key.attachment();
-					SocketChannel sc = (SocketChannel) key.channel();
-
-					// System.out.println("Selection Key "+key.isConnectable()+" "+key.isReadable()+" "+op);
-					if (key.isConnectable() && sc.finishConnect()) {
-						getLogger().debug("Client connected to " + sc + " from " + sc.socket().getLocalPort());
-						// sc.register(selector, SelectionKey.OP_READ, op);
-
-						if (sc.isConnected()) {
-							key.interestOps(SelectionKey.OP_READ);
-						} else {
-							getLogger().error("NOT CONNECTED");
-						}
-					} else if (key.isReadable()) {
-						if (!sc.isConnected()) {
-							key.interestOps(SelectionKey.OP_CONNECT);
-							getLogger().error("NOT CONNECTED!");
-						} else {
-							if (op != null) {
-								readDataFromSocket(sc, op);
-							} else {
-								getLogger().error(sc.toString() + " " + key.readyOps());
-							}
-						}
-					} else {
-						getLogger().error("WAS ANDERES " + key);
-					}
-
-					// if (key.isAcceptable()){
-					// ServerSocketChannel server =
-					// (ServerSocketChannel)key.channel();
-					// SocketChannel channel = server.accept();
-					// if (channel != null){
-					// channel.configureBlocking(false);
-					// channel.register(selector, SelectionKey.OP_READ);
-					// synchronized(buffer){
-					// buffer.clear();
-					// buffer.put("Hi there!\r\n".getBytes());
-					// buffer.flip();
-					// channel.write(buffer);
-					// }
-					// }
-					// }
-
-				}
-			} catch (java.nio.channels.CancelledKeyException e1) {
-				// Ignore
-				// e1.printStackTrace();
-			} catch (ConnectException ce) {
-				// ce.printStackTrace();
-				getLogger().error("Connection refused. " + ce.getMessage());
-				notifyConnectionListeners(ConnectionMessageReason.ConnectionRefused);
-			} catch (IOException ioe) {
-				getLogger().debug("Connection aborted. " + ioe.getMessage());
-				notifyConnectionListeners(ConnectionMessageReason.ConnectionAbort);
-			}
-		}
-		getLogger().debug("Nio Connection Handler terminated ...");
-	}
-
-    public void connectToServer(IAccessConnectionListener<ByteBuffer> sink, String host, int port, String username, String password, String logininfo) throws Exception {
-		getLogger().debug(sink + " connect to server " + host + " " + port);
-		SocketChannel sc = SocketChannel.open();
-		sc.configureBlocking(false);
-		// sc.configureBlocking(true);
-		sc.connect(new InetSocketAddress(host, port));
-		if (username != null && password != null) {
-			ByteBuffer buffer = ByteBuffer.allocate(2 * (username.length() + password.length()));
-			for (int i = 0; i < username.length(); i++) {
-				buffer.putChar(username.charAt(i));
-			}
-			buffer.putChar('\n');
-			for (int i = 0; i < password.length(); i++) {
-				buffer.putChar(password.charAt(i));
-			}
-			buffer.putChar('\n');
-			buffer.reset();
-			sc.write(buffer);
-		}
-        if (logininfo != null) {
-            sc.write(ByteBuffer.wrap(logininfo.replace("\\n", "\n").getBytes()));
+    static private Logger getLogger() {
+        if (_logger == null) {
+            _logger = LoggerFactory.getLogger(NioConnection.class);
         }
-		deferedRegister(sc, sink);
-		selector.wakeup();
-		notifyConnectionListeners(ConnectionMessageReason.ConnectionOpened);
-	}
+        return _logger;
+    }
 
-	public void disconnectFromServer(IAccessConnectionListener<ByteBuffer> sink) throws IOException {
-		synchronized (receiverMap) {
-			SocketChannel s = receiverMap.remove(sink);
-			if (s != null) {
-				s.close();
-			}
-		}
-	}
+    private ByteBuffer buffer = ByteBuffer.allocate(1024);
+    Selector selector = null;
+    static NioConnection instance = null;
+    private Map<IAccessConnectionListener<ByteBuffer>, SocketChannel> receiverMap = new HashMap<IAccessConnectionListener<ByteBuffer>, SocketChannel>();
+    private LinkedList<IPair<SocketChannel, IAccessConnectionListener<ByteBuffer>>> deferredList = new LinkedList<IPair<SocketChannel, IAccessConnectionListener<ByteBuffer>>>();
+    boolean registerAction = false;
+    boolean doRouting = true;
+    private List<IConnectionListener> connectionlistener = new ArrayList<IConnectionListener>();
 
-	private void deferedRegister(SocketChannel sc, IAccessConnectionListener<ByteBuffer> sink) {
-		synchronized (deferredList) {
-			deferredList.add(new Pair<SocketChannel, IAccessConnectionListener<ByteBuffer>>(sc, sink));
-			synchronized (receiverMap) {
-				receiverMap.put(sink, sc);
-			}
-			registerAction = true;
-		}
-	}
+    public static synchronized NioConnection getInstance() throws IOException {
+        if (instance == null) {
+            instance = new NioConnection();
+            instance.start();
+        }
+        return instance;
+    }
 
-	private synchronized void processRegister() {
-		synchronized (deferredList) {
-			while (deferredList.size() > 0) {
-				IPair<SocketChannel, IAccessConnectionListener<ByteBuffer>> pair = deferredList.poll();
-				try {
-					getLogger().debug("Registering " + pair.getE1() + " " + pair.getE2());
-					pair.getE1().register(selector, SelectionKey.OP_CONNECT, pair.getE2());
-				} catch (ClosedChannelException e) {
-					e.printStackTrace();
-				}
-				getLogger().debug("done");
-			}
-			registerAction = false;
-		}
-	}
+    public Set<IAccessConnectionListener<ByteBuffer>> getReceiver() {
+        return receiverMap.keySet();
+    }
 
-	private void readDataFromSocket(SocketChannel socketChannel, IAccessConnectionListener<ByteBuffer> os) throws IOException {
-		// ISink<ByteBuffer> os = clientMap.get(socketChannel);
-		// System.out.println(os);
-		// System.out.println("Read From Socket " + socketChannel.toString() +
-		// " "
-		// + os + " " + socketChannel.isConnected());
-		int count = -1;
-		try {
-			synchronized (buffer) {
-				buffer.clear();
-				while (socketChannel.isConnected() && (count = socketChannel.read(buffer)) > 0) {
-					// this first flip is done by the handler (AbstractTransportHandler)
-					//buffer.flip();
-					os.process(buffer);
-					buffer.clear();
-				}
-				buffer.flip(); // Wie geht das denn?
-				while (buffer.hasRemaining()) {
-					os.process(buffer);
-				}
-			}
-			if (count < 0) {
-				os.done();
-				socketChannel.close();
-				// System.err.println("Server "+socketChannel+" connection closed (no more Data)");
-			}
-		} catch (IOException e) {
-			socketChannel.isConnectionPending();
-			getLogger().debug("Server " + socketChannel + " connection closed");
-			os.done();
-			socketChannel.close();
-			// throw e;
-		} catch (ClassNotFoundException ex) {
-			ex.printStackTrace();
-			os.done();
-			socketChannel.close();
-		}
-	}
+    public static synchronized boolean hasInstance() {
+        return instance != null;
+    }
+
+    public void addConnectionListener(IConnectionListener listener) {
+        this.connectionlistener.add(listener);
+    }
+
+    public void removeConnectionListener(IConnectionListener listener) {
+        this.connectionlistener.remove(listener);
+    }
+
+    public void notifyConnectionListeners(ConnectionMessageReason reason) {
+        for (IConnectionListener listener : this.connectionlistener) {
+            listener.notify(this, reason);
+        }
+    }
+
+    private NioConnection() throws IOException {
+        selector = Selector.open();
+    }
+
+    public void stopRouting() {
+        doRouting = false;
+        // instance = null;
+        selector.wakeup();
+    }
+
+    @Override
+    public void run() {
+        getLogger().debug("Nio Connection Handler started ...");
+        while (doRouting) {
+            try {
+                int n = selector.select();
+                // Selector blockiert. Neue Elemente k�nnen nur nach oder
+                // vor select erfolgen. Deswegen die nachtr�gliche Registrierung
+                if (registerAction) {
+                    processRegister();
+                }
+                if (n == 0) {
+                    // System.out.println("Selector continue...");
+                    continue;
+                }
+
+                Iterator<SelectionKey> it = selector.selectedKeys().iterator();
+                while (it.hasNext()) {
+                    SelectionKey key = it.next();
+                    it.remove();
+                    @SuppressWarnings("unchecked")
+                    IAccessConnectionListener<ByteBuffer> op = (IAccessConnectionListener<ByteBuffer>) key.attachment();
+                    SocketChannel sc = (SocketChannel) key.channel();
+
+                    // System.out.println("Selection Key "+key.isConnectable()+" "+key.isReadable()+" "+op);
+                    if (key.isConnectable() && sc.finishConnect()) {
+                        getLogger().debug("Client connected to " + sc + " from " + sc.socket().getLocalPort());
+                        // sc.register(selector, SelectionKey.OP_READ, op);
+
+                        if (sc.isConnected()) {
+                            key.interestOps(SelectionKey.OP_READ);
+                        }
+                        else {
+                            getLogger().error("NOT CONNECTED");
+                        }
+                    }
+                    else if (key.isReadable()) {
+                        if (!sc.isConnected()) {
+                            key.interestOps(SelectionKey.OP_CONNECT);
+                            getLogger().error("NOT CONNECTED!");
+                        }
+                        else {
+                            if (op != null) {
+                                readDataFromSocket(sc, op);
+                            }
+                            else {
+                                getLogger().error(sc.toString() + " " + key.readyOps());
+                            }
+                        }
+                    }
+                    else {
+                        getLogger().error("WAS ANDERES " + key);
+                    }
+
+                    // if (key.isAcceptable()){
+                    // ServerSocketChannel server =
+                    // (ServerSocketChannel)key.channel();
+                    // SocketChannel channel = server.accept();
+                    // if (channel != null){
+                    // channel.configureBlocking(false);
+                    // channel.register(selector, SelectionKey.OP_READ);
+                    // synchronized(buffer){
+                    // buffer.clear();
+                    // buffer.put("Hi there!\r\n".getBytes());
+                    // buffer.flip();
+                    // channel.write(buffer);
+                    // }
+                    // }
+                    // }
+
+                }
+            }
+            catch (java.nio.channels.CancelledKeyException e1) {
+                // Ignore
+                // e1.printStackTrace();
+            }
+            catch (ConnectException ce) {
+                // ce.printStackTrace();
+                getLogger().error("Connection refused. " + ce.getMessage());
+                notifyConnectionListeners(ConnectionMessageReason.ConnectionRefused);
+            }
+            catch (IOException ioe) {
+                getLogger().debug("Connection aborted. " + ioe.getMessage());
+                notifyConnectionListeners(ConnectionMessageReason.ConnectionAbort);
+            }
+        }
+        getLogger().debug("Nio Connection Handler terminated ...");
+    }
+
+    public void connectToServer(IAccessConnectionListener<ByteBuffer> sink, String host, int port, byte[] initializeCommand) throws Exception {
+        getLogger().debug(sink + " connect to server " + host + " " + port);
+        SocketChannel sc = SocketChannel.open();
+        sc.configureBlocking(false);
+        // sc.configureBlocking(true);
+        sc.connect(new InetSocketAddress(host, port));
+
+        deferedRegister(sc, sink);
+        selector.wakeup();
+        notifyConnectionListeners(ConnectionMessageReason.ConnectionOpened);
+        if (initializeCommand != null) {
+            sc.write(ByteBuffer.wrap(initializeCommand));
+        }
+    }
+
+    public void disconnectFromServer(IAccessConnectionListener<ByteBuffer> sink) throws IOException {
+        synchronized (receiverMap) {
+            SocketChannel s = receiverMap.remove(sink);
+            if (s != null) {
+                s.close();
+            }
+        }
+    }
+
+    private void deferedRegister(SocketChannel sc, IAccessConnectionListener<ByteBuffer> sink) {
+        synchronized (deferredList) {
+            deferredList.add(new Pair<SocketChannel, IAccessConnectionListener<ByteBuffer>>(sc, sink));
+            synchronized (receiverMap) {
+                receiverMap.put(sink, sc);
+            }
+            registerAction = true;
+        }
+    }
+
+    private synchronized void processRegister() {
+        synchronized (deferredList) {
+            while (deferredList.size() > 0) {
+                IPair<SocketChannel, IAccessConnectionListener<ByteBuffer>> pair = deferredList.poll();
+                try {
+                    getLogger().debug("Registering " + pair.getE1() + " " + pair.getE2());
+                    pair.getE1().register(selector, SelectionKey.OP_CONNECT, pair.getE2());
+                }
+                catch (ClosedChannelException e) {
+                    e.printStackTrace();
+                }
+                getLogger().debug("done");
+            }
+            registerAction = false;
+        }
+    }
+
+    private void readDataFromSocket(SocketChannel socketChannel, IAccessConnectionListener<ByteBuffer> os) throws IOException {
+        // ISink<ByteBuffer> os = clientMap.get(socketChannel);
+        // System.out.println(os);
+        // System.out.println("Read From Socket " + socketChannel.toString() +
+        // " "
+        // + os + " " + socketChannel.isConnected());
+        int count = -1;
+        try {
+            synchronized (buffer) {
+                buffer.clear();
+                while (socketChannel.isConnected() && (count = socketChannel.read(buffer)) > 0) {
+                    // this first flip is done by the handler
+                    // (AbstractTransportHandler)
+                    // buffer.flip();
+                    os.process(buffer);
+                    buffer.clear();
+                }
+                buffer.flip(); // Wie geht das denn?
+                while (buffer.hasRemaining()) {
+                    os.process(buffer);
+                }
+            }
+            if (count < 0) {
+                os.done();
+                socketChannel.close();
+                // System.err.println("Server "+socketChannel+" connection closed (no more Data)");
+            }
+        }
+        catch (IOException e) {
+            socketChannel.isConnectionPending();
+            getLogger().debug("Server " + socketChannel + " connection closed");
+            os.done();
+            socketChannel.close();
+            // throw e;
+        }
+        catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+            os.done();
+            socketChannel.close();
+        }
+    }
 
 }
