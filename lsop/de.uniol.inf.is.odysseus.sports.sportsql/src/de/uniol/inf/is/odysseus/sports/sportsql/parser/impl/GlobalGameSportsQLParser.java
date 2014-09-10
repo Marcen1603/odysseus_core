@@ -96,12 +96,8 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 				enrichAO);
 		allOperators.add(projectAO);
 		
-		
-		String filterPredicate = "entity=\"Ball\" OR remark = \"Right Leg\"";
-		SelectAO filterSelect = OperatorBuildHelper.createSelectAO(filterPredicate, projectAO);
-		allOperators.add(filterSelect);	
-		
-		return OperatorBuildHelper.finishQuery(filterSelect, allOperators,
+	
+		return OperatorBuildHelper.finishQuery(projectAO, allOperators,
 				sportsQL.getName());
 	}
 
