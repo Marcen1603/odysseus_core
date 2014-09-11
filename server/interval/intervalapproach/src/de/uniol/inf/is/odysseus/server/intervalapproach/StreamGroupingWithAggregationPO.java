@@ -103,7 +103,8 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 
 	@Override
-	protected void process_done() {
+	protected void process_done(int port) {
+		// has only one port, so process_done can be called when first input port calls done
 		IGroupProcessor<R, W> g = getGroupProcessor();
 		synchronized (g) {
 			if (drainAtDone) {
@@ -132,6 +133,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			if (drainAtClose) {
 				drainGroups();
 			}
+			logger.debug("closing " +this.getName()+" done");
 		}
 
 	}
@@ -144,7 +146,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	@Override
 	protected void process_next(R object, int port) {
 
-		// System.err.println("AGGREGATE DEBUG MG: IN " + object);
+		System.err.println("AGGREGATE DEBUG MG: IN " + object);
 		// Determine if there is any data from previous runs to write
 		// createOutput(object.getMetadata().getStart());
 
@@ -163,13 +165,14 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		// Update sweep area with new element
 		List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(
 				sa, object, outputPA);
+		
 		if (debug){
 			System.err.println(sa);
 		}
 		if (results.size() > 0) {
 			produceResults(results, groupID);
 		}
-
+		
 		// Is there any new output to write now?
 		createOutput(object.getMetadata().getStart());
 	}
@@ -177,13 +180,13 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	private void createOutput(PointInTime timestamp) {
 		// Extract all Elements before current Time!
 		cleanUpSweepArea(timestamp);
-
+		
 		// optional: Build partial aggregates with validity end until timestamp
 		createAddOutput(timestamp);
 
 		// Find minimal start time stamp from elements intersecting time stamp
 		transferArea.newHeartbeat(findMinTimestamp(timestamp), 0);
-
+		
 		if (debug){
 			transferArea.dump();
 		}

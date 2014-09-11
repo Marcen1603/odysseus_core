@@ -87,7 +87,7 @@ public class RoundRobinPlanScheduling implements IPhysicalQueryScheduling,
 	public IScheduling nextPlan() {
 		IScheduling returnValue = null;
 		synchronized (pausedPlans) {
-			while (pausedPlans.size() == planList.size()) {
+			while (pausedPlans.size() == planList.size() && pausedPlans.size() > 0) {
 				try {
 					pausedPlans.wait(1000);
 				} catch (InterruptedException e) {

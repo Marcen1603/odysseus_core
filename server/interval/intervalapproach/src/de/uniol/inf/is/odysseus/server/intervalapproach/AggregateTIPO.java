@@ -165,7 +165,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 	// mehreren Attributen anwenden zu k�nnen
 	// Methode nach [Kr�mer] Algorithmus 9 bzw. 10 funktioniert leider nicht
 	// korrekt. Deswegen eigene Version
-	protected synchronized List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
+	protected List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
 			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			R elemToAdd, boolean outputPA) {
 		List<PairMap<SDFSchema, AggregateFunction, W, Q>> returnValues = new LinkedList<>();
@@ -382,7 +382,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 
 	// Updates SA by splitting all partial aggregates before split point
 	@SuppressWarnings("unchecked")
-	protected synchronized List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
+	protected List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
 			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			PointInTime splitPoint) {
 //		System.err.println("BEFORE "+splitPoint);
