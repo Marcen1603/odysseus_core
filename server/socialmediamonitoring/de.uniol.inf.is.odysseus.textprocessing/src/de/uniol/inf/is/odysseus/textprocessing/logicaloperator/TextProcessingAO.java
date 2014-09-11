@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(name="TEXTPROCESSING", minInputPorts=1, maxInputPorts=1, category={LogicalOperatorCategory.BASE}, doc="Allows preprocessing of incoming text.")
 public class TextProcessingAO extends UnaryLogicalOp  {

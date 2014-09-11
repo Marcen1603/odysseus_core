@@ -125,7 +125,8 @@ public class DefaultNetwork implements NetworkModel{
      * @param neuronNumber neuron number
      * @return Neuorn
      */
-    public NeuronModel getNeuron(int neuronNumber) {
+    @Override
+	public NeuronModel getNeuron(int neuronNumber) {
         return neuronList[neuronNumber];
     }
     
@@ -133,7 +134,8 @@ public class DefaultNetwork implements NetworkModel{
      * Return number of neuorns
      * @return nmber of neurons
      */
-    public int getNumbersOfNeurons() {
+    @Override
+	public int getNumbersOfNeurons() {
         return neuronList.length;
     }
     
@@ -141,7 +143,8 @@ public class DefaultNetwork implements NetworkModel{
      * Get topology reference
      * @return Topology
      */
-    public TopologyModel getTopology() {
+    @Override
+	public TopologyModel getTopology() {
         return topology;
     }
     
@@ -149,7 +152,8 @@ public class DefaultNetwork implements NetworkModel{
      * Set topology
      * @param topology Topology
      */
-    public void setTopology(TopologyModel topology){
+    @Override
+	public void setTopology(TopologyModel topology){
         this.topology = topology;
     }
     
@@ -157,7 +161,8 @@ public class DefaultNetwork implements NetworkModel{
      * Returns a string representation of the Coords object
      * @return Returns a string representation of the Coords object
      */
-    public String toString(){
+    @Override
+	public String toString(){
         String text = "";
         int networkSize = neuronList.length;
         for (int i=0; i< networkSize; i++ ){

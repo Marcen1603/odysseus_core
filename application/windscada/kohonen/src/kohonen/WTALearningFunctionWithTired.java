@@ -77,7 +77,8 @@ public class WTALearningFunctionWithTired extends WTALearningFunction{
      * @param vector input vector
      * @return Neuron number
      */
-    protected int getBestNeuron(double[] vector){
+    @Override
+	protected int getBestNeuron(double[] vector){
         int bestNeuron = super.getBestNeuron(vector);
         TiredNeuronModel tempNeuron;
         int networkSize = networkModel.getNumbersOfNeurons();
@@ -98,7 +99,8 @@ public class WTALearningFunctionWithTired extends WTALearningFunction{
      * @param iteration iteration number
      */
     
-    protected void changeNeuronWeight(int neuronNumber, double[] vector, int iteration){
+    @Override
+	protected void changeNeuronWeight(int neuronNumber, double[] vector, int iteration){
         super.changeNeuronWeight(neuronNumber,vector,iteration);
         
         TiredNeuronModel tempNeuron = (TiredNeuronModel) networkModel.getNeuron(neuronNumber);

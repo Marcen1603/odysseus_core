@@ -73,7 +73,8 @@ public class LinearActivationFunction implements ActivationFunctionModel{
      * second is <I>b</I>.
      * @param paramateresList array of parameters
      */
-    public void setParameteres(double[] paramateresList){
+    @Override
+	public void setParameteres(double[] paramateresList){
         a = paramateresList[0];
         b = paramateresList[1];
     }
@@ -83,7 +84,8 @@ public class LinearActivationFunction implements ActivationFunctionModel{
      * First value is <I>a</I>, second is <I>b</I>.
      * @return double array of the parameters
      */
-    public double[] getParamateres(){
+    @Override
+	public double[] getParamateres(){
         double [] parameter = new double[2];
         parameter[0] = a;
         parameter[1] = b;
@@ -96,7 +98,8 @@ public class LinearActivationFunction implements ActivationFunctionModel{
      * @param inputValue input value
      * @return value of linear function
      */
-    public double getValue(double inputValue) {
+    @Override
+	public double getValue(double inputValue) {
         return a * inputValue + b;
     }
 }

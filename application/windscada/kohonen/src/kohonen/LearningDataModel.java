@@ -59,7 +59,8 @@ public interface LearningDataModel {
      * Return a string representation of the data. 
      * @return string representation of the data
      */
-    public String toString();
+    @Override
+	public String toString();
    
     /**
      * Return numbers of data

@@ -69,7 +69,8 @@ public class LinearFunctionalFactor implements LearningFactorFunctionalModel {
      * <I>maxIteration</I>
      * @return Array of parameters
      */
-     public double[] getParameters(){
+     @Override
+	public double[] getParameters(){
          double[] parameters= new double[2];
          parameters[0] = n0;
          parameters[1] = maxIteration;
@@ -81,7 +82,8 @@ public class LinearFunctionalFactor implements LearningFactorFunctionalModel {
      * <I>maxIteration</I>
      * @param parameters array of parameters
      */
-    public void setParameters(double[] parameters){
+    @Override
+	public void setParameters(double[] parameters){
         n0 = parameters[0];
         maxIteration = parameters[1];
     }
@@ -91,7 +93,8 @@ public class LinearFunctionalFactor implements LearningFactorFunctionalModel {
      * @param k iteration
      * @return funciton value for specified iteration
      */
-    public double getValue(int k){
+    @Override
+	public double getValue(int k){
         return (n0/maxIteration)*(maxIteration-k); 
     }
 }

@@ -29,15 +29,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-import org.opencv.core.Mat;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.UserDefinedFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
 import de.uniol.inf.is.odysseus.image.common.datatype.Image;
-import de.uniol.inf.is.odysseus.image.util.OpenCVUtil;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -134,13 +131,13 @@ public class ShowImageUDF extends JFrame implements IUserDefinedFunction<Tuple<?
 
     }
 
-    private byte[] doubleToByteBuffer(double[] buffer) {
-        byte[] out = new byte[buffer.length];
-        for (int i = 0; i < buffer.length; i++) {
-            out[i] = (byte) ((1.0-buffer[i]) * 254.0);
-        }
-        return out;
-    }
+//    private byte[] doubleToByteBuffer(double[] buffer) {
+//        byte[] out = new byte[buffer.length];
+//        for (int i = 0; i < buffer.length; i++) {
+//            out[i] = (byte) ((1.0-buffer[i]) * 254.0);
+//        }
+//        return out;
+//    }
 
     private static class ImageCanvas extends JComponent {
 

@@ -315,7 +315,7 @@ public class WTMLearningFunction implements LearningFunctionModel {
         Iterator<Integer> it = neighboorhood.keySet().iterator();
         int neuronNr;
         while(it.hasNext()){
-            neuronNr = (Integer)it.next();
+            neuronNr = it.next();
             if(showComments){
                 System.out.println("Changing neuron number: " + (neuronNr +1));
             }

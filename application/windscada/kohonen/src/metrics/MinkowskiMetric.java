@@ -91,7 +91,8 @@ public class MinkowskiMetric implements MetricModel{
      * @param secondVector second input vector
      * @return distance beetwen vectors
      */
-    public double getDistance(double[] firstVector, double[] secondVector) {
+    @Override
+	public double getDistance(double[] firstVector, double[] secondVector) {
         double distance = 0;
         double x = 0, w = 0;
         double sum = 0;

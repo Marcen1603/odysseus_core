@@ -69,7 +69,8 @@ public class HexagonalTopology implements TopologyModel{
      * Set number of rows
      * @param rowNumber numbers of rows
      */
-    public void setRowNumber(int rowNumber){
+    @Override
+	public void setRowNumber(int rowNumber){
         this.rowNumber = rowNumber;
     }
     
@@ -77,7 +78,8 @@ public class HexagonalTopology implements TopologyModel{
      * Set number of columns
      * @param colNumber numbers of columns
      */
-    public void setColNumber(int colNumber){
+    @Override
+	public void setColNumber(int colNumber){
         this.colNumber = colNumber;
     }
     
@@ -85,7 +87,8 @@ public class HexagonalTopology implements TopologyModel{
      * Return number of rows
      * @return numbers of rows
      */
-    public int getRowNumber(){
+    @Override
+	public int getRowNumber(){
         return this.rowNumber;
     }
     
@@ -93,7 +96,8 @@ public class HexagonalTopology implements TopologyModel{
      * Return number of columns
      * @return number of columns
      */
-    public int getColNumber(){
+    @Override
+	public int getColNumber(){
         return this.colNumber;
     }
     
@@ -101,7 +105,8 @@ public class HexagonalTopology implements TopologyModel{
      * Set radius
      * @param radius Radius
      */
-    public void setRadius(int radius) {
+    @Override
+	public void setRadius(int radius) {
         this.radius = radius;
     }
 
@@ -109,7 +114,8 @@ public class HexagonalTopology implements TopologyModel{
      * Return radius for calculate neighbourhood
      * @return radius
      */
-    public int getRadius() {
+    @Override
+	public int getRadius() {
         return radius;
     }
     
@@ -119,7 +125,8 @@ public class HexagonalTopology implements TopologyModel{
      * @return list of connected neurons
      * @see ArrayList
      */
-    public ArrayList<Integer> getConnectedNeurons(int neuronNumber){
+    @Override
+	public ArrayList<Integer> getConnectedNeurons(int neuronNumber){
         ArrayList<Integer> connectedNeurons = new ArrayList<Integer>();
         
         int neuronRow = ((neuronNumber - 1) / colNumber ) + 1;
@@ -158,7 +165,8 @@ public class HexagonalTopology implements TopologyModel{
      * Return number of neurons in topology.
      * @return number of neurons
      */
-    public int getNumbersOfNeurons(){
+    @Override
+	public int getNumbersOfNeurons(){
         return colNumber*rowNumber;
     }
 
@@ -171,7 +179,7 @@ public class HexagonalTopology implements TopologyModel{
         ArrayList<Integer> neighborgoodConn = new ArrayList<Integer>();
         ArrayList<Integer> tempConn = new ArrayList<Integer>();
         for (int j=0; j<tempConnection.size(); j++){
-            tempConn = getConnectedNeurons((java.lang.Integer)tempConnection.get(j));
+            tempConn = getConnectedNeurons(tempConnection.get(j));
             for (int i=0; i<tempConn.size();i++){
                 if(!neighborgoodConn.contains(tempConn.get(i)))
                     neighborgoodConn.add(tempConn.get(i));
@@ -187,7 +195,8 @@ public class HexagonalTopology implements TopologyModel{
      * @return Tree map containn neuron number and distance
      * @see TreeMap
      */
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
     public TreeMap<Integer,Integer> getNeighbourhood(int neuronNumber){
         TreeMap<java.lang.Integer,java.lang.Integer> neighbornhood = new TreeMap<java.lang.Integer,java.lang.Integer>();
         ArrayList<Integer> tempConnection = new ArrayList<Integer>();
@@ -197,7 +206,7 @@ public class HexagonalTopology implements TopologyModel{
         for(int i=0; i<radius; i++){
                 neighborgoodConn = getN(tempConnection);
                 for(int k=0; k< neighborgoodConn.size(); k++){
-                    key = (java.lang.Integer)neighborgoodConn.get(k);
+                    key = neighborgoodConn.get(k);
                     if(!neighbornhood.containsKey(key))
                         neighbornhood.put(key,i+1);
                 }
@@ -211,7 +220,8 @@ public class HexagonalTopology implements TopologyModel{
      * @param coords neuron coordinate
      * @return neuron number
      */
-    public int getNeuronNumber(Coords coords){
+    @Override
+	public int getNeuronNumber(Coords coords){
         if ((coords.x < rowNumber) &&  (coords.y < colNumber)){
              return (coords.x - 1) * colNumber + coords.y;
         }
@@ -223,7 +233,8 @@ public class HexagonalTopology implements TopologyModel{
      * @param neuronNumber neuron number
      * @return coords object
      */
-    public Coords getNeuronCoordinate(int neuronNumber){
+    @Override
+	public Coords getNeuronCoordinate(int neuronNumber){
         int x = ((neuronNumber - 1) / colNumber ) + 1;
         int y = neuronNumber - ((x - 1 ) * colNumber); 
         return new Coords(x,y);
@@ -234,7 +245,8 @@ public class HexagonalTopology implements TopologyModel{
      * <I>Neuron number</I> <U>nr</U> is connected with: </I> [ list of neurons ]
      * @return string representation of the topology.
      */
-    public String toString() {
+    @Override
+	public String toString() {
         ArrayList<Integer> tempList = new ArrayList<Integer>();
         String conn = "";
         for(int i=1; i< colNumber*rowNumber + 1; i++){

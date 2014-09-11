@@ -81,26 +81,26 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
         }
     }
 
-    private static final String NAME = "TCPClient";
+    public static final String NAME = "TCPClient";
 
     // The host name
-    private static final String HOST = "host";
+    public static final String HOST = "host";
     // The port
-    private static final String PORT = "port";
+    public static final String PORT = "port";
     // The read buffer size
-    private static final String READ_BUFFER = "read";
+    public static final String READ_BUFFER = "read";
     // The write buffer size
-    private static final String WRITE_BUFFER = "write";
+    public static final String WRITE_BUFFER = "write";
     // Auto reconnect on disconnect
-    private static final String AUTOCONNECT = "autoconnect";
+    public static final String AUTOCONNECT = "autoconnect";
     // The initialization command
-    private static final String INITIALIZE = "init";
+    public static final String INITIALIZE = "init";
     // Deprecated
-    private static final String INITIALIZE_ALIAS = "logininfo";
+    public static final String INITIALIZE_ALIAS = "logininfo";
     // Deprecated
-    private static final String PASSWORD = "password";
+    public static final String PASSWORD = "password";
     // Deprecated
-    private static final String USERNAME = "user";
+    public static final String USERNAME = "user";
 
     static final Logger LOG = LoggerFactory.getLogger(NonBlockingTcpClientHandler.class);
     private TCPConnector connector;

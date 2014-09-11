@@ -57,14 +57,16 @@ public class TransparentActivationFunction implements ActivationFunctionModel{
      * Do nothing
      * @param paramateresList array of the parameters
      */
-    public void setParameteres(double[] paramateresList){
+    @Override
+	public void setParameteres(double[] paramateresList){
     }
     
     /**
      * Return null
      * @return null
      */
-    public double[] getParamateres(){
+    @Override
+	public double[] getParamateres(){
         return null;
     }
 
@@ -73,7 +75,8 @@ public class TransparentActivationFunction implements ActivationFunctionModel{
      * @param inputValue input value
      * @return input value
      */
-    public double getValue(double inputValue) {
+    @Override
+	public double getValue(double inputValue) {
         return inputValue;
     }
 }

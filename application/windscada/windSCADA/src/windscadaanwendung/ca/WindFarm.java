@@ -40,6 +40,7 @@ public class WindFarm {
 		return this.wkas.remove(wka);
 	}
 	
+	@Override
 	public String toString() {
 		return String.valueOf(this.id);
 	}

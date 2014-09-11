@@ -71,7 +71,8 @@ public class ExponentionalFunctionFactor implements LearningFactorFunctionalMode
      * @return parameters array
      */
     
-    public double[] getParameters(){
+    @Override
+	public double[] getParameters(){
         double[] parameters = new double[2];
         parameters[0] = n0;
         parameters[1] = c;
@@ -82,7 +83,8 @@ public class ExponentionalFunctionFactor implements LearningFactorFunctionalMode
      * Set parameters
      * @param parameters parameters array
      */
-    public void setParameters(double[] parameters){
+    @Override
+	public void setParameters(double[] parameters){
         n0 = parameters[0];
         c = parameters[1];
     }
@@ -92,7 +94,8 @@ public class ExponentionalFunctionFactor implements LearningFactorFunctionalMode
      * @param k iteratnion number
      * @return value of function factor
      */
-    public double getValue(int k){
+    @Override
+	public double getValue(int k){
         return n0*java.lang.Math.exp(-c*k);
     }
 }

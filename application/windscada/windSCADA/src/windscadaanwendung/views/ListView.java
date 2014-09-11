@@ -34,7 +34,8 @@ public class ListView extends ViewPart {
 		final Tree tree = new Tree(parent, SWT.BORDER);
 		
 		tree.addListener(SWT.Selection, new Listener() {
-		      public void handleEvent(Event e) {
+		      @Override
+			public void handleEvent(Event e) {
 		    	  // es kann hier immer nur ein Element selektiert werden
 		    	  TreeItem selected = tree.getSelection()[0];
 		          if (selected.getParentItem() == null) {

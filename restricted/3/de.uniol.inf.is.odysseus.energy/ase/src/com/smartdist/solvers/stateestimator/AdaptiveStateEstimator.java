@@ -264,7 +264,7 @@ public class AdaptiveStateEstimator {
  
         do
            machEps /= 2.0d;
-        while ((double) (1.0 + (machEps / 2.0)) != 1.0);
+        while (1.0 + (machEps / 2.0) != 1.0);
  
         return machEps;
     }
@@ -273,7 +273,7 @@ public class AdaptiveStateEstimator {
  
         do
            machEps /= 2.0d;
-        while ((double) (center + (machEps / 2.0)) != center);
+        while (center + (machEps / 2.0) != center);
  
         return machEps;
     }

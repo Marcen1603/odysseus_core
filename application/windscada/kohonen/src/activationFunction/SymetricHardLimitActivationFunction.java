@@ -67,7 +67,8 @@ public class SymetricHardLimitActivationFunction implements ActivationFunctionMo
      * Set parameters of Hard limit activation funciton
      * @param paramateresList Array of parameters
      */
-    public void setParameteres(double[] paramateresList){
+    @Override
+	public void setParameteres(double[] paramateresList){
         p = paramateresList[0];
     }
     
@@ -75,7 +76,8 @@ public class SymetricHardLimitActivationFunction implements ActivationFunctionMo
      * Return array contains parameters list
      * @return Array of parameters
      */
-    public double[] getParamateres(){
+    @Override
+	public double[] getParamateres(){
         double [] parameter = new double[1];
         parameter[0] = p;
         return parameter;
@@ -87,7 +89,8 @@ public class SymetricHardLimitActivationFunction implements ActivationFunctionMo
      * @param inputValue input Value
      * @return value of the function
      */
-    public double getValue(double inputValue) {
+    @Override
+	public double getValue(double inputValue) {
         if (inputValue > p)
             return 1;
         else

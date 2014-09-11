@@ -18,6 +18,7 @@ public class DPVTest extends DashboardPartView {
 	public DPVTest() {
 	}
 	
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();

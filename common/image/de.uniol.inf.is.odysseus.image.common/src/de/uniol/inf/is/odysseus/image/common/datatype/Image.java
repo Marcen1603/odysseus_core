@@ -17,8 +17,6 @@ package de.uniol.inf.is.odysseus.image.common.datatype;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.Raster;
-import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.nio.ByteBuffer;
 

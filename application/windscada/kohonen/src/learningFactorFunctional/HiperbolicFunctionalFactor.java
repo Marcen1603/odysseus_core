@@ -67,7 +67,8 @@ public class HiperbolicFunctionalFactor implements LearningFactorFunctionalModel
      * <I>maxIteration</I>
      * @return Array of parameters
      */
-    public double[] getParameters(){
+    @Override
+	public double[] getParameters(){
         double[] parameters = new double[2];
         parameters[0] = c1;
         parameters[1] = c2;
@@ -79,7 +80,8 @@ public class HiperbolicFunctionalFactor implements LearningFactorFunctionalModel
      * <I>maxIteration</I>
      * @param parameters array of parameters
      */    
-    public void setParameters(double[] parameters){
+    @Override
+	public void setParameters(double[] parameters){
         c1 = parameters[0];
         c2 = parameters[1];
     }
@@ -90,7 +92,8 @@ public class HiperbolicFunctionalFactor implements LearningFactorFunctionalModel
      * @param k iternetion number
      * @return value of function factor
      */
-    public double getValue(int k){
+    @Override
+	public double getValue(int k){
         return c1/(c2 + k);
     }
 }

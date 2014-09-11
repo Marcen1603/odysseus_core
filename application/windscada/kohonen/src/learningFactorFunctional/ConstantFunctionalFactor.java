@@ -64,7 +64,8 @@ public class ConstantFunctionalFactor implements LearningFactorFunctionalModel{
      * Return array containing parameter
      * @return constant parameter
      */
-    public double[] getParameters(){
+    @Override
+	public double[] getParameters(){
         double[] parameteres = new double[1];
         parameteres[0] = constant;
         return parameteres;
@@ -74,7 +75,8 @@ public class ConstantFunctionalFactor implements LearningFactorFunctionalModel{
      * Set parameter
      * @param parameters constat value
      */
-    public void setParameters(double[] parameters){
+    @Override
+	public void setParameters(double[] parameters){
         constant = parameters[0];
     }
     
@@ -84,7 +86,8 @@ public class ConstantFunctionalFactor implements LearningFactorFunctionalModel{
      * @param k iternetion number
      * @return value of function factor
      */
-    public double getValue(int k){
+    @Override
+	public double getValue(int k){
         return constant;
     }
 }

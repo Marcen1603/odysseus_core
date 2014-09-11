@@ -125,7 +125,8 @@ public class WTALearningFunction implements LearningFunctionModel{
      * @return metrics
      * @see MetricModel
      */
-    public MetricModel getMetrics() {
+    @Override
+	public MetricModel getMetrics() {
         return metrics;
     }
 
@@ -133,7 +134,8 @@ public class WTALearningFunction implements LearningFunctionModel{
      * Set metrics
      * @param metrics metrics
      */
-    public void setMetrics(MetricModel metrics) {
+    @Override
+	public void setMetrics(MetricModel metrics) {
         this.metrics = metrics;
     }
 
@@ -141,7 +143,8 @@ public class WTALearningFunction implements LearningFunctionModel{
      * Set network model
      * @param networkModel network model
      */
-    public void setNetworkModel(NetworkModel networkModel) {
+    @Override
+	public void setNetworkModel(NetworkModel networkModel) {
         this.networkModel = networkModel;
     }
 
@@ -149,7 +152,8 @@ public class WTALearningFunction implements LearningFunctionModel{
      * Return network model
      * @return network model
      */
-    public NetworkModel getNetworkModel() {
+    @Override
+	public NetworkModel getNetworkModel() {
         return networkModel;
     }
 
@@ -157,7 +161,8 @@ public class WTALearningFunction implements LearningFunctionModel{
      * Set max interation
      * @param maxIteration max interation
      */
-    public void setMaxIteration(int maxIteration) {
+    @Override
+	public void setMaxIteration(int maxIteration) {
         this.maxIteration = maxIteration;
     }
 
@@ -165,7 +170,8 @@ public class WTALearningFunction implements LearningFunctionModel{
      * Return maximal number of iteration
      * @return maximal number of iteration
      */
-    public int getMaxIteration() {
+    @Override
+	public int getMaxIteration() {
         return maxIteration;
     }
 
@@ -173,7 +179,8 @@ public class WTALearningFunction implements LearningFunctionModel{
      * Set reference to learning data
      * @param learningData reference to learning data
      */
-    public void setLearningData(LearningDataModel learningData) {
+    @Override
+	public void setLearningData(LearningDataModel learningData) {
         this.learningData = learningData;
     }
 
@@ -181,7 +188,8 @@ public class WTALearningFunction implements LearningFunctionModel{
      * Return reference to learning data
      * @return reference to learning data
      */
-    public LearningDataModel getLearningData() {
+    @Override
+	public LearningDataModel getLearningData() {
         return learningData;
     }
 
@@ -189,7 +197,8 @@ public class WTALearningFunction implements LearningFunctionModel{
      * Set functional learning factor model
      * @param functionalModel functional learning factor model
      */
-    public void setFunctionalModel(LearningFactorFunctionalModel functionalModel) {
+    @Override
+	public void setFunctionalModel(LearningFactorFunctionalModel functionalModel) {
         this.functionalModel = functionalModel;
     }
 
@@ -197,7 +206,8 @@ public class WTALearningFunction implements LearningFunctionModel{
      * Return function model
      * @return function model
      */
-    public LearningFactorFunctionalModel getFunctionalModel() {
+    @Override
+	public LearningFactorFunctionalModel getFunctionalModel() {
         return functionalModel;
     }
     
@@ -272,7 +282,8 @@ public class WTALearningFunction implements LearningFunctionModel{
     /**
      * Start learning process
      */
-    public void learn(){
+    @Override
+	public void learn(){
         int bestNeuron = 0;
         double[] vector;
         

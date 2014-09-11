@@ -81,7 +81,7 @@ public class FungiFunction extends AbstractFunction<Double>{
 		int[] values = new int[256];
 		for(int i=0; i < image.getWidth(); i++) {
 			for (int j=0; j < image.getHeight(); j++) {
-				values[(int) image.get(i, j)] ++;
+				values[image.get(i, j)] ++;
 			}
 		}
 		
@@ -124,20 +124,20 @@ public class FungiFunction extends AbstractFunction<Double>{
 			for (int i=right; i >= left; i--) {
 				if (i == right) {
 					min = values[i];
-					threshold = (double) i;
+					threshold = i;
 				} else if (values[i] < min) {
 					min = values[i];
-					threshold = (double) i;
+					threshold = i;
 				}
 			}
 		} else {
 			for(int i=left; i <= right; i++) {
 				if (i == left) {
 					min = values[i];
-					threshold = (double) i;
+					threshold = i;
 				} else if (values[i] < min) {
 					min = values[i];
-					threshold = (double) i;
+					threshold = i;
 				}
 			}
 		}

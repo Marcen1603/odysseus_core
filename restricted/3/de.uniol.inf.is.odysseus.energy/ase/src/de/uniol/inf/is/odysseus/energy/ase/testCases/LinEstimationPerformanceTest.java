@@ -364,7 +364,7 @@ for (int experiment=0;experiment<numberOfExperiments;experiment++){
 		DecimalFormat format = new DecimalFormat("##0.000");
 		DecimalFormat format2 = new DecimalFormat("##0.0");
 
-		System.out.println("average execution time (ms): " + format.format(((double)endTime-(double)startTime)/(double)numberOfExperiments));
+		System.out.println("average execution time (ms): " + format.format(((double)endTime-(double)startTime)/numberOfExperiments));
 				
 	}
 

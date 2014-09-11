@@ -94,7 +94,8 @@ public class Coords {
      * @param obj obj - the reference object with which to compare.
      * @return true if this object is the same as the obj argument; false otherwise.
      */
-    public boolean equals(Object obj){
+    @Override
+	public boolean equals(Object obj){
         if(obj instanceof Coords){
             Coords coords = (Coords) obj; 
             return (x == coords.x) && (y == coords.y);
@@ -107,7 +108,8 @@ public class Coords {
      * <I> [ x = ,y = ]</I>
      * @return Returns a string representation of the Coords object
      */
-    public String toString(){
+    @Override
+	public String toString(){
         return "[ x= " + x + ",y= " + y + " ]";
     }
 }

@@ -127,5 +127,6 @@ public interface TopologyModel {
      * Return a string representation of the topology.
      * @return string representation of the topology.
      */
-    public String toString();
+    @Override
+	public String toString();
 }

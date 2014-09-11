@@ -82,7 +82,8 @@ public class KohonenNeuronWithTired extends KohonenNeuron implements TiredNeuron
      * Set tiredness
      * @param tiredness tiredness
      */
-    public void setTiredness(int tiredness){
+    @Override
+	public void setTiredness(int tiredness){
         this.tiredness = tiredness;
     }
     
@@ -90,7 +91,8 @@ public class KohonenNeuronWithTired extends KohonenNeuron implements TiredNeuron
      * Return value of tiredness
      * @return value of tiredness
      */
-    public int getTiredness(){
+    @Override
+	public int getTiredness(){
         return this.tiredness;
     }
 }

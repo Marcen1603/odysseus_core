@@ -80,6 +80,7 @@ public class Node extends NamedElement {
 		return voltages;
 	}
 
+	@Override
 	public String toString() {
 		return modelNumber + "(" + Math.round(tempValue * 100.) / 100. + ")";
 	}

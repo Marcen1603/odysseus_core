@@ -106,7 +106,8 @@ public class DefaultNeuronWithBias implements NeuronModel {
      * @return array of the weights
      * 
      */
-    public double[] getWeight() {
+    @Override
+	public double[] getWeight() {
         return weight.clone();
     }
 
@@ -116,7 +117,8 @@ public class DefaultNeuronWithBias implements NeuronModel {
      * @param weight array of the weights
      * 
      */
-    public void setWeight(double[] weight) {
+    @Override
+	public void setWeight(double[] weight) {
         for (int i=0; i < weight.length; i++ ){
             this.weight[i] = weight[i]; 
         }
@@ -129,7 +131,8 @@ public class DefaultNeuronWithBias implements NeuronModel {
      * @return return
      * 
      */
-    public double getValue(double[] inputVector) {
+    @Override
+	public double getValue(double[] inputVector) {
         double value = 0;
         int inputSize = inputVector.length;
         

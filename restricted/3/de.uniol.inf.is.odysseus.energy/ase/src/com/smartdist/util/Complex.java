@@ -167,10 +167,12 @@ public class Complex {
 		}
 	}
 
+	@Override
 	public String toString() {
 		return (this.real + "+i" + this.imag);
 	}
 
+	@Override
 	public Complex clone() {
 		return new Complex(this.real, this.imag);
 	}

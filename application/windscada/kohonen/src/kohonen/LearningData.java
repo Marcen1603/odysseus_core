@@ -90,7 +90,8 @@ public class LearningData implements LearningDataModel{
      * @param index index of data
      * @return data vector
      */
-    public double[] getData(int index){
+    @Override
+	public double[] getData(int index){
         return dataList.get(index);
     }
     
@@ -98,7 +99,8 @@ public class LearningData implements LearningDataModel{
      * Return a string representation of the data. [<I>value, value, ... </I>]
      * @return string representation of the data
      */
-    public String toString(){
+    @Override
+	public String toString(){
         String text="";
         int dataSize = dataList.size();
         double [] vector;
@@ -122,7 +124,8 @@ public class LearningData implements LearningDataModel{
      * Return numbers of data
      * @return numbers of data
      */
-    public int getDataSize(){
+    @Override
+	public int getDataSize(){
         return dataList.size();
     }
     

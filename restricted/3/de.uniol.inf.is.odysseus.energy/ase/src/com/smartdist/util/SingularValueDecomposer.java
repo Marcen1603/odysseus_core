@@ -131,7 +131,7 @@ public class SingularValueDecomposer {
         double machEps = 1.0d;
         do
            machEps /= 2.0d;
-        while ((double) (center + (machEps / 2.0)) != center);
+        while (center + (machEps / 2.0) != center);
         System.out.println("Machine Epsilon claculated");
         return machEps;
     }

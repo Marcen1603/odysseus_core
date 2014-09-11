@@ -25,6 +25,7 @@ public class DBConnection extends AbstractDatabaseConnectionFactory {
 	public static Connection conn = null;
 	
 	//TODO: evtl durch export des packages redundanten code verhindern
+	@Override
 	public IDatabaseConnection createConnection(String server, int port, String database, String user, String password) {
 		Properties connectionProps = getCredentials(user, password);
 		if(port==-1){

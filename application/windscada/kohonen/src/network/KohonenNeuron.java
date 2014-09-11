@@ -106,7 +106,8 @@ public class KohonenNeuron implements NeuronModel{
      * Return array of neuron weigths
      * @return array of neuron weigths
      */
-    public double[] getWeight(){
+    @Override
+	public double[] getWeight(){
         return weight.clone();
     }
     
@@ -119,7 +120,8 @@ public class KohonenNeuron implements NeuronModel{
      * @param inputVector input vector for neuron
      * @return return
      */
-    public double getValue(double[] inputVector){
+    @Override
+	public double getValue(double[] inputVector){
         double value = 0;
         int inputSize = inputVector.length;
         if ( distanceFunction != null){
@@ -139,7 +141,8 @@ public class KohonenNeuron implements NeuronModel{
      * Set weigths from array as parameter
      * @param weight array of the weights
      */
-    public void setWeight(double[] weight){
+    @Override
+	public void setWeight(double[] weight){
         for (int i=0; i< weight.length; i++){
             this.weight[i] = weight[i];
         }
@@ -151,7 +154,8 @@ public class KohonenNeuron implements NeuronModel{
      * 
      * @return a string representation of the NeuronModel
      */
-    public String toString(){
+    @Override
+	public String toString(){
         String text="";
         text += "[ ";
         int weightSize = weight.length;

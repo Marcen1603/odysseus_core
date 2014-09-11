@@ -19,8 +19,6 @@ import java.awt.image.BufferedImage;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Size;
-
 import de.uniol.inf.is.odysseus.image.common.datatype.Image;
 
 /**

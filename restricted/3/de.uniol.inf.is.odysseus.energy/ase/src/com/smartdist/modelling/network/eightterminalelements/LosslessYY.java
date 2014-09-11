@@ -29,6 +29,7 @@ public class LosslessYY implements FourTerminalElement {
 				* depthOfCoreWithinWindings / lengthOfMagneticCircuit;
 	}
 
+	@Override
 	public Complex[][] generateAdmittanceMatrix(double nominalFrequency) {
 		Complex[][] admittanceMatrix = new Complex[8][8];
 		Complex[][] singleWinding = new Complex[2][2];

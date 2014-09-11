@@ -57,7 +57,8 @@ public class GaussFunctionalFactor implements LearningFactorFunctionalModel{
      * Return array containing parameter <I>r</I> - radius
      * @return constant parameter
      */
-    public double[] getParameters(){
+    @Override
+	public double[] getParameters(){
         double[] paremateres = new double[1];
         paremateres[0] = r;
         return paremateres;    
@@ -67,7 +68,8 @@ public class GaussFunctionalFactor implements LearningFactorFunctionalModel{
      * Set parameters. <I>r</I> - radius
      * @param parameters constat value
      */
-    public void setParameters(double[] parameters){
+    @Override
+	public void setParameters(double[] parameters){
         r = parameters[0];
     }
     
@@ -77,7 +79,8 @@ public class GaussFunctionalFactor implements LearningFactorFunctionalModel{
      * @param k iteration
      * @return value of function factor
      */
-    public double getValue(int k){
+    @Override
+	public double getValue(int k){
        return java.lang.Math.exp(-(java.lang.Math.pow(k,2))/ (2 * r * r ));
     }
 }

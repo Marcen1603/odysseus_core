@@ -26,12 +26,14 @@ public class DeltaConnectionImagPart extends NodeConnector {
 		this.myNetwork = network;
 	}
 
+	@Override
 	public double myTrueValue() {
 		// Always has to euqla zero, since neutral is not connected in Delta
 		// connection
 		return 0;
 	}
 
+	@Override
 	public double myTheroreticalValue(Complex[] assumedVoltages) {
 		// Update this.myTrueValue first. It is the negative sum of all other
 		// phase current, since the balance of all has to equal zero.

@@ -79,7 +79,8 @@ public class MatrixTopology implements TopologyModel {
      * <I>Neuron number</I><U> nr</U> <I>is connected with: </I> [ list of neurons ]
      * @return string representation of the topology.
      */
-    public String toString() {
+    @Override
+	public String toString() {
         ArrayList<Integer> tempList = new ArrayList<Integer>();
         String    conn     = "";
 
@@ -94,7 +95,8 @@ public class MatrixTopology implements TopologyModel {
      * Return number of columns
      * @return number of columns
      */
-    public int getColNumber() {
+    @Override
+	public int getColNumber() {
         return this.colNumber;
     }
 
@@ -104,7 +106,8 @@ public class MatrixTopology implements TopologyModel {
      * @return list of connected neurons
      * @see ArrayList
      */
-    public ArrayList<Integer> getConnectedNeurons(int neuronNumber) {
+    @Override
+	public ArrayList<Integer> getConnectedNeurons(int neuronNumber) {
         ArrayList<Integer> connectedNeurons = new ArrayList<Integer>();
 
         if ((neuronNumber < colNumber * rowNumber) && (neuronNumber >= 0)){
@@ -154,7 +157,8 @@ public class MatrixTopology implements TopologyModel {
      * @return Tree map containn neuron number and distance
      * @see TreeMap
      */
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
     public TreeMap<Integer,Integer> getNeighbourhood(int neuronNumber) {
         TreeMap<java.lang.Integer, java.lang.Integer> neighbornhood =
             new TreeMap<java.lang.Integer, java.lang.Integer>();
@@ -169,7 +173,7 @@ public class MatrixTopology implements TopologyModel {
             neighborgoodConn = getN(tempConnection);
 
             for (int k = 0; k < neighborgoodConn.size(); k++) {
-                key = (java.lang.Integer) neighborgoodConn.get(k);
+                key = neighborgoodConn.get(k);
 
                 if (!neighbornhood.containsKey(key) && (key != neuronNumber)) {
                     neighbornhood.put(key, i + 1);
@@ -187,7 +191,8 @@ public class MatrixTopology implements TopologyModel {
      * @param neuronNumber neuron number
      * @return coords object
      */
-    public Coords getNeuronCoordinate(int neuronNumber) {
+    @Override
+	public Coords getNeuronCoordinate(int neuronNumber) {
         int x = ((neuronNumber - 1) / colNumber) + 1;
         int y = neuronNumber - ((x - 1) * colNumber);
 
@@ -199,7 +204,8 @@ public class MatrixTopology implements TopologyModel {
      * @param coords neuron coordinate
      * @return neuron number
      */
-    public int getNeuronNumber(Coords coords) {
+    @Override
+	public int getNeuronNumber(Coords coords) {
         if ((coords.x < rowNumber) && (coords.y < colNumber)) {
             return (coords.x - 1) * colNumber + coords.y;
         }
@@ -211,7 +217,8 @@ public class MatrixTopology implements TopologyModel {
      * Return number of neuron.
      * @return number of neurons
      */
-    public int getNumbersOfNeurons() {
+    @Override
+	public int getNumbersOfNeurons() {
         return colNumber * rowNumber;
     }
 
@@ -219,7 +226,8 @@ public class MatrixTopology implements TopologyModel {
      * Return radius for calculate neighbourhood
      * @return radius
      */
-    public int getRadius() {
+    @Override
+	public int getRadius() {
         return radius;
     }
 
@@ -227,7 +235,8 @@ public class MatrixTopology implements TopologyModel {
      * Return number of rows
      * @return numbers of rows
      */
-    public int getRowNumber() {
+    @Override
+	public int getRowNumber() {
         return this.rowNumber;
     }
 
@@ -235,7 +244,8 @@ public class MatrixTopology implements TopologyModel {
      * Set number of columns
      * @param colNumber numbers of columns
      */
-    public void setColNumber(int colNumber) {
+    @Override
+	public void setColNumber(int colNumber) {
         this.colNumber = colNumber;
     }
 
@@ -243,7 +253,8 @@ public class MatrixTopology implements TopologyModel {
      * Set radius
      * @param radius Radius
      */
-    public void setRadius(int radius) {
+    @Override
+	public void setRadius(int radius) {
         this.radius = radius;
     }
 
@@ -251,7 +262,8 @@ public class MatrixTopology implements TopologyModel {
      * Set numbers of rows
      * @param rowNumber numbers of rows
      */
-    public void setRowNumber(int rowNumber) {
+    @Override
+	public void setRowNumber(int rowNumber) {
         this.rowNumber = rowNumber;
     }
 }
