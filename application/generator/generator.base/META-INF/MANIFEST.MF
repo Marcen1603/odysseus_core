@@ -18,5 +18,6 @@ Export-Package: de.uniol.inf.is.odysseus.generator,
  de.uniol.inf.is.odysseus.generator.valuegenerator,
  de.uniol.inf.is.odysseus.generator.valuegenerator.distribution,
  de.uniol.inf.is.odysseus.generator.valuegenerator.evolve,
+ de.uniol.inf.is.odysseus.generator.valuegenerator.random,
  de.uniol.inf.is.odysseus.generator.valuegenerator.spatial,
  de.uniol.inf.is.odysseus.generator.valuegenerator.switching

@@ -13,6 +13,7 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.generator.StreamServer;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.ConstantValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.PredifinedValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.TimeGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.BetaDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.BinomialDistributionGenerator;
@@ -33,6 +34,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.Multivaria
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.NormalDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.ParetoDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.PascalDistributionGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.PoissonDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.RayleighDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.TDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.TriangularDistributionGenerator;
@@ -49,6 +51,14 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.PrimeGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.SineGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.StepIncreaseGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.TangentGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.random.ISAACGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.random.MersenneTwisterGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.random.Well1024aGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.random.Well19937aGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.random.Well19937cGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.random.Well44497aGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.random.Well44497bGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.random.Well512aGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.spatial.MovingCircleGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.spatial.MovingPolynomialGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.spatial.WaypointGenerator;
@@ -68,7 +78,12 @@ public class Activator implements BundleActivator {
 
     private static Map<String, Class<?>> generators = new HashMap<>();
     static {
+        // Misc
         Activator.generators.put("ConstantValueGenerator".toUpperCase(), ConstantValueGenerator.class);
+        Activator.generators.put("PredifinedValueGenerator".toUpperCase(), PredifinedValueGenerator.class);
+        Activator.generators.put("TimeGenerator".toUpperCase(), TimeGenerator.class);
+
+        // Distribution
         Activator.generators.put("BetaDistributionGenerator".toUpperCase(), BetaDistributionGenerator.class);
         Activator.generators.put("BinomialDistributionGenerator".toUpperCase(), BinomialDistributionGenerator.class);
         Activator.generators.put("CauchyDistributionGenerator".toUpperCase(), CauchyDistributionGenerator.class);
@@ -84,9 +99,11 @@ public class Activator implements BundleActivator {
         Activator.generators.put("HypergeometricDistributionGenerator".toUpperCase(), HypergeometricDistributionGenerator.class);
         Activator.generators.put("LevyDistributionGenerator".toUpperCase(), LevyDistributionGenerator.class);
         Activator.generators.put("LogNormalDistributionGenerator".toUpperCase(), LogNormalDistributionGenerator.class);
+        Activator.generators.put("MultivariateNormalDistributionGenerator".toUpperCase(), MultivariateNormalDistributionGenerator.class);
         Activator.generators.put("NormalDistributionGenerator".toUpperCase(), NormalDistributionGenerator.class);
         Activator.generators.put("ParetoDistributionGenerator".toUpperCase(), ParetoDistributionGenerator.class);
         Activator.generators.put("PascalDistributionGenerator".toUpperCase(), PascalDistributionGenerator.class);
+        Activator.generators.put("PoissonDistributionGenerator".toUpperCase(), PoissonDistributionGenerator.class);
         Activator.generators.put("RayleighDistributionGenerator".toUpperCase(), RayleighDistributionGenerator.class);
         Activator.generators.put("TDistributionGenerator".toUpperCase(), TDistributionGenerator.class);
         Activator.generators.put("TriangularDistributionGenerator".toUpperCase(), TriangularDistributionGenerator.class);
@@ -95,22 +112,37 @@ public class Activator implements BundleActivator {
         Activator.generators.put("UniformRealDistributionGenerator".toUpperCase(), UniformRealDistributionGenerator.class);
         Activator.generators.put("WeibullDistributionGenerator".toUpperCase(), WeibullDistributionGenerator.class);
         Activator.generators.put("ZipfDistributionGenerator".toUpperCase(), ZipfDistributionGenerator.class);
+
+        // Evolve
         Activator.generators.put("AlternatingGenerator".toUpperCase(), AlternatingGenerator.class);
-        Activator.generators.put("IncreaseGenerator".toUpperCase(), IncreaseGenerator.class);
-        Activator.generators.put("StepIncreaseGenerator".toUpperCase(), StepIncreaseGenerator.class);
-        Activator.generators.put("SineGenerator".toUpperCase(), SineGenerator.class);
         Activator.generators.put("CosineGenerator".toUpperCase(), CosineGenerator.class);
-        Activator.generators.put("TangentGenerator".toUpperCase(), TangentGenerator.class);
-        Activator.generators.put("PrimeGenerator".toUpperCase(), PrimeGenerator.class);
         Activator.generators.put("DirichletEtaFunctionGenerator".toUpperCase(), DirichletEtaFunctionGenerator.class);
-        Activator.generators.put("TimeGenerator".toUpperCase(), TimeGenerator.class);
-        Activator.generators.put("AlternatingDurationSwitchGenerator".toUpperCase(), AlternatingDurationSwitchGenerator.class);
-        Activator.generators.put("SwitchGenerator".toUpperCase(), SwitchGenerator.class);
-        Activator.generators.put("SignGenerator".toUpperCase(), SignGenerator.class);
-        Activator.generators.put("MultivariateNormalDistributionGenerator".toUpperCase(), MultivariateNormalDistributionGenerator.class);
+        Activator.generators.put("IncreaseGenerator".toUpperCase(), IncreaseGenerator.class);
+        Activator.generators.put("PrimeGenerator".toUpperCase(), PrimeGenerator.class);
+        Activator.generators.put("SineGenerator".toUpperCase(), SineGenerator.class);
+        Activator.generators.put("StepIncreaseGenerator".toUpperCase(), StepIncreaseGenerator.class);
+        Activator.generators.put("TangentGenerator".toUpperCase(), TangentGenerator.class);
+
+        // Random
+        Activator.generators.put("ISAACGenerator".toUpperCase(), ISAACGenerator.class);
+        Activator.generators.put("MersenneTwisterGenerator".toUpperCase(), MersenneTwisterGenerator.class);
+        Activator.generators.put("Well1024aGenerator".toUpperCase(), Well1024aGenerator.class);
+        Activator.generators.put("Well19937aGenerator".toUpperCase(), Well19937aGenerator.class);
+        Activator.generators.put("Well19937cGenerator".toUpperCase(), Well19937cGenerator.class);
+        Activator.generators.put("Well44497aGenerator".toUpperCase(), Well44497aGenerator.class);
+        Activator.generators.put("Well44497bGenerator".toUpperCase(), Well44497bGenerator.class);
+        Activator.generators.put("Well512aGenerator".toUpperCase(), Well512aGenerator.class);
+
+        // Spatial
         Activator.generators.put("MovingCircleGenerator".toUpperCase(), MovingCircleGenerator.class);
         Activator.generators.put("MovingPolynomialGenerator".toUpperCase(), MovingPolynomialGenerator.class);
         Activator.generators.put("WaypointGenerator".toUpperCase(), WaypointGenerator.class);
+
+        // Switching
+        Activator.generators.put("AlternatingDurationSwitchGenerator".toUpperCase(), AlternatingDurationSwitchGenerator.class);
+        Activator.generators.put("SignGenerator".toUpperCase(), SignGenerator.class);
+        Activator.generators.put("SwitchGenerator".toUpperCase(), SwitchGenerator.class);
+
     }
 
     static BundleContext getContext() {
@@ -206,5 +238,4 @@ public class Activator implements BundleActivator {
         }
 
     }
-
 }
