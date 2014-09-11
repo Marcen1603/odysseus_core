@@ -3,27 +3,18 @@
 <plugin>
 
    <extension
-         id="windSCADA"
-         point="org.eclipse.core.runtime.applications">
-      <application>
-         <run
-               class="windscadaanwendung.Application">
-         </run>
-      </application>
-   </extension>
-   <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="RCP Perspective"
+            name="windSCADA"
             class="windscadaanwendung.Perspective"
-            id="windSCADAAnwendung.perspective">
+            id="windscadanwendung.perspective">
       </perspective>
    </extension>
    <extension
          id="windSCADA"
          point="org.eclipse.core.runtime.products">
       <product
-            application="windscadaanwendung.windSCADA"
+            application="de.uniol.inf.is.odysseus.client.starter.OdysseusStudioApplication"
             name="windSCADA">
          <property
                name="appName"
@@ -34,50 +25,42 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            id="windSCADAAnwendung"
-            name="Sample Category">
+            id="windscadaanwendung.category"
+            name="windSCADA">
       </category>
       <view
-            category="windSCADAAnwendung"
+            category="windscadaanwendung.category"
             class="windscadaanwendung.views.DetailView"
             id="windscadaanwendung.views.DetailView"
             name="Windkraftanlage">
       </view>
       <view
+            category="windscadaanwendung.category"
             class="windscadaanwendung.views.ListView"
             id="windacadaanwendung.ListView"
             name="ListView"
             restorable="true">
       </view>
       <view
+            category="windscadaanwendung.category"
             class="windscadaanwendung.views.UebersichtView"
             id="windscadaanwendung.views.UebersichtView"
             name="Uebersicht"
             restorable="true">
       </view>
       <view
+            category="windscadaanwendung.category"
             class="windscadaanwendung.views.DPVTest"
             id="windscadaanwendung.views.DPVTest"
             name="DPVTest"
             restorable="true">
       </view>
       <view
+            category="windscadaanwendung.category"
             class="windscadaanwendung.views.MapView"
             id="windscadaanwendung.views.MapView"
             name="Karte"
             restorable="true">
       </view>
    </extension>
-   <extension
-         point="org.eclipse.ui.splashHandlers">
-      <splashHandler
-            class="windscadaanwendung.SplashHandler"
-            id="windscadaanwendung.SplashHandler.id">
-      </splashHandler>
-      <splashHandlerProductBinding
-            productId="windscadaanwendung.windSCADA"
-            splashId="windscadaanwendung.SplashHandler.id">
-      </splashHandlerProductBinding>
-   </extension>
-
 </plugin>
