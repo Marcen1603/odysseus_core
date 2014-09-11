@@ -16,22 +16,8 @@ public class WebCrawler extends edu.uci.ics.crawler4j.crawler.WebCrawler {
         + "|wav|avi|mov|mpeg|ram|m4v|pdf" 
         + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 
-	int counter = 0;
-	private static ArrayList<String> liste = new ArrayList<>();
+	private static ArrayList<String> savedText = new ArrayList<>();
 	HtmlParseData htmlParseData;	
-	//private static List<String> crawlDomains = new ArrayList<>();
-//	private static File storageFolder;
-	
-	/*
-	public static void configure(List<String> domain, String storageFolderName) {
-        WebCrawler.crawlDomains = domain;
-
-        storageFolder = new File(storageFolderName);
-        if (!storageFolder.exists()) {
-                storageFolder.mkdirs();
-        }
-	}*/
-	
 	
 	@Override
 	public boolean shouldVisit(WebURL url) {
@@ -41,7 +27,9 @@ public class WebCrawler extends edu.uci.ics.crawler4j.crawler.WebCrawler {
 		System.out.println("Depth:" + url.getDepth());
 		System.out.println("Domain:" + url.getDomain());
 		System.out.println("ParentURL:" + url.getParentUrl());
+		System.out.println("ParentURL:" + url.getPath());
 		*/
+		
 		return !FILTERS.matcher(href).matches() && href.startsWith(url.getURL());
 	}
 	
@@ -56,7 +44,7 @@ public class WebCrawler extends edu.uci.ics.crawler4j.crawler.WebCrawler {
 			String text = null;				
 		
 			text = htmlParseData.getText();
-			liste.add(text);
+			savedText.add(text);
 			String html = htmlParseData.getHtml();
 			java.util.List<WebURL> links = htmlParseData.getOutgoingUrls();
 			
@@ -74,7 +62,7 @@ public class WebCrawler extends edu.uci.ics.crawler4j.crawler.WebCrawler {
 	
 	public ArrayList<String> getText()
 	{
-		return liste;
+		return savedText;
 	}
 	
 	@Override

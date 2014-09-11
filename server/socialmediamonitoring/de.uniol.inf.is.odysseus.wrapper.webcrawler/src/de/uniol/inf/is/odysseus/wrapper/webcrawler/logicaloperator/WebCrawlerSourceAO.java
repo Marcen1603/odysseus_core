@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.wrapper.webcrawler.physicaloperator.access.WebCrawlerTransportHandler;
 
-@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "WebCrawlerSourceAO", category = {LogicalOperatorCategory.SOURCE}, doc = "")
+@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "WebCrawler", category = {LogicalOperatorCategory.SOURCE}, doc = "Crawl your website with custom depth and fetch.")
 public class WebCrawlerSourceAO extends AbstractAccessAO
 {
 	private static final long serialVersionUID = -5775255960835766506L;
@@ -25,6 +25,9 @@ public class WebCrawlerSourceAO extends AbstractAccessAO
 	public WebCrawlerSourceAO()
 	{
 		setWrapper(Constants.GENERIC_PULL);
+		setTransportHandler(WebCrawlerTransportHandler.NAME);
+		setProtocolHandler("NONE");
+		setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 		
 		List<SDFAttribute> schema = new LinkedList<>();
 		
@@ -41,24 +44,24 @@ public class WebCrawlerSourceAO extends AbstractAccessAO
 	
 	public WebCrawlerSourceAO(Resource name, String wrapper, String transportHandler, String protocolHandler, String dataHandler, Map<String,String> optionsMap)
 	{
-		super(name, wrapper, transportHandler, protocolHandler, dataHandler, optionsMap);
+		//super(name, wrapper, transportHandler, protocolHandler, dataHandler, optionsMap);
 	}
 	
-	@Override
-	@Parameter(type = StringParameter.class, name = "DataHandler", optional = false, possibleValues="getDataHandlerValues", doc = "The name of the datahandler to use, e.g. Tuple or Document.")
-	public void setDataHandler(String dataHandler) {
-		super.setDataHandler(dataHandler);
-	}
-
-	@Override
-	@Parameter(type = StringParameter.class, name = "protocol", optional = false, possibleValues="getProtocolValues", doc = "The name of the protocol handler to use, e.g. Csv or SizeByteBuffer.")
-	public void setProtocolHandler(String protocolHandler) {
-		super.setProtocolHandler(protocolHandler);
-	}
-	
-	public List<String> getProtocolValues(){
-		return ProtocolHandlerRegistry.getHandlerNames();
-	}
+//	@Override
+//	@Parameter(type = StringParameter.class, name = "DataHandler", optional = false, possibleValues="getDataHandlerValues", doc = "The name of the datahandler to use, e.g. Tuple or Document.")
+//	public void setDataHandler(String dataHandler) {
+//		super.setDataHandler(dataHandler);
+//	}
+//
+//	@Override
+//	@Parameter(type = StringParameter.class, name = "protocol", optional = false, possibleValues="getProtocolValues", doc = "The name of the protocol handler to use, e.g. Csv or SizeByteBuffer.")
+//	public void setProtocolHandler(String protocolHandler) {
+//		super.setProtocolHandler(protocolHandler);
+//	}
+//	
+//	public List<String> getProtocolValues(){
+//		return ProtocolHandlerRegistry.getHandlerNames();
+//	}
 
 	@Parameter(type = StringParameter.class, name = WebCrawlerTransportHandler.DEPTH, optional = false, doc = "")
 	public void setDepth(String depth) {
@@ -79,5 +82,4 @@ public class WebCrawlerSourceAO extends AbstractAccessAO
 	public AbstractLogicalOperator clone() {
 		return new WebCrawlerSourceAO(this);
 	}
-
 }

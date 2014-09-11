@@ -38,7 +38,7 @@ public class KPIRegistry {
 		if (!classifierAlgoTypes.containsKey(kpiType.getType().toLowerCase())) {
 			classifierAlgoTypes.put(kpiType.getType().toLowerCase(), kpiType);
 		} else {
-			logger.debug("KPIType " + kpiType.getType().toLowerCase() + " already added");
+			logger.debug("KPIType " + kpiType.getType().toLowerCase() + " already added.");
 		}
 	}
 

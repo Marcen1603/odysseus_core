@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.sentimentanalysis.logicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -11,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
@@ -21,7 +23,6 @@ public class SentimentAnalysisAO extends BinaryLogicalOp{
 
 	private static final long serialVersionUID = -3965539158401817684L;
 	private String classifier;
-	//private String domain;
 	private int maxTrainSize = 5;
 
 	private int totalInputports = 2;
@@ -32,6 +33,7 @@ public class SentimentAnalysisAO extends BinaryLogicalOp{
 	
 	private String enrichAttribut = "classification";
 	private List<String> nominals = new ArrayList<String>();
+	private double thresholdValue;
 	
 		
 	public SentimentAnalysisAO(){
@@ -41,7 +43,6 @@ public class SentimentAnalysisAO extends BinaryLogicalOp{
 	public SentimentAnalysisAO(SentimentAnalysisAO sentimentAnalysisAO){
         super(sentimentAnalysisAO);
         this.classifier = sentimentAnalysisAO.classifier;
-        //this.domain = sentimentDetectionAO.domain;
         this.attributeTextToBeClassified = sentimentAnalysisAO.attributeTextToBeClassified; 
         this.totalInputports = sentimentAnalysisAO.totalInputports;
         this.attributeTrainSetText =  sentimentAnalysisAO.attributeTrainSetText;	
@@ -60,32 +61,31 @@ public class SentimentAnalysisAO extends BinaryLogicalOp{
 	public SDFSchema getOutputSchemaIntern(int pos){	
 		SDFSchema inSchema = getInputSchema(0);
 		
-		SDFAttribute sentDetection = new SDFAttribute(null, enrichAttribut ,SDFDatatype.STRING, null, null, null);
+		SDFAttribute sentAnalysis = new SDFAttribute(null, enrichAttribut ,SDFDatatype.STRING, null, null, null);
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();		
 		outputAttributes.addAll(inSchema.getAttributes());				
-		outputAttributes.add(sentDetection);
+		outputAttributes.add(sentAnalysis);
 		SDFSchema outSchema = new SDFSchema(inSchema, outputAttributes);
 		setOutputSchema(outSchema);
 		
 		return getOutputSchema();
 	}
-		
-/*	@Parameter(name = "domain", type=StringParameter.class, doc="")
-	public void setDomain(String domain) {
-		this.domain   = domain;
-	}
-*/	
-	
+			
 	@Parameter(name = "maxTrainSize", type=IntegerParameter.class,  doc="")
 	public void setMaxTrainSize(int maxTrainSize) {
 		this.maxTrainSize = maxTrainSize;
+	}
+	
+	@Parameter(name = "thresholdValue", type=DoubleParameter.class,  doc="")
+	public void setThresholdValue(double thresholdValue) {
+		this.thresholdValue = thresholdValue;
+		System.out.println("Threshold: " + this.thresholdValue);
 	}
 	
 	@Parameter(name = "nominals", type=StringParameter.class, isList = true,  doc="")
 	public void setNominals(List<String> nominals) {
 		this.nominals   = nominals;
 	}
-	
 	
 	@Parameter(name="classifier", type=StringParameter.class, optional=true, doc="")
 	public void setClassifier(String classifier){
@@ -113,12 +113,7 @@ public class SentimentAnalysisAO extends BinaryLogicalOp{
 	public void setToClassifierText(SDFAttribute textToBeClassified) {
 		this.attributeTextToBeClassified   = textToBeClassified;
 	}
-	
-	@Parameter(name = "enrichAttribut", type=StringParameter.class, optional= true, doc="")
-	public void setEnrichAttribut(String enrichAttribut) {
-		this.enrichAttribut   = enrichAttribut;
-	}
-	
+		
 	public SDFAttribute getAttributeTrainSetText() {
 		return attributeTrainSetText;
 	}
@@ -139,20 +134,17 @@ public class SentimentAnalysisAO extends BinaryLogicalOp{
 		return this.nominals;
 	}
 	
-/*	public String getDomain(){
-		return domain;
-	}
-*/		
-	public String getEnrichAttribut(){
-		return enrichAttribut;
-	}
-	
 	public int getTotalInputports(){
 		return totalInputports;
 	}
 	
 	public int getMaxTrainSize(){
 		return this.maxTrainSize;
+	}
+	
+	public double getThresholdValue()
+	{
+		return this.thresholdValue;
 	}
 	
 	@Override

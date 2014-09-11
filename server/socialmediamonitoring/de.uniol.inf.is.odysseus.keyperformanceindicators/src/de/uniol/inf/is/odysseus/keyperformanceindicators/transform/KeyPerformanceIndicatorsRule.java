@@ -24,7 +24,6 @@ public class KeyPerformanceIndicatorsRule extends AbstractTransformationRule<Key
 		defaultExecute(
 				operator,
 				new KeyPerformanceIndicatorsPO<>(operator.getOutputPorts(),
-											   operator.getDomain(),
 											   operator.getKpiName(),
 											   operator.getSubsetOfTerms(),
 											   operator.getTotalQuantityOfTerms(),

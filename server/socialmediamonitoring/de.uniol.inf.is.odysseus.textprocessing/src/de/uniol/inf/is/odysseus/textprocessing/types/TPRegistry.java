@@ -34,7 +34,6 @@ public class TPRegistry {
 	
 	
 	public static void registerTextProcessingType(ITextProcessing textProcess) {
-
 		if (!processingTypes.containsKey(textProcess.getType().toLowerCase())) {
 			processingTypes.put(textProcess.getType().toLowerCase(), textProcess);
 		} else {
@@ -46,10 +45,5 @@ public class TPRegistry {
 		if (processingTypes.containsKey(textProcess.getType().toLowerCase())) {
 			processingTypes.remove(textProcess.getType().toLowerCase());
 		}
-
 	}
-
-	
-	
-
 }

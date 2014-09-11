@@ -25,13 +25,13 @@ public class TSentimentAnalysisAORule extends
 		defaultExecute(
 				sentimentAnalysisAO,
 				new SentimentAnalysisPO<ITimeInterval>(sentimentAnalysisAO.getClassifier(),
-						/*sentimentDetectionAO.getDomain(),*/
 						sentimentAnalysisAO.getAttributeTextToBeClassified(),
 						sentimentAnalysisAO.getTotalInputports(),
 						sentimentAnalysisAO.getAttributeTrainSetText(),
 						sentimentAnalysisAO.getAttributeTrainSetTrueDecision(),
 						sentimentAnalysisAO.getNominals(),
-						sentimentAnalysisAO.getMaxTrainSize()),
+						sentimentAnalysisAO.getMaxTrainSize(),
+						sentimentAnalysisAO.getThresholdValue()),
 						config, true, true);
 	}
 

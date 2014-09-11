@@ -90,8 +90,6 @@ public class AudienceEngagementPO<M extends ITimeInterval> extends AbstractPipe<
 		double audienceEngagementResult = 0;
 		
 		Tuple<M> outputTuple = new Tuple<>(1, false);
-		
-		this.kpiType.setCountOfAllTopics(3);
 	
 		audienceEngagementResult = this.kpiType.manageKPICalculation(tuple, this.concreteTopics, this.allTopics, this.positionOfInputText);
 		

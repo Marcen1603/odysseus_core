@@ -12,9 +12,9 @@ public class ConversationReachKPI<M extends ITimeInterval> extends AbstractKeyPe
 
 	private String kpiType="conversationreach";
 	private double conversationReachResult = 0;
-	private List<String> concreteTopics = new ArrayList<>();
-	private List<String> allTopics = new ArrayList<>();	
-	private double counterAllTopics = 0;
+	private double counterAllElements = 0;
+	private List<String> concreteElements = new ArrayList<>();
+	private List<String> allElements = new ArrayList<>();	
 	private Map<Integer, String> uniqueUserIDs = new HashMap<Integer, String>();
 	private Map<Integer, String> allUserIDs = new HashMap<Integer, String>();
 	
@@ -27,11 +27,11 @@ public class ConversationReachKPI<M extends ITimeInterval> extends AbstractKeyPe
 	}
 
 	@Override
-	public double manageKPICalculation(List<Tuple<M>> incomingTuple, List<String> concreteTopics, List<String>allTopics, int positionOfInputText, int positionOfUserIDs)
+	public double manageKPICalculation(List<Tuple<M>> incomingTuple, List<String> con, List<String>all, int positionOfInputText, int positionOfUserIDs)
 	{	
-		this.concreteTopics = concreteTopics;
-		this.allTopics = allTopics;
-		this.counterAllTopics = 0;
+		this.concreteElements = con;
+		this.allElements = all;
+		this.counterAllElements = 0;
 		 
 		this.uniqueUserIDs.clear();
 		this.allUserIDs.clear();
@@ -57,19 +57,19 @@ public class ConversationReachKPI<M extends ITimeInterval> extends AbstractKeyPe
 
 	private void findAllTopicsAndSaveAllUserIDs(String currentInputText, String currentUserID) 
 	{
-		for(int i=0; i<this.allTopics.size(); i++)
-			if(currentInputText.contains(this.allTopics.get(i).toLowerCase().toString()))
+		for(int i=0; i<this.allElements.size(); i++)
+			if(currentInputText.contains(this.allElements.get(i).toLowerCase().toString()))
 			{
 				if(!this.allUserIDs.containsValue(currentUserID))
 					this.allUserIDs.put(this.allUserIDs.size()+1, currentUserID);
-				this.counterAllTopics++;
+				this.counterAllElements++; //Kann eventuell entfernt werdenS
 			}
 	}
 
 	private void findConcreteWordsAndSaveUserIDs(String currentInputText, String currentUserID) 
 	{
-		for(int i=0; i<this.concreteTopics.size(); i++)
-			if(currentInputText.contains(this.concreteTopics.get(i).toString().toLowerCase()))
+		for(int i=0; i<this.concreteElements.size(); i++)
+			if(currentInputText.contains(this.concreteElements.get(i).toString().toLowerCase()))
 				if(!this.uniqueUserIDs.containsValue(currentUserID))
 					this.uniqueUserIDs.put(this.uniqueUserIDs.size()+1, currentUserID);
 	}	

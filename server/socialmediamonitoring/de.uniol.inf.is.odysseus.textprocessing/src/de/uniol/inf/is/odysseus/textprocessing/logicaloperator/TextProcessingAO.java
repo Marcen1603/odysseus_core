@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(name="TEXTPROCESSING", minInputPorts=1, maxInputPorts=1, category={LogicalOperatorCategory.BASE}, doc="Allows preprocessing of incoming text.")
 public class TextProcessingAO extends UnaryLogicalOp  {
@@ -23,6 +24,7 @@ public class TextProcessingAO extends UnaryLogicalOp  {
 	private boolean doNgram = false;
 	private boolean doStemming = false;
 	private boolean doRemoveStopwords = false;
+	private String language = "porter";
 	private SDFAttribute inputText;
 	private int outputPort = 0;
 		
@@ -41,6 +43,7 @@ public class TextProcessingAO extends UnaryLogicalOp  {
 		this.doNgram = textProcessingAO.doNgram;
 		this.doRemoveStopwords = textProcessingAO.doRemoveStopwords;
 		this.doStemming = textProcessingAO.doStemming;
+		this.language = textProcessingAO.language;
 	}
 	
 	
@@ -84,7 +87,16 @@ public class TextProcessingAO extends UnaryLogicalOp  {
 	public void setNGramSize(int ngramSize) {
 		this.ngramSize = ngramSize;
 	}
+	
+//	@Parameter(name="language", type = StringParameter.class, optional = true)
+//	public void setLanguage(String  language) {
+//		this.language = language;
+//	}
 		
+//	public String getLanguage(){
+//		return this.language;
+//	}
+	
 	public boolean isDoNgram() {
 		return this.doNgram;
 	}

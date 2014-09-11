@@ -11,7 +11,6 @@ import java.util.Vector;
 public class StopwordProcessing implements ITextProcessing {
 
 	String kpiType = "stopwordprocessing";
-	Vector<String> result = new Vector<String>();
 	weka.core.Stopwords stopWords = new weka.core.Stopwords();
 	
 	public StopwordProcessing(){}
@@ -46,13 +45,13 @@ public class StopwordProcessing implements ITextProcessing {
 		{
 			String tempSentence = iter.next().toString();
 
-			if(!this.stopWords.isStopword(tempSentence))			//Calls the WEKA-Stopword-methods
+			if(!this.stopWords.isStopword(tempSentence))
 			{
 				result.add(tempSentence);
 			}
 			else
 			{
-				System.out.println("Entfernt: " + tempSentence);
+				
 			}
 		}
 		return result;
@@ -65,8 +64,7 @@ public class StopwordProcessing implements ITextProcessing {
 		BufferedReader br = null;
         try 
         {
-        	//Pfad noch anders setzen
-            br = new BufferedReader(new FileReader(new File("C:\\Users\\Rick\\workspace\\de.uniol.inf.is.odysseus.textprocessing\\OSGI-INF\\stopwords.txt")));
+        	br = new BufferedReader(new FileReader(new File("D:\\OdysseusOriginal\\trunk\\server\\socialmediamonitoring\\de.uniol.inf.is.odysseus.textprocessing\\OSGI-INF\\stopwords.txt")));
             String line = null;
             while((line = br.readLine()) != null) {            
                 parts = line.split(",");

@@ -68,10 +68,9 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 	List<String>userNominals = new ArrayList<>();
 
 	private String userClassifier;
-	//private String domain;
-	private boolean debugClassifier = false;
 	private int maxTrainSize;
 	private int totalInputports = 2;
+	private double thresholdValue;
 
 	private int attributeTextToBeClassifiedPos = -1;
 	private SDFAttribute attributeTextToBeClassified;
@@ -84,29 +83,28 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 
 	static Logger logger = LoggerFactory.getLogger(SentimentAnalysisPO.class);
 
-	public SentimentAnalysisPO(String userClassifier, /*String domain,*/ SDFAttribute attributeTextToBeClassified, int totalInputports, SDFAttribute attributeTrainSetText, SDFAttribute attributeTrainSetTrueDecision, List<String>userNominals, int maxTrainSize) {
+	public SentimentAnalysisPO(String userClassifier, SDFAttribute attributeTextToBeClassified, int totalInputports, SDFAttribute attributeTrainSetText, SDFAttribute attributeTrainSetTrueDecision, List<String>userNominals, int maxTrainSize, double thresholdValue) {
 		super();
 
 		this.attributeTextToBeClassified = attributeTextToBeClassified;
 		this.userClassifier = userClassifier;
-		//this.domain = domain;
 		this.setTotalInputports(totalInputports);
 		this.maxTrainSize = maxTrainSize;
 		this.attributeTrainSetText = attributeTrainSetText;
 		this.attributeTrainSetTrueDecision = attributeTrainSetTrueDecision;
 		this.userNominals = userNominals;
+		this.thresholdValue = thresholdValue;
 	}
 
 	public SentimentAnalysisPO(SentimentAnalysisPO<M> senti) {
 		super(senti);
 		this.userClassifier = senti.userClassifier;
-		//this.domain = senti.domain;
-		this.debugClassifier = senti.debugClassifier;
 		this.maxTrainSize = senti.maxTrainSize;
 		this.attributeTextToBeClassified = senti.attributeTextToBeClassified;
 		this.attributeTrainSetText = senti.attributeTrainSetText;
 		this.attributeTrainSetTrueDecision = senti.attributeTrainSetTrueDecision;
 		this.userNominals = senti.userNominals;
+		this.thresholdValue = senti.thresholdValue;
 	}
 
 	@Override
@@ -147,6 +145,11 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 	
 	private void classify(Instances instances) throws Exception {
 		double pred = this.classifier.classifyInstance(instances.instance(0));
+		
+		if(pred > this.thresholdValue)
+		{
+			//System.out.println("Threshold fall below " + this.thresholdValue);
+		}
 		//System.out.println("===== Instance classified =====");
 		//System.out.println("Class: " + instances.classAttribute().value((int) pred));
 		this.classification =  instances.classAttribute().value((int) pred);
@@ -173,8 +176,8 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 		Evaluation evaluation = new Evaluation(this.trainData);		
 		evaluation.crossValidateModel(this.classifier, this.trainData, this.maxTrainSize, new Random(1));
 		
-		//System.out.println("===========EVALUATION:\n " + evaluation.toSummaryString());
-		//System.out.println("===========EVALUATION-DETAILS:\n " + evaluation.toClassDetailsString());
+//		System.out.println("===========EVALUATION:\n " + evaluation.toSummaryString());
+//		System.out.println("===========EVALUATION-DETAILS:\n " + evaluation.toClassDetailsString());
 	}
 
 	private void learnClassifier()
@@ -206,7 +209,7 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 		for(int i=0; i < list.size(); i++){
 			nominalValues.add(list.get(i));
 		}
-		
+	
 		/*for(int i=0; i < list.size(); i++){
 			fvNominalVal.addElement(list.get(i));
 		}*/
@@ -224,12 +227,13 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 		Instances instances = new Instances("Test relation", wekaAttributes, 1);
 		instances.setClassIndex(this.attributeTrainSetTrueDecisionPosition);
 				
-		DenseInstance instance = new DenseInstance(list.size());
+		DenseInstance instance = new DenseInstance(2); //list.size()
 		instance.setValue(textToClassifyAttribute, textToClassify);
 						
 		instances.add(instance);
 		
-		//System.out.println("===== Instance created =====");
+//		System.out.println("===== Instance created =====");
+//		System.out.println(instances);
 		return instances;
 	}
 
@@ -280,13 +284,17 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 			{
 				Instances instances = createInstancesForClassifying(object.getAttribute(this.attributeTextToBeClassifiedPos).toString());
 				classify(instances);
+				prepareTupelForOutput(object);
 			} 
 			catch (Exception e) 
 			{
 				e.printStackTrace();
 			}
-		}
-		
+		}		
+	
+	}
+
+	private void prepareTupelForOutput(Tuple<M> object) {
 		Tuple<M> outputTuple = new Tuple<>(object.size()+1, false);
 		System.arraycopy(object.getAttributes(), 0, outputTuple.getAttributes(), 0, object.size());
 		

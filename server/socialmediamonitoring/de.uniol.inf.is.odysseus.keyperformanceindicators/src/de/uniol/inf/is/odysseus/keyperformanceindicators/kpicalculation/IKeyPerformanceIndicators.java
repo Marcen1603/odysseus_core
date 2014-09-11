@@ -16,8 +16,6 @@ public interface IKeyPerformanceIndicators<M extends ITimeInterval> {
 	double manageKPICalculation(List<Tuple<M>> tuple, List<String> ownCompany, List<String>allCompanies, int positionOfInputText);
 	
 	void monitorThresholdValue(double valueToMonitor, double currentResult);
-	
-	void setCountOfAllTopics(int count);
-	
+
 	String getType();
 }

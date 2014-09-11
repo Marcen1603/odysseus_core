@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
 public abstract class AbstractKeyPerformanceIndicators<M extends ITimeInterval> implements IKeyPerformanceIndicators<M>{
 
-	protected int countOfAllTopics = 0;
 	protected double valueToMonitor;
 	
 	@Override
@@ -23,13 +22,7 @@ public abstract class AbstractKeyPerformanceIndicators<M extends ITimeInterval> 
 	@Override
 	public void monitorThresholdValue(double valueToMonitor, double currentResult){
 		this.valueToMonitor = valueToMonitor;
-		
 		//if(currentResult < this.valueToMonitor)
 			//System.out.println("Grenzwert " + this.valueToMonitor + " unterschritten!" + currentResult);
-	}
-	
-	@Override
-	public void setCountOfAllTopics(int count){
-		this.countOfAllTopics = count;
 	}
 }

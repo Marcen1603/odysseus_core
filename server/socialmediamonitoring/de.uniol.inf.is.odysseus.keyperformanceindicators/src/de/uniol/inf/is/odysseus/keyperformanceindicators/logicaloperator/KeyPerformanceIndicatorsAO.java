@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
@@ -17,12 +17,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(name="KEYPERFORMANCEINDICATORS", minInputPorts=1, maxInputPorts=1, category={LogicalOperatorCategory.BASE}, doc="Allows KeyPerformanceIndicators for social media on input streams.")
-public class KeyPerformanceIndicatorsAO extends BinaryLogicalOp 
+public class KeyPerformanceIndicatorsAO extends UnaryLogicalOp 
 {
 	private static final long serialVersionUID = -4196540875708298361L;
 	private int totalInputPorts = 1;
 	private String kpiName;
-	private String domain;
 	private double thresholdValue = 0;
 	private List<String> subsetOfTerms = new ArrayList<String>();
 	private List<String> totalQuantityOfTerms = new ArrayList<String>();
@@ -40,7 +39,6 @@ public class KeyPerformanceIndicatorsAO extends BinaryLogicalOp
 		super(keyPerformanceIndicatorsAO);
 		
 		this.kpiName = keyPerformanceIndicatorsAO.kpiName;
-		this.domain = keyPerformanceIndicatorsAO.domain;
 		this.subsetOfTerms = keyPerformanceIndicatorsAO.subsetOfTerms;
 		this.totalQuantityOfTerms = keyPerformanceIndicatorsAO.totalQuantityOfTerms;
 		this.incomingText = keyPerformanceIndicatorsAO.incomingText;
@@ -79,12 +77,7 @@ public class KeyPerformanceIndicatorsAO extends BinaryLogicalOp
 	public void setKpiName(String kpiName) {
 		this.kpiName = kpiName;
 	}
-	
-	@Parameter(name="domain", type = StringParameter.class, optional = false)
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
-	
+		
 	@Parameter(name="userIDs", type = ResolvedSDFAttributeParameter.class, optional = true)
 	public void setUserIDs(SDFAttribute userIDs) {
 		this.userIDs = userIDs;
@@ -105,11 +98,7 @@ public class KeyPerformanceIndicatorsAO extends BinaryLogicalOp
 		return 0;
 	}
 	
-	public String getDomain() {
-		return this.domain;
-	}
-
-	public String getKpiName() {
+   public String getKpiName() {
 		return this.kpiName;
 	}	
 	

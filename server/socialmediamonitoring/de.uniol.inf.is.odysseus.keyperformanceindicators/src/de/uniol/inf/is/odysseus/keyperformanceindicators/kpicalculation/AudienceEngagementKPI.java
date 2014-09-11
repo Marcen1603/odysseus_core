@@ -9,11 +9,11 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 public class AudienceEngagementKPI<M extends ITimeInterval> extends AbstractKeyPerformanceIndicators<M> {
 	
 	private String kpiType="audienceengagement";
-	private List<String> concreteTopics = new ArrayList<>();
-	private List<String> allTopics = new ArrayList<>();
+	private List<String> concreteElements = new ArrayList<>();
+	private List<String> allElements = new ArrayList<>();
 	private String[] urlsToValidate = new String[]{"http://", "https://"};
 	private double audienceEngagementResult = 0;
-	private double countOfConcreteTopic = 0;
+	private double countOfConcreteElements = 0;
 		
 	public AudienceEngagementKPI(){}
 	
@@ -29,12 +29,12 @@ public class AudienceEngagementKPI<M extends ITimeInterval> extends AbstractKeyP
 	}
 		
 	@Override
-	public double manageKPICalculation(List<Tuple<M>> incomingTuple, List<String> concreteTopics, List<String>allTopics, int positionOfInputText)
+	public double manageKPICalculation(List<Tuple<M>> incomingTuple, List<String> con, List<String>all, int positionOfInputText)
 	{
-		this.concreteTopics = concreteTopics;
-		this.setAllTopics(allTopics);		
-		this.countOfConcreteTopic = 0;
-	
+		this.concreteElements = con;
+		this.allElements = all;
+		this.countOfConcreteElements = 0;
+		
 		for(Tuple<M> tuple : incomingTuple)
 		{
 			String currentInputText = tuple.getAttribute(positionOfInputText).toString().toLowerCase();					
@@ -46,11 +46,11 @@ public class AudienceEngagementKPI<M extends ITimeInterval> extends AbstractKeyP
 		
 	private void findAndCountGivenWordsInLists(String currentInputText) 
 	{
-		for(int i=0; i<this.concreteTopics.size(); i++)
+		for(int i=0; i<this.concreteElements.size(); i++)
 		{			
-			if(currentInputText.contains(this.concreteTopics.get(i).toString().toLowerCase()))
+			if(currentInputText.contains(this.concreteElements.get(i).toString().toLowerCase()))
 			{
-				this.countOfConcreteTopic++;
+				this.countOfConcreteElements++;
 				findAndCountLinksToTheConcreteTopic(currentInputText);
 			}
 		}
@@ -61,12 +61,13 @@ public class AudienceEngagementKPI<M extends ITimeInterval> extends AbstractKeyP
 		for(String urlValidator : this.urlsToValidate)
 		{
 			if(text.contains(urlValidator))
-				this.countOfConcreteTopic++;
+				this.countOfConcreteElements++;
 		}
 	}
 	
-	private void calculateAudienceEngagement() {
-		this.audienceEngagementResult = (this.countOfConcreteTopic / this.countOfAllTopics);
+	private void calculateAudienceEngagement() 
+	{	
+		this.audienceEngagementResult = (this.countOfConcreteElements / this.allElements.size());
 	}
 
 	@Override
@@ -82,11 +83,11 @@ public class AudienceEngagementKPI<M extends ITimeInterval> extends AbstractKeyP
 
 	public List<String> getAllTopics() 
 	{
-		return allTopics;
+		return allElements;
 	}
 
 	public void setAllTopics(List<String> allTopics) 
 	{
-		this.allTopics = allTopics;
+		this.allElements = allTopics;
 	}
 }

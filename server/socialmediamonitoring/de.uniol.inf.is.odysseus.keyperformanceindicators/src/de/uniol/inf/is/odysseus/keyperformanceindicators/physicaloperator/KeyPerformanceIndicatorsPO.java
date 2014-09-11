@@ -29,7 +29,6 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 	private IKeyPerformanceIndicators<M> algo;
 	
 	private String kpiName;
-	private String domain;
 	private double thresholdValue = 0;
 	private List<String> subsetOfTerms = new ArrayList<String>();
 	private List<String> totalQuantityOfTerms = new ArrayList<String>();
@@ -41,12 +40,11 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 	private int positionOfIncomingText = -1;
 	private int positionOfUserIDs = -1;
 		
-	public KeyPerformanceIndicatorsPO(int outputPort, String domain, String kpiName, List<String> subsetOfTerms, List<String> totalQuantityOfTerms, SDFAttribute incomingText, double thresholdValue, SDFAttribute userIDs, int totalInputPorts, IMetadataMergeFunction<M> metaDataMerge,
+	public KeyPerformanceIndicatorsPO(int outputPort, String kpiName, List<String> subsetOfTerms, List<String> totalQuantityOfTerms, SDFAttribute incomingText, double thresholdValue, SDFAttribute userIDs, int totalInputPorts, IMetadataMergeFunction<M> metaDataMerge,
 									  ITransferArea<Tuple<M>, Tuple<M>> transferFunction)
 	{
 		super();
 		this.outputPort = outputPort;
-		this.domain = domain;
 		this.kpiName = kpiName;
 		this.subsetOfTerms = subsetOfTerms;
 		this.totalQuantityOfTerms = totalQuantityOfTerms;
@@ -62,7 +60,6 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 	{
 		super(splitPO);
 		this.outputPort = splitPO.outputPort;
-		this.domain = splitPO.domain;
 		this.kpiName = splitPO.kpiName;
 		this.subsetOfTerms = splitPO.subsetOfTerms;
 		this.totalQuantityOfTerms = splitPO.totalQuantityOfTerms;
@@ -76,7 +73,7 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 
 	@Override
 	public OutputMode getOutputMode() {
-		return OutputMode.MODIFIED_INPUT;
+		return OutputMode.NEW_ELEMENT;
 	}
 	
 	@Override
@@ -107,26 +104,25 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 		}
 		
 		algo = KPIRegistry.getKPIByName(this.kpiName.toLowerCase());
-		this.algo.setCountOfAllTopics(this.totalQuantityOfTerms.size());
 	}
 
 	@Override
-	protected void process_next(Tuple<M> object, int port) 
+	protected void process_next(Tuple<M> tuple, int port) 
 	{
 		//In
-		sweepArea.insert(object);
+		sweepArea.insert(tuple);
 
 		//Aufräumen
 		@SuppressWarnings("unused")
-		Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsEndBefore(object.getMetadata().getStart());
+		Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsEndBefore(tuple.getMetadata().getStart());
 					
 		synchronized(this.sweepArea)
 		{
 			//Verbinden
-			List<Tuple<M>> list = this.sweepArea.queryOverlapsAsList(object.getMetadata());
+			List<Tuple<M>> list = this.sweepArea.queryOverlapsAsList(tuple.getMetadata());
 		
 			//Verarbeiten
-			processKeyIndicator(list, object, port);
+			processKeyIndicator(list, tuple, port);
 		}
 	}
 	

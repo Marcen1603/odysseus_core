@@ -20,16 +20,22 @@ public class WebCrawlerTransportHandler extends AbstractSimplePullTransportHandl
 	//Names for the options
 		public static final String NAME = "WebCrawler";
 		public static final String DEPTH = "depth";
-		public static final String WEBSITES = "sites";
+		public static final String WEBSITES = "site";
 		public static final String FETCH = "fetch";
 		
 		public String depth;
 		public String sites;
 		public String fetch;
 		
-		ArrayList<String> urls = new ArrayList<>();
-		ArrayList<String> crawledText = new ArrayList<>();
-		ArrayList<String> resultText = new ArrayList<>();
+		private ArrayList<String> urls = new ArrayList<>();
+		private ArrayList<String> crawledText = new ArrayList<>();
+		
+		private WebCrawler crawler; 
+		private CrawlController controller = null;
+		private CrawlConfig config;
+		private PageFetcher pageFetcher;
+		private RobotstxtConfig robotstxtConfig;
+		private RobotstxtServer robotstxtServer;
 		
 		public WebCrawlerTransportHandler() {
 			super();
@@ -79,9 +85,9 @@ public class WebCrawlerTransportHandler extends AbstractSimplePullTransportHandl
 	@Override
 	public boolean hasNext() {
 		
-		resultText = initializeCrawler();
+		initializeCrawler();
 		
-		if(resultText != null)
+		if(this.crawledText != null)
 			return true;
 		
 		return false;
@@ -94,52 +100,86 @@ public class WebCrawlerTransportHandler extends AbstractSimplePullTransportHandl
 		Tuple<?> tuple = new Tuple(2, false);
 	
 		tuple.setAttribute(0, sites);
-		tuple.setAttribute(1,resultText.toString());
+		tuple.setAttribute(1,this.crawledText.toString());
 		
 		return tuple;
 	}
 	
-	public ArrayList<String> initializeCrawler()
+	public void initializeCrawler()
 	{
 		String crawlStorageFolder = System.getProperty("user.home");
-        int numberOfCrawlers = 2;
+        int numberOfCrawlers =1;
 
-     //   this.text.clear();       
-        CrawlConfig config = new CrawlConfig();
-        config.setCrawlStorageFolder(crawlStorageFolder);
-        config.setMaxDepthOfCrawling(Integer.parseInt(this.depth));
-        config.setMaxPagesToFetch(Integer.parseInt(this.fetch));
+        this.config = new CrawlConfig();
+        this.config.setCrawlStorageFolder(crawlStorageFolder);
+        this.config.setMaxDepthOfCrawling(Integer.parseInt(this.depth));
+        this.config.setMaxPagesToFetch(Integer.parseInt(this.fetch));
         
-        PageFetcher pageFetcher = new PageFetcher(config);
-        RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
-        RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
-        CrawlController controller = null;
+        this.pageFetcher = new PageFetcher(this.config);
+        this.robotstxtConfig = new RobotstxtConfig();
+        this.robotstxtServer = new RobotstxtServer( this.robotstxtConfig,  this.pageFetcher);
+       
         
 		try {
-			controller = new CrawlController(config, pageFetcher, robotstxtServer);
+			this.controller = new CrawlController( this.config,  this.pageFetcher,  this.robotstxtServer);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		for(String str : this.urls)
-			controller.addSeed(str);
+			this.controller.addSeed(str);
 		
-		WebCrawler crawler = new WebCrawler();
-		//WebCrawler.configure(this.urls, crawlStorageFolder);
-		controller.start(WebCrawler.class, numberOfCrawlers);
-								
+		this.crawler = new WebCrawler();
+		this.controller.start(WebCrawler.class, numberOfCrawlers);
+		
+		this.crawledText.clear();
 		this.crawledText = crawler.getText();
+
+		trimCrawledText();
 		
-		for(String str : crawledText){
-			str.trim().equals("");
-			str.trim().equals("\t");
-			str.trim();
-			//System.out.println("TEXT: " + str);
+		this.controller.shutdown();
+		this.controller.waitUntilFinish();
+	}
+
+	private void trimCrawledText() 
+	{
+		ArrayList<String> tempList = new ArrayList<String>();
+		
+		for(String str : this.crawledText)
+		{
+			StringBuffer textToTrim = new StringBuffer(str);
+			
+			int counter = 0;
+			boolean check = true;
+			
+			while(counter<textToTrim.length())
+			{
+				if(textToTrim.charAt(counter) == '\n')
+				{
+					textToTrim.deleteCharAt(counter);
+					check = false;
+				}
+				
+				if(textToTrim.charAt(counter) == '\t')
+				{
+					textToTrim.deleteCharAt(counter);
+					check = false;
+				}
+				
+				if(textToTrim.charAt(counter) == '\r')
+				{
+					textToTrim.deleteCharAt(counter);
+					check = false;
+				}
+			
+				if(check)
+					counter++;
+				
+				check = true;
+			}	
+			str = textToTrim.toString().trim();
+			tempList.add(str);	
 		}
-		
-		controller.shutdown();
-		controller.waitUntilFinish();
-		
-		return this.crawledText;
+		this.crawledText = tempList;
 	}
 }

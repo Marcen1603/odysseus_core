@@ -8,11 +8,11 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 public class ShareOfVoiceKPI<M extends ITimeInterval> extends AbstractKeyPerformanceIndicators<M> {
 	
 	private String kpiType = "shareofvoice";
-	private List<String> ownBrands = new ArrayList<>();
-	private List<String> allBrands = new ArrayList<>();
+	private List<String> concreteElements = new ArrayList<>();
+	private List<String> allElements = new ArrayList<>();
 	private double shareOfVoiceResult = 0;
-	private double counterOwnBrands = 0;
-	private double counterAllBrands = 0;
+	private double counterConcreteElements = 0;
+	private double counterAllElements = 0;
 
 	public ShareOfVoiceKPI()
 	{}
@@ -31,11 +31,11 @@ public class ShareOfVoiceKPI<M extends ITimeInterval> extends AbstractKeyPerform
 	@Override
 	public double manageKPICalculation(List<Tuple<M>> incomingTuple, List<String> concrete, List<String> all, int positionOfInputText)
 	{	
-		this.ownBrands = concrete;
-		this.allBrands = all;
+		this.concreteElements = concrete;
+		this.allElements = all;
 		
-		this.counterOwnBrands = 0;
-		this.counterAllBrands = 0;
+		this.counterConcreteElements = 0;
+		this.counterAllElements = 0;
 		
 		for(Tuple<M> tuple : incomingTuple)
 		{
@@ -50,24 +50,24 @@ public class ShareOfVoiceKPI<M extends ITimeInterval> extends AbstractKeyPerform
 	 * Calculates the SOV result with the two counters
 	 */
 	private void calculateShareOfVoice() {
-		if(this.counterOwnBrands + this.counterAllBrands > 0)
-			this.shareOfVoiceResult = (this.counterOwnBrands / (this.counterOwnBrands + this.counterAllBrands)) * 100;
+		if(this.counterConcreteElements + this.counterAllElements > 0)
+			this.shareOfVoiceResult = (this.counterConcreteElements / (this.counterConcreteElements + this.counterAllElements)) * 100;
 		else
 			this.shareOfVoiceResult = 0;
 	}
 
 	private void findAndCountGivenWordsInLists(String currentInputText) 
 	{
-		for(int i=0; i<this.ownBrands.size(); i++)
+		for(int i=0; i<this.concreteElements.size(); i++)
 		{
-			if(currentInputText.contains(this.ownBrands.get(i).toString().toLowerCase()))
-				this.counterOwnBrands++;
+			if(currentInputText.contains(this.concreteElements.get(i).toString().toLowerCase()))
+				this.counterConcreteElements++;
 		}
 		
-		for(int i=0; i<this.allBrands.size(); i++)
+		for(int i=0; i<this.allElements.size(); i++)
 		{
-			if(currentInputText.contains(this.allBrands.get(i).toString().toLowerCase()))
-				this.counterAllBrands++;
+			if(currentInputText.contains(this.allElements.get(i).toString().toLowerCase()))
+				this.counterAllElements++;
 		}
 	}
 

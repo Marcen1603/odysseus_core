@@ -6,8 +6,8 @@ import java.util.Vector;
 public class StemmingProcessing implements ITextProcessing {
 
 	String kpiType = "stemmingprocessing";
-	Vector<String> result = new Vector<String>();
-
+	org.tartarus.snowball.SnowballStemmer stemmer;
+	
 	public StemmingProcessing(){}
 	
 	public StemmingProcessing(String processType){
@@ -33,17 +33,16 @@ public class StemmingProcessing implements ITextProcessing {
 	@Override
 	public Vector<String> startTextProcessing(Vector<String> incomingText) {
 
-		org.tartarus.snowball.ext.porterStemmer porterStemmer = new org.tartarus.snowball.ext.porterStemmer();
 		Vector<String> tmpResult = new Vector<String>();
 		
 		Iterator<String> iter = incomingText.iterator();
 		
 		while(iter.hasNext())
 		{
-			porterStemmer.setCurrent(iter.next().toString());
+			this.stemmer.setCurrent(iter.next().toString());
 			
-			if(porterStemmer.stem())
-				tmpResult.add(porterStemmer.getCurrent());	
+			if(this.stemmer.stem())
+				tmpResult.add(this.stemmer.getCurrent());	
 		}
 		
 		return tmpResult;
@@ -51,5 +50,12 @@ public class StemmingProcessing implements ITextProcessing {
 
 	@Override
 	public void setOptions(String[] options) {
+		
+		if(options[0].equals("german"))
+			this.stemmer = new org.tartarus.snowball.ext.germanStemmer();
+		else if(options[0].equals("english"))
+			this.stemmer = new org.tartarus.snowball.ext.englishStemmer();
+		else
+			this.stemmer = new org.tartarus.snowball.ext.porterStemmer();
 	}
 }

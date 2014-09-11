@@ -106,8 +106,8 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.datarate_systemload.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.systemload.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.webcrawler.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.temper1.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.image.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.security.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
