@@ -146,7 +146,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	@Override
 	protected void process_next(R object, int port) {
 
-		System.err.println("AGGREGATE DEBUG MG: IN " + object);
+		///System.err.println("AGGREGATE DEBUG MG: IN " + object);
 		// Determine if there is any data from previous runs to write
 		// createOutput(object.getMetadata().getStart());
 
