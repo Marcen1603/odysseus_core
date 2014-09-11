@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
+import de.uniol.inf.is.odysseus.wrapper.ivef.IVEFVersion;
 
 @LogicalOperator(name = "SHIPROUTECONVERTER", minInputPorts = 1, maxInputPorts = 1, doc = "This operator is used to convert ship route messages into IEC messages and vice versa.", category = { LogicalOperatorCategory.PROCESSING })
 public class ShipRouteConverterAO extends UnaryLogicalOp {
@@ -13,6 +14,8 @@ public class ShipRouteConverterAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 1L;
 	private ConversionType conversionType;
 
+	private IVEFVersion ivefVersion = IVEFVersion.V015;
+	
 	public ShipRouteConverterAO() {
 		super();
 	}
@@ -20,6 +23,7 @@ public class ShipRouteConverterAO extends UnaryLogicalOp {
 	public ShipRouteConverterAO(ShipRouteConverterAO converterAO) {
 		super(converterAO);
 		this.conversionType = converterAO.getConversionType();
+		this.ivefVersion = converterAO.getIvefVersion();
 	}
 
 	@Override
@@ -33,8 +37,17 @@ public class ShipRouteConverterAO extends UnaryLogicalOp {
 		this.conversionType = conversionType;
 	}
 	
+	@Parameter(name="ivefVersion", type=EnumParameter.class, isList=false, optional=true, doc="The version of IVEF elements: v015 (0.1.5), v025 (0.2.5)")
+	public void setIVEFVersion(IVEFVersion ivefVersion) {
+		this.ivefVersion= ivefVersion; 
+	} 
+	
 	public ConversionType getConversionType() {
 		return this.conversionType;
+	}
+	
+	public IVEFVersion getIvefVersion() {
+		return ivefVersion;
 	}
 
 }

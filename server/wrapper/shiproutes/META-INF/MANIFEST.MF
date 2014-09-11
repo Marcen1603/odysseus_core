@@ -12,6 +12,7 @@ Import-Package:
  de.uniol.inf.is.odysseus.transform.rule,
  de.uniol.inf.is.odysseus.wrapper.ivef,
  de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5,
+ de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5,
  de.uniol.inf.is.odysseus.wrapper.nmea.sentence,
  de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences,
  de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.payload.decoded,

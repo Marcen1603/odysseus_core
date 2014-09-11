@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_VesselData;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.StaticData;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.VesselData;
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.MSG_IVEF;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECExtension;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECLeg;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECManual;
@@ -531,6 +532,24 @@ public class ToJSONConverter {
 			}
 		}
 		return new ArrayList<IShipRouteRootElement>(manoeuvreDatas.values());
+	}
+
+	public static List<IShipRouteRootElement> convertIVEF025ToRoute(
+			MSG_IVEF msg_ivef) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static List<IShipRouteRootElement> convertIVEF025ToPrediction(
+			MSG_IVEF msg_ivef) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static List<IShipRouteRootElement> convertIVEF025ToManoeuvre(
+			MSG_IVEF msg_ivef) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

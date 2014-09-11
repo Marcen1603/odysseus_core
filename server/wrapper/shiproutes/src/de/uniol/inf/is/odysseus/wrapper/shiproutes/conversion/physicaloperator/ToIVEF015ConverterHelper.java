@@ -34,14 +34,14 @@ import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.Route;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.RouteDataItem;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.Waypoint;
 
-public class ToIVEFConverterHelper {
+public class ToIVEF015ConverterHelper {
 
 	private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
 	private static final double KTS_TO_MS = 0.51444444444;
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(ToIVEFConverterHelper.class);
+			.getLogger(ToIVEF015ConverterHelper.class);
 
 	public static MSG_VesselData convertShipRouteToIVEF(
 			RouteDataItem routeDataItem, StaticAndVoyageData staticAndVoyageData) {

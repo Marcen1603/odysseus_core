@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.Pos;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.StaticData;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.VesselData;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.Voyage;
+import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.MSG_IVEF;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECExtension;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECLeg;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.iec.element.IECManual;
@@ -450,5 +451,10 @@ public class ToIECConverterHelper {
 		}
 
 		return new ArrayList<IECRoute>(iecRoutes.values());
+	}
+
+	public static List<IECRoute> convertIVEF025ToIEC(MSG_IVEF msg_VesselData) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -22,22 +22,22 @@ import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.manoeuvre.Manoeu
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.prediction.PredictionDataItem;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.route.RouteDataItem;
 
-public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
+public class ShipRoute015ConverterPO<T extends IStreamObject<IMetaAttribute>>
 		extends AbstractPipe<T, T> {
 	private final Logger LOG = LoggerFactory
-			.getLogger(ShipRouteConverterPO.class);
+			.getLogger(ShipRoute015ConverterPO.class);
 	private ConversionType conversionType;
 	private AISSentenceHandler aishandler = new AISSentenceHandler();
 	private List<IShipRouteRootElement> cachedJSONElements = new ArrayList<IShipRouteRootElement>();
 	private List<IECRoute> cachedIECElements = new ArrayList<IECRoute>();
 	private StaticAndVoyageData staticAndVoyageData = null;
 
-	public ShipRouteConverterPO(ShipRouteConverterPO<T> anotherPO) {
+	public ShipRoute015ConverterPO(ShipRoute015ConverterPO<T> anotherPO) {
 		super();
 		this.conversionType = anotherPO.conversionType;
 	}
 
-	public ShipRouteConverterPO(ConversionType conversionType) {
+	public ShipRoute015ConverterPO(ConversionType conversionType) {
 		super();
 		this.conversionType = conversionType;
 	}
@@ -48,17 +48,17 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 	}
 
 	@Override
-	public ShipRouteConverterPO<T> clone() {
-		return new ShipRouteConverterPO<T>(this);
+	public ShipRoute015ConverterPO<T> clone() {
+		return new ShipRoute015ConverterPO<T>(this);
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof ShipRouteConverterPO)) {
+		if (!(ipo instanceof ShipRoute015ConverterPO)) {
 			return false;
 		}
-		ShipRouteConverterPO converterPO = (ShipRouteConverterPO) ipo;
+		ShipRoute015ConverterPO converterPO = (ShipRoute015ConverterPO) ipo;
 		return this.conversionType == converterPO.conversionType;
 	}
 
@@ -221,17 +221,17 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 				if (staticAndVoyageData != null) {
 					for (IShipRouteRootElement element : cachedJSONElements) {
 						if (element instanceof RouteDataItem) {
-							ivef = ToIVEFConverterHelper
+							ivef = ToIVEF015ConverterHelper
 									.convertShipRouteToIVEF(
 											(RouteDataItem) element,
 											staticAndVoyageData);
 						} else if (element instanceof ManoeuvrePlanDataItem) {
-							ivef = ToIVEFConverterHelper
+							ivef = ToIVEF015ConverterHelper
 									.convertManoeuvreToIVEF(
 											(ManoeuvrePlanDataItem) element,
 											staticAndVoyageData);
 						} else if (element instanceof PredictionDataItem) {
-							ivef = ToIVEFConverterHelper
+							ivef = ToIVEF015ConverterHelper
 									.convertPredictionToIVEF(
 											(PredictionDataItem) element,
 											staticAndVoyageData);
@@ -251,7 +251,7 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 			RouteDataItem dataItem = (RouteDataItem) received
 					.getMetadata("object");
 			if (staticAndVoyageData != null) {
-				ivef = ToIVEFConverterHelper.convertShipRouteToIVEF(dataItem,
+				ivef = ToIVEF015ConverterHelper.convertShipRouteToIVEF(dataItem,
 						staticAndVoyageData);
 			} else {
 				cachedJSONElements.add(dataItem);
@@ -260,7 +260,7 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 			ManoeuvrePlanDataItem dataItem = (ManoeuvrePlanDataItem) received
 					.getMetadata("object");
 			if (staticAndVoyageData != null) {
-				ivef = ToIVEFConverterHelper.convertManoeuvreToIVEF(dataItem,
+				ivef = ToIVEF015ConverterHelper.convertManoeuvreToIVEF(dataItem,
 						staticAndVoyageData);
 			} else {
 				cachedJSONElements.add(dataItem);
@@ -268,7 +268,7 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 		} else if (received.getMetadata("object") instanceof PredictionDataItem){
 			PredictionDataItem dataItem = (PredictionDataItem) received.getMetadata("object");
 			if (staticAndVoyageData != null){
-				ivef = ToIVEFConverterHelper
+				ivef = ToIVEF015ConverterHelper
 						.convertPredictionToIVEF(dataItem,
 								staticAndVoyageData);
 			} else {
@@ -292,7 +292,7 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 				// process cached elements
 				if (staticAndVoyageData != null) {
 					for (IECRoute cachedIECRoute : cachedIECElements) {
-						ivef = ToIVEFConverterHelper.convertIECToIVEF(
+						ivef = ToIVEF015ConverterHelper.convertIECToIVEF(
 								cachedIECRoute, staticAndVoyageData);
 						KeyValueObject<? extends IMetaAttribute> next = ivef
 								.toMap();
@@ -306,7 +306,7 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 		} else if (received.getMetadata("object") instanceof IECRoute) {
 			IECRoute route = (IECRoute) received.getMetadata("object");
 			if (staticAndVoyageData != null) {
-				ivef = ToIVEFConverterHelper.convertIECToIVEF(route,
+				ivef = ToIVEF015ConverterHelper.convertIECToIVEF(route,
 						staticAndVoyageData);
 			} else {
 				cachedIECElements.add(route);
@@ -401,7 +401,6 @@ public class ShipRouteConverterPO<T extends IStreamObject<IMetaAttribute>>
 				}
 			}
 		}
-
 		return null;
 	}
 
