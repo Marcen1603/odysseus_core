@@ -9,6 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
+
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -31,6 +36,10 @@ import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.VoyageData;
 import de.uniol.inf.is.odysseus.wrapper.ivef.spatial.Ellipsoid;
 import de.uniol.inf.is.odysseus.wrapper.ivef.spatial.GeodeticCalculator;
 import de.uniol.inf.is.odysseus.wrapper.ivef.spatial.GlobalCoordinates;
+import de.uniol.inf.is.odysseus.wrapper.ivef.spatial.Vector2D;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.TargetNumber;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.TargetReference;
+import de.uniol.inf.is.odysseus.wrapper.nmea.data.TargetStatus;
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Unit;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.AISSentence;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.Sentence;
@@ -107,6 +116,9 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 	@Override
 	protected void process_next(T object, int port) {
 		KeyValueObject<? extends IMetaAttribute> received = (KeyValueObject<? extends IMetaAttribute>) object;
+		
+		updateOwnShip(received);
+	 
 		switch (this.conversionType) {
 		case TTM_IVEF:
 			convertTTMtoIVEF(received);
@@ -125,13 +137,8 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 		}
 	}
 
-	@SuppressWarnings({ "unchecked" })
-	private void convertTTMtoIVEF(
-			KeyValueObject<? extends IMetaAttribute> received) {
-		/***************************************
-		 * Set the own ship (Ship ODYSSEUS)
-		 * *************************************/
-		KeyValueObject<? extends IMetaAttribute> sent = new KeyValueObject<>();
+	private void updateOwnShip(KeyValueObject<? extends IMetaAttribute> received) {
+		// try to get the own position from NMEA VDO Messages
 		if (received.getMetadata("originalNMEA") != null) {
 			if (received.getMetadata("originalNMEA") instanceof AISSentence) {
 				AISSentence ais = (AISSentence) received
@@ -140,25 +147,26 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 					this.ownShip = ais;
 					this.aishandler.handleAISSentence(this.ownShip);
 					if (this.aishandler.getDecodedAISMessage() != null) {
-						if (this.aishandler.getDecodedAISMessage() instanceof PositionReport)
+						if (this.aishandler.getDecodedAISMessage() instanceof PositionReport){
 							this.ownShipPosition = (PositionReport) this.aishandler
-									.getDecodedAISMessage();
-						else if (this.aishandler.getDecodedAISMessage() instanceof StaticAndVoyageData)
-							this.ownShipStaticData = (StaticAndVoyageData) this.aishandler
-									.getDecodedAISMessage();
-						else {
-							// Other decoded messages to be handled later if
-							// required.
+									.getDecodedAISMessage();							
 						}
 						this.aishandler.resetDecodedAISMessage();
 					}
 				}
 			}
-			/**************************************************************************
-			 * Data fusion: Convert the TTM message into IVEF using the OwnShip
-			 * message
-			 * ************************************************************************/
-			else if (received.getMetadata("originalNMEA") instanceof TTMSentence) {
+		}
+	}
+
+	@SuppressWarnings({ "unchecked" })
+	private void convertTTMtoIVEF(
+			KeyValueObject<? extends IMetaAttribute> received) {
+		/***************************************
+		 * Set the own ship (Ship ODYSSEUS)
+		 * *************************************/
+		KeyValueObject<? extends IMetaAttribute> sent = new KeyValueObject<>();
+		if (received.getMetadata("originalNMEA") != null) {
+			if (received.getMetadata("originalNMEA") instanceof TTMSentence) {
 				// We can't generate IVEF before receiving the ownShipMessage
 				this.ivef = new MSG_IVEF();
 
@@ -283,9 +291,137 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 		return header;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void convertIVEFtoTTM(
 			KeyValueObject<? extends IMetaAttribute> received) {
-		// TODO Auto-generated method stub
+		if (received.getMetadata("object") instanceof MSG_IVEF) {
+			KeyValueObject<? extends IMetaAttribute> sent = new KeyValueObject<>();
+			MSG_IVEF vesselMsg = (MSG_IVEF) received.getMetadata("object");
+			Double ownShipLat = null;
+			Double ownShipLong = null;
+			if (this.ownShipPosition != null) {
+				ownShipLat = this.ownShipPosition.getLatitude();
+				ownShipLong = this.ownShipPosition.getLongitude();
+			}
+			for (int i = 0; i < vesselMsg.getBody().getObjectDatas()
+					.countOfObjectDatas(); i++) {
+				ObjectData objectData = vesselMsg.getBody().getObjectDatas()
+						.getObjectDataAt(i);
+				/********************************************************************************************
+				 * Data fusion: calculate the track between the ownShip and the
+				 * IVEF message (Ship ODYSSEUS).
+				 * ******************************************************************************************/
+				if (this.ownShipPosition == null)
+					return;
+				Double targetLat = objectData.getTrackData().getPosAt(0).getLat();
+				Double targetLong = objectData.getTrackData().getPosAt(0).getLong();
+				if (ownShipLat != null && ownShipLong != null
+						&& targetLat != null && targetLong != null) {
+					Double targetDistance = IvefConversionUtilities
+							.calculateDistance(ownShipLat, ownShipLong,
+									targetLat, targetLong);
+					Double bearing = IvefConversionUtilities.calculateBearing(
+							ownShipLat, ownShipLong, targetLat, targetLong);
+					// Speed vectors
+					double ownShipCog = this.ownShipPosition
+							.getCourseOverGround();
+					double ownShipSog = this.ownShipPosition
+							.getSpeedOverGround();
+					Vector2D ownShipSpeedVector = new Vector2D(-ownShipSog
+							* Math.sin(ownShipCog), ownShipSog
+							* Math.cos(ownShipCog));
+					double targetCog = objectData.getTrackData().getCOG();
+					double targetSog = objectData.getTrackData().getSOG();
+					Vector2D targetSpeedVector = new Vector2D(-targetSog
+							* Math.sin(targetCog), targetSog
+							* Math.cos(targetCog));
+					// Distance vector
+					// First we have to project the P0 and Q0 from spherical
+					// spatial reference WGS84(EPSG:4326) into EPSG:3857
+					// (GoogleMap)
+					GeometryFactory gf = new GeometryFactory();
+					Point ownShipInWGS84At0 = gf.createPoint(new Coordinate(
+							ownShipLat, ownShipLong));
+					ownShipInWGS84At0.setSRID(4326);// WSG84
+					Geometry projectedOwnShip = IvefConversionUtilities
+							.geometryTransform(ownShipInWGS84At0, 3857);
+					Point targetInWGS84At0 = gf.createPoint(new Coordinate(
+							targetLat, targetLong));
+					targetInWGS84At0.setSRID(4326);// WSG84
+					Geometry projectedTarget = IvefConversionUtilities
+							.geometryTransform(targetInWGS84At0, 3857);
+					// Now we can generate the Distance vector at 0
+					Vector2D distanceVector = new Vector2D(
+							projectedOwnShip.getCoordinate().x
+									- projectedTarget.getCoordinate().x,
+							projectedOwnShip.getCoordinate().y
+									- projectedTarget.getCoordinate().y);
+					// TCPA: Time Closest Position of Approach
+					double tcpa = -distanceVector.dot(ownShipSpeedVector
+							.subtract(targetSpeedVector))
+							/ (ownShipSpeedVector.len() - targetSpeedVector
+									.len())
+							* (ownShipSpeedVector.len() - targetSpeedVector
+									.len());
+					// Distances from ownShip to P(tcpa) and from target to
+					// Q(tcpa)
+					double ownshipToTcpaDist = (ownShipSog * 0.514444444)
+							* tcpa;// SOG is converted from Kn/second to
+									// M/Second.
+					double targetToTcpaDist = targetSog * tcpa;
+					// The positions (Lat&Lon) of P(tcpa) and Q(tcpa)
+					GeodeticCalculator geoCalculator = new GeodeticCalculator();
+					GlobalCoordinates ownShipAtCPA = geoCalculator
+							.calculateEndingGlobalCoordinates(Ellipsoid.WGS84,
+									new GlobalCoordinates(ownShipLat,
+											ownShipLong), ownShipCog,
+									ownshipToTcpaDist);
+					GlobalCoordinates targetAtCPA = geoCalculator
+							.calculateEndingGlobalCoordinates(
+									Ellipsoid.WGS84,
+									new GlobalCoordinates(targetLat, targetLong),
+									targetCog, targetToTcpaDist);
+					// CPA: Closest Position of Approach
+					Double cpa = IvefConversionUtilities.calculateDistance(
+							ownShipAtCPA.getLatitude(),
+							ownShipAtCPA.getLongitude(),
+							targetAtCPA.getLatitude(),
+							targetAtCPA.getLongitude());
+
+					// The TTM message
+					TTMSentence ttm = new TTMSentence();
+					String targetNumStr = "";
+					if (objectData.getVesselDataAt(0) != null) {
+						if (objectData.getVesselDataAt(0).getIdentifier() != null) {
+							targetNumStr += objectData.getVesselDataAt(0)
+									.getIdentifier().getMMSI();
+						} else {
+							targetNumStr = "0";
+						}
+
+						// Maybe the target label is he same of the ship name!
+						String targetName = "";
+						if (!(targetName = objectData.getVesselDataAt(0)
+								.getIdentifier().getName()).equals("")) {
+							ttm.setTargetLabel(targetName);
+						}
+
+					}
+					ttm.setTargetNumber(TargetNumber.parse(targetNumStr));
+					ttm.setTargetDistance(targetDistance);
+					ttm.setBearing(bearing);
+					ttm.setTargetSpeed(targetSog);
+					ttm.setTargetCourse(targetCog);
+					ttm.setClosestPointOfApproach(cpa);
+					ttm.setTimeUntilClosestPoint(tcpa);
+					ttm.setTargetStatus(TargetStatus.TRACKING_TARGET);// tracking
+					ttm.setReferenceTarget(TargetReference.NOT_DESIGNATED);
+					ttm.parse();
+					sent.setMetadata("originalNMEA", ttm);
+					transfer((T) sent);
+				}
+			}
+		}
 
 	}
 
