@@ -157,6 +157,7 @@ public class FungiFunction extends AbstractFunction<Double>{
 	 */
 	protected double getPixelAmount(Image image) {
 		double temp;
+		@SuppressWarnings("unused")
 		int weiss = 0;
 		int schwarz = 0;
 	    int gesamt = (image.getWidth() * image.getHeight());

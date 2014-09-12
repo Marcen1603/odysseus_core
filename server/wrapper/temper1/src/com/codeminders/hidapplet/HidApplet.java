@@ -5,6 +5,7 @@ import com.codeminders.hidapi.HIDDeviceInfo;
 import com.codeminders.hidapi.HIDManager;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,7 +24,8 @@ public class HidApplet extends JApplet
     {
         String os = System.getProperty("os.name", "win").toLowerCase();
         String arch = System.getProperty("os.arch", "x86");
-        boolean x64 = arch.indexOf("_64") != -1;
+        @SuppressWarnings("unused")
+		boolean x64 = arch.indexOf("_64") != -1;
         String library;
         if (os.indexOf("win") != -1)
         {
