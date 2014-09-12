@@ -8,7 +8,6 @@ import java.io.IOException;
  *
  * @author lord
  */
-@SuppressWarnings("serial")
 public class HIDDeviceNotFoundException extends IOException
 {
     /**

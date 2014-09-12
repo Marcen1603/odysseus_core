@@ -12,22 +12,22 @@ import org.eclipse.osgi.framework.console.CommandProvider;
  */
 public class ConsoleCommands implements CommandProvider {
 
-    @SuppressWarnings({ "static-method"})
+    @SuppressWarnings({ "static-method", "unused" })
     public void _stopClients(final CommandInterpreter ci) {
         Activator.stop();
     }
 
-    @SuppressWarnings({ "static-method"})
+    @SuppressWarnings({ "static-method", "unused" })
     public void _pauseClients(final CommandInterpreter ci) {
         Activator.pause();
     }
 
-    @SuppressWarnings({ "static-method"})
+    @SuppressWarnings({ "static-method", "unused" })
     public void _proceedClients(final CommandInterpreter ci) {
         Activator.proceed();
     }
 
-    @SuppressWarnings({ "static-method"})
+    @SuppressWarnings({ "static-method", "unused" })
     public void _stats(final CommandInterpreter ci) {
         Activator.printStatus();
     }

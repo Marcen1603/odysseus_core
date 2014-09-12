@@ -30,8 +30,7 @@ public class ExceptionErrorDialog extends ErrorDialog {
     /**
      * The Send Bug Report button.
      */
-    @SuppressWarnings("unused")
-	private Button sendBugReportButton;
+    private Button sendBugReportButton;
     private final Throwable exception;
 
     public static void open(final IStatus status, final Throwable exception) {
