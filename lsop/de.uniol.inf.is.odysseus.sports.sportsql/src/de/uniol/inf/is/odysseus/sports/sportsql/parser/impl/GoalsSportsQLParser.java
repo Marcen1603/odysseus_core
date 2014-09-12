@@ -26,35 +26,15 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 @SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.GLOBAL }, name = "goals", parameters = {})
 public class GoalsSportsQLParser implements ISportsQLParser {
 
-	// goal 1 (left goal)
-	private static final int GOALPOST1_RIGHT = 22560;
-	private static final int GOALPOST1_LEFT = 29880;
-	private static final int GOALLINE1 = -33968;
-
-	// / goal 2 (right goal)
-	private static final int GOALPOST2_RIGHT = 29898;
-	private static final int GOALPOST2_LEFT = 22578;
-	private static final int GOALLINE2 = 33941;
-
-	// / goal dimensions
-	private static final int GOAL_HEIGHT = 2440;
-	private static final int GOAL_DEPTH = 2500;
-
-	// / centre spot area
-	private static final int CENTRESPOT_X1 = 24000; // / upper border
-	private static final int CENTRESPOT_X2 = 30000; // / lower border
-	private static final int CENTRESPOT_Y1 = -2000; // / left border
-	private static final int CENTRESPOT_Y2 = 2000; // / right border
-
 	// / time (seconds) between goal and kickoff
 	private static final int T_GOAL_KICKOFF = 30;
+	
+	private static final String ONE_SECOND = "1000000000000";
 
 	private static final int MIN_X = OperatorBuildHelper.LOWERLEFT_X;
 	private static final int MAX_X = OperatorBuildHelper.LOWERRIGHT_X;
-	private static final int MIN_Y = GOALLINE1;
-	private static final int MAX_Y = GOALLINE2;
-
-	private static final String ONE_SECOND = "1000000000000";
+	private static final int MIN_Y = OperatorBuildHelper.GOALLINE1;
+	private static final int MAX_Y = OperatorBuildHelper.GOALLINE2;
 
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
@@ -96,14 +76,14 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		String predicateGoalAndField = "(x > " + MIN_X + " AND x < " + MAX_X + " AND y > "
 				+ MIN_Y + " AND y < " + MAX_Y + ")";
 		
-		predicateGoalAndField +=  " OR (y < " + GOALLINE1
-				+ " AND y > ((" + (GOALLINE1 - GOAL_DEPTH)
-				+ ")) AND x > " + GOALPOST1_RIGHT + " AND x < "
-				+ GOALPOST1_LEFT + ")";
+		predicateGoalAndField +=  " OR (y < " + OperatorBuildHelper.GOALLINE1
+				+ " AND y > ((" + (OperatorBuildHelper.GOALLINE1 - OperatorBuildHelper.GOAL_DEPTH)
+				+ ")) AND x > " + OperatorBuildHelper.GOALPOST1_RIGHT + " AND x < "
+				+ OperatorBuildHelper.GOALPOST1_LEFT + ")";
 		
-		predicateGoalAndField += " OR (y > " + GOALLINE2 + " AND y < (("
-				+ (GOALLINE2 + GOAL_DEPTH) + ")) AND x < "
-				+ GOALPOST2_RIGHT + " AND x > " + GOALPOST2_LEFT + ")";
+		predicateGoalAndField += " OR (y > " + OperatorBuildHelper.GOALLINE2 + " AND y < (("
+				+ (OperatorBuildHelper.GOALLINE2 + OperatorBuildHelper.GOAL_DEPTH) + ")) AND x < "
+				+ OperatorBuildHelper.GOALPOST2_RIGHT + " AND x > " + OperatorBuildHelper.GOALPOST2_LEFT + ")";
 		
 		SelectAO ball_in_goal_or_field = OperatorBuildHelper.createSelectAO(
 				predicateGoalAndField, ball);
@@ -182,15 +162,15 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		SDFExpressionParameter ex4 = OperatorBuildHelper
 				.createExpressionParameter("z", "goal_z", source);
 		SDFExpressionParameter ex5 = OperatorBuildHelper
-				.createExpressionParameter("eif( y < " + GOALLINE1
-						+ " AND y > " + (GOALLINE1 - GOAL_DEPTH)
-						+ " AND x > " + GOALPOST1_RIGHT + " AND x < "
-						+ GOALPOST1_LEFT + " , 1, 0)", "inGoal1", source);
+				.createExpressionParameter("eif( y < " + OperatorBuildHelper.GOALLINE1
+						+ " AND y > " + (OperatorBuildHelper.GOALLINE1 - OperatorBuildHelper.GOAL_DEPTH)
+						+ " AND x > " + OperatorBuildHelper.GOALPOST1_RIGHT + " AND x < "
+						+ OperatorBuildHelper.GOALPOST1_LEFT + " , 1, 0)", "inGoal1", source);
 		SDFExpressionParameter ex6 = OperatorBuildHelper
-				.createExpressionParameter("eif( y > " + GOALLINE2
-						+ " AND y < " + (GOALLINE2 + GOAL_DEPTH)
-						+ " AND x < " + GOALPOST2_RIGHT + " AND x > "
-						+ GOALPOST2_LEFT + " , 1, 0)", "inGoal2", source);
+				.createExpressionParameter("eif( y > " + OperatorBuildHelper.GOALLINE2
+						+ " AND y < " + (OperatorBuildHelper.GOALLINE2 + OperatorBuildHelper.GOAL_DEPTH)
+						+ " AND x < " + OperatorBuildHelper.GOALPOST2_RIGHT + " AND x > "
+						+ OperatorBuildHelper.GOALPOST2_LEFT + " , 1, 0)", "inGoal2", source);
 		expressions.add(ex1);
 		expressions.add(ex2);
 		expressions.add(ex3);
@@ -207,9 +187,9 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		SDFExpressionParameter ex1 = OperatorBuildHelper
 				.createExpressionParameter("ts", "spot_ball_ts", source);
 		SDFExpressionParameter ex2 = OperatorBuildHelper
-				.createExpressionParameter("eif( x >= " + CENTRESPOT_X1
-						+ " AND x <= " + CENTRESPOT_X2 + " AND y >= "
-						+ CENTRESPOT_Y1 + " AND y <= " + CENTRESPOT_Y2
+				.createExpressionParameter("eif( x >= " + OperatorBuildHelper.CENTRESPOT_X1
+						+ " AND x <= " + OperatorBuildHelper.CENTRESPOT_X2 + " AND y >= "
+						+ OperatorBuildHelper.CENTRESPOT_Y1 + " AND y <= " + OperatorBuildHelper.CENTRESPOT_Y2
 						+ " , 1, 0)", "onCentreSpot", source);
 		expressions.add(ex1);
 		expressions.add(ex2);
