@@ -90,7 +90,7 @@ public class ExceptionErrorDialog extends ErrorDialog {
     protected void buttonPressed(final int id) {
         if (id == ExceptionErrorDialog.BUGREPORT_ID) {
             final BugReport report = new BugReport(this.exception);
-            report.send();
+            report.openEditor();
         }
         else {
             super.buttonPressed(id);

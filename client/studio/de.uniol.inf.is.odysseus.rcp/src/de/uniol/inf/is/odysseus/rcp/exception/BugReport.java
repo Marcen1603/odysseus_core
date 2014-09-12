@@ -26,8 +26,26 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
@@ -44,7 +62,13 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
  */
 public class BugReport {
     private static final Logger LOG = LoggerFactory.getLogger(BugReport.class);
-
+    private static final String JIRA = "http://odysseus.informatik.uni-oldenburg.de:8081/rest/api/latest/issue/";
+    private static final String LOGIN = "odysseus_studio";
+    private static final String PW = "jhf4hdds673";
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String COMPONENT_ID = "10023"; // Other
+    private static final String PROJECT_KEY = "ODY";
+    private static final String ISSUE_TYPE = "Bug";
     private static final String SUBJECT = "[ODY] I found a bug";
     private static final List<String> RECIPIENTS = new ArrayList<>();
     static {
@@ -68,7 +92,25 @@ public class BugReport {
         this.exception = null;
     }
 
-    public void send() {
+    public void openEditor() {
+        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+            @Override
+            public void run() {
+                final Shell shell;
+                if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell() != null)
+                    shell = new Shell(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+                else
+                    shell = new Shell();
+                BugReportEditor editor = new BugReportEditor(shell, BugReport.this);
+                editor.open();
+                editor.setReport(getReport());
+            }
+
+        });
+    }
+
+    public String getReport() {
         final StringBuilder report = new StringBuilder();
         report.append("Dear Developer,\n\n");
         report.append("*** Reporter, please consider answering these questions, where appropriate ***\n\n");
@@ -92,23 +134,64 @@ public class BugReport {
         report.append(bundlesReport);
         report.append("\n-- Services Information:\n");
         report.append(servicesReport);
+        return report.toString();
+    }
 
+    public void send(String report) {
         try {
-            BugReport.sendReport(RECIPIENTS, report.toString());
+            // Report Bugs using email clients (does not work on Windows)
+            // BugReport.sendReport(RECIPIENTS, report.toString());
+            // Report Bugs using JIRA
+            BugReport.sendReport(report);
+
         }
-        catch (IOException | URISyntaxException e) {
+        catch (IOException | URISyntaxException | JSONException e) {
             BugReport.LOG.debug(e.getMessage(), e);
         }
     }
 
+    private static void sendReport(final String report) throws ClientProtocolException, IOException, URISyntaxException, JSONException {
+        BasicCookieStore cookieStore = new BasicCookieStore();
+        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        URI uri = new URI(JIRA);
+        try (CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(cookieStore).setDefaultCredentialsProvider(credsProvider).build()) {
+            JSONObject request = new JSONObject();
+            JSONObject fields = new JSONObject();
+            JSONArray component = new JSONArray();
+            JSONObject components = new JSONObject();
+            components.put("id", COMPONENT_ID);
+            component.put(components);
+            JSONObject project = new JSONObject();
+            project.put("key", PROJECT_KEY);
+            JSONObject issuetype = new JSONObject();
+            issuetype.put("name", ISSUE_TYPE);
+            fields.put("project", project);
+            fields.put("summary", "Bug Report");
+            fields.put("description", report);
+            fields.put("issuetype", issuetype);
+            fields.put("components", component);
+            request.put("fields", fields);
+
+            StringEntity entity = new StringEntity(request.toString());
+            entity.setChunked(true);
+            entity.setContentType("application/json");
+            HttpUriRequest ticket = RequestBuilder.post().setUri(uri).setEntity(entity).setHeader(AUTHORIZATION_HEADER, "Basic " + new String(Base64.encodeBase64((LOGIN + ':' + PW).getBytes())))
+                    .setHeader("Content-Type", "application/json").build();
+            try (CloseableHttpResponse response = httpclient.execute(ticket)) {
+                HttpEntity resEntity = response.getEntity();
+                EntityUtils.consume(resEntity);
+            }
+        }
+
+    }
+
+    @SuppressWarnings("unused")
     private static void sendReport(final List<String> recipients, final String report) throws IOException, URISyntaxException {
         final URI mailto = BugReport.format(recipients, BugReport.SUBJECT, report);
         try {
             if (Desktop.isDesktopSupported()) {
                 final Desktop desktop = Desktop.getDesktop();
                 if (desktop.isSupported(Desktop.Action.MAIL)) {
-                    System.out.println("MAIL");
-                    System.out.println(mailto);
                     desktop.mail(mailto);
                 }
                 else if (desktop.isSupported(Desktop.Action.BROWSE)) {
