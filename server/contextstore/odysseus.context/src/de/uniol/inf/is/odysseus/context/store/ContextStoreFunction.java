@@ -56,7 +56,7 @@ public class ContextStoreFunction extends AbstractFunction<Object> {
 			SDFDatatype.STRING, SDFDatatype.INTEGER } };
 
 	public ContextStoreFunction() {
-		super("ContextStore", 1, accTypes, null, false);
+		super("ContextStore", 1, accTypes, SDFDatatype.TUPLE, false);
 	}
 
 	@Override
