@@ -130,7 +130,7 @@ public class ShipRoute015ConverterPO<T extends IStreamObject<IMetaAttribute>>
 			MSG_VesselData msg_VesselData = (MSG_VesselData) received
 					.getMetadata("object");
 			List<IECRoute> iecs = ToIECConverterHelper
-					.convertIVEFToIEC(msg_VesselData);
+					.convertIVEF015ToIEC(msg_VesselData);
 			for (IECRoute iecRoute : iecs) {
 				if (iecRoute.isValid()) {
 					KeyValueObject<? extends IMetaAttribute> next = iecRoute
