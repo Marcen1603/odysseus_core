@@ -25,24 +25,36 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
-@SportsQL(gameTypes = { GameType.SOCCER }, name = "crosses", parameters = {}, statisticTypes = { StatisticType.GLOBAL })
+/***
+ * SportsQL Parser for Crosses.
+ * 
+ * @author Simon Eilers
+ *
+ */
 
+@SportsQL(gameTypes = { GameType.SOCCER }, name = "crosses", parameters = {}, statisticTypes = { StatisticType.GLOBAL })
 public class CrossesGlobalSportsQLParser implements ISportsQLParser {
 
 	public final static String TIME_BETWEEN_TARGETZONE_CROSSINGZONE = "2000000000000";
 	
+	//Borders from where the cross has to be shot
 	public final static String CROSSINGZONE_RIGHT_SIDE = "11330";
 	public final static String CROSSINGZONE_LEFT_SIDE = "41184";
 	
+	//Zone into which the ball has to fly
 	public final static String TARGETZONE_LEFT_HALF = "-18983";
 	public final static String TARGETZONE_RIGHT_HALF = "18983";
 	
 	public final static String CENTER_LINE = "0";
 	
+	//minimal height the ball has to have
 	public final static String MIN_BALL_HEIGHT = "2500";
 	
 	public static final int BALL_SIDS[] = {4,8,10,12};
 	
+	/**
+	 * Parses sportsQL
+	 */
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
 			throws SportsQLParseException {
