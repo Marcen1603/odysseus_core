@@ -45,6 +45,7 @@ import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
@@ -637,24 +638,26 @@ public class WebserviceServer {
 	public ConnectionInformationResponse getConnectionInformationWithSSL(
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "queryId") int queryId,
-			@WebParam(name = "sslClientAuthentication") boolean sslClientAuthentication)
+			@WebParam(name = "sslClientAuthentication") boolean sslClientAuthentication,
+			@WebParam(name = "nullValues") boolean nullValues)
 			throws InvalidUserDataException {
 
 		return getConnectionInformationWithPorts(securityToken, queryId,0,
 				Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort",
 						SINK_MIN_PORT)), Integer.valueOf(OdysseusConfiguration
-						.getInt("maxSinkPort", SINK_MAX_PORT)), true, sslClientAuthentication);
+						.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues, true, sslClientAuthentication);
 	}
 
 	public ConnectionInformationResponse getConnectionInformation(
 			@WebParam(name = "securitytoken") String securityToken,
-			@WebParam(name = "queryId") int queryId)
+			@WebParam(name = "queryId") int queryId,
+			@WebParam(name = "nullValues") boolean nullValues)
 			throws InvalidUserDataException {
 
 		return getConnectionInformationWithPorts(securityToken, queryId,0,
 				Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort",
 						SINK_MIN_PORT)), Integer.valueOf(OdysseusConfiguration
-						.getInt("maxSinkPort", SINK_MAX_PORT)));
+						.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues);
 	}
 
 	public ConnectionInformationResponse getConnectionInformationWithPorts(
@@ -662,13 +665,14 @@ public class WebserviceServer {
 			@WebParam(name = "queryId") int queryId,
 			@WebParam(name = "rootPort") int rootPort,
 			@WebParam(name = "minPort") int minPort,
-			@WebParam(name = "maxPort") int maxPort)
+			@WebParam(name = "maxPort") int maxPort,
+			@WebParam(name = "nullValues") boolean nullValues)
 			throws InvalidUserDataException {
-		return this.getConnectionInformationWithPorts(securityToken, queryId, rootPort, minPort, maxPort, false, false);
+		return this.getConnectionInformationWithPorts(securityToken, queryId, rootPort, minPort, maxPort, nullValues, false, false);
 	}
 
 	
-	private ConnectionInformationResponse getConnectionInformationWithPorts(String securityToken,int queryId, int rootPort,int minPort, int maxPort, boolean ssl, boolean sslClientAuthentication) throws InvalidUserDataException {
+	private ConnectionInformationResponse getConnectionInformationWithPorts(String securityToken,int queryId, int rootPort,int minPort, int maxPort,boolean nullValues, boolean ssl, boolean sslClientAuthentication) throws InvalidUserDataException {
 		try {
 			loginWithSecurityToken(securityToken);
 			int port = 0;
@@ -679,7 +683,7 @@ public class WebserviceServer {
 			if (socketSinkMapEntry != null) {
 				if (socketSinkMapEntry.get(rootPort) == null) {
 					port = getNextFreePort(minPort, maxPort);
-					po = addSocketSink(queryId,rootPort, port, ssl, sslClientAuthentication);
+					po = addSocketSink(queryId,rootPort, port, nullValues, ssl, sslClientAuthentication);
 					socketSinkMapEntry.put(rootPort, po);
 					socketPortMapEntry.put(rootPort, port);					
 				} else {
@@ -692,7 +696,7 @@ public class WebserviceServer {
 				socketPortMap.put(queryId, socketPortMapEntry);
 				socketSinkMap.put(queryId, socketSinkMapEntry);			
 				port = getNextFreePort(minPort, maxPort);
-				po = addSocketSink(queryId,rootPort, port, ssl, sslClientAuthentication);
+				po = addSocketSink(queryId,rootPort, port, nullValues, ssl, sslClientAuthentication);
 				socketSinkMapEntry.put(rootPort, po);
 				socketPortMapEntry.put(rootPort, port);
 			}
@@ -727,7 +731,7 @@ public class WebserviceServer {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private SocketSinkPO addSocketSink(int queryId, int rootPort, int port, boolean ssl, boolean sslClientAuthentication) {
+	private SocketSinkPO addSocketSink(int queryId, int rootPort, int port, boolean nullValues, boolean ssl, boolean sslClientAuthentication) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor()
 				.getExecutionPlan();
 		IPhysicalQuery query = plan.getQueryById(queryId);
@@ -735,8 +739,14 @@ public class WebserviceServer {
 		final IPhysicalOperator root = roots.get(rootPort);
 		final ISource<?> rootAsSource = (ISource<?>) root;
 
-		IDataHandler<?> handler = new TupleDataHandler().getInstance(root
-				.getOutputSchema());
+		IDataHandler<?> handler = null;
+		
+		if (nullValues) {
+			handler = new NullAwareTupleDataHandler(root.getOutputSchema());
+		} else {
+			handler = new TupleDataHandler().getInstance(root.getOutputSchema());
+		}
+
 		ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 				handler);	
 		
