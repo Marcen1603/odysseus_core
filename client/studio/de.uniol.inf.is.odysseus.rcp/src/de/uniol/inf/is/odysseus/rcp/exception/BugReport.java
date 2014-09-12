@@ -72,7 +72,7 @@ public class BugReport {
     private static final String SUBJECT = "[ODY] I found a bug";
     private static final List<String> RECIPIENTS = new ArrayList<>();
     static {
-        RECIPIENTS.add("odysseus@lists.offis.de");
+        BugReport.RECIPIENTS.add("odysseus@lists.offis.de");
     }
     private final Throwable exception;
 
@@ -98,13 +98,15 @@ public class BugReport {
             @Override
             public void run() {
                 final Shell shell;
-                if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell() != null)
+                if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell() != null) {
                     shell = new Shell(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-                else
+                }
+                else {
                     shell = new Shell();
-                BugReportEditor editor = new BugReportEditor(shell, BugReport.this);
+                }
+                final BugReportEditor editor = new BugReportEditor(shell);
                 editor.open();
-                editor.setReport(getReport());
+                editor.setReport(BugReport.this.getReport());
             }
 
         });
@@ -137,7 +139,7 @@ public class BugReport {
         return report.toString();
     }
 
-    public void send(String report) {
+    public static void send(final String report) {
         try {
             // Report Bugs using email clients (does not work on Windows)
             // BugReport.sendReport(RECIPIENTS, report.toString());
@@ -151,20 +153,20 @@ public class BugReport {
     }
 
     private static void sendReport(final String report) throws ClientProtocolException, IOException, URISyntaxException, JSONException {
-        BasicCookieStore cookieStore = new BasicCookieStore();
-        CredentialsProvider credsProvider = new BasicCredentialsProvider();
-        URI uri = new URI(JIRA);
+        final BasicCookieStore cookieStore = new BasicCookieStore();
+        final CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        final URI uri = new URI(BugReport.JIRA);
         try (CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(cookieStore).setDefaultCredentialsProvider(credsProvider).build()) {
-            JSONObject request = new JSONObject();
-            JSONObject fields = new JSONObject();
-            JSONArray component = new JSONArray();
-            JSONObject components = new JSONObject();
-            components.put("id", COMPONENT_ID);
+            final JSONObject request = new JSONObject();
+            final JSONObject fields = new JSONObject();
+            final JSONArray component = new JSONArray();
+            final JSONObject components = new JSONObject();
+            components.put("id", BugReport.COMPONENT_ID);
             component.put(components);
-            JSONObject project = new JSONObject();
-            project.put("key", PROJECT_KEY);
-            JSONObject issuetype = new JSONObject();
-            issuetype.put("name", ISSUE_TYPE);
+            final JSONObject project = new JSONObject();
+            project.put("key", BugReport.PROJECT_KEY);
+            final JSONObject issuetype = new JSONObject();
+            issuetype.put("name", BugReport.ISSUE_TYPE);
             fields.put("project", project);
             fields.put("summary", "Bug Report");
             fields.put("description", report);
@@ -172,13 +174,14 @@ public class BugReport {
             fields.put("components", component);
             request.put("fields", fields);
 
-            StringEntity entity = new StringEntity(request.toString());
+            final StringEntity entity = new StringEntity(request.toString());
             entity.setChunked(true);
             entity.setContentType("application/json");
-            HttpUriRequest ticket = RequestBuilder.post().setUri(uri).setEntity(entity).setHeader(AUTHORIZATION_HEADER, "Basic " + new String(Base64.encodeBase64((LOGIN + ':' + PW).getBytes())))
+            final HttpUriRequest ticket = RequestBuilder.post().setUri(uri).setEntity(entity)
+                    .setHeader(BugReport.AUTHORIZATION_HEADER, "Basic " + new String(Base64.encodeBase64((BugReport.LOGIN + ':' + BugReport.PW).getBytes())))
                     .setHeader("Content-Type", "application/json").build();
             try (CloseableHttpResponse response = httpclient.execute(ticket)) {
-                HttpEntity resEntity = response.getEntity();
+                final HttpEntity resEntity = response.getEntity();
                 EntityUtils.consume(resEntity);
             }
         }

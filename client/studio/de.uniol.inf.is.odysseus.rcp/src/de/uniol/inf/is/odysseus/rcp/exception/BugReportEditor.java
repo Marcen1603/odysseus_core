@@ -37,8 +37,7 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
  *
  */
 public class BugReportEditor extends Window {
-    private final BugReport reportManager;
-    private Text textArea;
+    Text textArea;
 
     /**
      * Class constructor.
@@ -46,27 +45,26 @@ public class BugReportEditor extends Window {
      * @param parentShell
      * @param bugReport
      */
-    protected BugReportEditor(Shell parentShell, BugReport reportManager) {
+    protected BugReportEditor(final Shell parentShell) {
         super(parentShell);
-        this.reportManager = reportManager;
-        setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | getDefaultOrientation());
+        this.setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | Window.getDefaultOrientation());
     }
 
-    protected Control createButtonBar(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
+    protected Control createButtonBar(final Composite parent) {
+        final Composite composite = new Composite(parent, SWT.NONE);
+        final GridLayout layout = new GridLayout();
         layout.numColumns = 2;
         layout.makeColumnsEqualWidth = true;
         composite.setLayout(layout);
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER);
+        final GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER);
         composite.setLayoutData(data);
         composite.setFont(parent.getFont());
-        createButtonsForButtonBar(composite);
+        this.createButtonsForButtonBar(composite);
         return composite;
     }
 
     private void createButtonsForButtonBar(final Composite parent) {
-        Button cancelButton = new Button(parent, SWT.PUSH);
+        final Button cancelButton = new Button(parent, SWT.PUSH);
         cancelButton.setText(OdysseusNLS.Cancel);
         cancelButton.setFont(JFaceResources.getDialogFont());
         GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -75,13 +73,13 @@ public class BugReportEditor extends Window {
         cancelButton.setLayoutData(data);
         cancelButton.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent event) {
-                setReturnCode(CANCEL);
-                close();
+            public void widgetSelected(final SelectionEvent event) {
+                BugReportEditor.this.setReturnCode(Window.CANCEL);
+                BugReportEditor.this.close();
             }
         });
 
-        Button sendButton = new Button(parent, SWT.PUSH);
+        final Button sendButton = new Button(parent, SWT.PUSH);
         sendButton.setText(OdysseusNLS.SendBugReport);
         sendButton.setFont(JFaceResources.getDialogFont());
         data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -90,53 +88,52 @@ public class BugReportEditor extends Window {
         cancelButton.setLayoutData(data);
         sendButton.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent event) {
-                reportManager.send(textArea.getText());
-                setReturnCode(OK);
-                close();
+            public void widgetSelected(final SelectionEvent event) {
+                BugReport.send(BugReportEditor.this.textArea.getText());
+                BugReportEditor.this.setReturnCode(Window.OK);
+                BugReportEditor.this.close();
             }
         });
-        Shell shell = parent.getShell();
+        final Shell shell = parent.getShell();
         if (shell != null) {
             shell.setDefaultButton(sendButton);
         }
     }
 
-    protected Control createDialogArea(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
+    protected Control createDialogArea(final Composite parent) {
+        final Composite composite = new Composite(parent, SWT.NONE);
+        final GridLayout layout = new GridLayout();
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-        createTextArea(parent);
+        this.createTextArea(parent);
         return composite;
     }
 
-    protected void createTextArea(Composite parent) {
-        textArea = new Text(parent, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
-        textArea.setEditable(true);
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        Point minSize = textArea.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+    protected void createTextArea(final Composite parent) {
+        this.textArea = new Text(parent, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
+        this.textArea.setEditable(true);
+        final GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         data.widthHint = 600;
         data.heightHint = 300;
-        textArea.setLayoutData(data);
+        this.textArea.setLayoutData(data);
     }
 
-    public void setReport(String report) {
-        textArea.setText(report);
+    public void setReport(final String report) {
+        this.textArea.setText(report);
     }
 
     @Override
-    protected Control createContents(Composite parent) {
-        Composite composite = new Composite(parent, 0);
-        GridLayout layout = new GridLayout();
+    protected Control createContents(final Composite parent) {
+        final Composite composite = new Composite(parent, 0);
+        final GridLayout layout = new GridLayout();
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         layout.verticalSpacing = 0;
 
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-        Control dialogArea = createDialogArea(composite);
-        Control buttonBar = createButtonBar(composite);
+        this.createDialogArea(composite);
+        this.createButtonBar(composite);
 
         return composite;
     }

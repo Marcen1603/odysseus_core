@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.rcp.exception;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -27,10 +26,6 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 public class ExceptionErrorDialog extends ErrorDialog {
     private static final int BUGREPORT_ID = IDialogConstants.CLIENT_ID + 1;
-    /**
-     * The Send Bug Report button.
-     */
-    private Button sendBugReportButton;
     private final Throwable exception;
 
     public static void open(final IStatus status, final Throwable exception) {
@@ -83,7 +78,7 @@ public class ExceptionErrorDialog extends ErrorDialog {
     }
 
     protected void createSendBugReportButton(final Composite parent) {
-        this.sendBugReportButton = this.createButton(parent, IDialogConstants.CLIENT_ID + 1, OdysseusNLS.SendBugReport, false);
+        this.createButton(parent, IDialogConstants.CLIENT_ID + 1, OdysseusNLS.SendBugReport, false);
     }
 
     @Override
