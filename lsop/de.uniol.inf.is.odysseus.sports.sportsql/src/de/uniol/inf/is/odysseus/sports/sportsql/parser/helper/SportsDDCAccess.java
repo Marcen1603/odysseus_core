@@ -1,10 +1,15 @@
 package de.uniol.inf.is.odysseus.sports.sportsql.parser.helper;
 
+import java.util.Collection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
 import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
@@ -111,6 +116,16 @@ public class SportsDDCAccess {
 	private static final DDCKey KEY_GOALAREA_RIGHT_ZMAX = new DDCKey(
 			new String[] { SportsDDCAccess.KEY_GOALAREA_PREFIX + "right",
 					"zmax" });
+	
+	/**
+	 * The key for a list of all sensor_ids.
+	 */
+	private static final DDCKey KEY_SENSOR_LIST = new DDCKey("sensoridlist");
+	
+	/**
+	 * The key for the separator within {@link #KEY_SENSOR_LIST}.
+	 */
+	private static final DDCKey KEY_SENSOR_LIST_SEPARATOR = new DDCKey("sensoridseparator");
 
 	/**
 	 * The first key for properties of sensor metadata.
@@ -374,6 +389,27 @@ public class SportsDDCAccess {
 		Preconditions.checkNotNull(SportsDDCAccess.ddc, "No DDC bound!");
 		
 		return Double.valueOf(SportsDDCAccess.ddc.getValue(KEY_GOALAREA_RIGHT_ZMAX)).doubleValue();
+		
+	}
+	
+	/**
+	 * The list of all sensor_ids.
+	 * @throws MissingDDCEntryException if "sensoridlist" or "sensoridseparator" is not a key of the DDC.
+	 * @throws NumberFormatException if a list entry of "sensoridlist" could not be cast to Integer.
+	 */
+	public static ImmutableCollection<Integer> getSensorIds() throws MissingDDCEntryException, NumberFormatException {
+		
+		String separator = SportsDDCAccess.ddc.getValue(KEY_SENSOR_LIST_SEPARATOR);
+		String[] strIds = SportsDDCAccess.ddc.getValue(KEY_SENSOR_LIST).split(separator);
+		Collection<Integer> sensorids = Lists.newArrayList();
+		
+		for(String strID : strIds) {
+			
+			sensorids.add(Integer.valueOf(strID));
+			
+		}
+		
+		return ImmutableList.copyOf(sensorids);
 		
 	}
 	
