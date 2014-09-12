@@ -24,6 +24,10 @@ import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
  * @author Michael Brand
  *
  */
+/**
+ * @author Simon
+ *
+ */
 public class AbstractSportsDDCAccess {
 	// Note: class can not be abstract due to the OSGi-binding
 
@@ -323,5 +327,32 @@ public class AbstractSportsDDCAccess {
 		return Optional.of(Integer.valueOf(possNullTeamId));
 		
 	}
+	
+	
+	
+	/**
+	 * Calculates the x value for the center spot
+	 * @return
+	 * @throws NumberFormatException
+	 * @throws MissingDDCEntryException
+	 */
+	public static Double calculateCenterSpotX() throws NumberFormatException, MissingDDCEntryException{
+		
+		return (getFieldXMax() + getFieldXMin())/2;
+		
+	}
+	
+	/**
+	 * Calculates the x value for the center spot
+	 * @return
+	 * @throws NumberFormatException
+	 * @throws MissingDDCEntryException
+	 */
+	public static Double calculateCenterSpotY() throws NumberFormatException, MissingDDCEntryException{
+		
+		return (getFieldYMax() + getFieldYMin())/2;
+		
+	}
+
 	
 }
