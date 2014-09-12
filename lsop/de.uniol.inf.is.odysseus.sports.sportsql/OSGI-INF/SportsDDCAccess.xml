@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.sports.sportsql.SportsDDCAccess">
-   <implementation class="de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SportsDDCAccess"/>
-   <reference bind="bindDDC" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer" name="IDistributedDataContainer" policy="static" unbind="unbindDDC"/>
-</scr:component>
