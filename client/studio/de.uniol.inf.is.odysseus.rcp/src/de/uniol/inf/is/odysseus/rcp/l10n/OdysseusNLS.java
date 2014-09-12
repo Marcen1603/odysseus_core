@@ -75,6 +75,8 @@ public class OdysseusNLS extends NLS {
     public static String Arity;
     public static String ArgumentTypes;
 
+    public static String SendBugReport;
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, OdysseusNLS.class);
 	}
