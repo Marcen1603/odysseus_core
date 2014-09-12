@@ -162,8 +162,8 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser {
 		
 		allOperators.add(checkSelect);
 		
-		expressions.add(OperatorBuildHelper.createExpressionParameter("in_target_zone_left","Cross_Left_Half", join));
-		expressions.add(OperatorBuildHelper.createExpressionParameter("in_target_zone_right","Cross_Right_Half", join));
+		expressions.add(OperatorBuildHelper.createExpressionParameter("in_target_zone_left","Cross_Left_Half", checkSelect));
+		expressions.add(OperatorBuildHelper.createExpressionParameter("in_target_zone_right","Cross_Right_Half", checkSelect));
 		MapAO result = OperatorBuildHelper.createStateMapAO(expressions, checkSelect);
 		allOperators.add(result);
 		
