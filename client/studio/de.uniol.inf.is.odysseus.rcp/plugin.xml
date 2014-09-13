@@ -171,6 +171,11 @@
             name="Login User">
       </command>
       <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.SendBugReportCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.SendBugReportCommand"
+            name="Send Bug Report">
+      </command>
+      <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.DropSourceCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.DropSourceCommand"
             name="Drop Source">
@@ -480,6 +485,16 @@
                commandId="de.uniol.inf.is.odysseus.rcp.commands.LoginUserCommand"
                icon="icons/keys.png"
                label="Change User..."
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:help">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.SendBugReportCommand"
+               icon="icons/document_gear.png"
+               label="Send Bug Report"
                style="push">
          </command>
       </menuContribution>
