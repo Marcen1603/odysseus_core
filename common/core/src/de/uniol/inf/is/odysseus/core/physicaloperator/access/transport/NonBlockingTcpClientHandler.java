@@ -301,7 +301,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
      */
     public void setInitializeCommand(final String initializeCommand) {
         if (initializeCommand != null) {
-            this.initializeCommand = initializeCommand.replace("\\\\n", "\n").getBytes();
+            this.initializeCommand = initializeCommand.replace("\\\\n", "\n").replace("\\n", "\n").getBytes();
         }
         else {
             this.initializeCommand = null;
