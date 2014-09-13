@@ -23,9 +23,11 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
@@ -55,6 +57,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.Activator;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 /**
@@ -127,10 +134,12 @@ public class BugReport {
             report.append("\n-- Stack Trace:\n");
             report.append(stackStrace);
         }
+        final StringBuilder queryReport = BugReport.getQueryReport();
         final StringBuilder systemReport = BugReport.getSystemReport();
         final StringBuilder bundlesReport = BugReport.getBundlesReport();
         final StringBuilder servicesReport = BugReport.getServicesReport();
-
+        report.append("\n-- Odysseus Information:\n");
+        report.append(queryReport);
         report.append("\n-- System Information:\n");
         report.append(systemReport);
         report.append("\n-- Bundles Information:\n");
@@ -192,6 +201,7 @@ public class BugReport {
             final StringEntity entity = new StringEntity(request.toString());
             entity.setChunked(true);
             entity.setContentType("application/json");
+            // System.out.println(request);
             final HttpUriRequest ticket = RequestBuilder.post().setUri(uri).setEntity(entity)
                     .setHeader(BugReport.AUTHORIZATION_HEADER, "Basic " + new String(Base64.encodeBase64((BugReport.LOGIN + ':' + BugReport.PW).getBytes())))
                     .setHeader("Content-Type", "application/json").build();
@@ -225,6 +235,52 @@ public class BugReport {
             System.out.println("Please send the following bug report to: " + recipients.toString());
             System.out.println(report.toString());
         }
+    }
+
+    private static StringBuilder getQueryReport() {
+        final StringBuilder report = new StringBuilder();
+        IExecutor executor = OdysseusRCPPlugIn.getExecutor();
+        ISession session = OdysseusRCPPlugIn.getActiveSession();
+        if (executor != null) {
+            report.append("--- Queries:\n");
+            Collection<Integer> logicalQueries = executor.getLogicalQueryIds(session);
+            for (Integer id : logicalQueries) {
+                ILogicalQuery logicalQuery = executor.getLogicalQueryById(id.intValue(), session);
+                report.append("\t").append(logicalQuery.getID()).append("\t").append(logicalQuery.getQueryText()).append("\n");
+            }
+            report.append("--- Datatypes:\n");
+            Set<SDFDatatype> datatypes = executor.getRegisteredDatatypes(session);
+            for (SDFDatatype datatype : datatypes) {
+                report.append("\t").append(datatype).append("\n");
+            }
+            report.append("--- Wrappers:\n");
+            Set<String> wrappers = executor.getRegisteredWrapperNames(session);
+            for (String wrapper : wrappers) {
+                report.append("\t").append(wrapper).append("\n");
+            }
+            report.append("--- Schedulers:\n");
+            Set<String> schedulers = executor.getRegisteredSchedulers(session);
+            for (String scheduler : schedulers) {
+                report.append("\t").append(scheduler).append("\n");
+            }
+            report.append("--- Scheduling Strategies:\n");
+            Set<String> schedulingStrategies = executor.getRegisteredSchedulingStrategies(session);
+            for (String schedulingStrategy : schedulingStrategies) {
+                report.append("\t").append(schedulingStrategy).append("\n");
+            }
+            report.append("--- Parsers:\n");
+            Set<String> parsers = executor.getSupportedQueryParsers(session);
+            for (String parser : parsers) {
+                report.append("\t").append(parser).append("\n");
+            }
+            report.append("--- Operators:\n");
+            List<String> operators = executor.getOperatorNames(session);
+            for (String operator : operators) {
+                report.append("\t").append(operator).append("\n");
+            }
+
+        }
+        return report;
     }
 
     private static StringBuilder getStackTraceReport(final Throwable e) {
