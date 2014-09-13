@@ -21,11 +21,13 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TupleAggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
@@ -63,13 +65,13 @@ public class ShotOnGoalGlobalOutput {
 	public static final String MIN_SHOT_LENGTH = "1000.0";
 
 	/**
-	 * The minimal acceleration of balls, being shot [m/s²] and [micro m / s²]
+	 * The minimal acceleration of balls, being shot [m/sï¿½] and [micro m / sï¿½]
 	 */
 	public static final String MIN_ACCELERATION = "55000000.0";
 
 	@SuppressWarnings({ "rawtypes" })
 	public ILogicalOperator createGlobalOutput(SportsQLQuery sportsQL,
-			List<ILogicalOperator> allOperators) throws SportsQLParseException {
+			List<ILogicalOperator> allOperators) throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 
 		// ---------------------
 		// Access to the Streams
@@ -479,7 +481,7 @@ public class ShotOnGoalGlobalOutput {
 
 		// 1. Map
 		MapAO timeToGoalLine2MapAO = createGoalAreaMapAO(1, goalAreaDetection,
-				"(y + " + OperatorBuildHelper.GOAL_AREA_2_Y + " ) / vy");
+				"(y + " + SoccerDDCAccess.getGoalareaLeftY() + " ) / vy");
 
 		// 2. Select
 		SelectAO timeToGoal2SelectAO = createTimeToGoalSelectAO(
@@ -491,16 +493,16 @@ public class ShotOnGoalGlobalOutput {
 
 		// 4. Select
 		SelectAO foreCastSelectGoal2 = createForecastSelectAO(
-				OperatorBuildHelper.GOAL_AREA_2_X_MIN,
-				OperatorBuildHelper.GOAL_AREA_2_X_MAX,
-				OperatorBuildHelper.GOAL_AREA_2_Z_MAX, forecastMapGoal2);
+				SoccerDDCAccess.getGoalareaLeftXMin(),
+				SoccerDDCAccess.getGoalareaLeftXMax(),
+				SoccerDDCAccess.getGoalareaLeftZMax(), forecastMapGoal2);
 
 		// UPPER PART (in PQL): GOAL AREA 1
 		// --------------------------------
 
 		// 1. Map
 		MapAO timeToGoalLine1MapAO = createGoalAreaMapAO(0, goalAreaDetection,
-				"(" + OperatorBuildHelper.GOAL_AREA_1_Y + " - y) / vy");
+				"(" + SoccerDDCAccess.getGoalareaLeftY() + " - y) / vy");
 
 		// 2. Select
 		SelectAO timeToGoal1SelectAO = createTimeToGoalSelectAO(
@@ -512,9 +514,9 @@ public class ShotOnGoalGlobalOutput {
 
 		// 4. Select
 		SelectAO foreCastSelectGoal1 = createForecastSelectAO(
-				OperatorBuildHelper.GOAL_AREA_1_X_MIN,
-				OperatorBuildHelper.GOAL_AREA_1_X_MAX,
-				OperatorBuildHelper.GOAL_AREA_1_Z_MAX, forecastMapGoal1);
+				SoccerDDCAccess.getGoalareaRightXMin(),
+				SoccerDDCAccess.getGoalareaRightXMax(),
+				SoccerDDCAccess.getGoalareaRightZMax(), forecastMapGoal1);
 
 		// MERGE BOTH PARTS
 		// ----------------
@@ -613,17 +615,17 @@ public class ShotOnGoalGlobalOutput {
 	/**
 	 * Calculates, if the ball would reach the goal
 	 * 
-	 * @param xMin
+	 * @param goalArea1XMin
 	 * @param xMax
 	 * @param zMax
 	 * @param source
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	private static SelectAO createForecastSelectAO(String xMin, String xMax,
-			String zMax, ILogicalOperator source) {
+	private static SelectAO createForecastSelectAO(double goalArea1XMin, double xMax,
+			double zMax, ILogicalOperator source) {
 		IPredicate predicate1 = OperatorBuildHelper
-				.createRelationalPredicate("forecast_x > " + xMin);
+				.createRelationalPredicate("forecast_x > " + goalArea1XMin);
 		IPredicate predicate2 = OperatorBuildHelper
 				.createRelationalPredicate("forecast_x < " + xMax);
 		IPredicate predicate3 = OperatorBuildHelper

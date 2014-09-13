@@ -14,11 +14,13 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 
@@ -33,12 +35,12 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 
 	private static final int MIN_X = OperatorBuildHelper.LOWERLEFT_X;
 	private static final int MAX_X = OperatorBuildHelper.LOWERRIGHT_X;
-	private static final int MIN_Y = OperatorBuildHelper.GOALLINE1;
-	private static final int MAX_Y = OperatorBuildHelper.GOALLINE2;
+	
+	private static final int GOAL_DEPTH = 2400;
 
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
-			throws SportsQLParseException {
+			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		ArrayList<String> predicates = new ArrayList<String>();
@@ -64,8 +66,8 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		predicates.clear();
 
 		// ball in game field
-		predicate = " x > " + MIN_X + " AND x < " + MAX_X + " AND y > " + MIN_Y
-				+ " AND y < " + MAX_Y + " ";
+		predicate = " x > " + MIN_X + " AND x < " + MAX_X + " AND y > " + SoccerDDCAccess.getGoalareaLeftY()
+				+ " AND y < " + SoccerDDCAccess.getGoalareaRightY() + " ";
 		SelectAO ball_in_game_field = OperatorBuildHelper.createSelectAO(
 				predicate, ball);
 		allOperators.add(ball_in_game_field);
@@ -74,16 +76,16 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 
 		// ball in goal or field stream	
 		String predicateGoalAndField = "(x > " + MIN_X + " AND x < " + MAX_X + " AND y > "
-				+ MIN_Y + " AND y < " + MAX_Y + ")";
+				+ SoccerDDCAccess.getGoalareaLeftY() + " AND y < " + SoccerDDCAccess.getGoalareaRightY() + ")";
 		
-		predicateGoalAndField +=  " OR (y < " + OperatorBuildHelper.GOALLINE1
-				+ " AND y > ((" + (OperatorBuildHelper.GOALLINE1 - OperatorBuildHelper.GOAL_DEPTH)
-				+ ")) AND x > " + OperatorBuildHelper.GOALPOST1_RIGHT + " AND x < "
-				+ OperatorBuildHelper.GOALPOST1_LEFT + ")";
+		predicateGoalAndField +=  " OR (y < " + SoccerDDCAccess.getGoalareaLeftY()
+				+ " AND y > ((" + (SoccerDDCAccess.getGoalareaLeftY() - GOAL_DEPTH)
+				+ ")) AND x > " + SoccerDDCAccess.getGoalareaLeftXMin() + " AND x < "
+				+ SoccerDDCAccess.getGoalareaLeftXMax() + ")";
 		
-		predicateGoalAndField += " OR (y > " + OperatorBuildHelper.GOALLINE2 + " AND y < (("
-				+ (OperatorBuildHelper.GOALLINE2 + OperatorBuildHelper.GOAL_DEPTH) + ")) AND x < "
-				+ OperatorBuildHelper.GOALPOST2_RIGHT + " AND x > " + OperatorBuildHelper.GOALPOST2_LEFT + ")";
+		predicateGoalAndField += " OR (y > " + SoccerDDCAccess.getGoalareaRightY() + " AND y < (("
+				+ (SoccerDDCAccess.getGoalareaRightY() + GOAL_DEPTH) + ")) AND x < "
+				+ SoccerDDCAccess.getGoalareaRightXMax() + " AND x > " + SoccerDDCAccess.getGoalareaRightXMin() + ")";
 		
 		SelectAO ball_in_goal_or_field = OperatorBuildHelper.createSelectAO(
 				predicateGoalAndField, ball);
@@ -151,7 +153,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 	}
 
 	private List<SDFExpressionParameter> getExpressionForInGoal(
-			ILogicalOperator source) {
+			ILogicalOperator source) throws NumberFormatException, MissingDDCEntryException {
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter ex1 = OperatorBuildHelper
 				.createExpressionParameter("ts", "goal_ts", source);
@@ -162,15 +164,15 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		SDFExpressionParameter ex4 = OperatorBuildHelper
 				.createExpressionParameter("z", "goal_z", source);
 		SDFExpressionParameter ex5 = OperatorBuildHelper
-				.createExpressionParameter("eif( y < " + OperatorBuildHelper.GOALLINE1
-						+ " AND y > " + (OperatorBuildHelper.GOALLINE1 - OperatorBuildHelper.GOAL_DEPTH)
-						+ " AND x > " + OperatorBuildHelper.GOALPOST1_RIGHT + " AND x < "
-						+ OperatorBuildHelper.GOALPOST1_LEFT + " , 1, 0)", "inGoal1", source);
+				.createExpressionParameter("eif( y < " + SoccerDDCAccess.getGoalareaLeftY()
+						+ " AND y > " + (SoccerDDCAccess.getGoalareaLeftY() - GOAL_DEPTH)
+						+ " AND x > " + SoccerDDCAccess.getGoalareaLeftXMin()+ " AND x < "
+						+ SoccerDDCAccess.getGoalareaLeftXMax() + " , 1, 0)", "inGoal1", source);
 		SDFExpressionParameter ex6 = OperatorBuildHelper
-				.createExpressionParameter("eif( y > " + OperatorBuildHelper.GOALLINE2
-						+ " AND y < " + (OperatorBuildHelper.GOALLINE2 + OperatorBuildHelper.GOAL_DEPTH)
-						+ " AND x < " + OperatorBuildHelper.GOALPOST2_RIGHT + " AND x > "
-						+ OperatorBuildHelper.GOALPOST2_LEFT + " , 1, 0)", "inGoal2", source);
+				.createExpressionParameter("eif( y > " + SoccerDDCAccess.getGoalareaRightY()
+						+ " AND y < " + (SoccerDDCAccess.getGoalareaRightY() + GOAL_DEPTH)
+						+ " AND x < " + SoccerDDCAccess.getGoalareaRightXMax() + " AND x > "
+						+ SoccerDDCAccess.getGoalareaRightXMin() + " , 1, 0)", "inGoal2", source);
 		expressions.add(ex1);
 		expressions.add(ex2);
 		expressions.add(ex3);

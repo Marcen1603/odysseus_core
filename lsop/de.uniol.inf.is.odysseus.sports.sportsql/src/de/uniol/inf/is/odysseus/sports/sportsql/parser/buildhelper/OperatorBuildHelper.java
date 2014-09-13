@@ -114,30 +114,6 @@ public class OperatorBuildHelper {
 	public static final int VERTICAL_TOP_HALF_X = (UPPERLEFT_X + UPPERRIGHT_X) / 2; 
 	public static final int VERTICAL_BOTTOM_HALF_X = UPPERRIGHT_X;
 	
-	/**
-	 * Goals
-	 */
-	// left goal
-	public static final String GOAL_AREA_1_X_MIN = "22578.5";
-	public static final String GOAL_AREA_1_X_MAX = "29898.5";
-	public static final String GOAL_AREA_1_Y = "33941.0";
-	public static final String GOAL_AREA_1_Z_MAX = "2440.0";
-	public static final int GOALPOST1_RIGHT = 22560;
-	public static final int GOALPOST1_LEFT = 29880;
-	public static final int GOALLINE1 = -33968;
-
-	// right goal
-	public static final String GOAL_AREA_2_X_MIN = "22560.0";
-	public static final String GOAL_AREA_2_X_MAX = "29880.0";
-	public static final String GOAL_AREA_2_Y = "-33968.0";
-	public static final String GOAL_AREA_2_Z_MAX = "2440.0";
-	public static final int GOALPOST2_RIGHT = 29898;
-	public static final int GOALPOST2_LEFT = 22578;
-	public static final int GOALLINE2 = 33941;
-	
-	// goal dimensions
-	public static final int GOAL_HEIGHT = 2440;
-	public static final int GOAL_DEPTH = 2500;
 	
 	/**
 	 * centre spot area

@@ -12,11 +12,13 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 
@@ -41,10 +43,12 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 
 	/**
 	 * Parses sportsQL
+	 * @throws MissingDDCEntryException 
+	 * @throws NumberFormatException 
 	 */
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
-			throws SportsQLParseException {
+			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 
 		int xMin = OperatorBuildHelper.LOWERLEFT_X;
 		int xMax = OperatorBuildHelper.LOWERRIGHT_X;
@@ -113,10 +117,10 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		expressions.add(OperatorBuildHelper.createExpressionParameter("y",
 				activeBall));
 		expressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(y < " + OperatorBuildHelper.GOAL_AREA_2_Y + ", 1, 0)",
+				"eif(y < " + SoccerDDCAccess.getGoalareaLeftY() + ", 1, 0)",
 				"BallBehindGoalline1_left", activeBall));
 		expressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(y > " + OperatorBuildHelper.GOAL_AREA_1_Y + ", 1, 0)",
+				"eif(y > " + SoccerDDCAccess.getGoalareaRightY() + ", 1, 0)",
 				"BallBehindGoalline2_right", activeBall));
 
 		MapAO activeBallBehindGoalline = OperatorBuildHelper
