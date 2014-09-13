@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Scanner;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
@@ -168,7 +169,21 @@ public class BugReport {
             final JSONObject issuetype = new JSONObject();
             issuetype.put("name", BugReport.ISSUE_TYPE);
             fields.put("project", project);
-            fields.put("summary", "Bug Report");
+            String summary = "";
+            try (Scanner scanner = new Scanner(report)) {
+                scanner.useDelimiter("\n");
+                // Skip first line
+                if (scanner.hasNext()) {
+                    scanner.next();
+                }
+                while ((scanner.hasNext()) && ((summary == null) || ("".equals(summary)))) {
+                    summary = scanner.next();
+                }
+            }
+            if ((summary == null) || ("".equals(summary))) {
+                summary = "Bug Report";
+            }
+            fields.put("summary", summary);
             fields.put("description", report);
             fields.put("issuetype", issuetype);
             fields.put("components", component);
