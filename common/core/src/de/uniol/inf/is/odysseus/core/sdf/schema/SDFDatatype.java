@@ -157,6 +157,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
     public static final SDFDatatype VAR_PARTIAL_AGGREGATE = new SDFDatatype("VarPartialAggregate");
 
     public static final SDFDatatype[] NUMBERS = new SDFDatatype[] { BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE, START_TIMESTAMP, END_TIMESTAMP, TIMESTAMP };
+    public static final SDFDatatype[] LONG_NUMBERS = new SDFDatatype[] { LONG, START_TIMESTAMP, END_TIMESTAMP, TIMESTAMP };
 
 	private static final long serialVersionUID = 8585322290347489841L;
 
