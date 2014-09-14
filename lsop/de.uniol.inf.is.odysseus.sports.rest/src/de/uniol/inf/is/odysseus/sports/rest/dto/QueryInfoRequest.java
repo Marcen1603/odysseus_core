@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.sports.rest.dao;
+package de.uniol.inf.is.odysseus.sports.rest.dto;
 
 
 public class QueryInfoRequest {

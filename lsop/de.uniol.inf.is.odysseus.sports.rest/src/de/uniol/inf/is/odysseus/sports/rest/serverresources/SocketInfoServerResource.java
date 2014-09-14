@@ -7,8 +7,8 @@ import org.restlet.ext.jackson.JacksonRepresentation;
 import org.restlet.resource.ServerResource;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.sports.rest.dao.DataTransferObject;
-import de.uniol.inf.is.odysseus.sports.rest.dao.SocketInfo;
+import de.uniol.inf.is.odysseus.sports.rest.dto.DataTransferObject;
+import de.uniol.inf.is.odysseus.sports.rest.dto.SocketInfo;
 import de.uniol.inf.is.odysseus.sports.rest.resources.ISocketInfoResource;
 import de.uniol.inf.is.odysseus.sports.rest.socket.SocketService;
 

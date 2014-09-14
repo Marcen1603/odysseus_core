@@ -15,10 +15,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.sports.rest.ExecutorServiceBinding;
-import de.uniol.inf.is.odysseus.sports.rest.dao.AttributeInformation;
-import de.uniol.inf.is.odysseus.sports.rest.dao.DataTransferObject;
-import de.uniol.inf.is.odysseus.sports.rest.dao.QueryInfo;
-import de.uniol.inf.is.odysseus.sports.rest.dao.QueryInfoRequest;
+import de.uniol.inf.is.odysseus.sports.rest.dto.AttributeInformation;
+import de.uniol.inf.is.odysseus.sports.rest.dto.DataTransferObject;
+import de.uniol.inf.is.odysseus.sports.rest.dto.QueryInfo;
+import de.uniol.inf.is.odysseus.sports.rest.dto.QueryInfoRequest;
 import de.uniol.inf.is.odysseus.sports.rest.resources.IQueryResource;
 
 public class QueryServerResource extends ServerResource implements

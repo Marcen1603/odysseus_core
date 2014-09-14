@@ -30,4 +30,6 @@ Service-Component: OSGI-INF/SportsQLParserRegistry.xml,OSGI-INF/BallContactGloba
  OSGI-INF/SprintsPlayerSportsQLParser.xml,OSGI-INF/AbstractSportsDDCAccess.xml, OSGI-INF/CrossesGlobalSportsQLParser.xml
 Export-Package: de.uniol.inf.is.odysseus.sports.sportsql.parser,
  de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper,
+ de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess,
+ de.uniol.inf.is.odysseus.sports.sportsql.parser.helper,
  de.uniol.inf.is.odysseus.sports.sportsql.registry

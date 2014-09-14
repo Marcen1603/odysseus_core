@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.sports.rest.ExecutorServiceBinding;
-import de.uniol.inf.is.odysseus.sports.rest.dao.SocketInfo;
+import de.uniol.inf.is.odysseus.sports.rest.dto.SocketInfo;
 import de.uniol.inf.is.odysseus.sports.rest.exception.InvalidUserDataException;
 
 public class SocketService {

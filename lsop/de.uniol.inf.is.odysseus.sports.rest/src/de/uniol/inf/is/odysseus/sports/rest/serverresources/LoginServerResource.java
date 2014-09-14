@@ -6,7 +6,7 @@ import org.restlet.resource.ServerResource;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
-import de.uniol.inf.is.odysseus.sports.rest.dao.LoginInformation;
+import de.uniol.inf.is.odysseus.sports.rest.dto.LoginInformation;
 import de.uniol.inf.is.odysseus.sports.rest.resources.ILoginResource;
 
 public class LoginServerResource extends ServerResource implements
