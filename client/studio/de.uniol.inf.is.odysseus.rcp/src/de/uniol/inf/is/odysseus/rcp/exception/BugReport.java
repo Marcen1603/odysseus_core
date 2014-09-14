@@ -57,6 +57,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.Activator;
+import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -131,20 +133,20 @@ public class BugReport {
         report.append("Please be aware that this report may contain private or other confidential information\n");
         if (this.exception != null) {
             final StringBuilder stackStrace = BugReport.getStackTraceReport(this.exception);
-            report.append("\n-- Stack Trace:\n");
+            report.append("\n## Stack Trace:\n");
             report.append(stackStrace);
         }
         final StringBuilder queryReport = BugReport.getQueryReport();
         final StringBuilder systemReport = BugReport.getSystemReport();
         final StringBuilder bundlesReport = BugReport.getBundlesReport();
         final StringBuilder servicesReport = BugReport.getServicesReport();
-        report.append("\n-- Odysseus Information:\n");
+        report.append("\n## Odysseus Information:\n");
         report.append(queryReport);
-        report.append("\n-- System Information:\n");
+        report.append("\n## System Information:\n");
         report.append(systemReport);
-        report.append("\n-- Bundles Information:\n");
+        report.append("\n## Bundles Information:\n");
         report.append(bundlesReport);
-        report.append("\n-- Services Information:\n");
+        report.append("\n## Services Information:\n");
         report.append(servicesReport);
         return report.toString();
     }
@@ -242,43 +244,52 @@ public class BugReport {
         IExecutor executor = OdysseusRCPPlugIn.getExecutor();
         ISession session = OdysseusRCPPlugIn.getActiveSession();
         if (executor != null) {
-            report.append("--- Queries:\n");
+            report.append("\n### Queries:\n");
             Collection<Integer> logicalQueries = executor.getLogicalQueryIds(session);
             for (Integer id : logicalQueries) {
                 ILogicalQuery logicalQuery = executor.getLogicalQueryById(id.intValue(), session);
-                report.append("\t").append(logicalQuery.getID()).append("\t").append(logicalQuery.getQueryText()).append("\n");
+                report.append("\t* ").append(logicalQuery.getID()).append("\t").append(logicalQuery.getQueryText().replace('\n', ' ').replace('\r', ' ')).append("\n");
             }
-            report.append("--- Datatypes:\n");
+            report.append("\n### Sinks:\n");
+            List<SinkInformation> sinks = executor.getSinks(session);
+            for (SinkInformation sink : sinks) {
+                report.append("\t* ").append(sink.getName()).append(" (").append(sink.getOutputSchema()).append(")\n");
+            }
+            report.append("\n### Streams and Views:\n");
+            List<ViewInformation> streams = executor.getStreamsAndViewsInformation(session);
+            for (ViewInformation stream : streams) {
+                report.append("\t* ").append(stream.getName()).append(" (").append(stream.getOutputSchema()).append(")\n");
+            }
+            report.append("\n### Datatypes:\n");
             Set<SDFDatatype> datatypes = executor.getRegisteredDatatypes(session);
             for (SDFDatatype datatype : datatypes) {
-                report.append("\t").append(datatype).append("\n");
+                report.append("\t* ").append(datatype).append("\n");
             }
-            report.append("--- Wrappers:\n");
+            report.append("\n### Wrappers:\n");
             Set<String> wrappers = executor.getRegisteredWrapperNames(session);
             for (String wrapper : wrappers) {
-                report.append("\t").append(wrapper).append("\n");
+                report.append("\t* ").append(wrapper).append("\n");
             }
-            report.append("--- Schedulers:\n");
+            report.append("\n### Schedulers:\n");
             Set<String> schedulers = executor.getRegisteredSchedulers(session);
             for (String scheduler : schedulers) {
-                report.append("\t").append(scheduler).append("\n");
+                report.append("\t* ").append(scheduler).append("\n");
             }
-            report.append("--- Scheduling Strategies:\n");
+            report.append("\n### Scheduling Strategies:\n");
             Set<String> schedulingStrategies = executor.getRegisteredSchedulingStrategies(session);
             for (String schedulingStrategy : schedulingStrategies) {
-                report.append("\t").append(schedulingStrategy).append("\n");
+                report.append("\t* ").append(schedulingStrategy).append("\n");
             }
-            report.append("--- Parsers:\n");
+            report.append("\n### Parsers:\n");
             Set<String> parsers = executor.getSupportedQueryParsers(session);
             for (String parser : parsers) {
-                report.append("\t").append(parser).append("\n");
+                report.append("\t* ").append(parser).append("\n");
             }
-            report.append("--- Operators:\n");
+            report.append("\n### Operators:\n");
             List<String> operators = executor.getOperatorNames(session);
             for (String operator : operators) {
-                report.append("\t").append(operator).append("\n");
+                report.append("\t* ").append(operator).append("\n");
             }
-
         }
         return report;
     }
@@ -352,19 +363,19 @@ public class BugReport {
         final Version version = bundle.getVersion();
         final String productVersion = version.toString();
         final String locale = Locale.getDefault().toString();
-        report.append("Operating System: ").append(osName).append(" ").append(osVersion).append(" (").append(osArch).append(")\n");
-        report.append("Java VM: ").append(vmName).append(" ").append(vmVersion).append(" (").append(vmVendor).append(")\n");
-        report.append("Product: ").append(productVersion).append("\n");
-        report.append("CPUs: ").append(cpu).append("\n");
-        report.append("Memory: ").append(mem).append("\n");
-        report.append("Locale: ").append(locale).append("\n");
+        report.append("\t* Operating System: ").append(osName).append(" ").append(osVersion).append(" (").append(osArch).append(")\n");
+        report.append("\t* Java VM: ").append(vmName).append(" ").append(vmVersion).append(" (").append(vmVendor).append(")\n");
+        report.append("\t* Product: ").append(productVersion).append("\n");
+        report.append("\t* CPUs: ").append(cpu).append("\n");
+        report.append("\t* Memory: ").append(mem).append("\n");
+        report.append("\t* Locale: ").append(locale).append("\n");
         return report;
     }
 
     private static StringBuilder getBundlesReport() {
         final StringBuilder report = new StringBuilder();
         final Bundle[] bundles = Activator.getBundleContext().getBundles();
-        report.append("Id").append("\t").append("State").append("\t").append("Name").append("\t").append("Bundle").append("\n");
+        report.append("| Id").append("\t| ").append("State").append("\t| ").append("Name").append("\t| ").append("Bundle").append(" |\n");
 
         for (final Bundle bundle : bundles) {
             final int state = bundle.getState();
@@ -387,7 +398,7 @@ public class BugReport {
             else if (state == Bundle.UNINSTALLED) {
                 stateString = "UNINSTALLED";
             }
-            report.append(bundle.getBundleId()).append("\t").append(stateString).append("\t").append(bundle.getSymbolicName()).append("\t").append(bundle.toString()).append("\n");
+            report.append("| ").append(bundle.getBundleId()).append("\t| ").append(stateString).append("\t| ").append(bundle.getSymbolicName()).append("\t| ").append(bundle.toString()).append(" |\n");
         }
         return report;
     }
@@ -402,16 +413,16 @@ public class BugReport {
                     final Object serviceId = service.getProperty(Constants.SERVICE_ID);
                     final Object[] clazzes = (Object[]) service.getProperty(Constants.OBJECTCLASS);
 
-                    report.append(serviceId).append(" ").append(Arrays.toString(clazzes)).append("\n");
+                    report.append("* ").append(serviceId).append(" ").append(Arrays.toString(clazzes)).append("\n");
                     for (final String propertyKey : service.getPropertyKeys()) {
                         if (!propertyKey.equals(Constants.OBJECTCLASS)) {
-                            report.append("\t").append(propertyKey).append(": ").append(service.getProperty(propertyKey)).append("\n");
+                            report.append("\t+ ").append(propertyKey).append(": ").append(service.getProperty(propertyKey)).append("\n");
                         }
                     }
                     if (service.getUsingBundles() != null) {
                         report.append("\tUsed by:\n");
                         for (final Bundle b : service.getUsingBundles()) {
-                            report.append("\t\t").append(b.toString()).append("\n");
+                            report.append("\t\t- ").append(b.toString()).append("\n");
                         }
                     }
 
