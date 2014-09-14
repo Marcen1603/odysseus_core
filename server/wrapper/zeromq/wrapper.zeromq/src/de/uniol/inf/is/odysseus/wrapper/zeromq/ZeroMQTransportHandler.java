@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractT
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.AZMQConnector;
 import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQContextProvider;
+import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQPull;
 import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQPullConsumer;
 import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQPullPublisher;
 import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQPushConsumer;
@@ -38,6 +39,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 	public static final String NAME = "ZeroMQ";
 	public static final String PARAMS = "params";
 	public static final String TIMEOUT = "timeout";
+	public static final String MOSAIK = "mosaik";
 
 	private String host;
 	private int writePort;
@@ -46,6 +48,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 	private int communicationThreads;
 	private int timeout;
 	private String[] params;
+	private boolean isMosaik;
 	
 	private int delayedMsgCounter = 1;
 	private String delayedMsgs = "";
@@ -103,6 +106,11 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 			timeout = Integer.parseInt(options.get(TIMEOUT));
 		} else {
 			timeout = 10;
+		}
+		if(options.containsKey(MOSAIK)) {
+			isMosaik = Boolean.parseBoolean(options.get(MOSAIK));
+		} else {
+			isMosaik = false;
 		}
 		createContext();
 	}
@@ -198,7 +206,11 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 			input = new ByteArrayInputStream(new byte[0]);
 		}
 		if(consumer == null){
-			consumer = new ZMQPushConsumer(this);
+			if(isMosaik) {
+				consumer = new ZMQPull(this);
+			} else {
+				consumer = new ZMQPushConsumer(this);			
+			}
 			consumer.start();
 		}
 	}
