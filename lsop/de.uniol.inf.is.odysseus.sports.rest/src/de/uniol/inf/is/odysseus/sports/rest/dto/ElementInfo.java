@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.sports.rest.dto;
 
 import java.io.Serializable;
 
-import com.google.common.base.Optional;
-
 /**
  * This class represents a data transfer object for different kind of elements on the gamefield
  * @author Thomas
@@ -12,13 +10,13 @@ import com.google.common.base.Optional;
 public class ElementInfo implements Serializable {
 	
 	private static final long serialVersionUID = -5349759487022901177L;
-	private int sensor_id;
-	private int entity_id;
+	private Integer sensor_id;
+	private Integer entity_id;
 	private String entity;
-	private Optional<String> remark;
-	private Optional<Integer> team_id;
+	private String remark;
+	private Integer team_id;
 	
-	public ElementInfo(int sensor_id, int entity_id, String entity, Optional<String> remark, Optional<Integer> team_id) {
+	public ElementInfo(Integer sensor_id, Integer entity_id, String entity, String remark, Integer team_id) {
 		
 		this.sensor_id = sensor_id;
 		this.entity_id = entity_id;
@@ -28,7 +26,7 @@ public class ElementInfo implements Serializable {
 		
 	}
 
-	public int getSensor_id() {
+	public Integer getSensor_id() {
 		return sensor_id;
 	}
 
@@ -36,7 +34,7 @@ public class ElementInfo implements Serializable {
 		this.sensor_id = sensor_id;
 	}
 
-	public int getEntity_id() {
+	public Integer getEntity_id() {
 		return entity_id;
 	}
 
@@ -52,19 +50,19 @@ public class ElementInfo implements Serializable {
 		this.entity = entity;
 	}
 
-	public Optional<String> getRemark() {
+	public String getRemark() {
 		return remark;
 	}
 
-	public void setRemark(Optional<String> remark) {
+	public void setRemark(String remark) {
 		this.remark = remark;
 	}
 
-	public Optional<Integer> getTeam_id() {
+	public Integer getTeam_id() {
 		return team_id;
 	}
 
-	public void setTeam_id(Optional<Integer> team_id) {
+	public void setTeam_id(Integer team_id) {
 		this.team_id = team_id;
 	}
 }

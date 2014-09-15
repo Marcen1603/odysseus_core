@@ -7,8 +7,6 @@ import org.restlet.data.Status;
 import org.restlet.ext.jackson.JacksonRepresentation;
 import org.restlet.resource.ServerResource;
 
-import com.google.common.base.Optional;
-
 import de.uniol.inf.is.odysseus.sports.rest.dto.DataTransferObject;
 import de.uniol.inf.is.odysseus.sports.rest.dto.ElementInfo;
 import de.uniol.inf.is.odysseus.sports.rest.dto.FieldInfo;
@@ -54,17 +52,14 @@ public class MetadataServerResource extends ServerResource implements IMetadataR
 		try {
 			
 			for (int sensor_id : SoccerDDCAccess.getSensorIds()) {			
-				for (ElementInfo element : elements) {
-					if (element.getSensor_id() != sensor_id) {
-						int entity_id = SoccerDDCAccess.getEntityId(sensor_id);
-						String entity = SoccerDDCAccess.getEntity(sensor_id);
-						Optional<String> remark = SoccerDDCAccess.getRemark(sensor_id);
-						Optional<Integer> team_id = SoccerDDCAccess.getTeamId(sensor_id);
-						
-						elements.add(new ElementInfo(sensor_id, entity_id, entity, remark, team_id));
-						
-					}
-				}
+					
+				int entity_id = SoccerDDCAccess.getEntityId(sensor_id);
+				String entity = SoccerDDCAccess.getEntity(sensor_id);
+				String remark = SoccerDDCAccess.getRemark(sensor_id).orNull();
+				Integer team_id = SoccerDDCAccess.getTeamId(sensor_id).orNull();
+							
+				elements.add(new ElementInfo(sensor_id, entity_id, entity, remark, team_id));
+									
 			}
 			
 		} catch(Exception e) {
