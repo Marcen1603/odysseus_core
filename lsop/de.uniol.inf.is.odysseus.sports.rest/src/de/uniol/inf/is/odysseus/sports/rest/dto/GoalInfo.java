@@ -1,12 +1,15 @@
 package de.uniol.inf.is.odysseus.sports.rest.dto;
 
+import java.io.Serializable;
+
 /**
  * This class represents a data transfer object for a goal
  * @author Thomas
  *
  */
-public class GoalInfo {
+public class GoalInfo implements Serializable{
 
+	private static final long serialVersionUID = 5061385579315643449L;
 	private int position;
 	private double first_post;
 	private double second_post;

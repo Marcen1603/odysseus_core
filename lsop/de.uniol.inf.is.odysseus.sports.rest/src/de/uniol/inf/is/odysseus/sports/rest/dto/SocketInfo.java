@@ -15,8 +15,6 @@ public class SocketInfo {
 		this.port = port;
 	}
 
-	
-
 	public String getIp() {
 		return ip;
 	}

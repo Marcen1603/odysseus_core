@@ -6,6 +6,7 @@ import org.restlet.routing.Router;
 
 import de.uniol.inf.is.odysseus.rest.provider.IRestProvider;
 import de.uniol.inf.is.odysseus.sports.rest.serverresources.LoginServerResource;
+import de.uniol.inf.is.odysseus.sports.rest.serverresources.MetadataServerResource;
 import de.uniol.inf.is.odysseus.sports.rest.serverresources.QueryServerResource;
 import de.uniol.inf.is.odysseus.sports.rest.serverresources.QueryWithLoginServerResource;
 import de.uniol.inf.is.odysseus.sports.rest.serverresources.SocketInfoServerResource;
@@ -39,6 +40,8 @@ public class SportsRestProvider extends Application implements IRestProvider{
 		router.attach("/login", LoginServerResource.class);
 
 		router.attach("/querywithlogin", QueryWithLoginServerResource.class);
+		
+		router.attach("/metadata", MetadataServerResource.class);
 
 		return router;
 	}

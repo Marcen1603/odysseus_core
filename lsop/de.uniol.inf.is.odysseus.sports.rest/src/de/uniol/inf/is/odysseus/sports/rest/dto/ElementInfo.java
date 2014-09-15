@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.sports.rest.dto;
 
+import java.io.Serializable;
+
 import com.google.common.base.Optional;
 
 /**
@@ -7,8 +9,9 @@ import com.google.common.base.Optional;
  * @author Thomas
  *
  */
-public class ElementInfo {
+public class ElementInfo implements Serializable {
 	
+	private static final long serialVersionUID = -5349759487022901177L;
 	private int sensor_id;
 	private int entity_id;
 	private String entity;
