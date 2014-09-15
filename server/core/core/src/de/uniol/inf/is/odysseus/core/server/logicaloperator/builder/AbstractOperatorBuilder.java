@@ -43,8 +43,9 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	private static final long serialVersionUID = 5166465410911961680L;
 
 	private static final String DEFAULT_DOC_TEXT = "No documentation available";
+    private static final String DEFAULT_URL = "http://odysseus.informatik.uni-oldenburg.de:8090/pages/viewpage.action?pageId=4587829";
 
-	private Set<IParameter<?>> parameters;
+    private Set<IParameter<?>> parameters;
 	private List<Exception> errors;
 	private List<Exception> warnings;
 	private int minPortCount;
@@ -62,18 +63,27 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 	private String name;
 	private String doc;
+    private String url;
 	
 	public AbstractOperatorBuilder( String name, int minPortCount, int maxPortCount ) {
-		this(name, minPortCount, maxPortCount, null, null);
+        this(name, minPortCount, maxPortCount, null, null, null);
 	}
 
 	public AbstractOperatorBuilder(String name, int minPortCount, int maxPortCount, String doc, String[] categories) {
+        this(name, minPortCount, maxPortCount, doc, null, categories);
+    }
+
+    public AbstractOperatorBuilder(String name, int minPortCount, int maxPortCount, String doc, String url, String[] categories) {
+
 		this.name = name;
 		this.doc = doc;
 		if( Strings.isNullOrEmpty(this.doc)) {
 			this.doc = DEFAULT_DOC_TEXT;
 		}
-		
+        this.url = url;
+        if (Strings.isNullOrEmpty(this.url)) {
+            this.url = DEFAULT_URL;
+        }
 		if (minPortCount > maxPortCount) {
 			throw new IllegalArgumentException(
 					"minimum number of ports may not be higher than maximum number");
@@ -108,6 +118,11 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		return this.doc;
 	}
 	
+    @Override
+    public String getUrl() {
+        return this.url;
+    }
+
 	protected void addError(Exception e) {
 		this.errors.add(e);
 	}
