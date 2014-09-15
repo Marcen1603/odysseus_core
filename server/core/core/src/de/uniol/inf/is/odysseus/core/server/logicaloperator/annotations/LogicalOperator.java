@@ -28,6 +28,8 @@ public @interface LogicalOperator {
 	public int maxInputPorts();
 	public String doc();
 	public String[] category();
+
+    public String url() default "http://odysseus.informatik.uni-oldenburg.de:8090/pages/viewpage.action?pageId=4587829";
 	public boolean deprecation() default false;
 	public boolean hidden() default false;
 }
