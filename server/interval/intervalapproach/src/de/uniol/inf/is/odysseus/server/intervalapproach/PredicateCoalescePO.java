@@ -23,7 +23,8 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 
 	public PredicateCoalescePO(SDFSchema inputSchema, SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
-			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,@SuppressWarnings("rawtypes")IPredicate predicate) {
+			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
+			@SuppressWarnings("rawtypes") IPredicate predicate) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations);
 		this.predicate = predicate;
 	}
@@ -39,19 +40,30 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 		getGroupProcessor().init();
 	}
 
+	@Override
+	protected void process_done(int port) {
+		PairMap<SDFSchema, AggregateFunction, IStreamObject<M>, ?> result = calcEval(
+				currentPartialAggregates, false);
+		IStreamObject<M> out = getGroupProcessor().createOutputElement(0L,
+				result);
+		transfer(out);
+		currentPartialAggregates = null;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(IStreamObject<? extends M> object, int port) {
 		super.process_next(object, port);
-		
+
 		// The created object is a combiniation of all objects before
 		// --> so the new object needs the start timestamp of the first
 		// participating object and the other metadata of the last
 		// participating object (maybe a metadata merge function should be used)
-		
+
 		if (currentPartialAggregates == null) {
 			currentPartialAggregates = calcInit(object);
-			currentPartialAggregates.setMetadata((M)object.getMetadata().clone());
+			currentPartialAggregates.setMetadata((M) object.getMetadata()
+					.clone());
 		} else {
 			// TODO: Is it really neceessary to create a new partial aggregate?
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> newP = calcMerge(
@@ -60,7 +72,8 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 			currentPartialAggregates = newP;
 		}
 		if (predicate.evaluate(object)) {
-			PairMap<SDFSchema, AggregateFunction, IStreamObject<M>, ?> result = calcEval(currentPartialAggregates, false);
+			PairMap<SDFSchema, AggregateFunction, IStreamObject<M>, ?> result = calcEval(
+					currentPartialAggregates, false);
 			// create IStreamObject
 			IStreamObject<M> out = getGroupProcessor().createOutputElement(0L,
 					result);
@@ -70,7 +83,7 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 			transfer(out);
 			sendPunctuations();
 			currentPartialAggregates = null;
-		}else{
+		} else {
 			createHeartbeat(object.getMetadata().getStart());
 		}
 
