@@ -18,6 +18,7 @@ public class DistributedDataContainerAdvertisementSender {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DistributedDataContainerAdvertisementSender.class);
+	private static final long WAIT_TIME_MILLIS = 21 * 1000;
 
 	private static IJxtaServicesProvider jxtaServicesProvider;
 	private static DistributedDataContainerAdvertisementSender instance;
@@ -58,8 +59,8 @@ public class DistributedDataContainerAdvertisementSender {
 		if (adv != null) {
 			try {
 				waitForJxtaServicesProvider();
-				jxtaServicesProvider.publishInfinite(adv);
-				jxtaServicesProvider.remotePublishInfinite(adv);
+				jxtaServicesProvider.publish(adv, WAIT_TIME_MILLIS, WAIT_TIME_MILLIS);
+				jxtaServicesProvider.remotePublish(adv, WAIT_TIME_MILLIS);
 			} catch (IOException e) {
 				LOG.error("Could not publish ddc advertisement", e);
 			}

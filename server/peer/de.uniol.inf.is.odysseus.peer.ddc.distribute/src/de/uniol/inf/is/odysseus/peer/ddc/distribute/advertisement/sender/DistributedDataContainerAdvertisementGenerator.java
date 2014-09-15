@@ -126,17 +126,11 @@ public class DistributedDataContainerAdvertisementGenerator implements
 							.getAdvertisementType());
 			ddcAdvertisement.setID(IDFactory.newPipeID(p2pNetworkManager
 					.getLocalPeerGroupID()));
-			ddcAdvertisement.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
+			ddcAdvertisement.setInitiatingPeerId(p2pNetworkManager.getLocalPeerID());
 			UUID advertisementUid = UUID.randomUUID();
 			ddcAdvertisement.setDDCAdvertisementUid(advertisementUid);
 			ddcAdvertisement
 					.setType(DistributedDataContainerAdvertisementType.initialDistribution);
-
-			if (ddc.getKeys().size() == 0) {
-				// no need to send an advertisement if DDC is empty
-				LOG.debug("No DDCAdvertisement created, because there are no keys in DDC");
-				return null;
-			}
 
 			// get all entries from DDC and add them to DDCAdvertisement
 			for (DDCKey key : DistributedDataContainerAdvertisementGenerator.ddc
@@ -169,7 +163,7 @@ public class DistributedDataContainerAdvertisementGenerator implements
 							.getAdvertisementType());
 			ddcAdvertisement.setID(IDFactory.newPipeID(p2pNetworkManager
 					.getLocalPeerGroupID()));
-			ddcAdvertisement.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
+			ddcAdvertisement.setInitiatingPeerId(p2pNetworkManager.getLocalPeerID());
 			UUID advertisementUid = UUID.randomUUID();
 			ddcAdvertisement.setDDCAdvertisementUid(advertisementUid);
 			ddcAdvertisement

@@ -5,18 +5,27 @@ import java.util.List;
 import java.util.UUID;
 
 import net.jxta.document.Advertisement;
+import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
+import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
 import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
+import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerAdvertisement;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DistributedDataContainerAdvertisementGenerator;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.DistributedDataContainerCurrentStateMessage;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.DistributedDataContainerCurrentStateResponseMessage;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.RepeatingMessageSend;
 
 /**
  * Listener for DDCAdvertisements. The Changes from Advertisements will be
@@ -26,24 +35,21 @@ import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.Distrib
  * 
  */
 public class DistributedDataContainerAdvertisementListener implements
-		IDistributedDataContainerAdvertisementListener {
+		IDistributedDataContainerAdvertisementListener,
+		IPeerCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DistributedDataContainerAdvertisementListener.class);
 
-	/**
-	 * The DDC.
-	 */
 	private static IDistributedDataContainer ddc;
 
-	/**
-	 * Binds a DDC. <br />
-	 * Called by OSGi-DS.
-	 * 
-	 * @param ddc
-	 *            The DDC to bind. <br />
-	 *            Must be not null.
-	 */
+	private IP2PNetworkManager p2pNetworkManager;
+	private List<UUID> receivedDDCAdvertisements = new ArrayList<UUID>();
+	private List<UUID> receivedInitiatingMessages = new ArrayList<UUID>();
+	private RepeatingMessageSend currentJob;
+	private static IPeerCommunicator peerCommunicator;
+
+	// called by OSGi-DS
 	public static void bindDDC(IDistributedDataContainer ddc) {
 		Preconditions.checkNotNull(ddc, "The DDC to bind must be not null!");
 		DistributedDataContainerAdvertisementListener.ddc = ddc;
@@ -52,29 +58,16 @@ public class DistributedDataContainerAdvertisementListener implements
 
 	}
 
-	/**
-	 * Removes the binding for a DDC. <br />
-	 * Called by OSGi-DS.
-	 * 
-	 * @param ddc
-	 *            The DDC to unbind. <br />
-	 *            Must be not null.
-	 */
+	// called by OSGi-DS
 	public static void unbindDDC(IDistributedDataContainer ddc) {
 
 		Preconditions.checkNotNull(ddc, "The DDC to bind must be not null!");
 		if (DistributedDataContainerAdvertisementListener.ddc == ddc) {
-
 			DistributedDataContainerAdvertisementListener.ddc = null;
 			DistributedDataContainerAdvertisementListener.LOG.debug(
 					"Unbound {} as a DDC", ddc.getClass().getSimpleName());
-
 		}
-
 	}
-
-	private IP2PNetworkManager p2pNetworkManager;
-	private List<UUID> receivedDDCAdvertisements = new ArrayList<UUID>();
 
 	// called by OSGi-DS
 	public void bindP2PNetworkManager(IP2PNetworkManager serv) {
@@ -87,6 +80,39 @@ public class DistributedDataContainerAdvertisementListener implements
 		if (p2pNetworkManager == serv) {
 			p2pNetworkManager.removeAdvertisementListener(this);
 			p2pNetworkManager = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public void bindPeerCommunicator(IPeerCommunicator serv) {
+		LOG.debug("Bound Peer Communicator.");
+		peerCommunicator = serv;
+		peerCommunicator
+				.registerMessageType(DistributedDataContainerCurrentStateMessage.class);
+		peerCommunicator
+				.registerMessageType(DistributedDataContainerCurrentStateResponseMessage.class);
+
+		peerCommunicator.addListener(this,
+				DistributedDataContainerCurrentStateMessage.class);
+		peerCommunicator.addListener(this,
+				DistributedDataContainerCurrentStateResponseMessage.class);
+	}
+
+	// called by OSGi-DS
+	public void unbindPeerCommunicator(IPeerCommunicator serv) {
+		LOG.debug("Unbound Peer Communicator.");
+		if (peerCommunicator == serv) {
+			peerCommunicator.removeListener(this,
+					DistributedDataContainerCurrentStateMessage.class);
+			peerCommunicator.removeListener(this,
+					DistributedDataContainerCurrentStateResponseMessage.class);
+
+			peerCommunicator
+					.unregisterMessageType(DistributedDataContainerCurrentStateMessage.class);
+			peerCommunicator
+					.unregisterMessageType(DistributedDataContainerCurrentStateResponseMessage.class);
+
+			peerCommunicator = null;
 		}
 	}
 
@@ -120,6 +146,30 @@ public class DistributedDataContainerAdvertisementListener implements
 									.add(addedDdcEntry);
 						}
 					}
+
+					// send current state of the ddc to initiating peer
+					List<DDCEntry> ddcEntries = new ArrayList<DDCEntry>();
+					for (DDCKey key : DistributedDataContainerAdvertisementListener.ddc
+							.getKeys()) {
+						try {
+							ddcAdvertisement
+									.addAddedEntry(DistributedDataContainerAdvertisementListener.ddc
+											.get(key));
+						} catch (MissingDDCEntryException e) {
+							// do nothing
+						}
+					}
+					PeerID volunteerPeerID = p2pNetworkManager.getLocalPeerID();
+
+					DistributedDataContainerCurrentStateMessage currentStateMessage = DistributedDataContainerCurrentStateMessage
+							.createMessage(volunteerPeerID,
+									ddcAdvertisement.getAdvertisementUid(),
+									ddcEntries);
+					this.currentJob = new RepeatingMessageSend(
+							peerCommunicator, currentStateMessage,
+							ddcAdvertisement.getInitiatingPeerId());
+					currentJob.start();
+
 					break;
 				case changeDistribution:
 					// write added entries in DDC
@@ -153,6 +203,62 @@ public class DistributedDataContainerAdvertisementListener implements
 	@Override
 	public void updateAdvertisements() {
 		// no operation
+	}
+
+	@Override
+	public void receivedMessage(IPeerCommunicator communicator,
+			PeerID senderPeer, IMessage message) {
+
+		if (message instanceof DistributedDataContainerCurrentStateMessage) {
+			// processing on initiating peer
+
+			DistributedDataContainerCurrentStateMessage currentStateMessage = (DistributedDataContainerCurrentStateMessage) message;
+
+			if (!receivedInitiatingMessages.contains(currentStateMessage
+					.getDdcAdvertisementUUID())) {
+
+				DistributedDataContainerAdvertisementGenerator.getInstance()
+						.disableListeningForChanges();
+
+				// install current state from volunteer peer DDC on own DDC
+				if (currentStateMessage.getDdcEntries() != null) {
+					for (DDCEntry addedDdcEntry : currentStateMessage
+							.getDdcEntries()) {
+						DistributedDataContainerAdvertisementListener.ddc
+								.add(addedDdcEntry);
+					}
+				}
+
+				DistributedDataContainerAdvertisementGenerator.getInstance()
+						.enableListeningForChanges();
+
+				receivedInitiatingMessages.add(currentStateMessage
+						.getDdcAdvertisementUUID());
+			}
+
+			// send response
+			DistributedDataContainerCurrentStateResponseMessage responseMessage = DistributedDataContainerCurrentStateResponseMessage
+					.createMessage(true);
+			try {
+				LOG.debug("Send Response");
+				peerCommunicator.send(currentStateMessage.getVolunteerPeerID(),
+						responseMessage);
+			} catch (PeerCommunicationException e) {
+				LOG.error("Error while sending Response:");
+				LOG.error(e.getMessage());
+			}
+
+		}
+
+		if (message instanceof DistributedDataContainerCurrentStateResponseMessage) {
+			// processing on volunteer peer
+
+			if (this.currentJob != null) {
+				currentJob.stopRunning();
+				currentJob = null;
+
+			}
+		}
 	}
 
 }

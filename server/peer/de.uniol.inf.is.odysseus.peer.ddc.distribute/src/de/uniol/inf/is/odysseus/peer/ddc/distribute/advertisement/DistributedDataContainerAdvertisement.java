@@ -44,7 +44,7 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 	// Tag constants for document
 	private static final String ADVERTISEMENT_TYPE = "jxta:DDCAdvertisement";
 	private static final String ID_TAG = "id";
-	private static final String OWNER_PEER_ID_TAG = "ownerPeerId";
+	private static final String INITIATING_PEER_ID_TAG = "initiatingPeerId";
 	private static final String ADVERTISEMENT_UID = "advertisementUid";
 	private static final String TYPE = "type";
 	private static final String ADDED_DDC_ENTRY = "addedDDCEntry";
@@ -54,11 +54,11 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 	private static final String MULTI_KEY = "multiKey";
 
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG,
-			OWNER_PEER_ID_TAG, ADVERTISEMENT_UID };
+			INITIATING_PEER_ID_TAG, ADVERTISEMENT_UID };
 
 	// advertisement attributes
 	private ID id;
-	private PeerID ownerPeerId;
+	private PeerID initiatingPeerId;
 	private UUID advertisementUid;
 	private DistributedDataContainerAdvertisementType type;
 	private List<DDCEntry> addedDDCEntires;
@@ -105,7 +105,7 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 		Preconditions.checkNotNull(adv,
 				"Advertisement to copy must not be null!");
 		this.id = adv.id;
-		this.ownerPeerId = adv.ownerPeerId;
+		this.initiatingPeerId = adv.initiatingPeerId;
 		this.advertisementUid = adv.advertisementUid;
 		this.addedDDCEntires = new ArrayList<DDCEntry>();
 		for (DDCEntry ddcEntry : adv.addedDDCEntires) {
@@ -129,7 +129,7 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 			((Attributable) doc).addAttribute("xmlns:jxta", "http://jxta.org");
 		}
 		appendElement(doc, ID_TAG, id.toString());
-		appendElement(doc, OWNER_PEER_ID_TAG, ownerPeerId.toString());
+		appendElement(doc, INITIATING_PEER_ID_TAG, initiatingPeerId.toString());
 		appendElement(doc, ADVERTISEMENT_UID, advertisementUid.toString());
 		appendElement(doc, TYPE, type.toString());
 
@@ -238,8 +238,8 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 			final TextElement<?> elem = (TextElement<?>) elements.nextElement();
 			if (elem.getName().equals(ID_TAG)) {
 				setID(convertToID(elem.getTextValue()));
-			} else if (elem.getName().equals(OWNER_PEER_ID_TAG)) {
-				setOwnerPeerId(convertToPeerID(elem.getTextValue()));
+			} else if (elem.getName().equals(INITIATING_PEER_ID_TAG)) {
+				setInitiatingPeerId(convertToPeerID(elem.getTextValue()));
 			} else if (elem.getName().equals(ADVERTISEMENT_UID)) {
 				setDDCAdvertisementUid(UUID.fromString(elem.getTextValue()));
 			} else if (elem.getName().equals(TYPE)) {
@@ -328,12 +328,12 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 
 	}
 
-	public void setOwnerPeerId(PeerID ownerPeerId) {
-		this.ownerPeerId = ownerPeerId;
+	public void setInitiatingPeerId(PeerID ownerPeerId) {
+		this.initiatingPeerId = ownerPeerId;
 	}
 
-	public PeerID getOwnerPeerId() {
-		return ownerPeerId;
+	public PeerID getInitiatingPeerId() {
+		return initiatingPeerId;
 	}
 
 	@Override
