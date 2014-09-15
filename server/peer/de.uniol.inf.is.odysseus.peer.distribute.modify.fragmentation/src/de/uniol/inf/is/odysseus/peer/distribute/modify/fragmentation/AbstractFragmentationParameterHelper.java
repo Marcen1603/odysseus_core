@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
@@ -81,7 +82,7 @@ public abstract class AbstractFragmentationParameterHelper implements
 	}
 
 	@Override
-	public IPair<ILogicalOperator, Optional<ILogicalOperator>> determineStartAndEndPoints(
+	public IPair<Optional<ILogicalOperator>, Optional<ILogicalOperator>> determineStartAndEndPoints(
 			Collection<ILogicalQueryPart> queryParts)
 			throws QueryPartModificationException {
 
@@ -96,8 +97,11 @@ public abstract class AbstractFragmentationParameterHelper implements
 		String startAndEndPointParameter = this.mFragmentationParameters
 				.get(AbstractFragmentationParameterHelper.PARAMETER_INDEX_START_AND_END_POINT_IDS);
 
-		return ModificationHelper.determineStartAndEndPoints(queryParts,
-				startAndEndPointParameter);
+		IPair<ILogicalOperator, Optional<ILogicalOperator>> startAndEnd = ModificationHelper
+				.determineStartAndEndPoints(queryParts,
+						startAndEndPointParameter);
+		return new Pair<Optional<ILogicalOperator>, Optional<ILogicalOperator>>(
+				Optional.of(startAndEnd.getE1()), startAndEnd.getE2());
 
 	}
 

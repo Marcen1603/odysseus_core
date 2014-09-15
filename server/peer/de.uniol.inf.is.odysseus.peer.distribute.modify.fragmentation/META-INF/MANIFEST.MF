@@ -13,8 +13,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0",
  Jxta_2.6_Source;bundle-version="1.0.0"
 Import-Package: org.osgi.framework;version="1.6.0"
-Bundle-Activator: de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.Activator
-Service-Component: OSGI-INF/Activator.xml,OSGI-INF/SinkFragmentationRule.xml,OSGI-INF/AccessFragmentationRule.xml,OSGI-INF/StreamFragmentationRule.xml,
+Service-Component: OSGI-INF/SinkFragmentationRule.xml,OSGI-INF/AccessFragmentationRule.xml,OSGI-INF/StreamFragmentationRule.xml,
  OSGI-INF/FragmentationRuleHelper.xml
 Export-Package: de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation,
  de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule

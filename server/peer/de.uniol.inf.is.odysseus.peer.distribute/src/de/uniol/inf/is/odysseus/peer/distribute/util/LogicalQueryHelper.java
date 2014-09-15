@@ -29,7 +29,8 @@ import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
 
 public final class LogicalQueryHelper {
 
-	private static final Logger LOG = LoggerFactory.getLogger(LogicalQueryHelper.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(LogicalQueryHelper.class);
 	private static final String PQL_PARSER_ID = "PQL";
 
 	private static int connectionCounter = 0;
@@ -62,85 +63,103 @@ public final class LogicalQueryHelper {
 	}
 
 	public static ILogicalQuery copyLogicalQuery(ILogicalQuery originQuery) {
-		Preconditions.checkNotNull(originQuery, "Logical query to copy must not be null!");
+		Preconditions.checkNotNull(originQuery,
+				"Logical query to copy must not be null!");
 
-		ILogicalQuery copy = new LogicalQuery(PQL_PARSER_ID, copyLogicalPlan(originQuery.getLogicalPlan()), originQuery.getPriority());
+		ILogicalQuery copy = new LogicalQuery(PQL_PARSER_ID,
+				copyLogicalPlan(originQuery.getLogicalPlan()),
+				originQuery.getPriority());
 
 		copy.setName(originQuery.getName());
-		copy.setQueryText(pqlGenerator.generatePQLStatement(copy.getLogicalPlan()));
+		copy.setQueryText(pqlGenerator.generatePQLStatement(copy
+				.getLogicalPlan()));
 		copy.setUser(originQuery.getUser());
 
 		return copy;
 	}
 
 	public static ILogicalOperator copyLogicalPlan(ILogicalOperator originPlan) {
-		Preconditions.checkNotNull(originPlan, "Logical plan to copy must not be null!");
+		Preconditions.checkNotNull(originPlan,
+				"Logical plan to copy must not be null!");
 
-		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(originPlan.getOwner());
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(
+				originPlan.getOwner());
 
 		GenericGraphWalker<ILogicalOperator> walker = new GenericGraphWalker<>();
 
 		walker.prefixWalk(originPlan, copyVisitor);
 		return copyVisitor.getResult();
 	}
-	
-	public static String generatePQLStatementFromQueryPart( ILogicalQueryPart part ) {
-		
-		List<ILogicalOperator> operators = Lists.newArrayList(part.getOperators());
-		
+
+	public static String generatePQLStatementFromQueryPart(
+			ILogicalQueryPart part) {
+
+		List<ILogicalOperator> operators = Lists.newArrayList(part
+				.getOperators());
+
 		String statement = "";
-		while( !operators.isEmpty() ) {
+		while (!operators.isEmpty()) {
 			ILogicalOperator operator = operators.remove(0);
-			
+
 			List<ILogicalOperator> visitedOperators = Lists.newArrayList();
 			collectOperatorsWithSubscriptions(operator, visitedOperators);
-			
-			statement = statement + pqlGenerator.generatePQLStatement(operator) + System.lineSeparator();
-			
+
+			statement = statement + pqlGenerator.generatePQLStatement(operator)
+					+ System.lineSeparator();
+
 			operators.removeAll(visitedOperators);
 		}
-		
+
 		return statement;
 	}
-	
-	private static void collectOperatorsWithSubscriptions(ILogicalOperator operator, List<ILogicalOperator> visitedOperators) {
-		if( !visitedOperators.contains(operator )) {
+
+	private static void collectOperatorsWithSubscriptions(
+			ILogicalOperator operator, List<ILogicalOperator> visitedOperators) {
+		if (!visitedOperators.contains(operator)) {
 			visitedOperators.add(operator);
-			
-			for( LogicalSubscription sub : operator.getSubscribedToSource()) {
-				collectOperatorsWithSubscriptions(sub.getTarget(), visitedOperators);
+
+			for (LogicalSubscription sub : operator.getSubscribedToSource()) {
+				collectOperatorsWithSubscriptions(sub.getTarget(),
+						visitedOperators);
 			}
-			
-			for( LogicalSubscription sub : operator.getSubscriptions()) {
-				collectOperatorsWithSubscriptions(sub.getTarget(), visitedOperators);
+
+			for (LogicalSubscription sub : operator.getSubscriptions()) {
+				collectOperatorsWithSubscriptions(sub.getTarget(),
+						visitedOperators);
 			}
 		}
 	}
 
-	public static Collection<ILogicalOperator> getAllOperators(ILogicalQuery plan) {
+	public static Collection<ILogicalOperator> getAllOperators(
+			ILogicalQuery plan) {
 		return getAllOperators(plan.getLogicalPlan());
 	}
 
-	public static Collection<ILogicalOperator> getAllOperators(ILogicalOperator operator) {
+	public static Collection<ILogicalOperator> getAllOperators(
+			ILogicalOperator operator) {
 		List<ILogicalOperator> operators = Lists.newArrayList();
 		collectOperatorsImpl(operator, operators);
 		return operators;
 	}
 
-	private static void collectOperatorsImpl(ILogicalOperator currentOperator, Collection<ILogicalOperator> list) {
+	private static void collectOperatorsImpl(ILogicalOperator currentOperator,
+			Collection<ILogicalOperator> list) {
 		if (!list.contains(currentOperator)) {
 			list.add(currentOperator);
-			for (final LogicalSubscription subscription : currentOperator.getSubscriptions()) {
+			for (final LogicalSubscription subscription : currentOperator
+					.getSubscriptions()) {
 				collectOperatorsImpl(subscription.getTarget(), list);
 			}
 
-			for (final LogicalSubscription subscription : currentOperator.getSubscribedToSource()) {
+			for (final LogicalSubscription subscription : currentOperator
+					.getSubscribedToSource()) {
 				collectOperatorsImpl(subscription.getTarget(), list);
 			}
 		}
 	}
 
-	public static Collection<ILogicalOperator> replaceStreamAOs(Collection<ILogicalOperator> operators) {
+	public static Collection<ILogicalOperator> replaceStreamAOs(
+			Collection<ILogicalOperator> operators) {
 		Preconditions.checkNotNull(operators);
 
 		final List<ILogicalOperator> operatorsToRemove = Lists.newArrayList();
@@ -149,13 +168,17 @@ public final class LogicalQueryHelper {
 		for (ILogicalOperator operator : operators) {
 
 			if (operator instanceof StreamAO) {
-				ILogicalOperator streamPlan = serverExecutor.getDataDictionary(PeerDistributePlugIn.getActiveSession().getTenant()).getStreamForTransformation(((StreamAO) operator).getStreamname(), PeerDistributePlugIn.getActiveSession());
+				ILogicalOperator streamPlan = serverExecutor.getDataDictionary(
+						PeerDistributePlugIn.getActiveSession().getTenant())
+						.getStreamForTransformation(
+								((StreamAO) operator).getStreamname(),
+								PeerDistributePlugIn.getActiveSession());
 
 				ILogicalOperator streamPlanCopy = copyLogicalPlan(streamPlan);
-				
+
 				// WORKAROUND:
 				streamPlanCopy.unsubscribeFromAllSinks();
-				
+
 				operatorsToRemove.add(operator);
 				operatorsToAdd.addAll(getAllOperators(streamPlanCopy));
 
@@ -171,26 +194,31 @@ public final class LogicalQueryHelper {
 		return operators;
 	}
 
-	private static void setDestinationNames(ILogicalOperator fromOperator, ILogicalOperator toOperator) {
+	private static void setDestinationNames(ILogicalOperator fromOperator,
+			ILogicalOperator toOperator) {
 		Collection<ILogicalOperator> streamPlanOperators = getAllOperators(toOperator);
 		String destinationName = fromOperator.getDestinationName();
-		if(destinationName == null && toOperator.getDestinationName() != null)
+		if (destinationName == null && toOperator.getDestinationName() != null)
 			destinationName = toOperator.getDestinationName();
 		for (ILogicalOperator streamPlanOperator : streamPlanOperators) {
 			streamPlanOperator.setDestinationName(destinationName);
 		}
 	}
 
-	public static void replaceWithSubplan(ILogicalOperator leafOp, ILogicalOperator newOp) {
+	public static void replaceWithSubplan(ILogicalOperator leafOp,
+			ILogicalOperator newOp) {
 		if (leafOp.getSubscribedToSource().size() > 0) {
-			throw new IllegalArgumentException("Method can only be called for a leaf");
+			throw new IllegalArgumentException(
+					"Method can only be called for a leaf");
 		}
 
 		for (LogicalSubscription subToSink : leafOp.getSubscriptions()) {
 			ILogicalOperator target = subToSink.getTarget();
 
-			target.unsubscribeFromSource(leafOp, subToSink.getSinkInPort(), subToSink.getSourceOutPort(), subToSink.getSchema());
-			target.subscribeToSource(newOp, subToSink.getSinkInPort(), subToSink.getSourceOutPort(), subToSink.getSchema());
+			target.unsubscribeFromSource(leafOp, subToSink.getSinkInPort(),
+					subToSink.getSourceOutPort(), subToSink.getSchema());
+			target.subscribeToSource(newOp, subToSink.getSinkInPort(),
+					subToSink.getSourceOutPort(), subToSink.getSchema());
 		}
 	}
 
@@ -209,7 +237,8 @@ public final class LogicalQueryHelper {
 		}
 	}
 
-	public static Collection<ILogicalOperator> getSinks(Collection<ILogicalOperator> operators) {
+	public static Collection<ILogicalOperator> getSinks(
+			Collection<ILogicalOperator> operators) {
 		Collection<ILogicalOperator> sinks = Lists.newArrayList();
 		for (ILogicalOperator operator : operators) {
 			if (operator.getSubscriptions().isEmpty()) {
@@ -218,8 +247,9 @@ public final class LogicalQueryHelper {
 		}
 		return sinks;
 	}
-	
-	public static Collection<ILogicalOperator> getSources(Collection<ILogicalOperator> operators) {
+
+	public static Collection<ILogicalOperator> getSources(
+			Collection<ILogicalOperator> operators) {
 		Collection<ILogicalOperator> sources = Lists.newArrayList();
 		for (ILogicalOperator operator : operators) {
 			if (operator.getSubscribedToSource().isEmpty()) {
@@ -229,12 +259,15 @@ public final class LogicalQueryHelper {
 		return sources;
 	}
 
-	public static Collection<ILogicalOperator> getRelativeSourcesOfLogicalQueryPart(final ILogicalQueryPart part) {
+	public static Collection<ILogicalOperator> getRelativeSourcesOfLogicalQueryPart(
+			final ILogicalQueryPart part) {
 
-		Preconditions.checkNotNull(part, "Logical query part to process must not be null!");
+		Preconditions.checkNotNull(part,
+				"Logical query part to process must not be null!");
 
 		// The return value
-		final Collection<ILogicalOperator> relativeSources = Lists.newArrayList();
+		final Collection<ILogicalOperator> relativeSources = Lists
+				.newArrayList();
 
 		for (ILogicalOperator operator : part.getOperators()) {
 
@@ -245,7 +278,8 @@ public final class LogicalQueryHelper {
 
 			}
 
-			for (LogicalSubscription subToSource : operator.getSubscribedToSource()) {
+			for (LogicalSubscription subToSource : operator
+					.getSubscribedToSource()) {
 
 				if (!part.getOperators().contains(subToSource.getTarget())) {
 
@@ -270,9 +304,11 @@ public final class LogicalQueryHelper {
 	 *            The query part to process.
 	 * @return A collection of all relative sinks within <code>part</code>.
 	 */
-	public static Collection<ILogicalOperator> getRelativeSinksOfLogicalQueryPart(final ILogicalQueryPart part) {
+	public static Collection<ILogicalOperator> getRelativeSinksOfLogicalQueryPart(
+			final ILogicalQueryPart part) {
 
-		Preconditions.checkNotNull(part, "Logical query part to process must not be null!");
+		Preconditions.checkNotNull(part,
+				"Logical query part to process must not be null!");
 
 		// The return value
 		final Collection<ILogicalOperator> relativeSinks = Lists.newArrayList();
@@ -320,19 +356,25 @@ public final class LogicalQueryHelper {
 	 *             all sources of <code>originPart</code>.
 	 */
 	@SuppressWarnings("unchecked")
-	public static Map<ILogicalOperator, Collection<ILogicalOperator>> collectRelativeSources(ILogicalQueryPart originPart, Collection<ILogicalQueryPart> copies) throws NullPointerException, IllegalArgumentException {
+	public static Map<ILogicalOperator, Collection<ILogicalOperator>> collectRelativeSources(
+			ILogicalQueryPart originPart, Collection<ILogicalQueryPart> copies)
+			throws NullPointerException, IllegalArgumentException {
 
 		// Preconditions
 		if (originPart == null)
-			throw new NullPointerException("Origin query part to collect relative sources must be not null!");
+			throw new NullPointerException(
+					"Origin query part to collect relative sources must be not null!");
 		else if (copies == null)
-			throw new NullPointerException("List of copies to collect relative sources must be not null!");
+			throw new NullPointerException(
+					"List of copies to collect relative sources must be not null!");
 
 		// The return value
-		Map<ILogicalOperator, Collection<ILogicalOperator>> copiedToOriginSources = Maps.newHashMap();
+		Map<ILogicalOperator, Collection<ILogicalOperator>> copiedToOriginSources = Maps
+				.newHashMap();
 
 		// Collect origin sinks
-		List<ILogicalOperator> originSources = (List<ILogicalOperator>) LogicalQueryHelper.getRelativeSourcesOfLogicalQueryPart(originPart);
+		List<ILogicalOperator> originSources = (List<ILogicalOperator>) LogicalQueryHelper
+				.getRelativeSourcesOfLogicalQueryPart(originPart);
 		for (ILogicalOperator source : originSources) {
 
 			Collection<ILogicalOperator> copiedSources = Lists.newArrayList();
@@ -340,14 +382,17 @@ public final class LogicalQueryHelper {
 
 			try {
 
-				sourceNo = ((List<ILogicalOperator>) (originPart.getOperators())).indexOf(source);
+				sourceNo = ((List<ILogicalOperator>) (originPart.getOperators()))
+						.indexOf(source);
 
 				for (ILogicalQueryPart copy : copies)
-					copiedSources.add(((List<ILogicalOperator>) (copy.getOperators())).get(sourceNo));
+					copiedSources.add(((List<ILogicalOperator>) (copy
+							.getOperators())).get(sourceNo));
 
 			} catch (IndexOutOfBoundsException e) {
 
-				throw new IllegalArgumentException("At least one copy does not contain all sources of the origin!");
+				throw new IllegalArgumentException(
+						"At least one copy does not contain all sources of the origin!");
 
 			}
 
@@ -375,19 +420,25 @@ public final class LogicalQueryHelper {
 	 *             all sinks of <code>originPart</code>.
 	 */
 	@SuppressWarnings("unchecked")
-	public static Map<ILogicalOperator, Collection<ILogicalOperator>> collectRelativeSinks(ILogicalQueryPart originPart, Collection<ILogicalQueryPart> copies) throws NullPointerException, IllegalArgumentException {
+	public static Map<ILogicalOperator, Collection<ILogicalOperator>> collectRelativeSinks(
+			ILogicalQueryPart originPart, Collection<ILogicalQueryPart> copies)
+			throws NullPointerException, IllegalArgumentException {
 
 		// Preconditions
 		if (originPart == null)
-			throw new NullPointerException("Origin query part to collect relative sinks must be not null!");
+			throw new NullPointerException(
+					"Origin query part to collect relative sinks must be not null!");
 		else if (copies == null)
-			throw new NullPointerException("List of copies to collect relative sinks must be not null!");
+			throw new NullPointerException(
+					"List of copies to collect relative sinks must be not null!");
 
 		// The return value
-		Map<ILogicalOperator, Collection<ILogicalOperator>> copiedToOriginSinks = Maps.newHashMap();
+		Map<ILogicalOperator, Collection<ILogicalOperator>> copiedToOriginSinks = Maps
+				.newHashMap();
 
 		// Collect origin sinks
-		List<ILogicalOperator> originSinks = (List<ILogicalOperator>) LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(originPart);
+		List<ILogicalOperator> originSinks = (List<ILogicalOperator>) LogicalQueryHelper
+				.getRelativeSinksOfLogicalQueryPart(originPart);
 		for (ILogicalOperator sink : originSinks) {
 
 			Collection<ILogicalOperator> copiedSinks = Lists.newArrayList();
@@ -395,14 +446,17 @@ public final class LogicalQueryHelper {
 
 			try {
 
-				sinkNo = ((List<ILogicalOperator>) (originPart.getOperators())).indexOf(sink);
+				sinkNo = ((List<ILogicalOperator>) (originPart.getOperators()))
+						.indexOf(sink);
 
 				for (ILogicalQueryPart copy : copies)
-					copiedSinks.add(((List<ILogicalOperator>) (copy.getOperators())).get(sinkNo));
+					copiedSinks.add(((List<ILogicalOperator>) (copy
+							.getOperators())).get(sinkNo));
 
 			} catch (IndexOutOfBoundsException e) {
 
-				throw new IllegalArgumentException("At least one copy does not contain all sinks of the origin!");
+				throw new IllegalArgumentException(
+						"At least one copy does not contain all sinks of the origin!");
 
 			}
 
@@ -414,8 +468,11 @@ public final class LogicalQueryHelper {
 
 	}
 
-	public static void disconnectQueryParts(Collection<ILogicalQueryPart> queryParts, IOperatorGenerator generator) {
-		Preconditions.checkNotNull(generator, "Operator generator must not be null!");
+	public static void disconnectQueryParts(
+			Collection<ILogicalQueryPart> queryParts,
+			IOperatorGenerator generator) {
+		Preconditions.checkNotNull(generator,
+				"Operator generator must not be null!");
 
 		Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment = determineOperatorAssignment(queryParts);
 		Map<LogicalSubscription, ILogicalOperator> subsToReplace = determineSubscriptionsAcrossQueryParts(queryPartAssignment);
@@ -424,30 +481,38 @@ public final class LogicalQueryHelper {
 			ILogicalOperator sourceOperator = subsToReplace.get(subToReplace);
 			ILogicalOperator sinkOperator = subToReplace.getTarget();
 
-			ILogicalQueryPart sinkQueryPart = queryPartAssignment.get(sinkOperator);
-			ILogicalQueryPart sourceQueryPart = queryPartAssignment.get(sourceOperator);
-			generator.beginDisconnect(sourceQueryPart, sourceOperator, sinkQueryPart, sinkOperator);
+			ILogicalQueryPart sinkQueryPart = queryPartAssignment
+					.get(sinkOperator);
+			ILogicalQueryPart sourceQueryPart = queryPartAssignment
+					.get(sourceOperator);
+			generator.beginDisconnect(sourceQueryPart, sourceOperator,
+					sinkQueryPart, sinkOperator);
 
-			ILogicalOperator source = generator.createSourceofSink(sinkQueryPart, sinkOperator);
+			ILogicalOperator source = generator.createSourceofSink(
+					sinkQueryPart, sinkOperator);
 			source.setOutputSchema(sourceOperator.getOutputSchema().clone());
 			source.setName("RCV_" + connectionCounter);
 
-			
-			ILogicalOperator sink = generator.createSinkOfSource(sourceQueryPart, sourceOperator);
+			ILogicalOperator sink = generator.createSinkOfSource(
+					sourceQueryPart, sourceOperator);
 			sink.setOutputSchema(sourceOperator.getOutputSchema().clone());
 			sink.setName("SND_" + connectionCounter);
 
 			sourceOperator.unsubscribeSink(subToReplace);
 
-			sourceOperator.subscribeSink(sink, 0, subToReplace.getSourceOutPort(), sourceOperator.getOutputSchema());
-			sinkOperator.subscribeToSource(source, subToReplace.getSinkInPort(), 0, source.getOutputSchema());
+			sourceOperator.subscribeSink(sink, 0,
+					subToReplace.getSourceOutPort(),
+					sourceOperator.getOutputSchema());
+			sinkOperator.subscribeToSource(source,
+					subToReplace.getSinkInPort(), 0, source.getOutputSchema());
 
 			connectionCounter++;
 		}
 
 	}
 
-	private static Map<ILogicalOperator, ILogicalQueryPart> determineOperatorAssignment(Collection<ILogicalQueryPart> queryParts) {
+	private static Map<ILogicalOperator, ILogicalQueryPart> determineOperatorAssignment(
+			Collection<ILogicalQueryPart> queryParts) {
 		Map<ILogicalOperator, ILogicalQueryPart> map = Maps.newHashMap();
 		for (ILogicalQueryPart part : queryParts) {
 			for (ILogicalOperator operator : part.getOperators()) {
@@ -457,19 +522,25 @@ public final class LogicalQueryHelper {
 		return map;
 	}
 
-	private static Map<LogicalSubscription, ILogicalOperator> determineSubscriptionsAcrossQueryParts(Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment) {
-		List<ILogicalOperator> operatorsToVisit = Lists.newArrayList(queryPartAssignment.keySet());
+	private static Map<LogicalSubscription, ILogicalOperator> determineSubscriptionsAcrossQueryParts(
+			Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment) {
+		List<ILogicalOperator> operatorsToVisit = Lists
+				.newArrayList(queryPartAssignment.keySet());
 
-		Map<LogicalSubscription, ILogicalOperator> subsToReplace = Maps.newHashMap();
+		Map<LogicalSubscription, ILogicalOperator> subsToReplace = Maps
+				.newHashMap();
 		while (!operatorsToVisit.isEmpty()) {
 			ILogicalOperator currentOperator = operatorsToVisit.remove(0);
 
-			Collection<LogicalSubscription> sinkSubs = currentOperator.getSubscriptions();
+			Collection<LogicalSubscription> sinkSubs = currentOperator
+					.getSubscriptions();
 			for (LogicalSubscription sinkSub : sinkSubs) {
 				ILogicalOperator targetOperator = sinkSub.getTarget();
 
-				ILogicalQueryPart currentQueryPart = queryPartAssignment.get(currentOperator);
-				ILogicalQueryPart targetQueryPart = queryPartAssignment.get(targetOperator);
+				ILogicalQueryPart currentQueryPart = queryPartAssignment
+						.get(currentOperator);
+				ILogicalQueryPart targetQueryPart = queryPartAssignment
+						.get(targetOperator);
 				if (!currentQueryPart.equals(targetQueryPart)) {
 					subsToReplace.put(sinkSub, currentOperator);
 				}
@@ -480,7 +551,8 @@ public final class LogicalQueryHelper {
 
 	public static void cutQueryPart(ILogicalQueryPart queryPart) {
 
-		Preconditions.checkNotNull(queryPart, "Query part to be cut must be not null!");
+		Preconditions.checkNotNull(queryPart,
+				"Query part to be cut must be not null!");
 
 		Collection<ILogicalOperator> operators = queryPart.getOperators();
 		for (ILogicalOperator operator : operators) {
@@ -498,7 +570,8 @@ public final class LogicalQueryHelper {
 			}
 
 			subsToRemove.clear();
-			for (LogicalSubscription subcription : operator.getSubscribedToSource()) {
+			for (LogicalSubscription subcription : operator
+					.getSubscribedToSource()) {
 
 				if (!operators.contains(subcription.getTarget())) {
 					subsToRemove.add(subcription);
@@ -512,8 +585,9 @@ public final class LogicalQueryHelper {
 		}
 
 	}
-	
-	public static Map<ILogicalQueryPart, ILogicalQueryPart> copyQueryPartsDeep(Collection<ILogicalQueryPart> queryParts) {
+
+	public static Map<ILogicalQueryPart, ILogicalQueryPart> copyQueryPartsDeep(
+			Collection<ILogicalQueryPart> queryParts) {
 		Collection<ILogicalOperator> operators = Lists.newArrayList();
 		for (ILogicalQueryPart part : queryParts) {
 			operators.addAll(part.getOperators());
@@ -526,30 +600,37 @@ public final class LogicalQueryHelper {
 		Map<ILogicalQueryPart, ILogicalQueryPart> map = Maps.newHashMap();
 
 		for (ILogicalQueryPart queryPart : queryParts) {
-			Collection<ILogicalOperator> copyOperatorsOfCopyPart = Lists.newArrayList();
+			Collection<ILogicalOperator> copyOperatorsOfCopyPart = Lists
+					.newArrayList();
 
 			for (ILogicalOperator queryPartOperator : queryPart.getOperators()) {
-				copyOperatorsOfCopyPart.add(getCopyOfMap(queryPartOperator, operatorCopyMap));
+				copyOperatorsOfCopyPart.add(getCopyOfMap(queryPartOperator,
+						operatorCopyMap));
 			}
 
-			ILogicalQueryPart copyQueryPart = new LogicalQueryPart(copyOperatorsOfCopyPart);
+			ILogicalQueryPart copyQueryPart = new LogicalQueryPart(
+					copyOperatorsOfCopyPart);
 			map.put(copyQueryPart, queryPart);
 		}
-		
-		for( ILogicalQueryPart copyQueryPart : map.keySet() ) {
+
+		for (ILogicalQueryPart copyQueryPart : map.keySet()) {
 			ILogicalQueryPart originalQueryPart = map.get(copyQueryPart);
-			
-			Collection<ILogicalQueryPart> avoidedPartsInCopy = Lists.newArrayList();
-			for( ILogicalQueryPart avoidedPartInOriginal : originalQueryPart.getAvoidingQueryParts() ) {
-				ILogicalQueryPart avoidedPartCopy = getCopyOfMap(avoidedPartInOriginal, map);
-				
-				if( avoidedPartCopy != null ) {
+
+			Collection<ILogicalQueryPart> avoidedPartsInCopy = Lists
+					.newArrayList();
+			for (ILogicalQueryPart avoidedPartInOriginal : originalQueryPart
+					.getAvoidingQueryParts()) {
+				ILogicalQueryPart avoidedPartCopy = getCopyOfMap(
+						avoidedPartInOriginal, map);
+
+				if (avoidedPartCopy != null) {
 					avoidedPartsInCopy.add(avoidedPartCopy);
 				} else {
-					LOG.error("Could not find copy of queryPart {}", avoidedPartInOriginal);
+					LOG.error("Could not find copy of queryPart {}",
+							avoidedPartInOriginal);
 				}
 			}
-			
+
 			copyQueryPart.addAvoidingQueryParts(avoidedPartsInCopy);
 		}
 
@@ -569,18 +650,48 @@ public final class LogicalQueryHelper {
 	 * @throws NullPointerException
 	 *             if <code>queryParts</code> is null.
 	 */
-	public static Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyAndCutQueryParts(Collection<ILogicalQueryPart> queryParts, int numCopies) throws NullPointerException {
+	public static Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyAndCutQueryParts(
+			Collection<ILogicalQueryPart> queryParts, int numCopies)
+			throws NullPointerException {
 
 		// Preconditions
 		if (queryParts == null)
-			throw new NullPointerException("Query parts to be copied must be not null!");
+			throw new NullPointerException(
+					"Query parts to be copied must be not null!");
 
 		// The return value
-		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOriginPart = Maps.newHashMap();
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOriginPart = Maps
+				.newHashMap();
 
-		Collection<Map<ILogicalQueryPart, ILogicalQueryPart>> plainCopies = Lists.newArrayList();
-		for (int copyNo = 0; copyNo < numCopies; copyNo++)
-			plainCopies.add(LogicalQueryHelper.copyQueryPartsDeep(queryParts));
+		// Take care of unique IDs
+		Collection<Map<ILogicalQueryPart, ILogicalQueryPart>> plainCopies = Lists
+				.newArrayList();
+		for (int copyNo = 0; copyNo < numCopies; copyNo++) {
+
+			Map<ILogicalQueryPart, ILogicalQueryPart> partialPlainCopies = LogicalQueryHelper
+					.copyQueryPartsDeep(queryParts);
+
+			for (ILogicalQueryPart copiedPart : partialPlainCopies.keySet()) {
+
+				for (ILogicalOperator copiedOperator : copiedPart
+						.getOperators()) {
+
+					if (copiedOperator.getUniqueIdentifier() != null) {
+
+						copiedOperator
+								.setUniqueIdentifier(copiedOperator
+										.getUniqueIdentifier()
+										+ String.valueOf(copyNo));
+
+					}
+
+				}
+
+			}
+
+			plainCopies.add(partialPlainCopies);
+
+		}
 
 		for (Map<ILogicalQueryPart, ILogicalQueryPart> plainCopyMap : plainCopies) {
 
@@ -608,7 +719,8 @@ public final class LogicalQueryHelper {
 
 	}
 
-	private static Map<ILogicalOperator, ILogicalOperator> createOperatorCopyMap(Collection<ILogicalOperator> operators) {
+	private static Map<ILogicalOperator, ILogicalOperator> createOperatorCopyMap(
+			Collection<ILogicalOperator> operators) {
 		Map<ILogicalOperator, ILogicalOperator> copyMap = Maps.newHashMap();
 		for (ILogicalOperator operator : operators) {
 			copyMap.put(operator.clone(), operator);
@@ -616,25 +728,33 @@ public final class LogicalQueryHelper {
 		return copyMap;
 	}
 
-	private static void createSubscriptionsInCopies(Map<ILogicalOperator, ILogicalOperator> operatorCopyMap) {
+	private static void createSubscriptionsInCopies(
+			Map<ILogicalOperator, ILogicalOperator> operatorCopyMap) {
 		for (ILogicalOperator copyOperator : operatorCopyMap.keySet()) {
-			ILogicalOperator originalOperator = operatorCopyMap.get(copyOperator);
+			ILogicalOperator originalOperator = operatorCopyMap
+					.get(copyOperator);
 
 			for (LogicalSubscription sub : originalOperator.getSubscriptions()) {
 				ILogicalOperator originalTarget = sub.getTarget();
-				ILogicalOperator copyTarget = getCopyOfMap(originalTarget, operatorCopyMap);
+				ILogicalOperator copyTarget = getCopyOfMap(originalTarget,
+						operatorCopyMap);
 
 				if (copyTarget != null) {
-					copyOperator.subscribeSink(copyTarget, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+					copyOperator.subscribeSink(copyTarget, sub.getSinkInPort(),
+							sub.getSourceOutPort(), sub.getSchema());
 				}
 			}
 
-			for (LogicalSubscription sub : originalOperator.getSubscribedToSource()) {
+			for (LogicalSubscription sub : originalOperator
+					.getSubscribedToSource()) {
 				ILogicalOperator orginalSource = sub.getTarget();
-				ILogicalOperator copySource = getCopyOfMap(orginalSource, operatorCopyMap);
+				ILogicalOperator copySource = getCopyOfMap(orginalSource,
+						operatorCopyMap);
 
 				if (copySource == null) {
-					copyOperator.subscribeToSource(orginalSource, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+					copyOperator.subscribeToSource(orginalSource,
+							sub.getSinkInPort(), sub.getSourceOutPort(),
+							sub.getSchema());
 				}
 			}
 		}
@@ -649,50 +769,69 @@ public final class LogicalQueryHelper {
 
 		return null;
 	}
-	
+
 	/**
 	 * Collects all copies of a given operator.
-	 * @param originPartOfOperator The part containing the operator.
-	 * @param copiesOfOriginPart The copies of <code>originPartOfOperator</code>
-	 * @param operator The operator, whose copies shall be collected.
+	 * 
+	 * @param originPartOfOperator
+	 *            The part containing the operator.
+	 * @param copiesOfOriginPart
+	 *            The copies of <code>originPartOfOperator</code>
+	 * @param operator
+	 *            The operator, whose copies shall be collected.
 	 */
 	@SuppressWarnings("unchecked")
-	public static Collection<ILogicalOperator> collectCopies(ILogicalQueryPart originPartOfOperator, 
-			Collection<ILogicalQueryPart> copiesOfOriginPart, ILogicalOperator operator) {
-		
-		Preconditions.checkNotNull(operator, "The operator, whose copies shall be collected, must not be null!");
-		Preconditions.checkNotNull(originPartOfOperator, "The query part containing the operator must not be null!");
-		Preconditions.checkNotNull(copiesOfOriginPart, "The copies of the query part containing the operator must not be null!");
-		
+	public static Collection<ILogicalOperator> collectCopies(
+			ILogicalQueryPart originPartOfOperator,
+			Collection<ILogicalQueryPart> copiesOfOriginPart,
+			ILogicalOperator operator) {
+
+		Preconditions
+				.checkNotNull(operator,
+						"The operator, whose copies shall be collected, must not be null!");
+		Preconditions.checkNotNull(originPartOfOperator,
+				"The query part containing the operator must not be null!");
+		Preconditions
+				.checkNotNull(copiesOfOriginPart,
+						"The copies of the query part containing the operator must not be null!");
+
 		// The return value
 		Collection<ILogicalOperator> copies = Lists.newArrayList();
-		
-		int operatorIndex = ((List<ILogicalOperator>) originPartOfOperator.getOperators()).indexOf(operator);
-		for(ILogicalQueryPart copyOfOriginPart : copiesOfOriginPart)
-			copies.add(((List<ILogicalOperator>) copyOfOriginPart.getOperators()).get(operatorIndex));
-		
+
+		int operatorIndex = ((List<ILogicalOperator>) originPartOfOperator
+				.getOperators()).indexOf(operator);
+		for (ILogicalQueryPart copyOfOriginPart : copiesOfOriginPart)
+			copies.add(((List<ILogicalOperator>) copyOfOriginPart
+					.getOperators()).get(operatorIndex));
+
 		return copies;
-		
+
 	}
 
 	public static ILogicalOperator appendTopAO(ILogicalQueryPart queryPart) {
-		Preconditions.checkNotNull(queryPart, "Query part to append TopAO must not be null!");
+		Preconditions.checkNotNull(queryPart,
+				"Query part to append TopAO must not be null!");
 
-		Collection<ILogicalOperator> sinks = getSinks(getAllOperators(queryPart.getOperators().iterator().next()));
+		Collection<ILogicalOperator> sinks = getSinks(getAllOperators(queryPart
+				.getOperators().iterator().next()));
 
 		TopAO topAO = new TopAO();
 		int inputPort = 0;
 		for (ILogicalOperator sink : sinks) {
-			topAO.subscribeToSource(sink, inputPort++, 0, sink.getOutputSchema());
+			topAO.subscribeToSource(sink, inputPort++, 0,
+					sink.getOutputSchema());
 		}
 
 		return topAO;
 	}
 
-	public static Optional<ILogicalQueryPart> determineQueryPart(Collection<ILogicalQueryPart> queryParts, ILogicalOperator operator) {
+	public static Optional<ILogicalQueryPart> determineQueryPart(
+			Collection<ILogicalQueryPart> queryParts, ILogicalOperator operator) {
 
-		Preconditions.checkNotNull(queryParts, "Query parts for determination must be not null!");
-		Preconditions.checkNotNull(operator, "Operator to determine query part must be not null!");
+		Preconditions.checkNotNull(queryParts,
+				"Query parts for determination must be not null!");
+		Preconditions.checkNotNull(operator,
+				"Operator to determine query part must be not null!");
 
 		for (ILogicalQueryPart part : queryParts) {
 
@@ -707,36 +846,44 @@ public final class LogicalQueryHelper {
 
 	/**
 	 * Initializes all operators of a collection of query parts.
-	 * @param queryParts The given collection of query parts. <br />
-	 * Must be not null.
+	 * 
+	 * @param queryParts
+	 *            The given collection of query parts. <br />
+	 *            Must be not null.
 	 */
 	public static void initializeOperators(
 			Collection<ILogicalQueryPart> queryParts) {
-		
-		Preconditions.checkNotNull(queryParts, "Parts, which operators shall be initialized, must be not null!");
-		
-		for(ILogicalQueryPart queryPart : queryParts) {
-			
+
+		Preconditions
+				.checkNotNull(queryParts,
+						"Parts, which operators shall be initialized, must be not null!");
+
+		for (ILogicalQueryPart queryPart : queryParts) {
+
 			LogicalQueryHelper.initializeOperators(queryPart);
-			
+
 		}
-		
+
 	}
 
 	/**
 	 * Initializes all operators of a query part.
-	 * @param queryPart The given query part. <br />
-	 * Must be not null.
+	 * 
+	 * @param queryPart
+	 *            The given query part. <br />
+	 *            Must be not null.
 	 */
 	public static void initializeOperators(ILogicalQueryPart queryPart) {
-		
-		Preconditions.checkNotNull(queryPart, "Part, which operators shall be initialized, must be not null!");
-		
-		for(ILogicalOperator operator : queryPart.getOperators()) {
-			
+
+		Preconditions
+				.checkNotNull(queryPart,
+						"Part, which operators shall be initialized, must be not null!");
+
+		for (ILogicalOperator operator : queryPart.getOperators()) {
+
 			operator.initialize();
-			
+
 		}
-		
+
 	}
 }

@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
@@ -46,57 +45,6 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractFragmentationQueryPartModificator.class);
-
-	/**
-	 * Checks, if there are enough peers available (
-	 * {@link IP2PDictionary#getRemotePeerIDs()}) for the desired degree of
-	 * fragmentation.
-	 * 
-	 * @param bundle
-	 *            The {@link FragmentationInfoBundle} instance containing the
-	 *            degree of fragmentation-
-	 * @return True, if the number of available peers is greater than or equal
-	 *         to the degree of fragmentation.
-	 */
-	private static boolean validateDegreeOfFragmentation(
-			FragmentationInfoBundle bundle) {
-
-		Preconditions.checkNotNull(bundle,
-				"Fragmentation info bundle must be not null!");
-		Preconditions.checkNotNull(bundle.getCopyMap(),
-				"Mapping of copied query parts to originals must be not null!");
-
-		final Optional<IP2PDictionary> optP2PDictionary = Activator
-				.getP2PDictionary();
-
-		if (!optP2PDictionary.isPresent()) {
-
-			AbstractFragmentationQueryPartModificator.LOG
-					.error("No P2P dictionary found!");
-			return false;
-
-		}
-
-		int numQueryPartsToAllocate = bundle.getCopyMap().values().size();
-		int availablePeers = optP2PDictionary.get().getRemotePeerIDs().size();
-
-		if (availablePeers + 1 < numQueryPartsToAllocate) {
-
-			AbstractFragmentationQueryPartModificator.LOG.warn(
-					"Got {} peers. {} peers needed!", availablePeers,
-					numQueryPartsToAllocate);
-			return false;
-
-		} else if (availablePeers + 1 == numQueryPartsToAllocate) {
-
-			AbstractFragmentationQueryPartModificator.LOG
-					.warn("Got enough peers for a suitable fragmentation only if the local peer is considered!");
-
-		}
-
-		return true;
-
-	}
 
 	/**
 	 * Makes copies of the origin query parts as follows: <br />
@@ -131,39 +79,12 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				.newHashMap();
 		copiesToOriginals.putAll(copiedFragmentsToOriginals);
 		copiesToOriginals.putAll(copiedNonFragmentsToOriginals);
-
-		// Take care of unique IDs
-		for (ILogicalQueryPart originalPart : copiesToOriginals.keySet()) {
-
-			int copyNo = 1;
-			for (ILogicalQueryPart copiedPart : copiesToOriginals
-					.get(originalPart)) {
-
-				for (ILogicalOperator copiedOperator : copiedPart
-						.getOperators()) {
-
-					if (copiedOperator.getUniqueIdentifier() != null) {
-
-						copiedOperator
-								.setUniqueIdentifier(copiedOperator
-										.getUniqueIdentifier()
-										+ String.valueOf(copyNo));
-
-					}
-
-				}
-				copyNo++;
-
-			}
-
-		}
-
 		bundle.setCopyMap(copiesToOriginals);
 
 		// Check, if the degree of fragmentation is suitable for the number of
 		// available peers
-		if (!AbstractFragmentationQueryPartModificator
-				.validateDegreeOfFragmentation(bundle)) {
+		if (!ModificationHelper.validateDegreeOfModification(ModificationHelper
+				.calcSize(bundle.getCopyMap().values()))) {
 
 			AbstractFragmentationQueryPartModificator.LOG
 					.warn("Got not enough peers for a suitable fragmentation!");
@@ -498,9 +419,16 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		bundle.setDegreeOfFragmentation(helper.determineDegreeOfModification());
 
 		// Determine identifiers for start point and end point for fragmentation
-		final IPair<ILogicalOperator, Optional<ILogicalOperator>> startAndendPointOfFragmentation = helper
+		final IPair<Optional<ILogicalOperator>, Optional<ILogicalOperator>> startAndendPointOfFragmentation = helper
 				.determineStartAndEndPoints(queryParts);
-		bundle.setOriginStartOperator(startAndendPointOfFragmentation.getE1());
+		if (!startAndendPointOfFragmentation.getE1().isPresent()) {
+
+			throw new QueryPartModificationException(
+					"No start of fragmentation given!");
+
+		}
+		bundle.setOriginStartOperator(startAndendPointOfFragmentation.getE1()
+				.get());
 		bundle.setOriginEndOperator(startAndendPointOfFragmentation.getE2());
 
 		// Determine query parts to be fragments and those to be outside of

@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -15,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 
@@ -24,6 +28,46 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
  * @author Michael Brand
  */
 public class ModificationHelper {
+
+	/**
+	 * The logger for this class.
+	 */
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ModificationHelper.class);
+
+	/**
+	 * The bound {@link IP2PDictionary}.
+	 */
+	private static IP2PDictionary p2pDict;
+
+	/**
+	 * Binds an {@link IP2PDictionary}.
+	 * 
+	 * @param dict
+	 *            The {@link IP2PDictionary} to bind.
+	 */
+	public static void bindP2PDictionary(IP2PDictionary dict) {
+
+		ModificationHelper.p2pDict = dict;
+
+	}
+
+	/**
+	 * Unbinds an {@link IP2PDictionary}, if <code>dict</code> is the bound one.
+	 * 
+	 * @param dict
+	 *            The {@link IP2PDictionary} to unbind.
+	 */
+	public static void unbindP2PDictionary(IP2PDictionary dict) {
+
+		if (ModificationHelper.p2pDict != null
+				|| ModificationHelper.p2pDict.equals(dict)) {
+
+			ModificationHelper.p2pDict = null;
+
+		}
+
+	}
 
 	/**
 	 * All possible patterns for a string identifying the start or end point of
@@ -462,6 +506,65 @@ public class ModificationHelper {
 
 		return new Pair<ILogicalOperator, Optional<ILogicalOperator>>(
 				startOperator.get(), endOperator);
+
+	}
+
+	/**
+	 * Checks, if there are enough peers available (
+	 * {@link IP2PDictionary#getRemotePeerIDs()}) for the desired degree of
+	 * modification.
+	 * 
+	 * @param numQueryPartsToAllocate
+	 *            The number of query parts to allocate.
+	 * @return True, if the number of available peers is greater than or equal
+	 *         to the degree of modification.
+	 */
+	public static boolean validateDegreeOfModification(
+			int numQueryPartsToAllocate) {
+
+		if (ModificationHelper.p2pDict == null) {
+
+			ModificationHelper.LOG.error("No P2P dictionary found!");
+			return false;
+
+		}
+
+		int availablePeers = ModificationHelper.p2pDict.getRemotePeerIDs()
+				.size();
+
+		if (availablePeers + 1 < numQueryPartsToAllocate) {
+
+			ModificationHelper.LOG.warn("Got {} peers. {} peers needed!",
+					availablePeers, numQueryPartsToAllocate);
+			return false;
+
+		} else if (availablePeers + 1 == numQueryPartsToAllocate) {
+
+			ModificationHelper.LOG
+					.warn("Got enough peers for a suitable fragmentation only if the local peer is considered!");
+
+		}
+
+		return true;
+
+	}
+
+	/**
+	 * Calculates the number of query parts within a 2-dimensional collection.
+	 * 
+	 * @param values
+	 *            The given 2-dimensional collection.
+	 */
+	public static int calcSize(Collection<Collection<ILogicalQueryPart>> values) {
+
+		int size = 0;
+		for (Collection<ILogicalQueryPart> innerCollection : values) {
+
+			size += innerCollection.size();
+
+		}
+
+		return size;
 
 	}
 

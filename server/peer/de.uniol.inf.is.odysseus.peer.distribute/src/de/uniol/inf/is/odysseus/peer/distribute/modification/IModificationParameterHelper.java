@@ -36,13 +36,14 @@ public interface IModificationParameterHelper {
 	 *            The given query parts.
 	 * @return A pair as follows: <br />
 	 *         {@link IPair#getE1()} is the operator, where the modification
-	 *         starts. <br />
+	 *         starts or {@link Optional#absent()}, if no id for an start operator is
+	 *         given. <br />
 	 *         {@link IPair#getE2()} is the operator, where the modification ends
 	 *         or {@link Optional#absent()}, if no id for an end operator is
 	 *         given.
 	 * @throws QueryPartModificationException if any error occurs.
 	 */
-	public IPair<ILogicalOperator, Optional<ILogicalOperator>> determineStartAndEndPoints(
+	public IPair<Optional<ILogicalOperator>, Optional<ILogicalOperator>> determineStartAndEndPoints(
 			Collection<ILogicalQueryPart> queryParts)
 			throws QueryPartModificationException;
 
