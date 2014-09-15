@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
-@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "ElEMENTWINDOW", category={LogicalOperatorCategory.BASE}, doc="This is an element based window.", hidden=true)
+@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "ElEMENTWINDOW", category = { LogicalOperatorCategory.BASE }, doc = "This is an element based window.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/ElementWindow", hidden = true)
 public class ElementWindowAO extends AbstractWindowWithWidthAO {
 
 	private static final long serialVersionUID = -1206019698493473257L;

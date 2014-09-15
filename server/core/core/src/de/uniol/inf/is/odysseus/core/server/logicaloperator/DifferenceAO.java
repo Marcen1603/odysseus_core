@@ -29,7 +29,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * @author Marco Grawunder
  *
  */
-@LogicalOperator(name="DIFFERENCE", minInputPorts=2, maxInputPorts=2, doc="This operator calculates the difference between two input sets.", category={LogicalOperatorCategory.BASE, LogicalOperatorCategory.SET})
+@LogicalOperator(name = "DIFFERENCE", minInputPorts = 2, maxInputPorts = 2, doc = "This operator calculates the difference between two input sets.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Difference+operator", category = {
+        LogicalOperatorCategory.BASE, LogicalOperatorCategory.SET })
 public class DifferenceAO extends BinaryLogicalOp{
 	
 	private static final long serialVersionUID = 4518770628909423647L;

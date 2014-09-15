@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-@LogicalOperator(name = "RENAME", minInputPorts = 1, maxInputPorts = 1, doc="Renames the attributes", category={LogicalOperatorCategory.BASE})
+@LogicalOperator(name = "RENAME", minInputPorts = 1, maxInputPorts = 1, doc = "Renames the attributes", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Rename+operator", category = { LogicalOperatorCategory.BASE })
 public class RenameAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 4218605858465342011L;

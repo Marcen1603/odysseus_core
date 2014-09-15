@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 /**
  * @author Marco Grawunder
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "PROJECT", doc = "Make a projection on the input object (i.e. filter attributes)", category = { LogicalOperatorCategory.BASE })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "PROJECT", doc = "Make a projection on the input object (i.e. filter attributes)", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Project+operator", category = { LogicalOperatorCategory.BASE })
 public class ProjectAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 5487345119018834806L;
 	private List<SDFAttribute> attributes = new ArrayList<>();
