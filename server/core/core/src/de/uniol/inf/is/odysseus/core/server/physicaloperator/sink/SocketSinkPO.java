@@ -51,6 +51,11 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 		this.objectHandler = objectHandler;
 	}
 	
+	public SocketSinkPO(int serverPort, String host, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO, boolean loginNeeded, boolean loginWithSessionId, IObjectHandler objectHandler, boolean push, boolean withMetadata) {
+		this(serverPort,  host,  sinkStreamHandlerBuilder,  useNIO,  loginNeeded,  loginWithSessionId, objectHandler, push);
+		this.withMetadata = withMetadata;
+	}
+	
 	public SocketSinkPO(IServerSocketProvider serverSocketProvider,ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean loginNeeded, boolean loginWithSessionId, IObjectHandler objectHandler) {
 		if (objectHandler == null) {
 			throw new IllegalArgumentException("ObjectHandler cannot be null!");
