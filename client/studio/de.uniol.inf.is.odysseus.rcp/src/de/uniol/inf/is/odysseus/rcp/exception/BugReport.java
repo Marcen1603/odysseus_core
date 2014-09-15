@@ -183,13 +183,13 @@ public class BugReport {
             fields.put("project", project);
             String summary = "";
             try (Scanner scanner = new Scanner(report)) {
-                scanner.useDelimiter("\n");
+                // scanner.useDelimiter("\n");
                 // Skip first line
-                if (scanner.hasNext()) {
-                    scanner.next();
+                if (scanner.hasNextLine()) {
+                    scanner.nextLine();
                 }
-                while ((scanner.hasNext()) && ((summary == null) || ("".equals(summary)))) {
-                    summary = scanner.next();
+                while ((scanner.hasNextLine()) && ((summary == null) || ("".equals(summary)))) {
+                    summary = scanner.nextLine();
                 }
             }
             if ((summary == null) || ("".equals(summary))) {
