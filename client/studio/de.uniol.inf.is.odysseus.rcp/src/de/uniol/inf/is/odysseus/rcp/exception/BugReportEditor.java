@@ -16,6 +16,8 @@
  *******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.exception;
 
+import java.io.IOException;
+
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -27,8 +29,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
@@ -37,6 +42,8 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
  *
  */
 public class BugReportEditor extends Window {
+    private static final Logger LOG = LoggerFactory.getLogger(BugReportEditor.class);
+
     Text textArea;
 
     /**
@@ -53,7 +60,7 @@ public class BugReportEditor extends Window {
     protected Control createButtonBar(final Composite parent) {
         final Composite composite = new Composite(parent, SWT.NONE);
         final GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
+        layout.numColumns = 4;
         layout.makeColumnsEqualWidth = true;
         composite.setLayout(layout);
         final GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER);
@@ -64,10 +71,16 @@ public class BugReportEditor extends Window {
     }
 
     private void createButtonsForButtonBar(final Composite parent) {
+        final Label errorLabel = new Label(parent, SWT.NONE);
+        errorLabel.setText("");
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        data.horizontalSpan = 2;
+        errorLabel.setLayoutData(data);
+
         final Button cancelButton = new Button(parent, SWT.PUSH);
         cancelButton.setText(OdysseusNLS.Cancel);
         cancelButton.setFont(JFaceResources.getDialogFont());
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         Point minSize = cancelButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
         data.widthHint = minSize.x;
         cancelButton.setLayoutData(data);
@@ -89,9 +102,23 @@ public class BugReportEditor extends Window {
         sendButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent event) {
-                BugReport.send(BugReportEditor.this.textArea.getText());
-                BugReportEditor.this.setReturnCode(Window.OK);
-                BugReportEditor.this.close();
+                try {
+                    sendButton.setText(OdysseusNLS.Sending);
+                    boolean result = BugReport.send(BugReportEditor.this.textArea.getText());
+                    if (result) {
+                        BugReportEditor.this.setReturnCode(Window.OK);
+                    }
+                    else {
+                        BugReportEditor.this.setReturnCode(Window.CANCEL);
+                    }
+                    BugReportEditor.this.close();
+                }
+                catch (IOException e) {
+                    errorLabel.setText(e.getMessage());
+                    LOG.error(e.getMessage(), e);
+
+                }
+
             }
         });
         final Shell shell = parent.getShell();

@@ -31,6 +31,7 @@ import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -151,20 +152,20 @@ public class BugReport {
         return report.toString();
     }
 
-    public static void send(final String report) {
+    public static boolean send(final String report) throws IOException {
         try {
             // Report Bugs using email clients (does not work on Windows)
             // BugReport.sendReport(RECIPIENTS, report.toString());
             // Report Bugs using JIRA
-            BugReport.sendReport(report);
-
+            return BugReport.sendReport(report);
         }
-        catch (IOException | URISyntaxException | JSONException e) {
+        catch (ClientProtocolException | URISyntaxException | JSONException e) {
             BugReport.LOG.debug(e.getMessage(), e);
+            throw new IOException(e);
         }
     }
 
-    private static void sendReport(final String report) throws ClientProtocolException, IOException, URISyntaxException, JSONException {
+    private static boolean sendReport(final String report) throws ClientProtocolException, IOException, URISyntaxException, JSONException {
         final BasicCookieStore cookieStore = new BasicCookieStore();
         final CredentialsProvider credsProvider = new BasicCredentialsProvider();
         final URI uri = new URI(BugReport.JIRA);
@@ -210,26 +211,34 @@ public class BugReport {
             try (CloseableHttpResponse response = httpclient.execute(ticket)) {
                 final HttpEntity resEntity = response.getEntity();
                 EntityUtils.consume(resEntity);
+                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
+                    return true;
+                }
+                LOG.error(response.getStatusLine().toString());
+                throw new IOException(response.getStatusLine().getReasonPhrase());
             }
         }
 
     }
 
     @SuppressWarnings("unused")
-    private static void sendReport(final List<String> recipients, final String report) throws IOException, URISyntaxException {
+    private static boolean sendReport(final List<String> recipients, final String report) throws IOException, URISyntaxException {
         final URI mailto = BugReport.format(recipients, BugReport.SUBJECT, report);
         try {
             if (Desktop.isDesktopSupported()) {
                 final Desktop desktop = Desktop.getDesktop();
                 if (desktop.isSupported(Desktop.Action.MAIL)) {
                     desktop.mail(mailto);
+                    return true;
                 }
                 else if (desktop.isSupported(Desktop.Action.BROWSE)) {
                     desktop.browse(mailto);
+                    return true;
                 }
             }
             else {
                 Runtime.getRuntime().exec(new String[] { "open ", mailto.toString() });
+                return true;
             }
         }
         catch (final Exception e) {
@@ -237,6 +246,7 @@ public class BugReport {
             System.out.println("Please send the following bug report to: " + recipients.toString());
             System.out.println(report.toString());
         }
+        return false;
     }
 
     private static StringBuilder getQueryReport() {

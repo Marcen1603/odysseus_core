@@ -76,6 +76,7 @@ public class OdysseusNLS extends NLS {
     public static String ArgumentTypes;
 
     public static String SendBugReport;
+    public static String Sending;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, OdysseusNLS.class);
