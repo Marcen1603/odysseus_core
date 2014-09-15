@@ -150,7 +150,7 @@ public class SocketService {
 		
 		SocketSinkPO sink = new SocketSinkPO(port, "",
 				new NioByteBufferSinkStreamHandlerBuilder(), true, false, false,
-				objectHandler, false);
+				objectHandler, false, false);
 
 		rootAsSource.subscribeSink((ISink) sink, 0, 0, root.getOutputSchema(),
 				true, 0);
