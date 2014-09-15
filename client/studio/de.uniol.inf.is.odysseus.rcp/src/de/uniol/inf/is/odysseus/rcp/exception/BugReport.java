@@ -125,8 +125,9 @@ public class BugReport {
 
     public String getReport() {
         final StringBuilder report = new StringBuilder();
-        report.append("Dear Developer,\n\n");
+        report.append("*** Odysseus Bug Report *** \n\n");
         report.append("*** Reporter, please consider answering these questions, where appropriate ***\n\n");
+        report.append("* If you want a reply please enter a valid e-mail adress:\n\n");
         report.append("* What led up to the situation?\n\n");
         report.append("* What exactly did you do (or not do) that was effective (or ineffective)?\n\n");
         report.append("* What was the outcome of this action?\n\n");
@@ -185,9 +186,9 @@ public class BugReport {
             try (Scanner scanner = new Scanner(report)) {
                 // scanner.useDelimiter("\n");
                 // Skip first line
-                if (scanner.hasNextLine()) {
-                    scanner.nextLine();
-                }
+//                if (scanner.hasNextLine()) {
+//                    scanner.nextLine();
+//                }
                 while ((scanner.hasNextLine()) && ((summary == null) || ("".equals(summary)))) {
                     summary = scanner.nextLine();
                 }
