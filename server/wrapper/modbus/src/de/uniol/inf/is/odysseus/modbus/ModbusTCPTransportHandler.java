@@ -19,16 +19,17 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class ModbusTCPTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> {
+public class ModbusTCPTransportHandler extends
+		AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> {
 
 	private static final int DEFAULT_PORT = 0;
 	public static final String NAME = "ModbusTCP";
-	
+
 	public static final String PORT = "port";
 	public static final String SLAVE = "slave";
 	public static final String REF = "ref";
 	public static final String COUNT = "count";
-	
+
 	private int port;
 	private InetAddress slave;
 	private int ref;
@@ -38,9 +39,9 @@ public class ModbusTCPTransportHandler extends AbstractSimplePullTransportHandle
 	private ModbusTCPTransaction trans;
 	private ReadInputDiscretesRequest req;
 
-	public ModbusTCPTransportHandler(){
+	public ModbusTCPTransportHandler() {
 	}
-	
+
 	public ModbusTCPTransportHandler(IProtocolHandler<?> protocolHandler,
 			OptionMap options) {
 		super(protocolHandler, options);
@@ -50,28 +51,28 @@ public class ModbusTCPTransportHandler extends AbstractSimplePullTransportHandle
 	private void init(OptionMap options) {
 		port = DEFAULT_PORT;
 		String slaveStr;
-		if (options.containsKey(PORT)){
+		if (options.containsKey(PORT)) {
 			port = Integer.parseInt(options.get(PORT));
 		}
-		if (options.containsKey(SLAVE)){
+		if (options.containsKey(SLAVE)) {
 			slaveStr = options.get(SLAVE);
-		}else{
-			throw new IllegalArgumentException(SLAVE+" option must be set");
+		} else {
+			throw new IllegalArgumentException(SLAVE + " option must be set");
 		}
 		try {
 			slave = InetAddress.getByName(slaveStr);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		if (options.containsKey(REF)){
+		if (options.containsKey(REF)) {
 			ref = Integer.parseInt(options.get(REF));
-		}else{
-			throw new IllegalArgumentException(REF+" option must be set");
+		} else {
+			throw new IllegalArgumentException(REF + " option must be set");
 		}
-		if (options.containsKey(COUNT)){
+		if (options.containsKey(COUNT)) {
 			count = Integer.parseInt(options.get(COUNT));
-		}else{
-			throw new IllegalArgumentException(COUNT+" option must be set");
+		} else {
+			throw new IllegalArgumentException(COUNT + " option must be set");
 		}
 	}
 
@@ -97,7 +98,7 @@ public class ModbusTCPTransportHandler extends AbstractSimplePullTransportHandle
 			throw new IOException(e);
 		}
 		// TODO: This seems to read one value --> List of ref and count!
-		
+
 		// 3. Prepare the request
 		req = new ReadInputDiscretesRequest(ref, count);
 
@@ -142,28 +143,32 @@ public class ModbusTCPTransportHandler extends AbstractSimplePullTransportHandle
 
 	@Override
 	public boolean hasNext() {
-		return true; 
+		return true;
 	}
 
 	@Override
 	public Tuple<IMetaAttribute> getNext() {
 		try {
 			trans.execute();
-		} catch (NullPointerException np){
+		} catch (NullPointerException np) {
 			System.err.println("got nullpointer from modbus");
 		} catch (ModbusException e) {
 			e.printStackTrace();
 		}
 		ReadInputDiscretesResponse res = (ReadInputDiscretesResponse) trans
 				.getResponse();
+		if (res != null) {
+			System.err.println("Return was null");
+		}
 		Tuple<IMetaAttribute> t = new Tuple<>(1, false);
-		System.out.println("Digital Inputs Status="
-				+ res.getDiscretes().toString());
+		// System.out.println("Digital Inputs Status="
+		// + res.getDiscretes().toString());
 
-		BitVector out = res.getDiscretes().createOdysseusBitVector();
-		
-		t.setAttribute(0, out);
-		
+		if (res != null) {
+			BitVector out = res.getDiscretes().createOdysseusBitVector();
+
+			t.setAttribute(0, out);
+		}
 		return t;
 	}
 
