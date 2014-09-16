@@ -10,4 +10,6 @@ Require-Bundle: Jxta_2.6_Source,
  com.google.guava,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.slf4j
-Service-Component: OSGI-INF/BackupInformationStore.xml
+Service-Component: OSGI-INF/BackupInformationStore.xml,
+ OSGI-INF/RecoveryQueryDistributionListener.xml
+Export-Package: de.uniol.inf.is.odysseus.peer.recovery
