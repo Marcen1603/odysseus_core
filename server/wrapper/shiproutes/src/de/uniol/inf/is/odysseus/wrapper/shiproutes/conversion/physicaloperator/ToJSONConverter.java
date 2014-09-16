@@ -546,11 +546,12 @@ public class ToJSONConverter {
 		for (int i = 0; i < countOfObjectDatas; i++) {
 			ObjectData objectData = msg_ivef.getBody().getObjectDatas()
 					.getObjectDataAt(i);
-			if (objectData.getTrackData() != null) {
+			if (objectData.getVesselDataAt(0) != null) {
 				Route route = null;
-				if (routeDatas.containsKey(objectData.getTrackData().getId())) {
-					route = routeDatas.get(objectData.getTrackData().getId())
-							.getRoute();
+				if (routeDatas.containsKey(objectData.getVesselDataAt(0)
+						.getId())) {
+					route = routeDatas.get(
+							objectData.getVesselDataAt(0).getId()).getRoute();
 				} else {
 					RouteDataItem routeDataItem = new RouteDataItem();
 					routeDataItem.setData_item_id("Route");
@@ -558,11 +559,11 @@ public class ToJSONConverter {
 					routeDataItem.setRoute(route);
 
 					if (objectData.countOfVesselDatas() > 0) {
-						de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.VesselData staticData = objectData
+						de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.VesselData vesselData = objectData
 								.getVesselDataAt(0);
-						route.setRoute_ID(Integer.parseInt(staticData
+						route.setRoute_ID(Integer.parseInt(vesselData
 								.getSourceId()));
-						route.setRoute_label(staticData.getSourceName());
+						route.setRoute_label(vesselData.getSourceName());
 					}
 					RouteState routeState = new RouteState();
 					routeState.setHas_alarms(false);
@@ -571,28 +572,32 @@ public class ToJSONConverter {
 					routeState.setHas_warnings(false);
 					route.setRoute_state(routeState);
 
-					routeDatas.put(objectData.getTrackData().getId(),
+					routeDatas.put(objectData.getVesselDataAt(0).getId(),
 							routeDataItem);
 				}
 
-				Waypoint waypoint = new Waypoint();
-				waypoint.setID(idCounter);
-				if (objectData.getTrackData().countOfPoss() > 0) {
-					waypoint.setLat_rad(Math.toRadians(objectData
-							.getTrackData().getPosAt(0).getLat()));
-					waypoint.setLon_rad(Math.toRadians(objectData
-							.getTrackData().getPosAt(0).getLong()));
-				}
-				waypoint.setTurnradius_nm(objectData.getTrackData().getROT());
-				waypoint.setSpeed_kts(objectData.getTrackData().getSOG()
-						* MS_TO_KTS);
+				for (int j = 0; j < objectData.getVoyageDataAt(0)
+						.countOfWaypoints(); j++) {
+					de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.Waypoint voyageWaypoint = objectData
+							.getVoyageDataAt(0).getWaypointAt(j);
 
-				if (route.getWaypoints() == null) {
-					route.setWaypoints(new ArrayList<Waypoint>());
+					Waypoint waypoint = new Waypoint();
+					waypoint.setID(idCounter);
+					if (objectData.getTrackData().countOfPoss() > 0) {
+						waypoint.setLat_rad(Math.toRadians(voyageWaypoint
+								.getPos().getLat()));
+						waypoint.setLon_rad(Math.toRadians(voyageWaypoint
+								.getPos().getLong()));
+					}
+
+					if (route.getWaypoints() == null) {
+						route.setWaypoints(new ArrayList<Waypoint>());
+					}
+					route.getWaypoints().add(waypoint);
+					idCounter++;
 				}
-				route.getWaypoints().add(waypoint);
+
 				route.setNumber_of_wp(route.getWaypoints().size());
-				idCounter++;
 			}
 		}
 		return new ArrayList<IShipRouteRootElement>(routeDatas.values());
@@ -609,42 +614,45 @@ public class ToJSONConverter {
 		for (int i = 0; i < countOfObjectDatas; i++) {
 			ObjectData objectData = msg_ivef.getBody().getObjectDatas()
 					.getObjectDataAt(i);
-			if (objectData.getTrackData() != null) {
+			if (objectData.getVesselDataAt(0) != null) {
 				PredictionPlan predictionPlan = null;
-				if (predictionDatas.containsKey(objectData.getTrackData()
+				if (predictionDatas.containsKey(objectData.getVesselDataAt(0)
 						.getId())) {
 					predictionPlan = predictionDatas.get(
-							objectData.getTrackData().getId()).getMplan();
+							objectData.getVesselDataAt(0).getId()).getMplan();
 				} else {
 					PredictionDataItem predictionDataItem = new PredictionDataItem();
 					predictionDataItem.setData_item_id("Prediction");
 					predictionPlan = new PredictionPlan();
 					predictionDataItem.setMplan(predictionPlan);
-					predictionDatas.put(objectData.getTrackData().getId(),
+					predictionDatas.put(objectData.getVesselDataAt(0).getId(),
 							predictionDataItem);
 				}
 
-				PredictionPoint predictionPoint = new PredictionPoint();
-				predictionPoint.setID(idCounter);
-				if (objectData.getTrackData().countOfPoss() > 0) {
-					predictionPoint.setLat_rad(Math.toRadians(objectData
-							.getTrackData().getPosAt(0).getLat()));
-					predictionPoint.setLon_rad(Math.toRadians(objectData
-							.getTrackData().getPosAt(0).getLong()));
+				for (int j = 0; j < objectData.getVoyageDataAt(0)
+						.countOfWaypoints(); j++) {
+					de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.Waypoint voyageWaypoint = objectData
+							.getVoyageDataAt(0).getWaypointAt(j);
+
+					PredictionPoint predictionPoint = new PredictionPoint();
+					predictionPoint.setID(idCounter);
+					if (objectData.getTrackData().countOfPoss() > 0) {
+						predictionPoint.setLat_rad(Math
+								.toRadians(voyageWaypoint.getPos().getLat()));
+						predictionPoint.setLon_rad(Math
+								.toRadians(voyageWaypoint.getPos().getLong()));
+					}
+
+					if (predictionPlan.getPred_points() == null) {
+						predictionPlan
+								.setPred_points(new ArrayList<PredictionPoint>());
+					}
+					predictionPlan.getPred_points().add(predictionPoint);
+					idCounter++;
 				}
 
-				predictionPoint.setCourse_over_ground_rad(objectData
-						.getTrackData().getCOG());
-				predictionPoint.setRate_of_turn(objectData.getTrackData()
-						.getROT());
-				if (predictionPlan.getPred_points() == null) {
-					predictionPlan
-							.setPred_points(new ArrayList<PredictionPoint>());
-				}
-				predictionPlan.getPred_points().add(predictionPoint);
 				predictionPlan.setNumber_of_Prediction_points(predictionPlan
 						.getPred_points().size());
-				idCounter++;
 			}
 		}
 		return new ArrayList<IShipRouteRootElement>(predictionDatas.values());
@@ -661,12 +669,12 @@ public class ToJSONConverter {
 		for (int i = 0; i < countOfObjectDatas; i++) {
 			ObjectData objectData = msg_ivef.getBody().getObjectDatas()
 					.getObjectDataAt(i);
-			if (objectData.getTrackData() != null) {
+			if (objectData.getVesselDataAt(0) != null) {
 				ManoeuvrePlan manoeuvrePlan = null;
-				if (manoeuvreDatas.containsKey(objectData.getTrackData()
+				if (manoeuvreDatas.containsKey(objectData.getVesselDataAt(0)
 						.getId())) {
 					manoeuvrePlan = manoeuvreDatas.get(
-							objectData.getTrackData().getId()).getMplan();
+							objectData.getVesselDataAt(0).getId()).getMplan();
 				} else {
 					ManoeuvrePlanDataItem manoeuvreDataItem = new ManoeuvrePlanDataItem();
 					manoeuvreDataItem.setData_item_id("MPlan");
@@ -680,30 +688,33 @@ public class ToJSONConverter {
 								.setMplan_label(vesselData.getSourceName());
 					}
 					manoeuvreDataItem.setMplan(manoeuvrePlan);
-					manoeuvreDatas.put(objectData.getTrackData().getId(),
+					manoeuvreDatas.put(objectData.getVesselDataAt(0).getId(),
 							manoeuvreDataItem);
 				}
 
-				ManoeuvrePoint manoeuvrePoint = new ManoeuvrePoint();
-				manoeuvrePoint.setID(idCounter);
-				if (objectData.getTrackData().countOfPoss() > 0) {
-					manoeuvrePoint.setLat_rad(Math.toRadians(objectData
-							.getTrackData().getPosAt(0).getLat()));
-					manoeuvrePoint.setLon_rad(Math.toRadians(objectData
-							.getTrackData().getPosAt(0).getLong()));
-				}
-				manoeuvrePoint.setSog_long_kts(objectData.getTrackData()
-						.getSOG());
-				manoeuvrePoint.setCourse_over_ground_rad(objectData
-						.getTrackData().getCOG());
-				manoeuvrePoint.setRate_of_turn(objectData.getTrackData()
-						.getROT());
+				for (int j = 0; j < objectData.getVoyageDataAt(0)
+						.countOfWaypoints(); j++) {
+					de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.Waypoint voyageWaypoint = objectData
+							.getVoyageDataAt(0).getWaypointAt(j);
 
-				if (manoeuvrePlan.getMpoints() == null) {
-					manoeuvrePlan.setMpoints(new ArrayList<ManoeuvrePoint>());
+					ManoeuvrePoint manoeuvrePoint = new ManoeuvrePoint();
+					manoeuvrePoint.setID(idCounter);
+					if (objectData.getTrackData().countOfPoss() > 0) {
+						manoeuvrePoint.setLat_rad(Math.toRadians(voyageWaypoint
+								.getPos().getLat()));
+						manoeuvrePoint.setLon_rad(Math.toRadians(voyageWaypoint
+								.getPos().getLong()));
+					}
+
+					if (manoeuvrePlan.getMpoints() == null) {
+						manoeuvrePlan
+								.setMpoints(new ArrayList<ManoeuvrePoint>());
+					}
+					manoeuvrePlan.getMpoints().add(manoeuvrePoint);
+					idCounter++;
 				}
-				manoeuvrePlan.getMpoints().add(manoeuvrePoint);
-				idCounter++;
+				manoeuvrePlan
+						.setNumber_of_mp(manoeuvrePlan.getMpoints().size());
 			}
 		}
 		return new ArrayList<IShipRouteRootElement>(manoeuvreDatas.values());

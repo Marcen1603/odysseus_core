@@ -497,34 +497,33 @@ public class ToIECConverterHelper {
 					iecRoutes.put(objectData.getTrackData().getId(), iecRoute);
 				}
 
-				IECWaypoint iecWaypoint = new IECWaypoint();
-				iecWaypoint.setId(idCounter);
-				if (objectData.getTrackData().countOfPoss() > 0) {
-					de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.Pos pos = objectData.getTrackData().getPosAt(0);
+				
+				for (int j = 0; j < objectData.getVoyageDataAt(0).countOfWaypoints(); j++) {
+					de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.Waypoint voyageWaypoint = objectData.getVoyageDataAt(0).getWaypointAt(j);
+					IECWaypoint iecWaypoint = new IECWaypoint();
+					iecWaypoint.setId(idCounter);
+					
 					IECPosition iecPosition = new IECPosition();
-					iecPosition.setLatitude(pos.getLat());
-					iecPosition.setLongitude(pos.getLong());
+					iecPosition.setLatitude(voyageWaypoint.getPos().getLat());
+					iecPosition.setLongitude(voyageWaypoint.getPos().getLong());
 					iecWaypoint.setPosition(iecPosition);
-				}
-
-				IECLeg iecLeg = new IECLeg();
-				iecLeg.setGeometryType(GeometryType.Orthodrome);
-				if (objectData.countOfVoyageDatas() > 0) {
-					VoyageData voyageData = objectData.getVoyageDataAt(0);
-					iecLeg.setDraughtForward(voyageData.getDraught());
-					iecLeg.setDraughtAft(voyageData.getDraught());
-				}
-				iecWaypoint.setLeg(iecLeg);
-				iecRoute.getWaypoints().addwaypoint(iecWaypoint);
-
-				IECScheduleElement iecScheduleElement = new IECScheduleElement();
-				iecScheduleElement.setWaypointID(idCounter);
-				iecScheduleElement.setSpeed(objectData.getTrackData().getSOG());
-				iecScheduleElement.setCurrentDirection(objectData
-						.getTrackData().getCOG());
-				iecRoute.getSchedules().getSchedules().get(0).getManual()
-						.addScheduleElement(iecScheduleElement);
-				idCounter++;
+					
+					IECLeg iecLeg = new IECLeg();
+					iecLeg.setGeometryType(GeometryType.Orthodrome);
+					if (objectData.countOfVoyageDatas() > 0) {
+						VoyageData voyageData = objectData.getVoyageDataAt(0);
+						iecLeg.setDraughtForward(voyageData.getDraught());
+						iecLeg.setDraughtAft(voyageData.getDraught());
+					}
+					iecWaypoint.setLeg(iecLeg);
+					iecRoute.getWaypoints().addwaypoint(iecWaypoint);
+					
+					IECScheduleElement iecScheduleElement = new IECScheduleElement();
+					iecScheduleElement.setWaypointID(idCounter);
+					iecRoute.getSchedules().getSchedules().get(0).getManual()
+							.addScheduleElement(iecScheduleElement);
+					idCounter++;
+				}				
 			}
 		}
 
