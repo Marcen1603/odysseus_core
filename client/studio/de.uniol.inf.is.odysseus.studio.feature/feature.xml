@@ -169,12 +169,6 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
    <plugin
-         id="org.apache.commons.codec_1_7"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="org.json"
          download-size="0"
          install-size="0"
