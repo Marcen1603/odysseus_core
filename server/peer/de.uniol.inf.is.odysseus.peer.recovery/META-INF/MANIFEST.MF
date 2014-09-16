@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: P2P Recovery
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.recovery
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Michael Brand
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: Jxta_2.6_Source,
+ de.uniol.inf.is.odysseus.peer.distribute
