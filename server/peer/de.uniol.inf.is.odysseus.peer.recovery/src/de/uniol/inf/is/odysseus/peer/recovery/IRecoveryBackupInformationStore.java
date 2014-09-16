@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.peer.recovery;
 
 import java.util.Collection;
 
-import net.jxta.peer.PeerID;
+import net.jxta.id.ID;
 
 import com.google.common.collect.ImmutableCollection;
 
@@ -30,7 +30,7 @@ public interface IRecoveryBackupInformationStore {
 	 *         <code>False</code> if there are backup information about that
 	 *         query already stored.
 	 */
-	public boolean addSharedQuery(PeerID sharedQueryId,
+	public boolean addSharedQuery(ID sharedQueryId,
 			Collection<ILogicalQueryPart> queryParts);
 
 	/**
@@ -38,7 +38,7 @@ public interface IRecoveryBackupInformationStore {
 	 * 
 	 * @return A collection of shared queries (their ids).
 	 */
-	public ImmutableCollection<PeerID> getStoredSharedQueries();
+	public ImmutableCollection<ID> getStoredSharedQueries();
 
 	/**
 	 * All query parts, which are part of a given shared query.
@@ -49,7 +49,7 @@ public interface IRecoveryBackupInformationStore {
 	 * @return A collection of all query parts of the shared query.
 	 */
 	public ImmutableCollection<ILogicalQueryPart> getStoredQueryParts(
-			PeerID sharedQueryId);
+			ID sharedQueryId);
 
 	/**
 	 * Removes a backup information for a shared query.
@@ -61,6 +61,6 @@ public interface IRecoveryBackupInformationStore {
 	 *         <code>False</code> if there are no backup information about that
 	 *         query stored.
 	 */
-	public boolean removeStoredSharedQuery(PeerID sharedQueryId);
+	public boolean removeStoredSharedQuery(ID sharedQueryId);
 
 }

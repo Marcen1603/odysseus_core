@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import net.jxta.peer.PeerID;
+import net.jxta.id.ID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,11 +38,11 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	 * The stored information as a mapping of {@link AllocationInformation}s to
 	 * their shared query (it's id).
 	 */
-	private final Map<PeerID, ImmutableCollection<ILogicalQueryPart>> mInfoMap = Maps
+	private final Map<ID, ImmutableCollection<ILogicalQueryPart>> mInfoMap = Maps
 			.newHashMap();
 
 	@Override
-	public boolean addSharedQuery(PeerID sharedQueryId,
+	public boolean addSharedQuery(ID sharedQueryId,
 			Collection<ILogicalQueryPart> queryParts) {
 
 		Preconditions.checkNotNull(sharedQueryId,
@@ -70,7 +70,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	}
 
 	@Override
-	public ImmutableCollection<PeerID> getStoredSharedQueries() {
+	public ImmutableCollection<ID> getStoredSharedQueries() {
 
 		return ImmutableSet.copyOf(this.mInfoMap.keySet());
 
@@ -78,7 +78,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 
 	@Override
 	public ImmutableCollection<ILogicalQueryPart> getStoredQueryParts(
-			PeerID sharedQueryId) {
+			ID sharedQueryId) {
 
 		Preconditions
 				.checkNotNull(
@@ -97,7 +97,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	}
 
 	@Override
-	public boolean removeStoredSharedQuery(PeerID sharedQueryId) {
+	public boolean removeStoredSharedQuery(ID sharedQueryId) {
 
 		Preconditions.checkNotNull(sharedQueryId,
 				"The id of the shared query to store must be not null!");
