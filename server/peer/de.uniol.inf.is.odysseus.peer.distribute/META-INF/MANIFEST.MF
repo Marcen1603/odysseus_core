@@ -9,9 +9,14 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.parser.pql.generator,
  de.uniol.inf.is.odysseus.script.parser,
  org.osgi.framework;version="1.3.0"
-Service-Component: OSGI-INF/QueryDistributor.xml,OSGI-INF/DistributionCheckerService.xml,OSGI-INF/PeerExistsCheckDistributionChecker.xml,OSGI-INF/QueryPartitionerService.xml,OSGI-INF/QueryPartModificatorService.xml,OSGI-INF/QueryPartAllocatorService.xml,OSGI-INF/QueryPartController.xml,OSGI-INF/QueryPartReceiver.xml,
- OSGI-INF/PeerPreParserKeywordProvider.xml,OSGI-INF/QueryDistributionPreProcessorService.xml,OSGI-INF/QueryDistributionPostProcessorService.xml,OSGI-INF/LogicalQueryHelper.xml,OSGI-INF/QueryDistributorHelper.xml, OSGI-INF/P2PNetworkManagerService.xml, OSGI-INF/QueryPartSender.xml,
- OSGI-INF/ModificationHelper.xml
+Service-Component: OSGI-INF/QueryDistributor.xml,OSGI-INF/DistributionCheckerService.xml,
+ OSGI-INF/PeerExistsCheckDistributionChecker.xml,OSGI-INF/QueryPartitionerService.xml,
+ OSGI-INF/QueryPartModificatorService.xml,OSGI-INF/QueryPartAllocatorService.xml,
+ OSGI-INF/QueryPartController.xml,OSGI-INF/QueryPartReceiver.xml,OSGI-INF/PeerPreParserKeywordProvider.xml,
+ OSGI-INF/QueryDistributionPreProcessorService.xml,OSGI-INF/QueryDistributionPostProcessorService.xml,
+ OSGI-INF/LogicalQueryHelper.xml,OSGI-INF/QueryDistributorHelper.xml, OSGI-INF/P2PNetworkManagerService.xml, 
+ OSGI-INF/QueryPartSender.xml,OSGI-INF/ModificationHelper.xml,
+ OSGI-INF/QueryDistributionNotifier.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  com.google.guava,

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.util.InterfaceParametersPair;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LoggingHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.util.ParameterHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.util.QueryDistributionNotifier;
 import de.uniol.inf.is.odysseus.peer.distribute.util.QueryDistributorHelper;
 
 public class QueryDistributor implements IQueryDistributor {
@@ -64,29 +66,36 @@ public class QueryDistributor implements IQueryDistributor {
 
 		for (ILogicalQuery query : queries) {
 			LOG.debug("Start distribution of query {}", query);
+			QueryDistributionNotifier.tryNotifyBeforeDistribution(query);
 
 			QueryDistributorHelper.tryPreProcess(serverExecutor, caller, config, preProcessors, query);
+			QueryDistributionNotifier.tryNotifyAfterPreProcessing(query);
 
 			Collection<ILogicalOperator> operators = QueryDistributorHelper.prepareLogicalQuery(query);
 			LOG.debug("Following operators are condidered during distribution: {}", operators);
 
 			QueryDistributorHelper.tryCheckDistribution(config, query, operators);
 			Collection<ILogicalQueryPart> queryParts = QueryDistributorHelper.tryPartitionQuery(config, partitioners, operators, query);
+			QueryDistributionNotifier.tryNotifyAfterPartitioning(query, queryParts);
 			Collection<ILogicalQueryPart> modifiedQueryParts = QueryDistributorHelper.tryModifyQueryParts(config, modificators, queryParts, query);
+			QueryDistributionNotifier.tryNotifyAfterModification(query, queryParts, modifiedQueryParts);
 			Map<ILogicalQueryPart, PeerID> allocationMap = QueryDistributorHelper.tryAllocate(config, allocators, modifiedQueryParts, query);
+			QueryDistributionNotifier.tryNotifyAfterAllocation(query, allocationMap);
 			
 			Map<ILogicalQueryPart, PeerID> allocationMapCopy = copyAllocationMap(allocationMap);
 			
 			QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMapCopy, config, postProcessors, query);
-
+			QueryDistributionNotifier.tryNotifyAfterPostProcessing(query, allocationMapCopy);
+			
 			QueryPartSender.waitFor();
 			
-			List<PeerID> faultyPeers = Lists.newArrayList();		
+			List<PeerID> faultyPeers = Lists.newArrayList();
 			int tries = 0;
 			
 			while( true ) {
 				try {
-					QueryPartSender.getInstance().transmit(allocationMapCopy, serverExecutor, caller, query.getName(), config);
+					ID sharedQueryId = QueryPartSender.getInstance().transmit(allocationMapCopy, serverExecutor, caller, query.getName(), config);
+					QueryDistributionNotifier.tryNotifyAfterTransmission(query, allocationMapCopy, sharedQueryId);
 					break;
 				} catch( QueryPartTransmissionException ex ) {
 					tries++;
@@ -105,9 +114,11 @@ public class QueryDistributor implements IQueryDistributor {
 					LOG.error("Trying to reallocate. Try: {}", tries);
 					
 					allocationMap = QueryDistributorHelper.tryReallocate(config, allocators, allocationMap, faultyPeers);
+					QueryDistributionNotifier.tryNotifyAfterAllocation(query, allocationMap);
 					allocationMapCopy = copyAllocationMap(allocationMap);
 					
 					QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMapCopy, config, postProcessors, query);
+					QueryDistributionNotifier.tryNotifyAfterPostProcessing(query, allocationMapCopy);
 				}
 			}
 		}
