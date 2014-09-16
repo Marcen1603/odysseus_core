@@ -1,8 +1,9 @@
-package de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.listener;
+package de.uniol.inf.is.odysseus.peer.ddc.distribute.communication;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.jxta.document.Advertisement;
 import net.jxta.peer.PeerID;
@@ -24,7 +25,7 @@ import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerAdvertisement;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DistributedDataContainerAdvertisementGenerator;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.DistributedDataContainerCurrentStateMessage;
-import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.DistributedDataContainerCurrentStateResponseMessage;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.DistributedDataContainerCurrentStateAcknowledgement;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.RepeatingMessageSend;
 
 /**
@@ -34,26 +35,26 @@ import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.RepeatingMessageSend
  * @author ChrisToenjesDeye
  * 
  */
-public class DistributedDataContainerAdvertisementListener implements
-		IDistributedDataContainerAdvertisementListener,
+public class DistributedDataContainerCommunicator implements
+		IDistributedDataContainerCommunicator,
 		IPeerCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(DistributedDataContainerAdvertisementListener.class);
+			.getLogger(DistributedDataContainerCommunicator.class);
 
 	private static IDistributedDataContainer ddc;
 
 	private IP2PNetworkManager p2pNetworkManager;
 	private List<UUID> receivedDDCAdvertisements = new ArrayList<UUID>();
 	private List<UUID> receivedInitiatingMessages = new ArrayList<UUID>();
-	private RepeatingMessageSend currentJob;
+	private ConcurrentHashMap<UUID,RepeatingMessageSend> currentJobs = new ConcurrentHashMap<UUID,RepeatingMessageSend>();
 	private static IPeerCommunicator peerCommunicator;
 
 	// called by OSGi-DS
 	public static void bindDDC(IDistributedDataContainer ddc) {
 		Preconditions.checkNotNull(ddc, "The DDC to bind must be not null!");
-		DistributedDataContainerAdvertisementListener.ddc = ddc;
-		DistributedDataContainerAdvertisementListener.LOG.debug(
+		DistributedDataContainerCommunicator.ddc = ddc;
+		DistributedDataContainerCommunicator.LOG.debug(
 				"Bound {} as a DDC", ddc.getClass().getSimpleName());
 
 	}
@@ -62,9 +63,9 @@ public class DistributedDataContainerAdvertisementListener implements
 	public static void unbindDDC(IDistributedDataContainer ddc) {
 
 		Preconditions.checkNotNull(ddc, "The DDC to bind must be not null!");
-		if (DistributedDataContainerAdvertisementListener.ddc == ddc) {
-			DistributedDataContainerAdvertisementListener.ddc = null;
-			DistributedDataContainerAdvertisementListener.LOG.debug(
+		if (DistributedDataContainerCommunicator.ddc == ddc) {
+			DistributedDataContainerCommunicator.ddc = null;
+			DistributedDataContainerCommunicator.LOG.debug(
 					"Unbound {} as a DDC", ddc.getClass().getSimpleName());
 		}
 	}
@@ -90,12 +91,12 @@ public class DistributedDataContainerAdvertisementListener implements
 		peerCommunicator
 				.registerMessageType(DistributedDataContainerCurrentStateMessage.class);
 		peerCommunicator
-				.registerMessageType(DistributedDataContainerCurrentStateResponseMessage.class);
+				.registerMessageType(DistributedDataContainerCurrentStateAcknowledgement.class);
 
 		peerCommunicator.addListener(this,
 				DistributedDataContainerCurrentStateMessage.class);
 		peerCommunicator.addListener(this,
-				DistributedDataContainerCurrentStateResponseMessage.class);
+				DistributedDataContainerCurrentStateAcknowledgement.class);
 	}
 
 	// called by OSGi-DS
@@ -105,12 +106,12 @@ public class DistributedDataContainerAdvertisementListener implements
 			peerCommunicator.removeListener(this,
 					DistributedDataContainerCurrentStateMessage.class);
 			peerCommunicator.removeListener(this,
-					DistributedDataContainerCurrentStateResponseMessage.class);
+					DistributedDataContainerCurrentStateAcknowledgement.class);
 
 			peerCommunicator
 					.unregisterMessageType(DistributedDataContainerCurrentStateMessage.class);
 			peerCommunicator
-					.unregisterMessageType(DistributedDataContainerCurrentStateResponseMessage.class);
+					.unregisterMessageType(DistributedDataContainerCurrentStateAcknowledgement.class);
 
 			peerCommunicator = null;
 		}
@@ -142,18 +143,17 @@ public class DistributedDataContainerAdvertisementListener implements
 					if (ddcAdvertisement.getAddedDDCEntires() != null) {
 						for (DDCEntry addedDdcEntry : ddcAdvertisement
 								.getAddedDDCEntires()) {
-							DistributedDataContainerAdvertisementListener.ddc
+							DistributedDataContainerCommunicator.ddc
 									.add(addedDdcEntry);
 						}
 					}
 
 					// send current state of the ddc to initiating peer
 					List<DDCEntry> ddcEntries = new ArrayList<DDCEntry>();
-					for (DDCKey key : DistributedDataContainerAdvertisementListener.ddc
+					for (DDCKey key : DistributedDataContainerCommunicator.ddc
 							.getKeys()) {
 						try {
-							ddcAdvertisement
-									.addAddedEntry(DistributedDataContainerAdvertisementListener.ddc
+							ddcEntries.add(DistributedDataContainerCommunicator.ddc
 											.get(key));
 						} catch (MissingDDCEntryException e) {
 							// do nothing
@@ -165,9 +165,10 @@ public class DistributedDataContainerAdvertisementListener implements
 							.createMessage(volunteerPeerID,
 									ddcAdvertisement.getAdvertisementUid(),
 									ddcEntries);
-					this.currentJob = new RepeatingMessageSend(
+					RepeatingMessageSend currentJob = new RepeatingMessageSend(
 							peerCommunicator, currentStateMessage,
 							ddcAdvertisement.getInitiatingPeerId());
+					currentJobs.put(ddcAdvertisement.getAdvertisementUid(), currentJob);
 					currentJob.start();
 
 					break;
@@ -176,7 +177,7 @@ public class DistributedDataContainerAdvertisementListener implements
 					if (ddcAdvertisement.getAddedDDCEntires() != null) {
 						for (DDCEntry addedDdcEntry : ddcAdvertisement
 								.getAddedDDCEntires()) {
-							DistributedDataContainerAdvertisementListener.ddc
+							DistributedDataContainerCommunicator.ddc
 									.add(addedDdcEntry);
 						}
 					}
@@ -184,7 +185,7 @@ public class DistributedDataContainerAdvertisementListener implements
 					if (ddcAdvertisement.getRemovedDDCEntires() != null) {
 						for (String[] deletedDdcEntryKey : ddcAdvertisement
 								.getRemovedDDCEntires()) {
-							DistributedDataContainerAdvertisementListener.ddc
+							DistributedDataContainerCommunicator.ddc
 									.remove(new DDCKey(deletedDdcEntryKey));
 						}
 					}
@@ -216,6 +217,8 @@ public class DistributedDataContainerAdvertisementListener implements
 
 			if (!receivedInitiatingMessages.contains(currentStateMessage
 					.getDdcAdvertisementUUID())) {
+				receivedInitiatingMessages.add(currentStateMessage
+						.getDdcAdvertisementUUID());
 
 				DistributedDataContainerAdvertisementGenerator.getInstance()
 						.disableListeningForChanges();
@@ -224,7 +227,7 @@ public class DistributedDataContainerAdvertisementListener implements
 				if (currentStateMessage.getDdcEntries() != null) {
 					for (DDCEntry addedDdcEntry : currentStateMessage
 							.getDdcEntries()) {
-						DistributedDataContainerAdvertisementListener.ddc
+						DistributedDataContainerCommunicator.ddc
 								.add(addedDdcEntry);
 					}
 				}
@@ -232,13 +235,11 @@ public class DistributedDataContainerAdvertisementListener implements
 				DistributedDataContainerAdvertisementGenerator.getInstance()
 						.enableListeningForChanges();
 
-				receivedInitiatingMessages.add(currentStateMessage
-						.getDdcAdvertisementUUID());
 			}
 
 			// send response
-			DistributedDataContainerCurrentStateResponseMessage responseMessage = DistributedDataContainerCurrentStateResponseMessage
-					.createMessage(true);
+			DistributedDataContainerCurrentStateAcknowledgement responseMessage = DistributedDataContainerCurrentStateAcknowledgement
+					.createMessage(true, currentStateMessage.getDdcAdvertisementUUID());
 			try {
 				LOG.debug("Send Response");
 				peerCommunicator.send(currentStateMessage.getVolunteerPeerID(),
@@ -250,10 +251,15 @@ public class DistributedDataContainerAdvertisementListener implements
 
 		}
 
-		if (message instanceof DistributedDataContainerCurrentStateResponseMessage) {
+		if (message instanceof DistributedDataContainerCurrentStateAcknowledgement) {
 			// processing on volunteer peer
-
-			if (this.currentJob != null) {
+			DistributedDataContainerCurrentStateAcknowledgement ack = (DistributedDataContainerCurrentStateAcknowledgement) message;
+			
+			UUID advertisementUUID = ack.getDdcAdvertisementUUID();
+			RepeatingMessageSend currentJob = currentJobs.get(advertisementUUID);
+			currentJobs.remove(advertisementUUID);
+			
+			if (currentJob != null) {
 				currentJob.stopRunning();
 				currentJob = null;
 

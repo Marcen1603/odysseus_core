@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.listener;
+package de.uniol.inf.is.odysseus.peer.ddc.distribute.communication;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 
@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
  * @author ChrisToenjesDeye
  * 
  */
-public interface IDistributedDataContainerAdvertisementListener extends
+public interface IDistributedDataContainerCommunicator extends
 		IAdvertisementDiscovererListener {
 
 }

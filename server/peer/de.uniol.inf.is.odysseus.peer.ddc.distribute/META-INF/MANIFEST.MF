@@ -16,7 +16,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.p2p_new,
  Jxta_2.6_Source,
  de.uniol.inf.is.odysseus.peer.ddc.file;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement,
- de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.listener,
- de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender
-Service-Component: OSGI-INF/DistributedDataContainerAdvertisementListener.xml,OSGI-INF/DistributedDataContainerAdvertisementSender.xml,OSGI-INF/DistributedDataContainerAdvertisementGenerator.xml,
+ de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender,
+ de.uniol.inf.is.odysseus.peer.ddc.distribute.communication
+Service-Component: OSGI-INF/DistributedDataContainerCommunicator.xml,OSGI-INF/DistributedDataContainerAdvertisementSender.xml,OSGI-INF/DistributedDataContainerAdvertisementGenerator.xml,
  OSGI-INF/DDCFileHandlerListener.xml
