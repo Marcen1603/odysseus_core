@@ -60,13 +60,12 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	 * @param maxElementsLine the maxElementsLine to set
 	 */
 	public void setMaxElementsLine(int maxElementsLine) {
-		if (maxElementsLine < this.maxElements) {
-			this.maxElementsLine = maxElementsLine;
-		}
+		this.maxElementsLine = maxElementsLine;
 	}
 
 	private GC gc;
 	private int colorWidth = 20;
+	private Font timestampFont;
 	/**
 	 * @return the timestampTextSize
 	 */
@@ -79,6 +78,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	 */
 	public void setTimestampTextSize(int timestampTextSize) {
 		this.timestampTextSize = timestampTextSize;
+		this.timestampFont = new Font(Display.getCurrent(), "Tahoma", timestampTextSize , SWT.NORMAL);
 	}
 
 	/**
@@ -160,6 +160,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	private long counter;
 	private int timestampTextSize = 12;
 	private boolean fixedTimestamps = true;
+	private Composite parent;
 
 	/**
 	 * @return the fixedTimestamps
@@ -177,11 +178,14 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	@Override
 	public void createPartControl(final Composite parent, ToolBar toolbar) {
-		// SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP
-		parent.setLayout(new FillLayout());
-		canvas = new Canvas(parent, 0);
-		canvas.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		gc = new GC(canvas);
+		this.parent = parent;
+		this.parent.setLayout(new FillLayout());
+		this.canvas = new Canvas(parent, 0);
+		this.canvas.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		this.gc = new GC(canvas);
+		this.timestampFont = new Font(Display.getCurrent(), "Tahoma", timestampTextSize , SWT.NORMAL);
+		
+		
 		
 		updateThread = new Thread(new Runnable() {
 
@@ -222,8 +226,15 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 		int elementsInLine = 0;
 		int xPos = 0;
 		double lastTimestamp = 0-fixedTimestampDiffMilliseconds;	
-		Font font = new Font(Display.getCurrent(), "Tahoma", timestampTextSize , SWT.NORMAL);
-		gc.setFont(font);
+		
+		System.out.println();
+		System.out.println("x: " + this.parent.getSize().x);
+		System.out.println("y: " + this.parent.getSize().y);
+		
+		this.setMaxElementsLine(this.parent.getSize().x / this.colorWidth);
+		System.out.println(this.getMaxElementsLine());
+		
+		gc.setFont(timestampFont);
 		//to clear everything
 		gc.setBackground(new Color(Display.getCurrent(), 255, 255, 255));
 		gc.fillRectangle(0, 0, canvas.getSize().x, canvas.getSize().y);
@@ -239,9 +250,8 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 			xPos += colorWidth;
 
 			if (fixedTimestamps) {
+				// fixed Timestamps
 				if (timestampList.get(i) >= (lastTimestamp+fixedTimestampDiffMilliseconds)) {
-					System.out.println(String.valueOf(timestampList.get(i)));
-					
 					gc.drawString(String.valueOf(timestampList.get(i)), xPos-(colorWidth),  (lineNumber*colorHeight)+(lineNumber*lineSpace)+colorHeight, true);
 					lastTimestamp = timestampList.get(i);
 				}
