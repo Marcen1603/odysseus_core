@@ -29,20 +29,12 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.util.Set;
 
-//import org.apache.commons.codec.binary.Base64;
-//import org.apache.http.HttpEntity;
-//import org.apache.http.HttpStatus;
-//import org.apache.http.client.ClientProtocolException;
-//import org.apache.http.client.CredentialsProvider;
-//import org.apache.http.client.methods.CloseableHttpResponse;
-//import org.apache.http.client.methods.HttpUriRequest;
-//import org.apache.http.client.methods.RequestBuilder;
-//import org.apache.http.entity.StringEntity;
-//import org.apache.http.impl.client.BasicCookieStore;
-//import org.apache.http.impl.client.BasicCredentialsProvider;
-//import org.apache.http.impl.client.CloseableHttpClient;
-//import org.apache.http.impl.client.HttpClients;
-//import org.apache.http.util.EntityUtils;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.commons.httpclient.protocol.Protocol;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Shell;
@@ -74,8 +66,8 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 public class BugReport {
     private static final Logger LOG = LoggerFactory.getLogger(BugReport.class);
     private static final String JIRA = "http://odysseus.informatik.uni-oldenburg.de:8081/rest/api/latest/issue/";
-    private static final String LOGIN = "odysseus_studio";
-    private static final String PW = "jhf4hdds673";
+    // Base64.encodeBase64((BugReport.LOGIN + ':' + BugReport.PW).getBytes())
+    private static final String AUTH = "b2R5c3NldXNfc3R1ZGlvOmpoZjRoZGRzNjcz";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String COMPONENT_ID = "10023"; // Other
     private static final String PROJECT_KEY = "ODY";
@@ -154,75 +146,64 @@ public class BugReport {
     }
 
     public static boolean send(final String report) throws IOException {
-    	throw new UnsupportedOperationException("Currently, not implemented. Sorry.");
-    	//        try {
-//            // Report Bugs using email clients (does not work on Windows)
-//            // BugReport.sendReport(RECIPIENTS, report.toString());
-//            // Report Bugs using JIRA
-//            return BugReport.sendReport(report);
-//        }
-//        catch (ClientProtocolException | URISyntaxException | JSONException e) {
-//            BugReport.LOG.debug(e.getMessage(), e);
-//            throw new IOException(e);
-//        }
+        try {
+            // Report Bugs using email clients (does not work on Windows)
+            // BugReport.sendReport(RECIPIENTS, report.toString());
+            // Report Bugs using JIRA
+            return BugReport.sendReport(report);
+        }
+        catch (URISyntaxException | JSONException e) {
+            BugReport.LOG.debug(e.getMessage(), e);
+            throw new IOException(e);
+        }
     }
 
-//    private static boolean sendReport(final String report) throws ClientProtocolException, IOException, URISyntaxException, JSONException {
-//        final BasicCookieStore cookieStore = new BasicCookieStore();
-//        final CredentialsProvider credsProvider = new BasicCredentialsProvider();
-//        final URI uri = new URI(BugReport.JIRA);
-//        try (CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(cookieStore).setDefaultCredentialsProvider(credsProvider).build()) {
-//            final JSONObject request = new JSONObject();
-//            final JSONObject fields = new JSONObject();
-//            final JSONArray component = new JSONArray();
-//            final JSONObject components = new JSONObject();
-//            components.put("id", BugReport.COMPONENT_ID);
-//            component.put(components);
-//            final JSONObject project = new JSONObject();
-//            project.put("key", BugReport.PROJECT_KEY);
-//            final JSONObject issuetype = new JSONObject();
-//            issuetype.put("name", BugReport.ISSUE_TYPE);
-//            fields.put("project", project);
-//            String summary = "";
-//            try (Scanner scanner = new Scanner(report)) {
-//                // scanner.useDelimiter("\n");
-//                // Skip first line
-////                if (scanner.hasNextLine()) {
-////                    scanner.nextLine();
-////                }
-//                while ((scanner.hasNextLine()) && ((summary == null) || ("".equals(summary)))) {
-//                    summary = scanner.nextLine();
-//                }
-//            }
-//            if ((summary == null) || ("".equals(summary))) {
-//                summary = "Bug Report";
-//            }
-//            fields.put("summary", summary);
-//            fields.put("description", report);
-//            fields.put("issuetype", issuetype);
-//            fields.put("components", component);
-//            request.put("fields", fields);
-//
-//            final StringEntity entity = new StringEntity(request.toString());
-//            entity.setChunked(true);
-//            entity.setContentType("application/json");
-//            // System.out.println(request);
-//            final HttpUriRequest ticket = RequestBuilder.post().setUri(uri).setEntity(entity)
-//                    .setHeader(BugReport.AUTHORIZATION_HEADER, "Basic " + new String(Base64.encodeBase64((BugReport.LOGIN + ':' + BugReport.PW).getBytes())))
-//                    .setHeader("Content-Type", "application/json").build();
-//            try (CloseableHttpResponse response = httpclient.execute(ticket)) {
-//                final HttpEntity resEntity = response.getEntity();
-//                EntityUtils.consume(resEntity);
-//                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
-//                    return true;
-//                }
-//                LOG.error(response.getStatusLine().toString());
-//                throw new IOException(response.getStatusLine().getReasonPhrase());
-//            }
-//        }
-//
-//    }
-//
+    private static boolean sendReport(final String report) throws IOException, URISyntaxException, JSONException {
+        final URI uri = new URI(BugReport.JIRA);
+        HttpClient client = new HttpClient();
+        client.getHostConfiguration().setHost(uri.getHost(), uri.getPort(), Protocol.getProtocol(uri.getScheme()));
+
+        final JSONObject request = new JSONObject();
+        final JSONObject fields = new JSONObject();
+        final JSONArray component = new JSONArray();
+        final JSONObject components = new JSONObject();
+        components.put("id", BugReport.COMPONENT_ID);
+        component.put(components);
+        final JSONObject project = new JSONObject();
+        project.put("key", BugReport.PROJECT_KEY);
+        final JSONObject issuetype = new JSONObject();
+        issuetype.put("name", BugReport.ISSUE_TYPE);
+        fields.put("project", project);
+        String summary = "";
+        try (Scanner scanner = new Scanner(report)) {
+            while ((scanner.hasNextLine()) && ((summary == null) || ("".equals(summary)))) {
+                summary = scanner.nextLine();
+            }
+        }
+        if ((summary == null) || ("".equals(summary))) {
+            summary = "Bug Report";
+        }
+        fields.put("summary", summary);
+        fields.put("description", report);
+        fields.put("issuetype", issuetype);
+        fields.put("components", component);
+        request.put("fields", fields);
+        HttpMethod method = new PostMethod(uri.toString());
+        ((PostMethod) method).setRequestEntity(new StringRequestEntity(request.toString(), "application/json", null));
+        method.setRequestHeader(BugReport.AUTHORIZATION_HEADER, "Basic " + AUTH);
+        client.executeMethod(method);
+
+        if (method.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
+            return true;
+        }
+        LOG.error(method.getStatusLine().toString());
+        System.err.println("Unable to send bug report");
+        System.out.println("Please send the following bug report to: " + RECIPIENTS.toString());
+        System.out.println(report.toString());
+        throw new IOException(method.getStatusLine().getReasonPhrase());
+
+    }
+
     @SuppressWarnings("unused")
     private static boolean sendReport(final List<String> recipients, final String report) throws IOException, URISyntaxException {
         final URI mailto = BugReport.format(recipients, BugReport.SUBJECT, report);

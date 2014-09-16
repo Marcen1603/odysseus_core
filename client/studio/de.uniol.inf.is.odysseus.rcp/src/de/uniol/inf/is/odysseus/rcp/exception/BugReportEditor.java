@@ -102,8 +102,8 @@ public class BugReportEditor extends Window {
         sendButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent event) {
+                sendButton.setText(OdysseusNLS.Sending);
                 try {
-                    sendButton.setText(OdysseusNLS.Sending);
                     boolean result = BugReport.send(BugReportEditor.this.textArea.getText());
                     if (result) {
                         BugReportEditor.this.setReturnCode(Window.OK);
@@ -116,7 +116,7 @@ public class BugReportEditor extends Window {
                 catch (IOException e) {
                     errorLabel.setText(e.getMessage());
                     LOG.error(e.getMessage(), e);
-
+                    sendButton.setText(OdysseusNLS.SendBugReport);
                 }
 
             }
