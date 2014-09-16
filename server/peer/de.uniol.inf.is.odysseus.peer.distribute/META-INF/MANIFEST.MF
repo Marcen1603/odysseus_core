@@ -24,6 +24,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0",
  Jxta_2.6_Source;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.peer.distribute,
+ de.uniol.inf.is.odysseus.peer.distribute.listener,
  de.uniol.inf.is.odysseus.peer.distribute.modification,
  de.uniol.inf.is.odysseus.peer.distribute.parameter,
  de.uniol.inf.is.odysseus.peer.distribute.postprocess,
