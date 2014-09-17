@@ -201,17 +201,18 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		// activeBallBehindGoalline_wnd, BallOnCornerSpot_wnd)
 		//
 
-		ArrayList<String> joinPredicates = new ArrayList<String>();
-		joinPredicates
-				.add("BallBehindGoalline1_left = 1 OR BallBehindGoalline2_right = 1");
-		joinPredicates.add("ts > (spot_ball_ts - "
-				+ TIME_BETWEEN_GOALLINE_AND_CORNER + ")");
-		joinPredicates.add("ts < spot_ball_ts");
-		joinPredicates
-				.add("BallOnCornerSpot1_bottom = 1 OR BallOnCornerSpot2_top = 1");
+//		ArrayList<String> joinPredicates = new ArrayList<String>();
+//		joinPredicates
+//				.add("BallBehindGoalline1_left = 1 OR BallBehindGoalline2_right = 1");
+//		joinPredicates.add("ts > (spot_ball_ts - "
+//				+ TIME_BETWEEN_GOALLINE_AND_CORNER + ")");
+//		joinPredicates.add("ts < spot_ball_ts");
+//		joinPredicates
+//				.add("BallOnCornerSpot1_bottom = 1 OR BallOnCornerSpot2_top = 1");
 
+		String joinPredicates = "(BallBehindGoalline1_left = 1 OR BallBehindGoalline2_right = 1) AND (BallOnCornerSpot1_bottom = 1 OR BallOnCornerSpot2_top = 1) AND (ts > (spot_ball_ts - " + TIME_BETWEEN_GOALLINE_AND_CORNER + ")) AND (ts < spot_ball_ts)";
 		JoinAO cornerJoin = OperatorBuildHelper.createJoinAO(
-				joinPredicates, activeBallBehindGoallineWindow,
+				joinPredicates, null, activeBallBehindGoallineWindow,
 				ballOnCornerSpotWindow);
 		operatorList.add(cornerJoin);
 
