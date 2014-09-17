@@ -1,0 +1,54 @@
+package de.uniol.inf.is.odysseus.rcp.dashboard.windpower;
+
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Display;
+
+public class CanvasUpdater extends Thread {
+		
+	private final Display display;
+	private final Canvas canvas;
+	private final WindTurbineDashboardPart dbp;
+	private final int milliseconds;
+	
+	private boolean isRunning = true;
+
+	public CanvasUpdater(Canvas canvas, WindTurbineDashboardPart dbp, int intervalMillis) {
+		this.display = canvas.getDisplay();
+		this.canvas = canvas;
+		this.milliseconds = intervalMillis;
+		this.dbp = dbp;
+		
+		setName("Wind Turbine Canvas updater");
+		setDaemon(true);
+	}
+
+	public void stopRunning() {
+		isRunning = false;
+	}
+
+	@Override
+	public void run() {
+		while( isRunning && !display.isDisposed()) {
+			if (!canvas.isDisposed() ) {
+				display.asyncExec( new Runnable() {
+					@Override
+					public void run() {
+						if( !canvas.isDisposed() ) {
+							dbp.computeTransformation();
+							canvas.redraw(0, 0, 300, 350, false);;
+						}
+					}
+				});
+				
+				trySleep(milliseconds);
+			}
+		}
+	}
+
+	private static void trySleep(int milliseconds) {
+		try {
+			Thread.sleep(milliseconds);
+		} catch (InterruptedException e) {
+		}
+	}
+}
