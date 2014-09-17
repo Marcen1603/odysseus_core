@@ -16,6 +16,8 @@ public class SenderAO extends AbstractSenderAO {
 
 	private static final long serialVersionUID = -7035132852387239629L;
 
+	private List<Option> optionList = null;
+	
 	public SenderAO() {
 		super();
 	}
@@ -38,6 +40,12 @@ public class SenderAO extends AbstractSenderAO {
 	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options for different handler.")
 	public void setOptions(List<Option> value) {
 		super.setOptions(value);
+		
+		optionList = value;
+	}
+	
+	public List<Option> getOptions() {
+		return optionList;
 	}
 	
 	@Override
