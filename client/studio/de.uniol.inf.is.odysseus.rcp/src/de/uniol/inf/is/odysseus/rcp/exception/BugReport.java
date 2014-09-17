@@ -436,13 +436,15 @@ public class BugReport {
     private static StringBuilder getConsoleReport() {
         final StringBuilder report = new StringBuilder();
         ConsolePlugin plugin = ConsolePlugin.getDefault();
-        IConsoleManager conMan = plugin.getConsoleManager();
-        IConsole[] existing = conMan.getConsoles();
-        for (int i = 0; i < existing.length; i++) {
-            MessageConsole console = (MessageConsole) existing[i];
-            IDocument document = console.getDocument();
-            report.append(console.getName()).append("\n");
-            report.append(document.get()).append("\n");
+        if (plugin != null) {
+            IConsoleManager conMan = plugin.getConsoleManager();
+            IConsole[] existing = conMan.getConsoles();
+            for (int i = 0; i < existing.length; i++) {
+                MessageConsole console = (MessageConsole) existing[i];
+                IDocument document = console.getDocument();
+                report.append(console.getName()).append("\n");
+                report.append(document.get()).append("\n");
+            }
         }
         return report;
     }
