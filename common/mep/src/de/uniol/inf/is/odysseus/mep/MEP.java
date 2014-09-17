@@ -189,6 +189,8 @@ import de.uniol.inf.is.odysseus.mep.functions.transform.ToShortFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToStringFunction;
 import de.uniol.inf.is.odysseus.mep.impl.ExpressionBuilderVisitor;
 import de.uniol.inf.is.odysseus.mep.impl.MEPImpl;
+import de.uniol.inf.is.odysseus.mep.impl.MatrixFunction;
+import de.uniol.inf.is.odysseus.mep.impl.MatrixLine;
 import de.uniol.inf.is.odysseus.mep.impl.SimpleNode;
 
 public class MEP implements IExpressionParser {
@@ -440,6 +442,9 @@ public class MEP implements IExpressionParser {
 		
 		// Array Functions
 		registerFunction(new ListArrayFunction());
+		
+		registerFunction(new MatrixFunction());
+		registerFunction(new MatrixLine());
 	}
 
 	/**

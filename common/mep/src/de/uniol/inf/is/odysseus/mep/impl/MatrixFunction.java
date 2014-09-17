@@ -33,6 +33,10 @@ public class MatrixFunction extends AbstractFunction<double[][]> {
 	 */
     private static final long serialVersionUID = -742218734048620320L;
 
+    public MatrixFunction() {
+    	super("__matrix", 1, SDFDatatype.MATRIX_DOUBLE);
+    }
+    
     public MatrixFunction(IExpression<?>[] lines) {
         super("__matrix", lines.length, getAccTypes(lines.length), SDFDatatype.MATRIX_DOUBLE);
         setArguments(lines);

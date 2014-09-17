@@ -30,7 +30,11 @@ public class MatrixLine extends AbstractFunction<double[]> {
         setArguments(values);
     }
 
-    @Override
+    public MatrixLine() {
+        super("__matrixline", 1, SDFDatatype.VECTOR_DOUBLE);
+	}
+
+	@Override
     public double[] getValue() {
         int arity = getArity();
         double[] value = new double[arity];
