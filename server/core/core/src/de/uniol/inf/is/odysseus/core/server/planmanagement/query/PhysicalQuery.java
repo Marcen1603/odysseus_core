@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sun.awt.util.IdentityArrayList;
+import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -364,6 +365,29 @@ public class PhysicalQuery implements IPhysicalQuery {
 		return children;
 	}
 
+	private List<IPhysicalOperator> getDeepestNonSharedOperators() {
+		List<IPhysicalOperator> pos = new ArrayList<IPhysicalOperator>();
+		for (IPhysicalOperator s : getLeafSources()) {
+			pos.addAll(getNonSharedFathers(s));
+		}
+		return pos;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<? extends IPhysicalOperator> getNonSharedFathers(
+			IPhysicalOperator s) {
+		List<IPhysicalOperator> pos = new ArrayList<IPhysicalOperator>();
+		if (s.getOwner().size() == 1) {
+			pos.add(s);
+		} else {
+			for (PhysicalSubscription<IPhysicalOperator> father : ((ISubscribable<IPhysicalOperator,PhysicalSubscription<IPhysicalOperator>>) s)
+					.getSubscriptions()) {
+				pos.addAll(getNonSharedFathers(father.getTarget()));
+			}
+		}
+		return pos;
+	}
+
 	/**
 	 * Sets the physical children of this query. These children are the physical
 	 * operators which are necessary for the execution of this query. It also
@@ -450,7 +474,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	@Override
 	public Set<IPhysicalOperator> getSharedOperators(IPhysicalQuery otherQuery) {
 		Set<IPhysicalOperator> ops1 = this.getAllOperators();
-		Set<IPhysicalOperator> ops2 = this.getAllOperators();
+		Set<IPhysicalOperator> ops2 = otherQuery.getAllOperators();
 
 		ops1.retainAll(ops2);
 
@@ -540,6 +564,20 @@ public class PhysicalQuery implements IPhysicalQuery {
 		}
 	}
 
+	public void partial(int sheddingFactor){
+		try {
+			QueryState nextState = QueryState.next(queryState,
+					QueryFunction.PARTIAL);
+			for (IPhysicalOperator leaf : getDeepestNonSharedOperators()) {
+				((ISink<?>)leaf).partial(this, sheddingFactor);
+			}
+			queryState = nextState;
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		}
+	
+	}
+	
 	@Override
 	public void stop() {
 		try {

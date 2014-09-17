@@ -531,6 +531,18 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	}
 	
 	// ------------------------------------------------------------------------
+	// Partial
+	// ------------------------------------------------------------------------
+	@Override
+	public void partial(IOperatorOwner id, int sheddingFactor){
+		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
+			if (sub.getTarget().isOwnedBy(id)){
+				sub.setSheddingFactor(sheddingFactor);
+			}
+		}
+	}
+	
+	// ------------------------------------------------------------------------
 	// Getter and Setter
 	// ------------------------------------------------------------------------
 

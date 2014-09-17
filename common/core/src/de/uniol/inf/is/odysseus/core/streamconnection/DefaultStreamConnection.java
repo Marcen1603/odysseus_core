@@ -610,5 +610,11 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void partial(IOperatorOwner id, int sheddingFactor) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

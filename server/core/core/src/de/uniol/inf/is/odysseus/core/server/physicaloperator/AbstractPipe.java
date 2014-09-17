@@ -319,6 +319,15 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	public void resume(IOperatorOwner id) {
 		this.delegateSink.resume(id);
 	}
+
+	// ------------------------------------------------------------------------
+	// partial
+	// ------------------------------------------------------------------------
+	@Override
+	public void partial(IOperatorOwner id, int sheddingFactor){
+		this.delegateSink.partial(id, sheddingFactor);
+	}
+	
 	
 	// ------------------------------------------------------------------------
 	// Subscription management
