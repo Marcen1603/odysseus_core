@@ -127,61 +127,73 @@ public class WindRose extends DialChart {
 		return VIEW_ID_PREFIX + ".dialchart";
 	}
 
+	@Override
 	@ChartSetting(name = "Lower Bound", type = Type.GET)
 	public Double getLowerBound() {
 		return lowerBound;
 	}
 
+	@Override
 	@ChartSetting(name = "Lower Bound", type = Type.SET)
 	public void setLowerBound(Double lowerBound) {
 		this.lowerBound = lowerBound;
 	}
 
+	@Override
 	@ChartSetting(name = "Upper Bound", type = Type.GET)
 	public Double getUpperBound() {
 		return upperBound;
 	}
 
+	@Override
 	@ChartSetting(name = "Upper Bound", type = Type.SET)
 	public void setUpperBound(Double upperBound) {
 		this.upperBound = upperBound;
 	}
 
+	@Override
 	@ChartSetting(name = "Start Angle", type = Type.GET)
 	public Double getStartAngle() {
 		return startAngle;
 	}
 
+	@Override
 	@ChartSetting(name = "Start Angle", type = Type.SET)
 	public void setStartAngle(Double startAngle) {
 		this.startAngle = startAngle;
 	}
 
+	@Override
 	@ChartSetting(name = "Extent", type = Type.GET)
 	public Double getExtent() {
 		return extent;
 	}
 
+	@Override
 	@ChartSetting(name = "Extent", type = Type.SET)
 	public void setExtent(Double extent) {
 		this.extent = extent;
 	}
 
+	@Override
 	@ChartSetting(name = "Major Tick Increment", type = Type.GET)
 	public Double getMajorTickIncrement() {
 		return majorTickIncrement;
 	}
 
+	@Override
 	@ChartSetting(name = "Major Tick Increment", type = Type.SET)
 	public void setMajorTickIncrement(Double majorTickIncrement) {
 		this.majorTickIncrement = majorTickIncrement;
 	}
 
+	@Override
 	@ChartSetting(name = "Minor Tick Count", type = Type.GET)
 	public Integer getMinorTickCount() {
 		return minorTickCount;
 	}
 
+	@Override
 	@ChartSetting(name = "Minor Tick Count", type = Type.SET)
 	public void setMinorTickCount(Integer minorTickCount) {
 		this.minorTickCount = minorTickCount;
