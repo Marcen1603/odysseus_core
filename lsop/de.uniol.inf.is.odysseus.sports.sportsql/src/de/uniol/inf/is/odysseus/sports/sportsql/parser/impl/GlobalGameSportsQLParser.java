@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
+import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -36,7 +37,7 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
-			throws SportsQLParseException {
+			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 
 		// We need this list to initialize all operators
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();

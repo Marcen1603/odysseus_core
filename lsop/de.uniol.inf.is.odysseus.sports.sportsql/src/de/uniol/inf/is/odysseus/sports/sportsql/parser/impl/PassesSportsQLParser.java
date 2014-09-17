@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -26,9 +27,9 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.MetadataAttri
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceUnitHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.model.Space;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
@@ -36,9 +37,9 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLArrayPa
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLBooleanParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLDistanceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceUnit;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceType;
 
 
 /**
@@ -146,7 +147,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 	
 
 	@Override
-	public ILogicalQuery parse(SportsQLQuery sportsQL) throws SportsQLParseException {
+	public ILogicalQuery parse(SportsQLQuery sportsQL) throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 			
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		
@@ -473,21 +474,21 @@ public class PassesSportsQLParser implements ISportsQLParser {
 	}
 	
 	
-	private SelectAO createSpaceSelectAO(ILogicalOperator source, SportsQLQuery query) throws SportsQLParseException {	
+	private SelectAO createSpaceSelectAO(ILogicalOperator source, SportsQLQuery query) throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {	
 		Map<String, ISportsQLParameter> parameters = query.getParameters();
 		SportsQLSpaceParameter spaceParameter = (SportsQLSpaceParameter) parameters.get("space");
 		
-		int startX = 0;
-		int startY = 0;
-		int endX = 0;
-		int endY = 0;		
+		double startX = 0;
+		double startY = 0;
+		double endX = 0;
+		double endY = 0;		
 		
 		if(spaceParameter != null && spaceParameter.getSpace() != null) {
-			Space space = SpaceHelper.getSpace(spaceParameter.getSpace());
-			startX = space.getStart().x;
-			startY = space.getStart().y;
-			endX = space.getEnd().x;
-			endY = space.getEnd().y;
+			Space space = AbstractSportsDDCAccess.getSpace(spaceParameter.getSpace());
+			startX = space.getXMin();
+			startY = space.getYMin();
+			endX = space.getXMax();
+			endY = space.getYMax();
 		} else if(spaceParameter != null && spaceParameter.getUnit() != null) {
 			SpaceUnit unit = spaceParameter.getUnit();
 			
@@ -496,11 +497,11 @@ public class PassesSportsQLParser implements ISportsQLParser {
 			endX = SpaceUnitHelper.getMillimeters(spaceParameter.getEndx(), unit);
 			endY = SpaceUnitHelper.getMillimeters(spaceParameter.getEndy(), unit);
 		} else {
-			Space space = SpaceHelper.getSpace(SpaceType.field);
-			startX = space.getStart().x;
-			startY = space.getStart().y;
-			endX = space.getEnd().x;
-			endY = space.getEnd().y;
+			Space space = AbstractSportsDDCAccess.getSpace(SpaceType.field);
+			startX = space.getXMin();
+			startY = space.getYMin();
+			endX = space.getXMax();
+			endY = space.getYMax();
 		}
 		
 		ArrayList<String> spaceSelectPredicates = new ArrayList<String>();

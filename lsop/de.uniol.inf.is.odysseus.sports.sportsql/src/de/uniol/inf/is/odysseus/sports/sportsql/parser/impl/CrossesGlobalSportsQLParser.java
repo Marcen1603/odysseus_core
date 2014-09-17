@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -21,6 +22,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
@@ -33,13 +35,11 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  */
 
 @SportsQL(gameTypes = { GameType.SOCCER }, name = "crosses", parameters = {}, statisticTypes = { StatisticType.GLOBAL })
-public class CrossesGlobalSportsQLParser implements ISportsQLParser {
+public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 
 	public final static String TIME_BETWEEN_TARGETZONE_CROSSINGZONE = "2000000000000";
 	
-	//Borders from where the cross has to be shot
-	public final static String CROSSINGZONE_RIGHT_SIDE = "11330";
-	public final static String CROSSINGZONE_LEFT_SIDE = "41184";
+
 	
 	//Zone into which the ball has to fly
 	public final static String TARGETZONE_LEFT_HALF = "-18983";
@@ -54,10 +54,18 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser {
 	
 	/**
 	 * Parses sportsQL
+	 * @throws MissingDDCEntryException 
+	 * @throws NumberFormatException 
 	 */
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
-			throws SportsQLParseException {
+			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
+		
+		
+		//Borders from where the cross has to be shot
+		final double CROSSINGZONE_RIGHT_SIDE = SoccerDDCAccess.getCrossingZoneBorderRight();
+		final double CROSSINGZONE_LEFT_SIDE = SoccerDDCAccess.getCrossingZoneBorderRight();
+		
 		
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		ArrayList<String> predicates = new ArrayList<>();

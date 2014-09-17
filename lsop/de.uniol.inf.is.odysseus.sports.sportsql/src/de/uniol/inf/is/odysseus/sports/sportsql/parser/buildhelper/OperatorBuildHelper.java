@@ -56,9 +56,10 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceUnitHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.TimeUnitHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.model.Space;
@@ -303,27 +304,29 @@ public class OperatorBuildHelper {
 	 * @param source
 	 *            Source Operator
 	 * @return
+	 * @throws MissingDDCEntryException 
+	 * @throws NumberFormatException 
 	 */
 	@SuppressWarnings("rawtypes")
 	public static SelectAO createSpaceSelect(SportsQLSpaceParameter parameter,
-			boolean inMeters, ILogicalOperator source) {
+			boolean inMeters, ILogicalOperator source) throws NumberFormatException, MissingDDCEntryException {
 		
 		SpaceUnit unit = parameter.getUnit();
 		if(unit == null) {
 			unit = SpaceUnit.millimeters;
 		}
 		
-		int startX = SpaceUnitHelper.getMillimeters(parameter.getStartx(), unit);
-		int startY = SpaceUnitHelper.getMillimeters(parameter.getStarty(), unit);
-		int endX = SpaceUnitHelper.getMillimeters(parameter.getEndx(), unit);
-		int endY = SpaceUnitHelper.getMillimeters(parameter.getEndy(), unit);
+		double startX = SpaceUnitHelper.getMillimeters(parameter.getStartx(), unit);
+		double startY = SpaceUnitHelper.getMillimeters(parameter.getStarty(), unit);
+		double endX = SpaceUnitHelper.getMillimeters(parameter.getEndx(), unit);
+		double endY = SpaceUnitHelper.getMillimeters(parameter.getEndy(), unit);
 
 		if(parameter.getSpace() != null) {
-			Space space = SpaceHelper.getSpace(parameter.getSpace());
-			startX = space.getStart().x;
-			startY = space.getStart().y;
-			endX = space.getEnd().x;
-			endY = space.getEnd().y;
+			Space space = AbstractSportsDDCAccess.getSpace(parameter.getSpace());
+			startX = space.getXMin();
+			startY = space.getYMin();
+			endX = space.getXMax();
+			endY = space.getYMax();
 		}
 
 		// Predicate we want to produce:

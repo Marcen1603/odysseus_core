@@ -6,6 +6,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
@@ -54,7 +55,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 	private final String radius = "400";
 
 	@Override
-	public ILogicalQuery parse(SportsQLQuery sportsQL) {
+	public ILogicalQuery parse(SportsQLQuery sportsQL) throws NumberFormatException, MissingDDCEntryException {
 
 		// List for all operators, which will be used in this query plan
 		ArrayList<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
@@ -114,11 +115,13 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 	 * @param sportsQL
 	 * @param allOperators
 	 * @return
+	 * @throws MissingDDCEntryException 
+	 * @throws NumberFormatException 
 	 */
 	public ILogicalOperator getOutputOperator(
 			ILogicalOperator soccerGameStreamAO,
 			ILogicalOperator metadataStreamAO, SportsQLQuery sportsQL,
-			List<ILogicalOperator> allOperators) {
+			List<ILogicalOperator> allOperators) throws NumberFormatException, MissingDDCEntryException {
 
 		// List of predicates to use in single operators
 		ArrayList<String> predicates = new ArrayList<String>();

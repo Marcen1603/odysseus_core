@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -53,7 +54,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 	 * @throws SportsQLParseException
 	 */
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
-			throws SportsQLParseException {
+			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
 		// TODO remove hardcoded information.

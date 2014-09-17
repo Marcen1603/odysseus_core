@@ -176,5 +176,12 @@ public class SoccerDDCAccess extends AbstractSportsDDCAccess {
 		return Double.valueOf(AbstractSportsDDCAccess.ddc.getValue(KEY_GOALAREA_RIGHT_ZMAX)).doubleValue();
 		
 	}
+	
+	public static double getCrossingZoneBorderRight() throws NumberFormatException, MissingDDCEntryException{
+		return getFieldXMax()/5;
+	}
 
+	public static double getCrossingZoneBorderLeft() throws NumberFormatException, MissingDDCEntryException{
+		return getFieldXMax() - getFieldXMax()/5;
+	}
 }

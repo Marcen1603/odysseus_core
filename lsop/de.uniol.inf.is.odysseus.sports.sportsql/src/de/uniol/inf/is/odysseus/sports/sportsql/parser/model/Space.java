@@ -1,31 +1,51 @@
 package de.uniol.inf.is.odysseus.sports.sportsql.parser.model;
 
-import java.awt.Point;
-
 public class Space {
 	
-	private Point start;
-	private Point end;
+	private double xMax;
+	private double xMin;
+	private double yMax;
+	private double yMin;
 	
-	public Space(Point start, Point end) {
-		this.start = start;
-		this.end = end;
+	public Space(double xMin, double yMin, double xMax, double yMax) {
+		this.xMax = xMax;
+		this.xMin = xMin;
+		this.yMax = yMax;
+		this.yMin = yMin;
 	}
 
-	public Point getStart() {
-		return start;
+	public double getXMax() {
+		return xMax;
 	}
 
-	public void setStart(Point start) {
-		this.start = start;
+	public void setXMax(double xMax) {
+		this.xMax = xMax;
 	}
 
-	public Point getEnd() {
-		return end;
+	public double getXMin() {
+		return xMin;
 	}
 
-	public void setEnd(Point end) {
-		this.end = end;
+	public void setXMin(double xMin) {
+		this.xMin = xMin;
 	}
+
+	public double getYMax() {
+		return yMax;
+	}
+
+	public void setYMax(double yMax) {
+		this.yMax = yMax;
+	}
+
+	public double getYMin() {
+		return yMin;
+	}
+
+	public void setYMin(double yMin) {
+		this.yMin = yMin;
+	}
+	
+	
 	
 }

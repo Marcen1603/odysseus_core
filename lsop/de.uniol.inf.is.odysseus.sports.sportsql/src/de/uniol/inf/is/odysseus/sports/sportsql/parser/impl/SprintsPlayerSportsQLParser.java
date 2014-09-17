@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
@@ -30,9 +31,9 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.MetadataAttri
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceUnitHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.model.Space;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
@@ -90,7 +91,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
-			throws SportsQLParseException {
+			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 
 		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
 		StreamAO metadataStreamAO = OperatorBuildHelper
@@ -554,7 +555,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 	// create Overview Output
 	private ILogicalOperator createOverviewOutputAO(ILogicalOperator source,
-			SportsQLSpaceParameter spaceParameter) {
+			SportsQLSpaceParameter spaceParameter) throws NumberFormatException, MissingDDCEntryException {
 
 		SelectAO spaceSelect = OperatorBuildHelper.createSpaceSelect(
 				spaceParameter, false, source);
@@ -627,7 +628,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 	// create Detail Output
 	private ILogicalOperator createDetailOutputAO(ILogicalOperator source,
-			SportsQLSpaceParameter spaceParameter) {
+			SportsQLSpaceParameter spaceParameter) throws NumberFormatException, MissingDDCEntryException {
 
 		SelectAO spaceSelect = OperatorBuildHelper.createSpaceSelect(
 				spaceParameter, false, source);
@@ -745,7 +746,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 	// create Path Output
 	private ILogicalOperator createPathOutputAO(ILogicalOperator source,
-			SportsQLSpaceParameter spaceParameter) {
+			SportsQLSpaceParameter spaceParameter) throws NumberFormatException, MissingDDCEntryException {
 		// path: Statemap
 		List<SDFExpressionParameter> statemapExpressions3 = new ArrayList<SDFExpressionParameter>();
 		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
@@ -797,28 +798,28 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 	// create Space Select
 	@SuppressWarnings("rawtypes")
 	private ILogicalOperator createSpaceSelectAO(ILogicalOperator source,
-			SportsQLSpaceParameter spaceParameter) {
+			SportsQLSpaceParameter spaceParameter) throws NumberFormatException, MissingDDCEntryException {
 
 		SpaceUnit unit = spaceParameter.getUnit();
 		if (unit == null) {
 			unit = SpaceUnit.millimeters;
 		}
 
-		int startX = SpaceUnitHelper.getMillimeters(spaceParameter.getStartx(),
+		double startX = SpaceUnitHelper.getMillimeters(spaceParameter.getStartx(),
 				unit);
-		int startY = SpaceUnitHelper.getMillimeters(spaceParameter.getStarty(),
+		double startY = SpaceUnitHelper.getMillimeters(spaceParameter.getStarty(),
 				unit);
-		int endX = SpaceUnitHelper.getMillimeters(spaceParameter.getEndx(),
+		double endX = SpaceUnitHelper.getMillimeters(spaceParameter.getEndx(),
 				unit);
-		int endY = SpaceUnitHelper.getMillimeters(spaceParameter.getEndy(),
+		double endY = SpaceUnitHelper.getMillimeters(spaceParameter.getEndy(),
 				unit);
 
 		if (spaceParameter.getSpace() != null) {
-			Space space = SpaceHelper.getSpace(spaceParameter.getSpace());
-			startX = space.getStart().x;
-			startY = space.getStart().y;
-			endX = space.getEnd().x;
-			endY = space.getEnd().y;
+			Space space = AbstractSportsDDCAccess.getSpace(spaceParameter.getSpace());
+			startX = space.getXMin();
+			startY = space.getYMin();
+			endX = space.getXMax();
+			endY = space.getYMax();
 		}
 
 		String firstPredicateString = "Start_x >= " + startX;

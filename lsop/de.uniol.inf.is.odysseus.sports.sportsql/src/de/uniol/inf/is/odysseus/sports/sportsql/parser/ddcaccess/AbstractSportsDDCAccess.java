@@ -14,6 +14,8 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
 import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.model.Space;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceType;
 
 /**
  * An access to the DDC, which provides concrete getters. Each getter performs a
@@ -328,15 +330,13 @@ public class AbstractSportsDDCAccess {
 		
 	}
 	
-	
-	
 	/**
 	 * Calculates the x value for the center spot
 	 * @return
 	 * @throws NumberFormatException
 	 * @throws MissingDDCEntryException
 	 */
-	public static Double calculateCenterSpotX() throws NumberFormatException, MissingDDCEntryException{
+	public static Double calculateCenterX() throws NumberFormatException, MissingDDCEntryException{
 		
 		return (getFieldXMax() + getFieldXMin())/2;
 		
@@ -348,10 +348,49 @@ public class AbstractSportsDDCAccess {
 	 * @throws NumberFormatException
 	 * @throws MissingDDCEntryException
 	 */
-	public static Double calculateCenterSpotY() throws NumberFormatException, MissingDDCEntryException{
+	public static Double calculateCenterY() throws NumberFormatException, MissingDDCEntryException{
 		
 		return (getFieldYMax() + getFieldYMin())/2;
 		
+	}
+
+	
+	public static Space getSpace(SpaceType spaceType) throws NumberFormatException, MissingDDCEntryException{
+		int middleThirdLeftBorderY = (int) ((int)((getFieldYMax() + getFieldYMin()) / 3) + getFieldYMin());
+		int middleThirdRightBorderY = (int) ((int)((getFieldYMax() + getFieldYMin()) / 3) - getFieldYMax());;
+		
+		switch(spaceType){
+		case all:
+			return new Space(Integer.MIN_VALUE, Integer.MIN_VALUE, 
+				Integer.MAX_VALUE, Integer.MAX_VALUE);
+		case field:
+			return new Space(getFieldXMin(), getFieldYMin(), 
+				getFieldXMax(), getFieldYMax());
+		case left_half:
+			return new Space(getFieldXMin(), getFieldYMin(), 
+				getFieldXMax(), calculateCenterY());
+		case right_half:
+			return new Space(getFieldXMin(), calculateCenterY(), 
+				getFieldXMax(), getFieldYMax());
+		case left_third:
+			return new Space(getFieldXMin(),getFieldYMin(),
+					getFieldXMax(), middleThirdLeftBorderY);
+		case middle_third:
+			return new Space(getFieldXMin(),middleThirdLeftBorderY, 
+					getFieldXMax(), middleThirdRightBorderY);
+		case right_third:
+			return new Space(getFieldXMin(),middleThirdRightBorderY, 
+					getFieldXMax(), getFieldYMax());
+		case top_half:
+			return new Space(getFieldXMin(), getFieldYMin(), 
+					calculateCenterX(), getFieldYMax());
+		case bottom_half:
+			return new Space(calculateCenterX(), getFieldYMin(), 
+					getFieldXMax(), getFieldYMax());
+		default:
+			break;
+		}
+		return null;
 	}
 
 	
