@@ -21,7 +21,7 @@ public class SystemLoadAdmissionStatusComponent implements IAdmissionStatusCompo
 	}
 	
 	public double getCpuLoadPercentage() {
-		return getCpuLoad() <= 0.0 ? 0.0 : ( getCpuMax() / getCpuLoad() ) * 100.0;
+		return getCpuLoad() <= 0.0 ? 0.0 : ( getCpuLoad() / getCpuMax() ) * 100.0;
 	}
 	
 	public double getNetworkMax() {
@@ -61,6 +61,6 @@ public class SystemLoadAdmissionStatusComponent implements IAdmissionStatusCompo
 	}
 	
 	public double getMemoryLoadPercentage() {
-		return getMemoryLoad() <= 0 ? 0 : (getMemoryMax() / getMemoryLoad() ) * 100.0;
+		return getMemoryLoad() <= 0 ? 0 : (getMemoryLoad() / getMemoryMax() ) * 100.0;
 	}
 }
