@@ -90,15 +90,6 @@ public class OperatorBuildHelper {
 	public static final String TS_GAME_START = "10753295594424116.0";
 	public static final String TS_GAME_END = "14879639146403495.0";
 
-	
-	/**
-	 * centre spot area
-	 */
-	public static final int CENTRESPOT_X1 = 24000; // / upper border
-	public static final int CENTRESPOT_X2 = 30000; // / lower border
-	public static final int CENTRESPOT_Y1 = -2000; // / left border
-	public static final int CENTRESPOT_Y2 = 2000; // / right border
-
 	/**
 	 * Entity names
 	 */

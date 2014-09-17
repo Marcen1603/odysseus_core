@@ -6,11 +6,9 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
@@ -25,16 +23,19 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 
-@SuppressWarnings("unused")
 @SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.GLOBAL }, name = "goals", parameters = {})
 public class GoalsSportsQLParser implements ISportsQLParser {
 
 	// / time (seconds) between goal and kickoff
 	private static final int T_GOAL_KICKOFF = 30;
-	
 	private static final String ONE_SECOND = "1000000000000";
-	
 	private static final int GOAL_DEPTH = 2400;
+	
+	// TODO:
+	// this is the kickoff area around the center spot
+	// usually it has a size of 400mm but in DEBS data stream they lay the ball in a area of 2m around the center
+	private static final int KICKOFF_AREA_RADIUS = 2000;
+	
 
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
@@ -182,14 +183,23 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 	}
 
 	private List<SDFExpressionParameter> getExpressionForOnCentreSpot(
-			ILogicalOperator source) {
+			ILogicalOperator source) throws NumberFormatException, MissingDDCEntryException {
+		
+		double centerX = AbstractSportsDDCAccess.calculateCenterX();
+		double centerY = AbstractSportsDDCAccess.calculateCenterY();
+		
+		double spotTopX = centerX - KICKOFF_AREA_RADIUS;
+		double spotTopY = centerY - KICKOFF_AREA_RADIUS;
+		double spotBottomX = centerX + KICKOFF_AREA_RADIUS;
+		double spotBottomY = centerY + KICKOFF_AREA_RADIUS;
+		
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter ex1 = OperatorBuildHelper
 				.createExpressionParameter("ts", "spot_ball_ts", source);
 		SDFExpressionParameter ex2 = OperatorBuildHelper
-				.createExpressionParameter("eif( x >= " + OperatorBuildHelper.CENTRESPOT_X1
-						+ " AND x <= " + OperatorBuildHelper.CENTRESPOT_X2 + " AND y >= "
-						+ OperatorBuildHelper.CENTRESPOT_Y1 + " AND y <= " + OperatorBuildHelper.CENTRESPOT_Y2
+				.createExpressionParameter("eif( x >= " + spotTopX
+						+ " AND x <= " + spotBottomX + " AND y >= "
+						+ spotTopY + " AND y <= " + spotBottomY
 						+ " , 1, 0)", "onCentreSpot", source);
 		expressions.add(ex1);
 		expressions.add(ex2);
