@@ -73,6 +73,7 @@ public class LMS1xxProtocolHandler extends
 	public static final String PASSWORD = "password";
 
 	/** Key value parameter names. */
+	private final static String RAW_DATA = "RAWDATA";
 	private final static String TIMESTAMP_ATTRIBUTE = "TIMESTAMP";
 	private final static String VERSION_ATTRIBUTE = "VERSION";
 	private final static String DEVICE_ATTRIBUTE = "DEVICE";
@@ -413,7 +414,7 @@ public class LMS1xxProtocolHandler extends
 		}
 	}
 
-	private KeyValueObject<? extends IMetaAttribute> parseLMS1xxScanData(
+	public static Measurement parseLMS1xxScanData(
 			final String[] data) {
 		Preconditions.checkPositionIndex(19, data.length);
 		final Measurement measurement = new Measurement();
@@ -607,10 +608,17 @@ public class LMS1xxProtocolHandler extends
 			@SuppressWarnings("unused")
 			final int angularPosition = Integer.parseInt(data[pos++], 16);
 		}
-
+		
+		measurement.setTimeStamp(calendar.getTimeInMillis());
+		
+		return measurement;
+	}
+	
+	public static Map<String, Object> measurementToMap(Measurement measurement)
+	{
 		final Map<String, Object> event = new HashMap<String, Object>();
 		event.put(LMS1xxProtocolHandler.TIMESTAMP_ATTRIBUTE,
-				calendar.getTimeInMillis());
+				measurement.getTimeStamp());
 		event.put(LMS1xxProtocolHandler.VERSION_ATTRIBUTE,
 				measurement.getVersion());
 		event.put(LMS1xxProtocolHandler.DEVICE_ATTRIBUTE,
@@ -697,7 +705,7 @@ public class LMS1xxProtocolHandler extends
 					remission16Bit2);
 		}
 
-		return new KeyValueObject<>(event);
+		return event;
 	}
 
 	private KeyValueObject<? extends IMetaAttribute> parseLMS1xx(
@@ -726,7 +734,10 @@ public class LMS1xxProtocolHandler extends
 			throw new LMS1xxLoginException(message);
 		} else if (message.startsWith(LMS1xxConstants.SSN)) {
 			if (LMS1xxConstants.LMD_SCANDATA.equalsIgnoreCase(data[1])) {
-				return this.parseLMS1xxScanData(data);
+				Measurement measurement = parseLMS1xxScanData(data);
+				Map<String, Object> event = measurementToMap(measurement);
+				event.put(LMS1xxProtocolHandler.RAW_DATA, "\u0002" + message + "\u0003");
+				return new KeyValueObject<>(event);
 			}
 		} else {
 			throw new LMS1xxUnknownMessageException(message);
