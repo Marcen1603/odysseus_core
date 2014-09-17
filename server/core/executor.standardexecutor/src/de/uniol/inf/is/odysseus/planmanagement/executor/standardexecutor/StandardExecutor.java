@@ -1212,6 +1212,34 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		}
 	}
 
+	@Override
+	public void partialQuery(int queryID, int sheddingFactor, ISession caller)
+			throws PlanManagementException {
+		LOG.info("Set query (ID: " + queryID + ") to patial....");
+
+		IPhysicalQuery queryToPartial = this.executionPlan
+				.getQueryById(queryID);
+		try {
+			QueryState.next(queryToPartial.getState(), QueryFunction.PARTIAL);
+			validateUserRight(queryToPartial, caller,
+					ExecutorPermission.PARTIAL_QUERY);
+			executionPlanChanged(PlanModificationEventType.QUERY_PARTIAL,
+					queryToPartial);
+
+			if (isRunning()) {
+				queryToPartial.partial(sheddingFactor);
+			}
+			firePlanModificationEvent(new QueryPlanModificationEvent(this,
+					PlanModificationEventType.QUERY_PARTIAL, queryToPartial));
+
+		} catch (Exception e) {
+			LOG.warn("Query not in partial mode. An Error while optimizing occurd (ID: "
+					+ queryToPartial.getID() + ")." + e.getMessage());
+			throw new RuntimeException(e);
+			// return;
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

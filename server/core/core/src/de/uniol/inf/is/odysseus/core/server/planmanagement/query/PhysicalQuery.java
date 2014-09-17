@@ -564,6 +564,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 		}
 	}
 
+	@Override
 	public void partial(int sheddingFactor){
 		try {
 			QueryState nextState = QueryState.next(queryState,

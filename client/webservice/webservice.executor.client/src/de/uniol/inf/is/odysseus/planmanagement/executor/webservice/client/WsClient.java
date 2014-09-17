@@ -333,6 +333,12 @@ public class WsClient implements IExecutor, IClientExecutor {
 		}
 		fireUpdateEvent(IUpdateEventListener.QUERY);
 	}
+	
+	@Override
+	public void partialQuery(int queryID, int sheddingFactor, ISession caller)
+			throws PlanManagementException {
+		throw new PlanManagementException("Currently not implemented");
+	}
 
 	@Override
 	public QueryState getQueryState(int queryID) {

@@ -70,4 +70,14 @@ public interface IClientPlanManager{
 	
 	public void resumeQuery(int queryID, ISession caller) throws PlanManagementException;
 
+	/**
+	 * Set a query to query sharing mode
+	 * @param queryID
+	 * @param sheddingFactor value between 0 and 100 (0=no shedding, 100 = shedd all)
+	 * @param caller
+	 * @throws PlanManagementException
+	 */
+	void partialQuery(int queryID, int sheddingFactor, ISession caller)
+			throws PlanManagementException;
+
 }
