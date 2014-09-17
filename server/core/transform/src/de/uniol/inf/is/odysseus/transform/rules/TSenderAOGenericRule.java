@@ -73,7 +73,7 @@ public class TSenderAOGenericRule extends
 		Resource senderPOName = operator.getSinkname();
 
 		OptionMap options = new OptionMap(operator.getOptionsMap());
-		
+
 		IDataHandler<?> dataHandler = getDataHandler(operator);
 		if (dataHandler == null) {
 			LOG.error("No data handler {} found.", operator.getDataHandler());
@@ -90,14 +90,17 @@ public class TSenderAOGenericRule extends
 					+ operator.getProtocolHandler() + " found.");
 		}
 
-		ITransportHandler transportHandler = getTransportHandler(operator,
-				protocolHandler, options);
-		if (transportHandler == null) {
-			LOG.error("No transport handler {} found.",
-					operator.getTransportHandler());
-			throw new TransformationException("No transport handler "
-					+ operator.getTransportHandler() + " found.");
+		if (!operator.getTransportHandler().equalsIgnoreCase("NONE")) {
+			ITransportHandler transportHandler = getTransportHandler(operator,
+					protocolHandler, options);
+			if (transportHandler == null) {
+				LOG.error("No transport handler {} found.",
+						operator.getTransportHandler());
+				throw new TransformationException("No transport handler "
+						+ operator.getTransportHandler() + " found.");
+			}
 		}
+
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		ISink<?> senderPO = new SenderPO(protocolHandler);
 		if (!config.isVirtualTransformation()) {
@@ -107,10 +110,11 @@ public class TSenderAOGenericRule extends
 						.addSink(senderPOName, operator, getCaller());
 			}
 		}
-		
+
 		List<String> unusedOptions = options.getUnreadOptions();
-		LOG.warn("The following options where not used in translation "+unusedOptions);
-		
+		LOG.warn("The following options where not used in translation "
+				+ unusedOptions);
+
 		defaultExecute(operator, senderPO, config, true, true);
 	}
 
@@ -186,8 +190,7 @@ public class TSenderAOGenericRule extends
 		ITransportHandler transportHandler = null;
 		if (operator.getTransportHandler() != null) {
 			transportHandler = TransportHandlerRegistry.getInstance(
-					operator.getTransportHandler(), protocolHandler,
-					options);
+					operator.getTransportHandler(), protocolHandler, options);
 		}
 		return transportHandler;
 	}
@@ -208,13 +211,11 @@ public class TSenderAOGenericRule extends
 			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
 				protocolHandler = ProtocolHandlerRegistry.getInstance(
 						operator.getProtocolHandler(), ITransportDirection.OUT,
-						IAccessPattern.PULL, options,
-						dataHandler);
+						IAccessPattern.PULL, options, dataHandler);
 			} else {
 				protocolHandler = ProtocolHandlerRegistry.getInstance(
 						operator.getProtocolHandler(), ITransportDirection.OUT,
-						IAccessPattern.PUSH, options,
-						dataHandler);
+						IAccessPattern.PUSH, options, dataHandler);
 			}
 		}
 		return protocolHandler;
