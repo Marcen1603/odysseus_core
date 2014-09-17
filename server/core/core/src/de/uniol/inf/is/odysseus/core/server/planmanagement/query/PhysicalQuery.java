@@ -377,7 +377,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	private List<? extends IPhysicalOperator> getNonSharedFathers(
 			IPhysicalOperator s) {
 		List<IPhysicalOperator> pos = new ArrayList<IPhysicalOperator>();
-		if (s.getOwner().size() == 1) {
+		if (s.getOwner().size() == 1 && s.isSink()) {
 			pos.add(s);
 		} else {
 			for (PhysicalSubscription<IPhysicalOperator> father : ((ISubscribable<IPhysicalOperator, PhysicalSubscription<IPhysicalOperator>>) s)
