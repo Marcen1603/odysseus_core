@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
@@ -32,9 +33,6 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 	private static final int T_GOAL_KICKOFF = 30;
 	
 	private static final String ONE_SECOND = "1000000000000";
-
-	private static final int MIN_X = OperatorBuildHelper.LOWERLEFT_X;
-	private static final int MAX_X = OperatorBuildHelper.LOWERRIGHT_X;
 	
 	private static final int GOAL_DEPTH = 2400;
 
@@ -66,7 +64,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		predicates.clear();
 
 		// ball in game field
-		predicate = " x > " + MIN_X + " AND x < " + MAX_X + " AND y > " + SoccerDDCAccess.getGoalareaLeftY()
+		predicate = " x > " + AbstractSportsDDCAccess.getFieldXMin() + " AND x < " + AbstractSportsDDCAccess.getFieldXMax() + " AND y > " + SoccerDDCAccess.getGoalareaLeftY()
 				+ " AND y < " + SoccerDDCAccess.getGoalareaRightY() + " ";
 		SelectAO ball_in_game_field = OperatorBuildHelper.createSelectAO(
 				predicate, ball);
@@ -75,7 +73,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 
 
 		// ball in goal or field stream	
-		String predicateGoalAndField = "(x > " + MIN_X + " AND x < " + MAX_X + " AND y > "
+		String predicateGoalAndField = "(x > " + AbstractSportsDDCAccess.getFieldXMin() + " AND x < " + AbstractSportsDDCAccess.getFieldXMax() + " AND y > "
 				+ SoccerDDCAccess.getGoalareaLeftY() + " AND y < " + SoccerDDCAccess.getGoalareaRightY() + ")";
 		
 		predicateGoalAndField +=  " OR (y < " + SoccerDDCAccess.getGoalareaLeftY()

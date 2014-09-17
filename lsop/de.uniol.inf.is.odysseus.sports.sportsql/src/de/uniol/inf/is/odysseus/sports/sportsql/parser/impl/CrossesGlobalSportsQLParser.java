@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
@@ -81,7 +82,7 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 		RouteAO splitSoccerDataRoute = createSplitSoccerDataRouteAO(gameTimeSelect);
 		allOperators.add(splitSoccerDataRoute);
 		
-		SelectAO selectBallInField = OperatorBuildHelper.createSelectAO("x >" + OperatorBuildHelper.LOWERLEFT_X + "AND x <" + OperatorBuildHelper.LOWERRIGHT_X + "AND y>" + OperatorBuildHelper.LOWERLEFT_Y + "AND y<" + OperatorBuildHelper.UPPERLEFT_Y, splitSoccerDataRoute);
+		SelectAO selectBallInField = OperatorBuildHelper.createSelectAO("x >" + AbstractSportsDDCAccess.getFieldXMin() + "AND x <" + AbstractSportsDDCAccess.getFieldXMax() + "AND y>" + AbstractSportsDDCAccess.getFieldYMin() + "AND y<" + AbstractSportsDDCAccess.getFieldYMax(), splitSoccerDataRoute);
 		allOperators.add(selectBallInField);
 		
 //		inCrossingZone = MAP({

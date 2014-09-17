@@ -90,31 +90,6 @@ public class OperatorBuildHelper {
 	public static final String TS_GAME_START = "10753295594424116.0";
 	public static final String TS_GAME_END = "14879639146403495.0";
 
-	/**
-	 * Game field borders
-	 */
-	public static final int UPPERLEFT_X = 0;
-	public static final int UPPERLEFT_Y = 33965;
-	public static final int LOWERLEFT_X = -50;
-	public static final int LOWERLEFT_Y = -33960;
-	public static final int UPPERRIGHT_X = 52477;
-	public static final int UPPERRIGHT_Y = 33941;
-	public static final int LOWERRIGHT_X = 52489;
-	public static final int LOWERRIGHT_Y = -33939;
-	
-	/**
-	 * Game field thirds
-	 */
-	public static final int THIRD_LEFT_RIGHT_Y = LOWERLEFT_Y + 22626;
-	public static final int THIRD_MIDDLE_RIGHT_Y = THIRD_LEFT_RIGHT_Y + 22626;
-	public static final int THIRD_RIGHT_RIGHT_Y = UPPERLEFT_Y;
-	
-	/**
-	 * Game field vertical halfs
-	 */
-	public static final int VERTICAL_TOP_HALF_X = (UPPERLEFT_X + UPPERRIGHT_X) / 2; 
-	public static final int VERTICAL_BOTTOM_HALF_X = UPPERRIGHT_X;
-	
 	
 	/**
 	 * centre spot area
@@ -345,10 +320,10 @@ public class OperatorBuildHelper {
 			SDFExpressionParameter param1 = OperatorBuildHelper
 					.createExpressionParameter("sid", source);
 			SDFExpressionParameter param2 = OperatorBuildHelper
-					.createExpressionParameter("x / 1000 - " + UPPERRIGHT_X
+					.createExpressionParameter("x / 1000 - " + AbstractSportsDDCAccess.getFieldXMax()
 							+ "/1000", "x_meter", source);
 			SDFExpressionParameter param3 = OperatorBuildHelper
-					.createExpressionParameter("y / 1000 - " + UPPERRIGHT_Y
+					.createExpressionParameter("y / 1000 - " + AbstractSportsDDCAccess.getFieldYMax()
 							+ "/1000", "y_meter", source);
 			SDFExpressionParameter param4 = OperatorBuildHelper
 					.createExpressionParameter("x", source);

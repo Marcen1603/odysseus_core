@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
@@ -50,10 +51,10 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
 			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 
-		int xMin = OperatorBuildHelper.LOWERLEFT_X;
-		int xMax = OperatorBuildHelper.LOWERRIGHT_X;
-		int yMin = OperatorBuildHelper.LOWERLEFT_Y;
-		int yMax = OperatorBuildHelper.UPPERLEFT_Y;
+		double xMin = AbstractSportsDDCAccess.getFieldXMin();
+		double xMax = AbstractSportsDDCAccess.getFieldXMax();
+		double yMin = AbstractSportsDDCAccess.getFieldYMin();
+		double yMax = AbstractSportsDDCAccess.getFieldYMax();
 
 		String startTS = OperatorBuildHelper.TS_GAME_START;
 
