@@ -270,6 +270,14 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.DisableRefreshSourcesViewCommand"
             name="Disable Refreshing Sources View">
       </command>
+      <command
+            id="de.uniol.inf.is.odysseus.rcp.commands.PartialQueryCommand"
+            name="Partial Query (50)">
+      </command>
+      <command
+            id="de.uniol.inf.is.odysseus.rcp.commands.NonPartialQueryCommand"
+            name="Non-Partial Query">
+      </command>
     </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -433,6 +441,16 @@
                commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeQueryCommand"
                icon="icons/one-query-resume.png"
                label="Resume"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.PartialQueryCommand"
+               label="Partial (50)"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.NonPartialQueryCommand"
+               label="Non-Partial"
                style="push">
          </command>
          <separator
@@ -1018,6 +1036,24 @@
       <handler
             class="de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand"
             commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand">
+         <enabledWhen>
+            <reference
+                  definitionId="oneOrMoreQueryIsSelected">
+            </reference>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.rcp.commands.PartialQueryCommand"
+            commandId="de.uniol.inf.is.odysseus.rcp.commands.PartialQueryCommand">
+         <enabledWhen>
+            <reference
+                  definitionId="oneOrMoreQueryIsSelected">
+            </reference>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.rcp.commands.NonPartialQueryCommand"
+            commandId="de.uniol.inf.is.odysseus.rcp.commands.NonPartialQueryCommand">
          <enabledWhen>
             <reference
                   definitionId="oneOrMoreQueryIsSelected">
