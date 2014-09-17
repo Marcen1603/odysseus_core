@@ -96,7 +96,7 @@ public class HashFragmentAO extends AbstractFragmentAO {
 		// Determine indices of attributes
 		for(int index = 0; index < this.getInputSchema().size(); index++) {
 			
-			if(attributeURIs.contains(this.getInputSchema().get(index).getURI()))
+			if(attributeURIs.contains(this.getInputSchema().get(index).getAttributeName()))
 				attributeIndices.add(index);
 			
 		}

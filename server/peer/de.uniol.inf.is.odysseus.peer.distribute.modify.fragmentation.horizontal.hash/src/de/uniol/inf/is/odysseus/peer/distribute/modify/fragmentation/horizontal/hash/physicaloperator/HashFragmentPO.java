@@ -42,7 +42,7 @@ public class HashFragmentPO<T extends IStreamObject<IMetaAttribute>>
 			// Determine indices of attributes
 			for(int index = 0; index < fragmentAO.getInputSchema().size(); index++) {
 				
-				if(fragmentAO.getAttributes().contains(fragmentAO.getInputSchema().get(index).getURI()))
+				if(fragmentAO.getAttributes().contains(fragmentAO.getInputSchema().get(index).getAttributeName()))
 					attributeIndices.add(index);
 				
 			}
