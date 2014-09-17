@@ -380,7 +380,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 		if (s.getOwner().size() == 1) {
 			pos.add(s);
 		} else {
-			for (PhysicalSubscription<IPhysicalOperator> father : ((ISubscribable<IPhysicalOperator,PhysicalSubscription<IPhysicalOperator>>) s)
+			for (PhysicalSubscription<IPhysicalOperator> father : ((ISubscribable<IPhysicalOperator, PhysicalSubscription<IPhysicalOperator>>) s)
 					.getSubscriptions()) {
 				pos.addAll(getNonSharedFathers(father.getTarget()));
 			}
@@ -565,20 +565,24 @@ public class PhysicalQuery implements IPhysicalQuery {
 	}
 
 	@Override
-	public void partial(int sheddingFactor){
+	public void partial(int sheddingFactor) {
 		try {
-			QueryState nextState = QueryState.next(queryState,
-					QueryFunction.PARTIAL);
+			final QueryState nextState;
+			if (sheddingFactor > 0) {
+				nextState = QueryState.next(queryState, QueryFunction.PARTIAL);
+			} else {
+				nextState = QueryState.next(queryState, QueryFunction.FULL);
+			}
 			for (IPhysicalOperator leaf : getDeepestNonSharedOperators()) {
-				((ISink<?>)leaf).partial(this, sheddingFactor);
+				((ISink<?>) leaf).partial(this, sheddingFactor);
 			}
 			queryState = nextState;
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		}
-	
+
 	}
-	
+
 	@Override
 	public void stop() {
 		try {

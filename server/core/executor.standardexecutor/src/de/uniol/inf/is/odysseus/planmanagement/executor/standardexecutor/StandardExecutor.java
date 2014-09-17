@@ -1220,7 +1220,13 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		IPhysicalQuery queryToPartial = this.executionPlan
 				.getQueryById(queryID);
 		try {
-			QueryState.next(queryToPartial.getState(), QueryFunction.PARTIAL);
+			if (sheddingFactor > 0) {
+				QueryState.next(queryToPartial.getState(),
+						QueryFunction.PARTIAL);
+			} else {
+				QueryState.next(queryToPartial.getState(),
+						QueryFunction.FULL);
+			}
 			validateUserRight(queryToPartial, caller,
 					ExecutorPermission.PARTIAL_QUERY);
 			executionPlanChanged(PlanModificationEventType.QUERY_PARTIAL,
@@ -1239,7 +1245,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			// return;
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
