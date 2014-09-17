@@ -54,6 +54,210 @@ public class LMS1xxConnectionImpl implements LMS1xxConnection {
      * @author Christian Kuka <christian@kuka.cc>
      * 
      */
+	
+    public static Measurement parseLmsMessage(String message, Calendar calendar) throws LMS1xxReadErrorException
+    {
+        final String[] data = message.split(" ");
+
+        if (message.startsWith(LMS1xxConnectionImpl.SRA)) {
+            if (LMS1xxConnectionImpl.LCM_STATE.equalsIgnoreCase(data[1])) {
+                final int dirtyness = Integer.parseInt(data[2]);
+                LMS1xxConnectionImpl.LOG.warn(String.format("Dirtyness %s ", dirtyness));
+            }
+        }
+        else if (message.startsWith(LMS1xxConnectionImpl.SEA)) {
+            LMS1xxConnectionImpl.LOG.info(String.format("Receive message %s (%s byte)", message, message.getBytes().length + 2));
+        }
+        else if (message.startsWith(LMS1xxConnectionImpl.SSN)) {
+            if (LMS1xxConnectionImpl.LMD_SCANDATA.equalsIgnoreCase(data[1])) {
+                if (data.length >= 19) {
+                    final Measurement measurement = new Measurement();
+                    int pos = 2;
+                    measurement.setVersion(data[pos++]);
+                    measurement.setDevice(data[pos++]);
+                    measurement.setSerial(data[pos++]);
+                    measurement.setStatus(Integer.parseInt(data[pos], 16), Integer.parseInt(data[pos + 1], 16));
+                    pos += 2;
+                    measurement.setMessageCount(Integer.parseInt(data[pos++], 16));
+                    measurement.setScanCount(Integer.parseInt(data[pos++], 16));
+
+                    measurement.setPowerUpDuration(Long.parseLong(data[pos++], 16));
+                    measurement.setTransmissionDuration(Long.parseLong(data[pos++], 16));
+
+                    measurement.setInputStatus("3".equals(data[pos]) || "3".equals(data[pos + 1]));
+                    pos += 2;
+                    measurement.setOutputStatus("7".equals(data[pos]) || "7".equals(data[pos + 1]));
+                    pos += 2;
+                    // ReservedByteA
+                    pos += 1;
+                    measurement.setScanningFrequency(Long.parseLong(data[pos++], 16) * 10);
+                    measurement.setMeasurementFrequency(Long.parseLong(data[pos++], 16) * 10);
+
+                    measurement.setEncoders(Integer.parseInt(data[pos++], 16));
+                    for (int i = 0; i < measurement.getEncoders(); i++) {
+                        measurement.setEncoderPosition(Long.parseLong(data[pos++], 16));
+                        measurement.setEncoderSpeed(Integer.parseInt(data[pos++], 16));
+                    }
+
+                    final int channels16Bit = Integer.parseInt(data[pos++], 16);
+                    for (int i = 0; i < channels16Bit; i++) {
+                        final String name = data[pos++];
+                        if ((name.equalsIgnoreCase(LMS1xxConstants.DIST1)) || (name.equalsIgnoreCase(LMS1xxConstants.DIST2)) || (name.equalsIgnoreCase(LMS1xxConstants.RSSI1))
+                                || (name.equalsIgnoreCase(LMS1xxConstants.RSSI2))) {
+
+                            final float scalingFactor = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
+                            final float scalingOffset = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
+                            final double startingAngle = Double.longBitsToDouble(Long.parseLong(data[pos++], 16)) / 10000;
+                            final double angularStepWidth = ((double) Integer.parseInt(data[pos++], 16)) / 10000;
+
+                            final int samples = Integer.parseInt(data[pos++], 16);
+                            if (measurement.get16BitSamples() == null) {
+                                measurement.set16BitSamples(new Sample[samples]);
+                            }
+                            for (int j = 0; j < samples; j++) {
+                                if (measurement.get16BitSamples()[j] == null) {
+                                    measurement.get16BitSamples()[j] = new Sample(j, Math.toRadians((j * angularStepWidth) + startingAngle));
+                                }
+                                final float value = (Integer.parseInt(data[pos++], 16) * scalingFactor) + scalingOffset;
+                                if (name.equalsIgnoreCase(LMS1xxConstants.DIST1)) {
+                                    measurement.get16BitSamples()[j].setDist1(value);
+                                }
+                                else if (name.equalsIgnoreCase(LMS1xxConstants.DIST2)) {
+                                    measurement.get16BitSamples()[j].setDist2(value);
+                                }
+                                else if (name.equalsIgnoreCase(LMS1xxConstants.RSSI1)) {
+                                    measurement.get16BitSamples()[j].setRssi1(value);
+                                }
+                                else if (name.equalsIgnoreCase(LMS1xxConstants.RSSI2)) {
+                                    measurement.get16BitSamples()[j].setRssi2(value);
+                                }
+                            }
+                        }
+                        else {
+                            throw new LMS1xxReadErrorException(message);
+                        }
+                    }
+                    final int channels8Bit = Integer.parseInt(data[pos++], 16);
+                    for (int i = 0; i < channels8Bit; i++) {
+                        final String name = data[pos++];
+                        if ((name.equalsIgnoreCase(LMS1xxConstants.DIST1)) || (name.equalsIgnoreCase(LMS1xxConstants.DIST2)) || (name.equalsIgnoreCase(LMS1xxConstants.RSSI1))
+                                || (name.equalsIgnoreCase(LMS1xxConstants.RSSI2))) {
+
+                            final float scalingFactor = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
+                            final float scalingOffset = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
+                            final double startingAngle = Double.longBitsToDouble(Long.parseLong(data[pos++], 16)) / 10000;
+                            final double angularStepWidth = ((double) Integer.parseInt(data[pos++], 16)) / 10000;
+
+                            final int samples = Integer.parseInt(data[pos++], 16);
+                            if (measurement.get8BitSamples() == null) {
+                                measurement.set8BitSamples(new Sample[samples]);
+                            }
+                            for (int j = 0; j < samples; j++) {
+                                if (measurement.get8BitSamples()[j] == null) {
+                                    measurement.get8BitSamples()[j] = new Sample(j, Math.toRadians((j * angularStepWidth) + startingAngle));
+                                }
+                                final float value = (Integer.parseInt(data[pos++], 16) * scalingFactor) + scalingOffset;
+                                if (name.equalsIgnoreCase(LMS1xxConstants.DIST1)) {
+                                    measurement.get8BitSamples()[j].setDist1(value);
+                                }
+                                else if (name.equalsIgnoreCase(LMS1xxConstants.DIST2)) {
+                                    measurement.get8BitSamples()[j].setDist2(value);
+                                }
+                                else if (name.equalsIgnoreCase(LMS1xxConstants.RSSI1)) {
+                                    measurement.get8BitSamples()[j].setRssi1(value);
+                                }
+                                else if (name.equalsIgnoreCase(LMS1xxConstants.RSSI2)) {
+                                    measurement.get8BitSamples()[j].setRssi2(value);
+                                }
+                            }
+
+                        }
+                        else {
+                            throw new LMS1xxReadErrorException(message);
+                        }
+                    }
+
+                    final int hasPosition = Integer.parseInt(data[pos++], 16);
+                    if (hasPosition == 1) {
+                        @SuppressWarnings("unused")
+                        final float xPosition = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
+                        @SuppressWarnings("unused")
+                        final float yPosition = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
+                        @SuppressWarnings("unused")
+                        final float zPosition = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
+                        @SuppressWarnings("unused")
+                        final float xRotation = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
+                        @SuppressWarnings("unused")
+                        final float yRotation = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
+                        @SuppressWarnings("unused")
+                        final float zRotation = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
+                        @SuppressWarnings("unused")
+                        final int rotationType = Integer.parseInt(data[pos++]);
+                    }
+                    final int hasName = Integer.parseInt(data[pos++], 16);
+                    if (hasName == 1) {
+                        final StringBuffer buffer = new StringBuffer();
+                        String name = data[pos++];
+                        while ((!"0".equals(name)) && (!"1".equals(name))) {
+                            buffer.append(name);
+                            name = data[pos++];
+                        }
+                        measurement.setName(buffer.toString());
+                        pos--;
+                    }
+                    final int hasComment = Integer.parseInt(data[pos++], 16);
+                    if (hasComment == 1) {
+                        final StringBuffer buffer = new StringBuffer();
+                        String comment = data[pos++];
+                        while ((!"0".equals(comment)) && (!"1".equals(comment))) {
+                            buffer.append(comment);
+                            comment = data[pos++];
+                        }
+                        measurement.setName(buffer.toString());
+                        pos--;
+                    }
+                    final int hasTimeInfo = Integer.parseInt(data[pos++], 16);
+                    if (hasTimeInfo == 1) {
+                        final int year = Integer.parseInt(data[pos++], 16);
+                        final int month = Integer.parseInt(data[pos++], 16) - 1;
+                        final int day = Integer.parseInt(data[pos++], 16);
+                        final int hour = Integer.parseInt(data[pos++], 16);
+                        final int minute = Integer.parseInt(data[pos++], 16);
+                        final int second = Integer.parseInt(data[pos++], 16);
+                        final Long milliseconds = Long.parseLong(data[pos++], 16) / 1000;
+                        calendar.set(Calendar.YEAR, year);
+                        calendar.set(Calendar.MONTH, month);
+                        calendar.set(Calendar.DAY_OF_MONTH, day);
+                        calendar.set(Calendar.HOUR_OF_DAY, hour);
+                        calendar.set(Calendar.MINUTE, minute);
+                        calendar.set(Calendar.SECOND, second);
+                        calendar.set(Calendar.MILLISECOND, milliseconds.intValue());
+                    }
+                    final int hasEventInfo = Integer.parseInt(data[pos++], 16);
+                    if (hasEventInfo == 1) {
+                        @SuppressWarnings("unused")
+                        final String eventType = data[pos++];
+                        @SuppressWarnings("unused")
+                        final int encoderPosition = Integer.parseInt(data[pos++], 16);
+                        @SuppressWarnings("unused")
+                        final int eventTime = Integer.parseInt(data[pos++], 16);
+                        @SuppressWarnings("unused")
+                        final int angularPosition = Integer.parseInt(data[pos++], 16);
+                    }
+
+                    final Calendar now = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                    measurement.setDelay(now.getTimeInMillis() - calendar.getTimeInMillis());
+                    return measurement;
+                }
+            }
+        }
+        else 
+        {
+            LMS1xxConnectionImpl.LOG.info(String.format("Receive message %s (%s byte)", message, message.getBytes().length + 2));
+        }
+		return null;    	
+    }	
+	
     class SickConnectionHandler extends Thread {
 
         private final String host;
@@ -141,211 +345,21 @@ public class LMS1xxConnectionImpl implements LMS1xxConnection {
                 this.csvStream.close();
             }
         }
-
-        private void onMessage(final String message, final long timestamp) throws LMS1xxReadErrorException, IOException {
-            final String[] data = message.split(" ");
-
-            if (message.startsWith(LMS1xxConnectionImpl.SRA)) {
-                if (LMS1xxConnectionImpl.LCM_STATE.equalsIgnoreCase(data[1])) {
-                    final int dirtyness = Integer.parseInt(data[2]);
-                    LMS1xxConnectionImpl.LOG.warn(String.format("Dirtyness %s ", dirtyness));
-                }
-            }
-            else if (message.startsWith(LMS1xxConnectionImpl.SEA)) {
-                LMS1xxConnectionImpl.LOG.info(String.format("Receive message %s (%s byte)", message, message.getBytes().length + 2));
-            }
-            else if (message.startsWith(LMS1xxConnectionImpl.SSN)) {
-                if (LMS1xxConnectionImpl.LMD_SCANDATA.equalsIgnoreCase(data[1])) {
-                    if (data.length >= 19) {
-                        final Measurement measurement = new Measurement();
-                        final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                        int pos = 2;
-                        measurement.setVersion(data[pos++]);
-                        measurement.setDevice(data[pos++]);
-                        measurement.setSerial(data[pos++]);
-                        measurement.setStatus(Integer.parseInt(data[pos], 16), Integer.parseInt(data[pos + 1], 16));
-                        pos += 2;
-                        measurement.setMessageCount(Integer.parseInt(data[pos++], 16));
-                        measurement.setScanCount(Integer.parseInt(data[pos++], 16));
-
-                        measurement.setPowerUpDuration(Long.parseLong(data[pos++], 16));
-                        measurement.setTransmissionDuration(Long.parseLong(data[pos++], 16));
-
-                        measurement.setInputStatus("3".equals(data[pos]) || "3".equals(data[pos + 1]));
-                        pos += 2;
-                        measurement.setOutputStatus("7".equals(data[pos]) || "7".equals(data[pos + 1]));
-                        pos += 2;
-                        // ReservedByteA
-                        pos += 1;
-                        measurement.setScanningFrequency(Long.parseLong(data[pos++], 16) * 10);
-                        measurement.setMeasurementFrequency(Long.parseLong(data[pos++], 16) * 10);
-
-                        measurement.setEncoders(Integer.parseInt(data[pos++], 16));
-                        for (int i = 0; i < measurement.getEncoders(); i++) {
-                            measurement.setEncoderPosition(Long.parseLong(data[pos++], 16));
-                            measurement.setEncoderSpeed(Integer.parseInt(data[pos++], 16));
-                        }
-
-                        final int channels16Bit = Integer.parseInt(data[pos++], 16);
-                        for (int i = 0; i < channels16Bit; i++) {
-                            final String name = data[pos++];
-                            if ((name.equalsIgnoreCase(LMS1xxConstants.DIST1)) || (name.equalsIgnoreCase(LMS1xxConstants.DIST2)) || (name.equalsIgnoreCase(LMS1xxConstants.RSSI1))
-                                    || (name.equalsIgnoreCase(LMS1xxConstants.RSSI2))) {
-
-                                final float scalingFactor = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
-                                final float scalingOffset = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
-                                final double startingAngle = Double.longBitsToDouble(Long.parseLong(data[pos++], 16)) / 10000;
-                                final double angularStepWidth = ((double) Integer.parseInt(data[pos++], 16)) / 10000;
-
-                                final int samples = Integer.parseInt(data[pos++], 16);
-                                if (measurement.get16BitSamples() == null) {
-                                    measurement.set16BitSamples(new Sample[samples]);
-                                }
-                                for (int j = 0; j < samples; j++) {
-                                    if (measurement.get16BitSamples()[j] == null) {
-                                        measurement.get16BitSamples()[j] = new Sample(j, Math.toRadians((j * angularStepWidth) + startingAngle));
-                                    }
-                                    final float value = (Integer.parseInt(data[pos++], 16) * scalingFactor) + scalingOffset;
-                                    if (name.equalsIgnoreCase(LMS1xxConstants.DIST1)) {
-                                        measurement.get16BitSamples()[j].setDist1(value);
-                                    }
-                                    else if (name.equalsIgnoreCase(LMS1xxConstants.DIST2)) {
-                                        measurement.get16BitSamples()[j].setDist2(value);
-                                    }
-                                    else if (name.equalsIgnoreCase(LMS1xxConstants.RSSI1)) {
-                                        measurement.get16BitSamples()[j].setRssi1(value);
-                                    }
-                                    else if (name.equalsIgnoreCase(LMS1xxConstants.RSSI2)) {
-                                        measurement.get16BitSamples()[j].setRssi2(value);
-                                    }
-                                }
-                            }
-                            else {
-                                throw new LMS1xxReadErrorException(message);
-                            }
-                        }
-                        final int channels8Bit = Integer.parseInt(data[pos++], 16);
-                        for (int i = 0; i < channels8Bit; i++) {
-                            final String name = data[pos++];
-                            if ((name.equalsIgnoreCase(LMS1xxConstants.DIST1)) || (name.equalsIgnoreCase(LMS1xxConstants.DIST2)) || (name.equalsIgnoreCase(LMS1xxConstants.RSSI1))
-                                    || (name.equalsIgnoreCase(LMS1xxConstants.RSSI2))) {
-
-                                final float scalingFactor = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
-                                final float scalingOffset = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
-                                final double startingAngle = Double.longBitsToDouble(Long.parseLong(data[pos++], 16)) / 10000;
-                                final double angularStepWidth = ((double) Integer.parseInt(data[pos++], 16)) / 10000;
-
-                                final int samples = Integer.parseInt(data[pos++], 16);
-                                if (measurement.get8BitSamples() == null) {
-                                    measurement.set8BitSamples(new Sample[samples]);
-                                }
-                                for (int j = 0; j < samples; j++) {
-                                    if (measurement.get8BitSamples()[j] == null) {
-                                        measurement.get8BitSamples()[j] = new Sample(j, Math.toRadians((j * angularStepWidth) + startingAngle));
-                                    }
-                                    final float value = (Integer.parseInt(data[pos++], 16) * scalingFactor) + scalingOffset;
-                                    if (name.equalsIgnoreCase(LMS1xxConstants.DIST1)) {
-                                        measurement.get8BitSamples()[j].setDist1(value);
-                                    }
-                                    else if (name.equalsIgnoreCase(LMS1xxConstants.DIST2)) {
-                                        measurement.get8BitSamples()[j].setDist2(value);
-                                    }
-                                    else if (name.equalsIgnoreCase(LMS1xxConstants.RSSI1)) {
-                                        measurement.get8BitSamples()[j].setRssi1(value);
-                                    }
-                                    else if (name.equalsIgnoreCase(LMS1xxConstants.RSSI2)) {
-                                        measurement.get8BitSamples()[j].setRssi2(value);
-                                    }
-                                }
-
-                            }
-                            else {
-                                throw new LMS1xxReadErrorException(message);
-                            }
-                        }
-
-                        final int hasPosition = Integer.parseInt(data[pos++], 16);
-                        if (hasPosition == 1) {
-                            @SuppressWarnings("unused")
-                            final float xPosition = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
-                            @SuppressWarnings("unused")
-                            final float yPosition = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
-                            @SuppressWarnings("unused")
-                            final float zPosition = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
-                            @SuppressWarnings("unused")
-                            final float xRotation = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
-                            @SuppressWarnings("unused")
-                            final float yRotation = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
-                            @SuppressWarnings("unused")
-                            final float zRotation = Float.intBitsToFloat(((Long) Long.parseLong(data[pos++], 16)).intValue());
-                            @SuppressWarnings("unused")
-                            final int rotationType = Integer.parseInt(data[pos++]);
-                        }
-                        final int hasName = Integer.parseInt(data[pos++], 16);
-                        if (hasName == 1) {
-                            final StringBuffer buffer = new StringBuffer();
-                            String name = data[pos++];
-                            while ((!"0".equals(name)) && (!"1".equals(name))) {
-                                buffer.append(name);
-                                name = data[pos++];
-                            }
-                            measurement.setName(buffer.toString());
-                            pos--;
-                        }
-                        final int hasComment = Integer.parseInt(data[pos++], 16);
-                        if (hasComment == 1) {
-                            final StringBuffer buffer = new StringBuffer();
-                            String comment = data[pos++];
-                            while ((!"0".equals(comment)) && (!"1".equals(comment))) {
-                                buffer.append(comment);
-                                comment = data[pos++];
-                            }
-                            measurement.setName(buffer.toString());
-                            pos--;
-                        }
-                        final int hasTimeInfo = Integer.parseInt(data[pos++], 16);
-                        if (hasTimeInfo == 1) {
-                            final int year = Integer.parseInt(data[pos++], 16);
-                            final int month = Integer.parseInt(data[pos++], 16) - 1;
-                            final int day = Integer.parseInt(data[pos++], 16);
-                            final int hour = Integer.parseInt(data[pos++], 16);
-                            final int minute = Integer.parseInt(data[pos++], 16);
-                            final int second = Integer.parseInt(data[pos++], 16);
-                            final Long milliseconds = Long.parseLong(data[pos++], 16) / 1000;
-                            calendar.set(Calendar.YEAR, year);
-                            calendar.set(Calendar.MONTH, month);
-                            calendar.set(Calendar.DAY_OF_MONTH, day);
-                            calendar.set(Calendar.HOUR_OF_DAY, hour);
-                            calendar.set(Calendar.MINUTE, minute);
-                            calendar.set(Calendar.SECOND, second);
-                            calendar.set(Calendar.MILLISECOND, milliseconds.intValue());
-                        }
-                        final int hasEventInfo = Integer.parseInt(data[pos++], 16);
-                        if (hasEventInfo == 1) {
-                            @SuppressWarnings("unused")
-                            final String eventType = data[pos++];
-                            @SuppressWarnings("unused")
-                            final int encoderPosition = Integer.parseInt(data[pos++], 16);
-                            @SuppressWarnings("unused")
-                            final int eventTime = Integer.parseInt(data[pos++], 16);
-                            @SuppressWarnings("unused")
-                            final int angularPosition = Integer.parseInt(data[pos++], 16);
-                        }
-
-                        final Calendar now = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                        measurement.setDelay(now.getTimeInMillis() - calendar.getTimeInMillis());
-                        if (Settings.LOGGING) {
-                            this.writeCSV(measurement, calendar);
-                            this.writeRaw(message.getBytes());
-                        }
-                        this.connection.onMeasurement(measurement, calendar.getTimeInMillis());
-
-                    }
-                }
-            }
-            else {
-                LMS1xxConnectionImpl.LOG.info(String.format("Receive message %s (%s byte)", message, message.getBytes().length + 2));
-            }
+        
+        private void onMessage(final String message, final long timestamp) throws LMS1xxReadErrorException, IOException 
+        {
+        	Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        	Measurement measurement = LMS1xxConnectionImpl.parseLmsMessage(message, calendar);
+        	
+        	if (measurement != null)
+        	{
+        		if (Settings.LOGGING) 
+        		{
+        			this.writeCSV(measurement, calendar);
+        			this.writeRaw(message.getBytes());
+        		}
+        		this.connection.onMeasurement(measurement, calendar.getTimeInMillis());
+        	}
         }
 
         private void writeRaw(final byte[] message) throws IOException {
@@ -447,12 +461,12 @@ public class LMS1xxConnectionImpl implements LMS1xxConnection {
 
     private static final Logger LOG = LoggerFactory.getLogger(LMS1xxConnection.class);
 
-    private static final String SRA = "sRA";
-    private static final String SEA = "sEA";
-    private static final String SSN = "sSN";
-    private static final String LCM_STATE = "LCMstate";
+    public static final String SRA = "sRA";
+    public static final String SEA = "sEA";
+    public static final String SSN = "sSN";
+    public static final String LCM_STATE = "LCMstate";
 
-    private static final String LMD_SCANDATA = "LMDscandata";
+    public static final String LMD_SCANDATA = "LMDscandata";
     private SickConnectionHandler handler = null;
     private final String host;
     private final CharsetEncoder encoder;
