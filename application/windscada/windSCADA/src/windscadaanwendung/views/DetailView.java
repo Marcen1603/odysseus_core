@@ -23,7 +23,6 @@ import windscadaanwendung.db.DBConnectionHD;
 public class DetailView extends ViewPart {
 	
 	public static final String ID = "windscadaanwendung.views.DetailView";
-	//TODO: so umbauen, dass für jede WKA eine einzelne View erzugt wird und mit klick auf die entsprechende im tree nur die entsprechende view geöffnet wird ? -> Alle Daten alle WKA immer aufzeichnen und analysieren ?
 	private static Text hitWindRi;
 	private static Text hitLei;
 	private static Text hitDreh;
@@ -89,9 +88,6 @@ public class DetailView extends ViewPart {
 		
 		// aktPitch = new Text(parent, SWT.BORDER);
 
-		//TODO: an sinvollere Stelle packen
-		DBConnectionHD.setNewConnection();
-		
 	}
 
 	/* (non-Javadoc)
@@ -102,7 +98,7 @@ public class DetailView extends ViewPart {
 	}
 	
 	/**
-	 * Diese Methode lädt die Werte der entsprechenden WKA in diese View.
+	 * Diese Methode l��dt die Werte der entsprechenden WKA in diese View.
 	 * 
 	 * @param selected
 	 * 				In der ListView selektierte WKA
@@ -128,7 +124,5 @@ public class DetailView extends ViewPart {
 			
 		}
 		
-		
-		//TODO: Daten aus HD einlesen! -> WKA objekt an DB-Klasse geben -> in dieses entspr. Daten eintragen
 	}
 }

@@ -20,6 +20,10 @@
                name="appName"
                value="windSCADA">
          </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
+         </property>
       </product>
    </extension>
    <extension
@@ -50,8 +54,8 @@
       </view>
       <view
             category="windscadaanwendung.category"
-            class="windscadaanwendung.views.DPVTest"
-            id="windscadaanwendung.views.DPVTest"
+            class="windscadaanwendung.views.dashboard.DPVTest"
+            id="windscadaanwendung.views.dashboard.DPVTest"
             name="DPVTest"
             restorable="true">
       </view>
@@ -60,6 +64,13 @@
             class="windscadaanwendung.views.MapView"
             id="windscadaanwendung.views.MapView"
             name="Karte"
+            restorable="true">
+      </view>
+      <view
+            category="windscadaanwendung.category"
+            class="windscadaanwendung.views.dashboard.Farben"
+            id="windscadaanwendung.views.dashboard.Farben"
+            name="Farben"
             restorable="true">
       </view>
    </extension>

@@ -1,4 +1,4 @@
-package windscadaanwendung.views;
+package windscadaanwendung.views.dashboard;
 
 
 import org.eclipse.core.resources.IFile;
@@ -11,11 +11,12 @@ import org.eclipse.swt.widgets.Composite;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.views.DashboardPartView;
 
-public class DPVTest extends DashboardPartView {
+public abstract class AbstractDashboardPartView extends DashboardPartView {
 
 	public IFile dashboardPartFile;
+	public IProject project;
 
-	public DPVTest() {
+	public AbstractDashboardPartView() {
 	}
 	
 	@Override
@@ -23,7 +24,7 @@ public class DPVTest extends DashboardPartView {
 		super.createPartControl(parent);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot workspaceRoot = workspace.getRoot();
-		IProject project = workspaceRoot.getProject("GUI");
+		project = workspaceRoot.getProject("GUI");
 		try {
 			if(!project.exists()) {
 			project.create(null);
@@ -32,7 +33,10 @@ public class DPVTest extends DashboardPartView {
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
-		dashboardPartFile = project.getFile("BidAgg.prt");
+	}
+	
+	public void loadDashboardPartFile(String path) {
+		dashboardPartFile = project.getFile(path);
 		if (this.dashboardPartFile != null && dashboardPartFile.exists()) {
 			super.showDashboardPart(dashboardPartFile);
 		}

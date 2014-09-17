@@ -17,6 +17,11 @@ import windscadaanwendung.ca.WKA;
 import windscadaanwendung.ca.WindFarm;
 import windscadaanwendung.db.DBConnectionHD;
 
+/**
+ * 
+ * @author MarkMilster
+ *
+ */
 public class UebersichtView extends ViewPart {
 	
 	public static final String ID = "windscadaanwendung.views.DetailView";

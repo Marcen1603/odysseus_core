@@ -22,7 +22,6 @@ import windscadaanwendung.db.DBConnection;
  */
 public class ListView extends ViewPart {
 	
-	//TODO: alle Konstanten in separate Datei auslagern
 	public static final String ID = "windscadaanwendung.views.ListView";
 
 	public ListView() {
@@ -43,12 +42,12 @@ public class ListView extends ViewPart {
 		        	  WindFarm selectedFarm = FarmList.getFarm(Integer.parseInt(selected.getText()));
 		        	  UebersichtView.setSelectedWindpark(selectedFarm);
 		        	  DetailView.setSelectedWKA(null);
-		        	  MapView.setSelectedFarm(selectedFarm);
+//		        	  MapView.setSelectedFarm(selectedFarm);
 		          } else {
 		        	  // selected is a WKA
 		        	  WindFarm farm = FarmList.getFarm(Integer.parseInt(selected.getParentItem().getText()));
 		        	  UebersichtView.setSelectedWindpark(farm);
-		        	  MapView.setSelectedFarm(farm);
+//		        	  MapView.setSelectedFarm(farm);
 		        	  // the TreeItemText has to be eaqual to the ID of the WKA
 		        	  WKA selectedWKA = FarmList.getWKA(Integer.parseInt(selected.getText()));
 		        	  DetailView.setSelectedWKA(selectedWKA);
@@ -58,7 +57,19 @@ public class ListView extends ViewPart {
 			
 		      });
 		
-		//TODO: an sinvollere Stelle packen
+		this.createFarmList(tree);
+		
+
+		
+	}
+
+	/**
+	 * Creates a FarmList from the CA Database into the Specified tree
+	 * 
+	 * @param tree
+	 * 			The tree which will show the data
+	 */
+	private void createFarmList(Tree tree) {
 		DBConnection.setNewConnection();
 		FarmList.setFarmList(DBConnection.getFarmList());
 		
@@ -73,11 +84,8 @@ public class ListView extends ViewPart {
 		try {
 			DBConnection.conn.close();
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
-		
 	}
 
 	@Override

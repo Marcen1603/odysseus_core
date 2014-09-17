@@ -12,7 +12,6 @@ public class Perspective implements IPerspectiveFactory {
 		layout.addView("windacadaanwendung.ListView", IPageLayout.LEFT, 0.51f, "windscadaanwendung.views.DetailView");
 		layout.addView("windscadaanwendung.views.DPVTest", IPageLayout.BOTTOM, 0.5f, "windscadaanwendung.views.DetailView");
 		layout.addView("windscadaanwendung.views.UebersichtView", IPageLayout.LEFT, 0.76f, "windacadaanwendung.ListView");
-		layout.addView("windscadaanwendung.views.MapView", IPageLayout.BOTTOM, 0.5f, "windscadaanwendung.views.UebersichtView");
 		
 	}
 }

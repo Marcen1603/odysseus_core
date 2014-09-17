@@ -42,13 +42,13 @@ public class DBConnection extends AbstractDatabaseConnectionFactory {
 	}
 	
 	public static void setNewConnection() {
-		if (conn == null) {
-			DatabaseConnection dbconn = (DatabaseConnection) (new DBConnection()).createConnection(server, port, database, user, password);
-			try {
+		try {
+			if (conn == null || conn.isClosed()) {
+				DatabaseConnection dbconn = (DatabaseConnection) (new DBConnection()).createConnection(server, port, database, user, password);
 				conn = dbconn.getConnection();
-			} catch (SQLException e) {
-				e.printStackTrace();
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -94,7 +94,7 @@ public class DBConnection extends AbstractDatabaseConnectionFactory {
 		    	actWka.setID(rs.getInt("WKA.ID"));
 		    	actWka.setLatitude(rs.getDouble("LATITUDE"));
 		    	actWka.setLongtude(rs.getDouble("LONGTUDE"));
-		    	//TODO: Scripte einlesen (auch für windfarmen)
+		    	//TODO: Scripte einlesen (auch f��r windfarmen)
 		    	// search for the windFarm of this WKA
 		    	for (WindFarm farm: farms) {
 		    		if (farm.getID() == rs.getInt("FARM.ID")) {
