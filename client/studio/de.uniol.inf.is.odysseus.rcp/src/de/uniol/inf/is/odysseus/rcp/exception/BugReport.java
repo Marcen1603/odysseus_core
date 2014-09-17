@@ -37,8 +37,13 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.MessageConsole;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -131,9 +136,12 @@ public class BugReport {
             report.append(stackStrace);
         }
         final StringBuilder queryReport = BugReport.getQueryReport();
+        final StringBuilder consoleReport = BugReport.getConsoleReport();
         final StringBuilder systemReport = BugReport.getSystemReport();
         final StringBuilder bundlesReport = BugReport.getBundlesReport();
         final StringBuilder servicesReport = BugReport.getServicesReport();
+        report.append("\n## Console Information:\n");
+        report.append(consoleReport);
         report.append("\n## Odysseus Information:\n");
         report.append(queryReport);
         report.append("\n## System Information:\n");
@@ -424,4 +432,19 @@ public class BugReport {
         }
         return report;
     }
+
+    private static StringBuilder getConsoleReport() {
+        final StringBuilder report = new StringBuilder();
+        ConsolePlugin plugin = ConsolePlugin.getDefault();
+        IConsoleManager conMan = plugin.getConsoleManager();
+        IConsole[] existing = conMan.getConsoles();
+        for (int i = 0; i < existing.length; i++) {
+            MessageConsole console = (MessageConsole) existing[i];
+            IDocument document = console.getDocument();
+            report.append(console.getName()).append("\n");
+            report.append(document.get()).append("\n");
+        }
+        return report;
+    }
+
 }
