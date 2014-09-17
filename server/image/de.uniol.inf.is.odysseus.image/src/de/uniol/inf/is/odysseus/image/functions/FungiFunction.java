@@ -9,7 +9,10 @@ import de.uniol.inf.is.odysseus.image.util.OpenCVUtil;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.core.Core;
 
 /**
  * 
@@ -51,22 +54,42 @@ public class FungiFunction extends AbstractFunction<Double>{
 		
 		Mat iplImage = OpenCVUtil.imageToIplImage(grayImage);
 		Mat iplGray = new Mat();
+		Mat circles = new Mat();
 		
-		Imgproc.cvtColor(iplImage, iplGray, Imgproc.COLOR_BGR2GRAY);
+		Imgproc.cvtColor(iplImage, iplGray, Imgproc.COLOR_RGB2GRAY);
 		
-		double threshold = this.getThreshold(grayImage, dark);
+		circles = this.getBoundary(iplGray);
 		
-		Image threshImage = new Image(grayImage.getWidth(), grayImage.getHeight());
+		for (int x=0; x < circles.cols(); x++) {
+			double vCircle[] = circles.get(0, x);
+			
+			Point center = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
+			int radius = (int) Math.round(vCircle[2]);
+			Core.circle(iplGray, center, radius, new Scalar(125, 125, 125), 1, 8, 0);
+		}
 		
-		threshImage = this.threshold(grayImage, threshold, dark);
+		double threshold = this.getThreshold(iplGray, dark);
 		
-		threshImage = this.getBoundary(threshImage);
+		if (dark == true) {
+			Imgproc.threshold(iplGray, iplGray, threshold, 255.0, Imgproc.THRESH_BINARY_INV);
+		} else {
+			Imgproc.threshold(iplGray, iplGray, threshold, 255.0, Imgproc.THRESH_BINARY);
+		}
 		
-		double percent = this.getPixelAmount(threshImage);
+		
+		for (int x=0; x < circles.cols(); x++) {
+			double vCircle[] = circles.get(0, x);
+			
+			Point center = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
+			int radius = (int) Math.round(vCircle[2]);
+			Core.circle(iplGray, center, radius, new Scalar(125, 125, 125), 1, 8, 0);
+		}
+		
+		double percent = this.getPixelAmount(iplGray);
 		
 		System.out.println("Prozent:" + (percent * 100));
 		
-		return (percent * 100);
+		return percent * 100;
 	}
 	
 	
@@ -77,11 +100,23 @@ public class FungiFunction extends AbstractFunction<Double>{
 	 * 
 	 * @return Threshold value.
 	 */
-	protected double getThreshold(Image image, boolean dark) {
+	protected double getThreshold(Mat image, boolean dark) {
+		
 		int[] values = new int[256];
-		for(int i=0; i < image.getWidth(); i++) {
-			for (int j=0; j < image.getHeight(); j++) {
-				values[image.get(i, j)] ++;
+		double[] temp;
+		for(int i=0; i < image.width(); i++) {
+			boolean in = false;
+			for (int j=0; j < image.height(); j++) {
+				temp = image.get(i, j);
+				if ((int) temp[0] == 125 && in == false) {
+					in = true;
+				} else if ((int) temp[0] == 125 && in == true) {
+					in = false;
+				}
+				
+				if (in == true) {
+					values[(int) temp[0]] ++;
+				}
 			}
 		}
 		
@@ -101,10 +136,10 @@ public class FungiFunction extends AbstractFunction<Double>{
 		}
 		
 		for(int i=(values.length - 1); i >= 0; i--) {
-			if (i == (values.length - 1) && (i <= (left - 5) || i >= (left + 5))) {
+			if (i == (values.length - 1) && (i <= (left - 15) || i >= (left + 15))) {
 				maxRight = values[i];
 				right = i;
-			} else if (values[i] > maxRight && (i <= (left - 5) || i >= (left + 5))) {
+			} else if (values[i] > maxRight && (i <= (left - 15) || i >= (left + 15))) {
 				maxRight = values[i];
 				right = i;
 			}
@@ -155,64 +190,44 @@ public class FungiFunction extends AbstractFunction<Double>{
 	 * 
 	 * @return double Percentage of fungi. 
 	 */
-	protected double getPixelAmount(Image image) {
-		double temp;
+	protected double getPixelAmount(Mat image) {
+		double[] temp;
 		int weiss = 0;
 		int schwarz = 0;
-	    int gesamt = (image.getWidth() * image.getHeight());
-		for (int i=0; i < image.getWidth(); i++) {
-			for (int j=0; j < image.getHeight(); j++) {
+	    int gesamt = 0;
+	    boolean in;
+		for (int i=0; i < image.width(); i++) {
+			in = false;
+			for (int j=0; j < image.height(); j++) {
 				temp = image.get(i, j);
-				if ((int) temp == 255) {
+				
+				if (in == true) {
+					gesamt ++;
+				}
+				
+				if ((int) temp[0] == 125 && in == false) {
+					in = true;
+				} else if ((int) temp[0] == 125 && in == true) {
+					in = false;
+				}
+				
+				if ((int) temp[0] == 255 && in == true) {
 					weiss ++;
-				} else if((int) temp == 0) {
+				} else if((int) temp[0] == 0 && in == true) {
 					schwarz ++;
 				}
 			}
 		}
 		
 		return ((double) schwarz / (double) gesamt);
-	}
+	}	
 	
-	
-	/**
-	 * Executes threshold for image.
-	 * 
-	 * @param image Image.
-	 * @param threshold Threshold value
-	 * @param dark Is Fungi dark or not?
-	 * 
-	 * @return
-	 */
-	protected Image threshold(Image image, double threshold, boolean dark) {
-		for (int i=0; i<image.getWidth(); i++) {
-			for (int j=0; j<image.getHeight(); j++) {
-				System.out.println("Threshold: " + threshold + " Value: " + image.get(i, j));
-				if (image.get(i, j) <= threshold && dark == true) {
-					image.set(i, j, 0);
-				} else if (image.get(i, j) <= threshold && dark == false) {
-					image.set(i, j, 255);
-				} else if (image.get(i, j) > threshold && dark == true) {
-					image.set(i,j, 255);
-				} else {
-					image.set(i, j, 0);
-				}
-			}
-		}
-		
-		return image;
-	}
-	
-	
-	protected Image getBoundary(Image image) {
-		Mat iplImage = OpenCVUtil.imageToIplImage(image);
+	protected Mat getBoundary(Mat image) {
 		Mat circles = new Mat();
 		
-		Imgproc.HoughCircles(iplImage, circles, Imgproc.CV_HOUGH_GRADIENT, 1d, (iplImage.height()/4));
+		Imgproc.HoughCircles(image, circles, Imgproc.CV_HOUGH_GRADIENT, 3d, (image.width() * image.height()));
 		
-		System.out.println("Circles: " + circles.cols());
-		
-		return OpenCVUtil.iplImageToImage(iplImage, image);
+		return circles;
 	}
 
 }
