@@ -79,6 +79,11 @@ public class OptionMap {
 		return v != null ? Long.parseLong(v) : defaultValue;
 	}
 
+	public double getDouble(String key, double defaultValue) {
+		String v = get(key);
+		return v != null ? Double.parseDouble(v) : defaultValue;
+	}
+	
 	public List<String> getUnreadOptions() {
 		List<String> unread = new LinkedList<String>();
 		for (Entry<String, Boolean> e : keyRead.entrySet()) {
