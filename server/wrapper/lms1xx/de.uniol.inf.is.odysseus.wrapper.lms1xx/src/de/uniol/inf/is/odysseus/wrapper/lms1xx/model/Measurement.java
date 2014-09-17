@@ -55,6 +55,8 @@ public class Measurement {
 
     private double[][] position;
     private int positionRotationType;
+    
+    private long timeStamp;
 
     /**
      * @return the comment
@@ -400,5 +402,13 @@ public class Measurement {
                 + this.outputStatus + ", scanningFrequency=" + this.scanningFrequency + ", measurementFrequency=" + this.measurementFrequency + ", encoders=" + this.encoders + ", encoderPosition="
                 + this.encoderPosition + ", encoderSpeed=" + this.encoderSpeed + ", samples=" + Arrays.toString(this.samples16Bit) + "]";
     }
+
+	public long getTimeStamp() {
+		return timeStamp;
+	}
+
+	public void setTimeStamp(long timeStamp) {
+		this.timeStamp = timeStamp;
+	}
 
 }
