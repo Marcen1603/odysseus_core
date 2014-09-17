@@ -61,7 +61,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator
 	}
 
 	@Override
-	protected void processSpecialHandling(
+	protected void processSpecialHandling(ILogicalOperator originalTarget,
 			Collection<ILogicalOperator> copiedSources,
 			Collection<ILogicalOperator> copiedTargets,
 			Optional<LogicalSubscription> subscription,
@@ -101,9 +101,9 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator
 			source = optFragmentOperator;
 
 		}
-		ILogicalOperator reunionOperator = this.insertReunionOperator(source,
-				copiedTargets, subscription, partOfOriginalSource,
-				optPartOfCopiedSource, bundle);
+		ILogicalOperator reunionOperator = this.insertReunionOperator(
+				originalTarget, source, copiedTargets, subscription,
+				partOfOriginalSource, optPartOfCopiedSource, bundle);
 		reunionOperator.unsubscribeFromAllSinks();
 
 		// Determine query part of the reunion operator (and fragment operator,

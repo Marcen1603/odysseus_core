@@ -555,8 +555,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 						partOfOriginalTarget, this, helper)) {
 
 					// Need special handling
-					this.processSpecialHandling(copiedSources, copiedTargets,
-							Optional.of(subscription),
+					this.processSpecialHandling(originalTarget, copiedSources,
+							copiedTargets, Optional.of(subscription),
 							Optional.of(originalPart), partsOfCopiedSource,
 							partOfOriginalTarget, partsOfCopiedTarget, helper,
 							bundle);
@@ -565,10 +565,10 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 					// Need to reunion
 					ILogicalOperator reunionOperator = this
-							.insertReunionOperator(Optional.of(copiedSources
-									.iterator().next()), copiedTargets,
-									Optional.of(subscription), Optional
-											.of(originalPart), Optional
+							.insertReunionOperator(originalTarget, Optional
+									.of(copiedSources.iterator().next()),
+									copiedTargets, Optional.of(subscription),
+									Optional.of(originalPart), Optional
 											.of(partsOfCopiedSource.iterator()
 													.next()), bundle);
 					bundle.addReunionOperator(reunionOperator);
@@ -600,8 +600,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 						partOfOriginalTarget, this, helper)) {
 
 					// Need special handling
-					this.processSpecialHandling(copiedSources, copiedTargets,
-							Optional.of(subscription),
+					this.processSpecialHandling(originalTarget, copiedSources,
+							copiedTargets, Optional.of(subscription),
 							Optional.of(originalPart), partsOfCopiedSource,
 							partOfOriginalTarget, partsOfCopiedTarget, helper,
 							bundle);
@@ -723,14 +723,16 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		if (FragmentationRuleHelper.needSpecialHandlingForQueryPart(
 				originalPart, this, helper)) {
 
-			this.processSpecialHandling(copiedSources, copiedSinks,
-					subscription, partOfSource, partsOfCopiedSources,
-					originalPart, partsOfCopiedSink, helper, bundle);
+			this.processSpecialHandling(originalSink, copiedSources,
+					copiedSinks, subscription, partOfSource,
+					partsOfCopiedSources, originalPart, partsOfCopiedSink,
+					helper, bundle);
 
 		} else {
 
 			// Need to reunion
 			ILogicalOperator reunionOperator = this.insertReunionOperator(
+					originalSink,
 					source,
 					ModificationHelper.findCopies(originalSink,
 							bundle.getCopyMap()), subscription, partOfSource,
@@ -884,6 +886,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * single relative source or as a real sink after multiple copies of a
 	 * target.
 	 * 
+	 * @param originalTarget
+	 *            the given original target.
 	 * @param copiedSource
 	 *            The given relative source, if present.
 	 * @param copiedTargets
@@ -903,6 +907,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *             {@link #createReunionOperator(int, FragmentationInfoBundle)}.
 	 */
 	protected ILogicalOperator insertReunionOperator(
+			ILogicalOperator originalTarget,
 			Optional<ILogicalOperator> copiedSource,
 			Collection<ILogicalOperator> copiedTargets,
 			Optional<LogicalSubscription> subscription,
@@ -911,6 +916,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			FragmentationInfoBundle bundle)
 			throws QueryPartModificationException {
 
+		Preconditions.checkNotNull(originalTarget,
+				"Original logical target must be not null!");
 		Preconditions.checkNotNull(copiedTargets,
 				"Copied logical targets must be not null!");
 		Preconditions.checkNotNull(bundle,
@@ -924,7 +931,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 		int sinkInPort = 0;
 		int sourceOutPort = 0;
-		SDFSchema schema = copiedTargets.iterator().next().getOutputSchema();
+		SDFSchema schema = originalTarget.getOutputSchema();
 		if (subscription.isPresent()) {
 
 			sourceOutPort = subscription.get().getSourceOutPort();
@@ -1008,6 +1015,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * Special handling for a query part (e.g., the usage of partial
 	 * aggregates).
 	 * 
+	 * @param originalTarget
+	 *            the given original target.
 	 * @param copiedSources
 	 *            The given copies of the relative source, if present.
 	 * @param copiedTargets
@@ -1032,6 +1041,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *             {@link #createReunionOperator(int, FragmentationInfoBundle)}.
 	 */
 	protected abstract void processSpecialHandling(
+			ILogicalOperator originalTarget,
 			Collection<ILogicalOperator> copiedSources,
 			Collection<ILogicalOperator> copiedTargets,
 			Optional<LogicalSubscription> subscription,

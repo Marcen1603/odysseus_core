@@ -338,6 +338,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		// Need to merge
 		ILogicalOperator mergeOperator = ReplicationQueryPartModificator
 				.insertMergeOperator(
+						originalSink,
 						source,
 						ModificationHelper.findCopies(originalSink,
 								bundle.getCopyMap()), subscription,
@@ -492,11 +493,12 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 				// N:1 relationship
 				// Need to merge
 				ILogicalOperator mergeOperator = ReplicationQueryPartModificator
-						.insertMergeOperator(Optional.of(copiedSources
-								.iterator().next()), copiedTargets, Optional
-								.of(subscription), Optional.of(originalPart),
-								Optional.of(partsOfCopiedSource.iterator()
-										.next()), bundle);
+						.insertMergeOperator(originalTarget, Optional
+								.of(copiedSources.iterator().next()),
+								copiedTargets, Optional.of(subscription),
+								Optional.of(originalPart), Optional
+										.of(partsOfCopiedSource.iterator()
+												.next()), bundle);
 				bundle.addMergeOperator(mergeOperator);
 				ReplicationQueryPartModificator.LOG.debug(
 						"Inserted a merge operator after {}", originalTarget);
@@ -526,11 +528,13 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 				for (int copyNo = 0; copyNo < copiedSources.size(); copyNo++) {
 
 					ILogicalOperator mergeOperator = ReplicationQueryPartModificator
-							.insertMergeOperator(Optional.of(copiedSources
-									.get(copyNo)), copiedTargets, Optional
-									.of(subscription), Optional
-									.of(originalPart), Optional
-									.of(partsOfCopiedSource.get(copyNo)),
+							.insertMergeOperator(
+									originalTarget,
+									Optional.of(copiedSources.get(copyNo)),
+									copiedTargets,
+									Optional.of(subscription),
+									Optional.of(originalPart),
+									Optional.of(partsOfCopiedSource.get(copyNo)),
 									bundle);
 					bundle.addMergeOperator(mergeOperator);
 
@@ -550,6 +554,8 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	 * single relative source or as a real sink after multiple copies of a
 	 * target.
 	 * 
+	 * @param originalTarget
+	 *            the given original target.
 	 * @param copiedSource
 	 *            The given relative source, if present.
 	 * @param copiedTargets
@@ -566,6 +572,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	 * @return The inserted merge operator.
 	 */
 	private static ILogicalOperator insertMergeOperator(
+			ILogicalOperator originalTarget,
 			Optional<ILogicalOperator> copiedSource,
 			Collection<ILogicalOperator> copiedTargets,
 			Optional<LogicalSubscription> subscription,
@@ -573,6 +580,8 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			Optional<ILogicalQueryPart> partOfCopiedSource,
 			ReplicationInfoBundle bundle) {
 
+		Preconditions.checkNotNull(originalTarget,
+				"Original logical target must be not null!");
 		Preconditions.checkNotNull(copiedTargets,
 				"Copied logical targets must be not null!");
 		Preconditions.checkNotNull(bundle,
@@ -585,7 +594,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 
 		int sinkInPort = 0;
 		int sourceOutPort = 0;
-		SDFSchema schema = copiedTargets.iterator().next().getOutputSchema();
+		SDFSchema schema = originalTarget.getOutputSchema();
 		if (subscription.isPresent()) {
 
 			sourceOutPort = subscription.get().getSourceOutPort();
