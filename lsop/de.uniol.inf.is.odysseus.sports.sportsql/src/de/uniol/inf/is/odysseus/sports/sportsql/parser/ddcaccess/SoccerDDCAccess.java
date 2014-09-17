@@ -177,11 +177,4 @@ public class SoccerDDCAccess extends AbstractSportsDDCAccess {
 		
 	}
 	
-	public static double getCrossingZoneBorderRight() throws NumberFormatException, MissingDDCEntryException{
-		return getFieldXMax()/5;
-	}
-
-	public static double getCrossingZoneBorderLeft() throws NumberFormatException, MissingDDCEntryException{
-		return getFieldXMax() - getFieldXMax()/5;
-	}
 }

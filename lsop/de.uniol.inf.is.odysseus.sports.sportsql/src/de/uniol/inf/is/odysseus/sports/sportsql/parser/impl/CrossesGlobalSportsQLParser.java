@@ -23,9 +23,9 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuild
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 /***
@@ -39,14 +39,6 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 
 	public final static String TIME_BETWEEN_TARGETZONE_CROSSINGZONE = "2000000000000";
-	
-
-	
-	//Zone into which the ball has to fly
-	public final static String TARGETZONE_LEFT_HALF = "-18983";
-	public final static String TARGETZONE_RIGHT_HALF = "18983";
-	
-	public final static String CENTER_LINE = "0";
 	
 	//minimal height the ball has to have
 	public final static String MIN_BALL_HEIGHT = "2500";
@@ -62,11 +54,15 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
 			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 		
+		final double CENTER_LINE = AbstractSportsDDCAccess.calculateCenterY();
 		
 		//Borders from where the cross has to be shot
-		final double CROSSINGZONE_RIGHT_SIDE = SoccerDDCAccess.getCrossingZoneBorderRight();
-		final double CROSSINGZONE_LEFT_SIDE = SoccerDDCAccess.getCrossingZoneBorderRight();
+		final double CROSSINGZONE_RIGHT_SIDE = AbstractSportsDDCAccess.getSpace(SpaceType.top_fifth).getXMax();
+		final double CROSSINGZONE_LEFT_SIDE = AbstractSportsDDCAccess.getSpace(SpaceType.bottom_fifth).getXMin();
 		
+		//Zone into which the ball has to fly
+		final double TARGETZONE_LEFT_HALF = AbstractSportsDDCAccess.getSpace(SpaceType.quarter_field_left).getYMax();
+		final double TARGETZONE_RIGHT_HALF = AbstractSportsDDCAccess.getSpace(SpaceType.quarter_field_right).getYMin();
 		
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		ArrayList<String> predicates = new ArrayList<>();

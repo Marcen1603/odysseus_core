@@ -11,7 +11,11 @@ public class SportsQLSpaceParameter implements ISportsQLParameter {
 		middle_third,
 		right_third,
 		top_half,
-		bottom_half
+		bottom_half,
+		top_fifth,
+		bottom_fifth,
+		quarter_field_right,
+		quarter_field_left,
 	}
 	
 	public enum SpaceUnit {

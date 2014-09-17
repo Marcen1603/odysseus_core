@@ -387,6 +387,20 @@ public class AbstractSportsDDCAccess {
 		case bottom_half:
 			return new Space(calculateCenterX(), getFieldYMin(), 
 					getFieldXMax(), getFieldYMax());
+		case top_fifth:
+			return new Space(getFieldXMin(), getFieldYMin(), 
+					getFieldXMax()/5, getFieldYMax());
+		case bottom_fifth:
+			return new Space(getFieldXMax() - getFieldXMax()/5, 
+					getFieldYMin(), getFieldXMax(), getFieldYMax());
+		case quarter_field_left:
+			double fieldLength = getFieldYMax()-getFieldYMin();
+			return new Space(getFieldXMin(), getFieldYMin(),
+					getFieldXMax(),  fieldLength/4 + getFieldYMin());
+		case quarter_field_right:
+			double fieldLength2 = getFieldYMax()-getFieldYMin();
+			return new Space(getFieldXMin(), getFieldYMax() - fieldLength2/4, 
+					getFieldXMax(),  getFieldYMax());
 		default:
 			break;
 		}
