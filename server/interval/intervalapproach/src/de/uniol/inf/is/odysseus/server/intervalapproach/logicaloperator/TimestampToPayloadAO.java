@@ -50,6 +50,10 @@ public class TimestampToPayloadAO extends AbstractLogicalOperator {
 		this.attributes = attributes;
 	}
 	
+	public List<String> getAttributes() {
+		return this.attributes;
+	}
+	
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
 
