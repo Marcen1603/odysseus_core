@@ -75,6 +75,7 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 				protocolHandler.open();
 				opened = true;
 			} catch (Exception e) {
+				sendError("Error Opening "+e.getMessage());
 				throw new OpenFailedException(e);
 			}
 		}

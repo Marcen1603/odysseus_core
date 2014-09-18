@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.connection.NioTcpConnection;
 import de.uniol.inf.is.odysseus.core.connection.SelectorThread;
 import de.uniol.inf.is.odysseus.core.connection.TCPConnector;
 import de.uniol.inf.is.odysseus.core.connection.TCPConnectorListener;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
@@ -246,6 +247,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
         }
         catch (final IOException e) {
             NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+            InfoService.error(e.getMessage());
             throw new OpenFailedException(e);
         }
     }
