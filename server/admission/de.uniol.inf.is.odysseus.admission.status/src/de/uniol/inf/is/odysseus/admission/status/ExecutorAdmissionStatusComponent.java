@@ -60,4 +60,15 @@ public class ExecutorAdmissionStatusComponent implements IAdmissionStatusCompone
 		
 		return false;
 	}
+	
+	public boolean hasPartialQueries() {
+		Collection<IPhysicalQuery> queries = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan().getQueries();
+		for( IPhysicalQuery query : queries ) {
+			if( query.getState() == QueryState.PARTIAL ) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }
