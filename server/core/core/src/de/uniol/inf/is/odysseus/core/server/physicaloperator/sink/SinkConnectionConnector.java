@@ -34,9 +34,9 @@ public class SinkConnectionConnector implements ISinkConnection {
 	private String host;
 	private ISinkStreamHandlerBuilder sinkStreamHandlerBuilder;
 	@SuppressWarnings("rawtypes")
-	private List<ISinkStreamHandler> subscribe;
-//	private boolean loginNeeded;
+	// private boolean loginNeeded;
 	private boolean useNIO;
+	private SocketSinkPO po;
 	static private Logger logger = LoggerFactory.getLogger(SocketSinkPO.class);
 
 	/**
@@ -47,14 +47,15 @@ public class SinkConnectionConnector implements ISinkConnection {
 	 * @param useNIO
 	 * @param loginNeeded
 	 */
-	public SinkConnectionConnector(int serverPort, String host, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder,
+	public SinkConnectionConnector(int serverPort, String host,
+			ISinkStreamHandlerBuilder sinkStreamHandlerBuilder,
 			SocketSinkPO po, boolean useNIO, boolean loginNeeded) {
 		this.port = serverPort;
 		this.host = host;
 		this.sinkStreamHandlerBuilder = sinkStreamHandlerBuilder;
-		this.subscribe = subscribe;
+		this.po = po;
 		this.useNIO = useNIO;
-	//	this.loginNeeded = loginNeeded;
+		// this.loginNeeded = loginNeeded;
 	}
 
 	@Override
@@ -70,15 +71,12 @@ public class SinkConnectionConnector implements ISinkConnection {
 				client = new Socket(host, port);
 				client.setSoTimeout(0);
 			}
-		
 
 			logger.debug("Connecting to server " + host + " on " + port + "...");
 			logger.debug("Adding Handler....");
-			ISinkStreamHandler<?> temp = sinkStreamHandlerBuilder.newInstance(client);
-			synchronized (subscribe) {
-				subscribe.add(temp);
-				logger.debug("Adding Handler done");
-			}
+			ISinkStreamHandler<?> temp = sinkStreamHandlerBuilder
+					.newInstance(client);
+			po.addSubscriber(temp);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -88,13 +86,13 @@ public class SinkConnectionConnector implements ISinkConnection {
 	@Override
 	public void addSessionId(String sessionId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void removeSessionId(String sessionId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
