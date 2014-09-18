@@ -10,6 +10,7 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
@@ -40,6 +41,10 @@ public class JxtaSenderOperatorDetailProvider extends AbstractKeyValueUpdaterPro
 	}
 	
 	private static String determineDestinationPeerName(JxtaSenderPO operator) {
+		if( Strings.isNullOrEmpty(operator.getPeerIDString())) {
+			return "<none>";
+		}
+		
 		return RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerName(toPeerID(operator.getPeerIDString()));
 	}
 
