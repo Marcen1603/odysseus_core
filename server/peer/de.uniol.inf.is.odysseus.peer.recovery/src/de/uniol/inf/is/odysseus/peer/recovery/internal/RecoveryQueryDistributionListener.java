@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
+import java.util.Collection;
 import java.util.Map;
 
 import net.jxta.id.ID;
@@ -12,9 +13,12 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.listener.AbstractQueryDistributionListener;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
+import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
+import de.uniol.inf.is.odysseus.peer.recovery.util.SubsequentQueryPartsIdentifier;
 
 /**
  * The query distribution listener for recovery processes. <br />
@@ -22,7 +26,6 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
  * {@link IRecoveryBackupInformationStore}.
  * 
  * @author Michael Brand
- * @version 1.0
  */
 public class RecoveryQueryDistributionListener extends
 		AbstractQueryDistributionListener {
@@ -34,46 +37,47 @@ public class RecoveryQueryDistributionListener extends
 			.getLogger(RecoveryQueryDistributionListener.class);
 
 	/**
-	 * The bound backup information store, if there is one bound.
+	 * The P2P network manager, if there is one bound.
 	 */
-	private static Optional<IRecoveryBackupInformationStore> cInfoStore = Optional
+	private static Optional<IP2PNetworkManager> cNetworkManager = Optional
 			.absent();
 
 	/**
-	 * Binds a backup information store. <br />
+	 * Binds a P2P network manager. <br />
 	 * Called by OSGI-DS.
 	 * 
-	 * @param store
-	 *            The backup information store to bind. <br />
+	 * @param manager
+	 *            The P2P network manager to bind. <br />
 	 *            Must be not null.
 	 */
-	public static void bindStore(IRecoveryBackupInformationStore store) {
+	public static void bindNetworkManager(IP2PNetworkManager manager) {
 
-		Preconditions.checkNotNull(store,
-				"The backup information store to bind must be not null!");
-		cInfoStore = Optional.of(store);
-		LOG.debug("Bound {} as a backup information store for recovery.", store
+		Preconditions.checkNotNull(manager,
+				"The P2P network manager to bind must be not null!");
+		cNetworkManager = Optional.of(manager);
+		LOG.debug("Bound {} as a P2P network manager for recovery.", manager
 				.getClass().getSimpleName());
 
 	}
 
 	/**
-	 * Unbinds a backup information store. <br />
+	 * Unbinds a P2P network manager. <br />
 	 * Called by OSGI-DS.
 	 * 
-	 * @param store
-	 *            The backup information store to unbind. <br />
+	 * @param manager
+	 *            The P2P network manager to unbind. <br />
 	 *            Must be not null.
 	 */
-	public static void unbindStore(IRecoveryBackupInformationStore store) {
+	public static void unbindNetworkManager(IP2PNetworkManager manager) {
 
-		Preconditions.checkNotNull(store,
-				"The backup information store to unbind must be not null!");
-		if (cInfoStore.isPresent() && cInfoStore.get().equals(store)) {
+		Preconditions.checkNotNull(manager,
+				"The P2P network manager to unbind must be not null!");
+		if (cNetworkManager.isPresent()
+				&& cNetworkManager.get().equals(manager)) {
 
-			cInfoStore = Optional.absent();
-			LOG.debug("Unbound {} as a backup information store for recovery.",
-					store.getClass().getSimpleName());
+			cNetworkManager = Optional.absent();
+			LOG.debug("Unbound {} as a P2P network manager for recovery.",
+					manager.getClass().getSimpleName());
 
 		}
 
@@ -83,21 +87,42 @@ public class RecoveryQueryDistributionListener extends
 	public void afterTransmission(ILogicalQuery query,
 			Map<ILogicalQueryPart, PeerID> allocationMap, ID sharedQueryId) {
 
-		if (!cInfoStore.isPresent()) {
+		// TODO this function does not work, because the query parts have been
+		// disconnected during transmission.
 
-			LOG.error("No backup information store for recovery bound!");
+		if (!cNetworkManager.isPresent()) {
+
+			LOG.error("No P2P network manager for recovery bound!");
 			return;
 
 		}
 
-		boolean success = cInfoStore.get().addSharedQuery(sharedQueryId,
-				allocationMap.keySet());
-		if (!success) {
+		// Determine all subsequent query parts for each part
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> subsequentPartsMap = SubsequentQueryPartsIdentifier
+				.determineSubsequentParts(allocationMap.keySet());
 
-			LOG.error(
-					"Backup information for shared query id '{}' were already stored!",
-					sharedQueryId);
-			return;
+		for (ILogicalQueryPart part : allocationMap.keySet()) {
+
+			PeerID allocatedPeer = allocationMap.get(part);
+			Collection<ILogicalQueryPart> subsequentParts = subsequentPartsMap
+					.get(part);
+
+			if (subsequentParts.isEmpty()) {
+
+				continue;
+
+			} else if (allocatedPeer.equals(cNetworkManager.get()
+					.getLocalPeerID())) {
+
+				LocalBackupInformationAccess.storeLocal(sharedQueryId,
+						subsequentParts);
+
+			} else {
+
+				// TODO send a message with shared query ID and subsequent query
+				// parts
+
+			}
 
 		}
 
