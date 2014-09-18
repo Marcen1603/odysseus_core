@@ -27,24 +27,25 @@ public class SubsequentQueryPartsIdentifier {
 	/**
 	 * Determination of all (not only directly) subsequent query parts.
 	 * 
-	 * @param parts
-	 *            A collection of all relevant query parts. <br />
-	 *            Must be not null.
+	 * @param @param graph A {@link QueryPartGraph} containing all relevant
+	 *        query parts. <br />
+	 *        Must be not null.
 	 * @return A mapping of subsequent query parts to each part of
 	 *         <code>parts</code>.
 	 */
 	public static Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> determineSubsequentParts(
-			Collection<ILogicalQueryPart> parts) {
+			QueryPartGraph graph) {
 
-		Preconditions.checkNotNull(parts,
-				"The collection of query parts must be not null!");
+		Preconditions.checkNotNull(graph,
+				"The graph of query parts must be not null!");
 
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> subsequentPartsMap = Maps
 				.newHashMap();
 
-		for (ILogicalQueryPart part : parts) {
+		for (QueryPartGraphNode node : graph.getGraphNodes()) {
 
-			subsequentPartsMap.put(part, determineSubsequentParts(part, parts));
+			subsequentPartsMap.put(node.getQueryPart(),
+					determineSubsequentParts(graph, node));
 
 		}
 
@@ -55,27 +56,28 @@ public class SubsequentQueryPartsIdentifier {
 	/**
 	 * Determination of all (not only directly) subsequent query parts.
 	 * 
-	 * @param part
-	 *            The part, which subsequent parts shall be determined. <br />
+	 * @param graph
+	 *            A {@link QueryPartGraph} containing all relevant query parts
+	 *            including the part of <code>node</code>. <br />
 	 *            Must be not null.
-	 * @param allParts
-	 *            A collection of all relevant query parts including
-	 *            <code>part</code>. <br />
+	 * @param node
+	 *            The node containing the part, which subsequent parts shall be
+	 *            determined. <br />
 	 *            Must be not null.
 	 */
 	public static Collection<ILogicalQueryPart> determineSubsequentParts(
-			ILogicalQueryPart part, Collection<ILogicalQueryPart> allParts) {
+			QueryPartGraph graph, QueryPartGraphNode node) {
 
+		Preconditions.checkNotNull(graph,
+				"The graph of query parts must be not null!");
 		Preconditions
-				.checkNotNull(part,
-						"The query part to determine subsequent parts for must be not null!");
-		Preconditions.checkNotNull(allParts,
-				"The collection of all query parts must be not null!");
+				.checkNotNull(
+						node,
+						"The node of the query part to determine subsequent parts for must be not null!");
 
-		QueryPartGraph graph = new QueryPartGraph(allParts);
 		Collection<ILogicalQueryPart> subsequentParts = Lists.newArrayList();
 
-		determineSubsequentParts(part, graph, subsequentParts);
+		determineSubsequentParts(node, graph, subsequentParts);
 		return subsequentParts;
 
 	}
@@ -84,42 +86,43 @@ public class SubsequentQueryPartsIdentifier {
 	 * Recursive determination of all (not only directly) subsequent query
 	 * parts.
 	 * 
-	 * @param part
-	 *            The part, which subsequent parts shall be determined. <br />
+	 * @param node
+	 *            The node containing the part, which subsequent parts shall be
+	 *            determined. <br />
 	 *            Must be not null.
 	 * @param graph
 	 *            A {@link QueryPartGraph} containing all relevant query parts
-	 *            including <code>part</code>. <br />
+	 *            including the part of <code>node</code>. <br />
 	 *            Must be not null.
 	 * @param subsequentParts
 	 *            A collection of all already collected subsequent query parts.
 	 */
-	private static void determineSubsequentParts(ILogicalQueryPart part,
+	private static void determineSubsequentParts(QueryPartGraphNode node,
 			QueryPartGraph graph, Collection<ILogicalQueryPart> subsequentParts) {
 
 		Preconditions
-				.checkNotNull(part,
-						"The query part to determine subsequent parts for must be not null!");
+				.checkNotNull(
+						node,
+						"The node of the query part to determine subsequent parts for must be not null!");
 		Preconditions.checkNotNull(graph,
 				"The graph of query parts must be not null!");
-		Preconditions.checkArgument(graph.contains(part),
-				"The graph of query parts must contain " + part + "!");
+		Preconditions.checkArgument(graph.contains(node.getQueryPart()),
+				"The graph of query parts must contain " + node.getQueryPart()
+						+ "!");
 		if (subsequentParts == null) {
 
 			subsequentParts = Lists.newArrayList();
 
 		}
 
-		QueryPartGraphNode node = graph.getGraphNode(part);
 		Collection<QueryPartGraphConnection> outgoingConnections = node
 				.getConnectionsAsStart();
 
 		for (QueryPartGraphConnection connection : outgoingConnections) {
 
-			ILogicalQueryPart subsequentPart = connection.getEndNode()
-					.getQueryPart();
-			subsequentParts.add(subsequentPart);
-			determineSubsequentParts(subsequentPart, graph, subsequentParts);
+			QueryPartGraphNode subsequentNode = connection.getEndNode();
+			subsequentParts.add(subsequentNode.getQueryPart());
+			determineSubsequentParts(subsequentNode, graph, subsequentParts);
 
 		}
 
