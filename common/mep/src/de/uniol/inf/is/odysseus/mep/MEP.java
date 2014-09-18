@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.mep.functions.BurnFunction;
 import de.uniol.inf.is.odysseus.mep.functions.CPULoadFunction;
 import de.uniol.inf.is.odysseus.mep.functions.EvalFunction;
 import de.uniol.inf.is.odysseus.mep.functions.IfFunction;
@@ -434,6 +435,7 @@ public class MEP implements IExpressionParser {
 		registerFunction(new SMaxFunction());
 
 		registerFunction(new SleepFunction());
+		registerFunction(new BurnFunction());
 
 		registerFunction(new StoredValueFunction());
 		registerFunction(new StoredLineFunction());
