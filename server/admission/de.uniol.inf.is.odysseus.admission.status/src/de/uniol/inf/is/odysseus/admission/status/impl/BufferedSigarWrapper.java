@@ -14,7 +14,7 @@ public class BufferedSigarWrapper {
 
 	private static final String BUFFER_TIME_SETTING_NAME = "systemLoadInterval";
 	private static final long DEFAULT_NET_BANDWIDTH_KB = 1024 * 10;
-	private static final long BUFFER_TIME_MILLIS_DEFAULT = 3 * 1000;
+	private static final long BUFFER_TIME_MILLIS_DEFAULT = 2 * 1000;
 
 	private static long BUFFER_TIME_MILLIS = -1;
 

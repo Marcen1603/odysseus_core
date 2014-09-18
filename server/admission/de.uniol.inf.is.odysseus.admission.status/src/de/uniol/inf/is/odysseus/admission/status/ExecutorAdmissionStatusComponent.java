@@ -9,8 +9,16 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 public class ExecutorAdmissionStatusComponent implements IAdmissionStatusComponent {
 
+	public int getQueryCount() {
+		return AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan().getQueries().size();
+	}
+	
 	public int getRunningQueryCount() {
 		return getRunningQueryIDs().size();
+	}
+	
+	public int getStoppedQueryCount() {
+		return getQueryCount() - getRunningQueryCount();
 	}
 	
 	public Collection<Integer> getRunningQueryIDs() {

@@ -35,7 +35,8 @@ public class SystemLoadPrinter extends Thread {
 
 			System.err.print(time + ",");
 			System.err.print((int)systemLoadStatus.getCpuLoadPercentage() + ",");
-			System.err.println(executorStatus.getRunningQueryCount());
+			System.err.print(executorStatus.getRunningQueryCount() + ",");
+			System.err.print(executorStatus.getStoppedQueryCount() + ",");
 
 			trySleep(MEASURE_INTERVAL_MILLIS);
 		}
