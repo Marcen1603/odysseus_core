@@ -35,6 +35,7 @@ public class BatchProducerAO extends AbstractLogicalOperator {
 	private ArrayList<Integer> elementCounts = new ArrayList<Integer>();
 	private ArrayList<Long> frequencies = new ArrayList<Long>();
 	private int invertedPriorityRatio = 0;
+	private List<BatchItem> batchList;
 
 	public BatchProducerAO() {
 	}
@@ -53,6 +54,11 @@ public class BatchProducerAO extends AbstractLogicalOperator {
 		for (BatchItem item : batches) {
 			addBatch(item.size, item.wait);
 		}
+		this.batchList = batches;
+	}
+	
+	public List<BatchItem> getBatches() {
+		return batchList;
 	}
 
 	private void addBatch(int size, long wait) {
