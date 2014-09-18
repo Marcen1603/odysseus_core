@@ -149,9 +149,9 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 			LOG.warn("The following options where not used in translation "+unusedOptions);
 
 		}else{
-			if (operator.getWrapper() != null){
-				throw new TransformationException("Multiple definiton of source with name "+operator.getAccessAOName());
-			}
+//			if (operator.getWrapper() != null){
+//				throw new TransformationException("Multiple definiton of source with name "+operator.getAccessAOName());
+//			}
 		}
 		defaultExecute(operator, accessPO, config, true, true);
 	}
