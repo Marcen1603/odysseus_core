@@ -3,7 +3,6 @@ package windscadaanwendung;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import windscadaanwendung.db.DBConnection;
 import windscadaanwendung.db.DBConnectionHD;
 
 /**

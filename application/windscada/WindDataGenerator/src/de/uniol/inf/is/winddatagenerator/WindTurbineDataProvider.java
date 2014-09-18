@@ -28,13 +28,17 @@ public class WindTurbineDataProvider extends AbstractDataGenerator {
 	private final int SLEEP = 200;
 	private BufferedReader reader;
 	
-	private ISingleValueGenerator id;
+	private int id;
 	private ISingleValueGenerator time;
 	private ISingleValueGenerator direction;
 	private ISingleValueGenerator rotationalSpeed;
 	private ISingleValueGenerator phase;
 	private ISingleValueGenerator pitch;
 	private ISingleValueGenerator gear;
+
+	public WindTurbineDataProvider(int id2) {
+		this.id = id2;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -52,7 +56,7 @@ public class WindTurbineDataProvider extends AbstractDataGenerator {
 		String[] parts = CSVParser.parseCSV(line, ',', true);
 		DataTuple tuple = new DataTuple();
 		// wka_id
-		tuple.addInteger(id.nextValue());
+		tuple.addInteger(id);
 		// timestamp
 		tuple.addLong(Calendar.getInstance().getTimeInMillis());
 		// wind_speed
@@ -96,7 +100,6 @@ public class WindTurbineDataProvider extends AbstractDataGenerator {
 	 */
 	@Override
 	protected void process_init() {
-		int id = 4155;
 		Bundle bundle = Platform.getBundle("de.uniol.inf.is.WindDataGenerator");
 		URL url = bundle.getResource("/data/2005/" + id + ".csv");
 		File file;
@@ -109,15 +112,13 @@ public class WindTurbineDataProvider extends AbstractDataGenerator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		this.id = new ConstantValueGenerator(new NoError(),id);
-		this.id.init();
 		time = new TimeGenerator(new NoError());
 		time.init();
 		direction = new AlternatingGenerator(new NoError(), 0, 1, 0, 359);
 		direction.init();
 		phase = new ConstantValueGenerator(new NoError(),0);
 		phase.init();
-		rotationalSpeed = new ConstantValueGenerator(new NoError(),5);
+		rotationalSpeed = new AlternatingGenerator(new NoError(),0,0.05,-0.3,0.3);
 		rotationalSpeed.init();
 		pitch = new AlternatingGenerator(new NoError(),0,1,0,90);
 		pitch.init();
@@ -131,7 +132,7 @@ public class WindTurbineDataProvider extends AbstractDataGenerator {
 	 */
 	@Override
 	public IDataGenerator newCleanInstance() {
-		return new WindTurbineDataProvider();
+		return new WindTurbineDataProvider(id);
 	}
 
 }

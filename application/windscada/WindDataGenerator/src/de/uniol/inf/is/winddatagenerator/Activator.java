@@ -21,8 +21,14 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		StreamServer server = new StreamServer(54321, new WindTurbineDataProvider());
+		StreamServer server = new StreamServer(51128, new WindTurbineDataProvider(WindSource.getInstance().getWindSourceID()));
+		StreamServer server2 = new StreamServer(61128, new WindTurbineDataProvider(WindSource.getInstance().getWindSourceID()));
+		StreamServer server3 = new StreamServer(11168, new WindTurbineDataProvider(WindSource.getInstance().getWindSourceID()));
+		StreamServer server4 = new StreamServer(41168, new WindTurbineDataProvider(WindSource.getInstance().getWindSourceID()));
 	    server.start();
+	    server2.start();
+	    server3.start();
+	    server4.start();
 	}
 
 	/*

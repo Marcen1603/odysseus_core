@@ -45,5 +45,8 @@
       <plugin id="org.objenesis"/>
    </plugins>
 
+   <configurations>
+      <plugin id="de.uniol.inf.is.WindDataGenerator" autoStart="true" startLevel="0" />
+   </configurations>
 
 </product>
