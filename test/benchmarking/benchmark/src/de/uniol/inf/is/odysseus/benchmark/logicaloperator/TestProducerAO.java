@@ -38,6 +38,7 @@ public class TestProducerAO extends AbstractLogicalOperator {
 	private ArrayList<Long> frequencies = new ArrayList<Long>();
 	private int invertedPriorityRatio = 0;
 	private long delayMillis = 0;
+	private List<BatchItem> batchList;
 	
 	final private SDFSchema outputSchema;
 
@@ -73,6 +74,11 @@ public class TestProducerAO extends AbstractLogicalOperator {
 		for (BatchItem item : parts){
 			addTestPart(item.size, item.wait);
 		}
+		batchList = parts;
+	}
+	
+	public List<BatchItem> getTestParts() {
+		return batchList;
 	}
 
 	@Override
@@ -92,7 +98,7 @@ public class TestProducerAO extends AbstractLogicalOperator {
 		return invertedPriorityRatio;
 	}
 	
-	public long getDelayMillis() {
+	public long getDelay() {
 		return delayMillis;
 	}
 

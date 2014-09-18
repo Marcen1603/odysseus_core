@@ -36,7 +36,7 @@ public class TTestProducerAORule extends AbstractTransformationRule<TestProducer
 
 	@Override
 	public void execute(TestProducerAO algebraOp, TransformationConfiguration trafo) throws RuleException {
-		TestproducerPO po = new TestproducerPO(algebraOp.getDelayMillis());
+		TestproducerPO po = new TestproducerPO(algebraOp.getDelay());
 		po.setOutputSchema(algebraOp.getOutputSchema());
 		Iterator<Long> it = algebraOp.getFrequencies().iterator();
 		for(Integer size : algebraOp.getElementCounts()) {
