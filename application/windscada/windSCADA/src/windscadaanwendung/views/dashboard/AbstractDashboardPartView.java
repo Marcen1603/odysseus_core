@@ -11,10 +11,11 @@ import org.eclipse.swt.widgets.Composite;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.views.DashboardPartView;
 
-public abstract class AbstractDashboardPartView extends DashboardPartView {
+public class AbstractDashboardPartView extends DashboardPartView {
 
 	public IFile dashboardPartFile;
 	public IProject project;
+	public String valueType;
 
 	public AbstractDashboardPartView() {
 	}
@@ -37,8 +38,17 @@ public abstract class AbstractDashboardPartView extends DashboardPartView {
 	
 	public void loadDashboardPartFile(String path) {
 		dashboardPartFile = project.getFile(path);
+		
 		if (this.dashboardPartFile != null && dashboardPartFile.exists()) {
+			/*
+			if (super.isShowing()) {
+				super.setShowing(false);
+				System.out.println("showing auf nein gesetzt!");
+			}
+			//TODO: UNBEDINGT KLAEREN!!
+			 */
 			super.showDashboardPart(dashboardPartFile);
+			System.out.println("KLAPPT");
 		}
 		else {
 			System.out.println("Keine Datei gefunden!");

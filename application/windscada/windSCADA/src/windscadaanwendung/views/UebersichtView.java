@@ -6,6 +6,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -28,6 +29,7 @@ public class UebersichtView extends ViewPart {
 	private static Text hitLeistung;
 	private static Table table;
 	private static Text nameWindpark;
+	private static Composite wkaContainer;
 
 	public UebersichtView() {
 	}
@@ -71,6 +73,11 @@ public class UebersichtView extends ViewPart {
 		TableColumn tblclmnDurchschnittlicheLeistung = new TableColumn(table, SWT.NONE);
 		tblclmnDurchschnittlicheLeistung.setWidth(100);
 		tblclmnDurchschnittlicheLeistung.setText("durchschnittliche Leistung");
+		
+		wkaContainer = new Composite(parent, SWT.NONE);
+		wkaContainer.setLayout(new GridLayout(3, false));
+		Label lbl = new Label(wkaContainer, SWT.NONE);
+		lbl.setText("Test Hallo");
 	}
 
 	@Override
@@ -84,6 +91,42 @@ public class UebersichtView extends ViewPart {
 			hitLeistung.setText(String.valueOf(windFarm.getHitWindFarmData().getAvgPervormance()));
 		}
 		
+		// clear container
+		
+		for (Control c : wkaContainer.getChildren()) {
+	        c.dispose(); 
+	    }
+	    wkaContainer.layout();
+//		wkaContainer.redraw();
+		Label lbl;
+		Text txtAkt, txtHit;
+		for (WKA wka: windFarm.getWkas()) {
+			//FIXME: geht nicht ... weiß nicht warum 
+			DBConnectionHD.setHitWKAData(wka);
+			lbl = new Label(wkaContainer, SWT.NONE);
+			lbl.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+			lbl.setText(String.valueOf(wka.getID()));
+			System.out.println("Text: "  + lbl.getText());
+			txtAkt = new Text(wkaContainer, SWT.NONE);
+			txtAkt.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+			txtAkt.setText("aktData");
+			txtHit = new Text(wkaContainer, SWT.NONE);
+			txtHit.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+			if (wka.getHitWKAData() != null) {
+				txtHit.setText(String.valueOf(wka.getHitWKAData().getAvgPerformance()));
+			} else {
+				txtHit.setText("No Data");
+			}
+			//TODO: implementieren, dass nach x sekunden die historischen Daten aktualisiert wird
+			
+		}
+		wkaContainer.layout();
+//		wkaContainer.redraw();
+		System.out.println("Kinder: ");
+		for (Control c : wkaContainer.getChildren()) {
+	        System.out.println(c.toString());
+	    }
+		
 		table.removeAll();
 		TableItem item;
 		for (WKA wka: windFarm.getWkas()) {
@@ -96,10 +139,7 @@ public class UebersichtView extends ViewPart {
 			} else {
 				item.setText(2, "No Data");
 			}
-			//TODO: implementieren, dass nach x sekunden aktualisiert wird
-			
 		}
-		
 	}
 
 }

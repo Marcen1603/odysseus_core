@@ -73,5 +73,26 @@
             name="Farben"
             restorable="true">
       </view>
+      <view
+            category="windscadaanwendung.category"
+            class="windscadaanwendung.views.dashboard.CorrectedScorePart"
+            id="windscadaanwendung.views.dashboard.CorrectedScorePart"
+            name="Leistung"
+            restorable="true">
+      </view>
+      <view
+            category="windscadaanwendung.category"
+            class="windscadaanwendung.views.dashboard.RotationalSpeedPart"
+            id="windscadaanwendung.views.dashboard.RotationalSpeedPart"
+            name="Rotationsgeschwindigkeit"
+            restorable="true">
+      </view>
+      <view
+            category="windscadaanwendung.category"
+            class="windscadaanwendung.views.dashboard.WindSpeedPart"
+            id="windscadaanwendung.views.dashboard.WindSpeedPart"
+            name="Windgeschwindigkeit"
+            restorable="true">
+      </view>
    </extension>
 </plugin>

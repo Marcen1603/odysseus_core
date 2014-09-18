@@ -14,6 +14,8 @@ import org.eclipse.ui.part.ViewPart;
 
 import windscadaanwendung.ca.WKA;
 import windscadaanwendung.db.DBConnectionHD;
+import windscadaanwendung.views.dashboard.PhaseShiftPart;
+import windscadaanwendung.views.dashboard.PitchPart;
 
 
 /**
@@ -32,6 +34,10 @@ public class DetailView extends ViewPart {
 	private Label lblWKA;
 	private static Text nameWKA;
 	// private Canvas canvas;
+	private Composite pitchComp;
+	private PitchPart pitchPart;
+	private Composite phaseComp;
+	private PhaseShiftPart phaseShiftPart;
 
 	/**
 	 * 
@@ -76,17 +82,24 @@ public class DetailView extends ViewPart {
 		
 		hitWindgeschw = new Text(parent, SWT.BORDER);
 		
-		Label lblPhasenverschiebung = new Label(parent, SWT.NONE);
-		lblPhasenverschiebung.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblPhasenverschiebung.setText("Phasenverschiebung:");
-		
-		// aktPhas = new Text(parent, SWT.BORDER);
-		
 		Label lblPitchwinkel = new Label(parent, SWT.NONE);
 		lblPitchwinkel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblPitchwinkel.setText("Pitchwinkel:");
 		
-		// aktPitch = new Text(parent, SWT.BORDER);
+		this.pitchComp = new Composite(parent, SWT.NONE);
+		this.pitchPart = new PitchPart();
+		this.pitchPart.createPartControl(this.pitchComp);
+		
+		Label lblPhasenverschiebung = new Label(parent, SWT.NONE);
+		lblPhasenverschiebung.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblPhasenverschiebung.setText("Phasenverschiebung:");
+		
+		this.phaseComp = new Composite(parent, SWT.NONE);
+		this.phaseShiftPart = new PhaseShiftPart();
+		this.phaseShiftPart.createPartControl(this.phaseComp);
+		
+		
+		
 
 	}
 
@@ -124,5 +137,19 @@ public class DetailView extends ViewPart {
 			
 		}
 		
+	}
+
+	/**
+	 * @return the pitchComp
+	 */
+	public Composite getPitchComp() {
+		return pitchComp;
+	}
+
+	/**
+	 * @param pitchComp the pitchComp to set
+	 */
+	public void setPitchComp(Composite pitchComp) {
+		this.pitchComp = pitchComp;
 	}
 }
