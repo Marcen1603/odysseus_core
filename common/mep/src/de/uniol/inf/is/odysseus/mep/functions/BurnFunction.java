@@ -17,10 +17,10 @@ public class BurnFunction extends AbstractFunction<Double> {
 	@Override
 	public Double getValue() {
 		int time = getNumericalInputValue(0).intValue();
-		long startTS = System.nanoTime();
+		long startTS = System.currentTimeMillis();
 		
 		// BURN CPU
-		while( System.nanoTime() - startTS < time );
+		while( System.currentTimeMillis() - startTS < time );
 		
 		return 1.0;
 	}
