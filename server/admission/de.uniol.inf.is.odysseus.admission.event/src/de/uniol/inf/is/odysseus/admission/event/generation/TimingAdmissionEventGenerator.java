@@ -15,6 +15,9 @@ public class TimingAdmissionEventGenerator extends Thread {
 		Preconditions.checkArgument(intervalMillis > 0, "IntervalMillis must be positive instead of %s", intervalMillis);
 		
 		this.intervalMillis = intervalMillis;
+		
+		setName("TimingAdmissionEvent generator thread");
+		setDaemon(true);
 	}
 	
 	@Override
