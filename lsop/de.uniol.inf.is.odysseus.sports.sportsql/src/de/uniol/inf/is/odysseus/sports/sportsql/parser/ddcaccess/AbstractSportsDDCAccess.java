@@ -32,6 +32,12 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpacePa
  */
 public class AbstractSportsDDCAccess {
 	// Note: class can not be abstract due to the OSGi-binding
+	
+	/**
+	 * Entity values
+	 */
+	public static final String ENTITY_BALL = "Ball";
+	public static final String ENTITY_REFEREE = "Referee";
 
 	/**
 	 * The logger for this class.
@@ -355,6 +361,13 @@ public class AbstractSportsDDCAccess {
 	}
 
 	
+	/**
+	 * Returns a Space for a given space type based on the field dimensions
+	 * @param spaceType
+	 * @return
+	 * @throws NumberFormatException
+	 * @throws MissingDDCEntryException
+	 */
 	public static Space getSpace(SpaceType spaceType) throws NumberFormatException, MissingDDCEntryException{
 		int middleThirdLeftBorderY = (int) ((int)((getFieldYMax() + getFieldYMin()) / 3) + getFieldYMin());
 		int middleThirdRightBorderY = (int) ((int)((getFieldYMax() + getFieldYMin()) / 3) - getFieldYMax());;
@@ -407,5 +420,23 @@ public class AbstractSportsDDCAccess {
 		return null;
 	}
 
+	/**
+	 * Returns a list of all Ball sensor IDs
+	 * @return
+	 * @throws NumberFormatException
+	 * @throws MissingDDCEntryException
+	 */
+	public static ImmutableCollection<Integer> getBallSensorIds() throws NumberFormatException, MissingDDCEntryException {
+		ImmutableCollection<Integer> sensorids = getSensorIds();
+		Collection<Integer> ballSensorIds = Lists.newArrayList();
+		
+		for(int sensorId : sensorids) {
+			if(getEntity(sensorId).equals(ENTITY_BALL)) {
+				ballSensorIds.add(sensorId);
+			}
+		}
+		
+		return ImmutableList.copyOf(ballSensorIds);
+	}
 	
 }

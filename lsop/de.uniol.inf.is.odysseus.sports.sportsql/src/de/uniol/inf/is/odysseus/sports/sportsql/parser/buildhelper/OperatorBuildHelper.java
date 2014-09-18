@@ -93,8 +93,6 @@ public class OperatorBuildHelper {
 	/**
 	 * Entity names
 	 */
-	public static final String BALL_ENTITY = "Ball";
-	public static final String REFEREE_ENTITY = "Referee";
 	public static final String LEFT_LEG_REMARK = "Left Leg";
 	public static final String RIGHT_LEG_REMARK = "Right Leg";
 

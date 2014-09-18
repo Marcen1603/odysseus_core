@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
@@ -118,7 +119,7 @@ public class ShotOnGoalGlobalOutput {
 
 		// 1. Select for ball
 		SelectAO ballSelect = OperatorBuildHelper.createEntitySelectByName(
-				OperatorBuildHelper.BALL_ENTITY, enrichedStream);
+				AbstractSportsDDCAccess.ENTITY_BALL, enrichedStream);
 
 		// 2. Project for important variables
 		List<String> ballProjectList = new ArrayList<String>();
@@ -189,9 +190,9 @@ public class ShotOnGoalGlobalOutput {
 
 		// 1. Select for the feet
 		String feetSelectPredicate = "entity != \""
-				+ OperatorBuildHelper.REFEREE_ENTITY + "\"";
+				+ AbstractSportsDDCAccess.ENTITY_REFEREE + "\"";
 		feetSelectPredicate += " AND entity != \""
-				+ OperatorBuildHelper.REFEREE_ENTITY + "\"";
+				+ AbstractSportsDDCAccess.ENTITY_REFEREE + "\"";
 		feetSelectPredicate += " AND (remark = \""
 				+ OperatorBuildHelper.LEFT_LEG_REMARK + "\" OR remark = \""
 				+ OperatorBuildHelper.RIGHT_LEG_REMARK + "\")";

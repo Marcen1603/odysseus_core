@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  * 90, } "space": { "startx":-50, "starty":-33960 "endx":52489
  * "endy":33965 } } }
  * 
- * @author Thomas Prünie
+ * @author Thomas Prï¿½nie
  *
  */
 @SportsQL(gameTypes = GameType.SOCCER, statisticTypes = { StatisticType.GLOBAL }, name = "ball_contact", parameters = {
@@ -150,6 +150,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 				+ OperatorBuildHelper.BALL_2 + " OR sid= "
 				+ OperatorBuildHelper.BALL_3 + " OR sid= "
 				+ OperatorBuildHelper.BALL_4);
+		
 		ILogicalOperator split_balls = OperatorBuildHelper.createRouteAO(
 				predicates, game_space);
 		allOperators.add(split_balls);

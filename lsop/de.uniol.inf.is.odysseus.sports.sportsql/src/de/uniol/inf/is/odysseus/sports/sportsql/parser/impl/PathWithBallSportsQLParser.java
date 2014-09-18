@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
@@ -146,7 +147,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		// /balls_filtered =
 		// SELECT({predicate='entity = "ball"'},soccergame_after_start)
 		ILogicalOperator ballsFiltered = OperatorBuildHelper
-				.createEntitySelectByName(OperatorBuildHelper.BALL_ENTITY, enrichedStream);
+				.createEntitySelectByName(AbstractSportsDDCAccess.ENTITY_BALL, enrichedStream);
 		allOperators.add(ballsFiltered);
 
 		// / ball_sample = SAMPLE({datarate=${datarate}},balls_filtered)
