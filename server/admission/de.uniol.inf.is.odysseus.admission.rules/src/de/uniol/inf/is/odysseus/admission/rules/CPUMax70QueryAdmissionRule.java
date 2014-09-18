@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.admission.action.ExecutorAdmissionActionComponen
 import de.uniol.inf.is.odysseus.admission.event.QueryStartAdmissionEvent;
 import de.uniol.inf.is.odysseus.admission.status.SystemLoadAdmissionStatusComponent;
 
-public class CPUMax70AdmissionRule implements IAdmissionRule<QueryStartAdmissionEvent> {
+public class CPUMax70QueryAdmissionRule implements IAdmissionRule<QueryStartAdmissionEvent> {
 
 	@Override
 	public Class<QueryStartAdmissionEvent> getEventType() {
@@ -27,17 +27,14 @@ public class CPUMax70AdmissionRule implements IAdmissionRule<QueryStartAdmission
 
 	@Override
 	public boolean isExecutable(QueryStartAdmissionEvent event, IAdmissionStatus status) {
-		return status.hasStatusComponent(SystemLoadAdmissionStatusComponent.class);
+		SystemLoadAdmissionStatusComponent systemLoadStatus = status.getStatusComponent(SystemLoadAdmissionStatusComponent.class);
+
+		return systemLoadStatus.getCpuLoadPercentage() >= 70;
 	}
 
 	@Override
 	public void execute(QueryStartAdmissionEvent event, IAdmissionStatus status, IAdmissionActions actions) {
-		SystemLoadAdmissionStatusComponent systemLoadStatus = status.getStatusComponent(SystemLoadAdmissionStatusComponent.class);
 		ExecutorAdmissionActionComponent actionComponent = actions.getAdmissionActionComponent(ExecutorAdmissionActionComponent.class);
-		
-		if( systemLoadStatus.getCpuLoadPercentage() >= 70 ) {
-			actionComponent.stopQuery(event.getQueryID());
-		}
+		actionComponent.stopQuery(event.getQueryID());
 	}
-
 }

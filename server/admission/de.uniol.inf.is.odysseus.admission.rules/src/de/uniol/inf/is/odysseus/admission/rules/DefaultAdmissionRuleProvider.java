@@ -13,7 +13,7 @@ public class DefaultAdmissionRuleProvider implements IAdmissionRuleProvider {
 	public Collection<IAdmissionRule<?>> getRules() {
 		Collection<IAdmissionRule<?>> rules = Lists.newArrayList();
 		
-		rules.add(new CPUMax70AdmissionRule());
+		rules.add(new CPUMax70QueryAdmissionRule());
 		
 		return rules;
 	}
