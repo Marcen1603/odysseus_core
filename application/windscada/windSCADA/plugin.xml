@@ -54,13 +54,6 @@
       </view>
       <view
             category="windscadaanwendung.category"
-            class="windscadaanwendung.views.dashboard.DPVTest"
-            id="windscadaanwendung.views.dashboard.DPVTest"
-            name="DPVTest"
-            restorable="true">
-      </view>
-      <view
-            category="windscadaanwendung.category"
             class="windscadaanwendung.views.MapView"
             id="windscadaanwendung.views.MapView"
             name="Karte"

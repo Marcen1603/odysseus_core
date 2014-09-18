@@ -14,6 +14,7 @@ import org.eclipse.ui.part.ViewPart;
 import windscadaanwendung.ca.WKA;
 import windscadaanwendung.ca.WindFarm;
 import windscadaanwendung.db.DBConnectionHD;
+import windscadaanwendung.views.dashboard.CorrectedScoreTfPart;
 
 /**
  * 
@@ -79,15 +80,20 @@ public class UebersichtView extends ViewPart {
 	    setDefaultWKAContainerLabels();
 
 		Label lbl;
-		Text txtAkt, txtHit;
+		Text txtHit;
+		Composite comp;
+		CorrectedScoreTfPart tfP;
 		for (WKA wka: windFarm.getWkas()) {
 			DBConnectionHD.setHitWKAData(wka);
 			lbl = new Label(wkaContainer, SWT.NONE);
 			lbl.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 			lbl.setText(String.valueOf(wka.getID()));
-			txtAkt = new Text(wkaContainer, SWT.NONE);
-			txtAkt.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-			txtAkt.setText("aktData");
+			//TODO hier dpv rein
+			comp = new Composite(wkaContainer, SWT.NONE);
+			comp.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+			tfP = new CorrectedScoreTfPart();
+			tfP.createPartControl(comp, wka.getID());
+			
 			txtHit = new Text(wkaContainer, SWT.NONE);
 			txtHit.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 			if (wka.getHitWKAData() != null) {
