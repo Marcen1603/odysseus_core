@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.textfield.parts;
 
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -10,7 +9,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.PlatformUI;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -22,22 +20,34 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
 public class TextfieldDashboardPart extends AbstractDashboardPart {
 	
-	private final List<String> pendingElements = Lists.newLinkedList();
+	private String pendingElement = "";
 
-	private int receivedElements;
 	private Text text;
 	private Thread updateThread;
 
 	private boolean showHeartbeats = false;
-	private int maxElements = 10;
 	private long updateInterval = 1000;
+
+	private int atributeToShow = 0;
+
+	/**
+	 * @return the atributeToShow
+	 */
+	public int getAtributeToShow() {
+		return atributeToShow;
+	}
+
+	/**
+	 * @param atributeToShow the atributeToShow to set
+	 */
+	public void setAtributeToShow(int atributeToShow) {
+		this.atributeToShow = atributeToShow;
+	}
 
 	@Override
 	public void createPartControl(final Composite parent, ToolBar toolbar) {
 		text = new Text(parent, SWT.BORDER);
 		text.setEditable(false);
-//		text.setLayoutData(new GridData(GridData.FILL_BOTH));
-//		text.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
 		updateThread = new Thread(new Runnable() {
 
@@ -67,35 +77,13 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation punctuation, int port) {
-		synchronized (pendingElements) {
-			if (!punctuation.isHeartbeat() || showHeartbeats) {
-				pendingElements.add("Punctuation: " + punctuation);
-				if (!isInfinite() && pendingElements.size() > maxElements) {
-					pendingElements.remove(0);
-				}
-			}
-		}
-	}
-
-	@Override
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
-		punctuationElementRecieved(senderOperator, sp, port);
-	}
-
-	@Override
 	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
-		synchronized (pendingElements) {
+		synchronized (pendingElement) {
 			Tuple<?> elementTuple = (Tuple<?>) element;
-			int[] atr = {0};
-			pendingElements.add(elementTuple != null ? elementTuple.toString(atr) : "null");
-			if (!isInfinite() && pendingElements.size() > maxElements) {
-				pendingElements.remove(0);
-			}
+			int[] atr = {atributeToShow };
+			pendingElement = (elementTuple != null ? elementTuple.toString(atr) : "null");
 		}
 	}
-
-	
 
 	public boolean isShowHeartbeats() {
 		return showHeartbeats;
@@ -105,13 +93,6 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 		this.showHeartbeats = showHeartbeats;
 	}
 
-	public int getMaxElements() {
-		return maxElements;
-	}
-
-	public void setMaxElements(int maxElements) {
-		this.maxElements = maxElements;
-	}
 
 	public long getUpdateInterval() {
 		return updateInterval;
@@ -121,15 +102,10 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 		this.updateInterval = updateInterval;
 	}
 
-	private boolean isInfinite() {
-		return maxElements < 0;
-	}
-	
 	@Override
 	public void onLoad(Map<String, String> saved) {
 		showHeartbeats = Boolean.valueOf(saved.get("ShowHeartbeats"));
 		updateInterval = Long.valueOf(saved.get("UpdateInterval"));
-		maxElements = Integer.valueOf(saved.get("MaxElements"));
 	}
 	
 	@Override
@@ -137,31 +113,14 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 		Map<String, String> saveMap = Maps.newHashMap();
 		saveMap.put("ShowHeartbeats", String.valueOf(showHeartbeats));
 		saveMap.put("UpdateInterval", String.valueOf(updateInterval));
-		saveMap.put("MaxElements", String.valueOf(maxElements));
 		return saveMap;
 	}
 
 	private void refreshText() {
-		synchronized (pendingElements) {
-			if (pendingElements.isEmpty()) {
-				return;
-			}
-
-			for (final String element : pendingElements) {
-				text.setText(element);
-				receivedElements++;
-				if (!isInfinite() ) {
-					while(receivedElements > maxElements) {
-						String txt = text.getText();
-						final int pos = txt.indexOf("\n");
-						txt = txt.substring(pos + 1);
-						text.setText(txt);
-						receivedElements--;
-					}
-				}
-			}
-			text.setSelection(text.getCharCount());
-			pendingElements.clear();
+		synchronized (pendingElement) {
+			if (pendingElement != null) {
+				text.setText(pendingElement);
+			}	
 		}
 	}
 
@@ -170,5 +129,19 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 			Thread.sleep(length);
 		} catch (final InterruptedException e) {
 		}
+	}
+
+	@Override
+	public void punctuationElementRecieved(IPhysicalOperator senderOperator,
+			IPunctuation point, int port) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void securityPunctuationElementRecieved(
+			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
+		// TODO Auto-generated method stub
+		
 	}
 }

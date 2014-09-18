@@ -32,9 +32,22 @@ public class TextfieldConfigurer extends AbstractDashboardPartConfigurer<Textfie
 		topComposite.setLayout(new GridLayout(2, false));
 		topComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		createMaxDataControls(topComposite);
+		createAttributeToShowControls(topComposite);
 		createUpdateIntervalControls(topComposite);
 		createShowHeartbeatsControls(topComposite);
+	}
+
+	private void createAttributeToShowControls(Composite topComposite) {
+		DashboardPartUtil.createLabel(topComposite, "Attributeindex to show");
+		final Text attributeIndex = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getAtributeToShow()));
+		attributeIndex.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		attributeIndex.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				dashboardPart.setAtributeToShow(Integer.parseInt(attributeIndex.getText()));
+				fireListener();
+			}
+		});
 	}
 
 	@Override
@@ -42,18 +55,7 @@ public class TextfieldConfigurer extends AbstractDashboardPartConfigurer<Textfie
 
 	}
 
-	private void createMaxDataControls(Composite topComposite) {
-		DashboardPartUtil.createLabel(topComposite, "Max Elements");
-		final Text maxElementsText = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getMaxElements()));
-		maxElementsText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		maxElementsText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				dashboardPart.setMaxElements(Integer.valueOf(maxElementsText.getText()));
-				fireListener();
-			}
-		});
-	}
+	
 
 	private void createUpdateIntervalControls(Composite topComposite) {
 		DashboardPartUtil.createLabel(topComposite, "Update interval (ms)");
