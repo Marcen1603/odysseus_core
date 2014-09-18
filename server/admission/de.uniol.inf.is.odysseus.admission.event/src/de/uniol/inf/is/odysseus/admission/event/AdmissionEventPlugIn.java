@@ -3,12 +3,16 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.admission.IAdmissionControl;
+import de.uniol.inf.is.odysseus.admission.event.generation.ExecutorAdmissionEventGenerator;
+import de.uniol.inf.is.odysseus.admission.event.generation.TimingAdmissionEventGenerator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 
 public class AdmissionEventPlugIn implements BundleActivator {
 
+	private static final long TIMING_INTERVAL_MILLIS = 10000;
 	private static final ExecutorAdmissionEventGenerator EXECUTOR_EVENT_GENERATOR = new ExecutorAdmissionEventGenerator();
+	private static final TimingAdmissionEventGenerator TIMING_EVENT_GENERATOR = new TimingAdmissionEventGenerator(TIMING_INTERVAL_MILLIS);
 	
 	private static IServerExecutor executor;
 	private static IAdmissionControl admissionControl;
@@ -43,10 +47,12 @@ public class AdmissionEventPlugIn implements BundleActivator {
 	
 	@Override
 	public void start(BundleContext context) throws Exception {
+		TIMING_EVENT_GENERATOR.start();
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
+		TIMING_EVENT_GENERATOR.stopRunning();
 	}
 
 	public static IServerExecutor getExecutor() {

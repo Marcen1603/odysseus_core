@@ -1,9 +1,16 @@
-package de.uniol.inf.is.odysseus.admission.event;
+package de.uniol.inf.is.odysseus.admission.event.generation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.admission.IAdmissionControl;
+import de.uniol.inf.is.odysseus.admission.event.AdmissionEventPlugIn;
+import de.uniol.inf.is.odysseus.admission.event.QueryAddAdmissionEvent;
+import de.uniol.inf.is.odysseus.admission.event.QueryRemoveAdmissionEvent;
+import de.uniol.inf.is.odysseus.admission.event.QueryResumeAdmissionEvent;
+import de.uniol.inf.is.odysseus.admission.event.QueryStartAdmissionEvent;
+import de.uniol.inf.is.odysseus.admission.event.QueryStopAdmissionEvent;
+import de.uniol.inf.is.odysseus.admission.event.QuerySuspendAdmissionEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
