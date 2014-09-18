@@ -247,7 +247,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
         }
         catch (final IOException e) {
             NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
-            InfoService.error(e.getMessage());
+            InfoService.error(e.getMessage(),e);
             throw new OpenFailedException(e);
         }
     }

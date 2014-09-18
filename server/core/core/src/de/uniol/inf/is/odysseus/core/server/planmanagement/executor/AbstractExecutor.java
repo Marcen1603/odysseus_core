@@ -613,6 +613,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			break;
 		case QUERY_SUSPEND:
 		case QUERY_RESUME:
+		case QUERY_PARTIAL:
 			// Nothing to do for scheduler
 			break;
 		}

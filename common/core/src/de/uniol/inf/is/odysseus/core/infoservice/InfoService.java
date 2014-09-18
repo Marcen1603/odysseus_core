@@ -19,20 +19,20 @@ public class InfoService {
 	}
 	
 	public static void info(String message){
-		fire(InfoType.INFORMATION, message);
+		fire(InfoType.INFORMATION, message, null);
 	}
 
 	public static void warning(String message){
-		fire(InfoType.WARNING, message);
+		fire(InfoType.WARNING, message, null);
 	}
 	
-	public static void error(String message){
-		fire(InfoType.ERROR, message);
+	public static void error(String message, Throwable t){
+		fire(InfoType.ERROR, message,t);
 	}
 
-	private static void fire(InfoType infoType, String message) {
+	private static void fire(InfoType infoType, String message, Throwable t) {
 		for (IInfoServiceListener l: infoServiceListener){
-			l.newInfo(infoType, message);
+			l.newInfo(infoType, message,t);
 		}
 	}
 }

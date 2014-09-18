@@ -130,7 +130,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 				isDone = false;
 				protocolHandler.open();
 			} catch (Exception e) {
-				sendError("Error when opening query "+e.getMessage());
+				sendError("Error when opening query "+e.getMessage(), e);
 				throw new OpenFailedException(e);
 			}
 		}

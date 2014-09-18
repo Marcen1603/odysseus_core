@@ -957,8 +957,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	//--------------------------------------------------------
 	// Information Management
 	// -------------------------------------------------------
-	public void sendError(String message){
-		InfoService.error(message);
+	public void sendError(String message, Throwable t){
+		InfoService.error(message, t);
 	}
 	
 	public void sendWarning(String message){
