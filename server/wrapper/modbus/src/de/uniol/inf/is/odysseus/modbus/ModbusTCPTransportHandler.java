@@ -5,6 +5,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
 import com.ghgande.j2mod.modbus.msg.ReadInputDiscretesRequest;
@@ -22,6 +26,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 public class ModbusTCPTransportHandler extends
 		AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> {
 
+	Logger logger = LoggerFactory.getLogger(ModbusTCPTransportHandler.class);
+	
 	private static final int DEFAULT_PORT = 0;
 	public static final String NAME = "ModbusTCP";
 
@@ -74,6 +80,7 @@ public class ModbusTCPTransportHandler extends
 		} else {
 			throw new IllegalArgumentException(COUNT + " option must be set");
 		}
+		logger.debug("initialized with port="+port+" slave="+slave+" ref="+ref+" count="+count);
 	}
 
 	@Override
@@ -89,6 +96,7 @@ public class ModbusTCPTransportHandler extends
 
 	@Override
 	public void processInOpen() throws IOException {
+		logger.debug("Opening connection to slave "+slave);
 		// 2. Open the connection
 		con = new TCPMasterConnection(slave);
 		con.setPort(port);
@@ -98,10 +106,11 @@ public class ModbusTCPTransportHandler extends
 			throw new IOException(e);
 		}
 		// TODO: This seems to read one value --> List of ref and count!
-
+		logger.debug("Creating new read request");
 		// 3. Prepare the request
 		req = new ReadInputDiscretesRequest(ref, count);
 
+		logger.debug("Creating new Transaction");
 		trans = new ModbusTCPTransaction(con);
 		trans.setRequest(req);
 	}
@@ -148,23 +157,26 @@ public class ModbusTCPTransportHandler extends
 
 	@Override
 	public Tuple<IMetaAttribute> getNext() {
+		logger.debug("Retieving values from slave "+slave);
 		try {
 			trans.execute();
 		} catch (NullPointerException np) {
-			System.err.println("got nullpointer from modbus");
+			logger.error("got nullpointer from modbus. Is connections established?");
 		} catch (ModbusException e) {
 			e.printStackTrace();
 		}
+		logger.debug("Read response");
 		ReadInputDiscretesResponse res = (ReadInputDiscretesResponse) trans
 				.getResponse();
-		if (res != null) {
-			System.err.println("Return was null");
+		if (res == null) {
+			logger.error("Slave did not deliver any values ");
 		}
 		Tuple<IMetaAttribute> t = new Tuple<>(1, false);
 		// System.out.println("Digital Inputs Status="
 		// + res.getDiscretes().toString());
 
 		if (res != null) {
+			logger.debug("Creating output from result "+ res.getDiscretes());
 			BitVector out = res.getDiscretes().createOdysseusBitVector();
 
 			t.setAttribute(0, out);
