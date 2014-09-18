@@ -23,4 +23,12 @@ public class ExecutorAdmissionActionComponent implements IAdmissionActionCompone
 	public void removeQuery( int queryID ) {
 		AdmissionActionPlugIn.getServerExecutor().removeQuery(queryID, AdmissionActionPlugIn.getActiveSession());
 	}
+	
+	public void partialQuery( int queryID, int sheddingFactor ) {
+		AdmissionActionPlugIn.getServerExecutor().partialQuery(queryID, sheddingFactor, AdmissionActionPlugIn.getActiveSession());
+	}
+
+	public void unpartialQuery( int queryID ) {
+		AdmissionActionPlugIn.getServerExecutor().partialQuery(queryID, 0, AdmissionActionPlugIn.getActiveSession());
+	}
 }

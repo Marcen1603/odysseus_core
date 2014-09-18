@@ -29,9 +29,31 @@ public class AdmissionControl implements IAdmissionControl {
 	private Thread execThread;
 	private Boolean inProcessing = false;
 	
-	@SuppressWarnings("unchecked")
+	@Override
+	public <E extends IAdmissionEvent> void processEventDelayedAsync(final E event, final int delayMillis) {
+		Thread t = new Thread( new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(delayMillis);
+				} catch (InterruptedException e) {
+				}
+				
+				processEventInternal(event);
+			}
+		});
+		t.setName("Delayed admission event process thread");
+		t.setDaemon(true);
+		t.start();
+	}
+	
 	@Override
 	public void processEventAsync(final IAdmissionEvent event) {
+		processEventInternal(event);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void processEventInternal(final IAdmissionEvent event) {
 		Preconditions.checkNotNull(event, "Admission event must not be null!");
 		
 		LOG.debug("Got new admission event of type '{}': {}", event.getClass().getName(), event);
