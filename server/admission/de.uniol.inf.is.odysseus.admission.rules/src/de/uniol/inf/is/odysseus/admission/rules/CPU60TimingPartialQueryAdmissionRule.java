@@ -6,13 +6,12 @@ import de.uniol.inf.is.odysseus.admission.AdmissionRuleGroup;
 import de.uniol.inf.is.odysseus.admission.IAdmissionActions;
 import de.uniol.inf.is.odysseus.admission.IAdmissionRule;
 import de.uniol.inf.is.odysseus.admission.IAdmissionStatus;
-import de.uniol.inf.is.odysseus.admission.action.AdmissionActionComponent;
 import de.uniol.inf.is.odysseus.admission.action.ExecutorAdmissionActionComponent;
 import de.uniol.inf.is.odysseus.admission.event.TimingAdmissionEvent;
 import de.uniol.inf.is.odysseus.admission.status.ExecutorAdmissionStatusComponent;
 import de.uniol.inf.is.odysseus.admission.status.SystemLoadAdmissionStatusComponent;
 
-public class CPUMax70TimingPartialAdmissionRule implements IAdmissionRule<TimingAdmissionEvent> {
+public class CPU60TimingPartialQueryAdmissionRule implements IAdmissionRule<TimingAdmissionEvent> {
 
 	@Override
 	public Class<TimingAdmissionEvent> getEventType() {
@@ -34,7 +33,7 @@ public class CPUMax70TimingPartialAdmissionRule implements IAdmissionRule<Timing
 		SystemLoadAdmissionStatusComponent systemLoadStatus = status.getStatusComponent(SystemLoadAdmissionStatusComponent.class);
 		ExecutorAdmissionStatusComponent executorStatus = status.getStatusComponent(ExecutorAdmissionStatusComponent.class);
 
-		return systemLoadStatus.getCpuLoadPercentage() >= 70 && executorStatus.hasRunningQueries();
+		return systemLoadStatus.getCpuLoadPercentage() >= 60 && ( executorStatus.hasRunningQueries() || executorStatus.hasPartialQueries() );
 	}
 
 	@Override
@@ -42,12 +41,16 @@ public class CPUMax70TimingPartialAdmissionRule implements IAdmissionRule<Timing
 		ExecutorAdmissionActionComponent actionComponent = actions.getAdmissionActionComponent(ExecutorAdmissionActionComponent.class);
 		ExecutorAdmissionStatusComponent executorStatus = status.getStatusComponent(ExecutorAdmissionStatusComponent.class);
 
-		AdmissionActionComponent admissionComponent = actions.getAdmissionActionComponent(AdmissionActionComponent.class);
+		if( executorStatus.hasRunningQueries() ) {
+			int queryID = selectOneQuery(executorStatus.getRunningQueryIDs());
+			
+			actionComponent.partialQuery(queryID, 50);
+		} else {
+			int queryID = selectOneQuery(executorStatus.getPartialQueryIDs() );
+			
+			actionComponent.stopQuery(queryID);
+		}
 		
-		int queryID = selectOneQuery(executorStatus.getRunningQueryIDs());
-		
-		actionComponent.partialQuery(queryID, 50);
-		admissionComponent.processEventDelayed(new CheckQueryAgainAdmissionEvent(queryID), 8000);
 	}
 
 	private static int selectOneQuery(Collection<Integer> ids) {
