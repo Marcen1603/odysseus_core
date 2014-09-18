@@ -32,7 +32,7 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 	// static private Logger logger =
 	// LoggerFactory.getLogger(SocketSinkPO.class);
 
-	public List<ISinkStreamHandler> subscribe = new ArrayList<ISinkStreamHandler>();
+	private List<ISinkStreamHandler> subscribe = new ArrayList<ISinkStreamHandler>();
 	private ISinkConnection listener;
 	private boolean isStarted;
 	private IObjectHandler objectHandler = null;
@@ -41,9 +41,9 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 
 	public SocketSinkPO(int serverPort, String host, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO, boolean loginNeeded, boolean loginWithSessionId, IObjectHandler objectHandler, boolean push) {
 		if (push) {
-			listener = new SinkConnectionConnector(serverPort, host, sinkStreamHandlerBuilder, subscribe, useNIO, loginNeeded);
+			listener = new SinkConnectionConnector(serverPort, host, sinkStreamHandlerBuilder, this, useNIO, loginNeeded);
 		} else {
-			listener = new SinkConnectionListener(serverPort, sinkStreamHandlerBuilder, subscribe, useNIO, loginNeeded,loginWithSessionId);
+			listener = new SinkConnectionListener(serverPort, sinkStreamHandlerBuilder, this, useNIO, loginNeeded,loginWithSessionId);
 		}
 		if (objectHandler == null) {
 			throw new IllegalArgumentException("ObjectHandler cannot be null!");
@@ -60,7 +60,7 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 		if (objectHandler == null) {
 			throw new IllegalArgumentException("ObjectHandler cannot be null!");
 		}
-		listener = new SinkConnectionListener(serverSocketProvider, sinkStreamHandlerBuilder, subscribe, loginNeeded,loginWithSessionId);
+		listener = new SinkConnectionListener(serverSocketProvider, sinkStreamHandlerBuilder, this, loginNeeded,loginWithSessionId);
 		this.objectHandler = objectHandler;
 	}
 
@@ -75,6 +75,13 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 		}
 	}
 
+	public void addSubscriber(ISinkStreamHandler temp) {
+		// TODO each input port another subscription
+		
+		subscribe.add(temp);
+		
+	}
+	
 	@Override
 	protected void process_open() throws OpenFailedException {
 		startListening();
@@ -148,5 +155,7 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 	public void removeAllowedSessionId(String securityToken) {
 		listener.removeSessionId(securityToken);
 	}
+
+
 	
 }

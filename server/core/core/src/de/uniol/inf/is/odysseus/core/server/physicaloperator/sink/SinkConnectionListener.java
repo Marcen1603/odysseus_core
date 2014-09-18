@@ -40,7 +40,6 @@ class SinkConnectionListener extends Thread implements ISinkConnection {
 
 	final int port;
 	final private ISinkStreamHandlerBuilder sinkStreamHandlerBuilder;
-	final List<ISinkStreamHandler> subscribe;
 
 	private boolean useNIO;
 
@@ -51,14 +50,16 @@ class SinkConnectionListener extends Thread implements ISinkConnection {
 	final Set<String> allowedSessionIds = new TreeSet<>();
 	
 	private IServerSocketProvider serverSocketProvider;
+
+	final private SocketSinkPO po;
 	
 	public SinkConnectionListener(int port,
 			ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, /* OUT!! */
-			List<ISinkStreamHandler> subscribe2, boolean useNIO,
+			SocketSinkPO po, boolean useNIO,
 			boolean loginNeeded, boolean loginWithSessionId) {
 		this.port = port;
 		this.sinkStreamHandlerBuilder = sinkStreamHandlerBuilder;
-		this.subscribe = subscribe2;
+		this.po = po;
 		this.useNIO = useNIO;
 		this.loginNeeded = loginNeeded;
 		this.loginWithSessionId = loginWithSessionId;
@@ -66,14 +67,14 @@ class SinkConnectionListener extends Thread implements ISinkConnection {
 	
 	public SinkConnectionListener(IServerSocketProvider serverSocketProvider,
 			ISinkStreamHandlerBuilder sinkStreamHandlerBuilder,
-			List<ISinkStreamHandler> subscribe2,
+			SocketSinkPO po,
 			boolean loginNeeded, boolean loginWithSessionId) {
 		if (serverSocketProvider == null) {
 			throw new IllegalArgumentException("ServerSocketProvider cannot be null!");
 		}
 		this.port = serverSocketProvider.getServerSocket().getLocalPort();
 		this.sinkStreamHandlerBuilder = sinkStreamHandlerBuilder;
-		this.subscribe = subscribe2;
+		this.po = po;
 		this.loginNeeded = loginNeeded;
 		this.loginWithSessionId = loginWithSessionId;
 		this.serverSocketProvider = serverSocketProvider;
@@ -148,9 +149,7 @@ class SinkConnectionListener extends Thread implements ISinkConnection {
 						logger.debug("Adding Handler");
 						ISinkStreamHandler temp = sinkStreamHandlerBuilder
 								.newInstance(socket);
-						synchronized (subscribe) {
-							subscribe.add(temp);
-						}
+						po.addSubscriber(temp);
 						logger.debug("Adding Handler done");
 					} else {
 						logger.debug("Connection "

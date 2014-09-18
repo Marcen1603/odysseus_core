@@ -48,7 +48,7 @@ public class SinkConnectionConnector implements ISinkConnection {
 	 * @param loginNeeded
 	 */
 	public SinkConnectionConnector(int serverPort, String host, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder,
-			@SuppressWarnings("rawtypes") List<ISinkStreamHandler> subscribe, boolean useNIO, boolean loginNeeded) {
+			SocketSinkPO po, boolean useNIO, boolean loginNeeded) {
 		this.port = serverPort;
 		this.host = host;
 		this.sinkStreamHandlerBuilder = sinkStreamHandlerBuilder;
