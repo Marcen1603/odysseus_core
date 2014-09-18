@@ -14,7 +14,6 @@ import windscadaanwendung.ca.FarmList;
 import windscadaanwendung.ca.WKA;
 import windscadaanwendung.ca.WindFarm;
 import windscadaanwendung.db.DBConnection;
-import windscadaanwendung.views.dashboard.DashboardPartViewObserver;
 
 
 /**

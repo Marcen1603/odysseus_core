@@ -15,7 +15,44 @@ public class AbstractDashboardPartView extends DashboardPartView {
 
 	public IFile dashboardPartFile;
 	public IProject project;
-	public String valueType;
+	protected String valueType;
+	private final String fileEnding = ".prt";
+	/**
+	 * @return the fileEnding
+	 */
+	public String getFileEnding() {
+		return fileEnding;
+	}
+
+	/**
+	 * @return the valueType
+	 */
+	public String getValueType() {
+		return valueType;
+	}
+
+	/**
+	 * @param valueType the valueType to set
+	 */
+	public void setValueType(String valueType) {
+		this.valueType = valueType;
+	}
+
+	/**
+	 * @return the farmPart
+	 */
+	protected boolean isFarmPart() {
+		return farmPart;
+	}
+
+	/**
+	 * @param farmPart the farmPart to set
+	 */
+	public void setFarmPart(boolean farmPart) {
+		this.farmPart = farmPart;
+	}
+
+	public boolean farmPart;
 
 	public AbstractDashboardPartView() {
 	}
@@ -48,7 +85,6 @@ public class AbstractDashboardPartView extends DashboardPartView {
 			//TODO: UNBEDINGT KLAEREN!!
 			 */
 			super.showDashboardPart(dashboardPartFile);
-			System.out.println("KLAPPT");
 		}
 		else {
 			System.out.println("Keine Datei gefunden!");

@@ -133,8 +133,7 @@ public class DetailView extends ViewPart {
 					// no historical Data Found
 				}
 				//TODO: implementieren, dass nach x sekunden aktualisiert wird
-		
-			
+
 		}
 		
 	}

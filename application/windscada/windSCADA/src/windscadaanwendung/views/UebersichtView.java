@@ -8,9 +8,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
@@ -27,7 +24,6 @@ public class UebersichtView extends ViewPart {
 	
 	public static final String ID = "windscadaanwendung.views.DetailView";
 	private static Text hitLeistung;
-	private static Table table;
 	private static Text nameWindpark;
 	private static Composite wkaContainer;
 
@@ -58,26 +54,9 @@ public class UebersichtView extends ViewPart {
 		hitLeistung = new Text(composite, SWT.BORDER);
 		hitLeistung.setSize(297, 469);
 		
-		table = new Table(parent, SWT.BORDER | SWT.FULL_SELECTION);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		
-		TableColumn tblclmnWindkraftanlage = new TableColumn(table, SWT.NONE);
-		tblclmnWindkraftanlage.setWidth(100);
-		tblclmnWindkraftanlage.setText("Windkraftanlage");
-		
-		TableColumn tblclmnAktuelleLeistung = new TableColumn(table, SWT.NONE);
-		tblclmnAktuelleLeistung.setWidth(100);
-		tblclmnAktuelleLeistung.setText("Aktuelle Leistung");
-		
-		TableColumn tblclmnDurchschnittlicheLeistung = new TableColumn(table, SWT.NONE);
-		tblclmnDurchschnittlicheLeistung.setWidth(100);
-		tblclmnDurchschnittlicheLeistung.setText("durchschnittliche Leistung");
-		
 		wkaContainer = new Composite(parent, SWT.NONE);
 		wkaContainer.setLayout(new GridLayout(3, false));
-		Label lbl = new Label(wkaContainer, SWT.NONE);
-		lbl.setText("Test Hallo");
+		setDefaultWKAContainerLabels();
 	}
 
 	@Override
@@ -97,16 +76,15 @@ public class UebersichtView extends ViewPart {
 	        c.dispose(); 
 	    }
 	    wkaContainer.layout();
-//		wkaContainer.redraw();
+	    setDefaultWKAContainerLabels();
+
 		Label lbl;
 		Text txtAkt, txtHit;
 		for (WKA wka: windFarm.getWkas()) {
-			//FIXME: geht nicht ... weiß nicht warum 
 			DBConnectionHD.setHitWKAData(wka);
 			lbl = new Label(wkaContainer, SWT.NONE);
 			lbl.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 			lbl.setText(String.valueOf(wka.getID()));
-			System.out.println("Text: "  + lbl.getText());
 			txtAkt = new Text(wkaContainer, SWT.NONE);
 			txtAkt.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 			txtAkt.setText("aktData");
@@ -121,25 +99,19 @@ public class UebersichtView extends ViewPart {
 			
 		}
 		wkaContainer.layout();
-//		wkaContainer.redraw();
-		System.out.println("Kinder: ");
-		for (Control c : wkaContainer.getChildren()) {
-	        System.out.println(c.toString());
-	    }
 		
-		table.removeAll();
-		TableItem item;
-		for (WKA wka: windFarm.getWkas()) {
-			DBConnectionHD.setHitWKAData(wka);
-			item = new TableItem(table, SWT.NONE);
-			item.setText(0, String.valueOf(wka.getID()));
-			item.setText(1, "akt");
-			if (wka.getHitWKAData() != null) {
-				item.setText(2, String.valueOf(wka.getHitWKAData().getAvgPerformance()));
-			} else {
-				item.setText(2, "No Data");
-			}
-		}
+	}
+
+	private static void setDefaultWKAContainerLabels() {
+		Label lbl = new Label(wkaContainer, SWT.NONE);
+		lbl.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		lbl.setText("WKA");
+		Label lbl2 = new Label(wkaContainer, SWT.NONE);
+		lbl2.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		lbl2.setText("Aktuelle Leistung");
+		Label lbl3 = new Label(wkaContainer, SWT.NONE);
+		lbl3.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		lbl3.setText("Historischer Mittelwert Leistung");
 	}
 
 }

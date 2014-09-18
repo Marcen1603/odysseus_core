@@ -1,12 +1,10 @@
 package windscadaanwendung.ca;
 
-import windscadaanwendung.AktWKAData;
 import windscadaanwendung.hd.HitWKAData;
 
 public class WKA {
 	
 	private HitWKAData hitWKAData;
-	private AktWKAData aktWKAData;
 	
 	private WindFarm farm;
 	public WindFarm getFarm() {
@@ -62,20 +60,6 @@ public class WKA {
 	public void setHitWKAData(HitWKAData hitWKAData) {
 		
 		this.hitWKAData = hitWKAData;
-	}
-
-	/**
-	 * @return the aktWKAData
-	 */
-	public AktWKAData getAktWKAData() {
-		return aktWKAData;
-	}
-
-	/**
-	 * @param aktWKAData the aktWKAData to set
-	 */
-	public void setAktWKAData(AktWKAData aktWKAData) {
-		this.aktWKAData = aktWKAData;
 	}
 
 }
