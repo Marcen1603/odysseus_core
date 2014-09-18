@@ -21,7 +21,7 @@ data0 = ACCESS({
         ['y0', 'Double']
 ]})
 data1 = ACCESS({
-    source='source', 
+    source='source2', 
     wrapper='GenericPull',
     transport='file', 
     protocol='SimpleCSV',
