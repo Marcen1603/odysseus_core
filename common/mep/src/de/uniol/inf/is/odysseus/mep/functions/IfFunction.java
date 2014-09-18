@@ -36,7 +36,7 @@ public class IfFunction extends AbstractFunction<Object> {
 
 	@Override
 	public Object getValue() {
-		return getInputValue(0) ? getInputValue(1) : getInputValue(2);
+		return ((boolean) getInputValue(0)) ? getInputValue(1) : getInputValue(2);
 	}
 
 
