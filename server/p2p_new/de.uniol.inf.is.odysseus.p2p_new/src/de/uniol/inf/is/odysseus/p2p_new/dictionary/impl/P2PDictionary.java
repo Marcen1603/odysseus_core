@@ -27,6 +27,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -37,6 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritab
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDatadictionaryProviderListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
@@ -865,7 +867,11 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		jxtaSender.setName(viewName + "_Send");
 		jxtaSender.setPipeID(pipeID.toString());
 		jxtaSender.setUseUDP(false);
-		view.subscribeSink(jxtaSender, 0, 0, view.getOutputSchema());
+		
+		final StreamAO streamAO = new StreamAO();
+		streamAO.setSourceName(new Resource(SessionManagementService.getActiveSession().getUser(), viewName));
+		streamAO.setOutputSchema(view.getOutputSchema());
+		streamAO.subscribeSink(jxtaSender, 0, 0, streamAO.getOutputSchema());
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("#PARSER PQL\n");
