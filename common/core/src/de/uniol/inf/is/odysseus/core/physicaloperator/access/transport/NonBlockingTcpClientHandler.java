@@ -151,6 +151,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
 
     @Override
     public void connectionFailed(final ConnectorSelectorHandler handler, final Exception cause) {
+    	InfoService.error(cause.getMessage(), cause);
         NonBlockingTcpClientHandler.LOG.error(cause.getMessage(), cause);
     }
 
