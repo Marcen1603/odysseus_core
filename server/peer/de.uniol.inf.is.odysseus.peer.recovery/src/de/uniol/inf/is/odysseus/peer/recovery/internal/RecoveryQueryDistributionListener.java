@@ -11,16 +11,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.listener.AbstractQueryDistributionListener;
-import de.uniol.inf.is.odysseus.peer.distribute.util.graph.QueryPartGraph;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
-import de.uniol.inf.is.odysseus.peer.recovery.util.SubsequentQueryPartsIdentifier;
+import de.uniol.inf.is.odysseus.peer.recovery.util.SubsequentQueryPartsCalculator;
 
 /**
  * The query distribution listener for recovery processes. <br />
@@ -86,18 +84,18 @@ public class RecoveryQueryDistributionListener extends
 	}
 
 	/**
-	 * Mapping of query part graphs, created after postprocessing, to the
-	 * distributed query.
+	 * The helper instance to calculate subsequent query parts.
 	 */
-	private Map<ILogicalQuery, QueryPartGraph> queryPartGraphMap = Maps
-			.newHashMap();
+	private SubsequentQueryPartsCalculator mSubsequentPartsCalculator = new SubsequentQueryPartsCalculator();
 
 	@Override
 	public void afterPostProcessing(ILogicalQuery query,
 			Map<ILogicalQueryPart, PeerID> allocationMap) {
 
-		this.queryPartGraphMap.put(query,
-				new QueryPartGraph(allocationMap.keySet()));
+		// Keep allocation map for that query in mind, because after
+		// transmission, all query parts will be disconnected.
+		this.mSubsequentPartsCalculator
+				.calcQueryPartGraph(query, allocationMap);
 
 	}
 
@@ -105,8 +103,9 @@ public class RecoveryQueryDistributionListener extends
 	public void afterTransmission(ILogicalQuery query,
 			Map<ILogicalQueryPart, PeerID> allocationMap, ID sharedQueryId) {
 
-		Map<PeerID, Collection<ILogicalQueryPart>> subsequentPartsToPeer = Maps
-				.newHashMap();
+		// Calculate subsequent query parts
+		Map<PeerID, Collection<ILogicalQueryPart>> subsequentPartsToPeer = this.mSubsequentPartsCalculator
+				.calcSubsequentParts(query, allocationMap);
 
 		if (!cNetworkManager.isPresent()) {
 
@@ -115,39 +114,7 @@ public class RecoveryQueryDistributionListener extends
 
 		}
 
-		if (!this.queryPartGraphMap.containsKey(query)) {
-
-			LOG.error("Can not remind of allocation map for query {}!", query);
-			return;
-
-		}
-
-		// Determine all subsequent query parts for each part
-		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> subsequentPartsMap = SubsequentQueryPartsIdentifier
-				.determineSubsequentParts(this.queryPartGraphMap.get(query));
-
-		// Check, which peer gets which backup information
-		for (ILogicalQueryPart part : subsequentPartsMap.keySet()) {
-
-			PeerID allocatedPeer = allocationMap.get(part);
-			Collection<ILogicalQueryPart> subsequentParts = subsequentPartsMap
-					.get(part);
-
-			if (subsequentPartsToPeer.containsKey(allocatedPeer)) {
-
-				// TODO adds parts multiple times
-				subsequentPartsToPeer.get(allocatedPeer)
-						.addAll(subsequentParts);
-
-			} else {
-
-				// TODO adds parts multiple times
-				subsequentPartsToPeer.put(allocatedPeer, subsequentParts);
-
-			}
-
-		}
-
+		// Distribute backup information
 		for (PeerID peerID : subsequentPartsToPeer.keySet()) {
 
 			Collection<ILogicalQueryPart> subsequentParts = subsequentPartsToPeer
