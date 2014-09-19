@@ -12,6 +12,8 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//There is a copy of this class in de.uniol.inf.is.odysseus.p2p_new
+//please sync them!
 public final class ObjectByteConverter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ObjectByteConverter.class);
