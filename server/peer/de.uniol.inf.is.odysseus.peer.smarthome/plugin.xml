@@ -4,7 +4,7 @@
 	<extension
          point="org.eclipse.ui.views">
       <view
-            category="de.uniol.inf.is.odysseus.rcp.peer.SmartHomeCategory"
+            category="de.uniol.inf.is.odysseus.rcp.peer.smarthome.SmartHomeCategory"
             class="de.uniol.inf.is.odysseus.peer.rcp.views.SmartDeviceView"
             icon="icons/SmartHome.png"
             id="de.uniol.inf.is.odysseus.rcp.peer.SmartDeviceView"
@@ -12,31 +12,31 @@
             restorable="true">
       </view>
       <view
-            category="de.uniol.inf.is.odysseus.rcp.peer.SmartHomeCategory"
+            category="de.uniol.inf.is.odysseus.rcp.peer.smarthome.SmartHomeCategory"
             class="de.uniol.inf.is.odysseus.peer.rcp.views.ContextView"
-            icon="icons/SmartHome.png"
+            icon="icons/Context.png"
             id="de.uniol.inf.is.odysseus.rcp.peer.ContextView"
             name="Contexts"
             restorable="true">
       </view>
       <view
-            category="de.uniol.inf.is.odysseus.rcp.peer.SmartHomeCategory"
+            category="de.uniol.inf.is.odysseus.rcp.peer.smarthome.SmartHomeCategory"
             class="de.uniol.inf.is.odysseus.peer.rcp.views.EntityView"
-            icon="icons/SmartHome.png"
+            icon="icons/Entity.png"
             id="de.uniol.inf.is.odysseus.rcp.peer.EntityView"
             name="Entities"
             restorable="true">
       </view>
       <view
-            category="de.uniol.inf.is.odysseus.rcp.peer.SmartHomeCategory"
+            category="de.uniol.inf.is.odysseus.rcp.peer.smarthome.SmartHomeCategory"
             class="de.uniol.inf.is.odysseus.peer.rcp.views.ActivityView"
-            icon="icons/SmartHome.png"
+            icon="icons/Activity.png"
             id="de.uniol.inf.is.odysseus.rcp.peer.ActivityView"
             name="Activities"
             restorable="true">
       </view>
       <category
-            id="de.uniol.inf.is.odysseus.rcp.peer.SmartHomeCategory"
+            id="de.uniol.inf.is.odysseus.rcp.peer.smarthome.SmartHomeCategory"
             name="Smart Home">
       </category>
 	</extension>
