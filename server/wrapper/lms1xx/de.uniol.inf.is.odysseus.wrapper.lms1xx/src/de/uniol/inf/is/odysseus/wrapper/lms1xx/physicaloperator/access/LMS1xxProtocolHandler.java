@@ -71,6 +71,7 @@ public class LMS1xxProtocolHandler extends
 	public static final String BYTEORDER = "byteorder";
 	public static final String USERNAME = "username";
 	public static final String PASSWORD = "password";
+	public static final String INIT_RAWDATA = "rawdata";
 
 	/** Key value parameter names. */
 	private final static String RAW_DATA = "RAWDATA";
@@ -104,6 +105,7 @@ public class LMS1xxProtocolHandler extends
 	private String password = "client";
 	private String username = "client";
 	private ByteBuffer buffer;
+	private boolean addRawData = false;
 
 	/**
      * 
@@ -138,6 +140,10 @@ public class LMS1xxProtocolHandler extends
 		if (optionsMap.containsKey(LMS1xxProtocolHandler.PASSWORD)) {
 			this.setPassword(optionsMap.get(LMS1xxProtocolHandler.PASSWORD));
 		}
+		
+		if (optionsMap.containsKey(LMS1xxProtocolHandler.INIT_RAWDATA)) {
+			this.setAddRawData(Boolean.parseBoolean(optionsMap.get(LMS1xxProtocolHandler.INIT_RAWDATA)));
+		}		
 	}
 
 
@@ -736,7 +742,10 @@ public class LMS1xxProtocolHandler extends
 			if (LMS1xxConstants.LMD_SCANDATA.equalsIgnoreCase(data[1])) {
 				Measurement measurement = parseLMS1xxScanData(data);
 				Map<String, Object> event = measurementToMap(measurement);
-				event.put(LMS1xxProtocolHandler.RAW_DATA, "\u0002" + message + "\u0003");
+				
+				if (addRawData)
+					event.put(LMS1xxProtocolHandler.RAW_DATA, "\u0002" + message + "\u0003");
+				
 				return new KeyValueObject<>(event);
 			}
 		} else {
@@ -775,6 +784,14 @@ public class LMS1xxProtocolHandler extends
 			return false;
 		}
 		return true;
+	}
+
+	public boolean doesAddRawData() {
+		return addRawData;
+	}
+
+	public void setAddRawData(boolean addRawData) {
+		this.addRawData = addRawData;
 	}
 
 }
