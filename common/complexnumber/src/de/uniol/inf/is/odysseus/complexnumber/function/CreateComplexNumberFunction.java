@@ -10,7 +10,7 @@ public class CreateComplexNumberFunction extends
 
 
 	private static final long serialVersionUID = 6130071500243869339L;
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {SDFDatatype.NUMBERS};
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {SDFDatatype.NUMBERS,SDFDatatype.NUMBERS};
 	
 	public CreateComplexNumberFunction() {
 		super("newComplexNumber", 2, accTypes, SDFComplexNumberDatatype.COMPLEX_NUMBER);
