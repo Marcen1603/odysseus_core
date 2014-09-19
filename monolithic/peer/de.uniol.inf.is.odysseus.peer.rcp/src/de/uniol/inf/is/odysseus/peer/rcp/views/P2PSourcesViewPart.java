@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.rcp.views;
 import java.util.Collection;
 import java.util.List;
 
+import net.jxta.document.Advertisement;
 import net.jxta.peer.PeerID;
 
 import org.eclipse.jface.action.MenuManager;
@@ -27,16 +28,14 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
 
-public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListener {
+public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListener, IAdvertisementDiscovererListener {
 
-	private static final int REFRESH_INTERVAL_MILLIS = 5000;
-	
 	public static class TableEntry {
 		public SourceAdvertisement advertisement;
 
@@ -58,7 +57,6 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 	private IP2PDictionary p2pDictionary;
 	private TableViewer sourcesTable;
 	private List<TableEntry> input = Lists.newArrayList();
-	private RepeatingJobThread refresher;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -199,19 +197,14 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 
 		instance = this;
 		
-		refresher = new RepeatingJobThread(REFRESH_INTERVAL_MILLIS, "Refresher of P2PSourcesView") {
-			@Override
-			public void doJob() {
-				refreshTable();
-			}
-		};
-		refresher.start();
-		
+		RCPP2PNewPlugIn.getP2PNetworkManager().addAdvertisementListener(this);
 	}
 
 	@Override
 	public void dispose() {
 		instance = null;
+
+		RCPP2PNewPlugIn.getP2PNetworkManager().removeAdvertisementListener(this);
 
 		p2pDictionary.removeListener(this);
 		p2pDictionary = null;
@@ -386,5 +379,15 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 		} else {
 			return "";
 		}
+	}
+
+	@Override
+	public void advertisementDiscovered(Advertisement advertisement) {
+		
+	}
+
+	@Override
+	public void updateAdvertisements() {
+		refreshTable();
 	}
 }
