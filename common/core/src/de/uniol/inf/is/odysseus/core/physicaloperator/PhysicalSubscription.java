@@ -102,15 +102,17 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 	@SuppressWarnings({ "rawtypes" })
 	public void process(IStreamObject o) {
 		// is load shedding active?
+		
 		if (sheddingFactor > 0) {
 			// add sheddingFactor and if value higher 100 is read, 
 			// remove object
 			// e.g. 25: 25, 50, 75, 100 --> write 3 Object (at 25,50 and 75), and remove 1
-			currentSheddingValue = +sheddingFactor;
+			currentSheddingValue += sheddingFactor;
+			System.err.println("CurrentFactor = " + currentSheddingValue + " of " + getTarget());
 			if (currentSheddingValue < 100) {
 				process_internal(o);
 			} else {
-				currentSheddingValue = -100;
+				currentSheddingValue -= 100;
 			}
 		} else {
 			process_internal(o);
