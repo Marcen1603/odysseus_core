@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsD
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLIntegerParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLDoubleParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
@@ -33,15 +32,12 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  * Example Query:
  * 
  * { "statisticType": "player", "gameType": "soccer", "entityId": 16, "name":
- * "pathwithball", "parameters": { "time": { "start": 0, "end" :
- * 90, } "space": { "startx":-50, "starty":-33960 "endx":52489
- * "endy":33965 } } }
+ * "pathwithball" }
  * 
  * @author Carsten Cordes
  *
  */
 @SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER }, name = "pathwithball", parameters = {
-		@SportsQLParameter(name = "datarate", parameterClass = SportsQLIntegerParameter.class, mandatory = false),
 		@SportsQLParameter(name = "accuracy", parameterClass = SportsQLDoubleParameter.class, mandatory = false),
 		@SportsQLParameter(name = "proximity", parameterClass = SportsQLDoubleParameter.class, mandatory = false),
 		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
@@ -58,18 +54,10 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
-		// TODO remove hardcoded information.
-
 		/**
 		 * Entity id we look for.
 		 */
 		long entityId = sportsQL.getEntityId();
-
-		/**
-		 * Datarate to reduce ball load (only ever n'th tuple is regarded)
-		 * Default: 100 (Can be set with optional parameter 'datarate')
-		 */
-		int ballDatarate = 100;
 
 		/**
 		 * Accuracy (in mm): To reduce load. Movements with distance < accuracy
@@ -87,15 +75,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		// Set parameters when in sportsQL
 
 		Map<String, ISportsQLParameter> parameters = sportsQL.getParameters();
-		if (parameters.containsKey("datarate")) {
-			try {
-				ballDatarate = ((SportsQLIntegerParameter) parameters
-						.get("datarate")).getValue();
-			} catch (Exception e) {
-				throw new SportsQLParseException("Illegal value for datarate.");
-			}
-		}
-
+		
 		if (parameters.containsKey("accuracy")) {
 			try {
 				accuracy = ((SportsQLDoubleParameter) parameters
@@ -150,21 +130,16 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 				.createEntitySelectByName(AbstractSportsDDCAccess.ENTITY_BALL, enrichedStream);
 		allOperators.add(ballsFiltered);
 
-		// / ball_sample = SAMPLE({datarate=${datarate}},balls_filtered)
-		ILogicalOperator sampledBall = OperatorBuildHelper.createSampleAO(
-				ballDatarate, ballsFiltered);
-		allOperators.add(sampledBall);
-
 		// / MAP({EXPRESSIONS = [
 		// /['ToPoint(x,y,z)','ball_pos']
 		// /]}, sampled_ball)
 		ArrayList<SDFExpressionParameter> parameterList = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter toPointParameter = OperatorBuildHelper
 				.createExpressionParameter("ToPoint(x,y,z)", "ball_pos",
-						sampledBall);
+						ballsFiltered);
 		parameterList.add(toPointParameter);
 		ILogicalOperator ballpos = OperatorBuildHelper.createMapAO(
-				parameterList, sampledBall, 0, 0);
+				parameterList, ballsFiltered, 0, 0);
 		allOperators.add(ballpos);
 
 		// player_stream = SELECT({predicate='entity_id = ${entity_id}'},
