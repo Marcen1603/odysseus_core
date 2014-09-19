@@ -78,9 +78,26 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		// Third part (Select for questioned team)
 		// -----------------------------------------
 
-		// 1. Select for team
+		// 1. Sanitizes Metadata (null -> "" in remarks and null -> "-1" in team_id), causes exceptions otherwise.
+		SDFExpressionParameter mapExpr1 = OperatorBuildHelper.createExpressionParameter("entity_id", metaDataStreamAO);
+		SDFExpressionParameter mapExpr2 = OperatorBuildHelper.createExpressionParameter("entity", metaDataStreamAO);
+		SDFExpressionParameter mapExpr3 = OperatorBuildHelper.createExpressionParameter("sensorid", metaDataStreamAO);
+		SDFExpressionParameter mapExpr4 = OperatorBuildHelper.createExpressionParameter("eif(isNull(remark),'',remark)","remark", metaDataStreamAO);
+		SDFExpressionParameter mapExpr5 = OperatorBuildHelper.createExpressionParameter("eif(isNull(team_id),-1,team_id)","team_id",metaDataStreamAO);
+		ArrayList<SDFExpressionParameter> mapExprList = new ArrayList<SDFExpressionParameter>();
+		mapExprList.add(mapExpr1);
+		mapExprList.add(mapExpr2);
+		mapExprList.add(mapExpr3);
+		mapExprList.add(mapExpr4);
+		mapExprList.add(mapExpr5);
+		
+		MapAO sanitizedMetadata = OperatorBuildHelper.createMapAO(mapExprList, metaDataStreamAO, 0, 0);
+		allOperators.add(sanitizedMetadata);
+		
+		
+		// 3. Select for team
 		SelectAO teamSelect = OperatorBuildHelper.createTeamSelectAO(
-				sportsQL.getEntityId(), metaDataStreamAO);
+				sportsQL.getEntityId(), sanitizedMetadata);
 		allOperators.add(teamSelect);
 
 		// -----------------------------------------

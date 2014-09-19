@@ -181,7 +181,7 @@ public class LoadBalancingHelper {
 	}
 
 	/**
-	 * Takes a QueryPut and cut's all receivers from it.
+	 * Takes a QueryPart and cut's all receivers from it.
 	 * Used so that, when deleting a Query the other Parts won't be influenced (e.g. stopped) by the executor.
 	 * @param queryID
 	 */

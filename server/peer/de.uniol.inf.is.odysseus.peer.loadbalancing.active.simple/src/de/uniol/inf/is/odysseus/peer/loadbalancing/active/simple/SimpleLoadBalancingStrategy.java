@@ -52,12 +52,12 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	/**
 	 * The default threshold for the CPU load as percentage.
 	 */
-	public static final double DEFAULT_CPU_THRESHOLD = 0.8;
+	public static final double DEFAULT_CPU_THRESHOLD = 0.1;
 	
 	/**
 	 * The default threshold for the memory load as percentage.
 	 */
-	public static final double DEFAULT_MEM_THRESHOLD = 0.8;
+	public static final double DEFAULT_MEM_THRESHOLD = 0.1;
 	
 	/**
 	 * The default time between look ups of the local resources [ms].
@@ -349,9 +349,14 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	@Override
 	public void setCommunicator(ILoadBalancingCommunicator communicator) {
 		
+		if(mCommunicator!=null) {
+			mCommunicator.removeLoadBalancingListener(this);
+		}
+		
 		Preconditions.checkNotNull(communicator, "The load balancing communicator to be used must be not null!");
 		
 		this.mCommunicator = communicator;
+		mCommunicator.registerLoadBalancingListener(this);
 		LOG.debug("Set {} as implementation of {}", communicator.getClass().getSimpleName(), ILoadBalancingCommunicator.class.getSimpleName());
 		
 	}

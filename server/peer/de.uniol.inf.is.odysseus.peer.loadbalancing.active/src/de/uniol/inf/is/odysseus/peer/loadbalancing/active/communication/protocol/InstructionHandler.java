@@ -135,7 +135,7 @@ public class InstructionHandler {
 				
 				LOG.debug("Installing pipe " + instruction.getNewPipeId());
 				
-				status.addReplacedPipe(instruction.getOldPipeId(),
+				status.addReplacedPipe(instruction.getNewPipeId(),
 						instruction.getOldPipeId());
 				dispatcher = status.getMessageDispatcher();
 				try {
