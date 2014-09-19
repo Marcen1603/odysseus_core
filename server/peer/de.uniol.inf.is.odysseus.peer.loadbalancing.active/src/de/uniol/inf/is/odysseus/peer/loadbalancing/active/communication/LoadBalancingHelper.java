@@ -219,9 +219,9 @@ public class LoadBalancingHelper {
 		Map<ILogicalOperator, Collection<ConnectionToOperator>> outgoingConnections = LoadBalancingHelper
 				.stripJxtaSenders(modifiedPart);
 		
-		Collection<ILogicalOperator> relativeSources = LogicalQueryHelper
-				.getRelativeSinksOfLogicalQueryPart(modifiedPart);
 		Collection<ILogicalOperator> relativeSinks = LogicalQueryHelper
+				.getRelativeSinksOfLogicalQueryPart(modifiedPart);
+		Collection<ILogicalOperator> relativeSources = LogicalQueryHelper
 				.getRelativeSourcesOfLogicalQueryPart(modifiedPart);
 
 		HashMap<String, String> replacedPipes = new HashMap<String, String>();
