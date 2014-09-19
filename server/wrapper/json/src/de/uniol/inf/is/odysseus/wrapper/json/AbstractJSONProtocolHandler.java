@@ -52,6 +52,7 @@ abstract public class AbstractJSONProtocolHandler<T extends KeyValueObject<?>> e
 				reader = new BufferedReader(new InputStreamReader(getTransportHandler().getInputStream()));
 			} 
 		}
+		isDone = false;
 	}
 
 	@Override
