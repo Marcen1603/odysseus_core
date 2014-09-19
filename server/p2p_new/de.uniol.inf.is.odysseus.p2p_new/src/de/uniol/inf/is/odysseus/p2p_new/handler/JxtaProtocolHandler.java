@@ -3,13 +3,13 @@ package de.uniol.inf.is.odysseus.p2p_new.handler;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.objecthandler.ObjectByteConverter;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
 
 public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByteBufferHandler<T> {
 

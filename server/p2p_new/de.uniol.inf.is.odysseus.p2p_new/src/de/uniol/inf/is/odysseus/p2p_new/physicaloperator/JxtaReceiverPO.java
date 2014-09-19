@@ -14,7 +14,6 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferUtil;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -28,6 +27,7 @@ import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiverListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.util.ByteBufferUtil;
 import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 
 @SuppressWarnings("rawtypes")

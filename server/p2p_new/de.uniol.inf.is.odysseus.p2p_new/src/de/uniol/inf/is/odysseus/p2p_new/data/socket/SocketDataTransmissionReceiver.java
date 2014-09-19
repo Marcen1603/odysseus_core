@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
-import de.uniol.inf.is.odysseus.core.objecthandler.ObjectByteConverter;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
@@ -22,6 +21,7 @@ import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.EndpointDataTransmissionReceiver;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
 
 public class SocketDataTransmissionReceiver extends EndpointDataTransmissionReceiver {
 
