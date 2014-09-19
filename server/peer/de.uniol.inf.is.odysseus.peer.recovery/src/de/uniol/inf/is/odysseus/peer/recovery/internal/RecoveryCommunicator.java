@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
  * @author Tobias Brandt & Michael Brand
  *
  */
+@SuppressWarnings("unused")
 public class RecoveryCommunicator implements IRecoveryCommunicator,
 		IPeerCommunicatorListener {
 
@@ -113,8 +114,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 */
 	public void bindPeerCommunicator(IPeerCommunicator serv) {
 		peerCommunicator = serv;
-		peerCommunicator.registerMessageType(RecoveryMessage.class);
-		peerCommunicator.addListener(this, RecoveryMessage.class);
+		peerCommunicator.registerMessageType(RecoveryInstructionMessage.class);
+		peerCommunicator.addListener(this, RecoveryInstructionMessage.class);
 	}
 
 	/**
@@ -127,8 +128,10 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 */
 	public void unbindPeerCommunicator(IPeerCommunicator serv) {
 		if (peerCommunicator == serv) {
-			peerCommunicator.removeListener(this, RecoveryMessage.class);
-			peerCommunicator.unregisterMessageType(RecoveryMessage.class);
+			peerCommunicator.removeListener(this,
+					RecoveryInstructionMessage.class);
+			peerCommunicator
+					.unregisterMessageType(RecoveryInstructionMessage.class);
 			peerCommunicator = null;
 		}
 	}
@@ -189,9 +192,9 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		PeerID theChosenOne = peers.iterator().hasNext() ? peers.iterator()
 				.next() : null;
 
-		// Send, that this peer has to do the hard work
+		// Send that this peer has to do the hard work
 		if (theChosenOne != null) {
-			RecoveryMessage takeThis = new RecoveryMessage();
+			RecoveryInstructionMessage takeThis = new RecoveryInstructionMessage();
 			try {
 				peerCommunicator.send(theChosenOne, takeThis);
 			} catch (PeerCommunicationException e) {
@@ -216,11 +219,38 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 	}
 
+	private void sendHoldOnMessages(List<PeerID> peers, List<Integer> queryIds) {
+		try {
+			for (int i = 0; i < peers.size(); i++) {
+				RecoveryInstructionMessage holdOnMessage = RecoveryInstructionMessage
+						.createHoldOnMessage(queryIds.get(i));
+				peerCommunicator.send(peers.get(i), holdOnMessage);
+			}
+		} catch (Exception e) {
+			
+		}
+
+	}
+
+	
+	private void installQueriesOnNewPeer() {
+
+	}
+
+	private void setNewReceiver() {
+
+	}
+
+	private void setNewSender() {
+
+	}
+
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator,
 			PeerID senderPeer, IMessage message) {
-		if (message instanceof RecoveryMessage) {
-			// Take over the query part
+		if (message instanceof RecoveryInstructionMessage) {
+			RecoveryInstructionMessage instruction = (RecoveryInstructionMessage) message;
+
 		}
 
 	}
