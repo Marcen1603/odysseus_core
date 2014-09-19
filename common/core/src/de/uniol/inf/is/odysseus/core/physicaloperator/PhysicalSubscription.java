@@ -108,7 +108,6 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 			// remove object
 			// e.g. 25: 25, 50, 75, 100 --> write 3 Object (at 25,50 and 75), and remove 1
 			currentSheddingValue += sheddingFactor;
-			System.err.println("CurrentFactor = " + currentSheddingValue + " of " + getTarget());
 			if (currentSheddingValue < 100) {
 				process_internal(o);
 			} else {
