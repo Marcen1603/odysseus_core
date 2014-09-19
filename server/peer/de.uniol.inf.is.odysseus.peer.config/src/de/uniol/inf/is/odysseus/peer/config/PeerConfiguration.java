@@ -115,9 +115,13 @@ public class PeerConfiguration {
 	}
 
 	private static void setDefaultValue(String key, String defaultValue) {
-		String valueFromOdysseusConfig = OdysseusConfiguration.get(key);
-		if( !Strings.isNullOrEmpty(valueFromOdysseusConfig)) {
-			properties.put(key, valueFromOdysseusConfig);
+		if( OdysseusConfiguration.exists(key)) {
+			String valueFromOdysseusConfig = OdysseusConfiguration.get(key);
+			if( !Strings.isNullOrEmpty(valueFromOdysseusConfig)) {
+				properties.put(key, valueFromOdysseusConfig);
+			} else {
+				properties.put(key, defaultValue);
+			}
 		} else {
 			properties.put(key, defaultValue);
 		}
