@@ -111,6 +111,11 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 				PhysicalSubscription<ISource<? extends R>> subscription) {
 			AbstractPipe.this.sourceUnsubscribed(subscription);
 		}
+		
+		@Override
+		public void partial(IOperatorOwner id, int sheddingFactor) {
+			AbstractPipe.this.partial(id, sheddingFactor);
+		}
 	}
 
 	public enum OutputMode {
@@ -325,9 +330,8 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	// ------------------------------------------------------------------------
 	@Override
 	public void partial(IOperatorOwner id, int sheddingFactor){
-		this.delegateSink.partial(id, sheddingFactor);
+		delegateSink.partial(id, sheddingFactor, this);
 	}
-	
 	
 	// ------------------------------------------------------------------------
 	// Subscription management

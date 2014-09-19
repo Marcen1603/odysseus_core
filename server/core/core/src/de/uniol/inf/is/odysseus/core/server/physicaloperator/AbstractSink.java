@@ -534,10 +534,19 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	// Partial
 	// ------------------------------------------------------------------------
 	@Override
-	public void partial(IOperatorOwner id, int sheddingFactor){
+	public void partial(IOperatorOwner id, int sheddingFactor) {
+		partial(id, sheddingFactor,this);
+	}
+	
+
+	public void partial(IOperatorOwner id, int sheddingFactor, Object tgt){
 		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
-			if (sub.getTarget().isOwnedBy(id)){
-				sub.setSheddingFactor(sheddingFactor);
+			ISource<? extends R> target = sub.getTarget();
+			
+			for( PhysicalSubscription<?> subFromTarget : target.getSubscriptions()) {
+				if( subFromTarget.getTarget() == tgt ) {
+					subFromTarget.setSheddingFactor(sheddingFactor);
+				}
 			}
 		}
 	}
