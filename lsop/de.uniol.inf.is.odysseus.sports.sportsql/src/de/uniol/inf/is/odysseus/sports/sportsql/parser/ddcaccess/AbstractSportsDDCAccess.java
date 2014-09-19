@@ -38,6 +38,12 @@ public class AbstractSportsDDCAccess {
 	 */
 	public static final String ENTITY_BALL = "Ball";
 	public static final String ENTITY_REFEREE = "Referee";
+	
+	/**
+	 * Remarks
+	 */
+	public static final String REMARK_LEFT_LEG = "Left Leg";
+	public static final String REMARK_RIGHT_LEG = "Right Leg";
 
 	/**
 	 * The logger for this class.

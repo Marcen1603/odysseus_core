@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.sports.sportsql.parser.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -86,14 +87,25 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		// renamed
 		// )
 		//
-		String predicate = "( sid= " + OperatorBuildHelper.BALL_1 + " OR sid= "
-				+ OperatorBuildHelper.BALL_2 + " OR sid= "
-				+ OperatorBuildHelper.BALL_3 + " OR sid= "
-				+ OperatorBuildHelper.BALL_4 + ")";
+		
+		// build ball sensor IDs predicate
+		String predicate = "(";
+		Iterator<Integer> ballSensorIterator = AbstractSportsDDCAccess.getBallSensorIds().iterator();
+		while(ballSensorIterator.hasNext()) {
+			int sensorId = ballSensorIterator.next();
+			predicate += "sid = " + sensorId;
+			if(ballSensorIterator.hasNext()) {
+				predicate += " OR ";
+			}
+		}
+		predicate += ")";
+		
 		predicate += " AND (x >= " + (xMin - FIELD_TOLERANCE) + ")";
 		predicate += " AND (x <= " + (xMax + FIELD_TOLERANCE) + ")";
 		predicate += "AND (y >= " + (yMin - FIELD_TOLERANCE) + ")";
 		predicate += "AND (y <= " + (yMax + FIELD_TOLERANCE) + ")";
+		
+		
 		SelectAO activeBall = OperatorBuildHelper.createSelectAO(
 				predicate, projected);
 		operatorList.add(activeBall);

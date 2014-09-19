@@ -194,8 +194,8 @@ public class ShotOnGoalGlobalOutput {
 		feetSelectPredicate += " AND entity != \""
 				+ AbstractSportsDDCAccess.ENTITY_REFEREE + "\"";
 		feetSelectPredicate += " AND (remark = \""
-				+ OperatorBuildHelper.LEFT_LEG_REMARK + "\" OR remark = \""
-				+ OperatorBuildHelper.RIGHT_LEG_REMARK + "\")";
+				+ AbstractSportsDDCAccess.REMARK_LEFT_LEG+ "\" OR remark = \""
+				+ AbstractSportsDDCAccess.REMARK_RIGHT_LEG + "\")";
 
 		SelectAO playerLegSelect = OperatorBuildHelper.createSelectAO(
 				feetSelectPredicate, enrichedStream);

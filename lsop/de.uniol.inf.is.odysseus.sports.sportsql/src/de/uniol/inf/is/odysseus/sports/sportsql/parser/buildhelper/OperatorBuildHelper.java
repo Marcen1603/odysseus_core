@@ -91,12 +91,6 @@ public class OperatorBuildHelper {
 	public static final String TS_GAME_END = "14879639146403495.0";
 
 	/**
-	 * Entity names
-	 */
-	public static final String LEFT_LEG_REMARK = "Left Leg";
-	public static final String RIGHT_LEG_REMARK = "Right Leg";
-
-	/**
 	 * Team Ids
 	 */
 	public static final int TEAM_ID_RIGHT_GOAL_SHOOTERS = 1;
@@ -107,14 +101,6 @@ public class OperatorBuildHelper {
 	 */
 	public static final int START_MINUTE = 0;
 	public static final int END_MINUTE = 90;
-	
-	/**
-	 * Entity ids of the balls
-	 */
-	public static final int BALL_1 = 4;
-	public static final int BALL_2 = 8;
-	public static final int BALL_3 = 10;
-	public static final int BALL_4 = 12;
 
 	/**
 	 * Creates a MapAP with a list of expressions. To create such expressions,
@@ -925,7 +911,6 @@ public class OperatorBuildHelper {
 	 */
 	public static RouteAO createRouteAO(List<String> listOfPredicates,
 			ILogicalOperator source) {
-		RouteAO rAO = new RouteAO();
 		List<IPredicate<?>> predicates = new LinkedList<IPredicate<?>>();
 		// Add predicates to the routeAO operator
 		for (String predicate : listOfPredicates) {
@@ -934,10 +919,24 @@ public class OperatorBuildHelper {
 			RelationalPredicate p = new RelationalPredicate(predicateExpression);
 			predicates.add(p);
 		}
+		return createRoutePredicatesAO(predicates, source);
+	}
+	
+	/**
+	 * Returns routeAO with a list of predicates
+	 * 
+	 * @param predicates
+	 * @param source
+	 * @return
+	 */
+	public static RouteAO createRoutePredicatesAO(List<IPredicate<?>> predicates, 
+			ILogicalOperator source) {
+		RouteAO rAO = new RouteAO();
 		rAO.setPredicates(predicates);
 		rAO.subscribeTo(source, source.getOutputSchema());
 		return rAO;
 	}
+	
 
 	/**
 	 * Returns changeDetectAO with list of Attributes, groupBy, relative

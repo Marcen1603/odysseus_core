@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
@@ -37,6 +38,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 	private static final int KICKOFF_AREA_RADIUS = 2000;
 	
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
 			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
@@ -54,18 +56,20 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		allOperators.add(soccergame_after_start);
 		predicates.clear();
 
-		// get only ball
-		String predicate = "sid= " + OperatorBuildHelper.BALL_1 + " OR sid= "
-				+ OperatorBuildHelper.BALL_2 + " OR sid= "
-				+ OperatorBuildHelper.BALL_3 + " OR sid= "
-				+ OperatorBuildHelper.BALL_4;
-		SelectAO ball = OperatorBuildHelper.createSelectAO(predicate,
+		// get only ball	
+		List<IPredicate> ballPredicates = new ArrayList<IPredicate>();
+		for(int sensorId : AbstractSportsDDCAccess.getBallSensorIds()) {
+			IPredicate ballPredicate = OperatorBuildHelper.createRelationalPredicate("sid = " + sensorId);
+			ballPredicates.add(ballPredicate);
+		}		
+		
+		SelectAO ball = OperatorBuildHelper.createSelectAO(OperatorBuildHelper.createOrPredicate(ballPredicates),
 				soccergame_after_start);
 		allOperators.add(ball);
 		predicates.clear();
 
 		// ball in game field
-		predicate = " x > " + AbstractSportsDDCAccess.getFieldXMin() + " AND x < " + AbstractSportsDDCAccess.getFieldXMax() + " AND y > " + SoccerDDCAccess.getGoalareaLeftY()
+		String predicate = " x > " + AbstractSportsDDCAccess.getFieldXMin() + " AND x < " + AbstractSportsDDCAccess.getFieldXMax() + " AND y > " + SoccerDDCAccess.getGoalareaLeftY()
 				+ " AND y < " + SoccerDDCAccess.getGoalareaRightY() + " ";
 		SelectAO ball_in_game_field = OperatorBuildHelper.createSelectAO(
 				predicate, ball);

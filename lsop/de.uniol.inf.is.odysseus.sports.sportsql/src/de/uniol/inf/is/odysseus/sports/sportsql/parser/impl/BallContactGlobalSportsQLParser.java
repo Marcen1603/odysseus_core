@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
@@ -13,6 +14,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
@@ -118,6 +120,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 	 * @throws MissingDDCEntryException 
 	 * @throws NumberFormatException 
 	 */
+	@SuppressWarnings("rawtypes")
 	public ILogicalOperator getOutputOperator(
 			ILogicalOperator soccerGameStreamAO,
 			ILogicalOperator metadataStreamAO, SportsQLQuery sportsQL,
@@ -146,13 +149,17 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 				spaceParameter, true, game_after_start);
 		allOperators.add(game_space);
 
-		predicates.add("sid= " + OperatorBuildHelper.BALL_1 + " OR sid= "
-				+ OperatorBuildHelper.BALL_2 + " OR sid= "
-				+ OperatorBuildHelper.BALL_3 + " OR sid= "
-				+ OperatorBuildHelper.BALL_4);
+		// get only ball sensors
+		List<IPredicate> ballPredicates = new ArrayList<IPredicate>();
+		for(int sensorId : AbstractSportsDDCAccess.getBallSensorIds()) {
+			IPredicate ballPredicate = OperatorBuildHelper.createRelationalPredicate("sid = " + sensorId);
+			ballPredicates.add(ballPredicate);
+		}		
+		List<IPredicate<?>> predicatesBall = new ArrayList<IPredicate<?>>();
+		predicatesBall.add(OperatorBuildHelper.createOrPredicate(ballPredicates));
 		
-		ILogicalOperator split_balls = OperatorBuildHelper.createRouteAO(
-				predicates, game_space);
+		ILogicalOperator split_balls = OperatorBuildHelper.createRoutePredicatesAO(
+				predicatesBall, game_space);
 		allOperators.add(split_balls);
 		predicates.clear();
 
