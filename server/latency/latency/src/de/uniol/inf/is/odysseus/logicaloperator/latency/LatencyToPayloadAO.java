@@ -81,6 +81,10 @@ public class LatencyToPayloadAO extends AbstractLogicalOperator {
 		this.append = append;
 	}
 	
+	public boolean isAppend2() {
+		return this.append;
+	}
+	
 	public boolean isAppend() {
 		return append;
 	}
