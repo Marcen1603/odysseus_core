@@ -9,6 +9,6 @@ public class CorrectedScoreTfPart extends AbstractDashboardPartView {
 	
 	public void createPartControl(Composite parent, int wka_id) {
 		super.createPartControl(parent);
-		super.loadDashboardPartFile(wka_id + ".corrected_score_tf.prt");
+		super.loadDashboardPartFile(wka_id + "corrected_score_tf.prt");
 	}
 }

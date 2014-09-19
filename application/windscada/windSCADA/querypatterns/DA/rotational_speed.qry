@@ -1,0 +1,5 @@
+#PARSER PQL
+#RUNQUERY
+Stream1 = Stream({SOURCE='System.P§windfarmid§:§wkaid§'})
+
+P§windfarmid§:§wkaid§:rotational_speed ::= PROJECT({ATTRIBUTES=['P§windfarmid§:§wkaid§.rotational_speed']}, 0:Stream1)

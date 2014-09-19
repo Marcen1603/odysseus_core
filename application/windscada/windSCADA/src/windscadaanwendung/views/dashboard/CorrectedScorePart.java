@@ -12,7 +12,8 @@ public class CorrectedScorePart extends AbstractDashboardPartView {
 		this.valueType = "corrected_score";
 		this.farmPart = false;
 		super.createPartControl(parent);
-		super.loadDashboardPartFile("4155.corrected_score.prt");
+		// TODO
+		super.loadDashboardPartFile("4155corrected_score.prt");
 		DashboardPartViewObserver.addDashboardPartView(this);
 	}
 

@@ -84,6 +84,7 @@ public class AbstractDashboardPartView extends DashboardPartView {
 			}
 			//TODO: UNBEDINGT KLAEREN!!
 			 */
+			System.out.println(path);
 			super.showDashboardPart(dashboardPartFile);
 		}
 		else {

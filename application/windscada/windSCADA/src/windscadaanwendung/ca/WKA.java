@@ -40,6 +40,24 @@ public class WKA {
 	}
 
 	private int id;
+	private String host;
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	private int port;
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
 	private double latitude, longtude;
 	//TODO: add Scripts and comment
 	

@@ -10,7 +10,8 @@ public class WindSpeedPart extends AbstractDashboardPartView {
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		super.loadDashboardPartFile("4155.wind_speed.prt");
+		// TODO
+		super.loadDashboardPartFile("4155wind_speed.prt");
 		DashboardPartViewObserver.addDashboardPartView(this);
 	}
 

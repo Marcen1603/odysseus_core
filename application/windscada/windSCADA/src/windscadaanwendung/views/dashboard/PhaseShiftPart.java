@@ -10,7 +10,8 @@ public class PhaseShiftPart extends AbstractDashboardPartView {
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		super.loadDashboardPartFile("4155.phase_shift.prt");
+		// TODO
+		super.loadDashboardPartFile("4155phase_shift.prt");
 		DashboardPartViewObserver.addDashboardPartView(this);
 	}
 

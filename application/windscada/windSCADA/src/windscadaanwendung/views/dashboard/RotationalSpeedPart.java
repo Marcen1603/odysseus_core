@@ -10,7 +10,8 @@ public class RotationalSpeedPart extends AbstractDashboardPartView {
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		super.loadDashboardPartFile("4155.rotational_speed.prt");
+		// TODO
+		super.loadDashboardPartFile("4155rotational_speed.prt");
 		DashboardPartViewObserver.addDashboardPartView(this);
 	}
 

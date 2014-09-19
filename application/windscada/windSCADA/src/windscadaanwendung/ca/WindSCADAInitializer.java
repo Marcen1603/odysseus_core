@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.sql.SQLException;
 
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -19,24 +21,41 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.osgi.framework.Bundle;
 
 import windscadaanwendung.Activator;
 import windscadaanwendung.db.DBConnection;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-
+import de.uniol.inf.is.odysseus.rcp.commands.DropAllSourcesCommand;
+import de.uniol.inf.is.odysseus.rcp.commands.RemoveAllQueriesCommand;
 public class WindSCADAInitializer {
-
+	
+	private final static String[] DAFileNames = {"corrected_score.qry","phase_shift.qry","pitch_angle.qry","rotational_speed.qry","wind_speed.qry"};
+	private final static String[] GUIDashboardPartFileNames = {"corrected_score_tf.prt", "corrected_score.prt","phase_shift.prt","pitch_angle.prt","rotational_speed.prt","wind_speed.prt"};
+	private static final String[] GUIQueriesFileNames = {"corrected_score.qry","phase_shift.qry","pitch_angle.qry","rotational_speed.qry","wind_speed.qry"};
+	
 	public static void init() {
 		clearOdysseus();
 		loadConfig();
 		initScripts();
+		openPerspetive();
 	}
-	
+
 	private static void clearOdysseus() {
+		RemoveAllQueriesCommand dropQueries= new RemoveAllQueriesCommand();
+		DropAllSourcesCommand dropSources= new DropAllSourcesCommand();
+		try {
+			dropQueries.execute(new ExecutionEvent());
+			dropSources.execute(new ExecutionEvent());
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		String fileContent = loadFileContent("querypatterns/HD/dropDatabase.qry");
+		executeQuery(fileContent);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IPerspectiveDescriptor pers = PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId("windscadanwendung.perspective");
+		IPerspectiveDescriptor pers = PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId("windscadaanwendung.perspective");
 		page.closePerspective(pers, false, true);
 	}
 
@@ -45,7 +64,7 @@ public class WindSCADAInitializer {
 		executeQuery(fileContent);
 		for (WindFarm farm: FarmList.getFarmList()) {
 			for (WKA wka: farm.getWkas()) {
-				initDA(farm.getID(),wka.getID());
+				initDA(farm.getID(),wka.getID(), wka.getHost(), wka.getPort());
 				initHD(farm.getID(),wka.getID());
 				initAE(farm.getID(),wka.getID());
 				initGUI(farm.getID(),wka.getID());
@@ -75,7 +94,7 @@ public class WindSCADAInitializer {
 			BufferedReader reader = new BufferedReader(fileReader);
 			String str;
 			while((str = reader.readLine()) != null) {
-				content += str;
+				content += str + "\n";
 			}
 			reader.close();
 		} catch (IOException e) {
@@ -86,9 +105,14 @@ public class WindSCADAInitializer {
 	}
 	
 	private static String adjustQuery(String query, int windfarm_id, int wka_id) {
-		String adjustedQuery = new String(query);
-		adjustedQuery.replaceAll("ï¿½windfarm_idï¿½", String.valueOf(windfarm_id));
-		adjustedQuery.replaceAll("ï¿½wka_idï¿½", String.valueOf(wka_id));
+		String adjustedQuery = query.replace("§windfarmid§", String.valueOf(windfarm_id));
+		adjustedQuery = adjustedQuery.replace("§wkaid§", String.valueOf(wka_id));
+		return adjustedQuery;
+	}
+	
+	private static String replaceConnectionInfo(String query, String host, int port) {
+		String adjustedQuery = query.replace("§host§", host);
+		adjustedQuery = adjustedQuery.replace("§port§", String.valueOf(port));
 		return adjustedQuery;
 	}
 	
@@ -118,21 +142,50 @@ public class WindSCADAInitializer {
 		}
 	}
 	
-	private static void initDA(int farmId, int wkaId) {
-		
+	private static void initDA(int farmId, int wkaId, String host, int port) {
+		String fileContent = loadFileContent("querypatterns/DA/bindSource.qry");
+		String query = adjustQuery(fileContent,farmId,wkaId);
+		query = replaceConnectionInfo(query, host, port);
+		executeQuery(query);
+		for (String fileName: DAFileNames) {
+			fileContent = loadFileContent("querypatterns/DA/" + fileName);
+			query = adjustQuery(fileContent,farmId,wkaId);
+			query = replaceConnectionInfo(query, host, port);
+			executeQuery(query);
+		}
 	}
 	
 	private static void initHD(int farmId, int wkaId) {
 		String fileContent = loadFileContent("querypatterns/HD/archiveData.qry");
 		String query = adjustQuery(fileContent,farmId,wkaId);
+		storeFileInWorkspace("HD",wkaId + "archiveData.qry", query);
 		executeQuery(query);
 	}
 	
 	private static void initAE(int farmId, int wkaId) {
-		
+		//TODO
 	}
 	
 	private static void initGUI(int farmId, int wkaId) {
+		for (String fileName: GUIQueriesFileNames) {
+			String fileContent = loadFileContent("querypatterns/GUI/" + fileName);
+			String query = adjustQuery(fileContent,farmId,wkaId);
+			storeFileInWorkspace("GUI",wkaId + fileName, query);
+			executeQuery(query);
+		}
+		for (String fileName: GUIDashboardPartFileNames) {
+			String fileContent = loadFileContent("querypatterns/GUI/" + fileName);
+			String query = adjustQuery(fileContent,farmId,wkaId);
+			storeFileInWorkspace("GUI",wkaId + fileName, query);
+		}
+	}
+	
+	private static void openPerspetive() {
+		try {
+			PlatformUI.getWorkbench().showPerspective("windscadaanwendung.perspective", PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+		} catch (WorkbenchException e) {
+			e.printStackTrace();
+		}
 		
 	}
 }

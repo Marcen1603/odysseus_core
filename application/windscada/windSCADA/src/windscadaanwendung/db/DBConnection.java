@@ -92,6 +92,8 @@ public class DBConnection extends AbstractDatabaseConnectionFactory {
 		    while (rs.next()) {
 		    	actWka = new WKA();
 		    	actWka.setID(rs.getInt("WKA.ID"));
+		    	actWka.setHost(rs.getString("HOST"));
+		    	actWka.setPort(rs.getInt("PORT"));
 		    	actWka.setLatitude(rs.getDouble("LATITUDE"));
 		    	actWka.setLongtude(rs.getDouble("LONGTUDE"));
 		    	//TODO: Scripte einlesen (auch f��r windfarmen)

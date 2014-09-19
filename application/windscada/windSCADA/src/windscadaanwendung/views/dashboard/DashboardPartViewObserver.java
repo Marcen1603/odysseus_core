@@ -38,7 +38,7 @@ public class DashboardPartViewObserver {
 				System.out.println(String.valueOf(wka.getID()) + "." + dpv.valueType + dpv.getFileEnding());
 				// Funktioniert nicht -> vorher alle alten sachen vom dpv disposen und erzwingen dass es gejt auch wenn schon showing ist
 				// oder evtl. bei allen dpvs einfach createPartControl() aufrufen und dabei eine wka ID uebergeben?! wohl besser !?
-				dpv.loadDashboardPartFile(String.valueOf(wka.getID()) + "." + dpv.valueType + dpv.getFileEnding());
+				dpv.loadDashboardPartFile(String.valueOf(wka.getID()) + dpv.valueType + dpv.getFileEnding());
 			}
 		}
 		//TODO Fuer Farm und fuer null machen

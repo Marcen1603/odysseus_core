@@ -7,7 +7,7 @@
       <perspective
             name="windSCADA"
             class="windscadaanwendung.Perspective"
-            id="windscadanwendung.perspective">
+            id="windscadaanwendung.perspective">
       </perspective>
    </extension>
    <extension

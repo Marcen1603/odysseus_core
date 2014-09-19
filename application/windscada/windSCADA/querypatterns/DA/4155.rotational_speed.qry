@@ -1,5 +1,0 @@
-#PARSER PQL
-#RUNQUERY
-Stream1 = Stream({SOURCE='System.P0:4155'})
-
-P0:4155:rotational_speed ::= PROJECT({ATTRIBUTES=['P0:4155.rotational_speed']}, 0:Stream1)
