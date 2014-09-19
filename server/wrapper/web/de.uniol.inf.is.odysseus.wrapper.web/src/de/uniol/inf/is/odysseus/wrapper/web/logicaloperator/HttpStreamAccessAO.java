@@ -56,5 +56,8 @@ public class HttpStreamAccessAO extends AbstractAccessAO{
 		addOption(HTTPStreamTransportHandler.URI, uri);
 	}
 
+	public String getURI() {
+		return getOption(HTTPStreamTransportHandler.URI);
+	}
 
 }
