@@ -69,10 +69,18 @@ public class SaseAO extends AbstractLogicalOperator {
 	public void setAttributes(List<SDFAttribute> attributes) {
 		this.attributes = attributes;
 	}
+	
+	public List<SDFAttribute> getAttributes() {
+		return attributes;
+	}
 
 	@Parameter(name = "Type", type = StringParameter.class, optional = false)
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
+	}
+	
+	public String getTypeName() {
+		return typeName;
 	}
 
 	@Override
