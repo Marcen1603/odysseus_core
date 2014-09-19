@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.admission.status.impl;
 import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn;
 import de.uniol.inf.is.odysseus.admission.status.ExecutorAdmissionStatusComponent;
 import de.uniol.inf.is.odysseus.admission.status.SystemLoadAdmissionStatusComponent;
+import de.uniol.inf.is.odysseus.latency.LatencyValuesContainer;
 
 public class SystemLoadPrinter extends Thread {
 
@@ -37,7 +38,8 @@ public class SystemLoadPrinter extends Thread {
 			System.err.print((int)systemLoadStatus.getCpuLoadPercentage() + ",");
 			System.err.print(executorStatus.getRunningQueryCount() + ",");
 			System.err.print(executorStatus.getPartialQueryCount() + ",");
-			System.err.println(executorStatus.getStoppedQueryCount());
+			System.err.print(executorStatus.getStoppedQueryCount() + ",");
+			System.err.println(LatencyValuesContainer.popAverage());
 
 			trySleep(MEASURE_INTERVAL_MILLIS);
 		}
