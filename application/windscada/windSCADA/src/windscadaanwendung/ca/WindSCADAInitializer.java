@@ -16,14 +16,15 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
-import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import windscadaanwendung.Activator;
 import windscadaanwendung.db.DBConnection;
+import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 public class WindSCADAInitializer {
 
@@ -34,8 +35,9 @@ public class WindSCADAInitializer {
 	}
 	
 	private static void clearOdysseus() {
-		// TODO Auto-generated method stub
-		
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IPerspectiveDescriptor pers = PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId("windscadanwendung.perspective");
+		page.closePerspective(pers, false, true);
 	}
 
 	private static void initScripts() {
@@ -85,8 +87,8 @@ public class WindSCADAInitializer {
 	
 	private static String adjustQuery(String query, int windfarm_id, int wka_id) {
 		String adjustedQuery = new String(query);
-		adjustedQuery.replaceAll("§windfarm_id§", String.valueOf(windfarm_id));
-		adjustedQuery.replaceAll("§wka_id§", String.valueOf(wka_id));
+		adjustedQuery.replaceAll("ï¿½windfarm_idï¿½", String.valueOf(windfarm_id));
+		adjustedQuery.replaceAll("ï¿½wka_idï¿½", String.valueOf(wka_id));
 		return adjustedQuery;
 	}
 	
