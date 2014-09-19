@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.complexnumber.function;
 
 import de.uniol.inf.is.odysseus.complexnumber.ComplexNumber;
 import de.uniol.inf.is.odysseus.complexnumber.SDFComplexNumberDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 
@@ -9,9 +10,10 @@ public class ComplexNumberPlusOperator extends
 		AbstractBinaryOperator<ComplexNumber> {
 
 	private static final long serialVersionUID = -8385535716062248684L;
+    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { {SDFComplexNumberDatatype.COMPLEX_NUMBER}, {SDFComplexNumberDatatype.COMPLEX_NUMBER} };
 
 	public ComplexNumberPlusOperator() {
-		super("+", SDFComplexNumberDatatype.COMPLEX_NUMBER);
+		super("+", accTypes, SDFComplexNumberDatatype.COMPLEX_NUMBER);
 	}
 	
 	@Override
