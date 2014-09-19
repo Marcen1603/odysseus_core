@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.sports.sportsql.parser.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -139,10 +140,6 @@ public class PassesSportsQLParser implements ISportsQLParser {
 	private static String ATTRIBUTE_PASS_LENGTH= "pass_length";
 	private static String ATTRIBUTE_DIRECT_PASS= "direct_pass";
 	private static String ATTRIBUTE_DOUBLE_PASS= "double_pass";
-
-
-	//Ball sids
-	public static final int BALL_SIDS[] = {4,8,10,12};
 	
 	
 
@@ -531,15 +528,18 @@ public class PassesSportsQLParser implements ISportsQLParser {
 	}
 	
 	
-	private RouteAO createSplitSoccerDataRouteAO(ILogicalOperator source) {				
+	private RouteAO createSplitSoccerDataRouteAO(ILogicalOperator source) throws NumberFormatException, MissingDDCEntryException {				
 		StringBuilder predicateSb = new StringBuilder();
-		for (int i = 0; i<BALL_SIDS.length; i++) {
-			if (i == 0) {
-				predicateSb.append(SoccerGameAttributes.SID +"="+BALL_SIDS[i]);
-			} else {
-				predicateSb.append(" OR " + SoccerGameAttributes.SID +"="+BALL_SIDS[i]);
+		
+		Iterator<Integer> ballSensorIterator = AbstractSportsDDCAccess.getBallSensorIds().iterator();
+		while(ballSensorIterator.hasNext()) {
+			int sensorId = ballSensorIterator.next();
+			predicateSb.append("sid = " + sensorId);
+			if(ballSensorIterator.hasNext()) {
+				predicateSb.append(" OR ");
 			}
-		}		
+		}
+		
 		ArrayList<String> splitBallRoutePredicates = new ArrayList<String>();
 		splitBallRoutePredicates.add(predicateSb.toString());
 		RouteAO splitRoute = OperatorBuildHelper.createRouteAO(splitBallRoutePredicates, source);
