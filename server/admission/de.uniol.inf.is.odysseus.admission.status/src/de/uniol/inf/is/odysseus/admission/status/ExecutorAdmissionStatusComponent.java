@@ -39,6 +39,7 @@ public class ExecutorAdmissionStatusComponent implements IAdmissionStatusCompone
 	}
 	
 	public Collection<Integer> getRunningQueryIDs() {
+
 		Collection<IPhysicalQuery> queries = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan().getQueries();
 		Collection<Integer> runningQueryIDs = Lists.newArrayList();
 		for( IPhysicalQuery query : queries ) {
