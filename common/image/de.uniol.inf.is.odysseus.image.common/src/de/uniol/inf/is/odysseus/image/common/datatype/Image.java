@@ -67,7 +67,7 @@ public class Image implements IClone, Cloneable {
 //		return null;
 	}
 	
-	static BufferedImage deepCopy(BufferedImage bi) {
+	public static BufferedImage deepCopy(BufferedImage bi) {
 		ColorModel cm = bi.getColorModel();
 		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
 		WritableRaster raster = bi.copyData(null);

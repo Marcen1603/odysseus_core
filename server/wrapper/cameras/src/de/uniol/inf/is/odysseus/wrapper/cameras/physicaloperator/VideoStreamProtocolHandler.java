@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.wrapper.cameras.datatype.BaseImage;
+import de.uniol.inf.is.odysseus.image.common.datatype.Image;
 
 public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>> 
 {
@@ -78,7 +78,7 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 		}
 	}	
 	
-	void setUpStream(BaseImage image) throws FrameRecorder.Exception
+	void setUpStream(Image image) throws FrameRecorder.Exception
 	{
 		int w = image.getWidth();
 		int h = image.getHeight();
@@ -98,7 +98,7 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 	@Override
 	public void write(Tuple<?> object) throws IOException 
 	{
-		BaseImage image = (BaseImage) object.getAttribute(0);
+		Image image = (Image) object.getAttribute(0);
 		
 		if (recorder == null)
 		{

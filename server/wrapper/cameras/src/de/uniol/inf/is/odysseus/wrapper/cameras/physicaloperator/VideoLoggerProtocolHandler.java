@@ -21,8 +21,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.image.common.datatype.Image;
 import de.uniol.inf.is.odysseus.wrapper.cameras.KeyValueFile;
-import de.uniol.inf.is.odysseus.wrapper.cameras.datatype.BaseImage;
 
 public class VideoLoggerProtocolHandler extends LoggerProtocolHandler 
 {
@@ -66,7 +66,7 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 		logConfigFile.set("VideoFile", 	new File(videoFileName).getName());
 		logConfigFile.set("SyncFile", 	new File(syncFileName).getName());		
 		
-		BaseImage image = (BaseImage) object.getAttribute(0);
+		Image image = (Image) object.getAttribute(0);
 		
 		try
 		{
@@ -119,7 +119,7 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 
 	@Override protected long writeInternal(Tuple<?> object, long timeStamp) throws IOException 
 	{
-		BaseImage image = (BaseImage) object.getAttribute(0);
+		Image image = (Image) object.getAttribute(0);
 
 		try
 		{		

@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.wrapper.cameras.datatype.BaseImage;
+import de.uniol.inf.is.odysseus.image.common.datatype.Image;
 
 public class IntegratedCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<?>> 
 {
@@ -123,7 +123,8 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 		
 		lastTime = System.nanoTime();
 		
-		BaseImage image = new BaseImage(iplImage.getBufferedImage());
+//		BaseImage image = new BaseImage(iplImage.getBufferedImage());
+		Image image = new Image(iplImage.getBufferedImage());
 		
 		@SuppressWarnings("rawtypes")
 		Tuple<?> tuple = new Tuple(1, false);

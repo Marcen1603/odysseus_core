@@ -10,10 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.image.common.datatype.Image;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.wrapper.cameras.datatype.BaseImage;
 import de.uniol.inf.is.odysseus.wrapper.cameras.swig.BaslerCamera;
 import de.uniol.inf.is.odysseus.wrapper.cameras.swig.intArray;
 
@@ -148,7 +148,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		        }
 			}
 	        
-			BaseImage image = BaseImage.createNewFrom(bufferedImage);
+			Image image = new Image(Image.deepCopy(bufferedImage));
 			
 			@SuppressWarnings("rawtypes")
 			Tuple<?> tuple = new Tuple(1, false);
