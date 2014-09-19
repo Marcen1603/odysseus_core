@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="securitytoken" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="queryId" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="nullValues" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,13 +36,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getConnectionInformation", propOrder = {
     "securitytoken",
-    "queryId"
+    "queryId",
+    "nullValues"
 })
 @SuppressWarnings(value = { "all" })
 public class GetConnectionInformation {
 
     protected String securitytoken;
     protected int queryId;
+    protected boolean nullValues;
 
     /**
      * Gets the value of the securitytoken property.
@@ -81,6 +84,22 @@ public class GetConnectionInformation {
      */
     public void setQueryId(int value) {
         this.queryId = value;
+    }
+
+    /**
+     * Gets the value of the nullValues property.
+     * 
+     */
+    public boolean isNullValues() {
+        return nullValues;
+    }
+
+    /**
+     * Sets the value of the nullValues property.
+     * 
+     */
+    public void setNullValues(boolean value) {
+        this.nullValues = value;
     }
 
 }

@@ -13,20 +13,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getConnectionInformationWithPorts complex type.
+ * <p>Java class for getConnectionInformationWithSSL complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getConnectionInformationWithPorts">
+ * &lt;complexType name="getConnectionInformationWithSSL">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="securitytoken" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="queryId" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="rootPort" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="minPort" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="maxPort" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="sslClientAuthentication" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="nullValues" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -37,22 +35,18 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getConnectionInformationWithPorts", propOrder = {
+@XmlType(name = "getConnectionInformationWithSSL", propOrder = {
     "securitytoken",
     "queryId",
-    "rootPort",
-    "minPort",
-    "maxPort",
+    "sslClientAuthentication",
     "nullValues"
 })
 @SuppressWarnings(value = { "all" })
-public class GetConnectionInformationWithPorts {
+public class GetConnectionInformationWithSSL {
 
     protected String securitytoken;
     protected int queryId;
-    protected int rootPort;
-    protected int minPort;
-    protected int maxPort;
+    protected boolean sslClientAuthentication;
     protected boolean nullValues;
 
     /**
@@ -96,51 +90,19 @@ public class GetConnectionInformationWithPorts {
     }
 
     /**
-     * Gets the value of the rootPort property.
+     * Gets the value of the sslClientAuthentication property.
      * 
      */
-    public int getRootPort() {
-        return rootPort;
+    public boolean isSslClientAuthentication() {
+        return sslClientAuthentication;
     }
 
     /**
-     * Sets the value of the rootPort property.
+     * Sets the value of the sslClientAuthentication property.
      * 
      */
-    public void setRootPort(int value) {
-        this.rootPort = value;
-    }
-
-    /**
-     * Gets the value of the minPort property.
-     * 
-     */
-    public int getMinPort() {
-        return minPort;
-    }
-
-    /**
-     * Sets the value of the minPort property.
-     * 
-     */
-    public void setMinPort(int value) {
-        this.minPort = value;
-    }
-
-    /**
-     * Gets the value of the maxPort property.
-     * 
-     */
-    public int getMaxPort() {
-        return maxPort;
-    }
-
-    /**
-     * Sets the value of the maxPort property.
-     * 
-     */
-    public void setMaxPort(int value) {
-        this.maxPort = value;
+    public void setSslClientAuthentication(boolean value) {
+        this.sslClientAuthentication = value;
     }
 
     /**

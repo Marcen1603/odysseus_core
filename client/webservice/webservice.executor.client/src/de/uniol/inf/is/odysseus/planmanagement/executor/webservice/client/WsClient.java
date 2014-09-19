@@ -648,7 +648,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 		if (getWebserviceServer() != null) {
 			try {
 				ConnectionInformationResponse infoResponse = getWebserviceServer()
-						.getConnectionInformation(caller.getToken(), queryId);
+						.getConnectionInformation(caller.getToken(), queryId, false);
 
 				if (infoResponse != null) {
 					ConnectionInformation info = infoResponse

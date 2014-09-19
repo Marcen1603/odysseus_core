@@ -14,16 +14,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getReplacementMethodsResponse complex type.
+ * <p>Java class for getConnectionInformationWithSSLResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getReplacementMethodsResponse">
+ * &lt;complexType name="getConnectionInformationWithSSLResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}stringListResponse" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}connectionInformationResponse" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,24 +33,24 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getReplacementMethodsResponse", propOrder = {
+@XmlType(name = "getConnectionInformationWithSSLResponse", propOrder = {
     "_return"
 })
 @SuppressWarnings(value = { "all" })
-public class GetReplacementMethodsResponse {
+public class GetConnectionInformationWithSSLResponse {
 
     @XmlElement(name = "return")
-    protected StringListResponse _return;
+    protected ConnectionInformationResponse _return;
 
     /**
      * Gets the value of the return property.
      * 
      * @return
      *     possible object is
-     *     {@link StringListResponse }
+     *     {@link ConnectionInformationResponse }
      *     
      */
-    public StringListResponse getReturn() {
+    public ConnectionInformationResponse getReturn() {
         return _return;
     }
 
@@ -59,10 +59,10 @@ public class GetReplacementMethodsResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link StringListResponse }
+     *     {@link ConnectionInformationResponse }
      *     
      */
-    public void setReturn(StringListResponse value) {
+    public void setReturn(ConnectionInformationResponse value) {
         this._return = value;
     }
 
