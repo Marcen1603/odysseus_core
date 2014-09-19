@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.image.common.datatype.Image;
+import de.uniol.inf.is.odysseus.image.common.sdf.schema.SDFImageDatatype;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -38,7 +39,7 @@ import de.uniol.inf.is.odysseus.image.common.datatype.Image;
 public class ImageDataHandler extends AbstractDataHandler<Image> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
-		ImageDataHandler.types.add("Image");
+		ImageDataHandler.types.add(SDFImageDatatype.IMAGE.getURI());
 	}
 
 	@Override
