@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Complex Number
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.complexnumber
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Universtiy of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
+Service-Component: OSGI-INF/DatatypeProvider.xml,
+ OSGI-INF/DatatypeHandler.xml
