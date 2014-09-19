@@ -38,6 +38,9 @@ public class CalcLatencyPO<T extends IStreamObject<? extends ILatency>> extends
 	@Override
 	protected void process_next(T object, int port) {
 		object.getMetadata().setLatencyEnd(System.nanoTime());
+		
+//		LatencyValuesContainer.add(object.getMetadata().getLatency());
+		
 		transfer(object);
 	}
 
