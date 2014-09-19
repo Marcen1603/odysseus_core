@@ -118,6 +118,10 @@ public class UnNestAO extends UnaryLogicalOp {
     public void setRecalculate(final boolean recalculate) {
         this.recalculate = recalculate;
     }
+    
+    public boolean isRecalculate() {
+    	return recalculate;
+    }
 
     /**
      * @return The attribute for unnest
