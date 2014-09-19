@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.latency.LatencyValuesContainer;
 
 public class CalcLatencyPO<T extends IStreamObject<? extends ILatency>> extends
 		AbstractPipe<T, T> {
