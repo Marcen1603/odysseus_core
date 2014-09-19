@@ -8,6 +8,7 @@ public class ActivityView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
+		@SuppressWarnings("unused")
 		final Composite tableComposite = new Composite(parent, SWT.NONE);
 		
 		
