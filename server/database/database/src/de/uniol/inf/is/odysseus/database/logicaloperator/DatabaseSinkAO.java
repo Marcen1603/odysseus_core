@@ -120,6 +120,10 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator{
 		this.batchTimeout = timeout;
 	}
 	
+	public int getTimeout() {
+		return batchTimeout;
+	}
+	
 	public int getBatchTimeout() {
 		return batchTimeout;
 	}	
