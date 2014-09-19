@@ -17,15 +17,12 @@ package de.uniol.inf.is.odysseus.wrapper.cameras.datatype;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.DataBufferInt;
-import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
-import java.util.Arrays;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 
 /**
- * @author Christian Kuka <christian@kuka.cc>
+ * @author Henrik Surm
  * 
  */
 public class BaseImage implements IClone, Cloneable 

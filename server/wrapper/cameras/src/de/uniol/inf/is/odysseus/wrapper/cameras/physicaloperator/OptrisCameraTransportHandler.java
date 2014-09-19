@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.wrapper.cameras.physicaloperator;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.awt.image.WritableRaster;
 import java.io.IOException;
 
 import org.slf4j.Logger;
@@ -13,9 +10,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.wrapper.cameras.datatype.BaseImage;
 import de.uniol.inf.is.odysseus.wrapper.cameras.swig.OptrisCamera;
-import de.uniol.inf.is.odysseus.wrapper.cameras.swig.intArray;
 
 public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<?>> 
 {
@@ -26,9 +21,9 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 	private String 			ethernetAddress;
 	private OptrisCamera 	cameraCapture;
 	
-	private intArray 		imageData;	
+/*	private intArray 		imageData;	
 	private BufferedImage 	bufferedImage;
-	private int[] 			bufferedImagePixels;
+	private int[] 			bufferedImagePixels;*/
 	
 	public OptrisCameraTransportHandler() 
 	{
@@ -64,9 +59,9 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 
 	@Override public String getName() { return "OptrisCamera"; }
 
-	private int getImageWidth() { return cameraCapture.getImageWidth(); }
-	private int getImageHeight() { return cameraCapture.getImageHeight(); }
-	private int getImageNumPixels() { return getImageWidth() * getImageHeight(); }	
+//	private int getImageWidth() { return cameraCapture.getImageWidth(); }
+//	private int getImageHeight() { return cameraCapture.getImageHeight(); }
+//	private int getImageNumPixels() { return getImageWidth() * getImageHeight(); }	
 	
 	@Override public void processInOpen() throws IOException 
 	{
@@ -102,13 +97,13 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 			cameraCapture.stop();
 			cameraCapture = null;
 			
-			imageData = null;
+/*			imageData = null;
 			bufferedImage = null;
-			bufferedImagePixels = null;			
+			bufferedImagePixels = null;*/			
 		}
 	}
 
-	private long lastTime = 0;
+//	private long lastTime = 0;
 	
 	@Override public Tuple<?> getNext() 
 	{
