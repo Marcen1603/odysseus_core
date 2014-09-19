@@ -87,7 +87,9 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider,
 				|| PlanModificationEventType.QUERY_SUSPEND.equals(eventArgs
 						.getEventType())
 				|| PlanModificationEventType.QUERY_RESUME.equals(eventArgs
-						.getEventType())) {
+						.getEventType())
+				|| PlanModificationEventType.QUERY_PARTIAL.equals(eventArgs
+								.getEventType())) {
 			Optional<IQueryViewData> optData = view.getData(queryID);
 			if (optData.isPresent()) {
 				PhysicalQueryViewData data = (PhysicalQueryViewData) optData
