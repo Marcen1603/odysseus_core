@@ -71,7 +71,7 @@ public class ReplacementAO extends AbstractLogicalOperator {
 		return valueAttribute;
 	}
 	
-	@Parameter(type=StringParameter.class, doc="The replacement method for missing value.", possibleValues="getReplacementMethods")
+	@Parameter(type=StringParameter.class, doc="The replacement method for missing value.")
 	public void setReplacementMethod(String replacementMethod) {
 		this.replacementMethod = replacementMethod;
 	}
