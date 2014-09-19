@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
@@ -149,9 +150,10 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 			LOG.warn("The following options where not used in translation "+unusedOptions);
 
 		}else{
-//			if (operator.getWrapper() != null){
-//				throw new TransformationException("Multiple definiton of source with name "+operator.getAccessAOName());
-//			}
+			if (operator.getWrapper() != null){
+				//throw new TransformationException("Multiple definiton of source with name "+operator.getAccessAOName());
+				InfoService.warning("Potential problem? Multiple definition of source with name "+operator.getAccessAOName());
+			}
 		}
 		defaultExecute(operator, accessPO, config, true, true);
 	}

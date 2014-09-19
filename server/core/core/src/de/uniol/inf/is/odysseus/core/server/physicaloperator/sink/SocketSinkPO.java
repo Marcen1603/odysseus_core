@@ -16,8 +16,8 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.sink;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -32,12 +32,14 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 	// static private Logger logger =
 	// LoggerFactory.getLogger(SocketSinkPO.class);
 
-	private List<ISinkStreamHandler> subscribe = new ArrayList<ISinkStreamHandler>();
+//	private Map<Integer,ISinkStreamHandler> subscribe = new HashMap<>();
+	private List<ISinkStreamHandler> subscribe = new LinkedList<>();
 	private ISinkConnection listener;
 	private boolean isStarted;
 	private IObjectHandler objectHandler = null;
 	// TODO: Move to constructor
 	private boolean withMetadata = true;
+	private int lastPort;
 
 	public SocketSinkPO(int serverPort, String host, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO, boolean loginNeeded, boolean loginWithSessionId, IObjectHandler objectHandler, boolean push) {
 		if (push) {
@@ -72,12 +74,18 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 		if( !isStarted ) {
 			listener.start();
 			isStarted = true;
+			lastPort = 0;
 		}
 	}
 
 	public void addSubscriber(ISinkStreamHandler temp) {
 		// TODO each input port another subscription
-		
+//		if (lastPort == 0){
+//			List<PhysicalSubscription<ISource<? extends IStreamObject<?>>>> s = getSubscribedToSource();
+//			
+//		}else{
+//			
+//		}
 		subscribe.add(temp);
 		
 	}

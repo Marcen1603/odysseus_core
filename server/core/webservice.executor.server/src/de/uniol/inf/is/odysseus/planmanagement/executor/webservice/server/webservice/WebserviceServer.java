@@ -122,7 +122,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webser
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StringMapStringListResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StringResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.ViewInformationWS;
-import de.uniol.inf.is.odysseus.relational_interval.replacement.ReplacementRegistry;
+//import de.uniol.inf.is.odysseus.relational_interval.replacement.ReplacementRegistry;
 import de.uniol.inf.is.odysseus.security.ssl.SSLServerSocketProvider;
 
 /**
@@ -1179,11 +1179,11 @@ public class WebserviceServer {
 		return new StringListResponse(names, true);
 	}
 	
-	public StringListResponse getReplacementMethods(@WebParam(name = "securitytoken") String securityToken)throws InvalidUserDataException {
-		loginWithSecurityToken(securityToken);
-		List<String> names = ReplacementRegistry.getKeys();
-		return new StringListResponse(names, true);
-	}
+//	public StringListResponse getReplacementMethods(@WebParam(name = "securitytoken") String securityToken)throws InvalidUserDataException {
+//		loginWithSecurityToken(securityToken);
+//		List<String> names = ReplacementRegistry.getKeys();
+//		return new StringListResponse(names, true);
+//	}
 	
 	public StringListResponse getWindowTypes(@WebParam(name = "securitytoken") String securityToken)throws InvalidUserDataException {
 		loginWithSecurityToken(securityToken);
