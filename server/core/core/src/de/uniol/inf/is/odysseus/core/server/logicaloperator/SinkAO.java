@@ -44,6 +44,10 @@ public class SinkAO extends AbstractLogicalOperator {
 		this.sinkname = sinkname;
 	}
 	
+	public String getSink() {
+		return this.sinkname;
+	}
+	
 	public String getSinkname(){
 		return this.sinkname;
 	}
