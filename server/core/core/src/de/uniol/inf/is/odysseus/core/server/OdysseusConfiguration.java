@@ -219,6 +219,10 @@ public class OdysseusConfiguration {
 			e2.printStackTrace();
 		}
 	}
+	
+	public static boolean exists(String key) {
+		return props.getProperty(key) != null;
+	}
 
 	public static String get(String key) {
 		String ret = props.getProperty(key);
