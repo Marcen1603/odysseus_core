@@ -233,6 +233,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	}
 
 	
+
 	private void installQueriesOnNewPeer() {
 
 	}

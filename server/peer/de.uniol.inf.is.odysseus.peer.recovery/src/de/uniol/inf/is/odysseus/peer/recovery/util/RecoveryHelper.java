@@ -26,7 +26,8 @@ public class RecoveryHelper {
 			executor.startQuery(query, session);
 		}
 		return installedQueries;
-
 	}
+	
+	
 
 }

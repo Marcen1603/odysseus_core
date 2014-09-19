@@ -14,13 +14,13 @@ public class RecoveryInstructionMessage implements IMessage {
 	 * The peer has to stop sending tuples for query x to the next peer.
 	 * Instead, he stores them until he get a message with the new receiver-peer
 	 */
-	private static final int HOLD_ON = 0;
+	public static final int HOLD_ON = 0;
 
-	private static final int ADD_QUERY = 1;
+	public static final int ADD_QUERY = 1;
 
-	private static final int NEW_SENDER = 2;
+	public static final int NEW_SENDER = 2;
 
-	private static final int NEW_RECEIVER = 3;
+	public static final int NEW_RECEIVER = 3;
 
 	private String pqlQuery;
 	private int messageType;
