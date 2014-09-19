@@ -1,7 +1,5 @@
 package windscadaanwendung.views;
 
-import java.sql.SQLException;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -13,7 +11,6 @@ import org.eclipse.ui.part.ViewPart;
 import windscadaanwendung.ca.FarmList;
 import windscadaanwendung.ca.WKA;
 import windscadaanwendung.ca.WindFarm;
-import windscadaanwendung.db.DBConnection;
 
 
 /**
@@ -71,8 +68,6 @@ public class ListView extends ViewPart {
 	 * 			The tree which will show the data
 	 */
 	private void createFarmList(Tree tree) {
-		DBConnection.setNewConnection();
-		FarmList.setFarmList(DBConnection.getFarmList());
 		
 		for (WindFarm farm: FarmList.getFarmList()) {
 			TreeItem trtmFarm = new TreeItem(tree, SWT.NONE);
@@ -81,11 +76,6 @@ public class ListView extends ViewPart {
 				TreeItem trtmWka = new TreeItem(trtmFarm, SWT.NONE);
 				trtmWka.setText(String.valueOf(wka.getID()));
 			}
-		}
-		try {
-			DBConnection.conn.close();
-		} catch (SQLException e1) {
-			e1.printStackTrace();
 		}
 	}
 

@@ -88,4 +88,32 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="windscadaanwendung.commands"
+            defaultHandler="windscadaanwendung.rcp.InitWindSCADAHandler"
+            id="windscadaanwendung.init"
+            name="WindSCADA Initialization">
+      </command>
+      <category
+            id="windscadaanwendung.commands"
+            name="WindSCADA">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="de.uniol.inf.is.odysseus.rcp.odysseus.views">
+            <command
+                  commandId="windscadaanwendung.init"
+                  label="Init WindSCADA"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
 </plugin>
