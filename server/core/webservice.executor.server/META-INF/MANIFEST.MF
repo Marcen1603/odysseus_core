@@ -36,8 +36,7 @@ Service-Component: OSGI-INF/ExecutorService.xml,OSGI-INF/operatorBuilderFactory.
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.slf4j,
- com.google.guava,
- de.uniol.inf.is.odysseus.relational_interval
+ com.google.guava
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server,
  de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice,
  de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.exception,
