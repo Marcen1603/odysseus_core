@@ -77,14 +77,26 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 		this.jdbc = jdbc;
 	}
 
+	public String getJDBC() {
+		return jdbc;
+	}
+	
 	@Parameter(type = StringParameter.class, name = "user", optional = true)
 	public void setUser(String user) {
 		this.user = user;
+	}
+	
+	public String getUser() {
+		return user;
 	}
 
 	@Parameter(type = StringParameter.class, name = "password", optional = true)
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public String getPassword() {
+		return password;
 	}
 
 	@Parameter(type = StringParameter.class, name = "type", optional = true)
@@ -92,14 +104,26 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 		this.type = type;
 	}
 
+	public String getType() {
+		return type;
+	}
+	
 	@Parameter(type = StringParameter.class, name = "db", optional = true)
 	public void setDB(String db) {
 		this.db = db;
+	}
+	
+	public String getDB() {
+		return db;
 	}
 
 	@Parameter(type = StringParameter.class, name = "host", optional = true)
 	public void setHost(String host) {
 		this.host = host;
+	}
+	
+	public String getHost() {
+		return host;
 	}
 
 	@Parameter(type = StringParameter.class, name = "connection", optional = true)
@@ -107,7 +131,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 		this.connectionName = connection;
 	}
 	
-	protected String getConnectionName() {
+	public String getConnectionName() {
 		return connectionName;
 	}
 
@@ -116,9 +140,17 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 		this.port = port;
 	}
 	
+	public int getPort() {
+		return port;
+	}
+	
 	@Parameter(type = BooleanParameter.class, name = "lazy_connection_check", optional = true)
 	public void setLazyConnCheck(boolean lazyConnCheck) {
 		this.lazyConnectionCheck = lazyConnCheck;
+	}
+	
+	public boolean isLazyConnCheck() {
+		return lazyConnectionCheck;
 	}
 	
 	
