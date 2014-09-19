@@ -16,8 +16,8 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
-import de.uniol.inf.is.odysseus.peer.recovery.RecoveryHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
 /**

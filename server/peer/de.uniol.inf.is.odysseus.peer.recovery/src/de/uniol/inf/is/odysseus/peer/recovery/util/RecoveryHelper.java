@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.recovery;
+package de.uniol.inf.is.odysseus.peer.recovery.util;
 
 import java.util.Collection;
 
