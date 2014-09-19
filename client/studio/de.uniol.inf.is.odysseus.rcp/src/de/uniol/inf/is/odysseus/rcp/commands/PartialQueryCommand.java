@@ -5,6 +5,9 @@ import java.util.List;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryFunction;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
 public class PartialQueryCommand extends AbstractQueryCommand {
@@ -13,8 +16,15 @@ public class PartialQueryCommand extends AbstractQueryCommand {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		List<Integer> selectedObj = SelectionProvider.getSelection(event);
-		return execute(selectedObj,partial);
+		List<Integer> selectedObjs = SelectionProvider.getSelection(event);
+		
+		for( Integer selectedObj : selectedObjs ) {
+			if( !QueryState.isAllowed(OdysseusRCPPlugIn.getExecutor().getQueryState(selectedObj), QueryFunction.PARTIAL) ) {
+				return null;
+			}
+		}
+		
+		return execute(selectedObjs,partial);
 	}
 
 }

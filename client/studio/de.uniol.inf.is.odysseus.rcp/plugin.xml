@@ -156,6 +156,14 @@
          </commandParameter>
       </command>
       <command
+            id="de.uniol.inf.is.odysseus.rcp.commands.PartialQueryCommand"
+            name="Partial Query (50)">
+      </command>
+      <command
+            id="de.uniol.inf.is.odysseus.rcp.commands.NonPartialQueryCommand"
+            name="Non-Partial Query">
+      </command>
+      <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.RefreshQueryViewCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.RefreshQueryViewCommand"
             name="Refresh Query View">
@@ -269,14 +277,6 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.DisableRefreshSourcesCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.DisableRefreshSourcesViewCommand"
             name="Disable Refreshing Sources View">
-      </command>
-      <command
-            id="de.uniol.inf.is.odysseus.rcp.commands.PartialQueryCommand"
-            name="Partial Query (50)">
-      </command>
-      <command
-            id="de.uniol.inf.is.odysseus.rcp.commands.NonPartialQueryCommand"
-            name="Non-Partial Query">
       </command>
     </extension>
    <extension
