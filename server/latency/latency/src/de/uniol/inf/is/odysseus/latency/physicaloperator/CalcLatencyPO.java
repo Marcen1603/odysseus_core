@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.latency.LatencyValuesContainer;
 
 public class CalcLatencyPO<T extends IStreamObject<? extends ILatency>> extends
 		AbstractPipe<T, T> {
@@ -39,7 +40,7 @@ public class CalcLatencyPO<T extends IStreamObject<? extends ILatency>> extends
 	protected void process_next(T object, int port) {
 		object.getMetadata().setLatencyEnd(System.nanoTime());
 		
-//		LatencyValuesContainer.add(object.getMetadata().getLatency());
+		///LatencyValuesContainer.add(object.getMetadata().getLatency(), this);
 		
 		transfer(object);
 	}

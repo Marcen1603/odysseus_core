@@ -1,23 +1,41 @@
 package de.uniol.inf.is.odysseus.latency;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import de.uniol.inf.is.odysseus.latency.physicaloperator.CalcLatencyPO;
+
 public class LatencyValuesContainer {
 
-	private static long sum;
-	private static int count;
+	private static Map<CalcLatencyPO<?>, Long> sumMap = new HashMap<CalcLatencyPO<?>, Long>();
+	private static Map<CalcLatencyPO<?>, Long> countMap = new HashMap<CalcLatencyPO<?>, Long>();
 	
-	public synchronized static void add( long value ) {
-		sum += value;
-		count++;
+	public synchronized static void add( long value, CalcLatencyPO<?> op ) {
+		if( !sumMap.containsKey(op)) {
+			sumMap.put(op, value);
+			countMap.put(op, 1L);
+		}  else {
+			sumMap.put(op, sumMap.get(op) + value);
+			countMap.put(op, countMap.get(op) + 1);
+		}
 	}
 	
 	public synchronized static long popAverage() {
-		if( count == 0 ) {
+		if( sumMap.isEmpty() ) {
 			return 0;
 		}
 		
-		long ret = sum / count;
-		sum = 0;
-		count = 0;
+		long avg = 0;
+		for( CalcLatencyPO<?> op : sumMap.keySet() ) {
+			long sum = sumMap.get(op);
+			long count = countMap.get(op);
+			
+			avg += (sum / count);
+		}
+		
+		long ret = avg / sumMap.size();
+		sumMap.clear();
+		countMap.clear();
 		
 		return ret;
 	}
