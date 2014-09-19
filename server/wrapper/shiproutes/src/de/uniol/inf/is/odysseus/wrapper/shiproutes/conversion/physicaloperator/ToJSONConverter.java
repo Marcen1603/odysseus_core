@@ -583,7 +583,7 @@ public class ToJSONConverter {
 
 					Waypoint waypoint = new Waypoint();
 					waypoint.setID(idCounter);
-					if (objectData.getTrackData().countOfPoss() > 0) {
+					if (voyageWaypoint.getPos() != null) {
 						waypoint.setLat_rad(Math.toRadians(voyageWaypoint
 								.getPos().getLat()));
 						waypoint.setLon_rad(Math.toRadians(voyageWaypoint
@@ -636,7 +636,7 @@ public class ToJSONConverter {
 
 					PredictionPoint predictionPoint = new PredictionPoint();
 					predictionPoint.setID(idCounter);
-					if (objectData.getTrackData().countOfPoss() > 0) {
+					if (voyageWaypoint.getPos() != null) {
 						predictionPoint.setLat_rad(Math
 								.toRadians(voyageWaypoint.getPos().getLat()));
 						predictionPoint.setLon_rad(Math
@@ -699,7 +699,7 @@ public class ToJSONConverter {
 
 					ManoeuvrePoint manoeuvrePoint = new ManoeuvrePoint();
 					manoeuvrePoint.setID(idCounter);
-					if (objectData.getTrackData().countOfPoss() > 0) {
+					if (voyageWaypoint.getPos() != null) {
 						manoeuvrePoint.setLat_rad(Math.toRadians(voyageWaypoint
 								.getPos().getLat()));
 						manoeuvrePoint.setLon_rad(Math.toRadians(voyageWaypoint

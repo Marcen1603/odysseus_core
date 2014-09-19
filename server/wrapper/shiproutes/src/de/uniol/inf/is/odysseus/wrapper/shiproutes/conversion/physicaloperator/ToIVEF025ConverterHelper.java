@@ -59,11 +59,12 @@ public class ToIVEF025ConverterHelper {
 		VesselData vesselData = new VesselData();
 
 		vesselData.setId(id);
-		vesselData.setSourceId(String.valueOf(id));
 
 		if (receivedRoute.getRoute_label() != null)
 			vesselData.setSourceName(receivedRoute.getRoute_label());
-
+		vesselData.setSourceType(0);
+		vesselData.setUpdateTime(new Date());
+		
 		Identifier identifier = new Identifier();
 		if (staticAndVoyageData.getSourceMmsi() != null)
 			identifier.setMMSI(staticAndVoyageData.getSourceMmsi().getMMSI()
@@ -79,16 +80,20 @@ public class ToIVEF025ConverterHelper {
 
 		VoyageData voyageData = new VoyageData();
 		voyageData.setId(id);
-		voyageData.setSourceId(String.valueOf(id));
 
 		if (receivedRoute.getRoute_label() != null)
 			voyageData.setSourceName(receivedRoute.getRoute_label());
+		voyageData.setSourceType(0);
+		voyageData.setUpdateTime(new Date());
+		
 		if (staticAndVoyageData.getDraught() != null)
 			voyageData.setDraught(staticAndVoyageData.getDraught());
 
 		// iterate over waypoints
+		int counter = 0;
 		for (Waypoint waypoint : receivedWaypoints) {
 			de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.Waypoint ivefWaypoint = new de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.Waypoint();
+			ivefWaypoint.setName(String.valueOf(counter));
 			if (waypoint.getLat_rad() != null && waypoint.getLon_rad() != null) {
 				Pos pos = new Pos();
 				pos.setLat(Math.toDegrees(waypoint.getLat_rad()));
@@ -98,6 +103,7 @@ public class ToIVEF025ConverterHelper {
 			Date eta = new Date(waypoint.getETA() * 1000);
 			ivefWaypoint.setETA(eta);
 			voyageData.addWaypoint(ivefWaypoint);
+			counter++;
 		}
 
 		objectData.addVoyageData(voyageData);
@@ -136,11 +142,11 @@ public class ToIVEF025ConverterHelper {
 		VesselData vesselData = new VesselData();
 
 		vesselData.setId(id);
-		vesselData.setSourceId(String.valueOf(id));
 
 		if (receivedMPlan.getMplan_label() != null)
 			vesselData.setSourceName(receivedMPlan.getMplan_label());
-
+		vesselData.setSourceType(0);
+		vesselData.setUpdateTime(new Date());
 		Identifier identifier = new Identifier();
 		if (staticAndVoyageData.getSourceMmsi() != null)
 			identifier.setMMSI(staticAndVoyageData.getSourceMmsi().getMMSI()
@@ -159,17 +165,21 @@ public class ToIVEF025ConverterHelper {
 		VoyageData voyageData = new VoyageData();
 
 		voyageData.setId(id);
-		voyageData.setSourceId(String.valueOf(id));
 
 		if (receivedMPlan.getMplan_label() != null)
 			voyageData.setSourceName(receivedMPlan.getMplan_label());
+		voyageData.setSourceType(0);
+		voyageData.setUpdateTime(new Date());
+		
 		if (staticAndVoyageData.getDraught() != null)
 			voyageData.setDraught(staticAndVoyageData.getDraught());
 
 		// Iterate over manoeuvre points
+		int counter = 0;
 		for (ManoeuvrePoint manoeuvrePoint : receivedManoeuvrePoints) {
 
 			de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.Waypoint ivefWaypoint = new de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.Waypoint();
+			ivefWaypoint.setName(String.valueOf(counter));
 			if (manoeuvrePoint.getLat_rad() != null
 					&& manoeuvrePoint.getLon_rad() != null) {
 				Pos pos = new Pos();
@@ -177,6 +187,8 @@ public class ToIVEF025ConverterHelper {
 				pos.setLong(Math.toDegrees(manoeuvrePoint.getLon_rad()));
 				ivefWaypoint.setPos(pos);
 			}
+			voyageData.addWaypoint(ivefWaypoint);
+			counter++;
 		}
 		objectData.addVoyageData(voyageData);
 		objectDatas.addObjectData(objectData);
@@ -208,10 +220,10 @@ public class ToIVEF025ConverterHelper {
 		VesselData vesselData = new VesselData();
 
 		vesselData.setId(id);
-		vesselData.setSourceId(String.valueOf(id));
-
 		vesselData.setSourceName("Prediction");
-
+		vesselData.setSourceType(0);
+		vesselData.setUpdateTime(new Date());
+		
 		Identifier identifier = new Identifier();
 		if (staticAndVoyageData.getSourceMmsi() != null)
 			identifier.setMMSI(staticAndVoyageData.getSourceMmsi().getMMSI()
@@ -229,13 +241,18 @@ public class ToIVEF025ConverterHelper {
 		VoyageData voyageData = new VoyageData();
 
 		voyageData.setId(id);
-		voyageData.setSourceId(String.valueOf(id));
 
 		voyageData.setSourceName("Prediction");
+		voyageData.setSourceType(0);
+		voyageData.setUpdateTime(new Date());
+		
 		if (staticAndVoyageData.getDraught() != null)
 			voyageData.setDraught(staticAndVoyageData.getDraught());
+		
+		int counter = 0;
 		for (PredictionPoint predictionPoint : predictionPoints) {
 			de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.Waypoint ivefWaypoint = new de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.Waypoint();
+			ivefWaypoint.setName(String.valueOf(counter));
 			if (predictionPoint.getLat_rad() != null
 					&& predictionPoint.getLon_rad() != null) {
 				Pos pos = new Pos();
@@ -243,6 +260,8 @@ public class ToIVEF025ConverterHelper {
 				pos.setLong(Math.toDegrees(predictionPoint.getLon_rad()));
 				ivefWaypoint.setPos(pos);
 			}
+			voyageData.addWaypoint(ivefWaypoint);
+			counter++;
 		}
 		objectData.addVoyageData(voyageData);
 		objectDatas.addObjectData(objectData);
@@ -278,10 +297,11 @@ public class ToIVEF025ConverterHelper {
 
 		VesselData vesselData = new VesselData();
 		vesselData.setId(id);
-		vesselData.setSourceId(String.valueOf(id));
 		if (iecRouteInfo.getRouteName() != null)
 			vesselData.setSourceName(iecRouteInfo.getRouteName());
-
+		vesselData.setSourceType(0);
+		vesselData.setUpdateTime(new Date());
+		
 		Identifier identifier = new Identifier();
 		if (iecRouteInfo.getVesselName() != null) {
 			identifier.setName(iecRouteInfo.getVesselName());
@@ -309,9 +329,11 @@ public class ToIVEF025ConverterHelper {
 
 		VoyageData voyageData = new VoyageData();
 		voyageData.setId(id);
-		voyageData.setSourceId(String.valueOf(id));
 		if (iecRouteInfo.getRouteName() != null)
 			voyageData.setSourceName(iecRouteInfo.getRouteName());
+		voyageData.setSourceType(0);
+		voyageData.setUpdateTime(new Date());
+		
 		if (staticAndVoyageData.getDraught() != null)
 			voyageData.setDraught(staticAndVoyageData.getDraught());
 
@@ -329,18 +351,19 @@ public class ToIVEF025ConverterHelper {
 			}
 		}
 
+		int counter = 0;
 		for (IECWaypoint iecWaypoint : iecRoute.getWaypoints().getWaypoints()) {
 			de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.Waypoint waypoint = new de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_2_5.Waypoint();
+
+			waypoint.setName(String.valueOf(counter));
 			if (iecWaypoint.getPosition() != null) {
 				Pos pos = new Pos();
 				pos.setLat(iecWaypoint.getPosition().getLatitude());
 				pos.setLong(iecWaypoint.getPosition().getLongitude());
 				waypoint.setPos(pos);
-
-				if (iecRouteInfo.getRouteName() != null)
-					waypoint.setName(iecRouteInfo.getRouteName());
 			}
 			voyageData.addWaypoint(waypoint);
+			counter++;
 		}
 
 		objectData.addVoyageData(voyageData);
