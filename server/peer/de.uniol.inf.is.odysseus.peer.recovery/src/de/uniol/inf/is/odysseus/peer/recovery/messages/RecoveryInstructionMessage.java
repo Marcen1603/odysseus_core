@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery.messages;
 
+import java.nio.ByteBuffer;
+
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
@@ -37,14 +39,16 @@ public class RecoveryInstructionMessage implements IMessage {
 	 *            ID of the query which has to hold on.
 	 * @return A message which tells this.
 	 */
-	public static RecoveryInstructionMessage createHoldOnMessage(int sharedQueryId) {
+	public static RecoveryInstructionMessage createHoldOnMessage(
+			int sharedQueryId) {
 		RecoveryInstructionMessage holdOnMessage = new RecoveryInstructionMessage();
 		holdOnMessage.setMessageType(HOLD_ON);
 		holdOnMessage.setSharedQueryId(sharedQueryId);
 		return holdOnMessage;
 	}
 
-	public static RecoveryInstructionMessage createAddQueryMessage(String pqlQuery, int sharedQueryId) {
+	public static RecoveryInstructionMessage createAddQueryMessage(
+			String pqlQuery, int sharedQueryId) {
 		RecoveryInstructionMessage addQueryMessage = new RecoveryInstructionMessage();
 		addQueryMessage.setMessageType(ADD_QUERY);
 		addQueryMessage.setPqlQuery(pqlQuery);
@@ -52,7 +56,8 @@ public class RecoveryInstructionMessage implements IMessage {
 		return addQueryMessage;
 	}
 
-	public static RecoveryInstructionMessage createNewSenderMessage(PeerID newSender, int sharedQueryId) {
+	public static RecoveryInstructionMessage createNewSenderMessage(
+			PeerID newSender, int sharedQueryId) {
 		RecoveryInstructionMessage newSenderMessage = new RecoveryInstructionMessage();
 		newSenderMessage.setMessageType(NEW_SENDER);
 		newSenderMessage.setNewSender(newSender);
@@ -69,9 +74,38 @@ public class RecoveryInstructionMessage implements IMessage {
 		return newReceiverMessage;
 	}
 
+	/**
+	 * Puts the message into a byte-array. The message-type is always at the
+	 * beginning with an integer-value in the first 4 bytes.
+	 */
 	@Override
 	public byte[] toBytes() {
-		// TODO Auto-generated method stub
+		// TODO Not finished yet
+
+		ByteBuffer bb = null;
+		int bbsize;
+
+		switch (messageType) {
+		case HOLD_ON:
+			bbsize = 4 + 4;
+			bb = ByteBuffer.allocate(bbsize);
+			bb.putInt(messageType);
+			bb.putInt(sharedQueryId);
+			break;
+		case ADD_QUERY:
+			byte[] pqlAsBytes = pqlQuery.getBytes();
+			bbsize = 4 + 4 + pqlAsBytes.length;
+			bb = ByteBuffer.allocate(bbsize);
+			bb.putInt(messageType);
+			bb.putInt(sharedQueryId);
+			bb.put(pqlAsBytes);
+			break;
+		case NEW_SENDER:
+			break;
+		case NEW_RECEIVER:
+			break;
+		}
+
 		return null;
 	}
 

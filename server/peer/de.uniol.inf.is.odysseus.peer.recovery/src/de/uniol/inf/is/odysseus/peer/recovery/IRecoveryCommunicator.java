@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.recovery;
 
-import java.util.List;
-
-import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import net.jxta.peer.PeerID;
 
 /**
@@ -14,6 +11,6 @@ import net.jxta.peer.PeerID;
  */
 public interface IRecoveryCommunicator {
 
-	public void recover(PeerID failedPeer, List<ILogicalQueryPart> queryPartsToRecover);
+	public void recover(PeerID failedPeer);
 
 }

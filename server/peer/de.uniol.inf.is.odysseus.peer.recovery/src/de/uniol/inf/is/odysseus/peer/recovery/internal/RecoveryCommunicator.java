@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.protocoll.RecoveryInstructionHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
@@ -43,13 +44,13 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 * 5. We connect the peers so that the new peer is known by the right
 	 * peers
 	 * 
-	 * When we have this we add the second part (right side of diagram) 1. Tell
-	 * the peers which are before the failed peer that the peer failed 2. Save
-	 * the tuples there 3. When the new peer is there -> direct saved tuples to
-	 * the new peer
+	 * When we have this we add the second part (right side of diagram) 
+	 * 1. Tell the peers which are before the failed peer that the peer failed 
+	 * 2. Save the tuples there 
+	 * 3. When the new peer is there -> direct saved tuples to the new peer
 	 * 
-	 * And when we have this we add a third part 1. Add an error-protocol to
-	 * handle errors during the recovery? (maybe like loadBalancing?)
+	 * And when we have this we add a third part 
+	 * 1. Add an error-protocol to handle errors during the recovery? (maybe like loadBalancing?)
 	 * 
 	 */
 	//@formatter:on
@@ -181,40 +182,13 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	public static IServerExecutor getExecutor() {
 		return executor;
 	}
-
-	public void testAFewThings() {
-		// Just something to begin with ...
-
-		// All peers we know
-		Collection<PeerID> peers = p2pDictionary.getRemotePeerIDs();
-
-		// Take the first one
-		PeerID theChosenOne = peers.iterator().hasNext() ? peers.iterator()
-				.next() : null;
-
-		// Send that this peer has to do the hard work
-		if (theChosenOne != null) {
-			RecoveryInstructionMessage takeThis = new RecoveryInstructionMessage();
-			try {
-				peerCommunicator.send(theChosenOne, takeThis);
-			} catch (PeerCommunicationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void takeOverTest(List<String> partsToTakeOver) {
-		// We assume that we get the parts we have to get over as PQL strings
-		for (String pql : partsToTakeOver) {
-			RecoveryHelper.installAndRunQueryPartFromPql(pql);
-		}
-
-	}
+	
+	// -----------------------------------------------------
+	// 				Code with recovery logic
+	// -----------------------------------------------------
 
 	@Override
-	public void recover(PeerID failedPeer,
-			List<ILogicalQueryPart> queryPartsToRecover) {
+	public void recover(PeerID failedPeer) {
 		// TODO Auto-generated method stub
 
 	}
@@ -227,19 +201,24 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				peerCommunicator.send(peers.get(i), holdOnMessage);
 			}
 		} catch (Exception e) {
-			
+
 		}
 
 	}
 
-	
+	private void installQueriesOnNewPeer(PeerID newPeer) {
+		// TODO Get backup-information about the query
+		RecoveryInstructionMessage addQueryMessage = RecoveryInstructionMessage
+				.createAddQueryMessage("", 0);
+		try {
+			peerCommunicator.send(newPeer, addQueryMessage);
+		} catch (PeerCommunicationException e) {
 
-	private void installQueriesOnNewPeer() {
-
+		}
 	}
 
 	private void setNewReceiver() {
-
+			
 	}
 
 	private void setNewSender() {
@@ -251,9 +230,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			PeerID senderPeer, IMessage message) {
 		if (message instanceof RecoveryInstructionMessage) {
 			RecoveryInstructionMessage instruction = (RecoveryInstructionMessage) message;
-
+			RecoveryInstructionHandler.handleInstruction(instruction);
 		}
-
 	}
 
 }
