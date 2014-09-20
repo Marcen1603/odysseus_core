@@ -20,4 +20,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.database,
  de.uniol.inf.is.odysseus.rcp.dashboard.windpower;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.rcp.base;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core,
- org.eclipse.ui
+ org.eclipse.ui,
+ com.google.guava
