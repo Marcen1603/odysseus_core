@@ -47,6 +47,17 @@ public class RecoveryInstructionMessage implements IMessage {
 		return holdOnMessage;
 	}
 
+	/**
+	 * This message tells that the receiver of this message should install the
+	 * given query.
+	 * 
+	 * @param pqlQuery
+	 *            The query the peer should install, given as PQL.
+	 * @param sharedQueryId
+	 *            ID of the shared query, so that you can identify which query
+	 *            parts from different peers belong together
+	 * @return A message which tells the receiving peer to install this query.
+	 */
 	public static RecoveryInstructionMessage createAddQueryMessage(
 			String pqlQuery, int sharedQueryId) {
 		RecoveryInstructionMessage addQueryMessage = new RecoveryInstructionMessage();
@@ -94,10 +105,11 @@ public class RecoveryInstructionMessage implements IMessage {
 			break;
 		case ADD_QUERY:
 			byte[] pqlAsBytes = pqlQuery.getBytes();
-			bbsize = 4 + 4 + pqlAsBytes.length;
+			bbsize = 4 + 4 + 4 + pqlAsBytes.length;
 			bb = ByteBuffer.allocate(bbsize);
 			bb.putInt(messageType);
 			bb.putInt(sharedQueryId);
+			bb.putInt(pqlAsBytes.length);
 			bb.put(pqlAsBytes);
 			break;
 		case NEW_SENDER:
@@ -109,10 +121,24 @@ public class RecoveryInstructionMessage implements IMessage {
 		return null;
 	}
 
+	/**
+	 * Parses message from byte array.
+	 */
 	@Override
 	public void fromBytes(byte[] data) {
-		// TODO Auto-generated method stub
+		// TODO Not finished yet
+		ByteBuffer bb = ByteBuffer.wrap(data);
+		messageType = bb.getInt();
+		sharedQueryId = bb.getInt();
 
+		switch (messageType) {
+		case ADD_QUERY:
+			int pqlLength = bb.getInt();
+			byte[] pqlAsByte = new byte[pqlLength];
+			bb.get(pqlAsByte);
+			pqlQuery = new String(pqlAsByte);
+			break;
+		}
 	}
 
 	public String getPqlQuery() {

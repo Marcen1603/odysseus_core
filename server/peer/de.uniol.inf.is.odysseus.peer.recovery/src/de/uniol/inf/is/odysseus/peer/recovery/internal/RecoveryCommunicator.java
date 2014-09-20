@@ -55,7 +55,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 */
 	//@formatter:on
 
-	private static IPeerResourceUsageManager peerResourceUsageManager;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IP2PDictionary p2pDictionary;
 	private static IPeerCommunicator peerCommunicator;
@@ -68,18 +67,20 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 */
 	private static ISession activeSession;
 
-	// called by OSGi-DS
-	public static void bindPeerResourceUsageManager(
-			IPeerResourceUsageManager serv) {
-		peerResourceUsageManager = serv;
+	private static RecoveryCommunicator instance;
+	
+	/**
+	 * Called by OSGi on Bundle activation.
+	 */
+	public void activate() {
+		instance = this;
 	}
 
-	// called by OSGi-DS
-	public static void unbindPeerResourceUsageManager(
-			IPeerResourceUsageManager serv) {
-		if (peerResourceUsageManager == serv) {
-			peerResourceUsageManager = null;
-		}
+	/**
+	 * Called by OSGi on Bundle deactivation.
+	 */
+	public void deactivate() {
+		instance = null;
 	}
 
 	// called by OSGi-DS
@@ -183,9 +184,13 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		return executor;
 	}
 	
+	public static RecoveryCommunicator getInstance() {
+		return instance;
+	}
+
 	// -----------------------------------------------------
-	// 				Code with recovery logic
-	// -----------------------------------------------------
+	// Code with recovery logic
+	// -----------------------------------------------------	
 
 	@Override
 	public void recover(PeerID failedPeer) {
@@ -203,7 +208,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		} catch (Exception e) {
 
 		}
-
 	}
 
 	private void installQueriesOnNewPeer(PeerID newPeer) {
@@ -218,7 +222,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	}
 
 	private void setNewReceiver() {
-			
+
 	}
 
 	private void setNewSender() {

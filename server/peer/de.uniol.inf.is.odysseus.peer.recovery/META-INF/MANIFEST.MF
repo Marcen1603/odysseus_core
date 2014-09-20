@@ -11,8 +11,8 @@ Require-Bundle: Jxta_2.6_Source,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.p2p_new
-Service-Component: OSGI-INF/BackupInformationStore.xml,OSGI-INF/RecoveryQueryDistributionListener.xml,OSGI-INF/RecoveryCommunicator.xml,
- OSGI-INF/LocalBackupInformationAccess.xml
+Service-Component: OSGI-INF/BackupInformationStore.xml,OSGI-INF/RecoveryQueryDistributionListener.xml,OSGI-INF/RecoveryCommunicator.xml,OSGI-INF/LocalBackupInformationAccess.xml,
+ OSGI-INF/RecoveryConsole.xml
 Export-Package: de.uniol.inf.is.odysseus.peer.recovery
 Import-Package: de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
@@ -20,4 +20,5 @@ Import-Package: de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.p2p_new,
  de.uniol.inf.is.odysseus.p2p_new.dictionary,
  de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication,
- de.uniol.inf.is.odysseus.peer.resource
+ de.uniol.inf.is.odysseus.peer.resource,
+ org.eclipse.osgi.framework.console;version="1.1.0"

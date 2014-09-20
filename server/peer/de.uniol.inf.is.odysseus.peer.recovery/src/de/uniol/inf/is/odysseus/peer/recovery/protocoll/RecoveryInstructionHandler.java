@@ -3,6 +3,11 @@ package de.uniol.inf.is.odysseus.peer.recovery.protocoll;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
+/**
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class RecoveryInstructionHandler {
 
 	public static void handleInstruction(RecoveryInstructionMessage instructionMessage) {
