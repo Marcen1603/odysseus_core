@@ -75,7 +75,7 @@ limitations under the License.
       <feature id="de.uniol.inf.is.odysseus.client.platform.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.system.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.temper1.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.peer.smarthome.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.peer.smarthome.rcp.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>

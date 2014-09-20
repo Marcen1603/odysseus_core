@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.peer.smarthome.feature"
+      id="de.uniol.inf.is.odysseus.peer.smarthome.rcp.feature"
       label="Smart Home Feature"
       version="1.0.0.qualifier">
 
@@ -17,7 +17,7 @@
    </license>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.peer.smarthome"
+         id="de.uniol.inf.is.odysseus.peer.smarthome.rcp"
          download-size="0"
          install-size="0"
          version="0.0.0"
