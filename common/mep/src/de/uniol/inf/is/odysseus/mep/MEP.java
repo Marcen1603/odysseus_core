@@ -96,11 +96,13 @@ import de.uniol.inf.is.odysseus.mep.functions.math.FloorFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.HyperbolicCosinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.HyperbolicSinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.HyperbolicTangensFunction;
+import de.uniol.inf.is.odysseus.mep.functions.math.InfFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.Log10Function;
 import de.uniol.inf.is.odysseus.mep.functions.math.LogFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.MinusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.ModuloOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.MultiplicationOperator;
+import de.uniol.inf.is.odysseus.mep.functions.math.NaNFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.PIFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.PlusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.PowerOperator;
@@ -335,6 +337,8 @@ public class MEP implements IExpressionParser {
 
 		registerFunction(new PIFunction());
 		registerFunction(new EFunction());
+        registerFunction(new NaNFunction());
+        registerFunction(new InfFunction());
 
 		registerFunction(new ExpFunction());
 		registerFunction(new LogFunction());
