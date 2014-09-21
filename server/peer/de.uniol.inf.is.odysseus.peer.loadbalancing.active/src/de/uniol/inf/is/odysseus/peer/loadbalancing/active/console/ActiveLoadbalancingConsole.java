@@ -181,8 +181,8 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    lsLBAllocators	              		- Lists all available load balancing allocators\n");
 		sb.append("    initLB <strategyname> <allocatorname>	- Initiate Loadbalancing with load balancing strategy <strategyname> and load balancing allocator <allocatorname>\n");
 		sb.append("    stopLB                            - Stops the Load Balancing\n");
-		sb.append("    cpJxtaSender <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Sender");
-		sb.append("    cpJxtaReceiver <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Receiver");
+		sb.append("    cpJxtaSender <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Sender\n");
+		sb.append("    cpJxtaReceiver <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Receiver\n");
 		return sb.toString();
 	}
 	

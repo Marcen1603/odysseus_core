@@ -7,6 +7,8 @@ import net.jxta.peer.PeerID;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -17,6 +19,8 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 
 public class RecoveryConsole implements CommandProvider {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(RecoveryConsole.class);
 
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IP2PDictionary p2pDictionary;
@@ -73,10 +77,12 @@ public class RecoveryConsole implements CommandProvider {
 	
 	// called by OSGi-DS
 		public void activate() {
+			LOG.debug("Recovery console activated.");
 		}
 
 		// called by OSGi-DS
 		public void deactivate() {
+			LOG.debug("Recovery console deactivated.");
 		}
 
 	// ------------------------------------------
