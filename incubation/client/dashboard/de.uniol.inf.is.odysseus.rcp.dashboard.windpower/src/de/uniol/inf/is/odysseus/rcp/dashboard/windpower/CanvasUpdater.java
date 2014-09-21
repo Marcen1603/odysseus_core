@@ -7,16 +7,14 @@ public class CanvasUpdater extends Thread {
 		
 	private final Display display;
 	private final Canvas canvas;
-	private final WindTurbineDashboardPart dbp;
 	private final int milliseconds;
 	
 	private boolean isRunning = true;
 
-	public CanvasUpdater(Canvas canvas, WindTurbineDashboardPart dbp, int intervalMillis) {
+	public CanvasUpdater(Canvas canvas, int intervalMillis) {
 		this.display = canvas.getDisplay();
 		this.canvas = canvas;
 		this.milliseconds = intervalMillis;
-		this.dbp = dbp;
 		
 		setName("Wind Turbine Canvas updater");
 		setDaemon(true);
@@ -34,8 +32,7 @@ public class CanvasUpdater extends Thread {
 					@Override
 					public void run() {
 						if( !canvas.isDisposed() ) {
-							dbp.computeTransformation();
-							canvas.redraw(0, 0, 300, 350, false);;
+							canvas.redraw();
 						}
 					}
 				});

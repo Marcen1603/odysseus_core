@@ -18,7 +18,6 @@ import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.IDataGenerator;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.ConstantValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.ISingleValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.TimeGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.AlternatingGenerator;
@@ -66,7 +65,7 @@ public class WindTurbineDataProvider extends AbstractDataGenerator {
 		// wind_direction
 		tuple.addDouble(direction.nextValue());
 		// rotational_speed
-		tuple.addDouble(rotationalSpeed.nextValue());
+		tuple.addDouble(Math.max(0,rotationalSpeed.nextValue()));
 		// phase_shift
 		tuple.addDouble(phase.nextValue());
 		// pitch_angle
@@ -116,9 +115,9 @@ public class WindTurbineDataProvider extends AbstractDataGenerator {
 		time.init();
 		direction = new AlternatingGenerator(new NoError(), 0, 1, 0, 359);
 		direction.init();
-		phase = new ConstantValueGenerator(new NoError(),0);
+		phase = new AlternatingGenerator(new NoError(),0,10,-90,90);
 		phase.init();
-		rotationalSpeed = new AlternatingGenerator(new NoError(),0,0.05,-0.3,0.3);
+		rotationalSpeed = new AlternatingGenerator(new NoError(),0,0.03,0,0.3);
 		rotationalSpeed.init();
 		pitch = new AlternatingGenerator(new NoError(),0,1,0,90);
 		pitch.init();

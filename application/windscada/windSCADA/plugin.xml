@@ -75,6 +75,13 @@
       </view>
       <view
             category="windscadaanwendung.category"
+            class="windscadaanwendung.views.dashboard.CorrectedScoreWindSpeedPart"
+            id="windscadaanwendung.views.dashboard.CorrectedScoreWindSpeedPart"
+            name="Leistung und Windgeschwindigkeit"
+            restorable="true">
+      </view>
+      <view
+            category="windscadaanwendung.category"
             class="windscadaanwendung.views.dashboard.RotationalSpeedPart"
             id="windscadaanwendung.views.dashboard.RotationalSpeedPart"
             name="Rotationsgeschwindigkeit"

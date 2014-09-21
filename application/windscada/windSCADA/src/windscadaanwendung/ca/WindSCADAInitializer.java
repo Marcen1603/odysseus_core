@@ -48,13 +48,13 @@ public class WindSCADAInitializer {
 
 	private final static String[] DAFileNames = { "corrected_score.qry",
 			"phase_shift.qry", "pitch_angle.qry", "rotational_speed.qry",
-			"wind_speed.qry" };
+			"wind_speed.qry", "corrected_score_wind_speed.qry" };
 	private final static String[] GUIDashboardPartFileNames = {
 			"corrected_score_tf.prt", "corrected_score.prt", "phase_shift.prt",
-			"pitch_angle.prt", "rotational_speed.prt", "wind_speed.prt" };
+			"pitch_angle.prt", "rotational_speed.prt", "wind_speed.prt", "corrected_score_wind_speed.prt" };
 	private static final String[] GUIQueriesFileNames = {
 			"corrected_score.qry", "phase_shift.qry", "pitch_angle.qry",
-			"rotational_speed.qry", "wind_speed.qry" };
+			"rotational_speed.qry", "wind_speed.qry" , "corrected_score_wind_speed.qry"};
 
 	/**
 	 * Creates new Job that executes initialization of WindSCADA
@@ -294,6 +294,9 @@ public class WindSCADAInitializer {
 		try {
 			InputStream in = new ByteArrayInputStream(content.getBytes());
 			// Creates or overwrites the file in workspace
+			if(file.exists()) {
+				file.delete(true, null);
+			}
 			file.create(in, true, null);
 		} catch (CoreException e) {
 			e.printStackTrace();

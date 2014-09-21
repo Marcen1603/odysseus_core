@@ -8,4 +8,6 @@ TIMEWINDOW3 = TIMEWINDOW({SIZE=[5, 'SECONDS'], SLIDE=[5, 'SECONDS']}, 0:PROJECT2
 
 AGGREGATE4 = AGGREGATE({AGGREGATIONS=[['AVG','corrected_score','AVG_corrected_score','Double']]}, 0:TIMEWINDOW3)
 
-P§windfarmid§:§wkaid§:corrected_score ::= CACHE({MAXELEMENTS=100}, 0:AGGREGATE4)
+MAP5 = MAP({EXPRESSIONS=[['AVG_corrected_score', 'corrected_score'], ['AVG_corrected_score > 25', 'warning'], ['AVG_corrected_score > 30', 'error']]}, 0:AGGREGATE4)
+
+P§windfarmid§:§wkaid§:corrected_score ::= CACHE({MAXELEMENTS=100}, 0:MAP5)
