@@ -18,7 +18,6 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 
 public class RecoveryConsole implements CommandProvider {
 
-	// TODO Bind with xml
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IP2PDictionary p2pDictionary;
 	/**
@@ -71,6 +70,14 @@ public class RecoveryConsole implements CommandProvider {
 			executor = null;
 		}
 	}
+	
+	// called by OSGi-DS
+		public void activate() {
+		}
+
+		// called by OSGi-DS
+		public void deactivate() {
+		}
 
 	// ------------------------------------------
 
