@@ -49,6 +49,11 @@ public class BackupInformationMessage implements IMessage {
 	 * The list of pql statements to send.
 	 */
 	private ImmutableList<String> mPqlStatements;
+	
+	/**
+	 * The number of pql statements.
+	 */
+	private int mNumStatements;
 
 	/**
 	 * The shared query id to send.
@@ -85,28 +90,28 @@ public class BackupInformationMessage implements IMessage {
 		Preconditions.checkArgument(!pqlStatements.isEmpty(),
 				"The collection of pql statement must be not empty!");
 		this.mPqlStatements = ImmutableList.copyOf(pqlStatements);
+		this.mNumStatements = pqlStatements.size();
 
 	}
 
 	@Override
 	public byte[] toBytes() {
 
-		int numPQLStatements = this.mPqlStatements.size();
 		byte[] sharedQueryIDBytes = mSharedQueryID.toString().getBytes();
 		byte[] separatorBytes = SEPARATOR.getBytes();
-		byte[][] pqlStatementBytes = new byte[numPQLStatements][];
-		for (int index = 0; index < numPQLStatements; index++) {
+		byte[][] pqlStatementBytes = new byte[this.mNumStatements][];
+		for (int index = 0; index < this.mNumStatements; index++) {
 
 			pqlStatementBytes[index] = this.mPqlStatements.get(index)
 					.getBytes();
 
 		}
 
-		int bufferSize = 0;
-		for (int index = 0; index < numPQLStatements; index++) {
+		int bufferSize = INT_BUFFER_SIZE; // The number of pql statements
+		for (int index = 0; index < this.mNumStatements; index++) {
 
 			bufferSize += INT_BUFFER_SIZE + pqlStatementBytes[index].length;
-			if (index < numPQLStatements - 1) {
+			if (index < this.mNumStatements - 1) {
 
 				bufferSize += INT_BUFFER_SIZE + separatorBytes.length;
 
@@ -116,11 +121,12 @@ public class BackupInformationMessage implements IMessage {
 		bufferSize += INT_BUFFER_SIZE + sharedQueryIDBytes.length;
 
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-		for (int index = 0; index < numPQLStatements; index++) {
+		buffer.putInt(this.mNumStatements);
+		for (int index = 0; index < this.mNumStatements; index++) {
 
 			buffer.putInt(pqlStatementBytes[index].length);
 			buffer.put(pqlStatementBytes[index]);
-			if (index < numPQLStatements - 1) {
+			if (index < this.mNumStatements - 1) {
 
 				buffer.putInt(separatorBytes.length);
 				buffer.put(separatorBytes);
@@ -140,16 +146,17 @@ public class BackupInformationMessage implements IMessage {
 	public void fromBytes(byte[] data) {
 
 		ByteBuffer buffer = ByteBuffer.wrap(data);
+		
+		this.mNumStatements = buffer.getInt();
 
-		int numPQLStatements = this.mPqlStatements.size();
 		List<String> pqlStatements = Lists.newArrayList();
-		for (int index = 0; index < numPQLStatements; index++) {
+		for (int index = 0; index < this.mNumStatements; index++) {
 
 			int pqlStatementLength = buffer.getInt();
 			byte[] pqlStatementBytes = new byte[pqlStatementLength];
 			buffer.get(pqlStatementBytes);
 			pqlStatements.add(new String(pqlStatementBytes));
-			if (index < numPQLStatements - 1) {
+			if (index < this.mNumStatements - 1) {
 
 				int separatorLength = buffer.getInt();
 				byte[] separatorBytes = new byte[separatorLength];
