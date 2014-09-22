@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -69,6 +70,7 @@ public class ContextStoreFunction extends AbstractFunction<Object> {
             }
             if (values.size() > 1) {
                 LOG.warn("The context store delivered more than one context state, but a function can only handle one! Use enrich instead!");
+                InfoService.warning("The context store delivered more than one context state, but a function can only handle one! Use enrich instead!");
             }
             return values.get(0);
         }
