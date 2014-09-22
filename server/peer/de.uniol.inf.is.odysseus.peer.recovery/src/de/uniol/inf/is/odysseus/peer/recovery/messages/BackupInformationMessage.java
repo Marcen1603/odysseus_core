@@ -196,7 +196,7 @@ public class BackupInformationMessage implements IMessage {
 	 * 
 	 * @return
 	 */
-	public ImmutableCollection<String> getPqlStatement() {
+	public ImmutableCollection<String> getPqlStatements() {
 
 		return this.mPqlStatements;
 

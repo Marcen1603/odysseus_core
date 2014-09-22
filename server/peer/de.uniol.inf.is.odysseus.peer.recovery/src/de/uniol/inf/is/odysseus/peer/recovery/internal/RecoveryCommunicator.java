@@ -5,6 +5,10 @@ import java.util.List;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -16,8 +20,10 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryInstructionHandler;
+import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 
 /**
  * A recovery communicator handles the communication between peers for recovery
@@ -31,6 +37,12 @@ import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryInstructionHandle
 @SuppressWarnings("unused")
 public class RecoveryCommunicator implements IRecoveryCommunicator,
 		IPeerCommunicatorListener {
+
+	/**
+	 * The logger instance for this class.
+	 */
+	private static final Logger LOG = LoggerFactory
+			.getLogger(RecoveryCommunicator.class);
 
 	// @formatter:off
 	/**
@@ -115,6 +127,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		peerCommunicator = serv;
 		peerCommunicator.registerMessageType(RecoveryInstructionMessage.class);
 		peerCommunicator.addListener(this, RecoveryInstructionMessage.class);
+		peerCommunicator.registerMessageType(BackupInformationMessage.class);
+		peerCommunicator.addListener(this, BackupInformationMessage.class);
 	}
 
 	/**
@@ -232,13 +246,32 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		if (message instanceof RecoveryInstructionMessage) {
 			RecoveryInstructionMessage instruction = (RecoveryInstructionMessage) message;
 			RecoveryInstructionHandler.handleInstruction(instruction);
+		} else if(message instanceof BackupInformationMessage) {
+			
+			BackupInformationMessage biMessage = (BackupInformationMessage) message;
+			
+			// Store the backup information
+			LocalBackupInformationAccess.storeLocal(biMessage.getSharedQueryID(), biMessage.getPqlStatements());
+			
 		}
 	}
 
 	@Override
 	public void sendBackupInformation(PeerID peerId, ID sharedQueryId,
 			Collection<String> backupInformation) {
-		// TODO Auto-generated method stub
+
+		BackupInformationMessage message = new BackupInformationMessage(
+				sharedQueryId, backupInformation);
+		
+		try {
+			
+			peerCommunicator.send(peerId, message);
+			
+		} catch(Throwable e) {
+			
+			LOG.error("Could not send backup information to peer " + peerId.toString(), e);
+			
+		}
 
 	}
 
