@@ -53,9 +53,6 @@ public class AbstractDashboardPartView extends DashboardPartView {
 	}
 
 	public boolean farmPart;
-
-	public AbstractDashboardPartView() {
-	}
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -72,23 +69,15 @@ public class AbstractDashboardPartView extends DashboardPartView {
 			e.printStackTrace();
 		}
 	}
-	
+	 
 	public void loadDashboardPartFile(String path) {
 		dashboardPartFile = project.getFile(path);
 		
 		if (this.dashboardPartFile != null && dashboardPartFile.exists()) {
-			/*
-			if (super.isShowing()) {
-				super.setShowing(false);
-				System.out.println("showing auf nein gesetzt!");
-			}
-			//TODO: UNBEDINGT KLAEREN!!
-			 */
-			System.out.println(path);
 			super.showDashboardPart(dashboardPartFile);
 		}
 		else {
-			System.out.println("Keine Datei gefunden!");
+			System.out.println("No project-file " + path);
 		}
 	}
 

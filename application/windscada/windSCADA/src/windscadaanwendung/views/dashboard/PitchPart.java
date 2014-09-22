@@ -2,18 +2,15 @@ package windscadaanwendung.views.dashboard;
 
 import org.eclipse.swt.widgets.Composite;
 
+import windscadaanwendung.ca.WKA;
+
 public class PitchPart extends AbstractDashboardPartView {
-	
-	public PitchPart() {
-		
-	}
-	
-	@Override
-	public void createPartControl(Composite parent) {
+
+	public void createPartControl(Composite parent, WKA wka) {
+		this.valueType = "pitch_angle";
+		this.farmPart = false;
 		super.createPartControl(parent);
-		// TODO
-		super.loadDashboardPartFile("4155pitch_angle.prt");
-		DashboardPartViewObserver.addDashboardPartView(this);
+		super.loadDashboardPartFile(String.valueOf(wka.getID()) + this.getValueType() + this.getFileEnding());
 	}
 
 }

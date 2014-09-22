@@ -2,17 +2,15 @@ package windscadaanwendung.views.dashboard;
 
 import org.eclipse.swt.widgets.Composite;
 
+import windscadaanwendung.ca.WKA;
+
 public class PhaseShiftPart extends AbstractDashboardPartView {
-	
-	public PhaseShiftPart(){
-	}
-	
-	@Override
-	public void createPartControl(Composite parent) {
+
+	public void createPartControl(Composite parent, WKA wka) {
+		this.valueType = "phase_shift";
+		this.farmPart = false;
 		super.createPartControl(parent);
-		// TODO
-		super.loadDashboardPartFile("4155phase_shift.prt");
-		DashboardPartViewObserver.addDashboardPartView(this);
+		super.loadDashboardPartFile(String.valueOf(wka.getID()) + this.getValueType() + this.getFileEnding());
 	}
 
 }

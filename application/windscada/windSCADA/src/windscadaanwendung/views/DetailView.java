@@ -8,6 +8,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 // import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
@@ -34,16 +35,11 @@ public class DetailView extends ViewPart {
 	private Label lblWKA;
 	private static Text nameWKA;
 	// private Canvas canvas;
-	private Composite pitchComp;
-	private PitchPart pitchPart;
-	private Composite phaseComp;
-	private PhaseShiftPart phaseShiftPart;
+	private static Composite pitchComp;
+	private static PitchPart pitchPart;
+	private static Composite phaseComp;
+	private static PhaseShiftPart phaseShiftPart;
 
-	/**
-	 * 
-	 */
-	public DetailView() {
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -86,20 +82,15 @@ public class DetailView extends ViewPart {
 		lblPitchwinkel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblPitchwinkel.setText("Pitchwinkel:");
 		
-		this.pitchComp = new Composite(parent, SWT.NONE);
-		this.pitchPart = new PitchPart();
-		this.pitchPart.createPartControl(this.pitchComp);
+		pitchComp = new Composite(parent, SWT.NONE);
+		pitchPart = new PitchPart();
 		
 		Label lblPhasenverschiebung = new Label(parent, SWT.NONE);
 		lblPhasenverschiebung.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblPhasenverschiebung.setText("Phasenverschiebung:");
 		
-		this.phaseComp = new Composite(parent, SWT.NONE);
-		this.phaseShiftPart = new PhaseShiftPart();
-		this.phaseShiftPart.createPartControl(this.phaseComp);
-		
-		
-		
+		phaseComp = new Composite(parent, SWT.NONE);
+		phaseShiftPart = new PhaseShiftPart();
 
 	}
 
@@ -120,6 +111,7 @@ public class DetailView extends ViewPart {
 		
 		if (wka == null) {
 			nameWKA.setText("");
+			// TODO: alle anderen Felder leeren
 		} else {
 			nameWKA.setText(String.valueOf(wka.getID()));
 			
@@ -134,21 +126,22 @@ public class DetailView extends ViewPart {
 				}
 				//TODO: implementieren, dass nach x sekunden aktualisiert wird
 
+				for (Control c: pitchComp.getChildren()) {
+					c.dispose();
+				}
+				pitchComp.layout();
+				pitchPart = new PitchPart();
+				pitchPart.createPartControl(pitchComp, wka);
+				pitchComp.layout();
+
+				for (Control c: phaseComp.getChildren()) {
+					c.dispose();
+				}
+				phaseComp.layout();
+				phaseShiftPart = new PhaseShiftPart();
+				phaseShiftPart.createPartControl(phaseComp, wka);
+				phaseComp.layout();
 		}
 		
-	}
-
-	/**
-	 * @return the pitchComp
-	 */
-	public Composite getPitchComp() {
-		return pitchComp;
-	}
-
-	/**
-	 * @param pitchComp the pitchComp to set
-	 */
-	public void setPitchComp(Composite pitchComp) {
-		this.pitchComp = pitchComp;
 	}
 }

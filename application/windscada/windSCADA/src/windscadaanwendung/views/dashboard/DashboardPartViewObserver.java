@@ -3,6 +3,9 @@ package windscadaanwendung.views.dashboard;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+
 import windscadaanwendung.ca.WKA;
 import windscadaanwendung.ca.WindFarm;
 
@@ -20,7 +23,9 @@ public class DashboardPartViewObserver {
 		if (dpvList == null) {
 			dpvList = new ArrayList<AbstractDashboardPartView>();
 		}
-		dpvList.add(dpv);
+		if (!dpvList.contains(dpv)) {
+			dpvList.add(dpv);
+		}
 	}
 	
 	public static void setFileName(String fileName) {
@@ -29,16 +34,34 @@ public class DashboardPartViewObserver {
 		}
 	}
 	
-	public static void setWKA(WKA wka) {
-		for(AbstractDashboardPartView dpv: dpvList) {
+	public static void setWKA(final WKA wka) {
+		//FIXME: warum werden alle 2 mal aufgerufen?
+		for(final AbstractDashboardPartView dpv: dpvList) {
 			if (!dpv.isFarmPart()) {
 				// otherwise dpv is a part for a hole windfarm
 				// set wka for every valueType which shows a wkaPart
-				System.out.println("Setze:");
-				System.out.println(String.valueOf(wka.getID()) + "." + dpv.valueType + dpv.getFileEnding());
+				System.out.println("Setze :" + String.valueOf(wka.getID()) + dpv.valueType + dpv.getFileEnding());
 				// Funktioniert nicht -> vorher alle alten sachen vom dpv disposen und erzwingen dass es gejt auch wenn schon showing ist
 				// oder evtl. bei allen dpvs einfach createPartControl() aufrufen und dabei eine wka ID uebergeben?! wohl besser !?
-				dpv.loadDashboardPartFile(String.valueOf(wka.getID()) + dpv.valueType + dpv.getFileEnding());
+//				dpv.unshowDashboardPart();
+//				dpv.createPartControl(dpv.getParent());
+//				Composite p = dpv.getParent();
+//				dpv = new CorrectedScorePart();
+//				dpv.createPartControl(p);
+
+				Display.getDefault().asyncExec(new Runnable() {
+
+					@Override
+					public void run() {
+						dpv.unshowDashboardPart();
+						dpv.loadDashboardPartFile(String.valueOf(wka.getID()) + dpv.valueType + dpv.getFileEnding());
+					}
+					
+				});
+				
+//				dpv.unshowDashboardPart();
+//				dpv.loadDashboardPartFile(String.valueOf(wka.getID()) + dpv.valueType + dpv.getFileEnding());
+//				dpv.loadDashboardPartFile(String.valueOf(wka.getID()) + dpv.valueType + dpv.getFileEnding());
 			}
 		}
 		//TODO Fuer Farm und fuer null machen

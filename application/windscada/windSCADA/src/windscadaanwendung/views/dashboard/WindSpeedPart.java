@@ -4,14 +4,11 @@ import org.eclipse.swt.widgets.Composite;
 
 public class WindSpeedPart extends AbstractDashboardPartView {
 	
-	public WindSpeedPart(){
-	}
-	
 	@Override
 	public void createPartControl(Composite parent) {
+		this.valueType = "wind_speed";
+		this.farmPart = false;
 		super.createPartControl(parent);
-		// TODO
-		super.loadDashboardPartFile("4155wind_speed.prt");
 		DashboardPartViewObserver.addDashboardPartView(this);
 	}
 

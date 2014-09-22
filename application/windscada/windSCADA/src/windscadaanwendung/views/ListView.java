@@ -11,6 +11,7 @@ import org.eclipse.ui.part.ViewPart;
 import windscadaanwendung.ca.FarmList;
 import windscadaanwendung.ca.WKA;
 import windscadaanwendung.ca.WindFarm;
+import windscadaanwendung.views.dashboard.DashboardPartViewObserver;
 
 
 /**
@@ -48,7 +49,7 @@ public class ListView extends ViewPart {
 		        	  // the TreeItemText has to be eaqual to the ID of the WKA
 		        	  WKA selectedWKA = FarmList.getWKA(Integer.parseInt(selected.getText()));
 		        	  DetailView.setSelectedWKA(selectedWKA);
-//		        	  DashboardPartViewObserver.setWKA(selectedWKA);
+		        	  DashboardPartViewObserver.setWKA(selectedWKA);
 		          }
 		        }
 
