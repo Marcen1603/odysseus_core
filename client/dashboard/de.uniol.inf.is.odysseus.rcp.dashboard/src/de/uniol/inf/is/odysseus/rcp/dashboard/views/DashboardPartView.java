@@ -25,11 +25,12 @@ public class DashboardPartView extends ViewPart {
 	private static final IDashboardPartHandler DASHBOARD_PART_HANDLER = new XMLDashboardPartHandler();
 	
 	private Composite parent;
-
 	private IDashboardPart dashboardPart;
 	private DashboardPartController dashboardPartController;
 	
 	private boolean isShowing;
+	private Composite comp;
+	private ToolBar toolBar;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -42,17 +43,34 @@ public class DashboardPartView extends ViewPart {
 	public void setFocus() {
 		
 	}
+	
+
+	/**
+	 * Cleans The View if there is a Dashboardpart showing. 
+	 * You have to call this before you can show a new dashboardPartFile in this View.
+	 */
+	public void unshowDashboardPart() {
+		if (isShowing) {
+			if( dashboardPartController != null && dashboardPartController.isStarted() ) {
+				dashboardPartController.stop();
+			}
+			comp.dispose();
+			toolBar.dispose();
+			isShowing = false;
+			parent.layout();
+		}
+	}
 
 	public void showDashboardPart(IFile dashboardPartFile) {
 		if( isShowing ) {
 			return;
 		}
 		
-		final Composite comp = new Composite(parent, SWT.NONE);
+		comp = new Composite(parent, SWT.NONE);
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		comp.setLayout(new GridLayout());
 		
-		final ToolBar toolBar = new ToolBar(parent, SWT.WRAP | SWT.RIGHT);
+		toolBar = new ToolBar(parent, SWT.WRAP | SWT.RIGHT);
 		
 		try {
 			dashboardPart = DASHBOARD_PART_HANDLER.load(dashboardPartFile, this);
