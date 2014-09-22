@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.listener.AbstractQueryDistributionListener;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.SubsequentQueryPartsCalculator;
 
@@ -84,6 +85,53 @@ public class RecoveryQueryDistributionListener extends
 	}
 
 	/**
+	 * The recovery communicator, if there is one bound.
+	 */
+	private static Optional<IRecoveryCommunicator> cCommunicator = Optional
+			.absent();
+
+	/**
+	 * Binds a recovery communicator. <br />
+	 * Called by OSGI-DS.
+	 * 
+	 * @param communicator
+	 *            The recovery communicator to bind. <br />
+	 *            Must be not null.
+	 */
+	public static void bindCommunicator(IRecoveryCommunicator communicator) {
+
+		Preconditions.checkNotNull(communicator,
+				"The recovery communicator to bind must be not null!");
+		cCommunicator = Optional.of(communicator);
+		LOG.debug("Bound {} as a recovery communicator.", communicator
+				.getClass().getSimpleName());
+
+	}
+
+	/**
+	 * Unbinds a recovery communicator. <br />
+	 * Called by OSGI-DS.
+	 * 
+	 * @param communicator
+	 *            The recovery communicator to unbind. <br />
+	 *            Must be not null.
+	 */
+	public static void unbindCommunicator(IRecoveryCommunicator communicator) {
+
+		Preconditions.checkNotNull(communicator,
+				"The recovery communicator to unbind must be not null!");
+		if (cCommunicator.isPresent()
+				&& cCommunicator.get().equals(communicator)) {
+
+			cCommunicator = Optional.absent();
+			LOG.debug("Unbound {} as a recovery communicator.", communicator
+					.getClass().getSimpleName());
+
+		}
+
+	}
+
+	/**
 	 * The helper instance to calculate subsequent query parts.
 	 */
 	private SubsequentQueryPartsCalculator mSubsequentPartsCalculator = new SubsequentQueryPartsCalculator();
@@ -112,6 +160,11 @@ public class RecoveryQueryDistributionListener extends
 			LOG.error("No P2P network manager for recovery bound!");
 			return;
 
+		} else if (!cCommunicator.isPresent()) {
+
+			LOG.error("No recovery communicator bound!");
+			return;
+
 		}
 
 		// Distribute backup information
@@ -131,8 +184,8 @@ public class RecoveryQueryDistributionListener extends
 
 			} else {
 
-				// TODO send a message with shared query ID and subsequent query
-				// parts
+				cCommunicator.get().sendBackupInformation(peerID,
+						sharedQueryId, subsequentParts);
 
 			}
 

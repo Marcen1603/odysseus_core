@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.recovery.internal;
 import java.util.Collection;
 import java.util.List;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -236,6 +237,13 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			RecoveryInstructionMessage instruction = (RecoveryInstructionMessage) message;
 			RecoveryInstructionHandler.handleInstruction(instruction);
 		}
+	}
+
+	@Override
+	public void sendBackupInformation(PeerID peerId, ID sharedQueryId,
+			Collection<ILogicalQueryPart> backupInformation) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
