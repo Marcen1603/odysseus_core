@@ -76,7 +76,7 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 	final private R messagePrototype;
 			
 	public ProtobufServerTransportHandler() {
-		delegate = new AbstractTransportHandlerDelegate<>(null, this,null);
+		delegate = new AbstractTransportHandlerDelegate<>(null, null, this,null);
 		address = null;
 		messagePrototype = null;
 	}
@@ -90,7 +90,7 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 		if (messagePrototype == null){
 			throw new RuntimeException( new IllegalArgumentException("No valid type given: " +options.get("type")));
 		}
-		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), this, options); 
+		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), protocolHandler.getDirection(), this, options); 
 		
 		protocolHandler.setTransportHandler(this);
 		delegate.addListener(protocolHandler);

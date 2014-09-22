@@ -9,21 +9,25 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-public class AbstractTransportHandlerDelegate<T>{
-	
+public class AbstractTransportHandlerDelegate<T> {
+
 	private final List<ITransportHandlerListener<T>> transportHandlerListener = new ArrayList<ITransportHandlerListener<T>>();
 	private int openCounter = 0;
 	private final ITransportExchangePattern exchangePattern;
 	final private ITransportHandler callOnMe;
-	
+
 	final private OptionMap optionsMap;
 	private SDFSchema schema;
+	private ITransportDirection direction;
 
-	
-	public AbstractTransportHandlerDelegate(ITransportExchangePattern exchangePattern, ITransportHandler callOnMe, OptionMap optionsMap) {
+	public AbstractTransportHandlerDelegate(
+			ITransportExchangePattern exchangePattern,
+			ITransportDirection direction, ITransportHandler callOnMe,
+			OptionMap optionsMap) {
 		this.exchangePattern = exchangePattern;
 		this.callOnMe = callOnMe;
 		this.optionsMap = optionsMap;
+		this.direction = direction;
 	}
 
 	public void addListener(ITransportHandlerListener<T> listener) {
@@ -44,8 +48,8 @@ public class AbstractTransportHandlerDelegate<T>{
 			l.process(message);
 		}
 	}
-	
-	public void fireProcess(InputStream message){
+
+	public void fireProcess(InputStream message) {
 		for (ITransportHandlerListener<T> l : transportHandlerListener) {
 			l.process(message);
 		}
@@ -54,7 +58,7 @@ public class AbstractTransportHandlerDelegate<T>{
 	public void fireProcess(T m) {
 		for (ITransportHandlerListener<T> l : transportHandlerListener) {
 			l.process(m);
-		}		
+		}
 	}
 
 	public void fireProcess(String[] message) {
@@ -75,7 +79,6 @@ public class AbstractTransportHandlerDelegate<T>{
 		}
 	}
 
-
 	public ITransportExchangePattern getExchangePattern() {
 		return this.exchangePattern;
 	}
@@ -89,7 +92,9 @@ public class AbstractTransportHandlerDelegate<T>{
 							|| getExchangePattern().equals(
 									ITransportExchangePattern.InOptionalOut) || getExchangePattern()
 							.equals(ITransportExchangePattern.InOut))) {
-				callOnMe.processInOpen();
+				if (direction == ITransportDirection.IN) {
+					callOnMe.processInOpen();
+				}
 			}
 			if (getExchangePattern() != null
 					&& (getExchangePattern().equals(
@@ -97,12 +102,15 @@ public class AbstractTransportHandlerDelegate<T>{
 							|| getExchangePattern().equals(
 									ITransportExchangePattern.OutOptionalIn) || getExchangePattern()
 							.equals(ITransportExchangePattern.InOut))) {
-				callOnMe.processOutOpen();
+				if (direction == ITransportDirection.OUT) {
+					callOnMe.processOutOpen();
+				}
+
 			}
 		}
 		openCounter++;
 	}
-	
+
 	final synchronized public void close() throws IOException {
 		openCounter--;
 		if (openCounter == 0) {
@@ -124,27 +132,30 @@ public class AbstractTransportHandlerDelegate<T>{
 			}
 		}
 	}
-	
-    /**
-     * This method is supposed to retrieve the options for an instance, which were used during the call of {@link ITransportHandler#createInstance(IProtocolHandler, Map))}
-     * based on the current configuration. This is useful for comparing and serialising different TransportHandler-instances.
-     * @return
-     */
+
+	/**
+	 * This method is supposed to retrieve the options for an instance, which
+	 * were used during the call of
+	 * {@link ITransportHandler#createInstance(IProtocolHandler, Map))} based on
+	 * the current configuration. This is useful for comparing and serialising
+	 * different TransportHandler-instances.
+	 * 
+	 * @return
+	 */
 	public OptionMap getOptionsMap() {
 		return optionsMap;
 	}
-	
-//	public void setOptionsMap(Map<String, String> options) {
-//		this.optionsMap = options;
-//	}
-	
+
+	// public void setOptionsMap(Map<String, String> options) {
+	// this.optionsMap = options;
+	// }
+
 	public void setSchema(SDFSchema schema) {
 		this.schema = schema;
 	}
-	
+
 	public SDFSchema getSchema() {
 		return schema;
 	}
-
 
 }

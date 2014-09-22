@@ -28,12 +28,12 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 	final AbstractTransportHandlerDelegate<?> delegate;
 	
 	public AbstractTransportHandler(){
-		delegate = new AbstractTransportHandlerDelegate<>(null, this,null);
+		delegate = new AbstractTransportHandlerDelegate<>(null, null, this,null);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public AbstractTransportHandler(IProtocolHandler protocolHandler, OptionMap optionsMap) {
-		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), this, optionsMap);
+		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), protocolHandler.getDirection(), this, optionsMap);
 		protocolHandler.setTransportHandler(this);
 		delegate.addListener(protocolHandler);
 	}
