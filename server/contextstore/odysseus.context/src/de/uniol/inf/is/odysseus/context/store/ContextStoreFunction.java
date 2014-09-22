@@ -64,7 +64,7 @@ public class ContextStoreFunction extends AbstractFunction<Object> {
 		String storeName = resolveStoreName();
         if (storeName != null) {
             List<Tuple<? extends ITimeInterval>> values = ContextStoreManager.getStore(storeName).getLastValues();
-            if (values == null) {
+            if (values == null || values.size() == 0) {
                 return "<empty>";
             }
             if (values.size() > 1) {
