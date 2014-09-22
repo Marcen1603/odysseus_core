@@ -11,11 +11,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.listener.AbstractQueryDistributionListener;
+import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
@@ -170,22 +172,28 @@ public class RecoveryQueryDistributionListener extends
 		// Distribute backup information
 		for (PeerID peerID : subsequentPartsToPeer.keySet()) {
 
-			Collection<ILogicalQueryPart> subsequentParts = subsequentPartsToPeer
-					.get(peerID);
+			Collection<String> subsequentPQLStatements = Lists.newArrayList();
+			for (ILogicalQueryPart subsequentPart : subsequentPartsToPeer
+					.get(peerID)) {
 
-			if (subsequentParts.isEmpty()) {
+				subsequentPQLStatements.add(LogicalQueryHelper
+						.generatePQLStatementFromQueryPart(subsequentPart));
+
+			}
+
+			if (subsequentPQLStatements.isEmpty()) {
 
 				continue;
 
 			} else if (peerID.equals(cNetworkManager.get().getLocalPeerID())) {
 
 				LocalBackupInformationAccess.storeLocal(sharedQueryId,
-						subsequentParts);
+						subsequentPQLStatements);
 
 			} else {
 
 				cCommunicator.get().sendBackupInformation(peerID,
-						sharedQueryId, subsequentParts);
+						sharedQueryId, subsequentPQLStatements);
 
 			}
 

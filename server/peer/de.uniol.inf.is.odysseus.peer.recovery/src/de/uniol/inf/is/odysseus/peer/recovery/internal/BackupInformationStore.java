@@ -15,13 +15,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
 
 /**
  * A backup information store can be used to store backup information for
- * recovery techniques. For a shared (distributed) query, it stores all query
- * parts.
+ * recovery techniques. For a shared (distributed) query, it stores the pql
+ * strings of all query parts.
  * 
  * @author Michael Brand
  *
@@ -35,24 +34,24 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 			.getLogger(BackupInformationStore.class);
 
 	/**
-	 * The stored information as a mapping of {@link AllocationInformation}s to
-	 * their shared query (it's id).
+	 * The stored information as a mapping of pql statements to their shared
+	 * query (it's id).
 	 */
-	private final Map<ID, ImmutableCollection<ILogicalQueryPart>> mInfoMap = Maps
+	private final Map<ID, ImmutableCollection<String>> mInfoMap = Maps
 			.newHashMap();
 
 	@Override
 	public boolean addSharedQuery(ID sharedQueryId,
-			Collection<ILogicalQueryPart> queryParts) {
+			Collection<String> pqlStatements) {
 
 		Preconditions.checkNotNull(sharedQueryId,
 				"The id of the shared query to store must be not null!");
 		Preconditions.checkNotNull(
-				queryParts,
-				"The query parts of the shared query '"
+				pqlStatements,
+				"The pql statements of the shared query '"
 						+ sharedQueryId.toString() + "' must be not null!");
-		Preconditions.checkArgument(!queryParts.isEmpty(),
-				"There must be at leat one query parts of the shared query '"
+		Preconditions.checkArgument(!pqlStatements.isEmpty(),
+				"There must be at leat one pql statement of the shared query '"
 						+ sharedQueryId.toString() + "'!");
 
 		if (this.mInfoMap.containsKey(sharedQueryId)) {
@@ -62,9 +61,9 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 
 		}
 
-		this.mInfoMap.put(sharedQueryId, ImmutableSet.copyOf(queryParts));
+		this.mInfoMap.put(sharedQueryId, ImmutableSet.copyOf(pqlStatements));
 		LOG.debug("Stored backup information about '{}': {}", sharedQueryId,
-				queryParts);
+				pqlStatements);
 		return true;
 
 	}
@@ -77,8 +76,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	}
 
 	@Override
-	public ImmutableCollection<ILogicalQueryPart> getStoredQueryParts(
-			ID sharedQueryId) {
+	public ImmutableCollection<String> getStoredPQLStatements(ID sharedQueryId) {
 
 		Preconditions
 				.checkNotNull(
@@ -87,7 +85,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 
 		if (!this.mInfoMap.containsKey(sharedQueryId)) {
 
-			Set<ILogicalQueryPart> parts = Sets.newHashSet();
+			Set<String> parts = Sets.newHashSet();
 			return ImmutableSet.copyOf(parts);
 
 		}
@@ -109,5 +107,5 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 		return true;
 
 	}
-	
+
 }

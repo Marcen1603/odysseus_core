@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
 
 /**
@@ -80,11 +79,11 @@ public class LocalBackupInformationAccess {
 	 * 
 	 * @param sharedQueryId
 	 *            The shared query id of the distributed query.
-	 * @param parts
-	 *            The parts to store local.
+	 * @param pqlStatements
+	 *            The pql statements to store local.
 	 */
 	public static void storeLocal(ID sharedQueryId,
-			Collection<ILogicalQueryPart> parts) {
+			Collection<String> pqlStatements) {
 
 		if (!cInfoStore.isPresent()) {
 
@@ -93,7 +92,8 @@ public class LocalBackupInformationAccess {
 
 		}
 
-		boolean success = cInfoStore.get().addSharedQuery(sharedQueryId, parts);
+		boolean success = cInfoStore.get().addSharedQuery(sharedQueryId,
+				pqlStatements);
 		if (!success) {
 
 			LOG.error(

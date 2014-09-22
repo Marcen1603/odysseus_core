@@ -15,12 +15,9 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryInstructionHandler;
-import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
-import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
 /**
  * A recovery communicator handles the communication between peers for recovery
@@ -35,26 +32,25 @@ import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 public class RecoveryCommunicator implements IRecoveryCommunicator,
 		IPeerCommunicatorListener {
 
-	//@formatter:off
+	// @formatter:off
 	/**
-	 * Plan (try to find some ideas) 
-	 * 1. Someone (who?) tells us that a peer failed and which query this peer had (this should be part of LSOP-213)
-	 * 2. We search for another peer who can install this query 
-	 * 3. A new peer is found, we just take the first for now 
-	 * 4. We tell this peer to install the query 
-	 * 5. We connect the peers so that the new peer is known by the right
+	 * Plan (try to find some ideas) 1. Someone (who?) tells us that a peer
+	 * failed and which query this peer had (this should be part of LSOP-213) 2.
+	 * We search for another peer who can install this query 3. A new peer is
+	 * found, we just take the first for now 4. We tell this peer to install the
+	 * query 5. We connect the peers so that the new peer is known by the right
 	 * peers
 	 * 
-	 * When we have this we add the second part (right side of diagram) 
-	 * 1. Tell the peers which are before the failed peer that the peer failed 
-	 * 2. Save the tuples there 
-	 * 3. When the new peer is there -> direct saved tuples to the new peer
+	 * When we have this we add the second part (right side of diagram) 1. Tell
+	 * the peers which are before the failed peer that the peer failed 2. Save
+	 * the tuples there 3. When the new peer is there -> direct saved tuples to
+	 * the new peer
 	 * 
-	 * And when we have this we add a third part 
-	 * 1. Add an error-protocol to handle errors during the recovery? (maybe like loadBalancing?)
+	 * And when we have this we add a third part 1. Add an error-protocol to
+	 * handle errors during the recovery? (maybe like loadBalancing?)
 	 * 
 	 */
-	//@formatter:on
+	// @formatter:on
 
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IP2PDictionary p2pDictionary;
@@ -69,7 +65,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	private static ISession activeSession;
 
 	private static RecoveryCommunicator instance;
-	
+
 	/**
 	 * Called by OSGi on Bundle activation.
 	 */
@@ -184,14 +180,14 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	public static IServerExecutor getExecutor() {
 		return executor;
 	}
-	
+
 	public static RecoveryCommunicator getInstance() {
 		return instance;
 	}
 
 	// -----------------------------------------------------
 	// Code with recovery logic
-	// -----------------------------------------------------	
+	// -----------------------------------------------------
 
 	@Override
 	public void recover(PeerID failedPeer) {
@@ -241,9 +237,9 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 	@Override
 	public void sendBackupInformation(PeerID peerId, ID sharedQueryId,
-			Collection<ILogicalQueryPart> backupInformation) {
+			Collection<String> backupInformation) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

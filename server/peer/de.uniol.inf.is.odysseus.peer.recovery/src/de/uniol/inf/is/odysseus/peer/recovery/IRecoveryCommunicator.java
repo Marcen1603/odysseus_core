@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
-import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 
 /**
  * A recovery communicator handles the communication between peers for recovery
@@ -27,7 +26,7 @@ public interface IRecoveryCommunicator {
 	 *            the peer shall store.
 	 */
 	public void sendBackupInformation(PeerID peerId, ID sharedQueryId,
-			Collection<ILogicalQueryPart> backupInformation);
+			Collection<String> backupInformation);
 
 	public void recover(PeerID failedPeer);
 
