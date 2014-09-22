@@ -35,6 +35,49 @@ public class TextfieldConfigurer extends AbstractDashboardPartConfigurer<Textfie
 		createAttributeToShowControls(topComposite);
 		createUpdateIntervalControls(topComposite);
 		createShowHeartbeatsControls(topComposite);
+		createWarningAndErrorControls(topComposite);
+	}
+
+	private void createWarningAndErrorControls(Composite topComposite) {
+		DashboardPartUtil.createLabel(topComposite, "Show Warnings");
+		final Combo comboWarnings = createBooleanComboDropDown(topComposite, dashboardPart.isShowWarning());
+		comboWarnings.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				dashboardPart.setShowHeartbeats(comboWarnings.getSelectionIndex() == 0);
+				fireListener();
+			}
+		});
+		DashboardPartUtil.createLabel(topComposite, "Show Errors");
+		final Combo comboErrors = createBooleanComboDropDown(topComposite, dashboardPart.isShowError());
+		comboErrors.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				dashboardPart.setShowHeartbeats(comboErrors.getSelectionIndex() == 0);
+				fireListener();
+			}
+		});
+		
+		DashboardPartUtil.createLabel(topComposite, "Warningindex");
+		final Text warningIndex = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getWarningIndex()));
+		warningIndex.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		warningIndex.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				dashboardPart.setWarningIndex(Integer.parseInt(warningIndex.getText()));
+				fireListener();
+			}
+		});
+		DashboardPartUtil.createLabel(topComposite, "Errorindex");
+		final Text errorIndex = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getErrorIndex()));
+		errorIndex.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		errorIndex.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				dashboardPart.setErrorIndex(Integer.parseInt(errorIndex.getText()));
+				fireListener();
+			}
+		});
 	}
 
 	private void createAttributeToShowControls(Composite topComposite) {

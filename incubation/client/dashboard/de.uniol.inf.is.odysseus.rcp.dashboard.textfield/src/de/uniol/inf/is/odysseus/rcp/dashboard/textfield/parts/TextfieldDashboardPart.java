@@ -30,6 +30,58 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 
 	private int atributeToShow = 0;
 
+	private int warningIndex = 1;
+
+	/**
+	 * @return the warningIndex
+	 */
+	public int getWarningIndex() {
+		return warningIndex;
+	}
+
+	/**
+	 * @param warningIndex the warningIndex to set
+	 */
+	public void setWarningIndex(int warningIndex) {
+		this.warningIndex = warningIndex;
+	}
+
+	/**
+	 * @return the errorIndex
+	 */
+	public int getErrorIndex() {
+		return errorIndex;
+	}
+
+	/**
+	 * @param errorIndex the errorIndex to set
+	 */
+	public void setErrorIndex(int errorIndex) {
+		this.errorIndex = errorIndex;
+	}
+
+	private int errorIndex = 2;
+
+	private boolean warning;
+	private boolean error;
+
+	private boolean showWarning = true;;
+	/**
+	 * @return the showWarning
+	 */
+	public boolean isShowWarning() {
+		return showWarning;
+	}
+
+	/**
+	 * @param showWarning the showWarning to set
+	 */
+	public void setShowWarning(boolean showWarning) {
+		this.showWarning = showWarning;
+	}
+
+	private boolean showError = true;
+
 	/**
 	 * @return the atributeToShow
 	 */
@@ -82,6 +134,8 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 			Tuple<?> elementTuple = (Tuple<?>) element;
 			int[] atr = {atributeToShow };
 			pendingElement = (elementTuple != null ? elementTuple.toString(atr) : "null");
+			warning = elementTuple.getAttribute(warningIndex);
+			error =  elementTuple.getAttribute(errorIndex);
 		}
 	}
 
@@ -106,6 +160,11 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	public void onLoad(Map<String, String> saved) {
 		showHeartbeats = Boolean.valueOf(saved.get("ShowHeartbeats"));
 		updateInterval = Long.valueOf(saved.get("UpdateInterval"));
+		showWarning = Boolean.valueOf(saved.get("ShowWarning"));
+		showError = Boolean.valueOf(saved.get("ShowError"));
+		atributeToShow = Integer.valueOf(saved.get("AtributeToShow"));
+		errorIndex = Integer.valueOf(saved.get("ErrorIndex"));
+		warningIndex = Integer.valueOf(saved.get("WarningIndex"));
 	}
 	
 	@Override
@@ -113,14 +172,28 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 		Map<String, String> saveMap = Maps.newHashMap();
 		saveMap.put("ShowHeartbeats", String.valueOf(showHeartbeats));
 		saveMap.put("UpdateInterval", String.valueOf(updateInterval));
+		saveMap.put("ShowWarning", String.valueOf(showWarning));
+		saveMap.put("ShowError", String.valueOf(showError));
+		saveMap.put("AtributeToShow", String.valueOf(atributeToShow));
+		saveMap.put("ErrorIndex", String.valueOf(errorIndex));
+		saveMap.put("WarningIndex", String.valueOf(warningIndex));
 		return saveMap;
 	}
 
 	private void refreshText() {
 		synchronized (pendingElement) {
+			text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 			if (pendingElement != null) {
 				text.setText(pendingElement);
-			}	
+			} else {
+				text.setText("");
+			}
+			if (showWarning && warning) {
+				text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
+			}
+			if (showError && error) {
+				text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_RED));
+			}
 		}
 	}
 
@@ -143,5 +216,19 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	/**
+	 * @return the showError
+	 */
+	public boolean isShowError() {
+		return showError;
+	}
+
+	/**
+	 * @param showError the showError to set
+	 */
+	public void setShowError(boolean showError) {
+		this.showError = showError;
 	}
 }
