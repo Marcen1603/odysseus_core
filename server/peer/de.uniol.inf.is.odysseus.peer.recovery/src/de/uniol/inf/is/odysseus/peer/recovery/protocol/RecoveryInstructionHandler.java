@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.recovery.protocoll;
+package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
