@@ -4,5 +4,5 @@ public enum ConversionType {
 	AIS_IVEF,
 	IVEF_AIS,
 	TTM_IVEF,
-	IVEF_TTM; 
+	IVEF_TTM, TLL_IVEF; 
 }

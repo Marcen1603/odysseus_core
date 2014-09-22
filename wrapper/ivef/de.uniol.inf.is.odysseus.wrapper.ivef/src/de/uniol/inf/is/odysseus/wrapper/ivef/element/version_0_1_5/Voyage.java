@@ -228,8 +228,8 @@ public class Voyage implements IIvefElement {
     public String toXML() {
 
         String xml = "<Voyage";
-//        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+//        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         xml += " Id=\"" + encode( m_id) + "\"";
         xml += " SourceName=\"" + encode( m_sourceName) + "\"";
@@ -243,8 +243,8 @@ public class Voyage implements IIvefElement {
         if ( hasETA() ) {
         	try {
 				Date etaDate = df.parse(m_ETA);
-//				xml += " ETA=\"" + df.format(etaDate) + "\"";
-				xml += " ETA=\"" + df.format(etaDate) + "Z\"";
+				xml += " ETA=\"" + df.format(etaDate) + "\"";
+//				xml += " ETA=\"" + df.format(etaDate) + "Z\"";
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

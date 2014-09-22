@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.data.Unit;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.AISSentence;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.Sentence;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.SentenceFactory;
+import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.TLLSentence;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.TTMSentence;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.AISSentenceHandler;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.payload.decoded.DecodedAISPayload;
@@ -123,6 +124,9 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 		case TTM_IVEF:
 			convertTTMtoIVEF(received);
 			break;
+		case TLL_IVEF:
+			convertTLLtoIVEF(received);
+			break;
 		case IVEF_TTM:
 			convertIVEFtoTTM(received);
 			break;
@@ -134,6 +138,55 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 			break;
 		default:
 			break;
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "unused" })
+	private void convertTLLtoIVEF(
+			KeyValueObject<? extends IMetaAttribute> received) {
+		/***************************************
+		 * Set the own ship (Ship ODYSSEUS)
+		 * *************************************/
+		KeyValueObject<? extends IMetaAttribute> sent = new KeyValueObject<>();
+		if (received.getMetadata("originalNMEA") != null) {
+			if (received.getMetadata("originalNMEA") instanceof AISSentence) {
+				AISSentence ais = (AISSentence) received
+						.getMetadata("originalNMEA");
+				if (ais.getSentenceId().toUpperCase().equals("VDO")) {
+					this.ownShip = ais;
+					this.aishandler.handleAISSentence(this.ownShip);
+					if (this.aishandler.getDecodedAISMessage() != null) {
+						if (this.aishandler.getDecodedAISMessage() instanceof PositionReport)
+							this.ownShipPosition = (PositionReport) this.aishandler
+									.getDecodedAISMessage();
+						else if (this.aishandler.getDecodedAISMessage() instanceof StaticAndVoyageData)
+							this.ownShipStaticData = (StaticAndVoyageData) this.aishandler
+									.getDecodedAISMessage();
+						else {
+							// Other decoded messages to be handled later if
+							// required.
+						}
+						this.aishandler.resetDecodedAISMessage();
+					}
+				}
+			}
+			/**************************************************************************
+			 * Data fusion: Convert the TTM message into IVEF using the OwnShip
+			 * message
+			 * ************************************************************************/
+			else if (received.getMetadata("originalNMEA") instanceof TLLSentence) {
+				// We can't generate IVEF before receiving the ownShipMessage
+				if (this.ownShipPosition == null)
+					return;
+				TLLSentence tll = (TLLSentence) received
+						.getMetadata("originalNMEA");
+				
+				
+				
+				this.ivef.fillMap(sent);
+				sent.setMetadata("object", this.ivef);
+				transfer((T) sent);
+			}
 		}
 	}
 

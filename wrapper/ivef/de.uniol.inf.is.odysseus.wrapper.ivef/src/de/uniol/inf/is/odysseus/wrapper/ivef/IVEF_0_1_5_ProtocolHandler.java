@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractPr
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_LoginRequest;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_LoginResponse;
 import de.uniol.inf.is.odysseus.wrapper.ivef.element.version_0_1_5.MSG_Logout;
@@ -106,6 +107,11 @@ public class IVEF_0_1_5_ProtocolHandler extends
 	public String getName() {
 		return "IVEF_0_1_5";
 	}
+	
+	@Override
+    public ITransportExchangePattern getExchangePattern() {
+        return ITransportExchangePattern.InOut;
+    }
 
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> other) {

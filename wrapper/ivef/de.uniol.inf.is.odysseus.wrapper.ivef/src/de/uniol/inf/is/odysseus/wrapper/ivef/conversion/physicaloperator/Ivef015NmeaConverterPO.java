@@ -52,6 +52,7 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.data.Unit;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.AISSentence;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.Sentence;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.SentenceFactory;
+import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.TLLSentence;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.TTMSentence;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.AISSentenceHandler;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.payload.decoded.DecodedAISPayload;
@@ -123,14 +124,74 @@ public class Ivef015NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 	@Override
 	protected void process_next(T object, int port) {
 		KeyValueObject<? extends IMetaAttribute> received = (KeyValueObject<? extends IMetaAttribute>) object;
-		if (this.conversionType == ConversionType.TTM_IVEF)
+		switch (conversionType) {
+		case TTM_IVEF:
 			convertTTMtoIVEF(received);
-		else if (this.conversionType == ConversionType.IVEF_TTM)
+			break;
+		case TLL_IVEF:
+			convertTLLtoIVEF(received);
+			break;
+		case IVEF_TTM:
 			convertIVEFtoTTM(received);
-		else if (this.conversionType == ConversionType.AIS_IVEF)
+			break;
+		case AIS_IVEF:
 			convertAIStoIVEF(received);
-		else if (this.conversionType == ConversionType.IVEF_AIS)
+			break;
+		case IVEF_AIS:
 			convertIVEFtoAIS(received);
+			break;
+		default:
+			break;
+		}	
+	}
+
+	@SuppressWarnings({ "unchecked", "unused" })
+	private void convertTLLtoIVEF(
+			KeyValueObject<? extends IMetaAttribute> received) {
+		/***************************************
+		 * Set the own ship (Ship ODYSSEUS)
+		 * *************************************/
+		KeyValueObject<? extends IMetaAttribute> sent = new KeyValueObject<>();
+		if (received.getMetadata("originalNMEA") != null) {
+			if (received.getMetadata("originalNMEA") instanceof AISSentence) {
+				AISSentence ais = (AISSentence) received
+						.getMetadata("originalNMEA");
+				if (ais.getSentenceId().toUpperCase().equals("VDO")) {
+					this.ownShip = ais;
+					this.aishandler.handleAISSentence(this.ownShip);
+					if (this.aishandler.getDecodedAISMessage() != null) {
+						if (this.aishandler.getDecodedAISMessage() instanceof PositionReport)
+							this.ownShipPosition = (PositionReport) this.aishandler
+									.getDecodedAISMessage();
+						else if (this.aishandler.getDecodedAISMessage() instanceof StaticAndVoyageData)
+							this.ownShipStaticData = (StaticAndVoyageData) this.aishandler
+									.getDecodedAISMessage();
+						else {
+							// Other decoded messages to be handled later if
+							// required.
+						}
+						this.aishandler.resetDecodedAISMessage();
+					}
+				}
+			}
+			/**************************************************************************
+			 * Data fusion: Convert the TTM message into IVEF using the OwnShip
+			 * message
+			 * ************************************************************************/
+			else if (received.getMetadata("originalNMEA") instanceof TLLSentence) {
+				// We can't generate IVEF before receiving the ownShipMessage
+				if (this.ownShipPosition == null)
+					return;
+				TLLSentence tll = (TLLSentence) received
+						.getMetadata("originalNMEA");
+				
+				
+				
+				this.ivef.fillMap(sent);
+				sent.setMetadata("object", this.ivef);
+				transfer((T) sent);
+			}
+		}
 	}
 
 	@Override
@@ -312,7 +373,8 @@ public class Ivef015NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 			voyage.setDestination(destination);
 		String eta = null;
 		if ((eta = (String) received.getAttribute("eta")) != null)
-			voyage.setETA(IvefConversionUtilities.toUTC(IvefConversionUtilities.nmeaTimeToUTC(eta)));
+			voyage.setETA(IvefConversionUtilities.toUTC(IvefConversionUtilities
+					.nmeaTimeToUTC(eta)));
 		return voyage;
 	}
 
@@ -335,8 +397,6 @@ public class Ivef015NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 			return id;
 		}
 	}
-
-	
 
 	// private int getIdRandomly() {
 	// Random random = new Random();

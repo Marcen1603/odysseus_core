@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractPr
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.IShipRouteRootElement;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.manoeuvre.ManoeuvrePlanDataItem;
 import de.uniol.inf.is.odysseus.wrapper.shiproutes.json.element.prediction.PredictionDataItem;
@@ -75,6 +76,11 @@ public class ShipRouteProtocolHandler extends
 	public String getName() {
 		return PROTOCOL_HANDLER_NAME;
 	}
+	
+	@Override
+    public ITransportExchangePattern getExchangePattern() {
+        return ITransportExchangePattern.InOut;
+    }
 
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> other) {
