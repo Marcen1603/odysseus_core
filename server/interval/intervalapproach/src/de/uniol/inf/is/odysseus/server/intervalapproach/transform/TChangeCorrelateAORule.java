@@ -35,7 +35,6 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeCorrelateAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -43,19 +42,13 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.ChangeCorrelatePO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TIInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 29.05.2012
  */
-public class TChangeCorrelateAORule extends AbstractTransformationRule<ChangeCorrelateAO> {
-
-	@Override
-	public int getPriority() {	
-		return 0;
-	}
+public class TChangeCorrelateAORule extends AbstractIntervalTransformationRule<ChangeCorrelateAO> {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
@@ -76,15 +69,6 @@ public class TChangeCorrelateAORule extends AbstractTransformationRule<ChangeCor
 		retract(ccAO);		
 	}
 
-	@Override
-	public boolean isExecutable(ChangeCorrelateAO operator, TransformationConfiguration transformConfig) {
-		if(operator.isAllPhysicalInputSet()){
-			if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
-				return true;
-			}
-		}
-		return false;
-	}
 
 	@Override
 	public String getName() {

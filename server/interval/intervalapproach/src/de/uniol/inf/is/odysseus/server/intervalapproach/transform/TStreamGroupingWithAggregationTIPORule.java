@@ -24,14 +24,9 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.StreamGroupingWithAggregationPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TStreamGroupingWithAggregationTIPORule extends AbstractTransformationRule<AggregateAO> {
+public class TStreamGroupingWithAggregationTIPORule extends AbstractIntervalTransformationRule<AggregateAO> {
 
-	@Override
-	public int getPriority() {
-		return 0;
-	}
 	
 	@Override
 	public void execute(AggregateAO aggregateAO, TransformationConfiguration transformConfig) throws RuleException {
@@ -46,21 +41,6 @@ public class TStreamGroupingWithAggregationTIPORule extends AbstractTransformati
 		//((CombinedMergeFunction) po.getMetadataMerge()).add(new TimeIntervalInlineMetadataMergeFunction());
 		defaultExecute(aggregateAO, po, transformConfig, true, true);
 		
-	}
-
-	@Override
-	public boolean isExecutable(AggregateAO operator, TransformationConfiguration transformConfig) {
-		if (operator.isAllPhysicalInputSet()) {
-		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {			
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public String getName() {
-		return "AggregateAO -> StreamGroupingWithAggregationPO";
 	}
 	
 	@Override

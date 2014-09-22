@@ -22,9 +22,8 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TFilterAORule extends AbstractTransformationRule<FilterAO> {
+public class TFilterAORule extends AbstractIntervalTransformationRule<FilterAO> {
 
 	@Override
 	public int getPriority() {		
@@ -40,16 +39,6 @@ public class TFilterAORule extends AbstractTransformationRule<FilterAO> {
 					filterAO.getHeartbeatRate()));
 		}
 		defaultExecute(filterAO, filterPO, transformConfig, true, true);
-	}
-
-	@Override
-	public boolean isExecutable(FilterAO operator, TransformationConfiguration transformConfig) {
-		return operator.isAllPhysicalInputSet();
-	}
-
-	@Override
-	public String getName() {
-		return "FilterAO -> FilterPO";
 	}
 	
 	@Override

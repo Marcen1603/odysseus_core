@@ -23,43 +23,25 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TimeStampOrderValidatorTIPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.TimeStampOrderValidatorAO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-
 
 public class TTimeStampOrderValdiatorRule extends
-		AbstractTransformationRule<TimeStampOrderValidatorAO> {
-
-	@Override
-	public int getPriority() {
-		return 0;
-	}
+		AbstractIntervalTransformationRule<TimeStampOrderValidatorAO> {
 
 	@Override
 	public void execute(TimeStampOrderValidatorAO operator,
-			TransformationConfiguration config) throws RuleException {		
+			TransformationConfiguration config) throws RuleException {
 		TimeStampOrderValidatorTIPO<ITimeInterval, IStreamObject<ITimeInterval>> po = new TimeStampOrderValidatorTIPO<ITimeInterval, IStreamObject<ITimeInterval>>();
 		po.setDebug(operator.isDebug());
 		defaultExecute(operator, po, config, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(TimeStampOrderValidatorAO operator,
-			TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet();
-	}
-
-	@Override
-	public String getName() {
-		return "TimeStampOrderValidatorAO --> TimeStampOrderValidatorTIPO";
-	}
-
-	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
-	
+
 	@Override
-	public Class<? super TimeStampOrderValidatorAO>  getConditionClass() {	
+	public Class<? super TimeStampOrderValidatorAO> getConditionClass() {
 		return TimeStampOrderValidatorAO.class;
 	}
 

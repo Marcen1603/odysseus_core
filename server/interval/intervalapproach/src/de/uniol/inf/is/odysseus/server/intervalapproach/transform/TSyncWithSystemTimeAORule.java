@@ -8,31 +8,14 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.SyncWithSystemTimePO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.SyncWithSystemTimeAO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TSyncWithSystemTimeAORule extends AbstractTransformationRule<SyncWithSystemTimeAO> {
-
-	@Override
-	public int getPriority() {
-		return 0;
-	}
+public class TSyncWithSystemTimeAORule extends AbstractIntervalTransformationRule<SyncWithSystemTimeAO> {
 
 	@Override
 	public void execute(SyncWithSystemTimeAO operator,
 			TransformationConfiguration config) throws RuleException {
 		SyncWithSystemTimePO<IStreamObject<? extends ITimeInterval>> po = new SyncWithSystemTimePO<>(operator.getTimeUnit(), operator.getFactor());
 		defaultExecute(operator, po, config, true, true);
-	}
-
-	@Override
-	public boolean isExecutable(SyncWithSystemTimeAO operator,
-			TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet();
-	}
-
-	@Override
-	public String getName() {
-		return "SyncWithSystemTimeAO --> SyncWithSystemTimePO";
 	}
 
 	@Override

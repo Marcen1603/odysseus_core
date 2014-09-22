@@ -12,10 +12,10 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingPeriodicWi
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingTimeWindowTIPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.UnboundedWindowTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class TWindowAORule extends AbstractTransformationRule<AbstractWindowAO> {
+public class TWindowAORule extends
+		AbstractIntervalTransformationRule<AbstractWindowAO> {
 
 	public void executePredicateWindowAO(AbstractWindowAO operator,
 			TransformationConfiguration config) {
@@ -62,29 +62,32 @@ public class TWindowAORule extends AbstractTransformationRule<AbstractWindowAO> 
 	@Override
 	public void execute(AbstractWindowAO operator,
 			TransformationConfiguration config) throws RuleException {
-		switch (operator.getWindowType()) {
-		case PREDICATE:
-			executePredicateWindowAO(operator, config);
-			break;
-		case TIME:
-			if (operator.getWindowSlide() == null && operator.getWindowAdvance() == null){
-				executeSlidingTimeWindow(operator, config);
-			}else if (operator.getWindowSlide() == null){
-				executeSlidingAdvanceTimeWindow(operator, config);
-			}else{
-				executeSlidingPeriodicWindow(operator, config);
+		if (super.isExecutable(operator, config)) {
+			switch (operator.getWindowType()) {
+			case PREDICATE:
+				executePredicateWindowAO(operator, config);
+				break;
+			case TIME:
+				if (operator.getWindowSlide() == null
+						&& operator.getWindowAdvance() == null) {
+					executeSlidingTimeWindow(operator, config);
+				} else if (operator.getWindowSlide() == null) {
+					executeSlidingAdvanceTimeWindow(operator, config);
+				} else {
+					executeSlidingPeriodicWindow(operator, config);
+				}
+				break;
+			case TUPLE:
+				executeSlidingElementWindow(operator, config);
+				break;
+			case UNBOUNDED:
+				executeUnboundedWindow(operator, config);
+				break;
+			default:
+				throw new RuleException("Unkown window type "
+						+ operator.getWindowType() + " for interval approach");
 			}
-			break;
-		case TUPLE:
-			executeSlidingElementWindow(operator, config);
-			break;
-		case UNBOUNDED:
-			executeUnboundedWindow(operator, config);
-			break;
-		default:
-			throw new RuleException("Unkown window type "+operator.getWindowType()+" for interval approach");
 		}
-
 	}
 
 	@Override

@@ -28,15 +28,9 @@ import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 @SuppressWarnings({"unchecked"})
-public class TExistenceAORule extends AbstractTransformationRule<ExistenceAO> {
-
-	@Override 
-	public int getPriority() {		
-		return 0;
-	}
+public class TExistenceAORule extends AbstractIntervalTransformationRule<ExistenceAO> {
 
 	@Override
 	public void execute(ExistenceAO existenceAO, TransformationConfiguration transformConfig) throws RuleException {
@@ -52,16 +46,6 @@ public class TExistenceAORule extends AbstractTransformationRule<ExistenceAO> {
 		defaultExecute(existenceAO, po, transformConfig, true, true);
 	}
 
-	@Override
-	public boolean isExecutable(ExistenceAO operator, TransformationConfiguration transformConfig) {
-		return operator.isAllPhysicalInputSet();
-	}
-
-	@Override
-	public String getName() {
-		return "ExistenceAO -> AntiJoinTIPO";
-	}
-	
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;

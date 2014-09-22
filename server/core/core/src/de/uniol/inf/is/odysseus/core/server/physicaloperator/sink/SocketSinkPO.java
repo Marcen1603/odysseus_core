@@ -39,6 +39,7 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 	private IObjectHandler objectHandler = null;
 	// TODO: Move to constructor
 	private boolean withMetadata = true;
+	@SuppressWarnings("unused")
 	private int lastPort;
 
 	public SocketSinkPO(int serverPort, String host, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO, boolean loginNeeded, boolean loginWithSessionId, IObjectHandler objectHandler, boolean push) {

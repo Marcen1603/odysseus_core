@@ -9,10 +9,9 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.AbstractCoalescePO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.GroupCoalescePO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.PredicateCoalescePO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 
-public class TCoalesceAORule extends AbstractTransformationRule<CoalesceAO> {
+public class TCoalesceAORule extends AbstractIntervalTransformationRule<CoalesceAO> {
 
 	@Override
 	public int getPriority() {
@@ -36,22 +35,6 @@ public class TCoalesceAORule extends AbstractTransformationRule<CoalesceAO> {
 		// TODO: Think about it
 		//po.setMetadataMerge(new CombinedMergeFunction<ITimeInterval>());
 		defaultExecute(operator, po, config, true, true);
-	}
-
-	@Override
-	public boolean isExecutable(CoalesceAO operator,
-			TransformationConfiguration config) {
-		if(config.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
-			if (operator.isAllPhysicalInputSet()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public String getName() {
-		return "CoalesceAO --> CoalescePO";
 	}
 
 	@Override

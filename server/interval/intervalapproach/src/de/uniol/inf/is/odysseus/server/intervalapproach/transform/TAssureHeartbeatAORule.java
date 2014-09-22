@@ -8,15 +8,9 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AssureHeartbeatPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TAssureHeartbeatAORule extends
-		AbstractTransformationRule<AssureHeartbeatAO> {
-
-	@Override
-	public int getPriority() {
-		return 0;
-	}
+		AbstractIntervalTransformationRule<AssureHeartbeatAO> {
 
 	@Override
 	public void execute(AssureHeartbeatAO operator,
@@ -28,17 +22,6 @@ public class TAssureHeartbeatAORule extends
 		physical.setAllowOutOfOrder(operator.isAllowOutOfOrder());
 		physical.setStartTimerAfterFirstElement(operator.isStartTimerAfterFirstElement());
 		defaultExecute(operator, physical, config, true, true);
-	}
-
-	@Override
-	public boolean isExecutable(AssureHeartbeatAO operator,
-			TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet();
-	}
-
-	@Override
-	public String getName() {
-		return "AssureHeartbeatAO --> AssureHeartbeatPO";
 	}
 
 	@Override

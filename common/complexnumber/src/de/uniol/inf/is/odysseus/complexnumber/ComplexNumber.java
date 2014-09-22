@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.complexnumber;
 
-import java.awt.color.CMMException;
-
 import de.uniol.inf.is.odysseus.core.IClone;
 
 public class ComplexNumber implements IClone, Cloneable{

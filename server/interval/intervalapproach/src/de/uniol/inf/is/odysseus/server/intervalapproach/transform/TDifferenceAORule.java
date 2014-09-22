@@ -16,36 +16,20 @@
 package de.uniol.inf.is.odysseus.server.intervalapproach.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AntiJoinTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TDifferenceAORule extends AbstractTransformationRule<DifferenceAO> {
-
-	@Override
-	public int getPriority() {
-		return 0;
-	}
+public class TDifferenceAORule extends AbstractIntervalTransformationRule<DifferenceAO> {
 
 	@Override
 	public void execute(DifferenceAO differenceAO, TransformationConfiguration transformConfig) throws RuleException {
 		AntiJoinTIPO<ITimeInterval, IStreamObject<ITimeInterval>> po = new AntiJoinTIPO<ITimeInterval, IStreamObject<ITimeInterval>>(differenceAO);
 		defaultExecute(differenceAO, po, transformConfig, true, true);		
-	}
-
-	@Override
-	public boolean isExecutable(DifferenceAO operator, TransformationConfiguration transformConfig) {
-		return operator.isAllPhysicalInputSet();
-	}
-
-	@Override
-	public String getName() {
-		return "DifferenceAO -> AntiJoinTIPO";
 	}
 
 	@Override

@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.server.intervalapproach.transform;
 
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AssureOrderAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
@@ -23,21 +22,13 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AssureOrderPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
  * @author Merlin Wasmann
  *
  */
-public class TAssureOrderAORule extends AbstractTransformationRule<AssureOrderAO> {
+public class TAssureOrderAORule extends AbstractIntervalTransformationRule<AssureOrderAO> {
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
-	 */
-	@Override
-	public int getPriority() {
-		return 0;
-	}
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
@@ -51,15 +42,6 @@ public class TAssureOrderAORule extends AbstractTransformationRule<AssureOrderAO
 		orderPO.setTransferFunction(new TITransferArea());
 		
 		defaultExecute(operator, orderPO, config, true, true);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public boolean isExecutable(AssureOrderAO operator,
-			TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet() && config.getMetaTypes().contains(ITimeInterval.class.getCanonicalName()); 
 	}
 
 	/* (non-Javadoc)

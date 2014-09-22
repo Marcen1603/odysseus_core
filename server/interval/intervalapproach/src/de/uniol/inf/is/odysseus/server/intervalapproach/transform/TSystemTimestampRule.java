@@ -25,9 +25,8 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SystemTimeIntervalFactory;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TSystemTimestampRule extends AbstractTransformationRule<TimestampAO> {
+public class TSystemTimestampRule extends AbstractIntervalTransformationRule<TimestampAO> {
 
 	@Override
 	public int getPriority() {
@@ -47,10 +46,8 @@ public class TSystemTimestampRule extends AbstractTransformationRule<TimestampAO
 
 	@Override
 	public boolean isExecutable(TimestampAO operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
-			if(operator.isAllPhysicalInputSet() && operator.isUsingSystemTime()){
-				return true;
-			}
+		if(super.isExecutable(operator, transformConfig)){
+			return operator.isUsingSystemTime();
 		}
 		return false;
 	}

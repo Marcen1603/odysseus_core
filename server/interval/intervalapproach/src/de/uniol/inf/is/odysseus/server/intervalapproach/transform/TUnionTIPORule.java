@@ -24,14 +24,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TUnionTIPORule extends AbstractTransformationRule<UnionAO> {
+public class TUnionTIPORule extends AbstractIntervalTransformationRule<UnionAO> {
 
-	@Override
-	public int getPriority() {	
-		return 0;
-	}
 
 	@Override
 	public void execute(UnionAO unionAO, TransformationConfiguration transformConfig) throws RuleException {
@@ -48,21 +43,6 @@ public class TUnionTIPORule extends AbstractTransformationRule<UnionAO> {
 		}
 	}
 
-	@Override
-	public boolean isExecutable(UnionAO operator, TransformationConfiguration transformConfig) {
-		if(operator.isAllPhysicalInputSet()){
-		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){			
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public String getName() {
-		return "UnionAO -> UnionPO";
-	}
-	
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;

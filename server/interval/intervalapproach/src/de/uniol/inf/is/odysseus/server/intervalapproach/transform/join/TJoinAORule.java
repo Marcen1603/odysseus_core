@@ -15,28 +15,22 @@
   */
 package de.uniol.inf.is.odysseus.server.intervalapproach.transform.join;
 
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
-import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.transform.AbstractIntervalTransformationRule;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 @SuppressWarnings({"unchecked","rawtypes"})
-public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
-
-	@Override
-	public int getPriority() {	
-		return 0;
-	}
+public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 
 	@Override
 	public void execute(JoinAO joinAO, TransformationConfiguration transformConfig) throws RuleException {
@@ -87,17 +81,10 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
 
 	@Override
 	public boolean isExecutable(JoinAO operator, TransformationConfiguration transformConfig) {
-		if(operator.isAllPhysicalInputSet() && !(operator instanceof LeftJoinAO)){
-			if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
-				return true;
-			}
+		if (super.isExecutable(operator, transformConfig)){
+			return !(operator instanceof LeftJoinAO);
 		}
 		return false;
-	}
-
-	@Override
-	public String getName() {
-		return "JoinAO -> JoinTIPO";
 	}
 	
 	@Override

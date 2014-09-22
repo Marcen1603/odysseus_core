@@ -27,8 +27,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.sound.midi.MidiDevice.Info;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

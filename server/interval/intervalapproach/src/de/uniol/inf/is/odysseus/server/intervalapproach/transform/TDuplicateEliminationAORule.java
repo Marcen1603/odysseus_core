@@ -24,21 +24,13 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.DuplicateEliminationTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
  * @author Dennis Geesen
  *
  */
-public class TDuplicateEliminationAORule extends AbstractTransformationRule<DuplicateEliminationAO> {
+public class TDuplicateEliminationAORule extends AbstractIntervalTransformationRule<DuplicateEliminationAO> {
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
-	 */
-	@Override
-	public int getPriority() {		
-		return 0;
-	}
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
@@ -58,14 +50,6 @@ public class TDuplicateEliminationAORule extends AbstractTransformationRule<Dupl
 	@Override
 	public boolean isExecutable(DuplicateEliminationAO operator, TransformationConfiguration config) {		
 		return operator.isAllPhysicalInputSet();
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
-	 */
-	@Override
-	public String getName() {
-		return "DuplicateEliminationAO -> DuplicateEliminationPO";
 	}
 
 	@Override
