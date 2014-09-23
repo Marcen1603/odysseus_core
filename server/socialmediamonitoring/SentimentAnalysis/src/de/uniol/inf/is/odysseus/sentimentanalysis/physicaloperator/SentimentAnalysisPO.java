@@ -52,7 +52,7 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 	IClassificationLearner<ITimeInterval> learner;
 	WekaAttributeResolver resolver;
 		
-	Instances trainData;
+	Instances trainData ;
 	StringToWordVector filter;
 	StringToNominal nomFilter;
 	FilteredClassifier classifier;
@@ -176,8 +176,8 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 		Evaluation evaluation = new Evaluation(this.trainData);		
 		evaluation.crossValidateModel(this.classifier, this.trainData, this.maxTrainSize, new Random(1));
 		
-//		System.out.println("===========EVALUATION:\n " + evaluation.toSummaryString());
-//		System.out.println("===========EVALUATION-DETAILS:\n " + evaluation.toClassDetailsString());
+	System.out.println("===========EVALUATION:\n " + evaluation.toSummaryString());
+		System.out.println("===========EVALUATION-DETAILS:\n " + evaluation.toClassDetailsString());
 	}
 
 	private void learnClassifier()
@@ -191,7 +191,7 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 				this.classifier.setClassifier(this.userDefinedClassifier);
 				this.classifier.buildClassifier(this.trainData);
 				
-				//System.out.println("=========== Training data successfully ===========");
+				System.out.println("=========== Training data successfully ===========");
 		} 
 		catch (Exception e) 
 		{
@@ -232,8 +232,8 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 						
 		instances.add(instance);
 		
-//		System.out.println("===== Instance created =====");
-//		System.out.println(instances);
+		System.out.println("===== Instance created =====");
+		System.out.println(instances);
 		return instances;
 	}
 
@@ -278,17 +278,21 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 					e.printStackTrace();
 				}
 		}
-		else if(port == 0 && !(this.trainData.size() < this.maxTrainSize))
+		//else if(port == 0 && !(this.trainData.size() < this.maxTrainSize))
+		else if(port == 0 && (this.trainData != null))
 		{
-			try 
+			if(!(this.trainData.size() < this.maxTrainSize))
 			{
-				Instances instances = createInstancesForClassifying(object.getAttribute(this.attributeTextToBeClassifiedPos).toString());
-				classify(instances);
-				prepareTupelForOutput(object);
-			} 
-			catch (Exception e) 
-			{
-				e.printStackTrace();
+				try 
+				{
+					Instances instances = createInstancesForClassifying(object.getAttribute(this.attributeTextToBeClassifiedPos).toString());
+					classify(instances);
+					prepareTupelForOutput(object);
+				} 
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+				}
 			}
 		}		
 	
