@@ -108,7 +108,6 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.wrapper.webcrawler.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.image.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.security.feature" version="1.0.0.qualifier"/>
-      <feature id="windscadaanwendung.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.complexnumber.feature" version="1.0.0.qualifier"/>
    </features>
 
