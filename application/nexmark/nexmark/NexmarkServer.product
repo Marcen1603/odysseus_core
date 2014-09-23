@@ -7,9 +7,12 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -clean -debug -nl ${target.nl} -data @noDefault -noExit  -gcf  &quot;/config/NEXMarkGeneratorConfiguration.properties&quot; -useNIO &quot;true&quot; -pr 65440</programArgs>
-      <vmArgs>-Dosgi.requiredJavaVersion=1.5 -Xms40m -Xmx512m  -XX:+HeapDumpOnOutOfMemoryError -XX:+UseConcMarkSweepGC</vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+      <programArgs>-console -clean -debug -nl ${target.nl} -data @noDefault -noExit  -gcf  &quot;/config/NEXMarkGeneratorConfiguration_SLOW.properties&quot; -useNIO &quot;true&quot; -pr 65440
+      </programArgs>
+      <vmArgs>-Dosgi.requiredJavaVersion=1.5 -Xms40m -Xmx512m  -XX:+HeapDumpOnOutOfMemoryError -XX:+UseConcMarkSweepGC
+      </vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      </vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
