@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -246,31 +247,35 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		if (message instanceof RecoveryInstructionMessage) {
 			RecoveryInstructionMessage instruction = (RecoveryInstructionMessage) message;
 			RecoveryInstructionHandler.handleInstruction(instruction);
-		} else if(message instanceof BackupInformationMessage) {
-			
+		} else if (message instanceof BackupInformationMessage) {
+
 			BackupInformationMessage biMessage = (BackupInformationMessage) message;
-			
+
 			// Store the backup information
-			LocalBackupInformationAccess.storeLocal(biMessage.getSharedQueryID(), biMessage.getPqlStatements());
-			
+			LocalBackupInformationAccess.storeLocal(
+					biMessage.getSharedQueryID(),
+					biMessage.geBackupInformation());
+
 		}
 	}
 
 	@Override
 	public void sendBackupInformation(PeerID peerId, ID sharedQueryId,
-			Collection<String> backupInformation) {
+			Map<PeerID, Collection<String>> backupInformation) {
 
 		BackupInformationMessage message = new BackupInformationMessage(
 				sharedQueryId, backupInformation);
-		
+
 		try {
-			
+
 			peerCommunicator.send(peerId, message);
-			
-		} catch(Throwable e) {
-			
-			LOG.error("Could not send backup information to peer " + peerId.toString(), e);
-			
+
+		} catch (Throwable e) {
+
+			LOG.error(
+					"Could not send backup information to peer "
+							+ peerId.toString(), e);
+
 		}
 
 	}

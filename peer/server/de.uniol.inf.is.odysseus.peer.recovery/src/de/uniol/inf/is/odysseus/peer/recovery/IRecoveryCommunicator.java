@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery;
 
 import java.util.Collection;
+import java.util.Map;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -26,7 +27,7 @@ public interface IRecoveryCommunicator {
 	 *            the peer shall store.
 	 */
 	public void sendBackupInformation(PeerID peerId, ID sharedQueryId,
-			Collection<String> backupInformation);
+			Map<PeerID, Collection<String>> backupInformation);
 
 	public void recover(PeerID failedPeer);
 

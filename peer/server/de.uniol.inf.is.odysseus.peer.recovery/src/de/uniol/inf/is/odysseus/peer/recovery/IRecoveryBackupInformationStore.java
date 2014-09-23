@@ -1,15 +1,17 @@
 package de.uniol.inf.is.odysseus.peer.recovery;
 
 import java.util.Collection;
+import java.util.Map;
 
 import net.jxta.id.ID;
+import net.jxta.peer.PeerID;
 
 import com.google.common.collect.ImmutableCollection;
 
 /**
  * A backup information store can be used to store backup information for
- * recovery techniques. For a shared (distributed) query, it stores the pql
- * strings of all query parts.
+ * recovery techniques. For a shared (distributed) query, it stores the query
+ * parts (their pql statements) and the allocated peers.
  * 
  * @author Michael Brand
  *
@@ -22,15 +24,33 @@ public interface IRecoveryBackupInformationStore {
 	 * @param sharedQueryId
 	 *            The id of the shared query. <br />
 	 *            Must be not null.
-	 * @param pqlStatements
-	 *            A collection of pql statements of all query parts of the
-	 *            shared query.
+	 * @param pqlStatementsMap
+	 *            A mapping of query parts (their pql statements) to the
+	 *            allocated peers.
 	 * @return <code>True</code>, if the backup information has been stored. <br />
 	 *         <code>False</code> if there are backup information about that
 	 *         query already stored.
 	 */
 	public boolean addSharedQuery(ID sharedQueryId,
-			Collection<String> pqlStatements);
+			Map<PeerID, Collection<String>> pqlStatementsMap);
+
+	/**
+	 * Adds a new pql statement to the backup information for a shared query.
+	 * 
+	 * @param sharedQueryId
+	 *            The id of the shared query. <br />
+	 *            Must be not null.
+	 * @param peerId
+	 *            The id of the allocated peer. <br />
+	 *            Must be not null.
+	 * @param pqlStatement
+	 *            The pql statement to store.
+	 * @return <code>True</code>, if the pql statement has been stored. <br />
+	 *         <code>False</code> if there are no backup information about that
+	 *         query stored.
+	 */
+	public boolean addPQLStatement(ID sharedQueryId, PeerID peerId,
+			String pqlStatement);
 
 	/**
 	 * All shared queries, for which backup information is stored.
@@ -40,15 +60,30 @@ public interface IRecoveryBackupInformationStore {
 	public ImmutableCollection<ID> getStoredSharedQueries();
 
 	/**
-	 * All pql statements, which are part of a given shared query.
+	 * All peers, which are part of a given shared query.
 	 * 
 	 * @param sharedQueryId
 	 *            The id of the shared query. <br />
 	 *            Must be not null.
-	 * @return A collection of pql statements of all query parts of the shared
-	 *         query.
+	 * @return A collection of all peers of the shared query.
 	 */
-	public ImmutableCollection<String> getStoredPQLStatements(ID sharedQueryId);
+	public ImmutableCollection<PeerID> getStoredPeers(ID sharedQueryId);
+
+	/**
+	 * All pql statements, which are part of a given shared query and allocated
+	 * to a given peer.
+	 * 
+	 * @param sharedQueryId
+	 *            The id of the shared query. <br />
+	 *            Must be not null.
+	 * @param peerId
+	 *            The id of the allocated peer. <br />
+	 *            Must be not null.
+	 * @return A collection of all pql statement of the shared query allocated
+	 *         to the given peer.
+	 */
+	public ImmutableCollection<String> getStoredPQLStatements(ID sharedQueryId,
+			PeerID peerId);
 
 	/**
 	 * Removes a backup information for a shared query.
@@ -61,5 +96,23 @@ public interface IRecoveryBackupInformationStore {
 	 *         query stored.
 	 */
 	public boolean removeStoredSharedQuery(ID sharedQueryId);
+
+	/**
+	 * Removes a pql statement from the backup information of a shared query.
+	 * 
+	 * @param sharedQueryId
+	 *            The id of the shared query. <br />
+	 *            Must be not null.
+	 * @param peerId
+	 *            The id of the allocated peer. <br />
+	 *            Must be not null.
+	 * @param pqlStatement
+	 *            The pql statement to remove.
+	 * @return <code>True</code>, if the pql statement has been removed. <br />
+	 *         <code>False</code> if there are no backup information about that
+	 *         query stored.
+	 */
+	public boolean removePQLStatement(ID sharedQueryId, PeerID peerId,
+			String pqlStatement);
 
 }

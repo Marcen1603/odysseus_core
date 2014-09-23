@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
@@ -172,12 +173,27 @@ public class RecoveryQueryDistributionListener extends
 		// Distribute backup information
 		for (PeerID peerID : subsequentPartsToPeer.keySet()) {
 
-			Collection<String> subsequentPQLStatements = Lists.newArrayList();
+			Map<PeerID, Collection<String>> subsequentPQLStatements = Maps
+					.newHashMap();
 			for (ILogicalQueryPart subsequentPart : subsequentPartsToPeer
 					.get(peerID)) {
 
-				subsequentPQLStatements.add(LogicalQueryHelper
-						.generatePQLStatementFromQueryPart(subsequentPart));
+				PeerID allocatedPeer = allocationMap.get(subsequentPart);
+				String pqlStatement = LogicalQueryHelper
+						.generatePQLStatementFromQueryPart(subsequentPart);
+
+				if (subsequentPQLStatements.containsKey(allocatedPeer)) {
+
+					subsequentPQLStatements.get(allocatedPeer)
+							.add(pqlStatement);
+
+				} else {
+
+					Collection<String> pqlStatements = Lists
+							.newArrayList(pqlStatement);
+					subsequentPQLStatements.put(allocatedPeer, pqlStatements);
+
+				}
 
 			}
 

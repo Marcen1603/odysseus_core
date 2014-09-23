@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.peer.recovery.util;
 
 import java.util.Collection;
+import java.util.Map;
 
 import net.jxta.id.ID;
+import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,17 +75,17 @@ public class LocalBackupInformationAccess {
 	}
 
 	/**
-	 * Calls
-	 * {@link IRecoveryBackupInformationStore#addSharedQuery(ID, Collection)} of
+	 * Calls {@link IRecoveryBackupInformationStore#addSharedQuery(ID, Map)} of
 	 * the local backup information store.
 	 * 
 	 * @param sharedQueryId
 	 *            The shared query id of the distributed query.
-	 * @param pqlStatements
-	 *            The pql statements to store local.
+	 * @param pqlStatementsMap
+	 *            A mapping of query parts (their pql statements) to the
+	 *            allocated peers.
 	 */
 	public static void storeLocal(ID sharedQueryId,
-			Collection<String> pqlStatements) {
+			Map<PeerID, Collection<String>> pqlStatementsMap) {
 
 		if (!cInfoStore.isPresent()) {
 
@@ -93,7 +95,7 @@ public class LocalBackupInformationAccess {
 		}
 
 		boolean success = cInfoStore.get().addSharedQuery(sharedQueryId,
-				pqlStatements);
+				pqlStatementsMap);
 		if (!success) {
 
 			LOG.error(

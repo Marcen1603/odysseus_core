@@ -4,18 +4,19 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
+import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
@@ -35,10 +36,64 @@ public class BackupInformationMessage implements IMessage {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(BackupInformationMessage.class);
 
-	/**
-	 * The separator for different pql statements.
-	 */
-	public static final String SEPARATOR = "##";
+	// TODO javaDoc
+	private class PartialBIMessage implements IMessage {
+
+		PeerID mPeerId;
+
+		String mPqlStatement;
+
+		public PartialBIMessage() {
+
+			// Empty default constructor.
+
+		}
+
+		public PartialBIMessage(PeerID peerId, String pqlStatement) {
+
+			this.mPeerId = peerId;
+			this.mPqlStatement = pqlStatement;
+
+		}
+
+		@Override
+		public byte[] toBytes() {
+
+			byte[] peerIdBytes = this.mPeerId.toString().getBytes();
+			byte[] pqlStatementBytes = this.mPqlStatement.getBytes();
+
+			int bufferSize = INT_BUFFER_SIZE + peerIdBytes.length
+					+ INT_BUFFER_SIZE + pqlStatementBytes.length;
+
+			ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+			buffer.putInt(peerIdBytes.length);
+			buffer.put(peerIdBytes);
+			buffer.putInt(pqlStatementBytes.length);
+			buffer.put(pqlStatementBytes);
+
+			buffer.flip();
+			return buffer.array();
+
+		}
+
+		@Override
+		public void fromBytes(byte[] data) {
+
+			ByteBuffer buffer = ByteBuffer.wrap(data);
+
+			int peerIdLength = buffer.getInt();
+			byte[] peerIdBytes = new byte[peerIdLength];
+			buffer.get(peerIdBytes);
+			this.mPeerId = toPeerID(new String(peerIdBytes));
+
+			int pqlStatementLength = buffer.getInt();
+			byte[] pqlStatement = new byte[pqlStatementLength];
+			buffer.get(pqlStatement);
+			this.mPqlStatement = new String(pqlStatement);
+
+		}
+
+	}
 
 	/**
 	 * The byte size for integers.
@@ -46,14 +101,14 @@ public class BackupInformationMessage implements IMessage {
 	private static final int INT_BUFFER_SIZE = 4;
 
 	/**
-	 * The list of pql statements to send.
+	 * The list of backup information to send.
 	 */
-	private ImmutableList<String> mPqlStatements;
-	
+	private ImmutableMap<PeerID, Collection<String>> mBackupInformation;
+
 	/**
-	 * The number of pql statements.
+	 * The number of backup information to send.
 	 */
-	private int mNumStatements;
+	private int mNumBackupInformation;
 
 	/**
 	 * The shared query id to send.
@@ -70,27 +125,27 @@ public class BackupInformationMessage implements IMessage {
 	}
 
 	/**
-	 * Creates a new message with a given shared query id and given pql
-	 * statements.
+	 * Creates a new message with a given shared query id and given backup
+	 * information.
 	 * 
 	 * @param sharedQueryID
 	 *            The given shared query id to send.
-	 * @param pqlStatements
-	 *            The given pql statements to send.
+	 * @param backupInformation
+	 *            The given backup information to send.
 	 */
 	public BackupInformationMessage(ID sharedQueryID,
-			Collection<String> pqlStatements) {
+			Map<PeerID, Collection<String>> backupInformation) {
 
 		Preconditions.checkNotNull(sharedQueryID,
 				"The shared query ID must be not null!");
 		this.mSharedQueryID = sharedQueryID;
 
-		Preconditions.checkNotNull(pqlStatements,
-				"The collection of pql statements must be not null!");
-		Preconditions.checkArgument(!pqlStatements.isEmpty(),
-				"The collection of pql statement must be not empty!");
-		this.mPqlStatements = ImmutableList.copyOf(pqlStatements);
-		this.mNumStatements = pqlStatements.size();
+		Preconditions.checkNotNull(backupInformation,
+				"The backup information must be not null!");
+		Preconditions.checkArgument(!backupInformation.isEmpty(),
+				"The backup information must be not empty!");
+		this.mBackupInformation = ImmutableMap.copyOf(backupInformation);
+		this.mNumBackupInformation = backupInformation.values().size();
 
 	}
 
@@ -98,40 +153,34 @@ public class BackupInformationMessage implements IMessage {
 	public byte[] toBytes() {
 
 		byte[] sharedQueryIDBytes = mSharedQueryID.toString().getBytes();
-		byte[] separatorBytes = SEPARATOR.getBytes();
-		byte[][] pqlStatementBytes = new byte[this.mNumStatements][];
-		for (int index = 0; index < this.mNumStatements; index++) {
+		byte[][] backupInformationBytes = new byte[this.mNumBackupInformation][];
+		int backupInformationCounter = 0;
+		for (PeerID peerID : this.mBackupInformation.keySet()) {
 
-			pqlStatementBytes[index] = this.mPqlStatements.get(index)
-					.getBytes();
+			for (String pqlStatement : this.mBackupInformation.get(peerID)) {
+
+				backupInformationBytes[backupInformationCounter++] = new PartialBIMessage(
+						peerID, pqlStatement).toBytes();
+
+			}
 
 		}
 
-		int bufferSize = INT_BUFFER_SIZE; // The number of pql statements
-		for (int index = 0; index < this.mNumStatements; index++) {
+		int bufferSize = INT_BUFFER_SIZE; // The number of backup information
+		for (int index = 0; index < this.mNumBackupInformation; index++) {
 
-			bufferSize += INT_BUFFER_SIZE + pqlStatementBytes[index].length;
-			if (index < this.mNumStatements - 1) {
-
-				bufferSize += INT_BUFFER_SIZE + separatorBytes.length;
-
-			}
+			bufferSize += INT_BUFFER_SIZE
+					+ backupInformationBytes[index].length;
 
 		}
 		bufferSize += INT_BUFFER_SIZE + sharedQueryIDBytes.length;
 
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-		buffer.putInt(this.mNumStatements);
-		for (int index = 0; index < this.mNumStatements; index++) {
+		buffer.putInt(this.mNumBackupInformation);
+		for (int index = 0; index < this.mNumBackupInformation; index++) {
 
-			buffer.putInt(pqlStatementBytes[index].length);
-			buffer.put(pqlStatementBytes[index]);
-			if (index < this.mNumStatements - 1) {
-
-				buffer.putInt(separatorBytes.length);
-				buffer.put(separatorBytes);
-
-			}
+			buffer.putInt(backupInformationBytes[index].length);
+			buffer.put(backupInformationBytes[index]);
 
 		}
 		buffer.putInt(sharedQueryIDBytes.length);
@@ -146,26 +195,32 @@ public class BackupInformationMessage implements IMessage {
 	public void fromBytes(byte[] data) {
 
 		ByteBuffer buffer = ByteBuffer.wrap(data);
-		
-		this.mNumStatements = buffer.getInt();
 
-		List<String> pqlStatements = Lists.newArrayList();
-		for (int index = 0; index < this.mNumStatements; index++) {
+		this.mNumBackupInformation = buffer.getInt();
 
-			int pqlStatementLength = buffer.getInt();
-			byte[] pqlStatementBytes = new byte[pqlStatementLength];
-			buffer.get(pqlStatementBytes);
-			pqlStatements.add(new String(pqlStatementBytes));
-			if (index < this.mNumStatements - 1) {
+		Map<PeerID, Collection<String>> backupInformation = Maps.newHashMap();
+		for (int index = 0; index < this.mNumBackupInformation; index++) {
 
-				int separatorLength = buffer.getInt();
-				byte[] separatorBytes = new byte[separatorLength];
-				buffer.get(separatorBytes);
+			int backupInformationLength = buffer.getInt();
+			byte[] backupInformationBytes = new byte[backupInformationLength];
+			buffer.get(backupInformationBytes);
+			PartialBIMessage message = new PartialBIMessage();
+			message.fromBytes(backupInformationBytes);
+			if (backupInformation.containsKey(message.mPeerId)) {
+
+				backupInformation.get(message.mPeerId).add(
+						message.mPqlStatement);
+
+			} else {
+
+				Collection<String> pqlStatements = Lists
+						.newArrayList(message.mPqlStatement);
+				backupInformation.put(message.mPeerId, pqlStatements);
 
 			}
 
 		}
-		this.mPqlStatements = ImmutableList.copyOf(pqlStatements);
+		this.mBackupInformation = ImmutableMap.copyOf(backupInformation);
 
 		int sharedQueryIDLength = buffer.getInt();
 		byte[] sharedQueryIDBytes = new byte[sharedQueryIDLength];
@@ -198,21 +253,34 @@ public class BackupInformationMessage implements IMessage {
 
 	}
 
-	/**
-	 * Gets the sent pql statements.
-	 * 
-	 * @return
-	 */
-	public ImmutableCollection<String> getPqlStatements() {
+	// TODO javaDoc
+	private static PeerID toPeerID(String text) {
 
-		return this.mPqlStatements;
+		try {
+
+			final URI id = new URI(text);
+			return PeerID.create(id);
+
+		} catch (URISyntaxException | ClassCastException ex) {
+
+			LOG.error("Could not get id from text {}", text, ex);
+			return null;
+
+		}
+
+	}
+
+	/**
+	 * Gets the sent backup information.
+	 */
+	public ImmutableMap<PeerID, Collection<String>> geBackupInformation() {
+
+		return this.mBackupInformation;
 
 	}
 
 	/**
 	 * Gets the sent shared query id.
-	 * 
-	 * @return
 	 */
 	public ID getSharedQueryID() {
 
