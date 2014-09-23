@@ -2,25 +2,25 @@ package de.uniol.inf.is.odysseus.peer.recovery.tuplestore;
 
 import java.util.ArrayDeque;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
-@SuppressWarnings("rawtypes")
 public class ArrayDequeRecoveryTupleStore implements IRecoveryTupleStore{
 	
-	private ArrayDeque<Tuple> tupleStore;
+	private ArrayDeque<IStreamObject<? extends ITimeInterval>> tupleStore;
 
 	public ArrayDequeRecoveryTupleStore() {
-		tupleStore = new ArrayDeque<Tuple>();
+		tupleStore = new ArrayDeque<IStreamObject<? extends ITimeInterval>>();
 	}
 	
 	@Override
-	public void saveTuple(Tuple tuple) {
+	public void saveTuple(IStreamObject<? extends ITimeInterval> tuple) {
 		tupleStore.addLast(tuple);
 	}
 
 	@Override
-	public Tuple getNextTuple() {
-		Tuple first = tupleStore.getFirst();
+	public IStreamObject<? extends ITimeInterval> getNextTuple() {
+		IStreamObject<? extends ITimeInterval> first = tupleStore.getFirst();
 		tupleStore.removeFirst();
 		return first;
 	}

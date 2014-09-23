@@ -76,6 +76,18 @@ public class RecoveryInstructionMessage implements IMessage {
 		return newSenderMessage;
 	}
 
+	/**
+	 * Tells the receiver of this message, that it has to send the tuples for
+	 * query with the given shared query-id to a new receiver
+	 * 
+	 * @param newReceiver
+	 *            PeerID of the new receiver, probably the peer which replaces
+	 *            the failed peer
+	 * @param sharedQueryId
+	 *            The shared query-id which indicated, which parts on different
+	 *            peers belong together
+	 * @return A message which tells to send the tuples to the new peer
+	 */
 	public static RecoveryInstructionMessage createNewReceiverMessage(
 			PeerID newReceiver, int sharedQueryId) {
 		RecoveryInstructionMessage newReceiverMessage = new RecoveryInstructionMessage();
