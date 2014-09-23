@@ -3,7 +3,6 @@ package windscadaanwendung.views.dashboard;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 import windscadaanwendung.ca.WKA;
