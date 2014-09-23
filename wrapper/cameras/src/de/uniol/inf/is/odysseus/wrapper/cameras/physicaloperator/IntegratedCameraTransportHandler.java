@@ -119,7 +119,9 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 		if (iplImage == null || iplImage.isNull()) return null;
 
 		if (lastTime > 0)
-			System.out.println("getNext dt = " + (System.nanoTime() - lastTime) / 1.0e6 + "ms");
+		{
+//			System.out.println("getNext dt = " + (System.nanoTime() - lastTime) / 1.0e6 + "ms");
+		}
 		
 		lastTime = System.nanoTime();
 		
