@@ -2,10 +2,11 @@ package de.uniol.inf.is.odysseus.mep.functions.array;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class ListArrayFunction extends AbstractFunction<Object> {
+public class ListArrayFunction extends AbstractFunction<Object> implements IHasAlias{
 
 	private static final long serialVersionUID = -3282877303737235603L;
 
@@ -23,4 +24,9 @@ public class ListArrayFunction extends AbstractFunction<Object> {
 		return l.get(pos);
 	}
 
+	@Override
+	public String getAliasName() {
+		return "elementAt";
+	}
+	
 }
