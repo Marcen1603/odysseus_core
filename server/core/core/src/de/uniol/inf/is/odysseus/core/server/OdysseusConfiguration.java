@@ -187,6 +187,8 @@ public class OdysseusConfiguration {
 		props.setProperty("WebService.Port","9669");
 		props.setProperty("WebService.Endpoint2","/odysseus");
 		props.setProperty("WebService.MaxPort","10000");
+		props.setProperty("WebService.SSL", "false");
+		props.setProperty("Webservice.SSL_Client_Authentication", "false");
 		
 		
 		// security and crypto stuff, e.g. for creating self-signed certificates

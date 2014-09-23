@@ -23,6 +23,15 @@ public class WebserviceStarter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WebserviceStarter.class);
 	
 	public static void start() {
+		boolean ssl = OdysseusConfiguration.getBoolean("WebService.SSL");
+		if (ssl) {
+			startWithSSL();
+		} else {
+			startWithoutSSL();
+		}
+	}
+	
+	private static void startWithoutSSL() {
 		WebserviceServer server = new WebserviceServer();
 		long port = Integer.parseInt(OdysseusConfiguration.get("WebService.Port"));
 		long maxPort = Integer.parseInt(OdysseusConfiguration.get("WebService.MaxPort"));
@@ -50,8 +59,8 @@ public class WebserviceStarter {
 		}
 	}
 	
-	
-	public static void startSSL(final boolean sslClientAuthentication) {
+	private static void startWithSSL() {
+
 		// wait for bundle activation
 		Thread t = new Thread(new Runnable() {
 
@@ -63,14 +72,15 @@ public class WebserviceStarter {
 					} catch (InterruptedException e) {
 					}
 				}
-				startWithSSL(sslClientAuthentication);
+				startSSL();
 			}			
 		});	
 		t.setDaemon(true);
 		t.start();
 	}
 	
-	private static void startWithSSL(boolean sslClientAuthentication) {
+	private static void startSSL() {
+		boolean sslClientAuthentication = OdysseusConfiguration.getBoolean("Webservice.SSL_Client_Authentication");
 		try {
 			Endpoint endpoint = Endpoint.create(new WebserviceServer());
 			SSLContext ssl = SSLContext.getInstance("TLS");
