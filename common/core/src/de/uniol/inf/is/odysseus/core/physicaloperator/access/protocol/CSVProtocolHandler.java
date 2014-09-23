@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -47,6 +48,11 @@ public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 	@Override
 	protected T readLine(String line) {
 		List<String> ret = CSVParser.parseCSV(line, textDelimiter, delimiter, trim);
+        if (ret.size() < this.getDataHandler().getSchema().size()) {
+            for (int i = ret.size(); i < this.getDataHandler().getSchema().size(); i++) {
+                ret.add(null);
+            }
+        }
 		T retValue = getDataHandler().readData(ret);
 		return retValue;
 	}

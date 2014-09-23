@@ -41,6 +41,11 @@ public class SimpleCSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 	@Override
 	protected T readLine(String line) {
 		String[] ret = CSVParser.parseCSV(line, delimiter, trim);
+        if (ret.length < this.getDataHandler().getSchema().size()) {
+            String[] tmpRet = new String[this.getDataHandler().getSchema().size()];
+            System.arraycopy(ret, 0, tmpRet, 0, ret.length);
+            ret = tmpRet;
+        }
 		return getDataHandler().readData(ret);
 	}
 
