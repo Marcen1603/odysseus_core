@@ -26,7 +26,7 @@ public class ListArrayFunction extends AbstractFunction<Object> implements IHasA
 
 	@Override
 	public String getAliasName() {
-		return "elementAt";
+		return "listElementAt";
 	}
 	
 }
