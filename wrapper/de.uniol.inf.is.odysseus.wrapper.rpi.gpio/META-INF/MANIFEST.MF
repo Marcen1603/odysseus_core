@@ -11,3 +11,9 @@ Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Service-Component: OSGI-INF/RPiGPIOTransportHandler.xml
+Bundle-NativeCode: lib/native/linux/libpi4j.so ;
+  osname=linux;  processor=x86_64,
+  lib/native/linux/libpi4j.so ;
+  osname=linux;  processor=x86,
+  *
+Bundle-ClassPath: .
