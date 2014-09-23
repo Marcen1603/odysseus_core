@@ -36,19 +36,42 @@ public class BackupInformationMessage implements IMessage {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(BackupInformationMessage.class);
 
-	// TODO javaDoc
+	/**
+	 * A helper class to transform a pair of pql statement and allocated peer
+	 * to/from byte array.
+	 * 
+	 * @author Michael Brand
+	 *
+	 */
 	private class PartialBIMessage implements IMessage {
 
+		/**
+		 * The ID of the allocated peer.
+		 */
 		PeerID mPeerId;
 
+		/**
+		 * The pql statement to store.
+		 */
 		String mPqlStatement;
 
+		/**
+		 * Empty default constructor.
+		 */
 		public PartialBIMessage() {
 
 			// Empty default constructor.
 
 		}
 
+		/**
+		 * Creates a new helper message.
+		 * 
+		 * @param peerId
+		 *            The ID of the allocated peer.
+		 * @param pqlStatement
+		 *            The pql statement to store.
+		 */
 		public PartialBIMessage(PeerID peerId, String pqlStatement) {
 
 			this.mPeerId = peerId;
@@ -253,7 +276,14 @@ public class BackupInformationMessage implements IMessage {
 
 	}
 
-	// TODO javaDoc
+	/**
+	 * Creates a peer id from String.
+	 * 
+	 * @param text
+	 *            The given String.
+	 * @return The peer ID represented by <code>text</code> or null, if an error
+	 *         occurs.
+	 */
 	private static PeerID toPeerID(String text) {
 
 		try {
