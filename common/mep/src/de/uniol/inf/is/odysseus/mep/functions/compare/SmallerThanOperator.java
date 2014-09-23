@@ -16,28 +16,17 @@
 package de.uniol.inf.is.odysseus.mep.functions.compare;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
+import de.uniol.inf.is.odysseus.mep.AbstractBinaryNumberInputOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 
-public class SmallerThanOperator extends AbstractBinaryOperator<Boolean> {
-
+public class SmallerThanOperator extends AbstractBinaryNumberInputOperator<Boolean> {
 	
 	private static final long serialVersionUID = -6857126775649444062L;
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-		new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG,
-				SDFDatatype.DOUBLE, SDFDatatype.FLOAT },
-		new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG,
-				SDFDatatype.DOUBLE, SDFDatatype.FLOAT } };
 
-	
 	public SmallerThanOperator() {
-		super("<",accTypes, SDFDatatype.BOOLEAN);
+		super("<", SDFDatatype.BOOLEAN);
 	}
 	
-	protected SmallerThanOperator(SDFDatatype[][] accTypes) {
-		super("<",accTypes, SDFDatatype.BOOLEAN);
-	}
-
 	@Override
 	public int getPrecedence() {
 		return 8;
@@ -48,7 +37,6 @@ public class SmallerThanOperator extends AbstractBinaryOperator<Boolean> {
 	public Boolean getValue() {
 		Double val0 = getNumericalInputValue(0);
 		Double val1 = getNumericalInputValue(1);
-//		System.out.println(val0 + " < " + val1);
 		return val0 < val1;
 	}
 

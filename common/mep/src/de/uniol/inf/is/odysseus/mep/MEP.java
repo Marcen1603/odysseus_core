@@ -60,16 +60,14 @@ import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.XorOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.EqualsOperator;
-import de.uniol.inf.is.odysseus.mep.functions.compare.EqualsOperator2;
 import de.uniol.inf.is.odysseus.mep.functions.compare.GreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.GreaterThanOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.LikeFunction;
 import de.uniol.inf.is.odysseus.mep.functions.compare.NotEqualsOperator;
-import de.uniol.inf.is.odysseus.mep.functions.compare.NotEqualsOperator2;
-import de.uniol.inf.is.odysseus.mep.functions.compare.NotEqualsStringOperator;
-import de.uniol.inf.is.odysseus.mep.functions.compare.NotEqualsStringOperator2;
 import de.uniol.inf.is.odysseus.mep.functions.compare.SmallerEqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.SmallerThanOperator;
+import de.uniol.inf.is.odysseus.mep.functions.compare.StringEqualsOperator;
+import de.uniol.inf.is.odysseus.mep.functions.compare.StringNotEqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.crypt.DSAFunction;
 import de.uniol.inf.is.odysseus.mep.functions.crypt.DSASignFunction;
 import de.uniol.inf.is.odysseus.mep.functions.crypt.DSAVerifyFunction;
@@ -269,11 +267,9 @@ public class MEP implements IExpressionParser {
 		registerFunction(new XorOperator());
 
 		registerFunction(new EqualsOperator());
-		registerFunction(new EqualsOperator2());
+		registerFunction(new StringEqualsOperator());
 		registerFunction(new NotEqualsOperator());
-		registerFunction(new NotEqualsOperator2());
-		registerFunction(new NotEqualsStringOperator());
-		registerFunction(new NotEqualsStringOperator2());
+		registerFunction(new StringNotEqualsOperator());
 
 		/** Math Functions */
 		registerFunction(new GreaterThanOperator());

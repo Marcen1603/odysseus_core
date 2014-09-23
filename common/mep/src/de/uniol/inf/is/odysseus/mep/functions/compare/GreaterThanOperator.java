@@ -16,23 +16,20 @@
 package de.uniol.inf.is.odysseus.mep.functions.compare;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
+import de.uniol.inf.is.odysseus.mep.AbstractBinaryNumberInputOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 
-public class GreaterThanOperator extends AbstractBinaryOperator<Boolean> {
+public class GreaterThanOperator extends AbstractBinaryNumberInputOperator<Boolean> {
 
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{
-		new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT},
-		new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT}};
 
 	private static final long serialVersionUID = 3761097192507658786L;
 
 	public GreaterThanOperator() {
-		super(">",accTypes, SDFDatatype.BOOLEAN);
+		super(">", SDFDatatype.BOOLEAN);
 	}
 	
 	protected GreaterThanOperator(SDFDatatype[][] accTypes) {
-		super(">",accTypes, SDFDatatype.BOOLEAN);
+		super(">", SDFDatatype.BOOLEAN);
 }
 
 	@Override

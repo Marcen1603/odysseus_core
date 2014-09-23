@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 public abstract class AbstractBinaryNumberInputOperator<T> extends AbstractBinaryOperator<T>{
 	
 	private static final long serialVersionUID = -195306610974958000L;
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.NUMBERS_OBJECT, SDFDatatype.NUMBERS_OBJECT };
 	
 	public AbstractBinaryNumberInputOperator(String symbol, SDFDatatype returnType) {
 		super(symbol,accTypes, returnType);

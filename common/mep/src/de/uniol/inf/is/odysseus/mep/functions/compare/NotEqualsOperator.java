@@ -15,25 +15,18 @@
  */
 package de.uniol.inf.is.odysseus.mep.functions.compare;
 
+import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
+import de.uniol.inf.is.odysseus.mep.AbstractBinaryNumberInputOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 
-public class NotEqualsOperator extends AbstractBinaryOperator<Boolean> {
+public class NotEqualsOperator extends AbstractBinaryNumberInputOperator<Boolean> implements IHasAlias{
 
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG,
-					SDFDatatype.DOUBLE, SDFDatatype.FLOAT },
-			new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG,
-					SDFDatatype.DOUBLE, SDFDatatype.FLOAT } };
 	private static final long serialVersionUID = -1508977830046773571L;
 
-	public NotEqualsOperator() {
-		this("!=");
-	}
 
-	public NotEqualsOperator(String symbol) {
-		super(symbol, accTypes, SDFDatatype.BOOLEAN);
+	public NotEqualsOperator() {
+		super("!=", SDFDatatype.BOOLEAN);
 	}
 
 	@Override
@@ -71,6 +64,11 @@ public class NotEqualsOperator extends AbstractBinaryOperator<Boolean> {
 	@Override
 	public boolean isRightDistributiveWith(IOperator<Boolean> operator) {
 		return false;
+	}
+
+	@Override
+	public String getAliasName() {
+		return "<>";
 	}
 
 }

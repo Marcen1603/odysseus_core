@@ -16,26 +16,17 @@
 package de.uniol.inf.is.odysseus.mep.functions.compare;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
+import de.uniol.inf.is.odysseus.mep.AbstractBinaryNumberInputOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 
-public class SmallerEqualsOperator extends AbstractBinaryOperator<Boolean> {
+public class SmallerEqualsOperator extends AbstractBinaryNumberInputOperator<Boolean> {
 
 	private static final long serialVersionUID = -4954488959783908936L;
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG,
-					SDFDatatype.DOUBLE, SDFDatatype.FLOAT },
-			new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG,
-					SDFDatatype.DOUBLE, SDFDatatype.FLOAT } };
 
 	public SmallerEqualsOperator() {
-		super("<=", accTypes, SDFDatatype.BOOLEAN);
+		super("<=", SDFDatatype.BOOLEAN);
 	}
 	
-	protected SmallerEqualsOperator(SDFDatatype[][] accTypes) {
-		super("<=", accTypes, SDFDatatype.BOOLEAN);
-	}
-
 	@Override
 	public int getPrecedence() {
 		return 8;

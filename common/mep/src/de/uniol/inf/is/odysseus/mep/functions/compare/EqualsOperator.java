@@ -15,52 +15,32 @@
  */
 package de.uniol.inf.is.odysseus.mep.functions.compare;
 
-import de.uniol.inf.is.odysseus.core.mep.Constant;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
+import de.uniol.inf.is.odysseus.mep.AbstractBinaryNumberInputOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 
-public class EqualsOperator extends AbstractBinaryOperator<Boolean> {
+public class EqualsOperator extends AbstractBinaryNumberInputOperator<Boolean> implements IHasAlias {
 
 	private static final long serialVersionUID = 6011800156304578501L;
-	public static final SDFDatatype[][] accTypes =
-				new SDFDatatype[][]{new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.STRING},new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.STRING}};
-	
-	public EqualsOperator() {
-		this("=");
-	}
 
-	public EqualsOperator(String symbol){
-		super(symbol,accTypes, SDFDatatype.BOOLEAN);
+	public EqualsOperator(){
+		super("=", SDFDatatype.BOOLEAN);
 	}
 	
-	public EqualsOperator(String symbol, SDFDatatype[][] accTypes){
-		super(symbol,accTypes, SDFDatatype.BOOLEAN);
+	public EqualsOperator(SDFDatatype[][] accTypes){
+		super("=", SDFDatatype.BOOLEAN);
 	}
 	
-	private boolean isNumeric = false;
-
+	
 	@Override
 	public int getPrecedence() {
 		return 9;
 	}
 
 	@Override
-	public void setArgument(int argumentPosition, IExpression<?> argument) {
-		if (argument instanceof Constant) {
-			Constant<?> constArg = (Constant<?>) argument;
-			if (constArg.getReturnType().isNumeric()) {
-				isNumeric = true;
-			}
-		}
-
-		super.setArgument(argumentPosition, argument);
-	}
-
-	@Override
 	public Boolean getValue() {
-		return isNumeric ? getNumericalInputValue(0).equals(getNumericalInputValue(1)) : getInputValue(0) != null && getInputValue(0).equals(getInputValue(1));
+		return getNumericalInputValue(0).equals(getNumericalInputValue(1));
 	}
 
 
@@ -87,6 +67,11 @@ public class EqualsOperator extends AbstractBinaryOperator<Boolean> {
 	@Override
 	public boolean isRightDistributiveWith(IOperator<Boolean> operator) {
 		return false;
+	}
+
+	@Override
+	public String getAliasName() {
+		return "==";
 	}
 
 }
