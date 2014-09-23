@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Info
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.info;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.info.Activator
+Bundle-Vendor: Timo Michelsen
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.views.log;bundle-version="1.0.200",
+ de.uniol.inf.is.odysseus.rcp.base;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
