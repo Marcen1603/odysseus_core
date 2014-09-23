@@ -57,7 +57,7 @@ public class SingleElementStore<T extends Tuple<? extends ITimeInterval>> extend
     @Override
     public List<T> getAllValues() {
         List<T> list = new ArrayList<T>();
-        if (this.tuple == null) {
+        if (this.tuple != null) {
             list.add((T) this.tuple.clone());
         }
         return list;
