@@ -31,25 +31,22 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	@Override
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, OptionMap options) {
-		System.out.println("createInstance pre");
 		RPiGPIOTransportHandler tHandler = new RPiGPIOTransportHandler();
 		protocolHandler.setTransportHandler(tHandler);
 		this.init(options);
 		
 		try{
 			gpioController = GpioFactory.getInstance();
+		}catch(NullPointerException ex){
+			ex.printStackTrace();
 		}catch(Exception ex){
-			ex.getStackTrace();
+			ex.printStackTrace();
 		}
-		
-		System.out.println("createInstance post");
 		
 		return tHandler;
 	}
 	
 	protected void init(final OptionMap options) {
-		System.out.println("init");
-		
 		if (options.containsKey(RPiGPIOTransportHandler.PIN)) {
             this.pin = options.get(RPiGPIOTransportHandler.PIN);
         }
