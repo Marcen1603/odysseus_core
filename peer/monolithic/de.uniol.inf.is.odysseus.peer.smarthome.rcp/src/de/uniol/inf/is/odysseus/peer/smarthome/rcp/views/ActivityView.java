@@ -1,10 +1,10 @@
-package de.uniol.inf.is.odysseus.peer.rcp.views;
+package de.uniol.inf.is.odysseus.peer.smarthome.rcp.views;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
-public class ContextView extends ViewPart {
+public class ActivityView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.rcp.views;
+package de.uniol.inf.is.odysseus.peer.smarthome.rcp.views;
 
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;

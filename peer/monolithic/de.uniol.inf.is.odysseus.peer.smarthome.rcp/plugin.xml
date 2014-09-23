@@ -5,7 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             category="de.uniol.inf.is.odysseus.rcp.peer.smarthome.SmartHomeCategory"
-            class="de.uniol.inf.is.odysseus.peer.rcp.views.SmartDeviceView"
+            class="de.uniol.inf.is.odysseus.peer.smarthome.rcp.views.SmartDeviceView"
             icon="icons/SmartHome.png"
             id="de.uniol.inf.is.odysseus.rcp.peer.SmartDeviceView"
             name="Smart Devices"
@@ -13,7 +13,7 @@
       </view>
       <view
             category="de.uniol.inf.is.odysseus.rcp.peer.smarthome.SmartHomeCategory"
-            class="de.uniol.inf.is.odysseus.peer.rcp.views.ContextView"
+            class="de.uniol.inf.is.odysseus.peer.smarthome.rcp.views.ContextView"
             icon="icons/Context.png"
             id="de.uniol.inf.is.odysseus.rcp.peer.ContextView"
             name="Contexts"
@@ -21,7 +21,7 @@
       </view>
       <view
             category="de.uniol.inf.is.odysseus.rcp.peer.smarthome.SmartHomeCategory"
-            class="de.uniol.inf.is.odysseus.peer.rcp.views.EntityView"
+            class="de.uniol.inf.is.odysseus.peer.smarthome.rcp.views.EntityView"
             icon="icons/Entity.png"
             id="de.uniol.inf.is.odysseus.rcp.peer.EntityView"
             name="Entities"
@@ -29,7 +29,7 @@
       </view>
       <view
             category="de.uniol.inf.is.odysseus.rcp.peer.smarthome.SmartHomeCategory"
-            class="de.uniol.inf.is.odysseus.peer.rcp.views.ActivityView"
+            class="de.uniol.inf.is.odysseus.peer.smarthome.rcp.views.ActivityView"
             icon="icons/Activity.png"
             id="de.uniol.inf.is.odysseus.rcp.peer.ActivityView"
             name="Activities"
@@ -43,7 +43,7 @@
 	<extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="de.uniol.inf.is.odysseus.peer.rcp.perspectives.SmartHomePerspective"
+            class="de.uniol.inf.is.odysseus.peer.smarthome.rcp.perspectives.SmartHomePerspective"
             icon="icons/SmartHome.png"
             id="de.uniol.inf.is.odysseus.rcp.peer.SmartHomePerspective"
             name="Smart Home">

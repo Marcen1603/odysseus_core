@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.rcp.views;
+package de.uniol.inf.is.odysseus.peer.smarthome.rcp.views;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;

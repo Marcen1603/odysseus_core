@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.rcp.perspectives;
+package de.uniol.inf.is.odysseus.peer.smarthome.rcp.perspectives;
 
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;

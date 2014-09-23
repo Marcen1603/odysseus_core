@@ -77,6 +77,27 @@ limitations under the License.
       <feature id="de.uniol.inf.is.odysseus.wrapper.temper1.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.peer.smarthome.rcp.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.rpi.gpio.feature" version="1.0.0.qualifier"/>
+      <feature id="org.eclipse.equinox.p2.core.feature"/>
+      <feature id="de.uniol.inf.is.odysseus.script.feature"/>
+      <feature id="de.uniol.inf.is.odysseus.server.feature"/>
+      <feature id="org.eclipse.platform"/>
+      <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.feature"/>
+      <feature id="de.uniol.inf.is.odysseus.relational.feature"/>
+      <feature id="org.eclipse.help"/>
+      <feature id="de.uniol.inf.is.odysseus.core.server.feature"/>
+      <feature id="org.eclipse.equinox.p2.rcp.feature"/>
+      <feature id="org.eclipse.equinox.p2.user.ui"/>
+      <feature id="de.uniol.inf.is.odysseus.studio.feature"/>
+      <feature id="de.uniol.inf.is.odysseus.scheduling.feature"/>
+      <feature id="de.uniol.inf.is.odysseus.planmgmt.standard.feature"/>
+      <feature id="org.eclipse.gef"/>
+      <feature id="de.uniol.inf.is.odysseus.usermanagement.filestore.feature"/>
+      <feature id="org.eclipse.zest"/>
+      <feature id="org.eclipse.rcp"/>
+      <feature id="org.eclipse.draw2d"/>
+      <feature id="de.uniol.inf.is.odysseus.common.feature"/>
+      <feature id="de.uniol.inf.is.odysseus.peer.ddc.feature"/>
+      <feature id="org.eclipse.equinox.p2.extras.feature"/>
    </features>
 
    <configurations>
