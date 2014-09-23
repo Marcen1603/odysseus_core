@@ -32,7 +32,7 @@ public class ToCharFunction extends AbstractFunction<Character> {
     private static final long serialVersionUID = 1956450848515723544L;
 
     public ToCharFunction() {
-        super("toChar", 1, SDFDatatype.CHAR);
+        super("toChar", 1, getAllTypes(1), SDFDatatype.CHAR);
     }
 
     @Override

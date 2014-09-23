@@ -28,7 +28,7 @@ public class ToShortFunction extends AbstractFunction<Short> {
     private static final long serialVersionUID = 2336013385553930997L;
 
     public ToShortFunction() {
-        super("toShort", 1, SDFDatatype.SHORT);
+        super("toShort", 1, getAllTypes(1), SDFDatatype.SHORT);
     }
 
     @Override

@@ -29,7 +29,7 @@ public class ToDoubleFunction extends AbstractFunction<Double> {
     private static final long serialVersionUID = -8540214231248350115L;
 
     public ToDoubleFunction() {
-        super("toDouble", 1, SDFDatatype.DOUBLE);
+        super("toDouble", 1, getAllTypes(1), SDFDatatype.DOUBLE);
     }
 
     @Override

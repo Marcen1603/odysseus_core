@@ -21,10 +21,6 @@ public abstract class AbstractBinaryOperator<T> extends AbstractFunction<T>
 		implements IBinaryOperator<T> {
 	private static final long serialVersionUID = -8717397809265227223L;
 
-	public AbstractBinaryOperator(String symbol, SDFDatatype returnType) {
-		super(symbol,2, returnType);
-	}	
-
 	public AbstractBinaryOperator(String symbol,SDFDatatype[][] accDatatypes, SDFDatatype returnType) {
 		super(symbol,2,accDatatypes, returnType);
 	}	

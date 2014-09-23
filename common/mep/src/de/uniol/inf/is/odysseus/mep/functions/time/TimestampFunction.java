@@ -19,7 +19,7 @@ public class TimestampFunction extends AbstractFunction<Long> {
     private static final long serialVersionUID = -9167197876743665507L;
 
     protected TimestampFunction(String name) {
-    	super(name,1,SDFDatatype.LONG);
+    	super(name,1,getAllTypes(1),SDFDatatype.LONG);
     }
     
     public TimestampFunction(){

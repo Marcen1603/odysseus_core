@@ -31,7 +31,7 @@ public class MatrixLine extends AbstractFunction<double[]> {
     }
 
     public MatrixLine() {
-        super("__matrixline", 1, SDFDatatype.VECTOR_DOUBLE);
+        super("__matrixline", 1, getAllTypes(1), SDFDatatype.VECTOR_DOUBLE);
 	}
 
 	@Override

@@ -22,7 +22,7 @@ public class StreamDateFunction2 extends AbstractFunction<Date> {
     private static final long serialVersionUID = -9167197876743665507L;
 
     public StreamDateFunction2() {
-    	super("streamdate", 1, SDFDatatype.DATE);
+    	super("streamdate", 1,getAllTypes(1), SDFDatatype.DATE);
     }
     
     @Override

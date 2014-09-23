@@ -28,7 +28,7 @@ public class ToIntegerFunction extends AbstractFunction<Integer> {
     private static final long serialVersionUID = 2799997996073155068L;
 
     public ToIntegerFunction() {
-        super("toInteger", 1, SDFDatatype.INTEGER);
+        super("toInteger", 1, getAllTypes(1), SDFDatatype.INTEGER);
     }
 
     @Override

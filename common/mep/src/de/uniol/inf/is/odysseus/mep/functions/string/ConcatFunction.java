@@ -8,7 +8,7 @@ public class ConcatFunction extends AbstractFunction<String> {
 	private static final long serialVersionUID = -2667259091974125547L;
 
 	public ConcatFunction() {
-		super("concat", 2, SDFDatatype.STRING);
+		super("concat", 2, getAllTypes(2), SDFDatatype.STRING);
 	}
 	
 	@Override

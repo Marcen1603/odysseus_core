@@ -48,7 +48,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	private final SDFDatatype[] acceptedTypes2;
 	private final SDFDatatype returnType;
 	private final boolean optimizeConstantParameter;
-
+	
 	public AbstractFunction(String symbol, int arity,
 			SDFDatatype[][] acceptedTypes, SDFDatatype returnType) {
 		this(symbol, arity, acceptedTypes, returnType, true);
@@ -57,12 +57,12 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		}
 	}
 
-	public AbstractFunction(String symbol, int arity, SDFDatatype returnType) {
-		this(symbol, arity, null, null, returnType, true);
-		if (optimizeConstantParameter == true && arity == 0) {
-			LOG.warn("This function will be precompiled and creates the same value in each run.");
-		}
-	}
+//	public AbstractFunction(String symbol, int arity, SDFDatatype returnType) {
+//		this(symbol, arity, null, null, returnType, true);
+//		if (optimizeConstantParameter == true && arity == 0) {
+//			LOG.warn("This function will be precompiled and creates the same value in each run.");
+//		}
+//	}
 
 //	@Deprecated
 //	public AbstractFunction(String symbol, int arity,
@@ -97,12 +97,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 				// System.err.println("Error: arity and types do not fit for "+symbol+" "+this.getClass());
 			}
 		} else {
-			this.acceptedTypes = new SDFDatatype[arity][];
-			for (int i = 0; i < arity; i++) {
-				this.acceptedTypes[i] = SDFDatatype.getTypes().toArray(
-						new SDFDatatype[0]);
-			}
-
+			this.acceptedTypes = getAllTypes(arity);
 		}
 
 		if (returnType != null) {
@@ -112,6 +107,15 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		}
 	}
 
+	protected static SDFDatatype[][] getAllTypes(int arity){
+		SDFDatatype[][] types = new SDFDatatype[arity][];
+		for (int i = 0; i < arity; i++) {
+			types[i] = SDFDatatype.getTypes().toArray(
+					new SDFDatatype[0]);
+		}
+		return types;
+	}
+	
 	protected SDFDatatype determineReturnType() {
 		return SDFDatatype.OBJECT;
 	}

@@ -23,7 +23,7 @@ public class IsNullFunction extends AbstractFunction<Boolean> {
 	private static final long serialVersionUID = 4074484016029763344L;
 
 	public IsNullFunction() {
-		super("isNull",1,SDFDatatype.BOOLEAN);
+		super("isNull",1, getAllTypes(1),SDFDatatype.BOOLEAN);
 	}
 	
 	@Override

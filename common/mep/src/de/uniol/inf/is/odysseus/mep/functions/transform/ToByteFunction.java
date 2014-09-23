@@ -28,7 +28,7 @@ public class ToByteFunction extends AbstractFunction<Byte> {
 	private static final long serialVersionUID = 6268335067252659860L;
 
 	public ToByteFunction() {
-		super("toByte", 1, SDFDatatype.BYTE);
+		super("toByte", 1, getAllTypes(1), SDFDatatype.BYTE);
 	}
 
 	@Override

@@ -30,7 +30,7 @@ public class ToBooleanFunction extends AbstractFunction<Boolean> {
     private static final long serialVersionUID = 6172939691360862021L;
 
     public ToBooleanFunction() {
-        super("toBoolean", 1, SDFDatatype.BOOLEAN);
+        super("toBoolean", 1,getAllTypes(1), SDFDatatype.BOOLEAN);
     }
 
     @Override

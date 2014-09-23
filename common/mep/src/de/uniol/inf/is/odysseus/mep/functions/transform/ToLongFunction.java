@@ -29,7 +29,7 @@ public class ToLongFunction extends AbstractFunction<Long> {
     private static final long serialVersionUID = -6921898506120412818L;
 
     public ToLongFunction() {
-        super("toLong", 1, SDFDatatype.LONG);
+        super("toLong", 1, getAllTypes(1), SDFDatatype.LONG);
     }
 
     @Override

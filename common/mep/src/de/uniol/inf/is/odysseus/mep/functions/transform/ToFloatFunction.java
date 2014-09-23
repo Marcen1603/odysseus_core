@@ -28,7 +28,7 @@ public class ToFloatFunction extends AbstractFunction<Float> {
     private static final long serialVersionUID = 1201584883722391034L;
 
     public ToFloatFunction() {
-        super("toFloat", 1, SDFDatatype.FLOAT);
+        super("toFloat", 1, getAllTypes(1), SDFDatatype.FLOAT);
     }
 
     @Override
