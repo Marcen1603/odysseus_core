@@ -35,38 +35,36 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * 
  * @author Dennis Geesen Created at: 06.02.2012
  */
-public class ContextStoreFunction extends AbstractFunction<Object> {
+public class ContextStoreFunction extends AbstractFunction<Tuple<?>> {
 
 	private static final long serialVersionUID = 8083562782642549093L;
 	private static Logger LOG = LoggerFactory
 			.getLogger(ContextStoreFunction.class);
 	static final SDFDatatype accTypes[][] = new SDFDatatype[][] { {
-			SDFDatatype.STRING, SDFDatatype.INTEGER } };
+			SDFDatatype.STRING}};
 
 	public ContextStoreFunction() {
 		super("ContextStore", 1, accTypes, SDFDatatype.TUPLE, false);
 	}
 
 	@Override
-	public Object getValue() {
-		String storeName = resolveStoreName();
+	public Tuple<?> getValue() {
+		String storeName = (String) getInputValue(0);
+
         if (storeName != null) {
             List<Tuple<? extends ITimeInterval>> values = ContextStoreManager.getStore(storeName).getLastValues();
             if (values == null || values.size() == 0) {
-                return "<empty>";
+                return null;
             }
             if (values.size() > 1) {
                 LOG.warn("The context store delivered more than one context state, but a function can only handle one! Use enrich instead!");
@@ -75,38 +73,6 @@ public class ContextStoreFunction extends AbstractFunction<Object> {
             return values.get(0);
         }
         return null;
-	}
-
-	@Override
-	protected SDFDatatype determineReturnType() {
-		SDFSchema schema = ContextStoreManager.getStore(resolveStoreName())
-				.getSchema();
-		AttributeResolver resolver = new AttributeResolver();
-		resolver.addAttributes(schema);
-		SDFAttribute attribute = resolver.getAttribute(resolveAttributeName());
-		return attribute.getDatatype();
-	}
-
-	private String resolveStoreName() {
-        String inputValue = getInputValue(0);
-        if (inputValue != null) {
-            String[] symbols = inputValue.split("\\.");
-            if (symbols.length >= 2) {
-                return symbols[0];
-            }
-            throw new IllegalArgumentException("for context access you have to define store and attribute like \"thestore.theattribute\"");
-        }
-        return null;
-	}
-
-	private String resolveAttributeName() {
-		String inputValue = getInputValue(0);
-		String[] symbols = inputValue.split("\\.");
-		if (symbols.length >= 2) {
-			return symbols[1];
-		}
-		throw new IllegalArgumentException(
-				"for context access you have to define store and attribute like \"thestore.theattribute\"");
 	}
 
 }
