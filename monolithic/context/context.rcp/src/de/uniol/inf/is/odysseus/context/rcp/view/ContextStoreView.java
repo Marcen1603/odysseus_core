@@ -62,9 +62,12 @@ import de.uniol.inf.is.odysseus.context.store.IContextStore;
  * 
  * @author Dennis Geesen Created at: 27.04.2012
  */
-public class ContextStoreView extends ViewPart implements IContextManagementListener, ISelectionChangedListener, IContextStoreListener {
+public class ContextStoreView extends ViewPart implements
+		IContextManagementListener, ISelectionChangedListener,
+		IContextStoreListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ContextStoreView.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ContextStoreView.class);
 
 	public static final String VIEW_ID = "de.uniol.inf.is.odysseus.context.rcp.contextstoreview";
 
@@ -76,26 +79,28 @@ public class ContextStoreView extends ViewPart implements IContextManagementList
 	@Override
 	public void createPartControl(Composite parent) {
 		FillLayout layout = new FillLayout();
-		layout.type = SWT.VERTICAL;		
+		layout.type = SWT.VERTICAL;
 		parent.setLayout(layout);
 
 		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
-		
-		treeViewer = new TreeViewer(sashForm, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI);
+
+		treeViewer = new TreeViewer(sashForm, SWT.V_SCROLL | SWT.H_SCROLL
+				| SWT.MULTI);
 		treeViewer.setContentProvider(new ContextViewTreeContentProvider());
 		treeViewer.setLabelProvider(new ContextViewTreeLabelProvider());
 		treeViewer.addSelectionChangedListener(this);
 
 		Composite tableComposite = new Composite(sashForm, SWT.NONE);
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
-		tableComposite.setLayout(tableColumnLayout);				
-		tableViewer = new TableViewer(tableComposite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		tableComposite.setLayout(tableColumnLayout);
+		tableViewer = new TableViewer(tableComposite, SWT.MULTI | SWT.H_SCROLL
+				| SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		tableViewer.setContentProvider(new ContextViewTableContentProvider());
 		// table.setLabelProvider(new ContextViewTreeLabelProvider());
 		final Table table = tableViewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);		
+		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
 		col.getColumn().setText("Values");
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
@@ -103,9 +108,8 @@ public class ContextStoreView extends ViewPart implements IContextManagementList
 				return element.toString();
 			}
 		});
-		tableColumnLayout.setColumnData(col.getColumn(), new ColumnWeightData(100, true));
-
-
+		tableColumnLayout.setColumnData(col.getColumn(), new ColumnWeightData(
+				100, true));
 
 		refresh();
 
@@ -114,7 +118,8 @@ public class ContextStoreView extends ViewPart implements IContextManagementList
 
 		// Contextmenu
 		MenuManager menuManager = new MenuManager();
-		Menu contextMenu = menuManager.createContextMenu(treeViewer.getControl());
+		Menu contextMenu = menuManager.createContextMenu(treeViewer
+				.getControl());
 		// Set the MenuManager
 		treeViewer.getControl().setMenu(contextMenu);
 		getSite().registerContextMenu(menuManager, treeViewer);
@@ -124,10 +129,10 @@ public class ContextStoreView extends ViewPart implements IContextManagementList
 	@Override
 	public void dispose() {
 		ContextStoreManager.removeListener(this);
-		if(this.selectedStore!=null){
+		if (this.selectedStore != null) {
 			this.selectedStore.removeListener(this);
 		}
-		super.dispose();		
+		super.dispose();
 	}
 
 	private void refresh() {
@@ -139,7 +144,9 @@ public class ContextStoreView extends ViewPart implements IContextManagementList
 					treeViewer.setInput(ContextStoreManager.getStores());
 					treeViewer.refresh();
 				} catch (Exception e) {
-					LOG.error("Exception during setting input for treeViewer in ContextView", e);
+					LOG.error(
+							"Exception during setting input for treeViewer in ContextView",
+							e);
 				}
 			}
 
@@ -181,15 +188,17 @@ public class ContextStoreView extends ViewPart implements IContextManagementList
 				TreeSelection structSel = (TreeSelection) selection;
 
 				IContextStore<?> newStore = getStoreFromTreeSelection(structSel);
-				if (this.selectedStore != null) {
-					if (!this.selectedStore.equals(newStore)) {
-						this.selectedStore.removeListener(this);
+				if (newStore != null) {
+					if (this.selectedStore != null) {
+						if (!this.selectedStore.equals(newStore)) {
+							this.selectedStore.removeListener(this);
+							this.selectedStore = newStore;
+							this.selectedStore.addListener(this);
+						}
+					} else {
 						this.selectedStore = newStore;
 						this.selectedStore.addListener(this);
 					}
-				}else{
-					this.selectedStore = newStore;
-					this.selectedStore.addListener(this);				
 				}
 
 			}
@@ -198,7 +207,7 @@ public class ContextStoreView extends ViewPart implements IContextManagementList
 
 	@Override
 	public void contextStoreChanged(final IContextStore<?> store) {
-		if (store.equals(selectedStore)) {			
+		if (store.equals(selectedStore)) {
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 				@Override
@@ -207,12 +216,14 @@ public class ContextStoreView extends ViewPart implements IContextManagementList
 						tableViewer.setInput(store);
 
 					} catch (Exception e) {
-						LOG.error("Exception during setting input for tableviewer in ContextView", e);
+						LOG.error(
+								"Exception during setting input for tableviewer in ContextView",
+								e);
 					}
 				}
 
 			});
-			
+
 		}
 	}
 

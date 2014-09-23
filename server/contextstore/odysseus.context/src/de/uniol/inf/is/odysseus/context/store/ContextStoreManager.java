@@ -37,6 +37,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.context.ContextManagementException;
 import de.uniol.inf.is.odysseus.context.IContextManagementListener;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
@@ -74,6 +75,7 @@ public class ContextStoreManager<T extends Tuple<? extends ITimeInterval>> {
 	public static <T extends Tuple<? extends ITimeInterval>> void addStore(String name, IContextStore<T> store) throws ContextManagementException {
 		if (storeExists(name)) {
 			throw new ContextManagementException("Store already exists");
+			
 		}		
 		stores.put(name, store);
 		notifyListeners();
