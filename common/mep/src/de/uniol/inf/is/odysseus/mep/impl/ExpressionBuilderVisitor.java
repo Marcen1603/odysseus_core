@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
@@ -139,11 +140,13 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 			// function
 			if (selectedFunction == null) {
 				selectedFunction = functions.get(0);
-				for (int i = 0; i < arity; ++i) {
-					expressions[i] = (IExpression<?>) node.jjtGetChild(i)
-							.jjtAccept(this,
-									selectedFunction.getAcceptedTypes(i));
-				}
+				//InfoService.error("No function symbol for current Parameters found", null, "ExpressionParser");
+				throw new IllegalArgumentException("no function " + symbol + " for input parameter found!"); 
+//				for (int i = 0; i < arity; ++i) {
+//					expressions[i] = (IExpression<?>) node.jjtGetChild(i)
+//							.jjtAccept(this,
+//									selectedFunction.getAcceptedTypes(i));
+//				}
 			}
 
 			selectedFunction.setArguments(expressions);
