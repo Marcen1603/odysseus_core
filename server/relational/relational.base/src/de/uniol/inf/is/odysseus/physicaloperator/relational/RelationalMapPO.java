@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -93,8 +94,9 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 
 		Tuple<T> outputVal = new Tuple<T>(this.getOutputSchema().size(), false);
 		outputVal.setMetadata((T) object.getMetadata().clone());
-		if(object.getMetadataMap() != null) {
-			for (Entry<String, Object> entry : object.getMetadataMap().entrySet()) {
+		if (object.getMetadataMap() != null) {
+			for (Entry<String, Object> entry : object.getMetadataMap()
+					.entrySet()) {
 				outputVal.setMetadata(entry.getKey(), entry.getValue());
 			}
 		}
@@ -119,16 +121,34 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 							.getAdditionalContent());
 					this.expressions[i].bindVariables(meta, values);
 					Object expr = this.expressions[i].getValue();
-					if (expressions[i].getMEPExpression().getReturnType() != SDFDatatype.TUPLE) {
+					SDFDatatype retType = expressions[i].getMEPExpression()
+							.getReturnType();
+
+					if (retType == SDFDatatype.TUPLE) {
+						Tuple tuple = ((Tuple) expr);
+						for (Object o : tuple.getAttributes()) {
+							outputVal.setAttribute(outAttrPos++, o);
+						}
+					}else if (retType == SDFDatatype.LIST) {
+						for (Object o : (List) expr) {
+							outputVal.setAttribute(outAttrPos++, o);
+						}
+					} else {
 						outputVal.setAttribute(outAttrPos++, expr);
 						if (expr == null) {
 							nullValueOccured = true;
 						}
-					} else {
-						for(Object o : (List)expr){
-							outputVal.setAttribute(outAttrPos++, o);							
-						}
 					}
+					// MG: 23.09.14: Added test for Tuple as return type, the
+					// former implementation
+					// did not make any sense ...
+					// else{
+					//
+					//
+					// for(Object o : (List)expr){
+					// outputVal.setAttribute(outAttrPos++, o);
+					// }
+					// }
 				} catch (Exception e) {
 					nullValueOccured = true;
 					if (!(e instanceof NullPointerException)) {
@@ -136,6 +156,8 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 								+ " with expression " + expressions[i], e);
 						// Not needed. Value is null, if not set!
 						// outputVal.setAttribute(i, null);
+						InfoService.error("Cannot calc result for " + object
+								+ " with expression " + expressions[i], e);
 					}
 				}
 				if (this.expressions[i].getType().requiresDeepClone()) {
