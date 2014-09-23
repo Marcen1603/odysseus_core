@@ -210,7 +210,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 	}
 
-	private void sendHoldOnMessages(List<PeerID> peers, List<Integer> queryIds) {
+	public void sendHoldOnMessages(List<PeerID> peers, List<Integer> queryIds) {
 		try {
 			for (int i = 0; i < peers.size(); i++) {
 				RecoveryInstructionMessage holdOnMessage = RecoveryInstructionMessage

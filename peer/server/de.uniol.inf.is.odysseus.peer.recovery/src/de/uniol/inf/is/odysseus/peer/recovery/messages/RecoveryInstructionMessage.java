@@ -118,7 +118,8 @@ public class RecoveryInstructionMessage implements IMessage {
 			break;
 		}
 
-		return null;
+		bb.flip();
+		return bb.array();
 	}
 
 	/**
