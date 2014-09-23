@@ -6,9 +6,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 public class TupleAccessFunction extends AbstractFunction<Object> implements IHasAlias{
+	
 
-	private static final long serialVersionUID = -3282877303737235603L;
-
+	private static final long serialVersionUID = -6751879119439264427L;
 	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { new SDFDatatype[]{SDFDatatype.TUPLE},new SDFDatatype[]{SDFDatatype.INTEGER }};
 
 	public TupleAccessFunction() {
