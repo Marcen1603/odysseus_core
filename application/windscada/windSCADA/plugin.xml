@@ -94,6 +94,13 @@
             name="Windgeschwindigkeit"
             restorable="true">
       </view>
+      <view
+            category="windscadaanwendung.category"
+            class="windscadaanwendung.views.WarningsAndErrorsView"
+            id="windscadaanwendung.views.WarningsAndErrorsView"
+            name="Warnings und Errors"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

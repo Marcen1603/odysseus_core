@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.views.DashboardPartView;
 
-public class AbstractDashboardPartView extends DashboardPartView {
+public class WindDashboardPartView extends DashboardPartView {
 
 	public IFile dashboardPartFile;
 	public IProject project;

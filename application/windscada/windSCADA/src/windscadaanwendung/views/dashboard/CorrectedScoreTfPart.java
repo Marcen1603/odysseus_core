@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Composite;
  * @author MarkMilster
  *
  */
-public class CorrectedScoreTfPart extends AbstractDashboardPartView {
+public class CorrectedScoreTfPart extends WindDashboardPartView {
 
 	public void createPartControl(Composite parent, int wka_id) {
 		this.setValueType("corrected_score_tf");

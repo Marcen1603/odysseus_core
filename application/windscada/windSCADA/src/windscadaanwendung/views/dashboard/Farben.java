@@ -2,7 +2,7 @@ package windscadaanwendung.views.dashboard;
 
 import org.eclipse.swt.widgets.Composite;
 
-public class Farben extends AbstractDashboardPartView {
+public class Farben extends WindDashboardPartView {
 
 	public Farben() {
 	}

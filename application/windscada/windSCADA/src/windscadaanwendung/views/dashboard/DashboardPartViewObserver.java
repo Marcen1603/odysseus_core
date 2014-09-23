@@ -17,11 +17,11 @@ import windscadaanwendung.ca.WindFarm;
  */
 public class DashboardPartViewObserver {
 	
-	static List<AbstractDashboardPartView> dpvList;
+	static List<WindDashboardPartView> dpvList;
 	
-	public static void addDashboardPartView(AbstractDashboardPartView dpv) {
+	public static void addDashboardPartView(WindDashboardPartView dpv) {
 		if (dpvList == null) {
-			dpvList = new ArrayList<AbstractDashboardPartView>();
+			dpvList = new ArrayList<WindDashboardPartView>();
 		}
 		if (!dpvList.contains(dpv)) {
 			dpvList.add(dpv);
@@ -29,14 +29,14 @@ public class DashboardPartViewObserver {
 	}
 	
 	public static void setFileName(String fileName) {
-		for(AbstractDashboardPartView dpv: dpvList) {
+		for(WindDashboardPartView dpv: dpvList) {
 			dpv.loadDashboardPartFile(fileName);
 		}
 	}
 	
 	public static void setWKA(final WKA wka) {
 		//FIXME: warum werden alle 2 mal aufgerufen?
-		for(final AbstractDashboardPartView dpv: dpvList) {
+		for(final WindDashboardPartView dpv: dpvList) {
 			if (!dpv.isFarmPart()) {
 				// otherwise dpv is a part for a hole windfarm
 				// set wka for every valueType which shows a wkaPart
@@ -70,7 +70,7 @@ public class DashboardPartViewObserver {
 	}
 	
 	public static void setWindFarm(WindFarm farm) {
-		for(AbstractDashboardPartView dpv: dpvList) {
+		for(WindDashboardPartView dpv: dpvList) {
 			if (dpv.isFarmPart()) {
 				// dpv is a part for a hole windfarm
 				// set farm for every valueType which shows a farrmPart

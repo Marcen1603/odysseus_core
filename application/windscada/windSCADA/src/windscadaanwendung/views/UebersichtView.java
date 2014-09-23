@@ -1,9 +1,12 @@
 package windscadaanwendung.views;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -36,21 +39,17 @@ public class UebersichtView extends ViewPart {
 		parent.setLayout(new FillLayout(SWT.VERTICAL));
 		
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(3, false));
+		composite.setLayout(new GridLayout(2, false));
 		
 		Label lblwindpark = new Label(composite, SWT.NONE);
 		lblwindpark.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblwindpark.setText("Windpark:");
-		new Label(composite, SWT.NONE);
 		
 		nameWindpark = new Text(composite, SWT.BORDER);
 		nameWindpark.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		
 		Label lblHistorischeGesamtleistungIm = new Label(composite, SWT.NONE);
 		lblHistorischeGesamtleistungIm.setText("Historische Gesamtleistung im Durchschnitt:");
-		
-		Combo combo = new Combo(composite, SWT.NONE);
-		combo.setSize(198, 22);
 		
 		hitLeistung = new Text(composite, SWT.BORDER);
 		hitLeistung.setSize(297, 469);
@@ -79,16 +78,20 @@ public class UebersichtView extends ViewPart {
 	    wkaContainer.layout();
 	    setDefaultWKAContainerLabels();
 
-		Label lbl;
+//		Label lbl;
+		Button btn;
 		Text txtHit;
 		Composite comp;
 		CorrectedScoreTfPart tfP;
 		for (WKA wka: windFarm.getWkas()) {
 			DBConnectionHD.setHitWKAData(wka);
-			lbl = new Label(wkaContainer, SWT.NONE);
-			lbl.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-			lbl.setText(String.valueOf(wka.getID()));
-			//TODO hier dpv rein
+			btn = new Button(wkaContainer, SWT.NONE);
+			btn.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+			btn.setText(String.valueOf(wka.getID()));
+			btn.addMouseListener(new WKABTNListener());
+//			lbl = new Label(wkaContainer, SWT.NONE);
+//			lbl.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+//			lbl.setText(String.valueOf(wka.getID()));
 			comp = new Composite(wkaContainer, SWT.NONE);
 			comp.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 			tfP = new CorrectedScoreTfPart();
@@ -120,4 +123,22 @@ public class UebersichtView extends ViewPart {
 		lbl3.setText("Historischer Mittelwert Leistung");
 	}
 
+}
+
+class WKABTNListener implements MouseListener {
+
+	@Override
+	public void mouseDoubleClick(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseDown(MouseEvent e) {
+		Button btn = (Button) e.getSource();
+		ListView.setSelectedWKAById(btn.getText());
+	}
+
+	@Override
+	public void mouseUp(MouseEvent e) {
+	}
+	
 }

@@ -2,7 +2,7 @@ package windscadaanwendung.views.dashboard;
 
 import org.eclipse.swt.widgets.Composite;
 
-public class RotationalSpeedPart extends AbstractDashboardPartView {
+public class RotationalSpeedPart extends WindDashboardPartView {
 
 	@Override
 	public void createPartControl(Composite parent) {

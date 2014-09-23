@@ -21,6 +21,7 @@ import windscadaanwendung.views.dashboard.DashboardPartViewObserver;
 public class ListView extends ViewPart {
 	
 	public static final String ID = "windscadaanwendung.views.ListView";
+	static Tree tree;
 
 	public ListView() {
 	}
@@ -28,7 +29,7 @@ public class ListView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		
-		final Tree tree = new Tree(parent, SWT.BORDER);
+		tree = new Tree(parent, SWT.BORDER);
 		
 		tree.addListener(SWT.Selection, new Listener() {
 		      @Override
@@ -43,13 +44,7 @@ public class ListView extends ViewPart {
 //		        	  MapView.setSelectedFarm(selectedFarm);
 		          } else {
 		        	  // selected is a WKA
-		        	  WindFarm farm = FarmList.getFarm(Integer.parseInt(selected.getParentItem().getText()));
-		        	  UebersichtView.setSelectedWindpark(farm);
-//		        	  MapView.setSelectedFarm(farm);
-		        	  // the TreeItemText has to be eaqual to the ID of the WKA
-		        	  WKA selectedWKA = FarmList.getWKA(Integer.parseInt(selected.getText()));
-		        	  DetailView.setSelectedWKA(selectedWKA);
-		        	  DashboardPartViewObserver.setWKA(selectedWKA);
+		        	  handleSelectionWKA(selected);
 		          }
 		        }
 
@@ -82,6 +77,29 @@ public class ListView extends ViewPart {
 
 	@Override
 	public void setFocus() {
+	}
+
+	public static boolean setSelectedWKAById(String id) {
+		for (TreeItem farm: tree.getItems()) {
+			for(TreeItem wka: farm.getItems()) {
+				if (wka.getText().equals(id)) {
+					tree.setSelection(wka);
+					handleSelectionWKA(wka);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private static void handleSelectionWKA(TreeItem wka) {
+		WindFarm farm = FarmList.getFarm(Integer.parseInt(wka.getParentItem().getText()));
+  	  UebersichtView.setSelectedWindpark(farm);
+//  	  MapView.setSelectedFarm(farm);
+  	  // the TreeItemText has to be eaqual to the ID of the WKA
+  	  WKA selectedWKA = FarmList.getWKA(Integer.parseInt(wka.getText()));
+  	  DetailView.setSelectedWKA(selectedWKA);
+  	  DashboardPartViewObserver.setWKA(selectedWKA);
 	}
 
 }

@@ -2,7 +2,7 @@ package windscadaanwendung.views.dashboard;
 
 import org.eclipse.swt.widgets.Composite;
 
-public class CorrectedScorePart extends AbstractDashboardPartView {
+public class CorrectedScorePart extends WindDashboardPartView {
 	
 	@Override
 	public void createPartControl(Composite parent) {

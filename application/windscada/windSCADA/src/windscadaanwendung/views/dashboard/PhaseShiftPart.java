@@ -4,7 +4,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import windscadaanwendung.ca.WKA;
 
-public class PhaseShiftPart extends AbstractDashboardPartView {
+public class PhaseShiftPart extends WindDashboardPartView {
 
 	public void createPartControl(Composite parent, WKA wka) {
 		this.valueType = "phase_shift";
