@@ -50,20 +50,19 @@ public class ComplexNumberDataHandler extends
 
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
-		// TODO Auto-generated method stub
-
+		ComplexNumber n = (ComplexNumber)data;
+		buffer.putDouble(n.getReal());
+		buffer.putDouble(n.getImaginary());
 	}
 
 	@Override
 	public int memSize(Object attribute) {
-		// TODO Auto-generated method stub
-		return 0;
+		return Double.SIZE/4; // 2*Double.SIZE/8
 	}
 
 	@Override
 	public Class<?> createsType() {
-		// TODO Auto-generated method stub
-		return null;
+		return ComplexNumber.class;
 	}
 
 
