@@ -161,7 +161,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 						// Not needed. Value is null, if not set!
 						// outputVal.setAttribute(i, null);
 						InfoService.error("Cannot calc result for " + object
-								+ " with expression " + expressions[i], e);
+								+ " with expression " + expressions[i], e, "RelationalMap");
 					}
 				}
 				if (this.expressions[i].getType().requiresDeepClone()) {

@@ -68,7 +68,7 @@ public class ContextStoreFunction extends AbstractFunction<Tuple<?>> {
             }
             if (values.size() > 1) {
                 LOG.warn("The context store delivered more than one context state, but a function can only handle one! Use enrich instead!");
-                InfoService.warning("The context store delivered more than one context state, but a function can only handle one! Use enrich instead!");
+                InfoService.warning("The context store delivered more than one context state, but a function can only handle one! Use enrich instead!",getSymbol());
             }
             return values.get(0);
         }

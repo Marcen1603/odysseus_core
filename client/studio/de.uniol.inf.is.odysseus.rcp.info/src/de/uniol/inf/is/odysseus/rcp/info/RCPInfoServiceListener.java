@@ -9,20 +9,20 @@ import de.uniol.inf.is.odysseus.core.infoservice.InfoType;
 public class RCPInfoServiceListener implements IInfoServiceListener {
 
 	@Override
-	public void newInfo(InfoType infoType, String message, Throwable throwable) {
+	public void newInfo(InfoType infoType, String message, Throwable throwable, String source) {
 		if( Activator.isStarted() ) {
-			IStatus status = createStatus( infoType, message, throwable );
+			IStatus status = createStatus( infoType, message, throwable, source );
 			
 			Activator.getInstance().getLog().log(status);
 		}
 	}
 
-	private static IStatus createStatus(InfoType infoType, String message, Throwable throwable) {
+	private static IStatus createStatus(InfoType infoType, String message, Throwable throwable, String source) {
 		if( throwable == null ) {
-			return new Status(toStatus(infoType), "InfoService", message);
+			return new Status(toStatus(infoType), source, message);
 		} 
 			
-		return new Status(toStatus(infoType), "InfoService", message, throwable);
+		return new Status(toStatus(infoType), source, message, throwable);
 	}
 
 	private static int toStatus(InfoType infoType) {
