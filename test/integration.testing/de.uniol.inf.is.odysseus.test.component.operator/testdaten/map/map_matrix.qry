@@ -1,0 +1,30 @@
+///OdysseusScript
+#PARSER PQL
+#ADDQUERY
+input = ACCESS({
+	source='map_test', 
+	wrapper='GenericPull',
+	transport='file', 
+	protocol='SimpleCSV',
+	dataHandler='Tuple', 
+	options=[
+		['filename', '${BUNDLE-ROOT}\testdaten\map\map0.csv'], 
+		['csv.delimiter', ';'],
+		['csv.trim', 'true']
+		], 
+	schema=[
+		['timestamp', 'STARTTIMESTAMP'], 
+		['value', 'DOUBLE']
+]})
+
+
+output = MAP({EXPRESSIONS = [
+'toString([1.0,2.0,3.0;4.0,5.0,6.0]+[1.0,2.0,3.0;4.0,5.0,6.0])',
+'toString([1.0,2.0,3.0;4.0,5.0,6.0]-[1.0,1.0,1.0;2.0,2.0,2.0])',
+'toString([1.0,2.0,3.0;4.0,5.0,6.0]*[1.0,2.0;3.0,4.0;5.0,6.0])',
+'toString([1.0,2.0,3.0;4.0,5.0,6.0]+2)',
+'toString([1.0,2.0,3.0;4.0,5.0,6.0]-2)',
+'toString([1.0,2.0,3.0;4.0,5.0,6.0]*2)',
+'toString([1.0,2.0,3.0;4.0,5.0,6.0]/2)',
+'toString([1.0,2.0;3.0,4.0]^3)'
+ ]}, input)
