@@ -47,6 +47,83 @@ public class ColorListConfigurer extends AbstractDashboardPartConfigurer<ColorLi
 		createColorSizeControls(topComposite);
 		createLineSpaceControls(topComposite);
 		createShowHeartbeatsControls(topComposite);
+		createWarningAndErrorControls(topComposite);
+		createRGBIndexControls(topComposite);
+	}
+	
+	private void createRGBIndexControls(Composite topComposite) {
+		DashboardPartUtil.createLabel(topComposite, "Red Index");
+		final Text redIndex = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getRedIndex()));
+		redIndex.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		redIndex.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				dashboardPart.setRedIndex(Integer.parseInt(redIndex.getText()));
+				fireListener();
+			}
+		});
+		DashboardPartUtil.createLabel(topComposite, "Green Index");
+		final Text greenIndex = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getGreenIndex()));
+		greenIndex.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		greenIndex.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				dashboardPart.setGreenIndex(Integer.parseInt(greenIndex.getText()));
+				fireListener();
+			}
+		});
+		DashboardPartUtil.createLabel(topComposite, "Blue Index");
+		final Text blueIndex = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getBlueIndex()));
+		blueIndex.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		blueIndex.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				dashboardPart.setBlueIndex(Integer.parseInt(blueIndex.getText()));
+				fireListener();
+			}
+		});
+	}
+
+	private void createWarningAndErrorControls(Composite topComposite) {
+		DashboardPartUtil.createLabel(topComposite, "Show Warnings");
+		final Combo comboWarnings = createBooleanComboDropDown(topComposite, dashboardPart.isShowWarnings());
+		comboWarnings.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				dashboardPart.setShowHeartbeats(comboWarnings.getSelectionIndex() == 0);
+				fireListener();
+			}
+		});
+		DashboardPartUtil.createLabel(topComposite, "Show Errors");
+		final Combo comboErrors = createBooleanComboDropDown(topComposite, dashboardPart.isShowErrors());
+		comboErrors.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				dashboardPart.setShowHeartbeats(comboErrors.getSelectionIndex() == 0);
+				fireListener();
+			}
+		});
+		
+		DashboardPartUtil.createLabel(topComposite, "Warningindex");
+		final Text warningIndex = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getWarningIndex()));
+		warningIndex.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		warningIndex.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				dashboardPart.setWarningIndex(Integer.parseInt(warningIndex.getText()));
+				fireListener();
+			}
+		});
+		DashboardPartUtil.createLabel(topComposite, "Errorindex");
+		final Text errorIndex = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getErrorIndex()));
+		errorIndex.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		errorIndex.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				dashboardPart.setErrorIndex(Integer.parseInt(errorIndex.getText()));
+				fireListener();
+			}
+		});
 	}
 
 	private void createLineSpaceControls(Composite topComposite) {
@@ -126,6 +203,17 @@ public class ColorListConfigurer extends AbstractDashboardPartConfigurer<ColorLi
 	}
 
 	private void createTimestampControls(Composite topComposite) {
+		DashboardPartUtil.createLabel(topComposite, "Timestamp Index");
+		final Text timestampIndexText = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getTimestampIndex()));
+		timestampIndexText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		timestampIndexText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				dashboardPart.setTimestampIndex(Integer.valueOf(timestampIndexText.getText()));
+				fireListener();
+			}
+		});
+		
 		DashboardPartUtil.createLabel(topComposite, "Fixed Timestamps");
 		final Combo comboLocked = createBooleanComboDropDown(topComposite, dashboardPart.isFixedTimestamps());
 		comboLocked.addSelectionListener(new SelectionAdapter() {
