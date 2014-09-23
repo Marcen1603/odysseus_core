@@ -86,7 +86,7 @@ public class ContextVisitor implements IVisitor {
 		try {
 			ContextStoreManager.addStore(name, store);
 		} catch (ContextManagementException e) {
-			e.printStackTrace();
+			throw new QueryParseException(e);
 		}
 		return null;
 	}
