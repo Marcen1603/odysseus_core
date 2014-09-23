@@ -121,24 +121,29 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 							.getAdditionalContent());
 					this.expressions[i].bindVariables(meta, values);
 					Object expr = this.expressions[i].getValue();
-					SDFDatatype retType = expressions[i].getMEPExpression()
-							.getReturnType();
+//					SDFDatatype retType = expressions[i].getMEPExpression()
+//							.getReturnType();
 
-					if (retType == SDFDatatype.TUPLE) {
-						Tuple tuple = ((Tuple) expr);
-						for (Object o : tuple.getAttributes()) {
-							outputVal.setAttribute(outAttrPos++, o);
-						}
-					}else if (retType == SDFDatatype.LIST) {
-						for (Object o : (List) expr) {
-							outputVal.setAttribute(outAttrPos++, o);
-						}
-					} else {
-						outputVal.setAttribute(outAttrPos++, expr);
-						if (expr == null) {
-							nullValueOccured = true;
-						}
+					outputVal.setAttribute(outAttrPos++, expr);
+					if (expr == null) {
+						nullValueOccured = true;
 					}
+					
+//					if (retType == SDFDatatype.TUPLE) {
+//						Tuple tuple = ((Tuple) expr);
+//						for (Object o : tuple.getAttributes()) {
+//							outputVal.setAttribute(outAttrPos++, o);
+//						}
+//					}else if (retType == SDFDatatype.LIST) {
+//						for (Object o : (List) expr) {
+//							outputVal.setAttribute(outAttrPos++, o);
+//						}
+//					} else {
+//						outputVal.setAttribute(outAttrPos++, expr);
+//						if (expr == null) {
+//							nullValueOccured = true;
+//					}
+//					}
 					// MG: 23.09.14: Added test for Tuple as return type, the
 					// former implementation
 					// did not make any sense ...
