@@ -5,6 +5,7 @@ import org.eclipse.core.runtime.Status;
 
 import de.uniol.inf.is.odysseus.core.infoservice.IInfoServiceListener;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoType;
+import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 
 public class RCPInfoServiceListener implements IInfoServiceListener {
 
@@ -12,6 +13,10 @@ public class RCPInfoServiceListener implements IInfoServiceListener {
 	public void newInfo(InfoType infoType, String message, Throwable throwable, String source) {
 		if( Activator.isStarted() ) {
 			IStatus status = createStatus( infoType, message, throwable, source );
+			
+			if (infoType == InfoType.ERROR){
+				new ExceptionWindow(message, throwable);
+			}
 			
 			Activator.getInstance().getLog().log(status);
 		}

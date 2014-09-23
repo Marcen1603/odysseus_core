@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.exception;
 
 import org.eclipse.swt.SWT;
@@ -34,26 +34,38 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 public class ExceptionWindow {
 
 	private Text stackTrace = null;
-	
-	public ExceptionWindow(final Exception ex) {
-		PlatformUI.getWorkbench().getDisplay().asyncExec( new Runnable() {
+
+	public ExceptionWindow(final Throwable ex) {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
-				createWindow(ex);
+				createWindow("", ex);
 			}
-			
+
 		});
 	}
-	
-	protected void createWindow(final Exception ex) {
+
+	public ExceptionWindow(final String message, final Throwable ex) {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				createWindow(message, ex);
+			}
+
+		});
+	}
+
+	protected void createWindow(String msg, final Throwable ex) {
 
 		final Shell shell;
-		if( PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell() != null ) 
-			shell = new Shell(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+		if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell() != null)
+			shell = new Shell(PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow().getShell());
 		else
 			shell = new Shell();
-		
+
 		shell.setText(OdysseusNLS.Exception);
 
 		GridLayout gl = new GridLayout();
@@ -61,26 +73,32 @@ public class ExceptionWindow {
 		shell.setLayout(gl);
 
 		Label label = new Label(shell, SWT.NONE);
-		label.setText(OdysseusNLS.AnErrorHasOccured+": " + ex.getClass().getSimpleName());
+		label.setText(OdysseusNLS.AnErrorHasOccured + ": "
+				+ ex.getClass().getSimpleName());
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 3;
 		label.setLayoutData(data);
 
+		String windowMessage = msg;
+		if (windowMessage == "" || windowMessage == null) {
+			windowMessage = ex.getMessage() != null ? ex.getMessage() : "null";
+		}
 		Label message = new Label(shell, SWT.NONE);
-		message.setText(ex.getMessage() != null ? ex.getMessage() : "null");
-		message.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+		message.setText(windowMessage);
+		message.setForeground(Display.getDefault()
+				.getSystemColor(SWT.COLOR_RED));
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 3;
 		message.setLayoutData(data);
-		
-		final Composite placeHolder = new Composite( shell, SWT.NONE);
-		data = new GridData( GridData.FILL_HORIZONTAL );
+
+		final Composite placeHolder = new Composite(shell, SWT.NONE);
+		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 3;
 		placeHolder.setLayoutData(data);
 		placeHolder.setLayout(new FillLayout());
-		
-		Button closeButton = new Button( shell, SWT.PUSH );
-		data = new GridData( GridData.FILL_HORIZONTAL);
+
+		Button closeButton = new Button(shell, SWT.PUSH);
+		data = new GridData(GridData.FILL_HORIZONTAL);
 		closeButton.setLayoutData(data);
 		closeButton.setText(OdysseusNLS.CloseApplication);
 		closeButton.addSelectionListener(new SelectionAdapter() {
@@ -88,19 +106,19 @@ public class ExceptionWindow {
 			public void widgetSelected(SelectionEvent e) {
 				shell.close();
 				shell.dispose();
-				
+
 				PlatformUI.getWorkbench().close();
 			}
 		});
-		
-		final Button stackTraceButton = new Button( shell, SWT.PUSH );
-		data = new GridData( GridData.FILL_HORIZONTAL);
+
+		final Button stackTraceButton = new Button(shell, SWT.PUSH);
+		data = new GridData(GridData.FILL_HORIZONTAL);
 		stackTraceButton.setLayoutData(data);
 		stackTraceButton.setText(OdysseusNLS.ShowStackTrace);
 		stackTraceButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if( stackTrace != null ) {
+				if (stackTrace != null) {
 					// Stacktrace wird schon angezeigt --> ausblenden
 					hideStackTrace();
 					stackTraceButton.setText(OdysseusNLS.ShowStackTrace);
@@ -112,9 +130,9 @@ public class ExceptionWindow {
 				layoutShell(shell);
 			}
 		});
-		
+
 		Button acceptButton = new Button(shell, SWT.PUSH);
-		acceptButton.setLayoutData( new GridData(GridData.FILL_HORIZONTAL));
+		acceptButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		acceptButton.setText(OdysseusNLS.Continue);
 		acceptButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -123,31 +141,32 @@ public class ExceptionWindow {
 				shell.dispose();
 			}
 		});
-		
+
 		shell.pack();
 		shell.open();
 	}
-	
+
 	protected void layoutShell(Shell shell) {
 		shell.pack();
 		shell.layout();
 	}
-	
-	protected void showStackTrace(Composite comp, Exception ex) {
-		Text stackTrace = new Text(comp, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.READ_ONLY | SWT.BORDER);
+
+	protected void showStackTrace(Composite comp, Throwable ex) {
+		Text stackTrace = new Text(comp, SWT.MULTI | SWT.V_SCROLL
+				| SWT.H_SCROLL | SWT.READ_ONLY | SWT.BORDER);
 		stackTrace.setText(getStackTraceText(ex));
-		
+
 		this.stackTrace = stackTrace;
 	}
-	
+
 	protected void hideStackTrace() {
-		if( stackTrace != null ) {
+		if (stackTrace != null) {
 			stackTrace.dispose();
 			stackTrace = null;
 		}
 	}
-	
-	protected String getStackTraceText(Exception ex) {
+
+	protected String getStackTraceText(Throwable ex) {
 		StackTraceElement[] stack = ex.getStackTrace();
 
 		StringBuilder sb = new StringBuilder();
@@ -161,13 +180,14 @@ public class ExceptionWindow {
 		// cause
 		Throwable cause = ex.getCause();
 		if (cause != null) {
-			printStackTraceAsCause( cause, sb, stack);
+			printStackTraceAsCause(cause, sb, stack);
 		}
 
 		return sb.toString();
 	}
 
-	private void printStackTraceAsCause(Throwable ex, StringBuilder sb, StackTraceElement[] causedTrace) {
+	private void printStackTraceAsCause(Throwable ex, StringBuilder sb,
+			StackTraceElement[] causedTrace) {
 		// assert Thread.holdsLock(s);
 
 		// Compute number of frames in common between this and caused
@@ -179,7 +199,8 @@ public class ExceptionWindow {
 		}
 		int framesInCommon = trace.length - 1 - m;
 
-		sb.append(OdysseusNLS.CausedBy+": " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
+		sb.append(OdysseusNLS.CausedBy + ": " + ex.getClass().getSimpleName()
+				+ " - " + ex.getMessage());
 		sb.append("\n");
 		for (int i = 0; i <= m; i++)
 			sb.append("\tat " + trace[i]).append("\n");
