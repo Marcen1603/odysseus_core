@@ -166,8 +166,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	}
 	
 	@Override
-	protected synchronized void process_next(T object, int port) {
-		// TODO: DO NOT SYNCHRONIZE ON THIS!
+	protected void process_next(T object, int port) {
 		
 		if(!this.precheck(object))
 			return;
