@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.management.RuntimeErrorException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,45 +92,57 @@ public class DataHandlerRegistry {
 		}
 		return ret;
 	}
-	
+
 	public static ImmutableList<String> getHandlerNames() {
 		return ImmutableList.copyOf(dataHandlers.keySet());
 	}
-	
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Class<? extends IStreamObject> getCreatedType(String dhandlerText) {
+	public static Class<? extends IStreamObject> getCreatedType(
+			String dhandlerText) {
 		Class<? extends IStreamObject> type = null;
-		if (dhandlerText != null){
+		if (dhandlerText != null) {
 			IDataHandler<?> dh = dataHandlers.get(dhandlerText.toLowerCase());
 			if (dh == null) {
-			    throw new IllegalArgumentException("No such data handler: " + dhandlerText);
+				throw new IllegalArgumentException("No such data handler: "
+						+ dhandlerText);
 			}
 			try {
-					type =  (Class<? extends IStreamObject>) dh.createsType();
+				type = (Class<? extends IStreamObject>) dh.createsType();
 			} catch (ClassCastException e) {
-				throw new IllegalArgumentException(dhandlerText+" cannot be used as data handler!");
+				throw new IllegalArgumentException(dhandlerText
+						+ " cannot be used as data handler!");
 			}
-		}		
+		}
 		return type;
 	}
-	
-	public static List<String> getStreamableDataHandlerNames(){
+
+	public static List<String> getStreamableDataHandlerNames() {
 		List<String> list = new ArrayList<>();
-		for(String name : getHandlerNames()){
-			IDataHandler<?> dh = dataHandlers.get(name.toLowerCase());
-			if(IStreamObject.class.isAssignableFrom(dh.createsType())){
-				list.add(name);
+		for (String name : getHandlerNames()) {
+			IDataHandler<?> dh=null;
+			try {
+				dh = dataHandlers.get(name.toLowerCase());
+				if (IStreamObject.class.isAssignableFrom(dh.createsType())) {
+					list.add(name);
+				}
+			} catch (Exception e) {
+				if (dh != null){
+					throw new RuntimeException("Could not init dataHandler "+dh,e);
+				}else{
+					throw e;
+				}
 			}
 		}
 		return list;
 	}
-	
+
 	/**
-	 * This method should only be used, if the data handler are used in a non OSGi enviroment!
-	 * In other cases there should be declarative services that register new data handler!!
+	 * This method should only be used, if the data handler are used in a non
+	 * OSGi enviroment! In other cases there should be declarative services that
+	 * register new data handler!!
 	 */
-	public static void initDefaultHandler(){
+	public static void initDefaultHandler() {
 		registerDataHandler(new BooleanHandler());
 		registerDataHandler(new ByteDataHandler());
 		registerDataHandler(new CharDataHandler());
