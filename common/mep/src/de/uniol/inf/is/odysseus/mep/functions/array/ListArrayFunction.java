@@ -10,7 +10,7 @@ public class ListArrayFunction extends AbstractFunction<Object> implements IHasA
 
 	private static final long serialVersionUID = -3282877303737235603L;
 
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { new SDFDatatype[]{SDFDatatype.LIST},new SDFDatatype[]{SDFDatatype.INTEGER }};
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { new SDFDatatype[]{SDFDatatype.LIST}, SDFDatatype.NUMBERS};
 
 	public ListArrayFunction() {
 		super("[]", 2, accTypes, SDFDatatype.OBJECT, false);
@@ -26,7 +26,8 @@ public class ListArrayFunction extends AbstractFunction<Object> implements IHasA
 
 	@Override
 	public String getAliasName() {
-		return "listElementAt";
+		return "elementAt";
+		//return "listElementAt";
 	}
 	
 }
