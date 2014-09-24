@@ -1,0 +1,4 @@
+#PARSER CQL
+#RUNQUERY
+DROP CONTEXT STORE kohonen§wkaid§ IF EXISTS
+CREATE CONTEXT STORE kohonen§wkaid§ (corrected_score DOUBLE) AS single

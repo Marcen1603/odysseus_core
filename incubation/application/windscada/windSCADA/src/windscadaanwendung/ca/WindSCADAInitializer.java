@@ -55,6 +55,7 @@ public class WindSCADAInitializer {
 	private static final String[] GUIQueriesFileNames = {
 			"corrected_score.qry", "phase_shift.qry", "pitch_angle.qry",
 			"rotational_speed.qry", "wind_speed.qry" , "corrected_score_wind_speed.qry"};
+	private static final String[] KohonenQueriesFileNames = {"createKohonenStore.qry","kohonenStore.qry"};
 
 	/**
 	 * Creates new Job that executes initialization of WindSCADA
@@ -168,6 +169,8 @@ public class WindSCADAInitializer {
 				initDA(farm.getID(), wka.getID(), wka.getHost(), wka.getPort());
 				initHD(farm.getID(), wka.getID());
 				initAE(farm.getID(), wka.getID());
+				initKohonen(farm.getID(), wka.getID());
+				initPrediction(farm.getID(), wka.getID());
 				initGUI(farm.getID(), wka.getID());
 				subprogress.worked(1);
 			}
@@ -320,11 +323,12 @@ public class WindSCADAInitializer {
 		String fileContent = loadFileContent("querypatterns/DA/bindSource.qry");
 		String query = adjustQuery(fileContent, farmId, wkaId);
 		query = replaceConnectionInfo(query, host, port);
+		storeFileInWorkspace("DA", wkaId + "bindSource", query);
 		executeQuery(query);
 		for (String fileName : DAFileNames) {
 			fileContent = loadFileContent("querypatterns/DA/" + fileName);
 			query = adjustQuery(fileContent, farmId, wkaId);
-			query = replaceConnectionInfo(query, host, port);
+			storeFileInWorkspace("DA", wkaId + fileName, query);
 			executeQuery(query);
 		}
 	}
@@ -357,6 +361,23 @@ public class WindSCADAInitializer {
 	private static void initAE(int farmId, int wkaId) {
 		// TODO
 	}
+	
+	private static void initPrediction(int windfarmid, int wkaid) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void initKohonen(int farmId, int wkaId) {
+		for (String fileName : KohonenQueriesFileNames) {
+			String fileContent = loadFileContent("querypatterns/kohonen/"
+					+ fileName);
+			String query = adjustQuery(fileContent, farmId, wkaId);
+			storeFileInWorkspace("kohonen", wkaId + fileName, query);
+			executeQuery(query);
+		}
+		
+	}
+
 
 	/**
 	 * Loads and runs querys for one wind turbine needed by WindSCADA GUI
