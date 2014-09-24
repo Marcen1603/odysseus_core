@@ -25,6 +25,11 @@ public class InfoService {
 	public static void warning(String message, String source){
 		fire(InfoType.WARNING, message, null, source);
 	}
+
+	public static void warning(String message, Throwable t, String source){
+		fire(InfoType.WARNING, message, t, source);
+	}
+
 	
 	public static void error(String message, Throwable t, String source){
 		fire(InfoType.ERROR, message,t, source);
