@@ -406,33 +406,20 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 
 	private void init() {
 		final OptionMap options = this.getOptionsMap();
-		if (options.containsKey(NonBlockingTcpClientHandler.HOST)) {
-			this.setHost(options.get(NonBlockingTcpClientHandler.HOST));
-		} else {
-			this.setHost("127.0.0.1");
-		}
-		if (options.containsKey(NonBlockingTcpClientHandler.PORT)) {
-			this.setPort(Integer.parseInt(options
-					.get(NonBlockingTcpClientHandler.PORT)));
-		} else {
-			this.setPort(8080);
-		}
-		if (options.containsKey(NonBlockingTcpClientHandler.READ_BUFFER)) {
-			this.setReadBufferSize(Integer.parseInt(options
-					.get(NonBlockingTcpClientHandler.READ_BUFFER)));
-		} else {
-			this.setReadBufferSize(10240);
-		}
-		if (options.containsKey(NonBlockingTcpClientHandler.WRITE_BUFFER)) {
-			this.setWriteBufferSize(Integer.parseInt(options
-					.get(NonBlockingTcpClientHandler.WRITE_BUFFER)));
-		} else {
-			this.setWriteBufferSize(10240);
-		}
+		setHost(options.get(HOST, "127.0.0.1"));
+		setPort(options.getInt(PORT, 8080));
+		setReadBufferSize(options.getInt(READ_BUFFER,10240));
+		setWriteBufferSize(options.getInt(WRITE_BUFFER,10240));
+		
+
 		if (options.containsKey(NonBlockingTcpClientHandler.INITIALIZE_ALIAS)) {
 			this.setInitializeCommand(options
 					.get(NonBlockingTcpClientHandler.INITIALIZE_ALIAS));
 			NonBlockingTcpClientHandler.LOG.warn("Parameter "
+					+ NonBlockingTcpClientHandler.INITIALIZE_ALIAS
+					+ " is deprecated. Please use "
+					+ NonBlockingTcpClientHandler.INITIALIZE);
+			infoService.warning("Parameter "
 					+ NonBlockingTcpClientHandler.INITIALIZE_ALIAS
 					+ " is deprecated. Please use "
 					+ NonBlockingTcpClientHandler.INITIALIZE);
