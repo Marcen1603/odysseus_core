@@ -10,6 +10,8 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableCollection;
+
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -35,7 +37,6 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
  * @author Tobias Brandt & Michael Brand
  *
  */
-@SuppressWarnings("unused")
 public class RecoveryCommunicator implements IRecoveryCommunicator,
 		IPeerCommunicatorListener {
 
@@ -199,10 +200,20 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	public static RecoveryCommunicator getInstance() {
 		return instance;
 	}
+	
+	public static IP2PDictionary getP2pDictionary() {
+		return p2pDictionary;
+	}
+	
+	public static void setP2pDictionary(IP2PDictionary p2pDictionary) {
+		RecoveryCommunicator.p2pDictionary = p2pDictionary;
+	}
+	
 
 	// -----------------------------------------------------
 	// Code with recovery logic
 	// -----------------------------------------------------
+
 
 	@Override
 	public void recover(PeerID failedPeer) {
@@ -210,7 +221,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 	}
 
-	public void sendHoldOnMessages(List<PeerID> peers, List<Integer> queryIds) {
+	public void sendHoldOnMessages(List<PeerID> peers, List<ID> queryIds) {
 		try {
 			for (int i = 0; i < peers.size(); i++) {
 				RecoveryInstructionMessage holdOnMessage = RecoveryInstructionMessage
@@ -222,23 +233,32 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		}
 	}
 
-	private void installQueriesOnNewPeer(PeerID newPeer) {
-		// TODO Get backup-information about the query
-		RecoveryInstructionMessage addQueryMessage = RecoveryInstructionMessage
-				.createAddQueryMessage("", 0);
+	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
+			ID sharedQueryId) {
+		ImmutableCollection<String> pqlStatements = LocalBackupInformationAccess
+				.getStoredPQLStatements(sharedQueryId, failedPeer);
+
+		for (String pql : pqlStatements) {
+			RecoveryInstructionMessage addQueryMessage = RecoveryInstructionMessage
+					.createAddQueryMessage(pql, sharedQueryId);
+			try {
+				peerCommunicator.send(newPeer, addQueryMessage);
+			} catch (PeerCommunicationException e) {
+
+			}
+		}
+
+	}
+
+	public void sendNewReceiverMessage(PeerID senderPeer,
+			PeerID newReceiverPeer, ID sharedQueryID) {
+		RecoveryInstructionMessage message = RecoveryInstructionMessage
+				.createNewReceiverMessage(newReceiverPeer, sharedQueryID);
 		try {
-			peerCommunicator.send(newPeer, addQueryMessage);
-		} catch (PeerCommunicationException e) {
+			peerCommunicator.send(senderPeer, message);
+		} catch (Exception e) {
 
 		}
-	}
-
-	private void setNewReceiver() {
-
-	}
-
-	private void setNewSender() {
-
 	}
 
 	@Override

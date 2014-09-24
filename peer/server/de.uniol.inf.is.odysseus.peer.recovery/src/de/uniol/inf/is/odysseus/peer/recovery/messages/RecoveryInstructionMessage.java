@@ -1,7 +1,10 @@
 package de.uniol.inf.is.odysseus.peer.recovery.messages;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
@@ -28,7 +31,7 @@ public class RecoveryInstructionMessage implements IMessage {
 	private int messageType;
 	private PeerID newSender;
 	private PeerID newReceiver;
-	private int sharedQueryId;
+	private ID sharedQueryId;
 
 	/**
 	 * This message tells, that the receiver of this message should hold on.
@@ -40,7 +43,7 @@ public class RecoveryInstructionMessage implements IMessage {
 	 * @return A message which tells this.
 	 */
 	public static RecoveryInstructionMessage createHoldOnMessage(
-			int sharedQueryId) {
+			ID sharedQueryId) {
 		RecoveryInstructionMessage holdOnMessage = new RecoveryInstructionMessage();
 		holdOnMessage.setMessageType(HOLD_ON);
 		holdOnMessage.setSharedQueryId(sharedQueryId);
@@ -59,7 +62,7 @@ public class RecoveryInstructionMessage implements IMessage {
 	 * @return A message which tells the receiving peer to install this query.
 	 */
 	public static RecoveryInstructionMessage createAddQueryMessage(
-			String pqlQuery, int sharedQueryId) {
+			String pqlQuery, ID sharedQueryId) {
 		RecoveryInstructionMessage addQueryMessage = new RecoveryInstructionMessage();
 		addQueryMessage.setMessageType(ADD_QUERY);
 		addQueryMessage.setPqlQuery(pqlQuery);
@@ -68,7 +71,7 @@ public class RecoveryInstructionMessage implements IMessage {
 	}
 
 	public static RecoveryInstructionMessage createNewSenderMessage(
-			PeerID newSender, int sharedQueryId) {
+			PeerID newSender, ID sharedQueryId) {
 		RecoveryInstructionMessage newSenderMessage = new RecoveryInstructionMessage();
 		newSenderMessage.setMessageType(NEW_SENDER);
 		newSenderMessage.setNewSender(newSender);
@@ -89,7 +92,7 @@ public class RecoveryInstructionMessage implements IMessage {
 	 * @return A message which tells to send the tuples to the new peer
 	 */
 	public static RecoveryInstructionMessage createNewReceiverMessage(
-			PeerID newReceiver, int sharedQueryId) {
+			PeerID newReceiver, ID sharedQueryId) {
 		RecoveryInstructionMessage newReceiverMessage = new RecoveryInstructionMessage();
 		newReceiverMessage.setMessageType(NEW_RECEIVER);
 		newReceiverMessage.setNewReceiver(newReceiver);
@@ -110,17 +113,23 @@ public class RecoveryInstructionMessage implements IMessage {
 
 		switch (messageType) {
 		case HOLD_ON:
-			bbsize = 4 + 4;
+			bbsize = 4 + 4 + sharedQueryId.toString().getBytes().length;
 			bb = ByteBuffer.allocate(bbsize);
+			// 1. MessageType
 			bb.putInt(messageType);
-			bb.putInt(sharedQueryId);
+			// 2. Length of the sharedQueryId
+			bb.putInt(sharedQueryId.toString().getBytes().length);
+			// 3. SharedQueryId
+			bb.put(sharedQueryId.toString().getBytes());
 			break;
 		case ADD_QUERY:
 			byte[] pqlAsBytes = pqlQuery.getBytes();
-			bbsize = 4 + 4 + 4 + pqlAsBytes.length;
+			bbsize = 4 + 4 + sharedQueryId.toString().getBytes().length + 4
+					+ pqlAsBytes.length;
 			bb = ByteBuffer.allocate(bbsize);
 			bb.putInt(messageType);
-			bb.putInt(sharedQueryId);
+			bb.putInt(sharedQueryId.toString().getBytes().length);
+			bb.put(sharedQueryId.toString().getBytes());
 			bb.putInt(pqlAsBytes.length);
 			bb.put(pqlAsBytes);
 			break;
@@ -142,7 +151,17 @@ public class RecoveryInstructionMessage implements IMessage {
 		// TODO Not finished yet
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		messageType = bb.getInt();
-		sharedQueryId = bb.getInt();
+		int sharedQueryIdLength = bb.getInt();
+		byte[] sharedQueryIdByte = new byte[sharedQueryIdLength];
+		bb.get(sharedQueryIdByte, 0, sharedQueryIdLength);
+		String sharedQueryIdString = new String(sharedQueryIdByte);
+		try {
+			URI uri = new URI(sharedQueryIdString);
+			sharedQueryId = ID.create(uri);
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		switch (messageType) {
 		case ADD_QUERY:
@@ -186,11 +205,11 @@ public class RecoveryInstructionMessage implements IMessage {
 		this.newReceiver = newReceiver;
 	}
 
-	public int getSharedQueryId() {
+	public ID getSharedQueryId() {
 		return sharedQueryId;
 	}
 
-	public void setSharedQueryId(int sharedQueryId) {
+	public void setSharedQueryId(ID sharedQueryId) {
 		this.sharedQueryId = sharedQueryId;
 	}
 

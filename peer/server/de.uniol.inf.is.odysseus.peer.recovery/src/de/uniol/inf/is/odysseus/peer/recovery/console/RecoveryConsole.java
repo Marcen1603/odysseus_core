@@ -1,9 +1,11 @@
 package de.uniol.inf.is.odysseus.peer.recovery.console;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -11,15 +13,17 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableCollection;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
+import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
+import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
  * 
@@ -100,56 +104,104 @@ public class RecoveryConsole implements CommandProvider {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("---Recovery commands---\n");
+		sb.append("lsBackupStore - Lists the stored sharedQueryIds with a list of peers which have parts of this sharedQuery. sharedQueryId: peer1, peer2, peer3\n");
 		sb.append("sendHoldOn <PeerName from receiver> <sharedQueryId> - Send a hold-on message to <PeerName from receiver>, so that this should stop sending the tuples from query <sharedQueryId> further.\n");
+		sb.append("sendNewReceiver <PeerName from receiver> <sharedQueryId> - Send a newReceiver-message to <PeerName from receiver>, so that this should send the tuples from query <sharedQueryId> to a new receiver.\n");
 		return sb.toString();
 	}
 
-	@SuppressWarnings("unused")
 	public void _sendHoldOn(CommandInterpreter ci) {
-		Preconditions.checkNotNull(ci, "Command interpreter must be not null!");
+		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
 
-		String peerNameString = ci.nextArgument();
-		String sharedQueryIdString = ci.nextArgument();
+		PeerID peerId = getPeerIdFromCi(ci);
+		ID sharedQueryId = getSharedQueryIdFromCi(ci);
 
-		PeerID peerId = null;
-		int sharedQueryId = 0;
-
-		if (!Strings.isNullOrEmpty(peerNameString)) {
-
-			URI peerUri;
-			peerId = determinePeerID(peerNameString).isPresent() ? determinePeerID(
-					peerNameString).get()
-					: null;
-					System.out.println(peerId);
-		}
-
-		if (!Strings.isNullOrEmpty(sharedQueryIdString)) {
-			sharedQueryId = Integer.parseInt(sharedQueryIdString);
-		}
-		
 		List<PeerID> peers = new ArrayList<PeerID>();
 		peers.add(peerId);
-		
-		List<Integer> queryIds = new ArrayList<Integer>();
+
+		List<ID> queryIds = new ArrayList<ID>();
 		queryIds.add(sharedQueryId);
 		RecoveryCommunicator.getInstance().sendHoldOnMessages(peers, queryIds);
+	}
 
+	public void _sendNewReceiver(CommandInterpreter ci) {
+		// Preconditions.checkNotNull(ci,
+		// "Command interpreter must not be null!");
+		// PeerID peerId = getPeerIdFromCi(ci);
+		// ID sharedQueryId = getSharedQueryIdFromCi(ci);
+		//
+		//
+	}
+
+	public void _lsBackupStore(CommandInterpreter ci) {
+		StringBuilder sb = new StringBuilder();
+
+		ImmutableCollection<ID> storedIds = LocalBackupInformationAccess
+				.getStoredIDs();
+
+		if (storedIds.isEmpty()) {
+			System.out.println("No shared query ids stored.");
+			return;
+		}
+
+		for (ID id : storedIds) {
+			sb.append(id.toString() + " : ");
+			ImmutableCollection<PeerID> peersForThisQueryId = LocalBackupInformationAccess
+					.getStoredPeersForSharedQueryId(id);
+			boolean isFirst = true;
+			for (PeerID peer : peersForThisQueryId) {
+				if(!isFirst)
+					sb.append(", ");
+				isFirst = false;
+				String peerName = RecoveryHelper.determinePeerName(peer);
+				sb.append(peerName);
+			}
+
+			sb.append("\n");
+		}
+
+		System.out.println(sb.toString());
 	}
 
 	/**
-	 * If you need the PeerId for a given PeerName Copied from PeerConsole.
+	 * If your next argument should be the PeerID, you can get it with this
+	 * method
 	 * 
-	 * @param peerName
-	 *            Name of the peer you want to have the ID from
-	 * @return PeerID
+	 * @param ci
+	 * @return PeerID which is made from the next argument from the ci
 	 */
-	private static Optional<PeerID> determinePeerID(String peerName) {
-		for (PeerID pid : p2pDictionary.getRemotePeerIDs()) {
-			if (p2pDictionary.getRemotePeerName(pid).equals(peerName)) {
-				return Optional.of(pid);
+	private PeerID getPeerIdFromCi(CommandInterpreter ci) {
+		String peerNameString = ci.nextArgument();
+		PeerID peerId = null;
+		if (!Strings.isNullOrEmpty(peerNameString)) {
+			peerId = RecoveryHelper.determinePeerID(peerNameString).isPresent() ? RecoveryHelper
+					.determinePeerID(peerNameString).get() : null;
+		}
+
+		return peerId;
+	}
+
+	/**
+	 * If your next argument should be the sharedQueryID, you can get it with
+	 * this method
+	 * 
+	 * @param ci
+	 * @return SharedQueryId which is made from the next argument from the ci
+	 */
+	private ID getSharedQueryIdFromCi(CommandInterpreter ci) {
+		String sharedQueryIdString = ci.nextArgument();
+		ID sharedQueryId = null;
+		if (!Strings.isNullOrEmpty(sharedQueryIdString)) {
+			URI sharedIdUri;
+			try {
+				sharedIdUri = new URI(sharedQueryIdString);
+				sharedQueryId = ID.create(sharedIdUri);
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-		return Optional.absent();
+		return sharedQueryId;
 	}
 
 }

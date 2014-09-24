@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableCollection;
 
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
 
@@ -105,6 +106,40 @@ public class LocalBackupInformationAccess {
 
 		}
 
+	}
+
+	public static ImmutableCollection<String> getStoredPQLStatements(
+			ID sharedQueryId, PeerID peerId) {
+		if (!cInfoStore.isPresent()) {
+
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+
+		}
+
+		return cInfoStore.get().getStoredPQLStatements(sharedQueryId, peerId);
+
+	}
+
+	public static ImmutableCollection<ID> getStoredIDs() {
+		if (!cInfoStore.isPresent()) {
+
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+
+		}
+		return cInfoStore.get().getStoredSharedQueries();
+	}
+
+	public static ImmutableCollection<PeerID> getStoredPeersForSharedQueryId(
+			ID sharedQueryId) {
+		if (!cInfoStore.isPresent()) {
+
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+
+		}
+		return cInfoStore.get().getStoredPeers(sharedQueryId);
 	}
 
 }
