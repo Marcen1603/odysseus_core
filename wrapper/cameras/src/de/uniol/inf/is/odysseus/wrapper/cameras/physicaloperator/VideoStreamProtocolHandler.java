@@ -53,22 +53,25 @@ class VideoStream
 	
 	public void close()
 	{
-		try 
+		if (recorder != null)
 		{
-			recorder.stop();
-		} 
-		catch (FrameRecorder.Exception e) 
-		{
-			e.printStackTrace();
-		}
-	
-		try
-		{
-			recorder.release();		
-		} 
-		catch (FrameRecorder.Exception e) 
-		{
-			e.printStackTrace();
+			try 
+			{
+				recorder.stop();
+			} 
+			catch (FrameRecorder.Exception e) 
+			{
+				e.printStackTrace();
+			}
+		
+			try
+			{
+				recorder.release();		
+			} 
+			catch (FrameRecorder.Exception e) 
+			{
+				e.printStackTrace();
+			}
 		}
 		
 		recorder = null;		
@@ -255,8 +258,6 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 	
 	@Override public void open() throws UnknownHostException, IOException 
 	{
-		super.open();
-		
 		acceptor.open();
 	}
 	
@@ -266,8 +267,6 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 		acceptor.close();
 		
 		connectedStreams.clear();
-		
-		super.close();			
 	}	
 	
 	@Override
