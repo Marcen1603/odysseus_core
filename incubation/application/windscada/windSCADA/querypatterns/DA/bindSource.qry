@@ -9,7 +9,7 @@ P§windfarmid§:§wkaid§ := ACCESS({Source='P§windfarmid§:§wkaid§', Wrapper='Generi
                 ['rotational_speed','DOUBLE'],
                 ['phase_shift','DOUBLE'],
                 ['pitch_angle','DOUBLE'],
-                ['gear_angle','DOUBLE']],
+                ['gier_angle','DOUBLE']],
                 transport='NonBlockingTcp',
                 protocol='SizeByteBuffer',
                 dataHandler='Tuple',

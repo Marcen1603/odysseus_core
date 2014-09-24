@@ -48,14 +48,21 @@ public class WindSCADAInitializer {
 
 	private final static String[] DAFileNames = { "corrected_score.qry",
 			"phase_shift.qry", "pitch_angle.qry", "rotational_speed.qry",
-			"wind_speed.qry", "corrected_score_wind_speed.qry" };
+			"wind_speed.qry", "corrected_score_wind_speed.qry",
+			"gier_angle.qry", "wind_direction.qry" };
 	private final static String[] GUIDashboardPartFileNames = {
 			"corrected_score_tf.prt", "corrected_score.prt", "phase_shift.prt",
-			"pitch_angle.prt", "rotational_speed.prt", "wind_speed.prt", "corrected_score_wind_speed.prt" };
+			"pitch_angle.prt", "rotational_speed.prt", "wind_speed.prt",
+			"corrected_score_wind_speed.prt", "wind_direction.prt",
+			"gier_angle.prt" };
 	private static final String[] GUIQueriesFileNames = {
 			"corrected_score.qry", "phase_shift.qry", "pitch_angle.qry",
-			"rotational_speed.qry", "wind_speed.qry" , "corrected_score_wind_speed.qry"};
-	private static final String[] KohonenQueriesFileNames = {"createKohonenStore.qry","kohonenStore.qry"};
+			"rotational_speed.qry", "wind_speed.qry",
+			"corrected_score_wind_speed.qry", "wind_direction.qry",
+			"gier_angle.qry" };
+	private static final String[] KohonenQueriesFileNames = {
+			"createKohonenStore.qry", "kohonenStore.qry" };
+	private static final String[] AEQueriesFileNames = { "collectAlarms.qry" };
 
 	/**
 	 * Creates new Job that executes initialization of WindSCADA
@@ -175,6 +182,9 @@ public class WindSCADAInitializer {
 				subprogress.worked(1);
 			}
 		}
+		String query = unionStreams("AE");
+		storeFileInWorkspace("AE", "collectAllStreams.qry", query);
+		executeQuery(query);
 	}
 
 	/**
@@ -268,6 +278,21 @@ public class WindSCADAInitializer {
 				Context.empty());
 	}
 
+	private static String unionStreams(String suffix) {
+		String query = "#PARSER PQL\n#RUNQUERY\n";
+		String unionString = suffix + " ::= UNION(";
+		for (WindFarm farm : FarmList.getFarmList()) {
+			for (WKA wka : farm.getWkas()) {
+				query += "Stream" + wka.getID() + " = Stream({SOURCE='System.P"
+						+ farm.getID() + ":" + wka.getID() + ":" + suffix
+						+ "'})\n";
+				unionString += "0:Stream" + wka.getID() + ",";
+			}
+		}
+		query += unionString.substring(0, unionString.length() - 1) + ")";
+		return query;
+	}
+
 	/**
 	 * Stores Text in file in specified project with specified file name.
 	 * Creates Project if not already existent. Overwrites file if already
@@ -297,7 +322,7 @@ public class WindSCADAInitializer {
 		try {
 			InputStream in = new ByteArrayInputStream(content.getBytes());
 			// Creates or overwrites the file in workspace
-			if(file.exists()) {
+			if (file.exists()) {
 				file.delete(true, null);
 			}
 			file.create(in, true, null);
@@ -359,12 +384,17 @@ public class WindSCADAInitializer {
 	 *            wind turbine id
 	 */
 	private static void initAE(int farmId, int wkaId) {
-		// TODO
+		for (String fileName : AEQueriesFileNames) {
+			String fileContent = loadFileContent("querypatterns/AE/" + fileName);
+			String query = adjustQuery(fileContent, farmId, wkaId);
+			storeFileInWorkspace("AE", wkaId + fileName, query);
+			executeQuery(query);
+		}
 	}
-	
+
 	private static void initPrediction(int windfarmid, int wkaid) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private static void initKohonen(int farmId, int wkaId) {
@@ -375,9 +405,8 @@ public class WindSCADAInitializer {
 			storeFileInWorkspace("kohonen", wkaId + fileName, query);
 			executeQuery(query);
 		}
-		
-	}
 
+	}
 
 	/**
 	 * Loads and runs querys for one wind turbine needed by WindSCADA GUI

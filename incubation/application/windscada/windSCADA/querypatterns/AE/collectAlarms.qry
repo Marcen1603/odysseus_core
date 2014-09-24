@@ -1,0 +1,18 @@
+#PARSER PQL
+#RUNQUERY
+Stream1 = Stream({SOURCE='System.P§windfarmid§:§wkaid§:phase_shift'})
+Stream2 = Stream({SOURCE='System.P§windfarmid§:§wkaid§:rotational_speed'})
+Stream3 = Stream({SOURCE='System.P§windfarmid§:§wkaid§:corrected_score'})
+Stream4 = Stream({SOURCE='System.P§windfarmid§:§wkaid§:pitch_angle'})
+CHANGEDETECT5 = CHANGEDETECT({ATTR=['P§windfarmid§:§wkaid§:phase_shift.warning', 'P§windfarmid§:§wkaid§:phase_shift.error'], DELIVERFIRSTELEMENT='true', HEARTBEATRATE=1}, 0:Stream1)
+CHANGEDETECT6 = CHANGEDETECT({ATTR=['P§windfarmid§:§wkaid§:rotational_speed.warning', 'P§windfarmid§:§wkaid§:rotational_speed.error'], DELIVERFIRSTELEMENT='true', HEARTBEATRATE=1}, 0:Stream2)
+CHANGEDETECT7 = CHANGEDETECT({ATTR=['P§windfarmid§:§wkaid§:corrected_score.warning', 'P§windfarmid§:§wkaid§:corrected_score.error'], DELIVERFIRSTELEMENT='true', HEARTBEATRATE=1}, 0:Stream3)
+CHANGEDETECT8 = CHANGEDETECT({ATTR=['P§windfarmid§:§wkaid§:pitch_angle.warning', 'P§windfarmid§:§wkaid§:pitch_angle.error'], DELIVERFIRSTELEMENT='true', HEARTBEATRATE=1}, 0:Stream4)
+MAP9 = MAP({EXPRESSIONS=[['"phase_shift"', 'type'], ['P§windfarmid§:§wkaid§:phase_shift.phase_shift', 'value'], ['P§windfarmid§:§wkaid§:phase_shift.warning', 'warning'], ['P§windfarmid§:§wkaid§:phase_shift.error', 'error']]}, 0:CHANGEDETECT5)
+MAP10 = MAP({EXPRESSIONS=[['"rotational_speed"', 'type'], ['P§windfarmid§:§wkaid§:rotational_speed.rotational_speed', 'value'], ['P§windfarmid§:§wkaid§:rotational_speed.warning', 'warning'], ['P§windfarmid§:§wkaid§:rotational_speed.error', 'error']]}, 0:CHANGEDETECT6)
+MAP11 = MAP({EXPRESSIONS=[['"corrected_score"', 'type'], ['P§windfarmid§:§wkaid§:corrected_score.corrected_score', 'value'], ['P§windfarmid§:§wkaid§:corrected_score.warning', 'warning'], ['P§windfarmid§:§wkaid§:corrected_score.error', 'error']]}, 0:CHANGEDETECT7)
+MAP12 = MAP({EXPRESSIONS=[['"pitch_angle"', 'type'], ['P§windfarmid§:§wkaid§:pitch_angle.pitch_angle', 'value'], ['P§windfarmid§:§wkaid§:pitch_angle.warning', 'warning'], ['P§windfarmid§:§wkaid§:pitch_angle.error', 'error']]}, 0:CHANGEDETECT8)
+UNION13 = UNION(0:MAP9, 0:MAP10, 0:MAP11, 0:MAP12)
+RENAME14 = RENAME({ALIASES=['type', 'value', 'warning', 'error']}, 0:UNION13)
+MAP15 = MAP({EXPRESSIONS=[['§wkaid§', 'wka_id'], ['0', 'farm_id'], ['type', ''], ['value', ''], ['warning', ''], ['error', '']]}, 0:RENAME14)
+P§windfarmid§:§wkaid§:AE ::= TIMESTAMPTOPAYLOAD(0:MAP15)

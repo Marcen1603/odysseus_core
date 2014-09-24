@@ -113,15 +113,15 @@ public class WindTurbineDataProvider extends AbstractDataGenerator {
 		}
 		time = new TimeGenerator(new NoError());
 		time.init();
-		direction = new AlternatingGenerator(new NoError(), 0, 1, 0, 359);
+		direction = new AlternatingGenerator(new NoError(), 0, 0.2, 0, 359);
 		direction.init();
 		phase = new AlternatingGenerator(new NoError(),0,10,-90,90);
 		phase.init();
-		rotationalSpeed = new AlternatingGenerator(new NoError(),0,0.03,0,0.3);
+		rotationalSpeed = new AlternatingGenerator(new NoError(),0,0.005,0,0.3);
 		rotationalSpeed.init();
 		pitch = new AlternatingGenerator(new NoError(),0,1,0,90);
 		pitch.init();
-		gear = new AlternatingGenerator(new NoError(),0,1,0,359);
+		gear = new AlternatingGenerator(new NoError(),2,0.2,0,359);
 		gear.init();
 	}
 

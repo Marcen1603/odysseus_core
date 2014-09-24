@@ -101,6 +101,20 @@
             name="Warnings und Errors"
             restorable="true">
       </view>
+      <view
+            category="windscadaanwendung.category"
+            class="windscadaanwendung.views.dashboard.WindDirectionPart"
+            id="windscadaanwendung.views.dashboard.WindDirectionPart"
+            name="Windrichtung"
+            restorable="true">
+      </view>
+      <view
+            category="windscadaanwendung.category"
+            class="windscadaanwendung.views.dashboard.GierAnglePart"
+            id="windscadaanwendung.views.dashboard.GierAnglePart"
+            name="Gierwinkel"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
