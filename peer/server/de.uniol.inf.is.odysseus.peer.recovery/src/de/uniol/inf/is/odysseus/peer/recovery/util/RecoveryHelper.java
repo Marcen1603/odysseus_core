@@ -50,6 +50,11 @@ public class RecoveryHelper {
 		return Optional.absent();
 	}
 	
+	/**
+	 * If you have the peerId and want to have the name of the peer
+	 * @param peerId Peer you want to have the name from
+	 * @return Name of the peer
+	 */
 	public static String determinePeerName(PeerID peerId) {
 		return RecoveryCommunicator.getP2pDictionary().getRemotePeerName(peerId);
 	}

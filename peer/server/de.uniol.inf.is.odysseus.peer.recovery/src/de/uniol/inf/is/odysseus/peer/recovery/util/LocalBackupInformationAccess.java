@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.recovery.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import net.jxta.id.ID;
@@ -108,6 +110,15 @@ public class LocalBackupInformationAccess {
 
 	}
 
+	/**
+	 * Returns the stored PQL-Statements for a given PeerID and sharedQueryID.
+	 * 
+	 * @param sharedQueryId
+	 *            shared queryId of the PQL you want to have
+	 * @param peerId
+	 *            PeerID of the peer where the PQL is installed
+	 * @return
+	 */
 	public static ImmutableCollection<String> getStoredPQLStatements(
 			ID sharedQueryId, PeerID peerId) {
 		if (!cInfoStore.isPresent()) {
@@ -121,6 +132,11 @@ public class LocalBackupInformationAccess {
 
 	}
 
+	/**
+	 * 
+	 * @return All stored sharedQueryIDs in the backup-store of this peer
+	 *         (hence, the ids can (and probably will) be from many peers
+	 */
 	public static ImmutableCollection<ID> getStoredIDs() {
 		if (!cInfoStore.isPresent()) {
 
@@ -131,6 +147,12 @@ public class LocalBackupInformationAccess {
 		return cInfoStore.get().getStoredSharedQueries();
 	}
 
+	/**
+	 * 
+	 * @param sharedQueryId
+	 * @return All stored peerIds which are known to have a part of the query
+	 *         with the given sharedQueryId
+	 */
 	public static ImmutableCollection<PeerID> getStoredPeersForSharedQueryId(
 			ID sharedQueryId) {
 		if (!cInfoStore.isPresent()) {
@@ -140,6 +162,34 @@ public class LocalBackupInformationAccess {
 
 		}
 		return cInfoStore.get().getStoredPeers(sharedQueryId);
+	}
+
+	/**
+	 * Returns all shared query-ids which have a query part on the given peer
+	 * @param peerId Peer you want to have the sharedQueryIds from
+	 * @return
+	 */
+	public static List<ID> getStoredSharedQueryIdsForPeer(
+			PeerID peerId) {
+		if (!cInfoStore.isPresent()) {
+
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+
+		}
+		
+		List<ID> sharedQueryIds = new ArrayList<ID>();
+
+		for (ID queryId : cInfoStore.get().getStoredSharedQueries()) {
+			for (PeerID peer : cInfoStore.get().getStoredPeers(queryId)) {
+				if (peer.equals(peerId)) {
+					// This is what we search: For this peer we have a sharedQueryId
+					sharedQueryIds.add(queryId);
+				}
+			}
+		}
+
+		return sharedQueryIds;
 	}
 
 }

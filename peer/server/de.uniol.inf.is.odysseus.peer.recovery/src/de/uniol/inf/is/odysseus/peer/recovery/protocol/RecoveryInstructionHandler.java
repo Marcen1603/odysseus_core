@@ -64,7 +64,6 @@ public class RecoveryInstructionHandler {
 //			e.printStackTrace();
 //		}
 //
-//		//ID sharedId = new ID 
 //		LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId, newReceiver);
 	}
 

@@ -13,6 +13,7 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
@@ -104,10 +105,45 @@ public class RecoveryConsole implements CommandProvider {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("---Recovery commands---\n");
-		sb.append("lsBackupStore - Lists the stored sharedQueryIds with a list of peers which have parts of this sharedQuery. sharedQueryId: peer1, peer2, peer3\n");
-		sb.append("sendHoldOn <PeerName from receiver> <sharedQueryId> - Send a hold-on message to <PeerName from receiver>, so that this should stop sending the tuples from query <sharedQueryId> further.\n");
-		sb.append("sendNewReceiver <PeerName from receiver> <sharedQueryId> - Send a newReceiver-message to <PeerName from receiver>, so that this should send the tuples from query <sharedQueryId> to a new receiver.\n");
+		sb.append("	lsBackupStore - Lists the stored sharedQueryIds with a list of peers which have parts of this sharedQuery. sharedQueryId: peer1, peer2, peer3\n");
+		sb.append("	showPeerPQL <PeerName> - Shows the PQL that this peer knows from <PeerName>.\n");
+		sb.append("	sendHoldOn <PeerName from receiver> <sharedQueryId> - Send a hold-on message to <PeerName from receiver>, so that this should stop sending the tuples from query <sharedQueryId> further.\n");
+		sb.append("	sendNewReceiver <PeerName from receiver> <sharedQueryId> - Send a newReceiver-message to <PeerName from receiver>, so that this should send the tuples from query <sharedQueryId> to a new receiver.\n");
+		sb.append("	sendAddQueriesFromPeer <PeerName from receiver> <PeerName from failed peer> - The <PeerName from receiver> will get a message that tells that the peer has to install all queries from <PeerName from failed peer>. \n");
 		return sb.toString();
+	}
+
+	public void _showPeerPQL(CommandInterpreter ci) {
+		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
+
+		String peerName = ci.nextArgument();
+		Optional<PeerID> peerId = RecoveryHelper.determinePeerID(peerName);
+
+		if (peerId.isPresent()) {
+			List<ID> queryIds = LocalBackupInformationAccess
+					.getStoredSharedQueryIdsForPeer(peerId.get());
+			System.out.println("PQL-Queries for peer with peerId "
+					+ peerId.get());
+			for (ID queryId : queryIds) {
+				System.out.println("Shared Query ID: " + queryId);
+				ImmutableCollection<String> pqls = LocalBackupInformationAccess
+						.getStoredPQLStatements(queryId, peerId.get());
+
+				for (String pql : pqls) {
+					System.out.println("Query: ");
+					System.out.println("-------");
+					System.out.println(pql);
+				}
+			}
+		}
+
+	}
+
+	public void _sendAddQueriesFromPeer(CommandInterpreter ci) {
+		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
+
+//		PeerID installPeer = getPeerIdFromCi(ci);
+
 	}
 
 	public void _sendHoldOn(CommandInterpreter ci) {
@@ -125,6 +161,7 @@ public class RecoveryConsole implements CommandProvider {
 	}
 
 	public void _sendNewReceiver(CommandInterpreter ci) {
+		System.out.println("For now I do nothing. :'(");
 		// Preconditions.checkNotNull(ci,
 		// "Command interpreter must not be null!");
 		// PeerID peerId = getPeerIdFromCi(ci);
@@ -150,7 +187,7 @@ public class RecoveryConsole implements CommandProvider {
 					.getStoredPeersForSharedQueryId(id);
 			boolean isFirst = true;
 			for (PeerID peer : peersForThisQueryId) {
-				if(!isFirst)
+				if (!isFirst)
 					sb.append(", ");
 				isFirst = false;
 				String peerName = RecoveryHelper.determinePeerName(peer);
