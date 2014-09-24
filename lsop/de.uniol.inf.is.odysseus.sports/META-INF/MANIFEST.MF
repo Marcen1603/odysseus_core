@@ -4,3 +4,10 @@ Bundle-Name: Sports
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.sports
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.transform,
+ de.uniol.inf.is.odysseus.ruleengine
+Import-Package: de.uniol.inf.is.odysseus.physicaloperator.relational,
+ org.slf4j
+Service-Component: OSGI-INF/SportsRuleProvider.xml
